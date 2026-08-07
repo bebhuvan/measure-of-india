@@ -74,6 +74,15 @@ const PAGES = [
     ["n-urban", (b) => "₹" + b["hces-mpce"].series.urban.data.at(-1).toLocaleString("en-IN")],
     ["n-gini", (b) => b["hces-gini"].series.rural.data.at(-1).toFixed(3)],
     ["pv-lad", (b) => "₹" + b["hces-fractiles"].series.f95_100_urban.data.at(-1).toLocaleString("en-IN")],
+    ["pv-social", (b) => (b["hces-social"].series.others_rural.data.at(-1) / b["hces-social"].series.st_rural.data.at(-1)).toFixed(2) + "×"],
+    ["ex-so-scu", (b) => "₹" + b["hces-social"].series.sc_urban.data.at(-1).toLocaleString("en-IN")],
+    ["pv-hht", (b) => "₹" + b["hces-household-type"].series.casual_labour_urban.data.at(-1).toLocaleString("en-IN")],
+    ["pv-plate", (b) => b["hces-quantities"].series.total_cereals_rural.data.at(-1).toFixed(2) + " kg"],
+    ["ex-q-rice", (b) => b["hces-quantities"].series.rice_rural.data.at(-1).toFixed(1) + " kg"],
+    ["pv-food", (b) => {
+      const s = b["hces-categories-states"].series;
+      return Math.max(...Object.keys(s).filter((k) => k.endsWith("_rural")).map((k) => s[k].data.at(-1))).toFixed(2) + "%";
+    }],
     ["prov-vintage", (b) => b["hces-mpce"].meta.vintage],
     ["prov-vintage2", (b) => b["hces-mpce"].meta.vintage],
   ]},
@@ -165,6 +174,10 @@ for (const page of PAGES) {
     "hces-mpce": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/hces-mpce.json"), "utf8")),
     "hces-gini": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/hces-gini.json"), "utf8")),
     "hces-fractiles": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/hces-fractiles.json"), "utf8")),
+    "hces-social": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/hces-social.json"), "utf8")),
+    "hces-household-type": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/hces-household-type.json"), "utf8")),
+    "hces-quantities": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/hces-quantities.json"), "utf8")),
+    "hces-categories-states": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/hces-categories-states.json"), "utf8")),
     "asi-headline": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/asi-headline.json"), "utf8")),
     "asuse-annual": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/asuse-annual.json"), "utf8")),
   };

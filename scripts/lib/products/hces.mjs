@@ -7,13 +7,23 @@
 // 2023-04). All 9 indicators are small (~25k rows in total), so each is
 // ingested IN FULL (paged, limit=500, keyed by indicator_code only) and
 // sliced client-side. Bundles:
-//   hces-mpce.json       — All-India MPCE, rural/urban × with/without imputation
-//   hces-states.json     — state × sector MPCE (without imputation)
-//   hces-fractiles.json  — MPCE over 12 fractile classes, All-India
-//   hces-categories.json — %-share of MPCE over broad item categories
-//   hces-gini.json       — Gini coefficient of PCE by sector
+//   hces-mpce.json              — All-India MPCE, rural/urban × with/without imputation
+//   hces-states.json            — state × sector MPCE (without imputation)
+//   hces-fractiles.json         — MPCE over 12 fractile classes, All-India
+//   hces-categories.json        — %-share of MPCE over broad item categories
+//   hces-gini.json              — Gini coefficient of PCE by sector
+//   hces-social.json            — All-India MPCE by social group × sector (ind 8)
+//   hces-household-type.json    — All-India MPCE by household employment type × sector (ind 7)
+//   hces-quantities.json        — All-India per-capita monthly cereal quantity, kg (ind 5)
+//   hces-item-values.json       — All-India per-capita monthly cereal value, ₹ (ind 6)
+//   hces-categories-states.json — food share of MPCE by state × sector (ind 4, state grain)
 // "Without Imputation" is the headline convention; "With Imputation" adds the
 // imputed value of items received free through social welfare programmes.
+// Indicator 3 (broad categories in ₹) is deliberately NOT baked as a bundle:
+// each of its rupee figures equals the published share (ind 4) times MPCE
+// (ind 1) within rounding, and its cereal row duplicates ind 6's Total
+// Cereals — it is exercised as a validation cross-check instead
+// (scripts/validate.mjs reads it from the raw dump).
 
 import { mospi } from "../mospi.mjs";
 import { writeJson, writeRaw } from "../util.mjs";
@@ -167,11 +177,138 @@ export async function buildHces(root, dcfg, vintage) {
     },
   };
 
+  /* ---- hces-social: All-India MPCE by social group × sector (ind 8) ----
+     ("All" is omitted — it duplicates hces-mpce exactly) */
+  const SOC = [["Scheduled Tribe", "st"], ["Scheduled Caste", "sc"], ["Other Backward Class", "obc"], ["Others", "others"]];
+  const socRows = byInd["8"].filter((r) => r.state === "All India" && r.imputation_type === "Without Imputation");
+  const socSeries = {};
+  let si = 0;
+  for (const [group, gk] of SOC) {
+    for (const sector of ["Rural", "Urban"]) {
+      const key = `${gk}_${slugify(sector)}`;
+      socSeries[key] = {
+        name: `hces_mpce_social_${key}_inr`, label: `${group} · ${sector}`,
+        color: gk === "st" && sector === "Rural" ? "#BE3E26" : GREYS[si++ % GREYS.length],
+        data: data(toMap(socRows.filter((r) => r.social_group === group && r.sector === sector))), unit: "inr",
+      };
+    }
+  }
+  const socialBundle = {
+    meta: {
+      ...metaBase,
+      coverage: "All India, rural/urban; average MPCE by social group (ST/SC/OBC/Others), ₹, without imputation",
+      note: "The \"All\" group is omitted (it equals the All-India MPCE in hces-mpce). Group means are averages over overlapping distributions; " + imputNote,
+    },
+    dates, series: socSeries,
+  };
+
+  /* ---- hces-household-type: All-India MPCE by household employment type (ind 7) ----
+     Rural rows are published with an agriculture/non-agriculture split;
+     urban rows carry the aggregated types. "All" is omitted (= hces-mpce). */
+  const htRows = byInd["7"].filter((r) => r.state === "All India" && r.imputation_type === "Without Imputation" && r.employment_of_households !== "All");
+  const htKeys = [...new Set(htRows.map((r) => `${r.employment_of_households}|${r.sector}`))].sort();
+  const htSeries = {};
+  htKeys.forEach((k, i) => {
+    const [type, sector] = k.split("|");
+    const key = `${slugify(type)}_${slugify(sector)}`;
+    htSeries[key] = {
+      name: `hces_mpce_hhtype_${key}_inr`, label: `${type} · ${sector}`, color: GREYS[i % GREYS.length],
+      data: data(toMap(htRows.filter((r) => r.employment_of_households === type && r.sector === sector))), unit: "inr",
+    };
+  });
+  const hhTypeBundle = {
+    meta: {
+      ...metaBase,
+      coverage: "All India, rural/urban; average MPCE by household employment type, ₹, without imputation",
+      note: "Rural types are published with an agriculture/non-agriculture split; urban types are published aggregated (self-employed, regular wage/salaried, casual labour, others). The \"All\" type is omitted (it equals the All-India MPCE in hces-mpce). " + imputNote,
+    },
+    dates, series: htSeries,
+  };
+
+  /* ---- hces-quantities: per-capita monthly cereal quantity, kg (ind 5) ----
+     Quantities are published in the without-imputation convention only. */
+  const CEREALS = ["Rice", "Wheat", "Coarse Grains", "Other Cereals", "Total Cereals"];
+  const qtyRows = byInd["5"].filter((r) => r.state === "All India" && r.imputation_type === "Without Imputation");
+  const qtySeries = {};
+  let qi = 0;
+  for (const cereal of CEREALS) {
+    for (const sector of ["Rural", "Urban"]) {
+      const key = `${slugify(cereal)}_${slugify(sector)}`;
+      qtySeries[key] = {
+        name: `hces_qty_${key}_kg`, label: `${cereal} · ${sector}`,
+        color: cereal === "Total Cereals" && sector === "Rural" ? "#BE3E26" : GREYS[qi++ % GREYS.length],
+        data: data(toMap(qtyRows.filter((r) => r.cereal === cereal && r.sector === sector))), unit: "kg_per_month",
+      };
+    }
+  }
+  const quantitiesBundle = {
+    meta: {
+      ...metaBase,
+      coverage: "All India, rural/urban; average per-capita monthly quantity of cereals consumed, kg per person per month (as published)",
+      note: "The API serves cereal quantities in the without-imputation convention only. Rice + Wheat + Coarse Grains + Other Cereals sum to Total Cereals. Only the 2022-23 and 2023-24 HCES rounds exist in the eSankhyiki API; never spliced with the 2011-12 or earlier NSS CES rounds.",
+    },
+    dates, series: qtySeries,
+  };
+
+  /* ---- hces-item-values: per-capita monthly cereal value, ₹ (ind 6) ----
+     The ₹ complement of hces-quantities, headline (without imputation)
+     convention; a with-imputation variant exists in the raw dump. */
+  const valRows = byInd["6"].filter((r) => r.state === "All India" && r.imputation_type === "Without Imputation");
+  const valSeries = {};
+  let vi = 0;
+  for (const cereal of CEREALS) {
+    for (const sector of ["Rural", "Urban"]) {
+      const key = `${slugify(cereal)}_${slugify(sector)}`;
+      valSeries[key] = {
+        name: `hces_value_${key}_inr`, label: `${cereal} · ${sector}`,
+        color: cereal === "Total Cereals" && sector === "Rural" ? "#BE3E26" : GREYS[vi++ % GREYS.length],
+        data: data(toMap(valRows.filter((r) => r.cereal === cereal && r.sector === sector))), unit: "inr",
+      };
+    }
+  }
+  const itemValuesBundle = {
+    meta: {
+      ...metaBase,
+      coverage: "All India, rural/urban; average per-capita monthly value of cereals consumed, ₹ per person per month, without imputation",
+      note: "The ₹ twin of hces-quantities: same cereals, same households, valued in the rupees of the day. Total Cereals here equals the Cereal row of the broad-category table in ₹ (indicator 3) — that redundancy is asserted in scripts/validate.mjs. " + imputNote,
+    },
+    dates, series: valSeries,
+  };
+
+  /* ---- hces-categories-states: food share of MPCE by state × sector ----
+     The state grain of the shares indicator (ind 4), kept lean: one series
+     per state-sector, Food Total only. The full ₹ category table (ind 3) is
+     not baked — see the header note. */
+  const fsRows = byInd["4"].filter((r) => r.state !== "All India" && r.imputation_type === "Without Imputation" && r.item_category === "Food Total");
+  const fsKeys = [...new Set(fsRows.map((r) => `${r.state}|${r.sector}`))].sort();
+  const fsSeries = {};
+  fsKeys.forEach((k, i) => {
+    const [state, sector] = k.split("|");
+    const key = `${slugify(state)}_${slugify(sector)}`;
+    fsSeries[key] = {
+      name: `hces_food_share_${key}_pct`, label: `${state} · ${sector}`, color: GREYS[i % GREYS.length],
+      data: data(toMap(fsRows.filter((r) => r.state === state && r.sector === sector))), unit: "pct_of_mpce",
+    };
+  });
+  const foodStatesBundle = {
+    meta: {
+      ...metaBase,
+      coverage: "States/UTs × rural/urban; percentage share of MPCE going to food (Food Total category, 30-day recall), without imputation",
+      note: "Lean cut of the state × category grain: Food Total share only, one series per state-sector. The detail categories at state level live in the raw dump (data/raw/hces-records.json, indicators 3 and 4), not in a bundle.",
+    },
+    dates, series: fsSeries,
+  };
+
   if (!mpceBundle.series.rural.data.some((v) => v != null)) throw new Error("HCES: no MPCE data returned");
   writeJson(root, "data/series/hces-mpce.json", mpceBundle);
   writeJson(root, "data/series/hces-states.json", statesBundle);
   writeJson(root, "data/series/hces-fractiles.json", fractilesBundle);
   writeJson(root, "data/series/hces-categories.json", categoriesBundle);
   writeJson(root, "data/series/hces-gini.json", giniBundle);
+  writeJson(root, "data/series/hces-social.json", socialBundle);
+  writeJson(root, "data/series/hces-household-type.json", hhTypeBundle);
+  writeJson(root, "data/series/hces-quantities.json", quantitiesBundle);
+  writeJson(root, "data/series/hces-item-values.json", itemValuesBundle);
+  writeJson(root, "data/series/hces-categories-states.json", foodStatesBundle);
   return mpceBundle;
 }

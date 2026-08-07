@@ -1,0 +1,121 @@
+{
+ "meta": {
+  "dossier": "hces",
+  "frequency": "annual",
+  "base": "survey 2022-23 & 2023-24",
+  "source": "MoSPI, National Statistical Office",
+  "vintage": "2026-08-07",
+  "mock": false,
+  "latestPeriod": "2023-04",
+  "releaseDate": null,
+  "revisionPolicy": "Survey estimates are final on release. Each round is a cross-section; the two rounds are comparable by design but are never averaged or chained.",
+  "coverage": "All India, rural/urban; average per-capita monthly value of cereals consumed, ₹ per person per month, without imputation",
+  "note": "The ₹ twin of hces-quantities: same cereals, same households, valued in the rupees of the day. Total Cereals here equals the Cereal row of the broad-category table in ₹ (indicator 3) — that redundancy is asserted in scripts/validate.mjs. \"Without imputation\" is the headline MPCE convention (comparable across the two rounds); \"with imputation\" adds the imputed value of items received free of cost through social welfare programmes. Only the 2022-23 and 2023-24 HCES rounds exist in the eSankhyiki API — the 2011-12 and earlier NSS CES rounds are not served and are methodologically different; these series must never be spliced with them."
+ },
+ "dates": [
+  "2022-04-01",
+  "2023-04-01"
+ ],
+ "series": {
+  "rice_rural": {
+   "name": "hces_value_rice_rural_inr",
+   "label": "Rice · Rural",
+   "color": "#5B564B",
+   "data": [
+    94.74,
+    109.14
+   ],
+   "unit": "inr"
+  },
+  "rice_urban": {
+   "name": "hces_value_rice_urban_inr",
+   "label": "Rice · Urban",
+   "color": "#8A857A",
+   "data": [
+    127.61,
+    143.7
+   ],
+   "unit": "inr"
+  },
+  "wheat_rural": {
+   "name": "hces_value_wheat_rural_inr",
+   "label": "Wheat · Rural",
+   "color": "#A8A293",
+   "data": [
+    79.48,
+    84.15
+   ],
+   "unit": "inr"
+  },
+  "wheat_urban": {
+   "name": "hces_value_wheat_urban_inr",
+   "label": "Wheat · Urban",
+   "color": "#C6C0B0",
+   "data": [
+    99.89,
+    109.84
+   ],
+   "unit": "inr"
+  },
+  "coarse_grains_rural": {
+   "name": "hces_value_coarse_grains_rural_inr",
+   "label": "Coarse Grains · Rural",
+   "color": "#5B564B",
+   "data": [
+    9.42,
+    10.89
+   ],
+   "unit": "inr"
+  },
+  "coarse_grains_urban": {
+   "name": "hces_value_coarse_grains_urban_inr",
+   "label": "Coarse Grains · Urban",
+   "color": "#8A857A",
+   "data": [
+    5.75,
+    7.74
+   ],
+   "unit": "inr"
+  },
+  "other_cereals_rural": {
+   "name": "hces_value_other_cereals_rural_inr",
+   "label": "Other Cereals · Rural",
+   "color": "#A8A293",
+   "data": [
+    0.77,
+    0.58
+   ],
+   "unit": "inr"
+  },
+  "other_cereals_urban": {
+   "name": "hces_value_other_cereals_urban_inr",
+   "label": "Other Cereals · Urban",
+   "color": "#C6C0B0",
+   "data": [
+    0.75,
+    0.7
+   ],
+   "unit": "inr"
+  },
+  "total_cereals_rural": {
+   "name": "hces_value_total_cereals_rural_inr",
+   "label": "Total Cereals · Rural",
+   "color": "#BE3E26",
+   "data": [
+    184.42,
+    204.76
+   ],
+   "unit": "inr"
+  },
+  "total_cereals_urban": {
+   "name": "hces_value_total_cereals_urban_inr",
+   "label": "Total Cereals · Urban",
+   "color": "#5B564B",
+   "data": [
+    234,
+    261.97
+   ],
+   "unit": "inr"
+  }
+ }
+}

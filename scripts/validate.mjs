@@ -154,6 +154,16 @@ const PRODUCTS = [
   { slug: "hces-fractiles", dossier: "hces", cadence: 12, range: [500, 60000] },
   { slug: "hces-categories", dossier: "hces", cadence: 12, range: [0, 100] },
   { slug: "hces-gini", dossier: "hces", cadence: 12, range: [0.2, 0.5] },
+  // group means sit between the ST rural floor (~3,000) and the urban
+  // "Others" household-type ceiling (~9,200)
+  { slug: "hces-social", dossier: "hces", cadence: 12, range: [1500, 15000] },
+  { slug: "hces-household-type", dossier: "hces", cadence: 12, range: [1500, 15000] },
+  // kg per person per month: Other Cereals is ~0.01, Total Cereals ~8-10
+  { slug: "hces-quantities", dossier: "hces", cadence: 12, range: [0.005, 15] },
+  { slug: "hces-item-values", dossier: "hces", cadence: 12, range: [0.1, 1000] },
+  // food share of MPCE by state-sector: ~36% (urban Chandigarh/Kerala end)
+  // to ~58% (rural Ladakh end)
+  { slug: "hces-categories-states", dossier: "hces", cadence: 12, range: [20, 80] },
   // ASI: mixed units — counts (factories ~2.6e5, persons ~1.9e7) and ₹ lakh
   // levels (gross output ~1.2e9 lakh); ranges are wide by construction
   { slug: "asi-headline", dossier: "asi", cadence: 12, range: [0, 2.5e9] },
@@ -245,6 +255,64 @@ withBundle("hces-gini", (b) => {
     if (!b.series[k]?.data.some((v) => v != null)) fail(`hces-gini: series ${k} empty`);
   }
   ok("hces-gini: rural/urban Gini present, within [0.2, 0.5] (range check)");
+});
+
+withBundle("hces-social", (b) => {
+  // ordering sanity: "Others" is the highest of the four group means in both
+  // sectors and both rounds (true in the data; note the floor is NOT the
+  // same group everywhere — rural ST is lowest, urban SC is lowest)
+  b.dates.forEach((d, i) => {
+    for (const sec of ["rural", "urban"]) {
+      const oth = b.series[`others_${sec}`]?.data[i];
+      for (const g of ["st", "sc", "obc"]) {
+        const v = b.series[`${g}_${sec}`]?.data[i];
+        if (oth != null && v != null && oth < v) fail(`hces-social: others_${sec} (${oth}) < ${g}_${sec} (${v}) at ${d}`);
+      }
+    }
+  });
+  ok("hces-social: Others >= ST/SC/OBC in both sectors, both rounds");
+});
+
+withBundle("hces-quantities", (b) => {
+  // cereals are single-digit kg per head per month; components sum to Total
+  b.dates.forEach((d, i) => {
+    for (const sec of ["rural", "urban"]) {
+      const total = b.series[`total_cereals_${sec}`]?.data[i];
+      if (total == null || total < 4 || total > 15) fail(`hces-quantities: total_cereals_${sec} ${total} implausible at ${d}`);
+      const sum = ["rice", "wheat", "coarse_grains", "other_cereals"]
+        .reduce((a, c) => a + (b.series[`${c}_${sec}`]?.data[i] ?? 0), 0);
+      if (total != null && Math.abs(sum - total) > 0.05) fail(`hces-quantities: components sum ${sum.toFixed(3)} != total ${total} (${sec}, ${d})`);
+    }
+  });
+  for (const [k, s] of Object.entries(b.series)) {
+    if (s.data.some((v) => v != null && v <= 0)) fail(`hces-quantities.${k}: non-positive quantity`);
+  }
+  ok("hces-quantities: positive, single-digit totals, components sum to Total Cereals");
+});
+
+withBundle("hces-item-values", (b) => {
+  for (const [k, s] of Object.entries(b.series)) {
+    if (s.data.some((v) => v != null && v <= 0)) fail(`hces-item-values.${k}: non-positive value`);
+  }
+  // redundancy cross-check against indicator 3 (broad categories in ₹, not
+  // baked as a bundle): its All-India "Cereal" row must equal Total Cereals
+  const rawFile = path.join(ROOT, "data/raw/hces-records.json");
+  if (fs.existsSync(rawFile)) {
+    const ind3 = JSON.parse(fs.readFileSync(rawFile, "utf8")).indicators?.["3"] ?? [];
+    let checked = 0;
+    b.dates.forEach((d, i) => {
+      const fy = `${d.slice(0, 4)}-${String((+d.slice(0, 4) + 1) % 100).padStart(2, "0")}`;
+      for (const sec of ["Rural", "Urban"]) {
+        const pub = ind3.find((r) => r.state === "All India" && r.imputation_type === "Without Imputation" && r.item_category === "Cereal" && r.sector === sec && r.year === fy);
+        const v = b.series[`total_cereals_${sec.toLowerCase()}`]?.data[i];
+        if (!pub || v == null) continue;
+        checked++;
+        if (Math.abs(parseFloat(pub.value) - v) > 0.01) fail(`hces-item-values: total_cereals_${sec.toLowerCase()} ${v} != ind-3 Cereal ${pub.value} at ${fy}`);
+      }
+    });
+    if (checked) ok(`hces-item-values: positive; Total Cereals matches ind-3 Cereal row (${checked} cells)`);
+    else fail("hces-item-values: ind-3 cross-check matched no cells");
+  }
 });
 
 withBundle("asi-headline", (b) => {
