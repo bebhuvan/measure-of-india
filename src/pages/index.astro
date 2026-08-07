@@ -1,0 +1,158 @@
+---
+import Base from "../layouts/Base.astro";
+import "../styles/pages.css";
+---
+<Base
+  title="India Atlas — India's economic data, one dossier at a time"
+  description="Not another dashboard. Long-form dossiers on Indian economic statistics — charts, meaning, the latest print, and the ways each number is misread."
+  nav="dossiers"
+  dateStamp="July 2026"
+  crumbLeft="Home"
+  crumbRight="<b>8</b> dossiers published · <b>1,336</b> series baked"
+  canonical="https://indiaatlas.in/"
+>
+<div class="page home spage">
+
+  <div class="hero break">
+    <div class="kicker">India Atlas · A statistical monograph, continuously revised</div>
+    <div class="hero-grid">
+      <h1>India's economic data, <i>one dossier at a time.</i></h1>
+      <p class="lede">Not another dashboard. Each dossier devotes a whole page to a single statistical concept — the charts, the meaning, the latest print, and the ways the number is most often misread.</p>
+    </div>
+  </div>
+
+  <div class="frontis break">
+    <div id="frontis-plot"></div>
+    <div class="frontis-cap">
+      <span>Headline CPI, year-on-year · Jan 2016 – Jun 2026 · base 2012 to Dec 2025, base 2024 from Jan 2026 — never joined · shaded: RBI tolerance band</span>
+      <a href="/dossiers/cpi/">The full plate · Dossier 01 →</a>
+    </div>
+  </div>
+
+  <div class="prints break">
+    <div class="ph">
+      <span class="t">The latest prints · July 2026</span>
+      <a href="/register/">Full register →</a>
+    </div>
+    <div class="grid">
+      <div class="cell">
+        <div class="l">CPI inflation · Jun 2026 · y/y · base 2024</div>
+        <div class="v" id="v-cpi">–</div>
+        <div class="d"><b id="d-cpi">–</b> vs May · <a href="/dossiers/cpi/">Dossier 01 →</a></div>
+        <div class="nspark" id="sp-cpi"></div>
+      </div>
+      <div class="cell">
+        <div class="l">GDP growth · Q2 FY26 · y/y</div>
+        <div class="v" id="v-gdp">–</div>
+        <div class="d"><b id="d-gdp">–</b> vs Q1 · <a href="/dossiers/gdp/">Dossier 02 →</a></div>
+        <div class="nspark" id="sp-gdp"></div>
+      </div>
+      <div class="cell">
+        <div class="l">Core CPI · Dec 2025 · y/y · derived · base 2012, to Dec 2025</div>
+        <div class="v" id="v-core">–</div>
+        <div class="d"><b id="d-core">–</b> vs Nov · <a href="/dossiers/cpi/">Dossier 01 →</a></div>
+        <div class="nspark" id="sp-core"></div>
+      </div>
+    </div>
+  </div>
+
+  <section id="dossiers">
+    <div class="sec-head"><span class="no">§</span><h2>The dossiers</h2><span class="line"></span><span class="unit">№ 01 – 08 · all published</span></div>
+    <ul class="dossiers">
+      <li><a href="/dossiers/cpi/">
+        <span class="no">№ 01</span>
+        <span class="nm">Consumer Price Index</span>
+        <span class="ds">The cost of an ordinary shopping basket, measured monthly. The RBI's target, your salary's adversary, and the most argued-about number in Indian economics.</span>
+        <span class="dspark" id="ds-cpi"></span>
+        <span class="vt"><b>Current</b><br>Vintage 12 Jul 2026</span>
+      </a></li>
+      <li><a href="/dossiers/gdp/">
+        <span class="no">№ 02</span>
+        <span class="nm">National Accounts · GDP</span>
+        <span class="ds">The size and speed of the whole economy, estimated quarterly. What growth is made of — consumption, investment, government — and what the aggregate hides.</span>
+        <span class="dspark" id="ds-gdp"></span>
+        <span class="vt"><b>Current</b><br>Vintage 28 Nov 2025</span>
+      </a></li>
+      <li><a href="/dossiers/wpi/">
+        <span class="no">№ 03</span>
+        <span class="nm">Wholesale Prices · WPI</span>
+        <span class="ds">Factory-gate prices — a different basket from the CPI, measuring a different thing. Why the two diverge by five points and both are right.</span>
+        <span class="dspark" id="ds-wpi"></span>
+        <span class="vt"><b>Current</b><br>Vintage 14 May 2026</span>
+      </a></li>
+      <li><a href="/dossiers/iip/">
+        <span class="no">№ 04</span>
+        <span class="nm">Index of Industrial Production</span>
+        <span class="ds">The monthly pulse of mining, manufacturing and electricity. Volatile, revised, and read far too literally.</span>
+        <span class="dspark" id="ds-iip"></span>
+        <span class="vt"><b>Current</b><br>Vintage Jul 2026</span>
+      </a></li>
+      <li><a href="/dossiers/external/">
+        <span class="no">№ 05</span>
+        <span class="nm">The External Account</span>
+        <span class="ds">Exports, imports, reserves and the rupee — the country's ledger with the rest of the world, and the buffer that keeps it honest.</span>
+        <span class="dspark" id="ds-ext"></span>
+        <span class="vt"><b>Current</b><br>Vintage Jun 2025</span>
+      </a></li>
+      <li><a href="/dossiers/jobs/">
+        <span class="no">№ 06</span>
+        <span class="nm">Employment &amp; Unemployment · PLFS</span>
+        <span class="ds">Who has work, who wants it, who is counted. India's jobs number is not a count of jobs — it is three surveys, three stopwatches, kept side by side.</span>
+        <span class="dspark" id="ds-jobs"></span>
+        <span class="vt"><b>Current</b><br>Vintage Jun 2026</span>
+      </a></li>
+      <li><a href="/dossiers/consumption/">
+        <span class="no">№ 07</span>
+        <span class="nm">Household Consumption · HCES</span>
+        <span class="ds">The household budget of a country, averaged: what a person spends in a month, rung by rung of the ladder — and why the mean is nobody's life.</span>
+        <span class="dspark" id="ds-hces"></span>
+        <span class="vt"><b>Current</b><br>Vintage 2023-24 round</span>
+      </a></li>
+      <li><a href="/dossiers/factories/">
+        <span class="no">№ 08</span>
+        <span class="nm">Enterprises · ASI + ASUSE</span>
+        <span class="ds">The factory, the shop, and the line between them. Registered factories audited to the last rupee; the informal firm, counted only since 2021 — side by side, never summed.</span>
+        <span class="dspark" id="ds-asi"></span>
+        <span class="vt"><b>Current</b><br>Vintage 2023-24 rounds</span>
+      </a></li>
+    </ul>
+
+    <div class="note-block">
+      <div>
+        <h3>How to use this site</h3>
+        <p>Start with a dossier's <b>current reading</b> if you came for the news; read it end to end if you came to understand. Every chart downloads as SVG, PNG or CSV, and every number on the page is computed from the same data the charts use.</p>
+      </div>
+      <div>
+        <h3>What we promise</h3>
+        <p>Every observation traceable to its source. Derived series labelled as derived. Conflicting statistics shown side by side, never reconciled. And where something is not measured, the page says <b>we do not know</b>.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="provenance">
+    <div class="cols">
+      <div>
+        <h6>India Atlas</h6>
+        <p>A static-first reference work for Indian economic statistics. Published continuously; each dossier carries its vintage and revision history. All data is sourced from the statistical agencies and baked into the page at build time.</p>
+      </div>
+      <div>
+        <h6>Sources</h6>
+        <p>MoSPI / NSO for prices and national accounts; Office of the Economic Adviser for wholesale prices. Each dossier cites its exact press release and release date.</p>
+      </div>
+      <div>
+        <h6>Contact</h6>
+        <p>Corrections, questions and source tips: register@indiaatlas.example. Read <a href="/method/">how we work</a> before citing us.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas · Home</span>
+      <span>Static · no trackers · no cookies</span>
+      <span>Set in Archivo, Newsreader &amp; Plex Mono</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../dossiers/home.client.js";
+</script>
+</Base>

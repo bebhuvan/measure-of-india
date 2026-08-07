@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>India Atlas — Components</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF;--ink:#1B1A17;--ink-soft:#4A463F;--muted:#8A857A;--faint:#B4AFA2;
+    --rule:#E6E2D6;--accent:#BE3E26;--grey1:#5B564B;--grey2:#A8A293;--grey3:#C6C0B0;--band:#F8F6F1;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:"Newsreader",Georgia,serif;font-weight:460;
+    font-size:1.18rem;line-height:1.82;-webkit-font-smoothing:antialiased;
+  }
+  .page{max-width:880px;margin:0 auto;padding:0 32px}
+  .break{width:min(1280px, calc(100vw - 48px));margin-left:50%;transform:translateX(-50%)}
+
+  .sitehead{border-bottom:1px solid var(--ink)}
+  .sh-in{max-width:1184px;margin:0 auto;padding:0 32px;height:66px;display:flex;align-items:center;gap:40px}
+  .brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink);
+    font-family:"Archivo",sans-serif;font-weight:720;font-size:1.05rem;letter-spacing:-0.015em}
+  .brand .mark{width:10px;height:10px;background:var(--accent)}
+  .sh-nav{display:flex;gap:30px;margin-left:auto}
+  .sh-nav a{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink-soft);text-decoration:none}
+  .sh-nav a:hover{color:var(--accent)}
+  .sh-date{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);border-left:1px solid var(--rule);padding-left:30px}
+  .crumb{border-bottom:1px solid var(--rule);font-family:"IBM Plex Mono",monospace;
+    font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .crumb .crumb-in{max-width:1184px;margin:0 auto;padding:10px 32px;display:flex;justify-content:space-between;gap:24px}
+  .crumb b{color:var(--ink);font-weight:500}
+
+  .spec{padding:72px 0 0}
+  .spec > .tag{
+    font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:8px;
+  }
+  .spec > .desc{font-size:.95rem;color:var(--muted);max-width:64ch;margin-bottom:28px}
+  .spec > .desc code{font-family:"IBM Plex Mono",monospace;font-size:.85em;color:var(--ink-soft)}
+
+  h1{font-family:"Archivo",sans-serif;font-weight:720;font-size:3.2rem;letter-spacing:-0.03em;line-height:1.05;padding:80px 0 16px}
+  .lede{font-size:1.25rem;font-style:italic;color:#33302B;max-width:52ch}
+
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:36px}
+  .sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.68rem;color:var(--accent);letter-spacing:.1em}
+  .sec-head h2{font-family:"Archivo",sans-serif;font-weight:680;font-size:1.55rem;letter-spacing:-0.02em}
+  .sec-head .line{flex:1;height:1px;background:var(--rule);transform:translateY(-5px)}
+  .sec-head .unit{font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+  .numbers{display:grid;grid-template-columns:repeat(4,1fr);padding:16px 0 8px}
+  .num{padding:0 30px;border-left:1px solid var(--rule)}
+  .num:first-child{padding-left:0;border-left:none}
+  .num .l{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+  .num .v{font-family:"Newsreader",serif;font-weight:300;font-variation-settings:"opsz" 72;
+    font-size:3.4rem;letter-spacing:-0.02em;line-height:1;font-variant-numeric:tabular-nums}
+  .num .v.acc{color:var(--accent)}
+  .num .v .pc{font-size:.4em;color:var(--muted);margin-left:3px}
+  .num .d{font-family:"IBM Plex Mono",monospace;font-size:.62rem;color:var(--muted);margin-top:14px}
+  .num .d b{color:var(--ink-soft);font-weight:500}
+
+  .reading-grid{display:grid;grid-template-columns:300px 1fr 1fr;gap:56px;align-items:start}
+  .reading-box{border:2px solid var(--ink);padding:30px 28px 26px;position:relative;background:var(--bg)}
+  .reading-box::before{content:"Current reading";position:absolute;top:-9px;left:20px;background:var(--bg);
+    padding:0 9px;font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--accent);font-weight:500}
+  .reading-box .big{font-family:"Newsreader",serif;font-weight:300;font-variation-settings:"opsz" 72;
+    font-size:4.6rem;line-height:1;letter-spacing:-0.02em;font-variant-numeric:tabular-nums}
+  .reading-box .big .pc{font-size:.34em;color:var(--muted);margin-left:4px}
+  .reading-box .cap{margin-top:16px;font-size:.95rem;line-height:1.55;color:var(--ink-soft)}
+  .reading-col .mk{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.18em;
+    text-transform:uppercase;display:block;margin-bottom:16px;color:var(--grey1)}
+  .reading-col.now .mk{color:var(--accent)}
+  .reading-col p{font-size:1.06rem;line-height:1.76;color:#33302B}
+  .reading-col p b{color:var(--ink)}
+
+  .ledger table{width:100%;border-collapse:collapse}
+  .ledger th{font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);font-weight:400;text-align:left;
+    padding:0 20px 13px 0;border-bottom:1px solid var(--ink)}
+  .ledger td{padding:22px 20px 22px 0;border-bottom:1px solid var(--rule);vertical-align:middle}
+  .ledger tbody tr:hover{background:#FAF8F2}
+  .ledger .name{font-size:1.08rem;color:var(--ink)}
+  .ledger .name small{display:block;font-family:"IBM Plex Mono",monospace;font-size:.58rem;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+  .sw{display:inline-block;width:9px;height:9px;margin-right:11px}
+  .s-acc{background:var(--accent)} .s-g1{background:var(--grey1)} .s-g2{background:var(--grey2)} .s-g3{background:var(--grey3)}
+  .ledger .wt,.ledger .chg,.ledger .yr{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--ink-soft);white-space:nowrap}
+  .ledger .wt .wtrack{display:block;width:64px;height:3px;background:var(--rule);margin-top:9px}
+  .ledger .wt .wtrack i{display:block;height:100%}
+  .ledger .val{font-family:"Newsreader",serif;font-weight:300;font-variation-settings:"opsz" 72;
+    font-size:1.85rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .ledger .spark{width:170px}
+
+  .basket .bar{display:flex;height:44px;border:1px solid var(--ink)}
+  .basket .seg{border-left:1px solid var(--bg)}
+  .basket .seg:first-child{border-left:none}
+  .basket .labels{display:flex;margin-top:14px;flex-wrap:wrap}
+  .basket .blab{padding-right:20px}
+  .basket .blab .n{font-size:.98rem}
+  .basket .blab .w{font-family:"IBM Plex Mono",monospace;font-size:.62rem;color:var(--muted);margin-top:3px}
+  .basket .blab .sw{margin-right:8px}
+
+  .frame{
+    position:relative;margin-top:30px;padding:44px 48px 30px;
+    background-color:#FFFFFF;border:1px solid #DCD7C6;
+    background-image:
+      linear-gradient(#1B1A17,#1B1A17),linear-gradient(#1B1A17,#1B1A17),
+      linear-gradient(#1B1A17,#1B1A17),linear-gradient(#1B1A17,#1B1A17),
+      linear-gradient(#1B1A17,#1B1A17),linear-gradient(#1B1A17,#1B1A17),
+      linear-gradient(#1B1A17,#1B1A17),linear-gradient(#1B1A17,#1B1A17);
+    background-size:18px 1.5px,1.5px 18px,18px 1.5px,1.5px 18px,18px 1.5px,1.5px 18px,18px 1.5px,1.5px 18px;
+    background-position:-1px -1px,-1px -1px,calc(100% + 1px) -1px,calc(100% + 1px) -1px,
+      -1px calc(100% + 1px),-1px calc(100% + 1px),calc(100% + 1px) calc(100% + 1px),calc(100% + 1px) calc(100% + 1px);
+    background-repeat:no-repeat;
+  }
+  .frame::before{content:"";position:absolute;inset:7px;border:1px solid #EAE6D8;pointer-events:none}
+  .plate-head{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;
+    padding-bottom:22px;border-bottom:1px solid var(--ink)}
+  .plate-head .t h3{font-family:"Archivo",sans-serif;font-weight:660;font-size:1.4rem;letter-spacing:-0.02em;line-height:1.22}
+  .plate-head .t .sub{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--muted);margin-top:9px}
+  .plate-val{text-align:right;flex-shrink:0}
+  .plate-val .v{font-family:"Newsreader",serif;font-weight:300;font-variation-settings:"opsz" 72;
+    font-size:3rem;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
+  .plate-val .c{font-family:"IBM Plex Mono",monospace;font-size:.58rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);margin-top:8px}
+  .plotzone{position:relative;padding:22px 0 0}
+  .plotzone svg text{paint-order:stroke;stroke:#FFFFFF;stroke-width:4px;stroke-linejoin:round}
+  .plotfoot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px 28px;
+    margin-top:20px;padding-top:15px;border-top:1px solid var(--rule);
+    font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .dl{display:flex;align-items:center;gap:2px}
+  .dl button{background:none;border:none;cursor:pointer;font:inherit;letter-spacing:inherit;
+    text-transform:inherit;color:var(--ink-soft);padding:5px 8px;border:1px solid transparent}
+  .dl button:hover{color:var(--accent);border-color:var(--rule)}
+  .dl .sep{width:1px;height:11px;background:var(--rule);margin:0 4px}
+
+  .explain{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:36px;border-top:1px solid var(--ink)}
+  .explain > div{padding:32px 0 8px}
+  .explain .ev{padding-right:48px;border-right:1px solid var(--rule)}
+  .explain .now{padding-left:48px}
+  .explain .mk{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.18em;
+    text-transform:uppercase;display:block;margin-bottom:15px}
+  .explain .ev .mk{color:var(--grey1)}
+  .explain .now .mk{color:var(--accent)}
+  .explain p{font-size:1.08rem;line-height:1.78;color:#33302B}
+  .explain p b{color:var(--ink)}
+
+  .margin-note{font-size:.9rem;line-height:1.62;color:var(--muted);border-top:1px solid var(--ink);padding-top:13px;max-width:280px}
+  .margin-note .mk{font-family:"IBM Plex Mono",monospace;font-size:.58rem;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent);display:block;margin-bottom:9px}
+  .margin-note b{color:var(--ink-soft);font-weight:500}
+
+  .misread li{list-style:none;display:grid;grid-template-columns:64px 1fr;gap:24px;
+    padding:26px 0;border-bottom:1px solid var(--rule);align-items:baseline}
+  .misread .no{font-family:"IBM Plex Mono",monospace;font-size:.66rem;color:var(--accent);letter-spacing:.1em}
+  .misread h3{font-family:"Archivo",sans-serif;font-weight:640;font-size:1.12rem;
+    letter-spacing:-0.015em;line-height:1.3;margin-bottom:8px}
+  .misread p{font-size:1.02rem;color:#33302B;max-width:58ch}
+  .misread p b{color:var(--ink)}
+
+  .defbox{position:relative;max-width:64ch;margin:40px 0 0;border:1px solid var(--ink);padding:30px 34px 24px;background:var(--bg)}
+  .defbox::before{content:"Definition";position:absolute;top:-9px;left:24px;background:var(--bg);padding:0 10px;
+    font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:500}
+  .defbox .term{font-family:"Archivo",sans-serif;font-weight:680;font-size:1.3rem;letter-spacing:-0.018em;
+    display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+  .defbox .term .sub{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);font-weight:400}
+  .defbox p{font-size:1.07rem;line-height:1.76;color:#33302B;max-width:none}
+  .defbox p + p{margin-top:.8em}
+  .defbox .eg{margin-top:15px;padding-top:13px;border-top:1px solid var(--rule);font-size:.96rem;color:var(--muted);font-style:italic}
+  .defbox .eg b{color:var(--ink-soft);font-weight:500;font-style:normal}
+
+  .provenance{margin-top:96px;padding:40px 0 72px;border-top:1px solid var(--ink)}
+  .provenance .cols{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:52px}
+  .provenance h6{font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--ink);font-weight:500;margin-bottom:16px}
+  .provenance p{font-size:.92rem;line-height:1.7;color:var(--ink-soft)}
+  .provenance .fine{margin-top:44px;padding-top:16px;border-top:1px solid var(--rule);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 24px;
+    font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+  @media (max-width:680px){
+    .numbers{grid-template-columns:1fr 1fr;gap:32px 0}
+    .num{border-left:none;padding-left:0}
+    .reading-grid,.explain,.provenance .cols{grid-template-columns:1fr;gap:36px}
+    .explain .ev{padding-right:0;border-right:none}
+    .explain .now{padding-left:0}
+  }
+</style>
+</head>
+<body>
+<header class="sitehead">
+  <div class="sh-in">
+    <a class="brand" href="../index.html"><span class="mark"></span>India Atlas</a>
+    <nav class="sh-nav">
+      <a href="../index.html#dossiers">Dossiers</a><a href="../register.html">Register</a><a href="../method.html">Method</a><a href="../about.html">About</a>
+    </nav>
+    <span class="sh-date">Styleguide</span>
+  </div>
+</header>
+<div class="crumb">
+  <div class="crumb-in">
+    <span>Internal / <b>Component gallery</b></span>
+    <span>Companion to <b>BUILD.md §6–8</b></span>
+  </div>
+</div>
+<div class="page">
+
+  <h1>Components</h1>
+  <p class="lede">Every building block of an India Atlas page, in isolation. Class contracts are normative — dossiers must not invent variants without updating this page and BUILD.md.</p>
+
+  <div class="spec">
+    <div class="tag">01 · Section head — .sec-head</div>
+    <div class="desc">Opens every numbered section. Mono index, Archivo title, hairline, right-aligned unit note.</div>
+    <div class="sec-head"><span class="no">00</span><h2>Section title</h2><span class="line"></span><span class="unit">Unit · frequency</span></div>
+  </div>
+
+  <div class="spec">
+    <div class="tag">02 · Key numbers — .numbers &gt; .num</div>
+    <div class="desc">Four-cell strip under the titleblock. Newsreader 300 numerals, tabular figures; first cell carries the accent. Delta line: <code>▲/▼ x.xx pt vs prev · word</code>.</div>
+    <div class="numbers">
+      <div class="num"><div class="l">Headline · y/y</div><div class="v acc">3.51<span class="pc">%</span></div><div class="d"><b>▼ −0.13 pt</b> vs Nov · easing</div></div>
+      <div class="num"><div class="l">Component B · y/y</div><div class="v">2.97<span class="pc">%</span></div><div class="d"><b>▼ −0.38 pt</b> vs Nov · easing</div></div>
+      <div class="num"><div class="l">Component C · y/y</div><div class="v">2.50<span class="pc">%</span></div><div class="d"><b>▲ +0.79 pt</b> vs Nov · firming</div></div>
+      <div class="num"><div class="l">Component D · y/y</div><div class="v">4.18<span class="pc">%</span></div><div class="d"><b>▼ −0.02 pt</b> vs Nov · stable</div></div>
+    </div>
+  </div>
+
+  <div class="spec break">
+    <div class="tag">03 · Current reading — .reading-grid</div>
+    <div class="desc">The dated module. Bordered figure box with overlapping tab; two prose columns: what the print says / what it does not say. Uncertainty lives in the second column.</div>
+    <div class="reading-grid">
+      <div class="reading-box">
+        <div class="big">3.51<span class="pc">%</span></div>
+        <div class="cap">Headline figure, latest period — one plain sentence of context.</div>
+      </div>
+      <div class="reading-col">
+        <span class="mk">What the print says</span>
+        <p>Two short paragraphs maximum. Names the driver, the composition, and the comparison that matters — <b>with the key figure bolded</b>.</p>
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What it does not say</span>
+        <p>States the limits of the number and, where honest, says <b>we do not know</b>.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec break">
+    <div class="tag">04 · Series register — .ledger</div>
+    <div class="desc">Every series on the page: swatch keyed to chart colors, weight with track bar, Newsreader latest value, deltas, sparkline. Derived series flagged in the sub-line.</div>
+    <div class="ledger">
+      <table>
+        <thead><tr><th>Series</th><th>Weight</th><th>Latest y/y</th><th>vs prev. month</th><th>Year ago</th><th class="spark">2016 – 2025</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="name"><span class="sw s-acc"></span>Primary series<small>The headline</small></td>
+            <td class="wt">100.0<span class="wtrack"><i style="width:100%;background:#BE3E26"></i></span></td>
+            <td class="val">3.51%</td><td class="chg">▼ −0.13 pt · easing</td><td class="yr">5.42%</td>
+            <td class="spark" id="sp-a"></td>
+          </tr>
+          <tr>
+            <td class="name"><span class="sw s-g3"></span>Derived series<small>Flagged as derived</small></td>
+            <td class="wt">47.3<span class="wtrack"><i style="width:47.3%;background:#C6C0B0"></i></span></td>
+            <td class="val">4.18%</td><td class="chg">▼ −0.02 pt · stable</td><td class="yr">3.55%</td>
+            <td class="spark" id="sp-b"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="spec break">
+    <div class="tag">05 · Composition bar — .basket</div>
+    <div class="desc">Weights or shares as a single segmented strip. Ink-bordered, segments separated by white, mono percentage labels.</div>
+    <div class="basket">
+      <div class="bar">
+        <div class="seg" style="width:45.9%;background:#5B564B"></div>
+        <div class="seg" style="width:6.8%;background:#A8A293"></div>
+        <div class="seg" style="width:47.3%;background:#DCD7C6"></div>
+      </div>
+      <div class="labels">
+        <div class="blab"><div class="n"><span class="sw" style="background:#5B564B"></span>Segment A</div><div class="w">45.86%</div></div>
+        <div class="blab"><div class="n"><span class="sw" style="background:#A8A293"></span>Segment B</div><div class="w">6.84%</div></div>
+        <div class="blab"><div class="n"><span class="sw" style="background:#DCD7C6"></span>Segment C</div><div class="w">47.30%</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec break">
+    <div class="tag">06 · Chart plate — .frame, .plate-head, .plotfoot</div>
+    <div class="desc">The chart as an object: corner-tick frame, headline + plate value above, source and downloads below. This demo chart is live — hover it, download it.</div>
+    <div class="plate-head">
+      <div class="t"><h3>Plate title — an assertion, not a label</h3><div class="sub">Series · units · range</div></div>
+      <div class="plate-val"><div class="v" id="pv-demo">–</div><div class="c">Latest · y/y</div></div>
+    </div>
+    <div class="frame">
+      <div class="plotzone" id="plot-demo"></div>
+      <div class="plotfoot">
+        <span>Source — publisher, release date · reference furniture explained</span>
+        <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="tag">07 · Explain pair — .explain</div>
+    <div class="desc">Under every plate. Left: evergreen reading protocol. Right (accent kicker): the dated reading. Both must hold long text.</div>
+    <div class="explain">
+      <div class="ev">
+        <span class="mk">How to read this</span>
+        <p>Timeless. Never references "this month". Teaches the grammar of the chart: what the lines answer, what the band means, <b>what to ignore</b>.</p>
+      </div>
+      <div class="now">
+        <span class="mk">As of January 2026</span>
+        <p>Dated. Names its date, interprets the current configuration, and says what would change the picture.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec">
+    <div class="tag">08 · Margin note — .margin-note</div>
+    <div class="desc">Rail notes beside prose in §05. The sharpest one-liners on the page.</div>
+    <aside class="margin-note">
+      <span class="mk">Margin note · i</span>
+      <b>Falling inflation ≠ falling prices.</b> The price level almost never returns. A falling rate is slower pain, not relief.
+    </aside>
+  </div>
+
+  <div class="spec">
+    <div class="tag">09 · Misread item — .misread li</div>
+    <div class="desc">Roman-numbered failure modes. The mistake quoted as the heading; the correction bolds its key phrase.</div>
+    <ul class="misread">
+      <li>
+        <span class="no">i.</span>
+        <div>
+          <h3>"Inflation fell, so prices fell."</h3>
+          <p>No. Falling inflation means prices are rising more slowly — <b>disinflation</b>. Only a negative print means falling prices.</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="spec">
+    <div class="tag">10 · Definition box — .defbox</div>
+    <div class="desc">For technical terms on learn pages. Ink border with overlapping mono tab, Archivo term with mono qualifier, Newsreader definition, italic plain-words example over a hairline.</div>
+    <aside class="defbox">
+      <div class="term">Disinflation <span class="sub">the rate falling, still positive</span></div>
+      <p>Prices rising more slowly than before. The rate comes down; the price level does not.</p>
+      <div class="eg"><b>In plain words:</b> the pain is slowing, not reversing.</div>
+    </aside>
+  </div>
+
+  <footer class="provenance">
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>Column one: exact citation — publisher, release title, release date. Mock data disclosed here while the site is in preview.</p>
+      </div>
+      <div>
+        <h6>Revisions &amp; uncertainty</h6>
+        <p>Column two: the series' revision policy, and the standing promise to say "we do not know".</p>
+      </div>
+      <div>
+        <h6>This dossier</h6>
+        <p>Column three: dossier number, version, review date, next scheduled revision, contact.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas · Components</span>
+      <span>v1.0 · January 2026</span>
+      <span>Set in Archivo, Newsreader &amp; Plex Mono</span>
+    </div>
+  </footer>
+
+</div>
+
+<script type="module">
+import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
+
+const R=(a=>()=>{a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296})(7);
+const dates=[];for(let i=0;i<120;i++)dates.push(new Date(Date.UTC(2016+Math.floor(i/12),i%12,1)));
+const data=dates.map((d,i)=>({date:d,value:+(4.5+1.8*Math.sin(i/14)+1.1*Math.sin(i/5.3)+ (R()-.5)*.5).toFixed(2)}));
+document.getElementById("pv-demo").textContent=data.at(-1).value.toFixed(2)+"%";
+const mono="'IBM Plex Mono', monospace";
+
+const plot=Plot.plot({
+  width:1184,height:340,marginLeft:70,marginRight:136,marginTop:26,marginBottom:44,
+  style:{background:"transparent",fontFamily:mono,fontSize:"13.5px",color:"#5C574C",overflow:"visible"},
+  x:{label:null,tickSize:0,tickPadding:16,
+     ticks:[2016,2018,2020,2022,2024].map(y=>new Date(Date.UTC(y,0,1))),
+     tickFormat:d=>String(d.getUTCFullYear())},
+  y:{label:"↑ y/y, per cent",labelAnchor:"top",labelArrow:false,
+     tickFormat:d=>d+"%",ticks:[2,3,4,5,6,7,8],domain:[2,8],tickSize:0,tickPadding:11},
+  marks:[
+    Plot.gridY([2,3,4,5,6,7,8],{stroke:"#EAE5D7",strokeWidth:1}),
+    Plot.rectY([{y1:2,y2:6}],{y1:"y1",y2:"y2",x1:dates[0],x2:dates.at(-1),fill:"#F8F6F1"}),
+    Plot.ruleY([4],{stroke:"#C0B9A6",strokeWidth:1,strokeDasharray:"2,4"}),
+    Plot.lineY(data,{x:"date",y:"value",stroke:"#BE3E26",strokeWidth:2.25,strokeLinejoin:"round",strokeLinecap:"round"}),
+    Plot.dot([data.at(-1)],{x:"date",y:"value",fill:"#BE3E26",r:5,stroke:"#FFFFFF",strokeWidth:1.5}),
+    Plot.text([data.at(-1)],{x:"date",y:"value",text:d=>d.value.toFixed(2)+"%",dx:16,fill:"#BE3E26",fontSize:14,fontFamily:mono,fontWeight:500,textAnchor:"start"}),
+  ],
+});
+plot.setAttribute("role","img");
+plot.setAttribute("aria-label","Demo line chart, 2016 to 2025, ending at "+data.at(-1).value.toFixed(2)+" per cent");
+document.getElementById("plot-demo").append(plot);
+
+document.querySelectorAll("[data-dl]").forEach(btn=>btn.addEventListener("click",()=>{
+  const clone=plot.cloneNode(true);
+  clone.setAttribute("xmlns","http://www.w3.org/2000/svg");
+  const bg=document.createElementNS("http://www.w3.org/2000/svg","rect");
+  bg.setAttribute("width",plot.getAttribute("width"));bg.setAttribute("height",plot.getAttribute("height"));
+  bg.setAttribute("fill","#FFFFFF");clone.insertBefore(bg,clone.firstChild);
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(clone)],{type:"image/svg+xml"}));
+  a.download="india-atlas_component-demo.svg";a.click();
+}));
+
+[["sp-a","#BE3E26"],["sp-b","#C6C0B0"]].forEach(([id,color])=>{
+  const sp=Plot.plot({
+    width:170,height:38,marginLeft:0,marginRight:0,marginTop:4,marginBottom:4,
+    style:{background:"transparent"},x:{axis:null},y:{axis:null,domain:[2,8]},
+    marks:[
+      Plot.ruleY([4],{stroke:"#E6E2D6"}),
+      Plot.lineY(data,{x:"date",y:"value",stroke:color,strokeWidth:1.25,strokeLinejoin:"round"}),
+      Plot.dot([data.at(-1)],{x:"date",y:"value",fill:color,r:2}),
+    ],
+  });
+  sp.setAttribute("aria-hidden","true");
+  document.getElementById(id).append(sp);
+});
+</script>
+</body>
+</html>

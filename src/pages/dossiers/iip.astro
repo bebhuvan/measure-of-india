@@ -1,0 +1,399 @@
+---
+import Base from "../../layouts/Base.astro";
+---
+<Base
+  title="India Atlas — Industrial Production · Dossier 04"
+  description="Dossier 04 — the Index of Industrial Production: the monthly pulse of mining, manufacturing and power, in two bases that never meet — and its new services counterpart, the ISP."
+  nav="dossiers"
+  dateStamp="July 2026"
+  crumbLeft='<a href="/" style="color:inherit">Dossiers</a> / Output / <b>Index of Industrial Production</b>'
+  crumbRight='Evergreen · revised with each print · <b>v1.1</b>'
+  canonical="https://indiaatlas.in/dossiers/iip/"
+  ogImage="/og/iip.png"
+>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">Dossier № 04 — Output · Index of Industrial Production</div>
+    <div class="hero-grid">
+      <h1>The monthly pulse of <i>making things.</i></h1>
+      <p class="lede">Once a month, the statisticians count what came out of India's mines, factories and power plants — not its value, its volume — and for a few days it is the most argued-about number in the economy. Then it is revised.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>MoSPI, NSO</b></span>
+      <span>Frequency <b>Monthly</b></span>
+      <span>Base year <b>2022–23 = 100</b></span>
+      <span>Coverage <b>All-India, goods producing sectors</b></span>
+      <span>Latest print <b>June 2026</b></span>
+      <span>Released <b>Jul 2026 · quick estimates</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Headline IIP · y/y</div><div class="v acc" id="n-head">–</div><div class="d" id="d-head">–</div><div class="nspark" id="nspark-head"></div></div>
+      <div class="num"><div class="l">Manufacturing · y/y</div><div class="v" id="n-mfg">–</div><div class="d" id="d-mfg">–</div></div>
+      <div class="num"><div class="l">Capital goods · y/y</div><div class="v" id="n-cap">–</div><div class="d" id="d-cap">–</div></div>
+      <div class="num"><div class="l">Electricity &amp; gas · y/y</div><div class="v" id="n-elec">–</div><div class="d" id="d-elec">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">Quick estimates · June 2026</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Current reading</span><div class="big" id="rb-big">–</div></div>
+      <p class="rt-cap">Industrial production growth, June 2026 — the second-strongest month on the current base, led by the investment end of the economy.</p>
+      <div><span class="rk">One month earlier</span><div class="big" id="rb-prev" style="font-size:44px">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the print says</span>
+        <p>Factory, mine and power output in June was <b id="cr-h1">–</b> higher than a year ago, accelerating from <b id="cr-h2">–</b> in May. The composition is the interesting part. Capital goods — machinery, the stuff that makes other stuff — grew <b id="cr-c1">–</b>, a tenth consecutive month near or above double digits. Manufacturing did the heavy lifting at <b id="cr-m1">–</b>; electricity and gas supply added <b id="cr-e1">–</b>.</p>
+        <p>Mining barely moved, at <b id="cr-mn1">–</b>. The consumer end is softer: non-durables — soap, biscuits, the daily basket — grew <b id="cr-cnd1">–</b>, after spending part of last year underwater.</p>
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What it does not say</span>
+        <p>It does not say industry is 7 per cent larger in any sense you could bank. This is a volume index against the same month last year, built from a fixed panel of items, and this print is a quick estimate — it will be revised over the coming months as late returns arrive. One month of IIP is a weather report; three is a climate hint.</p>
+        <p>And it covers the organised, goods-producing economy only. The workshop down the road that files no returns is not in this number, and neither is anything you would call a service.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 register -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>The register of series</h2><span class="line"></span><span class="unit">Latest · year ago · base 2022–23</span></div>
+    <div class="break ledger">
+      <table>
+        <thead>
+          <tr><th>Series</th><th>Latest y/y</th><th>vs prev. month</th><th>Year ago</th><th class="spark">2024 – 2026</th></tr>
+        </thead>
+        <tbody id="ledger-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- § 03 two bases -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>Two ledgers, one index</h2><span class="line"></span><span class="unit">y/y % · base 2011–12 and base 2022–23</span></div>
+    <div class="break">
+      <figure id="cb-bases" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Fourteen years of the old ledger, three of the new</h3>
+            <div class="sub">IIP general index, year-on-year · base 2011–12 (Apr 2013 – Feb 2026) · base 2022–23 (Apr 2024 – Jun 2026) — plotted side by side, never spliced</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-bases">–</div><div class="c">Jun 2026 · current base, y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-bases"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, NSO · growth computed from index levels · the two bases share no items panel or weights; the gap between them is a change of ruler, not a change of output</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The long grey line is the retired base: a decade of single-digit hum, then the cliff of April 2020 (−57%) and the mirror-image spike of April 2021 (+134%) — the two wildest prints in Indian statistics, both arithmetic as much as event. The vermilion line is the current base, begun April 2023. Where they overlap, they disagree by a point or two. That disagreement is not an error; it is what a new basket and a new panel measure.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of July 2026</span>
+            <p>The current base has now produced twenty-seven months of growth readings, all but two of them positive. The old base was published for the last time with the February 2026 print — March 2025 was never loaded, so its final year-ago comparisons simply do not exist. The series ends not with a bang but with a missing cell.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 04 the long ledger: 23 industries on the retired base -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>The long ledger — 23 industries</h2><span class="line"></span><span class="unit">y/y % · base 2011–12 · monthly</span></div>
+    <div class="break">
+      <figure id="cb-old" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>What the retired base remembers</h3>
+            <div class="sub">All 23 two-digit manufacturing industries · year-on-year, per cent · Apr 2013 – Feb 2026 · ordered by the final print</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-old">–</div><div class="c">industries beyond ±10% · Feb 2026</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" style="padding-top:26px">
+            <div id="grid-old" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:28px 36px"></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, NSO · y-axes clipped at −40 / +45: the 2020–21 lockdown prints run to −99% and past +1000%, off scale by design · vermilion marks a final print beyond ±10%, the disclosed threshold · Mar 2025 was never loaded, so Feb 2026 is the last computable month · full values in the CSV</span>
+            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each panel is one manufacturing industry on the retired 2011–12 base — the longest industrial memory the monthly statistics keep. The panels share one clipped scale, so a flat grey hum means a steady industry and a wide sawtooth means a lumpy one: a single large plant's shutdown can swing a two-digit industry by double digits. The lockdown spike is clipped out of every panel on purpose; it is the same arithmetic everywhere and teaches nothing about any one industry.</p>
+            <p>This grid is memory, not news. The current 2022–23 base lives in the plates above, and the two are never spliced — an industry's panel here ends where the old ledger ended.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the final prints</span>
+            <p>The old base signed off in February 2026 with the split it had shown for two years: <b id="old-hi-name">–</b> fastest at <b id="old-hi">–</b>, <b id="old-lo-name">–</b> slowest at <b id="old-lo">–</b>. In its last month, <b id="old-n">–</b> of the 23 industries were moving faster than ±10% — the average never described them.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 plate 1 -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>Plate 1 — the sectors</h2><span class="line"></span><span class="unit">y/y % · base 2022–23 · monthly</span></div>
+    <div class="break">
+      <figure id="cb-main" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Mining, manufacturing, power — the three engines, plus the mains</h3>
+            <div class="sub">IIP by sector · year-on-year, per cent · Apr 2024 – Jun 2026</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-main">–</div><div class="c">Jun 2026 · headline y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-main">
+            <button class="chip" data-key="general"><i style="background:#BE3E26"></i>General</button>
+            <button class="chip" data-key="sector_manufacturing"><i style="background:#5B564B"></i>Manufacturing</button>
+            <button class="chip" data-key="sector_mining_quarrying"><i style="background:#A8A293"></i>Mining</button>
+            <button class="chip" data-key="sector_electricity_gas_supply"><i style="background:#8A857A"></i>Electricity &amp; gas</button>
+          </div>
+          <div class="plotzone" id="plot-main"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, NSO · quick estimates from May 2026 · water supply &amp; sewerage, the fourth sector, is omitted here for legibility — it runs near the headline</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Manufacturing is the heavyweight — most of the index — so the vermilion general line shadows the dark one. Mining and electricity swing wider and mean less individually. When the three point the same way, as they have through 2026, the print is broad-based; when they scatter, the headline is an average of disagreement.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of July 2026</span>
+            <p>All three sectors are above their year-ago marks, and June's acceleration is led by manufacturing. The drag, such as it is, sits in mining — a sector that answers to the monsoon and to administrative clearance more than to demand.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 the measure -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="wm-grid">
+      <div>
+        <p>The IIP counts physical output: tonnes of coal, metres of cloth, kilowatt-hours, scooters rolling off lines. Not revenue, not profit, not value added — volume. When we say industry grew 7.3 per cent, we mean the index of physical production stands <b>7.3 per cent above the same month a year ago</b>.</p>
+        <p>It is built from a fixed panel of representative items, each standing in for a slice of its industry, weighted together on a 2022–23 frame. It arrives fast — quick estimates within weeks — and the price of speed is revision: late data from factories trickles in for two months, and the first print is a draft.</p>
+        <p>It is the oldest high-frequency read on the real economy India has, which is why everyone over-reads it. The honest use is narrow: direction and breadth, in three-month moving windows, never point estimates.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note · i</span>
+          <b>Volume, not value.</b> A price spike can double an industry's revenue while its IIP contribution does nothing. This index deliberately ignores prices.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · ii</span>
+          <b>Quick estimates are drafts.</b> The first print is revised as late factory returns arrive. Compare vintages, not headlines.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · iii</span>
+          <b>Growth is computed from levels.</b> The published growth rate is rounded; ours is recomputed from the index and tracks it within 0.05 pt.
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 07 component plates -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>The parts, one plate each</h2><span class="line"></span><span class="unit">y/y % · base 2022–23</span></div>
+
+    <div class="break">
+      <figure id="cb-use" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Machines or soap — the use-based read</h3>
+            <div class="sub">Capital goods vs consumer goods, year-on-year, per cent · Apr 2024 – Jun 2026</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-use">–</div><div class="c">Jun 2026 · capital goods y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-use"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, NSO · use-based classification regroups the same factories by what their output is for</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Same index, different sorting: by what the output is <em>for</em>. Capital goods track the investment cycle — factories buying machines. Consumer durables track the confident household; non-durables, the everyday one. When capital runs ahead of consumer for a year, the expansion is investment-led, and the question becomes when the consumer joins.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of July 2026</span>
+            <p>Capital goods at <b id="ex-cap">–</b> against consumer non-durables at <b id="ex-cnd">–</b>: this is an investment-led expansion, ten months running. The consumption line has firmed since spring but the wedge is the widest on the current base.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-ind" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Inside manufacturing — the fastest and the slowest</h3>
+            <div class="sub">Selected 2-digit industries, year-on-year, per cent · Apr 2024 – Jun 2026</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-ind">–</div><div class="c">Jun 2026 · electrical equipment y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-ind"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, NSO · four of the 23 manufacturing industries on the current base, chosen by June rank</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The aggregate hides a split economy. Electrical equipment — transformers, switchgear, the grid build-out — and motor vehicles are running hot; apparel and wood products are shrinking. Averages describe none of these industries. This is why the register of industries matters more than the headline.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of July 2026</span>
+            <p>Electrical equipment grew <b id="ex-elec">–</b> in June and motor vehicles <b id="ex-mv">–</b>, while wearing apparel contracted <b id="ex-app">–</b>. The boom is in the capital-goods spine of manufacturing; the weakness sits in export-facing consumer lines.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 the services counterpart -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>The services counterpart — ISP</h2><span class="line"></span><span class="unit">Index levels · base 2024–25 = 100 · trial series</span></div>
+    <div class="break">
+      <figure id="cb-isp" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>A monthly index for services, at last</h3>
+            <div class="sub">Index of Services Production, five of nineteen series · index levels, base 2024–25 = 100 · Apr 2025 – May 2026</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-isp">–</div><div class="c">May 2026 · retail trade index</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-isp">
+            <button class="chip" data-key="retail_trade"><i style="background:#BE3E26"></i>Retail trade</button>
+            <button class="chip" data-key="road_transport"><i style="background:#8A857A"></i>Road transport</button>
+            <button class="chip" data-key="banking"><i style="background:#5B564B"></i>Banking</button>
+            <button class="chip" data-key="telecommunication"><i style="background:#C6C0B0"></i>Telecommunication</button>
+            <button class="chip" data-key="it_computer_related_services"><i style="background:#A8A293"></i>IT &amp; computer services</button>
+          </div>
+          <div class="plotzone" id="plot-isp"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, NSO · trial series, first published 2025 — methodology may change without notice · dashed rule: 100, the base-year average · levels, not growth rates: no year-on-year exists before Apr 2026</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The IIP counts goods. Services — more than half of everything India produces — had no monthly output measure at all: between one GDP quarter and the next, the largest part of the economy was statistically dark. The Index of Services Production is the answer, built like the IIP but counting bank transactions, freight, retail sales and the rest.</p>
+            <p>Read positions, not slopes. Each line is a level against its 2024–25 average — above 100 is above the base year, and that is all. The sawtooth is unmodelled seasonality: this index is too young for anyone to know what a normal October or a normal March looks like, so a month-to-month jump is not information yet. We do not know its seasonal shape. Nobody does; the history required to learn it does not exist.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of July 2026</span>
+            <p>Retail trade stood at <b id="isp-rt">–</b> in May 2026 — <b id="isp-rt-yy">–</b> above May 2025, comparing like month with like, the only comparison the young series supports. Banking read <b id="isp-bk">–</b>. Beyond that the honest commentary runs out fast: insurance printed <b id="isp-ins-mar">–</b> in March and <b id="isp-ins-may">–</b> two months later. Year-end accounting, seasonality, or noise — we do not know, because no earlier March exists to compare.</p>
+          </div>
+        </div>
+      </figure>
+
+      <div class="ledger" style="margin-top:64px">
+        <table>
+          <thead>
+            <tr><th>Series</th><th id="isp-th-latest">Latest level</th><th id="isp-th-yoy">vs year ago</th><th id="isp-th-year">Year ago</th><th class="spark">Apr 2025 – May 2026</th></tr>
+          </thead>
+          <tbody id="isp-ledger-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 09 misread -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li>
+        <span class="no">i.</span>
+        <div>
+          <h3>"Industry grew 7%, so the economy grew 7%."</h3>
+          <p>Industry is under a third of GDP, and this index covers only its organised, goods-producing slice. Services — the larger half of the economy — are elsewhere entirely. The IIP is a pulse, not the patient.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">ii.</span>
+        <div>
+          <h3>"One strong month is a boom."</h3>
+          <p>This is the most volatile major series in Indian statistics. A festival calendar shift can move a print by two points; a single large factory's shutdown can move an industry. Three-month averages are the minimum unit of belief.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iii.</span>
+        <div>
+          <h3>"The first print is the number."</h3>
+          <p>Quick estimates are revised as late returns arrive, and the revisions are not noise around zero — they cluster. Citing the first print of two years ago against the final print of last year mixes vintages.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iv.</span>
+        <div>
+          <h3>"Growth recovered, so output recovered."</h3>
+          <p>Every growth rate is a ratio to a year ago. In April 2021 the index printed +134% — and output was still below its pre-pandemic level. The spike measured the hole in the denominator, not the height of the economy.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">v.</span>
+        <div>
+          <h3>"The two bases tell different stories, so one is wrong."</h3>
+          <p>The 2011–12 and 2022–23 series use different items, different factories, different weights. Where they overlap they routinely disagree by a point. That is what changing the ruler does. Compare within a base, never across the seam.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">vi.</span>
+        <div>
+          <h3>"A young index can be read like an old one."</h3>
+          <p>A new index — the ISP is one — has no seasonal history: nobody knows what its normal festival month or year-end looks like, because none has happened twice. Until the same month has recurred for years, it supports statements about levels, not about momentum. Where the seasonal shape is unknown, the honest reading is "we do not know".</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <footer class="provenance">
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. "Quick Estimates of Index of Industrial Production — June 2026" (base 2022-23=100). Index levels retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>; growth rates are computed from levels and track the published rates within 0.05 pt.</p>
+        <p>The discontinued base 2011-12=100 — including the 23-industry register in §04 — is shown separately and never spliced with the current base (the base-year rule). Its final publication carried no March 2025 figure; the resulting gaps are disclosed in the series metadata.</p>
+        <p>The Index of Services Production (base 2024-25=100, first published 2025) is a trial series: MoSPI may change its methodology without notice, and every vintage is provisional. It is shown as levels only, same vintage.</p>
+      </div>
+      <div>
+        <h6>Revisions &amp; uncertainty</h6>
+        <p>Quick estimates are revised over the following two months as late returns arrive, and again in subsequent annual revisions. Every vintage is archived; none is overwritten silently.</p>
+        <p>Where something is not measured, this dossier says "we do not know" rather than inventing a number.</p>
+      </div>
+      <div>
+        <h6>This dossier</h6>
+        <p>Dossier 04 · Output · version 1.1 · adds the 23-industry register of the retired base and the Index of Services Production. Next scheduled revision: on release of the July print.</p>
+        <p>Corrections and questions: register@indiaatlas.example</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas · Dossier 04 · IIP</span>
+      <span>Vintage <span id="prov-vintage2">–</span> · Bases 2022-23=100 and 2011-12=100 · ISP base 2024-25=100</span>
+      <span>Set in Archivo, Newsreader &amp; Plex Mono</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../../dossiers/iip.client.js";
+</script>
+</Base>

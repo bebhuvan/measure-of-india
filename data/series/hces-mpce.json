@@ -1,0 +1,61 @@
+{
+ "meta": {
+  "dossier": "hces",
+  "frequency": "annual",
+  "base": "survey 2022-23 & 2023-24",
+  "source": "MoSPI, National Statistical Office",
+  "vintage": "2026-08-06",
+  "mock": false,
+  "latestPeriod": "2023-04",
+  "releaseDate": null,
+  "revisionPolicy": "Survey estimates are final on release. Each round is a cross-section; the two rounds are comparable by design but are never averaged or chained.",
+  "coverage": "All India, rural and urban; average MPCE in ₹",
+  "note": "\"Without imputation\" is the headline MPCE convention (comparable across the two rounds); \"with imputation\" adds the imputed value of items received free of cost through social welfare programmes. Only the 2022-23 and 2023-24 HCES rounds exist in the eSankhyiki API — the 2011-12 and earlier NSS CES rounds are not served and are methodologically different; these series must never be spliced with them."
+ },
+ "dates": [
+  "2022-04-01",
+  "2023-04-01"
+ ],
+ "series": {
+  "rural": {
+   "name": "hces_mpce_rural_inr",
+   "label": "Rural (without imputation)",
+   "color": "#BE3E26",
+   "data": [
+    3773,
+    4122
+   ],
+   "unit": "inr"
+  },
+  "urban": {
+   "name": "hces_mpce_urban_inr",
+   "label": "Urban (without imputation)",
+   "color": "#5B564B",
+   "data": [
+    6459,
+    6996
+   ],
+   "unit": "inr"
+  },
+  "rural_imputed": {
+   "name": "hces_mpce_rural_imputed_inr",
+   "label": "Rural (with imputation)",
+   "color": "#8A857A",
+   "data": [
+    3860,
+    4247
+   ],
+   "unit": "inr"
+  },
+  "urban_imputed": {
+   "name": "hces_mpce_urban_imputed_inr",
+   "label": "Urban (with imputation)",
+   "color": "#A8A293",
+   "data": [
+    6521,
+    7078
+   ],
+   "unit": "inr"
+  }
+ }
+}

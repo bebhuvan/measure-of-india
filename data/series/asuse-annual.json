@@ -1,0 +1,176 @@
+{
+ "meta": {
+  "dossier": "asuse",
+  "frequency": "annual",
+  "base": "survey 2021-22 onward",
+  "source": "MoSPI, National Statistical Office (ASUSE)",
+  "vintage": "2026-08-07",
+  "mock": false,
+  "latestPeriod": "2023-04",
+  "releaseDate": null,
+  "revisionPolicy": "Survey estimates are final on release.",
+  "coverage": "All India, rural + urban combined, all activities; by establishment type (HWE = hired-worker establishments, OAE = own-account establishments)",
+  "note": "Levels as published: establishment and worker counts are estimated absolute numbers; GVA per worker / per establishment and emoluments per hired worker are ₹ per year. The activity aggregate (\"All\") and establishment-type totals are PUBLISHED source rows, not computed here. GVA-per-worker refers to market establishments as titled in the source. Per-hired-worker metrics are not baked for OAE (own-account establishments have no hired workers), and the 2023-24 round publishes them for HWE only — the *_all variants end at 2022-23 (trailing null is a source publication change, not a fetch gap). GVA-per-establishment is baked for All only: the source's HWE and OAE rows for that indicator are mislabeled (the published All reconciles as a weighted mean only with the two labels inverted); the mislabeled rows are quarantined here and retained as served in the raw archive. Survey years are fiscal, plotted at April of the first year; only three rounds exist (2021-22 to 2023-24)."
+ },
+ "dates": [
+  "2021-04-01",
+  "2022-04-01",
+  "2023-04-01"
+ ],
+ "series": {
+  "establishments_hwe": {
+   "name": "asuse_establishments_hwe",
+   "label": "Establishments · HWE",
+   "color": "#5B564B",
+   "data": [
+    8448499,
+    9715518,
+    10017043
+   ],
+   "unit": "count"
+  },
+  "establishments_oae": {
+   "name": "asuse_establishments_oae",
+   "label": "Establishments · OAE",
+   "color": "#8A857A",
+   "data": [
+    51254179,
+    55332872,
+    63382433
+   ],
+   "unit": "count"
+  },
+  "establishments_all": {
+   "name": "asuse_establishments_all",
+   "label": "Establishments · ALL",
+   "color": "#A8A293",
+   "data": [
+    59702678,
+    65048390,
+    73399476
+   ],
+   "unit": "count"
+  },
+  "workers_hwe": {
+   "name": "asuse_workers_hwe",
+   "label": "Workers · HWE",
+   "color": "#C6C0B0",
+   "data": [
+    34658332,
+    41673143,
+    44131124
+   ],
+   "unit": "count"
+  },
+  "workers_oae": {
+   "name": "asuse_workers_oae",
+   "label": "Workers · OAE",
+   "color": "#5B564B",
+   "data": [
+    63229574,
+    67952824,
+    76468692
+   ],
+   "unit": "count"
+  },
+  "workers_all": {
+   "name": "asuse_workers_all",
+   "label": "Workers · ALL",
+   "color": "#8A857A",
+   "data": [
+    97887906,
+    109625967,
+    120599815
+   ],
+   "unit": "count"
+  },
+  "gva_per_worker_hwe": {
+   "name": "asuse_gva_per_worker_hwe",
+   "label": "GVA per worker (market establishments) · HWE",
+   "color": "#A8A293",
+   "data": [
+    217074,
+    205339,
+    220822
+   ],
+   "unit": "inr_per_year"
+  },
+  "gva_per_worker_oae": {
+   "name": "asuse_gva_per_worker_oae",
+   "label": "GVA per worker (market establishments) · OAE",
+   "color": "#C6C0B0",
+   "data": [
+    95974,
+    103449,
+    109212
+   ],
+   "unit": "inr_per_year"
+  },
+  "gva_per_worker_all": {
+   "name": "asuse_gva_per_worker_all",
+   "label": "GVA per worker (market establishments) · ALL",
+   "color": "#BE3E26",
+   "data": [
+    138207,
+    141769,
+    149742
+   ],
+   "unit": "inr_per_year"
+  },
+  "gva_per_establishment_all": {
+   "name": "asuse_gva_per_establishment_all",
+   "label": "GVA per establishment (market establishments) · ALL",
+   "color": "#5B564B",
+   "data": [
+    225362,
+    238168,
+    245687
+   ],
+   "unit": "inr_per_year"
+  },
+  "emoluments_per_hired_worker_hwe": {
+   "name": "asuse_emoluments_per_hired_worker_hwe",
+   "label": "Emoluments per hired worker · HWE",
+   "color": "#8A857A",
+   "data": [
+    126647,
+    124842,
+    141071
+   ],
+   "unit": "inr_per_year"
+  },
+  "emoluments_per_hired_worker_all": {
+   "name": "asuse_emoluments_per_hired_worker_all",
+   "label": "Emoluments per hired worker · ALL",
+   "color": "#A8A293",
+   "data": [
+    126243,
+    124842,
+    null
+   ],
+   "unit": "inr_per_year"
+  },
+  "hired_workers_hwe": {
+   "name": "asuse_hired_workers_hwe",
+   "label": "Hired workers · HWE",
+   "color": "#C6C0B0",
+   "data": [
+    24117369,
+    29540895,
+    31459077
+   ],
+   "unit": "count"
+  },
+  "hired_workers_all": {
+   "name": "asuse_hired_workers_all",
+   "label": "Hired workers · ALL",
+   "color": "#5B564B",
+   "data": [
+    24210136,
+    29540895,
+    null
+   ],
+   "unit": "count"
+  }
+ }
+}

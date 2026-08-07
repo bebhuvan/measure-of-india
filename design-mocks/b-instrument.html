@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>India Atlas — Consumer Prices · The Instrument</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;750&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --ink:#111110;
+    --muted:#75756F;
+    --rule:#E6E6E1;
+    --accent:#1D4ED8;
+    --grey1:#B9B9B2;
+    --grey2:#D9D9D4;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:"Inter",system-ui,sans-serif;font-size:15px;line-height:1.65;
+    font-feature-settings:"tnum";
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:"IBM Plex Mono",monospace}
+
+  /* top bar */
+  .topbar{
+    display:flex;justify-content:space-between;align-items:center;
+    height:52px;padding:0 32px;border-bottom:1px solid var(--rule);
+    font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;
+    text-transform:uppercase;
+  }
+  .topbar .id{color:var(--muted)}
+  .topbar .status{display:flex;gap:24px;align-items:center;color:var(--muted)}
+  .dot{display:inline-block;width:7px;height:7px;background:var(--accent);margin-right:7px;transform:translateY(-1px)}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+
+  /* header grid */
+  .head{
+    display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);
+    border-bottom:1px solid var(--rule);
+  }
+  .head .l{padding:56px 48px 48px 0;border-right:1px solid var(--rule)}
+  .head .r{padding:56px 0 48px 48px;display:flex;flex-direction:column;justify-content:flex-end;gap:0}
+  .tag{
+    font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--accent);margin-bottom:18px;font-weight:600;
+  }
+  h1{font-size:52px;font-weight:750;letter-spacing:-0.035em;line-height:1.02}
+  .sub{margin-top:20px;color:var(--muted);max-width:52ch;font-size:16px}
+  .kv{
+    display:flex;justify-content:space-between;padding:13px 0;
+    border-bottom:1px solid var(--rule);font-size:13px;
+  }
+  .kv:last-child{border-bottom:none}
+  .kv .k{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .kv .v{font-weight:600}
+
+  /* stat strip */
+  .stats{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    border-bottom:1px solid var(--rule);
+  }
+  .stat{padding:28px 32px 26px 0;border-right:1px solid var(--rule)}
+  .stat + .stat{padding-left:32px}
+  .stat:last-child{border-right:none}
+  .stat .lbl{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between}
+  .stat .val{font-size:38px;font-weight:750;letter-spacing:-0.03em;margin-top:8px;line-height:1}
+  .stat .val .u{font-size:16px;font-weight:500;color:var(--muted);margin-left:2px}
+  .stat .delta{font-family:"IBM Plex Mono",monospace;font-size:11px;margin-top:10px;color:var(--muted)}
+  .stat .delta b{font-weight:600}
+  .up b{color:#B4232A}.dn b{color:#146B3A}
+
+  /* panels */
+  .grid2{display:grid;grid-template-columns:minmax(0,8fr) minmax(0,4fr);border-bottom:1px solid var(--rule)}
+  .panel-main{padding:36px 40px 36px 0;border-right:1px solid var(--rule)}
+  .panel-side{padding:36px 0 36px 40px}
+  .panel-title{
+    display:flex;justify-content:space-between;align-items:baseline;margin-bottom:22px;
+  }
+  .panel-title h3{font-size:13px;font-weight:600;letter-spacing:.02em}
+  .panel-title .unit{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+
+  .multiples{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--rule);border-width:1px 0 0 1px}
+  .mini{border:1px solid var(--rule);border-width:0 1px 1px 0;padding:18px 18px 10px}
+  .mini .t{display:flex;justify-content:space-between;font-size:11.5px;font-weight:600;margin-bottom:2px}
+  .mini .t .mono{font-weight:500;color:var(--muted);font-size:10.5px}
+
+  .panel-side h4{
+    font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:16px;font-weight:600;
+  }
+  .protocol{counter-reset:step}
+  .protocol li{
+    list-style:none;display:flex;gap:16px;padding:14px 0;
+    border-bottom:1px solid var(--rule);font-size:13.5px;line-height:1.55;
+  }
+  .protocol li:last-child{border-bottom:none}
+  .protocol li::before{
+    counter-increment:step;content:counter(step,decimal-leading-zero);
+    font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--accent);
+    font-weight:600;padding-top:2px;
+  }
+  .protocol b{font-weight:600}
+
+  /* prose section */
+  .prose{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);border-bottom:1px solid var(--rule)}
+  .prose .l{padding:44px 40px 44px 0;border-right:1px solid var(--rule)}
+  .prose .l h3{font-size:22px;font-weight:750;letter-spacing:-0.02em;line-height:1.2}
+  .prose .l .no{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--accent);font-weight:600;display:block;margin-bottom:14px}
+  .prose .r{padding:44px 0 44px 40px;columns:2;column-gap:44px;column-rule:1px solid var(--rule)}
+  .prose .r p{font-size:14.5px;max-width:none;break-inside:avoid}
+  .prose .r p+p{margin-top:1em}
+
+  .foot{
+    display:flex;justify-content:space-between;padding:22px 0 44px;
+    font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.06em;
+    color:var(--muted);text-transform:uppercase;
+  }
+
+  @media (max-width:900px){
+    .head,.grid2,.prose{grid-template-columns:1fr}
+    .head .l,.panel-main,.prose .l{border-right:none;padding-right:0}
+    .head .r,.panel-side,.prose .r{padding-left:0}
+    .prose .r{columns:1}
+    .stats{grid-template-columns:1fr 1fr}
+    .stat{border-bottom:1px solid var(--rule)}
+    h1{font-size:38px}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span><b>India Atlas</b>&nbsp;&nbsp;/&nbsp;&nbsp;Prices</span>
+  <span class="id">IA-PRC-001 · Consumer Price Index</span>
+  <span class="status"><span><span class="dot"></span>Reviewed</span><span>v1.3</span></span>
+</div>
+
+<div class="wrap">
+
+  <div class="head">
+    <div class="l">
+      <div class="tag">Prices — Dossier 001</div>
+      <h1>Consumer<br>Price Index</h1>
+      <p class="sub">The cost of a fixed basket of ~300 goods and services, as bought by Indian households. The single most-watched number in Indian macro.</p>
+    </div>
+    <div class="r">
+      <div class="kv"><span class="k">Agency</span><span class="v">MoSPI · NSO</span></div>
+      <div class="kv"><span class="k">Frequency</span><span class="v">Monthly, 12th working day</span></div>
+      <div class="kv"><span class="k">Base</span><span class="v">2012 = 100 (Laspeyres)</span></div>
+      <div class="kv"><span class="k">Coverage</span><span class="v">Rural + Urban + Combined</span></div>
+      <div class="kv"><span class="k">Latest</span><span class="v">May 2025</span></div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="lbl"><span>Headline, y/y</span><span>May 25</span></div>
+      <div class="val">4.82<span class="u">%</span></div>
+      <div class="delta dn">▼ <b>0.31 pt</b> vs Apr</div>
+    </div>
+    <div class="stat">
+      <div class="lbl"><span>Food &amp; bev, y/y</span><span>Wt 45.9</span></div>
+      <div class="val">6.10<span class="u">%</span></div>
+      <div class="delta up">▲ <b>0.44 pt</b> vs Apr</div>
+    </div>
+    <div class="stat">
+      <div class="lbl"><span>Fuel &amp; light, y/y</span><span>Wt 6.8</span></div>
+      <div class="val">2.34<span class="u">%</span></div>
+      <div class="delta dn">▼ <b>0.12 pt</b> vs Apr</div>
+    </div>
+    <div class="stat">
+      <div class="lbl"><span>Core, y/y</span><span>Wt 47.3</span></div>
+      <div class="val">3.91<span class="u">%</span></div>
+      <div class="delta dn">▼ <b>0.05 pt</b> vs Apr</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel-main">
+      <div class="panel-title">
+        <h3>Headline CPI, year-on-year</h3>
+        <span class="unit">Per cent · 2016–2025</span>
+      </div>
+      <div id="chart-main"></div>
+    </div>
+    <div class="panel-side">
+      <h4>Reading protocol</h4>
+      <ul class="protocol">
+        <li><span><b>Read y/y, not m/m.</b> Month-on-month moves are seasonal noise. The honest comparison is twelve months back.</span></li>
+        <li><span><b>Inflation down ≠ prices down.</b> A falling rate means prices rise more slowly. The level does not come back.</span></li>
+        <li><span><b>Decompose before concluding.</b> Half the index is food and fuel. Check core to see what the RBI actually watches.</span></li>
+        <li><span><b>Your basket differs.</b> The index is an average household. If food is 60% of your budget, your inflation is higher.</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel-main" style="border-right:none;padding-right:0;padding-top:36px">
+    <div class="panel-title">
+      <h3>Components</h3>
+      <span class="unit">Year-on-year, per cent</span>
+    </div>
+    <div class="multiples">
+      <div class="mini"><div class="t"><span>Food &amp; beverages</span><span class="mono">6.10%</span></div><div id="m-food"></div></div>
+      <div class="mini"><div class="t"><span>Fuel &amp; light</span><span class="mono">2.34%</span></div><div id="m-fuel"></div></div>
+      <div class="mini"><div class="t"><span>Housing</span><span class="mono">3.02%</span></div><div id="m-housing"></div></div>
+      <div class="mini"><div class="t"><span>Core</span><span class="mono">3.91%</span></div><div id="m-core"></div></div>
+    </div>
+  </div>
+
+  <div class="prose" style="margin-top:0;border-top:1px solid var(--rule)">
+    <div class="l">
+      <span class="no">§ 02</span>
+      <h3>What this<br>measures</h3>
+    </div>
+    <div class="r">
+      <p>The CPI tracks the price of a fixed basket of goods and services — rice, rent, bus fares, haircuts, school fees — as households actually buy them. “Inflation is 4.8%” means the basket costs 4.8% more than a year ago.</p>
+      <p>The basket comes from the 2011–12 Consumer Expenditure Survey. Each item's weight equals its share of household budgets: food 46%, housing 10%, fuel 7%. It is a Laspeyres index — the basket is fixed, so it measures price change, not changes in what people buy.</p>
+      <p>That fixedness is both the index's strength and its blind spot. It gives a clean, comparable number — but it slowly drifts from how India actually lives, until the base is revised.</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>Source — MoSPI press release, 12 Jun 2025</span>
+    <span>Series — CPI-C · CFPI · Fuel · Core</span>
+    <span>Mock data for design preview</span>
+  </div>
+
+</div>
+
+<script type="module">
+import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
+
+function walk(seed, level, amp, smooth){
+  const out=[]; let v=level;
+  for(let i=0;i<40;i++){
+    const d=new Date(2016, i*3, 1);
+    v = v*smooth + (level + amp*Math.sin(i/3.1+seed) + amp*0.7*Math.sin(i*1.7+seed*2.3))*(1-smooth);
+    out.push({date:d, value:+(v).toFixed(2)});
+  }
+  return out;
+}
+const headline = walk(1.3, 4.8, 1.5, 0.72);
+const food = walk(2.9, 5.6, 2.6, 0.60);
+const fuel = walk(4.1, 3.2, 2.2, 0.55);
+const housing = walk(5.7, 3.4, 0.8, 0.85);
+const core = walk(0.4, 4.3, 0.7, 0.88);
+
+const mono = "'IBM Plex Mono', monospace";
+
+document.getElementById("chart-main").append(Plot.plot({
+  width: 700, height: 300,
+  marginLeft: 0, marginRight: 70, marginTop: 10, marginBottom: 26,
+  style:{background:"transparent", fontFamily:mono, fontSize:"10px", color:"#75756F"},
+  x:{label:null, tickSize:0, tickPadding:8},
+  y:{label:null, grid:true, tickFormat:d=>d+"%", ticks:4, tickSize:0},
+  marks:[
+    Plot.ruleY([0], {stroke:"#E6E6E1"}),
+    Plot.areaY(headline, {x:"date", y:"value", fill:"#1D4ED8", fillOpacity:0.05, curve:"catmull-rom"}),
+    Plot.lineY(headline, {x:"date", y:"value", stroke:"#1D4ED8", strokeWidth:2, curve:"catmull-rom"}),
+    Plot.lineY(headline, {x:"date", y:"value", stroke:"#111110", strokeWidth:0.5, strokeOpacity:0.15}),
+    Plot.dot([headline[headline.length-1]], {x:"date", y:"value", fill:"#1D4ED8", r:3}),
+    Plot.text([headline[headline.length-1]], {x:"date", y:"value", text:d=>d.value.toFixed(2)+"%", dx:12, fill:"#1D4ED8", fontSize:11, fontWeight:600, textAnchor:"start"}),
+  ]
+}));
+
+function mini(id, data, color){
+  document.getElementById(id).append(Plot.plot({
+    width: 330, height: 90,
+    marginLeft: 0, marginRight: 0, marginTop: 8, marginBottom: 16,
+    style:{background:"transparent", fontFamily:mono, fontSize:"9px", color:"#B9B9B2"},
+    x:{axis:"bottom", ticks:3, tickSize:0, tickPadding:6},
+    y:{axis:null},
+    marks:[
+      Plot.ruleY([0], {stroke:"#E6E6E1"}),
+      Plot.lineY(data, {x:"date", y:"value", stroke:color, strokeWidth:1.5, curve:"catmull-rom"}),
+      Plot.dot([data[data.length-1]], {x:"date", y:"value", fill:color, r:2.5}),
+    ]
+  }));
+}
+mini("m-food", food, "#111110");
+mini("m-fuel", fuel, "#111110");
+mini("m-housing", housing, "#111110");
+mini("m-core", core, "#1D4ED8");
+</script>
+</body>
+</html>

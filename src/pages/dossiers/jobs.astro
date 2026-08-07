@@ -1,0 +1,344 @@
+---
+import Base from "../../layouts/Base.astro";
+---
+<Base
+  title="India Atlas — Jobs · Dossier 06"
+  description="Dossier 06 — the Periodic Labour Force Survey: unemployment, participation, and the three stopwatches India times its workers with."
+  nav="dossiers"
+  dateStamp="July 2026"
+  crumbLeft='<a href="/" style="color:inherit">Dossiers</a> / Labour / <b>Employment &amp; Unemployment · PLFS</b>'
+  crumbRight='Evergreen · revised with each bulletin · <b>v1.1</b>'
+  canonical="https://indiaatlas.in/dossiers/jobs/"
+  ogImage="/og/jobs.png"
+>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">Dossier № 06 — Labour · Periodic Labour Force Survey</div>
+    <div class="hero-grid">
+      <h1>Who has work, who wants it, <i>who is counted.</i></h1>
+      <p class="lede">India's jobs number is not a count of jobs. It is a survey of people — what they did last week, what they did last year — and the answer changes depending on how you ask. This dossier keeps the three answers side by side.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>MoSPI, NSO</b></span>
+      <span>Frequency <b>Monthly · quarterly · annual</b></span>
+      <span>Population <b>Age 15 and above</b></span>
+      <span>Coverage <b>All-India &amp; States/UTs</b></span>
+      <span>Latest print <b>June 2026</b></span>
+      <span>Bulletin <b>Monthly, from Apr 2025</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Unemployment · monthly · CWS</div><div class="v acc" id="n-ur">–</div><div class="d" id="d-ur">–</div><div class="nspark" id="nspark-ur"></div></div>
+      <div class="num"><div class="l">Participation · LFPR</div><div class="v" id="n-lfpr">–</div><div class="d" id="d-lfpr">–</div></div>
+      <div class="num"><div class="l">Urban women unemployed</div><div class="v" id="n-fur">–</div><div class="d" id="d-fur">–</div></div>
+      <div class="num"><div class="l">Annual UR · usual status</div><div class="v" id="n-psss">–</div><div class="d" id="d-psss">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">Monthly bulletin · June 2026</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Current reading</span><div class="big" id="rb-big">–</div></div>
+      <p class="rt-cap">Unemployment rate, June 2026 — everyone aged 15+ who had no work last week, was looking, and could start. The monthly bulletin is fifteen months old; treat any single month accordingly.</p>
+      <div><span class="rk">A year into the bulletin</span><div class="big" id="rb-first" style="font-size:44px">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the print says</span>
+        <p>Fifteen months into India's first monthly jobs bulletin, the headline rate has spent its entire life in a narrow band — <b id="cr-ur0">–</b> at the start, <b id="cr-ur1">–</b> now. Participation sits at <b id="cr-lfpr">–</b>: just over half of everyone aged 15 and above is either working or looking for work.</p>
+        <p>The texture is underneath. Urban women's unemployment runs at <b id="cr-fur">–</b> against urban men's <b id="cr-mur">–</b>, and barely a quarter of urban women are in the labour force at all — <b id="cr-flfpr">–</b>, against three-quarters of urban men.</p>
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What it does not say</span>
+        <p>It does not say 5.5 per cent of Indians are jobless. The rate's denominator is the labour force — people working or seeking — which excludes students, carers, the retired and the discouraged. When participation is 54 per cent, the unemployment rate is a measure of the seeker's market, not the population's.</p>
+        <p>And a low rate is not a compliment by itself. Where work is informal and staying home is a luxury, few can afford to be counted as unemployed; India's rate has always been low by rich-country standards for exactly that reason.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 register -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>The register of series</h2><span class="line"></span><span class="unit">Latest · previous</span></div>
+    <div class="break ledger">
+      <table>
+        <thead>
+          <tr><th>Series</th><th>Latest</th><th>vs prev.</th><th>Year ago</th><th class="spark">History</th></tr>
+        </thead>
+        <tbody id="ledger-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- § 03 three stopwatches -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>One question, three stopwatches</h2><span class="line"></span><span class="unit">per cent · annual, agriculture years</span></div>
+    <div class="break">
+      <figure id="cb-annual" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Last week or last year — the answer depends on the question</h3>
+            <div class="sub">All-India unemployment rate, 15+ · current weekly status vs usual status (PS+SS) · 2017-18 – 2023-24</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-annual">–</div><div class="c">2023-24 · usual status</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-annual">
+            <button class="chip" data-key="ur_cws"><i style="background:#5B564B"></i>Weekly status · CWS</button>
+            <button class="chip" data-key="ur_psss"><i style="background:#BE3E26"></i>Usual status · PS+SS</button>
+          </div>
+          <div class="plotzone" id="plot-annual"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, PLFS annual reports · agriculture years (Jul–Jun) plotted at July · the gap between the lines is underemployment: work that exists for the year but not for the week</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Ask about the whole year — did you work, more often than not — and 3.2 per cent of the labour force says no. Ask about last week and the answer is roughly double. The vertical distance between these lines is the casualisation of Indian work: hundreds of millions who are employed in principle and idle in practice, week to week.</p>
+            <p>Both lines fall through the window. The post-pandemic recovery in work is real, on both stopwatches — the question each answers is simply different.</p>
+          </div>
+          <div class="now">
+            <span class="mk">The annual series ends 2023-24</span>
+            <p>Annual usual-status unemployment has halved in six years, from <b id="ex-p0">–</b> to <b id="ex-p1">–</b>. The weekly measure fell in step and remains near twice the annual one — the recovery closed neither the gap nor the question of job quality.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 04 plate 1 -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>Plate 1 — the long arc, urban</h2><span class="line"></span><span class="unit">per cent · quarterly · CWS</span></div>
+    <div class="break">
+      <figure id="cb-main" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Eight years of urban unemployment, including the quarter everything stopped</h3>
+            <div class="sub">Urban unemployment rate, 15+, current weekly status · 2018 – 2026</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-main">–</div><div class="c">Jan–Mar 2026 · urban CWS</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-main"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, PLFS quarterly bulletins · gaps: Apr–Jun 2019 (a mislabeled source cell — the published figure is 8.9; quarantined, disclosed in metadata) and Jan–Mar 2025 (never published, design transition)</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The quarterly bulletin is the oldest continuous stopwatch: urban India, last-week status, since 2018. The spike is the lockdown quarter — one urban worker in five counted unemployed in April–June 2020. What matters after the spike is the slow grind down: six years to retrace a few points, and the line has still never revisited its pre-2018 level in the other direction.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of early 2026</span>
+            <p>The urban rate sits at <b id="ex-q1">–</b>, against <b id="ex-q0">–</b> when the bulletin began. The improvement is steady and unspectacular — which, for this series, is the best kind of news there is.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 the measure -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="wm-grid">
+      <div>
+        <p>Three ratios, one survey. The labour force is everyone working or actively seeking work. The participation rate — LFPR — is that group as a share of the population. The worker-population ratio is the share actually working. Unemployment is the gap between them: seekers as a share of seekers-plus-workers. When we say unemployment is 5.5 per cent, we mean <b>5.5 per cent of the labour force</b> — not of the country.</p>
+        <p>The status questions do the real work. Usual status asks about the reference year and catches attachment to work; current weekly status asks about the seven days before the surveyor's knock and catches idleness inside employment. India publishes both because both are true.</p>
+        <p>And it is a survey — sample-based, household by household. The monthly bulletin is young, the quarterly one is urban-only in its long form, and the annual one runs on agriculture years. They are three instruments, and this dossier never splices them into one line.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note · i</span>
+          <b>Unemployment needs a seeker.</b> A person who stops looking leaves the labour force — and the rate falls without a single job created. Read UR beside LFPR, always.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · ii</span>
+          <b>Low is not the same as good.</b> In an informal economy, open unemployment is a luxury good. The Indian rate understates distress by construction.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · iii</span>
+          <b>One bad cell, quarantined.</b> The source carries a mislabeled 2019 cell contradicting its own WPR/LFPR identity; we exclude it from the chart and keep it in the raw archive.
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 06 component plates -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>The parts, one plate each</h2><span class="line"></span><span class="unit">per cent · monthly bulletin</span></div>
+
+    <div class="break">
+      <figure id="cb-cuts" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Four labour markets in one country</h3>
+            <div class="sub">Unemployment rate by gender × sector, CWS · Apr 2025 – Jun 2026</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-cuts">–</div><div class="c">Jun 2026 · urban women</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-cuts"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, PLFS monthly bulletin · 15+, current weekly status</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The national rate is an average of four very different markets. Urban women seek work in a market twice as tight as urban men's; the rural lines bunch lower, where work is seasonal, family-based and rarely "sought" in the survey's sense. The monthly bulletin is young, so read the levels more than the wiggles.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of June 2026</span>
+            <p>Urban women: <b id="ex-fu">–</b>. Urban men: <b id="ex-mu">–</b>. The two-point gap has persisted for the bulletin's entire fifteen-month life — a structure, not a fluctuation.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-lfpr" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The participation chasm</h3>
+            <div class="sub">Labour force participation rate by gender × sector, CWS · Apr 2025 – Jun 2026</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-lfpr">–</div><div class="c">Jun 2026 · urban women</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-lfpr"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, PLFS monthly bulletin · share of the population working or seeking work</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>This is the more important chart. Three-quarters of urban men are in the labour force; one urban woman in four is. Rural women participate more — farm and family enterprise absorb labour the city does not — but still at barely half the male rate. No single policy moves this line; childcare, safety, transport and social permission all move it at once.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of June 2026</span>
+            <p>Urban women's participation: <b id="ex-fl">–</b>. It has risen through the bulletin's short life, and it remains the largest single pool of unused labour in the economy — the gap between these lines is, arithmetically, India's biggest growth lever.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 states -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>A country of labour markets</h2><span class="line"></span><span class="unit">per cent · annual · States/UTs</span></div>
+    <div class="break">
+      <figure id="cb-states" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Thirty-six markets, one national average</h3>
+            <div class="sub">Unemployment rate by State/UT, 15+ · usual status (PS+SS) beside weekly status (CWS) · 2023-24</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-states">–</div><div class="c">2023-24 · spread, highest to lowest · PS+SS</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip" style="cursor:default"><i style="background:#5B564B;width:9px;height:9px;border-radius:50%"></i>Usual status · PS+SS</span>
+            <span class="chip" style="cursor:default"><i style="background:#C6C0B0;width:9px;height:9px;border-radius:50%"></i>Weekly status · CWS</span>
+            <span class="chip" style="cursor:default"><i style="background:#BE3E26;width:9px;height:9px;border-radius:50%"></i>Twice the All-India rate or more</span>
+          </div>
+          <div class="plotzone" id="plot-states"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, PLFS annual report 2023-24 · States/UTs, 15+, rural + urban · usual status sorts the strip; the pale dot is the same year on the weekly stopwatch, paired, never averaged · Dadra &amp; Nagar Haveli and Daman &amp; Diu merged in 2020 and appear as one UT</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each row is a State or Union Territory, sorted by the annual usual-status rate — the dark dot. The pale dot is the same year asked about last week instead; the two stopwatches sit side by side and are never averaged. The vertical rule is All-India. Red marks the places printing at twice the national rate or more.</p>
+            <p>The top of the strip is not simply distress, and the bottom is not simply health. Open unemployment needs a seeker who can afford to wait: Kerala's graduates queue for formal work and are counted; Gujarat's farms and workshops absorb almost everyone at some wage, and the queue never forms. A high rate can mean a labour market worth waiting for. A low one can mean an economy too poor to permit the wait. The strip ranks the searching, not the suffering.</p>
+          </div>
+          <div class="now">
+            <span class="mk">The 2023-24 register</span>
+            <p>The spread is the story. <b id="st-max">–</b> prints the highest usual-status rate and <b id="st-min">–</b> the lowest — <b id="st-spread">–</b> apart, around an All-India figure of <b id="st-ai">–</b>. Kerala stands at <b id="st-kerala">–</b> against Gujarat's <b id="st-gujarat">–</b>: one educated labour force searching, one informal economy absorbing. Of the thirty-six, <b id="st-nout">–</b> cross twice the national rate.</p>
+            <p>Against 2022-23, the largest fall is <b id="st-fall">–</b>; the largest rise is <b id="st-rise">–</b>. A one-year state move in a sample survey deserves suspicion before applause — the small UTs swing hardest for exactly that reason.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 misread -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li>
+        <span class="no">i.</span>
+        <div>
+          <h3>"Unemployment is 5.5%, so 94.5% have jobs."</h3>
+          <p>The denominator is the labour force, not the population. With participation at 54 per cent, the employed share of everyone aged 15+ is the worker-population ratio — about 51 per cent. Nearly half the working-age population is outside the count entirely, most of them women.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">ii.</span>
+        <div>
+          <h3>"The rate fell, so things improved."</h3>
+          <p>Maybe. Or seekers gave up and left the labour force, which also lowers the rate. The pair to watch is unemployment <em>and</em> participation; one without the other is a Rorschach test.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iii.</span>
+        <div>
+          <h3>"The monthly, quarterly and annual numbers disagree."</h3>
+          <p>They measure differently: last week versus the usual year, urban-only versus all-India. A weekly urban rate beside an annual all-India rate is not a contradiction; it is two instruments reading two things. Never chart them as one line.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iv.</span>
+        <div>
+          <h3>"3% unemployment is full employment."</h3>
+          <p>Open unemployment in India is rationed by poverty — most people cannot afford to seek without working. The usual-status rate coexists with vast underemployment, which is precisely the gap between the two stopwatches in §03.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">v.</span>
+        <div>
+          <h3>"The survey counts the informal sector."</h3>
+          <p>It counts <em>people</em>, including the informally employed — but it cannot see job quality. A street vendor working two hours a day is employed in these tables. Earnings, security and contract are different surveys, mostly different absences.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <footer class="provenance">
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. PLFS monthly bulletin (June 2026), quarterly bulletin (to Jan–Mar 2026) and annual reports (to 2023-24), retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>. State and UT unemployment rates (§07) are from the annual reports, 2017-18 to 2023-24, both stopwatches, same vintage. Dadra &amp; Nagar Haveli and Daman &amp; Diu report separately to 2019-20 and as one merged UT thereafter; the strip shows the merged series, the archive keeps both.</p>
+        <p>One source cell is quarantined: Apr–Jun 2019 urban UR is carried as 21.6, contradicting that quarter's own WPR/LFPR identity (which implies 8.8, matching the published 8.9). It is excluded from the charts, retained in the raw archive, and disclosed here. Jan–Mar 2025 was never published in the quarterly bulletin (the design transition to the monthly bulletin).</p>
+      </div>
+      <div>
+        <h6>Revisions &amp; uncertainty</h6>
+        <p>PLFS figures are final on release. The monthly bulletin (from April 2025) and the quarterly bulletin (urban, from 2018) are separate instruments with separate coverage — shown side by side, never joined.</p>
+        <p>Where something is not measured, this dossier says "we do not know" rather than inventing a number.</p>
+      </div>
+      <div>
+        <h6>This dossier</h6>
+        <p>Dossier 06 · Labour · version 1.1 · adds the state register (§07) to the first release, June 2026 bulletin. Next scheduled revision: on release of the July bulletin.</p>
+        <p>Corrections and questions: register@indiaatlas.example</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas · Dossier 06 · PLFS</span>
+      <span>Vintage <span id="prov-vintage2">–</span> · CWS and PS+SS, never spliced</span>
+      <span>Set in Archivo, Newsreader &amp; Plex Mono</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../../dossiers/jobs.client.js";
+</script>
+</Base>

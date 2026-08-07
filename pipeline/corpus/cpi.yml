@@ -1,0 +1,90 @@
+# Corpus — Dossier 01 (CPI), extracted from src/pages/dossiers/cpi.astro
+# This corpus IS the voice specification. Classify every new prose slot by type.
+
+current-reading:
+  - slot: what-the-print-says
+    text: >
+      Retail inflation closed 2025 at 1.34%, the calmest year-end reading in the
+      decade of this series. The cooling is genuine but unevenly distributed: it
+      is almost entirely a food story. Food and beverages — forty-six paise of
+      every rupee in the basket — fell 1.85% over the year; food has now been in
+      deflation for six of the last seven months. Fuel, at 1.97%, contributes
+      little in either direction, having emerged from eighteen straight months
+      of deflation in March.
+  - slot: what-it-does-not-say
+    text: >
+      It does not say prices are falling — the basket is still 1.34% dearer than
+      a year ago. And it does not say underlying pressure has eased: core
+      inflation, computed at 4.63%, has climbed through the year and now sits
+      more than three points above the headline. When core exceeds headline, the
+      average is being held down by volatile items. That configuration is stable
+      only until the next weather shock. We do not know which way 2026 breaks;
+      the next two prints will say.
+
+how-to-read:
+  - slot: plate1
+    text: >
+      Each line answers one question: how much dearer is this part of the basket
+      than twelve months ago? The vermilion line is their weighted average, so
+      it must always live between its parts — food supplies the swings, core
+      supplies the level, fuel supplies occasional noise. The shaded band is
+      law, not decoration.
+  - slot: food
+    text: >
+      The most violent line in the dossier, and nearly half the basket. Spikes
+      are usually weather, not policy — failed monsoons surface here three to
+      six months late, and gluts push the line below zero. Negative food
+      inflation is relief at the shop and distress on the farm, in the same figure.
+  - slot: core
+    text: >
+      Core strips out weather and energy — the parts monetary policy cannot
+      reach — leaving rents, health, education, transport services, gold: the
+      demand side of the economy. It moves in long arcs, and its Indian floor is
+      structural; the series has never sustainably visited 2%.
+
+as-of:
+  - slot: plate1
+    text: >
+      Inflation fell through 2025 — from 4.27% in January to 1.34% in December,
+      with the last four prints below the 2% floor of the band, ground occupied
+      only once before, in June 2017. The food line tells you why. Watch the
+      wedge between core and headline. While the dashed line sits above the
+      vermilion one, the average is being flattered by volatile items, and the
+      flattery expires with the next bad monsoon.
+  - slot: food
+    text: >
+      At -1.85%, food inflation is more than nine points below its level of a
+      year ago — partly arithmetic: the autumn 2024 spike above 10% is now in
+      the denominator, flattering the present. The base-effect gift expires by spring.
+  - slot: core
+    text: >
+      At 4.63%, core has climbed through 2025 while the headline collapsed
+      around it. Whatever is cooling the vermilion line, it is not underlying
+      demand. For rate-setters, this unremarkable line is the argument against
+      declaring victory.
+
+misread:
+  - quote: "Inflation fell, so prices fell."
+    correction: >
+      No. Falling inflation means prices are rising more slowly — disinflation.
+      Only a negative print means falling prices.
+  - quote: "One month tells a story."
+    correction: >
+      Vegetables can move the headline by a full point in a single month and
+      reverse the next. Month-to-month moves are mostly seasonal noise; three
+      consecutive months is the minimum unit of meaning, and twelve is better.
+  - quote: "The base doesn't matter."
+    correction: >
+      Every y/y figure is a ratio to the same month a year ago. A spike then
+      flatters now; a collapse then haunts now. Before reacting to any print,
+      ask what the denominator was doing.
+
+margin-note:
+  - "Falling inflation ≠ falling prices. The price level almost never returns. A falling rate is slower pain, not relief."
+  - "Watch the base. A high print last year flatters this year's number with nothing improving. Ask: compared to what?"
+  - "Core is derived, not published. The NSO releases no official core index; ours is computed from group indices and labelled as such."
+
+register-sub:
+  - "Nearly half the basket"
+  - "LPG, kerosene, electricity"
+  - "Ex food, ex fuel — derived, what the RBI watches"

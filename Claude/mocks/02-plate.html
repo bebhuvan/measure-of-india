@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CPI — India Atlas — Plate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..800,0..100,0..1;1,9..144,300..700,0..100,0..1&family=Jost:ital,wght@0,200..700;1,200..600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F7F4; --plate:#FDFDFB; --ink:#16232B; --ink-2:#48565E; --ink-3:#7C8A91;
+  --neat:#2A3A43; --grat:#C9D3D3; --rule:#D8DFDD;
+  --prus:#1157A4; --lichen:#81A749; --rev:#B9448E;
+  --t1:#CBDCEC; --t2:#A5C2DE; --t3:#7CA5CE; --t4:#5286BC; --t5:#2F68A2; --t6:#1A4B7A;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Fraunces",Georgia,serif;
+  font-variation-settings:"opsz" 14,"SOFT" 30,"WONK" 0;
+  font-size:17px;line-height:1.6;font-variant-numeric:tabular-nums;}
+
+.wrap{max-width:1220px;margin:0 auto;padding:0 30px 120px}
+
+/* ---- marginal apparatus: the map's lettering ---- */
+.marg{font-family:"Jost",sans-serif;font-weight:400;font-size:10px;
+  letter-spacing:.26em;text-transform:uppercase;color:var(--ink-3);line-height:1.6}
+.marg strong{font-weight:600;color:var(--ink-2);letter-spacing:.2em}
+
+h1,h2,h3{margin:0;font-weight:400}
+.display{font-variation-settings:"opsz" 144,"SOFT" 0,"WONK" 1;font-weight:500;
+  letter-spacing:-.012em}
+
+/* ---- header: the plate's upper margin ---- */
+header{padding:30px 0 0}
+.hrow{display:flex;justify-content:space-between;align-items:baseline;gap:24px;
+  flex-wrap:wrap;padding-bottom:12px;border-bottom:1px solid var(--neat)}
+.wordmark{font-family:"Jost",sans-serif;font-weight:500;font-size:11px;
+  letter-spacing:.42em;text-transform:uppercase;color:var(--ink)}
+.hmeta{display:flex;gap:30px;flex-wrap:wrap}
+
+.titleblock{padding:46px 0 40px;display:grid;grid-template-columns:1fr minmax(0,340px);
+  gap:56px;align-items:end;border-bottom:1px solid var(--rule)}
+.titleblock h1{font-size:clamp(38px,6.2vw,74px);line-height:.97;
+  font-variation-settings:"opsz" 144,"SOFT" 0,"WONK" 1;font-weight:500;letter-spacing:-.02em}
+.titleblock h1 .sc{display:block;font-size:.34em;letter-spacing:.16em;
+  text-transform:uppercase;font-family:"Jost",sans-serif;font-weight:400;
+  color:var(--ink-3);margin-bottom:16px}
+.titleblock .abstract{font-size:16px;line-height:1.62;color:var(--ink-2);
+  font-variation-settings:"opsz" 14,"SOFT" 40,"WONK" 0}
+
+/* ---- two-column: margin rail + plate ---- */
+.spread{display:grid;grid-template-columns:214px minmax(0,1fr);gap:52px;
+  padding-top:40px}
+.rail{position:sticky;top:26px;align-self:start}
+.rail section{padding-bottom:26px;margin-bottom:26px;border-bottom:1px solid var(--rule)}
+.rail section:last-child{border-bottom:0}
+.rail h3{margin-bottom:12px}
+.rail p{margin:0 0 10px;font-size:13.5px;line-height:1.55;color:var(--ink-2);
+  font-variation-settings:"opsz" 12,"SOFT" 50,"WONK" 0}
+.rail p:last-child{margin-bottom:0}
+
+.keyline{display:flex;align-items:center;gap:10px;margin:0 0 9px;
+  font-family:"Jost",sans-serif;font-size:12px;letter-spacing:.02em;color:var(--ink-2)}
+.keyline i{flex:none;width:20px;height:3px;background:var(--prus);border-radius:1.5px}
+.keyline i.band{height:12px;border-radius:2px;background:#DDE8F1}
+.keyline i.rev{height:12px;border-radius:2px;
+  background:repeating-linear-gradient(135deg,#B9448E 0 1.5px,transparent 1.5px 6px);
+  border:1px solid rgba(185,68,142,.5)}
+
+/* graduated tint column — the basket as hypsometric tints */
+.tints{width:100%;border-collapse:collapse;font-family:"Jost",sans-serif;font-size:12px}
+.tints td{padding:0;vertical-align:middle}
+.tints td.sw{width:26px}
+.tints td.sw span{display:block;height:20px;border-radius:1px}
+.tints td.nm{padding:0 8px;line-height:1.25;color:var(--ink-2)}
+.tints td.n{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-2)}
+.tints tr + tr td.sw span{margin-top:2px}
+.tints tr + tr td{padding-top:2px}
+
+/* ---- the plate: neat line ---- */
+.plate{background:var(--plate);border:1px solid var(--neat);padding:4px}
+.plate-in{border:1px solid var(--neat);padding:26px 26px 18px}
+.plate + .platecap{display:flex;justify-content:space-between;gap:26px;flex-wrap:wrap;
+  margin-top:11px}
+.platecap p{margin:0;max-width:60ch;font-size:13.5px;line-height:1.55;color:var(--ink-2);
+  font-variation-settings:"opsz" 12,"SOFT" 50,"WONK" 0}
+.plate-hd{display:flex;justify-content:space-between;align-items:baseline;gap:20px;
+  flex-wrap:wrap;margin-bottom:20px}
+.plate-hd h2{font-size:22px;font-variation-settings:"opsz" 60,"SOFT" 10,"WONK" 1;
+  font-weight:500;letter-spacing:-.01em}
+
+svg.plot{width:100%;height:auto;display:block}
+svg.plot text{font-family:"Jost",sans-serif;font-size:10px;letter-spacing:.14em;
+  fill:var(--ink-3);text-transform:uppercase}
+svg.plot text.val{letter-spacing:.02em;font-size:11px;text-transform:none;font-weight:500}
+
+/* ---- article body ---- */
+article{padding-top:14px}
+article > section{padding:44px 0;border-top:1px solid var(--rule)}
+article h2.sec{font-family:"Jost",sans-serif;font-weight:500;font-size:11px;
+  letter-spacing:.3em;text-transform:uppercase;color:var(--ink-3);margin-bottom:22px}
+.lead{font-size:22px;line-height:1.5;max-width:34ch;
+  font-variation-settings:"opsz" 72,"SOFT" 20,"WONK" 1;font-weight:400;letter-spacing:-.012em}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:44px;margin-top:26px}
+.cols p{margin:0 0 .9em;font-size:16px;line-height:1.66;color:#2C3940}
+.cols p:last-child{margin-bottom:0}
+.cols em{font-style:italic}
+
+/* revision slip — the cartographer's correction note */
+.slip{border-left:2px solid var(--rev);padding:2px 0 2px 18px;margin:30px 0 0;max-width:62ch}
+.slip .marg{color:var(--rev)}
+.slip p{margin:8px 0 0;font-size:15px;line-height:1.6;color:#2C3940}
+
+/* reading notes */
+.notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:0 44px}
+.notes > div{padding:20px 0;border-bottom:1px solid var(--rule)}
+.notes h3{font-size:18px;font-variation-settings:"opsz" 40,"SOFT" 10,"WONK" 1;
+  font-weight:500;margin-bottom:6px;letter-spacing:-.01em}
+.notes p{margin:0;font-size:14.5px;line-height:1.6;color:var(--ink-2)}
+.notes .tag{font-family:"Jost",sans-serif;font-size:9.5px;letter-spacing:.22em;
+  text-transform:uppercase;display:block;margin-bottom:9px}
+.notes .tag.dont{color:var(--rev)}
+.notes .tag.do{color:var(--lichen);filter:brightness(.82)}
+
+/* sources */
+.src{width:100%;border-collapse:collapse;font-size:15px;max-width:860px}
+.src td{padding:12px 0;border-bottom:1px solid var(--rule);vertical-align:baseline}
+.src td:first-child{width:180px;padding-right:22px}
+.src td:first-child span{font-family:"Jost",sans-serif;font-size:10px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--ink-3)}
+.src a{color:var(--prus);text-decoration:none;border-bottom:1px solid #A9C4DF}
+.src a:hover{border-bottom-color:var(--prus)}
+
+/* adjacent sheets */
+.sheets{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;
+  background:var(--rule);border:1px solid var(--rule);margin-top:8px}
+.sheets a{background:var(--paper);padding:22px 20px 24px;text-decoration:none;color:var(--ink);
+  display:block}
+.sheets a:hover{background:var(--plate)}
+.sheets .st{display:block;font-size:19px;margin-top:10px;letter-spacing:-.01em;
+  font-variation-settings:"opsz" 40,"SOFT" 10,"WONK" 1;font-weight:500}
+.sheets .sd{display:block;font-size:13px;color:var(--ink-3);margin-top:5px;line-height:1.45}
+
+footer{margin-top:56px;padding-top:16px;border-top:1px solid var(--neat);
+  display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+
+a:focus-visible{outline:2px solid var(--prus);outline-offset:3px}
+@media (max-width:900px){
+  .spread{grid-template-columns:1fr;gap:36px}
+  .rail{position:static}
+  .rail section{border-bottom:1px solid var(--rule)}
+  .titleblock{grid-template-columns:1fr;gap:28px;align-items:start}
+  .cols{grid-template-columns:1fr;gap:0}
+  .plate-in{padding:18px 16px 12px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="hrow">
+    <div class="wordmark">India Atlas</div>
+    <div class="hmeta">
+      <span class="marg">Plate <strong>14</strong></span>
+      <span class="marg">Series <strong>Prices</strong></span>
+      <span class="marg">Base <strong>2012 = 100</strong></span>
+      <span class="marg">Revised <strong>14 · vii · 2026</strong></span>
+    </div>
+  </div>
+
+  <div class="titleblock">
+    <h1><span class="sc">Consumer prices</span>The cost of one<br>unchanging basket</h1>
+    <p class="abstract">Every month, price collectors record the same 598 items in the same
+    1,181 villages and 1,114 urban markets. This plate shows what that fixed list has cost
+    since 2015, what is in it, and where the ground beneath the measurement has moved.</p>
+  </div>
+</header>
+
+<div class="spread">
+
+  <!-- ============ MARGIN RAIL ============ -->
+  <aside class="rail">
+    <section>
+      <h3 class="marg">Legend</h3>
+      <div class="keyline"><i></i>Headline CPI, combined</div>
+      <div class="keyline"><i class="band"></i>Statutory band, 2–6%</div>
+      <div class="keyline"><i class="rev"></i>Base revision, Jan 2015</div>
+    </section>
+
+    <section>
+      <h3 class="marg">Scale</h3>
+      <p>Vertical: percentage change against the same month one year earlier.
+      Horizontal: one month per step, 138 steps.</p>
+    </section>
+
+    <section>
+      <h3 class="marg">Basket, by weight</h3>
+      <table class="tints">
+        <tr><td class="sw"><span style="background:var(--t6)"></span></td><td class="nm">Food and beverages</td><td class="n">45.9</td></tr>
+        <tr><td class="sw"><span style="background:var(--t5)"></span></td><td class="nm">Miscellaneous</td><td class="n">28.3</td></tr>
+        <tr><td class="sw"><span style="background:var(--t4)"></span></td><td class="nm">Housing</td><td class="n">10.1</td></tr>
+        <tr><td class="sw"><span style="background:var(--t3)"></span></td><td class="nm">Fuel and light</td><td class="n">6.8</td></tr>
+        <tr><td class="sw"><span style="background:var(--t2)"></span></td><td class="nm">Clothing, footwear</td><td class="n">6.5</td></tr>
+        <tr><td class="sw"><span style="background:var(--t1)"></span></td><td class="nm">Pan, tobacco</td><td class="n">2.4</td></tr>
+      </table>
+      <p style="margin-top:12px">Weights fixed from the Consumer Expenditure Survey of 2011–12.</p>
+    </section>
+
+    <section>
+      <h3 class="marg">Authority</h3>
+      <p>National Statistical Office, Ministry of Statistics and Programme Implementation.
+      Released about the 12th of each month.</p>
+    </section>
+  </aside>
+
+  <!-- ============ THE PLATE ============ -->
+  <main>
+    <figure style="margin:0">
+      <div class="plate">
+        <div class="plate-in">
+          <div class="plate-hd">
+            <h2>Headline inflation, month by month</h2>
+            <span class="marg">Jan 2015 — Jun 2026</span>
+          </div>
+
+          <svg class="plot" viewBox="0 0 1082 344" role="img"
+               aria-label="Line chart of India's year-on-year CPI inflation, January 2015 to June 2026, with the 2 to 6 per cent statutory band shaded and the January 2015 base revision marked.">
+            <defs>
+              <pattern id="hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+                <line x1="0" y1="0" x2="0" y2="7" stroke="#B9448E" stroke-width="1" stroke-opacity=".45"/>
+              </pattern>
+            </defs>
+
+            <!-- statutory band -->
+            <rect x="0" y="98.8" width="1040" height="142.1" fill="#1157A4" opacity=".07"/>
+
+            <!-- graticule -->
+            <g stroke="#C9D3D3" stroke-width=".75" stroke-dasharray="1 4">
+              <line x1="0" y1="276.5" x2="1040" y2="276.5"/><line x1="0" y1="240.9" x2="1040" y2="240.9"/>
+              <line x1="0" y1="205.4" x2="1040" y2="205.4"/><line x1="0" y1="169.9" x2="1040" y2="169.9"/>
+              <line x1="0" y1="134.4" x2="1040" y2="134.4"/><line x1="0" y1="98.8" x2="1040" y2="98.8"/>
+              <line x1="0" y1="63.3" x2="1040" y2="63.3"/><line x1="0" y1="27.8" x2="1040" y2="27.8"/>
+              <line x1="91.1" y1="10" x2="91.1" y2="312"/><line x1="182.2" y1="10" x2="182.2" y2="312"/>
+              <line x1="273.3" y1="10" x2="273.3" y2="312"/><line x1="364.4" y1="10" x2="364.4" y2="312"/>
+              <line x1="455.5" y1="10" x2="455.5" y2="312"/><line x1="546.6" y1="10" x2="546.6" y2="312"/>
+              <line x1="637.7" y1="10" x2="637.7" y2="312"/><line x1="728.8" y1="10" x2="728.8" y2="312"/>
+              <line x1="819.9" y1="10" x2="819.9" y2="312"/><line x1="910.9" y1="10" x2="910.9" y2="312"/>
+              <line x1="1002" y1="10" x2="1002" y2="312"/>
+            </g>
+            <line x1="0" y1="312" x2="1040" y2="312" stroke="#2A3A43" stroke-width="1"/>
+
+            <!-- base revision overprint -->
+            <rect x="0" y="10" width="16" height="302" fill="url(#hatch)"/>
+            <line x1="16" y1="10" x2="16" y2="312" stroke="#B9448E" stroke-width="1.25"/>
+            <text x="24" y="22" fill="#B9448E" style="letter-spacing:.2em">Base revision · Jan 2015</text>
+
+            <path d="M0.0 127.2 L7.6 120.1 L15.2 123.7 L22.8 137.9 L30.4 134.4 L38.0 120.1 L45.5 180.5 L53.1 180.5 L60.7 155.7 L68.3 134.4 L75.9 120.1 L83.5 113.0 L91.1 109.5 L98.7 123.7 L106.3 141.5 L113.9 116.6 L121.5 105.9 L129.1 105.9 L136.6 95.3 L144.2 134.4 L151.8 155.7 L159.4 162.8 L167.0 184.1 L174.6 191.2 L182.2 198.3 L189.8 180.5 L197.4 173.4 L205.0 205.4 L212.6 233.8 L220.1 258.7 L227.7 226.7 L235.3 194.8 L242.9 194.8 L250.5 184.1 L258.1 137.9 L265.7 127.2 L273.3 130.8 L280.9 155.7 L288.5 159.2 L296.1 148.6 L303.6 137.9 L311.2 137.9 L318.8 162.8 L326.4 180.5 L334.0 180.5 L341.6 191.2 L349.2 230.3 L356.8 237.4 L364.4 240.9 L372.0 219.6 L379.6 209.0 L387.2 209.0 L394.7 205.4 L402.3 198.3 L409.9 198.3 L417.5 194.8 L425.1 169.9 L432.7 148.6 L440.3 116.6 L447.9 49.1 L455.5 42.0 L463.1 77.5 L470.7 105.9 L478.2 56.2 L485.8 88.2 L493.4 91.7 L501.0 74.0 L508.6 74.0 L516.2 52.6 L523.8 42.0 L531.4 66.8 L539.0 148.6 L546.6 166.3 L554.2 134.4 L561.8 116.6 L569.3 162.8 L576.9 88.2 L584.5 88.2 L592.1 113.0 L599.7 123.7 L607.3 155.7 L614.9 152.1 L622.5 137.9 L630.1 109.5 L637.7 98.8 L645.3 95.3 L652.8 63.3 L660.4 34.9 L668.0 63.3 L675.6 63.3 L683.2 74.0 L690.8 63.3 L698.4 49.1 L706.0 70.4 L713.6 102.4 L721.2 109.5 L728.8 81.1 L736.4 84.6 L743.9 109.5 L751.5 145.0 L759.1 159.2 L766.7 137.9 L774.3 49.1 L781.9 70.4 L789.5 134.4 L797.1 137.9 L804.7 113.0 L812.3 109.5 L819.9 130.8 L827.4 130.8 L835.0 137.9 L842.6 141.5 L850.2 141.5 L857.8 130.8 L865.4 184.1 L873.0 180.5 L880.6 116.6 L888.2 91.7 L895.8 116.6 L903.4 127.2 L910.9 159.2 L918.5 184.1 L926.1 194.8 L933.7 198.3 L941.3 212.5 L948.9 237.4 L956.5 255.2 L964.1 237.4 L971.7 258.7 L979.3 283.6 L986.9 262.3 L994.5 240.9 L1002.0 226.7 L1009.6 209.0 L1017.2 201.9 L1024.8 191.2 L1032.4 184.1 L1040.0 177.0" fill="none" stroke="#1157A4" stroke-width="1.9"
+                  stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+
+            <!-- y labels, in the right margin like a map's edge figures -->
+            <g text-anchor="end">
+              <text x="1080" y="279.5">1</text><text x="1080" y="208.4">3</text>
+              <text x="1080" y="137.4">5</text><text x="1080" y="66.3">7 %</text>
+            </g>
+            <!-- x labels -->
+            <g text-anchor="middle">
+              <text x="45.5" y="330">2015</text><text x="136.6" y="330">2016</text>
+              <text x="227.7" y="330">2017</text><text x="318.8" y="330">2018</text>
+              <text x="409.9" y="330">2019</text><text x="501" y="330">2020</text>
+              <text x="592.1" y="330">2021</text><text x="683.2" y="330">2022</text>
+              <text x="774.3" y="330">2023</text><text x="865.4" y="330">2024</text>
+              <text x="956.5" y="330">2025</text><text x="1021" y="330">26</text>
+            </g>
+
+            <circle cx="1040" cy="177" r="3.6" fill="#1157A4" stroke="#FDFDFB" stroke-width="2"/>
+            <text class="val" x="1032" y="169" text-anchor="end" fill="#1157A4">3.8 · June 2026</text>
+          </svg>
+        </div>
+      </div>
+      <figcaption class="platecap">
+        <p>The shaded field is the range Parliament requires the Reserve Bank to hold inflation
+        inside. It has been breached above in 2020 and 2022, and below in late 2025.</p>
+        <span class="marg">Fig. 14 · a</span>
+      </figcaption>
+    </figure>
+
+    <article>
+      <section>
+        <h2 class="sec">What is measured</h2>
+        <p class="lead">The index does not follow prices. It follows one shopping list, and
+        asks what that same list costs today.</p>
+        <div class="cols">
+          <div>
+            <p>Price collectors visit the same shops on the same days and record the price of
+            the same items — 299 in villages, 299 in towns. The list does not change when
+            households change what they buy, because if it did you could no longer tell a
+            price rise from a change in habit.</p>
+            <p>What newspapers call inflation is not the index. It is the change in the index
+            against the same month a year earlier. When inflation falls to 3.8%, nothing has
+            become cheaper: the list costs 3.8% more than it did last June, instead of the 5.1%
+            more it cost the June before.</p>
+          </div>
+          <div>
+            <p>Two indices are built, not one. Rural and urban India have separate baskets,
+            separate weights and separate collection networks, and the two diverge for months
+            at a time — the combined figure is a weighted average of them, and it can be quiet
+            while one half of the country is not.</p>
+            <p>The index is set to 100 in 2012. A reading of 196.4 means the basket costs 96%
+            more than it did then. It is <em>not</em> a price, and comparing index levels
+            between countries or between base years tells you nothing at all.</p>
+          </div>
+        </div>
+
+        <div class="slip">
+          <span class="marg">Revision slip · overprinted in magenta</span>
+          <p>In January 2015 the base moved from 2010 to 2012 and the basket was rebuilt with
+          new weights and new items. Values before and after are two different measurements
+          wearing the same name. Do not splice them into one line — the Atlas keeps them as
+          separate series, which is why this plate begins in 2015.</p>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="sec">Reading the plate</h2>
+        <div class="notes">
+          <div>
+            <span class="tag dont">Common error</span>
+            <h3>Falling inflation is not falling prices</h3>
+            <p>It means prices are climbing more slowly. Prices only fall when the rate goes
+            below zero — rare for the headline, and last seen for food in late 2025.</p>
+          </div>
+          <div>
+            <span class="tag dont">Common error</span>
+            <h3>Don’t blame the month you are reading</h3>
+            <p>A year-on-year figure has two ends. A soft reading can come entirely from an
+            unusually high price twelve months ago — a base effect — while nothing unusual
+            happened this month.</p>
+          </div>
+          <div>
+            <span class="tag do">Better question</span>
+            <h3>Whose basket is it?</h3>
+            <p>Food is 45.9% of the national basket. If food is a smaller share of your
+            spending, your lived inflation is not this line, and the gap is not an error in
+            either.</p>
+          </div>
+          <div>
+            <span class="tag do">Better question</span>
+            <h3>What moved, not how much</h3>
+            <p>A 3.8% headline built on 8% vegetables and 1% everything else describes a
+            different economy from a broad, even 3.8%. The sub-indices carry the story.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="sec">What this plate cannot tell you</h2>
+        <div class="cols">
+          <div>
+            <p>The weights are from the Consumer Expenditure Survey of 2011–12. Every decade
+            since Independence, Indian households have spent a smaller share of income on food.
+            A basket fixed in 2011 almost certainly gives food more weight than it deserves in
+            2026, which means the headline is more sensitive to a bad monsoon than the country
+            now is.</p>
+          </div>
+          <div>
+            <p>A weight revision has been pending for more than a decade. This is the single
+            largest known limitation of the series, and no adjustment in this plate corrects
+            for it. Where the Atlas cannot correct something, it says so rather than quietly
+            smoothing it away.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="sec">Sources and authority</h2>
+        <table class="src">
+          <tr><td><span>Producer</span></td><td>National Statistical Office, Ministry of Statistics and Programme Implementation</td></tr>
+          <tr><td><span>Release</span></td><td>On or about the 12th of each month, for the preceding month</td></tr>
+          <tr><td><span>Coverage</span></td><td>1,181 villages · 1,114 urban markets · 299 rural and 299 urban items</td></tr>
+          <tr><td><span>Break</span></td><td>January 2015 — new base, basket and weights. Series before this date are held separately.</td></tr>
+          <tr><td><span>Gap</span></td><td>April and May 2020 — field collection suspended; those months are imputed at source</td></tr>
+          <tr><td><span>Licence</span></td><td>Government Open Data Licence — India. Atlas text under CC BY 4.0.</td></tr>
+          <tr><td><span>Artifacts</span></td><td><a href="#">cpi-combined-yoy.csv</a> · <a href="#">weights-2012.csv</a> · <a href="#">observation provenance</a></td></tr>
+        </table>
+      </section>
+
+      <section style="border-bottom:0">
+        <h2 class="sec">Adjacent sheets</h2>
+        <nav class="sheets">
+          <a href="#"><span class="marg">Plate 15</span><span class="st">Food inflation</span><span class="sd">The 45.9% that decides the headline</span></a>
+          <a href="#"><span class="marg">Plate 31</span><span class="st">Wholesale prices</span><span class="sd">A different basket asking a different question</span></a>
+          <a href="#"><span class="marg">Plate 02</span><span class="st">The repo rate</span><span class="sd">What the Reserve Bank does with this line</span></a>
+          <a href="#"><span class="marg">Plate 48</span><span class="st">Real rural wages</span><span class="sd">Earnings with this plate subtracted out</span></a>
+        </nav>
+      </section>
+    </article>
+  </main>
+</div>
+
+<footer>
+  <span class="marg">India Atlas · Plate 14 · Prices</span>
+  <span class="marg">Figures on this plate are illustrative</span>
+</footer>
+
+</div>
+</body>
+</html>

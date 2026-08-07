@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>India Atlas — Consumer Prices · The Monograph, elevated</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --ink:#1B1A17;
+    --ink-soft:#4A463F;
+    --muted:#8A857A;
+    --faint:#B4AFA2;
+    --rule:#E6E2D6;
+    --accent:#BE3E26;
+    --grey1:#6B665A;
+    --grey2:#9C968A;
+    --grey3:#C9C4B6;
+    --band:#F8F6F1;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:"Newsreader",Georgia,serif;font-weight:460;
+    font-size:1.18rem;line-height:1.82;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{max-width:880px;margin:0 auto;padding:0 32px}
+  .mono{font-family:"IBM Plex Mono",monospace}
+
+  /* wide breakout for plates, from the narrow column */
+  .break{
+    width:min(1120px, calc(100vw - 56px));
+    margin-left:50%;transform:translateX(-50%);
+  }
+
+  /* site header */
+  .sitehead{border-bottom:1px solid var(--ink)}
+  .sh-in{
+    max-width:1184px;margin:0 auto;padding:0 32px;height:66px;
+    display:flex;align-items:center;gap:40px;
+  }
+  .brand{
+    display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink);
+    font-family:"Archivo",sans-serif;font-weight:720;font-size:1.05rem;letter-spacing:-0.015em;
+  }
+  .brand .mark{width:10px;height:10px;background:var(--accent)}
+  .sh-nav{display:flex;gap:30px;margin-left:auto}
+  .sh-nav a{
+    font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink-soft);text-decoration:none;
+  }
+  .sh-nav a:hover{color:var(--accent)}
+  .sh-date{
+    font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);
+    border-left:1px solid var(--rule);padding-left:30px;
+  }
+
+  /* title */
+  .titleblock{padding:76px 0 0}
+  .hero-grid{
+    display:grid;grid-template-columns:minmax(0,7fr) minmax(0,4fr);
+    gap:72px;align-items:end;
+  }
+  .hero-grid .lede{justify-self:end;margin-bottom:10px}
+  .kicker{
+    font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--accent);margin-bottom:34px;
+  }
+  h1{
+    font-family:"Archivo",sans-serif;font-weight:720;
+    font-variation-settings:"wdth" 100;
+    font-size:4.2rem;line-height:1.02;letter-spacing:-0.032em;
+    text-wrap:balance;
+  }
+  h1 i{font-style:italic;font-weight:560;color:var(--accent)}
+  .lede{
+    font-size:1.38rem;line-height:1.58;font-style:italic;color:#33302B;
+    max-width:34ch;text-wrap:pretty;
+  }
+  .meta{
+    display:flex;flex-wrap:wrap;gap:8px 40px;margin-top:48px;
+    font-family:"IBM Plex Mono",monospace;font-size:.64rem;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+    padding:16px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  }
+  .meta b{color:var(--ink);font-weight:500}
+
+  /* key numbers */
+  .numbers{display:grid;grid-template-columns:repeat(4,1fr);padding:44px 0 8px}
+  .num{padding:0 30px;border-left:1px solid var(--rule)}
+  .num:first-child{padding-left:0;border-left:none}
+  .num .l{
+    font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:16px;
+  }
+  .num .v{
+    font-family:"Bodoni Moda",serif;font-weight:400;
+    font-variation-settings:"opsz" 96;
+    font-size:3.1rem;letter-spacing:-0.02em;line-height:1;font-variant-numeric:tabular-nums;
+  }
+  .num .v.acc{color:var(--accent)}
+  .num .v .pc{font-size:.4em;color:var(--muted);margin-left:3px}
+  .num .v.acc .pc{color:var(--accent);opacity:.6}
+  .num .d{
+    font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.04em;
+    color:var(--muted);margin-top:14px;
+  }
+
+  /* sections */
+  section{padding:104px 0 0}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:34px}
+  .sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.68rem;color:var(--accent);letter-spacing:.1em}
+  .sec-head h2{
+    font-family:"Archivo",sans-serif;font-weight:680;
+    font-size:1.55rem;letter-spacing:-0.02em;text-wrap:balance;
+  }
+  .sec-head .line{flex:1;height:1px;background:var(--rule);transform:translateY(-5px)}
+  .sec-head .unit{
+    font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);
+  }
+  p{color:#33302B;max-width:64ch;hyphens:auto;text-wrap:pretty}
+  p b{color:var(--ink);font-weight:600}
+  p+p{margin-top:1.1em}
+
+  /* ledger */
+  .ledger table{width:100%;border-collapse:collapse}
+  .ledger th{
+    font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);font-weight:400;text-align:left;
+    padding:0 20px 13px 0;border-bottom:1px solid var(--ink);
+  }
+  .ledger td{padding:22px 20px 22px 0;border-bottom:1px solid var(--rule);vertical-align:middle}
+  .ledger tbody tr{transition:background .15s}
+  .ledger tbody tr:hover{background:#FAF8F2}
+  .ledger .name{font-size:1.08rem;color:var(--ink)}
+  .ledger .name small{
+    display:block;font-family:"IBM Plex Mono",monospace;font-size:.58rem;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px;
+  }
+  .sw{display:inline-block;width:9px;height:9px;margin-right:11px}
+  .s-acc{background:var(--accent)} .s-g1{background:var(--grey1)}
+  .s-g2{background:var(--grey2)} .s-g3{background:var(--grey3)}
+  .ledger .wt,.ledger .chg{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--ink-soft);white-space:nowrap}
+  .ledger .wt .wtrack{display:block;width:64px;height:3px;background:var(--rule);margin-top:9px}
+  .ledger .wt .wtrack i{display:block;height:100%}
+  .ledger .val{
+    font-family:"Bodoni Moda",serif;font-variation-settings:"opsz" 96;
+    font-size:1.85rem;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink);
+  }
+  .ledger .spark{width:170px}
+
+  /* the plate frame : chart as object (from the synthesis mock) */
+  .frame{
+    position:relative;margin-top:30px;
+    padding:44px 48px 32px;
+    background-color:#FFFFFF;border:1px solid #DCD7C6;
+    background-image:
+      linear-gradient(#1B1A17,#1B1A17),linear-gradient(#1B1A17,#1B1A17),
+      linear-gradient(#1B1A17,#1B1A17),linear-gradient(#1B1A17,#1B1A17),
+      linear-gradient(#1B1A17,#1B1A17),linear-gradient(#1B1A17,#1B1A17),
+      linear-gradient(#1B1A17,#1B1A17),linear-gradient(#1B1A17,#1B1A17);
+    background-size:
+      18px 1.5px,1.5px 18px,18px 1.5px,1.5px 18px,
+      18px 1.5px,1.5px 18px,18px 1.5px,1.5px 18px;
+    background-position:
+      -1px -1px,-1px -1px,
+      calc(100% + 1px) -1px,calc(100% + 1px) -1px,
+      -1px calc(100% + 1px),-1px calc(100% + 1px),
+      calc(100% + 1px) calc(100% + 1px),calc(100% + 1px) calc(100% + 1px);
+    background-repeat:no-repeat;
+  }
+  .frame::before{
+    content:"";position:absolute;inset:7px;
+    border:1px solid #EAE6D8;pointer-events:none;
+  }
+  .frame .legend{padding-top:0}
+  .frame .plotzone{padding-top:22px}
+  .frame .plotfoot{margin-top:22px}
+
+  /* the big numeral at the head of a plate (from the register mock) */
+  .plate-val{text-align:right;flex-shrink:0}
+  .plate-val .v{
+    font-family:"Bodoni Moda",serif;font-variation-settings:"opsz" 96;
+    font-size:3rem;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;
+  }
+  .plate-val .c{
+    font-family:"IBM Plex Mono",monospace;font-size:.58rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);margin-top:8px;
+  }
+
+  /* plate */
+  .plate-head{
+    display:flex;justify-content:space-between;align-items:flex-end;gap:28px;
+    padding-bottom:22px;border-bottom:1px solid var(--ink);
+  }
+  .plate-head .t h3{
+    font-family:"Archivo",sans-serif;font-weight:660;
+    font-size:1.4rem;letter-spacing:-0.02em;line-height:1.22;text-wrap:balance;
+  }
+  .plate-head .t .sub{
+    font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--muted);margin-top:9px;
+  }
+  .tools{
+    display:flex;align-items:center;flex-shrink:0;
+    font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.1em;
+    text-transform:uppercase;white-space:nowrap;
+  }
+  .tools button,.tools a{
+    background:none;border:none;cursor:pointer;text-decoration:none;
+    font:inherit;letter-spacing:inherit;text-transform:inherit;color:var(--muted);
+    padding:5px 7px;
+  }
+  .tools button:hover,.tools a:hover{color:var(--accent)}
+  .tools .sep{width:1px;height:12px;background:var(--rule);margin:0 6px}
+
+  .legend{display:flex;gap:30px;flex-wrap:wrap;padding:20px 0 0}
+  .legend .chip{
+    display:flex;align-items:center;gap:10px;background:none;border:none;cursor:pointer;
+    font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--ink-soft);padding:2px 0;
+  }
+  .legend .chip i{width:14px;height:2.5px}
+  .legend .chip:hover{color:var(--ink)}
+
+  .plotzone{position:relative;padding:22px 0 0}
+  .plotzone svg text{paint-order:stroke;stroke:#FFFFFF;stroke-width:4px;stroke-linejoin:round}
+  .cb-tip{
+    position:absolute;pointer-events:none;display:none;z-index:3;
+    background:#FFFFFF;border:1px solid var(--ink);
+    padding:13px 17px;min-width:200px;
+    font-family:"IBM Plex Mono",monospace;font-size:.7rem;line-height:2;
+  }
+  .cb-tip .d{
+    letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
+    border-bottom:1px solid var(--rule);padding-bottom:5px;margin-bottom:5px;
+  }
+  .cb-tip .r{display:flex;align-items:center;gap:9px}
+  .cb-tip .r .sw2{width:8px;height:8px;flex-shrink:0}
+  .cb-tip .r .n{color:var(--ink-soft)}
+  .cb-tip .r .v{margin-left:auto;font-weight:500;color:var(--ink)}
+
+  .plotfoot{
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 28px;
+    margin-top:20px;padding-top:15px;border-top:1px solid var(--rule);
+    font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--muted);
+  }
+  .plotfoot a{color:var(--muted)}
+  .plotfoot a:hover{color:var(--accent)}
+
+  .explain{
+    display:grid;grid-template-columns:1fr 1fr;gap:0;
+    margin-top:34px;border-top:1px solid var(--ink);
+  }
+  .explain > div{padding:32px 0 8px}
+  .explain .ev{padding-right:48px;border-right:1px solid var(--rule)}
+  .explain .now{padding-left:48px}
+  .explain .mk{
+    font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.18em;
+    text-transform:uppercase;display:block;margin-bottom:15px;
+  }
+  .explain .ev .mk{color:var(--grey1)}
+  .explain .now .mk{color:var(--accent)}
+  .explain p{font-size:1.08rem;line-height:1.78;color:#33302B;max-width:none}
+  .explain p + p{margin-top:.9em}
+
+  /* prose with a notes rail, both inside the column */
+  .wm-grid{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:52px}
+  .wm-rail .margin-note{margin-bottom:44px}
+  .wm-rail .margin-note:last-child{margin-bottom:0}
+  .margin-note{
+    font-size:.9rem;line-height:1.62;color:var(--muted);
+    border-top:1px solid var(--ink);padding-top:13px;
+  }
+  .margin-note .mk{
+    font-family:"IBM Plex Mono",monospace;font-size:.58rem;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent);display:block;margin-bottom:9px;
+  }
+  .margin-note b{color:var(--ink-soft);font-weight:500}
+
+  /* misread */
+  .misread{border-top:1px solid var(--ink);padding-top:8px;margin-top:12px}
+  .misread li{
+    list-style:none;display:grid;grid-template-columns:64px 1fr;gap:24px;
+    padding:24px 0;border-bottom:1px solid var(--rule);align-items:baseline;
+  }
+  .misread .no{font-family:"IBM Plex Mono",monospace;font-size:.66rem;color:var(--accent);letter-spacing:.1em}
+  .misread h3{
+    font-family:"Archivo",sans-serif;font-weight:640;
+    font-size:1.12rem;letter-spacing:-0.015em;line-height:1.3;margin-bottom:8px;
+  }
+  .misread p{font-size:1.02rem}
+
+  /* provenance */
+  .provenance{
+    margin-top:104px;padding:28px 0 72px;border-top:1px solid var(--ink);
+    font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.08em;
+    color:var(--muted);line-height:2.1;
+  }
+  .provenance .row{display:flex;justify-content:space-between;gap:20px}
+  .provenance b{color:var(--ink-soft);font-weight:500;text-transform:uppercase;letter-spacing:.12em}
+
+  @media (max-width:680px){
+    h1{font-size:2.6rem}
+    .hero-grid{grid-template-columns:1fr;gap:32px}
+    .hero-grid .lede{justify-self:start}
+    .sh-nav{display:none}
+    .sh-date{margin-left:auto;border-left:none;padding-left:0}
+    .numbers{grid-template-columns:1fr 1fr;gap:32px 0}
+    .num{border-left:none;padding-left:0}
+    .explain{grid-template-columns:1fr}
+    .explain .ev{padding-right:0;border-right:none;padding-bottom:8px}
+    .explain .now{padding-left:0;padding-top:8px;border-top:1px solid var(--rule)}
+    .wm-grid{grid-template-columns:1fr;gap:40px}
+    .wm-rail .margin-note{margin-bottom:24px}
+    .ledger .spark,.ledger th.spark{display:none}
+    .plate-head{flex-direction:column;align-items:flex-start;gap:16px}
+    .plate-val{text-align:left}
+    .frame{padding:20px 16px 14px}
+  }
+</style>
+</head>
+<body>
+<header class="sitehead">
+  <div class="sh-in">
+    <a class="brand" href="index.html"><span class="mark"></span>India Atlas</a>
+    <nav class="sh-nav">
+      <a href="#">Dossiers</a><a href="#">Chapters</a><a href="#">Data</a><a href="#">Methodology</a><a href="#">About</a>
+    </nav>
+    <span class="sh-date">May 2025</span>
+  </div>
+</header>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">Dossier № 01 — Prices · Consumer Price Index</div>
+    <div class="hero-grid">
+      <h1>The price of a <i>basket of life.</i></h1>
+      <p class="lede">Every month, the government checks the price of roughly three hundred things an ordinary household buys — and tells us, with a single number, how much dearer life has become.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>MoSPI, NSO</b></span>
+      <span>Frequency <b>Monthly</b></span>
+      <span>Base year <b>2012 = 100</b></span>
+      <span>Latest <b>May 2025</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Headline CPI · y/y</div><div class="v acc">4.82<span class="pc">%</span></div><div class="d">▼ −0.31 pt vs April · within RBI band</div></div>
+      <div class="num"><div class="l">Food &amp; beverages · y/y</div><div class="v">6.10<span class="pc">%</span></div><div class="d">▲ +0.44 pt vs April · firming</div></div>
+      <div class="num"><div class="l">Fuel &amp; light · y/y</div><div class="v">2.34<span class="pc">%</span></div><div class="d">▼ −0.12 pt vs April · easing</div></div>
+      <div class="num"><div class="l">Core · y/y</div><div class="v">3.91<span class="pc">%</span></div><div class="d">▼ −0.05 pt vs April · stable</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 register -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The register of series</h2><span class="line"></span><span class="unit">Weights · latest y/y</span></div>
+    <div class="break ledger">
+      <table>
+        <thead>
+          <tr><th>Series</th><th>Weight</th><th>Latest y/y</th><th>vs prev. month</th><th class="spark">2016 – 2025</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name"><span class="sw s-acc"></span>Headline CPI (combined)<small>All items, rural + urban</small></td>
+            <td class="wt">100.0<span class="wtrack"><i style="width:100%;background:#BE3E26"></i></span></td><td class="val">4.82%</td><td class="chg">−0.31 pt · easing</td>
+            <td class="spark" id="sp-head"></td>
+          </tr>
+          <tr>
+            <td class="name"><span class="sw s-g1"></span>Food &amp; beverages<small>CFPI — nearly half the basket</small></td>
+            <td class="wt">45.9<span class="wtrack"><i style="width:45.9%;background:#6B665A"></i></span></td><td class="val">6.10%</td><td class="chg">+0.44 pt · firming</td>
+            <td class="spark" id="sp-food"></td>
+          </tr>
+          <tr>
+            <td class="name"><span class="sw s-g2"></span>Fuel &amp; light<small>LPG, kerosene, electricity</small></td>
+            <td class="wt">6.8<span class="wtrack"><i style="width:6.8%;background:#9C968A"></i></span></td><td class="val">2.34%</td><td class="chg">−0.12 pt · easing</td>
+            <td class="spark" id="sp-fuel"></td>
+          </tr>
+          <tr>
+            <td class="name"><span class="sw s-g3"></span>Core<small>Ex food, ex fuel — what the RBI watches</small></td>
+            <td class="wt">47.3<span class="wtrack"><i style="width:47.3%;background:#B4AFA2"></i></span></td><td class="val">3.91%</td><td class="chg">−0.05 pt · stable</td>
+            <td class="spark" id="sp-core"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- § 02 plate 1 -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>Plate 1 — the headline and its parts</h2><span class="line"></span><span class="unit">y/y % · monthly</span></div>
+    <div class="break">
+      <figure id="cb-main" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Food is doing all the running</h3>
+            <div class="sub">CPI combined and components · year-on-year, per cent · Jan 2016 – May 2025</div>
+          </div>
+          <div class="tools">
+            <button data-dl="png">PNG</button><button data-dl="svg">SVG</button>
+            <span class="sep"></span>
+            <button data-dl="csv">CSV</button>
+            <span class="sep"></span>
+            <a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a>
+          </div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-main">
+            <button class="chip" data-key="headline"><i style="background:#BE3E26"></i>Headline</button>
+            <button class="chip" data-key="food"><i style="background:#6B665A"></i>Food &amp; beverages</button>
+            <button class="chip" data-key="fuel"><i style="background:#9C968A"></i>Fuel &amp; light</button>
+            <button class="chip" data-key="core"><i style="background:#B4AFA2"></i>Core</button>
+          </div>
+          <div class="plotzone" id="plot-main"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span>Source — <a href="https://www.mospi.gov.in" target="_blank" rel="noopener">MoSPI</a>, press release of 12 Jun 2025</span>
+            <span>Shaded band — RBI tolerance 2–6% · dashed — 4% target</span>
+            <span>CC-BY-4.0</span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each line is the year-on-year change in one part of the basket; the vermillion line is their weighted average. The shaded band is the RBI's tolerance range. When the headline sits inside it, monetary policy is roughly doing its job — whatever the news says.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of May 2025</span>
+            <p>The headline sits mid-band, but composition matters: <b>food is doing all the running</b> at 6.1% while core rests at 3.9%. A monsoon story, not a demand story — rate cuts can do little about the price of dal.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 03 the measure -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="wm-grid">
+      <div>
+        <p>The Consumer Price Index tracks the cost of a fixed basket of goods and services — rice, rent, bus fares, haircuts, school fees — as an urban or rural household actually buys them. When we say "inflation is 4.8 per cent", we mean this basket costs <b>4.8 per cent more than it did a year ago</b>.</p>
+        <p>The basket is not a guess. It comes from a massive survey of what households actually spent in 2011–12, and each item carries a weight proportional to its share of household budgets. Food weighs about 46 per cent; housing, 10; fuel, 7.</p>
+        <p>It is a Laspeyres index — the basket is fixed, so it measures pure price change. That fixedness is its strength and its blind spot: the number stays cleanly comparable, but slowly drifts from how India actually lives, until the base is revised.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note · i</span>
+          <b>Falling inflation ≠ falling prices.</b> The price level almost never returns. A falling rate is slower pain, not relief.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · ii</span>
+          <b>Watch the base.</b> A high print last year flatters this year's number with nothing improving. Ask: compared to what?
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 04 component plates -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>The parts, one plate each</h2><span class="line"></span><span class="unit">y/y % · monthly</span></div>
+
+    <div class="break">
+      <figure id="cb-food" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Food &amp; beverages — half the basket, all of the drama</h3>
+            <div class="sub">CFPI · weight 45.9 · year-on-year, per cent · 2016–2025</div>
+          </div>
+          <div class="plate-val"><div class="v">6.10%</div><div class="c">May 2025 · y/y</div></div>
+          <div class="tools">
+            <button data-dl="png">PNG</button><button data-dl="svg">SVG</button>
+            <span class="sep"></span><button data-dl="csv">CSV</button>
+          </div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-food"><div class="cb-tip"></div></div>
+          <div class="plotfoot"><span>Source — MoSPI · CFPI</span><span>Peak — 12.1%, Dec 2019 · Latest — 6.10%</span></div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The most volatile line in the dossier, and nearly half the basket. Spikes are usually weather, not policy — check whether core confirms before reading a trend.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of May 2025</span>
+            <p>The only component outside comfort — vegetables and pulses after an uneven monsoon.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:96px">
+      <figure id="cb-fuel" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Fuel &amp; light — loud, but says very little</h3>
+            <div class="sub">Weight 6.8 · year-on-year, per cent · 2016–2025</div>
+          </div>
+          <div class="plate-val"><div class="v">2.34%</div><div class="c">May 2025 · y/y</div></div>
+          <div class="tools">
+            <button data-dl="png">PNG</button><button data-dl="svg">SVG</button>
+            <span class="sep"></span><button data-dl="csv">CSV</button>
+          </div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-fuel"><div class="cb-tip"></div></div>
+          <div class="plotfoot"><span>Source — MoSPI</span><span>Peak — 10.7%, Apr 2022 · Latest — 2.34%</span></div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Fuel swings with global crude and administered prices, not with the household economy. It moves the headline loudly and means little by itself.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of May 2025</span>
+            <p>Actively pulling the headline down — flattering the average while food bites.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:96px">
+      <figure id="cb-core" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Core — the line the RBI actually watches</h3>
+            <div class="sub">Ex food, ex fuel · derived · weight 47.3 · year-on-year, per cent · 2016–2025</div>
+          </div>
+          <div class="plate-val"><div class="v">3.91%</div><div class="c">May 2025 · y/y</div></div>
+          <div class="tools">
+            <button data-dl="png">PNG</button><button data-dl="svg">SVG</button>
+            <span class="sep"></span><button data-dl="csv">CSV</button>
+          </div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-core"><div class="cb-tip"></div></div>
+          <div class="plotfoot"><span>Source — Derived from MoSPI components</span><span>Peak — 7.0%, Apr 2022 · Latest — 3.91%</span></div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Core strips out food and fuel — the parts monetary policy cannot reach. The best read of underlying demand. Note it is derived, not published directly.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of May 2025</span>
+            <p>Benign and falling slowly. Whatever is heating the headline, it is not domestic demand.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 misread -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li>
+        <span class="no">i.</span>
+        <div>
+          <h3>"Inflation fell, so prices fell."</h3>
+          <p>No. Falling inflation means prices are rising more slowly. The price level almost never comes back down.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">ii.</span>
+        <div>
+          <h3>"My inflation is the national inflation."</h3>
+          <p>Your basket is not the average basket. A family spending 60 per cent on food lives in a different index entirely.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iii.</span>
+        <div>
+          <h3>"One month tells a story."</h3>
+          <p>Month-to-month moves are seasonal noise. Compare a year ago, and watch the three-month trend.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <footer class="provenance">
+    <div class="row"><b>Series</b><span>CPI Combined, CFPI, Fuel, Core — MoSPI press release, 12 Jun 2025</span></div>
+    <div class="row"><b>Methodology</b><span>Base 2012, Laspeyres index · weights from CES 2011–12</span></div>
+    <div class="row"><b>Dossier</b><span>Reviewed May 2025 · v1.3 · Mock data for design preview</span></div>
+  </footer>
+
+</div>
+
+<script type="module">
+import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
+
+/* ---------- mock data : monthly, shaped like real Indian CPI history ---------- */
+const MN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const dates = [];
+for(let y=2016; y<=2025; y++) for(let m=0; m<12; m++){
+  if(y===2025 && m>4) break;
+  dates.push(new Date(y,m,1));
+}
+const N = dates.length;
+const fmtDate = d => MN[d.getMonth()] + " " + d.getFullYear();
+
+function shape(anchors, seed){
+  const out = new Array(N);
+  for(let a=0; a<anchors.length-1; a++){
+    const [i0,v0] = anchors[a], [i1,v1] = anchors[a+1];
+    for(let i=i0; i<=i1; i++){
+      const t = (i-i0)/(i1-i0);
+      const s = t*t*(3-2*t);
+      out[i] = v0 + (v1-v0)*s;
+    }
+  }
+  return out.map((v,i)=>+(v + 0.16*Math.sin(i*3.7+seed*9) + 0.11*Math.sin(i*1.9+seed*4)).toFixed(2));
+}
+
+const S = {
+  headline: {name:"headline_cpi_yoy_pct", label:"Headline", color:"#BE3E26",
+    data: shape([[0,4.9],[10,3.6],[18,4.6],[30,2.9],[42,4.9],[48,3.2],[56,6.2],[59,7.4],[64,6.7],[70,4.6],[76,7.8],[82,6.0],[90,7.4],[96,4.9],[106,5.1],[112,4.82]], 1.3)},
+  food: {name:"food_beverages_yoy_pct", label:"Food", color:"#6B665A",
+    data: shape([[0,5.8],[10,3.9],[30,2.6],[48,2.6],[56,9.6],[59,12.1],[64,8.4],[70,5.0],[76,8.4],[82,6.8],[90,11.5],[96,6.6],[106,7.4],[112,6.10]], 2.9)},
+  fuel: {name:"fuel_light_yoy_pct", label:"Fuel", color:"#9C968A",
+    data: shape([[0,5.3],[12,3.4],[30,5.2],[48,1.6],[58,0.8],[64,0.5],[70,1.7],[76,10.7],[84,8.4],[90,5.2],[96,3.9],[106,2.7],[112,2.34]], 4.1)},
+  core: {name:"core_yoy_pct", label:"Core", color:"#B9B3A4",
+    data: shape([[0,4.9],[12,4.6],[30,4.4],[48,5.9],[58,3.9],[64,5.1],[70,6.5],[76,7.0],[84,6.1],[90,5.0],[96,4.9],[106,4.2],[112,3.91]], 0.4)},
+};
+for(const k in S) S[k].data = S[k].data.map((v,i)=>({date:dates[i], value:v}));
+
+const mono = "'IBM Plex Mono', monospace";
+
+/* ---------- downloads ---------- */
+function serializeSVG(svg){
+  const clone = svg.cloneNode(true);
+  clone.setAttribute("xmlns","http://www.w3.org/2000/svg");
+  const bg = document.createElementNS("http://www.w3.org/2000/svg","rect");
+  bg.setAttribute("width", svg.getAttribute("width"));
+  bg.setAttribute("height", svg.getAttribute("height"));
+  bg.setAttribute("fill","#FFFFFF");
+  clone.insertBefore(bg, clone.firstChild);
+  return new XMLSerializer().serializeToString(clone);
+}
+function saveBlob(blob, filename){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+}
+function downloadSVG(svg, filename){
+  saveBlob(new Blob([serializeSVG(svg)], {type:"image/svg+xml"}), filename + ".svg");
+}
+function downloadPNG(svg, filename){
+  const url = URL.createObjectURL(new Blob([serializeSVG(svg)], {type:"image/svg+xml"}));
+  const img = new Image();
+  img.onload = () => {
+    const scale = 2;
+    const canvas = document.createElement("canvas");
+    canvas.width = +svg.getAttribute("width") * scale;
+    canvas.height = +svg.getAttribute("height") * scale;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    URL.revokeObjectURL(url);
+    canvas.toBlob(b => saveBlob(b, filename + ".png"), "image/png");
+  };
+  img.src = url;
+}
+function downloadCSV(seriesList, filename){
+  const header = ["date", ...seriesList.map(s=>s.name)];
+  const rows = seriesList[0].data.map((d,i) =>
+    [d.date.toISOString().slice(0,10), ...seriesList.map(s=>s.data[i].value)]
+  );
+  const csv = [header, ...rows].map(r=>r.join(",")).join("\n");
+  saveBlob(new Blob([csv], {type:"text/csv"}), filename + ".csv");
+}
+function wireTools(blockEl, plot, seriesList, filename){
+  blockEl.querySelectorAll("[data-dl]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const kind = btn.dataset.dl;
+      if(kind === "svg") downloadSVG(plot, filename);
+      if(kind === "png") downloadPNG(plot, filename);
+      if(kind === "csv") downloadCSV(seriesList, filename);
+    });
+  });
+}
+function a11y(plot, title, desc){
+  plot.setAttribute("role","img");
+  plot.setAttribute("aria-label", title + ". " + desc);
+  const t = document.createElementNS("http://www.w3.org/2000/svg","title");
+  t.textContent = title;
+  plot.insertBefore(t, plot.firstChild);
+}
+
+/* ---------- crosshair + tooltip ---------- */
+function addCrosshair(container, plot, seriesList, geo){
+  const {W,H,ml,mr,mt,mb,d0,d1} = geo;
+  const ns = "http://www.w3.org/2000/svg";
+  const t0 = seriesList[0].data[0].date.getTime();
+  const t1 = seriesList[0].data.at(-1).date.getTime();
+  const xPix = d => ml + (d.getTime()-t0)/(t1-t0) * (W-ml-mr);
+  const yPix = v => mt + (1-(v-d0)/(d1-d0)) * (H-mt-mb);
+
+  const rule = document.createElementNS(ns,"line");
+  rule.setAttribute("stroke","#1B1A17"); rule.setAttribute("stroke-width","1");
+  rule.setAttribute("y1",mt); rule.setAttribute("y2",H-mb); rule.style.display="none";
+  plot.appendChild(rule);
+  const dots = seriesList.map(s=>{
+    const c = document.createElementNS(ns,"circle");
+    c.setAttribute("r","3.5"); c.setAttribute("fill",s.color);
+    c.setAttribute("stroke","#FFFFFF"); c.setAttribute("stroke-width","1.5");
+    c.style.display="none";
+    plot.appendChild(c);
+    return c;
+  });
+  const tip = container.querySelector(".cb-tip");
+
+  plot.addEventListener("pointermove", e=>{
+    const rect = plot.getBoundingClientRect();
+    const px = (e.clientX-rect.left) * (W/rect.width);
+    let t = (px-ml)/(W-ml-mr);
+    if(t<0 || t>1){ return; }
+    const target = t0 + t*(t1-t0);
+    let i=0, best=Infinity;
+    seriesList[0].data.forEach((d,j)=>{
+      const diff = Math.abs(d.date.getTime()-target);
+      if(diff<best){ best=diff; i=j; }
+    });
+    const d = seriesList[0].data[i].date;
+    const x = xPix(d);
+    rule.setAttribute("x1",x); rule.setAttribute("x2",x); rule.style.display="";
+    seriesList.forEach((s,k)=>{
+      dots[k].setAttribute("cx",x);
+      dots[k].setAttribute("cy",yPix(s.data[i].value));
+      dots[k].style.display="";
+    });
+    tip.innerHTML =
+      `<div class="d">${fmtDate(d)}</div>` +
+      seriesList.map(s=>
+        `<div class="r"><span class="sw2" style="background:${s.color}"></span><span class="n">${s.label}</span><span class="v">${s.data[i].value.toFixed(2)}%</span></div>`
+      ).join("");
+    tip.style.display = "block";
+    const flip = x > W*0.72;
+    tip.style.left = (flip ? x-16-tip.offsetWidth : x+16) + "px";
+    tip.style.top = Math.max(10, yPix(seriesList[0].data[i].value)-40) + "px";
+  });
+  plot.addEventListener("pointerleave", ()=>{
+    rule.style.display="none";
+    dots.forEach(c=>c.style.display="none");
+    tip.style.display="none";
+  });
+}
+
+/* ---------- legend isolation ---------- */
+function wireLegend(blockEl, plot, keys){
+  blockEl.querySelectorAll(".chip").forEach(chip=>{
+    chip.addEventListener("mouseenter", ()=>{
+      keys.forEach(k=>{
+        if(k === chip.dataset.key) return;
+        const c = S[k].color;
+        plot.querySelectorAll(`[stroke="${c}"],[fill="${c}"]`).forEach(el=>{ el.style.opacity = 0.12; });
+      });
+    });
+    chip.addEventListener("mouseleave", ()=>{
+      plot.querySelectorAll("[style]").forEach(el=>{ el.style.opacity = ""; });
+    });
+  });
+}
+
+function peakOf(s){
+  let p = s.data[0];
+  for(const d of s.data) if(d.value > p.value) p = d;
+  return p;
+}
+
+/* ---------- plate 1 ---------- */
+{
+  const keys = ["headline","food","fuel","core"];
+  const seriesList = keys.map(k=>S[k]);
+  const pk = peakOf(S.headline);
+  const geo = {W:1120, H:620, ml:64, mr:160, mt:30, mb:42, d0:0, d1:13};
+  const marks = [
+    Plot.rectY([{y1:2, y2:6}], {
+      y1:"y1", y2:"y2", x1:dates[0], x2:dates.at(-1), fill:"#F8F6F1",
+    }),
+    Plot.ruleY([0], {stroke:"#E6E2D6"}),
+    Plot.ruleY([4], {stroke:"#CFC9BA", strokeWidth:1, strokeDasharray:"4,4"}),
+    Plot.text([{date:dates[2], value:4.34}], {
+      x:"date", y:"value", text:["RBI target · 4%"], fontSize:11, fill:"#8A857A",
+      fontFamily:mono, textAnchor:"start",
+    }),
+    Plot.text([{date:dates[2], value:6.6}], {
+      x:"date", y:"value", text:["Tolerance band · 2–6%"], fontSize:11,
+      fill:"#8A857A", fontFamily:mono, textAnchor:"start",
+    }),
+    Plot.ruleX([new Date(2020,3,1)], {stroke:"#CFC9BA", strokeWidth:1, strokeDasharray:"3,3"}),
+    Plot.text([{date:new Date(2020,5,1), value:12.3}], {
+      x:"date", y:"value", text:["COVID-19"], fontSize:11, fill:"#8A857A",
+      fontFamily:mono, textAnchor:"start",
+    }),
+    ...["food","fuel","core"].map(k => Plot.lineY(S[k].data, {
+      x:"date", y:"value", stroke:S[k].color, strokeWidth:1.75, curve:"catmull-rom",
+    })),
+    Plot.lineY(S.headline.data, {
+      x:"date", y:"value", stroke:S.headline.color, strokeWidth:2.5, curve:"catmull-rom",
+    }),
+    Plot.lineY(S.headline.data.slice(-13), {
+      x:"date", y:"value", stroke:S.headline.color, strokeWidth:3.5,
+      curve:"catmull-rom", strokeLinecap:"round",
+    }),
+    Plot.dot([pk], {x:"date", y:"value", fill:S.headline.color, r:4}),
+    Plot.text([pk], {
+      x:"date", y:"value", text:()=>pk.value.toFixed(1)+"% · "+fmtDate(pk.date),
+      dy:-16, fill:S.headline.color, fontSize:12.5, fontFamily:mono, textAnchor:"middle",
+    }),
+    Plot.dot([S.headline.data.at(-1)], {x:"date", y:"value", fill:S.headline.color, r:4.5}),
+    ...seriesList.map(s => Plot.text([s.data.at(-1)], {
+      x:"date", y:"value",
+      text:d=>`${s.label} ${d.value.toFixed(1)}%`,
+      dx:16, fill:s.color, fontSize:13, fontFamily:mono,
+      fontWeight: s === S.headline ? 500 : 400, textAnchor:"start",
+    })),
+  ];
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style:{background:"transparent", fontFamily:mono, fontSize:"12.5px", color:"#6E695D", overflow:"visible"},
+    x:{
+      label:null, tickSize:0, tickPadding:15,
+      ticks:[2016,2017,2018,2019,2020,2021,2022,2023,2024,2025].map(y=>new Date(y,0,1)),
+      tickFormat:d=>d.getFullYear(),
+    },
+    y:{
+      label:"↑ year-on-year, per cent", labelAnchor:"top", labelArrow:false,
+      grid:true, tickFormat:d=>d+"%", ticks:[0,2,4,6,8,10,12], domain:[geo.d0,geo.d1], tickSize:0, tickPadding:10,
+    },
+    marks,
+  });
+  a11y(plot, "Headline CPI and components, year-on-year, January 2016 to May 2025",
+    "Line chart. Headline ends at 4.8 per cent, food at 6.1, fuel at 2.3, core at 3.9. Shaded band marks the RBI tolerance range of 2 to 6 per cent; dashed line the 4 per cent target. Peak of 7.8 per cent in April 2022 annotated.");
+  document.getElementById("plot-main").append(plot);
+  wireTools(document.getElementById("cb-main"), plot, seriesList, "india-atlas_cpi_headline-components_2016-2025");
+  wireLegend(document.getElementById("legend-main"), plot, keys);
+  addCrosshair(document.getElementById("plot-main"), plot, seriesList, geo);
+}
+
+/* ---------- component plates ---------- */
+function componentChart(blockId, plotId, key, d1, yTicks, extraNote){
+  const s = S[key];
+  const pk = peakOf(s);
+  const geo = {W:1120, H:460, ml:64, mr:116, mt:28, mb:42, d0:0, d1};
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style:{background:"transparent", fontFamily:mono, fontSize:"12.5px", color:"#6E695D", overflow:"visible"},
+    x:{
+      label:null, tickSize:0, tickPadding:15,
+      ticks:[2016,2018,2020,2022,2024].map(y=>new Date(y,0,1)),
+      tickFormat:d=>d.getFullYear(),
+    },
+    y:{
+      label:"↑ y/y, per cent", labelAnchor:"top", labelArrow:false,
+      grid:true, tickFormat:d=>d+"%", ticks:yTicks, domain:[geo.d0,geo.d1], tickSize:0, tickPadding:10,
+    },
+    marks:[
+      Plot.rectY([{y1:2, y2:6}], {
+        y1:"y1", y2:"y2", x1:dates[0], x2:dates.at(-1), fill:"#F8F6F1",
+      }),
+      Plot.ruleY([0], {stroke:"#E6E2D6"}),
+      Plot.areaY(s.data, {x:"date", y:"value", fill:s.color, fillOpacity:0.08, curve:"catmull-rom"}),
+      Plot.lineY(s.data, {x:"date", y:"value", stroke:s.color, strokeWidth:2, curve:"catmull-rom"}),
+      Plot.lineY(s.data.slice(-13), {
+        x:"date", y:"value", stroke:s.color, strokeWidth:3.25, curve:"catmull-rom", strokeLinecap:"round",
+      }),
+      Plot.dot([pk], {x:"date", y:"value", fill:"#BE3E26", r:4}),
+      Plot.text([pk], {
+        x:"date", y:"value", text:()=>pk.value.toFixed(1)+"% · "+fmtDate(pk.date),
+        dy:-16, fill:"#BE3E26", fontSize:12, fontFamily:mono, textAnchor:"middle",
+      }),
+      Plot.dot([s.data.at(-1)], {x:"date", y:"value", fill:"#BE3E26", r:4.5}),
+      Plot.text([s.data.at(-1)], {
+        x:"date", y:"value", text:d=>d.value.toFixed(1)+"%",
+        dx:15, fill:"#BE3E26", fontSize:13, fontFamily:mono, fontWeight:500, textAnchor:"start",
+      }),
+    ],
+  });
+  a11y(plot, s.label + " inflation, year-on-year, 2016 to 2025",
+    "Line chart ending at " + s.data.at(-1).value + " per cent, peaking at " + pk.value + " per cent in " + fmtDate(pk.date) + ". " + (extraNote || ""));
+  document.getElementById(plotId).append(plot);
+  wireTools(document.getElementById(blockId), plot, [s], "india-atlas_cpi_" + key + "_2016-2025");
+  addCrosshair(document.getElementById(plotId), plot, [s], geo);
+}
+componentChart("cb-food","plot-food","food", 13, [0,3,6,9,12], "Shaded band marks the RBI tolerance range.");
+componentChart("cb-fuel","plot-fuel","fuel", 12, [0,2,4,6,8,10], "Shaded band marks the RBI tolerance range.");
+componentChart("cb-core","plot-core","core", 8, [0,2,4,6,8], "Core excludes food and fuel; derived, not published directly.");
+
+/* ---------- ledger sparklines ---------- */
+function spark(id, s){
+  const plot = Plot.plot({
+    width: 170, height: 38,
+    marginLeft: 0, marginRight: 0, marginTop: 4, marginBottom: 4,
+    style:{background:"transparent"},
+    x:{axis:null}, y:{axis:null},
+    marks:[
+      Plot.ruleY([0], {stroke:"#E6E2D6"}),
+      Plot.lineY(s.data, {x:"date", y:"value", stroke:s.color, strokeWidth:1.25, curve:"catmull-rom"}),
+      Plot.dot([s.data.at(-1)], {x:"date", y:"value", fill:s.color, r:2}),
+    ],
+  });
+  plot.setAttribute("aria-hidden","true");
+  document.getElementById(id).append(plot);
+}
+spark("sp-head", S.headline);
+spark("sp-food", S.food);
+spark("sp-fuel", S.fuel);
+spark("sp-core", S.core);
+</script>
+</body>
+</html>

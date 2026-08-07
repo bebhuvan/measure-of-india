@@ -1,0 +1,149 @@
+---
+import Learn from "../layouts/Learn.astro";
+---
+<Learn
+  title="India Atlas — Learn · Core inflation: the signal under the noise"
+  description="Learn № 04 — core inflation: CPI ex food ex fuel, the part of the price level monetary policy can reach. What it is, why the RBI watches it, and why India has no official core series."
+  slug="core-inflation"
+  kicker="Learn № 04 — Prices · Core inflation"
+  h1="The signal under the <i>noise.</i>"
+  lede="Food is weather and fuel is geopolitics; neither answers to interest rates. Strip them from the index and what remains is the part of inflation the RBI can actually reach."
+  meta={[
+    ["Concept", "Core inflation"],
+    ["Illustrated with", "Core vs headline · 2016–2025"],
+    ["Source", "MoSPI, NSO · core computed"],
+    ["Level", "First principles"],
+    ["Reading time", "7 min"],
+  ]}
+  dateStamp="Evergreen"
+  crumbTitle="Core inflation"
+>
+
+  <!-- § 01 the definition -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The word, defined</h2><span class="line"></span><span class="unit">First principles</span></div>
+    <div class="wm-grid">
+      <div>
+        <p>A bad monsoon lifts food prices. A war in the Gulf lifts fuel prices. A central bank can do nothing about either, yet both land in the inflation number it is judged by. So economists strip them out. What remains, roughly half the index, is core inflation: the part of the price level that answers to demand, wages and interest rates.</p>
+        <aside class="defbox">
+          <div class="term">Core inflation <span class="sub">CPI ex food, ex fuel · weight 47.30</span></div>
+          <p>The year-on-year rate of the basket with food and fuel removed: the 47.30 per cent of spending that is left. Food is weather, fuel is geopolitics, and monetary policy reaches neither, so the residue is read as the demand side of the economy.</p>
+          <div class="eg"><b>In plain words:</b> core is inflation with the weather taken out.</div>
+        </aside>
+        <p style="margin-top:1.4em">The logic is triage, not denial. People still buy food, and food is nearly half the budget. But the central bank's tools work through credit and demand, and the core basket is where those forces show up cleanest. When core is calm, a headline spike will pass. When core is climbing, a calm headline will not last.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note · i</span>
+          <b>Nobody eats core.</b> Food is 45.86 per cent of the real budget. Core is a policy gauge, not a description of anyone's life.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · ii</span>
+          <b>What the RBI can reach.</b> Interest rates work on demand. They cannot make it rain.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · iii</span>
+          <b>Read the pair, not the print.</b> Core above the headline means volatile items are holding the average down. Core below means they are propping it up.
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 plate : core vs headline -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>A decade of the two lines</h2><span class="line"></span><span class="unit">y/y % · monthly</span></div>
+    <div class="break">
+      <figure id="cb-core" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The average and its anchor — core against headline, 2016–2025</h3>
+            <div class="sub">CPI combined · year-on-year, per cent · Jan 2016 – Dec 2025 · core computed from group indices</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-core">–</div><div class="c">Dec 2025 · core y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-core"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, CPI group indices, base 2012=100, vintage <span id="pf-core">–</span> · core computed from group indices; not an official NSO series · shaded band: RBI tolerance 2–6% · dashed: 4% target</span>
+            <span class="dl">
+              <button data-dl="svg">SVG</button><span class="sep"></span>
+              <button data-dl="png">PNG</button><span class="sep"></span>
+              <button data-dl="csv">CSV</button><span class="sep"></span>
+              <a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a>
+            </span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The vermilion line is the headline, the number in the news. The dashed grey line is core: the same measure with food and fuel removed. When the two separate, the volatile half of the basket is doing the talking, and the direction of the gap tells you which way.</p>
+            <p>Core moves less, and moves late. Across this decade it stayed between <b id="ev-cmin">–</b> and <b id="ev-cmax">–</b>, never once reaching the 2 per cent floor of the band even as the headline visited both edges. India's core has a structural floor: administered prices, services and housing costs grind rather than swing.</p>
+          </div>
+          <div class="now">
+            <span class="mk">The 2025 case</span>
+            <p>Through 2025 the headline collapsed, ending the year at <b id="ex-hdec">–</b>. Core did the opposite: it climbed through the year and closed at <b id="ex-cdec">–</b>, a wedge of <b id="ex-gap">–</b> between the two lines. The average was being held down by volatile items, cheap vegetables above all, while underlying pressure climbed past the 4 per cent target and stayed there.</p>
+            <p>Read both lines and the year looks different: not inflation beaten, but inflation rearranged. That wedge is the reason this page exists.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 03 no official series -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>A number India does not officially publish</h2><span class="line"></span><span class="unit">Honesty clause</span></div>
+    <p>Here is the part most explainers skip. The National Statistical Office publishes the group indices: food, fuel, clothing, housing and the rest. It publishes no core series. Every Indian core number you have ever seen was computed by someone, whether the RBI's researchers, a bank's economists, a newspaper, or this site.</p>
+    <p>Ours is built from the published group indices using the official weights, and it is labelled as computed wherever it appears. The recipe is public and the ingredients are official. Know, though, that the dish is assembled, not served.</p>
+    <aside class="defbox">
+      <div class="term">Derived series <span class="sub">computed, not published</span></div>
+      <p>A series built by applying a stated method to published data. Core inflation in India is one: the group indices and the weights are official, the ex-food-ex-fuel aggregate is not. A derived series is only as good as its recipe, so the recipe must always be stated alongside the number.</p>
+      <div class="eg"><b>In plain words:</b> official ingredients, home cooking; the label should say so.</div>
+    </aside>
+  </section>
+
+  <!-- § 04 misreads -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>How to misread this concept</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li>
+        <span class="no">i.</span>
+        <div>
+          <h3>“Core is the real inflation.”</h3>
+          <p>No. Core is the inflation monetary policy can reach. The real inflation is the one households pay, food included, and food is 45.86 per cent of the budget. Strip the weather out to steer, never to describe.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">ii.</span>
+        <div>
+          <h3>“Core is an official series.”</h3>
+          <p>It is not. The NSO publishes group indices, not a core aggregate; every core number in circulation is computed from them, including the one on this page. That does not make it wrong. It makes the recipe part of the claim.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iii.</span>
+        <div>
+          <h3>“A low headline means low underlying pressure.”</h3>
+          <p>December 2025 says otherwise: a headline of <b id="mr3-h">–</b> with core at <b id="mr3-c">–</b>. The calm sat in the volatile half of the basket. The pressure, <b id="mr3-gap">–</b> above it, had not gone anywhere.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <div slot="prov-source">
+    <h6>Source of record</h6>
+    <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. CPI group indices on base 2012=100, combined; retrieved via the eSankhyiki API, vintage 2026-08-04. Headline and core year-on-year rates are computed from the published group indices using the official weights.</p>
+  </div>
+  <div slot="prov-revision">
+    <h6>Definitions &amp; honesty</h6>
+    <p>Core inflation is not an official NSO series. This page computes it as the index excluding food and fuel, weight 47.30, and labels it as computed wherever it appears. Housing group indices for December 2018 to September 2019 were never published; those months are interpolated and flagged in the series metadata.</p>
+  </div>
+  <div slot="prov-note">
+    <h6>This note</h6>
+    <p>Learn № 04 · Prices · version 1.0. Evergreen, written to survive the next print. The 2025 wedge is used as history, not news; the chart redraws from the baked data on every build.</p>
+    <p>Companion dossier: <a href="/dossiers/cpi/">Dossier 01 · Consumer Price Index</a>.</p>
+  </div>
+
+<script>
+  import "./core-inflation.client.js";
+</script>
+</Learn>

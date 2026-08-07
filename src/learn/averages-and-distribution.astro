@@ -1,0 +1,184 @@
+---
+import Learn from "../layouts/Learn.astro";
+---
+<Learn
+  title="India Atlas — Learn · Averages and distribution: the average hides the spread"
+  description="Learn № 18 — the mean hides the spread. A five-person example where total income rises 8 per cent because one person's income doubles while four stay flat: the mean says prosperity, the median says nothing happened. The questions to ask of any average."
+  slug="averages-and-distribution"
+  kicker="Learn № 18 — Reading numbers · Averages and distribution"
+  h1="The average hides <i>the spread.</i>"
+  lede="An 8 per cent economy can leave most people exactly where they were, and the average will not tell you. Mean and median are both honest numbers; they answer different questions. This page is about the gap between those questions."
+  meta={[
+    ["Concept", "Averages & distribution"],
+    ["Illustrated with", "A five-person example"],
+    ["Source", "Worked example · toy figures"],
+    ["Level", "First principles"],
+    ["Reading time", "7 min"],
+  ]}
+  dateStamp="Evergreen"
+  crumbTitle="Averages and distribution"
+>
+
+  <!-- § 01 the compression -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>One number, folded from millions</h2><span class="line"></span><span class="unit">First principles</span></div>
+    <div class="wm-grid">
+      <div>
+        <p>Ask how a country is doing and someone will quote an average: per capita income, mean wages, average inflation. An average is a compression. Hundreds of millions of experiences are folded into one number. Compression is useful, and it is where things get lost.</p>
+        <aside class="defbox">
+          <div class="term">Mean <span class="sub">the arithmetic average · sum divided by count</span></div>
+          <p>Add up everyone's income and divide by the number of people. The mean is easy to compute and easy to move: one very large income pulls it upward even if nobody else's income changes.</p>
+          <div class="eg"><b>In plain words:</b> the per-person share if the total were divided equally, which it is not.</div>
+        </aside>
+        <aside class="defbox">
+          <div class="term">Median <span class="sub">the middle value · half above, half below</span></div>
+          <p>Line everyone up from poorest to richest and take the person in the middle. The median does not care how much the top earner makes; doubling the richest income leaves the middle person exactly where they were.</p>
+          <div class="eg"><b>In plain words:</b> the typical person, as opposed to the arithmetical one.</div>
+        </aside>
+        <aside class="defbox">
+          <div class="term">Distribution <span class="sub">who sits where on the line</span></div>
+          <p>The full shape of incomes across the population: how many are near the bottom, how thick the middle is, how long the top tail runs. Two countries can share a mean and have entirely different distributions, and entirely different lived economies.</p>
+          <div class="eg"><b>In plain words:</b> the picture the average flattens.</div>
+        </aside>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note · i</span>
+          <b>Both honest, different questions.</b> A mean can rise while the median does not move. Neither number is wrong; they were never asked the same thing.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · ii</span>
+          <b>Same headline, different country.</b> Growth concentrated at the top and growth evenly shared produce identical GDP prints.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · iii</span>
+          <b>The average Indian is no one.</b> The mean folds hundreds of millions of lives into one person who exists nowhere.
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 five people -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>Five people, one doubling</h2><span class="line"></span><span class="unit">A worked example · toy figures</span></div>
+    <p>Suppose five people earn toy incomes in lakh per year: 1.2, 3.0, 3.0, 3.0 and 4.8. Their total is ₹15 lakh. Then one person's income doubles, from ₹1.2 lakh to ₹2.4 lakh, while the other four stay flat. Watch what the two averages do.</p>
+    <div class="break ledger" style="margin-top:48px">
+      <table>
+        <thead>
+          <tr><th>Person</th><th>Before</th><th>After</th><th>Change</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="name">Asha</td>
+            <td class="chg">₹1.2 lakh</td>
+            <td class="chg">₹2.4 lakh</td>
+            <td class="name">Doubled</td>
+          </tr>
+          <tr>
+            <td class="name">Bina</td>
+            <td class="chg">₹3.0 lakh</td>
+            <td class="chg">₹3.0 lakh</td>
+            <td class="name">Flat</td>
+          </tr>
+          <tr>
+            <td class="name">Chand</td>
+            <td class="chg">₹3.0 lakh</td>
+            <td class="chg">₹3.0 lakh</td>
+            <td class="name">Flat</td>
+          </tr>
+          <tr>
+            <td class="name">Dev</td>
+            <td class="chg">₹3.0 lakh</td>
+            <td class="chg">₹3.0 lakh</td>
+            <td class="name">Flat</td>
+          </tr>
+          <tr>
+            <td class="name">Esha</td>
+            <td class="chg">₹4.8 lakh</td>
+            <td class="chg">₹4.8 lakh</td>
+            <td class="name">Flat</td>
+          </tr>
+          <tr>
+            <td class="name">The mean<small>total ÷ five</small></td>
+            <td class="chg">₹3.0 lakh</td>
+            <td class="chg">₹3.24 lakh</td>
+            <td class="name">Up 8 per cent</td>
+          </tr>
+          <tr>
+            <td class="name">The median<small>the middle person</small></td>
+            <td class="chg">₹3.0 lakh</td>
+            <td class="chg">₹3.0 lakh</td>
+            <td class="name">Unmoved</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:40px">The total income of the five rises 8 per cent, and the mean rises with it: prosperity, by the average. The median does not move at all. The person in the middle earned ₹3 lakh before and earns ₹3 lakh after, and four of the five people are exactly where they started. Both numbers are honest. They are answering different questions, and the mistake is thinking they answer the same one.</p>
+  </section>
+
+  <!-- § 03 two claims -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>Two claims, not one</h2><span class="line"></span><span class="unit">Reading any average</span></div>
+    <div class="wm-grid">
+      <div>
+        <p>“GDP grew 8 per cent” and “Indians are better off” are different claims. The first is about a total. The second is about a distribution, and it cannot be settled by the total. An economy where the top decile takes all the growth and an economy where everyone gains 8 per cent produce the same headline. Only one of them matches the second sentence.</p>
+        <p>This is not an argument against averages. Totals and means answer real questions: how much is there, and is there more than before? It is an argument for asking the next question. When you are quoted an average, ask three things of it. Is it a mean or a median? The two part company precisely when the spread is wide. Who is in it? A national average folds farmer and banker into one person who exists nowhere. And what does the spread look like? The average plus the spread is the beginning of the truth; the average alone is the end of the conversation.</p>
+        <p>The same discipline applies to the per capita figure, which is a mean in national dress. The companion note on <a href="/learn/per-capita/">per capita</a> divides the economy by its people; this page asks what that division conceals.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note · iv</span>
+          <b>Three questions for any average.</b> Mean or median? Who is in it? What does the spread look like?
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · v</span>
+          <b>The gap is a fact.</b> Mean minus median is a measurement, not an opinion. What to do about it is politics; noticing it is accounting.
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 04 misreads -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>How to misread this concept</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li>
+        <span class="no">i.</span>
+        <div>
+          <h3>“The average Indian is a real person.”</h3>
+          <p>No one earns the average. The mean is a property of the group, not a biography: mix a village and a boardroom and the average of the room belongs to nobody in it. The typical person is the median, and even the median is a position, not a person.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">ii.</span>
+        <div>
+          <h3>“If the mean rises, most people are better off.”</h3>
+          <p>Not necessarily. In the five-person example the mean rose 8 per cent while four people gained nothing. A rising mean tells you the total grew; who gained is a separate question, answered only by looking at the spread.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iii.</span>
+        <div>
+          <h3>“Talking about distribution is just politics.”</h3>
+          <p>It is arithmetic first. The mean and the median are two measurements of the same data, and the gap between them is a fact, not an opinion. What to do about the gap is politics. Noticing it is accounting.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <div slot="prov-source">
+    <h6>Source of record</h6>
+    <p>This note teaches with a worked example, and the five incomes in it are toy figures chosen so the arithmetic is legible: one doubling moves the total by exactly 8 per cent and the median by zero. The concepts (mean, median, distribution) are standard; no survey is quoted.</p>
+  </div>
+  <div slot="prov-revision">
+    <h6>Definitions &amp; honesty</h6>
+    <p>Mean, median and distribution are used in their statistical senses. The toy example makes one narrow claim: an average can rise while most people stand still. It makes no claim about the actual shape of Indian incomes, which is a data question this page deliberately leaves to the surveys.</p>
+    <p>Where a toy figure stands in for data, the page says so rather than borrowing authority it has not earned.</p>
+  </div>
+  <div slot="prov-note">
+    <h6>This note</h6>
+    <p>Learn № 18 · Reading numbers · version 1.0. Evergreen, written to survive the next print. Companion notes: <a href="/learn/per-capita/">Per capita</a>, <a href="/learn/real-vs-nominal/">Real versus nominal</a>.</p>
+    <p>Companion dossier: <a href="/dossiers/gdp/">Dossier 02 · National Accounts</a>.</p>
+  </div>
+
+</Learn>

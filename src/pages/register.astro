@@ -1,0 +1,114 @@
+---
+import Base from "../layouts/Base.astro";
+import "../styles/pages.css";
+---
+<Base
+  title="India Atlas — The Register"
+  description="Every series India Atlas tracks: what it is, who publishes it, its latest reading, and its shape over the decade."
+  nav="register"
+  dateStamp="July 2026"
+  crumbLeft="<b>The Register</b>"
+  crumbRight="<b>1,336</b> series baked · 8 dossiers · updated with each print"
+  canonical="https://indiaatlas.in/register/"
+>
+<div class="page register spage">
+
+  <div class="titleblock">
+    <div class="kicker">The Register</div>
+    <h1>Every series we track, <i>in one ledger.</i></h1>
+    <p class="lede">The complete inventory of India Atlas data: what each series is, who publishes it, its latest reading, and its shape over the decade. Derived series are tagged.</p>
+  </div>
+
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>Prices · Dossier 01</h2><span class="line"></span><span class="unit">Monthly · base 2024 from Jan 2026 · base 2012 retired Dec 2025</span></div>
+    <div class="break ledger">
+      <table>
+        <thead><tr><th>Series</th><th>Code</th><th>Latest</th><th>Year ago</th><th>Vintage</th><th class="spark">History</th></tr></thead>
+        <tbody id="reg-cpi"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>Output · Dossier 02</h2><span class="line"></span><span class="unit">Quarterly · vintage 28 Nov 2025</span></div>
+    <div class="break ledger">
+      <table>
+        <thead><tr><th>Series</th><th>Code</th><th>Latest</th><th>Year ago</th><th>Vintage</th><th class="spark">2016 – 2025</th></tr></thead>
+        <tbody id="reg-gdp"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>Wholesale prices · Dossier 03</h2><span class="line"></span><span class="unit">Monthly · vintage 14 May 2026</span></div>
+    <div class="break ledger">
+      <table>
+        <thead><tr><th>Series</th><th>Code</th><th>Latest</th><th>Year ago</th><th>Vintage</th><th class="spark">2016 – 2026</th></tr></thead>
+        <tbody id="reg-wpi"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>Industry · Dossier 04</h2><span class="line"></span><span class="unit">Monthly · base 2022-23 · quick estimates</span></div>
+    <div class="break ledger">
+      <table>
+        <thead><tr><th>Series</th><th>Code</th><th>Latest</th><th>Year ago</th><th>Vintage</th><th class="spark">2024 – 2026</th></tr></thead>
+        <tbody id="reg-iip"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>External · Dossier 05</h2><span class="line"></span><span class="unit">Monthly · data through Jun 2025</span></div>
+    <div class="break ledger">
+      <table>
+        <thead><tr><th>Series</th><th>Code</th><th>Latest</th><th>Year ago</th><th>Vintage</th><th class="spark">History</th></tr></thead>
+        <tbody id="reg-ext"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>Labour · Dossier 06</h2><span class="line"></span><span class="unit">Monthly · quarterly · annual · CWS &amp; PS+SS, never spliced</span></div>
+    <div class="break ledger">
+      <table>
+        <thead><tr><th>Series</th><th>Code</th><th>Latest</th><th>Year ago</th><th>Vintage</th><th class="spark">History</th></tr></thead>
+        <tbody id="reg-plfs"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>Consumption · Dossier 07</h2><span class="line"></span><span class="unit">Annual survey · rounds 2022-23 &amp; 2023-24</span></div>
+    <div class="break ledger">
+      <table>
+        <thead><tr><th>Series</th><th>Code</th><th>Latest</th><th>Year ago</th><th>Vintage</th><th class="spark">History</th></tr></thead>
+        <tbody id="reg-hces"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>Enterprises · Dossier 08</h2><span class="line"></span><span class="unit">Annual · ASI from 2008-09 · ASUSE from 2021-22</span></div>
+    <div class="break ledger">
+      <table>
+        <thead><tr><th>Series</th><th>Code</th><th>Latest</th><th>Year ago</th><th>Vintage</th><th class="spark">History</th></tr></thead>
+        <tbody id="reg-asi"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="provenance">
+    <div class="fine">
+      <span>India Atlas · Register</span>
+      <span>Data: MoSPI / NSO via eSankhyiki · vintages as shown</span>
+      <span>Set in Archivo, Newsreader &amp; Plex Mono</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../dossiers/register.client.js";
+</script>
+</Base>

@@ -1,0 +1,157 @@
+---
+import Learn from "../layouts/Learn.astro";
+---
+<Learn
+  title="India Atlas — Learn · GDP versus GVA: the tax wedge"
+  description="Learn № 10 — two headline numbers for the same economy. GVA is production priced at the producer's gate; GDP adds taxes on products and subtracts subsidies. The wedge is accounting, not a discrepancy."
+  slug="gdp-vs-gva"
+  kicker="Learn № 10 — Growth · GDP versus GVA"
+  h1="Two headline numbers, <i>one economy.</i>"
+  lede="India reports two growth figures every quarter, and they never quite agree. The gap between them is exactly one thing, taxes net of subsidies: accounting, not a discrepancy."
+  meta={[
+    ["Concept", "GDP versus GVA"],
+    ["Illustrated with", "Real GDP and GVA · Q1 FY17 – Q2 FY26"],
+    ["Source", "MoSPI, NSO"],
+    ["Level", "First principles"],
+    ["Reading time", "6 min"],
+  ]}
+  dateStamp="Evergreen"
+  crumbTitle="GDP versus GVA"
+>
+
+  <!-- § 01 two prices for the same output -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>Two prices for the same output</h2><span class="line"></span><span class="unit">First principles</span></div>
+    <div class="wm-grid">
+      <div>
+        <p>Every quarter, India reports two headline growth numbers, and they never quite agree. One is GDP, measured at market prices: what buyers pay. The other is GVA, measured at basic prices: what producers receive at the factory gate. The difference between the two is exactly one thing, taxes on products minus subsidies. It is accounting, not a discrepancy.</p>
+        <aside class="defbox">
+          <div class="term">GVA <span class="sub">gross value added · basic prices · the producers' side</span></div>
+          <p>The value produced by every sector, farms, factories and services, measured at the price the producer actually receives, before product taxes are added and subsidies netted off. Summed across sectors, it is the supply side of the economy in one number.</p>
+          <div class="eg"><b>In plain words:</b> what the economy makes, priced at the factory gate.</div>
+        </aside>
+        <p style="margin-top:1.4em">GDP takes that same production and re-prices it at the till. Add the taxes the government charges on products, subtract the subsidies it pays on them, and the producers' total becomes the purchasers' total. The identity is exact: <b>GDP equals GVA plus net taxes</b>.</p>
+        <aside class="defbox">
+          <div class="term">Net taxes <span class="sub">taxes on products − subsidies</span></div>
+          <p>GST, excise and customs duties, minus the subsidies the government pays on products such as fertiliser and food. This is the wedge that turns the producers' price into the purchasers' price, and the only reason the two headline numbers differ.</p>
+          <div class="eg"><b>In plain words:</b> the government's slice, added at the till.</div>
+        </aside>
+        <p style="margin-top:1.4em">A litre of petrol makes it concrete. The refiner and the dealer receive one price; the buyer pays that price plus excise and GST. GVA follows the first figure, GDP follows the second. Neither is wrong. They stand on opposite sides of the till, and each side has its uses.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note · i</span>
+          <b>GVA is the producers' side.</b> It says how farms, factories and services are doing, sector by sector, before the government touches the price.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · ii</span>
+          <b>GDP is the purchasers' side.</b> It says what the whole economy, the government's slice included, is worth at the till.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · iii</span>
+          <b>The wedge moves.</b> When subsidies surge or tax collections jump, the two growth rates part ways. Watch the gap, not only the lines.
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 plate : the two lines -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>The same decade, measured twice</h2><span class="line"></span><span class="unit">y/y % · quarterly</span></div>
+    <p>Drawn together, the two measures trace nearly the same path, because they measure the same economy. What separates them is the wedge, and once in the decade the wedge swings hard enough to put the lines in a different order.</p>
+    <div class="break">
+      <figure id="cb-gg" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Two lines for one economy — the gap between them is the tax wedge</h3>
+            <div class="sub">Real GDP and real GVA, year-on-year · constant 2011-12 prices · Q1 FY17 – Q2 FY26</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-gg">–</div><div class="c">Q2 FY26 · GDP y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-gg"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, National Accounts, base 2011-12, vintage <span id="pf-gg">–</span> · the vertical gap is taxes on products net of subsidies</span>
+            <span class="dl">
+              <button data-dl="svg">SVG</button><span class="sep"></span>
+              <button data-dl="png">PNG</button><span class="sep"></span>
+              <button data-dl="csv">CSV</button><span class="sep"></span>
+              <a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a>
+            </span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The two lines move together; that is the first thing to see, and it is reassuring. The second thing is the gap. When GDP runs above GVA, product taxes are growing faster than subsidies. When it dips below, subsidies are winning. A swinging gap says something about the government's accounts, nothing about measurement error.</p>
+          </div>
+          <div class="now">
+            <span class="mk">The FY21 case</span>
+            <p>In Q4 FY21 the lines crossed in an instructive way. GVA grew <b id="fy21-gva">–</b> while GDP grew only <b id="fy21-gdp">–</b>. Production was recovering, but the wedge had swung: subsidy payouts rose sharply in the pandemic year even as tax collections fell.</p>
+            <p>Same economy, same quarter, two true numbers. Anyone quoting only one of them that quarter told half the story.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 03 which to quote -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>Which one to quote, and when</h2><span class="line"></span><span class="unit">A rule of thumb</span></div>
+    <div class="numbers">
+      <div class="num"><div class="l">GDP · Q2 FY26</div><div class="v acc" id="n-gdp">–</div><div class="d">market prices · the headline</div></div>
+      <div class="num"><div class="l">GVA · Q2 FY26</div><div class="v" id="n-gva">–</div><div class="d">basic prices · the producers' side</div></div>
+      <div class="num"><div class="l">The gap</div><div class="v" id="n-gap">–</div><div class="d">GDP minus GVA, points</div></div>
+      <div class="num"><div class="l">The wedge in levels</div><div class="v" id="n-wedge">–</div><div class="d">net taxes · share of GDP, Q2 FY26</div></div>
+    </div>
+    <p style="margin-top:40px">For the size and growth of the whole economy, quote GDP. It is the international standard, the budget is framed in it, and the RBI's models consume it. For the health of farms, factories and services, quote GVA: the sector detail lives on the producers' side, and the tax wedge adds nothing to that question.</p>
+    <p>The everyday error is quoting one when the question belongs to the other. Asking how manufacturing fared and answering with GDP imports the government's tax slice into a question about factory gates. Asking how fast the economy is growing and answering with GVA understates what buyers actually paid. Match the number to the question, and the two headlines stop competing.</p>
+  </section>
+
+  <!-- § 04 misreads -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>How to misread this concept</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li>
+        <span class="no">i.</span>
+        <div>
+          <h3>“One of them must be wrong.”</h3>
+          <p>No. They answer different questions at different prices. A shop's bill and the shopkeeper's receipt differ by the tax, and nobody calls that a contradiction. GDP and GVA differ by the same logic, at the scale of a country.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">ii.</span>
+        <div>
+          <h3>“Always quote GDP.”</h3>
+          <p>GDP is the right headline for size and international comparison. It is the wrong lens for the sector story. When agriculture or manufacturing is the question, GVA is the cleaner read, because the tax wedge says nothing about how farms and factories fared.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iii.</span>
+        <div>
+          <h3>“The gap is a data error.”</h3>
+          <p>The gap is defined, not discovered. GDP minus GVA equals taxes on products minus subsidies, by construction. It widens when collections surge and narrows when subsidies do; in the pandemic year it swung hard enough to put GDP growth below GVA growth. That is information, not noise.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <div slot="prov-source">
+    <h6>Source of record</h6>
+    <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. Quarterly estimates of GDP at market prices and GVA at basic prices, constant 2011-12; year-on-year growth computed from the published levels, vintage 2026-08-04. The wedge in levels is computed as GDP minus GVA.</p>
+  </div>
+  <div slot="prov-revision">
+    <h6>Definitions &amp; honesty</h6>
+    <p>The identity GDP = GVA + taxes on products − subsidies holds by construction in the accounts, small statistical discrepancies aside. Both series here are real, not nominal: prices are held at 2011-12 levels.</p>
+    <p>Quarters of the past two years are provisional estimates and will be revised.</p>
+  </div>
+  <div slot="prov-note">
+    <h6>This note</h6>
+    <p>Learn № 10 · Growth · version 1.0. Evergreen, written to survive the next print. The FY21 episode is used as history, not news; the chart redraws from the baked data on every build.</p>
+    <p>Companion dossier: <a href="/dossiers/gdp/">Dossier 02 · National Accounts</a>.</p>
+  </div>
+
+<script>
+  import "./gdp-vs-gva.client.js";
+</script>
+</Learn>

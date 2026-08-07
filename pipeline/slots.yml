@@ -1,0 +1,51 @@
+# Slot contracts for dated prose generation.
+# Evergreen slots (how-to-read, misread, margin-note) are NEVER generated —
+# they are human-only. Only the dated slots below regenerate on a release.
+
+cpi:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [headline.latest, food.latest, fuel.latest]
+    bannedWords: []
+    brief: >
+      Two short paragraphs. What the print says: the headline, what drives it
+      (food, fuel), any streak worth naming. Concede what is genuinely good
+      before qualifying it.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [headline.latest, core.latest]
+    brief: >
+      The honest limits: the rate is not the price level; core versus headline;
+      what we do not know. Must contain a plain "we do not know" sentence.
+  - id: as-of.plate1
+    maxSentences: 6
+    dateStamp: true
+    requiredFigures: [headline.yearStart, headline.latest]
+    brief: >
+      The year in one arc: where it started, where it ended, position in the
+      band, and the one thing to watch (the core-headline wedge).
+
+gdp:
+  - id: current-reading.what-the-print-says
+    maxSentences: 6
+    dateStamp: true
+    requiredFigures: [gdp.latest, gdp.previous, pfce.latest, gfcf.latest, gva.latest]
+    brief: >
+      The quarter: growth, direction of travel vs the previous quarter, the
+      composition (consumption, investment), and the GDP–GVA gap as accounting.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 5
+    dateStamp: false
+    requiredFigures: [gdp.latest]
+    brief: >
+      Distribution, the unmeasured informal sector, and revisions. Must state
+      which estimate this is and that the final figure may differ.
+  - id: as-of.plate1
+    maxSentences: 6
+    dateStamp: true
+    requiredFigures: [gdp.last4]
+    brief: >
+      The trend read: the last four quarters as a sequence, position vs the 6%
+      trend, and the early-estimate caution.

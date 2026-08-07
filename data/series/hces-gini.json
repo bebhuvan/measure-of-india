@@ -1,0 +1,61 @@
+{
+ "meta": {
+  "dossier": "hces",
+  "frequency": "annual",
+  "base": "survey 2022-23 & 2023-24",
+  "source": "MoSPI, National Statistical Office",
+  "vintage": "2026-08-06",
+  "mock": false,
+  "latestPeriod": "2023-04",
+  "releaseDate": null,
+  "revisionPolicy": "Survey estimates are final on release. Each round is a cross-section; the two rounds are comparable by design but are never averaged or chained.",
+  "coverage": "All India, rural and urban; Gini coefficient of per-capita consumption expenditure",
+  "note": "\"Without imputation\" is the headline MPCE convention (comparable across the two rounds); \"with imputation\" adds the imputed value of items received free of cost through social welfare programmes. Only the 2022-23 and 2023-24 HCES rounds exist in the eSankhyiki API — the 2011-12 and earlier NSS CES rounds are not served and are methodologically different; these series must never be spliced with them."
+ },
+ "dates": [
+  "2022-04-01",
+  "2023-04-01"
+ ],
+ "series": {
+  "rural": {
+   "name": "hces_gini_rural",
+   "label": "Rural (without imputation)",
+   "color": "#BE3E26",
+   "data": [
+    0.266,
+    0.237
+   ],
+   "unit": "gini"
+  },
+  "urban": {
+   "name": "hces_gini_urban",
+   "label": "Urban (without imputation)",
+   "color": "#5B564B",
+   "data": [
+    0.314,
+    0.284
+   ],
+   "unit": "gini"
+  },
+  "rural_imputed": {
+   "name": "hces_gini_rural_imputed",
+   "label": "Rural (with imputation)",
+   "color": "#8A857A",
+   "data": [
+    0.261,
+    0.23
+   ],
+   "unit": "gini"
+  },
+  "urban_imputed": {
+   "name": "hces_gini_urban_imputed",
+   "label": "Urban (with imputation)",
+   "color": "#A8A293",
+   "data": [
+    0.309,
+    0.279
+   ],
+   "unit": "gini"
+  }
+ }
+}

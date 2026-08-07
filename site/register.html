@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>India Atlas — The Register</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF;--ink:#1B1A17;--ink-soft:#4A463F;--muted:#8A857A;--faint:#B4AFA2;
+    --rule:#E6E2D6;--accent:#BE3E26;--grey1:#5B564B;--grey2:#A8A293;--grey3:#C6C0B0;--band:#F8F6F1;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:"Newsreader",Georgia,serif;font-weight:460;
+    font-size:1.18rem;line-height:1.82;-webkit-font-smoothing:antialiased}
+  .page{max-width:880px;margin:0 auto;padding:0 32px}
+  .break{width:min(1280px, calc(100vw - 48px));margin-left:50%;transform:translateX(-50%)}
+  .sitehead{border-bottom:1px solid var(--ink)}
+  .sh-in{max-width:1184px;margin:0 auto;padding:0 32px;height:66px;display:flex;align-items:center;gap:40px}
+  .brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink);
+    font-family:"Archivo",sans-serif;font-weight:720;font-size:1.05rem;letter-spacing:-0.015em}
+  .brand .mark{width:10px;height:10px;background:var(--accent)}
+  .sh-nav{display:flex;gap:30px;margin-left:auto}
+  .sh-nav a{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink-soft);text-decoration:none;
+    padding-bottom:3px;border-bottom:1px solid transparent;
+    transition:color .15s ease,border-color .15s ease}
+  .sh-nav a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+  .sh-nav a[aria-current]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--accent)}
+  .sh-date{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);border-left:1px solid var(--rule);padding-left:30px}
+  .crumb{border-bottom:1px solid var(--rule);font-family:"IBM Plex Mono",monospace;
+    font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .crumb .crumb-in{max-width:1184px;margin:0 auto;padding:10px 32px;display:flex;justify-content:space-between;gap:24px}
+  .crumb b{color:var(--ink);font-weight:500}
+
+  .kicker{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--accent);margin-bottom:30px}
+  h1{font-family:"Archivo",sans-serif;font-weight:720;font-size:4.4rem;line-height:1.0;letter-spacing:-0.034em;text-wrap:balance}
+  h1 i{font-style:italic;font-weight:560;color:var(--accent)}
+  .lede{margin-top:36px;font-size:1.3rem;line-height:1.58;font-style:italic;color:#33302B;max-width:48ch}
+  .titleblock{padding:96px 0 0}
+
+  section{padding:88px 0 0}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:40px}
+  .sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--accent);letter-spacing:.1em}
+  .sec-head h2{font-family:"Archivo",sans-serif;font-weight:680;font-size:1.8rem;letter-spacing:-0.022em}
+  .sec-head .line{flex:1;height:1px;background:var(--rule);transform:translateY(-6px)}
+  .sec-head .unit{font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+
+  .ledger table{width:100%;border-collapse:collapse}
+  .ledger th{font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);font-weight:400;text-align:left;
+    padding:0 20px 13px 0;border-bottom:1px solid var(--ink)}
+  .ledger td{padding:24px 20px 24px 0;border-bottom:1px solid var(--rule);vertical-align:middle}
+  .ledger tbody tr{transition:background .15s}
+  .ledger tbody tr:hover{background:#FAF8F2}
+  .ledger .name{font-size:1.06rem;color:var(--ink)}
+  .ledger .name a{color:inherit;text-decoration:none;transition:color .15s ease}
+  .ledger .name a:hover{color:var(--accent)}
+  .ledger .name small{display:block;font-family:"IBM Plex Mono",monospace;font-size:.58rem;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+  .sw{display:inline-block;width:9px;height:9px;margin-right:11px}
+  .s-acc{background:var(--accent)} .s-g1{background:var(--grey1)} .s-g2{background:var(--grey2)} .s-g3{background:var(--grey3)}
+  .ledger .num,.ledger .chg,.ledger .vt{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--ink-soft);white-space:nowrap}
+  .ledger .val{font-family:"Newsreader",serif;font-weight:300;font-variation-settings:"opsz" 72;
+    font-size:1.85rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .ledger .spark{width:170px}
+  .derived-tag{font-family:"IBM Plex Mono",monospace;font-size:.55rem;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--accent);border:1px solid var(--rule);padding:2px 6px;margin-left:10px}
+
+  .provenance{margin-top:96px;padding:40px 0 72px;border-top:1px solid var(--ink)}
+  .provenance .fine{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 24px;
+    font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  @media (max-width:680px){
+    h1{font-size:2.6rem}
+    .sh-nav{display:none}
+    .sh-date{margin-left:auto;border-left:none;padding-left:0}
+    .ledger .spark,.ledger th.spark{display:none}
+  }
+</style>
+</head>
+<body>
+<header class="sitehead">
+  <div class="sh-in">
+    <a class="brand" href="index.html"><span class="mark"></span>India Atlas</a>
+    <nav class="sh-nav">
+      <a href="index.html#dossiers">Dossiers</a><a href="register.html" aria-current="page">Register</a><a href="method.html">Method</a><a href="about.html">About</a>
+    </nav>
+    <span class="sh-date">January 2026</span>
+  </div>
+</header>
+<div class="crumb">
+  <div class="crumb-in">
+    <span><b>The Register</b></span>
+    <span><b>8</b> series · 2 dossiers · updated with each print</span>
+  </div>
+</div>
+<div class="page">
+
+  <div class="titleblock">
+    <div class="kicker">The Register</div>
+    <h1>Every series we track, <i>in one ledger.</i></h1>
+    <p class="lede">The complete inventory of India Atlas data: what each series is, who publishes it, its latest reading, and its shape over the decade. Derived series are tagged.</p>
+  </div>
+
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>Prices · Dossier 01</h2><span class="line"></span><span class="unit">Monthly · vintage 12 Jan 2026</span></div>
+    <div class="break ledger">
+      <table>
+        <thead><tr><th>Series</th><th>Code</th><th>Latest</th><th>Year ago</th><th>Vintage</th><th class="spark">2016 – 2025</th></tr></thead>
+        <tbody id="reg-cpi"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>Output · Dossier 02</h2><span class="line"></span><span class="unit">Quarterly · vintage 28 Nov 2025</span></div>
+    <div class="break ledger">
+      <table>
+        <thead><tr><th>Series</th><th>Code</th><th>Latest</th><th>Year ago</th><th>Vintage</th><th class="spark">2016 – 2025</th></tr></thead>
+        <tbody id="reg-gdp"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="provenance">
+    <div class="fine">
+      <span>India Atlas · Register</span>
+      <span>Illustrative mock data · design preview</span>
+      <span>Set in Archivo, Newsreader &amp; Plex Mono</span>
+    </div>
+  </footer>
+
+</div>
+
+<script type="module">
+import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
+
+const PRNG=a=>()=>{a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+const A=p=>m=>{if(m<=p[0][0])return p[0][1];for(let i=1;i<p.length;i++)if(m<=p[i][0]){const[a,b]=p[i-1],[c,d]=p[i];return b+(d-b)*(m-a)/(c-a)}return p[p.length-1][1]};
+
+const RC=PRNG(20251231);
+const mDates=[];for(let i=0;i<120;i++)mDates.push(new Date(Date.UTC(2016+Math.floor(i/12),i%12,1)));
+const FOOD=A([[0,6.1],[6,7.2],[12,1.9],[17,-1.8],[23,0.7],[24,-0.1],[30,0.9],[36,-2.6],[42,1.9],[44,4.8],[45,8.2],[46,11.6],[47,13.6],[48,13.0],[49,11.0],[50,8.6],[51,6.6],[52,5.0],[58,9.6],[59,6.0],[60,3.2],[64,4.0],[70,0.7],[72,2.8],[74,5.6],[76,8.6],[82,4.2],[88,8.4],[90,8.3],[93,11.5],[96,9.5],[100,6.5],[102,7.8],[103,9.0],[104,10.2],[105,10.9],[108,8.4],[112,5.9],[116,3.8],[119,2.9]]);
+const FUEL=A([[0,5.3],[6,3.4],[12,3.8],[18,6.2],[24,7.9],[30,4.4],[36,-1.6],[42,1.6],[48,3.5],[54,2.7],[57,5.0],[58,7.0],[60,10.0],[66,12.7],[72,13.3],[78,8.5],[84,11.0],[90,7.4],[96,1.0],[102,-1.0],[106,-3.7],[110,-5.3],[114,-1.5],[119,2.6]]);
+const CORE=A([[0,4.9],[12,4.6],[18,4.1],[24,5.7],[30,6.3],[36,5.5],[42,3.8],[48,4.4],[54,5.6],[60,5.4],[66,6.2],[72,6.3],[78,6.0],[84,6.2],[90,5.4],[96,4.6],[102,3.9],[106,3.5],[110,3.7],[114,4.1],[119,4.2]]);
+const mkC=(fn,step,persist)=>{const out=[];let dev=0;
+  for(let i=0;i<120;i++){dev=dev*persist+(RC()-0.5)*2*step;out.push(+(fn(i)+dev).toFixed(2))}
+  return out};
+const food=mkC(FOOD,.12,.8),fuel=mkC(FUEL,.07,.75),core=mkC(CORE,.03,.85);
+const head=[];for(let i=0;i<120;i++)head.push(+(0.4586*food[i]+0.0684*fuel[i]+0.4729*core[i]).toFixed(2));
+
+const RG=PRNG(20251128);
+const qDates=[];for(let i=0;i<39;i++)qDates.push(new Date(Date.UTC(2016+Math.floor(i/4),(i%4)*3,1)));
+const GDPA=A([[0,8.2],[2,7.9],[3,6.6],[4,7.6],[6,6.2],[8,7.0],[10,6.5],[12,5.6],[13,4.4],[14,3.9],[15,3.0],[16,-23.8],[17,-6.6],[18,0.5],[19,1.6],[20,20.1],[21,8.4],[22,5.5],[23,4.3],[24,13.1],[25,6.2],[26,4.4],[27,6.1],[28,7.8],[29,8.2],[30,6.5],[31,7.6],[32,8.4],[33,7.8],[34,6.7],[35,6.5],[36,5.6],[37,6.2],[38,6.9]]);
+const GVAA=A([[0,7.8],[2,7.5],[3,6.4],[4,7.2],[6,6.0],[8,6.9],[10,6.2],[12,5.4],[13,4.1],[15,2.7],[16,-22.4],[17,-5.9],[18,0.9],[19,1.2],[20,18.8],[21,7.9],[22,4.9],[23,3.8],[24,11.9],[25,5.7],[26,4.0],[27,5.9],[28,7.2],[29,7.7],[30,6.2],[31,7.2],[32,8.0],[33,7.3],[34,6.3],[35,6.2],[36,5.5],[37,6.0],[38,6.6]]);
+const PFA=A([[0,8.5],[2,8.0],[3,7.2],[4,8.1],[6,7.0],[8,7.4],[10,6.8],[12,5.9],[13,4.6],[15,2.8],[16,-22.9],[17,-7.4],[18,0.8],[19,3.5],[20,19.3],[21,10.2],[22,9.8],[23,4.9],[24,9.9],[25,5.9],[26,2.8],[27,4.0],[28,5.5],[29,8.3],[30,3.1],[31,7.4],[32,5.6],[33,4.0],[34,7.4],[35,6.0],[36,7.0],[37,6.8],[38,7.2]]);
+const GFA=A([[0,6.1],[2,8.0],[4,9.5],[6,7.2],[8,10.2],[10,7.5],[12,6.1],[13,4.5],[15,2.1],[16,-47.1],[17,-7.9],[18,3.1],[19,5.2],[20,55.3],[21,20.4],[22,9.6],[23,6.5],[24,20.6],[25,9.8],[26,5.3],[27,8.0],[28,8.5],[29,8.0],[30,6.5],[31,11.6],[32,9.8],[33,7.6],[34,6.7],[35,6.5],[36,7.5],[37,6.8],[38,7.4]]);
+const mkG=(fn,step,persist)=>{const out=[];let dev=0;
+  for(let i=0;i<39;i++){dev=dev*persist+(RG()-0.5)*2*step;out.push(+(fn(i)+dev).toFixed(2))}
+  return out};
+const gdp=mkG(GDPA,.04,.7),gva=mkG(GVAA,.04,.7),pf=mkG(PFA,.08,.75),gf=mkG(GFA,.15,.75);
+
+const toPts=(vals,ds)=>vals.map((v,i)=>({date:ds[i],value:v}));
+const f1=v=>v.toFixed(2)+"%";
+
+const cpiRows=[
+  ["Headline CPI (combined)","CPI-ALL","s-acc",head,mDates,false,"dossiers/cpi.html"],
+  ["Food & beverages","CPI-CFBN","s-g1",food,mDates,false,"dossiers/cpi.html"],
+  ["Fuel & light","CPI-FUEL","s-g2",fuel,mDates,false,"dossiers/cpi.html"],
+  ["Core · ex food & fuel","IA-CORE","s-g3",core,mDates,true,"dossiers/cpi.html"],
+];
+const gdpRows=[
+  ["Real GDP","NAS-GDP","s-acc",gdp,qDates,false,"dossiers/gdp.html"],
+  ["Real GVA","NAS-GVA","s-g1",gva,qDates,false,"dossiers/gdp.html"],
+  ["Consumption · PFCE","NAS-PFCE","s-g2",pf,qDates,false,"dossiers/gdp.html"],
+  ["Investment · GFCF","NAS-GFCF","s-g3",gf,qDates,false,"dossiers/gdp.html"],
+];
+function render(tbody,rows,lag,prefix){
+  document.getElementById(tbody).innerHTML=rows.map(([nm,code,sw,vals,ds,derived,href],i)=>`
+    <tr>
+      <td class="name"><span class="sw ${sw}"></span><a href="${href}">${nm}</a>${derived?'<span class="derived-tag">Derived</span>':''}<small>Source: ${code.startsWith("IA")?"India Atlas computation":"MoSPI / NSO"}</small></td>
+      <td class="num">${code}</td>
+      <td class="val">${f1(vals.at(-1))}</td>
+      <td class="chg">${f1(vals.at(-1-lag))}</td>
+      <td class="vt">${lag===12?"12 Jan 2026":"28 Nov 2025"}</td>
+      <td class="spark" id="${prefix}-${i}"></td>
+    </tr>`).join("");
+  rows.forEach(([nm,code,sw,vals,ds],i)=>{
+    const color=getComputedStyle(document.querySelector("."+sw)).backgroundColor;
+    const lo=Math.min(...vals,0),hi=Math.max(...vals);
+    const sp=Plot.plot({
+      width:170,height:40,marginLeft:0,marginRight:0,marginTop:4,marginBottom:4,
+      style:{background:"transparent"},x:{axis:null},y:{axis:null,domain:[lo,hi]},
+      marks:[
+        Plot.ruleY([0],{stroke:"#E6E2D6"}),
+        Plot.lineY(toPts(vals,ds),{x:"date",y:"value",stroke:color,strokeWidth:1.5,strokeLinejoin:"round"}),
+        Plot.dot([toPts(vals,ds).at(-1)],{x:"date",y:"value",fill:color,r:2.5,stroke:"#FFFFFF",strokeWidth:1}),
+      ],
+    });
+    sp.setAttribute("aria-hidden","true");
+    document.getElementById(`${prefix}-${i}`).append(sp);
+  });
+}
+render("reg-cpi",cpiRows,12,"spc");
+render("reg-gdp",gdpRows,4,"spg");
+</script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+---
+import Learn from "../layouts/Learn.astro";
+---
+<Learn
+  title="India Atlas — Learn · Index numbers and the base of 100"
+  description="Learn № 08 — index numbers: why statisticians abolish the rupee and measure against a base year set to 100. What 2012=100 claims, how a Laspeyres index fixes the basket, and why the base is a ruler, not a memory."
+  slug="index-numbers"
+  kicker="Learn № 08 — Prices · Index numbers"
+  h1="One hundred is a <i>place to stand.</i>"
+  lede="Why statisticians abolish the rupee and measure everything against a single year set to 100. What the base year claims, what it does not, and why the fixed basket is both the index's strength and its blind spot."
+  meta={[
+    ["Concept", "Index numbers"],
+    ["Illustrated with", "CPI level · 2016–2025"],
+    ["Source", "MoSPI, NSO"],
+    ["Level", "First principles"],
+    ["Reading time", "6 min"],
+  ]}
+  dateStamp="Evergreen"
+  crumbTitle="Index numbers"
+>
+
+  <!-- § 01 the definition -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The word, defined</h2><span class="line"></span><span class="unit">First principles</span></div>
+    <div class="wm-grid">
+      <div>
+        <p>Prices are messy to compare. Rice sells by the kilo, bus fares by the trip, school fees by the term. To make one number out of three hundred such prices, statisticians perform a small act of violence: they abolish the rupee. In its place they build an index, a scale with no unit at all, anchored to a single year set equal to 100.</p>
+        <aside class="defbox">
+          <div class="term">Index number <span class="sub">a unitless scale · base = 100</span></div>
+          <p>A way of expressing change without money. The value of a series in a chosen base period is set to 100, and every other period is shown relative to it. India's consumer price index uses 2012 as its base, so a reading of <b id="in-def-lvl">–</b> means the basket costs <b id="in-def-pc">–</b> more than it did in 2012.</p>
+          <div class="eg"><b>In plain words:</b> the 100 is the ruler's zero mark, not a claim that things were cheap then.</div>
+        </aside>
+        <p style="margin-top:1.4em">The choice of base year is exactly that: a choice. Nothing about 2012 was normal, average or specially blessed. It was simply the year the statisticians picked to stand on, helped by a fresh household spending survey that told them what the basket should contain. Any other year would serve; the ruler would just be marked differently.</p>
+        <aside class="defbox" style="margin-top:1.4em">
+          <div class="term">Laspeyres index <span class="sub">a fixed basket · the standard recipe</span></div>
+          <p>An index that prices the same basket every month: the quantities are fixed at what households bought in the base period, and only the prices are updated. India's CPI is built this way. Because the basket never changes, every move in the index is pure price change.</p>
+          <div class="eg"><b>In plain words:</b> same shopping list every month; only the bill changes.</div>
+        </aside>
+        <p style="margin-top:1.4em">The fixedness is the strength and the blind spot. Strength, because the index measures prices and nothing else. Blind spot, because households are not statues: when onions spike, people buy fewer onions and more of something else, and the frozen basket never sees the switch. The index answers its own question precisely, which is not always the question you meant to ask.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note · i</span>
+          <b>2012 = 100 is a label, not a memory.</b> The base year is where the ruler starts, not a claim about how life felt then.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · ii</span>
+          <b>The basket is frozen.</b> A Laspeyres index prices the base-year shopping list indefinitely: pure price change, at the cost of ignoring substitution.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · iii</span>
+          <b>Compare changes, not levels.</b> <span id="in-mn-pub">–</span> against <span id="in-mn-reb">–</span> is ruler talk. The percentage rise is identical on both rulers.
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 plate : same decade, two rulers -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>Same decade, two rulers</h2><span class="line"></span><span class="unit">Index level · monthly</span></div>
+    <p>Below is the consumer price level drawn twice: once as published, on the 2012 base, and once with every reading divided by the January 2016 value and multiplied by 100. The second line is the first line with a different ruler held against it.</p>
+    <div class="break">
+      <figure id="cb-rulers" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Two rulers, one decade — the shape never moves</h3>
+            <div class="sub">CPI combined · published, 2012 = 100 · rebased, January 2016 = 100 · Jan 2016 – Dec 2025</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-in">–</div><div class="c">Dec 2025 · published level</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-rulers"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, CPI combined, base 2012=100, vintage <span id="pf-in">–</span> · rebased series: same data ÷ Jan 2016 × 100</span>
+            <span class="dl">
+              <button data-dl="svg">SVG</button><span class="sep"></span>
+              <button data-dl="png">PNG</button><span class="sep"></span>
+              <button data-dl="csv">CSV</button><span class="sep"></span>
+              <a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a>
+            </span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The two lines are the same series. The vermilion one is the published index, measured from 2012; the grey one is the identical data rescaled so that January 2016 reads 100. They rise together, flatten together and end the decade with the same percentage gain. Only the labels differ, because only the ruler differs.</p>
+            <p>That is the whole lesson. A level is a measurement, and every measurement needs its ruler named. The change is the fact; the level is the fact photographed from a chosen spot.</p>
+          </div>
+          <div class="now">
+            <span class="mk">The December 2025 case</span>
+            <p>On the published ruler the decade ends at <b id="in-end-pub">–</b>. On the rebased ruler it ends at <b id="in-end-reb">–</b>. Both lines report the same rise since January 2016: <b id="in-rise">–</b>. Two different numbers, one fact.</p>
+            <p>Whoever quotes you a level without naming its base is selling you a ruler as if it were the world.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 03 the rebasing arithmetic -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>The arithmetic of a new ruler</h2><span class="line"></span><span class="unit">A worked example · Jan 2016 → Dec 2025</span></div>
+    <div class="numbers">
+      <div class="num"><div class="l">Published · Jan 2016</div><div class="v" id="in-n-pub0">–</div><div class="d">index points · 2012 = 100</div></div>
+      <div class="num"><div class="l">Rebased · Jan 2016</div><div class="v" id="in-n-reb0">–</div><div class="d">100 by construction</div></div>
+      <div class="num"><div class="l">Published · Dec 2025</div><div class="v" id="in-n-pub1">–</div><div class="d">index points · 2012 = 100</div></div>
+      <div class="num"><div class="l">Rebased · Dec 2025</div><div class="v acc" id="in-n-reb1">–</div><div class="d">published ÷ base month × 100</div></div>
+    </div>
+    <p style="margin-top:40px">Rebasing is one division and one multiplication. Divide every reading by the base-month reading, <b id="in-base">–</b>, and multiply by 100. Nothing is gained and nothing is lost: the new series reports the same changes as the old, month for month. This is why pure rebasing can never move an inflation rate; only the labels move.</p>
+    <p style="margin-top:1.4em">One honesty note. When India revises an official base year, more changes than the zero mark: the basket and the weights are updated too, and then the rates themselves can shift. That is a real revision. The exercise on this page is the pure kind, arithmetic only, and it proves the point: the base is a choice of ruler, not a fact about the world.</p>
+  </section>
+
+  <!-- § 04 misreads -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>How to misread this concept</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li>
+        <span class="no">i.</span>
+        <div>
+          <h3>“100 is the average price.”</h3>
+          <p>It is not a price at all; it is a marker. The 100 means “we started measuring here”, and it could have been 1, or 1,000, with nothing else changed. The unit was abolished on purpose.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">ii.</span>
+        <div>
+          <h3>“The base year is when things were normal.”</h3>
+          <p>No year is normal; some years are merely chosen. 2012 was picked because a fresh spending survey existed for it, not because life was calm then. A base year is scaffolding, and scaffolding is not the building.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iii.</span>
+        <div>
+          <h3>“Two indices can be compared by their levels.”</h3>
+          <p>Only if they share a base. An index at <b id="in-mis-pub">–</b> on a 2012 base and another at <b id="in-mis-reb">–</b> on a 2016 base can be reporting the very same decade, as the chart above shows. Compare the percentage changes, or rebase one series to the other. The levels are ruler talk.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <div slot="prov-source">
+    <h6>Source of record</h6>
+    <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. Consumer Price Index group indices on base 2012=100, rural, urban and combined; retrieved via the eSankhyiki API, vintage 2026-08-04. The level shown is the published combined index.</p>
+  </div>
+  <div slot="prov-revision">
+    <h6>Definitions &amp; honesty</h6>
+    <p>Rebasing here is pure rescaling: divide by the January 2016 reading, multiply by 100. An official base revision also updates the basket and the weights, which can move the rates; this page's rebasing cannot, by construction.</p>
+    <p>Where the data cannot answer a question, this page says so rather than inventing precision.</p>
+  </div>
+  <div slot="prov-note">
+    <h6>This note</h6>
+    <p>Learn № 08 · Prices · version 1.0. Evergreen, written to survive the next print. The chart redraws from the baked data on every build.</p>
+    <p>Companion dossier: <a href="/dossiers/cpi/">Dossier 01 · Consumer Price Index</a>.</p>
+  </div>
+
+<script>
+  import "./index-numbers.client.js";
+</script>
+</Learn>

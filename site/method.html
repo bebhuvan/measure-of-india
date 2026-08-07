@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>India Atlas — How we work</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF;--ink:#1B1A17;--ink-soft:#4A463F;--muted:#8A857A;--faint:#B4AFA2;
+    --rule:#E6E2D6;--accent:#BE3E26;--grey1:#5B564B;--grey2:#A8A293;--grey3:#C6C0B0;--band:#F8F6F1;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:"Newsreader",Georgia,serif;font-weight:460;
+    font-size:1.18rem;line-height:1.82;-webkit-font-smoothing:antialiased}
+  .page{max-width:880px;margin:0 auto;padding:0 32px}
+  .sitehead{border-bottom:1px solid var(--ink)}
+  .sh-in{max-width:1184px;margin:0 auto;padding:0 32px;height:66px;display:flex;align-items:center;gap:40px}
+  .brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink);
+    font-family:"Archivo",sans-serif;font-weight:720;font-size:1.05rem;letter-spacing:-0.015em}
+  .brand .mark{width:10px;height:10px;background:var(--accent)}
+  .sh-nav{display:flex;gap:30px;margin-left:auto}
+  .sh-nav a{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink-soft);text-decoration:none;
+    padding-bottom:3px;border-bottom:1px solid transparent;
+    transition:color .15s ease,border-color .15s ease}
+  .sh-nav a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+  .sh-nav a[aria-current]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--accent)}
+  .sh-date{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);border-left:1px solid var(--rule);padding-left:30px}
+  .crumb{border-bottom:1px solid var(--rule);font-family:"IBM Plex Mono",monospace;
+    font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .crumb .crumb-in{max-width:1184px;margin:0 auto;padding:10px 32px;display:flex;justify-content:space-between;gap:24px}
+  .crumb b{color:var(--ink);font-weight:500}
+
+  .kicker{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--accent);margin-bottom:30px}
+  h1{font-family:"Archivo",sans-serif;font-weight:720;font-size:4.4rem;line-height:1.0;letter-spacing:-0.034em;text-wrap:balance}
+  h1 i{font-style:italic;font-weight:560;color:var(--accent)}
+  .lede{margin-top:36px;font-size:1.3rem;line-height:1.58;font-style:italic;color:#33302B;max-width:48ch}
+  .titleblock{padding:96px 0 0}
+
+  section{padding:96px 0 0}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:40px}
+  .sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--accent);letter-spacing:.1em}
+  .sec-head h2{font-family:"Archivo",sans-serif;font-weight:680;font-size:1.8rem;letter-spacing:-0.022em}
+  .sec-head .line{flex:1;height:1px;background:var(--rule);transform:translateY(-6px)}
+  p{color:#33302B;max-width:64ch;hyphens:auto;text-wrap:pretty;hanging-punctuation:first allow-end}
+  p b{color:var(--ink);font-weight:600}
+  p+p{margin-top:1.1em}
+
+  .wm-grid{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:52px}
+  .wm-rail .margin-note{margin-bottom:44px}
+  .margin-note{font-size:.9rem;line-height:1.62;color:var(--muted);border-top:1px solid var(--ink);padding-top:13px}
+  .margin-note .mk{font-family:"IBM Plex Mono",monospace;font-size:.58rem;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent);display:block;margin-bottom:9px}
+  .margin-note b{color:var(--ink-soft);font-weight:500}
+
+  ol.rules{list-style:none;counter-reset:r}
+  ol.rules li{counter-increment:r;display:grid;grid-template-columns:64px 1fr;gap:24px;
+    padding:26px 0;border-bottom:1px solid var(--rule);align-items:baseline}
+  ol.rules li:first-child{border-top:1px solid var(--ink);padding-top:34px}
+  ol.rules li::before{content:counter(r,decimal-leading-zero);font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--accent)}
+  ol.rules h3{font-family:"Archivo",sans-serif;font-weight:640;font-size:1.15rem;letter-spacing:-0.015em;margin-bottom:8px}
+  ol.rules p{font-size:1.05rem}
+
+  .provenance{margin-top:96px;padding:40px 0 72px;border-top:1px solid var(--ink)}
+  .provenance .fine{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 24px;
+    font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  @media (max-width:680px){
+    h1{font-size:2.6rem}
+    .sh-nav{display:none}
+    .sh-date{margin-left:auto;border-left:none;padding-left:0}
+    .wm-grid{grid-template-columns:1fr;gap:40px}
+  }
+</style>
+</head>
+<body>
+<header class="sitehead">
+  <div class="sh-in">
+    <a class="brand" href="index.html"><span class="mark"></span>India Atlas</a>
+    <nav class="sh-nav">
+      <a href="index.html#dossiers">Dossiers</a><a href="register.html">Register</a><a href="method.html" aria-current="page">Method</a><a href="about.html">About</a>
+    </nav>
+    <span class="sh-date">January 2026</span>
+  </div>
+</header>
+<div class="crumb">
+  <div class="crumb-in">
+    <span><b>Method</b></span>
+    <span>Read this before citing us</span>
+  </div>
+</div>
+<div class="page">
+
+  <div class="titleblock">
+    <div class="kicker">Method</div>
+    <h1>How we work, <i>in the open.</i></h1>
+    <p class="lede">Every number on this site can be traced back to a press release. This page explains the rules we hold ourselves to — so you can hold us to them too.</p>
+  </div>
+
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The standing rules</h2><span class="line"></span></div>
+    <ol class="rules">
+      <li><div><h3>Every observation is traceable.</h3><p>Each chart names its publisher, the exact release, and the release date. If you cannot find our source, that is our error — write to us and we will fix it or take the chart down.</p></div></li>
+      <li><div><h3>Derived series are labelled as derived.</h3><p>Some useful series are not published by anyone — core inflation is the classic example. Where we compute a series ourselves, it is drawn dashed, flagged in the register, and disclosed in the provenance footer, every time it appears.</p></div></li>
+      <li><div><h3>Conflicts are shown, not reconciled.</h3><p>When two official statistics appear to contradict — CPI versus WPI, old base versus new — we plot both as separate series and explain the difference. We never average away a disagreement.</p></div></li>
+      <li><div><h3>Plotted points are the real points.</h3><p>Our charts connect actual observations with straight lines. We do not smooth, interpolate, or seasonally adjust unless the source does, and we say when it does. A peak on our chart is a number that was actually published.</p></div></li>
+      <li><div><h3>Vintages are explicit.</h3><p>Statistics that get revised — GDP above all — are quoted with their estimate vintage. When a series is restated, we show both vintages rather than silently rewriting history.</p></div></li>
+      <li><div><h3>We say "we do not know".</h3><p>Where something is not measured — an official core inflation rate, the informal sector's true output — the page says so, instead of inventing a figure.</p></div></li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>Sources we rely on</h2><span class="line"></span></div>
+    <div class="wm-grid">
+      <div>
+        <p>Our primary sources are the official statistical agencies: <b>MoSPI / NSO</b> for prices and national accounts, the <b>Office of the Economic Adviser</b> for wholesale prices, the <b>RBI</b> for monetary and financial statistics, and <b>PLFS</b> for labour. Each dossier cites the specific press release and release date for its latest print.</p>
+        <p>We read the PDFs so you don't have to — but we link them, and we encourage you to check our work against them. During the design-preview phase, all data on this site is <b>illustrative mock data</b>, labelled as such in every footer.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note · i</span>
+          <b>CPI is never revised. GDP always is.</b> Two official series, two opposite revision cultures. Each dossier states which kind it deals in.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · ii</span>
+          <b>Base years matter.</b> CPI uses 2012=100, GDP 2011–12=100. When a base is revised, levels shift and histories are rewritten. We flag base changes on the charts themselves.
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>Corrections</h2><span class="line"></span></div>
+    <p>Errors are corrected on the page, noted in the dossier's version line, and — if they changed a conclusion — flagged at the top of the affected section for one full revision cycle. Report them to <b>register@indiaatlas.example</b>.</p>
+  </section>
+
+  <footer class="provenance">
+    <div class="fine">
+      <span>India Atlas · Method</span>
+      <span>v1.1 · January 2026</span>
+      <span>Set in Archivo, Newsreader &amp; Plex Mono</span>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

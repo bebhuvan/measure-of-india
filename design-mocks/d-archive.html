@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>India Atlas — Consumer Prices · The Archive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4EEE1;
+    --paper2:#EDE5D4;
+    --ink:#261D12;
+    --soft:#5C5244;
+    --muted:#968B77;
+    --rule:#D8CDB6;
+    --terra:#BE4B2F;
+    --indigo:#33518C;
+    --leaf:#4C7A57;
+    --mustard:#C08A1E;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--paper);color:var(--ink);
+    font-family:"Spectral",Georgia,serif;font-size:1.05rem;line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{max-width:1080px;margin:0 auto;padding:0 32px}
+
+  .masthead{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:24px 0 20px;border-bottom:2px solid var(--ink);
+    font-family:"Space Mono",monospace;font-size:.66rem;
+    letter-spacing:.16em;text-transform:uppercase;
+  }
+  .masthead .brand{font-weight:700}
+
+  /* chapter tab */
+  .chapter{
+    display:flex;align-items:stretch;margin-top:0;border-bottom:1px solid var(--rule);
+  }
+  .tab{
+    background:var(--terra);color:var(--paper);
+    font-family:"Space Mono",monospace;font-size:.68rem;letter-spacing:.18em;
+    text-transform:uppercase;padding:14px 22px;display:flex;align-items:center;
+  }
+  .chapter .rest{
+    flex:1;display:flex;align-items:center;justify-content:space-between;
+    padding:0 22px;font-family:"Space Mono",monospace;font-size:.66rem;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+    border-left:1px solid var(--paper);
+  }
+
+  /* hero */
+  .hero{display:grid;grid-template-columns:minmax(0,8fr) minmax(0,4fr);gap:56px;padding:64px 0 0}
+  .hero h1{
+    font-weight:300;font-size:4rem;line-height:1.04;letter-spacing:-0.015em;
+  }
+  .hero h1 i{font-style:italic;color:var(--terra)}
+  .hero .lede{
+    margin-top:28px;font-size:1.25rem;line-height:1.6;color:var(--soft);max-width:36ch;
+  }
+  .stamp{
+    align-self:start;justify-self:end;
+    border:1.5px solid var(--leaf);color:var(--leaf);
+    font-family:"Space Mono",monospace;font-size:.62rem;letter-spacing:.16em;
+    text-transform:uppercase;padding:10px 16px;transform:rotate(3deg);
+    text-align:center;line-height:1.9;
+  }
+
+  /* ledger table */
+  .ledger{margin-top:56px;border-top:2px solid var(--ink)}
+  .ledger .row{
+    display:grid;grid-template-columns:2.2fr 1fr 1fr 1.6fr;
+    padding:16px 4px;border-bottom:1px solid var(--rule);align-items:baseline;
+  }
+  .ledger .row.head{
+    font-family:"Space Mono",monospace;font-size:.62rem;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted);padding:12px 4px;
+  }
+  .ledger .name{font-size:1.05rem}
+  .ledger .name small{display:block;font-family:"Space Mono",monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+  .ledger .val{font-size:1.5rem;font-weight:500;font-variant-numeric:tabular-nums}
+  .ledger .wt,.ledger .chg{font-family:"Space Mono",monospace;font-size:.78rem;color:var(--soft)}
+  .swatch{display:inline-block;width:10px;height:10px;margin-right:10px}
+  .s-terra{background:var(--terra)} .s-indigo{background:var(--indigo)}
+  .s-mustard{background:var(--mustard)} .s-leaf{background:var(--leaf)}
+
+  /* two-col body with margin notes */
+  .body{display:grid;grid-template-columns:minmax(0,8fr) minmax(0,4fr);gap:56px;padding:72px 0 0}
+  .body h2{
+    font-weight:400;font-size:1.9rem;line-height:1.2;margin-bottom:26px;letter-spacing:-0.01em;
+  }
+  .body h2 .mk{
+    font-family:"Space Mono",monospace;font-size:.66rem;letter-spacing:.16em;
+    color:var(--terra);display:block;margin-bottom:14px;text-transform:uppercase;
+  }
+  .body p{color:var(--soft);max-width:58ch}
+  .body p b{color:var(--ink);font-weight:500}
+  .body p+p{margin-top:1.1em}
+  .body section+section{margin-top:64px}
+
+  .margin aside{
+    border-top:2px solid var(--ink);padding-top:14px;margin-bottom:34px;
+    font-size:.88rem;line-height:1.65;color:var(--soft);
+  }
+  .margin aside .mk{
+    font-family:"Space Mono",monospace;font-size:.6rem;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--indigo);display:block;margin-bottom:10px;
+  }
+  .margin aside b{color:var(--ink);font-weight:500}
+
+  figure{padding:72px 0 0}
+  figcaption{
+    font-family:"Space Mono",monospace;font-size:.64rem;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:20px;
+  }
+  figcaption b{color:var(--soft)}
+
+  .multiples{display:grid;grid-template-columns:1fr 1fr;gap:40px 56px;margin-top:8px}
+  .mini .t{
+    display:flex;justify-content:space-between;align-items:baseline;
+    border-bottom:1px solid var(--ink);padding-bottom:8px;margin-bottom:4px;
+  }
+  .mini .t .n{font-weight:500;font-size:.98rem}
+  .mini .t .v{font-family:"Space Mono",monospace;font-size:.78rem;color:var(--soft)}
+
+  .foot{
+    margin-top:88px;border-top:2px solid var(--ink);padding:22px 4px 60px;
+    font-family:"Space Mono",monospace;font-size:.64rem;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;
+  }
+
+  @media (max-width:840px){
+    .hero,.body{grid-template-columns:1fr;gap:0}
+    .hero h1{font-size:2.7rem}
+    .stamp{justify-self:start;margin-top:32px}
+    .ledger .row{grid-template-columns:1.6fr 1fr 1fr}
+    .ledger .chg{display:none}
+    .multiples{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <span class="brand">India Atlas</span>
+    <span>An almanac of how India lives</span>
+  </header>
+
+  <div class="chapter">
+    <span class="tab">Chapter 03 — Prices</span>
+    <span class="rest"><span>Dossier · Consumer Price Index</span><span>pp. 1 of 12</span></span>
+  </div>
+
+  <div class="hero">
+    <div>
+      <h1>Consumer prices,<br>or the <i>cost of living</i><br>made visible.</h1>
+      <p class="lede">A monthly census of the price of ordinary things — grain, rent, kerosene, school fees — gathered into one number that tells us how much dearer life has become.</p>
+    </div>
+    <div class="stamp">Reviewed<br>May 2025<br>№ IA-PRC-001</div>
+  </div>
+
+  <div class="ledger">
+    <div class="row head"><span>Series</span><span>Weight</span><span>Latest y/y</span><span>vs prev. month</span></div>
+    <div class="row">
+      <span class="name"><span class="swatch s-terra"></span>Headline CPI (combined)<small>All items, rural + urban</small></span>
+      <span class="wt">100.0</span><span class="val">4.82%</span><span class="chg">−0.31 pt, easing</span>
+    </div>
+    <div class="row">
+      <span class="name"><span class="swatch s-indigo"></span>Food &amp; beverages<small>CFPI — nearly half the basket</small></span>
+      <span class="wt">45.9</span><span class="val">6.10%</span><span class="chg">+0.44 pt, firming</span>
+    </div>
+    <div class="row">
+      <span class="name"><span class="swatch s-mustard"></span>Fuel &amp; light<small>LPG, kerosene, electricity</small></span>
+      <span class="wt">6.8</span><span class="val">2.34%</span><span class="chg">−0.12 pt, easing</span>
+    </div>
+    <div class="row">
+      <span class="name"><span class="swatch s-leaf"></span>Core<small>Ex food, ex fuel — what RBI watches</small></span>
+      <span class="wt">47.3</span><span class="val">3.91%</span><span class="chg">−0.05 pt, stable</span>
+    </div>
+  </div>
+
+  <figure>
+    <figcaption><b>Plate 1</b> — The headline and its parts · y/y per cent · 2016–2025</figcaption>
+    <div id="chart-main"></div>
+  </figure>
+
+  <div class="body">
+    <div class="main">
+      <section>
+        <h2><span class="mk">§ 1 — The measure</span>What this measures</h2>
+        <p>The Consumer Price Index follows the price of a fixed basket of about three hundred goods and services, bought the way households actually buy them. When inflation reads 4.8%, the basket costs <b>4.8% more than a year ago</b> — not 4.8% more than last month, and never less than before.</p>
+        <p>The basket's weights come from the 2011–12 expenditure survey: food is 46% of it, housing 10%, fuel 7%. A poor monsoon therefore moves the nation's inflation more than the central bank ever can.</p>
+      </section>
+      <section>
+        <h2><span class="mk">§ 2 — The craft</span>How to read it well</h2>
+        <p>Compare a year back, never a month back — the seasons live inside the monthly print. Decompose before concluding: strip food and fuel, and the core tells you what monetary policy can actually reach. And remember that the index is an <b>average household that no one is</b>; your family's inflation is your family's basket.</p>
+      </section>
+    </div>
+    <div class="margin">
+      <aside>
+        <span class="mk">Margin note · i</span>
+        <b>Falling inflation ≠ falling prices.</b> The level of prices almost never returns. A falling rate is slower pain, not relief.
+      </aside>
+      <aside>
+        <span class="mk">Margin note · ii</span>
+        <b>Watch the base.</b> A high print last year flatters this year's number without anything improving. Ask: compared to what?
+      </aside>
+      <aside>
+        <span class="mk">Margin note · iii</span>
+        <b>Two countries, one index.</b> Rural and urban India inflate differently. This dossier keeps both series separate, always.
+      </aside>
+    </div>
+  </div>
+
+  <figure>
+    <figcaption><b>Plate 2</b> — The parts, each in its own colour · y/y per cent</figcaption>
+    <div class="multiples">
+      <div class="mini"><div class="t"><span class="n">Food &amp; beverages</span><span class="v">6.10%</span></div><div id="m-food"></div></div>
+      <div class="mini"><div class="t"><span class="n">Fuel &amp; light</span><span class="v">2.34%</span></div><div id="m-fuel"></div></div>
+      <div class="mini"><div class="t"><span class="n">Housing</span><span class="v">3.02%</span></div><div id="m-housing"></div></div>
+      <div class="mini"><div class="t"><span class="n">Core</span><span class="v">3.91%</span></div><div id="m-core"></div></div>
+    </div>
+  </figure>
+
+  <footer class="foot">
+    <span>Source — MoSPI press release, 12 Jun 2025</span>
+    <span>Base 2012 = 100 · Laspeyres</span>
+    <span>Mock data for design preview</span>
+  </footer>
+
+</div>
+
+<script type="module">
+import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
+
+function walk(seed, level, amp, smooth){
+  const out=[]; let v=level;
+  for(let i=0;i<40;i++){
+    const d=new Date(2016, i*3, 1);
+    v = v*smooth + (level + amp*Math.sin(i/3.1+seed) + amp*0.7*Math.sin(i*1.7+seed*2.3))*(1-smooth);
+    out.push({date:d, value:+(v).toFixed(2)});
+  }
+  return out;
+}
+const headline = walk(1.3, 4.8, 1.5, 0.72);
+const food = walk(2.9, 5.6, 2.6, 0.60);
+const fuel = walk(4.1, 3.2, 2.2, 0.55);
+const housing = walk(5.7, 3.4, 0.8, 0.85);
+const core = walk(0.4, 4.3, 0.7, 0.88);
+
+const mono = "'Space Mono', monospace";
+
+document.getElementById("chart-main").append(Plot.plot({
+  width: 1016, height: 340,
+  marginLeft: 0, marginRight: 90, marginTop: 14, marginBottom: 28,
+  style:{background:"transparent", fontFamily:mono, fontSize:"10px", color:"#968B77"},
+  x:{label:null, tickSize:0, tickPadding:10},
+  y:{label:null, grid:true, tickFormat:d=>d+"%", ticks:4, tickSize:0},
+  marks:[
+    Plot.ruleY([0], {stroke:"#D8CDB6"}),
+    Plot.lineY(food, {x:"date", y:"value", stroke:"#33518C", strokeWidth:1.5, curve:"catmull-rom"}),
+    Plot.lineY(fuel, {x:"date", y:"value", stroke:"#C08A1E", strokeWidth:1.5, curve:"catmull-rom"}),
+    Plot.lineY(core, {x:"date", y:"value", stroke:"#4C7A57", strokeWidth:1.5, curve:"catmull-rom"}),
+    Plot.lineY(headline, {x:"date", y:"value", stroke:"#BE4B2F", strokeWidth:2.5, curve:"catmull-rom"}),
+    Plot.dot([headline[headline.length-1]], {x:"date", y:"value", fill:"#BE4B2F", r:3.5}),
+    Plot.text([headline[headline.length-1]], {x:"date", y:"value", text:d=>"Headline "+d.value.toFixed(1)+"%", dx:14, fill:"#BE4B2F", fontSize:11, fontWeight:700, textAnchor:"start"}),
+    Plot.text([food[food.length-1]], {x:"date", y:"value", text:["Food"], dx:14, fill:"#33518C", fontSize:10, textAnchor:"start"}),
+    Plot.text([fuel[fuel.length-1]], {x:"date", y:"value", text:["Fuel"], dx:14, fill:"#C08A1E", fontSize:10, textAnchor:"start"}),
+    Plot.text([core[core.length-1]], {x:"date", y:"value", text:["Core"], dx:14, fill:"#4C7A57", fontSize:10, textAnchor:"start"}),
+  ]
+}));
+
+function mini(id, data, color){
+  document.getElementById(id).append(Plot.plot({
+    width: 480, height: 130,
+    marginLeft: 0, marginRight: 0, marginTop: 10, marginBottom: 18,
+    style:{background:"transparent", fontFamily:mono, fontSize:"9px", color:"#968B77"},
+    x:{axis:"bottom", ticks:4, tickSize:0, tickPadding:6},
+    y:{axis:null},
+    marks:[
+      Plot.ruleY([0], {stroke:"#D8CDB6"}),
+      Plot.areaY(data, {x:"date", y:"value", fill:color, fillOpacity:0.12, curve:"catmull-rom"}),
+      Plot.lineY(data, {x:"date", y:"value", stroke:color, strokeWidth:1.75, curve:"catmull-rom"}),
+      Plot.dot([data[data.length-1]], {x:"date", y:"value", fill:color, r:2.5}),
+    ]
+  }));
+}
+mini("m-food", food, "#33518C");
+mini("m-fuel", fuel, "#C08A1E");
+mini("m-housing", housing, "#968B77");
+mini("m-core", core, "#4C7A57");
+</script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+Inflation fell through 2025 — from 4.27% in January to 1.34% in December, with the last four prints below the 2% floor of the band. The food line tells you why. Watch the wedge between core and headline. While the dashed line sits above the vermilion one, the average is being flattered by volatile items, and the flattery expires with the next bad monsoon.

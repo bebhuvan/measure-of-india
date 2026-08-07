@@ -1,0 +1,402 @@
+---
+import Base from "../../layouts/Base.astro";
+---
+<Base
+  title="India Atlas — National Accounts · Dossier 02"
+  description="Dossier 02 — GDP and GVA: a decade of Indian growth, the pandemic wound, and how to read the latest quarterly print."
+  nav="dossiers"
+  dateStamp="January 2026"
+  crumbLeft='<a href="/" style="color:inherit">Dossiers</a> / Output / <b>National Accounts · GDP</b>'
+  crumbRight='Evergreen · revised with each print · <b>v1.7</b>'
+  canonical="https://indiaatlas.in/dossiers/gdp/"
+  ogImage="/og/gdp.png"
+>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">Dossier № 02 — Output · National Accounts</div>
+    <div class="hero-grid">
+      <h1>The speed of the <i>whole economy.</i></h1>
+      <p class="lede">Four times a year, the statisticians add up everything India produces — every factory, farm, office and street cart, in principle — and tell us how fast it is growing. The answer is one number built from a hundred arguments.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>MoSPI, NSO · NAS</b></span>
+      <span>Frequency <b>Quarterly</b></span>
+      <span>Base year <b>2011–12 = 100</b></span>
+      <span>Prices <b>Real (constant)</b></span>
+      <span>Latest print <b>Q2 FY2025–26</b></span>
+      <span>Released <b>28 Nov 2025</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">GDP · y/y</div><div class="v acc" id="n-gdp">–</div><div class="d" id="d-gdp">–</div><div class="nspark" id="nspark-gdp"></div></div>
+      <div class="num"><div class="l">GVA · y/y</div><div class="v" id="n-gva">–</div><div class="d" id="d-gva">–</div></div>
+      <div class="num"><div class="l">Consumption · PFCE y/y</div><div class="v" id="n-pfce">–</div><div class="d" id="d-pfce">–</div></div>
+      <div class="num"><div class="l">Investment · GFCF y/y</div><div class="v" id="n-gfcf">–</div><div class="d" id="d-gfcf">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">Recorded 28 Nov 2025</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Current reading</span><div class="big" id="rb-big">–</div></div>
+      <p class="rt-cap">Real GDP growth, July–September 2025 — the fastest quarter in a year and a half, and comfortably above the rough pre-pandemic trend.</p>
+      <div><div class="band-scale" id="rb-scale"></div><div class="band-chip" id="rb-band">vs 6% trend — <b>–</b></div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the print says</span>
+        <p>The economy grew <b id="cr-g1">–</b> in the September quarter, accelerating from <b id="cr-g0">–</b> in the previous one. The composition is the encouraging part: household consumption — fifty-six per cent of GDP — rose <b id="cr-c1">–</b>, and investment held at <b id="cr-i1">–</b>, so the quarter was carried by domestic demand rather than statistical residue.</p>
+        <p>GVA, which strips out taxes and subsidies, came in slightly lower at <b id="cr-v1">–</b> — the gap is a net-tax story, not a production story.</p>
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What it does not say</span>
+        <p>It does not say the average Indian is <b id="cr-g3">–</b> better off — GDP says nothing about distribution, and per-capita growth is lower once population is counted. It says nothing reliable about the informal economy, which is estimated, not measured.</p>
+        <p>And unlike the CPI, this number <b>will be revised</b> — this is the first estimate of this quarter, and the final figure, due in about three years, may look different. We do not yet know how different.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 register -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>The register of series</h2><span class="line"></span><span class="unit">Shares · latest · year ago</span></div>
+    <div class="break ledger">
+      <table>
+        <thead>
+          <tr><th>Series</th><th>Share of GDP</th><th>Latest y/y</th><th>vs prev. quarter</th><th>Year ago</th><th class="spark">2016 – 2025</th></tr>
+        </thead>
+        <tbody id="ledger-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- § 03 composition -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>What growth is made of</h2><span class="line"></span><span class="unit">Expenditure shares, per cent of GDP</span></div>
+    <div class="break basket">
+      <div class="bar" id="basket-bar"></div>
+      <div class="labels" id="basket-labels"></div>
+      <p class="note">The demand side of the economy, before net exports (roughly −2% of GDP) and statistical discrepancies. Consumption dwarfs everything — which is why a cautious consumer matters more to the headline than any single factory, and why "investment-led growth" at 33% is still the junior partner.</p>
+    </div>
+  </section>
+
+  <!-- § 04 plate 1 -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>Plate 1 — a decade of growth, with its wound</h2><span class="line"></span><span class="unit">y/y % · quarterly</span></div>
+    <div class="break">
+      <figure id="cb-main" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>One crash, one rebound, and the long middle</h3>
+            <div class="sub">Real GDP, GVA and consumption · year-on-year, per cent · Q1 FY17 – Q2 FY26</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-main">–</div><div class="c">Q2 FY26 · GDP y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-main">
+            <button class="chip" data-key="gdp"><i style="background:#BE3E26"></i>GDP</button>
+            <button class="chip" data-key="gva"><i style="background:#5B564B"></i>GVA</button>
+            <button class="chip" data-key="pfce"><i style="background:#A8A293"></i>Consumption · PFCE</button>
+          </div>
+          <div class="plotzone" id="plot-main"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — <a href="https://www.mospi.gov.in" target="_blank" rel="noopener">MoSPI</a>, NAS press release of 28 Nov 2025 · growth computed from constant-price levels · dashed rule: 6%, rough pre-pandemic trend · GFCF plotted separately (it crashed to −42%)</span>
+            <span class="dl">
+              <button data-dl="svg">SVG</button><span class="sep"></span>
+              <button data-dl="png">PNG</button><span class="sep"></span>
+              <button data-dl="csv">CSV</button><span class="sep"></span>
+              <a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a>
+            </span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each line compares one quarter with the same quarter a year earlier. The deep V is the pandemic: a real collapse in mid-2020, then a rebound a year later that is <em>arithmetic, not boom</em> — growth measured against a destroyed base. Read the 2020–22 stretch as a wound and its scar, not as information about trend.</p>
+            <p>GDP and GVA move together because they are nearly the same thing: GDP = GVA + net indirect taxes. Consumption (PFCE) is the demand engine; when it outgrows GDP, households are confident, and vice versa.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of November 2025</span>
+            <p>The base-effect theatre is finally over: the last four quarters read <b id="ex-last4">–</b> — the cleanest trend signal since before the pandemic, and accelerating. Growth is running well above the old 6% trend, with consumption growing nearly as fast as the headline.</p>
+            <p>The caution: these are early estimates. The quarterly series leans heavily on listed-company results and government accounts; the informal sector is extrapolated. Revisions over the next three years will redraw parts of this picture.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 the measure -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="wm-grid">
+      <div>
+        <p>Gross Domestic Product is the market value of everything produced inside India's borders in a period, with double-counting removed. It can be added up three ways — by what is <b>produced</b>, by what is <b>spent</b>, and by what is <b>earned</b> — and in India the three never quite agree, so the accounts publish a "discrepancies" line to absorb the difference.</p>
+        <p>The headline is <b>real</b> GDP: values at constant 2011–12 prices, so that growth means more output, not just higher prices. The nominal figure — current prices — runs several points higher when inflation is high, and it is the nominal number that tax collections and debt ratios actually care about.</p>
+        <p>Unlike the CPI, which is final on release, the national accounts are <b>revised relentlessly</b>: a quarter's growth is first estimated two months after it ends, then restated as annual surveys, tax data and the new base year arrive. Today's 8.2 is a pencil sketch that hardens over three years.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note · i</span>
+          <b>The rebound is arithmetic.</b> +23% after −23% does not restore the level: 0.77 × 1.23 ≈ 0.94. The economy was still ~6% smaller.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · ii</span>
+          <b>Real vs nominal.</b> Real growth measures volume; nominal measures rupees. Debt-to-GDP and tax buoyancy live in the nominal world.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · iii</span>
+          <b>GDP ≠ GVA.</b> GDP adds net indirect taxes to GVA. When subsidy payments swing, the two diverge — check which one a headline is quoting.
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 06 component plates -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>The parts, one plate each</h2><span class="line"></span><span class="unit">y/y % · quarterly</span></div>
+
+    <div class="break">
+      <figure id="cb-pfce" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Consumption — fifty-six per cent of everything</h3>
+            <div class="sub">Private final consumption expenditure (PFCE) · year-on-year, per cent · 2016–2025</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-pfce">–</div><div class="c">Q2 FY26 · y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-pfce"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI · <span id="pf-pfce">–</span></span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>What households spend on goods and services — the largest and steadiest block of demand. It tracks wages, rural incomes and consumer confidence, and it is the single best summary of how ordinary life is going. Sustained strength here is what turns a statistical recovery into a felt one.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of November 2025</span>
+            <p>At <b id="ex-pfce">–</b>, consumption is growing at nearly the pace of the headline — helped by two good monsoons and by food deflation freeing up household budgets.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-gfcf" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Investment — the swingiest number in the accounts</h3>
+            <div class="sub">Gross fixed capital formation (GFCF) · year-on-year, per cent · 2016–2025</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-gfcf">–</div><div class="c">Q2 FY26 · y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-gfcf"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI · <span id="pf-gfcf">–</span></span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Spending on machines, buildings and infrastructure — the economy's bet on its own future. Note the y-axis: investment collapsed more than <b>40%</b> in the pandemic quarter and rebounded over 60%, the widest swing of any major component. Judge its level over a year, never a quarter.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of November 2025</span>
+            <p>At <b id="ex-gfcf">–</b>, investment is steady rather than surging. Public capex has been doing the heavy lifting; a broad private-sector capex cycle remains, as ever, one budget away.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-gva" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>GVA — production before the taxman</h3>
+            <div class="sub">Gross value added, basic prices · year-on-year, per cent · 2016–2025</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-gva">–</div><div class="c">Q2 FY26 · y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-gva"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI · <span id="pf-gva">–</span></span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>GVA measures producers' output net of input costs, before product taxes and subsidies. Economists often prefer it as the cleaner read on supply conditions; newspapers usually quote GDP. When the two diverge, the cause is almost always net taxes — check before reading meaning into it.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of November 2025</span>
+            <p>At <b id="ex-gva">–</b>, GVA trails GDP only slightly — subsidy arithmetic, not weak production. The sectoral detail behind this line is where next quarter's story will come from.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-exp" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The rest of demand — the state and the border</h3>
+            <div class="sub">Government consumption, exports and imports · year-on-year, per cent · 2016–2025</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-exp">–</div><div class="c">Q2 FY26 · imports y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-exp">
+            <button class="chip" data-key="imports"><i style="background:#BE3E26"></i>Imports</button>
+            <button class="chip" data-key="exports"><i style="background:#5B564B"></i>Exports</button>
+            <button class="chip" data-key="gfce"><i style="background:#8A857A"></i>Government · GFCE</button>
+          </div>
+          <div class="plotzone" id="plot-exp"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI · <span id="pf-exp">–</span> · imports enter the accounts with a minus sign — the vermilion line subtracts from GDP</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The three engines the headline plates skip. Government consumption is the state's own spending on salaries and services — about a tenth of GDP, and the only engine a budget can start at will. Exports add demand from abroad; imports subtract it, because GDP counts what is made here, not what is bought here. A quarter where imports outrun exports is a quarter where net trade dragged on the headline.</p>
+            <p>All three swing harder than consumption. Government spending lurches with the fiscal calendar; trade answers to the world cycle and the oil bill. Read them for composition, not for trend.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of November 2025</span>
+            <p>Imports grew <b id="ex-imp">–</b> in the September quarter against <b id="ex-exp">–</b> for exports, so net trade subtracted from the print. Government consumption read <b id="ex-gfce">–</b>. The quarter belonged to households and builders, not to the state or the border.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 annual accounts -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>The annual ledger — six accounts</h2><span class="line"></span><span class="unit">Fiscal years · y/y % · constant prices</span></div>
+    <div class="break">
+      <figure id="cb-acc" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Gross, net, and the taxman's wedge</h3>
+            <div class="sub">Six annual accounts · year-on-year, per cent, constant prices · FY13 – FY26 · each panel on its own scale</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-acc">–</div><div class="c" id="pv-acc-c">– · NDP y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" style="padding-top:26px">
+            <div id="grid-acc" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:34px 44px"></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, NAS annual accounts · each panel on its own y-scale, zero rule shown · the detailed accounts — taxes, subsidies, capital — run two years behind the headline and stop at FY24</span>
+            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The quarterly print is one number; the annual accounts are a ledger, and the ledger teaches the identities. GDP is GVA plus taxes on products minus subsidies — that wedge is the whole difference between the two headlines, and it moves when policy moves, not when factories do. Net domestic product strips out capital consumption: the wearing-out of machines, roads and software. Gross counts everything made; net counts what is left after replacing what wore out.</p>
+            <p>Gross national income asks a different question — not what was made here, but what residents earned anywhere. The two travel together for India; the gap is remittances and profits crossing the border.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the January 2026 accounts</span>
+            <p>The FY26 advance estimates put NDP growth at <b id="ac-ndp">–</b> and GNI at <b id="ac-gni">–</b>. The detailed ledger stops at FY24: product taxes grew <b id="ac-tax">–</b> while subsidies printed <b id="ac-sub">–</b> — a wedge that flattered GDP against GVA that year. Capital consumption grew <b id="ac-cfc">–</b>, and it has run between <b id="ac-cfc-lo">–</b> and <b id="ac-cfc-hi">–</b> in every year of this ledger, boom, bust or lockdown. Depreciation does not do cycles.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 misread -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li>
+        <span class="no">i.</span>
+        <div>
+          <h3>"+20% means a boom."</h3>
+          <p>After a −23% collapse, +23% leaves the level <b>about 5% below where it started</b>. Growth rates multiply, they do not add. Always ask what the base quarter was.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">ii.</span>
+        <div>
+          <h3>"GDP growth is my growth."</h3>
+          <p>GDP says nothing about distribution or headcount. Per-capita growth is lower; median experience can be lower still. An aggregate can rise while most households tread water.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iii.</span>
+        <div>
+          <h3>"The first estimate is the fact."</h3>
+          <p>Quarterly GDP is revised for years as better data arrives — sometimes by more than a point. The CPI is final; GDP is a draft. Quote the vintage, not just the number.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iv.</span>
+        <div>
+          <h3>"Real and nominal are interchangeable."</h3>
+          <p>Real growth strips out price change; nominal does not. With 5% inflation, 8% real growth is 13% nominal — and it is the nominal figure that swells tax receipts and shrinks debt ratios.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">v.</span>
+        <div>
+          <h3>"GDP and GVA disagree."</h3>
+          <p>They differ by net indirect taxes, nothing more. A GDP–GVA gap is an accounting story about taxes and subsidies, not evidence of statistical confusion.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">vi.</span>
+        <div>
+          <h3>"Quarterly momentum = y/y growth."</h3>
+          <p>India publishes year-on-year quarterly growth; many countries publish annualised quarter-on-quarter. The two can move in opposite directions. Never compare India's 8.2 with America's 2.8 without checking which convention each used.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">vii.</span>
+        <div>
+          <h3>"Gross is the number that matters."</h3>
+          <p>Gross product counts everything made, including the output that merely replaces worn-out machines and roads. Net domestic product subtracts that depreciation, and it is the closer measure of what the country can consume or add to wealth. The wedge grows as the capital stock grows, and it never makes a headline.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <footer class="provenance">
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. "Estimates of Gross Domestic Product for the Second Quarter (July–September) of 2025–26." Press release, 28 November 2025. Constant-price levels retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>; growth rates are computed from levels, not taken from the rounded published rates.</p>
+        <p>The expenditure-side series — government consumption, exports, imports — and the annual accounts (NDP, GNI, taxes and subsidies on products, capital consumption, capital formation) are drawn from the same NAS releases, same vintage. The annual income-side accounts are not published quarterly; their detailed lines end two fiscal years behind the headline, and that gap is shown, not filled.</p>
+      </div>
+      <div>
+        <h6>Revisions &amp; uncertainty</h6>
+        <p>National accounts are revised continuously: quarterly estimates are restated with each new release and finalised over roughly three years. This dossier quotes vintages explicitly; where estimates conflict, both are shown.</p>
+        <p>Where something is not measured, this dossier says "we do not know" rather than inventing a number.</p>
+      </div>
+      <div>
+        <h6>This dossier</h6>
+        <p>Dossier 02 · Output · version 1.7 · adds the rest of the demand side (GFCE, exports, imports) and the annual six-account ledger. Next scheduled revision: 27 February 2026, on release of the Q3 print.</p>
+        <p>Corrections and questions: register@indiaatlas.example</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas · Dossier 02 · National Accounts</span>
+      <span>Vintage <span id="prov-vintage2">–</span> · Base 2011–12</span>
+      <span>Set in Archivo, Newsreader &amp; Plex Mono</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../../dossiers/gdp.client.js";
+</script>
+</Base>

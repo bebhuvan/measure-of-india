@@ -1,0 +1,69 @@
+name: data-release rebuild
+
+# Aligned to the release calendars:
+#  - CPI: monthly, ~12th (release of the previous month's print)
+#  - GDP: quarterly, end of Feb / May / Aug / Nov
+# Runs the pipeline, commits any new vintage JSON, rebuilds, deploys.
+
+on:
+  schedule:
+    - cron: "30 8 12 * *"        # CPI release day, ~14:00 IST
+    - cron: "30 8 28 2,5,8,11 *" # NAS release days
+    - cron: "30 8 * * 1"         # weekly safety net
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Fetch and validate data
+        run: node scripts/fetch.mjs && node scripts/validate.mjs
+
+      - name: Regenerate dated prose (if LLM key configured)
+        if: ${{ secrets.INDIA_ATLAS_LLM_KEY != '' }}
+        env:
+          INDIA_ATLAS_LLM_BASE: ${{ secrets.INDIA_ATLAS_LLM_BASE }}
+          INDIA_ATLAS_LLM_KEY: ${{ secrets.INDIA_ATLAS_LLM_KEY }}
+          INDIA_ATLAS_LLM_MODEL: ${{ secrets.INDIA_ATLAS_LLM_MODEL }}
+        run: npm run prose
+        # Generated prose lands in pipeline/out/ — a human reviews it in the
+        # release PR before it is merged into the dossiers. Evergreen slots
+        # are never generated.
+
+      - name: Commit new vintage
+        run: |
+          git config user.name "india-atlas-bot"
+          git config user.email "bot@indiaatlas.in"
+          git add data/series data/raw
+          if git diff --cached --quiet; then
+            echo "no data change"
+          else
+            git commit -m "data: new vintage $(date -u +%Y-%m-%d)"
+          fi
+
+      - run: npm run build
+
+      - name: QC
+        run: node scripts/qc.mjs
+
+      - name: Push data commit
+        run: git push
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=india-atlas

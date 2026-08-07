@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>India Atlas — Design Mocks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1B1915;--soft:#55504A;--faint:#8B857A;--hair:#E7E3D9;--paper:#FDFDFB}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:"Newsreader",Georgia,serif;font-optical-sizing:auto;
+  font-size:19px;line-height:1.6;-webkit-font-smoothing:antialiased;
+}
+.mono{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:880px;margin:0 auto;padding:0 32px}
+header{padding:28px 0 24px;border-bottom:1px solid var(--ink);display:flex;justify-content:space-between;align-items:baseline}
+.brand{font-weight:500;font-size:18px;letter-spacing:.16em}
+.brand span{color:#2B50AA}
+header .tag{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.intro{padding:72px 0 56px}
+h1{font-weight:400;font-size:44px;line-height:1.1;letter-spacing:-.01em;max-width:16ch}
+.intro p{margin-top:24px;color:var(--soft);max-width:56ch}
+ol.mocks{list-style:none;counter-reset:x;padding-bottom:96px}
+ol.mocks li{counter-increment:x;border-top:1px solid var(--hair)}
+ol.mocks li:last-child{border-bottom:1px solid var(--hair)}
+ol.mocks a{
+  display:grid;grid-template-columns:80px 240px 1fr;gap:32px;align-items:baseline;
+  padding:30px 0;text-decoration:none;color:inherit;
+}
+ol.mocks a:hover .name{color:#2B50AA}
+ol.mocks .no{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--faint);letter-spacing:.1em}
+ol.mocks .name{font-size:24px;font-weight:500}
+ol.mocks .desc{font-size:16.5px;color:var(--soft)}
+ol.mocks .desc em{font-style:italic;color:var(--ink)}
+footer{padding:24px 0 48px;border-top:1px solid var(--ink);font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);display:flex;justify-content:space-between}
+@media (max-width:760px){ol.mocks a{grid-template-columns:48px 1fr;gap:8px 20px}ol.mocks .desc{grid-column:2}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">INDIA <span>ATLAS</span></div>
+    <div class="tag">Design exploration · CPI dossier</div>
+  </header>
+  <div class="intro">
+    <h1>Four temperaments for one dossier</h1>
+    <p>Each mock is a complete, self-contained treatment of the same artifact — the Consumer Price Index dossier — with the same data, the same sections, and a different idea of what the page should feel like. Open them full-width; the charts are the protagonists.</p>
+  </div>
+  <ol class="mocks">
+    <li><a href="01-monograph.html">
+      <span class="no">MOCK 01</span><span class="name">The Monograph</span>
+      <span class="desc">A printed volume: Caslon and Newsreader, hairline rules, numbered plates, drop caps. <em>Scholarly, quiet, permanent.</em></span>
+    </a></li>
+    <li><a href="02-gazette.html">
+      <span class="no">MOCK 02</span><span class="name">The Gazette</span>
+      <span class="desc">A broadsheet front page: masthead, lead story for the latest print, column rules, vermilion accent. <em>Topical, urgent, readable.</em></span>
+    </a></li>
+    <li><a href="03-abstract.html">
+      <span class="no">MOCK 03</span><span class="name">The Abstract</span>
+      <span class="desc">A statistical register: document control, framed figures with reference codes, ledger as hero. <em>Precise, austere, verifiable.</em></span>
+    </a></li>
+    <li><a href="04-atlas-plate.html">
+      <span class="no">MOCK 04</span><span class="name">The Atlas Plate</span>
+      <span class="desc">A survey map: one great annotated chart with numbered marginalia, sparklines in the gazetteer. <em>Exploratory, narrative, spatial.</em></span>
+    </a></li>
+  </ol>
+  <footer><span>India Atlas · mocks/</span><span>Data: illustrative · Charts: Observable Plot</span></footer>
+</div>
+</body>
+</html>

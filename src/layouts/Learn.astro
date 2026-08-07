@@ -1,0 +1,55 @@
+---
+import Base from "./Base.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  slug: string;        // used for the canonical URL
+  kicker: string;      // e.g. "Learn № 01 — Concepts · Inflation"
+  h1: string;          // html — may contain <i>
+  lede: string;
+  meta: [string, string][]; // [label, value] pairs for the meta strip
+  dateStamp?: string;
+  crumbTitle: string;  // last crumb segment
+  ogImage?: string;
+}
+const { title, description, slug, kicker, h1, lede, meta, dateStamp = "Evergreen", crumbTitle, ogImage } = Astro.props;
+---
+<Base
+  title={title}
+  description={description}
+  nav="learn"
+  dateStamp={dateStamp}
+  crumbLeft={`<a href="/learn/" style="color:inherit">Learn</a> / Concepts / <b>${crumbTitle}</b>`}
+  crumbRight="Evergreen · concept notes · <b>v1.0</b>"
+  canonical={"https://indiaatlas.in/learn/" + slug + "/"}
+  ogImage={ogImage}
+>
+<div class="page">
+  <div class="titleblock break">
+    <div class="kicker">{kicker}</div>
+    <div class="hero-grid">
+      <h1 set:html={h1} />
+      <p class="lede">{lede}</p>
+    </div>
+    <div class="meta">
+      {meta.map(([l, v]) => <span>{l} <b>{v}</b></span>)}
+    </div>
+  </div>
+
+  <slot />
+
+  <footer class="provenance">
+    <div class="cols">
+      <slot name="prov-source" />
+      <slot name="prov-revision" />
+      <slot name="prov-note" />
+    </div>
+    <div class="fine">
+      <span>India Atlas · Learn · {crumbTitle}</span>
+      <span>Evergreen · review with each base revision</span>
+      <span>Set in Archivo, Newsreader &amp; Plex Mono</span>
+    </div>
+  </footer>
+</div>
+</Base>

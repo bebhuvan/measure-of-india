@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inflation closes the year at 3.5% — India Atlas · CPI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FFFFFF;
+  --ink:#141210;
+  --soft:#4C4741;
+  --faint:#8E877C;
+  --hair:#E4E0D6;
+  --accent:#C0391B;
+  --accent-quiet:#D98A76;
+  --steel:#7C8698;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:"Spectral",Georgia,serif;font-size:18px;line-height:1.6;
+}
+.sans{font-family:"IBM Plex Sans",sans-serif}
+.mono{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:1240px;margin:0 auto;padding:0 36px}
+
+.masthead{border-bottom:3px double var(--ink);padding:26px 0 18px;text-align:center}
+.masthead .name{
+  font-family:"Spectral",serif;font-weight:800;font-size:clamp(38px,5.4vw,60px);
+  letter-spacing:.22em;text-indent:.22em;
+}
+.masthead .name span{color:var(--accent)}
+.masthead .tag{
+  margin-top:8px;font-family:"IBM Plex Sans",sans-serif;font-size:12px;
+  letter-spacing:.32em;text-transform:uppercase;color:var(--soft);
+}
+.issue-line{
+  display:flex;justify-content:space-between;border-bottom:1px solid var(--ink);
+  padding:9px 0;font-family:"IBM Plex Mono",monospace;font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--soft);
+}
+.issue-line b{color:var(--ink);font-weight:500}
+nav.top{
+  display:flex;justify-content:center;gap:36px;border-bottom:1px solid var(--hair);padding:10px 0;
+}
+nav.top a{
+  font-family:"IBM Plex Sans",sans-serif;font-size:12.5px;font-weight:500;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--soft);text-decoration:none;
+}
+nav.top a:hover{color:var(--accent)}
+nav.top a[aria-current]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--accent)}
+
+.kicker{
+  font-family:"IBM Plex Sans",sans-serif;font-size:12px;font-weight:600;
+  letter-spacing:.3em;text-transform:uppercase;color:var(--accent);
+}
+.kicker::before{content:"";display:inline-block;width:26px;height:2px;background:var(--accent);vertical-align:middle;margin-right:10px}
+
+.hero{padding:64px 0 56px;border-bottom:1px solid var(--ink);display:grid;grid-template-columns:1.5fr 1fr;gap:72px}
+.hero h1{
+  font-family:"Spectral",serif;font-weight:700;font-size:clamp(40px,5.6vw,66px);
+  line-height:1.05;letter-spacing:-.01em;margin:22px 0 26px;
+}
+.hero .deck{font-size:21px;line-height:1.5;color:var(--soft);max-width:56ch}
+.hero .byline{
+  margin-top:30px;font-family:"IBM Plex Sans",sans-serif;font-size:12px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--faint);
+}
+.hero .byline b{color:var(--ink)}
+.hero aside{border-left:1px solid var(--hair);padding-left:44px}
+.hero aside h2{
+  font-family:"IBM Plex Sans",sans-serif;font-size:11px;font-weight:600;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--faint);margin-bottom:22px;
+}
+.mini-stat{padding:16px 0;border-bottom:1px solid var(--hair)}
+.mini-stat:last-child{border-bottom:none}
+.mini-stat .v{
+  font-family:"Spectral",serif;font-weight:700;font-size:38px;line-height:1;font-variant-numeric:tabular-nums;
+}
+.mini-stat .v em{font-style:normal;font-size:.45em;color:var(--soft);font-weight:500}
+.mini-stat .l{font-family:"IBM Plex Sans",sans-serif;font-size:12px;color:var(--soft);margin-top:6px}
+.mini-stat .l b{font-weight:600}
+
+section{padding:64px 0;border-bottom:1px solid var(--hair)}
+.sec-kicker{margin-bottom:26px;display:flex;align-items:center;gap:18px}
+.sec-kicker .line{flex:1;border-top:1px solid var(--hair)}
+h3.hed{
+  font-family:"Spectral",serif;font-weight:700;font-size:30px;line-height:1.15;letter-spacing:-.005em;
+}
+h3.hed span{color:var(--accent)}
+
+.lead-story{display:grid;grid-template-columns:1fr 1fr;gap:56px}
+.lead-story .col-rule{border-right:1px solid var(--hair);padding-right:56px}
+.lead-story p{margin-bottom:1.15em}
+.lead-story p:first-of-type::first-letter{
+  font-family:"Spectral",serif;font-weight:700;font-size:4.6em;float:left;line-height:.8;
+  padding:8px 14px 0 0;color:var(--accent);
+}
+.dateline{
+  font-family:"IBM Plex Sans",sans-serif;font-weight:600;font-size:13px;
+  letter-spacing:.14em;text-transform:uppercase;
+}
+.dateline::after{content:" —";font-weight:400;color:var(--faint)}
+
+figure.chart-fig{margin:0}
+figure.chart-fig .fighead{
+  display:flex;justify-content:space-between;align-items:baseline;
+  border-top:2px solid var(--ink);padding-top:14px;margin-bottom:4px;
+}
+.fig-k{font-family:"IBM Plex Sans",sans-serif;font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+.fig-t{font-family:"Spectral",serif;font-style:italic;font-weight:500;font-size:19px}
+.fig-note{font-size:14px;color:var(--faint);font-style:italic;margin-top:8px}
+.tools{display:flex;gap:8px;margin-top:14px}
+.tools button{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  background:none;border:1px solid var(--hair);color:var(--soft);padding:5px 11px;cursor:pointer;
+}
+.tools button:hover{border-color:var(--accent);color:var(--accent)}
+
+.read-pair{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:44px}
+.read-pair>div{padding-top:18px;border-top:1px solid var(--ink)}
+.read-pair h4{
+  font-family:"IBM Plex Sans",sans-serif;font-size:11.5px;font-weight:600;letter-spacing:.22em;
+  text-transform:uppercase;margin-bottom:18px;
+}
+.read-pair h4.dated{color:var(--accent)}
+.read-pair p{font-size:17px;margin-bottom:1em;color:var(--soft)}
+.read-pair p b,.read-pair p em{color:var(--ink)}
+
+table.ledger{width:100%;border-collapse:collapse;font-family:"IBM Plex Sans",sans-serif;font-size:14px}
+table.ledger th{
+  font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);
+  text-align:left;padding:0 14px 10px 0;border-bottom:2px solid var(--ink);
+}
+table.ledger th.n,table.ledger td.n{text-align:right;font-variant-numeric:tabular-nums}
+table.ledger td{padding:13px 14px 13px 0;border-bottom:1px solid var(--hair);vertical-align:baseline}
+table.ledger td.code{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--accent)}
+table.ledger td.n{font-family:"IBM Plex Mono",monospace;font-size:12.5px}
+table.ledger td .sub{display:block;font-size:12px;color:var(--faint)}
+
+.components{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0}
+.components article{padding:0 36px;border-left:1px solid var(--hair)}
+.components article:first-child{padding-left:0;border-left:none}
+.components article:last-child{padding-right:0}
+.components h4{
+  font-family:"Spectral",serif;font-weight:700;font-size:22px;margin:10px 0 4px;
+}
+.components .wt{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--faint);letter-spacing:.1em;margin-bottom:16px}
+.components .chart{margin:14px 0}
+.components p{font-size:15.5px;color:var(--soft);margin-bottom:.9em}
+.components p b{color:var(--ink)}
+.components .stamp{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:12px;display:block;
+}
+
+ol.misread{list-style:none;counter-reset:m;max-width:820px}
+ol.misread li{
+  counter-increment:m;display:grid;grid-template-columns:56px 1fr;gap:22px;
+  padding:26px 0;border-bottom:1px solid var(--hair);
+}
+ol.misread li::before{
+  content:"¶" counter(m);font-family:"Spectral",serif;font-weight:700;font-size:17px;color:var(--accent);padding-top:3px;
+}
+ol.misread h5{font-family:"Spectral",serif;font-weight:700;font-size:19px;margin-bottom:6px}
+ol.misread p{font-size:16.5px;color:var(--soft)}
+ol.misread p b{color:var(--ink)}
+
+footer{
+  padding:52px 0 72px;
+}
+footer .rule{border-top:3px double var(--ink);padding-top:28px}
+footer .cols{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:52px;font-size:14.5px;color:var(--soft)}
+footer h6{
+  font-family:"IBM Plex Sans",sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink);margin-bottom:14px;
+}
+footer p{margin-bottom:.8em}
+footer .fine{
+  margin-top:40px;padding-top:14px;border-top:1px solid var(--hair);
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;color:var(--faint);
+  display:flex;justify-content:space-between;text-transform:uppercase;
+}
+.chart svg text{font-family:"IBM Plex Sans",sans-serif}
+@media (max-width:980px){
+  .hero,.lead-story,.read-pair,footer .cols{grid-template-columns:1fr}
+  .hero aside{border-left:none;padding-left:0;border-top:1px solid var(--hair);padding-top:32px}
+  .lead-story .col-rule{border-right:none;padding-right:0}
+  .components{grid-template-columns:1fr}
+  .components article{border-left:none;padding:32px 0;border-top:1px solid var(--hair)}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="masthead">
+    <div class="name">INDIA <span>ATLAS</span></div>
+    <div class="tag">Every statistic, one dossier at a time</div>
+  </div>
+  <div class="issue-line mono">
+    <span><b>Dossier VII</b> · Prices</span>
+    <span>Vol. I — No. 8</span>
+    <span>Base 2012 = 100</span>
+    <span>Monthly</span>
+    <span><b>Monday, 12 January 2026</b></span>
+  </div>
+  <nav class="top">
+    <a href="#" aria-current="page">Consumer Prices</a>
+    <a href="#">National Accounts</a>
+    <a href="#">Real Estate</a>
+    <a href="#">Health</a>
+    <a href="#">The Register</a>
+    <a href="#">Method</a>
+  </nav>
+
+  <div class="hero">
+    <div>
+      <div class="kicker">Prices · The CPI Dossier</div>
+      <h1>Inflation ends the year at its calmest since 2019</h1>
+      <p class="deck">Retail prices rose 3.5% in December — a third straight month below the RBI's 4% target. Food, which drove every spike of the past decade, is finally quiet. The question for 2026 is whether the quiet survives the monsoon.</p>
+      <div class="byline">By the <b>India Atlas desk</b> · Data: MoSPI release of 12 Jan 2026 · Reading time 9 min</div>
+    </div>
+    <aside>
+      <h2>The print at a glance</h2>
+      <div class="mini-stat"><div class="v" id="ms-head">–<em>% y/y</em></div><div class="l">Headline CPI, <b>December 2025</b></div></div>
+      <div class="mini-stat"><div class="v" id="ms-food">–<em>%</em></div><div class="l">Food &amp; beverages · weight 45.86</div></div>
+      <div class="mini-stat"><div class="v" id="ms-fuel">–<em>%</em></div><div class="l">Fuel &amp; light · weight 6.84</div></div>
+      <div class="mini-stat"><div class="v" id="ms-core">–<em>%</em></div><div class="l">Core, computed · weight 47.30</div></div>
+    </aside>
+  </div>
+
+  <section id="story">
+    <div class="sec-kicker"><span class="kicker">The latest print</span><div class="line"></div><span class="mono" style="font-size:11px;color:var(--faint)">12 JAN 2026</span></div>
+    <div class="lead-story">
+      <div class="col-rule">
+        <p><span class="dateline">New Delhi, Jan 12</span>The Consumer Price Index closed 2025 the way it has spent most of it: quietly. December's print of <b id="st-head">–</b> keeps headline inflation below the midpoint of the Reserve Bank's tolerance band for a third consecutive month, a run last seen in the deflation-scare winter of 2018–19.</p>
+        <p>The calm is imported from the vegetable mandi. Food and beverage inflation halved over the course of 2025, from a peak above ten per cent last winter to <b id="st-food">–</b> in December. Because food carries nearly half the weight of the basket, its quiet overwhelms almost everything else the index has to say.</p>
+      </div>
+      <div>
+        <p>Everything else, on inspection, is saying something mildly uncomfortable. The core index — the basket minus food and fuel — has been pinned near <b id="st-core">–</b> for twelve months. That is the portion of inflation set by domestic demand, wages and rents, and it is the portion interest rates can reach. It is not falling.</p>
+        <p>Fuel, a small weight with a loud political life, has emerged from a year of statistical deflation caused by 2023's LPG price cuts washing through the comparison. It now sits at <b id="st-fuel">–</b>, contributing nothing in either direction. The RBI's next statement is due in February; this print gives it room, and no urgency.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="bigchart">
+    <figure class="chart-fig">
+      <div class="fighead"><span class="fig-k">Chart 1 · The decade</span><span class="fig-t">Headline, food, fuel and core inflation, 2016 – 2025</span></div>
+      <div class="chart" id="chart-headline" role="img" aria-label="Ten-year chart of Indian CPI inflation with the RBI tolerance band of two to six percent shaded."></div>
+      <div class="fig-note">Shaded band: RBI tolerance range, 4% ± 2%. Food spikes of December 2019 (onions) and July 2023 (vegetables) annotated. Source: MoSPI; core computed by India Atlas.</div>
+      <div class="tools"><button data-dl>SVG</button><button>PNG</button><button>CSV</button></div>
+    </figure>
+    <div class="read-pair">
+      <div>
+        <h4>How to read this · Standing note</h4>
+        <p>All four lines answer the same question — <em>how much dearer than twelve months ago?</em> The red headline is a weighted average and must therefore live between its parts: food drags it, core anchors it. The grey band is law, not preference: since 2016 the RBI must explain itself to government whenever the red line spends three quarters outside it.</p>
+      </div>
+      <div>
+        <h4 class="dated">The current reading · This month</h4>
+        <p>2025 is only the second sustained excursion into the lower half of the band in a decade. The shape to watch is the <em>wedge</em> between core and headline: while core sits above the red line, the average is being flattered by vegetables, and the flattery ends with the next bad monsoon.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="ledger">
+    <div class="sec-kicker"><span class="kicker">The ledger</span><div class="line"></div><span class="mono" style="font-size:11px;color:var(--faint)">FOUR SERIES · MONTHLY · ALL-INDIA COMBINED</span></div>
+    <table class="ledger">
+      <thead><tr><th>Code</th><th>Series</th><th class="n">Weight</th><th class="n">Dec '25</th><th class="n">Nov '25</th><th class="n">Dec '24</th><th class="n">10-yr high</th><th>Source / note</th></tr></thead>
+      <tbody id="ledger-body"></tbody>
+    </table>
+  </section>
+
+  <section id="components">
+    <div class="sec-kicker"><span class="kicker">The components</span><div class="line"></div><span class="mono" style="font-size:11px;color:var(--faint)">CHARTS 2–4</span></div>
+    <div class="components">
+      <article>
+        <span class="fig-k">Chart 2</span>
+        <h4>Food &amp; beverages</h4>
+        <div class="wt">WEIGHT 45.86 · THE SWING FACTOR</div>
+        <div class="chart" id="chart-food" role="img" aria-label="Food inflation 2016 to 2025"></div>
+        <div class="tools"><button data-dl>SVG</button><button>CSV</button></div>
+        <span class="stamp">Standing note</span>
+        <p>Food inflation is weather with a lag. Droughts surface in this line three to six months late; gluts push it below zero, as in 2017–19. Negative food inflation is relief at the shop and distress on the farm — the same number, two readings.</p>
+        <span class="stamp">This month · Jan 2026</span>
+        <p>At <b id="c-food">–</b>, food has halved in a year. Half of that fall is arithmetic: December 2024's spike is now in the denominator. The base-effect gift expires by spring.</p>
+      </article>
+      <article>
+        <span class="fig-k">Chart 3</span>
+        <h4>Fuel &amp; light</h4>
+        <div class="wt">WEIGHT 6.84 · POLICY, NOT OIL</div>
+        <div class="chart" id="chart-fuel" role="img" aria-label="Fuel and light inflation 2016 to 2025"></div>
+        <div class="tools"><button data-dl>SVG</button><button>CSV</button></div>
+        <span class="stamp">Standing note</span>
+        <p>Only loosely tied to crude. Excise duty, LPG subsidy accounting and electricity tariffs dominate. A flat line here means stable policy, not stable world prices. Do not use it to infer anything about global energy.</p>
+        <span class="stamp">This month · Jan 2026</span>
+        <p>Now <b id="c-fuel">–</b>, after most of 2024 in deflation. The deflation was 2023's LPG cuts passing through the year-ago base — nobody's bill actually fell during it.</p>
+      </article>
+      <article>
+        <span class="fig-k">Chart 4</span>
+        <h4>Core</h4>
+        <div class="wt">WEIGHT 47.30 · COMPUTED BY INDIA ATLAS</div>
+        <div class="chart" id="chart-core" role="img" aria-label="Core inflation 2016 to 2025"></div>
+        <div class="tools"><button data-dl>SVG</button><button>CSV</button></div>
+        <span class="stamp">Standing note</span>
+        <p>The basket minus food and fuel: rents, health, education, transport services, gold. Core moves in long arcs and is what monetary policy is actually aimed at. Indian core has never sustainably visited 2% — its floor is structural.</p>
+        <span class="stamp">This month · Jan 2026</span>
+        <p>Flat at <b id="c-core">–</b> for a year. For rate-setters, this unremarkable line is the argument against declaring victory. The NSO publishes no official core series; ours is a computation, labelled as such.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="misread">
+    <div class="sec-kicker"><span class="kicker">Caution</span><div class="line"></div></div>
+    <h3 class="hed" style="margin-bottom:40px">How to misread this <span>— six reliable methods</span></h3>
+    <ol class="misread">
+      <li><div><h5>“Inflation is down, so prices are down.”</h5><p>Falling inflation is prices rising more slowly. At 3.5%, the basket still costs <b>3.5% more than last December</b>. Only a negative print means falling prices — food has managed it twice in ten years.</p></div></li>
+      <li><div><h5>Forgetting the base.</h5><p>Every y/y figure is a ratio to the same month last year. A spike then flatters now; a collapse then haunts now. Before reacting to any print, ask <b>what the denominator was doing</b>.</p></div></li>
+      <li><div><h5>Calling core the “real” inflation.</h5><p>Core excludes what poor households spend most on. It is watched because it is stable and policy-responsive, not because it is truer. The headline is the honest cost of living.</p></div></li>
+      <li><div><h5>Mistaking the basket for your basket.</h5><p>Weights come from a 2011–12 survey. They understate urban rent, overstate cereals for the well-off, and describe nobody precisely. The CPI averages 1.4 billion private inflations.</p></div></li>
+      <li><div><h5>Reading one month as a trend.</h5><p>Vegetables can move the headline by a full point in a single month and reverse the next. Three consecutive months is the minimum unit of meaning; twelve is better.</p></div></li>
+      <li><div><h5>Pitting CPI against WPI.</h5><p>Consumer retail prices versus factory-gate prices: different baskets, different purposes, often five points apart. Both correct. Show them side by side, never as a contradiction to resolve.</p></div></li>
+    </ol>
+  </section>
+
+  <footer>
+    <div class="rule">
+      <div class="cols">
+        <div>
+          <h6>Source &amp; provenance</h6>
+          <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office: “Consumer Price Index Numbers on Base 2012=100 — December 2025,” press release of 12 January 2026. Core is computed by India Atlas from published group indices and is not official. Figures in this mock are illustrative.</p>
+        </div>
+        <div>
+          <h6>Revisions policy</h6>
+          <p>CPI is final on release and never revised. Where any source restates a figure, we publish both vintages as separate series and say so. Each chart carries its vintage date.</p>
+        </div>
+        <div>
+          <h6>Colophon</h6>
+          <p>Set in Spectral, Plex Sans and Plex Mono. Charts rendered with Observable Plot. Correspondence: desk@indiaatlas.example.</p>
+        </div>
+      </div>
+      <div class="fine"><span>India Atlas · Dossier VII · Prices</span><span>Vintage 2026-01-12</span><span>Next print: 12 February 2026</span></div>
+    </div>
+  </footer>
+</div>
+
+<script type="module">
+import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
+
+const R=(a=>()=>{a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296})(20251231);
+const A=p=>m=>{if(m<=p[0][0])return p[0][1];for(let i=1;i<p.length;i++)if(m<=p[i][0]){const[a,b]=p[i-1],[c,d]=p[i];return b+(d-b)*(m-a)/(c-a)}return p[p.length-1][1]};
+const FOOD=A([[0,6.1],[6,7.2],[12,1.9],[17,-1.8],[23,0.7],[24,-0.1],[30,0.9],[36,-2.6],[42,1.9],[47,13.6],[48,13.0],[52,5.0],[58,9.6],[60,3.2],[64,4.0],[70,0.7],[76,8.6],[82,4.2],[88,8.4],[90,8.3],[93,11.5],[96,9.5],[100,6.5],[105,10.9],[108,8.4],[112,5.9],[116,3.8],[119,2.9]]);
+const FUEL=A([[0,5.3],[6,3.4],[12,3.8],[18,6.2],[24,7.9],[30,4.4],[36,-1.6],[42,1.6],[48,3.5],[54,2.7],[60,10.0],[66,12.7],[72,13.3],[78,8.5],[84,11.0],[90,7.4],[96,1.0],[102,-1.0],[106,-3.7],[110,-5.3],[114,-1.5],[119,2.6]]);
+const CORE=A([[0,4.9],[12,4.6],[18,4.1],[24,5.7],[30,6.3],[36,5.5],[42,3.8],[48,4.4],[54,5.6],[60,5.4],[66,6.2],[72,6.3],[78,6.0],[84,6.2],[90,5.4],[96,4.6],[102,3.9],[106,3.5],[110,3.7],[114,4.1],[119,4.2]]);
+const MO=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const N=120;
+const nz=s=>(R()+R()+R()-1.5)/1.5*s;
+const rows=Array.from({length:N},(_,i)=>{
+  const d=new Date(Date.UTC(2016+Math.floor(i/12),i%12,1));
+  const food=FOOD(i)+nz(.4),fuel=FUEL(i)+nz(.22),core=CORE(i)+nz(.07);
+  return {date:d,mo:MO[i%12],yr:2016+Math.floor(i/12),head:+(0.4586*food+0.0684*fuel+0.4729*core).toFixed(1),food:+food.toFixed(1),fuel:+fuel.toFixed(1),core:+core.toFixed(1)};
+});
+const L=rows[N-1],P=rows[N-2],Y=rows[N-13];
+const fmt=v=>v.toFixed(1)+"%";
+const ACC="#C0391B",STEEL="#7C8698",FAINTC="#B9BFCB",INK="#141210";
+const yearTicks=rows.filter(r=>r.date.getUTCMonth()===0).map(r=>r.date);
+
+const set=(id,t)=>document.getElementById(id).textContent=t;
+set("ms-head",L.head.toFixed(1)+"%");set("ms-food",fmt(L.food));set("ms-fuel",fmt(L.fuel));set("ms-core",fmt(L.core));
+set("st-head",fmt(L.head));set("st-food",fmt(L.food));set("st-core",fmt(L.core));set("st-fuel",fmt(L.fuel));
+set("c-food",fmt(L.food));set("c-fuel",fmt(L.fuel));set("c-core",fmt(L.core));
+
+const hi=(k)=>rows.reduce((a,b)=>a[k]>b[k]?a:b);
+const reg=[
+  ["CPI-ALL","Headline · all groups","The number in every headline.",100.00,L.head,P.head,Y.head,hi("head"),"MoSPI · final, never revised"],
+  ["CPI-CFBN","Food & beverages","Vegetables, cereals, milk, oils.",45.86,L.food,P.food,Y.food,hi("food"),"MoSPI"],
+  ["CPI-FUEL","Fuel & light","LPG, electricity, firewood.",6.84,L.fuel,P.fuel,Y.fuel,hi("fuel"),"MoSPI"],
+  ["IA-CORE","Core · ex food & fuel","Rents, health, education, gold.",47.30,L.core,P.core,Y.core,hi("core"),"India Atlas computation"]
+];
+document.getElementById("ledger-body").innerHTML=reg.map(r=>`
+<tr><td class="code">${r[0]}</td><td><b>${r[1]}</b><span class="sub">${r[2]}</span></td>
+<td class="n">${r[3].toFixed(2)}</td><td class="n"><b style="color:${ACC}">${r[4].toFixed(1)}</b></td><td class="n">${r[5].toFixed(1)}</td><td class="n">${r[6].toFixed(1)}</td>
+<td class="n"></td><td style="color:var(--faint);font-size:12.5px">${r[8]}</td></tr>`).join("");
+document.querySelectorAll("#ledger-body tr").forEach((tr,i)=>{
+  const cell=tr.children[6];const k=["head","food","fuel","core"][i];const m=hi(k);
+  cell.textContent=m[k].toFixed(1)+" · "+m.mo.slice(0,3)+" '"+String(m.yr).slice(2);
+});
+
+function base(el,yticks,label,h){
+  return {
+    width:el.clientWidth,height:h,marginLeft:48,marginRight:104,marginTop:28,marginBottom:34,
+    style:{background:"transparent",fontSize:"11px",color:"#4C4741"},
+    x:{type:"time",label:null,ticks:yearTicks,tickFormat:d=>d.getUTCFullYear(),tickSize:0,tickPadding:11},
+    y:{label,ticks:yticks,tickFormat:d=>d+"%",grid:true,labelAnchor:"top",labelOffset:36}
+  };
+}
+const band=Plot.areaY(rows,{x:"date",y1:2,y2:6,fill:ACC,fillOpacity:.05});
+const target=Plot.ruleY([4],{stroke:INK,strokeOpacity:.55,strokeWidth:.7,strokeDasharray:"1 3"});
+const zero=Plot.ruleY([0],{stroke:INK,strokeOpacity:.3,strokeWidth:.7});
+const pk19=rows.filter(r=>r.yr===2019||(r.yr===2020&&r.date<new Date(Date.UTC(2020,2,1)))).reduce((a,b)=>a.head>b.head?a:b);
+const pk22=rows.filter(r=>r.yr>=2021&&r.yr<=2022).reduce((a,b)=>a.head>b.head?a:b);
+const pk23=rows.filter(r=>r.yr===2023).reduce((a,b)=>a.head>b.head?a:b);
+
+const elH=document.getElementById("chart-headline");
+const end=(key,name,color,dy)=>Plot.text(rows.slice(-1),{x:"date",y:key,text:d=>`${name} ${fmt(d[key])}`,dx:10,dy:dy||0,textAnchor:"start",fontSize:11.5,fontWeight:500,fill:color});
+elH.append(Plot.plot({
+  ...base(elH,[-2,0,2,4,6,8,10,12,14],"% change, year earlier ↑",520),
+  marks:[
+    band,target,zero,
+    Plot.lineY(rows,{x:"date",y:"food",stroke:STEEL,strokeWidth:1.4}),
+    Plot.lineY(rows,{x:"date",y:"fuel",stroke:FAINTC,strokeWidth:1.4}),
+    Plot.lineY(rows,{x:"date",y:"core",stroke:"#5A6272",strokeWidth:1.4,strokeDasharray:"3 2"}),
+    Plot.lineY(rows,{x:"date",y:"head",stroke:ACC,strokeWidth:2.4}),
+    Plot.dot([pk19,pk22,pk23],{x:"date",y:"head",r:3.2,fill:ACC}),
+    Plot.text([pk19],{x:"date",y:"head",text:["Dec 2019 · onions · "+fmt(pk19.head)],dy:-18,fontSize:11,fill:ACC}),
+    Plot.text([pk22],{x:"date",y:"head",text:["Apr 2022 · "+fmt(pk22.head)],dx:10,dy:-14,fontSize:11,fill:ACC}),
+    Plot.text([pk23],{x:"date",y:"head",text:["Jul 2023 · vegetables"],dx:34,dy:-8,fontSize:11,fill:ACC}),
+    end("head","Headline",ACC,-14),end("core","Core","#5A6272",10),end("food","Food",STEEL,-2),end("fuel","Fuel",FAINTC,14),
+    Plot.text([{d:new Date(Date.UTC(2016,7,1)),y:5.7}],{x:"d",y:"y",text:["RBI tolerance band 2–6%"],fontSize:10.5,fill:"#8E877C",textAnchor:"start",dx:4})
+  ]
+}));
+
+function small(id,key,color,name,ticks){
+  const el=document.getElementById(id);
+  el.append(Plot.plot({
+    ...base(el,ticks,"% y/y ↑",240),
+    marginLeft:40,marginRight:84,marginTop:20,
+    marks:[
+      zero,
+      Plot.areaY(rows,{x:"date",y:key,y1:0,fill:color,fillOpacity:.05}),
+      Plot.lineY(rows,{x:"date",y:key,stroke:color,strokeWidth:1.8}),
+      end(key,name,color),
+      Plot.dot(rows.slice(-1),{x:"date",y:key,r:2.6,fill:color})
+    ]
+  }));
+}
+small("chart-food","food",STEEL,"Food",[-4,0,4,8,12]);
+small("chart-fuel","fuel","#8A93A8","Fuel",[-6,0,6,12]);
+small("chart-core","core","#4A5468","Core",[2,4,6]);
+
+document.querySelectorAll("[data-dl]").forEach(b=>b.addEventListener("click",()=>{
+  const svg=b.closest("figure,article").querySelector("svg");if(!svg)return;
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([svg.outerHTML],{type:"image/svg+xml"}));
+  a.download="india-atlas-cpi.svg";a.click();
+}));
+</script>
+</body>
+</html>

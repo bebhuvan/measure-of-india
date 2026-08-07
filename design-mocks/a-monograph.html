@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>India Atlas — Consumer Prices · The Monograph</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Newsreader:opsz,ital,wght@6..72,0,400;6..72,0,500;6..72,1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBFAF6;
+    --ink:#1B1A17;
+    --ink-soft:#4A463F;
+    --muted:#8A857A;
+    --rule:#E3DFD3;
+    --accent:#BE3E26;
+    --accent-soft:#F3E6E1;
+    --series-mute:#CBC5B6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{font-size:16px}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Newsreader",Georgia,serif;
+    font-size:1.075rem;
+    line-height:1.72;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{max-width:768px;margin:0 auto;padding:0 28px}
+
+  /* masthead */
+  .masthead{
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding:26px 0 18px;border-bottom:1px solid var(--ink);
+    font-family:"IBM Plex Mono",monospace;font-size:.68rem;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);
+  }
+  .masthead .brand{color:var(--ink);font-weight:500}
+
+  /* title block */
+  .titleblock{padding:72px 0 0}
+  .kicker{
+    font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--accent);margin-bottom:26px;
+  }
+  h1{
+    font-family:"Fraunces",serif;font-weight:400;font-size:3.4rem;
+    line-height:1.05;letter-spacing:-0.015em;margin-bottom:30px;
+  }
+  .lede{
+    font-size:1.32rem;line-height:1.55;color:var(--ink-soft);
+    font-style:italic;max-width:34ch;margin-bottom:44px;
+  }
+  .meta{
+    display:flex;flex-wrap:wrap;gap:8px 34px;
+    font-family:"IBM Plex Mono",monospace;font-size:.66rem;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+    padding:14px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  }
+  .meta b{color:var(--ink);font-weight:500}
+
+  /* key numbers */
+  .numbers{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    padding:44px 0 8px;
+  }
+  .num{padding:0 26px;border-left:1px solid var(--rule)}
+  .num:first-child{padding-left:0;border-left:none}
+  .num .v{
+    font-family:"Fraunces",serif;font-weight:300;font-size:2.7rem;
+    letter-spacing:-0.02em;line-height:1.05;
+  }
+  .num .v sup{font-size:.45em;font-weight:400;color:var(--muted);margin-left:2px}
+  .num .l{
+    font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);margin-top:10px;
+  }
+
+  /* sections */
+  section{padding:64px 0 0}
+  .sec-head{
+    display:flex;align-items:baseline;gap:16px;margin-bottom:30px;
+  }
+  .sec-head .no{
+    font-family:"IBM Plex Mono",monospace;font-size:.68rem;color:var(--accent);
+    letter-spacing:.1em;
+  }
+  .sec-head h2{
+    font-family:"Fraunces",serif;font-weight:500;font-size:1.5rem;letter-spacing:-0.01em;
+  }
+  .sec-head .line{flex:1;height:1px;background:var(--rule);transform:translateY(-5px)}
+  p + p{margin-top:1.1em}
+  p{max-width:62ch}
+
+  figure{margin:8px 0 0}
+  figcaption{
+    font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:18px;
+  }
+  figcaption b{color:var(--ink-soft);font-weight:500}
+
+  .caption-below{
+    font-family:"Newsreader",serif;font-style:italic;font-size:.85rem;
+    color:var(--muted);margin-top:14px;max-width:60ch;line-height:1.55;
+  }
+
+  /* misread box */
+  .misread{
+    border-left:2px solid var(--accent);
+    padding:6px 0 6px 30px;margin-top:12px;
+  }
+  .misread h3{
+    font-family:"IBM Plex Mono",monospace;font-size:.66rem;font-weight:500;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--accent);
+    margin-bottom:16px;
+  }
+  .misread li{
+    font-size:1rem;line-height:1.7;list-style:none;margin-top:14px;
+    padding-left:26px;position:relative;max-width:58ch;
+  }
+  .misread li::before{
+    content:"—";position:absolute;left:0;color:var(--accent);
+  }
+  .misread li b{font-weight:500}
+
+  /* provenance */
+  .provenance{
+    margin-top:88px;padding:26px 0 60px;border-top:1px solid var(--ink);
+    font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.08em;
+    color:var(--muted);line-height:2;
+  }
+  .provenance .row{display:flex;justify-content:space-between;gap:20px}
+  .provenance b{color:var(--ink-soft);font-weight:500;text-transform:uppercase;letter-spacing:.12em}
+
+  @media (max-width:640px){
+    h1{font-size:2.5rem}
+    .numbers{grid-template-columns:1fr;gap:26px}
+    .num{border-left:none;padding-left:0;border-top:1px solid var(--rule);padding-top:18px}
+    .num:first-child{border-top:none;padding-top:0}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <span class="brand">India Atlas</span>
+    <span>Dossier № 01 — Prices</span>
+  </header>
+
+  <div class="titleblock">
+    <div class="kicker">Prices · Consumer Price Index</div>
+    <h1>The price of a<br>basket of life.</h1>
+    <p class="lede">Every month, the government checks the price of roughly three hundred things an ordinary household buys — and tells us, with a single number, how much dearer life has become.</p>
+    <div class="meta">
+      <span>Source <b>MoSPI, NSO</b></span>
+      <span>Frequency <b>Monthly</b></span>
+      <span>Base year <b>2012 = 100</b></span>
+      <span>Latest <b>May 2025</b></span>
+    </div>
+  </div>
+
+  <div class="numbers">
+    <div class="num"><div class="v">4.8<sup>%</sup></div><div class="l">Headline CPI, y/y</div></div>
+    <div class="num"><div class="v">6.1<sup>%</sup></div><div class="l">Food &amp; beverages</div></div>
+    <div class="num"><div class="v">3.9<sup>%</sup></div><div class="l">Core (ex food, fuel)</div></div>
+  </div>
+
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The headline and its parts</h2><span class="line"></span></div>
+    <figure>
+      <figcaption><b>Fig. 1</b> — CPI inflation, year-on-year, 2016–2025 · per cent</figcaption>
+      <div id="chart-main"></div>
+      <p class="caption-below">The headline number is a weighted average of everything a household buys. Food alone is nearly half the basket — which is why a bad monsoon can move the nation's inflation more than the central bank can.</p>
+    </figure>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>What this measures</h2><span class="line"></span></div>
+    <p>The Consumer Price Index tracks the cost of a fixed basket of goods and services — rice, rent, bus fares, haircuts, school fees — as an urban or rural household actually buys them. When we say "inflation is 4.8 per cent", we mean this basket costs 4.8 per cent more than it did a year ago.</p>
+    <p>The basket is not a guess. It comes from a massive survey of what households actually spent in 2011–12, and each item carries a weight proportional to its share of household budgets. Food weighs about 46 per cent; housing, 10; fuel, 7.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <div class="misread">
+      <h3>Common mistakes</h3>
+      <ul>
+        <li><b>"Inflation fell, so prices fell."</b> No. Falling inflation means prices are rising more slowly. The price level almost never goes back down.</li>
+        <li><b>"My inflation is the national inflation."</b> Your basket is not the average basket. A family spending 60 per cent on food lives in a different index.</li>
+        <li><b>"One month tells a story."</b> Month-to-month moves are noisy and seasonal. Compare a year ago, and look at three-month trends.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="provenance">
+    <div class="row"><b>Series</b><span>CPI Combined, CFPI, Core — MoSPI press release, 12 June 2025</span></div>
+    <div class="row"><b>Methodology</b><span>Base 2012, Laspeyres index · weights from CES 2011–12</span></div>
+    <div class="row"><b>Dossier</b><span>Reviewed May 2025 · v1.3 · Mock data for design preview</span></div>
+  </footer>
+
+</div>
+
+<script type="module">
+import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
+
+function walk(seed, level, amp, smooth){
+  const out=[]; let v=level;
+  for(let i=0;i<40;i++){
+    const d=new Date(2016, i*3, 1);
+    v = v*smooth + (level + amp*Math.sin(i/3.1+seed) + amp*0.7*Math.sin(i*1.7+seed*2.3))*(1-smooth);
+    out.push({date:d, value:+(v).toFixed(2)});
+  }
+  return out;
+}
+const headline = walk(1.3, 4.8, 1.5, 0.72);
+const food     = walk(2.9, 5.6, 2.6, 0.60);
+const fuel     = walk(4.1, 3.2, 2.2, 0.55);
+const core     = walk(0.4, 4.3, 0.7, 0.88);
+const last = headline[headline.length-1];
+
+const chart = Plot.plot({
+  width: 712, height: 330,
+  marginLeft: 0, marginRight: 78, marginTop: 16, marginBottom: 30,
+  style:{background:"transparent", fontFamily:"'IBM Plex Mono', monospace", fontSize:"10px", color:"#8A857A"},
+  x:{label:null, tickSize:0, tickPadding:10},
+  y:{label:null, grid:true, tickFormat:d=>d+"%", ticks:4, tickSize:0},
+  marks:[
+    Plot.ruleY([0], {stroke:"#E3DFD3"}),
+    Plot.lineY(food, {x:"date", y:"value", stroke:"#CBC5B6", strokeWidth:1.25, curve:"catmull-rom"}),
+    Plot.lineY(fuel, {x:"date", y:"value", stroke:"#CBC5B6", strokeWidth:1.25, curve:"catmull-rom", strokeDasharray:"2,3"}),
+    Plot.lineY(core, {x:"date", y:"value", stroke:"#CBC5B6", strokeWidth:1.25, curve:"catmull-rom", strokeDasharray:"6,3"}),
+    Plot.lineY(headline, {x:"date", y:"value", stroke:"#BE3E26", strokeWidth:2.25, curve:"catmull-rom"}),
+    Plot.dot([last], {x:"date", y:"value", fill:"#BE3E26", r:3.5}),
+    Plot.text([last], {x:"date", y:"value", text:d=>d.value.toFixed(1)+"%", dx:14, dy:-2, fill:"#BE3E26", fontSize:11, fontWeight:500, textAnchor:"start"}),
+    Plot.text([food[food.length-1]], {x:"date", y:"value", text:["Food"], dx:14, fill:"#8A857A", fontSize:10, textAnchor:"start"}),
+    Plot.text([fuel[fuel.length-1]], {x:"date", y:"value", text:["Fuel"], dx:14, fill:"#8A857A", fontSize:10, textAnchor:"start"}),
+    Plot.text([core[core.length-1]], {x:"date", y:"value", text:["Core"], dx:14, fill:"#8A857A", fontSize:10, textAnchor:"start"}),
+  ]
+});
+document.getElementById("chart-main").append(chart);
+</script>
+</body>
+</html>

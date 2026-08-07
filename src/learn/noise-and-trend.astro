@@ -1,0 +1,157 @@
+---
+import Learn from "../layouts/Learn.astro";
+---
+<Learn
+  title="India Atlas — Learn · Noise and trend"
+  description="Learn № 19 — one print is weather, three is a climate. Why month-to-month moves are mostly seasonal noise, why three consecutive months is the minimum unit of meaning, and how to read a turning point early without fooling yourself."
+  slug="noise-and-trend"
+  kicker="Learn № 19 — Reading numbers · Noise and trend"
+  h1="One print is weather. <i>Three is a climate.</i>"
+  lede="Month-to-month moves are mostly seasonal noise; the trend moves on a slower clock. The minimum unit of meaning in economic data, and how to see a turning point early without fooling yourself."
+  meta={[
+    ["Concept", "Noise and trend"],
+    ["Illustrated with", "CPI m/m vs y/y · 2021–2025"],
+    ["Source", "MoSPI, NSO"],
+    ["Level", "Reading numbers"],
+    ["Reading time", "6 min"],
+  ]}
+  dateStamp="Evergreen"
+  crumbTitle="Noise and trend"
+>
+
+  <!-- § 01 the minimum unit of meaning -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The minimum unit of meaning</h2><span class="line"></span><span class="unit">First principles</span></div>
+    <div class="wm-grid">
+      <div>
+        <p>Every month brings a new number, and every month someone reads too much into it. Prices jump half a per cent: alarm. They dip the next month: relief. Both readings were weather. The climate of the economy moves on a slower clock, and telling the two apart is the most useful skill in reading data.</p>
+        <aside class="defbox">
+          <div class="term">Noise <span class="sub">the weather of the data</span></div>
+          <p>The part of a monthly move that carries no information about where the economy is heading: festival timing, a vegetable spike, a strike, a statistical wobble. Noise is loud, fast and forgetful. It reverses within a month or two and leaves the trend untouched.</p>
+          <div class="eg"><b>In plain words:</b> movement that means nothing, delivered fresh every month.</div>
+        </aside>
+        <p style="margin-top:1.4em">The opposite of noise is not silence; it is persistence. What survives after the spikes have cancelled each other out is the trend, and persistence is the whole of its definition.</p>
+        <aside class="defbox">
+          <div class="term">Trend <span class="sub">the climate of the data</span></div>
+          <p>The direction that persists once noise has averaged itself out. A trend is visible only across several readings: three consecutive months moving the same way is the minimum unit of meaning, and twelve is better. One month cannot establish a trend, by definition.</p>
+          <div class="eg"><b>In plain words:</b> what is left when the weather cancels.</div>
+        </aside>
+        <p style="margin-top:1.4em">Why three? Because noise in Indian price data is seasonal at heart: mangoes in summer, onions after the monsoon, ease in winter. A single odd month proves nothing, and two can still be coincidence. Three moves in one direction, surviving a change of season, is where signal begins.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note · i</span>
+          <b>Weather is not false.</b> The spike really happened; prices really rose that month. It is the meaning attached to it that is false.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · ii</span>
+          <b>Three months, minimum.</b> Twelve is better. Below three you are not reading the data; you are auditioning it.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · iii</span>
+          <b>The slow line is the signal.</b> Year-on-year moves precisely because twelve months of weather are already inside it, cancelling.
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 plate : weather versus climate -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>Five years of weather, drawn beside the climate</h2><span class="line"></span><span class="unit">m/m % · y/y %</span></div>
+    <p>The same inflation, measured two ways. The thin grey line compares each month with the one before; the thick vermilion line compares it with a year earlier. One jumps; the other judges.</p>
+    <div class="break">
+      <figure id="cb-nt" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The spike was weather — the line that matters barely noticed</h3>
+            <div class="sub">CPI combined · month-on-month, thin grey · year-on-year, thick vermilion · Jan 2021 – Dec 2025</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-nt">–</div><div class="c">Dec 2025 · y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-nt"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, CPI combined, base 2012=100, vintage <span id="pf-nt">–</span> · m/m computed from published levels, not seasonally adjusted</span>
+            <span class="dl">
+              <button data-dl="svg">SVG</button><span class="sep"></span>
+              <button data-dl="png">PNG</button><span class="sep"></span>
+              <button data-dl="csv">CSV</button><span class="sep"></span>
+              <a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a>
+            </span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Watch how violently the grey line jumps and how calmly the vermilion one responds. The grey line is not wrong; it answers a faster, noisier question. For direction, trust the thick line. For early warning, watch the thin one, but demand three months of agreement before believing it.</p>
+          </div>
+          <div class="now">
+            <span class="mk">The 2023 case</span>
+            <p>In July 2023 the monthly reading spiked to <b id="c-spike">–</b>, the largest in this window, on a tomato-driven surge in food prices. The very next month the grey line printed <b id="c-rev1">–</b>, and the month after, <b id="c-rev2">–</b>. The surge had unwound.</p>
+            <p>The thick line rose and fell back over the same months, from <b id="c-y0">–</b> to <b id="c-y1">–</b> and back to <b id="c-y2">–</b> within a quarter. That is what weather looks like: loud, brief, and gone.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 03 seeing the turn early -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>How to see a turning point early</h2><span class="line"></span><span class="unit">An honest method</span></div>
+    <div class="numbers">
+      <div class="num"><div class="l">The spike · Jul 2023</div><div class="v acc" id="n-spike">–</div><div class="d">month-on-month</div></div>
+      <div class="num"><div class="l">The month after</div><div class="v" id="n-rev1">–</div><div class="d">Aug 2023 · m/m</div></div>
+      <div class="num"><div class="l">Two months later</div><div class="v" id="n-rev2">–</div><div class="d">Sep 2023 · m/m</div></div>
+      <div class="num"><div class="l">The calm line</div><div class="v" id="n-yoy">–</div><div class="d">y/y · Dec 2025</div></div>
+    </div>
+    <p style="margin-top:40px">There is an honest way to be early. When the fast line turns, note it and wait. If a second month agrees, lean. If a third agrees, the slow line will follow, and you have read the turning point a quarter before the headline admits it. The cost of the method is real: sometimes you must sit with a suspected turn and say nothing.</p>
+    <p>The discipline cuts both ways. A trend that has persisted can also end, and refusing to see a genuine turn is as expensive as inventing a false one. The rule that guards against both errors is the same rule: three months, one direction, a change of season survived. Anything less is a guess with a chart attached.</p>
+  </section>
+
+  <!-- § 04 misreads -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>How to misread this concept</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li>
+        <span class="no">i.</span>
+        <div>
+          <h3>“This month's number proves it.”</h3>
+          <p>One print is weather. The July 2023 spike looked like runaway inflation and unwound within two months. Proof needs three readings in the same direction; before that you hold a hypothesis, not a finding.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">ii.</span>
+        <div>
+          <h3>“The trend never changes.”</h3>
+          <p>It changes rarely, but it changes. Inflation fell through 2025 in a genuine break, visible precisely because month after month agreed. A method that dismisses single spikes must also admit sustained runs, or it becomes stubbornness with a formula attached.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iii.</span>
+        <div>
+          <h3>“More data points always mean more meaning.”</h3>
+          <p>More points help only when they are allowed to disagree with you. Collecting readings until one confirms the story is not analysis. Meaning comes from consistency across time, never from the size of the pile.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <div slot="prov-source">
+    <h6>Source of record</h6>
+    <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. CPI combined on base 2012=100, January 2021 to December 2025, vintage 2026-08-04. The year-on-year rate is the published measure; the month-on-month rate is computed from the published index levels.</p>
+  </div>
+  <div slot="prov-revision">
+    <h6>Definitions &amp; honesty</h6>
+    <p>CPI is final on release and never revised. The month-on-month rate shown here is not seasonally adjusted, which is why it swings with the calendar; that swing is the lesson, not a defect.</p>
+    <p>Three months is a rule of thumb, not a law of statistics. It trades speed for safety, and the page says so.</p>
+  </div>
+  <div slot="prov-note">
+    <h6>This note</h6>
+    <p>Learn № 19 · Reading numbers · version 1.0. Evergreen, written to survive the next print. The 2023 episode is used as history, not news; the chart redraws from the baked data on every build.</p>
+    <p>Companion dossier: <a href="/dossiers/cpi/">Dossier 01 · Consumer Price Index</a>.</p>
+  </div>
+
+<script>
+  import "./noise-and-trend.client.js";
+</script>
+</Learn>

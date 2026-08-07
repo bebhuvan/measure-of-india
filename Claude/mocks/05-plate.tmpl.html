@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CPI — India Atlas — Plate 14</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,300..700;1,62..125,400..600&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=Spline+Sans+Mono:ital,wght@0,300..600;1,300..500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FCFCFA; --ink:#1A1F1D; --ink2:#4A5551; --ink3:#8A918C;
+  --rule:#E4E5DE; --neat:#2A342F; --hair:#EBEBE4;
+  --rev:#B9448E;
+  --g1:#0065B1; --g2:#9F7200; --g3:#7153B2; --g4:#278A47; --g5:#B5462B; --g6:#00897C;
+  --rail:238px; --gap:40px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Archivo",system-ui,sans-serif;font-variation-settings:"wdth" 100;
+  font-size:15px;line-height:1.5;font-variant-numeric:tabular-nums;
+  -webkit-font-smoothing:antialiased}
+.sheet{max-width:1340px;margin:0 auto;padding:0 32px 110px}
+
+/* ========== instrument voice ========== */
+.tag{font-family:"Spline Sans Mono",ui-monospace,monospace;font-size:10px;font-weight:400;
+  letter-spacing:.19em;text-transform:uppercase;color:var(--ink3);font-variant-numeric:tabular-nums}
+.tag b{font-weight:500;color:var(--ink2)}
+.tag.rev{color:var(--rev)}
+
+/* ========== masthead ========== */
+.mast{display:flex;justify-content:space-between;align-items:baseline;gap:24px;
+  flex-wrap:wrap;padding:24px 0 11px;border-bottom:1px solid var(--neat)}
+.wm{font-variation-settings:"wdth" 118;font-weight:600;font-size:12px;
+  letter-spacing:.34em;text-transform:uppercase}
+.mast nav{display:flex;gap:28px;flex-wrap:wrap}
+
+/* ========== title ========== */
+.title{display:grid;grid-template-columns:var(--rail) minmax(0,1fr);column-gap:var(--gap);
+  padding:46px 0 0}
+.title .idn{grid-column:1;padding-top:6px}
+.title .lede{grid-column:2}
+.title h1{margin:0;font-variation-settings:"wdth" 116;font-weight:550;
+  font-size:clamp(32px,4.2vw,53px);line-height:1.03;letter-spacing:-.024em;max-width:19ch}
+.title .abs{margin:22px 0 0;max-width:62ch;font-family:"Newsreader",Georgia,serif;
+  font-variation-settings:"opsz" 20;font-size:18.5px;line-height:1.58;color:#26312E}
+.title .idn .big{font-family:"Spline Sans Mono",monospace;font-weight:400;
+  font-size:56px;line-height:.9;letter-spacing:-.055em;margin:13px 0 0}
+.title .idn .big i{font-style:normal;font-size:.38em;color:var(--ink3);margin-left:.08em}
+.title .idn p{margin:13px 0 0;font-size:12.5px;line-height:1.45;color:var(--ink3);max-width:22ch}
+
+.strip{grid-column:1/-1;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));
+  margin-top:42px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.strip > div{padding:14px 18px 15px 0;border-left:1px solid var(--rule)}
+.strip > div:first-child{border-left:0}
+.strip > div + div{padding-left:18px}
+.strip .v{font-family:"Spline Sans Mono",monospace;font-size:20px;margin-top:7px;
+  letter-spacing:-.035em;white-space:nowrap}
+.strip .v small{font-size:10.5px;color:var(--ink3);letter-spacing:.02em;margin-left:.4em}
+
+/* ========== the plate grid ========== */
+.plate{display:grid;grid-template-columns:var(--rail) minmax(0,1fr);column-gap:var(--gap);
+  row-gap:26px}
+.plate-hd{grid-column:1/-1;display:flex;justify-content:space-between;align-items:baseline;
+  gap:20px;flex-wrap:wrap;padding:48px 0 14px}
+.plate-hd h2{margin:0;font-variation-settings:"wdth" 108;font-weight:600;font-size:15px;
+  letter-spacing:.015em}
+.rail{grid-column:1;padding:0 0 16px}
+.rail .code{display:block;font-family:"Spline Sans Mono",monospace;font-size:10px;
+  letter-spacing:.19em;text-transform:uppercase;color:var(--rev);margin-bottom:7px}
+.rail h3{margin:0 0 7px;font-variation-settings:"wdth" 104;font-weight:600;font-size:14px;
+  letter-spacing:-.005em;line-height:1.3}
+.rail p{margin:0;font-family:"Newsreader",Georgia,serif;font-variation-settings:"opsz" 12;
+  font-size:14px;line-height:1.5;color:var(--ink2)}
+.rail p + p{margin-top:8px}
+
+/* ========== panels ========== */
+.panel{grid-column:2;display:grid;grid-template-columns:46px minmax(0,1fr) 96px;
+  min-height:var(--h)}
+.panel.kstart,.rail.kstart{margin-top:14px}
+.pg,.pp,.pt{position:relative}
+/* the plot keeps its exact height even if a margin note makes the row taller */
+.panel svg{position:absolute;top:0;left:0;width:100%;height:var(--h);display:block}
+
+.yl{position:absolute;right:12px;transform:translateY(-50%);font-family:"Newsreader",serif;
+  font-variation-settings:"opsz" 14;font-size:13px;color:var(--ink3);line-height:1;white-space:nowrap}
+.yl.rl{top:14px;transform:none;font-family:"Spline Sans Mono",monospace;font-size:9px;
+  letter-spacing:.13em;text-transform:uppercase}
+
+.grid line{stroke:var(--hair);stroke-width:1;vector-effect:non-scaling-stroke}
+.panel.fam:hover,.panel.sm:hover{background:rgba(26,31,29,.028);border-radius:3px}
+.stat-band{fill:var(--ink);opacity:.035}
+.gap-mark{fill:var(--rev);opacity:.14}
+.ink-line{fill:none;stroke:var(--ink);stroke-width:2.4;stroke-linejoin:round;
+  stroke-linecap:round;vector-effect:non-scaling-stroke}
+.ink-line.thin{stroke-width:1.9}
+.ink-line.muted{stroke:var(--ink3)}
+.ink-line.net{stroke-width:1.7}
+.gap-fill{fill:var(--ink);opacity:.09}
+.zero{stroke:var(--ink);stroke-width:1;vector-effect:non-scaling-stroke;opacity:.32}
+.zero-sm{stroke:var(--ink3);stroke-width:1;vector-effect:non-scaling-stroke;stroke-dasharray:2 3}
+.stack path{shape-rendering:geometricPrecision}
+.dot-ink{fill:var(--ink)}.dot-mut{fill:var(--ink3)}.dot-rev{fill:var(--rev)}
+
+/* on-plot annotation, with hairline leaders */
+.an{position:absolute;font-family:"Spline Sans Mono",monospace;font-size:10.5px;
+  letter-spacing:.01em;color:var(--ink2);white-space:nowrap;line-height:1.3}
+.an.band-an{left:9px;color:var(--ink3)}
+.an.lead{padding-left:7px;color:var(--rev)}
+.an.lead i{position:absolute;left:0;top:100%;width:1px;background:var(--rev);opacity:.5}
+.an.lead.up i{top:auto;bottom:100%}
+.an.lead.flip{padding-left:0;padding-right:8px;transform:translateX(-100%)}
+.an.lead.flip i{left:auto;right:0}
+
+/* right-hand figure column */
+.tv{position:absolute;left:12px;right:0;font-family:"Spline Sans Mono",monospace;
+  font-size:25px;letter-spacing:-.045em;line-height:1;color:var(--ink)}
+.tv i{font-style:normal;font-size:.52em;color:var(--ink3)}
+.tv small{display:block;font-size:9px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink3);margin-top:6px;line-height:1.2}
+.tv.sm{font-size:17px}
+.tv.sm small{margin-top:4px}
+.tv.mut{color:var(--ink3)}
+
+/* comparability ribbon */
+.rib{position:absolute;left:0;right:0;top:12px;height:10px;background:rgba(26,31,29,.13);border-radius:2px}
+.rib span{position:absolute;top:0;bottom:0}
+.rib-gap{background:var(--rev)}
+.rib-prov{background:repeating-linear-gradient(135deg,rgba(26,31,29,.45) 0 1px,transparent 1px 4px)}
+.an.rib-an{top:29px;font-size:9.5px;color:var(--ink3);letter-spacing:.1em;text-transform:uppercase}
+.an.rib-an.rev{color:var(--rev)}
+.an.rib-an.flip{transform:translateX(-100%)}
+
+/* 100-cell basket strip */
+.ustrip{position:absolute;left:0;right:0;top:22px;height:20px;display:grid;
+  grid-template-columns:repeat(100,1fr);gap:1px}
+.ustrip i{display:block;border-radius:1px}
+.an.ustrip-an{top:48px;left:0;font-size:9.5px;color:var(--ink3);letter-spacing:.1em;
+  text-transform:uppercase}
+
+/* x axis, drawn once per plate */
+.panel.axis{min-height:30px}
+.xaxis{position:absolute;top:0;left:0;right:0;height:30px}
+.xaxis::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:var(--rule)}
+.xl{position:absolute;top:8px;transform:translateX(-50%);font-family:"Newsreader",serif;
+  font-variation-settings:"opsz" 14;font-size:13.5px;color:var(--ink3)}
+
+/* plate caption + margin legend */
+.pcap{grid-column:2;display:flex;justify-content:space-between;gap:34px;flex-wrap:wrap;
+  padding:12px 0 0}
+.pcap p{margin:0;max-width:56ch;font-family:"Newsreader",serif;font-variation-settings:"opsz" 12;
+  font-size:14px;line-height:1.55;color:var(--ink2)}
+.pcap p.narrow{max-width:30ch}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:5px 12px;margin-top:11px}
+.legend{display:block;margin-top:12px}
+.lk{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);line-height:1.3;
+  padding:3px 0}
+.lk i{width:11px;height:11px;border-radius:2px;flex:none}
+.lk b{margin-left:auto;font-family:"Spline Sans Mono",monospace;font-weight:400;font-size:11.5px;
+  color:var(--ink3)}
+
+/* frontispiece: the family, one row each, on the shared axis */
+.plate-lead{grid-column:2;padding:0 0 15px;max-width:62ch;font-family:"Newsreader",serif;
+  font-variation-settings:"opsz" 16;font-size:16px;line-height:1.55;color:var(--ink2)}
+.fam-rail{padding:9px 0 0}
+.fam-tag{display:block;font-family:"Spline Sans Mono",monospace;font-size:9px;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.fam-tag em{font-style:normal;color:var(--hair);margin-left:.4em}
+.fam-tag.headline{color:var(--ink2)}
+.fam-tag.component{color:var(--g1)}
+.fam-tag.rival{color:var(--g5)}
+.fam-tag.policy{color:var(--g4)}
+.fam-tag.downstream{color:var(--g3)}
+.fam-name{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;
+  margin-top:5px;letter-spacing:-.006em}
+.fam-name i{width:9px;height:9px;border-radius:2px;flex:none}
+.fam-desc{display:block;font-family:"Newsreader",serif;font-variation-settings:"opsz" 12;
+  font-size:13px;color:var(--ink3);margin-top:2px;padding-left:17px;line-height:1.4}
+.fam-pt{display:flex;align-items:center;justify-content:flex-start;padding:0 0 0 12px}
+.famv{font-family:"Spline Sans Mono",monospace;font-size:17px;letter-spacing:-.04em}
+.famv em{font-style:normal;font-size:.62em;color:var(--ink3);margin-left:1px}
+
+
+/* small multiples */
+.sm-rail{padding:5px 0 0}
+.sm-name{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;
+  letter-spacing:-.004em}
+.sm-name i{width:9px;height:9px;border-radius:2px;flex:none}
+.sm-meta{display:block;font-family:"Newsreader",serif;font-variation-settings:"opsz" 12;
+  font-size:13px;color:var(--ink3);margin-top:2px;padding-left:17px;line-height:1.4}
+.sm-pt{display:flex;align-items:center;justify-content:space-between;padding:0 4px 0 12px}
+.smv{font-family:"Spline Sans Mono",monospace;font-size:16px;letter-spacing:-.04em}
+.smc{font-family:"Spline Sans Mono",monospace;font-size:11px;color:var(--ink3)}
+.panel.sm:hover{background:#ECEEE6}
+.smhead{position:absolute;left:0;right:0;bottom:5px;display:flex;justify-content:space-between;
+  padding:0 4px 0 12px;font-family:"Spline Sans Mono",monospace;font-size:9px;font-weight:400;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--ink3)}
+
+/* ========== reading zone ========== */
+.read{display:grid;grid-template-columns:var(--rail) minmax(0,1fr);column-gap:var(--gap);
+  padding-top:58px}
+.read > .hd{grid-column:1/-1;border-top:1px solid var(--neat);padding:15px 0 24px;margin-top:6px}
+.read h2{margin:0;font-variation-settings:"wdth" 108;font-weight:600;font-size:15px;
+  letter-spacing:.015em}
+.read .body{grid-column:2;max-width:58ch;font-family:"Newsreader",Georgia,serif;
+  font-variation-settings:"opsz" 22;font-size:18.5px;line-height:1.62;color:#222D2A;
+  padding-bottom:26px}
+.read .body p{margin:0 0 1.05em}
+.read .body p:last-child{margin-bottom:0}
+.read .body em{font-style:italic}
+.read .body strong{font-weight:600}
+.read .marg{grid-column:1;text-align:right;position:relative;padding:4px 0 26px}
+.read .marg::after{content:"";position:absolute;right:calc(-1 * var(--gap));top:13px;
+  width:calc(var(--gap) - 7px);height:1px;background:var(--hair)}
+.read .marg .k{display:block;font-family:"Spline Sans Mono",monospace;font-size:9.5px;
+  letter-spacing:.17em;text-transform:uppercase;margin-bottom:7px}
+.read .marg .k.x{color:var(--rev)}
+.read .marg .k.o{color:var(--g1)}
+.read .marg p{margin:0;font-size:13px;line-height:1.5;color:var(--ink2);
+  font-family:"Newsreader",serif;font-variation-settings:"opsz" 12}
+.read .spacer{grid-column:1}
+
+/* ========== compact blocks ========== */
+.cells{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));
+  border-top:1px solid var(--neat);margin-top:44px}
+.cells > div{padding:16px 26px 18px 0;border-bottom:1px solid var(--rule)}
+.cells dt{font-weight:600;font-size:14px;margin-bottom:4px}
+.cells dd{margin:0;font-family:"Newsreader",serif;font-variation-settings:"opsz" 12;
+  font-size:14.5px;line-height:1.5;color:var(--ink2)}
+
+.prov{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:14px}
+.prov td{padding:12px 0;border-bottom:1px solid var(--rule);vertical-align:baseline}
+.prov tr:last-child td{border-bottom:0}
+.prov td:first-child{width:214px;padding-right:24px}
+.prov a{color:var(--g1);text-decoration:none;border-bottom:1px solid rgba(0,95,163,.32)}
+.prov a:hover{border-bottom-color:var(--g1)}
+
+.next{display:grid;grid-template-columns:repeat(auto-fit,minmax(214px,1fr));
+  border-top:1px solid var(--neat);margin-top:52px}
+.next a{padding:22px 24px 26px 0;border-bottom:1px solid var(--rule);text-decoration:none;
+  color:var(--ink);display:block}
+.next a:hover .nt{color:var(--rev)}
+.next .nt{display:block;margin-top:9px;font-size:17px;font-weight:600;letter-spacing:-.014em}
+.next .nd{display:block;margin-top:4px;font-size:13px;color:var(--ink3);line-height:1.45;
+  font-family:"Newsreader",serif;font-variation-settings:"opsz" 12}
+
+footer{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  padding-top:22px;margin-top:20px;border-top:1px solid var(--neat)}
+
+a:focus-visible{outline:2px solid var(--rev);outline-offset:3px}
+
+@media (max-width:1120px){
+  :root{--rail:186px;--gap:26px}
+  .panel{grid-template-columns:38px minmax(0,1fr) 84px}
+  .sm-head b{width:84px}
+}
+@media (max-width:840px){
+  :root{--rail:0px;--gap:0px}
+  .plate,.title,.read{grid-template-columns:minmax(0,1fr)}
+  .rail,.panel,.pcap,.plate-lead,.read .body,.read .marg,.read > .hd,
+  .title .idn,.title .lede{grid-column:1}
+  .plate-hd{display:block}
+  .plate-hd h2{margin-bottom:6px}
+  .rail{padding:18px 0 12px}
+  .rail:empty{display:none}
+  .strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .strip > div:nth-child(odd){border-left:0;padding-left:0}
+  .strip > div{border-top:1px solid var(--rule)}
+  .strip > div:nth-child(-n+2){border-top:0}
+  .read .marg{text-align:left;padding:14px 0 18px 14px;border-left:2px solid var(--hair);
+    margin-bottom:16px}
+  .read .marg::after{display:none}
+  .title .idn{padding-bottom:20px}
+  .sm-rail{padding-bottom:7px}
+}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<header class="mast">
+  <div class="wm">India Atlas</div>
+  <nav>
+    <span class="tag">Plate <b>14</b></span>
+    <span class="tag">Family <b>Prices &amp; inflation</b></span>
+    <span class="tag">Base <b>2012 = 100</b></span>
+    <span class="tag">Reviewed <b>14 Jul 2026</b></span>
+    <span class="tag rev">Weights revision pending</span>
+  </nav>
+</header>
+
+<section class="title">
+  <div class="idn">
+    <span class="tag">Latest reading</span>
+    <div class="big">3.8<i>%</i></div>
+    <p>Year on year, June 2026. Rural and urban combined.</p>
+  </div>
+  <div class="lede">
+    <h1>Prices, and the nine ways India measures them</h1>
+    <p class="abs">No single number tells you what is happening to prices in India. Nine do,
+    they disagree with each other, and the disagreements are the point. This dossier puts all
+    nine on one time axis, then opens up the one most people mean when they say inflation —
+    the Consumer Price Index — down to the six groups that move it.</p>
+  </div>
+  <div class="strip">
+    <div><span class="tag">Previous</span><div class="v">3.6<small>%&thinsp;· May</small></div></div>
+    <div><span class="tag">Index level</span><div class="v">196.4<small>2012 = 100</small></div></div>
+    <div><span class="tag">Rural</span><div class="v">4.09<small>%</small></div></div>
+    <div><span class="tag">Urban</span><div class="v">3.54<small>%</small></div></div>
+    <div><span class="tag">12-month mean</span><div class="v">2.6<small>%</small></div></div>
+    <div><span class="tag">Next release</span><div class="v">12 Aug<small>2026</small></div></div>
+  </div>
+</section>
+
+<!-- ================= FRONTISPIECE ================= -->
+<section class="plate" id="family">
+  <div class="plate-hd">
+    <h2>The family &nbsp;·&nbsp; nine measures of the same thing</h2>
+    <span class="tag">One shared time axis &nbsp;·&nbsp; Jan 2015 — Jun 2026</span>
+  </div>
+  <div class="plate-lead">Read down the column: every row is drawn on the same eleven years,
+  so the shapes are directly comparable even though the vertical scales are not. Wholesale
+  prices swing four times as hard as shop prices. The repo rate is the only row that was
+  decided rather than measured. Where a row belongs to another plate, the reference is
+  printed beside its tag.</div>
+
+  <!--FRONTISPIECE-->
+
+  <div class="rail"></div>
+  <!--AXIS3-->
+
+  <div class="pcap">
+    <p>Each row carries its own vertical range, printed under its name; the figure at the
+    right is the latest reading. Rows cross zero where a dotted line is shown. The GDP deflator
+    is quarterly, which is why its line is visibly coarser — the Atlas does not resample a
+    series to make it look like its neighbours.</p>
+    <p class="narrow">Nine rows, four kinds of measure: the headline and its splits, its
+    components, two rival measures built on different baskets, and one policy rate that
+    responds to all of them.</p>
+  </div>
+</section>
+
+<!-- ================= PLATE I ================= -->
+<section class="plate">
+  <div class="plate-hd">
+    <h2>Plate I &nbsp;·&nbsp; The Consumer Price Index, opened up</h2>
+    <span class="tag">Jan 2015 — Jun 2026 &nbsp;·&nbsp; 138 months &nbsp;·&nbsp; one shared time axis</span>
+  </div>
+
+  <div class="rail">
+    <span class="code">View A</span>
+    <h3>Headline inflation</h3>
+    <p>The change in the index against the same month a year earlier. Not the index itself,
+    and not a price.</p>
+    <p>Two breaches above the statutory ceiling; one below the floor, in October 2025.</p>
+  </div>
+  <!--PANEL_A-->
+
+  <div class="rail">
+    <span class="code">View B</span>
+    <h3>Rural and urban</h3>
+    <p>Two separate indices with different baskets, averaged into the headline. The shaded
+    space between them is what the combined figure hides.</p>
+  </div>
+  <!--PANEL_B-->
+
+  <div class="rail">
+    <span class="code">View C</span>
+    <h3>Who moved the headline</h3>
+    <p>Each group’s weight times its own inflation. The stack sums to View A exactly; bands below
+    the line pulled it down. Clothing, pan and tobacco are folded into one grey band.</p>
+    <div class="legend"><!--LEGEND_C--></div>
+  </div>
+  <!--PANEL_C-->
+
+  <div class="rail">
+    <span class="code">View D</span>
+    <h3>Comparability</h3>
+  </div>
+  <!--PANEL_D-->
+
+  <div class="rail"></div>
+  <!--AXIS-->
+
+  <div class="pcap">
+    <p><strong>View D reads left to right.</strong> Solid where the series is final; magenta
+    where field collection was suspended and values were imputed at source; hatched where the
+    last two months are still provisional. The plate begins in January 2015 because the base
+    changed that month, and values before it are a different measurement that is never
+    spliced on.</p>
+    <p class="narrow">Contributions are computed from published group weights and group
+    indices. They sum to the headline to within 0.01 points.</p>
+  </div>
+</section>
+
+<!-- ================= PLATE II ================= -->
+<section class="plate">
+  <div class="plate-hd">
+    <h2>Plate II &nbsp;·&nbsp; The six groups, on the same axis</h2>
+    <span class="tag">Own vertical scale per row &nbsp;·&nbsp; shared time axis</span>
+  </div>
+
+  <div class="rail">
+    <span class="code">Weights</span>
+    <h3>What is in the basket</h3>
+    <p>Each cell is one per cent of household spending. Food alone carries 46 of them, which
+    is why View C is mostly blue.</p>
+  </div>
+  <!--UNIT_STRIP-->
+
+  <!--SMALL_MULTIPLES-->
+
+  <div class="rail"></div>
+  <!--AXIS2-->
+
+  <div class="pcap">
+    <p>Each row has its own vertical scale — printed under its name — because a group that
+    swings between −5% and +14% cannot share an axis with one that never leaves 2–6%. Only the
+    time axis is shared. Read the rows for <em>shape</em>; read the two figures at the right
+    for level and for what each group contributed this month.</p>
+  </div>
+</section>
+
+<!-- ================= READING ZONE ================= -->
+<section class="read">
+  <div class="hd"><h2>What the index is</h2></div>
+
+  <div class="spacer"></div>
+  <div class="body">
+    <p>The list does not change when households change what they buy. That is deliberate: if
+    the basket moved every month you could no longer tell a price rise from a change in habit.
+    The cost of holding it still is that it ages — and India’s has been held still an unusually
+    long time.</p>
+  </div>
+
+  <div class="marg">
+    <span class="k x">Common error</span>
+    <p>Falling inflation is not falling prices. It means prices are climbing more slowly.
+    Prices only fall when the rate goes below zero, as food did in late 2025 and the headline
+    almost never does.</p>
+  </div>
+  <div class="body">
+    <p>What the headlines call inflation is not the index. It is the change in the index
+    against the same month a year earlier. When inflation falls to 3.8%, nothing has become
+    cheaper. The list still costs more than it did last June — 3.8% more, instead of the 5.1%
+    more it cost the June before.</p>
+  </div>
+
+  <div class="marg">
+    <span class="k x">Common error</span>
+    <p>196.4 is not rupees and not a price. Index levels can be compared with nothing except
+    their own past — never across countries, never across base years.</p>
+  </div>
+  <div class="body">
+    <p>The index itself stands at 196.4 against 100 in 2012, which says the 2012 basket costs
+    96% more now than it did then. Two such indices are built, not one: rural and urban India
+    have separate baskets, separate weights and separate collection networks, and View B is
+    simply the distance between them.</p>
+  </div>
+
+  <div class="hd"><h2>How to read the plate</h2></div>
+
+  <div class="marg">
+    <span class="k x">Common error</span>
+    <p>Don’t blame the month you are reading. A year-on-year figure has two ends: a soft
+    reading can come entirely from an unusually high price twelve months ago.</p>
+  </div>
+  <div class="body">
+    <p>Start with View C, not View A. A 3.8% headline built on food alone is a different
+    economy from a broad, even 3.8% — and the stack tells you which it is. Through 2022 the
+    green and red bands do real work; by 2026 the headline is held up almost entirely by blue
+    and gold, which is to say by food and by services.</p>
+    <p>Bands that drop below the zero line are groups that <em>subtracted</em> from the
+    headline. Fuel spent most of 2023 and 2024 down there, which is why the headline eased in
+    those years while almost nothing in a household budget felt cheaper.</p>
+  </div>
+
+  <div class="marg">
+    <span class="k o">Better question</span>
+    <p>Whose basket is it? If food is a smaller share of your spending than 45.9%, your lived
+    inflation is not View A — and the gap between the two is not an error in either.</p>
+  </div>
+  <div class="body">
+    <p>Then read View B. Rural and urban inflation diverge for months at a time, and the
+    combined line can be perfectly calm while one half of the country is not. The shaded space
+    is the part of the story the headline averages away.</p>
+  </div>
+
+  <div class="hd"><h2>What this plate cannot tell you</h2></div>
+
+  <div class="marg">
+    <span class="k x">Known limitation</span>
+    <p>Weights are frozen at the 2011–12 Consumer Expenditure Survey. A revision has been
+    pending for more than ten years.</p>
+  </div>
+  <div class="body">
+    <p>Every decade since Independence, Indian households have spent a smaller share of their
+    money on food. A basket built in 2011 almost certainly gives food more weight than it
+    deserves in 2026, which makes the headline more sensitive to a bad monsoon than the
+    country now is. This is the single largest known limitation of the series, and nothing on
+    this plate corrects for it.</p>
+    <p>Where the Atlas cannot correct something, it marks it and says so. That is what View D
+    is for.</p>
+  </div>
+</section>
+
+<dl class="cells">
+  <div><dt>Base year</dt><dd>The year set to 100. India uses 2012. Changing it re-scales every value and breaks comparison across the join.</dd></div>
+  <div><dt>Base effect</dt><dd>When this month’s rate moves because of what happened a year ago rather than anything happening now.</dd></div>
+  <div><dt>Weight</dt><dd>The share of household spending a group carries. Food holds 45.86 of every 100 rupees.</dd></div>
+  <div><dt>Contribution</dt><dd>Weight times a group’s own inflation — what that group added to the headline, in percentage points.</dd></div>
+  <div><dt>Core inflation</dt><dd>The headline with food and fuel removed, because those two swing hardest and fastest.</dd></div>
+  <div><dt>Series break</dt><dd>A point where method changed enough that values on either side are not comparable.</dd></div>
+</dl>
+
+<section style="margin-top:52px">
+  <span class="tag">Sources and authority</span>
+  <table class="prov">
+    <tr><td><span class="tag">Producer</span></td><td>National Statistical Office, Ministry of Statistics and Programme Implementation</td></tr>
+    <tr><td><span class="tag">Release</span></td><td>On or about the 12th of each month, for the preceding month. Next: 12 August 2026.</td></tr>
+    <tr><td><span class="tag">Coverage</span></td><td>1,181 villages · 1,114 urban markets · 299 rural and 299 urban items</td></tr>
+    <tr><td><span class="tag">Break</span></td><td>January 2015 — new base, basket and weights. Earlier values are held as a separate series and never spliced.</td></tr>
+    <tr><td><span class="tag">Gap</span></td><td>April and May 2020 — field collection suspended; values imputed at source and marked in View D</td></tr>
+    <tr><td><span class="tag">Revision</span></td><td>Provisional for two months, then final. Provisional months are hatched in View D.</td></tr>
+    <tr><td><span class="tag">Licence</span></td><td>Government Open Data Licence — India. Atlas-authored text under CC BY 4.0.</td></tr>
+    <tr><td><span class="tag">Artifacts</span></td><td><a href="#">cpi-combined-yoy.csv</a> · <a href="#">cpi-groups-yoy.csv</a> · <a href="#">weights-2012.csv</a> · <a href="#">observation provenance</a></td></tr>
+  </table>
+</section>
+
+<nav class="next" aria-label="Adjacent plates">
+  <a href="#"><span class="tag">Plate 15</span><span class="nt">Food inflation</span><span class="nd">The 45.9% that decides the headline</span></a>
+  <a href="#"><span class="tag">Plate 31</span><span class="nt">Wholesale prices</span><span class="nd">A different basket asking a different question</span></a>
+  <a href="#"><span class="tag">Plate 02</span><span class="nt">The policy repo rate</span><span class="nd">What the Reserve Bank does with View A</span></a>
+  <a href="#"><span class="tag">Plate 48</span><span class="nt">Real rural wages</span><span class="nd">Earnings with this plate subtracted out</span></a>
+</nav>
+
+<footer>
+  <span class="tag">India Atlas · Plate 14 · Prices</span>
+  <span class="tag">Figures on this plate are illustrative</span>
+</footer>
+
+</div>
+</body>
+</html>

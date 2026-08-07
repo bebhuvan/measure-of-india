@@ -1,0 +1,400 @@
+# India Atlas — data source registry
+# Normative config for scripts/fetch.mjs. Every baked file in data/series/
+# must be traceable to an entry here.
+#
+# BASE-YEAR RULE (integrity): series on different base years are NEVER
+# spliced, chained, or back-calculated into one continuous array. Each base
+# is a separate series key, plotted side by side with an event annotation at
+# the changeover ("base revised 2011-12 → 2022-23"). A series that crosses a
+# base revision is a defect; validate.mjs fails on it.
+
+api:
+  base: https://api.mospi.gov.in/api/
+  note: >
+    MoSPI eSankhyiki API. The host requires legacy TLS renegotiation;
+    scripts/lib/mospi.mjs sets SSL_OP_LEGACY_SERVER_CONNECT. Endpoint names
+    were recovered from the eSankhyiki SPA bundle (see esankhyiki-api.md).
+
+dossiers:
+
+  cpi:
+    product: cpi
+    frequency: monthly
+    base: "2012=100"
+    release_calendar: "~12th of each month"
+    revision_policy: "CPI is final on release; never revised."
+    source_agency: MoSPI, National Statistical Office
+    release_url: https://www.mospi.gov.in
+    fetch:
+      endpoint: cpi/getCPIData
+      params:
+        base_year: 2012
+        level: Group
+        series: Current
+        state_code: 99      # All India
+        sector_code: 3      # Combined
+      # subgroup codes of the six COICOP groups (+ 0.99 published headline,
+      # fetched only to cross-check the computed headline in validate.mjs)
+      subgroups:
+        "0.99": published_headline
+        "1.99": food
+        "2.99": pan
+        "3.99": clothing
+        "4.99": housing
+        "5.99": fuel
+        "6.99": misc
+    # CPI (Combined) group weights, base 2012 — sum must equal 100.00
+    weights:
+      food: 45.86
+      pan: 2.38
+      clothing: 6.53
+      housing: 10.07
+      fuel: 6.84
+      misc: 28.32
+    # Sector weights, same base. Rural officially has no housing group.
+    weights_rural:
+      food: 54.18
+      pan: 3.26
+      clothing: 7.36
+      fuel: 7.94
+      misc: 27.26
+    weights_urban:
+      food: 36.29
+      pan: 1.36
+      clothing: 5.57
+      housing: 21.67
+      fuel: 5.58
+      misc: 29.53
+    derived:
+      headline: weighted index of all six groups, then y/y   # never stored independently
+      core: weighted index of [pan, clothing, housing, misc], then y/y
+    window: { start: "2016-01" }
+    # ---- base 2024=100 (rebased series) ----
+    # The 2012-base stream stopped at Dec 2025; from Jan 2025 the API serves a
+    # rebased series on 2024=100 with a COICOP-2018-style hierarchy (13
+    # divisions replace the six groups; division 0 is CPI General). Separate
+    # bundles, never spliced with the 2012 base (base-year rule).
+    # Param scheme differs from the 2012 base: division_code replaces
+    # subgroup_code, and state_code 1 (not 99) is All India. A division_code
+    # query returns the aggregate row plus its child group/class rows — the
+    # fetcher keeps only rows with group == null.
+    # WEIGHTS: the API serves no weight field for this base (checked the
+    # filter payload, the record rows and getCpiBaseYear). Until it does, the
+    # headline is the PUBLISHED all-groups index (division 0) and no computed
+    # cross-check is possible — disclosed in meta.note and the dossier.
+    # series=Back is the NSO's own back-cast of the General index on the 2024
+    # base, 2013–2024, headline only — baked as its own bundle, never merged.
+    fetch2024:
+      endpoint: cpi/getCPIData
+      base: "2024=100"
+      params:
+        base_year: 2024
+        level: Group
+        series: Current
+        state_code: 1       # All India (this base; 99 in the 2012 base)
+    window2024: { start: "2026-01" }   # first month with a same-base year-ago level
+
+  gdp:
+    product: nas
+    frequency: quarterly   # fiscal quarters: Q1 = Apr–Jun
+    base: "2011-12"
+    release_calendar: "end of Feb / May / Aug / Nov"
+    revision_policy: "Revised continuously; finalised over ~3 years. Vintages are kept."
+    source_agency: MoSPI, National Statistical Office
+    release_url: https://www.mospi.gov.in
+    fetch:
+      endpoint: nas/getNASData
+      params:
+        base_year: "2011-12"
+        series: Current
+        frequency_code: 2   # Quarterly
+        account_code: 1     # National
+      # NAS indicator codes; constant-price (real) levels are fetched and
+      # y/y growth is computed from levels — never taken from the API's
+      # rounded whole-number growth-rate indicator.
+      # ALL 22 NAS indicators are ingested to raw. Growth-rate indicators
+      # (21, 22) are rounded to whole numbers — kept only to cross-check the
+      # growth we compute from constant-price levels.
+      indicators:
+        "5": gdp            # Gross Domestic Product
+        "1": gva            # Gross Value Added
+        "10": pfce          # Private Final Consumption Expenditure
+        "9": gfcf           # Gross Fixed Capital Formation
+        "11": gfce          # Government Final Consumption Expenditure
+        "12": stocks        # Change in Stock — raw only; swings sign, y/y meaningless
+        "13": valuables     # Valuables — raw only; same reason
+        "14": exports       # Export of Goods and Services
+        "15": imports       # Import of Goods and Services
+        "2": net_taxes      # Net Taxes on Products
+        "3": taxes          # Taxes on Products
+        "4": subsidies      # Subsidies on Products
+        "6": cfc            # Consumption of Fixed Capital
+        "7": ndp            # Net Domestic Product
+        "8": gcf_industry   # Gross Capital Formation by Industry of Use
+        "16": primary_income_row  # Primary Income Receivable Net From RoW
+        "17": gni           # Gross National Income
+        "18": transfers_row # Other Current Transfers Net From RoW
+        "19": gndi          # Gross National Disposable Income
+        "20": gross_saving  # Gross Saving
+        "21": gva_growth_published  # cross-check only (rounded)
+        "22": gdp_growth_published  # cross-check only (rounded)
+    window: { start: "2016-Q1" }   # Q1 FY17 = Apr–Jun 2016
+
+  wpi:
+    product: wpi
+    frequency: monthly
+    base: "2011-12=100"
+    release_calendar: "~14th of each month (provisional); final ~8 weeks later"
+    revision_policy: "Provisional prints are revised to final ~8 weeks after release. Vintages are kept."
+    source_agency: "Office of the Economic Adviser, DPIIT (via MoSPI eSankhyiki)"
+    release_url: https://eaindustry.nic.in
+    fetch:
+      endpoint: wpi/getWpiRecords
+      params:
+        base_year: "2011-12"
+        limit: 500
+      # aggregate rows are identified by group/subgroup/item == null
+      major_groups:
+        "1000000000": published_headline   # Wholesale price index — cross-check only
+        "1100000000": primary              # Primary articles
+        "1200000000": fuel                 # Fuel & power
+        "1300000000": manufactured         # Manufactured products
+        "2000000000": food_index           # Food index (spans primary + manufactured food; published directly)
+    # WPI weights, base 2011-12 — sum must equal 100.00
+    weights:
+      primary: 22.62
+      fuel: 13.15
+      manufactured: 64.23
+    derived:
+      headline: weighted index of [primary, fuel, manufactured], then y/y   # cross-checked vs published
+    window: { start: "2016-01" }
+
+  cpialrl:
+    product: cpialrl
+    frequency: monthly
+    base: "2019=100"        # current base; old base "1986-87=100" fetched as a
+                            # separate bundle — never joined (base-year rule)
+    release_calendar: "last working day of the following month"
+    revision_policy: "Final on release; never revised."
+    source_agency: "Labour Bureau, Ministry of Labour & Employment (via MoSPI eSankhyiki)"
+    release_url: https://labourbureau.gov.in
+    fetch:
+      endpoint: cpialrl/getCpialrlRecords
+      # the base_year param is ignored by the API: one records stream carries
+      # both bases, distinguished by each row's own base_year field. Old-base
+      # rows use agriculture-year labels ("2024-2025" = Jul 2024–Jun 2025);
+      # new-base rows use calendar years. New base starts June 2025.
+      params:
+        indicator_code: 1     # General Index; indicator 2 (Group Index) is
+                              # fetched as a second stream in the fetcher —
+                              # old base carries group rows state-wise only,
+                              # so All-India group bundles exist on base 2019
+        state_code: 99        # All India
+        limit: 500
+      fields: { index_al: al, index_rl: rl }
+    derived:
+      al: y/y of index_al (old base only — new base has <13 months of levels)
+      rl: y/y of index_rl (old base only)
+
+  plfs:
+    product: plfs
+    frequency: monthly        # primary bundle; a quarterly bundle is also emitted
+    base: "survey 2017-18 onward"   # no index base; design breaks are the analogue
+    release_calendar: "monthly bulletin ~mid following month; quarterly bulletin thereafter"
+    revision_policy: "Final on release. Monthly bulletin (rural+urban, CWS) began Apr 2025; earlier history is the quarterly bulletin (urban, CWS) — separate series, never joined."
+    source_agency: "MoSPI, National Statistical Office"
+    release_url: https://www.mospi.gov.in
+    fetch:
+      endpoint: plfs/getData
+      indicators:
+        "1": lfpr
+        "2": wpr
+        "3": ur
+      dims:                   # 15+, person, All India
+        age_code: 1
+        gender_code: 3
+        state_code: 99
+      monthly:
+        frequency_code: 3
+        sector_code: 3        # rural + urban — from Apr 2025
+      quarterly:
+        frequency_code: 2
+        sector_code: 2        # urban — the longstanding quarterly bulletin
+      # NOTE: monthly and quarterly rows carry weekly_status null (CWS by
+      # definition in both bulletins); passing weekly_status_code filters
+      # everything out — it is deliberately not set.
+      # Annual rows carry religion/social_category/education/contract
+      # breakdowns alongside "all" rows — the fetcher keeps only "all".
+      # A second annual stream without state_code carries every state/UT;
+      # curated as plfs-states.json (UR by state, CWS + PS+SS).
+
+  rbi:
+    product: rbi
+    frequency: monthly
+    base: "as published (US$ Millions; ₹ per US$)"
+    release_calendar: "trade ~mid-month; reserves weekly/monthly; reference rates daily"
+    revision_policy: "Trade figures are revised (provisional -> final). Vintages are kept."
+    source_agency: "Reserve Bank of India (via MoSPI eSankhyiki)"
+    release_url: https://rbi.org.in
+    fetch:
+      endpoint: rbi/getRbiRecords
+      # FULL INGEST: every sub-indicator of the RBI product is archived to
+      # data/raw/rbi/<code>-<slug>.json. Records are keyed by
+      # sub_indicator_code; other dimension params (trade, currency, month)
+      # are unreliable — pages are pulled unfiltered and filtered client-side.
+      # Trade rows use fiscal-year labels ("2025-26"); reserves and exchange
+      # rates use calendar years.
+      # The curated monthly bundles below are built from the ingested rows:
+      sub_indicators:
+        trade: "12"     # India's Foreign Trade – US Dollars (monthly)
+        forex: "47"     # Foreign Exchange Reserve Monthly
+        usdinr: "36"    # Monthly Average Exchange Rates (EURO, GBP, JPY, USD)
+        # further curated bundles built from the full ingest (codes fixed by
+        # the API): oil/non-oil trade "42", overall BoP quarterly "4",
+        # BoP ratios "22", external debt end-March "25", NRI deposits "40"
+      # curated bundles carry the FULL published history (levels, not y/y);
+      # any display window is a dossier decision, not a data decision.
+
+  iip:
+    product: iip
+    frequency: monthly
+    base: "2022-23=100"       # current base; base "2011-12=100" fetched as
+                              # separate bundles — never joined (base-year rule)
+    release_calendar: "~12th of each month (quick estimates)"
+    revision_policy: "Quick estimates are revised in subsequent releases. Vintages are kept."
+    source_agency: MoSPI, National Statistical Office
+    release_url: https://www.mospi.gov.in
+    fetch:
+      endpoint: iip/getIIPData
+      params:
+        frequency: Monthly
+      # years come from iip/getIipFilter per base. Every row is ingested to
+      # raw (headline, sectoral, use-based, and the 2-digit industries);
+      # growth is computed from levels — the API's growth_rate is a
+      # cross-check only.
+      bases: ["2022-23", "2011-12"]
+
+  hces:
+    product: hces
+    frequency: annual
+    base: "survey 2022-23 & 2023-24"
+    release_calendar: "one factsheet/report per survey round"
+    revision_policy: "Survey estimates are final on release. Each round is a cross-section; the two rounds are comparable by design but are never averaged or chained."
+    source_agency: "MoSPI, National Statistical Office"
+    release_url: https://www.mospi.gov.in
+    fetch:
+      endpoint: hces/getHcesRecords
+      # 9 indicators (hces/getHcesIndicatorList). The product is small
+      # (~25k rows total): every indicator is ingested IN FULL (paged,
+      # limit=500, keyed by indicator_code only) and sliced client-side.
+      # Only the 2022-23 and 2023-24 HCES rounds exist in this API; the
+      # 2011-12 and earlier NSS CES rounds are NOT served and are never
+      # spliced in (methodology differs).
+      # Every MPCE indicator carries an imputation_type dimension:
+      # "Without Imputation" is the headline convention comparable to old
+      # CES; "With Imputation" adds the imputed value of items received
+      # free through social welfare programmes.
+      indicators:
+        "1": mpce                  # Average MPCE (₹)
+        "2": mpce_fractiles        # MPCE over 12 fractile classes (₹)
+        "3": mpce_categories_inr   # MPCE over broad item categories (₹, 30 days)
+        "4": mpce_categories_share # %-share of MPCE over broad categories
+        "5": qty_cereals           # per-capita monthly quantity, cereals (kg)
+        "6": value_cereals         # per-capita monthly value, cereals (₹)
+        "7": mpce_household_type   # MPCE by household employment type (₹)
+        "8": mpce_social_group     # MPCE by social group (₹)
+        "9": gini                  # Gini coefficient of PCE
+
+  asi:
+    product: asi
+    frequency: annual
+    base: "NIC 2008"        # current classification; NIC 2004/1998/1987 blocks
+                            # exist in the API but are NOT ingested — the
+                            # classification break is the base-year analogue,
+                            # blocks are never spliced
+    release_calendar: "one release per survey year, ~2-year lag"
+    revision_policy: "ASI results are final on release; occasional revisions get a fresh vintage."
+    source_agency: "MoSPI, National Statistical Office (Annual Survey of Industries)"
+    release_url: https://www.mospi.gov.in
+    fetch:
+      endpoint: asi/getASIData
+      classification_year: 2008
+      # getASIData honours server-side filters (VERIFIED 2026-08-06 by
+      # totalPages + row inspection): unfiltered = 226,635 pages at limit=10
+      # (~2.27M rows); +indicator_code=19 -> 4,048; +state_code=99 -> 414;
+      # +nic_code=99999 -> 5; +nic_type=2-digit -> 48. nic_id is IGNORED
+      # (same totals as without). asi/getDownloadASIRecords returns nothing.
+      # Ingest strategy: (a) All-India × nic 99999 (All) × all 57 indicators;
+      # (b) All-India × 2-digit NIC × core indicators; (c) state-wise ×
+      # nic 99999 × core indicators. Never page the unfiltered stream.
+      # NOTE: nic_code=99999 rows arrive in TRIPLICATE (once per nic_type,
+      # identical values) — deduped client-side.
+      headline_indicators:     # baked into asi-headline.json
+        "1": number_of_factories
+        "2": factories_in_operation
+        "3": fixed_capital
+        "6": invested_capital
+        "15": total_output
+        "18": total_inputs
+        "19": gva
+        "21": net_value_added
+        "31": persons_engaged
+        "32": workers
+        "43": emoluments       # Wages & Salaries Incl. Employer's Contribution
+      core_indicators:         # 2-digit NIC + state-wise cuts
+        "2": factories_in_operation
+        "3": fixed_capital
+        "15": total_output
+        "19": gva
+        "31": persons_engaged
+        "43": emoluments
+
+  asuse:
+    product: asuse
+    frequency: annual         # primary; a quarterly bulletin bundle is also emitted
+    base: "survey 2021-22 onward"
+    release_calendar: "annual report per survey year; quarterly bulletin from 2025"
+    revision_policy: "Survey estimates are final on release."
+    source_agency: "MoSPI, National Statistical Office (ASUSE)"
+    release_url: https://www.mospi.gov.in
+    fetch:
+      endpoint: asuse/getAsuseRecords
+      # DO NOT call asuse/getAsuseIndicatorList without params — it hangs.
+      # Use getAsuseFrequencyList + getAsuseIndicatorListByFrequency.
+      # getAsuseRecords honours year/sector_code/activity_code server-side
+      # (verified), but volumes are modest (largest stream ~12k rows), so
+      # each needed indicator is ingested IN FULL keyed by indicator_code
+      # only and sliced client-side (the rbi.mjs approach) — the raw dump
+      # then archives the complete published table.
+      # The activity dimension DOES carry aggregates: code 50 = "All",
+      # plus broad groups 26 "Manufacturing Activities", 33 "Trading
+      # Activities", 49 "Other Services" — published, not computed here.
+      annual_indicators:
+        "1": establishments    # Estimated number of establishments
+        "26": workers          # Estimated number of workers (gender × working time)
+        "30": emoluments       # Annual emoluments per hired worker + hired-worker counts
+        "32": gva_per_worker   # Annual GVA per worker (market establishments)
+        "34": gva_per_establishment
+      quarterly_indicators:    # calendar quarters, from Jan–Mar 2025
+        "40": pct_proprietary
+        "41": pct_hired_worker_estts
+        "42": pct_market_estts
+        "46": share_working_owner
+        "47": establishments_00
+        "48": workers_00
+        "49": share_hired_workers
+        "50": share_other_workers
+
+  isp:
+    product: isp
+    frequency: monthly
+    base: "2024-25=100"
+    release_calendar: "monthly, with a lag"
+    revision_policy: "TRIAL SERIES — methodology may change without notice. Treat every vintage as provisional."
+    source_agency: "MoSPI, National Statistical Office"
+    release_url: https://www.mospi.gov.in
+    fetch:
+      endpoint: isp/getISPRecords
+      # rows carry no month field: fetch per month_code (1=April..12=March,
+      # fiscal order) and read each row's own fiscal-year label. The year
+      # param breaks filtering — do not send it.

@@ -1,0 +1,154 @@
+---
+import Learn from "../layouts/Learn.astro";
+---
+<Learn
+  title="India Atlas — Learn · Every number has a denominator"
+  description="Learn № 02 — base effects: every year-on-year figure is a ratio to the same month a year ago. A spike then flatters now, a collapse then haunts now. Worked from real food CPI data, 2023–2025."
+  slug="base-effects"
+  kicker="Learn № 02 — Prices · Base effects"
+  h1="Every number has a <i>denominator.</i>"
+  lede="A spike in one year flatters the prints of the next; a collapse haunts them. The honest question about any inflation figure is a short one: compared to what?"
+  meta={[
+    ["Concept", "Base effects"],
+    ["Illustrated with", "Food CPI · 2023–2025"],
+    ["Source", "MoSPI, NSO"],
+    ["Level", "First principles"],
+    ["Reading time", "7 min"],
+  ]}
+  dateStamp="Evergreen"
+  crumbTitle="Base effects"
+>
+
+  <!-- § 01 the definition -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The word, defined</h2><span class="line"></span><span class="unit">First principles</span></div>
+    <div class="wm-grid">
+      <div>
+        <p>Every inflation figure you will ever read is a ratio. It divides what the basket cost in a month by what it cost in the same month a year earlier, subtracts one, and reports the answer as a percentage. Two numbers go in; one comes out. Most readers watch only the top of the ratio, the present. The bottom of it, the year-ago level, is the base, and it does half the work.</p>
+        <p>When the base was unusually high, the twelve prints that follow are flattered: ordinary prices measured against a spike look like relief. When the base was unusually low, those prints are haunted: ordinary prices measured against a collapse look like a surge. Neither requires anything to happen in the present at all.</p>
+        <aside class="defbox">
+          <div class="term">Base effect <span class="sub">the denominator moves too</span></div>
+          <p>The influence of the year-ago level on the year-on-year figure. Because the print is a ratio, an unusually high or low month a year back raises or lowers the twelve prints that follow it, even if prices in the present barely move. It is arithmetic, not news.</p>
+          <div class="eg"><b>In plain words:</b> before reacting to any figure, ask what it is being compared with.</div>
+        </aside>
+        <p style="margin-top:1.4em">The effect is strongest in food, because food is where the spikes live. A failed onion crop or a ruined tomato harvest lifts the level for a season; exactly a year later, that season becomes the base, and the prints turn gentle on their own. The gentleness lasts twelve months. Then the comparison window slides past the spike, and the kindness ends.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note · i</span>
+          <b>Compared to what?</b> The only question a year-on-year figure answers. The answer is always the same: the same month, one year ago.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · ii</span>
+          <b>A spike is a gift, twelve months later.</b> High prices then mean gentle prints now, with no improvement needed in between.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · iii</span>
+          <b>The kindness has an expiry date.</b> Twelve months after the spike, the window slides past it and the prints must stand on their own.
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 plate : the spike and the base -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>One spike, read two ways</h2><span class="line"></span><span class="unit">Index level · y/y %</span></div>
+    <p>The cleanest example in recent data sits in the food index. Below, three years drawn twice: the level above, the year-on-year rate below, with the same shaded months marked on both panels. Watch what those months do to each line.</p>
+    <div class="break">
+      <figure id="cb-be" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The spike of 2024 became the calm of 2025 — same months, two readings</h3>
+            <div class="sub">Food &amp; beverages · above: index level, 2012 = 100 · below: year-on-year rate · Jan 2023 – Dec 2025 · shaded: the base</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-be">–</div><div class="c">Dec 2025 · food y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-be-level"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-be-rate" style="margin-top:34px"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, CPI food &amp; beverages group index, base 2012=100, vintage <span id="pf-be">–</span> · shaded band: the autumn-2024 spike, the base for the late-2025 prints</span>
+            <span class="dl">
+              <button data-dl="svg">SVG</button><span class="sep"></span>
+              <button data-dl="png">PNG</button><span class="sep"></span>
+              <button data-dl="csv">CSV</button><span class="sep"></span>
+              <a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a>
+            </span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The top line is what food cost, month by month. The bottom line is the same months, each measured against twelve months back. The shaded window is identical on both panels: above, it is the spike itself; below, it is where the spike sits inside the ratio.</p>
+            <p>Every reading on the bottom panel divides by a month from a year earlier. So the gentle readings of late 2025 are not only about 2025. Their denominators are the shaded months, the most expensive food India had recorded up to then.</p>
+          </div>
+          <div class="now">
+            <span class="mk">The 2025 case</span>
+            <p>In autumn 2024 food prices surged: the level climbed from <b id="ex-jul24">–</b> in July to a peak of <b id="ex-peak">–</b> in October, the highest reading in this window. Twelve months later those months were the denominator. December 2025 printed <b id="ex-print">–</b>, the sixth negative food reading in seven months: not because food had become cheap, but because the comparison was with the most expensive winter on record.</p>
+            <p>A year earlier the same arithmetic had run the other way, with December 2024 printing <b id="ex-y24">–</b> against an ordinary winter base. The spike made 2024 look worse than the present and 2025 look better. Both times, the base was doing part of the talking.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 03 the arithmetic -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>The arithmetic of the base</h2><span class="line"></span><span class="unit">A worked example · Dec 2024 → Dec 2025</span></div>
+    <div class="numbers">
+      <div class="num"><div class="l">The base · Dec 2024</div><div class="v" id="n-then">–</div><div class="d">food index level · 2012 = 100</div></div>
+      <div class="num"><div class="l">The level · Dec 2025</div><div class="v" id="n-now">–</div><div class="d">food index level · 2012 = 100</div></div>
+      <div class="num"><div class="l">The ratio · Dec 2025</div><div class="v acc" id="n-rate">–</div><div class="d">the two levels divided, minus one</div></div>
+      <div class="num"><div class="l">What ₹1,000 became</div><div class="v" id="n-rupee">–</div><div class="d">same basket of food, one year later</div></div>
+    </div>
+    <p style="margin-top:40px">Divide <b id="ar-now">–</b> by <b id="ar-then">–</b> and the result is <b id="ar-ratio3">–</b>: the <b id="ar-print">–</b> of the print. Nothing in that division knows about harvests or gluts. It knows two levels and their ratio, and it is exactly as truthful as the month it divides by.</p>
+    <p>Now change only the denominator. Hold December 2025 where it is and compare it with December 2023, when the food level stood at <b id="ar-23">–</b>. The same month, the same level, prints <b id="ar-alt">–</b>. One reading says food is getting cheaper; the other says it has been getting more expensive for two years. Both are correct arithmetic. The difference is entirely the base.</p>
+    <p>That is why the prints of a spike year, and of the year that follows it, deserve extra scepticism. The number is real. What it means depends on a month you have probably forgotten.</p>
+  </section>
+
+  <!-- § 04 misreads -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>How to misread this concept</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li>
+        <span class="no">i.</span>
+        <div>
+          <h3>“The number fell, so things improved.”</h3>
+          <p>Not necessarily. Food inflation slid from <b id="mr-y24">–</b> to <b id="mr-y25">–</b> in twelve months, and part of that slide is the denominator rising between the two readings. Ask what happened to the level: it fell <b id="mr-lvl">–</b> from its peak, which is real relief, but a smaller story than the prints suggest.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">ii.</span>
+        <div>
+          <h3>“The base doesn't matter.”</h3>
+          <p>Change nothing but the base and the same month prints <b id="mr-a1">–</b> or <b id="mr-a2">–</b>. A ratio has two inputs. Ignoring one of them is not scepticism about statistics; it is bad arithmetic.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iii.</span>
+        <div>
+          <h3>“A low print is always good news.”</h3>
+          <p>A low print on a high base can mean prices are pausing at a peak. And a genuinely negative food print carries two stories at once: relief at the shop and distress on the farm. Read the level before you celebrate the rate.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <div slot="prov-source">
+    <h6>Source of record</h6>
+    <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. CPI food &amp; beverages group index on base 2012=100, combined; retrieved via the eSankhyiki API, vintage 2026-08-04. Levels shown are the published index; the year-on-year rate is computed from them.</p>
+  </div>
+  <div slot="prov-revision">
+    <h6>Definitions &amp; honesty</h6>
+    <p>The base effect is not an estimate or a model output; it is a property of the ratio itself. Every level and print on this page comes from the published index. Alternative bases are shown as arithmetic, clearly labelled, never as alternative data.</p>
+  </div>
+  <div slot="prov-note">
+    <h6>This note</h6>
+    <p>Learn № 02 · Prices · version 1.0. Evergreen, written to survive the next print. The autumn-2024 spike and the 2025 readings are used as history, not news; the charts redraw from the baked data on every build.</p>
+    <p>Companion dossier: <a href="/dossiers/cpi/">Dossier 01 · Consumer Price Index</a>.</p>
+  </div>
+
+<script>
+  import "./base-effects.client.js";
+</script>
+</Learn>

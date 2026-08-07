@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plate 07 · Consumer Price Index — India Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,300..700;1,7..72,300..700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FCFCF9;
+  --ink:#17201D;
+  --soft:#4F5A55;
+  --faint:#8A958F;
+  --hair:#E3E5DD;
+  --accent:#177E6C;
+  --accent-pale:#DDEBE6;
+  --ochre:#B98A2F;
+  --slate:#7A8894;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:"Literata",Georgia,serif;font-size:17.5px;line-height:1.65;
+}
+.grot{font-family:"Space Grotesk",sans-serif}
+.wrap{max-width:1320px;margin:0 auto;padding:0 40px}
+
+header.site{padding:22px 0;border-bottom:1px solid var(--ink)}
+header.site .bar{display:flex;justify-content:space-between;align-items:baseline}
+.brand{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:19px;letter-spacing:.2em;text-transform:uppercase}
+.brand span{color:var(--accent)}
+nav.top{display:flex;gap:30px}
+nav.top a{
+  font-family:"Space Grotesk",sans-serif;font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--soft);text-decoration:none;
+}
+nav.top a:hover{color:var(--accent)}
+nav.top a[aria-current]{color:var(--ink);border-bottom:2px solid var(--accent);padding-bottom:3px}
+
+.plate-head{display:grid;grid-template-columns:1fr 300px;gap:64px;padding:72px 0 56px;align-items:end}
+.plate-no{
+  font-family:"Space Grotesk",sans-serif;font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--accent);
+  margin-bottom:26px;display:flex;align-items:center;gap:14px;
+}
+.plate-no::after{content:"";flex:0 0 60px;border-top:1px solid var(--accent)}
+h1{font-weight:400;font-size:clamp(42px,5.6vw,68px);line-height:1.06;letter-spacing:-.01em;font-variation-settings:"opsz" 72}
+h1 em{font-style:italic;color:var(--accent)}
+.plate-intro{font-size:19px;color:var(--soft)}
+.plate-intro b{color:var(--ink)}
+.legend-card{border:1px solid var(--hair);padding:22px 24px;font-family:"Space Grotesk",sans-serif}
+.legend-card h3{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);font-weight:500;margin-bottom:16px}
+.legend-card .li{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--soft);padding:5px 0}
+.legend-card .sw{flex:0 0 30px;height:0;border-top:3px solid}
+.legend-card .sw.dash{border-top-style:dashed;border-top-width:2px}
+.legend-card .sw.band{height:10px;border-top:none;background:var(--accent-pale)}
+
+.atlas-grid{display:grid;grid-template-columns:1fr 340px;gap:56px;padding-bottom:88px;border-bottom:1px solid var(--ink)}
+.plate-canvas{position:relative}
+.canvas-title{
+  display:flex;justify-content:space-between;align-items:baseline;
+  font-family:"Space Grotesk",sans-serif;margin-bottom:18px;
+}
+.canvas-title .t{font-size:15px;font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.canvas-title .v{font-size:11px;color:var(--faint);letter-spacing:.14em}
+.chart{border-top:1px solid var(--ink);border-bottom:1px solid var(--hair);padding:18px 0 8px}
+.canvas-foot{
+  display:flex;justify-content:space-between;padding-top:12px;
+  font-family:"Space Grotesk",sans-serif;font-size:11px;color:var(--faint);letter-spacing:.08em;
+}
+.tools{display:flex;gap:8px}
+.tools button{
+  font-family:"Space Grotesk",sans-serif;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  background:none;border:1px solid var(--hair);color:var(--soft);padding:5px 11px;cursor:pointer;
+}
+.tools button:hover{border-color:var(--accent);color:var(--accent)}
+
+.marginalia{position:relative}
+.marginalia .rail-head{
+  font-family:"Space Grotesk",sans-serif;font-size:11px;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--faint);padding-bottom:14px;border-bottom:1px solid var(--ink);margin-bottom:8px;
+}
+.note{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:20px 0;border-bottom:1px solid var(--hair)}
+.note .num{
+  font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:14px;color:var(--accent);
+  border:1.5px solid var(--accent);border-radius:50%;width:28px;height:28px;
+  display:flex;align-items:center;justify-content:center;margin-top:2px;
+}
+.note h4{font-family:"Space Grotesk",sans-serif;font-weight:500;font-size:14px;margin-bottom:6px;letter-spacing:.02em}
+.note p{font-size:14.5px;color:var(--soft);line-height:1.6}
+.note p b{color:var(--ink)}
+.note.dated .num{background:var(--accent);color:var(--paper)}
+.note.dated h4{color:var(--accent)}
+
+.print-band{
+  display:grid;grid-template-columns:340px 1fr;gap:64px;padding:64px 0;border-bottom:1px solid var(--hair);
+}
+.print-band .figure-block{border-top:2px solid var(--accent);padding-top:18px}
+.print-band .lbl{font-family:"Space Grotesk",sans-serif;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--faint)}
+.print-band .big{
+  font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:92px;line-height:1;margin:14px 0 4px;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+}
+.print-band .big sup{font-size:.3em;color:var(--soft);font-weight:400}
+.print-band .sub{font-size:15px;color:var(--soft)}
+.compass{margin-top:26px;font-family:"Space Grotesk",sans-serif;font-size:12px;color:var(--soft)}
+.compass .row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--hair)}
+.compass .row b{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:500}
+.print-band .prose p{margin-bottom:1.1em}
+.print-band .prose .when{
+  font-family:"Space Grotesk",sans-serif;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);
+  margin-bottom:18px;font-weight:500;
+}
+
+section{padding:72px 0;border-bottom:1px solid var(--hair)}
+.sec-head{margin-bottom:48px}
+.sec-head .k{font-family:"Space Grotesk",sans-serif;font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;font-weight:500}
+h2{font-weight:400;font-size:34px;letter-spacing:-.005em;font-variation-settings:"opsz" 72}
+h2 em{font-style:italic}
+
+.comp{display:grid;grid-template-columns:1fr 340px;gap:56px;padding:44px 0;border-top:1px solid var(--hair)}
+.comp:first-of-type{border-top:none}
+.comp .chart{border-top:1px solid var(--ink)}
+.comp .cap{margin-top:10px;font-family:"Space Grotesk",sans-serif;font-size:11px;color:var(--faint);letter-spacing:.06em;display:flex;justify-content:space-between}
+.comp h3{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:21px;margin-bottom:4px}
+.comp .w{font-family:"Space Grotesk",sans-serif;font-size:11px;letter-spacing:.18em;color:var(--faint);text-transform:uppercase;margin-bottom:20px}
+.comp .note-static{padding:18px 0;border-top:1px solid var(--hair)}
+.comp .note-static h5{font-family:"Space Grotesk",sans-serif;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);margin-bottom:10px;font-weight:500}
+.comp .note-static.dated h5{color:var(--accent)}
+.comp .note-static p{font-size:14.5px;color:var(--soft)}
+.comp .note-static p b{color:var(--ink)}
+
+.gazetteer{width:100%;border-collapse:collapse}
+.gazetteer th{
+  font-family:"Space Grotesk",sans-serif;font-weight:500;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--faint);text-align:left;padding:0 16px 12px 0;border-bottom:1px solid var(--ink);
+}
+.gazetteer th.n,.gazetteer td.n{text-align:right}
+.gazetteer td{padding:16px 16px 16px 0;border-bottom:1px solid var(--hair);vertical-align:top}
+.gazetteer td.code{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:13px;color:var(--accent)}
+.gazetteer td .nm{font-weight:600;font-size:16px}
+.gazetteer td .ds{font-size:13.5px;color:var(--faint);font-style:italic;display:block;margin-top:2px}
+.gazetteer td.n{font-family:"Space Grotesk",sans-serif;font-size:13.5px;font-variant-numeric:tabular-nums;color:var(--soft)}
+.gazetteer td.n b{color:var(--ink)}
+.spark{display:block}
+
+.cautions{display:grid;grid-template-columns:1fr 1fr;gap:0 64px}
+.caution{display:grid;grid-template-columns:44px 1fr;gap:20px;padding:28px 0;border-bottom:1px solid var(--hair)}
+.caution .mark{
+  font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:15px;color:var(--ochre);
+  border:1.5px solid var(--ochre);width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+.caution h4{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:17px;margin-bottom:8px}
+.caution p{font-size:15px;color:var(--soft)}
+.caution p b{color:var(--ink)}
+
+footer{padding:56px 0 84px}
+footer .cols{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:56px}
+footer h6{
+  font-family:"Space Grotesk",sans-serif;font-size:10.5px;font-weight:500;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--ink);margin-bottom:16px;
+}
+footer p{font-size:14px;color:var(--soft);margin-bottom:.8em}
+footer .fine{
+  margin-top:44px;padding-top:16px;border-top:1px solid var(--ink);
+  font-family:"Space Grotesk",sans-serif;font-size:10.5px;letter-spacing:.14em;color:var(--faint);
+  display:flex;justify-content:space-between;text-transform:uppercase;
+}
+.chart svg text{font-family:"Space Grotesk",sans-serif}
+@media (max-width:1000px){
+  .plate-head,.atlas-grid,.print-band,.comp,footer .cols,.cautions{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <div class="bar">
+      <div class="brand">India <span>Atlas</span></div>
+      <nav class="top">
+        <a href="#" aria-current="page">Plates</a>
+        <a href="#">Gazetteer</a>
+        <a href="#">Field Notes</a>
+        <a href="#">About</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="plate-head">
+    <div>
+      <div class="plate-no">Plate 07 · Prices · Monthly survey</div>
+      <h1>The Consumer Price Index, <em>surveyed</em></h1>
+      <p class="plate-intro" style="margin-top:26px">One plate per statistical territory. This one maps ten years of Indian retail inflation — its ridges, floodplains and fault lines — and annotates what a traveller should know before reading it. <b>Latest survey: December 2025.</b></p>
+    </div>
+    <div class="legend-card">
+      <h3>Legend</h3>
+      <div class="li"><span class="sw" style="border-color:var(--accent)"></span>Headline — the surveyed contour</div>
+      <div class="li"><span class="sw" style="border-color:var(--slate)"></span>Food &amp; beverages</div>
+      <div class="li"><span class="sw" style="border-color:#B9C2CB"></span>Fuel &amp; light</div>
+      <div class="li"><span class="sw dash" style="border-color:var(--ochre)"></span>Core — computed, dashed</div>
+      <div class="li"><span class="sw band"></span>RBI tolerance band, 2–6%</div>
+    </div>
+  </div>
+
+  <div class="atlas-grid">
+    <div class="plate-canvas">
+      <div class="canvas-title">
+        <span class="t">Chart of the territory, 2016 – 2025</span>
+        <span class="v">PLATE 07 · FIG. 1 · % Y/Y</span>
+      </div>
+      <div class="chart" id="chart-headline" role="img" aria-label="Annotated chart of Indian CPI inflation 2016 to 2025, with numbered markers keyed to the marginal notes."></div>
+      <div class="canvas-foot">
+        <span>Survey: MoSPI · Plot: India Atlas · Circled figures refer to marginal notes →</span>
+        <span class="tools"><button data-dl>SVG</button><button>PNG</button><button>CSV</button></span>
+      </div>
+    </div>
+    <aside class="marginalia">
+      <div class="rail-head">Marginal notes</div>
+      <div class="note">
+        <div class="num">1</div>
+        <div><h4>The flood of 2019–20</h4><p>Onion prices tripled in one season; headline inflation left the tolerance band for the first time since targeting began. A weather event, read by many as policy failure.</p></div>
+      </div>
+      <div class="note">
+        <div class="num">2</div>
+        <div><h4>The pandemic ridge</h4><p>Supply rupture kept the headline above 6% for most of 2020–21, even as demand collapsed. The band was breached for three straight quarters; the RBI owed the government a letter.</p></div>
+      </div>
+      <div class="note">
+        <div class="num">3</div>
+        <div><h4>The 2022 pass-through</h4><p>War-driven oil and wheat arrived in the basket with a lag. Fuel led; food followed; core, the dashed line, proved it had become general.</p></div>
+      </div>
+      <div class="note">
+        <div class="num">4</div>
+        <div><h4>The vegetable squall of 2023</h4><p>Tomatoes, briefly, ran the national inflation rate. The spike reversed within a quarter — a reminder that one month is not a trend.</p></div>
+      </div>
+      <div class="note dated">
+        <div class="num">5</div>
+        <div><h4>Where the survey stands · Jan 2026</h4><p>The contour has settled into the lower half of the band — rare ground, occupied before only in 2017–19. Food is calm on a favourable base; core holds at <b id="m-core">–</b> above the headline. The map is quiet. Quiet maps deserve suspicious readers.</p></div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="print-band">
+    <div class="figure-block">
+      <div class="lbl">Field card · December 2025</div>
+      <div class="big" id="pb-big">–<sup>% y/y</sup></div>
+      <div class="sub">Headline CPI, all-India combined</div>
+      <div class="compass">
+        <div class="row"><span>Previous month</span><b id="pb-prev">–</b></div>
+        <div class="row"><span>Same month last year</span><b id="pb-year">–</b></div>
+        <div class="row"><span>Position vs 4% target</span><b id="pb-pos">–</b></div>
+        <div class="row"><span>Released</span><b>12 Jan 2026</b></div>
+      </div>
+    </div>
+    <div class="prose">
+      <div class="when">Recorded in the field · 12 January 2026</div>
+      <p>December's survey reads <b id="pb-h1">–</b> — the third month running below the target midpoint, and the quietest close to a year since 2019. The stillness is real but it is imported: food, nearly half the basket, is inflating at just <b id="pb-f1">–</b>, against a decade average near six.</p>
+      <p>Nothing in this print says prices are falling; the basket remains <b id="pb-h2">–</b> dearer than last December. And nothing in it says the work is done. Core — the dashed line on the plate — has not moved in a year. When the volatile parts are calm and the sticky part is not, the honest summary is: <em>favourable weather, pending verification.</em> The next survey lands 12 February 2026.</p>
+    </div>
+  </div>
+
+  <section id="components">
+    <div class="sec-head">
+      <div class="k">Detail plates · Figs. 2 – 4</div>
+      <h2>The three <em>currents</em> beneath the contour</h2>
+    </div>
+
+    <div class="comp">
+      <div>
+        <div class="chart" id="chart-food" role="img" aria-label="Food and beverages inflation 2016 to 2025"></div>
+        <div class="cap"><span>FIG. 2 · FOOD &amp; BEVERAGES · % Y/Y</span><span class="tools"><button data-dl>SVG</button><button>CSV</button></span></div>
+      </div>
+      <div>
+        <h3>Food &amp; beverages</h3>
+        <div class="w">Weight 45.86 · The monsoon current</div>
+        <div class="note-static"><h5>Standing note</h5><p>Weather with a lag. Droughts surface here three to six months late; gluts push the line underwater, as in 2017–19. Sub-zero readings are consumer relief and farm distress in the same figure.</p></div>
+        <div class="note-static dated"><h5>This survey · Jan 2026</h5><p><b id="c-food">–</b>, halved in a year — partly a base effect from the December 2024 spike, which expires by spring.</p></div>
+      </div>
+    </div>
+
+    <div class="comp">
+      <div>
+        <div class="chart" id="chart-fuel" role="img" aria-label="Fuel and light inflation 2016 to 2025"></div>
+        <div class="cap"><span>FIG. 3 · FUEL &amp; LIGHT · % Y/Y</span><span class="tools"><button data-dl>SVG</button><button>CSV</button></span></div>
+      </div>
+      <div>
+        <h3>Fuel &amp; light</h3>
+        <div class="w">Weight 6.84 · The administered current</div>
+        <div class="note-static"><h5>Standing note</h5><p>Only loosely tied to crude; excise, LPG subsidy accounting and electricity tariffs dominate. A flat stretch means stable policy, not stable world prices. Never infer global energy from this line.</p></div>
+        <div class="note-static dated"><h5>This survey · Jan 2026</h5><p><b id="c-fuel">–</b>, after most of 2024 underwater — that deflation was 2023's LPG cuts in the denominator, not smaller bills.</p></div>
+      </div>
+    </div>
+
+    <div class="comp">
+      <div>
+        <div class="chart" id="chart-core" role="img" aria-label="Core inflation 2016 to 2025"></div>
+        <div class="cap"><span>FIG. 4 · CORE · % Y/Y · COMPUTED, NOT OFFICIAL</span><span class="tools"><button data-dl>SVG</button><button>CSV</button></span></div>
+      </div>
+      <div>
+        <h3>Core</h3>
+        <div class="w">Weight 47.30 · The demand current</div>
+        <div class="note-static"><h5>Standing note</h5><p>The basket minus weather and energy: rents, health, education, transport, gold. Moves in long arcs and is what interest rates actually reach. Its Indian floor is structural — it has never sustainably visited 2%.</p></div>
+        <div class="note-static dated"><h5>This survey · Jan 2026</h5><p><b id="c-core">–</b>, unmoved for a year. The NSO publishes no core series; this one is computed and labelled as such wherever it appears.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="gazetteer">
+    <div class="sec-head">
+      <div class="k">Gazetteer</div>
+      <h2>Every series on this plate, <em>named and placed</em></h2>
+    </div>
+    <table class="gazetteer">
+      <thead><tr><th>Mark</th><th>Name</th><th class="n">Weight</th><th class="n">Dec '25</th><th class="n">Dec '24</th><th class="n">10y range</th><th>Trace · 2016–25</th><th>Surveyor</th></tr></thead>
+      <tbody id="gaz-body"></tbody>
+    </table>
+  </section>
+
+  <section id="cautions">
+    <div class="sec-head">
+      <div class="k">Traveller's cautions</div>
+      <h2>How this territory <em>misleads</em> the unwary</h2>
+    </div>
+    <div class="cautions">
+      <div class="caution"><div class="mark">!</div><div><h4>Mistaking the slope for the ground</h4><p>“Inflation falls” is a statement about slope. The ground — the price level — is still rising at <b>3.5% a year</b>. Only a negative reading means the ground itself is falling.</p></div></div>
+      <div class="caution"><div class="mark">!</div><div><h4>Ignoring last year's weather</h4><p>Every reading compares against the same month a year ago. A spike then flatters now. Ask what the base was doing before crediting the present.</p></div></div>
+      <div class="caution"><div class="mark">!</div><div><h4>Declaring core the true map</h4><p>Core omits what poor households spend most on. It is the policy map, not the lived one. The headline is the honest terrain.</p></div></div>
+      <div class="caution"><div class="mark">!</div><div><h4>Reading your own street in it</h4><p>The weights are a 2011–12 snapshot of the average household. Your rent, diet and fuel mix are in there, diluted by 1.4 billion others.</p></div></div>
+      <div class="caution"><div class="mark">!</div><div><h4>Calling one month a climate</h4><p>Vegetables can shift the headline a full point in a month and reverse the next. Three months is the minimum unit of meaning.</p></div></div>
+      <div class="caution"><div class="mark">!</div><div><h4>Pitting two maps against each other</h4><p>CPI and WPI survey different terrain — retail consumers vs. factory gate. Divergence of five points is normal. Both are correct; plot them separately.</p></div></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="cols">
+      <div>
+        <h6>Survey of record</h6>
+        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. “CPI on Base 2012=100 — December 2025”, press release, 12 Jan 2026. Core: India Atlas computation from published group indices; not official. Figures in this mock are illustrative.</p>
+      </div>
+      <div>
+        <h6>On certainty</h6>
+        <p>CPI is final on release and never revised. Where a source restates, both vintages are shown separately. Where something is not measured, this plate says “we do not know” rather than inventing a contour.</p>
+      </div>
+      <div>
+        <h6>Colophon</h6>
+        <p>Set in Literata and Space Grotesk. Plates drawn with Observable Plot. Next survey: 12 February 2026. fieldnotes@indiaatlas.example</p>
+      </div>
+    </div>
+    <div class="fine"><span>India Atlas · Plate 07 · Prices</span><span>Survey vintage 2026-01-12</span><span>Base 2012=100</span></div>
+  </footer>
+</div>
+
+<script type="module">
+import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
+
+const R=(a=>()=>{a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296})(20251231);
+const A=p=>m=>{if(m<=p[0][0])return p[0][1];for(let i=1;i<p.length;i++)if(m<=p[i][0]){const[a,b]=p[i-1],[c,d]=p[i];return b+(d-b)*(m-a)/(c-a)}return p[p.length-1][1]};
+const FOOD=A([[0,6.1],[6,7.2],[12,1.9],[17,-1.8],[23,0.7],[24,-0.1],[30,0.9],[36,-2.6],[42,1.9],[47,13.6],[48,13.0],[52,5.0],[58,9.6],[60,3.2],[64,4.0],[70,0.7],[76,8.6],[82,4.2],[88,8.4],[90,8.3],[93,11.5],[96,9.5],[100,6.5],[105,10.9],[108,8.4],[112,5.9],[116,3.8],[119,2.9]]);
+const FUEL=A([[0,5.3],[6,3.4],[12,3.8],[18,6.2],[24,7.9],[30,4.4],[36,-1.6],[42,1.6],[48,3.5],[54,2.7],[60,10.0],[66,12.7],[72,13.3],[78,8.5],[84,11.0],[90,7.4],[96,1.0],[102,-1.0],[106,-3.7],[110,-5.3],[114,-1.5],[119,2.6]]);
+const CORE=A([[0,4.9],[12,4.6],[18,4.1],[24,5.7],[30,6.3],[36,5.5],[42,3.8],[48,4.4],[54,5.6],[60,5.4],[66,6.2],[72,6.3],[78,6.0],[84,6.2],[90,5.4],[96,4.6],[102,3.9],[106,3.5],[110,3.7],[114,4.1],[119,4.2]]);
+const MO=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const N=120;
+const nz=s=>(R()+R()+R()-1.5)/1.5*s;
+const rows=Array.from({length:N},(_,i)=>{
+  const d=new Date(Date.UTC(2016+Math.floor(i/12),i%12,1));
+  const food=FOOD(i)+nz(.4),fuel=FUEL(i)+nz(.22),core=CORE(i)+nz(.07);
+  return {date:d,mo:MO[i%12],yr:2016+Math.floor(i/12),head:+(0.4586*food+0.0684*fuel+0.4729*core).toFixed(1),food:+food.toFixed(1),fuel:+fuel.toFixed(1),core:+core.toFixed(1)};
+});
+const L=rows[N-1],P=rows[N-2],Y=rows[N-13];
+const fmt=v=>v.toFixed(1)+"%";
+const ACC="#177E6C",OCHRE="#B98A2F",SLATE="#7A8894",PALE="#B9C2CB",INK="#17201D";
+const yearTicks=rows.filter(r=>r.date.getUTCMonth()===0).map(r=>r.date);
+const set=(id,t)=>document.getElementById(id).textContent=t;
+
+set("m-core",fmt(L.core));
+set("pb-big",L.head.toFixed(1));
+set("pb-prev",fmt(P.head));set("pb-year",fmt(Y.head));
+set("pb-pos",L.head<4?Math.abs(4-L.head).toFixed(1)+" pt below":"above");
+set("pb-h1",fmt(L.head));set("pb-h2",fmt(L.head));set("pb-f1",fmt(L.food));
+set("c-food",fmt(L.food));set("c-fuel",fmt(L.fuel));set("c-core",fmt(L.core));
+
+const minmax=k=>{const vs=rows.map(r=>r[k]);return Math.min(...vs).toFixed(1)+" … "+Math.max(...vs).toFixed(1)};
+const gaz=[
+  ["CPI-ALL","Headline · all groups","The surveyed contour itself.",100.00,"head","MoSPI"],
+  ["CPI-CFBN","Food & beverages","The monsoon current.",45.86,"food","MoSPI"],
+  ["CPI-FUEL","Fuel & light","The administered current.",6.84,"fuel","MoSPI"],
+  ["IA-CORE","Core · ex food & fuel","The demand current. Computed.",47.30,"core","India Atlas"]
+];
+document.getElementById("gaz-body").innerHTML=gaz.map(r=>`
+<tr><td class="code">${r[0]}</td>
+<td><span class="nm">${r[1]}</span><span class="ds">${r[2]}</span></td>
+<td class="n">${r[3].toFixed(2)}</td>
+<td class="n"><b>${fmt(L[r[4]])}</b></td><td class="n">${fmt(Y[r[4]])}</td><td class="n">${minmax(r[4])}</td>
+<td class="spark" data-key="${r[4]}"></td>
+<td class="n" style="color:var(--faint)">${r[5]}</td></tr>`).join("");
+
+document.querySelectorAll(".spark").forEach(td=>{
+  const k=td.dataset.key;
+  td.append(Plot.plot({
+    width:120,height:30,marginLeft:0,marginRight:0,marginTop:2,marginBottom:2,
+    x:{type:"time",axis:null},y:{axis:null},
+    marks:[
+      Plot.ruleY([0],{stroke:"#D8DCD3",strokeWidth:.7}),
+      Plot.lineY(rows,{x:"date",y:k,stroke:ACC,strokeWidth:1.2})
+    ]
+  }));
+});
+
+function base(el,yticks,label,h){
+  return {
+    width:el.clientWidth,height:h,marginLeft:46,marginRight:106,marginTop:26,marginBottom:32,
+    style:{background:"transparent",fontSize:"11px",color:"#4F5A55"},
+    x:{type:"time",label:null,ticks:yearTicks,tickFormat:d=>d.getUTCFullYear(),tickSize:0,tickPadding:10},
+    y:{label,ticks:yticks,tickFormat:d=>d+"%",grid:true,labelAnchor:"top",labelOffset:34}
+  };
+}
+const band=Plot.areaY(rows,{x:"date",y1:2,y2:6,fill:ACC,fillOpacity:.07});
+const target=Plot.ruleY([4],{stroke:INK,strokeOpacity:.5,strokeWidth:.7,strokeDasharray:"1 3"});
+const zero=Plot.ruleY([0],{stroke:INK,strokeOpacity:.3,strokeWidth:.7});
+const pk19=rows.filter(r=>r.yr===2019||(r.yr===2020&&r.date<new Date(Date.UTC(2020,2,1)))).reduce((a,b)=>a.head>b.head?a:b);
+const pk20=rows.filter(r=>r.yr===2020&&r.date>=new Date(Date.UTC(2020,5,1))).reduce((a,b)=>a.head>b.head?a:b);
+const pk22=rows.filter(r=>r.yr>=2021&&r.yr<=2022).reduce((a,b)=>a.head>b.head?a:b);
+const pk23=rows.filter(r=>r.yr===2023).reduce((a,b)=>a.head>b.head?a:b);
+
+const marker=(p,n,dx,dy)=>[
+  Plot.text([p],{x:"date",y:"head",text:[n],dx:dx,dy:dy,fontSize:12,fontWeight:700,fill:ACC,
+    stroke:"#FCFCF9",strokeWidth:6,paintOrder:"stroke",textAnchor:"middle"}),
+  Plot.dot([p],{x:"date",y:"head",r:2.6,fill:ACC})
+];
+const end=(key,name,color,dy)=>Plot.text(rows.slice(-1),{x:"date",y:key,text:d=>`${name} ${d[key].toFixed(1)}`,dx:9,dy:dy||0,textAnchor:"start",fontSize:11.5,fontWeight:500,fill:color});
+
+const elH=document.getElementById("chart-headline");
+elH.append(Plot.plot({
+  ...base(elH,[-2,0,2,4,6,8,10,12,14],"% y/y ↑",560),
+  marks:[
+    band,target,zero,
+    Plot.lineY(rows,{x:"date",y:"food",stroke:SLATE,strokeWidth:1.3}),
+    Plot.lineY(rows,{x:"date",y:"fuel",stroke:PALE,strokeWidth:1.3}),
+    Plot.lineY(rows,{x:"date",y:"core",stroke:OCHRE,strokeWidth:1.5,strokeDasharray:"4 2"}),
+    Plot.lineY(rows,{x:"date",y:"head",stroke:ACC,strokeWidth:2.6}),
+    ...marker(pk19,"1",-4,-20),
+    ...marker(pk20,"2",22,-14),
+    ...marker(pk22,"3",-6,-18),
+    ...marker(pk23,"4",26,-10),
+    ...marker(L,"5",-26,6),
+    end("head","Headline",ACC,-14),end("core","Core",OCHRE,12),end("food","Food",SLATE,-2),end("fuel","Fuel",PALE,14),
+    Plot.text([{d:new Date(Date.UTC(2016,6,1)),y:5.6}],{x:"d",y:"y",text:["RBI tolerance band"],fontSize:10.5,fontStyle:"italic",fill:"#8A958F",textAnchor:"start"})
+  ]
+}));
+
+function small(id,key,color,name,ticks){
+  const el=document.getElementById(id);
+  el.append(Plot.plot({
+    ...base(el,ticks,"% y/y ↑",280),
+    marginRight:88,
+    marks:[
+      zero,
+      Plot.areaY(rows,{x:"date",y:key,y1:0,fill:color,fillOpacity:.06}),
+      Plot.lineY(rows,{x:"date",y:key,stroke:color,strokeWidth:2}),
+      end(key,name,color),
+      Plot.dot(rows.slice(-1),{x:"date",y:key,r:2.8,fill:color})
+    ]
+  }));
+}
+small("chart-food","food",SLATE,"Food",[-4,0,4,8,12]);
+small("chart-fuel","fuel","#8A94A0","Fuel",[-6,0,6,12]);
+small("chart-core","core",OCHRE,"Core",[2,4,6]);
+
+document.querySelectorAll("[data-dl]").forEach(b=>b.addEventListener("click",()=>{
+  const bar=b.closest(".canvas-foot,.cap");
+  const svg=bar&&bar.previousElementSibling?bar.previousElementSibling.querySelector("svg"):null;
+  if(!svg)return;
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([svg.outerHTML],{type:"image/svg+xml"}));
+  a.download="india-atlas-cpi.svg";a.click();
+}));
+</script>
+</body>
+</html>

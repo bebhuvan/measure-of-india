@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>India Atlas — About</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF;--ink:#1B1A17;--ink-soft:#4A463F;--muted:#8A857A;--faint:#B4AFA2;
+    --rule:#E6E2D6;--accent:#BE3E26;--grey1:#5B564B;--grey2:#A8A293;--grey3:#C6C0B0;--band:#F8F6F1;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:"Newsreader",Georgia,serif;font-weight:460;
+    font-size:1.18rem;line-height:1.82;-webkit-font-smoothing:antialiased}
+  .page{max-width:880px;margin:0 auto;padding:0 32px}
+  .sitehead{border-bottom:1px solid var(--ink)}
+  .sh-in{max-width:1184px;margin:0 auto;padding:0 32px;height:66px;display:flex;align-items:center;gap:40px}
+  .brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--ink);
+    font-family:"Archivo",sans-serif;font-weight:720;font-size:1.05rem;letter-spacing:-0.015em}
+  .brand .mark{width:10px;height:10px;background:var(--accent)}
+  .sh-nav{display:flex;gap:30px;margin-left:auto}
+  .sh-nav a{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink-soft);text-decoration:none;
+    padding-bottom:3px;border-bottom:1px solid transparent;
+    transition:color .15s ease,border-color .15s ease}
+  .sh-nav a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+  .sh-nav a[aria-current]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--accent)}
+  .sh-date{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--muted);border-left:1px solid var(--rule);padding-left:30px}
+  .crumb{border-bottom:1px solid var(--rule);font-family:"IBM Plex Mono",monospace;
+    font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .crumb .crumb-in{max-width:1184px;margin:0 auto;padding:10px 32px;display:flex;justify-content:space-between;gap:24px}
+  .crumb b{color:var(--ink);font-weight:500}
+
+  .kicker{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--accent);margin-bottom:30px}
+  h1{font-family:"Archivo",sans-serif;font-weight:720;font-size:4.4rem;line-height:1.0;letter-spacing:-0.034em;text-wrap:balance}
+  h1 i{font-style:italic;font-weight:560;color:var(--accent)}
+  .lede{margin-top:36px;font-size:1.3rem;line-height:1.58;font-style:italic;color:#33302B;max-width:48ch}
+  .titleblock{padding:96px 0 0}
+
+  section{padding:96px 0 0}
+  .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:40px}
+  .sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--accent);letter-spacing:.1em}
+  .sec-head h2{font-family:"Archivo",sans-serif;font-weight:680;font-size:1.8rem;letter-spacing:-0.022em}
+  .sec-head .line{flex:1;height:1px;background:var(--rule);transform:translateY(-6px)}
+  p{color:#33302B;max-width:64ch;hyphens:auto;text-wrap:pretty;hanging-punctuation:first allow-end}
+  p b{color:var(--ink);font-weight:600}
+  p+p{margin-top:1.1em}
+  p a{color:var(--accent);text-decoration:none}
+
+  .provenance{margin-top:96px;padding:40px 0 72px;border-top:1px solid var(--ink)}
+  .provenance .fine{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 24px;
+    font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  @media (max-width:680px){
+    h1{font-size:2.6rem}
+    .sh-nav{display:none}
+    .sh-date{margin-left:auto;border-left:none;padding-left:0}
+  }
+</style>
+</head>
+<body>
+<header class="sitehead">
+  <div class="sh-in">
+    <a class="brand" href="index.html"><span class="mark"></span>India Atlas</a>
+    <nav class="sh-nav">
+      <a href="index.html#dossiers">Dossiers</a><a href="register.html">Register</a><a href="method.html">Method</a><a href="about.html" aria-current="page">About</a>
+    </nav>
+    <span class="sh-date">January 2026</span>
+  </div>
+</header>
+<div class="crumb">
+  <div class="crumb-in">
+    <span><b>About</b></span>
+    <span>What this is, and who it is for</span>
+  </div>
+</div>
+<div class="page">
+
+  <div class="titleblock">
+    <div class="kicker">About</div>
+    <h1>Built for the curious, <i>not the credentialed.</i></h1>
+    <p class="lede">India produces some of the world's richest economic data and publishes it in some of the world's least readable forms. India Atlas exists to close that gap.</p>
+  </div>
+
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The problem</h2><span class="line"></span></div>
+    <p>A citizen who wants to know "how fast are prices rising, really?" currently faces a trek through badly designed government portals, scanned PDFs, and press releases written for wire services. Even seasoned observers struggle to assemble a clean series, let alone interpret it. The data is public; the understanding is gated.</p>
+    <p>Dashboards have not fixed this. A wall of charts without explanation is just a faster way to be confused. What is missing is the middle layer: patient, well-designed interpretation that treats the reader as intelligent but not expert.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>The artifact</h2><span class="line"></span></div>
+    <p>India Atlas is not a dashboard and not a news site. Its unit of publication is the <b>dossier</b>: a whole page devoted to one statistical concept — the consumer price index, the national accounts, wholesale prices, industrial production. Each dossier combines carefully designed charts of every related series, evergreen explanation of what the measure means, dated commentary on the latest print, and an explicit guide to the ways the number is most often misread.</p>
+    <p>Dossiers are revised with each new data release but are built to last — closer to a continuously updated reference work than to journalism. Read how we handle sources, revisions and uncertainty in <a href="method.html">our method</a>.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>The reader</h2><span class="line"></span></div>
+    <p>We write for curious non-specialists: students, journalists on a deadline, citizens trying to verify a claim, founders watching input costs, civil servants outside the statistical service. We assume intelligence and zero training. Every unusual term is explained where it is used; every chart teaches you how to read it.</p>
+    <p>If you are an economist, you are welcome too — the register tables, downloadable data and vintage discipline are built for you. But the prose will never pretend you are the only audience.</p>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>Colophon</h2><span class="line"></span></div>
+    <p>India Atlas is a static website: no trackers, no cookies, no accounts, no app. Pages are plain HTML; charts are drawn with Observable Plot and download as SVG, PNG or CSV. The text is set in Archivo, Newsreader and IBM Plex Mono. During the design-preview phase, all data shown is illustrative and labelled as such.</p>
+  </section>
+
+  <footer class="provenance">
+    <div class="fine">
+      <span>India Atlas · About</span>
+      <span>v1.1 · January 2026</span>
+      <span>register@indiaatlas.example</span>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>India Atlas — Consumer Prices · The Night Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:opsz,wght@6..72,300;6..72,400&family=Spline+Sans+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0E1013;
+    --bg2:#14171B;
+    --ink:#E9E6DD;
+    --soft:#A8A498;
+    --dim:#6A675E;
+    --rule:rgba(233,230,221,.12);
+    --saffron:#E8A33D;
+    --aqua:#6FBFAF;
+    --rose:#D97B6C;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:"Newsreader",Georgia,serif;font-weight:300;
+    font-size:1.1rem;line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{max-width:860px;margin:0 auto;padding:0 32px}
+  .mono{font-family:"Spline Sans Mono",monospace}
+
+  .masthead{
+    display:flex;justify-content:space-between;
+    padding:30px 0 22px;border-bottom:1px solid var(--rule);
+    font-family:"Spline Sans Mono",monospace;font-size:.66rem;
+    letter-spacing:.18em;text-transform:uppercase;color:var(--dim);
+  }
+  .masthead .brand{color:var(--ink)}
+
+  .titleblock{padding:96px 0 64px;border-bottom:1px solid var(--rule)}
+  .kicker{
+    font-family:"Spline Sans Mono",monospace;font-size:.68rem;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--saffron);margin-bottom:30px;
+  }
+  h1{
+    font-family:"Instrument Serif",serif;font-weight:400;
+    font-size:4.6rem;line-height:1.0;letter-spacing:-0.01em;
+  }
+  h1 em{font-style:italic;color:var(--saffron)}
+  .lede{
+    margin-top:36px;font-size:1.3rem;line-height:1.6;color:var(--soft);
+    max-width:36ch;
+  }
+  .meta{
+    margin-top:52px;display:flex;gap:40px;flex-wrap:wrap;
+    font-family:"Spline Sans Mono",monospace;font-size:.64rem;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--dim);
+  }
+  .meta span b{color:var(--soft);font-weight:400;display:block;margin-top:6px}
+
+  .bigstat{padding:72px 0;border-bottom:1px solid var(--rule);display:flex;align-items:baseline;gap:28px;flex-wrap:wrap}
+  .bigstat .num{
+    font-family:"Instrument Serif",serif;font-size:7rem;line-height:.9;letter-spacing:-0.02em;
+  }
+  .bigstat .what{max-width:26ch;color:var(--soft);font-size:1rem;line-height:1.6}
+  .bigstat .what b{color:var(--ink);font-weight:400}
+  .chips{margin-left:auto;display:flex;flex-direction:column;gap:10px}
+  .chip{
+    font-family:"Spline Sans Mono",monospace;font-size:.72rem;letter-spacing:.06em;
+    color:var(--soft);display:flex;justify-content:space-between;gap:22px;
+    border-bottom:1px solid var(--rule);padding-bottom:10px;min-width:230px;
+  }
+  .chip b{font-weight:500}
+  .chip .f{color:var(--rose)} .chip .u{color:var(--saffron)} .chip .c{color:var(--aqua)}
+
+  section{padding:80px 0;border-bottom:1px solid var(--rule)}
+  .sec-k{
+    font-family:"Spline Sans Mono",monospace;font-size:.66rem;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--dim);margin-bottom:26px;
+  }
+  h2{
+    font-family:"Instrument Serif",serif;font-weight:400;font-size:2.3rem;
+    line-height:1.1;margin-bottom:34px;letter-spacing:0;
+  }
+  h2 em{font-style:italic;color:var(--aqua)}
+  p{max-width:60ch;color:var(--soft)}
+  p b{color:var(--ink);font-weight:400}
+  p+p{margin-top:1.1em}
+
+  figcaption{
+    font-family:"Spline Sans Mono",monospace;font-size:.66rem;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--dim);margin-bottom:24px;
+  }
+  figcaption b{color:var(--soft);font-weight:400}
+
+  .pull{
+    font-family:"Instrument Serif",serif;font-style:italic;
+    font-size:2rem;line-height:1.3;color:var(--ink);
+    max-width:24ch;padding:12px 0 0;margin:54px 0 0;
+  }
+  .pull::before{content:"“";color:var(--saffron)}
+  .pull::after{content:"”";color:var(--saffron)}
+
+  .notes{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--rule);margin-top:44px}
+  .note{padding:30px 32px 30px 0;border-bottom:1px solid var(--rule)}
+  .note:nth-child(even){padding-left:32px;padding-right:0;border-left:1px solid var(--rule)}
+  .note .n{font-family:"Spline Sans Mono",monospace;font-size:.66rem;color:var(--rose);letter-spacing:.14em;text-transform:uppercase;margin-bottom:12px}
+  .note p{font-size:.95rem;max-width:none}
+  .note p b{color:var(--ink)}
+
+  .foot{
+    padding:34px 0 64px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+    font-family:"Spline Sans Mono",monospace;font-size:.64rem;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--dim);
+  }
+
+  @media (max-width:680px){
+    h1{font-size:3rem}
+    .bigstat .num{font-size:4.4rem}
+    .chips{margin-left:0;width:100%}
+    .chip{width:100%}
+    .notes{grid-template-columns:1fr}
+    .note:nth-child(even){padding-left:0;border-left:none}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <span class="brand">India Atlas</span>
+    <span>Dossier 01 / Prices</span>
+  </header>
+
+  <div class="titleblock">
+    <div class="kicker">Prices · Consumer Price Index</div>
+    <h1>What it costs<br>to <em>live</em> here.</h1>
+    <p class="lede">One number, published every month, that tries to answer: how much dearer did an ordinary Indian life become this year?</p>
+    <div class="meta">
+      <span>Published by<b>MoSPI, NSO</b></span>
+      <span>Every<b>Month, 12th working day</b></span>
+      <span>Base<b>2012 = 100</b></span>
+      <span>Latest<b>May 2025</b></span>
+    </div>
+  </div>
+
+  <div class="bigstat">
+    <div class="num">4.8%</div>
+    <div class="what">Headline inflation, May 2025. The basket of everyday life costs <b>4.8% more</b> than it did last May.</div>
+    <div class="chips">
+      <div class="chip"><span>Food &amp; beverages</span><b class="f">6.10%</b></div>
+      <div class="chip"><span>Fuel &amp; light</span><b class="u">2.34%</b></div>
+      <div class="chip"><span>Core</span><b class="c">3.91%</b></div>
+    </div>
+  </div>
+
+  <section>
+    <figcaption><b>Fig. 1</b> — CPI inflation, y/y · 2016–2025 · per cent</figcaption>
+    <div id="chart-main"></div>
+  </section>
+
+  <section>
+    <div class="sec-k">02 — Reading it</div>
+    <h2>The average is a <em>fiction</em><br>you can still learn from.</h2>
+    <p>The CPI tracks the price of a fixed basket — rice, rent, bus fares, haircuts — as a statistical "average household" buys them. No real family buys exactly this basket. <b>Food is 46% of it</b>, which is why a failed monsoon moves national inflation more than any interest-rate decision.</p>
+    <p>When the number falls from 6% to 4%, prices have not fallen. They are still rising — just more slowly. The level of prices almost never comes back down.</p>
+    <div class="pull">Falling inflation is not falling prices. It is slower pain.</div>
+  </section>
+
+  <section>
+    <div class="sec-k">03 — Field notes</div>
+    <h2>Ways this number <em>lies</em>.</h2>
+    <div class="notes">
+      <div class="note">
+        <div class="n">Note 01</div>
+        <p><b>Base effects.</b> A high print this year makes next year's look gentle — with no change in anyone's life. Always ask: compared to what base?</p>
+      </div>
+      <div class="note">
+        <div class="n">Note 02</div>
+        <p><b>Your basket is not the basket.</b> If food is 60% of your family's budget, your personal inflation runs hotter than the headline.</p>
+      </div>
+      <div class="note">
+        <div class="n">Note 03</div>
+        <p><b>Rural ≠ urban.</b> The combined index hides two different countries. The dossier keeps them as separate series, never merged.</p>
+      </div>
+      <div class="note">
+        <div class="n">Note 04</div>
+        <p><b>One month is weather, three is climate.</b> Single prints are noisy. Trends over a quarter carry the signal.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>Source — MoSPI, 12 Jun 2025</span>
+    <span>Reviewed · v1.3 · Mock data</span>
+  </footer>
+
+</div>
+
+<script type="module">
+import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
+
+function walk(seed, level, amp, smooth){
+  const out=[]; let v=level;
+  for(let i=0;i<40;i++){
+    const d=new Date(2016, i*3, 1);
+    v = v*smooth + (level + amp*Math.sin(i/3.1+seed) + amp*0.7*Math.sin(i*1.7+seed*2.3))*(1-smooth);
+    out.push({date:d, value:+(v).toFixed(2)});
+  }
+  return out;
+}
+const headline = walk(1.3, 4.8, 1.5, 0.72);
+const food = walk(2.9, 5.6, 2.6, 0.60);
+const fuel = walk(4.1, 3.2, 2.2, 0.55);
+const core = walk(0.4, 4.3, 0.7, 0.88);
+
+document.getElementById("chart-main").append(Plot.plot({
+  width: 796, height: 340,
+  marginLeft: 0, marginRight: 84, marginTop: 18, marginBottom: 30,
+  style:{background:"transparent", fontFamily:"'Spline Sans Mono', monospace", fontSize:"10px", color:"#6A675E"},
+  x:{label:null, tickSize:0, tickPadding:10},
+  y:{label:null, grid:true, gridOpacity:0.5, tickFormat:d=>d+"%", ticks:4, tickSize:0},
+  marks:[
+    Plot.ruleY([0], {stroke:"rgba(233,230,221,.2)"}),
+    Plot.lineY(food, {x:"date", y:"value", stroke:"#D97B6C", strokeWidth:1.4, curve:"catmull-rom", strokeOpacity:0.85}),
+    Plot.lineY(fuel, {x:"date", y:"value", stroke:"#E8A33D", strokeWidth:1.4, curve:"catmull-rom", strokeOpacity:0.85}),
+    Plot.lineY(core, {x:"date", y:"value", stroke:"#6FBFAF", strokeWidth:1.4, curve:"catmull-rom", strokeOpacity:0.85}),
+    Plot.lineY(headline, {x:"date", y:"value", stroke:"#E9E6DD", strokeWidth:2.4, curve:"catmull-rom"}),
+    Plot.dot([headline[headline.length-1]], {x:"date", y:"value", fill:"#E9E6DD", r:3.5}),
+    Plot.text([headline[headline.length-1]], {x:"date", y:"value", text:d=>"Headline "+d.value.toFixed(1)+"%", dx:14, fill:"#E9E6DD", fontSize:11, textAnchor:"start"}),
+    Plot.text([food[food.length-1]], {x:"date", y:"value", text:["Food"], dx:14, fill:"#D97B6C", fontSize:10, textAnchor:"start"}),
+    Plot.text([fuel[fuel.length-1]], {x:"date", y:"value", text:["Fuel"], dx:14, fill:"#E8A33D", fontSize:10, textAnchor:"start"}),
+    Plot.text([core[core.length-1]], {x:"date", y:"value", text:["Core"], dx:14, fill:"#6FBFAF", fontSize:10, textAnchor:"start"}),
+  ]
+}));
+</script>
+</body>
+</html>

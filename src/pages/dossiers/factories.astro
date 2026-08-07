@@ -1,0 +1,369 @@
+---
+import Base from "../../layouts/Base.astro";
+---
+<Base
+  title="India Atlas — Enterprises · Dossier 08"
+  description="Dossier 08 — the Annual Survey of Industries and ASUSE: registered factories and unincorporated enterprises, side by side and never conflated."
+  nav="dossiers"
+  dateStamp="August 2026"
+  crumbLeft='<a href="/" style="color:inherit">Dossiers</a> / Enterprises / <b>Factories &amp; Informal Enterprises · ASI + ASUSE</b>'
+  crumbRight='Evergreen · revised with each survey round · <b>v1.0</b>'
+  canonical="https://indiaatlas.in/dossiers/factories/"
+  ogImage="/og/factories.png"
+>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">Dossier № 08 — Enterprises · Annual Survey of Industries &amp; ASUSE</div>
+    <div class="hero-grid">
+      <h1>The factory, the shop, <i>and the line between them.</i></h1>
+      <p class="lede">India audits its registered factories to the last rupee and met the rest of its enterprises only in 2021. This dossier puts the two counts on one page — side by side, never as one line.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>MoSPI, NSO</b></span>
+      <span>Instruments <b>ASI annual · ASUSE annual + quarterly</b></span>
+      <span>Coverage <b>Registered factories · unincorporated establishments</b></span>
+      <span>Latest ASI <b>2023-24</b></span>
+      <span>Latest ASUSE <b>2023-24 · bulletin Jan–Mar 2026</b></span>
+      <span>Rupees <b>Nominal, as published</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Factories in operation · lakh</div><div class="v" id="n-fact">–</div><div class="d" id="d-fact">–</div><div class="nspark" id="nspark-fact"></div></div>
+      <div class="num"><div class="l">Persons engaged · ASI · crore</div><div class="v" id="n-pers">–</div><div class="d" id="d-pers">–</div></div>
+      <div class="num"><div class="l">Informal establishments · crore</div><div class="v" id="n-inf">–</div><div class="d" id="d-inf">–</div></div>
+      <div class="num"><div class="l">GVA per worker · factory ÷ informal</div><div class="v acc" id="n-mult">–</div><div class="d" id="d-mult">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">ASI &amp; ASUSE · 2023-24</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Inside the Factories Act</span><div class="big" id="rb-formal">–</div></div>
+      <p class="rt-cap">Persons engaged in registered factories in 2023-24 — beside the workers of unincorporated establishments the same year. For every person inside the factory gate, about <b id="rt-ratio">–</b> work outside it, in enterprises the Act never sees.</p>
+      <div><span class="rk">Outside it</span><div class="big" id="rb-informal" style="font-size:44px">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the print says</span>
+        <p>The 2023-24 survey found <b id="cr-fop">–</b> factories in operation, of <b id="cr-freg">–</b> on the register. They engaged <b id="cr-pers">–</b> people and produced <b id="cr-fgva">–</b> of gross value added — <b id="cr-gpwf">–</b> per person, in the rupees of that year.</p>
+        <p>ASUSE's third round counted <b id="cr-est">–</b> unincorporated establishments with <b id="cr-wrk">–</b> workers, adding <b id="cr-gpwi">–</b> of value per worker per year. Set one against the other and the factory multiple is <b id="cr-mult">–</b>.</p>
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What it does not say</span>
+        <p>It does not say India makes things in only two lakh places. The ASI sees factories registered under the Factories Act — broadly, premises with ten or more workers using power, or twenty without. Everything smaller is invisible to it by design, and everything smaller is most of the country.</p>
+        <p>Nor do the rupee figures say "growth" by themselves. ASI values are nominal — no deflator is published for them — and the informal count has no history: ASUSE first measured it in 2021-22. Whether there were more informal establishments a decade ago, we do not know.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 register -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>The register of series</h2><span class="line"></span><span class="unit">Latest round · vs previous</span></div>
+    <div class="break ledger">
+      <table>
+        <thead>
+          <tr><th>Series</th><th>Latest</th><th>vs prev. round</th><th>First round</th><th class="spark">History</th></tr>
+        </thead>
+        <tbody id="ledger-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- § 03 the counts -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>Plate 1 — sixteen years of counting factories</h2><span class="line"></span><span class="unit">counts · annual · ASI</span></div>
+    <div class="break">
+      <figure id="cb-count" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The factories, and the people in them</h3>
+            <div class="sub">Registered factories &amp; factories in operation · persons engaged &amp; workers · 2008-09 – 2023-24</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-count">–</div><div class="c">2023-24 · factories in operation</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-count">
+            <button class="chip" data-key="factories_in_operation"><i style="background:#BE3E26"></i>In operation</button>
+            <button class="chip" data-key="number_of_factories"><i style="background:#5B564B"></i>On the register</button>
+            <button class="chip" data-key="persons_engaged"><i style="background:#5B564B"></i>Persons engaged</button>
+            <button class="chip" data-key="workers"><i style="background:#A8A293"></i>of whom workers</button>
+          </div>
+          <div class="plotzone">
+            <div id="plot-fact" style="position:relative"><div class="cb-tip"></div></div>
+            <div id="plot-pers" style="position:relative;margin-top:26px"><div class="cb-tip"></div></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, Annual Survey of Industries · fiscal years plotted at April · the 2010-11 step is a sampling-frame revision, disclosed on the chart, not real growth</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Counts are the honest part of the ASI: a factory is a factory in any year's rupees. The one violent move in the upper panel is 2010-11, when the survey's sampling frame was rebuilt and tens of thousands of already-existing factories walked into view at once. The lower panel barely flinches at the same moment — the newly visible factories were small, so they carried few people with them.</p>
+            <p>Everything else is slow. The register grows faster than the count in operation; the gap between the two lines is factories that exist on paper but reported no activity.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>Factories in operation: <b id="ex-c1">–</b>, from <b id="ex-c0">–</b> at the start of the window. Persons engaged: <b id="ex-cp">–</b>, of whom <b id="ex-cw">–</b> are production workers. An average operating factory now holds <b id="ex-cavg">–</b> people — the factory sector is growing, and its factories are growing bigger.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 04 the money -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>Plate 2 — the money, in the rupees of its day</h2><span class="line"></span><span class="unit">₹ lakh crore · nominal</span></div>
+    <div class="break">
+      <figure id="cb-money" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>What the factories added, and what they paid</h3>
+            <div class="sub">Gross value added &amp; total emoluments, ₹ lakh crore, nominal · y/y change derived · 2008-09 – 2023-24</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-money">–</div><div class="c">2023-24 · factory GVA · nominal</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-money">
+            <button class="chip" data-key="gva"><i style="background:#BE3E26"></i>Gross value added</button>
+            <button class="chip" data-key="emoluments"><i style="background:#5B564B"></i>Emoluments</button>
+            <button class="chip" data-key="gva_yoy"><i class="dash" style="border-color:#BE3E26"></i>GVA y/y % · derived</button>
+          </div>
+          <div class="plotzone">
+            <div id="plot-money" style="position:relative"><div class="cb-tip"></div></div>
+            <div id="plot-grow" style="position:relative;margin-top:26px"></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, ASI · published in ₹ lakh, shown in ₹ lakh crore (1 lakh crore = 10¹² ₹) · nominal, no deflator exists for ASI · y/y line derived, dashed</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Every rupee here is a rupee of its own year. The upper lines mix real expansion with fifteen years of inflation, and the survey publishes no deflator to separate them — so this plate states levels and refuses to call them growth. The dashed panel below is the honest companion: year-on-year change, which at least shows the rhythm — a pandemic dip, then a violent rebound that is part recovery and part the price surge of 2021-22.</p>
+            <p>The steadier story is the gap between the lines: what factories add and what they pay out as wages and salaries. Emoluments have stayed near a third of value added through the whole window.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>Factory GVA stands at <b id="ex-m1">–</b>, from <b id="ex-m0">–</b> in 2008-09 — <b id="ex-mx">–</b> the nominal level, over years in which prices themselves roughly doubled. Emoluments: <b id="ex-me">–</b>, or about <b id="ex-mw">–</b> per person engaged per year.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 where -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>Plate 3 — where the factory rupee is made</h2><span class="line"></span><span class="unit">share of factory GVA · 2023-24</span></div>
+    <div class="break">
+      <figure id="cb-states" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Three states, four rupees in ten</h3>
+            <div class="sub">State share of all-India factory GVA, per cent · 2023-24 · nominal</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-states">–</div><div class="c">Maharashtra + Gujarat + Tamil Nadu</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-states"></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, ASI state tables · shares computed from published state GVA, ₹ lakh · Telangana reported from 2012-13, Ladakh from 2019-20</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Factory India is coastal and western. The long tail is the plate's second story: below the top ten states, shares fall under two per cent each, and the whole north-east together rounds to almost nothing. Concentration this steep is old — ports, power and supplier networks compound — and it moves only slowly, survey by survey.</p>
+            <p>Share of value is not share of factories. Tamil Nadu runs the most factories; Maharashtra makes the most value per state. Capital-heavy industry, not counting, decides this ranking.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>Maharashtra alone: <b id="ex-s1">–</b> of factory GVA. The top three states hold <b id="ex-s3">–</b>; the top five, <b id="ex-s5">–</b>. Tamil Nadu's <b id="ex-stn">–</b> operating factories are the country's largest count, against Maharashtra's <b id="ex-smh">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 what they make -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>Plate 4 — what the factories make</h2><span class="line"></span><span class="unit">GVA by NIC division · ₹ nominal</span></div>
+    <div class="break">
+      <figure id="cb-ind" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Twenty-nine industries, one shelf</h3>
+            <div class="sub">Factory GVA by 2-digit NIC division · 16-year shape, each panel on its own scale · sorted by 2023-24 GVA</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-ind">–</div><div class="c">top five divisions · share of GVA</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="grid-ind"></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, ASI by NIC-2008 division · ₹ lakh in source, panel values in ₹ lakh crore, nominal · each mini-panel scaled to its own maximum — compare shapes, not heights</span>
+            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each panel is one industry's sixteen years of nominal value added, drawn to its own scale — the grid compares trajectories, not sizes; the printed share does the sizing. The top row is heavy industry and process plants: metals, vehicles, chemicals, food, pharmaceuticals. The famous labour-intensive exporters — textiles, apparel, leather — sit far down the shelf, large in employment and modest in value added.</p>
+            <p>Nominal caution applies panel by panel: a rising line is prices as much as product. The shapes still discriminate — some industries dip in 2020-21 and snap back, others never quite do.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>Basic metals lead at <b id="ex-i1">–</b> of factory GVA, with motor vehicles at <b id="ex-i2">–</b> and chemicals at <b id="ex-i3">–</b>. The five accented panels together hold <b id="ex-i5">–</b> of everything the factory sector adds.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 the other economy -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>The other economy, counted at last</h2><span class="line"></span><span class="unit">ASUSE · establishments · ₹ per year</span></div>
+    <p>ASUSE — the Annual Survey of Unincorporated Sector Enterprises — is the young counterpart to the ASI's old ledger. It counts establishments no factory inspector visits: the tailor, the tea stall, the two-room workshop. The survey splits them in two. An <b>own-account establishment</b> (OAE) hires nobody — usually one person, or a family, working for themselves. A <b>hired-worker establishment</b> (HWE) employs at least one person for pay. In 2023-24 the own-account kind was <b id="ot-oaesh">–</b> of all establishments; the hired-worker kind, <b id="ot-hwesh">–</b>, held <b id="ot-hwewk">–</b> of the workers.</p>
+
+    <div class="break basket" style="margin-top:44px">
+      <div class="bar" id="bar-est"></div>
+      <div class="labels" id="lab-est"></div>
+    </div>
+    <div class="break basket" style="margin-top:36px">
+      <div class="bar" id="bar-wrk"></div>
+      <div class="labels" id="lab-wrk"></div>
+      <p class="note" id="note-q">A quarterly ASUSE bulletin began with Jan–Mar 2025. It is five quarters old — a reading of scale, not yet of trend: <b id="q-now">–</b> establishments counted in Jan–Mar 2026, against <b id="q-then">–</b> a year earlier. We read the level and wait.</p>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-mult" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>One scale, two economies</h3>
+            <div class="sub">Gross value added per worker, ₹ lakh per year, nominal · 2023-24 · ASI derived vs ASUSE published</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-mult">–</div><div class="c">factory ÷ unincorporated · 2023-24</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-mult"></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI · factory bar derived: ASI GVA ÷ persons engaged · ASUSE bars published per-worker GVA, market establishments · both nominal, same year — never one survey</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>This is the dossier's one picture worth arguing about. A year of work in a registered factory yields several times the value added of a year in an unincorporated establishment. The gap is real, and it is not a verdict on the people: the factory worker stands next to machines, capital and scale that the shop worker does not have, in industries the shop cannot enter. The bars measure the establishment, not the person in it.</p>
+            <p>Read the two grey bars against each other too: even inside the informal economy, an establishment that hires at all adds roughly double per head what an own-account one does. Hiring one person is India's steepest step up.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>Factory GVA per person engaged: <b id="ex-x1">–</b> a year. Unincorporated, all establishments: <b id="ex-x2">–</b> — a multiple of <b id="ex-x3">–</b>, rising to <b id="ex-x4">–</b> against own-account establishments alone. Pay tells the softer version: factory emoluments per head are <b id="ex-x5">–</b> against <b id="ex-x6">–</b> per hired worker in the informal economy — <b id="ex-x7">–</b>, not eight.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 the measure -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="wm-grid">
+      <div>
+        <p>The ASI is a census-plus-sample of the Factories Act register: every large factory enumerated, the rest sampled, once a year, results final on release. "Registered" is the load-bearing word — broadly, ten or more workers with power, twenty without. The survey measures premises, money and people: counts of factories and workers are clean; every rupee figure is nominal, published in ₹ lakh, with no deflator offered or possible at this level.</p>
+        <p>ASUSE is the successor to the old NSS enterprise surveys, run annually since 2021-22. It samples households and premises to find unincorporated establishments — no company registration, no factory licence — in manufacturing, trade and other services. Its rupee figures are per-establishment and per-worker rates, also nominal. Three rounds exist. That is the entire history of India's informal-enterprise count.</p>
+        <p>Between the two surveys runs a seam, and much of the economy falls through it: agriculture, government, construction, and every incorporated firm that is not a factory — the software company, the bank, the airline. Neither survey sees them. This page describes the two shores it can see, and says so when it cannot.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note · i</span>
+          <b>Nominal rupees throughout.</b> No deflator is applied and none is published for ASI. Rupee levels mix quantity with fifteen years of inflation; only the counts are free of prices.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · ii</span>
+          <b>A factory is a premises; an establishment is not an enterprise.</b> One firm can run many factories; one owner, several establishments. Neither survey counts companies.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · iii</span>
+          <b>The 2010-11 break.</b> The ASI frame revision lifted the factory count by roughly a third in one year. Any series crossing that year carries the break; this dossier annotates it wherever it appears.
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 09 misread -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li>
+        <span class="no">i.</span>
+        <div>
+          <h3>"India has only two lakh factories."</h3>
+          <p>It has two lakh <em>registered</em> factories — premises large enough for the Factories Act. Crores of manufacturing establishments operate below its thresholds, in the other survey on this page. "Factory" is a legal category, not a synonym for a place where things are made.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">ii.</span>
+        <div>
+          <h3>"Factory GVA rose by double digits — manufacturing is booming."</h3>
+          <p>ASI rupees are nominal. Part of any rise is the price level, and the survey publishes no deflator to remove it. For volume, lean on the counts — factories, persons — or on the deflated production indices, which are a different instrument entirely.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iii.</span>
+        <div>
+          <h3>"The factory count jumped a third in 2010-11."</h3>
+          <p>The sampling frame was rebuilt that year and existing factories became visible; almost nothing was built that was not already there. Growth computed across 2010-11 is a property of the survey, not the economy. The break is annotated on every chart it touches.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iv.</span>
+        <div>
+          <h3>"Informal workers are eight times less productive."</h3>
+          <p>The eight-fold gap is real, but it belongs to the establishment, not the worker. Factories carry capital, power and scale in industries a shop cannot enter; the comparison also spans different sectors doing different work. Pay gaps, the cleaner person-level signal, are far narrower.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">v.</span>
+        <div>
+          <h3>"ASUSE counts the whole informal economy."</h3>
+          <p>It counts unincorporated establishments in manufacturing, trade and other services. Farms are excluded, as are construction, government and anything incorporated. Informal work in those sectors exists — the labour survey sees the workers — but no survey counts those enterprises, and this page does not pretend otherwise.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <footer class="provenance">
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. Annual Survey of Industries, NIC-2008 block, 2008-09 to 2023-24; ASUSE annual rounds 2021-22 to 2023-24 and quarterly bulletin from Jan–Mar 2025. Retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>.</p>
+        <p>ASI monetary values are published in ₹ lakh and are shown here in ₹ lakh crore, nominal, with no deflation. The 2010-11 sampling-frame revision is carried as published and annotated wherever a series crosses it. Ladakh's factory GVA is negative in 2021-22 — a real published value, inputs exceeding output, not an error. Telangana appears from 2012-13 and Ladakh from 2019-20; earlier cells are null, not zero.</p>
+      </div>
+      <div>
+        <h6>Revisions &amp; uncertainty</h6>
+        <p>ASI and ASUSE results are final on release. The two surveys have different frames, units and histories and are shown side by side, never spliced or summed. ASUSE 2023-24 publishes per-hired-worker figures for hired-worker establishments only; the all-establishment variants end at 2022-23 and carry a disclosed trailing null.</p>
+        <p>ASUSE quarterly counts are published in hundreds and converted for display. Where something is not measured — the informal economy before 2021-22, real factory output — this dossier says "we do not know" rather than inventing a number.</p>
+      </div>
+      <div>
+        <h6>This dossier</h6>
+        <p>Dossier 08 · Enterprises · version 1.0 · first release, on the ASI 2023-24 and ASUSE 2023-24 rounds. Next scheduled revision: on release of either survey's next round.</p>
+        <p>Corrections and questions: register@indiaatlas.example</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas · Dossier 08 · ASI + ASUSE</span>
+      <span>Vintage <span id="prov-vintage2">–</span> · formal and informal, never conflated</span>
+      <span>Set in Archivo, Newsreader &amp; Plex Mono</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../../dossiers/factories.client.js";
+</script>
+</Base>

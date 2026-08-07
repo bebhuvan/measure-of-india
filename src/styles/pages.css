@@ -1,0 +1,115 @@
+/* Support pages (home, register, method, about) — deltas from atlas.css.
+   Selectors are scoped under .spage / .home / .method so the dossier
+   stylesheet stays pixel-identical to the reference. */
+
+.sh-nav a[aria-current]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--accent)}
+
+.spage .titleblock{padding:96px 0 0}
+.spage .titleblock h1{font-size:4.4rem}
+.spage .titleblock .lede{margin-top:36px;font-size:1.3rem;max-width:48ch;font-style:italic}
+.spage section{padding:88px 0 0}
+.spage .provenance{margin-top:96px}
+.spage .provenance .fine{border-top:none}
+.spage p a{color:var(--accent);text-decoration:none}
+
+/* ---------- home ---------- */
+.home .hero{padding:104px 0 88px}
+.home .hero h1{font-size:5.2rem}
+.home .hero .lede{margin-top:0;font-size:1.38rem;max-width:34ch}
+.home .frontis{padding:0 0 64px}
+.home .frontis svg{display:block;width:100%;height:auto;overflow:visible}
+.home .frontis svg text{paint-order:stroke;stroke:#FFFFFF;stroke-width:4px;stroke-linejoin:round}
+.home .frontis-cap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 24px;margin-top:16px;
+  font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.home .frontis-cap a{color:var(--accent);text-decoration:none}
+.home .frontis-cap a:hover{text-decoration:underline}
+
+.home .prints{border-top:1px solid var(--ink);border-bottom:1px solid var(--rule);padding:48px 0 44px}
+.home .prints .ph{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:32px}
+.home .prints .ph .t{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.home .prints .ph a{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);text-decoration:none}
+.home .prints .grid{display:grid;grid-template-columns:repeat(3,1fr)}
+.home .prints .cell{padding:0 30px;border-left:1px solid var(--rule)}
+.home .prints .cell:first-child{padding-left:0;border-left:none}
+.home .prints .l{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.home .prints .v{font-family:"Newsreader",serif;font-weight:300;font-variation-settings:"opsz" 72;
+  font-size:3.6rem;letter-spacing:-0.02em;line-height:1;font-variant-numeric:tabular-nums}
+.home .prints .v .pc{font-size:.4em;color:var(--muted);margin-left:3px}
+.home .prints .d{font-family:"IBM Plex Mono",monospace;font-size:.62rem;color:var(--muted);margin-top:14px}
+.home .prints .d b{color:var(--ink-soft);font-weight:500}
+.home .prints .d a{color:var(--ink-soft)}
+.home .prints .d a:hover{color:var(--accent)}
+.home .prints .nspark{margin-top:20px}
+
+.home .dossiers{list-style:none}
+.home .dossiers li{border-top:1px solid var(--rule)}
+.home .dossiers li:last-child{border-bottom:1px solid var(--rule)}
+.home .dossiers a{
+  position:relative;display:grid;grid-template-columns:72px 1.1fr 1.6fr 130px auto;gap:36px;align-items:center;
+  padding:40px 16px;margin:0 -16px;text-decoration:none;color:inherit;
+  transition:background .15s ease;
+}
+.home .dossiers a::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent);
+  transform:scaleY(0);transform-origin:top;transition:transform .2s ease;
+}
+.home .dossiers a:hover{background:#FAF8F2}
+.home .dossiers a:hover::before{transform:scaleY(1)}
+.home .dossiers .no{font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--muted);letter-spacing:.08em}
+.home .dossiers .nm{font-family:"Archivo",sans-serif;font-weight:660;font-size:1.7rem;letter-spacing:-.02em;line-height:1.2;transition:color .15s ease}
+.home .dossiers .ds{font-size:1rem;color:var(--ink-soft);max-width:52ch}
+.home .dossiers .dspark{justify-self:end}
+.home .dossiers .dspark svg{display:block}
+.home .dossiers .vt{text-align:right;font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);line-height:2}
+.home .dossiers .vt b{color:var(--accent);font-weight:500}
+.home .dossiers a:hover .nm{color:var(--accent)}
+.home .dossiers a:hover .no{color:var(--accent)}
+.home .dossiers .soon .nm{color:var(--faint)}
+.home .dossiers .soon .vt b{color:var(--muted)}
+.home .dossiers .soon:hover{background:none}
+
+.home .note-block{margin-top:64px;display:grid;grid-template-columns:1fr 1fr;gap:56px;border-top:1px solid var(--ink);padding-top:36px}
+.home .note-block h3{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;margin-bottom:16px;color:var(--grey1)}
+.home .note-block p{font-size:1.02rem;line-height:1.76;color:#33302B}
+.home .note-block p b{color:var(--ink)}
+.home .provenance .fine{border-top:3px double var(--ink)}
+.home .provenance a{color:var(--accent);text-decoration:none}
+
+/* ---------- register ---------- */
+.register .ledger td{padding:24px 20px 24px 0}
+.register .ledger .name{font-size:1.06rem}
+.register .ledger .name a{color:inherit;text-decoration:none;transition:color .15s ease}
+.register .ledger .name a:hover{color:var(--accent)}
+.register .ledger .code,.register .ledger .vt{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--ink-soft);white-space:nowrap}
+.register .ledger .spark{width:170px}
+.register .derived-tag{font-family:"IBM Plex Mono",monospace;font-size:.55rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--accent);border:1px solid var(--rule);padding:2px 6px;margin-left:10px}
+
+/* ---------- method ---------- */
+.method section{padding:96px 0 0}
+.method .margin-note{border-left:none;border-top:1px solid var(--ink);padding:13px 0 3px;font-size:.9rem;line-height:1.62}
+.method .margin-note::before{display:none}
+.method .margin-note .mk{color:var(--accent)}
+.method .margin-note b{color:var(--ink-soft)}
+.method .wm-rail .margin-note{margin-bottom:44px}
+.method ol.rules{list-style:none;counter-reset:r}
+.method ol.rules li{counter-increment:r;display:grid;grid-template-columns:64px 1fr;gap:24px;
+  padding:26px 0;border-bottom:1px solid var(--rule);align-items:baseline}
+.method ol.rules li:first-child{border-top:1px solid var(--ink);padding-top:34px}
+.method ol.rules li::before{content:counter(r,decimal-leading-zero);font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--accent)}
+.method ol.rules h3{font-family:"Archivo",sans-serif;font-weight:640;font-size:1.15rem;letter-spacing:-.015em;margin-bottom:8px}
+.method ol.rules p{font-size:1.05rem}
+
+@media (max-width:680px){
+  .spage .titleblock h1{font-size:2.6rem}
+  .home .hero h1{font-size:2.7rem}
+  .home .hero-grid{grid-template-columns:1fr;gap:28px}
+  .home .hero-grid .lede{justify-self:start;margin-bottom:0}
+  .home .prints .v{font-size:2.8rem}
+  .home .prints .grid{grid-template-columns:1fr;gap:32px}
+  .home .prints .cell{border-left:none;padding:0}
+  .home .dossiers a{grid-template-columns:48px 1fr;gap:6px 20px}
+  .home .dossiers .ds,.home .dossiers .vt{grid-column:2;text-align:left}
+  .home .dossiers .dspark{display:none}
+  .home .note-block{grid-template-columns:1fr;gap:36px}
+}

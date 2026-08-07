@@ -1,0 +1,52 @@
+---
+import { EXPLAINERS } from "../../learn/registry.js";
+import Inflation from "../../learn/inflation.astro";
+import BaseEffects from "../../learn/base-effects.astro";
+import IndexWeights from "../../learn/index-weights.astro";
+import CoreInflation from "../../learn/core-inflation.astro";
+import YoyAndMom from "../../learn/yoy-and-mom.astro";
+import Seasonality from "../../learn/seasonality.astro";
+import InflationTargeting from "../../learn/inflation-targeting.astro";
+import IndexNumbers from "../../learn/index-numbers.astro";
+import Gdp from "../../learn/gdp.astro";
+import GdpVsGva from "../../learn/gdp-vs-gva.astro";
+import RealVsNominal from "../../learn/real-vs-nominal.astro";
+import InvestmentGfcf from "../../learn/investment-gfcf.astro";
+import ConsumptionPfce from "../../learn/consumption-pfce.astro";
+import Revisions from "../../learn/revisions.astro";
+import PerCapita from "../../learn/per-capita.astro";
+import BaseYear from "../../learn/base-year.astro";
+import StocksAndFlows from "../../learn/stocks-and-flows.astro";
+import AveragesAndDistribution from "../../learn/averages-and-distribution.astro";
+import NoiseAndTrend from "../../learn/noise-and-trend.astro";
+import MonsoonAndFoodPrices from "../../learn/monsoon-and-food-prices.astro";
+
+const BODIES = {
+  inflation: Inflation,
+  "base-effects": BaseEffects,
+  "index-weights": IndexWeights,
+  "core-inflation": CoreInflation,
+  "yoy-and-mom": YoyAndMom,
+  seasonality: Seasonality,
+  "inflation-targeting": InflationTargeting,
+  "index-numbers": IndexNumbers,
+  gdp: Gdp,
+  "gdp-vs-gva": GdpVsGva,
+  "real-vs-nominal": RealVsNominal,
+  "investment-gfcf": InvestmentGfcf,
+  "consumption-pfce": ConsumptionPfce,
+  revisions: Revisions,
+  "per-capita": PerCapita,
+  "base-year": BaseYear,
+  "stocks-and-flows": StocksAndFlows,
+  "averages-and-distribution": AveragesAndDistribution,
+  "noise-and-trend": NoiseAndTrend,
+  "monsoon-and-food-prices": MonsoonAndFoodPrices,
+};
+
+export function getStaticPaths() {
+  return EXPLAINERS.filter((e) => e.live).map((e) => ({ params: { slug: e.slug } }));
+}
+const Body = BODIES[Astro.params.slug];
+---
+<Body />

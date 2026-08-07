@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CPI — India Atlas — Baseline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chivo+Mono:wght@300;400;500&family=Literata:ital,opsz,wght@0,7..72,300..600;1,7..72,300..500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#FBFBF9; --ink:#1B1B19; --ink-2:#4B4B47; --ink-3:#83837C;
+  --blue:#00559E; --rose:#D36A96; --rule:#E3E3DD; --grid:rgba(27,27,25,.055);
+  --lh:28px; --measure:34em;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Literata",Georgia,serif;font-optical-sizing:auto;
+  font-size:17px;line-height:28px;font-weight:400;
+  font-variant-numeric:tabular-nums oldstyle-nums;
+  /* the page rhythm, made visible: one rule per line of text */
+  background-image:repeating-linear-gradient(to bottom,
+    var(--grid) 0 1px, transparent 1px var(--lh));
+  background-position:0 27px;
+}
+
+/* everything textual is 17px/28px. hierarchy is position, rule and colour. */
+.page{max-width:868px;margin:0 auto;padding:0 28px 112px 218px;position:relative}
+
+p{margin:0 0 28px;max-width:var(--measure)}
+p:last-child{margin-bottom:0}
+em{font-style:italic}
+a{color:var(--blue);text-decoration:none;
+  border-bottom:1px solid rgba(0,85,158,.3)}
+a:hover{border-bottom-color:var(--blue)}
+a:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+
+/* the instrument voice: machine facts only — dates, codes, sources, axes */
+.m{font-family:"Chivo Mono",ui-monospace,monospace;font-weight:400;font-size:12.5px;
+  line-height:28px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);
+  font-variant-numeric:tabular-nums lining-nums}
+.m b{font-weight:500;color:var(--ink-2)}
+
+/* hung headings: same size, moved into the margin */
+section{margin:0 0 56px;position:relative}
+h2{position:absolute;left:-218px;top:0;width:176px;text-align:right;
+  margin:0;font-size:17px;line-height:28px;font-weight:600;letter-spacing:.005em;
+  color:var(--blue)}
+h1{margin:0 0 28px;font-size:17px;line-height:28px;font-weight:600;max-width:var(--measure)}
+
+/* rule that spans the measure, on the grid */
+.hr{height:0;border:0;border-top:1px solid var(--rule);margin:0 0 27px;max-width:var(--measure)}
+.hr.wide{max-width:none}
+
+header{padding:56px 0 0}
+.head-meta{display:flex;gap:28px;flex-wrap:wrap;margin-bottom:28px}
+
+/* inline data: mono sized to match Literata's x-height, sitting on the baseline */
+.d{font-family:"Chivo Mono",monospace;font-size:14.5px;font-weight:500;
+  font-variant-numeric:tabular-nums lining-nums;letter-spacing:-.01em;color:var(--blue)}
+.d.rose{color:var(--rose)}
+.spark{display:inline-block;width:104px;height:17px;vertical-align:baseline;
+  margin:0 3px}
+
+/* ---------- the figure: locked to the same rhythm ---------- */
+figure{margin:0 0 28px;position:relative}
+.plotwrap{position:relative;height:252px}     /* 9 lines exactly = 9 per cent */
+.plotwrap svg{position:absolute;inset:0;width:100%;height:252px;display:block;overflow:visible}
+.ylab{position:absolute;left:-60px;width:46px;height:28px;line-height:28px;
+  text-align:right;color:var(--ink-3);font-size:17px}
+.xrow{position:relative;height:28px}
+.xlab{position:absolute;top:0;height:28px;line-height:28px;color:var(--ink-3);
+  transform:translateX(-50%);white-space:nowrap;font-size:17px}
+figcaption{max-width:var(--measure);color:var(--ink-2);margin-top:28px}
+figcaption .m{display:block}
+
+/* ---------- ranked weights: one bar per line, magnitude in one hue ---------- */
+.bars{margin:0 0 28px;max-width:none}
+.bar{display:grid;grid-template-columns:216px minmax(0,1fr);height:28px;line-height:28px}
+.bar .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-right:14px}
+.bar .track{position:relative}
+.bar .fill{position:absolute;left:0;top:7px;height:14px;background:var(--blue);
+  border-radius:2px}
+.bar .n{position:absolute;top:0;color:var(--ink-2);font-family:"Chivo Mono",monospace;
+  font-size:14.5px;font-variant-numeric:tabular-nums lining-nums;white-space:nowrap}
+.bar.flag .fill{background:var(--rose)}
+.bar.flag .nm{color:var(--rose)}
+
+/* ---------- reading notes ---------- */
+.note{position:relative;max-width:var(--measure);margin:0 0 28px;padding-left:0}
+.note:first-of-type{margin-top:28px}
+.note .k{position:absolute;left:-218px;width:176px;text-align:right;
+  font-family:"Chivo Mono",monospace;font-size:12.5px;line-height:28px;
+  letter-spacing:.13em;text-transform:uppercase}
+.note .k.x{color:var(--rose)}
+.note .k.o{color:var(--blue)}
+.note b{font-weight:600}
+
+/* ---------- definition list ---------- */
+dl{margin:0 0 28px;max-width:var(--measure)}
+dt{font-weight:600;float:left;margin-right:.5em}
+dd{margin:0 0 28px}
+dd:last-child{margin-bottom:0}
+
+/* ---------- source table ---------- */
+table{border-collapse:collapse;width:100%;max-width:none}
+td{padding:0 0 0;vertical-align:baseline;border-bottom:1px solid var(--rule);
+  padding-top:13px;padding-bottom:14px}
+td:first-child{width:200px;padding-right:24px}
+
+/* ---------- related ---------- */
+.rel{max-width:none}
+.rel a{display:block;border-bottom:1px solid var(--rule);padding-top:13px;
+  padding-bottom:14px;color:var(--ink);border-left:0}
+.rel a:hover{color:var(--blue)}
+.rel a .m{display:inline-block;width:190px;color:var(--ink-3)}
+
+footer{padding-top:27px;border-top:1px solid var(--rule);display:flex;
+  justify-content:space-between;gap:28px;flex-wrap:wrap}
+
+@media (max-width:860px){
+  .page{padding-left:28px}
+  h2{position:static;width:auto;text-align:left;margin-bottom:28px}
+  .note .k{position:static;display:block;width:auto;text-align:left}
+  .plotwrap,.xrow{margin-left:26px}
+  .ylab{left:-26px;width:20px;text-align:left}
+  .bar .nm{position:static;display:block;width:auto}
+  .bar{height:56px}
+  .bar .fill,.bar .n{top:auto;bottom:7px;left:0}
+  .bar .n{bottom:0;left:auto;right:0}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <div class="head-meta">
+    <span class="m">India Atlas</span>
+    <span class="m">Dossier <b>014</b></span>
+    <span class="m">Prices</span>
+    <span class="m">Reviewed <b>14 Jul 2026</b></span>
+  </div>
+  <hr class="hr wide">
+  <h1>The Consumer Price Index</h1>
+  <p>Every month, price collectors visit the same shops in 1,181 villages and 1,114 urban
+  markets and write down the price of the same 598 items. The Consumer Price Index is what
+  that unchanging list costs. In June 2026 it cost <span class="d">3.8%</span> more than it
+  did a year earlier <svg class="spark" viewBox="0 0 104 17" aria-hidden="true"><path d="M0.0 8.3 L4.5 8.0 L9.0 3.7 L13.6 2.0 L18.1 3.7 L22.6 4.4 L27.1 6.6 L31.7 8.3 L36.2 9.0 L40.7 9.2 L45.2 10.2 L49.7 11.9 L54.3 13.1 L58.8 11.9 L63.3 13.3 L67.8 15.0 L72.3 13.6 L76.9 12.1 L81.4 11.1 L85.9 9.9 L90.4 9.5 L95.0 8.7 L99.5 8.3 L104.0 7.8" fill="none" stroke="#00559E" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg> — down from
+  <span class="d">6.2%</span> at the end of 2024, and up from the
+  <span class="d">0.8%</span> of last October.</p>
+</header>
+
+<section>
+  <h2>The series</h2>
+  <figure>
+    <div class="plotwrap">
+      <span class="ylab" style="top:196px">1</span>
+      <span class="ylab" style="top:140px">3</span>
+      <span class="ylab" style="top:84px">5</span>
+      <span class="ylab" style="top:28px">7</span>
+
+      <svg viewBox="0 0 680 252" preserveAspectRatio="none" role="img"
+           aria-label="Line chart of India's year-on-year CPI inflation, January 2015 to June 2026, between 0.8 and 7.8 per cent.">
+        <!-- statutory band, 2 to 6 per cent -->
+        <rect x="0" y="84" width="680" height="112" fill="#00559E" opacity=".05"/>
+        <!-- the page's own rules, continued through the plot -->
+        <g stroke="rgba(27,27,25,.055)" stroke-width="1" vector-effect="non-scaling-stroke">
+          <line x1="0" y1="224" x2="680" y2="224"/><line x1="0" y1="196" x2="680" y2="196"/>
+          <line x1="0" y1="168" x2="680" y2="168"/><line x1="0" y1="140" x2="680" y2="140"/>
+          <line x1="0" y1="112" x2="680" y2="112"/><line x1="0" y1="84" x2="680" y2="84"/>
+          <line x1="0" y1="56" x2="680" y2="56"/><line x1="0" y1="28" x2="680" y2="28"/>
+        </g>
+        <line x1="0" y1="252" x2="680" y2="252" stroke="#C9C9C1" stroke-width="1" vector-effect="non-scaling-stroke"/>
+
+        <path d="M0.0 106.4 L5.0 100.8 L9.9 103.6 L14.9 114.8 L19.9 112.0 L24.8 100.8 L29.8 148.4 L34.7 148.4 L39.7 128.8 L44.7 112.0 L49.6 100.8 L54.6 95.2 L59.6 92.4 L64.5 103.6 L69.5 117.6 L74.5 98.0 L79.4 89.6 L84.4 89.6 L89.3 81.2 L94.3 112.0 L99.3 128.8 L104.2 134.4 L109.2 151.2 L114.2 156.8 L119.1 162.4 L124.1 148.4 L129.1 142.8 L134.0 168.0 L139.0 190.4 L143.9 210.0 L148.9 184.8 L153.9 159.6 L158.8 159.6 L163.8 151.2 L168.8 114.8 L173.7 106.4 L178.7 109.2 L183.6 128.8 L188.6 131.6 L193.6 123.2 L198.5 114.8 L203.5 114.8 L208.5 134.4 L213.4 148.4 L218.4 148.4 L223.4 156.8 L228.3 187.6 L233.3 193.2 L238.2 196.0 L243.2 179.2 L248.2 170.8 L253.1 170.8 L258.1 168.0 L263.1 162.4 L268.0 162.4 L273.0 159.6 L278.0 140.0 L282.9 123.2 L287.9 98.0 L292.8 44.8 L297.8 39.2 L302.8 67.2 L307.7 89.6 L312.7 50.4 L317.7 75.6 L322.6 78.4 L327.6 64.4 L332.6 64.4 L337.5 47.6 L342.5 39.2 L347.4 58.8 L352.4 123.2 L357.4 137.2 L362.3 112.0 L367.3 98.0 L372.3 134.4 L377.2 75.6 L382.2 75.6 L387.2 95.2 L392.1 103.6 L397.1 128.8 L402.0 126.0 L407.0 114.8 L412.0 92.4 L416.9 84.0 L421.9 81.2 L426.9 56.0 L431.8 33.6 L436.8 56.0 L441.8 56.0 L446.7 64.4 L451.7 56.0 L456.6 44.8 L461.6 61.6 L466.6 86.8 L471.5 92.4 L476.5 70.0 L481.5 72.8 L486.4 92.4 L491.4 120.4 L496.4 131.6 L501.3 114.8 L506.3 44.8 L511.2 61.6 L516.2 112.0 L521.2 114.8 L526.1 95.2 L531.1 92.4 L536.1 109.2 L541.0 109.2 L546.0 114.8 L550.9 117.6 L555.9 117.6 L560.9 109.2 L565.8 151.2 L570.8 148.4 L575.8 98.0 L580.7 78.4 L585.7 98.0 L590.7 106.4 L595.6 131.6 L600.6 151.2 L605.5 159.6 L610.5 162.4 L615.5 173.6 L620.4 193.2 L625.4 207.2 L630.4 193.2 L635.3 210.0 L640.3 229.6 L645.3 212.8 L650.2 196.0 L655.2 184.8 L660.1 170.8 L665.1 165.2 L670.1 156.8 L675.0 151.2 L680.0 145.6" fill="none" stroke="#00559E" stroke-width="1.6"
+              stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+
+        <!-- editorial annotation, in rose: the undershoot below the statutory floor -->
+        <rect x="637" y="226.4" width="6.4" height="6.4" fill="#D36A96" stroke="#FBFBF9" stroke-width="2"/>
+        <rect x="674" y="142.4" width="6.4" height="6.4" fill="#00559E" stroke="#FBFBF9" stroke-width="2"/>
+      </svg>
+    </div>
+    <div class="xrow">
+      <span class="xlab" style="left:4.4%">2015</span>
+      <span class="xlab" style="left:22%">2017</span>
+      <span class="xlab" style="left:39.5%">2019</span>
+      <span class="xlab" style="left:57%">2021</span>
+      <span class="xlab" style="left:74.6%">2023</span>
+      <span class="xlab" style="left:92.2%">2025</span>
+    </div>
+    <figcaption>
+      <span class="m">Fig. 1 · Headline CPI · per cent change, year on year</span>
+      The shaded field is <span class="d">2–6%</span>, the range the Reserve Bank is required
+      by law to hold inflation inside. It was breached above in 2020 and 2022, and
+      <span class="d rose">below</span> in October 2025 — the marked point, at
+      <span class="d rose">0.8%</span>.
+    </figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>What it measures</h2>
+  <p>The list does not change when households change what they buy. That is deliberate: if
+  the basket moved every month you could no longer tell a price rise from a change in habit.
+  The cost of holding it still is that it ages, and India’s has been held still an unusually
+  long time.</p>
+  <p>What the headlines call inflation is not the index. It is the change in the index against
+  the same month a year earlier. When inflation falls to <span class="d">3.8%</span>, nothing
+  has become cheaper. The list still costs more than it did last June — <span class="d">3.8%</span>
+  more, instead of the <span class="d">5.1%</span> more it cost the June before.</p>
+  <p>The index itself stands at <span class="d">196.4</span>, against 100 in 2012. That is not
+  a price and not rupees. It says the 2012 basket costs <span class="d">96%</span> more now
+  than it did then, and it can be compared with nothing except its own past.</p>
+</section>
+
+<section>
+  <h2>The basket</h2>
+  <div class="bars" role="img" aria-label="Ranked bar chart of CPI group weights: food and beverages 45.9, miscellaneous 28.3, housing 10.1, fuel and light 6.8, clothing and footwear 6.5, pan tobacco and intoxicants 2.4 per cent.">
+    <div class="bar flag"><span class="nm">Food and beverages</span><span class="track"><span class="fill" style="width:45.9%"></span><span class="n" style="left:calc(45.9% + 12px)">45.9</span></span></div>
+    <div class="bar"><span class="nm">Miscellaneous</span><span class="track"><span class="fill" style="width:28.3%"></span><span class="n" style="left:calc(28.3% + 12px)">28.3</span></span></div>
+    <div class="bar"><span class="nm">Housing</span><span class="track"><span class="fill" style="width:10.1%"></span><span class="n" style="left:calc(10.1% + 12px)">10.1</span></span></div>
+    <div class="bar"><span class="nm">Fuel and light</span><span class="track"><span class="fill" style="width:6.8%"></span><span class="n" style="left:calc(6.8% + 12px)">6.8</span></span></div>
+    <div class="bar"><span class="nm">Clothing and footwear</span><span class="track"><span class="fill" style="width:6.5%"></span><span class="n" style="left:calc(6.5% + 12px)">6.5</span></span></div>
+    <div class="bar"><span class="nm">Pan, tobacco, intoxicants</span><span class="track"><span class="fill" style="width:2.4%"></span><span class="n" style="left:calc(2.4% + 12px)">2.4</span></span></div>
+  </div>
+  <hr class="hr wide">
+  <p><span class="d rose">Food carries 45.9%</span> of the basket, and that number was fixed
+  from the Consumer Expenditure Survey of 2011–12. Every decade since Independence, Indian
+  households have spent a smaller share of their money on food. A basket built in 2011 almost
+  certainly gives food more weight than it deserves in 2026 — which makes the headline more
+  sensitive to a bad monsoon than the country now is.</p>
+  <p>A weight revision has been pending for more than ten years. This is the single largest
+  known limitation of the series. Nothing on this page corrects for it, and where the Atlas
+  cannot correct something it says so rather than smoothing it away.</p>
+</section>
+
+<section>
+  <h2>How to read it</h2>
+  <div class="note"><span class="k x">Common error</span>
+    <p><b>Falling inflation is not falling prices.</b> It means prices are climbing more
+    slowly than they were. Prices only fall when the rate goes below zero, which happened for
+    food in late 2025 and almost never happens for the headline.</p></div>
+  <div class="note"><span class="k x">Common error</span>
+    <p><b>Don’t blame the month you are reading.</b> A year-on-year figure has two ends. A soft
+    reading can come entirely from an unusually high price twelve months ago — a
+    <em>base effect</em> — while nothing unusual happened this month at all.</p></div>
+  <div class="note"><span class="k o">Better question</span>
+    <p><b>Whose basket is it?</b> If food is a smaller share of your spending than
+    <span class="d">45.9%</span>, your lived inflation is not this line. The gap between the
+    two is not an error in either.</p></div>
+  <div class="note"><span class="k o">Better question</span>
+    <p><b>What moved, not how much.</b> A <span class="d">3.8%</span> headline built on 8%
+    vegetables and 1% everything else describes a different economy from a broad, even
+    <span class="d">3.8%</span>. Rural and urban India are measured separately for the same
+    reason: the combined figure can be calm while one half of the country is not.</p></div>
+</section>
+
+<section>
+  <h2>Words you need</h2>
+  <dl>
+    <dt>Base year.</dt><dd>The year set to 100. India uses 2012. Changing it re-scales every value in the series and breaks comparison across the join.</dd>
+    <dt>Base effect.</dt><dd>When this month’s rate moves because of what happened a year ago rather than anything happening now.</dd>
+    <dt>Weight.</dt><dd>The share of household spending a group carries. Food holds 45.86 of every 100 rupees in the national basket.</dd>
+    <dt>Core inflation.</dt><dd>The headline with food and fuel taken out, because those two swing hardest and fastest.</dd>
+    <dt>Series break.</dt><dd>A point where the method changed enough that values on either side are not comparable. India’s CPI has one, in January 2015.</dd>
+  </dl>
+</section>
+
+<section>
+  <h2>Where it comes from</h2>
+  <table>
+    <tr><td><span class="m">Producer</span></td><td>National Statistical Office, Ministry of Statistics and Programme Implementation</td></tr>
+    <tr><td><span class="m">Release</span></td><td>On or about the 12th of each month, for the preceding month</td></tr>
+    <tr><td><span class="m">Coverage</span></td><td>1,181 villages · 1,114 urban markets · 299 rural and 299 urban items</td></tr>
+    <tr><td><span class="m">Break</span></td><td>January 2015. New base, basket and weights; earlier values are held as a separate series</td></tr>
+    <tr><td><span class="m">Gap</span></td><td>April and May 2020, when field collection was suspended and values were imputed at source</td></tr>
+    <tr><td><span class="m">Licence</span></td><td>Government Open Data Licence — India. Atlas text under CC BY 4.0</td></tr>
+    <tr><td><span class="m">Files</span></td><td><a href="#">cpi-combined-yoy.csv</a> · <a href="#">weights-2012.csv</a> · <a href="#">observation provenance</a></td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>Read next</h2>
+  <nav class="rel">
+    <a href="#"><span class="m">Dossier 015</span>Food inflation — the 45.9% that decides the headline</a>
+    <a href="#"><span class="m">Dossier 031</span>Wholesale prices — a different basket, a different question</a>
+    <a href="#"><span class="m">Dossier 002</span>The repo rate — what the Reserve Bank does with this line</a>
+    <a href="#"><span class="m">Dossier 048</span>Real rural wages — earnings with this page subtracted out</a>
+  </nav>
+</section>
+
+<footer>
+  <span class="m">India Atlas · Dossier 014</span>
+  <span class="m">Figures are illustrative</span>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CPI — India Atlas — Shirorekha</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wdth,wght@75..125,100..800&family=Anek+Latin:wdth,wght@75..125,100..800&family=Familjen+Grotesk:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#171A33; --chalk:#EDEEF6; --dim:#9AA0C4; --faint:#6B719A;
+  --rule:#333963; --rule-hi:#4A5185;
+  --rose:#D45D6B; --peri:#6681E3; --green:#00A469; --orchid:#B068C1;
+  --gold:#B27F00; --teal:#00A2AD;
+  --pad:34px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--chalk);
+  font-family:"Familjen Grotesk",system-ui,sans-serif;font-size:16px;line-height:1.6;
+  font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;}
+
+/* ---- the hanging rule system ---- */
+.band{border-top:1px solid var(--rule);padding:0 var(--pad)}
+.band.hi{border-top-color:var(--rule-hi)}
+.inner{max-width:1280px;margin:0 auto;position:relative}
+
+/* every hung block drops a short descender from the rule it hangs on */
+.hang{position:relative;padding-top:26px}
+.hang::before{content:"";position:absolute;left:0;top:0;width:1px;height:15px;
+  background:var(--rule-hi)}
+
+.lbl{font-family:"Anek Latin",sans-serif;font-variation-settings:"wdth" 87;
+  font-weight:500;font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--faint)}
+.lbl b{font-weight:600;color:var(--dim)}
+
+h1,h2,h3{margin:0;font-family:"Anek Latin",sans-serif;font-weight:500}
+
+/* ---- masthead ---- */
+.mast{display:flex;justify-content:space-between;align-items:baseline;gap:22px;
+  flex-wrap:wrap;padding:20px 0 18px}
+.wm{font-family:"Anek Latin",sans-serif;font-variation-settings:"wdth" 75;
+  font-weight:600;font-size:13px;letter-spacing:.34em;text-transform:uppercase;color:var(--chalk)}
+.mast-meta{display:flex;gap:26px;flex-wrap:wrap}
+
+/* ---- hero ---- */
+.hero{padding:38px 0 46px}
+.deva{font-family:"Anek Devanagari",serif;font-variation-settings:"wdth" 100;
+  font-weight:400;font-size:clamp(22px,2.6vw,30px);color:var(--dim);line-height:1.35;
+  margin:0 0 26px}
+.hero h1{font-variation-settings:"wdth" 100;font-weight:500;
+  font-size:clamp(42px,8.4vw,116px);line-height:.92;letter-spacing:-.03em;
+  max-width:15ch;text-transform:lowercase}
+.hero h1 .q{color:var(--teal)}
+.hero .stand{margin:34px 0 0;max-width:58ch;font-size:19px;line-height:1.55;color:var(--dim)}
+
+/* ---- reading row ---- */
+.read{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.read > div{padding:26px 26px 34px 0;position:relative}
+.read > div::before{content:"";position:absolute;left:0;top:0;width:1px;height:15px;
+  background:var(--rule-hi)}
+.read > div + div{padding-left:26px}
+.read > div + div::before{left:0}
+.read .v{font-family:"Anek Latin",sans-serif;font-variation-settings:"wdth" 87;
+  font-weight:500;font-size:clamp(30px,4.4vw,54px);line-height:1;letter-spacing:-.035em;
+  margin-top:16px}
+.read > div:first-child .v{color:var(--teal)}
+.read .v span{font-size:.4em;letter-spacing:0;color:var(--faint);margin-left:.16em;font-weight:400}
+.read .n{margin:12px 0 0;font-size:13.5px;line-height:1.45;color:var(--faint);max-width:24ch}
+
+/* ---- chart ---- */
+.figwrap{padding:30px 0 24px}
+svg.plot{width:100%;height:auto;display:block}
+svg.plot text{font-family:"Anek Latin",sans-serif;font-variation-settings:"wdth" 87;
+  font-weight:500;font-size:11px;letter-spacing:.16em;fill:var(--faint);text-transform:uppercase}
+svg.plot text.v{letter-spacing:.01em;font-size:14px;text-transform:none}
+.capline{display:flex;justify-content:space-between;gap:26px;flex-wrap:wrap;
+  padding:16px 0 30px;border-top:1px solid var(--rule)}
+.capline p{margin:0;max-width:56ch;font-size:14px;line-height:1.55;color:var(--dim)}
+.keys{display:flex;gap:20px;flex-wrap:wrap;align-items:center}
+.key{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--dim)}
+.key i{width:16px;height:3px;border-radius:2px;display:block;flex:none}
+.key.f i{height:12px;border-radius:2px}
+
+/* ---- contribution bar ---- */
+.contrib{padding:30px 0 6px}
+.cbar{display:flex;gap:2px;width:100%;height:52px;margin:4px 0 0}
+.cbar span{display:block;border-radius:3px}
+.clist{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0 26px;
+  margin-top:22px}
+.clist > div{padding:14px 0 16px;border-top:1px solid var(--rule)}
+.clist .nm{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--chalk)}
+.clist .nm i{width:9px;height:9px;border-radius:2px;flex:none}
+.clist .pp{font-family:"Anek Latin",sans-serif;font-variation-settings:"wdth" 87;
+  font-weight:500;font-size:22px;letter-spacing:-.02em;margin-top:8px}
+.clist .wt{font-size:12px;color:var(--faint);margin-top:3px}
+
+/* ---- prose ---- */
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 64px;
+  padding:36px 0 46px}
+.two > div{position:relative;padding-top:0}
+.prose p{margin:0 0 1em;font-size:17px;line-height:1.68;color:#D3D6E8;max-width:56ch}
+.prose p:last-child{margin-bottom:0}
+.prose em{font-style:italic;color:var(--chalk)}
+.big{font-family:"Anek Latin",sans-serif;font-variation-settings:"wdth" 100;font-weight:500;
+  font-size:clamp(24px,3.2vw,38px);line-height:1.16;letter-spacing:-.022em;
+  max-width:20ch;margin:0 0 24px;text-transform:lowercase}
+
+/* ---- rules of reading ---- */
+.rul{padding-bottom:20px}
+.rul > div{display:grid;grid-template-columns:minmax(0,26ch) minmax(0,1fr);gap:0 48px;
+  padding:24px 0;border-top:1px solid var(--rule);position:relative}
+.rul > div::before{content:"";position:absolute;left:0;top:0;width:1px;height:13px;
+  background:var(--rule-hi)}
+.rul h3{font-variation-settings:"wdth" 100;font-weight:500;font-size:21px;
+  letter-spacing:-.018em;line-height:1.2;text-transform:lowercase}
+.rul p{margin:0;font-size:15.5px;line-height:1.62;color:var(--dim);max-width:60ch}
+.rul .mk{font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  font-family:"Anek Latin",sans-serif;font-weight:600;display:block;margin-bottom:9px}
+.rul .mk.x{color:var(--rose)}
+.rul .mk.o{color:var(--green)}
+
+/* ---- glossary ---- */
+.gloss{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0 44px;
+  padding-bottom:24px}
+.gloss > div{padding:18px 0 20px;border-top:1px solid var(--rule)}
+.gloss dt{font-family:"Anek Latin",sans-serif;font-weight:600;font-size:15px;
+  letter-spacing:.01em;margin-bottom:5px}
+.gloss dd{margin:0;font-size:14px;line-height:1.55;color:var(--dim)}
+
+/* ---- provenance ---- */
+.prov{width:100%;border-collapse:collapse;font-size:15px;max-width:880px;
+  padding-bottom:20px}
+.prov td{padding:13px 0;border-top:1px solid var(--rule);vertical-align:baseline}
+.prov tr:first-child td{border-top:0}
+.prov td:first-child{width:190px;padding-right:24px}
+.prov td:first-child span{font-family:"Anek Latin",sans-serif;font-weight:500;font-size:10.5px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+.prov a{color:var(--teal);text-decoration:none;border-bottom:1px solid rgba(0,162,173,.42)}
+.prov a:hover{border-bottom-color:var(--teal)}
+
+/* ---- next ---- */
+.next{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:0 40px}
+.next a{padding:26px 0 30px;border-top:1px solid var(--rule);text-decoration:none;
+  color:var(--chalk);display:block;position:relative}
+.next a::before{content:"";position:absolute;left:0;top:0;width:1px;height:13px;
+  background:var(--rule-hi);transition:height .18s ease,background .18s ease}
+.next a:hover::before{height:26px;background:var(--teal)}
+.next .t{font-family:"Anek Latin",sans-serif;font-variation-settings:"wdth" 100;
+  font-weight:500;font-size:22px;letter-spacing:-.02em;display:block;margin-top:12px;
+  text-transform:lowercase}
+.next .d{display:block;font-size:13px;color:var(--faint);margin-top:6px;line-height:1.45}
+
+footer{padding:22px 0 60px;display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+
+a:focus-visible{outline:2px solid var(--teal);outline-offset:4px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:880px){
+  :root{--pad:20px}
+  .read{grid-template-columns:1fr 1fr}
+  .read > div + div{padding-left:0}
+  .read > div:nth-child(even){padding-left:22px}
+  .two{grid-template-columns:1fr;gap:32px}
+  .rul > div{grid-template-columns:1fr;gap:10px}
+}
+</style>
+</head>
+<body>
+
+<div class="band hi"><div class="inner">
+  <div class="mast">
+    <div class="wm">India Atlas</div>
+    <div class="mast-meta">
+      <span class="lbl">Dossier <b>014</b></span>
+      <span class="lbl">Prices</span>
+      <span class="lbl">Reviewed <b>14 Jul 2026</b></span>
+    </div>
+  </div>
+</div></div>
+
+<div class="band"><div class="inner">
+  <div class="hero hang">
+    <p class="deva">उपभोक्ता मूल्य सूचकांक</p>
+    <h1>what one unchanging basket <span class="q">costs</span></h1>
+    <p class="stand">Every month the same 598 items are priced in the same 2,295 places.
+    The headline you read is not that cost — it is how much that cost has changed since the
+    same month last year. Almost every misreading of Indian inflation starts there.</p>
+  </div>
+</div></div>
+
+<div class="band"><div class="inner">
+  <div class="read">
+    <div>
+      <span class="lbl">Latest · Jun 2026</span>
+      <div class="v">3.8<span>%</span></div>
+      <p class="n">Against June 2025. Rural and urban combined.</p>
+    </div>
+    <div>
+      <span class="lbl">Month before</span>
+      <div class="v">3.6<span>%</span></div>
+      <p class="n">May 2026</p>
+    </div>
+    <div>
+      <span class="lbl">Index level</span>
+      <div class="v">196.4</div>
+      <p class="n">Base 2012 = 100. This is not a price.</p>
+    </div>
+    <div>
+      <span class="lbl">Twelve-month mean</span>
+      <div class="v">2.6<span>%</span></div>
+      <p class="n">Jul 2025 to Jun 2026</p>
+    </div>
+  </div>
+</div></div>
+
+<div class="band hi"><div class="inner">
+  <div class="figwrap hang">
+    <span class="lbl">Headline inflation, monthly &nbsp;·&nbsp; <b>Jan 2015 — Jun 2026</b></span>
+    <svg class="plot" viewBox="-46 0 1246 384" role="img" style="margin-top:18px"
+         aria-label="Line chart of India's year-on-year CPI inflation from January 2015 to June 2026, with the 2 to 6 per cent statutory band shaded.">
+      <rect x="0" y="113.1" width="1200" height="155.3" fill="#FFFFFF" opacity=".045"/>
+      <line x1="0" y1="113.1" x2="1200" y2="113.1" stroke="#6B719A" stroke-width="1"/>
+      <line x1="0" y1="268.4" x2="1200" y2="268.4" stroke="#6B719A" stroke-width="1"/>
+
+      <g stroke="#333963" stroke-width="1">
+        <line x1="0" y1="346" x2="1200" y2="346"/>
+        <line x1="0" y1="307.2" x2="1200" y2="307.2"/>
+        <line x1="0" y1="190.7" x2="1200" y2="190.7"/>
+        <line x1="0" y1="74.2" x2="1200" y2="74.2"/>
+        <line x1="0" y1="35.4" x2="1200" y2="35.4"/>
+      </g>
+      <g text-anchor="end">
+        <text x="-14" y="349">0</text><text x="-14" y="310.2">1</text><text x="-14" y="193.7">4</text>
+        <text x="-14" y="77.2">7</text><text x="-14" y="38.4">8%</text>
+      </g>
+
+      <path d="M0.0 144.1 L8.8 136.4 L17.5 140.2 L26.3 155.8 L35.0 151.9 L43.8 136.4 L52.6 202.4 L61.3 202.4 L70.1 175.2 L78.8 151.9 L87.6 136.4 L96.4 128.6 L105.1 124.7 L113.9 140.2 L122.6 159.6 L131.4 132.5 L140.1 120.8 L148.9 120.8 L157.7 109.2 L166.4 151.9 L175.2 175.2 L183.9 182.9 L192.7 206.2 L201.5 214.0 L210.2 221.8 L219.0 202.4 L227.7 194.6 L236.5 229.5 L245.3 260.6 L254.0 287.8 L262.8 252.8 L271.5 217.9 L280.3 217.9 L289.1 206.2 L297.8 155.8 L306.6 144.1 L315.3 148.0 L324.1 175.2 L332.8 179.1 L341.6 167.4 L350.4 155.8 L359.1 155.8 L367.9 182.9 L376.6 202.4 L385.4 202.4 L394.2 214.0 L402.9 256.7 L411.7 264.5 L420.4 268.4 L429.2 245.1 L438.0 233.4 L446.7 233.4 L455.5 229.5 L464.2 221.8 L473.0 221.8 L481.8 217.9 L490.5 190.7 L499.3 167.4 L508.0 132.5 L516.8 58.7 L525.5 50.9 L534.3 89.8 L543.1 120.8 L551.8 66.5 L560.6 101.4 L569.3 105.3 L578.1 85.9 L586.9 85.9 L595.6 62.6 L604.4 50.9 L613.1 78.1 L621.9 167.4 L630.7 186.8 L639.4 151.9 L648.2 132.5 L656.9 182.9 L665.7 101.4 L674.5 101.4 L683.2 128.6 L692.0 140.2 L700.7 175.2 L709.5 171.3 L718.2 155.8 L727.0 124.7 L735.8 113.1 L744.5 109.2 L753.3 74.2 L762.0 43.2 L770.8 74.2 L779.6 74.2 L788.3 85.9 L797.1 74.2 L805.8 58.7 L814.6 82.0 L823.4 116.9 L832.1 124.7 L840.9 93.6 L849.6 97.5 L858.4 124.7 L867.2 163.5 L875.9 179.1 L884.7 155.8 L893.4 58.7 L902.2 82.0 L910.9 151.9 L919.7 155.8 L928.5 128.6 L937.2 124.7 L946.0 148.0 L954.7 148.0 L963.5 155.8 L972.3 159.6 L981.0 159.6 L989.8 148.0 L998.5 206.2 L1007.3 202.4 L1016.1 132.5 L1024.8 105.3 L1033.6 132.5 L1042.3 144.1 L1051.1 179.1 L1059.9 206.2 L1068.6 217.9 L1077.4 221.8 L1086.1 237.3 L1094.9 264.5 L1103.6 283.9 L1112.4 264.5 L1121.2 287.8 L1129.9 314.9 L1138.7 291.6 L1147.4 268.4 L1156.2 252.8 L1165.0 233.4 L1173.7 225.6 L1182.5 214.0 L1191.2 206.2 L1200.0 198.5" fill="none" stroke="#EDEEF6" stroke-width="2"
+            stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>
+
+      <g stroke="#4A5185" stroke-width="1">
+        <line x1="105.1" y1="346" x2="105.1" y2="353"/><line x1="210.2" y1="346" x2="210.2" y2="353"/>
+        <line x1="315.3" y1="346" x2="315.3" y2="353"/><line x1="420.4" y1="346" x2="420.4" y2="353"/>
+        <line x1="525.5" y1="346" x2="525.5" y2="353"/><line x1="630.7" y1="346" x2="630.7" y2="353"/>
+        <line x1="735.8" y1="346" x2="735.8" y2="353"/><line x1="840.9" y1="346" x2="840.9" y2="353"/>
+        <line x1="946" y1="346" x2="946" y2="353"/><line x1="1051.1" y1="346" x2="1051.1" y2="353"/>
+        <line x1="1156.2" y1="346" x2="1156.2" y2="353"/>
+      </g>
+      <g text-anchor="middle">
+        <text x="52.5" y="370">2015</text><text x="157.7" y="370">2016</text>
+        <text x="262.8" y="370">2017</text><text x="367.9" y="370">2018</text>
+        <text x="473" y="370">2019</text><text x="578.1" y="370">2020</text>
+        <text x="683.2" y="370">2021</text><text x="788.3" y="370">2022</text>
+        <text x="893.4" y="370">2023</text><text x="998.5" y="370">2024</text>
+        <text x="1103.6" y="370">2025</text><text x="1178" y="370">26</text>
+      </g>
+
+      <circle cx="1200" cy="198.5" r="4" fill="#EDEEF6" stroke="#171A33" stroke-width="2.5"/>
+      <text class="v" x="1190" y="187" text-anchor="end" fill="#EDEEF6">3.8 · June 2026</text>
+    </svg>
+
+    <div class="capline" style="margin-top:20px">
+      <p>The shaded field is the 2–6% range the Reserve Bank is required by law to hold
+      inflation inside. It has been breached above twice and below once in eleven years.</p>
+      <div class="keys">
+        <span class="key"><i style="background:var(--chalk)"></i>Headline CPI</span>
+        <span class="key f"><i style="background:#232741;border:1px solid #6B719A"></i>Statutory band</span>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<div class="band"><div class="inner">
+  <div class="contrib hang">
+    <span class="lbl">Where the 3.8% came from &nbsp;·&nbsp; <b>contribution in percentage points</b></span>
+    <div class="cbar" role="img" aria-label="Stacked bar showing each group's contribution to the 3.8 percentage point headline: food 1.35, miscellaneous 1.30, housing 0.38, clothing 0.36, fuel 0.25, pan and tobacco 0.16.">
+      <span style="flex:1.35;background:var(--rose)"></span>
+      <span style="flex:1.30;background:var(--peri)"></span>
+      <span style="flex:.38;background:var(--green)"></span>
+      <span style="flex:.36;background:var(--orchid)"></span>
+      <span style="flex:.25;background:var(--gold)"></span>
+      <span style="flex:.16;background:var(--teal)"></span>
+    </div>
+    <div class="clist">
+      <div><span class="nm"><i style="background:var(--rose)"></i>Food and beverages</span>
+        <div class="pp">1.35<span style="font-size:.5em;color:var(--faint)"> pp</span></div>
+        <div class="wt">45.9% of the basket</div></div>
+      <div><span class="nm"><i style="background:var(--peri)"></i>Miscellaneous</span>
+        <div class="pp">1.30<span style="font-size:.5em;color:var(--faint)"> pp</span></div>
+        <div class="wt">28.3% of the basket</div></div>
+      <div><span class="nm"><i style="background:var(--green)"></i>Housing</span>
+        <div class="pp">0.38<span style="font-size:.5em;color:var(--faint)"> pp</span></div>
+        <div class="wt">10.1% of the basket</div></div>
+      <div><span class="nm"><i style="background:var(--orchid)"></i>Clothing, footwear</span>
+        <div class="pp">0.36<span style="font-size:.5em;color:var(--faint)"> pp</span></div>
+        <div class="wt">6.5% of the basket</div></div>
+      <div><span class="nm"><i style="background:var(--gold)"></i>Fuel and light</span>
+        <div class="pp">0.25<span style="font-size:.5em;color:var(--faint)"> pp</span></div>
+        <div class="wt">6.8% of the basket</div></div>
+      <div><span class="nm"><i style="background:var(--teal)"></i>Pan, tobacco</span>
+        <div class="pp">0.16<span style="font-size:.5em;color:var(--faint)"> pp</span></div>
+        <div class="wt">2.4% of the basket</div></div>
+    </div>
+  </div>
+</div></div>
+
+<div class="band"><div class="inner">
+  <div class="two">
+    <div class="hang">
+      <h2 class="big">the basket does not change, and that is the point</h2>
+      <div class="prose">
+        <p>If the list changed every month you could never tell a price rise from a change in
+        what people buy. So it is fixed — and the cost of fixing it is that it ages.</p>
+      </div>
+    </div>
+    <div class="hang">
+      <div class="prose">
+        <p>India’s weights were set from the Consumer Expenditure Survey of 2011–12. Every
+        decade since Independence, Indian households have spent a smaller share of their money
+        on food. A basket built in 2011 almost certainly gives food more weight than it
+        deserves in 2026, which makes the headline more sensitive to a bad monsoon than the
+        country now is.</p>
+        <p>A weight revision has been pending for over a decade. This is the largest known
+        limitation of the series, and nothing on this page corrects for it. Where the Atlas
+        cannot correct something, it says so.</p>
+        <p>There is a second thing the basket hides. Rural and urban India are measured as two
+        separate indices, with different baskets and different collection networks. They
+        diverge for months at a time. The combined number can be perfectly calm while one half
+        of the country is not.</p>
+      </div>
+    </div>
+  </div>
+</div></div>
+
+<div class="band"><div class="inner">
+  <div class="rul hang" style="padding-top:26px">
+    <span class="lbl" style="display:block;margin-bottom:16px">How to read it</span>
+    <div>
+      <div><span class="mk x">Common error</span><h3>falling inflation is not falling prices</h3></div>
+      <p>It means prices are climbing more slowly than before. Prices only fall when the rate
+      goes below zero — which happened for food in late 2025, and almost never happens for the
+      headline.</p>
+    </div>
+    <div>
+      <div><span class="mk x">Common error</span><h3>the index level is not a price</h3></div>
+      <p>196.4 is not rupees. It says the 2012 basket now costs 96% more than it did in 2012.
+      Comparing index levels across countries, or across base years, tells you nothing.</p>
+    </div>
+    <div>
+      <div><span class="mk x">Common error</span><h3>don’t blame the month you are reading</h3></div>
+      <p>A year-on-year figure has two ends. A soft reading can come entirely from an unusually
+      high price twelve months ago — a <em>base effect</em> — while nothing unusual happened
+      this month at all.</p>
+    </div>
+    <div>
+      <div><span class="mk o">Better question</span><h3>whose basket is this?</h3></div>
+      <p>Food is 45.9% of the national basket. If food is a smaller share of your spending,
+      your lived inflation is not this line — and the gap is not an error in either number.</p>
+    </div>
+    <div>
+      <div><span class="mk o">Better question</span><h3>what moved, not how much</h3></div>
+      <p>A 3.8% headline built on 8% vegetables and 1% everything else describes a different
+      economy from a broad, even 3.8%. The contribution bar above is where that story lives.</p>
+    </div>
+  </div>
+</div></div>
+
+<div class="band"><div class="inner">
+  <dl class="gloss hang" style="padding-top:26px">
+    <div><dt>Base year</dt><dd>The year set to 100. India uses 2012. Changing it re-scales every value in the series.</dd></div>
+    <div><dt>Base effect</dt><dd>When this month’s rate moves because of what happened a year ago, not because of anything now.</dd></div>
+    <div><dt>Weight</dt><dd>The share of household spending a group carries. Food holds 45.86 of every 100 rupees.</dd></div>
+    <div><dt>Core inflation</dt><dd>The headline with food and fuel taken out, because those two swing hardest and fastest.</dd></div>
+    <div><dt>Contribution</dt><dd>Weight times that group’s own inflation. It is what a group added to the headline, in points.</dd></div>
+    <div><dt>Series break</dt><dd>A point where method changed enough that values on either side are not comparable.</dd></div>
+  </dl>
+</div></div>
+
+<div class="band"><div class="inner">
+  <div class="hang" style="padding-top:26px;padding-bottom:34px">
+    <span class="lbl" style="display:block;margin-bottom:16px">Where this comes from</span>
+    <table class="prov">
+      <tr><td><span>Producer</span></td><td>National Statistical Office, Ministry of Statistics and Programme Implementation</td></tr>
+      <tr><td><span>Release</span></td><td>On or about the 12th of each month, for the preceding month</td></tr>
+      <tr><td><span>Coverage</span></td><td>1,181 villages · 1,114 urban markets · 299 rural and 299 urban items</td></tr>
+      <tr><td><span>Break</span></td><td>January 2015 — new base, basket and weights. Earlier values are held as a separate series.</td></tr>
+      <tr><td><span>Gap</span></td><td>April and May 2020 — field collection suspended; imputed at source</td></tr>
+      <tr><td><span>Licence</span></td><td>Government Open Data Licence — India. Atlas text under CC BY 4.0.</td></tr>
+      <tr><td><span>Files</span></td><td><a href="#">cpi-combined-yoy.csv</a> · <a href="#">weights-2012.csv</a> · <a href="#">observation provenance</a></td></tr>
+    </table>
+  </div>
+</div></div>
+
+<div class="band"><div class="inner">
+  <nav class="next" aria-label="Related dossiers">
+    <a href="#"><span class="lbl">Dossier 015</span><span class="t">food inflation</span><span class="d">The 45.9% that decides the headline</span></a>
+    <a href="#"><span class="lbl">Dossier 031</span><span class="t">wholesale prices</span><span class="d">A different basket, a different question</span></a>
+    <a href="#"><span class="lbl">Dossier 002</span><span class="t">the repo rate</span><span class="d">What the Reserve Bank does with this line</span></a>
+    <a href="#"><span class="lbl">Dossier 048</span><span class="t">real rural wages</span><span class="d">Earnings with this page subtracted out</span></a>
+  </nav>
+</div></div>
+
+<div class="band hi"><div class="inner">
+  <footer>
+    <span class="lbl">India Atlas · Dossier 014</span>
+    <span class="lbl">Figures on this page are illustrative</span>
+  </footer>
+</div></div>
+
+</body>
+</html>
