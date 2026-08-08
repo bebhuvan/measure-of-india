@@ -105,6 +105,15 @@ const PRODUCTS = [
   // the NSO's own back-cast (series=Back): levels published to one decimal,
   // so computed y/y can sit ~0.16pt from the published rate — tolerance 0.25
   { slug: "cpi-2024-back", dossier: "cpi", cadence: 1, range: [-8, 20], base: "2024=100", cross: ["headline", "published_headline", 0.25] },
+  // 2024-base depth (v2.4): groups, items, states. Ranges are documentation
+  // of the measured extremes, not curation — silver jewellery y/y reaches
+  // +160.9 (Apr 2026), garlic -53.0; the hottest group is Other personal
+  // effects (jewellery) at +60.8; state General y/y stays in single digits
+  // on this young base. Per-series published-inflation crosschecks below.
+  { slug: "cpi-2024-groups", dossier: "cpi", cadence: 1, range: [-30, 70], base: "2024=100" },
+  { slug: "cpi-2024-items", dossier: "cpi", cadence: 1, range: [-60, 200], base: "2024=100" },
+  { slug: "cpi-2024-states", dossier: "cpi", cadence: 1, range: [-10, 25], base: "2024=100" },
+  { slug: "cpi-2024-states-sectors", dossier: "cpi", cadence: 1, range: [-12, 30], base: "2024=100" },
   { slug: "gdp", dossier: "gdp", cadence: 3, range: [-70, 90], cross: ["gdp", "gdp_growth_published", 0.6], cross2: ["gva", "gva_growth_published", 0.6] },
   { slug: "gdp-expenditure", dossier: "gdp", cadence: 3, range: [-90, 150] },
   { slug: "gdp-accounts", dossier: "gdp", cadence: 12, range: [-90, 150], freq: "annual" },
@@ -121,6 +130,12 @@ const PRODUCTS = [
   { slug: "wpi", dossier: "wpi", cadence: 1, range: [-30, 60], cross: ["headline", "published_headline", 0.15] },
   { slug: "wpi-groups", dossier: "wpi", cadence: 1, range: [-70, 130] },
   { slug: "wpi-subgroups", dossier: "wpi", cadence: 1, range: [-80, 250] },
+  // single named goods: the extremes are real observations (garlic +476%
+  // y/y in Jan 2024; molasses swings between -83% and +361%); range is
+  // documentation, not curation. Seasonal items (litchi, mango and kin)
+  // carry interior nulls where the source serves 0/absent levels —
+  // disclosed in meta.gaps.
+  { slug: "wpi-items", dossier: "wpi", cadence: 1, range: [-90, 500] },
   { slug: "cpialrl-1986", dossier: "cpialrl", cadence: 1, range: [-5, 25], base: "1986-87=100" },
   { slug: "cpialrl-2019", dossier: "cpialrl", cadence: 1, range: [-10, 300], base: "2019=100" },
   // range is wide: Assam's published old-base levels spike ~20% in late 2021
@@ -168,6 +183,15 @@ const PRODUCTS = [
   { slug: "iip-2011", dossier: "iip", cadence: 1, range: [-100, 1800], base: "2011-12=100", cross: ["general", "headline_growth_published", 0.3] },
   { slug: "iip-industries-2022", dossier: "iip", cadence: 1, range: [-60, 120] },
   { slug: "iip-industries-2011", dossier: "iip", cadence: 1, range: [-100, 55000], base: "2011-12=100" },
+  // heritage bases (full-surface audit, 2026-08-08) — separate rulers, never
+  // spliced. Capital goods on the old bases is lumpy-order volatile (+65% in
+  // single months); 2-digit extremes are as published (electrical machinery
+  // +275% y/y in 2007 on the 2004-05 base; jute swings past +860% on the
+  // 1993-94 base). Ranges are documentation, not curation.
+  { slug: "iip-2004", dossier: "iip", cadence: 1, range: [-45, 80], base: "2004-05=100", cross: ["general", "headline_growth_published", 0.3] },
+  { slug: "iip-industries-2004", dossier: "iip", cadence: 1, range: [-90, 320], base: "2004-05=100" },
+  { slug: "iip-1993", dossier: "iip", cadence: 1, range: [-30, 80], base: "1993-94=100", cross: ["general", "headline_growth_published", 0.3] },
+  { slug: "iip-industries-1993", dossier: "iip", cadence: 1, range: [-100, 900], base: "1993-94=100" },
   // HCES: two survey rounds, annual axis; ₹ levels (Chandigarh urban top
   // fractile is the ceiling driver), category shares in %, Gini 0.2-0.5
   { slug: "hces-mpce", dossier: "hces", cadence: 12, range: [500, 20000] },
@@ -243,7 +267,75 @@ withBundle("cpi", (b12) => withBundle("cpi-2024", (b24) => {
   else ok(`cpi: base seam clean — 2012 base ends ${last12}, 2024-base y/y begins ${first24}`);
 }));
 
-/* ---- 2024-base raw levels: a young index must sit near 100 ---- */
+/* ---- 2024-base depth: counts, same-base y/y rule, inflation crosscheck ---- */
+
+// per-series published-inflation crosscheck: computed-from-levels y/y vs the
+// API's own inflation field, worst cell across every series in the bundle.
+// NOT a weights recomputation — the API serves no weights for this base.
+const crossInflationMap = (slug, tol) => withBundle(slug, (b) => {
+  if (b.meta.mock) return;
+  const pub = b.crosscheck?.published_inflation;
+  if (!pub) return fail(`${slug}: crosscheck.published_inflation missing`);
+  let worst = 0, worstAt = null, n = 0;
+  for (const [k, s] of Object.entries(b.series)) {
+    const arr = pub[k];
+    if (!arr) { fail(`${slug}: no published-inflation column for series ${k}`); continue; }
+    s.data.forEach((v, i) => {
+      const p = arr[i];
+      if (v == null || p == null) return;
+      n++;
+      const d = Math.abs(v - p);
+      if (d > worst) { worst = d; worstAt = `${k} at ${b.dates[i]}`; }
+    });
+  }
+  if (!n) fail(`${slug}: published-inflation crosscheck matched no cells`);
+  else if (worst > tol) fail(`${slug}: computed y/y deviates ${worst.toFixed(2)}pt from published inflation (${worstAt})`);
+  else ok(`${slug}: y/y within ${worst.toFixed(3)}pt of published inflation (${n} cells)`);
+});
+crossInflationMap("cpi-2024-groups", 0.15);
+crossInflationMap("cpi-2024-items", 0.15);
+crossInflationMap("cpi-2024-states", 0.15);
+crossInflationMap("cpi-2024-states-sectors", 0.15);
+
+withBundle("cpi-2024-states", (b) => {
+  // 36 states/UTs in the 2024-base filter list (All India excluded here)
+  const n = Object.keys(b.series).length;
+  if (n !== 36) fail(`cpi-2024-states: ${n} states/UTs baked, expected 36`);
+  else ok("cpi-2024-states: all 36 states/UTs present");
+});
+withBundle("cpi-2024-states-sectors", (b) => {
+  const keys = Object.keys(b.series);
+  const r = keys.filter((k) => k.endsWith("_rural")).length;
+  const u = keys.filter((k) => k.endsWith("_urban")).length;
+  if (u !== 36 || r !== 35) fail(`cpi-2024-states-sectors: ${r} rural + ${u} urban series, expected 35 + 36 (Chandigarh is a city-UT with no rural index)`);
+  else ok("cpi-2024-states-sectors: 35 rural + 36 urban series present (Chandigarh urban-only, as published)");
+});
+withBundle("cpi-2024-groups", (b) => {
+  const n = Object.keys(b.series).length;
+  if (n !== 43) fail(`cpi-2024-groups: ${n} groups baked, expected 43`);
+  else ok("cpi-2024-groups: all 43 groups present");
+});
+withBundle("cpi-2024-items", (b) => {
+  const n = Object.keys(b.series).length;
+  if (n !== 358) fail(`cpi-2024-items: ${n} items baked, expected 358`);
+  else ok("cpi-2024-items: all 358 items present");
+  // y/y only where a same-base year-ago level exists — the axis must not
+  // reach back into 2025 (a cross-base computation would be the only way)
+  if (b.dates[0] < "2026-01-01") fail(`cpi-2024-items: axis starts ${b.dates[0]} — before the first same-base y/y month`);
+  else ok(`cpi-2024-items: axis starts ${b.dates[0]} (first same-base y/y month)`);
+  // imputation disclosure: the meta note must exist, and any imputed month
+  // must be listed on its series
+  if (!b.meta.imputationNote) fail("cpi-2024-items: meta.imputationNote missing");
+  for (const [k, s] of Object.entries(b.series)) {
+    if (!s.code || s.latest_level == null) { fail(`cpi-2024-items.${k}: code or latest_level missing`); break; }
+  }
+  // tripwire: §03 prose states no item-month has needed imputation. If the
+  // source starts flagging Y, this fails so the dossier text is revisited
+  // rather than silently contradicted.
+  const imputed = Object.entries(b.series).filter(([, s]) => (s.imputed_months ?? []).length);
+  if (imputed.length) fail(`cpi-2024-items: ${imputed.length} items now carry imputed months (e.g. ${imputed[0][0]}) — §03 prose asserts none; update the dossier`);
+  else ok("cpi-2024-items: no imputed item-months (matches the §03 disclosure)");
+});
 {
   const rawFile = path.join(ROOT, "data/raw/cpi-2024-indices.json");
   if (fs.existsSync(rawFile)) {
@@ -258,6 +350,69 @@ withBundle("cpi", (b12) => withBundle("cpi-2024", (b24) => {
     if (!bad) ok("cpi-2024 raw: all Current levels within 80–130 of the 2024=100 base");
   } else fail("cpi-2024: data/raw/cpi-2024-indices.json missing");
 }
+
+/* ---- WPI items (v1.2): y/y from levels, hull sanity, completeness ---- */
+
+withBundle("wpi-items", (b) => {
+  const rawFile = path.join(ROOT, "data/raw/wpi-items.json");
+  if (!fs.existsSync(rawFile)) return fail("wpi-items: data/raw/wpi-items.json missing");
+  const raw = JSON.parse(fs.readFileSync(rawFile, "utf8"));
+  const n = Object.keys(b.series).length;
+  if (n < 690) fail(`wpi-items: only ${n} item series baked (the 2011-12 basket has 697)`);
+  else ok(`wpi-items: ${n} item series baked`);
+  // every baked y/y must equal the recomputation from the raw index levels
+  const r2 = (v) => Math.round(v * 100) / 100;
+  let cells = 0, bad = 0;
+  for (const [k, s] of Object.entries(b.series)) {
+    const lv = raw.items[k]?.levels;
+    if (!lv) { fail(`wpi-items: ${k} missing from raw dump`); continue; }
+    b.dates.forEach((d, i) => {
+      const ym = d.slice(0, 7);
+      const [y, m] = ym.split("-");
+      const prev = lv[`${+y - 1}-${m}`], cur = lv[ym];
+      const expect = cur != null && prev != null && prev !== 0 ? r2((cur / prev - 1) * 100) : null;
+      const got = s.data[i];
+      if (expect == null && got == null) return;
+      cells++;
+      if (expect == null || got == null || Math.abs(expect - got) > 0.005) {
+        bad++;
+        if (bad <= 5) fail(`wpi-items: ${k} ${ym} baked ${got} != recomputed ${expect}`);
+      }
+    });
+  }
+  if (bad > 5) fail(`wpi-items: ${bad - 5} further y/y recomputation mismatches suppressed`);
+  if (!bad) ok(`wpi-items: y/y matches recomputation from raw levels (${cells} cells)`);
+  // hull sanity: a sub-group index is a positive-weighted mean of its items'
+  // indices, so its y/y must lie inside the min–max hull of its items' y/y
+  // (exact weights are not served — no weighted recomposition is possible).
+  // Checked for every sub-group-month whose full item set carries a y/y;
+  // items sitting directly under a group (Atf, Electricity, …) are skipped.
+  // Measured before asserting: worst deviation 0.10pt over 16,492 cells.
+  withBundle("wpi-subgroups", (sg) => {
+    const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
+    const members = {};
+    for (const [k, it] of Object.entries(raw.items)) {
+      if (it.subgroup == null) continue;
+      (members[slug(it.subgroup)] ??= []).push(k);
+    }
+    let checked = 0, viol = 0, worst = 0, worstAt = null;
+    b.dates.forEach((d, i) => {
+      for (const [sk, keys] of Object.entries(members)) {
+        const sv = sg.series[sk]?.data[i];
+        if (sv == null) continue;
+        const vals = keys.map((k) => b.series[k]?.data[i]);
+        if (vals.some((v) => v == null)) continue;
+        checked++;
+        const lo = Math.min(...vals), hi = Math.max(...vals);
+        const dev = sv < lo ? lo - sv : sv > hi ? sv - hi : 0;
+        if (dev > worst) { worst = dev; worstAt = `${sk} ${d.slice(0, 7)}`; }
+        if (dev > 0.75) { viol++; if (viol <= 5) fail(`wpi-items: sub-group ${sk} y/y ${sv} outside its items' hull [${lo.toFixed(2)}, ${hi.toFixed(2)}] at ${d.slice(0, 7)}`); }
+      }
+    });
+    if (!checked) fail("wpi-items: hull sanity checked 0 sub-group-months");
+    else if (!viol) ok(`wpi-items: every sub-group y/y inside its items' hull (${checked} cells, worst dev ${worst.toFixed(3)}pt at ${worstAt})`);
+  });
+});
 
 /* ---- RBI v1.2 identities: partners, commodities, turnover ---- */
 

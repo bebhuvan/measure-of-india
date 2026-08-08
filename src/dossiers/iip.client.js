@@ -7,6 +7,8 @@ import bundle from "../../data/series/iip-2022.json";
 import oldBundle from "../../data/series/iip-2011.json";
 import indBundle from "../../data/series/iip-industries-2022.json";
 import oldIndBundle from "../../data/series/iip-industries-2011.json";
+import herit04Bundle from "../../data/series/iip-2004.json";
+import herit93Bundle from "../../data/series/iip-1993.json";
 import ispBundle from "../../data/series/isp.json";
 import {
   MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend,
@@ -172,6 +174,67 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
   document.getElementById("plot-bases").append(plot);
   wireTools(document.getElementById("cb-bases"), plot, [cur, old], "india-atlas_iip_two-bases");
   // no crosshair here: the two bases have different spans, so a shared index
+  // cannot address both — the tooltip would lie
+}
+
+/* ---------- the deep ledger: heritage bases 1993-94 and 2004-05 ---------- */
+{
+  const H04 = hydrate(herit04Bundle);
+  const H93 = hydrate(herit93Bundle);
+  // leading nulls (the base's first year has no same-base year-ago level)
+  // are trimmed; the two spans differ and are never spliced
+  const trim = (s, label, color) => {
+    const i = s.data.findIndex((d) => d.value != null);
+    return { ...s, label, color, data: s.data.slice(i) };
+  };
+  const h93 = trim(H93.general, "Base 1993-94", "#A8A293");
+  const h04 = trim(H04.general, "Base 2004-05", "#5B564B");
+  const fmtM = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(2) + "%";
+  // the one industrial winter: the deepest print either heritage ruler gave
+  const trough = h04.data.reduce((a, d) => (d.value != null && d.value < a.value ? d : a), h04.data[0]);
+  const gfc93 = h93.data.find((d) => d.date.getTime() === trough.date.getTime());
+  const end93 = h93.data.filter((d) => d.value != null).at(-1);
+  const end04 = h04.data.filter((d) => d.value != null).at(-1);
+  setTxt("pv-herit", fmtM(trough.value));
+  setTxt("her-gfc04", fmtM(trough.value));
+  setTxt("her-gfc93", "+" + gfc93.value.toFixed(2) + "%");
+  setTxt("her-end93", fmtM(end93.value));
+  setTxt("her-end04", fmtM(end04.value));
+  const geo = { W: 1184, H: 520, ml: 80, mr: 190, mt: 36, mb: 48, d0: -12, d1: 26 };
+  const yTicks = [-10, 0, 10, 20];
+  const xTicks = []; for (let y = 1996; y <= 2016; y += 4) xTicks.push(new Date(Date.UTC(y, 0, 1)));
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => String(d.getUTCFullYear()) },
+    y: { label: "↑ year-on-year, per cent", labelAnchor: "top", labelArrow: false,
+         tickFormat: (d) => (d === yTicks[yTicks.length - 1] ? d + "%" : String(d)), ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
+    marks: [
+      Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
+      Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
+      Plot.ruleY([0], { stroke: "#1B1A17", strokeOpacity: 0.55, strokeWidth: 1 }),
+      Plot.lineY(h93.data, { x: "date", y: "value", stroke: h93.color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.lineY(h04.data, { x: "date", y: "value", stroke: h04.color, strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.ruleX([trough.date], { stroke: "#D8D3C4", strokeWidth: 1, strokeDasharray: "2,3" }),
+      Plot.text([{ date: new Date(Date.UTC(2008, 3, 1)), value: 24 }], { x: "date", y: "value", text: [`winter of 2008-09 · ${fmtM(trough.value)} on one ruler, +${gfc93.value.toFixed(2)}% on the other`], fontSize: 12.5, fill: "#8A857A", fontFamily: mono, textAnchor: "end" }),
+      Plot.ruleX([new Date(Date.UTC(2006, 3, 1))], { stroke: "#C9C3B2", strokeWidth: 1 }),
+      Plot.text([{ date: new Date(Date.UTC(2006, 5, 1)), value: -9.5 }], { x: "date", y: "value", text: ["base revised · 1993-94 → 2004-05"], fontSize: 12.5, fill: "#5C574C", fontFamily: mono, textAnchor: "start" }),
+      Plot.dot([trough], { x: "date", y: "value", fill: "#BE3E26", r: 4, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.dot([end93], { x: "date", y: "value", fill: h93.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      // the 1993-94 line ends mid-chart where the 2004-05 line is busy —
+      // lift its label into the empty upper region on a short leader
+      Plot.line([{ x: end93.date, y: end93.value + 1.2 }, { x: end93.date, y: 12.2 }], { x: "x", y: "y", stroke: h93.color, strokeWidth: 1, strokeOpacity: 0.45 }),
+      Plot.text([{ date: end93.date, value: 13 }], { x: "date", y: "value", text: [`Base 1993-94 ${end93.value.toFixed(2)}%`], dx: 6, fill: h93.color, fontSize: 13.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.dot([end04], { x: "date", y: "value", fill: h04.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([end04], { x: "date", y: "value", text: (d) => `Base 2004-05 ${d.value.toFixed(2)}%`, dx: 16, fill: h04.color, fontSize: 13.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+    ],
+  });
+  a11y(plot, "IIP year-on-year growth on the retired 1993-94 and 2004-05 bases, 1995 to 2017",
+    "Two line charts side by side on one time axis. The 1993-94 base runs from 1995 to 2011 and never prints below zero. The 2004-05 base runs from 2006 to 2017 and dips to " + fmtM(trough.value) + " in February 2009. The bases are never spliced.");
+  document.getElementById("plot-herit").append(plot);
+  wireTools(document.getElementById("cb-herit"), plot, [h04, h93], "india-atlas_iip_heritage-bases");
+  // no crosshair: the two bases have different spans, so a shared index
   // cannot address both — the tooltip would lie
 }
 

@@ -4,11 +4,11 @@ import Prose from "../../components/Prose.astro";
 ---
 <Base
   title="India Atlas — Industrial Production · Dossier 04"
-  description="Dossier 04 — the Index of Industrial Production: the monthly pulse of mining, manufacturing and power, in two bases that never meet — and its new services counterpart, the ISP."
+  description="Dossier 04 — the Index of Industrial Production: the monthly pulse of mining, manufacturing and power, in four bases that never meet — and its new services counterpart, the ISP."
   nav="dossiers"
   dateStamp="July 2026"
   crumbLeft='<a href="/" style="color:inherit">Dossiers</a> / Output / <b>Index of Industrial Production</b>'
-  crumbRight='Evergreen · revised with each print · <b>v1.1</b>'
+  crumbRight='Evergreen · revised with each print · <b>v1.2</b>'
   canonical="https://indiaatlas.in/dossiers/iip/"
   ogImage="/og/iip.png"
 >
@@ -71,7 +71,7 @@ import Prose from "../../components/Prose.astro";
 
   <!-- § 03 two bases -->
   <section>
-    <div class="sec-head"><span class="no">03</span><h2>Two ledgers, one index</h2><span class="line"></span><span class="unit">y/y % · base 2011–12 and base 2022–23</span></div>
+    <div class="sec-head"><span class="no">03</span><h2>Four ledgers, one index</h2><span class="line"></span><span class="unit">y/y % · four bases · never spliced</span></div>
     <div class="break">
       <figure id="cb-bases" style="margin:0">
         <div class="plate-head">
@@ -96,6 +96,36 @@ import Prose from "../../components/Prose.astro";
           <div class="now">
             <span class="mk">As of July 2026</span>
             <p>The current base has now produced twenty-seven months of growth readings, all but two of them positive. The old base was published for the last time with the February 2026 print — March 2025 was never loaded, so its final year-ago comparisons simply do not exist. The series ends not with a bang but with a missing cell.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-herit" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The deep ledger — two retired rulers, 1995 to 2017</h3>
+            <div class="sub">IIP general index, year-on-year · base 1993–94 (Apr 1995 – Jun 2011) · base 2004–05 (Apr 2006 – Mar 2017) — side by side, never spliced</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-herit">–</div><div class="c">Feb 2009 · the one industrial winter</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-herit"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, NSO · growth computed from index levels · base 1993–94 retired in 2011, base 2004–05 in 2017 · where the two overlap they read the same months differently — a change of ruler, not of output</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Beneath the modern pair lie the two rulers India retired earlier: 1993–94 and 2004–05. Together they carry the monthly record back three decades — the late-nineties grind, the 2003–2008 boom, the thin winter that followed. Where the lines overlap, from 2006 to 2011, they measure the same factories and disagree, sometimes by whole points. Neither is wrong; each holds a different basket.</p>
+            <p>Read these lines by the year, not the month. The item panels behind the old bases were smaller, so a single lumpy order could move an aggregate — capital goods once printed a 65 per cent year-on-year jump on one month's reading. The monthly sawtooth is arithmetic on a small panel; the slow drift underneath it is the economy.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the final prints</span>
+            <p>The sharpest lesson sits in February 2009. The 2004–05 base printed <b id="her-gfc04">–</b> — the deepest reading either ruler ever gave. The 1993–94 base read the same month at <b id="her-gfc93">–</b>, and in seventeen years it never once printed below zero. Same factories, one winter, two verdicts. The 1993–94 base signed off in June 2011 at <b id="her-end93">–</b>; the 2004–05 base in March 2017 at <b id="her-end04">–</b>.</p>
           </div>
         </div>
       </figure>
@@ -400,6 +430,7 @@ import Prose from "../../components/Prose.astro";
         <h6>Source of record</h6>
         <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. "Quick Estimates of Index of Industrial Production — June 2026" (base 2022-23=100). Index levels retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>; growth rates are computed from levels and track the published rates within 0.05 pt.</p>
         <p>The discontinued base 2011-12=100 — including the 23-industry register in §04 — is shown separately and never spliced with the current base (the base-year rule). Its final publication carried no March 2025 figure; the resulting gaps are disclosed in the series metadata.</p>
+        <p>The heritage bases 1993-94=100 (Apr 1994 – Jun 2011) and 2004-05=100 (Apr 2005 – Mar 2017) — the deep ledger in §03 — come from the same API, each on its own ruler. A full audit of the source's IIP surface (August 2026) found four bases, two frequencies and three classification axes: the annual frequency is the fiscal-year average of the monthly with no extra history, and nothing below the two-digit industries is served. This dossier covers every level the source publishes; the annual twin is documented, not duplicated.</p>
         <p>The Index of Services Production (base 2024-25=100, first published 2025) is a trial series: MoSPI may change its methodology without notice, and every vintage is provisional. It is shown as levels only, same vintage.</p>
       </div>
       <div>
@@ -409,13 +440,13 @@ import Prose from "../../components/Prose.astro";
       </div>
       <div>
         <h6>This dossier</h6>
-        <p>Dossier 04 · Output · version 1.1 · adds the 23-industry register of the retired base and the Index of Services Production. Next scheduled revision: on release of the July print.</p>
+        <p>Dossier 04 · Output · version 1.2 · adds the deep ledger of the 1993-94 and 2004-05 heritage bases, after a full audit of the source's IIP surface. Next scheduled revision: on release of the July print.</p>
         <p>Corrections and questions: register@indiaatlas.example</p>
       </div>
     </div>
     <div class="fine">
       <span>India Atlas · Dossier 04 · IIP</span>
-      <span>Vintage <span id="prov-vintage2">–</span> · Bases 2022-23=100 and 2011-12=100 · ISP base 2024-25=100</span>
+      <span>Vintage <span id="prov-vintage2">–</span> · Bases 2022-23, 2011-12, 2004-05 and 1993-94 (each =100) · ISP base 2024-25=100</span>
       <span>Set in Archivo, Newsreader &amp; Plex Mono</span>
     </div>
   </footer>

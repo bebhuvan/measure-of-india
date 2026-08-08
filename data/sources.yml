@@ -84,6 +84,30 @@ dossiers:
     # cross-check is possible — disclosed in meta.note and the dossier.
     # series=Back is the NSO's own back-cast of the General index on the 2024
     # base, 2013–2024, headline only — baked as its own bundle, never merged.
+    #
+    # DEPTH COVERAGE (audited live 2026-08-08; volumes measured from
+    # meta_data.totalRecords). One getCPIData stream carries EVERY level of
+    # the COICOP-2018-style hierarchy — the level param is ignored;
+    # division/group/class/item/month/state/sector/year params filter
+    # server-side. All India × Combined = exactly 668 rows per month:
+    # 1 General + 12 divisions + 43 groups + 92 classes + 162 sub-classes +
+    # 358 items, every month from Jan 2025. Per level:
+    #   divisions (13)      BAKED  cpi-2024.json (+ sectors, back-cast)
+    #   groups (43)         BAKED  cpi-2024-groups.json (combined)
+    #   classes (92)        RAW    data/raw/cpi-2024-grid.json only —
+    #   sub-classes (162)   RAW    intermediate aggregates between the baked
+    #                              group and item levels; no honest plate
+    #   items (358)         BAKED  cpi-2024-items.json (combined; y/y where a
+    #                              same-base year-ago level exists, plus each
+    #                              item's code, division and latest level)
+    #   states/UTs (36)     BAKED  cpi-2024-states.json (combined General) and
+    #                              cpi-2024-states-sectors.json (rural/urban)
+    # Rural/urban below the division level are NOT ingested (3× the volume
+    # for no dossier slot); the division-level sectors bundle stands.
+    # IMPUTATION: item rows carry a Y/N flag (Y = index imputed, not priced
+    # that month). Every All-India Combined item row served so far is N —
+    # disclosed in cpi-2024-items.json meta.imputationNote and checked in
+    # validate.mjs.
     fetch2024:
       endpoint: cpi/getCPIData
       base: "2024=100"
@@ -93,6 +117,18 @@ dossiers:
         series: Current
         state_code: 1       # All India (this base; 99 in the 2012 base)
     window2024: { start: "2026-01" }   # first month with a same-base year-ago level
+    # ---- base 2010=100: ARCHIVED, NOT BAKED ----
+    # Probed live 2026-08-08: getCpiFilterByLevelAndBaseYear?base_year=2010
+    # serves a 48-month fragment, Jan 2011 – Dec 2014, on the pre-2012 scheme
+    # (7 groups / 28 subgroups; state_code 99 = All India; an item list of
+    # 318 exists in the filter but the dossier takes no position on it).
+    # Decision: the fragment's whole span predates the dossier window (2016)
+    # and is superseded by the 2012 base; baking would add a third ruler to
+    # the seam plate for 48 months of retired readings. The All-India
+    # Combined table (28 subgroups × 48 months) is archived to
+    # data/raw/cpi-2010-indices.json as the audit trail. 2011 rows carry
+    # inflation=null at source (no 2010 monthly levels) — preserved.
+    archive2010: true
 
   gdp:
     product: nas
@@ -199,6 +235,26 @@ dossiers:
         "1200000000": fuel                 # Fuel & power
         "1300000000": manufactured         # Manufactured products
         "2000000000": food_index           # Food index (spans primary + manufactured food; published directly)
+      # ITEM LEVEL (v1.2) — coverage below the majors is COMPLETE:
+      # major-group -> group (29) -> sub-group (134) -> item (697). Audited
+      # against wpi/getWpiData filter metadata (2026-08): 697 items (117
+      # primary / 16 fuel / 564 manufactured), labels unique across the
+      # basket, so slugified labels are safe keys. The item rows ride in the
+      # SAME paged major-group×year stream the aggregate fetch already pulls
+      # (~350 pages at limit 500, ~10.4k rows/year, of which 697×12 are
+      # items) — keeping them costs zero extra requests. The headline and
+      # food-index major groups serve only their own 12 aggregate rows/year.
+      # Four sub-sub-group aggregates (Cereals, Pulses, Vegetables, Fruits)
+      # sit between sub-group and item — archived to raw only.
+      # SIZE DECISION: full y/y history for all 697 items bakes to ~1 MB
+      # (measured), well under the 8-10 MB cross-section-only fallback
+      # threshold — so wpi-items.json carries every item's complete y/y
+      # history; full level histories live in data/raw/wpi-items.json.
+      # Item WEIGHTS are not served by the API: no weighted recomposition is
+      # asserted at item level; validate.mjs instead checks that each
+      # sub-group's latest y/y lies inside the min–max hull of its items'
+      # y/y (a weighted mean must), plus item y/y recomputation from levels.
+      items: full   # all 697 -> data/series/wpi-items.json + data/raw/wpi-items.json
     # WPI weights, base 2011-12 — sum must equal 100.00
     weights:
       primary: 22.62
@@ -352,7 +408,27 @@ dossiers:
       # raw (headline, sectoral, use-based, and the 2-digit industries);
       # growth is computed from levels — the API's growth_rate is a
       # cross-check only.
-      bases: ["2022-23", "2011-12"]
+      #
+      # FULL SURFACE AUDIT (2026-08-08, via getIipBaseYear / getIipFilter /
+      # getIIPData row inspection):
+      # - iip/getIipBaseYear serves FOUR bases: 2022-23, 2011-12, 2004-05,
+      #   1993-94. All four are ingested below, each as separate bundles
+      #   (base-year rule). Monthly spans: 2022-23 -> Apr 2023 on;
+      #   2011-12 -> Apr 2012 – Mar 2026 (Mar 2025 never loaded);
+      #   2004-05 -> 2005–2017; 1993-94 -> 1994–2011.
+      # - frequency "Annually" IS served for all four bases (FY-labelled
+      #   rows; the year filter is ignored — the endpoint returns the whole
+      #   set). Verified spans: 2023-24..2025-26 / 2012-13..2025-26 /
+      #   2005-06..2016-17 / 1994-95..2010-11 with the SAME series sets as
+      #   monthly (43/33/31/26). No longer history, no finer detail — a
+      #   derivable FY-average twin of the monthly. NOT baked.
+      # - the filter space is year/month/type/category/subcategory only.
+      #   subcategory is 2-digit NIC (32/23/22/17 entries per base): the API
+      #   serves NO 3-digit NIC detail, no state cut, no item level.
+      # - use-based classification is served and baked for every base. The
+      #   pre-2011 bases use the older 5-way scheme (Basic Goods instead of
+      #   Primary; no Infrastructure/Construction) — kept as published.
+      bases: ["2022-23", "2011-12", "2004-05", "1993-94"]
 
   hces:
     product: hces

@@ -6,14 +6,16 @@ import * as Plot from "@observablehq/plot";
 import bundle from "../../data/series/wpi.json";
 import groupsBundle from "../../data/series/wpi-groups.json";
 import subgroupsBundle from "../../data/series/wpi-subgroups.json";
+import itemsBundle from "../../data/series/wpi-items.json";
 import {
   MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend,
-  peakOf, peakBetween, troughOf, dodgeEndLabels, spark,
+  peakOf, peakBetween, troughOf, dodgeEndLabels, spark, saveBlob,
 } from "../charts/plumbing.js";
 
 const S = hydrate(bundle);
 const G = hydrate(groupsBundle);    // 29 two-digit groups, y/y from levels
 const SG = hydrate(subgroupsBundle); // 134 sub-groups, y/y from levels
+const IT = hydrate(itemsBundle);     // 697 items, y/y from levels
 const dates = S.headline.data.map((d) => d.date);
 const MN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const fmtDate = (d) => MN[d.getUTCMonth()] + " " + d.getUTCFullYear();
@@ -72,6 +74,16 @@ const groupRows = [
   ["manufacture_of_chemicals_and_chemical_products", "Chemicals & chemical products", "Group · under manufactured", "s-g1"],
   ["manufacture_of_textiles", "Textiles", "Group · under manufactured — the loom", "s-g2"],
 ];
+// notable items, from the items bundle (v1.2) — petrol carries this print's
+// fuel event to the pump grade; gold sits behind §07's other-manufacturing
+// story; onion is the register's memento of what usually drives a WPI panic.
+const LI = {}, PI = {}, YI = {};
+const itemRows = [
+  ["petrol", "Petrol", "Item · under mineral oils — the refinery gate, before taxes", "s-g2"],
+  ["gold_gold_ornaments", "Gold & gold ornaments", "Item · under other manufacturing — the metal behind the jewellery group", "s-g4"],
+  ["onion", "Onion", "Item · under food articles — the old headline-maker", "s-g1"],
+];
+for (const [k] of itemRows) { LI[k] = IT[k].data.at(-1).value; PI[k] = IT[k].data.at(-2).value; YI[k] = IT[k].data.at(-13).value; }
 document.getElementById("ledger-body").innerHTML = regRows.map(([k, nm, sub, sw, wt, col]) => `
   <tr>
     <td class="name"><span class="sw ${sw}"></span>${nm}<small>${sub}</small></td>
@@ -88,6 +100,14 @@ document.getElementById("ledger-body").innerHTML = regRows.map(([k, nm, sub, sw,
     <td class="chg">${arrow(LG[k] - PG[k])} · ${word(LG[k] - PG[k])}</td>
     <td class="yr">${f1(YG[k])}</td>
     <td class="spark" id="sp-g-${k}"></td>
+  </tr>`).join("") + itemRows.map(([k, nm, sub, sw]) => `
+  <tr>
+    <td class="name"><span class="sw ${sw}"></span>${nm}<small>${sub}</small></td>
+    <td class="wt">—</td>
+    <td class="val">${f1(LI[k])}</td>
+    <td class="chg">${arrow(LI[k] - PI[k])} · ${word(LI[k] - PI[k])}</td>
+    <td class="yr">${f1(YI[k])}</td>
+    <td class="spark" id="sp-it-${k}"></td>
   </tr>`).join("");
 
 /* ---------- basket composition ---------- */
@@ -333,10 +353,80 @@ const SHORT = {
   wireTools(document.getElementById("cb-tail"), null, Object.keys(SG).map((k) => SG[k]), "india-atlas_wpi_134-subgroups_2016-2026");
 }
 
+/* ---------- §09 : the 697 items — extremes ledger ----------
+ * Same ledger-not-grid decision as §08, one level down. Items ranked by
+ * latest y/y; lineage (group › sub-group › sub-sub-group) shown under each
+ * name so a hot row traces back to the aggregate it feeds. The CSV is the
+ * full latest-month cross-section: index level + y/y for every item. */
+{
+  const IM = itemsBundle.series; // carries lineage + latestIndex per item
+  const allI = Object.keys(IT).map((k) => {
+    const d = IT[k].data;
+    return {
+      k, s: IT[k], lineage: IM[k].lineage.split(" › ").slice(1).join(" › "),
+      latest: d.at(-1).value, prevV: d.at(-2)?.value, yr: d.at(-13)?.value,
+    };
+  }).filter((r) => r.latest != null)
+    .sort((a, b) => b.latest - a.latest || a.s.label.localeCompare(b.s.label));
+  const nRanked = allI.length, nItems = Object.keys(IT).length;
+  const topI = allI.slice(0, 15), botI = allI.slice(-15);
+  const chgCell = (r) => r.prevV == null ? "—" : `${arrow(r.latest - r.prevV)} · ${word(r.latest - r.prevV)}`;
+  const rowI = (r, rank) => `
+  <tr>
+    <td class="name">${r.s.label}<small>№ ${rank} of ${nRanked} · ${r.lineage}</small></td>
+    <td class="val">${f1(r.latest)}</td>
+    <td class="chg">${chgCell(r)}</td>
+    <td class="yr">${r.yr == null ? "—" : f1(r.yr)}</td>
+    <td class="spark" id="sp-i${rank}"></td>
+  </tr>`;
+  document.getElementById("items-body").innerHTML =
+    topI.map((r, i) => rowI(r, i + 1)).join("") +
+    `<tr class="tail-mid"><td colspan="5">⋯ ${nRanked - 30} items between ${f1(topI.at(-1).latest)} and ${f1(botI[0].latest)} — the full field ships in the CSV ⋯</td></tr>` +
+    botI.map((r, i) => rowI(r, nRanked - 14 + i)).join("");
+  const sparkData = (r) => ({ ...r.s, color: "#5B564B", data: r.s.data.filter((d) => d.value != null) });
+  topI.forEach((r, i) => spark("sp-i" + (i + 1), sparkData(r)));
+  botI.forEach((r, i) => spark("sp-i" + (nRanked - 14 + i), sparkData(r)));
+
+  const valsI = allI.map((r) => r.latest);
+  const medI = nRanked % 2 ? valsI[(nRanked - 1) / 2] : (valsI[nRanked / 2 - 1] + valsI[nRanked / 2]) / 2;
+  const negI = valsI.filter((v) => v < 0).length;
+  setTxt("pv-items", f1(topI[0].latest));
+  setTxt("pc-items", fmtDate(topI[0].s.data.at(-1).date) + " · " + topI[0].s.label.slice(0, 34) + " — hottest item");
+  setTxt("pf-items", `${nRanked} of ${nItems} items carry an April y/y · cut lines — 15th hottest ${f1(topI.at(-1).latest)}, 15th coldest ${f1(botI[0].latest)}`);
+  setTxt("ex-ispan", (topI[0].latest - botI.at(-1).latest).toFixed(1));
+  setTxt("ex-itopn", topI[0].s.label.toLowerCase());
+  setTxt("ex-itop", f01(topI[0].latest));
+  setTxt("ex-ibotn", botI.at(-1).s.label.toLowerCase());
+  setTxt("ex-ibot", f01(botI.at(-1).latest));
+  setTxt("ex-imed", f01(medI));
+  setTxt("ex-ineg", String(negI));
+  const itemLatest = (k) => IT[k]?.data.at(-1)?.value;
+  setTxt("ex-ipetrol", f01(itemLatest("petrol")));
+  setTxt("ex-iatf", f01(itemLatest("atf")));
+  setTxt("ex-ihsd", f01(itemLatest("hsd")));
+  setTxt("ex-ionion", f01(itemLatest("onion")));
+
+  // cross-section CSV: one row per item, with lineage, latest index level and
+  // the three y/y readings shown in the ledger. Labels carry commas — quoted.
+  const q = (s) => '"' + String(s ?? "").replace(/"/g, '""') + '"';
+  const ymTag = itemsBundle.meta.latestPeriod.replace("-", "");
+  document.querySelector("#cb-items [data-dl=csv]").addEventListener("click", () => {
+    const header = ["item", "lineage", `index_${ymTag}`, "yoy_pct", "yoy_prev_month_pct", "yoy_year_ago_pct"];
+    const rows = Object.keys(IM).sort().map((k) => {
+      const d = IT[k].data;
+      return [q(IM[k].label), q(IM[k].lineage), IM[k].latestIndex ?? "",
+        d.at(-1).value ?? "", d.at(-2)?.value ?? "", d.at(-13)?.value ?? ""];
+    });
+    const csv = [header, ...rows].map((r) => r.join(",")).join("\n");
+    saveBlob(new Blob([csv], { type: "text/csv" }), `india-atlas_wpi_697-items_cross-section_${itemsBundle.meta.latestPeriod}.csv`);
+  });
+}
+
 /* ---------- ledger sparklines ---------- */
 spark("nspark-head", S.headline);
 for (const k of ["headline", "primary", "fuel", "manufactured", "food_index"]) spark("sp-" + k, S[k]);
 for (const [k] of groupRows) spark("sp-g-" + k, { ...G[k], color: "#5B564B" });
+for (const k of ["petrol", "gold_gold_ornaments", "onion"]) spark("sp-it-" + k, { ...IT[k], color: "#5B564B", data: IT[k].data.filter((d) => d.value != null) });
 
 /* ---------- provenance vintage — driven from the baked bundle, never hardcoded ---------- */
 setTxt("prov-vintage", bundle.meta.vintage);

@@ -8,7 +8,7 @@ import Prose from "../../components/Prose.astro";
   nav="dossiers"
   dateStamp="May 2026"
   crumbLeft='<a href="/" style="color:inherit">Dossiers</a> / Prices / <b>Wholesale Price Index</b>'
-  crumbRight='Evergreen · revised with each print · <b>v1.1</b>'
+  crumbRight='Evergreen · revised with each print · <b>v1.2</b>'
   canonical="https://indiaatlas.in/dossiers/wpi/"
   ogImage="/og/wpi.png"
 >
@@ -294,9 +294,51 @@ import Prose from "../../components/Prose.astro";
     </div>
   </section>
 
-  <!-- § 09 misread -->
+  <!-- § 09 the 697 items -->
   <section>
-    <div class="sec-head"><span class="no">09</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">09</span><h2>The 697 items</h2><span class="line"></span><span class="unit">Extremes · y/y % · full CSV</span></div>
+    <div class="break">
+      <figure id="cb-items" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The finest grain — fifteen hottest, fifteen coldest of 697</h3>
+            <div class="sub">Every named item in the 2011-12 basket, with its lineage · latest y/y · Apr 2026</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-items">–</div><div class="c" id="pc-items">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="ledger tail-ledger">
+            <table>
+              <thead>
+                <tr><th>Item</th><th>Latest y/y</th><th>vs prev. month</th><th>Year ago</th><th class="spark">2016 – 2026</th></tr>
+              </thead>
+              <tbody id="items-body"></tbody>
+            </table>
+          </div>
+          <div class="plotfoot">
+            <span class="src"><span>Source — OEA, DPIIT · ranked by April 2026 y/y · <span id="pf-items">–</span> · every y/y computed from index levels · CSV carries the full cross-section — index level and y/y for every item, with lineage</span></span>
+            <span class="dl"><button data-dl="csv">CSV · all 697</button><span class="sep"></span><a href="https://eaindustry.nic.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>This is the finest grain wholesale prices are published at — the level where "inflation" stops being a number and becomes onions, HR coils and jet fuel. Everything above this table is an average of something; these are the goods themselves, 697 of them, each with its own index and its own weather. And the deeper you go, the wider the field: sub-groups spread across tens of points in a month, items across hundreds.</p>
+            <p>The lineage under each name is the path back up the tree, so a hot row can be traced to the aggregate it feeds. Thirty rows are shown; the rest are quieter, and they ship complete in the CSV.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of May 2026</span>
+            <p>The April spread runs <b id="ex-ispan">–</b> points end to end — <span id="ex-itopn">–</span> at <b id="ex-itop">–</b> down to <span id="ex-ibotn">–</span> at <b id="ex-ibot">–</b>. The fuel event is legible item by item: petrol at <b id="ex-ipetrol">–</b>, ATF at <b id="ex-iatf">–</b>, HSD at <b id="ex-ihsd">–</b> — one refinery gate, three grades of the same shock.</p>
+            <p>The median item sits at <b id="ex-imed">–</b>, and <b id="ex-ineg">–</b> of the 697 are below zero in the same month the headline runs past eight. Onion, the old headline-maker, prints <b id="ex-ionion">–</b> — this is not a food print, and the item table is where that is easiest to see.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 10 misread -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>How to misread this number</h2><span class="line"></span></div>
     <ul class="misread">
       <li>
         <span class="no">i.</span>
@@ -340,9 +382,9 @@ import Prose from "../../components/Prose.astro";
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Office of the Economic Adviser, Ministry of Commerce &amp; Industry (DPIIT). "Index Numbers of Wholesale Price in India — April 2026." Press release, 14 May 2026 (provisional). Major-group, group and sub-group indices retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>.</p>
+        <p>Office of the Economic Adviser, Ministry of Commerce &amp; Industry (DPIIT). "Index Numbers of Wholesale Price in India — April 2026." Press release, 14 May 2026 (provisional). Major-group, group, sub-group and item indices retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>.</p>
         <p>The headline is computed by India Atlas from the three major-group indices using the official weights (Primary 22.62, Fuel &amp; power 13.15, Manufactured 64.23); it tracks the published headline within 0.10 pt across the decade. The food index is published directly by the OEA and is shown as published.</p>
-        <p>Coverage below the majors: all 29 two-digit groups and all 134 sub-groups — the deepest aggregate level the OEA publishes; the item level stays at the source. Every year-on-year figure on this page is computed by India Atlas from the published index levels, never taken from the release's growth columns.</p>
+        <p>Coverage below the majors is complete: all 29 two-digit groups, all 134 sub-groups and all 697 items — major-group → group → sub-group → item, the finest grain the OEA publishes. Item weights are not served by the API, so no weighted recomposition is asserted at that level; every year-on-year figure on this page is computed by India Atlas from the published index levels, never taken from the release's growth columns.</p>
       </div>
       <div>
         <h6>Revisions &amp; uncertainty</h6>
@@ -351,7 +393,7 @@ import Prose from "../../components/Prose.astro";
       </div>
       <div>
         <h6>This dossier</h6>
-        <p>Dossier 03 · Prices · version 1.1 · April 2026 print — adds the 29-group grid, the sub-group extremes ledger and six group rows in the register. Next scheduled revision: mid-June 2026, on release of the May print.</p>
+        <p>Dossier 03 · Prices · version 1.2 · April 2026 print — adds the 697-item extremes ledger, the item cross-section CSV and three item rows in the register. Next scheduled revision: mid-June 2026, on release of the May print.</p>
         <p>Corrections and questions: register@indiaatlas.example</p>
       </div>
     </div>

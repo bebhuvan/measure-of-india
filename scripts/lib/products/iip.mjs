@@ -1,25 +1,32 @@
 // scripts/lib/products/iip.mjs — Index of Industrial Production, MoSPI NSO.
-// Two bases are live in the API: 2022-23 (current, from Apr 2023) and
-// 2011-12 (discontinued, long history). Per the base-year rule each base is
+// FOUR bases are live in the API (getIipBaseYear): 2022-23 (current, from
+// Apr 2023), 2011-12 (discontinued, Apr 2012 – Mar 2026), 2004-05
+// (2005–2017) and 1993-94 (1994–2011). Per the base-year rule each base is
 // ingested and emitted separately, never joined:
-//   iip-2022.json / iip-2011.json — headline (General) + sectoral + use-based
-//     categories, y/y computed from levels; the API's growth_rate is kept as
-//     a cross-check on the headline only.
-//   iip-industries-2022.json / iip-industries-2011.json — the NIC 2-digit
-//     industries and mineral/electricity sub-indices, y/y.
+//   iip-<tag>.json — headline (General) + sectoral + use-based categories,
+//     y/y computed from levels; the API's growth_rate is kept as a
+//     cross-check on the headline only.
+//   iip-industries-<tag>.json — the 2-digit industries and the
+//     mineral/electricity sub-indices, y/y.
 // The headline is the published General index LEVEL (the primary data); only
 // growth is derived. Rows are calendar-labelled (year integer + month name).
+// The API also serves frequency=Annually for every base: FY-labelled rows
+// with the same series sets and spans as monthly — a derivable FY-average
+// twin, audited 2026-08-08 and deliberately not baked (see data/sources.yml).
 
 import { mospi } from "../mospi.mjs";
 import { MONTHS, writeJson, writeRaw, yoyFromLevels, monthAxis } from "../util.mjs";
 
 const GREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
 const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
+// the 1993-94 base's names carry XML-escape debris ("Related_x0002_products");
+// strip it from labels (and therefore keys) — a transcription fix, not editing
+const clean = (s) => s.replace(/_x[0-9a-fA-F]{4}_/g, " ").replace(/\s+/g, " ").trim();
 
 // row -> series key and label, by level of aggregation
 function rowKey(r) {
-  const cat = String(r.category ?? "").trim();
-  const sub = String(r.sub_category ?? "").trim();
+  const cat = clean(String(r.category ?? ""));
+  const sub = clean(String(r.sub_category ?? ""));
   if (r.type === "General") return { key: "general", label: "General" };
   if (!sub) return { key: `${r.type === "Sectoral" ? "sector" : "use"}:${slugify(cat)}`, label: cat };
   return { key: `sub:${slugify(cat)}:${slugify(sub)}`, label: sub };
@@ -68,6 +75,13 @@ export async function buildIip(root, dcfg, vintage) {
   writeRaw(root, "data/raw/iip-indices.json", raw);
 
   const baseTag = (base) => base.slice(0, 4); // "2022-23" -> "2022"
+  const BASE_NOTE = {
+    "2022-23": "Current base, from April 2023; the first computable y/y is April 2024.",
+    "2011-12": "Discontinued base — superseded by 2022-23=100; plotted separately, never spliced (base-year rule).",
+    "2004-05": "Discontinued base (2005–2017) — superseded by 2011-12=100; plotted separately, never spliced (base-year rule). Uses the older 5-way use-based scheme (Basic Goods, no Infrastructure/Construction).",
+    "1993-94": "Discontinued base (1994–2011) — superseded by 2004-05=100; plotted separately, never spliced (base-year rule). Uses the older 5-way use-based scheme (Basic Goods, no Infrastructure/Construction).",
+  };
+  const GAPS_NOTE = "Months absent from the source (e.g. the 2011-12 base was never loaded for March 2025), plus the y/y knock-on a year later.";
   const emit = (base) => {
     const { levels, growth, labels } = perBase[base];
     const tag = baseTag(base);
@@ -114,11 +128,9 @@ export async function buildIip(root, dcfg, vintage) {
       meta: {
         ...metaBase, latestPeriod: months.at(-1),
         coverage: "Headline (General), sectoral and use-based categories; y/y computed from published index levels",
-        note: base.startsWith("2022")
-          ? "Current base, from April 2023; the first computable y/y is April 2024."
-          : "Discontinued base — superseded by 2022-23=100; plotted separately, never spliced (base-year rule).",
+        note: BASE_NOTE[base],
         gaps: seriesGaps(topYoys).length ? seriesGaps(topYoys) : undefined,
-        gapsNote: "Months absent from the source (the old base was never loaded for March 2025), plus the y/y knock-on a year later.",
+        gapsNote: seriesGaps(topYoys).length ? GAPS_NOTE : undefined,
       },
       dates, series,
       crosscheck: { headline_growth_published: axis.map((ym) => growth.general?.get(ym) ?? null) },
@@ -142,7 +154,7 @@ export async function buildIip(root, dcfg, vintage) {
       writeJson(root, `data/series/iip-industries-${tag}.json`, {
         meta: { ...metaBase, latestPeriod: months.at(-1), coverage: "2-digit industries and sub-indices beneath the sectoral aggregates",
           gaps: seriesGaps(subYoys).length ? seriesGaps(subYoys) : undefined,
-          gapsNote: "Months absent from the source (the old base was never loaded for March 2025), plus the y/y knock-on a year later." },
+          gapsNote: seriesGaps(subYoys).length ? GAPS_NOTE : undefined },
         dates, series: subSeries,
       });
     }

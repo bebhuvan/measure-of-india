@@ -35,6 +35,17 @@ const PAGES = [
     ["prov-vintage", (b) => b.cpi.meta.vintage],
     ["prov-vintage24", (b) => b["cpi-2024"].meta.vintage],
     ["prov-vintage2", (b) => b["cpi-2024"].meta.vintage],
+    // v2.4 — the 358-item ledger and the new-base state strip
+    ["pv-tail24", (b) => {
+      const vals = Object.values(b["cpi-2024-items"].series).map((s) => s.data.at(-1)).filter((v) => v != null);
+      return Math.max(...vals).toFixed(2) + "%";
+    }],
+    ["ex-t24neg", (b) => String(Object.values(b["cpi-2024-items"].series).map((s) => s.data.at(-1)).filter((v) => v != null && v < 0).length)],
+    ["pv-st24", (b) => {
+      const vals = Object.values(b["cpi-2024-states"].series).map((s) => s.data.at(-1)).filter((v) => v != null);
+      return (Math.max(...vals) - Math.min(...vals)).toFixed(1) + " pt";
+    }],
+    ["pf-st24-ai", (b) => b["cpi-2024"].series.headline.data.at(-1).toFixed(2) + "%"],
   ]},
   { url: "/dossiers/gdp/", slug: null, checks: [
     ["n-gdp", (b) => b["gdp-2022"].series.gdp.data.at(-1).toFixed(2) + "%"],
@@ -52,15 +63,39 @@ const PAGES = [
     ["nb-q3", (b) => b["gdp-2022"].series.gdp.data.at(-2).toFixed(2) + "%"],
     ["prov-vintage", (b) => b.gdp.meta.vintage],
   ]},
-  { url: "/dossiers/wpi/", slug: "wpi", checks: [
-    ["n-head", (b) => b.series.headline.data.at(-1).toFixed(2) + "%"],
-    ["n-fuel", (b) => b.series.fuel.data.at(-1).toFixed(2) + "%"],
-    ["prov-vintage", (b) => b.meta.vintage],
+  { url: "/dossiers/wpi/", slug: null, checks: [
+    ["n-head", (b) => b.wpi.series.headline.data.at(-1).toFixed(2) + "%"],
+    ["n-fuel", (b) => b.wpi.series.fuel.data.at(-1).toFixed(2) + "%"],
+    // v1.2 — the 697 items: hottest item, deflating-item count, onion's print
+    ["pv-items", (b) => {
+      const vals = Object.values(b["wpi-items"].series).map((s) => s.data.at(-1)).filter((v) => v != null);
+      return Math.max(...vals).toFixed(2) + "%";
+    }],
+    ["ex-ineg", (b) => String(Object.values(b["wpi-items"].series).map((s) => s.data.at(-1)).filter((v) => v != null && v < 0).length)],
+    ["ex-ionion", (b) => {
+      const v = b["wpi-items"].series.onion.data.at(-1);
+      return (v < 0 ? "−" + Math.abs(v).toFixed(1) : v.toFixed(1)) + "%";
+    }],
+    ["prov-vintage", (b) => b.wpi.meta.vintage],
   ]},
-  { url: "/dossiers/iip/", slug: "iip-2022", checks: [
-    ["n-head", (b) => b.series.general.data.at(-1).toFixed(2) + "%"],
-    ["n-cap", (b) => b.series.use_capital_goods.data.at(-1).toFixed(2) + "%"],
-    ["prov-vintage", (b) => b.meta.vintage],
+  { url: "/dossiers/iip/", slug: null, checks: [
+    ["n-head", (b) => b["iip-2022"].series.general.data.at(-1).toFixed(2) + "%"],
+    ["n-cap", (b) => b["iip-2022"].series.use_capital_goods.data.at(-1).toFixed(2) + "%"],
+    // v1.2 deep-ledger plate: heritage bases 1993-94 / 2004-05
+    ["pv-herit", (b) => {
+      const v = Math.min(...b["iip-2004"].series.general.data.filter((x) => x != null));
+      return (v < 0 ? "−" : "") + Math.abs(v).toFixed(2) + "%";
+    }],
+    ["her-gfc93", (b) => {
+      const g04 = b["iip-2004"].series.general.data;
+      const i = g04.indexOf(Math.min(...g04.filter((x) => x != null)));
+      const d = b["iip-2004"].dates[i];
+      const j = b["iip-1993"].dates.indexOf(d);
+      return "+" + b["iip-1993"].series.general.data[j].toFixed(2) + "%";
+    }],
+    ["her-end93", (b) => b["iip-1993"].series.general.data.filter((x) => x != null).at(-1).toFixed(2) + "%"],
+    ["her-end04", (b) => b["iip-2004"].series.general.data.filter((x) => x != null).at(-1).toFixed(2) + "%"],
+    ["prov-vintage", (b) => b["iip-2022"].meta.vintage],
   ]},
   { url: "/dossiers/external/", slug: null, checks: [
     ["n-fx", (b) => "₹" + b["rbi-forex"].series.usdinr.data.at(-1).toFixed(2)],
@@ -219,13 +254,18 @@ for (const page of PAGES) {
   const bundles = {
     cpi: JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/cpi.json"), "utf8")),
     "cpi-2024": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/cpi-2024.json"), "utf8")),
+    "cpi-2024-items": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/cpi-2024-items.json"), "utf8")),
+    "cpi-2024-states": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/cpi-2024-states.json"), "utf8")),
     gdp: JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/gdp.json"), "utf8")),
     "gdp-industries": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/gdp-industries.json"), "utf8")),
     "gdp-nominal": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/gdp-nominal.json"), "utf8")),
     "gdp-accounts": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/gdp-accounts.json"), "utf8")),
     "gdp-2022": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/gdp-2022.json"), "utf8")),
     wpi: JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/wpi.json"), "utf8")),
+    "wpi-items": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/wpi-items.json"), "utf8")),
     "iip-2022": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/iip-2022.json"), "utf8")),
+    "iip-2004": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/iip-2004.json"), "utf8")),
+    "iip-1993": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/iip-1993.json"), "utf8")),
     "rbi-forex": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/rbi-forex.json"), "utf8")),
     "rbi-bop-ratios": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/rbi-bop-ratios.json"), "utf8")),
     "rbi-trade-partners": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/rbi-trade-partners.json"), "utf8")),

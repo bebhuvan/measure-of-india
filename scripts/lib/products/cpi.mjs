@@ -325,6 +325,7 @@ export async function buildCpi(root, dcfg, vintage) {
   writeJson(root, "data/series/cpi-states-sectors.json", bundleStatesSectors);
 
   if (dcfg.fetch2024) await buildCpi2024(root, dcfg, vintage);
+  if (dcfg.archive2010) await buildCpi2010Archive(root, dcfg, vintage);
   return bundleCombined;
 }
 
@@ -343,6 +344,27 @@ export async function buildCpi(root, dcfg, vintage) {
  *   cpi-2024-sectors.json — rural / urban published General index, y/y
  *   cpi-2024-back.json    — the NSO's own back-cast of the General index on
  *                           this base, 2013–2024 (series=Back), own bundle
+ *
+ * DEPTH (audited live 2026-08-08). One getCPIData stream carries EVERY level
+ * of the COICOP hierarchy — the level param is ignored; division_code /
+ * group_code / class_code / item_code / month_code / state_code /
+ * sector_code / year are honoured server-side. All India × Combined is
+ * exactly 668 rows per month: 1 General + 12 divisions + 43 groups +
+ * 92 classes + 162 sub-classes + 358 items, every month Jan 2025 onward.
+ * The imputation dimension is a per-row Y/N flag on ITEM rows only (Y = the
+ * item's index that month was imputed rather than directly priced); every
+ * All-India Combined item row is N in every month served so far — asserted
+ * at bake, disclosed in meta. Depth bundles from that audit:
+ *   cpi-2024-groups.json         — the 43 groups, All India combined, y/y
+ *   cpi-2024-items.json          — all 358 items, All India combined, y/y +
+ *                                  per-item code/division/latest level
+ *   cpi-2024-states.json         — General index (division 0) per state/UT,
+ *                                  combined, y/y from levels
+ *   cpi-2024-states-sectors.json — same, rural and urban
+ * Classes and sub-classes are archived to data/raw/cpi-2024-grid.json only:
+ * intermediate aggregates between the baked group and item levels.
+ * Base 2010=100 is also probed by buildCpi2010Archive below — a 48-month
+ * fragment (Jan 2011 – Dec 2014), archived raw, never baked.
  * ========================================================================= */
 
 // paginated fetch of one (sector, division, year); a division_code query
@@ -368,6 +390,48 @@ async function fetch2024DivisionYear(dcfg, sectorCode, divisionCode, year, serie
     if (batch.length < 100 || added === 0 || agg.length >= 12) break;
   }
   return agg;
+}
+
+// paged fetch of ONE month of the full All-India hierarchy (every level in
+// one stream, month_code honoured server-side): 668 rows = 7 pages at the
+// API's 100-row cap. Dedupe guards the pagination overlap.
+async function fetch2024GridMonth(dcfg, year, monthCode) {
+  const seen = new Set();
+  const rows = [];
+  for (let page = 1; page <= 12; page++) {
+    const res = await mospi(dcfg.fetch2024.endpoint, {
+      ...dcfg.fetch2024.params, series: "Current", sector_code: 3,
+      year, month_code: monthCode, page, limit: 100,
+    });
+    const batch = res.data ?? [];
+    let added = 0;
+    for (const r of batch) {
+      const k = JSON.stringify(r);
+      if (!seen.has(k)) { seen.add(k); rows.push(r); added++; }
+    }
+    if (batch.length < 100 || added === 0) break;
+  }
+  return rows;
+}
+
+// General index (division 0) for one (state, sector, year): 12 rows max
+async function fetch2024StateGeneralYear(dcfg, stateCode, sectorCode, year) {
+  const seen = new Set();
+  const rows = [];
+  for (let page = 1; page <= 2; page++) {
+    const res = await mospi(dcfg.fetch2024.endpoint, {
+      ...dcfg.fetch2024.params, series: "Current", state_code: stateCode,
+      sector_code: sectorCode, division_code: 0, year, page, limit: 100,
+    });
+    const batch = res.data ?? [];
+    let added = 0;
+    for (const r of batch) {
+      const k = JSON.stringify(r);
+      if (!seen.has(k)) { seen.add(k); if (r.group == null) { rows.push(r); added++; } }
+    }
+    if (batch.length < 100 || added === 0) break;
+  }
+  return rows;
 }
 
 // rows -> { levels: Map(ym -> index), published: Map(ym -> inflation) }
@@ -419,6 +483,57 @@ export async function buildCpi2024(root, dcfg, vintage) {
   for (const year of backYears) backRows.push(...await fetch2024DivisionYear(dcfg, SEC.combined, HEADLINE_CODE, year, "Back"));
   const back = rows2024ToMaps(backRows);
   process.stdout.write(`cpi-2024 back (combined, General): ${backRows.length} months\n`);
+
+  /* ---- full grid: All India combined, every level below the divisions ----
+     one paged fetch per month; 668 rows each = 43 groups + 92 classes +
+     162 sub-classes + 358 items below the 13 division aggregates. Row counts
+     are checked against that audited total before anything is baked. */
+  const levelOfRow = (r) => r.item != null ? "item" : r.sub_class != null ? "sub_class" : r.class != null ? "class" : r.group != null ? "group" : "division";
+  const grid = { group: {}, class: {}, sub_class: {}, item: {} }; // level -> code -> store
+  let gridMonths = 0;
+  for (const year of years) {
+    for (let mc = 1; mc <= 12; mc++) {
+      const rows = await fetch2024GridMonth(dcfg, year, mc);
+      if (!rows.length) continue; // months not yet published
+      gridMonths++;
+      if (rows.length !== 668) process.stdout.write(`cpi-2024 grid ${year}-${String(mc).padStart(2, "0")}: ${rows.length} rows, expected 668\n`);
+      for (const r of rows) {
+        const lv = levelOfRow(r);
+        if (lv === "division") continue; // divisions already ingested above
+        const store = (grid[lv][r.code] ??= { code: r.code, name: r[lv], division: r.division, levels: new Map(), published: new Map(), imputedMonths: [] });
+        const m = String(MONTHS.indexOf(r.month) + 1).padStart(2, "0");
+        if (m === "00") continue;
+        const ym = `${r.year}-${m}`;
+        const v = parseFloat(r.index);
+        if (Number.isFinite(v) && v !== 0) store.levels.set(ym, v);
+        const inf = parseFloat(r.inflation);
+        if (Number.isFinite(inf)) store.published.set(ym, inf);
+        if (lv === "item" && r.imputation === "Y") store.imputedMonths.push(ym);
+      }
+    }
+  }
+  const nGrid = Object.fromEntries(Object.entries(grid).map(([lv, o]) => [lv, Object.keys(o).length]));
+  process.stdout.write(`cpi-2024 grid: ${gridMonths} months; groups ${nGrid.group}, classes ${nGrid.class}, sub-classes ${nGrid.sub_class}, items ${nGrid.item}\n`);
+  const imputedItems = Object.values(grid.item).filter((x) => x.imputedMonths.length);
+  process.stdout.write(`cpi-2024 grid: ${imputedItems.length} of ${nGrid.item} items carry an imputed (Y) month at All-India combined\n`);
+
+  /* ---- states: published General index (division 0) per state/UT ---- */
+  const stateLevels24 = { combined: {}, rural: {}, urban: {} }; // sector -> sKey -> {label, levels, published}
+  for (const st of fd.state ?? []) {
+    if (st.state_code === 1) continue; // All India lives in cpi-2024.json
+    const sKey = slugify(st.state_name);
+    for (const [sector, sectorCode] of Object.entries(SEC)) {
+      const store = { label: st.state_name, levels: new Map(), published: new Map() };
+      for (const year of years) {
+        const rows = await fetch2024StateGeneralYear(dcfg, st.state_code, sectorCode, year);
+        const maps = rows2024ToMaps(rows);
+        for (const [ym, v] of maps.levels) store.levels.set(ym, v);
+        for (const [ym, v] of maps.published) store.published.set(ym, v);
+      }
+      if (store.levels.size) stateLevels24[sector][sKey] = store;
+    }
+    process.stdout.write(`cpi-2024 states ${sKey}: ${stateLevels24.combined[sKey]?.levels.size ?? 0} months (combined)\n`);
+  }
 
   const pub = cur.combined.headline.levels;
   if (!pub.size) throw new Error("CPI 2024-base: no data returned");
@@ -479,6 +594,88 @@ export async function buildCpi2024(root, dcfg, vintage) {
     crosscheck: { published_inflation: secCross },
   };
 
+  /* ---- groups bundle: the 43 groups below the divisions, combined ---- */
+  const groupSeries = {}, groupCross = {};
+  Object.values(grid.group).sort((a, b) => (a.code < b.code ? -1 : 1)).forEach((g, i) => {
+    const k = slugify(g.name);
+    const yoy = yoyFromLevels(g.levels);
+    groupSeries[k] = {
+      name: `cpi2024_grp_${k}_yoy_pct`, label: g.name, color: GREYS[i % GREYS.length],
+      code: g.code, division: g.division,
+      data: axis.map((ym) => yoy.get(ym) ?? null),
+    };
+    groupCross[k] = axis.map((ym) => g.published.get(ym) ?? null);
+  });
+  const bundleGroups2024 = {
+    meta: meta(`All India, Combined; the ${Object.keys(groupSeries).length} groups below the 13 divisions`, {
+      hierarchyNote: "Group level of the COICOP-2018-style hierarchy (13 divisions → 43 groups → 92 classes → 162 sub-classes → 358 items). Classes and sub-classes are archived raw, not baked.",
+    }),
+    dates, series: groupSeries,
+    crosscheck: { published_inflation: groupCross },
+  };
+
+  /* ---- items bundle: the full 358-item basket, combined ----
+     y/y from levels, only where a same-base year-ago level exists (2026
+     months); each series carries its code, division, latest level and any
+     imputed months. All rows to date are imputation = N — directly priced. */
+  const itemSeries = {}, itemCross = {};
+  Object.values(grid.item).sort((a, b) => (a.code < b.code ? -1 : 1)).forEach((it, i) => {
+    const k = slugify(it.name);
+    const yoy = yoyFromLevels(it.levels);
+    const own = [...it.levels.keys()].sort();
+    itemSeries[k] = {
+      name: `cpi2024_item_${k}_yoy_pct`, label: it.name, color: GREYS[i % GREYS.length],
+      code: it.code, division: it.division,
+      latest_level: it.levels.get(own.at(-1)) ?? null, latest_level_month: own.at(-1) ?? null,
+      imputed_months: it.imputedMonths.sort(),
+      data: axis.map((ym) => yoy.get(ym) ?? null),
+    };
+    itemCross[k] = axis.map((ym) => it.published.get(ym) ?? null);
+  });
+  const bundleItems2024 = {
+    meta: meta(`All India, Combined; all ${Object.keys(itemSeries).length} items of the 2024 basket`, {
+      imputationNote: imputedItems.length
+        ? `${imputedItems.length} items carry at least one imputed (Y) month; those months are listed per series in imputed_months.`
+        : "Every All-India combined item row served so far is flagged N — the index was compiled from collected prices, not imputed. Items with imputed months would list them in imputed_months.",
+    }),
+    dates, series: itemSeries,
+    crosscheck: { published_inflation: itemCross },
+  };
+
+  /* ---- states bundles: published General index per state/UT ---- */
+  const stateBundle24 = (sectors) => {
+    const series = {}, cross = {};
+    for (const sector of sectors) {
+      const sfx = sectors.length > 1 ? `_${sector}` : "";
+      Object.keys(stateLevels24[sector]).sort().forEach((sKey, i) => {
+        const st = stateLevels24[sector][sKey];
+        const yoy = yoyFromLevels(st.levels);
+        if (!yoy.size) return;
+        series[`${sKey}${sfx}`] = {
+          name: `cpi2024_${sKey}${sfx}_yoy_pct`,
+          label: sectors.length > 1 ? `${st.label} · ${sector}` : st.label,
+          color: GREYS[i % GREYS.length],
+          data: axis.map((ym) => yoy.get(ym) ?? null),
+          published: true,
+        };
+        cross[`${sKey}${sfx}`] = axis.map((ym) => st.published.get(ym) ?? null);
+      });
+    }
+    return { series, cross };
+  };
+  const stC = stateBundle24(["combined"]);
+  const bundleStates2024 = {
+    meta: meta("States/UTs, Combined; published General index (state baskets differ — no all-India weights applied)"),
+    dates, series: stC.series,
+    crosscheck: { published_inflation: stC.cross },
+  };
+  const stRU = stateBundle24(["rural", "urban"]);
+  const bundleStatesSectors2024 = {
+    meta: meta("States/UTs, Rural and Urban; published General index"),
+    dates, series: stRU.series,
+    crosscheck: { published_inflation: stRU.cross },
+  };
+
   /* ---- back-series bundle: the NSO's own back-cast, 2013–2024 ---- */
   const backMonths = [...back.levels.keys()].sort();
   const backAxis = monthAxis(backMonths[0], backMonths.at(-1));
@@ -516,8 +713,97 @@ export async function buildCpi2024(root, dcfg, vintage) {
   raw.published_inflation["back:combined:headline"] = Object.fromEntries([...back.published.entries()].sort());
   writeRaw(root, "data/raw/cpi-2024-indices.json", raw);
 
+  // the full hierarchy below the divisions (groups/classes/sub-classes/items)
+  const rawGrid = {
+    vintage, unit: `index, base ${base}`,
+    note: "All India, Combined; every level of the COICOP-2018-style hierarchy below the 13 divisions, keyed sector:code:name. " +
+      "Classes and sub-classes are archived here only — baked bundles carry the group and item levels. " +
+      "imputed_months lists item-months flagged imputation=Y at source (none so far: every row served is N).",
+    levels: {}, published_inflation: {}, imputed_months: {},
+  };
+  for (const lv of ["group", "class", "sub_class", "item"]) {
+    for (const s of Object.values(grid[lv])) {
+      const key = `combined:${s.code}:${slugify(s.name)}`;
+      rawGrid.levels[key] = Object.fromEntries([...s.levels.entries()].sort());
+      if (s.published.size) rawGrid.published_inflation[key] = Object.fromEntries([...s.published.entries()].sort());
+      if (s.imputedMonths.length) rawGrid.imputed_months[key] = s.imputedMonths.sort();
+    }
+  }
+  writeRaw(root, "data/raw/cpi-2024-grid.json", rawGrid);
+
+  const rawStates24 = { vintage, unit: `index, base ${base}, published General index`, levels: {}, published_inflation: {} };
+  for (const [sector, byKey] of Object.entries(stateLevels24)) {
+    for (const [k, s] of Object.entries(byKey)) {
+      rawStates24.levels[`${sector}:${k}`] = Object.fromEntries([...s.levels.entries()].sort());
+      if (s.published.size) rawStates24.published_inflation[`${sector}:${k}`] = Object.fromEntries([...s.published.entries()].sort());
+    }
+  }
+  writeRaw(root, "data/raw/cpi-2024-states-indices.json", rawStates24);
+
   writeJson(root, "data/series/cpi-2024.json", bundle2024);
   writeJson(root, "data/series/cpi-2024-sectors.json", bundleSectors2024);
   writeJson(root, "data/series/cpi-2024-back.json", bundleBack2024);
+  writeJson(root, "data/series/cpi-2024-groups.json", bundleGroups2024);
+  writeJson(root, "data/series/cpi-2024-items.json", bundleItems2024);
+  writeJson(root, "data/series/cpi-2024-states.json", bundleStates2024);
+  writeJson(root, "data/series/cpi-2024-states-sectors.json", bundleStatesSectors2024);
   return bundle2024;
+}
+
+/* =========================================================================
+ * CPI on base 2010=100 — ARCHIVED, NOT BAKED. Probed live 2026-08-08: the
+ * API serves a 48-month fragment, Jan 2011 – Dec 2014, on the pre-2012
+ * scheme (7 groups / 28 subgroups, state_code 99 = All India). Its entire
+ * span predates the dossier's 2016 window and overlaps the retired 2012
+ * base for 2013–14; baking it would put a third ruler on the seam plate for
+ * 48 months of superseded readings. The All-India combined table is
+ * archived raw as the audit trail; the decision is documented in
+ * data/sources.yml. First-year rows carry inflation=null (no 2010 monthly
+ * levels exist to divide by), which is preserved as-is.
+ * ========================================================================= */
+export async function buildCpi2010Archive(root, dcfg, vintage) {
+  const filt = await mospi("cpi/getCpiFilterByLevelAndBaseYear", {
+    base_year: 2010, level: "Group", series: "Current",
+  });
+  // this base's filter payload wraps the object directly in data (the 2024
+  // base wraps it in a one-element array) — handle both shapes
+  const fd = (Array.isArray(filt.data) ? filt.data[0] : filt.data) ?? {};
+  const years = (fd.year ?? []).map((y) => y.year).sort();
+  if (!years.length) throw new Error("CPI 2010 archive: filter served no years");
+  const seen = new Set();
+  const rows = [];
+  for (const year of years) {
+    for (let page = 1; page <= 8; page++) {
+      const res = await mospi("cpi/getCPIData", {
+        base_year: 2010, level: "Group", series: "Current",
+        state_code: 99, sector_code: 3, year, page, limit: 100,
+      });
+      const batch = res.data ?? [];
+      let added = 0;
+      for (const r of batch) {
+        const k = JSON.stringify(r);
+        if (!seen.has(k)) { seen.add(k); rows.push(r); added++; }
+      }
+      if (batch.length < 100 || added === 0) break;
+    }
+  }
+  const levels = {}, published = {};
+  for (const r of rows) {
+    const m = String(MONTHS.indexOf(r.month) + 1).padStart(2, "0");
+    if (m === "00") continue;
+    const ym = `${r.year}-${m}`;
+    const key = `combined:${slugify(r.subgroup)}`;
+    const v = parseFloat(r.index);
+    if (Number.isFinite(v) && v !== 0) (levels[key] ??= {})[ym] = v;
+    const inf = parseFloat(r.inflation);
+    if (Number.isFinite(inf)) (published[key] ??= {})[ym] = inf;
+  }
+  process.stdout.write(`cpi-2010 archive: ${rows.length} rows, ${Object.keys(levels).length} subgroups, years ${years.join(", ")}\n`);
+  writeRaw(root, "data/raw/cpi-2010-indices.json", {
+    vintage, unit: "index, base 2010=100",
+    note: "ARCHIVE ONLY, never baked. The API's base-2010 CPI is a 48-month fragment (Jan 2011 – Dec 2014) on the pre-2012 " +
+      "group/subgroup scheme; its span predates the dossier window and is superseded by the 2012 base. All India, Combined, " +
+      "all 28 subgroups. 2011 rows carry no published inflation (no 2010 monthly levels).",
+    levels, published_inflation: published,
+  });
 }

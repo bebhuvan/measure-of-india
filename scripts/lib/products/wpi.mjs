@@ -17,6 +17,14 @@ export async function buildWpi(root, dcfg, vintage) {
   for (const key of Object.values(major_groups)) levels[key] = new Map();
   const groupLevels = {}; // 2-digit group slug -> { label, map }
   const subgroupLevels = {}; // subgroup slug -> { label, map }
+  // ITEM LEVEL (v1.2). The same paged stream carries the item rows — no extra
+  // requests. 697 items in the 2011-12 basket (117 primary / 16 fuel / 564
+  // manufactured); labels are unique across the basket (verified against
+  // wpi/getWpiData filter metadata), so the item slug alone is a safe key.
+  const itemLevels = {}; // item slug -> { label, lineage fields, map }
+  // Between sub-group and item sit four sub-sub-group aggregates (Cereals,
+  // Pulses, Vegetables, Fruits) — archived to raw for a complete tree.
+  const subsubLevels = {}; // sub-sub-group slug -> { label, lineage, map }
 
   for (const [mgCode, key] of Object.entries(major_groups)) {
     for (let year = 2012; year <= endYear; year++) {
@@ -27,13 +35,18 @@ export async function buildWpi(root, dcfg, vintage) {
         });
         const rows = res.data ?? [];
         for (const r of rows) {
-          if (r.item != null) continue; // aggregates only — item level stays at the source
           const m = String(MONTHS.indexOf(r.month) + 1).padStart(2, "0");
           if (m === "00") continue;
           const v = parseFloat(r.index_value);
           if (!Number.isFinite(v)) continue;
           const ym = `${r.year}-${m}`;
-          if (r.group == null) {
+          if (r.item != null) {
+            const k = slugify(r.item);
+            (itemLevels[k] ??= {
+              label: r.item, majorgroup: r.majorgroup, group: r.group,
+              subgroup: r.subgroup, sub_subgroup: r.sub_subgroup ?? null, map: new Map(),
+            }).map.set(ym, v);
+          } else if (r.group == null) {
             levels[key].set(ym, v);
           } else if (r.subgroup == null) {
             const k = slugify(r.group);
@@ -41,6 +54,11 @@ export async function buildWpi(root, dcfg, vintage) {
           } else if (r.sub_subgroup == null) {
             const k = slugify(r.subgroup);
             (subgroupLevels[k] ??= { label: r.subgroup, map: new Map() }).map.set(ym, v);
+          } else {
+            const k = slugify(r.sub_subgroup);
+            (subsubLevels[k] ??= {
+              label: r.sub_subgroup, group: r.group, subgroup: r.subgroup, map: new Map(),
+            }).map.set(ym, v);
           }
         }
         const total = res.meta_data?.totalPages ?? 1;
@@ -128,7 +146,7 @@ export async function buildWpi(root, dcfg, vintage) {
     dates, series: groupSeries,
   };
   // subgroups bundle — the full detailed level below the 2-digit groups
-  // (134 series; item level stays at the source)
+  // (134 series; the 697 items are baked separately in wpi-items.json)
   const subgroupSeries = {};
   Object.keys(subgroupLevels).sort().forEach((k, i) => {
     const yoy = yoyFromLevels(subgroupLevels[k].map);
@@ -147,8 +165,70 @@ export async function buildWpi(root, dcfg, vintage) {
     },
     dates, series: subgroupSeries,
   };
+  // ---- item level: raw dump + full-history y/y bundle ----
+  // Raw is the audit trail: every item's complete level history with its
+  // lineage, plus the four sub-sub-group aggregates.
+  const itemsRaw = {
+    vintage, unit: "index, base 2011-12=100",
+    coverage: "all items of the 2011-12 basket, with lineage; plus the four sub-sub-group aggregates",
+    items: {}, sub_subgroups: {},
+  };
+  for (const k of Object.keys(itemLevels).sort()) {
+    const it = itemLevels[k];
+    itemsRaw.items[k] = {
+      label: it.label, majorgroup: it.majorgroup, group: it.group,
+      subgroup: it.subgroup, sub_subgroup: it.sub_subgroup,
+      levels: Object.fromEntries([...it.map.entries()].sort()),
+    };
+  }
+  for (const k of Object.keys(subsubLevels).sort()) {
+    const s = subsubLevels[k];
+    itemsRaw.sub_subgroups[k] = {
+      label: s.label, group: s.group, subgroup: s.subgroup,
+      levels: Object.fromEntries([...s.map.entries()].sort()),
+    };
+  }
+  writeRaw(root, "data/raw/wpi-items.json", itemsRaw);
+
+  // SIZE DECISION (measured): full y/y history for all 697 items on the
+  // 2016-01.. axis bakes to ~1.1 MB pretty-printed — well under the 8-10 MB
+  // budget at which a cross-section-only bundle would be baked instead. So
+  // the bundle carries the complete y/y history for every item; the full
+  // level history lives in raw.
+  const itemSeries = {};
+  const gapDates = new Set();
+  Object.keys(itemLevels).sort().forEach((k, i) => {
+    const it = itemLevels[k];
+    const yy = yoyFromLevels(it.map);
+    const data = axis.map((ym) => yy.get(ym) ?? null);
+    const first = data.findIndex((v) => v != null);
+    if (first !== -1) {
+      const last = data.length - 1 - [...data].reverse().findIndex((v) => v != null);
+      data.forEach((v, j) => { if (v == null && j > first && j < last) gapDates.add(dates[j]); });
+    }
+    const lineage = [it.majorgroup, it.group, it.subgroup, it.sub_subgroup].filter(Boolean).join(" › ");
+    itemSeries[k] = {
+      name: `wpi_item_${k}_yoy_pct`, label: it.label, lineage,
+      color: GREYS[i % GREYS.length],
+      latestIndex: it.map.get(lastMonth) ?? null,
+      data,
+    };
+  });
+  const itemsBundle = {
+    meta: {
+      dossier: "wpi", frequency: "monthly", base: dcfg.base,
+      source: dcfg.source_agency, vintage, mock: false,
+      latestPeriod: lastMonth, releaseDate: bundle.meta.releaseDate,
+      coverage: `The ${Object.keys(itemSeries).length} items beneath the sub-groups — the finest grain the OEA publishes`,
+      note: "full y/y history for every item, computed from index levels; latestIndex is the level at latestPeriod; item weights are not served by the API, so no weighted recomposition is asserted",
+      gaps: [...gapDates].sort(),
+      revisionPolicy: dcfg.revision_policy,
+    },
+    dates, series: itemSeries,
+  };
   writeJson(root, "data/series/wpi.json", bundle);
   writeJson(root, "data/series/wpi-groups.json", groupsBundle);
   writeJson(root, "data/series/wpi-subgroups.json", subgroupsBundle);
+  writeJson(root, "data/series/wpi-items.json", itemsBundle);
   return bundle;
 }
