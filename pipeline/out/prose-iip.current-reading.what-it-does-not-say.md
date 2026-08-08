@@ -1,0 +1,1 @@
+June printed 7.32%. That number does not say the industry is booming. A single month is noise: vegetables, holidays, one-off plant shutdowns move it more than any trend. These are quick estimates, revised later. The index counts goods only; services, over half the economy, sit in another index. The true monthly pulse stays unknown until revisions settle.

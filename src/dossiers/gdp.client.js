@@ -7,6 +7,9 @@ import * as Plot from "@observablehq/plot";
 import bundle from "../../data/series/gdp.json";
 import expBundle from "../../data/series/gdp-expenditure.json";
 import accBundle from "../../data/series/gdp-accounts.json";
+import indBundle from "../../data/series/gdp-industries.json";
+import nomBundle from "../../data/series/gdp-nominal.json";
+import nbBundle from "../../data/series/gdp-2022.json";
 import {
   MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend,
   peakOf, troughOf, peakBetween, dodgeEndLabels, spark,
@@ -15,6 +18,9 @@ import {
 const S = hydrate(bundle);
 const E = hydrate(expBundle);
 const ACC = hydrate(accBundle);
+const IND = hydrate(indBundle);   // 8-sector real GVA, same quarter grid as S
+const N = hydrate(nomBundle);     // nominal GDP, real GDP, implied deflator
+const NB = hydrate(nbBundle);     // the 2022-23 base — separate axis, never spliced
 // presentation palette for the expenditure plate — unique per line
 E.imports.color = "#BE3E26";
 E.exports.color = "#5B564B";
@@ -30,10 +36,15 @@ const fmtDate = (d) => {
 };
 
 /* ---------- drive every displayed number from the data ---------- */
-const ALL = { ...S, ...E }; // gdp.json and gdp-expenditure.json share the same quarter grid
+const ALL = { ...S, ...E, ...IND }; // gdp, gdp-expenditure and gdp-industries share the same quarter grid
 const L = {}; for (const k in ALL) L[k] = ALL[k].data.at(-1).value;
 const P = {}; for (const k in ALL) P[k] = ALL[k].data.at(-2).value;
 const Y = {}; for (const k in ALL) Y[k] = ALL[k].data.at(-5).value;
+// the current print lives on the 2022-23 base (NB); the 2011-12 base (L) retired
+// at Q2 FY26 and lives on below in the decade plate. Titleblock + §01 use NB.
+const LNB = {}; for (const k in NB) LNB[k] = NB[k].data.at(-1).value;
+const PNB = {}; for (const k in NB) PNB[k] = NB[k].data.at(-2).value;
+const prevQNB = "vs " + fmtDate(NB.gdp.data.at(-2).date).replace(/ FY\d+$/, "");
 const pc = '<span class="pc">%</span>';
 const arrow = (d) => (d >= 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(2) + " pt";
 const word = (d) => (d >= 0 ? "accelerating" : "slowing");
@@ -42,19 +53,19 @@ const setHTML = (id, h) => (document.getElementById(id).innerHTML = h);
 const setTxt = (id, t) => (document.getElementById(id).textContent = t);
 const f1 = (v) => v.toFixed(2) + "%";
 
-setHTML("n-gdp", L.gdp.toFixed(2) + pc);
-setHTML("n-gva", L.gva.toFixed(2) + pc);
-setHTML("n-pfce", L.pfce.toFixed(2) + pc);
-setHTML("n-gfcf", L.gfcf.toFixed(2) + pc);
-setHTML("d-gdp", `<b>${arrow(L.gdp - P.gdp)}</b> ${prevQ} · ${word(L.gdp - P.gdp)}`);
-setHTML("d-gva", `<b>${arrow(L.gva - P.gva)}</b> ${prevQ} · ${word(L.gva - P.gva)}`);
-setHTML("d-pfce", `<b>${arrow(L.pfce - P.pfce)}</b> ${prevQ} · ${word(L.pfce - P.pfce)}`);
-setHTML("d-gfcf", `<b>${arrow(L.gfcf - P.gfcf)}</b> ${prevQ} · ${word(L.gfcf - P.gfcf)}`);
+setHTML("n-gdp", LNB.gdp.toFixed(2) + pc);
+setHTML("n-gva", LNB.gva.toFixed(2) + pc);
+setHTML("n-pfce", LNB.pfce.toFixed(2) + pc);
+setHTML("n-gfcf", LNB.gfcf.toFixed(2) + pc);
+setHTML("d-gdp", `<b>${arrow(LNB.gdp - PNB.gdp)}</b> ${prevQNB} · ${word(LNB.gdp - PNB.gdp)}`);
+setHTML("d-gva", `<b>${arrow(LNB.gva - PNB.gva)}</b> ${prevQNB} · ${word(LNB.gva - PNB.gva)}`);
+setHTML("d-pfce", `<b>${arrow(LNB.pfce - PNB.pfce)}</b> ${prevQNB} · ${word(LNB.pfce - PNB.pfce)}`);
+setHTML("d-gfcf", `<b>${arrow(LNB.gfcf - PNB.gfcf)}</b> ${prevQNB} · ${word(LNB.gfcf - PNB.gfcf)}`);
 
-setHTML("rb-big", L.gdp.toFixed(2) + pc);
-setHTML("rb-band", `vs 6% trend — <b>${(L.gdp - 6 >= 0 ? "+" : "") + (L.gdp - 6).toFixed(2)} pt</b>`);
+setHTML("rb-big", LNB.gdp.toFixed(2) + pc);
+setHTML("rb-band", `vs 6% trend — <b>${(LNB.gdp - 6 >= 0 ? "+" : "") + (LNB.gdp - 6).toFixed(2)} pt</b>`);
 {
-  const W = 236, H = 46, min = 0, max = 10, val = L.gdp;
+  const W = 236, H = 46, min = 0, max = 10, val = LNB.gdp;
   const X = (v) => ((v - min) / (max - min)) * W, y = 18;
   document.getElementById("rb-scale").innerHTML =
     `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Scale from 0 to 10 per cent. The rough pre-pandemic trend of 6 per cent is dashed; the current reading, ${val.toFixed(2)} per cent, is marked.">` +
@@ -64,8 +75,8 @@ setHTML("rb-band", `vs 6% trend — <b>${(L.gdp - 6 >= 0 ? "+" : "") + (L.gdp - 
     `<circle cx="${X(val)}" cy="${y}" r="4.5" fill="#BE3E26" stroke="#FFFFFF" stroke-width="1.5"/>` +
     `</svg>`;
 }
-setTxt("cr-g1", f1(L.gdp)); setTxt("cr-g0", f1(P.gdp)); setTxt("cr-g3", f1(L.gdp));
-setTxt("cr-c1", f1(L.pfce)); setTxt("cr-i1", f1(L.gfcf)); setTxt("cr-v1", f1(L.gva));
+// §01 "current reading" prose is pipeline-generated (pipeline/out/prose-gdp.*.md);
+// the cr-* figure spans it used to carry are retired.
 
 setTxt("pv-main", f1(L.gdp));
 setTxt("pv-pfce", f1(L.pfce)); setTxt("pv-gfcf", f1(L.gfcf)); setTxt("pv-gva", f1(L.gva));
@@ -102,6 +113,7 @@ setTxt("ac-cfc", f1(accLast("cfc").value));
 }
 
 /* ---------- register ---------- */
+const SH = indBundle.shares; // sector shares of NOMINAL GVA, last four quarters
 const regRows = [
   ["gdp", "Real GDP", "Market prices · the headline", "s-acc", null, "#BE3E26"],
   ["gva", "Real GVA", "Basic prices · before net taxes", "s-g1", null, "#5B564B"],
@@ -110,6 +122,11 @@ const regRows = [
   ["gfce", "Government · GFCE", "The state's own consumption", "s-g4", 9.6, "#8A857A"],
   ["exports", "Exports · goods & services", "Demand from abroad", "s-g1", null, "#5B564B"],
   ["imports", "Imports · goods & services", "Enters with a minus sign", "s-acc", null, "#BE3E26"],
+  // production side — the four most telling engines; shares are of GVA (see table note)
+  ["agriculture", "Agriculture · GVA", "The monsoon engine · share of GVA", "s-g1", SH.agriculture, "#5B564B"],
+  ["manufacturing", "Manufacturing · GVA", "The tradables cycle · share of GVA", "s-g2", SH.manufacturing, "#5B564B"],
+  ["construction", "Construction · GVA", "Where investment becomes jobs · share of GVA", "s-g3", SH.construction, "#5B564B"],
+  ["finance_realty", "Finance & real estate · GVA", "The largest engine · share of GVA", "s-g4", SH.finance_realty, "#5B564B"],
 ];
 document.getElementById("ledger-body").innerHTML = regRows.map(([k, nm, sub, sw, share, col]) => `
   <tr>
@@ -331,6 +348,212 @@ componentChart("cb-gva", "plot-gva", "gva", -28, 24, [-20, -10, 0, 10, 20], "GVA
   wireTools(document.getElementById("cb-acc"), null, accSeries, "india-atlas_national-accounts_annual-six-accounts", fmtFY);
 }
 
+/* ---------- §09 companion: the saving rate (annual, % of nominal GDP) ---------- */
+{
+  const s = ACC.saving_rate;
+  const nn = s.data.filter((d) => d.value != null);
+  const last = nn.at(-1), first = nn[0];
+  const fmtFYs = (d) => "FY" + String(d.getUTCFullYear() + 1).slice(2);
+  const geo = { W: 1184, H: 360, ml: 70, mr: 150, mt: 30, mb: 48, d0: 28, d1: 35 };
+  const yTicks = [28, 30, 32, 34];
+  const xTicks = nn.filter((d) => d.date.getUTCMonth() === 3).map((d) => d.date);
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => "FY" + String(d.getUTCFullYear() + 1).slice(2) },
+    y: { label: "↑ gross saving, % of nominal GDP", labelAnchor: "top", labelArrow: false,
+         tickFormat: (d) => (d === yTicks[yTicks.length - 1] ? d + "%" : String(d)), ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
+    marks: [
+      Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
+      Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
+      Plot.areaY(nn, { x: "date", y: "value", fill: "#BE3E26", fillOpacity: 0.06 }),
+      Plot.lineY(nn, { x: "date", y: "value", stroke: "#BE3E26", strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.dot(nn, { x: "date", y: "value", fill: "#BE3E26", r: 3, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.dot([last], { x: "date", y: "value", fill: "#BE3E26", r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([last], { x: "date", y: "value", text: (d) => d.value.toFixed(1) + "%", dx: 16, fill: "#BE3E26", fontSize: 14, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+    ],
+  });
+  a11y(plot, "Gross saving rate, share of nominal GDP, " + fmtFYs(first.date) + " to " + fmtFYs(last.date),
+    "Line chart. The saving rate ends at " + last.value.toFixed(1) + " per cent of GDP in " + fmtFYs(last.date) + ", down from " + first.value.toFixed(1) + " at the start of the series. India invests more than it saves; the gap is the current account.");
+  document.getElementById("plot-sav").append(plot);
+  wireTools(document.getElementById("cb-sav"), plot, [s], "india-atlas_national-accounts_saving-rate", fmtFYs);
+  setTxt("pv-sav", last.value.toFixed(1) + "%");
+  setTxt("pv-sav-c", fmtFYs(last.date) + " · % of nominal GDP");
+  setTxt("sav-first", first.value.toFixed(1) + "%");
+  setTxt("sav-drop", (first.value - last.value).toFixed(1) + " points");
+}
+
+/* ---------- eight engines : industry GVA small multiples ---------- */
+{
+  const keys = Object.keys(IND);
+  const latest = Object.fromEntries(keys.map((k) => [k, IND[k].data.at(-1).value]));
+  // disclosed accent rule: the fastest and the slowest engine of the latest quarter
+  const fastest = keys.reduce((a, k) => (latest[k] > latest[a] ? k : a));
+  const slowest = keys.reduce((a, k) => (latest[k] < latest[a] ? k : a));
+  setTxt("pv-ind", f1(latest[fastest]));
+  setTxt("pv-ind-c", fmtDate(dates.at(-1)) + " · fastest — " + IND[fastest].label);
+  const fmtSigned = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(2) + "%";
+  setTxt("ex-eng-fast", fmtSigned(latest[fastest]) + " (" + IND[fastest].label.toLowerCase() + ")");
+  setTxt("ex-eng-slow", fmtSigned(latest[slowest]) + " (" + IND[slowest].label.toLowerCase() + ")");
+  setTxt("ex-eng-mfg", f1(latest.manufacturing));
+  setTxt("ex-eng-agri", f1(latest.agriculture));
+  const grid = document.getElementById("grid-ind");
+  for (const k of keys) {
+    const s = IND[k];
+    const nn = s.data.filter((d) => d.value != null);
+    const last = nn.at(-1);
+    const isExtreme = k === fastest || k === slowest;
+    const lineCol = "#8A857A", accCol = "#BE3E26";
+    const vs = nn.map((d) => d.value);
+    const lo = Math.min(...vs, 0), hi = Math.max(...vs, 0);
+    const pad = (hi - lo) * 0.12 + 0.5;
+    const div = document.createElement("div");
+    div.style.cssText = "border-top:1px solid #E6E2D6;padding-top:14px;min-width:0";
+    div.innerHTML =
+      `<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px">` +
+      `<div style="min-width:0"><div style="font-size:1.02rem;color:#1B1A17;line-height:1.35">${s.label}</div>` +
+      `<div style="font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:#8A857A;margin-top:3px">${SH[k].toFixed(1)}% of GVA</div></div>` +
+      `<div style="text-align:right;flex-shrink:0"><div style="font-family:'Newsreader',serif;font-weight:300;font-size:1.55rem;font-variant-numeric:tabular-nums;white-space:nowrap;color:${isExtreme ? accCol : "#1B1A17"}">${fmtSigned(last.value)}</div>` +
+      `<div style="font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:#8A857A;margin-top:3px">${fmtDate(last.date)} · y/y</div></div></div>`;
+    const mini = Plot.plot({
+      width: 280, height: 96, marginLeft: 4, marginRight: 10, marginTop: 10, marginBottom: 6,
+      style: { background: "transparent" },
+      x: { axis: null }, y: { axis: null, domain: [lo - pad, hi + pad] },
+      marks: [
+        Plot.ruleY([0], { stroke: "#D8D3C4", strokeWidth: 1 }),
+        Plot.lineY(nn, { x: "date", y: "value", stroke: lineCol, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
+        Plot.dot([last], { x: "date", y: "value", fill: isExtreme ? accCol : lineCol, r: 3, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      ],
+    });
+    mini.setAttribute("aria-hidden", "true");
+    mini.style.width = "100%"; mini.style.height = "auto";
+    div.append(mini);
+    const foot = document.createElement("div");
+    foot.style.cssText = "display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:#B4AFA2;margin-top:2px";
+    foot.innerHTML = `<span>${fmtDate(nn[0].date)}</span><span>${fmtDate(last.date)}</span>`;
+    div.append(foot);
+    grid.append(div);
+  }
+  grid.setAttribute("aria-label",
+    "Eight small line charts of quarterly real GVA growth by industry: agriculture, mining, manufacturing, utilities, construction, trade and transport, finance and real estate, public administration, Q1 FY17 to " + fmtDate(dates.at(-1)) + ". Latest year-on-year values are printed beside each panel; the fastest, " + IND[fastest].label + ", and the slowest, " + IND[slowest].label + ", are marked in vermilion.");
+  wireTools(document.getElementById("cb-ind"), null, keys.map((k) => IND[k]), "india-atlas_national-accounts_gva-by-industry_fy17-fy26", fmtDate);
+}
+
+/* ---------- deflator wedge : nominal vs real GDP ---------- */
+{
+  const keys = ["gdp_nominal", "gdp_real", "deflator"];
+  const seriesList = keys.map((k) => N[k]);
+  const geo = { W: 1184, H: 470, ml: 70, mr: 230, mt: 30, mb: 48, d0: -25, d1: 35 };
+  const yTicks = [-20, -10, 0, 10, 20, 30];
+  const dodged = dodgeEndLabels(seriesList, (geo.d1 - geo.d0) * 0.05);
+  const pkD = peakOf(N.deflator);
+  const sy = (px) => px / ((geo.H - geo.mt - geo.mb) / (geo.d1 - geo.d0));
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    x: { label: null, tickSize: 0, tickPadding: 16,
+         ticks: [2016, 2018, 2020, 2022, 2024].map((y) => new Date(Date.UTC(y, 0, 1))),
+         tickFormat: (d) => String(d.getUTCFullYear()) },
+    y: { label: "↑ year-on-year, per cent", labelAnchor: "top", labelArrow: false,
+         tickFormat: (d) => (d === yTicks[yTicks.length - 1] ? d + "%" : String(d)), ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
+    marks: [
+      Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
+      Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
+      Plot.ruleY([0], { stroke: "#1B1A17", strokeOpacity: 0.55, strokeWidth: 1 }),
+      Plot.ruleX([new Date(Date.UTC(2020, 3, 1))], { stroke: "#D8D3C4", strokeWidth: 1, strokeDasharray: "2,3" }),
+      Plot.text([{ date: new Date(Date.UTC(2020, 5, 1)), value: 32.5 }], { x: "date", y: "value", text: ["COVID-19"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
+      Plot.lineY(N.deflator.data, { x: "date", y: "value", stroke: N.deflator.color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.lineY(N.gdp_real.data, { x: "date", y: "value", stroke: N.gdp_real.color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.lineY(N.gdp_nominal.data, { x: "date", y: "value", stroke: N.gdp_nominal.color, strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.lineY(N.gdp_nominal.data.slice(-5), { x: "date", y: "value", stroke: N.gdp_nominal.color, strokeWidth: 4.5, strokeLinecap: "round", strokeLinejoin: "round" }),
+      Plot.dot([pkD], { x: "date", y: "value", fill: N.deflator.color, r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.line([{ x: pkD.date, y: pkD.value - sy(7) }, { x: pkD.date, y: pkD.value - sy(19) }], { x: "x", y: "y", stroke: "#8A857A", strokeWidth: 1 }),
+      Plot.text([{ date: pkD.date, value: pkD.value - sy(27) }], { x: "date", y: "value", text: () => pkD.value.toFixed(1) + "% · " + fmtDate(pkD.date) + " · deflator peak", fill: "#8A857A", fontSize: 13, fontFamily: mono, textAnchor: "middle" }),
+      ...seriesList.map((s) => Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: s === N.gdp_nominal ? 5 : 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
+      ...dodged.filter((p) => Math.abs(p.y - p.value) > 0.05).map((p) => Plot.line([
+        { x: dates.at(-1), y: p.value }, { x: dates.at(-1), y: p.y },
+      ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
+      ...dodged.map((p) => Plot.text([{ date: dates.at(-1), y: p.y }], {
+        x: "date", y: "y", text: () => `${p.s.label} ${p.value.toFixed(2)}%`,
+        dx: 16, fill: p.s.color, fontSize: 14.5, fontFamily: mono,
+        fontWeight: p.s === N.gdp_nominal ? 500 : 400, textAnchor: "start",
+      })),
+    ],
+  });
+  const Ld = N.deflator.data.at(-1).value, Ln = N.gdp_nominal.data.at(-1).value;
+  a11y(plot, "Nominal GDP, real GDP and the implied deflator, year-on-year, Q1 FY17 to " + fmtDate(dates.at(-1)),
+    "Line chart. Nominal GDP ends at " + Ln.toFixed(1) + " per cent, real GDP at " + L.gdp.toFixed(1) + ", the implied deflator at " + Ld.toFixed(1) + ". The deflator peaked at " + pkD.value.toFixed(1) + " per cent in " + fmtDate(pkD.date) + " and briefly turned negative in FY16.");
+  document.getElementById("plot-defl").append(plot);
+  wireTools(document.getElementById("cb-defl"), plot, seriesList, "india-atlas_national-accounts_nominal-real-deflator_fy17-fy26", fmtDate);
+  wireLegend(document.getElementById("legend-defl"), plot, keys, N);
+  addCrosshair(document.getElementById("plot-defl"), plot, seriesList, geo, fmtDate);
+  setTxt("pv-defl", f1(Ld));
+  setTxt("ex-defl-n", f1(Ln));
+  setTxt("ex-defl-r", f1(L.gdp));
+  setTxt("ex-defl-d", f1(Ld));
+  setTxt("ex-defl-pk", pkD.value.toFixed(1) + "% (" + fmtDate(pkD.date) + ")");
+}
+
+/* ---------- saving rate — current prices only, so a share, not a growth ---------- */
+setTxt("ac-sav", accLast("saving_rate").value.toFixed(1) + "%");
+setTxt("ac-sav0", ACC.saving_rate.data.find((d) => d.value != null).value.toFixed(1) + "%");
+
+/* ---------- the new base : 2022-23, separate axis, never spliced ---------- */
+{
+  const nbDates = NB.gdp.data.map((d) => d.date);
+  const keys = ["gdp", "gva", "pfce", "gfcf"];
+  const seriesList = keys.map((k) => NB[k]);
+  const geo = { W: 1184, H: 440, ml: 70, mr: 210, mt: 30, mb: 48, d0: 0, d1: 13 };
+  const yTicks = [0, 2, 4, 6, 8, 10, 12];
+  const dodged = dodgeEndLabels(seriesList, (geo.d1 - geo.d0) * 0.05);
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    x: { label: null, tickSize: 0, tickPadding: 16,
+         ticks: [2024, 2025, 2026].map((y) => new Date(Date.UTC(y, 0, 1))),
+         tickFormat: (d) => String(d.getUTCFullYear()) },
+    y: { label: "↑ year-on-year, per cent", labelAnchor: "top", labelArrow: false,
+         tickFormat: (d) => (d === yTicks[yTicks.length - 1] ? d + "%" : String(d)), ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
+    marks: [
+      Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
+      Plot.ruleY([0], { stroke: "#1B1A17", strokeOpacity: 0.55, strokeWidth: 1 }),
+      ...keys.slice(1).map((k) => Plot.lineY(NB[k].data, { x: "date", y: "value", stroke: NB[k].color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" })),
+      Plot.lineY(NB.gdp.data, { x: "date", y: "value", stroke: NB.gdp.color, strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.lineY(NB.gdp.data.slice(-3), { x: "date", y: "value", stroke: NB.gdp.color, strokeWidth: 4.5, strokeLinecap: "round", strokeLinejoin: "round" }),
+      ...seriesList.map((s) => Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: s === NB.gdp ? 5 : 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
+      ...dodged.filter((p) => Math.abs(p.y - p.value) > 0.05).map((p) => Plot.line([
+        { x: nbDates.at(-1), y: p.value }, { x: nbDates.at(-1), y: p.y },
+      ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
+      ...dodged.map((p) => Plot.text([{ date: nbDates.at(-1), y: p.y }], {
+        x: "date", y: "y", text: () => `${p.s.label} ${p.value.toFixed(2)}%`,
+        dx: 16, fill: p.s.color, fontSize: 14.5, fontFamily: mono,
+        fontWeight: p.s === NB.gdp ? 500 : 400, textAnchor: "start",
+      })),
+    ],
+  });
+  const nbL = NB.gdp.data.at(-1).value;
+  a11y(plot, "Real GDP, GVA and the consumption and investment engines on the 2022-23 base, year-on-year, Q1 FY24 to " + fmtDate(nbDates.at(-1)),
+    "Line chart on a deliberately short axis. GDP ends at " + nbL.toFixed(1) + " per cent, GVA at " + NB.gva.data.at(-1).value.toFixed(1) + ", consumption at " + NB.pfce.data.at(-1).value.toFixed(1) + ", investment at " + NB.gfcf.data.at(-1).value.toFixed(1) + ". This series is on the new 2022-23 base and is never spliced with the 2011-12-base plates above.");
+  document.getElementById("plot-nb").append(plot);
+  wireTools(document.getElementById("cb-nb"), plot, seriesList, "india-atlas_national-accounts_base2022-four-engines_fy24-fy26", fmtDate);
+  wireLegend(document.getElementById("legend-nb"), plot, keys, NB);
+  addCrosshair(document.getElementById("plot-nb"), plot, seriesList, geo, fmtDate);
+  setTxt("pv-nb", f1(nbL));
+  setTxt("pv-nb-c", fmtDate(nbDates.at(-1)) + " · GDP y/y · base 2022–23");
+  setTxt("nb-q3", f1(NB.gdp.data.at(-2).value));
+  setTxt("nb-q4", f1(nbL));
+  setTxt("nb-gfcf", f1(NB.gfcf.data.at(-1).value));
+  // the overlap quarter, re-scored: Q1 FY26 on both bases
+  const oldQ1 = S.gdp.data.at(-2);
+  const newQ1 = NB.gdp.data.find((d) => d.date.getTime() === oldQ1.date.getTime());
+  setTxt("nb-old-q1", f1(oldQ1.value));
+  setTxt("nb-new-q1", f1(newQ1.value));
+  setTxt("nb-gap", Math.abs(oldQ1.value - newQ1.value).toFixed(2) + " pt");
+}
+
 /* ---------- ledger sparklines ---------- */
 spark("nspark-gdp", S.gdp);
 spark("sp-gdp", S.gdp);
@@ -340,6 +563,10 @@ spark("sp-gfcf", S.gfcf);
 spark("sp-gfce", E.gfce);
 spark("sp-exports", E.exports);
 spark("sp-imports", E.imports);
+spark("sp-agriculture", IND.agriculture);
+spark("sp-manufacturing", IND.manufacturing);
+spark("sp-construction", IND.construction);
+spark("sp-finance_realty", IND.finance_realty);
 
 /* ---------- provenance vintage — driven from the baked bundle, never hardcoded ---------- */
 setTxt("prov-vintage", bundle.meta.vintage);

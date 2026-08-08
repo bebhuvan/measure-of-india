@@ -1,0 +1,222 @@
+{
+ "meta": {
+  "dossier": "plfs",
+  "frequency": "annual",
+  "base": "survey 2017-18 onward",
+  "source": "MoSPI, National Statistical Office",
+  "vintage": "2026-08-07",
+  "mock": false,
+  "releaseDate": null,
+  "coverage": "All India, 15 years and above, rural + urban; share of workers by broad status in employment (usual status, PS+SS) and by broad industry (CWS); annual PLFS reports, agriculture years (Jul–Jun) plotted at July",
+  "revisionPolicy": "Final on release. Monthly bulletin (rural+urban, CWS) began Apr 2025; earlier history is the quarterly bulletin (urban, CWS) — separate series, never joined.",
+  "latestPeriod": "2023-07",
+  "note": "Composition identities hold as published: self-employed + regular + casual = 100 per gender; own-account + helpers = self-employed; primary + secondary + tertiary = 100. The API serves a single population for this indicator (its age filter returns no rows); values match the published 15+ statements."
+ },
+ "dates": [
+  "2017-07-01",
+  "2018-07-01",
+  "2019-07-01",
+  "2020-07-01",
+  "2021-07-01",
+  "2022-07-01",
+  "2023-07-01"
+ ],
+ "series": {
+  "self_employed_person": {
+   "name": "plfs_workers_share_self_employed_person_pct",
+   "label": "Self-employed",
+   "color": "#BE3E26",
+   "data": [
+    52.2,
+    52.1,
+    53.5,
+    55.6,
+    55.8,
+    57.3,
+    58.4
+   ]
+  },
+  "regular_person": {
+   "name": "plfs_workers_share_regular_person_pct",
+   "label": "Regular wage/salary",
+   "color": "#5B564B",
+   "data": [
+    22.8,
+    23.8,
+    22.9,
+    21.1,
+    21.5,
+    20.9,
+    21.7
+   ]
+  },
+  "casual_person": {
+   "name": "plfs_workers_share_casual_person_pct",
+   "label": "Casual labour",
+   "color": "#A8A293",
+   "data": [
+    24.9,
+    24.1,
+    23.6,
+    23.3,
+    22.7,
+    21.8,
+    19.8
+   ]
+  },
+  "se_own_account_person": {
+   "name": "plfs_workers_share_se_own_account_person_pct",
+   "label": "Own-account & employers",
+   "color": "#8A857A",
+   "data": [
+    38.6,
+    38.8,
+    37.6,
+    38.2,
+    38.3,
+    39,
+    39
+   ]
+  },
+  "se_helper_person": {
+   "name": "plfs_workers_share_se_helper_person_pct",
+   "label": "Household-enterprise helpers",
+   "color": "#C6C0B0",
+   "data": [
+    13.6,
+    13.3,
+    15.9,
+    17.3,
+    17.5,
+    18.3,
+    19.4
+   ]
+  },
+  "self_employed_male": {
+   "name": "plfs_workers_share_self_employed_male_pct",
+   "label": "self employed · male",
+   "color": "#5B564B",
+   "data": [
+    52.3,
+    51.7,
+    52.4,
+    53.9,
+    53.2,
+    53.6,
+    53.6
+   ]
+  },
+  "regular_male": {
+   "name": "plfs_workers_share_regular_male_pct",
+   "label": "regular · male",
+   "color": "#5B564B",
+   "data": [
+    23.4,
+    24.4,
+    24,
+    22.7,
+    23.6,
+    23.2,
+    24.9
+   ]
+  },
+  "casual_male": {
+   "name": "plfs_workers_share_casual_male_pct",
+   "label": "casual · male",
+   "color": "#5B564B",
+   "data": [
+    24.3,
+    24,
+    23.6,
+    23.3,
+    23.2,
+    23.2,
+    21.5
+   ]
+  },
+  "self_employed_female": {
+   "name": "plfs_workers_share_self_employed_female_pct",
+   "label": "self employed · female",
+   "color": "#A8A293",
+   "data": [
+    51.9,
+    53.4,
+    56.3,
+    59.4,
+    62.1,
+    65.3,
+    67.4
+   ]
+  },
+  "regular_female": {
+   "name": "plfs_workers_share_regular_female_pct",
+   "label": "regular · female",
+   "color": "#A8A293",
+   "data": [
+    21,
+    21.9,
+    20,
+    17.4,
+    16.5,
+    15.9,
+    15.9
+   ]
+  },
+  "casual_female": {
+   "name": "plfs_workers_share_casual_female_pct",
+   "label": "casual · female",
+   "color": "#A8A293",
+   "data": [
+    27,
+    24.7,
+    23.7,
+    23.2,
+    21.4,
+    18.8,
+    16.7
+   ]
+  },
+  "industry_primary_person": {
+   "name": "plfs_workers_share_industry_primary_pct",
+   "label": "Agriculture & allied · CWS",
+   "color": "#BE3E26",
+   "data": [
+    42.4,
+    40.2,
+    43.7,
+    44.3,
+    42.9,
+    43,
+    43.5
+   ]
+  },
+  "industry_secondary_person": {
+   "name": "plfs_workers_share_industry_secondary_pct",
+   "label": "Industry & construction · CWS",
+   "color": "#5B564B",
+   "data": [
+    24.9,
+    25.7,
+    23.5,
+    24.4,
+    25.3,
+    26.2,
+    24.9
+   ]
+  },
+  "industry_tertiary_person": {
+   "name": "plfs_workers_share_industry_tertiary_pct",
+   "label": "Services · CWS",
+   "color": "#A8A293",
+   "data": [
+    32.6,
+    34.2,
+    32.8,
+    31.3,
+    31.8,
+    30.8,
+    31.6
+   ]
+  }
+ }
+}

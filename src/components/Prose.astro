@@ -1,0 +1,19 @@
+---
+// Renders a pipeline-generated dated prose slot (pipeline/out/prose-<slot>.md) as
+// one <p> per paragraph. The pipeline's verify/lint/contract gates have already
+// checked every number traces to the facts sheet; the slot is regenerated on each
+// release by `npm run prose`. If the file is absent (e.g. a fresh checkout before
+// the first prose run), a placeholder keeps the build green rather than crashing.
+import fs from "node:fs";
+
+interface Props { slot: string; }
+const { slot } = Astro.props;
+const file = `pipeline/out/prose-${slot}.md`;
+let paras: string[] = [];
+try {
+  paras = fs.readFileSync(file, "utf8").trim().split(/\n\s*\n+/).map((p) => p.replace(/\s+/g, " ").trim()).filter(Boolean);
+} catch {
+  paras = ["(dated prose pending — run: npm run prose " + slot.split(".")[0] + ")"];
+}
+---
+{paras.map((p) => <p>{p}</p>)}

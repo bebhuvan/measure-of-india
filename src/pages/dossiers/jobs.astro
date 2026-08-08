@@ -1,5 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
 ---
 <Base
   title="India Atlas — Jobs · Dossier 06"
@@ -7,7 +8,7 @@ import Base from "../../layouts/Base.astro";
   nav="dossiers"
   dateStamp="July 2026"
   crumbLeft='<a href="/" style="color:inherit">Dossiers</a> / Labour / <b>Employment &amp; Unemployment · PLFS</b>'
-  crumbRight='Evergreen · revised with each bulletin · <b>v1.1</b>'
+  crumbRight='Evergreen · revised with each bulletin · <b>v1.2</b>'
   canonical="https://indiaatlas.in/dossiers/jobs/"
   ogImage="/og/jobs.png"
 >
@@ -46,13 +47,11 @@ import Base from "../../layouts/Base.astro";
     <div class="reading-cols">
       <div class="reading-col">
         <span class="mk">What the print says</span>
-        <p>Fifteen months into India's first monthly jobs bulletin, the headline rate has spent its entire life in a narrow band — <b id="cr-ur0">–</b> at the start, <b id="cr-ur1">–</b> now. Participation sits at <b id="cr-lfpr">–</b>: just over half of everyone aged 15 and above is either working or looking for work.</p>
-        <p>The texture is underneath. Urban women's unemployment runs at <b id="cr-fur">–</b> against urban men's <b id="cr-mur">–</b>, and barely a quarter of urban women are in the labour force at all — <b id="cr-flfpr">–</b>, against three-quarters of urban men.</p>
+        <Prose slot="jobs.current-reading.what-the-print-says" />
       </div>
       <div class="reading-col now">
         <span class="mk">What it does not say</span>
-        <p>It does not say 5.5 per cent of Indians are jobless. The rate's denominator is the labour force — people working or seeking — which excludes students, carers, the retired and the discouraged. When participation is 54 per cent, the unemployment rate is a measure of the seeker's market, not the population's.</p>
-        <p>And a low rate is not a compliment by itself. Where work is informal and staying home is a luxury, few can afford to be counted as unemployed; India's rate has always been low by rich-country standards for exactly that reason.</p>
+        <Prose slot="jobs.current-reading.what-it-does-not-say" />
       </div>
     </div>
   </section>
@@ -228,11 +227,203 @@ import Base from "../../layouts/Base.astro";
         </div>
       </figure>
     </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-wpr" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Who is actually working</h3>
+            <div class="sub">Worker population ratio by gender × sector, CWS · Apr 2025 – Jun 2026 · the gap between this line and the participation line above is the unemployment rate</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-wpr">–</div><div class="c">Jun 2026 · urban men</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-wpr"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, PLFS monthly bulletin · the share of the population actually at work — distinct from the share willing to work (LFPR)</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Participation asks who is in the pool; this asks who is actually in a job. The two lines move together for men, because most men who want work find it. They part sharply for women: many women counted as participating are still searching, so the WPR line sits well below the LFPR line. That vertical gap, read alongside the UR plate, is the unemployment rate made visible.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of June 2026</span>
+            <p>Roughly one urban man in two is at work, against one urban woman in six. The male lines hold steady; the female lines are where a recovering labour market would show it — a WPR rising without LFPR rising means existing seekers are finding work, not new ones joining.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
   </section>
 
-  <!-- § 07 states -->
+  <!-- § 07 what work is -->
   <section>
-    <div class="sec-head"><span class="no">07</span><h2>A country of labour markets</h2><span class="line"></span><span class="unit">per cent · annual · States/UTs</span></div>
+    <div class="sec-head"><span class="no">07</span><h2>What work is</h2><span class="line"></span><span class="unit">share of workers · per cent · annual reports</span></div>
+
+    <div class="break basket">
+      <div class="bar" id="bk-st-bar"></div>
+      <div class="labels" id="bk-st-labels"></div>
+    </div>
+    <div class="break basket" style="margin-top:26px">
+      <div class="bar" id="bk-in-bar"></div>
+      <div class="labels" id="bk-in-labels"></div>
+      <p class="note">Two ways to split the same workforce, 2023-24. By status: a majority works for itself. By industry: the farm still employs more Indians than any other place — on the weekly stopwatch, where seasonal work is counted as it happens.</p>
+    </div>
+
+    <div class="break" style="margin-top:72px">
+      <figure id="cb-status" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The self-employed majority, the salaried minority</h3>
+            <div class="sub">Share of workers by broad status in employment, 15+ · usual status (PS+SS) · 2017-18 – 2023-24</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-status">–</div><div class="c">2023-24 · self-employed share</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-status">
+            <button class="chip" data-key="self_employed_person"><i style="background:#BE3E26"></i>Self-employed</button>
+            <button class="chip" data-key="regular_person"><i style="background:#5B564B"></i>Regular wage/salary</button>
+            <button class="chip" data-key="casual_person"><i style="background:#A8A293"></i>Casual labour</button>
+          </div>
+          <div class="plotzone" id="plot-status"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, PLFS annual reports · shares of all workers, person, rural + urban · the three statuses sum to 100 · agriculture years plotted at July</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The unemployment rate counts people without work. This plate counts the kinds of work the employed actually have. Self-employment — the farm, the shop, the loom — is the Indian norm; the salaried payroll job is the minority; casual labour is the day-rate rest. The underemployment gap in §03 lives here: own-account work absorbs people a payroll never would, at whatever the week offers.</p>
+            <p>Rising self-employment is not simply rising enterprise. Part of it is unpaid: helpers in household enterprises are counted as self-employed workers, and earn no separate wage at all.</p>
+          </div>
+          <div class="now">
+            <span class="mk">The 2023-24 register</span>
+            <p>Self-employment is <b id="ex-st-se">–</b> of all workers — <b id="ex-st-oa">–</b> own-account and employers, <b id="ex-st-hp">–</b> household helpers. Regular wage work is <b id="ex-st-rg">–</b>; casual labour <b id="ex-st-cs">–</b>. Since 2017-18 the self-employed share has risen <b id="ex-st-dse">–</b> while casual work fell <b id="ex-st-dcs">–</b> — the recovery in work has been a movement into working for oneself, not onto payrolls.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 what work pays -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>What work pays</h2><span class="line"></span><span class="unit">₹ · nominal · annual reports, quarterly grain</span></div>
+
+    <div class="break">
+      <figure id="cb-pay" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The pay hierarchy — a month of work, four prices</h3>
+            <div class="sub">Regular wage/salary earnings (₹ per month) and gross earnings from self-employment (₹ per 30 days) · by gender, rural + urban · 2017-18 – 2023-24</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-pay">–</div><div class="c">Apr–Jun 2024 · regular wage · person</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-pay">
+            <button class="chip" data-key="regular_male"><i style="background:#5B564B"></i>Regular · men</button>
+            <button class="chip" data-key="regular_female"><i style="background:#8A857A"></i>Regular · women</button>
+            <button class="chip" data-key="self_employed_male"><i style="background:#A8A293"></i>Self-employed · men</button>
+            <button class="chip" data-key="self_employed_female"><i style="background:#BE3E26"></i>Self-employed · women</button>
+          </div>
+          <div class="plotzone" id="plot-pay"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, PLFS annual reports · nominal ₹, all-India · regular wages are per month, self-employment earnings per 30 days — near-equal windows, plotted together; the casual day-rate has its own plate below · 2017-18 all-India aggregates quarantined (see provenance)</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The unemployment rate says who lacks work. This plate says what the work that exists is worth. Four lines, one shape: the salaried man on top; the salaried woman and the self-employed man close enough to trade places; the self-employed woman far beneath all three. The gaps are the structure — they have not closed anywhere in the window.</p>
+            <p>These are nominal rupees. Some of the climb is pay; some is the price level climbing with it.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of Apr–Jun 2024</span>
+            <p>A regular job pays <b id="ex-pay-rg">–</b> a month for men, <b id="ex-pay-rgf">–</b> for women. Self-employment grosses <b id="ex-pay-se">–</b> per 30 days for men and <b id="ex-pay-sef">–</b> for women — the widest gap on the plate, roughly <b id="ex-pay-ratio">–</b> between the salaried man and the self-employed woman. Most of the self-employed majority in §07 lives on the lower two lines.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-casual" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The casual day</h3>
+            <div class="sub">Average wage per day from casual labour, other than public works · rural + urban · 2017-18 – 2023-24</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-casual">–</div><div class="c">Apr–Jun 2024 · person · per day</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-casual">
+            <button class="chip" data-key="casual_person"><i style="background:#BE3E26"></i>Person</button>
+            <button class="chip" data-key="casual_male"><i style="background:#5B564B"></i>Men</button>
+            <button class="chip" data-key="casual_female"><i style="background:#A8A293"></i>Women</button>
+          </div>
+          <div class="plotzone" id="plot-casual"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, PLFS annual reports · nominal ₹ per day, all-India · casual work is priced by the day, so it is never drawn on the monthly axis above</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>This is the price of a day's labour for the fifth of Indian workers hired by the day. It has no leave, no contract and no next week attached. The male and female lines never touch — the day is priced differently depending on whose it is.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of Apr–Jun 2024</span>
+            <p>A casual day pays <b id="ex-cas-p">–</b> — <b id="ex-cas-m">–</b> for men, <b id="ex-cas-f">–</b> for women. Seven years earlier it paid <b id="ex-cas-0">–</b>; the rise is <b id="ex-cas-r">–</b> in nominal terms, over years in which the cost of living rose too. At twenty-six days a month, the casual month comes to <b id="ex-cas-mo">–</b> — about half the salaried one.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 the educated queue -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>The educated queue</h2><span class="line"></span><span class="unit">per cent · annual · usual status</span></div>
+    <div class="break">
+      <figure id="cb-edu" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Unemployment climbs the ladder of degrees</h3>
+            <div class="sub">Unemployment rate by general education level, 15+ · usual status (PS+SS) · 2023-24, with 2017-18 as pale dots</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-edu">–</div><div class="c">2023-24 · graduates</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip" style="cursor:default"><i style="background:#5B564B;width:9px;height:9px;border-radius:50%"></i>2023-24</span>
+            <span class="chip" style="cursor:default"><i style="background:#C6C0B0;width:9px;height:9px;border-radius:50%"></i>2017-18</span>
+            <span class="chip" style="cursor:default"><i style="background:#BE3E26;width:9px;height:9px;border-radius:50%"></i>Twice the all-India rate or more</span>
+          </div>
+          <div class="plotzone" id="plot-edu"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, PLFS annual reports · all-India, person, rural + urban, 15+ · rows in ladder order, not sorted by value · the vertical rule is the all-India rate, every level of education together</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>In most rich countries, unemployment falls as schooling rises. In India it rises with every rung. The reason is the denominator's cousin from §05: open unemployment needs a seeker who can wait. A worker who never went to school cannot afford a jobless week and takes whatever the day offers; a graduate — often young, often with a family behind them — queues for the formal post the degree was meant to buy. The ladder measures who can afford to search, and who cannot afford not to work.</p>
+          </div>
+          <div class="now">
+            <span class="mk">The 2023-24 register</span>
+            <p>Graduate unemployment prints at <b id="ex-edu-g">–</b> against <b id="ex-edu-nl">–</b> for those who never learned to read — <b id="ex-edu-x">–</b> the rate, in the same country, the same year. The queue is young as well as educated: among 15-to-29-year-olds the rate is <b id="ex-edu-y">–</b>, against <b id="ex-edu-all">–</b> for everyone 15 and above. The concession the window offers: the graduate rate has fallen from <b id="ex-edu-g0">–</b> in 2017-18, and the youth rate from <b id="ex-edu-y0">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 10 states -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>A country of labour markets</h2><span class="line"></span><span class="unit">per cent · annual · States/UTs</span></div>
     <div class="break">
       <figure id="cb-states" style="margin:0">
         <div class="plate-head">
@@ -270,9 +461,9 @@ import Base from "../../layouts/Base.astro";
     </div>
   </section>
 
-  <!-- § 08 misread -->
+  <!-- § 11 misread -->
   <section>
-    <div class="sec-head"><span class="no">08</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">11</span><h2>How to misread this number</h2><span class="line"></span></div>
     <ul class="misread">
       <li>
         <span class="no">i.</span>
@@ -306,7 +497,7 @@ import Base from "../../layouts/Base.astro";
         <span class="no">v.</span>
         <div>
           <h3>"The survey counts the informal sector."</h3>
-          <p>It counts <em>people</em>, including the informally employed — but it cannot see job quality. A street vendor working two hours a day is employed in these tables. Earnings, security and contract are different surveys, mostly different absences.</p>
+          <p>It counts <em>people</em>, including the informally employed — but employment here is a yes, not a description. A street vendor working two hours a day is employed in these tables. The annual reports do price the work (§08 draws on them); hours, contracts and security are thinner ground. A job and a good job are different facts.</p>
         </div>
       </li>
     </ul>
@@ -316,8 +507,8 @@ import Base from "../../layouts/Base.astro";
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. PLFS monthly bulletin (June 2026), quarterly bulletin (to Jan–Mar 2026) and annual reports (to 2023-24), retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>. State and UT unemployment rates (§07) are from the annual reports, 2017-18 to 2023-24, both stopwatches, same vintage. Dadra &amp; Nagar Haveli and Daman &amp; Diu report separately to 2019-20 and as one merged UT thereafter; the strip shows the merged series, the archive keeps both.</p>
-        <p>One source cell is quarantined: Apr–Jun 2019 urban UR is carried as 21.6, contradicting that quarter's own WPR/LFPR identity (which implies 8.8, matching the published 8.9). It is excluded from the charts, retained in the raw archive, and disclosed here. Jan–Mar 2025 was never published in the quarterly bulletin (the design transition to the monthly bulletin).</p>
+        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. PLFS monthly bulletin (June 2026), quarterly bulletin (to Jan–Mar 2026) and annual reports (to 2023-24), retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>. State and UT unemployment rates (§10) are from the annual reports, 2017-18 to 2023-24, both stopwatches, same vintage. Dadra &amp; Nagar Haveli and Daman &amp; Diu report separately to 2019-20 and as one merged UT thereafter; the strip shows the merged series, the archive keeps both. Worker-status composition (§07), earnings by worker status (§08) and the education and age cuts of the unemployment rate (§09) are from the same annual reports — one instrument, agriculture years, never spliced with either bulletin.</p>
+        <p>Quarantined cells, all retained in the raw archive: Apr–Jun 2019 urban UR is carried as 21.6, contradicting that quarter's own WPR/LFPR identity (which implies 8.8, matching the published 8.9); and the 2017-18 rural-plus-urban earnings aggregates for regular and self-employed workers, whose implied urban worker weight (0.85 and 0.55) contradicts the stable structure of every later year (0.53–0.62 and 0.19–0.25) while their rural and urban components match the published report. Jan–Mar 2025 was never published in the quarterly bulletin (the design transition to the monthly bulletin). The reports' employment-condition tables — written contracts, paid leave, social security — are listed by the API but its data endpoint fails on them; they are absent here because we do not show what we cannot fetch.</p>
       </div>
       <div>
         <h6>Revisions &amp; uncertainty</h6>
@@ -326,7 +517,7 @@ import Base from "../../layouts/Base.astro";
       </div>
       <div>
         <h6>This dossier</h6>
-        <p>Dossier 06 · Labour · version 1.1 · adds the state register (§07) to the first release, June 2026 bulletin. Next scheduled revision: on release of the July bulletin.</p>
+        <p>Dossier 06 · Labour · version 1.2 · adds what work is (§07), what it pays (§08) and the educated queue (§09) to v1.1's state register (§10). Next scheduled revision: on release of the July bulletin.</p>
         <p>Corrections and questions: register@indiaatlas.example</p>
       </div>
     </div>

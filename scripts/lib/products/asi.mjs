@@ -16,12 +16,23 @@
 // nic_type (2/3/4-digit) with identical values — deduped on (indicator, year,
 // state) keeping the first.
 //
-// Ingest (classification_year 2008 only; older NIC blocks are never spliced):
+// Ingest (classification_year 2008; older NIC blocks baked separately below):
 //  (a) All-India × nic 99999 × ALL 57 indicators × all years  -> raw + headline
+//      + asi-accounts.json (the complete 57-indicator ledger)
 //  (b) All-India × 2-digit NIC × 6 core indicators × all years -> asi-industries
 //  (c) all states × nic 99999 × 6 core indicators × all years  -> asi-states
+//  (d) legacy blocks 2004/1998/1987 (VERIFIED 2026-08-06: same param scheme,
+//      nic_code=99999 = "All" in every block; duplicate rows once per
+//      nic_type — 2004 ×3, 1998/1987 ×2 — identical values, deduped):
+//      All-India × 99999 × every indicator the block's getAsiFilter lists
+//      -> data/raw/asi-legacy.json + asi-headline-<block>.json (core set).
+//      Year ranges as served: 2004: 2004-05..2007-08; 1998: 1998-99..2003-04;
+//      1987: 1992-93..1997-98 with 1993-94 NOT SERVED (disclosed gap).
+//      Blocks are NEVER spliced with each other or with the 2008 bundle.
 // Monetary values are as published: ₹ lakh (unit field "₹ lakhs"); counts
-// carry unit "-" in the source and are baked with unit "count".
+// carry unit "-" in the source and are baked with unit "count". EXCEPTION:
+// the 1987 block serves its monetary indicators (e.g. 59 Total Emoluments)
+// with unit "-" — overridden to inr_lakh per UNIT_FIX, disclosed in meta.
 
 import { mospi } from "../mospi.mjs";
 import { writeJson, writeRaw } from "../util.mjs";
@@ -86,26 +97,46 @@ export async function buildAsi(root, dcfg, vintage) {
     indicators: stateRows,
   });
 
-  // dedupe the 99999 triplicates + index: key -> Map("YYYY-MM" -> value)
+  // resolve the 99999 duplicates + index: key -> Map("YYYY-MM" -> value).
+  // The per-nic_type copies are NOT always identical: for 2023-24 the
+  // 4-digit rows of indicators 36-49 are SHIFTED one indicator down (each
+  // carries the next code's value; ind 50's 4-digit row is missing), and
+  // the legacy blocks have a few cells whose copies differ slightly.
+  // Resolution: majority value across the copies; tie -> prefer 2-digit,
+  // then 3-digit, then 4-digit. Every disagreement is logged.
   const val = (r) => {
     const v = parseFloat(r.value);
     return Number.isFinite(v) ? v : null;
   };
+  const NIC_PREF = { "2-digit": 0, "3-digit": 1, "4-digit": 2 };
   const indexRows = (rows, keyOf) => {
-    const maps = {}; // key -> {map, unit, seen}
+    const maps = {}; // key -> {map, unit, cand}
     for (const r of rows) {
       // every probed ASI row carries sector "Combined"; drop any stray split
       // rather than let it collide with the combined figure
       if (r.sector != null && r.sector !== "Combined") continue;
       const k = keyOf(r);
       if (k == null) continue;
-      const ym = fyStart(r.year);
-      const e = (maps[k] ??= { map: new Map(), unit: normUnit(r.unit), seen: new Set() });
-      const dupKey = `${r.year}`; // triplicate rows differ only in nic_type
-      if (e.seen.has(dupKey)) continue;
-      e.seen.add(dupKey);
       const v = val(r);
-      if (v != null) e.map.set(ym, v);
+      if (v == null) continue;
+      const e = (maps[k] ??= { map: new Map(), unit: normUnit(r.unit), cand: new Map() });
+      const ym = fyStart(r.year);
+      if (!e.cand.has(ym)) e.cand.set(ym, []);
+      e.cand.get(ym).push({ v, pref: NIC_PREF[r.nic_type] ?? 9 });
+    }
+    for (const e of Object.values(maps)) {
+      for (const [ym, cands] of e.cand) {
+        const tally = new Map();
+        for (const c of cands) {
+          const t = tally.get(c.v) ?? { n: 0, pref: 9 };
+          t.n++; t.pref = Math.min(t.pref, c.pref);
+          tally.set(c.v, t);
+        }
+        const ranked = [...tally.entries()].sort((a, b) => b[1].n - a[1].n || a[1].pref - b[1].pref);
+        if (tally.size > 1) process.stdout.write(`asi RESOLVE ${ym}: copies disagree (${[...tally.keys()].join(" / ")}) — kept ${ranked[0][0]} (majority, then coarsest nic_type)\n`);
+        e.map.set(ym, ranked[0][0]);
+      }
+      delete e.cand;
     }
     return maps;
   };
@@ -124,12 +155,13 @@ export async function buildAsi(root, dcfg, vintage) {
     revisionPolicy: dcfg.revision_policy,
   };
   const unitNote = "Monetary series are as published in the source: ₹ lakh (1 lakh = 100,000; 1 crore = 100 lakh). Count series (factories, persons) are plain counts. Survey years are fiscal (Apr–Mar), plotted at April of the first year.";
-  // interior nulls (a series missing a middle year) must be disclosed
-  const gapsInside = (maps) => {
+  // interior nulls (a series missing a middle year) must be disclosed;
+  // the axis is a parameter so legacy blocks disclose against THEIR axis
+  const gapsInside = (maps, ax = axis) => {
     const set = new Set();
     for (const { map } of maps) {
       const ks = [...map.keys()].sort();
-      for (const ym of axis) if (ym > ks[0] && ym < ks.at(-1) && !map.has(ym)) set.add(ym);
+      for (const ym of ax) if (ym > ks[0] && ym < ks.at(-1) && !map.has(ym)) set.add(ym);
     }
     return [...set].sort().map((ym) => `${ym}-01`);
   };
@@ -221,8 +253,118 @@ export async function buildAsi(root, dcfg, vintage) {
     dates, series: sSeries,
   };
 
+  /* ---- asi-accounts.json: the complete 57-indicator ledger ---- */
+  // Every indicator the 2008 block serves, keyed i01..i57, units as
+  // published. This is the reference ledger behind "The factory accounts,
+  // complete" — no selection, no derivation.
+  const acctSeries = {};
+  const acctMaps = [];
+  let ai = 0;
+  for (let code = 1; code <= 57; code++) {
+    // QUARANTINE: indicator 36 (directly employed children workers) is
+    // served as a single 2023-24 4-digit row whose value equals indicator
+    // 37's contract-worker count — part of the shifted-copy defect above,
+    // with no clean copy to fall back on. Not baked; kept in raw as served.
+    if (code === 36) continue;
+    const rows = headlineRows[code];
+    if (!rows?.length) continue;
+    const label = rows[0].indicator;
+    const key = `i${String(code).padStart(2, "0")}`;
+    const idx = indexRows(rows, () => key)[key];
+    if (!idx?.map.size) continue;
+    acctMaps.push(idx);
+    acctSeries[key] = {
+      name: `asi_acct_${code}_${slugify(label)}`, label,
+      color: code === 19 ? "#BE3E26" : GREYS[ai++ % GREYS.length],
+      data: data(idx.map), unit: idx.unit,
+    };
+  }
+  const accountsBundle = {
+    meta: {
+      ...metaBase,
+      coverage: "All India, all industries (NIC 99999); every indicator the ASI 2008 block publishes — the complete factory accounts, " + Object.keys(acctSeries).length + " of 57 served with data",
+      note: unitNote + " Nothing is selected or derived here: every published indicator, keyed i01–i57 in the source's own order, units as served (₹ lakh for money, counts and mandays plain, kWh and tonnes where marked). Stock-change indicators (24–27) and Net Profit (30) can be legitimately negative. Two source defects are handled and disclosed: the 2023-24 4-digit copies of indicators 36–49 arrive shifted one indicator down and are outvoted by the clean 2- and 3-digit copies; indicator 36 (children workers) exists ONLY as one such corrupt row and is quarantined — 56 of 57 indicators are baked.",
+      gaps: gapsInside(acctMaps),
+    },
+    dates, series: acctSeries,
+  };
+
+  /* ================= legacy classification blocks ================= */
+  // Older blocks are separate rulers: fetched All-India × 99999 across the
+  // FULL indicator list each block advertises (raw audit trail), baked as
+  // asi-headline-<block>.json with the block's core comparable set only.
+  const UNIT_FIX = { 1987: { 59: "inr_lakh", 60: "inr_lakh" } }; // monetary rows served with unit "-"
+  const LEGACY_LABELS = {
+    number_of_factories: "Number of factories", factories_in_operation: "Factories in operation",
+    fixed_capital: "Fixed capital", invested_capital: "Invested capital",
+    total_output: "Gross output", total_inputs: "Total inputs", gva: "Gross value added",
+    net_value_added: "Net value added", persons_engaged: "Total persons engaged",
+    workers: "Total workers", emoluments: "Total emoluments (wages & salaries incl. employer's contribution)",
+    wages_incl_bonus: "Wages & salaries incl. bonus", total_emoluments: "Total emoluments",
+  };
+  const legacyBundles = {};
+  const LB = dcfg.fetch.legacy_blocks ?? {};
+  const legacyRaw = {};
+  for (const [cyStr, bcfg] of Object.entries(LB)) {
+    const lcy = Number(cyStr);
+    const filter = (await mospi("asi/getAsiFilter", { classification_year: lcy })).data;
+    const blockRows = {};
+    for (const { indicator_code: code } of filter.indicator) {
+      blockRows[code] = await fetchFiltered(lcy, { indicator_code: code, state_code: 99, nic_code: "99999" }, `legacy${lcy} ${code}`);
+    }
+    process.stdout.write(`asi legacy ${lcy}: ${filter.indicator.length} indicators fetched\n`);
+    legacyRaw[cyStr] = { filter, indicators: blockRows };
+
+    // block-local fiscal axis from the block's own served years
+    const yrs = filter.year.map((y) => Number(y.year.slice(0, 4))).sort((a, b) => a - b);
+    const lAxis = [];
+    for (let y = yrs[0]; y <= yrs.at(-1); y++) lAxis.push(`${y}-04`);
+    const lDates = lAxis.map((ym) => `${ym}-01`);
+    const lData = (map) => lAxis.map((ym) => map.get(ym) ?? null);
+    const lSeries = {};
+    const lMaps = [];
+    let gi2 = 0;
+    for (const [code, key] of Object.entries(bcfg.core)) {
+      const idx = indexRows(blockRows[code], () => key)[key];
+      if (!idx?.map.size) { process.stdout.write(`asi legacy ${lcy}: core indicator ${code} (${key}) returned nothing\n`); continue; }
+      if (UNIT_FIX[lcy]?.[code]) idx.unit = UNIT_FIX[lcy][code];
+      lMaps.push(idx);
+      lSeries[key] = {
+        name: `asi${lcy}_${key}`, label: LEGACY_LABELS[key] ?? key,
+        color: key === "gva" || key === "net_value_added" ? "#BE3E26" : GREYS[gi2++ % GREYS.length],
+        data: lData(idx.map), unit: idx.unit,
+      };
+    }
+    if (!lSeries.number_of_factories?.data.some((v) => v != null)) throw new Error(`ASI legacy ${lcy}: no factory counts returned`);
+    legacyBundles[cyStr] = {
+      meta: {
+        ...metaBase,
+        base: bcfg.base,
+        coverage: `All India, all industries (NIC 99999), classification block ${lcy}; core comparable indicators`,
+        latestPeriod: lAxis.at(-1),
+        note: unitNote
+          + ` This is the NIC-${lcy} classification block, a separate ruler from the 2008 block — never spliced.`
+          + (lcy === 1998 ? " The block publishes no GVA, no factories-in-operation and no employer's-contribution wage aggregate; wages incl. bonus is the closest served wage line." : "")
+          + (lcy === 1987 ? " The block publishes no GVA; 1993-94 is not served by the API at all (disclosed gap, not a fetch failure). Total Emoluments is served with unit \"-\" but is ₹ lakh — unit corrected here, disclosed." : ""),
+        gaps: gapsInside(lMaps, lAxis),
+      },
+      dates: lDates, series: lSeries,
+    };
+  }
+  if (Object.keys(legacyRaw).length) {
+    writeRaw(root, "data/raw/asi-legacy.json", {
+      vintage,
+      note: "Older ASI classification blocks (2004/1998/1987): All-India × NIC 99999 × every indicator each block's getAsiFilter advertises, plus the filter payloads. Rows arrive once per nic_type with identical values. 1987 block: 1993-94 not served.",
+      blocks: legacyRaw,
+    });
+  }
+
   writeJson(root, "data/series/asi-headline.json", headlineBundle);
+  writeJson(root, "data/series/asi-accounts.json", accountsBundle);
   writeJson(root, "data/series/asi-industries.json", industriesBundle);
   writeJson(root, "data/series/asi-states.json", statesBundle);
+  for (const [cyStr, b] of Object.entries(legacyBundles)) {
+    writeJson(root, `data/series/asi-headline-${cyStr}.json`, b);
+  }
   return headlineBundle;
 }

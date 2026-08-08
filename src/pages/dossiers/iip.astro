@@ -1,5 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
 ---
 <Base
   title="India Atlas — Industrial Production · Dossier 04"
@@ -46,13 +47,11 @@ import Base from "../../layouts/Base.astro";
     <div class="reading-cols">
       <div class="reading-col">
         <span class="mk">What the print says</span>
-        <p>Factory, mine and power output in June was <b id="cr-h1">–</b> higher than a year ago, accelerating from <b id="cr-h2">–</b> in May. The composition is the interesting part. Capital goods — machinery, the stuff that makes other stuff — grew <b id="cr-c1">–</b>, a tenth consecutive month near or above double digits. Manufacturing did the heavy lifting at <b id="cr-m1">–</b>; electricity and gas supply added <b id="cr-e1">–</b>.</p>
-        <p>Mining barely moved, at <b id="cr-mn1">–</b>. The consumer end is softer: non-durables — soap, biscuits, the daily basket — grew <b id="cr-cnd1">–</b>, after spending part of last year underwater.</p>
+        <Prose slot="iip.current-reading.what-the-print-says" />
       </div>
       <div class="reading-col now">
         <span class="mk">What it does not say</span>
-        <p>It does not say industry is 7 per cent larger in any sense you could bank. This is a volume index against the same month last year, built from a fixed panel of items, and this print is a quick estimate — it will be revised over the coming months as late returns arrive. One month of IIP is a weather report; three is a climate hint.</p>
-        <p>And it covers the organised, goods-producing economy only. The workshop down the road that files no returns is not in this number, and neither is anything you would call a service.</p>
+        <Prose slot="iip.current-reading.what-it-does-not-say" />
       </div>
     </div>
   </section>
@@ -261,6 +260,35 @@ import Base from "../../layouts/Base.astro";
           <div class="now">
             <span class="mk">As of July 2026</span>
             <p>Electrical equipment grew <b id="ex-elec">–</b> in June and motor vehicles <b id="ex-mv">–</b>, while wearing apparel contracted <b id="ex-app">–</b>. The boom is in the capital-goods spine of manufacturing; the weakness sits in export-facing consumer lines.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-ind22" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Every industry on the current base — the live field, ranked</h3>
+            <div class="sub">All <b id="ind-n">–</b> two-digit industries · year-on-year, per cent · base 2022–23 · Apr 2024 – Jun 2026 · ordered by the latest print · vermilion beyond ±10%</div>
+          </div>
+          <div class="plate-val"><div class="v" id="ind-hot">–</div><div class="c">industries beyond ±10% · Jun 2026</div></div>
+        </div>
+        <div class="frame">
+          <div id="grid-ind22" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:28px 36px;padding:20px 0 8px"></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, IIP on base 2022–23 · every two-digit industry the current base serves · shared clipped scale −20 to +45%; the CSV carries full values · the freshest detail the index offers</span>
+            <span class="dl"><button data-dl="csv">CSV · all series</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The retired base's 23-industry ledger (§04) is a memory; this is the live field. Each panel is one industry on its own clock against a shared scale, ordered by the latest print. Read the rows, not the lines: where the current expansion sits, and where it does not reach.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of June 2026</span>
+            <p>The hottest industry is <b id="ind-hi">–</b>; the coolest <b id="ind-lo">–</b>. The capital-goods spine — electrical equipment, machinery, motor vehicles — clusters at the top; the export-facing consumer lines — apparel, leather — further down. A panel past the vermilion threshold is moving at double digits.</p>
           </div>
         </div>
       </figure>

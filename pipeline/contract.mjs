@@ -44,7 +44,14 @@ function resolvePath(p) {
   }
   return node;
 }
-const numRendered = (v) => [v.toFixed(2), v.toFixed(1), Math.abs(v).toFixed(2), Math.abs(v).toFixed(1)];
+const numRendered = (v) => {
+  const r = [v.toFixed(2), v.toFixed(1), Math.abs(v).toFixed(2), Math.abs(v).toFixed(1)];
+  if (Number.isInteger(v)) r.push(String(v));
+  // the dossiers render rupee/large figures Indian thousand-grouped (₹4,122;
+  // 2,60,061) via toLocaleString("en-IN"), so accept those forms too
+  r.push(v.toLocaleString("en-IN"), Math.abs(v).toLocaleString("en-IN"));
+  return r;
+};
 const present = (v) => numRendered(v).some((r) => new RegExp(`(?<![\\d.])${r.replace(".", "\\.")}(?![\\d])`).test(prose));
 for (const fig of slot.requiredFigures ?? []) {
   const v = resolvePath(fig);
@@ -67,10 +74,25 @@ if (slot.dateStamp) {
   const lp = facts.latestPeriod; // "Dec 2025" or "Q2 FY26"
   const MNF = { Jan: "January", Feb: "February", Mar: "March", Apr: "April", May: "May", Jun: "June", Jul: "July", Aug: "August", Sep: "September", Oct: "October", Nov: "November", Dec: "December" };
   const m = lp.match(/^([A-Z][a-z]{2}) (\d{4})$/);
-  const ok = m
-    ? new RegExp(`\\b(${m[1]}|${MNF[m[1]]})\\b`).test(prose)
-    : new RegExp(`\\b${lp.replace(/\s+/g, "\\s+")}\\b`).test(prose)
-      || new RegExp(`\\b${lp.split(" ")[0]}\\b`).test(prose) && prose.includes(lp.split(" ")[1]);
+  let ok;
+  if (m) {
+    ok = new RegExp(`\\b(${m[1]}|${MNF[m[1]]})\\b`).test(prose);
+  } else {
+    const qm = lp.match(/^Q([1-4])\s*FY\s?(\d{2})$/);
+    if (qm) {
+      // a dated quarterly slot may anchor on the label, the FY, the year, or the
+      // ordinal — the as-of corpus style names quarters as a sequence, not a tag
+      const ord = ["", "first", "second", "third", "fourth"][+qm[1]];
+      const year = "20" + qm[2];
+      ok = new RegExp(`\\bQ${qm[1]}\\b`).test(prose)
+        || new RegExp(`\\bFY\\s*${qm[2]}\\b`, "i").test(prose)
+        || new RegExp(`\\b${year}\\b`).test(prose)
+        || new RegExp(`\\b${ord}\\s+quarter\\b`, "i").test(prose);
+    } else {
+      ok = new RegExp(`\\b${lp.replace(/\s+/g, "\\s+")}\\b`).test(prose)
+        || (new RegExp(`\\b${lp.split(" ")[0]}\\b`).test(prose) && prose.includes(lp.split(" ")[1]));
+    }
+  }
   if (!ok) fail(`dateStamp slot does not name its period (${lp})`);
 }
 

@@ -14,6 +14,8 @@ import alrl1986Bundle from "../../data/series/cpialrl-1986.json";
 import alrlGroupsBundle from "../../data/series/cpialrl-groups-2019.json";
 import bundle2024 from "../../data/series/cpi-2024.json";
 import back2024Bundle from "../../data/series/cpi-2024-back.json";
+import sectors2024Bundle from "../../data/series/cpi-2024-sectors.json";
+import alStates86Bundle from "../../data/series/cpialrl-states-1986.json";
 import {
   MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend,
   peakOf, peakBetween, dodgeEndLabels, spark, downloadCSV,
@@ -30,6 +32,8 @@ const AL86 = hydrate(alrl1986Bundle);
 const ALG = hydrate(alrlGroupsBundle);
 const S24 = hydrate(bundle2024);       // base 2024=100 — separate store, never merged with S
 const B24 = hydrate(back2024Bundle);   // the NSO's own back-cast of the 2024-base General index
+const S24S = hydrate(sectors2024Bundle); // base 2024=100 rural & urban General — separate, never merged
+const ALS86 = hydrate(alStates86Bundle); // CPI-AL by state, base 1986-87 (retired) — final reading May 2025
 
 // §08 store — combined against its two sector halves
 const RU = {
@@ -90,9 +94,8 @@ setHTML("rb-band", `Position in RBI band — <b>${
     `</svg>`;
 }
 const f1 = (v) => v.toFixed(2) + "%";
-setTxt("cr-h1", f1(L24.headline)); setTxt("cr-jan", f1(FIRST24));
-setTxt("cr-f1", f1(L24.food_and_beverages)); setTxt("cr-tr", f1(L24.transport));
-setTxt("cr-old", f1(L.headline)); setTxt("cr-c1", f1(L.core));
+// §01 "current reading" prose is now pipeline-generated (pipeline/out/prose-cpi.*.md);
+// the cr-* figure spans it used to carry are retired.
 
 setTxt("pv-main", f1(L.headline));
 setTxt("pv-food", f1(L.food)); setTxt("pv-fuel", f1(L.fuel)); setTxt("pv-core", f1(L.core));
@@ -166,6 +169,86 @@ setTxt("pf-core", `peak — ${pkCore.value.toFixed(1)}%, ${fmtDate(pkCore.date)}
     if (d.value != null && o != null) shadow = Math.max(shadow, Math.abs(d.value - o));
   }
   setTxt("nb-shadow", shadow.toFixed(1) + " pt");
+}
+
+/* ---------- §03 the new basket, opened up ----------
+ * The rebase's editorial point: six groups → thirteen COICOP-2018 divisions,
+ * so services (housing, health, education, transport, recreation, restaurants,
+ * personal care) are seen separately for the first time. The API serves no
+ * division weights for this base, so divisions are a ranked strip, not a
+ * weighted split — honestly unweighted. The companion plate wires the new-base
+ * rural/urban General indices to test whether the rebase changed the wedge. */
+{
+  const DIV = {
+    food_and_beverages: "Food & beverages",
+    paan_tobacco_and_intoxicants: "Paan, tobacco & intoxicants",
+    clothing_and_footwear: "Clothing & footwear",
+    housing_water_electricity_gas_and_other_fuels: "Housing, water, electricity, gas & fuels",
+    furnishings_household_equipment_and_routine_household_maintenance: "Furnishings & household equipment",
+    health: "Health",
+    transport: "Transport",
+    information_and_communication: "Information & communication",
+    recreation_sport_and_culture: "Recreation, sport & culture",
+    education_services: "Education",
+    restaurants_and_accommodation_services: "Restaurants & hotels",
+    personal_care_social_protection_and_miscellaneous_goods_and_services: "Personal care · incl. gold",
+  };
+  const rows = Object.keys(DIV).map((k) => ({ k, name: DIV[k], s: S24[k], v: S24[k].data.at(-1).value }))
+    .sort((a, b) => b.v - a.v);
+  const head = L24.headline;   // published all-groups index = the reference rule
+  const geo = { W: 1184, H: 500, ml: 304, mr: 88, mt: 34, mb: 46 };
+  const xt = [0, 2, 4, 6, 8, 10, 12, 14, 16];
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "13px", color: "#5C574C", overflow: "visible" },
+    x: { label: "year-on-year, per cent →", labelAnchor: "right", labelArrow: "none", domain: [-1, 17.5], ticks: xt, tickSize: 0, tickPadding: 12,
+         tickFormat: (d) => (d === xt[xt.length - 1] ? d + "%" : String(d)) },
+    y: { label: null, domain: rows.map((r) => r.name), tickSize: 0, tickPadding: 14 },
+    marks: [
+      Plot.gridX(xt, { stroke: "#EDE9DA", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
+      Plot.ruleX([head], { stroke: "#1B1A17", strokeWidth: 1, strokeDasharray: "3,3" }),
+      Plot.text([{ x: head }], { x: "x", text: () => "Headline · " + f1(head), frameAnchor: "top", dy: -16, dx: 5, fill: "#1B1A17", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.dot(rows, { x: "v", y: "name", r: 4.5, fill: (d) => (d.v > head ? "#BE3E26" : "#8A857A"), stroke: "#FFFFFF", strokeWidth: 1 }),
+      Plot.text(rows, { x: "v", y: "name", text: (d) => d.v.toFixed(2) + "%", dx: 12, dy: 0.5, fill: (d) => (d.v > head ? "#BE3E26" : "#8A857A"), fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+    ],
+  });
+  const top = rows[0], bot = rows.at(-1);
+  const aboveN = rows.filter((r) => r.v > head).length;
+  a11y(plot, "CPI divisions on the 2024 base, June 2026, twelve COICOP divisions sorted by year-on-year rate",
+    "Dot strip. " + top.name + " is highest at " + top.v.toFixed(1) + " per cent, " + bot.name + " lowest at " + bot.v.toFixed(1) + ". The all-groups headline of " + head.toFixed(1) + " per cent is marked; " + aboveN + " of twelve divisions sit above it. Personal care, which carries gold, is the outlier.");
+  document.getElementById("plot-div").append(plot);
+  wireTools(document.getElementById("cb-div"), plot, rows.map((r) => r.s), "india-atlas_cpi_13-divisions_2026");
+  setTxt("pv-div", top.name);
+  setTxt("div-top", top.name + " · " + f1(top.v));
+  setTxt("div-bot", bot.name + " · " + bot.v.toFixed(2) + "%");
+  setTxt("div-spread", (top.v - bot.v).toFixed(1) + " points");
+  setTxt("div-above", String(aboveN));
+  setTxt("div-gold", f1(S24.personal_care_social_protection_and_miscellaneous_goods_and_services.data.at(-1).value));
+  setTxt("div-rest", f1(S24.restaurants_and_accommodation_services.data.at(-1).value));
+  setTxt("div-info", f1(S24.information_and_communication.data.at(-1).value));
+}
+
+/* §03 companion: rural vs urban on the new 2024 base (six prints) */
+{
+  const V = {
+    rural: { ...S24S.rural, label: "Rural", color: "#BE3E26" },
+    urban: { ...S24S.urban, label: "Urban", color: "#A8A293" },
+  };
+  const geo = { W: 1184, H: 380, ml: 70, mr: 150, mt: 30, mb: 48, d0: 2.4, d1: 5.1 };
+  const xTicks = S24S.rural.data.map((d) => d.date);
+  const plot = multiLine("cb-ru24", "plot-ru24", ["rural", "urban"], V, geo, [2.5, 3, 3.5, 4, 4.5, 5], xTicks,
+    (d) => MN[d.getUTCMonth()] + " " + String(d.getUTCFullYear()).slice(2),
+    "india-atlas_cpi_rural-urban_base2024",
+    "Headline CPI rural and urban on the 2024 base, January to June 2026",
+    "Two line charts. Rural ends at " + V.rural.data.at(-1).value.toFixed(1) + " per cent, urban at " + V.urban.data.at(-1).value.toFixed(1) + ". Rural runs above urban in every month of the new base.",
+    { recentN: 3 });
+  wireLegend(document.getElementById("legend-ru24"), plot, ["rural", "urban"], V);
+  const rl = V.rural.data.at(-1).value, ul = V.urban.data.at(-1).value;
+  setTxt("pv-ru24", f1(rl));
+  setTxt("ru24-r", f1(rl)); setTxt("ru24-u", f1(ul));
+  setTxt("ru24-gap", (rl - ul).toFixed(2) + " pt");
 }
 
 /* ---------- register ----------
@@ -661,6 +744,80 @@ const stateName = (k) => ({
   setTxt("alg-cloth", f1(V.clothing.data.at(-1).value));
   setTxt("alg-misc", f1(V.misc.data.at(-1).value));
   setTxt("alg-cpifood", f1(L.food));
+}
+
+/* ---------- §12 lead: two rural populations — CPI-rural vs CPI-AL ----------
+ * The contrast that frames the AL section: the general rural household against
+ * the agricultural-labour household. Both rural, both y/y, overlapping Jan 2016
+ * – May 2025 (the old AL base's final reading). Trimmed to the shared window so
+ * one axis serves both; never spliced, never joined. */
+{
+  const end = AL86.al.data.at(-1).date;   // May 2025
+  const rural = { ...R.headline, name: "cpi_rural_base2012_yoy_pct", label: "CPI · rural (all households)", color: "#A8A293",
+    data: R.headline.data.filter((d) => d.date <= end) };
+  const al = { ...AL86.al, name: "cpi_al_base1986_yoy_pct", label: "CPI-AL (farm-labour households)", color: "#BE3E26",
+    data: AL86.al.data.filter((d) => d.date >= rural.data[0].date) };
+  const V = { al, rural };
+  const geo = { W: 1184, H: 470, ml: 70, mr: 200, mt: 30, mb: 48, d0: -1, d1: 12 };
+  const xTicks = []; for (let y = 2016; y <= 2025; y++) xTicks.push(new Date(Date.UTC(y, 0, 1)));
+  const plot = multiLine("cb-alcpi", "plot-alcpi", ["al", "rural"], V, geo, [0, 2, 4, 6, 8, 10, 12], xTicks,
+    (d) => String(d.getUTCFullYear()),
+    "india-atlas_cpi-al_vs_cpi-rural_2016-2025",
+    "CPI-AL against CPI-rural, year-on-year, January 2016 to May 2025",
+    "Two line charts on one axis. CPI-AL (farm labour) ends at " + al.data.at(-1).value.toFixed(1) + " per cent in May 2025, CPI-rural at " + rural.data.at(-1).value.toFixed(1) + ". CPI-AL swings wider — its basket is heavier in food.",
+    { recentN: 13 });
+  wireLegend(document.getElementById("legend-alcpi"), plot, ["al", "rural"], V);
+  const av = al.data.at(-1).value, rv = rural.data.at(-1).value;
+  const ruralByT = new Map(rural.data.map((d) => [d.date.getTime(), d.value]));
+  let gapSum = 0, gapN = 0, gapMax = 0, gapMaxDate = null;
+  for (const d of al.data) {
+    const r = ruralByT.get(d.date.getTime());
+    if (d.value != null && r != null) { const g = Math.abs(d.value - r); gapSum += g; gapN++; if (g > gapMax) { gapMax = g; gapMaxDate = d.date; } }
+  }
+  setTxt("pv-alcpi", f1(av));
+  setTxt("alcpi-al", f1(av)); setTxt("alcpi-rural", f1(rv));
+  setTxt("alcpi-avgap", (gapSum / gapN).toFixed(1) + " pt");
+  setTxt("alcpi-maxgap", gapMax.toFixed(1) + " pt · " + fmtDate(gapMaxDate));
+}
+
+/* ---------- §12 companion: CPI-AL state dispersion (old base, final reading) ----------
+ * The only state-level rural-labourer y/y the data supports: the 2019 base
+ * serves state LEVELS only (no same-base year-ago exists yet), so this is the
+ * final state reading of the retired 1986-87 ruler, May 2025. Twenty states. */
+{
+  const rows = Object.entries(ALS86)
+    .map(([k, s]) => ({ k, name: stateName(k), s, v: s.data.at(-1).value }))
+    .sort((a, b) => b.v - a.v);
+  const ai = AL86.al.data.at(-1).value;   // All-India CPI-AL, May 2025
+  const geo = { W: 1184, H: 600, ml: 168, mr: 88, mt: 34, mb: 46 };
+  const xt = [-2, 0, 2, 4, 6, 8];
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "13px", color: "#5C574C", overflow: "visible" },
+    x: { label: "year-on-year, per cent →", labelAnchor: "right", labelArrow: "none", domain: [-2.2, 8.6], ticks: xt, tickSize: 0, tickPadding: 12,
+         tickFormat: (d) => (d === xt[xt.length - 1] ? d + "%" : String(d)) },
+    y: { label: null, domain: rows.map((r) => r.name), tickSize: 0, tickPadding: 14 },
+    marks: [
+      Plot.gridX(xt, { stroke: "#EDE9DA", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
+      Plot.ruleX([ai], { stroke: "#1B1A17", strokeWidth: 1, strokeDasharray: "3,3" }),
+      Plot.text([{ x: ai }], { x: "x", text: () => "All-India CPI-AL · " + f1(ai), frameAnchor: "top", dy: -16, dx: 5, fill: "#1B1A17", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.dot(rows, { x: "v", y: "name", r: 4.5, fill: (d) => (d.v > ai ? "#BE3E26" : "#8A857A"), stroke: "#FFFFFF", strokeWidth: 1 }),
+      Plot.text(rows, { x: "v", y: "name", text: (d) => d.v.toFixed(2) + "%", dx: 12, dy: 0.5, fill: (d) => (d.v > ai ? "#BE3E26" : "#8A857A"), fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+    ],
+  });
+  const top = rows[0], bot = rows.at(-1);
+  const aboveN = rows.filter((r) => r.v > ai).length;
+  a11y(plot, "CPI-AL by state, May 2025, twenty states sorted by year-on-year rate, base 1986-87 (retired)",
+    "Dot strip. " + top.name + " is highest at " + top.v.toFixed(1) + " per cent, " + bot.name + " lowest at " + bot.v.toFixed(1) + ". All-India CPI-AL of " + ai.toFixed(1) + " is marked; " + aboveN + " of twenty states sit above it. Base 1986-87, the final state reading before the series retired.");
+  document.getElementById("plot-alst").append(plot);
+  wireTools(document.getElementById("cb-alst"), plot, rows.map((r) => r.s), "india-atlas_cpial_states_base1986-final");
+  setTxt("pv-alst", top.name);
+  setTxt("alst-top", top.name + " · " + f1(top.v));
+  setTxt("alst-bot", bot.name + " · " + bot.v.toFixed(2) + "%");
+  setTxt("alst-spread", (top.v - bot.v).toFixed(1) + " points");
+  setTxt("alst-above", String(aboveN));
 }
 
 /* ---------- ledger sparklines ---------- */

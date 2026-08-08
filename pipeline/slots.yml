@@ -6,26 +6,32 @@ cpi:
   - id: current-reading.what-the-print-says
     maxSentences: 7
     dateStamp: true
-    requiredFigures: [headline.latest, food.latest, fuel.latest]
+    requiredFigures: [headline.latest, food_and_beverages.latest, transport.latest]
     bannedWords: []
     brief: >
-      Two short paragraphs. What the print says: the headline, what drives it
-      (food, fuel), any streak worth naming. Concede what is genuinely good
-      before qualifying it.
+      Two short paragraphs on the new 2024-base print (June 2026): the headline,
+      what drives it (food and beverages, transport, restaurants — and personal
+      care / gold as a world-market spectator to set apart), and the firming run
+      since the series opened in January. Name the band position. Concede what is
+      genuine before qualifying it.
   - id: current-reading.what-it-does-not-say
     maxSentences: 6
     dateStamp: false
-    requiredFigures: [headline.latest, core.latest]
+    requiredFigures: [headline.latest, legacy.oldHeadline.value, legacy.core.value]
     brief: >
-      The honest limits: the rate is not the price level; core versus headline;
-      what we do not know. Must contain a plain "we do not know" sentence.
-  - id: as-of.plate1
+      The honest limits of the new base: the API serves no component weights, so
+      no core index can be computed on it — the last core reading lives on the
+      retired 2012 base, which closed at a different headline. The June figure
+      and the December figure are different rulers, not a jump. Must contain a
+      plain "we do not know" sentence.
+  - id: as-of.newbase
     maxSentences: 6
     dateStamp: true
-    requiredFigures: [headline.yearStart, headline.latest]
+    requiredFigures: [headline.latest, headline.yearStart]
     brief: >
-      The year in one arc: where it started, where it ended, position in the
-      band, and the one thing to watch (the core-headline wedge).
+      The new base's first half-year in one arc: where it opened (January), where
+      it stands (June), its position in the RBI tolerance band, and the one thing
+      to watch. Reads like a newspaper's second paragraph.
 
 gdp:
   - id: current-reading.what-the-print-says
@@ -49,3 +55,93 @@ gdp:
     brief: >
       The trend read: the last four quarters as a sequence, position vs the 6%
       trend, and the early-estimate caution.
+
+wpi:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [headline.latest, fuel.latest, primary.latest, manufactured.latest]
+    brief: >
+      The headline wholesale print and its three moving parts (primary, fuel,
+      manufactured). Name which group did the lifting this month. Concede the
+      genuine before qualifying it.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [headline.latest]
+    brief: >
+      The honest limits: this is the factory gate, not the shop (no services, no
+      retail margins); pass-through is slow; and it is provisional, revised in
+      about eight weeks. Must contain a plain "we do not know" or "provisional".
+
+iip:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [general.latest, sector_manufacturing.latest, use_capital_goods.latest]
+    brief: >
+      The headline industrial growth, the sector split (manufacturing, mining,
+      electricity), and the use-based read (capital goods = investment). Name the
+      standout. Concede before qualifying.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [general.latest]
+    brief: >
+      The honest limits: one month is noise; these are quick estimates, revised;
+      the index is goods only (services live elsewhere). Must contain a plain "we
+      do not know".
+
+jobs:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [ur.latest, lfpr.latest]
+    brief: >
+      The unemployment rate and participation, and what moved them. Name which
+      labour market (urban women, rural men) sits highest. Concede before
+      qualifying.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [ur.latest]
+    brief: >
+      The honest limits: the UR is a ratio that can fall for the wrong reason
+      (people leaving the pool); the monthly bulletin is young with no seasonal
+      history; this counts work done last week, not a pay slip. Must contain a
+      plain "we do not know".
+
+consumption:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [rural.latest, urban.latest]
+    brief: >
+      The average monthly spend, rural and urban, and the urban-rural gap. Name
+      any shift in food's share (Engel's law). Concede before qualifying.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [rural.latest]
+    brief: >
+      The honest limits: the mean is not the median (the spending ladder is steep
+      at the top); imputed free goods inflate the bill; this is a two-year survey,
+      not a monthly pulse. Must contain a plain "we do not know".
+
+factories:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [gva.latest, factories_in_operation.latest]
+    brief: >
+      The factory sector's value added, factory counts and people on the shop
+      floor. Set the registered (ASI) beside the informal (ASUSE) scale. Concede
+      before qualifying.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [gva.latest]
+    brief: >
+      The honest limits: registered and informal are separate instruments, never
+      summed; GVA is nominal (prices as much as product); the data lands with a
+      two-year lag. Must contain a plain "we do not know".

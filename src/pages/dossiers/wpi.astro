@@ -1,5 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
 ---
 <Base
   title="India Atlas — Wholesale Prices · Dossier 03"
@@ -46,13 +47,11 @@ import Base from "../../layouts/Base.astro";
     <div class="reading-cols">
       <div class="reading-col">
         <span class="mk">What the print says</span>
-        <p>Wholesale prices in April were <b id="cr-h1">–</b> higher than a year ago, capping a climb that has run uninterrupted since last autumn's brief deflation. The engine is not broadly distributed. Fuel and power — barely an eighth of the basket — did most of the lifting, jumping to <b id="cr-fu1">–</b> in a single month from roughly zero. Primary articles, the farm-and-mine end of the index, added their own <b id="cr-p1">–</b>.</p>
-        <p>The quiet two-thirds of the basket, manufactured products, rose <b id="cr-m1">–</b> — warm, but unremarkable by the standards of the decade.</p>
+        <Prose slot="wpi.current-reading.what-the-print-says" />
       </div>
       <div class="reading-col now">
         <span class="mk">What it does not say</span>
-        <p>It does not say your cost of living jumped fourfold in April. This index stops at the factory gate: no rents, no school fees, no haircuts, no services of any kind — and retail margins, taxes and logistics sit between this number and your receipt. What changed in April arrived through the energy pipe, and energy takes months, not weeks, to seep into consumer prices.</p>
-        <p>And it is provisional. This print will be revised to a final figure roughly eight weeks from now; the revision is usually small, and occasionally not.</p>
+        <Prose slot="wpi.current-reading.what-it-does-not-say" />
       </div>
     </div>
   </section>

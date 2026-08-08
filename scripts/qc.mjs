@@ -14,7 +14,9 @@ import { pathToFileURL, fileURLToPath } from "node:url";
 import { JSDOM } from "jsdom";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const DIST = path.join(ROOT, "dist");
+// QC_DIST lets gate runs point at a scratch build (e.g. astro build
+// --outDir /tmp/…) without touching the tracked dist/
+const DIST = process.env.QC_DIST ? path.resolve(process.env.QC_DIST) : path.join(ROOT, "dist");
 let failures = 0;
 const fail = (m) => { failures++; console.error("FAIL:", m); };
 const ok = (m) => console.log("  ok:", m);
@@ -27,7 +29,6 @@ const PAGES = [
     ["n-food", (b) => b["cpi-2024"].series.food_and_beverages.data.at(-1).toFixed(2) + "%"],
     ["n-old", (b) => b.cpi.series.headline.data.at(-1).toFixed(2) + "%"],
     ["n-core", (b) => b.cpi.series.core.data.at(-1).toFixed(2) + "%"],
-    ["cr-h1", (b) => b["cpi-2024"].series.headline.data.at(-1).toFixed(2) + "%"],
     ["pv-nb", (b) => b["cpi-2024"].series.headline.data.at(-1).toFixed(2) + "%"],
     ["nb-old-final", (b) => b.cpi.series.headline.data.at(-1).toFixed(2) + "%"],
     ["ex-hjan", (b) => b.cpi.series.headline.data.at(-12).toFixed(2) + "%"],
@@ -35,37 +36,70 @@ const PAGES = [
     ["prov-vintage24", (b) => b["cpi-2024"].meta.vintage],
     ["prov-vintage2", (b) => b["cpi-2024"].meta.vintage],
   ]},
-  { url: "/dossiers/gdp/", slug: "gdp", checks: [
-    ["n-gdp", (b) => b.series.gdp.data.at(-1).toFixed(2) + "%"],
-    ["n-gfcf", (b) => b.series.gfcf.data.at(-1).toFixed(2) + "%"],
-    ["cr-v1", (b) => b.series.gva.data.at(-1).toFixed(2) + "%"],
-    ["prov-vintage", (b) => b.meta.vintage],
+  { url: "/dossiers/gdp/", slug: null, checks: [
+    ["n-gdp", (b) => b["gdp-2022"].series.gdp.data.at(-1).toFixed(2) + "%"],
+    ["n-gfcf", (b) => b["gdp-2022"].series.gfcf.data.at(-1).toFixed(2) + "%"],
+    // v1.8 slots: engines, deflator wedge, saving rate, the 2022-23 base
+    ["pv-ind", (b) => {
+      const s = b["gdp-industries"].series;
+      return Math.max(...Object.values(s).map((x) => x.data.at(-1))).toFixed(2) + "%";
+    }],
+    ["ex-eng-agri", (b) => b["gdp-industries"].series.agriculture.data.at(-1).toFixed(2) + "%"],
+    ["pv-defl", (b) => b["gdp-nominal"].series.deflator.data.at(-1).toFixed(2) + "%"],
+    ["ex-defl-n", (b) => b["gdp-nominal"].series.gdp_nominal.data.at(-1).toFixed(2) + "%"],
+    ["ac-sav", (b) => b["gdp-accounts"].series.saving_rate.data.filter((v) => v != null).at(-1).toFixed(1) + "%"],
+    ["pv-nb", (b) => b["gdp-2022"].series.gdp.data.at(-1).toFixed(2) + "%"],
+    ["nb-q3", (b) => b["gdp-2022"].series.gdp.data.at(-2).toFixed(2) + "%"],
+    ["prov-vintage", (b) => b.gdp.meta.vintage],
   ]},
   { url: "/dossiers/wpi/", slug: "wpi", checks: [
     ["n-head", (b) => b.series.headline.data.at(-1).toFixed(2) + "%"],
     ["n-fuel", (b) => b.series.fuel.data.at(-1).toFixed(2) + "%"],
-    ["cr-m1", (b) => b.series.manufactured.data.at(-1).toFixed(2) + "%"],
     ["prov-vintage", (b) => b.meta.vintage],
   ]},
   { url: "/dossiers/iip/", slug: "iip-2022", checks: [
     ["n-head", (b) => b.series.general.data.at(-1).toFixed(2) + "%"],
     ["n-cap", (b) => b.series.use_capital_goods.data.at(-1).toFixed(2) + "%"],
-    ["cr-mn1", (b) => b.series.sector_mining_quarrying.data.at(-1).toFixed(2) + "%"],
     ["prov-vintage", (b) => b.meta.vintage],
   ]},
   { url: "/dossiers/external/", slug: null, checks: [
     ["n-fx", (b) => "₹" + b["rbi-forex"].series.usdinr.data.at(-1).toFixed(2)],
     ["n-cad", (b) => b["rbi-bop-ratios"].series.cad_gdp.data.at(-1).toFixed(1) + "%"],
     ["cr-res", (b) => "$" + Math.round(b["rbi-forex"].series.reserves.data.at(-1) / 1000) + " bn"],
+    // v1.2 plates — same formatter as the client (bn/bn2 on $bn values)
+    ["pv-part", (b) => {
+      const s = b["rbi-trade-partners"].series;
+      const v = (s.exports_china.data.at(-1) - s.imports_china.data.at(-1)) / 1000;
+      return (v < 0 ? "−$" : "$") + Math.abs(v).toFixed(1) + " bn";
+    }],
+    ["ex-pcm", (b) => {
+      const v = b["rbi-trade-partners"].series.imports_china.data.at(-1) / 1000;
+      return "$" + (Math.abs(v) >= 100 ? Math.round(v) : v.toFixed(1)) + " bn";
+    }],
+    ["pv-comm", (b) => {
+      const v = b["rbi-commodities-exports"].series.engineering_goods.data.at(-1) / 1000;
+      return "$" + (Math.abs(v) >= 100 ? Math.round(v) : v.toFixed(1)) + " bn";
+    }],
+    ["ex-cm1", (b) => {
+      const v = b["rbi-commodities-imports"].series.petroleum_crude_products.data.at(-1) / 1000;
+      return "$" + (Math.abs(v) >= 100 ? Math.round(v) : v.toFixed(1)) + " bn";
+    }],
     ["prov-vintage", (b) => b["rbi-forex"].meta.vintage],
   ]},
   { url: "/dossiers/jobs/", slug: null, checks: [
     ["n-ur", (b) => b["plfs-monthly"].series.ur.data.at(-1).toFixed(2) + "%"],
     ["n-fur", (b) => b["plfs-cuts"].series.ur_female_urban.data.at(-1).toFixed(2) + "%"],
-    ["cr-lfpr", (b) => b["plfs-monthly"].series.lfpr.data.at(-1).toFixed(2) + "%"],
     ["pv-main", (b) => b["plfs-quarterly"].series.ur.data.at(-1).toFixed(2) + "%"],
     ["pv-annual", (b) => b["plfs-annual"].series.ur_psss.data.at(-1).toFixed(2) + "%"],
     ["ex-p0", (b) => b["plfs-annual"].series.ur_psss.data[0].toFixed(2) + "%"],
+    // annual-report extras (v1.2): composition, earnings, education
+    ["pv-status", (b) => b["plfs-status"].series.self_employed_person.data.at(-1).toFixed(1) + "%"],
+    ["ex-st-hp", (b) => b["plfs-status"].series.se_helper_person.data.at(-1).toFixed(1) + "%"],
+    ["pv-pay", (b) => "₹" + Math.round(b["plfs-earnings"].series.regular_person.data.filter((v) => v != null).at(-1)).toLocaleString("en-IN")],
+    ["ex-pay-sef", (b) => "₹" + Math.round(b["plfs-earnings"].series.self_employed_female.data.filter((v) => v != null).at(-1)).toLocaleString("en-IN")],
+    ["pv-casual", (b) => "₹" + Math.round(b["plfs-earnings"].series.casual_person.data.filter((v) => v != null).at(-1)).toLocaleString("en-IN")],
+    ["pv-edu", (b) => b["plfs-education"].series.graduate.data.at(-1).toFixed(1) + "%"],
+    ["ex-edu-y", (b) => b["plfs-education"].series.youth_15_29.data.at(-1).toFixed(1) + "%"],
     ["prov-vintage", (b) => b["plfs-monthly"].meta.vintage],
     ["prov-vintage2", (b) => b["plfs-monthly"].meta.vintage],
   ]},
@@ -90,6 +124,28 @@ const PAGES = [
     ["n-fact", (b) => (b["asi-headline"].series.factories_in_operation.data.at(-1) / 1e5).toFixed(2) + "lakh"],
     ["cr-fop", (b) => b["asi-headline"].series.factories_in_operation.data.at(-1).toLocaleString("en-IN")],
     ["cr-gpwi", (b) => "₹" + Math.round(b["asuse-annual"].series.gva_per_worker_all.data.filter((v) => v != null).at(-1)).toLocaleString("en-IN")],
+    // v1.1 — the long century (four blocks, never joined)
+    ["pv-long", (b) => {
+      const l87 = b["asi-headline-1987"].series.number_of_factories.data.filter((v) => v != null).at(-1);
+      const l08 = b["asi-headline"].series.number_of_factories.data.at(-1);
+      return (l87 / 1e5).toFixed(2) + " → " + (l08 / 1e5).toFixed(2) + " lakh";
+    }],
+    ["ex-l02", (b) => b["asi-headline-1998"].series.number_of_factories.data[3].toLocaleString("en-IN")],
+    ["ex-lp03", (b) => (b["asi-headline-1998"].series.persons_engaged.data.at(-1) / 1e7).toFixed(2) + " crore"],
+    // v1.1 — the informal-firm portrait
+    ["if-reg", (b) => b["asuse-modernity"].series.reg_not_registered_combined.data.at(-1).toLocaleString("en-IN")],
+    ["pv-modern", (b) => b["asuse-modernity"].series.internet_all_combined.data.at(-1).toLocaleString("en-IN")],
+    ["pv-owner", (b) => {
+      const s = b["asuse-owners"].series;
+      return (s.social_obc_combined.data.at(-1) + s.social_sc_combined.data.at(-1) + s.social_st_combined.data.at(-1)).toLocaleString("en-IN") + " / 1,000";
+    }],
+    ["ex-r-avg", (b) => b["asuse-structure"].series.months_avg_combined.data.at(-1).toFixed(1)],
+    // v1.1 — the complete accounts ledger
+    ["pv-acct", (b) => "₹" + (b["asi-accounts"].series.i19.data.at(-1) / 1e7).toFixed(1) + " lakh cr"],
+    ["ex-a-con", (b) => {
+      const s = b["asi-accounts"].series;
+      return (s.i37.data.at(-1) / s.i32.data.at(-1) * 100).toFixed(1) + "%";
+    }],
     ["prov-vintage", (b) => b["asi-headline"].meta.vintage],
     ["prov-vintage2", (b) => b["asi-headline"].meta.vintage],
   ]},
@@ -97,7 +153,8 @@ const PAGES = [
     // the CPI print is the 2024-base series; core stays on the 2012 base
     // (no weights served for the new base), labelled "to Dec 2025"
     ["v-cpi", (b) => b["cpi-2024"].series.headline.data.at(-1).toFixed(2) + "%", "cpi-2024"],
-    ["v-gdp", (b) => b.gdp.series.gdp.data.at(-1).toFixed(2) + "%", "gdp"],
+    // the GDP print is the 2022-23-base series (old base ends Q2 FY26)
+    ["v-gdp", (b) => b["gdp-2022"].series.gdp.data.at(-1).toFixed(2) + "%", "gdp-2022"],
     ["v-core", (b) => b.cpi.series.core.data.at(-1).toFixed(2) + "%", "cpi"],
   ]},
   { url: "/register/", slug: null, minPlots: 8, checks: [] },
@@ -163,14 +220,24 @@ for (const page of PAGES) {
     cpi: JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/cpi.json"), "utf8")),
     "cpi-2024": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/cpi-2024.json"), "utf8")),
     gdp: JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/gdp.json"), "utf8")),
+    "gdp-industries": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/gdp-industries.json"), "utf8")),
+    "gdp-nominal": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/gdp-nominal.json"), "utf8")),
+    "gdp-accounts": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/gdp-accounts.json"), "utf8")),
+    "gdp-2022": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/gdp-2022.json"), "utf8")),
     wpi: JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/wpi.json"), "utf8")),
     "iip-2022": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/iip-2022.json"), "utf8")),
     "rbi-forex": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/rbi-forex.json"), "utf8")),
     "rbi-bop-ratios": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/rbi-bop-ratios.json"), "utf8")),
+    "rbi-trade-partners": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/rbi-trade-partners.json"), "utf8")),
+    "rbi-commodities-exports": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/rbi-commodities-exports.json"), "utf8")),
+    "rbi-commodities-imports": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/rbi-commodities-imports.json"), "utf8")),
     "plfs-monthly": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/plfs-monthly.json"), "utf8")),
     "plfs-quarterly": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/plfs-quarterly.json"), "utf8")),
     "plfs-annual": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/plfs-annual.json"), "utf8")),
     "plfs-cuts": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/plfs-cuts.json"), "utf8")),
+    "plfs-status": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/plfs-status.json"), "utf8")),
+    "plfs-earnings": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/plfs-earnings.json"), "utf8")),
+    "plfs-education": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/plfs-education.json"), "utf8")),
     "hces-mpce": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/hces-mpce.json"), "utf8")),
     "hces-gini": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/hces-gini.json"), "utf8")),
     "hces-fractiles": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/hces-fractiles.json"), "utf8")),
@@ -179,7 +246,13 @@ for (const page of PAGES) {
     "hces-quantities": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/hces-quantities.json"), "utf8")),
     "hces-categories-states": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/hces-categories-states.json"), "utf8")),
     "asi-headline": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/asi-headline.json"), "utf8")),
+    "asi-headline-1987": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/asi-headline-1987.json"), "utf8")),
+    "asi-headline-1998": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/asi-headline-1998.json"), "utf8")),
+    "asi-accounts": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/asi-accounts.json"), "utf8")),
     "asuse-annual": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/asuse-annual.json"), "utf8")),
+    "asuse-owners": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/asuse-owners.json"), "utf8")),
+    "asuse-modernity": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/asuse-modernity.json"), "utf8")),
+    "asuse-structure": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/asuse-structure.json"), "utf8")),
   };
   for (const [id, fn, which] of page.checks) {
     const got = doc.getElementById(id)?.textContent.trim();

@@ -5,6 +5,7 @@ import * as Plot from "@observablehq/plot";
 import cpiBundle from "../../data/series/cpi.json";
 import cpi2024Bundle from "../../data/series/cpi-2024.json";
 import gdpBundle from "../../data/series/gdp.json";
+import gdp2022Bundle from "../../data/series/gdp-2022.json";
 import wpiBundle from "../../data/series/wpi.json";
 import iipBundle from "../../data/series/iip-2022.json";
 import forexBundle from "../../data/series/rbi-forex.json";
@@ -16,21 +17,23 @@ import { hydrate } from "../charts/plumbing.js";
 const C = hydrate(cpiBundle);
 const C24 = hydrate(cpi2024Bundle);   // base 2024=100 — separate series, never spliced with C
 const G = hydrate(gdpBundle);
+const G22 = hydrate(gdp2022Bundle);   // base 2022-23 — the two newest prints live only here
 const W = hydrate(wpiBundle);
 const I = hydrate(iipBundle);
 const FX = hydrate(forexBundle);
 const PLFS = hydrate(plfsBundle);
 // the CPI print now lives on the 2024 base; core cannot be computed there
 // (no weights served yet), so it stays on the 2012 base, labelled to Dec 2025
-const head = C.headline.data, head24 = C24.headline.data, core = C.core.data, gdp = G.gdp.data, wpi = W.headline.data, iip = I.general.data.filter((d) => d.value != null);
+// the GDP print now lives on the 2022-23 base (old base ends Q2 FY26)
+const head = C.headline.data, head24 = C24.headline.data, core = C.core.data, gdp = G.gdp.data, gdp22 = G22.gdp.data, wpi = W.headline.data, iip = I.general.data.filter((d) => d.value != null);
 
 const pc = '<span class="pc">%</span>';
 const arrow = (d) => (d >= 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(2) + " pt";
 const setHTML = (id, h) => (document.getElementById(id).innerHTML = h);
 setHTML("v-cpi", head24.at(-1).value.toFixed(2) + pc);
 setHTML("d-cpi", arrow(head24.at(-1).value - head24.at(-2).value));
-setHTML("v-gdp", gdp.at(-1).value.toFixed(2) + pc);
-setHTML("d-gdp", arrow(gdp.at(-1).value - gdp.at(-2).value));
+setHTML("v-gdp", gdp22.at(-1).value.toFixed(2) + pc);
+setHTML("d-gdp", arrow(gdp22.at(-1).value - gdp22.at(-2).value));
 setHTML("v-core", core.at(-1).value.toFixed(2) + pc);
 setHTML("d-core", arrow(core.at(-1).value - core.at(-2).value));
 
@@ -52,7 +55,7 @@ function sparkline(id, data, color, dashed, w = 200, h = 40) {
   document.getElementById(id).append(plot);
 }
 sparkline("sp-cpi", head24, "#BE3E26", false);
-sparkline("sp-gdp", gdp, "#BE3E26", false);
+sparkline("sp-gdp", gdp22, "#BE3E26", false);
 sparkline("sp-core", core, "#C6C0B0", true);
 
 /* ---------- frontispiece : the decade + the rebased stub, never joined ---------- */

@@ -7,7 +7,7 @@ import Base from "../../layouts/Base.astro";
   nav="dossiers"
   dateStamp="August 2026"
   crumbLeft='<a href="/" style="color:inherit">Dossiers</a> / Enterprises / <b>Factories &amp; Informal Enterprises · ASI + ASUSE</b>'
-  crumbRight='Evergreen · revised with each survey round · <b>v1.0</b>'
+  crumbRight='Evergreen · revised with each survey round · <b>v1.1</b>'
   canonical="https://indiaatlas.in/dossiers/factories/"
   ogImage="/og/factories.png"
 >
@@ -70,9 +70,52 @@ import Base from "../../layouts/Base.astro";
     </div>
   </section>
 
-  <!-- § 03 the counts -->
+  <!-- § 03 the long century: four classification blocks, never joined -->
   <section>
-    <div class="sec-head"><span class="no">03</span><h2>Plate 1 — sixteen years of counting factories</h2><span class="line"></span><span class="unit">counts · annual · ASI</span></div>
+    <div class="sec-head"><span class="no">03</span><h2>Plate 1 — the long century</h2><span class="line"></span><span class="unit">Four rulers · 1992-93 – 2023-24 · never joined</span></div>
+    <div class="break">
+      <figure id="cb-long" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Thirty-two years, four rulers</h3>
+            <div class="sub">Factories on the register &amp; persons engaged · NIC-1987, NIC-1998, NIC-2004 and NIC-2008 blocks, drawn as four separate lines</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-long">–</div><div class="c">1997-98 → 2023-24 · factories on the register</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-long">
+            <button class="chip" data-key="b1987"><i style="background:#C6C0B0"></i>NIC-1987 · to 1997-98</button>
+            <button class="chip" data-key="b1998"><i style="background:#A8A293"></i>NIC-1998 · to 2003-04</button>
+            <button class="chip" data-key="b2004"><i style="background:#8A857A"></i>NIC-2004 · to 2007-08</button>
+            <button class="chip" data-key="b2008"><i style="background:#BE3E26"></i>NIC-2008 · current</button>
+          </div>
+          <div class="plotzone">
+            <div id="plot-long-fact" style="position:relative"></div>
+            <div id="plot-long-pers" style="position:relative;margin-top:26px"></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, ASI classification blocks 1987 / 1998 / 2004 / 2008 · each block is its own industrial classification and its own line — the seams are redefinitions, not events · 1993-94 is not served by the source at all · counts, free of prices</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The ASI is one survey published under four industrial classifications, and each classification is a different ruler. The lines are deliberately never joined: at every seam the survey re-sorted its factories, and a step across a seam measures the re-sorting as much as the economy. Read each segment's slope, not the jumps between segments.</p>
+            <p>What the segments say is uncomfortable enough. The register drifted through the 1990s, fell in the early 2000s, and the people-panel is worse: factory employment went backwards for half a decade after 1997-98 — the famous lost years of organised manufacturing, when output rose and jobs did not. The climb since is real; the 2010-11 step inside the current block is the frame revision, annotated in Plate 2.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>The register: <b id="ex-l87">–</b> factories in 1992-93, <b id="ex-l98">–</b> at the 1997-98 end of that ruler, and a dip to <b id="ex-l02">–</b> in 2001-02. Persons engaged: <b id="ex-lp97">–</b> in 1997-98, down to <b id="ex-lp03">–</b> by 2003-04, and <b id="ex-lp23">–</b> today. It took organised manufacturing about a decade to re-employ the people it shed after 1998.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 04 the counts -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>Plate 2 — sixteen years of counting factories</h2><span class="line"></span><span class="unit">counts · annual · ASI</span></div>
     <div class="break">
       <figure id="cb-count" style="margin:0">
         <div class="plate-head">
@@ -115,7 +158,7 @@ import Base from "../../layouts/Base.astro";
 
   <!-- § 04 the money -->
   <section>
-    <div class="sec-head"><span class="no">04</span><h2>Plate 2 — the money, in the rupees of its day</h2><span class="line"></span><span class="unit">₹ lakh crore · nominal</span></div>
+    <div class="sec-head"><span class="no">05</span><h2>Plate 3 — the money, in the rupees of its day</h2><span class="line"></span><span class="unit">₹ lakh crore · nominal</span></div>
     <div class="break">
       <figure id="cb-money" style="margin:0">
         <div class="plate-head">
@@ -157,7 +200,7 @@ import Base from "../../layouts/Base.astro";
 
   <!-- § 05 where -->
   <section>
-    <div class="sec-head"><span class="no">05</span><h2>Plate 3 — where the factory rupee is made</h2><span class="line"></span><span class="unit">share of factory GVA · 2023-24</span></div>
+    <div class="sec-head"><span class="no">06</span><h2>Plate 4 — where the factory rupee is made</h2><span class="line"></span><span class="unit">share of factory GVA · 2023-24</span></div>
     <div class="break">
       <figure id="cb-states" style="margin:0">
         <div class="plate-head">
@@ -191,7 +234,7 @@ import Base from "../../layouts/Base.astro";
 
   <!-- § 06 what they make -->
   <section>
-    <div class="sec-head"><span class="no">06</span><h2>Plate 4 — what the factories make</h2><span class="line"></span><span class="unit">GVA by NIC division · ₹ nominal</span></div>
+    <div class="sec-head"><span class="no">07</span><h2>Plate 5 — what the factories make</h2><span class="line"></span><span class="unit">GVA by NIC division · ₹ nominal</span></div>
     <div class="break">
       <figure id="cb-ind" style="margin:0">
         <div class="plate-head">
@@ -221,11 +264,40 @@ import Base from "../../layouts/Base.astro";
         </div>
       </figure>
     </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-jv" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Where the jobs are, against where the value is</h3>
+            <div class="sub">Share of factory employment (x) against share of factory value added (y), by two-digit industry · 2023-24 · the diagonal marks equal shares · vermilion: the most labour-intensive</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-jv">–</div><div class="c">most labour-intensive · 2023-24</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-jv"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, ASI · both shares computed by India Atlas from industry-level GVA and persons-engaged · an industry above the diagonal is capital-intensive (more value than its headcount implies); below it, labour-intensive</span>
+            <span class="dl"><button data-dl="csv">CSV · all industries</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>One dot per industry, plotted twice — once for its share of all factory jobs, once for its share of all factory value added. If jobs and value tracked each other, every dot would sit on the diagonal. They do not. The dots below it carry more workers than their output warrants: the labour-intensive backbone. The dots above carry more output than their headcount: the capital-intensive core.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>The most labour-intensive industry is <b id="ex-jv-lab">–</b>; the most capital-intensive <b id="ex-jv-cap">–</b>. A factory job in the one is not the same as a factory job in the other, and the aggregate productivity number hides the gap between them.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
   </section>
 
   <!-- § 07 the other economy -->
   <section>
-    <div class="sec-head"><span class="no">07</span><h2>The other economy, counted at last</h2><span class="line"></span><span class="unit">ASUSE · establishments · ₹ per year</span></div>
+    <div class="sec-head"><span class="no">08</span><h2>The other economy, counted at last</h2><span class="line"></span><span class="unit">ASUSE · establishments · ₹ per year</span></div>
     <p>ASUSE — the Annual Survey of Unincorporated Sector Enterprises — is the young counterpart to the ASI's old ledger. It counts establishments no factory inspector visits: the tailor, the tea stall, the two-room workshop. The survey splits them in two. An <b>own-account establishment</b> (OAE) hires nobody — usually one person, or a family, working for themselves. A <b>hired-worker establishment</b> (HWE) employs at least one person for pay. In 2023-24 the own-account kind was <b id="ot-oaesh">–</b> of all establishments; the hired-worker kind, <b id="ot-hwesh">–</b>, held <b id="ot-hwewk">–</b> of the workers.</p>
 
     <div class="break basket" style="margin-top:44px">
@@ -269,9 +341,168 @@ import Base from "../../layouts/Base.astro";
     </div>
   </section>
 
-  <!-- § 08 the measure -->
+  <!-- § 09 the informal firm, described -->
   <section>
-    <div class="sec-head"><span class="no">08</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">09</span><h2>The informal firm, described</h2><span class="line"></span><span class="unit">ASUSE · per 1,000 establishments · 2023-24</span></div>
+    <p>Counting the informal economy was the first act; describing it is the second. ASUSE also asks each establishment who owns it, where it stands, how long it runs and what paperwork it holds — answers published as rates per 1,000 establishments. They describe a firm that is one person, male-owned, run from home or a permanent stall, open all year — and mostly outside every register the state keeps. Of every 1,000 in 2023-24, <b id="if-reg">–</b> were registered under no act at all, and <b id="if-comp">–</b> used a computer.</p>
+
+    <div class="break" style="margin-top:44px">
+      <figure id="cb-owner" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Who owns the shop</h3>
+            <div class="sub">Proprietary &amp; partnership establishments, per 1,000 · by owner's social group &amp; by sex of owner · 2023-24 · All India</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-owner">–</div><div class="c">owned by OBC, SC or ST proprietors · per 1,000</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone">
+            <div class="basket" style="padding:0 0 8px">
+              <div class="bar" id="bar-social"></div>
+              <div class="labels" id="lab-social"></div>
+            </div>
+            <div class="basket" style="padding:28px 0 8px">
+              <div class="bar" id="bar-sex"></div>
+              <div class="labels" id="lab-sex"></div>
+            </div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, ASUSE indicators 5, 6 &amp; 3 · per-1,000 distributions as published, combined sector · proprietary &amp; partnership establishments only — a company has no single owner to classify</span>
+            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The informal economy is where India's less-favoured groups own things. The owner distribution leans further toward OBC and SC proprietors than the ownership of registered companies ever has, and that is the quiet function of this sector: it is the open door. The bar below it shows the other gate — sex. Most establishments are one proprietor, and most proprietors are men; female-owned establishments cluster in manufacturing, largely home-based work.</p>
+            <p>Education completes the portrait: the modal owner has schooling between primary and secondary. Graduates are a minority of owners here — the graduate premium in India is a wage premium, collected in jobs, not shops.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>Per 1,000 proprietary and partnership establishments: <b id="ex-o-obc">–</b> OBC-owned, <b id="ex-o-sc">–</b> SC-owned, <b id="ex-o-st">–</b> ST-owned. Female proprietors run <b id="ex-o-fem">–</b> of every 1,000 proprietary establishments. Owners educated below secondary school: <b id="ex-o-edu">–</b> per 1,000.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-modern" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The paperwork and the wires</h3>
+            <div class="sub">Establishments per 1,000 with a bank account, a computer, an internet connection, a registration · 2023-24 · All India, combined</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-modern">–</div><div class="c">per 1,000 using the internet · all establishments</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-modern"></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, ASUSE indicators 9, 20 &amp; 22 · rates per 1,000 establishments as published · registration rates are not exclusive — one establishment can hold several · GST = CGST Act registration</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Two Indias share this strip, and one surprise. Bank accounts are the reached frontier — three establishments in four keep one, a decade of financial-inclusion policy visible in a single dot. The computer never arrived: a few dozen per thousand, flat across all three rounds. The surprise is the internet dot between them, which nearly doubled in two years — the smartphone became a business tool without a computer ever entering the shop.</p>
+            <p>The registration dots are the formality frontier. An establishment registered under the Shops Act or GST is still unincorporated — registration is a spectrum, not a switch, and most of this economy sits at the unregistered end of it.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>Per 1,000 establishments: <b id="ex-m-bank">–</b> maintain a bank or post-office account, <b id="ex-m-net">–</b> use the internet, <b id="ex-m-comp">–</b> a computer. <b id="ex-m-gst">–</b> hold GST registration, <b id="ex-m-shops">–</b> a Shops &amp; Establishments registration — and <b id="ex-m-none">–</b> are registered under nothing. Hiring changes the picture: internet use is <b id="ex-m-hwe">–</b> per 1,000 among hired-worker establishments against <b id="ex-m-oae">–</b> among own-account ones.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-rhythm" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Where it stands, when it works</h3>
+            <div class="sub">Location of the establishment · months operated in the year · hours in the day · per 1,000 · 2023-24</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-rhythm">–</div><div class="c">per 1,000 operating more than 9 months a year</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone">
+            <div class="basket" style="padding:0 0 8px">
+              <div class="bar" id="bar-loc"></div>
+              <div class="labels" id="lab-loc"></div>
+            </div>
+            <div class="basket" style="padding:28px 0 8px">
+              <div class="bar" id="bar-months"></div>
+              <div class="labels" id="lab-months"></div>
+            </div>
+            <div class="basket" style="padding:28px 0 8px">
+              <div class="bar" id="bar-hours"></div>
+              <div class="labels" id="lab-hours"></div>
+            </div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, ASUSE indicators 10, 14 &amp; 16 · per-1,000 distributions as published, combined sector, all establishment types · street vendors are establishments without fixed premises</span>
+            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The picture of precarity that "informal" suggests — a street vendor, seasonal, a few hours a day — is the minority case. Most establishments have a roof and an address: household premises or a permanent structure outside one. Most run more than nine months a year, and the modal working day is a full eight-to-eleven hours. Informal describes the paperwork, not the work.</p>
+            <p>The margins are still where the hardship lives. The mobile and street-vending sliver at the end of the top bar has no premises to return to, and the short-months establishments at the left of the middle bar are the seasonal trades — brick work, sugarcane crushing, festival goods.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>Per 1,000 establishments: <b id="ex-r-house">–</b> operate from within the household and <b id="ex-r-perm">–</b> from a permanent structure outside it; street vending and mobile trade account for <b id="ex-r-street">–</b>. <b id="ex-r-m9">–</b> operate more than nine months a year; <b id="ex-r-h8">–</b> work an eight-to-eleven-hour day. The average establishment operates <b id="ex-r-avg">–</b> months in the year.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 10 the factory accounts, complete -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>The factory accounts, complete</h2><span class="line"></span><span class="unit">All 57 ASI indicators · 2023-24 · full CSV</span></div>
+    <div class="break">
+      <figure id="cb-acct" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Every line the survey publishes</h3>
+            <div class="sub">The complete ASI ledger — every indicator the survey publishes, All India, latest year, with sixteen-year sparklines · nominal where monetary</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-acct">–</div><div class="c">2023-24 · gross value added · the ledger's centre line</div></div>
+        </div>
+        <div class="frame">
+          <div class="ledger tail-ledger">
+            <table>
+              <thead>
+                <tr><th>Indicator · ASI code</th><th>2023-24</th><th>vs 2022-23</th><th>2008-09</th><th class="spark">2008 – 2024</th></tr>
+              </thead>
+              <tbody id="acct-body"></tbody>
+            </table>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, ASI 2008 block · all 57 published indicators, nothing selected · money in ₹ lakh at source, shown in ₹ lakh crore · counts and mandays plain · stock-change lines and net profit can print negative · CSV carries every indicator, every year</span>
+            <span class="dl"><button data-dl="csv">CSV · all 57</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>This is the survey's whole balance sheet, in the survey's own order: capital first, then output and inputs, the value-added lines, the people, the wage bill, and fuel at the end. The plates above chose eleven of these lines; the other forty-six are here so that the choosing is inspectable. A reader who wants depreciation, mandays, contract workers or the coal bill does not need another source — it is all one table.</p>
+            <p>Everything monetary is nominal, and the sparklines mostly rise for that reason alone. The exceptions earn attention: a line that falls in nominal terms — rent paid for fixed assets, unpaid family members working in factories — fell in fact. One line is missing by design: the children-workers indicator is served only as a single corrupt row and is quarantined, not printed; 56 of the 57 lines are here.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>The wage structure, visible only at this depth: of <b id="ex-a-emol">–</b> in total emoluments, <b id="ex-a-wrk">–</b> went to production workers' wages. Contract workers are <b id="ex-a-con">–</b> of all workers, and the sector worked <b id="ex-a-mand">–</b> crore mandays in the year. The fuel bill was <b id="ex-a-fuel">–</b>, of which purchased electricity made up <b id="ex-a-elec">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 11 the measure -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>What this measures</h2><span class="line"></span></div>
     <div class="wm-grid">
       <div>
         <p>The ASI is a census-plus-sample of the Factories Act register: every large factory enumerated, the rest sampled, once a year, results final on release. "Registered" is the load-bearing word — broadly, ten or more workers with power, twenty without. The survey measures premises, money and people: counts of factories and workers are clean; every rupee figure is nominal, published in ₹ lakh, with no deflator offered or possible at this level.</p>
@@ -295,9 +526,9 @@ import Base from "../../layouts/Base.astro";
     </div>
   </section>
 
-  <!-- § 09 misread -->
+  <!-- § 12 misread -->
   <section>
-    <div class="sec-head"><span class="no">09</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">12</span><h2>How to misread this number</h2><span class="line"></span></div>
     <ul class="misread">
       <li>
         <span class="no">i.</span>
@@ -330,6 +561,13 @@ import Base from "../../layouts/Base.astro";
       <li>
         <span class="no">v.</span>
         <div>
+          <h3>"The ASI shows 32 years of factory growth — just chain the four blocks."</h3>
+          <p>The four classification blocks are four different sortings of industry, with different coverage at the edges and a rebuilt frame in 2010-11. Chained into one line they would manufacture growth (or decline) at every seam. This dossier draws them as four lines with the seams visible, and computes no growth rate across any seam.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">vi.</span>
+        <div>
           <h3>"ASUSE counts the whole informal economy."</h3>
           <p>It counts unincorporated establishments in manufacturing, trade and other services. Farms are excluded, as are construction, government and anything incorporated. Informal work in those sectors exists — the labour survey sees the workers — but no survey counts those enterprises, and this page does not pretend otherwise.</p>
         </div>
@@ -341,8 +579,9 @@ import Base from "../../layouts/Base.astro";
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. Annual Survey of Industries, NIC-2008 block, 2008-09 to 2023-24; ASUSE annual rounds 2021-22 to 2023-24 and quarterly bulletin from Jan–Mar 2025. Retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>.</p>
-        <p>ASI monetary values are published in ₹ lakh and are shown here in ₹ lakh crore, nominal, with no deflation. The 2010-11 sampling-frame revision is carried as published and annotated wherever a series crosses it. Ladakh's factory GVA is negative in 2021-22 — a real published value, inputs exceeding output, not an error. Telangana appears from 2012-13 and Ladakh from 2019-20; earlier cells are null, not zero.</p>
+        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. Annual Survey of Industries, four classification blocks — NIC-1987 (1992-93 to 1997-98; 1993-94 not served by the source), NIC-1998 (1998-99 to 2003-04), NIC-2004 (2004-05 to 2007-08) and NIC-2008 (2008-09 to 2023-24) — kept as four separate series, never spliced. ASUSE annual rounds 2021-22 to 2023-24 and quarterly bulletin from Jan–Mar 2025. Retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>.</p>
+        <p>Coverage: all 57 indicators the ASI 2008 block publishes are ingested raw, and 56 are baked (§10 carries the ledger; the children-workers indicator exists in the API only as a single corrupt row — its 2023-24 value duplicates the contract-workers count — and is quarantined, disclosed here and in the baked file); the older blocks publish 57, 28 and 32 indicators respectively, of which the comparable core is baked. Of ASUSE's 35 catalogued annual indicators, 20 are baked: the headline counts and rupee rates, the owner, paperwork and rhythm distributions (§09), and lean state cuts of establishments, workers and GVA per worker. The rest are state-wise duplicates of the All-India distributions (11 indicators) or minor residuals (multi-activity counts, internet-use types, size-band characteristics, worker types) — skipped knowingly, listed in data/sources.yml.</p>
+        <p>ASI monetary values are published in ₹ lakh and are shown here in ₹ lakh crore, nominal, with no deflation. The 1987 block serves Total Emoluments with a blank unit; it is ₹ lakh and is corrected and disclosed in the baked file. The 2010-11 sampling-frame revision is carried as published and annotated wherever a series crosses it. Ladakh's factory GVA is negative in 2021-22 — a real published value, inputs exceeding output, not an error. Telangana appears from 2012-13 and Ladakh from 2019-20; earlier cells are null, not zero.</p>
       </div>
       <div>
         <h6>Revisions &amp; uncertainty</h6>
@@ -351,7 +590,7 @@ import Base from "../../layouts/Base.astro";
       </div>
       <div>
         <h6>This dossier</h6>
-        <p>Dossier 08 · Enterprises · version 1.0 · first release, on the ASI 2023-24 and ASUSE 2023-24 rounds. Next scheduled revision: on release of either survey's next round.</p>
+        <p>Dossier 08 · Enterprises · version 1.1 · adds the four-block long history (Plate 1), the informal-firm portrait (§09) and the complete 57-indicator factory ledger (§10). Next scheduled revision: on release of either survey's next round.</p>
         <p>Corrections and questions: register@indiaatlas.example</p>
       </div>
     </div>

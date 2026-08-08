@@ -41,10 +41,7 @@ setHTML("d-mfg", `<b>${arrow(L.manufactured - P.manufactured)}</b> vs ${prevName
 
 setHTML("rb-big", L.headline.toFixed(2) + pc);
 setHTML("rb-prev", P.headline.toFixed(2) + pc);
-setTxt("cr-h1", f1(L.headline));
-setTxt("cr-fu1", f1(L.fuel));
-setTxt("cr-p1", f1(L.primary));
-setTxt("cr-m1", f1(L.manufactured));
+// §01 "current reading" prose is pipeline-generated (pipeline/out/prose-wpi.*.md).
 
 setTxt("pv-main", f1(L.headline));
 setTxt("pv-fuel", f1(L.fuel)); setTxt("pv-mfg", f1(L.manufactured));

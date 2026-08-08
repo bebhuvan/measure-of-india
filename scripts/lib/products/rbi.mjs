@@ -484,5 +484,151 @@ function buildBundles(root, dcfg, vintage, byCode) {
     });
   }
 
+  /* ---- v1.2 additions: partners, commodities, forex-market turnover ---- */
+
+  // direction of foreign trade by partner country (sub 11, US$M, ANNUAL
+  // fiscal years, 2009-10 onward). One ingest fault, disclosed rather than
+  // smoothed: the countries dimension carries no United Kingdom, and every
+  // (year, direction) holds TWO rows labelled "USA". The pair's larger value
+  // tracks the RBI's published US series and the smaller its published UK
+  // series in every year of the table (FY25 exports: $86.5bn US, $14.5bn UK),
+  // so the larger is baked as USA, the smaller as United Kingdom, and the
+  // assertion below fails the build if the pair ever stops being separable.
+  const PARTNERS = [
+    ["usa", "USA", "USA"], ["china", "People's Republic of China", "China"],
+    ["uae", "U A E", "UAE"], ["russia", "Russia", "Russia"],
+    ["saudi_arabia", "Saudi Arabia", "Saudi Arabia"], ["singapore", "Singapore", "Singapore"],
+    ["iraq", "Iraq", "Iraq"], ["germany", "Germany", "Germany"],
+    ["indonesia", "Indonesia", "Indonesia"], ["netherlands", "Netherlands", "Netherlands"],
+    ["south_korea", "South Korea", "South Korea"], ["hong_kong", "Hong Kong", "Hong Kong"],
+    ["japan", "Japan", "Japan"], ["australia", "Australia", "Australia"],
+    ["switzerland", "Switzerland", "Switzerland"], ["uk", "United Kingdom", "United Kingdom"],
+  ];
+  // top-level group rows: OECD/Asia/Latin America/Others/Unspecified carry a
+  // null sub-group; Africa, Eastern Europe and OPEC surface their single
+  // sub-group row as the group total (no separate group-level row exists)
+  const GROUP_AS_SUB = new Set(["Other African Countries", "Other European Countries", "Other OPEC Countries"]);
+  const dot = {}; // partner key -> { exports: Map, imports: Map }
+  const dotTotals = { exports: new Map(), imports: new Map() };
+  const dotGroups = { exports: new Map(), imports: new Map() };
+  const usaPairs = {}; // "YYYY-04|dir" -> [v, v]
+  for (const r of byCode["11"] ?? []) {
+    const v = parseFloat(r.value);
+    if (!/^\d{4}/.test(r.year ?? "") || !Number.isFinite(v)) continue;
+    const ym = `${String(r.year).slice(0, 4)}-04`;
+    const dir = r.trade === "Export" ? "exports" : "imports";
+    if (r.countries == null) {
+      if (r.country_group === "Total") dotTotals[dir].set(ym, v);
+      else if (r.country_sub_group == null || GROUP_AS_SUB.has(r.country_sub_group))
+        dotGroups[dir].set(ym, (dotGroups[dir].get(ym) ?? 0) + v);
+      continue;
+    }
+    if (r.countries === "USA") { (usaPairs[`${ym}|${dir}`] ??= []).push(v); continue; }
+    const pk = PARTNERS.find(([, src]) => src === r.countries)?.[0];
+    if (pk) ((dot[pk] ??= { exports: new Map(), imports: new Map() })[dir]).set(ym, v);
+  }
+  for (const [key, vals] of Object.entries(usaPairs)) {
+    const [ym, dir] = key.split("|");
+    if (vals.length !== 2 || Math.min(...vals) <= 0 || Math.max(...vals) / Math.min(...vals) < 1.2)
+      throw new Error(`RBI sub 11: USA/UK label pair not separable at ${key}: ${vals}`);
+    (dot.usa ??= { exports: new Map(), imports: new Map() })[dir].set(ym, Math.max(...vals));
+    (dot.uk ??= { exports: new Map(), imports: new Map() })[dir].set(ym, Math.min(...vals));
+  }
+  const paMonths = [...new Set(Object.values(dot).flatMap((o) => [...o.exports.keys(), ...o.imports.keys()]))].sort();
+  if (paMonths.length) {
+    const paAxis = [];
+    for (let y = +paMonths[0].slice(0, 4); y <= +paMonths.at(-1).slice(0, 4); y++) paAxis.push(`${y}-04`);
+    const paSeries = {};
+    PARTNERS.forEach(([k, , label], i) => {
+      if (!dot[k]) return;
+      paSeries[`exports_${k}`] = { name: `exports_to_${k}_usd_millions`, label: `${label} · exports`, color: "#5B564B", data: paAxis.map((ym) => dot[k].exports.get(ym) ?? null), unit: "USD_millions" };
+      paSeries[`imports_${k}`] = { name: `imports_from_${k}_usd_millions`, label: `${label} · imports`, color: GREYS[(i + 2) % GREYS.length], data: paAxis.map((ym) => dot[k].imports.get(ym) ?? null), unit: "USD_millions" };
+    });
+    writeJson(root, "data/series/rbi-trade-partners.json", {
+      meta: { ...metaBase, frequency: "annual", base: dcfg.base, latestPeriod: paMonths.at(-1),
+        note: "Direction of foreign trade: exports to and imports from the sixteen largest partner countries, US$ Millions, fiscal years plotted at April of the first year. The source labels the United Kingdom's rows \"USA\" (its countries dimension has no UK); the two values are separated by size — the larger is the United States in every year, verified against the RBI's published bilateral series — and the build fails if the pair ever overlaps. This table's totals differ from the monthly customs series (rbi-trade) by up to ~0.3% — different compilation of the same trade; both totals are kept in crosscheck.",
+        gaps: gapsInside(paAxis, Object.values(dot).flatMap((o) => [o.exports, o.imports])) },
+      dates: paAxis.map((ym) => `${ym}-01`),
+      series: paSeries,
+      crosscheck: {
+        total_exports: paAxis.map((ym) => dotTotals.exports.get(ym) ?? null),
+        total_imports: paAxis.map((ym) => dotTotals.imports.get(ym) ?? null),
+        groups_exports_sum: paAxis.map((ym) => dotGroups.exports.get(ym) == null ? null : round2(dotGroups.exports.get(ym))),
+        groups_imports_sum: paAxis.map((ym) => dotGroups.imports.get(ym) == null ? null : round2(dotGroups.imports.get(ym))),
+      },
+    });
+  }
+
+  // exports / imports of major commodities (subs 44 & 46, US$M, ANNUAL
+  // fiscal years, 2009-10 onward): every published commodity group is baked;
+  // the published Total row is kept as a crosscheck, and the groups sum to it
+  // within $1mn (validate.mjs asserts the identity).
+  for (const [code, dimKey, totalLabel, slug, dir, what] of [
+    ["44", "export_commodities", "Total Exports", "rbi-commodities-exports", "exports", "Exports"],
+    ["46", "import_commodities", "Total Imports", "rbi-commodities-imports", "imports", "Imports"],
+  ]) {
+    const per = {}; const labels = {}; const totals = new Map();
+    for (const r of byCode[code] ?? []) {
+      const v = parseFloat(r.value);
+      if (!/^\d{4}/.test(r.year ?? "") || !Number.isFinite(v)) continue;
+      const ym = `${String(r.year).slice(0, 4)}-04`;
+      if (r[dimKey] === totalLabel) { totals.set(ym, v); continue; }
+      const k = String(r[dimKey]).toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
+      labels[k] = r[dimKey];
+      (per[k] ??= new Map()).set(ym, v);
+    }
+    const cMonths = [...new Set(Object.values(per).flatMap((m) => [...m.keys()]))].sort();
+    if (!cMonths.length) continue;
+    const cAxis = [];
+    for (let y = +cMonths[0].slice(0, 4); y <= +cMonths.at(-1).slice(0, 4); y++) cAxis.push(`${y}-04`);
+    const order = Object.keys(per).sort((a, b) => (per[b].get(cMonths.at(-1)) ?? 0) - (per[a].get(cMonths.at(-1)) ?? 0));
+    writeJson(root, `data/series/${slug}.json`, {
+      meta: { ...metaBase, frequency: "annual", base: dcfg.base, latestPeriod: cMonths.at(-1),
+        note: `${what} of major commodities, US$ Millions, fiscal years plotted at April of the first year. All ${order.length} published commodity groups are baked (series ordered by the latest year's value); the published ${totalLabel} row is kept in crosscheck and the groups sum to it within $1mn. The total matches the monthly customs series (rbi-trade) summed over the fiscal year to well under 0.5%.`,
+        gaps: gapsInside(cAxis, Object.values(per)) },
+      dates: cAxis.map((ym) => `${ym}-01`),
+      series: Object.fromEntries(order.map((k, i) => [k, {
+        name: `${dir}_${k}_usd_millions`, label: labels[k],
+        color: i === 0 ? "#BE3E26" : GREYS[i % GREYS.length],
+        data: cAxis.map((ym) => per[k].get(ym) ?? null), unit: "USD_millions",
+      }])),
+      crosscheck: { total_published: cAxis.map((ym) => totals.get(ym) ?? null) },
+    });
+  }
+
+  // turnover in the foreign exchange market (sub 30, monthly, fiscal labels,
+  // Aug 1996 onward): purchases plus sales in the month, by market segment.
+  // The finer grain (spot/forward/swap × FCY-INR/FCY-FCY) stays in the raw
+  // archive; here the segment totals and the published Grand Total only.
+  const to = { merchant: new Map(), interbank: new Map(), grand: new Map() };
+  for (const r of byCode["30"] ?? []) {
+    const ym = fyMonth(r.year, r.month);
+    const v = parseFloat(r.value);
+    if (!ym || !Number.isFinite(v)) continue;
+    const add = (m) => m.set(ym, round2((m.get(ym) ?? 0) + v));
+    if (r.market === "Grand Total") add(to.grand);
+    else if (r.conversion === "Total Merchant") add(to.merchant);
+    else if (r.conversion === "Total Inter-Bank") add(to.interbank);
+  }
+  const toMonths = [...to.grand.keys()].sort();
+  if (toMonths.length) {
+    const toAxis = monthAxis(toMonths[0], toMonths.at(-1));
+    writeJson(root, "data/series/rbi-fx-turnover.json", {
+      meta: { ...metaBase, frequency: "monthly", base: dcfg.base, latestPeriod: toMonths.at(-1),
+        note: "Turnover in the foreign exchange market: gross purchases plus sales in the month, US$ Millions (the source's unit field is empty; the scale matches the RBI's published USD-million turnover tables). Total is computed as merchant + inter-bank and cross-checked against the published Grand Total — they agree within $2mn everywhere except September 2018, where the published Grand Total exceeds the segment sum by ~$62bn in the source itself; the discrepancy is the source's, kept as published.",
+        gaps: gapsInside(toAxis, [to.merchant, to.interbank, to.grand]) },
+      dates: toAxis.map((ym) => `${ym}-01`),
+      series: {
+        merchant: { name: "fx_turnover_merchant_usd_millions", label: "Merchant", color: "#5B564B", data: toAxis.map((ym) => to.merchant.get(ym) ?? null), unit: "USD_millions" },
+        interbank: { name: "fx_turnover_interbank_usd_millions", label: "Inter-bank", color: "#A8A293", data: toAxis.map((ym) => to.interbank.get(ym) ?? null), unit: "USD_millions" },
+        total: { name: "fx_turnover_total_usd_millions", label: "Total", color: "#BE3E26", data: toAxis.map((ym) => {
+          const m = to.merchant.get(ym), b = to.interbank.get(ym);
+          return m != null && b != null ? round2(m + b) : null;
+        }), unit: "USD_millions" },
+      },
+      crosscheck: { grand_total_published: toAxis.map((ym) => to.grand.get(ym) ?? null) },
+    });
+  }
+
   return tradeBundle;
 }

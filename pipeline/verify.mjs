@@ -40,6 +40,7 @@ function walk(o) {
 }
 walk(facts.series);
 walk(facts.cross);
+if (facts.legacy) walk(facts.legacy);
 // structural constants of the dossiers (weights, band edges, targets, counts)
 for (const v of [2, 4, 6, 45.86, 6.84, 47.30, 2.38, 6.53, 10.07, 28.32, 100, 55.8, 33.5, 9.6, 2012, 2011, 2016, 2025, 2026, 12]) addNum(v);
 
@@ -64,7 +65,8 @@ for (const m of prose.matchAll(/\b(19|20)\d{2}\b/g)) {
 // against the baked series here. Conservative: only reject when a claim is
 // resolvable AND clearly false; anything ambiguous is left to the critic.
 
-const bundle = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", slug + ".json"), "utf8"));
+const CURRENT = { cpi: "cpi-2024", gdp: "gdp-2022", iip: "iip-2022", wpi: "wpi", jobs: "plfs-monthly", consumption: "hces-mpce", factories: "asi-headline" };
+const bundle = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", (CURRENT[slug] ?? slug) + ".json"), "utf8"));
 const monthly = bundle.meta.frequency === "monthly";
 const lagN = monthly ? 12 : 4;
 const MN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -90,8 +92,13 @@ function periodIndex(str) {
 }
 
 const SERIES_KWS = {
-  cpi: [["core", "core"], ["food", "food"], ["fuel", "fuel"], ["headline", "headline"], ["inflation", "headline"], ["basket", "headline"]],
+  cpi: [["headline", "headline"], ["inflation", "headline"], ["food", "food_and_beverages"], ["beverages", "food_and_beverages"], ["transport", "transport"], ["restaurants", "restaurants_and_accommodation_services"], ["hotels", "restaurants_and_accommodation_services"], ["personal care", "personal_care_social_protection_and_miscellaneous_goods_and_services"], ["gold", "personal_care_social_protection_and_miscellaneous_goods_and_services"], ["education", "education_services"], ["health", "health"], ["housing", "housing_water_electricity_gas_and_other_fuels"]],
   gdp: [["gva", "gva"], ["consumption", "pfce"], ["pfce", "pfce"], ["investment", "gfcf"], ["gfcf", "gfcf"], ["capex", "gfcf"], ["gdp", "gdp"], ["growth", "gdp"]],
+  wpi: [["headline", "headline"], ["wholesale", "headline"], ["inflation", "headline"], ["primary", "primary"], ["fuel", "fuel"], ["manufactured", "manufactured"], ["food", "food_index"]],
+  iip: [["general", "general"], ["headline", "general"], ["industrial", "general"], ["manufacturing", "sector_manufacturing"], ["capital", "use_capital_goods"], ["mining", "sector_mining_quarrying"], ["electricity", "sector_electricity_gas_supply"]],
+  jobs: [["unemployment", "ur"], ["headline", "ur"], ["participation", "lfpr"], ["worker", "wpr"]],
+  consumption: [["mpce", "rural"], ["spending", "rural"], ["consumption", "rural"], ["gini", "rural"]],
+  factories: [["factories", "factories_in_operation"], ["gva", "gva"], ["output", "total_output"], ["emoluments", "emoluments"]],
 }[slug] ?? [];
 function resolveSeries(sentence) {
   const s = sentence.toLowerCase();
@@ -140,6 +147,17 @@ function predicate(text) {
   if (/fall|decline|drop|easing|cooling/.test(t)) return { fn: (v, i, arr) => i > 0 && v < arr[i - 1], desc: "falling" };
   return null;
 }
+// A conservative predicate for streak counts that have no explicit "of <predicate>"
+// clause. It reads only a direction VERB next to the count (firmed, eased) — never a
+// level threshold ("above 4%") lifted from a different clause of the same sentence,
+// which would conflate "firmed for five months, now above 4%" into a false claim.
+function clausePredicate(text) {
+  const t = text.toLowerCase();
+  if (/deflation|negative|below zero/.test(t)) return { fn: (v) => v < 0, desc: "deflation/negative" };
+  if (/\b(rose|climbed|climbs|climbing|gained|increased|risen|firm|firmed|firms|firming|accelerat)/.test(t)) return { fn: (v, i, arr) => i > 0 && v > arr[i - 1], desc: "rising" };
+  if (/\b(fell|eased|declined|dropped|slipped|decreased|fallen|cooled|slowed|decelerat)/.test(t)) return { fn: (v, i, arr) => i > 0 && v < arr[i - 1], desc: "falling" };
+  return null;
+}
 
 const sentences = prose.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter(Boolean);
 const claimFail = (msg, s) => failures.push(`${msg} — in: "${s.slice(0, 90)}…"`);
@@ -186,7 +204,9 @@ for (const s of sentences) {
   //    predicate may also precede ("in deflation for nine straight months")
   for (const m of s.matchAll(new RegExp(`\\b(${NW})\\s+(?:straight|consecutive)\\s+(?:months|quarters|prints)(?:\\s+of\\s+([a-z][a-z\\s-]{2,40}))?`, "gi"))) {
     const n = numWord(m[1]);
-    const pred = predicate(m[2] ?? s);
+    // explicit "of <predicate>" clause → full predicate; else only a direction
+    // verb co-occurring with the count, never a level threshold from another clause
+    const pred = m[2] ? predicate(m[2]) : clausePredicate(s);
     if (n == null || !pred) continue;
     const ai = findAnchor(s.slice(m.index), "in|until|through|by|ending(?:\\s+in)?");
     if (ai === -1) continue;

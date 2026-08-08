@@ -59,12 +59,7 @@ setHTML("d-elec", `<b>${arrow(L.sector_electricity_gas_supply - P.sector_electri
 
 setHTML("rb-big", L.general.toFixed(2) + pc);
 setHTML("rb-prev", P.general.toFixed(2) + pc);
-setTxt("cr-h1", f1(L.general)); setTxt("cr-h2", f1(P.general));
-setTxt("cr-c1", f1(L.use_capital_goods));
-setTxt("cr-m1", f1(L.sector_manufacturing));
-setTxt("cr-e1", f1(L.sector_electricity_gas_supply));
-setTxt("cr-mn1", f1(L.sector_mining_quarrying));
-setTxt("cr-cnd1", f1(L.use_consumer_non_durables));
+// §01 "current reading" prose is pipeline-generated (pipeline/out/prose-iip.*.md).
 
 setTxt("pv-bases", f1(L.general));
 setTxt("pv-main", f1(L.general));
@@ -219,6 +214,56 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
     "india-atlas_iip_industries_base2022",
     "Selected manufacturing industries, year-on-year, April 2024 to June 2026",
     "Line chart. Electrical equipment ends at +" + IND[keys[0]].data.at(-1).value.toFixed(1) + " per cent, apparel at " + IND[keys[2]].data.at(-1).value.toFixed(1) + ".");
+}
+
+/* ---------- the current-base industry field: every industry on 2022-23 base ----------
+ * The retired base's 23-panel grid is a memory; the current base is the live
+ * field. The freshest detail the index offers, ranked by the latest print. */
+{
+  const labelOf = (k) => k
+    .replace(/^sub_manufacturing_manufacture_of_/, "")
+    .replace(/^sub_manufacturing_/, "")
+    .replace(/^sub_(mining_quarrying|electricity_gas_supply|water_supply_sewerage_waste_management)_/, "")
+    .split("_").map((w) => w[0].toUpperCase() + w.slice(1)).join(" ");
+  const TH = 10;
+  const fmtSigned = (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
+  const rows = Object.keys(IND).map((k) => {
+    const s = IND[k];
+    return { k, s, label: labelOf(k), last: s.data.filter((d) => d.value != null).at(-1) };
+  }).sort((a, b) => b.last.value - a.last.value);
+  const extremes = rows.filter((r) => Math.abs(r.last.value) >= TH);
+  setTxt("ind-n", String(rows.length));
+  setTxt("ind-hot", String(extremes.length));
+  setTxt("ind-hi", rows[0].label + " · " + fmtSigned(rows[0].last.value));
+  setTxt("ind-lo", rows.at(-1).label + " · " + fmtSigned(rows.at(-1).last.value));
+  const grid = document.getElementById("grid-ind22");
+  for (const r of rows) {
+    const ex = Math.abs(r.last.value) >= TH;
+    const col = ex ? "#BE3E26" : "#5B564B";
+    const div = document.createElement("div");
+    div.style.cssText = "border-top:1px solid #E6E2D6;padding-top:11px;min-width:0";
+    div.innerHTML =
+      `<div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">` +
+      `<div style="font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.09em;text-transform:uppercase;color:#8A857A;line-height:1.6;min-width:0">${r.label}</div>` +
+      `<div style="font-family:'Newsreader',serif;font-weight:300;font-size:1.3rem;font-variant-numeric:tabular-nums;white-space:nowrap;color:${ex ? "#BE3E26" : "#1B1A17"}">${fmtSigned(r.last.value)}</div></div>`;
+    const mini = Plot.plot({
+      width: 260, height: 70, marginLeft: 2, marginRight: 8, marginTop: 6, marginBottom: 4,
+      style: { background: "transparent" },
+      x: { axis: null }, y: { axis: null, domain: [-20, 45] },
+      marks: [
+        Plot.ruleY([0], { stroke: "#E0DACA", strokeWidth: 1 }),
+        Plot.lineY(r.s.data, { x: "date", y: "value", stroke: "#A8A293", strokeWidth: 1.1, strokeLinejoin: "round", clip: true }),
+        Plot.dot([r.last], { x: "date", y: "value", fill: col, r: 2.6, stroke: "#FFFFFF", strokeWidth: 1 }),
+      ],
+    });
+    mini.setAttribute("aria-hidden", "true");
+    mini.style.width = "100%"; mini.style.height = "auto";
+    div.append(mini);
+    grid.append(div);
+  }
+  grid.setAttribute("aria-label",
+    rows.length + " small line charts, one per industry on the current 2022-23 base, April 2024 to June 2026, ordered by the latest print. " + extremes.length + " industries ended beyond plus or minus 10 per cent.");
+  wireTools(document.getElementById("cb-ind22"), null, rows.map((r) => r.s), "india-atlas_iip_industries_base2022-all", fmtDate);
 }
 
 /* ---------- the long ledger: 23 industries on the retired base ----------

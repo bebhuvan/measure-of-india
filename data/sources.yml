@@ -138,7 +138,46 @@ dossiers:
         "20": gross_saving  # Gross Saving
         "21": gva_growth_published  # cross-check only (rounded)
         "22": gdp_growth_published  # cross-check only (rounded)
+      # ic1/ic21 carry an industry dimension QUARTERLY. The Total row is
+      # pinned explicitly (15 = Total GVA, 17 = Total GVA growth rate) —
+      # an unfiltered fetch returns every industry and only row-order luck
+      # makes last-write-wins land on the total.
+      industry_totals: { "1": 15, "21": 17 }
+      # the release's 8-sector table: real GVA by industry, quarterly.
+      # Published rounded growth (ic21 per industry) is kept as cross-check.
+      industries:
+        "1": agriculture      # Agriculture, Livestock, Forestry and Fishing
+        "2": mining           # Mining and Quarrying
+        "3": manufacturing    # Manufacturing
+        "4": utilities        # Electricity, Gas, Water Supply & Other Utility Services
+        "5": construction     # Construction
+        "6": trade_transport  # Trade, Hotels, Transport, Communication & Broadcasting
+        "9": finance_realty   # Financial, Real Estate & Professional Services
+        "12": public_admin    # Public Administration, Defence & Other Services
+      # The NEW BASE. Quarterly prints on base 2011-12 END at Q2 FY26 (the
+      # 28 Nov 2025 release); from the Feb 2026 release the quarterly series
+      # continues on base 2022-23 only. Baked as its own bundle
+      # (gdp-2022.json), never spliced — same rule as cpi-2024 / iip-2022.
+      # y/y needs a same-base year-ago level, so it starts Q1 FY24.
+      fetch2022:
+        base_year: "2022-23"
+        # this base codes ic21's Total row as industry 15 (the old base
+        # uses 17) — pinned per base
+        industry_totals: { "1": 15, "21": 15 }
+        indicators:
+          "5": gdp
+          "1": gva
+          "10": pfce
+          "9": gfcf
+          "21": gva_growth_published  # cross-check only (rounded)
+          "22": gdp_growth_published  # cross-check only (rounded)
+      # NOT SERVED nationally: per-capita GDP/GNI/NNI. The API's per-capita
+      # indicators (25, 28, 31) live in the Regional account, state-wise only
+      # — there is no All-India row (checked the state filter list). The
+      # dossier discloses this rather than deriving one from a population
+      # guess.
     window: { start: "2016-Q1" }   # Q1 FY17 = Apr–Jun 2016
+    window2022: { start: "2023-Q1" }  # first quarter with a same-base year-ago level
 
   wpi:
     product: wpi
@@ -227,6 +266,31 @@ dossiers:
       # breakdowns alongside "all" rows — the fetcher keeps only "all".
       # A second annual stream without state_code carries every state/UT;
       # curated as plfs-states.json (UR by state, CWS + PS+SS).
+      #
+      # ANNUAL-REPORT EXTRAS (fetched by buildPlfsExtras, raw in
+      # data/raw/plfs-extras.json; agriculture years, never spliced with the
+      # bulletins). The product serves eight indicators in total:
+      #   4 — percentage distribution of workers (by broad status in
+      #       employment, broad industry, NIC section, NCO division,
+      #       enterprise size/type, contract) -> plfs-status.json.
+      #       Server rejects age/gender/sector params for this indicator;
+      #       fetched unfiltered, filtered client-side. Single population
+      #       per cell, matching the published 15+ statements.
+      #   5 — % of regular wage employees by employment condition (no written
+      #       contract / no paid leave / no social security): listed by
+      #       getIndicatorList but getData answers HTTP 500 on every
+      #       combination tried — NOT fetchable, skipped.
+      #   6 — avg wage/salary earnings of regular employees (₹/month)
+      #   7 — avg casual labour wage, non-public works (₹/day)
+      #   8 — avg gross earnings from self-employment (₹/30 days)
+      #       6-8 -> plfs-earnings.json, quarterly grain inside each
+      #       agriculture year. The 2017-18 rural+urban cells of 6 and 8 are
+      #       quarantined (implied urban weight breaks the structure of every
+      #       later year); rural/urban sector cells match the published
+      #       report and stay in raw. Calendar-year rows (new design, from
+      #       2022) are archived raw only.
+      #   3 with education_code 1-9 / age_code 2 -> plfs-education.json
+      #       (UR by education level + the 15-29 youth cut, PS+SS).
 
   rbi:
     product: rbi
@@ -251,9 +315,25 @@ dossiers:
         usdinr: "36"    # Monthly Average Exchange Rates (EURO, GBP, JPY, USD)
         # further curated bundles built from the full ingest (codes fixed by
         # the API): oil/non-oil trade "42", overall BoP quarterly "4",
-        # BoP ratios "22", external debt end-March "25", NRI deposits "40"
+        # BoP ratios "22", external debt end-March "25", NRI deposits "40",
+        # 4-currency rates "36", forward premia "34", RBI US$ sale/purchase
+        # "28", invisibles US$ annual "9", quarterly external debt "27";
+        # v1.2 adds direction of trade by partner "11" (annual, US$; the
+        # source labels the UK's rows "USA" — split by size, asserted in
+        # validate.mjs), major commodities exports "44" / imports "46"
+        # (annual, US$; groups sum to the published Total), and forex-market
+        # turnover "30" (monthly segment totals, merchant/inter-bank).
       # curated bundles carry the FULL published history (levels, not y/y);
       # any display window is a dossier decision, not a data decision.
+      # COVERAGE (all 39 archived tables): BAKED into bundles — 4, 9, 11, 12,
+      # 22, 25, 27, 28, 30, 34, 36, 40, 42, 44, 46, 47 (16 tables).
+      # RAW ARCHIVE ONLY (each adds no honest series beyond a baked table):
+      # 1 (₹ twin of 11), 2/20 (commodity×country matrix — detail behind
+      # 44/46, kept as archive reference), 5/6/7/8/10/14 (older-vintage and
+      # ₹ BoP/invisibles variants of 4/9), 13/16/17 (₹ and annual twins of
+      # 12), 24 (twin of 42), 26 (₹ twin of 25), 29 (month high–low rate
+      # detail behind 36), 31/32/33/35/37 (SDR & multi-currency rate tables
+      # behind 36), 43/45 (₹ twins of 44/46), 48 (annual twin of 47).
 
   iip:
     product: iip
@@ -308,8 +388,9 @@ dossiers:
   asi:
     product: asi
     frequency: annual
-    base: "NIC 2008"        # current classification; NIC 2004/1998/1987 blocks
-                            # exist in the API but are NOT ingested — the
+    base: "NIC 2008"        # current classification. The NIC 2004/1998/1987
+                            # blocks ARE also ingested (legacy_blocks below)
+                            # and baked as SEPARATE bundles — the
                             # classification break is the base-year analogue,
                             # blocks are never spliced
     release_calendar: "one release per survey year, ~2-year lag"
@@ -348,6 +429,56 @@ dossiers:
         "19": gva
         "31": persons_engaged
         "43": emoluments
+      # Older classification blocks (VERIFIED live 2026-08-06 via
+      # asi/getAsiFilter + getASIData probes): same param scheme as 2008,
+      # nic_code=99999 is "All" in every block, rows arrive once per
+      # nic_type (2004: ×3; 1998/1987: ×2) with identical values — deduped.
+      # Year ranges as served: 2004 block 2004-05..2007-08 (4 yrs, 57
+      # indicators); 1998 block 1998-99..2003-04 (6 yrs, 28 indicators —
+      # NO GVA, NO factories-in-operation, NO emoluments-43); 1987 block
+      # 1992-93..1997-98 with 1993-94 NOT SERVED (5 yrs, 32 indicators —
+      # NO GVA; Total Emoluments is code 59 and carries unit "-" at source
+      # though it is ₹ lakh). Ingested All-India × NIC 99999 only; baked
+      # as asi-headline-<block>.json, never spliced with each other or 2008.
+      legacy_blocks:
+        "2004":
+          base: "NIC 2004"
+          core:
+            "1": number_of_factories
+            "2": factories_in_operation
+            "3": fixed_capital
+            "6": invested_capital
+            "15": total_output
+            "18": total_inputs
+            "19": gva
+            "21": net_value_added
+            "31": persons_engaged
+            "32": workers
+            "43": emoluments
+        "1998":
+          base: "NIC 1998"
+          core:
+            "1": number_of_factories
+            "3": fixed_capital
+            "6": invested_capital
+            "15": total_output
+            "18": total_inputs
+            "21": net_value_added
+            "31": persons_engaged
+            "32": workers
+            "44": wages_incl_bonus   # closest wage aggregate the block serves
+        "1987":
+          base: "NIC 1987"
+          core:
+            "1": number_of_factories
+            "3": fixed_capital
+            "6": invested_capital
+            "15": total_output
+            "18": total_inputs
+            "21": net_value_added
+            "31": persons_engaged
+            "32": workers
+            "59": total_emoluments   # unit "-" at source; it is ₹ lakh (disclosed)
 
   asuse:
     product: asuse
@@ -375,6 +506,33 @@ dossiers:
         "30": emoluments       # Annual emoluments per hired worker + hired-worker counts
         "32": gva_per_worker   # Annual GVA per worker (market establishments)
         "34": gva_per_establishment
+      # The informal-firm portrait: per-1000 distributions and rates,
+      # All-India grain (indicators keyed by activity_category carry the
+      # published "All" aggregate row; 9/19 are state-keyed tables whose
+      # All-India rows are used). Baked into asuse-owners / asuse-modernity
+      # / asuse-structure.
+      portrait_indicators:
+        "3": ownership         # per-1000 distribution by type of ownership
+        "5": owner_education   # per-1000, education of owner/major partner
+        "6": owner_social_group # per-1000, social group of owner/major partner
+        "9": bank_accounts     # per-1000 maintaining bank/PO accounts (state table, All-India rows used)
+        "10": location         # per-1000 by type of location
+        "12": operation        # per-1000 by nature of operation (perennial/seasonal/casual)
+        "14": months_operated  # per-1000 by months operated + average months
+        "16": working_hours    # per-1000 by hours normally worked per day
+        "19": npi_status       # per-1000 NPIs vs non-NPIs (state table, All-India rows used)
+        "20": computer_internet # per-1000 using computers / internet
+        "22": registration     # per-1000 registered under acts / not registered
+        "25": franchise        # estimated count of franchisee outlets (absolute, tiny)
+      # Lean state cuts (Combined sector, activity "All", all establishment
+      # types): the only state-wise variants baked. 4/7/11/13/15/17/21/23/29/
+      # 31/35 are state-wise duplicates of the distribution tables above —
+      # ingesting them would multiply volume without new All-India signal;
+      # consciously skipped and documented on the page.
+      state_indicators:
+        "2": establishments
+        "27": workers
+        "33": gva_per_worker
       quarterly_indicators:    # calendar quarters, from Jan–Mar 2025
         "40": pct_proprietary
         "41": pct_hired_worker_estts

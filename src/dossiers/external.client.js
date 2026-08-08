@@ -14,9 +14,13 @@ import ratesBundle from "../../data/series/rbi-exchange-rates.json";
 import interventionBundle from "../../data/series/rbi-intervention.json";
 import premiaBundle from "../../data/series/rbi-forward-premia.json";
 import debtQBundle from "../../data/series/rbi-debt-quarterly.json";
+import partnersBundle from "../../data/series/rbi-trade-partners.json";
+import commExpBundle from "../../data/series/rbi-commodities-exports.json";
+import commImpBundle from "../../data/series/rbi-commodities-imports.json";
+import turnoverBundle from "../../data/series/rbi-fx-turnover.json";
 import {
   MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend,
-  peakOf, troughOf, dodgeEndLabels, spark,
+  peakOf, troughOf, dodgeEndLabels, spark, downloadSVG, downloadPNG, saveBlob,
 } from "../charts/plumbing.js";
 
 const T = hydrate(tradeBundle);
@@ -30,9 +34,13 @@ const X4 = hydrate(ratesBundle);
 const IV = hydrate(interventionBundle);
 const P = hydrate(premiaBundle);
 const DQ = hydrate(debtQBundle);
+const PT = hydrate(partnersBundle);
+const CX = hydrate(commExpBundle);
+const CM = hydrate(commImpBundle);
+const TO = hydrate(turnoverBundle); // stays in US$ millions; shown as $ tn
 // US$ millions -> US$ billions (reserves scaled; exchange rates stay ₹,
 // forward premia stay % p.a., quarterly debt stays ₹ crore)
-for (const store of [T, B, D, N, INV, IV]) {
+for (const store of [T, B, D, N, INV, IV, PT, CX, CM]) {
   for (const k in store) store[k] = { ...store[k], data: store[k].data.map((d) => ({ ...d, value: d.value == null ? null : d.value / 1000 })) };
 }
 F.reserves = { ...F.reserves, data: F.reserves.data.map((d) => ({ ...d, value: d.value == null ? null : d.value / 1000 })) };
@@ -116,7 +124,32 @@ setTxt("ex-int", bn(Math.abs(netL)));
 setTxt("ex-fwd", bn2(fwdL));
 setTxt("ex-fwdtr", bn2(fwdTr.value));
 
+/* ---------- partners & commodities — latest FY numbers ---------- */
+const atFY = (s, y) => s.data.find((d) => d.date.getTime() === Date.UTC(y, 3, 1))?.value;
+const chinaBal = PT.exports_china.data.at(-1).value - PT.imports_china.data.at(-1).value;
+setTxt("pv-part", bn2(chinaBal));
+setTxt("ex-pux", bn(PT.exports_usa.data.at(-1).value));
+setTxt("ex-pum", bn(PT.imports_usa.data.at(-1).value));
+setTxt("ex-pus", bn(PT.exports_usa.data.at(-1).value - PT.imports_usa.data.at(-1).value));
+setTxt("ex-pcx", bn(PT.exports_china.data.at(-1).value));
+setTxt("ex-pcm", bn(PT.imports_china.data.at(-1).value));
+setTxt("ex-pcd", bn(Math.abs(chinaBal)));
+setTxt("ex-prm", bn(PT.imports_russia.data.at(-1).value));
+setTxt("ex-pr21", bn(atFY(PT.imports_russia, 2021)));
+
+setTxt("pv-comm", bn(CX.engineering_goods.data.at(-1).value));
+setTxt("ex-c1", bn(CX.engineering_goods.data.at(-1).value));
+setTxt("ex-cp", bn(CX.petroleum_products.data.at(-1).value));
+setTxt("ex-ce", bn(CX.electronic_goods.data.at(-1).value));
+setTxt("ex-ce0", bn(CX.electronic_goods.data[0].value));
+setTxt("ex-cg", bn(CX.gems_jewellery.data.at(-1).value));
+setTxt("ex-cg0", bn(CX.gems_jewellery.data[0].value));
+setTxt("ex-cm1", bn(CM.petroleum_crude_products.data.at(-1).value));
+setTxt("ex-cm2", bn(CM.electronic_goods.data.at(-1).value));
+setTxt("ex-cm3", bn(CM.gold.data.at(-1).value));
+
 /* ---------- register ---------- */
+const tn = (v) => "$" + (v / 1e6).toFixed(2) + " tn";
 const regRows = [
   ["Exports, goods", "RBI-TX", "s-g1", T.exports, bn, false],
   ["Imports, goods", "RBI-TM", "s-g2", T.imports, bn, false],
@@ -130,6 +163,13 @@ const regRows = [
   ["RBI net US$ purchase(+)/sale(−)", "RBI-INT", "s-g3", IV.net, bn2, false, "blank months = no operations"],
   ["Forward premia, 3-month", "RBI-FWP", "s-g4", P.m3, (v) => v.toFixed(2) + "% p.a.", false, "inter-bank, monthly avg"],
   ["External debt, quarterly", "RBI-EDQ", "s-g2", DQ.gross, (v) => "₹" + (v / 1e5).toFixed(1) + " lakh cr", false, "₹ crore in source"],
+  ["Exports to USA", "RBI-XUS", "s-g1", PT.exports_usa, bn, false, "annual, fiscal years"],
+  ["Imports from China", "RBI-MCN", "s-g3", PT.imports_china, bn, false, "annual, fiscal years"],
+  ["Imports from Russia", "RBI-MRU", "s-g4", PT.imports_russia, bn, false, "annual, fiscal years"],
+  ["Engineering-goods exports", "RBI-XEN", "s-g2", CX.engineering_goods, bn, false, "annual, fiscal years"],
+  ["Petroleum, crude & products imports", "RBI-MPE", "s-acc", CM.petroleum_crude_products, bn, false, "annual, fiscal years"],
+  ["Gold imports", "RBI-MAU", "s-g1", CM.gold, bn, false, "annual, fiscal years"],
+  ["FX market turnover, gross", "RBI-FXT", "s-g3", TO.total, tn, false, "purchases + sales in the month, computed"],
 ];
 document.getElementById("ledger-body").innerHTML = regRows.map(([nm, code, sw, s, fmt, derived, note], i) => {
   const data = s.data.filter((d) => d.value != null);
@@ -211,6 +251,136 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, fm
     "Merchandise exports, imports and trade balance, monthly, 2016 to 2025",
     "Line chart in US$ billions per month. Imports end at " + TT.imports.data.at(-1).value.toFixed(1) + ", exports at " + TT.exports.data.at(-1).value.toFixed(1) + ", the balance at minus " + Math.abs(TT.balance.data.at(-1).value).toFixed(1) + ".");
   wireLegend(document.getElementById("legend-main"), plot, keys, TT);
+}
+
+/* meta-carrying downloads for plates whose CSV is not a date×series matrix */
+function wirePlate(blockEl, plot, filename, csvText) {
+  const meta = {
+    title: blockEl.querySelector(".plate-head h3")?.textContent.trim(),
+    sub: blockEl.querySelector(".plate-head .sub")?.textContent.trim(),
+    foot: blockEl.querySelector(".plotfoot .src")?.textContent.trim().replace(/\s+/g, " "),
+  };
+  blockEl.querySelectorAll("[data-dl]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const kind = btn.dataset.dl;
+      if (kind === "svg" && plot) downloadSVG(plot, filename, meta);
+      if (kind === "png" && plot) downloadPNG(plot, filename, meta);
+      if (kind === "csv") saveBlob(new Blob([csvText], { type: "text/csv" }), filename + ".csv");
+    });
+  });
+}
+
+/* ---------- who India trades with : dumbbell strip, latest FY ---------- */
+{
+  const rows = [];
+  for (const k of Object.keys(PT)) {
+    if (!k.startsWith("exports_")) continue;
+    const p = k.slice(8);
+    const name = PT[k].label.split(" · ")[0];
+    const exp = PT[k].data.at(-1).value, imp = PT[`imports_${p}`].data.at(-1).value;
+    rows.push({ p, name, exp, imp, bal: exp - imp, total: exp + imp });
+  }
+  rows.sort((a, b) => b.total - a.total);
+  const isAcc = (d) => d.p === "usa" || d.p === "china";
+  const fmtBal = (v) => (v < 0 ? "−" : "+") + Math.abs(v).toFixed(1);
+
+  const geo = { W: 1184, H: 30 + rows.length * 30 + 46, ml: 165, mr: 155, mt: 30, mb: 46 };
+  const xTicks = [0, 30, 60, 90, 120];
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#5C574C", overflow: "visible" },
+    x: { label: "US$ billions, FY 2024–25 →", labelAnchor: "right", labelArrow: false, domain: [0, 120], ticks: xTicks, tickSize: 0, tickPadding: 10, tickFormat: (d) => (d === 120 ? "$120bn" : String(d)) },
+    y: { label: null, domain: rows.map((r) => r.name), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
+    marks: [
+      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
+      Plot.ruleY(rows, { y: "name", x1: "exp", x2: "imp", stroke: (d) => (isAcc(d) ? "#BE3E26" : "#D8D2C2"), strokeWidth: (d) => (isAcc(d) ? 2 : 1.5) }),
+      Plot.dot(rows, { y: "name", x: "exp", fill: "#5B564B", r: 4.5 }),
+      Plot.dot(rows, { y: "name", x: "imp", fill: "#C6C0B0", r: 4.5, stroke: "#8A857A", strokeWidth: 0.75 }),
+      Plot.text(rows.filter((d) => !isAcc(d)), { y: "name", x: () => 120, dx: 18, text: (d) => fmtBal(d.bal), fill: "#8A857A", fontSize: 12, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(rows.filter(isAcc), { y: "name", x: () => 120, dx: 18, text: (d) => fmtBal(d.bal), fill: "#BE3E26", fontSize: 12, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.text([{ y: rows[0].name }], { y: "y", x: () => 120, dx: 18, dy: -22, text: () => "balance", fill: "#8A857A", fontSize: 11, fontFamily: mono, textAnchor: "start" }),
+    ],
+  });
+  a11y(plot, "Merchandise trade with the sixteen largest partners, fiscal year 2024-25",
+    "Dumbbell strip in US$ billions, one row per country, exports and imports paired. " +
+    rows[0].name + " leads at " + rows[0].total.toFixed(0) + " billion total with a surplus of " + rows.find((r) => r.p === "usa").bal.toFixed(1) +
+    "; China follows with a deficit of " + Math.abs(rows.find((r) => r.p === "china").bal).toFixed(1) +
+    " billion, the widest in the ledger. Russia's imports of " + rows.find((r) => r.p === "russia").imp.toFixed(1) + " billion are nearly all crude.");
+  document.getElementById("plot-part").append(plot);
+  const csv = ["partner,exports_usd_bn,imports_usd_bn,balance_usd_bn",
+    ...rows.map((r) => `"${r.name}",${r.exp.toFixed(2)},${r.imp.toFixed(2)},${r.bal.toFixed(2)}`)].join("\n");
+  wirePlate(document.getElementById("cb-part"), plot, "india-atlas_trade-partners_fy2024-25", csv);
+}
+
+/* ---------- what India sells and buys : small multiples ---------- */
+{
+  const SHORT = {
+    engineering_goods: "Engineering goods", petroleum_products: "Petroleum products",
+    electronic_goods: "Electronic goods", drugs_pharmaceuticals: "Drugs & pharma",
+    gems_jewellery: "Gems & jewellery", organic_inorganic_chemicals: "Chemicals, org & inorg",
+    other_commodities: "Other commodities", rmg_of_all_textiles: "Readymade garments",
+    rice: "Rice", cotton_yarn_fabs_made_ups_handloom_products_etc: "Cotton yarn & fabrics",
+    petroleum_crude_products: "Petroleum, crude & prod", gold: "Gold",
+    machinery_electrical_non_electrical: "Machinery", transport_equipment: "Transport equipment",
+    coal_coke_briquettes_etc: "Coal & coke", non_ferrous_metals: "Non-ferrous metals",
+    iron_steel: "Iron & steel", pearls_precious_semi_precious_stones: "Pearls & prec. stones",
+  };
+  const grids = [
+    ["grid-exp", CX, commExpBundle, "sold", "export"],
+    ["grid-imp", CM, commImpBundle, "bought", "import"],
+  ];
+  for (const [gridId, S, bundle, verb, dir] of grids) {
+    const keys = Object.keys(S).slice(0, 10); // baked in latest-year order
+    const total = bundle.crosscheck.total_published.at(-1) / 1000;
+    const top3 = new Set(keys.slice(0, 3));
+    const grid = document.getElementById(gridId);
+    grid.style.display = "grid";
+    grid.style.gridTemplateColumns = "repeat(5, minmax(0, 1fr))";
+    grid.style.gap = "26px 26px";
+    grid.setAttribute("role", "img");
+    grid.setAttribute("aria-label", "Small-multiple grid of ten " + dir + " commodity groups, sixteen fiscal years each, sorted by 2024-25 value, each panel on its own scale. " +
+      SHORT[keys[0]] + " leads at " + S[keys[0]].data.at(-1).value.toFixed(1) + " billion dollars, " +
+      (S[keys[0]].data.at(-1).value / total * 100).toFixed(1) + " per cent of everything " + verb + "; the top three accented panels are " +
+      keys.slice(0, 3).map((k) => SHORT[k] ?? S[k].label).join(", ") + ".");
+    for (const k of keys) {
+      const acc = top3.has(k);
+      const color = acc ? "#BE3E26" : "#8A857A";
+      const cell = document.createElement("div");
+      const lab = document.createElement("div");
+      lab.style.cssText = "font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:" + color + ";margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
+      lab.textContent = SHORT[k] ?? S[k].label;
+      const val = document.createElement("div");
+      val.style.cssText = "font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.04em;color:#5C574C;margin-top:5px";
+      const latest = S[k].data.at(-1).value;
+      val.textContent = bn(latest) + " · " + (latest / total * 100).toFixed(1) + "%";
+      const max = Math.max(...S[k].data.map((d) => d.value ?? 0));
+      const mini = Plot.plot({
+        width: 205, height: 62, marginLeft: 2, marginRight: 6, marginTop: 5, marginBottom: 2,
+        style: { background: "transparent" },
+        x: { axis: null },
+        y: { axis: null, domain: [0, max * 1.05] },
+        marks: [
+          Plot.ruleY([0], { stroke: "#E6E2D6" }),
+          Plot.lineY(S[k].data, { x: "date", y: "value", stroke: color, strokeWidth: acc ? 1.75 : 1.5, strokeLinejoin: "round", strokeLinecap: "round" }),
+          Plot.dot([S[k].data.at(-1)], { x: "date", y: "value", fill: color, r: 2.2, stroke: "#FFFFFF", strokeWidth: 1 }),
+        ],
+      });
+      mini.setAttribute("aria-hidden", "true");
+      cell.append(lab, mini, val);
+      grid.append(cell);
+    }
+  }
+  // CSV: all 62 series, US$ millions as published, fiscal years
+  const fyLab = (d) => d.slice(0, 4) + "-" + String((+d.slice(0, 4) + 1) % 100).padStart(2, "0");
+  const head = "fiscal_year," +
+    Object.keys(commExpBundle.series).map((k) => "exports_" + k).join(",") + "," +
+    Object.keys(commImpBundle.series).map((k) => "imports_" + k).join(",");
+  const lines = commExpBundle.dates.map((d, i) => fyLab(d) + "," +
+    Object.values(commExpBundle.series).map((s) => s.data[i] ?? "").join(",") + "," +
+    Object.values(commImpBundle.series).map((s) => s.data[i] ?? "").join(","));
+  wirePlate(document.getElementById("cb-comm"), null, "india-atlas_major-commodities_2009-2025", [head, ...lines].join("\n"));
 }
 
 /* ---------- single-series plates ---------- */

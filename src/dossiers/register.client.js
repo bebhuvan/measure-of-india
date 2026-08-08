@@ -17,10 +17,14 @@ import invisiblesBundle from "../../data/series/rbi-invisibles.json";
 import interventionBundle from "../../data/series/rbi-intervention.json";
 import premiaBundle from "../../data/series/rbi-forward-premia.json";
 import ratesBundle from "../../data/series/rbi-exchange-rates.json";
+import partnersBundle from "../../data/series/rbi-trade-partners.json";
+import commImpBundle from "../../data/series/rbi-commodities-imports.json";
 import mpceBundle from "../../data/series/hces-mpce.json";
 import giniBundle from "../../data/series/hces-gini.json";
 import asiBundle from "../../data/series/asi-headline.json";
+import asi1987Bundle from "../../data/series/asi-headline-1987.json";
 import asuseBundle from "../../data/series/asuse-annual.json";
+import asuseModernityBundle from "../../data/series/asuse-modernity.json";
 import { hydrate } from "../charts/plumbing.js";
 
 const C = hydrate(cpiBundle);
@@ -47,6 +51,9 @@ const REM = toBn(noNulls(hydrate(invisiblesBundle).private_transfers));
 const IVN = toBn(noNulls(hydrate(interventionBundle).net));
 const FWP = noNulls(hydrate(premiaBundle).m3);
 const EUR = noNulls(hydrate(ratesBundle).euro);
+const XUS = toBn(hydrate(partnersBundle).exports_usa);
+const MCN = toBn(hydrate(partnersBundle).imports_china);
+const MPET = toBn(hydrate(commImpBundle).petroleum_crude_products);
 const fBn2 = (v) => (v < 0 ? "−$" : "$") + Math.abs(v).toFixed(1) + " bn";
 // HCES & enterprises formats
 const grpIN = (v) => Math.round(v).toLocaleString("en-IN");
@@ -57,7 +64,9 @@ const fLcr = (v) => "₹" + (v / 1e7).toFixed(1) + " lakh cr"; // ₹ lakh -> �
 const M2 = hydrate(mpceBundle);
 const G2 = hydrate(giniBundle);
 const ASI = hydrate(asiBundle);
+const ASI87 = hydrate(asi1987Bundle);
 const ASU = hydrate(asuseBundle);
+const ASUM = hydrate(asuseModernityBundle);
 const RATIO = { data: M2.rural.data.map((d, i) => ({ date: d.date, value: M2.urban.data[i].value / d.value })) };
 
 // rows[8] (optional) overrides the section vintage — the 2024-base prints
@@ -98,6 +107,9 @@ const extRows = [
   ["RBI net US$ purchase(+)/sale(−) · $bn/mo", "RBI-INT", "s-g4", IVN, false, "/dossiers/external/", null, fBn2],
   ["Forward premia · 3-month · % p.a.", "RBI-FWP", "s-g1", FWP, false, "/dossiers/external/", null, (v) => v.toFixed(2) + "%"],
   ["EUR / INR · monthly avg", "RBI-EUR", "s-g2", EUR, false, "/dossiers/external/", null, fRs],
+  ["Exports to USA · $bn/yr", "RBI-XUS", "s-g3", XUS, false, "/dossiers/external/", null, fBn],
+  ["Imports from China · $bn/yr", "RBI-MCN", "s-g4", MCN, false, "/dossiers/external/", null, fBn],
+  ["Petroleum, crude & products imports · $bn/yr", "RBI-MPE", "s-g1", MPET, false, "/dossiers/external/", null, fBn],
 ];
 // HCES is two survey rounds: a two-point sparkline is a bare diagonal, so the
 // history cell degrades to a note — same choice the dossier's own ledger makes.
@@ -114,6 +126,9 @@ const asiRows = [
   ["Factory GVA · ASI · nominal · ₹ lakh cr", "ASI-GVA", "s-g2", ASI.gva, false, "/dossiers/factories/", null, fLcr],
   ["Establishments · unincorporated · ASUSE", "ASUSE-EST", "s-g3", ASU.establishments_all, false, "/dossiers/factories/", null, fCr],
   ["GVA per worker · informal · ASUSE · ₹/yr", "ASUSE-GVW", "s-g4", noNulls(ASU.gva_per_worker_all), false, "/dossiers/factories/", null, fInr],
+  // v1.1 additions: the oldest classification block and the informal-firm portrait
+  ["Factories on register · NIC-1987 block", "ASI87-NF", "s-g2", ASI87.number_of_factories, false, "/dossiers/factories/", null, (v) => Math.round(v).toLocaleString("en-IN"), "block to 1997-98"],
+  ["Establishments using internet · ASUSE", "ASUSE-NET", "s-g1", ASUM.internet_all_combined, false, "/dossiers/factories/", null, (v) => Math.round(v).toLocaleString("en-IN") + " / 1,000"],
 ];
 const plfsRows = [
   ["UR · all-India · monthly CWS", "PLFS-UR", "s-acc", PM.ur, false, "/dossiers/jobs/"],

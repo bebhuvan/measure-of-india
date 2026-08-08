@@ -1,5 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
 ---
 <Base
   title="India Atlas — Consumption · Dossier 07"
@@ -46,13 +47,11 @@ import Base from "../../layouts/Base.astro";
     <div class="reading-cols">
       <div class="reading-col">
         <span class="mk">What the print says</span>
-        <p>India's second consumption survey of the decade prices the ordinary month at <b id="cr-rur">–</b> per rural head and <b id="cr-urb">–</b> per urban one. Both figures rose on the 2022-23 round — rural by <b id="cr-rgrow">–</b>, urban by <b id="cr-ugrow">–</b> — in nominal rupees, before any allowance for inflation.</p>
-        <p>The city spends <b id="cr-ratio">–</b> for every rural rupee. Where the money goes differs as much as how much: food takes <b id="cr-foodr">–</b> of rural spending against <b id="cr-foodu">–</b> in towns, and the further down the distribution a household sits, the more of its rupee eats.</p>
+        <Prose slot="consumption.current-reading.what-the-print-says" />
       </div>
       <div class="reading-col now">
         <span class="mk">What it does not say</span>
-        <p>It does not say what anyone earns. MPCE counts consumption only — savings, taxes and loan repayments sit outside it. And a survey mean is not a typical household. The rural average of <b id="cr-mean">–</b> sits above the middle of its own distribution: the tenth of rural India just past the median averages <b id="cr-mid">–</b> a head. Most Indians spend less than the average Indian.</p>
-        <p>"With imputation" is not a price adjustment. It adds an estimated value for goods received free through welfare programmes, lifting the rural figure to <b id="cr-rimp">–</b> and the urban to <b id="cr-uimp">–</b>. That variant answers a different question: what living would cost if the free things were bought.</p>
+        <Prose slot="consumption.current-reading.what-it-does-not-say" />
       </div>
     </div>
   </section>
@@ -266,6 +265,35 @@ import Base from "../../layouts/Base.astro";
           <div class="now">
             <span class="mk">As of 2023-24</span>
             <p>A rural Indian consumes <b id="ex-q-rt1">–</b> of cereals a month, down from <b id="ex-q-rt0">–</b> in the round before; a city-dweller <b id="ex-q-ut1">–</b>, near flat. The rupees moved the other way: the rural cereal bill rose <b id="ex-q-vg">–</b> to <b id="ex-q-vr1">–</b> a head — dearer grain, not more of it. Rice still outweighs wheat in the village, <b id="ex-q-rice">–</b> to <b id="ex-q-wheat">–</b>, and the fall is almost all rice: <b id="ex-q-riced">–</b> round on round, against <b id="ex-q-wheatd">–</b> for wheat.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-val" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The same cereals, priced in rupees</h3>
+            <div class="sub">Average per-capita monthly value of cereals, ₹, both rounds · read against the kilogram plate above — kg fell while ₹ rose</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-val">–</div><div class="c">rural cereals · 2023-24 · ₹/head/month</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-val"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, NSO, HCES · per-capita monthly value of cereals, ₹, without imputation · the counterpart to the kilogram plate: the same baskets, a different unit</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Hold this plate next to the one above. The kilograms move left — fewer cereals eaten. The rupees move right — a larger cereal bill. Lines travelling in opposite directions can mean only one thing: the price per kilogram rose. The survey does not publish that price directly; the two plates together derive it.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>The rural cereal bill reached <b id="ex-v-rt1">–</b> a head, up from <b id="ex-v-rt0">–</b> the round before — a rise of <b id="ex-v-pct">–</b> on a quantity that fell. Every additional rupee here bought less grain than it did, not more.</p>
           </div>
         </div>
       </figure>

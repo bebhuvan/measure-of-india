@@ -7,7 +7,7 @@ import Base from "../../layouts/Base.astro";
   nav="dossiers"
   dateStamp="July 2025"
   crumbLeft='<a href="/" style="color:inherit">Dossiers</a> / External / <b>The Balance of Payments</b>'
-  crumbRight='Evergreen · revised with each print · <b>v1.1</b>'
+  crumbRight='Evergreen · revised with each print · <b>v1.2</b>'
   canonical="https://indiaatlas.in/dossiers/external/"
   ogImage="/og/external.png"
 >
@@ -146,9 +146,78 @@ import Base from "../../layouts/Base.astro";
     </div>
   </section>
 
-  <!-- § 05 the measure -->
+  <!-- § 05 partners -->
   <section>
-    <div class="sec-head"><span class="no">05</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">05</span><h2>Who India trades with</h2><span class="line"></span><span class="unit">US$ bn · FY 2024–25</span></div>
+    <div class="break">
+      <figure id="cb-part" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The surplus lives in America; the deficit lives in China</h3>
+            <div class="sub">Merchandise trade with the sixteen largest partners, US$ billions · FY 2024–25 · dark dot exports, pale dot imports</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-part">–</div><div class="c">FY25 · goods balance with China, US$ bn</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-part"></div>
+          <div class="plotfoot">
+            <span class="src">Source — RBI · Direction of Foreign Trade, US$ millions, annual · bilateral balances computed as exports − imports · partner groups sum to the published total within $0.1 mn · the source feed labels the United Kingdom's rows "USA"; the pair is split by size and verified against the RBI's published bilateral figures — see provenance</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rbi.org.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each row is a country. The dark dot is what India sold it, the pale dot what India bought, and the bar between them is the bilateral gap — vermilion where the story is. The rows sort by the size of the relationship, and the top two are mirror images: the United States buys far more than it sells to India; China sells far more than it buys. Neither gap is an accident of one year — one is pharmaceuticals, gems and machinery sold to the world's largest consumer, the other is electronics, machinery and chemicals bought from the world's largest factory. A bilateral balance is not a scorecard. The country runs a deficit with its suppliers and a surplus with its customers, and only the total at the bottom of Plate 1 has to be financed.</p>
+          </div>
+          <div class="now">
+            <span class="mk">FY 2024–25</span>
+            <p>India sold <b id="ex-pux">–</b> of goods to the United States and bought <b id="ex-pum">–</b> back — a surplus of <b id="ex-pus">–</b>, the largest with any partner. China is the mirror: <b id="ex-pcx">–</b> sold against <b id="ex-pcm">–</b> bought, a gap of <b id="ex-pcd">–</b> — wider than the deficits with Russia and the UAE combined. And the newest line in the ledger is Russian crude: <b id="ex-prm">–</b> of imports, up from <b id="ex-pr21">–</b> as recently as FY 2021–22.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 commodities -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>What India sells and buys</h2><span class="line"></span><span class="unit">US$ bn · annual, fiscal years</span></div>
+    <div class="break">
+      <figure id="cb-comm" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Machines out, crude in — and electronics climbing both sides</h3>
+            <div class="sub">Exports and imports of major commodities, US$ billions per fiscal year · 2009–10 – 2024–25 · top ten of each, every panel on its own scale</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-comm">–</div><div class="c">FY25 · engineering-goods exports, US$ bn</div></div>
+        </div>
+        <div class="frame">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:#8A857A;padding-top:26px">What India sells — ten of 31 groups, sorted by FY25</div>
+          <div class="plotzone" id="grid-exp"></div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:#8A857A;padding-top:34px">What India buys — ten of 31 groups, sorted by FY25</div>
+          <div class="plotzone" id="grid-imp"></div>
+          <div class="plotfoot">
+            <span class="src">Source — RBI · exports and imports of major commodities, US$ millions, annual · 31 published groups each way; the ten largest of FY 2024–25 are drawn and all 62 series ride in the CSV · each way, the groups sum to the published total within $1 mn · accented panels are the top three of each direction</span>
+            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rbi.org.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Every panel is sixteen years of one commodity group, on its own scale — read the shapes, not the heights. The export side answers a common misreading: India's largest export is not software (that lives in the invisibles plate) and not gems — it is engineering goods, and it has been for the whole period. The import side is dominated by the two bills the country cannot yet refuse: crude oil and electronics. When one panel is flat for fifteen years while its neighbours triple, that flatness is the story.</p>
+          </div>
+          <div class="now">
+            <span class="mk">FY 2024–25</span>
+            <p>Engineering goods earned <b id="ex-c1">–</b>, petroleum products <b id="ex-cp">–</b>, electronics <b id="ex-ce">–</b> — the last up from <b id="ex-ce0">–</b> in 2009–10, the fastest climb on the board. Gems &amp; jewellery, the number-two export of 2009–10, is where it started: <b id="ex-cg">–</b> now against <b id="ex-cg0">–</b> then. On the other side the crude bill was <b id="ex-cm1">–</b>, electronics imports <b id="ex-cm2">–</b> — the one line that is a top-three story in both directions — and gold <b id="ex-cm3">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 the measure -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>What this measures</h2><span class="line"></span></div>
     <div class="wm-grid">
       <div>
         <p>The balance of payments is double-entry bookkeeping for a country. Every transaction with the outside world — a shipment of refined petrol, a software invoice, a remittance from Dubai, a foreign fund buying bonds — is recorded twice, once as a credit and once as a debit. It cannot be "unbalanced"; it can only be financed. The interesting question is never the total but the mix: earned through exports, or borrowed through capital flows?</p>
@@ -172,9 +241,9 @@ import Base from "../../layouts/Base.astro";
     </div>
   </section>
 
-  <!-- § 06 component plates -->
+  <!-- § 08 component plates -->
   <section>
-    <div class="sec-head"><span class="no">06</span><h2>The parts, one plate each</h2><span class="line"></span><span class="unit">as published</span></div>
+    <div class="sec-head"><span class="no">08</span><h2>The parts, one plate each</h2><span class="line"></span><span class="unit">as published</span></div>
 
     <div class="break">
       <figure id="cb-inv" style="margin:0">
@@ -338,9 +407,9 @@ import Base from "../../layouts/Base.astro";
     </div>
   </section>
 
-  <!-- § 07 misread -->
+  <!-- § 09 misread -->
   <section>
-    <div class="sec-head"><span class="no">07</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">09</span><h2>How to misread this number</h2><span class="line"></span></div>
     <ul class="misread">
       <li>
         <span class="no">i.</span>
@@ -384,8 +453,9 @@ import Base from "../../layouts/Base.astro";
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Reserve Bank of India, retrieved via the eSankhyiki API (vintage <b id="prov-vintage">–</b>): India's Foreign Trade (US$, monthly), Foreign Exchange Reserves (monthly), Monthly Average Exchange Rates, Overall Balance of Payments (quarterly), External Debt (end-March), NRI Deposits (monthly); and, from the same vintage, Invisibles by Category (annual, US$), Exchange Rates of Major Currencies (monthly), the RBI's Sale/Purchase of US Dollars (monthly), Forward Premia of the US Dollar (monthly), and Quarterly External Debt by Sector. Every sub-indicator of the RBI feed is archived raw; this dossier curates from that archive.</p>
-        <p>The trade balance is computed as exports − imports and cross-checked against the published figure (within $5 mn across the full history). Three quirks are disclosed rather than smoothed: the yen rate is quoted per single yen, not the RBI's customary 100; blank months in the intervention table are months with no reported operations and stay blank here; and the quarterly debt table is published in ₹ crore only, so it is shown in rupees. As of this vintage the source feed's trade, reserves and reference-rate tables end in mid-2025 (the multi-currency and forward-premia tables run a month or two further); we publish the lag rather than paper over it, and this dossier's dates are the data's dates.</p>
+        <p>Reserve Bank of India, retrieved via the eSankhyiki API (vintage <b id="prov-vintage">–</b>). The feed publishes 39 external-sector tables; every one is archived raw, and this dossier now accounts for all of them. Sixteen are baked into series (feed table numbers in brackets): Foreign Trade US$ monthly [12], Direction of Foreign Trade US$ [11], Exports [44] and Imports [46] of Major Commodities US$, Oil/Non-oil Trade [42], Overall Balance of Payments quarterly US$ [4], BoP Indicators [22], Invisibles US$ annual [9], External Debt end-March US$ [25] and quarterly [27], NRI Deposits [40], Foreign Exchange Reserves monthly [47], Monthly Average Exchange Rates [36], Forward Premia [34], Sale/Purchase of US Dollars by the RBI [28], and Turnover in the Foreign Exchange Market [30].</p>
+        <p>The remaining 23 stay in the raw archive because each is a twin or a finer cut of a baked table, not a new fact: rupee variants [1, 13, 14, 17, 26, 43, 45], older-vintage or component BoP layouts [5, 6, 7, 8, 10], annual twins of monthly tables [16, 48], the commodity-by-country matrix behind the commodity tables [20, and its rupee twin 2], a duplicate of the oil split [24], month-high/low rate detail [29], and the SDR and multi-currency rate tables behind the four-currency plate [31, 32, 33, 35, 37]. Nothing in the product is unaccounted for.</p>
+        <p>Computed figures are cross-checked against published ones: the trade balance within $5 mn across the full history, partner groups and commodity groups against their published totals within $1 mn, and forex-market turnover against the published grand total (one ~$62 bn discrepancy in September 2018 is the source's own and is kept as published). Quirks are disclosed rather than smoothed: the yen rate is quoted per single yen, not the RBI's customary 100; blank months in the intervention table are months with no reported operations and stay blank here; the quarterly debt table is published in ₹ crore only, so it is shown in rupees; and the direction-of-trade table labels the United Kingdom's rows "USA" — the pair is split by size, verified against the RBI's published bilateral figures, and the build fails if the two ever stop being separable. As of this vintage the source feed's trade, reserves and reference-rate tables end in mid-2025; we publish the lag rather than paper over it, and this dossier's dates are the data's dates.</p>
       </div>
       <div>
         <h6>Revisions &amp; uncertainty</h6>
@@ -394,7 +464,7 @@ import Base from "../../layouts/Base.astro";
       </div>
       <div>
         <h6>This dossier</h6>
-        <p>Dossier 05 · External · version 1.1 · adds the invisibles, four-currency, intervention, forward-premia and quarterly-debt series; core tables through June 2025, exchange rates through July, forward premia through August. Next revision on the source feed's resumption of monthly updates.</p>
+        <p>Dossier 05 · External · version 1.2 · adds the trading-partner and commodity plates and the forex-turnover series, and closes the coverage ledger — every table in the RBI feed is now either baked or accounted for in the archive. Core tables through June 2025; exchange rates and turnover through July, forward premia through August; the annual partner and commodity tables through FY 2024–25. Next revision on the source feed's resumption of monthly updates.</p>
         <p>Corrections and questions: register@indiaatlas.example</p>
       </div>
     </div>

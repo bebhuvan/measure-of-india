@@ -76,17 +76,7 @@ setHTML("d-gini", `<b>${arrowAbs(cur(G.rural), prv(G.rural), 3)}</b> vs 2022-23`
 /* ---------- § 01 current reading ---------- */
 setHTML("rb-big", inrBig(cur(M.rural)));
 setHTML("rb-first", inrBig(cur(M.urban)));
-setTxt("cr-rur", inr(cur(M.rural)));
-setTxt("cr-urb", inr(cur(M.urban)));
-setTxt("cr-rgrow", p1(((cur(M.rural) - prv(M.rural)) / prv(M.rural)) * 100));
-setTxt("cr-ugrow", p1(((cur(M.urban) - prv(M.urban)) / prv(M.urban)) * 100));
-setTxt("cr-ratio", "₹" + ratio1.toFixed(2));
-setTxt("cr-foodr", p1(cur(C.food_total_rural)));
-setTxt("cr-foodu", p1(cur(C.food_total_urban)));
-setTxt("cr-mean", inr(cur(M.rural)));
-setTxt("cr-mid", inr(cur(F.f50_60_rural)));
-setTxt("cr-rimp", inr(cur(M.rural_imputed)));
-setTxt("cr-uimp", inr(cur(M.urban_imputed)));
+// §01 "current reading" prose is pipeline-generated (pipeline/out/prose-consumption.*.md).
 
 /* ---------- § 02 register ----------
  * Two data points per series: a two-point sparkline is a bare diagonal, so
@@ -429,6 +419,47 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
   const csvList = ["rice", "wheat", "coarse_grains", "other_cereals", "total_cereals"]
     .flatMap((k) => [Q[k + "_rural"], Q[k + "_urban"], IV[k + "_rural"], IV[k + "_urban"]]);
   wireTools(document.getElementById("cb-plate"), plot, csvList, "india-atlas_hces_cereal-quantities", fmtRound);
+}
+
+/* ---------- § 06 companion : cereal VALUES (₹) — dearer grain, not more of it ----------
+ * The quantities plate above shows kg falling; this one shows ₹ rising. Read the
+ * pair together: the cereal story is a price story, not a quantity story. */
+{
+  const CROPS = [["rice", "Rice"], ["wheat", "Wheat"], ["coarse_grains", "Coarse grains"], ["total_cereals", "All cereals"]];
+  const rows = CROPS.flatMap(([k, name]) => [
+    { label: `${name} · Rural`, c: "#BE3E26", v1: cur(IV[k + "_rural"]), v0: prv(IV[k + "_rural"]) },
+    { label: `${name} · Urban`, c: "#5B564B", v1: cur(IV[k + "_urban"]), v0: prv(IV[k + "_urban"]) },
+  ]);
+  const maxV = Math.max(...rows.map((r) => r.v1), ...rows.map((r) => r.v0));
+  const xTop = Math.ceil(maxV / 50) * 50;
+  const xTicks = [0, xTop / 4, xTop / 2, (3 * xTop) / 4, xTop].map((t) => Math.round(t));
+  setTxt("pv-val", inr(cur(IV.total_cereals_rural)));
+  setTxt("ex-v-rt1", inr(cur(IV.total_cereals_rural)));
+  setTxt("ex-v-rt0", inr(prv(IV.total_cereals_rural)));
+  setTxt("ex-v-pct", p1(((cur(IV.total_cereals_rural) - prv(IV.total_cereals_rural)) / prv(IV.total_cereals_rural)) * 100));
+  const geo = { W: 1184, H: 440, ml: 235, mr: 110, mt: 24, mb: 48 };
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    x: { label: "₹ per person per month →", labelAnchor: "right", labelArrow: false,
+         ticks: xTicks, domain: [0, xTop], tickSize: 0, tickPadding: 12,
+         tickFormat: (d) => (d === xTop ? "₹" + d : String(d)) },
+    y: { label: null, domain: rows.map((r) => r.label), tickSize: 0, tickPadding: 12 },
+    marks: [
+      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
+      Plot.link(rows, { x1: "v0", x2: "v1", y: "label", stroke: "#D8D3C4", strokeWidth: 1.5 }),
+      Plot.dot(rows, { x: "v0", y: "label", fill: "#C6C0B0", r: 3.5 }),
+      Plot.dot(rows, { x: "v1", y: "label", fill: "c", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.text(rows.filter((d) => d.v1 <= d.v0), { x: "v1", y: "label", text: (d) => inr(d.v1), dx: -12, textAnchor: "end", fill: "c", fontSize: 12, fontFamily: mono }),
+      Plot.text(rows.filter((d) => d.v1 > d.v0), { x: "v1", y: "label", text: (d) => inr(d.v1), dx: 12, textAnchor: "start", fill: "c", fontSize: 12, fontFamily: mono }),
+    ],
+  });
+  a11y(plot, "Average monthly per-capita value of cereals by type, rural and urban, both rounds",
+    "Eight rows of paired dots in rupees. Rural cereal value rose from " + inr(prv(IV.total_cereals_rural)) + " to " + inr(cur(IV.total_cereals_rural)) + " a head a month between the rounds — even as the quantity on the plate above fell. That is the price of grain climbing, not the amount eaten.");
+  document.getElementById("plot-val").append(plot);
+  wireTools(document.getElementById("cb-val"), plot, ["rice", "wheat", "coarse_grains", "other_cereals", "total_cereals"].flatMap((k) => [IV[k + "_rural"], IV[k + "_urban"]]), "india-atlas_hces_cereal-values", fmtRound);
 }
 
 /* ---------- § 08a the map : 36 states, paired dots ---------- */

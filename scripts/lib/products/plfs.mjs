@@ -5,6 +5,13 @@
 //   plfs-quarterly.json  — quarterly bulletin (urban, CWS, from 2018)
 //   plfs-cuts.json       — monthly bulletin by gender × sector
 //   plfs-annual.json     — agriculture-year annual (PS+SS and CWS, from 2017-18)
+//   plfs-status.json     — annual reports: distribution of workers by broad
+//                          status in employment and by broad industry
+//   plfs-earnings.json   — annual reports: earnings by worker status
+//                          (regular ₹/month, casual ₹/day, self-emp ₹/30 days),
+//                          quarterly grain inside each agriculture year
+//   plfs-education.json  — annual reports: UR by general education level,
+//                          plus the 15–29 age cut
 // Rows carry weekly_status null in both bulletins (CWS by definition), so the
 // weekly_status_code param is never sent; annual rows do carry it.
 
@@ -285,5 +292,279 @@ export async function buildPlfs(root, dcfg, vintage) {
   writeJson(root, "data/series/plfs-cuts.json", cutsBundle);
   writeJson(root, "data/series/plfs-annual.json", annualBundle);
   if (statesBundle) writeJson(root, "data/series/plfs-states.json", statesBundle);
+  await buildPlfsExtras(root, dcfg, vintage, agriYears);
   return monthlyBundle;
 }
+
+/* =========================================================================
+ * Annual-report extras: worker distribution (indicator 4), earnings by
+ * worker status (indicators 6/7/8) and UR by education / youth age cut
+ * (indicator 3 with education_code / age_code 2). All from the annual PLFS
+ * reports (agriculture years) — one instrument, never spliced with the
+ * bulletins. Raw rows land in data/raw/plfs-extras.json.
+ *
+ * Server quirks found by probing (kept out of the request params):
+ *  - indicator 4 rejects age_code / gender_code / sector_code (0 rows);
+ *    fetched unfiltered per year and filtered client-side. It serves a
+ *    single population per cell (no duplicate cells), matching the
+ *    published 15+ figures (58.4 / 21.7 / 19.8 in 2023-24).
+ *  - indicator 5 (employment conditions) 500s on every getData combination
+ *    tried — listed by getIndicatorList but not fetchable; skipped.
+ *  - indicators 6/8: the 2017-18 "rural + urban" cells contradict their own
+ *    rural/urban siblings — the implied urban worker weight is 0.85 (regular)
+ *    and 0.55 (self-emp) against a stable 0.53-0.62 / 0.19-0.25 in every
+ *    later year. Those cells are quarantined from the curated bundle
+ *    (kept in raw), same discipline as the Apr–Jun 2019 quarterly UR cell.
+ * ========================================================================= */
+
+const STATUS_KEYS = {
+  "1.self-employed: own account worker, employer": "se_own_account",
+  "2.self-employed: helper in household enterprise": "se_helper",
+  "3.all self employed": "self_employed",
+  "4.regular wage/salary": "regular",
+  "5.casual labour": "casual",
+};
+const INDUSTRY_KEYS = {
+  "primary sector (Div. 01-03 of NIC 2008)": "primary",
+  "secondary sector (Div. 05-43 of NIC 2008)": "secondary",
+  "tertiary sector (Div. 45-99 of NIC 2008)": "tertiary",
+};
+const EDU_KEYS = {
+  "1.not literate": "not_literate",
+  "2.literate & upto primary": "up_to_primary",
+  "3.middle": "middle",
+  "4.secondary": "secondary",
+  "5.higher secondary": "higher_secondary",
+  "6.diploma/ certificate course": "diploma",
+  "7.graduate": "graduate",
+  "8.post graduate & above": "postgraduate",
+  "9.secondary & above": "secondary_above",
+};
+const QTR_START_IN_AGRI = { "Jul-Sep": [0, "07"], "Oct-Dec": [0, "10"], "Jan-Mar": [1, "01"], "Apr-Jun": [1, "04"] };
+const XGREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
+
+async function pageAll(endpoint, params) {
+  const rows = [];
+  let page = 1;
+  for (;;) {
+    const res = await mospi(endpoint, { ...params, page, limit: 500 });
+    rows.push(...(res.data ?? []));
+    if (page >= (res.meta_data?.totalPages ?? 1)) break;
+    page++;
+    await new Promise((r) => setTimeout(r, 150));
+  }
+  return rows;
+}
+
+export async function buildPlfsExtras(root, dcfg, vintage, agriYears) {
+  const ep = dcfg.fetch.endpoint;
+  const raw = { vintage, indicators: {} };
+  const meta0 = (frequency, coverage, extra = {}) => ({
+    dossier: "plfs", frequency, base: dcfg.base,
+    source: dcfg.source_agency, vintage, mock: false,
+    releaseDate: null, coverage, revisionPolicy: dcfg.revision_policy, ...extra,
+  });
+
+  /* ---- indicator 4: percentage distribution of workers ---- */
+  const distRows = [];
+  for (const y of agriYears) {
+    distRows.push(...await pageAll(ep, { indicator_code: 4, frequency_code: 1, year: y, year_type_code: 1, state_code: 99 }));
+    await new Promise((r) => setTimeout(r, 150));
+  }
+  raw.indicators.distribution = distRows;
+  const allDims4 = (r) =>
+    r.enterprise_size === "all" && r.enterprise_type === "all" &&
+    r.industry_section === "All" && r.nco_division === "all" &&
+    r.nic_group === "all" && r.employee_contract === "all" &&
+    r.quarter === "all" && r.state === "All India";
+  const stMaps = {}; // "statusKey|ws|gender|sector" -> Map("YYYY-07" -> v)
+  const indMaps = {}; // "industryKey|ws|gender|sector" -> Map
+  for (const r of distRows) {
+    if (!allDims4(r)) continue;
+    const v = parseFloat(r.value);
+    if (!Number.isFinite(v)) continue;
+    const y1 = String(r.year).slice(0, 4);
+    const sKey = STATUS_KEYS[r.broad_status_employment];
+    if (sKey && r.broad_industry_work === "all")
+      (stMaps[`${sKey}|${r.weekly_status}|${r.gender}|${r.sector}`] ??= new Map()).set(`${y1}-07`, v);
+    const iKey = INDUSTRY_KEYS[r.broad_industry_work];
+    if (iKey && r.broad_status_employment === "all")
+      (indMaps[`${iKey}|${r.weekly_status}|${r.gender}|${r.sector}`] ??= new Map()).set(`${y1}-07`, v);
+  }
+  const sAnchor = stMaps["self_employed|PS+SS|person|rural + urban"];
+  if (!sAnchor?.size) throw new Error("PLFS extras: no status-distribution data returned");
+  const stYears = [...sAnchor.keys()].sort();
+  const stAxis = [];
+  for (let y = Number(stYears[0].slice(0, 4)); y <= Number(stYears.at(-1).slice(0, 4)); y++) stAxis.push(`${y}-07`);
+  // industry shares at person/rural+urban are served on one weekly status
+  // only — prefer PS+SS if complete, else CWS (2023-24 probe: CWS only)
+  const indWs = ["PS+SS", "CWS"].find((ws) =>
+    Object.values(INDUSTRY_KEYS).every((k) => stAxis.every((ym) => indMaps[`${k}|${ws}|person|rural + urban`]?.get(ym) != null)));
+  if (!indWs) throw new Error("PLFS extras: no complete industry-shares status found");
+  const statusSeries = {};
+  const addStatus = (id, mapKey, label, color) => {
+    const m = stMaps[mapKey];
+    if (!m?.size) throw new Error(`PLFS extras: missing status series ${mapKey}`);
+    statusSeries[id] = { name: `plfs_workers_share_${id}_pct`, label, color, data: stAxis.map((ym) => m.get(ym) ?? null) };
+  };
+  addStatus("self_employed_person", "self_employed|PS+SS|person|rural + urban", "Self-employed", "#BE3E26");
+  addStatus("regular_person", "regular|PS+SS|person|rural + urban", "Regular wage/salary", "#5B564B");
+  addStatus("casual_person", "casual|PS+SS|person|rural + urban", "Casual labour", "#A8A293");
+  addStatus("se_own_account_person", "se_own_account|PS+SS|person|rural + urban", "Own-account & employers", "#8A857A");
+  addStatus("se_helper_person", "se_helper|PS+SS|person|rural + urban", "Household-enterprise helpers", "#C6C0B0");
+  ["male", "female"].forEach((g, gi) => {
+    for (const k of ["self_employed", "regular", "casual"])
+      addStatus(`${k}_${g}`, `${k}|PS+SS|${g}|rural + urban`, `${k.replace(/_/g, " ")} · ${g}`, XGREYS[gi * 2]);
+  });
+  Object.entries(INDUSTRY_KEYS).forEach(([, k], i) => {
+    const m = indMaps[`${k}|${indWs}|person|rural + urban`];
+    statusSeries[`industry_${k}_person`] = {
+      name: `plfs_workers_share_industry_${k}_pct`,
+      label: { primary: "Agriculture & allied", secondary: "Industry & construction", tertiary: "Services" }[k] + ` · ${indWs}`,
+      color: ["#BE3E26", "#5B564B", "#A8A293"][i],
+      data: stAxis.map((ym) => m.get(ym) ?? null),
+    };
+  });
+  const statusBundle = {
+    meta: meta0("annual",
+      "All India, 15 years and above, rural + urban; share of workers by broad status in employment (usual status, PS+SS) and by broad industry (" + indWs + "); annual PLFS reports, agriculture years (Jul–Jun) plotted at July",
+      {
+        latestPeriod: stYears.at(-1),
+        note: "Composition identities hold as published: self-employed + regular + casual = 100 per gender; own-account + helpers = self-employed; primary + secondary + tertiary = 100. The API serves a single population for this indicator (its age filter returns no rows); values match the published 15+ statements.",
+      }),
+    dates: stAxis.map((ym) => `${ym}-01`),
+    series: statusSeries,
+  };
+
+  /* ---- indicators 6/7/8: earnings by worker status ---- */
+  const EARN = { regular: 6, casual: 7, self_employed: 8 };
+  const earnMaps = {}; // "key|gender" -> Map("YYYY-MM" -> v), rural+urban only
+  for (const [key, code] of Object.entries(EARN)) {
+    const rows = [];
+    for (const y of agriYears) {
+      rows.push(...await pageAll(ep, { indicator_code: code, frequency_code: 1, year: y, year_type_code: 1, state_code: 99 }));
+      await new Promise((r) => setTimeout(r, 150));
+    }
+    // calendar-year rows (new-design annual averages) archived raw, not curated
+    const calRows = [];
+    for (const cy of [2022, 2023, 2024, 2025, 2026]) {
+      calRows.push(...await pageAll(ep, { indicator_code: code, frequency_code: 1, year: cy, year_type_code: 2, state_code: 99 }));
+    }
+    raw.indicators[`earnings_${key}`] = rows;
+    raw.indicators[`earnings_${key}_calendar`] = calRows;
+    for (const r of rows) {
+      if (r.state !== "All India" || r.sector !== "rural + urban") continue;
+      // quarantine: 2017-18 rural+urban aggregates for regular & self-employed
+      // contradict their own rural/urban siblings (see header note)
+      if (key !== "casual" && String(r.year) === "2017-18") continue;
+      const q = QTR_START_IN_AGRI[r.quarter];
+      if (!q) continue;
+      const v = parseFloat(r.value);
+      if (!Number.isFinite(v)) continue;
+      const y1 = Number(String(r.year).slice(0, 4)) + q[0];
+      (earnMaps[`${key}|${r.gender}`] ??= new Map()).set(`${y1}-${q[1]}`, v);
+    }
+  }
+  const eAnchor = earnMaps["casual|person"];
+  if (!eAnchor?.size) throw new Error("PLFS extras: no earnings data returned");
+  const eMonths = [...new Set(Object.values(earnMaps).flatMap((m) => [...m.keys()]))].sort();
+  const eAxis = quarterAxis(eMonths[0], eMonths.at(-1));
+  const UNIT = { regular: "₹/month", casual: "₹/day", self_employed: "₹/30 days" };
+  const earnSeries = {};
+  Object.keys(EARN).forEach((key, ki) => {
+    ["person", "male", "female"].forEach((g, gi) => {
+      const m = earnMaps[`${key}|${g}`];
+      if (!m?.size) throw new Error(`PLFS extras: missing earnings series ${key}|${g}`);
+      earnSeries[`${key}_${g}`] = {
+        name: `plfs_earnings_${key}_${g}_inr`,
+        label: `${key === "self_employed" ? "Self-employed" : key === "regular" ? "Regular wage" : "Casual"} · ${g} (${UNIT[key]})`,
+        color: g === "person" ? ["#BE3E26", "#5B564B", "#A8A293"][ki] : XGREYS[(ki + gi) % XGREYS.length],
+        data: eAxis.map((ym) => m.get(ym) ?? null),
+      };
+    });
+  });
+  const earningsBundle = {
+    meta: meta0("quarterly",
+      "All India, rural + urban; average earnings by worker status from the annual PLFS reports (agriculture years, quarterly grain): regular wage ₹/month, casual labour ₹/day (non-public works), self-employment gross ₹/30 days — three different denominators, never one axis",
+      {
+        latestPeriod: eMonths.at(-1),
+        note: "2017-18 rural+urban cells for regular-wage and self-employment earnings are quarantined: their implied urban worker weight (0.85 / 0.55) contradicts the stable structure of every later year (0.53-0.62 / 0.19-0.25). Rural and urban sector cells for that year match the published report and stay in the raw archive. Casual earnings carry the full span.",
+      }),
+    dates: eAxis.map((ym) => `${ym}-01`),
+    series: earnSeries,
+  };
+
+  /* ---- indicator 3 by education level + the 15–29 age cut ---- */
+  const eduRows = [];
+  for (const y of agriYears) {
+    for (let code = 1; code <= 9; code++) {
+      eduRows.push(...await pageAll(ep, {
+        indicator_code: 3, frequency_code: 1, year: y, year_type_code: 1,
+        age_code: 1, gender_code: 3, sector_code: 3, state_code: 99, education_code: code,
+      }));
+    }
+    await new Promise((r) => setTimeout(r, 150));
+  }
+  const youthRows = [];
+  for (const y of agriYears) {
+    youthRows.push(...await pageAll(ep, {
+      indicator_code: 3, frequency_code: 1, year: y, year_type_code: 1,
+      age_code: 2, gender_code: 3, sector_code: 3, state_code: 99,
+    }));
+  }
+  raw.indicators.ur_education = eduRows;
+  raw.indicators.ur_youth = youthRows;
+  const eduMaps = {}; // key -> Map("YYYY-07" -> v), PS+SS
+  for (const r of eduRows) {
+    if (r.weekly_status !== "PS+SS" || !ALL_DIMS_EDU(r)) continue;
+    const k = EDU_KEYS[r.General_Education];
+    if (!k) continue;
+    const v = parseFloat(r.value);
+    if (Number.isFinite(v)) (eduMaps[k] ??= new Map()).set(`${String(r.year).slice(0, 4)}-07`, v);
+  }
+  for (const r of youthRows) {
+    if (r.weekly_status !== "PS+SS" || r.AgeGroup !== "15-29 years") continue;
+    if ((r.General_Education ?? "all") !== "all" || !ALL_DIMS_EDU(r)) continue;
+    const v = parseFloat(r.value);
+    if (Number.isFinite(v)) (eduMaps.youth_15_29 ??= new Map()).set(`${String(r.year).slice(0, 4)}-07`, v);
+  }
+  const gAnchor = eduMaps.graduate;
+  if (!gAnchor?.size) throw new Error("PLFS extras: no education UR data returned");
+  const eduYears = [...gAnchor.keys()].sort();
+  const eduAxis = [];
+  for (let y = Number(eduYears[0].slice(0, 4)); y <= Number(eduYears.at(-1).slice(0, 4)); y++) eduAxis.push(`${y}-07`);
+  const EDU_LABELS = {
+    not_literate: "Not literate", up_to_primary: "Up to primary", middle: "Middle",
+    secondary: "Secondary", higher_secondary: "Higher secondary", diploma: "Diploma/certificate",
+    graduate: "Graduate", postgraduate: "Postgraduate & above", secondary_above: "Secondary & above",
+    youth_15_29: "Age 15–29 · all education",
+  };
+  const eduSeries = {};
+  Object.entries(EDU_LABELS).forEach(([k, label], i) => {
+    const m = eduMaps[k];
+    if (!m?.size) throw new Error(`PLFS extras: missing education series ${k}`);
+    eduSeries[k] = {
+      name: `plfs_ur_${k}_psss_pct`, label: `UR · ${label}`,
+      color: k === "graduate" ? "#BE3E26" : XGREYS[i % XGREYS.length],
+      data: eduAxis.map((ym) => m.get(ym) ?? null),
+    };
+  });
+  const educationBundle = {
+    meta: meta0("annual",
+      "All India, person, rural + urban, usual status (PS+SS); unemployment rate by general education level (15+), plus the 15–29 age cut; annual PLFS reports, agriculture years plotted at July",
+      { latestPeriod: eduYears.at(-1) }),
+    dates: eduAxis.map((ym) => `${ym}-01`),
+    series: eduSeries,
+  };
+
+  writeRaw(root, "data/raw/plfs-extras.json", raw);
+  writeJson(root, "data/series/plfs-status.json", statusBundle);
+  writeJson(root, "data/series/plfs-earnings.json", earningsBundle);
+  writeJson(root, "data/series/plfs-education.json", educationBundle);
+}
+
+// education/youth rows also carry religion / social-group / contract axes
+const ALL_DIMS_EDU = (r) =>
+  (r.religion ?? "all") === "all" && (r.socialGroup ?? "all") === "all" &&
+  (r.employee_contract ?? "all") === "all" && (r.quarter ?? "all") === "all" &&
+  r.state === "All India" && r.gender === "person" && r.sector === "rural + urban";

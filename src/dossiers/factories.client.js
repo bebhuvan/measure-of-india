@@ -11,18 +11,32 @@
 
 import * as Plot from "@observablehq/plot";
 import headlineBundle from "../../data/series/asi-headline.json";
+import accountsBundle from "../../data/series/asi-accounts.json";
+import legacy1987 from "../../data/series/asi-headline-1987.json";
+import legacy1998 from "../../data/series/asi-headline-1998.json";
+import legacy2004 from "../../data/series/asi-headline-2004.json";
 import industriesBundle from "../../data/series/asi-industries.json";
 import statesBundle from "../../data/series/asi-states.json";
 import asuseBundle from "../../data/series/asuse-annual.json";
 import asuseQBundle from "../../data/series/asuse-quarterly.json";
+import ownersBundle from "../../data/series/asuse-owners.json";
+import modernityBundle from "../../data/series/asuse-modernity.json";
+import structureBundle from "../../data/series/asuse-structure.json";
 import {
   MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend,
   dodgeEndLabels, spark, downloadSVG, downloadPNG, saveBlob,
 } from "../charts/plumbing.js";
 
 const H = hydrate(headlineBundle);
+const ACC = hydrate(accountsBundle);
+const L87 = hydrate(legacy1987);
+const L98 = hydrate(legacy1998);
+const L04 = hydrate(legacy2004);
 const UA = hydrate(asuseBundle);
 const UQ = hydrate(asuseQBundle);
+const UO = hydrate(ownersBundle);
+const UM = hydrate(modernityBundle);
+const US = hydrate(structureBundle);
 
 /* ---------- formatters ---------- */
 const setHTML = (id, h) => (document.getElementById(id).innerHTML = h);
@@ -82,6 +96,11 @@ UA.workers_all.color = "#A8A293";
 UA.gva_per_worker_all.color = "#5B564B";
 UA.emoluments_per_hired_worker_hwe.color = "#8A857A";
 
+UM.internet_all_combined.color = "#BE3E26";
+UM.reg_not_registered_combined.color = "#5B564B";
+US.own_proprietary_female_combined.color = "#8A857A";
+const per1000 = (v) => fmtIN(v) + " / 1,000";
+
 const regRows = [
   [H.factories_in_operation, "Factories in operation", "ASI · count · from 2008-09", "s-acc", fmtIN, fmtIN],
   [H.persons_engaged, "Persons engaged", "ASI · count · all registered factories", "s-g1", (v) => croreN(v) + " cr", (v) => lakhOf(v) + " lakh"],
@@ -92,6 +111,9 @@ const regRows = [
   [UA.workers_all, "Workers · unincorporated", "ASUSE · count · from 2021-22", "s-g2", (v) => croreN(v) + " cr", (v) => lakhOf(v) + " lakh"],
   [UA.gva_per_worker_all, "GVA per worker", "ASUSE · ₹ per year · market establishments", "s-g1", (v) => "₹" + fmtIN(v), (v) => "₹" + fmtIN(v)],
   [UA.emoluments_per_hired_worker_hwe, "Emoluments per hired worker", "ASUSE · HWE only · ₹ per year", "s-g4", (v) => "₹" + fmtIN(v), (v) => "₹" + fmtIN(v)],
+  [UM.internet_all_combined, "Establishments using the internet", "ASUSE · per 1,000 · from 2021-22", "s-acc", per1000, fmtIN],
+  [UM.reg_not_registered_combined, "Registered under no act", "ASUSE · per 1,000 · from 2021-22", "s-g1", per1000, fmtIN],
+  [US.own_proprietary_female_combined, "Female-proprietor establishments", "ASUSE · per 1,000 · from 2021-22", "s-g4", per1000, fmtIN],
 ];
 document.getElementById("ledger-body").innerHTML = regRows.map(([s, nm, sub, sw, fV, fD], i) => {
   const data = s.data.filter((d) => d.value != null);
@@ -163,6 +185,115 @@ function wirePlate(blockEl, plot, filename, csvText) {
 
 const xTicksASI = [2008, 2011, 2014, 2017, 2020, 2023].map((y) => new Date(Date.UTC(y, 3, 1)));
 const frameBreak = new Date(Date.UTC(2010, 3, 1));
+
+/* ---------- § 03 plate 1 : the long century — four rulers, never joined ----------
+ * The house two-bases pattern (iip) generalised to four classification
+ * blocks. Each block is its own line; nothing crosses a seam; the 1987
+ * block's missing 1993-94 stays a hole in its line. */
+{
+  const BLOCKS = [
+    ["b1987", L87, "NIC-1987", "#C6C0B0"],
+    ["b1998", L98, "NIC-1998", "#A8A293"],
+    ["b2004", L04, "NIC-2004", "#8A857A"],
+    ["b2008", H, "NIC-2008", "#BE3E26"],
+  ];
+  const storeOf = (key) => Object.fromEntries(BLOCKS.map(([bk, S, lab, col]) => [bk, { ...S[key], label: lab, color: col }]));
+  const factStore = storeOf("number_of_factories");
+  const persStore = storeOf("persons_engaged");
+  const seams = [1998, 2004, 2008].map((y) => new Date(Date.UTC(y, 3, 1)));
+  const xTicksLong = [1992, 1996, 2000, 2004, 2008, 2012, 2016, 2020, 2023].map((y) => new Date(Date.UTC(y, 3, 1)));
+  const lastPt = (s) => s.data.filter((d) => d.value != null).at(-1);
+  const firstPt = (s) => s.data.filter((d) => d.value != null)[0];
+
+  const panel = (el, store, geo, opts) => {
+    const sers = BLOCKS.map(([bk]) => store[bk]);
+    const plot = Plot.plot({
+      width: geo.W, height: geo.H,
+      marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+      style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+      x: { label: null, tickSize: 0, tickPadding: 14, ticks: xTicksLong, tickFormat: fy },
+      y: { label: opts.yLabel, labelAnchor: "top", labelArrow: false,
+           tickFormat: opts.yFmt, ticks: opts.yTicks, domain: [0, geo.d1], tickSize: 0, tickPadding: 11 },
+      marks: [
+        Plot.gridY(opts.yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
+        Plot.ruleY([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
+        ...seams.map((d) => Plot.ruleX([d], { stroke: "#D8D3C4", strokeWidth: 1, strokeDasharray: "2,3" })),
+        ...(opts.seamLabels ? seams.map((d, i) => Plot.text([{ date: d, value: geo.d1 * 0.97 }], {
+          x: "date", y: "value", text: [["'98", "'04", "'08"][i] + " reclassified"],
+          dx: 6, fontSize: 11.5, fill: "#8A857A", fontFamily: mono, textAnchor: "start",
+        })) : []),
+        ...sers.map((s) => Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: s.color === "#BE3E26" ? 2.75 : 1.75, strokeLinejoin: "round", strokeLinecap: "round" })),
+        ...sers.map((s) => Plot.dot([lastPt(s)], { x: "date", y: "value", fill: s.color, r: s.color === "#BE3E26" ? 4.5 : 3, stroke: "#FFFFFF", strokeWidth: 1.5 })),
+        ...(opts.blockLabels ? sers.slice(0, 3).map((s) => Plot.text([lastPt(s)], {
+          x: "date", y: "value", text: (d) => `${s.label} · ${opts.endFmt(d.value)}`,
+          dy: opts.labelDy?.[s.label] ?? -14, fontSize: 12, fill: s.color === "#C6C0B0" ? "#8A857A" : s.color, fontFamily: mono, textAnchor: "middle",
+        })) : []),
+        Plot.text([lastPt(sers[3])], { x: "date", y: "value", text: (d) => `NIC-2008 ${opts.endFmt(d.value)}`, dx: 14, fill: "#BE3E26", fontSize: 14, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      ],
+    });
+    a11y(plot, opts.a11yTitle, opts.a11yDesc);
+    el.append(plot);
+    return plot;
+  };
+
+  const geoF = { W: 1184, H: 350, ml: 70, mr: 210, mt: 30, mb: 42, d1: 300000 };
+  const plotF = panel(document.getElementById("plot-long-fact"), factStore, geoF, {
+    yTicks: [0, 100000, 200000, 300000],
+    yLabel: "↑ factories on the register, thousand",
+    yFmt: (d) => (d === 0 ? "0" : String(d / 1000) + "k"),
+    endFmt: (v) => lakhOf(v, 2) + " L",
+    seamLabels: true, blockLabels: true,
+    labelDy: { "NIC-1987": -16, "NIC-1998": 18, "NIC-2004": -16 },
+    a11yTitle: "Factories on the ASI register, 1992-93 to 2023-24, across four classification blocks drawn as four separate lines",
+    a11yDesc: "Four line segments that never join. The NIC-1987 block runs from " + fmtIN(firstPt(factStore.b1987).value) + " in 1992-93 to " + fmtIN(lastPt(factStore.b1987).value) + " in 1997-98, with 1993-94 missing at source. The 1998 block dips to " + fmtIN(128549) + " in 2001-02. The 2004 block climbs to " + fmtIN(lastPt(factStore.b2004).value) + " by 2007-08, and the current 2008 block rises from " + fmtIN(firstPt(factStore.b2008).value) + " to " + fmtIN(lastPt(factStore.b2008).value) + ", including the 2010-11 frame revision. Seams mark reclassifications, not events.",
+  });
+
+  const geoP = { W: 1184, H: 300, ml: 70, mr: 210, mt: 28, mb: 42, d1: 20000000 };
+  panel(document.getElementById("plot-long-pers"), persStore, geoP, {
+    yTicks: [0, 5000000, 10000000, 15000000, 20000000],
+    yLabel: "↑ persons engaged, crore",
+    yFmt: (d) => (d === 0 ? "0" : (d / 1e7).toFixed(1) + (d === 20000000 ? " cr" : "")),
+    endFmt: (v) => croreN(v) + " cr",
+    seamLabels: false, blockLabels: true,
+    labelDy: { "NIC-1987": -16, "NIC-1998": 20, "NIC-2004": -16 },
+    a11yTitle: "Persons engaged in registered factories, 1992-93 to 2023-24, across four classification blocks",
+    a11yDesc: "Four separate line segments. Factory employment stood at " + croreN(lastPt(persStore.b1987).value) + " crore in 1997-98, fell through the 1998 block to " + croreN(lastPt(persStore.b1998).value) + " crore by 2003-04, recovered through the 2004 block, and rises through the current block to " + croreN(lastPt(persStore.b2008).value) + " crore in 2023-24.",
+  });
+
+  setTxt("pv-long", lakhOf(lastPt(factStore.b1987).value, 2) + " → " + lakhOf(lastPt(factStore.b2008).value, 2) + " lakh");
+  setTxt("ex-l87", fmtIN(firstPt(factStore.b1987).value));
+  setTxt("ex-l98", fmtIN(lastPt(factStore.b1987).value));
+  setTxt("ex-l02", fmtIN(L98.number_of_factories.data.find((d) => d.date.getUTCFullYear() === 2001).value));
+  setTxt("ex-lp97", croreN(lastPt(persStore.b1987).value) + " crore");
+  setTxt("ex-lp03", croreN(lastPt(persStore.b1998).value) + " crore");
+  setTxt("ex-lp23", croreN(lastPt(persStore.b2008).value) + " crore");
+
+  const csvRows = [];
+  {
+    const head = ["fiscal_year"];
+    const cols = [];
+    for (const [bk, , lab] of BLOCKS) {
+      head.push(`factories_${lab.toLowerCase().replace("-", "")}`, `persons_${lab.toLowerCase().replace("-", "")}`);
+      cols.push([factStore[bk], persStore[bk]]);
+    }
+    for (let y = 1992; y <= 2023; y++) {
+      const row = [`${y}-${String((y + 1) % 100).padStart(2, "0")}`];
+      for (const [f, p] of cols) {
+        const fv = f.data.find((d) => d.date.getUTCFullYear() === y);
+        const pv = p.data.find((d) => d.date.getUTCFullYear() === y);
+        row.push(fv?.value ?? "", pv?.value ?? "");
+      }
+      csvRows.push(row.join(","));
+    }
+    csvRows.unshift(head.join(","));
+  }
+  wirePlate(document.getElementById("cb-long"), plotF, "india-atlas_asi_four-blocks_1992-2023", csvRows.join("\n"));
+  const legendEl = document.getElementById("legend-long");
+  const pf = document.getElementById("plot-long-fact").querySelector("svg");
+  const pp = document.getElementById("plot-long-pers").querySelector("svg");
+  wireLegend(legendEl, pf, ["b1987", "b1998", "b2004", "b2008"], factStore);
+  wireLegend(legendEl, pp, ["b1987", "b1998", "b2004", "b2008"], persStore);
+}
 
 /* ---------- § 03 plate 1 : the counts, two panels ---------- */
 {
@@ -389,6 +520,61 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   wirePlate(document.getElementById("cb-ind"), null, "india-atlas_asi_gva-by-industry_2008-2023", [csvHead, ...csvRows].join("\n"));
 }
 
+/* ---------- § 06 plate 4c : jobs vs value — the industry scatter ----------
+ * Where the jobs are, against where the value is. Industries below the diagonal
+ * are labour-intensive (big in employment, modest in value added); above it,
+ * capital-intensive. The persons_engaged series were ingested but never shown. */
+{
+  const SHORT = {
+    "10": "Food", "11": "Beverages", "13": "Textiles", "14": "Apparel", "15": "Leather",
+    "16": "Wood", "17": "Paper", "18": "Printing", "19": "Coke & petroleum", "20": "Chemicals",
+    "21": "Pharmaceuticals", "22": "Rubber & plastics", "23": "Non-metallic minerals", "24": "Basic metals",
+    "25": "Fabricated metal", "26": "Electronics", "27": "Electrical eqpt", "28": "Machinery", "29": "Motor vehicles",
+    "30": "Other transport", "31": "Furniture", "32": "Other mfg", "33": "Repair", "38": "Waste", "58": "Publishing",
+    "01": "Crop services", "08": "Other mining",
+  };
+  const codes = [...new Set(Object.keys(industriesBundle.series).filter((k) => k.startsWith("gva_")).map((k) => k.slice(4)))].filter((c) => c !== "99998");
+  const gv = (c) => industriesBundle.series["gva_" + c].data.at(-1);
+  const em = (c) => industriesBundle.series["persons_engaged_" + c]?.data.at(-1);
+  const codes2 = codes.filter((c) => em(c) != null && gv(c) != null);
+  const totG = codes2.reduce((a, c) => a + gv(c), 0);
+  const totE = codes2.reduce((a, c) => a + em(c), 0);
+  const pts = codes2.map((c) => ({ code: c, name: SHORT[c] || c, g: gv(c) / totG * 100, e: em(c) / totE * 100 })).filter((p) => p.g > 0.1 && p.e > 0.1);
+  const maxS = Math.max(...pts.map((p) => p.g), ...pts.map((p) => p.e)) * 1.15;
+  const labour = [...pts].sort((a, b) => b.e / b.g - a.e / a.g).slice(0, 4);
+  const labelled = new Set([...labour.map((p) => p.code), ...[...pts].sort((a, b) => b.g - a.g).slice(0, 3).map((p) => p.code)]);
+  const isLab = (p) => labour.includes(p);
+  setTxt("pv-jv", labour[0].name + " · " + labour[0].e.toFixed(1) + "% of jobs, " + labour[0].g.toFixed(1) + "% of value");
+  setTxt("ex-jv-lab", labour[0].name + " — " + labour[0].e.toFixed(1) + "% of jobs, " + labour[0].g.toFixed(1) + "% of value");
+  const capTop = [...pts].sort((a, b) => b.g / b.e - a.g / a.e)[0];
+  setTxt("ex-jv-cap", capTop.name + " — " + capTop.g.toFixed(1) + "% of value, " + capTop.e.toFixed(1) + "% of jobs");
+
+  const geo = { W: 1184, H: 560, ml: 70, mr: 40, mt: 30, mb: 56 };
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "13px", color: "#5C574C", overflow: "visible" },
+    x: { label: "share of factory employment →", labelAnchor: "right", labelArrow: "none", domain: [0, maxS], tickSize: 0, tickPadding: 12,
+         tickFormat: (d) => String(d) + "%" },
+    y: { label: "↑ share of factory value added", labelAnchor: "top", labelArrow: false, domain: [0, maxS], tickSize: 0, tickPadding: 11,
+         tickFormat: (d) => (d === Math.round(maxS) ? d + "%" : String(d)) },
+    marks: [
+      Plot.gridY([0, 5, 10, 15, 20], { stroke: "#EDE9DA", strokeWidth: 1 }),
+      Plot.gridX([0, 5, 10, 15, 20], { stroke: "#EDE9DA", strokeWidth: 1 }),
+      Plot.line([{ e: 0, g: 0 }, { e: maxS, g: maxS }], { x: "e", y: "g", stroke: "#C0B9A6", strokeWidth: 1, strokeDasharray: "2,4" }),
+      Plot.text([{ e: maxS * 0.86, g: maxS * 0.9 }], { x: "e", y: "g", text: ["capital-intensive →"], fontSize: 11.5, fill: "#8A857A", fontFamily: mono, textAnchor: "end" }),
+      Plot.text([{ e: maxS * 0.9, g: maxS * 0.78 }], { x: "e", y: "g", text: ["← labour-intensive"], fontSize: 11.5, fill: "#8A857A", fontFamily: mono, textAnchor: "end" }),
+      Plot.dot(pts, { x: "e", y: "g", fill: (d) => (isLab(d) ? "#BE3E26" : "#A8A293"), r: (d) => (labelled.has(d.code) ? 5.5 : 4), stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.text(pts.filter((p) => labelled.has(p.code)), { x: "e", y: "g", text: "name", dx: 9, dy: -7, fill: (d) => (isLab(d) ? "#BE3E26" : "#5B564B"), fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+    ],
+  });
+  a11y(plot, "Share of factory employment against share of factory value added, by two-digit industry, 2023-24",
+    "Scatter, one dot per industry. Above the diagonal sit capital-intensive industries (more value than their headcount would imply); below it, labour-intensive ones (big in jobs, modest in value). The most labour-intensive is " + labour[0].name + " at " + labour[0].e.toFixed(1) + " per cent of jobs against " + labour[0].g.toFixed(1) + " per cent of value; the most capital-intensive is " + capTop.name + ".");
+  document.getElementById("plot-jv").append(plot);
+  wirePlate(document.getElementById("cb-jv"), plot, "india-atlas_asi_jobs-vs-value_2023-24",
+    "nic_code,name,employment_share_pct,gva_share_pct\n" + pts.map((p) => p.code + "," + p.name + "," + p.e.toFixed(2) + "," + p.g.toFixed(2)).join("\n"));
+}
+
 /* ---------- § 07 the other economy ---------- */
 {
   const estOAE = last(UA.establishments_oae), estHWE = last(UA.establishments_hwe), estAll = last(UA.establishments_all);
@@ -456,6 +642,200 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   document.getElementById("plot-mult").append(plot);
   const csv = ["category,gva_per_worker_inr_per_year", ...rows.map((r) => `"${r.cat}",${Math.round(r.v)}`)].join("\n");
   wirePlate(document.getElementById("cb-mult"), plot, "india-atlas_asi-asuse_gva-per-worker_2023-24", csv);
+}
+
+/* ---------- § 09 : the informal firm, described ---------- */
+const renderBasket = (barId, labId, segs, denom) => {
+  document.getElementById(barId).innerHTML = segs.map(([n, v, c]) =>
+    `<div class="seg" style="width:${(v / 10).toFixed(2)}%;background:${c}" title="${n} — ${v} per 1,000"></div>`).join("");
+  document.getElementById(labId).innerHTML = segs.map(([n, v, c]) =>
+    `<div class="blab"><div class="n"><span class="sw" style="background:${c}"></span>${n}</div><div class="w">${fmtIN(v)} / 1,000 ${denom} · 2023-24</div></div>`).join("");
+};
+{
+  setTxt("if-reg", fmtIN(last(UM.reg_not_registered_combined)));
+  setTxt("if-comp", fmtIN(last(UM.computer_all_combined)));
+
+  /* -- who owns the shop -- */
+  const soc = (g) => last(UO[`social_${g}_combined`]);
+  const own = (g) => last(US[`own_${g}_combined`]);
+  const socSegs = [
+    ["Other Backward Classes", soc("obc"), "#BE3E26"],
+    ["Scheduled Caste", soc("sc"), "#5B564B"],
+    ["Scheduled Tribe", soc("st"), "#8A857A"],
+    ["Others", soc("others"), "#C6C0B0"],
+    ["Not known", soc("not_known"), "#E6E2D6"],
+  ];
+  const collective = own("partnership_same_hh") + own("partnership_diff_hh") + own("shg") + own("society_trust") + own("cooperatives") + own("others");
+  const sexSegs = [
+    ["Proprietary — male owner", own("proprietary_male"), "#5B564B"],
+    ["Proprietary — female owner", own("proprietary_female"), "#BE3E26"],
+    ["Partnerships, SHGs, societies, co-operatives", collective, "#C6C0B0"],
+  ];
+  renderBasket("bar-social", "lab-social", socSegs, "proprietary & partnership estts.");
+  renderBasket("bar-sex", "lab-sex", sexSegs, "of all establishments");
+  const edu = (g) => last(UO[`edu_${g}_combined`]);
+  setTxt("pv-owner", fmtIN(soc("obc") + soc("sc") + soc("st")) + " / 1,000");
+  setTxt("ex-o-obc", fmtIN(soc("obc")));
+  setTxt("ex-o-sc", fmtIN(soc("sc")));
+  setTxt("ex-o-st", fmtIN(soc("st")));
+  setTxt("ex-o-fem", fmtIN(Math.round(own("proprietary_female") / own("proprietary_all") * 1000)));
+  setTxt("ex-o-edu", fmtIN(edu("not_literate") + edu("below_primary") + edu("primary_to_secondary")));
+  const ownerCsv = ["dimension,category,per_1000_2023_24",
+    ...socSegs.map(([n, v]) => `owner_social_group,"${n}",${v}`),
+    ...sexSegs.map(([n, v]) => `ownership_type,"${n}",${v}`),
+    ...["not_literate", "below_primary", "primary_to_secondary", "secondary_to_hs", "hs_to_graduate", "graduate_and_above"].map((g) => `owner_education,"${UO[`edu_${g}_combined`].label}",${edu(g)}`),
+  ].join("\n");
+  wirePlate(document.getElementById("cb-owner"), null, "india-atlas_asuse_who-owns-the-shop_2023-24", ownerCsv);
+}
+
+{
+  /* -- the paperwork and the wires: per-1,000 dot strip -- */
+  const m = (k) => last(UM[k]);
+  const rows = [
+    { cat: "Bank / post-office account — any", v: m("bank_any_account_combined"), c: "#5B564B" },
+    { cat: "Not registered under any act", v: m("reg_not_registered_combined"), c: "#C6C0B0" },
+    { cat: "Using the internet", v: m("internet_all_combined"), c: "#BE3E26" },
+    { cat: "State-specific licence / registration", v: m("reg_state_licence_combined"), c: "#8A857A" },
+    { cat: "Account in the establishment's name", v: m("bank_estab_account_combined"), c: "#8A857A" },
+    { cat: "Regional Transport Office", v: m("reg_rto_combined"), c: "#8A857A" },
+    { cat: "Shops & Establishments Act", v: m("reg_shops_estb_act_combined"), c: "#8A857A" },
+    { cat: "Using a computer", v: m("computer_all_combined"), c: "#5B564B" },
+    { cat: "GST — CGST Act", v: m("reg_cgst_act_combined"), c: "#8A857A" },
+  ].sort((a, b) => b.v - a.v);
+  const xTicks = [0, 250, 500, 750, 1000];
+  const plot = Plot.plot({
+    width: 1184, height: 30 + rows.length * 34 + 40, marginLeft: 330, marginRight: 110, marginTop: 20, marginBottom: 40,
+    style: { background: "transparent", fontFamily: mono, fontSize: "13px", color: "#5C574C", overflow: "visible" },
+    x: { label: "per 1,000 establishments · 2023-24 →", labelAnchor: "right", labelArrow: false, domain: [0, 1000], ticks: xTicks, tickSize: 0, tickPadding: 10, tickFormat: (d) => String(d) },
+    y: { label: null, domain: rows.map((r) => r.cat), tickSize: 0, tickPadding: 14, tickFormat: (s) => String(s) },
+    marks: [
+      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
+      Plot.ruleX([1000], { stroke: "#E0DACA", strokeWidth: 1 }),
+      Plot.ruleY(rows, { y: "cat", x1: 0, x2: "v", stroke: (d) => (d.c === "#BE3E26" ? "#E5B8AE" : "#E0DACA"), strokeWidth: 1.25 }),
+      Plot.dot(rows, { y: "cat", x: "v", fill: "c", r: 4.5 }),
+      Plot.text(rows, { y: "cat", x: "v", dx: 12, text: (d) => fmtIN(d.v), fill: (d) => (d.c === "#C6C0B0" ? "#8A857A" : d.c), fontSize: 12.5, fontFamily: mono, fontWeight: (d) => (d.c === "#BE3E26" ? 500 : 400), textAnchor: "start" }),
+    ],
+  });
+  a11y(plot, "Rates per 1,000 unincorporated establishments: accounts, digital use and registrations, 2023-24",
+    "Dot strip on a 0 to 1,000 scale. " + fmtIN(rows[0].v) + " per 1,000 maintain a bank or post-office account; " + fmtIN(m("reg_not_registered_combined")) + " are registered under no act; " + fmtIN(m("internet_all_combined")) + " use the internet and " + fmtIN(m("computer_all_combined")) + " a computer; GST registration is " + fmtIN(m("reg_cgst_act_combined")) + " per 1,000.");
+  document.getElementById("plot-modern").append(plot);
+
+  setTxt("pv-modern", fmtIN(m("internet_all_combined")));
+  setTxt("ex-m-bank", fmtIN(m("bank_any_account_combined")));
+  setTxt("ex-m-net", fmtIN(m("internet_all_combined")));
+  setTxt("ex-m-comp", fmtIN(m("computer_all_combined")));
+  setTxt("ex-m-gst", fmtIN(m("reg_cgst_act_combined")));
+  setTxt("ex-m-shops", fmtIN(m("reg_shops_estb_act_combined")));
+  setTxt("ex-m-none", fmtIN(m("reg_not_registered_combined")));
+  setTxt("ex-m-hwe", fmtIN(m("internet_hwe_combined")));
+  setTxt("ex-m-oae", fmtIN(m("internet_oae_combined")));
+  const csv = ["metric,per_1000_2023_24", ...rows.map((r) => `"${r.cat}",${r.v}`)].join("\n");
+  wirePlate(document.getElementById("cb-modern"), plot, "india-atlas_asuse_paperwork-and-wires_2023-24", csv);
+}
+
+{
+  /* -- where it stands, when it works -- */
+  const s = (k) => last(US[k]);
+  const locSegs = [
+    ["Within the household premises", s("loc_within_household_combined"), "#5B564B"],
+    ["Fixed premises, permanent structure", s("loc_fixed_permanent_combined"), "#8A857A"],
+    ["Fixed premises, temporary / kiosk / stall", s("loc_fixed_temporary_combined"), "#A8A293"],
+    ["Fixed premises, no structure", s("loc_fixed_no_structure_combined"), "#C6C0B0"],
+    ["Mobile markets", s("loc_mobile_market_combined"), "#E0DACA"],
+    ["Street vending, no fixed premises", s("loc_street_vendor_combined"), "#BE3E26"],
+  ];
+  const moSegs = [
+    ["3 months or fewer", s("months_le3_combined"), "#BE3E26"],
+    ["4 – 6 months", s("months_4_6_combined"), "#C6C0B0"],
+    ["7 – 9 months", s("months_7_9_combined"), "#A8A293"],
+    ["More than 9 months", s("months_gt9_combined"), "#5B564B"],
+  ];
+  const hrSegs = [
+    ["Under 4 hours a day", s("hours_lt4_combined"), "#C6C0B0"],
+    ["4 – 7 hours", s("hours_4_7_combined"), "#A8A293"],
+    ["8 – 11 hours", s("hours_8_11_combined"), "#5B564B"],
+    ["Over 11 hours", s("hours_gt11_combined"), "#BE3E26"],
+  ];
+  renderBasket("bar-loc", "lab-loc", locSegs, "by location");
+  renderBasket("bar-months", "lab-months", moSegs, "by months operated");
+  renderBasket("bar-hours", "lab-hours", hrSegs, "by hours worked");
+  setTxt("pv-rhythm", fmtIN(s("months_gt9_combined")) + " / 1,000");
+  setTxt("ex-r-house", fmtIN(s("loc_within_household_combined")));
+  setTxt("ex-r-perm", fmtIN(s("loc_fixed_permanent_combined")));
+  setTxt("ex-r-street", fmtIN(s("loc_street_vendor_combined") + s("loc_mobile_market_combined")));
+  setTxt("ex-r-m9", fmtIN(s("months_gt9_combined")));
+  setTxt("ex-r-h8", fmtIN(s("hours_8_11_combined")));
+  setTxt("ex-r-avg", s("months_avg_combined").toFixed(1));
+  const csv = ["dimension,category,per_1000_2023_24",
+    ...locSegs.map(([n, v]) => `location,"${n}",${v}`),
+    ...moSegs.map(([n, v]) => `months_operated,"${n}",${v}`),
+    ...hrSegs.map(([n, v]) => `hours_per_day,"${n}",${v}`),
+    `months_operated,"Average months (count)",${s("months_avg_combined")}`,
+  ].join("\n");
+  wirePlate(document.getElementById("cb-rhythm"), null, "india-atlas_asuse_rhythm-of-the-firm_2023-24", csv);
+}
+
+/* ---------- § 10 : the factory accounts, complete ---------- */
+{
+  const codes = Object.keys(accountsBundle.series).map((k) => Number(k.slice(1))).sort((a, b) => a - b);
+  const unitLabel = (code, unit) => {
+    if (code === 42) return "thousand mandays";
+    return { inr_lakh: "₹ lakh · nominal", count: "count", thousand: "₹ thousand · nominal", thousand_kwh: "thousand kWh", thousand_tonne: "thousand tonnes" }[unit] ?? unit;
+  };
+  const fmtVal = (code, unit, v) => {
+    if (v == null) return "–";
+    const sign = v < 0 ? "−" : "";
+    const a = Math.abs(v);
+    if (unit === "inr_lakh") return sign + (a >= 1e7 ? "₹" + (a / 1e7).toFixed(1) + " L cr" : "₹" + fmtIN(Math.round(a / 100)) + " cr");
+    if (unit === "count") return sign + (a >= 1e7 ? croreN(a) + " cr" : a >= 2e5 ? lakhOf(a) + " lakh" : fmtIN(a));
+    if (code === 42) return sign + croreN(a * 1000) + " cr days";
+    if (unit === "thousand") return sign + "₹" + (a / 1e9).toFixed(2) + " L cr";
+    if (unit === "thousand_kwh") return sign + fmtIN(Math.round(a / 1e6)) + " bn kWh";
+    if (unit === "thousand_tonne") return sign + croreN(a * 1000, 1) + " cr t";
+    return sign + fmtIN(a);
+  };
+  const rowsHtml = codes.map((code) => {
+    const key = "i" + String(code).padStart(2, "0");
+    const unit = accountsBundle.series[key].unit;
+    const s = ACC[key];
+    const pts = s.data.filter((d) => d.value != null);
+    const latest = pts.at(-1), prev = pts.at(-2), first = pts[0];
+    const f = (v) => fmtVal(code, unit, v);
+    return `
+    <tr>
+      <td class="name">${s.label}<small>ASI ${code} · ${unitLabel(code, unit)}</small></td>
+      <td class="val">${f(latest.value)}</td>
+      <td class="chg">${arrow(latest.value - prev.value, (d) => f(d))}</td>
+      <td class="yr">${f(first.value)} · ${fy(first.date)}</td>
+      <td class="spark" id="sp-a${code}"></td>
+    </tr>`;
+  }).join("");
+  document.getElementById("acct-body").innerHTML = rowsHtml;
+  codes.forEach((code) => {
+    const key = "i" + String(code).padStart(2, "0");
+    spark("sp-a" + code, { ...ACC[key], color: code === 19 ? "#BE3E26" : "#5B564B" });
+  });
+
+  setTxt("pv-acct", lakhCr(last(ACC.i19)));
+  setTxt("ex-a-emol", lakhCr(last(ACC.i43)) + "ore");
+  setTxt("ex-a-wrk", lakhCr(last(ACC.i46)) + "ore");
+  setTxt("ex-a-con", (last(ACC.i37) / last(ACC.i32) * 100).toFixed(1) + "%");
+  setTxt("ex-a-mand", croreN(last(ACC.i42) * 1000, 0));
+  setTxt("ex-a-fuel", lakhCr(last(ACC.i16)) + "ore");
+  setTxt("ex-a-elec", lakhCr(last(ACC.i54) / 100) + "ore"); // ₹ thousand -> ₹ lakh
+  const years = accountsBundle.dates.map((d) => {
+    const y = Number(d.slice(0, 4));
+    return `${y}-${String((y + 1) % 100).padStart(2, "0")}`;
+  });
+  const csv = ["asi_code,indicator,unit," + years.join(","),
+    ...codes.map((code) => {
+      const key = "i" + String(code).padStart(2, "0");
+      const b = accountsBundle.series[key];
+      return `${code},"${b.label}",${b.unit},` + b.data.map((v) => v ?? "").join(",");
+    }),
+  ].join("\n");
+  wirePlate(document.getElementById("cb-acct"), null, "india-atlas_asi_all-indicators_2008-2023", csv);
 }
 
 /* ---------- sparklines ---------- */
