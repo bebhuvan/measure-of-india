@@ -12,7 +12,12 @@ import forexBundle from "../../data/series/rbi-forex.json";
 import plfsBundle from "../../data/series/plfs-monthly.json";
 import fractilesBundle from "../../data/series/hces-fractiles.json";
 import asiBundle from "../../data/series/asi-headline.json";
+import aisheBundle from "../../data/series/aishe-headline.json";
+import genderBundle from "../../data/series/gender-sexratio.json";
+import mnreBundle from "../../data/series/mnre-sources.json";
+import nfhsBundle from "../../data/series/nfhs-anaemia.json";
 import { hydrate } from "../charts/plumbing.js";
+import { DOSSIERS } from "./registry.js";
 
 const C = hydrate(cpiBundle);
 const C24 = hydrate(cpi2024Bundle);   // base 2024=100 — separate series, never spliced with C
@@ -84,17 +89,27 @@ sparkline("sp-core", core, "#C6C0B0", true);
     ],
   });
   plot.setAttribute("role", "img");
-  plot.setAttribute("aria-label", "Line chart of headline CPI inflation from January 2016 to June 2026 in two segments that never join: the retired 2012 base to December 2025, and the rebased 2024 series from January 2026, ending at " + head24.at(-1).value.toFixed(2) + " per cent, inside the RBI tolerance band of 2 to 6 per cent.");
+  const MNL = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const when = (d) => MNL[d.getUTCMonth()] + " " + d.getUTCFullYear();
+  plot.setAttribute("aria-label", "Line chart of headline CPI inflation from " + when(head[0].date) + " to " + when(head24.at(-1).date) + " in two segments that never join: the retired 2012 base to " + when(head.at(-1).date) + ", and the rebased 2024 series from " + when(head24[0].date) + ", ending at " + head24.at(-1).value.toFixed(2) + " per cent, inside the RBI tolerance band of 2 to 6 per cent.");
   document.getElementById("frontis-plot").append(plot);
 }
 
-/* ---------- dossier-row sparklines ---------- */
-sparkline("ds-cpi", head, "#BE3E26", false, 120, 32);
-sparkline("ds-gdp", gdp, "#BE3E26", false, 120, 32);
-sparkline("ds-wpi", wpi, "#BE3E26", false, 120, 32);
-sparkline("ds-iip", iip, "#BE3E26", false, 120, 32);
-sparkline("ds-ext", FX.reserves.data, "#BE3E26", false, 120, 32);
-sparkline("ds-jobs", PLFS.ur.data, "#BE3E26", false, 120, 32);
+/* ---------- dossier-row sparklines (driven by the registry) ---------- */
+// Vite needs static imports, so bundles are imported above and mapped here;
+// the registry says which bundle+series each dossier's row sparkline draws.
+// Element ids are `ds-<slug>` — the homepage generates them the same way.
+const SPARK_BUNDLES = {
+  "cpi": cpiBundle, "gdp": gdpBundle, "wpi": wpiBundle, "iip-2022": iipBundle,
+  "rbi-forex": forexBundle, "plfs-monthly": plfsBundle, "hces-fractiles": fractilesBundle,
+  "asi-headline": asiBundle, "aishe-headline": aisheBundle, "gender-sexratio": genderBundle,
+  "mnre-sources": mnreBundle, "nfhs-anaemia": nfhsBundle,
+};
+for (const d of DOSSIERS) {
+  if (!d.spark.series) continue;   // custom shapes handled below
+  const H = hydrate(SPARK_BUNDLES[d.spark.bundle]);
+  sparkline(`ds-${d.slug}`, H[d.spark.series].data.filter((p) => p.value != null), "#BE3E26", false, 120, 32);
+}
 // № 07 is cross-sectional — two rounds, no time axis. The card mark is the
 // 12-class fractile ladder (rural, 2023-24): a real ordering, drawn as a line.
 {
@@ -102,10 +117,13 @@ sparkline("ds-jobs", PLFS.ur.data, "#BE3E26", false, 120, 32);
   const FRACS = ["f0_5", "f5_10", "f10_20", "f20_30", "f30_40", "f40_50",
     "f50_60", "f60_70", "f70_80", "f80_90", "f90_95", "f95_100"];
   const ladder = FRACS.map((k, i) => ({ date: i, value: F[k + "_rural"].data[1].value }));
-  sparkline("ds-hces", ladder, "#BE3E26", false, 120, 32);
+  sparkline("ds-consumption", ladder, "#BE3E26", false, 120, 32);
 }
-// № 08's mark is a real time series: factories in operation, 16 ASI rounds.
+// № 12's mark is child anaemia NFHS-4 → NFHS-5 (the worsening).
 {
-  const A = hydrate(asiBundle);
-  sparkline("ds-asi", A.factories_in_operation.data, "#BE3E26", false, 120, 32);
+  const s = Object.values(nfhsBundle.series).find((x) => x.label.toLowerCase().includes("children age 6-59"));
+  if (s) {
+    const data = s.data.map((v, i) => ({ date: i, value: v }));
+    sparkline("ds-nfhs", data, "#BE3E26", false, 120, 32);
+  }
 }

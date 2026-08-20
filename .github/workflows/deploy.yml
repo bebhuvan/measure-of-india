@@ -1,0 +1,41 @@
+name: deploy
+
+# Publishes only what has already passed the release gates and a human merge.
+# Builds from the committed data — this workflow never fetches, so what is
+# deployed is exactly what was reviewed in the release PR.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build (no refetch — deploy exactly what was reviewed)
+        run: npx astro build
+
+      - name: QC
+        run: npm run qc   # qc.mjs + lint-charts.mjs — the full post-build gate
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name=india-atlas

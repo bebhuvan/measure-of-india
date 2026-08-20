@@ -21,7 +21,21 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 try { process.loadEnvFile(path.join(ROOT, ".env")); } catch {}
 const slug = process.argv[2];
 const DRY = process.argv.includes("--dry-run") || !process.env.INDIA_ATLAS_LLM_KEY;
-if (!slug) { console.error("usage: node pipeline/generate.mjs <slug> [--dry-run]"); process.exit(1); }
+if (!slug) { console.error("usage: node pipeline/generate.mjs <slug | --all> [--dry-run]"); process.exit(1); }
+
+if (slug === "--all") {
+  // regenerate every dossier's dated slots — the default release behaviour.
+  // Individual failures are accumulated, not swallowed: one bad dossier must
+  // not silently keep another's stale prose.
+  const YAML = (await import("yaml")).default;
+  const slots = YAML.parse(fs.readFileSync(path.join(ROOT, "pipeline/slots.yml"), "utf8"));
+  let bad = 0;
+  for (const s of Object.keys(slots)) {
+    try { execFileSync(process.execPath, [import.meta.filename, s, ...(DRY ? ["--dry-run"] : [])], { stdio: "inherit" }); }
+    catch { bad++; }
+  }
+  process.exit(bad ? 1 : 0);
+}
 
 const facts = JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline/out", `facts-${slug}.json`), "utf8"));
 const corpus = YAML.parse(fs.readFileSync(path.join(ROOT, "pipeline/corpus", slug + ".yml"), "utf8"));
@@ -92,11 +106,12 @@ for (const slot of slots) {
   ].join("\n");
   const headKey = (slot.requiredFigures[0] ?? Object.keys(facts.series)[0]).split(".")[0];
   const sig = facts.series[headKey];
+  const bands = facts.bands;   // a policy band exists only where the law declares one
   const signals = sig ? [
     sig.run ? `${sig.label} has moved ${sig.run.direction} for ${sig.run.length} straight prints, since ${sig.run.since}.` : null,
     sig.baseEffect,
-    sig.streaks.below2 >= 3 ? `${sig.label} has sat below the 2% floor for ${sig.streaks.below2} straight prints.` : null,
-    sig.streaks.above6 >= 3 ? `${sig.label} has sat above the 6% ceiling for ${sig.streaks.above6} straight prints.` : null,
+    bands && sig.streaks.belowFloor >= 3 ? `${sig.label} has sat below the ${bands.floor}% floor for ${sig.streaks.belowFloor} straight prints.` : null,
+    bands && sig.streaks.aboveCeiling >= 3 ? `${sig.label} has sat above the ${bands.ceiling}% ceiling for ${sig.streaks.aboveCeiling} straight prints.` : null,
   ].filter(Boolean) : [];
   const prompt = [
     "VOICE:\n" + voice,
@@ -141,6 +156,18 @@ for (const slot of slots) {
     else fs.rmSync(tryFile + ".critic");
   }
   fs.renameSync(tryFile, outFile);
+  // freshness manifest: which bundle print this prose describes. scripts/qc.mjs
+  // compares latestDate against the CURRENT bundle — prose that survived a
+  // data release without regenerating fails the build.
+  const manifestPath = path.join(ROOT, "pipeline/out/prose-manifest.json");
+  let manifest = {};
+  try { manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8")); } catch {}
+  manifest[`${slug}.${slot.id}`] = {
+    bundle: facts.bundle,
+    latestDate: JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", facts.bundle + ".json"), "utf8")).dates.at(-1),
+    generatedAt: new Date().toISOString().slice(0, 10),
+  };
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 1) + "\n");
   console.log(`${slot.id}: emitted ${path.relative(ROOT, outFile)}`);
 }
 if (DRY) console.log("(dry run — set INDIA_ATLAS_LLM_* to generate for real)");

@@ -25,6 +25,13 @@ import asiBundle from "../../data/series/asi-headline.json";
 import asi1987Bundle from "../../data/series/asi-headline-1987.json";
 import asuseBundle from "../../data/series/asuse-annual.json";
 import asuseModernityBundle from "../../data/series/asuse-modernity.json";
+import aisheHeadlineBundle from "../../data/series/aishe-headline.json";
+import genderSexratioBundle from "../../data/series/gender-sexratio.json";
+import genderMmrBundle from "../../data/series/gender-mmr.json";
+import genderLiteracyBundle from "../../data/series/gender-literacy.json";
+import genderWorkBundle from "../../data/series/gender-work.json";
+import mnreSourcesBundle from "../../data/series/mnre-sources.json";
+import mnreSolarBundle from "../../data/series/mnre-solar-categories.json";
 import { hydrate } from "../charts/plumbing.js";
 
 const C = hydrate(cpiBundle);
@@ -67,6 +74,13 @@ const ASI = hydrate(asiBundle);
 const ASI87 = hydrate(asi1987Bundle);
 const ASU = hydrate(asuseBundle);
 const ASUM = hydrate(asuseModernityBundle);
+const AIH = hydrate(aisheHeadlineBundle);
+const GSR = hydrate(genderSexratioBundle);
+const GMM = hydrate(genderMmrBundle);
+const GLIT = hydrate(genderLiteracyBundle);
+const GWK = hydrate(genderWorkBundle);
+const MNRE = hydrate(mnreSourcesBundle);
+const MNRE_RT = hydrate(mnreSolarBundle);
 const RATIO = { data: M2.rural.data.map((d, i) => ({ date: d.date, value: M2.urban.data[i].value / d.value })) };
 
 // rows[8] (optional) overrides the section vintage — the 2024-base prints
@@ -130,6 +144,15 @@ const asiRows = [
   ["Factories on register · NIC-1987 block", "ASI87-NF", "s-g2", ASI87.number_of_factories, false, "/dossiers/factories/", null, (v) => Math.round(v).toLocaleString("en-IN"), "block to 1997-98"],
   ["Establishments using internet · ASUSE", "ASUSE-NET", "s-g1", ASUM.internet_all_combined, false, "/dossiers/factories/", null, (v) => Math.round(v).toLocaleString("en-IN") + " / 1,000"],
 ];
+const aisheRows = [
+  ["Student enrolment · AISHE", "AISHE-ENR", "s-acc", AIH.enrolment, false, "/dossiers/aishe/", null, fCr],
+  ["Universities · AISHE", "AISHE-UNI", "s-g1", AIH.universities, false, "/dossiers/aishe/", null, (v) => Math.round(v).toLocaleString("en-IN")],
+  ["Colleges · AISHE", "AISHE-COL", "s-g2", AIH.colleges, false, "/dossiers/aishe/", null, (v) => Math.round(v).toLocaleString("en-IN")],
+  ["Teachers · AISHE · 2021-22 reconstructed", "AISHE-TEA", "s-g3", AIH.teachers, false, "/dossiers/aishe/", null, fCr],
+  ["Gross Enrolment Ratio · All Categories", "AISHE-GER", "s-g4", AIH.ger, false, "/dossiers/aishe/", null, (v) => v.toFixed(1) + "%"],
+  ["Gender Parity Index · All Categories", "AISHE-GPI", "s-acc", AIH.gpi, false, "/dossiers/aishe/", null, (v) => v.toFixed(2)],
+  ["Pupil-Teacher Ratio · all institutions", "AISHE-PTR", "s-g1", AIH.ptr, false, "/dossiers/aishe/", null, (v) => String(Math.round(v))],
+];
 const plfsRows = [
   ["UR · all-India · monthly CWS", "PLFS-UR", "s-acc", PM.ur, false, "/dossiers/jobs/"],
   ["LFPR · all-India · monthly", "PLFS-LFPR", "s-g1", PM.lfpr, false, "/dossiers/jobs/"],
@@ -191,3 +214,36 @@ render("reg-ext", extRows, 12, "spe", "Jun 2025", "RBI");
 render("reg-plfs", plfsRows, 12, "spl", "Jun 2026");
 render("reg-hces", hcesRows, 1, "sph", "2023-24 round");
 render("reg-asi", asiRows, 1, "spa", "2023-24");
+render("reg-aishe", aisheRows, 12, "spai", "2021-22 round", "Ministry of Education");
+const genderRows = [
+  ["Sex ratio · census · ♀ per 1000 ♂", "GEND-SR", "s-acc", GSR.sex_ratio, false, "/dossiers/gender/", null, (v) => String(Math.round(v))],
+  ["Maternal Mortality Ratio · per 100k", "GEND-MMR", "s-g1", GMM.mmr, false, "/dossiers/gender/", null, (v) => String(Math.round(v))],
+  ["Literacy · female · age 7+ · %", "GEND-LITF", "s-g2", GLIT.literacy_female, false, "/dossiers/gender/", null, (v) => v.toFixed(1) + "%"],
+  ["LFPR · female · 15+ · %", "GEND-LFPRF", "s-g3", GWK.lfpr_female, false, "/dossiers/gender/", null, (v) => v.toFixed(1) + "%"],
+  ["LFPR · male · 15+ · %", "GEND-LFPRM", "s-g4", GWK.lfpr_male, false, "/dossiers/gender/", null, (v) => v.toFixed(1) + "%"],
+];
+render("reg-gender", genderRows, 12, "spgd", "multi-source", "MoSPI compendium");
+const mnreRows = [
+  ["Grand Total · installed · GW", "MNRE-TOT", "s-acc", MNRE.grand_total, false, "/dossiers/mnre/", null, (v) => (v / 1000).toFixed(1) + " GW"],
+  ["Solar · installed · GW", "MNRE-SOL", "s-g1", MNRE.solar, false, "/dossiers/mnre/", null, (v) => (v / 1000).toFixed(1) + " GW"],
+  ["Wind · installed · GW", "MNRE-WND", "s-g2", MNRE.wind, false, "/dossiers/mnre/", null, (v) => (v / 1000).toFixed(1) + " GW"],
+  ["Rooftop solar · installed · GW", "MNRE-RT", "s-g3", MNRE_RT.rooftop, false, "/dossiers/mnre/", null, (v) => (v / 1000).toFixed(1) + " GW"],
+];
+render("reg-mnre", mnreRows, 1, "spmn", "Jun 2026", "MNRE");
+// NFHS — 2-point, cross-sectional; the register's year-ago logic needs no change
+// (it finds the nearest observation ~365 days back, which is the NFHS-4 point)
+import nfhsAnaemiaBundle from "../../data/series/nfhs-anaemia.json";
+import nfhsChildBundle from "../../data/series/nfhs-child.json";
+import nfhsFertilityBundle from "../../data/series/nfhs-fertility.json";
+const NA = hydrate(nfhsAnaemiaBundle);
+const NC = hydrate(nfhsChildBundle);
+const NF = hydrate(nfhsFertilityBundle);
+const nfhsFind = (b, needle) => { const lower = needle.toLowerCase(); return Object.values(b).find((s) => s.label && s.label.toLowerCase().includes(lower)); };
+const nfhsRows = [
+  ["Child anaemia (6-59 mo) · %", "NFHS-ANM", "s-acc", nfhsFind(NA, "children age 6-59")],
+  ["Infant mortality · /1,000", "NFHS-IMR", "s-g1", nfhsFind(NC, "infant mortality")],
+  ["Stunting (under-5) · %", "NFHS-STN", "s-g2", nfhsFind(NC, "stunted")],
+  ["TFR · children/woman", "NFHS-TFR", "s-g3", nfhsFind(NF, "total fertility rate")],
+  ["Women's bank account · %", "NFHS-BNK", "s-g4", nfhsFind(NF, "bank or savings")],
+].filter(([, , , s]) => s != null);
+render("reg-nfhs", nfhsRows.map(([nm, code, sw, s]) => [nm, code, sw, s, false, "/dossiers/nfhs/"]), 48, "spnf", "NFHS-5", "MoSPI / IIPS");

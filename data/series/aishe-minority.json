@@ -1,0 +1,180 @@
+{
+ "meta": {
+  "dossier": "aishe",
+  "frequency": "annual",
+  "base": "AISHE survey rounds",
+  "source": "Ministry of Education (Department of Higher Education), via MoSPI eSankhyiki",
+  "vintage": "2026-08-09",
+  "mock": false,
+  "latestPeriod": "2021-04",
+  "releaseDate": null,
+  "revisionPolicy": "Survey estimates are final on release. Each survey year is a cross-section; the five years (2017-18 to 2021-22) are comparable by design but are never chained into a spliced index.",
+  "coverage": "All India; enrolment of Persons With Disability and minority communities (Muslims, Other Minority Communities, EWS) by gender, all five survey years.",
+  "note": "Survey years are fiscal (Apr–Mar), plotted at April of the first year. The five AISHE rounds served by the eSankhyiki API (2017-18 to 2021-22) are comparable by design but are never chained into a spliced index. GER (Gross Enrolment Ratio) = enrolled students ÷ the college-age population × 100; it is gross, so it can exceed 100. GPI (Gender Parity Index) = female GER ÷ male GER; 1.0 is parity. EWS (Economically Weaker Sections) is a reservation category introduced after the 2019 constitutional amendment; the API carries no EWS data before 2019-20, so that series starts there — a disclosed gap, not a fetch failure. These are enrolment counts, not rates: the denominator (the eligible population in each group) is not served, so no GER-style ratio is computed for these groups."
+ },
+ "dates": [
+  "2017-04-01",
+  "2018-04-01",
+  "2019-04-01",
+  "2020-04-01",
+  "2021-04-01"
+ ],
+ "series": {
+  "muslims_both": {
+   "name": "aishe_minority_muslims_both",
+   "label": "Muslims · both",
+   "color": "#BE3E26",
+   "data": [
+    1837609,
+    1959004,
+    2100860,
+    1921713,
+    2108033
+   ],
+   "unit": "count"
+  },
+  "muslims_male": {
+   "name": "aishe_minority_muslims_male",
+   "label": "Muslims · male",
+   "color": "#5B564B",
+   "data": [
+    939488,
+    993396,
+    1046374,
+    954655,
+    1068766
+   ],
+   "unit": "count"
+  },
+  "muslims_female": {
+   "name": "aishe_minority_muslims_female",
+   "label": "Muslims · female",
+   "color": "#8A857A",
+   "data": [
+    898121,
+    965608,
+    1054486,
+    967058,
+    1039267
+   ],
+   "unit": "count"
+  },
+  "other_minority_both": {
+   "name": "aishe_minority_other_minority_both",
+   "label": "Other Minority Communities · both",
+   "color": "#A8A293",
+   "data": [
+    807627,
+    868100,
+    887750,
+    829866,
+    905159
+   ],
+   "unit": "count"
+  },
+  "other_minority_male": {
+   "name": "aishe_minority_other_minority_male",
+   "label": "Other Minority Communities · male",
+   "color": "#C6C0B0",
+   "data": [
+    359110,
+    397146,
+    404748,
+    381764,
+    427425
+   ],
+   "unit": "count"
+  },
+  "other_minority_female": {
+   "name": "aishe_minority_other_minority_female",
+   "label": "Other Minority Communities · female",
+   "color": "#5B564B",
+   "data": [
+    448517,
+    470954,
+    483002,
+    448102,
+    477734
+   ],
+   "unit": "count"
+  },
+  "ews_both": {
+   "name": "aishe_minority_ews_both",
+   "label": "Economically Weaker Sections · both",
+   "color": "#8A857A",
+   "data": [
+    null,
+    null,
+    null,
+    467776,
+    656561
+   ],
+   "unit": "count"
+  },
+  "ews_male": {
+   "name": "aishe_minority_ews_male",
+   "label": "Economically Weaker Sections · male",
+   "color": "#A8A293",
+   "data": [
+    null,
+    null,
+    null,
+    244250,
+    354534
+   ],
+   "unit": "count"
+  },
+  "ews_female": {
+   "name": "aishe_minority_ews_female",
+   "label": "Economically Weaker Sections · female",
+   "color": "#C6C0B0",
+   "data": [
+    null,
+    null,
+    null,
+    223526,
+    302027
+   ],
+   "unit": "count"
+  },
+  "pwd_both": {
+   "name": "aishe_minority_pwd_both",
+   "label": "Persons With Disability · both",
+   "color": "#5B564B",
+   "data": [
+    74317,
+    85877,
+    92831,
+    79035,
+    88748
+   ],
+   "unit": "count"
+  },
+  "pwd_male": {
+   "name": "aishe_minority_pwd_male",
+   "label": "Persons With Disability · male",
+   "color": "#8A857A",
+   "data": [
+    42630,
+    48212,
+    47830,
+    49334,
+    51373
+   ],
+   "unit": "count"
+  },
+  "pwd_female": {
+   "name": "aishe_minority_pwd_female",
+   "label": "Persons With Disability · female",
+   "color": "#A8A293",
+   "data": [
+    31687,
+    37665,
+    45001,
+    29701,
+    37375
+   ],
+   "unit": "count"
+  }
+ }
+}

@@ -1,23 +1,25 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+const D = bySlug["cpi"];
 ---
 <Base
   title="India Atlas — Consumer Prices · Dossier 01"
-  description="Dossier 01 — the Consumer Price Index: a decade of Indian retail inflation, its components, and how to read the latest print."
+  description={D.description}
   nav="dossiers"
-  dateStamp="July 2026"
-  crumbLeft='<a href="/" style="color:inherit">Dossiers</a> / Prices / <b>Consumer Price Index</b>'
-  crumbRight='Evergreen · revised with each print · <b>v2.4</b>'
-  canonical="https://indiaatlas.in/dossiers/cpi/"
-  ogImage="/og/cpi.png"
+  dateStamp={D.dateStamp}
+  crumbLeft={`<a href="/" style="color:inherit">Dossiers</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote} · <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/dossiers/cpi/"
+  ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
 
   <div class="titleblock break">
-    <div class="kicker">Dossier № 01 — Prices · Consumer Price Index</div>
+    <div class="kicker">{kicker(D)}</div>
     <div class="hero-grid">
-      <h1>The price of a <i>basket of life.</i></h1>
+      <h1 set:html={D.headline} />
       <p class="lede">Every month, the government checks the price of roughly three hundred things an ordinary household buys — and tells us, with a single number, how much dearer life has become.</p>
     </div>
     <div class="meta">
@@ -59,25 +61,24 @@ import Prose from "../../components/Prose.astro";
 
   <!-- § 02 the new base -->
   <section>
-    <div class="sec-head"><span class="no">02</span><h2>The new base — 2012 → 2024</h2><span class="line"></span><span class="unit">y/y % · two bases, never spliced</span></div>
+    <div class="sec-head"><span class="no">02</span><h2>The new base — a continuous headline</h2><span class="line"></span><span class="unit">y/y % · base 2024 · 2014 – 2026</span></div>
     <div class="break">
       <figure id="cb-nb" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>One cost of living, two rulers — the seam drawn, not smoothed</h3>
-            <div class="sub">Headline CPI, year-on-year · base 2012=100 (Jan 2016 – Dec 2025) · base 2024=100 (from Jan 2026) · NSO back-cast dashed · never spliced</div>
+            <h3>One continuous headline on the new ruler</h3>
+            <div class="sub">Headline CPI, year-on-year · one continuous series on base 2024=100: the NSO's back-cast (2014 – 2024, drawn lighter as reconstructed history) joined to the live print (2025 – 2026, solid) · the retired 2012 ruler shown faint for comparison · never spliced across bases</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-nb">–</div><div class="c">Jun 2026 · base 2024 · y/y</div></div>
         </div>
         <div class="frame">
           <div class="legend" id="legend-nb">
-            <button class="chip" data-key="nb_old"><i style="background:#8A857A"></i>Base 2012=100 · retired</button>
-            <button class="chip" data-key="nb_back"><i class="dash"></i>NSO back-cast · base 2024</button>
-            <button class="chip" data-key="nb_new"><i style="background:#BE3E26"></i>Base 2024=100</button>
+            <button class="chip" data-key="nb_new"><i style="background:#BE3E26"></i>Base 2024 · linked (NSO back-cast + live)</button>
+            <button class="chip" data-key="nb_old"><i style="background:#C6C0B0"></i>Base 2012 · retired</button>
           </div>
           <div class="plotzone" id="plot-nb"><div class="cb-tip"></div></div>
           <div class="plotfoot">
-            <span class="src">Source — MoSPI, press release of 12 Jul 2026 · the 2024 basket is redrawn into 13 COICOP-2018-style divisions; the API serves no weights for it yet, so the headline is the published all-groups index · dashed: the NSO's own back-cast of the new index, 2013–2024 · band: RBI tolerance 2–6%</span>
+            <span class="src">Source — MoSPI · the NSO publishes its own back-cast of the new index to 2013 (series=Back) and live levels from 2025 (series=Current); on the same 2024=100 base they form one continuous headline — not a cross-base splice. The 2025 year-on-year is computed at the handoff from back-cast 2024 levels to live 2025 levels. The retired 2012 series is shown faint for comparison only · band: RBI tolerance 2–6%</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -89,13 +90,13 @@ import Prose from "../../components/Prose.astro";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>A price index is a ruler, and rulers wear out. The 2012 basket was drawn from how households spent in 2011–12; by 2024 it described a country that had partly stopped existing. The rebased index prices a redrawn basket — thirteen divisions on the international COICOP-2018 classification, where the old series had six groups — with the 2024 average as 100. Different baskets cannot share one line, so the old series retires at December 2025, the new one begins, and the seam is drawn where they meet. They never join.</p>
-            <p>The dashed line is the NSO's own back-cast of the new index to 2013 — their linking series, not ours, shown so you can see how the new ruler re-reads the old decade. The new basket's weights are not yet served by the API; until they are, the headline is the published all-groups index, and the independent recomputation this dossier performs on the 2012 base is not possible here. We say so rather than guess.</p>
+            <p>The vermilion line is one continuous headline on the 2024 base — no seam, no splice. It exists because the NSO did the hard part itself: it back-cast the new index to 2013, re-reading the whole last decade on the new ruler, and it prints live levels from 2025. Joining the two (both base 2024=100) gives a single 2014–2026 series. The one gap — the 2025 year-on-year — is computed at the handoff, from the back-cast's 2024 levels to the live 2025 levels. No 2012 figure enters this line.</p>
+            <p>The line lightens to the left of January 2025. That paler portion is the NSO's back-cast — a reconstruction of history on the 2024 basket, not a direct measurement, and the NSO may restate it. From January 2025 the stroke turns solid: live, collected prices. The change of weight is the change of evidence. Read the solid part as fact and the lighter part as the NSO's best estimate of what the new ruler would have shown.</p>
+            <p>The faint grey line is the retired 2012 ruler, drawn for comparison. Where the two overlap they read the same months slightly differently — a different basket at work, not a contradiction. This is why the two bases are never joined into one number: they are different rulers. The continuous line sidesteps the question by staying on a single ruler throughout.</p>
           </div>
           <div class="now">
             <span class="mk">As of July 2026</span>
-            <p>The new series opened at <b id="nb-jan">–</b> in January and has firmed every month since, to <b id="nb-new">–</b> in June — past the 4% target, though still well inside the band. The old ruler retired at <b id="nb-old-final">–</b>. The three-point difference between those two prints is a change of ruler plus six months of firming, in unknown proportion.</p>
-            <p>Where the back-cast overlaps the retired series, the two part by at most <b id="nb-shadow">–</b> — the new ruler reads the old decade almost identically. What it cannot re-read is the future: from January 2026, only the 2024 base prints.</p>
+            <p>The continuous headline stands at <b id="nb-new">–</b> in June, having firmed every month since it opened the year at <b id="nb-jan">–</b>. The old ruler's last reading was <b id="nb-old-final">–</b> in December; over the years both describe, the two part by at most <b id="nb-shadow">–</b> — the new basket reads the old decade almost identically, then carries on alone.</p>
           </div>
         </div>
       </figure>
@@ -262,9 +263,16 @@ import Prose from "../../components/Prose.astro";
     </div>
   </section>
 
+  <!-- PART TWO divider: the transition to the retired 2012 base -->
+  <div class="part">
+    <div class="part-kick">Part Two</div>
+    <div class="part-h">The retired 2012 base — the last complete picture</div>
+    <div class="part-sub">Everything below lives on the old ruler, frozen at its final reading, December 2025. The 2024 rebase publishes the headline and its divisions, but no component weights yet — so the food/fuel/core split, the sub-groups and the state indices exist only here. They migrate when the NSO releases the detail; until then the seam in §02 is the only place the two rulers meet.</div>
+  </div>
+
   <!-- § 06 plate 1 -->
   <section>
-    <div class="sec-head"><span class="no">06</span><h2>Plate 1 — the headline and its parts</h2><span class="line"></span><span class="unit">y/y % · monthly</span></div>
+    <div class="sec-head"><span class="no">06</span><h2>Plate 1 — the headline and its parts</h2><span class="line"></span><span class="unit">y/y % · monthly · base 2012 · to Dec 2025</span></div>
     <div class="break">
       <figure id="cb-main" style="margin:0">
         <div class="plate-head">
@@ -336,14 +344,14 @@ import Prose from "../../components/Prose.astro";
 
   <!-- § 08 component plates -->
   <section>
-    <div class="sec-head"><span class="no">08</span><h2>The parts, one plate each</h2><span class="line"></span><span class="unit">y/y % · monthly</span></div>
+    <div class="sec-head"><span class="no">08</span><h2>The parts, one plate each</h2><span class="line"></span><span class="unit">y/y % · monthly · base 2012 · to Dec 2025</span></div>
 
     <div class="break">
       <figure id="cb-food" style="margin:0">
         <div class="plate-head">
           <div class="t">
             <h3>Food &amp; beverages — half the basket, all of the drama</h3>
-            <div class="sub">Weight 45.86 · year-on-year, per cent · 2016–2025</div>
+            <div class="sub">Weight 45.86 · year-on-year, per cent · 2016–2025 · base 2012=100, retired</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-food">–</div><div class="c">Dec 2025 · y/y</div></div>
         </div>
@@ -372,7 +380,7 @@ import Prose from "../../components/Prose.astro";
         <div class="plate-head">
           <div class="t">
             <h3>Fuel &amp; light — loud, but says very little</h3>
-            <div class="sub">Weight 6.84 · year-on-year, per cent · 2016–2025</div>
+            <div class="sub">Weight 6.84 · year-on-year, per cent · 2016–2025 · base 2012=100, retired</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-fuel">–</div><div class="c">Dec 2025 · y/y</div></div>
         </div>
@@ -401,7 +409,7 @@ import Prose from "../../components/Prose.astro";
         <div class="plate-head">
           <div class="t">
             <h3>Core — the line the RBI actually watches</h3>
-            <div class="sub">Ex food, ex fuel · derived · weight 47.30 · year-on-year, per cent · 2016–2025</div>
+            <div class="sub">Ex food, ex fuel · derived · weight 47.30 · year-on-year, per cent · 2016–2025 · base 2012=100, retired</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-core">–</div><div class="c">Dec 2025 · y/y</div></div>
         </div>
@@ -428,13 +436,13 @@ import Prose from "../../components/Prose.astro";
 
   <!-- § 09 the sub-indices, a field guide -->
   <section>
-    <div class="sec-head"><span class="no">09</span><h2>The sub-indices, a field guide</h2><span class="line"></span><span class="unit">y/y % · 21 series · two disclosed scales</span></div>
+    <div class="sec-head"><span class="no">09</span><h2>The sub-indices, a field guide</h2><span class="line"></span><span class="unit">y/y % · 21 series · base 2012 · to Dec 2025</span></div>
     <div class="break">
       <figure id="cb-sub" style="margin:0">
         <div class="plate-head">
           <div class="t">
             <h3>Twenty-one dials behind the six groups</h3>
-            <div class="sub">Every published sub-index · year-on-year, per cent · Jan 2016 – Dec 2025 · shaded band: RBI tolerance 2–6%, drawn to scale in every panel</div>
+            <div class="sub">Every published sub-index · year-on-year, per cent · Jan 2016 – Dec 2025 · base 2012=100, retired · shaded band: RBI tolerance 2–6%, drawn to scale in every panel</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-sub">–</div><div class="c">of 21 outside 2–6% · Dec 2025</div></div>
         </div>
@@ -466,7 +474,7 @@ import Prose from "../../components/Prose.astro";
 
   <!-- § 10 rural vs urban -->
   <section>
-    <div class="sec-head"><span class="no">10</span><h2>One index, two Indias — rural and urban</h2><span class="line"></span><span class="unit">y/y % · monthly</span></div>
+    <div class="sec-head"><span class="no">10</span><h2>One index, two Indias — rural and urban</h2><span class="line"></span><span class="unit">y/y % · monthly · base 2012 · to Dec 2025</span></div>
     <div class="break">
       <figure id="cb-ru" style="margin:0">
         <div class="plate-head">
@@ -832,7 +840,6 @@ import Prose from "../../components/Prose.astro";
       <div>
         <h6>This dossier</h6>
         <p>Dossier 01 · Prices · version 2.4 · adds the 358-item extremes ledger, the 43-group grid, the new-base state strip beside the retired one, three new-base group rows in the register and the base-2010 archive decision, to the 2.3 release. Next scheduled revision: 12 August 2026, on release of the July print.</p>
-        <p>Corrections and questions: register@indiaatlas.example</p>
       </div>
     </div>
     <div class="fine">
@@ -856,7 +863,7 @@ import Prose from "../../components/Prose.astro";
     display:grid;grid-template-columns:repeat(4,1fr);
     gap:1px;background:var(--rule);border:1px solid var(--rule);
   }
-  .sm-panel{background:#FFFFFF;padding:12px 14px 6px;position:relative}
+  .sm-panel{background:#FFFFFF;padding:12px 14px 16px;position:relative}
   .sm-panel .sm-t{
     font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.08em;
     text-transform:uppercase;color:var(--grey1);line-height:1.55;
@@ -868,6 +875,16 @@ import Prose from "../../components/Prose.astro";
     font-variant-numeric:tabular-nums;
   }
   .sm-panel .sm-v.acc{color:var(--accent);font-weight:500}
+  /* the panel's y-range at the baseline — the scale disclosure the
+   * normalized shape cannot carry. Two-sided: time window on the left,
+   * value range on the right. */
+  .sm-panel .sm-r{
+    position:absolute;bottom:1px;right:14px;
+    font-family:"IBM Plex Mono",monospace;font-size:.56rem;letter-spacing:.06em;
+    color:var(--faint);font-variant-numeric:tabular-nums;
+  }
+  .sm-panel .sm-r .x{float:left;margin-right:auto}
+  .sm-panel .sm-r{left:14px;display:flex;justify-content:space-between;gap:8px}
   .sm-panel svg{display:block;width:100%;height:auto}
   @media (max-width:900px){.sm-grid{grid-template-columns:repeat(2,1fr)}}
   @media (max-width:520px){.sm-grid{grid-template-columns:1fr}}
@@ -881,7 +898,26 @@ import Prose from "../../components/Prose.astro";
     font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.12em;
     text-transform:uppercase;color:var(--muted);
   }
-</style>
+  /* Part Two divider — the transition from the 2024 current print to the
+     retired 2012-base decade. Rules + type only; no color block (per docs/DESIGN.md). */
+  .part{
+    padding:52px 0 44px;margin:24px 0 8px;text-align:center;
+    border-top:1px solid var(--ink);border-bottom:1px solid var(--rule);
+  }
+  .part-kick{
+    font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--accent);margin-bottom:14px;
+  }
+  .part-h{
+    font-family:"Archivo",sans-serif;font-weight:680;font-size:1.5rem;
+    letter-spacing:-0.02em;color:var(--ink);line-height:1.2;
+  }
+  .part-sub{
+    margin:16px auto 0;max-width:62ch;font-size:1.0rem;line-height:1.7;
+    color:var(--muted);font-style:italic;
+  }
+  @media(max-width:680px){.part{padding:40px 0 34px}.part-h{font-size:1.28rem}}
+ </style>
 <script>
   import "../../dossiers/cpi.client.js";
 </script>

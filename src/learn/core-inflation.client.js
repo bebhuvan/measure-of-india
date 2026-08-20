@@ -51,7 +51,7 @@ setTxt("mr3-gap", gap.toFixed(1) + " points");
       Plot.rectY([{ y1: 2, y2: 6 }], { y1: "y1", y2: "y2", x1: dates[0], x2: dates.at(-1), fill: "#F8F6F1" }),
       Plot.ruleY([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
       Plot.ruleY([4], { stroke: "#C0B9A6", strokeWidth: 1, strokeDasharray: "2,4" }),
-      Plot.text([{ date: dates[2], value: 4.4 }], { x: "date", y: "value", text: ["RBI target · 4%"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
+      Plot.text([{ date: new Date(Date.UTC(2022, 1, 10)), value: 3.5 }], { x: "date", y: "value", text: ["RBI target · 4%"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
       Plot.text([{ date: dates[2], value: 6.5 }], { x: "date", y: "value", text: ["Tolerance band · 2–6%"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
       Plot.lineY(c.data, { x: "date", y: "value", stroke: "#5B564B", strokeWidth: 2.25, strokeDasharray: "6,4", strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.lineY(h.data, { x: "date", y: "value", stroke: "#BE3E26", strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),

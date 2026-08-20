@@ -8,6 +8,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { bySlug } from "../src/dossiers/registry.js";
+import { makePeriodIndex, yearLag, MONTHS_FULL } from "./lib/periods.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const [file, slug] = process.argv.slice(2);
@@ -41,8 +43,11 @@ function walk(o) {
 walk(facts.series);
 walk(facts.cross);
 if (facts.legacy) walk(facts.legacy);
-// structural constants of the dossiers (weights, band edges, targets, counts)
-for (const v of [2, 4, 6, 45.86, 6.84, 47.30, 2.38, 6.53, 10.07, 28.32, 100, 55.8, 33.5, 9.6, 2012, 2011, 2016, 2025, 2026, 12]) addNum(v);
+// structural constants the dossier may cite (weights, shares, base years) —
+// declared per dossier in the registry, never assumed globally
+const DOSSIER = bySlug[slug];
+if (!DOSSIER) { console.error(`verify: dossier "${slug}" is not in src/dossiers/registry.js`); process.exit(1); }
+for (const v of DOSSIER.proseConstants ?? []) addNum(v);
 
 // extract candidate figures from prose: decimals, percents, pt deltas
 const failures = [];
@@ -65,31 +70,13 @@ for (const m of prose.matchAll(/\b(19|20)\d{2}\b/g)) {
 // against the baked series here. Conservative: only reject when a claim is
 // resolvable AND clearly false; anything ambiguous is left to the critic.
 
-const CURRENT = { cpi: "cpi-2024", gdp: "gdp-2022", iip: "iip-2022", wpi: "wpi", jobs: "plfs-monthly", consumption: "hces-mpce", factories: "asi-headline" };
-const bundle = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", (CURRENT[slug] ?? slug) + ".json"), "utf8"));
+const bundle = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", DOSSIER.currentBundle + ".json"), "utf8"));
 const monthly = bundle.meta.frequency === "monthly";
-const lagN = monthly ? 12 : 4;
-const MN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const MNF = ["january","february","march","april","may","june","july","august","september","october","november","december"];
+const lagN = yearLag(bundle.meta.frequency);   // same year-ago rule as facts.mjs
+const bands = DOSSIER.bands ?? null;
+const MNF = MONTHS_FULL;
 const dates = bundle.dates;
-
-function periodIndex(str) {
-  str = str.trim().replace(/\./g, "").replace(/\s+/g, " ");
-  if (monthly) {
-    const m = str.match(/^([A-Za-z]+)\s+(\d{4})$/);
-    if (!m) return -1;
-    const mi = MNF.findIndex((f) => f.startsWith(m[1].toLowerCase().slice(0, 3)));
-    if (mi < 0) return -1;
-    return dates.indexOf(`${m[2]}-${String(mi + 1).padStart(2, "0")}-01`);
-  }
-  const q = str.match(/^Q([1-4])\s*FY\s?(\d{2})$/i);
-  if (!q) return -1;
-  const qn = Number(q[1]);
-  const y = 2000 + Number(q[2]) - (qn === 4 ? 0 : 1);
-  const mm = { 1: "04", 2: "07", 3: "10", 4: "01" }[qn];
-  const yy = qn === 4 ? y + 1 : y;
-  return dates.indexOf(`${yy}-${mm}-01`);
-}
+const periodIndex = makePeriodIndex(dates, bundle.meta.frequency, DOSSIER.calendar ?? "fiscal-apr");
 
 const SERIES_KWS = {
   cpi: [["headline", "headline"], ["inflation", "headline"], ["food", "food_and_beverages"], ["beverages", "food_and_beverages"], ["transport", "transport"], ["restaurants", "restaurants_and_accommodation_services"], ["hotels", "restaurants_and_accommodation_services"], ["personal care", "personal_care_social_protection_and_miscellaneous_goods_and_services"], ["gold", "personal_care_social_protection_and_miscellaneous_goods_and_services"], ["education", "education_services"], ["health", "health"], ["housing", "housing_water_electricity_gas_and_other_fuels"]],
@@ -99,11 +86,16 @@ const SERIES_KWS = {
   jobs: [["unemployment", "ur"], ["headline", "ur"], ["participation", "lfpr"], ["worker", "wpr"]],
   consumption: [["mpce", "rural"], ["spending", "rural"], ["consumption", "rural"], ["gini", "rural"]],
   factories: [["factories", "factories_in_operation"], ["gva", "gva"], ["output", "total_output"], ["emoluments", "emoluments"]],
-}[slug] ?? [];
+}[slug];
+// A dossier with no keyword map gets claim-checking SKIPPED (warned), never
+// silently verified against an arbitrary series — the old fallback to
+// bundle.series[0] produced false passes for any new dossier.
+const claimCheck = Boolean(SERIES_KWS);
+if (!claimCheck) console.warn(`verify: no series-keyword map for "${slug}" — arithmetic claim-checking skipped (numeric pass above still ran)`);
 function resolveSeries(sentence) {
   const s = sentence.toLowerCase();
   for (const [kw, key] of SERIES_KWS) if (new RegExp("\\b" + kw + "\\b").test(s)) return key;
-  return Object.keys(bundle.series)[0];
+  return null;
 }
 
 const NUMW = { a: 1, an: 1, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19, twenty: 20 };
@@ -139,8 +131,11 @@ function predicate(text) {
   const t = text.toLowerCase();
   let m;
   if (/deflation|negative|below zero/.test(t)) return { fn: (v) => v < 0, desc: "deflation/negative" };
-  if ((m = t.match(/below\s+(?:the\s+)?floor/))) return { fn: (v) => v < 2, desc: "below the floor" };
-  if ((m = t.match(/above\s+(?:the\s+)?ceiling/))) return { fn: (v) => v > 6, desc: "above the ceiling" };
+  // "the floor"/"the ceiling" mean the dossier's policy band — where one
+  // exists. Without a declared band the words resolve to nothing and the
+  // claim is left to the critic, never checked against a foreign band.
+  if (bands && /below\s+(?:the\s+)?floor/.test(t)) return { fn: (v) => v < bands.floor, desc: "below the floor" };
+  if (bands && /above\s+(?:the\s+)?ceiling/.test(t)) return { fn: (v) => v > bands.ceiling, desc: "above the ceiling" };
   if ((m = t.match(/below\s+(?:the\s+)?(\d+(?:\.\d+)?)/))) return { fn: (v) => v < +m[1], desc: "below " + m[1] };
   if ((m = t.match(/above\s+(?:the\s+)?(\d+(?:\.\d+)?)/))) return { fn: (v) => v > +m[1], desc: "above " + m[1] };
   if (/rise|increase|gain|growth/.test(t)) return { fn: (v, i, arr) => i > 0 && v > arr[i - 1], desc: "rising" };
@@ -163,7 +158,9 @@ const sentences = prose.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter(Boole
 const claimFail = (msg, s) => failures.push(`${msg} — in: "${s.slice(0, 90)}…"`);
 
 for (const s of sentences) {
+  if (!claimCheck) break;
   const key = resolveSeries(s);
+  if (!key) continue;   // no keyword matched — the claim is left to the critic
   const arr = bundle.series[key].data;
 
   // 1. strict monotonic: "<verb> every/each <unit> (since <period>)"

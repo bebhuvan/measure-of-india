@@ -1,23 +1,25 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+const D = bySlug["gdp"];
 ---
 <Base
   title="India Atlas — National Accounts · Dossier 02"
-  description="Dossier 02 — GDP and GVA: a decade of Indian growth, the pandemic wound, and how to read the latest quarterly print."
+  description={D.description}
   nav="dossiers"
-  dateStamp="August 2026"
-  crumbLeft='<a href="/" style="color:inherit">Dossiers</a> / Output / <b>National Accounts · GDP</b>'
-  crumbRight='Evergreen · revised with each print · <b>v1.8</b>'
-  canonical="https://indiaatlas.in/dossiers/gdp/"
-  ogImage="/og/gdp.png"
+  dateStamp={D.dateStamp}
+  crumbLeft={`<a href="/" style="color:inherit">Dossiers</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote} · <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/dossiers/gdp/"
+  ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
 
   <div class="titleblock break">
-    <div class="kicker">Dossier № 02 — Output · National Accounts</div>
+    <div class="kicker">{kicker(D)}</div>
     <div class="hero-grid">
-      <h1>The speed of the <i>whole economy.</i></h1>
+      <h1 set:html={D.headline} />
       <p class="lede">Four times a year, the statisticians add up everything India produces — every factory, farm, office and street cart, in principle — and tell us how fast it is growing. The answer is one number built from a hundred arguments.</p>
     </div>
     <div class="meta">
@@ -542,7 +544,6 @@ import Prose from "../../components/Prose.astro";
       <div>
         <h6>This dossier</h6>
         <p>Dossier 02 · Output · version 1.8 · adds the eight industry engines, the deflator wedge, the saving rate and the 2022–23-base series. Next scheduled revision: 28 August 2026, on release of the Q1 FY27 print.</p>
-        <p>Corrections and questions: register@indiaatlas.example</p>
       </div>
     </div>
     <div class="fine">

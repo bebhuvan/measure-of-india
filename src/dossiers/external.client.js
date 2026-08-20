@@ -253,6 +253,121 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, fm
   wireLegend(document.getElementById("legend-main"), plot, keys, TT);
 }
 
+/* ---------- §04 companion: the current-account decomposition ----------
+ * The goods pipeline above shows merchandise flows. This plate decomposes the
+ * current account into its four components — goods balance (the deficit),
+ * services surplus, income deficit and remittances — showing how invisibles
+ * offset the goods gap. Goods balance is summed from monthly trade to fiscal
+ * years; invisibles are annual at source. The current-account line is derived
+ * as goods + total invisibles. The API serves only NET services/income/
+ * transfers, not gross credits and debits — disclosed. */
+{
+  // sum monthly goods trade to fiscal-year buckets (US$ M -> US$ bn)
+  const fyMap = {};
+  tradeBundle.dates.forEach((iso, i) => {
+    const d = new Date(iso + "T00:00:00Z");
+    const y = d.getUTCFullYear();
+    const fyStart = d.getUTCMonth() >= 3 ? y : y - 1;
+    if (fyStart < 1990) return;
+    const key = fyStart;
+    if (!fyMap[key]) fyMap[key] = { bal: 0, n: 0 };
+    const e = tradeBundle.series.exports.data[i], m = tradeBundle.series.imports.data[i];
+    if (e != null && m != null) { fyMap[key].bal += (e - m) / 1000; fyMap[key].n++; }
+  });
+  // build aligned arrays: match invisibles dates (at April) to FY buckets
+  const invDates = invisiblesBundle.dates.map((iso) => new Date(iso + "T00:00:00Z"));
+  const rows = [];
+  for (let idx = 0; idx < invDates.length; idx++) {
+    const fyStart = invDates[idx].getUTCFullYear();
+    if (fyStart < 1990) continue;
+    const g = fyMap[fyStart];
+    const goodsBal = g && g.n >= 11 ? g.bal : null;  // allow 11/12 for latest FY
+    const svc = invisiblesBundle.series.services.data[idx];
+    const inc = invisiblesBundle.series.income.data[idx];
+    const trn = invisiblesBundle.series.private_transfers.data[idx];
+    const totInv = invisiblesBundle.series.invisibles.data[idx];
+    const ca = goodsBal != null && totInv != null ? goodsBal + totInv / 1000 : null;
+    rows.push({
+      date: invDates[idx],
+      goods: goodsBal,
+      services: svc != null ? svc / 1000 : null,
+      income: inc != null ? inc / 1000 : null,
+      transfers: trn != null ? trn / 1000 : null,
+      ca,
+    });
+  }
+  const toSeries = (key, label, color) => ({
+    label, color,
+    data: rows.map((r) => ({ date: r.date, value: r[key] })),
+  });
+  const V = {
+    goods: toSeries("goods", "Goods balance", "#BE3E26"),
+    services: toSeries("services", "Services, net", "#5B564B"),
+    transfers: toSeries("transfers", "Remittances, net", "#8A857A"),
+    income: toSeries("income", "Income, net", "#A8A293"),
+    ca: toSeries("ca", "Current account", "#C6C0B0"),
+  };
+  const keys = ["goods", "services", "transfers", "income", "ca"];
+  const seriesList = keys.map((k) => V[k]);
+
+  const lastRow = rows.filter((r) => r.goods != null).at(-1);
+  const prevRow = rows.filter((r) => r.goods != null).at(-2);
+  setTxt("pv-ca", lastRow.ca != null ? bn2(lastRow.ca) : "–");
+  setTxt("ex-ca-goods", bn2(lastRow.goods));
+  setTxt("ex-ca-svc", bn(lastRow.services));
+  setTxt("ex-ca-trn", bn(lastRow.transfers));
+  setTxt("ex-ca-inc", bn2(lastRow.income));
+  setTxt("ex-ca-ca", bn2(lastRow.ca));
+  setTxt("ex-ca-pct", lastRow.services != null && lastRow.goods != null
+    ? Math.abs(lastRow.services / lastRow.goods * 100).toFixed(0) + "%" : "–");
+
+  const geo = { W: 1184, H: 520, ml: 80, mr: 215, mt: 36, mb: 48, d0: -300, d1: 200 };
+  const xTicks = []; for (let y = 1990; y <= 2025; y += 5) xTicks.push(new Date(Date.UTC(y, 3, 1)));
+  const dodged = dodgeEndLabels(seriesList.filter((s) => s.data.at(-1).value != null), (geo.d1 - geo.d0) * 0.055);
+  const dts = rows.map((r) => r.date);
+  const fmtV = (v) => (v == null ? "—" : (v < 0 ? "−" : v > 0 ? "+" : "") + "$" + Math.abs(v).toFixed(0) + "bn");
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => String(d.getUTCFullYear()) },
+    y: { label: null, ticks: [-300, -200, -100, 0, 100, 200], domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11, tickFormat: (d) => String(d) },
+    marks: [
+      Plot.gridY([-300, -200, -100, 0, 100, 200], { stroke: "#EDE9DA", strokeWidth: 1 }),
+      Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
+      Plot.ruleY([0], { stroke: "#1B1A17", strokeOpacity: 0.55, strokeWidth: 1 }),
+      // current account: dashed, lightest — derived sum
+      Plot.lineY(V.ca.data, { x: "date", y: "value", stroke: "#C6C0B0", strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round", strokeDasharray: "4 3" }),
+      // income (small deficit, lightest solid)
+      Plot.lineY(V.income.data, { x: "date", y: "value", stroke: "#A8A293", strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
+      // transfers
+      Plot.lineY(V.transfers.data, { x: "date", y: "value", stroke: "#8A857A", strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
+      // services
+      Plot.lineY(V.services.data, { x: "date", y: "value", stroke: "#5B564B", strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
+      // goods balance — accent, heaviest
+      Plot.lineY(V.goods.data, { x: "date", y: "value", stroke: "#BE3E26", strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
+      // end dots + labels
+      ...seriesList.filter((s) => s.data.at(-1).value != null).map((s) =>
+        Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: s === V.goods ? 5 : 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
+      ...dodged.filter((p) => Math.abs(p.y - p.value) > 2).map((p) => Plot.line([
+        { x: dts.at(-1), y: p.value }, { x: dts.at(-1), y: p.y },
+      ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
+      ...dodged.map((p) => Plot.text([{ date: dts.at(-1), y: p.y }], {
+        x: "date", y: "y", text: () => `${p.s.label} ${fmtV(p.value)}`,
+        dx: 16, fill: p.s.color, fontSize: 13.5, fontFamily: mono,
+        fontWeight: p.s === V.goods ? 500 : 400, textAnchor: "start",
+      })),
+    ],
+  });
+  a11y(plot,
+    "Current account decomposed into goods balance, services surplus, income deficit and remittances, fiscal years 1990-91 to 2024-25",
+    "Five lines in US$ billions per fiscal year. The goods deficit (vermilion) ends at " + bn2(lastRow.goods) + ", offset by a services surplus of " + bn(lastRow.services) + " and remittances of " + bn(lastRow.transfers) + "; income runs at minus " + bn(Math.abs(lastRow.income)) + ". The dashed current-account line, their sum, ends at " + bn2(lastRow.ca) + ".");
+  document.getElementById("plot-ca").append(plot);
+  wireTools(document.getElementById("cb-ca"), plot, seriesList, "india-atlas_current-account-decomposition", fmtFY, fmtV);
+  addCrosshair(document.getElementById("plot-ca"), plot, seriesList, geo, fmtFY, fmtV);
+  wireLegend(document.getElementById("legend-ca"), plot, keys, V);
+}
+
 /* meta-carrying downloads for plates whose CSV is not a date×series matrix */
 function wirePlate(blockEl, plot, filename, csvText) {
   const meta = {

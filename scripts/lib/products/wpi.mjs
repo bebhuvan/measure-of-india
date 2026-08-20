@@ -5,7 +5,7 @@
 // cross-check and display, never substituted for the computed headline.
 
 import { mospi } from "../mospi.mjs";
-import { MONTHS, writeJson, writeRaw, yoyFromLevels, monthAxis } from "../util.mjs";
+import { MONTHS, writeSeries, writeRaw, yoyFromLevels, monthAxis } from "../util.mjs";
 
 const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 const GREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
@@ -106,6 +106,7 @@ export async function buildWpi(root, dcfg, vintage) {
     meta: {
       dossier: "wpi", frequency: "monthly", base: dcfg.base,
       source: dcfg.source_agency, vintage, mock: false,
+      geo: dcfg.geo ?? "IND",
       latestPeriod: lastMonth,
       releaseDate: `${relY}-${String(relM).padStart(2, "0")}-14`,
       revisionPolicy: dcfg.revision_policy,
@@ -139,6 +140,7 @@ export async function buildWpi(root, dcfg, vintage) {
     meta: {
       dossier: "wpi", frequency: "monthly", base: dcfg.base,
       source: dcfg.source_agency, vintage, mock: false,
+      geo: dcfg.geo ?? "IND",
       latestPeriod: lastMonth, releaseDate: bundle.meta.releaseDate,
       coverage: "2-digit groups beneath the major groups",
       revisionPolicy: dcfg.revision_policy,
@@ -159,6 +161,7 @@ export async function buildWpi(root, dcfg, vintage) {
     meta: {
       dossier: "wpi", frequency: "monthly", base: dcfg.base,
       source: dcfg.source_agency, vintage, mock: false,
+      geo: dcfg.geo ?? "IND",
       latestPeriod: lastMonth, releaseDate: bundle.meta.releaseDate,
       coverage: "Sub-groups beneath the 2-digit groups — the most detailed aggregate level published",
       revisionPolicy: dcfg.revision_policy,
@@ -218,6 +221,7 @@ export async function buildWpi(root, dcfg, vintage) {
     meta: {
       dossier: "wpi", frequency: "monthly", base: dcfg.base,
       source: dcfg.source_agency, vintage, mock: false,
+      geo: dcfg.geo ?? "IND",
       latestPeriod: lastMonth, releaseDate: bundle.meta.releaseDate,
       coverage: `The ${Object.keys(itemSeries).length} items beneath the sub-groups — the finest grain the OEA publishes`,
       note: "full y/y history for every item, computed from index levels; latestIndex is the level at latestPeriod; item weights are not served by the API, so no weighted recomposition is asserted",
@@ -226,9 +230,9 @@ export async function buildWpi(root, dcfg, vintage) {
     },
     dates, series: itemSeries,
   };
-  writeJson(root, "data/series/wpi.json", bundle);
-  writeJson(root, "data/series/wpi-groups.json", groupsBundle);
-  writeJson(root, "data/series/wpi-subgroups.json", subgroupsBundle);
-  writeJson(root, "data/series/wpi-items.json", itemsBundle);
+  writeSeries(root, "data/series/wpi.json", bundle);
+  writeSeries(root, "data/series/wpi-groups.json", groupsBundle);
+  writeSeries(root, "data/series/wpi-subgroups.json", subgroupsBundle);
+  writeSeries(root, "data/series/wpi-items.json", itemsBundle);
   return bundle;
 }

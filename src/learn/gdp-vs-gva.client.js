@@ -75,11 +75,11 @@ setTxt("fy21-gva", fy21.gva.value.toFixed(2) + "%");
       Plot.line([{ x: wp.date, y: wp.gva }, { x: wp.date, y: wp.gdp }], { x: "x", y: "y", stroke: "#8A857A", strokeWidth: 1.25 }),
       Plot.dot([{ date: wp.date, value: wp.gva }], { x: "date", y: "value", fill: v.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.dot([{ date: wp.date, value: wp.gdp }], { x: "date", y: "value", fill: g.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([{ date: dxDate(wp.date, 12), value: (wp.gdp + wp.gva) / 2 }], { x: "date", y: "value",
+      Plot.text([{ date: dxDate(wp.date, 12), value: (wp.gdp + wp.gva) / 2 + 3.6 }], { x: "date", y: "value",
         text: () => "the gap is net taxes · " + fmtDate(wp.date), fill: "#8A857A", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
       /* the FY21 inversion, marked */
       Plot.line([{ x: fy21.gva.date, y: fy21.gdp.value }, { x: fy21.gva.date, y: fy21.gva.value }], { x: "x", y: "y", stroke: "#8A857A", strokeWidth: 1.25, strokeDasharray: "2,3" }),
-      Plot.text([{ date: dxDate(fy21.gva.date, 12), value: (fy21.gdp.value + fy21.gva.value) / 2 }], { x: "date", y: "value",
+      Plot.text([{ date: dxDate(fy21.gva.date, 12), value: (fy21.gdp.value + fy21.gva.value) / 2 - 5.5 }], { x: "date", y: "value",
         text: () => "FY21: subsidies surge, GDP below GVA", fill: "#8A857A", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
       ...seriesList.map((s) => Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: s === g ? 5 : 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
       ...dodged.filter((p) => Math.abs(p.y - p.value) > 0.05).map((p) => Plot.line([

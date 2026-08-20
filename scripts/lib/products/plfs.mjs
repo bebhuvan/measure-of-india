@@ -16,7 +16,7 @@
 // weekly_status_code param is never sent; annual rows do carry it.
 
 import { mospi } from "../mospi.mjs";
-import { MONTHS, writeJson, writeRaw, monthAxis, quarterAxis } from "../util.mjs";
+import { MONTHS, writeSeries, writeRaw, monthAxis, quarterAxis } from "../util.mjs";
 
 // PLFS quarterly rows label calendar quarters by the calendar year they occur
 // in: "Jan-Mar" + year 2026 means 2026-01, not 2027-01.
@@ -83,6 +83,7 @@ export async function buildPlfs(root, dcfg, vintage) {
   const metaM = {
     dossier: "plfs", frequency: "monthly", base: dcfg.base,
     source: dcfg.source_agency, vintage, mock: false,
+    geo: dcfg.geo ?? "IND",
     latestPeriod: mMonths.at(-1), releaseDate: null,
     revisionPolicy: dcfg.revision_policy,
   };
@@ -158,6 +159,7 @@ export async function buildPlfs(root, dcfg, vintage) {
     meta: {
       dossier: "plfs", frequency: "quarterly", base: dcfg.base,
       source: dcfg.source_agency, vintage, mock: false,
+      geo: dcfg.geo ?? "IND",
       latestPeriod: qMonths[qMonths.length - 1],
       releaseDate: null,
       coverage: "All India, 15 years and above, person, urban, CWS",
@@ -212,6 +214,7 @@ export async function buildPlfs(root, dcfg, vintage) {
     meta: {
       dossier: "plfs", frequency: "annual", base: dcfg.base,
       source: dcfg.source_agency, vintage, mock: false,
+      geo: dcfg.geo ?? "IND",
       latestPeriod: aMonths.at(-1), releaseDate: null,
       coverage: "All India, 15 years and above, person, rural + urban; agriculture years (Jul–Jun) plotted at July",
       revisionPolicy: dcfg.revision_policy,
@@ -276,6 +279,7 @@ export async function buildPlfs(root, dcfg, vintage) {
       meta: {
         dossier: "plfs", frequency: "annual", base: dcfg.base,
         source: dcfg.source_agency, vintage, mock: false,
+        geo: dcfg.geo ?? "IND",
         latestPeriod: stMonths.at(-1), releaseDate: null,
         coverage: "States/UTs, 15 years and above, person, rural + urban; unemployment rate, agriculture years plotted at July",
         gaps: stGaps.length ? stGaps.map((ym) => `${ym}-01`) : undefined,
@@ -287,11 +291,11 @@ export async function buildPlfs(root, dcfg, vintage) {
   }
 
   writeRaw(root, "data/raw/plfs-levels.json", raw);
-  writeJson(root, "data/series/plfs-monthly.json", monthlyBundle);
-  writeJson(root, "data/series/plfs-quarterly.json", quarterlyBundle);
-  writeJson(root, "data/series/plfs-cuts.json", cutsBundle);
-  writeJson(root, "data/series/plfs-annual.json", annualBundle);
-  if (statesBundle) writeJson(root, "data/series/plfs-states.json", statesBundle);
+  writeSeries(root, "data/series/plfs-monthly.json", monthlyBundle);
+  writeSeries(root, "data/series/plfs-quarterly.json", quarterlyBundle);
+  writeSeries(root, "data/series/plfs-cuts.json", cutsBundle);
+  writeSeries(root, "data/series/plfs-annual.json", annualBundle);
+  if (statesBundle) writeSeries(root, "data/series/plfs-states.json", statesBundle);
   await buildPlfsExtras(root, dcfg, vintage, agriYears);
   return monthlyBundle;
 }
@@ -362,6 +366,7 @@ export async function buildPlfsExtras(root, dcfg, vintage, agriYears) {
   const meta0 = (frequency, coverage, extra = {}) => ({
     dossier: "plfs", frequency, base: dcfg.base,
     source: dcfg.source_agency, vintage, mock: false,
+    geo: dcfg.geo ?? "IND",
     releaseDate: null, coverage, revisionPolicy: dcfg.revision_policy, ...extra,
   });
 
@@ -558,9 +563,9 @@ export async function buildPlfsExtras(root, dcfg, vintage, agriYears) {
   };
 
   writeRaw(root, "data/raw/plfs-extras.json", raw);
-  writeJson(root, "data/series/plfs-status.json", statusBundle);
-  writeJson(root, "data/series/plfs-earnings.json", earningsBundle);
-  writeJson(root, "data/series/plfs-education.json", educationBundle);
+  writeSeries(root, "data/series/plfs-status.json", statusBundle);
+  writeSeries(root, "data/series/plfs-earnings.json", earningsBundle);
+  writeSeries(root, "data/series/plfs-education.json", educationBundle);
 }
 
 // education/youth rows also carry religion / social-group / contract axes

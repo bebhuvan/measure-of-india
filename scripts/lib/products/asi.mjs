@@ -35,7 +35,7 @@
 // with unit "-" — overridden to inr_lakh per UNIT_FIX, disclosed in meta.
 
 import { mospi } from "../mospi.mjs";
-import { writeJson, writeRaw } from "../util.mjs";
+import { writeSeries, writeRaw } from "../util.mjs";
 
 const GREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
 const slugify = (s) => String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
@@ -151,6 +151,7 @@ export async function buildAsi(root, dcfg, vintage) {
   const metaBase = {
     dossier: "asi", frequency: "annual", base: dcfg.base,
     source: dcfg.source_agency, vintage, mock: false,
+    geo: dcfg.geo ?? "IND",
     latestPeriod: axis.at(-1), releaseDate: null,
     revisionPolicy: dcfg.revision_policy,
   };
@@ -359,12 +360,12 @@ export async function buildAsi(root, dcfg, vintage) {
     });
   }
 
-  writeJson(root, "data/series/asi-headline.json", headlineBundle);
-  writeJson(root, "data/series/asi-accounts.json", accountsBundle);
-  writeJson(root, "data/series/asi-industries.json", industriesBundle);
-  writeJson(root, "data/series/asi-states.json", statesBundle);
+  writeSeries(root, "data/series/asi-headline.json", headlineBundle);
+  writeSeries(root, "data/series/asi-accounts.json", accountsBundle);
+  writeSeries(root, "data/series/asi-industries.json", industriesBundle);
+  writeSeries(root, "data/series/asi-states.json", statesBundle);
   for (const [cyStr, b] of Object.entries(legacyBundles)) {
-    writeJson(root, `data/series/asi-headline-${cyStr}.json`, b);
+    writeSeries(root, `data/series/asi-headline-${cyStr}.json`, b);
   }
   return headlineBundle;
 }

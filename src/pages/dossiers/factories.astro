@@ -1,22 +1,24 @@
 ---
 import Base from "../../layouts/Base.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+const D = bySlug["factories"];
 ---
 <Base
   title="India Atlas — Enterprises · Dossier 08"
-  description="Dossier 08 — the Annual Survey of Industries and ASUSE: registered factories and unincorporated enterprises, side by side and never conflated."
+  description={D.description}
   nav="dossiers"
-  dateStamp="August 2026"
-  crumbLeft='<a href="/" style="color:inherit">Dossiers</a> / Enterprises / <b>Factories &amp; Informal Enterprises · ASI + ASUSE</b>'
-  crumbRight='Evergreen · revised with each survey round · <b>v1.1</b>'
-  canonical="https://indiaatlas.in/dossiers/factories/"
-  ogImage="/og/factories.png"
+  dateStamp={D.dateStamp}
+  crumbLeft={`<a href="/" style="color:inherit">Dossiers</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote} · <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/dossiers/factories/"
+  ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
 
   <div class="titleblock break">
-    <div class="kicker">Dossier № 08 — Enterprises · Annual Survey of Industries &amp; ASUSE</div>
+    <div class="kicker">{kicker(D)}</div>
     <div class="hero-grid">
-      <h1>The factory, the shop, <i>and the line between them.</i></h1>
+      <h1 set:html={D.headline} />
       <p class="lede">India audits its registered factories to the last rupee and met the rest of its enterprises only in 2021. This dossier puts the two counts on one page — side by side, never as one line.</p>
     </div>
     <div class="meta">
@@ -293,6 +295,36 @@ import Base from "../../layouts/Base.astro";
         </div>
       </figure>
     </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-lab" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Where the factory jobs are</h3>
+            <div class="sub">Share of factory employment by 2-digit NIC division · 2023-24 · sorted · vermilion: the three largest employers</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-lab">–</div><div class="c">top three industries · share of jobs</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-lab"></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, ASI by NIC-2008 division · persons engaged per industry · shares computed by India Atlas · the same industries as the GVA grid above, ranked here by employment not value</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV · all industries</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The value-added grid above ranks industries by money; this strip ranks the same industries by people. The two rankings do not agree. Textiles, apparel and food — the classic labour-intensive trades — climb to the top here while sitting far down the value shelf. Basic metals and chemicals, the value leaders, carry fewer people than their rupee share implies.</p>
+            <p>Read this plate against the scatter above it: the scatter plots both shares at once and names the gap; this strip puts employment share on its own axis, so the ranking is legible end to end.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>The largest employer is <b id="ex-lb1">–</b>, followed by <b id="ex-lb2">–</b> and <b id="ex-lb3">–</b>. The top five together hold <b id="ex-lb5">–</b> of all factory employment.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
   </section>
 
   <!-- § 07 the other economy -->
@@ -335,6 +367,73 @@ import Base from "../../layouts/Base.astro";
           <div class="now">
             <span class="mk">As of 2023-24</span>
             <p>Factory GVA per person engaged: <b id="ex-x1">–</b> a year. Unincorporated, all establishments: <b id="ex-x2">–</b> — a multiple of <b id="ex-x3">–</b>, rising to <b id="ex-x4">–</b> against own-account establishments alone. Pay tells the softer version: factory emoluments per head are <b id="ex-x5">–</b> against <b id="ex-x6">–</b> per hired worker in the informal economy — <b id="ex-x7">–</b>, not eight.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-sec" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The shape of the informal economy</h3>
+            <div class="sub">Workers and GVA per worker by broad activity &amp; sector · rural (grey) → urban (vermilion) · 2023-24 · ASUSE</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-sec">–</div><div class="c">rural share of informal establishments · 2023-24</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#5B564B"></i>Rural</button>
+            <button class="chip"><i style="background:#BE3E26"></i>Urban</button>
+          </div>
+          <div class="plotzone">
+            <div id="plot-sec-wrk"></div>
+            <div id="plot-sec-gpw" style="margin-top:26px"></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, ASUSE · broad activity groups (Manufacturing, Trading, Other Services) by rural/urban sector · published aggregates, not computed · GVA per worker refers to market establishments · nominal</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each row is one activity; the line connects the rural value (grey dot) to the urban value (vermilion dot). The top panel counts workers; the bottom panel values them. Read the two panels together: where the workers sit and where the value sits are different answers.</p>
+            <p>Manufacturing workers skew rural — the village workshop, the handloom. Trade and services skew urban. But GVA per worker skews urban in every activity: the city establishment adds more per head than the rural one, whether it makes, trades or serves. The gap is widest in manufacturing and narrowest in services.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>Rural India holds <b id="ex-sec-estr">–</b> of informal establishments and <b id="ex-sec-wrkr">–</b> of informal workers; urban India holds <b id="ex-sec-estu">–</b> of establishments and <b id="ex-sec-wrku">–</b> of workers. Yet urban GVA per worker is <b id="ex-sec-gap">–</b> the rural level in manufacturing, narrowing to <b id="ex-sec-gaps">–</b> in services.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-ust" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Where the informal workers are</h3>
+            <div class="sub">Share of all-India informal workers by state &amp; UT · 2023-24 · sorted · vermilion: the three largest</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-ust">–</div><div class="c">top three states · share of informal workers</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-ust"></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, ASUSE · estimated workers (indicator 27, all genders and working time), Combined sector · shares computed by India Atlas · a wider map than the factory GVA strip — the informal economy is everywhere the factory economy is not</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The factory GVA strip earlier in this dossier concentrates in three western states. This mirror — informal workers, not factory value — spreads wider. Uttar Pradesh, West Bengal and Maharashtra hold the largest shares, but the tail is long: states that barely register in factory output carry millions of informal workers each.</p>
+            <p>The comparison is the point. A state's rank here against its rank on the factory strip measures how much of its economy the ASI misses — and for most states, that is most of the economy.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>The largest is <b id="ex-ust1">–</b>. The top three states together hold <b id="ex-ust3">–</b> of informal workers; the top five, <b id="ex-ust5">–</b>. Against the factory GVA top three's share, concentration here is markedly lower.</p>
           </div>
         </div>
       </figure>
@@ -590,8 +689,7 @@ import Base from "../../layouts/Base.astro";
       </div>
       <div>
         <h6>This dossier</h6>
-        <p>Dossier 08 · Enterprises · version 1.1 · adds the four-block long history (Plate 1), the informal-firm portrait (§09) and the complete 57-indicator factory ledger (§10). Next scheduled revision: on release of either survey's next round.</p>
-        <p>Corrections and questions: register@indiaatlas.example</p>
+        <p>Dossier 08 · Enterprises · version 1.2 · adds the labour-share-by-industry strip (§07), the ASUSE sectoral-structure dumbbell (§08) and the ASUSE state-dispersion strip (§08). Next scheduled revision: on release of either survey's next round.</p>
       </div>
     </div>
     <div class="fine">

@@ -12,7 +12,7 @@
 //     the five groups (indicator 2), All India; state × group stays raw.
 
 import { mospi } from "../mospi.mjs";
-import { MONTHS, writeJson, writeRaw, yoyFromLevels, monthAxis } from "../util.mjs";
+import { MONTHS, writeSeries, writeRaw, yoyFromLevels, monthAxis } from "../util.mjs";
 
 // Agriculture-year labels ("2024-2025" = Jul 2024–Jun 2025) and plain
 // calendar-year labels ("2026") both appear. Returns "YYYY-MM".
@@ -132,6 +132,7 @@ export async function buildCpialrl(root, dcfg, vintage) {
     meta: {
       dossier: "cpialrl", frequency: "monthly", base: "1986-87=100",
       source: dcfg.source_agency, vintage, mock: false,
+      geo: dcfg.geo ?? "IND",
       latestPeriod: m86.at(-1),
       releaseDate: null,
       note: "Old base. Superseded by base 2019=100 from June 2025 — plotted side by side, never spliced (base-year rule).",
@@ -152,6 +153,7 @@ export async function buildCpialrl(root, dcfg, vintage) {
     meta: {
       dossier: "cpialrl", frequency: "monthly", base: "2019=100",
       source: dcfg.source_agency, vintage, mock: false,
+      geo: dcfg.geo ?? "IND",
       latestPeriod: m19.at(-1),
       releaseDate: null,
       note: "New base, from June 2025. Levels are published; y/y inflation is the publisher's own (computed on a linked back-series we are not given) until 13 months of levels exist.",
@@ -210,6 +212,7 @@ export async function buildCpialrl(root, dcfg, vintage) {
       meta: {
         dossier: "cpialrl", frequency: "monthly", base: base === "1986" ? "1986-87=100" : "2019=100",
         source: dcfg.source_agency, vintage, mock: false,
+        geo: dcfg.geo ?? "IND",
         latestPeriod: allMonths.at(-1), releaseDate: null,
         coverage: `States/UTs, General Index (AL), base ${base === "1986" ? "1986-87" : "2019"}`,
         revisionPolicy: dcfg.revision_policy,
@@ -255,6 +258,7 @@ export async function buildCpialrl(root, dcfg, vintage) {
       meta: {
         dossier: "cpialrl", frequency: "monthly", base: base === "1986" ? "1986-87=100" : "2019=100",
         source: dcfg.source_agency, vintage, mock: false,
+        geo: dcfg.geo ?? "IND",
         latestPeriod: allMonths.at(-1), releaseDate: null,
         coverage: `All India, Group Index (AL), base ${base === "1986" ? "1986-87" : "2019"}`,
         note: mode === "yoy" ? bundle86.meta.note : bundle19.meta.note,
@@ -266,11 +270,11 @@ export async function buildCpialrl(root, dcfg, vintage) {
   const g86 = groupBundle("1986", "yoy");
   const g19 = groupBundle("2019", "levels");
 
-  writeJson(root, "data/series/cpialrl-1986.json", bundle86);
-  writeJson(root, "data/series/cpialrl-2019.json", bundle19);
-  if (s86) writeJson(root, "data/series/cpialrl-states-1986.json", s86);
-  if (s19) writeJson(root, "data/series/cpialrl-states-2019.json", s19);
-  if (g86) writeJson(root, "data/series/cpialrl-groups-1986.json", g86);
-  if (g19) writeJson(root, "data/series/cpialrl-groups-2019.json", g19);
+  writeSeries(root, "data/series/cpialrl-1986.json", bundle86);
+  writeSeries(root, "data/series/cpialrl-2019.json", bundle19);
+  if (s86) writeSeries(root, "data/series/cpialrl-states-1986.json", s86);
+  if (s19) writeSeries(root, "data/series/cpialrl-states-2019.json", s19);
+  if (g86) writeSeries(root, "data/series/cpialrl-groups-1986.json", g86);
+  if (g19) writeSeries(root, "data/series/cpialrl-groups-2019.json", g19);
   return bundle19;
 }

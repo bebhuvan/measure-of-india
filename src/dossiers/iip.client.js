@@ -26,10 +26,19 @@ const ISP = hydrate(ispBundle);
 S.sector_manufacturing.color = "#5B564B";
 S.sector_mining_quarrying.color = "#A8A293";
 S.sector_electricity_gas_supply.color = "#8A857A";
+S.sector_water_supply_sewerage_waste_management.color = "#C6C0B0";
+S.sector_water_supply_sewerage_waste_management.label = "Water & waste";
 S.use_capital_goods.color = "#BE3E26";
 S.use_infrastructure_construction_goods.color = "#5B564B";
 S.use_consumer_durables.color = "#A8A293";
 S.use_consumer_non_durables.color = "#8A857A";
+/* end labels must fit the right margin; the full bundle labels stay in the
+ * legend chips and tooltips, the short forms ride the line ends */
+S.sector_electricity_gas_supply.endLabel = "Electricity";
+S.sector_mining_quarrying.endLabel = "Mining";
+S.use_infrastructure_construction_goods.endLabel = "Infrastructure";
+S.use_consumer_non_durables.endLabel = "Non-durables";
+S.use_consumer_durables.endLabel = "Durables";
 IND.sub_manufacturing_manufacture_of_electrical_equipment.color = "#BE3E26";
 IND.sub_manufacturing_manufacture_of_motor_vehicles_trailers_and_semi_trailers.color = "#5B564B";
 IND.sub_manufacturing_manufacture_of_wearing_apparel.color = "#A8A293";
@@ -113,7 +122,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
       { x: dts.at(-1), y: p.value }, { x: dts.at(-1), y: p.y },
     ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
     ...dodged.map((p) => Plot.text([{ date: dts.at(-1), y: p.y }], {
-      x: "date", y: "y", text: () => `${p.s.label} ${p.value.toFixed(2)}%`,
+      x: "date", y: "y", text: () => `${p.s.endLabel ?? p.s.label} ${p.value.toFixed(2)}%`,
       dx: 16, fill: p.s.color, fontSize: 14.5, fontFamily: mono,
       fontWeight: p.s === seriesList[0] ? 500 : 400, textAnchor: "start",
     })),
@@ -143,7 +152,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
   const firstValid = oldData.findIndex((d) => d.value != null);
   const old = { ...OLD.general, label: "Base 2011-12", color: "#8A857A", data: oldData.slice(firstValid) };
   const cur = { ...S.general, label: "Base 2022-23", color: "#BE3E26" };
-  const geo = { W: 1184, H: 520, ml: 80, mr: 170, mt: 36, mb: 48, d0: -65, d1: 140 };
+  const geo = { W: 1184, H: 520, ml: 80, mr: 195, mt: 36, mb: 48, d0: -65, d1: 140 };
   const yTicks = [-50, 0, 50, 100];
   const xTicks = []; for (let y = 2014; y <= 2026; y += 2) xTicks.push(new Date(Date.UTC(y, 0, 1)));
   const plot = Plot.plot({
@@ -160,13 +169,13 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
       Plot.lineY(old.data, { x: "date", y: "value", stroke: old.color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.lineY(cur.data, { x: "date", y: "value", stroke: cur.color, strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.ruleX([new Date(Date.UTC(2020, 3, 1))], { stroke: "#D8D3C4", strokeWidth: 1, strokeDasharray: "2,3" }),
-      Plot.text([{ date: new Date(Date.UTC(2020, 6, 1)), value: 132 }], { x: "date", y: "value", text: ["COVID-19 · −57% then +134%"], fontSize: 12.5, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
+      Plot.text([{ date: new Date(Date.UTC(2018, 0, 1)), value: 133 }], { x: "date", y: "value", text: ["COVID-19 · −57% then +134%"], fontSize: 12.5, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
       Plot.ruleX([new Date(Date.UTC(2023, 3, 1))], { stroke: "#C9C3B2", strokeWidth: 1 }),
       Plot.text([{ date: new Date(Date.UTC(2023, 5, 1)), value: 132 }], { x: "date", y: "value", text: ["base revised · 2011-12 → 2022-23"], fontSize: 12.5, fill: "#5C574C", fontFamily: mono, textAnchor: "start" }),
       Plot.dot([cur.data.at(-1)], { x: "date", y: "value", fill: cur.color, r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.text([cur.data.at(-1)], { x: "date", y: "value", text: (d) => `Base 2022-23 ${d.value.toFixed(2)}%`, dx: 16, fill: cur.color, fontSize: 14.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
       Plot.dot([old.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", fill: old.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([old.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", text: (d) => `Base 2011-12 ${d.value.toFixed(2)}%`, dx: 16, dy: -14, fill: old.color, fontSize: 13.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text([old.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", text: (d) => `Base 2011-12 ${d.value.toFixed(2)}%`, dx: 16, dy: 20, fill: old.color, fontSize: 13.5, fontFamily: mono, textAnchor: "start" }),
     ],
   });
   a11y(plot, "IIP year-on-year growth on the retired 2011-12 base and the current 2022-23 base",
@@ -240,13 +249,13 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
 
 /* ---------- sectors ---------- */
 {
-  const keys = ["general", "sector_manufacturing", "sector_mining_quarrying", "sector_electricity_gas_supply"];
-  const geo = { W: 1184, H: 520, ml: 70, mr: 190, mt: 36, mb: 48, d0: -8, d1: 17 };
+  const keys = ["general", "sector_manufacturing", "sector_mining_quarrying", "sector_electricity_gas_supply", "sector_water_supply_sewerage_waste_management"];
+  const geo = { W: 1184, H: 520, ml: 70, mr: 220, mt: 36, mb: 48, d0: -8, d1: 17 };
   const plot = multiLine("cb-main", "plot-main", keys, S, geo, [-5, 0, 5, 10, 15],
     [2024, 2025, 2026].map((y) => new Date(Date.UTC(y, 0, 1))),
     "india-atlas_iip_sectors_base2022",
-    "IIP by sector, year-on-year, April 2024 to June 2026",
-    "Line chart. General ends at " + L.general.toFixed(1) + " per cent, manufacturing " + L.sector_manufacturing.toFixed(1) + ", mining " + L.sector_mining_quarrying.toFixed(1) + ", electricity and gas " + L.sector_electricity_gas_supply.toFixed(1) + ".");
+    "IIP by sector including water supply and waste management, year-on-year, April 2024 to June 2026",
+    "Line chart. General ends at " + L.general.toFixed(1) + " per cent, manufacturing " + L.sector_manufacturing.toFixed(1) + ", mining " + L.sector_mining_quarrying.toFixed(1) + ", electricity and gas " + L.sector_electricity_gas_supply.toFixed(1) + ", water supply and waste " + L.sector_water_supply_sewerage_waste_management.toFixed(1) + ".");
   wireLegend(document.getElementById("legend-main"), plot, keys, S);
 }
 
@@ -271,6 +280,8 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
   ];
   IND[keys[3]].label = "Wood products";
   IND[keys[1]].label = "Motor vehicles";
+  IND[keys[0]].endLabel = "Electrical eq.";
+  IND[keys[2]].endLabel = "Wearing apparel";
   const geo = { W: 1184, H: 470, ml: 70, mr: 210, mt: 30, mb: 48, d0: -14, d1: 36 };
   multiLine("cb-ind", "plot-ind", keys, IND, geo, [-10, 0, 10, 20, 30],
     [2024, 2025, 2026].map((y) => new Date(Date.UTC(y, 0, 1))),
@@ -373,6 +384,8 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
   setTxt("old-hi", fmtSigned(hi.last.value));
   setTxt("old-lo-name", SHORT[lo.k].toLowerCase());
   setTxt("old-lo", fmtSigned(lo.last.value));
+  // shared axis is deliberately bounded: the 2021 rebound prints run to five
+  // figures of per cent and are clipped by it — the swing is disclosed in prose
   const grid = document.getElementById("grid-old");
   for (const r of rows) {
     const ex = Math.abs(r.last.value) >= TH;
@@ -410,7 +423,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
     ["road_transport", "#8A857A", "Road transport"],
     ["banking", "#5B564B", "Banking"],
     ["telecommunication", "#C6C0B0", "Telecommunication"],
-    ["it_computer_related_services", "#A8A293", "IT & computer services"],
+    ["it_computer_related_services", "#A8A293", "IT services"],
   ];
   for (const [k, c, lb] of pick) { ISP[k].color = c; ISP[k].label = lb; }
   const keys = pick.map((p) => p[0]);
@@ -443,7 +456,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
       Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
       Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
       Plot.ruleY([100], { stroke: "#C0B9A6", strokeWidth: 1, strokeDasharray: "2,4" }),
-      Plot.text([{ date: dsI[0], value: 103 }], { x: "date", y: "value", text: ["base-year average · 100"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
+      Plot.text([{ date: dsI[0], value: 88 }], { x: "date", y: "value", text: ["base-year average · 100"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
       ...keys.slice(1).map((k) => Plot.lineY(ISP[k].data, { x: "date", y: "value", stroke: ISP[k].color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" })),
       Plot.lineY(ISP.retail_trade.data, { x: "date", y: "value", stroke: ISP.retail_trade.color, strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
       ...seriesList.map((s) => Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: s === seriesList[0] ? 5 : 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
@@ -498,6 +511,59 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
   </tr>`;
   }).join("");
   ispRows.forEach((s, i) => sparkLevel("sp-isp" + i, s));
+
+  /* ---- the full ISP field: all 19 services as small multiples ----
+   * The 5-line chart above picks; this grid shows. Organised by cluster:
+   * trade, logistics, finance, ICT, contact-intensive, professional. */
+  const CLUSTERS = [
+    ["Trade", ["wholesale_trade", "retail_trade"]],
+    ["Logistics", ["air_transport", "railway_transport", "road_transport", "water_transport", "warehousing_and_support_activities_for_transportation", "postal_and_courier"]],
+    ["Finance", ["banking", "insurance"]],
+    ["ICT", ["it_computer_related_services", "telecommunication", "information_and_broadcasting"]],
+    ["Contact-intensive", ["accommodation_and_food", "arts_entertainment_and_recreation", "repair_services"]],
+    ["Professional & property", ["professional_scientific_technical_services_including_r_d", "administrative_and_support_services", "real_estate"]],
+  ];
+  const grid = document.getElementById("grid-isp");
+  if (grid) {
+    grid.style.display = "grid";
+    grid.style.gridTemplateColumns = "repeat(auto-fill, minmax(230px, 1fr))";
+    grid.style.gap = "24px 32px";
+    const li2 = dsI.length - 1, yi2 = li2 - 12;
+    for (const [cluster, services] of CLUSTERS) {
+      for (const k of services) {
+        const s = ISP[k];
+        const lv = s.data[li2].value;
+        const yoy = ((s.data[li2].value / s.data[yi2].value - 1) * 100);
+        const vs = s.data.map((d) => d.value);
+        const div = document.createElement("div");
+        div.style.cssText = "border-top:1px solid #E6E2D6;padding-top:10px;min-width:0";
+        const shortLabel = s.label.trim().replace(/\s+/g, " ");
+        div.innerHTML =
+          `<div style="font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;color:#A8A293;margin-bottom:2px">${cluster}</div>` +
+          `<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">` +
+          `<div style="font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.06em;color:#5B564C;line-height:1.5;min-width:0">${shortLabel}</div></div>` +
+          `<div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:2px">` +
+          `<div style="font-family:'Newsreader',serif;font-weight:300;font-size:1.2rem;font-variant-numeric:tabular-nums;color:#1B1A17">${lv.toFixed(1)}</div>` +
+          `<div style="font-family:'IBM Plex Mono',monospace;font-size:.58rem;color:${yoy >= 0 ? "#5B564B" : "#BE3E26"}">${(yoy >= 0 ? "+" : "") + yoy.toFixed(1)}%</div></div>`;
+        const mini = Plot.plot({
+          width: 210, height: 54, marginLeft: 2, marginRight: 6, marginTop: 4, marginBottom: 2,
+          style: { background: "transparent" },
+          x: { axis: null },
+          y: { axis: null, domain: [Math.min(...vs, 95), Math.max(...vs, 105)] },
+          marks: [
+            Plot.ruleY([100], { stroke: "#E6E2D6", strokeWidth: 1 }),
+            Plot.lineY(s.data, { x: "date", y: "value", stroke: "#A8A293", strokeWidth: 1.25, strokeLinejoin: "round" }),
+            Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: "#5B564B", r: 2.5, stroke: "#FFFFFF", strokeWidth: 1 }),
+          ],
+        });
+        mini.setAttribute("aria-hidden", "true");
+        mini.style.width = "100%"; mini.style.height = "auto";
+        div.append(mini);
+        grid.append(div);
+      }
+    }
+    grid.setAttribute("aria-label", "Nineteen small line charts, one per ISP service, grouped into six clusters (trade, logistics, finance, ICT, contact-intensive, professional). Each shows the index level over fourteen months against a base-year average of 100. Retail trade ends at " + ISP.retail_trade.data[li2].value.toFixed(1) + ".");
+  }
 }
 
 /* ---------- sparklines ---------- */

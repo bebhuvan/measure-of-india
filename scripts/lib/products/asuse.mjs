@@ -33,7 +33,7 @@
 //                          29/31/35) are consciously NOT ingested.
 
 import { mospi } from "../mospi.mjs";
-import { writeJson, writeRaw, quarterAxis } from "../util.mjs";
+import { writeSeries, writeRaw, quarterAxis } from "../util.mjs";
 
 const GREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
 const slugify = (s) => String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
@@ -96,6 +96,7 @@ export async function buildAsuse(root, dcfg, vintage) {
   const metaBase = {
     dossier: "asuse", frequency: "annual", base: dcfg.base,
     source: dcfg.source_agency, vintage, mock: false,
+    geo: dcfg.geo ?? "IND",
     latestPeriod: aAxis.at(-1), releaseDate: null,
     revisionPolicy: dcfg.revision_policy,
   };
@@ -460,13 +461,13 @@ export async function buildAsuse(root, dcfg, vintage) {
     dates: aDates, series: slSeries,
   };
 
-  writeJson(root, "data/series/asuse-annual.json", annualBundle);
-  writeJson(root, "data/series/asuse-sectors.json", sectorsBundle);
-  writeJson(root, "data/series/asuse-owners.json", ownersBundle);
-  writeJson(root, "data/series/asuse-modernity.json", modernityBundle);
-  writeJson(root, "data/series/asuse-structure.json", structureBundle);
-  writeJson(root, "data/series/asuse-states.json", statesBundle);
-  if (quarterlyBundle) writeJson(root, "data/series/asuse-quarterly.json", quarterlyBundle);
+  writeSeries(root, "data/series/asuse-annual.json", annualBundle);
+  writeSeries(root, "data/series/asuse-sectors.json", sectorsBundle);
+  writeSeries(root, "data/series/asuse-owners.json", ownersBundle);
+  writeSeries(root, "data/series/asuse-modernity.json", modernityBundle);
+  writeSeries(root, "data/series/asuse-structure.json", structureBundle);
+  writeSeries(root, "data/series/asuse-states.json", statesBundle);
+  if (quarterlyBundle) writeSeries(root, "data/series/asuse-quarterly.json", quarterlyBundle);
   else process.stdout.write("asuse: quarterly indicators returned no usable dated rows — asuse-quarterly.json not written\n");
   return annualBundle;
 }

@@ -13,6 +13,20 @@ export function writeJson(root, rel, obj) {
   console.log(`wrote ${rel} (${obj.points?.length ?? obj.dates?.length ?? "?"} pts)`);
 }
 
+// Canonical-bundle writer (CONTRACT-series.md rule 7): same formatting as
+// writeJson, but the body lands at rel + ".tmp" first and is then renamed
+// into place — rename is atomic on POSIX, so a crash mid-write can never
+// leave a truncated bundle in data/series/. Use this for every
+// data/series/*.json write; raw dumps keep writeRaw, everything else
+// writeJson.
+export function writeSeries(root, rel, obj) {
+  const p = path.join(root, rel);
+  fs.mkdirSync(path.dirname(p), { recursive: true });
+  fs.writeFileSync(p + ".tmp", JSON.stringify(obj, null, 1) + "\n");
+  fs.renameSync(p + ".tmp", p);
+  console.log(`wrote ${rel} (${obj.points?.length ?? obj.dates?.length ?? "?"} pts)`);
+}
+
 // Deterministic serialisation: object keys sorted, arrays sorted by their
 // canonical form. Source APIs do not guarantee row order; without this, a
 // reordering would read as a "revision" and pollute git diffs.

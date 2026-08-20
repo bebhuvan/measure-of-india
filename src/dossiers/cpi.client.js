@@ -14,6 +14,7 @@ import alrl1986Bundle from "../../data/series/cpialrl-1986.json";
 import alrlGroupsBundle from "../../data/series/cpialrl-groups-2019.json";
 import bundle2024 from "../../data/series/cpi-2024.json";
 import back2024Bundle from "../../data/series/cpi-2024-back.json";
+import linked2024Bundle from "../../data/series/cpi-2024-linked.json";
 import sectors2024Bundle from "../../data/series/cpi-2024-sectors.json";
 import groups2024Bundle from "../../data/series/cpi-2024-groups.json";
 import items2024Bundle from "../../data/series/cpi-2024-items.json";
@@ -21,7 +22,7 @@ import states2024Bundle from "../../data/series/cpi-2024-states.json";
 import alStates86Bundle from "../../data/series/cpialrl-states-1986.json";
 import {
   MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend,
-  peakOf, peakBetween, dodgeEndLabels, spark, downloadCSV,
+  peakOf, peakBetween, dodgeEndLabels, spark, downloadCSV, stripLabelSide, stripLabelSpot, makePlacer, annotationSpot,
 } from "../charts/plumbing.js";
 
 const S = hydrate(bundle);
@@ -35,6 +36,7 @@ const AL86 = hydrate(alrl1986Bundle);
 const ALG = hydrate(alrlGroupsBundle);
 const S24 = hydrate(bundle2024);       // base 2024=100 — separate store, never merged with S
 const B24 = hydrate(back2024Bundle);   // the NSO's own back-cast of the 2024-base General index
+const LN24 = hydrate(linked2024Bundle); // continuous 2024-base headline: NSO back-cast + live, one ruler
 const S24S = hydrate(sectors2024Bundle); // base 2024=100 rural & urban General — separate, never merged
 const G24 = hydrate(groups2024Bundle);   // the 43 groups below the divisions, base 2024
 const IT24 = hydrate(items2024Bundle);   // all 358 items of the 2024 basket
@@ -113,26 +115,28 @@ setTxt("pf-food", `peak — ${pkFood.value.toFixed(1)}%, ${fmtDate(pkFood.date)}
 setTxt("pf-fuel", `peak — ${pkFuel.value.toFixed(1)}%, ${fmtDate(pkFuel.date)} · latest — ${f1(L.fuel)}`);
 setTxt("pf-core", `peak — ${pkCore.value.toFixed(1)}%, ${fmtDate(pkCore.date)} · latest — ${f1(L.core)}`);
 
-/* ---------- §02 the new base: 2012 → 2024, never spliced ----------
- * Same construction as the AL/RL two-base plate: each base keeps its own
- * series, padded onto one merged month axis so the CSV stays aligned and the
- * lines break at the seam instead of joining across it. The dashed line is
- * the NSO's own back-cast of the new index — their linking series, not ours. */
+/* ---------- §02 a continuous headline on the 2024 base ----------
+ * The NSO publishes its own back-cast to 2013 (series=Back) and live levels
+ * from 2025 (series=Current) — both on base 2024=100. Joined, they form one
+ * continuous headline on the new ruler, 2014–2026. This is NOT a cross-base
+ * splice: no 2012 figure enters it. The 2025 y/y is computed at the handoff
+ * from back-cast 2024 levels to current 2025 levels (same base). The retired
+ * 2012 series is drawn faint, for comparison only. */
 {
-  const oldS = { ...S.headline, name: "headline_cpi_base2012_yoy_pct", label: "Base 2012", color: "#8A857A" };
-  const newS = { ...S24.headline, name: "headline_cpi_base2024_yoy_pct", label: "Base 2024", color: "#BE3E26" };
-  const backS = { ...B24.headline, name: "headline_cpi_base2024_nso_backcast_yoy_pct", label: "NSO back-cast", color: "#C6C0B0",
-    data: B24.headline.data.filter((d) => d.date >= S.headline.data[0].date) };
-  const axis = [...oldS.data.map((d) => d.date), ...newS.data.map((d) => d.date)];
-  const padTo = (s) => {
-    const m = new Map(s.data.map((d) => [d.date.getTime(), d.value]));
-    return { ...s, data: axis.map((t) => ({ date: t, value: m.get(t.getTime()) ?? null })) };
-  };
-  const oldPad = padTo(oldS), newPad = padTo(newS), backPad = padTo(backS);
-  const geo = { W: 1184, H: 520, ml: 70, mr: 195, mt: 36, mb: 48, d0: -1, d1: 10 };
+  const linked = LN24.headline;                                          // continuous 2024 base, primary
+  const oldS = { ...S.headline, label: "Base 2012 · retired", color: "#C6C0B0" };  // faint reference
+  const handoff = new Date(Date.UTC(2025, 0, 1));                        // back-cast → live levels
+  const geo = { W: 1184, H: 520, ml: 70, mr: 178, mt: 36, mb: 48, d0: -1, d1: 10 };
   const yTicks = [0, 2, 4, 6, 8, 10];
-  const xTicks = []; for (let y = 2016; y <= 2026; y += 2) xTicks.push(new Date(Date.UTC(y, 0, 1)));
-  const seam = newS.data[0].date;
+  const xTicks = []; for (let y = 2014; y <= 2026; y += 2) xTicks.push(new Date(Date.UTC(y, 0, 1)));
+  const nbPlacer = makePlacer(geo, linked.data.map((d) => d.date));
+  nbPlacer.addSeries(linked.data).addSeries(oldS.data).addRuleY(4);
+  const nbRbiSpot = nbPlacer.place("RBI target · 4%", 12, [
+    { x: new Date(Date.UTC(2023, 5, 1)), y: 3.3, anchor: "start" },
+    { x: new Date(Date.UTC(2024, 0, 1)), y: 3.3, anchor: "start" },
+    { x: new Date(Date.UTC(2017, 6, 1)), y: 3.3, anchor: "start" },
+    { x: new Date(Date.UTC(2014, 2, 1)), y: 4.55, anchor: "start" },
+  ]);
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
@@ -142,38 +146,36 @@ setTxt("pf-core", `peak — ${pkCore.value.toFixed(1)}%, ${fmtDate(pkCore.date)}
          tickFormat: (d) => (d === yTicks[yTicks.length - 1] ? d + "%" : String(d)), ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
     marks: [
       Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.rectY([{ y1: 2, y2: 6 }], { y1: "y1", y2: "y2", x1: axis[0], x2: axis.at(-1), fill: "#F8F6F1" }),
+      Plot.rectY([{ y1: 2, y2: 6 }], { y1: "y1", y2: "y2", x1: linked.data[0].date, x2: linked.data.at(-1).date, fill: "#F8F6F1" }),
       Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
       Plot.ruleY([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
       Plot.ruleY([4], { stroke: "#C0B9A6", strokeWidth: 1, strokeDasharray: "2,4" }),
-      Plot.lineY(backPad.data, { x: "date", y: "value", stroke: backS.color, strokeWidth: 1.5, strokeDasharray: "4 3", strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.lineY(oldPad.data, { x: "date", y: "value", stroke: oldS.color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.lineY(newPad.data, { x: "date", y: "value", stroke: newS.color, strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.ruleX([seam], { stroke: "#C9C3B2", strokeWidth: 1 }),
-      Plot.text([{ date: seam, value: 9.55 }], { x: "date", y: "value", text: ["base revised · 2012 → 2024 · series meet, never join"], fontSize: 12.5, fill: "#5C574C", fontFamily: mono, textAnchor: "end", dx: -8 }),
-      Plot.dot([oldS.data.at(-1)], { x: "date", y: "value", fill: oldS.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([oldS.data.at(-1)], { x: "date", y: "value", text: (d) => `Base 2012 ${d.value.toFixed(2)}%`, dx: 16, dy: 16, fill: oldS.color, fontSize: 13.5, fontFamily: mono, textAnchor: "start" }),
-      Plot.dot([newS.data.at(-1)], { x: "date", y: "value", fill: newS.color, r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([newS.data.at(-1)], { x: "date", y: "value", text: (d) => `Base 2024 ${d.value.toFixed(2)}%`, dx: 16, dy: -8, fill: newS.color, fontSize: 14.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.text([{ date: nbRbiSpot.x, value: nbRbiSpot.y }], { x: "date", y: "value", text: ["RBI target · 4%"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: nbRbiSpot.anchor }),
+      Plot.lineY(oldS.data, { x: "date", y: "value", stroke: oldS.color, strokeWidth: 1.5, strokeOpacity: 0.7, strokeLinejoin: "round", strokeLinecap: "round" }),
+      // the continuous 2024-base headline, in two evidence regimes:
+      // NSO back-cast (reconstructed history, to 2024) — lighter, thinner
+      Plot.lineY(linked.data.filter((d) => d.date < handoff), { x: "date", y: "value", stroke: linked.color, strokeWidth: 2, strokeOpacity: 0.55, strokeLinejoin: "round", strokeLinecap: "round" }),
+      // live measurement (from Dec 2024 levels onward) — solid; starts at the join so the line never breaks
+      Plot.lineY(linked.data.filter((d) => d.date >= new Date(Date.UTC(2024, 11, 1))), { x: "date", y: "value", stroke: linked.color, strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.ruleX([handoff], { stroke: "#C9C3B2", strokeWidth: 1, strokeDasharray: "2,3" }),
+      Plot.text([{ date: handoff, value: 9.4 }], { x: "date", y: "value", text: ["live print begins · Jan 2025"], fontSize: 12, fill: "#5C574C", fontFamily: mono, textAnchor: "end", dx: -8 }),
+      Plot.dot([oldS.data.at(-1)], { x: "date", y: "value", fill: oldS.color, r: 3, stroke: "#FFFFFF", strokeWidth: 1 }),
+      Plot.dot([linked.data.at(-1)], { x: "date", y: "value", fill: linked.color, r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([linked.data.at(-1)], { x: "date", y: "value", text: (d) => `Base 2024 ${d.value.toFixed(2)}%`, dx: 16, dy: -8, fill: linked.color, fontSize: 14.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
   });
-  a11y(plot, "Headline CPI, year-on-year, on the retired 2012 base and the new 2024 base, with the NSO's back-cast",
-    "Two line charts side by side on one time axis, never spliced. The 2012 base runs January 2016 to December 2025 and retires at " + L.headline.toFixed(1) + " per cent. The 2024 base begins January 2026 and ends at " + L24.headline.toFixed(1) + " per cent in June 2026. A dashed line shows the NSO's own back-cast of the new index over 2016 to 2024, tracking the old series closely. Shaded band marks the RBI tolerance range of 2 to 6 per cent; dashed rule the 4 per cent target.");
+  a11y(plot, "Headline CPI as a continuous series on the 2024 base (NSO back-cast to 2014, live from 2025), beside the retired 2012 ruler",
+    "A continuous vermilion line on the 2024 base runs from 2014 to June 2026, ending at " + L24.headline.toFixed(1) + " per cent — the NSO's own back-cast joined to the live print; no 2012-base figure enters it. A faint grey line shows the retired 2012 series for comparison, ending at " + L.headline.toFixed(1) + " per cent in December 2025. The two rulers read the overlap years slightly differently. Shaded band: RBI tolerance 2–6%; dashed rule: 4% target.");
   document.getElementById("plot-nb").append(plot);
-  wireTools(document.getElementById("cb-nb"), plot, [newPad, oldPad, backPad], "india-atlas_cpi_two-bases_2016-2026");
-  // no crosshair: three different spans on one axis — a shared index would lie
-  wireLegend(document.getElementById("legend-nb"), plot, ["nb_old", "nb_back", "nb_new"],
-    { nb_old: { color: "#8A857A" }, nb_back: { color: "#C6C0B0" }, nb_new: { color: "#BE3E26" } });
+  wireTools(document.getElementById("cb-nb"), plot, [linked, oldS], "india-atlas_cpi2024_linked-headline_2014-2026");
+  wireLegend(document.getElementById("legend-nb"), plot, ["nb_new", "nb_old"],
+    { nb_new: { color: "#BE3E26" }, nb_old: { color: "#C6C0B0" } });
   setTxt("pv-nb", f1(L24.headline));
   setTxt("nb-jan", f1(FIRST24)); setTxt("nb-new", f1(L24.headline));
   setTxt("nb-old-final", f1(L.headline));
-  // widest gap between the back-cast and the retired series over their overlap
   const oldByT = new Map(oldS.data.map((d) => [d.date.getTime(), d.value]));
   let shadow = 0;
-  for (const d of backS.data) {
-    const o = oldByT.get(d.date.getTime());
-    if (d.value != null && o != null) shadow = Math.max(shadow, Math.abs(d.value - o));
-  }
+  for (const d of linked.data) { const o = oldByT.get(d.date.getTime()); if (d.value != null && o != null) shadow = Math.max(shadow, Math.abs(d.value - o)); }
   setTxt("nb-shadow", shadow.toFixed(1) + " pt");
 }
 
@@ -203,6 +205,7 @@ setTxt("pf-core", `peak — ${pkCore.value.toFixed(1)}%, ${fmtDate(pkCore.date)}
     .sort((a, b) => b.v - a.v);
   const head = L24.headline;   // published all-groups index = the reference rule
   const geo = { W: 1184, H: 500, ml: 304, mr: 88, mt: 34, mb: 46 };
+  const divSpot = (v) => stripLabelSpot(geo, -1, 17.5, v, head);
   const xt = [0, 2, 4, 6, 8, 10, 12, 14, 16];
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
@@ -216,8 +219,11 @@ setTxt("pf-core", `peak — ${pkCore.value.toFixed(1)}%, ${fmtDate(pkCore.date)}
       Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
       Plot.ruleX([head], { stroke: "#1B1A17", strokeWidth: 1, strokeDasharray: "3,3" }),
       Plot.text([{ x: head }], { x: "x", text: () => "Headline · " + f1(head), frameAnchor: "top", dy: -16, dx: 5, fill: "#1B1A17", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
-      Plot.dot(rows, { x: "v", y: "name", r: 4.5, fill: (d) => (d.v > head ? "#BE3E26" : "#8A857A"), stroke: "#FFFFFF", strokeWidth: 1 }),
-      Plot.text(rows, { x: "v", y: "name", text: (d) => d.v.toFixed(2) + "%", dx: 12, dy: 0.5, fill: (d) => (d.v > head ? "#BE3E26" : "#8A857A"), fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.dot(rows, { x: "v", y: "name", r: 5.5, fill: (d) => (d.v > head ? "#BE3E26" : "#8A857A"), stroke: "#FFFFFF", strokeWidth: 1 }),
+      /* Plot ignores function-valued dx/textAnchor — one text mark per side */
+      ["start", "end", "middle"].map((a) => Plot.text(rows.filter((d) => divSpot(d.v).anchor === a), { x: "v", y: "name", text: (d) => d.v.toFixed(2) + "%",
+        dx: a === "end" ? -12 : a === "start" ? 12 : 0, dy: a === "middle" ? -11 : 0.5,
+        fill: (d) => (d.v > head ? "#BE3E26" : "#8A857A"), fontSize: 12.5, fontFamily: mono, textAnchor: a })),
     ],
   });
   const top = rows[0], bot = rows.at(-1);
@@ -271,14 +277,26 @@ setTxt("pf-core", `peak — ${pkCore.value.toFixed(1)}%, ${fmtDate(pkCore.date)}
   for (const r of rows) {
     const above = r.v > head;
     const col = above ? "#BE3E26" : "#5B564B";
+    /* each panel is on its own scale — say so, faintly, in its corner:
+     * the tiny range makes the normalized shape quantitative */
+    const vals = r.s.data.map((d) => d.value).filter((v) => v != null);
+    const lo = Math.min(...vals), hi = Math.max(...vals);
+    const range = lo === hi ? hi.toFixed(1) : lo.toFixed(1) + "–" + hi.toFixed(1);
+    /* baseline, two-sided: the time window on the left, the y-range on the
+     * right — each panel is self-describing, no axis needed */
+    const d0 = r.s.data[0].date, d1 = r.s.data.at(-1).date;
+    const sameY = d0.getUTCFullYear() === d1.getUTCFullYear();
+    const window_ = sameY
+      ? MN[d0.getUTCMonth()] + "–" + MN[d1.getUTCMonth()] + " '" + String(d1.getUTCFullYear()).slice(2)
+      : d0.getUTCFullYear() + "–" + String(d1.getUTCFullYear()).slice(2);
     const el = document.createElement("div");
     el.className = "sm-panel";
-    el.innerHTML = `<div class="sm-t">${r.label}</div><div class="sm-v${above ? " acc" : ""}">${r.v.toFixed(1)}%</div>`;
+    el.innerHTML = `<div class="sm-t">${r.label}</div><div class="sm-v${above ? " acc" : ""}">${r.v.toFixed(1)}%</div><div class="sm-r"><span class="x">${window_}</span>${range}</div>`;
     const p = Plot.plot({
       width: 262, height: 92, marginLeft: 4, marginRight: 4, marginTop: 6, marginBottom: 4,
       style: { background: "transparent" },
       x: { axis: null },
-      y: { axis: null, domain: [Math.min(...r.s.data.map((d) => d.value), 0), Math.max(...r.s.data.map((d) => d.value))] },
+      y: { axis: null, domain: [Math.min(...vals, 0), Math.max(...vals)] },
       marks: [
         Plot.ruleY([0], { stroke: "#E0DACA", strokeWidth: 1 }),
         Plot.lineY(r.s.data, { x: "date", y: "value", stroke: col, strokeWidth: 1.3, strokeLinejoin: "round", strokeLinecap: "round" }),
@@ -424,13 +442,16 @@ const SECTOR_W = {
 const sectorOrder = [["combined", "Combined"], ["rural", "Rural · no housing"], ["urban", "Urban · housing 21.7%"]];
 const bb = document.getElementById("basket-bar");
 bb.style.cssText = "display:block;height:auto;border:none;padding:0;background:none";
+/* row labels right-aligned so they hug the bars; the legend below indents
+ * to the bars' left edge so the whole block shares one vertical seam */
+const LAB_W = 172;
 bb.innerHTML = sectorOrder.map(([key, nm]) => {
   const w = SECTOR_W[key];
   const segs = GROUP_DEFS.filter(([g]) => w[g] != null)
     .map(([g, label, c]) => `<div class="seg" style="width:${w[g]}%;background:${c}" title="${label} — ${w[g]}%"></div>`).join("");
-  return `<div style="display:flex;align-items:center;gap:16px;margin-top:12px"><div style="width:150px;flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft);line-height:1.5">${nm}</div><div style="flex:1;display:flex;height:34px;border:1px solid var(--ink)">${segs}</div></div>`;
+  return `<div style="display:flex;align-items:center;gap:16px;margin-top:12px"><div style="width:${LAB_W}px;flex-shrink:0;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft);line-height:1.5">${nm}</div><div style="flex:1;display:flex;height:34px;border:1px solid var(--ink)">${segs}</div></div>`;
 }).join("");
-document.getElementById("basket-labels").innerHTML = '<div style="display:flex;flex-wrap:wrap;gap:14px 30px;margin-top:20px">' +
+document.getElementById("basket-labels").innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:14px 30px;margin:20px 0 0 ${LAB_W + 16}px">` +
   GROUP_DEFS.map(([g, label, c]) => `<div class="blab"><div class="n"><span class="sw" style="background:${c}"></span>${label}</div></div>`).join("") + "</div>";
 
 /* ---------- plate 1 : headline + components ---------- */
@@ -445,19 +466,56 @@ document.getElementById("basket-labels").innerHTML = '<div style="display:flex;f
   const pk23 = peakBetween(S.headline, 2023, 2023);   // Jul 2023 vegetables
   const xTicks = []; for (let y = 2016; y <= 2025; y++) xTicks.push(new Date(Date.UTC(y, 0, 1)));
   const yTicks = [-4, -2, 0, 2, 4, 6, 8, 10, 12, 14];
-  const t0 = dates[0].getTime(), t1 = dates.at(-1).getTime();
-  const sx = (px) => px / ((geo.W - geo.ml - geo.mr) / (t1 - t0));
-  const sy = (px) => px / ((geo.H - geo.mt - geo.mb) / (geo.d1 - geo.d0));
-  const dxDate = (d, px) => new Date(d.getTime() + sx(px));
-  const ly19 = pk19.value + sy(30), ly22 = pk22.value + sy(32), ly23 = pk23.value + sy(14);
+  /* collision-aware annotation placement: every series, the 4% rule and the
+   * COVID rule are obstacles; each label takes the first candidate that fits */
+  const placer = makePlacer(geo, dates);
+  keys.forEach((k) => placer.addSeries(S[k].data));
+  placer.addRuleY(4).addRuleX(new Date(Date.UTC(2020, 3, 1)));
+  const D = (y, m, d) => new Date(Date.UTC(y, m, d));
+  const a19 = annotationSpot(placer, pk19, pk19.value.toFixed(1) + "% · " + fmtDate(pk19.date) + " · onion shock", 13, [
+    { x: pk19.date, y: pk19.value, anchor: "end", dx: -10, dy: 34 },
+    { x: pk19.date, y: pk19.value, anchor: "end", dx: -10, dy: 52 },
+    { x: pk19.date, y: pk19.value, anchor: "middle", dx: 0, dy: 34 },
+    { x: pk19.date, y: pk19.value, anchor: "start", dx: 10, dy: 34 },
+    { x: pk19.date, y: pk19.value, anchor: "end", dx: -10, dy: -40 },
+  ]);
+  placer.addObstacleBox(a19.box);
+  const a22 = annotationSpot(placer, pk22, pk22.value.toFixed(1) + "% · " + fmtDate(pk22.date), 13, [
+    { x: pk22.date, y: pk22.value, anchor: "start", dx: 22, dy: 26 },
+    { x: pk22.date, y: pk22.value, anchor: "end", dx: -22, dy: 12 },
+    { x: pk22.date, y: pk22.value, anchor: "end", dx: -22, dy: 40 },
+    { x: pk22.date, y: pk22.value, anchor: "middle", dx: 0, dy: 40 },
+    { x: D(2022, 0, 1), y: 3.4, anchor: "start" },
+  ]);
+  placer.addObstacleBox(a22.box);
+  const a23 = annotationSpot(placer, pk23, fmtDate(pk23.date) + " · vegetables", 13, [
+    { x: pk23.date, y: pk23.value, anchor: "start", dx: 22, dy: 6 },
+    { x: pk23.date, y: pk23.value, anchor: "start", dx: 22, dy: 26 },
+    { x: pk23.date, y: pk23.value, anchor: "start", dx: 22, dy: 55 },
+    { x: D(2023, 0, 1), y: 11.0, anchor: "start" },
+    { x: pk23.date, y: pk23.value, anchor: "middle", dx: 0, dy: 38 },
+  ]);
+  placer.addObstacleBox(a23.box);
+  const rbiSpot = placer.place("RBI target · 4%", 12, [
+    { x: D(2024, 0, 1), y: 2.4, anchor: "start" },
+    { x: D(2022, 1, 10), y: 3.15, anchor: "start" },
+    { x: D(2017, 0, 10), y: 3.4, anchor: "start" },
+    { x: D(2016, 1, 10), y: 8.6, anchor: "start" },
+  ]);
+  const tolSpot = placer.place("Tolerance band · 2–6%", 12, [
+    { x: D(2016, 1, 1), y: 8.6, anchor: "start" },
+    { x: D(2018, 5, 1), y: 7.3, anchor: "start" },
+    { x: D(2021, 5, 1), y: 1.95, anchor: "start" },
+    { x: D(2017, 0, 10), y: 6.7, anchor: "start" },
+  ]);
   const marks = [
     Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
     Plot.rectY([{ y1: 2, y2: 6 }], { y1: "y1", y2: "y2", x1: dates[0], x2: dates.at(-1), fill: "#F8F6F1" }),
     Plot.ruleY([-6], { stroke: "#E0DACA", strokeWidth: 1 }),
     Plot.ruleY([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
     Plot.ruleY([4], { stroke: "#C0B9A6", strokeWidth: 1, strokeDasharray: "2,4" }),
-    Plot.text([{ date: dates[2], value: 4.42 }], { x: "date", y: "value", text: ["RBI target · 4%"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
-    Plot.text([{ date: dates[2], value: 6.6 }], { x: "date", y: "value", text: ["Tolerance band · 2–6%"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
+    Plot.text([{ date: rbiSpot.x, value: rbiSpot.y }], { x: "date", y: "value", text: ["RBI target · 4%"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: rbiSpot.anchor }),
+    Plot.text([{ date: tolSpot.x, value: tolSpot.y }], { x: "date", y: "value", text: ["Tolerance band · 2–6%"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: tolSpot.anchor }),
     Plot.ruleX([new Date(Date.UTC(2020, 3, 1))], { stroke: "#D8D3C4", strokeWidth: 1, strokeDasharray: "2,3" }),
     Plot.text([{ date: new Date(Date.UTC(2020, 5, 1)), value: 14.2 }], { x: "date", y: "value", text: ["COVID-19"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
     ...["food", "fuel"].map((k) => Plot.lineY(S[k].data, { x: "date", y: "value", stroke: S[k].color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" })),
@@ -465,20 +523,12 @@ document.getElementById("basket-labels").innerHTML = '<div style="display:flex;f
     Plot.lineY(S.headline.data, { x: "date", y: "value", stroke: S.headline.color, strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
     Plot.lineY(S.headline.data.slice(-13), { x: "date", y: "value", stroke: S.headline.color, strokeWidth: 4.5, strokeLinecap: "round", strokeLinejoin: "round" }),
     Plot.dot([pk19, pk22, pk23], { x: "date", y: "value", fill: S.headline.color, r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-    Plot.line([{ x: pk19.date, y: pk19.value + sy(7) }, { x: pk19.date, y: ly19 - sy(9) }], { x: "x", y: "y", stroke: S.headline.color, strokeWidth: 1 }),
-    Plot.text([{ date: pk19.date, value: ly19 }], { x: "date", y: "value", text: () => pk19.value.toFixed(1) + "% · " + fmtDate(pk19.date) + " · onion shock", fill: S.headline.color, fontSize: 13, fontFamily: mono, textAnchor: "middle" }),
-    Plot.line([
-      { x: pk22.date, y: pk22.value + sy(7) },
-      { x: pk22.date, y: ly22 - sy(8) },
-      { x: dxDate(pk22.date, 18), y: ly22 - sy(8) },
-    ], { x: "x", y: "y", stroke: S.headline.color, strokeWidth: 1 }),
-    Plot.text([{ date: dxDate(pk22.date, 24), value: ly22 - sy(4) }], { x: "date", y: "value", text: () => pk22.value.toFixed(1) + "% · " + fmtDate(pk22.date), fill: S.headline.color, fontSize: 13, fontFamily: mono, textAnchor: "start" }),
-    Plot.line([
-      { x: pk23.date, y: pk23.value + sy(7) },
-      { x: pk23.date, y: ly23 },
-      { x: dxDate(pk23.date, 18), y: ly23 },
-    ], { x: "x", y: "y", stroke: S.headline.color, strokeWidth: 1 }),
-    Plot.text([{ date: dxDate(pk23.date, 24), value: ly23 + sy(4) }], { x: "date", y: "value", text: () => fmtDate(pk23.date) + " · vegetables", fill: S.headline.color, fontSize: 13, fontFamily: mono, textAnchor: "start" }),
+    Plot.line(a19.leader, { x: "x", y: "y", stroke: S.headline.color, strokeWidth: 1 }),
+    Plot.text([{ date: a19.textX, value: a19.textY }], { x: "date", y: "value", text: [pk19.value.toFixed(1) + "% · " + fmtDate(pk19.date) + " · onion shock"], fill: S.headline.color, fontSize: 13, fontFamily: mono, textAnchor: a19.spot.anchor }),
+    Plot.line(a22.leader, { x: "x", y: "y", stroke: S.headline.color, strokeWidth: 1 }),
+    Plot.text([{ date: a22.textX, value: a22.textY }], { x: "date", y: "value", text: [pk22.value.toFixed(1) + "% · " + fmtDate(pk22.date)], fill: S.headline.color, fontSize: 13, fontFamily: mono, textAnchor: a22.spot.anchor }),
+    Plot.line(a23.leader, { x: "x", y: "y", stroke: S.headline.color, strokeWidth: 1 }),
+    Plot.text([{ date: a23.textX, value: a23.textY }], { x: "date", y: "value", text: [fmtDate(pk23.date) + " · vegetables"], fill: S.headline.color, fontSize: 13, fontFamily: mono, textAnchor: a23.spot.anchor }),
     ...seriesList.map((s) => Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: s === S.headline ? 5 : 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
     ...dodged.filter((p) => Math.abs(p.y - p.value) > 0.05).map((p) => Plot.line([
       { x: dates.at(-1), y: p.value }, { x: dates.at(-1), y: p.y },
@@ -512,7 +562,35 @@ function componentChart(blockId, plotId, key, d0, d1, yTicks, extraNote) {
   const pk = peakOf(s);
   const geo = { W: 1184, H: 470, ml: 70, mr: 136, mt: 30, mb: 48, d0, d1 };
   const sy = (px) => px / ((geo.H - geo.mt - geo.mb) / (d1 - d0));
-  const dir = pk.value > d1 - (d1 - d0) * 0.14 ? -1 : 1;
+  /* collision-aware peak annotation: try above (or below for a ceiling peak),
+   * then to the sides — wherever the label is not struck by the line */
+  const placer = makePlacer(geo, dates);
+  placer.addSeries(s.data).addRuleY(0);
+  const nearCeiling = pk.value > d1 - (d1 - d0) * 0.14;
+  const dir = nearCeiling ? -1 : 1;
+  const pkText = pk.value.toFixed(1) + "% · " + fmtDate(pk.date);
+  const { spot, textX, textY, leader, box } = annotationSpot(placer, pk, pkText, 13, [
+    { x: pk.date, y: pk.value, anchor: "middle", dx: 0, dy: dir * 30 },
+    { x: pk.date, y: pk.value, anchor: "start", dx: 22, dy: dir * 18 },
+    { x: pk.date, y: pk.value, anchor: "end", dx: -22, dy: dir * 18 },
+    { x: pk.date, y: pk.value, anchor: "start", dx: 22, dy: -dir * 18 },
+    { x: pk.date, y: pk.value, anchor: "end", dx: -22, dy: -dir * 18 },
+    { x: pk.date, y: pk.value, anchor: "middle", dx: 0, dy: -dir * 30 },
+  ]);
+  placer.addObstacleBox(box);
+  /* the 2–6% band means nothing without a name — label it inside the band,
+   * wherever the line leaves room (same text and style as the plate-1 label).
+   * The candidate sweep covers the band interior first, then just outside it
+   * (plate 1's habit); the placer takes the first clean box and lint-charts
+   * verifies the choice at the gate. A static 5-spot list is not enough —
+   * the series moves with each print and a stale list ships a struck label. */
+  const bandCands = [];
+  for (const y of [3.1, 4.0, 4.9, 2.55, 5.55])                 // inside the 2–6 band
+    for (let yr = 2016; yr <= 2025; yr++) bandCands.push({ x: new Date(Date.UTC(yr, 0, 1)), y, anchor: "start" });
+  for (const y of [6.45, 1.55])                                // just outside the band
+    for (let yr = 2016; yr <= 2025; yr++) bandCands.push({ x: new Date(Date.UTC(yr, 0, 1)), y, anchor: "start" });
+  bandCands.push({ x: new Date(Date.UTC(2016, 0, 1)), y: 6.45, anchor: "start" });
+  const bandSpot = placer.place("Tolerance band · 2–6%", 12, bandCands);
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
@@ -530,9 +608,10 @@ function componentChart(blockId, plotId, key, d0, d1, yTicks, extraNote) {
       Plot.areaY(s.data, { x: "date", y: "value", fill: s.color, fillOpacity: 0.06 }),
       Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.lineY(s.data.slice(-13), { x: "date", y: "value", stroke: s.color, strokeWidth: 4, strokeLinecap: "round", strokeLinejoin: "round" }),
+      Plot.text([{ date: bandSpot.x, value: bandSpot.y }], { x: "date", y: "value", text: ["Tolerance band · 2–6%"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: bandSpot.anchor }),
       Plot.dot([pk], { x: "date", y: "value", fill: "#BE3E26", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.line([{ x: pk.date, y: pk.value + dir * sy(7) }, { x: pk.date, y: pk.value + dir * sy(19) }], { x: "x", y: "y", stroke: "#BE3E26", strokeWidth: 1 }),
-      Plot.text([{ date: pk.date, value: pk.value + dir * sy(27) }], { x: "date", y: "value", text: () => pk.value.toFixed(1) + "% · " + fmtDate(pk.date), fill: "#BE3E26", fontSize: 13, fontFamily: mono, textAnchor: "middle" }),
+      Plot.line(leader, { x: "x", y: "y", stroke: "#BE3E26", strokeWidth: 1 }),
+      Plot.text([{ date: textX, value: textY }], { x: "date", y: "value", text: [pkText], fill: "#BE3E26", fontSize: 13, fontFamily: mono, textAnchor: spot.anchor }),
       Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: "#BE3E26", r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.text([s.data.at(-1)], { x: "date", y: "value", text: (d) => d.value.toFixed(2) + "%", dx: 16, fill: "#BE3E26", fontSize: 14, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
@@ -545,7 +624,7 @@ function componentChart(blockId, plotId, key, d0, d1, yTicks, extraNote) {
 }
 componentChart("cb-food", "plot-food", "food", -5, 15, [-4, 0, 4, 8, 12], "Shaded band marks the RBI tolerance range. Food was in deflation for much of late 2025.");
 componentChart("cb-fuel", "plot-fuel", "fuel", -7, 15, [-6, 0, 4, 8, 12], "Shaded band marks the RBI tolerance range. Fuel was in deflation from September 2023 to February 2025.");
-componentChart("cb-core", "plot-core", "core", 2, 8, [3, 4, 5, 6, 7], "Core excludes food and fuel; derived, not published directly.");
+componentChart("cb-core", "plot-core", "core", 2, 8, [3, 4, 5, 6, 7], "Core excludes food and fuel; derived, not published directly. Shaded band marks the RBI tolerance range.");
 
 /* ---------- shared multi-line plate renderer (jobs pattern) ---------- */
 function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, fmtX, dlName, a11yTitle, a11yDesc, opts = {}) {
@@ -560,13 +639,16 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, fmtX, dlNa
     geo.d0 <= 0 && geo.d1 >= 0 ? Plot.ruleY([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }) : null,
     ...keys.slice(1).map((k) => Plot.lineY(store[k].data, { x: "date", y: "value", stroke: store[k].color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" })),
     Plot.lineY(store[keys[0]].data, { x: "date", y: "value", stroke: store[keys[0]].color, strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
-    Plot.lineY(store[keys[0]].data.slice(-recentN), { x: "date", y: "value", stroke: store[keys[0]].color, strokeWidth: 4.5, strokeLinecap: "round", strokeLinejoin: "round" }),
+    /* recent emphasis is a "last year" idiom — meaningless on a sub-year series */
+    seriesList[0].data.length >= 13
+      ? Plot.lineY(store[keys[0]].data.slice(-recentN), { x: "date", y: "value", stroke: store[keys[0]].color, strokeWidth: 4.5, strokeLinecap: "round", strokeLinejoin: "round" })
+      : null,
     ...seriesList.map((s) => Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: s === seriesList[0] ? 5 : 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
     ...dodged.filter((p) => Math.abs(p.y - p.value) > 0.05).map((p) => Plot.line([
       { x: dts.at(-1), y: p.value }, { x: dts.at(-1), y: p.y },
     ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
     ...dodged.map((p) => Plot.text([{ date: dts.at(-1), y: p.y }], {
-      x: "date", y: "y", text: () => `${p.s.label} ${p.value.toFixed(2)}%`,
+      x: "date", y: "y", text: () => `${p.s.endLabel ?? p.s.label} ${p.value.toFixed(2)}%`,
       dx: 16, fill: p.s.color, fontSize: 14.5, fontFamily: mono,
       fontWeight: p.s === seriesList[0] ? 500 : 400, textAnchor: "start",
     })),
@@ -609,7 +691,7 @@ const fmtMY = (d) => MN[d.getUTCMonth()] + " " + String(d.getUTCFullYear()).slic
     spices: "Spices", prepared_meals_snacks_sweets_etc: "Prepared meals & snacks", non_alcoholic_beverages: "Non-alcoholic beverages",
     clothing: "Clothing", footwear: "Footwear", household_goods_and_services: "Household goods & services",
     health: "Health", transport_and_communication: "Transport & communication", recreation_and_amusement: "Recreation & amusement",
-    education: "Education", personal_care_and_effects: "Personal care & effects · incl. gold",
+    education: "Education", personal_care_and_effects: "Personal care & effects",
     consumer_food_price: "Consumer food price · aggregate",
   };
   const outOfBand = (v) => v < 2 || v > 6;
@@ -617,9 +699,17 @@ const fmtMY = (d) => MN[d.getUTCMonth()] + " " + String(d.getUTCFullYear()).slic
     const s = SUB[key];
     const v = s.data.at(-1).value;
     const acc = outOfBand(v);
+    /* baseline, two-sided as on the 43-group grid: the time window on the
+     * left, the class's shared axis on the right — each panel self-describing */
+    const d0 = s.data[0].date, d1 = s.data.at(-1).date;
+    const sameY = d0.getUTCFullYear() === d1.getUTCFullYear();
+    const window_ = sameY
+      ? MN[d0.getUTCMonth()] + "–" + MN[d1.getUTCMonth()] + " '" + String(d1.getUTCFullYear()).slice(2)
+      : d0.getUTCFullYear() + "–" + String(d1.getUTCFullYear()).slice(2);
+    const sg = (n) => (n < 0 ? "−" + Math.abs(n) : "+" + n);
     const el = document.createElement("div");
     el.className = "sm-panel";
-    el.innerHTML = `<div class="sm-t">${TITLES[key]}</div><div class="sm-v${acc ? " acc" : ""}">${v.toFixed(1)}%</div>`;
+    el.innerHTML = `<div class="sm-t">${TITLES[key]}</div><div class="sm-v${acc ? " acc" : ""}">${v.toFixed(1)}%</div><div class="sm-r"><span class="x">${window_}</span>${sg(domain[0])}…${sg(domain[1])}</div>`;
     const p = Plot.plot({
       width: 262, height: 92,
       marginLeft: 4, marginRight: 4, marginTop: 6, marginBottom: 4,
@@ -710,6 +800,7 @@ const fmtMY = (d) => MN[d.getUTCMonth()] + " " + String(d.getUTCFullYear()).slic
   const hi = Math.ceil(Math.max(...rows.map((r) => r.v), 6));
   const xt = []; for (let t = Math.floor(lo / 2) * 2; t <= hi; t += 2) xt.push(t);
   const geo = { W: 1184, H: 1010, ml: 215, mr: 105, mt: 34, mb: 46 };
+  const stSpot = (v) => stripLabelSpot(geo, lo - 0.6, hi + 0.9, v, [ai, 0]);
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
@@ -723,8 +814,10 @@ const fmtMY = (d) => MN[d.getUTCMonth()] + " " + String(d.getUTCFullYear()).slic
       Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
       Plot.ruleX([ai], { stroke: "#1B1A17", strokeWidth: 1, strokeDasharray: "3,3" }),
       Plot.text([{ x: ai }], { x: "x", text: () => "All-India · " + f1(ai), frameAnchor: "top", dy: -18, dx: 4, fill: "#1B1A17", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
-      Plot.dot(rows, { x: "v", y: "name", r: 4.5, fill: (d) => (out(d.v) ? "#BE3E26" : "#8A857A"), stroke: "#FFFFFF", strokeWidth: 1 }),
-      Plot.text(rows, { x: "v", y: "name", text: (d) => d.v.toFixed(2) + "%", dx: 13, dy: 0.5, fill: (d) => (out(d.v) ? "#BE3E26" : "#8A857A"), fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.dot(rows, { x: "v", y: "name", r: 5.5, fill: (d) => (out(d.v) ? "#BE3E26" : "#8A857A"), stroke: "#FFFFFF", strokeWidth: 1 }),
+      ["start", "end", "middle"].map((a) => Plot.text(rows.filter((d) => stSpot(d.v).anchor === a), { x: "v", y: "name", text: (d) => d.v.toFixed(2) + "%",
+        dx: a === "end" ? -13 : a === "start" ? 13 : 0, dy: a === "middle" ? -11 : 0.5,
+        fill: (d) => (out(d.v) ? "#BE3E26" : "#8A857A"), fontSize: 12.5, fontFamily: mono, textAnchor: a })),
     ],
   });
   const top = rows[0], bot = rows.at(-1);
@@ -756,6 +849,7 @@ const stateName = (k) => ({
   const out = (v) => v < 2 || v > 6;
   const ai = L.headline;
   const geo = { W: 1184, H: 990, ml: 215, mr: 105, mt: 34, mb: 46 };
+  const stSpot = (v) => stripLabelSpot(geo, -5.2, 10.6, v, [ai, 0]);
   const xt = [-4, -2, 0, 2, 4, 6, 8, 10];
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
@@ -770,8 +864,10 @@ const stateName = (k) => ({
       Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
       Plot.ruleX([ai], { stroke: "#1B1A17", strokeWidth: 1, strokeDasharray: "3,3" }),
       Plot.text([{ x: ai }], { x: "x", text: () => "All-India · " + f1(ai), frameAnchor: "top", dy: -18, dx: 4, fill: "#1B1A17", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
-      Plot.dot(rows, { x: "v", y: "name", r: 4.5, fill: (d) => (out(d.v) ? "#BE3E26" : "#8A857A"), stroke: "#FFFFFF", strokeWidth: 1 }),
-      Plot.text(rows, { x: "v", y: "name", text: (d) => d.v.toFixed(2) + "%", dx: 13, dy: 0.5, fill: (d) => (out(d.v) ? "#BE3E26" : "#8A857A"), fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.dot(rows, { x: "v", y: "name", r: 5.5, fill: (d) => (out(d.v) ? "#BE3E26" : "#8A857A"), stroke: "#FFFFFF", strokeWidth: 1 }),
+      ["start", "end", "middle"].map((a) => Plot.text(rows.filter((d) => stSpot(d.v).anchor === a), { x: "v", y: "name", text: (d) => d.v.toFixed(2) + "%",
+        dx: a === "end" ? -13 : a === "start" ? 13 : 0, dy: a === "middle" ? -11 : 0.5,
+        fill: (d) => (out(d.v) ? "#BE3E26" : "#8A857A"), fontSize: 12.5, fontFamily: mono, textAnchor: a })),
     ],
   });
   const top = rows[0], bot = rows.at(-1);
@@ -814,8 +910,12 @@ const stateName = (k) => ({
       Plot.link(rows, { x1: "r", x2: "u", y: "name", stroke: "#C6C0B0", strokeWidth: 2 }),
       Plot.dot(rows, { x: "r", y: "name", r: 5, fill: "#5B564B", stroke: "#FFFFFF", strokeWidth: 1.25 }),
       Plot.dot(rows, { x: "u", y: "name", r: 5, fill: "#A8A293", stroke: "#FFFFFF", strokeWidth: 1.25 }),
-      Plot.text(rows, { x: "r", y: "name", text: (d) => d.r.toFixed(2) + "%", dx: (d) => (d.r < d.u ? -12 : 12), dy: 0.5, fill: "#5B564B", fontSize: 11.5, fontFamily: mono, textAnchor: (d) => (d.r < d.u ? "end" : "start") }),
-      Plot.text(rows, { x: "u", y: "name", text: (d) => d.u.toFixed(2) + "%", dx: (d) => (d.r < d.u ? 12 : -12), dy: 0.5, fill: "#8A857A", fontSize: 11.5, fontFamily: mono, textAnchor: (d) => (d.r < d.u ? "start" : "end") }),
+      /* labels outside the dumbbell; Plot ignores function dx/textAnchor,
+       * so one text mark per quadrant */
+      Plot.text(rows.filter((d) => d.r < d.u), { x: "r", y: "name", text: (d) => d.r.toFixed(2) + "%", dx: -16, dy: 0.5, fill: "#5B564B", fontSize: 11.5, fontFamily: mono, textAnchor: "end" }),
+      Plot.text(rows.filter((d) => d.r >= d.u), { x: "r", y: "name", text: (d) => d.r.toFixed(2) + "%", dx: 16, dy: 0.5, fill: "#5B564B", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(rows.filter((d) => d.r < d.u), { x: "u", y: "name", text: (d) => d.u.toFixed(2) + "%", dx: 16, dy: 0.5, fill: "#8A857A", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(rows.filter((d) => d.r >= d.u), { x: "u", y: "name", text: (d) => d.u.toFixed(2) + "%", dx: -16, dy: 0.5, fill: "#8A857A", fontSize: 11.5, fontFamily: mono, textAnchor: "end" }),
     ],
   });
   a11y(plot, "Rural against urban inflation, December 2025, in the five states where they differ most",
@@ -847,6 +947,17 @@ const stateName = (k) => ({
   const xTicks = []; for (let y = 2000; y <= 2025; y += 5) xTicks.push(new Date(Date.UTC(y, 0, 1)));
   const pk = peakOf(oldS);
   const seam = newS.data[0].date;
+  /* the old base's final label sits in the seam's busiest spot — place it
+   * against both lines and the seam rule */
+  const alPlacer = makePlacer(geo, oldPad.data.map((d) => d.date));
+  alPlacer.addSeries(oldS.data).addSeries(newS.data).addRuleX(seam).addRuleY(0);
+  const oldLabelSpot = annotationSpot(alPlacer, oldS.data.at(-1),
+    `Base 1986-87 ${oldS.data.at(-1).value.toFixed(2)}%`, 13.5, [
+      { x: oldS.data.at(-1).date, y: oldS.data.at(-1).value, anchor: "end", dx: -14, dy: -20 },
+      { x: oldS.data.at(-1).date, y: oldS.data.at(-1).value, anchor: "end", dx: -14, dy: 26 },
+      { x: oldS.data.at(-1).date, y: oldS.data.at(-1).value, anchor: "middle", dx: 0, dy: 32 },
+      { x: oldS.data.at(-1).date, y: oldS.data.at(-1).value, anchor: "start", dx: 14, dy: -20 },
+    ]);
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
@@ -865,7 +976,7 @@ const stateName = (k) => ({
       Plot.ruleX([seam], { stroke: "#C9C3B2", strokeWidth: 1 }),
       Plot.text([{ date: seam, value: 18.4 }], { x: "date", y: "value", text: ["base revised · 1986-87 → 2019"], fontSize: 12.5, fill: "#5C574C", fontFamily: mono, textAnchor: "end", dx: -8 }),
       Plot.dot([oldS.data.at(-1)], { x: "date", y: "value", fill: oldS.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([oldS.data.at(-1)], { x: "date", y: "value", text: (d) => `Base 1986-87 ${d.value.toFixed(2)}%`, dx: 16, dy: 16, fill: oldS.color, fontSize: 13.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text([{ date: oldLabelSpot.textX, value: oldLabelSpot.textY }], { x: "date", y: "value", text: [`Base 1986-87 ${oldS.data.at(-1).value.toFixed(2)}%`], fill: oldS.color, fontSize: 13.5, fontFamily: mono, textAnchor: oldLabelSpot.spot.anchor }),
       Plot.dot([newS.data.at(-1)], { x: "date", y: "value", fill: newS.color, r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.text([newS.data.at(-1)], { x: "date", y: "value", text: (d) => `Base 2019 ${d.value.toFixed(2)}%`, dx: 16, dy: -8, fill: newS.color, fontSize: 14.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
@@ -935,9 +1046,9 @@ const stateName = (k) => ({
  * one axis serves both; never spliced, never joined. */
 {
   const end = AL86.al.data.at(-1).date;   // May 2025
-  const rural = { ...R.headline, name: "cpi_rural_base2012_yoy_pct", label: "CPI · rural (all households)", color: "#A8A293",
+  const rural = { ...R.headline, name: "cpi_rural_base2012_yoy_pct", label: "CPI · rural (all households)", endLabel: "CPI rural", color: "#A8A293",
     data: R.headline.data.filter((d) => d.date <= end) };
-  const al = { ...AL86.al, name: "cpi_al_base1986_yoy_pct", label: "CPI-AL (farm-labour households)", color: "#BE3E26",
+  const al = { ...AL86.al, name: "cpi_al_base1986_yoy_pct", label: "CPI-AL (farm-labour households)", endLabel: "CPI-AL", color: "#BE3E26",
     data: AL86.al.data.filter((d) => d.date >= rural.data[0].date) };
   const V = { al, rural };
   const geo = { W: 1184, H: 470, ml: 70, mr: 200, mt: 30, mb: 48, d0: -1, d1: 12 };
@@ -972,6 +1083,7 @@ const stateName = (k) => ({
     .sort((a, b) => b.v - a.v);
   const ai = AL86.al.data.at(-1).value;   // All-India CPI-AL, May 2025
   const geo = { W: 1184, H: 600, ml: 168, mr: 88, mt: 34, mb: 46 };
+  const alSpot = (v) => stripLabelSpot(geo, -2.2, 8.6, v, [ai, 0]);
   const xt = [-2, 0, 2, 4, 6, 8];
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
@@ -985,8 +1097,10 @@ const stateName = (k) => ({
       Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
       Plot.ruleX([ai], { stroke: "#1B1A17", strokeWidth: 1, strokeDasharray: "3,3" }),
       Plot.text([{ x: ai }], { x: "x", text: () => "All-India CPI-AL · " + f1(ai), frameAnchor: "top", dy: -16, dx: 5, fill: "#1B1A17", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
-      Plot.dot(rows, { x: "v", y: "name", r: 4.5, fill: (d) => (d.v > ai ? "#BE3E26" : "#8A857A"), stroke: "#FFFFFF", strokeWidth: 1 }),
-      Plot.text(rows, { x: "v", y: "name", text: (d) => d.v.toFixed(2) + "%", dx: 12, dy: 0.5, fill: (d) => (d.v > ai ? "#BE3E26" : "#8A857A"), fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.dot(rows, { x: "v", y: "name", r: 5.5, fill: (d) => (d.v > ai ? "#BE3E26" : "#8A857A"), stroke: "#FFFFFF", strokeWidth: 1 }),
+      ["start", "end", "middle"].map((a) => Plot.text(rows.filter((d) => alSpot(d.v).anchor === a), { x: "v", y: "name", text: (d) => d.v.toFixed(2) + "%",
+        dx: a === "end" ? -12 : a === "start" ? 12 : 0, dy: a === "middle" ? -11 : 0.5,
+        fill: (d) => (d.v > ai ? "#BE3E26" : "#8A857A"), fontSize: 12.5, fontFamily: mono, textAnchor: a })),
     ],
   });
   const top = rows[0], bot = rows.at(-1);

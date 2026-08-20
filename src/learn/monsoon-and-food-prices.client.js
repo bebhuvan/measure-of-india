@@ -55,8 +55,8 @@ const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "13.5
       Plot.dot([defl25], { x: "date", y: "value", fill: "#BE3E26", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.text([defl25], { x: "date", y: "value", text: () => "Oct 2025 · " + defl25.value.toFixed(2) + "% · a good harvest, one winter late", dx: -6, dy: 26, fill: "#BE3E26", fontSize: 13, fontFamily: mono, fontWeight: 500, textAnchor: "end" }),
       Plot.dot([pNow], { x: "date", y: "value", fill: "#BE3E26", r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([pNow], { x: "date", y: "value", text: () => "Dec 2025 · " + pNow.value.toFixed(2) + "%", dx: -4, dy: -16, fill: "#BE3E26", fontSize: 13, fontFamily: mono, fontWeight: 500, textAnchor: "end" }),
-      Plot.text([{ date: new Date(Date.UTC(2020, 7, 1)), value: 13 }], { x: "date", y: "value", text: ["rain falls in the monsoon; the print answers by winter"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "middle" }),
+      Plot.text([pNow], { x: "date", y: "value", text: () => "Dec 2025 · " + pNow.value.toFixed(2) + "%", dx: 12, dy: -2, fill: "#BE3E26", fontSize: 13, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.text([{ date: new Date(Date.UTC(2017, 5, 1)), value: 13.8 }], { x: "date", y: "value", text: ["rain falls in the monsoon; the print answers by winter"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "middle" }),
     ],
   });
   a11y(plot, "Food inflation rate with monsoon episodes marked, January 2016 to December 2025",

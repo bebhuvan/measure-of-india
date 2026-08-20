@@ -6,7 +6,7 @@
 // is kept as a cross-check.
 
 import { mospi } from "../mospi.mjs";
-import { writeJson, writeRaw, yoyFromLevels, monthAxis } from "../util.mjs";
+import { writeSeries, writeRaw, yoyFromLevels, monthAxis } from "../util.mjs";
 
 // month_code (fiscal order) + FY label ("2026-27") -> "YYYY-MM"
 function ispMonth(fy, monthCode) {
@@ -55,6 +55,7 @@ export async function buildIsp(root, dcfg, vintage) {
     meta: {
       dossier: "isp", frequency: "monthly", base: dcfg.base,
       source: dcfg.source_agency, vintage, mock: false,
+      geo: dcfg.geo ?? "IND",
       latestPeriod: allMonths.at(-1),
       releaseDate: null,
       note: "Trial series, from April 2025. Levels only until 13 months exist; the first computable y/y is April 2026.",
@@ -65,6 +66,6 @@ export async function buildIsp(root, dcfg, vintage) {
   };
   const raw = { vintage, unit: "index, base 2024-25=100", rows: rawRows };
   writeRaw(root, "data/raw/isp-levels.json", raw);
-  writeJson(root, "data/series/isp.json", bundle);
+  writeSeries(root, "data/series/isp.json", bundle);
   return bundle;
 }

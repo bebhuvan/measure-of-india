@@ -1,0 +1,445 @@
+---
+import Base from "../../layouts/Base.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+const D = bySlug["nfhs"];
+---
+<Base
+  title="India Atlas — Health · Dossier 12"
+  description={D.description}
+  nav="dossiers"
+  dateStamp={D.dateStamp}
+  crumbLeft={`<a href="/" style="color:inherit">Dossiers</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote} · <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/dossiers/nfhs/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">Between 2015 and 2021, India's flagship health survey found fewer infant deaths, more institutional births, cleaner toilets and a fertility rate below replacement. It also found two in three children anaemic — up from three in five. The health story has two directions, and they are both real.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>MoSPI / IIPS</b></span>
+      <span>Instrument <b>Household sample survey · two rounds</b></span>
+      <span>Rounds <b>NFHS-4 (2015-16) &amp; NFHS-5 (2019-21)</b></span>
+      <span>Coverage <b>All India · 36 states/UTs · ~600k households</b></span>
+      <span>Indicators <b>21 · 102 sub-indicators baked</b></span>
+      <span>Unit <b>Per cent (unless noted)</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Children anaemic · 6-59 months</div><div class="v acc" id="n-anaemia">–</div><div class="d" id="d-anaemia">–</div></div>
+      <div class="num"><div class="l">Infant mortality · per 1,000</div><div class="v" id="n-imr">–</div><div class="d" id="d-imr">–</div></div>
+      <div class="num"><div class="l">Institutional births · per cent</div><div class="v" id="n-institutional">–</div><div class="d" id="d-institutional">–</div></div>
+      <div class="num"><div class="l">Total Fertility Rate</div><div class="v" id="n-tfr">–</div><div class="d" id="d-tfr">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">NFHS-5 · 2019-21</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Child anaemia · NFHS-5</span><div class="big" id="rb-anaemia">–</div></div>
+      <p class="rt-cap">Children age 6-59 months who are anaemic (haemoglobin below 11.0 g/dL) — up from <b id="rt-anaemia-prev">–</b> in NFHS-4. Every demographic group saw anaemia rise between the two rounds, a reversal in a country where most health indicators improved.</p>
+      <div><span class="rk">NFHS-4 · the previous round</span><div class="big" id="rb-anaemia-prev" style="font-size:44px">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the print says</span>
+        <p>NFHS-5 found <b id="cr-anaemia">–</b> of children anaemic, up from <b id="cr-anaemia-prev">–</b>. Infant mortality fell to <b id="cr-imr">–</b> per thousand, from <b id="cr-imr-prev">–</b>. Institutional births reached <b id="cr-institutional">–</b>, from <b id="cr-institutional-prev">–</b>. The fertility rate fell below replacement to <b id="cr-tfr">–</b>.</p>
+        <p>Stunting fell to <b id="cr-stunting">–</b>, wasting to <b id="cr-wasting">–</b>, underweight to <b id="cr-underweight">–</b>. Women's bank-account ownership jumped from <b id="cr-bank-prev">–</b> to <b id="cr-bank">–</b>. Spousal violence fell from <b id="cr-violence-prev">–</b> to <b id="cr-violence">–</b>.</p>
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What it does not say</span>
+        <p>It does not say why anaemia worsened. The survey measures haemoglobin from a finger-prick blood sample; the method changed between rounds (capillary vs venous, different analysers), and part of the rise may be a measurement artefact. But the direction — up — is confirmed by every sub-group, which a purely methodological shift would not produce.</p>
+        <p>Nor does NFHS-5 say anything about COVID. Fieldwork largely preceded the pandemic (the second phase was disrupted but completed by April 2021). The survey is a pre-COVID health baseline, not a post-COVID one.</p>
+        <p>And the two rounds are not perfectly comparable: some indicators changed definition, some are new. Each carries its own footnote in the survey report; this dossier discloses the breaks it knows about.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 register -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>The register of series</h2><span class="line"></span><span class="unit">NFHS-5 · vs NFHS-4 · direction of change</span></div>
+    <div class="break ledger">
+      <table>
+        <thead>
+          <tr><th>Series</th><th>NFHS-5</th><th>vs NFHS-4</th><th>NFHS-4</th></tr>
+        </thead>
+        <tbody id="ledger-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- § 03 direction of change -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>The direction of change</h2><span class="line"></span><span class="unit">Key indicators · NFHS-4 → NFHS-5 · percentage-point change</span></div>
+    <div class="break">
+      <figure id="cb-direction" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Most lines went the right way — except anaemia and obesity</h3>
+            <div class="sub">Percentage-point change between NFHS-4 and NFHS-5 · vermilion = worsened, grey = improved · each bar tagged by whether the direction is favourable</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-direction">–</div><div class="c">child anaemia · the largest unfavourable change</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-direction"></div>
+          <div class="plotfoot">
+            <span class="src">Source — NFHS-4 &amp; NFHS-5, All India, Rural + Urban (Combined · change = NFHS-5 minus NFHS-4 · "worsened" is editor-judged: anaemia up, obesity up, C-section up, tobacco-for-women up are unfavourable despite "improving" numbers; the tag is disclosed per bar</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rchips.org/nfhs" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>One bar per indicator, showing the percentage-point change between the two survey rounds. Bars right of the zero line increased; bars left decreased. The colour is the judgement: vermilion means the change is unfavourable (anaemia rose, obesity rose, C-sections rose), regardless of direction. Grey means favourable.</p>
+            <p>The chart is the dossier's thesis in one image. The grey bars dominate — mortality fell, births moved to facilities, sanitation spread, women's empowerment leapt. But the vermilion bars cluster at the top: anaemia and obesity, the two indicators that went the wrong way, and they moved more than most.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 04 headline : anaemia -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>Plate 1 — the anaemia reversal</h2><span class="line"></span><span class="unit">Anaemia by demographic · NFHS-4 → NFHS-5 · per cent</span></div>
+    <div class="break">
+      <figure id="cb-anaemia" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Every group worsened</h3>
+            <div class="sub">Anaemia prevalence by demographic group · All India · Combined · NFHS-4 (left dot) → NFHS-5 (right dot) · dumbbells</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-anaemia">–</div><div class="c">children · the steepest rise</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-anaemia"></div>
+          <div class="plotfoot">
+            <span class="src">Source — NFHS, anaemia by demographic · haemoglobin below age/sex-specific thresholds (children &lt;11.0, women &lt;12.0, pregnant women &lt;11.0, men &lt;13.0 g/dL) · the method changed between rounds (HemoCue Hb 201+ to Hb 301), which may explain part of the rise; the uniform direction across all groups suggests a real worsening alongside</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rchips.org/nfhs" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Five dumbbells, one per demographic group. The grey dot is NFHS-4, the vermilion dot NFHS-5. Every dumbbell shifts right — anaemia rose for children, for non-pregnant women, for pregnant women, for all women. Men (NFHS-5 only, no comparison) sit at 25 per cent. Children rose the most: <b id="ex-anaemia-rise">–</b> points in five years.</p>
+            <p>The method change (a more sensitive analyser in NFHS-5) inflates the level — but the survey's own report notes the direction holds even after adjusting. India did not get more anaemic by measurement alone; something real worsened, and the survey cannot fully explain it.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of NFHS-5</span>
+            <p>Children <b id="ex-an-children">–</b>, non-pregnant women <b id="ex-an-women">–</b>, pregnant women <b id="ex-an-pregnant">–</b>, men <b id="ex-an-men">–</b>. Every group above half — except men. The rise from NFHS-4: children <b id="ex-an-rise-children">–</b> pt, women <b id="ex-an-rise-women">–</b> pt.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 what this measures -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="wm-grid">
+      <div>
+        <p>The National Family Health Survey is India's flagship health interview — a household sample of 600,000 households across all states, run roughly every five years by the International Institute for Population Sciences under MoSPI. It measures what a clinic measures, door to door: height and weight, a finger-prick for haemoglobin and blood sugar, a blood-pressure cuff, a questionnaire on birth history, vaccination, marriage, work, violence. NFHS-5 (2019-21) is the latest round; NFHS-4 (2015-16) is the comparison.</p>
+        <p>The survey reports <b>prevalence</b>, not incidence — what fraction of a population has a condition at the time of the survey. Every figure here is a per cent (unless noted), measured on the Combined sector (rural + urban together), for All India. State-level estimates are published separately; this dossier carries them for the key indicators.</p>
+        <p>The two rounds are compared by design, but definitions shifted for some indicators. Anaemia used a different analyser (HemoCue Hb 301 in NFHS-5 vs Hb 201+ in NFHS-4); blood-pressure thresholds were redefined. Where a methodological break is known, this dossier discloses it. Where it is not, the change is taken at face value.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note · i</span>
+          <b>The anaemia method changed.</b> NFHS-5 used a more sensitive analyser (HemoCue Hb 301). Part of the rise may be artefact — but the uniform direction across every group signals a real worsening too.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · ii</span>
+          <b>Pre-COVID.</b> NFHS-5 fieldwork largely preceded the pandemic. This is a pre-COVID baseline, not a post-COVID reading.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note · iii</span>
+          <b>Two rounds, never chained.</b> Each sub-indicator is a cross-sectional estimate. The comparison is editorial, not a time series. Growth rates are not computed.
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 06 child health -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>Plate 2 — child survival and nutrition</h2><span class="line"></span><span class="unit">IMR, stunting, wasting, underweight, feeding · NFHS-4 → NFHS-5</span></div>
+    <div class="break">
+      <figure id="cb-child" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Fewer deaths, less stunting — but still a third undernourished</h3>
+            <div class="sub">Child mortality &amp; nutritional status · All India · Combined · NFHS-4 → NFHS-5 dumbbells</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-child">–</div><div class="c">stunting · still one in three</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-child"></div>
+          <div class="plotfoot">
+            <span class="src">Source — NFHS · IMR per 1,000 live births; stunting/wasting/underweight per cent of under-5 children · all improved between rounds; the absolute levels remain high by international comparison</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rchips.org/nfhs" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Seven dumbbells. The three mortality lines (IMR, under-five, neonatal) and three nutrition lines (stunting, wasting, underweight) all shifted left — fewer deaths, less undernourishment. Exclusive breastfeeding rose. The improvement is real and broad-based.</p>
+            <p>But read the levels, not just the direction. A third of under-five children are still stunted — chronically undernourished, their growth faltered. India's stunting rate is two to three times that of comparable-income countries. The line moved the right way; the room it left is still vast.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of NFHS-5</span>
+            <p>IMR <b id="ex-ch-imr">–</b>, stunting <b id="ex-ch-stunt">–</b>, wasting <b id="ex-ch-waste">–</b>, underweight <b id="ex-ch-uw">–</b>, exclusive breastfeeding <b id="ex-ch-bf">–</b>. Stunting fell <b id="ex-ch-stunt-drop">–</b> pt; IMR fell <b id="ex-ch-imr-drop">–</b> per thousand.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 maternal care -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>Plate 3 — where the births happen</h2><span class="line"></span><span class="unit">Institutional births, skilled attendance, ANC, C-section · NFHS-4 → NFHS-5</span></div>
+    <div class="break">
+      <figure id="cb-maternal" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Nine in ten births in a facility — and a rising C-section rate</h3>
+            <div class="sub">Delivery care · All India · Combined · NFHS-4 → NFHS-5 dumbbells</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-maternal">–</div><div class="c">C-section in private facilities · NFHS-5</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-maternal"></div>
+          <div class="plotfoot">
+            <span class="src">Source — NFHS · institutional births, skilled birth attendance, 4+ ANC visits, IFA 100+ days, C-section (overall, public, private) · the C-section rate in private facilities (47%) is well above the WHO 10-15% threshold · ANC and IFA improved; C-section rose across all sectors</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rchips.org/nfhs" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Six dumbbells. Institutional births and skilled attendance both rose to about nine in ten — a genuine system achievement, driven by the Janani Suraksha Yojana and Janani Shishu Suraksha Karyakram programmes that paid women to deliver in facilities. Four-plus ANC visits and IFA supplementation improved.</p>
+            <p>The last dumbbell is the concern: C-section rates rose across all sectors, but in private facilities nearly one in two births is now surgical — far above the WHO's 10-15 per cent threshold. The rise partly reflects more high-risk deliveries reaching facilities; it also reflects a supply-side incentive to operate.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of NFHS-5</span>
+            <p>Institutional births <b id="ex-ma-inst">–</b>, skilled attendance <b id="ex-ma-skilled">–</b>, C-section overall <b id="ex-ma-cs">–</b>, C-section private <b id="ex-ma-csp">–</b>, C-section public <b id="ex-ma-csu">–</b>, 4+ ANC <b id="ex-ma-anc">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 adult NCDs -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>Plate 4 — the dual burden</h2><span class="line"></span><span class="unit">Underweight &amp; overweight · tobacco &amp; alcohol · by gender · NFHS-4 → NFHS-5</span></div>
+    <div class="break">
+      <figure id="cb-adult" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Underweight fell, overweight rose — the epidemiological transition</h3>
+            <div class="sub">Adult nutritional status &amp; risk factors · All India · Combined · by gender · NFHS-4 → NFHS-5 dumbbells</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-adult">–</div><div class="c">women overweight or obese · NFHS-5</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-adult"></div>
+          <div class="plotfoot">
+            <span class="src">Source — NFHS · BMI below normal (thin) and overweight/obese (BMI ≥25) for adults 15-49, by gender · tobacco &amp; alcohol use 15+ · the dual burden: undernutrition persists while obesity spreads; men's tobacco &amp; alcohol fell; women's tobacco rose slightly</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rchips.org/nfhs" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Eight dumbbells, four pairs. The BMI dumbbells tell the transition: below-normal BMI fell for both sexes (fewer thin people), but overweight rose (more obese people). India now carries both burdens at once — undernutrition among the poor, obesity among the middle class, sometimes in the same district.</p>
+            <p>Tobacco and alcohol tell a gender story. Men's use of both fell sharply — a genuine public-health gain. Women's tobacco rose slightly, from a low base. The gender gap in tobacco is enormous (38% of men vs 9% of women) and narrowing only because men quit, not because women start.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of NFHS-5</span>
+            <p>Women overweight <b id="ex-ad-wov">–</b>, men overweight <b id="ex-ad-mov">–</b>. Women underweight <b id="ex-ad-wth">–</b>, men underweight <b id="ex-ad-mth">–</b>. Men's tobacco <b id="ex-ad-mto">–</b>, women's tobacco <b id="ex-ad-wto">–</b>. Men's alcohol <b id="ex-ad-mal">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 fertility & empowerment -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>Plate 5 — fertility, empowerment, safety</h2><span class="line"></span><span class="unit">TFR, child marriage, bank account, mobile, violence · NFHS-4 → NFHS-5</span></div>
+    <div class="break">
+      <figure id="cb-empower" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The bank-account revolution, and the fertility line crossed</h3>
+            <div class="sub">Fertility, women's empowerment &amp; safety · All India · Combined · NFHS-4 → NFHS-5 dumbbells</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-empower">–</div><div class="c">women with a bank account · the steepest rise</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-empower"></div>
+          <div class="plotfoot">
+            <span class="src">Source — NFHS · TFR, child marriage, women's bank account, mobile phone, property ownership, menstrual hygiene, spousal violence · the bank-account jump (3% → 79%) is the Jan Dhan / DBT revolution visible in one number; fertility fell below replacement (2.1) to 1.99</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rchips.org/nfhs" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Seven dumbbells. The steepest is the bank-account line: women's account ownership jumped from 3 per cent to 79 per cent — the Jan Dhan Yojana and direct-benefit transfers put a financial instrument in the hands of most Indian women in five years. Mobile-phone ownership, property ownership and menstrual-hygiene use all rose sharply.</p>
+            <p>Fertility fell below replacement (2.1) to 1.99 — India is now a below-replacement country. Child marriage fell. Spousal violence fell from 46 to 29 per cent. The empowerment indicators moved faster than any health indicator on the page.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of NFHS-5</span>
+            <p>TFR <b id="ex-em-tfr">–</b>, child marriage <b id="ex-em-cm">–</b>, bank account <b id="ex-em-bank">–</b>, mobile <b id="ex-em-mobile">–</b>, violence <b id="ex-em-violence">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 10 household infrastructure -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>Plate 6 — the household backdrop</h2><span class="line"></span><span class="unit">Sanitation, electricity, water, clean fuel · NFHS-4 → NFHS-5</span></div>
+    <div class="break">
+      <figure id="cb-household" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Swachh Bharat on one chart</h3>
+            <div class="sub">Household infrastructure · All India · Combined · NFHS-4 → NFHS-5 dumbbells</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-household">–</div><div class="c">improved sanitation · the largest gain</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-household"></div>
+          <div class="plotfoot">
+            <span class="src">Source — NFHS household profile · population with electricity, improved water, improved sanitation, clean cooking fuel, health insurance · sanitation rose 22 pt (Swachh Bharat); electricity reached 97%; clean fuel remains below 60%</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rchips.org/nfhs" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Five dumbbells. The sanitation line moved the furthest: from 48 per cent of households with improved sanitation to 70 per cent — the statistical signature of the Swachh Bharat Mission, which built tens of millions of toilets between the two rounds. Electricity reached 97 per cent of the population. Clean cooking fuel lagged: still under 60 per cent, meaning four in ten households still cook on solid fuel.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of NFHS-5</span>
+            <p>Electricity <b id="ex-hh-elec">–</b>, sanitation <b id="ex-hh-sani">–</b>, water <b id="ex-hh-water">–</b>, clean fuel <b id="ex-hh-fuel">–</b>, health insurance <b id="ex-hh-insurance">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 11 state dispersion -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>Plate 7 — where anaemia is worst</h2><span class="line"></span><span class="unit">Child anaemia by state · NFHS-5 · per cent</span></div>
+    <div class="break">
+      <figure id="cb-states" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>From Kerala's 39 to Ladakh's 92</h3>
+            <div class="sub">Children age 6-59 months anaemic · by state/UT · NFHS-5 · the vermilion rule is the All-India average</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-states">–</div><div class="c">spread: highest minus lowest state</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-states"></div>
+          <div class="plotfoot">
+            <span class="src">Source — NFHS-5 · child anaemia (6-59 months, Hb &lt;11.0 g/dL) by state/UT · the All-India average is 67%; the spread runs from Kerala (39%) through a north-eastern cluster in the 40s to Gujarat (80%) and Ladakh (92%) · the geography does not follow income — Gujarat is among the richest states and the most anaemic</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rchips.org/nfhs" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>One dot per state, sorted low to high. The All-India rule (67 per cent) sits in the middle of the strip — meaning half the states are worse than the national average. The spread is enormous: from Kerala's 39 per cent (comparable to middle-income countries) to Ladakh's 92 per cent (nine in ten children).</p>
+            <p>The geography confounds income. Gujarat — among India's richest states — has the second-worst child anaemia rate (80 per cent). The north-eastern states cluster better (40s), defying their lower per-capita income. Anaemia follows diet, public health and genetics, not GDP.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of NFHS-5</span>
+            <p>Best: <b id="ex-st-best">–</b>. Worst: <b id="ex-st-worst">–</b>. Spread: <b id="ex-st-spread">–</b> percentage points. States above the All-India line: <b id="ex-st-above">–</b> of <b id="ex-st-n">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 12 how to misread -->
+  <section>
+    <div class="sec-head"><span class="no">12</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li>
+        <span class="no">i.</span>
+        <div>
+          <h3>"Anaemia rose from 58% to 67% — children's health is getting worse."</h3>
+          <p>It may be — but the survey changed its haemoglobin analyser between rounds (HemoCue Hb 201+ to Hb 301), and the newer device reads higher. Part of the rise is methodological. The uniform direction across every group (children, women, men) signals a real component, but the survey report itself cautions against taking the full increase at face value.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">ii.</span>
+        <div>
+          <h3>"TFR is below replacement — India doesn't need population control."</h3>
+          <p>National TFR is 1.99, below the replacement rate of 2.1. But four large states — Bihar, Uttar Pradesh, Jharkhand, Meghalaya — are still above it. India's population will keep growing for decades because of momentum (a large youth cohort entering reproductive age), even with below-replacement fertility. "Below replacement" does not mean "shrinking."</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iii.</span>
+        <div>
+          <h3>"Institutional births reached 89% — maternal health is solved."</h3>
+          <p>Institutional delivery measures where the birth happened, not what happened there. A woman who delivers in a facility but receives no postnatal check-up, or has a C-section without medical indication, is counted the same as one with full care. The rise in institutional births is a supply-side achievement; the quality of care inside the facility is a different question.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iv.</span>
+        <div>
+          <h3>"Women's bank accounts jumped from 3% to 79% — women are financially empowered."</h3>
+          <p>The accounts exist — the Jan Dhan Yojana opened them. Whether women control them is another matter. Many are DBT conduits (benefits transferred in, withdrawn by a male relative); the survey counts account ownership, not account use. The rise is real; financial empowerment is the step after.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">v.</span>
+        <div>
+          <h3>"Gujarat has 80% child anaemia — it's a poor state."</h3>
+          <p>Gujarat is among India's richest states by per-capita income. Anaemia does not follow income: it follows diet (iron, folate, B12 intake), infection load (malaria, hookworm), genetics (thalassaemia, sickle-cell trait) and food systems. Wealth buys treatment, not prevention; the anaemia geography confounds the income geography.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">vi.</span>
+        <div>
+          <h3>"These two rounds show a trend."</h3>
+          <p>They show a comparison. Two points do not make a trend; they make a direction. The next round (NFHS-6, expected 2024-25) will confirm whether anaemia's rise is a trend or a methodological artefact, whether fertility keeps falling, whether the empowerment gains hold. Until then, read the arrows as one interval's movement, not a trajectory.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <footer class="provenance">
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>MoSPI / International Institute for Population Sciences (IIPS). National Family Health Survey, rounds 4 (2015-16) and 5 (2019-21). Retrieved via the eSankhyiki API (nfhs/getNfhsRecords), vintage <b id="prov-vintage">–</b>. All 21 indicators are ingested raw (data/raw/nfhs-records.json); seven thematic bundles carry the 102 All-India Combined sub-indicators with both survey values, plus 140 state-level cuts for NFHS-5.</p>
+        <p><b>Methodological note.</b> Anaemia was measured with a different device in NFHS-5 (HemoCue Hb 301) than NFHS-4 (Hb 201+); blood-pressure thresholds were redefined. Where a methodological break is known it is disclosed on the chart. The two rounds are cross-sectional estimates compared by design; they are never chained and growth rates are not computed.</p>
+      </div>
+      <div>
+        <h6>Revisions &amp; uncertainty</h6>
+        <p>NFHS estimates are final on release. Sampling errors are published in the survey report; small states have wider confidence intervals. The survey covers ~600,000 households per round — large, but still a sample. NFHS-5 fieldwork was disrupted by COVID in its second phase (March-April 2021); the national estimate blends pre-pandemic and pandemic-period data.</p>
+      </div>
+      <div>
+        <h6>This dossier</h6>
+        <p>Dossier 12 · Health · version 1.0 · covers the full NFHS landscape: the direction-of-change signature chart, anaemia deep-dive, child survival &amp; nutrition, maternal care (including C-section), adult NCDs (the dual burden), women's empowerment, household infrastructure and state dispersion. Next scheduled revision: on release of NFHS-6.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas · Dossier 12 · NFHS</span>
+      <span>Vintage <span id="prov-vintage2">–</span> · two rounds, never chained</span>
+      <span>Set in Archivo, Newsreader &amp; Plex Mono</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../../dossiers/nfhs.client.js";
+</script>
+</Base>

@@ -8,16 +8,27 @@
 # the changeover ("base revised 2011-12 → 2022-23"). A series that crosses a
 # base revision is a defect; validate.mjs fails on it.
 
-api:
-  base: https://api.mospi.gov.in/api/
-  note: >
-    MoSPI eSankhyiki API. The host requires legacy TLS renegotiation;
-    scripts/lib/mospi.mjs sets SSL_OP_LEGACY_SERVER_CONNECT. Endpoint names
-    were recovered from the eSankhyiki SPA bundle (see esankhyiki-api.md).
+families:
+  mospi:
+    transport: mospi
+    base: https://api.mospi.gov.in/api/
+    note: >
+      MoSPI eSankhyiki API. The host requires legacy TLS renegotiation;
+      scripts/lib/mospi.mjs sets SSL_OP_LEGACY_SERVER_CONNECT. Endpoint names
+      were recovered from the eSankhyiki SPA bundle (see docs/reference/esankhyiki-api.md).
+  worldbank:
+    transport: worldbank
+    base: https://api.worldbank.org/v2/
+    note: >
+      World Bank API v2 (WDI, Data360). JSON envelope [metadata, rows];
+      scripts/lib/worldbank.mjs paginates it. No key required; be polite:
+      per_page 500, one request at a time.
 
 dossiers:
 
   cpi:
+    family: mospi
+    geo: IND
     product: cpi
     frequency: monthly
     base: "2012=100"
@@ -131,6 +142,8 @@ dossiers:
     archive2010: true
 
   gdp:
+    family: mospi
+    geo: IND
     product: nas
     frequency: quarterly   # fiscal quarters: Q1 = Apr–Jun
     base: "2011-12"
@@ -216,6 +229,8 @@ dossiers:
     window2022: { start: "2023-Q1" }  # first quarter with a same-base year-ago level
 
   wpi:
+    family: mospi
+    geo: IND
     product: wpi
     frequency: monthly
     base: "2011-12=100"
@@ -265,6 +280,8 @@ dossiers:
     window: { start: "2016-01" }
 
   cpialrl:
+    family: mospi
+    geo: IND
     product: cpialrl
     frequency: monthly
     base: "2019=100"        # current base; old base "1986-87=100" fetched as a
@@ -292,6 +309,8 @@ dossiers:
       rl: y/y of index_rl (old base only)
 
   plfs:
+    family: mospi
+    geo: IND
     product: plfs
     frequency: monthly        # primary bundle; a quarterly bundle is also emitted
     base: "survey 2017-18 onward"   # no index base; design breaks are the analogue
@@ -349,6 +368,8 @@ dossiers:
       #       (UR by education level + the 15-29 youth cut, PS+SS).
 
   rbi:
+    family: mospi
+    geo: IND
     product: rbi
     frequency: monthly
     base: "as published (US$ Millions; ₹ per US$)"
@@ -392,6 +413,8 @@ dossiers:
       # behind 36), 43/45 (₹ twins of 44/46), 48 (annual twin of 47).
 
   iip:
+    family: mospi
+    geo: IND
     product: iip
     frequency: monthly
     base: "2022-23=100"       # current base; base "2011-12=100" fetched as
@@ -431,6 +454,8 @@ dossiers:
       bases: ["2022-23", "2011-12", "2004-05", "1993-94"]
 
   hces:
+    family: mospi
+    geo: IND
     product: hces
     frequency: annual
     base: "survey 2022-23 & 2023-24"
@@ -462,6 +487,8 @@ dossiers:
         "9": gini                  # Gini coefficient of PCE
 
   asi:
+    family: mospi
+    geo: IND
     product: asi
     frequency: annual
     base: "NIC 2008"        # current classification. The NIC 2004/1998/1987
@@ -557,6 +584,8 @@ dossiers:
             "59": total_emoluments   # unit "-" at source; it is ₹ lakh (disclosed)
 
   asuse:
+    family: mospi
+    geo: IND
     product: asuse
     frequency: annual         # primary; a quarterly bulletin bundle is also emitted
     base: "survey 2021-22 onward"
@@ -620,6 +649,8 @@ dossiers:
         "50": share_other_workers
 
   isp:
+    family: mospi
+    geo: IND
     product: isp
     frequency: monthly
     base: "2024-25=100"
@@ -632,3 +663,192 @@ dossiers:
       # rows carry no month field: fetch per month_code (1=April..12=March,
       # fiscal order) and read each row's own fiscal-year label. The year
       # param breaks filtering — do not send it.
+
+  aishe:
+    family: mospi
+    geo: IND
+    product: aishe
+    frequency: annual
+    base: "AISHE survey rounds"
+    release_calendar: "one report per survey year, ~1-year lag"
+    revision_policy: "Survey estimates are final on release. Each survey year is a cross-section; the five years (2017-18 to 2021-22) are comparable by design but are never chained into a spliced index."
+    source_agency: "Ministry of Education (Department of Higher Education), via MoSPI eSankhyiki"
+    release_url: https://aishe.gov.in
+    fetch:
+      endpoint: aishe/getAisheRecords
+      # All 9 AISHE indicators (aishe/getAisheIndicatorList) are small (~17k
+      # rows total across 5 years), so each is ingested IN FULL (paged,
+      # limit=500, keyed by indicator_code only) and sliced client-side —
+      # the rbi/hces approach. Five survey years are served: 2017-18 to
+      # 2021-22, plotted at April of the first year. Rows are plain
+      # (indicator, year, state, value) for ind 1/2, then gain dimensions:
+      #   3 enrolment    — gender × education_level (9 levels incl. Grand Total)
+      #   4 social grp   — social_category × gender
+      #   5 PWD/minority — gender × social_group
+      #   6 GER          — social_category × gender (SC/ST/All only — no OBC)
+      #   7 GPI          — social_category (no gender: GPI is itself a ratio)
+      #   8 PTR          — learning_mode × institution_type
+      #   9 teachers     — gender × faculty_type (7 types incl. All Teacher)
+      # SOURCE DEFECT (ind 9, 2021-22): the API's "All Teacher" total row is
+      # garbled for 2021-22 — All India prints 12,904 (against ~1.55M the
+      # prior year) and every state cell is likewise a near-zero residual;
+      # the same year's "Visiting Teacher" row carries the real total
+      # (~1.60M). The fetcher reconstructs 2021-22 teachers as the sum of
+      # the five regular faculty types (Professor & Equivalent + Reader &
+      # Associate Professor + Lecturer/Assistant Professor + Demonstrator/Tutor
+      # + Temporary Teacher), which equals 99.0-99.2% of the published total
+      # in every clean year — disclosed in meta.note.
+      indicators:
+        "1": universities
+        "2": colleges
+        "3": enrolment
+        "4": social_group
+        "5": pwd_minority
+        "6": ger
+        "7": gpi
+        "8": ptr
+        "9": teachers
+
+  gender:
+    family: mospi
+    geo: IND
+    product: gender
+    frequency: varies      # each indicator draws on a different source & cadence
+    base: "multi-source compendium (Census, SRS, NFHS, PLFS, NCRB, et al.)"
+    release_calendar: "annual 'Women and Men in India' compendium; each indicator carries its own source vintage"
+    revision_policy: "Each indicator is final as its underlying source publishes; the compendium is a curated cross-source portrait, never a single survey."
+    source_agency: "MoSPI, from multiple source agencies (Office of the Registrar General, NFHS, NCRB, Ministry of Education, et al.)"
+    release_url: https://www.mospi.gov.in
+    fetch:
+      endpoint: gender/getGenderRecords
+      # "Women and Men in India" — 157 indicators spanning population, fertility,
+      # mortality, health, education, work, finance, politics and safety. Each
+      # indicator is its own mini-table from a different source, with its own
+      # dimensions and time coverage; there is no shared base year or cadence.
+      # Every row keys on (year, state/UT) and gains dimensions per indicator:
+      # gender, sector, education_level, age_group, sub_indicator, crime_head,
+      # survey. The fetcher ingests ~20 core indicators that form the dossier's
+      # spine to raw, and bakes each as its own bundle with its own date axis —
+      # the varying cadences (census decadal, SRS annual, NFHS cross-sectional,
+      # MMR 3-year moving periods, life-expectancy 5-year cohorts) make a shared
+      # axis impossible and a forced one dishonest.
+      # The dossier (Dossier 10) covers the gender panorama: sex ratio (the
+      # 70-year census story), survival (IMR by gender, MMR, life expectancy
+      # convergence), fertility (TFR), education (literacy gap), work (LFPR) and
+      # state dispersion.
+      indicators:
+        "2": sex_ratio           # census 1951-2011, by state
+        "6": sex_ratio_state     # SRS, by state, more recent
+        "10": tfr                # by sector × education_level
+        "14": age_marriage       # mean age at marriage, by sector
+        "15": imr                # SRS annual 2008-2020, by gender
+        "16": imr_state          # by state × sector × gender
+        "17": u5mr              # under-5 mortality, by gender
+        "18": life_expectancy    # 5-year cohorts 1990-94 to 2031-36*, by gender
+        "19": life_exp_state     # by state × sector × gender
+        "21": mmr               # 3-year moving periods 2004-06 to 2018-20
+        "22": maternity_care     # sub_indicator × survey
+        "28": obesity           # by gender × survey
+        "55": literacy          # by sector × gender, census + 2017*
+        "80": lfpr              # by sector × gender × age_group (PLFS)
+        "93": unemployment      # by sector × gender (PLFS)
+        "141": crime_rate       # by sub_indicator × crime_head (NCRB)
+        "146": child_marriage   # % women 20-24 married before 18
+
+  mnre:
+    family: mospi
+    geo: IND
+    product: mnre
+    frequency: monthly
+    base: "installed capacity (MW)"
+    release_calendar: "monthly, with a lag"
+    revision_policy: "Cumulative installed capacity stock; revised as capacity is added or retired. Final on release."
+    source_agency: "Ministry of New and Renewable Energy (via MoSPI eSankhyiki)"
+    release_url: https://mnre.gov.in
+    fetch:
+      endpoint: mnre/getDataByEnergy
+      # Five renewable energy types, each a cumulative INSTALLED CAPACITY
+      # stock in MW (not generation): Solar (1), Wind (2), Hydro (3), Bio (4),
+      # Total (5). Monthly from Jan 2020 to the latest month served.
+      # state_code 36 = All India. Categories vary by type:
+      #   Solar (1):  Ground Mounted / Rooftop (PM Surya Ghar) / Hybrid /
+      #               Off-Grid KUSUM / Solar Power Total
+      #   Wind (2):   no category dimension (single total per month)
+      #   Hydro (3):  Small Hydro / Large Hydro
+      #   Bio (4):    Waste to Energy / Biomass Bagasse / Biomass Non-Bagasse /
+      #               Waste to Energy Off-Grid / Bio Power Total
+      #   Total (5):  no category (grand total of all RE capacity)
+      #
+      # CLASSIFICATION BREAK — "large hydro added" (Dec 2023):
+      # Large Hydro Power (type 3) reads 0.00 MW through Nov 2023, then jumps
+      # to ~46,910 MW in Dec 2023. This is not a capacity addition — it is a
+      # definitional change: large hydro (>25 MW) was folded into the RE
+      # total starting Dec 2023. The published Grand Total (type 5) carries
+      # the step: 132.7 GW (Nov 2023) → 180.8 GW (Dec 2023), of which ~47 GW
+      # is the reclassification. The Total series before and after Dec 2023
+      # is NOT comparable — the dossier annotates the break as a seam and
+      # never computes growth across it. Individual sources (Solar, Wind,
+      # Small Hydro, Bio) are unaffected.
+      types:
+        "1": solar
+        "2": wind
+        "3": hydro
+        "4": bio
+        "5": total
+      state_all_india: 36
+
+  nfhs:
+    family: mospi
+    geo: IND
+    product: nfhs
+    frequency: cross-sectional     # two survey rounds only (NFHS-4 & NFHS-5)
+    base: "NFHS-4 (2015-16) & NFHS-5 (2019-21)"
+    release_calendar: "one round per ~5 years; NFHS-6 expected 2024-25"
+    revision_policy: "Survey estimates are final on release. Each round is a cross-section; the two rounds are compared by design but are never chained."
+    source_agency: "MoSPI / International Institute for Population Sciences (IIPS)"
+    release_url: https://rchips.org/nfhs
+    fetch:
+      endpoint: nfhs/getNfhsRecords
+      # 21 indicators, each with sub_indicator × sector × survey dimensions.
+      # Two survey rounds served: nfhs-4 and nfhs-5. Rows key on
+      # (state, sub_indicator, sector, survey, value). state = "All India"
+      # for national estimates; sector = "Rural + Urban (Combined)" for the
+      # headline. The fetcher ingests ALL 21 indicators to raw and bakes 7
+      # thematic bundles (child, maternal, anaemia, adult, fertility,
+      # household, states), each carrying every All-India Combined
+      # sub-indicator with both survey values on a 2-point date axis
+      # (2016 = NFHS-4 midpoint, 2020 = NFHS-5 midpoint). Some sub-indicators
+      # carry only NFHS-5 data (new in that round) — the NFHS-4 point is null.
+      # The dossier (Dossier 12) covers the full health landscape: child
+      # mortality & nutrition, anaemia (which WORSENED), maternal care,
+      # adult NCDs (the dual burden), fertility, women's empowerment and
+      # state dispersion.
+      indicators:
+        "1": household_profile
+        "2": adult_characteristics
+        "3": marriage_fertility
+        "4": child_mortality
+        "5": family_planning
+        "6": unmet_need_fp
+        "7": fp_quality
+        "8": maternity_care
+        "9": delivery_care
+        "10": child_vaccination
+        "11": childhood_disease
+        "12": child_feeding_nutrition
+        "13": adult_nutrition
+        "14": anaemia
+        "15": blood_sugar
+        "16": hypertension
+        "17": cancer_screening
+        "18": hiv_knowledge
+        "19": womens_empowerment
+        "20": gender_violence
+        "21": tobacco_alcohol
+      themes:
+        child: [4, 10, 12]           # mortality, vaccination, feeding/nutrition
+        maternal: [8, 9]             # maternity care, delivery
+        anaemia: [14]                # anaemia deep-dive
+        adult: [13, 15, 16, 21]      # BMI, blood sugar, BP, tobacco, alcohol
+        fertility: [3, 5, 19, 20]    # fertility, contraception, empowerment, violence
+        household: [1]              # household profile (sanitation, water, etc.)

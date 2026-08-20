@@ -1,0 +1,219 @@
+{
+ "meta": {
+  "dossier": "aishe",
+  "frequency": "annual",
+  "base": "AISHE survey rounds",
+  "source": "Ministry of Education (Department of Higher Education), via MoSPI eSankhyiki",
+  "vintage": "2026-08-09",
+  "mock": false,
+  "latestPeriod": "2021-04",
+  "releaseDate": null,
+  "revisionPolicy": "Survey estimates are final on release. Each survey year is a cross-section; the five years (2017-18 to 2021-22) are comparable by design but are never chained into a spliced index.",
+  "coverage": "All India; teachers by the five regular faculty types × gender (Both/Male/Female), all five survey years. The defective 'All Teacher' total and 'Visiting Teacher' rows are excluded — see the headline-bundle note for the 2021-22 defect.",
+  "note": "Survey years are fiscal (Apr–Mar), plotted at April of the first year. The five AISHE rounds served by the eSankhyiki API (2017-18 to 2021-22) are comparable by design but are never chained into a spliced index. GER (Gross Enrolment Ratio) = enrolled students ÷ the college-age population × 100; it is gross, so it can exceed 100. GPI (Gender Parity Index) = female GER ÷ male GER; 1.0 is parity. The faculty hierarchy runs from Professor & Equivalent (the senior-most rank) down to Temporary Teacher. The five types summed equal 99.0–99.2% of the published 'All Teacher' total in every clean year (the remainder is visiting/guest faculty, excluded here because its 2021-22 row is the source defect)."
+ },
+ "dates": [
+  "2017-04-01",
+  "2018-04-01",
+  "2019-04-01",
+  "2020-04-01",
+  "2021-04-01"
+ ],
+ "series": {
+  "professor_both": {
+   "name": "aishe_teachers_professor_both",
+   "label": "Professor & Equivalent · both",
+   "color": "#5B564B",
+   "data": [
+    114170,
+    128949,
+    139797,
+    146749,
+    151407
+   ],
+   "unit": "count"
+  },
+  "professor_male": {
+   "name": "aishe_teachers_professor_male",
+   "label": "Professor & Equivalent · male",
+   "color": "#8A857A",
+   "data": [
+    83507,
+    93799,
+    101319,
+    104469,
+    106703
+   ],
+   "unit": "count"
+  },
+  "professor_female": {
+   "name": "aishe_teachers_professor_female",
+   "label": "Professor & Equivalent · female",
+   "color": "#A8A293",
+   "data": [
+    30663,
+    35150,
+    38478,
+    42280,
+    44704
+   ],
+   "unit": "count"
+  },
+  "reader_associate_both": {
+   "name": "aishe_teachers_reader_associate_both",
+   "label": "Reader / Associate Prof. · both",
+   "color": "#C6C0B0",
+   "data": [
+    139443,
+    152557,
+    160137,
+    160659,
+    160733
+   ],
+   "unit": "count"
+  },
+  "reader_associate_male": {
+   "name": "aishe_teachers_reader_associate_male",
+   "label": "Reader / Associate Prof. · male",
+   "color": "#5B564B",
+   "data": [
+    88415,
+    96376,
+    100652,
+    100272,
+    99893
+   ],
+   "unit": "count"
+  },
+  "reader_associate_female": {
+   "name": "aishe_teachers_reader_associate_female",
+   "label": "Reader / Associate Prof. · female",
+   "color": "#8A857A",
+   "data": [
+    51028,
+    56181,
+    59485,
+    60387,
+    60840
+   ],
+   "unit": "count"
+  },
+  "lecturer_assistant_both": {
+   "name": "aishe_teachers_lecturer_assistant_both",
+   "label": "Lecturer / Asst. Prof. · both",
+   "color": "#BE3E26",
+   "data": [
+    888427,
+    971201,
+    1023519,
+    1059296,
+    1086526
+   ],
+   "unit": "count"
+  },
+  "lecturer_assistant_male": {
+   "name": "aishe_teachers_lecturer_assistant_male",
+   "label": "Lecturer / Asst. Prof. · male",
+   "color": "#A8A293",
+   "data": [
+    511034,
+    557447,
+    583231,
+    601019,
+    610368
+   ],
+   "unit": "count"
+  },
+  "lecturer_assistant_female": {
+   "name": "aishe_teachers_lecturer_assistant_female",
+   "label": "Lecturer / Asst. Prof. · female",
+   "color": "#C6C0B0",
+   "data": [
+    377393,
+    413754,
+    440288,
+    458277,
+    476158
+   ],
+   "unit": "count"
+  },
+  "demonstrator_both": {
+   "name": "aishe_teachers_demonstrator_both",
+   "label": "Demonstrator / Tutor · both",
+   "color": "#5B564B",
+   "data": [
+    64266,
+    73174,
+    80172,
+    87581,
+    95753
+   ],
+   "unit": "count"
+  },
+  "demonstrator_male": {
+   "name": "aishe_teachers_demonstrator_male",
+   "label": "Demonstrator / Tutor · male",
+   "color": "#8A857A",
+   "data": [
+    22268,
+    25274,
+    27650,
+    29329,
+    32142
+   ],
+   "unit": "count"
+  },
+  "demonstrator_female": {
+   "name": "aishe_teachers_demonstrator_female",
+   "label": "Demonstrator / Tutor · female",
+   "color": "#A8A293",
+   "data": [
+    41998,
+    47900,
+    52522,
+    58252,
+    63611
+   ],
+   "unit": "count"
+  },
+  "temporary_both": {
+   "name": "aishe_teachers_temporary_both",
+   "label": "Temporary Teacher · both",
+   "color": "#C6C0B0",
+   "data": [
+    66858,
+    77510,
+    84956,
+    83741,
+    90365
+   ],
+   "unit": "count"
+  },
+  "temporary_male": {
+   "name": "aishe_teachers_temporary_male",
+   "label": "Temporary Teacher · male",
+   "color": "#5B564B",
+   "data": [
+    33335,
+    39229,
+    43387,
+    43816,
+    47274
+   ],
+   "unit": "count"
+  },
+  "temporary_female": {
+   "name": "aishe_teachers_temporary_female",
+   "label": "Temporary Teacher · female",
+   "color": "#8A857A",
+   "data": [
+    33523,
+    38281,
+    41569,
+    39925,
+    43091
+   ],
+   "unit": "count"
+  }
+ }
+}

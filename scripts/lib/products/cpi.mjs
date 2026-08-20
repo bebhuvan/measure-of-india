@@ -11,7 +11,7 @@
 //   cpi-states-sectors.json — published General index y/y per state/UT, rural + urban
 
 import { mospi } from "../mospi.mjs";
-import { MONTHS, round2, writeJson, writeRaw, yoyFromLevels, monthAxis } from "../util.mjs";
+import { MONTHS, round2, writeSeries, writeRaw, yoyFromLevels, monthAxis } from "../util.mjs";
 
 const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 const GREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
@@ -194,6 +194,7 @@ export async function buildCpi(root, dcfg, vintage) {
       meta: {
         dossier: "cpi", frequency: "monthly", base: dcfg.base,
         source: dcfg.source_agency, vintage, mock: false,
+        geo: dcfg.geo ?? "IND",
         latestPeriod: lastMonth, releaseDate,
         coverage: `All India, ${sector}`,
         estimated: estimated[sector],
@@ -230,6 +231,7 @@ export async function buildCpi(root, dcfg, vintage) {
     meta: {
       dossier: "cpi", frequency: "monthly", base: dcfg.base,
       source: dcfg.source_agency, vintage, mock: false,
+      geo: dcfg.geo ?? "IND",
       latestPeriod: lastMonth, releaseDate,
       coverage: "All India, Combined; the 21 sub-groups below the six groups",
       estimated: estimated.combined,
@@ -268,6 +270,7 @@ export async function buildCpi(root, dcfg, vintage) {
     meta: {
       dossier: "cpi", frequency: "monthly", base: dcfg.base,
       source: dcfg.source_agency, vintage, mock: false,
+      geo: dcfg.geo ?? "IND",
       latestPeriod: lastMonth, releaseDate,
       coverage: "States/UTs, Combined; published General index (state baskets differ — no all-India weights applied)",
       gaps: seriesGaps(Object.values(stateYoy)).map((ym) => `${ym}-01`),
@@ -296,6 +299,7 @@ export async function buildCpi(root, dcfg, vintage) {
     meta: {
       dossier: "cpi", frequency: "monthly", base: dcfg.base,
       source: dcfg.source_agency, vintage, mock: false,
+      geo: dcfg.geo ?? "IND",
       latestPeriod: lastMonth, releaseDate,
       coverage: "States/UTs, Rural and Urban; published General index",
       gaps: seriesGaps(sectorStateYoy).map((ym) => `${ym}-01`),
@@ -317,12 +321,12 @@ export async function buildCpi(root, dcfg, vintage) {
   }
   writeRaw(root, "data/raw/cpi-states-indices.json", rawStates);
 
-  writeJson(root, "data/series/cpi.json", bundleCombined);
-  writeJson(root, "data/series/cpi-rural.json", bundleRural);
-  writeJson(root, "data/series/cpi-urban.json", bundleUrban);
-  writeJson(root, "data/series/cpi-subgroups.json", bundleSubgroups);
-  writeJson(root, "data/series/cpi-states.json", bundleStates);
-  writeJson(root, "data/series/cpi-states-sectors.json", bundleStatesSectors);
+  writeSeries(root, "data/series/cpi.json", bundleCombined);
+  writeSeries(root, "data/series/cpi-rural.json", bundleRural);
+  writeSeries(root, "data/series/cpi-urban.json", bundleUrban);
+  writeSeries(root, "data/series/cpi-subgroups.json", bundleSubgroups);
+  writeSeries(root, "data/series/cpi-states.json", bundleStates);
+  writeSeries(root, "data/series/cpi-states-sectors.json", bundleStatesSectors);
 
   if (dcfg.fetch2024) await buildCpi2024(root, dcfg, vintage);
   if (dcfg.archive2010) await buildCpi2010Archive(root, dcfg, vintage);
@@ -549,6 +553,7 @@ export async function buildCpi2024(root, dcfg, vintage) {
   const meta = (coverage, extra = {}) => ({
     dossier: "cpi", frequency: "monthly", base,
     source: dcfg.source_agency, vintage, mock: false,
+    geo: dcfg.geo ?? "IND",
     latestPeriod: lastMonth, releaseDate, coverage,
     note: "Base 2024=100, a separate series from the 2012 base — never spliced. " +
       "Headline is the published all-groups index (CPI General): the API serves no component weights for this base yet, " +
@@ -684,6 +689,7 @@ export async function buildCpi2024(root, dcfg, vintage) {
     meta: {
       dossier: "cpi", frequency: "monthly", base,
       source: dcfg.source_agency, vintage, mock: false,
+      geo: dcfg.geo ?? "IND",
       latestPeriod: backMonths.at(-1), releaseDate: null,
       coverage: "All India, Combined; General index only",
       note: "The NSO's own back-cast of the 2024-base General index (series=Back), 2013–2024 — " +
@@ -740,13 +746,38 @@ export async function buildCpi2024(root, dcfg, vintage) {
   }
   writeRaw(root, "data/raw/cpi-2024-states-indices.json", rawStates24);
 
-  writeJson(root, "data/series/cpi-2024.json", bundle2024);
-  writeJson(root, "data/series/cpi-2024-sectors.json", bundleSectors2024);
-  writeJson(root, "data/series/cpi-2024-back.json", bundleBack2024);
-  writeJson(root, "data/series/cpi-2024-groups.json", bundleGroups2024);
-  writeJson(root, "data/series/cpi-2024-items.json", bundleItems2024);
-  writeJson(root, "data/series/cpi-2024-states.json", bundleStates2024);
-  writeJson(root, "data/series/cpi-2024-states-sectors.json", bundleStatesSectors2024);
+  /* ---- the continuous 2024-base headline (NSO back-cast + live, one ruler) ----
+   * Not a cross-base splice: the back-cast and the live levels are both base
+   * 2024=100. The 2025 y/y is computed at the handoff from back-cast 2024
+   * levels to live 2025 levels. Headline only — the NSO back-casts no components. */
+  const curHeadLv = cur.combined.headline.levels;   // Map ym→level, live (2025–2026)
+  {
+    const dates = [...bundleBack2024.dates], vals = [...bundleBack2024.series.headline.data];
+    for (let m = 1; m <= 12; m++) {
+      const mm = String(m).padStart(2, "0");
+      const a = curHeadLv.get(`2025-${mm}`), b = back.levels.get(`2024-${mm}`);
+      if (a != null && b != null) { dates.push(`2025-${mm}-01`); vals.push(Math.round((a / b - 1) * 10000) / 100); }
+    }
+    for (let i = 0; i < bundle2024.dates.length; i++) {
+      if (bundle2024.dates[i] >= "2026-01-01") { dates.push(bundle2024.dates[i]); vals.push(bundle2024.series.headline.data[i]); }
+    }
+    const bundleLinked2024 = {
+      meta: { ...bundleBack2024.meta,
+        coverage: "All India, Combined; continuous General index on base 2024=100 — NSO back-cast (2013–2024) bridged to live levels (2025) and the current print (2026), one ruler throughout",
+        note: "A single continuous headline on the 2024 base. The NSO publishes its own back-cast to 2013 (series=Back) and live levels from 2025 (series=Current); the 2025 year-on-year is computed at the handoff from back-cast 2024 levels to current 2025 levels. No 2012-base figure enters this series — it is not a cross-base splice. Headline only; the NSO back-casts no components." },
+      dates,
+      series: { headline: { name: "cpi2024_linked_headline_yoy_pct", label: "Headline · base 2024 (linked)", color: "#BE3E26", data: vals } },
+    };
+    writeSeries(root, "data/series/cpi-2024-linked.json", bundleLinked2024);
+  }
+
+  writeSeries(root, "data/series/cpi-2024.json", bundle2024);
+  writeSeries(root, "data/series/cpi-2024-sectors.json", bundleSectors2024);
+  writeSeries(root, "data/series/cpi-2024-back.json", bundleBack2024);
+  writeSeries(root, "data/series/cpi-2024-groups.json", bundleGroups2024);
+  writeSeries(root, "data/series/cpi-2024-items.json", bundleItems2024);
+  writeSeries(root, "data/series/cpi-2024-states.json", bundleStates2024);
+  writeSeries(root, "data/series/cpi-2024-states-sectors.json", bundleStatesSectors2024);
   return bundle2024;
 }
 

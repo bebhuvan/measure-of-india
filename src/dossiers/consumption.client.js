@@ -365,6 +365,84 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
   wireTools(document.getElementById("cb-engel"), plot, csvList, "india-atlas_hces_category-shares", fmtRound);
 }
 
+/* ---------- § 05 companion : round-on-round composition shift ----------
+ * The baskets above show 2023-24 only. This companion plots the CHANGE in
+ * each category's budget share between the two rounds — the composition shift
+ * Engel's law would predict downward, but food share actually rose. Every
+ * detail category is here, including the ~16 previously invisible: fruits,
+ * pulses, intoxicants, household services, hospitalisation. */
+{
+  const CATS = [
+    ["beverages_processed_food_etc", "Beverages & proc. food"],
+    ["cereal", "Cereals"], ["cereal_substitutes", "Cereal substitutes"],
+    ["clothing_bedding", "Clothing & bedding"],
+    ["consumer_services_excluding_conveyance", "Consumer services"],
+    ["conveyance", "Conveyance"], ["durable_goods", "Durable goods"],
+    ["edible_oil", "Edible oil"], ["education", "Education"],
+    ["egg_fish_meat", "Egg, fish & meat"], ["entertainment", "Entertainment"],
+    ["footwear", "Footwear"], ["fruits_dry", "Fruits (dry)"],
+    ["fruits_fresh", "Fruits (fresh)"], ["fuel_and_light", "Fuel & light"],
+    ["gram", "Gram"], ["medical_hospitalization", "Medical (hospital)"],
+    ["medical_non_hospitalization", "Medical (non-hospital)"],
+    ["milk_and_milk_products", "Milk & milk products"],
+    ["other_household_consumables", "Other consumables"],
+    ["other_taxes_cesses", "Other taxes & cesses"],
+    ["pan_tobacco_intoxicants", "Pan, tobacco & intoxicants"],
+    ["pulses_and_pulse_products", "Pulses & pulse products"],
+    ["rent", "Rent"], ["salt", "Salt"], ["spices", "Spices"],
+    ["sugar", "Sugar"], ["toilet_articles", "Toilet articles"],
+    ["vegetables", "Vegetables"],
+  ];
+  const rows = CATS.map(([k, label]) => ({
+    label,
+    dr: cur(C[k + "_rural"]) - prv(C[k + "_rural"]),
+    du: cur(C[k + "_urban"]) - prv(C[k + "_urban"]),
+  })).sort((a, b) => b.dr - a.dr);
+
+  setTxt("pv-shift", arrowPt(cur(C.food_total_rural), prv(C.food_total_rural)));
+  setTxt("ex-sh-food-r", arrowPt(cur(C.food_total_rural), prv(C.food_total_rural)));
+  setTxt("ex-sh-food-u", arrowPt(cur(C.food_total_urban), prv(C.food_total_urban)));
+  const oilDrop = rows.find((r) => r.label === "Edible oil");
+  setTxt("ex-sh-oil", arrowPt(cur(C.edible_oil_rural), prv(C.edible_oil_rural)));
+  setTxt("ex-sh-veg", arrowPt(cur(C.vegetables_rural), prv(C.vegetables_rural)));
+
+  const allDr = rows.map((r) => r.dr);
+  const xMax = Math.ceil(Math.max(...allDr, ...rows.map((r) => r.du)) * 10) / 10 + 0.1;
+  const xMin = Math.floor(Math.min(...allDr, ...rows.map((r) => r.du)) * 10) / 10 - 0.1;
+  const span = xMax - xMin;
+  const xTicks = [];
+  for (let t = Math.ceil(xMin * 2) / 2; t <= xMax; t += 0.5) xTicks.push(Math.round(t * 100) / 100);
+  const geo = { W: 1184, H: 30 + rows.length * 23 + 40, ml: 230, mr: 70, mt: 30, mb: 46 };
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#5C574C", overflow: "visible" },
+    x: { label: "change in share of MPCE · percentage points →", labelAnchor: "right", labelArrow: false,
+         ticks: xTicks, domain: [xMin, xMax], tickSize: 0, tickPadding: 10,
+         tickFormat: (d) => (d === 0 ? "0" : (d > 0 ? "+" : "") + d.toFixed(1)) },
+    y: { label: null, domain: rows.map((r) => r.label), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
+    marks: [
+      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
+      Plot.link(rows, { x1: "dr", x2: "du", y: "label", stroke: "#E0DACA", strokeWidth: 1.25 }),
+      Plot.dot(rows, { x: "du", y: "label", fill: "#A8A293", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1 }),
+      Plot.dot(rows, { x: "dr", y: "label", fill: (d) => (Math.abs(d.dr) >= 0.5 ? "#BE3E26" : "#5B564B"), r: 4, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      /* Plot ignores function-valued dx/textAnchor — one text mark per side */
+      Plot.text(rows.filter((d) => Math.abs(d.dr) >= 0.5 && d.dr > 0), { x: "dr", y: "label", text: (d) => "+" + d.dr.toFixed(2), dx: 12, textAnchor: "start", fill: "#BE3E26", fontSize: 11.5, fontFamily: mono, fontWeight: 500 }),
+      Plot.text(rows.filter((d) => Math.abs(d.dr) >= 0.5 && d.dr < 0), { x: "dr", y: "label", text: (d) => d.dr.toFixed(2), dx: -12, textAnchor: "end", fill: "#BE3E26", fontSize: 11.5, fontFamily: mono, fontWeight: 500 }),
+      Plot.text(rows.filter((d) => Math.abs(d.dr) < 0.5 && d.dr >= 0), { x: "dr", y: "label", text: (d) => (d.dr > 0 ? "+" : "") + d.dr.toFixed(2), dx: 12, textAnchor: "start", fill: "#8A857A", fontSize: 11.5, fontFamily: mono }),
+      Plot.text(rows.filter((d) => Math.abs(d.dr) < 0.5 && d.dr < 0), { x: "dr", y: "label", text: (d) => d.dr.toFixed(2), dx: -12, textAnchor: "end", fill: "#8A857A", fontSize: 11.5, fontFamily: mono }),
+    ],
+  });
+  a11y(plot, "Change in budget share by item category, 2022-23 to 2023-24, rural and urban",
+    "Sorted dot strip of " + rows.length + " categories. Rural changes (dark) range from " + rows.at(-1).label + " at " + (rows.at(-1).dr > 0 ? "+" : "") + rows.at(-1).dr.toFixed(2) + " points to " + rows[0].label + " at +" + rows[0].dr.toFixed(2) + ". The food share rose between rounds — against Engel's prediction. Edible oil fell most; vegetables and processed food rose most.");
+  document.getElementById("plot-shift").append(plot);
+  const csv = ["category,rural_2022_23_pct,rural_2023_24_pct,rural_change_pt,urban_2022_23_pct,urban_2023_24_pct,urban_change_pt",
+    ...CATS.map(([k, label]) => `${label.replace(/,/g, "")},${prv(C[k + "_rural"])},${cur(C[k + "_rural"])},${(cur(C[k + "_rural"]) - prv(C[k + "_rural"])).toFixed(3)},${prv(C[k + "_urban"])},${cur(C[k + "_urban"])},${(cur(C[k + "_urban"]) - prv(C[k + "_urban"])).toFixed(3)}`),
+  ].join("\n");
+  wireTools(document.getElementById("cb-shift"), plot, CATS.flatMap(([k]) => [C[k + "_rural"], C[k + "_urban"]]), "india-atlas_hces_composition-shift", fmtRound);
+}
+
 /* ---------- § 06 what the plate holds : cereal quantities ---------- */
 {
   // "Other Cereals" (~0.01 kg) is omitted from the plate — invisible at this

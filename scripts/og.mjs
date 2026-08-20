@@ -10,6 +10,7 @@ import { fileURLToPath } from "node:url";
 import { JSDOM } from "jsdom";
 import sharp from "sharp";
 import wawoff2 from "wawoff2";
+import { DOSSIERS, bySlug, kicker } from "../src/dossiers/registry.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -90,6 +91,9 @@ function plotSvg({ S, keys, d0, d1, band, trend, suffix = "%", yStep, fmt, mr })
   return new XMLSerializer().serializeToString(plot);
 }
 
+// Visual/data config per card. Dossier kicker + title are NOT here — they
+// come from src/dossiers/registry.js at render time (single source of truth);
+// the "site" card is the only one with local kicker/title.
 const CARDS = [
   {
     slug: "site", bundleSlug: "cpi", kicker: "India Atlas · A statistical monograph, continuously revised",
@@ -98,46 +102,39 @@ const CARDS = [
     foot: (b, S) => `Headline CPI ${S.headline.data.at(-1).value.toFixed(2)}% · ${b.meta.latestPeriod} · Source: MoSPI/NSO`,
   },
   {
-    slug: "cpi", bundleSlug: "cpi", kicker: "Dossier № 01 — Prices · Consumer Price Index",
-    title: "The price of a basket of life.",
+    slug: "cpi", bundleSlug: "cpi",
     keys: ["headline", "food", "fuel", "core"], d0: -6, d1: 15, band: [2, 6], trend: 4,
     foot: (b, S) => `Headline CPI ${S.headline.data.at(-1).value.toFixed(2)}% · ${b.meta.latestPeriod} · Source: MoSPI/NSO`,
   },
   {
-    slug: "gdp", bundleSlug: "gdp", kicker: "Dossier № 02 — Output · National Accounts",
-    title: "The speed of the whole economy.",
+    slug: "gdp", bundleSlug: "gdp",
     keys: ["gdp", "gva", "pfce"], d0: -30, d1: 25, band: null, trend: 6,
     foot: (b, S) => `Real GDP ${S.gdp.data.at(-1).value.toFixed(2)}% y/y · latest quarter · Source: MoSPI/NSO`,
   },
   {
-    slug: "wpi", bundleSlug: "wpi", kicker: "Dossier № 03 — Prices · Wholesale Price Index",
-    title: "The price at the factory gate.",
+    slug: "wpi", bundleSlug: "wpi",
     keys: ["headline", "primary", "manufactured", "food_index"], d0: -8, d1: 20, band: null, trend: null,
     foot: (b, S) => `Headline WPI ${S.headline.data.at(-1).value.toFixed(2)}% y/y · ${b.meta.latestPeriod} · Source: OEA/DPIIT`,
   },
   {
-    slug: "iip", bundleSlug: "iip-2022", kicker: "Dossier № 04 — Output · Index of Industrial Production",
-    title: "The monthly pulse of making things.",
+    slug: "iip", bundleSlug: "iip-2022",
     keys: ["general", "sector_manufacturing", "use_capital_goods"], d0: -5, d1: 18, band: null, trend: null,
     foot: (b, S) => `IIP ${S.general.data.at(-1).value.toFixed(2)}% y/y · ${b.meta.latestPeriod} · Source: MoSPI/NSO · base 2022-23`,
   },
   {
-    slug: "external", bundleSlug: "rbi-forex", kicker: "Dossier № 05 — External · Balance of Payments",
-    title: "What the country earns abroad, and what it owes.",
+    slug: "external", bundleSlug: "rbi-forex",
     keys: ["reserves"], d0: 0, d1: 750, band: null, trend: null, scale: 0.001, suffix: " bn",
     foot: (b, S) => `Reserves $${(S.reserves.data.at(-1).value / 1000).toFixed(0)} bn · ${b.meta.latestPeriod} · Source: RBI`,
   },
   {
-    slug: "jobs", bundleSlug: "plfs-quarterly", kicker: "Dossier № 06 — Labour · Periodic Labour Force Survey",
-    title: "Who has work, who wants it, who is counted.",
+    slug: "jobs", bundleSlug: "plfs-quarterly",
     keys: ["ur"], d0: 0, d1: 24, band: null, trend: null,
     foot: (b, S) => `Urban unemployment ${S.ur.data.filter((d) => d.value != null).at(-1).value.toFixed(2)}% · ${b.meta.latestPeriod} · Source: MoSPI/NSO`,
   },
   {
     // HCES is cross-sectional: the card plots the 12-class fractile ladder
     // (a real ordering) as the line, rural and urban, 2023-24 round.
-    slug: "consumption", bundleSlug: "hces-fractiles", kicker: "Dossier № 07 — Consumption · Household Consumption Expenditure Survey",
-    title: "What India spends, one person at a time.",
+    slug: "consumption", bundleSlug: "hces-fractiles",
     keys: ["rural_ladder", "urban_ladder"], d0: 0, d1: 22000, band: null, trend: null,
     yStep: 5000, fmt: (v) => "₹" + Math.round(v).toLocaleString("en-IN"),
     prep: (S) => {
@@ -150,8 +147,7 @@ const CARDS = [
     foot: (b, S) => `MPCE by fractile class · bottom 5% rural ₹${Math.round(S.rural_ladder.data[0].value).toLocaleString("en-IN")}, top 5% urban ₹${Math.round(S.urban_ladder.data.at(-1).value).toLocaleString("en-IN")} · 2023-24 round · Source: MoSPI/NSO`,
   },
   {
-    slug: "factories", bundleSlug: "asi-headline", kicker: "Dossier № 08 — Enterprises · Annual Survey of Industries & ASUSE",
-    title: "The factory, the shop, and the line between them.",
+    slug: "factories", bundleSlug: "asi-headline",
     keys: ["factories_in_operation", "number_of_factories"], d0: 0, d1: 3.2, band: null, trend: null,
     scale: 1e-5, yStep: 1, fmt: (v) => v.toFixed(2) + " lakh", mr: 240,
     prep: (S) => {
@@ -160,12 +156,64 @@ const CARDS = [
     },
     foot: (b, S) => `Factories in operation ${S.factories_in_operation.data.at(-1).value.toFixed(2)} lakh · ASI 2023-24 · Source: MoSPI/NSO`,
   },
+  {
+    slug: "aishe", bundleSlug: "aishe-access",
+    keys: ["female", "male"], d0: 1.6, d1: 2.45, band: null, trend: null,
+    scale: 1e-7, yStep: 0.2, fmt: (v) => v.toFixed(2) + " cr", mr: 230,
+    prep: (S) => {
+      S.female = { ...S.enrolment_female, label: "Female", color: "#BE3E26" };
+      S.male = { ...S.enrolment_male, label: "Male", color: "#5B564B" };
+    },
+    foot: (b, S) => `Enrolment ${S.female.data.at(-1).value.toFixed(2)} cr (F) · ${S.male.data.at(-1).value.toFixed(2)} cr (M) · AISHE 2021-22 · Source: Ministry of Education`,
+  },
+  {
+    slug: "gender", bundleSlug: "gender-sexratio",
+    keys: ["sex_ratio"], d0: 920, d1: 950, band: null, trend: null,
+    yStep: 5, fmt: (v) => String(Math.round(v)), mr: 200,
+    prep: (S) => { S.sex_ratio = { ...S.sex_ratio, label: "Sex ratio", color: "#BE3E26" }; },
+    foot: (b, S) => `Sex ratio ${Math.round(S.sex_ratio.data.at(-1).value)} ♀/1000♂ · Census 1951-2011 · Source: Census of India`,
+  },
+  {
+    slug: "mnre", bundleSlug: "mnre-sources",
+    keys: ["grand_total"], d0: 80000, d1: 300000, band: null, trend: null,
+    scale: 0.001, yStep: 50, fmt: (v) => v.toFixed(0) + " GW", mr: 200,
+    prep: (S) => { S.grand_total = { ...S.grand_total, label: "Grand Total", color: "#BE3E26" }; },
+    foot: (b, S) => `Grand Total ${(S.grand_total.data.at(-1).value).toFixed(0)} GW · Jun 2026 · the Dec 2023 step is a classification change, not capacity · Source: MNRE`,
+  },
+  {
+    slug: "nfhs", bundleSlug: "nfhs-anaemia",
+    keys: ["children", "women"], d0: 40, d1: 75, band: null, trend: null,
+    yStep: 5, fmt: (v) => v.toFixed(0) + "%", mr: 220,
+    prep: (S) => {
+      S.children = { label: "Children", color: "#BE3E26", data: [{ date: 0, value: 58.4 }, { date: 1, value: 67.1 }] };
+      S.women = { label: "Women", color: "#5B564B", data: [{ date: 0, value: 53.0 }, { date: 1, value: 57.0 }] };
+    },
+    foot: () => `Child anaemia 58% → 67% · NFHS-4 to NFHS-5 · Source: MoSPI / IIPS`,
+  },
 ];
 
 await ensureFonts();
 fs.mkdirSync(path.join(ROOT, "public/og"), { recursive: true });
 
+// startup guard: CARDS and the dossier registry must cover each other
+// exactly ("site" is the only card that is not a dossier). Dossier card
+// kickers/titles come from the registry — drift here is a bug, not a choice.
+{
+  const cardSlugs = new Set(CARDS.map((c) => c.slug).filter((s) => s !== "site"));
+  const noCard = DOSSIERS.map((d) => d.slug).filter((s) => !cardSlugs.has(s));
+  const notInRegistry = [...cardSlugs].filter((s) => !bySlug[s]);
+  if (noCard.length || notInRegistry.length) {
+    throw new Error(
+      "og.mjs: CARDS out of sync with src/dossiers/registry.js —" +
+      (noCard.length ? ` registry dossiers with no card config: ${noCard.join(", ")};` : "") +
+      (notInRegistry.length ? ` card slugs not in the registry: ${notInRegistry.join(", ")};` : ""));
+  }
+}
+
 for (const card of CARDS) {
+  const entry = card.slug === "site" ? null : bySlug[card.slug];
+  const kickerText = entry ? kicker(entry) : card.kicker;
+  const title = entry ? entry.ogTitle : card.title;
   const bundle = load(card.bundleSlug ?? card.slug);
   const S = hydrate(bundle);
   if (card.scale) for (const k of card.keys) if (S[k]) S[k] = { ...S[k], data: S[k].data.map((d) => ({ ...d, value: d.value == null ? null : d.value * card.scale })) };
@@ -177,12 +225,12 @@ for (const card of CARDS) {
     `<rect width="1200" height="630" fill="#FFFFFF"/>` +
     `<rect x="40" y="42" width="10" height="10" fill="#BE3E26"/>` +
     `<text x="60" y="52" font-family="Archivo, sans-serif" font-weight="720" font-size="17" letter-spacing="-0.2" fill="#1B1A17">India Atlas</text>` +
-    `<text x="40" y="96" font-family="'IBM Plex Mono', monospace" font-size="11.5" letter-spacing="2.3" fill="#BE3E26">${esc(card.kicker.toUpperCase())}</text>` +
-    `<text x="40" y="146" font-family="Archivo, sans-serif" font-weight="720" font-size="44" letter-spacing="-1.2" fill="#1B1A17">${esc(card.title)}</text>` +
+    `<text x="40" y="96" font-family="'IBM Plex Mono', monospace" font-size="11.5" letter-spacing="2.3" fill="#BE3E26">${esc(kickerText.toUpperCase())}</text>` +
+    `<text x="40" y="146" font-family="Archivo, sans-serif" font-weight="720" font-size="44" letter-spacing="-1.2" fill="#1B1A17">${esc(title)}</text>` +
     `<g transform="translate(40,180)">${chart.replace(/<\?xml[^>]*\?>/, "").replace(/<svg/, '<svg x="0" y="0"').replace(/width="1120"/, 'width="1120"')}</g>` +
     `<line x1="40" y1="596" x2="1160" y2="596" stroke="#E6E2D6"/>` +
     `<text x="40" y="616" font-family="'IBM Plex Mono', monospace" font-size="12" fill="#8A857A">${esc(card.foot(bundle, S))}</text>` +
-    `<text x="1160" y="616" text-anchor="end" font-family="'IBM Plex Mono', monospace" font-size="12" fill="#8A857A">indiaatlas.in</text>` +
+    `<text x="1160" y="616" text-anchor="end" font-family="'IBM Plex Mono', monospace" font-size="12" fill="#8A857A">atlas.thisindianlife.today</text>` +
     `</svg>`;
   const png = await sharp(Buffer.from(renderFonts(svg))).png().toBuffer();
   fs.writeFileSync(path.join(ROOT, "public/og", card.slug + ".png"), png);

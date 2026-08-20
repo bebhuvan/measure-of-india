@@ -1,0 +1,206 @@
+{
+ "meta": {
+  "dossier": "aishe",
+  "frequency": "annual",
+  "base": "AISHE survey rounds",
+  "source": "Ministry of Education (Department of Higher Education), via MoSPI eSankhyiki",
+  "vintage": "2026-08-09",
+  "mock": false,
+  "latestPeriod": "2021-04",
+  "releaseDate": null,
+  "revisionPolicy": "Survey estimates are final on release. Each survey year is a cross-section; the five years (2017-18 to 2021-22) are comparable by design but are never chained into a spliced index.",
+  "coverage": "All India; GER by social category × gender (SC, ST, All Categories — the API serves no OBC GER), GPI by social category, and enrolment by gender (Grand Total)",
+  "note": "Survey years are fiscal (Apr–Mar), plotted at April of the first year. The five AISHE rounds served by the eSankhyiki API (2017-18 to 2021-22) are comparable by design but are never chained into a spliced index. GER (Gross Enrolment Ratio) = enrolled students ÷ the college-age population × 100; it is gross, so it can exceed 100. GPI (Gender Parity Index) = female GER ÷ male GER; 1.0 is parity. GER for SC and ST runs below the All-India ratio in every year; the gender gap within each group is what GPI measures. The AISHE API publishes GER only for SC, ST and All Categories — there is no OBC GER series to serve."
+ },
+ "dates": [
+  "2017-04-01",
+  "2018-04-01",
+  "2019-04-01",
+  "2020-04-01",
+  "2021-04-01"
+ ],
+ "series": {
+  "ger_all_both": {
+   "name": "aishe_ger_all_both",
+   "label": "GER · All Categories · both",
+   "color": "#BE3E26",
+   "data": [
+    24.56,
+    24.93,
+    25.55,
+    27.29,
+    28.4
+   ],
+   "unit": "percent"
+  },
+  "ger_all_male": {
+   "name": "aishe_ger_all_male",
+   "label": "GER · All Categories · male",
+   "color": "#5B564B",
+   "data": [
+    24.5,
+    24.39,
+    24.82,
+    26.71,
+    28.3
+   ],
+   "unit": "percent"
+  },
+  "ger_all_female": {
+   "name": "aishe_ger_all_female",
+   "label": "GER · All Categories · female",
+   "color": "#8A857A",
+   "data": [
+    24.63,
+    25.53,
+    26.35,
+    27.93,
+    28.5
+   ],
+   "unit": "percent"
+  },
+  "ger_sc_both": {
+   "name": "aishe_ger_sc_both",
+   "label": "GER · SC · both",
+   "color": "#A8A293",
+   "data": [
+    20.99,
+    22.04,
+    22.3,
+    23.13,
+    25.9
+   ],
+   "unit": "percent"
+  },
+  "ger_sc_male": {
+   "name": "aishe_ger_sc_male",
+   "label": "GER · SC · male",
+   "color": "#C6C0B0",
+   "data": [
+    21.01,
+    21.39,
+    21.45,
+    22.42,
+    25.8
+   ],
+   "unit": "percent"
+  },
+  "ger_sc_female": {
+   "name": "aishe_ger_sc_female",
+   "label": "GER · SC · female",
+   "color": "#5B564B",
+   "data": [
+    20.98,
+    22.76,
+    23.24,
+    23.93,
+    26
+   ],
+   "unit": "percent"
+  },
+  "ger_st_both": {
+   "name": "aishe_ger_st_both",
+   "label": "GER · ST · both",
+   "color": "#8A857A",
+   "data": [
+    15.25,
+    16.39,
+    17,
+    18.92,
+    21.2
+   ],
+   "unit": "percent"
+  },
+  "ger_st_male": {
+   "name": "aishe_ger_st_male",
+   "label": "GER · ST · male",
+   "color": "#A8A293",
+   "data": [
+    16.01,
+    16.73,
+    16.97,
+    18.76,
+    21.4
+   ],
+   "unit": "percent"
+  },
+  "ger_st_female": {
+   "name": "aishe_ger_st_female",
+   "label": "GER · ST · female",
+   "color": "#C6C0B0",
+   "data": [
+    14.49,
+    16.05,
+    17.02,
+    19.08,
+    20.9
+   ],
+   "unit": "percent"
+  },
+  "gpi_all": {
+   "name": "aishe_gpi_all",
+   "label": "GPI · All Categories",
+   "color": "#BE3E26",
+   "data": [
+    1.01,
+    1.05,
+    1.06,
+    1.05,
+    1.01
+   ],
+   "unit": "index"
+  },
+  "gpi_sc": {
+   "name": "aishe_gpi_sc",
+   "label": "GPI · SC",
+   "color": "#5B564B",
+   "data": [
+    1,
+    1.06,
+    1.08,
+    1.07,
+    1.01
+   ],
+   "unit": "index"
+  },
+  "gpi_st": {
+   "name": "aishe_gpi_st",
+   "label": "GPI · ST",
+   "color": "#8A857A",
+   "data": [
+    0.91,
+    0.96,
+    1,
+    1.02,
+    0.98
+   ],
+   "unit": "index"
+  },
+  "enrolment_male": {
+   "name": "aishe_enrolment_male",
+   "label": "Enrolment · male",
+   "color": "#5B564B",
+   "data": [
+    19204674.91,
+    19209888,
+    19643747,
+    21237910,
+    22576389
+   ],
+   "unit": "count"
+  },
+  "enrolment_female": {
+   "name": "aishe_enrolment_female",
+   "label": "Enrolment · female",
+   "color": "#BE3E26",
+   "data": [
+    17437702.66,
+    18189500,
+    18892612,
+    20142803,
+    20691792
+   ],
+   "unit": "count"
+  }
+ }
+}

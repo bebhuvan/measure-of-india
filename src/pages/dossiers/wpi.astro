@@ -1,23 +1,25 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+const D = bySlug["wpi"];
 ---
 <Base
   title="India Atlas — Wholesale Prices · Dossier 03"
-  description="Dossier 03 — the Wholesale Price Index: factory-gate inflation, its three moving parts, and why it argues with the CPI while both are right."
+  description={D.description}
   nav="dossiers"
-  dateStamp="May 2026"
-  crumbLeft='<a href="/" style="color:inherit">Dossiers</a> / Prices / <b>Wholesale Price Index</b>'
-  crumbRight='Evergreen · revised with each print · <b>v1.2</b>'
-  canonical="https://indiaatlas.in/dossiers/wpi/"
-  ogImage="/og/wpi.png"
+  dateStamp={D.dateStamp}
+  crumbLeft={`<a href="/" style="color:inherit">Dossiers</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote} · <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/dossiers/wpi/"
+  ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
 
   <div class="titleblock break">
-    <div class="kicker">Dossier № 03 — Prices · Wholesale Price Index</div>
+    <div class="kicker">{kicker(D)}</div>
     <div class="hero-grid">
-      <h1>The price at the <i>factory gate.</i></h1>
+      <h1 set:html={D.headline} />
       <p class="lede">Before anything reaches a shop shelf, it is sold once already — mill to trader, refinery to pump, loom to garment exporter. This is the price of that first sale, and it moves to a different music than the one you pay.</p>
     </div>
     <div class="meta">
@@ -394,7 +396,6 @@ import Prose from "../../components/Prose.astro";
       <div>
         <h6>This dossier</h6>
         <p>Dossier 03 · Prices · version 1.2 · April 2026 print — adds the 697-item extremes ledger, the item cross-section CSV and three item rows in the register. Next scheduled revision: mid-June 2026, on release of the May print.</p>
-        <p>Corrections and questions: register@indiaatlas.example</p>
       </div>
     </div>
     <div class="fine">

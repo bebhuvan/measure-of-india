@@ -3,7 +3,7 @@ import sitemap from "@astrojs/sitemap";
 
 export default defineConfig({
   output: "static",
-  site: "https://indiaatlas.in",
+  site: "https://atlas.thisindianlife.today",
   integrations: [sitemap()],
   build: { inlineStylesheets: "auto" },
   vite: {

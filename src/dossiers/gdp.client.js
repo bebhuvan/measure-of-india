@@ -12,7 +12,7 @@ import nomBundle from "../../data/series/gdp-nominal.json";
 import nbBundle from "../../data/series/gdp-2022.json";
 import {
   MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend,
-  peakOf, troughOf, peakBetween, dodgeEndLabels, spark,
+  peakOf, troughOf, peakBetween, dodgeEndLabels, spark, makePlacer, annotationSpot,
 } from "../charts/plumbing.js";
 
 const S = hydrate(bundle);
@@ -154,7 +154,7 @@ document.getElementById("basket-labels").innerHTML = groups.map(([n, w, c]) =>
 {
   const keys = ["gdp", "gva", "pfce"];
   const seriesList = keys.map((k) => S[k]);
-  const geo = { W: 1184, H: 560, ml: 70, mr: 150, mt: 36, mb: 48, d0: -30, d1: 25 };
+  const geo = { W: 1184, H: 560, ml: 70, mr: 180, mt: 36, mb: 48, d0: -30, d1: 25 };
   const endGap = (geo.d1 - geo.d0) * 0.038;
   const dodged = dodgeEndLabels(seriesList, endGap);
   const crash = troughOf(S.gdp);
@@ -165,20 +165,42 @@ document.getElementById("basket-labels").innerHTML = groups.map(([n, w, c]) =>
   const sx = (px) => px / ((geo.W - geo.ml - geo.mr) / (t1 - t0));
   const sy = (px) => px / ((geo.H - geo.mt - geo.mb) / (geo.d1 - geo.d0));
   const dxDate = (d, px) => new Date(d.getTime() + sx(px));
+  /* collision-aware annotations: the three series, the 6% rule and the
+   * COVID rule are obstacles; placed labels become obstacles for later ones */
+  const placer = makePlacer(geo, dates);
+  keys.forEach((k) => placer.addSeries(S[k].data));
+  placer.addRuleY(6).addRuleX(new Date(Date.UTC(2020, 3, 1)));
+  /* the dodged end labels are obstacles too — nothing may overlap them */
+  for (const p of dodged) {
+    const lbl = `${p.s.label} ${p.value.toFixed(2)}%`;
+    placer.addObstacleBox(placer.box({ x: dates.at(-1), y: p.y, anchor: "start", dx: 16 }, lbl, 14.5));
+  }
+  const trendSpot = placer.place("Rough pre-pandemic trend · 6%", 12, [
+    { x: new Date(Date.UTC(2017, 0, 1)), y: 9.7, anchor: "start" },
+    { x: new Date(Date.UTC(2016, 10, 1)), y: 9.7, anchor: "start" },
+    { x: new Date(Date.UTC(2023, 1, 1)), y: 2.5, anchor: "start" },
+  ]);
+  const crashA = annotationSpot(placer, crash, crash.value.toFixed(1) + "% · " + fmtDate(crash.date) + " · lockdown", 13, [
+    { x: crash.date, y: crash.value, anchor: "end", dx: -12, dy: -38 },
+    { x: crash.date, y: crash.value, anchor: "start", dx: 12, dy: -38 },
+    { x: crash.date, y: crash.value, anchor: "end", dx: -12, dy: 44 },
+    { x: crash.date, y: crash.value, anchor: "middle", dx: 0, dy: -38 },
+  ]);
+  placer.addObstacleBox(crashA.box);
   const marks = [
     Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
     Plot.ruleY([-30], { stroke: "#E0DACA", strokeWidth: 1 }),
     Plot.ruleY([0], { stroke: "#1B1A17", strokeOpacity: 0.55, strokeWidth: 1 }),
     Plot.ruleY([6], { stroke: "#C0B9A6", strokeWidth: 1, strokeDasharray: "2,4" }),
-    Plot.text([{ date: dates[1], value: 6.8 }], { x: "date", y: "value", text: ["Rough pre-pandemic trend · 6%"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
+    Plot.text([{ date: trendSpot.x, value: trendSpot.y }], { x: "date", y: "value", text: ["Rough pre-pandemic trend · 6%"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: trendSpot.anchor }),
     Plot.ruleX([new Date(Date.UTC(2020, 3, 1))], { stroke: "#D8D3C4", strokeWidth: 1, strokeDasharray: "2,3" }),
     Plot.text([{ date: new Date(Date.UTC(2020, 5, 1)), value: 23.5 }], { x: "date", y: "value", text: ["COVID-19"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
     ...["gva", "pfce"].map((k) => Plot.lineY(S[k].data, { x: "date", y: "value", stroke: S[k].color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" })),
     Plot.lineY(S.gdp.data, { x: "date", y: "value", stroke: S.gdp.color, strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
     Plot.lineY(S.gdp.data.slice(-5), { x: "date", y: "value", stroke: S.gdp.color, strokeWidth: 4.5, strokeLinecap: "round", strokeLinejoin: "round" }),
     Plot.dot([crash], { x: "date", y: "value", fill: S.gdp.color, r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-    Plot.line([{ x: crash.date, y: crash.value - sy(7) }, { x: crash.date, y: crash.value - sy(19) }], { x: "x", y: "y", stroke: S.gdp.color, strokeWidth: 1 }),
-    Plot.text([{ date: crash.date, value: crash.value - sy(27) }], { x: "date", y: "value", text: () => crash.value.toFixed(1) + "% · " + fmtDate(crash.date) + " · lockdown", fill: S.gdp.color, fontSize: 13, fontFamily: mono, textAnchor: "middle" }),
+    Plot.line(crashA.leader, { x: "x", y: "y", stroke: S.gdp.color, strokeWidth: 1 }),
+    Plot.text([{ date: crashA.textX, value: crashA.textY }], { x: "date", y: "value", text: [crash.value.toFixed(1) + "% · " + fmtDate(crash.date) + " · lockdown"], fill: S.gdp.color, fontSize: 13, fontFamily: mono, textAnchor: crashA.spot.anchor }),
     Plot.dot([rebound], { x: "date", y: "value", fill: S.gdp.color, r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
     Plot.line([
       { x: dxDate(rebound.date, 7), y: rebound.value - sy(3) },
@@ -216,9 +238,21 @@ document.getElementById("basket-labels").innerHTML = groups.map(([n, w, c]) =>
 function componentChart(blockId, plotId, key, d0, d1, yTicks, extraNote) {
   const s = S[key];
   const pk = peakOf(s);
+  const dates = s.data.map((d) => d.date);
   const geo = { W: 1184, H: 470, ml: 70, mr: 136, mt: 30, mb: 48, d0, d1 };
-  const sy = (px) => px / ((geo.H - geo.mt - geo.mb) / (d1 - d0));
   const dir = pk.value > d1 - (d1 - d0) * 0.14 ? -1 : 1;
+  /* collision-aware peak annotation (placer, verified by lint-charts) */
+  const placer = makePlacer(geo, dates);
+  placer.addSeries(s.data).addRuleY(0);
+  const pkText = pk.value.toFixed(1) + "% · " + fmtDate(pk.date);
+  const { spot, textX, textY, leader } = annotationSpot(placer, pk, pkText, 13, [
+    { x: pk.date, y: pk.value, anchor: "middle", dx: 0, dy: dir * 30 },
+    { x: pk.date, y: pk.value, anchor: "start", dx: 22, dy: dir * 18 },
+    { x: pk.date, y: pk.value, anchor: "end", dx: -22, dy: dir * 18 },
+    { x: pk.date, y: pk.value, anchor: "start", dx: 22, dy: -dir * 18 },
+    { x: pk.date, y: pk.value, anchor: "end", dx: -22, dy: -dir * 18 },
+    { x: pk.date, y: pk.value, anchor: "middle", dx: 0, dy: -dir * 30 },
+  ]);
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
@@ -236,8 +270,8 @@ function componentChart(blockId, plotId, key, d0, d1, yTicks, extraNote) {
       Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.lineY(s.data.slice(-5), { x: "date", y: "value", stroke: s.color, strokeWidth: 4, strokeLinecap: "round", strokeLinejoin: "round" }),
       Plot.dot([pk], { x: "date", y: "value", fill: "#BE3E26", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.line([{ x: pk.date, y: pk.value + dir * sy(7) }, { x: pk.date, y: pk.value + dir * sy(19) }], { x: "x", y: "y", stroke: "#BE3E26", strokeWidth: 1 }),
-      Plot.text([{ date: pk.date, value: pk.value + dir * sy(27) }], { x: "date", y: "value", text: () => pk.value.toFixed(1) + "% · " + fmtDate(pk.date), fill: "#BE3E26", fontSize: 13, fontFamily: mono, textAnchor: "middle" }),
+      Plot.line(leader, { x: "x", y: "y", stroke: "#BE3E26", strokeWidth: 1 }),
+      Plot.text([{ date: textX, value: textY }], { x: "date", y: "value", text: [pkText], fill: "#BE3E26", fontSize: 13, fontFamily: mono, textAnchor: spot.anchor }),
       Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: "#BE3E26", r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.text([s.data.at(-1)], { x: "date", y: "value", text: (d) => d.value.toFixed(2) + "%", dx: 16, fill: "#BE3E26", fontSize: 14, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
@@ -449,6 +483,18 @@ componentChart("cb-gva", "plot-gva", "gva", -28, 24, [-20, -10, 0, 10, 20], "GVA
   const dodged = dodgeEndLabels(seriesList, (geo.d1 - geo.d0) * 0.05);
   const pkD = peakOf(N.deflator);
   const sy = (px) => px / ((geo.H - geo.mt - geo.mb) / (geo.d1 - geo.d0));
+  /* deflator peak, placed against all three lines and the COVID rule */
+  const dPlacer = makePlacer(geo, dates);
+  keys.forEach((k) => dPlacer.addSeries(N[k].data));
+  dPlacer.addRuleX(new Date(Date.UTC(2020, 3, 1)));
+  const pkText = pkD.value.toFixed(1) + "% · " + fmtDate(pkD.date) + " · deflator peak";
+  const pkSpot = annotationSpot(dPlacer, pkD, pkText, 13, [
+    { x: pkD.date, y: pkD.value, anchor: "start", dx: 20, dy: 24 },
+    { x: pkD.date, y: pkD.value, anchor: "end", dx: -20, dy: 24 },
+    { x: pkD.date, y: pkD.value, anchor: "middle", dx: 0, dy: 44 },
+    { x: pkD.date, y: pkD.value, anchor: "start", dx: 20, dy: -85 },
+    { x: pkD.date, y: pkD.value, anchor: "middle", dx: 0, dy: -36 },
+  ]);
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
@@ -469,8 +515,8 @@ componentChart("cb-gva", "plot-gva", "gva", -28, 24, [-20, -10, 0, 10, 20], "GVA
       Plot.lineY(N.gdp_nominal.data, { x: "date", y: "value", stroke: N.gdp_nominal.color, strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.lineY(N.gdp_nominal.data.slice(-5), { x: "date", y: "value", stroke: N.gdp_nominal.color, strokeWidth: 4.5, strokeLinecap: "round", strokeLinejoin: "round" }),
       Plot.dot([pkD], { x: "date", y: "value", fill: N.deflator.color, r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.line([{ x: pkD.date, y: pkD.value - sy(7) }, { x: pkD.date, y: pkD.value - sy(19) }], { x: "x", y: "y", stroke: "#8A857A", strokeWidth: 1 }),
-      Plot.text([{ date: pkD.date, value: pkD.value - sy(27) }], { x: "date", y: "value", text: () => pkD.value.toFixed(1) + "% · " + fmtDate(pkD.date) + " · deflator peak", fill: "#8A857A", fontSize: 13, fontFamily: mono, textAnchor: "middle" }),
+      Plot.line(pkSpot.leader, { x: "x", y: "y", stroke: "#8A857A", strokeWidth: 1 }),
+      Plot.text([{ date: pkSpot.textX, value: pkSpot.textY }], { x: "date", y: "value", text: [pkText], fill: "#8A857A", fontSize: 13, fontFamily: mono, textAnchor: pkSpot.spot.anchor }),
       ...seriesList.map((s) => Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: s === N.gdp_nominal ? 5 : 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
       ...dodged.filter((p) => Math.abs(p.y - p.value) > 0.05).map((p) => Plot.line([
         { x: dates.at(-1), y: p.value }, { x: dates.at(-1), y: p.y },

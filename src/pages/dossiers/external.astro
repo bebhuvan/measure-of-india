@@ -1,22 +1,24 @@
 ---
 import Base from "../../layouts/Base.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+const D = bySlug["external"];
 ---
 <Base
   title="India Atlas — The External Account · Dossier 05"
-  description="Dossier 05 — the balance of payments: exports, imports, reserves and the rupee. What the country earns abroad, what it owes, and the buffer in between."
+  description={D.description}
   nav="dossiers"
-  dateStamp="July 2025"
-  crumbLeft='<a href="/" style="color:inherit">Dossiers</a> / External / <b>The Balance of Payments</b>'
-  crumbRight='Evergreen · revised with each print · <b>v1.2</b>'
-  canonical="https://indiaatlas.in/dossiers/external/"
-  ogImage="/og/external.png"
+  dateStamp={D.dateStamp}
+  crumbLeft={`<a href="/" style="color:inherit">Dossiers</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote} · <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/dossiers/external/"
+  ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
 
   <div class="titleblock break">
-    <div class="kicker">Dossier № 05 — External · Balance of Payments</div>
+    <div class="kicker">{kicker(D)}</div>
     <div class="hero-grid">
-      <h1>What the country earns abroad, <i>and what it owes.</i></h1>
+      <h1 set:html={D.headline} />
       <p class="lede">Every nation keeps a ledger with the rest of the world: goods out, goods in, money flowing through. India's has a permanent gap on one side, a permanent cushion on the other, and a reserve pile in the middle that exists for the day the two stop balancing.</p>
     </div>
     <div class="meta">
@@ -140,6 +142,48 @@ import Base from "../../layouts/Base.astro";
           <div class="now">
             <span class="mk">As of June 2025</span>
             <p>The monthly gap narrowed to <b id="ex-bal">–</b> from the record <b id="ex-balpk">–</b> of August 2024. Both directions of the pipeline are near their highs; the deficit lives in the wedge between them, and the wedge is mostly oil and gold.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 04b current-account decomposition -->
+  <section>
+    <div class="sec-head"><span class="no">04b</span><h2>What offsets the goods deficit</h2><span class="line"></span><span class="unit">US$ bn · fiscal years · net</span></div>
+    <div class="break">
+      <figure id="cb-ca" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Services and remittances against the goods gap</h3>
+            <div class="sub">Current-account decomposition: goods balance (summed from monthly trade) vs services surplus, income deficit and remittances · fiscal years · 1990-91 – 2024-25 · dashed: implied current account (goods + invisibles)</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-ca">–</div><div class="c">FY25 · implied current account</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-ca">
+            <button class="chip" data-key="goods"><i style="background:#BE3E26"></i>Goods balance</button>
+            <button class="chip" data-key="services"><i style="background:#5B564B"></i>Services, net</button>
+            <button class="chip" data-key="transfers"><i style="background:#8A857A"></i>Remittances, net</button>
+            <button class="chip" data-key="income"><i style="background:#A8A293"></i>Income, net</button>
+            <button class="chip" data-key="ca"><i class="dash" style="border-color:#C6C0B0"></i>Current account · derived</button>
+          </div>
+          <div class="plotzone" id="plot-ca"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — RBI · goods balance summed by India Atlas from monthly merchandise trade (exports − imports); services, income and remittances from the annual invisibles table · the API serves only NET services/income/transfers, not gross credits and debits — disclosed · current account = goods + total invisibles (derived)</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rbi.org.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The goods pipeline of Plate 1 runs a widening deficit — the vermilion line falling below zero. Two invisible flows offset most of it. Services — software, business processing, the IT export engine — climb steadily into surplus. Remittances from Indians abroad hold near a hundred billion dollars a year. Income runs negative: foreign capital invested in India earns more than Indian capital earns abroad, a standing toll the economy pays for being a net debtor. The dashed line, their sum, is the current account: usually a small deficit, because invisibles cover most but not all of the goods gap.</p>
+            <p>Read the distance between the vermilion goods line and the dark services line. When the goods deficit widens faster than services grow — as in 2022-23, when oil surged — the current account deteriorates. When services accelerate or oil cools, the gap narrows. The structure is durable; the year-to-year swings are mostly oil.</p>
+            <p>A note on what the API serves: every figure here for services, income and remittances is a <b>net balance</b> — credits minus debits — not gross exports or imports. The eSankhyiki API does not serve services receipts or payments separately. The RBI publishes monthly gross estimates of services trade on its website; they are not in this data feed. So the services line shows the surplus India earns from services, not the total volume of services exported.</p>
+          </div>
+          <div class="now">
+            <span class="mk">FY 2024–25</span>
+            <p>The goods deficit reached <b id="ex-ca-goods">–</b>, against a services surplus of <b id="ex-ca-svc">–</b> and remittances of <b id="ex-ca-trn">–</b>. Income paid out: <b id="ex-ca-inc">–</b>. The implied current account: <b id="ex-ca-ca">–</b>. Services now offset <b id="ex-ca-pct">–</b> of the goods deficit — up from barely a third two decades ago, as the software industry grew into the country's largest invisible export.</p>
           </div>
         </div>
       </figure>
@@ -465,7 +509,6 @@ import Base from "../../layouts/Base.astro";
       <div>
         <h6>This dossier</h6>
         <p>Dossier 05 · External · version 1.2 · adds the trading-partner and commodity plates and the forex-turnover series, and closes the coverage ledger — every table in the RBI feed is now either baked or accounted for in the archive. Core tables through June 2025; exchange rates and turnover through July, forward premia through August; the annual partner and commodity tables through FY 2024–25. Next revision on the source feed's resumption of monthly updates.</p>
-        <p>Corrections and questions: register@indiaatlas.example</p>
       </div>
     </div>
     <div class="fine">

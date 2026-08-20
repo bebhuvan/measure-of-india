@@ -82,7 +82,7 @@ setTxt("mr1-neg", String(negMonths));
       Plot.text(dodged, {
         x: () => yy.at(-1).date, y: "y",
         text: (d) => d.s.label + " · " + (d.value >= 0 ? "+" : "") + d.value.toFixed(2) + "%",
-        dx: -12, textAnchor: "end", fontSize: 13, fontFamily: mono, fontWeight: 500,
+        dx: 12, textAnchor: "start", fontSize: 13, fontFamily: mono, fontWeight: 500,
         fill: (d) => d.s.color,
       }),
       Plot.text([{ date: new Date(Date.UTC(2021, 4, 1)), value: -1.55 }], { x: "date", y: "value", text: ["mostly noise"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),

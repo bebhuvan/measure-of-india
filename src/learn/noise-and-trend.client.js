@@ -90,7 +90,7 @@ setTxt("c-y2", y2.value.toFixed(1));
       Plot.dot([rev1, rev2], { x: "date", y: "value", fill: "#5B564B", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.text([rev2], { x: "date", y: "value", text: () => "reversed within two months", dy: 22, dx: 10, fill: "#8A857A", fontSize: 12, fontFamily: mono, textAnchor: "start" }),
       Plot.dot([lastY], { x: "date", y: "value", fill: "#BE3E26", r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([lastY], { x: "date", y: "value", text: () => lastY.value.toFixed(2) + "% · " + fmtDate(lastY.date), dx: -8, dy: -16, fill: "#BE3E26", fontSize: 13, fontFamily: mono, fontWeight: 500, textAnchor: "end" }),
+      Plot.text([lastY], { x: "date", y: "value", text: () => lastY.value.toFixed(2) + "% · " + fmtDate(lastY.date), dx: 12, dy: -2, fill: "#BE3E26", fontSize: 13, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
       Plot.text([{ date: new Date(Date.UTC(2022, 9, 1)), value: -2.4 }], { x: "date", y: "value", text: ["the grey line is the weather"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "middle" }),
     ],
   });

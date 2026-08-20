@@ -1,9 +1,10 @@
 name: data-release rebuild
 
-# Aligned to the release calendars:
-#  - CPI: monthly, ~12th (release of the previous month's print)
-#  - GDP: quarterly, end of Feb / May / Aug / Nov
-# Runs the pipeline, commits any new vintage JSON, rebuilds, deploys.
+# Release topology (docs/RELEASE-CHECKLIST.md):
+#   cron/dispatch → fetch → validate → prose → build → QC → release PR
+#   PR merge (workflow: deploy) → build → QC → publish
+# Nothing reaches production without passing every gate AND a human merge.
+# The bot never pushes to the default branch.
 
 on:
   schedule:
@@ -14,10 +15,16 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
+
+concurrency:
+  group: data-release
+  cancel-in-progress: true
 
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
 
@@ -28,42 +35,54 @@ jobs:
 
       - run: npm ci
 
+      # Persist the throttle-survival cache across runs: a died-mid-product
+      # ingest must not refetch the thousands of pages it already has.
+      - name: Restore http cache
+        uses: actions/cache@v4
+        with:
+          path: data/raw/http-cache
+          key: http-cache-${{ github.run_id }}
+          restore-keys: http-cache-
+
       - name: Fetch and validate data
         run: node scripts/fetch.mjs && node scripts/validate.mjs
 
-      - name: Regenerate dated prose (if LLM key configured)
+      - name: Regenerate dated prose
+        id: prose
         if: ${{ secrets.INDIA_ATLAS_LLM_KEY != '' }}
+        continue-on-error: true # prose must never block a data release…
         env:
           INDIA_ATLAS_LLM_BASE: ${{ secrets.INDIA_ATLAS_LLM_BASE }}
           INDIA_ATLAS_LLM_KEY: ${{ secrets.INDIA_ATLAS_LLM_KEY }}
           INDIA_ATLAS_LLM_MODEL: ${{ secrets.INDIA_ATLAS_LLM_MODEL }}
         run: npm run prose
-        # Generated prose lands in pipeline/out/ — a human reviews it in the
-        # release PR before it is merged into the dossiers. Evergreen slots
-        # are never generated.
-
-      - name: Commit new vintage
-        run: |
-          git config user.name "india-atlas-bot"
-          git config user.email "bot@indiaatlas.in"
-          git add data/series data/raw
-          if git diff --cached --quiet; then
-            echo "no data change"
-          else
-            git commit -m "data: new vintage $(date -u +%Y-%m-%d)"
-          fi
+        # …but stale prose cannot ship either: if the data moved and this step
+        # failed, the QC freshness gate below fails the run. The correct
+        # recovery is to fix prose and re-run, never to deploy around it.
 
       - run: npm run build
 
-      - name: QC
-        run: node scripts/qc.mjs
+      - name: QC (rendered numbers, charts, prose freshness)
+        run: npm run qc   # qc.mjs + lint-charts.mjs — the full post-build gate
 
-      - name: Push data commit
-        run: git push
-
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy dist --project-name=india-atlas
+      - name: Open release PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "india-atlas-bot"
+          git config user.email "bot@atlas.thisindianlife.today"
+          BRANCH="release/$(date -u +%Y-%m-%d)"
+          git checkout -b "$BRANCH"
+          git add data/series data/raw pipeline/out
+          if git diff --cached --quiet; then
+            echo "no data change — no release PR needed"
+            exit 0
+          fi
+          git commit -m "data: new vintage $(date -u +%Y-%m-%d)"
+          git push origin "$BRANCH"
+          gh pr create \
+            --base main \
+            --head "$BRANCH" \
+            --title "Release $(date -u +%Y-%m-%d)" \
+            --body "Automated release. Gates already run in CI: fetch, validate, build, QC (rendered numbers + prose freshness). Reviewer: follow docs/RELEASE-CHECKLIST.md — the two prose diffs and the series diff summary. Merge to deploy."
+          echo "PR_OPENED=1" >> "$GITHUB_OUTPUT"

@@ -1,8 +1,9 @@
 import https from "node:https";
-import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 import { fileURLToPath } from "node:url";
+import { requestOnce } from "./net.mjs";
 
 // api.mospi.gov.in requires legacy TLS renegotiation, disabled by default in
 // OpenSSL 3 — enable it explicitly for this host only.
@@ -52,35 +53,12 @@ let queue = Promise.resolve();
 let lastRequestAt = 0;
 
 function getJson(url) {
-  return new Promise((resolve, reject) => {
-    const req = https.get(url, { agent, timeout: 60000 }, (res) => {
-      let body = "";
-      res.setEncoding("utf8");
-      res.on("data", (c) => (body += c));
-      res.on("end", () => {
-        if (res.statusCode === 429 || res.statusCode >= 500) {
-          const err = new Error(`HTTP ${res.statusCode} for ${url}`);
-          err.throttled = true;
-          err.retryAfter = Number(res.headers["retry-after"]) || null;
-          return reject(err);
-        }
-        if (res.statusCode !== 200) return reject(new Error(`HTTP ${res.statusCode} for ${url}`));
-        if (body.trimStart().startsWith("<")) {
-          // HTML instead of JSON is how this host says "slow down"
-          const err = new Error(`Non-JSON response for ${url}`);
-          err.throttled = true;
-          return reject(err);
-        }
-        try {
-          resolve(JSON.parse(body));
-        } catch (e) {
-          reject(new Error(`Bad JSON from ${url}: ${e.message}`));
-        }
-      });
-    });
-    req.on("timeout", () => req.destroy(new Error(`Timeout for ${url}`)));
-    req.on("error", reject);
-  });
+  // Raw request via net.mjs: hard 180s total deadline and 64MB cap on top of
+  // the 60s idle timeout, so a slow-drip response can never hang an ingest.
+  // Status/throttle classification (429/5xx/HTML-as-JSON, Retry-After) and
+  // JSON validation happen inside net.mjs; the retry/backoff policy stays
+  // here because its cadence is tuned to this host.
+  return requestOnce(url, { agent, timeoutMs: 60_000, deadlineMs: 180_000 });
 }
 
 async function fetchWithRetry(url, retries) {

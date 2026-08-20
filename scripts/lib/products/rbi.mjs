@@ -17,7 +17,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { mospi } from "../mospi.mjs";
-import { MONTHS, round2, writeJson, writeRaw, monthAxis, quarterAxis } from "../util.mjs";
+import { MONTHS, round2, writeSeries, writeRaw, monthAxis, quarterAxis } from "../util.mjs";
 
 const GREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
 
@@ -119,7 +119,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
   process.stdout.write(`rbi curated: trade ${trade.exports.size}m, forex ${forex.size}m, usdinr ${usdinr.size}m\n`);
   if (!trade.exports.size || !forex.size || !usdinr.size) throw new Error("RBI: incomplete curated data");
 
-  const metaBase = { dossier: "rbi", source: dcfg.source_agency, vintage, mock: false, releaseDate: null, revisionPolicy: dcfg.revision_policy };
+  const metaBase = { dossier: "rbi", source: dcfg.source_agency, vintage, mock: false, geo: dcfg.geo ?? "IND", releaseDate: null, revisionPolicy: dcfg.revision_policy };
 
   // interior nulls are real gaps in eSankhyiki (e.g. USD/INR May 2024 is
   // absent for all currencies) — disclose in meta.gaps; validate.mjs allows
@@ -172,8 +172,8 @@ function buildBundles(root, dcfg, vintage, byCode) {
     },
   };
 
-  writeJson(root, "data/series/rbi-trade.json", tradeBundle);
-  writeJson(root, "data/series/rbi-forex.json", forexBundle);
+  writeSeries(root, "data/series/rbi-trade.json", tradeBundle);
+  writeSeries(root, "data/series/rbi-forex.json", forexBundle);
 
   /* ---- wider curated bundles from the full ingest ----
      same conventions: levels as published, fiscal labels mapped to calendar
@@ -192,7 +192,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
   const oMonths = [...new Set(Object.values(oil).flatMap((m) => [...m.keys()]))].sort();
   if (oMonths.length) {
     const oAxis = monthAxis(oMonths[0], oMonths.at(-1));
-    writeJson(root, "data/series/rbi-trade-oil.json", {
+    writeSeries(root, "data/series/rbi-trade-oil.json", {
       meta: { ...metaBase, frequency: "monthly", base: dcfg.base, latestPeriod: oMonths.at(-1),
         note: "Levels, US$ Millions. Broad commodity composition of merchandise trade.",
         gaps: gapsOn(oAxis, Object.values(oil)) },
@@ -224,7 +224,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
   const bMonths = [...new Set(Object.values(bop).flatMap((m) => [...m.keys()]))].sort();
   if (bMonths.length) {
     const bAxis = quarterAxis(bMonths[0], bMonths.at(-1));
-    writeJson(root, "data/series/rbi-bop.json", {
+    writeSeries(root, "data/series/rbi-bop.json", {
       meta: { ...metaBase, frequency: "quarterly", base: dcfg.base, latestPeriod: bMonths.at(-1),
         note: "Net transactions, US$ Millions. Fiscal quarters plotted at quarter start (Q1 = Apr–Jun).",
         gaps: gapsOn(bAxis, Object.values(bop)) },
@@ -268,7 +268,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
       rSeries[k] = { name: `bop_${k}_pct`, label, color, data: rAxis.map((ym) => ratios[k].get(ym) ?? null), unit: "pct_of_gdp" };
     }
     rSeries.import_cover = { name: "import_cover_months", label: "Import cover of reserves", color: "#5B564B", data: rAxis.map((ym) => importCover.get(ym) ?? null), unit: "months" };
-    writeJson(root, "data/series/rbi-bop-ratios.json", {
+    writeSeries(root, "data/series/rbi-bop-ratios.json", {
       meta: { ...metaBase, frequency: "annual", base: dcfg.base, latestPeriod: rMonths.at(-1),
         note: "Fiscal years plotted at April of the first year. Ratios as published; import cover is in months.",
         gaps: gapsOn(rAxis, [...Object.values(ratios), importCover]) },
@@ -312,7 +312,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
       if (!debtRatios[k]?.size) return;
       dSeries[k] = { name: `external_debt_${k}_pct`, label, color: GREYS[i % GREYS.length], data: dAxis.map((ym) => debtRatios[k].get(ym) ?? null), unit: "pct" };
     });
-    writeJson(root, "data/series/rbi-debt.json", {
+    writeSeries(root, "data/series/rbi-debt.json", {
       meta: { ...metaBase, frequency: "annual", base: dcfg.base, latestPeriod: dMonths.at(-1),
         note: "End-March stocks plotted at March. Composition by source in US$ Millions; ratios as published.",
         gaps: gapsOn(dAxis, [...Object.values(debt), ...Object.values(debtRatios)]) },
@@ -342,7 +342,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
       if (nri.outstanding[k]?.size) nSeries[`outstanding_${k}`] = { name: `nri_deposits_outstanding_${k}_usd_millions`, label: `Outstanding · ${label}`, color, data: nAxis.map((ym) => nri.outstanding[k].get(ym) ?? null), unit: "USD_millions" };
       if (nri.flows[k]?.size) nSeries[`flows_${k}`] = { name: `nri_deposits_flows_${k}_usd_millions`, label: `Net flows · ${label}`, color: "#C6C0B0", data: nAxis.map((ym) => nri.flows[k].get(ym) ?? null), unit: "USD_millions" };
     }
-    writeJson(root, "data/series/rbi-nri.json", {
+    writeSeries(root, "data/series/rbi-nri.json", {
       meta: { ...metaBase, frequency: "monthly", base: dcfg.base, latestPeriod: nMonths.at(-1),
         note: "US$ Millions. Outstandings are stocks; flows are net inflows(+) / outflows(-) in the month.",
         gaps: gapsOn(nAxis, [...Object.values(nri.outstanding), ...Object.values(nri.flows)]) },
@@ -366,7 +366,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
   const xMonths = [...new Set(Object.values(xr).flatMap((m) => [...m.keys()]))].sort();
   if (xMonths.length) {
     const xAxis = monthAxis(xMonths[0], xMonths.at(-1));
-    writeJson(root, "data/series/rbi-exchange-rates.json", {
+    writeSeries(root, "data/series/rbi-exchange-rates.json", {
       meta: { ...metaBase, frequency: "monthly", base: dcfg.base, latestPeriod: xMonths.at(-1),
         note: "Monthly average exchange rates, ₹ per unit of foreign currency. Yen is ₹ per single yen in this ingest (the source's unit field is empty; the RBI's usual per-100-yen convention would read ~100× higher). Euro begins Jan 1999.",
         gaps: gapsInside(xAxis, Object.values(xr)) },
@@ -389,7 +389,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
   const pMonths = [...new Set(Object.values(fp).flatMap((m) => [...m.keys()]))].sort();
   if (pMonths.length) {
     const pAxis = monthAxis(pMonths[0], pMonths.at(-1));
-    writeJson(root, "data/series/rbi-forward-premia.json", {
+    writeSeries(root, "data/series/rbi-forward-premia.json", {
       meta: { ...metaBase, frequency: "monthly", base: dcfg.base, latestPeriod: pMonths.at(-1),
         note: "USD/INR forward premia (inter-bank, monthly average), per cent per annum by tenor. Negative values (dollar at a forward discount) occur briefly, e.g. late 2003. 1-month begins Jun 1995 (3/6-month in Mar 1993); missing months are as published.",
         gaps: gapsInside(pAxis, Object.values(fp)) },
@@ -414,7 +414,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
   const iMonths = [...new Set(Object.values(iv).flatMap((m) => [...m.keys()]))].sort();
   if (iMonths.length) {
     const iAxis = monthAxis(iMonths[0], iMonths.at(-1));
-    writeJson(root, "data/series/rbi-intervention.json", {
+    writeSeries(root, "data/series/rbi-intervention.json", {
       meta: { ...metaBase, frequency: "monthly", base: dcfg.base, latestPeriod: iMonths.at(-1),
         note: "RBI sale/purchase of US dollars, US$ Millions. Gross legs are positive; net is purchases minus sales; the forward book is the end-of-month outstanding position, sales negative. Months the source leaves blank (\"-\", typically no operations) are nulls, not zeros.",
         gaps: gapsInside(iAxis, Object.values(iv)) },
@@ -442,7 +442,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
   if (vMonths.length) {
     const vAxis = [];
     for (let y = Number(vMonths[0].slice(0, 4)); y <= Number(vMonths.at(-1).slice(0, 4)); y++) vAxis.push(`${y}-04`);
-    writeJson(root, "data/series/rbi-invisibles.json", {
+    writeSeries(root, "data/series/rbi-invisibles.json", {
       meta: { ...metaBase, frequency: "annual", base: dcfg.base, latestPeriod: vMonths.at(-1),
         note: "Net invisibles by category, US$ Millions; fiscal years plotted at April of the first year. Chosen to tell the services/remittances story: total invisibles, non-factor services, miscellaneous services (the software/business-services carrier — no separate software line exists in this table), income (persistently negative), and private transfers i.e. remittances. The source's Receipts/GDP and Payments/GDP rows are mislabelled gross levels and are not baked.",
         gaps: gapsInside(vAxis, Object.values(inv)) },
@@ -474,7 +474,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
     const qAxis = [];
     for (let [y, m] = qMonths[0].split("-").map(Number); `${y}-${String(m).padStart(2, "0")}` <= qMonths.at(-1); m += 3, m > 12 && (m -= 12, y++))
       qAxis.push(`${y}-${String(m).padStart(2, "0")}`);
-    writeJson(root, "data/series/rbi-debt-quarterly.json", {
+    writeSeries(root, "data/series/rbi-debt-quarterly.json", {
       meta: { ...metaBase, frequency: "quarterly", base: dcfg.base, latestPeriod: qMonths.at(-1),
         note: "End-of-quarter external debt stocks by sector, ₹ Crore (this table is published in rupees only; the annual end-March US$ series is rbi-debt). Calendar quarter-ends plotted at March/June/September/December.",
         gaps: gapsInside(qAxis, Object.values(dq)) },
@@ -544,7 +544,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
       paSeries[`exports_${k}`] = { name: `exports_to_${k}_usd_millions`, label: `${label} · exports`, color: "#5B564B", data: paAxis.map((ym) => dot[k].exports.get(ym) ?? null), unit: "USD_millions" };
       paSeries[`imports_${k}`] = { name: `imports_from_${k}_usd_millions`, label: `${label} · imports`, color: GREYS[(i + 2) % GREYS.length], data: paAxis.map((ym) => dot[k].imports.get(ym) ?? null), unit: "USD_millions" };
     });
-    writeJson(root, "data/series/rbi-trade-partners.json", {
+    writeSeries(root, "data/series/rbi-trade-partners.json", {
       meta: { ...metaBase, frequency: "annual", base: dcfg.base, latestPeriod: paMonths.at(-1),
         note: "Direction of foreign trade: exports to and imports from the sixteen largest partner countries, US$ Millions, fiscal years plotted at April of the first year. The source labels the United Kingdom's rows \"USA\" (its countries dimension has no UK); the two values are separated by size — the larger is the United States in every year, verified against the RBI's published bilateral series — and the build fails if the pair ever overlaps. This table's totals differ from the monthly customs series (rbi-trade) by up to ~0.3% — different compilation of the same trade; both totals are kept in crosscheck.",
         gaps: gapsInside(paAxis, Object.values(dot).flatMap((o) => [o.exports, o.imports])) },
@@ -582,7 +582,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
     const cAxis = [];
     for (let y = +cMonths[0].slice(0, 4); y <= +cMonths.at(-1).slice(0, 4); y++) cAxis.push(`${y}-04`);
     const order = Object.keys(per).sort((a, b) => (per[b].get(cMonths.at(-1)) ?? 0) - (per[a].get(cMonths.at(-1)) ?? 0));
-    writeJson(root, `data/series/${slug}.json`, {
+    writeSeries(root, `data/series/${slug}.json`, {
       meta: { ...metaBase, frequency: "annual", base: dcfg.base, latestPeriod: cMonths.at(-1),
         note: `${what} of major commodities, US$ Millions, fiscal years plotted at April of the first year. All ${order.length} published commodity groups are baked (series ordered by the latest year's value); the published ${totalLabel} row is kept in crosscheck and the groups sum to it within $1mn. The total matches the monthly customs series (rbi-trade) summed over the fiscal year to well under 0.5%.`,
         gaps: gapsInside(cAxis, Object.values(per)) },
@@ -613,7 +613,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
   const toMonths = [...to.grand.keys()].sort();
   if (toMonths.length) {
     const toAxis = monthAxis(toMonths[0], toMonths.at(-1));
-    writeJson(root, "data/series/rbi-fx-turnover.json", {
+    writeSeries(root, "data/series/rbi-fx-turnover.json", {
       meta: { ...metaBase, frequency: "monthly", base: dcfg.base, latestPeriod: toMonths.at(-1),
         note: "Turnover in the foreign exchange market: gross purchases plus sales in the month, US$ Millions (the source's unit field is empty; the scale matches the RBI's published USD-million turnover tables). Total is computed as merchant + inter-bank and cross-checked against the published Grand Total — they agree within $2mn everywhere except September 2018, where the published Grand Total exceeds the segment sum by ~$62bn in the source itself; the discrepancy is the source's, kept as published.",
         gaps: gapsInside(toAxis, [to.merchant, to.interbank, to.grand]) },

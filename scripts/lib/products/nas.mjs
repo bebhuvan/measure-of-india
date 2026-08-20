@@ -22,7 +22,7 @@
 //    no national per-capita indicator — disclosed, not fabricated.
 
 import { mospi } from "../mospi.mjs";
-import { writeJson, writeRaw, yoyFromLevels, quarterAxis, round2 } from "../util.mjs";
+import { writeSeries, writeRaw, yoyFromLevels, quarterAxis, round2 } from "../util.mjs";
 
 // NAS revision labels by maturity; higher = more settled estimate.
 const REVISION_RANK = {
@@ -106,6 +106,7 @@ export async function buildNas(root, dcfg, vintage) {
   const metaBase = {
     frequency: "quarterly", base: dcfg.base,
     source: dcfg.source_agency, vintage, mock: false,
+    geo: dcfg.geo ?? "IND",
     latestPeriod: lastQ,
     releaseDate: null, // recorded per-release in the dossier frontmatter
     revisionPolicy: dcfg.revision_policy,
@@ -296,11 +297,11 @@ export async function buildNas(root, dcfg, vintage) {
   for (const [k, map] of Object.entries(b22Cur)) if (map.size) raw22.current[k] = Object.fromEntries([...map.entries()].sort());
   writeRaw(root, "data/raw/nas-2022-levels.json", raw22);
 
-  writeJson(root, "data/series/gdp.json", bundle);
-  writeJson(root, "data/series/gdp-expenditure.json", exp);
-  writeJson(root, "data/series/gdp-accounts.json", accounts);
-  writeJson(root, "data/series/gdp-industries.json", industriesBundle);
-  writeJson(root, "data/series/gdp-nominal.json", nominalBundle);
-  writeJson(root, "data/series/gdp-2022.json", bundle22);
+  writeSeries(root, "data/series/gdp.json", bundle);
+  writeSeries(root, "data/series/gdp-expenditure.json", exp);
+  writeSeries(root, "data/series/gdp-accounts.json", accounts);
+  writeSeries(root, "data/series/gdp-industries.json", industriesBundle);
+  writeSeries(root, "data/series/gdp-nominal.json", nominalBundle);
+  writeSeries(root, "data/series/gdp-2022.json", bundle22);
   return bundle;
 }

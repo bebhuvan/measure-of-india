@@ -73,7 +73,7 @@ setTxt("rec-avg", trendAvg.toFixed(1) + " per cent");
       /* the FY20 warning: three quarters below zero */
       ...fy20run.map((d) => Plot.dot([d], { x: "date", y: "value", fill: "#5B564B", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
       Plot.text([{ date: fy20run[1].date, value: fy20run[1].value - sy(26) }], { x: "date", y: "value",
-        text: () => "three quarters below zero · FY20, pre-pandemic", fill: "#5B564B", fontSize: 12.5, fontFamily: mono, textAnchor: "middle" }),
+        text: () => "three quarters below zero · FY20, pre-pandemic", dx: -10, fill: "#5B564B", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
       /* the COVID trough */
       Plot.dot([trough], { x: "date", y: "value", fill: "#BE3E26", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.text([{ date: dxDate(trough.date, 12), value: trough.value + sy(2) }], { x: "date", y: "value", text: () => trough.value.toFixed(1) + "% · " + fmtDate(trough.date) + " · building stopped", dy: 4, fill: "#BE3E26", fontSize: 13, fontFamily: mono, textAnchor: "start" }),

@@ -10,11 +10,14 @@
     "og": "node scripts/og.mjs",
     "build": "npm run data && npm run og && astro build",
     "preview": "astro preview",
-    "qc": "node scripts/qc.mjs",
-    "facts": "node pipeline/facts.mjs cpi && node pipeline/facts.mjs gdp",
-    "prose": "npm run facts && node pipeline/generate.mjs cpi && node pipeline/generate.mjs gdp",
-    "prose:dry": "npm run facts && node pipeline/generate.mjs cpi --dry-run && node pipeline/generate.mjs gdp --dry-run",
-    "prose:turing": "node pipeline/turing.mjs"
+    "qc": "node scripts/qc.mjs && node scripts/lint-charts.mjs",
+    "gates": "node scripts/validate.mjs && node scripts/qc.mjs && node scripts/lint-charts.mjs",
+    "test": "node --test",
+    "facts": "node pipeline/facts.mjs --all",
+    "prose": "npm run facts && node pipeline/generate.mjs --all",
+    "prose:dry": "npm run facts && node pipeline/generate.mjs --all --dry-run",
+    "prose:turing": "node pipeline/turing.mjs",
+    "lint:charts": "node scripts/lint-charts.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",

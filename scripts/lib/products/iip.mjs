@@ -15,7 +15,7 @@
 // twin, audited 2026-08-08 and deliberately not baked (see data/sources.yml).
 
 import { mospi } from "../mospi.mjs";
-import { MONTHS, writeJson, writeRaw, yoyFromLevels, monthAxis } from "../util.mjs";
+import { MONTHS, writeSeries, writeRaw, yoyFromLevels, monthAxis } from "../util.mjs";
 
 const GREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
 const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
@@ -88,6 +88,7 @@ export async function buildIip(root, dcfg, vintage) {
     const metaBase = {
       dossier: "iip", frequency: "monthly", base: `${base}=100`,
       source: dcfg.source_agency, vintage, mock: false,
+      geo: dcfg.geo ?? "IND",
       releaseDate: null,
       revisionPolicy: dcfg.revision_policy,
     };
@@ -135,7 +136,7 @@ export async function buildIip(root, dcfg, vintage) {
       dates, series,
       crosscheck: { headline_growth_published: axis.map((ym) => growth.general?.get(ym) ?? null) },
     };
-    writeJson(root, `data/series/iip-${tag}.json`, bundle);
+    writeSeries(root, `data/series/iip-${tag}.json`, bundle);
 
     // industries bundle: every sub-index (NIC 2-digit + mineral/electricity detail)
     const subSeries = {};
@@ -151,7 +152,7 @@ export async function buildIip(root, dcfg, vintage) {
       };
     });
     if (Object.keys(subSeries).length) {
-      writeJson(root, `data/series/iip-industries-${tag}.json`, {
+      writeSeries(root, `data/series/iip-industries-${tag}.json`, {
         meta: { ...metaBase, latestPeriod: months.at(-1), coverage: "2-digit industries and sub-indices beneath the sectoral aggregates",
           gaps: seriesGaps(subYoys).length ? seriesGaps(subYoys) : undefined,
           gapsNote: seriesGaps(subYoys).length ? GAPS_NOTE : undefined },

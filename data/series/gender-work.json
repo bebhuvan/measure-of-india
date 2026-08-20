@@ -1,0 +1,101 @@
+{
+ "meta": {
+  "dossier": "gender",
+  "frequency": "annual",
+  "base": "multi-source compendium (Census, SRS, NFHS, PLFS, NCRB, et al.)",
+  "source": "MoSPI, from multiple source agencies (Office of the Registrar General, NFHS, NCRB, Ministry of Education, et al.)",
+  "vintage": "2026-08-09",
+  "mock": false,
+  "releaseDate": null,
+  "revisionPolicy": "Each indicator is final as its underlying source publishes; the compendium is a curated cross-source portrait, never a single survey.",
+  "latestPeriod": "2023-01",
+  "coverage": "All India; LFPR (15+, usual status) and unemployment rate, by gender, PLFS",
+  "note": "Multi-source: each indicator carries its own underlying source (Census for sex ratio & literacy, SRS for fertility/mortality, PLFS for labour, NCRB for crime). Indicators are never spliced or chained — different cadences and frames make that dishonest. Values marked '-' at source are null; years marked '*' are projections. The female LFPR is the stubborn gap — far below male throughout. PLFS years are agriculture years (Jul-Jun), plotted at the start year."
+ },
+ "dates": [
+  "2017-01-01",
+  "2018-01-01",
+  "2019-01-01",
+  "2020-01-01",
+  "2021-01-01",
+  "2022-01-01",
+  "2023-01-01"
+ ],
+ "series": {
+  "lfpr_male": {
+   "name": "gender_lfpr_male",
+   "label": "LFPR · Male · 15+",
+   "color": "#5B564B",
+   "unit": "percent",
+   "data": [
+    75.8,
+    75.5,
+    76.8,
+    77,
+    77.2,
+    78.5,
+    78.8
+   ]
+  },
+  "lfpr_female": {
+   "name": "gender_lfpr_female",
+   "label": "LFPR · Female · 15+",
+   "color": "#BE3E26",
+   "unit": "percent",
+   "data": [
+    23.3,
+    24.5,
+    30,
+    32.5,
+    32.8,
+    37,
+    41.7
+   ]
+  },
+  "lfpr_person": {
+   "name": "gender_lfpr_person",
+   "label": "LFPR · Person · 15+",
+   "color": "#A8A293",
+   "unit": "percent",
+   "data": [
+    49.8,
+    50.2,
+    53.5,
+    54.9,
+    55.2,
+    57.9,
+    60.1
+   ]
+  },
+  "unemp_male": {
+   "name": "gender_unemp_male",
+   "label": "Unemployment · Male",
+   "color": "#8A857A",
+   "unit": "percent",
+   "data": [
+    6.2,
+    6,
+    5.1,
+    4.5,
+    4.4,
+    3.3,
+    3.2
+   ]
+  },
+  "unemp_female": {
+   "name": "gender_unemp_female",
+   "label": "Unemployment · Female",
+   "color": "#BE3E26",
+   "unit": "percent",
+   "data": [
+    5.7,
+    5.2,
+    4.2,
+    3.5,
+    3.3,
+    2.9,
+    3.1
+   ]
+  }
+ }
+}

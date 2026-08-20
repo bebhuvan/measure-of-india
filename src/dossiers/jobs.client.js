@@ -160,7 +160,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, fmtX, dlNa
       { x: dts.at(-1), y: p.value }, { x: dts.at(-1), y: p.y },
     ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
     ...dodged.map((p) => Plot.text([{ date: dts.at(-1), y: p.y }], {
-      x: "date", y: "y", text: () => `${p.s.label} ${fmtV(p.value)}`,
+      x: "date", y: "y", text: () => `${p.s.endLabel ?? p.s.label} ${fmtV(p.value)}`,
       dx: 16, fill: p.s.color, fontSize: 14.5, fontFamily: mono,
       fontWeight: p.s === seriesList[0] ? 500 : 400, textAnchor: "start",
     })),
@@ -228,6 +228,8 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
   A.ur_psss.color = "#BE3E26";
   A.ur_cws.label = "Weekly status · CWS";
   A.ur_psss.label = "Usual status · PS+SS";
+  A.ur_cws.endLabel = "CWS";
+  A.ur_psss.endLabel = "PS+SS";
   const keys = ["ur_psss", "ur_cws"];
   const geo = { W: 1184, H: 470, ml: 70, mr: 230, mt: 30, mb: 48, d0: 2, d1: 10 };
   const xTicks = []; for (let y = 2018; y <= 2023; y++) xTicks.push(new Date(Date.UTC(y, 6, 1)));
@@ -238,6 +240,35 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
     "Two line charts on one time axis. The weekly status starts at 8.7 per cent and ends at " + last(A.ur_cws).toFixed(1) + " per cent; the usual status starts at " + first(A.ur_psss).toFixed(1) + " and ends at " + last(A.ur_psss).toFixed(1) + ". The gap between them is underemployment. The two are never spliced.",
     fmtAgri);
   wireLegend(document.getElementById("legend-annual"), plot, keys, A);
+}
+
+/* ---------- §03 companion: annual LFPR — the seven-year structural story ----------
+ * The monthly LFPR plate (§06) is fifteen months old. This annual companion
+ * runs seven agriculture years and shows the structural rise in participation
+ * the monthly view cannot yet see — driven overwhelmingly by rural women. */
+{
+  A.lfpr_cws.color = "#5B564B";
+  A.lfpr_psss.color = "#BE3E26";
+  A.lfpr_cws.label = "LFPR · weekly status";
+  A.lfpr_psss.label = "LFPR · usual status";
+  A.lfpr_cws.endLabel = "weekly";
+  A.lfpr_psss.endLabel = "usual";
+  const keys = ["lfpr_psss", "lfpr_cws"];
+  const geo = { W: 1184, H: 470, ml: 70, mr: 240, mt: 30, mb: 48, d0: 40, d1: 65 };
+  const xTicks = []; for (let y = 2017; y <= 2023; y++) xTicks.push(new Date(Date.UTC(y, 6, 1)));
+  setTxt("pv-lfpr-ann", f1(last(A.lfpr_psss)));
+  setTxt("ex-lf0", f1(first(A.lfpr_psss)));
+  setTxt("ex-lf1", f1(last(A.lfpr_psss)));
+  setTxt("ex-lfc0", f1(first(A.lfpr_cws)));
+  setTxt("ex-lfc1", f1(last(A.lfpr_cws)));
+  setTxt("ex-lf-d", "+" + (last(A.lfpr_psss) - first(A.lfpr_psss)).toFixed(1) + " points");
+  const plot = multiLine("cb-lfpr-ann", "plot-lfpr-ann", keys, A, geo, [40, 45, 50, 55, 60, 65], xTicks,
+    (d) => String(d.getUTCFullYear()),
+    "india-atlas_plfs_annual-lfpr",
+    "Labour force participation rate, annual, usual status beside weekly status, 2017-18 to 2023-24",
+    "Two rising lines. Usual-status LFPR climbs from " + first(A.lfpr_psss).toFixed(1) + " to " + last(A.lfpr_psss).toFixed(1) + " per cent; weekly-status LFPR from " + first(A.lfpr_cws).toFixed(1) + " to " + last(A.lfpr_cws).toFixed(1) + ".",
+    fmtAgri, f1);
+  wireLegend(document.getElementById("legend-lfpr-ann"), plot, keys, A);
 }
 
 /* ---------- §04 plate 1: the long arc, urban quarterly ---------- */
@@ -368,6 +399,86 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
     "Three line charts summing to 100 per cent. Self-employment rises from " + first(STA.self_employed_person).toFixed(1) + " to " + last(STA.self_employed_person).toFixed(1) + " per cent of workers; regular wage work edges from " + first(STA.regular_person).toFixed(1) + " to " + last(STA.regular_person).toFixed(1) + "; casual labour falls from " + first(STA.casual_person).toFixed(1) + " to " + last(STA.casual_person).toFixed(1) + ".",
     fmtAgri, f1a);
   wireLegend(document.getElementById("legend-status"), plot, keys, V);
+}
+
+/* ---------- §07 companion: status composition by gender ----------
+ * The person-level status plate above shows self-employed, regular and casual
+ * shares for everyone. This companion splits each status by gender: the same
+ * three lines, drawn once for men and once for women, on one scale. The
+ * female self-employment line is the headline — it climbs fifteen points in
+ * seven years. */
+{
+  const STATUS_COLORS = { self_employed: "#BE3E26", regular: "#5B564B", casual: "#A8A293" };
+  const STATUS_LABELS = [["self_employed", "Self-employed"], ["regular", "Regular wage"], ["casual", "Casual labour"]];
+  const xTicks = []; for (let y = 2017; y <= 2023; y++) xTicks.push(new Date(Date.UTC(y, 6, 1)));
+
+  const miniGender = (plotId, gender) => {
+    const seriesList = STATUS_LABELS.map(([k, label]) => ({
+      ...STA[k + "_" + gender], label, color: STATUS_COLORS[k],
+    }));
+    const dts = seriesList[0].data.map((d) => d.date);
+    const dodged = dodgeEndLabels(seriesList, 2.2);
+    const marks = [
+      Plot.gridY([20, 30, 40, 50, 60, 70], { stroke: "#EDE9DA", strokeWidth: 1 }),
+      Plot.ruleY([20], { stroke: "#E0DACA", strokeWidth: 1 }),
+      ...seriesList.slice(1).map((s) => Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" })),
+      Plot.lineY(seriesList[0].data, { x: "date", y: "value", stroke: seriesList[0].color, strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
+      ...seriesList.map((s) => Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: 4, stroke: "#FFFFFF", strokeWidth: 1.5 })),
+      ...dodged.map((p) => Plot.text([{ date: dts.at(-1), y: p.y }], {
+        x: "date", y: "y", text: () => `${p.s.label} ${p.value.toFixed(1)}%`,
+        dx: 12, fill: p.s.color, fontSize: 12.5, fontFamily: mono,
+        fontWeight: p.s === seriesList[0] ? 500 : 400, textAnchor: "start",
+      })),
+    ];
+    return Plot.plot({
+      width: 570, height: 400,
+      marginLeft: 56, marginRight: 160, marginTop: 28, marginBottom: 44,
+      style: { background: "transparent", fontFamily: mono, fontSize: "13px", color: "#5C574C", overflow: "visible" },
+      x: { label: null, tickSize: 0, tickPadding: 14, ticks: xTicks, tickFormat: (d) => String(d.getUTCFullYear()) },
+      y: { label: "↑ per cent", labelAnchor: "top", labelArrow: false,
+           tickFormat: (d) => (d === 70 ? d + "%" : String(d)), ticks: [20, 30, 40, 50, 60, 70], domain: [15, 72], tickSize: 0, tickPadding: 11 },
+      marks,
+    });
+  };
+
+  const plotM = miniGender("plot-gender-male", "male");
+  a11y(plotM, "Share of male workers by employment status, usual status, 2017-18 to 2023-24",
+    "Three lines summing to 100 per cent. Male self-employment holds near " + last(STA.self_employed_male).toFixed(1) + " per cent, regular wage at " + last(STA.regular_male).toFixed(1) + ", casual labour at " + last(STA.casual_male).toFixed(1) + ".");
+  document.getElementById("plot-gender-male").append(plotM);
+
+  const plotF = miniGender("plot-gender-female", "female");
+  a11y(plotF, "Share of female workers by employment status, usual status, 2017-18 to 2023-24",
+    "Three lines summing to 100 per cent. Female self-employment rises from " + first(STA.self_employed_female).toFixed(1) + " to " + last(STA.self_employed_female).toFixed(1) + " per cent, regular wage falls from " + first(STA.regular_female).toFixed(1) + " to " + last(STA.regular_female).toFixed(1) + ", casual labour from " + first(STA.casual_female).toFixed(1) + " to " + last(STA.casual_female).toFixed(1) + ".");
+  document.getElementById("plot-gender-female").append(plotF);
+
+  setTxt("pv-gender", last(STA.self_employed_female).toFixed(1) + "%");
+  setTxt("ex-g-se-f", last(STA.self_employed_female).toFixed(1) + "%");
+  setTxt("ex-g-se-f0", first(STA.self_employed_female).toFixed(1) + "%");
+  setTxt("ex-g-se-m", last(STA.self_employed_male).toFixed(1) + "%");
+  setTxt("ex-g-rg-f", last(STA.regular_female).toFixed(1) + "%");
+  setTxt("ex-g-rg-m", last(STA.regular_male).toFixed(1) + "%");
+  setTxt("ex-g-cs-f", last(STA.casual_female).toFixed(1) + "%");
+  setTxt("ex-g-cs-m", last(STA.casual_male).toFixed(1) + "%");
+  const block = document.getElementById("cb-gender");
+  const meta = {
+    title: block.querySelector(".plate-head h3")?.textContent.trim(),
+    sub: block.querySelector(".plate-head .sub")?.textContent.trim(),
+    foot: block.querySelector(".plotfoot .src")?.textContent.trim().replace(/\s+/g, " "),
+  };
+  const dlName = "india-atlas_plfs_status-by-gender";
+  block.querySelectorAll("[data-dl]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const kind = btn.dataset.dl;
+      const csv = ["gender,status,year,share_pct",
+        ...["male", "female"].flatMap((g) =>
+          STATUS_LABELS.map(([k, label]) => STA[k + "_" + g].data.map((d) => `${g},${label.replace(/,/g, "")},${fmtAgri(d.date)},${d.value}`).join("\n"))
+        ),
+      ].join("\n");
+      if (kind === "svg") downloadSVG(plotF, dlName, meta);
+      if (kind === "png") downloadPNG(plotF, dlName, meta);
+      if (kind === "csv") saveBlob(new Blob([csv], { type: "text/csv" }), dlName + ".csv");
+    });
+  });
 }
 
 /* ---------- §08 what work pays: the salary ladder + the casual day ---------- */

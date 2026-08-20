@@ -58,7 +58,13 @@ function checkMeta(bundle, slug, dossierKey, baseOverride, freqOverride) {
   const declared = baseOverride ?? cfg.dossiers[dossierKey]?.base;
   if (declared && m.base !== declared) fail(`${slug}: meta.base "${m.base}" != sources.yml "${declared}" (base-year rule)`);
   const freq = freqOverride ?? cfg.dossiers[dossierKey]?.frequency;
-  if (freq && m.frequency !== freq && !(dossierKey === "plfs")) fail(`${slug}: meta.frequency "${m.frequency}" != sources.yml "${freq}"`);
+  if (freq && m.frequency !== freq && !(dossierKey === "plfs" || dossierKey === "gender" || dossierKey === "nfhs")) fail(`${slug}: meta.frequency "${m.frequency}" != sources.yml "${freq}"`);
+  // one bundle, one geography. Bundles baked before the geo field carry no
+  // meta.geo — they default to "IND", as does a sources.yml entry without
+  // geo; new bakes stamp it explicitly and a mismatch fails loudly.
+  const declaredGeo = cfg.dossiers[dossierKey]?.geo ?? "IND";
+  const bundleGeo = m.geo ?? "IND";
+  if (bundleGeo !== declaredGeo) fail(`${slug}: meta.geo "${m.geo}" != sources.yml "${declaredGeo}" (one bundle, one geography)`);
 }
 
 function checkWeights(dossierKey, field = "weights") {
@@ -111,6 +117,7 @@ const PRODUCTS = [
   // effects (jewellery) at +60.8; state General y/y stays in single digits
   // on this young base. Per-series published-inflation crosschecks below.
   { slug: "cpi-2024-groups", dossier: "cpi", cadence: 1, range: [-30, 70], base: "2024=100" },
+  { slug: "cpi-2024-linked", dossier: "cpi", cadence: 1, range: [-2, 10], base: "2024=100" },
   { slug: "cpi-2024-items", dossier: "cpi", cadence: 1, range: [-60, 200], base: "2024=100" },
   { slug: "cpi-2024-states", dossier: "cpi", cadence: 1, range: [-10, 25], base: "2024=100" },
   { slug: "cpi-2024-states-sectors", dossier: "cpi", cadence: 1, range: [-12, 30], base: "2024=100" },
@@ -237,6 +244,47 @@ const PRODUCTS = [
   { slug: "asuse-states", dossier: "asuse", cadence: 12, range: [0, 5e8] },
   // counts are in hundreds ('00): workers reach ~1.5e6 ('00) ≈ 152M
   { slug: "asuse-quarterly", dossier: "asuse", cadence: 3, range: [0, 3e6], freq: "quarterly" },
+  // AISHE: counts (enrolment to ~4.3e7, teachers ~1.6e6) mixed with ratios
+  // (GER ~25%, GPI ~1, PTR ~26); wide range admits them all
+  { slug: "aishe-headline", dossier: "aishe", cadence: 12, range: [0, 5e7] },
+  { slug: "aishe-access", dossier: "aishe", cadence: 12, range: [0, 3e7] },
+  { slug: "aishe-composition", dossier: "aishe", cadence: 12, range: [0, 4e7] },
+  // state enrolment (UP ~5e6 is the ceiling) + GER (0-50) + GPI (0-2)
+  { slug: "aishe-states", dossier: "aishe", cadence: 12, range: [0, 1e7] },
+  // teachers by faculty type: lecturer/assistant peaks ~1.09M
+  { slug: "aishe-teachers", dossier: "aishe", cadence: 12, range: [0, 1.2e6] },
+  // minority enrolment: Muslims peak ~2.1M
+  { slug: "aishe-minority", dossier: "aishe", cadence: 12, range: [0, 2.5e6] },
+  // Gender compendium — each indicator its own source/cadence. Sex ratio is
+  // decadal census (120-month steps); MMR & literacy have irregular cadences
+  // (overlapping 3-year periods; mixed census + NSO estimate) and skip the
+  // cadence check. Ranges: sex ratio 900-1000, IMR 0-100, life-exp 40-80,
+  // MMR 0-300, TFR 0-6, literacy 0-100, LFPR/unemp 0-100.
+  { slug: "gender-sexratio", dossier: "gender", cadence: 120, range: [900, 1000] },
+  { slug: "gender-imr", dossier: "gender", cadence: 12, range: [0, 100] },
+  { slug: "gender-lifeexp", dossier: "gender", noCadence: true, range: [40, 85] },
+  { slug: "gender-mmr", dossier: "gender", noCadence: true, range: [0, 300] },
+  { slug: "gender-fertility", dossier: "gender", cadence: 12, range: [0, 6] },
+  { slug: "gender-literacy", dossier: "gender", noCadence: true, range: [0, 100] },
+  { slug: "gender-work", dossier: "gender", cadence: 12, range: [0, 100] },
+  // some tribal/UT populations have sex ratio >1000 (more females than males)
+  { slug: "gender-states", dossier: "gender", noCadence: true, range: [0, 1200] },
+  // MNRE: installed capacity in MW. Grand Total peaks ~289k; states peak ~52k
+  { slug: "mnre-sources", dossier: "mnre", cadence: 1, range: [0, 300000] },
+  { slug: "mnre-solar-categories", dossier: "mnre", cadence: 1, range: [0, 200000] },
+  { slug: "mnre-states", dossier: "mnre", cadence: 1, range: [0, 60000] },
+  { slug: "mnre-states-solar", dossier: "mnre", cadence: 1, range: [0, 50000] },
+  // NFHS: 2-point cross-sections (NFHS-4, NFHS-5). Wide ranges: IMR in per
+  // 1000, most indicators in per cent. noCadence (2 points, irregular).
+  { slug: "nfhs-child", dossier: "nfhs", noCadence: true, range: [0, 100] },
+  // maternal mixes per cent with OOP expenditure (₹) and counts — wide range
+  { slug: "nfhs-maternal", dossier: "nfhs", noCadence: true, range: [0, 3500] },
+  { slug: "nfhs-anaemia", dossier: "nfhs", noCadence: true, range: [0, 100] },
+  { slug: "nfhs-adult", dossier: "nfhs", noCadence: true, range: [0, 100] },
+  { slug: "nfhs-fertility", dossier: "nfhs", noCadence: true, range: [0, 100] },
+  // household carries sex ratios (up to ~1020) alongside per cent
+  { slug: "nfhs-household", dossier: "nfhs", noCadence: true, range: [0, 1200] },
+  { slug: "nfhs-states", dossier: "nfhs", noCadence: true, range: [0, 100] },
 ];
 
 for (const p of PRODUCTS) {
@@ -244,7 +292,7 @@ for (const p of PRODUCTS) {
   if (!fs.existsSync(file)) { fail(`${p.slug}: data/series/${p.slug}.json missing`); continue; }
   const b = load(p.slug);
   checkMeta(b, p.slug, p.dossier, p.base, p.freq);
-  checkCadence(b.dates, p.cadence, p.slug);
+  if (!p.noCadence) checkCadence(b.dates, p.cadence, p.slug);
   checkRange(b, p.range[0], p.range[1], p.slug);
   if (p.cross) checkCrosscheck(b, p.slug, ...p.cross);
   if (p.cross2) checkCrosscheck(b, p.slug, ...p.cross2);
@@ -808,6 +856,236 @@ withBundle("asuse-annual", (b) => {
   }
   ok("asuse-annual: establishment counts positive");
 });
+
+/* ---- AISHE: composition identities + the teacher reconstruction ---- */
+
+withBundle("aishe-composition", (b) => withBundle("aishe-headline", (h) => {
+  // the eight education levels (Both) sum exactly to the Grand Total enrolment
+  const LEVELS = ["phd", "mphil", "post_graduate", "under_graduate", "pg_diploma", "diploma", "certificate", "integrated"];
+  let worst = 0, worstAt = null;
+  b.dates.forEach((d, i) => {
+    const total = h.series.enrolment.data[i];
+    if (total == null) return;
+    const sum = LEVELS.reduce((a, k) => a + (b.series[k]?.data[i] ?? 0), 0);
+    const dev = Math.abs(sum - total);
+    if (dev > worst) { worst = dev; worstAt = d; }
+    if (dev > 1) fail(`aishe-composition: education levels sum ${sum} != Grand Total ${total} at ${d}`);
+  });
+  if (worst <= 1) ok(`aishe-composition: education levels sum to Grand Total (worst dev ${worst.toFixed(2)} at ${worstAt})`);
+  // SC + ST + OBC + Others (residual) sum to the Grand Total
+  b.dates.forEach((d, i) => {
+    const total = h.series.enrolment.data[i];
+    if (total == null) return;
+    const sum = ["sc", "st", "obc", "others"].reduce((a, g) => a + (b.series[`social_${g}`]?.data[i] ?? 0), 0);
+    if (Math.abs(sum - total) > 1) fail(`aishe-composition: social groups sum ${sum} != Grand Total ${total} at ${d}`);
+  });
+  ok("aishe-composition: SC + ST + OBC + Others sum to Grand Total");
+}));
+
+withBundle("aishe-access", (b) => withBundle("aishe-headline", (h) => {
+  // male + female enrolment (Grand Total) = Both, every year
+  b.dates.forEach((d, i) => {
+    const total = h.series.enrolment.data[i];
+    const m = b.series.enrolment_male?.data[i], f = b.series.enrolment_female?.data[i];
+    if (total != null && m != null && f != null && Math.abs(m + f - total) > 1)
+      fail(`aishe-access: male + female (${m + f}) != Both (${total}) at ${d}`);
+  });
+  ok("aishe-access: male + female enrolment = Both in every year");
+  // GER All Categories Both in the access bundle = headline GER
+  let worst = 0;
+  b.dates.forEach((d, i) => {
+    const acc = b.series.ger_all_both?.data[i], head = h.series.ger.data[i];
+    if (acc != null && head != null) worst = Math.max(worst, Math.abs(acc - head));
+  });
+  if (worst > 0.01) fail(`aishe-access: ger_all_both deviates ${worst}pt from headline`);
+  else ok("aishe-access: ger_all_both matches headline GER");
+  // GPI >= 0.9 for All Categories in every year (parity is the story)
+  b.series.gpi_all?.data.forEach((v, i) => {
+    if (v != null && v < 0.9) fail(`aishe-access: gpi_all ${v} below 0.9 at ${b.dates[i]}`);
+  });
+  ok("aishe-access: GPI All Categories >= 0.9 in every year");
+}));
+
+withBundle("aishe-headline", (b) => {
+  // the teacher reconstruction: 2021-22 must be the core5 sum (~1.58M), not
+  // the broken "All Teacher" value (12,904). Assert the last value is plausible.
+  const t = b.series.teachers.data;
+  const lastT = t.at(-1);
+  if (lastT == null || lastT < 1000000) fail(`aishe-headline: teachers 2021-22 = ${lastT} — reconstruction not applied (expected ~1.58M)`);
+  else ok(`aishe-headline: teachers 2021-22 reconstructed to ${lastT.toLocaleString("en-IN")} (source defect disclosed in meta.note)`);
+  // enrolment must be strictly increasing (the expansion story)
+  for (let i = 1; i < t.length; i++) {
+    const e = b.series.enrolment.data;
+    if (e[i] != null && e[i - 1] != null && e[i] <= e[i - 1]) fail(`aishe-headline: enrolment not increasing at ${b.dates[i]}`);
+  }
+  ok("aishe-headline: enrolment strictly increasing across the five rounds");
+});
+
+withBundle("aishe-teachers", (b) => {
+  // the 2021-22 core5 sum must equal the headline reconstruction exactly
+  const FAC = ["professor", "reader_associate", "lecturer_assistant", "demonstrator", "temporary"];
+  withBundle("aishe-headline", (h) => {
+    const i = b.dates.length - 1;
+    const sum = FAC.reduce((s, f) => s + (b.series[`${f}_both`]?.data[i] ?? 0), 0);
+    if (sum !== h.series.teachers.data[i]) fail(`aishe-teachers: 2021-22 core5 sum ${sum} != headline teachers ${h.series.teachers.data[i]}`);
+    else ok(`aishe-teachers: 2021-22 core5 sum (${sum.toLocaleString("en-IN")}) = headline reconstruction`);
+  });
+  // the academic-hierarchy gender gradient: female share rises as rank falls
+  // (Professor < Reader < Lecturer < Demonstrator) in every year
+  b.dates.forEach((d, i) => {
+    const share = (f) => {
+      const bt = b.series[`${f}_both`]?.data[i], fe = b.series[`${f}_female`]?.data[i];
+      return bt != null && fe != null ? fe / bt : null;
+    };
+    const prof = share("professor"), dem = share("demonstrator");
+    if (prof != null && dem != null && prof >= dem) fail(`aishe-teachers: professor female share (${(prof * 100).toFixed(0)}%) >= demonstrator (${(dem * 100).toFixed(0)}%) at ${d} — hierarchy gradient broken`);
+  });
+  ok("aishe-teachers: female share rises down the faculty hierarchy (professor < demonstrator) in every year");
+});
+
+withBundle("aishe-minority", (b) => {
+  // Muslims > Other Minority > PWD (Both) in every year — the volume ordering
+  b.dates.forEach((d, i) => {
+    const mus = b.series.muslims_both?.data[i], om = b.series.other_minority_both?.data[i], pwd = b.series.pwd_both?.data[i];
+    if (mus != null && om != null && mus <= om) fail(`aishe-minority: Muslims (${mus}) <= Other Minority (${om}) at ${d}`);
+    if (om != null && pwd != null && om <= pwd) fail(`aishe-minority: Other Minority (${om}) <= PWD (${pwd}) at ${d}`);
+  });
+  ok("aishe-minority: Muslims > Other Minority > PWD in every year");
+  // EWS is a later-starting category — its early nulls are the disclosed gap
+  const ews = b.series.ews_both?.data ?? [];
+  const firstEws = ews.findIndex((v) => v != null);
+  if (firstEws < 0 || firstEws < 2) fail(`aishe-minority: EWS starts at index ${firstEws} — expected >= 2 (introduced ~2019-20)`);
+  else ok(`aishe-minority: EWS starts at ${b.dates[firstEws]} (disclosed late-start gap, not a fetch failure)`);
+});
+
+/* ---- Gender compendium: directional identities ---- */
+
+withBundle("gender-lifeexp", (b) => {
+  // female life expectancy > male in every period (the universal pattern)
+  b.dates.forEach((d, i) => {
+    const m = b.series.life_exp_male?.data[i], f = b.series.life_exp_female?.data[i];
+    if (m != null && f != null && f <= m) fail(`gender-lifeexp: female (${f}) <= male (${m}) at ${d}`);
+  });
+  ok("gender-lifeexp: female > male in every period");
+});
+
+withBundle("gender-mmr", (b) => {
+  // MMR strictly declining (the steepest mortality improvement)
+  const v = b.series.mmr.data.filter((x) => x != null);
+  for (let i = 1; i < v.length; i++) if (v[i] >= v[i - 1]) fail(`gender-mmr: not declining at index ${i} (${v[i - 1]} -> ${v[i]})`);
+  ok(`gender-mmr: strictly declining (${v[0]} -> ${v.at(-1)})`);
+});
+
+withBundle("gender-literacy", (b) => {
+  // male literacy > female in every year (the gap, closing but not closed)
+  b.dates.forEach((d, i) => {
+    const m = b.series.literacy_male?.data[i], f = b.series.literacy_female?.data[i];
+    if (m != null && f != null && f >= m) fail(`gender-literacy: female (${f}) >= male (${m}) at ${d}`);
+  });
+  ok("gender-literacy: male > female (gap closing, not closed)");
+});
+
+withBundle("gender-work", (b) => {
+  // male LFPR > female LFPR in every year (the stubborn work gap)
+  b.dates.forEach((d, i) => {
+    const m = b.series.lfpr_male?.data[i], f = b.series.lfpr_female?.data[i];
+    if (m != null && f != null && f >= m) fail(`gender-work: female LFPR (${f}) >= male (${m}) at ${d}`);
+  });
+  ok("gender-work: male LFPR > female throughout");
+});
+
+withBundle("gender-fertility", (b) => {
+  // TFR declines with education: graduate < illiterate in every year
+  b.dates.forEach((d, i) => {
+    const ill = b.series.tfr_illiterate?.data[i], grad = b.series.tfr_graduate_and_above?.data[i];
+    if (ill != null && grad != null && grad >= ill) fail(`gender-fertility: graduate TFR (${grad}) >= illiterate (${ill}) at ${d}`);
+  });
+  ok("gender-fertility: TFR declines with education (graduate < illiterate)");
+});
+
+withBundle("gender-sexratio", (b) => {
+  // the 1991 nadir: the lowest sex ratio in the series
+  const v = b.series.sex_ratio.data;
+  const minIdx = v.indexOf(Math.min(...v));
+  const minY = b.dates[minIdx].slice(0, 4);
+  if (minY !== "1991") fail(`gender-sexratio: nadir at ${minY}, expected 1991`);
+  else ok(`gender-sexratio: 1991 is the nadir (${v[minIdx]}) — the 'missing women' low point`);
+});
+
+/* ---- MNRE: classification break + solar category identity ---- */
+
+withBundle("mnre-sources", (b) => {
+  // the Dec 2023 classification break: Large Hydro must be 0 before Dec 2023
+  // and >0 from Dec 2023 onward
+  const lh = b.series.large_hydro.data;
+  const breakIdx = b.dates.findIndex((d) => d.startsWith("2023-12"));
+  if (breakIdx < 0) return fail("mnre-sources: Dec 2023 not found in date axis");
+  let badBefore = 0, badAfter = 0;
+  for (let i = 0; i < breakIdx; i++) if (lh[i] != null && lh[i] > 0) badBefore++;
+  for (let i = breakIdx; i < lh.length; i++) if (lh[i] != null && lh[i] === 0) badAfter++;
+  if (badBefore) fail(`mnre-sources: Large Hydro >0 before Dec 2023 (${badBefore} months)`);
+  if (badAfter) fail(`mnre-sources: Large Hydro =0 after Dec 2023 (${badAfter} months)`);
+  if (!badBefore && !badAfter) ok(`mnre-sources: Large Hydro classification break clean — 0 through Nov 2023, ${lh[breakIdx].toLocaleString("en-IN")} MW from Dec 2023`);
+
+/* ---- NFHS: the direction-of-change identities ---- */
+
+withBundle("nfhs-anaemia", (b) => {
+  // child anaemia WORSENED: NFHS-5 > NFHS-4
+  const s = Object.values(b.series).find((x) => x.label.toLowerCase().includes("children age 6-59"));
+  if (!s || s.data[0] == null || s.data[1] == null) return fail("nfhs-anaemia: child anaemia series missing");
+  if (s.data[1] <= s.data[0]) fail(`nfhs-anaemia: child anaemia did not worsen (${s.data[0]} → ${s.data[1]})`);
+  else ok(`nfhs-anaemia: child anaemia worsened (${s.data[0]}% → ${s.data[1]}%) — the central story`);
+  // women anaemia also worsened
+  const w = Object.values(b.series).find((x) => x.label.toLowerCase().includes("all women age 15-49"));
+  if (w && w.data[0] != null && w.data[1] != null && w.data[1] > w.data[0]) ok(`nfhs-anaemia: women anaemia also worsened (${w.data[0]}% → ${w.data[1]}%)`);
+});
+
+withBundle("nfhs-child", (b) => {
+  // IMR improved: NFHS-5 < NFHS-4
+  const imr = Object.values(b.series).find((x) => x.label.toLowerCase().includes("infant mortality"));
+  if (imr && imr.data[0] != null && imr.data[1] != null) {
+    if (imr.data[1] >= imr.data[0]) fail(`nfhs-child: IMR did not improve (${imr.data[0]} → ${imr.data[1]})`);
+    else ok(`nfhs-child: IMR improved (${imr.data[0]} → ${imr.data[1]} per 1,000)`);
+  }
+  // stunting improved
+  const stunt = Object.values(b.series).find((x) => x.label.toLowerCase().includes("stunted"));
+  if (stunt && stunt.data[0] != null && stunt.data[1] != null && stunt.data[1] < stunt.data[0]) ok(`nfhs-child: stunting improved (${stunt.data[0]}% → ${stunt.data[1]}%)`);
+});
+
+withBundle("nfhs-fertility", (b) => {
+  // TFR below replacement in NFHS-5
+  const tfr = Object.values(b.series).find((x) => x.label.toLowerCase().includes("total fertility rate"));
+  if (tfr && tfr.data[1] != null) {
+    if (tfr.data[1] > 2.1) fail(`nfhs-fertility: TFR ${tfr.data[1]} not below replacement (2.1)`);
+    else ok(`nfhs-fertility: TFR ${tfr.data[1]} — below replacement (2.1)`);
+  }
+  // bank accounts jumped massively
+  const bank = Object.values(b.series).find((x) => x.label.toLowerCase().includes("bank or savings"));
+  if (bank && bank.data[0] != null && bank.data[1] != null) {
+    const jump = bank.data[1] - bank.data[0];
+    if (jump < 30) fail(`nfhs-fertility: bank account jump only ${jump.toFixed(0)}pt — expected >30`);
+    else ok(`nfhs-fertility: women's bank account jumped ${jump.toFixed(0)}pt (${bank.data[0]}% → ${bank.data[1]}%) — the Jan Dhan effect`);
+  }
+});
+  // Solar overtook Wind: latest solar > latest wind
+  const sNow = b.series.solar.data.at(-1), wNow = b.series.wind.data.at(-1);
+  if (sNow != null && wNow != null && sNow <= wNow) fail(`mnre-sources: Solar (${sNow}) has not overtaken Wind (${wNow})`);
+  else ok(`mnre-sources: Solar (${(sNow / 1000).toFixed(1)} GW) > Wind (${(wNow / 1000).toFixed(1)} GW)`);
+});
+
+withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
+  // the four sub-categories sum to the Solar Total
+  let worst = 0, worstAt = null;
+  b.dates.forEach((d, i) => {
+    const total = s.series.solar.data[i];
+    if (total == null) return;
+    const sum = (b.series.ground_mounted?.data[i] ?? 0) + (b.series.rooftop?.data[i] ?? 0) + (b.series.hybrid?.data[i] ?? 0) + (b.series.off_grid?.data[i] ?? 0);
+    const dev = Math.abs(sum - total);
+    if (dev > worst) { worst = dev; worstAt = d; }
+    if (dev > 1) fail(`mnre-solar-categories: sum ${sum.toFixed(2)} != Solar Total ${total} at ${d}`);
+  });
+  if (worst <= 1) ok(`mnre-solar-categories: sub-categories sum to Solar Total (worst dev ${worst.toFixed(2)} MW at ${worstAt})`);
+}));
 
 if (failures) { console.error(`\n${failures} validation failure(s)`); process.exit(1); }
 console.log("validate: all checks passed");

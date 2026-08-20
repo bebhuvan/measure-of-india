@@ -19,6 +19,8 @@ import industriesBundle from "../../data/series/asi-industries.json";
 import statesBundle from "../../data/series/asi-states.json";
 import asuseBundle from "../../data/series/asuse-annual.json";
 import asuseQBundle from "../../data/series/asuse-quarterly.json";
+import asuseSectorsBundle from "../../data/series/asuse-sectors.json";
+import asuseStatesBundle from "../../data/series/asuse-states.json";
 import ownersBundle from "../../data/series/asuse-owners.json";
 import modernityBundle from "../../data/series/asuse-modernity.json";
 import structureBundle from "../../data/series/asuse-structure.json";
@@ -34,6 +36,8 @@ const L98 = hydrate(legacy1998);
 const L04 = hydrate(legacy2004);
 const UA = hydrate(asuseBundle);
 const UQ = hydrate(asuseQBundle);
+const USec = hydrate(asuseSectorsBundle);
+const USt = hydrate(asuseStatesBundle);
 const UO = hydrate(ownersBundle);
 const UM = hydrate(modernityBundle);
 const US = hydrate(structureBundle);
@@ -225,8 +229,8 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
         ...sers.map((s) => Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: s.color === "#BE3E26" ? 2.75 : 1.75, strokeLinejoin: "round", strokeLinecap: "round" })),
         ...sers.map((s) => Plot.dot([lastPt(s)], { x: "date", y: "value", fill: s.color, r: s.color === "#BE3E26" ? 4.5 : 3, stroke: "#FFFFFF", strokeWidth: 1.5 })),
         ...(opts.blockLabels ? sers.slice(0, 3).map((s) => Plot.text([lastPt(s)], {
-          x: "date", y: "value", text: (d) => `${s.label} · ${opts.endFmt(d.value)}`,
-          dy: opts.labelDy?.[s.label] ?? -14, fontSize: 12, fill: s.color === "#C6C0B0" ? "#8A857A" : s.color, fontFamily: mono, textAnchor: "middle",
+          x: "date", y: "value", text: (d) => opts.endFmt(d.value),
+          dy: opts.labelDy?.[s.label] ?? -14, dx: -8, fontSize: 12, fill: s.color === "#C6C0B0" ? "#8A857A" : s.color, fontFamily: mono, textAnchor: "end",
         })) : []),
         Plot.text([lastPt(sers[3])], { x: "date", y: "value", text: (d) => `NIC-2008 ${opts.endFmt(d.value)}`, dx: 14, fill: "#BE3E26", fontSize: 14, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
       ],
@@ -243,7 +247,7 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
     yFmt: (d) => (d === 0 ? "0" : String(d / 1000) + "k"),
     endFmt: (v) => lakhOf(v, 2) + " L",
     seamLabels: true, blockLabels: true,
-    labelDy: { "NIC-1987": -16, "NIC-1998": 18, "NIC-2004": -16 },
+    labelDy: { "NIC-1987": -16, "NIC-1998": 18, "NIC-2004": 18 },
     a11yTitle: "Factories on the ASI register, 1992-93 to 2023-24, across four classification blocks drawn as four separate lines",
     a11yDesc: "Four line segments that never join. The NIC-1987 block runs from " + fmtIN(firstPt(factStore.b1987).value) + " in 1992-93 to " + fmtIN(lastPt(factStore.b1987).value) + " in 1997-98, with 1993-94 missing at source. The 1998 block dips to " + fmtIN(128549) + " in 2001-02. The 2004 block climbs to " + fmtIN(lastPt(factStore.b2004).value) + " by 2007-08, and the current 2008 block rises from " + fmtIN(firstPt(factStore.b2008).value) + " to " + fmtIN(lastPt(factStore.b2008).value) + ", including the 2010-11 frame revision. Seams mark reclassifications, not events.",
   });
@@ -255,7 +259,7 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
     yFmt: (d) => (d === 0 ? "0" : (d / 1e7).toFixed(1) + (d === 20000000 ? " cr" : "")),
     endFmt: (v) => croreN(v) + " cr",
     seamLabels: false, blockLabels: true,
-    labelDy: { "NIC-1987": -16, "NIC-1998": 20, "NIC-2004": -16 },
+    labelDy: { "NIC-1987": -16, "NIC-1998": 20, "NIC-2004": 18 },
     a11yTitle: "Persons engaged in registered factories, 1992-93 to 2023-24, across four classification blocks",
     a11yDesc: "Four separate line segments. Factory employment stood at " + croreN(lastPt(persStore.b1987).value) + " crore in 1997-98, fell through the 1998 block to " + croreN(lastPt(persStore.b1998).value) + " crore by 2003-04, recovered through the 2004 block, and rises through the current block to " + croreN(lastPt(persStore.b2008).value) + " crore in 2023-24.",
   });
@@ -526,7 +530,7 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
  * capital-intensive. The persons_engaged series were ingested but never shown. */
 {
   const SHORT = {
-    "10": "Food", "11": "Beverages", "13": "Textiles", "14": "Apparel", "15": "Leather",
+    "10": "Food", "11": "Beverages", "12": "Tobacco", "13": "Textiles", "14": "Apparel", "15": "Leather",
     "16": "Wood", "17": "Paper", "18": "Printing", "19": "Coke & petroleum", "20": "Chemicals",
     "21": "Pharmaceuticals", "22": "Rubber & plastics", "23": "Non-metallic minerals", "24": "Basic metals",
     "25": "Fabricated metal", "26": "Electronics", "27": "Electrical eqpt", "28": "Machinery", "29": "Motor vehicles",
@@ -565,7 +569,9 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
       Plot.text([{ e: maxS * 0.86, g: maxS * 0.9 }], { x: "e", y: "g", text: ["capital-intensive →"], fontSize: 11.5, fill: "#8A857A", fontFamily: mono, textAnchor: "end" }),
       Plot.text([{ e: maxS * 0.9, g: maxS * 0.78 }], { x: "e", y: "g", text: ["← labour-intensive"], fontSize: 11.5, fill: "#8A857A", fontFamily: mono, textAnchor: "end" }),
       Plot.dot(pts, { x: "e", y: "g", fill: (d) => (isLab(d) ? "#BE3E26" : "#A8A293"), r: (d) => (labelled.has(d.code) ? 5.5 : 4), stroke: "#FFFFFF", strokeWidth: 1.25 }),
-      Plot.text(pts.filter((p) => labelled.has(p.code)), { x: "e", y: "g", text: "name", dx: 9, dy: -7, fill: (d) => (isLab(d) ? "#BE3E26" : "#5B564B"), fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(pts.filter((p) => labelled.has(p.code) && p.code !== "15"), { x: "e", y: "g", text: "name", dx: 9, dy: -7, fill: (d) => (isLab(d) ? "#BE3E26" : "#5B564B"), fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+      // Leather's dot sits beneath Tobacco's — label it below, not above
+      Plot.text(pts.filter((p) => p.code === "15" && labelled.has(p.code)), { x: "e", y: "g", text: "name", dx: 9, dy: 15, fill: (d) => (isLab(d) ? "#BE3E26" : "#5B564B"), fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
     ],
   });
   a11y(plot, "Share of factory employment against share of factory value added, by two-digit industry, 2023-24",
@@ -573,6 +579,68 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   document.getElementById("plot-jv").append(plot);
   wirePlate(document.getElementById("cb-jv"), plot, "india-atlas_asi_jobs-vs-value_2023-24",
     "nic_code,name,employment_share_pct,gva_share_pct\n" + pts.map((p) => p.code + "," + p.name + "," + p.e.toFixed(2) + "," + p.g.toFixed(2)).join("\n"));
+}
+
+/* ---------- § 06 plate 4d : labour share by industry — where the jobs are ----------
+ * Companion to the GVA small-multiples (value) and the jobs-vs-value scatter
+ * (the gap). This dot strip ranks industries by share of factory employment,
+ * the third view of the same industries. persons_engaged per industry was
+ * ingested but never shown on its own until now. */
+{
+  const SHORT = {
+    "10": "Food products", "11": "Beverages", "12": "Tobacco", "13": "Textiles",
+    "14": "Wearing apparel", "15": "Leather", "16": "Wood products", "17": "Paper",
+    "18": "Printing", "19": "Coke & petroleum", "20": "Chemicals", "21": "Pharmaceuticals",
+    "22": "Rubber & plastics", "23": "Non-metallic minerals", "24": "Basic metals",
+    "25": "Fabricated metal", "26": "Electronics & optical", "27": "Electrical equipment",
+    "28": "Machinery n.e.c.", "29": "Motor vehicles", "30": "Other transport eqpt",
+    "31": "Furniture", "32": "Other manufacturing", "33": "Repair & installation",
+    "38": "Waste & recovery", "58": "Publishing", "01": "Crop & animal services",
+    "08": "Other mining",
+  };
+  const codes = Object.keys(industriesBundle.series)
+    .filter((k) => k.startsWith("persons_engaged_"))
+    .map((k) => k.slice(16))
+    .filter((c) => c !== "99998");
+  const totE = codes.reduce((a, c) => a + industriesBundle.series["persons_engaged_" + c].data.at(-1), 0);
+  const rows = codes
+    .map((c) => ({ code: c, name: SHORT[c] || c, emp: industriesBundle.series["persons_engaged_" + c].data.at(-1) }))
+    .filter((d) => d.emp > 0)
+    .map((d) => ({ ...d, share: (d.emp / totE) * 100 }))
+    .sort((a, b) => b.share - a.share);
+  const top3 = rows.slice(0, 3);
+  const isTop = (d) => top3.includes(d);
+  const share3 = top3.reduce((a, r) => a + r.share, 0);
+  const share5 = rows.slice(0, 5).reduce((a, r) => a + r.share, 0);
+
+  setTxt("pv-lab", share3.toFixed(1) + "%");
+  setTxt("ex-lb1", rows[0].name + " · " + rows[0].share.toFixed(1) + "%");
+  setTxt("ex-lb2", rows[1].name + " · " + rows[1].share.toFixed(1) + "%");
+  setTxt("ex-lb3", rows[2].name + " · " + rows[2].share.toFixed(1) + "%");
+  setTxt("ex-lb5", share5.toFixed(1) + "%");
+
+  const geo = { W: 1184, H: 30 + rows.length * 23 + 40, ml: 250, mr: 90, mt: 30, mb: 40 };
+  const xTicks = [0, 4, 8, 12, 16];
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#5C574C", overflow: "visible" },
+    x: { label: "share of factory employment →", labelAnchor: "right", labelArrow: false, domain: [0, Math.ceil(rows[0].share / 2) * 2 + 1], ticks: xTicks, tickSize: 0, tickPadding: 10, tickFormat: (d) => (d === 0 ? "0" : String(d) + "%"), grid: false },
+    y: { label: null, domain: rows.map((r) => r.name), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
+    marks: [
+      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
+      Plot.ruleY(rows, { y: "name", x1: 0, x2: "share", stroke: (d) => (isTop(d) ? "#E5B8AE" : "#E0DACA"), strokeWidth: 1.25 }),
+      Plot.dot(rows, { y: "name", x: "share", fill: (d) => (isTop(d) ? "#BE3E26" : "#5B564B"), r: 4 }),
+      Plot.text(rows.filter((d) => !isTop(d)), { y: "name", x: "share", dx: 12, text: (d) => d.share.toFixed(1) + "%", fill: "#8A857A", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(top3, { y: "name", x: "share", dx: 12, text: (d) => d.share.toFixed(1) + "%", fill: "#BE3E26", fontSize: 11.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+    ],
+  });
+  a11y(plot, "Share of factory employment by two-digit industry, 2023-24",
+    "Sorted dot strip of " + rows.length + " industries. " + rows[0].name + " leads at " + rows[0].share.toFixed(1) + " per cent of factory employment, then " + rows[1].name + " at " + rows[1].share.toFixed(1) + " and " + rows[2].name + " at " + rows[2].share.toFixed(1) + "; together " + share3.toFixed(1) + " per cent.");
+  document.getElementById("plot-lab").append(plot);
+  const csv = ["nic_code,name,employment_share_pct,persons_engaged_2023_24", ...rows.map((r) => r.code + "," + r.name + "," + r.share.toFixed(2) + "," + r.emp)].join("\n");
+  wirePlate(document.getElementById("cb-lab"), plot, "india-atlas_asi_employment-share-by-industry_2023-24", csv);
 }
 
 /* ---------- § 07 the other economy ---------- */
@@ -642,6 +710,137 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   document.getElementById("plot-mult").append(plot);
   const csv = ["category,gva_per_worker_inr_per_year", ...rows.map((r) => `"${r.cat}",${Math.round(r.v)}`)].join("\n");
   wirePlate(document.getElementById("cb-mult"), plot, "india-atlas_asi-asuse_gva-per-worker_2023-24", csv);
+}
+
+/* ---------- § 08 plate : the informal economy's sectoral structure ----------
+ * ASUSE splits the informal economy three ways by activity (Manufacturing,
+ * Trading, Other Services) and two ways by sector (Rural, Urban). The
+ * dumbbell shows the rural→urban gap per activity for workers and for GVA
+ * per worker — volume skews rural in manufacturing, value skews urban
+ * everywhere. */
+{
+  const acts = [
+    ["manufacturing", "Manufacturing"],
+    ["trading", "Trading"],
+    ["other_services", "Other services"],
+  ];
+  const li = asuseSectorsBundle.dates.length - 1;
+  const pick = (metric, sector, act) => USec[metric + "_" + sector + "_" + act].data[li].value;
+  const buildRows = (metric) => acts.map(([k, label]) => ({ activity: label, rural: pick(metric, "rural", k), urban: pick(metric, "urban", k) }));
+
+  const wrkRows = buildRows("workers");
+  const gpwRows = buildRows("gva_per_worker");
+  const estRows = buildRows("establishments");
+  const totEstR = estRows.reduce((a, d) => a + d.rural, 0);
+  const totEstU = estRows.reduce((a, d) => a + d.urban, 0);
+  const totWrkR = wrkRows.reduce((a, d) => a + d.rural, 0);
+  const totWrkU = wrkRows.reduce((a, d) => a + d.urban, 0);
+
+  setTxt("pv-sec", (totEstR / (totEstR + totEstU) * 100).toFixed(0) + "%");
+  setTxt("ex-sec-estr", (totEstR / (totEstR + totEstU) * 100).toFixed(0) + "%");
+  setTxt("ex-sec-estu", (totEstU / (totEstR + totEstU) * 100).toFixed(0) + "%");
+  setTxt("ex-sec-wrkr", croreN(totWrkR) + " cr");
+  setTxt("ex-sec-wrku", croreN(totWrkU) + " cr");
+  const gpwGap = acts.map(([k]) => pick("gva_per_worker", "urban", k) / pick("gva_per_worker", "rural", k));
+  setTxt("ex-sec-gap", gpwGap[0].toFixed(1) + "×");
+  setTxt("ex-sec-gaps", gpwGap[2].toFixed(1) + "×");
+
+  const dumbbell = (rows, xLabel, xFmt, domain, xTicks) => {
+    const flat = rows.flatMap((r) => [
+      { activity: r.activity, sector: "Rural", v: r.rural },
+      { activity: r.activity, sector: "Urban", v: r.urban },
+    ]);
+    return Plot.plot({
+      width: 1184, height: 220,
+      marginLeft: 180, marginRight: 140, marginTop: 14, marginBottom: 42,
+      style: { background: "transparent", fontFamily: mono, fontSize: "13px", color: "#5C574C", overflow: "visible" },
+      x: { label: xLabel, labelAnchor: "right", labelArrow: false, domain, ticks: xTicks, tickSize: 0, tickPadding: 10, tickFormat: xFmt },
+      y: { label: null, domain: acts.map(([, l]) => l), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s), padding: 0.32 },
+      marks: [
+        Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
+        Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
+        Plot.link(rows, { y: "activity", x1: "rural", x2: "urban", stroke: "#C6C0B0", strokeWidth: 2 }),
+        Plot.dot(flat.filter((d) => d.sector === "Rural"), { y: "activity", x: "v", fill: "#5B564B", r: 6, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+        Plot.dot(flat.filter((d) => d.sector === "Urban"), { y: "activity", x: "v", fill: "#BE3E26", r: 6, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+        Plot.text(rows.filter((d) => d.rural < d.urban), { y: "activity", x: "rural", dx: -12, text: (d) => xFmt(d.rural), fill: "#5B564B", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
+        Plot.text(rows.filter((d) => d.rural >= d.urban), { y: "activity", x: "rural", dx: 12, text: (d) => xFmt(d.rural), fill: "#5B564B", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+        Plot.text(rows.filter((d) => d.urban <= d.rural), { y: "activity", x: "urban", dx: -12, text: (d) => xFmt(d.urban), fill: "#BE3E26", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "end" }),
+        Plot.text(rows.filter((d) => d.urban > d.rural), { y: "activity", x: "urban", dx: 12, text: (d) => xFmt(d.urban), fill: "#BE3E26", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      ],
+    });
+  };
+
+  const plotWrk = dumbbell(wrkRows, "workers, crore → · 2023-24", (d) => (d === 0 ? "0" : croreN(d) + " cr"), [0, 3e7], [0, 1e7, 2e7, 3e7]);
+  a11y(plotWrk, "Informal workers by activity and sector, rural versus urban, 2023-24",
+    "Dumbbell chart, three rows. Rural workers (grey) versus urban workers (vermilion) per activity. Manufacturing: " + croreN(wrkRows[0].rural) + " crore rural, " + croreN(wrkRows[0].urban) + " crore urban. Trading: " + croreN(wrkRows[1].rural) + " rural, " + croreN(wrkRows[1].urban) + " urban. Other services: " + croreN(wrkRows[2].rural) + " rural, " + croreN(wrkRows[2].urban) + " urban.");
+  document.getElementById("plot-sec-wrk").append(plotWrk);
+
+  const plotGpw = dumbbell(gpwRows, "GVA per worker, ₹ per year → · 2023-24", (d) => (d === 0 ? "0" : "₹" + lakhOf(d) + " L"), [0, 220000], [0, 50000, 100000, 150000, 200000]);
+  a11y(plotGpw, "GVA per worker in informal establishments by activity and sector, rural versus urban, 2023-24",
+    "Dumbbell chart, three rows. Rural GVA per worker (grey) versus urban (vermilion) per activity. The urban premium ranges from " + gpwGap[2].toFixed(1) + " times in other services to " + gpwGap[0].toFixed(1) + " times in manufacturing.");
+  document.getElementById("plot-sec-gpw").append(plotGpw);
+
+  const csv = ["metric,activity,sector,value_2023_24",
+    ...wrkRows.map((r) => `workers,"${r.activity}",Rural,${r.rural}`),
+    ...wrkRows.map((r) => `workers,"${r.activity}",Urban,${r.urban}`),
+    ...estRows.map((r) => `establishments,"${r.activity}",Rural,${r.rural}`),
+    ...estRows.map((r) => `establishments,"${r.activity}",Urban,${r.urban}`),
+    ...gpwRows.map((r) => `gva_per_worker,"${r.activity}",Rural,${r.rural}`),
+    ...gpwRows.map((r) => `gva_per_worker,"${r.activity}",Urban,${r.urban}`),
+  ].join("\n");
+  wirePlate(document.getElementById("cb-sec"), plotWrk, "india-atlas_asuse_sectoral-structure_2023-24", csv);
+}
+
+/* ---------- § 08 plate : informal state dispersion ----------
+ * The ASI state strip (§06) shows where the factory rupee concentrates. This
+ * ASUSE mirror shows where informal workers sit — a far wider map, because
+ * the informal economy is everywhere the factory economy is not. */
+{
+  const rename = { "Dadra & Nagar Haveli and Daman & Diu": "DNH & Daman & Diu" };
+  const rows = [];
+  for (const [k, s] of Object.entries(asuseStatesBundle.series)) {
+    if (!k.startsWith("wrk_")) continue;
+    const v = s.data.at(-1);
+    if (v == null || v === 0) continue;
+    const nm = s.label.split(" · ")[1];
+    rows.push({ state: rename[nm] || nm, workers: v });
+  }
+  const total = rows.reduce((a, r) => a + r.workers, 0);
+  rows.forEach((r) => (r.share = (r.workers / total) * 100));
+  rows.sort((a, b) => b.share - a.share);
+  const top3 = rows.slice(0, 3);
+  const isTop = (d) => top3.includes(d);
+  const share3 = top3.reduce((a, r) => a + r.share, 0);
+  const share5 = rows.slice(0, 5).reduce((a, r) => a + r.share, 0);
+
+  setTxt("pv-ust", share3.toFixed(1) + "%");
+  setTxt("ex-ust1", rows[0].state + " · " + rows[0].share.toFixed(1) + "%");
+  setTxt("ex-ust3", share3.toFixed(1) + "%");
+  setTxt("ex-ust5", share5.toFixed(1) + "%");
+
+  const geo = { W: 1184, H: 30 + rows.length * 23 + 40, ml: 220, mr: 90, mt: 30, mb: 40 };
+  const xMax = Math.ceil(rows[0].share / 2) * 2 + 1;
+  const xTicks = [0, 4, 8, 12, 16].filter((d) => d <= xMax);
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#5C574C", overflow: "visible" },
+    x: { label: "share of informal workers →", labelAnchor: "right", labelArrow: false, domain: [0, xMax], ticks: xTicks, tickSize: 0, tickPadding: 10, tickFormat: (d) => (d === 0 ? "0" : String(d) + "%"), grid: false },
+    y: { label: null, domain: rows.map((r) => r.state), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
+    marks: [
+      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
+      Plot.ruleY(rows, { y: "state", x1: 0, x2: "share", stroke: (d) => (isTop(d) ? "#E5B8AE" : "#E0DACA"), strokeWidth: 1.25 }),
+      Plot.dot(rows, { y: "state", x: "share", fill: (d) => (isTop(d) ? "#BE3E26" : "#5B564B"), r: 4 }),
+      Plot.text(rows.filter((d) => !isTop(d)), { y: "state", x: "share", dx: 12, text: (d) => d.share.toFixed(1) + "%", fill: "#8A857A", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(top3, { y: "state", x: "share", dx: 12, text: (d) => d.share.toFixed(1) + "%", fill: "#BE3E26", fontSize: 11.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+    ],
+  });
+  a11y(plot, "Share of informal workers by state and union territory, 2023-24",
+    "Sorted dot strip of " + rows.length + " states and union territories. " + rows[0].state + " leads at " + rows[0].share.toFixed(1) + " per cent, then " + rows[1].state + " at " + rows[1].share.toFixed(1) + " and " + rows[2].state + " at " + rows[2].share.toFixed(1) + "; together " + share3.toFixed(1) + " per cent. Dispersion is far wider than the factory GVA map.");
+  document.getElementById("plot-ust").append(plot);
+  const csv = ["state,workers_share_pct,workers_count_2023_24", ...rows.map((r) => `"${r.state}",${r.share.toFixed(2)},${r.workers}`)].join("\n");
+  wirePlate(document.getElementById("cb-ust"), plot, "india-atlas_asuse_state-worker-shares_2023-24", csv);
 }
 
 /* ---------- § 09 : the informal firm, described ---------- */

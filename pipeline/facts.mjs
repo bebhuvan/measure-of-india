@@ -6,29 +6,40 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { bySlug } from "../src/dossiers/registry.js";
+import { makePeriodLabel, yearLag } from "./lib/periods.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const slug = process.argv[2];
-if (!slug) { console.error("usage: node pipeline/facts.mjs <slug>"); process.exit(1); }
+if (!slug) { console.error("usage: node pipeline/facts.mjs <slug | --all>"); process.exit(1); }
+
+if (slug === "--all") {
+  // recompute facts for every dossier that has prose slots — no slug may go
+  // stale by omission (the qc freshness gate enforces the rest)
+  const { execFileSync } = await import("node:child_process");
+  const YAML = (await import("yaml")).default;
+  const slots = YAML.parse(fs.readFileSync(path.join(ROOT, "pipeline/slots.yml"), "utf8"));
+  let bad = 0;
+  for (const s of Object.keys(slots)) {
+    try { execFileSync(process.execPath, [import.meta.filename, s], { stdio: "inherit" }); }
+    catch { bad++; }
+  }
+  process.exit(bad ? 1 : 0);
+}
 
 // The current print lives on the rebased bundle where one exists: the 2012 CPI
 // base retired Dec 2025, the 2011-12 GDP base at Q2 FY26. Prose must describe
-// the CURRENT ruler, so facts come from the active bundle, not the retired one.
-const CURRENT = { cpi: "cpi-2024", gdp: "gdp-2022", iip: "iip-2022", wpi: "wpi", jobs: "plfs-monthly", consumption: "hces-mpce", factories: "asi-headline" };
-const bundleSlug = CURRENT[slug] ?? slug;
+// the CURRENT ruler — the registry's currentBundle, not a retired base.
+const D = bySlug[slug];
+if (!D) { console.error(`facts: dossier "${slug}" is not in src/dossiers/registry.js`); process.exit(1); }
+const bundleSlug = D.currentBundle;
 const bundle = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", bundleSlug + ".json"), "utf8"));
 const monthly = bundle.meta.frequency === "monthly";
 const annual = bundle.meta.frequency === "annual";
-const lag = monthly ? 12 : annual ? 1 : 4;
-const MN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-
-function periodLabel(iso) {
-  const [y, m] = iso.split("-").map(Number);
-  if (monthly) return `${MN[m - 1]} ${y}`;
-  if (annual) return "FY" + String(y + 1).slice(2);   // ASI/HCES rounds are fiscal years
-  const q = m === 4 ? 1 : m === 7 ? 2 : m === 10 ? 3 : 4;
-  return "Q" + q + " FY" + String(q === 4 ? y : y + 1).slice(2);
-}
+const lag = yearLag(bundle.meta.frequency);
+const calendar = D.calendar ?? "fiscal-apr";   // "fiscal-apr" for Indian official statistics; "calendar" for World Bank/OWID-style sources
+const bands = D.bands ?? null;   // a policy band (e.g. the RBI 2–6% tolerance) exists only where the law says so
+const periodLabel = makePeriodLabel(bundle.meta.frequency, calendar);
 
 function streak(data, pred) {
   let n = 0;
@@ -43,6 +54,7 @@ const facts = {
   vintage: bundle.meta.vintage,
   latestPeriod: periodLabel(bundle.dates.at(-1)),
   releaseDate: bundle.meta.releaseDate,
+  bands,
   series: {},
 };
 
@@ -53,6 +65,13 @@ for (const [k, s] of Object.entries(bundle.series)) {
   const Y = yIdx >= 0 ? data.at(-1 - lag).value : null;   // young series (e.g. CPI base 2024) have no same-base year-ago yet
   const min = data.reduce((a, d) => (d.value < a.value ? d : a));
   const max = data.reduce((a, d) => (d.value > a.value ? d : a));
+  // Level-based series (ASI counts, ₹ lakh; HCES ₹) need growth rates derived
+  // from levels — the raw deltaVsPrev is an absolute change, not a rate. The
+  // pipeline's rate-based streaks (below2/above6) are meaningless for levels,
+  // so growth-based streaks replace them.
+  const levelBased = s.unit && (s.unit === "count" || s.unit === "inr_lakh" || s.unit === "inr" || s.unit === "thousand" || s.unit === "inr_per_year");
+  const growthVsPrevPct = levelBased && L != null && P != null && P !== 0 ? Math.round(((L / P) - 1) * 1000) / 10 : null;
+  const growthVsYearPct = levelBased && L != null && Y != null && Y !== 0 ? Math.round(((L / Y) - 1) * 1000) / 10 : null;
   // trailing monotonic run of the values (for strict "every month" claims)
   const vals = data.map((d) => d.value);
   let run = null;
@@ -69,20 +88,27 @@ for (const [k, s] of Object.entries(bundle.series)) {
   }
   const entry = {
     label: s.label,
+    levelBased,
     latest: { value: L, period: periodLabel(data.at(-1).date) },
     previous: { value: P, period: periodLabel(data.at(-2).date) },
     yearAgo: Y == null ? null : { value: Y, period: periodLabel(data.at(-1 - lag).date) },
     deltaVsPrev: Math.round((L - P) * 100) / 100,
     deltaVsYear: Y == null ? null : Math.round((L - Y) * 100) / 100,
     ratioVsYearAgo: L > 0 && Y > 0 ? Math.round((L / Y) * 100) / 100 : null,
+    growthVsPrevPct,
+    growthVsYearPct,
     run,
     min: { value: min.value, period: periodLabel(min.date) },
     max: { value: max.value, period: periodLabel(max.date) },
     streaks: {
       negative: streak(data, (v) => v < 0),
-      below2: streak(data, (v) => v < 2),
-      below4: streak(data, (v) => v < 4),
-      above6: streak(data, (v) => v > 6),
+      // policy-band streaks are computed only where a band exists in law —
+      // the RBI 2–6% tolerance means nothing for a WDI or survey series
+      ...(bands ? {
+        belowFloor: streak(data, (v) => v < bands.floor),
+        belowTarget: streak(data, (v) => v < bands.target),
+        aboveCeiling: streak(data, (v) => v > bands.ceiling),
+      } : {}),
     },
     last4: data.slice(-4).map((d) => d.value),
     yearStart: monthly
@@ -93,11 +119,14 @@ for (const [k, s] of Object.entries(bundle.series)) {
         })()
       : null,
     // base-effect warning: is the year-ago value an outlier vs its own neighbours?
+    // Relative threshold (2σ of the window) — an absolute one flags every
+    // level series (₹ MPCE, counts) whose raw deviations dwarf a rate's.
     baseEffect: (() => {
       const win = data.slice(-1 - lag - 3, -1 - lag + 4).map((d) => d.value);
       const avg = win.reduce((a, b) => a + b, 0) / win.length;
+      const sd = Math.sqrt(win.reduce((a, b) => a + (b - avg) ** 2, 0) / win.length);
       const dev = Y - avg;
-      return Math.abs(dev) > 1.5
+      return sd > 0 && Math.abs(dev) > 2 * sd
         ? `${s.label} year-ago (${Y} in ${periodLabel(data.at(-1 - lag).date)}) sits ${dev > 0 ? "above" : "below"} its neighbourhood; the current y/y is ${dev > 0 ? "flattered" : "depressed"} by the base`
         : null;
     })(),
@@ -111,10 +140,10 @@ if (slug === "cpi") {
   const gold = facts.series.personal_care_social_protection_and_miscellaneous_goods_and_services;
   facts.cross = {
     bandPosition:
-      h.latest.value < 2 ? `${(2 - h.latest.value).toFixed(2)} pt below the 2% floor`
-      : h.latest.value < 4 ? `${(4 - h.latest.value).toFixed(2)} pt below the 4% target`
-      : h.latest.value <= 6 ? `${(h.latest.value - 4).toFixed(2)} pt above the 4% target`
-      : `${(h.latest.value - 6).toFixed(2)} pt above the 6% ceiling`,
+      h.latest.value < bands.floor ? `${(bands.floor - h.latest.value).toFixed(2)} pt below the ${bands.floor}% floor`
+      : h.latest.value < bands.target ? `${(bands.target - h.latest.value).toFixed(2)} pt below the ${bands.target}% target`
+      : h.latest.value <= bands.ceiling ? `${(h.latest.value - bands.target).toFixed(2)} pt above the ${bands.target}% target`
+      : `${(h.latest.value - bands.ceiling).toFixed(2)} pt above the ${bands.ceiling}% ceiling`,
     divisionsAboveHeadline: Object.values(facts.series).filter((s) => s !== h && s.latest.value > h.latest.value).length,
     goldDivision: gold ? gold.latest : null,
     goldNote: "Personal care is the division that carries gold; its price is set in world markets and is a spectator, not a domestic story.",

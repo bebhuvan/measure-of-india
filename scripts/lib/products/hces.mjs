@@ -26,7 +26,7 @@
 // (scripts/validate.mjs reads it from the raw dump).
 
 import { mospi } from "../mospi.mjs";
-import { writeJson, writeRaw } from "../util.mjs";
+import { writeSeries, writeRaw } from "../util.mjs";
 
 const GREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
 const slugify = (s) => String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
@@ -66,6 +66,7 @@ export async function buildHces(root, dcfg, vintage) {
   const metaBase = {
     dossier: "hces", frequency: "annual", base: dcfg.base,
     source: dcfg.source_agency, vintage, mock: false,
+    geo: dcfg.geo ?? "IND",
     latestPeriod: axis.at(-1), releaseDate: null,
     revisionPolicy: dcfg.revision_policy,
   };
@@ -300,15 +301,15 @@ export async function buildHces(root, dcfg, vintage) {
   };
 
   if (!mpceBundle.series.rural.data.some((v) => v != null)) throw new Error("HCES: no MPCE data returned");
-  writeJson(root, "data/series/hces-mpce.json", mpceBundle);
-  writeJson(root, "data/series/hces-states.json", statesBundle);
-  writeJson(root, "data/series/hces-fractiles.json", fractilesBundle);
-  writeJson(root, "data/series/hces-categories.json", categoriesBundle);
-  writeJson(root, "data/series/hces-gini.json", giniBundle);
-  writeJson(root, "data/series/hces-social.json", socialBundle);
-  writeJson(root, "data/series/hces-household-type.json", hhTypeBundle);
-  writeJson(root, "data/series/hces-quantities.json", quantitiesBundle);
-  writeJson(root, "data/series/hces-item-values.json", itemValuesBundle);
-  writeJson(root, "data/series/hces-categories-states.json", foodStatesBundle);
+  writeSeries(root, "data/series/hces-mpce.json", mpceBundle);
+  writeSeries(root, "data/series/hces-states.json", statesBundle);
+  writeSeries(root, "data/series/hces-fractiles.json", fractilesBundle);
+  writeSeries(root, "data/series/hces-categories.json", categoriesBundle);
+  writeSeries(root, "data/series/hces-gini.json", giniBundle);
+  writeSeries(root, "data/series/hces-social.json", socialBundle);
+  writeSeries(root, "data/series/hces-household-type.json", hhTypeBundle);
+  writeSeries(root, "data/series/hces-quantities.json", quantitiesBundle);
+  writeSeries(root, "data/series/hces-item-values.json", itemValuesBundle);
+  writeSeries(root, "data/series/hces-categories-states.json", foodStatesBundle);
   return mpceBundle;
 }

@@ -1,15 +1,41 @@
 ---
 import Base from "../layouts/Base.astro";
 import "../styles/pages.css";
+import fs from "node:fs";
+import { DOSSIERS } from "../dossiers/registry.js";
+import { makePeriodLabel, MONTHS_FULL, MONTHS_SHORT } from "../../pipeline/lib/periods.mjs";
+
+// counts are computed, never hardcoded — the front page must never disagree
+// with the register after a coverage wave lands
+const SERIES_FILES = fs.readdirSync("data/series").filter((f) => f.endsWith(".json"));
+const N_SERIES = SERIES_FILES.reduce((n, f) => n + Object.keys(JSON.parse(fs.readFileSync("data/series/" + f, "utf8")).series).length, 0);
+const N_DOSSIERS = DOSSIERS.length;
+
+// freshness is derived, never typed: every date on this page comes from the
+// bundles themselves, so a new print can never leave a stale label behind
+const read = (s) => JSON.parse(fs.readFileSync("data/series/" + s + ".json", "utf8"));
+const cpiNew = read("cpi-2024"), cpiOld = read("cpi"), gdpNew = read("gdp-2022");
+const mLab = makePeriodLabel("monthly", "fiscal-apr");
+const qLab = makePeriodLabel("quarterly", "fiscal-apr");
+const baseOf = (b) => b.meta.base?.replace("=100", "") ?? "";
+const cpiLatest = mLab(cpiNew.dates.at(-1));          // "Jun 2026"
+const cpiPrevMo = MONTHS_SHORT[Number(cpiNew.dates.at(-2).slice(5, 7)) - 1];
+const cpiOldLast = mLab(cpiOld.dates.at(-1));         // "Dec 2025"
+const gdpLatest = qLab(gdpNew.dates.at(-1));          // "Q4 FY26"
+const gdpPrevQ = qLab(gdpNew.dates.at(-2)).split(" ")[0];
+// the page stamp is the CPI release month — the freshest print on the board
+const rel = cpiNew.meta.releaseDate ?? cpiNew.meta.vintage;
+const stamp = `${MONTHS_FULL[Number(rel.slice(5, 7)) - 1]} ${rel.slice(0, 4)}`;
+const STAMP = stamp[0].toUpperCase() + stamp.slice(1);
 ---
 <Base
   title="India Atlas — India's economic data, one dossier at a time"
   description="Not another dashboard. Long-form dossiers on Indian economic statistics — charts, meaning, the latest print, and the ways each number is misread."
   nav="dossiers"
-  dateStamp="July 2026"
+  dateStamp={STAMP}
   crumbLeft="Home"
-  crumbRight="<b>8</b> dossiers published · <b>3,238</b> series baked"
-  canonical="https://indiaatlas.in/"
+  crumbRight={`<b>${N_DOSSIERS}</b> dossiers published · <b>${N_SERIES.toLocaleString("en-IN")}</b> series baked`}
+  canonical="https://atlas.thisindianlife.today/"
 >
 <div class="page home spage">
 
@@ -24,97 +50,50 @@ import "../styles/pages.css";
   <div class="frontis break">
     <div id="frontis-plot"></div>
     <div class="frontis-cap">
-      <span>Headline CPI, year-on-year · Jan 2016 – Jun 2026 · base 2012 to Dec 2025, base 2024 from Jan 2026 — never joined · shaded: RBI tolerance band</span>
+      <span>Headline CPI, year-on-year · {mLab(cpiOld.dates[0])} – {cpiLatest} · base {baseOf(cpiOld)} to {cpiOldLast}, base {baseOf(cpiNew)} from {mLab(cpiNew.dates[0])} — never joined · shaded: RBI tolerance band</span>
       <a href="/dossiers/cpi/">The full plate · Dossier 01 →</a>
     </div>
   </div>
 
   <div class="prints break">
     <div class="ph">
-      <span class="t">The latest prints · July 2026</span>
+      <span class="t">The latest prints · {STAMP}</span>
       <a href="/register/">Full register →</a>
     </div>
     <div class="grid">
       <div class="cell">
-        <div class="l">CPI inflation · Jun 2026 · y/y · base 2024</div>
+        <div class="l">CPI inflation · {cpiLatest} · y/y · base {baseOf(cpiNew)}</div>
         <div class="v" id="v-cpi">–</div>
-        <div class="d"><b id="d-cpi">–</b> vs May · <a href="/dossiers/cpi/">Dossier 01 →</a></div>
+        <div class="d"><b id="d-cpi">–</b> vs {cpiPrevMo} · <a href="/dossiers/cpi/">Dossier 01 →</a></div>
         <div class="nspark" id="sp-cpi"></div>
       </div>
       <div class="cell">
-        <div class="l">GDP growth · Q4 FY26 · y/y · base 2022-23</div>
+        <div class="l">GDP growth · {gdpLatest} · y/y · base {baseOf(gdpNew)}</div>
         <div class="v" id="v-gdp">–</div>
-        <div class="d"><b id="d-gdp">–</b> vs Q3 · <a href="/dossiers/gdp/">Dossier 02 →</a></div>
+        <div class="d"><b id="d-gdp">–</b> vs {gdpPrevQ} · <a href="/dossiers/gdp/">Dossier 02 →</a></div>
         <div class="nspark" id="sp-gdp"></div>
       </div>
       <div class="cell">
-        <div class="l">Core CPI · Dec 2025 · y/y · derived · base 2012, to Dec 2025</div>
+        <div class="l">Core CPI · {cpiOldLast} · y/y · derived · base {baseOf(cpiOld)}, to {cpiOldLast}</div>
         <div class="v" id="v-core">–</div>
-        <div class="d"><b id="d-core">–</b> vs Nov · <a href="/dossiers/cpi/">Dossier 01 →</a></div>
+        <div class="d"><b id="d-core">–</b> vs {MONTHS_SHORT[Number(cpiOld.dates.at(-2).slice(5, 7)) - 1]} · <a href="/dossiers/cpi/">Dossier 01 →</a></div>
         <div class="nspark" id="sp-core"></div>
       </div>
     </div>
   </div>
 
   <section id="dossiers">
-    <div class="sec-head"><span class="no">§</span><h2>The dossiers</h2><span class="line"></span><span class="unit">№ 01 – 08 · all published</span></div>
+    <div class="sec-head"><span class="no">§</span><h2>The dossiers</h2><span class="line"></span><span class="unit">№ 01 – {String(N_DOSSIERS).padStart(2, "0")} · all published</span></div>
     <ul class="dossiers">
-      <li><a href="/dossiers/cpi/">
-        <span class="no">№ 01</span>
-        <span class="nm">Consumer Price Index</span>
-        <span class="ds">The cost of an ordinary shopping basket, measured monthly. The RBI's target, your salary's adversary, and the most argued-about number in Indian economics.</span>
-        <span class="dspark" id="ds-cpi"></span>
-        <span class="vt"><b>Current</b><br>Vintage 12 Jul 2026</span>
-      </a></li>
-      <li><a href="/dossiers/gdp/">
-        <span class="no">№ 02</span>
-        <span class="nm">National Accounts · GDP</span>
-        <span class="ds">The size and speed of the whole economy, estimated quarterly. What growth is made of — consumption, investment, government — and what the aggregate hides.</span>
-        <span class="dspark" id="ds-gdp"></span>
-        <span class="vt"><b>Current</b><br>Vintage 28 Nov 2025</span>
-      </a></li>
-      <li><a href="/dossiers/wpi/">
-        <span class="no">№ 03</span>
-        <span class="nm">Wholesale Prices · WPI</span>
-        <span class="ds">Factory-gate prices — a different basket from the CPI, measuring a different thing. Why the two diverge by five points and both are right.</span>
-        <span class="dspark" id="ds-wpi"></span>
-        <span class="vt"><b>Current</b><br>Vintage 14 May 2026</span>
-      </a></li>
-      <li><a href="/dossiers/iip/">
-        <span class="no">№ 04</span>
-        <span class="nm">Index of Industrial Production</span>
-        <span class="ds">The monthly pulse of mining, manufacturing and electricity. Volatile, revised, and read far too literally.</span>
-        <span class="dspark" id="ds-iip"></span>
-        <span class="vt"><b>Current</b><br>Vintage Jul 2026</span>
-      </a></li>
-      <li><a href="/dossiers/external/">
-        <span class="no">№ 05</span>
-        <span class="nm">The External Account</span>
-        <span class="ds">Exports, imports, reserves and the rupee — the country's ledger with the rest of the world, and the buffer that keeps it honest.</span>
-        <span class="dspark" id="ds-ext"></span>
-        <span class="vt"><b>Current</b><br>Vintage Jun 2025</span>
-      </a></li>
-      <li><a href="/dossiers/jobs/">
-        <span class="no">№ 06</span>
-        <span class="nm">Employment &amp; Unemployment · PLFS</span>
-        <span class="ds">Who has work, who wants it, who is counted. India's jobs number is not a count of jobs — it is three surveys, three stopwatches, kept side by side.</span>
-        <span class="dspark" id="ds-jobs"></span>
-        <span class="vt"><b>Current</b><br>Vintage Jun 2026</span>
-      </a></li>
-      <li><a href="/dossiers/consumption/">
-        <span class="no">№ 07</span>
-        <span class="nm">Household Consumption · HCES</span>
-        <span class="ds">The household budget of a country, averaged: what a person spends in a month, rung by rung of the ladder — and why the mean is nobody's life.</span>
-        <span class="dspark" id="ds-hces"></span>
-        <span class="vt"><b>Current</b><br>Vintage 2023-24 round</span>
-      </a></li>
-      <li><a href="/dossiers/factories/">
-        <span class="no">№ 08</span>
-        <span class="nm">Enterprises · ASI + ASUSE</span>
-        <span class="ds">The factory, the shop, and the line between them. Registered factories audited to the last rupee; the informal firm, counted only since 2021 — side by side, never summed.</span>
-        <span class="dspark" id="ds-asi"></span>
-        <span class="vt"><b>Current</b><br>Vintage 2023-24 rounds</span>
-      </a></li>
+      {DOSSIERS.map((d) => (
+        <li><a href={`/dossiers/${d.slug}/`}>
+          <span class="no">№ {d.no}</span>
+          <span class="nm">{d.name}</span>
+          <span class="ds">{d.blurb}</span>
+          <span class="dspark" id={`ds-${d.slug}`}></span>
+          <span class="vt"><b>Current</b><br>{d.vintageLabel}</span>
+        </a></li>
+      ))}
     </ul>
 
     <div class="note-block">
@@ -140,8 +119,8 @@ import "../styles/pages.css";
         <p>MoSPI / NSO for prices and national accounts; Office of the Economic Adviser for wholesale prices. Each dossier cites its exact press release and release date.</p>
       </div>
       <div>
-        <h6>Contact</h6>
-        <p>Corrections, questions and source tips: register@indiaatlas.example. Read <a href="/method/">how we work</a> before citing us.</p>
+        <h6>Before you cite</h6>
+        <p>Read <a href="/method/">how we work</a> before citing us.</p>
       </div>
     </div>
     <div class="fine">

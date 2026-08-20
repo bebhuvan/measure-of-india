@@ -1,23 +1,25 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+const D = bySlug["consumption"];
 ---
 <Base
   title="India Atlas — Consumption · Dossier 07"
-  description="Dossier 07 — the Household Consumption Expenditure Survey: what India spends per person per month, rung by rung, state by state."
+  description={D.description}
   nav="dossiers"
-  dateStamp="August 2026"
-  crumbLeft='<a href="/" style="color:inherit">Dossiers</a> / Consumption / <b>Household Consumption · HCES</b>'
-  crumbRight='Two survey rounds · final on release · <b>v1.1</b>'
-  canonical="https://indiaatlas.in/dossiers/consumption/"
-  ogImage="/og/consumption.png"
+  dateStamp={D.dateStamp}
+  crumbLeft={`<a href="/" style="color:inherit">Dossiers</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote} · <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/dossiers/consumption/"
+  ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
 
   <div class="titleblock break">
-    <div class="kicker">Dossier № 07 — Consumption · Household Consumption Expenditure Survey</div>
+    <div class="kicker">{kicker(D)}</div>
     <div class="hero-grid">
-      <h1>What India spends, <i>one person at a time.</i></h1>
+      <h1 set:html={D.headline} />
       <p class="lede">Twice this decade, government surveyors sat in households from Ladakh to Lakshadweep and wrote down a month of spending — the rice, the bus fare, the school fee, the phone recharge. The result is not an income statistic and not a price index. It is the household budget of a country, averaged.</p>
     </div>
     <div class="meta">
@@ -226,6 +228,41 @@ import Prose from "../../components/Prose.astro";
           <div class="now">
             <span class="mk">As of 2023-24</span>
             <p>Food takes <b id="ex-en-fr">–</b> of the rural rupee and <b id="ex-en-fu">–</b> of the urban. The widest split is rent — <b id="ex-en-rent-u">–</b> of urban spending against <b id="ex-en-rent-r">–</b> rural, since the village mostly owns its roof — and education nearly doubles in the city, <b id="ex-en-edu-u">–</b> against <b id="ex-en-edu-r">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-shift" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>What moved between the two rounds</h3>
+            <div class="sub">Change in each category's share of MPCE, 2022-23 → 2023-24 · rural (vermilion/grey) beside urban (pale) · sorted by the rural change · all 29 detail categories</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-shift">–</div><div class="c">food share · rural · 2022-23 → 2023-24</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip" style="cursor:default"><i style="background:#BE3E26;width:9px;height:9px;border-radius:50%"></i>Rural · 2023-24 change (≥ 0.5 pt)</span>
+            <span class="chip" style="cursor:default"><i style="background:#5B564B;width:9px;height:9px;border-radius:50%"></i>Rural · smaller moves</span>
+            <span class="chip" style="cursor:default"><i style="background:#A8A293;width:9px;height:9px;border-radius:50%"></i>Urban · 2023-24 change</span>
+          </div>
+          <div class="plotzone" id="plot-shift"></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, HCES 2022-23 &amp; 2023-24 · percentage-point change in share of MPCE (without imputation) · all 29 detail categories, including fruits, pulses, intoxicants, medical and household services previously baked but not charted · the zero rule separates categories that gained share (right) from those that lost it (left)</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each row is one category; the dots show how many percentage points its budget share gained or lost between the two survey rounds. The dark dot is rural, the pale dot urban. Read the zero rule as the dividing line: right is a category that grew as a share of spending, left is one that shrank.</p>
+            <p>The surprise is at the aggregate. Food's share rose in both sectors — <b id="ex-sh-food-r">–</b> rural, <b id="ex-sh-food-u">–</b> urban — the wrong direction for Engel's law in a single year of rising incomes. The drivers are visible on the strip: vegetables and processed food climbed, edible oil fell hardest. The oil fall is a price story, not a taste change — the same pattern as the cereal plate in §06.</p>
+          </div>
+          <div class="now">
+            <span class="mk">Between the rounds</span>
+            <p>Edible oil: <b id="ex-sh-oil">–</b> rural. Vegetables: <b id="ex-sh-veg">–</b> rural. The largest moves are all food; non-food categories barely shifted — rent, education and conveyance each moved under half a point, a sign of how sticky the consumption basket is over one year.</p>
           </div>
         </div>
       </figure>
@@ -487,7 +524,6 @@ import Prose from "../../components/Prose.astro";
       <div>
         <h6>This dossier</h6>
         <p>Dossier 07 · Consumption · version 1.1 · on the 2023-24 round. v1.1 extends the first release with the social-group, household-type, cereal-quantity, cereal-value and state food-share families. Next scheduled revision: on release of the next HCES round.</p>
-        <p>Corrections and questions: register@indiaatlas.example</p>
       </div>
     </div>
     <div class="fine">

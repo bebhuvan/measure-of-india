@@ -78,10 +78,10 @@ const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "13.5
       Plot.dot([ePub], { x: "date", y: "value", fill: "#BE3E26", r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.text([ePub], { x: "date", y: "value", text: () => "published · 2012 = 100 · " + ePub.value.toFixed(1), dx: -8, dy: -16, fill: "#BE3E26", fontSize: 13, fontFamily: mono, fontWeight: 500, textAnchor: "end" }),
       Plot.dot([eReb], { x: "date", y: "value", fill: "#A8A293", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([eReb], { x: "date", y: "value", text: () => "rebased · Jan 2016 = 100 · " + eReb.value.toFixed(1), dx: -8, dy: 24, fill: "#5B564B", fontSize: 13, fontFamily: mono, textAnchor: "end" }),
+      Plot.text([{ date: new Date(Date.UTC(2020, 9, 1)), value: 151.5 }], { x: "date", y: "value", text: ["rebased · Jan 2016 = 100 · " + eReb.value.toFixed(1)], fill: "#5B564B", fontSize: 13, fontFamily: mono, textAnchor: "start" }),
       Plot.dot([pub[0]], { x: "date", y: "value", fill: "#BE3E26", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.dot([reb[0]], { x: "date", y: "value", fill: "#A8A293", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([{ date: new Date(Date.UTC(2016, 3, 1)), value: 129 }], { x: "date", y: "value", text: ["Jan 2016: published reads " + baseVal.toFixed(1) + ", rebased reads 100"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
+      Plot.text([{ date: new Date(Date.UTC(2016, 3, 1)), value: 122.5 }], { x: "date", y: "value", text: ["Jan 2016: published reads " + baseVal.toFixed(1) + ", rebased reads 100"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
       Plot.text([{ date: new Date(Date.UTC(2021, 0, 1)), value: 197 }], { x: "date", y: "value", text: ["same shape, same rise: only the labels differ"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "middle" }),
     ],
   });

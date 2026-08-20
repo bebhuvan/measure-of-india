@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// scripts/qc.mjs — post-build checks, per site/BUILD.md §12:
+// scripts/qc.mjs — post-build checks, per docs/CONTRACT-render.md:
 //  1. execute every page's JS against a jsdom DOM (catches syntax errors,
 //     missing element ids, runtime exceptions);
 //  2. no "–" placeholder left unfilled;
@@ -12,6 +12,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import { JSDOM } from "jsdom";
+import { DOSSIERS, bySlug } from "../src/dossiers/registry.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 // QC_DIST lets gate runs point at a scratch build (e.g. astro build
@@ -184,6 +185,80 @@ const PAGES = [
     ["prov-vintage", (b) => b["asi-headline"].meta.vintage],
     ["prov-vintage2", (b) => b["asi-headline"].meta.vintage],
   ]},
+  { url: "/dossiers/aishe/", slug: null, checks: [
+    ["n-enrol", (b) => (b["aishe-headline"].series.enrolment.data.at(-1) / 1e7).toFixed(2) + "crore"],
+    ["n-ger", (b) => b["aishe-headline"].series.ger.data.at(-1).toFixed(1) + "%"],
+    ["n-gpi", (b) => b["aishe-headline"].series.gpi.data.at(-1).toFixed(2)],
+    ["n-ptr", (b) => String(Math.round(b["aishe-headline"].series.ptr.data.at(-1)))],
+    ["cr-enrol", (b) => Math.round(b["aishe-headline"].series.enrolment.data.at(-1)).toLocaleString("en-IN")],
+    ["pv-comp", (b) => (b["aishe-composition"].series.under_graduate.data.at(-1) / b["aishe-headline"].series.enrolment.data.at(-1) * 100).toFixed(0) + "%"],
+    ["pv-enrol", (b) => {
+      const e = b["aishe-headline"].series.enrolment.data;
+      return ((e.at(-1) / e[0] - 1) * 100).toFixed(0) + "%";
+    }],
+    ["pv-ger", (b) => (b["aishe-access"].series.ger_all_both.data.at(-1) - b["aishe-access"].series.ger_st_both.data.at(-1)).toFixed(1) + " pt"],
+    ["pv-gergen", (b) => b["aishe-headline"].series.gpi.data.at(-1).toFixed(2)],
+    ["pv-states", (b) => {
+      const vals = Object.entries(b["aishe-states"].series).filter(([k]) => k.startsWith("ger_")).map(([, s]) => s.data.at(-1)).filter((v) => v != null);
+      return (Math.max(...vals) - Math.min(...vals)).toFixed(0) + " pt";
+    }],
+    ["pv-edu", (b) => {
+      const c = b["aishe-composition"].series.integrated.data;
+      const g = (c.at(-1) / c[0] - 1) * 100;
+      return (g >= 0 ? "+" : "") + g.toFixed(0) + "%";
+    }],
+    ["pv-fac", (b) => {
+      const t = b["aishe-teachers"].series;
+      return Math.round(t.professor_female.data.at(-1) / t.professor_both.data.at(-1) * 100) + "%";
+    }],
+    ["pv-min", (b) => Math.round(b["aishe-minority"].series.muslims_both.data.at(-1)).toLocaleString("en-IN")],
+    ["pv-ptr", (b) => String(Math.round(b["aishe-headline"].series.ptr.data.at(-1)))],
+    // lecturers' share of the faculty ladder — regression test for the NaN
+    // bug (denominator once summed datum objects, not values)
+    ["ex-fac-lecn", (b) => {
+      const t = b["aishe-teachers"].series;
+      const li = t.lecturer_assistant_both.data.length - 1;
+      const denom = t.professor_both.data[li] + t.reader_associate_both.data[li] + t.lecturer_assistant_both.data[li] + t.temporary_both.data[li] + t.demonstrator_both.data[li];
+      return Math.round((t.lecturer_assistant_both.data[li] / denom) * 100) + "%";
+    }],
+    ["prov-vintage", (b) => b["aishe-headline"].meta.vintage],
+    ["prov-vintage2", (b) => b["aishe-headline"].meta.vintage],
+  ]},
+  { url: "/dossiers/gender/", slug: null, checks: [
+    ["n-sr", (b) => b["gender-sexratio"].series.sex_ratio.data.at(-1) + "♀/1000♂"],
+    ["n-lfpr", (b) => b["gender-work"].series.lfpr_female.data.at(-1).toFixed(1) + "%"],
+    ["n-mmr", (b) => String(Math.round(b["gender-mmr"].series.mmr.data.at(-1)))],
+    ["cr-sr", (b) => String(b["gender-sexratio"].series.sex_ratio.data.at(-1))],
+    ["cr-mmr", (b) => Math.round(b["gender-mmr"].series.mmr.data.at(-1)) + "/100k"],
+    ["cr-lit-f", (b) => b["gender-literacy"].series.literacy_female.data.at(-1).toFixed(1) + "%"],
+    ["cr-lfpr-f", (b) => b["gender-work"].series.lfpr_female.data.at(-1).toFixed(1) + "%"],
+    ["pv-sr", (b) => b["gender-sexratio"].series.sex_ratio.data[0] + " → " + b["gender-sexratio"].series.sex_ratio.data.at(-1)],
+    ["pv-mmr", (b) => b["gender-mmr"].series.mmr.data[0] + " → " + Math.round(b["gender-mmr"].series.mmr.data.at(-1))],
+    ["pv-tfr", (b) => b["gender-fertility"].series.tfr_graduate_and_above.data.at(-1).toFixed(2)],
+    ["pv-lfpr", (b) => b["gender-work"].series.lfpr_female.data.at(-1).toFixed(1) + "%"],
+    ["prov-vintage", (b) => b["gender-sexratio"].meta.vintage],
+    ["prov-vintage2", (b) => b["gender-sexratio"].meta.vintage],
+  ]},
+  { url: "/dossiers/mnre/", slug: null, checks: [
+    ["n-total", (b) => (b["mnre-sources"].series.grand_total.data.at(-1) / 1000).toFixed(1) + "GW"],
+    ["n-solar-share", (b) => (b["mnre-sources"].series.solar.data.at(-1) / b["mnre-sources"].series.grand_total.data.at(-1) * 100).toFixed(0) + "%"],
+    ["cr-total", (b) => (b["mnre-sources"].series.grand_total.data.at(-1) / 1000).toFixed(1) + "GW"],
+    ["pv-total", (b) => (b["mnre-sources"].series.grand_total.data[0] / 1000).toFixed(1) + " → " + (b["mnre-sources"].series.grand_total.data.at(-1) / 1000).toFixed(1)],
+    ["pv-sources", (b) => (b["mnre-sources"].series.solar.data.at(-1) / b["mnre-sources"].series.wind.data.at(-1)).toFixed(1) + "×"],
+    ["pv-solar", (b) => (b["mnre-solar-categories"].series.rooftop.data.at(-1) / b["mnre-sources"].series.solar.data.at(-1) * 100).toFixed(0) + "%"],
+    ["prov-vintage", (b) => b["mnre-sources"].meta.vintage],
+    ["prov-vintage2", (b) => b["mnre-sources"].meta.vintage],
+  ]},
+  { url: "/dossiers/nfhs/", slug: null, checks: [
+    ["n-anaemia", (b) => { const s = Object.values(b["nfhs-anaemia"].series).find((x) => x.label.includes("Children age 6-59")); return s.data[1].toFixed(1) + "%"; }],
+    ["n-imr", (b) => { const s = Object.values(b["nfhs-child"].series).find((x) => x.label.includes("Infant mortality")); return Math.round(s.data[1]) + "/1000"; }],
+    ["n-institutional", (b) => { const s = Object.values(b["nfhs-maternal"].series).find((x) => x.label.includes("Institutional births (in the 5 years")); return s.data[1].toFixed(1) + "%"; }],
+    ["n-tfr", (b) => { const s = Object.values(b["nfhs-fertility"].series).find((x) => x.label.includes("Total Fertility Rate")); return s.data[1].toFixed(2); }],
+    ["cr-anaemia", (b) => { const s = Object.values(b["nfhs-anaemia"].series).find((x) => x.label.includes("Children age 6-59")); return s.data[1].toFixed(1) + "%"; }],
+    ["pv-anaemia", (b) => { const s = Object.values(b["nfhs-anaemia"].series).find((x) => x.label.includes("Children age 6-59")); return "+" + (s.data[1] - s.data[0]).toFixed(1) + " pt"; }],
+    ["prov-vintage", (b) => b["nfhs-anaemia"].meta.vintage],
+    ["prov-vintage2", (b) => b["nfhs-anaemia"].meta.vintage],
+  ]},
   { url: "/", slug: null, minPlots: 1, checks: [
     // the CPI print is the 2024-base series; core stays on the 2012 base
     // (no weights served for the new base), labelled "to Dec 2025"
@@ -209,6 +284,34 @@ const PAGES = [
     })),
 ];
 
+// startup guard: the PAGES table and the dossier registry must cover each
+// other exactly — a new dossier must be impossible to ship un-gated
+{
+  const gated = PAGES.filter((p) => p.url.startsWith("/dossiers/")).map((p) => p.url.split("/")[2]);
+  const ungated = DOSSIERS.map((d) => d.slug).filter((s) => !gated.includes(s));
+  const unknown = gated.filter((s) => !bySlug[s]);
+  if (ungated.length || unknown.length) {
+    if (ungated.length) console.error(`qc: registry dossiers with no PAGES entry: ${ungated.map((s) => "/dossiers/" + s + "/").join(", ")}`);
+    if (unknown.length) console.error(`qc: PAGES dossier URLs not in the registry: ${unknown.join(", ")}`);
+    process.exit(1);
+  }
+}
+
+// numbers match the baked data — bundles load lazily on first touch; a
+// missing file fails the gate naming the file, never an uncaught ENOENT
+const bundleCache = {};
+const bundles = new Proxy({}, {
+  get: (_, slug) => {
+    if (typeof slug !== "string") return undefined;
+    if (!(slug in bundleCache)) {
+      const file = path.join(ROOT, "data/series", slug + ".json");
+      if (!fs.existsSync(file)) throw new Error(`bundle file missing: ${path.relative(ROOT, file)}`);
+      bundleCache[slug] = JSON.parse(fs.readFileSync(file, "utf8"));
+    }
+    return bundleCache[slug];
+  },
+});
+
 for (const page of PAGES) {
   const file = path.join(DIST, page.url, "index.html");
   if (!fs.existsSync(file)) { fail(`${page.url}: not built`); continue; }
@@ -217,7 +320,7 @@ for (const page of PAGES) {
   // every id referenced by inline HTML placeholders exists — and vice versa
   const dash = [...html.matchAll(/id="([a-z0-9-]+)">–</g)].map((m) => m[1]);
 
-  const dom = new JSDOM(html, { url: "https://indiaatlas.in" + page.url, pretendToBeVisual: true });
+  const dom = new JSDOM(html, { url: "https://atlas.thisindianlife.today" + page.url, pretendToBeVisual: true });
   const { window } = dom;
   window.URL.createObjectURL = () => "blob:x";
   window.URL.revokeObjectURL = () => {};
@@ -250,53 +353,22 @@ for (const page of PAGES) {
   if (left.length) fail(`${page.url}: unfilled placeholders: ${left.join(", ")}`);
   else ok(`${page.url}: all ${dash.length} figure slots filled`);
 
+  // runtime-computed NaN/undefined must never reach the reader (the static
+  // sweep above can't see JS-injected text; this one executes the page)
+  const badTok = doc.body.textContent.match(/\b(NaN|undefined|Infinity)\b/);
+  if (badTok) fail(`${page.url}: renders "${badTok[1]}" as page text (check client arithmetic)`);
+  else ok(`${page.url}: no NaN/undefined/Infinity in rendered text`);
+
   // numbers match the baked data
-  const bundles = {
-    cpi: JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/cpi.json"), "utf8")),
-    "cpi-2024": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/cpi-2024.json"), "utf8")),
-    "cpi-2024-items": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/cpi-2024-items.json"), "utf8")),
-    "cpi-2024-states": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/cpi-2024-states.json"), "utf8")),
-    gdp: JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/gdp.json"), "utf8")),
-    "gdp-industries": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/gdp-industries.json"), "utf8")),
-    "gdp-nominal": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/gdp-nominal.json"), "utf8")),
-    "gdp-accounts": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/gdp-accounts.json"), "utf8")),
-    "gdp-2022": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/gdp-2022.json"), "utf8")),
-    wpi: JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/wpi.json"), "utf8")),
-    "wpi-items": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/wpi-items.json"), "utf8")),
-    "iip-2022": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/iip-2022.json"), "utf8")),
-    "iip-2004": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/iip-2004.json"), "utf8")),
-    "iip-1993": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/iip-1993.json"), "utf8")),
-    "rbi-forex": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/rbi-forex.json"), "utf8")),
-    "rbi-bop-ratios": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/rbi-bop-ratios.json"), "utf8")),
-    "rbi-trade-partners": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/rbi-trade-partners.json"), "utf8")),
-    "rbi-commodities-exports": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/rbi-commodities-exports.json"), "utf8")),
-    "rbi-commodities-imports": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/rbi-commodities-imports.json"), "utf8")),
-    "plfs-monthly": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/plfs-monthly.json"), "utf8")),
-    "plfs-quarterly": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/plfs-quarterly.json"), "utf8")),
-    "plfs-annual": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/plfs-annual.json"), "utf8")),
-    "plfs-cuts": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/plfs-cuts.json"), "utf8")),
-    "plfs-status": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/plfs-status.json"), "utf8")),
-    "plfs-earnings": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/plfs-earnings.json"), "utf8")),
-    "plfs-education": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/plfs-education.json"), "utf8")),
-    "hces-mpce": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/hces-mpce.json"), "utf8")),
-    "hces-gini": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/hces-gini.json"), "utf8")),
-    "hces-fractiles": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/hces-fractiles.json"), "utf8")),
-    "hces-social": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/hces-social.json"), "utf8")),
-    "hces-household-type": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/hces-household-type.json"), "utf8")),
-    "hces-quantities": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/hces-quantities.json"), "utf8")),
-    "hces-categories-states": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/hces-categories-states.json"), "utf8")),
-    "asi-headline": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/asi-headline.json"), "utf8")),
-    "asi-headline-1987": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/asi-headline-1987.json"), "utf8")),
-    "asi-headline-1998": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/asi-headline-1998.json"), "utf8")),
-    "asi-accounts": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/asi-accounts.json"), "utf8")),
-    "asuse-annual": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/asuse-annual.json"), "utf8")),
-    "asuse-owners": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/asuse-owners.json"), "utf8")),
-    "asuse-modernity": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/asuse-modernity.json"), "utf8")),
-    "asuse-structure": JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/asuse-structure.json"), "utf8")),
-  };
   for (const [id, fn, which] of page.checks) {
     const got = doc.getElementById(id)?.textContent.trim();
-    const want = fn(page.slug ? bundles[page.slug] : bundles);
+    let want;
+    try {
+      want = fn(page.slug ? bundles[page.slug] : bundles);
+    } catch (e) {
+      fail(`${page.url} #${id}: ${e.message}`);
+      continue;
+    }
     if (got !== want) fail(`${page.url} #${id}: rendered "${got}" != data "${want}"`);
     else ok(`${page.url} #${id} = ${want}`);
   }
@@ -327,7 +399,7 @@ for (const page of PAGES) {
     const text = parsed.documentElement.textContent;
     if (parsed.querySelector("parsererror")) fail("download card: SVG does not parse");
     else {
-      for (const needle of ["cost of living", "MOSPI", "INDIA ATLAS · INDIAATLAS.IN"]) {
+      for (const needle of ["cost of living", "MOSPI", "INDIA ATLAS · THISINDIANLIFE.TODAY"]) {
         if (!text.includes(needle)) fail(`download card: missing "${needle}"`);
       }
       ok(`download card composes (${card.width}×${card.height}, ${ (card.svg.length/1024).toFixed(0) } KB svg)`);
@@ -341,7 +413,7 @@ for (const page of PAGES) {
 }
 
 // static greps over our own sources (not Plot internals)
-for (const f of ["src/dossiers/cpi.client.js", "src/dossiers/gdp.client.js", "src/dossiers/jobs.client.js", "src/charts/plumbing.js"]) {
+for (const f of ["src/dossiers/cpi.client.js", "src/dossiers/gdp.client.js", "src/dossiers/jobs.client.js", "src/dossiers/aishe.client.js", "src/dossiers/gender.client.js", "src/dossiers/mnre.client.js", "src/dossiers/nfhs.client.js", "src/charts/plumbing.js"]) {
   const src = fs.readFileSync(path.join(ROOT, f), "utf8");
   if (/curve\s*[:=]|catmull|monotone|basis/.test(src.replace(/monetary/g, ""))) fail(`${f}: smoothing curve reference found`);
   for (const m of src.matchAll(/tickFormat:\s*\([^)]*\)\s*=>\s*([^,}\n]+)/g)) {
@@ -349,6 +421,61 @@ for (const f of ["src/dossiers/cpi.client.js", "src/dossiers/gdp.client.js", "sr
   }
 }
 ok("static source greps done");
+
+// ---------------------------------------------------------------------------
+// Prose gates (AGENTS.md rule 3, enforced post-build):
+//  1. no placeholder prose may ship — "(dated prose pending — run: …)" in a
+//     built page is a release blocker, not a cosmetic wart;
+//  2. freshness — every dated slot recorded in pipeline/out/prose-manifest.json
+//     must describe the print the CURRENT bundle serves. If a release lands and
+//     prose regeneration failed or was skipped, the periods diverge and the
+//     build fails here. Formatting-proof: compares ISO dates, never rendered
+//     strings.
+// ---------------------------------------------------------------------------
+{
+  const htmlFiles = [];
+  (function walk(dir) {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, e.name);
+      if (e.isDirectory()) walk(p);
+      else if (e.name.endsWith(".html")) htmlFiles.push(p);
+    }
+  })(DIST);
+  const pend = [...new Set(htmlFiles.filter((p) => /\(dated prose pending[^)]*\)/.test(fs.readFileSync(p, "utf8"))))];
+  for (const p of pend) fail(`placeholder prose shipped: ${path.relative(DIST, p)}`);
+  if (!pend.length) ok("no placeholder prose in dist");
+
+  // no NaN/undefined ever renders as page text (numbers are computed before
+  // build gates run; this catches the arithmetic the per-id checks miss)
+  const nanPages = htmlFiles.filter((p) => />[^<]*\bNaN\b|>[^<]*\bundefined\b/.test(fs.readFileSync(p, "utf8")));
+  for (const p of nanPages) fail(`NaN/undefined rendered in ${path.relative(DIST, p)}`);
+  if (!nanPages.length) ok("no NaN/undefined in rendered HTML");
+
+  // placeholder contact addresses can never ship (and the corrections
+  // mailbox was removed by decision — any stray register@ line is a bug)
+  const exampleMail = htmlFiles.filter((p) => /indiaatlas\.example|register@|\b[A-Za-z0-9._%+-]+@example\./.test(fs.readFileSync(p, "utf8")));
+  for (const p of exampleMail) fail(`stray contact email in ${path.relative(DIST, p)}`);
+  if (!exampleMail.length) ok("no stray contact email in dist");
+
+  const manifestPath = path.join(ROOT, "pipeline/out/prose-manifest.json");
+  if (!fs.existsSync(manifestPath)) {
+    fail("prose-manifest.json missing — run `npm run prose` once to seed it");
+  } else {
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+    let checked = 0;
+    const bundleCache = {};
+    const loadBundle = (slug) => bundleCache[slug] ??= JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", slug + ".json"), "utf8"));
+    for (const [slot, rec] of Object.entries(manifest)) {
+      const proseFile = path.join(ROOT, "pipeline/out", `prose-${slot}.md`);
+      if (!fs.existsSync(proseFile)) { fail(`manifest lists ${slot} but prose file is gone`); continue; }
+      const current = loadBundle(rec.bundle);
+      if (current.dates.at(-1) !== rec.latestDate) {
+        fail(`stale prose: ${slot} describes ${rec.latestDate} but the bundle now serves ${current.dates.at(-1)} — run \`npm run prose\``);
+      } else checked++;
+    }
+    if (checked) ok(`prose fresh: ${checked}/${Object.keys(manifest).length} dated slots describe the current print`);
+  }
+}
 
 if (failures) { console.error(`\n${failures} QC failure(s)`); process.exit(1); }
 console.log("\nQC: all checks passed");

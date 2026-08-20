@@ -1,23 +1,25 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+const D = bySlug["jobs"];
 ---
 <Base
   title="India Atlas — Jobs · Dossier 06"
-  description="Dossier 06 — the Periodic Labour Force Survey: unemployment, participation, and the three stopwatches India times its workers with."
+  description={D.description}
   nav="dossiers"
-  dateStamp="July 2026"
-  crumbLeft='<a href="/" style="color:inherit">Dossiers</a> / Labour / <b>Employment &amp; Unemployment · PLFS</b>'
-  crumbRight='Evergreen · revised with each bulletin · <b>v1.2</b>'
-  canonical="https://indiaatlas.in/dossiers/jobs/"
-  ogImage="/og/jobs.png"
+  dateStamp={D.dateStamp}
+  crumbLeft={`<a href="/" style="color:inherit">Dossiers</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote} · <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/dossiers/jobs/"
+  ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
 
   <div class="titleblock break">
-    <div class="kicker">Dossier № 06 — Labour · Periodic Labour Force Survey</div>
+    <div class="kicker">{kicker(D)}</div>
     <div class="hero-grid">
-      <h1>Who has work, who wants it, <i>who is counted.</i></h1>
+      <h1 set:html={D.headline} />
       <p class="lede">India's jobs number is not a count of jobs. It is a survey of people — what they did last week, what they did last year — and the answer changes depending on how you ask. This dossier keeps the three answers side by side.</p>
     </div>
     <div class="meta">
@@ -29,9 +31,9 @@ import Prose from "../../components/Prose.astro";
       <span>Bulletin <b>Monthly, from Apr 2025</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Unemployment · monthly · CWS</div><div class="v acc" id="n-ur">–</div><div class="d" id="d-ur">–</div><div class="nspark" id="nspark-ur"></div></div>
-      <div class="num"><div class="l">Participation · LFPR</div><div class="v" id="n-lfpr">–</div><div class="d" id="d-lfpr">–</div></div>
-      <div class="num"><div class="l">Urban women unemployed</div><div class="v" id="n-fur">–</div><div class="d" id="d-fur">–</div></div>
+      <div class="num"><div class="l">Unemployment · monthly · current weekly status (CWS)</div><div class="v acc" id="n-ur">–</div><div class="d" id="d-ur">–</div><div class="nspark" id="nspark-ur"></div></div>
+       <div class="num"><div class="l">Participation · LFPR</div><div class="v" id="n-lfpr">–</div><div class="d" id="d-lfpr">–</div></div>
+      <div class="num"><div class="l">Urban women · unemployment rate (UR)</div><div class="v" id="n-fur">–</div><div class="d" id="d-fur">–</div></div>
       <div class="num"><div class="l">Annual UR · usual status</div><div class="v" id="n-psss">–</div><div class="d" id="d-psss">–</div></div>
     </div>
   </div>
@@ -101,6 +103,40 @@ import Prose from "../../components/Prose.astro";
           <div class="now">
             <span class="mk">The annual series ends 2023-24</span>
             <p>Annual usual-status unemployment has halved in six years, from <b id="ex-p0">–</b> to <b id="ex-p1">–</b>. The weekly measure fell in step and remains near twice the annual one — the recovery closed neither the gap nor the question of job quality.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-lfpr-ann" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Seven years of joining the count</h3>
+            <div class="sub">All-India labour force participation rate, 15+ · usual status (PS+SS) vs weekly status (CWS) · 2017-18 – 2023-24</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-lfpr-ann">–</div><div class="c">2023-24 · usual status</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-lfpr-ann">
+            <button class="chip" data-key="lfpr_psss"><i style="background:#BE3E26"></i>Usual status · PS+SS</button>
+            <button class="chip" data-key="lfpr_cws"><i style="background:#5B564B"></i>Weekly status · CWS</button>
+          </div>
+          <div class="plotzone" id="plot-lfpr-ann"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, PLFS annual reports · agriculture years (Jul–Jun) plotted at July · the monthly participation plate (§06) runs from Apr 2025; this annual view runs seven years and shows the structural rise the bulletin cannot yet see</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The monthly participation plate in §06 is fifteen months old and shows a snapshot. This annual companion runs seven agriculture years and shows the trend: participation has climbed steeply and steadily, on both stopwatches. Most of the climb is rural women re-entering the count — through self-employment, as the next section shows — not urban job-seekers flooding in.</p>
+            <p>The usual-status line sits above the weekly one because it catches attachment to work across the year, not just the week surveyed. Both rise in lockstep: the recovery in participation is real on either stopwatch.</p>
+          </div>
+          <div class="now">
+            <span class="mk">The annual series ends 2023-24</span>
+            <p>Usual-status LFPR rose from <b id="ex-lf0">–</b> to <b id="ex-lf1">–</b> — <b id="ex-lf-d">–</b> in seven years. The weekly measure rose from <b id="ex-lfc0">–</b> to <b id="ex-lfc1">–</b>. No fifteen-month bulletin could show a shape this clear.</p>
           </div>
         </div>
       </figure>
@@ -302,6 +338,44 @@ import Prose from "../../components/Prose.astro";
           <div class="now">
             <span class="mk">The 2023-24 register</span>
             <p>Self-employment is <b id="ex-st-se">–</b> of all workers — <b id="ex-st-oa">–</b> own-account and employers, <b id="ex-st-hp">–</b> household helpers. Regular wage work is <b id="ex-st-rg">–</b>; casual labour <b id="ex-st-cs">–</b>. Since 2017-18 the self-employed share has risen <b id="ex-st-dse">–</b> while casual work fell <b id="ex-st-dcs">–</b> — the recovery in work has been a movement into working for oneself, not onto payrolls.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-gender" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The same workforce, asked by gender</h3>
+            <div class="sub">Share of workers by status in employment, usual status (PS+SS) · men (left) vs women (right) · 2017-18 – 2023-24 · same colours, same scale</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-gender">–</div><div class="c">2023-24 · women self-employed</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip" style="cursor:default"><i style="background:#BE3E26"></i>Self-employed</button>
+            <button class="chip" style="cursor:default"><i style="background:#5B564B"></i>Regular wage</button>
+            <button class="chip" style="cursor:default"><i style="background:#A8A293"></i>Casual labour</button>
+          </div>
+          <div class="plotzone" style="display:grid;grid-template-columns:1fr 1fr;gap:32px">
+            <div id="plot-gender-male"></div>
+            <div id="plot-gender-female"></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source — MoSPI, PLFS annual reports · shares of all male and all female workers separately · each panel sums to 100 · same three colours as the person-level plate above · agriculture years plotted at July</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Split the person-level plate above by gender and the averages dissolve. Men hold steady across the three statuses — roughly half self-employed, a quarter salaried, a fifth casual, barely moving in seven years. Women do not. Female self-employment has climbed fifteen points, almost entirely into unpaid household-enterprise helper roles; female regular-wage work has fallen by five. Women are not joining the salaried minority — they are joining the family firm.</p>
+            <p>Read the two right-hand lines together: female casual labour has fallen faster than male. The woman leaving casual work is not moving to a salary; she is moving to a family enterprise that pays no separate wage at all.</p>
+          </div>
+          <div class="now">
+            <span class="mk">The 2023-24 register, by gender</span>
+            <p>Self-employment: <b id="ex-g-se-m">–</b> of men, <b id="ex-g-se-f">–</b> of women — up from <b id="ex-g-se-f0">–</b> in 2017-18. Regular wage: <b id="ex-g-rg-m">–</b> of men against <b id="ex-g-rg-f">–</b> of women. Casual labour: <b id="ex-g-cs-m">–</b> of men, <b id="ex-g-cs-f">–</b> of women. The female self-employment line is the structural story behind the participation rise in §03.</p>
           </div>
         </div>
       </figure>
@@ -517,8 +591,7 @@ import Prose from "../../components/Prose.astro";
       </div>
       <div>
         <h6>This dossier</h6>
-        <p>Dossier 06 · Labour · version 1.2 · adds what work is (§07), what it pays (§08) and the educated queue (§09) to v1.1's state register (§10). Next scheduled revision: on release of the July bulletin.</p>
-        <p>Corrections and questions: register@indiaatlas.example</p>
+        <p>Dossier 06 · Labour · version 1.3 · adds the seven-year annual LFPR plate (§03) and the status-by-gender companion (§07) to v1.2. Next scheduled revision: on release of the July bulletin.</p>
       </div>
     </div>
     <div class="fine">
