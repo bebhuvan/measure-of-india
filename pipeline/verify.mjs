@@ -10,6 +10,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { bySlug } from "../src/dossiers/registry.js";
 import { makePeriodIndex, yearLag, MONTHS_FULL } from "./lib/periods.mjs";
+import { SERIES_KWS } from "./lib/series-kws.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const [file, slug] = process.argv.slice(2);
@@ -43,6 +44,7 @@ function walk(o) {
 walk(facts.series);
 walk(facts.cross);
 if (facts.legacy) walk(facts.legacy);
+if (facts.proseInputs) walk(facts.proseInputs);
 // structural constants the dossier may cite (weights, shares, base years) —
 // declared per dossier in the registry, never assumed globally
 const DOSSIER = bySlug[slug];
@@ -78,23 +80,17 @@ const MNF = MONTHS_FULL;
 const dates = bundle.dates;
 const periodIndex = makePeriodIndex(dates, bundle.meta.frequency, DOSSIER.calendar ?? "fiscal-apr");
 
-const SERIES_KWS = {
-  cpi: [["headline", "headline"], ["inflation", "headline"], ["food", "food_and_beverages"], ["beverages", "food_and_beverages"], ["transport", "transport"], ["restaurants", "restaurants_and_accommodation_services"], ["hotels", "restaurants_and_accommodation_services"], ["personal care", "personal_care_social_protection_and_miscellaneous_goods_and_services"], ["gold", "personal_care_social_protection_and_miscellaneous_goods_and_services"], ["education", "education_services"], ["health", "health"], ["housing", "housing_water_electricity_gas_and_other_fuels"]],
-  gdp: [["gva", "gva"], ["consumption", "pfce"], ["pfce", "pfce"], ["investment", "gfcf"], ["gfcf", "gfcf"], ["capex", "gfcf"], ["gdp", "gdp"], ["growth", "gdp"]],
-  wpi: [["headline", "headline"], ["wholesale", "headline"], ["inflation", "headline"], ["primary", "primary"], ["fuel", "fuel"], ["manufactured", "manufactured"], ["food", "food_index"]],
-  iip: [["general", "general"], ["headline", "general"], ["industrial", "general"], ["manufacturing", "sector_manufacturing"], ["capital", "use_capital_goods"], ["mining", "sector_mining_quarrying"], ["electricity", "sector_electricity_gas_supply"]],
-  jobs: [["unemployment", "ur"], ["headline", "ur"], ["participation", "lfpr"], ["worker", "wpr"]],
-  consumption: [["mpce", "rural"], ["spending", "rural"], ["consumption", "rural"], ["gini", "rural"]],
-  factories: [["factories", "factories_in_operation"], ["gva", "gva"], ["output", "total_output"], ["emoluments", "emoluments"]],
-}[slug];
+// series-keyword maps live in pipeline/lib/series-kws.mjs (shared with
+// contract.mjs's coverage floors and generate.mjs's COVERAGE enumeration).
 // A dossier with no keyword map gets claim-checking SKIPPED (warned), never
 // silently verified against an arbitrary series — the old fallback to
 // bundle.series[0] produced false passes for any new dossier.
-const claimCheck = Boolean(SERIES_KWS);
+const SERIES_KWS_ = SERIES_KWS[slug];
+const claimCheck = Boolean(SERIES_KWS_);
 if (!claimCheck) console.warn(`verify: no series-keyword map for "${slug}" — arithmetic claim-checking skipped (numeric pass above still ran)`);
 function resolveSeries(sentence) {
   const s = sentence.toLowerCase();
-  for (const [kw, key] of SERIES_KWS) if (new RegExp("\\b" + kw + "\\b").test(s)) return key;
+  for (const [kw, key] of SERIES_KWS_) if (new RegExp("\\b" + kw + "\\b").test(s)) return key;
   return null;
 }
 
@@ -249,6 +245,41 @@ for (const s of sentences) {
     if (mod === "more than") ok = want < 1 ? r <= want + tol : r >= want - tol;
     if (mod === "nearly" || mod === "almost") ok = want < 1 ? r >= want - tol * 2 && r <= want + tol * 0.5 : r >= want - tol * 2;
     if (!ok) claimFail(`false ratio claim: "${m[0]}" for ${key} — ${base} → ${latest} is a ratio of ${r.toFixed(2)}`, s);
+  }
+}
+
+// ---------- negative guard: no extreme or record the sheet contradicts ----------
+// The cross facts (facts.cross) now describe every sibling series. Prose may
+// not call a series a record, an extreme, or the top/bottom of the sheet
+// while the sheet disagrees — the error accuracy gates can't see.
+const SIBLING = /\b(?:of|among|in)\s+(?:the\s+)?(?:\w+\s+)?(?:divisions?|groups?|sectors?|parts?|bundles?|cuts?|moving parts?)\b/i;
+const HIW = /\b(record|all[- ]time high|ever|on record|in (?:the )?(?:whole )?(?:series|history)|hottest|highest|strongest|fastest|steepest|biggest|largest)\b/i;
+const LOW = /\b(lowest|coolest|softest|slowest|smallest|mildest|weakest)\b/i;
+if (claimCheck && facts.cross) {
+  for (const s of sentences) {
+    const sl = s.toLowerCase();
+    const mentioned = [...new Set(SERIES_KWS_.filter(([kw]) => new RegExp("\\b" + kw + "\\b", "i").test(sl)).map(([, k]) => k))];
+    // a record/high-low claim in a sentence naming several series binds to
+    // its referent; reject only when it is false for EVERY series named
+    const recordBroken = (which) => mentioned.length
+      && mentioned.every((k) => {
+        const f = facts.series[k];
+        return f?.latest?.value != null && f?.[which]?.value != null && f.latest.value !== f[which].value;
+      });
+    if (/\b(record|ever|on record|in (?:the )?(?:whole )?(?:series|history))\b/i.test(s)) {
+      if (HIW.test(s) && recordBroken("max")) claimFail(`negative guard: record/high claim — none of the named series (${mentioned.join(", ")}) stands at its own sheet max (${mentioned.map((k) => `${k} latest ${facts.series[k].latest.value} vs max ${facts.series[k].max.value}`).join("; ")})`, s);
+      if (LOW.test(s) && recordBroken("min")) claimFail(`negative guard: record-low claim — none of the named series (${mentioned.join(", ")}) stands at its own sheet min`, s);
+    }
+    const key = resolveSeries(s);
+    if (!key) continue;
+    if (HIW.test(s) && SIBLING.test(s)) {
+      const top = facts.cross.topByLatest?.key;
+      if (top && top !== key) claimFail(`negative guard: ${key} is called the top of the sheet, but the sheet's top is ${top} (${facts.cross.topByLatest.label} at ${facts.cross.topByLatest.latest})`, s);
+    }
+    if (LOW.test(s) && SIBLING.test(s)) {
+      const bot = facts.cross.bottomByLatest?.key;
+      if (bot && bot !== key) claimFail(`negative guard: ${key} is called the bottom of the sheet, but the sheet's bottom is ${bot} (${facts.cross.bottomByLatest.label} at ${facts.cross.bottomByLatest.latest})`, s);
+    }
   }
 }
 

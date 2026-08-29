@@ -49,6 +49,27 @@ source families, explicit geography, per-dossier calendars, and a single
 dossier registry — preparing the site for World Bank (WDI, Data360) and
 Our World in Data dossier families.
 
+## Retired mechanisms
+
+- **`--mock` fetch mode (retired 2026-08, plan P2.8).** `scripts/lib/mock.mjs`
+  plus the hand-assembled mock branch in `scripts/fetch.mjs` could bake 8 of
+  16 products with hand-typed metadata (fixed release dates, `source:
+  "MOCK generator"`) that had already diverged from the real bundles — and
+  `npm run data:mock` happily overwrote the canonical `data/series/` with it.
+  Nothing (CI, tests, build) consumed mock bakes; the live path is the only
+  path, and validate has no mock exemptions anymore. Decision: dropped, not
+  regenerated from adapters — offline work builds from the committed
+  `data/series/` (the bake is git-tracked), so mocks solved a problem the
+  repo's own design had already retired.
+
+- **Bundle-level `meta.gaps` (retired 2026-08, plan P2.5).** A union of
+  missing dates across all of a bundle's series could not say which series
+  actually missed which date — `wpi-items.json` carried 119 of 124 axis dates
+  as "gaps" while most items were complete. Disclosure now lives per series
+  (`series.gaps`, `series.gapsNote`), where it means something; `writeSeries`
+  migrates the legacy shape at the write boundary so every producer complies
+  by construction, and validate fails any bundle that bypasses the writer.
+
 ## Retired documents
 
 - `Idea.md` → `docs/VISION.md`

@@ -1,13 +1,14 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["external"];
 ---
 <Base
   title="India Atlas — The External Account · Dossier 05"
   description={D.description}
   nav="dossiers"
-  dateStamp={D.dateStamp}
+  dateStamp={dateStamp(D)}
   crumbLeft={`<a href="/" style="color:inherit">Dossiers</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote} · <b>${D.version}</b>`}
   canonical="https://atlas.thisindianlife.today/dossiers/external/"
@@ -43,7 +44,7 @@ const D = bySlug["external"];
     <div class="reading-top">
       <div><span class="rk">The buffer</span><div class="big" id="rb-big">–</div></div>
       <p class="rt-cap">Foreign exchange reserves, June 2025 — within sight of the all-time high, and enough to pay for <b id="rb-cover">–</b> months of imports.</p>
-      <div><span class="rk">A year earlier</span><div class="big" id="rb-prev" style="font-size:44px">–</div></div>
+      <div class="rt-side"><span class="rk">A year earlier</span><div class="rt-side-v" id="rb-prev">–</div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">

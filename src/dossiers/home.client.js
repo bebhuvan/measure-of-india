@@ -16,6 +16,7 @@ import aisheBundle from "../../data/series/aishe-headline.json";
 import genderBundle from "../../data/series/gender-sexratio.json";
 import mnreBundle from "../../data/series/mnre-sources.json";
 import nfhsBundle from "../../data/series/nfhs-anaemia.json";
+import wdiMfgBundle from "../../data/series/wdi-manufacturing.json";
 import { hydrate } from "../charts/plumbing.js";
 import { DOSSIERS } from "./registry.js";
 
@@ -103,7 +104,7 @@ const SPARK_BUNDLES = {
   "cpi": cpiBundle, "gdp": gdpBundle, "wpi": wpiBundle, "iip-2022": iipBundle,
   "rbi-forex": forexBundle, "plfs-monthly": plfsBundle, "hces-fractiles": fractilesBundle,
   "asi-headline": asiBundle, "aishe-headline": aisheBundle, "gender-sexratio": genderBundle,
-  "mnre-sources": mnreBundle, "nfhs-anaemia": nfhsBundle,
+  "mnre-sources": mnreBundle, "nfhs-anaemia": nfhsBundle, "wdi-manufacturing": wdiMfgBundle,
 };
 for (const d of DOSSIERS) {
   if (!d.spark.series) continue;   // custom shapes handled below

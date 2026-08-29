@@ -32,19 +32,34 @@ function checkCadence(dates, stepMonths, slug) {
   }
 }
 
-function checkRange(bundle, lo, hi, slug) {
-  const gaps = new Set(bundle.meta?.gaps ?? []);
+function checkRange(bundle, lo, hi, slug, seriesRange) {
+  // CONTRACT-series rule 2: disclosure lives on the series. A bundle-level
+  // meta.gaps union survived only in the legacy shape; writeSeries migrates
+  // it, so any meta.gaps here bypassed the writer by hand.
+  if (bundle.meta?.gaps?.length) fail(`${slug}: bundle-level meta.gaps is retired — declare gaps on the series that miss the dates (writeSeries migrates automatically)`);
   for (const [k, s] of Object.entries(bundle.series)) {
+    // a bundle may mix units (a % share beside a constant-US$ level); a
+    // per-series range overrides the bundle default
+    const [slo, shi] = seriesRange?.[k] ?? [lo, hi];
     // series may legitimately start late or end early (e.g. a state series
     // shorter than the bundle axis); nulls outside a series' own published
-    // span are fine, interior nulls must be disclosed in meta.gaps.
+    // span are fine, interior nulls must be disclosed in that series' gaps.
     const first = s.data.findIndex((v) => v != null);
     const last = s.data.length - 1 - [...s.data].reverse().findIndex((v) => v != null);
     if (first === -1) { fail(`${slug}.${k}: entirely empty`); continue; }
+    const gaps = new Set(s.gaps ?? []);
+    const estimated = new Set(s.estimated ?? []);
+    for (const d of s.estimated ?? []) {
+      const i = bundle.dates.indexOf(d);
+      if (i === -1) fail(`${slug}.${k}: estimated date ${d} is not on the axis`);
+      else if (s.data[i] == null) fail(`${slug}.${k}: estimated ${d} carries no value`);
+      else if (i <= first || i >= last) fail(`${slug}.${k}: estimated ${d} is not interior to the series' span`);
+      else if (gaps.has(d)) fail(`${slug}.${k}: ${d} cannot be both estimated and a gap`);
+    }
     s.data.forEach((v, i) => {
       if (v === null) {
-        if (i > first && i < last && !gaps.has(bundle.dates[i])) fail(`${slug}.${k}: null at ${bundle.dates[i]} (not disclosed in meta.gaps)`);
-      } else if (v < lo || v > hi) fail(`${slug}.${k}: implausible ${v} at ${bundle.dates[i]}`);
+        if (i > first && i < last && !gaps.has(bundle.dates[i])) fail(`${slug}.${k}: null at ${bundle.dates[i]} (not disclosed in series.gaps)`);
+      } else if (v < slo || v > shi) fail(`${slug}.${k}: implausible ${v} at ${bundle.dates[i]}`);
     });
     if (s.data.length !== bundle.dates.length) fail(`${slug}.${k}: length ${s.data.length} != dates ${bundle.dates.length}`);
   }
@@ -58,13 +73,43 @@ function checkMeta(bundle, slug, dossierKey, baseOverride, freqOverride) {
   const declared = baseOverride ?? cfg.dossiers[dossierKey]?.base;
   if (declared && m.base !== declared) fail(`${slug}: meta.base "${m.base}" != sources.yml "${declared}" (base-year rule)`);
   const freq = freqOverride ?? cfg.dossiers[dossierKey]?.frequency;
-  if (freq && m.frequency !== freq && !(dossierKey === "plfs" || dossierKey === "gender" || dossierKey === "nfhs")) fail(`${slug}: meta.frequency "${m.frequency}" != sources.yml "${freq}"`);
+  // a dossier whose bundles legitimately mix frequencies (multi-survey
+  // compendia) declares frequency_exempt in sources.yml — never a hardcoded
+  // list in code
+  if (freq && m.frequency !== freq && !cfg.dossiers[dossierKey]?.frequency_exempt) fail(`${slug}: meta.frequency "${m.frequency}" != sources.yml "${freq}"`);
   // one bundle, one geography. Bundles baked before the geo field carry no
   // meta.geo — they default to "IND", as does a sources.yml entry without
   // geo; new bakes stamp it explicitly and a mismatch fails loudly.
   const declaredGeo = cfg.dossiers[dossierKey]?.geo ?? "IND";
   const bundleGeo = m.geo ?? "IND";
   if (bundleGeo !== declaredGeo) fail(`${slug}: meta.geo "${m.geo}" != sources.yml "${declaredGeo}" (one bundle, one geography)`);
+}
+
+// FRESHNESS — two mechanical checks.
+// 1) meta.latestPeriod is a display label; when machine-parseable (YYYY-MM or
+//    YYYY) it must name the axis end. A hardcoded label that outlives its data
+//    is exactly the rot this gate exists for; prose-range labels ("2019-21")
+//    are not parseable and are skipped.
+// 2) The staleness floor: `stale_after` in sources.yml (per dossier; a row's
+//    `staleAfter` overrides) is the minimum period a live bundle must cover.
+//    It is a regression floor — newer data never fails it, a bake that loses
+//    ground does. Retired rulers carry their own frozen floor with a comment;
+//    the floor is a minimum, so late-arriving history can never false-fail.
+function checkFreshness(bundle, slug, row, dossierKey) {
+  const m = bundle.meta ?? {};
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(m.vintage ?? ""))) fail(`${slug}: meta.vintage "${m.vintage}" is not an ISO date`);
+  else if (m.vintage > new Date().toISOString().slice(0, 10)) fail(`${slug}: meta.vintage ${m.vintage} is in the future — vintage is the data vintage, not the fetch date`);
+  const last = bundle.dates.at(-1);
+  const lp = m.latestPeriod;
+  if (typeof lp === "string") {
+    // a real month only: "2019-21" is a survey-round range label, not YYYY-MM
+    const ym = /^\d{4}-(0[1-9]|1[0-2])$/.test(lp) ? lp : /^\d{4}$/.test(lp) ? `${lp}-01` : null;
+    if (ym && ym !== last.slice(0, 7)) fail(`${slug}: meta.latestPeriod "${lp}" does not match axis end ${last.slice(0, 7)}`);
+  }
+  if (row.stale === false) return;
+  const floor = row.staleAfter ?? cfg.dossiers[dossierKey]?.stale_after;
+  if (floor && last.slice(0, 7) < floor) fail(`${slug}: stale — last period ${last.slice(0, 7)} is behind the stale_after floor ${floor}`);
+  else if (floor) ok(`${slug}: covers through ${last.slice(0, 7)} (floor ${floor})`);
 }
 
 function checkWeights(dossierKey, field = "weights") {
@@ -76,7 +121,6 @@ function checkWeights(dossierKey, field = "weights") {
 }
 
 function checkCrosscheck(bundle, slug, computedKey, publishedKey, tol) {
-  if (bundle.meta.mock) return;
   const published = bundle.crosscheck?.[publishedKey];
   if (!published) return fail(`${slug}: crosscheck.${publishedKey} missing`);
   let worst = 0, worstAt = null;
@@ -93,14 +137,19 @@ function checkCrosscheck(bundle, slug, computedKey, publishedKey, tol) {
 /* ---- per-product table ---- */
 
 const PRODUCTS = [
-  { slug: "cpi", dossier: "cpi", cadence: 1, range: [-8, 20], cross: ["headline", "published_headline", 0.15] },
-  { slug: "cpi-rural", dossier: "cpi", cadence: 1, range: [-12, 20], cross: ["headline", "published_headline", 0.15] },
-  { slug: "cpi-urban", dossier: "cpi", cadence: 1, range: [-12, 20], cross: ["headline", "published_headline", 0.15] },
-  { slug: "cpi-subgroups", dossier: "cpi", cadence: 1, range: [-30, 70] },
-  { slug: "cpi-states", dossier: "cpi", cadence: 1, range: [-8, 30] },
+  // FRESHNESS FLOORS — the dossier-level floor lives in sources.yml
+  // (`stale_after`); a row's `staleAfter` overrides it. Floors are minimums:
+  // newer data never fails, a bake that loses ground does. Retired rulers
+  // carry a frozen floor so a refetch cannot silently truncate them.
+  // The 2012-base CPI stream was retired at Dec 2025 — frozen by design.
+  { slug: "cpi", dossier: "cpi", cadence: 1, staleAfter: "2025-12", range: [-8, 20], cross: ["headline", "published_headline", 0.15] },
+  { slug: "cpi-rural", dossier: "cpi", cadence: 1, staleAfter: "2025-12", range: [-12, 20], cross: ["headline", "published_headline", 0.15] },
+  { slug: "cpi-urban", dossier: "cpi", cadence: 1, staleAfter: "2025-12", range: [-12, 20], cross: ["headline", "published_headline", 0.15] },
+  { slug: "cpi-subgroups", dossier: "cpi", cadence: 1, staleAfter: "2025-12", range: [-30, 70] },
+  { slug: "cpi-states", dossier: "cpi", cadence: 1, staleAfter: "2025-12", range: [-8, 30] },
   // range is wide: Daman & Diu's published rural index falls ~13% over
   // late 2018 – early 2019 (as-published in eSankhyiki)
-  { slug: "cpi-states-sectors", dossier: "cpi", cadence: 1, range: [-15, 35] },
+  { slug: "cpi-states-sectors", dossier: "cpi", cadence: 1, staleAfter: "2025-12", range: [-15, 35] },
   // base 2024=100 — separate bundles, never spliced with the 2012 base.
   // Upper range bound is the personal-care division (carries gold, ~19% y/y
   // through H1 2026). Crosscheck here is computed-from-levels y/y against the
@@ -110,7 +159,7 @@ const PRODUCTS = [
   { slug: "cpi-2024-sectors", dossier: "cpi", cadence: 1, range: [-12, 25], base: "2024=100" },
   // the NSO's own back-cast (series=Back): levels published to one decimal,
   // so computed y/y can sit ~0.16pt from the published rate — tolerance 0.25
-  { slug: "cpi-2024-back", dossier: "cpi", cadence: 1, range: [-8, 20], base: "2024=100", cross: ["headline", "published_headline", 0.25] },
+  { slug: "cpi-2024-back", dossier: "cpi", cadence: 1, staleAfter: "2024-12", range: [-8, 20], base: "2024=100", cross: ["headline", "published_headline", 0.25] },
   // 2024-base depth (v2.4): groups, items, states. Ranges are documentation
   // of the measured extremes, not curation — silver jewellery y/y reaches
   // +160.9 (Apr 2026), garlic -53.0; the hottest group is Other personal
@@ -121,16 +170,17 @@ const PRODUCTS = [
   { slug: "cpi-2024-items", dossier: "cpi", cadence: 1, range: [-60, 200], base: "2024=100" },
   { slug: "cpi-2024-states", dossier: "cpi", cadence: 1, range: [-10, 25], base: "2024=100" },
   { slug: "cpi-2024-states-sectors", dossier: "cpi", cadence: 1, range: [-12, 30], base: "2024=100" },
-  { slug: "gdp", dossier: "gdp", cadence: 3, range: [-70, 90], cross: ["gdp", "gdp_growth_published", 0.6], cross2: ["gva", "gva_growth_published", 0.6] },
-  { slug: "gdp-expenditure", dossier: "gdp", cadence: 3, range: [-90, 150] },
-  { slug: "gdp-accounts", dossier: "gdp", cadence: 12, range: [-90, 150], freq: "annual" },
+  // the 2011-12 base was retired after the 2022-23 base revision — frozen
+  { slug: "gdp", dossier: "gdp", cadence: 3, staleAfter: "2025-07", range: [-70, 90], cross: ["gdp", "gdp_growth_published", 0.6], cross2: ["gva", "gva_growth_published", 0.6] },
+  { slug: "gdp-expenditure", dossier: "gdp", cadence: 3, staleAfter: "2025-07", range: [-90, 150] },
+  { slug: "gdp-accounts", dossier: "gdp", cadence: 12, staleAfter: "2025-04", range: [-90, 150], freq: "annual" },
   // 8-sector quarterly real GVA; range spans the lockdown whipsaw
   // (trade/construction fell ~-50% and rebounded past +45%)
-  { slug: "gdp-industries", dossier: "gdp", cadence: 3, range: [-70, 90] },
+  { slug: "gdp-industries", dossier: "gdp", cadence: 3, staleAfter: "2025-07", range: [-70, 90] },
   // nominal GDP y/y and the implied deflator. Nominal >= real in
   // inflationary years is NOT asserted — the deflator can print below zero
   // (WPI-heavy) while the CPI is positive, and did in FY16.
-  { slug: "gdp-nominal", dossier: "gdp", cadence: 3, range: [-40, 45], cross: ["gdp_nominal", "nominal_growth_published", 0.6] },
+  { slug: "gdp-nominal", dossier: "gdp", cadence: 3, staleAfter: "2025-07", range: [-40, 45], cross: ["gdp_nominal", "nominal_growth_published", 0.6] },
   // the new base: quarterly prints continue here after Q2 FY26; separate
   // bundle, never spliced with the 2011-12 base
   { slug: "gdp-2022", dossier: "gdp", cadence: 3, range: [-10, 20], base: "2022-23", cross: ["gdp", "gdp_growth_published", 0.6], cross2: ["gva", "gva_growth_published", 0.6] },
@@ -143,62 +193,64 @@ const PRODUCTS = [
   // carry interior nulls where the source serves 0/absent levels —
   // disclosed in meta.gaps.
   { slug: "wpi-items", dossier: "wpi", cadence: 1, range: [-90, 500] },
-  { slug: "cpialrl-1986", dossier: "cpialrl", cadence: 1, range: [-5, 25], base: "1986-87=100" },
+  { slug: "cpialrl-1986", dossier: "cpialrl", cadence: 1, staleAfter: "2025-05", range: [-5, 25], base: "1986-87=100" },
   { slug: "cpialrl-2019", dossier: "cpialrl", cadence: 1, range: [-10, 300], base: "2019=100" },
   // range is wide: Assam's published old-base levels spike ~20% in late 2021
   // (as-published in eSankhyiki), dragging 2022 y/y to about -14%
-  { slug: "cpialrl-states-1986", dossier: "cpialrl", cadence: 1, range: [-20, 40], base: "1986-87=100" },
+  { slug: "cpialrl-states-1986", dossier: "cpialrl", cadence: 1, staleAfter: "2025-05", range: [-20, 40], base: "1986-87=100" },
   { slug: "cpialrl-states-2019", dossier: "cpialrl", cadence: 1, range: [50, 300], base: "2019=100" },
   { slug: "cpialrl-groups-2019", dossier: "cpialrl", cadence: 1, range: [-10, 300], base: "2019=100" },
   { slug: "plfs-monthly", dossier: "plfs", cadence: 1, range: [0, 100] },
-  { slug: "plfs-quarterly", dossier: "plfs", cadence: 3, range: [0, 100] },
+  { slug: "plfs-quarterly", dossier: "plfs", cadence: 3, staleAfter: "2026-01", range: [0, 100] },
   { slug: "plfs-cuts", dossier: "plfs", cadence: 1, range: [0, 100] },
-  { slug: "plfs-annual", dossier: "plfs", cadence: 12, range: [0, 100] },
-  { slug: "plfs-states", dossier: "plfs", cadence: 12, range: [0, 45] },
-  { slug: "plfs-status", dossier: "plfs", cadence: 12, range: [0, 100] },
+  { slug: "plfs-annual", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100] },
+  { slug: "plfs-states", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 45] },
+  { slug: "plfs-status", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100] },
   // ₹ levels: casual female r+u floor ~₹165/day, regular male ceiling ~₹22k/mo
-  { slug: "plfs-earnings", dossier: "plfs", cadence: 3, range: [100, 60000] },
-  { slug: "plfs-education", dossier: "plfs", cadence: 12, range: [0, 45] },
-  { slug: "rbi-trade", dossier: "rbi", cadence: 1, range: [-60000, 80000], cross: ["balance", "balance_published", 5] },
-  { slug: "rbi-forex", dossier: "rbi", cadence: 1, range: [5, 1000000] },
-  { slug: "rbi-trade-oil", dossier: "rbi", cadence: 1, range: [0, 100000] },
-  { slug: "rbi-bop", dossier: "rbi", cadence: 3, range: [-200000, 200000], freq: "quarterly" },
-  { slug: "rbi-bop-ratios", dossier: "rbi", cadence: 12, range: [-15, 60], freq: "annual" },
-  { slug: "rbi-debt", dossier: "rbi", cadence: 12, range: [0, 1500000], freq: "annual" },
-  { slug: "rbi-nri", dossier: "rbi", cadence: 1, range: [-60000, 500000] },
+  { slug: "plfs-earnings", dossier: "plfs", cadence: 3, staleAfter: "2024-04", range: [100, 60000] },
+  { slug: "plfs-education", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 45] },
+  // RBI via eSankhyiki: the mirror lags the RBI's own publications by
+  // up to a year, so each bundle carries its own regression floor
+  { slug: "rbi-trade", dossier: "rbi", cadence: 1, staleAfter: "2025-06", range: [-60000, 80000], cross: ["balance", "balance_published", 5] },
+  { slug: "rbi-forex", dossier: "rbi", cadence: 1, staleAfter: "2025-06", range: [5, 1000000] },
+  { slug: "rbi-trade-oil", dossier: "rbi", cadence: 1, staleAfter: "2025-06", range: [0, 100000] },
+  { slug: "rbi-bop", dossier: "rbi", cadence: 3, staleAfter: "2025-04", range: [-200000, 200000], freq: "quarterly" },
+  { slug: "rbi-bop-ratios", dossier: "rbi", cadence: 12, staleAfter: "2024-04", range: [-15, 60], freq: "annual" },
+  { slug: "rbi-debt", dossier: "rbi", cadence: 12, staleAfter: "2025-03", range: [0, 1500000], freq: "annual" },
+  { slug: "rbi-nri", dossier: "rbi", cadence: 1, staleAfter: "2025-06", range: [-60000, 500000] },
   // low bound is the yen: quoted ₹ per single yen (0.01 in 1966); USD itself
   // stays within 4.76 (pre-1966-devaluation) .. ~90
-  { slug: "rbi-exchange-rates", dossier: "rbi", cadence: 1, range: [0.005, 130] },
-  { slug: "rbi-forward-premia", dossier: "rbi", cadence: 1, range: [-10, 40] },
+  { slug: "rbi-exchange-rates", dossier: "rbi", cadence: 1, staleAfter: "2025-07", range: [0.005, 130] },
+  { slug: "rbi-forward-premia", dossier: "rbi", cadence: 1, staleAfter: "2025-08", range: [-10, 40] },
   // gross legs peak ~69bn/month (Feb 2025 sales); forward book has hit -89bn
-  { slug: "rbi-intervention", dossier: "rbi", cadence: 1, range: [-100000, 80000] },
-  { slug: "rbi-invisibles", dossier: "rbi", cadence: 12, range: [-60000, 300000], freq: "annual" },
+  { slug: "rbi-intervention", dossier: "rbi", cadence: 1, staleAfter: "2025-06", range: [-100000, 80000] },
+  { slug: "rbi-invisibles", dossier: "rbi", cadence: 12, staleAfter: "2024-04", range: [-60000, 300000], freq: "annual" },
   // ₹ Crore stocks, all positive; gross ≈ 63 lakh crore end-Mar 2025
-  { slug: "rbi-debt-quarterly", dossier: "rbi", cadence: 3, range: [0, 10000000], freq: "quarterly" },
+  { slug: "rbi-debt-quarterly", dossier: "rbi", cadence: 3, staleAfter: "2025-03", range: [0, 10000000], freq: "quarterly" },
   // ceiling is imports from China (~$113bn FY25); identities checked below
-  { slug: "rbi-trade-partners", dossier: "rbi", cadence: 12, range: [0, 250000], freq: "annual" },
+  { slug: "rbi-trade-partners", dossier: "rbi", cadence: 12, staleAfter: "2024-04", range: [0, 250000], freq: "annual" },
   // ceilings: engineering exports ~$117bn; crude & products imports ~$186bn
-  { slug: "rbi-commodities-exports", dossier: "rbi", cadence: 12, range: [0, 150000], freq: "annual" },
-  { slug: "rbi-commodities-imports", dossier: "rbi", cadence: 12, range: [0, 250000], freq: "annual" },
+  { slug: "rbi-commodities-exports", dossier: "rbi", cadence: 12, staleAfter: "2024-04", range: [0, 150000], freq: "annual" },
+  { slug: "rbi-commodities-imports", dossier: "rbi", cadence: 12, staleAfter: "2024-04", range: [0, 250000], freq: "annual" },
   // gross monthly turnover, both legs: ~$76bn Aug 1996 to ~$3.0tn Jul 2025
-  { slug: "rbi-fx-turnover", dossier: "rbi", cadence: 1, range: [0, 4000000] },
+  { slug: "rbi-fx-turnover", dossier: "rbi", cadence: 1, staleAfter: "2025-07", range: [0, 4000000] },
   { slug: "isp", dossier: "isp", cadence: 1, range: [50, 250] },
   { slug: "iip-2022", dossier: "iip", cadence: 1, range: [-30, 60], cross: ["general", "headline_growth_published", 0.3] },
   // old base spans the COVID whipsaw: near-zero lockdown levels make the
   // 2021 y/y mathematically correct but enormous (consumer durables +1778%,
   // Apr 2021). Ranges are documentation, not curation — values as computed.
-  { slug: "iip-2011", dossier: "iip", cadence: 1, range: [-100, 1800], base: "2011-12=100", cross: ["general", "headline_growth_published", 0.3] },
+  { slug: "iip-2011", dossier: "iip", cadence: 1, staleAfter: "2026-03", range: [-100, 1800], base: "2011-12=100", cross: ["general", "headline_growth_published", 0.3] },
   { slug: "iip-industries-2022", dossier: "iip", cadence: 1, range: [-60, 120] },
-  { slug: "iip-industries-2011", dossier: "iip", cadence: 1, range: [-100, 55000], base: "2011-12=100" },
+  { slug: "iip-industries-2011", dossier: "iip", cadence: 1, staleAfter: "2026-03", range: [-100, 55000], base: "2011-12=100" },
   // heritage bases (full-surface audit, 2026-08-08) — separate rulers, never
   // spliced. Capital goods on the old bases is lumpy-order volatile (+65% in
   // single months); 2-digit extremes are as published (electrical machinery
   // +275% y/y in 2007 on the 2004-05 base; jute swings past +860% on the
   // 1993-94 base). Ranges are documentation, not curation.
-  { slug: "iip-2004", dossier: "iip", cadence: 1, range: [-45, 80], base: "2004-05=100", cross: ["general", "headline_growth_published", 0.3] },
-  { slug: "iip-industries-2004", dossier: "iip", cadence: 1, range: [-90, 320], base: "2004-05=100" },
-  { slug: "iip-1993", dossier: "iip", cadence: 1, range: [-30, 80], base: "1993-94=100", cross: ["general", "headline_growth_published", 0.3] },
-  { slug: "iip-industries-1993", dossier: "iip", cadence: 1, range: [-100, 900], base: "1993-94=100" },
+  { slug: "iip-2004", dossier: "iip", cadence: 1, staleAfter: "2017-03", range: [-45, 80], base: "2004-05=100", cross: ["general", "headline_growth_published", 0.3] },
+  { slug: "iip-industries-2004", dossier: "iip", cadence: 1, staleAfter: "2017-03", range: [-90, 320], base: "2004-05=100" },
+  { slug: "iip-1993", dossier: "iip", cadence: 1, staleAfter: "2011-06", range: [-30, 80], base: "1993-94=100", cross: ["general", "headline_growth_published", 0.3] },
+  { slug: "iip-industries-1993", dossier: "iip", cadence: 1, staleAfter: "2011-06", range: [-100, 900], base: "1993-94=100" },
   // HCES: two survey rounds, annual axis; ₹ levels (Chandigarh urban top
   // fractile is the ceiling driver), category shares in %, Gini 0.2-0.5
   { slug: "hces-mpce", dossier: "hces", cadence: 12, range: [500, 20000] },
@@ -225,9 +277,9 @@ const PRODUCTS = [
   { slug: "asi-accounts", dossier: "asi", cadence: 12, range: [-5e8, 8e9] },
   // legacy classification blocks — separate rulers, never spliced. Ranges
   // as for the 2008 block, scaled to their (smaller, older) economies.
-  { slug: "asi-headline-2004", dossier: "asi", cadence: 12, range: [-5e8, 2.5e9], base: "NIC 2004" },
-  { slug: "asi-headline-1998", dossier: "asi", cadence: 12, range: [-5e8, 2.5e9], base: "NIC 1998" },
-  { slug: "asi-headline-1987", dossier: "asi", cadence: 12, range: [-5e8, 2.5e9], base: "NIC 1987" },
+  { slug: "asi-headline-2004", dossier: "asi", cadence: 12, staleAfter: "2007-04", range: [-5e8, 2.5e9], base: "NIC 2004" },
+  { slug: "asi-headline-1998", dossier: "asi", cadence: 12, staleAfter: "2003-04", range: [-5e8, 2.5e9], base: "NIC 1998" },
+  { slug: "asi-headline-1987", dossier: "asi", cadence: 12, staleAfter: "1997-04", range: [-5e8, 2.5e9], base: "NIC 1987" },
   // industry/state cuts can carry real negative GVA (e.g. Ladakh 2021-22,
   // GVA -434 ₹ lakh — aggregate losses in a tiny UT, as published)
   { slug: "asi-industries", dossier: "asi", cadence: 12, range: [-1e8, 2.5e9] },
@@ -243,7 +295,7 @@ const PRODUCTS = [
   { slug: "asuse-modernity", dossier: "asuse", cadence: 12, range: [0, 5e5] },
   { slug: "asuse-states", dossier: "asuse", cadence: 12, range: [0, 5e8] },
   // counts are in hundreds ('00): workers reach ~1.5e6 ('00) ≈ 152M
-  { slug: "asuse-quarterly", dossier: "asuse", cadence: 3, range: [0, 3e6], freq: "quarterly" },
+  { slug: "asuse-quarterly", dossier: "asuse", cadence: 3, staleAfter: "2026-01", range: [0, 3e6], freq: "quarterly" },
   // AISHE: counts (enrolment to ~4.3e7, teachers ~1.6e6) mixed with ratios
   // (GER ~25%, GPI ~1, PTR ~26); wide range admits them all
   { slug: "aishe-headline", dossier: "aishe", cadence: 12, range: [0, 5e7] },
@@ -285,6 +337,13 @@ const PRODUCTS = [
   // household carries sex ratios (up to ~1020) alongside per cent
   { slug: "nfhs-household", dossier: "nfhs", noCadence: true, range: [0, 1200] },
   { slug: "nfhs-states", dossier: "nfhs", noCadence: true, range: [0, 100] },
+  // World Bank WDI (first non-MoSPI family): annual, calendar years. The
+  // headline bundle mixes % of GDP with a constant-2015-US$ level — the
+  // level carries its own range. Growth dips to about -10 (2020 lockdown).
+  { slug: "wdi-manufacturing", dossier: "manufacturing", cadence: 12, staleAfter: "2025-01", range: [-70, 100], seriesRange: { mva_constant_usd: [1e9, 3e12] } },
+  { slug: "wdi-manufacturing-composition", dossier: "manufacturing", cadence: 12, staleAfter: "2023-01", range: [0, 100] },
+  { slug: "wdi-manufacturing-tech", dossier: "manufacturing", cadence: 12, staleAfter: "2022-01", range: [0, 100] },
+  { slug: "wdi-manufacturing-exports", dossier: "manufacturing", cadence: 12, staleAfter: "2024-01", range: [0, 100] },
 ];
 
 for (const p of PRODUCTS) {
@@ -292,18 +351,48 @@ for (const p of PRODUCTS) {
   if (!fs.existsSync(file)) { fail(`${p.slug}: data/series/${p.slug}.json missing`); continue; }
   const b = load(p.slug);
   checkMeta(b, p.slug, p.dossier, p.base, p.freq);
+  checkFreshness(b, p.slug, p, p.dossier);
   if (!p.noCadence) checkCadence(b.dates, p.cadence, p.slug);
-  checkRange(b, p.range[0], p.range[1], p.slug);
+  checkRange(b, p.range[0], p.range[1], p.slug, p.seriesRange);
   if (p.cross) checkCrosscheck(b, p.slug, ...p.cross);
   if (p.cross2) checkCrosscheck(b, p.slug, ...p.cross2);
   const last = b.dates.at(-1);
-  console.log(`  ${p.slug}: ${b.dates.length} pts, ${b.dates[0]} .. ${last}, vintage ${b.meta.vintage}${b.meta.mock ? " (MOCK)" : ""}`);
+  console.log(`  ${p.slug}: ${b.dates.length} pts, ${b.dates[0]} .. ${last}, vintage ${b.meta.vintage}`);
 }
 
 checkWeights("cpi");
 checkWeights("cpi", "weights_rural");
 checkWeights("cpi", "weights_urban");
 checkWeights("wpi");
+
+/* ---- World Bank WDI manufacturing identities ---- */
+withBundle("wdi-manufacturing", (b) => {
+  const mva = b.series.mva_pct_gdp.data, ind = b.series.industry_pct_gdp.data;
+  const lvl = b.series.mva_constant_usd.data, pub = b.series.mva_growth.data;
+  // manufacturing is a subset of industry — its share can never exceed it
+  for (let i = 0; i < mva.length; i++) {
+    if (mva[i] != null && ind[i] != null && mva[i] > ind[i] + 1e-9) fail(`wdi-manufacturing: MVA share ${mva[i]} exceeds industry share ${ind[i]} at ${b.dates[i]}`);
+  }
+  ok("wdi-manufacturing: MVA share never exceeds the industry share");
+  // the published growth rate must equal the constant-US$ level's own y/y
+  // (WDI computes it from constant LCU; constant-USD is the same growth)
+  let worst = 0, worstAt = null;
+  for (let i = 1; i < lvl.length; i++) {
+    if (lvl[i] == null || lvl[i - 1] == null || pub[i] == null) continue;
+    const d = Math.abs((lvl[i] / lvl[i - 1] - 1) * 100 - pub[i]);
+    if (d > worst) { worst = d; worstAt = b.dates[i]; }
+  }
+  if (worst > 0.05) fail(`wdi-manufacturing: published growth deviates ${worst.toFixed(3)}pt from level-derived y/y at ${worstAt}`);
+  else ok(`wdi-manufacturing: published growth within ${worst.toFixed(4)}pt of level-derived y/y`);
+});
+withBundle("wdi-manufacturing-composition", (b) => {
+  // the five UNIDO decomposition shares are exhaustive — they must sum to 100
+  for (let i = 0; i < b.dates.length; i++) {
+    const sum = Object.values(b.series).reduce((a, s) => a + (s.data[i] ?? 0), 0);
+    if (Math.abs(sum - 100) > 0.5) fail(`wdi-manufacturing-composition: shares sum to ${sum.toFixed(2)} at ${b.dates[i]}, not 100`);
+  }
+  ok("wdi-manufacturing-composition: shares sum to 100 in every year");
+});
 
 /* ---- CPI base-year seam: two bases, never overlapping-spliced ---- */
 withBundle("cpi", (b12) => withBundle("cpi-2024", (b24) => {
@@ -321,7 +410,6 @@ withBundle("cpi", (b12) => withBundle("cpi-2024", (b24) => {
 // API's own inflation field, worst cell across every series in the bundle.
 // NOT a weights recomputation — the API serves no weights for this base.
 const crossInflationMap = (slug, tol) => withBundle(slug, (b) => {
-  if (b.meta.mock) return;
   const pub = b.crosscheck?.published_inflation;
   if (!pub) return fail(`${slug}: crosscheck.published_inflation missing`);
   let worst = 0, worstAt = null, n = 0;
@@ -1026,8 +1114,16 @@ withBundle("mnre-sources", (b) => {
   if (badBefore) fail(`mnre-sources: Large Hydro >0 before Dec 2023 (${badBefore} months)`);
   if (badAfter) fail(`mnre-sources: Large Hydro =0 after Dec 2023 (${badAfter} months)`);
   if (!badBefore && !badAfter) ok(`mnre-sources: Large Hydro classification break clean — 0 through Nov 2023, ${lh[breakIdx].toLocaleString("en-IN")} MW from Dec 2023`);
+  // Solar overtook Wind: latest solar > latest wind
+  const sNow = b.series.solar.data.at(-1), wNow = b.series.wind.data.at(-1);
+  if (sNow != null && wNow != null && sNow <= wNow) fail(`mnre-sources: Solar (${sNow}) has not overtaken Wind (${wNow})`);
+  else ok(`mnre-sources: Solar (${(sNow / 1000).toFixed(1)} GW) > Wind (${(wNow / 1000).toFixed(1)} GW)`);
+});
 
 /* ---- NFHS: the direction-of-change identities ---- */
+// NOTE: these blocks must stay OUTSIDE the mnre-sources callback above —
+// nesting them inside meant one early return in an MNRE check silently
+// disabled every NFHS identity.
 
 withBundle("nfhs-anaemia", (b) => {
   // child anaemia WORSENED: NFHS-5 > NFHS-4
@@ -1066,11 +1162,6 @@ withBundle("nfhs-fertility", (b) => {
     if (jump < 30) fail(`nfhs-fertility: bank account jump only ${jump.toFixed(0)}pt — expected >30`);
     else ok(`nfhs-fertility: women's bank account jumped ${jump.toFixed(0)}pt (${bank.data[0]}% → ${bank.data[1]}%) — the Jan Dhan effect`);
   }
-});
-  // Solar overtook Wind: latest solar > latest wind
-  const sNow = b.series.solar.data.at(-1), wNow = b.series.wind.data.at(-1);
-  if (sNow != null && wNow != null && sNow <= wNow) fail(`mnre-sources: Solar (${sNow}) has not overtaken Wind (${wNow})`);
-  else ok(`mnre-sources: Solar (${(sNow / 1000).toFixed(1)} GW) > Wind (${(wNow / 1000).toFixed(1)} GW)`);
 });
 
 withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {

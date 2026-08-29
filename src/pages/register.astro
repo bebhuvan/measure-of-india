@@ -3,6 +3,7 @@ import Base from "../layouts/Base.astro";
 import "../styles/pages.css";
 import fs from "node:fs";
 import { DOSSIERS } from "../dossiers/registry.js";
+import { dateStamp } from "../dossiers/display.js";
 
 // same computed counts as the front page — the two must never disagree
 const SERIES_FILES = fs.readdirSync("data/series").filter((f) => f.endsWith(".json"));
@@ -13,7 +14,7 @@ const N_DOSSIERS = DOSSIERS.length;
   title="India Atlas — The Register"
   description="Every series India Atlas tracks: what it is, who publishes it, its latest reading, and its shape over the decade."
   nav="register"
-  dateStamp="July 2026"
+  dateStamp={dateStamp(DOSSIERS[0])}
   crumbLeft="<b>The Register</b>"
   crumbRight={`<b>${N_SERIES.toLocaleString("en-IN")}</b> series baked · ${N_DOSSIERS} dossiers · updated with each print`}
   canonical="https://atlas.thisindianlife.today/register/"

@@ -605,7 +605,7 @@ function componentChart(blockId, plotId, key, d0, d1, yTicks, extraNote) {
       Plot.ruleY([d0], { stroke: "#E0DACA", strokeWidth: 1 }),
       Plot.rectY([{ y1: 2, y2: 6 }], { y1: "y1", y2: "y2", x1: dates[0], x2: dates.at(-1), fill: "#F8F6F1" }),
       Plot.ruleY([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
-      Plot.areaY(s.data, { x: "date", y: "value", fill: s.color, fillOpacity: 0.06 }),
+      Plot.areaY(s.data, { x: "date", y: "value", y1: d0 <= 0 ? 0 : d0, fill: s.color, fillOpacity: 0.06 }),
       Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.lineY(s.data.slice(-13), { x: "date", y: "value", stroke: s.color, strokeWidth: 4, strokeLinecap: "round", strokeLinejoin: "round" }),
       Plot.text([{ date: bandSpot.x, value: bandSpot.y }], { x: "date", y: "value", text: ["Tolerance band · 2–6%"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: bandSpot.anchor }),

@@ -1,13 +1,14 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["mnre"];
 ---
 <Base
   title="India Atlas — Renewable Energy · Dossier 11"
   description={D.description}
   nav="dossiers"
-  dateStamp={D.dateStamp}
+  dateStamp={dateStamp(D)}
   crumbLeft={`<a href="/" style="color:inherit">Dossiers</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote} · <b>${D.version}</b>`}
   canonical="https://atlas.thisindianlife.today/dossiers/mnre/"
@@ -43,7 +44,7 @@ const D = bySlug["mnre"];
     <div class="reading-top">
       <div><span class="rk">Grand Total · Jun 2026</span><div class="big" id="rb-total">–</div></div>
       <p class="rt-cap">Cumulative installed renewable-energy capacity — every solar panel, wind turbine, hydro dam and biomass plant on the MNRE register. Solar alone is <b id="rt-solar">–</b>; the four sources together reached this stock in six and a half years of building.</p>
-      <div><span class="rk">Solar · GW</span><div class="big" id="rb-solar" style="font-size:44px">–</div></div>
+      <div class="rt-side"><span class="rk">Solar · GW</span><div class="rt-side-v" id="rb-solar">–</div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">

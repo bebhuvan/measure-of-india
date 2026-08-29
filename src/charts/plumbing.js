@@ -487,3 +487,8 @@ export function hydrate(bundle) {
   }
   return S;
 }
+
+// shared number renderers (docs/CONTRACT-render.md): clients and qc.mjs both
+// format through src/charts/format.js so a formatter change cannot desync a
+// plate from its gate.
+export * as fmt from "./format.js";

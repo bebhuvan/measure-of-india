@@ -1,13 +1,14 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["gender"];
 ---
 <Base
   title="India Atlas — Women & Men · Dossier 10"
   description={D.description}
   nav="dossiers"
-  dateStamp={D.dateStamp}
+  dateStamp={dateStamp(D)}
   crumbLeft={`<a href="/" style="color:inherit">Dossiers</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote} · <b>${D.version}</b>`}
   canonical="https://atlas.thisindianlife.today/dossiers/gender/"
@@ -43,7 +44,7 @@ const D = bySlug["gender"];
     <div class="reading-top">
       <div><span class="rk">Sex ratio · 2011 census</span><div class="big" id="rb-sr">–</div></div>
       <p class="rt-cap">Females per 1,000 males, the 2011 Census — the latest full count. The ratio recovered from its 1991 nadir of 927 but never returned to the 1951 level of 946. Maternal mortality, the biggest single improvement, fell from <b id="rt-mmr0">–</b> to <b id="rt-mmr1">–</b> deaths per 100,000 live births.</p>
-      <div><span class="rk">MMR · 2018-20</span><div class="big" id="rb-mmr" style="font-size:44px">–</div></div>
+      <div class="rt-side"><span class="rk">MMR · 2018-20</span><div class="rt-side-v" id="rb-mmr">–</div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">

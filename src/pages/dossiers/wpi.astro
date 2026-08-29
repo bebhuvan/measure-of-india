@@ -2,13 +2,14 @@
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["wpi"];
 ---
 <Base
   title="India Atlas — Wholesale Prices · Dossier 03"
   description={D.description}
   nav="dossiers"
-  dateStamp={D.dateStamp}
+  dateStamp={dateStamp(D)}
   crumbLeft={`<a href="/" style="color:inherit">Dossiers</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote} · <b>${D.version}</b>`}
   canonical="https://atlas.thisindianlife.today/dossiers/wpi/"
@@ -44,7 +45,7 @@ const D = bySlug["wpi"];
     <div class="reading-top">
       <div><span class="rk">Current reading</span><div class="big" id="rb-big">–</div></div>
       <p class="rt-cap">Headline wholesale inflation, April 2026 — the highest since October 2022, and nearly quadruple March's pace in a single bound.</p>
-      <div><span class="rk">One month earlier</span><div class="big" id="rb-prev" style="font-size:44px">–</div></div>
+      <div class="rt-side"><span class="rk">One month earlier</span><div class="rt-side-v" id="rb-prev">–</div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">

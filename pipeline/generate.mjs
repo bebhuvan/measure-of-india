@@ -102,31 +102,61 @@ for (const slot of slots) {
     `Type: ${slot.dateStamp ? "dated — must name the period (" + facts.latestPeriod + ")" : "dated commentary"}`,
     `Max sentences: ${slot.maxSentences}`,
     `Required figures (use exactly these, from the facts sheet): ${slot.requiredFigures.join(", ")}`,
+    slot.minSeriesMentioned != null ? `Coverage floor: name at least ${slot.minSeriesMentioned} distinct series of the sheet (by name or by their figures) — the contract gate rejects prose that stays silent on most of the basket.` : null,
+    slot.mustName?.includes("extremes") ? "Coverage floor: the sheet's hottest and weakest movers MUST appear." : null,
+    slot.mustAcknowledge?.includes("contradictions") ? "Coverage floor: any series the sheet shows moving against the headline must be acknowledged — name it or say plainly that it contradicts the headline." : null,
     `Brief: ${slot.brief}`,
-  ].join("\n");
-  const headKey = (slot.requiredFigures[0] ?? Object.keys(facts.series)[0]).split(".")[0];
-  const sig = facts.series[headKey];
-  const bands = facts.bands;   // a policy band exists only where the law declares one
-  const signals = sig ? [
-    sig.run ? `${sig.label} has moved ${sig.run.direction} for ${sig.run.length} straight prints, since ${sig.run.since}.` : null,
-    sig.baseEffect,
-    bands && sig.streaks.belowFloor >= 3 ? `${sig.label} has sat below the ${bands.floor}% floor for ${sig.streaks.belowFloor} straight prints.` : null,
-    bands && sig.streaks.aboveCeiling >= 3 ? `${sig.label} has sat above the ${bands.ceiling}% ceiling for ${sig.streaks.aboveCeiling} straight prints.` : null,
-  ].filter(Boolean) : [];
+  ].filter(Boolean).join("\n");
+  const cross = facts.cross ?? {};
+  // signals across the WHOLE sheet — not just the first required figure:
+  // the three longest runs, every base effect, every band streak
+  const allSigs = Object.values(facts.series);
+  const signals = [
+    ...allSigs.filter((s) => s.run && s.run.length >= 3).sort((a, b) => b.run.length - a.run.length).slice(0, 3)
+      .map((s) => `${s.label} has moved ${s.run.direction} for ${s.run.length} straight prints, since ${s.run.since}.`),
+    ...allSigs.map((s) => s.baseEffect).filter(Boolean),
+    ...(facts.bands ? allSigs.flatMap((s) => [
+      s.streaks.belowFloor >= 3 ? `${s.label} has sat below the ${facts.bands.floor}% floor for ${s.streaks.belowFloor} straight prints.` : null,
+      s.streaks.aboveCeiling >= 3 ? `${s.label} has sat above the ${facts.bands.ceiling}% ceiling for ${s.streaks.aboveCeiling} straight prints.` : null,
+    ]).filter(Boolean) : []),
+  ];
+  // COVERAGE enumeration: every series with its one-line status, plus the
+  // summarized deep cuts. The writer reads it; contract.mjs enforces it.
+  const statusOf = (k) => {
+    const parts = [];
+    if (cross.topMover?.key === k) parts.push("HOTTEST mover — must appear");
+    if (cross.bottomMover?.key === k) parts.push("WEAKEST mover — must appear");
+    if ((cross.contradictions ?? []).some((c) => c.key === k)) parts.push("CONTRADICTS the headline move — must be acknowledged");
+    const r = (cross.ranking ?? []).indexOf(k);
+    parts.push(r >= 0 ? `rank ${r + 1} of ${(cross.ranking ?? []).length} on the sheet's ranking` : "not yet mentioned — name it or justify leaving it out");
+    return parts.join("; ");
+  };
+  const coverage = Object.entries(facts.series).map(([k, s]) => `- ${s.label}: ${statusOf(k)}`);
+  for (const pi of facts.proseInputs ?? []) {
+    coverage.push(
+      `- [deep cut ${pi.bundle} — ${pi.seriesCount} series]: hottest ${pi.top?.label ?? "?"} at ${pi.top?.latest}, weakest ${pi.bottom?.label ?? "?"} at ${pi.bottom?.latest}`
+      + (pi.tail ? `; median ${pi.tail.median}, ${pi.tail.rising} rising vs ${pi.tail.falling} falling, ${pi.tail.belowZero} below zero` : "")
+      + " — summarize or name; never ignore the cut.",
+    );
+  }
   const prompt = [
     "VOICE:\n" + voice,
     "EXEMPLARS of this slot type (match their cadence and moves; do NOT copy their numbers — those belong to a past print):\n" + exemplars.map((t, i) => `--- exemplar ${i + 1} ---\n${typeof t === "string" ? t : t.text}`).join("\n"),
     "FACTS SHEET (the ONLY numbers you may use):\n" + JSON.stringify(facts, null, 1),
     "CONTRACT:\n" + contract,
     "SIGNALS (drawn from the facts sheet — use whichever are true and relevant; ignore the rest; never claim a streak the sheet does not confirm):\n" + (signals.length ? signals.map((s) => "- " + s).join("\n") : "- no standout streak or base effect this print."),
+    "COVERAGE (every series of the sheet, accountable — the contract gate enforces these floors):\n" + coverage.join("\n"),
     "The latest period is " + facts.latestPeriod + ". A dated slot must name it.",
     "Write the slot now. Prose only, no headings, no lists, no preamble.",
   ].join("\n\n");
 
   const outFile = path.join(ROOT, "pipeline/out", `prose-${slug}.${slot.id}.md`);
   if (DRY) {
+    // the contract and COVERAGE blocks sit at the prompt's tail — a dry run
+    // must show both ends, or the writer's instructions are invisible
     console.log("=== DRY RUN — prompt for", slot.id, "===\n");
-    console.log(prompt.slice(0, 1200), "\n…[truncated]\n");
+    const tail = prompt.length > 2400 ? "\n…[truncated]…\n" + prompt.slice(-1600) : "";
+    console.log(prompt.slice(0, 800) + tail, "\n");
     continue;
   }
 

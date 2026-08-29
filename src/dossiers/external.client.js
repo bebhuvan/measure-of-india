@@ -511,7 +511,7 @@ function singleLine(blockId, plotId, s, geo, yTicks, xTicks, dlName, fmtV, a11yT
     marks: [
       Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
       Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
-      Plot.areaY(s.data, { x: "date", y: "value", fill: s.color, fillOpacity: 0.06 }),
+      Plot.areaY(s.data, { x: "date", y: "value", y1: geo.d0 <= 0 ? 0 : geo.d0, fill: s.color, fillOpacity: 0.06 }),
       Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.dot([pk], { x: "date", y: "value", fill: "#BE3E26", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.text([pk], { x: "date", y: "value", text: () => fmtV(pk.value) + " · " + fmtDate(pk.date), dy: -12, fill: "#BE3E26", fontSize: 13, fontFamily: mono, textAnchor: "middle" }),

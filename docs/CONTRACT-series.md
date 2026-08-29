@@ -19,7 +19,6 @@ disagree, file a bug — one of them is wrong.
     "geo": "ISO3 country/economy code of the series' coverage",
     "latestPeriod": "human label of the last published period",
     "releaseDate": "YYYY-MM-DD of the source's press release, when knowable",
-    "gaps": { "series-key": ["interior null dates that are real absences"] },
     "note": "disclosed quirks: quarantines, reconstructions, imputations"
   },
   "dates": ["2026-01-01", "2026-02-01"],
@@ -28,7 +27,10 @@ disagree, file a bug — one of them is wrong.
       "name": "CSV column header",
       "label": "human display label",
       "color": "#RRGGBB (page palette, assigned at bake time)",
-      "data": [1.2, null]
+      "data": [1.2, null],
+      "gaps": ["2026-02-01 — interior null dates OF THIS SERIES, disclosed where the data lives"],
+      "gapsNote": "why this series misses those dates, when the reason is not obvious",
+      "estimated": ["2019-01-01 — interior dates OF THIS SERIES whose value is an estimator's (interpolation, imputation), never a collected figure"]
     }
   }
 }
@@ -39,9 +41,16 @@ disagree, file a bug — one of them is wrong.
 1. **`dates` is the shared axis.** ISO `YYYY-MM-DD`, ascending, unique. Every
    series' `data` array parallels it exactly — same length, index-aligned.
 2. **Missing is `null`, never 0.** An unpublished value is `null`; a true zero
-   is `0`. Interior nulls must be listed in `meta.gaps` (validate fails
-   otherwise). Trailing nulls are forbidden — the axis ends at the last
+   is `0`. Interior nulls must be listed in the `gaps` of the very series
+   that misses them (validate fails otherwise) — a bundle-level `meta.gaps`
+   union is retired, because it cannot say which series actually misses
+   which date. Trailing nulls are forbidden — the axis ends at the last
    published period of the bundle as a whole.
+2b. **Estimated points are disclosed where they live.** A value produced by
+   an estimator (linear interpolation, imputation) is data — it stays in
+   `data`, never becomes `null` — but its date must be listed in that
+   series' `estimated`. validate checks each estimated date: on the axis,
+   non-null, interior to the series' own span, never also a gap.
 3. **One bundle, one instrument.** A base-year change, methodology revision,
    or coverage break starts a NEW bundle (`cpi.json` → `cpi-2024.json`).
    Never splice. Pages may show both, labelled as different rulers.

@@ -28,6 +28,7 @@ const STAT = {
   gender: (b) => `Gender — sex ratio ${b.series.sex_ratio.data.at(-1)} ♀ per 1,000 ♂ (${b.meta.latestPeriod})`,
   mnre: (b) => `Renewable Energy — ${(b.series.grand_total.data.at(-1) / 1000).toFixed(1)} GW installed (${b.meta.latestPeriod})`,
   nfhs: (b) => { const s = Object.values(b.series).find((x) => x.label.includes("Children age 6-59")); return `Health — child anaemia ${s.data.at(-1).toFixed(1)}% (NFHS-5)`; },
+  manufacturing: (b) => `Manufacturing · World Bank — ${b.series.mva_pct_gdp.data.at(-1).toFixed(1)}% of GDP (${b.meta.latestPeriod})`,
 };
 
 export function GET(context) {

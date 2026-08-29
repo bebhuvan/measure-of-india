@@ -5,12 +5,16 @@
 //  2. every requiredFigure (a path into the facts sheet, e.g. "headline.latest")
 //     appears in the prose in a voice-legal rendering (1dp, 2dp, |abs|, integer)
 //  3. dateStamp slots name the latest period (month name or quarter label)
+//  4. coverage floors (slots.yml): minSeriesMentioned, mustName extremes,
+//     mustAcknowledge contradictions — a print that stays silent about most
+//     of the sheet, or about the series that contradict its story, fails here
 // Usage: node pipeline/contract.mjs <prose-file> <slug> <slot-id>
 
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import YAML from "yaml";
+import { SERIES_KWS } from "./lib/series-kws.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const [file, slug, slotId] = process.argv.slice(2);
@@ -94,6 +98,46 @@ if (slot.dateStamp) {
     }
   }
   if (!ok) fail(`dateStamp slot does not name its period (${lp})`);
+}
+
+// 4. coverage floors: omission is a defect, not a style choice
+const kws = SERIES_KWS[slug];
+const keyNamed = (key) => {
+  if (!kws) return false;
+  // named by any of the key's words, or by its extreme/latest value rendered
+  // the way the voice renders numbers (citing the number IS naming it)
+  const words = kws.filter(([, k]) => k === key).some(([kw]) => new RegExp("\\b" + kw.replace(/ /g, "\\s+") + "\\b", "i").test(prose));
+  if (words) return true;
+  const s = facts.series[key];
+  if (!s) return false;
+  return (s.latest?.value != null && present(s.latest.value)) || (typeof s.latest === "number" && present(s.latest));
+};
+if (slot.minSeriesMentioned != null || slot.mustName || slot.mustAcknowledge) {
+  if (!kws) fail("coverage floor declared but pipeline/lib/series-kws.mjs has no keyword map for this dossier");
+  else {
+    if (slot.minSeriesMentioned != null) {
+      const keys = [...new Set(kws.map(([, k]) => k))];
+      const mentioned = keys.filter(keyNamed);
+      if (mentioned.length < slot.minSeriesMentioned) {
+        const silent = keys.filter((k) => !mentioned.includes(k));
+        fail(`coverage floor: ${mentioned.length} sheet series named, floor is ${slot.minSeriesMentioned} — silent on: ${silent.join(", ")}`);
+      }
+    }
+    if (slot.mustName?.includes("extremes")) {
+      for (const ext of ["topMover", "bottomMover"]) {
+        const m = facts.cross?.[ext];
+        if (m?.key && !keyNamed(m.key)) fail(`mustName extremes: the ${ext === "topMover" ? "hottest" : "weakest"} mover (${m.label}) is not named`);
+      }
+    }
+    if (slot.mustAcknowledge?.includes("contradictions")) {
+      const cons = facts.cross?.contradictions ?? [];
+      if (cons.length) {
+        const said = cons.some((c) => keyNamed(c.key))
+          || /\b(contradict\w*|moving? against|moves? against|against the (headline|print|trend)|pulling (the other way|down|in the opposite direction))\b/i.test(prose);
+        if (!said) fail(`mustAcknowledge contradictions: ${cons.length} sheet series move against the headline (${cons.map((c) => c.label).join("; ")}) and none is acknowledged`);
+      }
+    }
+  }
 }
 
 if (failures.length) {

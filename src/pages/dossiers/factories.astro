@@ -1,13 +1,14 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["factories"];
 ---
 <Base
   title="India Atlas — Enterprises · Dossier 08"
   description={D.description}
   nav="dossiers"
-  dateStamp={D.dateStamp}
+  dateStamp={dateStamp(D)}
   crumbLeft={`<a href="/" style="color:inherit">Dossiers</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote} · <b>${D.version}</b>`}
   canonical="https://atlas.thisindianlife.today/dossiers/factories/"
@@ -43,7 +44,7 @@ const D = bySlug["factories"];
     <div class="reading-top">
       <div><span class="rk">Inside the Factories Act</span><div class="big" id="rb-formal">–</div></div>
       <p class="rt-cap">Persons engaged in registered factories in 2023-24 — beside the workers of unincorporated establishments the same year. For every person inside the factory gate, about <b id="rt-ratio">–</b> work outside it, in enterprises the Act never sees.</p>
-      <div><span class="rk">Outside it</span><div class="big" id="rb-informal" style="font-size:44px">–</div></div>
+      <div class="rt-side"><span class="rk">Outside it</span><div class="rt-side-v" id="rb-informal">–</div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">

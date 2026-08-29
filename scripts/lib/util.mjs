@@ -19,7 +19,30 @@ export function writeJson(root, rel, obj) {
 // leave a truncated bundle in data/series/. Use this for every
 // data/series/*.json write; raw dumps keep writeRaw, everything else
 // writeJson.
+//
+// Also migrates the legacy bundle-level disclosure shape at the write
+// boundary (CONTRACT-series.md rule 2): gaps live ON the series they
+// explain — a meta.gaps union says nothing about which series actually
+// misses which date. Any adapter still assembling meta.gaps/meta.gapsNote
+// gets per-series gaps, mechanically derived from the data.
 export function writeSeries(root, rel, obj) {
+  if (obj.meta?.gaps?.length) {
+    const declared = new Set(obj.meta.gaps);
+    for (const s of Object.values(obj.series ?? {})) {
+      if (!s.data) continue;
+      const first = s.data.findIndex((v) => v != null);
+      const last = s.data.length - 1 - [...s.data].reverse().findIndex((v) => v != null);
+      const own = [...declared].filter((d) => {
+        const i = obj.dates.indexOf(d);
+        return i > first && i < last && s.data[i] == null;
+      }).sort();
+      if (own.length) s.gaps = own;
+    }
+    if (obj.meta.gapsNote) for (const s of Object.values(obj.series ?? {})) if (s.gaps) s.gapsNote ??= obj.meta.gapsNote;
+    delete obj.meta.gaps;
+    delete obj.meta.gapsNote;
+    console.log(`disclosure: ${rel} bundle-level gaps moved onto series`);
+  }
   const p = path.join(root, rel);
   fs.mkdirSync(path.dirname(p), { recursive: true });
   fs.writeFileSync(p + ".tmp", JSON.stringify(obj, null, 1) + "\n");

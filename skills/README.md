@@ -24,7 +24,9 @@ tools must never require editing the playbooks.
 
 | File | When to use |
 |---|---|
+| `analyze-series.md` | MANDATORY before touching any dossier's prose/charts/structure: run the census, account for every series |
 | `add-source.md` | Adding a new data product (API, CSV dump) end-to-end |
+| `write-dossier.md` | Writing or restructuring a dossier page + client module: registry, plates, slots, as-of governance, gates |
 | `release.md` | Cutting a release: what to run, what to check, how the PR is made |
 | `prose-review.md` | Critiquing dated prose drafts against voice/rubric without inventing numbers |
 

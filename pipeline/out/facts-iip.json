@@ -524,5 +524,141 @@
    },
    "baseEffect": null
   }
- }
+ },
+ "cross": {
+  "headlineKey": "general",
+  "countAboveHeadline": 6,
+  "countBelowHeadline": 4,
+  "countMovingWithHeadline": 8,
+  "countMovingAgainstHeadline": 2,
+  "topMover": {
+   "key": "sector_electricity_gas_supply",
+   "label": "Electricity & Gas Supply",
+   "latest": 10.64,
+   "latestPeriod": "2026-06",
+   "deltaVsYearAgo": 12.63
+  },
+  "bottomMover": {
+   "key": "sector_mining_quarrying",
+   "label": "Mining & Quarrying",
+   "latest": 1.01,
+   "latestPeriod": "2026-06",
+   "deltaVsYearAgo": -3.1
+  },
+  "topByLatest": {
+   "key": "use_capital_goods",
+   "label": "Capital Goods",
+   "latest": 14.23,
+   "latestPeriod": "2026-06",
+   "deltaVsYearAgo": 10.78
+  },
+  "bottomByLatest": {
+   "key": "sector_mining_quarrying",
+   "label": "Mining & Quarrying",
+   "latest": 1.01,
+   "latestPeriod": "2026-06",
+   "deltaVsYearAgo": -3.1
+  },
+  "spreadLatest": 13.22,
+  "contradictions": [
+   {
+    "key": "sector_mining_quarrying",
+    "label": "Mining & Quarrying",
+    "latest": 1.01,
+    "deltaVsYearAgo": -3.1
+   },
+   {
+    "key": "sector_water_supply_sewerage_waste_management",
+    "label": "Water Supply, Sewerage & Waste Management",
+    "latest": 6.12,
+    "deltaVsYearAgo": -1.82
+   }
+  ],
+  "ranking": [
+   "sector_electricity_gas_supply",
+   "use_capital_goods",
+   "use_consumer_non_durables",
+   "use_consumer_durables",
+   "use_intermediate_goods",
+   "sector_manufacturing",
+   "general",
+   "use_primary_goods",
+   "use_infrastructure_construction_goods",
+   "sector_water_supply_sewerage_waste_management",
+   "sector_mining_quarrying"
+  ]
+ },
+ "proseInputs": [
+  {
+   "bundle": "iip-industries-2022",
+   "seriesCount": 32,
+   "base": "2022-23=100",
+   "coverage": "2-digit industries and sub-indices beneath the sectoral aggregates",
+   "top": {
+    "key": "sub_mining_quarrying_metallic_minerals_incl_rare_earth_minerals",
+    "label": "Metallic Minerals incl. Rare Earth Minerals",
+    "latest": 38.9,
+    "latestPeriod": "2026-06",
+    "deltaVsYearAgo": 55.11
+   },
+   "bottom": {
+    "key": "sub_mining_quarrying_non_metallic_minerals_incl_minor_minerals",
+    "label": "Non-Metallic Minerals incl. Minor Minerals",
+    "latest": -13.35,
+    "latestPeriod": "2026-06",
+    "deltaVsYearAgo": -46.79
+   },
+   "topByLatest": {
+    "key": "sub_mining_quarrying_metallic_minerals_incl_rare_earth_minerals",
+    "label": "Metallic Minerals incl. Rare Earth Minerals",
+    "latest": 38.9,
+    "latestPeriod": "2026-06",
+    "deltaVsYearAgo": 55.11
+   },
+   "bottomByLatest": {
+    "key": "sub_mining_quarrying_non_metallic_minerals_incl_minor_minerals",
+    "label": "Non-Metallic Minerals incl. Minor Minerals",
+    "latest": -13.35,
+    "latestPeriod": "2026-06",
+    "deltaVsYearAgo": -46.79
+   },
+   "spread": 101.9,
+   "countAboveHeadline": null,
+   "contradictions": [
+    "sub_electricity_gas_supply_renewable_electricity",
+    "sub_manufacturing_manufacture_of_basic_metals",
+    "sub_manufacturing_manufacture_of_coke_and_refined_petroleum_products",
+    "sub_manufacturing_manufacture_of_fabricated_metal_products_except_machinery_and_equipment",
+    "sub_manufacturing_manufacture_of_furniture",
+    "sub_manufacturing_manufacture_of_wearing_apparel",
+    "sub_manufacturing_manufacture_of_wood_and_products_of_wood_and_cork_except_furniture_manufacture_of_articles_of_straw_and_plaiting_materials",
+    "sub_mining_quarrying_non_metallic_minerals_incl_minor_minerals",
+    "sub_water_supply_sewerage_waste_management_sewerage_waste_management",
+    "sub_water_supply_sewerage_waste_management_water_supply"
+   ],
+   "ranking": [
+    "sub_mining_quarrying_metallic_minerals_incl_rare_earth_minerals",
+    "sub_manufacturing_manufacture_of_electrical_equipment",
+    "sub_manufacturing_manufacture_of_beverages",
+    "sub_electricity_gas_supply_non_renewable_electricity",
+    "sub_manufacturing_manufacture_of_motor_vehicles_trailers_and_semi_trailers",
+    "sub_manufacturing_manufacture_of_leather_and_related_products",
+    "sub_manufacturing_other_manufacturing",
+    "sub_electricity_gas_supply_electricity",
+    "sub_electricity_gas_supply_gas_supply",
+    "sub_manufacturing_manufacture_of_food_products",
+    "sub_manufacturing_manufacture_of_textiles",
+    "sub_manufacturing_manufacture_of_other_non_metallic_mineral_products",
+    "sub_manufacturing_manufacture_of_paper_and_paper_products",
+    "sub_manufacturing_manufacture_of_machinery_and_equipment_n_e_c",
+    "sub_manufacturing_manufacture_of_other_transport_equipment"
+   ],
+   "tail": {
+    "median": 8.31,
+    "rising": 24,
+    "falling": 8,
+    "belowZero": 7
+   }
+  }
+ ]
 }

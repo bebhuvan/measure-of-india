@@ -1,13 +1,14 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["nfhs"];
 ---
 <Base
   title="India Atlas — Health · Dossier 12"
   description={D.description}
   nav="dossiers"
-  dateStamp={D.dateStamp}
+  dateStamp={dateStamp(D)}
   crumbLeft={`<a href="/" style="color:inherit">Dossiers</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote} · <b>${D.version}</b>`}
   canonical="https://atlas.thisindianlife.today/dossiers/nfhs/"
@@ -43,7 +44,7 @@ const D = bySlug["nfhs"];
     <div class="reading-top">
       <div><span class="rk">Child anaemia · NFHS-5</span><div class="big" id="rb-anaemia">–</div></div>
       <p class="rt-cap">Children age 6-59 months who are anaemic (haemoglobin below 11.0 g/dL) — up from <b id="rt-anaemia-prev">–</b> in NFHS-4. Every demographic group saw anaemia rise between the two rounds, a reversal in a country where most health indicators improved.</p>
-      <div><span class="rk">NFHS-4 · the previous round</span><div class="big" id="rb-anaemia-prev" style="font-size:44px">–</div></div>
+      <div class="rt-side"><span class="rk">NFHS-4 · the previous round</span><div class="rt-side-v" id="rb-anaemia-prev">–</div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">

@@ -10,9 +10,12 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import { JSDOM } from "jsdom";
 import { DOSSIERS, bySlug } from "../src/dossiers/registry.js";
+import * as fmt from "../src/charts/format.js";
+import * as display from "../src/dossiers/display.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 // QC_DIST lets gate runs point at a scratch build (e.g. astro build
@@ -26,251 +29,260 @@ const PAGES = [
   // titleblock and §01 lead with the 2024-base print; the 2012-base story
   // (§05 plate, core) stays below — both bundles are checked
   { url: "/dossiers/cpi/", slug: null, checks: [
-    ["n-head", (b) => b["cpi-2024"].series.headline.data.at(-1).toFixed(2) + "%"],
-    ["n-food", (b) => b["cpi-2024"].series.food_and_beverages.data.at(-1).toFixed(2) + "%"],
-    ["n-old", (b) => b.cpi.series.headline.data.at(-1).toFixed(2) + "%"],
-    ["n-core", (b) => b.cpi.series.core.data.at(-1).toFixed(2) + "%"],
-    ["pv-nb", (b) => b["cpi-2024"].series.headline.data.at(-1).toFixed(2) + "%"],
-    ["nb-old-final", (b) => b.cpi.series.headline.data.at(-1).toFixed(2) + "%"],
-    ["ex-hjan", (b) => b.cpi.series.headline.data.at(-12).toFixed(2) + "%"],
+    ["n-head", (b) => fmt.pct2(b["cpi-2024"].series.headline.data.at(-1))],
+    ["n-food", (b) => fmt.pct2(b["cpi-2024"].series.food_and_beverages.data.at(-1))],
+    ["n-old", (b) => fmt.pct2(b.cpi.series.headline.data.at(-1))],
+    ["n-core", (b) => fmt.pct2(b.cpi.series.core.data.at(-1))],
+    ["pv-nb", (b) => fmt.pct2(b["cpi-2024"].series.headline.data.at(-1))],
+    ["nb-old-final", (b) => fmt.pct2(b.cpi.series.headline.data.at(-1))],
+    ["ex-hjan", (b) => fmt.pct2(b.cpi.series.headline.data.at(-12))],
     ["prov-vintage", (b) => b.cpi.meta.vintage],
     ["prov-vintage24", (b) => b["cpi-2024"].meta.vintage],
     ["prov-vintage2", (b) => b["cpi-2024"].meta.vintage],
     // v2.4 — the 358-item ledger and the new-base state strip
     ["pv-tail24", (b) => {
       const vals = Object.values(b["cpi-2024-items"].series).map((s) => s.data.at(-1)).filter((v) => v != null);
-      return Math.max(...vals).toFixed(2) + "%";
+      return fmt.pct2(Math.max(...vals));
     }],
-    ["ex-t24neg", (b) => String(Object.values(b["cpi-2024-items"].series).map((s) => s.data.at(-1)).filter((v) => v != null && v < 0).length)],
+    ["ex-t24neg", (b) => fmt.count(Object.values(b["cpi-2024-items"].series).map((s) => s.data.at(-1)).filter((v) => v != null && v < 0).length)],
     ["pv-st24", (b) => {
       const vals = Object.values(b["cpi-2024-states"].series).map((s) => s.data.at(-1)).filter((v) => v != null);
-      return (Math.max(...vals) - Math.min(...vals)).toFixed(1) + " pt";
+      return fmt.pt1(Math.max(...vals) - Math.min(...vals));
     }],
-    ["pf-st24-ai", (b) => b["cpi-2024"].series.headline.data.at(-1).toFixed(2) + "%"],
+    ["pf-st24-ai", (b) => fmt.pct2(b["cpi-2024"].series.headline.data.at(-1))],
   ]},
   { url: "/dossiers/gdp/", slug: null, checks: [
-    ["n-gdp", (b) => b["gdp-2022"].series.gdp.data.at(-1).toFixed(2) + "%"],
-    ["n-gfcf", (b) => b["gdp-2022"].series.gfcf.data.at(-1).toFixed(2) + "%"],
+    ["n-gdp", (b) => fmt.pct2(b["gdp-2022"].series.gdp.data.at(-1))],
+    ["n-gfcf", (b) => fmt.pct2(b["gdp-2022"].series.gfcf.data.at(-1))],
     // v1.8 slots: engines, deflator wedge, saving rate, the 2022-23 base
     ["pv-ind", (b) => {
       const s = b["gdp-industries"].series;
-      return Math.max(...Object.values(s).map((x) => x.data.at(-1))).toFixed(2) + "%";
+      return fmt.pct2(Math.max(...Object.values(s).map((x) => x.data.at(-1))));
     }],
-    ["ex-eng-agri", (b) => b["gdp-industries"].series.agriculture.data.at(-1).toFixed(2) + "%"],
-    ["pv-defl", (b) => b["gdp-nominal"].series.deflator.data.at(-1).toFixed(2) + "%"],
-    ["ex-defl-n", (b) => b["gdp-nominal"].series.gdp_nominal.data.at(-1).toFixed(2) + "%"],
-    ["ac-sav", (b) => b["gdp-accounts"].series.saving_rate.data.filter((v) => v != null).at(-1).toFixed(1) + "%"],
-    ["pv-nb", (b) => b["gdp-2022"].series.gdp.data.at(-1).toFixed(2) + "%"],
-    ["nb-q3", (b) => b["gdp-2022"].series.gdp.data.at(-2).toFixed(2) + "%"],
+    ["ex-eng-agri", (b) => fmt.pct2(b["gdp-industries"].series.agriculture.data.at(-1))],
+    ["pv-defl", (b) => fmt.pct2(b["gdp-nominal"].series.deflator.data.at(-1))],
+    ["ex-defl-n", (b) => fmt.pct2(b["gdp-nominal"].series.gdp_nominal.data.at(-1))],
+    ["ac-sav", (b) => fmt.pct1(b["gdp-accounts"].series.saving_rate.data.filter((v) => v != null).at(-1))],
+    ["pv-nb", (b) => fmt.pct2(b["gdp-2022"].series.gdp.data.at(-1))],
+    ["nb-q3", (b) => fmt.pct2(b["gdp-2022"].series.gdp.data.at(-2))],
     ["prov-vintage", (b) => b.gdp.meta.vintage],
   ]},
   { url: "/dossiers/wpi/", slug: null, checks: [
-    ["n-head", (b) => b.wpi.series.headline.data.at(-1).toFixed(2) + "%"],
-    ["n-fuel", (b) => b.wpi.series.fuel.data.at(-1).toFixed(2) + "%"],
+    ["n-head", (b) => fmt.pct2(b.wpi.series.headline.data.at(-1))],
+    ["n-fuel", (b) => fmt.pct2(b.wpi.series.fuel.data.at(-1))],
     // v1.2 — the 697 items: hottest item, deflating-item count, onion's print
     ["pv-items", (b) => {
       const vals = Object.values(b["wpi-items"].series).map((s) => s.data.at(-1)).filter((v) => v != null);
-      return Math.max(...vals).toFixed(2) + "%";
+      return fmt.pct2(Math.max(...vals));
     }],
-    ["ex-ineg", (b) => String(Object.values(b["wpi-items"].series).map((s) => s.data.at(-1)).filter((v) => v != null && v < 0).length)],
+    ["ex-ineg", (b) => fmt.count(Object.values(b["wpi-items"].series).map((s) => s.data.at(-1)).filter((v) => v != null && v < 0).length)],
     ["ex-ionion", (b) => {
       const v = b["wpi-items"].series.onion.data.at(-1);
-      return (v < 0 ? "−" + Math.abs(v).toFixed(1) : v.toFixed(1)) + "%";
+      return fmt.pct1Minus(v);
     }],
     ["prov-vintage", (b) => b.wpi.meta.vintage],
   ]},
   { url: "/dossiers/iip/", slug: null, checks: [
-    ["n-head", (b) => b["iip-2022"].series.general.data.at(-1).toFixed(2) + "%"],
-    ["n-cap", (b) => b["iip-2022"].series.use_capital_goods.data.at(-1).toFixed(2) + "%"],
+    ["n-head", (b) => fmt.pct2(b["iip-2022"].series.general.data.at(-1))],
+    ["n-cap", (b) => fmt.pct2(b["iip-2022"].series.use_capital_goods.data.at(-1))],
     // v1.2 deep-ledger plate: heritage bases 1993-94 / 2004-05
     ["pv-herit", (b) => {
       const v = Math.min(...b["iip-2004"].series.general.data.filter((x) => x != null));
-      return (v < 0 ? "−" : "") + Math.abs(v).toFixed(2) + "%";
+      return fmt.pct2Minus(v);
     }],
     ["her-gfc93", (b) => {
       const g04 = b["iip-2004"].series.general.data;
       const i = g04.indexOf(Math.min(...g04.filter((x) => x != null)));
       const d = b["iip-2004"].dates[i];
       const j = b["iip-1993"].dates.indexOf(d);
-      return "+" + b["iip-1993"].series.general.data[j].toFixed(2) + "%";
+      return fmt.pct2Plus(b["iip-1993"].series.general.data[j]);
     }],
-    ["her-end93", (b) => b["iip-1993"].series.general.data.filter((x) => x != null).at(-1).toFixed(2) + "%"],
-    ["her-end04", (b) => b["iip-2004"].series.general.data.filter((x) => x != null).at(-1).toFixed(2) + "%"],
+    ["her-end93", (b) => fmt.pct2(b["iip-1993"].series.general.data.filter((x) => x != null).at(-1))],
+    ["her-end04", (b) => fmt.pct2(b["iip-2004"].series.general.data.filter((x) => x != null).at(-1))],
     ["prov-vintage", (b) => b["iip-2022"].meta.vintage],
   ]},
   { url: "/dossiers/external/", slug: null, checks: [
-    ["n-fx", (b) => "₹" + b["rbi-forex"].series.usdinr.data.at(-1).toFixed(2)],
-    ["n-cad", (b) => b["rbi-bop-ratios"].series.cad_gdp.data.at(-1).toFixed(1) + "%"],
-    ["cr-res", (b) => "$" + Math.round(b["rbi-forex"].series.reserves.data.at(-1) / 1000) + " bn"],
+    ["n-fx", (b) => fmt.inr2(b["rbi-forex"].series.usdinr.data.at(-1))],
+    ["n-cad", (b) => fmt.pct1(b["rbi-bop-ratios"].series.cad_gdp.data.at(-1))],
+    ["cr-res", (b) => fmt.bnRound(b["rbi-forex"].series.reserves.data.at(-1) / 1000)],
     // v1.2 plates — same formatter as the client (bn/bn2 on $bn values)
     ["pv-part", (b) => {
       const s = b["rbi-trade-partners"].series;
       const v = (s.exports_china.data.at(-1) - s.imports_china.data.at(-1)) / 1000;
-      return (v < 0 ? "−$" : "$") + Math.abs(v).toFixed(1) + " bn";
+      return fmt.bnFixed1(v);
     }],
     ["ex-pcm", (b) => {
       const v = b["rbi-trade-partners"].series.imports_china.data.at(-1) / 1000;
-      return "$" + (Math.abs(v) >= 100 ? Math.round(v) : v.toFixed(1)) + " bn";
+      return fmt.bnAuto(v);
     }],
     ["pv-comm", (b) => {
       const v = b["rbi-commodities-exports"].series.engineering_goods.data.at(-1) / 1000;
-      return "$" + (Math.abs(v) >= 100 ? Math.round(v) : v.toFixed(1)) + " bn";
+      return fmt.bnAuto(v);
     }],
     ["ex-cm1", (b) => {
       const v = b["rbi-commodities-imports"].series.petroleum_crude_products.data.at(-1) / 1000;
-      return "$" + (Math.abs(v) >= 100 ? Math.round(v) : v.toFixed(1)) + " bn";
+      return fmt.bnAuto(v);
     }],
     ["prov-vintage", (b) => b["rbi-forex"].meta.vintage],
   ]},
   { url: "/dossiers/jobs/", slug: null, checks: [
-    ["n-ur", (b) => b["plfs-monthly"].series.ur.data.at(-1).toFixed(2) + "%"],
-    ["n-fur", (b) => b["plfs-cuts"].series.ur_female_urban.data.at(-1).toFixed(2) + "%"],
-    ["pv-main", (b) => b["plfs-quarterly"].series.ur.data.at(-1).toFixed(2) + "%"],
-    ["pv-annual", (b) => b["plfs-annual"].series.ur_psss.data.at(-1).toFixed(2) + "%"],
-    ["ex-p0", (b) => b["plfs-annual"].series.ur_psss.data[0].toFixed(2) + "%"],
+    ["n-ur", (b) => fmt.pct2(b["plfs-monthly"].series.ur.data.at(-1))],
+    ["n-fur", (b) => fmt.pct2(b["plfs-cuts"].series.ur_female_urban.data.at(-1))],
+    ["pv-main", (b) => fmt.pct2(b["plfs-quarterly"].series.ur.data.at(-1))],
+    ["pv-annual", (b) => fmt.pct2(b["plfs-annual"].series.ur_psss.data.at(-1))],
+    ["ex-p0", (b) => fmt.pct2(b["plfs-annual"].series.ur_psss.data[0])],
     // annual-report extras (v1.2): composition, earnings, education
-    ["pv-status", (b) => b["plfs-status"].series.self_employed_person.data.at(-1).toFixed(1) + "%"],
-    ["ex-st-hp", (b) => b["plfs-status"].series.se_helper_person.data.at(-1).toFixed(1) + "%"],
-    ["pv-pay", (b) => "₹" + Math.round(b["plfs-earnings"].series.regular_person.data.filter((v) => v != null).at(-1)).toLocaleString("en-IN")],
-    ["ex-pay-sef", (b) => "₹" + Math.round(b["plfs-earnings"].series.self_employed_female.data.filter((v) => v != null).at(-1)).toLocaleString("en-IN")],
-    ["pv-casual", (b) => "₹" + Math.round(b["plfs-earnings"].series.casual_person.data.filter((v) => v != null).at(-1)).toLocaleString("en-IN")],
-    ["pv-edu", (b) => b["plfs-education"].series.graduate.data.at(-1).toFixed(1) + "%"],
-    ["ex-edu-y", (b) => b["plfs-education"].series.youth_15_29.data.at(-1).toFixed(1) + "%"],
+    ["pv-status", (b) => fmt.pct1(b["plfs-status"].series.self_employed_person.data.at(-1))],
+    ["ex-st-hp", (b) => fmt.pct1(b["plfs-status"].series.se_helper_person.data.at(-1))],
+    ["pv-pay", (b) => fmt.inrR(b["plfs-earnings"].series.regular_person.data.filter((v) => v != null).at(-1))],
+    ["ex-pay-sef", (b) => fmt.inrR(b["plfs-earnings"].series.self_employed_female.data.filter((v) => v != null).at(-1))],
+    ["pv-casual", (b) => fmt.inrR(b["plfs-earnings"].series.casual_person.data.filter((v) => v != null).at(-1))],
+    ["pv-edu", (b) => fmt.pct1(b["plfs-education"].series.graduate.data.at(-1))],
+    ["ex-edu-y", (b) => fmt.pct1(b["plfs-education"].series.youth_15_29.data.at(-1))],
     ["prov-vintage", (b) => b["plfs-monthly"].meta.vintage],
     ["prov-vintage2", (b) => b["plfs-monthly"].meta.vintage],
   ]},
   { url: "/dossiers/consumption/", slug: null, checks: [
-    ["n-rural", (b) => "₹" + b["hces-mpce"].series.rural.data.at(-1).toLocaleString("en-IN")],
-    ["n-urban", (b) => "₹" + b["hces-mpce"].series.urban.data.at(-1).toLocaleString("en-IN")],
-    ["n-gini", (b) => b["hces-gini"].series.rural.data.at(-1).toFixed(3)],
-    ["pv-lad", (b) => "₹" + b["hces-fractiles"].series.f95_100_urban.data.at(-1).toLocaleString("en-IN")],
-    ["pv-social", (b) => (b["hces-social"].series.others_rural.data.at(-1) / b["hces-social"].series.st_rural.data.at(-1)).toFixed(2) + "×"],
-    ["ex-so-scu", (b) => "₹" + b["hces-social"].series.sc_urban.data.at(-1).toLocaleString("en-IN")],
-    ["pv-hht", (b) => "₹" + b["hces-household-type"].series.casual_labour_urban.data.at(-1).toLocaleString("en-IN")],
-    ["pv-plate", (b) => b["hces-quantities"].series.total_cereals_rural.data.at(-1).toFixed(2) + " kg"],
-    ["ex-q-rice", (b) => b["hces-quantities"].series.rice_rural.data.at(-1).toFixed(1) + " kg"],
+    ["n-rural", (b) => fmt.inrR(b["hces-mpce"].series.rural.data.at(-1))],
+    ["n-urban", (b) => fmt.inrR(b["hces-mpce"].series.urban.data.at(-1))],
+    ["n-gini", (b) => fmt.num3(b["hces-gini"].series.rural.data.at(-1))],
+    ["pv-lad", (b) => fmt.inrR(b["hces-fractiles"].series.f95_100_urban.data.at(-1))],
+    ["pv-social", (b) => fmt.x2(b["hces-social"].series.others_rural.data.at(-1) / b["hces-social"].series.st_rural.data.at(-1))],
+    ["ex-so-scu", (b) => fmt.inrR(b["hces-social"].series.sc_urban.data.at(-1))],
+    ["pv-hht", (b) => fmt.inrR(b["hces-household-type"].series.casual_labour_urban.data.at(-1))],
+    ["pv-plate", (b) => fmt.kg2(b["hces-quantities"].series.total_cereals_rural.data.at(-1))],
+    ["ex-q-rice", (b) => fmt.kg1(b["hces-quantities"].series.rice_rural.data.at(-1))],
     ["pv-food", (b) => {
       const s = b["hces-categories-states"].series;
-      return Math.max(...Object.keys(s).filter((k) => k.endsWith("_rural")).map((k) => s[k].data.at(-1))).toFixed(2) + "%";
+      return fmt.pct2(Math.max(...Object.keys(s).filter((k) => k.endsWith("_rural")).map((k) => s[k].data.at(-1))));
     }],
     ["prov-vintage", (b) => b["hces-mpce"].meta.vintage],
     ["prov-vintage2", (b) => b["hces-mpce"].meta.vintage],
   ]},
   { url: "/dossiers/factories/", slug: null, checks: [
-    ["n-fact", (b) => (b["asi-headline"].series.factories_in_operation.data.at(-1) / 1e5).toFixed(2) + "lakh"],
-    ["cr-fop", (b) => b["asi-headline"].series.factories_in_operation.data.at(-1).toLocaleString("en-IN")],
-    ["cr-gpwi", (b) => "₹" + Math.round(b["asuse-annual"].series.gva_per_worker_all.data.filter((v) => v != null).at(-1)).toLocaleString("en-IN")],
+    ["n-fact", (b) => fmt.lakh2(b["asi-headline"].series.factories_in_operation.data.at(-1))],
+    ["cr-fop", (b) => fmt.inr(b["asi-headline"].series.factories_in_operation.data.at(-1))],
+    ["cr-gpwi", (b) => fmt.inrR(b["asuse-annual"].series.gva_per_worker_all.data.filter((v) => v != null).at(-1))],
     // v1.1 — the long century (four blocks, never joined)
     ["pv-long", (b) => {
       const l87 = b["asi-headline-1987"].series.number_of_factories.data.filter((v) => v != null).at(-1);
       const l08 = b["asi-headline"].series.number_of_factories.data.at(-1);
-      return (l87 / 1e5).toFixed(2) + " → " + (l08 / 1e5).toFixed(2) + " lakh";
+      return fmt.lakhN(l87) + " → " + fmt.lakhN(l08) + " lakh";
     }],
-    ["ex-l02", (b) => b["asi-headline-1998"].series.number_of_factories.data[3].toLocaleString("en-IN")],
-    ["ex-lp03", (b) => (b["asi-headline-1998"].series.persons_engaged.data.at(-1) / 1e7).toFixed(2) + " crore"],
+    ["ex-l02", (b) => fmt.inr(b["asi-headline-1998"].series.number_of_factories.data[3])],
+    ["ex-lp03", (b) => fmt.croreN(b["asi-headline-1998"].series.persons_engaged.data.at(-1)) + " crore"],
     // v1.1 — the informal-firm portrait
-    ["if-reg", (b) => b["asuse-modernity"].series.reg_not_registered_combined.data.at(-1).toLocaleString("en-IN")],
-    ["pv-modern", (b) => b["asuse-modernity"].series.internet_all_combined.data.at(-1).toLocaleString("en-IN")],
+    ["if-reg", (b) => fmt.inr(b["asuse-modernity"].series.reg_not_registered_combined.data.at(-1))],
+    ["pv-modern", (b) => fmt.inr(b["asuse-modernity"].series.internet_all_combined.data.at(-1))],
     ["pv-owner", (b) => {
       const s = b["asuse-owners"].series;
-      return (s.social_obc_combined.data.at(-1) + s.social_sc_combined.data.at(-1) + s.social_st_combined.data.at(-1)).toLocaleString("en-IN") + " / 1,000";
+      return fmt.inr(s.social_obc_combined.data.at(-1) + s.social_sc_combined.data.at(-1) + s.social_st_combined.data.at(-1)) + " / 1,000";
     }],
-    ["ex-r-avg", (b) => b["asuse-structure"].series.months_avg_combined.data.at(-1).toFixed(1)],
+    ["ex-r-avg", (b) => fmt.num1(b["asuse-structure"].series.months_avg_combined.data.at(-1))],
     // v1.1 — the complete accounts ledger
-    ["pv-acct", (b) => "₹" + (b["asi-accounts"].series.i19.data.at(-1) / 1e7).toFixed(1) + " lakh cr"],
+    ["pv-acct", (b) => "₹" + fmt.num1(b["asi-accounts"].series.i19.data.at(-1) / 1e7) + " lakh cr"],
     ["ex-a-con", (b) => {
       const s = b["asi-accounts"].series;
-      return (s.i37.data.at(-1) / s.i32.data.at(-1) * 100).toFixed(1) + "%";
+      return fmt.pct1(s.i37.data.at(-1) / s.i32.data.at(-1) * 100);
     }],
     ["prov-vintage", (b) => b["asi-headline"].meta.vintage],
     ["prov-vintage2", (b) => b["asi-headline"].meta.vintage],
   ]},
   { url: "/dossiers/aishe/", slug: null, checks: [
-    ["n-enrol", (b) => (b["aishe-headline"].series.enrolment.data.at(-1) / 1e7).toFixed(2) + "crore"],
-    ["n-ger", (b) => b["aishe-headline"].series.ger.data.at(-1).toFixed(1) + "%"],
-    ["n-gpi", (b) => b["aishe-headline"].series.gpi.data.at(-1).toFixed(2)],
-    ["n-ptr", (b) => String(Math.round(b["aishe-headline"].series.ptr.data.at(-1)))],
-    ["cr-enrol", (b) => Math.round(b["aishe-headline"].series.enrolment.data.at(-1)).toLocaleString("en-IN")],
-    ["pv-comp", (b) => (b["aishe-composition"].series.under_graduate.data.at(-1) / b["aishe-headline"].series.enrolment.data.at(-1) * 100).toFixed(0) + "%"],
+    ["n-enrol", (b) => fmt.crore2(b["aishe-headline"].series.enrolment.data.at(-1))],
+    ["n-ger", (b) => fmt.pct1(b["aishe-headline"].series.ger.data.at(-1))],
+    ["n-gpi", (b) => fmt.num2(b["aishe-headline"].series.gpi.data.at(-1))],
+    ["n-ptr", (b) => fmt.count(b["aishe-headline"].series.ptr.data.at(-1))],
+    ["cr-enrol", (b) => fmt.inr(b["aishe-headline"].series.enrolment.data.at(-1))],
+    ["pv-comp", (b) => fmt.pct0(b["aishe-composition"].series.under_graduate.data.at(-1) / b["aishe-headline"].series.enrolment.data.at(-1) * 100)],
     ["pv-enrol", (b) => {
       const e = b["aishe-headline"].series.enrolment.data;
-      return ((e.at(-1) / e[0] - 1) * 100).toFixed(0) + "%";
+      return fmt.pct0((e.at(-1) / e[0] - 1) * 100);
     }],
-    ["pv-ger", (b) => (b["aishe-access"].series.ger_all_both.data.at(-1) - b["aishe-access"].series.ger_st_both.data.at(-1)).toFixed(1) + " pt"],
-    ["pv-gergen", (b) => b["aishe-headline"].series.gpi.data.at(-1).toFixed(2)],
+    ["pv-ger", (b) => fmt.pt1(b["aishe-access"].series.ger_all_both.data.at(-1) - b["aishe-access"].series.ger_st_both.data.at(-1))],
+    ["pv-gergen", (b) => fmt.num2(b["aishe-headline"].series.gpi.data.at(-1))],
     ["pv-states", (b) => {
       const vals = Object.entries(b["aishe-states"].series).filter(([k]) => k.startsWith("ger_")).map(([, s]) => s.data.at(-1)).filter((v) => v != null);
-      return (Math.max(...vals) - Math.min(...vals)).toFixed(0) + " pt";
+      return fmt.pt0(Math.max(...vals) - Math.min(...vals));
     }],
     ["pv-edu", (b) => {
       const c = b["aishe-composition"].series.integrated.data;
       const g = (c.at(-1) / c[0] - 1) * 100;
-      return (g >= 0 ? "+" : "") + g.toFixed(0) + "%";
+      return (g >= 0 ? "+" : "") + fmt.pct0(g);
     }],
     ["pv-fac", (b) => {
       const t = b["aishe-teachers"].series;
-      return Math.round(t.professor_female.data.at(-1) / t.professor_both.data.at(-1) * 100) + "%";
+      return fmt.pct0(t.professor_female.data.at(-1) / t.professor_both.data.at(-1) * 100);
     }],
-    ["pv-min", (b) => Math.round(b["aishe-minority"].series.muslims_both.data.at(-1)).toLocaleString("en-IN")],
-    ["pv-ptr", (b) => String(Math.round(b["aishe-headline"].series.ptr.data.at(-1)))],
+    ["pv-min", (b) => fmt.inr(b["aishe-minority"].series.muslims_both.data.at(-1))],
+    ["pv-ptr", (b) => fmt.count(b["aishe-headline"].series.ptr.data.at(-1))],
     // lecturers' share of the faculty ladder — regression test for the NaN
     // bug (denominator once summed datum objects, not values)
     ["ex-fac-lecn", (b) => {
       const t = b["aishe-teachers"].series;
       const li = t.lecturer_assistant_both.data.length - 1;
       const denom = t.professor_both.data[li] + t.reader_associate_both.data[li] + t.lecturer_assistant_both.data[li] + t.temporary_both.data[li] + t.demonstrator_both.data[li];
-      return Math.round((t.lecturer_assistant_both.data[li] / denom) * 100) + "%";
+      return fmt.pct0((t.lecturer_assistant_both.data[li] / denom) * 100);
     }],
     ["prov-vintage", (b) => b["aishe-headline"].meta.vintage],
     ["prov-vintage2", (b) => b["aishe-headline"].meta.vintage],
   ]},
   { url: "/dossiers/gender/", slug: null, checks: [
     ["n-sr", (b) => b["gender-sexratio"].series.sex_ratio.data.at(-1) + "♀/1000♂"],
-    ["n-lfpr", (b) => b["gender-work"].series.lfpr_female.data.at(-1).toFixed(1) + "%"],
-    ["n-mmr", (b) => String(Math.round(b["gender-mmr"].series.mmr.data.at(-1)))],
+    ["n-lfpr", (b) => fmt.pct1(b["gender-work"].series.lfpr_female.data.at(-1))],
+    ["n-mmr", (b) => fmt.count(b["gender-mmr"].series.mmr.data.at(-1))],
     ["cr-sr", (b) => String(b["gender-sexratio"].series.sex_ratio.data.at(-1))],
-    ["cr-mmr", (b) => Math.round(b["gender-mmr"].series.mmr.data.at(-1)) + "/100k"],
-    ["cr-lit-f", (b) => b["gender-literacy"].series.literacy_female.data.at(-1).toFixed(1) + "%"],
-    ["cr-lfpr-f", (b) => b["gender-work"].series.lfpr_female.data.at(-1).toFixed(1) + "%"],
+    ["cr-mmr", (b) => fmt.count(b["gender-mmr"].series.mmr.data.at(-1)) + "/100k"],
+    ["cr-lit-f", (b) => fmt.pct1(b["gender-literacy"].series.literacy_female.data.at(-1))],
+    ["cr-lfpr-f", (b) => fmt.pct1(b["gender-work"].series.lfpr_female.data.at(-1))],
     ["pv-sr", (b) => b["gender-sexratio"].series.sex_ratio.data[0] + " → " + b["gender-sexratio"].series.sex_ratio.data.at(-1)],
-    ["pv-mmr", (b) => b["gender-mmr"].series.mmr.data[0] + " → " + Math.round(b["gender-mmr"].series.mmr.data.at(-1))],
-    ["pv-tfr", (b) => b["gender-fertility"].series.tfr_graduate_and_above.data.at(-1).toFixed(2)],
-    ["pv-lfpr", (b) => b["gender-work"].series.lfpr_female.data.at(-1).toFixed(1) + "%"],
+    ["pv-mmr", (b) => b["gender-mmr"].series.mmr.data[0] + " → " + fmt.count(b["gender-mmr"].series.mmr.data.at(-1))],
+    ["pv-tfr", (b) => fmt.num2(b["gender-fertility"].series.tfr_graduate_and_above.data.at(-1))],
+    ["pv-lfpr", (b) => fmt.pct1(b["gender-work"].series.lfpr_female.data.at(-1))],
     ["prov-vintage", (b) => b["gender-sexratio"].meta.vintage],
     ["prov-vintage2", (b) => b["gender-sexratio"].meta.vintage],
   ]},
   { url: "/dossiers/mnre/", slug: null, checks: [
-    ["n-total", (b) => (b["mnre-sources"].series.grand_total.data.at(-1) / 1000).toFixed(1) + "GW"],
-    ["n-solar-share", (b) => (b["mnre-sources"].series.solar.data.at(-1) / b["mnre-sources"].series.grand_total.data.at(-1) * 100).toFixed(0) + "%"],
-    ["cr-total", (b) => (b["mnre-sources"].series.grand_total.data.at(-1) / 1000).toFixed(1) + "GW"],
-    ["pv-total", (b) => (b["mnre-sources"].series.grand_total.data[0] / 1000).toFixed(1) + " → " + (b["mnre-sources"].series.grand_total.data.at(-1) / 1000).toFixed(1)],
-    ["pv-sources", (b) => (b["mnre-sources"].series.solar.data.at(-1) / b["mnre-sources"].series.wind.data.at(-1)).toFixed(1) + "×"],
-    ["pv-solar", (b) => (b["mnre-solar-categories"].series.rooftop.data.at(-1) / b["mnre-sources"].series.solar.data.at(-1) * 100).toFixed(0) + "%"],
+    ["n-total", (b) => fmt.gw1(b["mnre-sources"].series.grand_total.data.at(-1))],
+    ["n-solar-share", (b) => fmt.pct0(b["mnre-sources"].series.solar.data.at(-1) / b["mnre-sources"].series.grand_total.data.at(-1) * 100)],
+    ["cr-total", (b) => fmt.gw1(b["mnre-sources"].series.grand_total.data.at(-1))],
+    ["pv-total", (b) => fmt.num1(b["mnre-sources"].series.grand_total.data[0] / 1000) + " → " + fmt.num1(b["mnre-sources"].series.grand_total.data.at(-1) / 1000)],
+    ["pv-sources", (b) => fmt.x1(b["mnre-sources"].series.solar.data.at(-1) / b["mnre-sources"].series.wind.data.at(-1))],
+    ["pv-solar", (b) => fmt.pct0(b["mnre-solar-categories"].series.rooftop.data.at(-1) / b["mnre-sources"].series.solar.data.at(-1) * 100)],
     ["prov-vintage", (b) => b["mnre-sources"].meta.vintage],
     ["prov-vintage2", (b) => b["mnre-sources"].meta.vintage],
   ]},
   { url: "/dossiers/nfhs/", slug: null, checks: [
-    ["n-anaemia", (b) => { const s = Object.values(b["nfhs-anaemia"].series).find((x) => x.label.includes("Children age 6-59")); return s.data[1].toFixed(1) + "%"; }],
-    ["n-imr", (b) => { const s = Object.values(b["nfhs-child"].series).find((x) => x.label.includes("Infant mortality")); return Math.round(s.data[1]) + "/1000"; }],
-    ["n-institutional", (b) => { const s = Object.values(b["nfhs-maternal"].series).find((x) => x.label.includes("Institutional births (in the 5 years")); return s.data[1].toFixed(1) + "%"; }],
-    ["n-tfr", (b) => { const s = Object.values(b["nfhs-fertility"].series).find((x) => x.label.includes("Total Fertility Rate")); return s.data[1].toFixed(2); }],
-    ["cr-anaemia", (b) => { const s = Object.values(b["nfhs-anaemia"].series).find((x) => x.label.includes("Children age 6-59")); return s.data[1].toFixed(1) + "%"; }],
-    ["pv-anaemia", (b) => { const s = Object.values(b["nfhs-anaemia"].series).find((x) => x.label.includes("Children age 6-59")); return "+" + (s.data[1] - s.data[0]).toFixed(1) + " pt"; }],
+    ["n-anaemia", (b) => { const s = Object.values(b["nfhs-anaemia"].series).find((x) => x.label.includes("Children age 6-59")); return fmt.pct1(s.data[1]); }],
+    ["n-imr", (b) => { const s = Object.values(b["nfhs-child"].series).find((x) => x.label.includes("Infant mortality")); return fmt.count(s.data[1]) + "/1000"; }],
+    ["n-institutional", (b) => { const s = Object.values(b["nfhs-maternal"].series).find((x) => x.label.includes("Institutional births (in the 5 years")); return fmt.pct1(s.data[1]); }],
+    ["n-tfr", (b) => { const s = Object.values(b["nfhs-fertility"].series).find((x) => x.label.includes("Total Fertility Rate")); return fmt.num2(s.data[1]); }],
+    ["cr-anaemia", (b) => { const s = Object.values(b["nfhs-anaemia"].series).find((x) => x.label.includes("Children age 6-59")); return fmt.pct1(s.data[1]); }],
+    ["pv-anaemia", (b) => { const s = Object.values(b["nfhs-anaemia"].series).find((x) => x.label.includes("Children age 6-59")); return fmt.pt1Plus(s.data[1] - s.data[0]); }],
     ["prov-vintage", (b) => b["nfhs-anaemia"].meta.vintage],
     ["prov-vintage2", (b) => b["nfhs-anaemia"].meta.vintage],
+  ]},
+  { url: "/dossiers/manufacturing/", slug: null, checks: [
+    ["n-share", (b) => fmt.pct1(b["wdi-manufacturing"].series.mva_pct_gdp.data.at(-1))],
+    ["n-level", (b) => fmt.bnRound(b["wdi-manufacturing"].series.mva_constant_usd.data.at(-1) / 1e9)],
+    ["n-growth", (b) => fmt.pct1(b["wdi-manufacturing"].series.mva_growth.data.at(-1))],
+    ["n-tech", (b) => fmt.pct1(b["wdi-manufacturing-tech"].series.medhi_tech_share.data.at(-1))],
+    ["cr-share", (b) => fmt.pct1(b["wdi-manufacturing"].series.mva_pct_gdp.data.at(-1))],
+    ["prov-vintage", (b) => b["wdi-manufacturing"].meta.vintage],
+    ["prov-vintage2", (b) => b["wdi-manufacturing"].meta.vintage],
   ]},
   { url: "/", slug: null, minPlots: 1, checks: [
     // the CPI print is the 2024-base series; core stays on the 2012 base
     // (no weights served for the new base), labelled "to Dec 2025"
-    ["v-cpi", (b) => b["cpi-2024"].series.headline.data.at(-1).toFixed(2) + "%", "cpi-2024"],
+    ["v-cpi", (b) => fmt.pct2(b["cpi-2024"].series.headline.data.at(-1)), "cpi-2024"],
     // the GDP print is the 2022-23-base series (old base ends Q2 FY26)
-    ["v-gdp", (b) => b["gdp-2022"].series.gdp.data.at(-1).toFixed(2) + "%", "gdp-2022"],
-    ["v-core", (b) => b.cpi.series.core.data.at(-1).toFixed(2) + "%", "cpi"],
+    ["v-gdp", (b) => fmt.pct2(b["gdp-2022"].series.gdp.data.at(-1)), "gdp-2022"],
+    ["v-core", (b) => fmt.pct2(b.cpi.series.core.data.at(-1)), "cpi"],
   ]},
   { url: "/register/", slug: null, minPlots: 8, checks: [] },
   { url: "/learn/inflation/", slug: "cpi", minPlots: 3, checks: [
-    ["lr-rdec", (b) => b.series.headline.data.at(-1).toFixed(2) + "%"],
-    ["lr-rjan", (b) => b.series.headline.data.at(-12).toFixed(2) + "%"],
+    ["lr-rdec", (b) => fmt.pct2(b.series.headline.data.at(-1))],
+    ["lr-rjan", (b) => fmt.pct2(b.series.headline.data.at(-12))],
   ]},
   { url: "/learn/", slug: null, minPlots: 0, checks: [] },
   // learn section: every page marked live in src/learn/registry.js
@@ -373,10 +385,32 @@ for (const page of PAGES) {
     else ok(`${page.url} #${id} = ${want}`);
   }
 
+  // titleblock stamp and register vintage labels are DERIVED from the bundles
+  // (src/dossiers/display.js) — a hand-typed or stale stamp fails here
+  if (page.url.startsWith("/dossiers/")) {
+    const d = bySlug[page.url.split("/")[2]];
+    const got = doc.querySelector(".sh-date")?.textContent.trim();
+    const want = display.dateStamp(d);
+    if (got !== want) fail(`${page.url}: titleblock stamp "${got}" != derived "${want}" (src/dossiers/display.js)`);
+  }
+  if (page.url === "/") {
+    const vts = [...doc.querySelectorAll(".dossiers .vt")];
+    DOSSIERS.forEach((d, i) => {
+      const got = vts[i]?.textContent.replace(/^Current/, "").trim();
+      const want = display.vintageLabel(d);
+      if (got !== want) fail("/: dossier row " + d.slug + " vintage label '" + got + "' != derived '" + want + "'");
+    });
+  }
+  if (page.url === "/register/") {
+    const got = doc.querySelector(".sh-date")?.textContent.trim();
+    const want = display.dateStamp(bySlug.cpi);
+    if (got !== want) fail(`${page.url}: register stamp "${got}" != derived "${want}"`);
+  }
+
   // learn pages: level figures trace to the published index levels
   if (page.url === "/learn/inflation/") {
     const lv = JSON.parse(fs.readFileSync(path.join(ROOT, "data/raw/cpi-indices.json"), "utf8")).levels;
-    const want = lv["combined:general"]["2025-12"].toFixed(1);
+    const want = fmt.num1(lv["combined:general"]["2025-12"]);
     const got = doc.getElementById("n-lvl-now")?.textContent.trim();
     if (got !== want) fail(`${page.url} #n-lvl-now: rendered "${got}" != data "${want}"`);
     else ok(`${page.url} #n-lvl-now = ${want}`);
@@ -412,12 +446,21 @@ for (const page of PAGES) {
   if (missingTitle.length) fail(`${page.url}: ${missingTitle.length} plates missing <title>`);
 }
 
-// static greps over our own sources (not Plot internals)
-for (const f of ["src/dossiers/cpi.client.js", "src/dossiers/gdp.client.js", "src/dossiers/jobs.client.js", "src/dossiers/aishe.client.js", "src/dossiers/gender.client.js", "src/dossiers/mnre.client.js", "src/dossiers/nfhs.client.js", "src/charts/plumbing.js"]) {
+// static greps over our own sources (not Plot internals) — the file list is
+// the registry's, so a new dossier's client module is linted from day one
+import { DOSSIERS as QC_DOSSIERS } from "../src/dossiers/registry.js";
+for (const f of [...QC_DOSSIERS.map((d) => `src/dossiers/${d.slug}.client.js`), "src/charts/plumbing.js"]) {
   const src = fs.readFileSync(path.join(ROOT, f), "utf8");
   if (/curve\s*[:=]|catmull|monotone|basis/.test(src.replace(/monetary/g, ""))) fail(`${f}: smoothing curve reference found`);
   for (const m of src.matchAll(/tickFormat:\s*\([^)]*\)\s*=>\s*([^,}\n]+)/g)) {
-    if (!/String\(|\+ ?"%"|`/.test(m[1])) fail(`${f}: tickFormat may not return a string — ${m[0]}`);
+    // fail only when nothing in the body can produce a string — string
+    // literals, String(), toFixed/toLocaleString and lookup tables are legal
+    if (!/["'`]|String\(|toFixed|toLocaleString|\w+\[/.test(m[1])) fail(`${f}: tickFormat may not return a string — ${m[0]}`);
+  }
+  // area washes must declare their baseline: an implicit y1=0 bleeds below
+  // the plot on any domain that excludes zero (overflow:"visible" never clips)
+  for (const m of src.matchAll(/Plot\.areaY\(([^)]|\([^)]*\))*\}\)/g)) {
+    if (!/y1\s*:/.test(m[0])) fail(`${f}: areaY without an explicit baseline (y1) — anchor at 0 only when the domain includes it`);
   }
 }
 ok("static source greps done");
@@ -471,7 +514,17 @@ ok("static source greps done");
       const current = loadBundle(rec.bundle);
       if (current.dates.at(-1) !== rec.latestDate) {
         fail(`stale prose: ${slot} describes ${rec.latestDate} but the bundle now serves ${current.dates.at(-1)} — run \`npm run prose\``);
-      } else checked++;
+      } else {
+        checked++;
+        // the emitted prose must still satisfy its slot contract — sentence
+        // ceilings, required figures, and the coverage floors of slots.yml
+        const [pslug, ...rest] = slot.split(".");
+        try {
+          execFileSync(process.execPath, [path.join(ROOT, "pipeline/contract.mjs"), proseFile, pslug, rest.join(".")], { stdio: "pipe" });
+        } catch (e) {
+          fail(`coverage contract: ${slot} — ${((e.stdout?.toString() ?? "") + (e.stderr?.toString() ?? "")).trim()}`);
+        }
+      }
     }
     if (checked) ok(`prose fresh: ${checked}/${Object.keys(manifest).length} dated slots describe the current print`);
   }

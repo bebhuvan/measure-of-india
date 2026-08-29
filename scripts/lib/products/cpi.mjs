@@ -190,6 +190,13 @@ export async function buildCpi(root, dcfg, vintage) {
       published_headline: yoyFromLevels(lv[HEADLINE_KEY]),
     };
     const sfx = sector === "combined" ? "" : `_${sector}`; // cpi.json keeps its original series names
+    // interpolated months are disclosed ON the series their estimates feed
+    // (CONTRACT-series rule 2): the headline aggregates every weighted group,
+    // core aggregates pan + clothing + housing + misc — nothing else carries
+    // an interpolated point
+    const estFor = (groupNames) =>
+      [...new Set(groupNames.flatMap((n) => estimated[sector]?.[GROUP_KEYS[n]] ?? []))].sort().map((ym) => `${ym}-01`);
+    const headEst = estFor(groupKeys), coreEst = estFor(coreKeys);
     return {
       meta: {
         dossier: "cpi", frequency: "monthly", base: dcfg.base,
@@ -197,15 +204,14 @@ export async function buildCpi(root, dcfg, vintage) {
         geo: dcfg.geo ?? "IND",
         latestPeriod: lastMonth, releaseDate,
         coverage: `All India, ${sector}`,
-        estimated: estimated[sector],
         revisionPolicy: dcfg.revision_policy,
       },
       dates,
       series: {
-        headline: { name: `headline_cpi${sfx}_yoy_pct`, label: "Headline", color: "#BE3E26", data: axis.map((ym) => yoy.headline.get(ym) ?? null) },
+        headline: { name: `headline_cpi${sfx}_yoy_pct`, label: "Headline", color: "#BE3E26", data: axis.map((ym) => yoy.headline.get(ym) ?? null), ...(headEst.length ? { estimated: headEst } : {}) },
         food: { name: `food_beverages${sfx}_yoy_pct`, label: "Food", color: "#5B564B", data: axis.map((ym) => yoy.food.get(ym) ?? null) },
         fuel: { name: `fuel_light${sfx}_yoy_pct`, label: "Fuel", color: "#A8A293", data: axis.map((ym) => yoy.fuel.get(ym) ?? null) },
-        core: { name: `core${sfx}_yoy_pct`, label: "Core", color: "#C6C0B0", data: axis.map((ym) => yoy.core.get(ym) ?? null) },
+        core: { name: `core${sfx}_yoy_pct`, label: "Core", color: "#C6C0B0", data: axis.map((ym) => yoy.core.get(ym) ?? null), ...(coreEst.length ? { estimated: coreEst } : {}) },
       },
       crosscheck: { published_headline: axis.map((ym) => yoy.published_headline.get(ym) ?? null) },
     };
@@ -234,7 +240,6 @@ export async function buildCpi(root, dcfg, vintage) {
       geo: dcfg.geo ?? "IND",
       latestPeriod: lastMonth, releaseDate,
       coverage: "All India, Combined; the 21 sub-groups below the six groups",
-      estimated: estimated.combined,
       revisionPolicy: dcfg.revision_policy,
     },
     dates, series: subSeries,
@@ -243,7 +248,7 @@ export async function buildCpi(root, dcfg, vintage) {
   /* ---- states bundles (published headline y/y per state) ----
      interior nulls are real non-publication months (CPI was not compiled for
      most states in Apr–May 2020 and Apr–May 2021; the y/y nulls knock on into
-     2021) — disclosed in meta.gaps, computed on the emitted y/y series */
+     2021) — disclosed per series in gaps, computed on the emitted y/y series */
   const seriesGaps = (yoyMaps) => {
     const set = new Set();
     for (const m of yoyMaps) {

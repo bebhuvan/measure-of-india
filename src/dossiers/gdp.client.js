@@ -266,7 +266,7 @@ function componentChart(blockId, plotId, key, d0, d1, yTicks, extraNote) {
       Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
       Plot.ruleY([d0], { stroke: "#E0DACA", strokeWidth: 1 }),
       Plot.ruleY([0], { stroke: "#1B1A17", strokeOpacity: 0.55, strokeWidth: 1 }),
-      Plot.areaY(s.data, { x: "date", y: "value", fill: s.color, fillOpacity: 0.06 }),
+      Plot.areaY(s.data, { x: "date", y: "value", y1: d0 <= 0 ? 0 : d0, fill: s.color, fillOpacity: 0.06 }),
       Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.lineY(s.data.slice(-5), { x: "date", y: "value", stroke: s.color, strokeWidth: 4, strokeLinecap: "round", strokeLinejoin: "round" }),
       Plot.dot([pk], { x: "date", y: "value", fill: "#BE3E26", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
@@ -401,7 +401,7 @@ componentChart("cb-gva", "plot-gva", "gva", -28, 24, [-20, -10, 0, 10, 20], "GVA
     marks: [
       Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
       Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
-      Plot.areaY(nn, { x: "date", y: "value", fill: "#BE3E26", fillOpacity: 0.06 }),
+      Plot.areaY(nn, { x: "date", y: "value", y1: geo.d0 <= 0 ? 0 : geo.d0, fill: "#BE3E26", fillOpacity: 0.06 }),
       Plot.lineY(nn, { x: "date", y: "value", stroke: "#BE3E26", strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.dot(nn, { x: "date", y: "value", fill: "#BE3E26", r: 3, stroke: "#FFFFFF", strokeWidth: 1.25 }),
       Plot.dot([last], { x: "date", y: "value", fill: "#BE3E26", r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),

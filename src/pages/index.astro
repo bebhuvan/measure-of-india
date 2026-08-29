@@ -4,6 +4,7 @@ import "../styles/pages.css";
 import fs from "node:fs";
 import { DOSSIERS } from "../dossiers/registry.js";
 import { makePeriodLabel, MONTHS_FULL, MONTHS_SHORT } from "../../pipeline/lib/periods.mjs";
+import { vintageLabel } from "../dossiers/display.js";
 
 // counts are computed, never hardcoded — the front page must never disagree
 // with the register after a coverage wave lands
@@ -91,7 +92,7 @@ const STAMP = stamp[0].toUpperCase() + stamp.slice(1);
           <span class="nm">{d.name}</span>
           <span class="ds">{d.blurb}</span>
           <span class="dspark" id={`ds-${d.slug}`}></span>
-          <span class="vt"><b>Current</b><br>{d.vintageLabel}</span>
+          <span class="vt"><b>Current</b><br>{vintageLabel(d)}</span>
         </a></li>
       ))}
     </ul>

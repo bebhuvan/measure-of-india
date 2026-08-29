@@ -190,6 +190,12 @@ const CARDS = [
     },
     foot: () => `Child anaemia 58% → 67% · NFHS-4 to NFHS-5 · Source: MoSPI / IIPS`,
   },
+  {
+    slug: "manufacturing", bundleSlug: "wdi-manufacturing",
+    keys: ["mva_pct_gdp", "industry_pct_gdp"], d0: 0, d1: 30, band: null, trend: null,
+    yStep: 10, fmt: (v) => v.toFixed(1) + "%", mr: 220,
+    foot: (b, S) => `Manufacturing ${S.mva_pct_gdp.data.at(-1).value.toFixed(1)}% of GDP · 2025 · Source: World Bank WDI`,
+  },
 ];
 
 await ensureFonts();

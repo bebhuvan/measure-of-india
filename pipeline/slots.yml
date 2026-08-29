@@ -7,6 +7,9 @@ cpi:
     maxSentences: 7
     dateStamp: true
     requiredFigures: [headline.latest, food_and_beverages.latest, transport.latest]
+    minSeriesMentioned: 5        # headline + at least 4 of the 12 divisions
+    mustName: [extremes]         # the hottest and weakest divisions must appear
+    mustAcknowledge: [contradictions]
     bannedWords: []
     brief: >
       Two short paragraphs on the new 2024-base print (June 2026): the headline,
@@ -38,6 +41,9 @@ gdp:
     maxSentences: 6
     dateStamp: true
     requiredFigures: [gdp.latest, gdp.previous, pfce.latest, gfcf.latest, gva.latest]
+    minSeriesMentioned: 4        # gdp, gva, consumption, investment
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
     brief: >
       The quarter: growth, direction of travel vs the previous quarter, the
       composition (consumption, investment), and the GDP–GVA gap as accounting.
@@ -61,6 +67,9 @@ wpi:
     maxSentences: 7
     dateStamp: true
     requiredFigures: [headline.latest, fuel.latest, primary.latest, manufactured.latest]
+    minSeriesMentioned: 5        # the headline and all four moving parts
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
     brief: >
       The headline wholesale print and its three moving parts (primary, fuel,
       manufactured). Name which group did the lifting this month. Concede the
@@ -79,6 +88,9 @@ iip:
     maxSentences: 7
     dateStamp: true
     requiredFigures: [general.latest, sector_manufacturing.latest, use_capital_goods.latest]
+    minSeriesMentioned: 4        # general + sector and use-based cuts
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
     brief: >
       The headline industrial growth, the sector split (manufacturing, mining,
       electricity), and the use-based read (capital goods = investment). Name the
@@ -97,6 +109,9 @@ jobs:
     maxSentences: 7
     dateStamp: true
     requiredFigures: [ur.latest, lfpr.latest]
+    minSeriesMentioned: 3        # ur, lfpr, wpr
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
     brief: >
       The unemployment rate and participation, and what moved them. Name which
       labour market (urban women, rural men) sits highest. Concede before
@@ -116,6 +131,9 @@ consumption:
     maxSentences: 7
     dateStamp: true
     requiredFigures: [rural.latest, urban.latest]
+    minSeriesMentioned: 2        # rural and urban
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
     brief: >
       The average monthly spend, rural and urban, and the urban-rural gap. Name
       any shift in food's share (Engel's law). Concede before qualifying.
@@ -133,6 +151,9 @@ factories:
     maxSentences: 7
     dateStamp: true
     requiredFigures: [gva.latest, factories_in_operation.latest]
+    minSeriesMentioned: 3        # gva, factory count, people
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
     brief: >
       The factory sector's value added, factory counts and people on the shop
       floor. Set the registered (ASI) beside the informal (ASUSE) scale. Concede

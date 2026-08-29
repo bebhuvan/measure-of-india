@@ -151,8 +151,9 @@ export async function buildPlfs(root, dcfg, vintage) {
   const qMonthsClean = [...quarterly.ur.keys()].sort();
   const qAxis = quarterAxis(qMonthsClean[0], qMonthsClean[qMonthsClean.length - 1]);
   // interior nulls are real publication gaps (e.g. Jan–Mar 2025, the design
-  // transition quarter, was never published) — disclose them in meta.gaps;
-  // validate.mjs allows nulls only at these dates.
+  // transition quarter, was never published) — disclose them per series in gaps;
+  // validate.mjs allows nulls only at these dates. writeSeries moves the
+  // bundle-level union onto the series automatically.
   const gaps = qAxis.filter((ym) =>
     Object.values(quarterly).some((m) => m.get(ym) == null));
   const quarterlyBundle = {

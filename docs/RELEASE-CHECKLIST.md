@@ -17,6 +17,21 @@ in order; budget ten minutes.
   guarantee.
 - Evergreen slots (how-to-read, misread, margin-note) must NEVER appear in
   the diff. If they do, something regenerated what only humans write.
+- **Coverage floors are now release gates**: qc re-runs the slot contract
+  (sentence ceilings, required figures, `minSeriesMentioned`, extremes,
+  contradictions) on every emitted slot. If a floor caught a real omission,
+  the regenerating run already failed until the prose covered the sheet —
+  read what it now covers, not just what it says.
+
+## 1b. The hand-written "As of" paragraphs
+
+If a bundle's print advanced this release, `pipeline/asof.mjs` has flagged
+every `.now` paragraph bound to it (the gates fail on
+`stale "As of" paragraph: <slug>#<figure>`). For each flagged block:
+re-read it against the new print, edit its stamp and any claim that no
+longer holds, then attest with `node pipeline/asof.mjs --refresh
+<slug>#<figure-id>` (or `--refresh-all` for one reviewed dossier). The
+refresh is your signature that a human re-read it — do not batch it blind.
 
 ## 2. The series diff (scan it like an auditor)
 
@@ -26,6 +41,13 @@ in order; budget ten minutes.
 - Any NEW bundle file: one instrument, one bundle; base year in `meta.base`.
 - Any `meta.vintage` bump without a data change is a bug (fetch-date
   stamping). Reject.
+- **Staleness floors**: if a live bundle moved forward this release, bump its
+  `stale_after` floor (dossier-level in `data/sources.yml`, or the row-level
+  `staleAfter` in `scripts/validate.mjs` for bundles on their own cadence).
+  The floor is the editorial claim "this source should never again be seen
+  covering less than this" — a release that moves the data without moving
+  the floor is leaving the gate asleep. Retired rulers keep their frozen
+  floor; do not touch those.
 
 ## 3. The raw dump spot-check (one minute)
 

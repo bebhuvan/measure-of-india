@@ -1,13 +1,14 @@
 ---
 import Base from "../../layouts/Base.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["aishe"];
 ---
 <Base
   title="India Atlas — Higher Education · Dossier 09"
   description={D.description}
   nav="dossiers"
-  dateStamp={D.dateStamp}
+  dateStamp={dateStamp(D)}
   crumbLeft={`<a href="/" style="color:inherit">Dossiers</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote} · <b>${D.version}</b>`}
   canonical="https://atlas.thisindianlife.today/dossiers/aishe/"
@@ -43,7 +44,7 @@ const D = bySlug["aishe"];
     <div class="reading-top">
       <div><span class="rk">Estimated enrolment</span><div class="big" id="rb-enrol">–</div></div>
       <p class="rt-cap">Students enrolled in higher education, 2021-22 — the AISHE headline count. Beside it sits the Gross Enrolment Ratio: the share of the college-age population that enrolled, gross of repeats and in-migrants. About <b id="rt-ratio">–</b> of every hundred Indians of college age were enrolled.</p>
-      <div><span class="rk">GER · per cent</span><div class="big" id="rb-ger" style="font-size:44px">–</div></div>
+      <div class="rt-side"><span class="rk">GER · per cent</span><div class="rt-side-v" id="rb-ger">–</div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">

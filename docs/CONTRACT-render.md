@@ -5,6 +5,17 @@ charts are drawn once on load, nothing re-renders. This document is the
 budget of what a page may do. `scripts/qc.mjs` enforces the mechanical
 parts by executing every page's JS in jsdom.
 
+## Number formatting
+
+Every display format is defined once, in `src/charts/format.js` (re-exported
+from `plumbing.js` as `fmt`). Clients render through it; `scripts/qc.mjs`
+renders its expected strings through the same module — a formatter change
+updates both sides, and hand-typed rendering in qc (the old shape) can no
+longer false-fail or drift. Titleblock stamps and vintage labels are derived
+the same way, from bundle meta, by `src/dossiers/display.js`; qc compares
+every rendered page against the derivation, so a hand-typed stamp fails the
+build.
+
 ## Pages and plates
 
 0. **Dossier metadata lives in `src/dossiers/registry.js`** — title, kicker,

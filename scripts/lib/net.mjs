@@ -36,18 +36,27 @@ function agentFor(url, opts = {}) {
 
 // One attempt. Classifies failures so the retry loop can back off harder on
 // throttle signals. Never resolves with an unparsed body (unless asText).
-export function requestOnce(url, { agent, timeoutMs = 60_000, deadlineMs = 120_000, maxBytes = 64 * 1024 * 1024, asText = false } = {}) {
+// Follows up to 3 redirects (http→https moves and CDN hops are ordinary);
+// each hop gets a fresh deadline.
+const REDIRECT_STATUS = new Set([301, 302, 303, 307, 308]);
+export function requestOnce(url, { agent, timeoutMs = 60_000, deadlineMs = 120_000, maxBytes = 64 * 1024 * 1024, asText = false, redirectsLeft = 3 } = {}) {
   return new Promise((resolve, reject) => {
     const started = Date.now();
     let body = "";
+    let bytes = 0;
     let settled = false;
     const finish = (fn, arg) => { if (!settled) { settled = true; req.destroy(); fn(arg); } };
 
     const req = (url.startsWith("http:") ? http : https).get(url, { agent: agentFor(url, { agent }) }, (res) => {
       res.setEncoding("utf8");
+      if (REDIRECT_STATUS.has(res.statusCode) && res.headers.location && redirectsLeft > 0) {
+        const next = new URL(res.headers.location, url).toString();
+        return finish(resolve, requestOnce(next, { agent, timeoutMs, deadlineMs, maxBytes, asText, redirectsLeft: redirectsLeft - 1 }));
+      }
       res.on("data", (c) => {
         body += c;
-        if (body.length > maxBytes) {
+        bytes += Buffer.byteLength(c); // the cap is bytes, not UTF-16 code units
+        if (bytes > maxBytes) {
           const err = new Error(`Response exceeds ${maxBytes} bytes for ${url}`);
           err.fatal = true; // retrying an oversized body is pointless
           finish(reject, err);

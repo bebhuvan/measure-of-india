@@ -1,0 +1,76 @@
+// pipeline/lib/series-kws.mjs — THE series keyword maps: which words in a
+// sentence refer to which series of the dossier's CURRENT bundle. One map,
+// three consumers: pipeline/verify.mjs (claim checks + the negative guard),
+// pipeline/contract.mjs (coverage floors), pipeline/generate.mjs (the
+// COVERAGE enumeration). A series with no keyword cannot be covered, so the
+// maps must name every series of the current bundle — a map that lags the
+// bundle is a coverage hole, and contract.mjs fails a floor it cannot see.
+//
+// Order matters: resolveSeries returns the FIRST keyword that matches, so
+// specific phrases precede generic ones ("food index" before "food").
+
+export const SERIES_KWS = {
+  cpi: [
+    ["headline", "headline"], ["inflation", "headline"],
+    ["food", "food_and_beverages"],
+    ["tobacco", "paan_tobacco_and_intoxicants"], ["paan", "paan_tobacco_and_intoxicants"], ["intoxicants", "paan_tobacco_and_intoxicants"], ["pan masala", "paan_tobacco_and_intoxicants"],
+    ["clothing", "clothing_and_footwear"], ["footwear", "clothing_and_footwear"], ["apparel", "clothing_and_footwear"],
+    ["housing", "housing_water_electricity_gas_and_other_fuels"], ["utilities", "housing_water_electricity_gas_and_other_fuels"], ["electricity", "housing_water_electricity_gas_and_other_fuels"], ["fuel and light", "housing_water_electricity_gas_and_other_fuels"],
+    ["furnishings", "furnishings_household_equipment_and_routine_household_maintenance"], ["furniture", "furnishings_household_equipment_and_routine_household_maintenance"], ["household equipment", "furnishings_household_equipment_and_routine_household_maintenance"],
+    ["health", "health"],
+    ["transport", "transport"],
+    ["information", "information_and_communication"], ["communication", "information_and_communication"],
+    ["recreation", "recreation_sport_and_culture"], ["culture", "recreation_sport_and_culture"], ["sport", "recreation_sport_and_culture"],
+    ["education", "education_services"],
+    ["restaurants", "restaurants_and_accommodation_services"], ["hotels", "restaurants_and_accommodation_services"], ["accommodation", "restaurants_and_accommodation_services"],
+    ["personal care", "personal_care_social_protection_and_miscellaneous_goods_and_services"], ["gold", "personal_care_social_protection_and_miscellaneous_goods_and_services"], ["miscellaneous", "personal_care_social_protection_and_miscellaneous_goods_and_services"],
+  ],
+  gdp: [
+    ["gva", "gva"], ["consumption", "pfce"], ["pfce", "pfce"],
+    ["investment", "gfcf"], ["gfcf", "gfcf"], ["capex", "gfcf"],
+    ["gdp", "gdp"], ["growth", "gdp"],
+  ],
+  wpi: [
+    ["headline", "headline"], ["wholesale", "headline"], ["inflation", "headline"],
+    ["primary", "primary"],
+    ["fuel", "fuel"], ["fuel and power", "fuel"],
+    ["manufactured", "manufactured"],
+    ["food index", "food_index"], ["food", "food_index"],
+  ],
+  iip: [
+    ["general", "general"], ["headline", "general"], ["industrial", "general"], ["index", "general"],
+    ["manufacturing", "sector_manufacturing"],
+    ["mining", "sector_mining_quarrying"], ["quarrying", "sector_mining_quarrying"],
+    ["electricity", "sector_electricity_gas_supply"], ["power", "sector_electricity_gas_supply"],
+    ["water", "sector_water_supply_sewerage_waste_management"], ["sewerage", "sector_water_supply_sewerage_waste_management"],
+    ["capital goods", "use_capital_goods"], ["capital", "use_capital_goods"],
+    ["consumer durables", "use_consumer_durables"], ["durables", "use_consumer_durables"],
+    ["non-durables", "use_consumer_non_durables"], ["consumer non", "use_consumer_non_durables"],
+    ["infrastructure", "use_infrastructure_construction_goods"], ["construction goods", "use_infrastructure_construction_goods"],
+    ["intermediate", "use_intermediate_goods"],
+    ["primary goods", "use_primary_goods"], ["basic goods", "use_primary_goods"],
+  ],
+  jobs: [
+    ["unemployment", "ur"], ["headline", "ur"], ["ur", "ur"],
+    ["participation", "lfpr"], ["lfpr", "lfpr"],
+    ["worker", "wpr"], ["wpr", "wpr"], ["employment", "wpr"],
+  ],
+  consumption: [
+    ["rural", "rural"], ["mpce", "rural"], ["spending", "rural"], ["consumption", "rural"],
+    ["urban", "urban"],
+    ["imputed", "rural_imputed"], ["imputation", "rural_imputed"],
+    ["gini", "rural"],
+  ],
+  factories: [
+    ["factories in operation", "factories_in_operation"], ["operating factories", "factories_in_operation"], ["factories", "factories_in_operation"],
+    ["gva", "gva"], ["value added", "gva"],
+    ["output", "total_output"],
+    ["emoluments", "emoluments"], ["wages", "emoluments"],
+    ["persons engaged", "persons_engaged"], ["workers", "workers"], ["employment", "workers"],
+    ["fixed capital", "fixed_capital"],
+    ["invested capital", "invested_capital"],
+    ["inputs", "total_inputs"],
+    ["net value added", "net_value_added"],
+    ["number of factories", "number_of_factories"],
+  ],
+};

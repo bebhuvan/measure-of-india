@@ -12,6 +12,15 @@ compressed execution order) and `docs/CONTRACT-series.md` (bundle shape).
 
 Do not proceed on assumptions about any of the three.
 
+## Step 0 — the census (mandatory)
+
+Run `node scripts/census.mjs <target-dossier>` (or `--bundle <slug>` for an
+existing bundle) and follow `skills/analyze-series.md`: read the whole
+inventory and produce the coverage ledger before registering or adapting
+anything. The ledger decides which cuts the adapter must extract and which
+sections the dossier needs — bias toward comprehensiveness, skips need
+written reasons.
+
 ## Steps
 
 1. **Registry.** Add the entry to `data/sources.yml`: `family`, `geo`,
@@ -39,12 +48,17 @@ Do not proceed on assumptions about any of the three.
    dossier's `PAGES` entry in `scripts/qc.mjs` — qc refuses to run a registry
    dossier that has none.
 7. **Prose (only if the dossier has dated slots).** Extend
-   `pipeline/slots.yml` `requiredFigures`; confirm `pipeline/facts.mjs`
-   exposes them from the registry's `currentBundle`.
+   `pipeline/slots.yml` — `requiredFigures` plus the coverage floors
+   (`minSeriesMentioned`, `mustName: [extremes]`,
+   `mustAcknowledge: [contradictions]`); declare the sibling bundles the
+   writer must see as the registry's `proseInputs`; confirm
+   `pipeline/facts.mjs` exposes them. The render-side playbook is
+   `skills/write-dossier.md`.
 8. **Prove it, in order:**
    ```
    node scripts/fetch.mjs only <name> && node scripts/validate.mjs
    npx astro build && node scripts/qc.mjs
+   npm run gates      # validate + asof + qc + chart lint
    npm run prose:dry   # if slots changed
    ```
 9. **Report.** List files added/changed, the anchor you asserted, the

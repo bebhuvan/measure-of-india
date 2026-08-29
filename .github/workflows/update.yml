@@ -35,6 +35,9 @@ jobs:
 
       - run: npm ci
 
+      - name: Unit tests
+        run: npm test
+
       # Persist the throttle-survival cache across runs: a died-mid-product
       # ingest must not refetch the thousands of pages it already has.
       - name: Restore http cache

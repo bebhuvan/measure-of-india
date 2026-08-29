@@ -27,6 +27,9 @@ jobs:
 
       - run: npm ci
 
+      - name: Unit tests
+        run: npm test
+
       - name: Build (no refetch — deploy exactly what was reviewed)
         run: npx astro build
 

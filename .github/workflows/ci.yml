@@ -1,0 +1,43 @@
+name: ci
+
+# Every PR runs the gates against the committed data — no fetch, no prose
+# regeneration, no publish. The release pipeline (update.yml) remains the
+# only path that changes data; this workflow keeps human-authored PRs from
+# landing regressions that the gates already know how to catch.
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Validate committed data
+        run: node scripts/validate.mjs
+
+      - name: Build
+        run: npx astro build
+
+      - name: QC (rendered numbers, chart geometry, prose freshness)
+        run: npm run qc

@@ -8,6 +8,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { bySlug } from "../src/dossiers/registry.js";
 import { makePeriodLabel, yearLag } from "./lib/periods.mjs";
+import { seriesFacts, crossBundle, commonHeadline } from "./lib/census-core.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const slug = process.argv[2];
@@ -134,20 +135,45 @@ for (const [k, s] of Object.entries(bundle.series)) {
   facts.series[k] = entry;
 }
 
-// cross-series facts the corpus uses
+// cross-series facts the corpus uses — computed for EVERY dossier from the
+// shared census core (pipeline/lib/census-core.mjs), so the ranking the
+// writer sees is the ranking the census audited. Dossier-specific extras
+// (band position, gold, the retired base) layer on top.
+const allSeries = Object.entries(bundle.series).map(([key, s]) => seriesFacts(bundle.dates, { key, ...s }));
+const headKey = commonHeadline(Object.keys(bundle.series));
+const xEntry = crossBundle(bundleSlug, allSeries, headKey, null, true);
+const mover = (m) => m && { key: m.key, label: m.label, latest: m.latest, latestPeriod: m.latestPeriod, deltaVsYearAgo: m.deltaVsYearAgo };
+// extremes read the PRIMARY series only — an "with imputation" disclosure
+// variant is not a separate story, and naming the primary names the fact
+const primary = allSeries.filter((s) => !/_imputed$/.test(s.key));
+const byLatest = primary.filter((s) => s.latest != null).sort((a, b) => b.latest - a.latest);
+const byDelta = primary.filter((s) => s.deltaVsYearAgo != null).sort((a, b) => b.deltaVsYearAgo - a.deltaVsYearAgo);
+facts.cross = {
+  headlineKey: headKey,
+  countAboveHeadline: xEntry.countAboveHeadline ?? null,
+  countBelowHeadline: xEntry.countBelowHeadline ?? null,
+  countMovingWithHeadline: xEntry.countMovingWithHeadline,
+  countMovingAgainstHeadline: xEntry.countMovingAgainstHeadline,
+  topMover: mover(byDelta[0] ?? byLatest[0] ?? null),
+  bottomMover: mover(byDelta.at(-1) ?? byLatest.at(-1) ?? null),
+  topByLatest: mover(byLatest[0] ?? null),
+  bottomByLatest: mover(byLatest.at(-1) ?? null),
+  spreadLatest: byLatest.length > 1 ? Math.round((byLatest[0].latest - byLatest.at(-1).latest) * 100) / 100 : null,
+  contradictions: xEntry.contradictions.map((k) => { const s = allSeries.find((f) => f.key === k); return { key: k, label: s.label, latest: s.latest, deltaVsYearAgo: s.deltaVsYearAgo }; }),
+  ranking: xEntry.ranking,
+};
+if (bands) {
+  const h = facts.series[headKey ?? Object.keys(facts.series)[0]];
+  facts.cross.bandPosition =
+    h.latest.value < bands.floor ? `${(bands.floor - h.latest.value).toFixed(2)} pt below the ${bands.floor}% floor`
+    : h.latest.value < bands.target ? `${(bands.target - h.latest.value).toFixed(2)} pt below the ${bands.target}% target`
+    : h.latest.value <= bands.ceiling ? `${(h.latest.value - bands.target).toFixed(2)} pt above the ${bands.target}% target`
+    : `${(h.latest.value - bands.ceiling).toFixed(2)} pt above the ${bands.ceiling}% ceiling`;
+}
 if (slug === "cpi") {
-  const h = facts.series.headline;
   const gold = facts.series.personal_care_social_protection_and_miscellaneous_goods_and_services;
-  facts.cross = {
-    bandPosition:
-      h.latest.value < bands.floor ? `${(bands.floor - h.latest.value).toFixed(2)} pt below the ${bands.floor}% floor`
-      : h.latest.value < bands.target ? `${(bands.target - h.latest.value).toFixed(2)} pt below the ${bands.target}% target`
-      : h.latest.value <= bands.ceiling ? `${(h.latest.value - bands.target).toFixed(2)} pt above the ${bands.target}% target`
-      : `${(h.latest.value - bands.ceiling).toFixed(2)} pt above the ${bands.ceiling}% ceiling`,
-    divisionsAboveHeadline: Object.values(facts.series).filter((s) => s !== h && s.latest.value > h.latest.value).length,
-    goldDivision: gold ? gold.latest : null,
-    goldNote: "Personal care is the division that carries gold; its price is set in world markets and is a spectator, not a domestic story.",
-  };
+  facts.cross.goldDivision = gold ? gold.latest : null;
+  facts.cross.goldNote = "Personal care is the division that carries gold; its price is set in world markets and is a spectator, not a domestic story.";
   // the retired 2012 base carries the only core index (the 2024 base serves no
   // weights, so core can't be computed on it) — expose its final reading so the
   // "what it does not say" slot can be honest about the ruler change.
@@ -161,15 +187,56 @@ if (slug === "cpi") {
 }
 if (slug === "gdp") {
   const g = facts.series.gdp;
-  facts.cross = {
-    vsTrend6: Math.round((g.latest.value - 6) * 100) / 100,
-    fastestSince: (() => {
-      const data = bundle.series.gdp.data;
-      const L = data.at(-1);
-      for (let i = data.length - 2; i >= 0; i--) if (data[i] > L) return { value: data[i], period: periodLabel(bundle.dates[i]) };
-      return null;
-    })(),
-  };
+  facts.cross.vsTrend6 = Math.round((g.latest.value - 6) * 100) / 100;
+  facts.cross.fastestSince = (() => {
+    const data = bundle.series.gdp.data;
+    const L = data.at(-1);
+    for (let i = data.length - 2; i >= 0; i--) if (data[i] > L) return { value: data[i], period: periodLabel(bundle.dates[i]) };
+    return null;
+  })();
+}
+
+// the writer's window on the SIBLING bundles (registry `proseInputs`): the
+// deep cuts — groups, items, states, sectors — summarized as field facts
+// (rankings, extremes, contradictions), never 358 raw rows. Every number
+// here is prose-citable and verify-traceable like the rest of the sheet.
+if (D.proseInputs?.length) {
+  const hDir = headKey != null && allSeries.find((s) => s.key === headKey)?.deltaVsYearAgo != null
+    ? Math.sign(allSeries.find((s) => s.key === headKey).deltaVsYearAgo) : null;
+  facts.proseInputs = D.proseInputs.map((slug2) => {
+    const b = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", slug2 + ".json"), "utf8"));
+    const list = Object.entries(b.series).map(([key, s]) => seriesFacts(b.dates, { key, ...s }));
+    const e = crossBundle(slug2, list, commonHeadline(Object.keys(b.series)), hDir);
+    const bl = list.filter((s) => s.latest != null).sort((a, c) => c.latest - a.latest);
+    const out2 = {
+      bundle: slug2,
+      seriesCount: list.length,
+      base: b.meta.base,
+      coverage: b.meta.coverage ?? null,
+      top: mover(e.topByDelta ?? bl[0] ?? null),
+      bottom: mover(e.bottomByDelta ?? bl.at(-1) ?? null),
+      topByLatest: mover(bl[0] ?? null),
+      bottomByLatest: mover(bl.at(-1) ?? null),
+      spread: e.spreadDelta,
+      countAboveHeadline: e.countAboveHeadline ?? null,
+      contradictions: e.contradictions,
+      ranking: e.ranking.slice(0, 10),
+    };
+    // deep-tail bundles (items, all states): the summarize bucket — counts
+    // and median, so the writer can narrate the field without 358 rows
+    if (list.length > 30) {
+      const latestVals = bl.map((s) => s.latest);
+      const prevs = list.map((s) => s.deltaVsPrev).filter((v) => v != null);
+      out2.tail = {
+        median: Math.round(latestVals.sort((a, c) => a - c)[Math.floor(latestVals.length / 2)] * 100) / 100,
+        rising: prevs.filter((v) => v > 0).length,
+        falling: prevs.filter((v) => v < 0).length,
+        belowZero: latestVals.filter((v) => v < 0).length,
+      };
+      out2.ranking = e.ranking.slice(0, 15);
+    }
+    return out2;
+  });
 }
 
 fs.mkdirSync(path.join(ROOT, "pipeline/out"), { recursive: true });

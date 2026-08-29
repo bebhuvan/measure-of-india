@@ -73,6 +73,9 @@ async function fetchWithRetry(url, retries) {
       return json;
     } catch (err) {
       lastErr = err;
+      // fatal errors (4xx, size cap) will never succeed on retry — fail now
+      // instead of burning ~2 minutes each across the remaining attempts
+      if (err.fatal) throw err;
       if (attempt < retries) {
         // throttle signals back off much harder than transient errors
         const base = err.throttled ? 8000 * 2 ** (attempt - 1) : 1500 * attempt;

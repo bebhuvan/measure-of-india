@@ -185,10 +185,241 @@
   }
  },
  "cross": {
+  "headlineKey": "gdp",
+  "countAboveHeadline": 2,
+  "countBelowHeadline": 1,
+  "countMovingWithHeadline": 3,
+  "countMovingAgainstHeadline": 0,
+  "topMover": {
+   "key": "gfcf",
+   "label": "Investment",
+   "latest": 10.82,
+   "latestPeriod": "2026-01",
+   "deltaVsYearAgo": 4.57
+  },
+  "bottomMover": {
+   "key": "gva",
+   "label": "GVA",
+   "latest": 7.88,
+   "latestPeriod": "2026-01",
+   "deltaVsYearAgo": 0.76
+  },
+  "topByLatest": {
+   "key": "gfcf",
+   "label": "Investment",
+   "latest": 10.82,
+   "latestPeriod": "2026-01",
+   "deltaVsYearAgo": 4.57
+  },
+  "bottomByLatest": {
+   "key": "pfce",
+   "label": "Consumption",
+   "latest": 7.06,
+   "latestPeriod": "2026-01",
+   "deltaVsYearAgo": 1.48
+  },
+  "spreadLatest": 3.76,
+  "contradictions": [],
+  "ranking": [
+   "gfcf",
+   "pfce",
+   "gdp",
+   "gva"
+  ],
   "vsTrend6": 1.83,
   "fastestSince": {
    "value": 7.96,
    "period": "Q3 FY26"
   }
- }
+ },
+ "proseInputs": [
+  {
+   "bundle": "gdp-expenditure",
+   "seriesCount": 3,
+   "base": "2011-12",
+   "coverage": null,
+   "top": {
+    "key": "imports",
+    "label": "Imports",
+    "latest": 12.75,
+    "latestPeriod": "2025-07",
+    "deltaVsYearAgo": 11.71
+   },
+   "bottom": {
+    "key": "gfce",
+    "label": "Govt consumption",
+    "latest": -2.69,
+    "latestPeriod": "2025-07",
+    "deltaVsYearAgo": -6.97
+   },
+   "topByLatest": {
+    "key": "imports",
+    "label": "Imports",
+    "latest": 12.75,
+    "latestPeriod": "2025-07",
+    "deltaVsYearAgo": 11.71
+   },
+   "bottomByLatest": {
+    "key": "gfce",
+    "label": "Govt consumption",
+    "latest": -2.69,
+    "latestPeriod": "2025-07",
+    "deltaVsYearAgo": -6.97
+   },
+   "spread": 18.68,
+   "countAboveHeadline": null,
+   "contradictions": [
+    "gfce"
+   ],
+   "ranking": [
+    "imports",
+    "exports",
+    "gfce"
+   ]
+  },
+  {
+   "bundle": "gdp-industries",
+   "seriesCount": 8,
+   "base": "2011-12",
+   "coverage": "All-India, real GVA by the 8 NAS industry groups; shares are of NOMINAL GVA, summed over the last four published quarters",
+   "top": {
+    "key": "manufacturing",
+    "label": "Manufacturing",
+    "latest": 9.13,
+    "latestPeriod": "2025-07",
+    "deltaVsYearAgo": 6.97
+   },
+   "bottom": {
+    "key": "construction",
+    "label": "Construction",
+    "latest": 7.18,
+    "latestPeriod": "2025-07",
+    "deltaVsYearAgo": -1.19
+   },
+   "topByLatest": {
+    "key": "finance_realty",
+    "label": "Finance & real estate",
+    "latest": 10.24,
+    "latestPeriod": "2025-07",
+    "deltaVsYearAgo": 3.01
+   },
+   "bottomByLatest": {
+    "key": "mining",
+    "label": "Mining & quarrying",
+    "latest": -0.04,
+    "latestPeriod": "2025-07",
+    "deltaVsYearAgo": 0.4
+   },
+   "spread": 8.16,
+   "countAboveHeadline": null,
+   "contradictions": [
+    "agriculture",
+    "construction"
+   ],
+   "ranking": [
+    "manufacturing",
+    "finance_realty",
+    "utilities",
+    "trade_transport",
+    "public_admin",
+    "mining",
+    "agriculture",
+    "construction"
+   ]
+  },
+  {
+   "bundle": "gdp-accounts",
+   "seriesCount": 7,
+   "base": "2011-12",
+   "coverage": "Annual (fiscal years); the income-side accounts are not published quarterly. saving_rate is gross saving over nominal GDP — saving is published at current prices only.",
+   "top": {
+    "key": "gcf_industry",
+    "label": "Capital formation",
+    "latest": 10.36,
+    "latestPeriod": "2023-04",
+    "deltaVsYearAgo": 1.42
+   },
+   "bottom": {
+    "key": "subsidies",
+    "label": "Subsidies",
+    "latest": -15.97,
+    "latestPeriod": "2023-04",
+    "deltaVsYearAgo": -19.77
+   },
+   "topByLatest": {
+    "key": "saving_rate",
+    "label": "Gross saving rate",
+    "latest": 30.74,
+    "latestPeriod": "2023-04",
+    "deltaVsYearAgo": 0.08
+   },
+   "bottomByLatest": {
+    "key": "subsidies",
+    "label": "Subsidies",
+    "latest": -15.97,
+    "latestPeriod": "2023-04",
+    "deltaVsYearAgo": -19.77
+   },
+   "spread": 21.19,
+   "countAboveHeadline": null,
+   "contradictions": [
+    "taxes",
+    "subsidies",
+    "cfc"
+   ],
+   "ranking": [
+    "gcf_industry",
+    "ndp",
+    "gni",
+    "saving_rate",
+    "cfc",
+    "taxes",
+    "subsidies"
+   ]
+  },
+  {
+   "bundle": "gdp-nominal",
+   "seriesCount": 3,
+   "base": "2011-12",
+   "coverage": "Nominal (current-price) GDP against real; the deflator is implied — current-price level over constant-price level",
+   "top": {
+    "key": "gdp_real",
+    "label": "Real GDP",
+    "latest": 8.23,
+    "latestPeriod": "2025-07",
+    "deltaVsYearAgo": 2.62
+   },
+   "bottom": {
+    "key": "deflator",
+    "label": "Deflator",
+    "latest": 0.47,
+    "latestPeriod": "2025-07",
+    "deltaVsYearAgo": -2.06
+   },
+   "topByLatest": {
+    "key": "gdp_nominal",
+    "label": "Nominal GDP",
+    "latest": 8.73,
+    "latestPeriod": "2025-07",
+    "deltaVsYearAgo": 0.45
+   },
+   "bottomByLatest": {
+    "key": "deflator",
+    "label": "Deflator",
+    "latest": 0.47,
+    "latestPeriod": "2025-07",
+    "deltaVsYearAgo": -2.06
+   },
+   "spread": 4.68,
+   "countAboveHeadline": null,
+   "contradictions": [
+    "deflator"
+   ],
+   "ranking": [
+    "gdp_real",
+    "gdp_nominal",
+    "deflator"
+   ]
+  }
+ ]
 }

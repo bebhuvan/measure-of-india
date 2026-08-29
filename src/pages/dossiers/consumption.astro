@@ -2,13 +2,14 @@
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["consumption"];
 ---
 <Base
   title="India Atlas — Consumption · Dossier 07"
   description={D.description}
   nav="dossiers"
-  dateStamp={D.dateStamp}
+  dateStamp={dateStamp(D)}
   crumbLeft={`<a href="/" style="color:inherit">Dossiers</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote} · <b>${D.version}</b>`}
   canonical="https://atlas.thisindianlife.today/dossiers/consumption/"
@@ -44,7 +45,7 @@ const D = bySlug["consumption"];
     <div class="reading-top">
       <div><span class="rk">Current reading — rural</span><div class="big" id="rb-big">–</div></div>
       <p class="rt-cap">Average monthly consumption expenditure per person, 2023-24 round, without imputation. A survey mean in the rupees of the day: it is not income, and it is not adjusted for prices.</p>
-      <div><span class="rk">Urban, same round</span><div class="big" id="rb-first" style="font-size:44px">–</div></div>
+      <div class="rt-side"><span class="rk">Urban, same round</span><div class="rt-side-v" id="rb-first">–</div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">

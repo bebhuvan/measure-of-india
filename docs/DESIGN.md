@@ -46,6 +46,10 @@ display + text faces preloaded in `Base.astro`):
 | **Newsreader** (variable optical size) | body prose (460, 1.18rem/1.82); **all large data numerals** at weight 300, `opsz 72`, tabular-nums |
 | **IBM Plex Mono** | axis labels, kickers, metadata, table figures, chart text |
 
+Mono metadata has a legibility floor: nothing below .66rem (10.5px); most
+metadata sits at .7–.72rem. Quiet is a virtue, illegible is not — the floor
+was set after the register's .55–.62rem labels failed the eye test.
+
 Never use a hairline-contrast display face (e.g. Bodoni) for data numerals —
 thin strokes vanish on non-retina screens. (Tried, rejected, do not retry.)
 
@@ -72,6 +76,11 @@ reference implementation `site/dossiers/cpi.html` and the built pages):
    4 key figures with delta lines and sparklines.
 2. **The current reading** — big-number box + band-position scale; two prose
    columns: *What the print says* / *What it does not say*. Dated.
+   Composition rules (learned the hard way): the caption's measure is
+   protected (`.rt-cap` max 46ch, never squeezed); a second statistic is a
+   **reference stat** (`.rt-side`: right-aligned, kicker above, value at the
+   plate-val size 2.9rem) — never a second hero numeral, never an inline
+   font-size. One box, one hero.
 3. **The register of series** — `.break` ledger: swatch, name, weight track,
    latest, deltas, sparkline. Derived series flagged.
 4. **Composition** — `.basket` segmented bar where weights exist; prose
