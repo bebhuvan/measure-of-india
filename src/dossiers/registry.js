@@ -131,7 +131,7 @@ export const DOSSIERS = [
     statusNote: "Evergreen, revised with each print",
     version: "v1.4",
     currentBundle: "iip-2022",
-    proseInputs: ["iip-industries-2022", "core-2011"],
+    proseInputs: ["iip-industries-2022"],
     calendar: "fiscal-apr",
     bands: null,
     proseConstants: [100, 2022],   // verifier whitelist: weights/shares/base years this dossier may cite
