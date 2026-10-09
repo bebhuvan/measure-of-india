@@ -746,7 +746,10 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
     wirePlate(document.getElementById("cb-nic4"), plot, "india-atlas_asi_top-4-digit-classes", csv);
   }
   if (A && A.mix.length) {
-    const dn = (c) => { const d = A.divs.find((x) => x.code === c); const n = d.name.replace(/^\d+ /, "").replace(/^Manufacture of /, ""); const s2 = n.split(/,| and /)[0]; return s2.charAt(0).toUpperCase() + s2.slice(1).toLowerCase(); };
+    const SHORTD = { "10": "Food products", "11": "Beverages", "13": "Textiles", "14": "Apparel", "19": "Refining", "20": "Chemicals", "21": "Pharmaceuticals",
+      "22": "Rubber & plastics", "23": "Cement & glass", "24": "Basic metals", "25": "Fabricated metal", "26": "Electronics", "27": "Electrical equipment",
+      "28": "Machinery", "29": "Motor vehicles", "30": "Other transport" };
+    const dn = (c) => { if (SHORTD[c]) return SHORTD[c]; const d = A.divs.find((x) => x.code === c); const n = d.name.replace(/^\d+ /, "").replace(/^Manufacture of /, ""); const s2 = n.split(/,| and /)[0]; return s2.charAt(0).toUpperCase() + s2.slice(1).toLowerCase(); };
     const cols = [...A.divs.map((d) => d.code), "other"];
     const colName = (c) => (c === "other" ? "All other" : dn(c));
     const cells = A.mix.flatMap((m) => [...m.cells.map((c) => ({ state: m.state, col: colName(c.code), sh: c.sh })), { state: m.state, col: "All other", sh: m.other }]);
@@ -755,6 +758,8 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
     setTxt("pv-statemix", peak.sh.toFixed(1) + "%");
     setTxt("sm-peak", peak.col.toLowerCase() + " in " + peak.state + ", " + peak.sh.toFixed(1) + "% of its factory value added");
     setTxt("sm-div", varied.state + " (" + varied.other.toFixed(1) + "% in divisions outside the eight)");
+    const colTop = A.divs.map((d) => { const best = cells.filter((c) => c.col === colName(d.code) && c.sh != null).sort((a, b) => b.sh - a.sh)[0]; return colName(d.code).toLowerCase() + " in " + best.state + " (" + best.sh.toFixed(1) + "%)"; });
+    setTxt("sm-cols", colTop.join(", ").replace(/, ([^,]*)$/, " and $1"));
     const plot = Plot.plot({
       width: 1184, height: 60 + A.mix.length * 34 + 30, marginLeft: 160, marginRight: 10, marginTop: 70, marginBottom: 10,
       style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#4A5160", overflow: "visible" },

@@ -30,7 +30,7 @@
 //    Hand check (2026-10-09): General index 1986-87 annual average 155.1 (report 219,
 //    155.091667); the mean of report 638's twelve 1986-87 months is 155.09. Consistent.
 import { databankRoot, dbieReport } from "../databank.mjs";
-import { writeSeries, writeRaw, yoyFromLevels, monthAxis } from "../util.mjs";
+import { writeSeries, writeRaw, readRaw, yoyFromLevels, monthAxis } from "../util.mjs";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -70,7 +70,7 @@ export async function buildCore(root, dcfg, vintage, cfg) {
     reports: { 499: { provenance: idx.provenance, header: idx.header, rows: idx.rows }, 989: { provenance: gr.provenance, header: gr.header, rows: gr.rows } },
     twins: Object.fromEntries(Object.entries(twin).map(([id, r]) => [id, r.provenance])),
   });
-  const V = JSON.parse(fs.readFileSync(path.join(root, rawRel), "utf8")).vintage;
+  const V = readRaw(root, rawRel).vintage;
   if (twin[120].rows.length !== idx.rows.length || twin[839].rows.length !== gr.rows.length) console.warn("core: DBIE 120/839 no longer match 499/989 in size; check which is current");
 
   for (const [hbs, tag] of Object.entries(CORE_BASES)) {
@@ -143,7 +143,7 @@ export async function buildIip1980(root, dcfg, vintage, cfg) {
     note: "RBI DBIE report 638 (monthly IIP, sectoral) and 219 (annual averages), rows on base 1980-81=100 only; the other bases in these reports are the RBI's copy of MoSPI's IIP, baked from MoSPI itself. Read from the local Data Bank mirror.",
     reports: { 638: { provenance: M.provenance, header: M.header, rows: mRows }, 219: { provenance: A.provenance, header: A.header, rows: aRows } },
   });
-  const V = JSON.parse(fs.readFileSync(path.join(root, rawRel), "utf8")).vintage;
+  const V = readRaw(root, rawRel).vintage;
   if (mRows.length < 3000) throw new Error(`iip-1980: only ${mRows.length} monthly rows on base 1980-81 (expected about 3,468)`);
   const tidy = (s) => String(s).replace(/^S\.[\d.]+\)\s*/, "").replace(/\s*\(1980-81\)\s*$/, "").replace(/^IIP General Index$/, "General").trim();
   const keyOf = (code, name) => (code === "IIPS04" ? "general" : ["IIPS01", "IIPS02", "IIPS03"].includes(code) ? `sector_${{ IIPS01: "mining", IIPS02: "manufacturing", IIPS03: "electricity" }[code]}` : `group_${code.toLowerCase()}`);

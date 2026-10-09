@@ -9,7 +9,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import YAML from "yaml";
-import { readRawFile } from "./lib/util.mjs";
+import { readRawFile, readRaw } from "./lib/util.mjs";
 // raw dumps are stored gzipped (scripts/lib/util.mjs readRawFile reads either form)
 const rawFileExists = (f) => fs.existsSync(f) || fs.existsSync(f + ".gz");
 
@@ -2241,7 +2241,7 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
   // per-1000 distributions add to about 1,000 (published integers, rounding)
   for (const slug of ["asuse-t03", "asuse-2025-t03", "asuse-t10", "asuse-2025-t10"].filter((x) => files.includes(x))) {
     const b = load(slug);
-    const parts = Object.entries(b.series).filter(([k, s]) => /^All India · /.test(s.label) && !/ · All$/.test(s.label) && !/Proprietary-All/.test(s.label));
+    const parts = Object.entries(b.series).filter(([k, s]) => /^All India · /.test(s.label) && !/ · All$|: all$/.test(s.label) && !/Proprietary-All/.test(s.label));
     const sum = b.dates.map((_, i) => parts.reduce((a, [, s]) => a + (s.data[i] ?? 0), 0));
     if (sum.some((v) => v && Math.abs(v - 1000) > 6)) fail(`${slug}: All India categories sum to ${sum.join(", ")} per 1,000`);
     else ok(`${slug}: All India categories sum to ${sum.join(", ")} per 1,000`);
@@ -2256,12 +2256,10 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
     const b = load(slug), tag = (slug.match(/^asi(-\d{4})?-/) ?? [])[1] ?? "";
     checkMeta(b, slug, "asi", ASI_BLOCK[tag], "annual");
     checkCadence(b.dates, 12, slug);
+    // money can print negative in many lines for small cuts (working capital, stock changes,
+    // value added, profit), as published; counts and quantities never do
     const rng = {};
-    for (const [k, s] of Object.entries(b.series)) {
-      const code = +k.slice(1, 3);
-      const neg = (code >= 19 && code <= 30) || (code >= 60);   // 1987 block codes run past 57
-      rng[k] = s.unit === "count" || s.unit === "thousand" ? [0, 1e9] : neg ? [-1e10, 1e10] : [0, 1e10];
-    }
+    for (const [k, s] of Object.entries(b.series)) rng[k] = /^inr/.test(s.unit) ? [-1e10, 1e10] : [0, 1e10];
     checkRange(b, -Infinity, Infinity, slug, rng);
     checkFreshness(b, slug, { staleAfter: { "": "2023-04", "-2004": "2007-04", "-1998": "2003-04", "-1987": "1997-04" }[tag] }, "asi");
   }
@@ -2308,7 +2306,7 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
   }
   // a financial-year index is the mean of its twelve monthly levels (raw dumps)
   {
-    const raw = JSON.parse(fs.readFileSync(path.join(ROOT, "data/raw/iip-indices.json"), "utf8")).levels;
+    const raw = readRaw(ROOT, "data/raw/iip-indices.json").levels;
     for (const [tag, base] of [["2022", "2022-23"], ["2011", "2011-12"], ["2004", "2004-05"], ["1993", "1993-94"]]) {
       if (!files.includes(`iip-annual-${tag}`)) continue;
       const b = load(`iip-annual-${tag}`), m = raw[`${base}:general`]; let worst = 0, at = null, n = 0;
@@ -2323,7 +2321,7 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
       else ok(`iip-annual-${tag}: annual General index = mean of its twelve months within ${worst.toFixed(3)} (${n} years)`);
     }
     if (files.includes("iip-annual-1980")) {
-      const r80 = JSON.parse(fs.readFileSync(path.join(ROOT, "data/raw/iip-1980.json"), "utf8")).reports["638"].rows.filter((x) => x["Iip Industry Code"] === "IIPS04");
+      const r80 = readRaw(ROOT, "data/raw/iip-1980.json").reports["638"].rows.filter((x) => x["Iip Industry Code"] === "IIPS04");
       const MON = { JAN: 1, FEB: 2, MAR: 3, APR: 4, MAY: 5, JUN: 6, JUL: 7, AUG: 8, SEP: 9, OCT: 10, NOV: 11, DEC: 12 };
       const lv = new Map(r80.map((x) => { const [mo, y] = x["Time Month"].split("-"); return [`${y}-${String(MON[mo]).padStart(2, "0")}`, +x["Index Value"]]; }));
       const b = load("iip-annual-1980"); let worst = 0, n = 0;

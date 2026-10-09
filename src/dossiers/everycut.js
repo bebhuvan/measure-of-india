@@ -77,6 +77,9 @@ export const UNITS = {
   pp: { kind: "diff", fmt: (v) => (v < 0 ? MINUS : v > 0 ? "+" : "") + Math.abs(v).toFixed(1) + " pt", note: "percentage points" },
   inr_per_sqft: { kind: "pct", fmt: (v) => "₹" + grp(v), note: "per sq ft" },
   // ---- end bis family ----
+  // ---- industry (wave 2): ASI fuel values are published in ₹ thousand ----
+  inr_thousand: { kind: "pct", fmt: (v) => (Math.abs(v) >= 1e9 ? "₹" + grp(v / 1e9, 2) + " lakh crore" : "₹" + grp(v / 1e4, 1) + " crore"), note: "published in ₹ thousand" },
+  // ---- end industry ----
   // ---- services ----
   pct_of_gva: { kind: "pt", fmt: (v) => v.toFixed(1) + "%", note: "of GVA" },
   pct_of_workers: { kind: "pt", fmt: (v) => v.toFixed(1) + "%", note: "of workers" },

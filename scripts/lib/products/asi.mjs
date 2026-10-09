@@ -34,6 +34,12 @@
 // the 1987 block serves its monetary indicators (e.g. 59 Total Emoluments)
 // with unit "-" — overridden to inr_lakh per UNIT_FIX, disclosed in meta.
 
+// Hand check (2026-10-10): All India 2023-24 GVA 245,833,606 ₹ lakh (₹24,58,336 crore) and
+// persons engaged 1,95,89,131, as in MoSPI's ASI 2023-24 results (reported 28 Aug 2025) and the
+// later ASI factsheet; the top five industries by GVA there (basic metals, motor vehicles,
+// chemicals, food products, pharmaceuticals) are asi-nic2's top five. Every 2-digit division's
+// GVA sums to the All-India figure exactly (validate). MoSPI has since released ASI 2024-25 as
+// a factsheet; eSankhyiki still ends at 2023-24 (checked 2026-10-10), so the bundles do too.
 import { mospi } from "../mospi.mjs";
 import { writeSeries } from "../util.mjs";
 import { ensureAsiRaw, readAsiRaw } from "./asi-raw.mjs";
@@ -340,9 +346,9 @@ export async function buildAsi(root, dcfg, vintage) {
  *   asi-<block>-accounts           All India x all industries x every indicator (older blocks;
  *                                  the 2008 block's is asi-accounts, above)
  *   asi-<block>-sectors            rural / urban rows, where a block serves them
- * The state x 3- and 4-digit tables are the deep-archive tier: long-format csv.gz staged in
- * data/archive/staging/asi/ (one file per block and level), rolling up to the state x 2-digit
- * bundles. Blocks are never joined; each is its own ruler (sources.yml seams).
+ * The state x 3-digit tables, and the older blocks' state x 2-digit tables, are the deep-archive
+ * tier: long-format csv.gz staged in data/archive/staging/asi/ (one file per block and level),
+ * rolling up to the state x 2-digit bundles (NIC 2008) or the states and divisions bundles. Blocks are never joined; each is its own ruler (sources.yml seams).
  * Values as served. Where a cell arrives more than once (the NIC 99999 "All" rows, once per
  * nic_type), the majority value is kept, then the coarsest copy; disagreements are counted. */
 const BLOCK_TAG = { 2008: "", 2004: "-2004", 1998: "-1998", 1987: "-1987" };
@@ -369,7 +375,7 @@ export async function bakeAsiTables(root, dcfg, vintage, T) {
     const inds = f.indicator.map((i) => ({ code: +i.indicator_code, name: String(i.indicator_name).replace(/\s+/g, " ").trim() }));
     // cells: grain -> key -> { label, unit, group, years: Map(fy -> [{v, pref}]) }
     const G = { all: new Map(), nic2: new Map(), nic3: new Map(), nic4: new Map(), states: new Map(), sectors: new Map() };   // + "sn2:<state>", one per state
-    const deep = { sn3: [], sn4: [] };
+    const deep = { sn2: [], sn3: [], sn4: [] };
     const units = new Set();
     for (const ind of inds) {
       const rows = T(cy, ind.code);
@@ -391,7 +397,9 @@ export async function bakeAsiTables(root, dcfg, vintage, T) {
         } else if (ai && all) { g = "all"; key = ik; label = ind.name; group = ind.name; }
         else if (ai) { g = `nic${lvl}`; key = `${ik}_${r.nic_code}`; label = `${ind.name} · ${nicLab}`; group = `NIC ${div}`; }
         else if (all) { g = "states"; key = `${ik}_${slug(r.state)}`; label = `${ind.name} · ${r.state}`; group = r.state; }
-        else if (lvl === 2) { g = `sn2:${r.state}`; key = `${ik}_${r.nic_code}`; label = `${ind.name} · ${r.state} · ${nicLab}`; group = nicLab; }
+        // older blocks' state x division tables (69,000 series) are the archive tier, like
+        // every state x 3-digit table; the current block's state x division is baked per state
+        else if (lvl === 2 && cy === 2008) { g = `sn2:${r.state}`; key = `${ik}_${r.nic_code}`; label = `${ind.name} · ${r.state} · ${nicLab}`; group = nicLab; }
         else { deep[`sn${lvl}`].push([r.state, r.nic_type, r.nic_code, nicLab.slice(r.nic_code.length + 1), ind.code, ind.name, r.year, v, unit]); continue; }
         if (g.startsWith("sn2:")) G[g] ??= new Map();
         if (!G[g]) throw new Error(`ASI ${cy}: unexpected grain for ${JSON.stringify(r)}`);
@@ -403,6 +411,33 @@ export async function bakeAsiTables(root, dcfg, vintage, T) {
       }
     }
     process.stdout.write(`asi tables ${cy}: units ${[...units].join("; ")}\n`);
+    // Shifted copies: in some (grain, year) tables MoSPI serves indicators 36-49 one code
+    // down (each code carries the next code's value; 50 is missing). Found 2026-10-10 at NIC
+    // 2008, 4-digit, 2023-24: persons engaged (31) no longer equals workers (32) + other
+    // employees (38) + unpaid members (41) in 149 of 151 classes, and does once read a code
+    // up. Detected here by that identity, per grain and year: where most cells fail, the
+    // cells of indicators 36-50 for that year are quarantined (not baked; the raw keeps them).
+    const quarantine = new Map();   // grain -> Set(fy)
+    for (const [g, map] of Object.entries(G)) {
+      const byFy = new Map();
+      for (const [key, e] of map) {
+        if (!key.startsWith("i31")) continue;
+        const sfx = key.slice(3), w = map.get("i32" + sfx), o = map.get("i38" + sfx), u = map.get("i41" + sfx);
+        if (!w || !o) continue;
+        for (const [fy, c] of e.years) {
+          const v = (x) => x?.years.get(fy)?.[0]?.v;
+          if (v(w) == null || v(o) == null) continue;
+          const t = byFy.get(fy) ?? { n: 0, bad: 0 }; t.n++;
+          if (Math.abs(v(w) + v(o) + (v(u) ?? 0) - c[0].v) > Math.max(2, c[0].v * 0.002)) t.bad++;
+          byFy.set(fy, t);
+        }
+      }
+      for (const [fy, t] of byFy) if (t.n >= 5 && t.bad / t.n > 0.5) {
+        (quarantine.get(g) ?? quarantine.set(g, new Set()).get(g)).add(fy);
+        process.stdout.write(`asi QUARANTINE ${cy} ${g} ${fy}: identity fails in ${t.bad} of ${t.n} cells; indicators 36-50 not baked for that year\n`);
+        for (const [key, e] of map) { const c = +key.slice(1, 3); if (c >= 36 && c <= 50) e.years.delete(fy); }
+      }
+    }
     // fiscal axis of the block from every year it serves
     const fys = [...new Set(inds.flatMap((i) => T(cy, i.code).map((r) => String(r.year))))].sort();
     if (!fys.length) throw new Error(`ASI ${cy}: no rows in any table`);
@@ -440,7 +475,8 @@ export async function bakeAsiTables(root, dcfg, vintage, T) {
           product: `Annual Survey of Industries, NIC ${cy} block`,
           coverage: `${cov}, ${axis[0]} to ${axis.at(-1)} (NIC ${cy} block)`,
           note: `The NIC-${cy} classification block, a separate ruler from every other block (never joined). Values as published: money in ₹ lakh (nominal; fuel values in ₹ thousand where the source says so), counts plain, mandays in thousands. Survey years are financial years, dated at April of the first. A class missing in a year was not reported separately that year.`
-            + (cy === 2008 ? " The 2023-24 four-digit copies of the All-industries rows of indicators 36 to 49 arrive shifted by one indicator; at All India they are outvoted by the clean 2- and 3-digit copies (see asi-accounts)." : "") },
+            + (cy === 2008 ? " The 2023-24 four-digit copies of the All-industries rows of indicators 36 to 49 arrive shifted by one indicator; at All India they are outvoted by the clean 2- and 3-digit copies (see asi-accounts)." : "")
+            + (quarantine.get(g)?.size ? ` Quarantined: in ${[...quarantine.get(g)].join(", ")} the source serves indicators 36 to 49 of this table shifted one code down (persons engaged stops adding up from workers, other employees and unpaid members, and adds up again read one code up); those cells of indicators 36 to 50 are left out, and the raw archive keeps them as served.` : "") },
         dates, series,
       });
     }
@@ -454,7 +490,7 @@ export async function bakeAsiTables(root, dcfg, vintage, T) {
       const file = `${STAGE}/asi-${cy}-state-${lv.replace("sn", "nic")}.csv.gz`;
       fs.mkdirSync(path.join(root, STAGE), { recursive: true });
       fs.writeFileSync(path.join(root, file), zlib.gzipSync(lines.join("\n") + "\n", { level: 9 }));
-      staged.push({ file, block: cy, level: lv.replace("sn", "nic"), rows: rows.length, rolls_up_to: `asi${tag}-state-nic2-<state>` });
+      staged.push({ file, block: cy, level: lv.replace("sn", "nic"), rows: rows.length, rolls_up_to: cy === 2008 ? "asi-state-nic2-<state>" : `asi${tag}-states, asi${tag}-nic2` });
     }
   }
   if (staged.length) fs.writeFileSync(path.join(root, STAGE, "files.json"), JSON.stringify({ note: "Staged ASI state x 3- and 4-digit tables for the deep archive (PLAN-launch §2b); each rolls up to its block's state x 2-digit bundle.", files: staged }, null, 1) + "\n");

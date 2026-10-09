@@ -1,8 +1,9 @@
 # Coverage ledger: Annual Survey of Industries, MoSPI (docs/CONTRACT-coverage.md).
 # Catalogue: node scripts/lib/products/asi.mjs --catalogue. NIC blocks are never spliced.
-# Omissions left for the coordinator ("industry deeper"): the 51 non-core indicators by
-# industry and by state, the 3- and 4-digit NIC levels, every indicator of the older blocks
-# beyond the comparable core, their states, industries and rural/urban split.
+# Since wave 2 (2026-10-10) every indicator of every block is baked at every grain the survey
+# serves (asi[-<block>]-nic2/3/4, -states(-all), -state-nic2-<state>, -<block>-accounts); states
+# by 3-digit group are staged for the deep archive. Items the listing names but the survey
+# serves no rows for are excluded, each checked against the complete raw tables.
 family: asi
 guides: [factories]
 catalogue: data/coverage/asi.catalogue.json
@@ -10,6 +11,9 @@ rules:
   - match: "asi:*:*:nic2:98"
     status: excluded
     reason: "The listing names NIC 98, households producing for their own use, but the survey serves no rows for it (No Data Found, checked 2026-10-09): households are outside the factory frame."
+  - match: "asi:2008:36:*"
+    status: excluded
+    reason: "Directly employed children workers (indicator 36) is served only for 2023-24 and only in the four-digit rows, which arrive shifted one indicator down (they carry the contract-worker count); with no clean copy it is quarantined at every grain."
   - match: ["asi:2008:1:all", "asi:2008:2:all", "asi:2008:3:all", "asi:2008:6:all", "asi:2008:15:all", "asi:2008:18:all", "asi:2008:19:all", "asi:2008:21:all", "asi:2008:31:all", "asi:2008:32:all", "asi:2008:43:all"]
     status: shown
     bundle: [asi-headline, asi-accounts]
@@ -39,27 +43,112 @@ rules:
     bundle: asi-headline-1987
     plate: "Plate 1: the long century"
 
-  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
-  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
-  - match:
-      - "asi:1987:*:all"
-      - "asi:1987:*:nic2:*"
-      - "asi:1987:*:nic3:*"
-      - "asi:1987:*:sector:*"
-      - "asi:1987:*:state:*"
-      - "asi:1998:*:all"
-      - "asi:1998:*:nic2:*"
-      - "asi:1998:*:nic3:*"
-      - "asi:1998:*:sector:*"
-      - "asi:1998:*:state:*"
-      - "asi:2004:*:all"
-      - "asi:2004:*:nic2:*"
-      - "asi:2004:*:nic3:*"
-      - "asi:2004:*:nic4:*"
-      - "asi:2004:*:state:*"
-      - "asi:2008:*:nic2:*"
-      - "asi:2008:*:nic3:*"
-      - "asi:2008:*:nic4:*"
-      - "asi:2008:*:state:*"
-    status: pending
-    scheduled: "wave 2: industry deeper"
+  # ---- unserved: listed by getAsiFilter, no rows in the complete tables (checked 2026-10-10) ----
+  - match: ["asi:1987:*:nic2:36", "asi:1987:*:nic3:249"]
+    status: excluded
+    reason: "The NIC-1987 listing names division 36 and group 249, but the survey serves no rows for either in any year (checked against every table, 2026-10-10)."
+  - match: ["asi:1987:*:sector:*", "asi:1998:*:sector:*"]
+    status: excluded
+    reason: "The older blocks' listings name a rural and an urban sector, but every row the survey serves is Combined (checked against every table, 2026-10-10)."
+  - match: "asi:1998:*:statenic3:*"
+    status: excluded
+    reason: "States by 3-digit group are not served for the NIC-1998 block: its state rows stop at 2-digit divisions (checked 2026-10-10)."
+  - match: ["asi:2004:*:statenic4:*", "asi:2008:*:statenic4:*"]
+    status: excluded
+    reason: "States by 4-digit class are not served: the survey publishes 4-digit classes at All India only (checked against every table, 2026-10-10)."
+  # ---- NIC 2008: every indicator at every grain ----
+  - match: ["asi:2008:19:nic4:*", "asi:2008:31:nic4:*"]
+    status: shown
+    bundle: asi-nic4
+    plate: "Inside the shelf: the 20 largest 4-digit classes"
+  - match: "asi:2008:*:nic4:*"
+    status: baked
+    bundle: asi-nic4
+  - match: "asi:2008:*:nic3:*"
+    status: baked
+    bundle: asi-nic3
+  - match: "asi:2008:*:nic2:*"
+    status: baked
+    bundle: asi-nic2
+  - match: "asi:2008:*:state:*"
+    status: baked
+    bundle: asi-states-all
+  - match: "asi:2008:19:statenic2:*"
+    status: shown
+    bundle: [asi-state-nic2-andaman-nicobar-islands, asi-state-nic2-andhra-pradesh, asi-state-nic2-arunachal-pradesh, asi-state-nic2-assam, asi-state-nic2-bihar, asi-state-nic2-chandigarh, asi-state-nic2-chattisgarh, asi-state-nic2-dadra-nagar-haveli, asi-state-nic2-dadra-nagar-havelli-and-daman-diu, asi-state-nic2-daman-diu, asi-state-nic2-delhi, asi-state-nic2-goa, asi-state-nic2-gujarat, asi-state-nic2-haryana, asi-state-nic2-himachal-pradesh, asi-state-nic2-jammu-kashmir, asi-state-nic2-jharkhand, asi-state-nic2-karnataka, asi-state-nic2-kerala, asi-state-nic2-ladakh, asi-state-nic2-lakshadweep, asi-state-nic2-madhya-pradesh, asi-state-nic2-maharashtra, asi-state-nic2-manipur, asi-state-nic2-meghalaya, asi-state-nic2-mizoram, asi-state-nic2-nagaland, asi-state-nic2-odisha, asi-state-nic2-puducherry, asi-state-nic2-punjab, asi-state-nic2-rajasthan, asi-state-nic2-sikkim, asi-state-nic2-tamil-nadu, asi-state-nic2-telangana, asi-state-nic2-tripura, asi-state-nic2-uttar-pradesh, asi-state-nic2-uttarakhand, asi-state-nic2-west-bengal]
+    plate: "Inside the shelf: what each state's factories make"
+  - match: "asi:2008:*:statenic2:*"
+    status: baked
+    bundle: [asi-state-nic2-andaman-nicobar-islands, asi-state-nic2-andhra-pradesh, asi-state-nic2-arunachal-pradesh, asi-state-nic2-assam, asi-state-nic2-bihar, asi-state-nic2-chandigarh, asi-state-nic2-chattisgarh, asi-state-nic2-dadra-nagar-haveli, asi-state-nic2-dadra-nagar-havelli-and-daman-diu, asi-state-nic2-daman-diu, asi-state-nic2-delhi, asi-state-nic2-goa, asi-state-nic2-gujarat, asi-state-nic2-haryana, asi-state-nic2-himachal-pradesh, asi-state-nic2-jammu-kashmir, asi-state-nic2-jharkhand, asi-state-nic2-karnataka, asi-state-nic2-kerala, asi-state-nic2-ladakh, asi-state-nic2-lakshadweep, asi-state-nic2-madhya-pradesh, asi-state-nic2-maharashtra, asi-state-nic2-manipur, asi-state-nic2-meghalaya, asi-state-nic2-mizoram, asi-state-nic2-nagaland, asi-state-nic2-odisha, asi-state-nic2-puducherry, asi-state-nic2-punjab, asi-state-nic2-rajasthan, asi-state-nic2-sikkim, asi-state-nic2-tamil-nadu, asi-state-nic2-telangana, asi-state-nic2-tripura, asi-state-nic2-uttar-pradesh, asi-state-nic2-uttarakhand, asi-state-nic2-west-bengal]
+  - match: "asi:2008:*:statenic3:*"
+    status: excluded
+    archive: true
+    rolls_up_to: [asi-state-nic2-andaman-nicobar-islands, asi-state-nic2-andhra-pradesh, asi-state-nic2-arunachal-pradesh, asi-state-nic2-assam, asi-state-nic2-bihar, asi-state-nic2-chandigarh, asi-state-nic2-chattisgarh, asi-state-nic2-dadra-nagar-haveli, asi-state-nic2-dadra-nagar-havelli-and-daman-diu, asi-state-nic2-daman-diu, asi-state-nic2-delhi, asi-state-nic2-goa, asi-state-nic2-gujarat, asi-state-nic2-haryana, asi-state-nic2-himachal-pradesh, asi-state-nic2-jammu-kashmir, asi-state-nic2-jharkhand, asi-state-nic2-karnataka, asi-state-nic2-kerala, asi-state-nic2-ladakh, asi-state-nic2-lakshadweep, asi-state-nic2-madhya-pradesh, asi-state-nic2-maharashtra, asi-state-nic2-manipur, asi-state-nic2-meghalaya, asi-state-nic2-mizoram, asi-state-nic2-nagaland, asi-state-nic2-odisha, asi-state-nic2-puducherry, asi-state-nic2-punjab, asi-state-nic2-rajasthan, asi-state-nic2-sikkim, asi-state-nic2-tamil-nadu, asi-state-nic2-telangana, asi-state-nic2-tripura, asi-state-nic2-uttar-pradesh, asi-state-nic2-uttarakhand, asi-state-nic2-west-bengal]
+    reason: "Published by state x 3-digit group x indicator x year, 1.3 million cells; held for the deep-archive tier (data/archive/staging/asi/asi-2008-state-nic3.csv.gz). States by 2-digit division are baked."
+  # ---- NIC 2004: every indicator at every grain ----
+  - match: "asi:2004:*:all"
+    status: baked
+    bundle: asi-2004-accounts
+  - match: "asi:2004:*:nic2:*"
+    status: baked
+    bundle: asi-2004-nic2
+  - match: "asi:2004:*:nic3:*"
+    status: baked
+    bundle: asi-2004-nic3
+  - match: "asi:2004:*:nic4:*"
+    status: baked
+    bundle: asi-2004-nic4
+  - match: "asi:2004:*:state:*"
+    status: baked
+    bundle: asi-2004-states
+  - match: "asi:2004:*:statenic2:*"
+    status: excluded
+    archive: true
+    rolls_up_to: [asi-2004-states, asi-2004-nic2]
+    reason: "Published by state x 2-digit division x indicator x year; held for the deep-archive tier (data/archive/staging/asi/asi-2004-state-nic2.csv.gz), like the states by 3-digit group. States and divisions are each baked for this block, and the current NIC 2008 block bakes states by division."
+  - match: "asi:2004:*:statenic3:*"
+    status: excluded
+    archive: true
+    rolls_up_to: [asi-2004-states, asi-2004-nic3]
+    reason: "Published by state x 3-digit group x indicator x year; held for the deep-archive tier (data/archive/staging/asi/asi-2004-state-nic3.csv.gz). States by 2-digit division are baked."
+  # ---- NIC 1998: every indicator at every grain ----
+  - match: "asi:1998:*:all"
+    status: baked
+    bundle: asi-1998-accounts
+  - match: "asi:1998:*:nic2:*"
+    status: baked
+    bundle: asi-1998-nic2
+  - match: "asi:1998:*:nic3:*"
+    status: baked
+    bundle: asi-1998-nic3
+  - match: "asi:1998:*:state:*"
+    status: baked
+    bundle: asi-1998-states
+  - match: "asi:1998:*:statenic2:*"
+    status: excluded
+    archive: true
+    rolls_up_to: [asi-1998-states, asi-1998-nic2]
+    reason: "Published by state x 2-digit division x indicator x year; held for the deep-archive tier (data/archive/staging/asi/asi-1998-state-nic2.csv.gz), like the states by 3-digit group. States and divisions are each baked for this block, and the current NIC 2008 block bakes states by division."
+  # ---- NIC 1987: every indicator at every grain ----
+  - match: "asi:1987:*:all"
+    status: baked
+    bundle: asi-1987-accounts
+  - match: "asi:1987:*:nic2:*"
+    status: baked
+    bundle: asi-1987-nic2
+  - match: "asi:1987:*:nic3:*"
+    status: baked
+    bundle: asi-1987-nic3
+  - match: "asi:1987:*:state:*"
+    status: baked
+    bundle: asi-1987-states
+  - match: "asi:1987:*:statenic2:*"
+    status: excluded
+    archive: true
+    rolls_up_to: [asi-1987-states, asi-1987-nic2]
+    reason: "Published by state x 2-digit division x indicator x year; held for the deep-archive tier (data/archive/staging/asi/asi-1987-state-nic2.csv.gz), like the states by 3-digit group. States and divisions are each baked for this block, and the current NIC 2008 block bakes states by division."
+  - match: "asi:1987:*:statenic3:*"
+    status: excluded
+    archive: true
+    rolls_up_to: [asi-1987-states, asi-1987-nic3]
+    reason: "Published by state x 3-digit group x indicator x year; held for the deep-archive tier (data/archive/staging/asi/asi-1987-state-nic3.csv.gz). States by 2-digit division are baked."

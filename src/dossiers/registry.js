@@ -300,6 +300,8 @@ export const DOSSIERS = [
     everyCutFamilies: [
       { id: "asuse-tables", label: "ASUSE, every table: the financial-year rounds 2021-22 to 2023-24", match: "asuse-t" },
       { id: "asuse-2025-tables", label: "ASUSE, every table: the calendar-year 2025 round", match: "asuse-2025-" },
+      { id: "asi-tables-2008", label: "ASI, NIC 2008 block: every indicator by 2-, 3- and 4-digit industry, by state, and by state and division", match: ["asi-nic", "asi-states-all", "asi-state-nic2-"] },
+      { id: "asi-tables-older", label: "ASI, the NIC 2004, 1998 and 1987 blocks: every indicator at every grain", match: ["asi-2004-", "asi-1998-", "asi-1987-"] },
     ],
   },
   {
