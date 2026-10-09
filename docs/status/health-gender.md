@@ -10,14 +10,17 @@ Session atlas-health-gender, branch `lb/health-gender`, port 4425. Brief: `docs/
   tables have nothing left to bake, see below). The two rounds are two rulers (`sources.yml seams: nfhs`),
   each a single-date cross-section, never joined into a series. Bracketed fact-sheet values (25-49
   cases) are now baked and flagged `caution`; the old adapter silently dropped about a thousand of them.
-- **MoSPI's API misfiles NFHS-4 values.** In tables 6, 8, 14, 16, 19 and 20 the NFHS-4 column is
+- **MoSPI's API misfiles NFHS-4 values.** In tables 6, 14, 16, 19 and 20 the NFHS-4 column is
   shifted against the labels, identically in every state: women's bank accounts 3.3% (the NFHS-5 report
-  says 53%), violence in pregnancy 57.6% (DHS: 3.9%), children's postnatal care in rupees. The old guide
-  printed "3% to 79%" and "46 to 29 per cent" from these. 17 such NFHS-4 lines are withheld, and 15
-  more where NFHS-4 measured a different age group or question (blood pressure, sugar, tobacco and
-  alcohol at 15-49; cancer examinations). Evidence line by line in the adapter's `QUARANTINE`;
-  re-proved on every bake against the DHS Program's tabulation (`data/raw/nfhs-dhs-crosscheck.json`,
-  58 agreeing pairs). Notes: `docs/reference/nfhs.md`.
+  says 53%), violence in pregnancy 57.6% (DHS: 3.9%). The old guide printed "3% to 79%" and "46 to 29
+  per cent" from these, and validate.mjs asserted the false bank-account jump. 10 such NFHS-4 lines are
+  withheld, and 15 more where NFHS-4 measured a different age group or question (blood pressure, sugar,
+  tobacco and alcohol at 15-49; cancer examinations). Table 8 (maternity care) was shifted the same way
+  in the 2026-08-10 dump and is **correct** in the 2026-10-10 re-fetch, so MoSPI fixes lines without
+  notice: each quarantine now records the value it was withheld for (`served`) and the bake stops if
+  MoSPI serves something else. Evidence in the adapter's `QUARANTINE`; re-proved on every bake against
+  the DHS Program's tabulation (`data/raw/nfhs-dhs-crosscheck.json`, 58 agreeing pairs). Notes:
+  `docs/reference/nfhs.md`.
 - **Gender compendium, all 154 indicators baked** (2026-10-10). Fresh full fetch (about 600 MoSPI
   requests, no failures), 24,835 series in 180 bundles (`gender-t<code>`), split by instrument where the
   compendium joins two: census and NSS literacy, three PLFS rulers, ESAG and UDISE+, NFHS rounds,
@@ -25,7 +28,7 @@ Session atlas-health-gender, branch `lb/health-gender`, port 4425. Brief: `docs/
   and compendium table (from the 2025 PDF). The 12 codes in MoSPI's MCP definitions the API no longer
   serves are in the catalogue and `blocked` (No Data Found, 2026-10-10). Notes:
   `docs/reference/gender-compendium.md`.
-- **Ledgers, nothing pending.** nfhs: 11,152 items, 1,182 shown, 6,994 baked, 2,976 excluded (each
+- **Ledgers, nothing pending.** nfhs: 11,152 items, 1,188 shown, 7,255 baked, 2,709 excluded (each
   with a reason: misfiled, different age group, not in that round, place not in that round,
   suppressed). gender: 4,840 items, 340 shown, 4,488 baked, 12 blocked. Both written by generators
   (`scripts/lib/products/nfhs-ledger.mjs`, `gender-ledger.mjs`) whose plate tables mirror the pages.
@@ -39,6 +42,16 @@ Session atlas-health-gender, branch `lb/health-gender`, port 4425. Brief: `docs/
 - validate.mjs: family blocks for both (unit ranges, round bases and dates, total-between-rural-and-
   urban for 7,065 NFHS triplets, shares summing to 100, census low point, women outliving men, the
   compendium's NFHS reprints matching the NFHS bundles).
+
+- **launch-build merged** (c683ad4) and both families re-fetched through the new `mospiAll`: no
+  "pages slipped" warnings for either. Gender came back unchanged. NFHS changed only in table 8 (above).
+  Series keys are now independent of the API's row order (the August key order swapped two vaccine
+  series between fetches); only `nfhs-4-maternity` takes a new vintage, since its data changed.
+- Gates at the final commit: astro build, `npm run gates` (validate, asof, qc, chart lint, coverage),
+  `npm test` (34 pass), `npm run prose:dry`, all green. Prose generated with DeepSeek for both guides
+  and read by hand against the data; two drafts were wrong and were fixed at the source (the facts
+  sheet once picked NFHS-4's "tried to quit tobacco" for "uses tobacco"; a reason string said "new in
+  NFHS-5" for lines NFHS-4 did measure). Looked at 1440 and 390; share images downloaded from both.
 
 ## Decisions
 
@@ -63,9 +76,17 @@ Session atlas-health-gender, branch `lb/health-gender`, port 4425. Brief: `docs/
 - `src/dossiers/headline.js`: `SPARK` accepts `rounds` (one point from each of two bundles).
 - `src/dossiers/register.client.js`: the gender and NFHS rows now read the new bundles.
 - `src/dossiers/everycut.js`: one block of units, and per-bundle cut names and period labels read
-  from bundle meta (`healthGenderMeta`). Old nfhs/gender lines removed.
+  from bundle meta (`healthGenderMeta`). Old nfhs/gender lines removed. One logic line in `rowsOf`:
+  an estimated latest value marks its change as estimated even when the frequency shows no change
+  (the test failed on census-year projections).
 - `scripts/validate.mjs`, `scripts/qc.mjs`, `scripts/og.mjs`, `data/sources.yml`, `pipeline/slots.yml`,
   `pipeline/asof-manifest.json`: my entries replaced or appended.
+
+## Not done / next
+
+- On phones the state strips scroll sideways (the site's rule for full plates). A narrower mobile
+  rendering would read better; that is a shared-chart decision, so it is left as is.
+- NFHS-6 has not been released; when it is, it becomes a third ruler (`nfhs-6-*`) beside the two.
 
 ## Data quirks for other owners
 

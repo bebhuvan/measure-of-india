@@ -22,13 +22,6 @@ rules:
       - nfhs:20:125-ever-married-women-age-18-49-years-who-h:2-nfhs-4:*
       - nfhs:20:126-ever-married-women-age-18-49-years-who-h:2-nfhs-4:*
       - nfhs:6:36-total-unmet-need-for-family-planning-cur:2-nfhs-4:*
-      - nfhs:8:134-mothers-who-had-full-antenatal-care:2-nfhs-4:*
-      - nfhs:8:135-mothers-who-received-financial-assistanc:2-nfhs-4:*
-      - nfhs:8:45-registered-pregnancies-for-which-the-mot:2-nfhs-4:*
-      - nfhs:8:46-mothers-who-received-postnatal-care-from:2-nfhs-4:*
-      - nfhs:8:47-average-out-of-pocket-expenditure-per-de:2-nfhs-4:*
-      - nfhs:8:48-children-born-at-home-who-were-taken-to:2-nfhs-4:*
-      - nfhs:8:49-children-who-received-postnatal-care-fro:2-nfhs-4:*
     status: excluded
     reason: MoSPI's API files another indicator's NFHS-4 value under this sub-indicator (for India it gives 3.3 per cent of women with a bank account, where the NFHS-5 national report prints 53; violence during pregnancy 57.6 where the DHS Program gives 3.9), and the shift repeats in every state, so its NFHS-4 figure is withheld (scripts/lib/products/nfhs.mjs QUARANTINE has the evidence line by line).
   - match:
@@ -224,6 +217,10 @@ rules:
       - nfhs:7:38-health-worker-ever-talked-to-female-non:2-nfhs-4:state:ladakh
       - nfhs:7:39-current-users-ever-told-about-side-effec:2-nfhs-4:state:dadra-nagar-haveli-and-daman-diu
       - nfhs:7:39-current-users-ever-told-about-side-effec:2-nfhs-4:state:ladakh
+      - nfhs:8:134-mothers-who-had-full-antenatal-care:2-nfhs-4:state:dadra-nagar-haveli-and-daman-diu
+      - nfhs:8:134-mothers-who-had-full-antenatal-care:2-nfhs-4:state:ladakh
+      - nfhs:8:135-mothers-who-received-financial-assistanc:2-nfhs-4:state:dadra-nagar-haveli-and-daman-diu
+      - nfhs:8:135-mothers-who-received-financial-assistanc:2-nfhs-4:state:ladakh
       - nfhs:8:40-mothers-who-had-an-antenatal-check-up-in:2-nfhs-4:state:dadra-nagar-haveli-and-daman-diu
       - nfhs:8:40-mothers-who-had-an-antenatal-check-up-in:2-nfhs-4:state:ladakh
       - nfhs:8:41-mothers-who-had-at-least-4-antenatal-car:2-nfhs-4:state:dadra-nagar-haveli-and-daman-diu
@@ -232,6 +229,16 @@ rules:
       - nfhs:8:42-mothers-whose-last-birth-was-protected-a:2-nfhs-4:state:ladakh
       - nfhs:8:43-mothers-who-consumed-iron-folic-acid-for:2-nfhs-4:state:dadra-nagar-haveli-and-daman-diu
       - nfhs:8:43-mothers-who-consumed-iron-folic-acid-for:2-nfhs-4:state:ladakh
+      - nfhs:8:45-registered-pregnancies-for-which-the-mot:2-nfhs-4:state:dadra-nagar-haveli-and-daman-diu
+      - nfhs:8:45-registered-pregnancies-for-which-the-mot:2-nfhs-4:state:ladakh
+      - nfhs:8:46-mothers-who-received-postnatal-care-from:2-nfhs-4:state:dadra-nagar-haveli-and-daman-diu
+      - nfhs:8:46-mothers-who-received-postnatal-care-from:2-nfhs-4:state:ladakh
+      - nfhs:8:47-average-out-of-pocket-expenditure-per-de:2-nfhs-4:state:dadra-nagar-haveli-and-daman-diu
+      - nfhs:8:47-average-out-of-pocket-expenditure-per-de:2-nfhs-4:state:ladakh
+      - nfhs:8:48-children-born-at-home-who-were-taken-to:2-nfhs-4:state:dadra-nagar-haveli-and-daman-diu
+      - nfhs:8:48-children-born-at-home-who-were-taken-to:2-nfhs-4:state:ladakh
+      - nfhs:8:49-children-who-received-postnatal-care-fro:2-nfhs-4:state:dadra-nagar-haveli-and-daman-diu
+      - nfhs:8:49-children-who-received-postnatal-care-fro:2-nfhs-4:state:ladakh
       - nfhs:9:50-institutional-births-in-the-5-years-befo:2-nfhs-4:state:dadra-nagar-haveli-and-daman-diu
       - nfhs:9:50-institutional-births-in-the-5-years-befo:2-nfhs-4:state:ladakh
       - nfhs:9:51-institutional-births-in-public-facility:2-nfhs-4:state:dadra-nagar-haveli-and-daman-diu
@@ -608,6 +615,12 @@ rules:
       - nfhs:4:26-infant-mortality-rate-per-1000-live-birt:2-nfhs-4:state:chandigarh
       - nfhs:4:27-under-five-mortality-rate-per-1000-live:2-nfhs-4:state:chandigarh
       - nfhs:7:39-current-users-ever-told-about-side-effec:2-nfhs-4:state:lakshadweep
+      - nfhs:8:48-children-born-at-home-who-were-taken-to:2-nfhs-4:state:andaman-n.-islands
+      - nfhs:8:48-children-born-at-home-who-were-taken-to:2-nfhs-4:state:chandigarh
+      - nfhs:8:48-children-born-at-home-who-were-taken-to:2-nfhs-4:state:goa
+      - nfhs:8:48-children-born-at-home-who-were-taken-to:2-nfhs-4:state:kerala
+      - nfhs:8:48-children-born-at-home-who-were-taken-to:2-nfhs-4:state:lakshadweep
+      - nfhs:8:48-children-born-at-home-who-were-taken-to:2-nfhs-4:state:puduchery
       - nfhs:9:55-births-in-a-private-health-facility-that:2-nfhs-4:state:andaman-n.-islands
     status: excluded
     reason: "The fact sheet prints NA or leaves the cell blank: no figure was published for this place and sector."
@@ -1050,6 +1063,10 @@ rules:
       - nfhs:7:39-current-users-ever-told-about-side-effec:3-nfhs-5:all
       - nfhs:8:42-mothers-whose-last-birth-was-protected-a:2-nfhs-4:all
       - nfhs:8:42-mothers-whose-last-birth-was-protected-a:3-nfhs-5:all
+      - nfhs:8:45-registered-pregnancies-for-which-the-mot:2-nfhs-4:all
+      - nfhs:8:45-registered-pregnancies-for-which-the-mot:3-nfhs-5:all
+      - nfhs:8:48-children-born-at-home-who-were-taken-to:2-nfhs-4:all
+      - nfhs:8:48-children-born-at-home-who-were-taken-to:3-nfhs-5:all
       - nfhs:9:52-home-births-that-were-conducted-by-skill:2-nfhs-4:all
       - nfhs:9:52-home-births-that-were-conducted-by-skill:3-nfhs-5:all
       - nfhs:9:55-births-in-a-private-health-facility-that:2-nfhs-4:all
@@ -1740,7 +1757,9 @@ rules:
       - nfhs:8:43-mothers-who-consumed-iron-folic-acid-for:2-nfhs-4:all
       - nfhs:8:43-mothers-who-consumed-iron-folic-acid-for:3-nfhs-5:all
       - nfhs:8:44-mothers-who-consumed-iron-folic-acid-for:3-nfhs-5:all
+      - nfhs:8:46-mothers-who-received-postnatal-care-from:2-nfhs-4:all
       - nfhs:8:46-mothers-who-received-postnatal-care-from:3-nfhs-5:all
+      - nfhs:8:49-children-who-received-postnatal-care-fro:2-nfhs-4:all
       - nfhs:8:49-children-who-received-postnatal-care-fro:3-nfhs-5:all
       - nfhs:9:50-institutional-births-in-the-5-years-befo:2-nfhs-4:all
       - nfhs:9:50-institutional-births-in-the-5-years-befo:3-nfhs-5:all

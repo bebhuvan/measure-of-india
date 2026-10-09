@@ -385,6 +385,18 @@ export function bakeGender(root, dcfg, raw) {
         (unitsByKey.get(k) ?? unitsByKey.set(k, new Set()).get(k)).add(r.unit);
       }
       const multiUnit = new Set([...unitsByKey].filter(([, u]) => u.size > 1).map(([k]) => k));
+      // the labels each plain key would carry (a key shared by two labels gets hashed, below)
+      const labelsByKey = new Map();
+      for (const r of g.rows) {
+        const geoRaw = GEO_KEYS.map((k) => r[k]).find((v) => v != null);
+        const geo = geoRaw == null ? null : (String(geoRaw).trim() === "India" ? "All India" : String(geoRaw).trim());
+        const parts = dims.map((k) => [k, tidy(r[k])]).filter(([, v2]) => v2 !== "");
+        const unit = cfg.unitOf?.(r) ?? cfg.units?.[r.unit] ?? cfg.unit ?? UNIT_OF[r.unit];
+        const bk = [...parts.map(([, v2]) => slug(v2, 56)), geo ? slug(geo, 30) : null].filter(Boolean).join("__");
+        const tag = multiUnit.has(bk) ? UNIT_WORD[unit] ?? unit : null;
+        const k = [...parts.map(([, v2]) => slug(v2, 56)), geo ? slug(geo, 30) : null, tag ? slug(unit) : null].filter(Boolean).join("__") || "value";
+        (labelsByKey.get(k) ?? labelsByKey.set(k, new Set()).get(k)).add([...parts.map(([, v2]) => v2), geo, tag].filter(Boolean).join(", "));
+      }
       for (const r of g.rows) {
         const geoRaw = GEO_KEYS.map((k) => r[k]).find((v) => v != null);
         const geo = geoRaw == null ? null : (String(geoRaw).trim() === "India" ? "All India" : String(geoRaw).trim());
@@ -407,8 +419,9 @@ export function bakeGender(root, dcfg, raw) {
         const unitTag = multiUnit.has(baseKey) ? UNIT_WORD[unit] ?? unit : null;
         const label = [...parts.map(([, v2]) => v2), geo, unitTag].filter(Boolean).join(", ") || name;
         let key = [...parts.map(([, v2]) => slug(v2, 56)), geo ? slug(geo, 30) : null, unitTag ? slug(unit) : null].filter(Boolean).join("__") || "value";
-        // a long name cut to 36 characters can collide with its neighbour: add a short hash of the full label
-        if (series[key] && series[key].label !== label) key += "_" + crypto.createHash("sha1").update(label).digest("hex").slice(0, 6);
+        // names cut to 56 characters can collide: every label sharing a key takes a short hash of
+        // the full label, so a key never depends on the order the API returns rows in
+        if ((labelsByKey.get(key)?.size ?? 1) > 1) key += "_" + crypto.createHash("sha1").update(label).digest("hex").slice(0, 6);
         const s = (series[key] ??= { name: `gender_t${code}_${key}`, label, color: GREY, unit, map: new Map(), labels: new Map(), group: parts[0]?.[1] ?? geo ?? "", geo: geo ?? undefined });
         if (s.unit !== unit) throw new Error(`gender ${code}: series ${key} mixes units ${s.unit} and ${unit}`);
         if (s.map.has(p.date) && s.map.get(p.date) !== v) throw new Error(`gender ${code}: two values for ${key} at ${p.date} (${s.map.get(p.date)}, ${v})`);

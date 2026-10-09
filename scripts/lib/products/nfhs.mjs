@@ -14,12 +14,13 @@
 //    (The adapter before 2026-10-10 parsed it as NaN and dropped 1,000-odd such cells.)
 //  - "*" is a figure suppressed for fewer than 25 cases; "NA" not available; "" blank. None is
 //    baked; each bundle counts them in meta.omitted.
-//  - THE API MISFILES SOME NFHS-4 VALUES. In tables 6, 8, 14, 16, 19 and 20 the NFHS-4 column
+//  - THE API MISFILES SOME NFHS-4 VALUES. In tables 6, 14, 16, 19 and 20 the NFHS-4 column
 //    is shifted against the sub-indicator labels: the value under "women with a bank account
 //    they use" is 3.3 (the NFHS-5 national report, ch. 14.6, prints 53 per cent for NFHS-4);
-//    under "violence during pregnancy" it is 57.6 (DHS: 3.9); under "children's postnatal
-//    care" it is a rupee amount in every state (the out-of-pocket cost of a delivery). The
-//    shift is the same in every state. Those NFHS-4 sub-indicators are QUARANTINED below:
+//    under "violence during pregnancy" it is 57.6 (DHS: 3.9). The shift is the same in every
+//    state. Table 8 (maternity care) was shifted the same way in the 2026-08-10 dump (children's
+//    postnatal care held rupee amounts) and is correct in the 2026-10-10 fetch: MoSPI fixes
+//    lines without notice, so every quarantine names the value it was withheld for (`served`). Those NFHS-4 sub-indicators are QUARANTINED below:
 //    not baked, listed in the nfhs-4 bundle's meta.quarantined, `excluded` in the ledger.
 //    The NFHS-5 column checks clean against the DHS Program's tabulation of the same survey.
 //  - In tables 15, 16, 17 and 21 the API files NFHS-4 figures under NFHS-5's wording, but the
@@ -48,6 +49,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 import { mospi, mospiAll } from "../mospi.mjs";
 import { getJson } from "../net.mjs";
 import { writeSeries, writeRaw } from "../util.mjs";
@@ -84,26 +86,23 @@ export const bundleSlug = (round, table) => `nfhs-${ROUNDS[round].n}-${TABLES[ta
 const SECTORS = { "Rural + Urban (Combined)": "total", Rural: "rural", Urban: "urban" };
 
 /* ---------- NFHS-4 sub-indicators the API misfiles or mislabels (see the header) ----------
+ * A misfiled entry names the All India value MoSPI serves while the line is wrong (`served`).
+ * MoSPI corrects lines without notice: table 8 was misfiled in the 2026-08-10 dump and right in
+ * the 2026-10-10 fetch. If the served value changes, the bake stops so the entry is re-checked
+ * against the report and DHS, rather than withholding a figure that may now be right.
  * `re` matches the API's sub_indicator text in table `t`. kind "misfiled": the value belongs to
  * another indicator; kind "frame": a different population or question under NFHS-5's wording. */
 export const QUARANTINE = [
-  { t: 6, re: /^Total Unmet need/i, kind: "misfiled", evidence: "API 5.7 is the NFHS-4 unmet need for spacing; total unmet need was 12.9 (DHS FP_NADM_W_UNT; the Women and Men in India compendium, table 2.13, also prints 12.9)" },
-  { t: 8, re: /Mother and Child Protection/i, kind: "misfiled", evidence: "API 21.0 is NFHS-4's full antenatal care; the column is shifted from this row down" },
-  { t: 8, re: /^Mothers who received postnatal care/i, kind: "misfiled", evidence: "API 89.3 belongs to the row above (the MCP card)" },
-  { t: 8, re: /out-of-pocket expenditure/i, kind: "misfiled", evidence: "API 62.4 is a percentage, not rupees; NFHS-4's mothers' postnatal-care rate" },
-  { t: 8, re: /^Children born at home/i, kind: "misfiled", evidence: "API 36.4 belongs to another row; NFHS-5 is 4.2" },
-  { t: 8, re: /^Children who received postnatal care/i, kind: "misfiled", evidence: "API holds rupee amounts (3,198 for India) in every state: NFHS-4's out-of-pocket cost per delivery" },
-  { t: 8, re: /full antenatal care/i, kind: "misfiled", evidence: "API 2.5 belongs to another row" },
-  { t: 8, re: /Janani Suraksha Yojana/i, kind: "misfiled", evidence: "API 24.3 belongs to another row" },
-  { t: 14, re: /^All women age 15-19/i, kind: "misfiled", evidence: "API 22.7 is NFHS-4's anaemia among men 15-49 (the NFHS-5 report, ch. 10: 23 per cent of men in 2015-16); women 15-19 were 54 per cent" },
-  { t: 16, re: /^Women .*Elevated blood pressure \(Systolic ≥140/, kind: "misfiled", evidence: "API 0.7 is NFHS-4's 'very high' band (systolic 180 and above), not elevated-or-on-medicine" },
-  { t: 16, re: /^Men .*Elevated blood pressure \(Systolic ≥140/, kind: "misfiled", evidence: "API 0.9 is NFHS-4's 'very high' band, not elevated-or-on-medicine" },
-  { t: 19, re: /owning a house and\/or land/i, kind: "misfiled", evidence: "API 28.9; the column is shifted from this row down" },
-  { t: 19, re: /bank or savings account/i, kind: "misfiled", evidence: "API 3.3; the NFHS-5 national report (FR375, ch. 14.6) prints 53 per cent for NFHS-4" },
-  { t: 19, re: /mobile phone/i, kind: "misfiled", evidence: "API 38.4 belongs to the row above" },
-  { t: 19, re: /hygienic methods/i, kind: "misfiled", evidence: "API 53.0 is NFHS-4's bank-account figure" },
-  { t: 20, re: /spousal violence/i, kind: "misfiled", evidence: "API 45.9 for India, 81.2 for Kerala; urban (61.8) far above rural (36.9). The compendium (table 6.4) prints 30.9 for physical or sexual spousal violence in NFHS-4" },
-  { t: 20, re: /violence during any pregnancy/i, kind: "misfiled", evidence: "API 57.6; DHS DV_VPRG_W_VPG gives 3.9 for NFHS-4" },
+  { t: 6, re: /^Total Unmet need/i, kind: "misfiled", served: 5.7, evidence: "API 5.7 is the NFHS-4 unmet need for spacing; total unmet need was 12.9 (DHS FP_NADM_W_UNT; the Women and Men in India compendium, table 2.13, also prints 12.9)" },
+  { t: 14, re: /^All women age 15-19/i, kind: "misfiled", served: 22.7, evidence: "API 22.7 is NFHS-4's anaemia among men 15-49 (the NFHS-5 report, ch. 10: 23 per cent of men in 2015-16); women 15-19 were 54 per cent" },
+  { t: 16, re: /^Women .*Elevated blood pressure \(Systolic ≥140/, kind: "misfiled", served: 0.7, evidence: "API 0.7 is NFHS-4's 'very high' band (systolic 180 and above), not elevated-or-on-medicine" },
+  { t: 16, re: /^Men .*Elevated blood pressure \(Systolic ≥140/, kind: "misfiled", served: 0.9, evidence: "API 0.9 is NFHS-4's 'very high' band, not elevated-or-on-medicine" },
+  { t: 19, re: /owning a house and\/or land/i, kind: "misfiled", served: 28.9, evidence: "API 28.9; the column is shifted from this row down" },
+  { t: 19, re: /bank or savings account/i, kind: "misfiled", served: 3.3, evidence: "API 3.3; the NFHS-5 national report (FR375, ch. 14.6) prints 53 per cent for NFHS-4" },
+  { t: 19, re: /mobile phone/i, kind: "misfiled", served: 38.4, evidence: "API 38.4 belongs to the row above" },
+  { t: 19, re: /hygienic methods/i, kind: "misfiled", served: 53.0, evidence: "API 53.0 is NFHS-4's bank-account figure" },
+  { t: 20, re: /spousal violence/i, kind: "misfiled", served: 45.9, evidence: "API 45.9 for India, 81.2 for Kerala; urban (61.8) far above rural (36.9). The compendium (table 6.4) prints 30.9 for physical or sexual spousal violence in NFHS-4" },
+  { t: 20, re: /violence during any pregnancy/i, kind: "misfiled", served: 57.6, evidence: "API 57.6; DHS DV_VPRG_W_VPG gives 3.9 for NFHS-4" },
   { t: 15, re: /./, kind: "frame", evidence: "NFHS-4 tested blood sugar at ages 15-49 only; NFHS-5 tested everyone 15 and over" },
   { t: 16, re: /./, kind: "frame", evidence: "NFHS-4 measured blood pressure at ages 15-49 only, in different bands; NFHS-5 measured everyone 15 and over" },
   { t: 17, re: /./, kind: "frame", evidence: "NFHS-4 asked women 15-49 about any examination of the cervix, breast or mouth; NFHS-5 asked women and men 30-49 about a screening test" },
@@ -269,6 +268,11 @@ export function bakeNfhs(root, dcfg, raw, dhs) {
   if (!(av > 40 && av < 90)) throw new Error(`NFHS: no data returned: child anaemia, All India, NFHS-5 (got ${anchor?.value})`);
 
   const { out: checks, problems } = dhs ? dhsCrosscheck(raw, dhs) : { out: [], problems: ["no DHS dump"] };
+  for (const q of QUARANTINE.filter((x) => x.served != null)) {
+    const r = raw.indicators[q.t].find((x) => q.re.test(x.sub_indicator) && x.state === "All India" && SECTORS[x.sector] === "total" && x.survey === "nfhs-4");
+    const v = r ? parseCell(r.value).value : null;
+    if (v !== q.served) problems.push(`QUARANTINE T${q.t} ${q.re}: MoSPI now serves ${v} for NFHS-4 (was ${q.served} when withheld); re-check the line against the NFHS-5 report and DHS, then update or drop the entry`);
+  }
   if (problems.length) throw new Error("NFHS DHS cross-check failed:\n  " + problems.join("\n  "));
   console.log(`  nfhs: DHS cross-check, ${checks.filter((c) => c.agrees).length} pairs agree, ${checks.filter((c) => c.quarantined).length} quarantines re-proved`);
 
@@ -278,11 +282,12 @@ export function bakeNfhs(root, dcfg, raw, dhs) {
     for (const [t, [tslug, tname]] of Object.entries(TABLES)) {
       const rows = raw.indicators[t].filter((x) => x.survey === round);
       const subs = [...new Set(raw.indicators[t].map((x) => x.sub_indicator))];   // the table's order, both rounds
-      const keyOf = new Map();
+      // a key is the label's first 44 characters; labels that share them take a short hash of the
+      // full label, so a key never depends on the order the API returns rows in
+      const keyOf = new Map(), stem = (sub) => slug(cleanLabel(sub), 44);
       for (const sub of subs) {
-        let k = slug(cleanLabel(sub), 44);
-        while ([...keyOf.values()].includes(k)) k += "_x";
-        keyOf.set(sub, k);
+        const clash = subs.some((o) => o !== sub && stem(o) === stem(sub));
+        keyOf.set(sub, clash ? `${stem(sub)}_${crypto.createHash("sha1").update(cleanLabel(sub)).digest("hex").slice(0, 6)}` : stem(sub));
       }
       const series = {}, omitted = {}, quarantined = [];
       let caution = 0;
@@ -337,6 +342,14 @@ export function bakeNfhs(root, dcfg, raw, dhs) {
         dates: [R.date],
         series,
       };
+      // vintage is data vintage (AGENTS.md rule 5): a bundle whose every label and value is
+      // unchanged keeps its vintage even if its keys were renamed
+      const prevPath = path.join(root, `data/series/${slugB}.json`);
+      if (fs.existsSync(prevPath)) {
+        const prev = JSON.parse(fs.readFileSync(prevPath, "utf8"));
+        const sig = (b) => Object.values(b.series).map((x) => `${x.label}=${x.data[0]}`).sort().join("|");
+        if (prev.meta?.vintage && sig(prev) === sig(bundle)) bundle.meta.vintage = prev.meta.vintage;
+      }
       writeSeries(root, `data/series/${slugB}.json`, bundle);
       written.push(slugB);
     }

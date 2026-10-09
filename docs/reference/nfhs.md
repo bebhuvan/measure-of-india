@@ -30,13 +30,13 @@ not, in these tables:
 | Table | What the API gives for NFHS-4 | What it is |
 |---|---|---|
 | 6 Unmet need | total 5.7 | the spacing figure; total was 12.9 |
-| 8 Maternity care | MCP card 21.0, mothers' PNC 89.3, OOP 62.4, children's PNC 3,198 (rupees, in every state) ... | the column shifted down by one row from the MCP card |
+| 8 Maternity care | (2026-08-10 dump) MCP card 21.0, mothers' PNC 89.3, OOP 62.4, children's PNC 3,198 (rupees) ... | the column shifted down one row; **corrected by MoSPI in the 2026-10-10 fetch** |
 | 14 Anaemia | women 15-19: 22.7 | men 15-49 (the report: 23 per cent) |
 | 16 Hypertension | elevated-or-on-medicine 0.7 / 0.9 | NFHS-4's "very high" band |
 | 19 Empowerment | bank account 3.3, phone 38.4, hygienic 53.0 ... | shifted from the property row down (bank account was 53) |
 | 20 Violence | spousal 45.9, during pregnancy 57.6 | other rows' figures (DHS: pregnancy 3.9) |
 
-The shift is identical in every state. These NFHS-4 lines are withheld (`QUARANTINE` in the adapter,
+The shift is identical in every state. MoSPI corrects tables without notice (table 8 between August and October 2026), so each quarantine records the All India value it was withheld for (`served`) and the bake stops if MoSPI starts serving something else. The misfiled NFHS-4 lines are withheld (`QUARANTINE` in the adapter,
 `excluded` in the ledger). Tables 15, 16, 17 and 21 also file NFHS-4 figures under NFHS-5's wording
 for a different population (15-49 against 15 and over) or question (cancer examinations against
 screening tests); withheld too.
