@@ -1,0 +1,25 @@
+# Coverage ledger: the IIP as republished by the RBI in DBIE (docs/CONTRACT-coverage.md).
+# Catalogue: node scripts/lib/products/industry-dbie.mjs --catalogue. MoSPI is the source of
+# record for the IIP and its own API serves the 1993-94 to 2022-23 bases (iip.yml); the RBI's
+# copy is read only for the 1980-81 base, which MoSPI's API does not serve.
+family: iip-dbie
+guides: [iip]
+catalogue: data/coverage/iip-dbie.catalogue.json
+rules:
+  - match: ["iip-dbie:638:1980-81:iips01", "iip-dbie:638:1980-81:iips02", "iip-dbie:638:1980-81:iips03", "iip-dbie:638:1980-81:iips04"]
+    status: shown
+    bundle: iip-1980
+    plate: "§03 The deep ledger: 1980-81 to 2017"
+  - match: "iip-dbie:638:1980-81:*"
+    status: baked
+    bundle: iip-industries-1980
+  - match: "iip-dbie:219:1980-81:*"
+    status: shown
+    bundle: iip-annual-1980
+    plate: "§04 Forty-five years in financial years"
+  - match: ["iip-dbie:638:1993-94:*", "iip-dbie:638:2004-05:*", "iip-dbie:638:2011-12:*", "iip-dbie:638:2022-23:*", "iip-dbie:219:1993-94:*", "iip-dbie:219:2004-05:*", "iip-dbie:219:2011-12:*", "iip-dbie:219:2022-23:*"]
+    status: excluded
+    reason: "The RBI's copy of MoSPI's IIP on bases MoSPI's own API serves; the source of record is baked instead (iip.yml)."
+  - match: ["iip-dbie:1059", "iip-dbie:262", "iip-dbie:263", "iip-dbie:654", "iip-dbie:220", "iip-dbie:321", "iip-dbie:701", "iip-dbie:832"]
+    status: excluded
+    reason: "Further RBI republications of MoSPI's IIP (monthly sectoral and use-based tables, annual use-based tables and growth rates) on bases MoSPI serves; the source of record is baked instead."

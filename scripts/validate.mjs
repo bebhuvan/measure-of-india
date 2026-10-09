@@ -1952,6 +1952,85 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
   }
 }
 
+/* ---- industry (lb/industry, wave 2): IIP financial years, the 1980-81 base, core industries,
+ * the complete ASI tables and every ASUSE indicator. Generic checks per file, then identities.
+ * Ranges document measured extremes; they are not curation. ---- */
+{
+  const files = fs.readdirSync(path.join(ROOT, "data/series")).map((f) => f.replace(/\.json$/, ""));
+  const ROWS = [
+    ...["2022", "2011", "2004", "1993"].map((t) => ({ slug: `iip-annual-${t}`, dossier: "iip", base: `${t}-${String((+t + 1) % 100).padStart(2, "0")}=100`, freq: "annual", step: 12,
+      stale: { 2022: "2025-04", 2011: "2025-04", 2004: "2016-04", 1993: "2010-04" }[t], range: [-70, 1500] })),
+    { slug: "iip-1980", dossier: "iip-1980", base: "1980-81=100", freq: "monthly", step: 1, range: [-40, 60] },
+    // single manufacturing groups swing much harder: jute textiles -84% (Mar 1984) and +487% (Feb 1985)
+    { slug: "iip-industries-1980", dossier: "iip-1980", base: "1980-81=100", freq: "monthly", step: 1, range: [-90, 500], stale: "1994-03" },
+    { slug: "iip-annual-1980", dossier: "iip-1980", base: "1980-81=100", freq: "annual", step: 12, range: [-20, 500], stale: "1997-04" },
+    { slug: "core-1993", dossier: "core", base: "1993-94=100", freq: "annual", step: 12, range: [-30, 500], stale: "2010-04" },
+    { slug: "core-2004", dossier: "core", base: "2004-05=100", freq: "annual", step: 12, range: [-30, 500], stale: "2015-04" },
+    { slug: "core-2011", dossier: "core", base: "2011-12=100", freq: "annual", step: 12, range: [-30, 500] },
+  ];
+  for (const r of ROWS) {
+    if (!files.includes(r.slug)) { fail(`${r.slug}: bundle missing`); continue; }
+    const b = load(r.slug);
+    checkMeta(b, r.slug, r.dossier, r.base, r.freq);
+    checkCadence(b.dates, r.step, r.slug);
+    checkRange(b, r.range[0], r.range[1], r.slug);
+    checkFreshness(b, r.slug, r.stale ? { staleAfter: r.stale } : {}, r.dossier);
+  }
+  // annual growth as published vs computed from the published (rounded) annual levels
+  for (const slug of ["iip-annual-2022", "iip-annual-2011", "iip-annual-2004", "iip-annual-1993", "core-2011", "core-2004", "core-1993"].filter((x) => files.includes(x))) {
+    const b = load(slug); let worst = 0, at = null, n = 0;
+    for (const k of Object.keys(b.series).filter((x) => x.endsWith("_index"))) {
+      const g = b.series[k.replace(/_index$/, "_growth")]; if (!g) continue;
+      const lv = b.series[k].data;
+      lv.forEach((v, i) => { if (i && v != null && lv[i - 1] != null && g.data[i] != null) { n++; const d = Math.abs((v / lv[i - 1] - 1) * 100 - g.data[i]); if (d > worst) { worst = d; at = `${k} ${b.dates[i]}`; } } });
+    }
+    // levels are printed to one decimal: growth from them can miss the published rate by a few tenths
+    if (worst > 0.6) fail(`${slug}: published growth differs from the levels by ${worst.toFixed(2)} pt at ${at}`);
+    else ok(`${slug}: published growth matches the levels within ${worst.toFixed(2)} pt (${n} years)`);
+  }
+  // a financial-year index is the mean of its twelve monthly levels (raw dumps)
+  {
+    const raw = JSON.parse(fs.readFileSync(path.join(ROOT, "data/raw/iip-indices.json"), "utf8")).levels;
+    for (const [tag, base] of [["2022", "2022-23"], ["2011", "2011-12"], ["2004", "2004-05"], ["1993", "1993-94"]]) {
+      if (!files.includes(`iip-annual-${tag}`)) continue;
+      const b = load(`iip-annual-${tag}`), m = raw[`${base}:general`]; let worst = 0, at = null, n = 0;
+      b.dates.forEach((d, i) => {
+        const y = +d.slice(0, 4), ms = Array.from({ length: 12 }, (_, k) => m[`${k < 9 ? y : y + 1}-${String(((k + 3) % 12) + 1).padStart(2, "0")}`]);
+        const v = b.series.general_index.data[i];
+        if (v == null || ms.some((x) => x == null)) return;
+        n++; const dev = Math.abs(ms.reduce((a, x) => a + x, 0) / 12 - v); if (dev > worst) { worst = dev; at = d; }
+      });
+      if (!n) fail(`iip-annual-${tag}: no year with twelve monthly levels to check`);
+      else if (worst > 0.15) fail(`iip-annual-${tag}: annual General index is ${worst.toFixed(2)} away from the mean of its months at ${at}`);
+      else ok(`iip-annual-${tag}: annual General index = mean of its twelve months within ${worst.toFixed(3)} (${n} years)`);
+    }
+    if (files.includes("iip-annual-1980")) {
+      const r80 = JSON.parse(fs.readFileSync(path.join(ROOT, "data/raw/iip-1980.json"), "utf8")).reports["638"].rows.filter((x) => x["Iip Industry Code"] === "IIPS04");
+      const MON = { JAN: 1, FEB: 2, MAR: 3, APR: 4, MAY: 5, JUN: 6, JUL: 7, AUG: 8, SEP: 9, OCT: 10, NOV: 11, DEC: 12 };
+      const lv = new Map(r80.map((x) => { const [mo, y] = x["Time Month"].split("-"); return [`${y}-${String(MON[mo]).padStart(2, "0")}`, +x["Index Value"]]; }));
+      const b = load("iip-annual-1980"); let worst = 0, n = 0;
+      b.dates.forEach((d, i) => {
+        const y = +d.slice(0, 4), ms = Array.from({ length: 12 }, (_, k) => lv.get(`${k < 9 ? y : y + 1}-${String(((k + 3) % 12) + 1).padStart(2, "0")}`));
+        if (ms.some((x) => x == null)) return; n++;
+        worst = Math.max(worst, Math.abs(ms.reduce((a, x) => a + x, 0) / 12 - b.series.general_index.data[i]));
+      });
+      if (worst > 0.15) fail(`iip-annual-1980: annual averages (report 219) miss the monthly table (638) by ${worst.toFixed(2)}`);
+      else ok(`iip-annual-1980: report 219's averages = mean of report 638's months within ${worst.toFixed(3)} (${n} years)`);
+    }
+  }
+  // the composite core index stays between its industries (a weighted mean)
+  for (const slug of ["core-2011", "core-2004", "core-1993"].filter((x) => files.includes(x))) {
+    const b = load(slug); let bad = 0;
+    b.dates.forEach((d, i) => {
+      const parts = Object.keys(b.series).filter((k) => k.endsWith("_index") && k !== "composite_index").map((k) => b.series[k].data[i]).filter((v) => v != null);
+      const c = b.series.composite_index?.data[i];
+      if (c != null && parts.length && (c < Math.min(...parts) || c > Math.max(...parts))) { bad++; fail(`${slug}: composite ${c} outside its industries at ${d}`); }
+    });
+    if (!bad) ok(`${slug}: composite index sits between its industries every year`);
+  }
+}
+/* ---- end industry ---- */
+
 /* ---- seams: the base-year registry (sources.yml `seams`) ----
  * For every product that has changed ruler: each bundle of that dossier is
  * registered under exactly one base, its meta.base matches, and its dates

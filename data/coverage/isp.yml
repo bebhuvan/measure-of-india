@@ -1,6 +1,6 @@
 # Coverage ledger: Index of Services Production, MoSPI (docs/CONTRACT-coverage.md).
 # Catalogue: node scripts/lib/products/isp.mjs --catalogue. All 19 monthly sub-sectors are
-# baked. Omission left for the coordinator: the annual series (one year so far).
+# baked. The annual series (one year so far) is the services guide's services-isp-annual.
 family: isp
 guides: [iip]
 catalogue: data/coverage/isp.catalogue.json
@@ -10,9 +10,9 @@ rules:
     bundle: isp
     plate: "§08 The services counterpart: ISP"
 
-  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
-  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
-  - match:
-      - "isp:annual:*"
-    status: pending
-    scheduled: "wave 2: industry deeper"
+  # The annual (financial-year) index, one year so far (2025-26), is baked by the services guide
+  # from the same MoSPI call; this guide lists that bundle in its downloads rather than baking
+  # a second copy (decided 2026-10-10, docs/status/industry.md).
+  - match: "isp:annual:*"
+    status: baked
+    bundle: services-isp-annual

@@ -1577,6 +1577,31 @@ dossiers:
     source_agency: "Reserve Bank of India, DBIE (DGCI&S data)"
     release_url: https://data.rbi.org.in
   # --- end trade ---
+  # ---- industry (lb/industry, wave 2): the RBI's industry tables (scripts/lib/products/industry-dbie.mjs) ----
+  core:
+    stale_after: "2025-04"     # financial years dated at April: 2025-04 is 2025-26
+    family: databank
+    geo: IND
+    product: core
+    frequency: annual
+    base: "2011-12=100"        # current base; 1993-94 and 2004-05 are separate bundles (seams below)
+    release_calendar: "monthly by the Office of the Economic Adviser (DPIIT), about 20 days after the month; the RBI Handbook's annual tables follow each financial year"
+    revision_policy: "The monthly index is provisional and revised in the next release; the RBI's annual tables carry the final financial-year averages."
+    source_agency: "Office of the Economic Adviser, DPIIT, as published by the RBI (DBIE, via the local Data Bank)"
+    release_url: https://eaindustry.nic.in
+  iip-1980:
+    stale_after: "1998-03"     # a closed ruler: base 1980-81 ended in March 1998
+    frequency_exempt: true     # monthly growth and financial-year averages
+    family: databank
+    geo: IND
+    product: iip-1980
+    frequency: monthly
+    base: "1980-81=100"
+    release_calendar: "closed base; no new data"
+    revision_policy: "Final figures on a retired base; frozen."
+    source_agency: "Central Statistical Organisation, as republished by the RBI (DBIE, via the local Data Bank)"
+    release_url: https://data.rbi.org.in
+  # ---- end industry ----
 
 # ---------------------------------------------------------------------------
 # SEAMS: the base-year registry (2026-10). One entry per base (or
@@ -1619,19 +1644,24 @@ seams:
     - base: "1993-94=100"
       from: "1994-04"
       to: "2011-06"
-      bundles: [iip-1993, iip-industries-1993]
+      bundles: [iip-1993, iip-industries-1993, iip-annual-1993]
     - base: "2004-05=100"
       from: "2005-04"
       to: "2017-03"
-      bundles: [iip-2004, iip-industries-2004]
+      bundles: [iip-2004, iip-industries-2004, iip-annual-2004]
     - base: "2011-12=100"
       from: "2012-04"
       to: "2026-03"
-      bundles: [iip-2011, iip-industries-2011]
+      bundles: [iip-2011, iip-industries-2011, iip-annual-2011]
     - base: "2022-23=100"
       from: "2023-04"
       to: null
-      bundles: [iip-2022, iip-industries-2022]
+      bundles: [iip-2022, iip-industries-2022, iip-annual-2022]
+    # industry (lb/industry): the oldest ruler, from the RBI's copy (DBIE 638, 219)
+    - base: "1980-81=100"
+      from: "1981-04"
+      to: "1998-03"
+      bundles: [iip-1980, iip-industries-1980, iip-annual-1980]
   gdp:
     # quarters are dated at their first month (Q2 FY26 = 2025-07); annual
     # rows at April of the fiscal year
@@ -2021,3 +2051,18 @@ seams:
       to: null
       bundles: [trade-dbie-tot-2012, trade-dbie-uvi-2012]
   # --- end trade ---
+  # ---- industry (lb/industry) ----
+  core:
+    - base: "1993-94=100"
+      from: "1994-04"
+      to: "2010-04"
+      bundles: [core-1993]
+    - base: "2004-05=100"
+      from: "2005-04"
+      to: "2015-04"
+      bundles: [core-2004]
+    - base: "2011-12=100"
+      from: "2012-04"
+      to: null
+      bundles: [core-2011]
+  # ---- end industry ----

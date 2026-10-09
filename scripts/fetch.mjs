@@ -58,6 +58,7 @@ import { buildWdiIndia } from "./lib/products/wdi-india.mjs";
 import { buildPip } from "./lib/products/pip.mjs";
 import { buildWpp } from "./lib/products/wpp.mjs";
 
+import { buildCore, buildIip1980 } from "./lib/products/industry-dbie.mjs";   // industry (lb/industry)
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
 const ONLY = args.includes("only") ? args.slice(args.indexOf("only") + 1) : null;
@@ -76,6 +77,7 @@ Object.assign(REGISTRY, { "external-bop": buildExternalBop, "external-flows": bu
 // credit (lb/credit)
 Object.assign(REGISTRY, { credit: buildCredit });
 Object.assign(REGISTRY, { tradestat: buildTradestat, "dbie-trade": buildDbieTrade });   // trade (lb/trade)
+Object.assign(REGISTRY, { core: buildCore, "iip-1980": buildIip1980 });   // industry (lb/industry)
 
 // One product's failure must not starve the rest: collect, continue, and
 // exit non-zero at the end so CI still fails on the summary.

@@ -1,7 +1,8 @@
 # Coverage ledger: Index of Industrial Production, MoSPI (docs/CONTRACT-coverage.md).
 # Catalogue: node scripts/lib/products/iip.mjs --catalogue. Every monthly category and
 # industry of every base is baked (counts checked against the listing: 11/32, 10/23, 9/22,
-# 9/17). Omission left for the coordinator: the annual (financial-year) series of all bases.
+# 9/17). The annual (financial-year) series of every base are baked as iip-annual-<base>
+# (wave 2, 2026-10-10). The 1980-81 base, which MoSPI does not serve, is in iip-dbie.yml.
 family: iip
 guides: [iip]
 catalogue: data/coverage/iip.catalogue.json
@@ -54,24 +55,22 @@ rules:
     status: baked
     bundle: iip-industries-1993
 
-  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
-  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
-  - match:
-      - "iip:1993-94:annual:general"
-      - "iip:1993-94:annual:industry:*"
-      - "iip:1993-94:annual:sectoral:*"
-      - "iip:1993-94:annual:use-based:*"
-      - "iip:2004-05:annual:general"
-      - "iip:2004-05:annual:industry:*"
-      - "iip:2004-05:annual:sectoral:*"
-      - "iip:2004-05:annual:use-based:*"
-      - "iip:2011-12:annual:general"
-      - "iip:2011-12:annual:industry:*"
-      - "iip:2011-12:annual:sectoral:*"
-      - "iip:2011-12:annual:use-based:*"
-      - "iip:2022-23:annual:general"
-      - "iip:2022-23:annual:industry:*"
-      - "iip:2022-23:annual:sectoral:*"
-      - "iip:2022-23:annual:use-based:*"
-    status: pending
-    scheduled: "wave 2: industry deeper"
+  # Financial-year series (frequency=Annually), baked in wave 2 (2026-10-10): every level and
+  # published growth MoSPI serves, one bundle per base; the general index is drawn.
+  - match: ["iip:2022-23:annual:general", "iip:2011-12:annual:general", "iip:2004-05:annual:general", "iip:1993-94:annual:general"]
+    status: shown
+    bundle: [iip-annual-2022, iip-annual-2011, iip-annual-2004, iip-annual-1993]
+    series: [general_index, general_growth]
+    plate: "§04 Forty-five years in financial years"
+  - match: "iip:2022-23:annual:*"
+    status: baked
+    bundle: iip-annual-2022
+  - match: "iip:2011-12:annual:*"
+    status: baked
+    bundle: iip-annual-2011
+  - match: "iip:2004-05:annual:*"
+    status: baked
+    bundle: iip-annual-2004
+  - match: "iip:1993-94:annual:*"
+    status: baked
+    bundle: iip-annual-1993
