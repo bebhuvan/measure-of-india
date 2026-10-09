@@ -25,6 +25,14 @@
 //   vegetable oils, HS 1507-1515, imports July 2025  1,931.99 vs QE "Vegetable Oil" 1,935
 //     (the QE group takes a few more lines; within 0.2%)
 //   total exports 2025-26 (March 2026 cumulative)   441,452.14 vs QE total 441,452
+//   partners (QE country tables): exports to the USA 2024-25 86,514.28 vs 86,514, 2025-26
+//     87,312.75 vs 87,313, July 2025 7,996.07 vs 7,996; imports from China 2024-25
+//     113,447.34 vs 113,447, 2025-26 131,620.29 vs 131,620, July 2025 10,914.48 vs 10,914
+//     (trade-partners-*, and the same years in trade-partners-long)
+//   principal commodities: FTPA gold imports 2025-26 71,977.30 vs QE "Gold" 71,977;
+//     vegetable oils 19,488.41 vs 19,488; petroleum products exports 53,828.39 vs 53,828
+//   quantities (FTSPCC) and the 6/8-digit tables have no published counterpart in the
+//     release; they are held to the identities in validate.mjs and to their 4-digit totals
 // The 2023-24 column of the 2024-25 call against the 2023-24 call: in MEIDB the two agree to
 // the cent at chapter level (FY 2023-24 exports 437,072.05 in both); the "fish at 12,248"
 // the first probe saw is EIDB's double count, not a revision.
@@ -234,6 +242,9 @@ export async function fetchAll(root, vintage, { only = null, log = console.log }
   for (const j of todo) {
     try {
       const r = await tsQuery(j.view, j.fields);
+      // a partner with no trade in a year answers an empty table: archived as such (so the
+      // next run does not ask again); anywhere else an empty table is a failure
+      if (!r.rows.length && j.group.startsWith("cxc")) { counts[writeRawGz(root, j.file, { view: j.view, fields: j.fields, header: r.header, rows: [], notes: { ...r.notes, empty: "no data rows: no trade recorded" } }, vintage)]++; continue; }
       if (!r.rows.length) throw new Error("no data rows");
       const st = writeRawGz(root, j.file, { view: j.view, fields: j.fields, header: r.header, rows: r.rows, notes: r.notes }, vintage);
       counts[st]++;

@@ -328,24 +328,24 @@ if (slug === "trade") {
   const T = {
     month: periodLabel(bundle.dates[n]), yearAgoMonth: periodLabel(bundle.dates[n - 12]),
     print: bundle.meta.revision?.[bundle.dates[n]] === "F" ? "final (the month's own detailed table)" : "revised",
-    exportsBn: bn(X[n]), importsBn: bn(M[n]), balanceBn: bn(BL[n]), deficitBn: bn(-BL[n]),
-    exportsYearAgoBn: bn(X[n - 12]), importsYearAgoBn: bn(M[n - 12]), balanceYearAgoBn: bn(BL[n - 12]), deficitYearAgoBn: bn(-BL[n - 12]),
+    exports_bn: bn(X[n]), imports_bn: bn(M[n]), balance_bn: bn(BL[n]), deficit_bn: bn(-BL[n]),
+    exports_year_ago_bn: bn(X[n - 12]), imports_year_ago_bn: bn(M[n - 12]), balance_year_ago_bn: bn(BL[n - 12]), deficit_year_ago_bn: bn(-BL[n - 12]),
     exportsYoYPct: g(X[n], X[n - 12]), importsYoYPct: g(M[n], M[n - 12]),
-    exportsPrevMonthBn: bn(X[n - 1]), importsPrevMonthBn: bn(M[n - 1]), deficitPrevMonthBn: bn(-BL[n - 1]),
+    exports_prev_month_bn: bn(X[n - 1]), imports_prev_month_bn: bn(M[n - 1]), deficit_prev_month_bn: bn(-BL[n - 1]),
   };
   // the largest monthly deficit on record in this series
   let kmin = 0; BL.forEach((v, k) => { if (v != null && v < BL[kmin]) kmin = k; });
   T.largestDeficit = { bn: bn(-BL[kmin]), period: periodLabel(bundle.dates[kmin]) };
   // the year so far
   const YX = B("trade-hs2-exports-ytd"), YM = B("trade-hs2-imports-ytd");
-  T.yearToDate = { months: YX.meta.period?.label, exportsBn: bn(YX.series.total.data[1]), exportsPrevBn: bn(YX.series.total.data[0]), exportsGrowthPct: g(YX.series.total.data[1], YX.series.total.data[0]),
-    importsBn: bn(YM.series.total.data[1]), importsPrevBn: bn(YM.series.total.data[0]), importsGrowthPct: g(YM.series.total.data[1], YM.series.total.data[0]) };
+  T.yearToDate = { months: YX.meta.period?.label, exports_bn: bn(YX.series.total.data[1]), exports_prev_bn: bn(YX.series.total.data[0]), exportsGrowthPct: g(YX.series.total.data[1], YX.series.total.data[0]),
+    imports_bn: bn(YM.series.total.data[1]), imports_prev_bn: bn(YM.series.total.data[0]), importsGrowthPct: g(YM.series.total.data[1], YM.series.total.data[0]) };
   // drivers: chapters whose value moved most against the same month a year earlier (US$ billion)
   const movers = (slug2) => {
     const b = B(slug2), i = b.dates.indexOf(bundle.dates[n]), j = b.dates.indexOf(bundle.dates[n - 12]);
     const rows = Object.entries(b.series).filter(([k]) => k !== "total").map(([k, s]) => ({ chapter: `${chapterName(k.slice(1), s.label)} (HS ${k.slice(1)})`, now: s.data[i], ago: s.data[j] }))
       .filter((r) => r.now != null && r.ago != null)
-      .map((r) => ({ chapter: r.chapter, nowBn: bn(r.now), yearAgoBn: bn(r.ago), changeBn: bn(r.now - r.ago), changeMn: Math.round(r.now - r.ago), nowMn: Math.round(r.now), growthPct: g(r.now, r.ago), _d: r.now - r.ago }));
+      .map((r) => ({ chapter: r.chapter, now_bn: bn(r.now), year_ago_bn: bn(r.ago), change_bn: bn(r.now - r.ago), change_mn: Math.round(r.now - r.ago), now_mn: Math.round(r.now), growthPct: g(r.now, r.ago), _d: r.now - r.ago }));
     rows.sort((a, b2) => b2._d - a._d);   // exact changes: rounding to 0.1 bn would tie the small falls
     for (const r of rows) delete r._d;
     return { largestRises: rows.slice(0, 3), largestFalls: rows.slice(-3).reverse() };
@@ -355,11 +355,11 @@ if (slug === "trade") {
   // the first estimate for the next month (principal-commodity quick estimates, provisional)
   const QX = B("trade-principal-exports"), QM = B("trade-principal-imports"), q = QX.dates.length - 1;
   if (QX.dates[q] > bundle.dates[n]) T.quickEstimate = { month: periodLabel(QX.dates[q]), print: "provisional quick estimate",
-    exportsBn: bn(QX.series.total.data[q]), importsBn: bn(QM.series.total.data[q]), balanceBn: bn(QX.series.total.data[q] - QM.series.total.data[q]),
-    exportsYearAgoBn: bn(QX.series.total.data[q - 12]), exportsYoYPct: g(QX.series.total.data[q], QX.series.total.data[q - 12]), importsYoYPct: g(QM.series.total.data[q], QM.series.total.data[q - 12]) };
+    exports_bn: bn(QX.series.total.data[q]), imports_bn: bn(QM.series.total.data[q]), balance_bn: bn(QX.series.total.data[q] - QM.series.total.data[q]),
+    exports_year_ago_bn: bn(QX.series.total.data[q - 12]), exportsYoYPct: g(QX.series.total.data[q], QX.series.total.data[q - 12]), importsYoYPct: g(QM.series.total.data[q], QM.series.total.data[q - 12]) };
   // partners this month: the largest deficits and surpluses (US$ billion)
   const P = B("trade-partners-balance"), pi = P.dates.indexOf(bundle.dates[n]);
-  const prow = Object.entries(P.series).map(([k, s]) => ({ partner: s.label.replace(/: exports minus imports \(derived\)$/, ""), balanceBn: bn(s.data[pi]), raw: s.data[pi] })).filter((r) => r.raw != null && !/unspecified/i.test(r.partner)).sort((a, b2) => a.raw - b2.raw);
+  const prow = Object.entries(P.series).map(([k, s]) => ({ partner: s.label.replace(/: exports minus imports \(derived\)$/, ""), balance_bn: bn(s.data[pi]), raw: s.data[pi] })).filter((r) => r.raw != null && !/unspecified/i.test(r.partner)).sort((a, b2) => a.raw - b2.raw);
   T.partners = { largestDeficits: prow.slice(0, 3), largestSurpluses: prow.slice(-3).reverse(),
     countInDeficit: prow.filter((r) => r.raw < 0).length, countInSurplus: prow.filter((r) => r.raw > 0).length, countListed: prow.length,
     note: "countInDeficit and countInSurplus count partners by the sign of this month's balance (any size); partners with no trade either way are in neither." };
@@ -372,8 +372,8 @@ if (slug === "trade") {
   T.importBreadth = breadth("trade-hs2-imports");
   // oil and gold this month: HS 27 (mineral fuels) and HS 7108 (gold) imports
   const H2 = B("trade-hs2-imports"), H4 = B("trade-hs4-imports"), i2 = H2.dates.indexOf(bundle.dates[n]), i4 = H4.dates.indexOf(bundle.dates[n]);
-  T.fuelImports = { bn: bn(H2.series.c27.data[i2]), yearAgoBn: bn(H2.series.c27.data[i2 - 12]), growthPct: g(H2.series.c27.data[i2], H2.series.c27.data[i2 - 12]), shareOfImportsPct: r1(100 * H2.series.c27.data[i2] / M[n]) };
-  T.goldImports = { bn: bn(H4.series.c7108.data[i4]), yearAgoBn: bn(H4.series.c7108.data[i4 - 12]), growthPct: g(H4.series.c7108.data[i4], H4.series.c7108.data[i4 - 12]) };
+  T.fuelImports = { bn: bn(H2.series.c27.data[i2]), year_ago_bn: bn(H2.series.c27.data[i2 - 12]), growthPct: g(H2.series.c27.data[i2], H2.series.c27.data[i2 - 12]), shareOfImportsPct: r1(100 * H2.series.c27.data[i2] / M[n]) };
+  T.goldImports = { bn: bn(H4.series.c7108.data[i4]), year_ago_bn: bn(H4.series.c7108.data[i4 - 12]), growthPct: g(H4.series.c7108.data[i4], H4.series.c7108.data[i4 - 12]) };
   facts.cross.trade = T;
 }
 // --- end trade ---

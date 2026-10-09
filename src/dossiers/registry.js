@@ -751,7 +751,7 @@ export const DOSSIERS = [
       ...["partners", "regions"].flatMap((l) => ["exports", "imports"].flatMap((f) => ["", "-fy", "-ytd"].flatMap((t) => [`trade-${l}-${f}${t}`, `trade-${l}-${f}${t}-inr`]))),
       "trade-partners-balance", "trade-partners-balance-fy", "trade-partners-long", "trade-partners-long-inr",
       ...["exports", "imports"].flatMap((f) => [`trade-principal-${f}`, `trade-principal-${f}-inr`, `trade-principal-${f}-fy`, `trade-principal-${f}-fy-inr`, `trade-principal-${f}-ytd`, `trade-principal-${f}-ytd-inr`, `trade-principal-quantity-${f}`]),
-      ...["hs2", "hs4"].flatMap((l) => ["exports", "imports"].flatMap((f) => [`trade-partner-${l}-${f}`, `trade-partner-${l}-${f}-ytd`])),
+      ...["exports", "imports"].flatMap((f) => [`trade-partner-hs2-${f}`, `trade-partner-hs2-${f}-ytd`]),   // partner x heading: deep archive
       // 6 and 8 digits are not bundles: they are the deep-archive tier (PLAN-launch §2b),
       // staged by tradestat-bake.mjs and rolled up into trade-hs4-*.
       "trade-dbie-monthly", "trade-dbie-monthly-inr", "trade-dbie-annual", "trade-dbie-annual-inr", "trade-dbie-tot-2012", "trade-dbie-tot-1999", "trade-dbie-tot-1978",

@@ -1364,26 +1364,6 @@
   "latestDate": "2025-03-01",
   "stamp": "{fyOf(load(\"credit-frauds\").dates.at(-1))}"
  },
- "external#cb-main": {
-  "bundle": "rbi-forex",
-  "latestDate": "2025-06-01",
-  "stamp": "June 2025"
- },
- "external#cb-fx": {
-  "bundle": "rbi-exchange-rates",
-  "latestDate": "2025-07-01",
-  "stamp": "June 2025"
- },
- "external#cb-fx4": {
-  "bundle": "rbi-exchange-rates",
-  "latestDate": "2025-07-01",
-  "stamp": "July 2025"
- },
- "external#cb-int": {
-  "bundle": "rbi-intervention",
-  "latestDate": "2025-06-01",
-  "stamp": "June 2025"
- },
  "trade#cb-home": {
   "bundle": "trade-hs4-exports",
   "latestDate": "2026-07-01",
@@ -1458,5 +1438,10 @@
   "bundle": "trade-dbie-annual",
   "latestDate": "2025-04-01",
   "stamp": "{fyOf(T.ccy.dates.at(-1))}"
+ },
+ "trade#cb-cxc": {
+  "bundle": "trade-partner-hs2-exports",
+  "latestDate": "2025-04-01",
+  "stamp": "{T.cxc ? T.cxc.us.fy : T.partners.fy}"
  }
 }

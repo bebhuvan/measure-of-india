@@ -58,7 +58,7 @@ rules:
     status: excluded
     archive: true
     rolls_up_to: [trade-hs4-exports, trade-hs4-imports]
-    reason: "Held for the deep-archive tier: 5,600 subheadings and 11,000 tariff lines every month since January 2017, in US dollars, rupees and quantity, one file per year on one HS edition (about 2 million rows each way); the 4-digit headings they add up to are baked."
+    reason: "Held for the deep-archive tier: 5,600 subheadings and 11,000 tariff lines every month since January 2017, in US dollars, rupees and quantity, one file per year on one HS edition (9.5 million rows in all); the 4-digit headings they add up to are baked."
   - match: ["meidb:*:qty:monthly:hs2", "meidb:*:qty:monthly:hs4", "meidb:*:qty:monthly:hs6"]
     status: excluded
     reason: "At 2, 4 and 6 digits TradeStat prints quantities with no unit, adding kilograms, numbers and litres of different goods into one figure that cannot be read as an amount; quantities are baked at 8 digits, each in its own unit."
@@ -104,12 +104,17 @@ rules:
     status: shown
     bundle: [trade-partner-hs2-exports, trade-partner-hs2-imports]
     plate: "What goes to America, and what comes from China"
-  - match: ["meidb:*:usd:fy:country-hs2:*", "meidb:*:usd:fy:country-hs4:*"]
+  - match: ["meidb:*:usd:fy:country-hs2:*"]
     status: baked
-    bundle: [trade-partner-hs2-exports, trade-partner-hs2-imports, trade-partner-hs4-exports, trade-partner-hs4-imports]
-  - match: ["meidb:*:usd:ytd:country-hs2:*", "meidb:*:usd:ytd:country-hs4:*"]
+    bundle: [trade-partner-hs2-exports, trade-partner-hs2-imports]
+  - match: ["meidb:*:usd:ytd:country-hs2:*"]
     status: baked
-    bundle: [trade-partner-hs2-exports-ytd, trade-partner-hs2-imports-ytd, trade-partner-hs4-exports-ytd, trade-partner-hs4-imports-ytd]
+    bundle: [trade-partner-hs2-exports-ytd, trade-partner-hs2-imports-ytd]
+  - match: ["meidb:*:usd:fy:country-hs4:*", "meidb:*:usd:ytd:country-hs4:*"]
+    status: excluded
+    archive: true
+    rolls_up_to: [trade-partner-hs2-exports, trade-partner-hs2-imports]
+    reason: "Held for the deep-archive tier: every partner by every 4-digit heading, each financial year and the year to date (about 150,000 partner and heading pairs); partner by chapter is baked."
   - match: ["meidb:*:usd:monthly:country-hs*", "meidb:*:usd:fy:country-hs6", "meidb:*:usd:fy:country-hs8", "meidb:*:usd:ytd:country-hs6", "meidb:*:usd:ytd:country-hs8", "meidb:*:inr:any:country-hs*", "meidb:*:qty:any:country-hs*"]
     status: excluded
     reason: "Partner detail is baked for whole years at chapter and heading level; the month-by-month, rupee, quantity and 6- and 8-digit partner tables are TradeStat's one-partner-per-request views of the same shipments (about 50,000 requests for the monthly history alone) and are left to TradeStat, an owner decision recorded in docs/status/trade.md."

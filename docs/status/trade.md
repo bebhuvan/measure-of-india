@@ -1,6 +1,6 @@
 # trade: status
 
-Guide: merchandise trade (`/guides/trade/`), branch `lb/trade`, port 4402. Updated 2026-10-09.
+Guide: merchandise trade (`/guides/trade/`), branch `lb/trade`, port 4402. Updated 2026-10-09 (late).
 
 ## Done
 
@@ -20,13 +20,16 @@ Guide: merchandise trade (`/guides/trade/`), branch `lb/trade`, port 4402. Updat
 
 ## Now
 
-- Last download: commodity x partner tables (HS 2 and 4 digits, every partner, each
-  financial year and the year to date), about 8,000 calls left, running in the background.
-  Then: bake them, last gates, final commit, report.
+Done, 2026-10-09. Build (537 pages), `npm run gates`, `npm test`, `npm run prose:dry` green;
+both prose slots verified, linted, contract-checked and read against the data.
 
 ## Next
 
-Nothing beyond the above, unless the owner revisits the decisions below.
+- Archive builder: upload `data/archive/staging/trade/` (110 long-format files, 9.5 million
+  rows: 6/8-digit lines, US$ / ₹ / quantity; plus partner x heading) and
+  `data/archive/staging/trade-raw/` (12,627 calls, indexed in `data/raw/trade-index.json`),
+  then fill the link in the guide's `#xp-archive-link` note.
+- April 2027: nothing to bump in the registry (6/8-digit files are no longer listed).
 
 ## Decisions (and why)
 
@@ -90,19 +93,18 @@ trade series would need adding to its IDH config). Partial matches, all PPAC pet
 
 ## For the owner
 
-- **Repo size.** The raw TradeStat archive (one gzipped file per call, the audit trail) is
-  about 300 MB once complete; the 66 yearly 6- and 8-digit bundles are 190 MB on disk
-  (about 30 MB compressed in git). The brief asked for the 8-digit tables baked; this is
-  what that costs. If it is too much, the cheapest cut is the 8-digit quantity tables
-  (half the 8-digit weight).
-- **Every-cut pages.** The framework builds one page per 1,000 series. All eleven years of
-  6/8-digit files would be about 800 pages and a 25-minute build, so the registry lists only
-  the last full year and the current one (about 120 pages). Every year stays baked, in
-  /data/ and in the guide's look-up table, with a download list per year.
-- **Partner x product is annual, at 2 and 4 digits.** TradeStat serves partner detail one
-  partner per request; monthly partner x chapter history would be about 50,000 more calls,
-  and 6/8-digit partner tables far more. Excluded in the ledger with that reason; easy to
-  extend later (the fetch plan is one line per table).
-- **Census.** `node scripts/census.mjs trade` writes a 462 MB file (every 8-digit line);
-  not committed. The census may want a size guard or a summary mode for tail bundles.
-
+- **Decided by the coordinator for the owner (2026-10-09), done:** 6/8-digit tables (US$,
+  ₹ and quantity, every month since January 2017) are the deep-archive tier, staged as
+  long-format gzipped CSV in `data/archive/staging/trade/` (git-ignored; one file per
+  flow, level, unit and financial year on one HS edition; 9.5 million rows); the
+  per-call raw archive is staged in `data/archive/staging/trade-raw/` and indexed in
+  `data/raw/trade-index.json` (committed, sha256 per call). The guide's 6/8-digit look-up
+  became a note awaiting the archive links (`#xp-archive-link`). My branch history was
+  rewritten locally so the 450 MB never entered it; the old tip is
+  `lb/trade-backup-prearchive` (safe to delete after the merge).
+- **Partner x product is annual, at 2 and 4 digits**; monthly partner history (about 50,000
+  calls) is excluded, not for launch (coordinator, 2026-10-09).
+- **Census.** Even without the 6/8-digit tables, `census trade` writes 53 MB (partner x
+  chapter alone is about 20,000 series); not committed. trade-dbie's is 2 MB.
+- **Partner x heading** (about 150,000 pairs, 95 MB as bundles) went to the archive tier on
+  the same rule as the 6/8-digit tables; partner x chapter stays baked and drawn.

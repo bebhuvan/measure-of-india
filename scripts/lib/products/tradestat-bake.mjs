@@ -74,7 +74,7 @@ function call(root, file) {
 }
 /** MEIDB commodity table -> { cols: {mPrev, mCur, cPrev, cCur}, items: Map(code -> {desc, unit, star, v:[mPrev, mCur, cPrev, cCur]}), total } */
 function parseCommodity(raw, expectMonth) {
-  if (!raw) return null;
+  if (!raw || !raw.rows.length) return null;   // an archived empty table: no trade recorded
   const vc = valueColumns(raw.header);
   if (vc.length !== 4) throw new Error(`tradestat bake: ${raw.view} ${JSON.stringify(raw.fields)}: expected 4 value columns, saw ${vc.length}`);
   const [mPrev, mCur, cPrev, cCur] = vc;
@@ -516,9 +516,22 @@ export function bakeTradestat(root, dcfg, { latest, latestFtpa }) {
       }
       if (F.ytd) { ytdFlags = F.ytd.flags; for (const [c, it] of F.ytd.items) { if (!it.prev && !it.cur) continue; descs.set(c, it.desc); ytdCells.set(`${ck}|${c}`, [it.prev, it.cur]); cells.set(`name|${ck}`, name); } }
     }
-    if (missing) console.warn(`  tradestat bake: commodity x partner HS ${lvl} ${flow}: ${missing} partners have no archived tables yet`);
+    if (missing) console.warn(`  tradestat bake: commodity x partner HS ${lvl} ${flow}: ${missing} partners have no table with any trade (territories with none recorded)`);
     const fys = [...fysAll].sort();
     const pairs = [...new Set([...cells.keys()].filter((k) => !k.startsWith("name|")).map((k) => k.split("|").slice(1).join("|")))].sort();
+    if (lvl === 4) {
+      // partner x heading (about 150,000 pairs, ~95 MB as bundles) is the deep-archive tier:
+      // one long-format file per flow; trade-partner-hs2-* is what it rolls up to
+      const lines = [["flow", "partner", "hs_level", "hs_code", "description", "period", "period_kind", "value", "value_unit", "revision_flag", "source", "vintage"].join(",")];
+      for (const p of pairs) { const [ck, c] = p.split("|"); const nm = countryName(cells.get(`name|${ck}`));
+        for (const fy of fys) { const v = cells.get(`${fy}|${p}`); if (v != null) lines.push([FLOW[flow], nm, 4, c, tidyDesc(descs.get(c)), fy, "financial year", r2(v), "usd_million", flags.get(fy), "Ministry of Commerce, TradeStat MEIDB (DGCI&S)", V].map(csvCell).join(",")); }
+        const y = ytdCells.get(p); if (y) for (const [k, v] of [[0, y[0]], [1, y[1]]]) if (v) lines.push([FLOW[flow], nm, 4, c, tidyDesc(descs.get(c)), `${fyOf(addMonths(latest, k ? 0 : -12))} April to ${MONTHS[+latest.slice(5, 7) - 1]}`, "year to date", r2(v), "usd_million", ytdFlags?.[k] ?? "", "Ministry of Commerce, TradeStat MEIDB (DGCI&S)", V].map(csvCell).join(",")); }
+      const file = `${STAGE}/meidb-${FLOW[flow]}-partner-hs4-usd.csv.gz`;
+      fs.mkdirSync(path.join(root, STAGE), { recursive: true });
+      fs.writeFileSync(path.join(root, file), zlib.gzipSync(lines.join("\n") + "\n", { level: 9 }));
+      archived.push({ file, rows: lines.length - 1, flow: FLOW[flow], level: 4, unit: "usd", cut: "partner x heading" });
+      continue;
+    }
     const series = {};
     for (const p of pairs) {
       const [ck, c] = p.split("|");
@@ -539,5 +552,6 @@ export function bakeTradestat(root, dcfg, { latest, latestFtpa }) {
     }
   }
 
+  if (archived.length) fs.writeFileSync(path.join(root, STAGE, "files.json"), JSON.stringify({ note: "Staged TradeStat tables for the deep archive: 6- and 8-digit lines roll up to trade-hs4-exports/imports; partner x heading rolls up to trade-partner-hs2-exports/imports.", files: archived }, null, 1) + "\n");
   return { written, V };
 }
