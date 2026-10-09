@@ -1,0 +1,586 @@
+---
+import fs from "node:fs";
+import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
+import GuideData from "../../components/GuideData.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+const D = bySlug["population"];
+
+// "Every cut": built here, at render time, from the bundles themselves (no client fetch)
+const B = (s) => JSON.parse(fs.readFileSync(`data/series/${s}.json`, "utf8"));
+const est = B("population-wpp"), proj = B("population-wpp-projection"), age = B("population-wpp-age"), ageP = B("population-wpp-age-projection");
+const estN = est.dates.at(-1).slice(0, 4), projN = proj.dates.at(-1).slice(0, 4), est0 = est.dates[0].slice(0, 4);
+const at = (b, k, y) => { const i = b.dates.indexOf(`${y}-01-01`); return i < 0 ? null : b.series[k]?.data[i] ?? null; };
+const nf = (v) => (v == null ? "—" : Math.abs(v) >= 1000 ? Math.round(v).toLocaleString("en-IN") : Math.abs(v) >= 100 ? v.toFixed(1) : v.toFixed(2));
+const wppRows = Object.entries(est.series).map(([k, s]) => ({ label: s.label, a: at(est, k, est0), b: at(est, k, estN), c: at(proj, k, 2050), d: at(proj, k, projN) }));
+const groups = age.meta.ageGroups;
+const gk = (g) => g.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
+const ageRows = groups.map((g) => ({ g: g.replace("+", " and over"), m: at(age, `age_${gk(g)}_male`, estN), f: at(age, `age_${gk(g)}_female`, estN), m50: at(ageP, `age_${gk(g)}_male`, 2050), f50: at(ageP, `age_${gk(g)}_female`, 2050) }));
+const wdiRows = ["population-wdi", "population-wdi-vital", "population-wdi-urban", "population-wdi-migration"].flatMap((slug) => {
+  const b = B(slug);
+  return Object.values(b.series).map((s) => {
+    const i = s.data.findLastIndex((v) => v != null), j = s.data.findIndex((v) => v != null);
+    return { code: s.name, label: s.label, first: b.dates[j].slice(0, 4), last: b.dates[i].slice(0, 4), v: s.data[i], slug };
+  });
+});
+const varB = B("population-wpp-variants");
+---
+<Base
+  title="Population · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/population/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">India last counted its people in 2011. Every figure since is an estimate, and every figure for the years ahead is a projection. The United Nations makes both, and the World Bank republishes them. This guide shows what they say about how many Indians there are, how old they are, and where they live.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>UN World Population Prospects 2024; World Bank WDI</b></span>
+      <span>Instrument <b>Model estimates from censuses, surveys and registration</b></span>
+      <span>Frequency <b>Annual, mid-year</b></span>
+      <span>Window <b>Estimates 1950 to {estN}; projections to {projN}</b></span>
+      <span>Latest estimate <b id="m-latest">–</b></span>
+      <span>Unit <b>People</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Population, UN estimate</div><div class="v acc" id="n-pop">–</div><div class="d" id="d-pop">–</div><div class="nspark" id="nspark-pop"></div></div>
+      <div class="num"><div class="l">Median age</div><div class="v" id="n-age">–</div><div class="d" id="d-age">–</div></div>
+      <div class="num"><div class="l">Children per woman</div><div class="v" id="n-tfr">–</div><div class="d" id="d-tfr">–</div></div>
+      <div class="num"><div class="l">Share aged 15 to 64</div><div class="v" id="n-wa">–</div><div class="d" id="d-wa">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading: inputs population-wpp (all series), population-wpp-projection, population-wpp-age, population-wdi-urban; prose generated (slots population.current-reading.*) -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="reading-top">
+      <div><span class="rk">People in India</span><div class="big" id="rb-pop">–</div></div>
+      <p class="rt-cap">The UN's estimate of everyone living in India on 1 July of its latest estimate year, <span id="cr-crore">–</span>. It counts residents, whatever their citizenship. It is a model built on the 2011 census and the surveys since, not a head count.</p>
+      <div class="rt-side"><span class="rk" id="rb-proj-year">–</span><div class="rt-side-v" id="rb-proj">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the figures say</span>
+        <Prose slot="population.current-reading.what-the-print-says" />
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What they do not say</span>
+        <Prose slot="population.current-reading.what-it-does-not-say" />
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 the long curve: inputs population-wpp.tpopulation1july, population-wpp-projection.tpopulation1july, population-wpp-variants (80% and 95% intervals); evergreen + As of -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>The long curve</h2><span class="line"></span><span class="unit">Population, 1950 to {projN}</span></div>
+    <div class="break">
+      <figure id="cb-curve" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>India's population is projected to peak around 1.7 billion, then shrink</h3>
+            <div class="sub">People living in India on 1 July, billion. UN estimates to {estN} (solid), the UN's medium projection after (dashed), with the ranges its probabilistic model gives 80 and 95 chances in 100 of holding.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-curve">–</div><div class="c">projected peak year</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>UN estimate</button>
+            <button class="chip"><i style="background:#B9C3F3"></i>Medium projection</button>
+            <button class="chip"><i style="background:#E7EBFC"></i>80% range</button>
+            <button class="chip"><i style="background:#F4F6FD;border:1px solid #DFE2E8"></i>95% range</button>
+          </div>
+          <div class="plotzone"><div id="plot-curve" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: UN DESA Population Division, World Population Prospects 2024, medium variant and probabilistic intervals. Estimates and projections are separate series, never joined.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The solid line is the UN's reconstruction of the past, from censuses (the last in 2011), the Sample Registration System and household surveys. The dashed line is a projection: what happens if fertility, death rates and migration follow the UN's central assumptions. The shaded bands show how uncertain that is. The wider band is the range the UN's model gives a 95% chance of containing the true figure.</p>
+            <p>A projection is not a forecast of policy or a target. It mostly follows from people already born: the women who will be mothers in 2045 are alive today.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of WPP 2024</span>
+            <p>India had <b id="ex-cu-1950">–</b> people in 1950 and is now <b id="ex-cu-x">–</b> as large. The medium projection reaches <b id="ex-cu-2050">–</b> in 2050 and peaks at <b id="ex-cu-peak">–</b> in <b id="ex-cu-peakyr">–</b>, falling to <b id="ex-cu-2100">–</b> by 2100. The 95% range for 2100 runs from <b id="ex-cu-lo">–</b> to <b id="ex-cu-hi">–</b>: the far future is genuinely unknown.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 03 how old is India: inputs population-wpp-age (age x sex, shares), population-wpp-age-projection (2050), population-wpp.medianagepop + projection; evergreen + As of -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>How old is India</h2><span class="line"></span><span class="unit">Age and sex, median age</span></div>
+    <div class="break">
+      <figure id="cb-pyramid" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The base of the pyramid has stopped widening</h3>
+            <div class="sub">People in each five-year age group, million: men to the left, women to the right. Bars are the latest UN estimate; ticks are the UN's projection for 2050.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-pyramid">–</div><div class="c">median age, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i><span id="lg-pyr-now">Latest</span></button>
+            <button class="chip"><i style="background:#C47A16;width:3px"></i><span id="lg-pyr-then">2050, projected</span></button>
+          </div>
+          <div class="plotzone"><div id="plot-pyramid" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: UN DESA, World Population Prospects 2024, population by five-year age group and sex, 1 July; 2050 from the medium variant.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each bar is one five-year age group. A country with many births and early deaths draws a triangle: wide at the bottom, narrow at the top. As births slow and people live longer, the bottom stops growing and the middle and top fill out. Where the marigold tick sits beyond a bar, that group is projected to be larger in 2050; where it sits inside, smaller.</p>
+            <p>The median age splits the population in two: half are younger, half older. It tells you whether a country's typical person is a schoolchild, a young worker or a parent of grown children.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of WPP 2024</span>
+            <p>The median Indian is <b id="ex-py-med">–</b> years old, and will be <b id="ex-py-med50">–</b> in 2050 on the medium projection. The largest five-year group today is aged <b id="ex-py-big">–</b>; in 2050 it is projected to be <b id="ex-py-big50">–</b>. Children under 15 are <b id="ex-py-young">–</b> of the population, against <b id="ex-py-young0">–</b> in 1950.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-median" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>India got younger until the 1970s, and has been ageing since</h3>
+            <div class="sub">Median age of the population, years. UN estimates (solid) and medium projection (dashed).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-median">–</div><div class="c">latest estimate</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-median" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: UN DESA, World Population Prospects 2024.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>When child deaths fall before births do, a country first gets younger: more babies survive. That happened in India until the 1970s. Once families have fewer children, the median age climbs steadily.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of WPP 2024</span>
+            <p>The median age was lowest, <b id="ex-md-low">–</b> years, in <b id="ex-md-lowyr">–</b>. On the medium projection it reaches <b id="ex-md-2100">–</b> by 2100: half of all Indians would then be older than that.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 04 the working-age window: inputs population-wpp-age(-projection).share_15_64, working_age, dependency_young/old/total, share_65_plus; evergreen + As of -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>The working-age window</h2><span class="line"></span><span class="unit">Ages 15 to 64, and the people they support</span></div>
+    <div class="break">
+      <figure id="cb-window" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The working-age share is projected to peak in the mid-2030s</h3>
+            <div class="sub">People aged 15 to 64 as a share of the population, per cent. UN estimates (solid) and medium projection (dashed).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-window">–</div><div class="c">projected peak year</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-window" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: UN DESA, World Population Prospects 2024; shares computed here from the five-year age groups.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Economists call the years when the working-age share rises a "demographic dividend": more earners for every mouth to feed. Fifteen to 64 is a convention, not a fact about Indian lives. Many 15-year-olds are in school, many 64-year-olds still work a field, and the share counts people of working age, not people with work.</p>
+            <p>The dividend is a window, not a payment. It pays only if those of working age find jobs; the <a href="/guides/jobs/">jobs guide</a> shows how many do.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of WPP 2024</span>
+            <p>People aged 15 to 64 are <b id="ex-wi-now">–</b> of Indians. The share is projected to peak at <b id="ex-wi-peak">–</b> in <b id="ex-wi-peakyr">–</b>. Their number keeps rising for longer, from <b id="ex-wi-nnow">–</b> today to a projected <b id="ex-wi-npk">–</b> in <b id="ex-wi-npkyr">–</b>, because the population itself is still growing.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-dependency" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Fewer children to support now; more old people later</h3>
+            <div class="sub">Children (0 to 14) and older people (65 and over) for every 100 people aged 15 to 64. UN estimates (solid) and medium projection (dashed).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-dependency">–</div><div class="c">dependants per 100, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Children, 0 to 14</button>
+            <button class="chip"><i style="background:#C47A16"></i>Aged 65 and over</button>
+          </div>
+          <div class="plotzone"><div id="plot-dependency" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: UN DESA, World Population Prospects 2024; ratios computed here from the five-year age groups.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A dependency ratio counts people too young or too old to be expected to earn, for every 100 who are of working age. Children cost school fees and food; older people cost medicine and care, and in India most of that care is given by their own families, not by pensions.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of WPP 2024</span>
+            <p>For every 100 people of working age there are <b id="ex-de-young">–</b> children and <b id="ex-de-old">–</b> people aged 65 or more. The older group is projected to outnumber children, per working-age person, from <b id="ex-de-cross">–</b>. People aged 65 and over are <b id="ex-de-65">–</b> of Indians today and a projected <b id="ex-de-6550">–</b> in 2050, when there will be <b id="ex-de-old50">–</b> of them for every 100 of working age.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 fewer children: inputs population-wpp(-projection).tfr, births, deaths; evergreen + As of -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>Fewer children</h2><span class="line"></span><span class="unit">Fertility, births and deaths</span></div>
+    <div class="break">
+      <figure id="cb-tfr" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>An Indian woman now has fewer than two children on average</h3>
+            <div class="sub">Total fertility rate: the children a woman would have over her life at this year's birth rates for each age. Replacement, about 2.1, keeps a population stable in the long run.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-tfr">–</div><div class="c">children per woman, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-tfr" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: UN DESA, World Population Prospects 2024. India's own measures are the Sample Registration System and NFHS (see the NFHS guide).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The fertility rate is a snapshot of this year's behaviour, not a count of any real woman's children. Replacement is a little above two because some children die young and slightly more boys than girls are born. Below it, each generation is smaller than the one before, though the population keeps growing for decades while the large generations born earlier have their own children.</p>
+            <p>The national figure hides wide differences between states. The <a href="/guides/nfhs/">NFHS guide</a> has India's own survey measure; the <a href="/guides/gender/">gender guide</a> has the Sample Registration System series.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of WPP 2024</span>
+            <p>At <b id="ex-tf-1950">–</b> children per woman in 1950 and <b id="ex-tf-now">–</b> now, fertility fell below replacement in <b id="ex-tf-yr">–</b>. The UN's medium projection has it at <b id="ex-tf-2100">–</b> by 2100.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-births" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Births peaked at the turn of the century; deaths are rising as India ages</h3>
+            <div class="sub">Births and deaths a year, million. UN estimates (solid) and medium projection (dashed).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-births">–</div><div class="c">births, latest year</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Births</button>
+            <button class="chip"><i style="background:#5F6675"></i>Deaths</button>
+          </div>
+          <div class="plotzone"><div id="plot-births" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: UN DESA, World Population Prospects 2024.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The gap between the two lines is the population's natural growth. Deaths rise even as health improves, simply because there are more old people. When the lines cross, the population shrinks unless more people arrive than leave.</p>
+            <p>Fewer births is already visible in classrooms: fewer children enter school each year, which frees room for spending per child, or closes village schools.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of WPP 2024</span>
+            <p>Births peaked at <b id="ex-bi-pk">–</b> in <b id="ex-bi-pkyr">–</b>. In the latest estimate year there were <b id="ex-bi-now">–</b> births and <b id="ex-bi-deaths">–</b> deaths. On the medium projection deaths overtake births in <b id="ex-bi-cross">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 longer lives: inputs population-wpp(-projection).lexmale, lexfemale, lex, imr, q5; evergreen + As of -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>Longer lives</h2><span class="line"></span><span class="unit">Life expectancy and child deaths</span></div>
+    <div class="break">
+      <figure id="cb-life" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Indians live three decades longer than in 1950, women longer than men</h3>
+            <div class="sub">Life expectancy at birth, years, by sex. UN estimates (solid) and medium projection (dashed).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-life">–</div><div class="c">both sexes, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Women</button>
+            <button class="chip"><i style="background:#5F6675"></i>Men</button>
+          </div>
+          <div class="plotzone"><div id="plot-life" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: UN DESA, World Population Prospects 2024.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Life expectancy at birth is the average lifespan a baby would have if this year's death rates held for its whole life. It is pulled down hard by deaths in infancy, which is why most of its rise since 1950 came from children surviving, not from old people living longer.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of WPP 2024</span>
+            <p>Life expectancy rose from <b id="ex-li-1950">–</b> years in 1950 to <b id="ex-li-now">–</b>: <b id="ex-li-f">–</b> for women and <b id="ex-li-m">–</b> for men. The sharpest fall in the record was in <b id="ex-li-dipyr">–</b>, <b id="ex-li-dip">–</b> below <b id="ex-li-dipfrom">–</b>, the pandemic year. Of every 1,000 babies born, <b id="ex-li-imr0">–</b> died before their first birthday in 1950 and <b id="ex-li-imr">–</b> now; <b id="ex-li-u50">–</b> and <b id="ex-li-u5">–</b> before their fifth.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 cities: inputs population-wdi-urban (sp_urb_totl_in_zs, sp_urb_totl, sp_rur_totl, sp_urb_grow, sp_rur_totl_zg, en_urb_lcty, en_urb_mcty_tl_zs); evergreen + As of -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>How fast cities grow</h2><span class="line"></span><span class="unit">Urban and rural India</span></div>
+    <div class="break">
+      <figure id="cb-urban" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>About a third of Indians live in places the census calls urban</h3>
+            <div class="sub">Urban population as a share of the total, per cent. UN estimates to 2018 (solid), the UN's projection after (dashed).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-urban">–</div><div class="c">urban share, latest year</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-urban" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: World Bank WDI (SP.URB.TOTL.IN.ZS), from the UN World Urbanization Prospects 2018. Values after 2018 are projections.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.worldbank.org/indicator/SP.URB.TOTL.IN.ZS?locations=IN" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>"Urban" follows the Census of India: statutory towns with a municipality, and census towns with at least 5,000 people, a density of 400 a square kilometre and three-quarters of working men outside farming. Many large villages that look and work like towns are counted as rural, so this share understates how urban India's way of life has become.</p>
+            <p>The UN's urban figures were last revised in 2018 and, without a census since 2011, everything after rests on projection.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of WDI, October 2026</span>
+            <p>The urban share rose from <b id="ex-ur-1960">–</b> in 1960 to <b id="ex-ur-2018">–</b> in 2018, and is projected at <b id="ex-ur-last">–</b> for <b id="ex-ur-lastyr">–</b>: <b id="ex-ur-n">–</b> people in urban areas and <b id="ex-ur-rn">–</b> in rural ones. On the same projections the largest city holds <b id="ex-ur-city">–</b> people, and cities of a million or more hold <b id="ex-ur-mcty">–</b> of all Indians, against <b id="ex-ur-mcty0">–</b> in 1960.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-growth" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Urban India is growing several times faster than rural India</h3>
+            <div class="sub">Growth of the urban and the rural population, per cent a year.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-growth">–</div><div class="c">urban growth, latest year</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Urban</button>
+            <button class="chip"><i style="background:#5F6675"></i>Rural</button>
+          </div>
+          <div class="plotzone"><div id="plot-growth" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: World Bank WDI (SP.URB.GROW, SP.RUR.TOTL.ZG), from the UN World Urbanization Prospects 2018; after 2018, projections.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.worldbank.org/indicator/SP.URB.GROW?locations=IN" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Cities grow three ways: their own births, people moving in from villages, and villages being reclassified as towns when they cross the census thresholds. The figures do not separate the three. A jump at a census year is partly reclassification.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of WDI, October 2026</span>
+            <p>In the latest year urban India grew by <b id="ex-ur-g">–</b> and rural India by <b id="ex-ur-rg">–</b>. Both figures after 2018 are the UN's projections, not measurements.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 migration: inputs population-wpp(-projection).netmigrations, population-wdi-migration (sm_pop_totl, sm_pop_totl_zs, sm_pop_rhcr_ea); evergreen + As of -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>Who leaves, who arrives</h2><span class="line"></span><span class="unit">International migration</span></div>
+    <div class="break">
+      <figure id="cb-migration" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>More people leave India than arrive, though few relative to its size</h3>
+            <div class="sub">Net international migration a year, million: people arriving to live in India minus people leaving. UN estimates (dark) and medium projection to 2050 (pale).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-migration">–</div><div class="c">net, latest estimate year</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>UN estimate</button>
+            <button class="chip"><i style="background:#B9C3F3"></i>Projection</button>
+          </div>
+          <div class="plotzone"><div id="plot-migration" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: UN DESA, World Population Prospects 2024; migrant stock and refugees from World Bank WDI (UN DESA, UNHCR).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Net migration is a balance, and it hides how many move each way. It counts people crossing India's borders to live, not the far larger movement within India, from village to city and state to state, which the census and surveys measure separately. Money sent home by Indians abroad is in the <a href="/guides/external/">external account guide</a>.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of WPP 2024</span>
+            <p>In the latest estimate year about <b id="ex-mi-now">–</b> more people left India than arrived; the largest net outflow in the record was <b id="ex-mi-worst">–</b> in <b id="ex-mi-worstyr">–</b>. People born abroad and living in India numbered <b id="ex-mi-stock">–</b> in <b id="ex-mi-stockyr">–</b>, <b id="ex-mi-stockpct">–</b> of the population, down from <b id="ex-mi-stock0">–</b> in <b id="ex-mi-stock0yr">–</b>. India hosted <b id="ex-mi-refg">–</b> refugees in <b id="ex-mi-refgyr">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 the projection variants: inputs population-wpp-variants (tpopulation1july__*), population-wpp-projection; evergreen + As of -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>What if</h2><span class="line"></span><span class="unit">The UN's projection variants</span></div>
+    <div class="break">
+      <figure id="cb-variants" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Half a child per woman separates a shrinking India from a growing one</h3>
+            <div class="sub">India's population in <span id="lg-var-b">2100</span> under each UN projection variant, billion (bars), and in 2050 (rings). The dashed line is today's population.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-variants">–</div><div class="c">range across variants</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Medium, end of century</button>
+            <button class="chip"><i style="background:#C9CED6"></i>Other variants, end of century</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #C47A16"></i>2050</button>
+          </div>
+          <div class="plotzone"><div id="plot-variants" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: UN DESA, World Population Prospects 2024, medium and other variants. Scenario variants are deterministic what-ifs; the 80% and 95% ranges come from the probabilistic projection.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://population.un.org/wpp/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The variants change one assumption at a time. Low and high move fertility half a child below or above the medium path; constant fertility holds today's rate forever; zero migration closes the borders. None is a prediction. Together they show which assumption matters most, and for India that is the number of children families choose to have.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of WPP 2024</span>
+            <p>By 2100 the variants range from <b id="ex-va-lo">–</b> (<span id="ex-va-lon">–</span>) to <b id="ex-va-hi">–</b> (<span id="ex-va-hin">–</span>). With no migration at all, India would have <b id="ex-va-zm">–</b> people in 2100.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 10 every cut: every series of population-wpp, population-wpp-age(-projection), population-wdi* in tables built at render time -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>Every cut</h2><span class="line"></span><span class="unit">All the figures behind this guide</span></div>
+    <div class="prose">
+      <p>Every indicator the UN publishes for India in its standard tables, every age group by sex, and every population indicator the World Bank carries for India. All of it downloads below. Projection variants are in the data file <a href="/data/population-wpp-variants.csv">population-wpp-variants</a> ({Object.keys(varB.series).length} series).</p>
+    </div>
+    <div class="em-table break">
+      <table>
+        <caption style="text-align:left;padding:0 0 .6rem">UN World Population Prospects 2024: India, every indicator. Estimates for {est0} and {estN}; medium projection for 2050 and {projN}.</caption>
+        <thead><tr><th>Indicator</th><th class="n">{est0}</th><th class="n">{estN}</th><th class="n">2050, projected</th><th class="n">{projN}, projected</th></tr></thead>
+        <tbody>{wppRows.map((r) => <tr><td class="w">{r.label}</td><td class="n">{nf(r.a)}</td><td class="n">{nf(r.b)}</td><td class="n">{nf(r.c)}</td><td class="n">{nf(r.d)}</td></tr>)}</tbody>
+      </table>
+    </div>
+    <div class="em-table break">
+      <table>
+        <caption style="text-align:left;padding:1.4rem 0 .6rem">Population by age and sex, thousands: {estN} estimate and 2050 projection.</caption>
+        <thead><tr><th>Age</th><th class="n">Men, {estN}</th><th class="n">Women, {estN}</th><th class="n">Men, 2050</th><th class="n">Women, 2050</th></tr></thead>
+        <tbody>{ageRows.map((r) => <tr><td class="w">{r.g}</td><td class="n">{nf(r.m)}</td><td class="n">{nf(r.f)}</td><td class="n">{nf(r.m50)}</td><td class="n">{nf(r.f50)}</td></tr>)}</tbody>
+      </table>
+    </div>
+    <div class="em-table break">
+      <table>
+        <caption style="text-align:left;padding:1.4rem 0 .6rem">World Bank WDI: every population indicator for India ({wdiRows.length}), latest value. WDI runs the UN's estimates into its projections without a break; the years after 2023 here are projections.</caption>
+        <thead><tr><th>Indicator</th><th>Code</th><th class="n">From</th><th class="n">Latest</th><th class="n">Year</th></tr></thead>
+        <tbody>{wdiRows.map((r) => <tr><td class="w">{r.label}</td><td class="nw">{r.code}</td><td class="n">{r.first}</td><td class="n">{nf(r.v)}</td><td class="n">{r.last}</td></tr>)}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- § 11 what this measures: evergreen -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="prose">
+      <p>India counts its people in a census every ten years. The 2021 census was postponed, so the latest count is from 2011; the next is scheduled for 2027. Between censuses, the Sample Registration System records births and deaths in a large sample of villages and urban blocks, and household surveys such as the NFHS ask about children, marriage and health.</p>
+      <p>The UN Population Division combines all of these into one consistent account for every country, from 1950 to the latest year (2023 in the 2024 revision), and projects forward to 2100. The medium projection uses the median of thousands of simulated paths for fertility and life expectancy; the 80% and 95% ranges come from the same simulations. It revises the whole history every two years, so a figure for 2015 in one revision can differ from the next.</p>
+      <p>The World Bank's population figures are the UN's, republished in its World Development Indicators; its urban figures come from the UN's World Urbanization Prospects, last revised in 2018. India's own official projections, by the Technical Group on Population Projections for 2011 to 2036, are a separate source and are not shown here.</p>
+    </div>
+  </section>
+
+  <!-- § 12 misreadings: evergreen -->
+  <section>
+    <div class="sec-head"><span class="no">12</span><h2>How to misread these numbers</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li><span class="no">1</span><div><h3>"The census says India has 1.4 billion people."</h3><p>No census has been taken since 2011. Today's figure is a UN estimate built on that census and the surveys since; when the next census is published, the estimate will be revised, perhaps by tens of millions.</p></div></li>
+      <li><span class="no">2</span><div><h3>"Fertility is below replacement, so the population is falling."</h3><p>Not yet. The large generations born before 2000 are now having children, so births still outnumber deaths by a wide margin. The UN projects growth to continue for decades after fertility fell below 2.1.</p></div></li>
+      <li><span class="no">3</span><div><h3>"The UN projects 1.7 billion Indians in 2061."</h3><p>It projects that on its medium assumptions, with a wide range around it. A projection says what follows if fertility, mortality and migration behave as assumed; it is not a forecast and not a target.</p></div></li>
+      <li><span class="no">4</span><div><h3>"The demographic dividend guarantees growth."</h3><p>A rising working-age share creates a chance, not an outcome. It adds to growth only if people of working age find productive work, and it closes whether or not they do.</p></div></li>
+      <li><span class="no">5</span><div><h3>"Only a third of India is urban."</h3><p>A third lives in places the census classifies as towns. By density or work, many more Indians live in settlements that behave like towns, and the share depends heavily on that definition.</p></div></li>
+    </ul>
+  </section>
+
+  <GuideData slug="population" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>UN Department of Economic and Social Affairs, Population Division, World Population Prospects 2024: the standard CSV files of demographic indicators (medium and other variants) and population by five-year age group and sex, India (location 356). Data vintage <b id="prov-vintage">–</b>. Urban, migrant-stock and refugee figures from the World Bank's World Development Indicators, vintage <b id="prov-wdi">–</b>.</p>
+        <p>Checked by hand: India's population on 1 July 2024 is 1,450,935,791 in both WPP 2024 and WDI; the gate checks the two sources agree every year.</p>
+      </div>
+      <div>
+        <h6>Method</h6>
+        <p>Values are shown as published, converted from thousands for display. Broad-age shares and dependency ratios are computed here from the five-year age groups, and match WDI's own ratios. Nothing is interpolated or estimated by us.</p>
+      </div>
+      <div>
+        <h6>Revisions and breaks</h6>
+        <p>Estimates and projections are separate instruments in separate files and are never joined. Each UN revision re-estimates the whole history. In WPP 2024's probabilistic-interval rows, life expectancy at 15, 65 and 80 and the age-specific mortality columns carry impossible values; those cells are not used.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Version 1.0, built October 2026 from WPP 2024 and the World Bank's October 2026 WDI. Revised with each UN revision (every two years) and with each census.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, population</span>
+      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/population.client.js";
+</script>
+</Base>

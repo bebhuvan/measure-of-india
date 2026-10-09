@@ -36,6 +36,9 @@ export const HEADLINE = {
                    what: "children aged 6 to 59 months with anaemia", period: () => "NFHS-5, 2019-21" },
   manufacturing: { value: (b) => `${last(b, "mva_pct_gdp").toFixed(1)}%`, what: "manufacturing's share of GDP", period: (b) => lastDate(b).slice(0, 4) },
   deposits:      { value: (b) => `₹${last(b, "household_total").toFixed(1)} lakh crore`, what: "households' bank deposits", period: (b) => `March ${lastDate(b).slice(0, 4)}` },
+  // worldbank family (2026-10-09)
+  poverty:       { value: (b) => `${last(b, "headcount_3_00").toFixed(1)}%`, what: "of Indians below $3.00 a day (2021 PPP)", period: (b) => `HCES ${lastDate(b).slice(0, 4)}-${String(+lastDate(b).slice(0, 4) + 1).slice(2)}` },
+  population:    { value: (b) => `${(last(b, "tpopulation1july") / 1e6).toFixed(3)} billion`, what: "people in India, UN estimate", period: (b) => lastDate(b).slice(0, 4) },
 };
 
 // The small chart beside each guide's figure: always on the current ruler, so a chart never
@@ -56,6 +59,9 @@ export const SPARK = {
   nfhs:          { bundle: "nfhs-anaemia", label: "Children age 6-59", slope: true },
   manufacturing: { bundle: "wdi-manufacturing", series: "mva_pct_gdp" },
   deposits:      { bundle: "deposits-owners", series: "household_total" },
+  // worldbank family (2026-10-09): the lineup (model estimates) gives the poverty spark a shape; surveys alone are 2 points
+  poverty:       { bundle: "poverty-pip-lineup", series: "headcount_3_00" },
+  population:    { bundle: "population-wpp", series: "tpopulation1july" },
 };
 
 const cache = {};

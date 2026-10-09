@@ -1,0 +1,425 @@
+---
+import fs from "node:fs";
+import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
+import GuideData from "../../components/GuideData.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+const D = bySlug["poverty"];
+
+// "Every cut": built at render time from the bundles (no client fetch)
+const B = (s) => JSON.parse(fs.readFileSync(`data/series/${s}.json`, "utf8"));
+const spells = ["poverty-pip-1977", "poverty-pip-1983", "poverty-pip-1987", "poverty-pip-1993", "poverty-pip-2011", "poverty-pip-2022"].map(B);
+const cols = spells.flatMap((b) => b.dates.map((d, i) => ({ b, i, round: b.meta.surveys[i].period.replace(/^(\d{4})-\d{2}(\d{2})$/, "$1-$2"), spell: b.meta.spell })));
+const keys = Object.keys(spells.at(-1).series);
+const nf = (v) => (v == null ? "—" : Math.abs(v) >= 1e6 ? Math.round(v).toLocaleString("en-IN") : Math.abs(v) >= 100 ? v.toFixed(1) : Math.abs(v) >= 1 ? v.toFixed(2) : v.toFixed(4));
+const pipRows = keys.map((k) => ({ label: spells.at(-1).series[k].label, vals: cols.map((c) => c.b.series[k]?.data[c.i] ?? null) }));
+const lineup = B("poverty-pip-lineup");
+const lu = lineup.dates.map((d, i) => ({ y: d.slice(0, 4), kind: lineup.meta.estimationType[d.slice(0, 4)], h3: lineup.series.headcount_3_00.data[i] ?? lineup.series.headcount_3_00_nowcast?.data[i], h42: lineup.series.headcount_4_20.data[i] ?? lineup.series.headcount_4_20_nowcast?.data[i], h83: lineup.series.headcount_8_30.data[i] ?? lineup.series.headcount_8_30_nowcast?.data[i], p3: lineup.series.poor_3_00.data[i] }));
+const wdi = B("poverty-wdi");
+const wdiRows = Object.values(wdi.series).map((s) => ({ code: s.name, label: s.label, obs: wdi.dates.map((d, i) => [d.slice(0, 4), s.data[i]]).filter(([, v]) => v != null) }));
+const latestRound = cols.at(-1).round, firstRound = cols[0].round;
+---
+<Base
+  title="Poverty and inequality · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/poverty/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">Ask how many Indians are poor and you can be told a few in a hundred or four in five, and both answers come from the same survey. The difference is the line. This guide shows India through the World Bank's three international lines, every consumption survey since 1977-78, and what each line buys in rupees.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>World Bank, Poverty and Inequality Platform</b></span>
+      <span>Instrument <b>NSS and HCES household consumption surveys</b></span>
+      <span>Frequency <b>Survey years; annual since 2022-23</b></span>
+      <span>Window <b>{firstRound} to {latestRound}</b></span>
+      <span>Latest <b id="m-latest">–</b></span>
+      <span>Unit <b>2021 PPP dollars a day per person</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Below $3.00 a day</div><div class="v acc" id="n-h3">–</div><div class="d" id="d-h3">–</div><div class="nspark" id="nspark-h3"></div></div>
+      <div class="num"><div class="l">Below $4.20 a day</div><div class="v" id="n-h42">–</div><div class="d" id="d-h42">–</div></div>
+      <div class="num"><div class="l">People below $3.00 a day</div><div class="v" id="n-poor">–</div><div class="d" id="d-poor">–</div></div>
+      <div class="num"><div class="l">Gini index of consumption</div><div class="v" id="n-gini">–</div><div class="d" id="d-gini">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading: inputs poverty-pip-2022 (all series), poverty-pip-lineup, poverty-pip-2011; prose generated (slots poverty.current-reading.*) -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Below $3.00 a day</span><div class="big" id="rb-h3">–</div></div>
+      <p class="rt-cap">The share of Indians whose consumption in the <span id="cr-round">–</span> survey was below the World Bank's extreme poverty line: $3.00 a day at 2021 purchasing power, about <span id="cr-line3">–</span> a person a day at that survey's prices.</p>
+      <div class="rt-side"><span class="rk">Below $4.20 a day</span><div class="rt-side-v" id="rb-h42">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the figures say</span>
+        <Prose slot="poverty.current-reading.what-the-print-says" />
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What they do not say</span>
+        <Prose slot="poverty.current-reading.what-it-does-not-say" />
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 the line decides: inputs poverty-pip-2022 (headcount ladder, ppp, cpi, median), poverty-pip-2011 (ladder, faint); evergreen + As of -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>The line decides</h2><span class="line"></span><span class="unit">Share of people below any line</span></div>
+    <div class="break">
+      <figure id="cb-ladder" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Move the line a few dollars and the number of poor Indians changes many times over</h3>
+            <div class="sub">Share of Indians whose daily consumption falls below each line, per cent. Lines in 2021 PPP dollars a day per person; the horizontal scale is logarithmic so that each doubling of the line takes the same width.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-ladder">–</div><div class="c">below $3.00 to below $8.30</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i><span id="lg-lad-now">Latest</span></button>
+            <button class="chip"><i style="background:#B9C3F3"></i><span id="lg-lad-prev">Previous</span></button>
+            <button class="chip"><i style="background:#C9CED6"></i><span id="lg-lad-old">2011-12</span></button>
+          </div>
+          <div class="plotzone"><div id="plot-ladder" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: World Bank, Poverty and Inequality Platform, 2021 PPP, one query per line. The 2011-12 survey used a different design and is shown for shape, not for comparison.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://pip.worldbank.org/country-profiles/IND" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Pick a line on the horizontal axis and read up: the curve gives the share of Indians who consume less than that each day. The curve is steep in the middle because most Indians live within a few dollars of each other; a small move in the line there moves hundreds of millions of people across it.</p>
+            <p>A PPP dollar is not a dollar at the exchange rate. It is the amount of rupees that buys in India what one dollar buys in the United States, so it already allows for lower Indian prices. The World Bank uses the same lines for every country: $3.00 for extreme poverty, $4.20 and $8.30 for the typical lines of lower-middle and upper-middle income countries.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of PIP, September 2026</span>
+            <p>In <span id="ex-la-round">–</span>, <b id="ex-la-3">–</b> of Indians were below $3.00 a day, <b id="ex-la-42">–</b> below $4.20 and <b id="ex-la-83">–</b> below $8.30. At that survey's prices, using the World Bank's factor of <b id="ex-la-ppp">–</b> rupees to the PPP dollar, $3.00 is <b id="ex-la-r3">–</b> a person a day, <b id="ex-la-r3m">–</b> a month, or <b id="ex-la-r3f">–</b> a month for a family of five. $4.20 is <b id="ex-la-r42">–</b> a day (<b id="ex-la-r42m">–</b> a month); $8.30 is <b id="ex-la-r83">–</b> (<b id="ex-la-r83m">–</b>). The median Indian consumed <b id="ex-la-med">–</b> a day, about <b id="ex-la-medr">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 03 every survey: inputs poverty-pip-<spell> (headcount at 3.00, 4.20, 8.30), poverty-pip-lineup.headcount_3_00(+_nowcast); evergreen + As of -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>Every survey since 1977</h2><span class="line"></span><span class="unit">Six survey designs, never joined</span></div>
+    <div class="break">
+      <figure id="cb-record" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Extreme poverty has fallen over four decades; the biggest drop came between 2011-12 and 2022-23</h3>
+            <div class="sub">Share of Indians below each international line, per cent, at every survey (dots). Lines join only surveys the World Bank treats as comparable. The pale line is the World Bank's estimate for the years in between, at $3.00.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-record">–</div><div class="c">surveys</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>$3.00 a day</button>
+            <button class="chip"><i style="background:#C47A16"></i>$4.20 a day</button>
+            <button class="chip"><i style="background:#5F6675"></i>$8.30 a day</button>
+            <button class="chip"><i style="background:#B9C3F3"></i>World Bank estimate between surveys</button>
+          </div>
+          <div class="plotzone"><div id="plot-record" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: World Bank, Poverty and Inequality Platform (2021 PPP): NSS consumption rounds 1977-78 to 2011-12, HCES 2022-23 and 2023-24; the lineup for other years.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://pip.worldbank.org/country-profiles/IND" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each dot is one national consumption survey. The World Bank groups them into spells it treats as comparable: the three rounds from 1993-94 to 2009-10 used the same questions; 2011-12 asked about some items over a different recall period; the HCES of 2022-23 was redesigned, with more items asked over several visits. A line joins dots only inside a spell. The drop between spells mixes real change with the change in the questionnaire, and nobody can fully separate the two.</p>
+            <p>The recall period matters because people remember a week's vegetables better than a month's, and a year's clothes differently from a month's. A longer list of items and better recall both record more spending, and so fewer people below any line.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of PIP, September 2026</span>
+            <p>Across <b id="ex-re-n">–</b> surveys in <b id="ex-re-spells">–</b> comparable spells, the share below $3.00 a day went from <b id="ex-re-77">–</b> in <span id="ex-re-77r">–</span> to <b id="ex-re-11">–</b> in <span id="ex-re-11r">–</span>, then <b id="ex-re-22">–</b> in <span id="ex-re-22r">–</span> and <b id="ex-re-23">–</b> in <span id="ex-re-23r">–</span>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 04 the gap years: inputs poverty-pip-lineup (headcount_3_00, _nowcast, poor_3_00, meta.estimationType), poverty-pip-2011/2022/1993 survey points; evergreen + As of -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>A decade without a survey</h2><span class="line"></span><span class="unit">What the gap did to what we know</span></div>
+    <div class="break">
+      <figure id="cb-gap" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Between 2011-12 and 2022-23 India's poverty figures are estimates, not measurements</h3>
+            <div class="sub">Share below $3.00 a day, per cent: the World Bank's estimate for each calendar year (pale; dashed after the last survey) and the survey readings (dark).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-gap">–</div><div class="c">with no national survey</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Survey reading</button>
+            <button class="chip"><i style="background:#B9C3F3"></i>World Bank estimate</button>
+          </div>
+          <div class="plotzone"><div id="plot-gap" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: World Bank, Poverty and Inequality Platform, lineup estimates (fill_gaps) and survey estimates, 2021 PPP.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://pip.worldbank.org/country-profiles/IND" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The NSS consumption survey of 2017-18 was completed but never released, and the next survey came only in 2022-23. For the years between, the World Bank fills the gap with a statistical model, anchored on the surveys either side and moved by growth in national accounts and other data. A year's estimate is aligned to the calendar year, so it does not equal the survey reading for the overlapping year.</p>
+            <p>The model cannot see what happened to the poor in particular: a drought, a lockdown or a rise in rural wages moves real lives but shows up only through the national average. For those years we do not know India's poverty rate; we have a well-made guess.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of PIP, September 2026</span>
+            <p>For the <b id="ex-ga-n">–</b> calendar years without a survey, the World Bank estimates the share below $3.00 a day fell from <b id="ex-ga-a">–</b> in <b id="ex-ga-ay">–</b> to <b id="ex-ga-b">–</b> in <b id="ex-ga-by">–</b>, with a rise in the pandemic year, from <b id="ex-ga-19">–</b> in 2019 to <b id="ex-ga-20">–</b> in 2020. Its nowcast for <b id="ex-ga-nowy">–</b> is <b id="ex-ga-now">–</b>, about <b id="ex-ga-poor">–</b> people.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 how many, how deep: inputs poverty-pip-<spell>.poor_3_00, poor_4_20, poverty_gap_*, poverty_severity_3_00, reporting_pop; evergreen + As of -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>How many, and how far below</h2><span class="line"></span><span class="unit">Counts and the poverty gap</span></div>
+    <div class="break">
+      <figure id="cb-poor" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Fewer Indians are below $3.00 a day than at any survey since 1977</h3>
+            <div class="sub">People below $3.00 a day (dark) and below $4.20 a day (light), million, at each survey. Computed from the World Bank's share and population.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-poor">–</div><div class="c">below $3.00, latest survey</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Below $3.00 a day</button>
+            <button class="chip"><i style="background:#E7D2B0"></i>Below $4.20 a day</button>
+          </div>
+          <div class="plotzone"><div id="plot-poor" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: World Bank, Poverty and Inequality Platform (headcount and population), 2021 PPP; counts computed here. Survey designs differ across spells (section 03).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://pip.worldbank.org/country-profiles/IND" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A falling share can still mean a rising count when the population grows; the bars show the people. The poverty gap adds depth: it averages, over everyone, how far below the line each person falls (zero for the non-poor), as a share of the line. Two countries with the same headcount can have very different gaps.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of PIP, September 2026</span>
+            <p>In <span id="ex-po-r">–</span>, <b id="ex-po-n">–</b> Indians were below $3.00 a day and <b id="ex-po-n42">–</b> below $4.20; the most below $3.00 at any survey was <b id="ex-po-pk">–</b>, in <span id="ex-po-pkr">–</span>. The poverty gap at $3.00 was <b id="ex-po-gap">–</b> of the line: those below it fell short by <b id="ex-po-short">–</b> of the line on average, about <b id="ex-po-shortr">–</b>. At $4.20 the gap was <b id="ex-po-gap42">–</b>; the severity index at $3.00 was <b id="ex-po-sev">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 inequality: inputs poverty-pip-<spell>.gini, mean, median, mld, polarization, decile1..10, spl, spr, survey_mean_lcu; evergreen + As of -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>How unequal</h2><span class="line"></span><span class="unit">Consumption inequality</span></div>
+    <div class="break">
+      <figure id="cb-gini" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Consumption inequality is lower in the new survey than in any before it</h3>
+            <div class="sub">Gini index of consumption per person, every survey. Lines join only comparable surveys.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-gini">–</div><div class="c">Gini, latest survey</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-gini" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: World Bank, Poverty and Inequality Platform. Consumption, not income or wealth.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://pip.worldbank.org/country-profiles/IND" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The Gini index runs from 0, where everyone consumes the same, to 100, where one person consumes everything. Consumption is far more equal than income or wealth: the rich save much of what they earn, and household surveys rarely reach the very rich at all. A low consumption Gini says little about inequality of income or wealth, which this source does not measure.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of PIP, September 2026</span>
+            <p>The Gini was <b id="ex-gi-now">–</b> in the latest survey, <b id="ex-gi-prev">–</b> in the one before and <b id="ex-gi-11">–</b> in 2011-12. The average Indian consumed <b id="ex-gi-mean">–</b> a day and the median Indian <b id="ex-gi-med">–</b> (2021 PPP); in rupees the average was <b id="ex-gi-meanr">–</b> a month at survey prices. The World Bank's societal poverty line, which rises with the median, stood at <b id="ex-gi-spl">–</b> a day, with <b id="ex-gi-spr">–</b> of Indians below it.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-deciles" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The richest tenth of Indians consumes several times as much as the poorest tenth</h3>
+            <div class="sub">Share of all household consumption by tenth of the population, ranked from the poorest, per cent. Bars are the latest survey; rings the one before (same design). The dashed line marks an equal share, 10%.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-deciles">–</div><div class="c">richest tenth over poorest tenth</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i><span id="lg-dec-now">Latest</span></button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #5F6675"></i><span id="lg-dec-prev">Previous</span></button>
+          </div>
+          <div class="plotzone"><div id="plot-deciles" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: World Bank, Poverty and Inequality Platform, decile shares of consumption.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://pip.worldbank.org/country-profiles/IND" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Line all Indians up by how much they consume a day, split the line into ten equal groups, and add up what each group consumes. If consumption were equal, each tenth would have 10%. The <a href="/guides/consumption/">consumption guide</a> shows the same survey in rupees, rural and urban, by fractile.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of PIP, September 2026</span>
+            <p>The richest tenth accounted for <b id="ex-dc-top">–</b> of all consumption and the poorest tenth for <b id="ex-dc-bot">–</b>: the richest tenth consumed <b id="ex-dc-x">–</b> as much. The poorest four tenths together had <b id="ex-dc-b40">–</b>. In the survey before, the richest tenth's share was <b id="ex-dc-top0">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 the numbers people quote: inputs poverty-pip-2022 (headcount_*, spr), poverty-pip-2011.headcount_3_00, poverty-wdi (SI.POV.NAHC, SI.POV.MPWB, SI.POV.MPUN); evergreen + As of -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>Why the numbers differ</h2><span class="line"></span><span class="unit">Every poverty figure in circulation, side by side</span></div>
+    <div class="break">
+      <figure id="cb-quotes" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>India's poverty rate is anything from a few per cent to four in five, depending on the yardstick</h3>
+            <div class="sub">Share of Indians counted as poor under each measure the World Bank publishes for India, per cent, with its year. Grey marks older figures from surveys of a different design.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-quotes">–</div><div class="c">range across measures</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-quotes" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: World Bank, Poverty and Inequality Platform and World Development Indicators (SI.POV.NAHC, SI.POV.MPWB, SI.POV.MPUN).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.worldbank.org/topic/poverty?locations=IN" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each measure answers a different question. The $3.00 line asks who is destitute by a global standard. The $4.20 and $8.30 lines ask who is poor by the standards of countries a little or much richer than India. The societal line rises with the median, asking who has fallen behind their own country. India's national line, last set by the Tendulkar committee and last applied to 2011-12, uses Indian prices and consumption baskets. Multidimensional measures count deprivations beyond money: the UNDP and Oxford index counts homes without electricity, clean fuel, schooling or sanitation and leaves consumption out, while the World Bank's measure adds such deprivations to the $3.00 line.</p>
+            <p>India has had no official national poverty line since 2011-12. The Rangarajan committee proposed one in 2014; the government did not adopt it.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of PIP, September 2026</span>
+            <p>The last official national-line figure, for <span id="ex-qu-naty">–</span>, was <b id="ex-qu-nat">–</b>; the World Bank's $3.00 figure for the same survey was <b id="ex-qu-wb11">–</b>. The World Bank's multidimensional measure for <span id="ex-qu-mpwby">–</span> counts <b id="ex-qu-mpwb">–</b> of Indians as poor; the UNDP and Oxford measure for <span id="ex-qu-mpuny">–</span>, <b id="ex-qu-mpun">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 rural and urban: a cut this source does not serve; disclosed, linked -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>Rural and urban</h2><span class="line"></span><span class="unit">A cut this source does not publish</span></div>
+    <div class="prose">
+      <p>The World Bank's current release publishes India's poverty only for the country as a whole. It serves no rural or urban figures for any survey, and its World Development Indicators carry none either. So this guide cannot say how many rural or urban Indians fall below $3.00 a day; we do not know from this source.</p>
+      <p>The survey itself does split. The <a href="/guides/consumption/">consumption guide</a> shows what rural and urban households spend in rupees, average and fractile by fractile, from the same HCES rounds. Comparing those rupee figures with the rupee values of the lines above needs care: the World Bank converts at one national price level, while prices in villages and cities differ.</p>
+    </div>
+  </section>
+
+  <!-- § 09 every cut: every series of the PIP spell bundles, the lineup and poverty-wdi, as tables built at render time -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>Every cut</h2><span class="line"></span><span class="unit">All the figures behind this guide</span></div>
+    <div class="prose">
+      <p>Every measure PIP publishes for India, at every survey; the World Bank's estimates for every year; and every poverty and distribution series in the World Development Indicators. All of it downloads below.</p>
+    </div>
+    <div class="em-table break">
+      <table>
+        <caption style="text-align:left;padding:0 0 .6rem">World Bank PIP: India, every measure at every survey. Shares in per cent; money in 2021 PPP dollars a day per person unless stated. Columns from different survey designs are not comparable.</caption>
+        <thead><tr><th>Measure</th>{cols.map((c) => <th class="n">{c.round}</th>)}</tr></thead>
+        <tbody>{pipRows.map((r) => <tr><td class="w">{r.label}</td>{r.vals.map((x) => <td class="n">{nf(x)}</td>)}</tr>)}</tbody>
+      </table>
+    </div>
+    <div class="em-table break">
+      <table>
+        <caption style="text-align:left;padding:1.4rem 0 .6rem">World Bank lineup: model estimates for every calendar year, per cent below each line, and people below $3.00 a day (million). Not survey readings.</caption>
+        <thead><tr><th>Year</th><th>Kind of estimate</th><th class="n">Below $3.00</th><th class="n">Below $4.20</th><th class="n">Below $8.30</th><th class="n">Below $3.00, million</th></tr></thead>
+        <tbody>{lu.map((r) => <tr><td class="nw">{r.y}</td><td>{r.kind}</td><td class="n">{nf(r.h3)}</td><td class="n">{nf(r.h42)}</td><td class="n">{nf(r.h83)}</td><td class="n">{nf(r.p3)}</td></tr>)}</tbody>
+      </table>
+    </div>
+    <div class="em-table break">
+      <table>
+        <caption style="text-align:left;padding:1.4rem 0 .6rem">World Development Indicators: every poverty and distribution series for India. WDI calls these income shares; for India they are consumption. WDI joins surveys of different designs in one series.</caption>
+        <thead><tr><th>Indicator</th><th>Code</th><th>Values</th></tr></thead>
+        <tbody>{wdiRows.map((r) => <tr><td class="w">{r.label}</td><td class="nw">{r.code}</td><td>{r.obs.map(([y, x]) => `${y}: ${x}`).join(", ")}</td></tr>)}</tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- § 10 what this measures: evergreen -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="prose">
+      <p>The World Bank's Poverty and Inequality Platform takes each national household consumption survey, converts every household's spending per person into 2021 purchasing-power dollars a day using India's price index and the International Comparison Program's conversion factor, and counts the people below each line. It also publishes the distribution itself: the mean and median, the Gini index, and the share of consumption going to each tenth of the population.</p>
+      <p>For India the surveys are the NSS consumer expenditure rounds from 1977-78 to 2011-12 and the Household Consumption Expenditure Surveys (HCES) of 2022-23 and 2023-24, run by the National Statistics Office. They measure what households spend and consume, including food grown at home, not what they earn. The World Bank, not the Government of India, sets the lines.</p>
+      <p>Consumption is measured per person, with no allowance for the fact that children need less than adults or that a family of five shares one roof. Each PIP release can revise past estimates, for example when new price data or population figures arrive.</p>
+    </div>
+  </section>
+
+  <!-- § 11 misreadings: evergreen -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>How to misread these numbers</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li><span class="no">1</span><div><h3>"$3 a day is ₹250, so the poor live on ₹250 a day."</h3><p>The line is in purchasing-power dollars, not market dollars. At Indian prices it comes to a few dozen rupees a day per person, as the plate on lines shows.</p></div></li>
+      <li><span class="no">2</span><div><h3>"Poverty collapsed between 2011-12 and 2022-23."</h3><p>Partly. The two figures come from surveys with different questionnaires, and the redesigned survey records more consumption. Some of the fall is real, some is the new ruler; the World Bank does not join the two.</p></div></li>
+      <li><span class="no">3</span><div><h3>"Extreme poverty is over, so nobody in India is poor."</h3><p>The $3.00 line is a floor set for the poorest countries. By the line typical of countries at India's income level, $4.20, a much larger share is poor, and by the $8.30 line most Indians are.</p></div></li>
+      <li><span class="no">4</span><div><h3>"Inequality is falling: the Gini is the lowest ever."</h3><p>That is consumption inequality, measured by a survey that rarely reaches the richest households. Income and wealth inequality are different measures, from other sources, and can move the other way.</p></div></li>
+      <li><span class="no">5</span><div><h3>"The World Bank's yearly figures are survey results."</h3><p>Only survey years are. The figures for other years, including all of 2012 to 2021 and every year after the last survey, are model estimates built from national accounts.</p></div></li>
+    </ul>
+  </section>
+
+  <GuideData slug="poverty" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>World Bank, Poverty and Inequality Platform, release of 22 September 2026, 2021 PPP (api.worldbank.org/pip/v1), country India, national level: survey estimates at each international line and a ladder of other lines, the lineup estimates, and the survey means table. Data vintage <b id="prov-vintage">–</b>. National-line and multidimensional measures from the World Development Indicators, vintage <b id="prov-wdi">–</b>.</p>
+        <p>Checked by hand: PIP and the World Bank's India country profile give 5.25% below $3.00 a day for 2022-23; WDI's rounded copy gives 5.3. The gate checks PIP against WDI at every survey.</p>
+      </div>
+      <div>
+        <h6>Method</h6>
+        <p>Shares are converted from fractions to per cent. Counts of poor people are computed as the share times PIP's population. Rupee values of the lines are the line times PIP's own PPP factor and CPI ratio for that survey; the gate checks that the same factors turn PIP's dollar mean into its rupee survey mean.</p>
+      </div>
+      <div>
+        <h6>Revisions and breaks</h6>
+        <p>Six comparable spells of surveys (1977-78; 1983; 1987-88; 1993-94 to 2009-10; 2011-12; 2022-23 to 2023-24), each its own file, never joined. The lineup is kept apart from the surveys, and its nowcasts after the last survey apart again. Each PIP release can revise the past.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Version 1.0, built October 2026 from the September 2026 PIP release. Revised with each release, twice a year.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, poverty and inequality</span>
+      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/poverty.client.js";
+</script>
+</Base>

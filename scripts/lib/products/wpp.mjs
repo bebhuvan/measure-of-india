@@ -153,6 +153,12 @@ function annualBundle(rows, cols, y0, y1, meta, labelSuffix = "") {
     const gaps = dates.filter((d, i) => i > first && i < last && data[i] == null);
     series[keyOf(c)] = { name: c, label: label + labelSuffix, unit, color: "#878D99", data, ...(gaps.length ? { gaps, gapsNote: "WPP serves no value for this year." } : {}) };
   }
+  // the total in the units a reader uses (derived, labelled): prose cites these, not thousands
+  const tp = series.tpopulation1july?.data;
+  if (tp) {
+    series.population_billion = { name: "population_billion", label: "Total population, 1 July, billion (derived: thousands / 1,000,000)", unit: "billion", color: "#878D99", data: tp.map((v) => (v == null ? null : Math.round(v / 1e2) / 1e4)) };
+    series.population_crore = { name: "population_crore", label: "Total population, 1 July, crore (derived: thousands / 10,000)", unit: "crore", color: "#878D99", data: tp.map((v) => (v == null ? null : Math.round(v / 1e2) / 1e2)) };
+  }
   return { meta, dates, series };
 }
 

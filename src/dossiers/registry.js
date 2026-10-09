@@ -393,6 +393,60 @@ export const DOSSIERS = [
     register: { id: "reg-deposits", label: "Bank deposits", unit: "Annual, RBI BSR-2, as on 31 March, ₹ lakh crore", historyCol: "Since 2019" },
     bundles: ["deposits-owners", "deposits-owners-2005", "deposits-population", "deposits-term-rates", "deposits-term-maturity", "deposits-term-size", "deposits-term-size-2026"],
   },
+  // --- worldbank family session (2026-10-09): poverty (World Bank PIP), population (UN WPP, WDI) ---
+  {
+    slug: "poverty",
+    no: "15",
+    section: "Consumption",
+    name: "Poverty and inequality, World Bank PIP",
+    title: "Poverty and inequality",   // the topic as a reader names it: nav, lists, search
+    kickerTitle: "Poverty and inequality, World Bank PIP",
+    crumbTitle: "Poverty and inequality, PIP",
+    headline: "How many Indians are poor <i>depends on the line.</i>",
+    ogTitle: "How many Indians are poor depends on the line.",
+    blurb: "The share of Indians living below the World Bank's international poverty lines, from every consumption survey since 1977-78: what each line means in rupees, why the numbers people quote differ, and what a decade without a survey did to what we know.",
+    description: "Poverty and inequality in India from the World Bank's Poverty and Inequality Platform: headcounts at $3.00, $4.20 and $8.30 a day (2021 PPP), the poverty gap, the Gini index and consumption shares by decile, survey by survey since 1977-78.",
+    rssDescription: "The share of Indians below the World Bank's poverty lines, survey by survey. Revised with each PIP release.",
+    stamp: { dateStyle: "release", vintageStyle: "release", vintagePrefix: "PIP release " },
+    statusNote: "Revised with each PIP release, twice a year",
+    version: "v1.0",
+    currentBundle: "poverty-pip-2022",
+    calendar: "calendar",
+    bands: null,
+    proseConstants: [3, 4.2, 8.3, 3.0, 4.20, 8.30, 2021, 2011, 100, 10, 40],   // the three lines, the PPP year, the last official line (2011-12), decile arithmetic
+    spark: { bundle: "poverty-pip-lineup", series: "headcount_3_00" },
+    prose: true,
+    proseInputs: [],   // the lineup and older spells are other rulers: facts.mjs keeps them out of the sheet
+    register: { id: "reg-poverty", label: "Poverty", unit: "Survey years, World Bank PIP, 2021 PPP", historyCol: "Lineup, 1981 to 2023", latestCol: "2023-24", agoCol: "2022-23" },
+    bundles: ["poverty-pip-2022", "poverty-pip-2011", "poverty-pip-1993", "poverty-pip-1987", "poverty-pip-1983", "poverty-pip-1977", "poverty-pip-lineup", "poverty-wdi", "hces-mpce", "hces-fractiles"],
+  },
+  {
+    slug: "population",
+    no: "16",
+    section: "Social",
+    name: "Population, UN WPP and World Bank",
+    title: "Population",   // the topic as a reader names it: nav, lists, search
+    kickerTitle: "Population, UN World Population Prospects",
+    crumbTitle: "Population, UN WPP",
+    headline: "How many of us, <i>and how old.</i>",
+    ogTitle: "How many of us, and how old.",
+    blurb: "India's population since 1950 and the UN's projections to 2100: how old the country is, when its working-age share peaks, how fast fertility fell, how long people live, and how fast its cities grow.",
+    description: "India's population from the UN World Population Prospects 2024 and the World Bank's WDI: estimates from 1950, projections to 2100 drawn as projections, age structure, dependency, fertility, life expectancy, urbanisation and migration.",
+    rssDescription: "India's population, age structure, fertility, cities and migration, from the UN and the World Bank. Revised with each WPP revision.",
+    stamp: { dateStyle: "vintageMonth", vintageStyle: "vintage", vintagePrefix: "WPP 2024, vintage " },
+    statusNote: "Revised with each UN WPP revision, every two years",
+    version: "v1.0",
+    currentBundle: "population-wpp",
+    calendar: "calendar",
+    bands: null,
+    proseConstants: [2.1, 15, 64, 65, 100, 1000, 1950, 2011, 2024, 2100],   // replacement fertility, the age bands, census and WPP years
+    spark: { bundle: "population-wpp", series: "tpopulation1july" },
+    prose: true,
+    proseInputs: ["population-wpp-age"],   // estimates only: projections are drawn on the plates, never narrated from the sheet
+    register: { id: "reg-population", label: "Population", unit: "Annual, UN WPP 2024 estimates, 1950 to 2023", historyCol: "1950 to 2023" },
+    bundles: ["population-wpp", "population-wpp-projection", "population-wpp-variants", "population-wpp-age", "population-wpp-age-projection", "population-wdi", "population-wdi-vital", "population-wdi-urban", "population-wdi-migration"],
+  },
+  // --- end worldbank family block ---
 ];
 export const bySlug = Object.fromEntries(DOSSIERS.map((d) => [d.slug, d]));
 

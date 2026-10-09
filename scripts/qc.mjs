@@ -287,6 +287,32 @@ const PAGES = [
     ["ex-p-women", (b) => fmt.pct1(100 * b["deposits-owners"].series.female_total.data.at(-1) / b["deposits-owners"].series.all_total.data.at(-1))],
     ["prov-vintage", (b) => b["deposits-owners"].meta.vintage],
   ]},
+  // worldbank family (2026-10-09): every check renders through fmt from the bundles
+  { url: "/guides/poverty/", slug: null, minPlots: 7, checks: [
+    ["rb-h3", (b) => fmt.pct2(b["poverty-pip-2022"].series.headcount_3_00.data.at(-1))],
+    ["rb-h42", (b) => fmt.pct2(b["poverty-pip-2022"].series.headcount_4_20.data.at(-1))],
+    ["ex-la-3", (b) => fmt.pct1(b["poverty-pip-2022"].series.headcount_3_00.data.at(-1))],
+    ["ex-la-83", (b) => fmt.pct1(b["poverty-pip-2022"].series.headcount_8_30.data.at(-1))],
+    // the rupee value of $3.00 a day: line x PIP's PPP factor x CPI ratio, at the latest survey
+    ["ex-la-r3", (b) => { const s = b["poverty-pip-2022"].series; return fmt.inrR(3 * s.ppp.data.at(-1) * s.cpi.data.at(-1)); }],
+    ["ex-po-n", (b) => fmt.num1(b["poverty-pip-2022"].series.poor_3_00.data.at(-1)) + " million"],
+    ["pv-gini", (b) => fmt.num1(b["poverty-pip-2022"].series.gini.data.at(-1))],
+    ["ex-dc-top", (b) => fmt.pct1(b["poverty-pip-2022"].series.decile10.data.at(-1))],
+    ["ex-re-11", (b) => fmt.pct1(b["poverty-pip-2011"].series.headcount_3_00.data[0])],
+    ["ex-qu-nat", (b) => fmt.pct1(b["poverty-wdi"].series.si_pov_nahc.data.filter((v) => v != null).at(-1))],
+    ["prov-vintage", (b) => b["poverty-pip-2022"].meta.vintage],
+  ]},
+  { url: "/guides/population/", slug: null, minPlots: 11, checks: [
+    ["rb-pop", (b) => (b["population-wpp"].series.tpopulation1july.data.at(-1) / 1e6).toFixed(3) + " billion"],
+    ["n-tfr", (b) => fmt.num2(b["population-wpp"].series.tfr.data.at(-1))],
+    ["n-age", (b) => fmt.num1(b["population-wpp"].series.medianagepop.data.at(-1)) + " years"],
+    ["ex-wi-now", (b) => fmt.pct1(b["population-wpp-age"].series.share_15_64.data.at(-1))],
+    ["ex-li-now", (b) => fmt.num1(b["population-wpp"].series.lex.data.at(-1))],
+    ["ex-cu-2100", (b) => (b["population-wpp-projection"].series.tpopulation1july.data.at(-1) / 1e6).toFixed(2) + " billion"],
+    ["ex-bi-deaths", (b) => fmt.num1(b["population-wpp"].series.deaths.data.at(-1) / 1e3) + " million"],
+    ["ex-ur-last", (b) => fmt.pct1(b["population-wdi-urban"].series.sp_urb_totl_in_zs.data.at(-1))],
+    ["prov-vintage", (b) => b["population-wpp"].meta.vintage],
+  ]},
   { url: "/", slug: null, minPlots: 1, checks: [
     // the CPI print is the 2024-base series; core stays on the 2012 base
     // (no weights served for the new base), labelled "to Dec 2025"

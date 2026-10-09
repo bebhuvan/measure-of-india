@@ -208,6 +208,26 @@ const CARDS = [
     yStep: 10, fmt: (v) => v.toFixed(1) + "%", mr: 220,
     foot: (b, S) => `Manufacturing ${S.mva_pct_gdp.data.at(-1).value.toFixed(1)}% of GDP · 2025 · Source: World Bank WDI`,
   },
+  // worldbank family (2026-10-09)
+  {
+    // the lineup gives the shape; the foot quotes the survey reading
+    slug: "poverty", bundleSlug: "poverty-pip-lineup",
+    keys: ["headcount_3_00", "headcount_4_20"], d0: 0, d1: 90, band: null, trend: null,
+    yStep: 20, fmt: (v) => v.toFixed(1) + "%", mr: 260,
+    prep: (S) => {
+      const keep = (s) => ({ ...s, data: s.data.filter((d) => d.value != null) });
+      S.headcount_3_00 = { ...keep(S.headcount_3_00), label: "$3.00 line, estimate", color: "#2E4BD8" };
+      S.headcount_4_20 = { ...keep(S.headcount_4_20), label: "$4.20 line, estimate", color: "#5F6675" };
+    },
+    foot: (b) => { const s = load("poverty-pip-2022"); return `Share below each line, World Bank estimates to ${b.meta.lastSurveyYear}. Survey reading, HCES ${s.meta.surveys.at(-1).period}: ${s.series.headcount_3_00.data.at(-1).toFixed(1)}% below $3.00. Source: World Bank PIP`; },
+  },
+  {
+    slug: "population", bundleSlug: "population-wpp",
+    keys: ["tpopulation1july"], d0: 0, d1: 1.6, band: null, trend: null,
+    scale: 1e-6, yStep: 0.4, fmt: (v) => v.toFixed(2) + " bn", mr: 200,
+    prep: (S) => { S.tpopulation1july = { ...S.tpopulation1july, label: "Population", color: "#2E4BD8" }; },
+    foot: (b, S) => `India's population, UN estimate, ${b.dates.at(-1).slice(0, 4)}: ${S.tpopulation1july.data.at(-1).value.toFixed(3)} billion. Source: UN World Population Prospects 2024`,
+  },
 ];
 
 await ensureFonts();

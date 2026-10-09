@@ -1321,7 +1321,7 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
     checkMeta(b, slug, "population");
     checkFreshness(b, slug, {}, "population");
     checkCadence(b.dates, 12, slug);
-    const sr = Object.fromEntries(Object.entries(b.series).map(([k, s]) => [k, { thousand: [-1e5, 3e6], pct: [-10, 100], per_1000: [-60, 1000], years: [0, 120], per_woman: [0, 10], ratio: [0, 250], per_sq_km: [0, 1000], per_100: [0, 200], doubling_years: [0, 10000] }[s.unit] ?? (fail(`${slug}.${k}: unit "${s.unit}" has no range`), [0, 0])]));
+    const sr = Object.fromEntries(Object.entries(b.series).map(([k, s]) => [k, { thousand: [-1e5, 3e6], pct: [-10, 100], per_1000: [-60, 1000], years: [0, 120], per_woman: [0, 10], ratio: [0, 250], per_sq_km: [0, 1000], per_100: [0, 200], doubling_years: [0, 10000], billion: [0, 3], crore: [0, 300] }[s.unit] ?? (fail(`${slug}.${k}: unit "${s.unit}" has no range`), [0, 0])]));
     checkRange(b, 0, 0, slug, sr);
   }
   withBundle("population-wpp", (e) => withBundle("population-wpp-projection", (p) => {
@@ -1368,9 +1368,9 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
     const b = load(slug);
     checkMeta(b, slug, "poverty", b.meta.base, b.meta.frequency);
     checkFreshness(b, slug, slug === "poverty-pip-lineup" || slug === "poverty-pip-2022" ? {} : { stale: false }, "poverty");
-    if (b.meta.frequency === "annual") checkCadence(b.dates, 12, slug);
+    if (slug === "poverty-pip-lineup") checkCadence(b.dates, 12, slug);
     checkRange(b, 0, 0, slug, Object.fromEntries(Object.entries(b.series).map(([k, s]) => [k, PR[s.unit] ?? (fail(`${slug}.${k}: unit "${s.unit}" has no range`), [0, 0])])));
-    if (b.meta.frequency !== "irregular" && slug !== "poverty-pip-lineup") fail(`${slug}: a survey spell bundle must be irregular`);
+    if (b.meta.frequency === "annual" && slug !== "poverty-pip-lineup") checkCadence(b.dates, 12, slug);
     if (slug === "poverty-pip-lineup") continue;
     const lines = Object.keys(b.series).filter((k) => /^headcount_\d+_\d\d$/.test(k)).map((k) => [Number(k.slice(10).replace("_", ".")), k]).sort((x, y) => x[0] - y[0]);
     b.dates.forEach((d, i) => {

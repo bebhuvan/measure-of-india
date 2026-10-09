@@ -50,7 +50,7 @@ const FREE_FIELDS = {
   polarization: ["Polarisation index", "index", false],
   spl: ["Societal poverty line, 2021 PPP $ a day", "ppp_usd_day", false],
   spr: ["Societal poverty rate", "pct", true],
-  pg: ["Prosperity gap (average factor by which consumption falls short of $25 a day)", "ratio", false],
+  pg: ["Prosperity gap: the average factor by which consumption falls short of the prosperity standard ($28 a day, 2021 PPP, as WDI states it)", "ratio", false],
   ppp: ["PPP conversion factor used (rupees per 2021 international $)", "inr_per_ppp_usd", false],
   cpi: ["CPI relative to 2021 used by PIP (2021 = 1)", "ratio", false],
   reporting_pop: ["Population the estimate refers to", "persons", false],
@@ -108,7 +108,8 @@ export async function buildPip(root, dcfg) {
     for (const s of Object.values(series)) if (s.data.every((v) => v == null)) throw new Error(`pip: ${spell} ${s.name} is empty`);
     const slug = `poverty-pip-${years[0]}`;
     bundles[slug] = {
-      meta: { ...meta0, frequency: "irregular", base: `2021 PPP, comparable spell ${spell.replace(/\s+/g, "")}`,
+      // a spell of consecutive yearly surveys (HCES 2022-23, 2023-24) is annual; the rest irregular
+      meta: { ...meta0, frequency: years.length > 1 && years.every((y, i) => i === 0 || y === years[i - 1] + 1) ? "annual" : "irregular", base: `2021 PPP, comparable spell ${spell.replace(/\s+/g, "")}`,
         latestPeriod: String(years.at(-1)), spell, surveys: rows.map((r) => ({ year: r.reporting_year, survey: r.survey_acronym, period: sm(r.reporting_year)?.survey_time ?? null, welfare: r.welfare_type, distribution: r.distribution_type })),
         coverage: `PIP surveys in the comparable spell ${spell.replace(" - ", " to ")}: ${rows.map((r) => `${r.survey_acronym} ${sm(r.reporting_year)?.survey_time ?? r.reporting_year}`).join(", ")}`,
         note: "Each date is a survey's reporting year (the survey's own period is in meta.surveys). Shares are per cent of people; money is 2021 PPP dollars a day per person. Poor counts are derived (headcount times population). Never join this spell to another." },
