@@ -17,7 +17,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { mospi } from "../mospi.mjs";
-import { MONTHS, round2, writeSeries, writeRaw, monthAxis, quarterAxis } from "../util.mjs";
+import { MONTHS, round2, writeSeries as writeSeriesFile, writeRaw, monthAxis, quarterAxis } from "../util.mjs";
 
 const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 
@@ -89,6 +89,17 @@ export async function buildRbi(root, dcfg, vintage) {
 
 /* ---- 2. curated bundles (pure: byCode rows in, series files out) ---- */
 function buildBundles(root, dcfg, vintage, byCode) {
+  // 2026-10: the external guide moved to RBI DBIE (scripts/lib/products/external-*.mjs). The
+  // bundles DBIE replaces are retired: no longer written (their raw dumps in data/raw/rbi stay as
+  // the audit trail). The merchandise-trade bundles are still written, for the trade guide's
+  // cross-check; no guide draws them.
+  const RETIRED = new Set(["rbi-forex", "rbi-bop", "rbi-bop-ratios", "rbi-debt", "rbi-debt-quarterly", "rbi-nri", "rbi-invisibles",
+    "rbi-exchange-rates", "rbi-forward-premia", "rbi-intervention", "rbi-fx-turnover"]);
+  const writeSeries = (r, rel, obj) => {
+    const b = path.basename(rel, ".json");
+    if (RETIRED.has(b)) { process.stdout.write(`rbi: ${b} retired (replaced by DBIE external-* bundles), not written\n`); return; }
+    writeSeriesFile(r, rel, obj);
+  };
   const tradeRows = byCode[dcfg.fetch.sub_indicators.trade] ?? [];
   const forexRows = byCode[dcfg.fetch.sub_indicators.forex] ?? [];
   const fxRows = byCode[dcfg.fetch.sub_indicators.usdinr] ?? [];

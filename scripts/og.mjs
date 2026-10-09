@@ -127,9 +127,11 @@ const CARDS = [
     foot: (b, S) => `IIP ${S.general.data.at(-1).value.toFixed(2)}% y/y · ${b.meta.latestPeriod} · Source: MoSPI/NSO · base 2022-23`,
   },
   {
-    slug: "external", bundleSlug: "rbi-forex",
-    keys: ["reserves"], d0: 0, d1: 750, band: null, trend: null, scale: 0.001, suffix: " bn",
-    foot: (b, S) => `Reserves $${(S.reserves.data.at(-1).value / 1000).toFixed(0)} bn · ${b.meta.latestPeriod} · Source: RBI`,
+    // external (lb/external): weekly reserves since 2001, RBI DBIE
+    slug: "external", bundleSlug: "external-reserves-weekly",
+    keys: ["total_usd"], d0: 0, d1: 900, band: null, trend: null, scale: 0.001, yStep: 200, fmt: (v) => "$" + v.toFixed(0) + " bn", mr: 200,
+    prep: (S) => { S.total_usd = { ...S.total_usd, label: "Reserves", color: "#2E4BD8" }; },
+    foot: (b, S) => `Foreign exchange reserves $${(S.total_usd.data.at(-1).value / 1000).toFixed(0)} bn, week of ${b.dates.at(-1)}. Source: RBI DBIE`,
   },
   {
     slug: "jobs", bundleSlug: "plfs-quarterly",
