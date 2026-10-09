@@ -35,69 +35,227 @@ pairs:
     scale: 1
     tolerance: 0.15
     note: "Our 2012-base headline is computed from the published group indices with the official weights (it tracks the published one within 0.14 pt); IDH carries the published all-India combined index."
-  - bundle: rbi-exchange-rates
+  - bundle: external-rupee
     series: usd
     idh: "FMFXUSDINA11M:IND"
     transform: level
     scale: 1
     tolerance: 0.01
-    note: "Monthly average ₹ per US$, RBI reference rate."
-  - bundle: rbi-forex
-    series: usdinr
+    note: "Monthly average ₹ per US$ (DBIE report 719). Flags expected for Mar 1992 to Feb 1993: 719 carries the official LERMS rate, IDH the market rate. A dozen later months differ by 0.01 to 0.03 between RBI tables."
+  - bundle: external-rupee-sdr
+    series: usd_avg
     idh: "FMFXUSDINA11M:IND"
     transform: level
     scale: 1
     tolerance: 0.01
-    note: "The same monthly average, carried in the reserves bundle."
-  - bundle: rbi-intervention
-    series: purchases
+    note: "The same monthly average from DBIE report 1374, which carries the market rate during the dual exchange rate (Mar 1992 to Feb 1993) where report 719 (external-rupee) carries the official rate."
+  - bundle: external-intervention
+    series: purchase
     idh: "FMFXRGPFXD11M:IND"
     transform: level
     scale: 0.000001
     tolerance: 1
     note: "RBI gross purchases of foreign currency in the month, US$ million."
-  - bundle: rbi-intervention
-    series: sales
+  - bundle: external-intervention
+    series: sale
     idh: "FMFXRGSFXD11M:IND"
     transform: level
     scale: 0.000001
     tolerance: 1
     note: "RBI gross sales of foreign currency in the month, US$ million."
-  - bundle: rbi-intervention
+  - bundle: external-intervention
     series: net
     idh: "FMFXRNPFXD11M:IND"
     transform: level
     scale: 0.000001
     tolerance: 1
     note: "Net purchase (+) or sale (−), US$ million."
-  - bundle: rbi-intervention
+  - bundle: external-intervention
     series: forward_outstanding
     idh: "FMFXFWORNL00M:IND"
     transform: level
     scale: 0.000001
     tolerance: 1
     note: "End-of-month outstanding net forward position, US$ million; ours is signed sales negative, IDH's net long position the same way."
-  - bundle: rbi-forward-premia
+  - bundle: external-forward-premia
     series: m1
     idh: "FMFXFPRD1M11W:IND"
     transform: monthly_mean
     scale: 1
     tolerance: 0.5
     note: "Ours is the RBI's monthly average; IDH is weekly (Friday) readings averaged here, so small gaps are construction, not error."
-  - bundle: rbi-forward-premia
+  - bundle: external-forward-premia
     series: m3
     idh: "FMFXFPRD3M11W:IND"
     transform: monthly_mean
     scale: 1
     tolerance: 0.5
     note: "As 1-month."
-  - bundle: rbi-forward-premia
+  - bundle: external-forward-premia
     series: m6
     idh: "FMFXFPRD6M11W:IND"
     transform: monthly_mean
     scale: 1
     tolerance: 0.5
     note: "As 1-month."
+  # ---- bis family session ----
+  - bundle: bis-property-cities
+    series: cities_18
+    idh: "MOHPNIDXAC23Q:IND"
+    transform: quarter_level
+    scale: 1
+    tolerance: 0.1
+    note: "RBI's 18-city all-India house price index (2022-23 = 100) as relayed by BIS. BIS lags RBI by a release: BIS's Q4 2025-26 is 115.85 (RBI's first print), RBI later revised it to 116.2, so the latest quarters may differ."
+  - bundle: bis-policy-rate
+    series: policy_rate
+    idh: "MOIRRBIRPO11W:IND"
+    transform: monthly_mean
+    scale: 1
+    tolerance: 0.25
+    note: "BIS's end-of-month policy rate against the mean of IDH's weekly repo rate in the month: equal except in months with a rate change (the mean blends the two rates), and in earlier decades when the RBI's policy rate was not the repo rate."
+  # ---- end bis family ----
+  # --- rates (atlas-rates) ---
+  # IDH's weekly policy-rate series map onto our month-end levels (the last week of each month
+  # wins); a change made after a month's last Friday shows as a one-month difference.
+  # Not paired: the daily call rate, T-bill auction yields, CD and CP rates (IDH carries them
+  # daily or weekly, and the cross-check compares monthly only), FBIL par and zero-coupon
+  # yields and corporate bond spreads (no Atlas bundle).
+  - bundle: rates-monthly
+    series: repo
+    idh: "MOIRRBIRPO11W:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.001
+    note: "Policy repo rate. Ours is the level in force at month-end from the Handbook and MPC resolutions; IDH's is the RBI's weekly (WSS) series."
+  - bundle: rates-monthly
+    series: reverse_repo
+    idh: "MOIRRBIRRO11W:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.001
+    note: "Fixed reverse repo rate."
+  - bundle: rates-monthly
+    series: sdf
+    idh: "MOIRRBISDF11W:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.001
+    note: "Standing deposit facility rate, from April 2022."
+  - bundle: rates-monthly
+    series: msf
+    idh: "MOIRRBIMSF11W:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.001
+    note: "Marginal standing facility rate, from May 2011."
+  - bundle: rates-monthly
+    series: bank_rate
+    idh: "MOIRRBIBKR11W:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.001
+    note: "Bank Rate."
+  - bundle: rates-monthly
+    series: crr
+    idh: "MOIRRBICRR11W:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.001
+    note: "Cash reserve ratio. The Handbook restates a June 2002 CRR date between editions (2002-06-01 or 2002-06-15)."
+  - bundle: rates-monthly
+    series: slr
+    idh: "MOIRRBISLR11W:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.001
+    note: "Statutory liquidity ratio."
+  - bundle: rates-call-monthly
+    series: average
+    idh: "CMMMCALLRT11D:IND"
+    transform: monthly_mean
+    scale: 1
+    tolerance: 0.2
+    note: "The Handbook's monthly average is weighted by turnover; IDH's daily series is averaged equally here, so the two can differ in volatile months."
+  - bundle: rates-gsec-curve
+    series: y10
+    idh: "FMDMGSEC1011M:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.1
+    note: "Ours is the RBI's month-end SGL yield at exactly 10 years to maturity; IDH's month-end 10-year yield may be read from a benchmark bond, so small gaps are expected."
+  # ---- external (lb/external, 2026-10): DBIE bundles of the external account ----
+  - bundle: external-reer-2015
+    series: reer_trade
+    idh: "FMFXERRTTR16M:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.05
+    note: "REER, 40 currencies, trade weights, 2015-16 = 100 (DBIE codes it '36')."
+  - bundle: external-reer-2015
+    series: reer_export
+    idh: "FMFXERRTEX16M:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.05
+    note: "REER, 40 currencies, export weights, 2015-16 = 100."
+  - bundle: external-reer-2015
+    series: neer_trade
+    idh: "FMFXERNTTR16M:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.05
+    note: "NEER, 40 currencies, trade weights, 2015-16 = 100."
+  - bundle: external-reer-2015
+    series: neer_export
+    idh: "FMFXERNTEX16M:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.05
+    note: "NEER, 40 currencies, export weights, 2015-16 = 100."
+  - bundle: external-reer6-2015
+    series: reer_trade
+    idh: "FMFXERRSTR16M:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.05
+    note: "REER, 6 currencies, trade weights, 2015-16 = 100."
+  - bundle: external-reer6-2015
+    series: neer_trade
+    idh: "FMFXERNSTR16M:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.05
+    note: "NEER, 6 currencies, trade weights, 2015-16 = 100."
+  - bundle: external-fdi
+    series: a_i_a_gross_inflows_gross_investment
+    idh: "EXBPCDIFDI11M:IND"
+    transform: level
+    scale: 0.000001
+    tolerance: 1
+    note: "Gross FDI inflows into India, monthly, US$ million (DBIE report 34)."
+  - bundle: external-fdi
+    series: a_i_direct_investment_to_india
+    idh: "EXBPNDIFDI11M:IND"
+    transform: level
+    scale: 0.000001
+    tolerance: 1
+    note: "Direct investment to India, net of repatriation, monthly, US$ million."
+  - bundle: external-fdi
+    series: b_i_b_fpis
+    idh: "EXBPNDIFII11M:IND"
+    transform: level
+    scale: 0.000001
+    tolerance: 1
+    note: "Net portfolio investment by FPIs, monthly, US$ million (IDH EXBPNDIFPI11M matches no single line of report 34)."
+  - bundle: external-fdi
+    series: a_i_a_i_equity
+    idh: "EXBPCDIDIE11M:IND"
+    transform: level
+    scale: 0.000001
+    tolerance: 1
+    note: "Gross FDI inflows, equity, monthly, US$ million."
+  # ---- end external ----
+
   # credit (lb/credit): sectoral deployment of bank credit, new format, levels. IDH rupees to
   # our ₹ lakh crore (1e-12). Every pair matches every month except March 2021, where IDH's
   # unadjusted series carries RBI's "excluding merger" figure (report 539) and ours the raw one.

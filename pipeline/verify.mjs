@@ -11,6 +11,8 @@ import { fileURLToPath } from "node:url";
 import { bySlug } from "../src/dossiers/registry.js";
 import { makePeriodIndex, yearLag, MONTHS_FULL } from "./lib/periods.mjs";
 import { SERIES_KWS } from "./lib/series-kws.mjs";
+import { makeAllowed, extractFigures, traces, KEY_SCALE } from "./lib/figures.mjs";
+import { unitOf } from "../src/dossiers/everycut.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const [file, slug] = process.argv.slice(2);
@@ -19,32 +21,56 @@ if (!file || !slug) { console.error("usage: node pipeline/verify.mjs <prose-file
 const facts = JSON.parse(fs.readFileSync(path.join(ROOT, "pipeline/out", `facts-${slug}.json`), "utf8"));
 const prose = fs.readFileSync(file, "utf8");
 
-// the allowed numeric vocabulary: every number in the facts sheet, rendered
-// every way the voice allows (1dp, 2dp, integer), plus absolute values
-// (prose says "fell 1.85%" for a -1.85 print) and pt deltas.
-const allowed = new Set();
-function addNum(v) {
-  if (typeof v !== "number" || !Number.isFinite(v)) return;
-  allowed.add(v.toFixed(2));
-  allowed.add(v.toFixed(1));
-  allowed.add(Math.abs(v).toFixed(2));
-  allowed.add(Math.abs(v).toFixed(1));
-  if (Number.isInteger(v)) allowed.add(String(v));
+// the allowed numeric vocabulary: every number in the facts sheet, rendered every way the
+// voice allows (0, 1, 2 dp, absolute values), and restated at another scale only through its
+// own series' unit (pipeline/lib/figures.mjs). Each number is walked with the unit of the
+// series it belongs to: facts.series is keyed by series key, movers carry a `key`, and a
+// section without a key takes its bundle's unit when every series there shares one.
+const allowed = makeAllowed();
+const addNum = (v, unit = null) => allowed.add(v, unit);
+const bundleUnits = new Map();
+function unitsOf(bundleSlug) {
+  if (!bundleSlug) return { byKey: new Map(), common: null };
+  if (!bundleUnits.has(bundleSlug)) {
+    const f = path.join(ROOT, "data/series", bundleSlug + ".json");
+    const byKey = new Map();
+    if (fs.existsSync(f)) {
+      const b = JSON.parse(fs.readFileSync(f, "utf8"));
+      for (const [k, sr] of Object.entries(b.series)) byKey.set(k, unitOf(b, sr));
+    }
+    const set = new Set(byKey.values());
+    bundleUnits.set(bundleSlug, { byKey, common: set.size === 1 ? [...set][0] : null });
+  }
+  return bundleUnits.get(bundleSlug);
 }
-function walk(o) {
+// a key that names its own scale ("peak_bn": 785.7, or a whole "bn": { ... } section) puts
+// every number under it at that scale, whatever series key sits inside
+const SCALE_KEY = /(?:^|_)(bn|billion|mn|million|cr|crore|lakh_crore|lakh|tn|trillion|thousand)$/;
+function walk(o, unit = null, U = { byKey: new Map() }, atScale = null) {
   if (o == null) return;
-  if (typeof o === "number") return addNum(o);
-  if (Array.isArray(o)) return o.forEach(walk);
-  // `ruler` names the base a number is on (facts.mjs rulerOf): structure, never a citable figure
-  if (typeof o === "object") return Object.entries(o).forEach(([k, v]) => { if (k !== "ruler") walk(v); });
+  if (typeof o === "number") return atScale ? allowed.addAtScale(o, atScale) : addNum(o, unit);
+  if (Array.isArray(o)) return o.forEach((x) => walk(x, unit, U, atScale));
+  if (typeof o === "object") {
+    const u = typeof o.key === "string" && U.byKey.has(o.key) ? U.byKey.get(o.key) : unit;
+    return Object.entries(o).forEach(([k, v]) => {
+      // `ruler` names the base a number is on (facts.mjs rulerOf): structure, never a citable figure
+      if (k === "ruler") return;
+      const ks = k.match(SCALE_KEY);
+      walk(v, U.byKey.has(k) ? U.byKey.get(k) : u, U, ks ? KEY_SCALE[ks[1]] : atScale);
+    });
+  }
   if (typeof o === "string") {
     // pull numbers out of strings like "0.66 pt below the 2% floor"
-    for (const m of o.matchAll(/-?\d+\.\d+|-?\d+/g)) addNum(parseFloat(m[0]));
+    for (const m of o.matchAll(/-?\d+\.\d+|-?\d+/g)) atScale ? allowed.addAtScale(parseFloat(m[0]), atScale) : addNum(parseFloat(m[0]), unit);
   }
 }
-walk(facts.series);
-walk(facts.cross);
-if (facts.legacy) walk(facts.legacy);
+const CUR = unitsOf(facts.bundle);
+walk(facts.series, CUR.common, CUR);
+walk(facts.cross, CUR.common, CUR);
+if (facts.climate) walk(facts.climate, CUR.common, CUR);
+if (facts.legacy) { const L = unitsOf("cpi"); walk(facts.legacy, L.common, L); }
+// bis family: India's position among the comparison economies (facts.peers)
+if (facts.peers) { walk(facts.peers.rankings); walk(facts.peers.china); walk(facts.peers.unitedStates); }
 // proseInputs summaries: the economic facts (extremes, spreads, medians,
 // contradictions) are citable; the structural fields are not — seriesCount
 // and the coverage note describe the SHEET, not the economy, and leaving
@@ -56,8 +82,12 @@ if (facts.legacy) walk(facts.legacy);
 if (facts.proseInputs) {
   for (const pi of facts.proseInputs) {
     const { seriesCount, coverage, tail, base, ruler, ...citable } = pi;
-    walk(citable);
-    if (tail) walk({ median: tail.median });
+    const PU = unitsOf(pi.bundle);
+    walk(citable, PU.common, PU);
+    if (tail) walk({ median: tail.median }, PU.common, PU);
+    // the breadth counts: citable as counts ("358 items", "32 rising"), never as rates
+    allowed.addCount(seriesCount);
+    for (const v of Object.values(tail ?? {})) allowed.addCount(v);
   }
 }
 // structural constants the dossier may cite (weights, shares, base years) —
@@ -66,18 +96,19 @@ const DOSSIER = bySlug[slug];
 if (!DOSSIER) { console.error(`verify: dossier "${slug}" is not in src/dossiers/registry.js`); process.exit(1); }
 for (const v of DOSSIER.proseConstants ?? []) addNum(v);
 
-// extract candidate figures from prose: decimals, percents, pt deltas
+// every figure in the prose, with its scale word (pipeline/lib/figures.mjs): ₹ and US$
+// amounts in lakh, crore, million, billion; percents and points; °C, mm; ratios; counts
 const failures = [];
 const seen = new Set();
-for (const m of prose.matchAll(/-?\d+(?:\.\d+)?\s*(?:%|per cent|pt|points?)/g)) {
-  const num = m[0].match(/-?\d+(?:\.\d+)?/)[0];
-  if (seen.has(num)) continue;
-  seen.add(num);
-  if (!allowed.has(num)) failures.push(`untraceable figure: "${m[0]}"`);
+for (const fig of extractFigures(prose)) {
+  const id = `${fig.str}|${fig.scale ?? ""}`;
+  if (seen.has(id)) continue;
+  seen.add(id);
+  if (!traces(fig, allowed)) failures.push(`untraceable figure: "${fig.raw}"${fig.scale ? ` (no facts number in a unit that restates as ${fig.scale})` : ""}`);
 }
 // bare years and ordinals ("six of the last seven months") — years checked loosely
 for (const m of prose.matchAll(/\b(19|20)\d{2}\b/g)) {
-  if (!allowed.has(m[0])) failures.push(`untraceable year: ${m[0]}`);
+  if (!allowed.plain.has(m[0])) failures.push(`untraceable year: ${m[0]}`);
 }
 
 // ---------- claim verification ----------

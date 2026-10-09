@@ -167,6 +167,317 @@ factories:
       summed; GVA is nominal (prices as much as product); the data lands with a
       two-year lag. Must contain a plain "we do not know".
 
+# ---- bis family session ----
+debt:
+  - id: current-reading.what-the-figures-say
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [total.latest, government.latest, households.estimated.lastMeasured.value, companies.estimated.lastMeasured.value]
+    minSeriesMentioned: 4        # the total and at least three of the borrowers
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
+    brief: >
+      The quarter's debt picture as a share of GDP, honest about what is measured.
+      Each series' "estimated" field says which readings are BIS estimates: since the
+      RBI's last financial accounts quarter, BIS extends private credit with bank
+      credit and keeps the household/company split fixed. So: name the total and
+      government (measured); give private credit and the credit gap as BIS estimates
+      and say so; never describe households or companies as rising, falling or
+      driving anything after the last measured quarter, because their split is
+      carried forward, not observed. Use their lastMeasured values (and period) for
+      who owes what. Bring in the debt service ratio and one comparison with China or
+      the United States from the peer rankings. Concede before qualifying.
+  - id: current-reading.what-they-do-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [households.latest]
+    brief: >
+      The honest limits: the latest quarters of private credit are BIS estimates scaled
+      from bank credit, with the household/company split frozen at the last measured
+      quarter (see each series' "estimated" field), so we do not know how households'
+      and companies' debts moved since then; these are national totals, so they cannot
+      say how many families or firms are stretched; a ratio to GDP moves with inflation
+      and growth as well as with borrowing. Must contain a plain "we do not know".
+
+housing:
+  - id: current-reading.what-the-figures-say
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [nominal_yoy.latest, real_yoy.latest]
+    minSeriesMentioned: 2        # nominal and real
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
+    brief: >
+      House prices in the quarter: the change on a year ago in rupees (nominal) and
+      after inflation (real), and where the real index stands against its own past.
+      Bring in the city spread from the RBI's 18-city summary (fastest and slowest
+      city on a year ago). Those city figures are one quarter LATER than the BIS
+      series (their latestPeriod is 2026-04, April to June 2026) and the latest
+      quarter is provisional: say so in the same sentence, and warn that single
+      cities swing with the mix of homes sold. Then how India's real change ranks
+      among the comparison economies. Concede before qualifying.
+  - id: current-reading.what-they-do-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [real_yoy.latest]
+    brief: >
+      Do not repeat the other column's figures: cite the real change once and no
+      other index level. The honest limits: an index of registered transactions in a few big cities
+      is not the price of every home; it says nothing about incomes, so it cannot by
+      itself say whether homes are affordable; registered values can sit below what
+      buyers actually pay. Must contain a plain "we do not know".
+
+# ---- services ----
+services:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [services.latest, finance_realty_prof.latest, trade_transport_comm.latest, public_admin_other.latest]
+    minSeriesMentioned: 4        # the services total and the three service groups
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
+    brief: >
+      The latest year on the 2022-23 base: services' share of gross value added and how it
+      moved, which of the three service groups is largest, and what the sibling sheets add:
+      the fastest and slowest service sub-industries in real terms (services-gva-2022-growth),
+      the latest month of services exports and imports (services-trade-monthly), and the
+      latest month of the trial ISP's sub-sectors (services-isp-growth). Name the estimate
+      (provisional, revised) where it matters. Concede what is genuine before qualifying it.
+      Periods differ by sheet: the share is for FY26; sub-industry growth stops at 2024-25
+      (FY25), the latest year with sub-industry detail; trade is May 2026; the ISP is July 2026.
+      Name each figure's own period, and call the ISP a trial. Services and goods shares add
+      to 100 by construction: never present one as explaining the other. Write every growth
+      rate or share with a per cent sign.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [services.latest]
+    brief: >
+      The honest limits: a share of output is not a share of jobs or incomes; the ISP is a
+      trial covering only the formal part of services, with no overall index; the latest
+      annual figures are provisional and will be revised; the informal service economy is
+      estimated, not measured each year. Must contain a plain "we do not know" sentence.
+      PLFS does publish services' share of jobs (about a third), so never say the number of
+      service jobs is unknown; what is not known is, for example, how fast the informal service
+      businesses grow year to year, since ASUSE runs a year or more behind.
+      Keep figures few, and write each with its unit (per cent, US$ billion). Talk only about
+      service industries; leave farms, factories and utilities out.
+# ---- end services ----
+
+# --- states (state economies) ---
+states:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [gap_current.latest, gap_current.min, richest_current.latest, poorest_current.latest]
+    minSeriesMentioned: 4        # the multiple, richest, poorest, and the spread or the middle state
+    # no mustName extremes: the sheet mixes units (a multiple, rupees, per cent), so its
+    # "top and bottom movers" compare unlike things and pushed the writer into doing so
+    mustAcknowledge: [contradictions]
+    brief: >
+      The gap between India's states in the latest year the fixed panel covers: the
+      richest state's income per person as a multiple of the poorest's, the two
+      figures themselves in rupees, and where the multiple stood
+      in 2011-12. The path was not steady: the multiple's low (gap_current.min) came
+      early, in FY14, below today's level, then it rose and has fallen again since; say
+      that plainly rather than calling the fall a steady drift. Say whether the spread
+      across all states narrowed, and how fast the
+      typical state grew in real terms (that figure is the median of all the states'
+      growth rates, not the growth of the median-income state; say "the typical state's
+      economy grew"). The sheet does not name the states: do not name any, and never
+      mention the sheet or your sources. Income per person is production, not earnings:
+      never write "earned". The sheet's figures are of different kinds (a multiple, rupees,
+      a percentage, a growth rate): never rank or compare one kind against another, and
+      never call the sheet a "basket". Concede before qualifying.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [gap_current.latest]
+    brief: >
+      The honest limits: income per person is production per resident, not what people
+      take home, so commuters and migrants distort it (states that receive workers look
+      richer, states that send them look poorer); every state counts once, whatever its
+      size; the latest year is an estimate each state will revise; the rupee distance
+      between richest and poorest can widen while the multiple narrows. Cite only the
+      multiple; the other column carries the numbers. Do not mention growth. Use
+      "they", never "he". Must contain a plain "we do not know".
+
+# --- worldbank family (2026-10-09): poverty (World Bank PIP) and population (UN WPP 2024) ---
+poverty:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [headcount_3_00.latest, headcount_4_20.latest, headcount_8_30.latest, gini.latest]
+    minSeriesMentioned: 4        # the three lines and one distribution measure
+    bannedWords: []
+    brief: >
+      Two short paragraphs on the latest survey (HCES 2023-24, PIP reporting year 2023) against
+      the one before it in the same comparable spell (HCES 2022-23, reporting year 2022): the
+      share of Indians below $3.00, $4.20 and $8.30 a day (2021 PPP), and the number of people
+      below $3.00. Say plainly how much the answer depends on the line. Then one distribution
+      fact: the Gini or the share of the richest and poorest tenths. Call the rounds 2022-23 and
+      2023-24. The facts cover only this survey design; give no figure for earlier surveys.
+      Write for a reader: never mention "the sheet", rankings or series names.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [headcount_3_00.latest]
+    brief: >
+      The honest limits: the lines are the World Bank's international lines, not an Indian
+      official line (India has none since 2011-12); consumption per person is not income or
+      wealth, and the survey misses the very rich; the redesigned HCES is not comparable with
+      2011-12, so part of the fall between them is the new questionnaire; the years between
+      surveys are World Bank model estimates. PIP publishes no rural or urban split for India.
+      Must contain a plain "we do not know".
+
+population:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [population_billion.latest, tfr.latest, medianagepop.latest, lex.latest]
+    minSeriesMentioned: 5        # population, fertility, age, life expectancy, and births or deaths
+    bannedWords: []
+    brief: >
+      Two short paragraphs on the UN's latest estimate year (WPP 2024, estimate for 2023): how
+      many Indians there are (cite population_billion or population_crore, never the thousands), how fast the
+      number grows, the fertility rate against replacement (2.1), the median age, life
+      expectancy, and births against deaths, and how long fertility has been falling. Say
+      nothing about projections: the facts hold estimates only, and the plates below carry the
+      UN's projections. Plain words, no jargon. Write for a reader: never mention "the sheet", rankings or series names.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [population_crore.latest]
+    brief: >
+      The honest limits of the estimate itself: India has not taken a census since 2011, so the
+      figure is the UN's model, built from that census, sample registration of births and
+      deaths, and surveys, and the next census will revise it; the UN re-estimates the whole
+      history every two years; a national figure hides large differences between states;
+      India's own official figures can differ. Do not discuss projections or forecasts. Plain,
+      literal sentences, no metaphors. Must contain a plain "we do not know".
+
+# --- climate (lb/climate) ---
+climate:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [temperature_anomaly.latest, temperature_2m.latest, climate.last12Mean]
+    minSeriesMentioned: 2        # the anomaly and the average temperature it is measured against
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
+    brief: >
+      The month just published: how far India's average temperature sat from the
+      1991-2020 average for that month, what the month's average actually was in
+      degrees, and where it ranks among the same month in every year since 1940.
+      Then the last twelve months as a whole and how many months of the current
+      year ran above their normal. State the rank once. Never describe the average
+      temperature rising or falling from one month to the next: it falls every year
+      from May into the monsoon, so only the anomaly and the same month a year
+      earlier carry meaning. Concede a cool or ordinary month plainly; one month is
+      weather, not climate.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [temperature_anomaly.latest, climate.century.change]
+    brief: >
+      The honest limits: one month is weather, and an anomaly against 1991-2020 hides
+      the warming already inside that baseline (the century figure from the station
+      record shows how much). The national average blurs states, days and nights,
+      and dry heat and humid heat. Recent months are revised. Do not repeat the
+      month's rank (the first paragraph gives it), and never describe the average
+      temperature rising or falling from month to month: that is the season. Must
+      contain a plain "we do not know".
+# --- end climate ---
+
+# ilo: the current bundle is the ILO's modelled participation (ilo-est-eap-2wap); the writer also
+# sees employment, unemployment, NEET, labour's share and hours (registry proseInputs)
+ilo:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [eap_2wap_sex_age_rt__sex_t__age_ythadult_yge15.latest, eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15.latest]
+    minSeriesMentioned: 4        # everyone, women, men and young people
+    mustAcknowledge: [contradictions]
+    brief: >
+      The ILO's modelled estimates for the latest year: how many Indians are in the labour
+      force, women against men, young people, and the direction since the low point of the
+      late 2010s. Say plainly that these are the ILO's model estimates, not a survey. Plain
+      words: no "basket", no "movers". Concede what is genuine before qualifying it.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15.latest]
+    brief: >
+      The honest limits: most years in the ILO's line are imputed by its model, not measured.
+      India did run surveys in many of those years (NSS rounds, then the PLFS); the ILO flags only
+      a few years as taken directly from one, so never say there was no survey;
+      each yearly edition rewrites the whole history; the ILO's definitions and calendar years
+      differ from MoSPI's usual-status figures, so the two never match and are never joined;
+      counting women's work at all depends on what the survey calls work. Must contain a
+      plain "we do not know".
+
+
+# --- rates (atlas-rates) ---
+rates:
+  - id: current-reading.what-the-print-says
+    maxSentences: 6
+    dateStamp: true
+    requiredFigures: [repo.latest, repo.previous, sdf.latest, msf.latest]
+    minSeriesMentioned: 3        # the repo rate and the corridor around it (floor, ceiling)
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
+    brief: >
+      Paragraph one: the decision of the latest Monetary Policy Committee meeting (the repo
+      rate after it and before it, the SDF floor and MSF ceiling that moved with it, and the
+      change in the cash reserve ratio over the year). Paragraph two: what banks were charging
+      and paying in the latest lending-rate release, using only figures the sheet gives for
+      loans or deposits and saying which is which (a deposit rate is never a lending rate),
+      and what a fixed deposit earned after inflation from the real-rate figures. Do not
+      describe the bond market. Name the month of the decision. Concede before qualifying.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 5
+    dateStamp: false
+    requiredFigures: [repo.latest]
+    brief: >
+      The honest limits, without repeating the figures of the other slot beyond the repo
+      rate itself: a change in the repo rate reaches loans priced off it within three months
+      and other loans far more slowly; the bank rates in the sheet describe months before the
+      decision, so they cannot show its effect yet; the minutes, with each member's reasons,
+      come about two weeks after a meeting. Real rates subtract the inflation that happened,
+      not what savers expected. Do not say anything about how the members voted. Must
+      contain a plain "we do not know" (for example: how quickly banks will pass the change on,
+      or where inflation goes next).
+
+# ---- external (lb/external, 2026-10): the quarter's balance of payments, RBI DBIE ----
+external:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [cross.bn.current_account.latest, cross.bn.goods.latest, cross.bn.services.latest, cross.bn.private_transfers.latest]
+    minSeriesMentioned: 6        # current account, goods, services, remittances, income, and the money that financed it
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
+    brief: >
+      Two short paragraphs on the latest quarter of India's balance of payments. The current
+      account balance first, against the quarter before and the same quarter a year earlier;
+      then what made it: the goods deficit against services (software above all), remittances
+      and income. Then how the gap was financed or not: direct investment, portfolio flows,
+      loans and NRI deposits, and the overall balance that moved the reserves. Cite every dollar
+      figure from cross.bn in US$ billion exactly as written there, never the US$ million series
+      values. Say plainly that this is the first (provisional) estimate.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [cross.reserves.latest_bn, cross.annual.ca_pct_gdp]
+    brief: >
+      The honest limits of one quarter's account. It is a provisional estimate and will be
+      revised, often by billions. One quarter is not a year: give the last full fiscal year's
+      current account as a share of GDP (cross.annual). The reserves have moved since the
+      quarter ended (cross.reserves, latest week and the peak), and reserves move with the
+      dollar value of gold and other currencies, not only with the RBI's trading. Must contain
+      a plain "we do not know" sentence about what the next revision or the current quarter
+      will show.
+# ---- end external ----
 # credit (lb/credit): the monthly sectoral credit release
 credit:
   - id: current-reading.what-the-print-says

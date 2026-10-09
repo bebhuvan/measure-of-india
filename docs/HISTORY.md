@@ -201,6 +201,20 @@ stamps, silent series). What the audit changed:
 
 ## Open debt (known, deliberate, not scheduled)
 
+- **2026-10-09: pipeline/verify.mjs traced only figures followed by %, per cent, pt or
+  points.** Amounts (₹, US$ with lakh/crore/billion), °C, mm, index levels and ratios in prose
+  were never checked against the facts sheet, so hard rule 3 held only for percentages.
+  Found by atlas-external during the launch build; the fix is scheduled (atlas-framework,
+  round 2), after which every prose file is re-verified. **Closed 2026-10-09** (round 2,
+  `pipeline/lib/figures.mjs`): every figure is extracted with its scale word and traced
+  unit-aware; 435 figures across 34 prose files trace, one real miss found (a ratio the
+  writer computed itself, consumption).
+- **What tracing cannot prove: that a figure is attached to the right period or series.**
+  A coordinator mutation test swapped this quarter's remittances (US$41 bn) for last
+  quarter's (US$41.6 bn): it traces, because the figure is in the sheet. Number tracing
+  proves existence, not binding; the hand read against the data stays in the definition
+  of done for that reason.
+
 - The verify.mjs negative guard judges multi-series sentences
   conservatively: a record claim is rejected only when false for EVERY
   series named, so a co-occurring generic word ("inflation" resolves to the

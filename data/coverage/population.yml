@@ -1,0 +1,61 @@
+# Coverage ledger: India in the UN World Population Prospects 2024 (docs/CONTRACT-coverage.md).
+# Estimates (1950-2023), the medium projection and every other variant (2024-2100), age by sex.
+# Indicators not drawn on a plate are in the guide's "Every cut" tables and download from /data/.
+family: population
+guides: [population]
+catalogue: data/coverage/population.catalogue.json
+rules:
+  # drawn
+  - match: ["wpp:estimate:tpopulation1july", "wpp:projection:medium:tpopulation1july"]
+    status: shown
+    bundle: [population-wpp, population-wpp-projection]
+    plate: "§02 The long curve"
+  - match: ["wpp:projection:lower_95_pi:tpopulation1july", "wpp:projection:upper_95_pi:tpopulation1july", "wpp:projection:lower_80_pi:tpopulation1july", "wpp:projection:upper_80_pi:tpopulation1july"]
+    status: shown
+    bundle: population-wpp-variants
+    plate: "§02 The long curve (ranges) and §09 What if"
+  - match: "wpp:projection:*:tpopulation1july"
+    status: shown
+    bundle: population-wpp-variants
+    plate: "§09 What if: every variant"
+  - match: ["wpp:estimate:medianagepop", "wpp:projection:medium:medianagepop"]
+    status: shown
+    bundle: [population-wpp, population-wpp-projection]
+    plate: "§03 How old is India: median age"
+  - match: ["wpp:age:estimate:*", "wpp:age:projection:*"]
+    status: shown
+    bundle: [population-wpp-age, population-wpp-age-projection]
+    plate: "§03 How old is India: the pyramid; §04 The working-age window (shares and ratios from these groups)"
+  - match: ["wpp:estimate:tfr", "wpp:projection:medium:tfr"]
+    status: shown
+    bundle: [population-wpp, population-wpp-projection]
+    plate: "§05 Fewer children: fertility"
+  - match: ["wpp:estimate:births", "wpp:projection:medium:births", "wpp:estimate:deaths", "wpp:projection:medium:deaths"]
+    status: shown
+    bundle: [population-wpp, population-wpp-projection]
+    plate: "§05 Fewer children: births and deaths"
+  - match: ["wpp:estimate:lexmale", "wpp:estimate:lexfemale", "wpp:projection:medium:lexmale", "wpp:projection:medium:lexfemale"]
+    status: shown
+    bundle: [population-wpp, population-wpp-projection]
+    plate: "§06 Longer lives"
+  - match: ["wpp:estimate:netmigrations", "wpp:projection:medium:netmigrations"]
+    status: shown
+    bundle: [population-wpp, population-wpp-projection]
+    plate: "§08 Who leaves, who arrives"
+  # the published file's defect: decided against
+  - match: ["wpp:projection:*_pi:le1*", "wpp:projection:*_pi:le6*", "wpp:projection:*_pi:le8*", "wpp:projection:*_pi:q*"]
+    status: excluded
+    reason: "In WPP 2024's probabilistic-interval rows these columns carry impossible values (life expectancy at 15 of about 1.5 years, mortality of 1,000 per 1,000), for India and every other country checked; the medium variant's values are baked instead."
+  - match: "wpp:closing_stock:*"
+    status: excluded
+    reason: "The 1 January 2101 row carries only the closing population stock, one day after the projection's last mid-year figure; the 2100 mid-year figure is baked."
+  # baked
+  - match: "wpp:estimate:*"
+    status: baked
+    bundle: population-wpp
+  - match: "wpp:projection:medium:*"
+    status: baked
+    bundle: population-wpp-projection
+  - match: "wpp:projection:*"
+    status: baked
+    bundle: population-wpp-variants

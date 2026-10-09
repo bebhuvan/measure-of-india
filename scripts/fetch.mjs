@@ -33,8 +33,28 @@ import { buildMnre } from "./lib/products/mnre.mjs";
 import { buildNfhs } from "./lib/products/nfhs.mjs";
 import { buildWorldbankWdi } from "./lib/products/worldbank-wdi.mjs";
 import { buildBsr2 } from "./lib/products/bsr2.mjs";
+// services guide: five products, one adapter
+import { buildServicesIsp, buildServicesNas, buildServicesTrade, buildServicesJobs, buildServicesAsuse } from "./lib/products/services.mjs";
+import { buildStates } from "./lib/products/states.mjs";
+import { buildOwidClimate } from "./lib/products/owid-climate.mjs";   // climate
+import { buildCckp } from "./lib/products/cckp.mjs";                  // climate
+import { buildIlostat } from "./lib/products/ilostat.mjs";   // ilo
+import { buildRbiRates } from "./lib/products/rbirates.mjs";
+// external (lb/external): the External account guide on RBI DBIE
+import { buildExternalBop } from "./lib/products/external-bop.mjs";
+import { buildExternalFlows } from "./lib/products/external-flows.mjs";
+import { buildExternalReer } from "./lib/products/external-reer.mjs";
+// credit (lb/credit)
 import { buildCredit } from "./lib/products/credit.mjs";
 import { writeSeries } from "./lib/util.mjs";
+// bis family session: BIS, RBI house price index, NHB RESIDEX
+import { buildBis } from "./lib/products/bis.mjs";
+import { buildRbihpi } from "./lib/products/rbihpi.mjs";
+import { buildResidex } from "./lib/products/residex.mjs";
+// worldbank family (2026-10-09): the WDI catalogue, PIP poverty, UN WPP population
+import { buildWdiIndia } from "./lib/products/wdi-india.mjs";
+import { buildPip } from "./lib/products/pip.mjs";
+import { buildWpp } from "./lib/products/wpp.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
@@ -42,7 +62,17 @@ const ONLY = args.includes("only") ? args.slice(args.indexOf("only") + 1) : null
 const cfg = YAML.parse(fs.readFileSync(path.join(ROOT, "data/sources.yml"), "utf8"));
 const VINTAGE = new Date().toISOString().slice(0, 10);
 
-const REGISTRY = { cpi: buildCpi, nas: buildNas, wpi: buildWpi, cpialrl: buildCpialrl, plfs: buildPlfs, rbi: buildRbi, isp: buildIsp, iip: buildIip, hces: buildHces, asi: buildAsi, asuse: buildAsuse, aishe: buildAishe, gender: buildGender, mnre: buildMnre, nfhs: buildNfhs, "worldbank-wdi": buildWorldbankWdi, bsr2: buildBsr2, credit: buildCredit };
+const REGISTRY = { cpi: buildCpi, nas: buildNas, wpi: buildWpi, cpialrl: buildCpialrl, plfs: buildPlfs, rbi: buildRbi, isp: buildIsp, iip: buildIip, hces: buildHces, asi: buildAsi, asuse: buildAsuse, aishe: buildAishe, gender: buildGender, mnre: buildMnre, nfhs: buildNfhs, "worldbank-wdi": buildWorldbankWdi, bsr2: buildBsr2, "owid-climate": buildOwidClimate, cckp: buildCckp, ilostat: buildIlostat, rbirates: buildRbiRates };
+Object.assign(REGISTRY, { bis: buildBis, rbihpi: buildRbihpi, residex: buildResidex });   // bis family session
+// services guide
+Object.assign(REGISTRY, { "services-isp": buildServicesIsp, "services-nas": buildServicesNas, "services-trade": buildServicesTrade, "services-jobs": buildServicesJobs, "services-asuse": buildServicesAsuse });
+// states family session
+Object.assign(REGISTRY, { states: buildStates });
+Object.assign(REGISTRY, { "wdi-india": buildWdiIndia, pip: buildPip, wpp: buildWpp });   // worldbank family
+// external (lb/external)
+Object.assign(REGISTRY, { "external-bop": buildExternalBop, "external-flows": buildExternalFlows, "external-reer": buildExternalReer });
+// credit (lb/credit)
+Object.assign(REGISTRY, { credit: buildCredit });
 
 // One product's failure must not starve the rest: collect, continue, and
 // exit non-zero at the end so CI still fails on the summary.

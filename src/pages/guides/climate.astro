@@ -1,0 +1,978 @@
+---
+import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
+import GuideData from "../../components/GuideData.astro";
+import EveryCut from "../../components/EveryCut.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+import { climateData } from "../../dossiers/climate.data.js";
+import * as fmt from "../../charts/format.js";
+import { B } from "../../dossiers/climate.data.js";
+const D = bySlug["climate"];
+// Every figure on this page is derived from the bundles at build time
+// (src/dossiers/climate.data.js); qc.mjs recomputes the ones carrying ids.
+const C = climateData();
+const V = B(D.currentBundle).meta.vintage;
+const W = C.WIN;
+const w = (p) => `${p[0]}-${String(p[1]).slice(2)}`;          // "1951-80"
+const sd2 = (v) => (v < 0 ? "−" : "+") + fmt.num2(Math.abs(v)) + "°C";
+const sd1 = (v) => (v < 0 ? "−" : "+") + fmt.num1(Math.abs(v)) + "°C";
+const d1 = (v) => fmt.num1(v) + "°C";
+const days = (v) => fmt.count(v) + (Math.round(v) === 1 ? " day" : " days");
+const ORD = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth"];
+const ord = (n) => ORD[n - 1] ?? n + (n % 100 >= 11 && n % 100 <= 13 ? "th" : ["th", "st", "nd", "rd"][n % 10] ?? "th");
+const sgn1 = (v) => (v < 0 ? "−" : "+") + fmt.num1(Math.abs(v));
+const M = C.month;
+const heat = Object.fromEntries(C.heat.map((p) => [p.k, p]));
+const st = [...C.states].sort((a, b) => b.tasCru - a.tasCru);
+const st5 = [...C.states].sort((a, b) => b.tas - a.tas);
+const listNames = (xs) => xs.slice(0, -1).join(", ") + " and " + xs.at(-1);
+const stTop = st.slice(0, 3), stLow = st.slice(-3).reverse();
+const delhi = C.states.find((s) => s.k === "delhi");
+const wbtTop = [...C.states].sort((a, b) => b.wbt27 - a.wbt27).slice(0, 3);
+const lowest40 = [...C.states].sort((a, b) => a.hd40 - b.hd40)[0];
+const stProj = [...C.states].filter((s) => s.proj != null).sort((a, b) => b.proj - a.proj);
+const nStates = C.states.length;
+const allWarmer = C.states.every((s) => s.tasCru > 0);
+const E = C.em, S = E.share;
+const EN = C.energy, en = (f) => EN.primary.find((x) => x.f === f).last, el = (f) => EN.elec.find((x) => x.f === f).last;
+const P = C.proj, pt = (s, y) => P.tas.find((x) => x.s === s).w.find((x) => x.y === y);
+const pd = (k, s, y) => P.days.find((x) => x.k === k).s.find((x) => x.s === s).w.find((x) => x.y === y).med;
+const pref = (k) => P.days.find((x) => x.k === k).ref;
+const born = 2026;
+const R = C.rain;
+const monthsSorted = [...C.months].sort((a, b) => b.tas - a.tas);
+const MN = { Jan: "January", Feb: "February", Mar: "March", Apr: "April", May: "May", Jun: "June", Jul: "July", Aug: "August", Sep: "September", Oct: "October", Nov: "November", Dec: "December" };
+const fires = C.cost;
+const cropShare = 100 * fires.firesCrop.at(-1)[1] / fires.firesAll.at(-1)[1];
+const hdLast = C.cost.heatDeaths;
+const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
+---
+<Base
+  title="Climate and temperature · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/climate/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<script type="application/json" id="climate-data" set:html={JSON.stringify(C).replace(/</g, "\\u003c")} />
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">Heat, rain and the air are economic facts: they decide what a field yields, how many hours a labourer can work, how much power a city draws on a summer night. This guide reads India's climate from three instruments, kept apart: weather stations since 1901, a reanalysis since 1940, and the climate models that look ahead to 2100.</p>
+    </div>
+    <div class="meta">
+      <span>Sources <b>CRU TS, Copernicus ERA5, CMIP6 (World Bank CCKP); Our World in Data</b></span>
+      <span>Latest month <b>{M.label}</b></span>
+      <span>Station record <b>1901 to {C.century.cruLast}</b></span>
+      <span>Emissions <b>to {E.year}</b></span>
+      <span>Projections <b>to 2100</b></span>
+      <span>Baselines <b>1991-2020 for the month; 1951-1980 for change</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">{M.label} against its 1991-2020 average</div><div class="v acc" id="n-anom">{sd2(M.anom)}</div><div class="d"><b id="n-rank">{ord(M.rank)}</b> warmest {M.monthName} of {M.of}</div><div class="nspark" id="nspark-anom"></div></div>
+      <div class="num"><div class="l">Warmer than the early 1900s</div><div class="v" id="n-century">{sd1(C.century.change)}</div><div class="d">{w(W.decade)} against {w(W.early)}, station record</div></div>
+      <div class="num"><div class="l">Nights of 26°C or more, a year</div><div class="v" id="n-nights">{days(heat.tr26.recent)}</div><div class="d">against <b id="d-nights">{days(heat.tr26.base)}</b> in {w(W.base)}</div></div>
+      <div class="num"><div class="l">CO₂ per person, {E.year}</div><div class="v" id="n-pc">{fmt.num1(S.IND.pc)} t</div><div class="d">world <b id="d-pc">{fmt.num1(E.worldPc)} t</b>, US {fmt.num1(S.USA.pc)} t</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 the current reading: inputs climate-temp-monthly (both series), climate-temp-annual, climate-rain-owid; prose generated -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">ERA5, India's land, {M.label}</span></div>
+    <div class="reading-top">
+      <div><span class="rk">{M.label}, against 1991-2020</span><div class="big" id="rb-anom">{sd2(M.anom)}</div></div>
+      <p class="rt-cap">How far India's average temperature for the month sat from the average for the same month in 1991 to 2020. The month itself averaged {d1(M.temp)} across the country.</p>
+      <div class="rt-side"><span class="rk">Last twelve months</span><div class="rt-side-v" id="rb-12">{sd2(C.month.last12)}</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the month says</span>
+        <Prose slot="climate.current-reading.what-the-print-says" />
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What it does not say</span>
+        <Prose slot="climate.current-reading.what-it-does-not-say" />
+      </div>
+    </div>
+
+    <div class="break" style="margin-top:72px">
+      <figure id="cb-stripes" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Since 2000, cool months have become rare</h3>
+            <div class="sub">Every month since January 1940: India's average temperature against the 1991-2020 average for that month, °C. One column a year, one row a month.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-stripes">{sd2(M.anom)}</div><div class="c">{M.short}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-stripes"></div>
+          <div class="plotzone"><div id="plot-stripes" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Copernicus Climate Change Service, ERA5, country average by Our World in Data (CC BY 4.0). Baseline: the same calendar month, 1991-2020.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ourworldindata.org/grapher/monthly-temperature-anomalies" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Read across for years, down for months. Blue cells were cooler than the 1991-2020 normal for that month, ochre cells warmer, white cells close to it. The baseline is itself recent: a white cell is a month as warm as the 1990s and 2000s, already warmer than the 1940s.</p>
+            <p>ERA5 is a reanalysis: a weather model run backwards over every observation available (stations, balloons, satellites), producing a complete, consistent picture of each day. It is not a thermometer reading, and its early decades rest on far fewer observations than its recent ones.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {M.label}</span>
+            <p>{M.label} sat <b id="ex-st-anom">{sd2(M.anom)}</b> from its normal, the {ord(M.rank)} warmest {M.monthName} in {M.of} years; the warmest was {M.warmest.y}. Of the {M.ytdN} months of {M.label.slice(-4)} so far, <b id="ex-st-above">{M.ytdAbove}</b> ran above normal.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 02 lived reality: inputs climate-era5-hotdays (hd40, tr26), climate-era5-heatstress (wbt27, hi41); evergreen + data-bound figures -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>What a hotter India feels like</h2><span class="line"></span><span class="unit">ERA5, India's land, days a year</span></div>
+    <div class="wm-grid">
+      <div>
+        <p>A national average of half a degree sounds like nothing. Nobody lives in an average. What people live through is the hottest afternoon, the night that does not cool, the muggy day when sweat stops working. Those have changed far more than the average.</p>
+        <p>In {w(W.base)}, an average spot in India had <b id="lr-nights0">{days(heat.tr26.base)}</b> a year when the night never fell below 26°C. In {w(W.recent)} it had <b id="lr-nights1">{days(heat.tr26.recent)}</b>. A night that stays at 26°C or more is a night a fan cannot fix, and a body that does not recover before the next day's work.</p>
+        <p>Humid heat rose faster still. Days with a wet-bulb temperature of 27°C or more, the reading of a wet thermometer cooled by evaporation and so the limit of how well sweat can cool a body, went from <b id="lr-wbt0">{days(heat.wbt27.base)}</b> a year to <b id="lr-wbt1">{days(heat.wbt27.recent)}</b>. Days so hot and humid that the heat index passes 41°C, the band in which heat exhaustion becomes likely, went from <b id="lr-hi0">{fmt.num1(heat.hi41.base)}</b> to <b id="lr-hi1">{fmt.num1(heat.hi41.recent)}</b>.</p>
+        <p>The scorching dry days have not multiplied the same way. Days of 40°C or more averaged <b id="lr-hd0">{days(heat.hd40.base)}</b> a year then and <b id="lr-hd1">{days(heat.hd40.recent)}</b> now, nationally. India's heat has become wetter and longer into the night, which is harder on bodies, on outdoor work and on power grids than a few more scorching afternoons would be.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note, i</span>
+          <b>Wet-bulb temperature.</b> Wrap a thermometer in a wet cloth and fan it. The reading it settles at is the coolest sweat can make your skin. A wet-bulb of 35°C is often cited as the point where even a resting person in shade cannot shed heat for long; heavy work becomes dangerous well below it.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note, ii</span>
+          <b>An area average.</b> These are averages over India's land. A coastal city, a desert town and a Himalayan valley sit inside one number. The state table further down breaks it apart.
+        </aside>
+      </div>
+    </div>
+
+    <div class="break" style="margin-top:56px">
+      <figure id="cb-heat" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Warm nights and humid days have multiplied; 40°C days have not</h3>
+            <div class="sub">Days a year at an average spot in India, 1950 to {C.century.era5Last}. The grey line is the {w(W.base)} average; the blue line, each year.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-heat">{days(heat.tr26.recent)}</div><div class="c">nights of 26°C or more, {w(W.recent)} average</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-heat" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Copernicus ERA5 reanalysis, indices and India area averages by the World Bank Climate Change Knowledge Portal (CCKP). Wet-bulb by the Stull formula; heat index by the US National Weather Service formula.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org/country/india" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each panel counts days in a year above a line that matters for the body. The count is for an average spot: the days above the line in every quarter-degree cell of India's land, averaged. A count of 12 can mean 12 days everywhere or 60 days across a fifth of the country, mostly the Gangetic plain and the coasts.</p>
+            <p>The panels share no common scale: each is drawn to its own range, so read the change within a panel, not the height across panels.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {C.century.era5Last}</span>
+            <p>In {heat.tr26.last.y}: nights of 26°C or more, <b id="ex-h-tr">{days(heat.tr26.last.v)}</b>; wet-bulb days of 27°C or more, <b id="ex-h-wbt">{days(heat.wbt27.last.v)}</b>; heat-index days of 41°C or more, <b id="ex-h-hi">{days(heat.hi41.last.v)}</b>; days of 40°C or more, <b id="ex-h-hd">{days(heat.hd40.last.v)}</b>. {C.heat.every((p) => p.last.v < p.data.at(-2)[1]) ? `Every count was lower than in ${heat.tr26.last.y - 1}; ` : ""}the humid counts stay far above their 1950s level.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 03 how to read this: evergreen, human-written -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>How to read these numbers</h2><span class="line"></span></div>
+    <div class="wm-grid">
+      <div>
+        <p><b>Three instruments, never joined.</b> The station record (CRU TS, from the University of East Anglia) interpolates thermometer and rain-gauge readings onto a half-degree grid and reaches back to 1901. The reanalysis (ERA5, from the European Copernicus service) runs a weather model over every available observation from 1940; the World Bank's portal aggregates it from 1950 and computes heat and rain indices from it. The projections (CMIP6) are about thirty climate models run forward under stated assumptions about emissions. They measure related things in different ways, so this guide shows them side by side and never splices one onto another.</p>
+        <p><b>Anomalies and baselines.</b> An anomaly is a departure from an average for the same period: this August against the average August. The month on this page is measured against 1991-2020, Copernicus's standard. Long-run change is measured as the difference between two 30-year averages, {w(W.base)} and {w(W.recent)}, inside one instrument. Thirty years is long enough to wash out most year-to-year swings.</p>
+        <p><b>Area averages.</b> Every figure for India or a state is an average over its land, weighted by area, not by people. Delhi and the Thar desert count by their size. The World Bank's portal publishes 35 state and union territory units; its boundary set has none for Jammu and Kashmir or Ladakh. Its all-India temperature runs about 0.7°C warmer than the station record's own country average for the same grid, which is what leaving out those cold Himalayan territories would do; we do not know that for certain. Changes over time agree within a few hundredths of a degree, and this guide reports changes.</p>
+        <p><b>Projections are not forecasts.</b> A projection says what the models expect if emissions follow a stated pathway: SSP1-2.6 is rapid cuts, SSP2-4.5 roughly today's policies, SSP3-7.0 a fractured world, SSP5-8.5 fossil-fuelled growth. The range shown is the spread across models (the 10th to 90th percentile), not a probability. Projections are drawn hollow and dashed and never joined to an observed line.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note, iii</span>
+          <b>Why the records differ.</b> Stations sit in towns and valleys; a reanalysis fills the gaps with physics. In heavily irrigated plains, the two disagree most on daytime heat. Neither is the truth; the gap is the uncertainty.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note, iv</span>
+          <b>Revisions.</b> ERA5's latest months are preliminary. CRU TS is re-issued as a new version each year, and each version can change earlier years slightly.
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 04 a century of warming: inputs climate-cru (tas), climate-era5-temp (tas) -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>A century of warming</h2><span class="line"></span><span class="unit">Annual mean temperature, °C, against each record's own 1951-1980 average</span></div>
+    <div class="break">
+      <figure id="cb-century" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>India has warmed about {fmt.num1(C.century.change)}°C since the early 1900s, and twice as fast since the 1970s</h3>
+            <div class="sub">Annual mean temperature over India's land, against each record's own {w(W.base)} average, °C. Two instruments, drawn apart: the station record from 1901, the reanalysis from 1950.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-century">{fmt.num2(C.century.rate1976)}°C</div><div class="c">a decade since 1976, station record</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Station record (CRU TS)</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Reanalysis (ERA5)</button>
+          </div>
+          <div class="plotzone"><div id="plot-century" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: CRU TS 4.10 (University of East Anglia) and Copernicus ERA5, India area averages by the World Bank CCKP. Each line against its own 1951-1980 mean; the two are never joined.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org/country/india" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each line is one year's average temperature over India's land, minus that record's average for 1951-1980, so both start from the same zero. Year-to-year swings of half a degree are ordinary: El Niño years run hot, strong monsoons cool the summer. The signal is the drift underneath: flat for half a century, then climbing.</p>
+            <p>The warming rate is a straight line fitted through the years: the average change per decade over the period named, not a prediction.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {C.century.cruLast}</span>
+            <p>The last ten years averaged <b id="ex-c-dec">{d1(C.century.decade)}</b> in the station record, against <b id="ex-c-early">{d1(C.century.early)}</b> in {w(W.early)}. Warming ran at <b id="ex-c-r1901">{fmt.num2(C.century.rate1901)}°C</b> a decade over the whole record and <b id="ex-c-r1976">{fmt.num2(C.century.rate1976)}°C</b> since 1976; the reanalysis gives <b id="ex-c-e1976">{fmt.num2(C.century.rate1976era5)}°C</b> since 1976. The five warmest years in the station record: {C.century.warmest.join(", ")}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 anatomy: which months, days or nights: inputs climate-cru-monthly (tas, tasmax, tasmin), climate-cru (tasmax, tasmin) -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>Which months, and which hours</h2><span class="line"></span><span class="unit">Change from {w(W.base)} to {w(W.recent)}, °C, station record</span></div>
+    <div class="break">
+      <figure id="cb-months" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Winter and the months after the monsoon warmed most; nights more than days</h3>
+            <div class="sub">Change in the average daily maximum (day) and minimum (night) temperature for each calendar month, {w(W.base)} to {w(W.recent)}, °C, India's land.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-months">{sd1(monthsSorted[0].tas)}</div><div class="c">{MN[monthsSorted[0].m]}, the month that warmed most</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>Days (daily maximum)</button>
+            <button class="chip"><i style="background:#2E4BD8"></i>Nights (daily minimum)</button>
+          </div>
+          <div class="plotzone"><div id="plot-months" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: CRU TS 4.10, monthly, India area average by the World Bank CCKP. Change is the difference of two 30-year means.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://crudata.uea.ac.uk/cru/data/hrg/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>For each month, the hollow dot is how much warmer its days have become, the blue dot how much warmer its nights. The monsoon months, June and July, warmed least: cloud and rain cap the heat. The dry season, from November to March, warmed most. A warmer winter shortens the cool spell wheat needs to fill its grain, which is why a hot February or March worries farmers more than a hot May.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {C.century.cruLast}</span>
+            <p>Over the whole year, nights warmed by <b id="ex-m-night">{sd1(C.dayNight.tmin)}</b> and days by <b id="ex-m-day">{sd1(C.dayNight.tmax)}</b>. {MN[monthsSorted[0].m]} warmed most (<b id="ex-m-top">{sd1(monthsSorted[0].tas)}</b>) and {MN[monthsSorted.at(-1).m]} least (<b id="ex-m-low">{sd1(monthsSorted.at(-1).tas)}</b>).</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 granular: states: inputs climate-cru-states (tas), climate-era5-states-temp (tas), climate-era5-states-heatstress (wbt27), climate-era5-states-hotdays (hd40) -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>Which states</h2><span class="line"></span><span class="unit">{nStates} states and union territories, change from {w(W.base)} to {w(W.recent)}</span></div>
+    <div class="break">
+      <figure id="cb-states" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{allWarmer ? "Every state is warmer by the station record, " : "By the station record, "}most of all {listNames(stTop.slice(0, 2).map((s) => s.name))}; the reanalysis puts {listNames(st5.slice(0, 2).map((s) => s.name))} first</h3>
+            <div class="sub">Change in annual mean temperature, {w(W.base)} to {w(W.recent)}, °C. Filled dots: the station record; hollow dots: the reanalysis. Sorted by the station record.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-states">{sd1(stTop[0].tasCru)}</div><div class="c">{stTop[0].name}, the largest change</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Station record (CRU TS)</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>Reanalysis (ERA5)</button>
+          </div>
+          <div class="plotzone"><div id="plot-states" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: CRU TS 4.10 and Copernicus ERA5, area averages over CCKP's first-level boundaries. CCKP publishes no unit for Jammu and Kashmir or Ladakh. Small territories rest on few grid cells.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org/country/india" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Where the two dots sit close, the two instruments agree. Where they part, read the gap as uncertainty: the two records do not even agree on which regions warmed most. The station record, built from sparse gauges in hilly and remote states, leans on interpolation there; the reanalysis leans on its model. They also part in the irrigated north-west: canals and wet fields cool the afternoon there, aerosols from crop fires and traffic dim the sun, and the two records treat those effects differently. In Delhi the reanalysis finds days slightly cooler than in the 1950s and nights clearly warmer; the station record finds both warmer.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {C.century.cruLast}</span>
+            <p>Largest changes in the station record: {stTop.map((s) => `${s.name} (${sd1(s.tasCru)})`).join(", ")}. Smallest: {stLow.map((s) => `${s.name} (${sd1(s.tasCru)})`).join(", ")}. Largest in the reanalysis: {st5.slice(0, 3).map((s) => `${s.name} (${sd1(s.tas)})`).join(", ")}. Delhi: <b id="ex-s-delhi">{sd1(delhi.tasCru)}</b> by the stations, <b id="ex-s-delhi5">{sd1(delhi.tas)}</b> by the reanalysis.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-states-humid" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Humid heat has spread across the Gangetic plain and the east</h3>
+            <div class="sub">Change in days a year with a wet-bulb temperature of 27°C or more, {w(W.base)} to {w(W.recent)}, and change in days of 40°C or more, by state.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-humid">+{fmt.num1(wbtTop[0].wbt27)}</div><div class="c">more humid days, {wbtTop[0].name}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Wet-bulb days, 27°C or more</button>
+            <button class="chip"><i style="background:#C9CED6"></i>Days of 40°C or more</button>
+          </div>
+          <div class="plotzone"><div id="plot-states-humid" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Copernicus ERA5 reanalysis, indices and state averages by the World Bank CCKP. Change in days a year between two 30-year averages.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org/country/india" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Two bars a state. The blue bar is how many more muggy days a year the state now has; the grey bar how many more (or fewer) scorching dry days. In the plains of the north, dry 40°C days have become fewer while wet-bulb days rose sharply: the heat did not leave, it took on water. Irrigation, which puts moisture into the air, is part of the reason.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {C.century.cruLast}</span>
+            <p>The largest rises in humid days: {wbtTop.map((s) => `${s.name} (+${fmt.num1(s.wbt27)})`).join(", ")}. Days of 40°C or more fell most in {lowest40.name} (<b id="ex-sh-low">{sgn1(lowest40.hd40)}</b> a year). In Delhi, humid days rose by <b id="ex-sh-delhi">{fmt.num1(delhi.wbt27)}</b> a year while 40°C days changed by {sgn1(delhi.hd40)}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 the monsoon: inputs climate-cru (pr), climate-cru-monthly (pr), climate-era5-rain (rx5day, r99ptot, r50mm, cdd), climate-cru-states (pr) -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>The monsoon</h2><span class="line"></span><span class="unit">Rainfall over India's land, millimetres</span></div>
+    <div class="break">
+      <figure id="cb-rain" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>A century of monsoons: no long decline in the national total, and the droughts stand out</h3>
+            <div class="sub">Annual rainfall averaged over India's land, millimetres, 1901 to {C.century.cruLast}. The line marks the {w(W.base)} average.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-rain">{fmt.inr(R.annual.at(-1)[1])} mm</div><div class="c">{R.annual.at(-1)[0]}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-rain" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: CRU TS 4.10 (rain-gauge record), India area average by the World Bank CCKP. The India Meteorological Department's own all-India series uses a different gauge network and differs in level.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://crudata.uea.ac.uk/cru/data/hrg/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each bar is one year's rain. About four-fifths of it falls from June to September. A bar far below the line is a drought year, and in an economy where much of the farmland still depends on rain, it shows up within months in farm incomes, rural wages and food prices.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {C.century.cruLast}</span>
+            <p>Average annual rain: <b id="ex-r-base">{fmt.inr(R.base)} mm</b> in {w(W.base)}, <b id="ex-r-recent">{fmt.inr(R.recent)} mm</b> in {w(W.recent)}. June to September brought <b id="ex-r-jjas">{fmt.num1(R.jjasRecent)}%</b> of the year's rain in the recent period, against {fmt.num1(R.jjasBase)}% before. The driest years on the record: {R.driest.map(([y]) => y).join(", ")}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-rain-months" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The season's shape has shifted only slightly: a little less in June, a little more in September</h3>
+            <div class="sub">Average rainfall in each month, {w(W.base)} and {w(W.recent)}, millimetres, India's land.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-rmonths">{(() => { const s = R.months.find((x) => x.m === "Sep"); return (s.recent - s.base >= 0 ? "+" : "−") + Math.abs(s.recent - s.base) + " mm"; })()}</div><div class="c">September, change</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>{w(W.base)}</button>
+            <button class="chip"><i style="background:#2E4BD8"></i>{w(W.recent)}</button>
+          </div>
+          <div class="plotzone"><div id="plot-rain-months" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: CRU TS 4.10, monthly, India area average by the World Bank CCKP.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://crudata.uea.ac.uk/cru/data/hrg/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The bars are the recent average for each month, the dots the old one. A shift in timing matters to a farmer even when the total does not move: a late June delays sowing, a wet September can flatten a ripe crop. Monthly averages over the whole country cannot show the onset date; the India Meteorological Department dates onset and withdrawal, and those dates are not in these sources. We do not know from this data whether the monsoon arrives later.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {C.century.cruLast}</span>
+            <p>June: <b id="ex-rm-jun">{R.months[5].base} mm</b> then, {R.months[5].recent} mm now. September: <b id="ex-rm-sep">{R.months[8].base} mm</b> then, {R.months[8].recent} mm now. July and August, the core of the season: {R.months[6].base} and {R.months[7].base} mm then, {R.months[6].recent} and {R.months[7].recent} mm now.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-rain-extremes" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Across India as a whole, rain extremes have barely moved; the change is local</h3>
+            <div class="sub">Four measures of how rain falls, India's land, 1950 to {C.century.era5Last}. The grey line marks the {w(W.base)} average.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-rext">{fmt.count(R.extremes[0].last.v)} mm</div><div class="c">wettest five days of {R.extremes[0].last.y}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-rain-extremes" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Copernicus ERA5 reanalysis, indices and India area averages by the World Bank CCKP.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org/country/india" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>An extreme downpour falls on a district, not on a country. Averaged over all of India, a cloudburst in one valley is diluted by dry days everywhere else, so national averages of extremes move slowly even when local floods grow more frequent. This national average can neither confirm nor rule out more frequent local downpours.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {C.century.era5Last}</span>
+            <p>Wettest five days: <b id="ex-re-rx5">{fmt.num1(R.extremes[0].base)} mm</b> on average in {w(W.base)}, {fmt.num1(R.extremes[0].recent)} mm in {w(W.recent)}. Share of the year's rain on its wettest 1% of days: {fmt.num1(R.extremes[1].base)}% then, {fmt.num1(R.extremes[1].recent)}% now. Longest dry spell: {fmt.num1(R.extremes[3].base)} days then, {fmt.num1(R.extremes[3].recent)} days now.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 emissions: inputs climate-co2, climate-co2-chn, climate-co2-usa, climate-co2-world -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>What India emits</h2><span class="line"></span><span class="unit">Carbon dioxide and other greenhouse gases, to {E.year}</span></div>
+    <div class="break">
+      <figure id="cb-co2" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>India is the third-largest emitter, and its emissions are still rising</h3>
+            <div class="sub">Carbon dioxide from fossil fuels and industry, million tonnes a year, 1950 to {E.year}: India, China and the United States.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-co2">{fmt.inr(E.india.co2)} Mt</div><div class="c">India, {E.year}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>India</button>
+            <button class="chip"><i style="background:#C47A16"></i>China</button>
+            <button class="chip"><i style="background:#878D99"></i>United States</button>
+          </div>
+          <div class="plotzone"><div id="plot-co2" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Global Carbon Project, via Our World in Data (CC BY 4.0). Territorial emissions, excluding land-use change.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ourworldindata.org/co2-emissions" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>These are territorial emissions: the carbon dioxide released inside each country's borders, mostly by burning coal, oil and gas, and by making cement. They are estimated from fuel and production statistics, not measured in the air, and are revised each year as those statistics are revised.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {E.year}</span>
+            <p>India emitted <b id="ex-e-co2">{fmt.inr(E.india.co2)} million tonnes</b>, <b id="ex-e-share">{fmt.num1(S.IND.annual)}%</b> of the world's, up <b id="ex-e-growth">{fmt.num1(E.india.growth)}%</b> on the year and {fmt.num1(E.india.co2 / E.india.co2_1990)} times its 1990 level. China emitted {fmt.num1(S.CHN.annual)}% of the world total, the United States {fmt.num1(S.USA.annual)}%. Coal alone produced <b id="ex-e-coal">{fmt.num1(E.india.coalShare)}%</b> of India's CO₂.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-percap" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Per person, India emits less than half the world average</h3>
+            <div class="sub">Carbon dioxide from fossil fuels and industry per person, tonnes a year, 1950 to {E.year}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-pc">{fmt.num2(S.IND.pc)} t</div><div class="c">India, per person, {E.year}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>India</button>
+            <button class="chip"><i style="background:#C47A16"></i>China</button>
+            <button class="chip"><i style="background:#878D99"></i>United States</button>
+            <button class="chip"><i style="background:#C9CED6"></i>World</button>
+          </div>
+          <div class="plotzone"><div id="plot-percap" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Global Carbon Project, population from UN and OWID sources, via Our World in Data (CC BY 4.0).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ourworldindata.org/co2-emissions" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Divide a country's emissions by its people and the ranking turns over. India has as many people as China and four times as many as the United States, so its total is large while its share per person is small. A per-person average says nothing about how emissions split within India: a household with two air conditioners and a car emits many times what a household with one bulb does.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {E.year}</span>
+            <p>Per person: India <b id="ex-pc-ind">{fmt.num2(S.IND.pc)} t</b>, China {fmt.num2(S.CHN.pc)} t, the United States <b id="ex-pc-usa">{fmt.num2(S.USA.pc)} t</b>, the world {fmt.num2(E.worldPc)} t. An average American emits as much in about {Math.round(365 * S.IND.pc / S.USA.pc)} days as an average Indian does in a year.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-stock" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>India's share of the warming so far is smaller than its share of today's emissions</h3>
+            <div class="sub">Share of the world's annual CO₂ ({E.year}), of all CO₂ emitted since 1750, and of the global warming caused so far by greenhouse gases, per cent.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-stock">{fmt.num1(S.IND.warming)}%</div><div class="c">India's share of warming so far</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#C9CED6"></i>Share of {E.year} CO₂</button>
+            <button class="chip"><i style="background:#878D99"></i>Share of all CO₂ since 1750</button>
+            <button class="chip"><i style="background:#2E4BD8"></i>Share of warming caused</button>
+          </div>
+          <div class="plotzone"><div id="plot-stock" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Global Carbon Project (CO₂) and Jones et al. (contributions to warming, all greenhouse gases including land use), via Our World in Data (CC BY 4.0).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ourworldindata.org/contributed-most-global-co2" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Carbon dioxide stays in the air for centuries, so warming follows the total ever emitted, not this year's flow. Countries that industrialised early carry a larger share of the stock than of today's emissions; India, a late emitter, the reverse. The warming share also counts methane and nitrous oxide and emissions from clearing land, estimated by Jones and colleagues.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {E.year}</span>
+            <p>India: <b id="ex-s-ann">{fmt.num1(S.IND.annual)}%</b> of the year's CO₂, <b id="ex-s-cum">{fmt.num1(S.IND.cumulative)}%</b> of all CO₂ since 1750, {fmt.num1(S.IND.warming)}% of the warming. United States: {fmt.num1(S.USA.annual)}%, {fmt.num1(S.USA.cumulative)}% and {fmt.num1(S.USA.warming)}%. China: {fmt.num1(S.CHN.annual)}%, {fmt.num1(S.CHN.cumulative)}% and {fmt.num1(S.CHN.warming)}%.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-fuels" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Coal makes two-thirds of India's carbon dioxide</h3>
+            <div class="sub">India's CO₂ by source, million tonnes a year, 1950 to {E.year}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-fuels">{fmt.num1(E.india.coalShare)}%</div><div class="c">from coal, {E.year}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-fuels"></div>
+          <div class="plotzone"><div id="plot-fuels" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Global Carbon Project, via Our World in Data (CC BY 4.0). The Global Carbon Project reports no separate "other industry" CO₂ for India.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ourworldindata.org/co2-emissions" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Most of India's coal is burned in power stations, the rest in steel, cement and brick kilns. Oil goes mostly into transport and cooking gas; natural gas is a small fuel in India, unlike in the United States. Cement releases carbon dioxide twice: from the fuel that heats the kiln and from the limestone it bakes.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {E.year}</span>
+            <p>Coal <b id="ex-f-coal">{fmt.inr(E.india.coal)} Mt</b>, oil {fmt.inr(E.fuels.find((f) => f.k === "oil_co2").data.at(-1)[1])} Mt, cement {fmt.inr(E.fuels.find((f) => f.k === "cement_co2").data.at(-1)[1])} Mt, gas {fmt.inr(E.fuels.find((f) => f.k === "gas_co2").data.at(-1)[1])} Mt.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-gases" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Methane from rice and cattle adds a quarter again to India's carbon dioxide</h3>
+            <div class="sub">India's greenhouse gas emissions by gas, million tonnes of CO₂-equivalent a year, 1950 to {E.year}. Carbon dioxide here includes land-use change.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-gases">{fmt.inr(E.india.ghg)} Mt</div><div class="c">all greenhouse gases, {E.year}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Carbon dioxide</button>
+            <button class="chip"><i style="background:#C47A16"></i>Methane</button>
+            <button class="chip"><i style="background:#878D99"></i>Nitrous oxide</button>
+          </div>
+          <div class="plotzone"><div id="plot-gases" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Jones et al. (2025) national contributions, via Our World in Data (CC BY 4.0). CO₂-equivalent over 100 years.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ourworldindata.org/greenhouse-gas-emissions" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Methane and nitrous oxide warm the air far more per tonne than carbon dioxide; they are converted to "CO₂-equivalent" tonnes so the gases can be added up. India's methane comes mostly from flooded rice paddies, cattle digesting fodder, and landfills; its nitrous oxide mostly from fertiliser on fields. These are farm emissions, tied to food and livelihoods, and much harder to cut than a coal plant's.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {E.year}</span>
+            <p>Methane <b id="ex-g-ch4">{fmt.inr(E.india.methane)} Mt</b> and nitrous oxide {fmt.inr(E.india.n2o)} Mt of CO₂-equivalent, against {fmt.inr(E.india.co2)} Mt of fossil CO₂. Measured by what India's own consumption causes, wherever it is produced, CO₂ was <b id="ex-g-cons">{fmt.inr(E.consumption.last.v)} Mt</b> in {E.consumption.last.y}, against {fmt.inr(E.consumption.terrAt)} Mt emitted inside India: India exports more embodied carbon than it imports.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 energy: inputs climate-energy -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>The energy behind it</h2><span class="line"></span><span class="unit">Shares of primary energy and of electricity, per cent</span></div>
+    <div class="break">
+      <figure id="cb-energy" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Coal still supplies more than half of all the energy India uses</h3>
+            <div class="sub">Share of India's primary energy by source, per cent, 1965 to {EN.year} (substitution method).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-energy">{fmt.num1(en("coal"))}%</div><div class="c">coal, {EN.year}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-energy"></div>
+          <div class="plotzone"><div id="plot-energy" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Energy Institute Statistical Review of World Energy, via Our World in Data (CC BY 4.0). Excludes firewood, crop waste and dung burned in homes. Sources under 2% are in the CSV download.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ourworldindata.org/energy/country/india" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Primary energy is everything a country uses before conversion: coal into a power station, crude into a refinery. Electricity from wind, sun and water is counted as the fossil fuel it would have taken to generate it (the "substitution method"), so its share is comparable with coal's. Traditional biomass, still the cooking fuel of many rural homes, is left out of these figures.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {EN.year}</span>
+            <p>Coal <b id="ex-en-coal">{fmt.num1(en("coal"))}%</b>, oil {fmt.num1(en("oil"))}%, gas {fmt.num1(en("gas"))}%, hydro {fmt.num1(en("hydro"))}%, solar {fmt.num1(en("solar"))}%, wind {fmt.num1(en("wind"))}%, nuclear {fmt.num1(en("nuclear"))}%. Fossil fuels together: <b id="ex-en-fossil">{fmt.num1(EN.fossilEnergy)}%</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-power" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Solar and wind now make one unit of electricity in seven</h3>
+            <div class="sub">Share of India's electricity generation by source, per cent, 1985 to {EN.elYear}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-power">{fmt.num1(el("solar") + el("wind"))}%</div><div class="c">solar and wind, {EN.elYear}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-power"></div>
+          <div class="plotzone"><div id="plot-power" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Ember and the Energy Institute, via Our World in Data (CC BY 4.0). Sources under 2% (biofuels, other renewables, oil) are drawn only in the CSV download. Installed capacity is in the renewable energy guide.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ourworldindata.org/electricity-mix" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>This is electricity generated, not capacity installed. A solar plant produces at full power only around midday on clear days, so its share of generation is much smaller than its share of capacity. For capacity month by month, see <a href="/guides/mnre/">the renewable energy guide</a>.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {EN.elYear}</span>
+            <p>Coal <b id="ex-pw-coal">{fmt.num1(el("coal"))}%</b>, solar <b id="ex-pw-solar">{fmt.num1(el("solar"))}%</b>, hydro {fmt.num1(el("hydro"))}%, wind {fmt.num1(el("wind"))}%, nuclear {fmt.num1(el("nuclear"))}%, gas {fmt.num1(el("gas"))}%. Each unit of electricity released <b id="ex-pw-int">{fmt.count(EN.intensity.last)} g</b> of CO₂-equivalent in {EN.intensity.y}, against {fmt.count(EN.intensity.first[1])} g in {EN.intensity.first[0]}. Electricity use per person: {fmt.inr(EN.perCapitaElec.last.v)} kWh a year in {EN.perCapitaElec.last.y}, against {fmt.inr(EN.perCapitaElec.y2000)} kWh in 2000.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 10 projections: inputs climate-cmip6-windows-temp, climate-cmip6-windows-hotdays, climate-cmip6-windows-heatstress, climate-cmip6-states-temp -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>A child born today</h2><span class="line"></span><span class="unit">CMIP6 projections, change from 1995-2014; model output, not data</span></div>
+    <div class="break">
+      <figure id="cb-proj" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>In the years a child born in {born} turns 54 to 73, India is projected to be {fmt.num1(pt("ssp126", 2080).med)} to {fmt.num1(pt("ssp585", 2080).med)}°C warmer than in 1995-2014, depending on emissions</h3>
+            <div class="sub">Projected change in India's annual mean temperature from 1995-2014, °C, for four 20-year windows and four emission pathways. Dot: the median of about 30 models; line: the 10th to 90th percentile across them.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-proj">{sd1(pt("ssp245", 2080).med)}</div><div class="c">SSP2-4.5, 2080-2099, median</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>SSP1-2.6</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #2E4BD8"></i>SSP2-4.5</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #5F6675"></i>SSP3-7.0</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #C47A16"></i>SSP5-8.5</button>
+          </div>
+          <div class="plotzone"><div id="plot-proj" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: CMIP6 multi-model ensemble, downscaled and bias-corrected by the World Bank CCKP. Projections under stated scenarios, not forecasts.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org/country/india/climate-data-projections" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each group is a 20-year window; within it, one hollow dot per emissions pathway. The pathways barely differ until the 2040s, because the warming of the next two decades is largely set by gases already emitted. After that the choice of pathway decides most of the outcome. A child born in {born} is 14 to 33 years old in the 2040-2059 window and 54 to 73 in 2080-2099.</p>
+            <p>The baseline here is 1995-2014, the models' reference period, not 1951-1980. The models' change from 1995-2014 cannot be added to the observed change since 1951 to make one number: they are different instruments.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of CMIP6, CCKP {P.windows[0]} to 2099</span>
+            <p>2040-2059: <b id="ex-p-245-40">{sd1(pt("ssp245", 2040).med)}</b> under SSP2-4.5 (range {sd1(pt("ssp245", 2040).p10)} to {sd1(pt("ssp245", 2040).p90)}), {sd1(pt("ssp585", 2040).med)} under SSP5-8.5. 2080-2099: <b id="ex-p-126-80">{sd1(pt("ssp126", 2080).med)}</b> under SSP1-2.6, {sd1(pt("ssp245", 2080).med)} under SSP2-4.5, {sd1(pt("ssp370", 2080).med)} under SSP3-7.0 and <b id="ex-p-585-80">{sd1(pt("ssp585", 2080).med)}</b> under SSP5-8.5.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-proj-heat" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Days of extreme humid heat are projected to multiply {fmt.num1(pd("hi41", "ssp245", 2040) / pref("hi41"))} times by mid-century, nights of 26°C or more by {fmt.count(100 * (pd("tr26", "ssp245", 2040) / pref("tr26") - 1))}%</h3>
+            <div class="sub">Projected days a year at an average spot in India, for 20-year windows, under SSP2-4.5 (blue) and SSP5-8.5 (ochre), ensemble median; the grey line is the models' own 1995-2014 level.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-projheat">{days(pd("tr26", "ssp245", 2040))}</div><div class="c">nights of 26°C or more, 2040-2059, SSP2-4.5</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-proj-heat" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: CMIP6 multi-model ensemble median, indices by the World Bank CCKP. CCKP's projected wet-bulb series for India are corrupt at source (an India mean near 8°C) and are not used.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org/country/india/climate-data-projections" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The grey line is what the models reproduce for 1995-2014; the dots are what they project. Compare dots with the grey line, not with the observed counts in section 02: a model's past is its own ruler. The hollow, dashed marks are a reminder that none of this has happened.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of CMIP6, CCKP {P.windows[0]} to 2099</span>
+            <p>Nights of 26°C or more: <b id="ex-ph-tr0">{days(pref("tr26"))}</b> in the models' 1995-2014, {days(pd("tr26", "ssp245", 2040))} in 2040-2059 under SSP2-4.5 and {days(pd("tr26", "ssp585", 2080))} by 2080-2099 under SSP5-8.5. Days of 40°C or more: {days(pref("hd40"))}, then {days(pd("hd40", "ssp245", 2040))} and {days(pd("hd40", "ssp585", 2080))}. Heat-index days of 41°C or more: {days(pref("hi41"))}, then <b id="ex-ph-hi">{days(pd("hi41", "ssp245", 2040))}</b> and {days(pd("hi41", "ssp585", 2080))}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-proj-states" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The projected warming is highest in the north and the Himalaya, lowest on the southern coasts</h3>
+            <div class="sub">Projected change in annual mean temperature from 1995-2014 to 2040-2059, SSP2-4.5, ensemble median, °C, by state.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-projst">{sd1(stProj[0].proj)}</div><div class="c">{stProj[0].name}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-proj-states" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: CMIP6 multi-model ensemble median, state averages by the World Bank CCKP. Every scenario and window for every index, by state, is in the data downloads.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org/country/india/climate-data-projections" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Land far from the sea warms more than land beside it, and high ground more than low. The ordering is more robust than the numbers: models agree better on where it warms most than on by how much.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of CMIP6, CCKP {P.windows[0]} to 2099</span>
+            <p>Highest: {stProj.slice(0, 3).map((s) => `${s.name} (${sd1(s.proj)})`).join(", ")}. Lowest: {stProj.slice(-3).reverse().map((s) => `${s.name} (${sd1(s.proj)})`).join(", ")}. Under SSP5-8.5 by 2080-2099, Delhi's projected change is <b id="ex-ps-delhi">{sd1(delhi.proj85)}</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 11 the cost of heat: inputs climate-era5-energy (cdd65), climate-cmip6-windows-energy (cdd65), climate-heat-deaths, climate-burned-area -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>What a hotter day costs</h2><span class="line"></span><span class="unit">Cooling, health and fire</span></div>
+    <div class="wm-grid">
+      <div>
+        <p>A hotter day has three costs that can be counted, and several that these sources cannot. It raises the electricity needed to keep a room liveable. It raises the chance of dying, mostly for the old, the poor and outdoor workers. And it cuts the hours a person can work outside at full effort.</p>
+        <p>We do not know, from these sources, how many working hours heat already costs India, or how much it trims a wheat or rice harvest; those are research estimates built on the measures here, and they vary widely with method. What follows is what the sources do publish.</p>
+      </div>
+    </div>
+    <div class="break" style="margin-top:40px">
+      <figure id="cb-cool" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The heat a building must shed each year has risen {fmt.count(100 * (C.cost.cddRecent / C.cost.cddBase - 1))}% since {w(W.base)}, and the models project far more</h3>
+            <div class="sub">Cooling degree days at an average spot in India (each degree a day's average sits above 65°F, 18.3°C, summed over the year). Observed, ERA5, 1950 to {C.century.era5Last}, solid; projected, CMIP6 median, 20-year windows, hollow.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-cool">{fmt.inr(C.cost.cdd.at(-1)[1])}</div><div class="c">cooling degree days, {C.cost.cdd.at(-1)[0]}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Observed (ERA5)</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>Models, 1995-2014 average</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #2E4BD8"></i>Projected, SSP2-4.5</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #C47A16"></i>Projected, SSP5-8.5</button>
+          </div>
+          <div class="plotzone"><div id="plot-cool" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Copernicus ERA5 and CMIP6, cooling degree days by the World Bank CCKP. Two instruments: the observed line and the projected dots are never joined.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org/country/india" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Cooling degree days measure the heat a building has to get rid of to stay at a comfortable temperature, and so track the work fans, coolers and air conditioners must do. They are the standard input to estimates of electricity demand for cooling.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {C.century.era5Last}</span>
+            <p>Observed: <b id="ex-cl-base">{fmt.inr(C.cost.cddBase)}</b> a year on average in {w(W.base)}, <b id="ex-cl-recent">{fmt.inr(C.cost.cddRecent)}</b> in {w(W.recent)}. Projected from the models' 1995-2014 level of {fmt.inr(P.cdd65.ref)}: {fmt.inr(P.cdd65.s[0].w.find((x) => x.y === 2040).med)} in 2040-2059 under SSP2-4.5, {fmt.inr(P.cdd65.s[1].w.find((x) => x.y === 2080).med)} by 2080-2099 under SSP5-8.5.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-deaths" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Under middling emissions, temperature-related deaths are projected to rise by about {fmt.num1(hdLast.at(-1)[1])} per 100,000 people a year by the 2090s</h3>
+            <div class="sub">Projected change in India's death rate from non-optimal temperatures, deaths per 100,000 people a year, against today, under RCP4.5 (a pathway close to SSP2-4.5).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-deaths">+{fmt.num1(hdLast.at(-1)[1])}</div><div class="c">per 100,000, {hdLast.at(-1)[0]}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-deaths" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Climate Impact Lab and UNDP, Human Climate Horizons (2024), via Our World in Data (CC BY 4.0). A model estimate; adaptation and income growth are assumed as in the source.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://horizons.hdr.undp.org" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The figure is the change in deaths from heat and cold combined: warmer winters save some lives, hotter summers cost more. It is a projection from statistical links between temperature and deaths, observed across many countries, applied to India's projected climate and population. India's death registration does not record heat as a cause reliably enough to count these deaths directly.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of Human Climate Horizons, 2024</span>
+            <p>Projected change: <b id="ex-d-30">+{fmt.num1(hdLast[0][1])}</b> per 100,000 a year by {hdLast[0][0]}, +{fmt.num1(hdLast[1][1])} by {hdLast[1][0]} and +{fmt.num1(hdLast[2][1])} by {hdLast[2][0]}. On India's population of {E.year}, +{fmt.num1(hdLast[1][1])} per 100,000 would be about {lakh(hdLast[1][1] * S.IND.pop / 1e5)} more deaths a year.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-fires" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Most of the land that burns in India each year is farmland</h3>
+            <div class="sub">Area burnt by land type, lakh hectares a year, 2002 to {fires.firesAll.at(-1)[0]}, from satellite detection.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-fires">{fmt.num1(cropShare)}%</div><div class="c">croplands, {fires.firesAll.at(-1)[0]}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-fires"></div>
+          <div class="plotzone"><div id="plot-fires" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Global Wildfire Information System (GWIS), via Our World in Data (CC BY 4.0). Burnt area seen by satellite; small fires can be missed.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://gwis.jrc.ec.europa.eu" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A satellite sees a scorch mark, not its cause. In India, most burnt cropland is stubble set alight after the harvest, in Punjab and Haryana after rice in October and November, and across the plains before the summer crop. Its smoke adds to north India's winter haze. In the weekly satellite record, burning peaks in March and April and again in October and November.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {fires.firesAll.at(-1)[0]}</span>
+            <p>Area burnt: <b id="ex-fi-all">{lakh(fires.firesAll.at(-1)[1])} hectares</b>, of which croplands {lakh(fires.firesCrop.at(-1)[1])} and forests {lakh(fires.fires.find((f) => f.k === "forest").data.at(-1)[1])}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 12 every state, every measure: inputs every state bundle above -->
+  <section>
+    <div class="sec-head"><span class="no">12</span><h2>Every state, every measure</h2><span class="line"></span><span class="unit">{nStates} CCKP units; changes from {w(W.base)} to {w(W.recent)}; projections from 1995-2014</span></div>
+    <p class="explorer-note">Click a column to sort. Station: CRU TS. Reanalysis: ERA5. Projection: CMIP6 median, SSP2-4.5, 2040-2059. Every other index, scenario and window, for every state, is in the data downloads below.</p>
+    <div class="break ledger">
+      <table id="explorer">
+        <thead><tr>
+          <th data-k="name">State or territory</th><th data-k="tasCru" class="n">Warming, station</th><th data-k="tas" class="n">Warming, reanalysis</th><th data-k="tmax" class="n">Days, reanalysis</th><th data-k="tmin" class="n">Nights, reanalysis</th>
+          <th data-k="hd40now" class="n">40°C days now</th><th data-k="wbt27now" class="n">Humid days now</th><th data-k="hi41now" class="n">Heat-index 41°C days now</th><th data-k="prCru" class="n">Rain change, station</th><th data-k="proj" class="n">Projected, 2040-59</th>
+        </tr></thead>
+        <tbody>
+          {[...C.states].sort((a, b) => a.name.localeCompare(b.name)).map((s) => (
+            <tr>
+              <td class="name">{s.name}</td><td class="n" data-v={s.tasCru}>{sd1(s.tasCru)}</td><td class="n" data-v={s.tas}>{sd1(s.tas)}</td><td class="n" data-v={s.tmax}>{sd1(s.tmax)}</td><td class="n" data-v={s.tmin}>{sd1(s.tmin)}</td>
+              <td class="n" data-v={s.hd40now}>{fmt.num1(s.hd40now)}</td><td class="n" data-v={s.wbt27now}>{fmt.num1(s.wbt27now)}</td><td class="n" data-v={s.hi41now}>{fmt.num1(s.hi41now)}</td><td class="n" data-v={s.prCru}>{s.prCru == null ? "—" : (s.prCru >= 0 ? "+" : "−") + fmt.num1(Math.abs(s.prCru)) + "%"}</td><td class="n" data-v={s.proj}>{s.proj == null ? "—" : sd1(s.proj)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- § 13 what this measures -->
+  <section>
+    <div class="sec-head"><span class="no">13</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="prose">
+      <p>Temperature here is the air two metres above the ground, averaged over a day, a month or a year and over a country's or a state's land. Rain is what reaches the ground, in millimetres of water. The indices (hot days, warm nights, wet-bulb and heat-index days, dry spells, the wettest five days) are counted each day in each grid cell and then averaged over the area, so they describe an average place, not any one town.</p>
+      <p>Emissions are estimates built from fuel use, industrial output and land statistics, not measurements of the air. Carbon dioxide from fossil fuels is the best measured; methane and nitrous oxide from farms are less certain, and emissions from land-use change the least.</p>
+      <p>The guide reads every series the sources publish for India. The OWID datasets and the World Bank portal publish many more indices, aggregations and model runs than a page can draw: everything baked is downloadable below, and the full catalogue of what the sources publish, with what this guide did with each item, is in the repository's coverage ledgers.</p>
+    </div>
+  </section>
+
+  <!-- § 14 misreadings -->
+  <section>
+    <div class="sec-head"><span class="no">14</span><h2>How to misread these numbers</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li><span class="no">1</span><div><h3>"This month was normal, so the warming has paused."</h3><p>The normal is 1991-2020, already about half a degree warmer than the 1950s. A month at the normal is a warm month by the standard of the last century. One month, or one year, is weather; the change shows in thirty-year averages.</p></div></li>
+      <li><span class="no">2</span><div><h3>"Temperatures have fallen for three months running: it is cooling down."</h3><p>India's average temperature falls every year from May into the monsoon, as cloud and rain arrive. A month's level can be compared only with the same month in other years. Watch the anomaly, the gap from that month's normal: it can rise while the thermometer falls.</p></div></li>
+      <li><span class="no">3</span><div><h3>"India has warmed by less than a degree, which no one can feel."</h3><p>The average hides the extremes people live through. Nights of 26°C or more and humid days above a wet-bulb of 27°C have multiplied, and those are what tire a body, cut work hours and push up power demand.</p></div></li>
+      <li><span class="no">4</span><div><h3>"Delhi has not warmed."</h3><p>One record finds Delhi's afternoons little changed since the 1950s; both records find its nights clearly warmer and its humid days far more frequent. Irrigation and haze cool the afternoon and add moisture; the heat moves into the night and into the humidity.</p></div></li>
+      <li><span class="no">5</span><div><h3>"India is the third-largest polluter, so it is one of the main causes of climate change."</h3><p>India emits the third-largest share of the world's carbon dioxide today, but warming follows everything emitted since the 1750s, and India's share of that is a fraction of the United States' or China's. Per person, India emits less than half the world average.</p></div></li>
+      <li><span class="no">6</span><div><h3>"The models say India will be 4°C hotter."</h3><p>Only under the highest-emission pathway, by the end of the century, and as the median of a wide model range. Under lower pathways the projected warming is half that or less. Projections describe consequences of choices, not a forecast.</p></div></li>
+      <li><span class="no">7</span><div><h3>"The monsoon is failing."</h3><p>The national total shows no long decline over 125 years, and its timing has shifted only slightly. What has changed is how rain is spread: some regions are drier, others wetter, and heavy downpours are a local story that national averages blur.</p></div></li>
+    </ul>
+  </section>
+
+  <EveryCut slug="climate" />
+  <GuideData slug="climate" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Sources of record</h6>
+        <p>Temperature, rain and climate indices: the World Bank Climate Change Knowledge Portal (CCKP), which aggregates CRU TS 4.10 (Climatic Research Unit, University of East Anglia), Copernicus ERA5 (ECMWF) and the CMIP6 model ensemble to India and its states. Monthly temperature, precipitation, wildfires, emissions, energy and heat-death projections: Our World in Data, with Copernicus, the Global Carbon Project, Jones et al., the Energy Institute, Ember, GWIS and the Climate Impact Lab as the underlying producers, under CC BY 4.0. Data vintage <b id="prov-vintage">{V}</b>.</p>
+      </div>
+      <div>
+        <h6>Method</h6>
+        <p>Values are as published. Changes are differences between two 30-year averages computed within one instrument; warming rates are least-squares lines through annual values. The century plate subtracts each record's own 1951-1980 average. CCKP's fill code for a missing value is left empty. Nothing is estimated, interpolated or spliced.</p>
+      </div>
+      <div>
+        <h6>Revisions and breaks</h6>
+        <p>Station, reanalysis and model records are separate instruments and never joined. OWID's annual figure for the current, unfinished year is not shown. CCKP's simplified wet-bulb globe temperature series are not used: for 2024 and 2025 they carry corrupt values. The projected wet-bulb series, and one CMIP6 percentile series that CCKP serves on the wrong side of its own median, are withheld as source defects.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Version 1.0, October 2026. The monthly reading is revised as OWID publishes each ERA5 month; the long records when CCKP adds a year; emissions when the Global Carbon Project publishes its annual budget.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, climate and temperature</span>
+      <span>Vintage <span id="prov-vintage2">{V}</span></span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<style>
+  .explorer-note{font-family:var(--sans);font-size:.88rem;color:var(--ink-soft);max-width:880px;margin:0 0 16px}
+  #explorer th{cursor:pointer;white-space:nowrap}
+  #explorer th.n,#explorer td.n{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--sans);font-size:.92rem}
+  #explorer td.name{font-size:1rem}
+  #explorer th[aria-sort]{color:var(--ink)}
+</style>
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/climate.client.js";
+</script>
+</Base>

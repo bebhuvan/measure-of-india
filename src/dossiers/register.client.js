@@ -7,18 +7,20 @@ import cpi2024Bundle from "../../data/series/cpi-2024.json";
 import gdpBundle from "../../data/series/gdp.json";
 import wpiBundle from "../../data/series/wpi.json";
 import iipBundle from "../../data/series/iip-2022.json";
-import tradeBundle from "../../data/series/rbi-trade.json";
-import forexBundle from "../../data/series/rbi-forex.json";
-import ratiosBundle from "../../data/series/rbi-bop-ratios.json";
+// external account: RBI DBIE bundles (lb/external, 2026-10)
+import extBopBundle from "../../data/series/external-bop.json";
+import extGrossBundle from "../../data/series/external-bop-gross.json";
+import extIndBundle from "../../data/series/external-bop-indicators.json";
+import extResBundle from "../../data/series/external-reserves-weekly.json";
+import extRupeeBundle from "../../data/series/external-rupee.json";
+import extIntBundle from "../../data/series/external-intervention.json";
+import extPremiaBundle from "../../data/series/external-forward-premia.json";
+import extReerBundle from "../../data/series/external-reer-2015.json";
+import extDebtBundle from "../../data/series/external-debt-annual.json";
+import extLrsBundle from "../../data/series/external-lrs.json";
 import plfsMonthlyBundle from "../../data/series/plfs-monthly.json";
 import plfsQuarterlyBundle from "../../data/series/plfs-quarterly.json";
 import plfsAnnualBundle from "../../data/series/plfs-annual.json";
-import invisiblesBundle from "../../data/series/rbi-invisibles.json";
-import interventionBundle from "../../data/series/rbi-intervention.json";
-import premiaBundle from "../../data/series/rbi-forward-premia.json";
-import ratesBundle from "../../data/series/rbi-exchange-rates.json";
-import partnersBundle from "../../data/series/rbi-trade-partners.json";
-import commImpBundle from "../../data/series/rbi-commodities-imports.json";
 import mpceBundle from "../../data/series/hces-mpce.json";
 import giniBundle from "../../data/series/hces-gini.json";
 import asiBundle from "../../data/series/asi-headline.json";
@@ -45,22 +47,24 @@ const PA = hydrate(plfsAnnualBundle);
 const f1 = (v) => v.toFixed(2) + "%";
 // RBI bundles arrive in US$ millions; the register shows $ billions
 const toBn = (s) => ({ ...s, data: s.data.map((d) => ({ ...d, value: d.value == null ? null : d.value / 1000 })) });
-const TB = toBn(hydrate(tradeBundle).balance);
-const FR = toBn(hydrate(forexBundle).reserves);
-const FU = hydrate(forexBundle).usdinr;
-const RC = hydrate(ratiosBundle).cad_gdp;
+const XB = hydrate(extBopBundle), XG = hydrate(extGrossBundle);
+const CA = toBn(XB.current_account);
+const FR = toBn(hydrate(extResBundle).total_usd);
+const XR = hydrate(extRupeeBundle);
+const FU = XR.usd;
+const RC = hydrate(extIndBundle).cad_to_gdp;
 const fBn = (v) => "$" + v.toFixed(1) + " bn";
 const fRs = (v) => "₹" + v.toFixed(2);
 // intervention months with no reported operations are blank in the source;
 // the spark and the year-ago lookup both skip them
 const noNulls = (s) => ({ ...s, data: s.data.filter((d) => d.value != null) });
-const REM = toBn(noNulls(hydrate(invisiblesBundle).private_transfers));
-const IVN = toBn(noNulls(hydrate(interventionBundle).net));
-const FWP = noNulls(hydrate(premiaBundle).m3);
-const EUR = noNulls(hydrate(ratesBundle).euro);
-const XUS = toBn(hydrate(partnersBundle).exports_usa);
-const MCN = toBn(hydrate(partnersBundle).imports_china);
-const MPET = toBn(hydrate(commImpBundle).petroleum_crude_products);
+const REM = toBn(noNulls(XG.remittances_in));
+const IVN = toBn(noNulls(hydrate(extIntBundle).net));
+const FWP = noNulls(hydrate(extPremiaBundle).m3);
+const EUR = noNulls(XR.eur);
+const REER = hydrate(extReerBundle).reer_trade;
+const XDEBT = toBn(hydrate(extDebtBundle).e_1_gross_external_debt_position);
+const LRS = toBn(hydrate(extLrsBundle).total);
 const fBn2 = (v) => (v < 0 ? "−$" : "$") + Math.abs(v).toFixed(1) + " bn";
 // HCES & enterprises formats
 const grpIN = (v) => Math.round(v).toLocaleString("en-IN");
@@ -113,17 +117,17 @@ const iipRows = [
   ["Consumer non-durables", "IIP-CND", "s-g3", I.use_consumer_non_durables, false, "/guides/iip/", "computed"],
 ];
 const extRows = [
-  ["Trade balance, goods, $bn/mo", "RBI-TB", "s-acc", TB, false, "/guides/external/", "computed", fBn],
-  ["Forex reserves, $bn", "RBI-FX", "s-g1", FR, false, "/guides/external/", null, fBn],
+  ["Current account balance, $bn/qtr", "RBI-CAB", "s-acc", CA, false, "/guides/external/", null, fBn2],
+  ["Forex reserves, $bn (weekly)", "RBI-FX", "s-g1", FR, false, "/guides/external/", null, fBn],
   ["USD / INR, monthly avg", "RBI-USD", "s-g2", FU, false, "/guides/external/", null, fRs],
-  ["CAD, % of GDP", "RBI-CAD", "s-g3", RC, false, "/guides/external/", null, f1],
-  ["Remittances, private transfers, net, $bn/yr", "RBI-REM", "s-acc", REM, false, "/guides/external/", null, fBn],
+  ["Current account, % of GDP (annual)", "RBI-CAD", "s-g3", RC, false, "/guides/external/", null, f1],
+  ["Remittances received, private transfers, $bn/qtr", "RBI-REM", "s-acc", REM, false, "/guides/external/", null, fBn],
   ["RBI net US$ purchase(+)/sale(−), $bn/mo", "RBI-INT", "s-g4", IVN, false, "/guides/external/", null, fBn2],
   ["Forward premia, 3-month, % p.a.", "RBI-FWP", "s-g1", FWP, false, "/guides/external/", null, (v) => v.toFixed(2) + "%"],
   ["EUR / INR, monthly avg", "RBI-EUR", "s-g2", EUR, false, "/guides/external/", null, fRs],
-  ["Exports to USA, $bn/yr", "RBI-XUS", "s-g3", XUS, false, "/guides/external/", null, fBn],
-  ["Imports from China, $bn/yr", "RBI-MCN", "s-g4", MCN, false, "/guides/external/", null, fBn],
-  ["Petroleum, crude & products imports, $bn/yr", "RBI-MPE", "s-g1", MPET, false, "/guides/external/", null, fBn],
+  ["Real effective exchange rate, 40 currencies (2015-16 = 100)", "RBI-REER", "s-g3", REER, false, "/guides/external/", null, (v) => v.toFixed(1)],
+  ["External debt, $bn, end-March", "RBI-EDT", "s-g4", XDEBT, false, "/guides/external/", null, fBn],
+  ["Outward remittances under the LRS, $bn/mo", "RBI-LRS", "s-g1", LRS, false, "/guides/external/", null, fBn],
 ];
 // HCES is two survey rounds: a two-point sparkline is a bare diagonal, so the
 // history cell degrades to a note — same choice the dossier's own ledger makes.
@@ -222,7 +226,7 @@ render("reg-cpi", cpiRows, 12, "spc", "12 Jan 2026");
 render("reg-gdp", gdpRows, 4, "spg", "28 Nov 2025");
 render("reg-wpi", wpiRows, 12, "spw", vintOf(wpiBundle), "OEA / DPIIT");
 render("reg-iip", iipRows, 12, "spi", "Jul 2026, QE");
-render("reg-ext", extRows, 12, "spe", "Jun 2025", "RBI");
+render("reg-ext", extRows, 12, "spe", vintOf(extBopBundle), "RBI DBIE");
 render("reg-plfs", plfsRows, 12, "spl", "Jun 2026");
 render("reg-hces", hcesRows, 1, "sph", "2023-24 round");
 render("reg-asi", asiRows, 1, "spa", "2023-24");
@@ -271,6 +275,130 @@ const nfhsRows = [
   ["Women's bank account, %", "NFHS-BNK", "s-g4", nfhsFind(NF, "bank or savings")],
 ].filter(([, , , s]) => s != null);
 render("reg-nfhs", nfhsRows.map(([nm, code, sw, s]) => [nm, code, sw, s, false, "/guides/nfhs/"]), 48, "spnf", "NFHS-5", "MoSPI / IIPS");
+// ---- bis family session: debt and house prices (BIS), quarterly ----
+import bisCreditBundle from "../../data/series/bis-credit.json";
+import bisGapBundle from "../../data/series/bis-credit-gap.json";
+import bisDsrBundle from "../../data/series/bis-dsr.json";
+import bisPropertyBundle from "../../data/series/bis-property.json";
+import bisCitiesBundle from "../../data/series/bis-property-cities.json";
+{
+  const M3 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const qv = (b) => { const d = b.dates.at(-1); const m = +d.slice(5, 7) - 1; return `${M3[m]}-${M3[m + 2]} ${d.slice(0, 4)}`; };
+  const CR = hydrate(bisCreditBundle), GP = hydrate(bisGapBundle), DS = hydrate(bisDsrBundle);
+  const pg = (v) => v.toFixed(1) + "%";
+  const pt = (v) => (v < 0 ? "−" : "+") + Math.abs(v).toFixed(1) + " pt";
+  render("reg-debt", [
+    ["Debt of all non-financial borrowers, % of GDP", "BIS-TC-C", "s-acc", CR.total, false, "/guides/debt/", null, pg],
+    ["Households' debt, % of GDP (latest quarters BIS estimates)", "BIS-TC-H", "s-g1", CR.households, false, "/guides/debt/", null, pg],
+    ["Companies' debt, % of GDP (latest quarters BIS estimates)", "BIS-TC-N", "s-g2", CR.companies, false, "/guides/debt/", null, pg],
+    ["Government debt, % of GDP", "BIS-TC-G", "s-g3", CR.government, false, "/guides/debt/", null, pg],
+    ["Credit-to-GDP gap", "BIS-CG", "s-g1", GP.gap, false, "/guides/debt/", null, pt],
+    ["Debt service ratio, private sector", "BIS-DSR", "s-g2", DS.private, false, "/guides/debt/", null, pg],
+  ], 4, "spdb", qv(bisCreditBundle), "BIS");
+  const PP = hydrate(bisPropertyBundle), PC = hydrate(bisCitiesBundle);
+  const ix = (v) => v.toFixed(1);
+  render("reg-housing", [
+    ["Residential property prices, real, 2010 = 100", "BIS-SPP-R", "s-acc", PP.real, false, "/guides/housing/", null, ix],
+    ["Residential property prices, nominal, 2010 = 100", "BIS-SPP-N", "s-g1", PP.nominal, false, "/guides/housing/", null, ix],
+    ["Real house prices, % change on a year ago", "BIS-SPP-RY", "s-g2", PP.real_yoy, false, "/guides/housing/", null, (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(2) + "%"],
+    ["RBI house price index, 18 cities, 2022-23 = 100", "RBI-HPI-18", "s-g3", PC.cities_18, false, "/guides/housing/", null, ix],
+  ], 4, "spho", qv(bisPropertyBundle), "BIS");
+}
+// ---- services: annual share of GVA (2022-23 base) and monthly trade (RBI) ----
+import svcShareBundle from "../../data/series/services-gva-2022-share.json";
+import svcTradeBundle from "../../data/series/services-trade-monthly.json";
+{
+  const SH = hydrate(svcShareBundle), TR = hydrate(svcTradeBundle);
+  const bn = (v) => "$" + v.toFixed(1) + " bn";
+  render("reg-services", [
+    ["Services, share of GVA", "NAS-SVC", "s-acc", SH.services, true, "/guides/services/", "computed"],
+    ["Finance, real estate, professional, share", "NAS-SVC9", "s-g1", SH.finance_realty_prof, false, "/guides/services/", "computed"],
+    ["Services exports, monthly", "RBI-SX", "s-g2", TR.exports, false, "/guides/services/", null, bn, vintOf(svcTradeBundle)],
+    ["Services imports, monthly", "RBI-SM", "s-g3", TR.imports, false, "/guides/services/", null, bn, vintOf(svcTradeBundle)],
+  ], 1, "spsv", vintOf(svcShareBundle), "MoSPI / RBI");
+}
+// ---- end services ----
+// --- states (state economies): MoSPI regional accounts, fixed panel, annual ---
+import statesSpreadBundle from "../../data/series/states-spread.json";
+{
+  const SP = hydrate(statesSpreadBundle);
+  const fy = statesSpreadBundle.dates.at(-1).slice(0, 4);
+  const vt = `${fy}-${String((+fy + 1) % 100).padStart(2, "0")}`;
+  render("reg-states", [
+    ["Richest state's income per person, times the poorest's", "IA-ST-GAP", "s-acc", SP.gap_current, true, "/guides/states/", null, (v) => v.toFixed(1) + "×"],
+    ["Income per person, middle state, ₹", "IA-ST-MED", "s-g1", SP.median_current, true, "/guides/states/", null, (v) => "₹" + Math.round(v).toLocaleString("en-IN")],
+    ["Income per person, poorest state, ₹", "IA-ST-LOW", "s-g2", SP.poorest_current, true, "/guides/states/", null, (v) => "₹" + Math.round(v).toLocaleString("en-IN")],
+    ["Real GSDP growth, middle state", "IA-ST-GRW", "s-g3", SP.median_real_growth, true, "/guides/states/", null, (v) => v.toFixed(1) + "%"],
+  ], 1, "spst", vt, "MoSPI regional accounts");
+}
+
+// worldbank family (2026-10-09): poverty (World Bank PIP) and population (UN WPP 2024)
+import povertyBundle from "../../data/series/poverty-pip-lineup.json";
+import popBundle from "../../data/series/population-wpp.json";
+import popAgeBundle from "../../data/series/population-wpp-age.json";
+{
+  // the lineup carries a value every year (World Bank model estimates); survey years live in the guide
+  const PV = hydrate(povertyBundle);
+  const p1 = (v) => v.toFixed(1) + "%";
+  const est = (s) => ({ ...s, data: s.data.filter((d) => d.value != null) });
+  render("reg-poverty", [
+    ["Below $3.00 a day (2021 PPP), World Bank estimate", "PIP-LU-300", "s-acc", est(PV.headcount_3_00), true, "/guides/poverty/", null, p1],
+    ["Below $4.20 a day (2021 PPP), World Bank estimate", "PIP-LU-420", "s-g1", est(PV.headcount_4_20), true, "/guides/poverty/", null, p1],
+    ["Below $8.30 a day (2021 PPP), World Bank estimate", "PIP-LU-830", "s-g2", est(PV.headcount_8_30), true, "/guides/poverty/", null, p1],
+  ], 1, "sppv", povertyBundle.meta.vintage, "World Bank PIP");
+  const PP = hydrate(popBundle), PA2 = hydrate(popAgeBundle);
+  const bnF = (v) => (v / 1e6).toFixed(3) + " bn";
+  render("reg-population", [
+    ["Population, 1 July", "WPP-POP", "s-acc", PP.tpopulation1july, false, "/guides/population/", null, bnF],
+    ["Median age, years", "WPP-MED", "s-g1", PP.medianagepop, false, "/guides/population/", null, (v) => v.toFixed(1)],
+    ["Total fertility rate", "WPP-TFR", "s-g2", PP.tfr, false, "/guides/population/", null, (v) => v.toFixed(2)],
+    ["Life expectancy at birth, years", "WPP-LEX", "s-g3", PP.lex, false, "/guides/population/", null, (v) => v.toFixed(1)],
+    ["Share aged 15 to 64", "WPP-WA", "s-g4", PA2.share_15_64, true, "/guides/population/", null, (v) => v.toFixed(1) + "%"],
+  ], 1, "sppo", popBundle.meta.vintage, "UN WPP 2024");
+}
+
+// climate (lb/climate): the month against 1991-2020 (ERA5, OWID), the station record's annual
+// mean, and nights of 26°C or more (ERA5, CCKP)
+import climateMonthlyBundle from "../../data/series/climate-temp-monthly.json";
+import climateCruBundle from "../../data/series/climate-cru.json";
+import climateHotdaysBundle from "../../data/series/climate-era5-hotdays.json";
+{
+  const CM = hydrate(climateMonthlyBundle), CR = hydrate(climateCruBundle), CH = hydrate(climateHotdaysBundle);
+  const sdeg = (v) => (v < 0 ? "−" : "+") + Math.abs(v).toFixed(2) + "°C";
+  render("reg-climate", [
+    ["Temperature against 1991-2020, monthly", "ERA5-ANOM", "s-acc", CM.temperature_anomaly, false, "/guides/climate/", null, sdeg],
+    ["Annual mean temperature, station record", "CRU-TAS", "s-g1", CR.tas, false, "/guides/climate/", null, (v) => v.toFixed(2) + "°C", "CRU TS 4.10"],
+    ["Nights of 26°C or more, a year", "ERA5-TR26", "s-g2", CH.tr26, false, "/guides/climate/", null, (v) => v.toFixed(1) + " days", "ERA5, CCKP"],
+  ], 12, "spcl", climateMonthlyBundle.meta.latestPeriod, "Copernicus ERA5 via OWID; CRU TS and ERA5 via the World Bank CCKP");
+}
+
+// ilo (ILOSTAT): the ILO's modelled estimates for India, annual, calendar years
+import iloLfprBundle from "../../data/series/ilo-est-eap-2wap.json";
+import iloUrBundle from "../../data/series/ilo-est-une-2eap.json";
+import iloNeetBundle from "../../data/series/ilo-est-eip-2eet.json";
+{
+  const IL = hydrate(iloLfprBundle), IU = hydrate(iloUrBundle), IN = hydrate(iloNeetBundle);
+  render("reg-ilo", [
+    ["Labour force participation, 15+, ILO model", "ILO-LFPR", "s-acc", IL.eap_2wap_sex_age_rt__sex_t__age_ythadult_yge15, false, "/guides/ilo/"],
+    ["Women's labour force participation, ILO model", "ILO-LFPR-F", "s-g1", IL.eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15, false, "/guides/ilo/"],
+    ["Unemployment rate, 15+, ILO model", "ILO-UR", "s-g2", IU.une_2eap_sex_age_rt__sex_t__age_ythadult_yge15, false, "/guides/ilo/"],
+    ["Youth not in work or study, ILO model", "ILO-NEET", "s-g3", IN.eip_2eet_sex_rt__sex_t, false, "/guides/ilo/"],
+  ], 1, "spilo", "Nov 2025 edition", "ILO, ILOSTAT");
+}
+// --- rates (atlas-rates): policy and bank rates, per cent a year
+import ratesMonthlyBundle from "../../data/series/rates-monthly.json";
+import ratesLendingBundle from "../../data/series/rates-lending.json";
+{
+  const RM = hydrate(ratesMonthlyBundle), RL = hydrate(ratesLendingBundle);
+  const since = (s, iso) => ({ ...s, data: s.data.filter((d) => d.date >= new Date(iso + "T00:00:00Z")) });
+  const vt = (b) => { const d = b.dates.at(-1); return ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][+d.slice(5, 7) - 1] + " " + d.slice(0, 4); };
+  render("reg-rates", [
+    ["Policy repo rate, month-end", "RBI-REPO", "s-acc", since(RM.repo, "2016-10-01"), false, "/guides/rates/", null, f1, vt(ratesMonthlyBundle)],
+    ["WALR, fresh rupee loans", "RBI-WALRF", "s-g1", since(RL.walr_fresh_all, "2016-10-01"), false, "/guides/rates/", null, f1],
+    ["WALR, outstanding loans", "RBI-WALRO", "s-g2", since(RL.walr_outstanding_all, "2016-10-01"), false, "/guides/rates/", null, f1],
+    ["WADTDR, fresh term deposits", "RBI-WADF", "s-g3", since(RL.wadtdr_fresh_all, "2016-10-01"), false, "/guides/rates/", null, f1],
+  ], 12, "sprt", vt(ratesLendingBundle), "RBI");
+}
 
 // credit (lb/credit): bank credit, money and bank health, RBI
 import creditGrowthBundle from "../../data/series/credit-growth.json";

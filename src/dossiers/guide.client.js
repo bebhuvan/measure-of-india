@@ -100,3 +100,47 @@ if (MO) new MO((ms) => {
     else for (const n of m.addedNodes) n.nodeType === 1 ? tidyTree(n) : n.nodeType === 3 && !SKIP.has(n.parentElement?.tagName) && (n.nodeValue.includes(" · ") || n.nodeValue.includes(" — ")) && (n.nodeValue = tidy(n.nodeValue));
   }
 }).observe(document.body, { childList: true, subtree: true, characterData: true });
+
+/* ---------- phone plates open at today ----------
+ * On phones a plate's main plot keeps its authored width and scrolls sideways (DESIGN.md §3),
+ * and time runs left to right, so the latest period sits at the far right. Each scrolling plot
+ * zone therefore opens at its right end: after layout, and again whenever its size changes
+ * (fonts, rotation), until the reader scrolls it themselves. A quiet cue above the plot says
+ * there is more to the left, and goes once the reader reaches the start. */
+{
+  const zones = [...document.querySelectorAll(".plotzone")];
+  const touched = new WeakSet();
+  let programmatic = false;
+  const cueOf = new Map();
+  const cue = (z) => {
+    let c = cueOf.get(z);
+    if (!c) {
+      c = document.createElement("div");
+      c.className = "pz-cue"; c.hidden = true; c.setAttribute("aria-hidden", "true");
+      c.textContent = "← Earlier years";
+      z.before(c); cueOf.set(z, c);
+    }
+    return c;
+  };
+  const update = (z) => {
+    const max = z.scrollWidth - z.clientWidth;
+    if (max <= 4) { if (cueOf.has(z)) cueOf.get(z).hidden = true; return; }
+    if (!touched.has(z)) { programmatic = true; z.scrollLeft = max; programmatic = false; }
+    cue(z).hidden = z.scrollLeft <= 4;
+  };
+  const all = () => zones.forEach(update);
+  for (const z of zones) {
+    z.addEventListener("scroll", () => {
+      if (!programmatic) touched.add(z);
+      if (cueOf.has(z)) cueOf.get(z).hidden = z.scrollLeft <= 4 || z.scrollWidth - z.clientWidth <= 4;
+    }, { passive: true });
+  }
+  if (typeof window !== "undefined") {
+    // after layout; jsdom (the qc gate) has no requestAnimationFrame, so fall back to a tick
+    const raf = window.requestAnimationFrame?.bind(window) ?? ((f) => setTimeout(f, 0));
+    if (document.readyState === "complete") raf(all);
+    else window.addEventListener("load", () => raf(all));
+    window.addEventListener("resize", all);
+    if (window.ResizeObserver) { const ro = new ResizeObserver(() => all()); zones.forEach((z) => ro.observe(z)); }
+  }
+}

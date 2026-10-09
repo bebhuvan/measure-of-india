@@ -23,6 +23,14 @@ families:
       World Bank API v2 (WDI, Data360). JSON envelope [metadata, rows];
       scripts/lib/worldbank.mjs paginates it. No key required; be polite:
       per_page 500, one request at a time.
+  # worldbank family session (2026-10-09): UN WPP, the population guide's projections
+  unpd:
+    transport: http-gzip-csv
+    base: https://population.un.org/wpp/assets/Excel%20Files/
+    note: >
+      UN DESA Population Division, World Population Prospects standard CSV files (gzip,
+      all countries). scripts/lib/products/wpp.mjs downloads them with net.mjs getBuffer and
+      caches them in data/raw/http-cache for 30 days; WPP is revised every two years.
   databank:
     transport: local
     root: "~/Documents/Data/Data bank"
@@ -31,6 +39,49 @@ families:
       RBI DBIE webi mirror (dataset rbi_dbie_webi_rows) through scripts/lib/databank.mjs.
       Refresh the mirror with the Data Bank's own CLI (docs/RBI_DBIE_WEBI_RUNBOOK.md there),
       then run `npm run data`. Override the path with INDIA_ATLAS_DATABANK.
+  # --- climate (lb/climate) ---
+  owid:
+    transport: owid
+    base: https://ourworldindata.org/
+    note: >
+      Our World in Data: the CO2 and energy datasets (CSV plus codebook) and OWID's own
+      indicators (api.ourworldindata.org/v1/indicators/<id>.data.json). Licence CC BY 4.0:
+      credit OWID and the underlying producer. scripts/lib/owid.mjs; docs/reference/owid.md.
+  cckp:
+    transport: cckp
+    base: https://cckpapi.worldbank.org/cckp/v1/
+    note: >
+      World Bank Climate Change Knowledge Portal aggregation API (ERA5, CRU TS, CMIP6 by
+      country and first-level unit) and its public S3 bucket (the catalogue). No key.
+      scripts/lib/cckp.mjs; docs/reference/cckp.md.
+  # --- end climate ---
+
+  # ---- bis family session (housing, debt) ----
+  bis:
+    transport: http
+    base: https://stats.bis.org/api/v1/
+    note: >
+      Bank for International Settlements statistics API (SDMX). Used ONLY for the coverage
+      catalogue (series-key listings, scripts/lib/bis.mjs); BIS values are read from the Data
+      Bank's bis_series and bis_daily datasets. No key; one request at a time, 3 s apart.
+  nhb:
+    transport: http
+    base: https://residex.nhbonline.org.in/
+    note: >
+      National Housing Bank RESIDEX dashboards (ASP.NET, form POSTs that answer JSON). Three
+      bases, each its own controller: DashboardBY2013, DashboardBY2018, Dashboard (2024-25).
+      scripts/lib/nhb.mjs posts one request at a time, 1.5 s apart. See docs/reference/residex.md.
+  # ---- end bis family ----
+
+  # ---- ilo (ILOSTAT) ----
+  ilostat:
+    transport: ilostat
+    base: https://sdmx.ilo.org/rest/
+    note: >
+      ILOSTAT's SDMX 2.1 REST API (scripts/lib/ilostat.mjs; docs/reference/ilostat.md). No key.
+      Structure messages are XML, data is SDMX-CSV (format=csvfile). One request in flight,
+      400ms apart, cached under data/raw/http-cache. rplumber.ilo.org returns empty bodies
+      (2026-10-09) and is not used.
 
 dossiers:
 
@@ -471,6 +522,10 @@ dossiers:
       #       (UR by education level + the 15-29 youth cut, PS+SS).
 
   rbi:
+    # 2026-10: the external guide moved to RBI DBIE (dossiers external-bop / external-flows /
+    # external-reer). The bundles DBIE replaces (forex, BoP, ratios, debt, NRI, invisibles, rates,
+    # premia, intervention, turnover) are retired: rbi.mjs no longer writes them; their raw dumps
+    # stay. The merchandise-trade bundles below are still written, for the trade guide's cross-check.
     family: mospi
     geo: IND
     product: rbi
@@ -1003,6 +1058,466 @@ dossiers:
     ranges:
       inr_lakh_crore: [0, 400]
 
+  # ---- services (the services guide; adapter scripts/lib/products/services.mjs) ----
+  # Five products, one dossier key each, so every bundle is checked against its own base.
+  services-isp:
+    stale_after: "2026-07"
+    frequency_exempt: true    # the monthly y/y and the one annual year
+    family: mospi
+    geo: IND
+    product: services-isp
+    frequency: monthly
+    base: "2024-25=100"
+    release_calendar: "monthly, about two months after the reference month"
+    revision_policy: "TRIAL SERIES: methodology may change without notice. Treat every vintage as provisional."
+    source_agency: "MoSPI, National Statistical Office"
+    release_url: https://www.mospi.gov.in
+    fetch:
+      endpoint: isp/getISPRecords
+      # monthly rows carry no month field: fetched per month_code (1=April..12=March);
+      # annual rows with frequency_code 1. The year param breaks filtering: never sent.
+  services-nas:
+    stale_after: "2025-04"
+    family: mospi
+    geo: IND
+    product: services-nas
+    frequency: annual
+    base: "2022-23"
+    release_calendar: "annual estimates with the end-February and end-May releases"
+    revision_policy: "Revised continuously; each year moves from advance to provisional to revised to final estimates over about three years."
+    source_agency: "MoSPI, National Statistical Office"
+    release_url: https://www.mospi.gov.in
+    fetch:
+      endpoint: nas/getNASData
+      params: { series: Current, account_code: 1 }
+      # GVA (indicator 1), annual, all 15 industries and the 9 service sub-industries (codes
+      # 10-18; 1-9 are farm and factory sub-industries, the GDP guide's). The sub-industry
+      # dimension is annual only; quarterly rows carry the 8-group table (gdp-*-industries).
+      bases:
+        - { base_year: "2022-23", slug: "2022", nameSuffix: "_base2022" }
+        - { base_year: "2011-12", slug: "2011", nameSuffix: "" }
+  services-trade:
+    stale_after: "2026-04"
+    frequency_exempt: true    # monthly totals, quarterly categories, annual long table
+    family: databank
+    geo: IND
+    product: services-trade
+    frequency: quarterly
+    base: "as published (US$)"
+    release_calendar: "monthly totals about 45 days after the month (RBI press release); BoP quarterly about 80 days after the quarter"
+    revision_policy: "Monthly figures are provisional and revised when the quarterly BoP is compiled; BoP quarters move from preliminary to partially revised. The latest version of each period is kept."
+    source_agency: "Reserve Bank of India (DBIE, via the local Data Bank)"
+    release_url: https://data.rbi.org.in
+  services-jobs:
+    stale_after: "2025-01"
+    frequency_exempt: true
+    family: mospi
+    geo: IND
+    product: services-jobs
+    frequency: annual
+    base: "calendar year (PLFS new design)"
+    release_calendar: "annual report, about five months after the year"
+    revision_policy: "Final on release. Agriculture-year reports (July to June, 2017-18 to 2023-24) and calendar-year estimates (new design, published for 2023 on) are two designs, never joined."
+    source_agency: "MoSPI, National Statistical Office (PLFS)"
+    release_url: https://www.mospi.gov.in
+    fetch:
+      endpoint: plfs/getData
+      indicator_code: 4     # percentage distribution of workers; rejects age/gender/sector params
+      agriculture_years: ["2017-18", "2018-19", "2019-20", "2020-21", "2021-22", "2022-23", "2023-24"]
+      calendar_years: ["2023", "2024", "2025"]
+  services-asuse:
+    stale_after: "2023-04"
+    family: mospi
+    geo: IND
+    product: services-asuse
+    frequency: annual
+    base: "survey 2021-22 onward"
+    release_calendar: "annual, with the quarterly bulletin in between"
+    revision_policy: "Survey estimates are final on release. The 2025 round moved to a calendar-year reference period: a separate bundle."
+    source_agency: "MoSPI, National Statistical Office (ASUSE)"
+    release_url: https://www.mospi.gov.in
+    fetch:
+      endpoint: asuse/getAsuseRecords
+      # every ASUSE indicator that carries the activity dimension; only service activities
+      # (and the All, Trading and Other Services aggregates) are kept
+      indicators: [1, 3, 6, 10, 12, 14, 16, 22, 26, 30, 32, 34]
+      years: ["2021-22", "2022-23", "2023-24", "2025"]
+  # ---- end services ----
+
+
+  # ---- bis family session: BIS (housing, debt), RBI house price index, NHB RESIDEX ----
+  bis:
+    # regression floor: BIS quarterly series run to Q1 2026 (2026-01) as of 2026-10
+    stale_after: "2026-01"
+    family: databank
+    geo: IND
+    product: bis
+    frequency: quarterly
+    frequency_exempt: true      # monthly/daily/annual cross-check copies (EER, policy rate, rupee, CPI)
+    release_calendar: "quarterly, BIS releases credit and property statistics about four months after the quarter (March, June, September, December)"
+    revision_policy: "BIS revises credit, debt service and property series as national sources revise; each update re-reads the last ten years. Break-adjusted series are BIS's own adjustment."
+    source_agency: "Bank for International Settlements (BIS)"
+    release_url: https://data.bis.org
+  rbihpi:
+    stale_after: "2026-04"
+    family: databank
+    geo: IND
+    product: rbihpi
+    frequency: quarterly
+    release_calendar: "quarterly, about two months after the quarter"
+    revision_policy: "The latest quarter is provisional and is finalised with the next release; RBI rebased the index in 2010-11 and 2022-23 (three bases, never joined)."
+    source_agency: "Reserve Bank of India, House Price Index (via DBIE)"
+    release_url: https://data.rbi.org.in
+  residex:
+    stale_after: "2026-04"
+    family: nhb
+    geo: IND
+    product: residex
+    frequency: quarterly
+    release_calendar: "quarterly, NHB press release about three months after the quarter"
+    revision_policy: "NHB rebased RESIDEX to 2012-13, 2017-18 and 2024-25 (three bases, never joined here). Values are as served by the RESIDEX dashboards at fetch time."
+    source_agency: "National Housing Bank, RESIDEX"
+    release_url: https://residex.nhbonline.org.in
+  # ---- end bis family ----
+  # --- states (state economies) ---------------------------------------------
+  states:
+    # regression floor: the newest year any state reports (2025-26 for 16 states)
+    stale_after: "2025-04"
+    family: mospi
+    # also reads the RBI Handbook of Statistics on Indian States, every table, from the
+    # databank family (read-only). Its SDP tables carry meta.dossier "states" (seams below);
+    # the rest carry meta.dossier "states-hbs", base "as published" (no ruler to change).
+    geo: IND
+    product: states
+    frequency: annual
+    base: "2011-12"
+    release_calendar: "irregular: each state's DES sends estimates to MoSPI as it makes them; MoSPI refreshes the regional tables a few times a year"
+    revision_policy: "Each year is the state's latest estimate; states revise at different times and the API carries no revision label. The newest year is usually an advance or quick estimate."
+    source_agency: "MoSPI, National Statistical Office (state estimates from each state's Directorate of Economics and Statistics)"
+    release_url: https://www.mospi.gov.in
+
+  # --- worldbank family session (2026-10-09): WDI catalogue, poverty (PIP), population (WPP) ---
+  worldbank:
+    # every WDI indicator with India data, baked into topic bundles (no guide of its own;
+    # population-wdi* and poverty-wdi feed the population and poverty guides)
+    stale_after: "2023-01"
+    family: worldbank
+    geo: IND
+    product: wdi-india
+    frequency: annual
+    base: "n/a"
+    release_calendar: "WDI updates several times a year, without a fixed calendar; indicators carry their own lastupdated stamps"
+    revision_policy: "WDI revises history freely at every update: a new vintage can change any past value. Raw dumps keep every vintage."
+    source_agency: "World Bank, World Development Indicators"
+    release_url: https://databank.worldbank.org/source/world-development-indicators
+    # plausibility ranges per unit class (the class comes from WDI's own naming: see
+    # unitClass in scripts/lib/products/wdi-india.mjs). Loose by design: they catch a
+    # scale or unit error, not a surprising value.
+    unit_ranges:
+      pct: [-1000, 10000]
+      pct_gdp: [-500, 1000]
+      pct_change: [-100, 100000]
+      index: [-1e4, 1e7]
+      usd: [-1e16, 1e17]
+      lcu: [-1e17, 1e18]
+      ppp_usd: [-1e16, 1e17]
+      rate: [0, 1e6]
+      level: [-1e13, 1e13]
+    fetch:
+      # ordered: the first rule whose pattern matches a WDI code decides its bundle.
+      # A code no rule matches fails the bake (a new indicator needs a home).
+      groups:
+        - { bundle: population-wdi, dossier: worldbank, coverage: "Population: totals, sex, and five-year age groups (WDI, from UN WPP)", match: ["SP.POP.*"], caution: "WDI takes these from UN WPP 2024 and runs the estimates (to 2023) straight into the medium projection (2024 and 2025) in one series; the population-wpp bundles keep the two apart." }
+        - { bundle: population-wdi-vital, dossier: worldbank, coverage: "Births, deaths, fertility, life expectancy, marriage, contraception and registration (WDI)", match: ["SP.DYN.*", "SP.ADO.*", "SP.REG.*", "SP.HOU.*", "SP.M15.*", "SP.M18.*", "SP.MTR.*", "SP.UWT.*"], caution: "Births, deaths, fertility and life expectancy here come from UN WPP 2024: values after 2023 are WPP's medium projection, not estimates." }
+        - { bundle: population-wdi-urban, dossier: worldbank, coverage: "Urban and rural population, density, slums and large cities (WDI)", match: ["SP.URB.*", "SP.RUR.*", "EN.POP.*", "EN.URB.*"], caution: "Urban and rural shares come from the UN's World Urbanization Prospects 2018 applied to WPP totals: values after 2018 are projections, and India's urban share follows the Census of India's definition of a town." }
+        - { bundle: population-wdi-migration, dossier: worldbank, coverage: "International migrants and refugees (WDI)", match: ["SM.POP.*"] }
+        - { bundle: worldbank-external, dossier: worldbank, coverage: "Balance of payments, reserves, external debt, remittances and their cost (WDI)", match: ["SI.RMT.*", "BX.*", "BM.*", "BN.*", "BG.*", "DT.*", "FI.RES.*", "PX.REX.*"] }
+        - { bundle: poverty-wdi, dossier: worldbank, coverage: "Poverty headcounts and gaps at international and national lines, income shares by quintile and decile, survey means (WDI, from PIP)", match: ["SI.*"], caution: "WDI's poverty and distribution series join survey rounds that PIP marks as not comparable (different questionnaires and recall periods) into one line. Use the poverty-pip-* bundles, one per comparable spell, to compare rounds." }
+        - { bundle: worldbank-national-accounts, dossier: worldbank, coverage: "GDP, GNI, expenditure, value added by sector, savings and natural-resource rents (WDI)", match: ["NY.*", "NE.*", "NV.*"] }
+        - { bundle: worldbank-trade, dossier: worldbank, coverage: "Merchandise and services trade, tariffs, trade indices and tourism (WDI)", match: ["TX.*", "TM.*", "TG.*", "TT.*", "ST.*"] }
+        - { bundle: worldbank-prices, dossier: worldbank, coverage: "Consumer and wholesale prices, exchange rates and PPP conversion factors (WDI)", match: ["FP.*", "PA.*"] }
+        - { bundle: worldbank-finance, dossier: worldbank, coverage: "Banks, credit, money, interest rates, stock markets and account ownership (WDI)", match: ["FB.*", "FD.*", "FM.*", "FR.*", "FS.*", "FX.*", "CM.*"] }
+        - { bundle: worldbank-government, dossier: worldbank, coverage: "Government revenue, spending and debt, governance and statistical capacity, military, violence (WDI)", match: ["GC.*", "GF.*", "GOV_WGI_*", "IQ.*", "MS.*", "VC.*"] }
+        - { bundle: worldbank-education, dossier: worldbank, coverage: "Schooling, literacy, learning and education spending; the human capital index (WDI)", match: ["SE.*", "HD_HCIP_*"] }
+        - { bundle: worldbank-health, dossier: worldbank, coverage: "Health, mortality by cause, nutrition, water and sanitation, health spending, UHC (WDI)", match: ["SH.*", "SH_UHC_*", "SN.*"] }
+        - { bundle: worldbank-labour, dossier: worldbank, coverage: "Labour force, employment, unemployment and child work (WDI, mostly ILO modelled estimates)", match: ["SL.*"] }
+        - { bundle: worldbank-gender, dossier: worldbank, coverage: "Women's decisions, violence against women, time use, parliament, Women, Business and the Law (WDI)", match: ["SG.*", "GD_WBL_*"] }
+        - { bundle: worldbank-environment, dossier: worldbank, coverage: "Emissions, air pollution, water, forests, protected areas, threatened species (WDI)", match: ["EN.*", "ER.*"] }
+        - { bundle: worldbank-energy, dossier: worldbank, coverage: "Electricity access, clean cooking, energy use and renewables (WDI)", match: ["EG.*"] }
+        - { bundle: worldbank-agriculture, dossier: worldbank, coverage: "Land use, crops, yields and fertiliser (WDI)", match: ["AG.*"] }
+        - { bundle: worldbank-business, dossier: worldbank, coverage: "Firms, business entry and regulation (B-READY, Enterprise Surveys), patents, R&D, private infrastructure investment (WDI)", match: ["IC.*", "IE.*", "IP.*", "GB.*"] }
+        - { bundle: worldbank-infrastructure, dossier: worldbank, coverage: "Phones, internet, railways, air transport, ports and logistics (WDI)", match: ["IS.*", "IT.*", "LP.*"] }
+        - { bundle: worldbank-aid, dossier: worldbank, coverage: "Aid to India from donor countries (WDI)", match: ["DC.*"] }
+        - { bundle: worldbank-social-protection, dossier: worldbank, coverage: "Coverage, adequacy and incidence of social protection programmes (WDI, ASPIRE)", match: ["per_*"] }
+  poverty:
+    # PIP releases twice a year (March/April and September/October); the floor is the
+    # latest survey year PIP serves for India (HCES 2023-24 is reporting year 2023)
+    stale_after: "2023-01"
+    family: worldbank
+    geo: IND
+    product: pip
+    frequency: irregular
+    frequency_exempt: true      # survey spells are irregular; the lineup and WDI bundles are annual
+    base: "2021 PPP"
+    release_calendar: "PIP updates twice a year, in March or April and in September or October"
+    revision_policy: "Each PIP release can revise any past estimate (new PPPs, new population figures, reprocessed surveys). The raw dump keeps every release."
+    source_agency: "World Bank, Poverty and Inequality Platform (PIP)"
+    release_url: https://pip.worldbank.org/country-profiles/IND
+    fetch:
+      # the international lines (2021 PPP $ a day); pip.mjs fails if PIP's own
+      # poverty_lines table no longer lists them
+      international_lines: [3.0, 4.2, 8.3]
+      # further lines, to draw the whole distribution (share of people below each)
+      ladder: [1.0, 1.5, 2.0, 2.5, 3.5, 5.0, 6.0, 7.0, 10.0, 12.0, 15.0, 20.0, 25.0, 30.0, 40.0]
+      # PIP auxiliary tables that are inputs or global aggregates, not India measures
+      aux_tables_not_used: [gdp, pce, decomposition, regions, metaregion, region_coverage, incgrp_coverage, pop_region]
+  population:
+    stale_after: "2023-01"
+    family: unpd
+    geo: IND
+    product: wpp
+    frequency: annual
+    base: "WPP 2024"
+    release_calendar: "WPP is revised every two years (2022, 2024, next 2026)"
+    revision_policy: "Each WPP revision re-estimates the whole history from 1950 and re-projects to 2100. A new revision is a new instrument; the raw dump keeps the old one."
+    source_agency: "UN DESA Population Division, World Population Prospects 2024"
+    release_url: https://population.un.org/wpp/
+    fetch:
+      revision: "2024"
+      vintage: "2024-07-11"     # WPP 2024 release date (World Population Day)
+      loc_id: 356               # India
+      estimates_end: 2023       # last estimate year of WPP 2024; projections start 2024
+      base_url: "https://population.un.org/wpp/assets/Excel%20Files/1_Indicator%20(Standard)/CSV_FILES/"
+      files:
+        medium: WPP2024_Demographic_Indicators_Medium.csv.gz
+        variants: WPP2024_Demographic_Indicators_OtherVariants.csv.gz
+        age: WPP2024_PopulationByAge5GroupSex_Medium.csv.gz
+      # a defect in the published OtherVariants file (checked 2026-10-09, India and China
+      # alike): in the probabilistic-interval rows these columns carry impossible values
+      # (life expectancy at 15 of about 1.5 years, mortality of 1,000 per 1,000). Not baked;
+      # the catalogue still lists them and the ledger excludes them with this reason.
+      defects:
+        variants: ["Median PI", "Lower 80 PI", "Upper 80 PI", "Lower 95 PI", "Upper 95 PI"]
+        columns: [LE15, LE15Male, LE15Female, LE65, LE65Male, LE65Female, LE80, LE80Male, LE80Female, Q5, Q0040, Q0040Male, Q0040Female, Q0060, Q0060Male, Q0060Female, Q1550, Q1550Male, Q1550Female, Q1560, Q1560Male, Q1560Female]
+  manufacturing:
+    # added 2026-10-09 by the worldbank family session (the guide never had an entry, so
+    # `npm run data` never refreshed it); values copied from its existing bundles' meta
+    stale_after: "2022-01"
+    family: worldbank
+    geo: IND
+    product: worldbank-wdi
+    frequency: annual
+    base: "n/a — WDI annual (levels in constant 2015 US$)"
+    release_calendar: "WDI updates several times a year, without a fixed calendar"
+    revision_policy: "WDI revises history freely as member countries rebase national accounts. meta.vintage is the WDI database lastupdated stamp, not the fetch date."
+    source_agency: "World Bank — World Development Indicators (national accounts via UNIDO/OECD; trade via UN Comtrade)"
+    release_url: https://databank.worldbank.org/source/world-development-indicators
+    fetch:
+      bundles:
+        wdi-manufacturing:
+          note: "Headline: manufacturing value added — share of GDP, industry context, constant-US$ level, annual growth. 1960–latest."
+          indicators: { NV.IND.MANF.ZS: mva_pct_gdp, NV.IND.TOTL.ZS: industry_pct_gdp, NV.IND.MANF.KD: mva_constant_usd, NV.IND.MANF.KD.ZG: mva_growth }
+        wdi-manufacturing-composition:
+          note: "UNIDO technology/skill decomposition of manufacturing value added. Shares sum to ~100. 1963–2023."
+          indicators: { NV.MNF.MTRN.ZS.UN: machinery_transport, NV.MNF.CHEM.ZS.UN: chemicals, NV.MNF.FBTO.ZS.UN: food_beverages_tobacco, NV.MNF.TXTL.ZS.UN: textiles_clothing, NV.MNF.OTHR.ZS.UN: other }
+        wdi-manufacturing-tech:
+          note: "Medium- and high-tech share of manufacturing value added (UNIDO). 1990–2022."
+          indicators: { NV.MNF.TECH.ZS.UN: medhi_tech_share }
+        wdi-manufacturing-exports:
+          note: "Manufactures' share of merchandise exports (UN Comtrade). 1962–2024."
+          indicators: { TX.VAL.MANF.ZS.UN: manufactures_share_of_exports }
+  # --- end worldbank family block ---
+
+
+  # --- climate (lb/climate): two products feed one guide, `climate` ---
+  climate:
+    # regression floor: the monthly ERA5 anomaly (OWID) is the guide's current series
+    stale_after: "2026-06"
+    frequency_exempt: true        # monthly, weekly, annual and projection windows side by side
+    family: owid
+    geo: IND
+    comparators: [CHN, USA, WLD]  # emissions and energy bundles for China, the US and the world (one bundle per geography)
+    product: owid-climate
+    frequency: monthly
+    base: "ERA5 reanalysis, OWID country average"
+    release_calendar: "OWID updates ERA5 temperature monthly; the CO2 and energy datasets once or twice a year"
+    revision_policy: "OWID re-publishes each dataset whole; ERA5 is revised for its most recent months, emissions estimates for the whole history."
+    source_agency: "Our World in Data (Copernicus ERA5; Global Carbon Project; Jones et al.; Energy Institute; Ember; GWIS; Climate Impact Lab and UNDP)"
+    release_url: https://ourworldindata.org
+    bases:
+      owid-co2: "Global Carbon Project and Jones et al., via OWID"
+      owid-energy: "Energy Institute and Ember, via OWID"
+      default: "ERA5 reanalysis, OWID country average"
+      climate-burned-area: "GWIS satellite burned area, via OWID"
+      climate-wildfires: "GWIS satellite burned area, via OWID"
+      climate-wildfires-weekly: "GWIS satellite burned area, via OWID"
+      climate-warming-contrib: "Jones et al. national contributions, via OWID"
+      climate-heat-deaths: "Human Climate Horizons projection, RCP4.5"
+      climate-opinion-youth: "Hickman et al. 2021 survey"
+    fetch:
+      anchor: { bundle: climate-temp-monthly, series: temperature_anomaly }
+      csv_bundles:
+        co2: { IND: climate-co2, CHN: climate-co2-chn, USA: climate-co2-usa, WLD: climate-co2-world }
+        energy: { IND: climate-energy, CHN: climate-energy-chn, USA: climate-energy-usa, WLD: climate-energy-world }
+      # OWID dataset (ETL short name, version dropped) -> bundle. In-scope datasets left out
+      # here are decided in data/coverage/climate-owid.yml (pivots of a baked series).
+      datasets:
+        surface_temperature: climate-temp-monthly
+        surface_temperature_annual_average: climate-temp-annual
+        total_precipitation_annual: climate-rain-owid
+        yearly_burned_area: climate-burned-area
+        wildfires_by_year: climate-wildfires
+        weekly_wildfires: climate-wildfires-weekly
+        national_contributions: climate-warming-contrib
+        heat_deaths_undp_climate_horizons: climate-heat-deaths
+        young_people_opinions_climate_change__hickman_et_al__2021: climate-opinion-youth
+      # single indicators routed to their own bundle (a decade axis is not a year axis)
+      indicators:
+        temperature_2m_decadal: climate-temp-decadal
+        temperature_anomaly_decadal: climate-temp-decadal
+      irregular: [climate-temp-decadal, climate-heat-deaths, climate-opinion-youth]
+      drop_partial_year: [climate-temp-annual, climate-rain-owid, climate-wildfires, climate-burned-area]
+
+  climate-cckp:
+    # the guide's second product (registry slug `climate`); bundles carry meta.dossier "climate"
+    stale_after: "2025-01"
+    frequency_exempt: true
+    family: cckp
+    geo: IND
+    product: cckp
+    frequency: annual
+    base: "ERA5 reanalysis, CCKP 0.25-degree"
+    release_calendar: "irregular: CCKP adds a year of ERA5 and a new CRU TS version about once a year"
+    revision_policy: "Each CRU TS version and each ERA5 extension is a re-publication; earlier versions stay in CCKP's archive and are not mixed in."
+    source_agency: "World Bank Climate Change Knowledge Portal (Copernicus ERA5; CRU TS, University of East Anglia; CMIP6 models)"
+    release_url: https://climateknowledgeportal.worldbank.org
+    bases:
+      era5: "ERA5 reanalysis, CCKP 0.25-degree"
+      cru: "CRU TS station grid, CCKP 0.5-degree"
+      cmip6: "CMIP6 ensemble, CCKP 0.25-degree"
+    fetch:
+      cmip6_windows: ["2020-2039", "2040-2059", "2060-2079", "2080-2099"]
+      # variables not baked, per collection (status blocked in data/coverage/climate-cckp.yml):
+      # ERA5 simplified WBGT serves fill-like values for 2024-25 and readings below wet-bulb;
+      # CMIP6 serves no WBGT for India, and its wet-bulb family is corrupt (an India mean of
+      # about 8°C against ERA5's 19°C, zero days above every threshold), checked 2026-10-09
+      skip_vars:
+        era5: [swbgt, swbgt26, swbgt29, swbgt32, swbgtx1day, swbgtx3day, swbgtx5day]
+        cmip6: [swbgt, swbgt26, swbgt29, swbgt32, wbt, wbt25, wbt27, wbt29, wbt31]
+  # --- end climate ---
+
+
+  # ---- ilo (ILOSTAT): work in India as the ILO counts it ----
+  ilo:
+    # regression floor: the ILOEST edition must reach 2024, PLFS (ILO processing) 2024
+    stale_after: "2024-01"
+    frequency_exempt: true          # annual modelled + annual and quarterly survey bundles
+    family: ilostat
+    geo: IND
+    product: ilostat
+    frequency: annual
+    base: "varies by instrument (ILOEST edition; PLFS, NSS, Census as processed by the ILO)"
+    release_calendar: "ILOEST: one edition a year (November); survey series as the ILO processes each new PLFS year or quarter"
+    revision_policy: "Each ILOEST edition re-estimates the whole modelled history; the raw dump of the previous edition is archived under data/raw/vintages. Survey series change when the ILO reprocesses the unit data."
+    source_agency: "International Labour Organization, ILOSTAT"
+    release_url: https://ilostat.ilo.org
+    # peer countries: a short, fixed list, drawn in grey beside India
+    peers: [CHN, BGD, IDN, VNM]
+    peerFlows: [DF_EAP_2WAP_SEX_AGE_RT, DF_EMP_2WAP_SEX_AGE_RT, DF_UNE_2EAP_SEX_AGE_RT, DF_EIP_2EET_SEX_RT, DF_EMP_2IFL_SEX_RT,
+      DF_EMP_2EMP_SEX_STE_NB, DF_EMP_2EMP_SEX_ECO_NB, DF_EMP_2EMP_SEX_AGE_CLA_NB, DF_EMP_2EMP_SEX_AGE_NB, DF_LAP_2GDP_NOC_RT,
+      DF_GDP_211P_NOC_NB, DF_HOW_2EMP_SEX_NB]
+    bake:
+      # survey tables (PLFS, NSS): how many classifications (sex counts as one) a baked table may
+      # carry. Deeper cubes stay at ILOSTAT, listed in the catalogue and the ledger. Raising
+      # annualMaxCuts to 3 bakes ~1.9 million more observations (docs/status/ilo.md).
+      annualMaxCuts: 2
+      quarterlyMaxCuts: 1
+      # ...except the core quarterly rates by sex and age, and by sex and area, which are baked
+      quarterlyFlows: [DF_EAP_DWAP_SEX_AGE_RT, DF_EMP_DWAP_SEX_AGE_RT, DF_UNE_DEAP_SEX_AGE_RT, DF_EIP_DWAP_SEX_AGE_RT,
+        DF_EAP_DWAP_SEX_GEO_RT, DF_EMP_DWAP_SEX_GEO_RT, DF_UNE_DEAP_SEX_GEO_RT]
+      # survey topics with this many series or fewer fold into ilo-<instrument>-more (the
+      # every-cut table lists bundles of up to 150 series inline on the guide page)
+      mergeBelowSeries: 150
+      # ILOSTAT's copies of other agencies' data and currency conversions: listed, never baked
+      excludeFlows: ["^DF_CPI_", "^DF_CCF_", "_CUR_"]
+  # --- rates (atlas-rates family session, 2026-10) ---
+  rates:
+    # regression floor: the slowest monthly feed is the lending-rate release (data to M-1);
+    # each bundle carries its own floor in scripts/validate.mjs
+    stale_after: "2026-08"
+    family: databank
+    geo: IND
+    product: rbirates
+    frequency: monthly
+    # event-dated (policy changes, MPC meetings, auctions), daily, weekly, fortnightly,
+    # monthly, quarterly and annual bundles: the instrument sets the cadence
+    frequency_exempt: true
+    base: "n/a"
+    release_calendar: "policy: MPC meetings six times a year; lending and deposit rates: last working day of each month (WALR/WADTDR for the previous month, MCLR for the month); auctions weekly; DBIE tables as the RBI loads them"
+    revision_policy: "Policy rates and auction results are final when announced. The Handbook restates a few effective dates between editions (newest edition wins, differences listed in rates-policy meta). Lending and deposit rates: each monthly release repeats the full history; the newest release wins."
+    source_agency: "Reserve Bank of India (via the Data Bank)"
+    release_url: https://www.rbi.org.in
+    # rulers that changed, kept as separate series (never joined): the corridor floor (fixed
+    # reverse repo to 7 Apr 2022, SDF from 8 Apr 2022); the operating rate (Bank Rate, then the
+    # LAF repo, then the policy repo with the call rate as the operating target from May 2011);
+    # lending benchmarks (BPLR, base rate Jul 2010, MCLR Apr 2016, external benchmarks Oct 2019);
+    # real rates on CPI 2012=100 (to Dec 2025) and CPI 2024=100 (from Jan 2025), one bundle each.
+    ranges:
+      pct: [-30, 60]
+
+
+
+  # ---- external (lb/external, 2026-10): the External account guide on RBI DBIE ----
+  # Three adapters read the owner's Data Bank (read-only), never RBI live. Shared reader and the
+  # family's catalogue generator: scripts/lib/products/external-dbie.mjs. Units as in RBI's own
+  # tables: US$ million, ₹ crore, index points, per cent. Every value is the latest revision DBIE
+  # carries; earlier versions stay in data/raw/external-dbie and in external-bop-vintages.
+  external-bop:
+    # regression floor: BoP is quarterly, about 12 weeks after the quarter ends
+    stale_after: "2026-04"
+    family: databank
+    geo: IND
+    product: external-bop
+    frequency: quarterly
+    frequency_exempt: true      # quarterly BoP and IIP beside annual key components and indicators
+    base: "RBI overall-BoP layout"
+    release_calendar: "quarterly, about 12 weeks after the quarter (last week of Mar, Jun, Sep, Dec)"
+    revision_policy: "Provisional on release; partially revised with the next quarter's release and revised again later. DBIE keeps the first and the latest version of recent quarters; both are kept."
+    source_agency: "Reserve Bank of India, Database on Indian Economy (via the Data Bank)"
+    release_url: https://data.rbi.org.in
+    # Two presentations, never joined: RBI's overall-BoP layout (reports 56/57, quarterly from
+    # 1990-91, rupees from 1949-50; annual key components from 1950-51) and the IMF BPM6 standard
+    # presentation (report 58, and 1502 in rupees, from 2011-12). The international investment
+    # position is BPM5 to September 2021 and BPM6 from December 2017 (report 982): two rulers.
+  external-flows:
+    stale_after: "2026-06"
+    family: databank
+    geo: IND
+    product: external-flows
+    frequency: monthly
+    frequency_exempt: true      # weekly reserves, daily rates, monthly flows, quarterly and annual debt
+    base: "as published"
+    release_calendar: "reserves weekly (Friday, for the previous week); rates daily; flows and debt monthly to quarterly"
+    revision_policy: "Weekly reserves and daily rates are final on release. Investment flows, ECBs and LRS are revised in later Bulletins; external debt is provisional for a quarter, then partially revised."
+    source_agency: "Reserve Bank of India, Database on Indian Economy (via the Data Bank)"
+    release_url: https://data.rbi.org.in
+    # Classification breaks kept as separate bundles, never joined: foreign investment inflows'
+    # old (to March 2011) and new (from April 2011) monthly formats; ECB registrations under the
+    # earlier classification and under the framework revised in January 2025. The quarterly
+    # external debt in US$ comes from DBIE's Data Query element EXT_DBT_RT_RN because report 660's
+    # dollar column is missing from the Data Bank mirror (seen 2026-10-08).
+  external-reer:
+    stale_after: "2026-06"
+    family: databank
+    geo: IND
+    product: external-reer
+    frequency: monthly
+    base: "2015-16=100"
+    release_calendar: "monthly, in the RBI Bulletin, about six weeks after the month"
+    revision_policy: "The latest months are provisional; the base year changes every few years (one bundle per base, never joined)."
+    source_agency: "Reserve Bank of India, Database on Indian Economy (via the Data Bank)"
+    release_url: https://data.rbi.org.in
+  # ---- end external ----
   # credit (lb/credit): money, credit and banks. Many RBI products at many frequencies, all
   # read from the local Data Bank; scripts/lib/products/credit.mjs lists them.
   credit:
@@ -1125,6 +1640,282 @@ seams:
       from: "2025-04"
       to: null
       bundles: [isp]
+  # ---- bis family session ----
+  rbihpi:
+    # RBI house price index: three bases, quarters dated at their first month
+    - base: "2008-09=100"
+      from: "2009-01"
+      to: "2013-01"
+      bundles: [housing-rbi-2009]
+    - base: "2010-11=100"
+      from: "2010-04"
+      to: "2025-01"
+      bundles: [housing-rbi-2010, housing-rbi-2010-yoy]
+    - base: "2022-23=100"
+      from: "2022-04"
+      to: null
+      bundles: [housing-rbi-2022, housing-rbi-2022-yoy]
+  residex:
+    - base: "2012-13=100"
+      from: "2013-04"
+      to: "2018-01"
+      bundles: [housing-residex-2013, housing-residex-prices-2013]
+    - base: "2017-18=100"
+      from: "2018-04"
+      to: "2025-10"
+      bundles: [housing-residex-2018, housing-residex-prices-2018]
+    - base: "2024-25=100"
+      from: "2025-04"
+      to: null
+      bundles: [housing-residex-2025, housing-residex-prices-2025]
+  # ---- end bis family ----
+  # ---- services ----
+  services-nas:
+    - base: "2011-12"
+      from: "2011-04"
+      to: "2025-04"
+      bundles: [services-gva-2011-share, services-gva-2011-growth, services-gva-2011-level]
+    - base: "2022-23"
+      from: "2022-04"
+      to: null
+      bundles: [services-gva-2022-share, services-gva-2022-growth, services-gva-2022-level]
+  services-isp:
+    - base: "2024-25=100"
+      from: "2025-04"
+      to: null
+      bundles: [services-isp-growth, services-isp-annual]
+  services-jobs:
+    - base: "agriculture year (PLFS 2017-18 to 2023-24)"
+      from: "2017-07"
+      to: "2023-07"
+      bundles: [services-jobs-ay]
+    - base: "calendar year (PLFS new design)"
+      from: "2023-01"
+      to: null
+      bundles: [services-jobs-cy]
+  services-asuse:
+    - base: "survey 2021-22 onward"
+      from: "2021-04"
+      to: "2023-04"
+      bundles: [services-asuse, services-asuse-profile]
+    - base: "calendar-year round (ASUSE 2025)"
+      from: "2025-01"
+      to: null
+      bundles: [services-asuse-2025, services-asuse-profile-2025]
+  # ---- end services ----
+  # --- states: the SDP tables (MoSPI 2011-12; the RBI Handbook carries 2004-05 too) ---
+  states:
+    - base: "2004-05"
+      from: "2004-04"
+      to: "2014-04"
+      bundles: [states-hbs-t019-2004, states-hbs-t020-2004, states-hbs-t021-2004, states-hbs-t022-2004, states-hbs-t023-2004, states-hbs-t024-2004, states-hbs-t030-2004, states-hbs-t032-2004, states-hbs-t033-2004, states-hbs-t034-2004, states-hbs-t035-2004, states-hbs-t036-2004, states-hbs-t037-2004, states-hbs-t038-2004, states-hbs-t039-2004, states-hbs-t040-2004, states-hbs-t041-2004, states-hbs-t042-2004, states-hbs-t043-2004, states-hbs-t045-2004, states-hbs-t046-2004, states-hbs-t048-2004, states-hbs-t049-2004, states-hbs-t050-2004, states-hbs-t051-2004, states-hbs-t052-2004]
+    - base: "2011-12"
+      from: "2011-04"
+      to: null
+      bundles: [states-gsdp-current, states-gsdp-constant, states-nsdp-current, states-nsdp-constant, states-pcnsdp-current, states-pcnsdp-constant, states-pcgsdp-current, states-pcgsdp-constant, states-gsva-current, states-gsva-constant, states-nsva-current, states-nsva-constant, states-taxes-current, states-taxes-constant, states-growth-real, states-growth-nominal, states-structure, states-spread, states-industry-shares, states-finances, states-hbs-t019, states-hbs-t020, states-hbs-t021, states-hbs-t022, states-hbs-t023, states-hbs-t024, states-hbs-t025, states-hbs-t026, states-hbs-t027, states-hbs-t028, states-hbs-t029, states-hbs-t030, states-hbs-t031, states-hbs-t032, states-hbs-t033, states-hbs-t034, states-hbs-t035, states-hbs-t036, states-hbs-t037, states-hbs-t038, states-hbs-t039, states-hbs-t040, states-hbs-t041, states-hbs-t042, states-hbs-t043, states-hbs-t044, states-hbs-t045, states-hbs-t046, states-hbs-t047, states-hbs-t048, states-hbs-t049, states-hbs-t050, states-hbs-t051, states-hbs-t052]
+  # worldbank family (2026-10-09): PIP's comparable spells are different rulers (different
+  # NSS schedules and recall periods, then the redesigned HCES). Each spell is a base.
+  poverty:
+    - base: "2021 PPP, comparable spell 1977"
+      from: "1977-01"
+      to: "1977-01"
+      bundles: [poverty-pip-1977]
+    - base: "2021 PPP, comparable spell 1983"
+      from: "1983-01"
+      to: "1983-01"
+      bundles: [poverty-pip-1983]
+    - base: "2021 PPP, comparable spell 1987"
+      from: "1987-01"
+      to: "1987-01"
+      bundles: [poverty-pip-1987]
+    - base: "2021 PPP, comparable spell 1993-2009"
+      from: "1993-01"
+      to: "2009-01"
+      bundles: [poverty-pip-1993]
+    - base: "2021 PPP, comparable spell 2011"
+      from: "2011-01"
+      to: "2011-01"
+      bundles: [poverty-pip-2011]
+    - base: "2021 PPP, comparable spell 2022-2023"
+      from: "2022-01"
+      to: null
+      bundles: [poverty-pip-2022]
+    # the lineup is its own ruler: model estimates for every calendar year, interpolated
+    # between surveys across the spells above and nowcast after the last. It overlaps every
+    # spell by design (reported by validate, never joined to any of them).
+    - base: "2021 PPP, World Bank lineup estimates"
+      from: "1981-01"
+      to: null
+      bundles: [poverty-pip-lineup]
+  climate:
+    # not price bases: instruments. Station grid, reanalysis and model projections are
+    # different rulers (lb/climate); each bundle names its instrument and is never joined.
+    - base: "Global Carbon Project and Jones et al., via OWID"
+      from: "1750-01"
+      to: null
+      bundles: [climate-co2, climate-co2-chn, climate-co2-usa, climate-co2-world]
+    - base: "Jones et al. national contributions, via OWID"
+      from: "1851-01"
+      to: null
+      bundles: [climate-warming-contrib]
+    - base: "Energy Institute and Ember, via OWID"
+      from: "1900-01"
+      to: null
+      bundles: [climate-energy, climate-energy-chn, climate-energy-usa, climate-energy-world]
+    - base: "CRU TS station grid, CCKP 0.5-degree"
+      from: "1901-01"
+      to: null
+      bundles: [climate-cru, climate-cru-monthly, climate-cru-states, climate-seasons-cru]
+    - base: "ERA5 reanalysis, OWID country average"
+      from: "1940-01"
+      to: null
+      bundles: [climate-rain-owid, climate-temp-annual, climate-temp-decadal, climate-temp-monthly]
+    - base: "CMIP6 ensemble, CCKP 0.25-degree"
+      from: "1950-01"
+      to: null
+      bundles: [climate-cmip6-energy, climate-cmip6-energy-hist, climate-cmip6-heatstress, climate-cmip6-heatstress-hist, climate-cmip6-hotdays, climate-cmip6-hotdays-hist, climate-cmip6-rain, climate-cmip6-rain-hist, climate-cmip6-states-energy, climate-cmip6-states-heatstress, climate-cmip6-states-hotdays, climate-cmip6-states-rain, climate-cmip6-states-temp, climate-cmip6-temp, climate-cmip6-temp-hist, climate-cmip6-windows-energy, climate-cmip6-windows-heatstress, climate-cmip6-windows-hotdays, climate-cmip6-windows-rain, climate-cmip6-windows-temp]
+    - base: "ERA5 reanalysis, CCKP 0.25-degree"
+      from: "1950-01"
+      to: null
+      bundles: [climate-era5-energy, climate-era5-energy-monthly, climate-era5-heatstress, climate-era5-heatstress-monthly, climate-era5-hotdays, climate-era5-hotdays-monthly, climate-era5-rain, climate-era5-rain-monthly, climate-era5-states-energy, climate-era5-states-heatstress, climate-era5-states-hotdays, climate-era5-states-rain, climate-era5-states-temp, climate-era5-temp, climate-era5-temp-monthly, climate-seasons-era5-energy, climate-seasons-era5-heatstress, climate-seasons-era5-hotdays, climate-seasons-era5-rain, climate-seasons-era5-temp]
+    - base: "GWIS satellite burned area, via OWID"
+      from: "2002-01"
+      to: null
+      bundles: [climate-burned-area, climate-wildfires, climate-wildfires-weekly]
+    - base: "Hickman et al. 2021 survey"
+      from: "2021-01"
+      to: null
+      bundles: [climate-opinion-youth]
+    - base: "Human Climate Horizons projection, RCP4.5"
+      from: "2030-01"
+      to: null
+      bundles: [climate-heat-deaths]
+  # ilo (ILOSTAT): not price bases but instruments, each its own ruler, never joined.
+  # Generated from the baked bundles; a new ilo bundle fails validate until it is listed here.
+  ilo:
+    - base: "Labour inspectorate records (ADM-IR)"
+      from: "1971-01"
+      to: null
+      bundles: [ilo-adm-ir]
+    - base: "Labour inspectorate records (ADM-LIR)"
+      from: "1969-01"
+      to: null
+      bundles: [ilo-adm-lir]
+    - base: "Population Census, ILO processing"
+      from: "1961-01"
+      to: "2001-01"          # the ILO holds Census economic questions to 2001
+      bundles: [ilo-census]
+    - base: "Employment Market Information survey"
+      from: "1969-01"
+      to: null
+      bundles: [ilo-emi]
+    - base: "ILO modelled estimates (ILOEST)"
+      from: "1990-01"
+      to: null
+      bundles: [ilo-est-cld-2pop, ilo-est-eap-2eap, ilo-est-eap-2wap, ilo-est-eip-2eet, ilo-est-eip-2eip, ilo-est-eip-2wap, ilo-est-emp-2emp, ilo-est-emp-2fte, ilo-est-emp-2tru, ilo-est-emp-2wap, ilo-est-gdp-205u, ilo-est-gdp-211p, ilo-est-gdp-2hrw, ilo-est-gdp-2tot, ilo-est-how-2emp, ilo-est-how-2tdp, ilo-est-how-2tot, ilo-est-lap-2gdp, ilo-est-lap-2lid, ilo-est-luu-2lu2, ilo-est-pop-2ldr, ilo-est-pop-2pop, ilo-est-pop-2wap, ilo-est-sdg-0111, ilo-est-sdg-0821, ilo-est-sdg-1041, ilo-est-sdg-b821, ilo-est-une-2eap, ilo-est-une-2une, ilo-peer-bgd, ilo-peer-chn, ilo-peer-idn, ilo-peer-vnm]
+    - base: "ILO modelled estimates (ILOEST), projections"
+      from: "2024-01"
+      to: null
+      bundles: [ilo-est-projections]
+    - base: "Estimates based on the NSS employment-unemployment surveys"
+      from: "2000-01"
+      to: null
+      bundles: [ilo-eus-estimates]
+    - base: "Institute for Human Development estimates"
+      from: "1983-01"
+      to: null
+      bundles: [ilo-ihd]
+    - base: "ILO estimates"
+      from: "2022-01"
+      to: null
+      bundles: [ilo-ilo-estimates]
+    - base: "ILO Employment Policy Gateway"
+      from: "2019-01"
+      to: null
+      bundles: [ilo-ilo-policy]
+    - base: "ILO calculations from ILO textual sources"
+      from: "2015-01"
+      to: null
+      bundles: [ilo-ilo-textual]
+    - base: "Labour legislation"
+      from: "2000-01"
+      to: null
+      bundles: [ilo-legislation]
+    - base: "Ministry of External Affairs records"
+      from: "2018-01"
+      to: null
+      bundles: [ilo-mea]
+    - base: "Ministry of Overseas Indian Affairs, annual report"
+      from: "2008-01"
+      to: null
+      bundles: [ilo-moia]
+    - base: "NSS employment-unemployment rounds, ILO processing"
+      from: "1994-01"
+      to: "2012-01"          # the NSS quinquennial rounds ended with 2011-12; PLFS replaced them
+      bundles: [ilo-nss-eap, ilo-nss-ear, ilo-nss-ees, ilo-nss-eip, ilo-nss-emp, ilo-nss-more, ilo-nss-pop, ilo-nss-une]
+    - base: "Official estimates"
+      from: "2009-01"
+      to: null
+      bundles: [ilo-official]
+    - base: "PLFS unit data, ILO processing"
+      from: "2017-01"
+      to: null
+      bundles: [ilo-plfs-eap, ilo-plfs-ear, ilo-plfs-ees, ilo-plfs-eip, ilo-plfs-emp, ilo-plfs-how, ilo-plfs-more, ilo-plfs-pop, ilo-plfs-q, ilo-plfs-sdg, ilo-plfs-une]
+    - base: "Special data collection (ILO questionnaire)"
+      from: "1969-01"
+      to: null
+      bundles: [ilo-special]
+    - base: "ILO Social Security Inquiry"
+      from: "2000-01"
+      to: null
+      bundles: [ilo-ssi]
+  # ---- external (lb/external, 2026-10) ----
+  external-bop:
+    # presentations, not price bases: RBI's overall-BoP layout and the IMF's BPM6 (and BPM5 for
+    # the old investment position). Each is published on its own; none is converted to another.
+    - base: "RBI overall-BoP layout"
+      from: "1948-04"
+      to: null
+      bundles: [external-bop, external-bop-gross, external-bop-lines, external-bop-vintages, external-bop-inr-lines, external-bop-annual, external-bop-annual-head, external-bop-annual-inr, external-bop-annual-overall, external-bop-annual-overall-inr, external-bop-indicators, external-invisibles-annual, external-invisibles-annual-inr]
+    - base: "BPM5"
+      from: "2006-01"
+      to: "2021-07"
+      bundles: [external-iip-bpm5, external-iip-bpm5-inr]
+    - base: "BPM6"
+      from: "2010-04"
+      to: null
+      bundles: [external-bop6-lines, external-bop6-vintages, external-bop6-inr-lines, external-bop6-annual-lines, external-bop6-annual-lines-inr, external-invisibles, external-invisibles-people, external-iip, external-iip-head, external-iip-inr, external-iip-summary, external-iip-summary-inr]
+  external-reer:
+    # broad basket ("36" in DBIE) and 6-currency basket share base years; each base is its own ruler
+    - base: "1985=100"
+      from: "1975-01"
+      to: "1993-03"
+      bundles: [external-reer-1985]
+    - base: "1993-94=100"
+      from: "1993-01"        # the calendar-year 1993 average sits at January
+      to: "2011-01"
+      bundles: [external-reer-1993, external-reer6-1993, external-reer-1993-calendar, external-reer-1993-fiscal]
+    - base: "2003-04=100"
+      from: "1993-04"
+      to: "2006-08"
+      bundles: [external-reer6-2003]
+    - base: "2004-05=100"
+      from: "2003-02"
+      to: "2021-12"
+      bundles: [external-reer-2004, external-reer6-2004, external-reer-2004-calendar, external-reer-2004-fiscal]
+    - base: "2015-16=100"
+      from: "2004-01"        # the calendar-year 2004 average sits at January
+      to: null
+      bundles: [external-reer-2015, external-reer6-2015, external-reer-2015-calendar, external-reer-2015-fiscal, external-reer6-2015-calendar, external-reer6-2015-fiscal]
+    - base: "2018-19=100"
+      from: "2004-04"
+      to: "2024-03"
+      bundles: [external-reer6-2018]
+    - base: "2022-23=100"
+      from: "2015-04"
+      to: null
+      bundles: [external-reer6-2022]
+  # ---- end external ----
   # credit (lb/credit): two products whose ruler changed. Sectoral deployment of bank credit
   # changed classification in January 2019 (new codes and sectors; the old format runs on to
   # December 2020 for comparison). The spatial statements changed coverage in March 2023

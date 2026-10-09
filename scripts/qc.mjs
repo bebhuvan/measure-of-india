@@ -108,29 +108,24 @@ const PAGES = [
     ["her-end04", (b) => fmt.pct2(b["iip-2004"].series.general.data.filter((x) => x != null).at(-1))],
     ["prov-vintage", (b) => b["iip-2022"].meta.vintage],
   ]},
+  // external (lb/external, 2026-10): RBI DBIE bundles; amounts US$ million shown in US$ bn
   { url: "/guides/external/", slug: null, checks: [
-    ["n-fx", (b) => fmt.inr2(b["rbi-forex"].series.usdinr.data.at(-1))],
-    ["n-cad", (b) => fmt.pct1(b["rbi-bop-ratios"].series.cad_gdp.data.at(-1))],
-    ["cr-res", (b) => fmt.bnRound(b["rbi-forex"].series.reserves.data.at(-1) / 1000)],
-    // v1.2 plates — same formatter as the client (bn/bn2 on $bn values)
-    ["pv-part", (b) => {
-      const s = b["rbi-trade-partners"].series;
-      const v = (s.exports_china.data.at(-1) - s.imports_china.data.at(-1)) / 1000;
-      return fmt.bnFixed1(v);
-    }],
-    ["ex-pcm", (b) => {
-      const v = b["rbi-trade-partners"].series.imports_china.data.at(-1) / 1000;
-      return fmt.bnAuto(v);
-    }],
-    ["pv-comm", (b) => {
-      const v = b["rbi-commodities-exports"].series.engineering_goods.data.at(-1) / 1000;
-      return fmt.bnAuto(v);
-    }],
-    ["ex-cm1", (b) => {
-      const v = b["rbi-commodities-imports"].series.petroleum_crude_products.data.at(-1) / 1000;
-      return fmt.bnAuto(v);
-    }],
-    ["prov-vintage", (b) => b["rbi-forex"].meta.vintage],
+    ["n-ca", (b) => fmt.bnFixed1(b["external-bop"].series.current_account.data.at(-1) / 1000)],
+    ["pv-ca", (b) => fmt.bnFixed1(b["external-bop"].series.current_account.data.at(-1) / 1000)],
+    ["n-res", (b) => fmt.bnRound(b["external-reserves-weekly"].series.total_usd.data.at(-1) / 1000)],
+    ["n-inr", (b) => fmt.inr2(b["external-rupee"].series.usd.data.at(-1))],
+    ["n-reer", (b) => fmt.num1(b["external-reer-2015"].series.reer_trade.data.at(-1))],
+    ["pv-cagdp", (b) => fmt.pct1Minus(b["external-bop-indicators"].series.cad_to_gdp.data.at(-1))],
+    ["ex-p-goods", (b) => fmt.bnFixed1(b["external-bop"].series.goods.data.at(-1) / 1000)],
+    ["ex-p-rem", (b) => fmt.bnFixed1(b["external-bop"].series.private_transfers.data.at(-1) / 1000)],
+    ["pv-remit", (b) => fmt.bnFixed1(b["external-bop-gross"].series.remittances_in.data.at(-1) / 1000)],
+    ["ex-f-fdi", (b) => fmt.bnFixed1(b["external-bop"].series.fdi.data.at(-1) / 1000)],
+    ["ex-res-cover", (b) => fmt.num1(b["external-bop-indicators"].series.import_cover_of_reserves_in_months.data.at(-1))],
+    ["pv-debt", (b) => fmt.bnRound(b["external-debt-annual"].series.e_1_gross_external_debt_position.data.at(-1) / 1000)],
+    ["ex-debt-st", (b) => fmt.pct1(b["external-debt-annual"].series.e_5_as_of_total_debt.data.at(-1))],
+    ["pv-iip", (b) => fmt.bnFixed1(b["external-iip-head"].series.net.data.at(-1) / 1000)],
+    ["pv-desk", (b) => fmt.bnFixed1(b["external-intervention"].series.forward_outstanding.data.at(-1) / 1000)],
+    ["prov-vintage", (b) => b["external-bop"].meta.vintage],
   ]},
   { url: "/guides/jobs/", slug: null, checks: [
     ["n-ur", (b) => fmt.pct2(b["plfs-monthly"].series.ur.data.at(-1))],
@@ -286,6 +281,167 @@ const PAGES = [
     ["cr-term", (b) => fmt.pct1(100 * b["deposits-owners"].series.household_term.data.at(-1) / b["deposits-owners"].series.household_total.data.at(-1))],
     ["ex-p-women", (b) => fmt.pct1(100 * b["deposits-owners"].series.female_total.data.at(-1) / b["deposits-owners"].series.all_total.data.at(-1))],
     ["prov-vintage", (b) => b["deposits-owners"].meta.vintage],
+  ]},
+  // ---- bis family session: debt (BIS total credit) ----
+  { url: "/guides/debt/", slug: null, checks: [
+    ["n-total", (b) => fmt.pct1(b["bis-credit"].series.total.data.at(-1))],
+    // households are quoted for the last MEASURED quarter: later quarters are BIS estimates (series.estimated)
+    ["n-hh", (b) => { const B = b["bis-credit"], est = new Set(B.series.households.estimated ?? []); const i = B.dates.findLastIndex((d, j) => B.series.households.data[j] != null && !est.has(d)); return fmt.pct1(B.series.households.data[i]); }],
+    ["ex-s-hhe", (b) => fmt.pct1(b["bis-credit"].series.households.data.at(-1))],
+    ["n-dsr", (b) => fmt.pct1(b["bis-dsr"].series.private.data.at(-1))],
+    ["ex-s-co", (b) => { const B = b["bis-credit"], est = new Set(B.series.companies.estimated ?? []); const i = B.dates.findLastIndex((d, j) => B.series.companies.data[j] != null && !est.has(d)); return fmt.pct1(B.series.companies.data[i]); }],
+    ["ex-s-gov", (b) => fmt.pct1(b["bis-credit"].series.government.data.at(-1))],
+    ["pv-long", (b) => fmt.pct1(b["bis-credit"].series.private.data.at(-1))],
+    ["ex-l-banks", (b) => fmt.pct1(b["bis-credit"].series.private_banks.data.at(-1))],
+    ["pv-inr", (b) => "₹" + Math.round(b["bis-credit-inr"].series.households.data.at(-1) / 1000) + " lakh crore"],
+    ["pv-gap", (b) => { const g = b["bis-credit-gap"].series.gap.data.at(-1); return (g >= 0 ? "+" : "−") + Math.abs(g).toFixed(1) + " pt"; }],
+    ["ex-d-cn", (b) => fmt.pct1(b["bis-peer-chn"].series.dsr.data.filter((v) => v != null).at(-1))],
+    ["pv-gli", (b) => "$" + b["bis-gli"].series.usd.data.at(-1).toFixed(1) + " bn"],
+    ["prov-vintage", (b) => b["bis-credit"].meta.vintage],
+  ]},
+  // house prices: BIS y/y as published; RBI city levels; RESIDEX prices per sq ft
+  { url: "/guides/housing/", slug: null, checks: [
+    ["n-nom", (b) => fmt.pct1(b["bis-property"].series.nominal_yoy.data.at(-1))],
+    ["n-real", (b) => fmt.pct1(b["bis-property"].series.real_yoy.data.at(-1))],
+    ["rb-real", (b) => fmt.pct2(b["bis-property"].series.real_yoy.data.at(-1))],
+    ["pv-nr", (b) => b["bis-property"].series.real.data.at(-1).toFixed(1)],
+    ["ex-nr-nom", (b) => b["bis-property"].series.nominal.data.at(-1).toFixed(1)],
+    ["ex-c-top", (b) => b["housing-rbi-2022"].series.chennai.data.at(-1).toFixed(1)],
+    ["ex-c-bot", (b) => b["housing-rbi-2022"].series.delhi.data.at(-1).toFixed(1)],
+    ["pv-cities10", (b) => Math.max(...Object.values(b["housing-rbi-2010"].series).map((s) => s.data.at(-1))).toFixed(0)],
+    ["pv-price", (b) => "₹" + Math.round(Math.max(...Object.entries(b["housing-residex-prices-2025"].series).filter(([k]) => /_hfc_price$/.test(k)).map(([, s]) => s.data.at(-1)))).toLocaleString("en-IN")],
+    ["ex-x-india", (b) => { const s = b["housing-residex-2025"].series.india_hfc.data; const v = (s.at(-1) / s.at(-5) - 1) * 100; return (v < 0 ? "−" : "+") + Math.abs(v).toFixed(1) + "%"; }],
+    ["prov-vintage", (b) => b["bis-property"].meta.vintage],
+  ]},
+  // ---- end bis family ----
+  // ---- services ----
+  { url: "/guides/services/", slug: null, checks: [
+    // title block: share of GVA (2022-23 base), annual services exports (RBI 807), service jobs (PLFS CY)
+    ["n-share", (b) => fmt.pct1(b["services-gva-2022-share"].series.services.data.at(-1))],
+    ["rb-share", (b) => fmt.pct1(b["services-gva-2022-share"].series.services.data.at(-1))],
+    ["n-exp", (b) => "$" + Math.round(b["services-bop-annual"].series.s1_2_1_credit.data.at(-1) / 1000) + " bn"],
+    ["n-jobs", (b) => fmt.pct1(b["services-jobs-cy"].series.tertiary__person_all_cws.data.at(-1))],
+    ["rb-side", (b) => fmt.bnAuto(b["services-trade-monthly"].series.exports.data.at(-1))],
+    ["pv-long", (b) => fmt.pct1(b["services-gva-2022-share"].series.services.data.at(-1))],
+    ["pv-quarter", (b) => fmt.pct2(b["gdp-2022-industries"].series.finance_realty.data.at(-1))],
+    ["ex-mo-exp", (b) => fmt.bnFixed1(b["services-trade-monthly"].series.exports.data.at(-1))],
+    ["ex-mo-imp", (b) => fmt.bnFixed1(b["services-trade-monthly"].series.imports.data.at(-1))],
+    ["ex-tl-sw", (b) => fmt.bnAuto(b["services-bop-annual"].series.s1_2_1_5_1_credit.data.at(-1) / 1000)],
+    ["pv-isp", (b) => { const v = Object.values(b["services-isp-growth"].series).map((s) => s.data.at(-1)).filter((x) => x != null); return `${v.filter((x) => x >= 10).length} of ${v.length}`; }],
+    ["pv-ispa", (b) => fmt.pct1(Math.max(...Object.values(b["services-isp-annual"].series).map((s) => s.data.at(-1))) - 100)],
+    ["pv-status", (b) => fmt.pct1(b["services-jobs-ay"].series.regular__tertiary__person_all_ps.data.at(-1))],
+    ["pv-agva", (b) => "₹" + fmt.inr(b["services-asuse"].series.gva_per_worker__other_services_group__combined__all.data.at(-1))],
+    ["prov-vintage", (b) => b["services-gva-2022-share"].meta.vintage],
+  ]},
+  // ---- end services ----
+  // --- states (state economies): title block from the fixed panel; plate values recomputed
+  // here from the bundles, independently of the page's code
+  { url: "/guides/states/", slug: null, checks: [
+    ["n-gap", (b) => fmt.x1(b["states-spread"].series.gap_current.data.at(-1))],
+    ["n-rich", (b) => fmt.inrR(b["states-spread"].series.richest_current.data.at(-1))],
+    ["n-poor", (b) => fmt.inrR(b["states-spread"].series.poorest_current.data.at(-1))],
+    ["n-grow", (b) => fmt.pct1(b["states-spread"].series.median_real_growth.data.at(-1))],
+    ["ex-gap-0", (b) => fmt.x1(b["states-spread"].series.gap_current.data[0])],
+    ["ex-cv-l", (b) => fmt.pct1(b["states-spread"].series.cv_constant.data.at(-1))],
+    ["pv-pc", (b) => { const B = b["states-pcnsdp-current"], i = B.dates.indexOf(b["states-spread"].dates.at(-1)); return fmt.inrR(Math.max(...Object.entries(B.series).filter(([k]) => k !== "jammu_and_kashmir_state").map(([, s]) => s.data[i]).filter((v) => v != null))); }],
+    ["pv-size", (b) => { const B = b["states-gsdp-current"], i = B.dates.indexOf(b["states-spread"].dates.at(-1)); return "₹" + (Math.max(...Object.values(B.series).map((s) => s.data[i]).filter((v) => v != null)) / 1e5).toFixed(2) + " lakh cr"; }],
+    ["pv-growth", (b) => {
+      const B = b["states-gsdp-constant"], D = b["states-spread"].dates, i0 = B.dates.indexOf(D[0]), i1 = B.dates.indexOf(D.at(-1)), n = +D.at(-1).slice(0, 4) - +D[0].slice(0, 4);
+      return fmt.pct1(Math.max(...Object.entries(B.series).filter(([k]) => !k.startsWith("jammu_and_kashmir")).map(([, s]) => s.data[i0] > 0 && s.data[i1] != null ? (Math.pow(s.data[i1] / s.data[i0], 1 / n) - 1) * 100 : -Infinity)));
+    }],
+    ["prov-vintage", (b) => b["states-pcnsdp-current"].meta.vintage],
+  ]},
+  // worldbank family (2026-10-09): every check renders through fmt from the bundles
+  { url: "/guides/poverty/", slug: null, minPlots: 7, checks: [
+    ["rb-h3", (b) => fmt.pct2(b["poverty-pip-2022"].series.headcount_3_00.data.at(-1))],
+    ["rb-h42", (b) => fmt.pct2(b["poverty-pip-2022"].series.headcount_4_20.data.at(-1))],
+    ["ex-la-3", (b) => fmt.pct1(b["poverty-pip-2022"].series.headcount_3_00.data.at(-1))],
+    ["ex-la-83", (b) => fmt.pct1(b["poverty-pip-2022"].series.headcount_8_30.data.at(-1))],
+    // the rupee value of $3.00 a day: line x PIP's PPP factor x CPI ratio, at the latest survey
+    ["ex-la-r3", (b) => { const s = b["poverty-pip-2022"].series; return fmt.inrR(3 * s.ppp.data.at(-1) * s.cpi.data.at(-1)); }],
+    ["ex-po-n", (b) => fmt.num1(b["poverty-pip-2022"].series.poor_3_00.data.at(-1)) + " million"],
+    ["pv-gini", (b) => fmt.num1(b["poverty-pip-2022"].series.gini.data.at(-1))],
+    ["ex-dc-top", (b) => fmt.pct1(b["poverty-pip-2022"].series.decile10.data.at(-1))],
+    ["ex-re-11", (b) => fmt.pct1(b["poverty-pip-2011"].series.headcount_3_00.data[0])],
+    ["ex-qu-nat", (b) => fmt.pct1(b["poverty-wdi"].series.si_pov_nahc.data.filter((v) => v != null).at(-1))],
+    ["prov-vintage", (b) => b["poverty-pip-2022"].meta.vintage],
+  ]},
+  { url: "/guides/population/", slug: null, minPlots: 11, checks: [
+    ["rb-pop", (b) => (b["population-wpp"].series.tpopulation1july.data.at(-1) / 1e6).toFixed(3) + " billion"],
+    ["n-tfr", (b) => fmt.num2(b["population-wpp"].series.tfr.data.at(-1))],
+    ["n-age", (b) => fmt.num1(b["population-wpp"].series.medianagepop.data.at(-1)) + " years"],
+    ["ex-wi-now", (b) => fmt.pct1(b["population-wpp-age"].series.share_15_64.data.at(-1))],
+    ["ex-li-now", (b) => fmt.num1(b["population-wpp"].series.lex.data.at(-1))],
+    ["ex-cu-2100", (b) => (b["population-wpp-projection"].series.tpopulation1july.data.at(-1) / 1e6).toFixed(2) + " billion"],
+    ["ex-bi-deaths", (b) => fmt.num1(b["population-wpp"].series.deaths.data.at(-1) / 1e3) + " million"],
+    ["ex-ur-last", (b) => fmt.pct1(b["population-wdi-urban"].series.sp_urb_totl_in_zs.data.at(-1))],
+    ["prov-vintage", (b) => b["population-wpp"].meta.vintage],
+  ]},
+  // climate (lb/climate): figures recomputed here from the bundles, independently of
+  // src/dossiers/climate.data.js, through the shared formatters
+  ...(() => {
+    const yr = (d) => +d.slice(0, 4), mean = (a) => a.reduce((s, v) => s + v, 0) / a.length;
+    const wm = (b, k, y0, y1) => mean(b.dates.map((d, i) => (yr(d) >= y0 && yr(d) <= y1 ? b.series[k].data[i] : null)).filter((v) => v != null));
+    const sd = (v, f) => (v < 0 ? "−" : "+") + f(Math.abs(v)) + "°C";
+    const dys = (v) => fmt.count(v) + (Math.round(v) === 1 ? " day" : " days");
+    const an = (b) => b["climate-temp-monthly"].series.temperature_anomaly.data;
+    const lastYr = (b, s, k) => { const i = b[s].dates.indexOf(b[s].dates.filter((d, j) => b[s].series[k].data[j] != null).at(-1)); return b[s].series[k].data[i]; };
+    return [{ url: "/guides/climate/", slug: null, minPlots: 18, checks: [
+      ["n-anom", (b) => sd(an(b).at(-1), fmt.num2)],
+      ["rb-anom", (b) => sd(an(b).at(-1), fmt.num2)],
+      ["rb-12", (b) => sd(mean(an(b).slice(-12)), fmt.num2)],
+      ["n-rank", (b) => { const d = b["climate-temp-monthly"].dates, m = d.at(-1).slice(5, 7); const vals = d.map((x, i) => [x, an(b)[i]]).filter(([x, v]) => x.slice(5, 7) === m && v != null).sort((p, q) => q[1] - p[1]); const r = vals.findIndex(([x]) => x === d.at(-1)) + 1; return ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth"][r - 1] ?? r + (r % 100 >= 11 && r % 100 <= 13 ? "th" : ["th", "st", "nd", "rd"][r % 10] ?? "th"); }],
+      ["n-century", (b) => sd(wm(b["climate-cru"], "tas", 2016, 2025) - wm(b["climate-cru"], "tas", 1901, 1930), fmt.num1)],
+      ["n-nights", (b) => dys(wm(b["climate-era5-hotdays"], "tr26", 1996, 2025))],
+      ["d-nights", (b) => dys(wm(b["climate-era5-hotdays"], "tr26", 1951, 1980))],
+      ["lr-wbt1", (b) => dys(wm(b["climate-era5-heatstress"], "wbt27", 1996, 2025))],
+      ["lr-hd0", (b) => dys(wm(b["climate-era5-hotdays"], "hd40", 1951, 1980))],
+      ["ex-h-tr", (b) => dys(lastYr(b, "climate-era5-hotdays", "tr26"))],
+      ["n-pc", (b) => fmt.num1(b["climate-co2"].series.co2_per_capita.data.at(-1)) + " t"],
+      ["d-pc", (b) => fmt.num1(b["climate-co2-world"].series.co2_per_capita.data.at(-1)) + " t"],
+      ["pv-co2", (b) => fmt.inr(b["climate-co2"].series.co2.data.at(-1)) + " Mt"],
+      ["ex-e-share", (b) => fmt.num1(b["climate-co2"].series.share_global_co2.data.at(-1)) + "%"],
+      ["ex-s-cum", (b) => fmt.num1(b["climate-co2"].series.share_global_cumulative_co2.data.at(-1)) + "%"],
+      ["pv-stock", (b) => fmt.num1(b["climate-co2"].series.share_of_temperature_change_from_ghg.data.at(-1)) + "%"],
+      ["ex-r-base", (b) => fmt.inr(wm(b["climate-cru"], "pr", 1951, 1980)) + " mm"],
+      ["ex-c-r1976", (b) => { const c = b["climate-cru"]; const p = c.dates.map((d, i) => [yr(d), c.series.tas.data[i]]).filter(([y, v]) => y >= 1976 && v != null); const mx = mean(p.map((x) => x[0])), my = mean(p.map((x) => x[1])); return fmt.num2(10 * p.reduce((s, [x, y]) => s + (x - mx) * (y - my), 0) / p.reduce((s, [x]) => s + (x - mx) ** 2, 0)) + "°C"; }],
+      ["ex-en-coal", (b) => { const e = b["climate-energy"]; return fmt.num1(lastYr(b, "climate-energy", "coal_share_energy")) + "%"; }],
+      ["ex-p-245-40", (b) => { const w = b["climate-cmip6-windows-temp"]; return sd(w.series.tas__change__ssp245__median.data[w.dates.indexOf("2040-01-01")], fmt.num1); }],
+      ["ex-p-585-80", (b) => { const w = b["climate-cmip6-windows-temp"]; return sd(w.series.tas__change__ssp585__median.data[w.dates.indexOf("2080-01-01")], fmt.num1); }],
+      ["ex-s-delhi", (b) => sd(wm(b["climate-cru-states"], "tas__delhi", 1996, 2025) - wm(b["climate-cru-states"], "tas__delhi", 1951, 1980), fmt.num1)],
+      ["prov-vintage", (b) => b["climate-temp-monthly"].meta.vintage],
+    ]}];
+  })(),
+  // ilo: titleblock and plate values straight from the ILO bundles
+  { url: "/guides/ilo/", slug: null, checks: [
+    ["n-emp", (b) => fmt.num1(b["ilo-est-emp-2emp"].series.emp_2emp_sex_age_nb__sex_t__age_ythadult_yge15.data.filter((v) => v != null).at(-1) / 1000) + " million"],
+    ["n-lfpr", (b) => fmt.pct1(b["ilo-est-eap-2wap"].series.eap_2wap_sex_age_rt__sex_t__age_ythadult_yge15.data.at(-1))],
+    ["n-women", (b) => fmt.pct1(b["ilo-est-eap-2wap"].series.eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15.data.at(-1))],
+    ["n-neet", (b) => fmt.pct1(b["ilo-est-eip-2eet"].series.eip_2eet_sex_rt__sex_f.data.at(-1))],
+    ["pv-unemp", (b) => fmt.pct1(b["ilo-est-une-2eap"].series.une_2eap_sex_age_rt__sex_t__age_ythadult_yge15.data.at(-1))],
+    ["ex-r-psss", (b) => fmt.pct1(b["plfs-annual"].series.lfpr_psss.data.at(-1))],
+    ["ex-i-tot", (b) => fmt.pct1(b["ilo-plfs-sdg"].series.sdg_0831_sex_eco_rt__sex_t__eco_sector_total.data.at(-1))],
+    ["prov-vintage", (b) => b["ilo-est-eap-2wap"].meta.vintage],
+  ]},
+  // --- rates (atlas-rates): the title block, the plates' lead values, provenance
+  { url: "/guides/rates/", slug: null, checks: [
+    ["n-repo", (b) => fmt.pct2(b["rates-monthly"].series.repo.data.at(-1))],
+    ["pv-long", (b) => fmt.pct2(b["rates-policy"].series.repo.data.at(-1))],
+    ["ex-long-bank", (b) => fmt.pct2(b["rates-policy"].series.bank_rate.data.at(-1))],
+    ["n-walr", (b) => fmt.pct2(b["rates-lending"].series.walr_fresh_all.data.at(-1))],
+    ["ex-pass-do", (b) => fmt.pct2(b["rates-lending"].series.wadtdr_outstanding_all.data.at(-1))],
+    ["n-fd", (b) => fmt.pct2(b["rates-lending"].series.wadtdr_fresh_all.data.at(-1))],
+    ["ex-mpc-n", (b) => fmt.count(b["rates-mpc"].dates.length)],
+    ["pv-votes", (b) => fmt.count(b["rates-mpc-votes"].series.votes_against.data.reduce((a, c) => a + c, 0))],
+    ["pv-bench", (b) => fmt.pct2(b["rates-benchmarks"].series.all_eblr.data.at(-1))],
+    ["pv-loans", (b) => fmt.pct2(b["rates-walr-sectors"].series.fresh_housing.data.at(-1))],
+    ["pv-cards", (b) => fmt.pct2(b["rates-walr-occupation"].series.personal_credit_cards.data.at(-1))],
+    ["pv-mclr", (b) => fmt.pct2(b["rates-mclr"].series.all_median.data.at(-1))],
+    ["ex-real-cpi", (b) => fmt.pct2(b["rates-real"].series.cpi.data.at(-1))],
+    ["ex-curve-10", (b) => fmt.pct2(b["rates-gsec-curve"].series.y10.data.at(-1))],
+    ["ex-call-avg", (b) => fmt.pct2(b["rates-call-monthly"].series.average.data.at(-1))],
+    ["ex-bor-c", (b) => fmt.lc1(b["rates-borrowing"].series.centre_gross.data.at(-1) / 1e5)],
+    ["prov-vintage", (b) => b["rates-monthly"].meta.vintage],
   ]},
   // credit (lb/credit): title block, the headline plate and a value from each part of the guide
   { url: "/guides/credit/", slug: null, minPlots: 18, checks: [
@@ -479,32 +635,41 @@ for (const page of PAGES) {
   if (missingTitle.length) fail(`${page.url}: ${missingTitle.length} plates missing <title>`);
 }
 
-// every-cut (F6, framework): each guide lists every series of every bundle it uses, inline or
-// on a long-tail page of its own; the row counts must equal the bundles' series counts
+// every-cut (F6, framework): each guide lists every series of every bundle it uses EXACTLY
+// ONCE, inline or in one long-tail view (src/dossiers/everycut.js everyCutPlan). Rows are
+// counted per file across the guide page and every long-tail page, and each file's count must
+// equal its bundle's series count: a missing, doubled or misplaced bundle fails here. The guide
+// page and each long-tail page also stay inside their HTML budgets (docs/CONTRACT-render.md).
 {
   const EC = await import(pathToFileURL(path.join(ROOT, "src/dossiers/everycut.js")).href);
+  const rowsPerFile = (h, into) => { for (const m of h.matchAll(/<tr data-o="\d+" data-file="([^"]+)"/g)) into.set(m[1], (into.get(m[1]) ?? 0) + 1); };
   for (const d of DOSSIERS) {
     const file = path.join(DIST, "guides", d.slug, "index.html");
     if (!fs.existsSync(file)) continue;   // "not built" is already reported above
     const html = fs.readFileSync(file, "utf8");
     if (!html.includes('id="every-cut"')) { fail(`/guides/${d.slug}/: no every-cut table (src/components/EveryCut.astro)`); continue; }
-    let want = 0, got = (html.match(/<tr data-o=/g) || []).length, tails = 0;
-    for (const b of EC.guideBundles(d)) {
-      const n = Object.keys(EC.loadBundle(b).series).length;
-      want += n;
-      if (n <= EC.LONG_TAIL) continue;
-      tails++;
-      const pages = EC.paginate(EC.rowsOf(b));
-      pages.forEach((pg, i) => {
-        const pf = path.join(DIST, "guides", d.slug, "every-cut", b, i ? String(i + 1) : "", "index.html");
+    if (html.length > 1.2e6) fail(`/guides/${d.slug}/: ${(html.length / 1e6).toFixed(2)} MB of HTML (budget 1.2 MB; lower everyCutInline)`);
+    const seen = new Map();
+    rowsPerFile(html, seen);
+    const plan = EC.everyCutPlan(d);
+    for (const t of plan.tails) {
+      t.pages.forEach((_, i) => {
+        const pf = path.join(DIST, "guides", d.slug, "every-cut", t.id, i ? String(i + 1) : "", "index.html");
         if (!fs.existsSync(pf)) { fail(`every-cut page missing: ${path.relative(DIST, pf)}`); return; }
         const h = fs.readFileSync(pf, "utf8");
-        got += (h.match(/<tr data-o=/g) || []).length;
+        rowsPerFile(h, seen);
         if (h.length > 1.2e6) fail(`${path.relative(DIST, pf)}: ${(h.length / 1e6).toFixed(2)} MB of HTML (budget 1.2 MB, docs/CONTRACT-render.md)`);
       });
     }
-    if (got !== want) fail(`/guides/${d.slug}/: every-cut lists ${got} series, the bundles hold ${want}`);
-    else ok(`/guides/${d.slug}/: every-cut lists all ${want} series${tails ? ` (${tails} long tail page set${tails > 1 ? "s" : ""})` : ""}`);
+    let want = 0, bad = [];
+    for (const b of EC.guideBundles(d)) {
+      const n = Object.keys(EC.loadBundle(b).series).length;
+      want += n;
+      if ((seen.get(b) ?? 0) !== n) bad.push(`${b} ${seen.get(b) ?? 0}/${n}`);
+    }
+    for (const b of seen.keys()) if (!EC.guideBundles(d).includes(b)) bad.push(`${b} is not a bundle of this guide`);
+    if (bad.length) fail(`/guides/${d.slug}/: every-cut does not list each series exactly once: ${bad.slice(0, 5).join("; ")}${bad.length > 5 ? ` (+${bad.length - 5})` : ""}`);
+    else ok(`/guides/${d.slug}/: every-cut lists all ${want} series once (${plan.inlineRows.length} inline${plan.tails.length ? `, ${plan.tails.length} long-tail view${plan.tails.length > 1 ? "s" : ""}` : ""})`);
   }
 }
 

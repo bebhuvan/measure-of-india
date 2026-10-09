@@ -1,0 +1,7318 @@
+{
+ "family": "population",
+ "source": "UN DESA Population Division, World Population Prospects 2024, India (LocID 356), standard CSV files",
+ "generator": "scripts/lib/products/wpp.mjs via node scripts/fetch.mjs only population",
+ "generated_at": "2024-07-11",
+ "note": "Every WPP indicator for India in the three standard CSV files, by instrument (estimate, medium projection, each other variant), and every age group by sex. WDI's population series are in the worldbank catalogue.",
+ "items": [
+  {
+   "id": "wpp:estimate:tpopulation1jan",
+   "label": "Total population, 1 January, thousands, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:tpopulation1jan",
+   "label": "Total population, 1 January, thousands, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:tpopulation1july",
+   "label": "Total population, 1 July, thousands, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:tpopulation1july",
+   "label": "Total population, 1 July, thousands, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:tpopulationmale1july",
+   "label": "Male population, 1 July, thousands, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:tpopulationmale1july",
+   "label": "Male population, 1 July, thousands, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:tpopulationfemale1july",
+   "label": "Female population, 1 July, thousands, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:tpopulationfemale1july",
+   "label": "Female population, 1 July, thousands, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:popdensity",
+   "label": "Population density, persons per sq km, 1 July, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:popdensity",
+   "label": "Population density, persons per sq km, 1 July, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:popsexratio",
+   "label": "Sex ratio of the population, males per 100 females, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:popsexratio",
+   "label": "Sex ratio of the population, males per 100 females, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:medianagepop",
+   "label": "Median age, years, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:medianagepop",
+   "label": "Median age, years, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:natchange",
+   "label": "Natural change (births minus deaths), thousands, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:natchange",
+   "label": "Natural change (births minus deaths), thousands, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:natchangert",
+   "label": "Rate of natural change, per 1,000 people, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:natchangert",
+   "label": "Rate of natural change, per 1,000 people, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:popchange",
+   "label": "Population change, thousands, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:popchange",
+   "label": "Population change, thousands, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:popgrowthrate",
+   "label": "Population growth rate, per cent, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:popgrowthrate",
+   "label": "Population growth rate, per cent, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:doublingtime",
+   "label": "Population doubling time at the current growth rate, years (served only while the population grows), estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:doublingtime",
+   "label": "Population doubling time at the current growth rate, years (served only while the population grows), medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:births",
+   "label": "Births, thousands, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:births",
+   "label": "Births, thousands, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:births1519",
+   "label": "Births to women aged 15 to 19, thousands, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:births1519",
+   "label": "Births to women aged 15 to 19, thousands, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:cbr",
+   "label": "Crude birth rate, births per 1,000 people, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:cbr",
+   "label": "Crude birth rate, births per 1,000 people, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:tfr",
+   "label": "Total fertility rate, live births per woman, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:tfr",
+   "label": "Total fertility rate, live births per woman, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:nrr",
+   "label": "Net reproduction rate, surviving daughters per woman, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:nrr",
+   "label": "Net reproduction rate, surviving daughters per woman, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:mac",
+   "label": "Mean age of mothers at childbearing, years, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:mac",
+   "label": "Mean age of mothers at childbearing, years, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:srb",
+   "label": "Sex ratio at birth, males per 100 females, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:srb",
+   "label": "Sex ratio at birth, males per 100 females, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:deaths",
+   "label": "Deaths, thousands, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:deaths",
+   "label": "Deaths, thousands, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:deathsmale",
+   "label": "Male deaths, thousands, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:deathsmale",
+   "label": "Male deaths, thousands, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:deathsfemale",
+   "label": "Female deaths, thousands, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:deathsfemale",
+   "label": "Female deaths, thousands, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:cdr",
+   "label": "Crude death rate, deaths per 1,000 people, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:cdr",
+   "label": "Crude death rate, deaths per 1,000 people, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:lex",
+   "label": "Life expectancy at birth, both sexes, years, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:lex",
+   "label": "Life expectancy at birth, both sexes, years, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:lexmale",
+   "label": "Life expectancy at birth, males, years, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:lexmale",
+   "label": "Life expectancy at birth, males, years, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:lexfemale",
+   "label": "Life expectancy at birth, females, years, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:lexfemale",
+   "label": "Life expectancy at birth, females, years, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:le15",
+   "label": "Life expectancy at age 15, both sexes, years, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:le15",
+   "label": "Life expectancy at age 15, both sexes, years, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:le15male",
+   "label": "Life expectancy at age 15, males, years, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:le15male",
+   "label": "Life expectancy at age 15, males, years, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:le15female",
+   "label": "Life expectancy at age 15, females, years, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:le15female",
+   "label": "Life expectancy at age 15, females, years, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:le65",
+   "label": "Life expectancy at age 65, both sexes, years, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:le65",
+   "label": "Life expectancy at age 65, both sexes, years, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:le65male",
+   "label": "Life expectancy at age 65, males, years, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:le65male",
+   "label": "Life expectancy at age 65, males, years, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:le65female",
+   "label": "Life expectancy at age 65, females, years, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:le65female",
+   "label": "Life expectancy at age 65, females, years, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:le80",
+   "label": "Life expectancy at age 80, both sexes, years, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:le80",
+   "label": "Life expectancy at age 80, both sexes, years, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:le80male",
+   "label": "Life expectancy at age 80, males, years, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:le80male",
+   "label": "Life expectancy at age 80, males, years, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:le80female",
+   "label": "Life expectancy at age 80, females, years, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:le80female",
+   "label": "Life expectancy at age 80, females, years, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:infantdeaths",
+   "label": "Infant deaths (under age 1), thousands, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:infantdeaths",
+   "label": "Infant deaths (under age 1), thousands, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:imr",
+   "label": "Infant mortality rate, deaths per 1,000 live births, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:imr",
+   "label": "Infant mortality rate, deaths per 1,000 live births, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:lbsurvivingage1",
+   "label": "Live births surviving to age 1, thousands, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:lbsurvivingage1",
+   "label": "Live births surviving to age 1, thousands, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:under5deaths",
+   "label": "Deaths under age 5, thousands, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:under5deaths",
+   "label": "Deaths under age 5, thousands, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:q5",
+   "label": "Under-five mortality, deaths per 1,000 live births, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:q5",
+   "label": "Under-five mortality, deaths per 1,000 live births, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:q0040",
+   "label": "Mortality before age 40, per 1,000 live births, both sexes, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:q0040",
+   "label": "Mortality before age 40, per 1,000 live births, both sexes, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:q0040male",
+   "label": "Mortality before age 40, per 1,000 male live births, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:q0040male",
+   "label": "Mortality before age 40, per 1,000 male live births, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:q0040female",
+   "label": "Mortality before age 40, per 1,000 female live births, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:q0040female",
+   "label": "Mortality before age 40, per 1,000 female live births, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:q0060",
+   "label": "Mortality before age 60, per 1,000 live births, both sexes, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:q0060",
+   "label": "Mortality before age 60, per 1,000 live births, both sexes, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:q0060male",
+   "label": "Mortality before age 60, per 1,000 male live births, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:q0060male",
+   "label": "Mortality before age 60, per 1,000 male live births, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:q0060female",
+   "label": "Mortality before age 60, per 1,000 female live births, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:q0060female",
+   "label": "Mortality before age 60, per 1,000 female live births, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:q1550",
+   "label": "Mortality between ages 15 and 50, per 1,000 alive at 15, both sexes, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:q1550",
+   "label": "Mortality between ages 15 and 50, per 1,000 alive at 15, both sexes, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:q1550male",
+   "label": "Mortality between ages 15 and 50, per 1,000 males alive at 15, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:q1550male",
+   "label": "Mortality between ages 15 and 50, per 1,000 males alive at 15, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:q1550female",
+   "label": "Mortality between ages 15 and 50, per 1,000 females alive at 15, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:q1550female",
+   "label": "Mortality between ages 15 and 50, per 1,000 females alive at 15, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:q1560",
+   "label": "Mortality between ages 15 and 60, per 1,000 alive at 15, both sexes, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:q1560",
+   "label": "Mortality between ages 15 and 60, per 1,000 alive at 15, both sexes, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:q1560male",
+   "label": "Mortality between ages 15 and 60, per 1,000 males alive at 15, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:q1560male",
+   "label": "Mortality between ages 15 and 60, per 1,000 males alive at 15, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:q1560female",
+   "label": "Mortality between ages 15 and 60, per 1,000 females alive at 15, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:q1560female",
+   "label": "Mortality between ages 15 and 60, per 1,000 females alive at 15, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:netmigrations",
+   "label": "Net migration (immigrants minus emigrants), thousands, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:netmigrations",
+   "label": "Net migration (immigrants minus emigrants), thousands, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:estimate:cnmr",
+   "label": "Net migration rate, per 1,000 people, estimates",
+   "dims": {
+    "kind": "estimate"
+   }
+  },
+  {
+   "id": "wpp:projection:medium:cnmr",
+   "label": "Net migration rate, per 1,000 people, medium projection",
+   "dims": {
+    "kind": "projection",
+    "variant": "Medium"
+   }
+  },
+  {
+   "id": "wpp:projection:high:tpopulation1jan",
+   "label": "tpopulation1jan__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:tpopulation1july",
+   "label": "tpopulation1july__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:tpopulationmale1july",
+   "label": "tpopulationmale1july__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:tpopulationfemale1july",
+   "label": "tpopulationfemale1july__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:popdensity",
+   "label": "popdensity__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:popsexratio",
+   "label": "popsexratio__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:medianagepop",
+   "label": "medianagepop__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:natchange",
+   "label": "natchange__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:natchangert",
+   "label": "natchangert__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:popchange",
+   "label": "popchange__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:popgrowthrate",
+   "label": "popgrowthrate__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:doublingtime",
+   "label": "doublingtime__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:births",
+   "label": "births__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:births1519",
+   "label": "births1519__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:cbr",
+   "label": "cbr__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:tfr",
+   "label": "tfr__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:nrr",
+   "label": "nrr__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:mac",
+   "label": "mac__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:srb",
+   "label": "srb__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:deaths",
+   "label": "deaths__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:deathsmale",
+   "label": "deathsmale__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:deathsfemale",
+   "label": "deathsfemale__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:cdr",
+   "label": "cdr__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:lex",
+   "label": "lex__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:lexmale",
+   "label": "lexmale__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:lexfemale",
+   "label": "lexfemale__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:imr",
+   "label": "imr__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:q5",
+   "label": "q5__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:netmigrations",
+   "label": "netmigrations__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:high:cnmr",
+   "label": "cnmr__high (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "high"
+   }
+  },
+  {
+   "id": "wpp:projection:low:tpopulation1jan",
+   "label": "tpopulation1jan__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:tpopulation1july",
+   "label": "tpopulation1july__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:tpopulationmale1july",
+   "label": "tpopulationmale1july__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:tpopulationfemale1july",
+   "label": "tpopulationfemale1july__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:popdensity",
+   "label": "popdensity__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:popsexratio",
+   "label": "popsexratio__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:medianagepop",
+   "label": "medianagepop__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:natchange",
+   "label": "natchange__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:natchangert",
+   "label": "natchangert__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:popchange",
+   "label": "popchange__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:popgrowthrate",
+   "label": "popgrowthrate__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:doublingtime",
+   "label": "doublingtime__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:births",
+   "label": "births__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:births1519",
+   "label": "births1519__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:cbr",
+   "label": "cbr__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:tfr",
+   "label": "tfr__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:nrr",
+   "label": "nrr__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:mac",
+   "label": "mac__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:srb",
+   "label": "srb__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:deaths",
+   "label": "deaths__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:deathsmale",
+   "label": "deathsmale__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:deathsfemale",
+   "label": "deathsfemale__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:cdr",
+   "label": "cdr__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:lex",
+   "label": "lex__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:lexmale",
+   "label": "lexmale__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:lexfemale",
+   "label": "lexfemale__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:imr",
+   "label": "imr__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:q5",
+   "label": "q5__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:netmigrations",
+   "label": "netmigrations__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:low:cnmr",
+   "label": "cnmr__low (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "low"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:tpopulation1jan",
+   "label": "tpopulation1jan__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:tpopulation1july",
+   "label": "tpopulation1july__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:tpopulationmale1july",
+   "label": "tpopulationmale1july__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:tpopulationfemale1july",
+   "label": "tpopulationfemale1july__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:popdensity",
+   "label": "popdensity__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:popsexratio",
+   "label": "popsexratio__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:medianagepop",
+   "label": "medianagepop__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:natchange",
+   "label": "natchange__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:natchangert",
+   "label": "natchangert__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:popchange",
+   "label": "popchange__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:popgrowthrate",
+   "label": "popgrowthrate__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:doublingtime",
+   "label": "doublingtime__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:births",
+   "label": "births__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:births1519",
+   "label": "births1519__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:cbr",
+   "label": "cbr__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:tfr",
+   "label": "tfr__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:nrr",
+   "label": "nrr__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:mac",
+   "label": "mac__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:srb",
+   "label": "srb__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:deaths",
+   "label": "deaths__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:deathsmale",
+   "label": "deathsmale__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:deathsfemale",
+   "label": "deathsfemale__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:cdr",
+   "label": "cdr__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:lex",
+   "label": "lex__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:lexmale",
+   "label": "lexmale__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:lexfemale",
+   "label": "lexfemale__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:imr",
+   "label": "imr__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:q5",
+   "label": "q5__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:netmigrations",
+   "label": "netmigrations__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_fertility:cnmr",
+   "label": "cnmr__constant_fertility (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_fertility"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:tpopulation1jan",
+   "label": "tpopulation1jan__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:tpopulation1july",
+   "label": "tpopulation1july__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:tpopulationmale1july",
+   "label": "tpopulationmale1july__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:tpopulationfemale1july",
+   "label": "tpopulationfemale1july__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:popdensity",
+   "label": "popdensity__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:popsexratio",
+   "label": "popsexratio__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:medianagepop",
+   "label": "medianagepop__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:natchange",
+   "label": "natchange__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:natchangert",
+   "label": "natchangert__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:popchange",
+   "label": "popchange__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:popgrowthrate",
+   "label": "popgrowthrate__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:doublingtime",
+   "label": "doublingtime__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:births",
+   "label": "births__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:births1519",
+   "label": "births1519__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:cbr",
+   "label": "cbr__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:tfr",
+   "label": "tfr__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:nrr",
+   "label": "nrr__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:mac",
+   "label": "mac__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:srb",
+   "label": "srb__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:deaths",
+   "label": "deaths__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:deathsmale",
+   "label": "deathsmale__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:deathsfemale",
+   "label": "deathsfemale__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:cdr",
+   "label": "cdr__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:lex",
+   "label": "lex__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:lexmale",
+   "label": "lexmale__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:lexfemale",
+   "label": "lexfemale__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:imr",
+   "label": "imr__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:q5",
+   "label": "q5__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:netmigrations",
+   "label": "netmigrations__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement:cnmr",
+   "label": "cnmr__instant_replacement (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:tpopulation1jan",
+   "label": "tpopulation1jan__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:tpopulation1july",
+   "label": "tpopulation1july__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:tpopulationmale1july",
+   "label": "tpopulationmale1july__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:tpopulationfemale1july",
+   "label": "tpopulationfemale1july__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:popdensity",
+   "label": "popdensity__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:popsexratio",
+   "label": "popsexratio__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:medianagepop",
+   "label": "medianagepop__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:natchange",
+   "label": "natchange__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:natchangert",
+   "label": "natchangert__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:popchange",
+   "label": "popchange__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:popgrowthrate",
+   "label": "popgrowthrate__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:doublingtime",
+   "label": "doublingtime__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:births",
+   "label": "births__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:births1519",
+   "label": "births1519__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:cbr",
+   "label": "cbr__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:tfr",
+   "label": "tfr__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:nrr",
+   "label": "nrr__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:mac",
+   "label": "mac__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:srb",
+   "label": "srb__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:deaths",
+   "label": "deaths__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:deathsmale",
+   "label": "deathsmale__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:deathsfemale",
+   "label": "deathsfemale__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:cdr",
+   "label": "cdr__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:lex",
+   "label": "lex__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:lexmale",
+   "label": "lexmale__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:lexfemale",
+   "label": "lexfemale__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:le15",
+   "label": "le15__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:le15male",
+   "label": "le15male__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:le15female",
+   "label": "le15female__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:le65",
+   "label": "le65__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:le65male",
+   "label": "le65male__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:le65female",
+   "label": "le65female__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:le80",
+   "label": "le80__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:le80male",
+   "label": "le80male__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:le80female",
+   "label": "le80female__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:infantdeaths",
+   "label": "infantdeaths__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:imr",
+   "label": "imr__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:lbsurvivingage1",
+   "label": "lbsurvivingage1__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:under5deaths",
+   "label": "under5deaths__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:q5",
+   "label": "q5__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:q0040",
+   "label": "q0040__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:q0040male",
+   "label": "q0040male__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:q0040female",
+   "label": "q0040female__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:q0060",
+   "label": "q0060__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:q0060male",
+   "label": "q0060male__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:q0060female",
+   "label": "q0060female__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:q1550",
+   "label": "q1550__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:q1550male",
+   "label": "q1550male__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:q1550female",
+   "label": "q1550female__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:q1560",
+   "label": "q1560__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:q1560male",
+   "label": "q1560male__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:q1560female",
+   "label": "q1560female__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:netmigrations",
+   "label": "netmigrations__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:zero_migration:cnmr",
+   "label": "cnmr__zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:tpopulation1jan",
+   "label": "tpopulation1jan__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:tpopulation1july",
+   "label": "tpopulation1july__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:tpopulationmale1july",
+   "label": "tpopulationmale1july__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:tpopulationfemale1july",
+   "label": "tpopulationfemale1july__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:popdensity",
+   "label": "popdensity__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:popsexratio",
+   "label": "popsexratio__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:medianagepop",
+   "label": "medianagepop__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:natchange",
+   "label": "natchange__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:natchangert",
+   "label": "natchangert__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:popchange",
+   "label": "popchange__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:popgrowthrate",
+   "label": "popgrowthrate__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:doublingtime",
+   "label": "doublingtime__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:births",
+   "label": "births__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:births1519",
+   "label": "births1519__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:cbr",
+   "label": "cbr__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:tfr",
+   "label": "tfr__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:nrr",
+   "label": "nrr__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:mac",
+   "label": "mac__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:srb",
+   "label": "srb__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:deaths",
+   "label": "deaths__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:deathsmale",
+   "label": "deathsmale__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:deathsfemale",
+   "label": "deathsfemale__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:cdr",
+   "label": "cdr__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:lex",
+   "label": "lex__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:lexmale",
+   "label": "lexmale__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:lexfemale",
+   "label": "lexfemale__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:imr",
+   "label": "imr__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:q5",
+   "label": "q5__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:netmigrations",
+   "label": "netmigrations__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:constant_mortality:cnmr",
+   "label": "cnmr__constant_mortality (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "constant_mortality"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:tpopulation1jan",
+   "label": "tpopulation1jan__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:tpopulation1july",
+   "label": "tpopulation1july__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:tpopulationmale1july",
+   "label": "tpopulationmale1july__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:tpopulationfemale1july",
+   "label": "tpopulationfemale1july__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:popdensity",
+   "label": "popdensity__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:popsexratio",
+   "label": "popsexratio__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:medianagepop",
+   "label": "medianagepop__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:natchange",
+   "label": "natchange__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:natchangert",
+   "label": "natchangert__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:popchange",
+   "label": "popchange__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:popgrowthrate",
+   "label": "popgrowthrate__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:doublingtime",
+   "label": "doublingtime__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:births",
+   "label": "births__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:births1519",
+   "label": "births1519__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:cbr",
+   "label": "cbr__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:tfr",
+   "label": "tfr__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:nrr",
+   "label": "nrr__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:mac",
+   "label": "mac__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:srb",
+   "label": "srb__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:deaths",
+   "label": "deaths__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:deathsmale",
+   "label": "deathsmale__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:deathsfemale",
+   "label": "deathsfemale__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:cdr",
+   "label": "cdr__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:lex",
+   "label": "lex__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:lexmale",
+   "label": "lexmale__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:lexfemale",
+   "label": "lexfemale__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:imr",
+   "label": "imr__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:q5",
+   "label": "q5__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:netmigrations",
+   "label": "netmigrations__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:no_change:cnmr",
+   "label": "cnmr__no_change (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_change"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:tpopulation1jan",
+   "label": "tpopulation1jan__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:tpopulation1july",
+   "label": "tpopulation1july__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:tpopulationmale1july",
+   "label": "tpopulationmale1july__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:tpopulationfemale1july",
+   "label": "tpopulationfemale1july__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:popdensity",
+   "label": "popdensity__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:popsexratio",
+   "label": "popsexratio__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:medianagepop",
+   "label": "medianagepop__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:natchange",
+   "label": "natchange__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:natchangert",
+   "label": "natchangert__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:popchange",
+   "label": "popchange__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:popgrowthrate",
+   "label": "popgrowthrate__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:doublingtime",
+   "label": "doublingtime__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:births",
+   "label": "births__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:births1519",
+   "label": "births1519__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:cbr",
+   "label": "cbr__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:tfr",
+   "label": "tfr__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:nrr",
+   "label": "nrr__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:mac",
+   "label": "mac__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:srb",
+   "label": "srb__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:deaths",
+   "label": "deaths__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:deathsmale",
+   "label": "deathsmale__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:deathsfemale",
+   "label": "deathsfemale__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:cdr",
+   "label": "cdr__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:lex",
+   "label": "lex__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:lexmale",
+   "label": "lexmale__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:lexfemale",
+   "label": "lexfemale__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:imr",
+   "label": "imr__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:q5",
+   "label": "q5__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:netmigrations",
+   "label": "netmigrations__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:momentum:cnmr",
+   "label": "cnmr__momentum (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "momentum"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:tpopulation1jan",
+   "label": "tpopulation1jan__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:tpopulation1july",
+   "label": "tpopulation1july__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:tpopulationmale1july",
+   "label": "tpopulationmale1july__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:tpopulationfemale1july",
+   "label": "tpopulationfemale1july__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:popdensity",
+   "label": "popdensity__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:popsexratio",
+   "label": "popsexratio__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:medianagepop",
+   "label": "medianagepop__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:natchange",
+   "label": "natchange__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:natchangert",
+   "label": "natchangert__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:popchange",
+   "label": "popchange__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:popgrowthrate",
+   "label": "popgrowthrate__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:doublingtime",
+   "label": "doublingtime__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:births",
+   "label": "births__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:births1519",
+   "label": "births1519__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:cbr",
+   "label": "cbr__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:tfr",
+   "label": "tfr__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:nrr",
+   "label": "nrr__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:mac",
+   "label": "mac__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:srb",
+   "label": "srb__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:deaths",
+   "label": "deaths__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:deathsmale",
+   "label": "deathsmale__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:deathsfemale",
+   "label": "deathsfemale__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:cdr",
+   "label": "cdr__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:lex",
+   "label": "lex__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:lexmale",
+   "label": "lexmale__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:lexfemale",
+   "label": "lexfemale__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:imr",
+   "label": "imr__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:q5",
+   "label": "q5__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:netmigrations",
+   "label": "netmigrations__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:instant_replacement_zero_migration:cnmr",
+   "label": "cnmr__instant_replacement_zero_migration (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "instant_replacement_zero_migration"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:tpopulation1jan",
+   "label": "tpopulation1jan__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:tpopulation1july",
+   "label": "tpopulation1july__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:tpopulationmale1july",
+   "label": "tpopulationmale1july__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:tpopulationfemale1july",
+   "label": "tpopulationfemale1july__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:popdensity",
+   "label": "popdensity__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:popsexratio",
+   "label": "popsexratio__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:medianagepop",
+   "label": "medianagepop__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:natchange",
+   "label": "natchange__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:natchangert",
+   "label": "natchangert__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:popchange",
+   "label": "popchange__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:popgrowthrate",
+   "label": "popgrowthrate__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:doublingtime",
+   "label": "doublingtime__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:births",
+   "label": "births__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:births1519",
+   "label": "births1519__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:cbr",
+   "label": "cbr__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:tfr",
+   "label": "tfr__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:nrr",
+   "label": "nrr__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:mac",
+   "label": "mac__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:srb",
+   "label": "srb__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:deaths",
+   "label": "deaths__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:deathsmale",
+   "label": "deathsmale__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:deathsfemale",
+   "label": "deathsfemale__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:cdr",
+   "label": "cdr__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:lex",
+   "label": "lex__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:lexmale",
+   "label": "lexmale__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:lexfemale",
+   "label": "lexfemale__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:imr",
+   "label": "imr__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:q5",
+   "label": "q5__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:netmigrations",
+   "label": "netmigrations__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:no_fertility_below_age_18:cnmr",
+   "label": "cnmr__no_fertility_below_age_18 (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "no_fertility_below_age_18"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:tpopulation1jan",
+   "label": "tpopulation1jan__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:tpopulation1july",
+   "label": "tpopulation1july__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:tpopulationmale1july",
+   "label": "tpopulationmale1july__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:tpopulationfemale1july",
+   "label": "tpopulationfemale1july__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:popdensity",
+   "label": "popdensity__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:popsexratio",
+   "label": "popsexratio__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:medianagepop",
+   "label": "medianagepop__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:natchange",
+   "label": "natchange__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:natchangert",
+   "label": "natchangert__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:popchange",
+   "label": "popchange__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:popgrowthrate",
+   "label": "popgrowthrate__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:doublingtime",
+   "label": "doublingtime__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:births",
+   "label": "births__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:births1519",
+   "label": "births1519__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:cbr",
+   "label": "cbr__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:tfr",
+   "label": "tfr__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:nrr",
+   "label": "nrr__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:mac",
+   "label": "mac__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:srb",
+   "label": "srb__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:deaths",
+   "label": "deaths__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:deathsmale",
+   "label": "deathsmale__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:deathsfemale",
+   "label": "deathsfemale__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:cdr",
+   "label": "cdr__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:lex",
+   "label": "lex__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:lexmale",
+   "label": "lexmale__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:lexfemale",
+   "label": "lexfemale__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:le15",
+   "label": "le15__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:le15male",
+   "label": "le15male__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:le15female",
+   "label": "le15female__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:le65",
+   "label": "le65__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:le65male",
+   "label": "le65male__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:le65female",
+   "label": "le65female__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:le80",
+   "label": "le80__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:le80male",
+   "label": "le80male__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:le80female",
+   "label": "le80female__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:infantdeaths",
+   "label": "infantdeaths__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:imr",
+   "label": "imr__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:lbsurvivingage1",
+   "label": "lbsurvivingage1__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:under5deaths",
+   "label": "under5deaths__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:q5",
+   "label": "q5__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:q0040",
+   "label": "q0040__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:q0040male",
+   "label": "q0040male__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:q0040female",
+   "label": "q0040female__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:q0060",
+   "label": "q0060__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:q0060male",
+   "label": "q0060male__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:q0060female",
+   "label": "q0060female__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:q1550",
+   "label": "q1550__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:q1550male",
+   "label": "q1550male__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:q1550female",
+   "label": "q1550female__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:q1560",
+   "label": "q1560__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:q1560male",
+   "label": "q1560male__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:q1560female",
+   "label": "q1560female__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:netmigrations",
+   "label": "netmigrations__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline:cnmr",
+   "label": "cnmr__accelerated_abr_decline (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:tpopulation1jan",
+   "label": "tpopulation1jan__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:tpopulation1july",
+   "label": "tpopulation1july__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:tpopulationmale1july",
+   "label": "tpopulationmale1july__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:tpopulationfemale1july",
+   "label": "tpopulationfemale1july__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:popdensity",
+   "label": "popdensity__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:popsexratio",
+   "label": "popsexratio__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:medianagepop",
+   "label": "medianagepop__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:natchange",
+   "label": "natchange__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:natchangert",
+   "label": "natchangert__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:popchange",
+   "label": "popchange__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:popgrowthrate",
+   "label": "popgrowthrate__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:doublingtime",
+   "label": "doublingtime__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:births",
+   "label": "births__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:births1519",
+   "label": "births1519__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:cbr",
+   "label": "cbr__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:tfr",
+   "label": "tfr__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:nrr",
+   "label": "nrr__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:mac",
+   "label": "mac__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:srb",
+   "label": "srb__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:deaths",
+   "label": "deaths__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:deathsmale",
+   "label": "deathsmale__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:deathsfemale",
+   "label": "deathsfemale__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:cdr",
+   "label": "cdr__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:lex",
+   "label": "lex__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:lexmale",
+   "label": "lexmale__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:lexfemale",
+   "label": "lexfemale__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:le15",
+   "label": "le15__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:le15male",
+   "label": "le15male__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:le15female",
+   "label": "le15female__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:le65",
+   "label": "le65__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:le65male",
+   "label": "le65male__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:le65female",
+   "label": "le65female__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:le80",
+   "label": "le80__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:le80male",
+   "label": "le80male__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:le80female",
+   "label": "le80female__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:infantdeaths",
+   "label": "infantdeaths__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:imr",
+   "label": "imr__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:lbsurvivingage1",
+   "label": "lbsurvivingage1__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:under5deaths",
+   "label": "under5deaths__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:q5",
+   "label": "q5__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:q0040",
+   "label": "q0040__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:q0040male",
+   "label": "q0040male__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:q0040female",
+   "label": "q0040female__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:q0060",
+   "label": "q0060__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:q0060male",
+   "label": "q0060male__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:q0060female",
+   "label": "q0060female__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:q1550",
+   "label": "q1550__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:q1550male",
+   "label": "q1550male__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:q1550female",
+   "label": "q1550female__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:q1560",
+   "label": "q1560__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:q1560male",
+   "label": "q1560male__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:q1560female",
+   "label": "q1560female__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:netmigrations",
+   "label": "netmigrations__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:accelerated_abr_decline_with_rec:cnmr",
+   "label": "cnmr__accelerated_abr_decline_with_rec (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "accelerated_abr_decline_with_rec"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:tpopulation1jan",
+   "label": "tpopulation1jan__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:tpopulation1july",
+   "label": "tpopulation1july__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:tpopulationmale1july",
+   "label": "tpopulationmale1july__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:tpopulationfemale1july",
+   "label": "tpopulationfemale1july__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:popdensity",
+   "label": "popdensity__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:popsexratio",
+   "label": "popsexratio__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:medianagepop",
+   "label": "medianagepop__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:natchange",
+   "label": "natchange__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:natchangert",
+   "label": "natchangert__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:popchange",
+   "label": "popchange__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:popgrowthrate",
+   "label": "popgrowthrate__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:doublingtime",
+   "label": "doublingtime__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:births",
+   "label": "births__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:births1519",
+   "label": "births1519__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:cbr",
+   "label": "cbr__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:tfr",
+   "label": "tfr__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:mac",
+   "label": "mac__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:deaths",
+   "label": "deaths__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:cdr",
+   "label": "cdr__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:lex",
+   "label": "lex__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:lexmale",
+   "label": "lexmale__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:lexfemale",
+   "label": "lexfemale__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:imr",
+   "label": "imr__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:netmigrations",
+   "label": "netmigrations__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:cnmr",
+   "label": "cnmr__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:tpopulation1jan",
+   "label": "tpopulation1jan__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:tpopulation1july",
+   "label": "tpopulation1july__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:tpopulationmale1july",
+   "label": "tpopulationmale1july__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:tpopulationfemale1july",
+   "label": "tpopulationfemale1july__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:popdensity",
+   "label": "popdensity__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:popsexratio",
+   "label": "popsexratio__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:medianagepop",
+   "label": "medianagepop__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:natchange",
+   "label": "natchange__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:natchangert",
+   "label": "natchangert__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:popchange",
+   "label": "popchange__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:popgrowthrate",
+   "label": "popgrowthrate__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:doublingtime",
+   "label": "doublingtime__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:births",
+   "label": "births__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:births1519",
+   "label": "births1519__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:cbr",
+   "label": "cbr__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:tfr",
+   "label": "tfr__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:mac",
+   "label": "mac__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:deaths",
+   "label": "deaths__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:cdr",
+   "label": "cdr__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:lex",
+   "label": "lex__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:lexmale",
+   "label": "lexmale__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:lexfemale",
+   "label": "lexfemale__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:imr",
+   "label": "imr__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:netmigrations",
+   "label": "netmigrations__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:cnmr",
+   "label": "cnmr__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:tpopulation1jan",
+   "label": "tpopulation1jan__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:tpopulation1july",
+   "label": "tpopulation1july__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:tpopulationmale1july",
+   "label": "tpopulationmale1july__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:tpopulationfemale1july",
+   "label": "tpopulationfemale1july__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:popdensity",
+   "label": "popdensity__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:popsexratio",
+   "label": "popsexratio__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:medianagepop",
+   "label": "medianagepop__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:natchange",
+   "label": "natchange__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:natchangert",
+   "label": "natchangert__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:popchange",
+   "label": "popchange__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:popgrowthrate",
+   "label": "popgrowthrate__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:doublingtime",
+   "label": "doublingtime__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:births",
+   "label": "births__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:births1519",
+   "label": "births1519__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:cbr",
+   "label": "cbr__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:tfr",
+   "label": "tfr__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:mac",
+   "label": "mac__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:deaths",
+   "label": "deaths__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:cdr",
+   "label": "cdr__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:lex",
+   "label": "lex__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:lexmale",
+   "label": "lexmale__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:lexfemale",
+   "label": "lexfemale__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:imr",
+   "label": "imr__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:netmigrations",
+   "label": "netmigrations__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:cnmr",
+   "label": "cnmr__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:tpopulation1jan",
+   "label": "tpopulation1jan__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:tpopulation1july",
+   "label": "tpopulation1july__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:tpopulationmale1july",
+   "label": "tpopulationmale1july__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:tpopulationfemale1july",
+   "label": "tpopulationfemale1july__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:popdensity",
+   "label": "popdensity__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:popsexratio",
+   "label": "popsexratio__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:medianagepop",
+   "label": "medianagepop__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:natchange",
+   "label": "natchange__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:natchangert",
+   "label": "natchangert__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:popchange",
+   "label": "popchange__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:popgrowthrate",
+   "label": "popgrowthrate__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:doublingtime",
+   "label": "doublingtime__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:births",
+   "label": "births__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:births1519",
+   "label": "births1519__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:cbr",
+   "label": "cbr__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:tfr",
+   "label": "tfr__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:mac",
+   "label": "mac__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:deaths",
+   "label": "deaths__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:cdr",
+   "label": "cdr__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:lex",
+   "label": "lex__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:lexmale",
+   "label": "lexmale__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:lexfemale",
+   "label": "lexfemale__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:imr",
+   "label": "imr__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:netmigrations",
+   "label": "netmigrations__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:cnmr",
+   "label": "cnmr__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:tpopulation1jan",
+   "label": "tpopulation1jan__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:tpopulation1july",
+   "label": "tpopulation1july__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:tpopulationmale1july",
+   "label": "tpopulationmale1july__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:tpopulationfemale1july",
+   "label": "tpopulationfemale1july__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:popdensity",
+   "label": "popdensity__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:popsexratio",
+   "label": "popsexratio__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:medianagepop",
+   "label": "medianagepop__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:natchange",
+   "label": "natchange__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:natchangert",
+   "label": "natchangert__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:popchange",
+   "label": "popchange__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:popgrowthrate",
+   "label": "popgrowthrate__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:doublingtime",
+   "label": "doublingtime__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:births",
+   "label": "births__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:births1519",
+   "label": "births1519__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:cbr",
+   "label": "cbr__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:tfr",
+   "label": "tfr__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:mac",
+   "label": "mac__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:deaths",
+   "label": "deaths__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:cdr",
+   "label": "cdr__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:lex",
+   "label": "lex__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:lexmale",
+   "label": "lexmale__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:lexfemale",
+   "label": "lexfemale__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:imr",
+   "label": "imr__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:netmigrations",
+   "label": "netmigrations__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:cnmr",
+   "label": "cnmr__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:mean:tfr",
+   "label": "tfr__mean (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "mean"
+   }
+  },
+  {
+   "id": "wpp:projection:mean:lexmale",
+   "label": "lexmale__mean (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "mean"
+   }
+  },
+  {
+   "id": "wpp:projection:mean:lexfemale",
+   "label": "lexfemale__mean (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "mean"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:le15",
+   "label": "le15__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:le15male",
+   "label": "le15male__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:le15female",
+   "label": "le15female__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:le65",
+   "label": "le65__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:le65male",
+   "label": "le65male__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:le65female",
+   "label": "le65female__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:le80",
+   "label": "le80__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:le80male",
+   "label": "le80male__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:le80female",
+   "label": "le80female__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:q5",
+   "label": "q5__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:q0040",
+   "label": "q0040__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:q0040male",
+   "label": "q0040male__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:q0040female",
+   "label": "q0040female__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:q0060",
+   "label": "q0060__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:q0060male",
+   "label": "q0060male__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:q0060female",
+   "label": "q0060female__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:q1550",
+   "label": "q1550__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:q1550male",
+   "label": "q1550male__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:q1550female",
+   "label": "q1550female__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:q1560",
+   "label": "q1560__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:q1560male",
+   "label": "q1560male__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:median_pi:q1560female",
+   "label": "q1560female__median_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "median_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:le15",
+   "label": "le15__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:le15male",
+   "label": "le15male__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:le15female",
+   "label": "le15female__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:le65",
+   "label": "le65__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:le65male",
+   "label": "le65male__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:le65female",
+   "label": "le65female__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:le80",
+   "label": "le80__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:le80male",
+   "label": "le80male__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:le80female",
+   "label": "le80female__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:q5",
+   "label": "q5__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:q0040",
+   "label": "q0040__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:q0040male",
+   "label": "q0040male__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:q0040female",
+   "label": "q0040female__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:q0060",
+   "label": "q0060__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:q0060male",
+   "label": "q0060male__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:q0060female",
+   "label": "q0060female__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:q1550",
+   "label": "q1550__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:q1550male",
+   "label": "q1550male__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:q1550female",
+   "label": "q1550female__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:q1560",
+   "label": "q1560__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:q1560male",
+   "label": "q1560male__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_80_pi:q1560female",
+   "label": "q1560female__upper_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:le15",
+   "label": "le15__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:le15male",
+   "label": "le15male__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:le15female",
+   "label": "le15female__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:le65",
+   "label": "le65__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:le65male",
+   "label": "le65male__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:le65female",
+   "label": "le65female__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:le80",
+   "label": "le80__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:le80male",
+   "label": "le80male__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:le80female",
+   "label": "le80female__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:q5",
+   "label": "q5__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:q0040",
+   "label": "q0040__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:q0040male",
+   "label": "q0040male__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:q0040female",
+   "label": "q0040female__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:q0060",
+   "label": "q0060__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:q0060male",
+   "label": "q0060male__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:q0060female",
+   "label": "q0060female__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:q1550",
+   "label": "q1550__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:q1550male",
+   "label": "q1550male__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:q1550female",
+   "label": "q1550female__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:q1560",
+   "label": "q1560__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:q1560male",
+   "label": "q1560male__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_80_pi:q1560female",
+   "label": "q1560female__lower_80_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_80_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:le15",
+   "label": "le15__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:le15male",
+   "label": "le15male__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:le15female",
+   "label": "le15female__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:le65",
+   "label": "le65__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:le65male",
+   "label": "le65male__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:le65female",
+   "label": "le65female__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:le80",
+   "label": "le80__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:le80male",
+   "label": "le80male__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:le80female",
+   "label": "le80female__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:q5",
+   "label": "q5__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:q0040",
+   "label": "q0040__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:q0040male",
+   "label": "q0040male__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:q0040female",
+   "label": "q0040female__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:q0060",
+   "label": "q0060__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:q0060male",
+   "label": "q0060male__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:q0060female",
+   "label": "q0060female__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:q1550",
+   "label": "q1550__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:q1550male",
+   "label": "q1550male__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:q1550female",
+   "label": "q1550female__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:q1560",
+   "label": "q1560__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:q1560male",
+   "label": "q1560male__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:upper_95_pi:q1560female",
+   "label": "q1560female__upper_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "upper_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:le15",
+   "label": "le15__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:le15male",
+   "label": "le15male__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:le15female",
+   "label": "le15female__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:le65",
+   "label": "le65__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:le65male",
+   "label": "le65male__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:le65female",
+   "label": "le65female__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:le80",
+   "label": "le80__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:le80male",
+   "label": "le80male__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:le80female",
+   "label": "le80female__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:q5",
+   "label": "q5__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:q0040",
+   "label": "q0040__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:q0040male",
+   "label": "q0040male__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:q0040female",
+   "label": "q0040female__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:q0060",
+   "label": "q0060__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:q0060male",
+   "label": "q0060male__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:q0060female",
+   "label": "q0060female__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:q1550",
+   "label": "q1550__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:q1550male",
+   "label": "q1550male__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:q1550female",
+   "label": "q1550female__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:q1560",
+   "label": "q1560__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:q1560male",
+   "label": "q1560male__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:projection:lower_95_pi:q1560female",
+   "label": "q1560female__lower_95_pi (WPP 2024 other variants)",
+   "dims": {
+    "kind": "projection",
+    "variant": "lower_95_pi"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:0_4:total",
+   "label": "Population aged 0-4, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "0-4",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:0_4:total",
+   "label": "Population aged 0-4, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "0-4",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:0_4:male",
+   "label": "Population aged 0-4, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "0-4",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:0_4:male",
+   "label": "Population aged 0-4, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "0-4",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:0_4:female",
+   "label": "Population aged 0-4, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "0-4",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:0_4:female",
+   "label": "Population aged 0-4, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "0-4",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:5_9:total",
+   "label": "Population aged 5-9, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "5-9",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:5_9:total",
+   "label": "Population aged 5-9, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "5-9",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:5_9:male",
+   "label": "Population aged 5-9, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "5-9",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:5_9:male",
+   "label": "Population aged 5-9, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "5-9",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:5_9:female",
+   "label": "Population aged 5-9, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "5-9",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:5_9:female",
+   "label": "Population aged 5-9, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "5-9",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:10_14:total",
+   "label": "Population aged 10-14, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "10-14",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:10_14:total",
+   "label": "Population aged 10-14, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "10-14",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:10_14:male",
+   "label": "Population aged 10-14, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "10-14",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:10_14:male",
+   "label": "Population aged 10-14, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "10-14",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:10_14:female",
+   "label": "Population aged 10-14, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "10-14",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:10_14:female",
+   "label": "Population aged 10-14, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "10-14",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:15_19:total",
+   "label": "Population aged 15-19, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "15-19",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:15_19:total",
+   "label": "Population aged 15-19, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "15-19",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:15_19:male",
+   "label": "Population aged 15-19, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "15-19",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:15_19:male",
+   "label": "Population aged 15-19, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "15-19",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:15_19:female",
+   "label": "Population aged 15-19, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "15-19",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:15_19:female",
+   "label": "Population aged 15-19, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "15-19",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:20_24:total",
+   "label": "Population aged 20-24, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "20-24",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:20_24:total",
+   "label": "Population aged 20-24, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "20-24",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:20_24:male",
+   "label": "Population aged 20-24, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "20-24",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:20_24:male",
+   "label": "Population aged 20-24, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "20-24",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:20_24:female",
+   "label": "Population aged 20-24, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "20-24",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:20_24:female",
+   "label": "Population aged 20-24, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "20-24",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:25_29:total",
+   "label": "Population aged 25-29, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "25-29",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:25_29:total",
+   "label": "Population aged 25-29, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "25-29",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:25_29:male",
+   "label": "Population aged 25-29, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "25-29",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:25_29:male",
+   "label": "Population aged 25-29, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "25-29",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:25_29:female",
+   "label": "Population aged 25-29, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "25-29",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:25_29:female",
+   "label": "Population aged 25-29, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "25-29",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:30_34:total",
+   "label": "Population aged 30-34, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "30-34",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:30_34:total",
+   "label": "Population aged 30-34, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "30-34",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:30_34:male",
+   "label": "Population aged 30-34, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "30-34",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:30_34:male",
+   "label": "Population aged 30-34, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "30-34",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:30_34:female",
+   "label": "Population aged 30-34, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "30-34",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:30_34:female",
+   "label": "Population aged 30-34, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "30-34",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:35_39:total",
+   "label": "Population aged 35-39, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "35-39",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:35_39:total",
+   "label": "Population aged 35-39, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "35-39",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:35_39:male",
+   "label": "Population aged 35-39, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "35-39",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:35_39:male",
+   "label": "Population aged 35-39, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "35-39",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:35_39:female",
+   "label": "Population aged 35-39, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "35-39",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:35_39:female",
+   "label": "Population aged 35-39, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "35-39",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:40_44:total",
+   "label": "Population aged 40-44, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "40-44",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:40_44:total",
+   "label": "Population aged 40-44, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "40-44",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:40_44:male",
+   "label": "Population aged 40-44, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "40-44",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:40_44:male",
+   "label": "Population aged 40-44, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "40-44",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:40_44:female",
+   "label": "Population aged 40-44, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "40-44",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:40_44:female",
+   "label": "Population aged 40-44, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "40-44",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:45_49:total",
+   "label": "Population aged 45-49, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "45-49",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:45_49:total",
+   "label": "Population aged 45-49, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "45-49",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:45_49:male",
+   "label": "Population aged 45-49, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "45-49",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:45_49:male",
+   "label": "Population aged 45-49, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "45-49",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:45_49:female",
+   "label": "Population aged 45-49, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "45-49",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:45_49:female",
+   "label": "Population aged 45-49, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "45-49",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:50_54:total",
+   "label": "Population aged 50-54, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "50-54",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:50_54:total",
+   "label": "Population aged 50-54, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "50-54",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:50_54:male",
+   "label": "Population aged 50-54, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "50-54",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:50_54:male",
+   "label": "Population aged 50-54, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "50-54",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:50_54:female",
+   "label": "Population aged 50-54, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "50-54",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:50_54:female",
+   "label": "Population aged 50-54, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "50-54",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:55_59:total",
+   "label": "Population aged 55-59, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "55-59",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:55_59:total",
+   "label": "Population aged 55-59, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "55-59",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:55_59:male",
+   "label": "Population aged 55-59, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "55-59",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:55_59:male",
+   "label": "Population aged 55-59, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "55-59",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:55_59:female",
+   "label": "Population aged 55-59, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "55-59",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:55_59:female",
+   "label": "Population aged 55-59, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "55-59",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:60_64:total",
+   "label": "Population aged 60-64, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "60-64",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:60_64:total",
+   "label": "Population aged 60-64, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "60-64",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:60_64:male",
+   "label": "Population aged 60-64, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "60-64",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:60_64:male",
+   "label": "Population aged 60-64, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "60-64",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:60_64:female",
+   "label": "Population aged 60-64, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "60-64",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:60_64:female",
+   "label": "Population aged 60-64, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "60-64",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:65_69:total",
+   "label": "Population aged 65-69, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "65-69",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:65_69:total",
+   "label": "Population aged 65-69, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "65-69",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:65_69:male",
+   "label": "Population aged 65-69, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "65-69",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:65_69:male",
+   "label": "Population aged 65-69, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "65-69",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:65_69:female",
+   "label": "Population aged 65-69, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "65-69",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:65_69:female",
+   "label": "Population aged 65-69, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "65-69",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:70_74:total",
+   "label": "Population aged 70-74, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "70-74",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:70_74:total",
+   "label": "Population aged 70-74, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "70-74",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:70_74:male",
+   "label": "Population aged 70-74, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "70-74",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:70_74:male",
+   "label": "Population aged 70-74, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "70-74",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:70_74:female",
+   "label": "Population aged 70-74, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "70-74",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:70_74:female",
+   "label": "Population aged 70-74, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "70-74",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:75_79:total",
+   "label": "Population aged 75-79, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "75-79",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:75_79:total",
+   "label": "Population aged 75-79, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "75-79",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:75_79:male",
+   "label": "Population aged 75-79, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "75-79",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:75_79:male",
+   "label": "Population aged 75-79, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "75-79",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:75_79:female",
+   "label": "Population aged 75-79, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "75-79",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:75_79:female",
+   "label": "Population aged 75-79, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "75-79",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:80_84:total",
+   "label": "Population aged 80-84, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "80-84",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:80_84:total",
+   "label": "Population aged 80-84, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "80-84",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:80_84:male",
+   "label": "Population aged 80-84, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "80-84",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:80_84:male",
+   "label": "Population aged 80-84, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "80-84",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:80_84:female",
+   "label": "Population aged 80-84, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "80-84",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:80_84:female",
+   "label": "Population aged 80-84, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "80-84",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:85_89:total",
+   "label": "Population aged 85-89, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "85-89",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:85_89:total",
+   "label": "Population aged 85-89, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "85-89",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:85_89:male",
+   "label": "Population aged 85-89, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "85-89",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:85_89:male",
+   "label": "Population aged 85-89, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "85-89",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:85_89:female",
+   "label": "Population aged 85-89, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "85-89",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:85_89:female",
+   "label": "Population aged 85-89, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "85-89",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:90_94:total",
+   "label": "Population aged 90-94, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "90-94",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:90_94:total",
+   "label": "Population aged 90-94, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "90-94",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:90_94:male",
+   "label": "Population aged 90-94, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "90-94",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:90_94:male",
+   "label": "Population aged 90-94, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "90-94",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:90_94:female",
+   "label": "Population aged 90-94, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "90-94",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:90_94:female",
+   "label": "Population aged 90-94, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "90-94",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:95_99:total",
+   "label": "Population aged 95-99, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "95-99",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:95_99:total",
+   "label": "Population aged 95-99, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "95-99",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:95_99:male",
+   "label": "Population aged 95-99, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "95-99",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:95_99:male",
+   "label": "Population aged 95-99, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "95-99",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:95_99:female",
+   "label": "Population aged 95-99, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "95-99",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:95_99:female",
+   "label": "Population aged 95-99, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "95-99",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:100:total",
+   "label": "Population aged 100+, total, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "100+",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:projection:100:total",
+   "label": "Population aged 100+, total, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "100+",
+    "sex": "total"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:100:male",
+   "label": "Population aged 100+, male, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "100+",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:projection:100:male",
+   "label": "Population aged 100+, male, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "100+",
+    "sex": "male"
+   }
+  },
+  {
+   "id": "wpp:age:estimate:100:female",
+   "label": "Population aged 100+, female, estimates",
+   "dims": {
+    "kind": "estimate",
+    "age": "100+",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:age:projection:100:female",
+   "label": "Population aged 100+, female, medium projection",
+   "dims": {
+    "kind": "projection",
+    "age": "100+",
+    "sex": "female"
+   }
+  },
+  {
+   "id": "wpp:closing_stock:tpopulation1jan_2101",
+   "label": "Population on 1 January 2101",
+   "dims": {}
+  }
+ ]
+}

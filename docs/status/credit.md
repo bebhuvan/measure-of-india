@@ -27,8 +27,16 @@ Branch `lb/credit`, port 4403. Updated 2026-10-09.
   bundles (money stock M3 = CAS M3 on 84 dates; spatial statement 1's credit growth = statement
   3A's levels; BSR-1 table 1.14 men + women = all; accounts less those above ₹2 lakh = the two
   smallest size bands, 262,430,617 both ways).
-- Guide page, client, registry, headline, periods, OG card, qc PAGES, asof manifest, slots,
-  corpus; EveryCut table; seamMarks on the merger, classification and M3 charts.
+- Guide page, client, registry (No. 24 after the launch-build merge), headline, periods, OG
+  card, qc PAGES, asof manifest (22 paragraphs), slots, corpus; EveryCut with four bundle
+  families for the deep tables (BSR-1, spatial, Trend and Progress, other RBI tables): the page
+  is 0.70 MB with 542 rows inline and 16 long-tail views, and qc counts all 159,786 series once;
+  seamMarks on the merger, classification and M3 charts.
+- Checked by eye at 1440 and 390 px; share images downloaded (credit-deposit ratio by state,
+  loan sizes). The download showed two value labels touching their circles (Telangana,
+  Haryana); hbars' label-width estimate was widened, fixed.
+- Prose regenerated for credit only (2026-10-09) and read by hand; verify (new figures
+  verifier), lint and contract pass for both slots.
 - IDH cross-check block in `data/crosscheck/idh.yml` (sectoral and industry credit levels).
 
 ## Decisions
@@ -103,6 +111,14 @@ BSR-2 tables are Measure-N exports like the spatial statements; table 2.3's meas
 checked (offices, then accounts and amounts for current, savings, term and total, and the
 types add to the totals in every row), so they can be baked the same way, but that is a
 session of its own and the rules belong in the deposits ledger.
+
+## For the coordinator (framework, not patched here)
+
+- `src/dossiers/guide.client.js` opens every scrolling plot zone at its right end, which suits
+  time charts but hides the category names on horizontal bar charts at 390 px (11 plates on
+  credit, 4 on states). Bar plates need to open at the left.
+- "Data and downloads" (GuideData) lists every file, so with 291 files the section is about
+  60,000 px tall on credit (little HTML); families could be summarised there as in EveryCut.
 
 ## Blocked
 

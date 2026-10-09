@@ -46,3 +46,33 @@ test("periods: quarters dated by first or last month, fiscal years, stocks at Ma
   assert.equal(periodLabel("x", a, "2023-04-01"), "2023-24");
   assert.equal(periodLabel("x", a, "2026-03-01"), "Mar 2026");
 });
+
+test("an estimated latest value is marked, never shown as measured (CONTRACT-series 2b)", () => {
+  let checked = 0;
+  for (const b of slugs) {
+    const j = JSON.parse(fs.readFileSync(`data/series/${b}.json`, "utf8"));
+    const rows = rowsOf(b);
+    for (const [k, s] of Object.entries(j.series)) {
+      if (!s.estimated?.length) continue;
+      let li = -1;
+      for (let i = s.data.length - 1; i >= 0; i--) if (s.data[i] != null) { li = i; break; }
+      const r = rows.find((x) => x.key === k);
+      assert.equal(r.estimated, li >= 0 && s.estimated.includes(j.dates[li]), `${b}.${k}`);
+      if (r.estimated) { assert.ok(r.changeEstimated, `${b}.${k}: change uses an estimate`); checked++; }
+    }
+  }
+  assert.ok(checked > 0, "no estimated latest values found: the BIS India credit series should have some");
+});
+
+test("every guide's every-cut plan places each bundle exactly once, inline within the cap", async () => {
+  const { DOSSIERS } = await import("../src/dossiers/registry.js");
+  const { everyCutPlan, guideBundles, INLINE_CAP } = await import("../src/dossiers/everycut.js");
+  for (const d of DOSSIERS) {
+    const p = everyCutPlan(d);
+    const placed = [...p.inline, ...p.tails.flatMap((t) => t.bundles)];
+    assert.deepEqual([...placed].sort(), [...guideBundles(d)].sort(), d.slug);
+    assert.equal(new Set(placed).size, placed.length, `${d.slug}: a bundle placed twice`);
+    assert.ok(p.inlineRows.length <= (d.everyCutInline ?? INLINE_CAP), `${d.slug}: inline over the cap`);
+    for (const t of p.tails) assert.equal(t.pages.flat().length, t.rows.length, `${d.slug}/${t.id}: pages lose rows`);
+  }
+});

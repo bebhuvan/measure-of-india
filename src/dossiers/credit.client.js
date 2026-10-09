@@ -102,12 +102,13 @@ function hbars(id, rows, { valueFmt, hl = () => false, xDomain, xTicks, xFmt = (
   // value labels sit at the bar's end; only when a comparison dot falls where the label would
   // be is the label moved past the dot, so a label always reads as its own bar's value
   const upx = (xDomain[1] - xDomain[0]) / (W - ml - mr);
-  const lx = (r) => { const wpx = valueFmt(r.v).length * 7.4 + 14; const d = dot ? r[dot] : null; return d != null && d >= r.v - 6 * upx && d <= r.v + wpx * upx ? d + 4 * upx : r.v; };
+  // the label's width: dx 9 and about 8.6px a character at 12.5px, plus the dot's radius and a gap
+  const lx = (r) => { const wpx = valueFmt(r.v).length * 8.6 + 20; const d = dot ? r[dot] : null; return d != null && d >= r.v - 6 * upx && d <= r.v + wpx * upx ? d + 4 * upx : r.v; };
   const right = rows.filter((r) => r.v >= 0), left = rows.filter((r) => r.v < 0);
   marks.push(Plot.text(right, { y: "name", x: lx, text: (d) => valueFmt(d.v), dx: 9, textAnchor: "start", fill: INK, fontSize: 12.5, fontWeight: (d) => (hl(d) ? 600 : 400) }));
   if (left.length) marks.push(Plot.text(left, { y: "name", x: "v", text: (d) => valueFmt(d.v), dx: -9, textAnchor: "end", fill: INK, fontSize: 12.5 }));
   // labels for the dots themselves, muted, where a plate's story is the dot (loan sizes)
-  if (dot && dotFmt) marks.push(Plot.text(rows.filter((r) => r[dot] != null && r[dot] > r.v + (valueFmt(r.v).length * 7.4 + 14) * upx), { y: "name", x: dot, text: (d) => dotFmt(d[dot]), dx: 9, textAnchor: "start", fill: MUTED, fontSize: 11.5 }));
+  if (dot && dotFmt) marks.push(Plot.text(rows.filter((r) => r[dot] != null && r[dot] > r.v + (valueFmt(r.v).length * 8.6 + 20) * upx), { y: "name", x: dot, text: (d) => dotFmt(d[dot]), dx: 9, textAnchor: "start", fill: MUTED, fontSize: 11.5 }));
   const plot = Plot.plot({
     width: W, height: 40 + rows.length * rowH, marginLeft: ml, marginRight: mr, marginTop: 24, marginBottom: 30, style: baseStyle,
     x: { label: null, domain: xDomain, ticks: xTicks, tickFormat: xFmt, tickSize: 0, tickPadding: 8 },

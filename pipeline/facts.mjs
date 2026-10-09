@@ -84,8 +84,10 @@ for (const [k, s] of Object.entries(bundle.series)) {
   const L = data.at(-1).value, P = data.at(-2).value;
   const yIdx = data.length - 1 - lag;
   const Y = yIdx >= 0 ? data.at(-1 - lag).value : null;   // young series (e.g. CPI base 2024) have no same-base year-ago yet
-  const min = data.reduce((a, d) => (d.value < a.value ? d : a));
-  const max = data.reduce((a, d) => (d.value > a.value ? d : a));
+  // published points only: a series may start after the bundle's axis (leading nulls)
+  const pub = data.filter((d) => d.value != null);
+  const min = pub.reduce((a, d) => (d.value < a.value ? d : a));
+  const max = pub.reduce((a, d) => (d.value > a.value ? d : a));
   // Level-based series (ASI counts, ₹ lakh; HCES ₹) need growth rates derived
   // from levels — the raw deltaVsPrev is an absolute change, not a rate. The
   // pipeline's rate-based streaks (below2/above6) are meaningless for levels,
@@ -107,9 +109,15 @@ for (const [k, s] of Object.entries(bundle.series)) {
     const startIdx = vals.length - 1 - run.length;
     run.since = startIdx >= 0 ? periodLabel(data[startIdx].date) : periodLabel(data[0].date) + " (series start)";
   }
+  // estimated points (CONTRACT-series 2b): the writer must know which readings are an
+  // estimator's, and what the last measured reading was (BIS extrapolates India's credit)
+  const estSet = new Set(s.estimated ?? []);
+  const lastMeasured = [...data].reverse().find((d) => d.value != null && !estSet.has(d.date));
   const entry = {
     label: s.label,
     ruler: facts.ruler.base == null ? bundleSlug : `${facts.ruler.base}, ${bundleSlug}`,
+    estimated: estSet.size ? { from: periodLabel(s.estimated[0]), periods: estSet.size, latestIsEstimate: estSet.has(data.at(-1).date),
+      lastMeasured: lastMeasured ? { value: lastMeasured.value, period: periodLabel(lastMeasured.date) } : null, note: s.estimatedNote ?? null } : null,
     levelBased,
     latest: { value: L, period: periodLabel(data.at(-1).date) },
     previous: { value: P, period: periodLabel(data.at(-2).date) },
@@ -153,6 +161,15 @@ for (const [k, s] of Object.entries(bundle.series)) {
         : null;
     })(),
   };
+  // seasonal raw levels (series flag `seasonal: true`, set by the adapter; added by
+  // lb/climate): a month-on-month move, a run of prints or a year-start comparison of a
+  // monthly temperature or rainfall level is the calendar, not a finding (India cools every
+  // year from May into the monsoon). Only same-month comparisons (yearAgo, deltaVsYear)
+  // and the series' extremes stay; the writer reads change from the anomaly series.
+  if (s.seasonal === true) {
+    Object.assign(entry, { seasonal: true, previous: null, deltaVsPrev: null, growthVsPrevPct: null, run: null, last4: null, yearStart: null, baseEffect: null,
+      seasonalNote: "A seasonal level: compare it only with the same month in other years." });
+  }
   facts.series[k] = entry;
 }
 
@@ -207,6 +224,28 @@ if (slug === "cpi") {
     note: "The 2024 base serves no component weights, so no core index can be computed on it; the core figure is the retired 2012 base's final reading.",
   };
 }
+// ---- external (lb/external): the account is published in US$ million; prose speaks in US$
+// billion. The conversion is done here, in code, so the writer never does arithmetic: every
+// dollar figure it may cite sits in cross.bn (one decimal), with the period it belongs to.
+if (slug === "external") {
+  const bn1 = (v) => (v == null ? null : Math.round(v / 100) / 10);
+  const rd = (f) => JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", f + ".json"), "utf8"));
+  facts.cross.bn = {};
+  for (const [k, s] of Object.entries(facts.series)) facts.cross.bn[k] = { latest: bn1(s.latest.value), previous: bn1(s.previous.value), yearAgo: s.yearAgo ? bn1(s.yearAgo.value) : null, period: s.latest.period };
+  const g = rd("external-bop-gross");
+  for (const k of ["goods_exports", "goods_imports", "services_exports", "remittances_in", "software_exports"]) facts.cross.bn[k] = { latest: bn1(g.series[k].data.at(-1)), period: facts.latestPeriod };
+  const w = rd("external-reserves-weekly"), ws = w.series.total_usd.data;
+  const iw = ws.length - 1 - [...ws].reverse().findIndex((v) => v != null);
+  const peak = ws.reduce((a, v, i) => (v != null && v > ws[a] ? i : a), 0);
+  facts.cross.reserves = { latest_bn: bn1(ws[iw]), week: w.dates[iw], weekBefore_bn: bn1(ws[iw - 1]), peak_bn: bn1(ws[peak]), peakWeek: w.dates[peak] };
+  const ind = rd("external-bop-indicators");
+  const lastI = (k) => { const d = ind.series[k].data; return Math.round(d.at(-1) * 100) / 100; };
+  facts.cross.annual = { fiscalYear: `${ind.dates.at(-1).slice(0, 4)}-${String((+ind.dates.at(-1).slice(0, 4) + 1) % 100).padStart(2, "0")}`, ca_pct_gdp: lastI("cad_to_gdp"), import_cover_months: lastI("import_cover_of_reserves_in_months") };
+  const re = rd("external-reer-2015"), ru = rd("external-rupee");
+  facts.cross.rupee = { month: ru.dates.at(-1).slice(0, 7), inr_per_usd: Math.round(ru.series.usd.data.at(-1) * 100) / 100, inr_per_usd_year_ago: Math.round(ru.series.usd.data.at(-13) * 100) / 100,
+    reer_month: re.dates.at(-1).slice(0, 7), reer: Math.round(re.series.reer_trade.data.at(-1) * 10) / 10, neer: Math.round(re.series.neer_trade.data.at(-1) * 10) / 10 };
+  facts.cross.note = "Every dollar figure is in cross.bn, cross.reserves or the other cross blocks, already in US$ billion; cite them as written. The series values are US$ million and must not be cited directly.";
+}
 if (slug === "gdp") {
   const g = facts.series.gdp;
   facts.cross.vsTrend6 = Math.round((g.latest.value - 6) * 100) / 100;
@@ -216,6 +255,64 @@ if (slug === "gdp") {
     for (let i = data.length - 2; i >= 0; i--) if (data[i] > L) return { value: data[i], period: periodLabel(bundle.dates[i]) };
     return null;
   })();
+}
+
+// consumption: how many times urban spending is rural spending, per survey round and per
+// basis (with and without imputation). The writer reached for this ratio and computed it
+// itself (verify caught "1.7 times"); arithmetic belongs here, never in the model.
+if (slug === "consumption") {
+  const S = facts.series, r2 = (v) => Math.round(v * 100) / 100;
+  const pair = (u, r) => S[u] && S[r] ? {
+    latest: { value: r2(S[u].latest.value / S[r].latest.value), period: S[u].latest.period },
+    previous: S[u].previous && S[r].previous ? { value: r2(S[u].previous.value / S[r].previous.value), period: S[u].previous.period } : null,
+  } : null;
+  facts.cross.urbanRuralRatio = { withoutImputation: pair("urban", "rural"), withImputation: pair("urban_imputed", "rural_imputed"),
+    note: "Urban MPCE divided by rural MPCE: how many times what a town household member spends a month a village one spends." };
+}
+
+// bis family session: the comparison economies (one bundle each, bis-peer-<iso3>). India's
+// position among them is a fact the writer may cite; computed here so verify can trace it.
+if (slug === "debt" || slug === "housing") {
+  const peersDir = fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => /^bis-peer-[a-z]{3}\.json$/.test(f));
+  const rows = peersDir.map((f) => { const b = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", f), "utf8")); const name = b.meta.coverage.split(":")[0];
+    const lastV = (k) => { const s = b.series[k]; if (!s) return null; for (let i = s.data.length - 1; i >= 0; i--) if (s.data[i] != null) return { value: s.data[i], period: periodLabel(b.dates[i]) }; return null; };
+    return { name, households: lastV("households"), companies: lastV("companies"), government: lastV("government"), dsr: lastV("dsr"), credit_gap: lastV("credit_gap"), real_house_prices_yoy: lastV("real_house_prices_yoy") }; });
+  const india = slug === "debt" ? {
+    households: facts.series.households.latest, companies: facts.series.companies.latest, government: facts.series.government.latest,
+    dsr: { value: JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/bis-dsr.json"), "utf8")).series.private.data.at(-1) },
+    credit_gap: { value: JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/bis-credit-gap.json"), "utf8")).series.gap.data.at(-1) },
+  } : { real_house_prices_yoy: facts.series.real_yoy.latest };
+  const rank = (k) => { const xs = [{ name: "India", v: india[k]?.value }, ...rows.map((r) => ({ name: r.name, v: r[k]?.value }))].filter((x) => x.v != null).sort((a, b) => b.v - a.v);
+    return { measure: k, indiaRank: xs.findIndex((x) => x.name === "India") + 1, of: xs.length, highest: { name: xs[0].name, value: xs[0].v }, lowest: { name: xs.at(-1).name, value: xs.at(-1).v } }; };
+  facts.peers = {
+    note: "Latest quarter BIS publishes for each economy; rank 1 = highest. Same BIS definitions as India's series.",
+    rankings: (slug === "debt" ? ["households", "companies", "government", "dsr", "credit_gap"] : ["real_house_prices_yoy"]).map(rank),
+    china: rows.find((r) => r.name === "China"), unitedStates: rows.find((r) => r.name === "United States"),
+  };
+}
+
+// climate (lb/climate): a month's anomaly means little alone. The writer gets its rank
+// among the same calendar month since 1940, the last twelve months' mean, the current
+// year's count of months above normal, and the century context from the station record
+// (CRU TS: 2016-2025 against 1901-1930, and the warming rate per decade).
+if (slug === "climate") {
+  const a = bundle.series.temperature_anomaly.data, d = bundle.dates;
+  const L = d.length - 1, m = d[L].slice(5, 7), yr = d[L].slice(0, 4);
+  const same = d.map((x, i) => ({ y: x.slice(0, 4), v: a[i] })).filter((x, i) => d[i].slice(5, 7) === m && x.v != null).sort((p, q) => q.v - p.v);
+  const r2 = (v) => Math.round(v * 100) / 100;
+  const last12 = a.slice(-12).filter((v) => v != null);
+  const ytd = d.map((x, i) => (x.startsWith(yr) ? a[i] : null)).filter((v) => v != null);
+  const cru = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/climate-cru.json"), "utf8"));
+  const cy = (y0, y1) => { const v = cru.dates.map((x, i) => (+x.slice(0, 4) >= y0 && +x.slice(0, 4) <= y1 ? cru.series.tas.data[i] : null)).filter((z) => z != null); return v.reduce((s2, z) => s2 + z, 0) / v.length; };
+  const slope = (y0) => { const p2 = cru.dates.map((x, i) => [+x.slice(0, 4), cru.series.tas.data[i]]).filter(([y, v]) => y >= y0 && v != null); const mx = p2.reduce((s2, q) => s2 + q[0], 0) / p2.length, my = p2.reduce((s2, q) => s2 + q[1], 0) / p2.length; return 10 * p2.reduce((s2, [x, y]) => s2 + (x - mx) * (y - my), 0) / p2.reduce((s2, [x]) => s2 + (x - mx) ** 2, 0); };
+  const cl = cru.dates.at(-1).slice(0, 4);
+  facts.climate = {
+    note: "temperature_anomaly is the month's departure from that calendar month's 1991-2020 average (ERA5, OWID). Ranks count the same calendar month in every year since 1940; rank 1 is the warmest.",
+    sameMonth: { month: periodLabel(d[L]).split(" ")[0], rank: same.findIndex((x) => x.y === yr) + 1, of: same.length, warmest: { year: +same[0].y, value: r2(same[0].v) }, coolest: { year: +same.at(-1).y, value: r2(same.at(-1).v) } },
+    last12Mean: r2(last12.reduce((s2, v) => s2 + v, 0) / last12.length),
+    yearToDate: { year: +yr, months: ytd.length, aboveNormal: ytd.filter((v) => v > 0).length, mean: r2(ytd.reduce((s2, v) => s2 + v, 0) / ytd.length) },
+    century: { source: `CRU TS station record, India, annual mean temperature, 1901 to ${cl}`, change: r2(cy(2016, 2025) - cy(1901, 1930)), from: "1901-1930", to: "2016-2025", perDecadeSince1901: r2(slope(1901)), perDecadeSince1976: r2(slope(1976)) },
+  };
 }
 
 // the writer's window on the SIBLING bundles (registry `proseInputs`): the
