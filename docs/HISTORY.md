@@ -201,6 +201,13 @@ stamps, silent series). What the audit changed:
 
 ## Open debt (known, deliberate, not scheduled)
 
+- **2026-10-09: pipeline/verify.mjs traced only figures followed by %, per cent, pt or
+  points.** Amounts (₹, US$ with lakh/crore/billion), °C, mm, index levels and ratios in prose
+  were never checked against the facts sheet, so hard rule 3 held only for percentages.
+  Found by atlas-external during the launch build; the fix is scheduled (atlas-framework,
+  round 2), after which every prose file is re-verified. Not deliberate: listed here until
+  it is closed.
+
 - The verify.mjs negative guard judges multi-series sentences
   conservatively: a record claim is rejected only when false for EVERY
   series named, so a co-occurring generic word ("inflation" resolves to the

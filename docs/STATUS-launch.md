@@ -1,6 +1,6 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-09, 20:00.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-09, 20:30.
 
 ## Running now: ten family sessions
 
@@ -10,7 +10,7 @@ Each writes its own log in `docs/status/<slug>.md` on its branch.
 
 | Session | Builds | State |
 |---|---|---|
-| atlas-external | External account rebuilt on DBIE: BoP, weekly reserves, FDI and FPI, external debt, REER | started 18:17 |
+| atlas-external | External account rebuilt on DBIE: BoP, weekly reserves, FDI and FPI, external debt, REER | **merged** (BoP to Q1 FY27, weekly reserves to 25 Sep 2026, FDI/FPI, debt, REER) |
 | atlas-trade | New guide: merchandise trade from TradeStat, HS 2 to 8 digit, partners | started 18:18 |
 | atlas-credit | New guide: credit by sector, money supply, bank health | started 18:18 |
 | atlas-rates | New guide: policy rates since 1935, MPC votes, lending and deposit rates, yields | **merged** (repo rate since 1935, every MPC vote, lending rates, yields) |
@@ -20,7 +20,7 @@ Each writes its own log in `docs/status/<slug>.md` on its branch.
 | atlas-climate | New guide: temperature, rain, emissions (OWID, World Bank climate portal) | **merged**, follow-up merged |
 | atlas-worldbank | WDI inventory; new guides on poverty and on population | **merged** (poverty, population; all 1,395 WDI India indicators baked) |
 | atlas-bis | BIS bundles; new guides on housing prices and on debt | **merged** (debt, housing; BIS India credit after 2023 marked as BIS estimates) |
-| atlas-framework | Every-cut table, seam charts, IDH cross-check, ledgers for the 14 existing guides | **merged** (every-cut table, seam charts, IDH cross-check, ledgers) |
+| atlas-framework | Every-cut table, seam charts, IDH cross-check, ledgers for the 14 existing guides | merged; round 2 running: verifier traces every number, phone charts open at the latest end, lighter every-cut pages |
 
 ## Coordinator (this session) meanwhile
 
@@ -41,7 +41,7 @@ throttles, so not run alongside the states and services sessions). Then the laun
   state x item, ASI 3-4 digit, NFHS tables, 144 gender indicators). Each is in its ledger as
   `pending`, scheduled for wave 2. Gates pass; the launch setting (`--strict`) fails until
   they are decided.
-- Merged guides on the branch: 23 (bis, services, states, worldbank, climate, ilo, rates in).
+- Merged guides on the branch: 23, and external rebuilt on DBIE (bis, services, states, worldbank, climate, ilo, rates, external in). Still building: trade, credit.
 - Every-cut marks estimated values (", est."), enforced by a test.
 - DBIE reader fixed (quoted ";" misaligned 5,232 rows of report 1076).
 
@@ -55,6 +55,14 @@ throttles, so not run alongside the states and services sessions). Then the laun
 - For the Data Bank (found by atlas-rates): the MPC stance classifier misses "change the
   stance to calibrated tightening", which blocks meeting 63's promotion; 2019-20 G-sec
   notified amounts disagree with DBIE report 559 on 17 days.
+
+## Found and being fixed
+
+- **The prose verifier only checked percentages and points.** Rupee and dollar amounts,
+  °C, mm, index levels and ratios were never traced to the facts sheet (found by
+  atlas-external). All prose so far was also read by hand, and a probe traced all 23 US$
+  figures in the external prose, but the guarantee was weaker than AGENTS.md says. Fix
+  running in atlas-framework; then every prose file on the site is re-verified.
 
 ## Queued (after wave 1 merges)
 
