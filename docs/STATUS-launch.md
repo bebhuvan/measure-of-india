@@ -1,6 +1,6 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-09, 21:00.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-09, 21:30.
 
 ## Running now: ten family sessions
 
@@ -12,7 +12,7 @@ Each writes its own log in `docs/status/<slug>.md` on its branch.
 |---|---|---|
 | atlas-external | External account rebuilt on DBIE: BoP, weekly reserves, FDI and FPI, external debt, REER | **merged** (BoP to Q1 FY27, weekly reserves to 25 Sep 2026, FDI/FPI, debt, REER) |
 | atlas-trade | New guide: merchandise trade from TradeStat, HS 2 to 8 digit, partners | started 18:18 |
-| atlas-credit | New guide: credit by sector, money supply, bank health | started 18:18 |
+| atlas-credit | New guide: credit by sector, money supply, bank health | **merged** (credit by sector, money, banks; 228 deep RBI tables; 22 held for the archive) |
 | atlas-rates | New guide: policy rates since 1935, MPC votes, lending and deposit rates, yields | **merged** (repo rate since 1935, every MPC vote, lending rates, yields) |
 | atlas-states | New guide: state GDP, per-capita income, what each state runs on | **merged** (state economies; all 182 RBI Handbook tables, every unit resolved) |
 | atlas-services | New guide: services output, exports, enterprises, jobs | **merged** |
@@ -20,7 +20,7 @@ Each writes its own log in `docs/status/<slug>.md` on its branch.
 | atlas-climate | New guide: temperature, rain, emissions (OWID, World Bank climate portal) | **merged**, follow-up merged |
 | atlas-worldbank | WDI inventory; new guides on poverty and on population | **merged** (poverty, population; all 1,395 WDI India indicators baked) |
 | atlas-bis | BIS bundles; new guides on housing prices and on debt | **merged** (debt, housing; BIS India credit after 2023 marked as BIS estimates) |
-| atlas-framework | Every-cut table, seam charts, IDH cross-check, ledgers for the 14 existing guides | **merged**, round 2 merged (verifier traces every figure; phone charts open at today; lighter every-cut) |
+| atlas-framework | Every-cut table, seam charts, IDH cross-check, ledgers for the 14 existing guides | round 3 running: bar charts on phones keep their labels; a shorter data-downloads list |
 
 ## Coordinator (this session) meanwhile
 
@@ -41,7 +41,7 @@ throttles, so not run alongside the states and services sessions). Then the laun
   state x item, ASI 3-4 digit, NFHS tables, 144 gender indicators). Each is in its ledger as
   `pending`, scheduled for wave 2. Gates pass; the launch setting (`--strict`) fails until
   they are decided.
-- Merged guides on the branch: 23, and external rebuilt on DBIE (bis, services, states, worldbank, climate, ilo, rates, external in). Still building: trade, credit.
+- Merged guides on the branch: 24 (bis, services, states, worldbank, climate, ilo, rates, external, credit in). Still building: trade.
 - Every-cut marks estimated values (", est."), enforced by a test.
 - DBIE reader fixed (quoted ";" misaligned 5,232 rows of report 1076).
 
@@ -66,8 +66,11 @@ throttles, so not run alongside the states and services sessions). Then the laun
 ## Queued (after wave 1 merges)
 
 - **Deep archive on Hugging Face** (owner chose 2026-10-09): `bebhuvan1/india-atlas-archive`,
-  public, Parquet plus CSV, manifest in the repo (`PLAN-launch.md` §2b). Built after trade
-  and credit merge.
+  public, Parquet plus CSV, manifest in the repo (`PLAN-launch.md` §2b); write token in
+  `.env` verified. Built after trade merges. Credit holds 22 reports for it, ILO 17 rules,
+  climate 2.
+- Deposits: 690 pending BSR-2 items (ownership and maturity tables need the categories
+  worked out; credit verified tables 2.1-2.3 and 2.8-2.10 add up). Wave 2.
 
 - Store `data/raw` gzipped: 316 MB tracked today, one file over GitHub's 50 MB warning;
   gzip shrinks them 6-50x with the audit trail intact.
