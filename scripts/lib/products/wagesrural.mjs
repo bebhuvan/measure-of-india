@@ -31,7 +31,7 @@
 // 280.8 Gujarat; RBI Handbook 2024-25, table 113 (men, general agricultural labourers),
 // prints the same five figures.
 import { databankRoot, dbieReport } from "../databank.mjs";
-import { writeSeries, writeRaw, monthAxis } from "../util.mjs";
+import { writeSeries, writeRaw, readRaw, monthAxis } from "../util.mjs";
 import { writeCatalogue, idPart, catalogueCli, sourceCfg } from "../catalogue.mjs";
 import fs from "node:fs";
 import path from "node:path";
@@ -54,7 +54,7 @@ export async function buildWagesRural(root, dcfg, vintage, cfg) {
     note: "Rows are the report's cells joined by \";\" in header order. Labour Bureau rural wage rates by occupation and state from RBI DBIE report 664, read from the local Data Bank mirror (rbi_dbie_webi_rows). Rupees per day.",
     reports: { 664: { provenance: R.provenance, header: R.header, rows: R.rows.map((r) => R.header.map((h) => r[h]).join(";")) } },
   });
-  const V = JSON.parse(fs.readFileSync(path.join(root, rawRel), "utf8")).vintage;
+  const V = readRaw(root, rawRel).vintage;
 
   // scheme -> state -> occ code -> Map(ym -> rupees)
   const W = { 1998: {}, 2013: {} };

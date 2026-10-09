@@ -41,7 +41,7 @@
 // 699 (and 154.4 for ALL INDIA in report 1168). See docs/status/cpi.md for the press-release
 // comparison.
 import { databankRoot, dbieReport, dbieProvider } from "../databank.mjs";
-import { writeSeries, writeRaw, yoyFromLevels, monthAxis } from "../util.mjs";
+import { writeSeries, writeRaw, readRaw, yoyFromLevels, monthAxis } from "../util.mjs";
 import { writeCatalogue, idPart, catalogueCli, sourceCfg } from "../catalogue.mjs";
 import fs from "node:fs";
 import path from "node:path";
@@ -116,7 +116,7 @@ export async function buildCpiiw(root, dcfg, vintage, cfg) {
       1168: { provenance: r1168.provenance, header: r1168.header, rows: r1168.rows.map((r) => r1168.header.map((h) => r[h]).join(";")) },
     },
   });
-  const V = JSON.parse(fs.readFileSync(path.join(root, rawRel), "utf8")).vintage;
+  const V = readRaw(root, rawRel).vintage;
 
   // ---------- 699: All India, base x group -> Map(ym -> level) ----------
   const ai = {};   // tag -> gkey -> Map

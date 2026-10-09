@@ -8,7 +8,7 @@ import { mospi, mospiAll } from "../mospi.mjs";
 import fs from "node:fs";
 import { quarantine } from "./cpiiw.mjs";
 import path from "node:path";
-import { MONTHS, writeSeries, writeRaw, yoyFromLevels, monthAxis } from "../util.mjs";
+import { MONTHS, writeSeries, writeRaw, readRaw, yoyFromLevels, monthAxis } from "../util.mjs";
 
 const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
@@ -19,7 +19,7 @@ export async function buildWpi(root, dcfg, vintage) {
   // fetched again (about 7,800 calls at the API's 100-row cap): the sub-sub-group bundle
   // (wave 2) is baked from data/raw/wpi-items.json, and the live bases run as usual.
   if (dcfg.fetch.retired) {
-    const raw = JSON.parse(fs.readFileSync(path.join(root, "data/raw/wpi-items.json"), "utf8"));
+    const raw = readRaw(root, "data/raw/wpi-items.json");
     const groups = JSON.parse(fs.readFileSync(path.join(root, "data/series/wpi-groups.json"), "utf8"));
     const subsub = Object.fromEntries(Object.entries(raw.sub_subgroups).map(([k, o]) => [k, { label: o.label, group: o.group, subgroup: o.subgroup, map: new Map(Object.entries(o.levels)) }]));
     const axis = groups.dates.map((d) => d.slice(0, 7));
