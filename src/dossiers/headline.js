@@ -30,10 +30,10 @@ export const HEADLINE = {
   consumption:   { value: (b) => `₹${inr(last(b, "rural"))}`, what: "rural spending per person per month", period: fy },
   factories:     { value: (b) => `${(last(b, "factories_in_operation") / 1e5).toFixed(2)} lakh`, what: "factories in operation", period: fy },
   aishe:         { value: (b) => `${(last(b, "enrolment") / 1e7).toFixed(2)} crore`, what: "students enrolled in higher education", period: fy },
-  gender:        { value: (b) => `${last(b, "sex_ratio")}`, what: "women per 1,000 men", period: (b) => `Census ${lastDate(b).slice(0, 4)}` },
+  gender:        { value: (b) => `${Math.round(last(b, "total__all_india"))}`, what: "girls born for every 1,000 boys (Sample Registration System)", period: (b) => b.meta.latestPeriod },
   mnre:          { value: (b) => `${(last(b, "grand_total") / 1000).toFixed(1)} GW`, what: "renewable power capacity installed", period: month },
-  nfhs:          { value: (b) => { const s = Object.values(b.series).find((x) => x.label.includes("Children age 6-59")); return `${s.data.at(-1).toFixed(1)}%`; },
-                   what: "children aged 6 to 59 months with anaemia", period: () => "NFHS-5, 2019-21" },
+  nfhs:          { value: (b) => `${last(b, "children_age_6_59_months_who_are_anaemic_11__all_india__total").toFixed(1)}%`,
+                   what: "children aged 6 to 59 months with anaemia", period: (b) => `NFHS-5, ${b.meta.latestPeriod}` },
   manufacturing: { value: (b) => `${last(b, "mva_pct_gdp").toFixed(1)}%`, what: "manufacturing's share of GDP", period: (b) => lastDate(b).slice(0, 4) },
   deposits:      { value: (b) => `₹${last(b, "household_total").toFixed(1)} lakh crore`, what: "households' bank deposits", period: (b) => `March ${lastDate(b).slice(0, 4)}` },
   // bis family session
@@ -71,9 +71,10 @@ export const SPARK = {
   consumption:   { bundle: "hces-mpce", series: "rural", slope: true },
   factories:     { bundle: "asi-headline", series: "factories_in_operation" },
   aishe:         { bundle: "aishe-headline", series: "enrolment" },
-  gender:        { bundle: "gender-sexratio", series: "sex_ratio" },
+  gender:        { bundle: "gender-t007", series: "total__all_india" },
   mnre:          { bundle: "mnre-sources", series: "grand_total" },
-  nfhs:          { bundle: "nfhs-anaemia", label: "Children age 6-59", slope: true },
+  // health-gender: two survey rounds, two bundles; the spark is a before-and-after of one series
+  nfhs:          { rounds: ["nfhs-4-anaemia", "nfhs-5-anaemia"], series: "children_age_6_59_months_who_are_anaemic_11__all_india__total", slope: true },
   manufacturing: { bundle: "wdi-manufacturing", series: "mva_pct_gdp" },
   deposits:      { bundle: "deposits-owners", series: "household_total" },
   // bis family session
@@ -111,6 +112,11 @@ export function headlineOf(d) {
 export function sparkOf(d) {
   const sp = SPARK[d.slug];
   if (!sp) throw new Error(`headline: no spark for guide "${d.slug}"`);
+  // health-gender: a survey whose rounds are separate bundles (two rulers): one point from each
+  if (sp.rounds) {
+    const bs = sp.rounds.map(bundle);
+    return { dates: bs.map((x) => x.dates.at(-1)), values: bs.map((x) => x.series[sp.series].data.at(-1)), slope: true };
+  }
   const b = bundle(sp.bundle);
   const s = sp.series ? b.series[sp.series] : Object.values(b.series).find((x) => x.label.includes(sp.label));
   let dates = b.dates, values = s.data;

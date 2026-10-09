@@ -594,3 +594,78 @@ trade:
       Give no counts of chapters or partners here: the first slot carries them, and the
       deep-cut "rising" counts compare with the previous month, not a year earlier.
 # --- end trade ---
+
+# --- health-gender: Family health (NFHS) and Women and men (the gender compendium) ---
+# Both sheets are assembled by pipeline/lib/facts-health-gender.mjs (registry factsModule): NFHS-5
+# beside NFHS-4 on separate rulers, and the compendium's tables each on its own agency's calendar.
+# No keyword map: these are cross-sections and many-source tables, not time series, so the
+# streak and record claim checks do not apply; every figure is still traced by verify.mjs.
+nfhs:
+  - id: current-reading.what-the-print-says
+    maxSentences: 8
+    dateStamp: true
+    requiredFigures: [child_anaemia.latest, stunting.latest, institutional_births.latest, men_high_bp.latest, women_high_bp.latest]
+    bannedWords: []
+    brief: >
+      Two short paragraphs on what the National Family Health Survey's latest round, NFHS-5
+      (2019-21), found for India, against NFHS-4 (2015-16) where the sheet gives an NFHS-4
+      figure. First the direction of change: how many of the measures compared moved the right
+      way and how many the wrong way (cross.directionOfChange), and that anaemia leads the wrong
+      way (children, then women). Then children (stunting, infant deaths, full vaccination) and
+      births (facility births, caesareans). Second paragraph: the adult measures NFHS-5 took
+      for everyone 15 and over for the first time: the share of men and women with high blood
+      pressure or taking medicine for it, and with high blood sugar or taking medicine for it
+      (always say "or taking medicine"); then one fact about women's lives (bank account,
+      phone, or violence by a husband). Name the rounds as "NFHS-5 (2019-21)" and "NFHS-4 (2015-16)". Never give an
+      NFHS-4 figure the sheet does not hold, and never describe a change for a measure whose
+      series carries noEarlierRound. Write for a reader: never mention "the sheet", series keys
+      or rankings.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [cross.withheld.nfhs4LinesWithheld]
+    brief: >
+      The honest limits. The two rounds are separate surveys with different samples; two points
+      are a change, not a trend. Some NFHS-4 figures in MoSPI's copy of the survey are filed
+      against the wrong measure (cross.withheld.misfiledByMoSPI lines; for example women's bank
+      accounts, which the NFHS-5 national report puts at 53 per cent in NFHS-4), and others were
+      measured on a different age group or question (cross.withheld.differentAgeGroupOrQuestion
+      lines: blood pressure, blood sugar, tobacco and alcohol for ages 15-49 in NFHS-4 against 15
+      and over in NFHS-5, and cancer screening), so the guide withholds all
+      cross.withheld.nfhs4LinesWithheld. When saying why a measure has no NFHS-4 figure, use
+      that series' noEarlierRound reason; never say a measure is new in NFHS-5. The survey measures, it does not explain: it cannot say why
+      anaemia rose. Must contain a plain "we do not know". Plain, literal sentences, no metaphors.
+
+gender:
+  - id: current-reading.what-the-print-says
+    maxSentences: 8
+    dateStamp: true
+    requiredFigures: [sex_ratio_at_birth.latest, maternal_mortality.latest, women_labour_force_2025.latest, men_labour_force_2025.latest, unpaid_work_women.latest]
+    bannedWords: []
+    brief: >
+      Two short paragraphs on where women in India stand in MoSPI's Women and Men in India 2025.
+      First the count and survival: girls born per 1,000 boys in the latest Sample Registration
+      System window (2021-23) against the first window the sheet gives, maternal deaths per
+      1,00,000 births then and now, and that girls' infant mortality is now level with or below
+      boys'. If you give life expectancy, say "life expectancy at birth in 2019-23", never "women
+      born in 2019-23 can expect": it is a period measure, not a cohort's. Second paragraph, work, time and voice: women's and men's labour force
+      participation in PLFS 2025, the minutes a day women and men spend on unpaid work at home
+      (Time Use Survey 2024, with 2019), the rural casual wage women earn for every 100 rupees
+      a man earns, and women's share of Lok Sabha seats. Name each figure's source and period
+      as the sheet gives it; each comes from a different agency and calendar, so never compare
+      two figures from different sources as if they were one series. Write for a reader: never
+      mention "the sheet", series keys, rankings or missing tables.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [cross.womenShareOfAccounts.individualDepositsByValue]
+    brief: >
+      The honest limits. The compendium reprints other agencies' tables: each figure is that
+      agency's, with its own definitions and calendar. Recorded crime is what the police
+      registered, not what happened, so a high state rate can mean more reporting. Accounts in
+      women's names are not money women control. Labour figures changed survey design in 2025
+      and cannot be joined with the years before. There has been no census since 2011. Women's
+      share of individuals' bank deposits by value (cross.womenShareOfAccounts) is far below
+      their share of scheme accounts. Do not discuss the compendium's missing tables. Must contain
+      a plain "we do not know". Plain, literal sentences, no metaphors.
+# --- end health-gender ---

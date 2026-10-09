@@ -25,6 +25,9 @@ let failures = 0;
 const fail = (m) => { failures++; console.error("FAIL:", m); };
 const ok = (m) => console.log("  ok:", m);
 
+// health-gender: an NFHS value (All India, total unless named) and a round's states, by sub-indicator
+const nfhsV = (b, round, table, re, geo = "All India", sector = "total") => Object.values(b[`nfhs-${round}-${table}`].series).find((s) => re.test(s.group) && s.geo === geo && s.sector === sector).data[0];
+const nfhsStates = (b, round, table, re) => Object.values(b[`nfhs-${round}-${table}`].series).filter((s) => re.test(s.group) && s.sector === "total" && s.geo !== "All India").map((s) => ({ geo: s.geo, v: s.data[0] }));
 const PAGES = [
   // titleblock and §01 lead with the 2024-base print; the 2012-base story
   // (§05 plate, core) stays below — both bundles are checked
@@ -255,20 +258,21 @@ const PAGES = [
     ["prov-vintage", (b) => b["aishe-headline"].meta.vintage],
     ["prov-vintage2", (b) => b["aishe-headline"].meta.vintage],
   ]},
-  { url: "/guides/gender/", slug: null, checks: [
-    ["n-sr", (b) => b["gender-sexratio"].series.sex_ratio.data.at(-1) + "♀/1000♂"],
-    ["n-lfpr", (b) => fmt.pct1(b["gender-work"].series.lfpr_female.data.at(-1))],
-    ["n-mmr", (b) => fmt.count(b["gender-mmr"].series.mmr.data.at(-1))],
-    ["cr-sr", (b) => String(b["gender-sexratio"].series.sex_ratio.data.at(-1))],
-    ["cr-mmr", (b) => fmt.count(b["gender-mmr"].series.mmr.data.at(-1)) + "/100k"],
-    ["cr-lit-f", (b) => fmt.pct1(b["gender-literacy"].series.literacy_female.data.at(-1))],
-    ["cr-lfpr-f", (b) => fmt.pct1(b["gender-work"].series.lfpr_female.data.at(-1))],
-    ["pv-sr", (b) => b["gender-sexratio"].series.sex_ratio.data[0] + " → " + b["gender-sexratio"].series.sex_ratio.data.at(-1)],
-    ["pv-mmr", (b) => b["gender-mmr"].series.mmr.data[0] + " → " + fmt.count(b["gender-mmr"].series.mmr.data.at(-1))],
-    ["pv-tfr", (b) => fmt.num2(b["gender-fertility"].series.tfr_graduate_and_above.data.at(-1))],
-    ["pv-lfpr", (b) => fmt.pct1(b["gender-work"].series.lfpr_female.data.at(-1))],
-    ["prov-vintage", (b) => b["gender-sexratio"].meta.vintage],
-    ["prov-vintage2", (b) => b["gender-sexratio"].meta.vintage],
+  // health-gender: the compendium's tables, read straight from their bundles
+  { url: "/guides/gender/", slug: null, minPlots: 18, checks: [
+    ["n-srb", (b) => fmt.count(b["gender-t007"].series.total__all_india.data.at(-1))],
+    ["rb-srb", (b) => fmt.count(b["gender-t007"].series.total__all_india.data.at(-1))],
+    ["rb-srb-then", (b) => fmt.count(b["gender-t007"].series.total__all_india.data[0])],
+    ["n-lfpr", (b) => fmt.pct1(b["gender-t082-cy25"].series.total__female__all_india.data.at(-1))],
+    ["n-ls", (b) => { const c = b["gender-t124"].series.elected_female__all_india__count.data, s = b["gender-t124"].series.number_of_seats_available_for_election__all_india.data; return fmt.pct1(Math.round(1000 * c.at(-1) / s.at(-1)) / 10); }],
+    ["n-time", (b) => fmt.count(b["gender-t104"].series.average_time_in_minutes_spent_in_a_day_per_person__female__unpaid_activity__all_india.data.at(-1))],
+    ["pv-mmr", (b) => fmt.count(b["gender-t021"].series.all_india.data.at(-1))],
+    ["pv-imr", (b) => fmt.count(b["gender-t015"].series.female__all_india.data.at(-1))],
+    ["pv-crime", (b) => fmt.num1(b["gender-t141"].series.rates_of_crimes__total_crimes_against_women__all_india.data.at(-1))],
+    ["pv-lfpr", (b) => fmt.pct1(b["gender-t082-cy25"].series.total__female__all_india.data.at(-1))],
+    ["pv-census", (b) => fmt.count(b["gender-t002"].series.all_india.data.at(-1))],
+    ["prov-vintage", (b) => b["gender-t007"].meta.vintage],
+    ["prov-vintage2", (b) => b["gender-t007"].meta.vintage],
   ]},
   { url: "/guides/mnre/", slug: null, checks: [
     ["n-total", (b) => fmt.gw1(b["mnre-sources"].series.grand_total.data.at(-1))],
@@ -283,15 +287,23 @@ const PAGES = [
     ["prov-vintage", (b) => b["mnre-sources"].meta.vintage],
     ["prov-vintage2", (b) => b["mnre-sources"].meta.vintage],
   ]},
-  { url: "/guides/nfhs/", slug: null, checks: [
-    ["n-anaemia", (b) => { const s = Object.values(b["nfhs-anaemia"].series).find((x) => x.label.includes("Children age 6-59")); return fmt.pct1(s.data[1]); }],
-    ["n-imr", (b) => { const s = Object.values(b["nfhs-child"].series).find((x) => x.label.includes("Infant mortality")); return fmt.count(s.data[1]) + "/1000"; }],
-    ["n-institutional", (b) => { const s = Object.values(b["nfhs-maternal"].series).find((x) => x.label.includes("Institutional births (in the 5 years")); return fmt.pct1(s.data[1]); }],
-    ["n-tfr", (b) => { const s = Object.values(b["nfhs-fertility"].series).find((x) => x.label.includes("Total Fertility Rate")); return fmt.num2(s.data[1]); }],
-    ["cr-anaemia", (b) => { const s = Object.values(b["nfhs-anaemia"].series).find((x) => x.label.includes("Children age 6-59")); return fmt.pct1(s.data[1]); }],
-    ["pv-anaemia", (b) => { const s = Object.values(b["nfhs-anaemia"].series).find((x) => x.label.includes("Children age 6-59")); return fmt.pt1Plus(s.data[1] - s.data[0]); }],
-    ["prov-vintage", (b) => b["nfhs-anaemia"].meta.vintage],
-    ["prov-vintage2", (b) => b["nfhs-anaemia"].meta.vintage],
+  // health-gender: NFHS-5 and NFHS-4 read from their own bundles (two rounds, two rulers)
+  { url: "/guides/nfhs/", slug: null, minPlots: 18, checks: [
+    ["n-anaemia", (b) => fmt.pct1(nfhsV(b, 5, "anaemia", /^Children age 6-59/))],
+    ["rb-anaemia", (b) => fmt.pct1(nfhsV(b, 5, "anaemia", /^Children age 6-59/))],
+    ["d-anaemia", (b) => fmt.pct1(nfhsV(b, 4, "anaemia", /^Children age 6-59/)) + " in NFHS-4"],
+    ["n-stunting", (b) => fmt.pct1(nfhsV(b, 5, "child-nutrition", /are stunted/))],
+    ["n-institutional", (b) => fmt.pct1(nfhsV(b, 5, "delivery", /^Institutional births \(in/))],
+    ["n-bp", (b) => fmt.pct1(nfhsV(b, 5, "blood-pressure", /^Men .*Elevated blood pressure \(Systolic ≥140/))],
+    ["pv-anaemia", (b) => fmt.pct1(nfhsV(b, 5, "anaemia", /^Children age 6-59/))],
+    ["ex-an-rose", (b) => { const s5 = nfhsStates(b, 5, "anaemia", /^Children age 6-59/), s4 = new Map(nfhsStates(b, 4, "anaemia", /^Children age 6-59/).map((x) => [x.geo, x.v])); return fmt.count(s5.filter((x) => s4.has(x.geo) && x.v > s4.get(x.geo)).length); }],
+    ["pv-cancer", (b) => fmt.pct1(nfhsV(b, 5, "cancer-screening", /cervical/))],
+    ["pv-violence", (b) => fmt.pct1(nfhsV(b, 5, "violence", /spousal violence/))],
+    ["pv-tfr", (b) => fmt.num2(nfhsV(b, 5, "marriage-fertility", /Total Fertility/))],
+    ["ex-bi-oop", (b) => fmt.inr(nfhsV(b, 5, "maternity", /out-of-pocket/))],
+    ["pv-household", (b) => fmt.pct1(nfhsV(b, 5, "household", /improved sanitation/))],
+    ["prov-vintage", (b) => b["nfhs-5-anaemia"].meta.vintage],
+    ["prov-vintage2", (b) => b["nfhs-5-anaemia"].meta.vintage],
   ]},
   { url: "/guides/manufacturing/", slug: null, checks: [
     ["n-share", (b) => fmt.pct1(b["wdi-manufacturing"].series.mva_pct_gdp.data.at(-1))],

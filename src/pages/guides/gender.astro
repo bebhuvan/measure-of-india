@@ -1,13 +1,169 @@
 ---
 import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
 import GuideData from "../../components/GuideData.astro";
 import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
+import { load, points, last, first, value, states, share, r1 } from "../../dossiers/gender.data.js";
 const D = bySlug["gender"];
+
+// ---- the figures the copy names, read from the bundles at build time ----
+const f1 = (v) => (v == null ? "–" : v.toFixed(1));
+const f0 = (v) => (v == null ? "–" : Math.round(v).toLocaleString("en-IN"));
+const pts = (slug, key) => points(slug, key).map((p) => ({ iso: p.iso, period: p.period, value: p.value }));
+const nTables = new Set(D.bundles.map((b) => b.replace(/-[a-z0-9]+$/, "").replace(/^(gender-t\d{3}).*/, "$1"))).size;
+const compendium = load("gender-t007").meta;
+
+// § 03 the count: sex ratio at birth (SRS), the census sex ratio
+const srb = pts("gender-t007", "total__all_india"), srbR = pts("gender-t007", "rural__all_india"), srbU = pts("gender-t007", "urban__all_india");
+const srbNow = srb.at(-1), srbThen = srb[0];
+const srbS = states("gender-t007", "total__");
+const sr = pts("gender-t002", "all_india");
+const srLow = sr.reduce((a, p) => (p.value < a.value ? p : a));
+const crs = states("gender-t006", "");
+
+// § 04 survival
+const imrF = pts("gender-t015", "female__all_india"), imrM = pts("gender-t015", "male__all_india");
+const imrCross = imrF.find((p, i) => p.value <= imrM[i].value);
+const mmr = pts("gender-t021", "all_india"), mmrS = states("gender-t021", "");
+const le = load("gender-t018");
+const leF = pts("gender-t018", "female__all_india"), leM = pts("gender-t018", "male__all_india");
+const leEst = new Set(le.series.female__all_india.estimated ?? []);
+const leLastMeasured = leF.filter((p) => !leEst.has(p.iso)).at(-1), leLastMeasuredM = leM.filter((p) => !leEst.has(p.iso)).at(-1);
+const u5F = value("gender-t017", "female__all_india"), u5M = value("gender-t017", "male__all_india");
+
+// § 05 fertility and marriage
+const EDU = [["illiterate", "Never went to school"], ["literate_below_primary", "Below primary"], ["literate_primary", "Primary"], ["literate_middle", "Middle school"],
+  ["literate_class_x", "Class 10"], ["literate_class_xii", "Class 12"], ["literate_graduate_and_above", "Graduate and above"]];
+const tfrEdu = EDU.map(([k, label]) => ({ label, v: value("gender-t010", `total__${k}__all_india`) }));
+const tfrAll = value("gender-t010", "total__total_literate__all_india");
+const marS = states("gender-t014", "total__"), mar = value("gender-t014", "total__all_india");
+const adol = value("gender-t012", "total__all_india"), adolS = states("gender-t012", "total__");
+
+// § 06 school and college
+const LEVELS = [["primary_i_v", "Primary (classes 1-5)"], ["upper_primary_vi_viii", "Upper primary (6-8)"], ["secondary_ix_x", "Secondary (9-10)"], ["higher_secondary_xi_xii", "Higher secondary (11-12)"], ["higher_education_graduation_and_above", "College and university"]];
+const ger = LEVELS.map(([k, label]) => ({ label, a: value("gender-t060", `male__${k}__all_india`), b: value("gender-t060", `female__${k}__all_india`) }));
+const gerPeriod = last("gender-t060", "female__primary_i_v__all_india").period;
+const DROP = [["primary_i_v", "Primary"], ["upper_primary_vi_viii", "Upper primary"], ["secondary_ix_x", "Secondary"]];
+const drop = DROP.map(([k, label]) => ({ label: `Dropout, ${label.toLowerCase()}`, a: value("gender-t074", `male__${k}__all_india`), b: value("gender-t074", `female__${k}__all_india`) }));
+const dropPeriod = last("gender-t074", "female__secondary_ix_x__all_india").period;
+const litF = pts("gender-t055-census", "total__female__all_india"), litM = pts("gender-t055-census", "total__male__all_india");
+const litNssF = pts("gender-t055-nss", "total__female__all_india"), litNssM = pts("gender-t055-nss", "total__male__all_india");
+const ysF = states("gender-t070", "total__female__"), ysM = new Map(states("gender-t070", "total__male__").map((r) => [r.geo, r.v]));
+const ysRows = ysF.map((r) => ({ geo: r.geo, women: r.v, men: ysM.get(r.geo) ?? null }));
+const ysWomen = value("gender-t070", "total__female__all_india"), ysMen = value("gender-t070", "total__male__all_india");
+const ysAhead = ysRows.filter((r) => r.men != null && r.women > r.men);
+
+// § 07 work and pay: PLFS, three rulers
+const wpr = (r, sex) => pts(`gender-t085-${r}`, `total__${sex}__all_india`);
+const wprAyF = wpr("ay", "female"), wprCyF = wpr("cy", "female"), wpr25F = wpr("cy25", "female");
+const wprAyM = wpr("ay", "male"), wprCyM = wpr("cy", "male"), wpr25M = wpr("cy25", "male");
+const lfF = states("gender-t082-cy25", "total__female__"), lfM = new Map(states("gender-t082-cy25", "total__male__").map((r) => [r.geo, r.v]));
+const lfRows = lfF.map((r) => ({ geo: r.geo, women: r.v, men: lfM.get(r.geo) ?? null }));
+const lfW = value("gender-t082-cy25", "total__female__all_india"), lfMen = value("gender-t082-cy25", "total__male__all_india");
+const wgF = states("gender-t087-cy25", "rural__female__"), wgM = new Map(states("gender-t087-cy25", "rural__male__").map((r) => [r.geo, r.v]));
+const wageRows = wgF.map((r) => ({ geo: r.geo, women: r.v, men: wgM.get(r.geo) ?? null }));
+const wF = value("gender-t087-cy25", "rural__female__all_india"), wM = value("gender-t087-cy25", "rural__male__all_india");
+const informalF = value("gender-t092-cy25", "total__female__all_india"), informalM = value("gender-t092-cy25", "total__male__all_india");
+
+// § 08 time: Time Use Survey 2019 and 2024, minutes a day per person (two rounds, side by side)
+const T19 = (sex, k) => value("gender-t103", `${sex}__${k}__all_india`);
+const T24 = (sex, k) => value("gender-t104", `average_time_in_minutes_spent_in_a_day_per_person__${sex}__${k}__all_india`);
+const time = [
+  { label: "Women: unpaid work at home", a: T19("female", "unpaid_activity_non_sna") + T19("female", "unpaid_activity_sna"), b: T24("female", "unpaid_activity") },
+  { label: "Men: unpaid work at home", a: T19("male", "unpaid_activity_non_sna") + T19("male", "unpaid_activity_sna"), b: T24("male", "unpaid_activity") },
+  { label: "Women: paid work", a: T19("female", "paid_activity"), b: T24("female", "paid_activity") },
+  { label: "Men: paid work", a: T19("male", "paid_activity"), b: T24("male", "paid_activity") },
+];
+const careF = value("gender-t098", "average_time_in_minutes_spent_in_a_day_per_participant__female__unpaid_domestic_services_for_household_members__all_india");
+const careM = value("gender-t098", "average_time_in_minutes_spent_in_a_day_per_participant__male__unpaid_domestic_services_for_household_members__all_india");
+
+// § 09 money: women's share of each scheme or account (derived: the women's count over the total)
+const sh = (slug, f, t) => share(value(slug, f), value(slug, t));
+const money = [
+  { label: "Jan Dhan accounts (PMJDY)", v: sh("gender-t111", "female__all_india", "total__all_india"), period: last("gender-t111", "total__all_india").period },
+  { label: "Stand-Up India loans", v: sh("gender-t114", "female__account_sanctioned__all_india", "total__account_sanctioned__all_india"), period: last("gender-t114", "total__account_sanctioned__all_india").period },
+  { label: "Life cover (PMJJBY)", v: sh("gender-t109", "female__pmjjby__all_india", "total__pmjjby__all_india"), period: last("gender-t109", "total__pmjjby__all_india").period },
+  { label: "Accident cover (PMSBY)", v: sh("gender-t109", "female__pmsby__all_india", "total__pmsby__all_india"), period: last("gender-t109", "total__pmsby__all_india").period },
+  { label: "Atal Pension Yojana", v: sh("gender-t113", "female__all_india", "total__all_india"), period: last("gender-t113", "total__all_india").period },
+  { label: "Individuals' bank deposit accounts", v: sh("gender-t108", "females_out_of_individuals__no_of_accounts_in_thousand__all_india", "individuals__no_of_accounts_in_thousand__all_india"), period: last("gender-t108", "individuals__no_of_accounts_in_thousand__all_india").period },
+  { label: "Individuals' bank deposits, by value", v: sh("gender-t108", "females_out_of_individuals__amount_in_crore__all_india", "individuals__amount_in_crore__all_india"), period: last("gender-t108", "individuals__amount_in_crore__all_india").period },
+  { label: "Demat accounts (CDSL)", v: sh("gender-t115", "female__all_india", "total__all_india"), period: last("gender-t115", "total__all_india").period },
+  { label: "Individual investors (NSE)", v: value("gender-t118", "female__all_india"), period: last("gender-t118", "female__all_india").period },
+].sort((a, b) => b.v - a.v);
+const demat = pts("gender-t115", "female__all_india"), dematT = pts("gender-t115", "total__all_india");
+const dematShare0 = share(demat[0].value, dematT[0].value), dematShare1 = share(demat.at(-1).value, dematT.at(-1).value);
+
+// § 10 voice: women's share of Lok Sabha seats since 1957 (derived: women elected over seats)
+const lsW = pts("gender-t124", "elected_female__all_india__count"), lsSeats = new Map(pts("gender-t124", "number_of_seats_available_for_election__all_india").map((p) => [p.iso, p.value]));
+const lsShare = lsW.filter((p) => lsSeats.has(p.iso)).map((p) => ({ iso: p.iso, period: p.period, value: share(p.value, lsSeats.get(p.iso)) }));
+const lsNow = lsShare.at(-1), lsFirst = lsShare[0];
+const lsCand = pts("gender-t124", "total_number_contesting_female__all_india");
+const voice = [
+  { label: "Panchayat members", v: value("gender-t127", "percentage_of_women_elected_representatives__all_india") },
+  { label: "Lok Sabha members, 2024", v: value("gender-t125", "women__all_india") },
+  { label: "High Court and Supreme Court judges", v: value("gender-t130", "female__total__percent") },
+  { label: "Police (civil, armed and reserve)", v: value("gender-t172", "percentage_of_women_police_civil_district_armed_reserve__all_india") },
+  { label: "Union Council of Ministers", v: value("gender-t123", "women_in_central_council_of_ministers__all_india") },
+  { label: "State legislative assembly members", v: share(value("gender-t126-total", "female__all_india"), value("gender-t126-total", "total__all_india")) },
+  { label: "Company boards of directors", v: share(value("gender-t131", "board_of_directors__female__all_india"), value("gender-t131", "board_of_directors__female__all_india") + value("gender-t131", "board_of_directors__male__all_india") + value("gender-t131", "board_of_directors__transgender__all_india")) },
+  { label: "Senior management in companies", v: share(value("gender-t131", "senior_management_positions__female__all_india"), value("gender-t131", "senior_management_positions__female__all_india") + value("gender-t131", "senior_management_positions__male__all_india") + value("gender-t131", "senior_management_positions__transgender__all_india")) },
+].sort((a, b) => b.v - a.v);
+
+// § 11 safety
+const crimeK = "rates_of_crimes__total_crimes_against_women__";
+const crimeS = states("gender-t141", crimeK), crimeAI = value("gender-t141", crimeK + "all_india");
+const crimeYear = last("gender-t141", crimeK + "all_india").period;
+const HEADS = [["cruelty_by_husband_and_relatives_sec_498_a_ipc", "Cruelty by husband or relatives"], ["kidnapping_abduction_sec_363_to_373_ipc", "Kidnapping and abduction"],
+  ["assault_on_women_with_intent_to_outrage_her_modesty_sec_354_ipc", "Assault on modesty"], ["rape_sec_376_ipc", "Rape"], ["dowry_prohibition_act_1961", "Dowry Prohibition Act"],
+  ["insult_to_the_modesty_of_women_sec_509_ipc", "Insult to modesty"]];
+const ck = (h) => Object.keys(load("gender-t140").series).find((k) => k.startsWith("no_of_cases__" + h.slice(0, 40)));
+const heads = HEADS.map(([h, label]) => { const k = ck(h); const p = pts("gender-t140", k); return { label, a: p[0].value, b: p.at(-1).value, from: p[0].period, to: p.at(-1).period }; });
+const allCases = pts("gender-t140", ck("total_crime_against_women"));
+const convK = (h) => Object.keys(load("gender-t145").series).find((k) => k.startsWith("percentage_of_cases_convicted") && k.includes(h));
+const CONV = [["__rape__", "Rape"], ["dowry_deaths", "Dowry deaths"], ["cruelty_by_husband", "Cruelty by husband or relatives"], ["kidnapping_abduction_of_women", "Kidnapping and abduction"],
+  ["assault_on_women_with_intent", "Assault on modesty"], ["insult_to_the_modesty", "Insult to modesty"], ["dowry_prohibition_act", "Dowry Prohibition Act"], ["total_crimes_against_women", "All crimes against women"]];
+const conv = CONV.map(([h, label]) => ({ label, v: value("gender-t145", convK(h)) })).sort((a, b) => b.v - a.v);
+const convAll = conv.find((c) => c.label === "All crimes against women").v;
+const sv4 = value("gender-t143-nfhs4", "physical_or_sexual__all_india"), sv5 = value("gender-t143-nfhs5", "physical_or_sexual__all_india");
+
+// § 12 health, briefly: causes of death by sex (SRS)
+const CAUSE = [["non_communicable_diseases", "Non-communicable diseases"], ["communicable_maternal_perinatal_and_nutritional_conditions", "Communicable, maternal, newborn and nutritional"], ["injuries", "Injuries"], ["symptoms_signs_and_ill_defined_conditions", "Ill-defined causes"]];
+const cdk = (c, sex) => Object.keys(load("gender-t160").series).find((k) => k.startsWith(c.slice(0, 50)) && k.includes("__percentage__" + sex + "__all_india"));
+const causes = CAUSE.map(([c, label]) => ({ label, a: value("gender-t160", cdk(c, "male")), b: value("gender-t160", cdk(c, "female")) }));
+const causePeriod = last("gender-t160", cdk("injuries", "female")).period;
+
+const iso = (p) => p.map((x) => ({ iso: x.iso, value: x.value }));
+const DATA = {
+  srb: { series: [{ label: "India", color: "#2E4BD8", points: iso(srb) }, { label: "Towns", color: "#5F6675", points: iso(srbU), width: 1.5 }, { label: "Villages", color: "#A3A9B4", points: iso(srbR), width: 1.5 }], periods: Object.fromEntries(srb.map((p) => [p.iso, p.period])) },
+  "srb-states": { rows: srbS.map((r) => ({ geo: r.geo, v: r.v })), ref: srbNow.value, fmt: "0" },
+  census: { series: [{ label: "Women per 1,000 men", color: "#2E4BD8", points: iso(sr) }] },
+  imr: { series: [{ label: "Girls", color: "#2E4BD8", points: iso(imrF) }, { label: "Boys", color: "#5F6675", points: iso(imrM), width: 1.5 }] },
+  mmr: { series: [{ label: "India", color: "#2E4BD8", points: iso(mmr) }], periods: Object.fromEntries(mmr.map((p) => [p.iso, p.period])) },
+  "mmr-states": { rows: mmrS.map((r) => ({ geo: r.geo, v: r.v })), ref: mmr.at(-1).value, fmt: "0" },
+  life: { series: [{ label: "Women", color: "#2E4BD8", points: iso(leF), est: [...leEst] }, { label: "Men", color: "#5F6675", points: iso(leM), est: [...leEst], width: 1.5 }], periods: Object.fromEntries(leF.map((p) => [p.iso, p.period])) },
+  "tfr-edu": { rows: tfrEdu, ref: tfrAll },
+  "marriage-states": { rows: marS.map((r) => ({ geo: r.geo, v: r.v })), ref: mar },
+  school: [...ger, ...drop],
+  literacy: { census: [{ label: "Women", color: "#2E4BD8", points: iso(litF) }, { label: "Men", color: "#5F6675", points: iso(litM) }], nss: [{ label: "Women, NSS", color: "#2E4BD8", points: iso(litNssF) }, { label: "Men, NSS", color: "#5F6675", points: iso(litNssM) }] },
+  "schooling-states": { rows: ysRows, ref: ysWomen, refLabel: "India, women" },
+  work: { rulers: [[wprAyF, wprCyF, wpr25F], [wprAyM, wprCyM, wpr25M]].map((g, gi) => g.map((p) => ({ label: gi ? "Men" : "Women", color: gi ? "#5F6675" : "#2E4BD8", points: iso(p) }))) },
+  "lfpr-states": { rows: lfRows, ref: lfW, refLabel: "India, women" },
+  "wage-states": { rows: wageRows, ref: wF, refLabel: "India, women", fmt: "0" },
+  time,
+  money: money.map((m) => ({ label: m.label, v: m.v })),
+  "lok-sabha": { series: [{ label: "Women's share of seats", color: "#2E4BD8", points: iso(lsShare) }] },
+  voice,
+  "crime-states": { rows: crimeS.map((r) => ({ geo: r.geo, v: r.v })), ref: crimeAI },
+  "crime-heads": heads.map((h) => ({ label: h.label, a: h.a, b: h.b })),
+  conviction: conv,
+  causes,
+};
+const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.dates.at(-1)] ?? b.meta.latestPeriod; };
 ---
 <Base
-  title="Women & Men · India Atlas"
+  title="Women and men · India Atlas"
   description={D.description}
   nav="guides"
   dateStamp={dateStamp(D)}
@@ -16,472 +172,783 @@ const D = bySlug["gender"];
   canonical="https://atlas.thisindianlife.today/guides/gender/"
   ogImage={`/og/${D.slug}.png`}
 >
+<script type="application/json" id="gender-data" is:inline set:html={JSON.stringify(DATA)}></script>
 <div class="page">
 
   <div class="titleblock break">
     <div class="kicker">{kicker(D)}</div>
     <div class="hero-grid">
       <h1 set:html={D.headline} />
-      <p class="lede">The sex ratio, seven census rounds long, tells one story: how many women survive to be counted. The rest of this guide asks what happens to them after: whether they live as long, learn as much, work as much, and are as safe. Every indicator draws on a different source; none is spliced into the next.</p>
+      <p class="lede">Every year MoSPI gathers what India's agencies know about women and men into one book: how many girls are born, how long women live, how far they study, whether they work and for how much, who holds the money and the seats, and how safe women are. This guide holds every table of the 2025 edition, each figure kept to the agency that measured it.</p>
     </div>
     <div class="meta">
-      <span>Source <b>MoSPI, multi-source compendium</b></span>
-      <span>Sources <b>Census, SRS, NFHS, PLFS, NCRB</b></span>
-      <span>Coverage <b>Demography, health, education, work, safety</b></span>
-      <span>Sex ratio <b>1951 to 2011, 7 census rounds</b></span>
-      <span>Latest SRS <b>2020</b></span>
-      <span>Latest PLFS <b>2023-24</b></span>
+      <span>Source <b>MoSPI, Women and Men in India 2025</b></span>
+      <span>Released <b>29 April 2026</b></span>
+      <span>Instruments <b>Census, SRS, NFHS, PLFS, Time Use Survey, NCRB, RBI and others</b></span>
+      <span>Tables <b>{D.bundles.length} files from {nTables} tables</b></span>
+      <span>Window <b>1951 to 2026</b></span>
+      <span>Unit <b>As each table states</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Sex ratio, 2011, ♀ per 1000 ♂</div><div class="v acc" id="n-sr">–</div><div class="d" id="d-sr">–</div><div class="nspark" id="nspark-sr"></div></div>
-      <div class="num"><div class="l">Female LFPR, 15+, per cent</div><div class="v" id="n-lfpr">–</div><div class="d" id="d-lfpr">–</div></div>
-      <div class="num"><div class="l">Maternal Mortality Ratio</div><div class="v" id="n-mmr">–</div><div class="d" id="d-mmr">–</div></div>
-      <div class="num"><div class="l">Life expectancy gap, ♀ − ♂, years</div><div class="v" id="n-le">–</div><div class="d" id="d-le">–</div></div>
+      <div class="num"><div class="l">Girls born for every 1,000 boys</div><div class="v acc" id="n-srb">{f0(srbNow.value)}</div><div class="d" id="d-srb">{srbThen.period}: {f0(srbThen.value)}; SRS, {srbNow.period}</div></div>
+      <div class="num"><div class="l">Women 15+ in the labour force</div><div class="v" id="n-lfpr">{f1(lfW)}<span class="pc">%</span></div><div class="d" id="d-lfpr">men {f1(lfMen)}%, PLFS 2025</div></div>
+      <div class="num"><div class="l">Women's share of Lok Sabha seats</div><div class="v" id="n-ls">{f1(lsNow.value)}<span class="pc">%</span></div><div class="d" id="d-ls">{lsNow.period} election; {f1(lsFirst.value)}% in {lsFirst.period}</div></div>
+      <div class="num"><div class="l">Minutes a day women spend on unpaid work at home</div><div class="v" id="n-time">{f0(time[0].b)}</div><div class="d" id="d-time">men {f0(time[1].b)}, Time Use Survey 2024</div></div>
     </div>
   </div>
 
-  <!-- § 01 current reading -->
+  <!-- § 01 the current reading. Inputs: gender-t007 and the bundles named in pipeline/lib/facts-health-gender.mjs. Prose: generated slots. -->
   <section>
-    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">Latest available, each indicator its own vintage</span></div>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">Women and Men in India 2025</span></div>
     <div class="reading-top">
-      <div><span class="rk">Sex ratio, 2011 census</span><div class="big" id="rb-sr">–</div></div>
-      <p class="rt-cap">Females per 1,000 males, the 2011 Census: the latest full count. The ratio recovered from its 1991 nadir of 927 but never returned to the 1951 level of 946. Maternal mortality, the biggest single improvement, fell from <b id="rt-mmr0">–</b> to <b id="rt-mmr1">–</b> deaths per 100,000 live births.</p>
-      <div class="rt-side"><span class="rk">MMR, 2018-20</span><div class="rt-side-v" id="rb-mmr">–</div></div>
+      <div><span class="rk">Girls born per 1,000 boys</span><div class="big" id="rb-srb">{f0(srbNow.value)}</div></div>
+      <p class="rt-cap">The Sample Registration System's sex ratio at birth for {srbNow.period}, a three-year average. Nature produces about 950 girls for every 1,000 boys; a lower figure means girls are missing at birth.</p>
+      <div class="rt-side"><span class="rk">In {srbThen.period}</span><div class="rt-side-v" id="rb-srb-then">{f0(srbThen.value)}</div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
-        <span class="mk">What the print says</span>
-        <p>The 2011 Census counted <b id="cr-sr">–</b> females per 1,000 males: up from <b id="cr-sr-nadir">–</b> in 1991, the lowest point on record. Infant mortality in 2020 was equal for boys and girls (<b id="cr-imr">–</b> per thousand), closing a gap that once ran against girls. Life expectancy at birth favours women by <b id="cr-le-gap">–</b> years.</p>
-        <p>Maternal mortality fell to <b id="cr-mmr">–</b> per 100,000 live births (2018-20): a <b id="cr-mmr-drop">–</b> decline from 2004-06. Literacy among women (age 7+) reached <b id="cr-lit-f">–</b>, against <b id="cr-lit-m">–</b> for men. And <b id="cr-lfpr-f">–</b> of working-age women were in the labour force, against <b id="cr-lfpr-m">–</b> of men.</p>
+        <span class="mk">What the tables say</span>
+        <Prose slot="gender.current-reading.what-the-print-says" />
       </div>
       <div class="reading-col now">
-        <span class="mk">What it does not say</span>
-        <p>The sex ratio is a stock count from 2011: fourteen years old. The Sample Registration System carries it forward to 2020, but a census has not been held since, so the ratio's current level is an estimate on top of an estimate.</p>
-        <p>Each indicator here is its own source with its own methodology and its own vintage. They are shown together because they describe one subject, the condition of women relative to men, but they were never designed to be one series. Comparing the literacy rate (a census/NSO measure) with the LFPR (a sample survey) across the same year is approximate at best.</p>
-        <p>What none of these indicators measures is the <em>quality</em> of survival, education or work. Women living longer does not mean living healthier; enrolling does not mean graduating; being in the labour force does not mean earning equally. The compendium counts positions, not outcomes.</p>
+        <span class="mk">What they do not say</span>
+        <Prose slot="gender.current-reading.what-it-does-not-say" />
       </div>
     </div>
   </section>
 
-  <!-- § 02 register -->
+  <!-- § 02 how to read the compendium: evergreen -->
   <section>
-    <div class="sec-head"><span class="no">02</span><h2>The register of series</h2><span class="line"></span><span class="unit">Latest, vs previous, since first</span></div>
-    <div class="break ledger">
-      <table>
-        <thead>
-          <tr><th>Series</th><th>Latest</th><th>vs previous</th><th>First</th><th class="spark">History</th></tr>
-        </thead>
-        <tbody id="ledger-body"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- § 03 the balance sheet -->
-  <section>
-    <div class="sec-head"><span class="no">03</span><h2>The balance sheet</h2><span class="line"></span><span class="unit">Women vs men, latest available, one scale per metric</span></div>
-    <div class="break">
-      <figure id="cb-balance" style="margin:0">
-        <div class="plate-head">
-          <div class="t">
-            <h3>Five gaps, five directions</h3>
-            <div class="sub">Women and men compared on survival, education and work, latest published, female in blue, male in grey</div>
-          </div>
-          <div class="plate-val"><div class="v" id="pv-balance">–</div><div class="c">female life expectancy advantage, years</div></div>
-        </div>
-        <div class="frame">
-          <div class="plotzone" id="plot-balance"></div>
-          <div class="plotfoot">
-            <span class="src">Source: MoSPI compendium: SRS (IMR, life expectancy), Census/NSO (literacy), PLFS (LFPR), each metric on its own scale, the dumbbell shows the gap, not the level</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
-          </div>
-        </div>
-        <div class="explain">
-          <div class="ev">
-            <span class="mk">How to read this</span>
-            <p>Five dumbbells, one per metric. The grey dot is men, the blue dot women; the line between them is the gender gap on that measure. Three of the five favour women: they live longer, their IMR has converged to equality, and the literacy gap is narrowing. Two favour men overwhelmingly: the labour-force gap is the widest dumbbell on the page.</p>
-            <p>Each dumbbell is on its own scale (IMR is per thousand, literacy and LFPR are per cent, life expectancy is years): read the <em>direction</em> of each gap, not the distance between dumbbells. The point of putting them together is to show that "gender parity" is not one condition but several, each moving at its own speed.</p>
-          </div>
-          <div class="now">
-            <span class="mk">As of latest</span>
-            <p>Life expectancy: women ahead by <b id="ex-b-le">–</b> years. Literacy: men ahead by <b id="ex-b-lit">–</b> points. LFPR: men ahead by <b id="ex-b-lfpr">–</b> points: the widest gap on the page. IMR: <b id="ex-b-imr">–</b>, equal within rounding.</p>
-          </div>
-        </div>
-      </figure>
-    </div>
-  </section>
-
-  <!-- § 04 headline : sex ratio -->
-  <section>
-    <div class="sec-head"><span class="no">04</span><h2>Plate 1: the seventy-year count</h2><span class="line"></span><span class="unit">Sex ratio, females per 1,000 males, census 1951-2011</span></div>
-    <div class="break">
-      <figure id="cb-sr" style="margin:0">
-        <div class="plate-head">
-          <div class="t">
-            <h3>The line that fell, then climbed halfway back</h3>
-            <div class="sub">Sex ratio (females per 1,000 males), All India, seven Census rounds 1951-2011</div>
-          </div>
-          <div class="plate-val"><div class="v acc" id="pv-sr">–</div><div class="c">1951 → 2011, the swing</div></div>
-        </div>
-        <div class="frame">
-          <div class="plotzone">
-            <div id="plot-sr" style="position:relative"><div class="cb-tip"></div></div>
-          </div>
-          <div class="plotfoot">
-            <span class="src">Source: Census of India, females per 1,000 males, seven rounds, decadal, the 1991 nadir of 927 is the low point of the 'missing women' story; the recovery to 943 by 2011 did not reach the 1951 level of 946, no census has been held since 2011</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
-          </div>
-        </div>
-        <div class="explain">
-          <div class="ev">
-            <span class="mk">How to read this</span>
-            <p>Seven points, one per census. The line falls from 946 in 1951 to 927 in 1991: four decades of decline that traced the spread of prenatal sex selection and the persistent neglect of girl children. Then it turns: 933 in 2001, 943 in 2011. The recovery is real but incomplete; the ratio sits three below where it began, sixty years earlier.</p>
-            <p>The line stops at 2011 because the next census was not held. The Sample Registration System carries the sex ratio forward in Plate 7, but a survey estimate is not a census count. Treat anything after 2011 as provisional.</p>
-          </div>
-          <div class="now">
-            <span class="mk">As of 2011</span>
-            <p>The 2011 ratio: <b id="ex-sr-now">–</b>, up from <b id="ex-sr-nadir">–</b> at the 1991 nadir. The swing from nadir to now: <b id="ex-sr-swing">–</b> points: but still <b id="ex-sr-gap">–</b> below the 1951 starting point.</p>
-          </div>
-        </div>
-      </figure>
-    </div>
-  </section>
-
-  <!-- § 05 what this measures -->
-  <section>
-    <div class="sec-head"><span class="no">05</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">02</span><h2>How to read the compendium</h2><span class="line"></span></div>
     <div class="wm-grid">
       <div>
-        <p>This guide is not one survey. It is the "Women and Men in India" compendium: a MoSPI publication that gathers indicators from a dozen sources and arranges them by sex. The Census provides the sex ratio and literacy; the Sample Registration System (SRS) provides fertility and mortality; NFHS provides health behaviours; PLFS provides labour; NCRB provides crime. Each carries its own methodology, sample frame and vintage.</p>
-        <p>The sex ratio, females per 1,000 males, is the simplest and the most contested. It measures survival, not preference: how many girls are born and live to be counted, against how many boys. A ratio below 1,000 means fewer women than men, which in India's case reflects both prenatal sex selection and excess female mortality. The 1991 nadir of 927 was the statistical signature of "missing women."</p>
-        <p>The other metrics fill in the life that follows. <b>Infant mortality rate</b> (IMR) is deaths in the first year per 1,000 live births. <b>Life expectancy at birth</b> is years lived, by gender. <b>Maternal mortality ratio</b> (MMR) is maternal deaths per 100,000 live births. <b>Literacy</b> is the per cent age 7+ who can read and write. <b>LFPR</b> is the labour force participation rate: the share working or seeking work. None of these is invented; none is spliced with another.</p>
+        <p>Women and Men in India is a reprint, not a survey. MoSPI's Social Statistics Division collects tables from the agencies that measure each thing: the Registrar General for births, deaths and the census, the National Family Health Survey for health, the Periodic Labour Force Survey for work, the Time Use Survey for unpaid work, the National Crime Records Bureau for crime, the Reserve Bank, ministries and regulators for money and office. Every figure here is that agency's figure, and the guide names the agency on every chart.</p>
+        <p>Because each table comes from a different instrument, each has its own calendar. The census counts once a decade; the Sample Registration System reports three-year averages; school data run by school year, labour data by agricultural year until 2022 and by calendar year since; schemes report "as on" a date. The guide keeps each table on its own axis and labels each period as its source names it.</p>
+        <p><b>Where a table joins two instruments, we split it.</b> The compendium prints census literacy beside a 2017-18 sample survey figure, and labour rates from the old and the revamped Labour Force Survey in one column. Those are different rulers; here they are separate files, drawn side by side with the changeover marked, never as one line. The compendium's NFHS tables are split by round the same way.</p>
+        <p>Some cuts are not published: a state the survey could not cover, a crime head a state did not report. Where a table prints "-" or "NR", the guide shows nothing rather than a zero.</p>
       </div>
       <div class="wm-rail">
-        <aside class="margin-note">
-          <span class="mk">Margin note, i</span>
-          <b>No census since 2011.</b> The sex ratio is a 14-year-old stock count. The SRS continues, but a survey estimate is not a census. Everything after 2011 is provisional.
-        </aside>
-        <aside class="margin-note">
-          <span class="mk">Margin note, ii</span>
-          <b>Each indicator its own source.</b> Comparing literacy (Census/NSO) with LFPR (PLFS) across the same year is approximate: different frames, different methods, different vintages. </aside>
-        <aside class="margin-note">
-          <span class="mk">Margin note, iii</span>
-          <b>Positions, not outcomes.</b> Living longer ≠ living healthier. Enrolling ≠ graduating. In the labour force ≠ earning equally. The compendium counts where women stand, not where they arrive.
-        </aside>
+        <aside class="margin-note"><span class="mk">Margin note, i</span><b>Twelve tables have gone.</b> MoSPI's own definitions list twelve indicators the service no longer returns: disease cases by sex, school costs per student, ownership of assets and an earlier adolescent fertility table. We record them as unavailable.</aside>
+        <aside class="margin-note"><span class="mk">Margin note, ii</span><b>Other guides go deeper.</b> Work by sex, state, age and industry is in the Jobs guide; the ILO's estimates in Work, as the ILO counts it; fertility and life expectancy from the UN in Population; the full health survey in Family health.</aside>
       </div>
     </div>
   </section>
 
-  <!-- § 06 survival : MMR + IMR -->
+  <!-- § 03 the count. Inputs: gender-t007 (SRS sex ratio at birth), gender-t002 (census), gender-t006 (CRS). -->
   <section>
-    <div class="sec-head"><span class="no">06</span><h2>Plate 2: survival</h2><span class="line"></span><span class="unit">MMR &amp; IMR, the mortality story</span></div>
+    <div class="sec-head"><span class="no">03</span><h2>The count</h2><span class="line"></span><span class="unit">Girls born per 1,000 boys; women per 1,000 men</span></div>
     <div class="break">
-      <figure id="cb-mmr" style="margin:0">
+      <figure id="cb-srb" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>The steepest decline in the compendium</h3>
-            <div class="sub">Maternal Mortality Ratio, All India, 3-year moving averages 2004-06 to 2018-20</div>
+            <h3>Fewer girls are missing at birth: {f0(srbThen.value)} per 1,000 boys in {srbThen.period}, {f0(srbNow.value)} in {srbNow.period}</h3>
+            <div class="sub">Sex ratio at birth, girls born per 1,000 boys, three-year averages from the Sample Registration System: India, towns and villages. Each window is placed at its middle year.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-mmr">–</div><div class="c">2004-06 → 2018-20, decline</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-srb">{f0(srbNow.value)}</div><div class="c">India, {srbNow.period}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone">
-            <div id="plot-mmr" style="position:relative"><div class="cb-tip"></div></div>
-          </div>
+          <div class="plotzone" id="plot-srb"></div>
           <div class="plotfoot">
-            <span class="src">Source: SRS, Office of the Registrar General, maternal deaths per 100,000 live births, overlapping 3-year windows plotted at each period's start year, the decline from 254 to 97 is a 62 per cent drop in 14 years</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src">Source: Sample Registration System, Office of the Registrar General of India, as reprinted in MoSPI's Women and Men in India 2025 (table 1.6).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in/census.website/data/SRSSTAT" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>One line, nine points, falling steeply. Maternal mortality, deaths from pregnancy and childbirth per 100,000 live births, dropped from 254 in 2004-06 to 97 in 2018-20. That is the steepest mortality improvement in the compendium, and the clearest development-success story on this page. The rate is now below the SDG "sub-target" pace, though still above the 2030 goal of 70.</p>
-            <p>The windows overlap (each is a 3-year moving average), so the line is smoother than an annual series would be. The later points are closer together because the SRS began publishing annually from 2014-16, having previously released at 3-year intervals: the tighter spacing is a publication change, not an acceleration.</p>
+            <p>Left alone, about 105 boys are born for every 100 girls, roughly 950 girls per 1,000 boys. A ratio well below that means girls are being selected out before birth; telling parents the sex of a foetus has been illegal since 1994. Each point averages three years, so a change shows up slowly.</p>
+            <p>In the first windows towns ran lower than villages; the lines have since crossed.</p>
           </div>
           <div class="now">
-            <span class="mk">As of 2018-20</span>
-            <p>MMR: <b id="ex-mmr-now">–</b>, down from <b id="ex-mmr-first">–</b> in 2004-06: a <b id="ex-mmr-drop">–</b> decline. At this pace the SDG 2030 target of 70 is within reach, but the last stretch (rural, poorest states) is the hardest.</p>
+            <span class="mk">As of {asOf("gender-t007")}</span>
+            <p>India <b id="ex-srb-now">{f0(srbNow.value)}</b>, towns {f0(srbU.at(-1).value)}, villages {f0(srbR.at(-1).value)}. In {srbThen.period} towns stood at {f0(srbU[0].value)} and villages at {f0(srbR[0].value)}.</p>
+          </div>
+        </div>
+      </figure>
+
+      <figure id="cb-srb-states" style="margin:56px 0 0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{srbS.at(-1).geo} has {f0(srbS.at(-1).v)} girls born per 1,000 boys; {srbS[0].geo} has {f0(srbS[0].v)}</h3>
+            <div class="sub">Sex ratio at birth, {srbNow.period}, the larger states the Sample Registration System reports separately.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-srb-states">{srbS.filter((r) => r.v < srbNow.value).length}</div><div class="c">states below India's {f0(srbNow.value)}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-srb-states"></div>
+          <div class="plotfoot">
+            <span class="src">Source: Sample Registration System, Office of the Registrar General of India, as reprinted in MoSPI's Women and Men in India 2025 (table 1.6). The Civil Registration System's count of registered births by state (table 1.5) is in the data downloads.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in/census.website/data/SRSSTAT" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The Sample Registration System follows a fixed sample of households and records every birth, so its ratio is the steadier one. The Civil Registration System counts births registered with the state; where registration is incomplete, and girls go unregistered more often, its ratio can mislead.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf("gender-t007")}</span>
+            <p>Lowest: <b id="ex-srbs-lo">{srbS.at(-1).geo}, {f0(srbS.at(-1).v)}</b>. Highest: {srbS[0].geo}, {f0(srbS[0].v)}. {srbS.filter((r) => r.v >= 950).length} of {srbS.length} states reach 950.</p>
+          </div>
+        </div>
+      </figure>
+
+      <figure id="cb-census" style="margin:56px 0 0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Seven censuses: the count of women per 1,000 men fell to {f0(srLow.value)} in {srLow.period} and recovered to {f0(sr.at(-1).value)}</h3>
+            <div class="sub">Sex ratio of the whole population, women per 1,000 men, India, census years 1951 to 2011. The 2021 census has not been taken.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-census">{f0(sr.at(-1).value)}</div><div class="c">Census {sr.at(-1).period}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-census"></div>
+          <div class="plotfoot">
+            <span class="src">Source: Census of India, Office of the Registrar General of India, as reprinted in MoSPI's Women and Men in India 2025 (table 1.3). Every state's census ratio is in the data downloads.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>This ratio counts everyone alive, not births. It moves with births, with who dies young (for decades more girls died in childhood than boys) and with migration. Women outlive men, so an ageing population pushes it up even when births stay unequal.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of Census {sr.at(-1).period}</span>
+            <p>Census {sr[0].period}: <b>{f0(sr[0].value)}</b>. Low point {srLow.period}: <b id="ex-cen-low">{f0(srLow.value)}</b>. Census {sr.at(-1).period}: {f0(sr.at(-1).value)}.</p>
           </div>
         </div>
       </figure>
     </div>
+  </section>
 
-    <div class="break" style="margin-top:104px">
+  <!-- § 04 survival. Inputs: gender-t015, gender-t017, gender-t018, gender-t021. -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>Survival</h2><span class="line"></span><span class="unit">Sample Registration System</span></div>
+    <div class="break">
       <figure id="cb-imr" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>The gap that closed the wrong way, then righted</h3>
-            <div class="sub">Infant Mortality Rate by gender, All India, SRS 2008-2020, male in grey, female in blue</div>
+            <h3>Baby girls used to die more often than baby boys; {imrCross ? `since ${imrCross.period} they no longer do` : "the gap is closing"}</h3>
+            <div class="sub">Infant deaths per 1,000 live births, girls and boys, India, {imrF[0].period} to {imrF.at(-1).period}.</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-imr">–</div><div class="c">2020, female IMR, equal to male</div></div>
+          <div class="plate-val"><div class="v" id="pv-imr">{f0(imrF.at(-1).value)}</div><div class="c">girls, {imrF.at(-1).period}</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-imr">
-            <button class="chip" data-key="female"><i style="background:#2E4BD8"></i>Female IMR</button>
-            <button class="chip" data-key="male"><i style="background:#5F6675"></i>Male IMR</button>
-          </div>
-          <div class="plotzone">
-            <div id="plot-imr" style="position:relative"><div class="cb-tip"></div></div>
-          </div>
+          <div class="plotzone" id="plot-imr"></div>
           <div class="plotfoot">
-            <span class="src">Source: SRS, infant deaths per 1,000 live births, by gender, biologically, female infants survive better than male; India's female IMR exceeded male for years, the statistical trace of son preference. The lines converged to equality by 2020</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src">Source: Sample Registration System, Office of the Registrar General of India, as reprinted in MoSPI's Women and Men in India 2025 (tables 2.5, 2.6). Rates by state, village and town are in the data downloads.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in/census.website/data/SRSSTAT" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Two lines, both falling: infant mortality halved in twelve years. But look at their order: at the start, female IMR (blue) sat <em>above</em> male. That is the reverse of biology. Everywhere in the world, girl infants are hardier than boys; in India they died more often, the statistical trace of unequal care. By 2020 the lines crossed to equality: not to the female advantage biology predicts, but to parity. The excess female infant death is gone; the biological edge is not yet visible.</p>
+            <p>Newborn boys are biologically frailer, so where girls are cared for equally, slightly more boys die in the first year. A higher death rate for girls is a sign of neglect: less food, later treatment, fewer trips to the doctor. The crossing of these lines is one of the quieter changes in Indian family life.</p>
           </div>
           <div class="now">
-            <span class="mk">As of 2020</span>
-            <p>IMR: male <b id="ex-imr-m">–</b>, female <b id="ex-imr-f">–</b>: equal, within rounding. In 2008 the gap was <b id="ex-imr-gap0">–</b> against girls; by 2020 it had closed. Both halved, from the low fifties to <b id="ex-imr-now">–</b>.</p>
+            <span class="mk">As of {imrF.at(-1).period}</span>
+            <p>Girls <b id="ex-imr-f">{f0(imrF.at(-1).value)}</b>, boys {f0(imrM.at(-1).value)} per 1,000 births; in {imrF[0].period}, girls {f0(imrF[0].value)} and boys {f0(imrM[0].value)}. Before the fifth birthday: girls {f0(u5F)}, boys {f0(u5M)}.</p>
           </div>
         </div>
       </figure>
-    </div>
-  </section>
 
-  <!-- § 07 life expectancy -->
-  <section>
-    <div class="sec-head"><span class="no">07</span><h2>Plate 3: living longer, living apart</h2><span class="line"></span><span class="unit">Life expectancy at birth, by gender, 1990-94 to 2031-36</span></div>
-    <div class="break">
-      <figure id="cb-le" style="margin:0">
+      <figure id="cb-mmr" style="margin:56px 0 0">
         <div class="plate-head">
           <div class="t">
-            <h3>Women gain more years than men</h3>
-            <div class="sub">Life expectancy at birth, All India, by gender, 5-year cohort periods, observed to 2016-20, projected after (dashed)</div>
+            <h3>Maternal deaths fell from {f0(mmr[0].value)} to {f0(mmr.at(-1).value)} for every 1,00,000 births</h3>
+            <div class="sub">Maternal mortality ratio, deaths of women from pregnancy and childbirth per 1,00,000 live births, India, three-year windows from {mmr[0].period} to {mmr.at(-1).period}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-le">–</div><div class="c">female advantage, latest observed</div></div>
+          <div class="plate-val"><div class="v" id="pv-mmr">{f0(mmr.at(-1).value)}</div><div class="c">{mmr.at(-1).period}</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-le">
-            <button class="chip" data-key="female"><i style="background:#2E4BD8"></i>Female</button>
-            <button class="chip" data-key="male"><i style="background:#5F6675"></i>Male</button>
-          </div>
-          <div class="plotzone">
-            <div id="plot-le" style="position:relative"><div class="cb-tip"></div></div>
-          </div>
+          <div class="plotzone" id="plot-mmr"></div>
           <div class="plotfoot">
-            <span class="src">Source: SRS, Office of the Registrar General, life expectancy at birth by gender, 5-year cohort periods (e.g. 1990-94), periods after 2016-20 are projections (marked '*', dashed), the female advantage is universal and widening</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src">Source: Sample Registration System special bulletins on maternal mortality, Office of the Registrar General of India, as reprinted in MoSPI's Women and Men in India 2025 (table 2.9).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in/census.website/data/SRSSTAT" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Two rising lines: both sexes are living longer. But the female line (blue) sits above the male throughout, and the gap widens with time. Women gained more years from the mortality transition than men did, which is the universal pattern: female biology plus male risk-taking (occupational, tobacco, alcohol, violence) compound over development.</p>
-            <p>The line turns dashed after 2016-20: those periods are projections, not observed. The report estimates future life expectancy from current age-specific rates; treat them as informed guesses, not measurements.</p>
+            <p>Maternal deaths are rare enough that one year's sample cannot measure them, so the Registrar General pools three years. The windows overlap, and the gaps between them are uneven, which is why the points are not evenly spaced.</p>
           </div>
           <div class="now">
-            <span class="mk">As of 2016-20 (latest observed)</span>
-            <p>Male life expectancy <b id="ex-le-m">–</b>, female <b id="ex-le-f">–</b>: women ahead by <b id="ex-le-gap">–</b> years. In 1990-94 the gap was <b id="ex-le-gap0">–</b>; it has grown by about a year. Projected to <b id="ex-le-proj">–</b> (F) and <b id="ex-le-projm">–</b> (M) by 2031-36.</p>
+            <span class="mk">As of {mmr.at(-1).period}</span>
+            <p>India <b id="ex-mmr-now">{f0(mmr.at(-1).value)}</b>. Highest among the states reported: {mmrS[0].geo} ({f0(mmrS[0].v)}); lowest: {mmrS.at(-1).geo} ({f0(mmrS.at(-1).v)}).</p>
           </div>
         </div>
       </figure>
-    </div>
-  </section>
 
-  <!-- § 08 fertility -->
-  <section>
-    <div class="sec-head"><span class="no">08</span><h2>Plate 4: fewer births, by education</h2><span class="line"></span><span class="unit">Total Fertility Rate, by education of woman, 2016-2020</span></div>
-    <div class="break">
-      <figure id="cb-tfr" style="margin:0">
+      <figure id="cb-mmr-states" style="margin:56px 0 0">
         <div class="plate-head">
           <div class="t">
-            <h3>The steepest gradient in the country</h3>
-            <div class="sub">Total Fertility Rate by education level of woman, All India, 2016-2020, replacement level at 2.1</div>
+            <h3>A mother in {mmrS[0].geo} is about {Math.round(mmrS[0].v / mmrS.at(-1).v)} times as likely to die in childbirth as one in {mmrS.at(-1).geo}</h3>
+            <div class="sub">Maternal mortality ratio, {mmr.at(-1).period}, the states the Sample Registration System reports separately (some smaller states are pooled with a neighbour).</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-tfr">–</div><div class="c">graduate TFR, below replacement</div></div>
+          <div class="plate-val"><div class="v" id="pv-mmr-states">{f0(mmrS[0].v)}</div><div class="c">{mmrS[0].geo}</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-tfr">
-            <button class="chip" data-key="graduate"><i style="background:#2E4BD8"></i>Graduate &amp; above</button>
-            <button class="chip" data-key="illiterate"><i style="background:#5F6675"></i>Illiterate</button>
-          </div>
-          <div class="plotzone">
-            <div id="plot-tfr" style="position:relative"><div class="cb-tip"></div></div>
-          </div>
+          <div class="plotzone" id="plot-mmr-states"></div>
           <div class="plotfoot">
-            <span class="src">Source: SRS, TFR by education level of woman, the gradient is monotone: fertility falls with every step of schooling, graduates are well below the replacement rate of 2.1; illiterate women are above it</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src">Source: Sample Registration System, Office of the Registrar General of India, as reprinted in MoSPI's Women and Men in India 2025 (table 2.9).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in/census.website/data/SRSSTAT" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Seven lines, one per education level, all below the national average at the top and above it at the bottom. The gradient is monotone: every additional step of schooling lowers the number of children a woman has. Graduate women are at 1.6: well below the replacement rate of 2.1. Illiterate women are at 3.3: above it.</p>
-            <p>This is not a causal claim that education <em>causes</em> lower fertility. Education correlates with urban residence, later marriage, labour-force participation, access to contraception and child survival: each of which lowers fertility on its own. The gradient is the country's single strongest demographic signal, but its drivers are many.</p>
-          </div>
-          <div class="now">
-            <span class="mk">As of 2020</span>
-            <p>Graduate TFR: <b id="ex-tfr-grad">–</b>. Illiterate TFR: <b id="ex-tfr-ill">–</b>. The gap: <b id="ex-tfr-gap">–</b> children per woman. India's aggregate TFR has fallen below replacement: the education gradient explains why the average conceals two different countries.</p>
+            <p>The ratio is per 1,00,000 births, not per woman. A state with fewer births and a high ratio may still lose fewer mothers in all than a populous state with a middling one.</p>
           </div>
         </div>
       </figure>
-    </div>
-  </section>
 
-  <!-- § 09 literacy -->
-  <section>
-    <div class="sec-head"><span class="no">09</span><h2>Plate 5: the literacy gap</h2><span class="line"></span><span class="unit">Literacy rate, age 7+, by gender, 1981-2017</span></div>
-    <div class="break">
-      <figure id="cb-lit" style="margin:0">
+      <figure id="cb-life" style="margin:56px 0 0">
         <div class="plate-head">
           <div class="t">
-            <h3>Closing, not closed</h3>
-            <div class="sub">Literacy rate (age 7+), All India, by gender, Census 1981-2011 + NSO 2017 estimate</div>
+            <h3>Women outlive men by {f1(leLastMeasured.value - leLastMeasuredM.value)} years: {f1(leLastMeasured.value)} against {f1(leLastMeasuredM.value)}</h3>
+            <div class="sub">Life expectancy at birth, women and men, India, five-year windows placed at their middle year. The pale stretch is the Technical Group on Population Projections' projection, not a measurement.</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-lit">–</div><div class="c">2017, gender gap, percentage points</div></div>
+          <div class="plate-val"><div class="v" id="pv-life">{f1(leLastMeasured.value)}</div><div class="c">women, {leLastMeasured.period}</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-lit">
-            <button class="chip" data-key="female"><i style="background:#2E4BD8"></i>Female</button>
-            <button class="chip" data-key="male"><i style="background:#5F6675"></i>Male</button>
-          </div>
-          <div class="plotzone">
-            <div id="plot-lit" style="position:relative"><div class="cb-tip"></div></div>
-          </div>
+          <div class="plotzone" id="plot-life"></div>
           <div class="plotfoot">
-            <span class="src">Source: Census of India (1981-2011) + NSO 2017 estimate (marked '*'), literacy rate for persons aged 7+ who can read and write, the female line rises faster, narrowing the gap from 27 points (1981) to 14 (2017)</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src">Source: Sample Registration System abridged life tables, Office of the Registrar General of India; projections from the Report of the Technical Group on Population Projections (July 2020); as reprinted in MoSPI's Women and Men in India 2025 (table 2.8). The UN's estimates are in the Population guide.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in/census.website/data/SRSSTAT" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Two rising lines. Both sexes became more literate over four decades, but the female line (blue) rose faster: from 31 per cent in 1981 to 70 per cent in 2017. The gap narrowed from 27 points to 14. That is real progress, but 14 points is still a chasm: one in seven women who should be literate by the male standard is not.</p>
-            <p>The last point (2017) is an NSO estimate, not a census round. A census has not been held since 2011, so the current gap is an estimate of an estimate.</p>
+            <p>Life expectancy at birth is how long a baby would live if today's death rates at every age held for her whole life. In the early 1990s women and men lived about as long as each other in India; the women's advantage seen in most of the world opened up only as maternal deaths fell.</p>
           </div>
           <div class="now">
-            <span class="mk">As of 2017 (NSO estimate)</span>
-            <p>Male literacy <b id="ex-lit-m">–</b>, female <b id="ex-lit-f">–</b>: a gap of <b id="ex-lit-gap">–</b> points. In 1981 the gap was <b id="ex-lit-gap0">–</b>. At this rate the gap reaches zero around <b id="ex-lit-eta">–</b>: but literacy gaps close slowly at the end, as the hardest-to-reach populations are last.</p>
+            <span class="mk">As of {leLastMeasured.period}</span>
+            <p>Women <b id="ex-le-f">{f1(leLastMeasured.value)}</b> years, men {f1(leLastMeasuredM.value)}. In {leF[0].period}, women {f1(leF[0].value)} and men {f1(leM[0].value)}.</p>
           </div>
         </div>
       </figure>
     </div>
   </section>
 
-  <!-- § 10 work -->
+  <!-- § 05 fertility and marriage. Inputs: gender-t010, gender-t012, gender-t014. -->
   <section>
-    <div class="sec-head"><span class="no">10</span><h2>Plate 6: the work gap</h2><span class="line"></span><span class="unit">LFPR, 15+, usual status, by gender, PLFS</span></div>
+    <div class="sec-head"><span class="no">05</span><h2>Children and marriage</h2><span class="line"></span><span class="unit">Sample Registration System, {asOf("gender-t010")}</span></div>
     <div class="break">
-      <figure id="cb-lfpr" style="margin:0">
+      <figure id="cb-tfr-edu" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>The widest dumbbell, narrowing at last</h3>
-            <div class="sub">Labour Force Participation Rate (15+, usual status ps+ss), All India, by gender, PLFS 2017-18 to 2023-24</div>
+            <h3>A woman who never went to school has {f1(tfrEdu[0].v)} children on average; a graduate has {f1(tfrEdu.at(-1).v)}</h3>
+            <div class="sub">Total fertility rate by the mother's schooling, India, {asOf("gender-t010")}. The dashed rule is all literate women.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-lfpr">–</div><div class="c">female LFPR, 2023-24, rising</div></div>
+          <div class="plate-val"><div class="v" id="pv-tfr-edu">{f1(tfrEdu[0].v)}</div><div class="c">children per woman, no schooling</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-lfpr">
-            <button class="chip" data-key="female"><i style="background:#2E4BD8"></i>Female LFPR</button>
-            <button class="chip" data-key="male"><i style="background:#5F6675"></i>Male LFPR</button>
-          </div>
-          <div class="plotzone">
-            <div id="plot-lfpr" style="position:relative"><div class="cb-tip"></div></div>
-          </div>
+          <div class="plotzone" id="plot-tfr-edu"></div>
           <div class="plotfoot">
-            <span class="src">Source: PLFS, MoSPI/NSO, LFPR for persons aged 15+, usual status (ps+ss), all sectors, agriculture years (Jul–Jun) plotted at the start year, female LFPR rose from 23% to 42% in six years, partly real, partly a measurement-frame effect</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src">Source: Sample Registration System, Office of the Registrar General of India, as reprinted in MoSPI's Women and Men in India 2025 (table 2.1). Rates for villages and towns, and by age, are in the data downloads.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in/census.website/data/SRSSTAT" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>The widest gap on the page. Male LFPR (grey) is flat near 77 per cent throughout; female LFPR (blue) sat below 25 per cent for years, among the lowest in the world for a country at India's income, then rose sharply to 42 per cent. The rise is the most encouraging recent signal in this guide, but it needs reading carefully.</p>
-            <p>Part of the rise is real. Part is a measurement effect: PLFS widened its frame and its recall over these years, and the "usual status" definition counts unpaid family work in agriculture and self-employment more completely than earlier surveys did. A woman helping on the family farm for the better part of a year now enters the labour force; whether she did not work before, or was not counted, the survey alone cannot say.</p>
+            <p>Schooling and fewer children travel together: a woman in school marries later, knows more about contraception and has more say. The link is not only cause and effect; the women who stay in school also tend to come from richer, more urban families.</p>
           </div>
           <div class="now">
-            <span class="mk">As of 2023-24</span>
-            <p>Female LFPR <b id="ex-lfpr-f">–</b>, male <b id="ex-lfpr-m">–</b>: a gap of <b id="ex-lfpr-gap">–</b> points, down from <b id="ex-lfpr-gap0">–</b> in 2017-18. The female line nearly doubled in six years; the male line barely moved. For the measurement caveat, read Guide 06 (PLFS) alongside this one.</p>
+            <span class="mk">As of {asOf("gender-t010")}</span>
+            <p>No schooling <b id="ex-tfr-ill">{f1(tfrEdu[0].v)}</b>; graduate {f1(tfrEdu.at(-1).v)}; all literate women {f1(tfrAll)}. Births per 1,000 girls aged 15-19: {f1(adol)}.</p>
           </div>
         </div>
       </figure>
-    </div>
-  </section>
 
-  <!-- § 11 state sex ratio -->
-  <section>
-    <div class="sec-head"><span class="no">11</span><h2>Plate 7: where the balance is worst</h2><span class="line"></span><span class="unit">Sex ratio by state, SRS, latest</span></div>
-    <div class="break">
-      <figure id="cb-stsr" style="margin:0">
+      <figure id="cb-marriage-states" style="margin:56px 0 0">
         <div class="plate-head">
           <div class="t">
-            <h3>The north-western deficit</h3>
-            <div class="sub">Sex ratio (females per 1,000 males) by state/UT, SRS latest, the blue rule is the All-India ratio</div>
+            <h3>Women marry at {f1(mar)} on average, from {f1(marS.at(-1).v)} in {marS.at(-1).geo} to {f1(marS[0].v)} in {marS[0].geo}</h3>
+            <div class="sub">Women's mean age at effective marriage, years, by state, {asOf("gender-t014")}.</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-stsr">–</div><div class="c">spread: highest minus lowest state</div></div>
+          <div class="plate-val"><div class="v" id="pv-marriage">{f1(mar)}</div><div class="c">years, India</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-stsr"></div>
+          <div class="plotzone" id="plot-marriage-states"></div>
           <div class="plotfoot">
-            <span class="src">Source: SRS, sex ratio by state/UT, latest published, the deficit concentrates in the north-west (Haryana, Delhi, Punjab), the belt where prenatal sex selection was most widespread, Kerala and the tribal-majority north-east sit above parity</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src">Source: Sample Registration System, Office of the Registrar General of India, as reprinted in MoSPI's Women and Men in India 2025 (table 2.4). The NFHS's share of women married before 18 is in Family health.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in/census.website/data/SRSSTAT" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>One dot per state, sorted low to high, against the All-India rule. The shape is not a slope but a gulf: the north-western states, Haryana, Delhi, Punjab, sit far below the national line, the belt where sex selection hollowed out the ratio for a generation. At the other end, Kerala and the north-eastern tribal-majority states sit at or above parity.</p>
-            <p>India does not have one sex ratio; it has two. The north-west runs a deficit of fifty to ninety women per thousand; the south and east do not. A national ratio of 943 is the average of these two different countries, and policy that ignores the geography misses the point.</p>
+            <p>An average hides the girls married young. A state with an average of 22 can still have many brides under 18; the share married before 18, from the health survey, tells that story.</p>
           </div>
           <div class="now">
-            <span class="mk">As of latest SRS</span>
-            <p>Lowest: <b id="ex-stsr-bot">–</b>. Highest: <b id="ex-stsr-top">–</b>. The spread is <b id="ex-stsr-spread">–</b> points: wider than the entire 70-year swing of the All-India ratio. <b id="ex-stsr-above">–</b> states sit at or above the national line.</p>
+            <span class="mk">As of {asOf("gender-t014")}</span>
+            <p>India <b id="ex-mar">{f1(mar)}</b> years. Youngest: {marS.at(-1).geo} ({f1(marS.at(-1).v)}). Oldest: {marS[0].geo} ({f1(marS[0].v)}).</p>
           </div>
         </div>
       </figure>
     </div>
   </section>
 
-  <!-- § 12 how to misread -->
+  <!-- § 06 school and college. Inputs: gender-t060, gender-t074, gender-t055-census, gender-t055-nss, gender-t070. -->
   <section>
-    <div class="sec-head"><span class="no">12</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">06</span><h2>School and college</h2><span class="line"></span><span class="unit">UDISE+, AISHE, Census, NSS</span></div>
+    <div class="break">
+      <figure id="cb-school" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Girls now enrol at least as much as boys at every level, and drop out less</h3>
+            <div class="sub">Gross enrolment ratio ({gerPeriod}) and dropout rate ({dropPeriod}), per cent: boys (grey) and girls (blue).</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-school">{f1(ger.at(-1).b)}<span class="pc">%</span></div><div class="c">women's enrolment in higher education</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#5F6675"></i>Boys and men</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>Girls and women</button>
+          </div>
+          <div class="plotzone" id="plot-school"></div>
+          <div class="plotfoot">
+            <span class="src">Source: UDISE+, Department of School Education and Literacy, and the All India Survey on Higher Education, Ministry of Education, as reprinted in MoSPI's Women and Men in India 2025 (tables 3.5, 3.15).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://udiseplus.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The gross enrolment ratio divides everyone enrolled at a level, whatever their age, by the children of the age for that level. It can pass 100 when older children repeat a class, and it says nothing about attendance or learning. The dropout rate is the share of a year's pupils who do not come back the next year.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {gerPeriod}</span>
+            <p>Higher education: women <b id="ex-ger-he">{f1(ger.at(-1).b)}%</b>, men {f1(ger.at(-1).a)}%. Secondary dropout: girls {f1(drop.at(-1).b)}%, boys {f1(drop.at(-1).a)}%.</p>
+          </div>
+        </div>
+      </figure>
+
+      <figure id="cb-literacy" style="margin:56px 0 0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Census literacy: women went from {f1(litF[0].value)}% to {f1(litF.at(-1).value)}% in thirty years, and still trailed men by {f1(litM.at(-1).value - litF.at(-1).value)} points</h3>
+            <div class="sub">Literacy rate, people 7 and over, women and men, India: census years 1981 to 2011, and the NSS's 2017-18 survey drawn apart as a separate measure.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-literacy">{f1(litF.at(-1).value)}<span class="pc">%</span></div><div class="c">women, Census 2011</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-literacy"></div>
+          <div class="plotfoot">
+            <span class="src">Source: Census of India, Office of the Registrar General of India; 2017-18 from the National Sample Survey's 75th round, National Statistics Office; as reprinted in MoSPI's Women and Men in India 2025 (table 3.1). The two are different instruments and are not joined.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Both ask whether a person can read and write a simple message with understanding, but the census asks everyone in the household and the survey asks a sample, with a different questionnaire. The gap between the 2011 census and the 2017-18 survey is not a measured change.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of Census 2011</span>
+            <p>Census 2011: women <b id="ex-lit-f">{f1(litF.at(-1).value)}%</b>, men {f1(litM.at(-1).value)}%. NSS 2017-18: women {f1(litNssF.at(-1).value)}%, men {f1(litNssM.at(-1).value)}%.</p>
+          </div>
+        </div>
+      </figure>
+
+      <figure id="cb-schooling-states" style="margin:56px 0 0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>An Indian woman over 15 has {f1(ysWomen)} years of schooling, a man {f1(ysMen)}; {ysAhead.length ? `women lead in ${ysAhead.length} states and UTs` : "men have more in every state and UT"}</h3>
+            <div class="sub">Mean years of schooling, people 15 and over, women (blue) and men (grey), by state and UT, 2022-23.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-schooling">{f1(ysWomen)}</div><div class="c">years, women, India</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-schooling-states"></div>
+          <div class="plotfoot">
+            <span class="src">Source: Comprehensive Annual Modular Survey 2022-23 (NSS 79th round), National Statistics Office, as reprinted in MoSPI's Women and Men in India 2025 (table 3.12.3).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Mean years of schooling counts every adult, including the grandmothers who never went to school, so it moves slowly and records the past as much as the present. Enrolment shows today's children; this shows the stock of education in a state's adults.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2022-23</span>
+            <p>Women <b id="ex-ys-w">{f1(ysWomen)}</b> years, men {f1(ysMen)}. Most, women: {ysRows[0].geo} ({f1(ysRows[0].women)}); fewest: {ysRows.at(-1).geo} ({f1(ysRows.at(-1).women)}).</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 work and pay. Inputs: gender-t085-ay/-cy/-cy25 (WPR, three rulers), gender-t082-cy25, gender-t087-cy25, gender-t092-cy25. -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>Work and pay</h2><span class="line"></span><span class="unit">Periodic Labour Force Survey</span></div>
+    <div class="break">
+      <figure id="cb-work" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Women at work rose from {f1(wprAyF[0].value)}% in {wprAyF[0].period} to {f1(wprAyF.at(-1).value)}% in {wprAyF.at(-1).period} on the old survey's measure, and stands at {f1(wpr25F[0].value)}% on the new one</h3>
+            <div class="sub">Worker population ratio, people 15 and over at work, usual status, women and men, India, on three rulers: agricultural years (July to June) and calendar years on the survey's original design, and the revamped design from 2025. Each drawn on its own, with the changeovers marked.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-work">{f1(wpr25F[0].value)}<span class="pc">%</span></div><div class="c">women at work, 2025</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-work"></div>
+          <div class="plotfoot">
+            <span class="src">Source: Periodic Labour Force Survey, National Statistics Office, MoSPI, as reprinted in MoSPI's Women and Men in India 2025 (table 4.6.1). The Jobs guide carries every PLFS cut by state, age, sector and industry.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>"At work" in usual status means a person's main activity over the past year, or a subsidiary one for at least 30 days, was work for pay, profit or the family's own farm or business. Much of the rise in women's work since 2017-18 is unpaid help in a family enterprise and self-employment, not wage jobs.</p>
+            <p>The survey changed twice in this window: from agricultural to calendar years, and in 2025 to a new sample design. Change is read within a ruler, never across the marked lines.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2025</span>
+            <p>2025: women <b id="ex-wk-f">{f1(wpr25F[0].value)}%</b>, men {f1(wpr25M[0].value)}%. Calendar years: women {f1(wprCyF[0].value)}% in {wprCyF[0].period} and {f1(wprCyF.at(-1).value)}% in {wprCyF.at(-1).period}. Of women at work, {f1(informalF)}% are in the informal sector, against {f1(informalM)}% of men.</p>
+          </div>
+        </div>
+      </figure>
+
+      <figure id="cb-lfpr-states" style="margin:56px 0 0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Women's labour force participation runs from {f1(lfRows.at(-1).women)}% in {lfRows.at(-1).geo} to {f1(lfRows[0].women)}% in {lfRows[0].geo}</h3>
+            <div class="sub">Labour force participation rate, people 15 and over, women (blue) and men (grey), by state and UT, 2025, usual status.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-lfpr">{f1(lfW)}<span class="pc">%</span></div><div class="c">women, India</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-lfpr-states"></div>
+          <div class="plotfoot">
+            <span class="src">Source: Periodic Labour Force Survey 2025, National Statistics Office, MoSPI, as reprinted in MoSPI's Women and Men in India 2025 (table 4.3).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The states with the most women in the labour force are mostly hill and north-eastern states, where women farm; the fewest are in the north-west and in cities, where paid work for women outside the home is scarcer. Men's rates vary far less from state to state.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2025</span>
+            <p>India: women <b id="ex-lf-w">{f1(lfW)}%</b>, men {f1(lfMen)}%. Highest for women: {lfRows[0].geo} ({f1(lfRows[0].women)}%). Lowest: {lfRows.at(-1).geo} ({f1(lfRows.at(-1).women)}%).</p>
+          </div>
+        </div>
+      </figure>
+
+      <figure id="cb-wage-states" style="margin:56px 0 0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>A village woman doing casual work earns ₹{f0(wF)} a day, a man ₹{f0(wM)}: {Math.round((100 * wF) / wM)} rupees for every 100</h3>
+            <div class="sub">Average daily wage of casual labourers in work other than public works, rural, women (blue) and men (grey), by state and UT, 2025, rupees.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-wage">₹{f0(wF)}</div><div class="c">a day, rural women</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-wage-states"></div>
+          <div class="plotfoot">
+            <span class="src">Source: Periodic Labour Force Survey 2025, National Statistics Office, MoSPI, as reprinted in MoSPI's Women and Men in India 2025 (table 4.7). Urban wages, and hourly earnings by occupation, are in the data downloads.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Casual labour is daily-wage work: harvesting, construction, loading. Part of the gap is the kind of work each is given, part is a lower rate for the same work. Public works such as MGNREGA, which pay women and men the same rate, are counted separately and are not in this measure.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2025</span>
+            <p>Rural casual wage: women <b id="ex-wg-f">₹{f0(wF)}</b>, men ₹{f0(wM)}. Highest for women: {wageRows[0].geo} (₹{f0(wageRows[0].women)}).</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 time. Inputs: gender-t103 (TUS 2019), gender-t104 and gender-t098 (TUS 2024). -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>The working day nobody pays for</h2><span class="line"></span><span class="unit">Time Use Survey, minutes a day</span></div>
+    <div class="break">
+      <figure id="cb-time" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Women spend about {f1(time[0].b / 60)} hours a day on unpaid work at home, men under one hour, and the gap barely moved between the surveys</h3>
+            <div class="sub">Average minutes a day per person aged 6 and over, India: Time Use Survey 2019 (grey) and 2024 (blue). Unpaid work at home in 2019 adds the survey's two unpaid categories (domestic and care work, and production for the household's own use).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-time">{f0(time[0].b)}</div><div class="c">minutes, women, 2024</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#5F6675"></i>2019</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>2024</button>
+          </div>
+          <div class="plotzone" id="plot-time"></div>
+          <div class="plotfoot">
+            <span class="src">Source: Time Use Survey 2019 and 2024, National Statistics Office, MoSPI, as reprinted in MoSPI's Women and Men in India 2025 (tables 4.21.1, 4.21.2). Every activity, by village and town and by age, is in the data downloads.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The survey asks each person to account for every half hour of the previous day. "Per person" averages over everyone, including those who did none of the activity; "per participant", in the downloads, averages only over those who did. Unpaid work at home is cooking, cleaning, fetching water and fuel, and looking after children and the old.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2024</span>
+            <p>Unpaid work at home: women <b id="ex-tm-f">{f0(time[0].b)}</b> minutes a day, men {f0(time[1].b)}. Women who do domestic work spend {f0(careF)} minutes on it; men who do, {f0(careM)}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 money. Inputs: gender-t108, gender-t109, gender-t111, gender-t113, gender-t114, gender-t115, gender-t118 (shares derived from their counts). -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>Money in women's names</h2><span class="line"></span><span class="unit">Women's share, per cent</span></div>
+    <div class="break">
+      <figure id="cb-money" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Women hold half or more of the accounts in most government schemes, and a fifth to a quarter of the investing</h3>
+            <div class="sub">Women's share of accounts, enrolments or holders in each scheme or market, India, latest date each source reports. Computed from the counts the compendium prints, except NSE's, which it prints as a share.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-money">{f1(money.find((m) => /Jan Dhan/.test(m.label)).v)}<span class="pc">%</span></div><div class="c">of Jan Dhan accounts are women's</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-money"></div>
+          <div class="plotfoot">
+            <span class="src">Source: Department of Financial Services, Ministry of Finance (PMJDY, PMJJBY, PMSBY, APY, Stand-Up India); RBI, BSR-2 (deposits, March 2025); CDSL (demat); NSE (investors); as reprinted in MoSPI's Women and Men in India 2025 (tables 4.24 to 4.36). Shares computed by the Atlas from the printed counts.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>An account in a woman's name is not money she controls. Many scheme accounts were opened to receive government transfers; they show that the money reaches her name, not that she decides how it is spent. The investing figures are closer to choice, and there women are a small minority.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2025</span>
+            <p>Jan Dhan accounts: <b id="ex-mo-jd">{f1(money.find((m) => /Jan Dhan/.test(m.label)).v)}%</b> women's. Demat accounts with CDSL: {f1(dematShare0)}% women's in March 2021, {f1(dematShare1)}% by October 2025. Bank deposits of individuals, by value: {f1(money.find((m) => /by value/.test(m.label)).v)}% women's.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 10 voice. Inputs: gender-t124 (share derived), gender-t125, gender-t126-total, gender-t127, gender-t123, gender-t130, gender-t131, gender-t172. -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>Voice and office</h2><span class="line"></span><span class="unit">Women's share, per cent</span></div>
+    <div class="break">
+      <figure id="cb-lok-sabha" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Women held {f1(lsFirst.value)}% of Lok Sabha seats in {lsFirst.period} and {f1(lsNow.value)}% in {lsNow.period}</h3>
+            <div class="sub">Women elected to the Lok Sabha as a share of the seats, general elections {lsFirst.period} to {lsNow.period}. Computed from the counts the compendium prints.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-ls">{f1(lsNow.value)}<span class="pc">%</span></div><div class="c">{lsNow.period}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-lok-sabha"></div>
+          <div class="plotfoot">
+            <span class="src">Source: Election Commission of India, as reprinted in MoSPI's Women and Men in India 2025 (table 5.2). Share computed by the Atlas: women elected divided by seats.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://eci.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Parliament passed the Constitution (106th Amendment) in 2023 to reserve a third of Lok Sabha and assembly seats for women; it takes effect only after the next census and delimitation of constituencies. Women who contest win more often than men do: parties field few women, and mostly in seats they expect to win.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {lsNow.period}</span>
+            <p>{f0(lsW.at(-1).value)} women elected in {lsNow.period}, <b id="ex-ls-share">{f1(lsNow.value)}%</b> of seats, from {f0(lsCand.at(-1).value)} women candidates.</p>
+          </div>
+        </div>
+      </figure>
+
+      <figure id="cb-voice" style="margin:56px 0 0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Half of panchayat members are women, where a law reserves the seats; in the other offices women hold {f1(voice.at(-1).v)}% to {f1(voice[1].v)}%</h3>
+            <div class="sub">Women's share of members or holders, India, latest date each source reports.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-voice">{f1(voice[0].v)}<span class="pc">%</span></div><div class="c">{voice[0].label.replace(/^[A-Z](?![A-Z])/, (c) => c.toLowerCase())}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-voice"></div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Panchayati Raj; Lok Sabha Secretariat; Department of Justice; Bureau of Police Research and Development; Election Commission of India; Ministry of Corporate Affairs; as reprinted in MoSPI's Women and Men in India 2025 (tables 5.1 to 5.11). Assembly and company shares computed by the Atlas from the printed counts.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The 73rd and 74th Amendments (1992) reserved a third of panchayat and municipal seats for women, and many states have raised that to half. No such rule applies to the courts, the police or company boards, apart from the Companies Act's requirement of at least one woman director on larger boards.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2025</span>
+            <p>Panchayats <b id="ex-vo-pri">{f1(voice.find((v) => /Panchayat/.test(v.label)).v)}%</b>; judges {f1(voice.find((v) => /judges/.test(v.label)).v)}%; police {f1(voice.find((v) => /Police/.test(v.label)).v)}%; senior company management {f1(voice.find((v) => /Senior/.test(v.label)).v)}%.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 11 safety. Inputs: gender-t141, gender-t140, gender-t145, gender-t143-nfhs4/-nfhs5. -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>Safety</h2><span class="line"></span><span class="unit">National Crime Records Bureau, {crimeYear}</span></div>
+    <div class="break">
+      <figure id="cb-crime-states" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Recorded crimes against women: {f1(crimeAI)} for every 1,00,000 women, from {f1(crimeS.at(-1).v)} in {crimeS.at(-1).geo} to {f1(crimeS[0].v)} in {crimeS[0].geo}</h3>
+            <div class="sub">Crimes against women registered by the police, per 1,00,000 women, by state and UT, {crimeYear}.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-crime">{f1(crimeAI)}</div><div class="c">India, per 1,00,000 women</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-crime-states"></div>
+          <div class="plotfoot">
+            <span class="src">Source: Crime in India, National Crime Records Bureau, as reprinted in MoSPI's Women and Men in India 2025 (table 6.2). Rates by crime head for every state are in the data downloads.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ncrb.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>These are crimes the police registered, not crimes committed. A state where women are more willing, and police more ready, to file a case records more. A high rate can mean more crime, more reporting, or both; a very low one can mean women do not go to the police.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {crimeYear}</span>
+            <p>India <b id="ex-cr-ai">{f1(crimeAI)}</b> per 1,00,000 women; {f0(allCases.at(-1).value)} cases registered, against {f0(allCases[0].value)} in {allCases[0].period}. Highest: {crimeS[0].geo} ({f1(crimeS[0].v)}). Lowest: {crimeS.at(-1).geo} ({f1(crimeS.at(-1).v)}).</p>
+          </div>
+        </div>
+      </figure>
+
+      <figure id="cb-crime-heads" style="margin:56px 0 0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The most common recorded crime against women is cruelty by a husband or his family</h3>
+            <div class="sub">Cases registered under each head, India, {heads[0].from} (grey) and {heads[0].to} (blue).</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-heads">{f0(heads[0].b)}</div><div class="c">cases of cruelty by husband or relatives, {heads[0].to}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-crime-heads"></div>
+          <div class="plotfoot">
+            <span class="src">Source: Crime in India, National Crime Records Bureau, as reprinted in MoSPI's Women and Men in India 2025 (table 6.1). Heads under the Indian Penal Code and special laws as NCRB reports them.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ncrb.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Section 498A of the Indian Penal Code makes cruelty by a husband or his relatives a crime; most of these cases arise from violence and dowry demands at home. The health survey asks women directly and finds far more violence by husbands than ever reaches a police station.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {heads[0].to}</span>
+            <p>Cruelty by husband or relatives: <b id="ex-hd-cruelty">{f0(heads[0].b)}</b> cases. In the health survey, {f1(sv5)}% of married women aged 18 to 49 said a husband had been physically or sexually violent (NFHS-5), against {f1(sv4)}% in NFHS-4.</p>
+          </div>
+        </div>
+      </figure>
+
+      <figure id="cb-conviction" style="margin:56px 0 0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Fewer than {Math.ceil(conv[0].v)} in 100 cases due for trial ended in a conviction within the year, whatever the crime</h3>
+            <div class="sub">Cases that ended in conviction during the year, as a share of all cases due for trial (the year's new cases and those pending from earlier years), by crime head, India, {asOf("gender-t145")}.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-conviction">{f1(convAll)}<span class="pc">%</span></div><div class="c">all crimes against women</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-conviction"></div>
+          <div class="plotfoot">
+            <span class="src">Source: Crime in India, National Crime Records Bureau, as reprinted in MoSPI's Women and Men in India 2025 (table 6.6).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ncrb.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>This is not the usual "conviction rate", which divides convictions by the trials completed. It divides by every case due for trial, including the backlog, so it shows how few cases end in a verdict at all in a year. The counts of convictions, acquittals and cases pending are in the data downloads.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf("gender-t145")}</span>
+            <p>All crimes against women <b id="ex-cv-all">{f1(convAll)}%</b>; highest {conv[0].label.replace(/^[A-Z](?![A-Z])/, (c) => c.toLowerCase())} ({f1(conv[0].v)}%), lowest {conv.at(-1).label.replace(/^[A-Z](?![A-Z])/, (c) => c.toLowerCase())} ({f1(conv.at(-1).v)}%).</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 12 health, briefly. Inputs: gender-t160. -->
+  <section>
+    <div class="sec-head"><span class="no">12</span><h2>What women and men die of</h2><span class="line"></span><span class="unit">Sample Registration System, {causePeriod}</span></div>
+    <div class="break">
+      <figure id="cb-causes" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>More than half of deaths are from non-communicable disease; injuries take {f1(causes[2].a)}% of men's deaths and {f1(causes[2].b)}% of women's</h3>
+            <div class="sub">Share of deaths by broad cause, men (grey) and women (blue), India, {causePeriod}.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-causes">{f1(causes[0].b)}<span class="pc">%</span></div><div class="c">women's deaths from non-communicable disease</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-causes"></div>
+          <div class="plotfoot">
+            <span class="src">Source: Cause of Death Statistics, Sample Registration System, Office of the Registrar General of India, as reprinted in MoSPI's Women and Men in India 2025 (table 2.30). Disability, HIV, tuberculosis and other health tables are in the data downloads; the household health survey is in Family health.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://censusindia.gov.in/census.website/data/SRSSTAT" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Cause of death is assigned by trained staff from a structured interview with the family after the death, a "verbal autopsy", because most Indians die without a doctor certifying the cause. A larger share of women's deaths is left ill-defined.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {causePeriod}</span>
+            <p>Non-communicable disease: women <b id="ex-cd-ncd">{f1(causes[0].b)}%</b>, men {f1(causes[0].a)}%. Communicable, maternal, newborn and nutritional: women {f1(causes[1].b)}%, men {f1(causes[1].a)}%.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 13 how to misread: evergreen -->
+  <section>
+    <div class="sec-head"><span class="no">13</span><h2>How to misread these tables</h2><span class="line"></span></div>
     <ul class="misread">
-      <li>
-        <span class="no">i.</span>
-        <div>
-          <h3>"The sex ratio improved from 927 to 943: son preference is over."</h3>
-          <p>The national ratio recovered, but the recovery is uneven. The north-western states still run deficits of 50-90 per thousand. A national average conceals the geography: the improvement happened where the deficit was smallest, not where it was worst.</p>
-        </div>
-      </li>
-      <li>
-        <span class="no">ii.</span>
-        <div>
-          <h3>"Female LFPR doubled: women are surging into the workforce."</h3>
-          <p>Part of the rise is a measurement-frame effect. PLFS widened its coverage and its recall over these years; unpaid family work in agriculture now enters the count more completely. Whether women are working more or being counted better, the survey alone cannot separate. Read Guide 06 alongside this one.</p>
-        </div>
-      </li>
-      <li>
-        <span class="no">iii.</span>
-        <div>
-          <h3>"Life expectancy is 74 for women and 71 for men: the gap is biology."</h3>
-          <p>Partly. The female advantage is universal, but its <em>size</em> varies with male risk-taking: occupational hazard, tobacco, alcohol, violence. India's gap (3 years) is narrower than in countries where male mortality risks are higher. Biology sets the floor; behaviour sets the ceiling.</p>
-        </div>
-      </li>
-      <li>
-        <span class="no">iv.</span>
-        <div>
-          <h3>"MMR fell to 97: maternal death is nearly eliminated."</h3>
-          <p>97 per 100,000 is still roughly 25,000 women a year. The decline is the steepest in the compendium, but the last stretch, rural, poorest states, the hardest-to-reach, is the slowest. The SDG target is 70 by 2030; reaching it means the ratio must fall another 28 per cent in a decade.</p>
-        </div>
-      </li>
-      <li>
-        <span class="no">v.</span>
-        <div>
-          <h3>"These indicators together measure 'women's empowerment'."</h3>
-          <p>They measure positions, survival, literacy, labour-force presence, not power. A woman who is literate, alive and counted in the labour force may still earn a third of a man's wage, own no property, and decide nothing at home. The compendium counts where women stand; empowerment is what they can <em>do</em> from there.</p>
-        </div>
-      </li>
-      <li>
-        <span class="no">vi.</span>
-        <div>
-          <h3>"Each indicator is comparable across the same year."</h3>
-          <p>They are not. Each draws on a different source with a different frame: the Census is a complete count, SRS is a sample, NFHS is a household survey, PLFS is a different sample. Putting them on one page is editorial, not statistical: they describe one subject but were never designed to be one series.</p>
-        </div>
-      </li>
+      <li><span class="no">i.</span><div>
+        <h3>"Women's work jumped in 2023."</h3>
+        <p>The compendium's columns change instrument mid-way: agricultural years, then calendar years, then a revamped survey from 2025. A jump at a changeover can be the new ruler. Read change within one ruler only; the chart marks each changeover.</p>
+      </div></li>
+      <li><span class="no">ii.</span><div>
+        <h3>"Literacy among women rose from 64.6% in 2011 to 70% in 2017."</h3>
+        <p>The first figure is the census, the second a sample survey with a different questionnaire. The gap between them is not a measured change.</p>
+      </div></li>
+      <li><span class="no">iii.</span><div>
+        <h3>"Crime against women is highest in Delhi."</h3>
+        <p>Recorded crime is highest there. Delhi has more police stations per person, more women who know how to file a complaint, and a large population passing through that the rate does not count. Low rates in some states may mean less reporting, not less crime.</p>
+      </div></li>
+      <li><span class="no">iv.</span><div>
+        <h3>"Women own more bank accounts than men, so they control the money."</h3>
+        <p>The schemes counted here opened accounts for women in large numbers, often to receive government transfers. Ownership on paper is not control; in deposits by value and in investing, women hold far less.</p>
+      </div></li>
+      <li><span class="no">v.</span><div>
+        <h3>"The sex ratio is improving, so the problem is solved."</h3>
+        <p>The ratio at birth has risen, but most large states remain below the natural level, and the census sex ratio of the whole population cannot be updated until the census is taken.</p>
+      </div></li>
+      <li><span class="no">vi.</span><div>
+        <h3>"The compendium is MoSPI's data."</h3>
+        <p>MoSPI compiles it; each table belongs to the agency that collected it. Revisions, definitions and errors are that agency's, and the guide names it on every chart.</p>
+      </div></li>
     </ul>
   </section>
 
@@ -494,21 +961,20 @@ const D = bySlug["gender"];
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>MoSPI, "Women and Men in India": a multi-source compendium. Each indicator draws on its own underlying source: the Census of India (sex ratio 1951-2011, literacy to 2011), the Sample Registration System (fertility, IMR, life expectancy, MMR), NFHS (health behaviours), PLFS (labour force, 2017-18 onward), and NCRB (crime). Retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>. The 17 core indicators forming this guide's spine are ingested in full; the remaining ~140 catalogued indicators (time use, banking schemes, political representation, disability, cyber crime) live in the raw audit dump.</p>
-        <p>No indicator is spliced or chained with another. The varying cadences, census decadal, SRS annual, MMR three-year moving periods, life-expectancy five-year cohorts, make a shared date axis impossible and a forced one dishonest. Each plate carries its own axis and its own source citation. Values marked '-' at source are null; years marked '*' are projections.</p>
+        <p>MoSPI, Social Statistics Division: Women and Men in India 2025, 27th edition, released 29 April 2026, reprinting tables from the agencies named on each chart. Retrieved from MoSPI's eSankhyiki API (gender/getGenderRecords), every indicator the service lists, vintage <b id="prov-vintage">{compendium.vintage}</b>; the raw dump is data/raw/gender-records.json. Source agencies are taken from the compendium's table notes.</p>
       </div>
       <div>
-        <h6>Revisions &amp; uncertainty</h6>
-        <p>The sex ratio is a 2011 stock count: no census has been held since. Life expectancy periods after 2016-20 are projections (marked '*', dashed on the chart). The sharp rise in female LFPR after 2017-18 is partly a measurement-frame effect (PLFS coverage and recall widened); Guide 06 carries the fuller labour-force detail. Every indicator is final as its underlying source publishes; the compendium is curated, not revised.</p>
+        <h6>Revisions and uncertainty</h6>
+        <p>Each table is final as its agency publishes it and is revised only when that agency revises. Survey figures carry sampling error the compendium does not print; administrative counts depend on what is registered or reported. Projections are marked as projections.</p>
       </div>
       <div>
         <h6>This guide</h6>
-        <p>Social, version 1.0, covers the gender panorama: sex ratio (the 70-year census story), survival (IMR crossover, MMR decline, life-expectancy convergence), fertility (TFR by education), education (the literacy gap), work (the LFPR gap) and state dispersion. Next scheduled revision: on release of the next compendium update or the 2025 Census.</p>
+        <p>Women and men, version 2.0 (October 2026): all 154 tables the service returns, each on its own instrument; twelve tables in MoSPI's definitions that the service no longer returns are recorded as unavailable. Next revision: with the 2026 edition of the compendium.</p>
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, Women and Men in India</span>
-      <span>Vintage <span id="prov-vintage2">–</span>, multi-source, never spliced</span>
+      <span>India Atlas, Women and men</span>
+      <span>Vintage <span id="prov-vintage2">{compendium.vintage}</span>, every table on its own ruler</span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
