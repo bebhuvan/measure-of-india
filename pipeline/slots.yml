@@ -12,11 +12,15 @@ cpi:
     mustAcknowledge: [contradictions]
     bannedWords: []
     brief: >
-      Two short paragraphs on the new 2024-base print (June 2026): the headline,
-      what drives it (food and beverages, transport, restaurants — and personal
-      care / gold as a world-market spectator to set apart), and the firming run
-      since the series opened in January. Name the band position. Concede what is
-      genuine before qualifying it.
+      Two short paragraphs on the latest 2024-base print (name its month from the
+      sheet, never from memory): the headline, what drives it (food and beverages,
+      transport, restaurants, and personal care / gold as a world-market spectator to
+      set apart), and the run since the series opened in January. Name the band
+      position. Then the cuts that answer "what does inflation look like for me": the
+      rural and urban division gap (proseInputs cpi-2024-rural-divisions and
+      -urban-divisions), the state spread by division (cpi-2024-states-divisions), and
+      the industrial worker's index (cpiiw-2016, a different instrument and a
+      different month: say so). Concede what is genuine before qualifying it.
   - id: current-reading.what-it-does-not-say
     maxSentences: 6
     dateStamp: false
@@ -24,17 +28,17 @@ cpi:
     brief: >
       The honest limits of the new base: the API serves no component weights, so
       no core index can be computed on it — the last core reading lives on the
-      retired 2012 base, which closed at a different headline. The June figure
-      and the December figure are different rulers, not a jump. Must contain a
+      retired 2012 base, which closed at a different headline. The latest figure
+      and the December 2025 figure are different rulers, not a jump. Must contain a
       plain "we do not know" sentence.
   - id: as-of.newbase
     maxSentences: 6
     dateStamp: true
     requiredFigures: [headline.latest, headline.yearStart]
     brief: >
-      The new base's first half-year in one arc: where it opened (January), where
-      it stands (June), its position in the RBI tolerance band, and the one thing
-      to watch. Reads like a newspaper's second paragraph.
+      The new base's months so far in one arc: where it opened (January), where
+      it stands (the latest month in the sheet), its position in the RBI tolerance
+      band, and the one thing to watch. Reads like a newspaper's second paragraph.
 
 gdp:
   - id: current-reading.what-the-print-says

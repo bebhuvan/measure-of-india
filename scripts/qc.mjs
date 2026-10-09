@@ -50,6 +50,19 @@ const PAGES = [
       return fmt.pt1(Math.max(...vals) - Math.min(...vals));
     }],
     ["pf-st24-ai", (b) => fmt.pct2(b["cpi-2024"].series.headline.data.at(-1))],
+    // ---- prices wave 2 (lb/prices): CPI-IW, rural wages, state x division, the 2012 groups and items
+    ["pv-iw", (b) => fmt.pct2(b["cpiiw-2016"].series.general.data.at(-1))],
+    ["iw-yago", (b) => fmt.pct2(b["cpiiw-2016"].series.general.data.at(-13))],
+    ["iwg-food", (b) => fmt.pct2(b["cpiiw-2016"].series.food.data.at(-1))],
+    ["iwc-n", (b) => fmt.count(Object.values(b["cpiiw-centres-2016"].series).filter((s) => s.data.at(-1) != null).length)],
+    ["iwc-ai", (b) => fmt.pct2(b["cpiiw-2016"].series.general.data.at(-1))],
+    ["pv-wage", (b) => fmt.inrR(b["wages-rural-2013"].series.o1210.data.filter((v) => v != null).at(-1))],
+    ["wgs-ai", (b) => fmt.inrR(b["wages-rural-2013"].series.o1210.data.filter((v) => v != null).at(-1))],
+    ["stdiv-cells", (b) => fmt.count(Object.values(b["cpi-2024-states-divisions"].series).filter((s) => s.data.at(-1) != null).length)],
+    ["oth-misc", (b) => fmt.pct2(b["cpi-groups"].series.miscellaneous.data.at(-1))],
+    ["oth-housing", (b) => fmt.pct2(b["cpi-groups"].series.housing.data.at(-1))],
+    ["pv-items12", (b) => Math.max(...Object.values(b["cpi-items-2012"].series).map((s) => s.latest_level).filter((v) => v != null)).toFixed(1)],
+    ["it12-below", (b) => fmt.count(Object.values(b["cpi-items-2012"].series).filter((s) => s.latest_level != null && s.latest_level < 100).length)],
   ]},
   { url: "/guides/gdp/", slug: null, checks: [
     ["n-gdp", (b) => fmt.pct2(b["gdp-2022"].series.gdp.data.at(-1))],
@@ -88,6 +101,10 @@ const PAGES = [
       return fmt.pct1Minus(v);
     }],
     ["prov-vintage", (b) => b.wpi.meta.vintage],
+    // ---- prices wave 2 (lb/prices): four bases, wholesale to retail
+    ["pv-long", (b) => fmt.pct2(b["wpi-2022"].series.headline.data.at(-1))],
+    ["long-now", (b) => fmt.pct2(b["wpi-2022"].series.headline.data.at(-1))],
+    ["w2r-n", (b) => { const c = new Map(b.cpi.dates.map((d, i) => [d, b.cpi.series.food.data[i]])); return fmt.count(b.wpi.dates.filter((d, i) => b.wpi.series.food_index.data[i] != null && c.get(d) != null).length); }],
   ]},
   { url: "/guides/iip/", slug: null, checks: [
     ["n-head", (b) => fmt.pct2(b["iip-2022"].series.general.data.at(-1))],

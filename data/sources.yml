@@ -151,9 +151,10 @@ dossiers:
     derived:
       headline: weighted index of all six groups, then y/y   # never stored independently
       core: weighted index of [pan, clothing, housing, misc], then y/y
-    window: { start: "2014-01" }   # wave 2: was 2016-01; the Current series serves levels from 2013
+    window: { start: "2016-01" }
     # wave 2 (lb/prices): every group and sub-group for every state and sector, the 299
-    # items and the NSO back series (2011-12 levels) -> buildCpi2012Deep in cpi.mjs
+    # items, and the years 2012 to 2015 before the window above (cpi-2012-early*, 2012 and
+    # 2013 resting on the NSO back series) -> buildCpi2012Deep in cpi.mjs
     deep2012: true
     # ---- base 2024=100 (rebased series) ----
     # The 2012-base stream stopped at Dec 2025; from Jan 2025 the API serves a
@@ -1657,24 +1658,45 @@ seams:
     - base: "2012=100"
       from: "2011-01"
       to: "2025-12"
-      bundles: [cpi, cpi-rural, cpi-urban, cpi-subgroups, cpi-states, cpi-states-sectors]
+      bundles: [cpi, cpi-rural, cpi-urban, cpi-subgroups, cpi-states, cpi-states-sectors,
+        cpi-groups, cpi-rural-detail, cpi-urban-detail, cpi-states-groups, cpi-states-groups-rural, cpi-states-groups-urban,
+        cpi-states-subgroups, cpi-states-subgroups-rural, cpi-states-subgroups-urban, cpi-items-2012]   # second line on: prices wave 2
+      bridge:
+        kind: agency back series
+        what: "NSO back series on the 2012=100 base (series=Back): index levels for 2011 and 2012, every state, sector, group and sub-group; carries y/y for 2012, and for 2013 at the handoff to the Current series; 2014-15 are Current over Current"
+        from: "2012-01"
+        to: "2015-12"
+        bundles: [cpi-2012-early, cpi-2012-early-states]
     - base: "2024=100"
       from: "2013-01"        # series=Back from 2013; series=Current from 2025-01
       to: null
-      bundles: [cpi-2024, cpi-2024-sectors, cpi-2024-groups, cpi-2024-items, cpi-2024-states, cpi-2024-states-sectors]
+      bundles: [cpi-2024, cpi-2024-sectors, cpi-2024-groups, cpi-2024-items, cpi-2024-states, cpi-2024-states-sectors,
+        cpi-2024-classes, cpi-2024-subclasses, cpi-2024-rural-divisions, cpi-2024-rural-groups, cpi-2024-rural-classes, cpi-2024-rural-subclasses, cpi-2024-rural-items,
+        cpi-2024-urban-divisions, cpi-2024-urban-groups, cpi-2024-urban-classes, cpi-2024-urban-subclasses, cpi-2024-urban-items,
+        cpi-2024-states-divisions, cpi-2024-states-divisions-rural, cpi-2024-states-divisions-urban,
+        cpi-2024-states-groups, cpi-2024-states-groups-rural, cpi-2024-states-groups-urban]   # second line on: prices wave 2
       bridge:
         kind: agency back series
-        what: "NSO back-cast of the 2024=100 General index, All India, 2013 to 2024 (series=Back); headline only, no components"
-        bundles: [cpi-2024-back, cpi-2024-linked]
+        what: "NSO back-cast of the 2024=100 General index, 2013 to 2024 (series=Back): All India combined, and (prices wave 2) rural and urban; headline only, no components"
+        bundles: [cpi-2024-back, cpi-2024-linked, cpi-2024-back-sectors]
   wpi:
     - base: "2011-12=100"
       from: "2012-04"
       to: "2026-04"
-      bundles: [wpi, wpi-groups, wpi-subgroups, wpi-items]
+      bundles: [wpi, wpi-groups, wpi-subgroups, wpi-items, wpi-subsubgroups]
     - base: "2022-23=100"
       from: "2023-04"
       to: null
-      bundles: [wpi-2022, wpi-2022-groups, wpi-2022-subgroups, wpi-2022-items]
+      bundles: [wpi-2022, wpi-2022-groups, wpi-2022-subgroups, wpi-2022-items, wpi-2022-subsubgroups]
+    # prices wave 2: the two retired bases the API still serves
+    - base: "2004-05=100"
+      from: "2005-04"
+      to: "2017-03"
+      bundles: [wpi-2004, wpi-2004-groups, wpi-2004-subgroups, wpi-2004-subsubgroups, wpi-2004-items]
+    - base: "1993-94=100"
+      from: "1994-04"
+      to: "2010-12"
+      bundles: [wpi-1993, wpi-1993-groups, wpi-1993-subgroups, wpi-1993-subsubgroups, wpi-1993-items]
   iip:
     - base: "1993-94=100"
       from: "1994-04"
@@ -1741,11 +1763,11 @@ seams:
     - base: "1986-87=100"
       from: "1995-07"
       to: "2025-05"
-      bundles: [cpialrl-1986, cpialrl-states-1986]
+      bundles: [cpialrl-1986, cpialrl-states-1986, cpialrl-states-rl-1986, cpialrl-states-groups-1986]
     - base: "2019=100"
       from: "2025-06"
       to: null
-      bundles: [cpialrl-2019, cpialrl-groups-2019, cpialrl-states-2019]
+      bundles: [cpialrl-2019, cpialrl-groups-2019, cpialrl-states-2019, cpialrl-states-rl-2019, cpialrl-states-groups-2019, cpialrl-groups-rl-2019]
   asi:
     # not price bases: NIC classification blocks, equally never joined
     - base: "NIC 1987"

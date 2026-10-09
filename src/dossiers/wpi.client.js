@@ -8,8 +8,12 @@ import groupsBundle from "../../data/series/wpi-groups.json";
 import subgroupsBundle from "../../data/series/wpi-subgroups.json";
 import itemsBundle from "../../data/series/wpi-items.json";
 import wpi2022Bundle from "../../data/series/wpi-2022.json";
+// wave 2 (lb/prices): the retired bases, and CPI food for the wholesale-to-retail plate
+import wpi1993Bundle from "../../data/series/wpi-1993.json";
+import wpi2004Bundle from "../../data/series/wpi-2004.json";
+import cpiBundle from "../../data/series/cpi.json";
 import {
-  MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend, seamMarks, seamOverlap,
+  SEAM_RULE, MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend, seamMarks, seamOverlap,
   peakOf, peakBetween, troughOf, dodgeEndLabels, spark, saveBlob, makePlacer, annotationSpot,
 } from "../charts/plumbing.js";
 
@@ -518,6 +522,138 @@ const SHORT = {
     const csv = [header, ...rows].map((r) => r.join(",")).join("\n");
     saveBlob(new Blob([csv], { type: "text/csv" }), `india-atlas_wpi_697-items_cross-section_${itemsBundle.meta.latestPeriod}.csv`);
   });
+}
+
+/* ---------- shared multi-line plate renderer (copied from cpi.client.js, wave 2) ---------- */
+function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, fmtX, dlName, a11yTitle, a11yDesc, opts = {}) {
+  const { band = false, fmtCross = fmtDate, recentN = 13 } = opts;
+  const seriesList = keys.map((k) => store[k]);
+  const dts = seriesList[0].data.map((d) => d.date);
+  const dodged = dodgeEndLabels(seriesList, (geo.d1 - geo.d0) * 0.06);
+  const marks = [
+    Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+    band ? Plot.rectY([{ y1: 2, y2: 6 }], { y1: "y1", y2: "y2", x1: dts[0], x2: dts.at(-1), fill: "#F4F6FD" }) : null,
+    Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+    geo.d0 <= 0 && geo.d1 >= 0 ? Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }) : null,
+    ...keys.slice(1).map((k) => Plot.lineY(store[k].data, { x: "date", y: "value", stroke: store[k].color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" })),
+    Plot.lineY(store[keys[0]].data, { x: "date", y: "value", stroke: store[keys[0]].color, strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
+    /* recent emphasis is a "last year" idiom — meaningless on a sub-year series */
+    seriesList[0].data.length >= 13
+      ? Plot.lineY(store[keys[0]].data.slice(-recentN), { x: "date", y: "value", stroke: store[keys[0]].color, strokeWidth: 4.5, strokeLinecap: "round", strokeLinejoin: "round" })
+      : null,
+    ...seriesList.map((s) => Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: s === seriesList[0] ? 5 : 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
+    ...dodged.filter((p) => Math.abs(p.y - p.value) > 0.05).map((p) => Plot.line([
+      { x: dts.at(-1), y: p.value }, { x: dts.at(-1), y: p.y },
+    ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
+    ...dodged.map((p) => Plot.text([{ date: dts.at(-1), y: p.y }], {
+      x: "date", y: "y", text: () => `${p.s.endLabel ?? p.s.label} ${p.value.toFixed(2)}%`,
+      dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono,
+      fontWeight: p.s === seriesList[0] ? 500 : 400, textAnchor: "start",
+    })),
+  ].filter(Boolean);
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+    x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: fmtX },
+    y: { label: "↑ year-on-year, per cent", labelAnchor: "top", labelArrow: false,
+         tickFormat: (d) => (d === yTicks[yTicks.length - 1] ? d + "%" : String(d)), ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
+    marks,
+  });
+  a11y(plot, a11yTitle, a11yDesc);
+  document.getElementById(plotId).append(plot);
+  wireTools(document.getElementById(blockId), plot, seriesList, dlName, fmtCross);
+  addCrosshair(document.getElementById(plotId), plot, seriesList, geo, fmtCross);
+  return plot;
+}
+
+/* ---------- §02 thirty years on four rulers (wave 2, lb/prices) ---------- */
+{
+  const MLONG = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const longD = (d) => MLONG[d.getUTCMonth()] + " " + d.getUTCFullYear();
+  const B = { b1993: hydrate(wpi1993Bundle).headline, b2004: hydrate(wpi2004Bundle).headline, b2011: S.headline, b2022: N.headline };
+  const COL = { b1993: "#C9CED6", b2004: "#A3A9B4", b2011: "#5F6675", b2022: "#2E4BD8" };
+  const LAB = { b1993: "Base 1993–94", b2004: "Base 2004–05", b2011: "Base 2011–12", b2022: "Base 2022–23" };
+  const rulers = Object.entries(B).map(([k, s]) => ({ ...s, key: k, color: COL[k], label: LAB[k], data: s.data.filter((d) => d.value != null) }));
+  const all = rulers.flatMap((r) => r.data);
+  const peak = all.reduce((a, b) => (b.value > a.value ? b : a)), trough = all.reduce((a, b) => (b.value < a.value ? b : a));
+  const lo = Math.floor(trough.value / 5) * 5, hi = Math.ceil(peak.value / 5) * 5;
+  const yTicks = []; for (let t = lo; t <= hi; t += 5) yTicks.push(t);
+  const geo = { W: 1184, H: 520, ml: 70, mr: 160, mt: 40, mb: 48, d0: lo - 1, d1: hi + 1 };
+  const y0 = rulers[0].data[0].date.getUTCFullYear(), y1 = rulers.at(-1).data.at(-1).date.getUTCFullYear();
+  const xTicks = []; for (let y = Math.ceil(y0 / 5) * 5; y <= y1; y += 5) xTicks.push(new Date(Date.UTC(y, 0, 1)));
+  const owner = (d) => rulers.find((r) => r.data.includes(d));
+  const end = rulers.at(-1).data.at(-1);
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+    x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => String(d.getUTCFullYear()) },
+    y: { label: "↑ year-on-year, per cent", labelAnchor: "top", labelArrow: false, ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11,
+         tickFormat: (d) => (d === yTicks.at(-1) ? d + "%" : String(d)) },
+    marks: [
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+      Plot.ruleX(rulers.slice(1, -1).map((r) => r.data[0].date), { stroke: SEAM_RULE, strokeWidth: 1 }),
+      ...seamMarks("side", rulers, { solid: true }),
+      Plot.text(rulers, { x: (r) => r.data[0].date, y: geo.d1 - 1, text: (r) => r.label, dx: 6, textAnchor: "start", fill: "#5F6675", fontSize: 12, fontFamily: mono }),
+      Plot.dot([peak, trough], { x: "date", y: "value", fill: "#878D99", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([peak], { x: "date", y: "value", text: (d) => d.value.toFixed(1) + "%, " + fmtDate(d.date), dx: 10, textAnchor: "start", fill: "#5F6675", fontSize: 12, fontFamily: mono }),
+      Plot.text([trough], { x: "date", y: "value", text: (d) => d.value.toFixed(1) + "%, " + fmtDate(d.date), dy: 16, textAnchor: "middle", fill: "#5F6675", fontSize: 12, fontFamily: mono }),
+      Plot.dot([end], { x: "date", y: "value", fill: "#2E4BD8", r: 4, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([end], { x: "date", y: "value", text: (d) => "Base 2022–23 " + d.value.toFixed(2) + "%", dx: 12, textAnchor: "start", fill: "#161A22", fontSize: 12.5, fontWeight: 500, fontFamily: mono }),
+    ],
+  });
+  a11y(plot, "Headline WPI, year-on-year, on four bases, " + y0 + " to " + y1,
+    "Four line charts on one time axis, never joined: bases 1993-94, 2004-05, 2011-12 and 2022-23. The highest reading is " + peak.value.toFixed(1) + " per cent in " + longD(peak.date) + " (" + owner(peak).label + "); the lowest " + trough.value.toFixed(1) + " per cent in " + longD(trough.date) + ". The newest base ends at " + end.value.toFixed(1) + " per cent.");
+  document.getElementById("plot-long").append(plot);
+  wireTools(document.getElementById("cb-long"), plot, rulers, "india-atlas_wpi_four-bases_" + y0 + "-" + y1, fmtDate);
+  wireLegend(document.getElementById("legend-long"), plot, Object.keys(B), Object.fromEntries(Object.entries(COL).map(([k, c]) => [k, { color: c }])));
+  setTxt("pv-long", f1(end.value));
+  setTxt("pc-long", fmtDate(end.date) + ", base 2022–23");
+  setTxt("long-peak", peak.value.toFixed(1) + "% in " + longD(peak.date) + ", on the " + owner(peak).label.toLowerCase().replace("base ", "") + " base");
+  setTxt("long-trough", trough.value.toFixed(1) + "% in " + longD(trough.date) + ", on the " + owner(trough).label.toLowerCase().replace("base ", "") + " base");
+  setTxt("long-now", f1(end.value));
+}
+
+/* ---------- §11 wholesale food against retail food (wave 2, lb/prices) ----------
+ * Two instruments, one axis: WPI food index (2011-12) and CPI food and beverages (2012),
+ * on the months both cover. The lag is computed here: the shift of the CPI line (0 to 6
+ * months later) with the highest correlation to the WPI line. */
+{
+  const C = hydrate(cpiBundle);
+  const cpiT = new Map(C.food.data.map((d) => [d.date.getTime(), d.value]));
+  const pts = S.food_index.data.filter((d) => d.value != null && cpiT.get(d.date.getTime()) != null)
+    .map((d) => ({ date: d.date, w: d.value, c: cpiT.get(d.date.getTime()) }));
+  const corr = (a, b) => { const n = a.length, ma = a.reduce((x, y) => x + y, 0) / n, mb = b.reduce((x, y) => x + y, 0) / n;
+    let sab = 0, saa = 0, sbb = 0; for (let i = 0; i < n; i++) { sab += (a[i] - ma) * (b[i] - mb); saa += (a[i] - ma) ** 2; sbb += (b[i] - mb) ** 2; } return sab / Math.sqrt(saa * sbb); };
+  const fits = [0, 1, 2, 3, 4, 5, 6].map((lag) => ({ lag, r: corr(pts.slice(0, pts.length - lag).map((p) => p.w), pts.slice(lag).map((p) => p.c)) }));
+  const best = fits.reduce((a, b) => (b.r > a.r ? b : a));
+  const V = {
+    wpi: { name: "wpi_food_index_yoy_pct", label: "Wholesale food", color: "#2E4BD8", data: pts.map((p) => ({ date: p.date, value: p.w })) },
+    cpi: { name: "food_beverages_yoy_pct", label: "Retail food", color: "#C47A16", data: pts.map((p) => ({ date: p.date, value: p.c })) },
+  };
+  const vals = pts.flatMap((p) => [p.w, p.c]);
+  const lo = Math.floor(Math.min(...vals) / 2) * 2, hi = Math.ceil(Math.max(...vals) / 2) * 2;
+  const yTicks = []; for (let t = lo; t <= hi; t += 2) yTicks.push(t);
+  const geo = { W: 1184, H: 480, ml: 70, mr: 170, mt: 30, mb: 48, d0: lo - 0.5, d1: hi + 0.5 };
+  const xTicks = []; for (let y = pts[0].date.getUTCFullYear(); y <= pts.at(-1).date.getUTCFullYear(); y += 2) xTicks.push(new Date(Date.UTC(y, 0, 1)));
+  const MLONG = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const plot = multiLine("cb-w2r", "plot-w2r", ["wpi", "cpi"], V, geo, yTicks, xTicks, (d) => String(d.getUTCFullYear()),
+    "india-atlas_wpi-food_vs_cpi-food",
+    "Wholesale food prices (WPI food index) against retail food prices (CPI food and beverages), year-on-year, " + fmtDate(pts[0].date) + " to " + fmtDate(pts.at(-1).date),
+    "Two line charts. Wholesale food swings wider than retail food. The retail line matches the wholesale line best " + best.lag + " months later, correlation " + best.r.toFixed(2) + ".");
+  wireLegend(document.getElementById("legend-w2r"), plot, ["wpi", "cpi"], V);
+  const rng = (k) => { const v = pts.map((p) => p[k]); return f1(Math.min(...v)) + " and " + f1(Math.max(...v)); };
+  setTxt("w2r-span", fmtDate(pts[0].date) + " to " + fmtDate(pts.at(-1).date));
+  setTxt("w2r-title", best.lag === 0 ? "Retail food moves with wholesale food, softer" : `Retail food follows wholesale food about ${best.lag} month${best.lag > 1 ? "s" : ""} later, and softer`);
+  setTxt("pv-w2r", best.lag + (best.lag === 1 ? " month" : " months"));
+  setTxt("pc-w2r", "best-fitting lag, correlation " + best.r.toFixed(2));
+  setTxt("w2r-n", String(pts.length));
+  setTxt("w2r-lag", best.lag + (best.lag === 1 ? " month" : " months"));
+  setTxt("w2r-r", best.r.toFixed(2));
+  setTxt("w2r-wrange", rng("w"));
+  setTxt("w2r-crange", rng("c"));
 }
 
 /* ---------- ledger sparklines ---------- */

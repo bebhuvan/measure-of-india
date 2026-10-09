@@ -108,8 +108,7 @@ export async function buildCpi(root, dcfg, vintage) {
     for (const c of allCodes) if (subByCode[c].name === name) return subByCode[c].key;
     return null;
   };
-  // first year fetched: one year before the window opens, so the window's first y/y exists
-  const startYear = Number(dcfg.window.start.slice(0, 4)) - 1;
+  const startYear = 2014;
   const endYear = new Date().getUTCFullYear();
 
   // canonical keys for the six groups + published headline
@@ -337,7 +336,7 @@ export async function buildCpi(root, dcfg, vintage) {
   writeSeries(root, "data/series/cpi-states.json", bundleStates);
   writeSeries(root, "data/series/cpi-states-sectors.json", bundleStatesSectors);
 
-  if (dcfg.deep2012) await buildCpi2012Deep(root, dcfg, vintage, { states, axis, releaseDate, startYear, endYear });
+  if (dcfg.deep2012) await buildCpi2012Deep(root, dcfg, vintage, { states, axis, releaseDate, endYear });
   if (dcfg.fetch2024) await buildCpi2024(root, dcfg, vintage);
   if (dcfg.archive2010) await buildCpi2010Archive(root, dcfg, vintage);
   return bundleCombined;
@@ -819,11 +818,11 @@ export async function buildCpi2024(root, dcfg, vintage) {
  *   cpi-states-groups[-rural|-urban]   state x every group (General is in cpi-states)
  *   cpi-states-subgroups[-rural|-urban] state x every sub-group
  *   cpi-items-2012                     the 299 items, All India combined (served from 2014)
- *   cpi-2012-back, cpi-2012-back-states  the NSO's back series on this base (series=Back,
- *                                      levels for 2011 and 2012): y/y for 2012 from Back over
- *                                      Back, and for 2013 at the handoff, Current 2013 over
- *                                      Back 2012. Same 2012=100 ruler; an agency bridge in
- *                                      sources.yml seams, never folded into the main bundles.
+ *   cpi-2012-early, cpi-2012-early-states  2012 to 2015, the years before the main bundles'
+ *                                      window: 2012 from the NSO back series (series=Back, levels
+ *                                      for 2011 and 2012), 2013 at the handoff (Current 2013 over
+ *                                      Back 2012), 2014-15 Current over Current. One 2012=100
+ *                                      ruler; an agency bridge in sources.yml seams.
  *
  * Fetching. One call per (state, sector, year) carries every group and sub-group (about 336
  * rows, 4 pages). The API's pagination on this base is LOSSY: a page boundary can repeat
@@ -851,7 +850,8 @@ async function fetch2012Year(dcfg, params, keyOf) {
   return { rows: out, refetched };
 }
 
-async function buildCpi2012Deep(root, dcfg, vintage, { states, axis, releaseDate, startYear, endYear }) {
+async function buildCpi2012Deep(root, dcfg, vintage, { states, axis, releaseDate, endYear }) {
+  const startYear = 2013;   // the Current series serves levels from January 2013
   const SEC = { combined: 3, rural: 1, urban: 2 };
   const nodeKey = (r) => (/-overall$/i.test(r.subgroup ?? "") || r.subgroup == null ? `g:${r.group}` : `s:${r.group}|${r.subgroup}`);
   const nodeLabel = (k) => (k.startsWith("g:") ? k.slice(2) : k.split("|")[1]);
@@ -944,29 +944,32 @@ async function buildCpi2012Deep(root, dcfg, vintage, { states, axis, releaseDate
     }
     out["cpi-items-2012"] = { meta: { ...meta(`All India, Combined; the ${Object.keys(series).length} items of the 2012 basket (served from January 2014, so y/y from January 2015)`), note: "Item indices carry no weights in the API, so no recomposition is asserted. latest_level is each item's index (2012=100) at its last published month." }, dates: itAxis.map((m) => `${m}-01`), series };
   }
-  // the back series bridge: 2012 and 2013 y/y
+  // the early years, 2012 to 2015: before the main bundles' window opens (January 2016).
+  // y/y for 2012 is Back over Back, for 2013 Current over Back (the handoff), for 2014 and
+  // 2015 Current over Current: one 2012=100 ruler throughout, the first two years resting on
+  // the NSO's own back series (an agency bridge in sources.yml seams).
   {
-    const bax = monthAxis("2012-01", "2013-12");
+    const eax = monthAxis("2012-01", "2015-12");
     const joined = (sector, stKey, k) => {
       const m = new Map();
       for (const [ym, v] of lv.Back[sector]?.[stKey]?.[k] ?? []) if (ym <= "2012-12") m.set(ym, v);
-      for (const [ym, v] of lv.Current[sector]?.[stKey]?.[k] ?? []) if (ym.startsWith("2013")) m.set(ym, v);
+      for (const [ym, v] of lv.Current[sector]?.[stKey]?.[k] ?? []) if (ym >= "2013-01" && ym <= "2015-12") m.set(ym, v);
       return m;
     };
     const mk = (stFilter) => {
       const series = {};
       for (const st of stList.filter(stFilter)) for (const sector of ["combined", "rural", "urban"]) {
-        const nodes = new Set([...Object.keys(lv.Back[sector]?.[st.key] ?? {})]);
+        const nodes = new Set([...Object.keys(lv.Back[sector]?.[st.key] ?? {}), ...Object.keys(lv.Current[sector]?.[st.key] ?? {})]);
         for (const k of [...nodes].sort()) {
-          const s = ser(joined(sector, st.key, k), bax, { name: `cpi_back_${st.key}_${sector}_${keyName(k)}_yoy_pct`, label: `${st.key === "all_india" ? "" : st.name + ": "}${nodeLabel(k)}, ${sector}`, group: st.key === "all_india" ? sector : st.name });
+          const s = ser(joined(sector, st.key, k), eax, { name: `cpi_early_${st.key}_${sector}_${keyName(k)}_yoy_pct`, label: `${st.key === "all_india" ? "" : st.name + ": "}${nodeLabel(k)}, ${sector}`, group: st.key === "all_india" ? sector : st.name });
           if (s.data.some((v) => v != null)) series[`${st.key === "all_india" ? "" : st.key + "__"}${sector}__${keyName(k)}`] = s;
         }
       }
       return series;
     };
-    const note = "The NSO's back series on the 2012 base (series=Back: index levels for 2011 and 2012, 2012=100). Year-on-year for 2012 is Back over Back; for 2013 it is computed at the handoff, the Current 2013 level over the Back 2012 level. Both are the same 2012=100 ruler, published by the NSO; kept in its own bundle so the main 2012-base bundles hold the Current series only.";
-    out["cpi-2012-back"] = { meta: { ...meta("All India, three sectors; every group and sub-group, 2012 and 2013, from the NSO back series"), latestPeriod: "2013-12", releaseDate: null, note }, dates: bax.map((m) => `${m}-01`), series: mk((st) => st.key === "all_india") };
-    out["cpi-2012-back-states"] = { meta: { ...meta("States/UTs, three sectors; every group and sub-group, 2012 and 2013, from the NSO back series"), latestPeriod: "2013-12", releaseDate: null, note }, dates: bax.map((m) => `${m}-01`), series: mk((st) => st.key !== "all_india") };
+    const note = "The 2012 base's early years, January 2012 to December 2015, before this guide's main 2012-base bundles open (January 2016). One 2012=100 ruler: y/y for 2012 is the NSO back series (series=Back) over itself, for 2013 the Current level over the Back level a year earlier, for 2014 and 2015 Current over Current.";
+    out["cpi-2012-early"] = { meta: { ...meta("All India, three sectors; every group and sub-group, 2012 to 2015"), latestPeriod: "2015-12", releaseDate: null, note }, dates: eax.map((m) => `${m}-01`), series: mk((st) => st.key === "all_india") };
+    out["cpi-2012-early-states"] = { meta: { ...meta("States/UTs, three sectors; every group and sub-group, 2012 to 2015"), latestPeriod: "2015-12", releaseDate: null, note }, dates: eax.map((m) => `${m}-01`), series: mk((st) => st.key !== "all_india") };
   }
 
   // raw: every level read, one row string per (series, sector, state, node)

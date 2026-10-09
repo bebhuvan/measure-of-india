@@ -21,8 +21,13 @@
 //   - Values are rupees per day, two decimals. A state does not report every occupation every
 //     month; the Bureau publishes no figure then (null here, interior gaps declared).
 //
-// Hand check (2026-10-09): All India, general agricultural labourers (code 1210), latest
-// month in the report; see docs/status/cpi.md.
+// Men's wages: RBI's Handbook of Statistics on Indian States reproduces this series as
+// "Average daily wage rates in rural India (men)", tables 112 to 115.
+//
+// Hand check (2026-10-10): the 2024-25 average of the monthly general agricultural labourer
+// wage (code 1210) is Rs 868.7 for Kerala, 454.3 Karnataka, 384.8 Assam, 362.8 Bihar and
+// 280.8 Gujarat; RBI Handbook 2024-25, table 113 (men, general agricultural labourers),
+// prints the same five figures.
 import { databankRoot, dbieReport } from "../databank.mjs";
 import { writeSeries, writeRaw, monthAxis } from "../util.mjs";
 import { writeCatalogue, idPart, catalogueCli, sourceCfg } from "../catalogue.mjs";
@@ -104,7 +109,7 @@ export async function buildWagesRural(root, dcfg, vintage, cfg) {
         dossier: "wages-rural", frequency: "monthly", base: s === "1998" ? "occupations 1998 (18)" : "occupations 2013 (25)",
         unit: "inr", source: dcfg.source_agency, vintage: V, mock: false, geo: dcfg.geo ?? "IND",
         latestPeriod: axis.at(-1), releaseDate: null, revisionPolicy: dcfg.revision_policy, coverage,
-        note: `Average daily wage rate, rupees per day, men, from the Labour Bureau's Wage Rates in Rural India (RBI DBIE report 664). ${s === "1998" ? "Old occupation scheme (18 occupations), April 1998 to October 2013." : "New occupation scheme (25 occupations), from November 2013."} Never joined to the other scheme.`,
+        note: `Average daily wage rate for men, rupees per day, from the Labour Bureau's Wage Rates in Rural India (RBI DBIE report 664). ${s === "1998" ? "Old occupation scheme (18 occupations), April 1998 to October 2013." : "New occupation scheme (25 occupations), from November 2013."} Never joined to the other scheme.`,
       },
       dates, series,
     };

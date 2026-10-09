@@ -193,6 +193,21 @@ export const UNITS = {
     ["ltr", "litres"], ["mtr", "metres"], ["cum", "CUM"], ["thn", "THN"], ["ctm", "CTM"], ["crt", "CRT"], ["thd", "THD"], ["tkw", "TKW"], ["gif", "GIF"], ["c_k", "C/K"], ["none", "no unit printed"]]
     .map(([k, w]) => [`qty_${k}`, { kind: "pct", fmt: (v) => grp(v) + (k === "none" ? "" : " " + w), note: k === "none" ? "quantity, no unit printed" : `quantity, unit as printed (${k.toUpperCase().replace("_", "/")})` }])),
   // --- end trade ---
+  // --- prices (lb/prices, wave 2) ---
+  "cpi-2024-classes": "Class", "cpi-2024-subclasses": "Sub-class", "cpi-2024-back-sectors": "Sector",
+  ...Object.fromEntries(["rural", "urban"].flatMap((sec) => [["divisions", "Division"], ["groups", "Group"], ["classes", "Class"], ["subclasses", "Sub-class"], ["items", "Item"]].map(([l, c]) => [`cpi-2024-${sec}-${l}`, `${c}, ${sec}`]))),
+  ...Object.fromEntries(["", "-rural", "-urban"].flatMap((sec) => [[`cpi-2024-states-divisions${sec}`, `State and division${sec ? ", " + sec.slice(1) : ""}`], [`cpi-2024-states-groups${sec}`, `State and group${sec ? ", " + sec.slice(1) : ""}`],
+    [`cpi-states-groups${sec}`, `State and group${sec ? ", " + sec.slice(1) : ""}`], [`cpi-states-subgroups${sec}`, `State and sub-group${sec ? ", " + sec.slice(1) : ""}`]])),
+  "cpi-groups": "Group", "cpi-rural-detail": "Group and sub-group, rural", "cpi-urban-detail": "Group and sub-group, urban", "cpi-items-2012": "Item",
+  "cpi-2012-early": "Sector, group and sub-group", "cpi-2012-early-states": "State, sector, group and sub-group",
+  "cpiiw-2016": "Group", "cpiiw-2001": "Group", "cpiiw-1982": "Group", "cpiiw-1960": "Group",
+  "cpiiw-centres-2016": "Centre", "cpiiw-centres-2001": "Centre", "cpiiw-centres-1982": "Centre",
+  "wages-rural-2013": "Occupation", "wages-rural-1998": "Occupation", "wages-rural-states-2013": "State and occupation", "wages-rural-states-1998": "State and occupation",
+  "cpialrl-states-rl-2019": "State", "cpialrl-states-rl-1986": "State", "cpialrl-groups-rl-2019": "Group",
+  "cpialrl-states-groups-2019": "State and group", "cpialrl-states-groups-1986": "State and group",
+  "wpi-subsubgroups": "Sub-sub-group", "wpi-2022-subsubgroups": "Sub-sub-group",
+  ...Object.fromEntries(["2004", "1993"].flatMap((t) => [[`wpi-${t}`, "All India"], [`wpi-${t}-groups`, "Group"], [`wpi-${t}-subgroups`, "Sub-group"], [`wpi-${t}-subsubgroups`, "Sub-sub-group"], [`wpi-${t}-items`, "Item"]])),
+  // --- end prices ---
 };
 
 // series.unit, then what the series name says, then the bundle's meta.unit: a bundle-level

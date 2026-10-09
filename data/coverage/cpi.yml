@@ -1,10 +1,7 @@
 # Coverage ledger: Consumer Price Index, MoSPI (docs/CONTRACT-coverage.md).
 # Catalogue: node scripts/lib/products/cpi.mjs --catalogue. First matching rule wins.
-# Items no rule decides are omissions the gate reports on purpose (listed for the
-# coordinator in docs/status/framework.md): base-2024 classes and sub-classes, base-2024
-# rural/urban and state detail below the General index, base-2012 groups outside food and
-# fuel, rural and urban sub-groups, state groups, the 299 base-2012 items, and the
-# 2011-13 base-2012 back series.
+# Wave 2 (lb/prices, 2026-10-10) decided every item the first ledger left pending: see the
+# block at the end. Nothing is pending.
 family: cpi
 guides: [cpi]
 catalogue: data/coverage/cpi.catalogue.json
@@ -79,38 +76,106 @@ rules:
     status: excluded
     reason: "The 2010 base is a 48-month fragment, 2011 to 2014, on the pre-2012 group scheme, wholly overlapped and superseded by the 2012 base; it is archived raw (data/raw/cpi-2010-indices.json) and not baked."
 
-  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
-  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
-  - match:
-      - "cpi:2012-back:*:combined:group:*"
-      - "cpi:2012-back:*:combined:subgroup:*"
-      - "cpi:2012-back:*:rural:group:*"
-      - "cpi:2012-back:*:rural:subgroup:*"
-      - "cpi:2012-back:*:urban:group:*"
-      - "cpi:2012-back:*:urban:subgroup:*"
-      - "cpi:2012:*:combined:group:*"
-      - "cpi:2012:*:combined:item:*"
-      - "cpi:2012:*:combined:subgroup:*"
-      - "cpi:2012:*:rural:group:*"
-      - "cpi:2012:*:rural:subgroup:*"
-      - "cpi:2012:*:urban:group:*"
-      - "cpi:2012:*:urban:subgroup:*"
-      - "cpi:2024-back:all-india:rural:general"
-      - "cpi:2024-back:all-india:urban:general"
-      - "cpi:2024:*:combined:class:*"
-      - "cpi:2024:*:combined:division:*"
-      - "cpi:2024:*:combined:group:*"
-      - "cpi:2024:*:combined:item:*"
-      - "cpi:2024:*:combined:subclass:*"
-      - "cpi:2024:*:rural:class:*"
-      - "cpi:2024:*:rural:division:*"
-      - "cpi:2024:*:rural:group:*"
-      - "cpi:2024:*:rural:item:*"
-      - "cpi:2024:*:rural:subclass:*"
-      - "cpi:2024:*:urban:class:*"
-      - "cpi:2024:*:urban:division:*"
-      - "cpi:2024:*:urban:group:*"
-      - "cpi:2024:*:urban:item:*"
-      - "cpi:2024:*:urban:subclass:*"
-    status: pending
-    scheduled: "wave 2: prices deeper"
+  # ---- wave 2 (lb/prices, 2026-10-10): every item the framework left pending, decided ----
+  # base 2024, All India, below the divisions and by sector
+  - match: "cpi:2024:all-india:combined:class:*"
+    status: baked
+    bundle: cpi-2024-classes
+  - match: "cpi:2024:all-india:combined:subclass:*"
+    status: baked
+    bundle: cpi-2024-subclasses
+  - match: ["cpi:2024:all-india:rural:division:*", "cpi:2024:all-india:urban:division:*"]
+    status: shown
+    bundle: [cpi-2024-rural-divisions, cpi-2024-urban-divisions]
+    plate: "§03 Village and town, division by division"
+  - match: "cpi:2024:all-india:rural:group:*"
+    status: baked
+    bundle: cpi-2024-rural-groups
+  - match: "cpi:2024:all-india:urban:group:*"
+    status: baked
+    bundle: cpi-2024-urban-groups
+  - match: "cpi:2024:all-india:rural:class:*"
+    status: baked
+    bundle: cpi-2024-rural-classes
+  - match: "cpi:2024:all-india:urban:class:*"
+    status: baked
+    bundle: cpi-2024-urban-classes
+  - match: "cpi:2024:all-india:rural:subclass:*"
+    status: baked
+    bundle: cpi-2024-rural-subclasses
+  - match: "cpi:2024:all-india:urban:subclass:*"
+    status: baked
+    bundle: cpi-2024-urban-subclasses
+  - match: "cpi:2024:all-india:rural:item:*"
+    status: baked
+    bundle: cpi-2024-rural-items
+  - match: "cpi:2024:all-india:urban:item:*"
+    status: baked
+    bundle: cpi-2024-urban-items
+  # base 2024, states
+  - match: "cpi:2024:*:combined:division:*"
+    status: shown
+    bundle: cpi-2024-states-divisions
+    plate: "§11 Your state, division by division"
+  - match: "cpi:2024:*:rural:division:*"
+    status: baked
+    bundle: cpi-2024-states-divisions-rural
+  - match: "cpi:2024:*:urban:division:*"
+    status: baked
+    bundle: cpi-2024-states-divisions-urban
+  - match: "cpi:2024:*:combined:group:*"
+    status: baked
+    bundle: cpi-2024-states-groups
+  - match: "cpi:2024:*:rural:group:*"
+    status: baked
+    bundle: cpi-2024-states-groups-rural
+  - match: "cpi:2024:*:urban:group:*"
+    status: baked
+    bundle: cpi-2024-states-groups-urban
+  - match: ["cpi:2024:*:*:class:*", "cpi:2024:*:*:subclass:*", "cpi:2024:*:*:item:*"]
+    status: excluded
+    archive: true
+    rolls_up_to: [cpi-2024-states-groups, cpi-2024-states-groups-rural, cpi-2024-states-groups-urban]
+    reason: "Published by the NSO for every state and sector at class, sub-class and item level: about 600,000 index values a year, too many for a chart bundle. Held for the deep-archive tier (data/archive/staging/cpi/, long csv.gz with index, y/y, the NSO's own inflation and the imputation flag); state by group is baked."
+  - match: ["cpi:2024-back:all-india:rural:general", "cpi:2024-back:all-india:urban:general"]
+    status: baked
+    bundle: cpi-2024-back-sectors
+  # base 2012
+  - match: ["cpi:2012:all-india:combined:group:2-pan-tobacco-and-intoxicants", "cpi:2012:all-india:combined:group:3-clothing-and-footwear", "cpi:2012:all-india:combined:group:4-housing", "cpi:2012:all-india:combined:group:6-miscellaneous"]
+    status: shown
+    bundle: cpi-groups
+    plate: "§08 The rest of the old basket: housing, clothing, pan and the services block"
+  - match: "cpi:2012:all-india:rural:*"
+    status: baked
+    bundle: cpi-rural-detail
+  - match: "cpi:2012:all-india:urban:*"
+    status: baked
+    bundle: cpi-urban-detail
+  - match: "cpi:2012:all-india:combined:item:*"
+    status: shown
+    bundle: cpi-items-2012
+    plate: "§09 Thirteen years of the old basket, item by item"
+  - match: "cpi:2012:*:combined:group:*"
+    status: baked
+    bundle: cpi-states-groups
+  - match: "cpi:2012:*:rural:group:*"
+    status: baked
+    bundle: cpi-states-groups-rural
+  - match: "cpi:2012:*:urban:group:*"
+    status: baked
+    bundle: cpi-states-groups-urban
+  - match: "cpi:2012:*:combined:subgroup:*"
+    status: baked
+    bundle: cpi-states-subgroups
+  - match: "cpi:2012:*:rural:subgroup:*"
+    status: baked
+    bundle: cpi-states-subgroups-rural
+  - match: "cpi:2012:*:urban:subgroup:*"
+    status: baked
+    bundle: cpi-states-subgroups-urban
+  - match: "cpi:2012-back:all-india:*"
+    status: baked
+    bundle: cpi-2012-early
+  - match: "cpi:2012-back:*"
+    status: baked
+    bundle: cpi-2012-early-states

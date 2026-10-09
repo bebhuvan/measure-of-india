@@ -12,6 +12,11 @@ import sec24 from "../../../data/series/cpi-2024-sectors.json";
 // periods named in the copy, read from the bundles (src/dossiers/periods.js)
 const P24 = period("cpi-2024"), PS24 = period("cpi-2024-sectors"), PG24 = period("cpi-2024-groups");
 const PI24 = period("cpi-2024-items"), PST24 = period("cpi-2024-states"), PAL = period("cpialrl-2019");
+// wave 2 (lb/prices): CPI-IW and rural wages
+const PIW = period("cpiiw-2016"), PIW60 = period("cpiiw-1960"), PIWC = period("cpiiw-centres-2016");
+const PDR = period("cpi-2024-rural-divisions"), PSD = period("cpi-2024-states-divisions"), P12 = period("cpi-groups"), PIT12 = period("cpi-items-2012");
+const PALS = period("cpialrl-states-2019");
+const PWG = period("wages-rural-2013"), PWGS = period("wages-rural-states-2013");
 const cap = (t) => t[0].toUpperCase() + t.slice(1);
 const h24 = b24.series.headline.data;
 // the current run above the 4% target, if the latest print is above it
@@ -181,6 +186,39 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           <div class="now">
             <span class="mk">As of {PS24.stamp}</span>
             <p>Rural inflation closed {PS24.month} at <b id="ru24-r">–</b> against urban <b id="ru24-u">–</b>: a gap of <b id="ru24-gap">–</b>. The ordering is the same as on the old base, which means the structural cause, food weighing more in the village, survived the rebase. {cap(PS24.nWord)} months is too short to call a trend, but the village is not waiting for permission to run hotter.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-divru" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="divru-title">Village and town, division by division</h3>
+            <div class="sub">Rural against urban, every division of the 2024 base, year-on-year, per cent, {PDR.long}, sorted by the gap</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-divru">–</div><div class="c" id="pc-divru">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-divru">
+            <button class="chip" data-key="rural"><i style="background:#2E4BD8"></i>Rural</button>
+            <button class="chip" data-key="urban"><i style="background:#A3A9B4"></i>Urban</button>
+          </div>
+          <div class="plotzone" id="plot-divru"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, base 2024=100, rural and urban indices as published, each sector weighted by its own spending, so the two dots are separate measurements, not a split of the headline</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The headline plate above says the village runs hotter than the town. This one says where. Each row is one of the twelve divisions, priced separately in rural and urban markets with each sector's own weights. A row where the two dots sit far apart is a part of the household budget where the village and the town are living through different years.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PDR.stamp}</span>
+            <p>In {PDR.month} rural prices ran ahead of urban in <b id="divru-rhi">–</b> of the twelve divisions. The widest gap is in <b id="divru-top">–</b>; the two sectors agree most on <b id="divru-bot">–</b>.</p>
           </div>
         </div>
       </figure>
@@ -451,6 +489,41 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
         </div>
       </figure>
     </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-other" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="other-title">The rest of the old basket: housing, clothing, pan and the services block</h3>
+            <div class="sub">The four groups of the 2012 base beyond food and fuel, All India combined, year-on-year, per cent, {P12.firstShort} to {P12.short}, base 2012=100, retired</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-other">–</div><div class="c" id="pc-other">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-other">
+            <button class="chip" data-key="miscellaneous"><i style="background:#2E4BD8"></i>Miscellaneous</button>
+            <button class="chip" data-key="housing"><i style="background:#5F6675"></i>Housing</button>
+            <button class="chip" data-key="clothing_and_footwear"><i style="background:#A3A9B4"></i>Clothing and footwear</button>
+            <button class="chip" data-key="pan_tobacco_and_intoxicants"><i style="background:#C9CED6"></i>Pan, tobacco</button>
+          </div>
+          <div class="plotzone" id="plot-other"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, group indices, base 2012=100, y/y computed from published levels, housing has no rural index: villagers mostly own their homes, so the rural basket carries no rent</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Food and fuel get the headlines; these four groups were half the old basket by weight. Miscellaneous alone, at 28 per cent, held every service the household buys: doctors, school fees, bus fares, phone bills, haircuts, gold. Housing is rent, and the NSO repriced it only every six months, which is why its line moves in steps. These are the slow groups. They rarely make news, and they set the floor under the headline.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of January 2026</span>
+            <p>The old base closed in {P12.month} with miscellaneous at <b id="oth-misc">–</b>, housing at <b id="oth-housing">–</b>, clothing at <b id="oth-cloth">–</b> and pan at <b id="oth-pan">–</b>. Over the whole span the steadiest of the four was <b id="oth-steady">–</b>, and the most changeable <b id="oth-wild">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
   </section>
 
   <!-- § 09 the sub-indices, a field guide -->
@@ -485,6 +558,42 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <span class="mk">As of January 2026</span>
             <p><b id="sub-n">–</b> of the twenty-one sub-indices ended 2025 outside the tolerance band: <b id="sub-lo">–</b> below its floor, <b id="sub-hi">–</b> above its ceiling. The deflation holding the headline down is concentrated where you would guess: vegetables at <b id="sub-veg">–</b>, pulses at <b id="sub-pulses">–</b>.</p>
             <p>The loudest dial is not food at all. Personal care &amp; effects, the sub-index that carries gold, is running at <b id="sub-gold">–</b>, the highest reading in the grid by a wide margin. And oils &amp; fats, at <b id="sub-oils">–</b>, show that not every food item joined the glut.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-items12" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="items12-title">Thirteen years of the old basket, item by item</h3>
+            <div class="sub">All {PIT12.nWord} items of the 2012 basket ranked by their index level in {PIT12.long}: the price then against the 2012 average, which the base fixes at 100; fifteen dearest-grown and fifteen cheapest-grown shown</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-items12">–</div><div class="c" id="pc-items12">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="ledger tail-ledger">
+            <table>
+              <thead>
+                <tr><th>Item</th><th>Level, 2012=100</th><th>Latest y/y</th><th class="spark">{PIT12.span}, y/y</th></tr>
+              </thead>
+              <tbody id="items12-body"></tbody>
+            </table>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, item indices, base 2012=100 (retired), All India combined, items carry no weights in the API, so this is a ranking, not a recomposition; the CSV carries all items</span>
+            <span class="dl"><button data-dl="csv">CSV, all items</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Year-on-year inflation is a short memory. This ledger is the long one: each item's index in the old base's last month, against the 2012 average fixed at 100. An item at 250 cost two and a half times its 2012 price; one at 90 got cheaper. The spread is the decade's real story of who paid more for what.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of January 2026</span>
+            <p>By {PIT12.month} the dearest-grown item was <span id="it12-topn">–</span> at <b id="it12-top">–</b>; at the other end <span id="it12-botn">–</span> stood at <b id="it12-bot">–</b>. The median item stood at <b id="it12-med">–</b>, and <b id="it12-below">–</b> items were cheaper than in 2012.</p>
           </div>
         </div>
       </figure>
@@ -560,6 +669,35 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
             <span class="mk">As of {PST24.stamp}</span>
             <p>The highest reading is <b id="st24-top">–</b>; the lowest is <b id="st24-bot">–</b>. The spread between them is <b id="st24-spread">–</b>, in a month when the national rate was <b id="st24-ai">–</b>. <b id="st24-above">–</b> of the thirty-six sit above the band's ceiling; <b id="st24-below">–</b> sit below its floor; <b id="st24-neg">–</b> print below zero.</p>
             <p>Set against December's strip below, where deflation reached from the east to a Kerala print above nine, the new ruler's field is tighter. How much of that narrowing is the fresh basket and how much is the {word(PST24.since("2025-12-01"))} months between the two strips, we do not know; the strips are shown apart so no one has to pretend to.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-stdiv" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="stdiv-title">Your state, division by division</h3>
+            <div class="sub">Every state and union territory against every division of the 2024 base, year-on-year, per cent, {PSD.long}, combined rural and urban; rows sorted by the state's General index, deeper tint for faster price rises</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-stdiv">–</div><div class="c" id="pc-stdiv">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="ledger stdiv-wrap"><table class="stdiv" id="stdiv-table"></table></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, base 2024=100, published state indices (state baskets differ; no all-India weights applied), every cell is a year-on-year change computed from index levels; first column: the state's General index</span>
+            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The national number is an average of thirty-six. This table opens it the other way: one row per state, one column per part of the household budget. Read along a row to see what drives prices where you live; read down a column to see whether, say, health costs are rising everywhere or only in a few places. A deeper tint means faster price rises; grey marks prices that fell over the year.</p><p>Each state has its own basket, so a cell compares a state with its own past, not with another state. The rural and urban versions of this table, and the forty-three groups by state, are in the data downloads and the every-cut table.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PSD.stamp}</span>
+            <p>The column with the widest spread across states is <b id="stdiv-wide">–</b>, from <b id="stdiv-wide-hi">–</b> to <b id="stdiv-wide-lo">–</b>. The narrowest is <b id="stdiv-narrow">–</b>. <b id="stdiv-negcells">–</b> of the <b id="stdiv-cells">–</b> state-division cells show prices lower than a year earlier.</p>
           </div>
         </div>
       </figure>
@@ -773,7 +911,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
         <div class="frame">
           <div class="plotzone" id="plot-alst"><div class="cb-tip"></div></div>
           <div class="plotfoot">
-            <span class="src">Source: Labour Bureau, via eSankhyiki, base 1986-87, the 2019-base state series publishes levels only (no same-base year-ago yet), so this is the final state reading of the retired ruler, dashed rule: All-India CPI-AL, state baskets differ and are not recomputed</span>
+            <span class="src">Source: Labour Bureau, via eSankhyiki, base 1986-87, the final state reading of the retired ruler; the new base's states are on the next plate, dashed rule: All-India CPI-AL, state baskets differ and are not recomputed</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
@@ -784,29 +922,232 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of May 2025, final reading</span>
-            <p><b id="alst-above">–</b> of the twenty states sat above the All-India CPI-AL. The spread runs from <b id="alst-top">–</b> down to <b id="alst-bot">–</b>: <b id="alst-spread">–</b> end to end. This is the old ruler's last word on the states; the new 2019-base state series will take over once it carries a full year of levels.</p>
+            <p><b id="alst-above">–</b> of the twenty states sat above the All-India CPI-AL. The spread runs from <b id="alst-top">–</b> down to <b id="alst-bot">–</b>: <b id="alst-spread">–</b> end to end. This is the old ruler's last word on its twenty states; the next plate reads thirty-four on the new base.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-alst19" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="alst19-title">The farm and rural labourer, state by state, on the new base</h3>
+            <div class="sub">CPI-AL and CPI-RL by state, year-on-year, per cent, {PALS.long}, base 2019=100, computed from the Bureau's published levels (the new base now has a full year of them), sorted by CPI-AL</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-alst19">–</div><div class="c" id="pc-alst19">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-alst19">
+            <button class="chip" data-key="al"><i style="background:#2E4BD8"></i>Agricultural labourers</button>
+            <button class="chip" data-key="rl"><i style="background:#A3A9B4"></i>Rural labourers</button>
+          </div>
+          <div class="plotzone" id="plot-alst19"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Labour Bureau, via MoSPI eSankhyiki, base 2019=100, 34 states and union territories against 20 on the old base, y/y from levels a year apart on the same base; the state baskets differ</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The new base covers thirty-four states and union territories, against twenty on the old one, and prices two households in each: the agricultural labourer and the wider rural labourer, who might be a mason, a weaver or a cart-puller. The two dots in a row are the same village markets read with two baskets. Where they sit apart, the farm worker's heavier food share is pulling one way.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PALS.stamp}</span>
+            <p>The farm labourer's index rose fastest in <b id="alst19-top">–</b> and slowest in <b id="alst19-bot">–</b>. In <b id="alst19-alhi">–</b> of the <b id="alst19-n">–</b> states the agricultural labourer's inflation ran above the rural labourer's.</p>
           </div>
         </div>
       </figure>
     </div>
   </section>
 
-  <!-- § 13 misread -->
+  <!-- § 13 the factory worker's index, and what a day's work pays (wave 2, lb/prices) -->
   <section>
-    <div class="sec-head"><span class="no">13</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">13</span><h2>The worker's prices, and the worker's wage</h2><span class="line"></span><span class="unit">CPI-IW (Labour Bureau, four bases) and rural daily wages</span></div>
+
+    <div class="break">
+      <figure id="cb-iw" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="iw-title">The factory worker's index, on four rulers</h3>
+            <div class="sub">CPI for industrial workers, All India, General Index, year-on-year, per cent, {PIW60.firstShort} to {PIW.short}: bases 1960, 1982, 2001 and 2016, each computed inside its own base, drawn side by side, never joined</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-iw">–</div><div class="c">{PIW.short}, base 2016, y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-iw">
+            <button class="chip" data-key="b1960"><i style="background:#C9CED6"></i>Base 1960</button>
+            <button class="chip" data-key="b1982"><i style="background:#A3A9B4"></i>Base 1982</button>
+            <button class="chip" data-key="b2001"><i style="background:#5F6675"></i>Base 2001</button>
+            <button class="chip" data-key="b2016"><i style="background:#2E4BD8"></i>Base 2016</button>
+          </div>
+          <div class="plotzone" id="plot-iw"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Labour Bureau, via RBI DBIE (report 699), year-on-year computed from published index levels inside each base; the Bureau's linking factors between bases are not in the report, so no line crosses a seam</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>This is the oldest continuous price index India keeps for a group of people, and the one with the most money riding on it. The dearness allowance of every central government employee and pensioner is set from it twice a year, and so are wages in many factories, mines and plantations. A point on this index is rupees in a few crore pay packets.</p>
+            <p>The household it describes is a worker in one of the Bureau's industrial centres: a mill town, a mining belt, a port, a tea garden. The basket was redrawn four times, in 1960, 1982, 2001 and 2016, each from a fresh survey of what such families buy. Each colour is one basket. Where one ends and the next begins there is a fine rule, not a join: the Bureau publishes a linking factor to carry wages across, but a growth rate from one basket to the next would compare two different shopping lists.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PIW.stamp}</span>
+            <p>On the 2016 basket the worker's index rose <b id="iw-now">–</b> in the year to {PIW.month}, against <b id="iw-yago">–</b> a year earlier. The current basket's high so far is <b id="iw-peak16">–</b>; the whole record's high is <b id="iw-peak">–</b>,, on the 1960 basket. Dearness allowance is revised twice a year from this index, so a high reading here reaches pay packets within months.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-iwgrp" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="iwgrp-title">What the factory worker's rupee buys</h3>
+            <div class="sub">CPI-IW group indices, All India, year-on-year, per cent, base 2016, {PIW.span}</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-iwgrp">–</div><div class="c" id="pc-iwgrp">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-iwgrp">
+            <button class="chip" data-key="food"><i style="background:#2E4BD8"></i>Food</button>
+            <button class="chip" data-key="housing"><i style="background:#5F6675"></i>Housing</button>
+            <button class="chip" data-key="fuel"><i style="background:#878D99"></i>Fuel and light</button>
+            <button class="chip" data-key="clothing"><i style="background:#A3A9B4"></i>Clothing, bedding, footwear</button>
+            <button class="chip" data-key="pan"><i style="background:#C9CED6"></i>Pan, tobacco</button>
+            <button class="chip" data-key="misc"><i style="background:#C9CED6"></i>Miscellaneous</button>
+          </div>
+          <div class="plotzone" id="plot-iwgrp"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Labour Bureau, via RBI DBIE (report 699), base 2016=100, unlike the farm labourer's basket, this one has a housing group: industrial workers rent</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Six groups, as in the retired national CPI, and the same lesson: food moves the index. The group to watch here is housing. The Bureau prices rents in the industrial centres twice a year, so the housing line climbs in steps rather than drifting, and a step in January or July can move the whole index in a month when food is quiet.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PIW.stamp}</span>
+            <p>In {PIW.month} the fastest group was <b id="iwg-top">–</b> and the slowest <b id="iwg-bot">–</b>. Food stood at <b id="iwg-food">–</b>, against <b id="iwg-food-y">–</b> a year earlier: <span id="iwg-food-dir">–</span>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-iwcen" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="iwcen-title">Eighty-eight towns, one index</h3>
+            <div class="sub">CPI-IW by centre, year-on-year, per cent, {PIWC.long}, base 2016, sorted: every industrial centre the Labour Bureau prices, from mill towns to tea gardens</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-iwcen">–</div><div class="c">spread across centres, {PIWC.short}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-iwcen"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Labour Bureau, via RBI DBIE (report 1168), base 2016=100, each centre is priced in its own markets with its own basket, dashed rule: All India; a centre is a town, not a state, so a state can appear several times</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each dot is a town where the Bureau sends price collectors to the markets an industrial worker uses. The centres are chosen for their factories and mines, not to cover a state, so read them as places: Jamshedpur, Coimbatore, Kolkata. Dearness allowance is paid on the All-India figure, so a worker in a centre well above the dashed rule is falling behind on an allowance that averages the country.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PIWC.stamp}</span>
+            <p>The spread runs from <b id="iwc-top">–</b> to <b id="iwc-bot">–</b>: <b id="iwc-spread">–</b> end to end. <b id="iwc-above">–</b> of <b id="iwc-n">–</b> centres ran above the All-India rate of <b id="iwc-ai">–</b>, and <b id="iwc-neg">–</b> saw prices fall over the year.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-wage" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="wage-title">Did the farm wage keep up with farm prices?</h3>
+            <div class="sub">Daily wage of a man working as a general agricultural labourer, All India, growth on a year earlier, per cent, against CPI-AL inflation (base 1986-87), <span id="wage-span">–</span>: both are Labour Bureau series</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-wage">–</div><div class="c">wage, {PWG.short}, rupees a day</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-wage">
+            <button class="chip" data-key="wage"><i style="background:#2E4BD8"></i>Wage growth, general farm labourer</button>
+            <button class="chip" data-key="al"><i style="background:#C47A16"></i>CPI-AL inflation</button>
+          </div>
+          <div class="plotzone" id="plot-wage"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Labour Bureau, Wage Rates in Rural India (RBI DBIE report 664) and CPI-AL (eSankhyiki), wage growth computed from the published daily wage; the occupation list was redrawn in November 2013, so the line starts a year later; ends where the old CPI-AL base ends, May 2025</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A price index only tells half the story for a wage earner. The other half is the wage. The Labour Bureau collects both for rural India: what a day's work pays in each occupation, and what the farm labourer's household pays for its basket. When the blue line runs above the gold one, a day's wage bought a little more than it did a year before; below it, a little less.</p>
+            <p>The wage is the average man's daily wage across the Bureau's sample villages, for the general agricultural labourer: watering, weeding, the work anyone can be hired for. It is not what any one worker earns, and it says nothing about how many days of work there were.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PWG.stamp}</span>
+            <p>A day of general farm labour paid <b id="wg-now">–</b> in {PWG.long}, up from <b id="wg-first">–</b> in {PWG.firstLong}. Over the <b id="wg-n">–</b> months both series cover, the wage grew faster than farm prices in <b id="wg-above">–</b>, by <b id="wg-gap">–</b> a month on average. That is a slow gain in what a day's work buys, and it says nothing about the number of days.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-wagest" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="wagest-title">A day's farm wage, state by state</h3>
+            <div class="sub">Daily wage of a general agricultural labourer, rupees, latest month each state reports, {PWGS.long} or earlier, sorted</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-wagest">–</div><div class="c">highest to lowest state</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-wagest"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Labour Bureau, Wage Rates in Rural India (RBI DBIE report 664), men's wages, rupees per day, nominal: not adjusted for each state's prices, dashed rule: All India</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The same day's work, priced in twenty states. These are rupees, not an index, so states can be compared directly, with one caution: a rupee buys more rice in some states than others, and this chart does not adjust for that. The other 24 occupations, from ploughing to plumbing, are in the data downloads and the every-cut table below.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PWG.stamp}</span>
+            <p>The wage runs from <b id="wgs-top">–</b> down to <b id="wgs-bot">–</b>: the best-paid state pays <b id="wgs-ratio">–</b> times the lowest for the same work. The All-India figure is <b id="wgs-ai">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 14 misread -->
+  <section>
+    <div class="sec-head"><span class="no">14</span><h2>How to misread this number</h2><span class="line"></span></div>
     <ul class="misread">
       <li>
         <span class="no">i.</span>
         <div>
           <h3>"Inflation fell, so prices fell."</h3>
-          <p>No. Falling inflation means prices are rising more slowly: disinflation. At 1.3%, the basket still costs 1.3% more than last December. Only a negative print means falling prices: and food has done exactly that for six of the last seven months, which is why this misreading is tempting right now.</p>
+          <p>No. Falling inflation means prices are rising more slowly: disinflation. At 2%, the basket still costs 2% more than a year ago. Only a negative print means falling prices, and that happens to single items and groups (vegetables, pulses) far more often than to the whole basket.</p>
         </div>
       </li>
       <li>
         <span class="no">ii.</span>
         <div>
           <h3>"My inflation is the national inflation."</h3>
-          <p>Your basket is not the average basket. The weights are a 2011–12 snapshot; they understate urban rent, overstate cereals for the well-off, and describe nobody precisely. A family spending 60 per cent on food lives in a different index entirely.</p>
+          <p>Your basket is not the average basket. The weights are a snapshot of average spending in a survey year; they describe nobody precisely. A family spending 60 per cent on food lives in a different index, and so does a family in a different state: the state table in §11 shows the same month reading very differently from one state to the next.</p>
         </div>
       </li>
       <li>
@@ -837,6 +1178,20 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           <p>They survey different terrain: retail consumers versus the factory gate, with different baskets and different fuels. Divergence of five points is normal. Both are correct; show them as separate series, never as a conflict to resolve.</p>
         </div>
       </li>
+      <li>
+        <span class="no">vii.</span>
+        <div>
+          <h3>"Dearness allowance follows the CPI."</h3>
+          <p>It follows a different CPI. Central government dearness allowance is set from the CPI for industrial workers (§13), a Labour Bureau index of a factory worker's basket in 88 towns, averaged over twelve months. It can run a point or more away from the national CPI in either direction, and it rebases on its own timetable.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">viii.</span>
+        <div>
+          <h3>"Rural wages rose 7%, so labourers are 7% better off."</h3>
+          <p>Only if prices stood still. A wage rise is a gain only above the labourer's own inflation, and that is CPI-AL, not the national CPI. Even then the daily rate says nothing about how many days of work there were in the month, which is where rural incomes most often fall.</p>
+        </div>
+      </li>
     </ul>
   </section>
 
@@ -854,7 +1209,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
         <p>The retired series: "Consumer Price Index Numbers on Base 2012=100 for Rural, Urban &amp; Combined, December 2025." Press release, 12 January 2026, the final print on that base. Group indices retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>.</p>
         <p>Headline and core inflation are computed by India Atlas from the published group indices using the official weights; the computed headline tracks the published one within 0.14 pt across the decade. Core is not an official series. Housing group indices for December 2018 to September 2019 were never published; those months are linearly interpolated and flagged in the series metadata. The rural and urban headline and core series (§10) are computed the same way, on the sector weights.</p>
         <p>The 21 sub-group indices (§09, Jan 2016 to Dec 2025) and the state series (§11) are the published MoSPI series, same vintage. State figures are the published General index of each state: state baskets differ, and nothing is recomputed on all-India weights. Several state indices were not published in April–June 2020 and April–June 2021; those months, and their year-on-year knock-on a year later, are gaps in the data, not zeros.</p>
-        <p>The CPI for Agricultural Labourers and Rural Labourers (§12) is compiled by the Labour Bureau, Ministry of Labour &amp; Employment, retrieved via eSankhyiki, vintage <b id="prov-vintage3">–</b>. The base 1986-87=100 series ends with the May 2025 print; the base 2019=100 series begins June 2025 (coverage here: Jul 2000 to May 2026). The two bases price different baskets and are never spliced. Year-on-year rates on the new base are the Bureau's own, computed on a linked back-series it does not publish.</p>
+        <p>The CPI for Agricultural Labourers and Rural Labourers (§12) is compiled by the Labour Bureau, Ministry of Labour &amp; Employment, retrieved via eSankhyiki, vintage <b id="prov-vintage3">–</b>. The base 1986-87=100 series ends with the May 2025 print; the base 2019=100 series begins June 2025 (coverage here: Jul 2000 to {PAL.short}). The two bases price different baskets and are never spliced. Year-on-year rates on the new base are the Bureau's own, computed on a linked back-series it does not publish.</p>
       </div>
       <div>
         <h6>Revisions &amp; uncertainty</h6>
@@ -875,6 +1230,14 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
 
 </div>
 <style is:global>
+  /* §11 state x division table (prices wave 2): pale tints under ink, the state column fixed */
+  .stdiv-wrap{overflow-x:auto}
+  .stdiv-wrap table.stdiv{min-width:1100px;font-size:.8rem}
+  .stdiv th{font-size:.74rem;line-height:1.25;padding:0 6px 8px;text-align:right;vertical-align:bottom;white-space:normal;max-width:76px}
+  .stdiv th:first-child{text-align:left}
+  .stdiv td{padding:5px 6px;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink);border-bottom:1px solid #FFFFFF}
+  .stdiv td.name{font-family:var(--sans);font-size:.82rem;text-align:left;white-space:nowrap;position:sticky;left:0;background:#FFFFFF;padding-right:14px}
+  .stdiv tbody tr:hover{background:transparent}
   /* §07 small-multiple grid — this page only */
   .sm-cap{
     font-family:var(--sans);font-size:.82rem;color:var(--muted);
