@@ -57,28 +57,20 @@ export async function buildIip(root, dcfg, vintage) {
     const years = ((filter.data ?? filter).year ?? []).map((y) => Number(y.year)).sort((a, b) => a - b);
     const levels = {}; const growth = {}; const labels = {};
     for (const year of years) {
-      let page = 1;
-      let n = 0;
-      for (;;) {
-        const res = await mospi(dcfg.fetch.endpoint, {
-          base_year: base, ...dcfg.fetch.params, year, page, limit: 500,
-        });
-        const rows = res.data ?? [];
-        n += rows.length;
-        for (const r of rows) {
-          const { key, label } = rowKey(r);
-          const m = String(MONTHS.indexOf(r.month) + 1).padStart(2, "0");
-          if (m === "00") continue;
-          const v = parseFloat(r.index);
-          if (Number.isFinite(v) && v !== 0) {
-            labels[key] = label;
-            (levels[key] ??= new Map()).set(`${r.year}-${m}`, v);
-          }
-          const g = parseFloat(r.growth_rate);
-          if (Number.isFinite(g)) (growth[key] ??= new Map()).set(`${r.year}-${m}`, g);
+      // mospiAll pages through mospi.mjs and checks the page set for slips (repeated rows)
+      const rows = await mospiAll(dcfg.fetch.endpoint, { base_year: base, ...dcfg.fetch.params, year });
+      const n = rows.length;
+      for (const r of rows) {
+        const { key, label } = rowKey(r);
+        const m = String(MONTHS.indexOf(r.month) + 1).padStart(2, "0");
+        if (m === "00") continue;
+        const v = parseFloat(r.index);
+        if (Number.isFinite(v) && v !== 0) {
+          labels[key] = label;
+          (levels[key] ??= new Map()).set(`${r.year}-${m}`, v);
         }
-        if (page >= (res.meta_data?.totalPages ?? 1)) break;
-        page++;
+        const g = parseFloat(r.growth_rate);
+        if (Number.isFinite(g)) (growth[key] ??= new Map()).set(`${r.year}-${m}`, g);
       }
       process.stdout.write(`iip ${base} ${year}: ${n} rows\n`);
       await new Promise((r) => setTimeout(r, 200));
