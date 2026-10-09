@@ -1995,5 +1995,120 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
 }
 /* ---- end climate ---- */
 
+/* ---- ilo (ILOSTAT): every ilo-* bundle, by instrument; ranges by series unit; identities ----
+ * Bundles come from scripts/lib/products/ilostat.mjs. Each instrument is its own ruler (the
+ * seams registry in sources.yml lists them); peers carry their own geo (sources.yml peers). */
+{
+  const D = cfg.dossiers.ilo;
+  const UNIT_RANGE = { pct: [-50, 100], per_100k_workers: [0, 20000], days: [0, 1e8], cases: [0, 1e6], thousand: [0, 1.6e6],
+    usd_2015: [0, 1e5], usd_ppp_2021: [0, 1e5], usd_ppp_2021_million: [0, 1e8], hours: [0, 100], hours_thousand: [0, 1e8], score: [0, 10],
+    inr: [0, 1e6], gini: [0, 1], dependency_ratio: [0, 5] };
+  const files = fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => /^ilo-.*\.json$/.test(f)).sort();
+  if (files.length < 60) fail(`ilo: only ${files.length} ilo-* bundles (expected ~68)`);
+  let n = 0;
+  for (const f of files) {
+    const slug = f.replace(/\.json$/, ""), b = load(slug), m = b.meta ?? {};
+    for (const k of ["source", "vintage", "base", "frequency", "geo"]) if (m[k] == null) fail(`${slug}: meta.${k} missing`);
+    if (m.dossier !== "ilo") fail(`${slug}: meta.dossier "${m.dossier}" != "ilo"`);
+    const geoOk = m.peer ? D.peers.includes(m.geo) : m.geo === D.geo;
+    if (!geoOk) fail(`${slug}: meta.geo "${m.geo}" is neither India nor a declared peer (one bundle, one geography)`);
+    const seriesRange = {};
+    for (const [k, s2] of Object.entries(b.series)) {
+      if (!UNIT_RANGE[s2.unit]) fail(`${slug}.${k}: unit "${s2.unit}" has no range in validate.mjs`);
+      else seriesRange[k] = UNIT_RANGE[s2.unit];
+      for (const [st, ds] of Object.entries(s2.flags ?? {})) for (const d of ds) {
+        const i = b.dates.indexOf(d);
+        if (i < 0 || s2.data[i] == null) fail(`${slug}.${k}: flag ${st} on ${d}, which has no value`);
+      }
+      if (s2.lower && (s2.lower.length !== b.dates.length || s2.upper.length !== b.dates.length)) fail(`${slug}.${k}: bounds not aligned to the axis`);
+      if (s2.lower) s2.data.forEach((v, i) => { if (v != null && s2.lower[i] != null && (s2.lower[i] > v + 1e-9 || s2.upper[i] < v - 1e-9)) fail(`${slug}.${k}: value ${v} outside its bounds at ${b.dates[i]}`); });
+    }
+    checkRange(b, -Infinity, Infinity, slug, seriesRange);
+    // cadence: modelled and PLFS annual axes are consecutive years, PLFS quarters consecutive
+    // quarters; NSS rounds, the Census and administrative sources are irregular by nature
+    if (/^ilo-(est|peer)-/.test(slug)) checkCadence(b.dates, 12, slug);
+    else if (slug === "ilo-plfs-q") checkCadence(b.dates, 3, slug);
+    else if (/^ilo-plfs-/.test(slug)) checkCadence(b.dates, 12, slug);
+    // freshness floors on the guide's headline rulers only
+    if (["ilo-est-eap-2wap", "ilo-est-une-2eap", "ilo-plfs-eap"].includes(slug)) checkFreshness(b, slug, { staleAfter: D.stale_after }, "ilo");
+    else checkFreshness(b, slug, { stale: false }, "ilo");
+    if (/^ilo-est-/.test(slug) && slug !== "ilo-est-projections" && b.dates.at(-1) >= "2025-01-01" && !/pop-2|cld-2/.test(slug)) fail(`${slug}: modelled bundle reaches ${b.dates.at(-1)}: projection years belong in ilo-est-projections`);
+    n++;
+  }
+  ok(`ilo: ${n} bundles, units ranged, flags on the axis, bounds bracket values`);
+
+  const at = (b, k, i) => b.series[k]?.data[i] ?? null;
+  // identity 1 (modelled): EPR = LFPR x (1 - UR/100), every year, every sex and age
+  for (const bslug of ["ilo-est-eap-2wap", ...D.peers.map((g) => `ilo-peer-${g.toLowerCase()}`)]) {
+    const L = load(bslug), E = bslug === "ilo-est-eap-2wap" ? load("ilo-est-emp-2wap") : L, U = bslug === "ilo-est-eap-2wap" ? load("ilo-est-une-2eap") : L;
+    let worst = 0, where = null, checked = 0;
+    for (const sex of ["t", "m", "f"]) for (const age of ["yge15", "y15_24", "yge25"]) {
+      const kl = `eap_2wap_sex_age_rt__sex_${sex}__age_ythadult_${age}`, ke = `emp_2wap_sex_age_rt__sex_${sex}__age_ythadult_${age}`, ku = `une_2eap_sex_age_rt__sex_${sex}__age_ythadult_${age}`;
+      L.dates.forEach((d, i) => {
+        const l = at(L, kl, i), e = at(E, ke, E.dates.indexOf(d)), u = at(U, ku, U.dates.indexOf(d));
+        if (l == null || e == null || u == null) return;
+        const dev = Math.abs(l * (1 - u / 100) - e); checked++;
+        if (dev > worst) { worst = dev; where = `${kl} ${d}`; }
+      });
+    }
+    if (!checked) fail(`${bslug}: participation identity found nothing to check`);
+    else if (worst > 0.1) fail(`${bslug}: EPR != LFPR x (1 - UR) by ${worst.toFixed(3)} pt at ${where}`);
+    else ok(`${bslug}: EPR = LFPR x (1 - UR) within ${worst.toFixed(3)} pt (${checked} points)`);
+  }
+  // identity 2: female and male rates bracket the total (participation, every instrument)
+  for (const bslug of ["ilo-est-eap-2wap", "ilo-plfs-eap", "ilo-nss-eap"]) {
+    const b = load(bslug); let bad = 0, checked = 0;
+    // rates only (eap_dwap, eap_2wap): a count's total is the sum of its parts, not between them
+    for (const k of Object.keys(b.series).filter((x) => x.includes("__sex_t__") && /^eap_(dwap|2wap)_/.test(x))) {
+      const kf = k.replace("__sex_t__", "__sex_f__"), km = k.replace("__sex_t__", "__sex_m__");
+      if (!b.series[kf] || !b.series[km]) continue;
+      b.dates.forEach((d, i) => {
+        const t = at(b, k, i), f2 = at(b, kf, i), m2 = at(b, km, i);
+        if (t == null || f2 == null || m2 == null) return; checked++;
+        if (t < Math.min(f2, m2) - 0.05 || t > Math.max(f2, m2) + 0.05) { bad++; if (bad < 4) fail(`${bslug}: ${k} ${t} outside female ${f2} / male ${m2} at ${d}`); }
+      });
+    }
+    if (!bad) ok(`${bslug}: total participation sits between women's and men's (${checked} points)`);
+  }
+  // identity 3 (modelled): employment by status and by economic class add up to total employment
+  {
+    const b = load("ilo-est-emp-2emp");
+    const sumCheck = (totalKey, partKeys, tag) => {
+      let worst = 0, where = null, checked = 0;
+      b.dates.forEach((d, i) => {
+        const t = at(b, totalKey, i), parts = partKeys.map((k) => at(b, k, i));
+        if (t == null || parts.some((v) => v == null)) return; checked++;
+        const dev = Math.abs(parts.reduce((a, v) => a + v, 0) / t - 1);
+        if (dev > worst) { worst = dev; where = d; }
+      });
+      if (!checked) fail(`ilo-est-emp-2emp: ${tag} identity found nothing to check`);
+      else if (worst > 0.002) fail(`ilo-est-emp-2emp: ${tag} parts miss the total by ${(100 * worst).toFixed(2)}% at ${where}`);
+      else ok(`ilo-est-emp-2emp: ${tag} parts add to the total within ${(100 * worst).toFixed(3)}% (${checked} years)`);
+    };
+    const ste = Object.keys(b.series).filter((k) => /^emp_2emp_sex_ste_nb__sex_t__ste_icse93_[1235]$/.test(k));
+    sumCheck("emp_2emp_sex_ste_nb__sex_t__ste_icse93_total", ste, "status in employment");
+    // cat1 < $3 PPP, cat2 $3 to 4.2, cat34 >= $4.2 (itself cat3 + cat4)
+    const cla = ["cat1", "cat2", "cat34"].map((c) => `emp_2emp_sex_age_cla_nb__sex_t__age_ythadult_yge15__cla_ecocla_${c}`).filter((k) => b.series[k]);
+    if (cla.length === 3) sumCheck("emp_2emp_sex_age_cla_nb__sex_t__age_ythadult_yge15__cla_ecocla_total", cla, "economic class");
+    else fail(`ilo-est-emp-2emp: economic-class series not found (${cla.length} of 3)`);
+  }
+  // identity 4 (modelled): labour income deciles add up to 100
+  {
+    const b = load("ilo-est-lap-2lid"); let worst = 0;
+    b.dates.forEach((d, i) => { const v = Object.values(b.series).map((s2) => s2.data[i]); if (v.every((x) => x != null)) worst = Math.max(worst, Math.abs(v.reduce((a, x) => a + x, 0) - 100)); });
+    if (worst > 0.6) fail(`ilo-est-lap-2lid: deciles sum off 100 by ${worst.toFixed(2)}`);
+    else ok(`ilo-est-lap-2lid: deciles sum to 100 within ${worst.toFixed(2)}`);
+  }
+  // hand-checked anchors (docs/status/ilo.md): ILOEST UR 2024 and PLFS women's LFPR 2024
+  {
+    const u = load("ilo-est-une-2eap"), p = load("ilo-plfs-eap");
+    const uv = at(u, "une_2eap_sex_age_rt__sex_t__age_ythadult_yge15", u.dates.indexOf("2024-01-01"));
+    const pv = at(p, "eap_dwap_sex_age_rt__sex_f__age_ythadult_yge15", p.dates.indexOf("2024-01-01"));
+    if (uv !== 4.173) fail(`ilo-est-une-2eap: 2024 UR ${uv} != hand-checked 4.173 (a new ILOEST edition? re-check by hand and update)`);
+    else if (pv !== 34.389) fail(`ilo-plfs-eap: 2024 women's LFPR ${pv} != hand-checked 34.389`);
+    else ok("ilo: hand-checked anchors hold (ILOEST UR 2024 = 4.173; PLFS women's LFPR 2024 = 34.389)");
+  }
+}
+
 if (failures) { console.error(`\n${failures} validation failure(s)`); process.exit(1); }
 console.log("validate: all checks passed");

@@ -388,3 +388,31 @@ climate:
       temperature rising or falling from month to month: that is the season. Must
       contain a plain "we do not know".
 # --- end climate ---
+
+# ilo: the current bundle is the ILO's modelled participation (ilo-est-eap-2wap); the writer also
+# sees employment, unemployment, NEET, labour's share and hours (registry proseInputs)
+ilo:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [eap_2wap_sex_age_rt__sex_t__age_ythadult_yge15.latest, eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15.latest]
+    minSeriesMentioned: 4        # everyone, women, men and young people
+    mustAcknowledge: [contradictions]
+    brief: >
+      The ILO's modelled estimates for the latest year: how many Indians are in the labour
+      force, women against men, young people, and the direction since the low point of the
+      late 2010s. Say plainly that these are the ILO's model estimates, not a survey. Plain
+      words: no "basket", no "movers". Concede what is genuine before qualifying it.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15.latest]
+    brief: >
+      The honest limits: most years in the ILO's line are imputed by its model, not measured.
+      India did run surveys in many of those years (NSS rounds, then the PLFS); the ILO flags only
+      a few years as taken directly from one, so never say there was no survey;
+      each yearly edition rewrites the whole history; the ILO's definitions and calendar years
+      differ from MoSPI's usual-status figures, so the two never match and are never joined;
+      counting women's work at all depends on what the survey calls work. Must contain a
+      plain "we do not know".
+

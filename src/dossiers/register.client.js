@@ -368,3 +368,16 @@ import climateHotdaysBundle from "../../data/series/climate-era5-hotdays.json";
   ], 12, "spcl", climateMonthlyBundle.meta.latestPeriod, "Copernicus ERA5 via OWID; CRU TS and ERA5 via the World Bank CCKP");
 }
 
+// ilo (ILOSTAT): the ILO's modelled estimates for India, annual, calendar years
+import iloLfprBundle from "../../data/series/ilo-est-eap-2wap.json";
+import iloUrBundle from "../../data/series/ilo-est-une-2eap.json";
+import iloNeetBundle from "../../data/series/ilo-est-eip-2eet.json";
+{
+  const IL = hydrate(iloLfprBundle), IU = hydrate(iloUrBundle), IN = hydrate(iloNeetBundle);
+  render("reg-ilo", [
+    ["Labour force participation, 15+, ILO model", "ILO-LFPR", "s-acc", IL.eap_2wap_sex_age_rt__sex_t__age_ythadult_yge15, false, "/guides/ilo/"],
+    ["Women's labour force participation, ILO model", "ILO-LFPR-F", "s-g1", IL.eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15, false, "/guides/ilo/"],
+    ["Unemployment rate, 15+, ILO model", "ILO-UR", "s-g2", IU.une_2eap_sex_age_rt__sex_t__age_ythadult_yge15, false, "/guides/ilo/"],
+    ["Youth not in work or study, ILO model", "ILO-NEET", "s-g3", IN.eip_2eet_sex_rt__sex_t, false, "/guides/ilo/"],
+  ], 1, "spilo", "Nov 2025 edition", "ILO, ILOSTAT");
+}

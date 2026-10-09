@@ -82,6 +82,8 @@ export function requestOnce(url, { agent, timeoutMs = 60_000, deadlineMs = 120_0
           err.fatal = status >= 400 && status < 500 && status !== 429; // 4xx (except 429) will not heal
           return finish(reject, err);
         }
+        // `markup: true` is for sources whose real payload is XML (S3 listings, SDMX
+        // structure messages); everyone else keeps the throttle-page guard.
         if (!markup && body.trimStart().startsWith("<")) {
           // an HTML error/login page served with 200 is how throttling gateways behave
           const err = new Error(`Non-JSON response for ${url}`);

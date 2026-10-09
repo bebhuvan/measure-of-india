@@ -48,6 +48,8 @@ export const HEADLINE = {
   population:    { value: (b) => `${(last(b, "tpopulation1july") / 1e6).toFixed(3)} billion`, what: "people in India, UN estimate", period: (b) => lastDate(b).slice(0, 4) },
   // climate: the month's departure from its own 1991-2020 average (ERA5, OWID)
   climate:       { value: (b) => `${last(b, "temperature_anomaly") < 0 ? "−" : "+"}${Math.abs(last(b, "temperature_anomaly")).toFixed(2)}°C`, what: "India's temperature against the 1991-2020 average for the month", period: month },
+  // ilo
+  ilo:           { value: (b) => `${last(b, "eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15").toFixed(1)}%`, what: "women aged 15+ in the labour force, ILO estimate", period: (b) => lastDate(b).slice(0, 4) },
 };
 
 // The small chart beside each guide's figure: always on the current ruler, so a chart never
@@ -78,6 +80,8 @@ export const SPARK = {
   poverty:       { bundle: "poverty-pip-lineup", series: "headcount_3_00" },
   population:    { bundle: "population-wpp", series: "tpopulation1july" },
   climate:       { bundle: "climate-temp-annual", series: "temperature_anomaly" },   // climate: annual, 1940 on
+  // ilo
+  ilo:           { bundle: "ilo-est-eap-2wap", series: "eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15" },
 };
 
 const cache = {};

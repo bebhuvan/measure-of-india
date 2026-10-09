@@ -157,6 +157,17 @@ export const UNITS = {
   tonnes: { kind: "pct", fmt: (v) => big(v, " tonnes") },
   per_100k: { kind: "diff", fmt: (v) => v.toFixed(1), note: "per 1,00,000 people" },
   // end climate
+  // ilo (ILOSTAT)
+  cases: { kind: "pct", fmt: (v) => big(v, "") , note: "cases" },
+  days: { kind: "pct", fmt: (v) => big(v, " days") },
+  hours: { kind: "diff", fmt: (v) => v.toFixed(1) + " h", note: "a week" },
+  hours_thousand: { kind: "pct", fmt: (v) => grp(v / 1e6, 2) + " billion h", note: "a week, published in thousand hours" },
+  usd_2015: { kind: "pct", fmt: (v) => "$" + grp(v), note: "constant 2015 US$" },
+  usd_ppp_2021: { kind: "pct", fmt: (v) => "$" + grp(v), note: "constant 2021 PPP dollars" },
+  usd_ppp_2021_million: { kind: "pct", fmt: (v) => "$" + grp(v / 1e6, 2) + " trillion", note: "constant 2021 PPP dollars" },
+  per_100k_workers: { kind: "diff", fmt: (v) => grp(v, 1), note: "per 1,00,000 workers" },
+  dependency_ratio: { kind: "diff", fmt: (v) => v.toFixed(2), note: "people per worker" },
+  score: { kind: "diff", fmt: (v) => grp(v, 1), note: "ILO score" },
 };
 
 // series.unit, then what the series name says, then the bundle's meta.unit: a bundle-level
@@ -321,6 +332,8 @@ export const PERIOD_LABELS = {
   "climate-cmip6-windows-": { "1995-01-01": "1995-2014", "2020-01-01": "2020-2039", "2040-01-01": "2040-2059", "2060-01-01": "2060-2079", "2080-01-01": "2080-2099" },
   "climate-cmip6-states-": { "2020-01-01": "2020-2039", "2040-01-01": "2040-2059", "2060-01-01": "2060-2079", "2080-01-01": "2080-2099" },
   "climate-temp-decadal": Object.fromEntries(Array.from({ length: 10 }, (_, i) => [`${1940 + 10 * i}-01-01`, `${1940 + 10 * i}s`])),
+  // ilo: the ILO dates each NSS round by the year it ends
+  "ilo-nss-": { "1994-01-01": "NSS 1993-94", "2000-01-01": "NSS 1999-2000", "2005-01-01": "NSS 2004-05", "2010-01-01": "NSS 2009-10", "2012-01-01": "NSS 2011-12" },
 };
 export function periodLabel(slug, bundle, iso) {
   for (const [pre, map] of Object.entries(PERIOD_LABELS)) if (slug.startsWith(pre) && map[iso]) return map[iso];

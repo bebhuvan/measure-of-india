@@ -596,6 +596,44 @@ export const DOSSIERS = [
     bundles: ["climate-temp-monthly", "climate-burned-area","climate-cmip6-energy","climate-cmip6-energy-hist","climate-cmip6-heatstress","climate-cmip6-heatstress-hist","climate-cmip6-hotdays","climate-cmip6-hotdays-hist","climate-cmip6-rain","climate-cmip6-rain-hist","climate-cmip6-states-energy","climate-cmip6-states-heatstress","climate-cmip6-states-hotdays","climate-cmip6-states-rain","climate-cmip6-states-temp","climate-cmip6-temp","climate-cmip6-temp-hist","climate-cmip6-windows-energy","climate-cmip6-windows-heatstress","climate-cmip6-windows-hotdays","climate-cmip6-windows-rain","climate-cmip6-windows-temp","climate-co2","climate-co2-chn","climate-co2-usa","climate-co2-world","climate-cru","climate-cru-monthly","climate-cru-states","climate-energy","climate-energy-chn","climate-energy-usa","climate-energy-world","climate-era5-energy","climate-era5-energy-monthly","climate-era5-heatstress","climate-era5-heatstress-monthly","climate-era5-hotdays","climate-era5-hotdays-monthly","climate-era5-rain","climate-era5-rain-monthly","climate-era5-states-energy","climate-era5-states-heatstress","climate-era5-states-hotdays","climate-era5-states-rain","climate-era5-states-temp","climate-era5-temp","climate-era5-temp-monthly","climate-heat-deaths","climate-opinion-youth","climate-rain-owid","climate-seasons-cru","climate-seasons-era5-energy","climate-seasons-era5-heatstress","climate-seasons-era5-hotdays","climate-seasons-era5-rain","climate-seasons-era5-temp","climate-temp-annual","climate-temp-decadal","climate-warming-contrib","climate-wildfires","climate-wildfires-weekly"],
   },
   // --- end climate ---
+  // ---- ilo (ILOSTAT) ----
+  {
+    slug: "ilo",
+    no: "22",
+    section: "Work",
+    name: "Work in India, ILO estimates",
+    title: "Work, as the ILO counts it",   // the topic as a reader names it: nav, lists, search
+    kickerTitle: "ILOSTAT, the ILO's labour statistics",
+    crumbTitle: "Work, ILO estimates",
+    headline: "How India works, <i>by the world's yardstick.</i>",
+    ogTitle: "How India works, by the world's yardstick.",
+    blurb: "How many Indians work, why so few women are counted at work, how many young people are neither working nor studying, and how India compares with China, Bangladesh, Indonesia and Vietnam, on the ILO's common definitions.",
+    description: "Work in India through ILOSTAT: the ILO's modelled estimates since 1990 beside its own processing of PLFS, NSS and Census data, with four peer countries on the same definitions.",
+    rssDescription: "Work in India on the ILO's definitions: participation, unemployment, informality, working poverty and earnings. Revised with each ILO edition.",
+    stamp: { dateStyle: "vintageMonth", vintageStyle: "vintage", vintagePrefix: "ILOSTAT vintage " },
+    statusNote: "Annual, ILO modelled estimates and survey series, history revised each edition",
+    version: "v1.0",
+    currentBundle: "ilo-est-eap-2wap",
+    proseInputs: ["ilo-est-emp-2wap", "ilo-est-une-2eap", "ilo-est-eip-2eet", "ilo-est-lap-2gdp", "ilo-est-how-2emp"],
+    calendar: "calendar",
+    bands: null,
+    proseConstants: [15, 24, 25, 100, 1990, 1991, 3, 4.2],   // ages, the ILO's $3 and $4.20 lines, the model's first years
+    spark: { bundle: "ilo-est-eap-2wap", series: "eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15" },
+    prose: true,
+    register: { id: "reg-ilo", label: "Work, ILO", unit: "Annual, ILO modelled estimates and ILO processing of PLFS", historyCol: "Since 1990" },
+    bundles: ["ilo-est-eap-2wap", "ilo-est-emp-2wap", "ilo-est-une-2eap", "ilo-est-eip-2eet", "ilo-est-emp-2emp",
+      "ilo-est-lap-2gdp", "ilo-est-lap-2lid", "ilo-est-how-2emp", "ilo-est-gdp-211p", "ilo-est-projections",
+      "ilo-plfs-eap", "ilo-nss-eap", "ilo-census", "ilo-plfs-une", "ilo-nss-une", "ilo-plfs-sdg", "ilo-nss-more",
+      "ilo-plfs-ear", "ilo-peer-chn", "ilo-peer-bgd", "ilo-peer-idn", "ilo-peer-vnm", "plfs-annual", "ilo-adm-ir",
+      "ilo-adm-lir", "ilo-emi", "ilo-est-cld-2pop", "ilo-est-eap-2eap", "ilo-est-eip-2eip", "ilo-est-eip-2wap",
+      "ilo-est-emp-2fte", "ilo-est-emp-2tru", "ilo-est-gdp-205u", "ilo-est-gdp-2hrw", "ilo-est-gdp-2tot",
+      "ilo-est-how-2tdp", "ilo-est-how-2tot", "ilo-est-luu-2lu2", "ilo-est-pop-2ldr", "ilo-est-pop-2pop",
+      "ilo-est-pop-2wap", "ilo-est-sdg-0111", "ilo-est-sdg-0821", "ilo-est-sdg-1041", "ilo-est-sdg-b821",
+      "ilo-est-une-2une", "ilo-eus-estimates", "ilo-ihd", "ilo-ilo-estimates", "ilo-ilo-policy", "ilo-ilo-textual",
+      "ilo-legislation", "ilo-mea", "ilo-moia", "ilo-nss-ear", "ilo-nss-ees", "ilo-nss-eip", "ilo-nss-emp",
+      "ilo-nss-pop", "ilo-official", "ilo-plfs-ees", "ilo-plfs-eip", "ilo-plfs-emp", "ilo-plfs-how", "ilo-plfs-more",
+      "ilo-plfs-pop", "ilo-plfs-q", "ilo-special", "ilo-ssi"],
+  },
 ];
 export const bySlug = Object.fromEntries(DOSSIERS.map((d) => [d.slug, d]));
 
