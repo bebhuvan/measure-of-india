@@ -176,6 +176,16 @@ stamps, silent series). What the audit changed:
   keeps both sides; in-place edits of a shared line need a person); trial-merge every
   branch in a scratch worktree with the full gates before it lands; ten concurrent sessions
   filled a 466 GB disk once (build output is ~700 MB each; deleted after each check now).
+- **2026-10-10 — Two corrections to what the site had said.** (1) The higher-education
+  guide's "2021-22 All Teacher source defect" was our own corrupted download: MoSPI's API
+  pages without a stable order, and the 2026-08-09 page set repeated one row and dropped
+  another with the count intact. A clean refetch adds up (15,97,688 teachers); mospiAll now
+  detects a repeat in any page set and re-reads it in 100-row pages. (2) MoSPI's API misfiles
+  NFHS-4 values in five tables, shifted identically in every state (women's bank accounts
+  served as 3.3% against the true 53%); the old family-health guide printed "3% to 79%".
+  Those lines are withheld, pinned to the value served so a silent fix is noticed. Lesson:
+  an agency's API is a copy of its report, and a copy can be wrong; check one value per
+  table against the printed report, which is what caught both.
 
 ## Retired mechanisms
 

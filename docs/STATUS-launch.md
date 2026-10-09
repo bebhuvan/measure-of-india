@@ -1,6 +1,6 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 02:50.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 03:05.
 
 ## Running now: ten family sessions
 
@@ -33,7 +33,7 @@ Each decides every `pending` item in its ledgers (brief: `docs/briefs/wave2.md`)
 | atlas-industry | iip, factories (+ eight core industries) | 45,347; paging fix merged, audit clean so far (38 ASI tables, all 52 ASUSE, IIP annual); ASI download ~2 h left |
 | atlas-nas | gdp | **merged**: 0 pending; institutional sectors, revision paths, 18 sub-industries |
 
-| atlas-health-gender | nfhs, gender | 15,538 (started 01:30) |
+| atlas-health-gender | nfhs, gender | **merged**: 0 pending; found MoSPI misfiling NFHS-4 values the old guide had printed |
 | atlas-households | consumption, aishe, mnre, deposits | **merged**: 0 pending; BSR-2 decoded; found our own corrupted AISHE download |
 
 ## Coordinator (this session) meanwhile
