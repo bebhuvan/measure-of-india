@@ -62,6 +62,8 @@ Hard rules — breaking any of these is a bug regardless of what else works:
 - `docs/DESIGN.md` — the design system: tokens, typography, dossier anatomy,
   chart engineering, rejected directions. Normative; elevate, never redesign.
 - `docs/HISTORY.md` — lineage: what was tried, rejected, retired, and why
+- `docs/PLAN-launch.md` — the launch build: scope, coverage ledger, sources, order, definition of done;
+  progress in `docs/STATUS-launch.md`
 - `data/sources.yml` — registry: families, cadence, release-day rules, base years, ranges
 - Naming: readers see **guides** (`/guides/<slug>/`; old `/dossiers/` URLs redirect).
   Code keeps the internal name: `src/dossiers/`, `DOSSIERS`, the `.dossiers` class.
@@ -86,7 +88,7 @@ Hard rules — breaking any of these is a bug regardless of what else works:
   outside the dots).
 - `pipeline/` — prose machinery: corpus (the spec), voice, slots, gates
 - `site/` — design-phase reference implementation (plain HTML visual spec)
-- `docs/reference/` — source reverse-engineering notes (eSankhyiki API)
+- `docs/reference/` — source reverse-engineering notes (eSankhyiki API, TradeStat)
 - `skills/` — task playbooks for agents (see skills/README.md)
 
 ## Contracts you must not violate

@@ -142,7 +142,20 @@ stamps, silent series). What the audit changed:
   another base of the same product); writeSeries counts published cross-checks as data; on
   phones every small-multiple grid on the site was clipped to its first half by the
   700px plate minimum (exempted in atlas.css).
-
+- **2026-10-09 (evening) — The launch build is planned.** The owner set the launch bar: every
+  major family (jobs, national accounts and states, prices, industry, services, trade, the
+  external account with portfolio flows and reserves, money and credit, rates) in a guide, and
+  comprehensiveness across every indicator and granularity the source publishes. The three
+  earlier sessions stood down, the day's work was committed as one checkpoint (`77384bd`, on
+  the new branch `launch-build`, gates green), and `docs/PLAN-launch.md` was written with
+  `docs/STATUS-launch.md`. Three decisions from that plan: (1) the census proves a guide saw
+  everything we baked but nothing proved we baked everything the source publishes, so a
+  generated coverage ledger per family becomes a gate; (2) commodity and partner trade comes
+  from the Ministry of Commerce's TradeStat, not UN Comtrade (Comtrade lags by months;
+  TradeStat is current to the latest release and a plain form POST returns a month at HS
+  8-digit in under two seconds: `docs/reference/tradestat.md`); (3) India Data Hub, a paid
+  service, is used only as a cross-check read from the Data Bank, and its values never enter
+  this repo or the site.
 
 ## Retired mechanisms
 
