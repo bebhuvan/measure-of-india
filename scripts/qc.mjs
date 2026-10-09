@@ -668,6 +668,19 @@ for (const page of PAGES) {
       if ((seen.get(b) ?? 0) !== n) bad.push(`${b} ${seen.get(b) ?? 0}/${n}`);
     }
     for (const b of seen.keys()) if (!EC.guideBundles(d).includes(b)) bad.push(`${b} is not a bundle of this guide`);
+    // Data and downloads: every bundle of the registry entry (and every file a family claims)
+    // downloads from the guide page, or from its family's view one click away
+    const unreachable = [];
+    for (const b of new Set([d.currentBundle, ...(d.bundles ?? []), ...EC.guideBundles(d)])) {
+      if (!b || !fs.existsSync(path.join(ROOT, "data/series", b + ".json"))) continue;
+      if (html.includes(`/data/${b}.csv`)) continue;
+      const fam = plan.tails.find((t) => t.kind === "family" && t.bundles.includes(b));
+      const fp = fam && path.join(DIST, "guides", d.slug, "every-cut", fam.id, "index.html");
+      const ok1 = fam && html.includes(`/guides/${d.slug}/every-cut/${fam.id}/`) && fs.existsSync(fp) && fs.readFileSync(fp, "utf8").includes(`/data/${b}.csv`);
+      if (!ok1) unreachable.push(b);
+    }
+    if (unreachable.length) fail(`/guides/${d.slug}/: ${unreachable.length} file(s) not downloadable from the guide page or one click away: ${unreachable.slice(0, 5).join(", ")}`);
+    else ok(`/guides/${d.slug}/: every file downloads from the page or one click away`);
     if (bad.length) fail(`/guides/${d.slug}/: every-cut does not list each series exactly once: ${bad.slice(0, 5).join("; ")}${bad.length > 5 ? ` (+${bad.length - 5})` : ""}`);
     else ok(`/guides/${d.slug}/: every-cut lists all ${want} series once (${plan.inlineRows.length} inline${plan.tails.length ? `, ${plan.tails.length} long-tail view${plan.tails.length > 1 ? "s" : ""}` : ""})`);
   }

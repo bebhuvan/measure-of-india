@@ -103,10 +103,15 @@ if (MO) new MO((ms) => {
 
 /* ---------- phone plates open at today ----------
  * On phones a plate's main plot keeps its authored width and scrolls sideways (DESIGN.md §3),
- * and time runs left to right, so the latest period sits at the far right. Each scrolling plot
- * zone therefore opens at its right end: after layout, and again whenever its size changes
- * (fonts, rotation), until the reader scrolls it themselves. A quiet cue above the plot says
- * there is more to the left, and goes once the reader reaches the start. */
+ * and time runs left to right, so the latest period sits at the far right. A scrolling plot zone
+ * whose chart has TIME on its x axis therefore opens at its right end: after layout, and again
+ * whenever its size changes (fonts, rotation), until the reader scrolls it themselves. A quiet
+ * cue above the plot says there is more to the left, and goes once the reader reaches the start.
+ * Every other chart (horizontal bars, dot strips: category names sit on the left) keeps its
+ * left edge. The chart decides, not a list of plates: Plot's figure carries its own scales
+ * (plot.scale("x"), the hook addCrosshair uses too), and a time or utc x scale, or a band
+ * scale over dates, is time. A chart built by hand from several Plot panels declares data-x on
+ * its own SVG where it is built. The finding is written on the zone as data-x="time|other". */
 {
   const zones = [...document.querySelectorAll(".plotzone")];
   const touched = new WeakSet();
@@ -122,7 +127,20 @@ if (MO) new MO((ms) => {
     }
     return c;
   };
+  const xKind = (z) => {
+    if (z.dataset.x) return z.dataset.x;
+    // a chart assembled by hand (several Plot panels in one SVG) declares data-x where it is built
+    const declared = z.querySelector("svg[data-x], figure[data-x]")?.getAttribute("data-x");
+    if (declared) return (z.dataset.x = declared === "time" ? "time" : "other");
+    const fig = [...z.querySelectorAll("figure, svg")].find((el) => typeof el.scale === "function" && el.scale("x"));
+    if (!fig) return "";   // not drawn yet (or not a Plot chart): decide on the next pass
+    const x = fig.scale("x");
+    const time = x.type === "time" || x.type === "utc"
+      || ((x.type === "band" || x.type === "point") && x.domain?.length && x.domain.every((v) => v instanceof Date));
+    return (z.dataset.x = time ? "time" : "other");
+  };
   const update = (z) => {
+    if (xKind(z) !== "time") return;
     const max = z.scrollWidth - z.clientWidth;
     if (max <= 4) { if (cueOf.has(z)) cueOf.get(z).hidden = true; return; }
     if (!touched.has(z)) { programmatic = true; z.scrollLeft = max; programmatic = false; }
