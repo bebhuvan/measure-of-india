@@ -54,6 +54,12 @@ const titles = Object.fromEntries((single ? [] : [...new Set(rows.map((r) => r.b
     </div>
   </div>
   <div class="break">
+    {!single && (
+      <details class="ec-files" id="files">
+        <summary>All {t.bundles.length.toLocaleString("en-IN")} files, to download whole</summary>
+        <ul>{t.bundles.map((b) => <li>{bundleTitle(b)} <a href={`/data/${b}.csv`} download>CSV</a> <a href={`/data/${b}.json`} download>JSON</a></li>)}</ul>
+      </details>
+    )}
     {total > 1 && (
       <nav class="ec-pages" aria-label="Pages">{pages.map((p, i) => i === n
         ? <b aria-current="page">{i + 1}</b>
@@ -71,10 +77,18 @@ const titles = Object.fromEntries((single ? [] : [...new Set(rows.map((r) => r.b
   .ec-pages{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;font-family:var(--sans);font-size:.9rem;margin-top:8px}
   .ec-pages a{color:var(--ink-soft)}
   .ec-pages span{color:var(--muted);font-size:.82rem;margin-left:8px}
+  .ec-files{margin:6px 0 22px;font-family:var(--sans);font-size:.88rem}
+  .ec-files summary{cursor:pointer;color:var(--ink)}
+  .ec-files ul{list-style:none;margin:12px 0 0;columns:2 26em;column-gap:40px}
+  .ec-files li{break-inside:avoid;color:var(--ink-soft);padding:3px 0;line-height:1.45}
+  .ec-files a{color:var(--ink-soft);margin-left:6px}
   .ec-back{margin:36px 0 80px;font-family:var(--sans);font-size:.92rem}
   .ec-back a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink)}
 </style>
 <script>
   import "../../../../../dossiers/guide.client.js";
+  // a link to #files (from the guide's Data and downloads) opens the file list
+  const f = document.getElementById("files");
+  if (f && location.hash === "#files") f.open = true;
 </script>
 </Base>

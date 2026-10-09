@@ -282,3 +282,18 @@ fails on the omissions above, by design.
   cb-industries, cb-nbfc, cb-states, cb-pop, cb-women, cb-npaflow, cb-frauds); states: 1 time,
   7 other (cb-pc, cb-size, cb-growth, cb-converge, cb-structure, cb-industries, cb-finance);
   cpi 11 time, 5 other; gdp 13 time.
+
+## 2. Data and downloads summarises families
+
+- `GuideData.astro` reads the same plan as every-cut (`everyCutPlan`): the guide's own bundles
+  stay one row each; each registry family (`everyCutFamilies`) is one row with its label,
+  file count, series count, span, newest vintage, and a link "All N files" to the family's
+  long-tail view. That view now opens with a file list (`#files`, opened by the link) where
+  every file of the family downloads as CSV and JSON: every file is on the guide page or one
+  click from it.
+- The description column takes 46% of the table (it was squeezed, wrapping rows to a dozen
+  lines). Data and downloads at 1440px: credit about 60,000 to 11,354 px (its 63 own bundles
+  still listed one by one), states 2,970, climate 8,257, cpi 2,255.
+- qc: every bundle of the registry entry, and every file a family claims, must have a
+  download link on the guide page or sit in a family whose view is linked from the guide
+  page and carries that file's link. All 24 guides pass.
