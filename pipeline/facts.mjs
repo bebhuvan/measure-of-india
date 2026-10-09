@@ -257,6 +257,19 @@ if (slug === "gdp") {
   })();
 }
 
+// consumption: how many times urban spending is rural spending, per survey round and per
+// basis (with and without imputation). The writer reached for this ratio and computed it
+// itself (verify caught "1.7 times"); arithmetic belongs here, never in the model.
+if (slug === "consumption") {
+  const S = facts.series, r2 = (v) => Math.round(v * 100) / 100;
+  const pair = (u, r) => S[u] && S[r] ? {
+    latest: { value: r2(S[u].latest.value / S[r].latest.value), period: S[u].latest.period },
+    previous: S[u].previous && S[r].previous ? { value: r2(S[u].previous.value / S[r].previous.value), period: S[u].previous.period } : null,
+  } : null;
+  facts.cross.urbanRuralRatio = { withoutImputation: pair("urban", "rural"), withImputation: pair("urban_imputed", "rural_imputed"),
+    note: "Urban MPCE divided by rural MPCE: how many times what a town household member spends a month a village one spends." };
+}
+
 // bis family session: the comparison economies (one bundle each, bis-peer-<iso3>). India's
 // position among them is a fact the writer may cite; computed here so verify can trace it.
 if (slug === "debt" || slug === "housing") {
