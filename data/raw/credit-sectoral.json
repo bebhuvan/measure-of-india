@@ -160086,7 +160086,7 @@
  "rbi_sectoral_credit": {
   "provenance": {
    "dataset": "rbi_sectoral_credit",
-   "sql": "select distinct statement, bank_universe, category_code, category_label, observation_date, amount_inr_cr, year_ago_date, year_ago_amount_inr_cr, growth_yoy_pct, release_date, release_prid from {table} order by statement, observation_date, category_code, release_prid, category_label, year_ago_date",
+   "sql": "select distinct statement, bank_universe, category_code, category_label, observation_date, amount_inr_cr, year_ago_date, year_ago_amount_inr_cr, growth_yoy_pct, release_date, release_prid from {table} order by statement, observation_date, category_code, release_prid, category_label, year_ago_date, bank_universe, amount_inr_cr, release_date",
    "rows": 19716,
    "sha256": "823b62813727dc5e8f32043bd5017fb7b9016686067bb5963528c9c0b3c73163"
   },

@@ -73,6 +73,23 @@ function disclose(dates, s, note) {
   return s;
 }
 
+/** The unit the every-cut table shows for a series (src/dossiers/everycut.js UNITS). */
+function unitFor(rel, name, bundleUnit) {
+  const n = String(name);
+  if (rel === "credit-money-annual") return "pct_yoy";
+  if (rel === "credit-money-ratios") return "times";
+  if (/_yoy_pct$/.test(n)) return "pct_yoy";
+  if (/_pct$/.test(n)) return "pct";
+  if (/_inr_lakh_crore$/.test(n)) return "inr_lakh_crore";
+  if (/_(banks|offices|cases)$/.test(n)) return "count";
+  if (/_rate$/.test(n)) return "pct_per_annum";
+  if (rel.startsWith("credit-frauds") && /_amount$/.test(n)) return "inr_crore";
+  if (/_(amount|limit)$/.test(n)) return "inr_lakh_crore";
+  if (/_accounts$/.test(n)) return "lakh_count";
+  if (["inr_lakh_crore", "pct", "count"].includes(bundleUnit)) return bundleUnit;
+  throw new Error(`credit: no unit for series ${n} in ${rel}`);
+}
+
 /** Trim a bundle's axis to the dates some series reports, then write it. */
 function bundleOut(root, rel, meta, dates, series, gapNote) {
   const any = (i) => Object.values(series).some((s) => s.data[i] != null);
@@ -82,6 +99,7 @@ function bundleOut(root, rel, meta, dates, series, gapNote) {
   const D = dates.slice(a, b + 1);
   for (const s of Object.values(series)) { s.data = s.data.slice(a, b + 1); disclose(D, s, gapNote); }
   for (const [k, s] of Object.entries(series)) if (s.data.every((v) => v == null)) delete series[k];
+  for (const s of Object.values(series)) s.unit ??= unitFor(rel, s.name, meta.unit);
   writeSeries(root, `data/series/${rel}.json`, { meta: { latestPeriod: D.at(-1), ...meta }, dates: D, series });
   return { dates: D, series };
 }
@@ -314,7 +332,7 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
   const histMax = {};
   for (const r of H.rows) if (r.format_segment === "new") histMax[r.statement] = r.observation_date > (histMax[r.statement] ?? "") ? r.observation_date : histMax[r.statement];
   const REL = databankQuery(db, "rbi_sectoral_credit",
-    "select distinct statement, bank_universe, category_code, category_label, observation_date, amount_inr_cr, year_ago_date, year_ago_amount_inr_cr, growth_yoy_pct, release_date, release_prid from {table} order by statement, observation_date, category_code, release_prid, category_label, year_ago_date");
+    "select distinct statement, bank_universe, category_code, category_label, observation_date, amount_inr_cr, year_ago_date, year_ago_amount_inr_cr, growth_yoy_pct, release_date, release_prid from {table} order by statement, observation_date, category_code, release_prid, category_label, year_ago_date, bank_universe, amount_inr_cr, release_date");
   // RBI's printed comparison, per observation and category: the latest release's pair
   const relCode = (st, c) => (st === "industry" && c === "total" ? "2" : ROMAN[c] ?? c);
   const latestRel = new Map();     // "statement|date|code" -> the row of the highest release_prid
@@ -519,6 +537,7 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
     const S = b.series;
     S.m1 = { name: "m1", label: "Narrow money (M1), derived: currency with the public, demand deposits and other deposits with the RBI",
       data: b.dates.map((_, i) => (S.currency_with_public.data[i] != null && S.demand_deposits.data[i] != null && S.other_deposits_rbi.data[i] != null ? r3(S.currency_with_public.data[i] + S.demand_deposits.data[i] + S.other_deposits_rbi.data[i]) : null)) };
+    S.m1.unit = "inr_lakh_crore";
     disclose(b.dates, S.m1, "A component is missing for this date.");
     writeSeries(root, "data/series/credit-money.json", b);
     money.series.m1 = S.m1;
@@ -949,7 +968,7 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
    * 7. NBFCs' own credit (selected NBFCs and HFCs)
    * ==================================================================================== */
   {
-    const N = databankQuery(db, "rbi_nbfc_credit", "select distinct observation_date, category_code, category_label, amount_inr_cr, year_ago_date, year_ago_amount_inr_cr, growth_yoy_pct, release_date, release_prid from {table} order by observation_date, category_code, release_prid");
+    const N = databankQuery(db, "rbi_nbfc_credit", "select distinct observation_date, category_code, category_label, amount_inr_cr, year_ago_date, year_ago_amount_inr_cr, growth_yoy_pct, release_date, release_prid from {table} order by observation_date, category_code, release_prid, category_label, year_ago_date, amount_inr_cr");
     const VN = stamp("data/raw/credit-nbfc.json", { note: "Credit by selected NBFCs and HFCs, by sector, from the RBI's monthly sectoral-credit release, read from the local Data Bank (rbi_nbfc_credit). ₹ crore.", provenance: N.provenance,
       columns: ["observation_date", "category_code", "category_label", "amount_inr_cr", "year_ago_date", "year_ago_amount_inr_cr", "growth_yoy_pct", "release_date", "release_prid"], rows: N.rows.map((r) => [r.observation_date, r.category_code, r.category_label, r.amount_inr_cr, r.year_ago_date, r.year_ago_amount_inr_cr, r.growth_yoy_pct, r.release_date, r.release_prid]) });
     const latest = new Map();

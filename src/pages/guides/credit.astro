@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
 import GuideData from "../../components/GuideData.astro";
+import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 import { period } from "../../dossiers/periods.js";
@@ -13,23 +14,7 @@ const PF = period("credit-food"), PN = period("credit-npa"), PST = period("credi
 const PZ = period("credit-size"), PI = period("credit-industry"), PNB = period("credit-nbfc"), PFR = period("credit-frauds"), PMR = period("credit-money-ratios"), PNM = period("credit-npa-movement");
 const load = (b) => JSON.parse(fs.readFileSync(`data/series/${b}.json`, "utf8"));
 const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
-const sectors = load("credit-sectors"), growth = load("credit-growth"), industry = load("credit-industry"), cdA = load("credit-states-cd-annual"), stA = load("credit-states-annual");
-const women = load("credit-women"), npaBanks = load("credit-npa-banks"), occ = load("credit-occupation");
-const lastI = (b) => b.dates.length - 1;
-const yAgo = (b) => b.dates.indexOf(`${+b.dates.at(-1).slice(0, 4) - 1}${b.dates.at(-1).slice(4)}`);
-const f1 = (v) => (v == null ? "" : v.toFixed(1));
-const f2 = (v) => (v == null ? "" : v.toFixed(2));
-// every-cut tables, built here from the bundles
-const sectorRows = Object.entries(sectors.series).map(([k, s]) => ({ label: s.label, amt: s.data[lastI(sectors)], g: growth.series[k === "bank_credit" ? "headline" : k]?.data[lastI(growth)] ?? null,
-  gy: growth.series[k === "bank_credit" ? "headline" : k]?.data[yAgo(growth)] ?? null }));
-const indTot = industry.series.industry_total.data[lastI(industry)];
-const industryRows = Object.entries(industry.series).filter(([k]) => k !== "industry_total").map(([k, s]) => { const L = s.data[lastI(industry)], Y = s.data[yAgo(industry)]; return { label: s.label, amt: L, share: (100 * L) / indTot, g: L != null && Y ? 100 * (L / Y - 1) : null }; });
-const stateRows = Object.keys(cdA.series).filter((k) => k !== "all_india").map((k) => ({ label: cdA.series[k].label.replace(/, credit-deposit ratio$/, ""), cd: cdA.series[k].data[lastI(cdA)],
-  dep: stA.series[`${k}_deposits`]?.data[lastI(stA)], cr: stA.series[`${k}_credit`]?.data[lastI(stA)], w: women.series[`${k}_women_share`]?.data[lastI(women)] ?? null })).filter((r) => r.cd != null);
-const bankRows = Object.values(npaBanks.series).map((s) => ({ label: s.label.replace(/, gross NPA ratio$/, ""), v: s.data[lastI(npaBanks)], y: s.data[lastI(npaBanks) - 1] })).filter((r) => r.v != null).sort((a, b) => b.v - a.v);
-const occRows = Object.entries(occ.series).filter(([k]) => k.endsWith("_amount")).map(([k, s]) => ({ label: s.label.replace(/, credit outstanding$/, ""), amt: s.data[lastI(occ)], acc: occ.series[k.replace(/_amount$/, "_accounts")]?.data[lastI(occ)] ?? null,
-  g: s.data[yAgo(occ)] ? 100 * (s.data[lastI(occ)] / s.data[yAgo(occ)] - 1) : null }));
-const npaLast = npaBanks.dates.at(-1).slice(0, 4);
+
 ---
 <Base
   title="Money, credit and banks · India Atlas"
@@ -46,16 +31,6 @@ const npaLast = npaBanks.dates.at(-1).slice(0, 4);
   .credit-sm-cell .sm-h{font-family:var(--sans);font-size:.85rem;color:var(--ink-soft)}
   .credit-sm-cell .sm-v{font-family:var(--sans);font-size:1.35rem;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;margin:2px 0 4px}
   .credit-sm-cell svg{max-width:100%;height:auto}
-  .cut-wrap{overflow-x:auto;margin:14px 0 30px}
-  .cut-wrap details{border-top:1px solid var(--rule-2);padding:12px 0}
-  .cut-wrap summary{font-family:var(--sans);font-size:.95rem;color:var(--ink);cursor:pointer}
-  .cut-wrap summary small{color:var(--muted);margin-left:8px}
-  table.cut-table{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:.86rem;min-width:560px;margin-top:10px}
-  table.cut-table th{font-weight:400;font-size:.78rem;color:var(--muted);text-align:left;padding:0 14px 8px 0;border-bottom:1px solid var(--rule-2);cursor:pointer;white-space:nowrap}
-  table.cut-table th[data-dir="asc"]::after{content:" ↑"} table.cut-table th[data-dir="desc"]::after{content:" ↓"}
-  table.cut-table td{padding:7px 14px 7px 0;border-bottom:1px solid var(--rule);color:var(--ink-soft)}
-  table.cut-table td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-  table.cut-table th.n{text-align:right}
 </style>
 <div class="page">
 
@@ -829,42 +804,9 @@ const npaLast = npaBanks.dates.at(-1).slice(0, 4);
     </div>
   </section>
 
-  <!-- § 12 every cut: the long tail, built at render time from the bundles. -->
-  <section>
-    <div class="sec-head"><span class="no">12</span><h2>Every cut</h2><span class="line"></span><span class="unit">Click a column to sort</span></div>
-    <div class="prose"><p>Every sector, industry, occupation, state and bank this guide holds, at the latest figure, with a download of the full history in the data table below. Nothing here is estimated.</p></div>
-    <div class="cut-wrap">
-      <details open>
-        <summary>Bank credit by sector and type of personal loan<small>{PS.long}, ₹ lakh crore, {sectorRows.length} series</small></summary>
-        <table class="cut-table"><thead><tr><th data-k="l">Sector</th><th data-k="a" class="n">₹ lakh crore</th><th data-k="g" class="n">Growth, year</th><th data-k="gy" class="n">A year earlier</th></tr></thead>
-          <tbody>{sectorRows.map((r) => <tr><td>{r.label}</td><td class="n">{f2(r.amt)}</td><td class="n">{r.g == null ? "" : f1(r.g) + "%"}</td><td class="n">{r.gy == null ? "" : f1(r.gy) + "%"}</td></tr>)}</tbody></table>
-      </details>
-      <details>
-        <summary>Bank credit to industry, by industry<small>{PI.long}, {industryRows.length} industries and sub-industries</small></summary>
-        <table class="cut-table"><thead><tr><th data-k="l">Industry</th><th data-k="a" class="n">₹ lakh crore</th><th data-k="s" class="n">Share of industry</th><th data-k="g" class="n">Growth, year</th></tr></thead>
-          <tbody>{industryRows.map((r) => <tr><td>{r.label}</td><td class="n">{f2(r.amt)}</td><td class="n">{f1(r.share)}%</td><td class="n">{r.g == null ? "" : f1(r.g) + "%"}</td></tr>)}</tbody></table>
-      </details>
-      <details>
-        <summary>Bank credit by the borrower's occupation (BSR-1)<small>{period("credit-occupation").long}, {occRows.length} rows</small></summary>
-        <table class="cut-table"><thead><tr><th data-k="l">Occupation</th><th data-k="a" class="n">₹ lakh crore</th><th data-k="c" class="n">Accounts, lakh</th><th data-k="g" class="n">Growth, year</th></tr></thead>
-          <tbody>{occRows.map((r) => <tr><td>{r.label}</td><td class="n">{f2(r.amt)}</td><td class="n">{r.acc == null ? "" : f1(r.acc)}</td><td class="n">{r.g == null ? "" : f1(r.g) + "%"}</td></tr>)}</tbody></table>
-      </details>
-      <details>
-        <summary>States and union territories<small>March {PST.year}, including RRBs</small></summary>
-        <table class="cut-table"><thead><tr><th data-k="l">State</th><th data-k="d" class="n">Deposits, ₹ lakh crore</th><th data-k="c" class="n">Credit, ₹ lakh crore</th><th data-k="r" class="n">Credit-deposit ratio</th><th data-k="w" class="n">Women's share of loans to individuals, {PW.short}</th></tr></thead>
-          <tbody>{stateRows.map((r) => <tr><td>{r.label}</td><td class="n">{f2(r.dep)}</td><td class="n">{f2(r.cr)}</td><td class="n">{f1(r.cd)}%</td><td class="n">{r.w == null ? "" : f1(r.w) + "%"}</td></tr>)}</tbody></table>
-      </details>
-      <details>
-        <summary>Gross NPA ratio of every bank<small>March {npaLast}, {bankRows.length} banks</small></summary>
-        <table class="cut-table"><thead><tr><th data-k="l">Bank</th><th data-k="v" class="n">Gross NPA ratio</th><th data-k="y" class="n">A year earlier</th></tr></thead>
-          <tbody>{bankRows.map((r) => <tr><td>{r.label}</td><td class="n">{f2(r.v)}%</td><td class="n">{r.y == null ? "" : f2(r.y) + "%"}</td></tr>)}</tbody></table>
-      </details>
-    </div>
-  </section>
-
   <!-- § 13 misreadings -->
   <section>
-    <div class="sec-head"><span class="no">13</span><h2>How to misread these numbers</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">12</span><h2>How to misread these numbers</h2><span class="line"></span></div>
     <ul class="misread">
       <li><span class="no">1</span><div><h3>"Credit grew 20% in 2023-24, a boom."</h3><p>A big part of that year's growth was the merger of HDFC Ltd into HDFC Bank, which moved existing home loans from a finance company into a bank. No new loan was made. RBI's figures excluding the merger show growth several points lower.</p></div></li>
       <li><span class="no">2</span><div><h3>"Personal loans are now the biggest sector, so households are over-borrowed."</h3><p>Most personal-loan money is home loans, secured against houses. Indian household debt is low next to most countries' (see the <a href="/guides/debt/">debt guide</a>). The worry is narrower: unsecured loans and credit-card balances growing fast among borrowers with thin incomes.</p></div></li>
@@ -875,6 +817,7 @@ const npaLast = npaBanks.dates.at(-1).slice(0, 4);
     </ul>
   </section>
 
+  <EveryCut slug="credit" />
   <GuideData slug="credit" />
 
   <footer class="provenance">

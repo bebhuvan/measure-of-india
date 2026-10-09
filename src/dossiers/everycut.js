@@ -69,6 +69,9 @@ export const UNITS = {
   thousand_tonne: { kind: "pct", fmt: (v) => big(v * 1000, " tonnes") },
   thousand_kwh: { kind: "pct", fmt: (v) => grp(v / 1e6, 2) + " billion kWh", note: "published in thousand kWh" },
   kg_per_month: { kind: "pct", fmt: (v) => v.toFixed(2) + " kg", note: "a month" },
+  // credit (lb/credit)
+  lakh_count: { kind: "pct", fmt: (v) => grp(v, 1) + " lakh" },
+  times: { kind: "diff", fmt: (v) => v.toFixed(2) + "×", note: "times" },
 };
 
 // series.unit, then what the series name says, then the bundle's meta.unit: a bundle-level
@@ -144,6 +147,22 @@ export const CUT_BY_BUNDLE = {
   "deposits-owners": "Owner and account", "deposits-owners-2005": "Owner and account", "deposits-population": "Population group",
   "deposits-term-rates": "Interest rate band", "deposits-term-maturity": "Maturity", "deposits-term-size": "Deposit size",
   "deposits-term-size-2026": "Deposit size",
+  // credit (lb/credit)
+  "credit-growth": "Sector", "credit-sectors": "Sector", "credit-sectors-2007": "Sector", "credit-industry": "Industry", "credit-industry-2007": "Industry",
+  "credit-scb": "Balance sheet item", "credit-scb-ratios": "All India", "credit-food": "All India",
+  "credit-money": "Component and source", "credit-money-growth": "Component", "credit-money-monthly": "Component and source", "credit-money-annual": "Component and source",
+  "credit-money-ratios": "Ratio", "credit-reserve-money": "Component and source", "credit-reserve-money-weekly": "Component and source", "credit-bank-survey": "Component and source",
+  "credit-rbi-balance-sheet": "Asset or liability", "credit-depth": "Ratio",
+  "credit-npa": "Bank group", "credit-npa-amounts": "Bank group", "credit-npa-movement": "Bank group and flow", "credit-npa-banks": "Bank", "credit-loan-quality": "Asset class",
+  "credit-crar": "Bank group and capital band", "credit-frauds": "Banking operation", "credit-frauds-half-year": "Banking operation",
+  "credit-states": "State", "credit-states-cd": "State", "credit-offices": "State", "credit-places": "Population and bank group",
+  "credit-states-2017": "State", "credit-states-cd-2017": "State", "credit-offices-2017": "State", "credit-places-2017": "Population and bank group",
+  "credit-states-2004": "State", "credit-states-cd-2004": "State", "credit-offices-2004": "State", "credit-places-2004": "Population and bank group",
+  "credit-states-annual": "State", "credit-states-cd-annual": "State", "credit-offices-annual": "State", "credit-places-annual": "Population and bank group",
+  "credit-utilisation": "State", "credit-women": "State", "credit-occupation": "Occupation", "credit-organisation": "Borrower",
+  "credit-size": "Loan size", "credit-interest-rates": "Interest rate band", "credit-lending-rates": "Occupation", "credit-population-group": "Population group",
+  "credit-bank-groups": "Bank group", "credit-account-type": "Type of account", "credit-states-bsr1": "State", "credit-states-occupation": "State and occupation",
+  "credit-nbfc": "Sector",
 };
 // the fallback, by what a bundle's slug says it is
 export const CUT_RULES = [

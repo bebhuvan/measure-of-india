@@ -30,7 +30,7 @@ import ratesB from "../../data/series/credit-lending-rates.json";
 import sizeB from "../../data/series/credit-size.json";
 import nbfcB from "../../data/series/credit-nbfc.json";
 import cpiB from "../../data/series/cpi-2024-linked.json";
-import { MONO as sans, hydrate, a11y, addCrosshair, spark, dodgeEndLabels, downloadSVG, downloadPNG, saveBlob, fmt } from "../charts/plumbing.js";
+import { MONO as sans, hydrate, a11y, addCrosshair, spark, dodgeEndLabels, downloadSVG, downloadPNG, saveBlob, seamMarks, fmt } from "../charts/plumbing.js";
 
 const INK = "#161A22", GRID = "#F0F2F5", ZERO = "#D3D7DE", MUTED = "#878D99", ACC = "#2E4BD8", ACC_SOFT = "#AFBBF0", GOLD = "#C47A16", G1 = "#5F6675", G2 = "#A3A9B4", G3 = "#C9CED6";
 const W = 1184;
@@ -71,8 +71,9 @@ const seriesCsv = (list) => {
 function lines(id, list, { yDomain, yTicks, yFmt = (v) => String(v), yLabel, xTicks, height = 470, mr = 210, ml = 48, labelFmt = (v) => v.toFixed(1) + "%", extra = [], tipFmt, dateFmt = (d) => monthOf(d.toISOString().slice(0, 10)) }) {
   const host = document.getElementById(id); if (!host) return null;
   const marks = [Plot.gridY(yTicks.filter((v) => v !== 0), { stroke: GRID }), Plot.ruleY([yDomain[0] <= 0 && yDomain[1] >= 0 ? 0 : yDomain[0]], { stroke: ZERO }), ...extra];
-  for (const s of list.filter((s) => !s.lead)) marks.push(Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: s.width ?? 1.5, strokeLinejoin: "round", strokeLinecap: "round", ...(s.dash ? { strokeDasharray: s.dash } : {}) }));
-  for (const s of list.filter((s) => s.lead)) marks.push(Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: s.width ?? 2, strokeLinejoin: "round", strokeLinecap: "round" }));
+  // series drawn by a seam (seamMarks, passed in extra) set noLine: they keep their end label and tooltip
+  for (const s of list.filter((s) => !s.lead && !s.noLine)) marks.push(Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: s.width ?? 1.5, strokeLinejoin: "round", strokeLinecap: "round", ...(s.dash ? { strokeDasharray: s.dash } : {}) }));
+  for (const s of list.filter((s) => s.lead && !s.noLine)) marks.push(Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: s.width ?? 2, strokeLinejoin: "round", strokeLinecap: "round" }));
   const labelled = list.filter((s) => s.endLabel !== false && s.data.length);
   for (const s of labelled) marks.push(Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: s.lead ? 3.5 : 3, stroke: "#fff", strokeWidth: 1.5 }));
   const gap = (yDomain[1] - yDomain[0]) * 0.055;
@@ -147,13 +148,16 @@ setHTML("rb-stock", "₹" + lastOf(S, "bank_credit").v.toFixed(1) + pc(" lakh cr
  * ==================================================================================== */
 {
   const R = ratiosB, s = (k) => pts(R, k);
+  // the merger seam: growth excluding the merger and growth as published, both drawn through
+  // the two years RBI published both; the marker at the merger (July 2023)
+  const exM = s("credit_growth_ex_merger"), raw = s("credit_growth");
+  const seam = seamMarks("overlap", [{ data: exM, color: ACC_SOFT, width: 1.75 }, { data: raw, color: ACC, width: 2 }],
+    { at: new Date(Date.UTC(2023, 6, 14)), text: "HDFC merger", y: 38 });
   const plot = lines("plot-growth", [
     { data: s("deposits_growth"), color: GOLD, width: 1.5, label: "Deposits" },
-    { data: s("credit_growth_ex_merger"), color: ACC_SOFT, width: 1.75, label: "Credit, excluding the merger", endLabel: false },
-    { data: s("credit_growth"), color: ACC, width: 2, label: "Bank credit", lead: true },
-  ], { yDomain: [-5, 40], yTicks: [0, 10, 20, 30, 40], yFmt: (v) => v + (v === 40 ? "%" : ""), yLabel: "↑ growth on a year earlier", xTicks: yearTicks(1998, 2026, 2), mr: 170,
-    extra: [Plot.ruleX([new Date(Date.UTC(2023, 6, 1))], { stroke: "#B5BAC4", strokeDasharray: "1 3" }),
-      Plot.text([{ x: new Date(Date.UTC(2023, 6, 1)), y: 38 }], { x: "x", y: "y", text: () => "HDFC merger", dx: -6, textAnchor: "end", fill: MUTED, fontSize: 11.5 })] });
+    { data: exM, color: ACC_SOFT, label: "Credit, excluding the merger", endLabel: false, noLine: true },
+    { data: raw, color: ACC, label: "Bank credit", lead: true, noLine: true },
+  ], { yDomain: [-5, 40], yTicks: [0, 10, 20, 30, 40], yFmt: (v) => v + (v === 40 ? "%" : ""), yLabel: "↑ growth on a year earlier", xTicks: yearTicks(1998, 2026, 2), mr: 170, extra: seam });
   const cg = lastOf(R, "credit_growth"), dg = lastOf(R, "deposits_growth");
   a11y(plot, "Growth of bank credit and deposits since 1998", `Bank credit grew ${fmt.pct1(cg.v)} and deposits ${fmt.pct1(dg.v)} in the year to ${dayOf(cg.d)}.`);
   // the slowest point after 2010 and the highest since, read from the data
@@ -228,11 +232,13 @@ const ROWS_WHO = [
 {
   const KEYS = [["personal_loans", "Personal loans", ACC], ["services", "Services", GOLD], ["industry", "Industry", G1], ["agriculture", "Agriculture", G2]];
   const share = (B, k) => B.dates.map((d, i) => { const t = ["agriculture", "industry", "services", "personal_loans"].reduce((a, c) => a + (B.series[c].data[i] ?? NaN), 0); const v = B.series[k].data[i]; return { date: new Date(d + "T00:00:00Z"), value: v == null || !Number.isFinite(t) ? null : (100 * v) / t }; }).filter((p) => p.value != null);
+  // the 2019 reclassification: each sector's old-format share (pale, to December 2020) and new
+  // format (solid, from January 2019) drawn through the two years both exist, never joined
   const TINT = { [ACC]: ACC_SOFT, [GOLD]: "#E7C48E", [G1]: "#B5BAC4", [G2]: "#D5D9E0" };
   const extra = [];
-  for (const [k, , c] of KEYS) extra.push(Plot.lineY(share(sectors07B, k).filter((p) => p.date < yr(2019)), { x: "date", y: "value", stroke: TINT[c], strokeWidth: 1.5, strokeLinejoin: "round" }));
-  extra.push(Plot.ruleX([yr(2019)], { stroke: "#B5BAC4", strokeDasharray: "1 3" }), Plot.text([{ x: yr(2019), y: 47 }], { x: "x", y: "y", text: () => "New classification", dx: 6, textAnchor: "start", fill: MUTED, fontSize: 11.5 }));
-  const plot = lines("plot-mix", KEYS.map(([k, name, c]) => ({ data: share(S, k), color: c, width: k === "personal_loans" ? 2 : 1.5, label: name, lead: k === "personal_loans" })),
+  KEYS.forEach(([k, , c], i) => extra.push(...seamMarks("overlap", [{ data: share(sectors07B, k), color: TINT[c], width: 1.5 }, { data: share(S, k), color: c, width: k === "personal_loans" ? 2 : 1.5 }],
+    i === 0 ? { at: yr(2019), text: "New classification", y: 47, anchor: "start" } : false)));
+  const plot = lines("plot-mix", KEYS.map(([k, name, c]) => ({ data: share(S, k), color: c, label: name, lead: k === "personal_loans", noLine: true })),
     { yDomain: [0, 50], yTicks: [0, 10, 20, 30, 40, 50], yFmt: (v) => v + (v === 50 ? "%" : ""), yLabel: "↑ share of credit to the four sectors", xTicks: yearTicks(2007, 2026, 1).filter((d) => d.getUTCFullYear() % 2 === 0 || d.getUTCFullYear() === 2007), height: 440, mr: 190, extra });
   const p07 = share(sectors07B, "personal_loans")[0].value, i07 = share(sectors07B, "industry")[0].value;
   const pNow = share(S, "personal_loans").at(-1).value, iNow = share(S, "industry").at(-1).value;
@@ -410,11 +416,15 @@ const ROWS_WHO = [
 {
   const M = moneyGB;
   const cpi = pts(cpiB, "headline").filter((p) => p.date >= yr(2013));
+  // two rulers: M3 excluding the merger (to June 2025) and including it (growth from July 2024),
+  // both drawn through the year they overlap; the marker where the old ruler ends
+  const mOld = pts(M, "m3").filter((p) => p.date >= yr(2013)), mNew = pts(M, "m3_incl_merger");
+  const seam = seamMarks("overlap", [{ data: mOld, color: ACC_SOFT, width: 2 }, { data: mNew, color: ACC, width: 2 }], { text: "M3 excluding the merger ends", y: 19 });
   const plot = lines("plot-m3", [
     { data: cpi, color: GOLD, width: 1.5, label: "Consumer prices" },
-    { data: pts(M, "m3_incl_merger"), color: ACC, width: 2, label: "M3, with merger", lead: true },
-    { data: pts(M, "m3").filter((p) => p.date >= yr(2013)), color: ACC_SOFT, width: 2, label: "M3", endLabel: false },
-  ], { yDomain: [0, 20], yTicks: [0, 5, 10, 15, 20], yFmt: (v) => v + (v === 20 ? "%" : ""), yLabel: "↑ growth on a year earlier", xTicks: yearTicks(2013, 2026, 1), height: 440, mr: 230 });
+    { data: mNew, color: ACC, label: "M3, with merger", lead: true, noLine: true },
+    { data: mOld, color: ACC_SOFT, label: "M3", endLabel: false, noLine: true },
+  ], { yDomain: [0, 20], yTicks: [0, 5, 10, 15, 20], yFmt: (v) => v + (v === 20 ? "%" : ""), yLabel: "↑ growth on a year earlier", xTicks: yearTicks(2013, 2026, 1), height: 440, mr: 230, extra: seam });
   const m = lastOf(M, "m3_incl_merger"), c = lastOf(cpiB, "headline");
   a11y(plot, "Money growth and inflation since 2013", `Broad money grew ${fmt.pct1(m.v)} in the year to ${dayOf(m.d)}; consumer prices rose ${fmt.pct1(c.v)} in the year to ${monthOf(c.d)}.`);
   setHTML("pv-m3", fmt.pct1(m.v)); setHTML("ex-m-m3", fmt.pct1(m.v)); setHTML("ex-m-m3d", dayOf(m.d)); setHTML("ex-m-cpi", fmt.pct1(c.v)); setHTML("ex-m-cpid", monthOf(c.d));
@@ -566,19 +576,6 @@ const ROWS_WHO = [
   setHTML("ex-fr-cardamt", fmt.pct1((100 * F.series.card_internet_amount.data[L]) / F.series.total_amount.data[L]));
   wirePlate("cb-frauds", plot, "india-atlas_bank-frauds", seriesCsv(Object.keys(F.series).map((k) => [F, k])));
 }
-
-/* ======================================================================================
- * Every cut: sortable tables, built on the page from the bundles
- * ==================================================================================== */
-document.querySelectorAll("table.cut-table").forEach((t) => {
-  t.querySelectorAll("th[data-k]").forEach((th, col) => th.addEventListener("click", () => {
-    const body = t.tBodies[0], rows = [...body.rows], dir = th.dataset.dir === "asc" ? -1 : 1;
-    t.querySelectorAll("th").forEach((x) => delete x.dataset.dir); th.dataset.dir = dir === 1 ? "asc" : "desc";
-    const val = (r) => { const c = r.cells[col]; const n = parseFloat(c.dataset.v ?? c.textContent.replace(/[^0-9.-]/g, "")); return Number.isFinite(n) ? n : c.textContent; };
-    rows.sort((a, b) => { const x = val(a), y = val(b); return (typeof x === "number" && typeof y === "number" ? x - y : String(x).localeCompare(String(y))) * dir; });
-    rows.forEach((r) => body.append(r));
-  }));
-});
 
 /* ---------- provenance ---------- */
 setHTML("prov-vintage", growthB.meta.vintage);
