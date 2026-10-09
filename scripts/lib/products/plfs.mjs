@@ -1,31 +1,37 @@
-// scripts/lib/products/plfs.mjs — Periodic Labour Force Survey.
-// Values are levels in per cent (UR/LFPR/WPR), not growth rates.
-// Bundles, never joined across design changes:
-//   plfs-monthly.json    — monthly bulletin (rural+urban, CWS, from Apr 2025)
-//   plfs-quarterly.json  — quarterly bulletin (urban, CWS, from 2018)
-//   plfs-cuts.json       — monthly bulletin by gender × sector
-//   plfs-annual.json     — agriculture-year annual (PS+SS and CWS, from 2017-18)
-//   plfs-status.json     — annual reports: distribution of workers by broad
-//                          status in employment and by broad industry
-//   plfs-earnings.json   — annual reports: earnings by worker status
-//                          (regular ₹/month, casual ₹/day, self-emp ₹/30 days),
-//                          quarterly grain inside each agriculture year
-//   plfs-education.json  — annual reports: UR by general education level,
-//                          plus the 15–29 age cut
-// Rows carry weekly_status null in both bulletins (CWS by definition), so the
-// weekly_status_code param is never sent; annual rows do carry it.
+// scripts/lib/products/plfs.mjs: Periodic Labour Force Survey, the curated headline bundles.
+// Values are levels in per cent (UR/LFPR/WPR), not growth rates. Every bundle is cut from the
+// archived cube (plfs-cube.mjs: every getData call set, unfiltered, in data/raw/plfs/); every
+// cell these bundles do not carry is in plfs-deep.mjs's bundles. Two survey designs, never
+// joined (sources.yml seams: plfs): the original (to Dec 2024) and the revamped (from Jan 2025).
+//   plfs-monthly.json    monthly bulletin (rural+urban, CWS, from Apr 2025), revamped design
+//   plfs-cuts.json       monthly bulletin by gender x sector, 15+, revamped design
+//   plfs-quarterly.json  quarterly bulletin (urban, CWS), Apr-Jun 2018 to Oct-Dec 2024,
+//                        original design (the revamped quarters are plfs-q25)
+//   plfs-annual.json     agriculture-year annual (PS+SS and CWS, 2017-18 to 2023-24)
+//   plfs-states.json     UR by state, person, rural + urban, 15+, agriculture years
+//   plfs-status.json     annual reports: workers by broad status and broad industry
+//   plfs-earnings.json   annual reports: earnings by worker status (regular ₹/month, casual
+//                        ₹/day, self-employed ₹/30 days), quarterly grain, All India
+//   plfs-education.json  annual reports: UR by general education level, plus 15-29
+// Hand check (2026-10-10): plfs-annual ur_psss 2023-24 = 3.2, the PLFS Annual Report 2023-24
+// headline (usual status, 15+); the cube serves the same cell. Values are read strictly
+// (plfs-deep.mjs num): parseFloat once read the source's OCR debris "20. I" as 20.
 
-import { mospi, mospiAll } from "../mospi.mjs";
-import { MONTHS, writeSeries, writeRaw, monthAxis, quarterAxis } from "../util.mjs";
+import { mospi } from "../mospi.mjs";
+import { MONTHS, writeSeries, monthAxis, quarterAxis } from "../util.mjs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { fetchPlfsCube, cubeRows, cubeCalls, readCubeFile, AGRI_YEARS } from "./plfs-cube.mjs";
+import { buildPlfsDeep, num, BASE_OLD, BASE_NEW } from "./plfs-deep.mjs";
 
 // PLFS quarterly rows label calendar quarters by the calendar year they occur
 // in: "Jan-Mar" + year 2026 means 2026-01, not 2027-01.
 const QUARTER_START = { "Apr-Jun": "04", "Jul-Sep": "07", "Oct-Dec": "10", "Jan-Mar": "01" };
 const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 
-async function fetchYear(dcfg, freqCfg, indicatorCode, year, extra = {}) {
-  return mospiAll(dcfg.fetch.endpoint, { ...freqCfg, ...extra, indicator_code: indicatorCode, year });
-}
+// rows of one indicator from the archived cube (scripts/lib/products/plfs-cube.mjs); every
+// bundle below is cut from the same archived rows, so no two bundles can disagree on a cell
+const rowsOf = (root, freq, ic, yt) => cubeRows(root, { freq, ic: Number(ic), yt });
 
 // annual rows carry religion / socialGroup / General_Education /
 // employee_contract breakdowns alongside the "all" rows — without this
@@ -35,40 +41,24 @@ const ALL_DIMS = (r) =>
   (r.General_Education ?? "all") === "all" && (r.employee_contract ?? "all") === "all";
 
 export async function buildPlfs(root, dcfg, vintage) {
-  const raw = { vintage, unit: "per cent", frequencies: {} };
-  const endYear = new Date().getUTCFullYear();
-  const dims = dcfg.fetch.dims; // age 15+, person, All India — gender/sector sliced client-side for cuts
-  const baseDims = { age_code: dims.age_code, state_code: dims.state_code };
+  // refresh the archived cube: missing call sets and the latest periods (PLFS_CUBE_FULL=1
+  // re-asks for every call set; unchanged files keep their first-seen date)
+  // PLFS_NO_FETCH=1 rebuilds every bundle from the archive alone (no network)
+  if (process.env.PLFS_NO_FETCH !== "1") await fetchPlfsCube(root, { mode: process.env.PLFS_CUBE_FULL === "1" ? "all" : "recent" });
 
   const IND = dcfg.fetch.indicators; // code -> key (lfpr, wpr, ur)
 
-  /* ---- monthly bulletin (from Apr 2025): full gender × sector grid ----
-     (the API defaults to sector "rural + urban" unless sector_code is sent,
-     so the grid is fetched per gender_code × sector_code) */
-  const monthlyRows = {}; // key -> rows
-  const GENDERS = { male: 1, female: 2, person: 3 };
-  const SECTOR_CODES = { rural: 1, urban: 2, "rural + urban": 3 };
-  for (const [code, key] of Object.entries(IND)) {
-    const rows = [];
-    for (const g of Object.values(GENDERS)) {
-      for (const s of Object.values(SECTOR_CODES)) {
-        for (let year = 2025; year <= endYear; year++) {
-          rows.push(...await fetchYear(dcfg, dcfg.fetch.monthly, code, year, { ...baseDims, gender_code: g, sector_code: s }));
-        }
-        await new Promise((r) => setTimeout(r, 150));
-      }
-    }
-    monthlyRows[key] = rows;
-    raw.frequencies[`monthly_${key}`] = rows;
-  }
+  /* ---- monthly bulletin (from Apr 2025): gender × sector grid, 15+ ---- */
+  const monthlyRows = {}; // key -> rows (All India: the monthly bulletin has no states)
+  for (const [code, key] of Object.entries(IND)) monthlyRows[key] = rowsOf(root, "monthly", code).filter((r) => r.state === "All India");
   const mIndex = {}; // "key|gender|sector" -> Map
   for (const [key, rows] of Object.entries(monthlyRows)) {
     for (const r of rows) {
       if (r.AgeGroup !== "15 years and above") continue;
       const m = String(MONTHS.indexOf(r.month) + 1).padStart(2, "0");
       if (m === "00") continue;
-      const v = parseFloat(r.value);
-      if (!Number.isFinite(v)) continue;
+      const v = num(r.value);
+      if (v == null) continue;
       (mIndex[`${key}|${r.gender}|${r.sector}`] ??= new Map()).set(`${r.year}-${m}`, v);
     }
   }
@@ -78,7 +68,7 @@ export async function buildPlfs(root, dcfg, vintage) {
   const mAxis = monthAxis(mMonths[0], mMonths.at(-1));
   const mDates = mAxis.map((ym) => `${ym}-01`);
   const metaM = {
-    dossier: "plfs", frequency: "monthly", base: dcfg.base,
+    dossier: "plfs", frequency: "monthly", base: BASE_NEW,
     source: dcfg.source_agency, vintage, mock: false,
     geo: dcfg.geo ?? "IND",
     latestPeriod: mMonths.at(-1), releaseDate: null,
@@ -94,13 +84,15 @@ export async function buildPlfs(root, dcfg, vintage) {
       wpr: { name: "wpr_pct", label: "Workers", color: "#A3A9B4", data: pick("wpr", "person", "rural + urban") },
     },
   };
+  // every gender x sector cell but the headline (person, rural + urban: plfs-monthly)
   const cutCombos = [];
-  for (const g of ["male", "female"]) for (const s of ["rural", "urban"]) cutCombos.push([g, s]);
+  for (const g of ["male", "female", "person"]) for (const s of ["rural", "urban", "rural + urban"]) if (!(g === "person" && s === "rural + urban")) cutCombos.push([g, s]);
   const cutsSeries = {};
   cutCombos.forEach(([g, s], i) => {
+    const sk = s === "rural + urban" ? "all" : s;
     for (const key of Object.values(IND)) {
-      cutsSeries[`${key}_${g}_${s}`] = {
-        name: `plfs_${key}_${g}_${s}_pct`, label: `${key.toUpperCase()} · ${g} · ${s}`, color: GREYS[i % GREYS.length],
+      cutsSeries[`${key}_${g}_${sk}`] = {
+        name: `plfs_${key}_${g}_${sk}_pct`, label: `${key.toUpperCase()} · ${g} · ${s}`, color: GREYS[i % GREYS.length],
         data: pick(key, g, s),
       };
     }
@@ -110,22 +102,20 @@ export async function buildPlfs(root, dcfg, vintage) {
     dates: mDates, series: cutsSeries,
   };
 
-  /* ---- quarterly bulletin: urban, CWS, from 2018 ---- */
+  /* ---- quarterly bulletin, original design: urban, CWS, Apr-Jun 2018 to Oct-Dec 2024 ---- */
   const quarterly = {};
   for (const [code, key] of Object.entries(IND)) {
     quarterly[key] = new Map();
-    const rows = [];
-    for (let year = 2018; year <= endYear; year++) {
-      rows.push(...await fetchYear(dcfg, dcfg.fetch.quarterly, code, year, { ...baseDims, gender_code: dims.gender_code }));
-      if (year < endYear) await new Promise((r) => setTimeout(r, 200));
-    }
-    raw.frequencies[`quarterly_${key}`] = rows;
+    const rows = rowsOf(root, "quarterly", code);
     for (const r of rows) {
-      if (r.sector !== "urban" || r.AgeGroup !== "15 years and above") continue;
+      if (r.state !== "All India" || r.gender !== "person" || r.sector !== "urban" || r.AgeGroup !== "15 years and above") continue;
       const qs = QUARTER_START[r.quarter];
       if (!qs) continue;
-      const v = parseFloat(r.value);
-      if (Number.isFinite(v)) quarterly[key].set(`${r.year}-${qs}`, v);
+      // the original design ends with Oct-Dec 2024; the revamped design's quarters (from
+      // Apr-Jun 2025) are a different ruler and live in plfs-q25 (plfs-deep.mjs)
+      if (`${r.year}-${qs}` >= "2025-01") continue;
+      const v = num(r.value);
+      if (v != null) quarterly[key].set(`${r.year}-${qs}`, v);
     }
     process.stdout.write(`plfs quarterly ${key}: ${quarterly[key].size} quarters\n`);
   }
@@ -155,7 +145,7 @@ export async function buildPlfs(root, dcfg, vintage) {
     Object.values(quarterly).some((m) => m.get(ym) == null));
   const quarterlyBundle = {
     meta: {
-      dossier: "plfs", frequency: "quarterly", base: dcfg.base,
+      dossier: "plfs", frequency: "quarterly", base: BASE_OLD,
       source: dcfg.source_agency, vintage, mock: false,
       geo: dcfg.geo ?? "IND",
       latestPeriod: qMonths[qMonths.length - 1],
@@ -175,20 +165,15 @@ export async function buildPlfs(root, dcfg, vintage) {
 
   /* ---- annual: agriculture years (Jul–Jun), PS+SS and CWS ---- */
   const annual = {}; // "key|weekly_status" -> Map("YYYY-07" -> value)
-  const agriYears = [];
-  for (let y = 2017; y < endYear; y++) agriYears.push(`${y}-${String(y + 1).slice(2)}`);
+  const agriYears = AGRI_YEARS;
   for (const [code, key] of Object.entries(IND)) {
-    const rows = [];
-    for (const y of agriYears) {
-      rows.push(...await fetchYear(dcfg, { frequency_code: 1 }, code, y, { ...baseDims, gender_code: dims.gender_code, year_type_code: 1 }));
-      await new Promise((r) => setTimeout(r, 150));
-    }
-    raw.frequencies[`annual_${key}`] = rows;
+    const rows = rowsOf(root, "annual", code, "agri");
     for (const r of rows) {
+      if (r.state !== "All India") continue;
       if (r.sector !== "rural + urban" || r.AgeGroup !== "15 years and above" || r.gender !== "person") continue;
       if (!r.weekly_status || !ALL_DIMS(r)) continue;
-      const v = parseFloat(r.value);
-      if (!Number.isFinite(v)) continue;
+      const v = num(r.value);
+      if (v == null) continue;
       const y1 = String(r.year).slice(0, 4);
       (annual[`${key}|${r.weekly_status}`] ??= new Map()).set(`${y1}-07`, v);
     }
@@ -210,7 +195,7 @@ export async function buildPlfs(root, dcfg, vintage) {
   });
   const annualBundle = {
     meta: {
-      dossier: "plfs", frequency: "annual", base: dcfg.base,
+      dossier: "plfs", frequency: "annual", base: BASE_OLD,
       source: dcfg.source_agency, vintage, mock: false,
       geo: dcfg.geo ?? "IND",
       latestPeriod: aMonths.at(-1), releaseDate: null,
@@ -221,32 +206,17 @@ export async function buildPlfs(root, dcfg, vintage) {
     series: aSeries,
   };
 
-  /* ---- annual, states: the same stream without state_code carries every
-     state/UT — full grid archived to raw; the curated bundle is UR by state
-     (the comparison the annual bulletin is used for) ---- */
+  /* ---- annual, states: the curated bundle is UR by state, person, rural + urban, 15+
+     (the comparison the annual report is used for); every other state cell is in the
+     plfs-ay-states-* bundles (plfs-deep.mjs) ---- */
   const stAnnual = {}; // "key|weekly_status|state" -> Map("YYYY-07" -> value)
   for (const [code, key] of Object.entries(IND)) {
-    const rows = [];
-    for (const y of agriYears) {
-      let page = 1;
-      for (;;) {
-        const res = await mospi(dcfg.fetch.endpoint, {
-          frequency_code: 1, indicator_code: code, year: y,
-          age_code: dims.age_code, gender_code: dims.gender_code, year_type_code: 1, page, limit: 500,
-        });
-        const batch = res.data ?? [];
-        rows.push(...batch);
-        if (page >= (res.meta_data?.totalPages ?? 1)) break;
-        page++;
-      }
-      await new Promise((r) => setTimeout(r, 150));
-    }
-    raw.frequencies[`annual_states_${key}`] = rows;
+    const rows = rowsOf(root, "annual", code, "agri");
     for (const r of rows) {
       if (r.state === "All India" || r.sector !== "rural + urban" || r.AgeGroup !== "15 years and above" || r.gender !== "person") continue;
       if (!r.weekly_status || r.weekly_status === "all" || !ALL_DIMS(r)) continue;
-      const v = parseFloat(r.value);
-      if (!Number.isFinite(v)) continue;
+      const v = num(r.value);
+      if (v == null) continue;
       const sk = String(r.state).toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
       const y1 = String(r.year).slice(0, 4);
       (stAnnual[`${key}|${r.weekly_status}|${sk}`] ??= new Map()).set(`${y1}-07`, v);
@@ -275,7 +245,7 @@ export async function buildPlfs(root, dcfg, vintage) {
     }));
     statesBundle = {
       meta: {
-        dossier: "plfs", frequency: "annual", base: dcfg.base,
+        dossier: "plfs", frequency: "annual", base: BASE_OLD,
         source: dcfg.source_agency, vintage, mock: false,
         geo: dcfg.geo ?? "IND",
         latestPeriod: stMonths.at(-1), releaseDate: null,
@@ -288,13 +258,13 @@ export async function buildPlfs(root, dcfg, vintage) {
     };
   }
 
-  writeRaw(root, "data/raw/plfs-levels.json", raw);
   writeSeries(root, "data/series/plfs-monthly.json", monthlyBundle);
   writeSeries(root, "data/series/plfs-quarterly.json", quarterlyBundle);
   writeSeries(root, "data/series/plfs-cuts.json", cutsBundle);
   writeSeries(root, "data/series/plfs-annual.json", annualBundle);
   if (statesBundle) writeSeries(root, "data/series/plfs-states.json", statesBundle);
   await buildPlfsExtras(root, dcfg, vintage, agriYears);
+  buildPlfsDeep(root, dcfg, vintage);
   return monthlyBundle;
 }
 
@@ -345,36 +315,18 @@ const EDU_KEYS = {
 const QTR_START_IN_AGRI = { "Jul-Sep": [0, "07"], "Oct-Dec": [0, "10"], "Jan-Mar": [1, "01"], "Apr-Jun": [1, "04"] };
 const XGREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 
-async function pageAll(endpoint, params) {
-  const rows = [];
-  let page = 1;
-  for (;;) {
-    const res = await mospi(endpoint, { ...params, page, limit: 500 });
-    rows.push(...(res.data ?? []));
-    if (page >= (res.meta_data?.totalPages ?? 1)) break;
-    page++;
-    await new Promise((r) => setTimeout(r, 150));
-  }
-  return rows;
-}
 
 export async function buildPlfsExtras(root, dcfg, vintage, agriYears) {
-  const ep = dcfg.fetch.endpoint;
-  const raw = { vintage, indicators: {} };
+  void agriYears;
   const meta0 = (frequency, coverage, extra = {}) => ({
-    dossier: "plfs", frequency, base: dcfg.base,
+    dossier: "plfs", frequency, base: BASE_OLD,
     source: dcfg.source_agency, vintage, mock: false,
     geo: dcfg.geo ?? "IND",
     releaseDate: null, coverage, revisionPolicy: dcfg.revision_policy, ...extra,
   });
 
   /* ---- indicator 4: percentage distribution of workers ---- */
-  const distRows = [];
-  for (const y of agriYears) {
-    distRows.push(...await pageAll(ep, { indicator_code: 4, frequency_code: 1, year: y, year_type_code: 1, state_code: 99 }));
-    await new Promise((r) => setTimeout(r, 150));
-  }
-  raw.indicators.distribution = distRows;
+  const distRows = rowsOf(root, "annual", 4, "agri").filter((r) => r.state === "All India");
   // an ABSENT dimension counts as "all": the API dropped employee_contract
   // from indicator 4 rows by 2026-10 (checked live 2026-10-09), and a strict
   // === "all" then rejected every row
@@ -388,8 +340,8 @@ export async function buildPlfsExtras(root, dcfg, vintage, agriYears) {
   const indMaps = {}; // "industryKey|ws|gender|sector" -> Map
   for (const r of distRows) {
     if (!allDims4(r)) continue;
-    const v = parseFloat(r.value);
-    if (!Number.isFinite(v)) continue;
+    const v = num(r.value);
+    if (v == null) continue;
     const y1 = String(r.year).slice(0, 4);
     const sKey = STATUS_KEYS[r.broad_status_employment];
     if (sKey && r.broad_industry_work === "all")
@@ -447,18 +399,8 @@ export async function buildPlfsExtras(root, dcfg, vintage, agriYears) {
   const EARN = { regular: 6, casual: 7, self_employed: 8 };
   const earnMaps = {}; // "key|gender" -> Map("YYYY-MM" -> v), rural+urban only
   for (const [key, code] of Object.entries(EARN)) {
-    const rows = [];
-    for (const y of agriYears) {
-      rows.push(...await pageAll(ep, { indicator_code: code, frequency_code: 1, year: y, year_type_code: 1, state_code: 99 }));
-      await new Promise((r) => setTimeout(r, 150));
-    }
-    // calendar-year rows (new-design annual averages) archived raw, not curated
-    const calRows = [];
-    for (const cy of [2022, 2023, 2024, 2025, 2026]) {
-      calRows.push(...await pageAll(ep, { indicator_code: code, frequency_code: 1, year: cy, year_type_code: 2, state_code: 99 }));
-    }
-    raw.indicators[`earnings_${key}`] = rows;
-    raw.indicators[`earnings_${key}_calendar`] = calRows;
+    // calendar-year rows and every state and sector cell are in plfs-deep.mjs's bundles
+    const rows = rowsOf(root, "annual", code, "agri");
     for (const r of rows) {
       if (r.state !== "All India" || r.sector !== "rural + urban") continue;
       // quarantine: 2017-18 rural+urban aggregates for regular & self-employed
@@ -466,8 +408,8 @@ export async function buildPlfsExtras(root, dcfg, vintage, agriYears) {
       if (key !== "casual" && String(r.year) === "2017-18") continue;
       const q = QTR_START_IN_AGRI[r.quarter];
       if (!q) continue;
-      const v = parseFloat(r.value);
-      if (!Number.isFinite(v)) continue;
+      const v = num(r.value);
+      if (v == null) continue;
       const y1 = Number(String(r.year).slice(0, 4)) + q[0];
       (earnMaps[`${key}|${r.gender}`] ??= new Map()).set(`${y1}-${q[1]}`, v);
     }
@@ -502,38 +444,22 @@ export async function buildPlfsExtras(root, dcfg, vintage, agriYears) {
   };
 
   /* ---- indicator 3 by education level + the 15–29 age cut ---- */
-  const eduRows = [];
-  for (const y of agriYears) {
-    for (let code = 1; code <= 9; code++) {
-      eduRows.push(...await pageAll(ep, {
-        indicator_code: 3, frequency_code: 1, year: y, year_type_code: 1,
-        age_code: 1, gender_code: 3, sector_code: 3, state_code: 99, education_code: code,
-      }));
-    }
-    await new Promise((r) => setTimeout(r, 150));
-  }
-  const youthRows = [];
-  for (const y of agriYears) {
-    youthRows.push(...await pageAll(ep, {
-      indicator_code: 3, frequency_code: 1, year: y, year_type_code: 1,
-      age_code: 2, gender_code: 3, sector_code: 3, state_code: 99,
-    }));
-  }
-  raw.indicators.ur_education = eduRows;
-  raw.indicators.ur_youth = youthRows;
+  const ur3 = rowsOf(root, "annual", 3, "agri").filter((r) => r.state === "All India" && r.gender === "person" && r.sector === "rural + urban");
+  const eduRows = ur3.filter((r) => r.AgeGroup === "15 years and above" && (r.General_Education ?? "all") !== "all");
+  const youthRows = ur3.filter((r) => r.AgeGroup === "15-29 years");
   const eduMaps = {}; // key -> Map("YYYY-07" -> v), PS+SS
   for (const r of eduRows) {
     if (r.weekly_status !== "PS+SS" || !ALL_DIMS_EDU(r)) continue;
     const k = EDU_KEYS[r.General_Education];
     if (!k) continue;
-    const v = parseFloat(r.value);
-    if (Number.isFinite(v)) (eduMaps[k] ??= new Map()).set(`${String(r.year).slice(0, 4)}-07`, v);
+    const v = num(r.value);
+    if (v != null) (eduMaps[k] ??= new Map()).set(`${String(r.year).slice(0, 4)}-07`, v);
   }
   for (const r of youthRows) {
     if (r.weekly_status !== "PS+SS" || r.AgeGroup !== "15-29 years") continue;
     if ((r.General_Education ?? "all") !== "all" || !ALL_DIMS_EDU(r)) continue;
-    const v = parseFloat(r.value);
-    if (Number.isFinite(v)) (eduMaps.youth_15_29 ??= new Map()).set(`${String(r.year).slice(0, 4)}-07`, v);
+    const v = num(r.value);
+    if (v != null) (eduMaps.youth_15_29 ??= new Map()).set(`${String(r.year).slice(0, 4)}-07`, v);
   }
   const gAnchor = eduMaps.graduate;
   if (!gAnchor?.size) throw new Error("PLFS extras: no education UR data returned");
@@ -564,7 +490,6 @@ export async function buildPlfsExtras(root, dcfg, vintage, agriYears) {
     series: eduSeries,
   };
 
-  writeRaw(root, "data/raw/plfs-extras.json", raw);
   writeSeries(root, "data/series/plfs-status.json", statusBundle);
   writeSeries(root, "data/series/plfs-earnings.json", earningsBundle);
   writeSeries(root, "data/series/plfs-education.json", educationBundle);
@@ -594,7 +519,9 @@ export async function cataloguePlfs() {
     const inds = (await mospi("plfs/getIndicatorListByFrequency", { frequency_code: fr.frequency_code })).data ?? [];
     for (const ind of inds) {
       const f = (await mospi("plfs/getFilterByIndicatorId", { indicator_code: ind.indicator_code, frequency_code: fr.frequency_code })).data ?? {};
-      const yts = freq === "annual" ? (f.year_type ?? []).map((y) => (y.year_type_code === 2 ? "annual-calendar" : "annual-agri")) : [freq];
+      // an annual indicator listed without a year_type filter (indicator 5, employment
+      // conditions) is served on agriculture years only; without this fallback it got no items
+      const yts = freq === "annual" ? (f.year_type?.length ? f.year_type.map((y) => (y.year_type_code === 2 ? "annual-calendar" : "annual-agri")) : ["annual-agri"]) : [freq];
       const wss = (f.weekly_status ?? [{ description: "CWS" }]).map((w) => idPart(w.description.replace("+", "-")));
       const genders = (f.gender ?? []).map((g) => idPart(g.description)), sectors = (f.sector ?? []).map((s) => idPart(s.description.replace("+", "plus")));
       for (const yt of yts) for (const ws of wss) {
@@ -612,10 +539,34 @@ export async function cataloguePlfs() {
       }
     }
   }
+  // Cross-cuts. The listing names each dimension once, but getData serves them crossed (state x
+  // gender x sector x age, state x education, status within an industry group by state ...).
+  // One item per indicator x weekly status x cross table x state, read from the archived cube
+  // (the source's own unfiltered answer, scripts/lib/products/plfs-cube.mjs): every table the
+  // source serves at more than one cut is on the record, so the ledger decides each.
+  const XD = [["gender", (r) => r.gender !== "person"], ["sector", (r) => r.sector !== "rural + urban"], ["age", (r) => r.AgeGroup != null && r.AgeGroup !== "15 years and above"],
+    ["religion", (r) => (r.religion ?? "all") !== "all"], ["social-group", (r) => (r.socialGroup ?? "all") !== "all"], ["education", (r) => (r.General_Education ?? "all") !== "all"],
+    ...["broad_industry_work", "broad_status_employment", "enterprise_size", "enterprise_type", "industry_section", "nco_division", "nic_group", "employee_contract"]
+      .map((d) => [idPart(d), (r) => r[d] != null && r[d] !== "" && !/^all$/i.test(r[d])])];
+  const FREQ = (c) => (c.freq === "annual" ? (c.yt === "cal" ? "annual-calendar" : "annual-agri") : c.freq);
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
+  let crosses = 0;
+  for (const c of cubeCalls()) {
+    for (const r of readCubeFile(root, c)?.rows ?? []) {
+      const dims = XD.filter(([, f]) => f(r)).map(([n]) => n);
+      const isState = r.state !== "All India";
+      // one cut (and the gender x sector pair) are the listing's own items above
+      if (dims.length + (isState ? 1 : 0) < 2 || (!isState && dims.join() === "gender,sector")) continue;
+      const ws = r.weekly_status === "PS+SS" ? "ps-ss" : "cws";
+      items.push({ id: `plfs:${FREQ(c)}:${c.ic}:${ws}:x:${dims.join("-") || "headline"}:${idPart(r.state)}` });
+      crosses++;
+    }
+  }
+  process.stdout.write(`plfs catalogue: ${crosses} cross-cut rows read from the cube\n`);
   writeCatalogue("plfs", {
     source: "MoSPI, NSO: Periodic Labour Force Survey (eSankhyiki API)",
     generator: "scripts/lib/products/plfs.mjs --catalogue",
-    note: "From getFrequency, getIndicatorListByFrequency and getFilterByIndicatorId. One cut at a time over the headline (All India, person, rural + urban, 15+), plus the gender x sector grid. The listing offers every weekly status and year type for every indicator; not every pair is served.",
+    note: "From getFrequency, getIndicatorListByFrequency and getFilterByIndicatorId: one cut at a time over the headline (All India, person, rural + urban, 15+), plus the gender x sector grid. The listing offers every weekly status and year type for every indicator; not every pair is served. Then the cross-cuts the source serves (plfs:<freq>:<ind>:<ws>:x:<dimensions>:<state>), one item per table and state, read from the archived cube (data/raw/plfs/), which is getData's own unfiltered answer.",
     items,
   });
 }

@@ -20,8 +20,12 @@ import earningsBundle from "../../data/series/plfs-earnings.json";
 import educationBundle from "../../data/series/plfs-education.json";
 import {
   MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend,
-  peakOf, dodgeEndLabels, spark, downloadSVG, downloadPNG, saveBlob,
+  peakOf, dodgeEndLabels, spark, downloadSVG, downloadPNG, saveBlob, seamMarks,
 } from "../charts/plumbing.js";
+
+// the deep bundles' slices, embedded at build time by the page (src/dossiers/jobs.data.js)
+const JD = JSON.parse(document.getElementById("jobs-data")?.textContent || "{}");
+const Q25 = hydrate(JD.q25);
 
 const M = hydrate(monthlyBundle);
 const ST = hydrate(statesBundle);
@@ -73,7 +77,6 @@ setHTML("rb-first", first(M.ur).toFixed(2) + pc);
 
 setTxt("pv-annual", f1(last(A.ur_psss)));
 setTxt("ex-p0", f1(first(A.ur_psss))); setTxt("ex-p1", f1(last(A.ur_psss)));
-setTxt("pv-main", f1(last(Q.ur)));
 setTxt("ex-q0", f1(first(Q.ur))); setTxt("ex-q1", f1(last(Q.ur)));
 setTxt("pv-cuts", f1(last(CUTS.ur_female_urban)));
 setTxt("ex-fu", f1(last(CUTS.ur_female_urban))); setTxt("ex-mu", f1(last(CUTS.ur_male_urban)));
@@ -273,13 +276,18 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
   wireLegend(document.getElementById("legend-lfpr-ann"), plot, keys, A);
 }
 
-/* ---------- §04 plate 1: the long arc, urban quarterly ---------- */
+/* ---------- §04 plate 1: the long arc, urban quarterly, two survey designs ----------
+ * The original design's urban bulletin (plfs-quarterly, to Oct-Dec 2024) and the revamped
+ * design's urban figure (plfs-q25, from Apr-Jun 2025) are two rulers: drawn side by side with
+ * seamMarks, never joined (AGENTS.md rule 1). */
 {
   const s = Q.ur;
-  const geo = { W: 1184, H: 520, ml: 70, mr: 180, mt: 36, mb: 48, d0: 0, d1: 24 };
+  const neu = Q25.ur_cws__person_urban__a15plus;
+  const geo = { W: 1184, H: 520, ml: 70, mr: 200, mt: 36, mb: 48, d0: 0, d1: 24 };
   const yTicks = [0, 5, 10, 15, 20];
-  const xTicks = []; for (let y = 2018; y <= 2026; y++) xTicks.push(new Date(Date.UTC(y, 0, 1)));
+  const xTicks = []; for (let y = 2018; y <= neu.data.at(-1).date.getUTCFullYear(); y++) xTicks.push(new Date(Date.UTC(y, 0, 1)));
   const peak = peakOf(s);
+  const lastOld = s.data.filter((d) => d.value != null).at(-1), lastNew = neu.data.filter((d) => d.value != null).at(-1);
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
@@ -289,25 +297,28 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
          tickFormat: (d) => (d === yTicks[yTicks.length - 1] ? d + "%" : String(d)), ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
     marks: [
       Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
-      Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
       Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
-      // nulls at Apr–Jun 2019 (quarantined) and Jan–Mar 2025 (unpublished)
-      // break the line — the gaps are disclosed, not interpolated
-      Plot.lineY(s.data, { x: "date", y: "value", stroke: "#2E4BD8", strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.lineY(s.data.filter((d) => d.value != null).slice(-7), { x: "date", y: "value", stroke: "#2E4BD8", strokeWidth: 4.5, strokeLinecap: "round", strokeLinejoin: "round" }),
+      // nulls at Apr–Jun 2019 (quarantined) break the old line; the two designs never meet
+      ...seamMarks("side", [{ data: s.data, color: "#5F6675", width: 1.75 }, { data: neu.data, color: "#2E4BD8", width: 2.5 }],
+        { at: new Date(Date.UTC(2025, 0, 1)), text: "survey redesigned, Jan 2025", y: 15.5, anchor: "end" }),
       Plot.ruleX([peak.date], { stroke: "#DADDE3", strokeWidth: 1, strokeDasharray: "2,3" }),
       Plot.text([{ date: peak.date, value: 22.6 }], { x: "date", y: "value", text: ["lockdown, one urban worker in five"], fontSize: 12.5, fill: "#878D99", fontFamily: mono, textAnchor: "middle" }),
-      Plot.dot([s.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([s.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", text: (d) => `Urban UR ${d.value.toFixed(2)}%`, dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.dot([lastOld], { x: "date", y: "value", fill: "#5F6675", r: 3, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.dot(neu.data.filter((d) => d.value != null), { x: "date", y: "value", fill: "#2E4BD8", r: 3, stroke: "#FFFFFF", strokeWidth: 1 }),
+      Plot.text([lastOld], { x: "date", y: "value", text: (d) => `original ${d.value.toFixed(1)}%`, dy: 18, fill: "#5F6675", fontSize: 12, fontFamily: mono, textAnchor: "middle" }),
+      Plot.text([lastNew], { x: "date", y: "value", text: (d) => `Revamped ${d.value.toFixed(1)}%`, dx: 14, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
   });
-  a11y(plot, "Urban unemployment rate, quarterly, current weekly status, 2018 to 2026",
-    "Line chart starting at 9.7 per cent in April–June 2018, spiking to " + peak.value.toFixed(1) + " per cent in the April–June 2020 lockdown quarter, then grinding down to " + last(Q.ur).toFixed(1) + " per cent in January–March 2026. Two quarters are missing by design: April–June 2019 is quarantined and January–March 2025 was never published.");
+  const sNew = { ...neu, label: "Urban UR, revamped design", color: "#2E4BD8" };
+  const sOld = { ...s, label: "Urban UR, original design", color: "#5F6675" };
+  a11y(plot, "Urban unemployment rate, quarterly, current weekly status, two survey designs drawn side by side",
+    "The original design's line starts at " + first(Q.ur).toFixed(1) + " per cent in April–June 2018, spikes to " + peak.value.toFixed(1) + " per cent in the April–June 2020 lockdown quarter and ends at " + lastOld.value.toFixed(1) + " per cent in " + fmtQ(lastOld.date) + ". After a gap for the redesign, the revamped design's urban figure runs from " + fmtQ(neu.data[0].date) + " to " + lastNew.value.toFixed(1) + " per cent in " + fmtQ(lastNew.date) + ". April–June 2019 is quarantined.");
   document.getElementById("plot-main").append(plot);
-  wireTools(document.getElementById("cb-main"), plot, [s], "india-atlas_plfs_urban-quarterly", fmtQ);
-  // the two disclosed gaps are null; the tooltip says so instead of NaN
-  addCrosshair(document.getElementById("plot-main"), plot, [s], geo, fmtQ,
-    (v) => (v == null ? "not published" : v.toFixed(2) + "%"));
+  wireTools(document.getElementById("cb-main"), plot, [sOld, sNew], "india-atlas_plfs_urban-quarterly", fmtQ);
+  addCrosshair(document.getElementById("plot-main"), plot, [sOld, sNew], geo, fmtQ,
+    (v) => (v == null ? "not published" : v.toFixed(1) + "%"));
+  setTxt("pv-main", f1a(lastNew.value));
+  setTxt("ex-q25u", f1a(lastNew.value));
 }
 
 /* ---------- §06 cuts: four labour markets ---------- */
@@ -714,6 +725,250 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
       }
     });
   });
+}
+
+/* ---------- shared: a sorted dot strip (one row per state or group) ----------
+ * Dark dot `a` (blue where hi(row)), pale dot `b`, a hairline between them, a reference rule,
+ * the dark value at the right. Labels sit outside the dots (plumbing.js rule 2). The CSV is
+ * the rows as drawn. Strips are not time series, so downloads are wired by hand. */
+function strip({ blockId, plotId, rows, domain, ticks, tickFmt, ref, refLabel, hi = () => false, fmtV, dlName, csvHeader, a11yTitle, a11yDesc, rowH = 27, ml = 220 }) {
+  const geo = { W: 1184, H: 34 + rows.length * rowH + 46, ml, mr: 84, mt: 34, mb: 46 };
+  const names = rows.map((r) => r.name);
+  const marks = [
+    Plot.gridX(ticks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+    Plot.ruleX([domain[0]], { stroke: "#E3E6EB", strokeWidth: 1 }),
+    ref != null ? Plot.ruleX([ref], { stroke: "#878D99", strokeWidth: 1.25 }) : null,
+    ref != null ? Plot.text([{ x: ref }], { x: "x", y: () => names[0], dy: -26, dx: 7, text: () => refLabel, textAnchor: "start", fill: "#5F6675", fontSize: 12, fontFamily: mono }) : null,
+    Plot.link(rows.filter((r) => r.b != null), { x1: "b", x2: "a", y1: "name", y2: "name", stroke: "#C9CED6", strokeWidth: 1 }),
+    Plot.dot(rows.filter((r) => r.b != null), { x: "b", y: "name", fill: "#C9CED6", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1 }),
+    Plot.dot(rows, { x: "a", y: "name", fill: (d) => (hi(d) ? "#2E4BD8" : "#5F6675"), r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+    Plot.text(rows, { x: () => domain[1], y: "name", text: (d) => fmtV(d.a), dx: 60, textAnchor: "end", fill: (d) => (hi(d) ? "#161A22" : "#878D99"), fontSize: 12.5, fontFamily: mono }),
+  ].filter(Boolean);
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H, marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+    x: { label: null, domain, ticks, tickSize: 0, tickPadding: 12, tickFormat: tickFmt },
+    y: { label: null, domain: names, tickSize: 0, tickPadding: 14 },
+    marks,
+  });
+  a11y(plot, a11yTitle, a11yDesc);
+  document.getElementById(plotId).append(plot);
+  const block = document.getElementById(blockId);
+  const meta = {
+    title: block.querySelector(".plate-head h3")?.textContent.trim(),
+    sub: block.querySelector(".plate-head .sub")?.textContent.trim(),
+    foot: block.querySelector(".plotfoot .src")?.textContent.trim().replace(/\s+/g, " "),
+  };
+  block.querySelectorAll("[data-dl]").forEach((btn) => btn.addEventListener("click", () => {
+    const kind = btn.dataset.dl;
+    if (kind === "svg") downloadSVG(plot, dlName, meta);
+    if (kind === "png") downloadPNG(plot, dlName, meta);
+    if (kind === "csv") saveBlob(new Blob([[csvHeader.join(","), ...rows.map((r) => [r.name.replace(/,/g, ""), r.a ?? "", r.b ?? ""].join(","))].join("\n")], { type: "text/csv" }), dlName + ".csv");
+  }));
+  return plot;
+}
+const desc = (rows, k) => [...rows].sort((x, y) => y[k] - x[k] || x.name.localeCompare(y.name));
+const pct = (v) => v.toFixed(1);
+const nice = (v, step) => Math.ceil(v / step) * step;
+
+/* ---------- §03 the seam: two survey designs, side by side ---------- */
+{
+  const ay = hydrate(JD.seam.ay), cy = hydrate(JD.seam.cy), c5 = hydrate(JD.seam.cy25);
+  const H = "__person_all__a15plus";
+  const panel = (plotId, ind, d0, d1, ticks) => {
+    // each year is drawn at its middle: an agriculture year (July to June) at January, a
+    // calendar year at July, so the redesign rule falls between the two designs' years
+    const mid = (s, months) => ({ ...s, data: s.data.map((d) => ({ ...d, date: new Date(Date.UTC(d.date.getUTCFullYear(), d.date.getUTCMonth() + months, 1)) })) });
+    const sA = mid(ay[ind + "_psss"], 6), sC = mid(cy[ind + "_psss" + H], 6), sN = mid(c5[ind + "_psss" + H], 6);
+    const nNew = sN.data.filter((d) => d.value != null);
+    const plot = Plot.plot({
+      width: 570, height: 400, marginLeft: 56, marginRight: 150, marginTop: 28, marginBottom: 44,
+      style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+      x: { label: null, tickSize: 0, tickPadding: 14, domain: [new Date(Date.UTC(2017, 0, 1)), new Date(Date.UTC(nNew.at(-1).date.getUTCFullYear(), 11, 31))],
+           ticks: [2018, 2020, 2022, 2024].map((y) => new Date(Date.UTC(y, 0, 1))),
+           tickFormat: (d) => String(d.getUTCFullYear()) },
+      y: { label: ind === "lfpr" ? "↑ participation, per cent" : "↑ unemployment, per cent", labelAnchor: "top", labelArrow: false, domain: [d0, d1], ticks, tickSize: 0, tickPadding: 11,
+           tickFormat: (d) => (d === ticks.at(-1) ? d + "%" : String(d)) },
+      marks: [
+        Plot.gridY(ticks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+        ...seamMarks("side", [{ data: sA.data, color: "#A3A9B4", width: 1.5 }, { data: sC.data, color: "#5F6675", width: 1.75 }, { data: sN.data, color: "#2E4BD8", width: 2 }],
+          { at: new Date(Date.UTC(2025, 0, 1)), text: "redesign", y: d1 - (d1 - d0) * 0.06, anchor: "end" }),
+        Plot.dot(sC.data.filter((d) => d.value != null), { x: "date", y: "value", fill: "#5F6675", r: 3, stroke: "#FFFFFF", strokeWidth: 1 }),
+        Plot.dot(nNew, { x: "date", y: "value", fill: "#2E4BD8", r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+        Plot.text(nNew.slice(-1), { x: "date", y: "value", text: (d) => `${d.date.getUTCFullYear()} ${d.value.toFixed(1)}%`, dx: 12, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      ],
+    });
+    a11y(plot, (ind === "lfpr" ? "Participation" : "Unemployment") + " rate, usual status, on three rulers",
+      "Agriculture years run from " + first(sA).toFixed(1) + " to " + last(sA).toFixed(1) + " per cent; the original design's calendar years end at " + last(sC).toFixed(1) + "; the revamped design's first year reads " + last(sN).toFixed(1) + ". The rulers are drawn side by side and never joined.");
+    document.getElementById(plotId).append(plot);
+    return { plot, series: [{ ...sA, label: "Agriculture years, original design" }, { ...sC, label: "Calendar years, original design" }, { ...sN, label: "Calendar year, revamped design" }] };
+  };
+  const L = panel("plot-seam-l", "lfpr", 45, 65, [45, 50, 55, 60, 65]);
+  const U = panel("plot-seam-u", "ur", 0, 7, [0, 2, 4, 6]);
+  setTxt("pv-seam", f1a(last(c5["lfpr_psss" + H])));
+  const block = document.getElementById("cb-seam");
+  const meta = { title: block.querySelector(".plate-head h3")?.textContent.trim(), sub: block.querySelector(".plate-head .sub")?.textContent.trim(), foot: block.querySelector(".plotfoot .src")?.textContent.trim().replace(/\s+/g, " ") };
+  block.querySelectorAll("[data-dl]").forEach((btn) => btn.addEventListener("click", () => {
+    const kind = btn.dataset.dl;
+    if (kind === "svg") downloadSVG(L.plot, "india-atlas_plfs_two-designs", meta);
+    if (kind === "png") downloadPNG(L.plot, "india-atlas_plfs_two-designs", meta);
+    if (kind === "csv") {
+      const lines = ["indicator,ruler,period,value"];
+      for (const [ind, P] of [["lfpr_psss", L], ["ur_psss", U]]) for (const s of P.series) for (const d of s.data) if (d.value != null)
+        lines.push(`${ind},${s.label.replace(/,/g, "")},${s.label.startsWith("Agri") ? fmtAgri(d.date) : d.date.getUTCFullYear()},${d.value}`);
+      saveBlob(new Blob([lines.join("\n")], { type: "text/csv" }), "india-atlas_plfs_two-designs.csv");
+    }
+  }));
+}
+
+/* ---------- §04 the whole country, quarter by quarter (revamped design) ---------- */
+{
+  const V = {
+    ur_cws__person_all__a15plus: { ...Q25.ur_cws__person_all__a15plus, label: "All India", color: "#2E4BD8" },
+    ur_cws__person_urban__a15plus: { ...Q25.ur_cws__person_urban__a15plus, label: "Urban", color: "#5F6675" },
+    ur_cws__person_rural__a15plus: { ...Q25.ur_cws__person_rural__a15plus, label: "Rural", color: "#A3A9B4" },
+  };
+  const keys = Object.keys(V);
+  const geo = { W: 1184, H: 420, ml: 70, mr: 190, mt: 30, mb: 48, d0: 0, d1: 8 };
+  const xTicks = V[keys[0]].data.map((d) => d.date);
+  const plot = multiLine("cb-q25", "plot-q25", keys, V, geo, [0, 2, 4, 6, 8], xTicks, fmtQ,
+    "india-atlas_plfs_quarterly-rural-urban",
+    "Unemployment rate, quarterly, rural, urban and all India, revamped design",
+    "Three short lines. Urban ends at " + last(V.ur_cws__person_urban__a15plus).toFixed(1) + " per cent, all India at " + last(V.ur_cws__person_all__a15plus).toFixed(1) + ", rural at " + last(V.ur_cws__person_rural__a15plus).toFixed(1) + ".",
+    fmtQ, f1a);
+  wireLegend(document.getElementById("legend-q25"), plot, keys, V);
+  setTxt("pv-q25", f1a(last(V.ur_cws__person_all__a15plus)));
+  setTxt("ex-q25a", f1a(last(V.ur_cws__person_all__a15plus)));
+  setTxt("ex-q25r", f1a(last(V.ur_cws__person_rural__a15plus)));
+  setTxt("ex-q25ub", f1a(last(V.ur_cws__person_urban__a15plus)));
+  setTxt("ex-q25l", f1a(last(Q25.lfpr_cws__person_all__a15plus)));
+}
+
+/* ---------- §04 young people's unemployment by state (revamped design, latest quarter) ---------- */
+{
+  const rows = desc(JD.youthStates.map((r) => ({ name: r.name, a: r.y, b: r.all })), "a");
+  const d1 = nice(Math.max(...rows.map((r) => r.a)) + 2, 5);
+  const ticks = []; for (let t = 0; t <= d1; t += 5) ticks.push(t);
+  strip({ blockId: "cb-ystates", plotId: "plot-ystates", rows, domain: [0, d1], ticks, tickFmt: (d) => (d === ticks.at(-1) ? d + "%" : String(d)),
+    ref: JD.youthAi.y, refLabel: `All India, ages 15 to 29 ${pct(JD.youthAi.y)}%`, hi: () => true, fmtV: pct,
+    dlName: "india-atlas_plfs_youth-ur-states", csvHeader: ["state", "ur_cws_15_29", "ur_cws_15_plus"],
+    a11yTitle: "Unemployment rate of 15-to-29-year-olds by state, latest quarter",
+    a11yDesc: `Sorted dot strip of ${rows.length} states. ${rows[0].name} is highest at ${pct(rows[0].a)} per cent and ${rows.at(-1).name} lowest at ${pct(rows.at(-1).a)}, around an all-India youth rate of ${pct(JD.youthAi.y)}. Each row pairs the youth rate with the state's rate for everyone 15 and above.` });
+  setTxt("pv-ystates", f1a(JD.youthAi.y));
+}
+
+/* ---------- §06 young people, monthly ---------- */
+{
+  const Y = hydrate(JD.youth);
+  const V = {
+    ur_cws__female_urban__a15_29: { ...Y.ur_cws__female_urban__a15_29, label: "Urban women", color: "#2E4BD8" },
+    ur_cws__male_urban__a15_29: { ...Y.ur_cws__male_urban__a15_29, label: "Urban men", color: "#5F6675" },
+    ur_cws__female_rural__a15_29: { ...Y.ur_cws__female_rural__a15_29, label: "Rural women", color: "#A3A9B4" },
+    ur_cws__male_rural__a15_29: { ...Y.ur_cws__male_rural__a15_29, label: "Rural men", color: "#878D99" },
+  };
+  const keys = Object.keys(V);
+  const top = nice(Math.max(...keys.flatMap((k) => V[k].data.map((d) => d.value ?? 0))) + 1, 5);
+  const yT = []; for (let t = 5; t <= top; t += 5) yT.push(t);
+  const geo = { W: 1184, H: 470, ml: 70, mr: 190, mt: 30, mb: 48, d0: 5, d1: top };
+  const xTicks = [new Date(Date.UTC(2025, 3, 1)), new Date(Date.UTC(2025, 9, 1)), new Date(Date.UTC(2026, 0, 1)), new Date(Date.UTC(2026, 3, 1))];
+  multiLine("cb-youth", "plot-youth", keys, V, geo, yT, xTicks,
+    (d) => MN[d.getUTCMonth()] + " " + String(d.getUTCFullYear()).slice(2),
+    "india-atlas_plfs_youth-ur-gender-sector",
+    "Unemployment rate of 15-to-29-year-olds by gender and sector, monthly",
+    "Four lines. Young urban women end at " + last(V.ur_cws__female_urban__a15_29).toFixed(1) + " per cent, young urban men at " + last(V.ur_cws__male_urban__a15_29).toFixed(1) + ", young rural women at " + last(V.ur_cws__female_rural__a15_29).toFixed(1) + ", young rural men at " + last(V.ur_cws__male_rural__a15_29).toFixed(1) + ".",
+    fmtDate, f1a);
+  setTxt("pv-youth", f1a(last(V.ur_cws__female_urban__a15_29)));
+  setTxt("ex-y-fu", f1a(last(V.ur_cws__female_urban__a15_29)));
+  setTxt("ex-y-mu", f1a(last(V.ur_cws__male_urban__a15_29)));
+  setTxt("ex-y-fr", f1a(last(V.ur_cws__female_rural__a15_29)));
+  setTxt("ex-y-mr", f1a(last(V.ur_cws__male_rural__a15_29)));
+  setTxt("ex-y-all", f1a(last(Y.ur_cws__person_all__a15_29)));
+  setTxt("ex-y-one", String(Math.round(100 / last(V.ur_cws__female_urban__a15_29))));
+}
+
+/* ---------- §07 kinds of work, state by state ---------- */
+{
+  const rows = desc(JD.kinds.map((r) => ({ name: r.name, a: r.rg, b: r.cs })), "a");
+  const d1 = nice(Math.max(...rows.map((r) => Math.max(r.a, r.b))) + 2, 10);
+  const ticks = []; for (let t = 0; t <= d1; t += 10) ticks.push(t);
+  strip({ blockId: "cb-kinds", plotId: "plot-kinds", rows, domain: [0, d1], ticks, tickFmt: (d) => (d === ticks.at(-1) ? d + "%" : String(d)),
+    ref: null, hi: () => true, fmtV: pct,
+    dlName: "india-atlas_plfs_salaried-share-states", csvHeader: ["state", "regular_wage_share_pct", "casual_share_pct"],
+    a11yTitle: "Share of workers in regular wage or salaried jobs, and in casual labour, by state",
+    a11yDesc: `Sorted dot strip of ${rows.length} states and UTs. ${rows[0].name} has the largest salaried share, ${pct(rows[0].a)} per cent; ${rows.at(-1).name} the smallest, ${pct(rows.at(-1).a)}. The pale dot is casual labour.` });
+  setTxt("pv-kinds", (rows[0].a - rows.at(-1).a).toFixed(1) + " pt");
+}
+
+/* ---------- §08 what a regular job pays, state by state ---------- */
+{
+  const ai = JD.payAi;
+  const rows = desc(JD.pay.map((r) => ({ name: r.name, a: r.p, b: r.f })), "a");
+  const d1 = nice(Math.max(...rows.map((r) => Math.max(r.a, r.b))) + 1000, 10000);
+  const ticks = []; for (let t = 0; t <= d1; t += 10000) ticks.push(t);
+  strip({ blockId: "cb-paystates", plotId: "plot-paystates", rows, domain: [0, d1], ticks,
+    tickFmt: (d) => (d === 0 ? "0" : d === ticks.at(-1) ? `₹${d / 1000}k` : `${d / 1000}k`),
+    ref: ai.regular__person_all, refLabel: `All India ${inr(ai.regular__person_all)}`, hi: (r) => r.a > ai.regular__person_all, fmtV: inr,
+    dlName: "india-atlas_plfs_regular-wage-states", csvHeader: ["state", "regular_wage_inr_month_all", "regular_wage_inr_month_women"],
+    a11yTitle: "Average monthly earnings from regular wage or salaried work, by state",
+    a11yDesc: `Sorted dot strip of ${rows.length} states and UTs, nominal rupees a month. ${rows[0].name} pays most, ${inr(rows[0].a)}; ${rows.at(-1).name} least, ${inr(rows.at(-1).a)}; all India ${inr(ai.regular__person_all)}. The pale dot is women's earnings.` });
+  setTxt("pv-paystates", inr(ai.regular__person_all));
+  setTxt("ex-ps-ai", inr(ai.regular__person_all));
+  setTxt("ex-ps-m", inr(ai.regular__male_all));
+  setTxt("ex-ps-f", inr(ai.regular__female_all));
+}
+
+/* ---------- §08 job conditions of regular employees ---------- */
+{
+  const C = hydrate(JD.cond);
+  const V = {
+    none_of_three__person_all: { ...C.none_of_three__person_all, label: "None of the three", color: "#2E4BD8" },
+    no_contract__person_all: { ...C.no_contract__person_all, label: "No written contract", color: "#5F6675" },
+    no_social_security__person_all: { ...C.no_social_security__person_all, label: "No social security", color: "#878D99" },
+    no_paid_leave__person_all: { ...C.no_paid_leave__person_all, label: "No paid leave", color: "#A3A9B4" },
+  };
+  const keys = Object.keys(V);
+  const geo = { W: 1184, H: 470, ml: 70, mr: 230, mt: 30, mb: 48, d0: 20, d1: 80 };
+  const xTicks = V[keys[0]].data.map((d) => d.date);
+  const plot = multiLine("cb-cond", "plot-cond", keys, V, geo, [20, 40, 60, 80], xTicks,
+    (d) => String(d.getUTCFullYear()),
+    "india-atlas_plfs_job-conditions",
+    "Regular wage or salaried employees without a written contract, paid leave or social security, agriculture years",
+    "Four lines. No written contract falls from " + first(V.no_contract__person_all).toFixed(1) + " to " + last(V.no_contract__person_all).toFixed(1) + " per cent; no paid leave from " + first(V.no_paid_leave__person_all).toFixed(1) + " to " + last(V.no_paid_leave__person_all).toFixed(1) + "; no social security moves from " + first(V.no_social_security__person_all).toFixed(1) + " to " + last(V.no_social_security__person_all).toFixed(1) + "; none of the three from " + first(V.none_of_three__person_all).toFixed(1) + " to " + last(V.none_of_three__person_all).toFixed(1) + ".",
+    fmtAgri, f1a);
+  wireLegend(document.getElementById("legend-cond"), plot, keys, V);
+  setTxt("pv-cond", f1a(last(V.none_of_three__person_all)));
+  setTxt("ex-c-nc0", f1a(first(V.no_contract__person_all)));
+  setTxt("ex-c-nc1", f1a(last(V.no_contract__person_all)));
+  setTxt("ex-c-n0", f1a(first(V.none_of_three__person_all)));
+  setTxt("ex-c-n1", f1a(last(V.none_of_three__person_all)));
+  setTxt("ex-c-ten", String(Math.round(last(V.none_of_three__person_all) / 10)));
+}
+
+/* ---------- §09 women's work by social group and religion ---------- */
+{
+  const S = JD.social.series;
+  const v = (g, k) => S[`lfpr_psss__${g}_all__a15plus__${k}`]?.data.at(-1);
+  const GROUPS = [["soc_scheduled_tribe", "Scheduled Tribe"], ["soc_scheduled_caste", "Scheduled Caste"], ["soc_other_backward_class", "Other Backward Class"], ["soc_others", "Others (outside the three)"],
+    ["rel_christianity", "Christian"], ["rel_hinduism", "Hindu"], ["rel_sikhism", "Sikh"], ["rel_islam", "Muslim"]];
+  const rows = GROUPS.map(([k, name]) => ({ name, a: v("female", k), b: v("male", k) })).filter((r) => r.a != null);
+  const fAi = JD.socialAi.f;
+  strip({ blockId: "cb-social", plotId: "plot-social", rows, domain: [0, 100], ticks: [0, 20, 40, 60, 80, 100], tickFmt: (d) => (d === 100 ? "100%" : String(d)),
+    ref: fAi, refLabel: `All women ${pct(fAi)}%`, hi: () => true, fmtV: pct, rowH: 34,
+    dlName: "india-atlas_plfs_lfpr-social-religion", csvHeader: ["group", "lfpr_women_pct", "lfpr_men_pct"],
+    a11yTitle: "Labour force participation by social group and religion, women and men",
+    a11yDesc: "Eight rows: four social groups then four religions. " + rows.map((r) => `${r.name}: women ${pct(r.a)}, men ${pct(r.b)}`).join("; ") + "." });
+  setTxt("pv-social", f1a(fAi));
+}
+
+/* ---------- §10 how many people in each state work ---------- */
+{
+  const rows = desc(JD.work.map((r) => ({ name: r.name, a: r.f, b: r.m })), "a");
+  strip({ blockId: "cb-work", plotId: "plot-work", rows, domain: [0, 100], ticks: [0, 20, 40, 60, 80, 100], tickFmt: (d) => (d === 100 ? "100%" : String(d)),
+    ref: JD.workAi.f, refLabel: `All-India women ${pct(JD.workAi.f)}%`, hi: () => true, fmtV: pct,
+    dlName: "india-atlas_plfs_wpr-states-gender", csvHeader: ["state", "wpr_women_pct", "wpr_men_pct"],
+    a11yTitle: "Share of people aged 15 and above who are working, women and men, by state",
+    a11yDesc: `Sorted dot strip of ${rows.length} states and UTs. Women's worker ratio runs from ${pct(rows[0].a)} per cent in ${rows[0].name} to ${pct(rows.at(-1).a)} in ${rows.at(-1).name}; men's stays between ${pct(Math.min(...rows.map((r) => r.b)))} and ${pct(Math.max(...rows.map((r) => r.b)))}.` });
+  setTxt("pv-work", (rows[0].a - rows.at(-1).a).toFixed(1) + " pt");
 }
 
 /* ---------- sparklines ---------- */

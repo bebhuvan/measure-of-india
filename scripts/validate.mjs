@@ -230,15 +230,51 @@ const PRODUCTS = [
   { slug: "cpialrl-states-1986", dossier: "cpialrl", cadence: 1, staleAfter: "2025-05", range: [-20, 40], base: "1986-87=100" },
   { slug: "cpialrl-states-2019", dossier: "cpialrl", cadence: 1, range: [50, 300], base: "2019=100" },
   { slug: "cpialrl-groups-2019", dossier: "cpialrl", cadence: 1, range: [-10, 300], base: "2019=100" },
+  // ---- jobs (PLFS): two survey designs, each its own base (sources.yml seams: plfs) ----
+  // revamped design (from January 2025): the sources.yml base
   { slug: "plfs-monthly", dossier: "plfs", cadence: 1, range: [0, 100] },
-  { slug: "plfs-quarterly", dossier: "plfs", cadence: 3, staleAfter: "2026-01", range: [0, 100] },
   { slug: "plfs-cuts", dossier: "plfs", cadence: 1, range: [0, 100] },
-  { slug: "plfs-annual", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100] },
-  { slug: "plfs-states", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 45] },
-  { slug: "plfs-status", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100] },
+  { slug: "plfs-monthly-age", dossier: "plfs", cadence: 1, range: [0, 100] },
+  { slug: "plfs-q25", dossier: "plfs", cadence: 3, staleAfter: "2026-04", range: [0, 100] },
+  { slug: "plfs-q25-states-lfpr", dossier: "plfs", cadence: 3, staleAfter: "2026-04", range: [0, 100] },
+  { slug: "plfs-q25-states-wpr", dossier: "plfs", cadence: 3, staleAfter: "2026-04", range: [0, 100] },
+  { slug: "plfs-q25-states-ur", dossier: "plfs", cadence: 3, staleAfter: "2026-04", range: [0, 100] },
+  { slug: "plfs-q25-industry", dossier: "plfs", cadence: 3, staleAfter: "2026-04", range: [0, 100] },
+  { slug: "plfs-cy25-india", dossier: "plfs", cadence: 12, staleAfter: "2025-01", range: [0, 100] },
+  { slug: "plfs-cy25-states-lfpr", dossier: "plfs", cadence: 12, staleAfter: "2025-01", range: [0, 100] },
+  { slug: "plfs-cy25-states-wpr", dossier: "plfs", cadence: 12, staleAfter: "2025-01", range: [0, 100] },
+  { slug: "plfs-cy25-states-ur", dossier: "plfs", cadence: 12, staleAfter: "2025-01", range: [0, 100] },
+  { slug: "plfs-cy25-workers-states", dossier: "plfs", cadence: 12, staleAfter: "2025-01", range: [0, 100] },
+  // ₹: casual day wages from ~₹100 (a state's rural women) to regular monthly pay of
+  // ~₹1 lakh in a small UT's urban cell
+  { slug: "plfs-cy25-earnings", dossier: "plfs", cadence: 12, staleAfter: "2025-01", range: [20, 200000] },
+  // original design (2017-18 to 2024): frozen, each at its last period
+  { slug: "plfs-quarterly", dossier: "plfs", cadence: 3, staleAfter: "2024-10", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-quarterly-cuts", dossier: "plfs", cadence: 3, staleAfter: "2024-10", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-quarterly-states-lfpr", dossier: "plfs", cadence: 3, staleAfter: "2024-10", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-quarterly-states-wpr", dossier: "plfs", cadence: 3, staleAfter: "2024-10", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-quarterly-states-ur", dossier: "plfs", cadence: 3, staleAfter: "2024-10", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-quarterly-industry", dossier: "plfs", cadence: 3, staleAfter: "2024-10", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-annual", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-states", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 45], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-status", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
   // ₹ levels: casual female r+u floor ~₹165/day, regular male ceiling ~₹22k/mo
-  { slug: "plfs-earnings", dossier: "plfs", cadence: 3, staleAfter: "2024-04", range: [100, 60000] },
-  { slug: "plfs-education", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 45] },
+  { slug: "plfs-earnings", dossier: "plfs", cadence: 3, staleAfter: "2024-04", range: [100, 60000], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-education", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 45], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-ay-india", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-ay-states-lfpr", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-ay-states-wpr", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-ay-states-ur", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-ay-workers-states", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-conditions", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-earnings-cuts", dossier: "plfs", cadence: 3, staleAfter: "2024-04", range: [20, 200000], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-cy-india", dossier: "plfs", cadence: 12, staleAfter: "2024-01", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-cy-states-lfpr", dossier: "plfs", cadence: 12, staleAfter: "2024-01", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-cy-states-wpr", dossier: "plfs", cadence: 12, staleAfter: "2024-01", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-cy-states-ur", dossier: "plfs", cadence: 12, staleAfter: "2024-01", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-cy-workers-states", dossier: "plfs", cadence: 12, staleAfter: "2024-01", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-cy-earnings", dossier: "plfs", cadence: 12, staleAfter: "2024-01", range: [20, 200000], base: "PLFS original design (2017-18 to 2024)" },
+  // ---- end jobs ----
   // RBI via eSankhyiki: the mirror lags the RBI's own publications by
   // up to a year, so each bundle carries its own regression floor
   { slug: "rbi-trade", dossier: "rbi", cadence: 1, staleAfter: "2025-06", range: [-60000, 80000], cross: ["balance", "balance_published", 5] },
@@ -1129,6 +1165,83 @@ withBundle("plfs-education", (b) => {
   });
   ok("plfs-education: graduate UR above not-literate UR in every published year");
 });
+
+/* ---- jobs (PLFS) deep bundles: identities on every cell (scripts/lib/products/plfs-deep.mjs) ---- */
+{
+  // the three ratios: for every cell the bundles carry, WPR <= LFPR and UR = 100 x (1 - WPR/LFPR)
+  // within rounding (1.5 points; the adapter withholds cells that break it, so none may remain)
+  const rateSets = [["plfs-ay-india"], ["plfs-cy-india"], ["plfs-cy25-india"], ["plfs-q25"], ["plfs-quarterly-cuts"], ["plfs-monthly-age"],
+    ...["ay", "cy", "cy25", "q25", "quarterly"].map((t) => ["lfpr", "wpr", "ur"].map((i) => `plfs-${t}-states-${i}`))];
+  for (const set of rateSets) {
+    if (!set.every((sl) => fs.existsSync(path.join(ROOT, "data/series", sl + ".json")))) { fail(`plfs deep: missing bundle in ${set.join(", ")}`); continue; }
+    const bs = set.map(load);
+    const all = Object.assign({}, ...bs.map((b) => b.series));
+    const dates = bs[0].dates;
+    if (bs.some((b) => b.dates.join() !== dates.join())) { fail(`plfs deep: ${set.join(", ")} do not share one date axis`); continue; }
+    let n = 0, bad = 0;
+    for (const [k, s] of Object.entries(all)) {
+      if (!/(^|__)lfpr_/.test(k)) continue;
+      const w = all[k.replace(/(^|__)lfpr_/, "$1wpr_")], u = all[k.replace(/(^|__)lfpr_/, "$1ur_")];
+      if (!w || !u) continue;
+      s.data.forEach((lf, i) => {
+        const wp = w.data[i], ur = u.data[i];
+        if (lf == null || wp == null || ur == null) return;
+        n++;
+        if (wp > lf + 0.05 || Math.abs(100 * (1 - wp / lf) - ur) > 1.5) { bad++; if (bad <= 3) fail(`plfs deep ${set[0]}: ${k} at ${dates[i]}: LFPR ${lf}, WPR ${wp}, UR ${ur} break the identity`); }
+      });
+    }
+    if (!bad) ok(`plfs deep ${set[0]}${set.length > 1 ? " (+" + (set.length - 1) + ")" : ""}: WPR <= LFPR and UR = 1 - WPR/LFPR in all ${n} cells`);
+  }
+  // quarterly industry shares: agriculture + industry + services = 100 per state, gender, sector, quarter
+  for (const sl of ["plfs-quarterly-industry", "plfs-q25-industry"]) withBundle(sl, (b) => {
+    let n = 0;
+    for (const k of Object.keys(b.series).filter((k) => /(^|__)agriculture__/.test(k))) {
+      const ks = ["agriculture", "industry", "services"].map((x) => b.series[k.replace(/(^|__)agriculture__/, `$1${x}__`)]);
+      if (ks.some((s) => !s)) { fail(`${sl}: ${k} has no industry or services sibling`); continue; }
+      b.dates.forEach((d, i) => {
+        const v = ks.map((s) => s.data[i]);
+        if (v.some((x) => x == null)) return;
+        n++;
+        const sum = v.reduce((a, x) => a + x, 0);
+        if (Math.abs(sum - 100) > 0.35) fail(`${sl}: ${k} shares sum ${sum.toFixed(1)} at ${d}`);
+      });
+    }
+    ok(`${sl}: agriculture + industry + services = 100 (±0.35) in ${n} cells`);
+  });
+  // job conditions: "none of the three" can never exceed any one of the three
+  withBundle("plfs-conditions", (b) => {
+    let n = 0;
+    for (const k of Object.keys(b.series).filter((k) => /(^|__)none_of_three__/.test(k))) {
+      const parts = ["no_contract", "no_paid_leave", "no_social_security"].map((x) => b.series[k.replace(/(^|__)none_of_three__/, `$1${x}__`)]);
+      b.dates.forEach((d, i) => {
+        const v = b.series[k].data[i];
+        if (v == null) return;
+        n++;
+        for (const p of parts) if (p?.data[i] != null && v > p.data[i] + 0.15) fail(`plfs-conditions: ${k} ${v} exceeds a single condition (${p.data[i]}) at ${d}`);
+      });
+    }
+    ok(`plfs-conditions: "none of the three" never exceeds a single condition (${n} cells)`);
+  });
+  // workers by status, every state: self-employed + regular + casual = 100; own-account + helpers = self-employed (usual status)
+  for (const sl of ["plfs-ay-workers-states", "plfs-cy-workers-states", "plfs-cy25-workers-states"]) withBundle(sl, (b) => {
+    let n = 0, bad = 0;
+    for (const k of Object.keys(b.series).filter((k) => /^[a-z_]+__self_employed__[a-z]+_[a-z]+__(psss|cws)$/.test(k))) {
+      const [rg, cs, oa, hp] = ["regular", "casual", "own_account", "helper"].map((x) => b.series[k.replace("__self_employed__", `__${x}__`)]);
+      b.dates.forEach((d, i) => {
+        const se = b.series[k].data[i];
+        if (se == null || rg?.data[i] == null || cs?.data[i] == null) return;
+        n++;
+        const sum = se + rg.data[i] + cs.data[i];
+        if (Math.abs(sum - 100) > 0.35) { bad++; if (bad <= 3) fail(`${sl}: ${k} statuses sum ${sum.toFixed(1)} at ${d}`); }
+        // own-account + helpers = self-employed on the usual status only (the weekly status's
+        // self-employed also hold those with work who did not work that week)
+        if (k.endsWith("__psss") && oa?.data[i] != null && hp?.data[i] != null && Math.abs(oa.data[i] + hp.data[i] - se) > 0.35) { bad++; if (bad <= 3) fail(`${sl}: ${k} own-account + helpers != self-employed at ${d}`); }
+      });
+    }
+    if (!n) fail(`${sl}: no status cells found`);
+    else if (!bad) ok(`${sl}: statuses sum to 100 and self-employment splits add up in ${n} cells`);
+  });
+}
 
 withBundle("asuse-annual", (b) => {
   const estKeys = Object.keys(b.series).filter((k) => k.startsWith("establishments_"));
