@@ -5,6 +5,27 @@ family: cpialrl
 guides: [cpi]
 catalogue: data/coverage/cpialrl.catalogue.json
 rules:
+  # wave 2 (lb/prices): pairs the listing offers but the Bureau never served (checked 2026-10-10)
+  - match:
+      - "cpialrl:1986-1987:*:andaman-and-nicobar-islands:*"
+      - "cpialrl:1986-1987:*:arunachal-pradesh:*"
+      - "cpialrl:1986-1987:*:chhattisgarh:*"
+      - "cpialrl:1986-1987:*:daman-and-diu-dadra-nagar-and-haveli:*"
+      - "cpialrl:1986-1987:*:delhi:*"
+      - "cpialrl:1986-1987:*:goa:*"
+      - "cpialrl:1986-1987:*:jharkhand:*"
+      - "cpialrl:1986-1987:*:lakshadweep:*"
+      - "cpialrl:1986-1987:*:mizoram:*"
+      - "cpialrl:1986-1987:*:nagaland:*"
+      - "cpialrl:1986-1987:*:puducherry:*"
+      - "cpialrl:1986-1987:*:sikkim:*"
+      - "cpialrl:1986-1987:*:telangana:*"
+      - "cpialrl:1986-1987:*:uttarakhand:*"
+    status: excluded
+    reason: "The 1986-87 series covered twenty states; the listing offers this state on that base but the Bureau served no index for it in any month (it entered the series with the 2019 base)."
+  - match: "cpialrl:2019:al:delhi:*"
+    status: excluded
+    reason: "Delhi has a rural labourers' index on the 2019 base but no agricultural labourers' index: the Bureau served no CPI-AL rows for it."
   - match: ["cpialrl:1986-1987:al:all-india:general-index", "cpialrl:1986-1987:rl:all-india:general-index"]
     status: shown
     bundle: cpialrl-1986

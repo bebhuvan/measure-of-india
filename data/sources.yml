@@ -110,6 +110,9 @@ dossiers:
     release_url: https://www.mospi.gov.in
     fetch:
       endpoint: cpi/getCPIData
+      # the 2012 base ended Dec 2025 and CPI is never revised: its six baked bundles are not
+      # fetched again (cpi.mjs); set false to re-ingest them from the API
+      retired: true
       params:
         base_year: 2012
         level: Group
@@ -381,6 +384,9 @@ dossiers:
     release_url: https://eaindustry.nic.in
     fetch:
       endpoint: wpi/getWpiRecords
+      # the 2011-12 base ended Apr 2026 and is final: not fetched again (wpi.mjs reads its
+      # raw dump for the wave-2 sub-sub-groups); set false to re-ingest it from the API
+      retired: true
       params:
         base_year: "2011-12"
         limit: 500

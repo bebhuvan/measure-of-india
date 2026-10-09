@@ -32,6 +32,11 @@
 //     All India is baked from 699 only; the adapter tolerates this one stale month.
 //   - DBIE dates months at their last day; baked at the month's first day.
 //
+//   - Early 1982-base Food rows (1983 to 1988) repeat one figure through each fiscal year:
+//     annual values, not monthly indices; such years are dropped (dropAnnualRepeats).
+//   - Single-month keying slips (Ranchi-Hatia, August 2012: 141 among 249 to 272) are set
+//     aside by quarantine(), listed on the series, never corrected.
+//
 // Hand check (2026-10-09): All India General Index, August 2026, base 2016: 154.4 in report
 // 699 (and 154.4 for ALL INDIA in report 1168). See docs/status/cpi.md for the press-release
 // comparison.
@@ -61,6 +66,36 @@ export const GROUPS = {
   "CLOTHING, BEDDING & FOOTWEAR": { key: "clothing", label: "Clothing, bedding and footwear" },
   "MISCELLANEOUS GROUP": { key: "misc", label: "Miscellaneous" },
 };
+// A keying slip: a value far from both its nearest published neighbours (within three months
+// either side) while those two neighbours agree with each other (within 30%). That shape is a
+// typo (108.8, 5108.8, 108.8), not a price move: a genuine spike or a level step has
+// neighbours that disagree, or none. Slips are set aside (null, listed per series), never
+// corrected or filled. lo/hi bound the slip against the neighbours' mean.
+export function quarantine(map, lo, hi) {
+  const keys = [...map.keys()].sort();
+  const mi = (k) => +k.slice(0, 4) * 12 + +k.slice(5, 7);
+  const out = [];
+  keys.forEach((k, i) => {
+    const a = keys[i - 1], b = keys[i + 1];
+    if (!a || !b || mi(k) - mi(a) > 3 || mi(b) - mi(k) > 3) return;
+    const va = map.get(a), vb = map.get(b), v = map.get(k);
+    if (Math.max(va, vb) / Math.min(va, vb) > 1.3) return;
+    const m = (va + vb) / 2;
+    if (v < lo * m || v > hi * m) out.push(k);
+  });
+  for (const k of out) map.delete(k);
+  return out;
+}
+// a fiscal year (April to March) whose twelve months all carry one figure is an annual value
+// repeated, not a monthly index (the 1982 base's early Food rows): those years are dropped
+function dropAnnualRepeats(map) {
+  const fy = (k) => (+k.slice(5) >= 4 ? +k.slice(0, 4) : +k.slice(0, 4) - 1);
+  const by = new Map();
+  for (const [k, v] of map) (by.get(fy(k)) ?? by.set(fy(k), []).get(fy(k))).push([k, v]);
+  const dropped = [];
+  for (const [y, kv] of by) if (kv.length === 12 && new Set(kv.map((x) => x[1])).size === 1) { for (const [k] of kv) map.delete(k); dropped.push(y); }
+  return dropped.sort((a, b) => a - b);
+}
 const titleCase = (s) => String(s).toLowerCase().replace(/(^|[\s(/&-])([a-z])/g, (m, a, b) => a + b.toUpperCase());
 
 function read(root, cfg) {
@@ -98,6 +133,12 @@ export async function buildCpiiw(root, dcfg, vintage, cfg) {
     ((ai[B.tag] ??= {})[G.key] ??= new Map()).set(ym(r["Time Date"]), v);
   }
   if (!roundingOnly) throw new Error("cpiiw: report 699's two value columns differ by more than rounding; re-read the report before baking");
+  // set aside annual-repeat years and keying slips, per series, and say so on the series
+  const setAside = {};   // "tag|gkey" -> { annual: [fiscal years], slips: [months] }
+  for (const [tag, groups] of Object.entries(ai)) for (const [g, map] of Object.entries(groups)) {
+    const annual = dropAnnualRepeats(map), slips = quarantine(map, 0.75, 1.33);
+    if (annual.length || slips.length) setAside[`${tag}|${g}`] = { annual, slips };
+  }
   const latest16 = ai["2016"]?.general;
   if (!latest16?.size) throw new Error("cpiiw: no data returned: report 699 has no base-2016 General Index");
   const last = [...latest16.keys()].sort().at(-1);
@@ -137,6 +178,12 @@ export async function buildCpiiw(root, dcfg, vintage, cfg) {
         (B.tag === "1982" ? " Group indices begin in January 1995 in the report; the General Index in October 1988." : ""),
     });
     if (!b) throw new Error(`cpiiw: base ${B.tag} produced no y/y`);
+    for (const [k, s] of Object.entries(b.series)) {
+      const a = setAside[`${B.tag}|${k}`];
+      if (!a) continue;
+      s.setAsideNote = [a.annual.length ? `Fiscal years ${a.annual.map((y) => `${y}-${String(y + 1).slice(2)}`).join(", ")} carry one figure repeated in all twelve months in report 699 (an annual value, not a monthly index): left out.` : "",
+        a.slips.length ? `Index levels for ${a.slips.join(", ")} sit far from their neighbouring months in report 699 (a keying slip): set aside, not corrected.` : ""].filter(Boolean).join(" ");
+    }
     // the current base also carries the index level: the number dearness allowance is set from
     if (B.tag === "2016") {
       const ax = b.dates.map((d) => d.slice(0, 7));
@@ -168,6 +215,8 @@ export async function buildCpiiw(root, dcfg, vintage, cfg) {
   // and the Bureau's press release give 137.5 (checked 2026-10-09; the centres' September
   // rows are their own). The All India row is not baked from 1168, so one stale month is
   // disclosed, not fatal; more than that means the reports have drifted apart.
+  const centreSlips = {};
+  for (const [tag, cs] of Object.entries(cen)) for (const [code, c] of Object.entries(cs)) { const sl = quarantine(c.map, 0.75, 1.33); if (sl.length) centreSlips[`${tag}|${code}`] = sl; }
   if (allIndiaMismatch > 1) throw new Error(`cpiiw: report 1168's All India row differs from report 699 in ${allIndiaMismatch} months`);
   for (const B of Object.values(BASES)) {
     const centres = cen[B.tag];
@@ -180,7 +229,11 @@ export async function buildCpiiw(root, dcfg, vintage, cfg) {
         (outside && B.tag === "2001" ? ` Rows dated before the base began (January 2006) are dropped: ${outside} in all across the report.` : ""),
     });
     if (!b) continue;
-    for (const [k, s] of Object.entries(b.series)) { s.state = centres[k.slice(1)].state; s.group = centres[k.slice(1)].state; }
+    for (const [k, s] of Object.entries(b.series)) {
+      s.state = centres[k.slice(1)].state; s.group = centres[k.slice(1)].state;
+      const sl = centreSlips[`${B.tag}|${k.slice(1)}`];
+      if (sl) s.setAsideNote = `Index levels for ${sl.join(", ")} sit far from their neighbouring months in report 1168 (a keying slip, such as Ranchi-Hatia's 141 in August 2012 among readings of 249 to 272): set aside, not corrected.`;
+    }
     writeSeries(root, `data/series/cpiiw-centres-${B.tag}.json`, b);
   }
   console.log(`cpiiw: bases ${Object.keys(ai).join(", ")}; centres ${Object.entries(cen).map(([t, c]) => `${t}:${Object.keys(c).length}`).join(", ")}; ${mislabelled} mislabelled 1986-87 rows dropped; ${outside} centre rows outside their base window dropped; latest ${last} = ${lastV}`);

@@ -103,6 +103,16 @@ function weightedIndex(levels, keys, W, months) {
 
 export async function buildCpi(root, dcfg, vintage) {
   const { subByCode, states } = await cpiMeta(dcfg);
+  // The 2012 base stopped at December 2025 and CPI is final on release: with `retired: true`
+  // its six baked bundles are not fetched again (about 2,700 calls); the wave-2 deep bake
+  // and the 2024 base run as usual, on the baked axis.
+  if (dcfg.fetch.retired) {
+    const b = JSON.parse(fs.readFileSync(path.join(root, "data/series/cpi.json"), "utf8"));
+    if (dcfg.deep2012) await buildCpi2012Deep(root, dcfg, vintage, { states, axis: b.dates.map((d) => d.slice(0, 7)), releaseDate: b.meta.releaseDate, endYear: 2025 });
+    if (dcfg.fetch2024) await buildCpi2024(root, dcfg, vintage);
+    if (dcfg.archive2010) await buildCpi2010Archive(root, dcfg, vintage);
+    return b;
+  }
   const allCodes = Object.keys(subByCode);
   const nameToKey = (name) => {
     for (const c of allCodes) if (subByCode[c].name === name) return subByCode[c].key;

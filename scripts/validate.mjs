@@ -2719,7 +2719,8 @@ function ratesRanges(slug, byUnit) {
 /* ---- prices wave 2 (lb/prices): identities for the deepening ---- */
 // y/y computed from levels against the NSO's own published inflation, on every new base-2024 bundle
 for (const slug of ["cpi-2024-classes", "cpi-2024-subclasses", ...["rural", "urban"].flatMap((s) => ["divisions", "groups", "classes", "subclasses", "items"].map((l) => `cpi-2024-${s}-${l}`)),
-  ...["", "-rural", "-urban"].flatMap((s) => [`cpi-2024-states-divisions${s}`, `cpi-2024-states-groups${s}`]), "cpi-2024-back-sectors"]) crossInflationMap(slug, 0.15);
+  ...["", "-rural", "-urban"].flatMap((s) => [`cpi-2024-states-divisions${s}`, `cpi-2024-states-groups${s}`])]) crossInflationMap(slug, 0.15);
+crossInflationMap("cpi-2024-back-sectors", 0.25);   // the back-cast's own rate, as cpi-2024-back
 withBundle("cpi-2024-states-divisions", (b) => {
   const states = new Set(Object.values(b.series).map((s) => s.state));
   if (states.size !== 36) fail(`cpi-2024-states-divisions: ${states.size} states/UTs, expected 36`);
