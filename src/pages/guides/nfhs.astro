@@ -1,13 +1,176 @@
 ---
 import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
 import GuideData from "../../components/GuideData.astro";
 import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
+import { load, val, states, strip, pairs, ruralUrban, directionRows, withheld, short, polarity, TABLE_ORDER, bundleOf } from "../../dossiers/nfhs.data.js";
 const D = bySlug["nfhs"];
+
+// ---- the figures the copy names, read from the bundles at build time ----
+const f1 = (v) => (v == null ? "–" : v.toFixed(1));
+const f0 = (v) => (v == null ? "–" : v.toFixed(0));
+const f2 = (v) => (v == null ? "–" : v.toFixed(2));
+const pt = (a, b) => `${b - a >= 0 ? "+" : "−"}${Math.abs(b - a).toFixed(1)} pt`;
+const V5 = (t, re, o) => val(5, t, re, o), V4 = (t, re, o) => val(4, t, re, o);
+const AN = /^Children age 6-59/;
+const an5 = V5("anaemia", AN), an4 = V4("anaemia", AN);
+const st5 = V5("child-nutrition", /are stunted/), st4 = V4("child-nutrition", /are stunted/);
+const ib5 = V5("delivery", /^Institutional births \(in/), ib4 = V4("delivery", /^Institutional births \(in/);
+const bpw = V5("blood-pressure", /^Women .*Elevated blood pressure \(Systolic ≥140/), bpm = V5("blood-pressure", /^Men .*Elevated blood pressure \(Systolic ≥140/);
+const sgw = V5("blood-sugar", /^Women .*taking medicine/), sgm = V5("blood-sugar", /^Men .*taking medicine/);
+const round5 = load("nfhs-5-anaemia").meta, round4 = load("nfhs-4-anaemia").meta;
+const nWithheld = withheld().length;
+const nBundles = TABLE_ORDER.filter((t) => bundleOf(5, t)).length + TABLE_ORDER.filter((t) => bundleOf(4, t)).length;
+const nCells = TABLE_ORDER.reduce((n, t) => n + [4, 5].reduce((m, r) => m + Object.keys(bundleOf(r, t)?.series ?? {}).length, 0), 0);
+const nStates = states(5, "anaemia", AN).length;
+
+// §03 every per-cent measure taken in both rounds, with the direction a rise means
+const dir = directionRows().map((r) => ({ ...r, short: short(r.label), dir: polarity(short(r.label)) })).sort((a, b) => b.change - a.change);
+const better = dir.filter((r) => r.dir !== 0 && r.dir * r.change > 0), worse = dir.filter((r) => r.dir !== 0 && r.dir * r.change < 0).sort((a, b) => a.dir * a.change - b.dir * b.change);
+const directed = dir.filter((r) => r.dir !== 0).length;
+
+// §04 anaemia
+const anaemia = pairs([["anaemia", AN, "Children 6-59 months"], ["anaemia", /^Non-pregnant women/, "Women, not pregnant"], ["anaemia", /^Pregnant women/, "Women, pregnant"],
+  ["anaemia", /^All women age 15-49/, "All women 15-49"], ["anaemia", /^All women age 15-19/, "Girls 15-19"], ["anaemia", /^Men age 15-49/, "Men 15-49"], ["anaemia", /^Men age 15-19/, "Boys 15-19"]]);
+const anS = strip("anaemia", AN);
+const anRows = anS.rows.map((r) => ({ geo: r.geo, v: r.v, v4: r.v4, caution: r.caution }));
+const anRose = anRows.filter((r) => r.v4 != null && r.v > r.v4), anBoth = anRows.filter((r) => r.v4 != null);
+const anTop = anRows[0], anBot = anRows.at(-1);
+const anW5 = V5("anaemia", /^All women age 15-49/), anM5 = V5("anaemia", /^Men age 15-49/), anG5 = V5("anaemia", /^All women age 15-19/);
+
+// §05 children
+const nutrition = pairs([["child-nutrition", /are stunted/, "Stunted (too short for age)"], ["child-nutrition", /are wasted/, "Wasted (too thin for height)"],
+  ["child-nutrition", /severely wasted/, "Severely wasted"], ["child-nutrition", /are underweight/, "Underweight"], ["child-nutrition", /Children under 5 years who are overweight/, "Overweight"],
+  ["child-nutrition", /breastfed within one hour/, "Breastfed in the first hour"], ["child-nutrition", /exclusively breastfed/, "Only breastmilk, under 6 months"],
+  ["child-nutrition", /^Total children age 6-23 months receiving an adequate diet/, "Adequate diet, 6-23 months"]]);
+const mortality = pairs([["mortality", /^Infant/, "Infant deaths"], ["mortality", /^Under-five/, "Under-five deaths"], ["mortality", /^Neonatal/, "Newborn deaths (first month)"]]);
+const imr5 = V5("mortality", /^Infant/), imr4 = V4("mortality", /^Infant/);
+const diet5 = V5("child-nutrition", /^Total children age 6-23 months receiving an adequate diet/);
+const stS = states(5, "child-nutrition", /are stunted/);
+
+// §06 vaccines
+const vaccines = pairs([["vaccination", /fully vaccinated based on information from either/, "Fully vaccinated (card or recall)"], ["vaccination", /received BCG/, "BCG"],
+  ["vaccination", /3 doses of polio/, "Polio, 3 doses"], ["vaccination", /3 doses of penta or DPT/, "DPT or penta, 3 doses"], ["vaccination", /first dose of measles/, "Measles, first dose"],
+  ["vaccination", /second dose of measles/, "Measles, second dose"], ["vaccination", /3 doses of penta or hepatitis B/, "Hepatitis B or penta, 3 doses"], ["vaccination", /rotavirus/, "Rotavirus, 3 doses"],
+  ["vaccination", /vitamin A dose/, "Vitamin A, last 6 months"], ["childhood-disease", /received oral rehydration salts/, "Diarrhoea treated with ORS"],
+  ["childhood-disease", /received zinc/, "Diarrhoea treated with zinc"], ["childhood-disease", /fever or symptoms of ARI/, "Fever or chest infection taken to a provider"]]);
+const fv5 = V5("vaccination", /fully vaccinated based on information from either/);
+const fvS = states(5, "vaccination", /fully vaccinated based on information from either/);
+const rota5 = V5("vaccination", /rotavirus/), mcv2 = V5("vaccination", /second dose of measles/);
+
+// §07 births
+const births = pairs([["maternity", /antenatal check-up in the first trimester/, "Antenatal check, first three months"], ["maternity", /at least 4 antenatal/, "Four or more antenatal visits"],
+  ["maternity", /iron folic acid for 100 days/, "Iron and folic acid, 100+ days"], ["maternity", /iron folic acid for 180 days/, "Iron and folic acid, 180+ days"],
+  ["delivery", /^Institutional births \(in/, "Born in a health facility"], ["delivery", /^Institutional births in public/, "Born in a public facility"],
+  ["delivery", /^Births attended by skilled/, "Skilled attendant at birth"], ["maternity", /^Mothers who received postnatal care/, "Mother checked within 2 days"],
+  ["maternity", /^Children who received postnatal care/, "Baby checked within 2 days"], ["delivery", /^Births delivered by caesarean/, "Caesarean births"]]);
+const csP = states(5, "delivery", /private health facility/), csU = new Map(states(5, "delivery", /public health facility that were delivered/).map((c) => [c.geo, c.value]));
+const csRows = csP.map((c) => ({ geo: c.geo, private: c.value, public: csU.get(c.geo) ?? null, caution: c.caution }));
+const csp5 = V5("delivery", /private health facility/), csu5 = V5("delivery", /public health facility that were delivered/), cs5 = V5("delivery", /^Births delivered by caesarean/);
+const oop5 = V5("maternity", /out-of-pocket/);
+const ibS = states(5, "delivery", /^Institutional births \(in/);
+
+// §08 blood pressure and sugar
+const ncd = ruralUrban([["blood-pressure", /^Women .*Elevated blood pressure \(Systolic ≥140/, "Women: high blood pressure or on medicine"], ["blood-pressure", /^Men .*Elevated blood pressure \(Systolic ≥140/, "Men: high blood pressure or on medicine"],
+  ["blood-sugar", /^Women .*taking medicine/, "Women: high blood sugar or on medicine"], ["blood-sugar", /^Men .*taking medicine/, "Men: high blood sugar or on medicine"],
+  ["adult-nutrition", /^Women .*overweight or obese/, "Women 15-49: overweight or obese"], ["adult-nutrition", /^Men .*overweight or obese/, "Men 15-49: overweight or obese"],
+  ["adult-nutrition", /^Women .*waist-to-hip/, "Women 15-49: high-risk waist"], ["adult-nutrition", /^Men .*waist-to-hip/, "Men 15-49: high-risk waist"]]);
+const bpW = states(5, "blood-pressure", /^Women .*Elevated blood pressure \(Systolic ≥140/), bpM = new Map(states(5, "blood-pressure", /^Men .*Elevated blood pressure \(Systolic ≥140/).map((c) => [c.geo, c.value]));
+const ncdRows = bpW.map((c) => ({ geo: c.geo, women: c.value, men: bpM.get(c.geo) ?? null, caution: c.caution }));
+const sgS = states(5, "blood-sugar", /^Men .*taking medicine/);
+
+// §09 cancer screening
+const cvS = states(5, "cancer-screening", /cervical/), brS = new Map(states(5, "cancer-screening", /breast/).map((c) => [c.geo, c.value]));
+const cancerRows = cvS.map((c) => ({ geo: c.geo, cervical: c.value, breast: brS.get(c.geo) ?? null, caution: c.caution }));
+const cv5 = V5("cancer-screening", /cervical/), br5 = V5("cancer-screening", /breast/), or5 = V5("cancer-screening", /^Women .*oral/);
+const cvBelow1 = cvS.filter((c) => c.value < 1).length;
+
+// §10 women's lives
+const women = ruralUrban([["empowerment", /bank or savings/, "Bank account she uses"], ["empowerment", /mobile phone/, "Phone she uses"], ["adults", /^Women \(age 15-49\) who have ever used the internet/, "Has used the internet"],
+  ["empowerment", /house and\/or land/, "Owns a house or land"], ["empowerment", /paid in cash/, "Worked and paid in cash"], ["empowerment", /three household decisions/, "Has a say in household decisions"],
+  ["empowerment", /hygienic methods/, "Hygienic period protection (15-24)"], ["adults", /^Women \(age 15-49\) with 10 or more years/, "10 or more years of school"]]);
+const phS = states(5, "empowerment", /mobile phone/), bkS = new Map(states(5, "empowerment", /bank or savings/).map((c) => [c.geo, c.value]));
+const womenRows = phS.map((c) => ({ geo: c.geo, phone: c.value, bank: bkS.get(c.geo) ?? null, caution: c.caution }));
+const bank5 = V5("empowerment", /bank or savings/), phone5 = V5("empowerment", /mobile phone/), cash5 = V5("empowerment", /paid in cash/), cash4 = V4("empowerment", /paid in cash/);
+const net5w = V5("adults", /^Women \(age 15-49\) who have ever used the internet/), net5m = V5("adults", /^Men \(age 15-49\) who have ever used the internet/);
+const phoneR = V5("empowerment", /mobile phone/, { sector: "rural" }), phoneU = V5("empowerment", /mobile phone/, { sector: "urban" });
+
+// §11 violence
+const vS = states(5, "violence", /spousal violence/);
+const violenceRows = vS.map((c) => ({ geo: c.geo, v: c.value, caution: c.caution }));
+const sv5 = V5("violence", /spousal violence/), pv5 = V5("violence", /violence during any pregnancy/), sx5 = V5("violence", /sexual violence by age 18/);
+const svR = V5("violence", /spousal violence/, { sector: "rural" }), svU = V5("violence", /spousal violence/, { sector: "urban" });
+const gCompendium = load("gender-t143-nfhs4"), gC5 = load("gender-t143-nfhs5");
+const ps4 = gCompendium?.series?.physical_or_sexual__all_india?.data[0] ?? null, ps5 = gC5?.series?.physical_or_sexual__all_india?.data[0] ?? null;
+
+// §12 tobacco and alcohol
+const tbM = new Map(states(5, "tobacco-alcohol", /^Men .*use any kind of tobacco/).map((c) => [c.geo, c.value])), tbW = states(5, "tobacco-alcohol", /^Women .*use any kind of tobacco/);
+const tobaccoRows = states(5, "tobacco-alcohol", /^Men .*use any kind of tobacco/).map((c) => ({ geo: c.geo, men: c.value, women: tbW.find((w) => w.geo === c.geo)?.value ?? null, caution: c.caution }));
+const tm5 = V5("tobacco-alcohol", /^Men .*use any kind of tobacco/), tw5 = V5("tobacco-alcohol", /^Women .*use any kind of tobacco/), am5 = V5("tobacco-alcohol", /^Men .*consume alcohol/), aw5 = V5("tobacco-alcohol", /^Women .*consume alcohol/);
+const twTop = tbW[0];
+
+// §13 household
+const household = pairs([["household", /households with electricity/, "Living with electricity"], ["household", /improved drinking-water/, "Improved drinking water"],
+  ["household", /improved sanitation/, "Improved toilet"], ["household", /clean fuel/, "Cooking with clean fuel"], ["household", /iodized salt/, "Iodised salt"],
+  ["household", /health insurance/, "Someone covered by health insurance"], ["household", /birth was registered/, "Births registered, under-5s"],
+  ["household", /^Deaths in the last 3 years/, "Deaths registered"], ["household", /pre-primary school/, "Five-year-olds in pre-school"]]);
+const san5 = V5("household", /improved sanitation/), san4 = V4("household", /improved sanitation/), fuel5 = V5("household", /clean fuel/), fuelR = V5("household", /clean fuel/, { sector: "rural" });
+const ins5 = V5("household", /health insurance/), ins4 = V4("household", /health insurance/);
+
+// §14 fertility
+const tfS = strip("marriage-fertility", /Total Fertility/);
+const tfRows = tfS.rows.map((r) => ({ geo: r.geo, v: r.v, v4: r.v4 }));
+const tfr5 = V5("marriage-fertility", /Total Fertility/), tfr4 = V4("marriage-fertility", /Total Fertility/);
+const tfAbove = tfRows.filter((r) => r.v > 2.1);
+const fp = pairs([["family-planning", /: Any method/, "Any method"], ["family-planning", /: Any modern method/, "A modern method"], ["family-planning", /Female sterilization/, "Female sterilisation"],
+  ["family-planning", /: Condom/, "Condom"], ["family-planning", /: Pill/, "Pill"], ["family-planning", /IUD/, "IUD"], ["family-planning", /Male sterilization/, "Male sterilisation"],
+  ["family-planning", /Injectables/, "Injectables"], ["unmet-need", /^Unmet need for spacing/, "Unmet need for spacing"], ["unmet-need", /^Total Unmet/, "Unmet need, total"]]);
+const fst5 = V5("family-planning", /Female sterilization/), mst5 = V5("family-planning", /Male sterilization/), cm5 = V5("marriage-fertility", /married before age 18/), cm4 = V4("marriage-fertility", /married before age 18/);
+
+// §15 village and town: every per-cent measure, NFHS-5
+const gap = [];
+for (const t of TABLE_ORDER) {
+  const b = bundleOf(5, t);
+  for (const s of Object.values(b.series)) if (s.geo === "All India" && s.sector === "total" && s.unit === "percent") {
+    const ru = val(5, t, new RegExp("^" + s.group.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "$"), { sector: "rural" }), ur = val(5, t, new RegExp("^" + s.group.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "$"), { sector: "urban" });
+    if (ru != null && ur != null) gap.push({ label: s.group, short: short(s.group), rural: ru, urban: ur, gap: Math.round((ur - ru) * 10) / 10 });
+  }
+}
+gap.sort((a, b) => b.gap - a.gap);
+const gapTop = gap[0], gapBot = gap.at(-1), ruralAhead = gap.filter((g) => g.gap < 0);
+
+// §16 the state table, NFHS-5
+const COLS = [["anaemia", AN, "Child anaemia", true], ["child-nutrition", /are stunted/, "Stunted", true], ["mortality", /^Infant/, "Infant deaths /1,000", true],
+  ["delivery", /^Institutional births \(in/, "Born in a facility", false], ["vaccination", /fully vaccinated based on information from either/, "Fully vaccinated", false],
+  ["blood-pressure", /^Women .*Elevated blood pressure \(Systolic ≥140/, "Women, high BP", true], ["blood-sugar", /^Women .*taking medicine/, "Women, high sugar", true],
+  ["empowerment", /mobile phone/, "Women with a phone", false], ["violence", /spousal violence/, "Spousal violence", true], ["tobacco-alcohol", /^Men .*use any kind of tobacco/, "Men, tobacco", true],
+  ["household", /clean fuel/, "Clean cooking fuel", false], ["marriage-fertility", /Total Fertility/, "Children per woman", null]];
+const geos = states(5, "anaemia", AN).map((c) => c.geo).sort();
+const table = {
+  cols: COLS.map(([t, re, label, bad]) => ({ short: label, label, bad })),
+  india: { geo: "India", v: COLS.map(([t, re]) => val(5, t, re)) },
+  rows: geos.map((g) => ({ geo: g, v: COLS.map(([t, re]) => val(5, t, re, { geo: g })) })),
+};
+
+const DATA = {
+  direction: dir.map((r) => ({ label: r.label, short: r.short, a: r.a, b: r.b, change: r.change, dir: r.dir })),
+  anaemia, nutrition, mortality, vaccines, births, household, fp, ncd, women,
+  "anaemia-states": { rows: anRows, ref: an5 },
+  "ncd-states": { rows: ncdRows, ref: bpw, refLabel: "India, women" },
+  "cancer-states": { rows: cancerRows, ref: cv5, refLabel: "India, cervical" },
+  "women-states": { rows: womenRows, ref: phone5, refLabel: "India, phone" },
+  "violence-states": { rows: violenceRows, ref: sv5 },
+  "tobacco-states": { rows: tobaccoRows, ref: tm5, refLabel: "India, men" },
+  "tfr-states": { rows: tfRows, ref: tfr5, fmt: "2" },
+  "cs-states": { rows: csRows, ref: csp5, refLabel: "India, private" },
+  gap, table,
+};
+const asOf = "NFHS-5";
 ---
 <Base
-  title="Health · India Atlas"
+  title="Family health · India Atlas"
   description={D.description}
   nav="guides"
   dateStamp={dateStamp(D)}
@@ -16,404 +179,773 @@ const D = bySlug["nfhs"];
   canonical="https://atlas.thisindianlife.today/guides/nfhs/"
   ogImage={`/og/${D.slug}.png`}
 >
+<script type="application/json" id="nfhs-data" is:inline set:html={JSON.stringify(DATA)}></script>
+<style is:global>
+  .nf-table-wrap{overflow-x:auto}
+  .nf-table{border-collapse:collapse;font-family:var(--sans);font-size:.8rem;font-variant-numeric:tabular-nums;width:100%;min-width:980px}
+  .nf-table th{font-weight:500;color:var(--ink-soft);text-align:right;padding:6px 6px;border-bottom:1px solid var(--rule-2);vertical-align:bottom;line-height:1.25}
+  .nf-table th:first-child,.nf-table td:first-child{text-align:left;white-space:nowrap}
+  .nf-table td{text-align:right;padding:4px 6px;border-bottom:1px solid var(--rule);color:var(--ink)}
+  .nf-table tr.ai td{font-weight:600;border-bottom:1px solid var(--rule-2)}
+  .nf-withheld{font-family:var(--sans);font-size:.85rem;color:var(--ink-soft)}
+  .nf-withheld li{margin:.2rem 0}
+</style>
 <div class="page">
 
   <div class="titleblock break">
     <div class="kicker">{kicker(D)}</div>
     <div class="hero-grid">
       <h1 set:html={D.headline} />
-      <p class="lede">Between 2015 and 2021, India's flagship health survey found fewer infant deaths, more institutional births, cleaner toilets and a fertility rate below replacement. It also found two in three children anaemic: up from three in five. The health story has two directions, and they are both real.</p>
+      <p class="lede">India's largest health survey visits about six lakh homes, weighs the children, takes a drop of blood and a blood-pressure reading, and asks women about their bank accounts and their husbands. Between 2015-16 and 2019-21 it found fewer babies dying, more births in hospitals and cleaner toilets. It also found more children anaemic, and, for the first time across all adults, one in five with high blood pressure.</p>
     </div>
     <div class="meta">
-      <span>Source <b>MoSPI / IIPS</b></span>
+      <span>Source <b>IIPS for the Ministry of Health and Family Welfare, via MoSPI</b></span>
       <span>Instrument <b>Household sample survey, two rounds</b></span>
-      <span>Rounds <b>NFHS-4 (2015-16) &amp; NFHS-5 (2019-21)</b></span>
-      <span>Coverage <b>All India, 36 states/UTs, ~600k households</b></span>
-      <span>Indicators <b>21, 102 sub-indicators baked</b></span>
-      <span>Unit <b>Per cent (unless noted)</b></span>
+      <span>Rounds <b>NFHS-4 (2015-16), NFHS-5 (2019-21)</b></span>
+      <span>Coverage <b>India and {nStates} states and UTs, rural and urban</b></span>
+      <span>Tables <b>21, every one baked</b></span>
+      <span>Unit <b>Per cent unless noted</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Children anaemic, 6-59 months</div><div class="v acc" id="n-anaemia">–</div><div class="d" id="d-anaemia">–</div></div>
-      <div class="num"><div class="l">Infant mortality, per 1,000</div><div class="v" id="n-imr">–</div><div class="d" id="d-imr">–</div></div>
-      <div class="num"><div class="l">Institutional births, per cent</div><div class="v" id="n-institutional">–</div><div class="d" id="d-institutional">–</div></div>
-      <div class="num"><div class="l">Total Fertility Rate</div><div class="v" id="n-tfr">–</div><div class="d" id="d-tfr">–</div></div>
+      <div class="num"><div class="l">Children 6-59 months anaemic</div><div class="v acc" id="n-anaemia">{f1(an5)}<span class="pc">%</span></div><div class="d" id="d-anaemia">{f1(an4)}% in NFHS-4</div></div>
+      <div class="num"><div class="l">Children under 5 stunted</div><div class="v" id="n-stunting">{f1(st5)}<span class="pc">%</span></div><div class="d" id="d-stunting">{f1(st4)}% in NFHS-4</div></div>
+      <div class="num"><div class="l">Births in a health facility</div><div class="v" id="n-institutional">{f1(ib5)}<span class="pc">%</span></div><div class="d" id="d-institutional">{f1(ib4)}% in NFHS-4</div></div>
+      <div class="num"><div class="l">Men 15+ with high blood pressure or on medicine</div><div class="v" id="n-bp">{f1(bpm)}<span class="pc">%</span></div><div class="d" id="d-bp">women {f1(bpw)}%, first measured for all adults</div></div>
     </div>
   </div>
 
-  <!-- § 01 current reading -->
+  <!-- § 01 the current reading. Inputs: nfhs-5-* and nfhs-4-* (All India), via pipeline/lib/facts-health-gender.mjs. Prose: generated slots. -->
   <section>
-    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">NFHS-5, 2019-21</span></div>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">NFHS-5, {round5.latestPeriod}</span></div>
     <div class="reading-top">
-      <div><span class="rk">Child anaemia, NFHS-5</span><div class="big" id="rb-anaemia">–</div></div>
-      <p class="rt-cap">Children age 6-59 months who are anaemic (haemoglobin below 11.0 g/dL): up from <b id="rt-anaemia-prev">–</b> in NFHS-4. Every demographic group saw anaemia rise between the two rounds, a reversal in a country where most health indicators improved.</p>
-      <div class="rt-side"><span class="rk">NFHS-4, the previous round</span><div class="rt-side-v" id="rb-anaemia-prev">–</div></div>
+      <div><span class="rk">Children anaemic, NFHS-5</span><div class="big" id="rb-anaemia">{f1(an5)}<span class="pc">%</span></div></div>
+      <p class="rt-cap">Children aged six months to five years whose haemoglobin is below 11 grams per decilitre, from a drop of blood taken at home. In the round before, NFHS-4, the share was <b id="rt-anaemia-prev">{f1(an4)}%</b>.</p>
+      <div class="rt-side"><span class="rk">Women 15-49 anaemic</span><div class="rt-side-v" id="rb-women">{f1(anW5)}<span class="pc">%</span></div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
-        <span class="mk">What the print says</span>
-        <p>NFHS-5 found <b id="cr-anaemia">–</b> of children anaemic, up from <b id="cr-anaemia-prev">–</b>. Infant mortality fell to <b id="cr-imr">–</b> per thousand, from <b id="cr-imr-prev">–</b>. Institutional births reached <b id="cr-institutional">–</b>, from <b id="cr-institutional-prev">–</b>. The fertility rate fell below replacement to <b id="cr-tfr">–</b>.</p>
-        <p>Stunting fell to <b id="cr-stunting">–</b>, wasting to <b id="cr-wasting">–</b>, underweight to <b id="cr-underweight">–</b>. Women's bank-account ownership jumped from <b id="cr-bank-prev">–</b> to <b id="cr-bank">–</b>. Spousal violence fell from <b id="cr-violence-prev">–</b> to <b id="cr-violence">–</b>.</p>
+        <span class="mk">What the survey says</span>
+        <Prose slot="nfhs.current-reading.what-the-print-says" />
       </div>
       <div class="reading-col now">
         <span class="mk">What it does not say</span>
-        <p>It does not say why anaemia worsened. The survey measures haemoglobin from a finger-prick blood sample; the method changed between rounds (capillary vs venous, different analysers), and part of the rise may be a measurement artefact. But the direction, up, is confirmed by every sub-group, which a purely methodological shift would not produce.</p>
-        <p>Nor does NFHS-5 say anything about COVID. Fieldwork largely preceded the pandemic (the second phase was disrupted but completed by April 2021). The survey is a pre-COVID health baseline, not a post-COVID one.</p>
-        <p>And the two rounds are not perfectly comparable: some indicators changed definition, some are new. Each carries its own footnote in the survey report; this guide discloses the breaks it knows about.</p>
+        <Prose slot="nfhs.current-reading.what-it-does-not-say" />
       </div>
     </div>
   </section>
 
-  <!-- § 02 register -->
+  <!-- § 02 how to read the survey: evergreen, human-written -->
   <section>
-    <div class="sec-head"><span class="no">02</span><h2>The register of series</h2><span class="line"></span><span class="unit">NFHS-5, vs NFHS-4, direction of change</span></div>
-    <div class="break ledger">
-      <table>
-        <thead>
-          <tr><th>Series</th><th>NFHS-5</th><th>vs NFHS-4</th><th>NFHS-4</th></tr>
-        </thead>
-        <tbody id="ledger-body"></tbody>
-      </table>
+    <div class="sec-head"><span class="no">02</span><h2>How to read the survey</h2><span class="line"></span></div>
+    <div class="wm-grid">
+      <div>
+        <p>The National Family Health Survey is a door-to-door visit. Field teams working for the International Institute for Population Sciences, on behalf of the Ministry of Health and Family Welfare, sit with a sample of households in every district, ask about births and deaths, vaccines and contraception, money and violence, and measure what a clinic would: height, weight, waist, a drop of blood for haemoglobin and sugar, three blood-pressure readings. Each round publishes a fact sheet for India and for every state and union territory, split by village and town. This guide holds every line of those fact sheets that MoSPI serves: 21 tables, two rounds, {nCells.toLocaleString("en-IN")} figures in {nBundles} files.</p>
+        <p>Every figure is a share of people at the time of the survey, not a count of new cases. "Two in three children anaemic" means two in three children had low haemoglobin on the day the blood was taken. Mortality rates are the exception: they count deaths in the five years before the interview, per 1,000 births.</p>
+        <p><b>The two rounds are two rulers.</b> NFHS-4 ({round4.fieldwork}) and NFHS-5 ({round5.fieldwork}) used different samples, and several questions changed. NFHS-5 measured blood pressure and blood sugar, and asked about tobacco and alcohol, for everyone 15 and over; NFHS-4 for ages 15 to 49. Its cancer questions changed too. This guide puts the two rounds side by side, a grey dot and a blue one, and never draws them as a trend: two surveys are a before and an after, not a line.</p>
+        <p><b>A figure in brackets</b> in the fact sheet rests on 25 to 49 people; this guide marks it with an asterisk. A figure based on fewer than 25 is not published at all. Small union territories (Lakshadweep, Ladakh, the Andaman and Nicobar Islands) often sit at the edges of a ranking for this reason.</p>
+        <p><b>What we withhold.</b> MoSPI's copy of the survey files some NFHS-4 figures against the wrong line. For India it gives 3.3 per cent of women with a bank account; the NFHS-5 national report says 53 per cent. The error shifts whole columns in the tables on maternity care, unmet need for contraception, women's lives and violence, and it repeats in every state. We checked each NFHS-4 line against the DHS Program's own tabulation of the same survey and against the national report, and we do not use the {nWithheld} NFHS-4 lines that fail or that measured a different group of people. NFHS-5 checks clean. The list is below the provenance notes.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note"><span class="mk">Margin note, i</span><b>The pandemic split the survey.</b> NFHS-5 surveyed 22 states and UTs between June 2019 and January 2020. The other 14 began in January 2020 and, interrupted by the pandemic, finished by April 2021. A state's figure belongs to the months its own fieldwork ran.</aside>
+        <aside class="margin-note"><span class="mk">Margin note, ii</span><b>Borders moved.</b> Ladakh was part of Jammu and Kashmir in NFHS-4; Dadra and Nagar Haveli and Daman and Diu were two territories, now one. Each round keeps its own map; nothing here re-adds them.</aside>
+        <aside class="margin-note"><span class="mk">Margin note, iii</span><b>Only two rounds.</b> Two surveys show a change, not a trend. NFHS-6 will be the third point.</aside>
+      </div>
     </div>
   </section>
 
-  <!-- § 03 direction of change -->
+  <!-- § 03 what changed. Inputs: every per-cent sub-indicator of every nfhs-4-* and nfhs-5-* bundle, All India total. Prose: evergreen + as-of. -->
   <section>
-    <div class="sec-head"><span class="no">03</span><h2>The direction of change</h2><span class="line"></span><span class="unit">Key indicators, NFHS-4 → NFHS-5, percentage-point change</span></div>
+    <div class="sec-head"><span class="no">03</span><h2>What changed between the rounds</h2><span class="line"></span><span class="unit">Every measure taken both times, percentage points</span></div>
     <div class="break">
       <figure id="cb-direction" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>Most lines went the right way: except anaemia and obesity</h3>
-            <div class="sub">Percentage-point change between NFHS-4 and NFHS-5, blue = worsened, grey = improved, each bar tagged by whether the direction is favourable</div>
+            <h3>Of {directed} measures with a right direction, {better.length} moved the right way; anaemia leads the {worse.length} that did not</h3>
+            <div class="sub">Change from NFHS-4 to NFHS-5, India, every per-cent measure the fact sheet carries in both rounds. Blue bars moved the wrong way; light grey bars have no right direction.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-direction">–</div><div class="c">child anaemia, the largest unfavourable change</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-direction">{worse.length}</div><div class="c">measures moved the wrong way</div></div>
         </div>
         <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#A3A9B4;height:8px"></i>Moved the right way</button>
+            <button class="chip"><i style="background:#2E4BD8;height:8px"></i>Moved the wrong way</button>
+            <button class="chip"><i style="background:#C9CED6;height:8px"></i>No right direction</button>
+          </div>
           <div class="plotzone" id="plot-direction"></div>
           <div class="plotfoot">
-            <span class="src">Source: NFHS-4 &amp; NFHS-5, All India, Rural + Urban (Combined, change = NFHS-5 minus NFHS-4, "worsened" is editor-judged: anaemia up, obesity up, C-section up, tobacco-for-women up are unfavourable despite "improving" numbers; the tag is disclosed per bar</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rchips.org/nfhs" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src">Source: NFHS-4 and NFHS-5 fact sheets (IIPS, MoHFW), via MoSPI. India, rural and urban together. NFHS-4 lines MoSPI misfiles are left out. Which way is right is our judgement: more anaemia, stunting, unmet need or child marriage is worse; caesarean births, family-planning methods and the sex ratio of the population have no right direction here.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>One bar per indicator, showing the percentage-point change between the two survey rounds. Bars right of the zero line increased; bars left decreased. The colour is the judgement: blue means the change is unfavourable (anaemia rose, obesity rose, C-sections rose), regardless of direction. Grey means favourable.</p>
-            <p>The chart is the guide's thesis in one image. The grey bars dominate: mortality fell, births moved to facilities, sanitation spread, women's empowerment leapt. But the blue bars cluster at the top: anaemia and obesity, the two indicators that went the wrong way, and they moved more than most.</p>
+            <p>One bar for each measure, the change in percentage points from the first round to the second. A bar to the right means the share rose. Whether a rise is good depends on the measure: more vaccinated children is good, more anaemic children is not. The blue bars are the ones that went the wrong way for the family.</p>
+            <p>A point is a point of the whole population, not a per cent change. Ten points on a measure that starts at 20 is a large change; ten points on one that starts at 80 is a smaller one in proportion.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf}</span>
+            <p>The largest rise is <b id="ex-dir-top">{dir[0].short.replace(/^[A-Z](?![A-Z])/, (c) => c.toLowerCase())}, {pt(dir[0].a, dir[0].b)}</b>; the largest fall, <b id="ex-dir-bot">{dir.at(-1).short.replace(/^[A-Z](?![A-Z])/, (c) => c.toLowerCase())}, {pt(dir.at(-1).a, dir.at(-1).b)}</b>. Of the measures that went the wrong way, the worst is {worse[0].short.replace(/^[A-Z](?![A-Z])/, (c) => c.toLowerCase())} ({f1(worse[0].a)}% to {f1(worse[0].b)}%), then {worse[1].short.replace(/^[A-Z](?![A-Z])/, (c) => c.toLowerCase())} ({f1(worse[1].a)}% to {f1(worse[1].b)}%).</p>
           </div>
         </div>
       </figure>
     </div>
   </section>
 
-  <!-- § 04 headline : anaemia -->
+  <!-- § 04 anaemia. Inputs: nfhs-4-anaemia, nfhs-5-anaemia (All India, every state). -->
   <section>
-    <div class="sec-head"><span class="no">04</span><h2>Plate 1: the anaemia reversal</h2><span class="line"></span><span class="unit">Anaemia by demographic, NFHS-4 → NFHS-5, per cent</span></div>
+    <div class="sec-head"><span class="no">04</span><h2>Anaemia, the measure that went the wrong way</h2><span class="line"></span><span class="unit">Per cent anaemic, NFHS-4 and NFHS-5</span></div>
     <div class="break">
       <figure id="cb-anaemia" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>Every group worsened</h3>
-            <div class="sub">Anaemia prevalence by demographic group, All India, Combined, NFHS-4 (left dot) → NFHS-5 (right dot), dumbbells</div>
+            <h3>Two in three young children and more than half of women are anaemic, and every group measured twice got worse</h3>
+            <div class="sub">Share anaemic, India, NFHS-4 (grey) and NFHS-5 (blue). MoSPI's copy has no NFHS-4 figure for men and boys, and its figure for girls 15-19 is withheld.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-anaemia">–</div><div class="c">children, the steepest rise</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-anaemia">{f1(an5)}<span class="pc">%</span></div><div class="c">children 6-59 months, NFHS-5</div></div>
         </div>
         <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#5F6675"></i>NFHS-4, 2015-16</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>NFHS-5, 2019-21</button>
+          </div>
           <div class="plotzone" id="plot-anaemia"></div>
           <div class="plotfoot">
-            <span class="src">Source: NFHS, anaemia by demographic, haemoglobin below age/sex-specific thresholds (children &lt;11.0, women &lt;12.0, pregnant women &lt;11.0, men &lt;13.0 g/dL), the method changed between rounds (HemoCue Hb 201+ to Hb 301), which may explain part of the rise; the uniform direction across all groups suggests a real worsening alongside</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rchips.org/nfhs" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src">Source: NFHS-4 and NFHS-5 (IIPS, MoHFW), via MoSPI. Anaemic: haemoglobin below 11 g/dl for children and pregnant women, 12 for other women, 13 for men, adjusted for altitude and, for adults, smoking. The NFHS-4 figure for girls 15-19 is withheld (MoSPI files the men's figure under it).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Five dumbbells, one per demographic group. The grey dot is NFHS-4, the blue dot NFHS-5. Every dumbbell shifts right: anaemia rose for children, for non-pregnant women, for pregnant women, for all women. Men (NFHS-5 only, no comparison) sit at 25 per cent. Children rose the most: <b id="ex-anaemia-rise">–</b> points in five years.</p>
-            <p>The method change (a more sensitive analyser in NFHS-5) inflates the level: but the survey's own report notes the direction holds even after adjusting. India did not get more anaemic by measurement alone; something real worsened, and the survey cannot fully explain it.</p>
+            <p>Anaemia means too little haemoglobin to carry oxygen. A child with it tires easily and learns more slowly; a pregnant woman with it is more likely to bleed dangerously at birth. The usual causes in India are a diet short of iron, folate and vitamin B12, worms and malaria, and blood lost in childbirth and menstruation.</p>
+            <p>Both rounds measured haemoglobin the same way, from a drop of blood from a finger. Experts have argued that a finger-prick reads lower than blood drawn from a vein, which would overstate anaemia in both rounds alike; it would not explain a rise between them.</p>
           </div>
           <div class="now">
-            <span class="mk">As of NFHS-5</span>
-            <p>Children <b id="ex-an-children">–</b>, non-pregnant women <b id="ex-an-women">–</b>, pregnant women <b id="ex-an-pregnant">–</b>, men <b id="ex-an-men">–</b>. Every group above half: except men. The rise from NFHS-4: children <b id="ex-an-rise-children">–</b> pt, women <b id="ex-an-rise-women">–</b> pt.</p>
+            <span class="mk">As of {asOf}</span>
+            <p>Children <b id="ex-an-children">{f1(an5)}%</b>, up from {f1(an4)}%. All women 15-49 <b id="ex-an-women">{f1(anW5)}%</b>, girls 15-19 {f1(anG5)}%, men {f1(anM5)}%. Anaemia rose among children in <b id="ex-an-rose">{anRose.length}</b> of the {anBoth.length} states and UTs measured in both rounds.</p>
           </div>
         </div>
       </figure>
-    </div>
-  </section>
 
-  <!-- § 05 what this measures -->
-  <section>
-    <div class="sec-head"><span class="no">05</span><h2>What this measures</h2><span class="line"></span></div>
-    <div class="wm-grid">
-      <div>
-        <p>The National Family Health Survey is India's flagship health interview: a household sample of 600,000 households across all states, run roughly every five years by the International Institute for Population Sciences under MoSPI. It measures what a clinic measures, door to door: height and weight, a finger-prick for haemoglobin and blood sugar, a blood-pressure cuff, a questionnaire on birth history, vaccination, marriage, work, violence. NFHS-5 (2019-21) is the latest round; NFHS-4 (2015-16) is the comparison.</p>
-        <p>The survey reports <b>prevalence</b>, not incidence: what fraction of a population has a condition at the time of the survey. Every figure here is a per cent (unless noted), measured on the Combined sector (rural + urban together), for All India. State-level estimates are published separately; this guide carries them for the key indicators.</p>
-        <p>The two rounds are compared by design, but definitions shifted for some indicators. Anaemia used a different analyser (HemoCue Hb 301 in NFHS-5 vs Hb 201+ in NFHS-4); blood-pressure thresholds were redefined. Where a methodological break is known, this guide discloses it. Where it is not, the change is taken at face value.</p>
-      </div>
-      <div class="wm-rail">
-        <aside class="margin-note">
-          <span class="mk">Margin note, i</span>
-          <b>The anaemia method changed.</b> NFHS-5 used a more sensitive analyser (HemoCue Hb 301). Part of the rise may be artefact: but the uniform direction across every group signals a real worsening too. </aside>
-        <aside class="margin-note">
-          <span class="mk">Margin note, ii</span>
-          <b>Pre-COVID.</b> NFHS-5 fieldwork largely preceded the pandemic. This is a pre-COVID baseline, not a post-COVID reading.
-        </aside>
-        <aside class="margin-note">
-          <span class="mk">Margin note, iii</span>
-          <b>Two rounds, never chained.</b> Each sub-indicator is a cross-sectional estimate. The comparison is editorial, not a time series. Growth rates are not computed.
-        </aside>
-      </div>
-    </div>
-  </section>
-
-  <!-- § 06 child health -->
-  <section>
-    <div class="sec-head"><span class="no">06</span><h2>Plate 2: child survival and nutrition</h2><span class="line"></span><span class="unit">IMR, stunting, wasting, underweight, feeding, NFHS-4 → NFHS-5</span></div>
-    <div class="break">
-      <figure id="cb-child" style="margin:0">
+      <figure id="cb-anaemia-states" style="margin:56px 0 0">
         <div class="plate-head">
           <div class="t">
-            <h3>Fewer deaths, less stunting: but still a third undernourished</h3>
-            <div class="sub">Child mortality &amp; nutritional status, All India, Combined, NFHS-4 → NFHS-5 dumbbells</div>
+            <h3>From {anBot.geo} at {f1(anBot.v)}% to {anTop.geo} at {f1(anTop.v)}%, and higher than in NFHS-4 in {anRose.length} of {anBoth.length} states</h3>
+            <div class="sub">Children 6-59 months anaemic, by state and UT, NFHS-5 (blue) with NFHS-4 (grey) where the state existed in both rounds. Sorted by NFHS-5.</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-child">–</div><div class="c">stunting, still one in three</div></div>
+          <div class="plate-val"><div class="v" id="pv-anaemia-states">{anRose.length} of {anBoth.length}</div><div class="c">states where it rose</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-child"></div>
+          <div class="plotzone" id="plot-anaemia-states"></div>
           <div class="plotfoot">
-            <span class="src">Source: NFHS, IMR per 1,000 live births; stunting/wasting/underweight per cent of under-5 children, all improved between rounds; the absolute levels remain high by international comparison</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rchips.org/nfhs" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src">Source: NFHS-4 and NFHS-5 state fact sheets (IIPS, MoHFW), via MoSPI. * an estimate on 25 to 49 children. Ladakh and Dadra and Nagar Haveli and Daman and Diu have no NFHS-4 figure of their own.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Seven dumbbells. The three mortality lines (IMR, under-five, neonatal) and three nutrition lines (stunting, wasting, underweight) all shifted left: fewer deaths, less undernourishment. Exclusive breastfeeding rose. The improvement is real and broad-based.</p>
-            <p>But read the levels, not just the direction. A third of under-five children are still stunted: chronically undernourished, their growth faltered. India's stunting rate is two to three times that of comparable-income countries. The line moved the right way; the room it left is still vast.</p>
+            <p>Each row is a state; the blue dot is NFHS-5 and the grey dot, where there is one, NFHS-4. The dashed rule is India. Anaemia does not sort states the way income does: some richer states sit near the top and several north-eastern states near the bottom. Diet, water and sanitation, worm infections, inherited blood disorders and the reach of iron supplements all play a part.</p>
           </div>
           <div class="now">
-            <span class="mk">As of NFHS-5</span>
-            <p>IMR <b id="ex-ch-imr">–</b>, stunting <b id="ex-ch-stunt">–</b>, wasting <b id="ex-ch-waste">–</b>, underweight <b id="ex-ch-uw">–</b>, exclusive breastfeeding <b id="ex-ch-bf">–</b>. Stunting fell <b id="ex-ch-stunt-drop">–</b> pt; IMR fell <b id="ex-ch-imr-drop">–</b> per thousand.</p>
+            <span class="mk">As of {asOf}</span>
+            <p>Highest: <b id="ex-ans-top">{anTop.geo}, {f1(anTop.v)}%</b>. Lowest: <b id="ex-ans-bot">{anBot.geo}, {f1(anBot.v)}%</b>. {anRows.filter((r) => r.v > an5).length} of {anRows.length} states and UTs sit above India's {f1(an5)}%.</p>
           </div>
         </div>
       </figure>
     </div>
   </section>
 
-  <!-- § 07 maternal care -->
+  <!-- § 05 children: survival and growth. Inputs: nfhs-*-child-nutrition, nfhs-*-mortality. -->
   <section>
-    <div class="sec-head"><span class="no">07</span><h2>Plate 3: where the births happen</h2><span class="line"></span><span class="unit">Institutional births, skilled attendance, ANC, C-section, NFHS-4 → NFHS-5</span></div>
+    <div class="sec-head"><span class="no">05</span><h2>Children: surviving and growing</h2><span class="line"></span><span class="unit">Children under 5, NFHS-4 and NFHS-5</span></div>
     <div class="break">
-      <figure id="cb-maternal" style="margin:0">
+      <figure id="cb-nutrition" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>Nine in ten births in a facility: and a rising C-section rate</h3>
-            <div class="sub">Delivery care, All India, Combined, NFHS-4 → NFHS-5 dumbbells</div>
+            <h3>Stunting fell {f1(st4 - st5)} points, but a third of children under five are still too short for their age</h3>
+            <div class="sub">Nutrition of children under 5 and how they are fed, India, NFHS-4 (grey) and NFHS-5 (blue). MoSPI's copy has no NFHS-4 figure for overweight children.</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-maternal">–</div><div class="c">C-section in private facilities, NFHS-5</div></div>
+          <div class="plate-val"><div class="v" id="pv-nutrition">{f1(st5)}<span class="pc">%</span></div><div class="c">stunted, NFHS-5</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-maternal"></div>
+          <div class="plotzone" id="plot-nutrition"></div>
           <div class="plotfoot">
-            <span class="src">Source: NFHS, institutional births, skilled birth attendance, 4+ ANC visits, IFA 100+ days, C-section (overall, public, private), the C-section rate in private facilities (47%) is well above the WHO 10-15% threshold, ANC and IFA improved; C-section rose across all sectors</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rchips.org/nfhs" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src">Source: NFHS-4 and NFHS-5 (IIPS, MoHFW), via MoSPI. Stunted, wasted and underweight against the WHO child growth standards. Adequate diet: enough meals and enough kinds of food for the child's age.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Six dumbbells. Institutional births and skilled attendance both rose to about nine in ten: a genuine system achievement, driven by the Janani Suraksha Yojana and Janani Shishu Suraksha Karyakram programmes that paid women to deliver in facilities. Four-plus ANC visits and IFA supplementation improved.</p>
-            <p>The last dumbbell is the concern: C-section rates rose across all sectors, but in private facilities nearly one in two births is now surgical: far above the WHO's 10-15 per cent threshold. The rise partly reflects more high-risk deliveries reaching facilities; it also reflects a supply-side incentive to operate.</p>
+            <p>Stunting is the long story: a child too short for her age has gone without enough food, or lost it to infection, for months or years, often since the womb. Wasting is the short story: too thin for her height, usually from recent hunger or illness. Underweight mixes the two.</p>
+            <p>The feeding lines explain part of it. Most children get breastmilk; few get enough meals of enough kinds of food once they are past six months.</p>
           </div>
           <div class="now">
-            <span class="mk">As of NFHS-5</span>
-            <p>Institutional births <b id="ex-ma-inst">–</b>, skilled attendance <b id="ex-ma-skilled">–</b>, C-section overall <b id="ex-ma-cs">–</b>, C-section private <b id="ex-ma-csp">–</b>, C-section public <b id="ex-ma-csu">–</b>, 4+ ANC <b id="ex-ma-anc">–</b>.</p>
+            <span class="mk">As of {asOf}</span>
+            <p>Stunted <b id="ex-nu-stunted">{f1(st5)}%</b>, from {f1(st4)}%. Only <b id="ex-nu-diet">{f1(diet5)}%</b> of children aged 6 to 23 months get an adequate diet. Stunting is highest in {stS[0].geo} ({f1(stS[0].value)}%) and lowest in {stS.at(-1).geo} ({f1(stS.at(-1).value)}%).</p>
           </div>
         </div>
       </figure>
-    </div>
-  </section>
 
-  <!-- § 08 adult NCDs -->
-  <section>
-    <div class="sec-head"><span class="no">08</span><h2>Plate 4: the dual burden</h2><span class="line"></span><span class="unit">Underweight &amp; overweight, tobacco &amp; alcohol, by gender, NFHS-4 → NFHS-5</span></div>
-    <div class="break">
-      <figure id="cb-adult" style="margin:0">
+      <figure id="cb-mortality" style="margin:56px 0 0">
         <div class="plate-head">
           <div class="t">
-            <h3>Underweight fell, overweight rose: the epidemiological transition</h3>
-            <div class="sub">Adult nutritional status &amp; risk factors, All India, Combined, by gender, NFHS-4 → NFHS-5 dumbbells</div>
+            <h3>Infant deaths fell from {f0(imr4)} to {f0(imr5)} for every 1,000 births</h3>
+            <div class="sub">Deaths per 1,000 live births in the five years before each survey, India, NFHS-4 (grey) and NFHS-5 (blue). MoSPI's copy has no NFHS-4 newborn rate.</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-adult">–</div><div class="c">women overweight or obese, NFHS-5</div></div>
+          <div class="plate-val"><div class="v" id="pv-mortality">{f1(imr5)}</div><div class="c">infant deaths per 1,000, NFHS-5</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-adult"></div>
+          <div class="plotzone" id="plot-mortality"></div>
           <div class="plotfoot">
-            <span class="src">Source: NFHS, BMI below normal (thin) and overweight/obese (BMI ≥25) for adults 15-49, by gender, tobacco &amp; alcohol use 15+, the dual burden: undernutrition persists while obesity spreads; men's tobacco &amp; alcohol fell; women's tobacco rose slightly</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rchips.org/nfhs" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src">Source: NFHS-4 and NFHS-5 (IIPS, MoHFW), via MoSPI. NFHS-4 rates are printed to the whole number. The Sample Registration System's annual rates are in the Women and men guide.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Eight dumbbells, four pairs. The BMI dumbbells tell the transition: below-normal BMI fell for both sexes (fewer thin people), but overweight rose (more obese people). India now carries both burdens at once: undernutrition among the poor, obesity among the middle class, sometimes in the same district.</p>
-            <p>Tobacco and alcohol tell a gender story. Men's use of both fell sharply: a genuine public-health gain. Women's tobacco rose slightly, from a low base. The gender gap in tobacco is enormous (38% of men vs 9% of women) and narrowing only because men quit, not because women start.</p>
+            <p>The survey counts deaths from mothers' birth histories, so each rate describes the five years before the interview, not the survey year itself. The Registrar General's Sample Registration System counts deaths every year and is the better source for a single year.</p>
           </div>
           <div class="now">
-            <span class="mk">As of NFHS-5</span>
-            <p>Women overweight <b id="ex-ad-wov">–</b>, men overweight <b id="ex-ad-mov">–</b>. Women underweight <b id="ex-ad-wth">–</b>, men underweight <b id="ex-ad-mth">–</b>. Men's tobacco <b id="ex-ad-mto">–</b>, women's tobacco <b id="ex-ad-wto">–</b>. Men's alcohol <b id="ex-ad-mal">–</b>.</p>
+            <span class="mk">As of {asOf}</span>
+            <p>Infant deaths <b id="ex-mo-imr">{f1(imr5)}</b> per 1,000 births, under-five deaths {f1(val(5, "mortality", /^Under-five/))}, newborn deaths {f1(val(5, "mortality", /^Neonatal/))}.</p>
           </div>
         </div>
       </figure>
     </div>
   </section>
 
-  <!-- § 09 fertility & empowerment -->
+  <!-- § 06 vaccines and childhood illness. Inputs: nfhs-*-vaccination, nfhs-*-childhood-disease. -->
   <section>
-    <div class="sec-head"><span class="no">09</span><h2>Plate 5: fertility, empowerment, safety</h2><span class="line"></span><span class="unit">TFR, child marriage, bank account, mobile, violence, NFHS-4 → NFHS-5</span></div>
+    <div class="sec-head"><span class="no">06</span><h2>Vaccines and childhood illness</h2><span class="line"></span><span class="unit">Children 12-23 months, NFHS-4 and NFHS-5</span></div>
     <div class="break">
-      <figure id="cb-empower" style="margin:0">
+      <figure id="cb-vaccines" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>The bank-account revolution, and the fertility line crossed</h3>
-            <div class="sub">Fertility, women's empowerment &amp; safety, All India, Combined, NFHS-4 → NFHS-5 dumbbells</div>
+            <h3>Three in four children are fully vaccinated; the newer vaccines reach far fewer</h3>
+            <div class="sub">Vaccination of children 12-23 months and treatment of childhood illness, India, NFHS-4 (grey) and NFHS-5 (blue). Rotavirus, the second measles dose and the NFHS-5 definition of full vaccination have no NFHS-4 figure.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-empower">–</div><div class="c">women with a bank account, the steepest rise</div></div>
+          <div class="plate-val"><div class="v" id="pv-vaccines">{f1(fv5)}<span class="pc">%</span></div><div class="c">fully vaccinated, NFHS-5</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-empower"></div>
+          <div class="plotzone" id="plot-vaccines"></div>
           <div class="plotfoot">
-            <span class="src">Source: NFHS, TFR, child marriage, women's bank account, mobile phone, property ownership, menstrual hygiene, spousal violence, the bank-account jump (3% → 79%) is the Jan Dhan / DBT revolution visible in one number; fertility fell below replacement (2.1) to 1.99</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rchips.org/nfhs" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src">Source: NFHS-4 and NFHS-5 (IIPS, MoHFW), via MoSPI. Fully vaccinated: BCG, measles and three doses each of polio and DPT, from the vaccination card or the mother's recall.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Seven dumbbells. The steepest is the bank-account line: women's account ownership jumped from 3 per cent to 79 per cent: the Jan Dhan Yojana and direct-benefit transfers put a financial instrument in the hands of most Indian women in five years. Mobile-phone ownership, property ownership and menstrual-hygiene use all rose sharply.</p>
-            <p>Fertility fell below replacement (2.1) to 1.99: India is now a below-replacement country. Child marriage fell. Spousal violence fell from 46 to 29 per cent. The empowerment indicators moved faster than any health indicator on the page.</p>
+            <p>The first doses come at a clinic soon after birth and almost every child gets them. The later doses need the family to come back, again and again, and that is where children drop out. Rotavirus vaccine, which prevents the commonest cause of severe diarrhoea, joined the public programme state by state from 2016.</p>
           </div>
           <div class="now">
-            <span class="mk">As of NFHS-5</span>
-            <p>TFR <b id="ex-em-tfr">–</b>, child marriage <b id="ex-em-cm">–</b>, bank account <b id="ex-em-bank">–</b>, mobile <b id="ex-em-mobile">–</b>, violence <b id="ex-em-violence">–</b>.</p>
+            <span class="mk">As of {asOf}</span>
+            <p>Fully vaccinated <b id="ex-va-full">{f1(fv5)}%</b>; rotavirus <b id="ex-va-rota">{f1(rota5)}%</b>; second measles dose {f1(mcv2)}%. Full vaccination is lowest in {fvS.at(-1).geo} ({f1(fvS.at(-1).value)}%).</p>
           </div>
         </div>
       </figure>
     </div>
   </section>
 
-  <!-- § 10 household infrastructure -->
+  <!-- § 07 births and mothers. Inputs: nfhs-*-maternity, nfhs-*-delivery. -->
   <section>
-    <div class="sec-head"><span class="no">10</span><h2>Plate 6: the household backdrop</h2><span class="line"></span><span class="unit">Sanitation, electricity, water, clean fuel, NFHS-4 → NFHS-5</span></div>
+    <div class="sec-head"><span class="no">07</span><h2>Births and mothers</h2><span class="line"></span><span class="unit">Births in the five years before the survey</span></div>
+    <div class="break">
+      <figure id="cb-births" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Nine in ten babies are now born in a health facility; the care before and after birth lags</h3>
+            <div class="sub">Care before, during and after birth, India, NFHS-4 (grey) and NFHS-5 (blue). Lines with only a blue dot have no NFHS-4 figure in MoSPI's copy, or it is withheld.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-births">{f1(ib5)}<span class="pc">%</span></div><div class="c">born in a health facility</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-births"></div>
+          <div class="plotfoot">
+            <span class="src">Source: NFHS-4 and NFHS-5 (IIPS, MoHFW), via MoSPI. The NFHS-4 figures for postnatal checks are withheld: MoSPI files them against the wrong lines.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Since 2005 the Janani Suraksha Yojana has paid mothers to deliver in a facility, and the Janani Shishu Suraksha Karyakram has made the delivery, the medicines and the ambulance free in public hospitals. The rise in facility births is their mark. Iron tablets and four antenatal visits depend on the months before the birth, when the system reaches women less reliably.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf}</span>
+            <p>Born in a facility <b id="ex-bi-inst">{f1(ib5)}%</b>, from {f1(ib4)}%; lowest in {ibS.at(-1).geo} ({f1(ibS.at(-1).value)}%). A delivery in a public facility still cost a family ₹<span id="ex-bi-oop">{Math.round(oop5).toLocaleString("en-IN")}</span> on average from its own pocket.</p>
+          </div>
+        </div>
+      </figure>
+
+      <figure id="cb-cs-states" style="margin:56px 0 0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Almost half of private-hospital births are by caesarean, against {f1(csu5)}% in public hospitals</h3>
+            <div class="sub">Share of births in each kind of facility delivered by caesarean section, by state and UT, NFHS-5: private (marigold) and public (blue).</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-cs">{f1(csp5)}<span class="pc">%</span></div><div class="c">of private-facility births</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#C47A16"></i>Private facilities</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>Public facilities</button>
+          </div>
+          <div class="plotzone" id="plot-cs-states"></div>
+          <div class="plotfoot">
+            <span class="src">Source: NFHS-5 state fact sheets (IIPS, MoHFW), via MoSPI. * an estimate on 25 to 49 births.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A caesarean saves lives when a birth goes wrong. The World Health Organization has long said that rates above 10 to 15 per cent of all births bring no further benefit to mothers or babies. Private hospitals are paid more for an operation than for a normal birth, and many women ask for one; the survey cannot say which births needed it.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf}</span>
+            <p>Caesarean births are <b id="ex-cs-all">{f1(cs5)}%</b> of all births: <b id="ex-cs-priv">{f1(csp5)}%</b> in private facilities and {f1(csu5)}% in public ones. The private share is highest in {csRows[0].geo} ({f1(csRows[0].private)}%).</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 blood pressure and blood sugar. Inputs: nfhs-5-blood-pressure, nfhs-5-blood-sugar, nfhs-*-adult-nutrition. -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>Blood pressure and blood sugar</h2><span class="line"></span><span class="unit">Adults 15 and over, NFHS-5</span></div>
+    <div class="break">
+      <figure id="cb-ncd" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>One adult in five has high blood pressure, and towns run higher than villages on every measure</h3>
+            <div class="sub">Adults with high blood pressure or blood sugar (or taking medicine for it), and overweight and waist measures, India, NFHS-5: villages (grey) and towns (blue).</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-ncd">{f1(bpm)}<span class="pc">%</span></div><div class="c">men with high blood pressure or on medicine</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#5F6675"></i>Villages</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>Towns</button>
+          </div>
+          <div class="plotzone" id="plot-ncd"></div>
+          <div class="plotfoot">
+            <span class="src">Source: NFHS-5 (IIPS, MoHFW), via MoSPI. High blood pressure: 140/90 mm Hg or above, or on medicine. High blood sugar: above 140 mg/dl at a random reading, or on medicine. Weight and waist: ages 15-49. NFHS-4 measured ages 15-49 only, so it is not shown.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The interviewer takes three blood-pressure readings and a finger-prick for sugar, at whatever time of day the visit happens. A single random sugar reading is a screen, not a diagnosis of diabetes. People already taking medicine count, whatever their reading that day, because their condition is known.</p>
+            <p>High blood pressure and diabetes cause no pain for years, then cause strokes, heart attacks and kidney failure.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf}</span>
+            <p>High blood pressure or on medicine: men <b id="ex-ncd-bpm">{f1(bpm)}%</b>, women <b id="ex-ncd-bpw">{f1(bpw)}%</b>. High blood sugar or on medicine: men {f1(sgm)}%, women {f1(sgw)}%; highest among men in {sgS[0].geo} ({f1(sgS[0].value)}%).</p>
+          </div>
+        </div>
+      </figure>
+
+      <figure id="cb-ncd-states" style="margin:56px 0 0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>High blood pressure ranges from {f1(ncdRows.at(-1).women)}% of women in {ncdRows.at(-1).geo} to {f1(ncdRows[0].women)}% in {ncdRows[0].geo}</h3>
+            <div class="sub">Adults 15 and over with high blood pressure or on medicine, by state and UT, NFHS-5: women (blue) and men (marigold). Sorted by women.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-ncd-states">{f1(ncdRows[0].women)}<span class="pc">%</span></div><div class="c">women, {ncdRows[0].geo}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>Women</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#C47A16"></i>Men</button>
+          </div>
+          <div class="plotzone" id="plot-ncd-states"></div>
+          <div class="plotfoot">
+            <span class="src">Source: NFHS-5 state fact sheets (IIPS, MoHFW), via MoSPI.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The states with the most high blood pressure are mostly the richer, older, more urban ones: the condition rises with age, weight and salt. A state low on the list is not necessarily healthier; it may simply be younger.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf}</span>
+            <p>Men run above women in {ncdRows.filter((r) => r.men != null && r.men > r.women).length} of {ncdRows.length} states and UTs. Highest for men: <b id="ex-ncds-men">{[...ncdRows].sort((a, b) => b.men - a.men)[0].geo}, {f1([...ncdRows].sort((a, b) => b.men - a.men)[0].men)}%</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 cancer screening. Inputs: nfhs-5-cancer-screening. -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>Cancer screening</h2><span class="line"></span><span class="unit">Women and men 30-49, NFHS-5</span></div>
+    <div class="break">
+      <figure id="cb-cancer-states" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Fewer than two women in a hundred have ever been screened for cervical cancer</h3>
+            <div class="sub">Women 30-49 who have ever had a screening test for cervical cancer (blue) or a breast examination (marigold), by state and UT, NFHS-5.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-cancer">{f1(cv5)}<span class="pc">%</span></div><div class="c">women 30-49 ever screened for cervical cancer</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>Cervical</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#C47A16"></i>Breast</button>
+          </div>
+          <div class="plotzone" id="plot-cancer-states"></div>
+          <div class="plotfoot">
+            <span class="src">Source: NFHS-5 state fact sheets (IIPS, MoHFW), via MoSPI. NFHS-4 asked women 15-49 about any examination of the cervix or breast, a different question, so it is not shown.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Cervical cancer is the second most common cancer among Indian women, and among the most preventable: a simple test every few years finds the changes before they become cancer. India began offering routine screening to people over 30 only in the late 2010s, so NFHS-5 caught the programme early. A higher dot is better here.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf}</span>
+            <p>Ever screened for cervical cancer: <b id="ex-ca-cv">{f1(cv5)}%</b>; breast examination {f1(br5)}%; mouth examination {f1(or5)}%. The highest is {cancerRows[0].geo} at {f1(cancerRows[0].cervical)}%; {cvBelow1} states and UTs are below 1%.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 10 women's lives. Inputs: nfhs-5-empowerment, nfhs-5-adults (and nfhs-4 where baked). -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>Women's money, phones and say at home</h2><span class="line"></span><span class="unit">Women 15-49, NFHS-5</span></div>
+    <div class="break">
+      <figure id="cb-women" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Four in five women have a bank account they use; half have a phone, and village women lag furthest on phones and the internet</h3>
+            <div class="sub">Women 15-49, India, NFHS-5: villages (grey) and towns (blue).</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-women">{f1(bank5)}<span class="pc">%</span></div><div class="c">have a bank account they use</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#5F6675"></i>Villages</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>Towns</button>
+          </div>
+          <div class="plotzone" id="plot-women"></div>
+          <div class="plotfoot">
+            <span class="src">Source: NFHS-5 (IIPS, MoHFW), via MoSPI. Household decisions: married women who usually take part in decisions on their own health care, large purchases and visits to family. MoSPI's NFHS-4 figures for the bank, phone, property and period lines are withheld; the NFHS-5 national report puts bank accounts at 53 per cent in NFHS-4.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The survey asks whether a woman has an account that she herself uses, and a phone that she herself uses, not one in the house. It cannot say who decides what is withdrawn, or who reads her messages.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf}</span>
+            <p>Bank account <b id="ex-wo-bank">{f1(bank5)}%</b>; phone <b id="ex-wo-phone">{f1(phone5)}%</b>, {f1(phoneR)}% in villages and {f1(phoneU)}% in towns. {f1(net5w)}% of women have ever used the internet, against {f1(net5m)}% of men. Paid in cash for work: {f1(cash5)}%, against {f1(cash4)}% in NFHS-4.</p>
+          </div>
+        </div>
+      </figure>
+
+      <figure id="cb-women-states" style="margin:56px 0 0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>A woman's phone depends on her state: {f1(womenRows.at(-1).phone)}% in {womenRows.at(-1).geo}, {f1(womenRows[0].phone)}% in {womenRows[0].geo}</h3>
+            <div class="sub">Women 15-49 with a phone (blue) and a bank account (marigold) they themselves use, by state and UT, NFHS-5. Sorted by phone.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-women-states">{f1(phone5)}<span class="pc">%</span></div><div class="c">India, phone</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>Phone</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#C47A16"></i>Bank account</button>
+          </div>
+          <div class="plotzone" id="plot-women-states"></div>
+          <div class="plotfoot">
+            <span class="src">Source: NFHS-5 state fact sheets (IIPS, MoHFW), via MoSPI.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Bank accounts are spread far more evenly than phones. An account can be opened for a woman by a government scheme; a phone is something her household decides to buy for her.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf}</span>
+            <p>Bank accounts range from {f1(Math.min(...womenRows.map((r) => r.bank).filter((v) => v != null)))}% to {f1(Math.max(...womenRows.map((r) => r.bank).filter((v) => v != null)))}% across states; phones from <b id="ex-wos-lo">{f1(womenRows.at(-1).phone)}%</b> to {f1(womenRows[0].phone)}%.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 11 violence at home. Inputs: nfhs-5-violence; gender-t143 (the compendium's NFHS reprint). -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>Violence at home</h2><span class="line"></span><span class="unit">Ever-married women 18-49, NFHS-5</span></div>
+    <div class="break">
+      <figure id="cb-violence-states" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Nearly three married women in ten say a husband has hurt them; in {violenceRows[0].geo}, {f1(violenceRows[0].v)}%</h3>
+            <div class="sub">Ever-married women 18-49 who have ever experienced physical, sexual or emotional violence from a husband, by state and UT, NFHS-5.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-violence">{f1(sv5)}<span class="pc">%</span></div><div class="c">India, NFHS-5</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-violence-states"></div>
+          <div class="plotfoot">
+            <span class="src">Source: NFHS-5 state fact sheets (IIPS, MoHFW), via MoSPI. MoSPI's NFHS-4 figures for this table are misfiled and withheld; the Women and Men in India compendium prints NFHS-4 for physical or sexual violence by a husband (see the Women and men guide).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The questions are asked of one woman per household, alone, by a trained woman interviewer, and only if privacy can be ensured. Even so, every survey of this kind undercounts: women who are afraid, ashamed or still living with the man do not always say. A low figure can mean less violence, or less telling.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf}</span>
+            <p>Ever hurt by a husband: <b id="ex-vi-all">{f1(sv5)}%</b>, {f1(svR)}% in villages and {f1(svU)}% in towns; hurt during a pregnancy {f1(pv5)}%. In the compendium's reprint, physical or sexual violence by a husband was {f1(ps4)}% in NFHS-4 and {f1(ps5)}% in NFHS-5.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 12 tobacco and alcohol. Inputs: nfhs-5-tobacco-alcohol. -->
+  <section>
+    <div class="sec-head"><span class="no">12</span><h2>Tobacco and alcohol</h2><span class="line"></span><span class="unit">Adults 15 and over, NFHS-5</span></div>
+    <div class="break">
+      <figure id="cb-tobacco-states" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{f1(tm5)}% of men use tobacco; among women it is {f1(tw5)}% nationally but {f1(twTop.value)}% in {twTop.geo}</h3>
+            <div class="sub">Adults 15 and over who use any kind of tobacco, men (marigold) and women (blue), by state and UT, NFHS-5. Sorted by men.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-tobacco">{f1(tm5)}<span class="pc">%</span></div><div class="c">men using tobacco</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#C47A16"></i>Men</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>Women</button>
+          </div>
+          <div class="plotzone" id="plot-tobacco-states"></div>
+          <div class="plotfoot">
+            <span class="src">Source: NFHS-5 state fact sheets (IIPS, MoHFW), via MoSPI. Tobacco includes smoking, chewing, gutkha, khaini and snuff. NFHS-4 asked ages 15-49, so it is not shown.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>In most of India tobacco is a man's habit and chewing is as common as smoking. The north-east is different: there women chew betel and tobacco too, and the gap between the sexes narrows.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf}</span>
+            <p>Tobacco: men <b id="ex-to-men">{f1(tm5)}%</b>, women <b id="ex-to-women">{f1(tw5)}%</b>. Alcohol: men {f1(am5)}%, women {f1(aw5)}%. Men's tobacco use is highest in {tobaccoRows[0].geo} ({f1(tobaccoRows[0].men)}%).</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 13 the household. Inputs: nfhs-*-household. -->
+  <section>
+    <div class="sec-head"><span class="no">13</span><h2>The household</h2><span class="line"></span><span class="unit">NFHS-4 and NFHS-5</span></div>
     <div class="break">
       <figure id="cb-household" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>Swachh Bharat on one chart</h3>
-            <div class="sub">Household infrastructure, All India, Combined, NFHS-4 → NFHS-5 dumbbells</div>
+            <h3>Toilets spread fastest: improved sanitation rose from {f1(san4)}% to {f1(san5)}%</h3>
+            <div class="sub">Household conditions, India, NFHS-4 (grey) and NFHS-5 (blue). MoSPI's copy has no NFHS-4 figure for death registration or pre-school.</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-household">–</div><div class="c">improved sanitation, the largest gain</div></div>
+          <div class="plate-val"><div class="v" id="pv-household">{f1(san5)}<span class="pc">%</span></div><div class="c">live with an improved toilet</div></div>
         </div>
         <div class="frame">
           <div class="plotzone" id="plot-household"></div>
           <div class="plotfoot">
-            <span class="src">Source: NFHS household profile, population with electricity, improved water, improved sanitation, clean cooking fuel, health insurance, sanitation rose 22 pt (Swachh Bharat); electricity reached 97%; clean fuel remains below 60%</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rchips.org/nfhs" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src">Source: NFHS-4 and NFHS-5 (IIPS, MoHFW), via MoSPI. Improved toilet: one that separates waste from human contact, such as a flush to a septic tank or a pit with a slab. Clean fuel: electricity, LPG, natural gas or biogas.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Five dumbbells. The sanitation line moved the furthest: from 48 per cent of households with improved sanitation to 70 per cent: the statistical signature of the Swachh Bharat Mission, which built tens of millions of toilets between the two rounds. Electricity reached 97 per cent of the population. Clean cooking fuel lagged: still under 60 per cent, meaning four in ten households still cook on solid fuel.</p>
+            <p>These are the conditions children grow up in. Toilets and clean water decide how often a child gets diarrhoea; a smoky kitchen decides how often she coughs. The Swachh Bharat Mission built toilets between the two rounds and Ujjwala gave LPG connections; the survey counts whether a household uses them, not whether it has one.</p>
           </div>
           <div class="now">
-            <span class="mk">As of NFHS-5</span>
-            <p>Electricity <b id="ex-hh-elec">–</b>, sanitation <b id="ex-hh-sani">–</b>, water <b id="ex-hh-water">–</b>, clean fuel <b id="ex-hh-fuel">–</b>, health insurance <b id="ex-hh-insurance">–</b>.</p>
+            <span class="mk">As of {asOf}</span>
+            <p>Improved toilet <b id="ex-hh-san">{f1(san5)}%</b>. Clean cooking fuel {f1(fuel5)}%, only {f1(fuelR)}% in villages. Households with any member covered by health insurance {f1(ins5)}%, from {f1(ins4)}%.</p>
           </div>
         </div>
       </figure>
     </div>
   </section>
 
-  <!-- § 11 state dispersion -->
+  <!-- § 14 fertility and family planning. Inputs: nfhs-*-marriage-fertility, nfhs-*-family-planning, nfhs-*-unmet-need. -->
   <section>
-    <div class="sec-head"><span class="no">11</span><h2>Plate 7: where anaemia is worst</h2><span class="line"></span><span class="unit">Child anaemia by state, NFHS-5, per cent</span></div>
+    <div class="sec-head"><span class="no">14</span><h2>Children per woman, and how families plan them</h2><span class="line"></span><span class="unit">NFHS-4 and NFHS-5</span></div>
     <div class="break">
-      <figure id="cb-states" style="margin:0">
+      <figure id="cb-tfr-states" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>From Kerala's 39 to Ladakh's 92</h3>
-            <div class="sub">Children age 6-59 months anaemic, by state/UT, NFHS-5, the blue rule is the All-India average</div>
+            <h3>India fell below two children per woman; {tfAbove.length} states and UTs are still above replacement</h3>
+            <div class="sub">Total fertility rate, by state and UT, NFHS-5 (blue) and NFHS-4 (grey). Replacement is about 2.1 children per woman.</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-states">–</div><div class="c">spread: highest minus lowest state</div></div>
+          <div class="plate-val"><div class="v" id="pv-tfr">{f2(tfr5)}</div><div class="c">children per woman, NFHS-5</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-states"></div>
+          <div class="plotzone" id="plot-tfr-states"></div>
           <div class="plotfoot">
-            <span class="src">Source: NFHS-5, child anaemia (6-59 months, Hb &lt;11.0 g/dL) by state/UT, the All-India average is 67%; the spread runs from Kerala (39%) through a north-eastern cluster in the 40s to Gujarat (80%) and Ladakh (92%), the geography does not follow income, Gujarat is among the richest states and the most anaemic</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rchips.org/nfhs" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src">Source: NFHS-4 and NFHS-5 state fact sheets (IIPS, MoHFW), via MoSPI. Fertility from births in the three years before the survey. NFHS-4 rates are printed to one decimal.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>One dot per state, sorted low to high. The All-India rule (67 per cent) sits in the middle of the strip: meaning half the states are worse than the national average. The spread is enormous: from Kerala's 39 per cent (comparable to middle-income countries) to Ladakh's 92 per cent (nine in ten children).</p>
-            <p>The geography confounds income. Gujarat, among India's richest states, has the second-worst child anaemia rate (80 per cent). The north-eastern states cluster better (40s), defying their lower per-capita income. Anaemia follows diet, public health and genetics, not GDP.</p>
+            <p>The total fertility rate is how many children a woman would have if she lived through today's birth rates at each age. About 2.1 keeps a population the same size in the long run. Below it, the population still grows for decades, because many young women are now in their childbearing years.</p>
           </div>
           <div class="now">
-            <span class="mk">As of NFHS-5</span>
-            <p>Best: <b id="ex-st-best">–</b>. Worst: <b id="ex-st-worst">–</b>. Spread: <b id="ex-st-spread">–</b> percentage points. States above the All-India line: <b id="ex-st-above">–</b> of <b id="ex-st-n">–</b>.</p>
+            <span class="mk">As of {asOf}</span>
+            <p>India <b id="ex-tf-india">{f2(tfr5)}</b>, from {f1(tfr4)}. Highest: {tfRows[0].geo} ({f2(tfRows[0].v)}). Lowest: {tfRows.at(-1).geo} ({f2(tfRows.at(-1).v)}). Women 20-24 married before 18: {f1(cm5)}%, from {f1(cm4)}%.</p>
+          </div>
+        </div>
+      </figure>
+
+      <figure id="cb-fp" style="margin:56px 0 0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Family planning still means a woman's operation: female sterilisation at {f1(fst5)}%, male at {f1(mst5)}%</h3>
+            <div class="sub">Currently married women 15-49 using each method, and unmet need, India, NFHS-4 (grey) and NFHS-5 (blue).</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-fp">{f1(fst5)}<span class="pc">%</span></div><div class="c">rely on female sterilisation</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-fp"></div>
+          <div class="plotfoot">
+            <span class="src">Source: NFHS-4 and NFHS-5 (IIPS, MoHFW), via MoSPI. Unmet need: married women who want no more children, or want to wait, and use nothing. MoSPI's NFHS-4 figure for total unmet need is misfiled and withheld; the Women and Men in India compendium prints 12.9% for NFHS-4.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>More than half of the couples who use any method rely on sterilising the woman, usually once they have the children they want; few space births with temporary methods. Vasectomy is a simpler operation, and almost no men have one.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf}</span>
+            <p>Any method <b id="ex-fp-any">{f1(val(5, "family-planning", /: Any method/))}%</b>, from {f1(val(4, "family-planning", /: Any method/))}%. Unmet need {f1(val(5, "unmet-need", /^Total Unmet/))}%.</p>
           </div>
         </div>
       </figure>
     </div>
   </section>
 
-  <!-- § 12 how to misread -->
+  <!-- § 15 village and town. Inputs: every per-cent sub-indicator of every nfhs-5-* bundle, rural and urban. -->
   <section>
-    <div class="sec-head"><span class="no">12</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">15</span><h2>Village and town</h2><span class="line"></span><span class="unit">NFHS-5, town minus village, percentage points</span></div>
+    <div class="break">
+      <figure id="cb-gap" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The widest gap between town and village is {gapTop.short.replace(/^[A-Z](?![A-Z])/, (c) => c.toLowerCase())}, {f1(gapTop.gap)} points; {ruralAhead.length} measures run higher in villages</h3>
+            <div class="sub">Every per-cent measure in NFHS-5, India: the urban figure minus the rural one. Bars to the right are higher in towns; marigold bars are higher in villages.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-gap">{f1(gapTop.gap)}</div><div class="c">points, the widest gap</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-gap"></div>
+          <div class="plotfoot">
+            <span class="src">Source: NFHS-5 (IIPS, MoHFW), via MoSPI. Rural and urban as the survey's sample defines them.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A gap is not always a disadvantage, and it does not always favour towns. A bar to the right can be a good thing that towns have more of, such as toilets or schooling, or a bad thing, such as obesity. Read the measure before the direction.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf}</span>
+            <p>Widest gap: <b id="ex-gap-top">{gapTop.short.replace(/^[A-Z](?![A-Z])/, (c) => c.toLowerCase())}</b>, {f1(gapTop.rural)}% in villages and {f1(gapTop.urban)}% in towns. Furthest the other way: {gapBot.short.replace(/^[A-Z](?![A-Z])/, (c) => c.toLowerCase())}, {f1(gapBot.rural)}% in villages against {f1(gapBot.urban)}% in towns.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 16 state by state. Inputs: twelve sub-indicators of the nfhs-5-* bundles, every state. -->
+  <section>
+    <div class="sec-head"><span class="no">16</span><h2>State by state</h2><span class="line"></span><span class="unit">Twelve measures, NFHS-5</span></div>
+    <div class="break">
+      <figure id="cb-table" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>No state does well on everything: the twelve measures, side by side</h3>
+            <div class="sub">Twelve NFHS-5 measures for every state and UT, per cent unless named. Each column is shaded on its own range; darker is the worse end (children per woman is not shaded).</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-table">{table.rows.length}</div><div class="c">states and UTs</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-table"></div>
+          <div class="plotfoot">
+            <span class="src">Source: NFHS-5 state fact sheets (IIPS, MoHFW), via MoSPI. Every other measure, for every state, village and town, is in the table at the end of this guide and in the downloads.</span>
+            <span class="dl"><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Read across a row to see one state's profile, down a column to see where a problem is worst. The states that have largely left undernutrition behind tend to carry more of the diseases of plenty, high blood pressure and blood sugar; others carry both at once.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 17 how to misread: evergreen -->
+  <section>
+    <div class="sec-head"><span class="no">17</span><h2>How to misread this survey</h2><span class="line"></span></div>
     <ul class="misread">
-      <li>
-        <span class="no">i.</span>
-        <div>
-          <h3>"Anaemia rose from 58% to 67%: children's health is getting worse."</h3>
-          <p>It may be: but the survey changed its haemoglobin analyser between rounds (HemoCue Hb 201+ to Hb 301), and the newer device reads higher. Part of the rise is methodological. The uniform direction across every group (children, women, men) signals a real component, but the survey report itself cautions against taking the full increase at face value.</p>
-        </div>
-      </li>
-      <li>
-        <span class="no">ii.</span>
-        <div>
-          <h3>"TFR is below replacement: India doesn't need population control."</h3>
-          <p>National TFR is 1.99, below the replacement rate of 2.1. But four large states, Bihar, Uttar Pradesh, Jharkhand, Meghalaya, are still above it. India's population will keep growing for decades because of momentum (a large youth cohort entering reproductive age), even with below-replacement fertility. "Below replacement" does not mean "shrinking."</p>
-        </div>
-      </li>
-      <li>
-        <span class="no">iii.</span>
-        <div>
-          <h3>"Institutional births reached 89%: maternal health is solved."</h3>
-          <p>Institutional delivery measures where the birth happened, not what happened there. A woman who delivers in a facility but receives no postnatal check-up, or has a C-section without medical indication, is counted the same as one with full care. The rise in institutional births is a supply-side achievement; the quality of care inside the facility is a different question.</p>
-        </div>
-      </li>
-      <li>
-        <span class="no">iv.</span>
-        <div>
-          <h3>"Women's bank accounts jumped from 3% to 79%: women are financially empowered."</h3>
-          <p>The accounts exist: the Jan Dhan Yojana opened them. Whether women control them is another matter. Many are DBT conduits (benefits transferred in, withdrawn by a male relative); the survey counts account ownership, not account use. The rise is real; financial empowerment is the step after.</p>
-        </div>
-      </li>
-      <li>
-        <span class="no">v.</span>
-        <div>
-          <h3>"Gujarat has 80% child anaemia: it's a poor state."</h3>
-          <p>Gujarat is among India's richest states by per-capita income. Anaemia does not follow income: it follows diet (iron, folate, B12 intake), infection load (malaria, hookworm), genetics (thalassaemia, sickle-cell trait) and food systems. Wealth buys treatment, not prevention; the anaemia geography confounds the income geography.</p>
-        </div>
-      </li>
-      <li>
-        <span class="no">vi.</span>
-        <div>
-          <h3>"These two rounds show a trend."</h3>
-          <p>They show a comparison. Two points do not make a trend; they make a direction. The next round (NFHS-6, expected 2024-25) will confirm whether anaemia's rise is a trend or a methodological artefact, whether fertility keeps falling, whether the empowerment gains hold. Until then, read the arrows as one interval's movement, not a trajectory.</p>
-        </div>
-      </li>
+      <li><span class="no">i.</span><div>
+        <h3>"Women's bank accounts jumped from 3% to 79% in five years."</h3>
+        <p>That figure circulates because MoSPI's copy of NFHS-4 files another line's value against bank accounts. The NFHS-5 national report puts NFHS-4 at 53 per cent. The rise was real and large, about 26 points, but it did not start from nothing. This guide withholds every NFHS-4 line it could not confirm.</p>
+      </div></li>
+      <li><span class="no">ii.</span><div>
+        <h3>"Anaemia rose from 58% to 67%, so children's health got worse."</h3>
+        <p>Anaemia did rise, in most states and every group measured twice. But stunting, wasting and child deaths fell over the same years. Anaemia is one measure, with its own causes (iron, worms, malaria, inherited blood disorders), and a finger-prick that may overstate its level in both rounds alike.</p>
+      </div></li>
+      <li><span class="no">iii.</span><div>
+        <h3>"High blood pressure doubled between the rounds."</h3>
+        <p>MoSPI's tables print NFHS-4 beside NFHS-5 for blood pressure and blood sugar, but NFHS-4 measured only ages 15 to 49 and NFHS-5 everyone over 15. Older people have far more high blood pressure, so the rise is mostly the change in who was measured. We do not compare the two.</p>
+      </div></li>
+      <li><span class="no">iv.</span><div>
+        <h3>"Fertility is below replacement, so India's population has stopped growing."</h3>
+        <p>A fertility rate below 2.1 means each generation of mothers will, in time, be smaller than the last. Today's large cohort of young women keeps the number of births high for years to come, so India's population keeps growing for decades (the Population guide carries the UN's projections), and several states are still above replacement.</p>
+      </div></li>
+      <li><span class="no">v.</span><div>
+        <h3>"Nine in ten births are in hospitals, so maternal care is solved."</h3>
+        <p>The survey records where a baby was born, not what happened there. A facility birth can still come with no antenatal care, an unneeded caesarean or no check-up afterwards, and the out-of-pocket cost in a public hospital is not zero.</p>
+      </div></li>
+      <li><span class="no">vi.</span><div>
+        <h3>"Lakshadweep has almost no infant deaths."</h3>
+        <p>The smallest union territories rest on a few dozen births and a few hundred households. Their figures swing on a handful of cases and the fact sheets mark many of them as uncertain. Read them, but do not rank on them.</p>
+      </div></li>
+      <li><span class="no">vii.</span><div>
+        <h3>"These two rounds show a trend."</h3>
+        <p>They show a change between two surveys, taken five years apart with different samples, and in some states on either side of a lockdown. NFHS-6 will be the third point.</p>
+      </div></li>
     </ul>
   </section>
 
@@ -426,21 +958,28 @@ const D = bySlug["nfhs"];
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>MoSPI / International Institute for Population Sciences (IIPS). National Family Health Survey, rounds 4 (2015-16) and 5 (2019-21). Retrieved via the eSankhyiki API (nfhs/getNfhsRecords), vintage <b id="prov-vintage">–</b>. All 21 indicators are ingested raw (data/raw/nfhs-records.json); seven thematic bundles carry the 102 All-India Combined sub-indicators with both survey values, plus 140 state-level cuts for NFHS-5.</p>
-        <p><b>Methodological note.</b> Anaemia was measured with a different device in NFHS-5 (HemoCue Hb 301) than NFHS-4 (Hb 201+); blood-pressure thresholds were redefined. Where a methodological break is known it is disclosed on the chart. The two rounds are cross-sectional estimates compared by design; they are never chained and growth rates are not computed.</p>
+        <p>International Institute for Population Sciences (IIPS) for the Ministry of Health and Family Welfare: National Family Health Survey, rounds 4 (2015-16) and 5 (2019-21), state and national fact sheets. Retrieved from MoSPI's eSankhyiki API (nfhs/getNfhsRecords), vintage <b id="prov-vintage">{round5.vintage}</b>; the raw dump is data/raw/nfhs-records.json. Checked against the DHS Program's tabulation of the same surveys (data/raw/nfhs-dhs-crosscheck.json) and the NFHS-5 national report.</p>
       </div>
       <div>
-        <h6>Revisions &amp; uncertainty</h6>
-        <p>NFHS estimates are final on release. Sampling errors are published in the survey report; small states have wider confidence intervals. The survey covers ~600,000 households per round: large, but still a sample. NFHS-5 fieldwork was disrupted by COVID in its second phase (March-April 2021); the national estimate blends pre-pandemic and pandemic-period data.</p>
+        <h6>Revisions and uncertainty</h6>
+        <p>Survey estimates are final on release; the fact sheets publish no confidence intervals, and the national report's sampling-error tables are the place to look. A state estimate rests on a few thousand households; a small union territory's on far fewer. Figures in brackets (an asterisk here) rest on 25 to 49 people.</p>
       </div>
       <div>
         <h6>This guide</h6>
-        <p>Health, version 1.0, covers the full NFHS landscape: the direction-of-change signature chart, anaemia deep-dive, child survival &amp; nutrition, maternal care (including C-section), adult NCDs (the dual burden), women's empowerment, household infrastructure and state dispersion. Next scheduled revision: on release of NFHS-6.</p>
+        <p>Family health, version 2.0 (October 2026): every table, every state, village and town, both rounds side by side, with the NFHS-4 lines MoSPI misfiles withheld and listed below. Next revision: on the release of NFHS-6.</p>
+      </div>
+    </div>
+    <div class="wm-grid" style="margin-top:20px">
+      <div>
+        <h6>The NFHS-4 lines withheld ({nWithheld})</h6>
+        <ul class="nf-withheld">
+          {withheld().map((w) => <li><b>{short(w.sub)}</b>: {w.kind === "misfiled" ? "MoSPI files another line's figure here." : "a different age group or question in NFHS-4."} {w.evidence}.</li>)}
+        </ul>
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, NFHS</span>
-      <span>Vintage <span id="prov-vintage2">–</span>, two rounds, never chained</span>
+      <span>India Atlas, Family health</span>
+      <span>Vintage <span id="prov-vintage2">{round5.vintage}</span>, two rounds side by side</span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>

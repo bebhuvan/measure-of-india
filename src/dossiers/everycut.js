@@ -198,6 +198,13 @@ export const UNITS = {
     ["ltr", "litres"], ["mtr", "metres"], ["cum", "CUM"], ["thn", "THN"], ["ctm", "CTM"], ["crt", "CRT"], ["thd", "THD"], ["tkw", "TKW"], ["gif", "GIF"], ["c_k", "C/K"], ["none", "no unit printed"]]
     .map(([k, w]) => [`qty_${k}`, { kind: "pct", fmt: (v) => grp(v) + (k === "none" ? "" : " " + w), note: k === "none" ? "quantity, no unit printed" : `quantity, unit as printed (${k.toUpperCase().replace("_", "/")})` }])),
   // --- end trade ---
+  // --- health-gender (nfhs, gender) ---
+  per_1000_women: { kind: "diff", fmt: (v) => grp(v, 1), note: "per 1,000 women" },
+  per_lakh_women: { kind: "diff", fmt: (v) => grp(v, 1), note: "per 1,00,000 women" },
+  per_100_males: { kind: "diff", fmt: (v) => grp(v), note: "women per 100 men" },
+  minutes: { kind: "diff", fmt: (v) => grp(v) + " min", note: "a day" },
+  unstated: { kind: "pct", fmt: (v) => grp(v, 1), note: "the source does not state the unit" },
+  // --- end health-gender ---
   // --- nas (gdp guide, wave 2) ---
   ...Object.fromEntries(["gdp", "gdp-2022"].flatMap((b) => Object.entries({ "annual-levels": "Indicator", "annual-growth": "Indicator", "annual-shares": "Component of GDP", "annual-industries": "Industry", "annual-subindustries": "Sub-industry", "annual-gcf-industries": "Industry of use", "sectors": "Institutional sector", "revisions": "Estimate stage", "quarterly-levels": "Indicator", "quarterly-shares": "Component of GDP", "quarterly-industry-levels": "Industry" }).map(([k, c]) => [`${b}-${k}`, c]))),
   "gdp-back-levels": "Indicator", "gdp-back-growth": "Indicator", "gdp-back-shares": "Component of GDP", "gdp-back-industries": "Industry", "gdp-back-subindustries": "Sub-industry",
@@ -284,14 +291,10 @@ export const CUT_BY_BUNDLE = {
   // aishe
   "aishe-headline": "All India", "aishe-access": "Social group and gender", "aishe-composition": "Level",
   "aishe-teachers": "Post and gender", "aishe-minority": "Community and gender",
-  // gender
-  "gender-sexratio": "All India", "gender-imr": "Gender", "gender-lifeexp": "Gender", "gender-mmr": "All India",
-  "gender-fertility": "Education", "gender-literacy": "Gender", "gender-work": "Gender",
+  // health-gender: every NFHS and gender-compendium bundle names its own cut (meta.cut)
+  ...healthGenderMeta("cut"),
   // mnre
   "mnre-sources": "Energy source", "mnre-solar-categories": "Solar category",
-  // nfhs
-  "nfhs-child": "Indicator", "nfhs-maternal": "Indicator", "nfhs-anaemia": "Indicator", "nfhs-adult": "Indicator",
-  "nfhs-fertility": "Indicator", "nfhs-household": "Indicator",
   // manufacturing
   "wdi-manufacturing": "All India", "wdi-manufacturing-composition": "Industry", "wdi-manufacturing-tech": "Technology",
   "wdi-manufacturing-exports": "All India",
@@ -488,6 +491,8 @@ function groupOf(s) {
 // survey rounds dated by one year on the axis, named as the source names them
 export const PERIOD_LABELS = {
   "nfhs-": { "2016-01-01": "NFHS-4, 2015-16", "2020-01-01": "NFHS-5, 2019-21" },
+  // health-gender: the compendium's periods as each table names them (meta.periodLabels)
+  ...healthGenderMeta("periodLabels", /^gender-t/),
   // worldbank (2026-10-09): PIP survey rounds, dated by reporting year
   "poverty-pip-1977": { "1977-01-01": "NSS 1977-78" }, "poverty-pip-1983": { "1983-01-01": "NSS 1983" },
   "poverty-pip-1987": { "1987-01-01": "NSS 1987-88" },
@@ -598,6 +603,9 @@ function rowsOfUncached(slug, opts = {}) {
       const v = s.data[li], iso = b.dates[li];
       row.latest = v; row.latestText = minus(U.fmt(v)); row.period = periodLabel(slug, b, iso);
       row.estimated = est.has(iso);
+      // health-gender: an estimated latest value marks its change as estimated too, even where the
+      // frequency gives no change to show (census-year projections)
+      row.changeEstimated = row.estimated;
       if (TIMED.has(b.meta?.frequency)) {
         const j = b.dates.indexOf(yearEarlier(iso));
         const p = j >= 0 ? s.data[j] : null;
@@ -696,4 +704,17 @@ export function paginateBy(rows, keyFn, size = PAGE_ROWS) {
 export function paginate(rows, size = PAGE_ROWS) {
   if (rows.length <= size) return [rows];
   return paginateBy(rows, (r) => r.group || "", size);
+}
+
+// --- health-gender: per-bundle cut names and period labels, read once from bundle meta ---
+function healthGenderMeta(field, re = /^(nfhs-[45]-|gender-t)/) {
+  const dir = path.join(ROOT, "data/series");
+  if (!fs.existsSync(dir)) return {};
+  const out = {};
+  for (const f of fs.readdirSync(dir)) {
+    if (!f.endsWith(".json") || !re.test(f)) continue;
+    const m = JSON.parse(fs.readFileSync(path.join(dir, f), "utf8")).meta ?? {};
+    if (m[field]) out[f.slice(0, -5)] = m[field];
+  }
+  return out;
 }

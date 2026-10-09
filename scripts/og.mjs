@@ -174,11 +174,15 @@ const CARDS = [
     foot: (b, S) => `Enrolment ${S.female.data.at(-1).value.toFixed(2)} cr (F) · ${S.male.data.at(-1).value.toFixed(2)} cr (M) · AISHE 2021-22 · Source: Ministry of Education`,
   },
   {
-    slug: "gender", bundleSlug: "gender-sexratio",
-    keys: ["sex_ratio"], d0: 920, d1: 950, band: null, trend: null,
-    yStep: 5, fmt: (v) => String(Math.round(v)), mr: 200,
-    prep: (S) => { S.sex_ratio = { ...S.sex_ratio, label: "Sex ratio", color: "#2E4BD8" }; },
-    foot: (b, S) => `Sex ratio ${Math.round(S.sex_ratio.data.at(-1).value)} ♀/1000♂ · Census 1951-2011 · Source: Census of India`,
+    slug: "gender", bundleSlug: "gender-t007",
+    keys: ["total__all_india", "rural__all_india", "urban__all_india"], d0: 870, d1: 940, band: null, trend: null,
+    yStep: 10, fmt: (v) => String(Math.round(v)), mr: 220,
+    prep: (S) => {
+      S.total__all_india = { ...S.total__all_india, label: "India", color: "#2E4BD8" };
+      S.rural__all_india = { ...S.rural__all_india, label: "Villages", color: "#A3A9B4" };
+      S.urban__all_india = { ...S.urban__all_india, label: "Towns", color: "#5F6675" };
+    },
+    foot: (b) => `Girls born per 1,000 boys, ${b.meta.periodLabels[b.dates[0]]} to ${b.meta.periodLabels[b.dates.at(-1)]}, three-year averages. Source: SRS, Registrar General`,
   },
   {
     slug: "mnre", bundleSlug: "mnre-sources",
@@ -188,14 +192,16 @@ const CARDS = [
     foot: (b, S) => `Grand Total ${(S.grand_total.data.at(-1).value).toFixed(0)} GW · Jun 2026 · the Dec 2023 step is a classification change, not capacity · Source: MNRE`,
   },
   {
-    slug: "nfhs", bundleSlug: "nfhs-anaemia",
+    slug: "nfhs", bundleSlug: "nfhs-5-anaemia",
     keys: ["children", "women"], d0: 40, d1: 75, band: null, trend: null,
-    yStep: 5, fmt: (v) => v.toFixed(0) + "%", mr: 220,
+    yStep: 5, fmt: (v) => v.toFixed(1) + "%", mr: 220,
+    // two survey rounds, two bundles: one point from each, drawn as a before-and-after
     prep: (S) => {
-      S.children = { label: "Children", color: "#2E4BD8", data: [{ date: 0, value: 58.4 }, { date: 1, value: 67.1 }] };
-      S.women = { label: "Women", color: "#5F6675", data: [{ date: 0, value: 53.0 }, { date: 1, value: 57.0 }] };
+      const two = (k) => ["nfhs-4-anaemia", "nfhs-5-anaemia"].map((b) => { const x = load(b); return { date: new Date(x.dates[0] + "T00:00:00Z"), value: x.series[k].data[0] }; });
+      S.children = { label: "Children 6-59 months", color: "#2E4BD8", data: two("children_age_6_59_months_who_are_anaemic_11__all_india__total") };
+      S.women = { label: "Women 15-49", color: "#5F6675", data: two("all_women_age_15_49_years_who_are_anaemic__all_india__total") };
     },
-    foot: () => `Child anaemia 58% → 67% · NFHS-4 to NFHS-5 · Source: MoSPI / IIPS`,
+    foot: (b, S) => `Anaemic, per cent, NFHS-4 (2015-16) and NFHS-5 (2019-21): children ${S.children.data[0].value.toFixed(1)} to ${S.children.data[1].value.toFixed(1)}. Source: IIPS, MoHFW, via MoSPI`,
   },
   {
     slug: "deposits", bundleSlug: "deposits-owners",
