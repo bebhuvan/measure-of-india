@@ -92,7 +92,11 @@ The owner (Bhuvanesh) follows along from a phone. Keep your status file readable
    read every generated file by hand against the data: the verifier cannot catch a
    sentence that contradicts its own paragraph.
 6. Look at it at 1440px and 390px; read every chart; download one share image.
-7. Write `docs/status/<slug>.md`.
+7. The every-cut table on your guide (`<EveryCut slug="<slug>" />` before `<GuideData>`;
+   how-to: "Note for family sessions" in `docs/status/framework.md`), every series with a unit
+   it can show (`npm test` checks), two-ruler charts drawn with `seamMarks` from
+   `src/charts/plumbing.js`, and no `pending` item left in your own ledgers.
+8. Write `docs/status/<slug>.md`.
 
 Writing: plain Indian English, short sentences, no em dashes, no AI tells
 (`pipeline/banned.txt`), "we do not know" when true. Never estimate, splice or fill from
@@ -102,7 +106,10 @@ memory.
 
 - Commit to `lb/<slug>` at each coherent step, with the gates green at that commit where
   you can. Clear messages; end each with the attribution lines your harness gives you.
-  **Never push, never merge, never rebase onto anything.** The coordinator merges.
+  **Never push, never rebase.** The coordinator merges your branch into `launch-build`.
+  The one merge you do: when the coordinator says `launch-build` has moved, run
+  `git merge launch-build` on your branch (resolve conflicts keeping both sides' blocks in
+  shared files; never discard someone else's block), then re-run the gates.
 - No subagents (they are expensive): do the work in this session.
 - `docs/status/<slug>.md` is your log, kept current after every step: what is done, what
   is next, what is blocked, decisions you took and why (the coordinator folds these into

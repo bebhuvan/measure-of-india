@@ -278,3 +278,26 @@ export async function buildCpialrl(root, dcfg, vintage) {
   if (g19) writeSeries(root, "data/series/cpialrl-groups-2019.json", g19);
   return bundle19;
 }
+
+/* Catalogue (docs/CONTRACT-coverage.md): what the Labour Bureau publishes through eSankhyiki,
+ * from the indicator list and each indicator's filter listing. Every record carries both
+ * labourer types (AL and RL), so each is its own item:
+ *   cpialrl:<base>:<al|rl>:<state>:<group>   group "general-index" for indicator 1. */
+import { writeCatalogue, idPart, catalogueCli } from "../catalogue.mjs";
+export async function catalogueCpialrl() {
+  const items = [];
+  const list = (await mospi("cpialrl/getCpialrlIndicatorList", {})).data?.indicator ?? [];
+  for (const ind of list) {
+    const f = (await mospi("cpialrl/getCpialrlFilterByIndicatorId", { indicator_code: ind.indicator_code })).data ?? {};
+    const groups = f.groups?.length ? f.groups.map((g) => g.description) : ["General Index"];
+    for (const b of f.base_year ?? []) for (const st of f.state ?? []) for (const g of groups) for (const t of ["al", "rl"])
+      items.push({ id: `cpialrl:${idPart(b.base_year)}:${t}:${idPart(st.description)}:${idPart(g)}`, ...(st.state_code === 99 ? { label: `CPI-${t.toUpperCase()}, ${g}` } : {}) });
+  }
+  writeCatalogue("cpialrl", {
+    source: "Labour Bureau: CPI for Agricultural and Rural Labourers (via MoSPI eSankhyiki)",
+    generator: "scripts/lib/products/cpialrl.mjs --catalogue",
+    note: "From getCpialrlIndicatorList and getCpialrlFilterByIndicatorId. Ids: cpialrl:<base>:<al|rl>:<state>:<group>. The listing offers both bases for every state and group; not every pair is served.",
+    items,
+  });
+}
+await catalogueCli(import.meta.url, catalogueCpialrl);

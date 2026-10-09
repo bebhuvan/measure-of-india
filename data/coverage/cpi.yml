@@ -1,0 +1,116 @@
+# Coverage ledger: Consumer Price Index, MoSPI (docs/CONTRACT-coverage.md).
+# Catalogue: node scripts/lib/products/cpi.mjs --catalogue. First matching rule wins.
+# Items no rule decides are omissions the gate reports on purpose (listed for the
+# coordinator in docs/status/framework.md): base-2024 classes and sub-classes, base-2024
+# rural/urban and state detail below the General index, base-2012 groups outside food and
+# fuel, rural and urban sub-groups, state groups, the 299 base-2012 items, and the
+# 2011-13 base-2012 back series.
+family: cpi
+guides: [cpi]
+catalogue: data/coverage/cpi.catalogue.json
+rules:
+  # ---- base 2024, All India
+  - match: "cpi:2024:all-india:combined:general:*"
+    status: shown
+    bundle: [cpi-2024, cpi-2024-linked]
+    series: [headline]
+    plate: "§01 The current reading; §02 The new base: a continuous headline"
+  - match: "cpi:2024:all-india:combined:division:*"
+    status: shown
+    bundle: cpi-2024
+    plate: "§03 The new basket, opened up (the twelve divisions)"
+  - match: ["cpi:2024:all-india:rural:general:*", "cpi:2024:all-india:urban:general:*"]
+    status: shown
+    bundle: cpi-2024-sectors
+    series: [rural, urban]
+    plate: "§03 Rural and urban on the new base"
+  - match: "cpi:2024:all-india:combined:group:*"
+    status: shown
+    bundle: cpi-2024-groups
+    plate: "§03 The 43-group grid"
+  - match: "cpi:2024:all-india:combined:item:*"
+    status: shown
+    bundle: cpi-2024-items
+    plate: "§03 The 358-item extremes ledger"
+  # ---- base 2024, states (published General index)
+  - match: "cpi:2024:*:combined:general:*"
+    status: shown
+    bundle: cpi-2024-states
+    plate: "§11 The spread across states (new base)"
+  - match: ["cpi:2024:*:rural:general:*", "cpi:2024:*:urban:general:*"]
+    status: baked
+    bundle: cpi-2024-states-sectors
+  # ---- base 2024, the NSO back series
+  - match: "cpi:2024-back:all-india:combined:general"
+    status: shown
+    bundle: [cpi-2024-back, cpi-2024-linked]
+    plate: "§02 The new base: a continuous headline (NSO back-cast)"
+  # ---- base 2012 (retired Dec 2025), All India. The headline is computed from the group
+  # indices with the official weights; the published General index is its cross-check.
+  - match: ["cpi:2012:all-india:combined:group:0-general", "cpi:2012:all-india:combined:group:1-food-and-beverages", "cpi:2012:all-india:combined:group:5-fuel-and-light"]
+    status: shown
+    bundle: cpi
+    series: [headline, food, fuel]
+    plate: "§06 Plate 1: the headline and its parts; §08 The parts, one plate each"
+  - match: ["cpi:2012:all-india:rural:group:0-general", "cpi:2012:all-india:rural:group:1-food-and-beverages", "cpi:2012:all-india:rural:group:5-fuel-and-light"]
+    status: shown
+    bundle: cpi-rural
+    series: [headline, food, fuel]
+    plate: "§10 One index, two Indias: rural and urban"
+  - match: ["cpi:2012:all-india:urban:group:0-general", "cpi:2012:all-india:urban:group:1-food-and-beverages", "cpi:2012:all-india:urban:group:5-fuel-and-light"]
+    status: shown
+    bundle: cpi-urban
+    series: [headline, food, fuel]
+    plate: "§10 One index, two Indias: rural and urban"
+  - match: ["cpi:2012:all-india:combined:subgroup:*", "cpi:2012:all-india:combined:group:7-consumer-food-price"]
+    status: shown
+    bundle: cpi-subgroups
+    plate: "§09 The sub-indices, a field guide"
+  - match: "cpi:2012:*:combined:group:0-general"
+    status: shown
+    bundle: cpi-states
+    plate: "§11 The spread across states (retired base)"
+  - match: ["cpi:2012:*:rural:group:0-general", "cpi:2012:*:urban:group:0-general"]
+    status: shown
+    bundle: cpi-states-sectors
+    plate: "§11 The widest rural-urban gaps"
+  # ---- base 2010
+  - match: "cpi:2010:*"
+    status: excluded
+    reason: "The 2010 base is a 48-month fragment, 2011 to 2014, on the pre-2012 group scheme, wholly overlapped and superseded by the 2012 base; it is archived raw (data/raw/cpi-2010-indices.json) and not baked."
+
+  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
+  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
+  - match:
+      - "cpi:2012-back:*:combined:group:*"
+      - "cpi:2012-back:*:combined:subgroup:*"
+      - "cpi:2012-back:*:rural:group:*"
+      - "cpi:2012-back:*:rural:subgroup:*"
+      - "cpi:2012-back:*:urban:group:*"
+      - "cpi:2012-back:*:urban:subgroup:*"
+      - "cpi:2012:*:combined:group:*"
+      - "cpi:2012:*:combined:item:*"
+      - "cpi:2012:*:combined:subgroup:*"
+      - "cpi:2012:*:rural:group:*"
+      - "cpi:2012:*:rural:subgroup:*"
+      - "cpi:2012:*:urban:group:*"
+      - "cpi:2012:*:urban:subgroup:*"
+      - "cpi:2024-back:all-india:rural:general"
+      - "cpi:2024-back:all-india:urban:general"
+      - "cpi:2024:*:combined:class:*"
+      - "cpi:2024:*:combined:division:*"
+      - "cpi:2024:*:combined:group:*"
+      - "cpi:2024:*:combined:item:*"
+      - "cpi:2024:*:combined:subclass:*"
+      - "cpi:2024:*:rural:class:*"
+      - "cpi:2024:*:rural:division:*"
+      - "cpi:2024:*:rural:group:*"
+      - "cpi:2024:*:rural:item:*"
+      - "cpi:2024:*:rural:subclass:*"
+      - "cpi:2024:*:urban:class:*"
+      - "cpi:2024:*:urban:division:*"
+      - "cpi:2024:*:urban:group:*"
+      - "cpi:2024:*:urban:item:*"
+      - "cpi:2024:*:urban:subclass:*"
+    status: pending
+    scheduled: "wave 2: prices deeper"

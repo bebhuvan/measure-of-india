@@ -1,0 +1,41 @@
+# Coverage ledger: CPI for Agricultural and Rural Labourers, Labour Bureau
+# (docs/CONTRACT-coverage.md). Catalogue: node scripts/lib/products/cpialrl.mjs --catalogue.
+# Omissions left for the coordinator: RL groups and RL states, 1986-87 groups, state x group,
+# and states the 1986-87 bundle does not carry.
+family: cpialrl
+guides: [cpi]
+catalogue: data/coverage/cpialrl.catalogue.json
+rules:
+  - match: ["cpialrl:1986-1987:al:all-india:general-index", "cpialrl:1986-1987:rl:all-india:general-index"]
+    status: shown
+    bundle: cpialrl-1986
+    series: [al, rl]
+    plate: "§12 The other CPI: agricultural labourers (two bases)"
+  - match: ["cpialrl:2019:al:all-india:general-index", "cpialrl:2019:rl:all-india:general-index"]
+    status: shown
+    bundle: cpialrl-2019
+    series: [al, rl]
+    plate: "§12 The other CPI: agricultural labourers; AL and RL on the new base"
+  # the Bureau names the food group "Food" on one base and "Food and Non Alcoholic Beverages"
+  # on the other; the adapter folds both into one food series (cpialrl.mjs GROUP_KEY)
+  - match: ["cpialrl:2019:al:all-india:food", "cpialrl:2019:al:all-india:food-and-non-alcoholic-beverages", "cpialrl:2019:al:all-india:fuel-and-light", "cpialrl:2019:al:all-india:clothing-and-footwear", "cpialrl:2019:al:all-india:miscellaneous", "cpialrl:2019:al:all-india:pan-tobacco-and-intoxicants"]
+    status: shown
+    bundle: cpialrl-groups-2019
+    plate: "§12 The farm worker's basket, group by group"
+  - match: ["cpialrl:1986-1987:al:andhra-pradesh:general-index", "cpialrl:1986-1987:al:assam:general-index", "cpialrl:1986-1987:al:bihar:general-index", "cpialrl:1986-1987:al:gujarat:general-index", "cpialrl:1986-1987:al:haryana:general-index", "cpialrl:1986-1987:al:himachal-pradesh:general-index", "cpialrl:1986-1987:al:jammu-*:general-index", "cpialrl:1986-1987:al:karnataka:general-index", "cpialrl:1986-1987:al:kerala:general-index", "cpialrl:1986-1987:al:madhya-pradesh:general-index", "cpialrl:1986-1987:al:maharashtra:general-index", "cpialrl:1986-1987:al:manipur:general-index", "cpialrl:1986-1987:al:meghalaya:general-index", "cpialrl:1986-1987:al:odisha:general-index", "cpialrl:1986-1987:al:punjab:general-index", "cpialrl:1986-1987:al:rajasthan:general-index", "cpialrl:1986-1987:al:tamil-nadu:general-index", "cpialrl:1986-1987:al:tripura:general-index", "cpialrl:1986-1987:al:uttar-pradesh:general-index", "cpialrl:1986-1987:al:west-bengal:general-index"]
+    status: shown
+    bundle: cpialrl-states-1986
+    plate: "§12 Where the farm worker's rupee stretched: twenty states"
+  - match: "cpialrl:2019:al:*:general-index"
+    status: baked
+    bundle: cpialrl-states-2019
+
+  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
+  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
+  - match:
+      - "cpialrl:1986-1987:al:*:*"
+      - "cpialrl:1986-1987:rl:*:*"
+      - "cpialrl:2019:al:*:*"
+      - "cpialrl:2019:rl:*:*"
+    status: pending
+    scheduled: "wave 2: prices deeper"

@@ -68,3 +68,20 @@ export async function buildIsp(root, dcfg, vintage) {
   writeSeries(root, "data/series/isp.json", bundle);
   return bundle;
 }
+
+/* Catalogue (docs/CONTRACT-coverage.md): what MoSPI publishes for the ISP, from
+ * isp/getISPFilter: isp:<monthly|annual>:<code>-<sub-sector> (base 2024-25, trial series). */
+import { writeCatalogue, idPart, catalogueCli } from "../catalogue.mjs";
+export async function catalogueIsp() {
+  const f = ((await mospi("isp/getISPFilter", {})).data ?? [])[0] ?? {};
+  const items = [];
+  for (const fr of f.frequency ?? []) for (const s of f.broad_sub_sector ?? [])
+    items.push({ id: `isp:${fr.description === "Monthly" ? "monthly" : "annual"}:${s.broad_sub_sector_code}-${idPart(s.description)}`, label: s.description.trim() });
+  writeCatalogue("isp", {
+    source: "MoSPI, NSO: Index of Services Production, trial series (eSankhyiki API)",
+    generator: "scripts/lib/products/isp.mjs --catalogue",
+    note: "From getISPFilter. Ids: isp:<frequency>:<code>-<sub-sector>.",
+    items,
+  });
+}
+await catalogueCli(import.meta.url, catalogueIsp);
