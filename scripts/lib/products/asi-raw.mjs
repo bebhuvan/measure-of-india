@@ -61,6 +61,19 @@ function writeIndex(root, entries) {
 
 const keyOf = (r) => [r.year, r.state, r.sector, r.nic_type, r.nic_code].join("|");
 
+// mospi.mjs caches every page it fetches (data/raw/http-cache), which is what lets a table
+// resume mid-way. Once a table is safely staged its ~400 cached pages are dead weight (about
+// 35 KB each, 1.2 GB for every table), so they are removed. The URL is rebuilt exactly as
+// mospi()/mospiAll() build it.
+function purgePageCache(root, cy, code, pages) {
+  for (let page = 1; page <= pages; page++) {
+    const qs = new URLSearchParams({ classification_year: String(cy), indicator_code: String(code), page: String(page), limit: "100" });
+    const url = "https://api.mospi.gov.in/api/asi/getASIData?" + qs.toString();
+    const f = path.join(root, "data/raw/http-cache", crypto.createHash("sha1").update(url).digest("hex") + ".json");
+    try { fs.unlinkSync(f); } catch { /* not cached */ }
+  }
+}
+
 async function fetchTable(root, cy, ind) {
   const t0 = Date.now();
   const rows = await mospiAll("asi/getASIData", { classification_year: cy, indicator_code: ind.indicator_code });
@@ -78,6 +91,7 @@ async function fetchTable(root, cy, ind) {
   fs.mkdirSync(path.dirname(p), { recursive: true });
   fs.writeFileSync(p + ".tmp", gz);
   fs.renameSync(p + ".tmp", p);
+  purgePageCache(root, cy, ind.indicator_code, Math.ceil(rows.length / 100));
   process.stdout.write(`asi raw ${cy}-${ind.indicator_code} (${ind.indicator_name}): ${rows.length} rows, ${Math.round((Date.now() - t0) / 1000)}s\n`);
   return {
     file: path.relative(path.join(root, ASI_RAW_DIR), p), block: cy, indicator: Number(ind.indicator_code), name: ind.indicator_name,

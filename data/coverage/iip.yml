@@ -11,32 +11,32 @@ rules:
     status: shown
     bundle: iip-2022
     series: [general]
-    plate: "§01 The current reading; §03 Four ledgers, one index"
+    plate: "§01 The current reading; §03 Five ledgers, one index"
   - match: ["iip:2022-23:monthly:sectoral:*", "iip:2022-23:monthly:use-based:*"]
     status: shown
     bundle: iip-2022
-    plate: "§05 Plate 1: the sectors; §07 The parts, one plate each"
+    plate: "§06 Plate 1: the sectors; §09 The parts, one plate each"
   - match: "iip:2022-23:monthly:industry:*"
     status: shown
     bundle: iip-industries-2022
-    plate: "§07 The current-base industry field"
+    plate: "§09 The current-base industry field"
   - match: "iip:2011-12:monthly:general"
     status: shown
     bundle: iip-2011
     series: [general]
-    plate: "§03 Four ledgers, one index (two bases)"
+    plate: "§03 Five ledgers, one index (two bases)"
   - match: ["iip:2011-12:monthly:sectoral:*", "iip:2011-12:monthly:use-based:*"]
     status: baked
     bundle: iip-2011
   - match: "iip:2011-12:monthly:industry:*"
     status: shown
     bundle: iip-industries-2011
-    plate: "§04 The long ledger: 23 industries"
+    plate: "§05 The long ledger: 23 industries"
   - match: "iip:2004-05:monthly:general"
     status: shown
     bundle: iip-2004
     series: [general]
-    plate: "§03 Four ledgers, one index (the deep ledger)"
+    plate: "§03 Five ledgers, one index (the deep ledger)"
   - match: ["iip:2004-05:monthly:sectoral:*", "iip:2004-05:monthly:use-based:*"]
     status: baked
     bundle: iip-2004
@@ -47,7 +47,7 @@ rules:
     status: shown
     bundle: iip-1993
     series: [general]
-    plate: "§03 Four ledgers, one index (the deep ledger)"
+    plate: "§03 Five ledgers, one index (the deep ledger)"
   - match: ["iip:1993-94:monthly:sectoral:*", "iip:1993-94:monthly:use-based:*"]
     status: baked
     bundle: iip-1993
@@ -61,7 +61,7 @@ rules:
     status: shown
     bundle: [iip-annual-2022, iip-annual-2011, iip-annual-2004, iip-annual-1993]
     series: [general_index, general_growth]
-    plate: "§04 Forty-five years in financial years"
+    plate: "§04 Financial years, five rulers"
   - match: "iip:2022-23:annual:*"
     status: baked
     bundle: iip-annual-2022

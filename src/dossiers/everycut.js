@@ -246,6 +246,10 @@ export const CUT_BY_BUNDLE = {
   // iip
   "iip-2022": "Sector and use", "iip-2011": "Sector and use", "iip-2004": "Sector and use", "iip-1993": "Sector and use",
   "isp": "Services sub-sector",
+  // industry (wave 2)
+  "iip-industries-2004": "Industry", "iip-industries-1993": "Industry", "iip-industries-1980": "Industry", "iip-1980": "Sector",
+  "iip-annual-2022": "Financial year", "iip-annual-2011": "Financial year", "iip-annual-2004": "Financial year", "iip-annual-1993": "Financial year", "iip-annual-1980": "Financial year",
+  "core-2011": "Core industry", "core-2004": "Core industry", "core-1993": "Core industry",
   // external
   "rbi-trade": "All India", "rbi-trade-oil": "Oil and non-oil", "rbi-forex": "All India", "rbi-bop": "Account",
   "rbi-bop-ratios": "Ratio", "rbi-debt": "Component", "rbi-debt-quarterly": "Component", "rbi-nri": "Deposit scheme",

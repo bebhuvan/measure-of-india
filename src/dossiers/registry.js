@@ -129,16 +129,19 @@ export const DOSSIERS = [
     rssDescription: "The monthly pulse of mining, manufacturing and electricity. Revised with the latest print.",
     stamp: { dateStyle: "monthNext", vintageStyle: "monthNext" },
     statusNote: "Evergreen, revised with each print",
-    version: "v1.2",
+    version: "v1.4",
     currentBundle: "iip-2022",
-    proseInputs: ["iip-industries-2022"],
+    proseInputs: ["iip-industries-2022", "core-2011"],
     calendar: "fiscal-apr",
     bands: null,
     proseConstants: [100, 2022],   // verifier whitelist: weights/shares/base years this dossier may cite
     spark: { bundle: "iip-2022", series: "general" },
     prose: true,
     register: { id: "reg-iip", label: "Industry", unit: "Monthly, base 2022-23, quick estimates", historyCol: "2024 to 2026" },
-    bundles: ["iip-2022", "iip-2011", "iip-industries-2022", "iip-industries-2011", "iip-2004", "iip-1993", "isp"],
+    bundles: ["iip-2022", "iip-2011", "iip-industries-2022", "iip-industries-2011", "iip-2004", "iip-1993", "isp",
+      // industry (wave 2): the retired bases' industries, financial years, base 1980-81, core industries, annual ISP (services' bundle)
+      "iip-industries-2004", "iip-industries-1993", "iip-annual-2022", "iip-annual-2011", "iip-annual-2004", "iip-annual-1993",
+      "iip-1980", "iip-industries-1980", "iip-annual-1980", "core-2011", "core-2004", "core-1993", "services-isp-annual"],
   },
   {
     slug: "external",
