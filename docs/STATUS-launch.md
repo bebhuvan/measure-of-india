@@ -1,6 +1,6 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 01:25.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 02:50.
 
 ## Running now: ten family sessions
 
@@ -30,7 +30,7 @@ Each decides every `pending` item in its ledgers (brief: `docs/briefs/wave2.md`)
 |---|---|---|
 | atlas-prices | cpi, wpi (+ CPI-IW, rural wages) | 82,269 |
 | atlas-jobs-deep | jobs | **merged**: 0 pending (9,523 items); found the 2025 PLFS redesign splice. services-jobs-cy split at the seam too (merged) |
-| atlas-industry | iip, factories (+ eight core industries) | 45,347 |
+| atlas-industry | iip, factories (+ eight core industries) | 45,347; paging fix merged, audit clean so far (38 ASI tables, all 52 ASUSE, IIP annual); ASI download ~2 h left |
 | atlas-nas | gdp | **merged**: 0 pending; institutional sectors, revision paths, 18 sub-industries |
 
 | atlas-health-gender | nfhs, gender | 15,538 (started 01:30) |
