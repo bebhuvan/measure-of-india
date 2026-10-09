@@ -38,6 +38,7 @@
 // Hand-checked values are recorded in docs/status/credit.md and in validate.mjs.
 import { databankRoot, dbieReport, dbieProvider, databankQuery } from "../databank.mjs";
 import { writeSeries, writeRaw } from "../util.mjs";
+import { DEEP, bakeDeep } from "./credit-deep.mjs";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -107,6 +108,7 @@ function bundleOut(root, rel, meta, dates, series, gapNote) {
 // label tidying for display: RBI's ampersands, footnote digits and "of which" fragments
 const tidy = (l) => String(l).replace(/[¹²³⁴⁵⁶⁷⁸⁹⁰]/g, "").replace(/([a-z)])\d$/, "$1").replace(/\s*of which,?\s*$/i, "")
   .replace(/ & /g, " and ").replace(/&/g, " and ").replace(/\s+/g, " ").replace(/\s+,/g, ",").trim();
+const sentenceCase = (l) => (l === l.toUpperCase() ? l.toLowerCase().replace(/^\w/, (c) => c.toUpperCase()) : l);
 const norm = (l) => tidy(l).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 const slug = (l) => norm(l).replace(/ /g, "_").slice(0, 48);
 
@@ -702,6 +704,18 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
       const data = Y.map((d) => { const x = acc.get(`${g}|${lvl}|${desc}|${d}`); return x == null ? null : r3(x / LC); });
       if (data.some((x) => x != null)) series[`${g}_${lk}_${dk}`] = { name: `${g}_${lk}_${dk}_inr_lakh_crore`, label: `${GL[g]}, ${lk} NPAs ${dl}`, data };
     }
+    // bank by bank, as reported (the finest cut the table publishes)
+    {
+      const banks = new Map(); for (const [k, o] of pickV) { const b = k.split("|")[0]; if (!banks.has(b)) banks.set(b, o.grp); }
+      const bs = {};
+      for (const [b, g] of [...banks].sort()) for (const [lvl, lk] of [["Gross NPAs", "gross"], ["Net NPAs", "net"]]) for (const [desc, dk, dl] of DESCS) {
+        const data = Y.map((d) => { const o = pickV.get(`${b}|${d.slice(0, 4)}|${lvl}|${desc}`); return o == null ? null : r3(o.v / 1e7); });
+        if (data.some((x) => x != null && x !== 0)) bs[`${slug(b)}__${lk}_${dk}`] = { name: `${slug(b)}__${lk}_${dk}_inr_crore`, label: `${tidy(b).replace(/\b(LIMITED|LTD\.?)\b/gi, "").replace(/\s+/g, " ").trim()} (${tidy(g).toLowerCase()}): ${lk} NPAs ${dl}`, unit: "inr_crore", data };
+      }
+      bundleOut(root, "credit-npa-movement-banks", H_({ base: "RBI bank groups, as on 31 March", unit: "inr_crore",
+        coverage: "Bad loans bank by bank: each scheduled commercial bank's gross and net NPAs at the start of the year, added, reduced, written off and at the end, every year since 2004-05",
+        note: "RBI DBIE report 1114, every bank as reported, ₹ crore; Final where published. Banks that merged stop; new banks start late. The unit column of the report is unreliable; values are rupees." }), Y, bs, "This bank reported no figure this year.");
+    }
     bundleOut(root, "credit-npa-movement", H_({ base: "RBI bank groups, as on 31 March", unit: "inr_lakh_crore",
       coverage: "How bad loans move each year: gross and net NPAs at the start, added, recovered or upgraded, written off, and at the end, all banks and by bank group, 2004-05 to 2024-25",
       note: "RBI DBIE report 1114 (Movement of NPAs of Scheduled Commercial Banks), bank by bank, summed here to all banks and to bank groups (public: nationalised banks, SBI and its associates; private: old, new and all private banks; small finance banks), ₹ lakh crore; Final where published. The report's unit column is unreliable (it lists SECONDS, LAKH TONNES and the like); values are rupees, which reconcile with report 330's bank-group NPAs." }), Y, series, "No bank of this group reported this item in this year.");
@@ -771,6 +785,14 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
       if (data.every((x) => x == null)) continue;
       per[slug(b)] = { name: `${slug(b)}_gnpa_ratio_pct`, label: `${tidy(b).replace(/\b(LIMITED|LTD\.?)\b/gi, "").replace(/\s+/g, " ").trim()} (${tidy(g).toLowerCase()}), gross NPA ratio`, data };
     }
+    const cls = {};
+    for (const [b, g] of [...banks].sort()) for (const [c, ck, cl] of CL) {
+      const data = Y.map((d) => { const x = v.get(`${b}|${c}|${d}`); return x == null ? null : r3(x / 1e7); });
+      if (data.some((x) => x != null && x !== 0)) cls[`${slug(b)}__${ck}`] = { name: `${slug(b)}__${ck}_inr_crore`, label: `${tidy(b).replace(/\b(LIMITED|LTD\.?)\b/gi, "").replace(/\s+/g, " ").trim()} (${tidy(g).toLowerCase()}): ${cl}`, unit: "inr_crore", data };
+    }
+    bundleOut(root, "credit-loan-quality-banks", H_({ base: "RBI asset classification, as on 31 March", unit: "inr_crore",
+      coverage: "Every bank's loans by their health: standard, sub-standard, doubtful and loss advances, gross NPAs and gross advances, bank by bank, every March since 2004",
+      note: "RBI DBIE report 336, every bank as reported, ₹ crore. The asset classes are published to March 2013; gross NPAs and advances run on." }), Y, cls, "This bank reported no figure this year.");
     bundleOut(root, "credit-npa-banks", H_({ base: "RBI asset classification, as on 31 March", unit: "pct",
       coverage: "Gross NPA ratio of every scheduled commercial bank, bank by bank, every March since 2004",
       note: "RBI DBIE report 336: gross NPAs over gross advances, computed for each bank from the two published amounts. Banks that merged or closed stop; banks that opened start late." }), Y, per, "This bank reported no figure this year.");
@@ -861,6 +883,19 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
       groups[`${slug(b)}_${mk}`] = { name: `${slug(b)}_${mk}_inr_lakh_crore`, label: `${tidy(b).toLowerCase().replace(/^\w/, (c) => c.toUpperCase()).replace("Sbi", "SBI")}, ${mk}`, data: D.map((d) => { const o = bg.get(`${b}|${d}`); return o ? r3(o[i] / LC) : null; }) };
     const meta = (unit, what) => P_({ frequency: ids.includes("1427") ? "annual" : "quarterly", base: ids.includes("1427") ? `Spatial statements, annual, ${cover}` : `Spatial statements, ${cover}`, unit, coverage: `${what}, ${notePart}`,
       note: `RBI quarterly statistics on deposits and credit of scheduled commercial banks, statement 3A (DBIE ${ids.join(" and ")}), ${cover}. Summed over bank groups and population groups to each state; by the location of the branch that books the deposit or loan. Dated to the last month of each quarter.` });
+    // the finest cut the statement publishes: state x bank group x population group
+    {
+      const fine = new Map(), names = new Map();
+      for (const r of rowsAll) { if (r["Census Flag"] !== flagOf.get(fqDate(r["Fiscal Quarter"]))) continue; const pgk = r["Dimension 2"].replace("SEMI-URBAN", "SEMI URBAN");
+        const k = `${slug(stateName(r["Dimension 5"]))}__${slug(r["Dimension 1"])}__${slug(pgk)}`; names.set(k, `${stateName(r["Dimension 5"])}, ${sentenceCase(tidy(r["Dimension 1"]))}, ${sentenceCase(pgk)} centres`);
+        fine.set(`${k}|${fqDate(r["Fiscal Quarter"])}`, [num(r["Measure 1"]), num(r["Measure 2"]), num(r["Measure 3"])]); }
+      const fs_ = {};
+      for (const [k, l] of [...names].sort()) for (const [i, mk, u, dv] of [[0, "offices", "count", 1], [1, "deposits", "inr_crore", 1e7], [2, "credit", "inr_crore", 1e7]]) {
+        const data = D.map((d) => { const o = fine.get(`${k}|${d}`); return o?.[i] == null ? null : r3(o[i] / dv); });
+        if (data.some((x) => x != null && x !== 0)) fs_[`${k}__${mk}`] = { name: `${k}__${mk}_${u}`, unit: u, label: `${l}: ${mk === "offices" ? "bank offices reporting" : mk}`, data };
+      }
+      bundleOut(root, `credit-places-states${suffix}`, meta("mixed: count, inr_crore", "Deposits, credit and bank offices in every state, by bank group and by rural, semi-urban, urban and metropolitan centres"), D, fs_, "Not reported in this quarter.");
+    }
     bundleOut(root, `credit-states${suffix}`, meta("inr_lakh_crore", "Bank deposits and credit in every state and union territory, ₹ lakh crore"), D, amt, "Not reported for this state in this quarter.");
     bundleOut(root, `credit-states-cd${suffix}`, meta("pct", "Credit-deposit ratio of every state and union territory: credit booked in the state as a share of deposits booked there"), D, cd, "Not reported for this state in this quarter.");
     bundleOut(root, `credit-offices${suffix}`, meta("count", "Bank offices reporting, in every state and union territory"), D, off, "Not reported for this state in this quarter.");
@@ -945,14 +980,18 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
   // 963: state x occupation group, amount outstanding only
   {
     const rows = BR["963"].rows, dates = new Set(), v = new Map(), states = new Map(), occs = new Map();
-    for (const r of rows) { const d = qEnd(r["Reporting Date"]); dates.add(d); states.set(r["Key3 Description 2"], +r["Sorting Order3"]); occs.set(r["Key4 Description 1"], +r["Sorting Order4"]); v.set(`${r["Key3 Description 2"]}|${r["Key4 Description 1"]}|${d}`, num(r["Set1 Total Amount Outstanding"])); }
+    for (const r of rows) { const d = qEnd(r["Reporting Date"]); dates.add(d); states.set(r["Key3 Description 2"], +r["Sorting Order3"]); occs.set(r["Key4 Description 1"], +r["Sorting Order4"]); v.set(`${r["Key3 Description 2"]}|${r["Key4 Description 1"]}|${d}`, num(r["Set1 Total Amount Outstanding"])); v.set(`${r["Key3 Description 2"]}|${r["Key4 Description 1"]}|${d}|acc`, num(r["Set1 Number Of Account"])); v.set(`${r["Key3 Description 2"]}|${r["Key4 Description 1"]}|${d}|lim`, num(r["Set1 Total Credit Limit"])); }
     const D = quarterAxis(dates), series = {};
     for (const [st] of [...states].sort((a, b) => a[1] - b[1])) for (const [oc] of [...occs].sort((a, b) => a[1] - b[1])) {
       const data = D.map((d) => { const x = v.get(`${st}|${oc}|${d}`); return x == null ? null : r3(x / LC); });
-      if (data.some((x) => x != null)) series[`${slug(st)}__${slug(clean(oc))}`] = { name: `${slug(st)}__${slug(clean(oc))}_inr_lakh_crore`, label: `${st.replace(/ & /g, " and ")}: ${sentence(clean(oc))}`, data };
+      if (data.some((x) => x != null)) series[`${slug(st)}__${slug(clean(oc))}`] = { name: `${slug(st)}__${slug(clean(oc))}_inr_lakh_crore`, label: `${st.replace(/ & /g, " and ")}: ${sentence(clean(oc))}, credit outstanding`, data };
+      const lim = D.map((d) => { const x = v.get(`${st}|${oc}|${d}|lim`); return x == null ? null : r3(x / LC); });
+      if (lim.some((x) => x != null)) series[`${slug(st)}__${slug(clean(oc))}__limit`] = { name: `${slug(st)}__${slug(clean(oc))}__limit`, unit: "inr_lakh_crore", label: `${st.replace(/ & /g, " and ")}: ${sentence(clean(oc))}, credit limits sanctioned`, data: lim };
+      const acc = D.map((d) => { const x = v.get(`${st}|${oc}|${d}|acc`); return x == null ? null : r3(x / 1e5); });
+      if (acc.some((x) => x != null)) series[`${slug(st)}__${slug(clean(oc))}__accounts`] = { name: `${slug(st)}__${slug(clean(oc))}__accounts`, unit: "lakh_count", label: `${st.replace(/ & /g, " and ")}: ${sentence(clean(oc))}, loan accounts, lakh`, data: acc };
     }
-    bundleOut(root, "credit-states-occupation", B_({ unit: "inr_lakh_crore", coverage: "Bank credit in every state by the borrower's occupation group (agriculture, industry, transport, services, personal loans, trade, finance), every quarter since March 2014",
-      note: "RBI BSR-1 quarterly table 3.6 (DBIE 963), amount outstanding, ₹ lakh crore, by state of the sanctioning branch. States as listed by the RBI each quarter (see credit-states-bsr1)." }), D, series, "Not reported for this state in this quarter.");
+    bundleOut(root, "credit-states-occupation", B_({ unit: "mixed: inr_lakh_crore, lakh accounts", coverage: "Bank credit in every state by the borrower's occupation group (agriculture, industry, transport, services, personal loans, trade, finance): amount, limits and accounts, every quarter since March 2014",
+      note: "RBI BSR-1 quarterly table 3.6 (DBIE 963), amount outstanding and limits in ₹ lakh crore, accounts in lakh, by state of the sanctioning branch. States as listed by the RBI each quarter (see credit-states-bsr1)." }), D, series, "Not reported for this state in this quarter.");
   }
   // 1555: credit to individuals by gender, district rows summed to states and all India
   {
@@ -970,6 +1009,22 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
     // where the source prints an all-India row it must equal the sum of its districts
     for (const d of dates) { const a = acc.get(`ALL INDIA (printed)|${d}`), b = acc.get(`ALL INDIA|${d}`); if (a && b && Math.abs(a[5] / b[5] - 1) > 0.002) throw new Error(`credit: 1555 ${d}: printed all-India ${a[5]} != sum of districts ${b[5]}`); }
     if (bad > rows.length * 0.01) throw new Error(`credit: 1555 male + female != total on ${bad} rows: the measure layout moved`);
+    // district by district, as the RBI names them each quarter (a district carved out appears as
+    // a new series; its parent's series then covers less ground: read across such breaks with care)
+    {
+      const dv = new Map(), dn = new Map(), DQ = quarterAxis([...new Set(rows.map((r) => qEnd(r["Period End Date"])))]);
+      for (const r of rows) { if (r.Dimension_2 === "ALL INDIA" || r.Dimension_1 === "ALL INDIA" || !r.Dimension_3) continue; const k = `${slug(stateName(r.Dimension_2))}__${slug(r.Dimension_3)}`; dn.set(k, `${stateName(r.Dimension_2)}: ${sentence(r.Dimension_3)}`); dv.set(`${k}|${qEnd(r["Period End Date"])}`, [1, 2, 3, 4, 5, 6].map((i) => num(r[`Measure_${i}`]) ?? 0)); }
+      const ds = {};
+      for (const [k, l] of [...dn].sort()) {
+        const g = (f) => DQ.map((d) => { const o = dv.get(`${k}|${d}`); return o ? f(o) : null; });
+        ds[`${k}__women_share`] = { name: `${k}__women_share_pct`, unit: "pct", label: `${l}, women's share of bank credit to individuals`, data: g((o) => (o[5] ? r2((100 * o[3]) / o[5]) : null)) };
+        ds[`${k}__women_amount`] = { name: `${k}__women_amount_inr_crore`, unit: "inr_crore", label: `${l}, credit to women`, data: g((o) => r3(o[3] / 1e7)) };
+        ds[`${k}__individuals_amount`] = { name: `${k}__individuals_amount_inr_crore`, unit: "inr_crore", label: `${l}, credit to all individuals`, data: g((o) => r3(o[5] / 1e7)) };
+      }
+      bundleOut(root, "credit-women-districts", B_({ unit: "mixed: pct, inr_crore",
+        coverage: "Bank credit to women in every district: women's share of loans to individuals and the amounts, every quarter since March 2014",
+        note: "RBI BSR-1 quarterly table 1.10 (DBIE 1555), district by district as the RBI names them each quarter, ₹ crore. A district carved out of another appears as a new series and its parent then covers less ground." }), DQ, ds, "Not reported for this district in this quarter.");
+    }
     const D = quarterAxis(dates), series = {};
     const names = [...new Set([...acc.keys()].map((k) => k.split("|")[0]))].filter((x) => !x.startsWith("ALL INDIA")).sort();
     for (const st of ["ALL INDIA", ...names]) {
@@ -1010,7 +1065,63 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
       note: "RBI, Sectoral Deployment of Credit by NBFCs (selected NBFCs and HFCs, in the monthly sectoral-credit release), ₹ lakh crore, latest release per month. The release prints the current month, the same month a year earlier and the previous March, so months between are not published: they are gaps, not zeros. Housing loans include those of HFCs." }, axis, series, "Not printed in any release: the RBI publishes the current month, a year earlier and March.");
   }
 
+  /* ======================================================================================
+   * 8. Every other table the RBI publishes on money, credit and banks (credit-deep.mjs):
+   *    baked as published, one bundle per table; the raw archive is provenance only (the
+   *    Data Bank's content-addressed copy, by sha256), since the tables run to millions of rows
+   * ==================================================================================== */
+  {
+    const tables = [];
+    for (const c of DEEP) tables.push(await bakeDeep(root, db, c, { ...base, dossier: "credit-deep", vintage }));
+    stamp("data/raw/credit-deep.json", { note: "Provenance of every table baked by scripts/lib/products/credit-deep.mjs: DBIE report, data provider, rows read, and the sha256 of the Data Bank's stored copy. The bundles are baked from those copies as published.", tables });
+  }
+
   return { db, base, stamp };
 }
 
 // CLI: node scripts/lib/products/credit.mjs --catalogue  (writes the coverage catalogue only)
+
+/* Catalogue (docs/CONTRACT-coverage.md): what the RBI publishes on money, credit and banks.
+ * From the Data Bank's DBIE report catalogue (rbi_dbie_report_catalog), every report in the
+ * money, banking and BSR-1 menus, the Handbook's "Money and Banking" tables, the Bulletin's
+ * "Money and Banking" section and the Weekly Statistical Supplement's money and bank tables;
+ * and, from the parsed datasets this guide reads, every series they carry:
+ *   dbie:<report>                                   one DBIE report (all its providers)
+ *   sibc:<statement>:<old|new|release>:<code>       sectoral and industry credit categories
+ *   cas:<dsd>:<series key>                          CAS money and reserve money series
+ *   nbfc:<category>, position:<bank group>, growth:<universe>:<category>
+ * Reports another family owns are left to its catalogue: 737 (deposits, BSR-2), 151 (policy
+ * rates), 824 (payment systems). */
+import { writeCatalogue, idPart, catalogueCli, sourceCfg } from "../catalogue.mjs";
+const CAT_MENUS = ["Banking - Sectoral Statistics", "Banking - Assets & Liabilities", "Banking - Performance Indicators", "Monetary Statistics", "Reserve Money", "Business of Scheduled Banks",
+  "RBI Balance Sheet", "Non Banking Financial Companies", "Quarterly Spatial Distribution of Deposits and Credit", "Annual Spatial Distribution of Deposits and Credit - (Including Regional Rural Banks)",
+  "Statistical Tables Relating to Banks in India", "Report on Trend and Progress of Banking in India"];
+const CAT_IDS = ["6", "7", "9", "13", "39", "15", "20"], CAT_OTHERS = ["737", "151", "824"];
+export const CAS_DSDS = ["MSC_F_RN", "MSS_F_RN", "MSS_M_RN", "MON_AG_RN", "MONTRY_RATIOS_RN", "BMC_M_RN", "CSURYCOM_F_RN", "CSURYSOR_F_RN", "RMC_M_RN", "RMC_W_RN", "RMS_M_RN", "RMS_W_RN", "RBI_ASSET_W_RN", "RBI_LIAB_W_RN"];
+export async function catalogueCredit() {
+  const { cfg } = sourceCfg("credit");
+  const db = databankRoot(cfg?.families?.databank);
+  const q = (ds, sql) => databankQuery(db, ds, sql).rows;
+  const items = [];
+  const reps = q("rbi_dbie_report_catalog", "SELECT DISTINCT report_id, report_name, menu, section, subsection FROM {table} ORDER BY report_id, menu, section, subsection");
+  const seen = new Set();
+  for (const r of reps) {
+    const inMenu = CAT_MENUS.includes(r.menu) || /\(BSR\)-1/.test(r.menu) || (/^Handbook/.test(r.menu) && /money and banking/i.test(r.subsection ?? "")) || (r.menu === "Monthly RBI Bulletin" && /money and banking/i.test(r.section ?? "")) || CAT_IDS.includes(r.report_id);
+    if (!inMenu || CAT_OTHERS.includes(r.report_id) || seen.has(r.report_id)) continue;
+    seen.add(r.report_id);
+    items.push({ id: `dbie:${r.report_id}`, label: `${String(r.report_name).trim()} (${r.menu})` });
+  }
+  for (const r of q("rbi_credit_history", "SELECT DISTINCT statement, format_segment, category_code, category_label FROM {table} ORDER BY statement, format_segment, category_code, category_label"))
+    items.push({ id: `sibc:${r.statement}:${r.format_segment}:${idPart(r.category_code)}`, label: tidy(r.category_label) });
+  for (const r of q("rbi_sectoral_credit", "SELECT DISTINCT statement, bank_universe, category_code, category_label FROM {table} ORDER BY statement, bank_universe, category_code, category_label"))
+    items.push({ id: `sibc:${r.statement}:${r.bank_universe === "all_scb_section42" ? "section42" : "release"}:${idPart(r.category_code)}`, label: tidy(r.category_label) });
+  for (const r of q("rbi_dbie_cas_money", `SELECT DISTINCT dsd_code, series_key, series_label FROM {table} WHERE dsd_code IN (${CAS_DSDS.map((d) => `'${d}'`).join(",")}) ORDER BY dsd_code, series_key, series_label`))
+    items.push({ id: `cas:${idPart(r.dsd_code)}:${idPart(r.series_key)}`, label: r.series_label });
+  for (const r of q("rbi_nbfc_credit", "SELECT DISTINCT category_code, category_label FROM {table} ORDER BY category_code, category_label")) items.push({ id: `nbfc:${idPart(r.category_code)}`, label: tidy(r.category_label) });
+  for (const r of q("rbi_bank_position", "SELECT DISTINCT bank_group FROM {table} ORDER BY bank_group")) items.push({ id: `position:${idPart(r.bank_group)}`, label: `Section 42 position, ${r.bank_group}` });
+  for (const r of q("rbi_credit_growth_summary", "SELECT DISTINCT bank_universe, category FROM {table} ORDER BY bank_universe, category")) items.push({ id: `growth:${idPart(r.bank_universe)}:${idPart(r.category)}`, label: `Printed credit growth, ${r.category}` });
+  writeCatalogue("credit", { source: "Reserve Bank of India: DBIE money, banking and BSR-1 reports, and the parsed sectoral-credit, CAS money and NBFC datasets (via the local Data Bank)",
+    generator: "scripts/lib/products/credit.mjs --catalogue",
+    note: "DBIE reports from rbi_dbie_report_catalog: the money, banking, BSR-1, spatial, NBFC, Statistical Tables and Trend and Progress menus, the Handbook's and Bulletin's money and banking tables, and the Weekly Statistical Supplement's money and bank tables; 737, 151 and 824 belong to the deposits, rates and payments catalogues. Parsed datasets itemised by series.", items });
+}
+await catalogueCli(import.meta.url, catalogueCredit);

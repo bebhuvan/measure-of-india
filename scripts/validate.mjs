@@ -1241,6 +1241,17 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
     if (b.meta.frequency === "annual" && !["credit-frauds"].includes(slug)) checkCadence(b.dates, 12, slug);
     if (["fortnightly", "weekly", "irregular"].includes(b.meta.frequency)) for (let i = 1; i < b.dates.length; i++) if (b.dates[i] <= b.dates[i - 1]) fail(`${slug}: dates not ascending at ${b.dates[i]}`);
     const unit = String(b.meta.unit).split(":")[0];
+    for (const [k, s] of Object.entries(b.series)) if (!s.unit) fail(`${slug}.${k}: no unit`);
+    // the deep tables (one bundle per RBI table, credit-deep.mjs) hold every kind of number a
+    // table prints; they get a sanity range per series unit, the guide's bundles the tight one
+    if (b.meta.dossier === "credit-deep" || ["credit-women-districts", "credit-places-states", "credit-places-states-2004", "credit-places-states-2017", "credit-places-states-annual", "credit-npa-movement-banks", "credit-loan-quality-banks"].includes(slug)) {
+      // a foreign bank with almost no deposits prints deposit ratios in the millions of per cent
+      const DEEP_RANGE = { count: [0, 5e9], inr_crore: [-1e8, 1e9], inr_lakh_crore: [-1e3, 1e4], lakh_count: [0, 5e4], pct: [-1e7, 1e7], pct_yoy: [-1e5, 1e5], pct_per_annum: [0, 100], times: [-1e3, 1e4], inr: [0, 1e8], inr_lakh: [-1e6, 1e6], usd_millions: [0, 1e7] };
+      const sr = Object.fromEntries(Object.entries(b.series).map(([k, s]) => [k, DEEP_RANGE[s.unit] ?? [NaN, NaN]]));
+      for (const [k, s] of Object.entries(b.series)) if (!DEEP_RANGE[s.unit]) fail(`${slug}.${k}: unit ${s.unit} has no range`);
+      checkRange(b, -Infinity, Infinity, slug, sr);
+      continue;
+    }
     // mixed bundles carry the unit in each series name
     const sr = {};
     if (unit === "mixed") for (const [k, s] of Object.entries(b.series)) sr[k] = /_pct$/.test(s.name) ? RANGE.pct : /_accounts$/.test(s.name) ? [0, 100000] : /_offices$/.test(s.name) ? [0, 200000] : /_cases$/.test(s.name) ? [0, 100000] : /_amount$/.test(s.name) && slug.startsWith("credit-frauds") ? [0, 200000] : RANGE.inr_lakh_crore;
@@ -1288,10 +1299,37 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
   }
   ident("credit-utilisation", "credit used = used where sanctioned + brought in from other states", (S, i) => { const out = []; for (const k of Object.keys(S).filter((k) => k.endsWith("_utilised") && k !== "all_india_utilised")) { const st = k.replace(/_utilised$/, ""); out.push(Math.abs(S[k].data[i] - S[`${st}_sanctioned_used_here`].data[i] - S[`${st}_sanctioned_elsewhere_used_here`].data[i])); } return [Math.max(...out), 0, 0.01]; });
   ident("credit-women", "women's credit sits inside credit to individuals", (S, i) => S.all_india_women_amount.data[i] != null && [Math.min(S.all_india_women_amount.data[i], S.all_india_individuals_amount.data[i]), S.all_india_women_amount.data[i], 0]);
+  // the deep tables (credit-deep.mjs) against the guide's own bundles and against each other
+  {
+    const x = (a, b, tol) => a != null && b != null && Math.abs(a / b - 1) <= tol;
+    const cross = (label, A, ka, B, kb, scale, tol, dateMap = (d) => d) => { const a = load(A), b = load(B); let n = 0, bad = 0;
+      a.dates.forEach((d, i) => { const j = b.dates.indexOf(dateMap(d)); if (j < 0) return; const va = a.series[ka]?.data[i], vb = b.series[kb]?.data[j]; if (va == null || vb == null) return; n++; if (!x(va * scale, vb, tol)) { bad++; if (bad <= 3) fail(`credit-deep: ${label}: ${A}.${ka} ${va} vs ${B}.${kb} ${vb} on ${d}`); } });
+      if (!n) fail(`credit-deep: ${label}: no shared dates`); else if (!bad) ok(`credit-deep: ${label} (${n} dates)`); };
+    cross("money stock M3 (report 25) = CAS M3 including the merger", "credit-deep-money-stock-fortnightly", "msm_1_7_m3", "credit-money", "m3_incl_merger", 1e-5, 0.001);
+    cross("BSR-1 all-India credit by state and bank group (report 952) = the bank-group table (942)", "credit-deep-bsr1-state-bankgroup", "all_india__all_india__all_scheduled_commercial_banks__amount", "credit-bank-groups", "all_scheduled_commercial_banks_amount", 1e-5, 0.001);
+    { const g = load("credit-deep-spatial-glance"), s = load("credit-states"); let n = 0, bad = 0;
+      g.dates.forEach((d, i) => { const j = s.dates.indexOf(d), k = s.dates.indexOf(`${+d.slice(0, 4) - 1}${d.slice(4)}`); const v = g.series.x__rpt_1_3__credit_growth?.data[i]; if (j < 0 || k < 0 || v == null) return; n++;
+        const ours = (s.series.all_india_credit.data[j] / s.series.all_india_credit.data[k] - 1) * 100; if (Math.abs(ours - v) > 0.05) { bad++; fail(`credit-deep: statement 1 credit growth ${v} vs statement 3A ${ours.toFixed(3)} on ${d}`); } });
+      if (!n) fail("credit-deep: statement 1 vs 3A: no shared dates"); else if (!bad) ok(`credit-deep: spatial statement 1's credit growth = statement 3A's levels (${n} quarters)`); }
+    { const d = load("credit-deep-bsr1a-district-gender"), S = d.series, p = "all_india__all_india__all_india__";
+      const ok2 = ["accounts", "amount"].every((m) => Math.abs(S[p + "men_" + m].data[0] + S[p + "women_" + m].data[0] - S[p + m].data[0]) <= Math.max(1, S[p + m].data[0] * 1e-6));
+      if (ok2) ok("credit-deep: BSR-1 table 1.14, men + women = all individuals (all India)"); else fail("credit-deep: BSR-1 table 1.14, men + women != all individuals"); }
+    { const a = load("credit-deep-bsr1a-account-type"), z = load("credit-deep-bsr1a-size"); const sum = (b, re) => Object.entries(b.series).filter(([k]) => re.test(k)).reduce((t, [, s]) => t + (s.data.at(-1) ?? 0), 0);
+      const lhs = sum(a, /__accounts$/) - sum(a, /__big_accounts$/), rhs = sum(z, /^(a|b)_.*__accounts$/);
+      if (lhs === rhs) ok(`credit-deep: BSR-1 annual, all accounts less those above ₹2 lakh = the two smallest size bands (${rhs})`); else fail(`credit-deep: BSR-1 annual accounts identity ${lhs} != ${rhs}`); }
+  }
   // values checked by hand against RBI publications (docs/status/credit.md): they must not move
   // unless the RBI revises them, in which case re-check and update both places
   const HAND = [
-    ["credit-npa", "all_gnpa_ratio", "2018-03-01", 11.2, 0.05],
+    ["credit-npa", "all_gnpa_ratio", "2018-03-01", 11.2, 0.05],        // RBI Trend and Progress 2017-18: 11.2%
+    ["credit-npa", "all_gnpa_ratio", "2025-03-01", 2.22, 0.05],        // RBI Trend and Progress 2024-25: 2.2%
+    ["credit-scb", "deposits", "2026-09-15", 276.231, 0.001],          // RBI statement of position, 15 Sep 2026: ₹2,76,23,065.76 crore
+    ["credit-scb-ratios", "deposits_growth", "2026-09-15", 17.31, 0.05], // RBI WSS, 15 Sep 2026: 17.3%
+    ["credit-growth", "non_food_credit", "2026-08-01", 18.77, 0.05],   // RBI sectoral credit release, 30 Sep 2026: 18.8%
+    ["credit-growth", "agriculture", "2026-08-01", 17.22, 0.05],       // same release: 17.2%
+    ["credit-growth", "industry", "2026-08-01", 18.23, 0.05],          // same release: 18.2%
+    ["credit-frauds", "total_cases", "2025-03-01", 23879, 0.5],        // RBI Trend and Progress 2024-25: 23,879 frauds
+    ["credit-frauds", "total_amount", "2025-03-01", 34771, 1],         // same: ₹34,771 crore
   ];
   for (const [sl, k, d, v, tol] of HAND) { const b = load(sl), i = b.dates.indexOf(d), got = i >= 0 ? b.series[k]?.data[i] : null; if (!near(got, v, tol)) fail(`credit hand-check: ${sl}.${k} at ${d} is ${got}, checked by hand as ${v}`); else ok(`credit hand-check: ${sl}.${k} at ${d} = ${got}`); }
 }
