@@ -40,6 +40,10 @@ import { buildOwidClimate } from "./lib/products/owid-climate.mjs";   // climate
 import { buildCckp } from "./lib/products/cckp.mjs";                  // climate
 import { buildIlostat } from "./lib/products/ilostat.mjs";   // ilo
 import { buildRbiRates } from "./lib/products/rbirates.mjs";
+// external (lb/external): the External account guide on RBI DBIE
+import { buildExternalBop } from "./lib/products/external-bop.mjs";
+import { buildExternalFlows } from "./lib/products/external-flows.mjs";
+import { buildExternalReer } from "./lib/products/external-reer.mjs";
 import { writeSeries } from "./lib/util.mjs";
 // bis family session: BIS, RBI house price index, NHB RESIDEX
 import { buildBis } from "./lib/products/bis.mjs";
@@ -63,6 +67,8 @@ Object.assign(REGISTRY, { "services-isp": buildServicesIsp, "services-nas": buil
 // states family session
 Object.assign(REGISTRY, { states: buildStates });
 Object.assign(REGISTRY, { "wdi-india": buildWdiIndia, pip: buildPip, wpp: buildWpp });   // worldbank family
+// external (lb/external)
+Object.assign(REGISTRY, { "external-bop": buildExternalBop, "external-flows": buildExternalFlows, "external-reer": buildExternalReer });
 
 // One product's failure must not starve the rest: collect, continue, and
 // exit non-zero at the end so CI still fails on the summary.

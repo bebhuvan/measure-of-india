@@ -447,3 +447,35 @@ rates:
       not what savers expected. Do not say anything about how the members voted. Must
       contain a plain "we do not know" (for example: how quickly banks will pass the change on,
       or where inflation goes next).
+
+# ---- external (lb/external, 2026-10): the quarter's balance of payments, RBI DBIE ----
+external:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [cross.bn.current_account.latest, cross.bn.goods.latest, cross.bn.services.latest, cross.bn.private_transfers.latest]
+    minSeriesMentioned: 6        # current account, goods, services, remittances, income, and the money that financed it
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
+    brief: >
+      Two short paragraphs on the latest quarter of India's balance of payments. The current
+      account balance first, against the quarter before and the same quarter a year earlier;
+      then what made it: the goods deficit against services (software above all), remittances
+      and income. Then how the gap was financed or not: direct investment, portfolio flows,
+      loans and NRI deposits, and the overall balance that moved the reserves. Cite every dollar
+      figure from cross.bn in US$ billion exactly as written there, never the US$ million series
+      values. Say plainly that this is the first (provisional) estimate.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [cross.reserves.latest_bn, cross.annual.ca_pct_gdp]
+    brief: >
+      The honest limits of one quarter's account. It is a provisional estimate and will be
+      revised, often by billions. One quarter is not a year: give the last full fiscal year's
+      current account as a share of GDP (cross.annual). The reserves have moved since the
+      quarter ended (cross.reserves, latest week and the peak), and reserves move with the
+      dollar value of gold and other currencies, not only with the RBI's trading. Must contain
+      a plain "we do not know" sentence about what the next revision or the current quarter
+      will show.
+# ---- end external ----
+

@@ -180,4 +180,22 @@ export const SERIES_KWS = {
     ["statutory liquidity ratio", "slr"], ["slr", "slr"],
     ["policy rate", "repo"], ["repo rate", "repo"], ["repo", "repo"],
   ],
+  // external (lb/external): the net lines of RBI's overall balance of payments (external-bop)
+  external: [
+    ["current account", "current_account"], ["current-account", "current_account"],
+    ["merchandise", "goods"], ["goods", "goods"], ["trade deficit", "goods"],
+    ["invisibles", "invisibles"],
+    ["software", "software"], ["business services", "business_services"], ["travel", "travel"], ["transport", "transport"],
+    ["services", "services"],
+    ["remittances", "private_transfers"], ["private transfers", "private_transfers"], ["transfers", "transfers"],
+    ["investment income", "investment_income"], ["income", "income"],
+    ["capital account", "capital_account"], ["foreign investment", "foreign_investment"],
+    ["direct investment into india", "fdi_in_india"], ["direct investment abroad", "fdi_abroad"], ["fdi", "fdi"], ["direct investment", "fdi"],
+    ["portfolio investment into india", "portfolio_in_india"], ["portfolio", "portfolio"],
+    ["external assistance", "external_assistance"], ["commercial borrowings", "commercial_borrowings"], ["ecb", "commercial_borrowings"],
+    ["short-term trade credit", "short_term_credit"], ["trade credit", "short_term_credit"], ["loans", "loans"],
+    ["nri deposits", "nri_deposits"], ["non-resident deposits", "nri_deposits"], ["banking capital", "banking_capital"],
+    ["other capital", "other_capital"], ["errors and omissions", "errors_omissions"],
+    ["overall balance", "overall_balance"], ["reserves", "reserves_change"],
+  ],
 };

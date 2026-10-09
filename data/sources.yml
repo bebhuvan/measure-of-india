@@ -522,6 +522,10 @@ dossiers:
       #       (UR by education level + the 15-29 youth cut, PS+SS).
 
   rbi:
+    # 2026-10: the external guide moved to RBI DBIE (dossiers external-bop / external-flows /
+    # external-reer). The bundles DBIE replaces (forex, BoP, ratios, debt, NRI, invisibles, rates,
+    # premia, intervention, turnover) are retired: rbi.mjs no longer writes them; their raw dumps
+    # stay. The merchandise-trade bundles below are still written, for the trade guide's cross-check.
     family: mospi
     geo: IND
     product: rbi
@@ -1462,6 +1466,59 @@ dossiers:
       pct: [-30, 60]
 
 
+
+  # ---- external (lb/external, 2026-10): the External account guide on RBI DBIE ----
+  # Three adapters read the owner's Data Bank (read-only), never RBI live. Shared reader and the
+  # family's catalogue generator: scripts/lib/products/external-dbie.mjs. Units as in RBI's own
+  # tables: US$ million, ₹ crore, index points, per cent. Every value is the latest revision DBIE
+  # carries; earlier versions stay in data/raw/external-dbie and in external-bop-vintages.
+  external-bop:
+    # regression floor: BoP is quarterly, about 12 weeks after the quarter ends
+    stale_after: "2026-04"
+    family: databank
+    geo: IND
+    product: external-bop
+    frequency: quarterly
+    frequency_exempt: true      # quarterly BoP and IIP beside annual key components and indicators
+    base: "RBI overall-BoP layout"
+    release_calendar: "quarterly, about 12 weeks after the quarter (last week of Mar, Jun, Sep, Dec)"
+    revision_policy: "Provisional on release; partially revised with the next quarter's release and revised again later. DBIE keeps the first and the latest version of recent quarters; both are kept."
+    source_agency: "Reserve Bank of India, Database on Indian Economy (via the Data Bank)"
+    release_url: https://data.rbi.org.in
+    # Two presentations, never joined: RBI's overall-BoP layout (reports 56/57, quarterly from
+    # 1990-91, rupees from 1949-50; annual key components from 1950-51) and the IMF BPM6 standard
+    # presentation (report 58, and 1502 in rupees, from 2011-12). The international investment
+    # position is BPM5 to September 2021 and BPM6 from December 2017 (report 982): two rulers.
+  external-flows:
+    stale_after: "2026-06"
+    family: databank
+    geo: IND
+    product: external-flows
+    frequency: monthly
+    frequency_exempt: true      # weekly reserves, daily rates, monthly flows, quarterly and annual debt
+    base: "as published"
+    release_calendar: "reserves weekly (Friday, for the previous week); rates daily; flows and debt monthly to quarterly"
+    revision_policy: "Weekly reserves and daily rates are final on release. Investment flows, ECBs and LRS are revised in later Bulletins; external debt is provisional for a quarter, then partially revised."
+    source_agency: "Reserve Bank of India, Database on Indian Economy (via the Data Bank)"
+    release_url: https://data.rbi.org.in
+    # Classification breaks kept as separate bundles, never joined: foreign investment inflows'
+    # old (to March 2011) and new (from April 2011) monthly formats; ECB registrations under the
+    # earlier classification and under the framework revised in January 2025. The quarterly
+    # external debt in US$ comes from DBIE's Data Query element EXT_DBT_RT_RN because report 660's
+    # dollar column is missing from the Data Bank mirror (seen 2026-10-08).
+  external-reer:
+    stale_after: "2026-06"
+    family: databank
+    geo: IND
+    product: external-reer
+    frequency: monthly
+    base: "2015-16=100"
+    release_calendar: "monthly, in the RBI Bulletin, about six weeks after the month"
+    revision_policy: "The latest months are provisional; the base year changes every few years (one bundle per base, never joined)."
+    source_agency: "Reserve Bank of India, Database on Indian Economy (via the Data Bank)"
+    release_url: https://data.rbi.org.in
+  # ---- end external ----
+
 # ---------------------------------------------------------------------------
 # SEAMS: the base-year registry (2026-10). One entry per base (or
 # classification) for every product whose instrument has changed ruler.
@@ -1794,3 +1851,50 @@ seams:
       from: "2000-01"
       to: null
       bundles: [ilo-ssi]
+  # ---- external (lb/external, 2026-10) ----
+  external-bop:
+    # presentations, not price bases: RBI's overall-BoP layout and the IMF's BPM6 (and BPM5 for
+    # the old investment position). Each is published on its own; none is converted to another.
+    - base: "RBI overall-BoP layout"
+      from: "1948-04"
+      to: null
+      bundles: [external-bop, external-bop-gross, external-bop-lines, external-bop-vintages, external-bop-inr-lines, external-bop-annual, external-bop-annual-head, external-bop-annual-inr, external-bop-annual-overall, external-bop-annual-overall-inr, external-bop-indicators, external-invisibles-annual, external-invisibles-annual-inr]
+    - base: "BPM5"
+      from: "2006-01"
+      to: "2021-07"
+      bundles: [external-iip-bpm5, external-iip-bpm5-inr]
+    - base: "BPM6"
+      from: "2010-04"
+      to: null
+      bundles: [external-bop6-lines, external-bop6-vintages, external-bop6-inr-lines, external-bop6-annual-lines, external-bop6-annual-lines-inr, external-invisibles, external-invisibles-people, external-iip, external-iip-head, external-iip-inr, external-iip-summary, external-iip-summary-inr]
+  external-reer:
+    # broad basket ("36" in DBIE) and 6-currency basket share base years; each base is its own ruler
+    - base: "1985=100"
+      from: "1975-01"
+      to: "1993-03"
+      bundles: [external-reer-1985]
+    - base: "1993-94=100"
+      from: "1993-01"        # the calendar-year 1993 average sits at January
+      to: "2011-01"
+      bundles: [external-reer-1993, external-reer6-1993, external-reer-1993-calendar, external-reer-1993-fiscal]
+    - base: "2003-04=100"
+      from: "1993-04"
+      to: "2006-08"
+      bundles: [external-reer6-2003]
+    - base: "2004-05=100"
+      from: "2003-02"
+      to: "2021-12"
+      bundles: [external-reer-2004, external-reer6-2004, external-reer-2004-calendar, external-reer-2004-fiscal]
+    - base: "2015-16=100"
+      from: "2004-01"        # the calendar-year 2004 average sits at January
+      to: null
+      bundles: [external-reer-2015, external-reer6-2015, external-reer-2015-calendar, external-reer-2015-fiscal, external-reer6-2015-calendar, external-reer6-2015-fiscal]
+    - base: "2018-19=100"
+      from: "2004-04"
+      to: "2024-03"
+      bundles: [external-reer6-2018]
+    - base: "2022-23=100"
+      from: "2015-04"
+      to: null
+      bundles: [external-reer6-2022]
+  # ---- end external ----

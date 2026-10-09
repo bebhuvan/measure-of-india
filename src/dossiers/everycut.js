@@ -175,6 +175,13 @@ export const UNITS = {
   times: { kind: "diff", fmt: (v) => v.toFixed(2) + "×", note: "bids per rupee offered" },
   vote: { kind: "diff", fmt: (v) => (v === 1 ? "with" : v === 0 ? "against" : String(v)), note: "1 = voted with the decision, 0 = against" },
   inr_per_100: { kind: "diff", fmt: (v) => "₹" + v.toFixed(4), note: "per ₹100 of face value" },
+  // ---- external (lb/external): RBI DBIE external-sector units ----
+  usd_million: { kind: "pct", fmt: (v) => (v < 0 ? MINUS : "") + "$" + grp(Math.abs(v) / 1e3, 1) + " bn", note: "published in US$ million" },
+  sdr_million: { kind: "pct", fmt: (v) => "SDR " + grp(v / 1e3, 1) + " bn", note: "published in SDR million" },
+  inr_per_unit: { kind: "pct", fmt: (v) => "₹" + (Math.abs(v) >= 1 ? v.toFixed(2) : v.toPrecision(3)), note: "per unit of the currency named" },
+  paise: { kind: "diff", fmt: (v) => v.toFixed(1) + " paise", note: "per US$" },
+  tonnes: { kind: "pct", fmt: (v) => grp(v, 1) + " tonnes" },
+  // ---- end external ----
 };
 
 // series.unit, then what the series name says, then the bundle's meta.unit: a bundle-level

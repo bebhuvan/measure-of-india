@@ -2,9 +2,23 @@
 import Base from "../../layouts/Base.astro";
 import GuideData from "../../components/GuideData.astro";
 import EveryCut from "../../components/EveryCut.astro";
+import Prose from "../../components/Prose.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
-import { dateStamp } from "../../dossiers/display.js";
+import { dateStamp, bundleOf } from "../../dossiers/display.js";
 const D = bySlug["external"];
+// the periods this page names, read from the bundles at build time (never typed)
+const MS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MF = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const last = (slug) => bundleOf(slug).dates.at(-1);
+const qOf = (iso) => { const m = +iso.slice(5, 7) - 1; return `${MS[m]} to ${MS[m + 2]} ${iso.slice(0, 4)}`; };
+const monOf = (iso) => `${MF[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}`;
+const dayOf = (iso) => `${+iso.slice(8, 10)} ${MF[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}`;
+const fyOf = (iso) => { const y = +iso.slice(0, 4); return `${y}-${String((y + 1) % 100).padStart(2, "0")}`; };
+const Q = { bop: qOf(last("external-bop")), ppl: qOf(last("external-invisibles-people")), iip: qOf(last("external-iip-head")), sect: qOf(last("external-debt-sector-inr")) };
+const M = { rupee: monOf(last("external-rupee")), reer: monOf(last("external-reer-2015")), int: monOf(last("external-intervention")), lrs: monOf(last("external-lrs")), fdi: monOf(last("external-fdi")), fpi: monOf(last("external-fpi")), resm: monOf(last("external-reserves-monthly")) };
+const WK = dayOf(last("external-reserves-weekly"));
+const FY = { ind: fyOf(last("external-bop-indicators")), ann: fyOf(last("external-bop-annual-head")) };
+const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
 ---
 <Base
   title="The External Account · India Atlas"
@@ -22,481 +36,662 @@ const D = bySlug["external"];
     <div class="kicker">{kicker(D)}</div>
     <div class="hero-grid">
       <h1 set:html={D.headline} />
-      <p class="lede">Every nation keeps a ledger with the rest of the world: goods out, goods in, money flowing through. India's has a permanent gap on one side, a permanent cushion on the other, and a reserve pile in the middle that exists for the day the two stop balancing.</p>
+      <p class="lede">Every rupee India earns from the world and every rupee it pays out is written down twice, once for what crossed the border and once for how it was paid. This guide reads that ledger: what the country sells and buys, who sends money in and who takes it out, what is kept in reserve, and what is owed.</p>
     </div>
     <div class="meta">
-      <span>Source <b>Reserve Bank of India</b></span>
-      <span>Frequency <b>Monthly, quarterly, annual</b></span>
-      <span>Units <b>US$ millions, ₹ per US$</b></span>
-      <span>Coverage <b>All-India external account</b></span>
-      <span>Latest data <b>June 2025</b></span>
-      <span>Note <b>Source feed lags: see provenance</b></span>
+      <span>Source <b>Reserve Bank of India, DBIE</b></span>
+      <span>Balance of payments <b>Quarterly, to <span id="m-latest">–</span></b></span>
+      <span>Reserves <b>Weekly, to <span id="m-week">–</span></b></span>
+      <span>Rupee, flows <b>Monthly</b></span>
+      <span>Units <b>US$ billion unless named</b></span>
+      <span>Presentation <b>RBI's overall balance of payments</b></span>
     </div>
     <div class="numbers">
-      <div class="num"><div class="l">Forex reserves, US$ bn</div><div class="v acc" id="n-res">–</div><div class="d" id="d-res">–</div><div class="nspark" id="nspark-res"></div></div>
-      <div class="num"><div class="l">Trade balance, US$ bn / mo</div><div class="v" id="n-bal">–</div><div class="d" id="d-bal">–</div></div>
-      <div class="num"><div class="l">USD / INR, monthly avg</div><div class="v" id="n-fx">–</div><div class="d" id="d-fx">–</div></div>
-      <div class="num"><div class="l">CAD, % of GDP, FY25</div><div class="v" id="n-cad">–</div><div class="d" id="d-cad">–</div></div>
+      <div class="num"><div class="l">Current account, the latest quarter</div><div class="v acc" id="n-ca">–</div><div class="d" id="d-ca">–</div><div class="nspark" id="nspark-ca"></div></div>
+      <div class="num"><div class="l">Foreign exchange reserves, latest week</div><div class="v" id="n-res">–</div><div class="d" id="d-res">–</div></div>
+      <div class="num"><div class="l">Rupees per US dollar, monthly average</div><div class="v" id="n-inr">–</div><div class="d" id="d-inr">–</div></div>
+      <div class="num"><div class="l">Real effective exchange rate, 40 currencies</div><div class="v" id="n-reer">–</div><div class="d" id="d-reer">–</div></div>
     </div>
   </div>
 
-  <!-- § 01 current reading -->
+  <!-- § 01 current reading: data inputs external-bop (all net lines), external-bop-gross, external-reserves-weekly, external-reer-2015; prose: generated slots -->
   <section>
-    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">Data through June 2025</span></div>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
     <div class="reading-top">
-      <div><span class="rk">The buffer</span><div class="big" id="rb-big">–</div></div>
-      <p class="rt-cap">Foreign exchange reserves, June 2025: within sight of the all-time high, and enough to pay for <b id="rb-cover">–</b> months of imports.</p>
-      <div class="rt-side"><span class="rk">A year earlier</span><div class="rt-side-v" id="rb-prev">–</div></div>
+      <div><span class="rk">Current account</span><div class="big" id="rb-ca">–</div></div>
+      <p class="rt-cap" id="rb-cap">–</p>
+      <div class="rt-side"><span class="rk">Reserves, latest week</span><div class="rt-side-v" id="rb-res">–</div></div>
     </div>
     <div class="reading-cols">
       <div class="reading-col">
-        <span class="mk">What the print says</span>
-        <p>India closed the 2024–25 financial year with its external books in rare order: the current account deficit came in at <b id="cr-cad">–</b> of GDP: effectively balanced, and the final quarter printed a rare <em>surplus</em> of $13.4 billion. Reserves ended June at <b id="cr-res">–</b>, up $46 billion on the year. NRI deposits kept arriving, <b id="cr-nri">–</b> outstanding by June.</p>
-        <p>The monthly trade gap: <b id="cr-bal">–</b> in June: looks alarming only until you remember it is the one durable feature of the account: goods out <b id="cr-exp">–</b>, goods in <b id="cr-imp">–</b>, every month, financed by services, remittances and capital flows that this table does not itemise.</p>
+        <span class="mk">What the quarter says</span>
+        <Prose slot="external.current-reading.what-the-print-says" />
       </div>
       <div class="reading-col now">
         <span class="mk">What it does not say</span>
-        <p>It does not say the rupee is safe. The exchange rate spent the year sliding from 83.5 to <b id="cr-fx">–</b> per dollar: a managed drift, smoothed by the central bank selling from the very reserves we just praised. The buffer and the exchange rate are the same story told from two ends.</p>
-        <p>And it does not say anything about today. The source trail for this guide ends in mid-2025; we show what was published, date it plainly, and refuse to extrapolate.</p>
+        <Prose slot="external.current-reading.what-it-does-not-say" />
       </div>
     </div>
   </section>
 
-  <!-- § 02 register -->
+  <!-- § 02 living within its means: external-bop current_account, external-bop-indicators cad_to_gdp; evergreen + governed As of -->
   <section>
-    <div class="sec-head"><span class="no">02</span><h2>The register of series</h2><span class="line"></span><span class="unit">Latest, year ago</span></div>
-    <div class="break ledger">
-      <table>
-        <thead>
-          <tr><th>Series</th><th>Latest</th><th>vs prev.</th><th>Year ago</th><th class="spark">History</th></tr>
-        </thead>
-        <tbody id="ledger-body"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- § 03 the identity -->
-  <section>
-    <div class="sec-head"><span class="no">03</span><h2>One identity, two ledgers</h2><span class="line"></span><span class="unit">US$ bn, quarterly, net</span></div>
-    <div class="break">
-      <figure id="cb-bop" style="margin:0">
-        <div class="plate-head">
-          <div class="t">
-            <h3>The current account leaks; the capital account plugs it</h3>
-            <div class="sub">Balance of payments, net transactions, quarterly, 2016 to 2025</div>
-          </div>
-          <div class="plate-val"><div class="v" id="pv-bop">–</div><div class="c">Q1 FY26, current account, US$ bn</div></div>
-        </div>
-        <div class="frame">
-          <div class="legend" id="legend-bop">
-            <button class="chip" data-key="current_account"><i style="background:#2E4BD8"></i>Current account</button>
-            <button class="chip" data-key="capital_account"><i style="background:#5F6675"></i>Capital account</button>
-            <button class="chip" data-key="overall"><i style="background:#878D99"></i>Overall balance</button>
-          </div>
-          <div class="plotzone" id="plot-bop"><div class="cb-tip"></div></div>
-          <div class="plotfoot">
-            <span class="src">Source: RBI, fiscal quarters (Q1 = Apr–Jun), net transactions; the overall balance is, by construction, what flows into or out of reserves</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rbi.org.in" target="_blank" rel="noopener">Source ↗</a></span>
-          </div>
-        </div>
-        <div class="explain">
-          <div class="ev">
-            <span class="mk">How to read this</span>
-            <p>These lines are not independent. A current account in deficit, India buys more from the world than it sells, must be paid for by a capital account in surplus: foreign investment, loans, NRI deposits. The overall balance is the residual, and it has nowhere to go but the reserve pile. When you see the grey line spike, reserves grew by that much; the chart of the next plate is this one, cumulated.</p>
-          </div>
-          <div class="now">
-            <span class="mk">FY 2024–25</span>
-            <p>The year ended with a statistical rarity: a current account <em>surplus</em> in the final quarter, only the second in two decades of this series. It flattered the annual tally to nearly zero. One quarter is not a regime: the first quarter of the new year was back in deficit, and the durable structure of the account has not changed.</p>
-          </div>
-        </div>
-      </figure>
-    </div>
-  </section>
-
-  <!-- § 04 plate 1 -->
-  <section>
-    <div class="sec-head"><span class="no">04</span><h2>Plate 1: the goods pipeline</h2><span class="line"></span><span class="unit">US$ bn, monthly</span></div>
-    <div class="break">
-      <figure id="cb-main" style="margin:0">
-        <div class="plate-head">
-          <div class="t">
-            <h3>Exports, imports, and the gap that never closes</h3>
-            <div class="sub">Merchandise trade, US$ billions per month, 2016 to 2025</div>
-          </div>
-          <div class="plate-val"><div class="v" id="pv-main">–</div><div class="c">Jun 2025, trade balance, US$ bn</div></div>
-        </div>
-        <div class="frame">
-          <div class="legend" id="legend-main">
-            <button class="chip" data-key="exports"><i style="background:#5F6675"></i>Exports</button>
-            <button class="chip" data-key="imports"><i style="background:#A3A9B4"></i>Imports</button>
-            <button class="chip" data-key="balance"><i style="background:#2E4BD8"></i>Balance</button>
-          </div>
-          <div class="plotzone" id="plot-main"><div class="cb-tip"></div></div>
-          <div class="plotfoot">
-            <span class="src">Source: RBI, US$ millions, monthly, balance computed as exports − imports and cross-checked against the published figure (within $5 mn across 35 years)</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rbi.org.in" target="_blank" rel="noopener">Source ↗</a></span>
-          </div>
-        </div>
-        <div class="explain">
-          <div class="ev">
-            <span class="mk">How to read this</span>
-            <p>Two grey lines climb together for a decade, exports and imports rising with the economy, while the blue line, their difference, oscillates in a band that never visits zero for long. India is a structural net importer of goods. The COVID collapse and rebound, the 2022 import bill swollen by oil, the 2024 export stall: every episode arrives here first, before it reaches the GDP tables.</p>
-          </div>
-          <div class="now">
-            <span class="mk">As of June 2025</span>
-            <p>The monthly gap narrowed to <b id="ex-bal">–</b> from the record <b id="ex-balpk">–</b> of August 2024. Both directions of the pipeline are near their highs; the deficit lives in the wedge between them, and the wedge is mostly oil and gold.</p>
-          </div>
-        </div>
-      </figure>
-    </div>
-  </section>
-
-  <!-- § 04b current-account decomposition -->
-  <section>
-    <div class="sec-head"><span class="no">04b</span><h2>What offsets the goods deficit</h2><span class="line"></span><span class="unit">US$ bn, fiscal years, net</span></div>
+    <div class="sec-head"><span class="no">02</span><h2>Is India living within its means?</h2><span class="line"></span><span class="unit">The current account, quarterly and as a share of GDP</span></div>
     <div class="break">
       <figure id="cb-ca" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>Services and remittances against the goods gap</h3>
-            <div class="sub">Current-account decomposition: goods balance (summed from monthly trade) vs services surplus, income deficit and remittances, fiscal years, 1990-91 to 2024-25, dashed: implied current account (goods + invisibles)</div>
+            <h3>Most quarters India pays the world more than it earns from it</h3>
+            <div class="sub">Current account balance, US$ billion a quarter, fiscal quarters since April 2010. Below zero is a deficit.</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-ca">–</div><div class="c">FY25, implied current account</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-ca">–</div><div class="c">{Q.bop}</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-ca">
-            <button class="chip" data-key="goods"><i style="background:#2E4BD8"></i>Goods balance</button>
-            <button class="chip" data-key="services"><i style="background:#5F6675"></i>Services, net</button>
-            <button class="chip" data-key="transfers"><i style="background:#878D99"></i>Remittances, net</button>
-            <button class="chip" data-key="income"><i style="background:#A3A9B4"></i>Income, net</button>
-            <button class="chip" data-key="ca"><i class="dash" style="border-color:#C9CED6"></i>Current account, derived</button>
-          </div>
           <div class="plotzone" id="plot-ca"><div class="cb-tip"></div></div>
           <div class="plotfoot">
-            <span class="src">Source: RBI, goods balance summed by India Atlas from monthly merchandise trade (exports − imports); services, income and remittances from the annual invisibles table, the API serves only NET services/income/transfers, not gross credits and debits, disclosed, current account = goods + total invisibles (derived)</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rbi.org.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src">Source: RBI, India's overall balance of payments (DBIE report 56), net, latest revision of each quarter.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>The goods pipeline of Plate 1 runs a widening deficit: the blue line falling below zero. Two invisible flows offset most of it. Services, software, business processing, the IT export engine, climb steadily into surplus. Remittances from Indians abroad hold near a hundred billion dollars a year. Income runs negative: foreign capital invested in India earns more than Indian capital earns abroad, a standing toll the economy pays for being a net debtor. The dashed line, their sum, is the current account: usually a small deficit, because invisibles cover most but not all of the goods gap.</p>
-            <p>Read the distance between the blue goods line and the dark services line. When the goods deficit widens faster than services grow, as in 2022-23, when oil surged, the current account deteriorates. When services accelerate or oil cools, the gap narrows. The structure is durable; the year-to-year swings are mostly oil.</p>
-            <p>A note on what the API serves: every figure here for services, income and remittances is a <b>net balance</b>, credits minus debits, not gross exports or imports. The eSankhyiki API does not serve services receipts or payments separately. The RBI publishes monthly gross estimates of services trade on its website; they are not in this data feed. So the services line shows the surplus India earns from services, not the total volume of services exported.</p>
+            <p>The current account adds up everything India earns from the world in a quarter (exports of goods and services, income on Indian money invested abroad, money sent home) and takes away everything it pays out. A deficit means the country spent more abroad than it earned, and paid the difference with foreign money that came in: investment, loans, or deposits by Indians living abroad.</p>
+            <p>A deficit is not a loss, any more than a family taking a home loan is losing money. What matters is its size against the economy, and whether the money that fills it stays.</p>
           </div>
           <div class="now">
-            <span class="mk">FY 2024–25</span>
-            <p>The goods deficit reached <b id="ex-ca-goods">–</b>, against a services surplus of <b id="ex-ca-svc">–</b> and remittances of <b id="ex-ca-trn">–</b>. Income paid out: <b id="ex-ca-inc">–</b>. The implied current account: <b id="ex-ca-ca">–</b>. Services now offset <b id="ex-ca-pct">–</b> of the goods deficit: up from barely a third two decades ago, as the software industry grew into the country's largest invisible export.</p>
+            <span class="mk">As of {Q.bop}</span>
+            <p>The latest quarter, <span id="ex-ca-q">–</span>, shows a balance of <b id="ex-ca-latest">–</b>. The deepest deficit in this run was <b id="ex-ca-trough">–</b>. Only <b id="ex-ca-surplus">–</b> quarters since 2010 ended in surplus: four January to March quarters, when exports run high before the fiscal year closes, and three around the 2020 and 2021 lockdowns, when imports collapsed.</p>
           </div>
         </div>
       </figure>
     </div>
-  </section>
-
-  <!-- § 05 partners -->
-  <section>
-    <div class="sec-head"><span class="no">05</span><h2>Who India trades with</h2><span class="line"></span><span class="unit">US$ bn, FY 2024–25</span></div>
-    <div class="break">
-      <figure id="cb-part" style="margin:0">
-        <div class="plate-head">
-          <div class="t">
-            <h3>The surplus lives in America; the deficit lives in China</h3>
-            <div class="sub">Merchandise trade with the sixteen largest partners, US$ billions, FY 2024–25, dark dot exports, pale dot imports</div>
-          </div>
-          <div class="plate-val"><div class="v" id="pv-part">–</div><div class="c">FY25, goods balance with China, US$ bn</div></div>
-        </div>
-        <div class="frame">
-          <div class="plotzone" id="plot-part"></div>
-          <div class="plotfoot">
-            <span class="src">Source: RBI, Direction of Foreign Trade, US$ millions, annual, bilateral balances computed as exports − imports, partner groups sum to the published total within $0.1 mn, the source feed labels the United Kingdom's rows "USA"; the pair is split by size and verified against the RBI's published bilateral figures, see provenance</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rbi.org.in" target="_blank" rel="noopener">Source ↗</a></span>
-          </div>
-        </div>
-        <div class="explain">
-          <div class="ev">
-            <span class="mk">How to read this</span>
-            <p>Each row is a country. The dark dot is what India sold it, the pale dot what India bought, and the bar between them is the bilateral gap: blue where the story is. The rows sort by the size of the relationship, and the top two are mirror images: the United States buys far more than it sells to India; China sells far more than it buys. Neither gap is an accident of one year: one is pharmaceuticals, gems and machinery sold to the world's largest consumer, the other is electronics, machinery and chemicals bought from the world's largest factory. A bilateral balance is not a scorecard. The country runs a deficit with its suppliers and a surplus with its customers, and only the total at the bottom of Plate 1 has to be financed.</p>
-          </div>
-          <div class="now">
-            <span class="mk">FY 2024–25</span>
-            <p>India sold <b id="ex-pux">–</b> of goods to the United States and bought <b id="ex-pum">–</b> back: a surplus of <b id="ex-pus">–</b>, the largest with any partner. China is the mirror: <b id="ex-pcx">–</b> sold against <b id="ex-pcm">–</b> bought, a gap of <b id="ex-pcd">–</b>: wider than the deficits with Russia and the UAE combined. And the newest line in the ledger is Russian crude: <b id="ex-prm">–</b> of imports, up from <b id="ex-pr21">–</b> as recently as FY 2021–22.</p>
-          </div>
-        </div>
-      </figure>
-    </div>
-  </section>
-
-  <!-- § 06 commodities -->
-  <section>
-    <div class="sec-head"><span class="no">06</span><h2>What India sells and buys</h2><span class="line"></span><span class="unit">US$ bn, annual, fiscal years</span></div>
-    <div class="break">
-      <figure id="cb-comm" style="margin:0">
-        <div class="plate-head">
-          <div class="t">
-            <h3>Machines out, crude in: and electronics climbing both sides</h3>
-            <div class="sub">Exports and imports of major commodities, US$ billions per fiscal year, 2009–10 to 2024–25, top ten of each, every panel on its own scale</div>
-          </div>
-          <div class="plate-val"><div class="v" id="pv-comm">–</div><div class="c">FY25, engineering-goods exports, US$ bn</div></div>
-        </div>
-        <div class="frame">
-          <div style="font-family:var(--sans);font-size:.82rem;color:#878D99;padding-top:26px">What India sells: ten of 31 groups, sorted by FY25</div>
-          <div class="plotzone" id="grid-exp"></div>
-          <div style="font-family:var(--sans);font-size:.82rem;color:#878D99;padding-top:34px">What India buys: ten of 31 groups, sorted by FY25</div>
-          <div class="plotzone" id="grid-imp"></div>
-          <div class="plotfoot">
-            <span class="src">Source: RBI, exports and imports of major commodities, US$ millions, annual, 31 published groups each way; the ten largest of FY 2024–25 are drawn and all 62 series ride in the CSV, each way, the groups sum to the published total within $1 mn, accented panels are the top three of each direction</span>
-            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rbi.org.in" target="_blank" rel="noopener">Source ↗</a></span>
-          </div>
-        </div>
-        <div class="explain">
-          <div class="ev">
-            <span class="mk">How to read this</span>
-            <p>Every panel is sixteen years of one commodity group, on its own scale: read the shapes, not the heights. The export side answers a common misreading: India's largest export is not software (that lives in the invisibles plate) and not gems: it is engineering goods, and it has been for the whole period. The import side is dominated by the two bills the country cannot yet refuse: crude oil and electronics. When one panel is flat for fifteen years while its neighbours triple, that flatness is the story.</p>
-          </div>
-          <div class="now">
-            <span class="mk">FY 2024–25</span>
-            <p>Engineering goods earned <b id="ex-c1">–</b>, petroleum products <b id="ex-cp">–</b>, electronics <b id="ex-ce">–</b>: the last up from <b id="ex-ce0">–</b> in 2009–10, the fastest climb on the board. Gems &amp; jewellery, the number-two export of 2009–10, is where it started: <b id="ex-cg">–</b> now against <b id="ex-cg0">–</b> then. On the other side the crude bill was <b id="ex-cm1">–</b>, electronics imports <b id="ex-cm2">–</b>, the one line that is a top-three story in both directions, and gold <b id="ex-cm3">–</b>.</p>
-          </div>
-        </div>
-      </figure>
-    </div>
-  </section>
-
-  <!-- § 07 the measure -->
-  <section>
-    <div class="sec-head"><span class="no">07</span><h2>What this measures</h2><span class="line"></span></div>
-    <div class="wm-grid">
-      <div>
-        <p>The balance of payments is double-entry bookkeeping for a country. Every transaction with the outside world, a shipment of refined petrol, a software invoice, a remittance from Dubai, a foreign fund buying bonds, is recorded twice, once as a credit and once as a debit. It cannot be "unbalanced"; it can only be financed. The interesting question is never the total but the mix: earned through exports, or borrowed through capital flows?</p>
-        <p>Reserves are the central bank's war chest: foreign currency assets held against the day the flows reverse. They are not savings in the household sense, much of the pile is the counterpart of capital that came in and can leave, and spending them is defending the currency, not buying infrastructure.</p>
-        <p>The exchange rate is where it all clears. A managed float means the RBI sells dollars into weakness and buys into strength, trading reserves for calm. The price of the rupee and the size of the pile are two readings of one instrument.</p>
-      </div>
-      <div class="wm-rail">
-        <aside class="margin-note">
-          <span class="mk">Margin note, i</span>
-          <b>The trade deficit is not the current account.</b> Goods are one line; services and remittances routinely halve the gap before capital flows are even counted.
-        </aside>
-        <aside class="margin-note">
-          <span class="mk">Margin note, ii</span>
-          <b>Reserves are borrowed, partly.</b> A pile built on capital inflows is insurance with a counterparty. Import cover, months of imports the pile can pay for, is the more honest yardstick. </aside>
-        <aside class="margin-note">
-          <span class="mk">Margin note, iii</span>
-          <b>Dated honesty.</b> This guide's source feed lags; figures are shown with their true dates, never projected forward.
-        </aside>
-      </div>
-    </div>
-  </section>
-
-  <!-- § 08 component plates -->
-  <section>
-    <div class="sec-head"><span class="no">08</span><h2>The parts, one plate each</h2><span class="line"></span><span class="unit">as published</span></div>
 
     <div class="break">
-      <figure id="cb-inv" style="margin:0">
+      <figure id="cb-cagdp" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>The invisible surplus: what pays for the goods gap</h3>
-            <div class="sub">Net invisibles by category, US$ billions per fiscal year, 1990–91 to 2024–25</div>
+            <h3>Measured against the economy, today's deficit is small</h3>
+            <div class="sub">Current account balance as a share of GDP, fiscal years since 1970-71. The dotted line marks a deficit of 3% of GDP.</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-inv">–</div><div class="c">FY 2024–25, remittances, net, US$ bn</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-cagdp">–</div><div class="c">{FY.ind}</div></div>
         </div>
         <div class="frame">
-          <div class="legend" id="legend-inv">
-            <button class="chip" data-key="private_transfers"><i style="background:#2E4BD8"></i>Remittances</button>
-            <button class="chip" data-key="services"><i style="background:#878D99"></i>Services</button>
-            <button class="chip" data-key="income"><i style="background:#C9CED6"></i>Income</button>
-            <button class="chip" data-key="invisibles"><i style="background:#5F6675"></i>Total invisibles</button>
-          </div>
-          <div class="plotzone" id="plot-inv"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-cagdp"><div class="cb-tip"></div></div>
           <div class="plotfoot">
-            <span class="src">Source: RBI, US$ millions, annual, net, fiscal years plotted at April of the first year, the table runs from 1950-51, but before 1990 every category sits within ±$5 bn, flat at this scale, so the plate starts at 1990-91; the one disclosed gap (income, 1955-56) falls in the omitted years</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rbi.org.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src">Source: RBI, balance of payments indicators (DBIE report 427), as published.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Invisibles are everything the goods pipeline of Plate 1 cannot see: services sold abroad, money workers send home, interest and dividends crossing the border. The blue line is remittances: India has been the world's largest recipient for over a decade, and the flow barely flinched in 2008 or 2020. Services climb with the software industry. Income runs negative year after year, and that is the quiet story here: foreign capital in India earns more than Indian capital earns abroad, so the account pays a standing toll. What the first two lines earn is what finances the goods deficit: most of it, most years.</p>
+            <p>Dividing by GDP lets one year be compared with another fifty years apart. A deficit beyond about 3% of GDP is often treated as hard to finance for long; it is a rule of thumb, not a law. The years that crossed it were years of trouble: the run-up to the 1991 payments crisis, and 2011-12 and 2012-13, when the rupee fell sharply.</p>
           </div>
           <div class="now">
-            <span class="mk">FY 2024–25</span>
-            <p>Remittances brought in <b id="ex-rem">–</b> net; services added <b id="ex-svc">–</b>. Income drained <b id="ex-inc">–</b>. The sum: <b id="ex-inv">–</b> of invisible surplus: covered nearly all of the year's <b id="ex-gd">–</b> goods deficit. The current account came in close to balance not because trade improved, but because the invisible side kept growing.</p>
+            <span class="mk">As of {FY.ind}</span>
+            <p>The ratio for <span id="ex-cagdp-fy">–</span> is <b id="ex-cagdp">–</b>. The worst year on record is <b id="ex-cagdp-trough">–</b>; the deficit has gone beyond 3% of GDP in <b id="ex-cagdp-n3">–</b> fiscal years since 1970-71.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 03 how to read this: evergreen, human-written -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="prose">
+      <p>The balance of payments is double-entry bookkeeping for a country. Every transaction between someone in India and someone abroad is recorded twice. When a software firm in Bengaluru bills a bank in London, the export enters the current account and the dollars it earns enter the financial side. Because every entry has a matching entry, the whole account always balances; what people call a "deficit" is the balance of one part of it.</p>
+      <p>The <b>current account</b> covers goods, services (software, travel, transport, business services), income (interest, dividends, wages earned across borders) and transfers (mostly money sent home by Indians working abroad). The <b>capital account</b>, in RBI's presentation, covers money that comes to stay or to be repaid: foreign direct investment, portfolio investment in shares and bonds, loans, banks' foreign borrowing, and deposits by non-resident Indians. What is left over moves the <b>reserves</b>.</p>
+      <p>The Reserve Bank publishes the account every quarter, about twelve weeks after the quarter ends, first as a provisional estimate and then revised. It keeps two presentations. This guide draws RBI's own long-running layout, which its press release leads with and which runs back to 1990 (and, year by year, to 1950). The international standard layout (the IMF's sixth manual, BPM6), which RBI has published since 2011-12, files some lines differently; it is downloadable below and is never mixed with the other on one chart.</p>
+      <p>Weekly reserves, the rupee's daily price, and monthly figures for foreign investment, borrowing and remittances fill in between the quarters. They come from the same source, the RBI's Database on Indian Economy.</p>
+    </div>
+  </section>
+
+  <!-- § 04 what fills the gap: external-bop goods/services/private_transfers/income/software; external-bop-annual-head -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>What pays for the goods</h2><span class="line"></span><span class="unit">The parts of the current account</span></div>
+    <div class="break">
+      <figure id="cb-parts" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Services and money from Indians abroad pay for most of the goods India buys</h3>
+            <div class="sub">Net goods, services, remittances and income, US$ billion a quarter, since April 2011.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-parts">–</div><div class="c">goods, {Q.bop}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-parts"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, overall balance of payments (DBIE report 56). Remittances are private transfers, net. Goods are on a balance-of-payments basis, not the monthly customs figures.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>India buys far more goods than it sells: crude oil, gold, electronics, machinery. That gap is the blue line, always below zero. Two flows climb against it. Services, led by software and business services, earn a growing surplus. Remittances, the money Indians working in the Gulf, America and elsewhere send to their families, add almost as much again. Income runs the other way: profits and interest paid to foreigners who invested in India exceed what Indian money earns abroad.</p>
+            <p>When the phone in your pocket, the petrol in your scooter and the gold at a wedding are paid for, it is largely a nurse in Dubai and a coder in Pune who pay.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {Q.bop}</span>
+            <p>Goods <b id="ex-p-goods">–</b>; services <b id="ex-p-svc">–</b>, of which software <b id="ex-p-soft">–</b>; remittances <b id="ex-p-rem">–</b>; income <b id="ex-p-inc">–</b>. Services and remittances together covered <b id="ex-p-cover">–</b> of the goods deficit.</p>
           </div>
         </div>
       </figure>
     </div>
 
-    <div class="break" style="margin-top:104px">
+    <div class="break">
+      <figure id="cb-long" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Seventy-five years of the account: the goods gap opened, and invisibles grew to meet it</h3>
+            <div class="sub">Net current account, goods and invisibles (services, transfers and income), US$ billion, fiscal years since 1950-51.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-long">–</div><div class="c">current account, {FY.ann}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-long"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, key components of India's balance of payments (DBIE report 875), net, as published.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>For four decades the numbers are small enough to look flat at this scale; the economy was closed and the rupee controlled. The lines fan out after the 1991 reforms. The goods deficit widens as Indians buy more of the world's oil, gold and electronics, and invisibles, mostly software and remittances, rise almost as fast. The current account, their sum, stays close to zero because the two move together.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {FY.ann}</span>
+            <p>In 1990-91, the year that ended in the 1991 payments crisis, the current account was <b id="ex-long-91">–</b>. Net invisibles first passed US$ 10 billion in <b id="ex-long-inv10">–</b>. The latest full year in this table is <span id="ex-long-fy">–</span>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 money home and money out: external-bop-gross remittances_in; external-invisibles-people; external-lrs -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>Money sent home, money sent out</h2><span class="line"></span><span class="unit">Remittances and the Liberalised Remittance Scheme</span></div>
+    <div class="break">
+      <figure id="cb-remit" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>What Indians abroad send home has grown every decade</h3>
+            <div class="sub">Private transfers received, US$ billion a quarter, since April 1990. Gross receipts, before the much smaller sums sent out.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-remit">–</div><div class="c">{Q.bop}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-remit"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, overall balance of payments (DBIE report 56), private transfers, credit.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>This is money that arrives without anything being sold for it: wages earned by Indians abroad and sent to their families, gifts, donations to temples and charities, and money NRIs draw out of their Indian bank accounts to spend here. For a household in Kerala, Punjab or Bihar it pays for school fees, a house, a wedding. For the country it is the steadiest inflow there is: it rarely falls even when markets panic.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {Q.bop}</span>
+            <p>Receipts were <b id="ex-r-q">–</b> in the latest quarter and <b id="ex-r-year">–</b> over the last four quarters.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-remitmix" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Most of it is wages sent home for the family</h3>
+            <div class="sub">Private transfers received, by kind, US$ billion, {Q.ppl}, the latest quarter of RBI's detailed table.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-remitmix">–</div><div class="c">sent home for the family</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-remitmix" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, invisibles by category of transactions (DBIE report 1076), receipts. The detailed table ends a year before the headline account.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The headline remittance figure mixes two different things. Money sent home by a worker abroad is income for a family. Money an NRI withdraws in India from a deposit already held here is a transfer of savings. Both count as private transfers. The bar on top is the first kind.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {Q.ppl}</span>
+            <p>In <span id="ex-rm-q">–</span>, money sent home for families came to <b id="ex-rm-family">–</b> and withdrawals from NRI deposits to <b id="ex-rm-nri">–</b>. Indians working on foreign contracts earned another <b id="ex-rm-wages">–</b> in wages. Going the other way, private transfers paid abroad were <b id="ex-rm-out">–</b>, and Indians spent <b id="ex-rm-edu">–</b> on travel for education abroad.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-lrs" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Indians now send tens of billions of dollars abroad a year, mostly for travel</h3>
+            <div class="sub">Outward remittances by resident individuals under the Liberalised Remittance Scheme, by purpose, US$ billion, fiscal years (each the sum of RBI's twelve monthly figures).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-lrs">–</div><div class="c">latest full year</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-lrs"></div>
+          <div class="plotzone"><div id="plot-lrs" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, outward remittances under the LRS (DBIE report 793), monthly, summed by India Atlas into fiscal years; only complete years are drawn.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Any resident Indian may send up to US$ 250,000 a year abroad under the scheme: for a holiday, a child's college fees, support for a relative, shares in a foreign company. Travel here includes tour packages and spending on international cards. Much of it now carries tax collected at source, which is one reason the scheme's figures are watched closely.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {M.lrs}</span>
+            <p>In <span id="ex-l-fy">–</span>, Indians sent <b id="ex-l-total">–</b> abroad under the scheme; travel made up <b id="ex-l-travel">–</b> of it and studies abroad <b id="ex-l-study">–</b>. In <span id="ex-l-edum">–</span>, travel for education alone took <b id="ex-l-edu">–</b>; the latest month published is <span id="ex-l-month">–</span>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 foreign money: external-bop fdi/portfolio; external-fdi; external-fpi -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>Who brings money in, and how long it stays</h2><span class="line"></span><span class="unit">Direct and portfolio investment</span></div>
+    <div class="break">
+      <figure id="cb-flows" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Direct investment is steady; portfolio money comes and goes</h3>
+            <div class="sub">Net foreign direct investment and net portfolio investment, US$ billion a quarter, since April 2010.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-flows">–</div><div class="c">portfolio, {Q.bop}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-flows"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, overall balance of payments (DBIE report 56). Net direct investment is investment into India less Indian investment abroad.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Direct investment buys a lasting stake: a factory, a share of a company large enough to have a say in it. It is hard to pull out quickly. Portfolio investment buys shares and bonds that can be sold in a day, and it leaves when interest rates rise abroad or markets turn nervous. A deficit financed by portfolio money is a deficit financed by money that may not stay.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {Q.bop}</span>
+            <p>Net direct investment was <b id="ex-f-fdi">–</b> and net portfolio investment <b id="ex-f-fpi">–</b> in the latest quarter. Over the quarters drawn, portfolio flows swing with a standard deviation of <b id="ex-f-sdfpi">–</b> a quarter against <b id="ex-f-sdfdi">–</b> for direct investment; portfolio money left on net in <b id="ex-f-negfpi">–</b> quarters, direct investment in <b id="ex-f-negfdi">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-fdi" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Much of the direct investment that comes in also goes back out</h3>
+            <div class="sub">Gross foreign direct investment into India, repatriation by foreign investors, and Indian companies' investment abroad, US$ billion, fiscal years (each the sum of RBI's monthly figures).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-fdi">–</div><div class="c">gross inflows, latest full year</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-fdi"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, foreign investment inflows (DBIE report 34), monthly, summed by India Atlas into fiscal years; complete years only.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Headlines about "record FDI" usually quote the gross inflow. But private equity funds that bought into Indian companies sell out and take their money home, and Indian companies buy businesses abroad. What is left for the balance of payments is much smaller than the gross figure.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {M.fdi}</span>
+            <p>In <span id="ex-fdi-fy">–</span> gross inflows were <b id="ex-fdi-gross">–</b>, repatriation <b id="ex-fdi-rep">–</b> (<b id="ex-fdi-share">–</b> of what came in), and Indian investment abroad <b id="ex-fdi-out">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-fpi" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Foreign investors in Indian shares and bonds change their minds month to month</h3>
+            <div class="sub">Net purchases by foreign portfolio investors in the Indian market, ₹ thousand crore a month, since January 2016.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-fpi">–</div><div class="c">{M.fpi}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-fpi"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, net investment by FPIs in the Indian capital market (DBIE report 136), ₹ crore, from depository data. Not the same timing or coverage as the balance-of-payments portfolio line.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each bar is a month of buying (above zero) or selling (below). When foreign funds sell, the stock market usually falls and the rupee weakens as they convert their rupees back into dollars. This is the money most likely to leave when the world gets nervous.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {M.fpi}</span>
+            <p>The latest month is <span id="ex-fpi-m">–</span>. Foreign portfolio investors sold more than they bought in <b id="ex-fpi-out">–</b> months since 2016; the largest month of selling on record was <b id="ex-fpi-trough">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 reserves: external-reserves-weekly, external-reserves-monthly, external-intervention; indicators import cover -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>The reserves, and why they moved this week</h2><span class="line"></span><span class="unit">Weekly, US$ billion</span></div>
+    <div class="break">
       <figure id="cb-res" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>The war chest: three decades of self-insurance</h3>
-            <div class="sub">Total foreign exchange reserves, US$ billions, 1990 to 2025</div>
+            <h3>Twenty-five years of building a buffer</h3>
+            <div class="sub">Foreign exchange reserves, US$ billion, every week since April 2001: the total, foreign currency assets and gold.</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-res">–</div><div class="c">Jun 2025, US$ bn</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-res">–</div><div class="c">{WK}</div></div>
         </div>
         <div class="frame">
           <div class="plotzone" id="plot-res"><div class="cb-tip"></div></div>
           <div class="plotfoot">
-            <span class="src">Source: RBI, total reserves, US$ millions, monthly, <span id="pf-res">–</span></span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rbi.org.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src">Source: RBI, foreign exchange reserves, weekly (DBIE report 574, Weekly Statistical Supplement table 2). SDRs and the IMF reserve position make up the small rest.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>In 1991 the pile ran to roughly two weeks of imports and the country shipped gold to London. The three-decade climb since is the single clearest artifact of post-liberalisation India: the dips are defenses, 2008, 2013, 2018, 2022, each a year when the central bank spent the buffer to slow the rupee's fall.</p>
+            <p>Reserves are dollars, euros, yen, gold and claims on the IMF held by the RBI. They exist for bad days: to pay for imports if foreign money stops coming, and to stop the rupee falling too fast. Each week's figure moves for two reasons. The RBI buys or sells dollars in the market. And everything it holds that is not a dollar (gold, euros, yen, the bonds themselves) is valued in dollars at that week's prices, so a fall in the euro or in gold shrinks the pile without the RBI selling anything.</p>
           </div>
           <div class="now">
-            <span class="mk">As of June 2025</span>
-            <p>At <b id="ex-res">–</b> the pile sits just below its September 2024 record, covering eleven months of imports: triple the conventional three-month rule of thumb. The argument about whether this is prudence or hoarding is legitimate; the number itself is not in dispute.</p>
+            <span class="mk">As of {WK}</span>
+            <p>Reserves stood at <b id="ex-res-total">–</b> on <span id="ex-res-week">–</span>, a change of <b id="ex-res-wk">–</b> on the week before, against a peak of <b id="ex-res-peak">–</b>. Gold is <b id="ex-res-gold">–</b> of the total. At the end of <span id="ex-res-cover-fy">–</span> the reserves covered <b id="ex-res-cover">–</b> months of imports.</p>
           </div>
         </div>
       </figure>
     </div>
 
-    <div class="break" style="margin-top:104px">
-      <figure id="cb-fx" style="margin:0">
+    <div class="break">
+      <figure id="cb-resmove" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>The price of a dollar: a staircase, not a cliff</h3>
-            <div class="sub">USD/INR, monthly average, ₹ per US$, 1990 to 2025</div>
+            <h3>Reserves do not move only when the RBI buys or sells</h3>
+            <div class="sub">Month-on-month change in total reserves (bars) against the RBI's net purchases (+) or sales (−) of dollars in the same month (dots), US$ billion, since August 2023.</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-fx">–</div><div class="c">Jun 2025, ₹ per US$</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-resmove">–</div><div class="c">change, {M.resm}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-fx"><div class="cb-tip"></div></div>
+          <div class="plotzone" id="plot-resmove"><div class="cb-tip"></div></div>
           <div class="plotfoot">
-            <span class="src">Source: RBI, monthly average reference rate, a gap in the source at May 2024 is disclosed in the series metadata</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rbi.org.in" target="_blank" rel="noopener">Source ↗</a></span>
+            <span class="src">Source: RBI, reserves at month end (DBIE report 184) and sale and purchase of US dollars by the RBI (DBIE report 730). The month's change is computed by India Atlas from the two month-end figures.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>The rupee depreciates the way water wears stone: steadily, with sudden steps. Each plateau is a period of active management; each step is the central bank deciding that defending the old level costs more reserves than the level is worth. Read this chart together with the one above: the steps are where the dips come from.</p>
+            <p>Where a dot sits on its bar, the month's change was the RBI's own trading. Where they part, something else moved the pile: gold and other currencies revalued against the dollar, interest earned on the bonds held, forward contracts maturing. The RBI's purchase figures are published a few weeks after the reserves, so the latest months have bars but no dots.</p>
           </div>
           <div class="now">
-            <span class="mk">As of June 2025</span>
-            <p>At <b id="ex-fx">–</b>, the rupee has given up about three per cent over the year: a managed slide, not a lurch. The long-run direction is set by the inflation gap with the United States; the speed is set by how much reserve the RBI is willing to spend.</p>
-          </div>
-        </div>
-      </figure>
-    </div>
-
-    <div class="break" style="margin-top:104px">
-      <figure id="cb-fx4" style="margin:0">
-        <div class="plate-head">
-          <div class="t">
-            <h3>Four prices of the rupee: the same slide, four mirrors</h3>
-            <div class="sub">Monthly average, ₹ per unit of foreign currency, 1966 to 2025</div>
-          </div>
-          <div class="plate-val"><div class="v" id="pv-fx4">–</div><div class="c">Jul 2025, ₹ per US$</div></div>
-        </div>
-        <div class="frame">
-          <div class="legend" id="legend-fx4">
-            <button class="chip" data-key="usd"><i style="background:#2E4BD8"></i>Dollar</button>
-            <button class="chip" data-key="gbp"><i style="background:#878D99"></i>Pound</button>
-            <button class="chip" data-key="euro"><i style="background:#5F6675"></i>Euro</button>
-            <button class="chip" data-key="jpy"><i style="background:#A3A9B4"></i>Yen, per ¥1</button>
-          </div>
-          <div class="plotzone" id="plot-fx4"><div class="cb-tip"></div></div>
-          <div class="plotfoot">
-            <span class="src">Source: RBI, monthly average, ₹ per unit of currency, the yen is quoted per single yen here, not the RBI's customary 100, its line hugs the floor by construction, the euro begins with the currency, January 1999, a source gap at May 2024 briefly breaks all four lines</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rbi.org.in" target="_blank" rel="noopener">Source ↗</a></span>
-          </div>
-        </div>
-        <div class="explain">
-          <div class="ev">
-            <span class="mk">How to read this</span>
-            <p>Devaluation used to arrive as an announcement. June 1966, then mid-1991: twice the government moved the peg, and the chart shows a step. Since 1993 the rupee floats, managed, and the steps became a slope. Read the four lines together. When all of them climb, the rupee is weakening; when they cross one another, that is the dollar, pound, euro and yen trading places among themselves, and the rupee is only the ruler they are measured with. The pound was once the anchor currency; the chart remembers.</p>
-          </div>
-          <div class="now">
-            <span class="mk">As of July 2025</span>
-            <p>A dollar costs <b id="ex4-usd">–</b>, a pound <b id="ex4-gbp">–</b>, a euro <b id="ex4-eur">–</b>, a yen <b id="ex4-jpy">–</b>. Over the year the rupee gave ground against all four: a broad slide, not a dollar quirk. The euro moved most, up about ten rupees; that is mostly the euro's own strength against the dollar, read through an Indian lens.</p>
-          </div>
-        </div>
-      </figure>
-    </div>
-
-    <div class="break" style="margin-top:104px">
-      <figure id="cb-int" style="margin:0">
-        <div class="plate-head">
-          <div class="t">
-            <h3>Managing the float: the central bank's dollar desk</h3>
-            <div class="sub">RBI purchases(+) and sales(−) of US dollars, US$ billions, monthly, 1995 to 2025</div>
-          </div>
-          <div class="plate-val"><div class="v" id="pv-int">–</div><div class="c">Jun 2025, net purchase(+)/sale(−), US$ bn</div></div>
-        </div>
-        <div class="frame">
-          <div class="legend" id="legend-int">
-            <button class="chip" data-key="net"><i style="background:#2E4BD8"></i>Net $ bought, monthly</button>
-            <button class="chip" data-key="forward_outstanding"><i style="background:#878D99"></i>Forward book, outstanding</button>
-          </div>
-          <div class="plotzone" id="plot-int"><div class="cb-tip"></div></div>
-          <div class="plotfoot">
-            <span class="src">Source: RBI, US$ millions, monthly, net = gross purchases − gross sales, the forward book is the end-month outstanding position, a stock beside a flow, months the source leaves blank are months with no reported operations; the lines break there rather than read zero</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://rbi.org.in" target="_blank" rel="noopener">Source ↗</a></span>
-          </div>
-        </div>
-        <div class="explain">
-          <div class="ev">
-            <span class="mk">How to read this</span>
-            <p>The float is managed by hand. When the rupee falls too fast, the RBI sells dollars out of the reserves; when inflows push it up, the bank buys. The blue line is the net of one month's buying and selling: above zero the pile grows, below zero it is spent. The grey line is different in kind: a stock, not a flow. It is the bank's outstanding forward position: dollars promised for delivery later. A forward sale props the rupee today without spending a reserve dollar today; the bill is dated, not cancelled. Blank stretches are months with no reported operations.</p>
-          </div>
-          <div class="now">
-            <span class="mk">As of June 2025</span>
-            <p>The desk was a net seller of <b id="ex-int">–</b> in June. The forward book stood at <b id="ex-fwd">–</b>, sold forward, awaiting delivery, after touching <b id="ex-fwdtr">–</b> in February 2025, the deepest position in the series. Each month of unwinding delivers dollars out of a reserve pile the headline number has already counted.</p>
+            <span class="mk">As of {M.resm}</span>
+            <p>Reserves changed by <b id="ex-mv-chg">–</b> in <span id="ex-mv-month">–</span>. In <span id="ex-mv-netm">–</span>, the latest month with both figures, the RBI's net purchases were <b id="ex-mv-net">–</b>. Over the months drawn, the two have differed by as much as <b id="ex-mv-gapmax">–</b> in a single month.</p>
           </div>
         </div>
       </figure>
     </div>
   </section>
 
-  <!-- § 09 misread -->
+  <!-- § 08 the rupee: external-rupee usd; external-reer-2015 -->
   <section>
-    <div class="sec-head"><span class="no">09</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">08</span><h2>The rupee, against the dollar and against everyone</h2><span class="line"></span><span class="unit">Monthly</span></div>
+    <div class="break">
+      <figure id="cb-rupee" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>A dollar costs about three times as many rupees as in 1993</h3>
+            <div class="sub">Rupees per US dollar, monthly average of the reference rate, since April 1993, the first full month after the rupee was left to the market.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-rupee">–</div><div class="c">{M.rupee}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-rupee"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, monthly average exchange rates (DBIE report 719). The table runs from 1966; for March 1992 to February 1993 (the dual exchange rate) it carries the official LERMS rate (₹25.89 to ₹26.20), while the market rate (₹29.46 to ₹32.65) is in DBIE report 1374, both downloadable below.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A higher number is a weaker rupee. Over long periods the rupee loses ground because prices in India rise faster than in America: if Indian prices rise 5% a year and American prices 2%, a rupee that did not weaken would make Indian goods dearer abroad every year. The steps in the line are the moments when that slow pressure met a sudden one, such as 2008, 2013, 2018 and 2022.</p>
+            <p>For a family, a weaker rupee means dearer petrol, phones, foreign tuition and holidays; for an exporter, or a family receiving money from abroad, more rupees for every dollar earned.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {M.rupee}</span>
+            <p>A dollar cost <b id="ex-ru-v">–</b> on average in <span id="ex-ru-m">–</span>, against <b id="ex-ru-y">–</b> a year earlier: <b id="ex-ru-pct">–</b> more rupees for a dollar than a year before.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-reer" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>After prices, the rupee has weakened far less than the dollar rate says</h3>
+            <div class="sub">Real and nominal effective exchange rate of the rupee, 40-currency trade-weighted basket, index 2015-16 = 100, monthly since April 2004. A rise is a stronger rupee.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-reer">–</div><div class="c">REER, {M.reer}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-reer"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, indices of REER and NEER (DBIE report 584), base 2015-16 = 100. Earlier bases (1985, 1993-94, 2004-05) and the 6-currency index are separate rulers, downloadable below, never joined to this one.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>India does not trade only with America. The nominal index (NEER) weighs the rupee against 40 currencies by how much India trades with each country. The real index (REER) then adjusts for prices: if the rupee falls 5% but Indian prices rise 5% more than partners' prices, Indian goods are no cheaper abroad, and the real rate has not moved. That is why the real rate, not the dollar rate, tells you whether Indian goods are getting more or less competitive.</p>
+            <p>Read the gap between the two lines: the nominal index falls steadily because Indian inflation runs higher than its partners'; the real index falls much less because that fall roughly offsets the price gap.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {M.reer}</span>
+            <p>In <span id="ex-re-m">–</span> the real index was <b id="ex-re-reer">–</b> and the nominal index <b id="ex-re-neer">–</b>, a gap of <b id="ex-re-gap">–</b> points; a year earlier the real index stood at <b id="ex-re-reery">–</b>. Below 100 means that, after prices, the rupee is cheaper than it was in 2015-16.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 the RBI's dollar desk: external-intervention, external-forward-book -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>The RBI's dollar desk</h2><span class="line"></span><span class="unit">Monthly, US$ billion</span></div>
+    <div class="break">
+      <figure id="cb-desk" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The RBI sells dollars to slow the rupee's fall, and promises more for later</h3>
+            <div class="sub">The RBI's net purchases (+) or sales (−) of US dollars each month (bars), and its outstanding forward position at the end of each month (line), US$ billion, since April 2015.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-desk">–</div><div class="c">forward book, {M.int}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-desk"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, sale and purchase of US dollars by the RBI (DBIE report 730). Net purchases, gross purchases and sales and the forward book as published; the forward book is a stock at the end of the month. In March 2014 the table repeats the purchase figure as the sale, so read the net for that month.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The rupee floats, but not freely. When it falls too fast, the RBI sells dollars from the reserves; when money floods in, it buys. A forward sale is a promise to deliver dollars at a future date: it supports the rupee today without spending reserves today, but the bill falls due. A deep negative forward book is reserves already spoken for.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {M.int}</span>
+            <p>In <span id="ex-d-m">–</span> the RBI's net purchases were <b id="ex-d-net">–</b>. Over the last twelve months it bought <b id="ex-d-bought12">–</b> and sold <b id="ex-d-sold12">–</b>. Its forward book stood at <b id="ex-d-fw">–</b>; the deepest point in the series is <b id="ex-d-fwt">–</b>. Of the current book, a net <b id="ex-d-1m">–</b> falls due within a month.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 10 what India owes: external-debt-annual, external-debt-sector-inr, external-iip-head, external-nri -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>What India owes, and to whom</h2><span class="line"></span><span class="unit">External debt and the investment position</span></div>
+    <div class="break">
+      <figure id="cb-debt" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>India's foreign debt has grown with the economy, and most of it is long-term</h3>
+            <div class="sub">External debt as on 31 March each year since 1991, US$ billion: the total and its largest parts.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-debt">–</div><div class="c">{DEBT}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-debt"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, India's external debt as on end-March (DBIE report 563). Commercial borrowing includes companies' foreign loans and bonds and foreign investors' holdings of Indian debt; NRI deposits count only those maturing in over a year.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>External debt is what Indian residents owe to non-residents and must repay: government loans from the World Bank and other governments, companies' foreign loans and bonds, NRI deposits, trade credit. Short-term debt, due within a year, is what a run would hit first. In what currency the debt is owed we do not know from these tables: RBI's quarterly debt press release gives it, but DBIE does not carry it.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {DEBT}</span>
+            <p>External debt was <b id="ex-debt-total">–</b> in <span id="ex-debt-y">–</span>, against <b id="ex-debt-91">–</b> in <span id="ex-debt-91y">–</span>. It is <b id="ex-debt-gdp">–</b> of GDP; short-term debt is <b id="ex-debt-st">–</b> of the total; repaying and servicing it takes <b id="ex-debt-ds">–</b> of current receipts. The latest week's reserves equal <b id="ex-debt-cover">–</b> of that debt. NRI deposits of every maturity stood at <b id="ex-nri">–</b> in <span id="ex-nri-m">–</span>, and Indian exports invoiced in rupees reached <b id="ex-inv">–</b> of the total, fiscal year to <span id="ex-inv-m">–</span>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-sector" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Companies and banks, not the government, owe most of it</h3>
+            <div class="sub">External debt by who borrowed, share of the total, {Q.sect}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-sector">–</div><div class="c">the largest borrower</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-sector" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, external debt of India, quarterly (DBIE report 660), borrower-by-maturity layout, shares computed by India Atlas from rupee values (the same shares in any currency at one date).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Who owes the debt matters as much as how much there is. Government debt abroad is mostly long-term: loans from the World Bank and friendly governments, and government bonds held by foreign investors. Company debt is commercial: if the rupee falls, a company that borrowed in dollars and earns in rupees has to find more rupees to repay.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {Q.sect}</span>
+            <p>In <span id="ex-s-q">–</span> the largest borrower was <span id="ex-s-top">–</span>, with <b id="ex-s-topv">–</b> of the total; the government owed <b id="ex-s-gov">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-iip" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>India owes the world more than it owns abroad</h3>
+            <div class="sub">International investment position: foreign assets owned by Indian residents, liabilities to non-residents, and the net, US$ billion, end of each quarter since December 2017.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-iip">–</div><div class="c">net, {Q.iip}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-iip"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, international investment position (DBIE report 982), BPM6 classification. The older BPM5 position (2006 to 2021) is a separate ruler, downloadable below.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The investment position is the balance sheet behind the flows. Liabilities include debt but also foreign-owned shares and factories, which are not repaid but earn dividends and profits that flow out as income. Assets include the reserves and Indian companies' businesses abroad. The net figure is negative because the world has invested more in India than India abroad.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {Q.iip}</span>
+            <p>The net position in <span id="ex-iip-q">–</span> was <b id="ex-iip-net">–</b>. Reserves were <b id="ex-iip-res">–</b> of everything India owns abroad; direct investment was <b id="ex-iip-ldi">–</b> of what it owes.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 11 how it revises: external-bop-vintages -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>How the numbers change after they are published</h2><span class="line"></span><span class="unit">First estimate against the latest</span></div>
+    <div class="break">
+      <figure id="cb-rev" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>A quarter's current account can move by billions after its first release</h3>
+            <div class="sub">Current account balance as first published (hollow dot) and as now published (filled dot), US$ billion, for every quarter whose earlier version DBIE still carries.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-rev">–</div><div class="c">largest revision</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-rev" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, overall balance of payments (DBIE report 56): DBIE keeps the provisional (or preliminary) and the partially revised version of recent quarters; older quarters are carried only in their final form.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The first estimate of a quarter is built from incomplete returns; services and income are the hardest parts to count and are revised most. The number in the newspaper on release day is a draft. Comparing this quarter's first estimate with a year-old quarter's revised figure mixes a draft with a finished copy.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {Q.bop}</span>
+            <p>The largest revision among these quarters: <b id="ex-rev-big">–</b>. In <b id="ex-rev-n">–</b> of <span id="ex-rev-of">–</span> quarters the estimate moved by a billion dollars or more.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 12 misreadings: evergreen -->
+  <section>
+    <div class="sec-head"><span class="no">12</span><h2>How to misread these numbers</h2><span class="line"></span></div>
     <ul class="misread">
-      <li>
-        <span class="no">i.</span>
-        <div>
-          <h3>"A trade deficit means the economy is losing."</h3>
-          <p>India has run a merchandise deficit for nearly every month of the liberalisation era: through its fastest growth. The deficit is a structure, not a verdict: the country imports energy and capital goods it cannot yet make, and pays with services and remittances. Watch the financing, not the gap.</p>
-        </div>
-      </li>
-      <li>
-        <span class="no">ii.</span>
-        <div>
-          <h3>"Reserves are the government's savings."</h3>
-          <p>Much of the pile is the mirror image of foreign money that entered and can leave. It is insurance with a counterparty, held by the central bank: not a fund available for the budget. Spending it is intervention, and intervention is never free.</p>
-        </div>
-      </li>
-      <li>
-        <span class="no">iii.</span>
-        <div>
-          <h3>"A weaker rupee means a weaker economy."</h3>
-          <p>The rupee's long slide reflects the inflation differential with the dollar, managed deliberately. A slow depreciation is policy, not panic. The genuine warning sign is not the level but the speed: and the speed is what the reserves are for.</p>
-        </div>
-      </li>
-      <li>
-        <span class="no">iv.</span>
-        <div>
-          <h3>"The balance of payments can be in deficit."</h3>
-          <p>By construction, it balances. What people call a "BoP deficit" is the overall balance going negative: reserves falling to plug the gap. The number that matters is how much of the plug is left.</p>
-        </div>
-      </li>
-      <li>
-        <span class="no">v.</span>
-        <div>
-          <h3>"Eleven months of import cover is a target met."</h3>
-          <p>Import cover measures one kind of drain: the goods bill. It says nothing about the other kind: the stock of foreign portfolio money and short-term debt that can exit in a quarter. Both drains mattered in 2013; only one is in the ratio.</p>
-        </div>
-      </li>
+      <li><span class="no">1</span><div><h3>"A trade deficit means India is losing to the world."</h3><p>India has bought more goods than it sold almost every year since independence, through its fastest growth. Services and remittances pay for most of it. The number to watch is the current account and how it is financed, not the goods gap alone.</p></div></li>
+      <li><span class="no">2</span><div><h3>"The reserves fell, so the RBI sold dollars."</h3><p>Not necessarily. Gold, euros and yen in the reserves are valued in dollars every week, so a stronger dollar or a fall in gold shrinks the pile with no selling at all. The RBI's own purchases and sales are published separately, a few weeks later.</p></div></li>
+      <li><span class="no">3</span><div><h3>"The rupee hit a record low, so Indian exports must be booming."</h3><p>Only if Indian prices did not rise as fast. The real effective exchange rate, which adjusts for prices across 40 trading partners, often moves far less than the dollar rate.</p></div></li>
+      <li><span class="no">4</span><div><h3>"Reserves are the government's savings."</h3><p>They are held by the RBI, and much of the pile is the counterpart of foreign money that came in and can leave. Spending them is defending the rupee, not funding roads.</p></div></li>
+      <li><span class="no">5</span><div><h3>"FDI hit a record, so foreign money is pouring in."</h3><p>Gross inflows are the headline; repatriation by foreign investors and Indian investment abroad are taken out before it reaches the balance of payments. Net direct investment can be small, even negative, in a year of record gross inflows.</p></div></li>
+      <li><span class="no">6</span><div><h3>"This quarter's deficit is the worst in years."</h3><p>Check which estimate. The first release of a quarter is often revised by billions; compare first estimates with first estimates, or wait for the revision.</p></div></li>
+      <li><span class="no">7</span><div><h3>"Remittances are what migrants earn and send home."</h3><p>The headline includes NRIs withdrawing money from deposits they already hold in India, and gifts and donations. Money sent home for families is the larger part, but not all of it.</p></div></li>
     </ul>
   </section>
 
   <EveryCut slug="external" />
-
   <GuideData slug="external" />
 
   <footer class="provenance">
@@ -504,23 +699,25 @@ const D = bySlug["external"];
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Reserve Bank of India, retrieved via the eSankhyiki API (vintage <b id="prov-vintage">–</b>). The feed publishes 39 external-sector tables; every one is archived raw, and this guide now accounts for all of them. Sixteen are baked into series (feed table numbers in brackets): Foreign Trade US$ monthly [12], Direction of Foreign Trade US$ [11], Exports [44] and Imports [46] of Major Commodities US$, Oil/Non-oil Trade [42], Overall Balance of Payments quarterly US$ [4], BoP Indicators [22], Invisibles US$ annual [9], External Debt end-March US$ [25] and quarterly [27], NRI Deposits [40], Foreign Exchange Reserves monthly [47], Monthly Average Exchange Rates [36], Forward Premia [34], Sale/Purchase of US Dollars by the RBI [28], and Turnover in the Foreign Exchange Market [30].</p>
-        <p>The remaining 23 stay in the raw archive because each is a twin or a finer cut of a baked table, not a new fact: rupee variants [1, 13, 14, 17, 26, 43, 45], older-vintage or component BoP layouts [5, 6, 7, 8, 10], annual twins of monthly tables [16, 48], the commodity-by-country matrix behind the commodity tables [20, and its rupee twin 2], a duplicate of the oil split [24], month-high/low rate detail [29], and the SDR and multi-currency rate tables behind the four-currency plate [31, 32, 33, 35, 37]. Nothing in the product is unaccounted for.</p>
-        <p>Computed figures are cross-checked against published ones: the trade balance within $5 mn across the full history, partner groups and commodity groups against their published totals within $1 mn, and forex-market turnover against the published grand total (one ~$62 bn discrepancy in September 2018 is the source's own and is kept as published). Quirks are disclosed rather than smoothed: the yen rate is quoted per single yen, not the RBI's customary 100; blank months in the intervention table are months with no reported operations and stay blank here; the quarterly debt table is published in ₹ crore only, so it is shown in rupees; and the direction-of-trade table labels the United Kingdom's rows "USA": the pair is split by size, verified against the RBI's published bilateral figures, and the build fails if the two ever stop being separable. As of this vintage the source feed's trade, reserves and reference-rate tables end in mid-2025; we publish the lag rather than paper over it, and this guide's dates are the data's dates.</p>
+        <p>Reserve Bank of India, Database on Indian Economy (DBIE), read from the owner's local mirror of DBIE (the Data Bank), never from RBI live. Every external-sector table DBIE publishes is either baked into a file listed above or accounted for in the coverage ledger: copies of the same table under other DBIE menus, and the few tables DBIE serves without names for their columns. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Checked by hand against the RBI's own figures: the latest quarter's current account, the reserves in the Weekly Statistical Supplement, and the current-account ratio to GDP in RBI's press release. The checks, and every source quirk found, are recorded in the adapters and in the guide's status notes.</p>
       </div>
       <div>
-        <h6>Revisions &amp; uncertainty</h6>
-        <p>Trade figures move from provisional to final over several months; the balance of payments is revised quarterly. Each revision archives the prior vintage instead of overwriting it.</p>
-        <p>Where something is not measured, this guide says "we do not know" rather than inventing a number.</p>
+        <h6>Method</h6>
+        <p>Amounts are converted from dollars to US$ million and shown in US$ billion. Where several versions of a figure exist, the latest is shown and the earlier are kept. Sums over fiscal years, month-to-month changes and shares are computed by India Atlas and say so. Nothing is estimated or filled in.</p>
+      </div>
+      <div>
+        <h6>Revisions and breaks</h6>
+        <p>RBI's overall balance of payments and the BPM6 standard presentation are kept apart, as are the BPM5 and BPM6 investment positions, every base year of the effective exchange rates, the old and new formats of the foreign investment table, and the two classifications of external borrowing (before and after January 2025).</p>
       </div>
       <div>
         <h6>This guide</h6>
-        <p>External, version 1.2, adds the trading-partner and commodity plates and the forex-turnover series, and closes the coverage ledger: every table in the RBI feed is now either baked or accounted for in the archive. Core tables through June 2025; exchange rates and turnover through July, forward premia through August; the annual partner and commodity tables through FY 2024–25. Next revision on the source feed's resumption of monthly updates.</p>
+        <p>Version 2.0, October 2026, rebuilt on RBI DBIE: the balance of payments to {Q.bop}, reserves to {WK}. Merchandise trade by commodity and partner, and services by category, have their own guides. Revised with each RBI release.</p>
       </div>
     </div>
     <div class="fine">
-      <span>India Atlas, External account</span>
-      <span>Vintage <span id="prov-vintage2">–</span>, US$ millions, ₹ per US$, ₹ crore</span>
+      <span>India Atlas, the external account</span>
+      <span>Vintage <span id="prov-vintage2">–</span></span>
       <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>

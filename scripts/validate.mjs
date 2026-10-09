@@ -242,28 +242,17 @@ const PRODUCTS = [
   // RBI via eSankhyiki: the mirror lags the RBI's own publications by
   // up to a year, so each bundle carries its own regression floor
   { slug: "rbi-trade", dossier: "rbi", cadence: 1, staleAfter: "2025-06", range: [-60000, 80000], cross: ["balance", "balance_published", 5] },
-  { slug: "rbi-forex", dossier: "rbi", cadence: 1, staleAfter: "2025-06", range: [5, 1000000] },
   { slug: "rbi-trade-oil", dossier: "rbi", cadence: 1, staleAfter: "2025-06", range: [0, 100000] },
-  { slug: "rbi-bop", dossier: "rbi", cadence: 3, staleAfter: "2025-04", range: [-200000, 200000], freq: "quarterly" },
-  { slug: "rbi-bop-ratios", dossier: "rbi", cadence: 12, staleAfter: "2024-04", range: [-15, 60], freq: "annual" },
-  { slug: "rbi-debt", dossier: "rbi", cadence: 12, staleAfter: "2025-03", range: [0, 1500000], freq: "annual" },
-  { slug: "rbi-nri", dossier: "rbi", cadence: 1, staleAfter: "2025-06", range: [-60000, 500000] },
   // low bound is the yen: quoted ₹ per single yen (0.01 in 1966); USD itself
   // stays within 4.76 (pre-1966-devaluation) .. ~90
-  { slug: "rbi-exchange-rates", dossier: "rbi", cadence: 1, staleAfter: "2025-07", range: [0.005, 130] },
-  { slug: "rbi-forward-premia", dossier: "rbi", cadence: 1, staleAfter: "2025-08", range: [-10, 40] },
   // gross legs peak ~69bn/month (Feb 2025 sales); forward book has hit -89bn
-  { slug: "rbi-intervention", dossier: "rbi", cadence: 1, staleAfter: "2025-06", range: [-100000, 80000] },
-  { slug: "rbi-invisibles", dossier: "rbi", cadence: 12, staleAfter: "2024-04", range: [-60000, 300000], freq: "annual" },
   // ₹ Crore stocks, all positive; gross ≈ 63 lakh crore end-Mar 2025
-  { slug: "rbi-debt-quarterly", dossier: "rbi", cadence: 3, staleAfter: "2025-03", range: [0, 10000000], freq: "quarterly" },
   // ceiling is imports from China (~$113bn FY25); identities checked below
   { slug: "rbi-trade-partners", dossier: "rbi", cadence: 12, staleAfter: "2024-04", range: [0, 250000], freq: "annual" },
   // ceilings: engineering exports ~$117bn; crude & products imports ~$186bn
   { slug: "rbi-commodities-exports", dossier: "rbi", cadence: 12, staleAfter: "2024-04", range: [0, 150000], freq: "annual" },
   { slug: "rbi-commodities-imports", dossier: "rbi", cadence: 12, staleAfter: "2024-04", range: [0, 250000], freq: "annual" },
   // gross monthly turnover, both legs: ~$76bn Aug 1996 to ~$3.0tn Jul 2025
-  { slug: "rbi-fx-turnover", dossier: "rbi", cadence: 1, staleAfter: "2025-07", range: [0, 4000000] },
   { slug: "isp", dossier: "isp", cadence: 1, range: [50, 250] },
   { slug: "iip-2022", dossier: "iip", cadence: 1, range: [-30, 60], cross: ["general", "headline_growth_published", 0.3] },
   // old base spans the COVID whipsaw: near-zero lockdown levels make the
@@ -452,6 +441,110 @@ const PRODUCTS = [
   { slug: "rates-market-repo", dossier: "rates", noCadence: true, freq: "weekly", staleAfter: "2026-09", range: [0, 5000], seriesRange: ratesRanges("rates-market-repo", { pct: [0, 100], inr_crore: [0, 5e6] }) },
   { slug: "rates-real", dossier: "rates", cadence: 1, staleAfter: "2026-08", range: [-20, 20], base: "CPI 2024=100" },
   { slug: "rates-real-cpi2012", dossier: "rates", cadence: 1, staleAfter: "2025-12", range: [-20, 20], base: "CPI 2012=100" },
+  // ---- external (lb/external, 2026-10): the External account on RBI DBIE ----
+  // US$ million / ₹ crore as in RBI's tables. Ranges are documentation, set from the first bake
+  // with headroom: BoP lines reach ~₹52 lakh crore (rupee receipts in 2026), debt ~US$ 0.8 tn,
+  // reserves ~₹75 lakh crore; flows and positions are signed. Weekly and daily bundles skip the
+  // monthly cadence check and get their own below.
+  { slug: "external-bop", dossier: "external-bop", cadence: 3, staleAfter: "2026-04", range: [-200000, 200000] },
+  { slug: "external-bop-gross", dossier: "external-bop", cadence: 3, staleAfter: "2026-04", range: [0, 600000] },
+  { slug: "external-bop-lines", dossier: "external-bop", cadence: 3, staleAfter: "2026-04", range: [-300000, 1200000] },
+  { slug: "external-bop-vintages", dossier: "external-bop", cadence: 3, staleAfter: "2026-04", range: [-200000, 200000] },
+  { slug: "external-bop-inr-lines", dossier: "external-bop", cadence: 3, staleAfter: "2026-04", range: [-6e6, 1.2e7] },
+  { slug: "external-bop6-lines", dossier: "external-bop", cadence: 3, staleAfter: "2026-04", range: [-300000, 700000], base: "BPM6" },
+  { slug: "external-bop6-vintages", dossier: "external-bop", cadence: 3, staleAfter: "2026-04", range: [-300000, 700000], base: "BPM6" },
+  { slug: "external-bop6-inr-lines", dossier: "external-bop", cadence: 3, staleAfter: "2026-04", range: [-3e6, 1e7], base: "BPM6" },
+  { slug: "external-bop-annual", dossier: "external-bop", cadence: 12, staleAfter: "2025-04", range: [-800000, 5e6] },
+  { slug: "external-bop-annual-inr", dossier: "external-bop", cadence: 12, staleAfter: "2025-04", range: [-7e6, 5e7] },
+  // ratios to GDP in per cent and import cover in months; current receipts to payments reaches ~113
+  { slug: "external-bop-indicators", dossier: "external-bop", cadence: 12, staleAfter: "2025-04", range: [-15, 200] },
+  { slug: "external-invisibles", dossier: "external-bop", cadence: 3, staleAfter: "2025-04", range: [0, 500000], base: "BPM6" },
+  { slug: "external-invisibles-annual", dossier: "external-bop", cadence: 12, staleAfter: "2025-04", range: [-800000, 5e6] },
+  { slug: "external-invisibles-annual-inr", dossier: "external-bop", cadence: 12, staleAfter: "2025-04", range: [-7e6, 5e7] },
+  { slug: "external-iip", dossier: "external-bop", cadence: 3, staleAfter: "2026-04", range: [-1e6, 3e6], base: "BPM6" },
+  { slug: "external-iip-inr", dossier: "external-bop", cadence: 3, staleAfter: "2026-04", range: [-1e7, 3e7], base: "BPM6" },
+  { slug: "external-iip-bpm5", dossier: "external-bop", cadence: 3, staleAfter: "2021-07", range: [-1e6, 3e6], base: "BPM5" },
+  { slug: "external-iip-bpm5-inr", dossier: "external-bop", cadence: 3, staleAfter: "2021-07", range: [-1e7, 3e7], base: "BPM5" },
+  { slug: "external-bop-annual-head", dossier: "external-bop", cadence: 12, staleAfter: "2025-04", range: [-800000, 800000] },
+  { slug: "external-bop-annual-overall", dossier: "external-bop", cadence: 12, staleAfter: "2025-04", range: [-800000, 5e6] },
+  { slug: "external-bop-annual-overall-inr", dossier: "external-bop", cadence: 12, staleAfter: "2025-04", range: [-7e6, 5e7] },
+  { slug: "external-bop6-annual-lines", dossier: "external-bop", cadence: 12, staleAfter: "2025-04", range: [-800000, 3e6], base: "BPM6" },
+  { slug: "external-bop6-annual-lines-inr", dossier: "external-bop", cadence: 12, staleAfter: "2025-04", range: [-7e6, 3e7], base: "BPM6" },
+  { slug: "external-fx-turnover-daily", dossier: "external-flows", noCadence: true, staleAfter: "2026-07", range: [0, 5e5] },
+  { slug: "external-forward-premia-paise-daily", dossier: "external-flows", noCadence: true, staleAfter: "2026-06", range: [-100, 1500] },
+  { slug: "external-fdi-yearly", dossier: "external-flows", cadence: 12, staleAfter: "2023-04", range: [-200000, 300000] },
+  { slug: "external-invisibles-people", dossier: "external-bop", cadence: 3, staleAfter: "2025-04", range: [0, 200000], base: "BPM6" },
+  { slug: "external-iip-head", dossier: "external-bop", cadence: 3, staleAfter: "2026-04", range: [-1e6, 3e6], base: "BPM6" },
+  { slug: "external-iip-summary", dossier: "external-bop", cadence: 3, staleAfter: "2026-04", range: [-1e6, 3e6], base: "BPM6" },
+  { slug: "external-iip-summary-inr", dossier: "external-bop", cadence: 3, staleAfter: "2026-04", range: [-1e7, 3e7], base: "BPM6" },
+  { slug: "external-reserves-weekly", dossier: "external-flows", noCadence: true, staleAfter: "2026-09", range: [0, 2e7] },
+  { slug: "external-reserves-weekly-inr", dossier: "external-flows", noCadence: true, staleAfter: "2026-09", range: [0, 2e7] },
+  { slug: "external-reserves-monthly-inr", dossier: "external-flows", cadence: 1, staleAfter: "2026-08", range: [0, 2e7] },
+  { slug: "external-debt-sector-inr", dossier: "external-flows", cadence: 3, staleAfter: "2026-01", range: [-1000, 2e7] },
+  { slug: "external-reserves-monthly", dossier: "external-flows", cadence: 1, staleAfter: "2026-08", range: [0, 2e7] },
+  { slug: "external-reserves-annual", dossier: "external-flows", cadence: 12, staleAfter: "2026-03", range: [0, 2e7] },
+  // the forward book has reached -US$ 137 bn (a stock); monthly gross legs up to ~US$ 73 bn
+  { slug: "external-intervention", dossier: "external-flows", cadence: 1, staleAfter: "2026-07", range: [-300000, 300000] },
+  { slug: "external-intervention-inr", dossier: "external-flows", cadence: 1, staleAfter: "2026-07", range: [-3e6, 3e6] },
+  { slug: "external-forward-book", dossier: "external-flows", cadence: 1, staleAfter: "2026-07", range: [-300000, 300000] },
+  { slug: "external-fx-turnover", dossier: "external-flows", cadence: 1, staleAfter: "2026-07", range: [0, 5e6] },
+  { slug: "external-forward-premia", dossier: "external-flows", cadence: 1, staleAfter: "2026-06", range: [-10, 50] },
+  // per cent a year beside paise per dollar (12-month cash premium reaches ~550 paise)
+  { slug: "external-forward-premia-daily", dossier: "external-flows", noCadence: true, staleAfter: "2026-06", range: [-100, 1000] },
+  // the yen is quoted per single yen in this table (0.013 in 1966)
+  { slug: "external-rupee", dossier: "external-flows", cadence: 1, staleAfter: "2026-09", range: [0.005, 200] },
+  { slug: "external-rupee-sdr", dossier: "external-flows", cadence: 1, staleAfter: "2026-09", range: [1, 200] },
+  { slug: "external-rupee-daily", dossier: "external-flows", noCadence: true, staleAfter: "2026-10", range: [1, 200] },
+  { slug: "external-rupee-interbank-daily", dossier: "external-flows", noCadence: true, staleAfter: "2026-06", range: [10, 200] },
+  { slug: "external-rupee-155", dossier: "external-flows", cadence: 1, staleAfter: "2026-09", range: [0, 2000] },
+  { slug: "external-rupee-highlow", dossier: "external-flows", cadence: 1, staleAfter: "2026-08", range: [1, 200] },
+  { slug: "external-rupee-month-extremes", dossier: "external-flows", cadence: 1, staleAfter: "2024-01", range: [1, 200] },
+  { slug: "external-rupee-annual", dossier: "external-flows", cadence: 12, staleAfter: "2025-04", range: [0.5, 200] },
+  { slug: "external-rupee-annual-calendar", dossier: "external-flows", cadence: 12, staleAfter: "2025-01", range: [0.5, 200] },
+  { slug: "external-fdi", dossier: "external-flows", cadence: 1, staleAfter: "2026-07", range: [-60000, 60000] },
+  { slug: "external-fdi-1995", dossier: "external-flows", cadence: 1, staleAfter: "2011-02", range: [-60000, 60000] },
+  { slug: "external-fdi-annual", dossier: "external-flows", cadence: 12, staleAfter: "2022-04", range: [-200000, 300000] },
+  { slug: "external-fdi-annual-inr", dossier: "external-flows", cadence: 12, staleAfter: "2019-04", range: [-2e6, 3e6] },
+  { slug: "external-fdi-annual-new", dossier: "external-flows", cadence: 12, staleAfter: "2025-04", range: [-200000, 300000] },
+  { slug: "external-fdi-annual-new-inr", dossier: "external-flows", cadence: 12, staleAfter: "2025-04", range: [-2e6, 3e6] },
+  { slug: "external-fpi", dossier: "external-flows", cadence: 1, staleAfter: "2026-06", range: [-400000, 400000] },
+  // counts, US$ million, years and per cent side by side
+  { slug: "external-ecb", dossier: "external-flows", cadence: 1, staleAfter: "2026-07", range: [0, 100000] },
+  { slug: "external-ecb-2025", dossier: "external-flows", cadence: 1, staleAfter: "2026-07", range: [0, 100000] },
+  { slug: "external-ecb-annual", dossier: "external-flows", cadence: 12, staleAfter: "2025-04", range: [0, 200000] },
+  { slug: "external-lrs", dossier: "external-flows", cadence: 1, staleAfter: "2026-07", range: [0, 20000] },
+  { slug: "external-lrs-annual", dossier: "external-flows", cadence: 12, staleAfter: "2024-04", range: [0, 100000] },
+  { slug: "external-nri", dossier: "external-flows", cadence: 1, staleAfter: "2026-07", range: [-50000, 500000] },
+  { slug: "external-nri-annual", dossier: "external-flows", cadence: 12, staleAfter: "2025-04", range: [-100000, 500000] },
+  { slug: "external-nri-annual-inr", dossier: "external-flows", cadence: 12, staleAfter: "2025-04", range: [-1e6, 5e6] },
+  { slug: "external-invoicing", dossier: "external-flows", cadence: 1, staleAfter: "2026-07", range: [0, 2e6] },
+  { slug: "external-debt-annual", dossier: "external-flows", cadence: 12, staleAfter: "2026-03", range: [-100, 2e6] },
+  { slug: "external-debt-annual-inr", dossier: "external-flows", cadence: 12, staleAfter: "2026-03", range: [-1000, 2e7] },
+  { slug: "external-debt-inr", dossier: "external-flows", cadence: 3, staleAfter: "2026-01", range: [-1000, 2e7] },
+  { slug: "external-debt", dossier: "external-flows", cadence: 3, staleAfter: "2025-10", range: [-1000, 2e6] },
+  { slug: "external-assistance", dossier: "external-flows", cadence: 12, staleAfter: "2025-04", range: [-100000, 100000] },
+  { slug: "external-assistance-inr", dossier: "external-flows", cadence: 12, staleAfter: "2025-04", range: [-1e6, 1e6] },
+  { slug: "external-mf", dossier: "external-flows", cadence: 12, staleAfter: "2026-03", range: [0, 200000] },
+  { slug: "external-mf-inr", dossier: "external-flows", cadence: 12, staleAfter: "2026-03", range: [0, 2e6] },
+  { slug: "external-reer-2015", dossier: "external-reer", cadence: 1, staleAfter: "2026-08", range: [40, 200] },
+  { slug: "external-reer6-2015", dossier: "external-reer", cadence: 1, staleAfter: "2026-08", range: [40, 200] },
+  { slug: "external-reer6-2022", dossier: "external-reer", cadence: 1, staleAfter: "2026-08", range: [40, 200], base: "2022-23=100" },
+  { slug: "external-reer6-2018", dossier: "external-reer", cadence: 1, staleAfter: "2024-03", range: [40, 200], base: "2018-19=100" },
+  { slug: "external-reer-2004", dossier: "external-reer", cadence: 1, staleAfter: "2021-12", range: [40, 200], base: "2004-05=100" },
+  { slug: "external-reer6-2004", dossier: "external-reer", cadence: 1, staleAfter: "2020-12", range: [40, 200], base: "2004-05=100" },
+  { slug: "external-reer6-2003", dossier: "external-reer", cadence: 1, staleAfter: "2006-08", range: [40, 200], base: "2003-04=100" },
+  { slug: "external-reer-1993", dossier: "external-reer", cadence: 1, staleAfter: "2011-01", range: [40, 200], base: "1993-94=100" },
+  { slug: "external-reer6-1993", dossier: "external-reer", cadence: 1, staleAfter: "2011-01", range: [40, 200], base: "1993-94=100" },
+  { slug: "external-reer-1985", dossier: "external-reer", cadence: 1, staleAfter: "1993-03", range: [20, 200], base: "1985=100" },
+  { slug: "external-reer-1993-calendar", dossier: "external-reer", cadence: 12, freq: "annual", staleAfter: "2010-01", range: [40, 200], base: "1993-94=100" },
+  { slug: "external-reer-1993-fiscal", dossier: "external-reer", cadence: 12, freq: "annual", staleAfter: "2010-04", range: [40, 200], base: "1993-94=100" },
+  { slug: "external-reer-2004-calendar", dossier: "external-reer", cadence: 12, freq: "annual", staleAfter: "2021-01", range: [40, 200], base: "2004-05=100" },
+  { slug: "external-reer-2004-fiscal", dossier: "external-reer", cadence: 12, freq: "annual", staleAfter: "2020-04", range: [40, 200], base: "2004-05=100" },
+  { slug: "external-reer-2015-calendar", dossier: "external-reer", cadence: 12, freq: "annual", staleAfter: "2025-01", range: [40, 200] },
+  { slug: "external-reer-2015-fiscal", dossier: "external-reer", cadence: 12, freq: "annual", staleAfter: "2025-04", range: [40, 200] },
+  { slug: "external-reer6-2015-calendar", dossier: "external-reer", cadence: 12, freq: "annual", staleAfter: "2025-01", range: [40, 200] },
+  { slug: "external-reer6-2015-fiscal", dossier: "external-reer", cadence: 12, freq: "annual", staleAfter: "2025-04", range: [40, 200] },
+  // ---- end external ----
 ];
 
 for (const p of PRODUCTS) {
@@ -743,20 +836,6 @@ for (const [slug, key] of [["rbi-commodities-exports", "exports"], ["rbi-commodi
   }));
 }
 
-withBundle("rbi-fx-turnover", (b) => {
-  // computed total (merchant + inter-bank) vs the published Grand Total;
-  // Sep 2018 carries a ~$62bn discrepancy in the source itself (disclosed
-  // in meta.note) and is the one tolerated exception
-  let worst = 0, worstAt = null;
-  b.dates.forEach((d, i) => {
-    const c = b.series.total.data[i], p = b.crosscheck.grand_total_published[i];
-    if (c == null || p == null || d === "2018-09-01") return;
-    const diff = Math.abs(c - p);
-    if (diff > worst) { worst = diff; worstAt = d; }
-  });
-  if (worst > 2) fail(`rbi-fx-turnover: computed total deviates $${worst.toFixed(2)}mn from Grand Total at ${worstAt}`);
-  else ok(`rbi-fx-turnover: computed total within $${worst.toFixed(2)}mn of published Grand Total (Sep 2018 source discrepancy excepted)`);
-});
 
 /* ---- NAS: industry identity, sector cross-checks, saving rate ---- */
 
@@ -1566,6 +1645,77 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
     }
     ok(`states-hbs: ${n} Handbook bundles from ${tables.size} tables pass shape, disclosure and split checks`);
   }
+}
+
+/* ---- external (lb/external, 2026-10): identities of the DBIE external-sector bundles ---- */
+{
+  const near = (a, b, tol) => a == null || b == null || Math.abs(a - b) <= tol;
+  const identity = (slug, what, dates, f, tol) => {
+    let worst = 0, at = null, n = 0;
+    dates.forEach((d, i) => { const x = f(i); if (x == null || Number.isNaN(x)) return; n++; if (Math.abs(x) > Math.abs(worst)) { worst = x; at = d; } });
+    if (!n) fail(`${slug}: ${what}: nothing to check`);
+    else if (Math.abs(worst) > tol) fail(`${slug}: ${what}: off by ${worst.toFixed(3)} at ${at}`);
+    else ok(`${slug}: ${what}, within ${Math.abs(worst).toFixed(3)} over ${n} periods`);
+  };
+  const all = (...xs) => (xs.some((x) => x == null) ? null : xs);
+  withBundle("external-bop", (b) => {
+    const S = b.series, v = (k, i) => S[k].data[i];
+    // RBI rounds each line to the million: sums of three or four lines may differ by a few units
+    identity("external-bop", "current + capital + errors = overall balance", b.dates, (i) => all(v("current_account", i), v("capital_account", i), v("errors_omissions", i), v("overall_balance", i)) && v("current_account", i) + v("capital_account", i) + v("errors_omissions", i) - v("overall_balance", i), 3);
+    identity("external-bop", "current account = goods + invisibles", b.dates, (i) => all(v("current_account", i), v("goods", i), v("invisibles", i)) && v("current_account", i) - v("goods", i) - v("invisibles", i), 3);
+    identity("external-bop", "invisibles = services + transfers + income", b.dates, (i) => all(v("invisibles", i), v("services", i), v("transfers", i), v("income", i)) && v("invisibles", i) - v("services", i) - v("transfers", i) - v("income", i), 3);
+    withBundle("external-bop-gross", (g) => identity("external-bop-gross", "current receipts - payments = current account (external-bop)", g.dates,
+      (i) => all(g.series.current_receipts.data[i], g.series.current_payments.data[i], v("current_account", b.dates.indexOf(g.dates[i]))) && g.series.current_receipts.data[i] - g.series.current_payments.data[i] - v("current_account", b.dates.indexOf(g.dates[i])), 3));
+    withBundle("external-bop-vintages", (w) => identity("external-bop-vintages", "latest estimate = external-bop", w.dates,
+      (i) => all(w.series.current_account_latest.data[i]) && w.series.current_account_latest.data[i] - v("current_account", b.dates.indexOf(w.dates[i])), 0.001));
+    // the indicators' current-account ratio must carry the sign of the fiscal year's four quarters
+    withBundle("external-bop-indicators", (ind) => {
+      let bad = 0, n = 0;
+      ind.dates.forEach((d, i) => {
+        const y = +d.slice(0, 4); const r = ind.series.cad_to_gdp.data[i];
+        const q = [`${y}-04-01`, `${y}-07-01`, `${y}-10-01`, `${y + 1}-01-01`].map((x) => v("current_account", b.dates.indexOf(x)));
+        if (r == null || q.some((x) => x == null)) return;
+        const sum = q.reduce((a, x) => a + x, 0); n++;
+        if (Math.abs(r) > 0.05 && Math.sign(sum) !== Math.sign(r)) { bad++; fail(`external-bop-indicators: CAD/GDP ${r} in FY ${y}-${String((y + 1) % 100).padStart(2, "0")} has the opposite sign to the quarters' sum ${sum.toFixed(0)}`); }
+      });
+      if (!bad) ok(`external-bop-indicators: CAD/GDP sign agrees with the quarterly current account in ${n} fiscal years`);
+    });
+  });
+  for (const slug of ["external-reserves-weekly", "external-reserves-monthly", "external-reserves-annual"]) withBundle(slug, (b) => {
+    const S = b.series;
+    identity(slug, "total = FCA + gold + SDR + IMF position (US$)", b.dates, (i) => S.total_usd.data[i] == null ? null : S.total_usd.data[i] - ["fca", "gold", "sdr", "imf"].reduce((a, k) => a + (S[`${k}_usd`]?.data[i] ?? 0), 0), Math.max(25, 0));
+    if (slug.endsWith("weekly")) {
+      // week-ending Fridays, plus the extra end-March (and a few holiday-shifted) dates RBI reports:
+      // no week may be missing, extra dates are fine
+      let gap = 0; for (let i = 1; i < b.dates.length; i++) { const days = (Date.parse(b.dates[i]) - Date.parse(b.dates[i - 1])) / 864e5; if (days > 9) { gap++; fail(`${slug}: ${days} days between ${b.dates[i - 1]} and ${b.dates[i]} (a missing week)`); } }
+      const fridays = b.dates.filter((d) => new Date(d + "T00:00:00Z").getUTCDay() === 5).length;
+      if (!gap) ok(`${slug}: no missing week; ${fridays} Fridays and ${b.dates.length - fridays} extra reporting dates (31 March and holiday shifts)`);
+    }
+  });
+  withBundle("external-debt-annual", (b) => { const S = b.series;
+    identity("external-debt-annual", "gross debt = long-term + short-term", b.dates, (i) => all(S.e_1_gross_external_debt_position.data[i], S.e_1_1_total_long_term_debt.data[i], S.e_1_2_short_term_debt.data[i]) && S.e_1_gross_external_debt_position.data[i] - S.e_1_1_total_long_term_debt.data[i] - S.e_1_2_short_term_debt.data[i], 3);
+    withBundle("external-debt", (q) => { const g = q.series.gross_ttl_dbt; if (!g) return fail("external-debt: no gross debt series");
+      identity("external-debt", "end-March gross debt = the end-March table (563), within 0.5%", q.dates, (i) => { if (!q.dates[i].endsWith("-01-01")) return null; const j = b.dates.indexOf(`${q.dates[i].slice(0, 4)}-03-01`); const a = S.e_1_gross_external_debt_position.data[j]; return a == null || g.data[i] == null ? null : (g.data[i] - a) / a * 100; }, 0.5); });
+  });
+  // one source discrepancy, disclosed in the bundle note: BPM5 December 2014 (net -356,010 against
+  // assets 522,402 less liabilities 886,645, a gap of 8,233 US$ million in RBI's own table)
+  for (const slug of ["external-iip", "external-iip-bpm5"]) withBundle(slug, (b) => { const S = b.series; const n = Object.keys(S).find((k) => /^n_/.test(k));
+    identity(slug, "net position = assets - liabilities (source exception: BPM5 Dec 2014)", b.dates, (i) => (slug.endsWith("bpm5") && b.dates[i] === "2014-10-01") || !all(S[n].data[i], S.a_a_assets.data[i], S.l_b_liabilities.data[i]) ? null : S[n].data[i] - S.a_a_assets.data[i] + S.l_b_liabilities.data[i], 3); });
+  // September 2018 carries a discrepancy in RBI's own table (grand total above merchant plus
+  // inter-bank by about US$ 28-33 bn each side), disclosed in the bundle note and excepted here
+  withBundle("external-fx-turnover", (b) => { const S = b.series;
+    for (const side of ["purchases", "sales"]) identity("external-fx-turnover", `grand total ${side} = merchant + inter-bank (source exception: Sep 2018)`, b.dates, (i) => b.dates[i] === "2018-09-01" || !all(S[`grand_total_all_all_${side}`].data[i], S[`merchant_all_total_${side}`].data[i], S[`inter_bank_all_total_${side}`].data[i]) ? null : S[`grand_total_all_all_${side}`].data[i] - S[`merchant_all_total_${side}`].data[i] - S[`inter_bank_all_total_${side}`].data[i], 5); });
+  withBundle("external-lrs", (b) => { const S = b.series; const top = ["deposit", "purchase_of_immovable_property", "investment_in_equity_debt", "gift", "donations", "travels", "maintenance_of_close_relatives", "medical_treatment", "studies_abroad", "others"];
+    identity("external-lrs", "total = the ten purposes", b.dates, (i) => S.total.data[i] == null ? null : S.total.data[i] - top.reduce((a, k) => a + (S[k]?.data[i] ?? 0), 0), 1); });
+  // a base year's own months average 100: the index is anchored where it says it is
+  for (const slug of ["external-reer-1985", "external-reer-1993", "external-reer-2004", "external-reer-2015", "external-reer6-1993", "external-reer6-2003", "external-reer6-2004", "external-reer6-2015", "external-reer6-2018", "external-reer6-2022"]) withBundle(slug, (b) => {
+    const y = b.meta.base.slice(0, 4);
+    const months = y === "1985" ? b.dates.filter((d) => d.startsWith("1985")) : b.dates.filter((d) => d >= `${y}-04-01` && d < `${+y + 1}-04-01`);
+    if (months.length !== 12) return fail(`${slug}: base year ${b.meta.base} not fully on the axis`);
+    for (const [k, s] of Object.entries(b.series)) { const avg = months.reduce((a, d) => a + s.data[b.dates.indexOf(d)], 0) / 12;
+      if (Math.abs(avg - 100) > 1) fail(`${slug}.${k}: base-year average ${avg.toFixed(2)}, not 100`); }
+    ok(`${slug}: every series averages 100 (within 1) over its base year ${b.meta.base}`);
+  });
 }
 
 /* ---- seams: the base-year registry (sources.yml `seams`) ----

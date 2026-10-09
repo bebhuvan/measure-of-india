@@ -224,6 +224,28 @@ if (slug === "cpi") {
     note: "The 2024 base serves no component weights, so no core index can be computed on it; the core figure is the retired 2012 base's final reading.",
   };
 }
+// ---- external (lb/external): the account is published in US$ million; prose speaks in US$
+// billion. The conversion is done here, in code, so the writer never does arithmetic: every
+// dollar figure it may cite sits in cross.bn (one decimal), with the period it belongs to.
+if (slug === "external") {
+  const bn1 = (v) => (v == null ? null : Math.round(v / 100) / 10);
+  const rd = (f) => JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", f + ".json"), "utf8"));
+  facts.cross.bn = {};
+  for (const [k, s] of Object.entries(facts.series)) facts.cross.bn[k] = { latest: bn1(s.latest.value), previous: bn1(s.previous.value), yearAgo: s.yearAgo ? bn1(s.yearAgo.value) : null, period: s.latest.period };
+  const g = rd("external-bop-gross");
+  for (const k of ["goods_exports", "goods_imports", "services_exports", "remittances_in", "software_exports"]) facts.cross.bn[k] = { latest: bn1(g.series[k].data.at(-1)), period: facts.latestPeriod };
+  const w = rd("external-reserves-weekly"), ws = w.series.total_usd.data;
+  const iw = ws.length - 1 - [...ws].reverse().findIndex((v) => v != null);
+  const peak = ws.reduce((a, v, i) => (v != null && v > ws[a] ? i : a), 0);
+  facts.cross.reserves = { latest_bn: bn1(ws[iw]), week: w.dates[iw], weekBefore_bn: bn1(ws[iw - 1]), peak_bn: bn1(ws[peak]), peakWeek: w.dates[peak] };
+  const ind = rd("external-bop-indicators");
+  const lastI = (k) => { const d = ind.series[k].data; return Math.round(d.at(-1) * 100) / 100; };
+  facts.cross.annual = { fiscalYear: `${ind.dates.at(-1).slice(0, 4)}-${String((+ind.dates.at(-1).slice(0, 4) + 1) % 100).padStart(2, "0")}`, ca_pct_gdp: lastI("cad_to_gdp"), import_cover_months: lastI("import_cover_of_reserves_in_months") };
+  const re = rd("external-reer-2015"), ru = rd("external-rupee");
+  facts.cross.rupee = { month: ru.dates.at(-1).slice(0, 7), inr_per_usd: Math.round(ru.series.usd.data.at(-1) * 100) / 100, inr_per_usd_year_ago: Math.round(ru.series.usd.data.at(-13) * 100) / 100,
+    reer_month: re.dates.at(-1).slice(0, 7), reer: Math.round(re.series.reer_trade.data.at(-1) * 10) / 10, neer: Math.round(re.series.neer_trade.data.at(-1) * 10) / 10 };
+  facts.cross.note = "Every dollar figure is in cross.bn, cross.reserves or the other cross blocks, already in US$ billion; cite them as written. The series values are US$ million and must not be cited directly.";
+}
 if (slug === "gdp") {
   const g = facts.series.gdp;
   facts.cross.vsTrend6 = Math.round((g.latest.value - 6) * 100) / 100;

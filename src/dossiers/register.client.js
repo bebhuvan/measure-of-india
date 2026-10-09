@@ -7,18 +7,20 @@ import cpi2024Bundle from "../../data/series/cpi-2024.json";
 import gdpBundle from "../../data/series/gdp.json";
 import wpiBundle from "../../data/series/wpi.json";
 import iipBundle from "../../data/series/iip-2022.json";
-import tradeBundle from "../../data/series/rbi-trade.json";
-import forexBundle from "../../data/series/rbi-forex.json";
-import ratiosBundle from "../../data/series/rbi-bop-ratios.json";
+// external account: RBI DBIE bundles (lb/external, 2026-10)
+import extBopBundle from "../../data/series/external-bop.json";
+import extGrossBundle from "../../data/series/external-bop-gross.json";
+import extIndBundle from "../../data/series/external-bop-indicators.json";
+import extResBundle from "../../data/series/external-reserves-weekly.json";
+import extRupeeBundle from "../../data/series/external-rupee.json";
+import extIntBundle from "../../data/series/external-intervention.json";
+import extPremiaBundle from "../../data/series/external-forward-premia.json";
+import extReerBundle from "../../data/series/external-reer-2015.json";
+import extDebtBundle from "../../data/series/external-debt-annual.json";
+import extLrsBundle from "../../data/series/external-lrs.json";
 import plfsMonthlyBundle from "../../data/series/plfs-monthly.json";
 import plfsQuarterlyBundle from "../../data/series/plfs-quarterly.json";
 import plfsAnnualBundle from "../../data/series/plfs-annual.json";
-import invisiblesBundle from "../../data/series/rbi-invisibles.json";
-import interventionBundle from "../../data/series/rbi-intervention.json";
-import premiaBundle from "../../data/series/rbi-forward-premia.json";
-import ratesBundle from "../../data/series/rbi-exchange-rates.json";
-import partnersBundle from "../../data/series/rbi-trade-partners.json";
-import commImpBundle from "../../data/series/rbi-commodities-imports.json";
 import mpceBundle from "../../data/series/hces-mpce.json";
 import giniBundle from "../../data/series/hces-gini.json";
 import asiBundle from "../../data/series/asi-headline.json";
@@ -45,22 +47,24 @@ const PA = hydrate(plfsAnnualBundle);
 const f1 = (v) => v.toFixed(2) + "%";
 // RBI bundles arrive in US$ millions; the register shows $ billions
 const toBn = (s) => ({ ...s, data: s.data.map((d) => ({ ...d, value: d.value == null ? null : d.value / 1000 })) });
-const TB = toBn(hydrate(tradeBundle).balance);
-const FR = toBn(hydrate(forexBundle).reserves);
-const FU = hydrate(forexBundle).usdinr;
-const RC = hydrate(ratiosBundle).cad_gdp;
+const XB = hydrate(extBopBundle), XG = hydrate(extGrossBundle);
+const CA = toBn(XB.current_account);
+const FR = toBn(hydrate(extResBundle).total_usd);
+const XR = hydrate(extRupeeBundle);
+const FU = XR.usd;
+const RC = hydrate(extIndBundle).cad_to_gdp;
 const fBn = (v) => "$" + v.toFixed(1) + " bn";
 const fRs = (v) => "₹" + v.toFixed(2);
 // intervention months with no reported operations are blank in the source;
 // the spark and the year-ago lookup both skip them
 const noNulls = (s) => ({ ...s, data: s.data.filter((d) => d.value != null) });
-const REM = toBn(noNulls(hydrate(invisiblesBundle).private_transfers));
-const IVN = toBn(noNulls(hydrate(interventionBundle).net));
-const FWP = noNulls(hydrate(premiaBundle).m3);
-const EUR = noNulls(hydrate(ratesBundle).euro);
-const XUS = toBn(hydrate(partnersBundle).exports_usa);
-const MCN = toBn(hydrate(partnersBundle).imports_china);
-const MPET = toBn(hydrate(commImpBundle).petroleum_crude_products);
+const REM = toBn(noNulls(XG.remittances_in));
+const IVN = toBn(noNulls(hydrate(extIntBundle).net));
+const FWP = noNulls(hydrate(extPremiaBundle).m3);
+const EUR = noNulls(XR.eur);
+const REER = hydrate(extReerBundle).reer_trade;
+const XDEBT = toBn(hydrate(extDebtBundle).e_1_gross_external_debt_position);
+const LRS = toBn(hydrate(extLrsBundle).total);
 const fBn2 = (v) => (v < 0 ? "−$" : "$") + Math.abs(v).toFixed(1) + " bn";
 // HCES & enterprises formats
 const grpIN = (v) => Math.round(v).toLocaleString("en-IN");
@@ -113,17 +117,17 @@ const iipRows = [
   ["Consumer non-durables", "IIP-CND", "s-g3", I.use_consumer_non_durables, false, "/guides/iip/", "computed"],
 ];
 const extRows = [
-  ["Trade balance, goods, $bn/mo", "RBI-TB", "s-acc", TB, false, "/guides/external/", "computed", fBn],
-  ["Forex reserves, $bn", "RBI-FX", "s-g1", FR, false, "/guides/external/", null, fBn],
+  ["Current account balance, $bn/qtr", "RBI-CAB", "s-acc", CA, false, "/guides/external/", null, fBn2],
+  ["Forex reserves, $bn (weekly)", "RBI-FX", "s-g1", FR, false, "/guides/external/", null, fBn],
   ["USD / INR, monthly avg", "RBI-USD", "s-g2", FU, false, "/guides/external/", null, fRs],
-  ["CAD, % of GDP", "RBI-CAD", "s-g3", RC, false, "/guides/external/", null, f1],
-  ["Remittances, private transfers, net, $bn/yr", "RBI-REM", "s-acc", REM, false, "/guides/external/", null, fBn],
+  ["Current account, % of GDP (annual)", "RBI-CAD", "s-g3", RC, false, "/guides/external/", null, f1],
+  ["Remittances received, private transfers, $bn/qtr", "RBI-REM", "s-acc", REM, false, "/guides/external/", null, fBn],
   ["RBI net US$ purchase(+)/sale(−), $bn/mo", "RBI-INT", "s-g4", IVN, false, "/guides/external/", null, fBn2],
   ["Forward premia, 3-month, % p.a.", "RBI-FWP", "s-g1", FWP, false, "/guides/external/", null, (v) => v.toFixed(2) + "%"],
   ["EUR / INR, monthly avg", "RBI-EUR", "s-g2", EUR, false, "/guides/external/", null, fRs],
-  ["Exports to USA, $bn/yr", "RBI-XUS", "s-g3", XUS, false, "/guides/external/", null, fBn],
-  ["Imports from China, $bn/yr", "RBI-MCN", "s-g4", MCN, false, "/guides/external/", null, fBn],
-  ["Petroleum, crude & products imports, $bn/yr", "RBI-MPE", "s-g1", MPET, false, "/guides/external/", null, fBn],
+  ["Real effective exchange rate, 40 currencies (2015-16 = 100)", "RBI-REER", "s-g3", REER, false, "/guides/external/", null, (v) => v.toFixed(1)],
+  ["External debt, $bn, end-March", "RBI-EDT", "s-g4", XDEBT, false, "/guides/external/", null, fBn],
+  ["Outward remittances under the LRS, $bn/mo", "RBI-LRS", "s-g1", LRS, false, "/guides/external/", null, fBn],
 ];
 // HCES is two survey rounds: a two-point sparkline is a bare diagonal, so the
 // history cell degrades to a note — same choice the dossier's own ledger makes.
@@ -222,7 +226,7 @@ render("reg-cpi", cpiRows, 12, "spc", "12 Jan 2026");
 render("reg-gdp", gdpRows, 4, "spg", "28 Nov 2025");
 render("reg-wpi", wpiRows, 12, "spw", vintOf(wpiBundle), "OEA / DPIIT");
 render("reg-iip", iipRows, 12, "spi", "Jul 2026, QE");
-render("reg-ext", extRows, 12, "spe", "Jun 2025", "RBI");
+render("reg-ext", extRows, 12, "spe", vintOf(extBopBundle), "RBI DBIE");
 render("reg-plfs", plfsRows, 12, "spl", "Jun 2026");
 render("reg-hces", hcesRows, 1, "sph", "2023-24 round");
 render("reg-asi", asiRows, 1, "spa", "2023-24");
