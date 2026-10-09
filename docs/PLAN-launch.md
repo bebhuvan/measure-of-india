@@ -78,8 +78,8 @@ climate cuts by state and month. They are neither dropped nor forced into `data/
 Ledger rules mark them `archive: true` with `rolls_up_to` (`docs/CONTRACT-coverage.md`).
 
 - **Host:** a public Hugging Face dataset, `huggingface.co/datasets/bebhuvan1/india-atlas-archive`
-  (the owner's account; uploads use the token already on the build machine, never one in
-  the repo). Chosen over Cloudflare R2: free for public data, every upload is a commit (so
+  (the owner's account; uploads read `HF_TOKEN` from the git-ignored `.env`, a write token
+  checked 2026-10-09, never printed and never in the repo). Chosen over Cloudflare R2: free for public data, every upload is a commit (so
   each data vintage is kept and citable, which fits rule 5), a table viewer for readers,
   and a place researchers already look. The manifest makes an R2 mirror possible later.
 - **Format:** Parquet per cut (HF's viewer reads it), plus gzipped CSV for spreadsheet users.
