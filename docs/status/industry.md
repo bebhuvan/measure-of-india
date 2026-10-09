@@ -16,10 +16,29 @@ Guides `iip` and `factories`; ledgers `iip`, `isp`, `core`, `iip-dbie`, `asi`, `
 - ISP annual: the services guide already bakes `services-isp-annual` from the same call; the
   `isp` ledger points at it and the iip guide lists it in downloads (no second copy).
 
+- **IIP guide**: §03 deep ledger now three retired rulers (1980-81 added); new §04 financial
+  years on five rulers; new §07 the core eight (latest year by industry with weights; 31 years
+  on three rulers against the IIP); misreading on the core; provenance rewritten. Prose
+  regenerated (DeepSeek), verified (22 + 12 figures), read by hand: the brief now forces
+  growth-rate counts to be called "accelerated"/"slowed" (the first draft said "17 rising
+  against 15 falling", which read as output).
+- **ASUSE, every table** (2026-10-10): all 44 annual indicators in both rulers, `asuse-tNN`
+  (financial-year rounds) and `asuse-2025-tNN` (calendar 2025, its own seam), 73 bundles, 20,225
+  series. Each series varies at most one of the five cuts (state, sector, activity, broad
+  activity, establishment type), which is what a catalogue item is; the full crosses (630,011
+  rows) are staged in `data/archive/staging/asuse/` rolling up to those bundles. Raw: per-table
+  gzip in staging + committed `data/raw/asuse-index.json` (the 65 MB `asuse-records.json` is
+  retired; it is in git history). Quarterly bulletin now to Apr-Jun 2026.
+- **Factories guide so far**: what a factory job pays (emoluments per person by industry) and
+  how big the plant is (persons per factory); the 2025 round: workers by trade (46 activities)
+  and women's share by trade. Quarterly-bulletin text and the meta strip read their periods from
+  the bundle (they had "Jan-Mar 2026" typed in).
+
 ## In progress
 
-- Full MoSPI pull in the background (one call at a time, `logs/industry-queue.log`): every
-  ASUSE indicator, then every ASI table of every NIC block (~34,000 calls, ~3.5 hours).
+- Full MoSPI pull of every ASI table of every NIC block (one call at a time,
+  `logs/industry-queue.log`, ~34,000 calls; page cache purged per table). Then: complete ASI
+  bundles, the deeper ASI plates (4-digit classes, state by industry), factories prose.
 
 ## Decisions
 
@@ -31,7 +50,18 @@ Guides `iip` and `factories`; ledgers `iip`, `isp`, `core`, `iip-dbie`, `asi`, `
 - Core 1993-94 base, 2010-11: the RBI prints two sets of growth rows; only the full-year ("Y")
   set is baked.
 
+- ASUSE: the bake splits baked from archived by the cut rule above rather than by size, so the
+  boundary is the catalogue's own definition of an item.
+- ASUSE 2025 plates draw from a build-time pick (`#u25-data`): the table is 1.7 MB.
+- The core-industries bundle is not a prose input: its summary mixes index levels and growth
+  rates, which invited the writer to compare unlike figures.
+
 ## Source quirks
+
+- ASUSE table 9: MoSPI relabelled the headline row ("Maintaining Bank/PO Savings Account" is
+  now "Maintaining any kind of  Account in Financial Institutions", double space as served);
+  the values are unchanged (666, 710, 761). Mapped; label updated.
+- ASUSE tables 1 and 2 now carry a measure dimension (count and percentage of establishments).
 
 - MoSPI annual IIP, base 2022-23: API growth 6.8% (2023-24), 5.7% (2024-25), 4.3% (2025-26);
   annual levels equal the monthly means. Press summaries of the 1 June 2026 release quote 6.7%
