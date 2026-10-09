@@ -35,8 +35,9 @@ import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";
 import { fileURLToPath } from "node:url";
-import { databankRoot, dbieReport, databankQuery } from "../databank.mjs";
+import { databankRoot, dbieReport as dbieReportUncached, databankQuery } from "../databank.mjs";
 import { writeSeries, writeRaw } from "../util.mjs";
+import { parseCsv } from "../tabular.mjs";
 
 const C = { accent: "#2E4BD8", gold: "#C47A16", g1: "#5F6675", g2: "#A3A9B4", g3: "#C9CED6", muted: "#878D99" };
 const r2 = (v) => (v == null || !Number.isFinite(v) ? null : Math.round(v * 100) / 100);
@@ -76,10 +77,23 @@ function parsed(db, dataset, cols, order, key) {
   return { rows, provenance: { ...provenance, parse_file: path.basename(file), older_run_orphans: orphans.length } };
 }
 
+// big reports are heavy: each is read once per run
+const DBIE_CACHE = new Map();
+const dbieReport = (db, id) => DBIE_CACHE.get(id) ?? DBIE_CACHE.set(id, dbieReportUncached(db, id)).get(id);
+const PROVIDER_CACHE = new Map();
+
 // a webi report's named data provider (dbieReport returns the largest one; the weekly
 // supplement's "Ratios and Rates" table keeps its rates in a smaller provider)
 let WEBI_INDEX = null;
 function webiProvider(db, reportId, providerId) {
+  const ck = `${reportId}|${providerId}`;
+  if (PROVIDER_CACHE.has(ck)) return PROVIDER_CACHE.get(ck);
+  const out = webiProviderRead(db, reportId, providerId);
+  // keep the small ones; the big ones are read once by the adapter anyway
+  if (out.rows.length < 50000) PROVIDER_CACHE.set(ck, out);
+  return out;
+}
+function webiProviderRead(db, reportId, providerId) {
   if (!WEBI_INDEX) {
     WEBI_INDEX = new Map();
     const base = path.join(db, "data/raw/metadata/rbi_dbie/rbi_dbie_webi_rows");
@@ -101,10 +115,10 @@ function webiProvider(db, reportId, providerId) {
   if (!e) throw new Error(`rbirates: DBIE report ${reportId} provider ${providerId} not in the Data Bank mirror`);
   let buf = fs.readFileSync(e.content);
   if (e.meta.stored_encoding === "gzip") buf = zlib.gunzipSync(buf);
-  const lines = buf.toString("utf8").split(/\r?\n/).filter(Boolean);
-  const split = (l) => l.split(";").map((x) => x.replace(/^"|"$/g, "").trim());
-  const header = split(lines[0]);
-  const rows = lines.slice(1).map(split).map((c) => Object.fromEntries(header.map((h, i) => [h, c[i] ?? ""])));
+  // the same CSV parse as dbieReport: quoted DBIE cells can hold ";"
+  const table = parseCsv(buf.toString("utf8"), ";").filter((r) => r.some((c) => String(c).trim() !== ""));
+  const header = table[0].map((x) => String(x).trim());
+  const rows = table.slice(1).map((c) => Object.fromEntries(header.map((h, i) => [h, String(c[i] ?? "").trim()])));
   return { header, rows, provenance: { report_id: reportId, data_provider: providerId, rows: rows.length, retrieved_at: e.retrieved, sha256: e.sha256, document_id: e.meta.document_id } };
 }
 
@@ -122,6 +136,24 @@ function stateNameOf(raw) {
   ];
   for (const [re, name] of rules) if (re.test(z)) return name;
   return null;
+}
+
+// the unit of a series, from its name: rates are per cent a year; shares and reserve ratios per
+// cent; spreads percentage points; amounts ₹ crore; counts, votes, tenors and prices as named
+function unitFor(name, slug) {
+  const n = String(name);
+  if (/spread|minus_1y_pt$|_pt$/.test(n)) return "pct_points";
+  if (/^share_|_share_|share_.*_pct$|^crr_pct$|^slr_pct$/.test(n) || /benchmarks|walr-1992/.test(slug) && /share/.test(n)) return "pct";
+  if (/_pct$/.test(n)) return "pct_per_annum";
+  if (/_inr_crore$/.test(n)) return "inr_crore";
+  if (/_bps$/.test(n)) return "bps";
+  if (/_days$|period_day$|_period_days?$/.test(n)) return "days";
+  if (/_years$/.test(n)) return "years";
+  if (/with_decision$/.test(n)) return "vote";
+  if (/bid_cover$/.test(n)) return "times";
+  if (/price$/.test(n)) return "inr_per_100";
+  if (/(_n|_number|_number_new|votes_for|votes_against)$/.test(n)) return "count";
+  throw new Error(`rbirates: ${slug}: no unit for series name ${n}`);
 }
 
 /* ---------------- bundle writing ---------------- */
@@ -142,6 +174,9 @@ function makeWriter(root, dcfg, vintage) {
     }
     // the axis starts at the first date any series reports and ends at the last (no empty lead
     // or tail: CONTRACT-series rule 2); interior nulls are declared on the series that miss them
+    // every series carries its unit (src/dossiers/everycut.js UNITS); inferred from the series
+    // name the adapter gives it, and an unrecognised name fails the bake
+    for (const s of Object.values(series)) if (!s.unit) s.unit = unitFor(s.name, slug);
     const any = (i) => Object.values(series).some((s) => s.data[i] != null);
     let a = 0, b = dates.length - 1;
     while (a <= b && !any(a)) a++;
@@ -778,7 +813,7 @@ export async function buildRbiRates(root, dcfg, vintage, cfg) {
   /* =================== 13. the weekly supplement: the rates a bank customer sees =================== */
   {
     const R = webiProvider(db, "10", "DP6");
-    const rows = keep("10", R, R.rows.filter((x) => isDate(x["Time Date"]) && x["Item Hierarchy Level1"] !== "Ratios"), ["Time Date", "Item Hierarchy Level1", "Item Description", "Growth Rate", "Growth Rate(Base Rate/Term Dep._ Max)"]);
+    const rows = keep("10", R, R.rows.filter((x) => isDate(x["Time Date"])), ["Time Date", "Item Hierarchy Level1", "Item Description", "Growth Rate", "Growth Rate(Base Rate/Term Dep._ Max)"]);
     const P = pivot(rows, (x) => ymd(x["Time Date"]), (x) => x["Item Description"].trim(), (x) => ({ v: num(x["Growth Rate"]), hi: num(x["Growth Rate(Base Rate/Term Dep._ Max)"]) }));
     const one = (item) => P.dates.map((d) => P.get(item, d)?.v ?? null);
     // ranges print the low end in the value column and the high end in the 'max' column; a single
@@ -1191,8 +1226,14 @@ export async function catalogueRbiRates(root, cfg) {
       const cols = R.header;
       const stats = cols.map((c) => { const vals = rows.map((x) => x[c]).filter((v) => v !== "" && v !== "NULL"); const distinct = new Set(vals);
         return { c, distinct: distinct.size, num: vals.length ? vals.filter(isNum).length / vals.length : 0, date: vals.length ? vals.filter(isDateLike).length / vals.length : 0, n: vals.length }; });
-      const valueCols = stats.filter((s) => s.num >= 0.8 && s.distinct > 12 && !SKIP_COL.test(s.c) && s.date < 0.5).map((s) => s.c);
-      const dimCols = stats.filter((s) => s.distinct > 1 && s.distinct <= 150 && s.num < 0.8 && s.date < 0.5 && !SKIP_COL.test(s.c) && !valueCols.includes(s.c)).map((s) => s.c);
+      // a value column holds the numbers; codes, keys, texts and previous-period copies are not values
+      const NOT_VALUE = /code|text|_none|prev_|^prev|\bsk\b|sk$/i;
+      // time is the axis, never a cut; maturity and tenor columns are cuts even when numeric
+      const TIME = /(^|\s|_)(month|year|date|fortnight|week|quarter|time|fiscal|period)(\s|_|$)|date sk|calendar|prompts/i;
+      const CUT_NUM = /maturity|tenor|tenure|term|days|years/i;
+      const valueCols = stats.filter((s) => s.num >= 0.8 && s.distinct > 12 && !SKIP_COL.test(s.c) && !NOT_VALUE.test(s.c) && !TIME.test(s.c) && !(CUT_NUM.test(s.c) && s.distinct <= 40) && s.date < 0.5).map((s) => s.c);
+      const dimCols = stats.filter((s) => s.distinct > 1 && s.distinct <= 150 && !SKIP_COL.test(s.c) && !TIME.test(s.c) && !/value/i.test(s.c) && s.date < 0.5 && !valueCols.includes(s.c)
+        && (s.num < 0.8 || (CUT_NUM.test(s.c) && s.distinct <= 40)) && !/code/i.test(s.c)).map((s) => s.c);
       const stateCol = cols.find((c) => /nomenclature/i.test(c));
       const combos = new Map();
       for (const x of rows) {

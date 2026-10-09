@@ -202,6 +202,18 @@ const CARDS = [
     prep: (S) => { S.household_term = { ...S.household_term, label: "Fixed deposits" }; S.household_savings = { ...S.household_savings, label: "Savings" }; S.household_current = { ...S.household_current, label: "Current" }; },
     foot: (b, S) => `Household bank deposits, March ${b.dates.at(-1).slice(0, 4)}. Source: RBI, BSR-2`,
   },
+  // --- rates (atlas-rates) ---
+  {
+    slug: "rates", bundleSlug: "rates-monthly",
+    keys: ["repo", "sdf"], d0: 0, d1: 10, band: null, trend: null,
+    yStep: 2, fmt: (v) => v.toFixed(2) + "%", mr: 200,
+    prep: (S) => {
+      const from = (s) => ({ ...s, data: s.data.filter((d) => d.date >= new Date(Date.UTC(2011, 4, 1))) });
+      S.repo = { ...from(S.repo), label: "Repo rate", color: "#2E4BD8" };
+      S.sdf = { ...from(S.sdf), label: "SDF (floor)", color: "#A3A9B4" };
+    },
+    foot: (b) => `RBI policy repo rate at month-end, May 2011 to ${monthOf(b)}. Source: RBI`,
+  },
   {
     slug: "manufacturing", bundleSlug: "wdi-manufacturing",
     keys: ["mva_pct_gdp", "industry_pct_gdp"], d0: 0, d1: 30, band: null, trend: null,

@@ -271,3 +271,17 @@ const nfhsRows = [
   ["Women's bank account, %", "NFHS-BNK", "s-g4", nfhsFind(NF, "bank or savings")],
 ].filter(([, , , s]) => s != null);
 render("reg-nfhs", nfhsRows.map(([nm, code, sw, s]) => [nm, code, sw, s, false, "/guides/nfhs/"]), 48, "spnf", "NFHS-5", "MoSPI / IIPS");
+// --- rates (atlas-rates): policy and bank rates, per cent a year
+import ratesMonthlyBundle from "../../data/series/rates-monthly.json";
+import ratesLendingBundle from "../../data/series/rates-lending.json";
+{
+  const RM = hydrate(ratesMonthlyBundle), RL = hydrate(ratesLendingBundle);
+  const since = (s, iso) => ({ ...s, data: s.data.filter((d) => d.date >= new Date(iso + "T00:00:00Z")) });
+  const vt = (b) => { const d = b.dates.at(-1); return ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][+d.slice(5, 7) - 1] + " " + d.slice(0, 4); };
+  render("reg-rates", [
+    ["Policy repo rate, month-end", "RBI-REPO", "s-acc", since(RM.repo, "2016-10-01"), false, "/guides/rates/", null, f1, vt(ratesMonthlyBundle)],
+    ["WALR, fresh rupee loans", "RBI-WALRF", "s-g1", since(RL.walr_fresh_all, "2016-10-01"), false, "/guides/rates/", null, f1],
+    ["WALR, outstanding loans", "RBI-WALRO", "s-g2", since(RL.walr_outstanding_all, "2016-10-01"), false, "/guides/rates/", null, f1],
+    ["WADTDR, fresh term deposits", "RBI-WADF", "s-g3", since(RL.wadtdr_fresh_all, "2016-10-01"), false, "/guides/rates/", null, f1],
+  ], 12, "sprt", vt(ratesLendingBundle), "RBI");
+}

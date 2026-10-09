@@ -73,4 +73,14 @@ export const SERIES_KWS = {
     ["net value added", "net_value_added"],
     ["number of factories", "number_of_factories"],
   ],
+  // --- rates (atlas-rates): the current bundle is rates-monthly; specific phrases first
+  rates: [
+    ["reverse repo", "reverse_repo"],
+    ["standing deposit facility", "sdf"], ["sdf", "sdf"], ["floor", "sdf"],
+    ["marginal standing facility", "msf"], ["msf", "msf"], ["ceiling", "msf"],
+    ["bank rate", "bank_rate"],
+    ["cash reserve ratio", "crr"], ["crr", "crr"],
+    ["statutory liquidity ratio", "slr"], ["slr", "slr"],
+    ["policy rate", "repo"], ["repo rate", "repo"], ["repo", "repo"],
+  ],
 };

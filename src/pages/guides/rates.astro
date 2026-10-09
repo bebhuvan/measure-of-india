@@ -1,0 +1,865 @@
+---
+import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
+import GuideData from "../../components/GuideData.astro";
+import EveryCut from "../../components/EveryCut.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+import { period } from "../../dossiers/periods.js";
+import fs from "node:fs";
+const D = bySlug["rates"];
+// every period, date and count named in this page's copy is read from the bundles at build time
+const B = (s) => JSON.parse(fs.readFileSync(`data/series/${s}.json`, "utf8"));
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const M3 = MONTHS.map((m) => m.slice(0, 3));
+const longDay = (iso) => `${+iso.slice(8, 10)} ${MONTHS[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}`;
+const longMonth = (iso) => `${MONTHS[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}`;
+const shortMonth = (iso) => `${M3[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}`;
+const fy = (iso) => { const y = +iso.slice(0, 4); return `${y}-${String((y + 1) % 100).padStart(2, "0")}`; };
+
+const pol = B("rates-policy"), mpc = B("rates-mpc"), votes = B("rates-mpc-votes"), lend = B("rates-lending"), bench = B("rates-benchmarks");
+const wss = B("rates-wss"), real = B("rates-real"), curve = B("rates-gsec-curve"), t91 = B("rates-tbill-91"), banks = B("rates-mclr-banks");
+const sdl = B("rates-sdl-states"), occ = B("rates-walr-occupation"), sect = B("rates-walr-sectors"), callm = B("rates-call-monthly");
+const borrow = B("rates-borrowing"), dev = B("rates-gsec-auctions-fy"), structure = B("rates-structure"), mclr = B("rates-mclr");
+
+const meetings = mpc.meta.meetings, lastM = meetings.at(-1);
+const decided = longDay(lastM.date);
+const stanceWords = { accommodative: "accommodative", neutral: "neutral", calibrated_tightening: "calibrated tightening", withdrawal_of_accommodation: "withdrawal of accommodation", accommodative_focus_on_withdrawal: "accommodative, focused on withdrawal" };
+const lastVotes = votes.dates.at(-1);
+const minutesPending = !lastM.minutes;
+const counts = { hike: meetings.filter((m) => m.decision === "hike").length, cut: meetings.filter((m) => m.decision === "cut").length, hold: meetings.filter((m) => m.decision === "hold").length };
+const unanimous = votes.series.votes_against.data.filter((v) => v === 0).length;
+const PL = period("rates-lending"), PB = period("rates-benchmarks"), PO = period("rates-walr-occupation"), PR = period("rates-real"), PW = period("rates-wss"), PC = period("rates-gsec-curve");
+const PS = period("rates-walr-sectors"), PM = period("rates-mclr-banks"), PCM = period("rates-call-monthly"), PT = period("rates-tbill-91");
+const last = (b, k) => { const d = b.series[k].data; for (let i = d.length - 1; i >= 0; i--) if (d[i] != null) return d[i]; return null; };
+// complete financial years only for the state plate: the current one is not over
+const sdlFY = sdl.dates.filter((d) => d < `${+lastM.date.slice(0, 4) - (+lastM.date.slice(5, 7) >= 4 ? 0 : 1)}-04-01`).at(-1);
+const ebShare = last(bench, "all_eblr");
+const eblrIn = ebShare >= 66.5 ? "Two in three" : ebShare >= 60 ? "Three in five" : ebShare >= 50 ? "More than half of all" : `${Math.round(ebShare)}% of`;
+const cards = last(occ, "personal_credit_cards"), housing = last(occ, "housing");
+const cardTimes = Math.round(cards / housing);
+const nBanks = banks.meta.banks.filter((x) => banks.series[x.key].data.at(-1) != null).length;   // banks reporting in the latest month
+const nStates = Object.keys(sdl.series).filter((k) => k.endsWith("_raised") && k !== "all_raised").filter((k) => sdl.series[k].data[sdl.dates.indexOf(sdlFY)] != null).length;
+const devFY = dev.dates.map((d, i) => [d, dev.series.devolved_pd.data[i]]).sort((a, b) => b[1] - a[1])[0];
+// the votes title: the share of all dissents cast by external members (roles from DBIE report 1491)
+const extKeys = votes.meta.members.filter((m) => m.role === "External member").map((m) => m.key);
+const againstBy = (keys) => keys.reduce((t, k) => t + (votes.series[k]?.data.filter((v) => v === 0).length ?? 0), 0);
+const externalAgainst = againstBy(extKeys) / Math.max(1, againstBy(votes.meta.members.map((m) => m.key)));
+const bl = borrow.dates.length - 1, lakh = (v) => (v / 1e5).toFixed(1);
+const borrowTitle = `The centre and the states borrowed ₹${lakh(borrow.series.centre_gross.data[bl] + borrow.series.states_gross.data[bl])} lakh crore from the market in ${fy(borrow.dates[bl])}, the states ${Math.round(100 * borrow.series.states_gross.data[bl] / (borrow.series.centre_gross.data[bl] + borrow.series.states_gross.data[bl]))}% of it`;
+
+// heavy bundles are sliced here, at build time, and handed to the page as baked JSON: the page
+// performs no data requests (CONTRACT-render), and the client carries only what it draws
+const sliceSeries = (b, keys, from) => { const i0 = from ? b.dates.findIndex((d) => d >= from) : 0; return { dates: b.dates.slice(i0), series: Object.fromEntries(keys.map((k) => [k, b.series[k].data.slice(i0)])) }; };
+const baked = {
+  wss: sliceSeries(wss, ["repo", "msf", "sdf", "reverse_repo", "call", "term_deposit_min", "term_deposit_max", "savings_min", "savings_max"]),
+  t91: sliceSeries(t91, ["cutoff_yield"]),
+  curve: { dates: curve.dates, series: Object.fromEntries([...Array(30)].map((_, i) => [`y${i + 1}`, curve.series[`y${i + 1}`].data])), spread: curve.series.spread_10_1.data },
+  banks: banks.meta.banks.map((x) => { const s = banks.series[x.key].data; let i = s.length - 1; while (i >= 0 && s[i] == null) i--; return i < 0 ? null : { k: x.key, bank: x.bank, group: x.group, v: s[i], at: banks.dates[i], y: s[i - 12] ?? null }; }).filter(Boolean),
+  banksDate: banks.dates.at(-1),
+};
+---
+<Base
+  title="Interest rates · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/rates/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">Six times a year, six people decide what it costs to borrow a rupee overnight. That decision travels, slowly and unevenly, to the rate on your home loan, the rate on your fixed deposit, and the rate the government pays to borrow.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>Reserve Bank of India</b></span>
+      <span>Latest decision <b id="m-decided">–</b></span>
+      <span>Lending and deposit rates <b>to {PL.long}</b></span>
+      <span>History <b>policy rates since 1935, MPC votes since 2016</b></span>
+      <span>Unit <b>per cent a year</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Policy repo rate</div><div class="v acc" id="n-repo">–</div><div class="d" id="d-repo">–</div><div class="nspark" id="nspark-repo"></div></div>
+      <div class="num"><div class="l">New loans, average rate</div><div class="v" id="n-walr">–</div><div class="d" id="d-walr">–</div></div>
+      <div class="num"><div class="l">New fixed deposits, average rate</div><div class="v" id="n-fd">–</div><div class="d" id="d-fd">–</div></div>
+      <div class="num"><div class="l">Repo rate after inflation</div><div class="v" id="n-real">–</div><div class="d" id="d-real">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading. Inputs: rates-monthly (repo, sdf, msf), rates-mpc (decision, stance), proseInputs. Prose: generated slots. -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">Decided {decided}</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Policy repo rate</span><div class="big" id="rb-repo">–</div></div>
+      <p class="rt-cap">The rate at which the RBI lends to banks overnight, set by the Monetary Policy Committee at its meeting that ended on {decided}. Every other rate on this page takes its cue from it.</p>
+      <div class="rt-side"><span class="rk">Stance</span><div class="rt-side-v" id="rb-stance" style="font-size:1.6rem">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the decision says</span>
+        <Prose slot="rates.current-reading.what-the-print-says" />
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What it does not say</span>
+        <Prose slot="rates.current-reading.what-it-does-not-say" />
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 lived reality. Inputs: rates-lending, rates-walr-sectors (housing), rates-real. Evergreen copy, numbers filled from data. -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>What it means for your money</h2><span class="line"></span><span class="unit">Loans and deposits, {PL.long}</span></div>
+    <div class="prose">
+      <p>A home loan of ₹30 lakh over 20 years costs <b id="lr-emi">–</b> more a month for every percentage point added to its rate, at the average rate on new home loans in {PS.long}. That is why a change in the repo rate matters to a family long before it matters to a bond trader. A loan priced off the repo rate resets within three months of a change; a loan priced off the bank's own MCLR, usually once a year.</p>
+      <p>Savers sit on the other side. A fixed deposit is locked at the rate of the day it was opened, so a rise in rates reaches savers only as old deposits mature and are renewed. The average new home loan in {PS.long} was priced at <b id="lr-house">–</b>, and the average new fixed deposit earned <b id="lr-fd">–</b>. After consumer price inflation of <b id="lr-cpi">–</b> a year, that deposit was left with <b id="lr-realfd">–</b> in real terms, before tax.</p>
+    </div>
+  </section>
+
+  <!-- § 03 how to read this (evergreen, human-written) -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>How the system works</h2><span class="line"></span></div>
+    <div class="prose">
+      <p>The RBI does not set the rate on your loan. It sets the price of overnight money for banks: the <b>repo rate</b>, at which it lends to them against government bonds, and two rates around it. The <b>marginal standing facility</b> (MSF) is the ceiling, a costlier window a bank can always use. The <b>standing deposit facility</b> (SDF) is the floor, the rate the RBI pays on money banks park with it; before April 2022 the floor was the fixed reverse repo rate. Between the floor and the ceiling sits the market's own overnight rate, the <b>weighted average call rate</b>, which the RBI steers towards the repo rate.</p>
+      <p>Banks then price loans off a benchmark. New retail and small business loans are mostly tied to an <b>external benchmark</b>, usually the repo rate itself, since October 2019. Older loans and most loans to companies are tied to the bank's own <b>MCLR</b> (since April 2016), or to the older <b>base rate</b> (2010) and <b>BPLR</b>. These are different rulers. The RBI's monthly <b>WALR</b> and <b>WADTDR</b> average what banks actually charge and pay across all of them, for new business (fresh) and for the whole book (outstanding).</p>
+      <p>The rate is decided by the <b>Monetary Policy Committee</b>: the Governor, a Deputy Governor, one RBI officer and three members from outside the RBI, who serve fixed terms. Each votes, and the minutes record every vote. The law gives them one target: consumer price inflation of 4%, within a band of 2 to 6%. The government borrows in the same market, by selling <b>Treasury bills</b> (up to a year) and <b>dated securities</b> (up to 50 years) at weekly auctions; state governments sell their own loans (<b>SDLs</b>). What the market demands for those loans, the <b>yield</b>, is the rate everyone else's long-term borrowing is measured against.</p>
+    </div>
+  </section>
+
+  <!-- § 04 the decision. Inputs: rates-policy (all seven rates), rates-wss (call, repo, msf, sdf, reverse_repo). -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>What the RBI decides</h2><span class="line"></span><span class="unit">Policy rates since 1935</span></div>
+    <div class="break">
+      <figure id="cb-long" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Ninety years of the price of money</h3>
+            <div class="sub">The Bank Rate from July 1935 and the repo rate from April 2001, the level in force on each day, per cent a year. The operating rate changed from one to the other; they are drawn as two lines, never joined.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-long">–</div><div class="c">repo rate now</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#C47A16"></i>Bank Rate</span>
+            <span class="chip"><i style="background:#2E4BD8"></i>Repo rate</span>
+          </div>
+          <div class="plotzone"><div id="plot-long" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics, Major Monetary Policy Rates and Reserve Requirements, and MPC resolutions (via the Data Bank).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>For most of the twentieth century the Bank Rate was the RBI's signal, but it was changed rarely and credit was rationed by rule rather than priced. From 2000 the RBI began to steer the market with daily repo auctions under its Liquidity Adjustment Facility, and from May 2011 the repo rate became the single policy rate. Each step in the blue line is one decision.</p>
+            <p>The repo rate peaked in 2001 and again in 2008, and touched its lowest during the pandemic, when the RBI cut to support an economy in lockdown. The steps of 2022 took it up by two and a half points in nine months, as inflation rose after the pandemic and the war in Ukraine.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {decided}</span>
+            <p>The repo rate stands at <b id="ex-long-repo">–</b> after the meeting that ended on {decided}, a change of <b id="ex-long-chg">–</b>. The Bank Rate, now tied to the MSF, is <b id="ex-long-bank">–</b>. The repo rate has ranged from <b id="ex-long-min">–</b> to <b id="ex-long-max">–</b> since 2001.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-corridor" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The overnight rate lives inside a corridor the RBI sets</h3>
+            <div class="sub">Weighted average call money rate for each week, against the repo rate, the ceiling (MSF) and the floor (reverse repo to April 2022, SDF from April 2022), per cent, April 2011 to {PW.long}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-corr">–</div><div class="c">call rate, latest week</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>Call money rate</span>
+            <span class="chip"><i style="background:#161A22"></i>Repo rate</span>
+            <span class="chip"><i style="background:#A3A9B4"></i>Ceiling and floor</span>
+          </div>
+          <div class="plotzone"><div id="plot-corridor" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Weekly Statistical Supplement, Table 4 'Ratios and Rates' (DBIE report 10).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>When banks are short of money, the call rate rises towards the ceiling; when they have more than they need, it falls towards the floor. Where it sits inside the corridor tells you whether the RBI is keeping money tight or loose, whatever the repo rate says. In 2013 the RBI raised the ceiling sharply to defend the rupee, and the call rate followed it up. In 2020 and 2021 it flooded the system with money, and the call rate sat on the floor for two years.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PW.long}</span>
+            <p>In the week to {longDay(wss.dates.at(-1))} the call rate averaged <b id="ex-corr-call">–</b>, against a repo rate of <b id="ex-corr-repo">–</b> and a floor of <b id="ex-corr-floor">–</b>.{wss.dates.at(-1) < lastM.date ? ` This weekly table has not yet caught up with the decision of ${decided}.` : ""}</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-reserve" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Banks once had to hold more than half of their deposits as cash and government bonds</h3>
+            <div class="sub">Cash reserve ratio (CRR, cash kept with the RBI) and statutory liquidity ratio (SLR, mostly government bonds), per cent of deposits, the level in force on each day, 1935 to {longMonth(pol.dates.at(-1))}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-res">–</div><div class="c">CRR plus SLR now</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>CRR</span>
+            <span class="chip"><i style="background:#878D99"></i>SLR</span>
+          </div>
+          <div class="plotzone"><div id="plot-reserve" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics (via the Data Bank). The CRR before 1962 was set as two separate ratios on demand and time liabilities and is not drawn.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The CRR is money a bank must keep with the RBI and cannot lend; it earns nothing. The SLR is the share of deposits a bank must hold in safe assets, mostly government bonds. In 1990-91 the two together claimed more than half of every rupee deposited, which kept the government's borrowing cheap and left less for everyone else. The reforms of the 1990s brought both down. The SLR still guarantees the government a captive buyer for its bonds.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {longMonth(pol.dates.at(-1))}</span>
+            <p>The CRR is <b id="ex-res-crr">–</b> and the SLR <b id="ex-res-slr">–</b> of deposits. At their peak, in September 1990, they summed to <b id="ex-res-peak">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 who decides. Inputs: rates-mpc (repo, change_bps, meta.meetings), rates-mpc-votes (every member series, votes_for, votes_against). -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>Who decides, and how often they disagree</h2><span class="line"></span><span class="unit">{meetings.length} meetings since October 2016</span></div>
+    <div class="break">
+      <figure id="cb-mpc" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{counts.hold} holds, {counts.cut} cuts and {counts.hike} hikes</h3>
+            <div class="sub">Every decision of the Monetary Policy Committee: the change in the repo rate at each meeting, basis points (100 basis points = 1 percentage point), and the repo rate that followed, October 2016 to {longMonth(lastM.date)}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-mpc">–</div><div class="c">latest change</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>Cut</span>
+            <span class="chip"><i style="background:#C47A16"></i>Hike</span>
+            <span class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>Hold</span>
+          </div>
+          <div class="plotzone"><div id="plot-mpc" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, MPC resolutions (via the Data Bank's rbi_mpc_meetings). Meeting 39 (November 2022, the report to the government on missing the inflation target) took no rate decision.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in/Scripts/Annualpolicy.aspx" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each bar is one meeting. Bars below the line are cuts, above it hikes; a ring is a meeting that left the rate unchanged. Most meetings change nothing. The committee usually moves in steps of 25 basis points, with larger steps in emergencies: 75 in March 2020, and 35 to 50 at a time in 2022.</p>
+            <p>The <b>stance</b> is the committee's signal about its next moves (accommodative, neutral, or withdrawing accommodation). The RBI does not record a vote on it.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {decided}</span>
+            <p>The committee has met <b id="ex-mpc-n">–</b> times; it held the rate <b id="ex-mpc-hold">–</b> times, cut <b id="ex-mpc-cut">–</b> times and raised it <b id="ex-mpc-hike">–</b> times. At its latest meeting it moved the repo rate by <b id="ex-mpc-last">–</b> and set its stance to <b id="ex-mpc-stance">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-votes" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{unanimous} of {votes.dates.length} decisions were unanimous; {externalAgainst > 0.5 ? "most dissents came from the three members appointed from outside the RBI" : "the dissents came from inside and outside the RBI"}</h3>
+            <div class="sub">How each member voted on the repo-rate resolution at every meeting whose minutes are published, October 2016 to {longMonth(lastVotes)}. A filled dot is a vote against the decision taken.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-votes">–</div><div class="c">votes against, all meetings</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>Voted against the decision</span>
+            <span class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#C9CED6"></i>Voted with it</span>
+          </div>
+          <div class="plotzone"><div id="plot-votes" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Minutes of the MPC meetings, 'Voting on the Resolution' (via the Data Bank's rbi_mpc_votes); roles as the RBI's DBIE table labels them (report 1491).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in/Scripts/Annualpolicy.aspx" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each row is a member, in the order they joined; each column is a meeting. Members serve fixed terms, so rows begin and end. A vote against can mean the member wanted a different direction, or the same direction by a different amount: in 2019, 2020 and June 2025 the minutes record members who agreed to cut but wanted a cut of another size. This table cannot say which way a "no" leaned; each member's statement in the minutes does.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {longMonth(lastVotes)}</span>
+            <p>Across <b id="ex-votes-n">–</b> meetings, members cast <b id="ex-votes-against">–</b> votes against the decision. The latest published vote, at the meeting ending {longDay(lastVotes)}, was <b id="ex-votes-last">–</b>.{minutesPending ? ` The minutes of the meeting that ended on ${decided}, which record each member's vote and reasons, are due about two weeks after it; this chart adds that meeting when they are out.` : ""}</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 transmission. Inputs: rates-lending (all 16 series), rates-monthly (repo), rates-benchmarks, rates-walr-sectors, rates-walr-occupation, rates-mclr-banks, rates-mclr, rates-wss (deposit ranges). -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>How it reaches your loan and your deposit</h2><span class="line"></span><span class="unit">Banks' rates, monthly since 2012</span></div>
+    <div class="break">
+      <figure id="cb-pass" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Loan and deposit rates follow the repo rate, new business first</h3>
+            <div class="sub">Weighted average lending rate (WALR) and term deposit rate (WADTDR) of all scheduled commercial banks, on fresh business in the month and on the whole book, against the repo rate at month-end, per cent, February 2012 to {PL.long}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-pass">–</div><div class="c">new loans, {PL.short}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>New loans</span>
+            <span class="chip"><i style="background:#AFBBF0"></i>All loans</span>
+            <span class="chip"><i style="background:#C47A16"></i>New deposits</span>
+            <span class="chip"><i style="background:#E8C79A"></i>All deposits</span>
+            <span class="chip"><i style="background:#161A22"></i>Repo rate</span>
+          </div>
+          <div class="plotzone"><div id="plot-pass" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Lending and Deposit Rates of Scheduled Commercial Banks (monthly release, via the Data Bank). All SCBs excludes regional rural and small finance banks. The fresh deposit rate begins March 2020 and is monthly from January 2021.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The rates on new loans and new deposits react within months; the rates on the whole book lag, because most loans and deposits already on the books were priced earlier. Compare the gap between new and outstanding loans after the 2022 hikes and after the 2025 cuts. The gap between what banks charge and what they pay is their margin: it widens when deposits are slow to reprice.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PL.long}</span>
+            <p>New loans averaged <b id="ex-pass-wf">–</b> and the whole loan book <b id="ex-pass-wo">–</b>. New fixed deposits paid <b id="ex-pass-df">–</b> and all fixed deposits <b id="ex-pass-do">–</b>. Over the twelve months to {PL.long}, new loan rates moved by <b id="ex-pass-dwf">–</b> and new deposit rates by <b id="ex-pass-ddf">–</b>, against a repo move of <b id="ex-pass-drepo">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-bench" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{eblrIn} floating-rate loans are now tied to an external benchmark</h3>
+            <div class="sub">Share of outstanding floating-rate rupee loans of all scheduled commercial banks by the benchmark they are priced on, per cent, quarter-ends, September 2019 to {PB.long}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-bench">–</div><div class="c">external benchmark, {PB.short}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-bench"></div>
+          <div class="plotzone"><div id="plot-bench" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Lending and Deposit Rates release, Table 7 (via the Data Bank).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A loan tied to an external benchmark, usually the repo rate, must be reset at least once every three months, so a change in the repo rate reaches it almost at once. A loan tied to the bank's MCLR resets only on the dates its agreement sets, often once a year, and follows the bank's own cost of funds. The rise of external benchmarks since October 2019 is why rate changes now reach borrowers faster than they did a decade ago.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PB.long}</span>
+            <p>External benchmarks priced <b id="ex-bench-eblr">–</b> of floating-rate loans, the MCLR <b id="ex-bench-mclr">–</b>, the base rate <b id="ex-bench-base">–</b>. At public sector banks the external-benchmark share was <b id="ex-bench-psb">–</b>; at private banks <b id="ex-bench-pvt">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-loans" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>What a new loan costs depends on what it is for</h3>
+            <div class="sub">Weighted average lending rate on fresh rupee loans by purpose, all scheduled commercial banks, per cent, {PS.long}, with the rate a year earlier.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-loans">–</div><div class="c">housing loans</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i><span id="lg-loans">Latest</span></span>
+            <span class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>A year earlier</span>
+          </div>
+          <div class="plotzone"><div id="plot-loans" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Lending and Deposit Rates release, Table 8 (fresh loans by sector, via the Data Bank).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Loans to large borrowers and loans backed by property cost least: export credit, large industry and home loans sit at the bottom. Unsecured loans to individuals cost most. Read the rates as averages across every bank and borrower: your own loan may be priced well above or below them.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PS.long}</span>
+            <p>A new housing loan averaged <b id="ex-loans-house">–</b>, a vehicle loan <b id="ex-loans-veh">–</b>, an education loan <b id="ex-loans-edu">–</b> and other personal loans <b id="ex-loans-pers">–</b>. Loans to micro, small and medium enterprises averaged <b id="ex-loans-msme">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-cards" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Credit card debt costs about {["", "", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"][cardTimes] ?? cardTimes} times as much as a home loan</h3>
+            <div class="sub">Weighted average lending rate on all outstanding loans by the borrower's occupation, scheduled commercial banks, per cent, {PO.long}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-cards">–</div><div class="c">credit cards</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-cards" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Quarterly Basic Statistical Return (BSR-1), Table 1.9 (DBIE report 949). Outstanding loans, a different ruler from the fresh-loan rates above.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>This return counts every outstanding loan, not just new ones, so its rates move slowly. A credit card bill paid in full by the due date costs no interest; balances rolled over are charged rates like these.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PO.long}</span>
+            <p>Credit card balances carried <b id="ex-cards-card">–</b>, consumer durables loans <b id="ex-cards-dur">–</b> and housing loans <b id="ex-cards-house">–</b>. All bank credit averaged <b id="ex-cards-all">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-mclr" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{nBanks} banks, {nBanks} prices: the 1-year MCLR bank by bank</h3>
+            <div class="sub">One-year marginal cost of funds based lending rate of each bank that reported for {PM.long}, by bank group, per cent; the line marks each group's median.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-mclr">–</div><div class="c">median bank, {PM.short}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-mclr" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Lending and Deposit Rates release, Tables 5 and 6 (via the Data Bank). The full list, with each bank's rate a year earlier, is in the table below.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The MCLR is each bank's own floor for loans not tied to an external benchmark, worked out from what the bank pays for its money. Public sector banks cluster tightly; private and foreign banks spread wider, because their funding and their borrowers differ more. A few foreign banks print rates far below the rest.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PM.long}</span>
+            <p>The median bank's 1-year MCLR was <b id="ex-mclr-med">–</b>; among public sector banks <b id="ex-mclr-psb">–</b>, private banks <b id="ex-mclr-pvt">–</b> and foreign banks <b id="ex-mclr-frn">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+      <details class="every-cut">
+        <summary>Every bank's 1-year MCLR ({baked.banks.length} banks)</summary>
+        <div class="em-table">
+          <table class="sortable" id="tbl-banks">
+            <thead><tr><th data-sort="s">Bank</th><th data-sort="s">Group</th><th class="n" data-sort="n">1-year MCLR</th><th class="n" data-sort="n">A year earlier</th><th data-sort="s">Month</th></tr></thead>
+            <tbody>
+              {baked.banks.slice().sort((a, b) => (a.group < b.group ? -1 : a.group > b.group ? 1 : a.v - b.v)).map((x) => (
+                <tr><td class="w">{x.bank}</td><td>{x.group.replace("_sector", "").replace("_", " ")}</td><td class="n">{x.v.toFixed(2)}%</td><td class="n">{x.y == null ? "" : x.y.toFixed(2) + "%"}</td><td class="nw">{shortMonth(x.at)}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+
+    <div class="break">
+      <figure id="cb-savers" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>What banks advertise to savers, and what savers actually get</h3>
+            <div class="sub">Term deposit rates for more than a year at major banks (the band from lowest to highest), the savings account rate, and the average rate on fresh term deposits, per cent, April 2011 to {PW.long}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-savers">–</div><div class="c">top of the band, latest week</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#E7EBFC"></i>Card rates, more than a year</span>
+            <span class="chip"><i style="background:#2E4BD8"></i>Fresh deposits, actual</span>
+            <span class="chip"><i style="background:#878D99"></i>Savings account</span>
+          </div>
+          <div class="plotzone"><div id="plot-savers" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Weekly Statistical Supplement, Table 4 (deposit rate ranges) and Lending and Deposit Rates release (WADTDR on fresh deposits).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The band is what major banks put on their rate cards for deposits of more than a year. The blue line is what new deposits of every term actually earned on average, weighted by the money placed; it can sit below the band because it counts short deposits too. The savings account rate was set by the RBI until October 2011 and has been each bank's choice since.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PW.long}</span>
+            <p>Card rates for more than a year ran from <b id="ex-sav-min">–</b> to <b id="ex-sav-max">–</b>; savings accounts paid <b id="ex-sav-sb">–</b>. New deposits earned <b id="ex-sav-fd">–</b> on average in {PL.long}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 real rates. Inputs: rates-real (all seven series), rates-real-cpi2012 (baked, the retired ruler). -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>Is a fixed deposit beating inflation?</h2><span class="line"></span><span class="unit">Rates minus CPI inflation, monthly since 2014</span></div>
+    <div class="break">
+      <figure id="cb-real" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>After inflation, savers lost money for most of 2020 to 2022</h3>
+            <div class="sub">Real interest rates: the average rate on fresh and on all fixed deposits, and the repo rate, each minus CPI inflation for the same month, percentage points, January 2014 to {PR.long}. CPI on the 2024 base: the NSO's back-cast to 2024 (paler), live from 2025.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-real">–</div><div class="c">new deposits after inflation</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>New fixed deposits</span>
+            <span class="chip"><i style="background:#878D99"></i>All fixed deposits</span>
+            <span class="chip"><i style="background:#C47A16"></i>Repo rate</span>
+          </div>
+          <div class="plotzone"><div id="plot-real" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: India Atlas calculation from RBI rates and MoSPI CPI (2024=100; the CPI guide's linked series). Before tax. The same calculation on the retired 2012 base is in the data downloads.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Below zero, money in the bank loses buying power. These are rates after the inflation that actually happened, not the inflation savers expected when they put money in, which nobody measures monthly. Interest is also taxed at the saver's income-tax rate, so the real return after tax is lower again. The 2014 to 2024 part rests on the NSO's reconstruction of the new CPI for those years, not on prices it collected at the time.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PR.long}</span>
+            <p>With CPI inflation at <b id="ex-real-cpi">–</b>, a new fixed deposit earned <b id="ex-real-fdf">–</b> after inflation and the average fixed deposit <b id="ex-real-fdo">–</b>. The real repo rate was <b id="ex-real-repo">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 market rates. Inputs: rates-gsec-curve (y1..y30, spread_10_1), rates-tbill-91 (cutoff_yield), rates-call-monthly (average, high, low). -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>What the markets pay</h2><span class="line"></span><span class="unit">Call money, Treasury bills and government bonds</span></div>
+    <div class="break">
+      <figure id="cb-curve" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The yield curve: what the government pays to borrow for 1 to 30 years</h3>
+            <div class="sub">Yields of central government securities traded in the market at each whole year to maturity, per cent, at the end of {PC.long}, a year earlier and five years earlier.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-curve">–</div><div class="c">10-year yield, {PC.short}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-curve"></div>
+          <div class="plotzone"><div id="plot-curve" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Month-end Yield of SGL Transactions in Government Dated Securities for Various Maturities (DBIE report 1368).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Lenders usually want more to lend for longer, so the curve slopes up. A steep curve says markets expect rates or inflation to rise; a flat or falling one says they expect them to fall. The 10-year yield is the one to watch: banks, companies and state governments price their own long-term borrowing off it, and it sets what the government pays on the debt it adds each year.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PC.long}</span>
+            <p>The 1-year yield was <b id="ex-curve-1">–</b>, the 10-year <b id="ex-curve-10">–</b> and the 30-year <b id="ex-curve-30">–</b>. The 10-year stood <b id="ex-curve-spread">–</b> above the 1-year.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-tbill" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Short and long: the 91-day Treasury bill and the 10-year bond since the 1990s</h3>
+            <div class="sub">Cut-off yield at each weekly auction of the 91-day Treasury bill since January 1993, and the month-end 10-year government bond yield since April 1996, per cent.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-tbill">–</div><div class="c">91-day bill, latest auction</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>91-day Treasury bill</span>
+            <span class="chip"><i style="background:#C47A16"></i>10-year bond</span>
+          </div>
+          <div class="plotzone"><div id="plot-tbill" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Auctions of 91-Day Government of India Treasury Bills (DBIE report 307), and month-end SGL yields (report 1368).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A 91-day bill is the government's shortest regular borrowing; its yield tracks the repo rate and the call rate closely. The 10-year yield adds what the market expects of inflation and of government borrowing over a decade. When the two lines come close, markets expect rates to fall; when they spread apart, to rise.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PT.long}</span>
+            <p>The latest 91-day auction, on {longDay(t91.dates.at(-1))}, cleared at <b id="ex-tbill-91">–</b>. The 10-year yield ended {PC.long} at <b id="ex-tbill-10">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-call" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Call money since 1990: from wild swings to a narrow band</h3>
+            <div class="sub">Call money rate, monthly average and the highest rate struck in the month, per cent, April 1990 to {PCM.long}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-call">–</div><div class="c">monthly average, {PCM.short}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>Monthly average</span>
+            <span class="chip"><i style="background:#C9CED6"></i>Highest deal of the month</span>
+          </div>
+          <div class="plotzone"><div id="plot-call" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Weighted Average Call/Notice Money Rates, monthly (DBIE report 1375, Handbook of Statistics).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>In the 1990s banks borrowed from each other overnight with little help from the RBI, and a tight week could send the call rate past 40%. The securities scam of 1992 and the pressure on the rupee in 1995-96 and 1998 show as spikes; so do the year-end squeeze of March 2007 and the global crisis of 2008. Since the RBI set a firm corridor in 2011, the monthly average has stayed close to the policy rate, though single deals can still stray, as they did in 2013.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PCM.long}</span>
+            <p>The call rate averaged <b id="ex-call-avg">–</b> in {PCM.long}, with the highest deal at <b id="ex-call-high">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 government borrowing. Inputs: rates-borrowing (centre/states gross/net), rates-gsec-auctions-fy, rates-sdl-states (every state's yield and amount). -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>Why government borrowing matters to everyone's rates</h2><span class="line"></span><span class="unit">Auctions of central and state bonds</span></div>
+    <div class="break">
+      <figure id="cb-borrow" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{borrowTitle}</h3>
+            <div class="sub">Gross market borrowing through dated securities by the central government and by all state governments together, ₹ lakh crore, financial years 1980-81 to {fy(borrow.dates.at(-1))}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-borrow">–</div><div class="c">centre and states, {fy(borrow.dates.at(-1))}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>Central government</span>
+            <span class="chip"><i style="background:#C47A16"></i>State governments</span>
+          </div>
+          <div class="plotzone"><div id="plot-borrow" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics, Market Borrowings of the Central and State Governments (DBIE report 104). Nominal rupees: not adjusted for inflation.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Every rupee governments borrow is a rupee banks, insurers and pension funds lend to them instead of to someone else. When borrowing is heavy, governments must offer higher yields to sell it, and every other long-term rate is priced off those yields. Gross borrowing includes new loans taken to repay old ones; the net figure, after repayments, is in the data download.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {fy(borrow.dates.at(-1))}</span>
+            <p>In {fy(borrow.dates.at(-1))} the centre borrowed <b id="ex-bor-c">–</b> gross and the states <b id="ex-bor-s">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-devolve" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>When the market will not buy: bonds left with primary dealers</h3>
+            <div class="sub">Central government bonds that the market did not take at auction and that primary dealers had to buy (devolvement), ₹ crore, financial years 1995-96 to {fy(dev.dates.at(-1))}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-dev">–</div><div class="c">largest year, {fy(devFY[0])}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-devolve" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Details of Central Government Market Borrowings (DBIE report 559), summed by financial year. The current year is not over.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Primary dealers underwrite each auction: if bids fall short of the amount offered, or come only at yields the RBI rejects, the dealers must take up the rest. A devolvement is a signal that the market thinks the government is asking too little. Large devolvements cluster in years of stress: 2013-14, when foreign investors fled, and 2020-21, when pandemic borrowing swelled.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {fy(dev.dates.at(-1))}</span>
+            <p>The largest year was {fy(devFY[0])}, with <b id="ex-dev-max">–</b> left with dealers on <b id="ex-dev-n">–</b> auction days. In {fy(dev.dates.at(-1))} so far, <b id="ex-dev-now">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-states" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>What each state pays to borrow</h3>
+            <div class="sub">Cut-off yield on each state's market loans in {fy(sdlFY)}, weighted by the amount raised, per cent, {nStates} states and union territories, against the all-state average.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-states">–</div><div class="c">all states, {fy(sdlFY)}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-states" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Details of State Governments Market Borrowings (DBIE report 1213), states read from each loan's name; checked against the RBI's auction press releases. Every state's yield and borrowing since 2005-06 is in the table below.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>State loans carry no central guarantee, but markets treat them as nearly safe, because the RBI manages them and repays them from the states' accounts with it. So the gaps between states are small, a fraction of a percentage point, and they reflect how much a state borrows, how long it borrows for, and how its finances look. A state that borrows for longer pays more for that alone.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {fy(sdlFY)}</span>
+            <p>The states paid <b id="ex-st-all">–</b> on average. The lowest was <b id="ex-st-lo">–</b>, the highest <b id="ex-st-hi">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+      <details class="every-cut">
+        <summary>Every state's borrowing cost and amount, {fy(sdl.dates[0])} to {fy(sdl.dates.at(-1))}</summary>
+        <div class="em-table">
+          <table class="sortable" id="tbl-states">
+            <thead><tr><th data-sort="s">State</th><th class="n" data-sort="n">Yield, {fy(sdlFY)}</th><th class="n" data-sort="n">Raised, {fy(sdlFY)}, ₹ crore</th><th class="n" data-sort="n">Yield, {fy(sdl.dates.at(-1))} so far</th><th class="n" data-sort="n">Raised since {fy(sdl.dates[0])}, ₹ crore</th></tr></thead>
+            <tbody>
+              {Object.keys(sdl.series).filter((k) => k.endsWith("_yield") && !k.endsWith("_wavg_yield") && k !== "all_yield").map((k) => {
+                const base = k.replace(/_yield$/, ""); const lab = sdl.series[k].label.split(":")[0];
+                const i = sdl.dates.indexOf(sdlFY), j = sdl.dates.length - 1;
+                const tot = sdl.series[base + "_raised"].data.reduce((a, v) => a + (v ?? 0), 0);
+                const y1 = sdl.series[k].data[i], r1 = sdl.series[base + "_raised"].data[i], y2 = sdl.series[k].data[j];
+                return <tr><td class="w">{lab}</td><td class="n">{y1 == null ? "" : y1.toFixed(2) + "%"}</td><td class="n">{r1 == null ? "" : Math.round(r1).toLocaleString("en-IN")}</td><td class="n">{y2 == null ? "" : y2.toFixed(2) + "%"}</td><td class="n">{Math.round(tot).toLocaleString("en-IN")}</td></tr>;
+              })}
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- § 10 the long view. Inputs: rates-structure (deposit rates, call, G-sec yields), rates-walr-1992 and rates-walr-groups-2005 (baked). -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>The long view</h2><span class="line"></span><span class="unit">Financial years since 1970-71</span></div>
+    <div class="break">
+      <figure id="cb-structure" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>What a one-to-three-year fixed deposit paid, 1970 to today</h3>
+            <div class="sub">Deposit rates for one to three years: the RBI's prescribed rate for all commercial banks to 1999-00, and the range at five major banks from 2000-01, per cent, financial years; the two are different rulers and are not joined.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-struct">–</div><div class="c">top of the range, {fy(structure.dates.at(-1))}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#878D99"></i>All commercial banks, to 1999-00</span>
+            <span class="chip"><i style="background:#2E4BD8"></i>Five major banks, from 2000-01</span>
+          </div>
+          <div class="plotzone"><div id="plot-structure" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics, Structure of Interest Rates (DBIE report 282). The current year's figure is the latest the Handbook prints, not a full-year figure.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Until the 1990s the RBI fixed what banks could pay on deposits and charge on loans. Deposit rates above 10% look generous, but inflation then often ran in double digits too. Rates were freed in stages through the 1990s, and the line becomes a range across banks. Compare any rate here with the inflation of its time before calling it high or low.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {fy(structure.dates.at(-1))}</span>
+            <p>Five major banks offered <b id="ex-struct-lo">–</b> to <b id="ex-struct-hi">–</b> for one to three years. The peak in this table is <b id="ex-struct-peak">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 11 what this measures (evergreen) -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>What these numbers measure</h2><span class="line"></span></div>
+    <div class="prose">
+      <p><b>Policy rates</b> are decisions, not measurements. Each is in force from the date the RBI announces until it is changed; the charts draw them as steps. The Handbook of Statistics records every change since 1935, and a few dates differ between its editions; this guide follows the newest edition and lists the differences in its data.</p>
+      <p><b>WALR</b> and <b>WADTDR</b> are weighted averages of what banks report to the RBI each month: the rate on every rupee lent or deposited, weighted by the amount. They exclude regional rural banks and small finance banks. "Fresh" covers business done in the month; "outstanding" covers everything on the books at month-end.</p>
+      <p><b>Yields</b> come from trades and auctions. A bond's yield is the return a buyer earns by holding it to maturity at today's price; when its price rises, its yield falls. The month-end yield curve is read from trades settled in the RBI's own ledger of government securities, at whole years to maturity.</p>
+      <p><b>Real rates</b> on this page subtract the year's CPI inflation from a nominal rate for the same month. They are a calculation by India Atlas, not an RBI statistic.</p>
+    </div>
+  </section>
+
+  <!-- § 12 misreadings -->
+  <section>
+    <div class="sec-head"><span class="no">12</span><h2>How to misread these numbers</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li><span class="no">1</span><div><h3>"The RBI cut rates, so my EMI will fall next month."</h3><p>Only if your loan is tied to the repo rate, and even then at its next reset, up to three months away. Loans tied to the MCLR reset once a year. Many banks keep the EMI unchanged and change the number of instalments instead.</p></div></li>
+      <li><span class="no">2</span><div><h3>"Deposit rates are 7%, so savers are doing well."</h3><p>Subtract inflation and tax first. A 7% deposit in a year of 5% inflation earns 2% in real terms, and less after tax. And the rate that matters is the one locked in when you opened the deposit, not the rate on today's rate card.</p></div></li>
+      <li><span class="no">3</span><div><h3>"The repo rate is the rate banks borrow at."</h3><p>It is the rate at which they can borrow from the RBI against collateral. Most of their money comes from deposits, which cost them the deposit rate; that is why loan rates track deposit rates as well as the repo rate.</p></div></li>
+      <li><span class="no">4</span><div><h3>"A dissenting vote means the member wanted a hike."</h3><p>A vote against the resolution can mean a different direction or a different size. Several dissents recorded here were votes for a smaller or larger cut. The minutes, not the tally, say which.</p></div></li>
+      <li><span class="no">5</span><div><h3>"Bond yields rose, so bonds are a better buy than ever."</h3><p>A rise in yields means the price of bonds already held has fallen. Higher yields help new buyers and hurt existing holders, including the banks and funds that hold most government debt.</p></div></li>
+    </ul>
+  </section>
+
+  <EveryCut slug="rates" />
+  <GuideData slug="rates" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>Reserve Bank of India: the Handbook of Statistics on the Indian Economy, MPC resolutions and minutes, the monthly release on Lending and Deposit Rates of Scheduled Commercial Banks, the Weekly Statistical Supplement, auction results, and the Database on Indian Economy (DBIE), all read through the owner's local mirror of RBI publications (the Data Bank). CPI from MoSPI, read from this site's CPI guide. Data vintage <b id="prov-vintage">–</b>.</p>
+      </div>
+      <div>
+        <h6>Method</h6>
+        <p>Policy rates are carried forward from each change to give the level on any date. Amounts are converted from rupees to ₹ crore. Where a table prints one value per display unit, only the actual values are read. Weighted averages, sums by financial year, real rates and the term spread are India Atlas calculations, labelled as such. Nothing is estimated; impossible printed values (a negative tenor or rate) are left empty and listed.</p>
+      </div>
+      <div>
+        <h6>Revisions and breaks</h6>
+        <p>Separate rulers are never joined: the Bank Rate and the repo rate; the reverse repo and the SDF as the floor; benchmark lending rates (base rate, MCLR, external benchmark); the annual lending-rate tables to 2014 and the monthly release from 2012; deposit rates of all banks to 1999-00 and of five major banks from 2000-01; CPI on the 2012 and 2024 bases.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Version 1.0, built October 2026. Revised after each MPC meeting and each monthly lending-rate release.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, interest rates</span>
+      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<script type="application/json" id="rates-baked" set:html={JSON.stringify(baked)} />
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/rates.client.js";
+</script>
+</Base>

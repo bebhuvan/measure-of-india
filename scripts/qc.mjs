@@ -287,6 +287,26 @@ const PAGES = [
     ["ex-p-women", (b) => fmt.pct1(100 * b["deposits-owners"].series.female_total.data.at(-1) / b["deposits-owners"].series.all_total.data.at(-1))],
     ["prov-vintage", (b) => b["deposits-owners"].meta.vintage],
   ]},
+  // --- rates (atlas-rates): the title block, the plates' lead values, provenance
+  { url: "/guides/rates/", slug: null, checks: [
+    ["n-repo", (b) => fmt.pct2(b["rates-monthly"].series.repo.data.at(-1))],
+    ["pv-long", (b) => fmt.pct2(b["rates-policy"].series.repo.data.at(-1))],
+    ["ex-long-bank", (b) => fmt.pct2(b["rates-policy"].series.bank_rate.data.at(-1))],
+    ["n-walr", (b) => fmt.pct2(b["rates-lending"].series.walr_fresh_all.data.at(-1))],
+    ["ex-pass-do", (b) => fmt.pct2(b["rates-lending"].series.wadtdr_outstanding_all.data.at(-1))],
+    ["n-fd", (b) => fmt.pct2(b["rates-lending"].series.wadtdr_fresh_all.data.at(-1))],
+    ["ex-mpc-n", (b) => fmt.count(b["rates-mpc"].dates.length)],
+    ["pv-votes", (b) => fmt.count(b["rates-mpc-votes"].series.votes_against.data.reduce((a, c) => a + c, 0))],
+    ["pv-bench", (b) => fmt.pct2(b["rates-benchmarks"].series.all_eblr.data.at(-1))],
+    ["pv-loans", (b) => fmt.pct2(b["rates-walr-sectors"].series.fresh_housing.data.at(-1))],
+    ["pv-cards", (b) => fmt.pct2(b["rates-walr-occupation"].series.personal_credit_cards.data.at(-1))],
+    ["pv-mclr", (b) => fmt.pct2(b["rates-mclr"].series.all_median.data.at(-1))],
+    ["ex-real-cpi", (b) => fmt.pct2(b["rates-real"].series.cpi.data.at(-1))],
+    ["ex-curve-10", (b) => fmt.pct2(b["rates-gsec-curve"].series.y10.data.at(-1))],
+    ["ex-call-avg", (b) => fmt.pct2(b["rates-call-monthly"].series.average.data.at(-1))],
+    ["ex-bor-c", (b) => fmt.lc1(b["rates-borrowing"].series.centre_gross.data.at(-1) / 1e5)],
+    ["prov-vintage", (b) => b["rates-monthly"].meta.vintage],
+  ]},
   { url: "/", slug: null, minPlots: 1, checks: [
     // the CPI print is the 2024-base series; core stays on the 2012 base
     // (no weights served for the new base), labelled "to Dec 2025"
