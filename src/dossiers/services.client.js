@@ -23,7 +23,7 @@ import bopA from "../../data/series/services-bop-annual.json";
 // just the series the plates draw (src/pages/guides/services.astro, #svc-data): the whole
 // files are megabytes and stay in the downloads and the every-series table
 const PICK = JSON.parse(document.getElementById("svc-data")?.textContent || "{}");
-const bopQ = PICK["services-bop-quarterly"], invQ = PICK["services-invisibles-quarterly"], jobsCy = PICK["services-jobs-cy"], jobsAy = PICK["services-jobs-ay"];
+const bopQ = PICK["services-bop-quarterly"], invQ = PICK["services-invisibles-quarterly"], jobsCy = PICK["services-jobs-cy25"], jobsAy = PICK["services-jobs-ay"];
 const asuse = PICK["services-asuse"], asuseProfile = PICK["services-asuse-profile"];
 import { MONO as sans, hydrate, a11y, addCrosshair, spark, downloadSVG, downloadPNG, saveBlob, fmt } from "../charts/plumbing.js";
 
@@ -430,8 +430,9 @@ setHTML("rt-est", (share22.meta.estimates.split("; ").at(-1) || "").split(": ")[
 const SECTIONS = { g: "Trade and vehicle repair", h: "Transport and storage", i: "Hotels and restaurants", j: "Information and communication", k: "Finance and insurance", l: "Real estate", m: "Professional, scientific, technical", n: "Administrative and support",
   o: "Public administration and defence", p: "Education", q: "Health and social work", r: "Arts and recreation", s: "Other personal services", t: "Households as employers (domestic work)", u: "International bodies" };
 {
-  const y1 = jobsCy.dates.length - 1, y0 = 0;
-  const rows = Object.entries(SECTIONS).map(([c, l]) => ({ c, label: l, a: JC[`sec_${c}__person_all_ps`]?.data[y0], b: JC[`sec_${c}__person_all_ps`]?.data[y1], f: JC[`sec_${c}__female_all_ps`]?.data[y1], m: JC[`sec_${c}__male_all_ps`]?.data[y1] }))
+  // the revamped design's latest calendar year (services-jobs-cy25); never set beside the original design's years
+  const y1 = jobsCy.dates.length - 1;
+  const rows = Object.entries(SECTIONS).map(([c, l]) => ({ c, label: l, b: JC[`sec_${c}__person_all_ps`]?.data[y1], f: JC[`sec_${c}__female_all_ps`]?.data[y1], m: JC[`sec_${c}__male_all_ps`]?.data[y1] }))
     .filter((r) => r.b != null && r.c !== "u").sort((p, q) => q.b - p.b);
   const svc = rows.reduce((a, r) => a + r.b, 0);
   const xEnd = Math.ceil(Math.max(...rows.flatMap((r) => [r.b, r.f, r.m]).filter((v) => v != null)) / 2) * 2 + 2;
@@ -461,10 +462,11 @@ const SECTIONS = { g: "Trade and vehicle repair", h: "Transport and storage", i:
   setHTML("ex-j-edu-m", rows.find((r) => r.c === "p").m.toFixed(1) + "%");
   setHTML("ex-j-dom-f", rows.find((r) => r.c === "t").f.toFixed(1) + "%");
   setHTML("ex-j-agri", JC.sec_a__person_all_ps.data[y1].toFixed(1) + "%");
-  wirePlate("cb-jobs", plot, "india-atlas_service-workers-by-industry", csvOf(["nic_section", "industry", `persons_${jobsCy.dates[y0].slice(0, 4)}_pct`, `persons_${yJ}_pct`, `women_${yJ}_pct`, `men_${yJ}_pct`], rows.map((r) => [r.c.toUpperCase(), r.label, r.a, r.b, r.f, r.m])));
+  wirePlate("cb-jobs", plot, "india-atlas_service-workers-by-industry", csvOf(["nic_section", "industry", `persons_${yJ}_pct`, `women_${yJ}_pct`, `men_${yJ}_pct`], rows.map((r) => [r.c.toUpperCase(), r.label, r.b, r.f, r.m])));
 }
 {
-  // services' share of workers: men and women, rural and urban, CWS, calendar years
+  // services' share of workers: men and women, rural and urban, CWS, the revamped design's calendar years
+  // (services-jobs-cy25; the original design's 2023-24 are another ruler, not drawn beside it)
   const cells = [["male", "rural", "Men, rural"], ["female", "rural", "Women, rural"], ["male", "urban", "Men, urban"], ["female", "urban", "Women, urban"], ["person", "all", "Everyone"]];
   const rows = cells.flatMap(([g, s, l]) => jobsCy.dates.map((d, i) => ({ label: l, year: d.slice(0, 4), v: JC[`tertiary__${g}_${s}_cws`]?.data[i] }))).filter((r) => r.v != null);
   const years = jobsCy.dates.map((d) => d.slice(0, 4));
@@ -483,8 +485,7 @@ const SECTIONS = { g: "Trade and vehicle repair", h: "Transport and storage", i:
   });
   a11y(plot, "Services' share of workers by sex and place", last.map((r) => `${r.label} ${r.v.toFixed(1)}%`).join("; ") + ` in ${years.at(-1)}.`);
   mount("plot-who", plot);
-  setHTML("who-y", years.at(-1));
-  setHTML("who-y0", `${years[0]} to ${years.at(-2)}`);
+  setHTML("who-y", years.length > 1 ? `${years.at(-1)} (grey: ${years[0]}${years.length > 2 ? " to " + years.at(-2) : ""}, same design)` : years.at(-1));
   const v = (l) => last.find((r) => r.label === l).v;
   setHTML("pv-who", v("Women, urban").toFixed(1) + "%");
   setHTML("ex-w-y", years.at(-1));

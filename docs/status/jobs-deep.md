@@ -78,6 +78,8 @@ Guide: `jobs` (family `plfs`).
   are the original design and 2025 the revamped one (MoSPI's own note). Its meta says "new
   design" for all three. It should split like `plfs-cy-*` / `plfs-cy25-*`, or at least
   disclose the seam. I have not edited it.
+## Notes for the coordinator
+
 - **Disk**: the machine filled to 0 bytes at about 00:10 on 2026-10-10; my cube fetch died
   with ENOSPC and was re-run. I deleted only my own http-cache and test bundles.
 

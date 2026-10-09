@@ -1,7 +1,8 @@
 # Coverage ledger: renewable installed capacity, MNRE (docs/CONTRACT-coverage.md).
-# Catalogue: node scripts/lib/products/mnre.mjs --catalogue. Omissions left for the
-# coordinator: wind, hydro and bio capacity by state, and the bio-power categories
-# (bagasse cogeneration, non-bagasse, waste to energy on and off grid).
+# Catalogue: node scripts/lib/products/mnre.mjs --catalogue. Wave 2 (households, 2026-10-10):
+# wind, hydro and bio by state, and the bio-power categories, baked and drawn; nothing pending.
+# State x category (solar's four, hydro's two, bio's four) is baked beyond what the catalogue
+# lists, since the source serves it.
 family: mnre
 guides: [mnre]
 catalogue: data/coverage/mnre.catalogue.json
@@ -23,12 +24,20 @@ rules:
     bundle: mnre-states-solar
     plate: "Plate 4: the geography of the buildout (solar)"
 
-  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
-  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
-  - match:
-      - "mnre:2:state:*"
-      - "mnre:3:state:*"
-      - "mnre:4:category:*"
-      - "mnre:4:state:*"
-    status: pending
-    scheduled: "wave 2: renewable energy fuller"
+  # wave 2 (households, 2026-10-10)
+  - match: "mnre:2:state:*"
+    status: shown
+    bundle: mnre-states-wind
+    plate: "Plate 5: each source has its own map"
+  - match: "mnre:3:state:*"
+    status: shown
+    bundle: mnre-states-hydro
+    plate: "Plate 5: each source has its own map"
+  - match: "mnre:4:state:*"
+    status: shown
+    bundle: mnre-states-bio
+    plate: "Plate 5: each source has its own map"
+  - match: "mnre:4:category:*"
+    status: shown
+    bundle: mnre-bio-categories
+    plate: "Plate 6: what bio power burns"

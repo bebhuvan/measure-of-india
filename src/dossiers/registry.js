@@ -236,8 +236,8 @@ export const DOSSIERS = [
     rssDescription: "The Household Consumption Expenditure Survey: what a person spends in a month, rung by rung of the ladder. Revised with each survey round.",
     stamp: { dateText: "August 2026", vintageStyle: "round" },
     statusNote: "Two survey rounds, final on release",
-    version: "v1.1",
-    proseInputs: ["hces-fractiles", "hces-states", "hces-categories", "hces-gini", "hces-social"],
+    version: "v1.2",
+    proseInputs: ["hces-fractiles", "hces-states", "hces-categories", "hces-gini", "hces-social", "hces-states-imputed", "hces-gini-states"],
     currentBundle: "hces-mpce",
     calendar: "fiscal-apr",
     bands: null,
@@ -245,7 +245,7 @@ export const DOSSIERS = [
     spark: { bundle: "hces-fractiles", custom: "fractile-ladder" },   // 12-point rural ladder, 2023-24 round
     prose: true,
     register: { id: "reg-hces", label: "Consumption", unit: "Annual survey, rounds 2022-23 & 2023-24", historyCol: "History" },
-    bundles: ["hces-mpce", "hces-states", "hces-fractiles", "hces-categories", "hces-gini", "hces-social", "hces-household-type", "hces-quantities", "hces-item-values", "hces-categories-states"],
+    bundles: ["hces-mpce", "hces-states", "hces-fractiles", "hces-categories", "hces-gini", "hces-social", "hces-household-type", "hces-quantities", "hces-item-values", "hces-categories-states", "hces-states-imputed", "hces-fractiles-states", "hces-categories-inr", "hces-categories-imputed", "hces-categories-states-imputed", "hces-categories-inr-states", "hces-categories-inr-states-imputed", "hces-quantities-states", "hces-item-values-states", "hces-household-type-states", "hces-social-states", "hces-gini-states"],
   },
   {
     slug: "factories",
@@ -288,7 +288,7 @@ export const DOSSIERS = [
     rssDescription: "AISHE: who enrols, who teaches, and who is left out of Indian higher education. Revised with each round.",
     stamp: { dateText: "August 2026", vintageStyle: "round" },
     statusNote: "Five survey rounds, final on release",
-    version: "v1.0",
+    version: "v1.2",
     currentBundle: "aishe-headline",
     calendar: "fiscal-apr",
     bands: null,
@@ -296,7 +296,7 @@ export const DOSSIERS = [
     spark: { bundle: "aishe-headline", series: "enrolment" },
     prose: false,
     register: { id: "reg-aishe", label: "Higher Education", unit: "Annual, AISHE, 2017-18 to 2021-22", historyCol: "5 rounds" },
-    bundles: ["aishe-headline", "aishe-access", "aishe-composition", "aishe-states", "aishe-teachers", "aishe-minority"],
+    bundles: ["aishe-headline", "aishe-access", "aishe-composition", "aishe-states", "aishe-teachers", "aishe-minority", "aishe-states-institutions", "aishe-states-enrolment", "aishe-states-social", "aishe-states-minority", "aishe-states-ger", "aishe-ptr", "aishe-states-teachers"],
   },
   {
     slug: "gender",
@@ -368,7 +368,7 @@ export const DOSSIERS = [
     rssDescription: "Solar, wind and the rest of the renewable build-out, counted at the meter. Revised with each release.",
     stamp: { dateText: "August 2026", vintageStyle: "month" },
     statusNote: "Monthly installed capacity, Dec 2023 classification break disclosed",
-    version: "v1.0",
+    version: "v1.1",
     currentBundle: "mnre-sources",
     calendar: "fiscal-apr",
     bands: null,
@@ -376,7 +376,7 @@ export const DOSSIERS = [
     spark: { bundle: "mnre-sources", series: "grand_total" },
     prose: false,
     register: { id: "reg-mnre", label: "Renewable Energy", unit: "Monthly, MNRE, Jan 2020 to Jun 2026", historyCol: "78 months" },
-    bundles: ["mnre-sources", "mnre-solar-categories", "mnre-states", "mnre-states-solar"],
+    bundles: ["mnre-sources", "mnre-solar-categories", "mnre-states", "mnre-states-solar", "mnre-bio-categories", "mnre-states-wind", "mnre-states-hydro", "mnre-states-bio"],
   },
   {
     slug: "nfhs",
@@ -453,7 +453,7 @@ export const DOSSIERS = [
     rssDescription: "Savings accounts and fixed deposits: how much, at what rate, for how long. Revised each year.",
     stamp: { dateStyle: "vintageMonth", vintageStyle: "vintage" },
     statusNote: "Annual, as on 31 March; classification change in 2018-19 disclosed",
-    version: "v1.0",
+    version: "v1.1",
     currentBundle: "deposits-owners",
     calendar: "fiscal-apr",
     bands: null,
@@ -461,7 +461,8 @@ export const DOSSIERS = [
     spark: { bundle: "deposits-owners", series: "household_total" },
     prose: false,
     register: { id: "reg-deposits", label: "Bank deposits", unit: "Annual, RBI BSR-2, as on 31 March, ₹ lakh crore", historyCol: "Since 2019" },
-    bundles: ["deposits-owners", "deposits-owners-2005", "deposits-population", "deposits-term-rates", "deposits-term-maturity", "deposits-term-size", "deposits-term-size-2026"],
+    bundles: ["deposits-owners", "deposits-owners-2005", "deposits-population", "deposits-term-rates", "deposits-term-maturity", "deposits-term-size", "deposits-term-size-2026", "deposits-sectors", "deposits-sectors-2005", "deposits-age", "deposits-states-owners", "deposits-states-type", "deposits-districts", "deposits-districts-gender", "deposits-bankgroups-sectors", "deposits-employees-bankgroups", "deposits-employees-states", "deposits-maturity-owners", "deposits-q-sectors"],
+    everyCutFamilies: [{ id: "bsr2-annual", label: "Every other annual BSR-2 table", match: ["deposits-states-sectors", "deposits-metros-sectors", "deposits-population-type", "deposits-bankgroups-type", "deposits-population-owners", "deposits-bankgroups-owners", "deposits-states-population-type", "deposits-states-bankgroups-type", "deposits-bankgroups-population-type", "deposits-maturity-population", "deposits-maturity-bankgroups", "deposits-maturity-population-owners", "deposits-maturity-states", "deposits-states-2010"] }, { id: "bsr2-quarterly", label: "The quarterly BSR-2 (excluding regional rural banks)", match: "deposits-q-" }],
   },
   // ---- bis family session: debt and housing (BIS backbone; RBI HPI and NHB RESIDEX as rulers) ----
   {
@@ -547,7 +548,7 @@ export const DOSSIERS = [
     bundles: ["services-gva-2022-share", "services-gva-2022-growth", "services-gva-2022-level", "services-gva-2011-share", "services-gva-2011-growth", "services-gva-2011-level",
       "gdp-2022-industries", "isp", "services-isp-growth", "services-isp-annual",
       "services-trade-monthly", "services-bop-quarterly", "services-invisibles-quarterly", "services-bop-annual",
-      "services-jobs-cy", "services-jobs-ay", "services-asuse", "services-asuse-profile", "services-asuse-2025", "services-asuse-profile-2025", "asuse-sectors"],
+      "services-jobs-cy25", "services-jobs-cy", "services-jobs-ay", "services-asuse", "services-asuse-profile", "services-asuse-2025", "services-asuse-profile-2025", "asuse-sectors"],
   },
   // ---- end services ----
   // --- states (state economies) ---

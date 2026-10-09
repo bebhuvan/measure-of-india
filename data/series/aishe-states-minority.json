@@ -1,0 +1,6241 @@
+{
+ "meta": {
+  "dossier": "aishe",
+  "frequency": "annual",
+  "base": "AISHE survey rounds",
+  "source": "Ministry of Education (Department of Higher Education), via MoSPI eSankhyiki",
+  "vintage": "2026-10-09",
+  "mock": false,
+  "geo": "IND",
+  "latestPeriod": "2021-04",
+  "releaseDate": null,
+  "revisionPolicy": "Survey estimates are final on release. Each survey year is a cross-section; the five years (2017-18 to 2021-22) are comparable by design but are never chained into a spliced index.",
+  "coverage": "States/UTs and All India; enrolment of Muslims, other minority communities, Economically Weaker Sections and persons with disability, by gender, five survey years.",
+  "note": "Survey years are fiscal (Apr–Mar), plotted at April of the first year. The five AISHE rounds served by the eSankhyiki API (2017-18 to 2021-22) are comparable by design but are never chained into a spliced index. GER (Gross Enrolment Ratio) = enrolled students ÷ the college-age population × 100; it is gross, so it can exceed 100. GPI (Gender Parity Index) = female GER ÷ male GER; 1.0 is parity. EWS starts in 2019-20, when the category was created. Counts, not rates: the survey publishes no population base for these groups."
+ },
+ "dates": [
+  "2017-04-01",
+  "2018-04-01",
+  "2019-04-01",
+  "2020-04-01",
+  "2021-04-01"
+ ],
+ "series": {
+  "all_india__muslims_both": {
+   "name": "aishe_all_india__muslims_both",
+   "label": "Enrolment, Muslims, women and men · All India",
+   "group": "All India",
+   "color": "#5F6675",
+   "data": [
+    1837609,
+    1959004,
+    2100860,
+    1921713,
+    2108033
+   ],
+   "unit": "count"
+  },
+  "all_india__muslims_male": {
+   "name": "aishe_all_india__muslims_male",
+   "label": "Enrolment, Muslims, men · All India",
+   "group": "All India",
+   "color": "#878D99",
+   "data": [
+    939488,
+    993396,
+    1046374,
+    954655,
+    1068766
+   ],
+   "unit": "count"
+  },
+  "all_india__muslims_female": {
+   "name": "aishe_all_india__muslims_female",
+   "label": "Enrolment, Muslims, women · All India",
+   "group": "All India",
+   "color": "#A3A9B4",
+   "data": [
+    898121,
+    965608,
+    1054486,
+    967058,
+    1039267
+   ],
+   "unit": "count"
+  },
+  "all_india__other_minority_both": {
+   "name": "aishe_all_india__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · All India",
+   "group": "All India",
+   "color": "#C9CED6",
+   "data": [
+    807627,
+    868100,
+    887750,
+    829866,
+    905159
+   ],
+   "unit": "count"
+  },
+  "all_india__other_minority_male": {
+   "name": "aishe_all_india__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · All India",
+   "group": "All India",
+   "color": "#5F6675",
+   "data": [
+    359110,
+    397146,
+    404748,
+    381764,
+    427425
+   ],
+   "unit": "count"
+  },
+  "all_india__other_minority_female": {
+   "name": "aishe_all_india__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · All India",
+   "group": "All India",
+   "color": "#878D99",
+   "data": [
+    448517,
+    470954,
+    483002,
+    448102,
+    477734
+   ],
+   "unit": "count"
+  },
+  "all_india__ews_both": {
+   "name": "aishe_all_india__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · All India",
+   "group": "All India",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    467776,
+    656561
+   ],
+   "unit": "count"
+  },
+  "all_india__ews_male": {
+   "name": "aishe_all_india__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · All India",
+   "group": "All India",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    244250,
+    354534
+   ],
+   "unit": "count"
+  },
+  "all_india__ews_female": {
+   "name": "aishe_all_india__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · All India",
+   "group": "All India",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    223526,
+    302027
+   ],
+   "unit": "count"
+  },
+  "all_india__pwd_both": {
+   "name": "aishe_all_india__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · All India",
+   "group": "All India",
+   "color": "#878D99",
+   "data": [
+    74317,
+    85877,
+    92831,
+    79035,
+    88748
+   ],
+   "unit": "count"
+  },
+  "all_india__pwd_male": {
+   "name": "aishe_all_india__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · All India",
+   "group": "All India",
+   "color": "#A3A9B4",
+   "data": [
+    42630,
+    48212,
+    47830,
+    49334,
+    51373
+   ],
+   "unit": "count"
+  },
+  "all_india__pwd_female": {
+   "name": "aishe_all_india__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · All India",
+   "group": "All India",
+   "color": "#C9CED6",
+   "data": [
+    31687,
+    37665,
+    45001,
+    29701,
+    37375
+   ],
+   "unit": "count"
+  },
+  "andaman_nicobar_islands__muslims_both": {
+   "name": "aishe_andaman_nicobar_islands__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Andaman & Nicobar Islands",
+   "group": "Andaman & Nicobar Islands",
+   "color": "#5F6675",
+   "data": [
+    530,
+    639,
+    470,
+    618,
+    609
+   ],
+   "unit": "count"
+  },
+  "andaman_nicobar_islands__muslims_male": {
+   "name": "aishe_andaman_nicobar_islands__muslims_male",
+   "label": "Enrolment, Muslims, men · Andaman & Nicobar Islands",
+   "group": "Andaman & Nicobar Islands",
+   "color": "#878D99",
+   "data": [
+    207,
+    263,
+    166,
+    255,
+    239
+   ],
+   "unit": "count"
+  },
+  "andaman_nicobar_islands__muslims_female": {
+   "name": "aishe_andaman_nicobar_islands__muslims_female",
+   "label": "Enrolment, Muslims, women · Andaman & Nicobar Islands",
+   "group": "Andaman & Nicobar Islands",
+   "color": "#A3A9B4",
+   "data": [
+    323,
+    376,
+    304,
+    363,
+    370
+   ],
+   "unit": "count"
+  },
+  "andaman_nicobar_islands__other_minority_both": {
+   "name": "aishe_andaman_nicobar_islands__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Andaman & Nicobar Islands",
+   "group": "Andaman & Nicobar Islands",
+   "color": "#C9CED6",
+   "data": [
+    1094,
+    1009,
+    938,
+    1132,
+    1145
+   ],
+   "unit": "count"
+  },
+  "andaman_nicobar_islands__other_minority_male": {
+   "name": "aishe_andaman_nicobar_islands__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Andaman & Nicobar Islands",
+   "group": "Andaman & Nicobar Islands",
+   "color": "#5F6675",
+   "data": [
+    416,
+    339,
+    293,
+    401,
+    402
+   ],
+   "unit": "count"
+  },
+  "andaman_nicobar_islands__other_minority_female": {
+   "name": "aishe_andaman_nicobar_islands__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Andaman & Nicobar Islands",
+   "group": "Andaman & Nicobar Islands",
+   "color": "#878D99",
+   "data": [
+    678,
+    670,
+    645,
+    731,
+    743
+   ],
+   "unit": "count"
+  },
+  "andaman_nicobar_islands__ews_both": {
+   "name": "aishe_andaman_nicobar_islands__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Andaman & Nicobar Islands",
+   "group": "Andaman & Nicobar Islands",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    88,
+    112
+   ],
+   "unit": "count"
+  },
+  "andaman_nicobar_islands__ews_male": {
+   "name": "aishe_andaman_nicobar_islands__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Andaman & Nicobar Islands",
+   "group": "Andaman & Nicobar Islands",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    51,
+    49
+   ],
+   "unit": "count"
+  },
+  "andaman_nicobar_islands__ews_female": {
+   "name": "aishe_andaman_nicobar_islands__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Andaman & Nicobar Islands",
+   "group": "Andaman & Nicobar Islands",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    37,
+    63
+   ],
+   "unit": "count"
+  },
+  "andaman_nicobar_islands__pwd_both": {
+   "name": "aishe_andaman_nicobar_islands__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Andaman & Nicobar Islands",
+   "group": "Andaman & Nicobar Islands",
+   "color": "#878D99",
+   "data": [
+    25,
+    37,
+    62,
+    56,
+    66
+   ],
+   "unit": "count"
+  },
+  "andaman_nicobar_islands__pwd_male": {
+   "name": "aishe_andaman_nicobar_islands__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Andaman & Nicobar Islands",
+   "group": "Andaman & Nicobar Islands",
+   "color": "#A3A9B4",
+   "data": [
+    15,
+    20,
+    18,
+    22,
+    27
+   ],
+   "unit": "count"
+  },
+  "andaman_nicobar_islands__pwd_female": {
+   "name": "aishe_andaman_nicobar_islands__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Andaman & Nicobar Islands",
+   "group": "Andaman & Nicobar Islands",
+   "color": "#C9CED6",
+   "data": [
+    10,
+    17,
+    44,
+    34,
+    39
+   ],
+   "unit": "count"
+  },
+  "andhra_pradesh__muslims_both": {
+   "name": "aishe_andhra_pradesh__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Andhra Pradesh",
+   "group": "Andhra Pradesh",
+   "color": "#5F6675",
+   "data": [
+    56100,
+    58779,
+    61295,
+    51651,
+    56444
+   ],
+   "unit": "count"
+  },
+  "andhra_pradesh__muslims_male": {
+   "name": "aishe_andhra_pradesh__muslims_male",
+   "label": "Enrolment, Muslims, men · Andhra Pradesh",
+   "group": "Andhra Pradesh",
+   "color": "#878D99",
+   "data": [
+    32307,
+    33309,
+    34050,
+    28338,
+    32718
+   ],
+   "unit": "count"
+  },
+  "andhra_pradesh__muslims_female": {
+   "name": "aishe_andhra_pradesh__muslims_female",
+   "label": "Enrolment, Muslims, women · Andhra Pradesh",
+   "group": "Andhra Pradesh",
+   "color": "#A3A9B4",
+   "data": [
+    23793,
+    25470,
+    27245,
+    23313,
+    23726
+   ],
+   "unit": "count"
+  },
+  "andhra_pradesh__other_minority_both": {
+   "name": "aishe_andhra_pradesh__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Andhra Pradesh",
+   "group": "Andhra Pradesh",
+   "color": "#C9CED6",
+   "data": [
+    6469,
+    8834,
+    7629,
+    10028,
+    8661
+   ],
+   "unit": "count"
+  },
+  "andhra_pradesh__other_minority_male": {
+   "name": "aishe_andhra_pradesh__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Andhra Pradesh",
+   "group": "Andhra Pradesh",
+   "color": "#5F6675",
+   "data": [
+    2939,
+    4428,
+    3884,
+    5727,
+    4241
+   ],
+   "unit": "count"
+  },
+  "andhra_pradesh__other_minority_female": {
+   "name": "aishe_andhra_pradesh__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Andhra Pradesh",
+   "group": "Andhra Pradesh",
+   "color": "#878D99",
+   "data": [
+    3530,
+    4406,
+    3745,
+    4301,
+    4420
+   ],
+   "unit": "count"
+  },
+  "andhra_pradesh__ews_both": {
+   "name": "aishe_andhra_pradesh__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Andhra Pradesh",
+   "group": "Andhra Pradesh",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    29718,
+    39441
+   ],
+   "unit": "count"
+  },
+  "andhra_pradesh__ews_male": {
+   "name": "aishe_andhra_pradesh__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Andhra Pradesh",
+   "group": "Andhra Pradesh",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    15650,
+    20391
+   ],
+   "unit": "count"
+  },
+  "andhra_pradesh__ews_female": {
+   "name": "aishe_andhra_pradesh__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Andhra Pradesh",
+   "group": "Andhra Pradesh",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    14068,
+    19050
+   ],
+   "unit": "count"
+  },
+  "andhra_pradesh__pwd_both": {
+   "name": "aishe_andhra_pradesh__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Andhra Pradesh",
+   "group": "Andhra Pradesh",
+   "color": "#878D99",
+   "data": [
+    3206,
+    2525,
+    2665,
+    2616,
+    2528
+   ],
+   "unit": "count"
+  },
+  "andhra_pradesh__pwd_male": {
+   "name": "aishe_andhra_pradesh__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Andhra Pradesh",
+   "group": "Andhra Pradesh",
+   "color": "#A3A9B4",
+   "data": [
+    1832,
+    1597,
+    1683,
+    1659,
+    1361
+   ],
+   "unit": "count"
+  },
+  "andhra_pradesh__pwd_female": {
+   "name": "aishe_andhra_pradesh__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Andhra Pradesh",
+   "group": "Andhra Pradesh",
+   "color": "#C9CED6",
+   "data": [
+    1374,
+    928,
+    982,
+    957,
+    1167
+   ],
+   "unit": "count"
+  },
+  "arunachal_pradesh__muslims_both": {
+   "name": "aishe_arunachal_pradesh__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Arunachal Pradesh",
+   "group": "Arunachal Pradesh",
+   "color": "#5F6675",
+   "data": [
+    120,
+    136,
+    150,
+    93,
+    107
+   ],
+   "unit": "count"
+  },
+  "arunachal_pradesh__muslims_male": {
+   "name": "aishe_arunachal_pradesh__muslims_male",
+   "label": "Enrolment, Muslims, men · Arunachal Pradesh",
+   "group": "Arunachal Pradesh",
+   "color": "#878D99",
+   "data": [
+    70,
+    94,
+    91,
+    53,
+    65
+   ],
+   "unit": "count"
+  },
+  "arunachal_pradesh__muslims_female": {
+   "name": "aishe_arunachal_pradesh__muslims_female",
+   "label": "Enrolment, Muslims, women · Arunachal Pradesh",
+   "group": "Arunachal Pradesh",
+   "color": "#A3A9B4",
+   "data": [
+    50,
+    42,
+    59,
+    40,
+    42
+   ],
+   "unit": "count"
+  },
+  "arunachal_pradesh__other_minority_both": {
+   "name": "aishe_arunachal_pradesh__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Arunachal Pradesh",
+   "group": "Arunachal Pradesh",
+   "color": "#C9CED6",
+   "data": [
+    2767,
+    2887,
+    4769,
+    3141,
+    4143
+   ],
+   "unit": "count"
+  },
+  "arunachal_pradesh__other_minority_male": {
+   "name": "aishe_arunachal_pradesh__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Arunachal Pradesh",
+   "group": "Arunachal Pradesh",
+   "color": "#5F6675",
+   "data": [
+    1409,
+    1688,
+    2519,
+    1849,
+    2470
+   ],
+   "unit": "count"
+  },
+  "arunachal_pradesh__other_minority_female": {
+   "name": "aishe_arunachal_pradesh__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Arunachal Pradesh",
+   "group": "Arunachal Pradesh",
+   "color": "#878D99",
+   "data": [
+    1358,
+    1199,
+    2250,
+    1292,
+    1673
+   ],
+   "unit": "count"
+  },
+  "arunachal_pradesh__ews_both": {
+   "name": "aishe_arunachal_pradesh__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Arunachal Pradesh",
+   "group": "Arunachal Pradesh",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    185,
+    345
+   ],
+   "unit": "count"
+  },
+  "arunachal_pradesh__ews_male": {
+   "name": "aishe_arunachal_pradesh__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Arunachal Pradesh",
+   "group": "Arunachal Pradesh",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    111,
+    221
+   ],
+   "unit": "count"
+  },
+  "arunachal_pradesh__ews_female": {
+   "name": "aishe_arunachal_pradesh__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Arunachal Pradesh",
+   "group": "Arunachal Pradesh",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    74,
+    124
+   ],
+   "unit": "count"
+  },
+  "arunachal_pradesh__pwd_both": {
+   "name": "aishe_arunachal_pradesh__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Arunachal Pradesh",
+   "group": "Arunachal Pradesh",
+   "color": "#878D99",
+   "data": [
+    39,
+    28,
+    14,
+    32,
+    52
+   ],
+   "unit": "count"
+  },
+  "arunachal_pradesh__pwd_male": {
+   "name": "aishe_arunachal_pradesh__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Arunachal Pradesh",
+   "group": "Arunachal Pradesh",
+   "color": "#A3A9B4",
+   "data": [
+    26,
+    19,
+    9,
+    22,
+    24
+   ],
+   "unit": "count"
+  },
+  "arunachal_pradesh__pwd_female": {
+   "name": "aishe_arunachal_pradesh__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Arunachal Pradesh",
+   "group": "Arunachal Pradesh",
+   "color": "#C9CED6",
+   "data": [
+    13,
+    9,
+    5,
+    10,
+    28
+   ],
+   "unit": "count"
+  },
+  "assam__muslims_both": {
+   "name": "aishe_assam__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Assam",
+   "group": "Assam",
+   "color": "#5F6675",
+   "data": [
+    87804,
+    97465,
+    93353,
+    87929,
+    84808
+   ],
+   "unit": "count"
+  },
+  "assam__muslims_male": {
+   "name": "aishe_assam__muslims_male",
+   "label": "Enrolment, Muslims, men · Assam",
+   "group": "Assam",
+   "color": "#878D99",
+   "data": [
+    45324,
+    49869,
+    47608,
+    44845,
+    44047
+   ],
+   "unit": "count"
+  },
+  "assam__muslims_female": {
+   "name": "aishe_assam__muslims_female",
+   "label": "Enrolment, Muslims, women · Assam",
+   "group": "Assam",
+   "color": "#A3A9B4",
+   "data": [
+    42480,
+    47596,
+    45745,
+    43084,
+    40761
+   ],
+   "unit": "count"
+  },
+  "assam__other_minority_both": {
+   "name": "aishe_assam__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Assam",
+   "group": "Assam",
+   "color": "#C9CED6",
+   "data": [
+    8662,
+    13282,
+    13905,
+    13362,
+    11735
+   ],
+   "unit": "count"
+  },
+  "assam__other_minority_male": {
+   "name": "aishe_assam__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Assam",
+   "group": "Assam",
+   "color": "#5F6675",
+   "data": [
+    4268,
+    6586,
+    6796,
+    6791,
+    5841
+   ],
+   "unit": "count"
+  },
+  "assam__other_minority_female": {
+   "name": "aishe_assam__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Assam",
+   "group": "Assam",
+   "color": "#878D99",
+   "data": [
+    4394,
+    6696,
+    7109,
+    6571,
+    5894
+   ],
+   "unit": "count"
+  },
+  "assam__ews_both": {
+   "name": "aishe_assam__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Assam",
+   "group": "Assam",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    17412,
+    27204
+   ],
+   "unit": "count"
+  },
+  "assam__ews_male": {
+   "name": "aishe_assam__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Assam",
+   "group": "Assam",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    8496,
+    12932
+   ],
+   "unit": "count"
+  },
+  "assam__ews_female": {
+   "name": "aishe_assam__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Assam",
+   "group": "Assam",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    8916,
+    14272
+   ],
+   "unit": "count"
+  },
+  "assam__pwd_both": {
+   "name": "aishe_assam__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Assam",
+   "group": "Assam",
+   "color": "#878D99",
+   "data": [
+    882,
+    963,
+    812,
+    960,
+    661
+   ],
+   "unit": "count"
+  },
+  "assam__pwd_male": {
+   "name": "aishe_assam__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Assam",
+   "group": "Assam",
+   "color": "#A3A9B4",
+   "data": [
+    528,
+    599,
+    511,
+    644,
+    429
+   ],
+   "unit": "count"
+  },
+  "assam__pwd_female": {
+   "name": "aishe_assam__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Assam",
+   "group": "Assam",
+   "color": "#C9CED6",
+   "data": [
+    354,
+    364,
+    301,
+    316,
+    232
+   ],
+   "unit": "count"
+  },
+  "bihar__muslims_both": {
+   "name": "aishe_bihar__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Bihar",
+   "group": "Bihar",
+   "color": "#5F6675",
+   "data": [
+    142796,
+    151572,
+    163949,
+    153741,
+    172681
+   ],
+   "unit": "count"
+  },
+  "bihar__muslims_male": {
+   "name": "aishe_bihar__muslims_male",
+   "label": "Enrolment, Muslims, men · Bihar",
+   "group": "Bihar",
+   "color": "#878D99",
+   "data": [
+    74955,
+    80401,
+    83382,
+    78713,
+    93896
+   ],
+   "unit": "count"
+  },
+  "bihar__muslims_female": {
+   "name": "aishe_bihar__muslims_female",
+   "label": "Enrolment, Muslims, women · Bihar",
+   "group": "Bihar",
+   "color": "#A3A9B4",
+   "data": [
+    67841,
+    71171,
+    80567,
+    75028,
+    78785
+   ],
+   "unit": "count"
+  },
+  "bihar__other_minority_both": {
+   "name": "aishe_bihar__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Bihar",
+   "group": "Bihar",
+   "color": "#C9CED6",
+   "data": [
+    1755,
+    2615,
+    1951,
+    2880,
+    7937
+   ],
+   "unit": "count"
+  },
+  "bihar__other_minority_male": {
+   "name": "aishe_bihar__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Bihar",
+   "group": "Bihar",
+   "color": "#5F6675",
+   "data": [
+    908,
+    1167,
+    1111,
+    1222,
+    3879
+   ],
+   "unit": "count"
+  },
+  "bihar__other_minority_female": {
+   "name": "aishe_bihar__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Bihar",
+   "group": "Bihar",
+   "color": "#878D99",
+   "data": [
+    847,
+    1448,
+    840,
+    1658,
+    4058
+   ],
+   "unit": "count"
+  },
+  "bihar__ews_both": {
+   "name": "aishe_bihar__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Bihar",
+   "group": "Bihar",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    29145,
+    43281
+   ],
+   "unit": "count"
+  },
+  "bihar__ews_male": {
+   "name": "aishe_bihar__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Bihar",
+   "group": "Bihar",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    16533,
+    24859
+   ],
+   "unit": "count"
+  },
+  "bihar__ews_female": {
+   "name": "aishe_bihar__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Bihar",
+   "group": "Bihar",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    12612,
+    18422
+   ],
+   "unit": "count"
+  },
+  "bihar__pwd_both": {
+   "name": "aishe_bihar__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Bihar",
+   "group": "Bihar",
+   "color": "#878D99",
+   "data": [
+    2185,
+    5420,
+    2616,
+    5646,
+    4021
+   ],
+   "unit": "count"
+  },
+  "bihar__pwd_male": {
+   "name": "aishe_bihar__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Bihar",
+   "group": "Bihar",
+   "color": "#A3A9B4",
+   "data": [
+    1596,
+    3433,
+    1879,
+    3410,
+    2732
+   ],
+   "unit": "count"
+  },
+  "bihar__pwd_female": {
+   "name": "aishe_bihar__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Bihar",
+   "group": "Bihar",
+   "color": "#C9CED6",
+   "data": [
+    589,
+    1987,
+    737,
+    2236,
+    1289
+   ],
+   "unit": "count"
+  },
+  "chandigarh__muslims_both": {
+   "name": "aishe_chandigarh__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Chandigarh",
+   "group": "Chandigarh",
+   "color": "#5F6675",
+   "data": [
+    484,
+    552,
+    687,
+    703,
+    692
+   ],
+   "unit": "count"
+  },
+  "chandigarh__muslims_male": {
+   "name": "aishe_chandigarh__muslims_male",
+   "label": "Enrolment, Muslims, men · Chandigarh",
+   "group": "Chandigarh",
+   "color": "#878D99",
+   "data": [
+    270,
+    324,
+    414,
+    327,
+    321
+   ],
+   "unit": "count"
+  },
+  "chandigarh__muslims_female": {
+   "name": "aishe_chandigarh__muslims_female",
+   "label": "Enrolment, Muslims, women · Chandigarh",
+   "group": "Chandigarh",
+   "color": "#A3A9B4",
+   "data": [
+    214,
+    228,
+    273,
+    376,
+    371
+   ],
+   "unit": "count"
+  },
+  "chandigarh__other_minority_both": {
+   "name": "aishe_chandigarh__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Chandigarh",
+   "group": "Chandigarh",
+   "color": "#C9CED6",
+   "data": [
+    4951,
+    4186,
+    4722,
+    5262,
+    4568
+   ],
+   "unit": "count"
+  },
+  "chandigarh__other_minority_male": {
+   "name": "aishe_chandigarh__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Chandigarh",
+   "group": "Chandigarh",
+   "color": "#5F6675",
+   "data": [
+    2448,
+    1876,
+    2140,
+    2072,
+    1726
+   ],
+   "unit": "count"
+  },
+  "chandigarh__other_minority_female": {
+   "name": "aishe_chandigarh__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Chandigarh",
+   "group": "Chandigarh",
+   "color": "#878D99",
+   "data": [
+    2503,
+    2310,
+    2582,
+    3190,
+    2842
+   ],
+   "unit": "count"
+  },
+  "chandigarh__ews_both": {
+   "name": "aishe_chandigarh__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Chandigarh",
+   "group": "Chandigarh",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    1463,
+    2915
+   ],
+   "unit": "count"
+  },
+  "chandigarh__ews_male": {
+   "name": "aishe_chandigarh__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Chandigarh",
+   "group": "Chandigarh",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    832,
+    1178
+   ],
+   "unit": "count"
+  },
+  "chandigarh__ews_female": {
+   "name": "aishe_chandigarh__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Chandigarh",
+   "group": "Chandigarh",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    631,
+    1737
+   ],
+   "unit": "count"
+  },
+  "chandigarh__pwd_both": {
+   "name": "aishe_chandigarh__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Chandigarh",
+   "group": "Chandigarh",
+   "color": "#878D99",
+   "data": [
+    127,
+    236,
+    331,
+    317,
+    438
+   ],
+   "unit": "count"
+  },
+  "chandigarh__pwd_male": {
+   "name": "aishe_chandigarh__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Chandigarh",
+   "group": "Chandigarh",
+   "color": "#A3A9B4",
+   "data": [
+    78,
+    163,
+    245,
+    231,
+    287
+   ],
+   "unit": "count"
+  },
+  "chandigarh__pwd_female": {
+   "name": "aishe_chandigarh__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Chandigarh",
+   "group": "Chandigarh",
+   "color": "#C9CED6",
+   "data": [
+    49,
+    73,
+    86,
+    86,
+    151
+   ],
+   "unit": "count"
+  },
+  "chhattisgarh__muslims_both": {
+   "name": "aishe_chhattisgarh__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Chhattisgarh",
+   "group": "Chhattisgarh",
+   "color": "#5F6675",
+   "data": [
+    5082,
+    5122,
+    5384,
+    4693,
+    5113
+   ],
+   "unit": "count"
+  },
+  "chhattisgarh__muslims_male": {
+   "name": "aishe_chhattisgarh__muslims_male",
+   "label": "Enrolment, Muslims, men · Chhattisgarh",
+   "group": "Chhattisgarh",
+   "color": "#878D99",
+   "data": [
+    2233,
+    2406,
+    2427,
+    2017,
+    2348
+   ],
+   "unit": "count"
+  },
+  "chhattisgarh__muslims_female": {
+   "name": "aishe_chhattisgarh__muslims_female",
+   "label": "Enrolment, Muslims, women · Chhattisgarh",
+   "group": "Chhattisgarh",
+   "color": "#A3A9B4",
+   "data": [
+    2849,
+    2716,
+    2957,
+    2676,
+    2765
+   ],
+   "unit": "count"
+  },
+  "chhattisgarh__other_minority_both": {
+   "name": "aishe_chhattisgarh__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Chhattisgarh",
+   "group": "Chhattisgarh",
+   "color": "#C9CED6",
+   "data": [
+    4811,
+    4907,
+    5599,
+    4923,
+    7329
+   ],
+   "unit": "count"
+  },
+  "chhattisgarh__other_minority_male": {
+   "name": "aishe_chhattisgarh__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Chhattisgarh",
+   "group": "Chhattisgarh",
+   "color": "#5F6675",
+   "data": [
+    1800,
+    1766,
+    2134,
+    1885,
+    2911
+   ],
+   "unit": "count"
+  },
+  "chhattisgarh__other_minority_female": {
+   "name": "aishe_chhattisgarh__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Chhattisgarh",
+   "group": "Chhattisgarh",
+   "color": "#878D99",
+   "data": [
+    3011,
+    3141,
+    3465,
+    3038,
+    4418
+   ],
+   "unit": "count"
+  },
+  "chhattisgarh__ews_both": {
+   "name": "aishe_chhattisgarh__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Chhattisgarh",
+   "group": "Chhattisgarh",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    2541,
+    4664
+   ],
+   "unit": "count"
+  },
+  "chhattisgarh__ews_male": {
+   "name": "aishe_chhattisgarh__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Chhattisgarh",
+   "group": "Chhattisgarh",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    1398,
+    2144
+   ],
+   "unit": "count"
+  },
+  "chhattisgarh__ews_female": {
+   "name": "aishe_chhattisgarh__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Chhattisgarh",
+   "group": "Chhattisgarh",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    1143,
+    2520
+   ],
+   "unit": "count"
+  },
+  "chhattisgarh__pwd_both": {
+   "name": "aishe_chhattisgarh__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Chhattisgarh",
+   "group": "Chhattisgarh",
+   "color": "#878D99",
+   "data": [
+    455,
+    710,
+    524,
+    476,
+    1210
+   ],
+   "unit": "count"
+  },
+  "chhattisgarh__pwd_male": {
+   "name": "aishe_chhattisgarh__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Chhattisgarh",
+   "group": "Chhattisgarh",
+   "color": "#A3A9B4",
+   "data": [
+    284,
+    350,
+    353,
+    344,
+    799
+   ],
+   "unit": "count"
+  },
+  "chhattisgarh__pwd_female": {
+   "name": "aishe_chhattisgarh__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Chhattisgarh",
+   "group": "Chhattisgarh",
+   "color": "#C9CED6",
+   "data": [
+    171,
+    360,
+    171,
+    132,
+    411
+   ],
+   "unit": "count"
+  },
+  "dadra_nagar_haveli_and_daman_diu__muslims_both": {
+   "name": "aishe_dadra_nagar_haveli_and_daman_diu__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Dadra & Nagar Haveli and Daman & Diu",
+   "group": "Dadra & Nagar Haveli and Daman & Diu",
+   "color": "#5F6675",
+   "data": [
+    220,
+    240,
+    231,
+    267,
+    228
+   ],
+   "unit": "count"
+  },
+  "dadra_nagar_haveli_and_daman_diu__muslims_male": {
+   "name": "aishe_dadra_nagar_haveli_and_daman_diu__muslims_male",
+   "label": "Enrolment, Muslims, men · Dadra & Nagar Haveli and Daman & Diu",
+   "group": "Dadra & Nagar Haveli and Daman & Diu",
+   "color": "#878D99",
+   "data": [
+    116,
+    127,
+    129,
+    135,
+    108
+   ],
+   "unit": "count"
+  },
+  "dadra_nagar_haveli_and_daman_diu__muslims_female": {
+   "name": "aishe_dadra_nagar_haveli_and_daman_diu__muslims_female",
+   "label": "Enrolment, Muslims, women · Dadra & Nagar Haveli and Daman & Diu",
+   "group": "Dadra & Nagar Haveli and Daman & Diu",
+   "color": "#A3A9B4",
+   "data": [
+    104,
+    113,
+    102,
+    132,
+    120
+   ],
+   "unit": "count"
+  },
+  "dadra_nagar_haveli_and_daman_diu__other_minority_both": {
+   "name": "aishe_dadra_nagar_haveli_and_daman_diu__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Dadra & Nagar Haveli and Daman & Diu",
+   "group": "Dadra & Nagar Haveli and Daman & Diu",
+   "color": "#C9CED6",
+   "data": [
+    86,
+    293,
+    314,
+    307,
+    352
+   ],
+   "unit": "count"
+  },
+  "dadra_nagar_haveli_and_daman_diu__other_minority_male": {
+   "name": "aishe_dadra_nagar_haveli_and_daman_diu__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Dadra & Nagar Haveli and Daman & Diu",
+   "group": "Dadra & Nagar Haveli and Daman & Diu",
+   "color": "#5F6675",
+   "data": [
+    31,
+    17,
+    12,
+    10,
+    19
+   ],
+   "unit": "count"
+  },
+  "dadra_nagar_haveli_and_daman_diu__other_minority_female": {
+   "name": "aishe_dadra_nagar_haveli_and_daman_diu__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Dadra & Nagar Haveli and Daman & Diu",
+   "group": "Dadra & Nagar Haveli and Daman & Diu",
+   "color": "#878D99",
+   "data": [
+    55,
+    276,
+    302,
+    297,
+    333
+   ],
+   "unit": "count"
+  },
+  "dadra_nagar_haveli_and_daman_diu__ews_both": {
+   "name": "aishe_dadra_nagar_haveli_and_daman_diu__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Dadra & Nagar Haveli and Daman & Diu",
+   "group": "Dadra & Nagar Haveli and Daman & Diu",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    84,
+    153
+   ],
+   "unit": "count"
+  },
+  "dadra_nagar_haveli_and_daman_diu__ews_male": {
+   "name": "aishe_dadra_nagar_haveli_and_daman_diu__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Dadra & Nagar Haveli and Daman & Diu",
+   "group": "Dadra & Nagar Haveli and Daman & Diu",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    45,
+    74
+   ],
+   "unit": "count"
+  },
+  "dadra_nagar_haveli_and_daman_diu__ews_female": {
+   "name": "aishe_dadra_nagar_haveli_and_daman_diu__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Dadra & Nagar Haveli and Daman & Diu",
+   "group": "Dadra & Nagar Haveli and Daman & Diu",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    39,
+    79
+   ],
+   "unit": "count"
+  },
+  "dadra_nagar_haveli_and_daman_diu__pwd_both": {
+   "name": "aishe_dadra_nagar_haveli_and_daman_diu__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Dadra & Nagar Haveli and Daman & Diu",
+   "group": "Dadra & Nagar Haveli and Daman & Diu",
+   "color": "#878D99",
+   "data": [
+    10,
+    15,
+    25,
+    20,
+    20
+   ],
+   "unit": "count"
+  },
+  "dadra_nagar_haveli_and_daman_diu__pwd_male": {
+   "name": "aishe_dadra_nagar_haveli_and_daman_diu__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Dadra & Nagar Haveli and Daman & Diu",
+   "group": "Dadra & Nagar Haveli and Daman & Diu",
+   "color": "#A3A9B4",
+   "data": [
+    4,
+    8,
+    15,
+    10,
+    12
+   ],
+   "unit": "count"
+  },
+  "dadra_nagar_haveli_and_daman_diu__pwd_female": {
+   "name": "aishe_dadra_nagar_haveli_and_daman_diu__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Dadra & Nagar Haveli and Daman & Diu",
+   "group": "Dadra & Nagar Haveli and Daman & Diu",
+   "color": "#C9CED6",
+   "data": [
+    6,
+    7,
+    10,
+    10,
+    8
+   ],
+   "unit": "count"
+  },
+  "delhi__muslims_both": {
+   "name": "aishe_delhi__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Delhi",
+   "group": "Delhi",
+   "color": "#5F6675",
+   "data": [
+    23582,
+    24347,
+    26475,
+    21204,
+    28282
+   ],
+   "unit": "count"
+  },
+  "delhi__muslims_male": {
+   "name": "aishe_delhi__muslims_male",
+   "label": "Enrolment, Muslims, men · Delhi",
+   "group": "Delhi",
+   "color": "#878D99",
+   "data": [
+    15982,
+    15715,
+    16168,
+    11900,
+    15489
+   ],
+   "unit": "count"
+  },
+  "delhi__muslims_female": {
+   "name": "aishe_delhi__muslims_female",
+   "label": "Enrolment, Muslims, women · Delhi",
+   "group": "Delhi",
+   "color": "#A3A9B4",
+   "data": [
+    7600,
+    8632,
+    10307,
+    9304,
+    12793
+   ],
+   "unit": "count"
+  },
+  "delhi__other_minority_both": {
+   "name": "aishe_delhi__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Delhi",
+   "group": "Delhi",
+   "color": "#C9CED6",
+   "data": [
+    10464,
+    13939,
+    13988,
+    11076,
+    10188
+   ],
+   "unit": "count"
+  },
+  "delhi__other_minority_male": {
+   "name": "aishe_delhi__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Delhi",
+   "group": "Delhi",
+   "color": "#5F6675",
+   "data": [
+    4869,
+    6164,
+    6191,
+    4865,
+    5033
+   ],
+   "unit": "count"
+  },
+  "delhi__other_minority_female": {
+   "name": "aishe_delhi__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Delhi",
+   "group": "Delhi",
+   "color": "#878D99",
+   "data": [
+    5595,
+    7775,
+    7797,
+    6211,
+    5155
+   ],
+   "unit": "count"
+  },
+  "delhi__ews_both": {
+   "name": "aishe_delhi__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Delhi",
+   "group": "Delhi",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    23193,
+    33351
+   ],
+   "unit": "count"
+  },
+  "delhi__ews_male": {
+   "name": "aishe_delhi__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Delhi",
+   "group": "Delhi",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    14261,
+    19811
+   ],
+   "unit": "count"
+  },
+  "delhi__ews_female": {
+   "name": "aishe_delhi__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Delhi",
+   "group": "Delhi",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    8932,
+    13540
+   ],
+   "unit": "count"
+  },
+  "delhi__pwd_both": {
+   "name": "aishe_delhi__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Delhi",
+   "group": "Delhi",
+   "color": "#878D99",
+   "data": [
+    7969,
+    8346,
+    8262,
+    4426,
+    6401
+   ],
+   "unit": "count"
+  },
+  "delhi__pwd_male": {
+   "name": "aishe_delhi__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Delhi",
+   "group": "Delhi",
+   "color": "#A3A9B4",
+   "data": [
+    4714,
+    4998,
+    4850,
+    2984,
+    4073
+   ],
+   "unit": "count"
+  },
+  "delhi__pwd_female": {
+   "name": "aishe_delhi__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Delhi",
+   "group": "Delhi",
+   "color": "#C9CED6",
+   "data": [
+    3255,
+    3348,
+    3412,
+    1442,
+    2328
+   ],
+   "unit": "count"
+  },
+  "goa__muslims_both": {
+   "name": "aishe_goa__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Goa",
+   "group": "Goa",
+   "color": "#5F6675",
+   "data": [
+    2156,
+    2625,
+    2734,
+    2898,
+    3084
+   ],
+   "unit": "count"
+  },
+  "goa__muslims_male": {
+   "name": "aishe_goa__muslims_male",
+   "label": "Enrolment, Muslims, men · Goa",
+   "group": "Goa",
+   "color": "#878D99",
+   "data": [
+    1038,
+    1274,
+    1291,
+    1378,
+    1531
+   ],
+   "unit": "count"
+  },
+  "goa__muslims_female": {
+   "name": "aishe_goa__muslims_female",
+   "label": "Enrolment, Muslims, women · Goa",
+   "group": "Goa",
+   "color": "#A3A9B4",
+   "data": [
+    1118,
+    1351,
+    1443,
+    1520,
+    1553
+   ],
+   "unit": "count"
+  },
+  "goa__other_minority_both": {
+   "name": "aishe_goa__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Goa",
+   "group": "Goa",
+   "color": "#C9CED6",
+   "data": [
+    8060,
+    9542,
+    8858,
+    9079,
+    10180
+   ],
+   "unit": "count"
+  },
+  "goa__other_minority_male": {
+   "name": "aishe_goa__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Goa",
+   "group": "Goa",
+   "color": "#5F6675",
+   "data": [
+    3169,
+    3843,
+    3412,
+    3630,
+    4446
+   ],
+   "unit": "count"
+  },
+  "goa__other_minority_female": {
+   "name": "aishe_goa__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Goa",
+   "group": "Goa",
+   "color": "#878D99",
+   "data": [
+    4891,
+    5699,
+    5446,
+    5449,
+    5734
+   ],
+   "unit": "count"
+  },
+  "goa__ews_both": {
+   "name": "aishe_goa__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Goa",
+   "group": "Goa",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    295,
+    880
+   ],
+   "unit": "count"
+  },
+  "goa__ews_male": {
+   "name": "aishe_goa__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Goa",
+   "group": "Goa",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    197,
+    475
+   ],
+   "unit": "count"
+  },
+  "goa__ews_female": {
+   "name": "aishe_goa__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Goa",
+   "group": "Goa",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    98,
+    405
+   ],
+   "unit": "count"
+  },
+  "goa__pwd_both": {
+   "name": "aishe_goa__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Goa",
+   "group": "Goa",
+   "color": "#878D99",
+   "data": [
+    60,
+    69,
+    59,
+    47,
+    604
+   ],
+   "unit": "count"
+  },
+  "goa__pwd_male": {
+   "name": "aishe_goa__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Goa",
+   "group": "Goa",
+   "color": "#A3A9B4",
+   "data": [
+    35,
+    46,
+    33,
+    34,
+    460
+   ],
+   "unit": "count"
+  },
+  "goa__pwd_female": {
+   "name": "aishe_goa__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Goa",
+   "group": "Goa",
+   "color": "#C9CED6",
+   "data": [
+    25,
+    23,
+    26,
+    13,
+    144
+   ],
+   "unit": "count"
+  },
+  "gujarat__muslims_both": {
+   "name": "aishe_gujarat__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Gujarat",
+   "group": "Gujarat",
+   "color": "#5F6675",
+   "data": [
+    35395,
+    36052,
+    44014,
+    33105,
+    35993
+   ],
+   "unit": "count"
+  },
+  "gujarat__muslims_male": {
+   "name": "aishe_gujarat__muslims_male",
+   "label": "Enrolment, Muslims, men · Gujarat",
+   "group": "Gujarat",
+   "color": "#878D99",
+   "data": [
+    19839,
+    20279,
+    24664,
+    18170,
+    19387
+   ],
+   "unit": "count"
+  },
+  "gujarat__muslims_female": {
+   "name": "aishe_gujarat__muslims_female",
+   "label": "Enrolment, Muslims, women · Gujarat",
+   "group": "Gujarat",
+   "color": "#A3A9B4",
+   "data": [
+    15556,
+    15773,
+    19350,
+    14935,
+    16606
+   ],
+   "unit": "count"
+  },
+  "gujarat__other_minority_both": {
+   "name": "aishe_gujarat__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Gujarat",
+   "group": "Gujarat",
+   "color": "#C9CED6",
+   "data": [
+    10094,
+    9676,
+    11696,
+    11270,
+    14135
+   ],
+   "unit": "count"
+  },
+  "gujarat__other_minority_male": {
+   "name": "aishe_gujarat__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Gujarat",
+   "group": "Gujarat",
+   "color": "#5F6675",
+   "data": [
+    5550,
+    5221,
+    6049,
+    5561,
+    6945
+   ],
+   "unit": "count"
+  },
+  "gujarat__other_minority_female": {
+   "name": "aishe_gujarat__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Gujarat",
+   "group": "Gujarat",
+   "color": "#878D99",
+   "data": [
+    4544,
+    4455,
+    5647,
+    5709,
+    7190
+   ],
+   "unit": "count"
+  },
+  "gujarat__ews_both": {
+   "name": "aishe_gujarat__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Gujarat",
+   "group": "Gujarat",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    39773,
+    60580
+   ],
+   "unit": "count"
+  },
+  "gujarat__ews_male": {
+   "name": "aishe_gujarat__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Gujarat",
+   "group": "Gujarat",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    23494,
+    35817
+   ],
+   "unit": "count"
+  },
+  "gujarat__ews_female": {
+   "name": "aishe_gujarat__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Gujarat",
+   "group": "Gujarat",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    16279,
+    24763
+   ],
+   "unit": "count"
+  },
+  "gujarat__pwd_both": {
+   "name": "aishe_gujarat__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Gujarat",
+   "group": "Gujarat",
+   "color": "#878D99",
+   "data": [
+    1825,
+    1740,
+    2337,
+    1771,
+    5041
+   ],
+   "unit": "count"
+  },
+  "gujarat__pwd_male": {
+   "name": "aishe_gujarat__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Gujarat",
+   "group": "Gujarat",
+   "color": "#A3A9B4",
+   "data": [
+    1081,
+    1127,
+    1207,
+    1143,
+    2885
+   ],
+   "unit": "count"
+  },
+  "gujarat__pwd_female": {
+   "name": "aishe_gujarat__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Gujarat",
+   "group": "Gujarat",
+   "color": "#C9CED6",
+   "data": [
+    744,
+    613,
+    1130,
+    628,
+    2156
+   ],
+   "unit": "count"
+  },
+  "haryana__muslims_both": {
+   "name": "aishe_haryana__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Haryana",
+   "group": "Haryana",
+   "color": "#5F6675",
+   "data": [
+    7607,
+    10084,
+    12877,
+    10445,
+    10961
+   ],
+   "unit": "count"
+  },
+  "haryana__muslims_male": {
+   "name": "aishe_haryana__muslims_male",
+   "label": "Enrolment, Muslims, men · Haryana",
+   "group": "Haryana",
+   "color": "#878D99",
+   "data": [
+    5702,
+    7297,
+    9317,
+    7423,
+    7869
+   ],
+   "unit": "count"
+  },
+  "haryana__muslims_female": {
+   "name": "aishe_haryana__muslims_female",
+   "label": "Enrolment, Muslims, women · Haryana",
+   "group": "Haryana",
+   "color": "#A3A9B4",
+   "data": [
+    1905,
+    2787,
+    3560,
+    3022,
+    3092
+   ],
+   "unit": "count"
+  },
+  "haryana__other_minority_both": {
+   "name": "aishe_haryana__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Haryana",
+   "group": "Haryana",
+   "color": "#C9CED6",
+   "data": [
+    12404,
+    13085,
+    11933,
+    11688,
+    12076
+   ],
+   "unit": "count"
+  },
+  "haryana__other_minority_male": {
+   "name": "aishe_haryana__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Haryana",
+   "group": "Haryana",
+   "color": "#5F6675",
+   "data": [
+    5967,
+    6152,
+    5012,
+    4769,
+    5629
+   ],
+   "unit": "count"
+  },
+  "haryana__other_minority_female": {
+   "name": "aishe_haryana__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Haryana",
+   "group": "Haryana",
+   "color": "#878D99",
+   "data": [
+    6437,
+    6933,
+    6921,
+    6919,
+    6447
+   ],
+   "unit": "count"
+  },
+  "haryana__ews_both": {
+   "name": "aishe_haryana__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Haryana",
+   "group": "Haryana",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    10280,
+    15697
+   ],
+   "unit": "count"
+  },
+  "haryana__ews_male": {
+   "name": "aishe_haryana__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Haryana",
+   "group": "Haryana",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    5867,
+    9445
+   ],
+   "unit": "count"
+  },
+  "haryana__ews_female": {
+   "name": "aishe_haryana__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Haryana",
+   "group": "Haryana",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    4413,
+    6252
+   ],
+   "unit": "count"
+  },
+  "haryana__pwd_both": {
+   "name": "aishe_haryana__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Haryana",
+   "group": "Haryana",
+   "color": "#878D99",
+   "data": [
+    769,
+    1334,
+    714,
+    1093,
+    1281
+   ],
+   "unit": "count"
+  },
+  "haryana__pwd_male": {
+   "name": "aishe_haryana__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Haryana",
+   "group": "Haryana",
+   "color": "#A3A9B4",
+   "data": [
+    419,
+    505,
+    499,
+    646,
+    798
+   ],
+   "unit": "count"
+  },
+  "haryana__pwd_female": {
+   "name": "aishe_haryana__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Haryana",
+   "group": "Haryana",
+   "color": "#C9CED6",
+   "data": [
+    350,
+    829,
+    215,
+    447,
+    483
+   ],
+   "unit": "count"
+  },
+  "himachal_pradesh__muslims_both": {
+   "name": "aishe_himachal_pradesh__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Himachal Pradesh",
+   "group": "Himachal Pradesh",
+   "color": "#5F6675",
+   "data": [
+    1402,
+    1797,
+    1764,
+    1176,
+    1314
+   ],
+   "unit": "count"
+  },
+  "himachal_pradesh__muslims_male": {
+   "name": "aishe_himachal_pradesh__muslims_male",
+   "label": "Enrolment, Muslims, men · Himachal Pradesh",
+   "group": "Himachal Pradesh",
+   "color": "#878D99",
+   "data": [
+    913,
+    1189,
+    1103,
+    616,
+    746
+   ],
+   "unit": "count"
+  },
+  "himachal_pradesh__muslims_female": {
+   "name": "aishe_himachal_pradesh__muslims_female",
+   "label": "Enrolment, Muslims, women · Himachal Pradesh",
+   "group": "Himachal Pradesh",
+   "color": "#A3A9B4",
+   "data": [
+    489,
+    608,
+    661,
+    560,
+    568
+   ],
+   "unit": "count"
+  },
+  "himachal_pradesh__other_minority_both": {
+   "name": "aishe_himachal_pradesh__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Himachal Pradesh",
+   "group": "Himachal Pradesh",
+   "color": "#C9CED6",
+   "data": [
+    1743,
+    2452,
+    3284,
+    2495,
+    2132
+   ],
+   "unit": "count"
+  },
+  "himachal_pradesh__other_minority_male": {
+   "name": "aishe_himachal_pradesh__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Himachal Pradesh",
+   "group": "Himachal Pradesh",
+   "color": "#5F6675",
+   "data": [
+    553,
+    1048,
+    1753,
+    1141,
+    1028
+   ],
+   "unit": "count"
+  },
+  "himachal_pradesh__other_minority_female": {
+   "name": "aishe_himachal_pradesh__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Himachal Pradesh",
+   "group": "Himachal Pradesh",
+   "color": "#878D99",
+   "data": [
+    1190,
+    1404,
+    1531,
+    1354,
+    1104
+   ],
+   "unit": "count"
+  },
+  "himachal_pradesh__ews_both": {
+   "name": "aishe_himachal_pradesh__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Himachal Pradesh",
+   "group": "Himachal Pradesh",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    2399,
+    4636
+   ],
+   "unit": "count"
+  },
+  "himachal_pradesh__ews_male": {
+   "name": "aishe_himachal_pradesh__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Himachal Pradesh",
+   "group": "Himachal Pradesh",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    1196,
+    2551
+   ],
+   "unit": "count"
+  },
+  "himachal_pradesh__ews_female": {
+   "name": "aishe_himachal_pradesh__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Himachal Pradesh",
+   "group": "Himachal Pradesh",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    1203,
+    2085
+   ],
+   "unit": "count"
+  },
+  "himachal_pradesh__pwd_both": {
+   "name": "aishe_himachal_pradesh__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Himachal Pradesh",
+   "group": "Himachal Pradesh",
+   "color": "#878D99",
+   "data": [
+    290,
+    309,
+    369,
+    283,
+    505
+   ],
+   "unit": "count"
+  },
+  "himachal_pradesh__pwd_male": {
+   "name": "aishe_himachal_pradesh__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Himachal Pradesh",
+   "group": "Himachal Pradesh",
+   "color": "#A3A9B4",
+   "data": [
+    213,
+    226,
+    246,
+    192,
+    335
+   ],
+   "unit": "count"
+  },
+  "himachal_pradesh__pwd_female": {
+   "name": "aishe_himachal_pradesh__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Himachal Pradesh",
+   "group": "Himachal Pradesh",
+   "color": "#C9CED6",
+   "data": [
+    77,
+    83,
+    123,
+    91,
+    170
+   ],
+   "unit": "count"
+  },
+  "jammu_kashmir__muslims_both": {
+   "name": "aishe_jammu_kashmir__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Jammu & Kashmir",
+   "group": "Jammu & Kashmir",
+   "color": "#5F6675",
+   "data": [
+    141962,
+    157714,
+    178676,
+    131342,
+    138142
+   ],
+   "unit": "count"
+  },
+  "jammu_kashmir__muslims_male": {
+   "name": "aishe_jammu_kashmir__muslims_male",
+   "label": "Enrolment, Muslims, men · Jammu & Kashmir",
+   "group": "Jammu & Kashmir",
+   "color": "#878D99",
+   "data": [
+    72401,
+    81908,
+    89608,
+    65193,
+    63796
+   ],
+   "unit": "count"
+  },
+  "jammu_kashmir__muslims_female": {
+   "name": "aishe_jammu_kashmir__muslims_female",
+   "label": "Enrolment, Muslims, women · Jammu & Kashmir",
+   "group": "Jammu & Kashmir",
+   "color": "#A3A9B4",
+   "data": [
+    69561,
+    75806,
+    89068,
+    66149,
+    74346
+   ],
+   "unit": "count"
+  },
+  "jammu_kashmir__other_minority_both": {
+   "name": "aishe_jammu_kashmir__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Jammu & Kashmir",
+   "group": "Jammu & Kashmir",
+   "color": "#C9CED6",
+   "data": [
+    5893,
+    6661,
+    5676,
+    5793,
+    5320
+   ],
+   "unit": "count"
+  },
+  "jammu_kashmir__other_minority_male": {
+   "name": "aishe_jammu_kashmir__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Jammu & Kashmir",
+   "group": "Jammu & Kashmir",
+   "color": "#5F6675",
+   "data": [
+    2325,
+    2675,
+    2447,
+    2465,
+    2323
+   ],
+   "unit": "count"
+  },
+  "jammu_kashmir__other_minority_female": {
+   "name": "aishe_jammu_kashmir__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Jammu & Kashmir",
+   "group": "Jammu & Kashmir",
+   "color": "#878D99",
+   "data": [
+    3568,
+    3986,
+    3229,
+    3328,
+    2997
+   ],
+   "unit": "count"
+  },
+  "jammu_kashmir__ews_both": {
+   "name": "aishe_jammu_kashmir__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Jammu & Kashmir",
+   "group": "Jammu & Kashmir",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    5692,
+    7574
+   ],
+   "unit": "count"
+  },
+  "jammu_kashmir__ews_male": {
+   "name": "aishe_jammu_kashmir__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Jammu & Kashmir",
+   "group": "Jammu & Kashmir",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    2500,
+    3604
+   ],
+   "unit": "count"
+  },
+  "jammu_kashmir__ews_female": {
+   "name": "aishe_jammu_kashmir__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Jammu & Kashmir",
+   "group": "Jammu & Kashmir",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    3192,
+    3970
+   ],
+   "unit": "count"
+  },
+  "jammu_kashmir__pwd_both": {
+   "name": "aishe_jammu_kashmir__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Jammu & Kashmir",
+   "group": "Jammu & Kashmir",
+   "color": "#878D99",
+   "data": [
+    466,
+    2335,
+    596,
+    588,
+    735
+   ],
+   "unit": "count"
+  },
+  "jammu_kashmir__pwd_male": {
+   "name": "aishe_jammu_kashmir__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Jammu & Kashmir",
+   "group": "Jammu & Kashmir",
+   "color": "#A3A9B4",
+   "data": [
+    286,
+    660,
+    334,
+    297,
+    514
+   ],
+   "unit": "count"
+  },
+  "jammu_kashmir__pwd_female": {
+   "name": "aishe_jammu_kashmir__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Jammu & Kashmir",
+   "group": "Jammu & Kashmir",
+   "color": "#C9CED6",
+   "data": [
+    180,
+    1675,
+    262,
+    291,
+    221
+   ],
+   "unit": "count"
+  },
+  "jharkhand__muslims_both": {
+   "name": "aishe_jharkhand__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Jharkhand",
+   "group": "Jharkhand",
+   "color": "#5F6675",
+   "data": [
+    36787,
+    40510,
+    43576,
+    34313,
+    38200
+   ],
+   "unit": "count"
+  },
+  "jharkhand__muslims_male": {
+   "name": "aishe_jharkhand__muslims_male",
+   "label": "Enrolment, Muslims, men · Jharkhand",
+   "group": "Jharkhand",
+   "color": "#878D99",
+   "data": [
+    18085,
+    20388,
+    21742,
+    17069,
+    19532
+   ],
+   "unit": "count"
+  },
+  "jharkhand__muslims_female": {
+   "name": "aishe_jharkhand__muslims_female",
+   "label": "Enrolment, Muslims, women · Jharkhand",
+   "group": "Jharkhand",
+   "color": "#A3A9B4",
+   "data": [
+    18702,
+    20122,
+    21834,
+    17244,
+    18668
+   ],
+   "unit": "count"
+  },
+  "jharkhand__other_minority_both": {
+   "name": "aishe_jharkhand__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Jharkhand",
+   "group": "Jharkhand",
+   "color": "#C9CED6",
+   "data": [
+    12365,
+    12658,
+    13139,
+    11800,
+    12397
+   ],
+   "unit": "count"
+  },
+  "jharkhand__other_minority_male": {
+   "name": "aishe_jharkhand__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Jharkhand",
+   "group": "Jharkhand",
+   "color": "#5F6675",
+   "data": [
+    5050,
+    5602,
+    6150,
+    4916,
+    4976
+   ],
+   "unit": "count"
+  },
+  "jharkhand__other_minority_female": {
+   "name": "aishe_jharkhand__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Jharkhand",
+   "group": "Jharkhand",
+   "color": "#878D99",
+   "data": [
+    7315,
+    7056,
+    6989,
+    6884,
+    7421
+   ],
+   "unit": "count"
+  },
+  "jharkhand__ews_both": {
+   "name": "aishe_jharkhand__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Jharkhand",
+   "group": "Jharkhand",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    4710,
+    9202
+   ],
+   "unit": "count"
+  },
+  "jharkhand__ews_male": {
+   "name": "aishe_jharkhand__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Jharkhand",
+   "group": "Jharkhand",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    3010,
+    5837
+   ],
+   "unit": "count"
+  },
+  "jharkhand__ews_female": {
+   "name": "aishe_jharkhand__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Jharkhand",
+   "group": "Jharkhand",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    1700,
+    3365
+   ],
+   "unit": "count"
+  },
+  "jharkhand__pwd_both": {
+   "name": "aishe_jharkhand__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Jharkhand",
+   "group": "Jharkhand",
+   "color": "#878D99",
+   "data": [
+    752,
+    639,
+    1157,
+    771,
+    1175
+   ],
+   "unit": "count"
+  },
+  "jharkhand__pwd_male": {
+   "name": "aishe_jharkhand__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Jharkhand",
+   "group": "Jharkhand",
+   "color": "#A3A9B4",
+   "data": [
+    500,
+    459,
+    773,
+    546,
+    881
+   ],
+   "unit": "count"
+  },
+  "jharkhand__pwd_female": {
+   "name": "aishe_jharkhand__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Jharkhand",
+   "group": "Jharkhand",
+   "color": "#C9CED6",
+   "data": [
+    252,
+    180,
+    384,
+    225,
+    294
+   ],
+   "unit": "count"
+  },
+  "karnataka__muslims_both": {
+   "name": "aishe_karnataka__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Karnataka",
+   "group": "Karnataka",
+   "color": "#5F6675",
+   "data": [
+    119467,
+    125536,
+    144511,
+    138358,
+    147249
+   ],
+   "unit": "count"
+  },
+  "karnataka__muslims_male": {
+   "name": "aishe_karnataka__muslims_male",
+   "label": "Enrolment, Muslims, men · Karnataka",
+   "group": "Karnataka",
+   "color": "#878D99",
+   "data": [
+    61778,
+    65642,
+    75198,
+    72487,
+    78638
+   ],
+   "unit": "count"
+  },
+  "karnataka__muslims_female": {
+   "name": "aishe_karnataka__muslims_female",
+   "label": "Enrolment, Muslims, women · Karnataka",
+   "group": "Karnataka",
+   "color": "#A3A9B4",
+   "data": [
+    57689,
+    59894,
+    69313,
+    65871,
+    68611
+   ],
+   "unit": "count"
+  },
+  "karnataka__other_minority_both": {
+   "name": "aishe_karnataka__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Karnataka",
+   "group": "Karnataka",
+   "color": "#C9CED6",
+   "data": [
+    71109,
+    81499,
+    87770,
+    81679,
+    94611
+   ],
+   "unit": "count"
+  },
+  "karnataka__other_minority_male": {
+   "name": "aishe_karnataka__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Karnataka",
+   "group": "Karnataka",
+   "color": "#5F6675",
+   "data": [
+    30409,
+    36255,
+    38600,
+    36086,
+    42716
+   ],
+   "unit": "count"
+  },
+  "karnataka__other_minority_female": {
+   "name": "aishe_karnataka__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Karnataka",
+   "group": "Karnataka",
+   "color": "#878D99",
+   "data": [
+    40700,
+    45244,
+    49170,
+    45593,
+    51895
+   ],
+   "unit": "count"
+  },
+  "karnataka__ews_both": {
+   "name": "aishe_karnataka__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Karnataka",
+   "group": "Karnataka",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    51048,
+    52607
+   ],
+   "unit": "count"
+  },
+  "karnataka__ews_male": {
+   "name": "aishe_karnataka__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Karnataka",
+   "group": "Karnataka",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    15920,
+    26058
+   ],
+   "unit": "count"
+  },
+  "karnataka__ews_female": {
+   "name": "aishe_karnataka__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Karnataka",
+   "group": "Karnataka",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    35128,
+    26549
+   ],
+   "unit": "count"
+  },
+  "karnataka__pwd_both": {
+   "name": "aishe_karnataka__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Karnataka",
+   "group": "Karnataka",
+   "color": "#878D99",
+   "data": [
+    3608,
+    4296,
+    4602,
+    4495,
+    6057
+   ],
+   "unit": "count"
+  },
+  "karnataka__pwd_male": {
+   "name": "aishe_karnataka__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Karnataka",
+   "group": "Karnataka",
+   "color": "#A3A9B4",
+   "data": [
+    2098,
+    2310,
+    2398,
+    2665,
+    3397
+   ],
+   "unit": "count"
+  },
+  "karnataka__pwd_female": {
+   "name": "aishe_karnataka__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Karnataka",
+   "group": "Karnataka",
+   "color": "#C9CED6",
+   "data": [
+    1510,
+    1986,
+    2204,
+    1830,
+    2660
+   ],
+   "unit": "count"
+  },
+  "kerala__muslims_both": {
+   "name": "aishe_kerala__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Kerala",
+   "group": "Kerala",
+   "color": "#5F6675",
+   "data": [
+    149191,
+    159248,
+    166027,
+    170929,
+    187358
+   ],
+   "unit": "count"
+  },
+  "kerala__muslims_male": {
+   "name": "aishe_kerala__muslims_male",
+   "label": "Enrolment, Muslims, men · Kerala",
+   "group": "Kerala",
+   "color": "#878D99",
+   "data": [
+    63875,
+    67175,
+    68848,
+    68170,
+    76375
+   ],
+   "unit": "count"
+  },
+  "kerala__muslims_female": {
+   "name": "aishe_kerala__muslims_female",
+   "label": "Enrolment, Muslims, women · Kerala",
+   "group": "Kerala",
+   "color": "#A3A9B4",
+   "data": [
+    85316,
+    92073,
+    97179,
+    102759,
+    110983
+   ],
+   "unit": "count"
+  },
+  "kerala__other_minority_both": {
+   "name": "aishe_kerala__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Kerala",
+   "group": "Kerala",
+   "color": "#C9CED6",
+   "data": [
+    117154,
+    116906,
+    117977,
+    114886,
+    121189
+   ],
+   "unit": "count"
+  },
+  "kerala__other_minority_male": {
+   "name": "aishe_kerala__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Kerala",
+   "group": "Kerala",
+   "color": "#5F6675",
+   "data": [
+    48606,
+    48761,
+    51070,
+    51334,
+    55951
+   ],
+   "unit": "count"
+  },
+  "kerala__other_minority_female": {
+   "name": "aishe_kerala__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Kerala",
+   "group": "Kerala",
+   "color": "#878D99",
+   "data": [
+    68548,
+    68145,
+    66907,
+    63552,
+    65238
+   ],
+   "unit": "count"
+  },
+  "kerala__ews_both": {
+   "name": "aishe_kerala__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Kerala",
+   "group": "Kerala",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    16552,
+    27198
+   ],
+   "unit": "count"
+  },
+  "kerala__ews_male": {
+   "name": "aishe_kerala__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Kerala",
+   "group": "Kerala",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    6189,
+    10383
+   ],
+   "unit": "count"
+  },
+  "kerala__ews_female": {
+   "name": "aishe_kerala__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Kerala",
+   "group": "Kerala",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    10363,
+    16815
+   ],
+   "unit": "count"
+  },
+  "kerala__pwd_both": {
+   "name": "aishe_kerala__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Kerala",
+   "group": "Kerala",
+   "color": "#878D99",
+   "data": [
+    2744,
+    3511,
+    3710,
+    3991,
+    5315
+   ],
+   "unit": "count"
+  },
+  "kerala__pwd_male": {
+   "name": "aishe_kerala__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Kerala",
+   "group": "Kerala",
+   "color": "#A3A9B4",
+   "data": [
+    1388,
+    1807,
+    1975,
+    2103,
+    2843
+   ],
+   "unit": "count"
+  },
+  "kerala__pwd_female": {
+   "name": "aishe_kerala__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Kerala",
+   "group": "Kerala",
+   "color": "#C9CED6",
+   "data": [
+    1356,
+    1704,
+    1735,
+    1888,
+    2472
+   ],
+   "unit": "count"
+  },
+  "ladakh__muslims_both": {
+   "name": "aishe_ladakh__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Ladakh",
+   "group": "Ladakh",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    1954,
+    2020,
+    1148
+   ],
+   "unit": "count"
+  },
+  "ladakh__muslims_male": {
+   "name": "aishe_ladakh__muslims_male",
+   "label": "Enrolment, Muslims, men · Ladakh",
+   "group": "Ladakh",
+   "color": "#878D99",
+   "data": [
+    null,
+    null,
+    652,
+    679,
+    421
+   ],
+   "unit": "count"
+  },
+  "ladakh__muslims_female": {
+   "name": "aishe_ladakh__muslims_female",
+   "label": "Enrolment, Muslims, women · Ladakh",
+   "group": "Ladakh",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    1302,
+    1341,
+    727
+   ],
+   "unit": "count"
+  },
+  "ladakh__other_minority_both": {
+   "name": "aishe_ladakh__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Ladakh",
+   "group": "Ladakh",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    890,
+    790,
+    1337
+   ],
+   "unit": "count"
+  },
+  "ladakh__other_minority_male": {
+   "name": "aishe_ladakh__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Ladakh",
+   "group": "Ladakh",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    307,
+    226,
+    451
+   ],
+   "unit": "count"
+  },
+  "ladakh__other_minority_female": {
+   "name": "aishe_ladakh__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Ladakh",
+   "group": "Ladakh",
+   "color": "#878D99",
+   "data": [
+    null,
+    null,
+    583,
+    564,
+    886
+   ],
+   "unit": "count"
+  },
+  "ladakh__ews_both": {
+   "name": "aishe_ladakh__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Ladakh",
+   "group": "Ladakh",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    0,
+    0
+   ],
+   "unit": "count"
+  },
+  "ladakh__ews_male": {
+   "name": "aishe_ladakh__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Ladakh",
+   "group": "Ladakh",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    0,
+    0
+   ],
+   "unit": "count"
+  },
+  "ladakh__ews_female": {
+   "name": "aishe_ladakh__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Ladakh",
+   "group": "Ladakh",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    0,
+    0
+   ],
+   "unit": "count"
+  },
+  "ladakh__pwd_both": {
+   "name": "aishe_ladakh__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Ladakh",
+   "group": "Ladakh",
+   "color": "#878D99",
+   "data": [
+    null,
+    null,
+    0,
+    0,
+    1
+   ],
+   "unit": "count"
+  },
+  "ladakh__pwd_male": {
+   "name": "aishe_ladakh__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Ladakh",
+   "group": "Ladakh",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    0,
+    0,
+    1
+   ],
+   "unit": "count"
+  },
+  "ladakh__pwd_female": {
+   "name": "aishe_ladakh__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Ladakh",
+   "group": "Ladakh",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    0,
+    0,
+    0
+   ],
+   "unit": "count"
+  },
+  "lakshadweep__muslims_both": {
+   "name": "aishe_lakshadweep__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Lakshadweep",
+   "group": "Lakshadweep",
+   "color": "#5F6675",
+   "data": [
+    238,
+    310,
+    326,
+    326,
+    88
+   ],
+   "unit": "count"
+  },
+  "lakshadweep__muslims_male": {
+   "name": "aishe_lakshadweep__muslims_male",
+   "label": "Enrolment, Muslims, men · Lakshadweep",
+   "group": "Lakshadweep",
+   "color": "#878D99",
+   "data": [
+    56,
+    64,
+    70,
+    70,
+    14
+   ],
+   "unit": "count"
+  },
+  "lakshadweep__muslims_female": {
+   "name": "aishe_lakshadweep__muslims_female",
+   "label": "Enrolment, Muslims, women · Lakshadweep",
+   "group": "Lakshadweep",
+   "color": "#A3A9B4",
+   "data": [
+    182,
+    246,
+    256,
+    256,
+    74
+   ],
+   "unit": "count"
+  },
+  "lakshadweep__other_minority_both": {
+   "name": "aishe_lakshadweep__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Lakshadweep",
+   "group": "Lakshadweep",
+   "color": "#C9CED6",
+   "data": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "unit": "count"
+  },
+  "lakshadweep__other_minority_male": {
+   "name": "aishe_lakshadweep__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Lakshadweep",
+   "group": "Lakshadweep",
+   "color": "#5F6675",
+   "data": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "unit": "count"
+  },
+  "lakshadweep__other_minority_female": {
+   "name": "aishe_lakshadweep__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Lakshadweep",
+   "group": "Lakshadweep",
+   "color": "#878D99",
+   "data": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "unit": "count"
+  },
+  "lakshadweep__ews_both": {
+   "name": "aishe_lakshadweep__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Lakshadweep",
+   "group": "Lakshadweep",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    0,
+    0
+   ],
+   "unit": "count"
+  },
+  "lakshadweep__ews_male": {
+   "name": "aishe_lakshadweep__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Lakshadweep",
+   "group": "Lakshadweep",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    0,
+    0
+   ],
+   "unit": "count"
+  },
+  "lakshadweep__ews_female": {
+   "name": "aishe_lakshadweep__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Lakshadweep",
+   "group": "Lakshadweep",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    0,
+    0
+   ],
+   "unit": "count"
+  },
+  "lakshadweep__pwd_both": {
+   "name": "aishe_lakshadweep__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Lakshadweep",
+   "group": "Lakshadweep",
+   "color": "#878D99",
+   "data": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "unit": "count"
+  },
+  "lakshadweep__pwd_male": {
+   "name": "aishe_lakshadweep__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Lakshadweep",
+   "group": "Lakshadweep",
+   "color": "#A3A9B4",
+   "data": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "unit": "count"
+  },
+  "lakshadweep__pwd_female": {
+   "name": "aishe_lakshadweep__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Lakshadweep",
+   "group": "Lakshadweep",
+   "color": "#C9CED6",
+   "data": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "unit": "count"
+  },
+  "madhya_pradesh__muslims_both": {
+   "name": "aishe_madhya_pradesh__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Madhya Pradesh",
+   "group": "Madhya Pradesh",
+   "color": "#5F6675",
+   "data": [
+    39468,
+    36757,
+    44289,
+    41427,
+    39205
+   ],
+   "unit": "count"
+  },
+  "madhya_pradesh__muslims_male": {
+   "name": "aishe_madhya_pradesh__muslims_male",
+   "label": "Enrolment, Muslims, men · Madhya Pradesh",
+   "group": "Madhya Pradesh",
+   "color": "#878D99",
+   "data": [
+    22406,
+    20195,
+    24366,
+    20995,
+    22617
+   ],
+   "unit": "count"
+  },
+  "madhya_pradesh__muslims_female": {
+   "name": "aishe_madhya_pradesh__muslims_female",
+   "label": "Enrolment, Muslims, women · Madhya Pradesh",
+   "group": "Madhya Pradesh",
+   "color": "#A3A9B4",
+   "data": [
+    17062,
+    16562,
+    19923,
+    20432,
+    16588
+   ],
+   "unit": "count"
+  },
+  "madhya_pradesh__other_minority_both": {
+   "name": "aishe_madhya_pradesh__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Madhya Pradesh",
+   "group": "Madhya Pradesh",
+   "color": "#C9CED6",
+   "data": [
+    15730,
+    26028,
+    25537,
+    18782,
+    20682
+   ],
+   "unit": "count"
+  },
+  "madhya_pradesh__other_minority_male": {
+   "name": "aishe_madhya_pradesh__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Madhya Pradesh",
+   "group": "Madhya Pradesh",
+   "color": "#5F6675",
+   "data": [
+    7038,
+    14070,
+    12788,
+    8968,
+    10826
+   ],
+   "unit": "count"
+  },
+  "madhya_pradesh__other_minority_female": {
+   "name": "aishe_madhya_pradesh__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Madhya Pradesh",
+   "group": "Madhya Pradesh",
+   "color": "#878D99",
+   "data": [
+    8692,
+    11958,
+    12749,
+    9814,
+    9856
+   ],
+   "unit": "count"
+  },
+  "madhya_pradesh__ews_both": {
+   "name": "aishe_madhya_pradesh__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Madhya Pradesh",
+   "group": "Madhya Pradesh",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    12455,
+    18839
+   ],
+   "unit": "count"
+  },
+  "madhya_pradesh__ews_male": {
+   "name": "aishe_madhya_pradesh__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Madhya Pradesh",
+   "group": "Madhya Pradesh",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    7293,
+    11964
+   ],
+   "unit": "count"
+  },
+  "madhya_pradesh__ews_female": {
+   "name": "aishe_madhya_pradesh__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Madhya Pradesh",
+   "group": "Madhya Pradesh",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    5162,
+    6875
+   ],
+   "unit": "count"
+  },
+  "madhya_pradesh__pwd_both": {
+   "name": "aishe_madhya_pradesh__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Madhya Pradesh",
+   "group": "Madhya Pradesh",
+   "color": "#878D99",
+   "data": [
+    2880,
+    3328,
+    2442,
+    2594,
+    4055
+   ],
+   "unit": "count"
+  },
+  "madhya_pradesh__pwd_male": {
+   "name": "aishe_madhya_pradesh__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Madhya Pradesh",
+   "group": "Madhya Pradesh",
+   "color": "#A3A9B4",
+   "data": [
+    1781,
+    1763,
+    1403,
+    1886,
+    2277
+   ],
+   "unit": "count"
+  },
+  "madhya_pradesh__pwd_female": {
+   "name": "aishe_madhya_pradesh__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Madhya Pradesh",
+   "group": "Madhya Pradesh",
+   "color": "#C9CED6",
+   "data": [
+    1099,
+    1565,
+    1039,
+    708,
+    1778
+   ],
+   "unit": "count"
+  },
+  "maharashtra__muslims_both": {
+   "name": "aishe_maharashtra__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Maharashtra",
+   "group": "Maharashtra",
+   "color": "#5F6675",
+   "data": [
+    151390,
+    152366,
+    166228,
+    150804,
+    154515
+   ],
+   "unit": "count"
+  },
+  "maharashtra__muslims_male": {
+   "name": "aishe_maharashtra__muslims_male",
+   "label": "Enrolment, Muslims, men · Maharashtra",
+   "group": "Maharashtra",
+   "color": "#878D99",
+   "data": [
+    79997,
+    78777,
+    83037,
+    79148,
+    79193
+   ],
+   "unit": "count"
+  },
+  "maharashtra__muslims_female": {
+   "name": "aishe_maharashtra__muslims_female",
+   "label": "Enrolment, Muslims, women · Maharashtra",
+   "group": "Maharashtra",
+   "color": "#A3A9B4",
+   "data": [
+    71393,
+    73589,
+    83191,
+    71656,
+    75322
+   ],
+   "unit": "count"
+  },
+  "maharashtra__other_minority_both": {
+   "name": "aishe_maharashtra__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Maharashtra",
+   "group": "Maharashtra",
+   "color": "#C9CED6",
+   "data": [
+    81949,
+    84660,
+    96022,
+    81674,
+    106786
+   ],
+   "unit": "count"
+  },
+  "maharashtra__other_minority_male": {
+   "name": "aishe_maharashtra__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Maharashtra",
+   "group": "Maharashtra",
+   "color": "#5F6675",
+   "data": [
+    39357,
+    41535,
+    46074,
+    42054,
+    54185
+   ],
+   "unit": "count"
+  },
+  "maharashtra__other_minority_female": {
+   "name": "aishe_maharashtra__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Maharashtra",
+   "group": "Maharashtra",
+   "color": "#878D99",
+   "data": [
+    42592,
+    43125,
+    49948,
+    39620,
+    52601
+   ],
+   "unit": "count"
+  },
+  "maharashtra__ews_both": {
+   "name": "aishe_maharashtra__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Maharashtra",
+   "group": "Maharashtra",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    51651,
+    77897
+   ],
+   "unit": "count"
+  },
+  "maharashtra__ews_male": {
+   "name": "aishe_maharashtra__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Maharashtra",
+   "group": "Maharashtra",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    29953,
+    45510
+   ],
+   "unit": "count"
+  },
+  "maharashtra__ews_female": {
+   "name": "aishe_maharashtra__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Maharashtra",
+   "group": "Maharashtra",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    21698,
+    32387
+   ],
+   "unit": "count"
+  },
+  "maharashtra__pwd_both": {
+   "name": "aishe_maharashtra__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Maharashtra",
+   "group": "Maharashtra",
+   "color": "#878D99",
+   "data": [
+    7906,
+    7935,
+    7797,
+    6163,
+    8171
+   ],
+   "unit": "count"
+  },
+  "maharashtra__pwd_male": {
+   "name": "aishe_maharashtra__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Maharashtra",
+   "group": "Maharashtra",
+   "color": "#A3A9B4",
+   "data": [
+    4935,
+    4400,
+    4714,
+    3949,
+    4955
+   ],
+   "unit": "count"
+  },
+  "maharashtra__pwd_female": {
+   "name": "aishe_maharashtra__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Maharashtra",
+   "group": "Maharashtra",
+   "color": "#C9CED6",
+   "data": [
+    2971,
+    3535,
+    3083,
+    2214,
+    3216
+   ],
+   "unit": "count"
+  },
+  "manipur__muslims_both": {
+   "name": "aishe_manipur__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Manipur",
+   "group": "Manipur",
+   "color": "#5F6675",
+   "data": [
+    4884,
+    5601,
+    6479,
+    4430,
+    1964
+   ],
+   "unit": "count"
+  },
+  "manipur__muslims_male": {
+   "name": "aishe_manipur__muslims_male",
+   "label": "Enrolment, Muslims, men · Manipur",
+   "group": "Manipur",
+   "color": "#878D99",
+   "data": [
+    2548,
+    3047,
+    3380,
+    1904,
+    964
+   ],
+   "unit": "count"
+  },
+  "manipur__muslims_female": {
+   "name": "aishe_manipur__muslims_female",
+   "label": "Enrolment, Muslims, women · Manipur",
+   "group": "Manipur",
+   "color": "#A3A9B4",
+   "data": [
+    2336,
+    2554,
+    3099,
+    2526,
+    1000
+   ],
+   "unit": "count"
+  },
+  "manipur__other_minority_both": {
+   "name": "aishe_manipur__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Manipur",
+   "group": "Manipur",
+   "color": "#C9CED6",
+   "data": [
+    6172,
+    3119,
+    4386,
+    5149,
+    3782
+   ],
+   "unit": "count"
+  },
+  "manipur__other_minority_male": {
+   "name": "aishe_manipur__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Manipur",
+   "group": "Manipur",
+   "color": "#5F6675",
+   "data": [
+    3046,
+    1496,
+    1977,
+    2519,
+    1080
+   ],
+   "unit": "count"
+  },
+  "manipur__other_minority_female": {
+   "name": "aishe_manipur__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Manipur",
+   "group": "Manipur",
+   "color": "#878D99",
+   "data": [
+    3126,
+    1623,
+    2409,
+    2630,
+    2702
+   ],
+   "unit": "count"
+  },
+  "manipur__ews_both": {
+   "name": "aishe_manipur__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Manipur",
+   "group": "Manipur",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    174,
+    195
+   ],
+   "unit": "count"
+  },
+  "manipur__ews_male": {
+   "name": "aishe_manipur__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Manipur",
+   "group": "Manipur",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    115,
+    133
+   ],
+   "unit": "count"
+  },
+  "manipur__ews_female": {
+   "name": "aishe_manipur__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Manipur",
+   "group": "Manipur",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    59,
+    62
+   ],
+   "unit": "count"
+  },
+  "manipur__pwd_both": {
+   "name": "aishe_manipur__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Manipur",
+   "group": "Manipur",
+   "color": "#878D99",
+   "data": [
+    99,
+    129,
+    168,
+    233,
+    176
+   ],
+   "unit": "count"
+  },
+  "manipur__pwd_male": {
+   "name": "aishe_manipur__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Manipur",
+   "group": "Manipur",
+   "color": "#A3A9B4",
+   "data": [
+    67,
+    81,
+    88,
+    123,
+    85
+   ],
+   "unit": "count"
+  },
+  "manipur__pwd_female": {
+   "name": "aishe_manipur__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Manipur",
+   "group": "Manipur",
+   "color": "#C9CED6",
+   "data": [
+    32,
+    48,
+    80,
+    110,
+    91
+   ],
+   "unit": "count"
+  },
+  "meghalaya__muslims_both": {
+   "name": "aishe_meghalaya__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Meghalaya",
+   "group": "Meghalaya",
+   "color": "#5F6675",
+   "data": [
+    1479,
+    2252,
+    2078,
+    2062,
+    2119
+   ],
+   "unit": "count"
+  },
+  "meghalaya__muslims_male": {
+   "name": "aishe_meghalaya__muslims_male",
+   "label": "Enrolment, Muslims, men · Meghalaya",
+   "group": "Meghalaya",
+   "color": "#878D99",
+   "data": [
+    891,
+    1318,
+    1177,
+    1150,
+    1324
+   ],
+   "unit": "count"
+  },
+  "meghalaya__muslims_female": {
+   "name": "aishe_meghalaya__muslims_female",
+   "label": "Enrolment, Muslims, women · Meghalaya",
+   "group": "Meghalaya",
+   "color": "#A3A9B4",
+   "data": [
+    588,
+    934,
+    901,
+    912,
+    795
+   ],
+   "unit": "count"
+  },
+  "meghalaya__other_minority_both": {
+   "name": "aishe_meghalaya__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Meghalaya",
+   "group": "Meghalaya",
+   "color": "#C9CED6",
+   "data": [
+    23473,
+    23972,
+    24330,
+    30124,
+    14745
+   ],
+   "unit": "count"
+  },
+  "meghalaya__other_minority_male": {
+   "name": "aishe_meghalaya__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Meghalaya",
+   "group": "Meghalaya",
+   "color": "#5F6675",
+   "data": [
+    10951,
+    10694,
+    10928,
+    13119,
+    6253
+   ],
+   "unit": "count"
+  },
+  "meghalaya__other_minority_female": {
+   "name": "aishe_meghalaya__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Meghalaya",
+   "group": "Meghalaya",
+   "color": "#878D99",
+   "data": [
+    12522,
+    13278,
+    13402,
+    17005,
+    8492
+   ],
+   "unit": "count"
+  },
+  "meghalaya__ews_both": {
+   "name": "aishe_meghalaya__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Meghalaya",
+   "group": "Meghalaya",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    343,
+    454
+   ],
+   "unit": "count"
+  },
+  "meghalaya__ews_male": {
+   "name": "aishe_meghalaya__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Meghalaya",
+   "group": "Meghalaya",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    207,
+    240
+   ],
+   "unit": "count"
+  },
+  "meghalaya__ews_female": {
+   "name": "aishe_meghalaya__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Meghalaya",
+   "group": "Meghalaya",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    136,
+    214
+   ],
+   "unit": "count"
+  },
+  "meghalaya__pwd_both": {
+   "name": "aishe_meghalaya__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Meghalaya",
+   "group": "Meghalaya",
+   "color": "#878D99",
+   "data": [
+    65,
+    292,
+    367,
+    327,
+    1065
+   ],
+   "unit": "count"
+  },
+  "meghalaya__pwd_male": {
+   "name": "aishe_meghalaya__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Meghalaya",
+   "group": "Meghalaya",
+   "color": "#A3A9B4",
+   "data": [
+    35,
+    110,
+    204,
+    188,
+    477
+   ],
+   "unit": "count"
+  },
+  "meghalaya__pwd_female": {
+   "name": "aishe_meghalaya__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Meghalaya",
+   "group": "Meghalaya",
+   "color": "#C9CED6",
+   "data": [
+    30,
+    182,
+    163,
+    139,
+    588
+   ],
+   "unit": "count"
+  },
+  "mizoram__muslims_both": {
+   "name": "aishe_mizoram__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Mizoram",
+   "group": "Mizoram",
+   "color": "#5F6675",
+   "data": [
+    68,
+    83,
+    70,
+    78,
+    130
+   ],
+   "unit": "count"
+  },
+  "mizoram__muslims_male": {
+   "name": "aishe_mizoram__muslims_male",
+   "label": "Enrolment, Muslims, men · Mizoram",
+   "group": "Mizoram",
+   "color": "#878D99",
+   "data": [
+    58,
+    54,
+    48,
+    50,
+    77
+   ],
+   "unit": "count"
+  },
+  "mizoram__muslims_female": {
+   "name": "aishe_mizoram__muslims_female",
+   "label": "Enrolment, Muslims, women · Mizoram",
+   "group": "Mizoram",
+   "color": "#A3A9B4",
+   "data": [
+    10,
+    29,
+    22,
+    28,
+    53
+   ],
+   "unit": "count"
+  },
+  "mizoram__other_minority_both": {
+   "name": "aishe_mizoram__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Mizoram",
+   "group": "Mizoram",
+   "color": "#C9CED6",
+   "data": [
+    23238,
+    18655,
+    16830,
+    20051,
+    19213
+   ],
+   "unit": "count"
+  },
+  "mizoram__other_minority_male": {
+   "name": "aishe_mizoram__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Mizoram",
+   "group": "Mizoram",
+   "color": "#5F6675",
+   "data": [
+    11861,
+    9675,
+    8560,
+    9747,
+    9504
+   ],
+   "unit": "count"
+  },
+  "mizoram__other_minority_female": {
+   "name": "aishe_mizoram__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Mizoram",
+   "group": "Mizoram",
+   "color": "#878D99",
+   "data": [
+    11377,
+    8980,
+    8270,
+    10304,
+    9709
+   ],
+   "unit": "count"
+  },
+  "mizoram__ews_both": {
+   "name": "aishe_mizoram__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Mizoram",
+   "group": "Mizoram",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    26,
+    99
+   ],
+   "unit": "count"
+  },
+  "mizoram__ews_male": {
+   "name": "aishe_mizoram__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Mizoram",
+   "group": "Mizoram",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    18,
+    62
+   ],
+   "unit": "count"
+  },
+  "mizoram__ews_female": {
+   "name": "aishe_mizoram__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Mizoram",
+   "group": "Mizoram",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    8,
+    37
+   ],
+   "unit": "count"
+  },
+  "mizoram__pwd_both": {
+   "name": "aishe_mizoram__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Mizoram",
+   "group": "Mizoram",
+   "color": "#878D99",
+   "data": [
+    28,
+    26,
+    23,
+    27,
+    31
+   ],
+   "unit": "count"
+  },
+  "mizoram__pwd_male": {
+   "name": "aishe_mizoram__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Mizoram",
+   "group": "Mizoram",
+   "color": "#A3A9B4",
+   "data": [
+    14,
+    12,
+    15,
+    14,
+    14
+   ],
+   "unit": "count"
+  },
+  "mizoram__pwd_female": {
+   "name": "aishe_mizoram__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Mizoram",
+   "group": "Mizoram",
+   "color": "#C9CED6",
+   "data": [
+    14,
+    14,
+    8,
+    13,
+    17
+   ],
+   "unit": "count"
+  },
+  "nagaland__muslims_both": {
+   "name": "aishe_nagaland__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Nagaland",
+   "group": "Nagaland",
+   "color": "#5F6675",
+   "data": [
+    215,
+    204,
+    212,
+    257,
+    253
+   ],
+   "unit": "count"
+  },
+  "nagaland__muslims_male": {
+   "name": "aishe_nagaland__muslims_male",
+   "label": "Enrolment, Muslims, men · Nagaland",
+   "group": "Nagaland",
+   "color": "#878D99",
+   "data": [
+    103,
+    89,
+    100,
+    113,
+    112
+   ],
+   "unit": "count"
+  },
+  "nagaland__muslims_female": {
+   "name": "aishe_nagaland__muslims_female",
+   "label": "Enrolment, Muslims, women · Nagaland",
+   "group": "Nagaland",
+   "color": "#A3A9B4",
+   "data": [
+    112,
+    115,
+    112,
+    144,
+    141
+   ],
+   "unit": "count"
+  },
+  "nagaland__other_minority_both": {
+   "name": "aishe_nagaland__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Nagaland",
+   "group": "Nagaland",
+   "color": "#C9CED6",
+   "data": [
+    14539,
+    18369,
+    15996,
+    11334,
+    18001
+   ],
+   "unit": "count"
+  },
+  "nagaland__other_minority_male": {
+   "name": "aishe_nagaland__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Nagaland",
+   "group": "Nagaland",
+   "color": "#5F6675",
+   "data": [
+    6551,
+    8214,
+    7118,
+    4719,
+    8303
+   ],
+   "unit": "count"
+  },
+  "nagaland__other_minority_female": {
+   "name": "aishe_nagaland__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Nagaland",
+   "group": "Nagaland",
+   "color": "#878D99",
+   "data": [
+    7988,
+    10155,
+    8878,
+    6615,
+    9698
+   ],
+   "unit": "count"
+  },
+  "nagaland__ews_both": {
+   "name": "aishe_nagaland__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Nagaland",
+   "group": "Nagaland",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    233,
+    303
+   ],
+   "unit": "count"
+  },
+  "nagaland__ews_male": {
+   "name": "aishe_nagaland__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Nagaland",
+   "group": "Nagaland",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    173,
+    43
+   ],
+   "unit": "count"
+  },
+  "nagaland__ews_female": {
+   "name": "aishe_nagaland__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Nagaland",
+   "group": "Nagaland",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    60,
+    260
+   ],
+   "unit": "count"
+  },
+  "nagaland__pwd_both": {
+   "name": "aishe_nagaland__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Nagaland",
+   "group": "Nagaland",
+   "color": "#878D99",
+   "data": [
+    13,
+    24,
+    36,
+    8,
+    21
+   ],
+   "unit": "count"
+  },
+  "nagaland__pwd_male": {
+   "name": "aishe_nagaland__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Nagaland",
+   "group": "Nagaland",
+   "color": "#A3A9B4",
+   "data": [
+    7,
+    9,
+    17,
+    3,
+    14
+   ],
+   "unit": "count"
+  },
+  "nagaland__pwd_female": {
+   "name": "aishe_nagaland__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Nagaland",
+   "group": "Nagaland",
+   "color": "#C9CED6",
+   "data": [
+    6,
+    15,
+    19,
+    5,
+    7
+   ],
+   "unit": "count"
+  },
+  "odisha__muslims_both": {
+   "name": "aishe_odisha__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Odisha",
+   "group": "Odisha",
+   "color": "#5F6675",
+   "data": [
+    11098,
+    10341,
+    9846,
+    8487,
+    8509
+   ],
+   "unit": "count"
+  },
+  "odisha__muslims_male": {
+   "name": "aishe_odisha__muslims_male",
+   "label": "Enrolment, Muslims, men · Odisha",
+   "group": "Odisha",
+   "color": "#878D99",
+   "data": [
+    5862,
+    5741,
+    5614,
+    4728,
+    4412
+   ],
+   "unit": "count"
+  },
+  "odisha__muslims_female": {
+   "name": "aishe_odisha__muslims_female",
+   "label": "Enrolment, Muslims, women · Odisha",
+   "group": "Odisha",
+   "color": "#A3A9B4",
+   "data": [
+    5236,
+    4600,
+    4232,
+    3759,
+    4097
+   ],
+   "unit": "count"
+  },
+  "odisha__other_minority_both": {
+   "name": "aishe_odisha__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Odisha",
+   "group": "Odisha",
+   "color": "#C9CED6",
+   "data": [
+    3431,
+    3610,
+    3559,
+    3110,
+    4946
+   ],
+   "unit": "count"
+  },
+  "odisha__other_minority_male": {
+   "name": "aishe_odisha__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Odisha",
+   "group": "Odisha",
+   "color": "#5F6675",
+   "data": [
+    1645,
+    1779,
+    1641,
+    1562,
+    2468
+   ],
+   "unit": "count"
+  },
+  "odisha__other_minority_female": {
+   "name": "aishe_odisha__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Odisha",
+   "group": "Odisha",
+   "color": "#878D99",
+   "data": [
+    1786,
+    1831,
+    1918,
+    1548,
+    2478
+   ],
+   "unit": "count"
+  },
+  "odisha__ews_both": {
+   "name": "aishe_odisha__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Odisha",
+   "group": "Odisha",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    15248,
+    23612
+   ],
+   "unit": "count"
+  },
+  "odisha__ews_male": {
+   "name": "aishe_odisha__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Odisha",
+   "group": "Odisha",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    7257,
+    13816
+   ],
+   "unit": "count"
+  },
+  "odisha__ews_female": {
+   "name": "aishe_odisha__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Odisha",
+   "group": "Odisha",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    7991,
+    9796
+   ],
+   "unit": "count"
+  },
+  "odisha__pwd_both": {
+   "name": "aishe_odisha__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Odisha",
+   "group": "Odisha",
+   "color": "#878D99",
+   "data": [
+    1567,
+    1961,
+    2094,
+    1734,
+    2020
+   ],
+   "unit": "count"
+  },
+  "odisha__pwd_male": {
+   "name": "aishe_odisha__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Odisha",
+   "group": "Odisha",
+   "color": "#A3A9B4",
+   "data": [
+    967,
+    1158,
+    1358,
+    1041,
+    1214
+   ],
+   "unit": "count"
+  },
+  "odisha__pwd_female": {
+   "name": "aishe_odisha__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Odisha",
+   "group": "Odisha",
+   "color": "#C9CED6",
+   "data": [
+    600,
+    803,
+    736,
+    693,
+    806
+   ],
+   "unit": "count"
+  },
+  "puducherry__muslims_both": {
+   "name": "aishe_puducherry__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Puducherry",
+   "group": "Puducherry",
+   "color": "#5F6675",
+   "data": [
+    2455,
+    2653,
+    3126,
+    2341,
+    3270
+   ],
+   "unit": "count"
+  },
+  "puducherry__muslims_male": {
+   "name": "aishe_puducherry__muslims_male",
+   "label": "Enrolment, Muslims, men · Puducherry",
+   "group": "Puducherry",
+   "color": "#878D99",
+   "data": [
+    1395,
+    1456,
+    1637,
+    1202,
+    1565
+   ],
+   "unit": "count"
+  },
+  "puducherry__muslims_female": {
+   "name": "aishe_puducherry__muslims_female",
+   "label": "Enrolment, Muslims, women · Puducherry",
+   "group": "Puducherry",
+   "color": "#A3A9B4",
+   "data": [
+    1060,
+    1197,
+    1489,
+    1139,
+    1705
+   ],
+   "unit": "count"
+  },
+  "puducherry__other_minority_both": {
+   "name": "aishe_puducherry__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Puducherry",
+   "group": "Puducherry",
+   "color": "#C9CED6",
+   "data": [
+    2698,
+    2844,
+    3038,
+    2717,
+    3047
+   ],
+   "unit": "count"
+  },
+  "puducherry__other_minority_male": {
+   "name": "aishe_puducherry__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Puducherry",
+   "group": "Puducherry",
+   "color": "#5F6675",
+   "data": [
+    904,
+    950,
+    1013,
+    851,
+    1035
+   ],
+   "unit": "count"
+  },
+  "puducherry__other_minority_female": {
+   "name": "aishe_puducherry__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Puducherry",
+   "group": "Puducherry",
+   "color": "#878D99",
+   "data": [
+    1794,
+    1894,
+    2025,
+    1866,
+    2012
+   ],
+   "unit": "count"
+  },
+  "puducherry__ews_both": {
+   "name": "aishe_puducherry__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Puducherry",
+   "group": "Puducherry",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    298,
+    383
+   ],
+   "unit": "count"
+  },
+  "puducherry__ews_male": {
+   "name": "aishe_puducherry__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Puducherry",
+   "group": "Puducherry",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    176,
+    233
+   ],
+   "unit": "count"
+  },
+  "puducherry__ews_female": {
+   "name": "aishe_puducherry__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Puducherry",
+   "group": "Puducherry",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    122,
+    150
+   ],
+   "unit": "count"
+  },
+  "puducherry__pwd_both": {
+   "name": "aishe_puducherry__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Puducherry",
+   "group": "Puducherry",
+   "color": "#878D99",
+   "data": [
+    205,
+    257,
+    285,
+    322,
+    287
+   ],
+   "unit": "count"
+  },
+  "puducherry__pwd_male": {
+   "name": "aishe_puducherry__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Puducherry",
+   "group": "Puducherry",
+   "color": "#A3A9B4",
+   "data": [
+    122,
+    158,
+    131,
+    120,
+    94
+   ],
+   "unit": "count"
+  },
+  "puducherry__pwd_female": {
+   "name": "aishe_puducherry__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Puducherry",
+   "group": "Puducherry",
+   "color": "#C9CED6",
+   "data": [
+    83,
+    99,
+    154,
+    202,
+    193
+   ],
+   "unit": "count"
+  },
+  "punjab__muslims_both": {
+   "name": "aishe_punjab__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Punjab",
+   "group": "Punjab",
+   "color": "#5F6675",
+   "data": [
+    8430,
+    10834,
+    13784,
+    16485,
+    19917
+   ],
+   "unit": "count"
+  },
+  "punjab__muslims_male": {
+   "name": "aishe_punjab__muslims_male",
+   "label": "Enrolment, Muslims, men · Punjab",
+   "group": "Punjab",
+   "color": "#878D99",
+   "data": [
+    6106,
+    7526,
+    9558,
+    11803,
+    14277
+   ],
+   "unit": "count"
+  },
+  "punjab__muslims_female": {
+   "name": "aishe_punjab__muslims_female",
+   "label": "Enrolment, Muslims, women · Punjab",
+   "group": "Punjab",
+   "color": "#A3A9B4",
+   "data": [
+    2324,
+    3308,
+    4226,
+    4682,
+    5640
+   ],
+   "unit": "count"
+  },
+  "punjab__other_minority_both": {
+   "name": "aishe_punjab__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Punjab",
+   "group": "Punjab",
+   "color": "#C9CED6",
+   "data": [
+    145298,
+    157698,
+    142468,
+    119253,
+    130481
+   ],
+   "unit": "count"
+  },
+  "punjab__other_minority_male": {
+   "name": "aishe_punjab__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Punjab",
+   "group": "Punjab",
+   "color": "#5F6675",
+   "data": [
+    62604,
+    68769,
+    65018,
+    53417,
+    60736
+   ],
+   "unit": "count"
+  },
+  "punjab__other_minority_female": {
+   "name": "aishe_punjab__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Punjab",
+   "group": "Punjab",
+   "color": "#878D99",
+   "data": [
+    82694,
+    88929,
+    77450,
+    65836,
+    69745
+   ],
+   "unit": "count"
+  },
+  "punjab__ews_both": {
+   "name": "aishe_punjab__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Punjab",
+   "group": "Punjab",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    9274,
+    12444
+   ],
+   "unit": "count"
+  },
+  "punjab__ews_male": {
+   "name": "aishe_punjab__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Punjab",
+   "group": "Punjab",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    5937,
+    6712
+   ],
+   "unit": "count"
+  },
+  "punjab__ews_female": {
+   "name": "aishe_punjab__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Punjab",
+   "group": "Punjab",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    3337,
+    5732
+   ],
+   "unit": "count"
+  },
+  "punjab__pwd_both": {
+   "name": "aishe_punjab__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Punjab",
+   "group": "Punjab",
+   "color": "#878D99",
+   "data": [
+    834,
+    1082,
+    738,
+    573,
+    1067
+   ],
+   "unit": "count"
+  },
+  "punjab__pwd_male": {
+   "name": "aishe_punjab__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Punjab",
+   "group": "Punjab",
+   "color": "#A3A9B4",
+   "data": [
+    499,
+    559,
+    427,
+    318,
+    599
+   ],
+   "unit": "count"
+  },
+  "punjab__pwd_female": {
+   "name": "aishe_punjab__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Punjab",
+   "group": "Punjab",
+   "color": "#C9CED6",
+   "data": [
+    335,
+    523,
+    311,
+    255,
+    468
+   ],
+   "unit": "count"
+  },
+  "rajasthan__muslims_both": {
+   "name": "aishe_rajasthan__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Rajasthan",
+   "group": "Rajasthan",
+   "color": "#5F6675",
+   "data": [
+    38556,
+    44358,
+    44183,
+    42990,
+    46411
+   ],
+   "unit": "count"
+  },
+  "rajasthan__muslims_male": {
+   "name": "aishe_rajasthan__muslims_male",
+   "label": "Enrolment, Muslims, men · Rajasthan",
+   "group": "Rajasthan",
+   "color": "#878D99",
+   "data": [
+    22280,
+    26100,
+    25128,
+    24356,
+    26212
+   ],
+   "unit": "count"
+  },
+  "rajasthan__muslims_female": {
+   "name": "aishe_rajasthan__muslims_female",
+   "label": "Enrolment, Muslims, women · Rajasthan",
+   "group": "Rajasthan",
+   "color": "#A3A9B4",
+   "data": [
+    16276,
+    18258,
+    19055,
+    18634,
+    20199
+   ],
+   "unit": "count"
+  },
+  "rajasthan__other_minority_both": {
+   "name": "aishe_rajasthan__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Rajasthan",
+   "group": "Rajasthan",
+   "color": "#C9CED6",
+   "data": [
+    17974,
+    17640,
+    19364,
+    19869,
+    19552
+   ],
+   "unit": "count"
+  },
+  "rajasthan__other_minority_male": {
+   "name": "aishe_rajasthan__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Rajasthan",
+   "group": "Rajasthan",
+   "color": "#5F6675",
+   "data": [
+    7776,
+    7629,
+    8366,
+    8595,
+    9186
+   ],
+   "unit": "count"
+  },
+  "rajasthan__other_minority_female": {
+   "name": "aishe_rajasthan__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Rajasthan",
+   "group": "Rajasthan",
+   "color": "#878D99",
+   "data": [
+    10198,
+    10011,
+    10998,
+    11274,
+    10366
+   ],
+   "unit": "count"
+  },
+  "rajasthan__ews_both": {
+   "name": "aishe_rajasthan__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Rajasthan",
+   "group": "Rajasthan",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    28697,
+    50694
+   ],
+   "unit": "count"
+  },
+  "rajasthan__ews_male": {
+   "name": "aishe_rajasthan__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Rajasthan",
+   "group": "Rajasthan",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    14756,
+    24977
+   ],
+   "unit": "count"
+  },
+  "rajasthan__ews_female": {
+   "name": "aishe_rajasthan__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Rajasthan",
+   "group": "Rajasthan",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    13941,
+    25717
+   ],
+   "unit": "count"
+  },
+  "rajasthan__pwd_both": {
+   "name": "aishe_rajasthan__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Rajasthan",
+   "group": "Rajasthan",
+   "color": "#878D99",
+   "data": [
+    5024,
+    4712,
+    9961,
+    6308,
+    5224
+   ],
+   "unit": "count"
+  },
+  "rajasthan__pwd_male": {
+   "name": "aishe_rajasthan__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Rajasthan",
+   "group": "Rajasthan",
+   "color": "#A3A9B4",
+   "data": [
+    2528,
+    2848,
+    3442,
+    4579,
+    3563
+   ],
+   "unit": "count"
+  },
+  "rajasthan__pwd_female": {
+   "name": "aishe_rajasthan__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Rajasthan",
+   "group": "Rajasthan",
+   "color": "#C9CED6",
+   "data": [
+    2496,
+    1864,
+    6519,
+    1729,
+    1661
+   ],
+   "unit": "count"
+  },
+  "sikkim__muslims_both": {
+   "name": "aishe_sikkim__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Sikkim",
+   "group": "Sikkim",
+   "color": "#5F6675",
+   "data": [
+    106,
+    196,
+    146,
+    147,
+    162
+   ],
+   "unit": "count"
+  },
+  "sikkim__muslims_male": {
+   "name": "aishe_sikkim__muslims_male",
+   "label": "Enrolment, Muslims, men · Sikkim",
+   "group": "Sikkim",
+   "color": "#878D99",
+   "data": [
+    70,
+    136,
+    96,
+    102,
+    111
+   ],
+   "unit": "count"
+  },
+  "sikkim__muslims_female": {
+   "name": "aishe_sikkim__muslims_female",
+   "label": "Enrolment, Muslims, women · Sikkim",
+   "group": "Sikkim",
+   "color": "#A3A9B4",
+   "data": [
+    36,
+    60,
+    50,
+    45,
+    51
+   ],
+   "unit": "count"
+  },
+  "sikkim__other_minority_both": {
+   "name": "aishe_sikkim__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Sikkim",
+   "group": "Sikkim",
+   "color": "#C9CED6",
+   "data": [
+    967,
+    2127,
+    725,
+    1356,
+    2257
+   ],
+   "unit": "count"
+  },
+  "sikkim__other_minority_male": {
+   "name": "aishe_sikkim__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Sikkim",
+   "group": "Sikkim",
+   "color": "#5F6675",
+   "data": [
+    258,
+    781,
+    223,
+    572,
+    889
+   ],
+   "unit": "count"
+  },
+  "sikkim__other_minority_female": {
+   "name": "aishe_sikkim__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Sikkim",
+   "group": "Sikkim",
+   "color": "#878D99",
+   "data": [
+    709,
+    1346,
+    502,
+    784,
+    1368
+   ],
+   "unit": "count"
+  },
+  "sikkim__ews_both": {
+   "name": "aishe_sikkim__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Sikkim",
+   "group": "Sikkim",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    87,
+    279
+   ],
+   "unit": "count"
+  },
+  "sikkim__ews_male": {
+   "name": "aishe_sikkim__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Sikkim",
+   "group": "Sikkim",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    46,
+    140
+   ],
+   "unit": "count"
+  },
+  "sikkim__ews_female": {
+   "name": "aishe_sikkim__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Sikkim",
+   "group": "Sikkim",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    41,
+    139
+   ],
+   "unit": "count"
+  },
+  "sikkim__pwd_both": {
+   "name": "aishe_sikkim__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Sikkim",
+   "group": "Sikkim",
+   "color": "#878D99",
+   "data": [
+    7,
+    8,
+    12,
+    8,
+    20
+   ],
+   "unit": "count"
+  },
+  "sikkim__pwd_male": {
+   "name": "aishe_sikkim__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Sikkim",
+   "group": "Sikkim",
+   "color": "#A3A9B4",
+   "data": [
+    6,
+    7,
+    8,
+    7,
+    17
+   ],
+   "unit": "count"
+  },
+  "sikkim__pwd_female": {
+   "name": "aishe_sikkim__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Sikkim",
+   "group": "Sikkim",
+   "color": "#C9CED6",
+   "data": [
+    1,
+    1,
+    4,
+    1,
+    3
+   ],
+   "unit": "count"
+  },
+  "tamil_nadu__muslims_both": {
+   "name": "aishe_tamil_nadu__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Tamil Nadu",
+   "group": "Tamil Nadu",
+   "color": "#5F6675",
+   "data": [
+    117797,
+    123571,
+    129565,
+    114972,
+    115690
+   ],
+   "unit": "count"
+  },
+  "tamil_nadu__muslims_male": {
+   "name": "aishe_tamil_nadu__muslims_male",
+   "label": "Enrolment, Muslims, men · Tamil Nadu",
+   "group": "Tamil Nadu",
+   "color": "#878D99",
+   "data": [
+    68582,
+    71882,
+    72794,
+    65103,
+    64355
+   ],
+   "unit": "count"
+  },
+  "tamil_nadu__muslims_female": {
+   "name": "aishe_tamil_nadu__muslims_female",
+   "label": "Enrolment, Muslims, women · Tamil Nadu",
+   "group": "Tamil Nadu",
+   "color": "#A3A9B4",
+   "data": [
+    49215,
+    51689,
+    56771,
+    49869,
+    51335
+   ],
+   "unit": "count"
+  },
+  "tamil_nadu__other_minority_both": {
+   "name": "aishe_tamil_nadu__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Tamil Nadu",
+   "group": "Tamil Nadu",
+   "color": "#C9CED6",
+   "data": [
+    147078,
+    153900,
+    164364,
+    162242,
+    168720
+   ],
+   "unit": "count"
+  },
+  "tamil_nadu__other_minority_male": {
+   "name": "aishe_tamil_nadu__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Tamil Nadu",
+   "group": "Tamil Nadu",
+   "color": "#5F6675",
+   "data": [
+    64975,
+    72974,
+    76670,
+    76594,
+    82102
+   ],
+   "unit": "count"
+  },
+  "tamil_nadu__other_minority_female": {
+   "name": "aishe_tamil_nadu__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Tamil Nadu",
+   "group": "Tamil Nadu",
+   "color": "#878D99",
+   "data": [
+    82103,
+    80926,
+    87694,
+    85648,
+    86618
+   ],
+   "unit": "count"
+  },
+  "tamil_nadu__ews_both": {
+   "name": "aishe_tamil_nadu__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Tamil Nadu",
+   "group": "Tamil Nadu",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    39224,
+    29805
+   ],
+   "unit": "count"
+  },
+  "tamil_nadu__ews_male": {
+   "name": "aishe_tamil_nadu__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Tamil Nadu",
+   "group": "Tamil Nadu",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    20557,
+    15193
+   ],
+   "unit": "count"
+  },
+  "tamil_nadu__ews_female": {
+   "name": "aishe_tamil_nadu__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Tamil Nadu",
+   "group": "Tamil Nadu",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    18667,
+    14612
+   ],
+   "unit": "count"
+  },
+  "tamil_nadu__pwd_both": {
+   "name": "aishe_tamil_nadu__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Tamil Nadu",
+   "group": "Tamil Nadu",
+   "color": "#878D99",
+   "data": [
+    5822,
+    10199,
+    10901,
+    4869,
+    8811
+   ],
+   "unit": "count"
+  },
+  "tamil_nadu__pwd_male": {
+   "name": "aishe_tamil_nadu__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Tamil Nadu",
+   "group": "Tamil Nadu",
+   "color": "#A3A9B4",
+   "data": [
+    3356,
+    5889,
+    3464,
+    2831,
+    4141
+   ],
+   "unit": "count"
+  },
+  "tamil_nadu__pwd_female": {
+   "name": "aishe_tamil_nadu__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Tamil Nadu",
+   "group": "Tamil Nadu",
+   "color": "#C9CED6",
+   "data": [
+    2466,
+    4310,
+    7437,
+    2038,
+    4670
+   ],
+   "unit": "count"
+  },
+  "telangana__muslims_both": {
+   "name": "aishe_telangana__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Telangana",
+   "group": "Telangana",
+   "color": "#5F6675",
+   "data": [
+    109240,
+    130282,
+    121918,
+    128954,
+    121318
+   ],
+   "unit": "count"
+  },
+  "telangana__muslims_male": {
+   "name": "aishe_telangana__muslims_male",
+   "label": "Enrolment, Muslims, men · Telangana",
+   "group": "Telangana",
+   "color": "#878D99",
+   "data": [
+    58234,
+    67314,
+    62229,
+    65893,
+    64775
+   ],
+   "unit": "count"
+  },
+  "telangana__muslims_female": {
+   "name": "aishe_telangana__muslims_female",
+   "label": "Enrolment, Muslims, women · Telangana",
+   "group": "Telangana",
+   "color": "#A3A9B4",
+   "data": [
+    51006,
+    62968,
+    59689,
+    63061,
+    56543
+   ],
+   "unit": "count"
+  },
+  "telangana__other_minority_both": {
+   "name": "aishe_telangana__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Telangana",
+   "group": "Telangana",
+   "color": "#C9CED6",
+   "data": [
+    9866,
+    10404,
+    8905,
+    9665,
+    9567
+   ],
+   "unit": "count"
+  },
+  "telangana__other_minority_male": {
+   "name": "aishe_telangana__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Telangana",
+   "group": "Telangana",
+   "color": "#5F6675",
+   "data": [
+    4286,
+    5054,
+    3744,
+    3769,
+    4036
+   ],
+   "unit": "count"
+  },
+  "telangana__other_minority_female": {
+   "name": "aishe_telangana__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Telangana",
+   "group": "Telangana",
+   "color": "#878D99",
+   "data": [
+    5580,
+    5350,
+    5161,
+    5896,
+    5531
+   ],
+   "unit": "count"
+  },
+  "telangana__ews_both": {
+   "name": "aishe_telangana__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Telangana",
+   "group": "Telangana",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    14415,
+    21524
+   ],
+   "unit": "count"
+  },
+  "telangana__ews_male": {
+   "name": "aishe_telangana__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Telangana",
+   "group": "Telangana",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    7201,
+    10800
+   ],
+   "unit": "count"
+  },
+  "telangana__ews_female": {
+   "name": "aishe_telangana__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Telangana",
+   "group": "Telangana",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    7214,
+    10724
+   ],
+   "unit": "count"
+  },
+  "telangana__pwd_both": {
+   "name": "aishe_telangana__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Telangana",
+   "group": "Telangana",
+   "color": "#878D99",
+   "data": [
+    2671,
+    2703,
+    2940,
+    3104,
+    3989
+   ],
+   "unit": "count"
+  },
+  "telangana__pwd_male": {
+   "name": "aishe_telangana__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Telangana",
+   "group": "Telangana",
+   "color": "#A3A9B4",
+   "data": [
+    1617,
+    1583,
+    1468,
+    1761,
+    2371
+   ],
+   "unit": "count"
+  },
+  "telangana__pwd_female": {
+   "name": "aishe_telangana__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Telangana",
+   "group": "Telangana",
+   "color": "#C9CED6",
+   "data": [
+    1054,
+    1120,
+    1472,
+    1343,
+    1618
+   ],
+   "unit": "count"
+  },
+  "tripura__muslims_both": {
+   "name": "aishe_tripura__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Tripura",
+   "group": "Tripura",
+   "color": "#5F6675",
+   "data": [
+    1892,
+    2348,
+    2115,
+    1347,
+    3002
+   ],
+   "unit": "count"
+  },
+  "tripura__muslims_male": {
+   "name": "aishe_tripura__muslims_male",
+   "label": "Enrolment, Muslims, men · Tripura",
+   "group": "Tripura",
+   "color": "#878D99",
+   "data": [
+    1052,
+    1346,
+    1233,
+    656,
+    1796
+   ],
+   "unit": "count"
+  },
+  "tripura__muslims_female": {
+   "name": "aishe_tripura__muslims_female",
+   "label": "Enrolment, Muslims, women · Tripura",
+   "group": "Tripura",
+   "color": "#A3A9B4",
+   "data": [
+    840,
+    1002,
+    882,
+    691,
+    1206
+   ],
+   "unit": "count"
+  },
+  "tripura__other_minority_both": {
+   "name": "aishe_tripura__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Tripura",
+   "group": "Tripura",
+   "color": "#C9CED6",
+   "data": [
+    943,
+    786,
+    488,
+    628,
+    446
+   ],
+   "unit": "count"
+  },
+  "tripura__other_minority_male": {
+   "name": "aishe_tripura__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Tripura",
+   "group": "Tripura",
+   "color": "#5F6675",
+   "data": [
+    555,
+    482,
+    300,
+    333,
+    219
+   ],
+   "unit": "count"
+  },
+  "tripura__other_minority_female": {
+   "name": "aishe_tripura__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Tripura",
+   "group": "Tripura",
+   "color": "#878D99",
+   "data": [
+    388,
+    304,
+    188,
+    295,
+    227
+   ],
+   "unit": "count"
+  },
+  "tripura__ews_both": {
+   "name": "aishe_tripura__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Tripura",
+   "group": "Tripura",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    521,
+    672
+   ],
+   "unit": "count"
+  },
+  "tripura__ews_male": {
+   "name": "aishe_tripura__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Tripura",
+   "group": "Tripura",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    355,
+    445
+   ],
+   "unit": "count"
+  },
+  "tripura__ews_female": {
+   "name": "aishe_tripura__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Tripura",
+   "group": "Tripura",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    166,
+    227
+   ],
+   "unit": "count"
+  },
+  "tripura__pwd_both": {
+   "name": "aishe_tripura__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Tripura",
+   "group": "Tripura",
+   "color": "#878D99",
+   "data": [
+    160,
+    231,
+    364,
+    137,
+    211
+   ],
+   "unit": "count"
+  },
+  "tripura__pwd_male": {
+   "name": "aishe_tripura__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Tripura",
+   "group": "Tripura",
+   "color": "#A3A9B4",
+   "data": [
+    124,
+    165,
+    290,
+    90,
+    157
+   ],
+   "unit": "count"
+  },
+  "tripura__pwd_female": {
+   "name": "aishe_tripura__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Tripura",
+   "group": "Tripura",
+   "color": "#C9CED6",
+   "data": [
+    36,
+    66,
+    74,
+    47,
+    54
+   ],
+   "unit": "count"
+  },
+  "uttar_pradesh__muslims_both": {
+   "name": "aishe_uttar_pradesh__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Uttar Pradesh",
+   "group": "Uttar Pradesh",
+   "color": "#5F6675",
+   "data": [
+    298973,
+    319516,
+    357676,
+    299311,
+    326819
+   ],
+   "unit": "count"
+  },
+  "uttar_pradesh__muslims_male": {
+   "name": "aishe_uttar_pradesh__muslims_male",
+   "label": "Enrolment, Muslims, men · Uttar Pradesh",
+   "group": "Uttar Pradesh",
+   "color": "#878D99",
+   "data": [
+    135983,
+    142299,
+    158790,
+    137654,
+    157372
+   ],
+   "unit": "count"
+  },
+  "uttar_pradesh__muslims_female": {
+   "name": "aishe_uttar_pradesh__muslims_female",
+   "label": "Enrolment, Muslims, women · Uttar Pradesh",
+   "group": "Uttar Pradesh",
+   "color": "#A3A9B4",
+   "data": [
+    162990,
+    177217,
+    198886,
+    161657,
+    169447
+   ],
+   "unit": "count"
+  },
+  "uttar_pradesh__other_minority_both": {
+   "name": "aishe_uttar_pradesh__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Uttar Pradesh",
+   "group": "Uttar Pradesh",
+   "color": "#C9CED6",
+   "data": [
+    18557,
+    23955,
+    27133,
+    22980,
+    28994
+   ],
+   "unit": "count"
+  },
+  "uttar_pradesh__other_minority_male": {
+   "name": "aishe_uttar_pradesh__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Uttar Pradesh",
+   "group": "Uttar Pradesh",
+   "color": "#5F6675",
+   "data": [
+    9186,
+    12012,
+    13009,
+    10725,
+    13717
+   ],
+   "unit": "count"
+  },
+  "uttar_pradesh__other_minority_female": {
+   "name": "aishe_uttar_pradesh__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Uttar Pradesh",
+   "group": "Uttar Pradesh",
+   "color": "#878D99",
+   "data": [
+    9371,
+    11943,
+    14124,
+    12255,
+    15277
+   ],
+   "unit": "count"
+  },
+  "uttar_pradesh__ews_both": {
+   "name": "aishe_uttar_pradesh__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Uttar Pradesh",
+   "group": "Uttar Pradesh",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    40021,
+    57504
+   ],
+   "unit": "count"
+  },
+  "uttar_pradesh__ews_male": {
+   "name": "aishe_uttar_pradesh__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Uttar Pradesh",
+   "group": "Uttar Pradesh",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    23733,
+    33485
+   ],
+   "unit": "count"
+  },
+  "uttar_pradesh__ews_female": {
+   "name": "aishe_uttar_pradesh__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Uttar Pradesh",
+   "group": "Uttar Pradesh",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    16288,
+    24019
+   ],
+   "unit": "count"
+  },
+  "uttar_pradesh__pwd_both": {
+   "name": "aishe_uttar_pradesh__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Uttar Pradesh",
+   "group": "Uttar Pradesh",
+   "color": "#878D99",
+   "data": [
+    16637,
+    14791,
+    18050,
+    15003,
+    11864
+   ],
+   "unit": "count"
+  },
+  "uttar_pradesh__pwd_male": {
+   "name": "aishe_uttar_pradesh__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Uttar Pradesh",
+   "group": "Uttar Pradesh",
+   "color": "#A3A9B4",
+   "data": [
+    8531,
+    7790,
+    9356,
+    9484,
+    6006
+   ],
+   "unit": "count"
+  },
+  "uttar_pradesh__pwd_female": {
+   "name": "aishe_uttar_pradesh__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Uttar Pradesh",
+   "group": "Uttar Pradesh",
+   "color": "#C9CED6",
+   "data": [
+    8106,
+    7001,
+    8694,
+    5519,
+    5858
+   ],
+   "unit": "count"
+  },
+  "uttarakhand__muslims_both": {
+   "name": "aishe_uttarakhand__muslims_both",
+   "label": "Enrolment, Muslims, women and men · Uttarakhand",
+   "group": "Uttarakhand",
+   "color": "#5F6675",
+   "data": [
+    9900,
+    12744,
+    15359,
+    23640,
+    16836
+   ],
+   "unit": "count"
+  },
+  "uttarakhand__muslims_male": {
+   "name": "aishe_uttarakhand__muslims_male",
+   "label": "Enrolment, Muslims, men · Uttarakhand",
+   "group": "Uttarakhand",
+   "color": "#878D99",
+   "data": [
+    5670,
+    7135,
+    8380,
+    11100,
+    7998
+   ],
+   "unit": "count"
+  },
+  "uttarakhand__muslims_female": {
+   "name": "aishe_uttarakhand__muslims_female",
+   "label": "Enrolment, Muslims, women · Uttarakhand",
+   "group": "Uttarakhand",
+   "color": "#A3A9B4",
+   "data": [
+    4230,
+    5609,
+    6979,
+    12540,
+    8838
+   ],
+   "unit": "count"
+  },
+  "uttarakhand__other_minority_both": {
+   "name": "aishe_uttarakhand__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · Uttarakhand",
+   "group": "Uttarakhand",
+   "color": "#C9CED6",
+   "data": [
+    2859,
+    3408,
+    3791,
+    4258,
+    4167
+   ],
+   "unit": "count"
+  },
+  "uttarakhand__other_minority_male": {
+   "name": "aishe_uttarakhand__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · Uttarakhand",
+   "group": "Uttarakhand",
+   "color": "#5F6675",
+   "data": [
+    1404,
+    1686,
+    1864,
+    1889,
+    1998
+   ],
+   "unit": "count"
+  },
+  "uttarakhand__other_minority_female": {
+   "name": "aishe_uttarakhand__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · Uttarakhand",
+   "group": "Uttarakhand",
+   "color": "#878D99",
+   "data": [
+    1455,
+    1722,
+    1927,
+    2369,
+    2169
+   ],
+   "unit": "count"
+  },
+  "uttarakhand__ews_both": {
+   "name": "aishe_uttarakhand__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · Uttarakhand",
+   "group": "Uttarakhand",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    3204,
+    6394
+   ],
+   "unit": "count"
+  },
+  "uttarakhand__ews_male": {
+   "name": "aishe_uttarakhand__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · Uttarakhand",
+   "group": "Uttarakhand",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    1970,
+    3750
+   ],
+   "unit": "count"
+  },
+  "uttarakhand__ews_female": {
+   "name": "aishe_uttarakhand__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · Uttarakhand",
+   "group": "Uttarakhand",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    1234,
+    2644
+   ],
+   "unit": "count"
+  },
+  "uttarakhand__pwd_both": {
+   "name": "aishe_uttarakhand__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · Uttarakhand",
+   "group": "Uttarakhand",
+   "color": "#878D99",
+   "data": [
+    400,
+    1848,
+    4209,
+    2955,
+    1664
+   ],
+   "unit": "count"
+  },
+  "uttarakhand__pwd_male": {
+   "name": "aishe_uttarakhand__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · Uttarakhand",
+   "group": "Uttarakhand",
+   "color": "#A3A9B4",
+   "data": [
+    304,
+    879,
+    2009,
+    1497,
+    934
+   ],
+   "unit": "count"
+  },
+  "uttarakhand__pwd_female": {
+   "name": "aishe_uttarakhand__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · Uttarakhand",
+   "group": "Uttarakhand",
+   "color": "#C9CED6",
+   "data": [
+    96,
+    969,
+    2200,
+    1458,
+    730
+   ],
+   "unit": "count"
+  },
+  "west_bengal__muslims_both": {
+   "name": "aishe_west_bengal__muslims_both",
+   "label": "Enrolment, Muslims, women and men · West Bengal",
+   "group": "West Bengal",
+   "color": "#5F6675",
+   "data": [
+    230735,
+    232170,
+    235333,
+    238170,
+    335412
+   ],
+   "unit": "count"
+  },
+  "west_bengal__muslims_male": {
+   "name": "aishe_west_bengal__muslims_male",
+   "label": "Enrolment, Muslims, men · West Bengal",
+   "group": "West Bengal",
+   "color": "#878D99",
+   "data": [
+    113100,
+    111257,
+    111879,
+    110860,
+    164066
+   ],
+   "unit": "count"
+  },
+  "west_bengal__muslims_female": {
+   "name": "aishe_west_bengal__muslims_female",
+   "label": "Enrolment, Muslims, women · West Bengal",
+   "group": "West Bengal",
+   "color": "#A3A9B4",
+   "data": [
+    117635,
+    120913,
+    123454,
+    127310,
+    171346
+   ],
+   "unit": "count"
+  },
+  "west_bengal__other_minority_both": {
+   "name": "aishe_west_bengal__other_minority_both",
+   "label": "Enrolment, Other Minority Communities, women and men · West Bengal",
+   "group": "West Bengal",
+   "color": "#C9CED6",
+   "data": [
+    12974,
+    12494,
+    15776,
+    15083,
+    20338
+   ],
+   "unit": "count"
+  },
+  "west_bengal__other_minority_male": {
+   "name": "aishe_west_bengal__other_minority_male",
+   "label": "Enrolment, Other Minority Communities, men · West Bengal",
+   "group": "West Bengal",
+   "color": "#5F6675",
+   "data": [
+    5996,
+    5758,
+    5575,
+    7381,
+    9901
+   ],
+   "unit": "count"
+  },
+  "west_bengal__other_minority_female": {
+   "name": "aishe_west_bengal__other_minority_female",
+   "label": "Enrolment, Other Minority Communities, women · West Bengal",
+   "group": "West Bengal",
+   "color": "#878D99",
+   "data": [
+    6978,
+    6736,
+    10201,
+    7702,
+    10437
+   ],
+   "unit": "count"
+  },
+  "west_bengal__ews_both": {
+   "name": "aishe_west_bengal__ews_both",
+   "label": "Enrolment, Economically Weaker Sections, women and men · West Bengal",
+   "group": "West Bengal",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    17327,
+    25623
+   ],
+   "unit": "count"
+  },
+  "west_bengal__ews_male": {
+   "name": "aishe_west_bengal__ews_male",
+   "label": "Enrolment, Economically Weaker Sections, men · West Bengal",
+   "group": "West Bengal",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    8753,
+    11202
+   ],
+   "unit": "count"
+  },
+  "west_bengal__ews_female": {
+   "name": "aishe_west_bengal__ews_female",
+   "label": "Enrolment, Economically Weaker Sections, women · West Bengal",
+   "group": "West Bengal",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    8574,
+    14421
+   ],
+   "unit": "count"
+  },
+  "west_bengal__pwd_both": {
+   "name": "aishe_west_bengal__pwd_both",
+   "label": "Enrolment, Persons With Disability, women and men · West Bengal",
+   "group": "West Bengal",
+   "color": "#878D99",
+   "data": [
+    4587,
+    3838,
+    3589,
+    7082,
+    3961
+   ],
+   "unit": "count"
+  },
+  "west_bengal__pwd_male": {
+   "name": "aishe_west_bengal__pwd_male",
+   "label": "Enrolment, Persons With Disability, men · West Bengal",
+   "group": "West Bengal",
+   "color": "#A3A9B4",
+   "data": [
+    2640,
+    2474,
+    2408,
+    4491,
+    2597
+   ],
+   "unit": "count"
+  },
+  "west_bengal__pwd_female": {
+   "name": "aishe_west_bengal__pwd_female",
+   "label": "Enrolment, Persons With Disability, women · West Bengal",
+   "group": "West Bengal",
+   "color": "#C9CED6",
+   "data": [
+    1947,
+    1364,
+    1181,
+    2591,
+    1364
+   ],
+   "unit": "count"
+  }
+ }
+}

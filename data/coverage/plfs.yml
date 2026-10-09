@@ -130,13 +130,13 @@ rules:
   - match: ["plfs:annual-calendar:4:ps-ss:x:broad-status-employment:*"]
     status: shown
     bundle: plfs-cy25-workers-states
-    plate: "§07 A salary is rare almost everywhere"
+    plate: "§07 In most states, fewer than three workers in ten draw a regular wage"
   - match: ["plfs:annual-agri:4:*:x:*:all-india"]
     status: baked
     bundle: services-jobs-ay
   - match: ["plfs:annual-calendar:4:*:x:*:all-india"]
     status: baked
-    bundle: services-jobs-cy
+    bundle: [services-jobs-cy, services-jobs-cy25]
   - match: ["plfs:annual-agri:4:*:state:*", "plfs:annual-agri:4:*:x:*"]
     status: baked
     bundle: plfs-ay-workers-states
@@ -148,7 +148,7 @@ rules:
     bundle: [services-jobs-ay, plfs-status]
   - match: "plfs:annual-calendar:4:*"
     status: baked
-    bundle: services-jobs-cy
+    bundle: [services-jobs-cy, services-jobs-cy25]
 
   # ---------------- indicator 5: regular employees' job conditions ----------------
   - match: ["plfs:annual-agri:5:cws:all", "plfs:annual-agri:5:cws:employee-contract:*"]

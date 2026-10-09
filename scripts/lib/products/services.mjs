@@ -475,7 +475,16 @@ export async function buildServicesJobs(root, dcfg, vintage) {
   const cy = await fetchYears(dcfg.fetch.calendar_years, 2);
   if (!ay.length || !cy.length) throw new Error("services-jobs: no PLFS indicator-4 rows returned (agriculture or calendar years)");
   writeRaw(root, "data/raw/services-jobs.json", { vintage, unit: "per cent of workers", note: "PLFS indicator 4 (percentage distribution of workers), All India, every row served for each agriculture year and calendar year, unfiltered.", agriculture_years: ay, calendar_years: cy });
+  bakeServicesJobs(root, dcfg, vintage, ay, cy);
+}
 
+/* The bake, from the archived rows (data/raw/services-jobs.json); runnable without the network.
+ * The calendar-year estimates span two PLFS survey designs (MoSPI, "Changes in Periodic Labour
+ * Force Survey from 2025"): 2023 and 2024 come from the original design, 2025 on from the
+ * revamped one. Two rulers, two bundles (AGENTS.md rule 1; sources.yml seams: services-jobs,
+ * the same split as seams: plfs). Fixed 2026-10-10 by atlas-jobs-deep: the bundle used to join
+ * them. */
+export function bakeServicesJobs(root, dcfg, vintage, ay, cy) {
   const build = (rows, dateOf, slug, extra) => {
     const cells = new Map(); const labels = new Map(); const order = [];
     for (const r of rows) {
@@ -512,9 +521,13 @@ export async function buildServicesJobs(root, dcfg, vintage) {
   build(ay, (y) => `${String(y).slice(0, 4)}-07-01`, "services-jobs-ay", { base: "agriculture year (PLFS 2017-18 to 2023-24)",
     coverage: "All India, workers aged 15 and above; percentage distribution by industry (NIC 2008 section and group), by status within each industry group, by enterprise type and size within each group; men, women and all; rural, urban and both; usual status (PS+SS) and current weekly status",
     note: "PLFS annual reports, agriculture years (July to June) plotted at July. Each key names its cut: sec_<letter> is a NIC section, trade/transport/accommodation_food/other_services/tertiary are NIC groups, and a status, enterprise type or size before the group is a distribution of that group's workers. Separate from the calendar-year estimates (services-jobs-cy): a different survey design." });
-  build(cy, (y) => `${String(y).slice(0, 4)}-01-01`, "services-jobs-cy", { base: dcfg.base,
-    coverage: "All India, workers aged 15 and above; percentage distribution by NIC section and the other cuts the calendar-year estimates publish; men, women and all; rural, urban and both",
-    note: "PLFS calendar-year estimates (new design: a rotational panel covering every month of the year). Plotted at January. Never joined to the agriculture-year reports, which are a different design and a different twelve months." });
+  const NEW_FROM = 2025;   // the revamped PLFS design's first calendar year
+  build(cy.filter((r) => +String(r.year).slice(0, 4) < NEW_FROM), (y) => `${String(y).slice(0, 4)}-01-01`, "services-jobs-cy", { base: "calendar year (PLFS original design, to 2024)",
+    coverage: "All India, workers aged 15 and above; percentage distribution by NIC section and the other cuts the calendar-year estimates publish; men, women and all; rural, urban and both; calendar years on the survey's original design",
+    note: "PLFS calendar-year estimates from the survey's original design (MoSPI released calendar-year results for 2022, 2023 and 2024 from it), plotted at January. Never joined to the revamped design's calendar years (services-jobs-cy25) or to the agriculture-year reports (services-jobs-ay)." });
+  build(cy.filter((r) => +String(r.year).slice(0, 4) >= NEW_FROM), (y) => `${String(y).slice(0, 4)}-01-01`, "services-jobs-cy25", { base: dcfg.base,
+    coverage: "All India, workers aged 15 and above; percentage distribution by NIC section and the other cuts the calendar-year estimates publish; men, women and all; rural, urban and both; calendar years on the survey's revamped design (from January 2025)",
+    note: "PLFS calendar-year estimates from the revamped design (from January 2025: a rotational panel in rural and urban areas, households visited four months running), plotted at January. MoSPI publishes no link to the original design's years (services-jobs-cy): two rulers, never joined." });
 }
 
 /* =====================================================================================

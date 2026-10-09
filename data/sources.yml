@@ -1072,9 +1072,9 @@ dossiers:
     geo: IND
     product: services-jobs
     frequency: annual
-    base: "calendar year (PLFS new design)"
+    base: "calendar year (PLFS revamped design, from 2025)"
     release_calendar: "annual report, about five months after the year"
-    revision_policy: "Final on release. Agriculture-year reports (July to June, 2017-18 to 2023-24) and calendar-year estimates (new design, published for 2023 on) are two designs, never joined."
+    revision_policy: "Final on release. Three rulers, never joined: agriculture-year reports (July to June, 2017-18 to 2023-24) and calendar-year estimates for 2023 and 2024, both from the survey's original design, and calendar-year estimates from 2025 on the revamped design (MoSPI redesigned the PLFS sample and estimation from January 2025)."
     source_agency: "MoSPI, National Statistical Office (PLFS)"
     release_url: https://www.mospi.gov.in
     fetch:
@@ -1677,10 +1677,15 @@ seams:
       from: "2017-07"
       to: "2023-07"
       bundles: [services-jobs-ay]
-    - base: "calendar year (PLFS new design)"
+    # the calendar years straddle the PLFS redesign (January 2025): split 2026-10-10, as seams: plfs
+    - base: "calendar year (PLFS original design, to 2024)"
       from: "2023-01"
-      to: null
+      to: "2024-01"
       bundles: [services-jobs-cy]
+    - base: "calendar year (PLFS revamped design, from 2025)"
+      from: "2025-01"
+      to: null
+      bundles: [services-jobs-cy25]
   services-asuse:
     - base: "survey 2021-22 onward"
       from: "2021-04"

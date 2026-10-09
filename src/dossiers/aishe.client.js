@@ -3,9 +3,10 @@
 // aishe-composition.json + aishe-states.json, baked at build time by
 // scripts/fetch.mjs from the Ministry of Education's AISHE (five survey
 // rounds, 2017-18 to 2021-22). Enrolment counts enrolments, not distinct
-// students; GER divides by a population projection; the 2021-22 teacher
-// total is reconstructed from the five regular faculty types (source defect
-// — disclosed in the provenance and in data/sources.yml).
+// students; GER divides by a population projection. Teachers are the
+// published total (the 2021-22 "defect" of v1.0 was a corrupted download;
+// see the provenance). Wave 2 adds the state plates from the aishe-states-*
+// and aishe-ptr bundles.
 
 import * as Plot from "@observablehq/plot";
 import headlineBundle from "../../data/series/aishe-headline.json";
@@ -14,6 +15,10 @@ import compositionBundle from "../../data/series/aishe-composition.json";
 import statesBundle from "../../data/series/aishe-states.json";
 import teachersBundle from "../../data/series/aishe-teachers.json";
 import minorityBundle from "../../data/series/aishe-minority.json";
+import ptrBundle from "../../data/series/aishe-ptr.json";
+import stTeachersBundle from "../../data/series/aishe-states-teachers.json";
+import stEnrolBundle from "../../data/series/aishe-states-enrolment.json";
+import stInstBundle from "../../data/series/aishe-states-institutions.json";
 import {
   MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend,
   dodgeEndLabels, spark, downloadSVG, downloadPNG, saveBlob, stripLabelSide, stripLabelSpot,
@@ -92,7 +97,7 @@ const regRows = [
   [H.enrolment, "Estimated student enrolment", "AISHE, count, Both, Grand Total", "s-acc", (v) => croreN(v) + " cr", (v) => lakhOf(v) + " lakh"],
   [H.universities, "Universities", "AISHE, count", "s-g1", fmtIN, fmtIN],
   [H.colleges, "Colleges", "AISHE, count", "s-g2", fmtIN, fmtIN],
-  [H.teachers, "Teachers", "AISHE, count, 2021-22 reconstructed", "s-g3", (v) => fmtIN(v), (v) => fmtIN(v)],
+  [H.teachers, "Teachers", "AISHE, count, all posts", "s-g3", (v) => fmtIN(v), (v) => fmtIN(v)],
   [H.ger, "Gross Enrolment Ratio", "AISHE, %, All Categories, Both", "s-acc", (v) => v.toFixed(1) + "%", (v) => v.toFixed(1)],
   [H.gpi, "Gender Parity Index", "AISHE, index, All Categories, 1.0 = parity", "s-g1", (v) => v.toFixed(2), (v) => v.toFixed(2)],
   [H.ptr, "Pupil-Teacher Ratio", "AISHE, ratio, all institutions", "s-g4", (v) => String(Math.round(v)), (v) => v.toFixed(1)],
@@ -481,7 +486,7 @@ const parityRule = new Date(Date.UTC(2017, 3, 1)); // unused anchor
     both: T[k + "_both"].data[li].value,
     fshare: T[k + "_female"].data[li].value / T[k + "_both"].data[li].value,
   }));
-  const lecShare = T.lecturer_assistant_both.data[li].value / (T.professor_both.data[li].value + T.reader_associate_both.data[li].value + T.lecturer_assistant_both.data[li].value + T.temporary_both.data[li].value + T.demonstrator_both.data[li].value);
+  const lecShare = T.lecturer_assistant_both.data[li].value / T.all_both.data[li].value;
 
   setHTML("pv-fac", (rows[0].fshare * 100).toFixed(0) + pc("%"));
   setHTML("ex-fac-prof", (rows[0].fshare * 100).toFixed(0) + pc("%"));
@@ -609,6 +614,82 @@ const parityRule = new Date(Date.UTC(2017, 3, 1)); // unused anchor
 
   wirePlate(document.getElementById("cb-ptr"), plot, "india-atlas_aishe_ptr_2017-2021", "fiscal_year,pupil_teacher_ratio\n" + H.ptr.data.map((d) => fy(d.date) + "," + d.value).join("\n"));
   wireLegend(document.getElementById("legend-ptr"), plot, ["ptr"], store);
+}
+
+
+/* ---------- § 13 the states, closer (wave 2) ---------- */
+const LI = headlineBundle.dates.length - 1;
+const stShort = (s) => ({ "Andaman & Nicobar Islands": "Andaman & Nicobar", "Dadra & Nagar Haveli and Daman & Diu": "DNH and Daman & Diu" })[s] || s;
+const stBars = (el, rows, { xMax, xTicks, xLabel, hl, fmtV, dots, refLine }) => {
+  const plot = Plot.plot({
+    width: 1184, height: 30 + rows.length * 24 + 44, marginLeft: 210, marginRight: 90, marginTop: 30, marginBottom: 44,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#878D99", overflow: "visible" },
+    x: { label: xLabel, labelAnchor: "right", labelArrow: false, domain: [0, xMax], ticks: xTicks, tickSize: 0, tickPadding: 10 },
+    y: { label: null, domain: rows.map((r) => r.name), tickSize: 0, tickPadding: 12 },
+    marks: [
+      Plot.gridX(xTicks.slice(1), { stroke: "#F0F2F5" }),
+      ...(refLine ? [Plot.ruleX([refLine.v], { stroke: "#878D99", strokeDasharray: "3 3" }), Plot.text([refLine], { x: "v", frameAnchor: "top", dy: -14, text: (d) => d.label, fill: "#4A5160", fontSize: 11.5, textAnchor: "middle" })] : []),
+      Plot.barX(rows, { y: "name", x: "v", fill: (d) => (hl(d) ? "#2E4BD8" : "#C9CED6"), insetTop: 6, insetBottom: 6 }),
+      ...(dots ? [Plot.dot(rows, { y: "name", x: "d", r: 4, fill: "#C47A16", stroke: "#fff", strokeWidth: 1.25 })] : []),
+      Plot.text(rows, { y: "name", x: (d) => Math.max(d.v, dots ? d.d : 0), dx: 10, text: (d) => fmtV(d), textAnchor: "start", fill: "#161A22", fontSize: 12, fontWeight: (d) => (hl(d) ? 600 : 400) }),
+      Plot.ruleX([0], { stroke: "#B5BAC4" }),
+    ],
+  });
+  el.append(plot);
+  return plot;
+};
+
+{
+  // pupil-teacher ratio by state, regular students, all institutions
+  const ent = Object.entries(ptrBundle.series).filter(([k]) => k.endsWith("__ptr_regular_all") && !k.startsWith("all_india"))
+    .map(([, s]) => ({ name: stShort(s.group), v: s.data[LI] })).filter((d) => d.v != null && d.v > 0).sort((a, c) => c.v - a.v);
+  const ai = ptrBundle.series.all_india__ptr_regular_all.data[LI];
+  const plot = stBars(document.getElementById("plot-stptr"), ent, { xMax: Math.ceil(ent[0].v / 10) * 10 + 4, xTicks: [0, 10, 20, 30, 40, 50, 60, 70].filter((t) => t <= ent[0].v + 6), xLabel: "regular students per teacher →",
+    hl: (d) => d.v > ai, fmtV: (d) => String(Math.round(d.v)) });
+  a11y(plot, "Pupil-teacher ratio by state, regular students, 2021-22", ent.slice(0, 4).map((d) => `${d.name} ${Math.round(d.v)}`).join(", ") + "; lowest " + ent.at(-1).name + " " + Math.round(ent.at(-1).v));
+  setHTML("pv-stptr", String(Math.round(ent[0].v)));
+  setHTML("ex-stptr-hi", `${ent[0].name}, ${Math.round(ent[0].v)}`);
+  setHTML("ex-stptr-lo", `${ent.at(-1).name}, ${Math.round(ent.at(-1).v)}`);
+  setHTML("ex-stptr-ai", String(Math.round(ai)));
+  wirePlate(document.getElementById("cb-stptr"), plot, "india-atlas_aishe_ptr-by-state_2021-22", "state,ptr_regular_all_institutions,ptr_regular_and_distance_all_institutions\n" +
+    ent.map((d) => { const k = Object.keys(ptrBundle.series).find((k) => stShort(ptrBundle.series[k].group) === d.name && k.endsWith("__ptr_reg_dist_all")); return `"${d.name}",${d.v},${k ? ptrBundle.series[k].data[LI] ?? "" : ""}`; }).join("\n"));
+}
+
+{
+  // women's share of teachers (bars) and of students (dots), by state
+  const share = (b, k, f, t) => { const a = b.series[k.replace(t, f)]?.data[LI], z = b.series[k]?.data[LI]; return a != null && z ? (a / z) * 100 : null; };
+  const ent = Object.entries(stTeachersBundle.series).filter(([k]) => k.endsWith("__all_both") && !k.startsWith("all_india")).map(([k, s]) => {
+    const st = k.slice(0, -"__all_both".length);
+    return { name: stShort(s.group), v: share(stTeachersBundle, k, "__all_female", "__all_both"), d: share(stEnrolBundle, `${st}__grand_total_both`, "__grand_total_female", "__grand_total_both") };
+  }).filter((d) => d.v != null && d.d != null).sort((a, c) => a.v - c.v);
+  const aiT = share(stTeachersBundle, "all_india__all_both", "__all_female", "__all_both"), aiS = share(stEnrolBundle, "all_india__grand_total_both", "__grand_total_female", "__grand_total_both");
+  const plot = stBars(document.getElementById("plot-stwomen"), ent, { xMax: 90, xTicks: [0, 20, 40, 60, 80], xLabel: "per cent →", dots: true,
+    hl: (d) => d.v < aiT, fmtV: (d) => `${d.v.toFixed(0)}% / ${d.d.toFixed(0)}%` });
+  a11y(plot, "Women's share of college teachers and students, by state, 2021-22", ent.slice(0, 3).map((d) => `${d.name} ${d.v.toFixed(0)}% of teachers, ${d.d.toFixed(0)}% of students`).join("; "));
+  setHTML("pv-stwomen", aiT.toFixed(0) + pc("%"));
+  setHTML("ex-stw-hi", `${ent.at(-1).name}, ${ent.at(-1).v.toFixed(0)}%`);
+  setHTML("ex-stw-lo", `${ent[0].name}, ${ent[0].v.toFixed(0)}%`);
+  setHTML("ex-stw-ai", aiT.toFixed(0) + "%");
+  setHTML("ex-stw-ais", aiS.toFixed(0) + "%");
+  wirePlate(document.getElementById("cb-stwomen"), plot, "india-atlas_aishe_women-teachers-students-by-state_2021-22", "state,women_share_of_teachers_pct,women_share_of_students_pct\n" + ent.map((d) => `"${d.name}",${d.v.toFixed(2)},${d.d.toFixed(2)}`).join("\n"));
+}
+
+{
+  // colleges by state
+  const all = Object.entries(stInstBundle.series).filter(([k]) => k.endsWith("__colleges") && !k.startsWith("all_india"))
+    .map(([k, s]) => ({ name: stShort(s.group), v: s.data[LI], u: stInstBundle.series[k.replace("__colleges", "__universities")]?.data[LI] ?? null })).filter((d) => d.v != null).sort((a, c) => c.v - a.v);
+  const tot = stInstBundle.series.all_india__colleges.data[LI];
+  const rows = all.slice(0, 20);
+  const plot = stBars(document.getElementById("plot-stcol"), rows, { xMax: Math.ceil(rows[0].v / 1000) * 1000 + 500, xTicks: [0, 2000, 4000, 6000, 8000], xLabel: "colleges →",
+    hl: (d, i) => d === rows[0], fmtV: (d) => d.v.toLocaleString("en-IN") });
+  a11y(plot, "Colleges by state, 2021-22", rows.slice(0, 5).map((d) => `${d.name} ${d.v.toLocaleString("en-IN")}`).join(", "));
+  setHTML("pv-stcol", tot.toLocaleString("en-IN"));
+  setTxt("ex-stc-n1", rows[0].name);
+  setHTML("ex-stc-v1", rows[0].v.toLocaleString("en-IN"));
+  setHTML("ex-stc-s1", ((rows[0].v / tot) * 100).toFixed(0) + "%");
+  setHTML("ex-stc-univ", fmtIN(last(H.universities)));
+  setHTML("ex-stc-univ0", fmtIN(firstV(H.universities)));
+  wirePlate(document.getElementById("cb-stcol"), plot, "india-atlas_aishe_colleges-by-state_2021-22", "state,colleges,universities\n" + all.map((d) => `"${d.name}",${d.v},${d.u ?? ""}`).join("\n"));
 }
 
 /* ---------- provenance ---------- */

@@ -165,11 +165,13 @@ const CARDS = [
   },
   {
     slug: "aishe", bundleSlug: "aishe-access",
+    // in crore: card.scale only touches series that exist before prep, so prep scales its own
     keys: ["female", "male"], d0: 1.6, d1: 2.45, band: null, trend: null,
-    scale: 1e-7, yStep: 0.2, fmt: (v) => v.toFixed(2) + " cr", mr: 230,
+    yStep: 0.2, fmt: (v) => v.toFixed(2) + " cr", mr: 230,
     prep: (S) => {
-      S.female = { ...S.enrolment_female, label: "Female", color: "#2E4BD8" };
-      S.male = { ...S.enrolment_male, label: "Male", color: "#5F6675" };
+      const cr = (s) => s.data.map((d) => ({ ...d, value: d.value == null ? null : d.value / 1e7 }));
+      S.female = { ...S.enrolment_female, data: cr(S.enrolment_female), label: "Female", color: "#2E4BD8" };
+      S.male = { ...S.enrolment_male, data: cr(S.enrolment_male), label: "Male", color: "#5F6675" };
     },
     foot: (b, S) => `Enrolment ${S.female.data.at(-1).value.toFixed(2)} cr (F) · ${S.male.data.at(-1).value.toFixed(2)} cr (M) · AISHE 2021-22 · Source: Ministry of Education`,
   },
@@ -186,10 +188,11 @@ const CARDS = [
   },
   {
     slug: "mnre", bundleSlug: "mnre-sources",
-    keys: ["grand_total"], d0: 80000, d1: 300000, band: null, trend: null,
+    // the domain is in GW: card.scale turns the bundle's MW into GW before plotting
+    keys: ["grand_total"], d0: 50, d1: 300, band: null, trend: null,
     scale: 0.001, yStep: 50, fmt: (v) => v.toFixed(0) + " GW", mr: 200,
     prep: (S) => { S.grand_total = { ...S.grand_total, label: "Grand Total", color: "#2E4BD8" }; },
-    foot: (b, S) => `Grand Total ${(S.grand_total.data.at(-1).value).toFixed(0)} GW · Jun 2026 · the Dec 2023 step is a classification change, not capacity · Source: MNRE`,
+    foot: (b, S) => `Grand Total ${(S.grand_total.data.at(-1).value).toFixed(0)} GW · ${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][+b.dates.at(-1).slice(5, 7) - 1]} ${b.dates.at(-1).slice(0, 4)} · the Dec 2023 step is a classification change, not capacity · Source: MNRE`,
   },
   {
     slug: "nfhs", bundleSlug: "nfhs-5-anaemia",

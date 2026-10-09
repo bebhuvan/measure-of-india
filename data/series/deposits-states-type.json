@@ -1,0 +1,7430 @@
+{
+ "meta": {
+  "dossier": "deposits",
+  "base": "as on 31 March",
+  "unit": "mixed",
+  "source": "Reserve Bank of India, Basic Statistical Return 2 (via DBIE)",
+  "vintage": "2026-10-09",
+  "mock": false,
+  "geo": "IND",
+  "releaseDate": null,
+  "revisionPolicy": "BSR-2 stocks are final on release for the year; the sector classification changed in 2018-19 and the deposit-size bands in March 2026 (both disclosed, never spliced).",
+  "frequency": "annual",
+  "latestPeriod": "2026-03",
+  "coverage": "Deposits by state and type of account, as on 31 March. Amounts in ₹ crore; accounts, offices and employees as counts.",
+  "note": "RBI BSR-2 Table 2.3 via DBIE report 853, read from the Data Bank mirror. Column meanings are fixed by identities checked on every row (scripts/lib/products/bsr2-tables.mjs)."
+ },
+ "dates": [
+  "2019-03-01",
+  "2020-03-01",
+  "2021-03-01",
+  "2022-03-01",
+  "2023-03-01",
+  "2024-03-01",
+  "2025-03-01",
+  "2026-03-01"
+ ],
+ "series": {
+  "all_india__offices": {
+   "name": "all_india__offices",
+   "label": "Bank offices · All India",
+   "group": "All India",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    145374,
+    153102,
+    154485,
+    154758,
+    158642,
+    163216,
+    167806,
+    172073
+   ]
+  },
+  "all_india__current_accounts": {
+   "name": "all_india__current_accounts",
+   "label": "Current accounts · All India",
+   "group": "All India",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    81009669,
+    86006704,
+    91686178,
+    121884270,
+    144957466,
+    166451129,
+    87137998,
+    86739526
+   ]
+  },
+  "all_india__current": {
+   "name": "all_india__current",
+   "label": "Current deposits · All India",
+   "group": "All India",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    1190209.63,
+    1273755.91,
+    1541004.72,
+    1709808.26,
+    1866222.18,
+    2060788.96,
+    2280912.47,
+    2509921
+   ]
+  },
+  "all_india__savings_accounts": {
+   "name": "all_india__savings_accounts",
+   "label": "Savings accounts · All India",
+   "group": "All India",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    1643290459,
+    1729599834,
+    1768219892,
+    1879269381,
+    2120221992,
+    2211709747,
+    2321439591,
+    2369146822
+   ]
+  },
+  "all_india__savings": {
+   "name": "all_india__savings",
+   "label": "Savings deposits · All India",
+   "group": "All India",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    4117374.2,
+    4515859.43,
+    5268912.41,
+    5970532.26,
+    6290451.99,
+    6648151.02,
+    6957106.52,
+    7656723.79
+   ]
+  },
+  "all_india__term_accounts": {
+   "name": "all_india__term_accounts",
+   "label": "Term deposit accounts · All India",
+   "group": "All India",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    248419519,
+    253440936,
+    256619777,
+    253846181,
+    258625623,
+    274212576,
+    284716551,
+    288570093
+   ]
+  },
+  "all_india__term": {
+   "name": "all_india__term",
+   "label": "Term deposits · All India",
+   "group": "All India",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    7331424.69,
+    7959039.72,
+    8633592.83,
+    9328454.56,
+    10585636.71,
+    12544418.09,
+    14213819.39,
+    15909621.49
+   ]
+  },
+  "all_india__total_accounts": {
+   "name": "all_india__total_accounts",
+   "label": "All deposit accounts · All India",
+   "group": "All India",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    1972719647,
+    2069047474,
+    null,
+    null,
+    null,
+    2652373452,
+    2693294140,
+    2744456441
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "all_india__total": {
+   "name": "all_india__total",
+   "label": "All deposits · All India",
+   "group": "All India",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    12639008.51,
+    13748655.06,
+    null,
+    null,
+    null,
+    21253358.07,
+    23451838.38,
+    26076266.28
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "central_region__offices": {
+   "name": "central_region__offices",
+   "label": "Bank offices · Central Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    28969,
+    30292,
+    30437,
+    30484,
+    31137,
+    31958,
+    32915,
+    33605
+   ]
+  },
+  "eastern_region__offices": {
+   "name": "eastern_region__offices",
+   "label": "Bank offices · Eastern Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    23264,
+    25339,
+    25678,
+    26066,
+    26677,
+    27288,
+    28084,
+    28722
+   ]
+  },
+  "north_eastern_region__offices": {
+   "name": "north_eastern_region__offices",
+   "label": "Bank offices · North Eastern Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    3916,
+    4632,
+    4735,
+    4799,
+    4918,
+    5112,
+    5238,
+    5338
+   ]
+  },
+  "northern_region__offices": {
+   "name": "northern_region__offices",
+   "label": "Bank offices · Northern Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    26636,
+    27500,
+    27543,
+    27430,
+    28167,
+    29018,
+    29781,
+    30538
+   ]
+  },
+  "southern_region__offices": {
+   "name": "southern_region__offices",
+   "label": "Bank offices · Southern Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    40693,
+    42328,
+    43071,
+    43025,
+    44138,
+    45451,
+    46640,
+    47887
+   ]
+  },
+  "western_region__offices": {
+   "name": "western_region__offices",
+   "label": "Bank offices · Western Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    21896,
+    23011,
+    23021,
+    22954,
+    23605,
+    24389,
+    25148,
+    25983
+   ]
+  },
+  "central_region__current_accounts": {
+   "name": "central_region__current_accounts",
+   "label": "Current accounts · Central Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    16963227,
+    17792027,
+    17538405,
+    24974773,
+    28882770,
+    35244142,
+    14561560,
+    14187186
+   ]
+  },
+  "eastern_region__current_accounts": {
+   "name": "eastern_region__current_accounts",
+   "label": "Current accounts · Eastern Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    13020428,
+    13854443,
+    17620674,
+    23887704,
+    27076975,
+    36101690,
+    13631688,
+    12795004
+   ]
+  },
+  "north_eastern_region__current_accounts": {
+   "name": "north_eastern_region__current_accounts",
+   "label": "Current accounts · North Eastern Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    1487496,
+    1536696,
+    2664603,
+    3609924,
+    4118816,
+    6518953,
+    1585161,
+    1494858
+   ]
+  },
+  "northern_region__current_accounts": {
+   "name": "northern_region__current_accounts",
+   "label": "Current accounts · Northern Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    18903710,
+    19402101,
+    17871558,
+    27645794,
+    30656057,
+    38604619,
+    14102557,
+    13774707
+   ]
+  },
+  "southern_region__current_accounts": {
+   "name": "southern_region__current_accounts",
+   "label": "Current accounts · Southern Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    17884676,
+    17968572,
+    17571429,
+    19976862,
+    28761773,
+    22693279,
+    17244875,
+    17687302
+   ]
+  },
+  "western_region__current_accounts": {
+   "name": "western_region__current_accounts",
+   "label": "Current accounts · Western Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    12750132,
+    15452865,
+    18419509,
+    21789213,
+    25461075,
+    27288446,
+    26012157,
+    26800469
+   ]
+  },
+  "central_region__current": {
+   "name": "central_region__current",
+   "label": "Current deposits · Central Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    114629.2,
+    115586.62,
+    132310.42,
+    153567.26,
+    164142.57,
+    187466.03,
+    192501.43,
+    219279.88
+   ]
+  },
+  "eastern_region__current": {
+   "name": "eastern_region__current",
+   "label": "Current deposits · Eastern Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    116770.2,
+    115442.99,
+    126807.06,
+    157478.23,
+    158409.51,
+    175182.83,
+    181356.99,
+    195197.84
+   ]
+  },
+  "north_eastern_region__current": {
+   "name": "north_eastern_region__current",
+   "label": "Current deposits · North Eastern Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    27030.02,
+    27506.2,
+    28127.93,
+    33320.84,
+    32714.02,
+    37134.04,
+    41067.37,
+    43807.53
+   ]
+  },
+  "northern_region__current": {
+   "name": "northern_region__current",
+   "label": "Current deposits · Northern Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    226357.37,
+    243238.59,
+    303192.71,
+    321917.9,
+    360546.79,
+    401777.32,
+    451115.51,
+    458479.05
+   ]
+  },
+  "southern_region__current": {
+   "name": "southern_region__current",
+   "label": "Current deposits · Southern Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    264877.77,
+    293225.48,
+    396669.8,
+    419104.76,
+    455434.15,
+    479206.88,
+    540695.38,
+    624127.85
+   ]
+  },
+  "western_region__current": {
+   "name": "western_region__current",
+   "label": "Current deposits · Western Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    440545.06,
+    478756.03,
+    553896.8,
+    624419.27,
+    694975.14,
+    780021.84,
+    874175.79,
+    969028.85
+   ]
+  },
+  "central_region__savings_accounts": {
+   "name": "central_region__savings_accounts",
+   "label": "Savings accounts · Central Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    373334808,
+    390670105,
+    396867738,
+    422891943,
+    486619581,
+    491604890,
+    508635712,
+    519246479
+   ]
+  },
+  "eastern_region__savings_accounts": {
+   "name": "eastern_region__savings_accounts",
+   "label": "Savings accounts · Eastern Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    321717441,
+    342437642,
+    355684071,
+    383657065,
+    406623315,
+    405918618,
+    431329974,
+    448462726
+   ]
+  },
+  "north_eastern_region__savings_accounts": {
+   "name": "north_eastern_region__savings_accounts",
+   "label": "Savings accounts · North Eastern Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    49903891,
+    53749429,
+    56975088,
+    61429879,
+    67249392,
+    65224680,
+    69024786,
+    71127756
+   ]
+  },
+  "northern_region__savings_accounts": {
+   "name": "northern_region__savings_accounts",
+   "label": "Savings accounts · Northern Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    228976934,
+    240260887,
+    242596753,
+    261821830,
+    349654996,
+    423021327,
+    466768001,
+    486697799
+   ]
+  },
+  "southern_region__savings_accounts": {
+   "name": "southern_region__savings_accounts",
+   "label": "Savings accounts · Southern Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    425192574,
+    445291009,
+    453180548,
+    472984155,
+    507877280,
+    514338369,
+    521241067,
+    529366696
+   ]
+  },
+  "western_region__savings_accounts": {
+   "name": "western_region__savings_accounts",
+   "label": "Savings accounts · Western Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    244164811,
+    257190762,
+    262915694,
+    276484509,
+    302197428,
+    311601863,
+    324440051,
+    314245366
+   ]
+  },
+  "central_region__savings": {
+   "name": "central_region__savings",
+   "label": "Savings deposits · Central Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    782607.37,
+    846924.56,
+    968366.93,
+    1093026.7,
+    1176006.14,
+    1261411.28,
+    1346033.4,
+    1453608.31
+   ]
+  },
+  "eastern_region__savings": {
+   "name": "eastern_region__savings",
+   "label": "Savings deposits · Eastern Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    678512.39,
+    728307.46,
+    789830.97,
+    918361.49,
+    975813.43,
+    1027886.96,
+    1073595.5,
+    1154009.68
+   ]
+  },
+  "north_eastern_region__savings": {
+   "name": "north_eastern_region__savings",
+   "label": "Savings deposits · North Eastern Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    115153.18,
+    129190.12,
+    139667.99,
+    162134.34,
+    181684.9,
+    182937.4,
+    185979.26,
+    192315.64
+   ]
+  },
+  "northern_region__savings": {
+   "name": "northern_region__savings",
+   "label": "Savings deposits · Northern Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    812517.59,
+    891867.89,
+    1022806.32,
+    1181600.63,
+    1231605.85,
+    1287682.04,
+    1352924.39,
+    1471430.96
+   ]
+  },
+  "southern_region__savings": {
+   "name": "southern_region__savings",
+   "label": "Savings deposits · Southern Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    977144.75,
+    1076564.67,
+    1307782.61,
+    1473891.88,
+    1530413.61,
+    1596650.85,
+    1646255.33,
+    1887559.19
+   ]
+  },
+  "western_region__savings": {
+   "name": "western_region__savings",
+   "label": "Savings deposits · Western Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    751438.92,
+    843004.75,
+    1040457.59,
+    1141517.22,
+    1194928.06,
+    1291582.49,
+    1352318.65,
+    1497800.01
+   ]
+  },
+  "central_region__term_accounts": {
+   "name": "central_region__term_accounts",
+   "label": "Term deposit accounts · Central Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    44603211,
+    44523616,
+    44646327,
+    43721975,
+    43957441,
+    46755518,
+    48677343,
+    49461031
+   ]
+  },
+  "eastern_region__term_accounts": {
+   "name": "eastern_region__term_accounts",
+   "label": "Term deposit accounts · Eastern Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    47943899,
+    46774084,
+    48051440,
+    47355837,
+    43657973,
+    45650148,
+    47175719,
+    46629815
+   ]
+  },
+  "north_eastern_region__term_accounts": {
+   "name": "north_eastern_region__term_accounts",
+   "label": "Term deposit accounts · North Eastern Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    5023862,
+    5098552,
+    5177658,
+    5098807,
+    5310602,
+    5325043,
+    5611153,
+    5846318
+   ]
+  },
+  "northern_region__term_accounts": {
+   "name": "northern_region__term_accounts",
+   "label": "Term deposit accounts · Northern Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    44570559,
+    46810355,
+    47993230,
+    47917523,
+    49906535,
+    53643245,
+    55744708,
+    56839374
+   ]
+  },
+  "southern_region__term_accounts": {
+   "name": "southern_region__term_accounts",
+   "label": "Term deposit accounts · Southern Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    59271058,
+    60990732,
+    59469793,
+    58670068,
+    61133872,
+    65186344,
+    67978689,
+    69021720
+   ]
+  },
+  "western_region__term_accounts": {
+   "name": "western_region__term_accounts",
+   "label": "Term deposit accounts · Western Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    47006930,
+    49243597,
+    51281329,
+    51081971,
+    54659200,
+    57652278,
+    59528939,
+    60771835
+   ]
+  },
+  "central_region__term": {
+   "name": "central_region__term",
+   "label": "Term deposits · Central Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    792917.27,
+    889261.23,
+    969122.02,
+    1035930.14,
+    1172677.57,
+    1381533.61,
+    1558996.63,
+    1778054.85
+   ]
+  },
+  "eastern_region__term": {
+   "name": "eastern_region__term",
+   "label": "Term deposits · Eastern Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    880133.99,
+    950974.79,
+    1006149.43,
+    1068347.5,
+    1188610.58,
+    1346404.56,
+    1515184.79,
+    1668937.47
+   ]
+  },
+  "north_eastern_region__term": {
+   "name": "north_eastern_region__term",
+   "label": "Term deposits · North Eastern Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    100875.07,
+    108958.91,
+    115866.24,
+    120387.98,
+    130021.48,
+    149606.22,
+    173112.45,
+    190137.79
+   ]
+  },
+  "northern_region__term": {
+   "name": "northern_region__term",
+   "label": "Term deposits · Northern Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    1621744.25,
+    1718703.29,
+    1889617.94,
+    2015291.16,
+    2331345.33,
+    2692644.7,
+    3057004.62,
+    3398633.15
+   ]
+  },
+  "southern_region__term": {
+   "name": "southern_region__term",
+   "label": "Term deposits · Southern Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    1764787.23,
+    1979726.99,
+    2156565.44,
+    2327869.33,
+    2586298.43,
+    3054945.66,
+    3491349.95,
+    3911510.58
+   ]
+  },
+  "western_region__term": {
+   "name": "western_region__term",
+   "label": "Term deposits · Western Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    2170966.87,
+    2311414.51,
+    2496271.75,
+    2760628.45,
+    3176683.32,
+    3919283.33,
+    4418170.95,
+    4962347.66
+   ]
+  },
+  "central_region__total_accounts": {
+   "name": "central_region__total_accounts",
+   "label": "All deposit accounts · Central Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    434901246,
+    452985748,
+    null,
+    null,
+    null,
+    573604550,
+    571874615,
+    582894696
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "eastern_region__total_accounts": {
+   "name": "eastern_region__total_accounts",
+   "label": "All deposit accounts · Eastern Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    382681768,
+    403066169,
+    null,
+    null,
+    null,
+    487670456,
+    492137381,
+    507887545
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "north_eastern_region__total_accounts": {
+   "name": "north_eastern_region__total_accounts",
+   "label": "All deposit accounts · North Eastern Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    56415249,
+    60384677,
+    null,
+    null,
+    null,
+    77068676,
+    76221100,
+    78468932
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "northern_region__total_accounts": {
+   "name": "northern_region__total_accounts",
+   "label": "All deposit accounts · Northern Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    292451203,
+    306473343,
+    null,
+    null,
+    null,
+    515269191,
+    536615266,
+    557311880
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "southern_region__total_accounts": {
+   "name": "southern_region__total_accounts",
+   "label": "All deposit accounts · Southern Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    502348308,
+    524250313,
+    null,
+    null,
+    null,
+    602217992,
+    606464631,
+    616075718
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "western_region__total_accounts": {
+   "name": "western_region__total_accounts",
+   "label": "All deposit accounts · Western Region",
+   "group": "Region",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    303921873,
+    321887224,
+    null,
+    null,
+    null,
+    396542587,
+    409981147,
+    401817670
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "central_region__total": {
+   "name": "central_region__total",
+   "label": "All deposits · Central Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    1690153.84,
+    1851772.41,
+    null,
+    null,
+    null,
+    2830410.93,
+    3097531.45,
+    3450943.04
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "eastern_region__total": {
+   "name": "eastern_region__total",
+   "label": "All deposits · Eastern Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    1675416.58,
+    1794725.23,
+    null,
+    null,
+    null,
+    2549474.35,
+    2770137.28,
+    3018144.98
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "north_eastern_region__total": {
+   "name": "north_eastern_region__total",
+   "label": "All deposits · North Eastern Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    243058.27,
+    265655.23,
+    null,
+    null,
+    null,
+    369677.66,
+    400159.08,
+    426260.96
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "northern_region__total": {
+   "name": "northern_region__total",
+   "label": "All deposits · Northern Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    2660619.21,
+    2853809.76,
+    null,
+    null,
+    null,
+    4382104.07,
+    4861044.51,
+    5328543.16
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "southern_region__total": {
+   "name": "southern_region__total",
+   "label": "All deposits · Southern Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    3006809.76,
+    3349517.14,
+    null,
+    null,
+    null,
+    5130803.4,
+    5678300.67,
+    6423197.62
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "western_region__total": {
+   "name": "western_region__total",
+   "label": "All deposits · Western Region",
+   "group": "Region",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    3362950.85,
+    3633175.29,
+    null,
+    null,
+    null,
+    5990887.66,
+    6644665.39,
+    7429176.51
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "andaman_and_nicobar_islands__offices": {
+   "name": "andaman_and_nicobar_islands__offices",
+   "label": "Bank offices · Andaman & Nicobar Islands",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    69,
+    71,
+    72,
+    72,
+    70,
+    74,
+    76,
+    74
+   ]
+  },
+  "andhra_pradesh__offices": {
+   "name": "andhra_pradesh__offices",
+   "label": "Bank offices · Andhra Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    7087,
+    7252,
+    7431,
+    7446,
+    7663,
+    7898,
+    8087,
+    8270
+   ]
+  },
+  "arunachal_pradesh__offices": {
+   "name": "arunachal_pradesh__offices",
+   "label": "Bank offices · Arunachal Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    155,
+    164,
+    169,
+    172,
+    187,
+    206,
+    229,
+    243
+   ]
+  },
+  "assam__offices": {
+   "name": "assam__offices",
+   "label": "Bank offices · Assam",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    2404,
+    2957,
+    3020,
+    3043,
+    3085,
+    3190,
+    3236,
+    3279
+   ]
+  },
+  "bihar__offices": {
+   "name": "bihar__offices",
+   "label": "Bank offices · Bihar",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    6917,
+    7463,
+    7584,
+    7640,
+    7832,
+    7979,
+    8226,
+    8409
+   ]
+  },
+  "chandigarh__offices": {
+   "name": "chandigarh__offices",
+   "label": "Bank offices · Chandigarh",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    442,
+    454,
+    442,
+    438,
+    449,
+    466,
+    461,
+    463
+   ]
+  },
+  "chhattisgarh__offices": {
+   "name": "chhattisgarh__offices",
+   "label": "Bank offices · Chhattisgarh",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    2634,
+    2823,
+    2844,
+    2897,
+    2979,
+    3092,
+    3187,
+    3259
+   ]
+  },
+  "dadra_and_nagar_haveli__offices": {
+   "name": "dadra_and_nagar_haveli__offices",
+   "label": "Bank offices · Dadra & Nagar Haveli",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    59,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "dadra_and_nagar_haveli_and_daman_and_diu__offices": {
+   "name": "dadra_and_nagar_haveli_and_daman_and_diu__offices",
+   "label": "Bank offices · Dadra and Nagar Haveli and Daman and Diu",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    null,
+    110,
+    104,
+    102,
+    103,
+    108,
+    113,
+    116
+   ]
+  },
+  "daman_and_diu__offices": {
+   "name": "daman_and_diu__offices",
+   "label": "Bank offices · Daman & Diu",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    47,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "goa__offices": {
+   "name": "goa__offices",
+   "label": "Bank offices · Goa",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    697,
+    697,
+    687,
+    663,
+    668,
+    680,
+    690,
+    707
+   ]
+  },
+  "gujarat__offices": {
+   "name": "gujarat__offices",
+   "label": "Bank offices · Gujarat",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    8150,
+    8626,
+    8582,
+    8599,
+    8862,
+    9191,
+    9513,
+    9819
+   ]
+  },
+  "haryana__offices": {
+   "name": "haryana__offices",
+   "label": "Bank offices · Haryana",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    5008,
+    5224,
+    5225,
+    5190,
+    5326,
+    5515,
+    5683,
+    5909
+   ]
+  },
+  "himachal_pradesh__offices": {
+   "name": "himachal_pradesh__offices",
+   "label": "Bank offices · Himachal Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    1635,
+    1652,
+    1683,
+    1674,
+    1734,
+    1774,
+    1819,
+    1839
+   ]
+  },
+  "jammu_and_kashmir__offices": {
+   "name": "jammu_and_kashmir__offices",
+   "label": "Bank offices · Jammu & Kashmir",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    1830,
+    1767,
+    1800,
+    1816,
+    1877,
+    1933,
+    1996,
+    2017
+   ]
+  },
+  "jharkhand__offices": {
+   "name": "jharkhand__offices",
+   "label": "Bank offices · Jharkhand",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    3051,
+    3169,
+    3190,
+    3206,
+    3298,
+    3399,
+    3518,
+    3631
+   ]
+  },
+  "karnataka__offices": {
+   "name": "karnataka__offices",
+   "label": "Bank offices · Karnataka",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    10285,
+    10778,
+    10875,
+    10780,
+    11034,
+    11236,
+    11395,
+    11680
+   ]
+  },
+  "kerala__offices": {
+   "name": "kerala__offices",
+   "label": "Bank offices · Kerala",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    6622,
+    6801,
+    6869,
+    6814,
+    6921,
+    7130,
+    7380,
+    7547
+   ]
+  },
+  "ladakh__offices": {
+   "name": "ladakh__offices",
+   "label": "Bank offices · Ladakh",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    68,
+    75,
+    81,
+    90,
+    100,
+    103,
+    104
+   ]
+  },
+  "lakshadweep__offices": {
+   "name": "lakshadweep__offices",
+   "label": "Bank offices · Lakshadweep",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    13,
+    13,
+    21,
+    21,
+    22,
+    23,
+    17,
+    18
+   ]
+  },
+  "madhya_pradesh__offices": {
+   "name": "madhya_pradesh__offices",
+   "label": "Bank offices · Madhya Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    6747,
+    7234,
+    7248,
+    7338,
+    7541,
+    7703,
+    7949,
+    8128
+   ]
+  },
+  "maharashtra__offices": {
+   "name": "maharashtra__offices",
+   "label": "Bank offices · Maharashtra",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    12943,
+    13578,
+    13648,
+    13590,
+    13972,
+    14410,
+    14832,
+    15341
+   ]
+  },
+  "manipur__offices": {
+   "name": "manipur__offices",
+   "label": "Bank offices · Manipur",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    192,
+    203,
+    210,
+    225,
+    240,
+    250,
+    261,
+    276
+   ]
+  },
+  "meghalaya__offices": {
+   "name": "meghalaya__offices",
+   "label": "Bank offices · Meghalaya",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    346,
+    364,
+    367,
+    368,
+    374,
+    388,
+    394,
+    391
+   ]
+  },
+  "mizoram__offices": {
+   "name": "mizoram__offices",
+   "label": "Bank offices · Mizoram",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    192,
+    203,
+    210,
+    220,
+    227,
+    235,
+    241,
+    251
+   ]
+  },
+  "nagaland__offices": {
+   "name": "nagaland__offices",
+   "label": "Bank offices · Nagaland",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    164,
+    176,
+    180,
+    182,
+    192,
+    209,
+    231,
+    245
+   ]
+  },
+  "nct_of_delhi__offices": {
+   "name": "nct_of_delhi__offices",
+   "label": "Bank offices · Delhi",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    3716,
+    3825,
+    3747,
+    3712,
+    3775,
+    3894,
+    3981,
+    4082
+   ]
+  },
+  "odisha__offices": {
+   "name": "odisha__offices",
+   "label": "Bank offices · Odisha",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    4914,
+    5223,
+    5289,
+    5367,
+    5548,
+    5712,
+    5920,
+    6099
+   ]
+  },
+  "puducherry__offices": {
+   "name": "puducherry__offices",
+   "label": "Bank offices · Puducherry",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    253,
+    267,
+    268,
+    265,
+    272,
+    285,
+    288,
+    288
+   ]
+  },
+  "punjab__offices": {
+   "name": "punjab__offices",
+   "label": "Bank offices · Punjab",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    6614,
+    6735,
+    6700,
+    6550,
+    6612,
+    6784,
+    6952,
+    7075
+   ]
+  },
+  "rajasthan__offices": {
+   "name": "rajasthan__offices",
+   "label": "Bank offices · Rajasthan",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    7391,
+    7775,
+    7871,
+    7969,
+    8304,
+    8552,
+    8786,
+    9049
+   ]
+  },
+  "sikkim__offices": {
+   "name": "sikkim__offices",
+   "label": "Bank offices · Sikkim",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    143,
+    162,
+    164,
+    165,
+    168,
+    176,
+    185,
+    187
+   ]
+  },
+  "tamil_nadu__offices": {
+   "name": "tamil_nadu__offices",
+   "label": "Bank offices · Tamil Nadu",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    11206,
+    11829,
+    12028,
+    12094,
+    12407,
+    12832,
+    13204,
+    13584
+   ]
+  },
+  "telangana__offices": {
+   "name": "telangana__offices",
+   "label": "Bank offices · Telangana",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    5227,
+    5388,
+    5579,
+    5605,
+    5819,
+    6047,
+    6269,
+    6500
+   ]
+  },
+  "tripura__offices": {
+   "name": "tripura__offices",
+   "label": "Bank offices · Tripura",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    463,
+    565,
+    579,
+    589,
+    613,
+    634,
+    646,
+    653
+   ]
+  },
+  "uttar_pradesh__offices": {
+   "name": "uttar_pradesh__offices",
+   "label": "Bank offices · Uttar Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    17462,
+    18041,
+    18125,
+    18073,
+    18415,
+    18883,
+    19436,
+    19819
+   ]
+  },
+  "uttarakhand__offices": {
+   "name": "uttarakhand__offices",
+   "label": "Bank offices · Uttarakhand",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    2126,
+    2194,
+    2220,
+    2176,
+    2202,
+    2280,
+    2343,
+    2399
+   ]
+  },
+  "west_bengal__offices": {
+   "name": "west_bengal__offices",
+   "label": "Bank offices · West Bengal",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    8170,
+    9251,
+    9379,
+    9616,
+    9761,
+    9948,
+    10159,
+    10322
+   ]
+  },
+  "andaman_and_nicobar_islands__current_accounts": {
+   "name": "andaman_and_nicobar_islands__current_accounts",
+   "label": "Current accounts · Andaman & Nicobar Islands",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    25862,
+    26395,
+    24867,
+    28442,
+    34383,
+    39693,
+    30600,
+    29996
+   ]
+  },
+  "andhra_pradesh__current_accounts": {
+   "name": "andhra_pradesh__current_accounts",
+   "label": "Current accounts · Andhra Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    2960247,
+    2795646,
+    2322352,
+    2517145,
+    3125168,
+    2654854,
+    2129458,
+    2326670
+   ]
+  },
+  "arunachal_pradesh__current_accounts": {
+   "name": "arunachal_pradesh__current_accounts",
+   "label": "Current accounts · Arunachal Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    61295,
+    59229,
+    62214,
+    82994,
+    101503,
+    112093,
+    88470,
+    85761
+   ]
+  },
+  "assam__current_accounts": {
+   "name": "assam__current_accounts",
+   "label": "Current accounts · Assam",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    1102739,
+    1160242,
+    1997509,
+    2732820,
+    3091217,
+    5060511,
+    1071680,
+    1005899
+   ]
+  },
+  "bihar__current_accounts": {
+   "name": "bihar__current_accounts",
+   "label": "Current accounts · Bihar",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    4953537,
+    5418168,
+    5331490,
+    7797821,
+    9010212,
+    10649861,
+    4002717,
+    3652664
+   ]
+  },
+  "chandigarh__current_accounts": {
+   "name": "chandigarh__current_accounts",
+   "label": "Current accounts · Chandigarh",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    287292,
+    291385,
+    237346,
+    371189,
+    410106,
+    480367,
+    176896,
+    163151
+   ]
+  },
+  "chhattisgarh__current_accounts": {
+   "name": "chhattisgarh__current_accounts",
+   "label": "Current accounts · Chhattisgarh",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    1370336,
+    1649940,
+    1798420,
+    2324099,
+    2633332,
+    3408950,
+    1669580,
+    1618263
+   ]
+  },
+  "dadra_and_nagar_haveli__current_accounts": {
+   "name": "dadra_and_nagar_haveli__current_accounts",
+   "label": "Current accounts · Dadra & Nagar Haveli",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    32129,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "dadra_and_nagar_haveli_and_daman_and_diu__current_accounts": {
+   "name": "dadra_and_nagar_haveli_and_daman_and_diu__current_accounts",
+   "label": "Current accounts · Dadra and Nagar Haveli and Daman and Diu",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    53638,
+    60440,
+    68272,
+    78832,
+    89423,
+    56777,
+    54066
+   ]
+  },
+  "daman_and_diu__current_accounts": {
+   "name": "daman_and_diu__current_accounts",
+   "label": "Current accounts · Daman & Diu",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    19763,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "goa__current_accounts": {
+   "name": "goa__current_accounts",
+   "label": "Current accounts · Goa",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    182026,
+    187939,
+    191106,
+    235904,
+    294138,
+    269805,
+    195278,
+    198147
+   ]
+  },
+  "gujarat__current_accounts": {
+   "name": "gujarat__current_accounts",
+   "label": "Current accounts · Gujarat",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    3389983,
+    3504685,
+    3580551,
+    4129596,
+    4878700,
+    4990394,
+    3899696,
+    3745070
+   ]
+  },
+  "haryana__current_accounts": {
+   "name": "haryana__current_accounts",
+   "label": "Current accounts · Haryana",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    3342115,
+    3466792,
+    3171211,
+    5039535,
+    5604614,
+    7192109,
+    2141681,
+    2216045
+   ]
+  },
+  "himachal_pradesh__current_accounts": {
+   "name": "himachal_pradesh__current_accounts",
+   "label": "Current accounts · Himachal Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    997892,
+    1026438,
+    614188,
+    1201901,
+    1273292,
+    1726598,
+    339953,
+    317537
+   ]
+  },
+  "jammu_and_kashmir__current_accounts": {
+   "name": "jammu_and_kashmir__current_accounts",
+   "label": "Current accounts · Jammu & Kashmir",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    2067670,
+    1939713,
+    2013567,
+    2441002,
+    2620299,
+    3051554,
+    2904453,
+    3078307
+   ]
+  },
+  "jharkhand__current_accounts": {
+   "name": "jharkhand__current_accounts",
+   "label": "Current accounts · Jharkhand",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    1421167,
+    1455543,
+    1665023,
+    2284644,
+    2539124,
+    3297997,
+    1500327,
+    1496692
+   ]
+  },
+  "karnataka__current_accounts": {
+   "name": "karnataka__current_accounts",
+   "label": "Current accounts · Karnataka",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    4325634,
+    4533624,
+    4393294,
+    4902815,
+    5178733,
+    5153152,
+    4107844,
+    4041997
+   ]
+  },
+  "kerala__current_accounts": {
+   "name": "kerala__current_accounts",
+   "label": "Current accounts · Kerala",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    2575277,
+    2523021,
+    2501446,
+    3112486,
+    3646501,
+    3985667,
+    3048823,
+    3269347
+   ]
+  },
+  "ladakh__current_accounts": {
+   "name": "ladakh__current_accounts",
+   "label": "Current accounts · Ladakh",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    null,
+    40226,
+    47514,
+    57339,
+    69185,
+    80685,
+    90258,
+    92777
+   ]
+  },
+  "lakshadweep__current_accounts": {
+   "name": "lakshadweep__current_accounts",
+   "label": "Current accounts · Lakshadweep",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    4513,
+    4480,
+    3856,
+    4328,
+    4146,
+    4270,
+    4435,
+    4794
+   ]
+  },
+  "madhya_pradesh__current_accounts": {
+   "name": "madhya_pradesh__current_accounts",
+   "label": "Current accounts · Madhya Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    3928979,
+    4208898,
+    4509674,
+    6194812,
+    7325680,
+    7238679,
+    4561334,
+    4451403
+   ]
+  },
+  "maharashtra__current_accounts": {
+   "name": "maharashtra__current_accounts",
+   "label": "Current accounts · Maharashtra",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    9126231,
+    11706603,
+    14587412,
+    17355441,
+    20209405,
+    21938824,
+    21860406,
+    22803186
+   ]
+  },
+  "manipur__current_accounts": {
+   "name": "manipur__current_accounts",
+   "label": "Current accounts · Manipur",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    70143,
+    75190,
+    191207,
+    254398,
+    303752,
+    518781,
+    90323,
+    82010
+   ]
+  },
+  "meghalaya__current_accounts": {
+   "name": "meghalaya__current_accounts",
+   "label": "Current accounts · Meghalaya",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    92440,
+    91948,
+    103729,
+    132788,
+    145078,
+    172694,
+    100705,
+    95070
+   ]
+  },
+  "mizoram__current_accounts": {
+   "name": "mizoram__current_accounts",
+   "label": "Current accounts · Mizoram",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    21524,
+    22104,
+    24328,
+    30530,
+    34203,
+    55526,
+    33856,
+    31874
+   ]
+  },
+  "nagaland__current_accounts": {
+   "name": "nagaland__current_accounts",
+   "label": "Current accounts · Nagaland",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    53516,
+    44845,
+    54406,
+    67121,
+    86991,
+    90789,
+    73693,
+    66089
+   ]
+  },
+  "nct_of_delhi__current_accounts": {
+   "name": "nct_of_delhi__current_accounts",
+   "label": "Current accounts · Delhi",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    4033164,
+    4272374,
+    4001009,
+    6052386,
+    6707439,
+    7323838,
+    3272377,
+    3047754
+   ]
+  },
+  "odisha__current_accounts": {
+   "name": "odisha__current_accounts",
+   "label": "Current accounts · Odisha",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    1621691,
+    1699122,
+    2129728,
+    2771934,
+    3168982,
+    4180334,
+    1926430,
+    1848911
+   ]
+  },
+  "puducherry__current_accounts": {
+   "name": "puducherry__current_accounts",
+   "label": "Current accounts · Puducherry",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    95217,
+    101384,
+    91732,
+    111431,
+    206982,
+    142003,
+    103705,
+    98353
+   ]
+  },
+  "punjab__current_accounts": {
+   "name": "punjab__current_accounts",
+   "label": "Current accounts · Punjab",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    4599281,
+    4712484,
+    4072391,
+    7204355,
+    8034999,
+    11019078,
+    2203427,
+    1911037
+   ]
+  },
+  "rajasthan__current_accounts": {
+   "name": "rajasthan__current_accounts",
+   "label": "Current accounts · Rajasthan",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    3576296,
+    3652689,
+    3714332,
+    5278087,
+    5936123,
+    7730390,
+    2973512,
+    2948099
+   ]
+  },
+  "sikkim__current_accounts": {
+   "name": "sikkim__current_accounts",
+   "label": "Current accounts · Sikkim",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    27868,
+    29786,
+    36722,
+    55734,
+    79943,
+    63199,
+    40505,
+    34753
+   ]
+  },
+  "tamil_nadu__current_accounts": {
+   "name": "tamil_nadu__current_accounts",
+   "label": "Current accounts · Tamil Nadu",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    5781997,
+    5792686,
+    5935478,
+    6618477,
+    13352063,
+    7476928,
+    5353982,
+    5408865
+   ]
+  },
+  "telangana__current_accounts": {
+   "name": "telangana__current_accounts",
+   "label": "Current accounts · Telangana",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    2141791,
+    2217731,
+    2323271,
+    2710180,
+    3248180,
+    3276405,
+    2496628,
+    2537276
+   ]
+  },
+  "tripura__current_accounts": {
+   "name": "tripura__current_accounts",
+   "label": "Current accounts · Tripura",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    85839,
+    83138,
+    231210,
+    309273,
+    356072,
+    508559,
+    126434,
+    128155
+   ]
+  },
+  "uttar_pradesh__current_accounts": {
+   "name": "uttar_pradesh__current_accounts",
+   "label": "Current accounts · Uttar Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    10553533,
+    10801135,
+    10314128,
+    14883603,
+    17193805,
+    22280011,
+    7760285,
+    7565391
+   ]
+  },
+  "uttarakhand__current_accounts": {
+   "name": "uttarakhand__current_accounts",
+   "label": "Current accounts · Uttarakhand",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    1110379,
+    1132054,
+    916183,
+    1572259,
+    1729953,
+    2316502,
+    570361,
+    552129
+   ]
+  },
+  "west_bengal__current_accounts": {
+   "name": "west_bengal__current_accounts",
+   "label": "Current accounts · West Bengal",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    4970303,
+    5225429,
+    8432844,
+    10949129,
+    12244331,
+    17870606,
+    6131109,
+    5731988
+   ]
+  },
+  "andaman_and_nicobar_islands__current": {
+   "name": "andaman_and_nicobar_islands__current",
+   "label": "Current deposits · Andaman & Nicobar Islands",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    544.4,
+    577.45,
+    595.89,
+    624.03,
+    609.04,
+    607.48,
+    556.49,
+    617.46
+   ]
+  },
+  "andhra_pradesh__current": {
+   "name": "andhra_pradesh__current",
+   "label": "Current deposits · Andhra Pradesh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    21877.07,
+    22951.36,
+    24370.12,
+    27580.7,
+    28462.13,
+    33068.14,
+    42975.08,
+    49557.62
+   ]
+  },
+  "arunachal_pradesh__current": {
+   "name": "arunachal_pradesh__current",
+   "label": "Current deposits · Arunachal Pradesh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    3158.57,
+    3568.77,
+    3036.84,
+    4585.08,
+    5718,
+    5481.84,
+    7954.58,
+    8723.51
+   ]
+  },
+  "assam__current": {
+   "name": "assam__current",
+   "label": "Current deposits · Assam",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    12601.71,
+    12875.43,
+    13500.84,
+    16470.12,
+    15353.61,
+    18329.52,
+    17608.97,
+    18507.41
+   ]
+  },
+  "bihar__current": {
+   "name": "bihar__current",
+   "label": "Current deposits · Bihar",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    20879.35,
+    20756.72,
+    22610.16,
+    26527.02,
+    27142.48,
+    32267.81,
+    31509.21,
+    33340.18
+   ]
+  },
+  "chandigarh__current": {
+   "name": "chandigarh__current",
+   "label": "Current deposits · Chandigarh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    4502.65,
+    5317.24,
+    5460.29,
+    6552.66,
+    6392.43,
+    7364.2,
+    7163.77,
+    7371.36
+   ]
+  },
+  "chhattisgarh__current": {
+   "name": "chhattisgarh__current",
+   "label": "Current deposits · Chhattisgarh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    11080.29,
+    11736.85,
+    14237.39,
+    16798.25,
+    16285.79,
+    19894.71,
+    18948.26,
+    22125.33
+   ]
+  },
+  "dadra_and_nagar_haveli__current": {
+   "name": "dadra_and_nagar_haveli__current",
+   "label": "Current deposits · Dadra & Nagar Haveli",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    474.38,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "dadra_and_nagar_haveli_and_daman_and_diu__current": {
+   "name": "dadra_and_nagar_haveli_and_daman_and_diu__current",
+   "label": "Current deposits · Dadra and Nagar Haveli and Daman and Diu",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    964.06,
+    1032.05,
+    1301.85,
+    1677.25,
+    1414.69,
+    1501.16,
+    1679.17
+   ]
+  },
+  "daman_and_diu__current": {
+   "name": "daman_and_diu__current",
+   "label": "Current deposits · Daman & Diu",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    342.77,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "goa__current": {
+   "name": "goa__current",
+   "label": "Current deposits · Goa",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    3235.66,
+    3203.11,
+    3798.72,
+    4365.13,
+    4876.97,
+    4882.18,
+    6309.09,
+    6724.25
+   ]
+  },
+  "gujarat__current": {
+   "name": "gujarat__current",
+   "label": "Current deposits · Gujarat",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    59114.35,
+    63979.05,
+    74415.64,
+    89197.79,
+    96926.31,
+    116841.34,
+    119910.6,
+    139930.26
+   ]
+  },
+  "haryana__current": {
+   "name": "haryana__current",
+   "label": "Current deposits · Haryana",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    36679.67,
+    42621.39,
+    48538.8,
+    58578.52,
+    71261.37,
+    74693.45,
+    82104.78,
+    94792.88
+   ]
+  },
+  "himachal_pradesh__current": {
+   "name": "himachal_pradesh__current",
+   "label": "Current deposits · Himachal Pradesh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    3182.04,
+    3334.23,
+    3839.62,
+    4388.3,
+    4694.26,
+    5376.4,
+    5252.9,
+    5377.16
+   ]
+  },
+  "jammu_and_kashmir__current": {
+   "name": "jammu_and_kashmir__current",
+   "label": "Current deposits · Jammu & Kashmir",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    12141,
+    12663.08,
+    13767.8,
+    14445.02,
+    14402.33,
+    15392.62,
+    17243.65,
+    18387.11
+   ]
+  },
+  "jharkhand__current": {
+   "name": "jharkhand__current",
+   "label": "Current deposits · Jharkhand",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    16041.5,
+    14998.38,
+    16409.38,
+    21156.46,
+    18709.96,
+    22965.1,
+    24425.56,
+    27691.33
+   ]
+  },
+  "karnataka__current": {
+   "name": "karnataka__current",
+   "label": "Current deposits · Karnataka",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    89093.71,
+    102998.61,
+    129310.56,
+    158943.25,
+    175779.69,
+    184147.47,
+    205665.84,
+    238273.24
+   ]
+  },
+  "kerala__current": {
+   "name": "kerala__current",
+   "label": "Current deposits · Kerala",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    22342.53,
+    23249.31,
+    32497.51,
+    37351.28,
+    37779.01,
+    39995.7,
+    48717.6,
+    54939.78
+   ]
+  },
+  "ladakh__current": {
+   "name": "ladakh__current",
+   "label": "Current deposits · Ladakh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    null,
+    623.79,
+    1037.71,
+    1202.77,
+    1415.17,
+    1661.56,
+    1703.97,
+    1953.98
+   ]
+  },
+  "lakshadweep__current": {
+   "name": "lakshadweep__current",
+   "label": "Current deposits · Lakshadweep",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    60.28,
+    45.16,
+    45.45,
+    67.88,
+    195.97,
+    214.38,
+    301.86,
+    328.7
+   ]
+  },
+  "madhya_pradesh__current": {
+   "name": "madhya_pradesh__current",
+   "label": "Current deposits · Madhya Pradesh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    25671.23,
+    26278.18,
+    28357.96,
+    35029.2,
+    35943.38,
+    40274.56,
+    42895.25,
+    47764.9
+   ]
+  },
+  "maharashtra__current": {
+   "name": "maharashtra__current",
+   "label": "Current deposits · Maharashtra",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    377377.9,
+    410609.8,
+    474650.4,
+    529554.5,
+    591494.61,
+    656883.63,
+    746454.94,
+    820695.17
+   ]
+  },
+  "manipur__current": {
+   "name": "manipur__current",
+   "label": "Current deposits · Manipur",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    2328.5,
+    2080.36,
+    2647.77,
+    2553.35,
+    2292.34,
+    2636.57,
+    2209.51,
+    2630.11
+   ]
+  },
+  "meghalaya__current": {
+   "name": "meghalaya__current",
+   "label": "Current deposits · Meghalaya",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    3730.09,
+    3153.84,
+    3387.95,
+    3432.73,
+    3208.79,
+    3917.74,
+    4729.01,
+    4745.64
+   ]
+  },
+  "mizoram__current": {
+   "name": "mizoram__current",
+   "label": "Current deposits · Mizoram",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    1130.52,
+    1301.02,
+    1020.14,
+    1132.68,
+    964.64,
+    901.04,
+    1005.17,
+    1281.16
+   ]
+  },
+  "nagaland__current": {
+   "name": "nagaland__current",
+   "label": "Current deposits · Nagaland",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    2548.31,
+    2693.69,
+    2739.76,
+    2921.24,
+    2938.62,
+    3330.56,
+    4409.72,
+    4838.11
+   ]
+  },
+  "nct_of_delhi__current": {
+   "name": "nct_of_delhi__current",
+   "label": "Current deposits · Delhi",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    126869.31,
+    134391.85,
+    176590.37,
+    175589.37,
+    193883.16,
+    218174.62,
+    258900.88,
+    245640.77
+   ]
+  },
+  "odisha__current": {
+   "name": "odisha__current",
+   "label": "Current deposits · Odisha",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    17792.89,
+    18963.87,
+    20408.85,
+    27573.5,
+    26213.41,
+    30535.21,
+    34763.87,
+    35852.21
+   ]
+  },
+  "puducherry__current": {
+   "name": "puducherry__current",
+   "label": "Current deposits · Puducherry",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    875.88,
+    1003.87,
+    1181.59,
+    1530.77,
+    1627.78,
+    1863.14,
+    2004.71,
+    2290.78
+   ]
+  },
+  "punjab__current": {
+   "name": "punjab__current",
+   "label": "Current deposits · Punjab",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    16466.32,
+    17262.67,
+    20353.07,
+    22865.85,
+    24994.78,
+    30250.17,
+    28101.28,
+    30674.2
+   ]
+  },
+  "rajasthan__current": {
+   "name": "rajasthan__current",
+   "label": "Current deposits · Rajasthan",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    26516.38,
+    27024.34,
+    33605.04,
+    38295.4,
+    43503.28,
+    48864.31,
+    50644.28,
+    54281.59
+   ]
+  },
+  "sikkim__current": {
+   "name": "sikkim__current",
+   "label": "Current deposits · Sikkim",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    758.29,
+    788.13,
+    762.1,
+    1070.4,
+    923.62,
+    1312.25,
+    1144.91,
+    1128.35
+   ]
+  },
+  "tamil_nadu__current": {
+   "name": "tamil_nadu__current",
+   "label": "Current deposits · Tamil Nadu",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    74596.71,
+    84473.31,
+    101435.47,
+    112947.96,
+    127448.98,
+    134938.37,
+    146900.48,
+    168969.94
+   ]
+  },
+  "telangana__current": {
+   "name": "telangana__current",
+   "label": "Current deposits · Telangana",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    56031.6,
+    58503.86,
+    107829.11,
+    80682.93,
+    84140.59,
+    84979.68,
+    94129.82,
+    109767.8
+   ]
+  },
+  "tripura__current": {
+   "name": "tripura__current",
+   "label": "Current deposits · Tripura",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    1532.33,
+    1833.1,
+    1794.63,
+    2225.64,
+    2238.02,
+    2536.78,
+    3150.41,
+    3081.6
+   ]
+  },
+  "uttar_pradesh__current": {
+   "name": "uttar_pradesh__current",
+   "label": "Current deposits · Uttar Pradesh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    70582,
+    70150.69,
+    80806.91,
+    92177.18,
+    101603.32,
+    116030.2,
+    118966.44,
+    136489.95
+   ]
+  },
+  "uttarakhand__current": {
+   "name": "uttarakhand__current",
+   "label": "Current deposits · Uttarakhand",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    7295.68,
+    7420.9,
+    8908.16,
+    9562.62,
+    10310.08,
+    11266.55,
+    11691.48,
+    12899.7
+   ]
+  },
+  "west_bengal__current": {
+   "name": "west_bengal__current",
+   "label": "Current deposits · West Bengal",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    60753.78,
+    59358.43,
+    66020.69,
+    80526.83,
+    84811.01,
+    87494.98,
+    88956.95,
+    96568.3
+   ]
+  },
+  "andaman_and_nicobar_islands__savings_accounts": {
+   "name": "andaman_and_nicobar_islands__savings_accounts",
+   "label": "Savings accounts · Andaman & Nicobar Islands",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    495703,
+    504490,
+    468910,
+    482262,
+    500160,
+    511388,
+    528547,
+    529362
+   ]
+  },
+  "andhra_pradesh__savings_accounts": {
+   "name": "andhra_pradesh__savings_accounts",
+   "label": "Savings accounts · Andhra Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    80446858,
+    81164405,
+    84917438,
+    87551348,
+    88633739,
+    89997546,
+    90922979,
+    92865926
+   ]
+  },
+  "arunachal_pradesh__savings_accounts": {
+   "name": "arunachal_pradesh__savings_accounts",
+   "label": "Savings accounts · Arunachal Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    1323846,
+    1446130,
+    1369424,
+    1683175,
+    1797891,
+    1901036,
+    1982127,
+    2014006
+   ]
+  },
+  "assam__savings_accounts": {
+   "name": "assam__savings_accounts",
+   "label": "Savings accounts · Assam",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    36144090,
+    39233303,
+    42127956,
+    45458527,
+    49911020,
+    48765143,
+    51516086,
+    52738858
+   ]
+  },
+  "bihar__savings_accounts": {
+   "name": "bihar__savings_accounts",
+   "label": "Savings accounts · Bihar",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    111066691,
+    119802966,
+    126181822,
+    135401692,
+    141164810,
+    140369320,
+    149758549,
+    157946740
+   ]
+  },
+  "chandigarh__savings_accounts": {
+   "name": "chandigarh__savings_accounts",
+   "label": "Savings accounts · Chandigarh",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    2753064,
+    2884228,
+    2838565,
+    2978411,
+    5031148,
+    3251899,
+    3214707,
+    3190944
+   ]
+  },
+  "chhattisgarh__savings_accounts": {
+   "name": "chhattisgarh__savings_accounts",
+   "label": "Savings accounts · Chhattisgarh",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    34290317,
+    35611855,
+    36833994,
+    38779002,
+    39295044,
+    39655202,
+    41022366,
+    42097637
+   ]
+  },
+  "dadra_and_nagar_haveli__savings_accounts": {
+   "name": "dadra_and_nagar_haveli__savings_accounts",
+   "label": "Savings accounts · Dadra & Nagar Haveli",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    760740,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "dadra_and_nagar_haveli_and_daman_and_diu__savings_accounts": {
+   "name": "dadra_and_nagar_haveli_and_daman_and_diu__savings_accounts",
+   "label": "Savings accounts · Dadra and Nagar Haveli and Daman and Diu",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    null,
+    1330552,
+    1297263,
+    1375544,
+    1460260,
+    1539473,
+    1588527,
+    1570842
+   ]
+  },
+  "daman_and_diu__savings_accounts": {
+   "name": "daman_and_diu__savings_accounts",
+   "label": "Savings accounts · Daman & Diu",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    486825,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "goa__savings_accounts": {
+   "name": "goa__savings_accounts",
+   "label": "Savings accounts · Goa",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    3842982,
+    3992641,
+    3898924,
+    4004924,
+    4190976,
+    4316834,
+    4418920,
+    4405468
+   ]
+  },
+  "gujarat__savings_accounts": {
+   "name": "gujarat__savings_accounts",
+   "label": "Savings accounts · Gujarat",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    77620772,
+    81622849,
+    83607301,
+    87120982,
+    93180648,
+    96926338,
+    100590452,
+    101870567
+   ]
+  },
+  "haryana__savings_accounts": {
+   "name": "haryana__savings_accounts",
+   "label": "Savings accounts · Haryana",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    41118842,
+    43306915,
+    43958508,
+    47677450,
+    52612420,
+    102094617,
+    109331085,
+    108033521
+   ]
+  },
+  "himachal_pradesh__savings_accounts": {
+   "name": "himachal_pradesh__savings_accounts",
+   "label": "Savings accounts · Himachal Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    9387105,
+    9887615,
+    9959787,
+    10883052,
+    11956782,
+    11488652,
+    12094481,
+    12264267
+   ]
+  },
+  "jammu_and_kashmir__savings_accounts": {
+   "name": "jammu_and_kashmir__savings_accounts",
+   "label": "Savings accounts · Jammu & Kashmir",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    16508635,
+    16547153,
+    16863214,
+    17481244,
+    18600997,
+    18166177,
+    18401621,
+    18037609
+   ]
+  },
+  "jharkhand__savings_accounts": {
+   "name": "jharkhand__savings_accounts",
+   "label": "Savings accounts · Jharkhand",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    38602320,
+    41016347,
+    42928301,
+    45175038,
+    47352659,
+    48976104,
+    51735650,
+    53013677
+   ]
+  },
+  "karnataka__savings_accounts": {
+   "name": "karnataka__savings_accounts",
+   "label": "Savings accounts · Karnataka",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    103506017,
+    110447596,
+    109869185,
+    112111885,
+    120553541,
+    123924416,
+    127398402,
+    132075728
+   ]
+  },
+  "kerala__savings_accounts": {
+   "name": "kerala__savings_accounts",
+   "label": "Savings accounts · Kerala",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    61422758,
+    63825873,
+    64349608,
+    70066910,
+    76450733,
+    78691756,
+    79412160,
+    77338141
+   ]
+  },
+  "ladakh__savings_accounts": {
+   "name": "ladakh__savings_accounts",
+   "label": "Savings accounts · Ladakh",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    438763,
+    445680,
+    459614,
+    473546,
+    485918,
+    502724,
+    503947
+   ]
+  },
+  "lakshadweep__savings_accounts": {
+   "name": "lakshadweep__savings_accounts",
+   "label": "Savings accounts · Lakshadweep",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    92234,
+    94093,
+    80189,
+    82784,
+    86341,
+    87039,
+    90889,
+    94256
+   ]
+  },
+  "madhya_pradesh__savings_accounts": {
+   "name": "madhya_pradesh__savings_accounts",
+   "label": "Savings accounts · Madhya Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    89354890,
+    94642428,
+    96708084,
+    102174561,
+    111750476,
+    114586986,
+    118366769,
+    121197953
+   ]
+  },
+  "maharashtra__savings_accounts": {
+   "name": "maharashtra__savings_accounts",
+   "label": "Savings accounts · Maharashtra",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    161453492,
+    170244720,
+    174112206,
+    183983059,
+    203365544,
+    208819218,
+    217842152,
+    206398489
+   ]
+  },
+  "manipur__savings_accounts": {
+   "name": "manipur__savings_accounts",
+   "label": "Savings accounts · Manipur",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    2595328,
+    2740398,
+    2791140,
+    3127995,
+    3193640,
+    3041852,
+    3345246,
+    3375466
+   ]
+  },
+  "meghalaya__savings_accounts": {
+   "name": "meghalaya__savings_accounts",
+   "label": "Savings accounts · Meghalaya",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    2455044,
+    2601672,
+    2756221,
+    2884462,
+    3027639,
+    3167267,
+    3346253,
+    3462523
+   ]
+  },
+  "mizoram__savings_accounts": {
+   "name": "mizoram__savings_accounts",
+   "label": "Savings accounts · Mizoram",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    1339149,
+    1408248,
+    1468298,
+    1489217,
+    1555838,
+    1621811,
+    1644746,
+    1675222
+   ]
+  },
+  "nagaland__savings_accounts": {
+   "name": "nagaland__savings_accounts",
+   "label": "Savings accounts · Nagaland",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    1323485,
+    1425419,
+    1480796,
+    1549713,
+    1632154,
+    1707086,
+    1795876,
+    1806496
+   ]
+  },
+  "nct_of_delhi__savings_accounts": {
+   "name": "nct_of_delhi__savings_accounts",
+   "label": "Savings accounts · Delhi",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    34555974,
+    36114260,
+    35468280,
+    38739256,
+    106131808,
+    130883019,
+    159394462,
+    176287129
+   ]
+  },
+  "odisha__savings_accounts": {
+   "name": "odisha__savings_accounts",
+   "label": "Savings accounts · Odisha",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    52375607,
+    56194359,
+    58290660,
+    62884072,
+    68290451,
+    68798672,
+    72007629,
+    73883594
+   ]
+  },
+  "puducherry__savings_accounts": {
+   "name": "puducherry__savings_accounts",
+   "label": "Savings accounts · Puducherry",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    2384930,
+    2562198,
+    2615484,
+    2774097,
+    2938894,
+    3019187,
+    3000370,
+    2986824
+   ]
+  },
+  "punjab__savings_accounts": {
+   "name": "punjab__savings_accounts",
+   "label": "Savings accounts · Punjab",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    46038987,
+    48143354,
+    47560850,
+    51272423,
+    53811131,
+    55303600,
+    58915991,
+    59622160
+   ]
+  },
+  "rajasthan__savings_accounts": {
+   "name": "rajasthan__savings_accounts",
+   "label": "Savings accounts · Rajasthan",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    78614327,
+    82938599,
+    85501869,
+    92330380,
+    101037164,
+    101347445,
+    104912930,
+    108758222
+   ]
+  },
+  "sikkim__savings_accounts": {
+   "name": "sikkim__savings_accounts",
+   "label": "Savings accounts · Sikkim",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    885346,
+    937558,
+    948694,
+    978559,
+    1012451,
+    1077847,
+    1132828,
+    1122242
+   ]
+  },
+  "tamil_nadu__savings_accounts": {
+   "name": "tamil_nadu__savings_accounts",
+   "label": "Savings accounts · Tamil Nadu",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    118512991,
+    126871147,
+    129321371,
+    135371928,
+    148651070,
+    148631234,
+    148117939,
+    148792875
+   ]
+  },
+  "telangana__savings_accounts": {
+   "name": "telangana__savings_accounts",
+   "label": "Savings accounts · Telangana",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    58826786,
+    60325697,
+    62027273,
+    65025203,
+    70562962,
+    69987191,
+    72298328,
+    75212946
+   ]
+  },
+  "tripura__savings_accounts": {
+   "name": "tripura__savings_accounts",
+   "label": "Savings accounts · Tripura",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    4722949,
+    4894259,
+    4981253,
+    5236790,
+    6131210,
+    5020485,
+    5394452,
+    6055185
+   ]
+  },
+  "uttar_pradesh__savings_accounts": {
+   "name": "uttar_pradesh__savings_accounts",
+   "label": "Savings accounts · Uttar Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    234747906,
+    244805724,
+    247739291,
+    265225539,
+    317997985,
+    319463153,
+    330386098,
+    336686782
+   ]
+  },
+  "uttarakhand__savings_accounts": {
+   "name": "uttarakhand__savings_accounts",
+   "label": "Savings accounts · Uttarakhand",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    14941695,
+    15610098,
+    15586369,
+    16712841,
+    17576076,
+    17899549,
+    18860479,
+    19264107
+   ]
+  },
+  "west_bengal__savings_accounts": {
+   "name": "west_bengal__savings_accounts",
+   "label": "Savings accounts · West Bengal",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    118291774,
+    123981922,
+    126865684,
+    138735442,
+    148302784,
+    146185287,
+    156166771,
+    161967111
+   ]
+  },
+  "andaman_and_nicobar_islands__savings": {
+   "name": "andaman_and_nicobar_islands__savings",
+   "label": "Savings deposits · Andaman & Nicobar Islands",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    2428.34,
+    2642.76,
+    2962.13,
+    3742.23,
+    3859.4,
+    3848.05,
+    4096.01,
+    4063.77
+   ]
+  },
+  "andhra_pradesh__savings": {
+   "name": "andhra_pradesh__savings",
+   "label": "Savings deposits · Andhra Pradesh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    120135.98,
+    128250.08,
+    148375.27,
+    168738.73,
+    180809.65,
+    192767.95,
+    193708.12,
+    225453.32
+   ]
+  },
+  "arunachal_pradesh__savings": {
+   "name": "arunachal_pradesh__savings",
+   "label": "Savings deposits · Arunachal Pradesh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    7077.54,
+    7448.85,
+    8969.89,
+    12144.96,
+    12688.11,
+    14127.57,
+    14900.99,
+    15043.04
+   ]
+  },
+  "assam__savings": {
+   "name": "assam__savings",
+   "label": "Savings deposits · Assam",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    72361.73,
+    81743.31,
+    86685.97,
+    97648.8,
+    110969.32,
+    108644.05,
+    107081.98,
+    112038.28
+   ]
+  },
+  "bihar__savings": {
+   "name": "bihar__savings",
+   "label": "Savings deposits · Bihar",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    207170.52,
+    219211.89,
+    231510.71,
+    267592.82,
+    287386.1,
+    303141.63,
+    321986.92,
+    346963.67
+   ]
+  },
+  "chandigarh__savings": {
+   "name": "chandigarh__savings",
+   "label": "Savings deposits · Chandigarh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    19008.68,
+    20423.85,
+    25977.65,
+    31929.4,
+    34788.76,
+    36384.12,
+    38889.94,
+    36148.19
+   ]
+  },
+  "chhattisgarh__savings": {
+   "name": "chhattisgarh__savings",
+   "label": "Savings deposits · Chhattisgarh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    65013.71,
+    73576.91,
+    80879.18,
+    94183,
+    104153.95,
+    114356.87,
+    122880.02,
+    126701.67
+   ]
+  },
+  "dadra_and_nagar_haveli__savings": {
+   "name": "dadra_and_nagar_haveli__savings",
+   "label": "Savings deposits · Dadra & Nagar Haveli",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    2015.21,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "dadra_and_nagar_haveli_and_daman_and_diu__savings": {
+   "name": "dadra_and_nagar_haveli_and_daman_and_diu__savings",
+   "label": "Savings deposits · Dadra and Nagar Haveli and Daman and Diu",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    null,
+    4487.86,
+    4975.93,
+    5950.92,
+    6320.27,
+    6625.78,
+    7226,
+    7402.95
+   ]
+  },
+  "daman_and_diu__savings": {
+   "name": "daman_and_diu__savings",
+   "label": "Savings deposits · Daman & Diu",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    1968.52,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "goa__savings": {
+   "name": "goa__savings",
+   "label": "Savings deposits · Goa",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    18950.04,
+    20757.41,
+    23692.43,
+    27237.51,
+    28890.29,
+    30485.61,
+    32400.03,
+    35193.5
+   ]
+  },
+  "gujarat__savings": {
+   "name": "gujarat__savings",
+   "label": "Savings deposits · Gujarat",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    222766.59,
+    242435.68,
+    280181.79,
+    327836.87,
+    352419.14,
+    381776.1,
+    398657.08,
+    435974.16
+   ]
+  },
+  "haryana__savings": {
+   "name": "haryana__savings",
+   "label": "Savings deposits · Haryana",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    160427,
+    175353.92,
+    198456.42,
+    228868.1,
+    236586.37,
+    247192.52,
+    260214.27,
+    286368.89
+   ]
+  },
+  "himachal_pradesh__savings": {
+   "name": "himachal_pradesh__savings",
+   "label": "Savings deposits · Himachal Pradesh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    34551.34,
+    36997.41,
+    40966.2,
+    47483.31,
+    51156.01,
+    51088.82,
+    53789.22,
+    55600.09
+   ]
+  },
+  "jammu_and_kashmir__savings": {
+   "name": "jammu_and_kashmir__savings",
+   "label": "Savings deposits · Jammu & Kashmir",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    48143.51,
+    53199.99,
+    61663.76,
+    65650.42,
+    67968.48,
+    69511.63,
+    70860.01,
+    76521.82
+   ]
+  },
+  "jharkhand__savings": {
+   "name": "jharkhand__savings",
+   "label": "Savings deposits · Jharkhand",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    84950.62,
+    92284.74,
+    104353.05,
+    120203.84,
+    129353.7,
+    138171.97,
+    148550.46,
+    160434.36
+   ]
+  },
+  "karnataka__savings": {
+   "name": "karnataka__savings",
+   "label": "Savings deposits · Karnataka",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    281467.54,
+    319042.86,
+    427830.08,
+    442829.87,
+    462493.12,
+    486283.71,
+    503768.3,
+    580955.61
+   ]
+  },
+  "kerala__savings": {
+   "name": "kerala__savings",
+   "label": "Savings deposits · Kerala",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    154232.87,
+    164833.48,
+    194513.76,
+    230382.51,
+    229264.43,
+    233407.8,
+    245000.92,
+    280751
+   ]
+  },
+  "ladakh__savings": {
+   "name": "ladakh__savings",
+   "label": "Savings deposits · Ladakh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    2429.91,
+    2890.57,
+    3694.89,
+    3978.99,
+    3803.47,
+    3994.73,
+    4301.34
+   ]
+  },
+  "lakshadweep__savings": {
+   "name": "lakshadweep__savings",
+   "label": "Savings deposits · Lakshadweep",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    825.25,
+    862.43,
+    1003.6,
+    989.33,
+    1041.22,
+    1052.59,
+    1058.9,
+    1148.44
+   ]
+  },
+  "madhya_pradesh__savings": {
+   "name": "madhya_pradesh__savings",
+   "label": "Savings deposits · Madhya Pradesh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    149899.69,
+    157641.48,
+    190292.66,
+    222444.64,
+    230908.48,
+    250427.51,
+    262702.02,
+    281770.33
+   ]
+  },
+  "maharashtra__savings": {
+   "name": "maharashtra__savings",
+   "label": "Savings deposits · Maharashtra",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    505738.57,
+    575323.81,
+    731607.46,
+    780491.92,
+    807298.36,
+    872695,
+    914035.53,
+    1019229.4
+   ]
+  },
+  "manipur__savings": {
+   "name": "manipur__savings",
+   "label": "Savings deposits · Manipur",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    5125.43,
+    5787.5,
+    6975.86,
+    8393.81,
+    9527.08,
+    9411.68,
+    10459.37,
+    10831.78
+   ]
+  },
+  "meghalaya__savings": {
+   "name": "meghalaya__savings",
+   "label": "Savings deposits · Meghalaya",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    9759.7,
+    11175.85,
+    11934.23,
+    14538.76,
+    15621.67,
+    16580.92,
+    17227.26,
+    17076.13
+   ]
+  },
+  "mizoram__savings": {
+   "name": "mizoram__savings",
+   "label": "Savings deposits · Mizoram",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    4968.21,
+    5893.33,
+    6429.93,
+    7133.84,
+    8175.78,
+    8617.12,
+    9018.75,
+    10113.71
+   ]
+  },
+  "nagaland__savings": {
+   "name": "nagaland__savings",
+   "label": "Savings deposits · Nagaland",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    4738.73,
+    5409.82,
+    5447.54,
+    7237.01,
+    8143.53,
+    8520.86,
+    8601.76,
+    8225.85
+   ]
+  },
+  "nct_of_delhi__savings": {
+   "name": "nct_of_delhi__savings",
+   "label": "Savings deposits · Delhi",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    248043.04,
+    279321.12,
+    319560.55,
+    364092.91,
+    367707.42,
+    388877.21,
+    408985.19,
+    451545.8
+   ]
+  },
+  "odisha__savings": {
+   "name": "odisha__savings",
+   "label": "Savings deposits · Odisha",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    117581.29,
+    132434.39,
+    138132.79,
+    166207.11,
+    181408.3,
+    197073.29,
+    210122.51,
+    228549.71
+   ]
+  },
+  "puducherry__savings": {
+   "name": "puducherry__savings",
+   "label": "Savings deposits · Puducherry",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    6276.14,
+    6887.11,
+    7837.71,
+    9332.4,
+    9734.52,
+    10450.09,
+    10604.39,
+    11850.44
+   ]
+  },
+  "punjab__savings": {
+   "name": "punjab__savings",
+   "label": "Savings deposits · Punjab",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    143179.13,
+    151508.14,
+    173447.38,
+    205594.66,
+    218236.7,
+    221555.21,
+    232040.73,
+    252504.79
+   ]
+  },
+  "rajasthan__savings": {
+   "name": "rajasthan__savings",
+   "label": "Savings deposits · Rajasthan",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    159164.9,
+    172633.54,
+    199843.78,
+    234286.96,
+    251183.11,
+    269269.07,
+    284150.29,
+    308440.05
+   ]
+  },
+  "sikkim__savings": {
+   "name": "sikkim__savings",
+   "label": "Savings deposits · Sikkim",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    3424.01,
+    3540.67,
+    3870.92,
+    4945.19,
+    4803.26,
+    4752.17,
+    5001.38,
+    4811.6
+   ]
+  },
+  "tamil_nadu__savings": {
+   "name": "tamil_nadu__savings",
+   "label": "Savings deposits · Tamil Nadu",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    261060.11,
+    287515.29,
+    334812.66,
+    392883.11,
+    411105.89,
+    422375.83,
+    430810.06,
+    488567.71
+   ]
+  },
+  "telangana__savings": {
+   "name": "telangana__savings",
+   "label": "Savings deposits · Telangana",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    153146.86,
+    169173.41,
+    193409.53,
+    228735.93,
+    235964.79,
+    250312.88,
+    261304.64,
+    298832.68
+   ]
+  },
+  "tripura__savings": {
+   "name": "tripura__savings",
+   "label": "Savings deposits · Tripura",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    11121.84,
+    11731.45,
+    13224.57,
+    15037.16,
+    16559.42,
+    17035.21,
+    18689.14,
+    18986.85
+   ]
+  },
+  "uttar_pradesh__savings": {
+   "name": "uttar_pradesh__savings",
+   "label": "Savings deposits · Uttar Pradesh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    514108.76,
+    556919.49,
+    630484.26,
+    699251.04,
+    757271.15,
+    807320.12,
+    865388.77,
+    942847.46
+   ]
+  },
+  "uttarakhand__savings": {
+   "name": "uttarakhand__savings",
+   "label": "Savings deposits · Uttarakhand",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    53585.21,
+    58786.67,
+    66710.83,
+    77148.03,
+    83672.55,
+    89306.78,
+    95062.59,
+    102288.86
+   ]
+  },
+  "west_bengal__savings": {
+   "name": "west_bengal__savings",
+   "label": "Savings deposits · West Bengal",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    262957.6,
+    278193.01,
+    309001.37,
+    355670.31,
+    369002.66,
+    380899.85,
+    383838.23,
+    409186.57
+   ]
+  },
+  "andaman_and_nicobar_islands__term_accounts": {
+   "name": "andaman_and_nicobar_islands__term_accounts",
+   "label": "Term deposit accounts · Andaman & Nicobar Islands",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    94116,
+    93700,
+    89603,
+    97446,
+    108529,
+    119661,
+    127339,
+    142660
+   ]
+  },
+  "andhra_pradesh__term_accounts": {
+   "name": "andhra_pradesh__term_accounts",
+   "label": "Term deposit accounts · Andhra Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    8263569,
+    8269289,
+    8678056,
+    8438727,
+    8597815,
+    9007553,
+    9232021,
+    9055971
+   ]
+  },
+  "arunachal_pradesh__term_accounts": {
+   "name": "arunachal_pradesh__term_accounts",
+   "label": "Term deposit accounts · Arunachal Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    163795,
+    163192,
+    171895,
+    180012,
+    194025,
+    204548,
+    220606,
+    232623
+   ]
+  },
+  "assam__term_accounts": {
+   "name": "assam__term_accounts",
+   "label": "Term deposit accounts · Assam",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    3758522,
+    3805583,
+    3849811,
+    3785891,
+    3880368,
+    3915745,
+    4134967,
+    4289937
+   ]
+  },
+  "bihar__term_accounts": {
+   "name": "bihar__term_accounts",
+   "label": "Term deposit accounts · Bihar",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    9846252,
+    9745074,
+    10650455,
+    10726981,
+    8456044,
+    8746495,
+    8964896,
+    8774579
+   ]
+  },
+  "chandigarh__term_accounts": {
+   "name": "chandigarh__term_accounts",
+   "label": "Term deposit accounts · Chandigarh",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    1145570,
+    1178842,
+    1199417,
+    1176553,
+    1192565,
+    1247409,
+    1268194,
+    1284374
+   ]
+  },
+  "chhattisgarh__term_accounts": {
+   "name": "chhattisgarh__term_accounts",
+   "label": "Term deposit accounts · Chhattisgarh",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    4011180,
+    3731276,
+    3747668,
+    3654657,
+    3564751,
+    3825529,
+    4036474,
+    4019995
+   ]
+  },
+  "dadra_and_nagar_haveli__term_accounts": {
+   "name": "dadra_and_nagar_haveli__term_accounts",
+   "label": "Term deposit accounts · Dadra & Nagar Haveli",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    71392,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "dadra_and_nagar_haveli_and_daman_and_diu__term_accounts": {
+   "name": "dadra_and_nagar_haveli_and_daman_and_diu__term_accounts",
+   "label": "Term deposit accounts · Dadra and Nagar Haveli and Daman and Diu",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    186649,
+    191022,
+    187640,
+    196747,
+    205471,
+    215000,
+    222750
+   ]
+  },
+  "daman_and_diu__term_accounts": {
+   "name": "daman_and_diu__term_accounts",
+   "label": "Term deposit accounts · Daman & Diu",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    112132,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "goa__term_accounts": {
+   "name": "goa__term_accounts",
+   "label": "Term deposit accounts · Goa",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    1757587,
+    1795644,
+    1778745,
+    1772539,
+    1835656,
+    1895799,
+    1926565,
+    1949958
+   ]
+  },
+  "gujarat__term_accounts": {
+   "name": "gujarat__term_accounts",
+   "label": "Term deposit accounts · Gujarat",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    17758117,
+    18027776,
+    17937610,
+    17271485,
+    17689623,
+    18789987,
+    19463477,
+    19821007
+   ]
+  },
+  "haryana__term_accounts": {
+   "name": "haryana__term_accounts",
+   "label": "Term deposit accounts · Haryana",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    6809076,
+    7387730,
+    7661715,
+    7659443,
+    8134720,
+    8887269,
+    9346286,
+    9639397
+   ]
+  },
+  "himachal_pradesh__term_accounts": {
+   "name": "himachal_pradesh__term_accounts",
+   "label": "Term deposit accounts · Himachal Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    3079598,
+    3181259,
+    3237029,
+    3234470,
+    3364786,
+    3576785,
+    3666764,
+    3802844
+   ]
+  },
+  "jammu_and_kashmir__term_accounts": {
+   "name": "jammu_and_kashmir__term_accounts",
+   "label": "Term deposit accounts · Jammu & Kashmir",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    3084869,
+    3131143,
+    3207481,
+    3199716,
+    3291738,
+    3476293,
+    3652285,
+    3796226
+   ]
+  },
+  "jharkhand__term_accounts": {
+   "name": "jharkhand__term_accounts",
+   "label": "Term deposit accounts · Jharkhand",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    5640466,
+    5493213,
+    5657585,
+    5528347,
+    4898017,
+    5123586,
+    5360900,
+    5472671
+   ]
+  },
+  "karnataka__term_accounts": {
+   "name": "karnataka__term_accounts",
+   "label": "Term deposit accounts · Karnataka",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    17286081,
+    17982006,
+    17102009,
+    16926308,
+    18026737,
+    19025868,
+    19616124,
+    19507057
+   ]
+  },
+  "kerala__term_accounts": {
+   "name": "kerala__term_accounts",
+   "label": "Term deposit accounts · Kerala",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    9497152,
+    10022816,
+    9778726,
+    9993309,
+    10745962,
+    11757249,
+    12739862,
+    13441320
+   ]
+  },
+  "ladakh__term_accounts": {
+   "name": "ladakh__term_accounts",
+   "label": "Term deposit accounts · Ladakh",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    null,
+    61552,
+    69535,
+    68636,
+    70999,
+    78629,
+    88361,
+    94560
+   ]
+  },
+  "lakshadweep__term_accounts": {
+   "name": "lakshadweep__term_accounts",
+   "label": "Term deposit accounts · Lakshadweep",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    3859,
+    3769,
+    3502,
+    4454,
+    4317,
+    4481,
+    4636,
+    5052
+   ]
+  },
+  "madhya_pradesh__term_accounts": {
+   "name": "madhya_pradesh__term_accounts",
+   "label": "Term deposit accounts · Madhya Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    12248321,
+    11732115,
+    11374885,
+    11255211,
+    10714884,
+    11488693,
+    11921837,
+    11883524
+   ]
+  },
+  "maharashtra__term_accounts": {
+   "name": "maharashtra__term_accounts",
+   "label": "Term deposit accounts · Maharashtra",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    27307702,
+    29233528,
+    31373952,
+    31850307,
+    34937174,
+    36761021,
+    37923897,
+    38778120
+   ]
+  },
+  "manipur__term_accounts": {
+   "name": "manipur__term_accounts",
+   "label": "Term deposit accounts · Manipur",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    77742,
+    80592,
+    87152,
+    89159,
+    101090,
+    100827,
+    111453,
+    117703
+   ]
+  },
+  "meghalaya__term_accounts": {
+   "name": "meghalaya__term_accounts",
+   "label": "Term deposit accounts · Meghalaya",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    293333,
+    301445,
+    315702,
+    321192,
+    333784,
+    347308,
+    342003,
+    347395
+   ]
+  },
+  "mizoram__term_accounts": {
+   "name": "mizoram__term_accounts",
+   "label": "Term deposit accounts · Mizoram",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    55446,
+    60492,
+    65932,
+    67700,
+    74631,
+    81768,
+    88539,
+    94037
+   ]
+  },
+  "nagaland__term_accounts": {
+   "name": "nagaland__term_accounts",
+   "label": "Term deposit accounts · Nagaland",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    102137,
+    101003,
+    104141,
+    100960,
+    113656,
+    116451,
+    126002,
+    128714
+   ]
+  },
+  "nct_of_delhi__term_accounts": {
+   "name": "nct_of_delhi__term_accounts",
+   "label": "Term deposit accounts · Delhi",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    12261176,
+    12762960,
+    13073945,
+    12979354,
+    13567553,
+    14608453,
+    14918998,
+    14812643
+   ]
+  },
+  "odisha__term_accounts": {
+   "name": "odisha__term_accounts",
+   "label": "Term deposit accounts · Odisha",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    8131533,
+    7868997,
+    8217649,
+    8150883,
+    8118601,
+    8637276,
+    9076249,
+    8996912
+   ]
+  },
+  "puducherry__term_accounts": {
+   "name": "puducherry__term_accounts",
+   "label": "Term deposit accounts · Puducherry",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    350604,
+    371204,
+    368608,
+    359673,
+    372170,
+    406167,
+    423801,
+    446550
+   ]
+  },
+  "punjab__term_accounts": {
+   "name": "punjab__term_accounts",
+   "label": "Term deposit accounts · Punjab",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    8944640,
+    9223769,
+    9334843,
+    9291383,
+    9474530,
+    10143689,
+    10600236,
+    10906001
+   ]
+  },
+  "rajasthan__term_accounts": {
+   "name": "rajasthan__term_accounts",
+   "label": "Term deposit accounts · Rajasthan",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    9245630,
+    9883100,
+    10209265,
+    10307968,
+    10809644,
+    11624718,
+    12203584,
+    12503329
+   ]
+  },
+  "sikkim__term_accounts": {
+   "name": "sikkim__term_accounts",
+   "label": "Term deposit accounts · Sikkim",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    117555,
+    126921,
+    120268,
+    118463,
+    140506,
+    133739,
+    144351,
+    145531
+   ]
+  },
+  "tamil_nadu__term_accounts": {
+   "name": "tamil_nadu__term_accounts",
+   "label": "Term deposit accounts · Tamil Nadu",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    16778301,
+    17360414,
+    16564692,
+    16095086,
+    16250309,
+    17439940,
+    18066958,
+    18493070
+   ]
+  },
+  "telangana__term_accounts": {
+   "name": "telangana__term_accounts",
+   "label": "Term deposit accounts · Telangana",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    7091492,
+    6981234,
+    6974200,
+    6852511,
+    7136562,
+    7545086,
+    7895287,
+    8072700
+   ]
+  },
+  "tripura__term_accounts": {
+   "name": "tripura__term_accounts",
+   "label": "Term deposit accounts · Tripura",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    572887,
+    586245,
+    583025,
+    553893,
+    613048,
+    558396,
+    587583,
+    635909
+   ]
+  },
+  "uttar_pradesh__term_accounts": {
+   "name": "uttar_pradesh__term_accounts",
+   "label": "Term deposit accounts · Uttar Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    24937914,
+    25549670,
+    25946149,
+    25214585,
+    25847003,
+    27372347,
+    28444809,
+    29152756
+   ]
+  },
+  "uttarakhand__term_accounts": {
+   "name": "uttarakhand__term_accounts",
+   "label": "Term deposit accounts · Uttarakhand",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    3405796,
+    3510555,
+    3577625,
+    3597522,
+    3830803,
+    4068949,
+    4274223,
+    4404756
+   ]
+  },
+  "west_bengal__term_accounts": {
+   "name": "west_bengal__term_accounts",
+   "label": "Term deposit accounts · West Bengal",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    24113977,
+    23446179,
+    23315880,
+    22733717,
+    21936276,
+    22889391,
+    23501984,
+    23097462
+   ]
+  },
+  "andaman_and_nicobar_islands__term": {
+   "name": "andaman_and_nicobar_islands__term",
+   "label": "Term deposits · Andaman & Nicobar Islands",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    2213.09,
+    2590.92,
+    2485.3,
+    2406.41,
+    2653.23,
+    3290.15,
+    3896.55,
+    4879.23
+   ]
+  },
+  "andhra_pradesh__term": {
+   "name": "andhra_pradesh__term",
+   "label": "Term deposits · Andhra Pradesh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    158438.77,
+    173671.27,
+    187024.66,
+    189561.57,
+    220446.88,
+    254743.6,
+    292990.13,
+    328082.51
+   ]
+  },
+  "arunachal_pradesh__term": {
+   "name": "arunachal_pradesh__term",
+   "label": "Term deposits · Arunachal Pradesh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    6422.66,
+    6153.15,
+    7518.45,
+    7391.2,
+    8250.29,
+    9595.25,
+    10257.97,
+    12370.61
+   ]
+  },
+  "assam__term": {
+   "name": "assam__term",
+   "label": "Term deposits · Assam",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    62127.69,
+    69679.83,
+    72826.76,
+    75363.87,
+    80989.29,
+    93500.73,
+    109379.05,
+    117589.35
+   ]
+  },
+  "bihar__term": {
+   "name": "bihar__term",
+   "label": "Term deposits · Bihar",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    125118.94,
+    135738.1,
+    143370.81,
+    148297.09,
+    163900.54,
+    188841.61,
+    215230.03,
+    241751.68
+   ]
+  },
+  "chandigarh__term": {
+   "name": "chandigarh__term",
+   "label": "Term deposits · Chandigarh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    44788.94,
+    46810.88,
+    49882.25,
+    51256.41,
+    58737.01,
+    70340.26,
+    80542.05,
+    89371.07
+   ]
+  },
+  "chhattisgarh__term": {
+   "name": "chhattisgarh__term",
+   "label": "Term deposits · Chhattisgarh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    66561.67,
+    75228.34,
+    78100.14,
+    86269.13,
+    95967.27,
+    109703.58,
+    126332.38,
+    151981.56
+   ]
+  },
+  "dadra_and_nagar_haveli__term": {
+   "name": "dadra_and_nagar_haveli__term",
+   "label": "Term deposits · Dadra & Nagar Haveli",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    1504.58,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "dadra_and_nagar_haveli_and_daman_and_diu__term": {
+   "name": "dadra_and_nagar_haveli_and_daman_and_diu__term",
+   "label": "Term deposits · Dadra and Nagar Haveli and Daman and Diu",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    4526.93,
+    5578.13,
+    5957.29,
+    6190.65,
+    7614.03,
+    8237.83,
+    9045.67
+   ]
+  },
+  "daman_and_diu__term": {
+   "name": "daman_and_diu__term",
+   "label": "Term deposits · Daman & Diu",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    2743.61,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "goa__term": {
+   "name": "goa__term",
+   "label": "Term deposits · Goa",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    48949.61,
+    52572.65,
+    58280.15,
+    61296.89,
+    68270.49,
+    76653.56,
+    81953.24,
+    86943.77
+   ]
+  },
+  "gujarat__term": {
+   "name": "gujarat__term",
+   "label": "Term deposits · Gujarat",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    393040.62,
+    432497.52,
+    475563.61,
+    511432.99,
+    578107.32,
+    696747.57,
+    754504.21,
+    817866.73
+   ]
+  },
+  "haryana__term": {
+   "name": "haryana__term",
+   "label": "Term deposits · Haryana",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    212867.79,
+    257376.32,
+    291569.54,
+    326567.33,
+    394522.32,
+    466912.25,
+    546452.51,
+    622272.02
+   ]
+  },
+  "himachal_pradesh__term": {
+   "name": "himachal_pradesh__term",
+   "label": "Term deposits · Himachal Pradesh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    57796.09,
+    63212.97,
+    67538.51,
+    71800.18,
+    80635.39,
+    93869.2,
+    103488.46,
+    115916.4
+   ]
+  },
+  "jammu_and_kashmir__term": {
+   "name": "jammu_and_kashmir__term",
+   "label": "Term deposits · Jammu & Kashmir",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    57837.25,
+    62162.43,
+    67465.26,
+    73133.42,
+    80537.44,
+    91062.56,
+    103878.16,
+    116684.42
+   ]
+  },
+  "jharkhand__term": {
+   "name": "jharkhand__term",
+   "label": "Term deposits · Jharkhand",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    117592.57,
+    126822.4,
+    135307.35,
+    141628.84,
+    155980.36,
+    175586.87,
+    194386.17,
+    214432.92
+   ]
+  },
+  "karnataka__term": {
+   "name": "karnataka__term",
+   "label": "Term deposits · Karnataka",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    563802.31,
+    639200.4,
+    698882.78,
+    780778.62,
+    846980.11,
+    1011979.8,
+    1179273.59,
+    1330920.14
+   ]
+  },
+  "kerala__term": {
+   "name": "kerala__term",
+   "label": "Term deposits · Kerala",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    319186.36,
+    356941.01,
+    380637.82,
+    402555.68,
+    456969.4,
+    530007.59,
+    601136.25,
+    665295.07
+   ]
+  },
+  "ladakh__term": {
+   "name": "ladakh__term",
+   "label": "Term deposits · Ladakh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    null,
+    1901.14,
+    2233.15,
+    2557.17,
+    2854.56,
+    3382.74,
+    4186.27,
+    4694.92
+   ]
+  },
+  "lakshadweep__term": {
+   "name": "lakshadweep__term",
+   "label": "Term deposits · Lakshadweep",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    210.05,
+    207.03,
+    189.61,
+    173.21,
+    175.32,
+    264.59,
+    179.49,
+    410.56
+   ]
+  },
+  "madhya_pradesh__term": {
+   "name": "madhya_pradesh__term",
+   "label": "Term deposits · Madhya Pradesh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    193380.22,
+    212859.27,
+    234721.38,
+    252839.17,
+    280515.54,
+    327112.13,
+    367878.99,
+    429454.72
+   ]
+  },
+  "maharashtra__term": {
+   "name": "maharashtra__term",
+   "label": "Term deposits · Maharashtra",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    1724728.44,
+    1821817.41,
+    1956849.86,
+    2181941.27,
+    2524114.86,
+    3138268.17,
+    3573475.67,
+    4048491.49
+   ]
+  },
+  "manipur__term": {
+   "name": "manipur__term",
+   "label": "Term deposits · Manipur",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    2473.21,
+    2500.98,
+    2699.03,
+    2866.06,
+    3031.17,
+    3620.87,
+    4136.85,
+    5102.15
+   ]
+  },
+  "meghalaya__term": {
+   "name": "meghalaya__term",
+   "label": "Term deposits · Meghalaya",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    10573.61,
+    9426.29,
+    10499.27,
+    11469.21,
+    12444.13,
+    13873.47,
+    15822.62,
+    17035.33
+   ]
+  },
+  "mizoram__term": {
+   "name": "mizoram__term",
+   "label": "Term deposits · Mizoram",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    3156.22,
+    4137.84,
+    4549.78,
+    4835.15,
+    5541.43,
+    6195.2,
+    7438.33,
+    8703.08
+   ]
+  },
+  "nagaland__term": {
+   "name": "nagaland__term",
+   "label": "Term deposits · Nagaland",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    3895.82,
+    4138.73,
+    4392.13,
+    4421.04,
+    4497.3,
+    5283.65,
+    5777.54,
+    6578.95
+   ]
+  },
+  "nct_of_delhi__term": {
+   "name": "nct_of_delhi__term",
+   "label": "Term deposits · Delhi",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    835196,
+    824531.54,
+    904713.11,
+    950247.65,
+    1097275.37,
+    1248557.62,
+    1403127.22,
+    1542165.39
+   ]
+  },
+  "odisha__term": {
+   "name": "odisha__term",
+   "label": "Term deposits · Odisha",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    174179.63,
+    189741.93,
+    205025.59,
+    227632.03,
+    255696.42,
+    294934.55,
+    339038.73,
+    379718.29
+   ]
+  },
+  "puducherry__term": {
+   "name": "puducherry__term",
+   "label": "Term deposits · Puducherry",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    10665.84,
+    12151.63,
+    13118.55,
+    13689.24,
+    15106.24,
+    17912.78,
+    20318.3,
+    22345.76
+   ]
+  },
+  "punjab__term": {
+   "name": "punjab__term",
+   "label": "Term deposits · Punjab",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    219931.56,
+    242216.2,
+    265227.04,
+    281677.47,
+    317043.82,
+    365683.48,
+    408688.07,
+    457362.99
+   ]
+  },
+  "rajasthan__term": {
+   "name": "rajasthan__term",
+   "label": "Term deposits · Rajasthan",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    193326.63,
+    220491.8,
+    240989.08,
+    258051.54,
+    299739.41,
+    352836.59,
+    406641.87,
+    450165.93
+   ]
+  },
+  "sikkim__term": {
+   "name": "sikkim__term",
+   "label": "Term deposits · Sikkim",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    5449.85,
+    5801.11,
+    5971.16,
+    6394.99,
+    7827.08,
+    8683.69,
+    10144.01,
+    11770.02
+   ]
+  },
+  "tamil_nadu__term": {
+   "name": "tamil_nadu__term",
+   "label": "Term deposits · Tamil Nadu",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    463081.6,
+    527048.94,
+    572482.81,
+    611580.73,
+    672839,
+    787239.1,
+    885315.81,
+    1000235.46
+   ]
+  },
+  "telangana__term": {
+   "name": "telangana__term",
+   "label": "Term deposits · Telangana",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    249402.3,
+    270506.72,
+    304229.21,
+    329530.27,
+    373781.48,
+    452798.19,
+    512136.39,
+    564221.07
+   ]
+  },
+  "tripura__term": {
+   "name": "tripura__term",
+   "label": "Term deposits · Tripura",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    12225.87,
+    12922.09,
+    13380.83,
+    14041.45,
+    15267.87,
+    17537.04,
+    20300.1,
+    22758.32
+   ]
+  },
+  "uttar_pradesh__term": {
+   "name": "uttar_pradesh__term",
+   "label": "Term deposits · Uttar Pradesh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    456815.9,
+    517831.88,
+    566586.78,
+    602748.31,
+    689752.73,
+    822456.43,
+    925529.56,
+    1043376.51
+   ]
+  },
+  "uttarakhand__term": {
+   "name": "uttarakhand__term",
+   "label": "Term deposits · Uttarakhand",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    76159.47,
+    83341.75,
+    89713.73,
+    94073.53,
+    106442.04,
+    122261.47,
+    139255.7,
+    153242.06
+   ]
+  },
+  "west_bengal__term": {
+   "name": "west_bengal__term",
+   "label": "Term deposits · West Bengal",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    455579.91,
+    490280.34,
+    513989.23,
+    541988.14,
+    602552.95,
+    675067.7,
+    752489.3,
+    816385.33
+   ]
+  },
+  "andaman_and_nicobar_islands__total_accounts": {
+   "name": "andaman_and_nicobar_islands__total_accounts",
+   "label": "All deposit accounts · Andaman & Nicobar Islands",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    615681,
+    624585,
+    null,
+    null,
+    null,
+    670742,
+    686486,
+    702018
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "andhra_pradesh__total_accounts": {
+   "name": "andhra_pradesh__total_accounts",
+   "label": "All deposit accounts · Andhra Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    91670674,
+    92229340,
+    null,
+    null,
+    null,
+    101659953,
+    102284458,
+    104248567
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "arunachal_pradesh__total_accounts": {
+   "name": "arunachal_pradesh__total_accounts",
+   "label": "All deposit accounts · Arunachal Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    1548936,
+    1668551,
+    null,
+    null,
+    null,
+    2217677,
+    2291203,
+    2332390
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "assam__total_accounts": {
+   "name": "assam__total_accounts",
+   "label": "All deposit accounts · Assam",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    41005351,
+    44199128,
+    null,
+    null,
+    null,
+    57741399,
+    56722733,
+    58034694
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "bihar__total_accounts": {
+   "name": "bihar__total_accounts",
+   "label": "All deposit accounts · Bihar",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    125866480,
+    134966208,
+    null,
+    null,
+    null,
+    159765676,
+    162726162,
+    170373983
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "chandigarh__total_accounts": {
+   "name": "chandigarh__total_accounts",
+   "label": "All deposit accounts · Chandigarh",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    4185926,
+    4354455,
+    null,
+    null,
+    null,
+    4979675,
+    4659797,
+    4638469
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "chhattisgarh__total_accounts": {
+   "name": "chhattisgarh__total_accounts",
+   "label": "All deposit accounts · Chhattisgarh",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    39671833,
+    40993071,
+    null,
+    null,
+    null,
+    46889681,
+    46728420,
+    47735895
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "dadra_and_nagar_haveli__total_accounts": {
+   "name": "dadra_and_nagar_haveli__total_accounts",
+   "label": "All deposit accounts · Dadra & Nagar Haveli",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    864261,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "dadra_and_nagar_haveli_and_daman_and_diu__total_accounts": {
+   "name": "dadra_and_nagar_haveli_and_daman_and_diu__total_accounts",
+   "label": "All deposit accounts · Dadra and Nagar Haveli and Daman and Diu",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    null,
+    1570839,
+    null,
+    null,
+    null,
+    1834367,
+    1860304,
+    1847658
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "daman_and_diu__total_accounts": {
+   "name": "daman_and_diu__total_accounts",
+   "label": "All deposit accounts · Daman & Diu",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    618720,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "goa__total_accounts": {
+   "name": "goa__total_accounts",
+   "label": "All deposit accounts · Goa",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    5782595,
+    5976224,
+    null,
+    null,
+    null,
+    6482438,
+    6540763,
+    6553573
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "gujarat__total_accounts": {
+   "name": "gujarat__total_accounts",
+   "label": "All deposit accounts · Gujarat",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    98768872,
+    103155310,
+    null,
+    null,
+    null,
+    120706719,
+    123953625,
+    125436644
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "haryana__total_accounts": {
+   "name": "haryana__total_accounts",
+   "label": "All deposit accounts · Haryana",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    51270033,
+    54161437,
+    null,
+    null,
+    null,
+    118173995,
+    120819052,
+    119888963
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "himachal_pradesh__total_accounts": {
+   "name": "himachal_pradesh__total_accounts",
+   "label": "All deposit accounts · Himachal Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    13464595,
+    14095312,
+    null,
+    null,
+    null,
+    16792035,
+    16101198,
+    16384648
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "jammu_and_kashmir__total_accounts": {
+   "name": "jammu_and_kashmir__total_accounts",
+   "label": "All deposit accounts · Jammu & Kashmir",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    21661174,
+    21618009,
+    null,
+    null,
+    null,
+    24694024,
+    24958359,
+    24912142
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "jharkhand__total_accounts": {
+   "name": "jharkhand__total_accounts",
+   "label": "All deposit accounts · Jharkhand",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    45663953,
+    47965103,
+    null,
+    null,
+    null,
+    57397687,
+    58596877,
+    59983040
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "karnataka__total_accounts": {
+   "name": "karnataka__total_accounts",
+   "label": "All deposit accounts · Karnataka",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    125117732,
+    132963226,
+    null,
+    null,
+    null,
+    148103436,
+    151122370,
+    155624782
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "kerala__total_accounts": {
+   "name": "kerala__total_accounts",
+   "label": "All deposit accounts · Kerala",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    73495187,
+    76371710,
+    null,
+    null,
+    null,
+    94434672,
+    95200845,
+    94048808
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "ladakh__total_accounts": {
+   "name": "ladakh__total_accounts",
+   "label": "All deposit accounts · Ladakh",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    540541,
+    null,
+    null,
+    null,
+    645232,
+    681343,
+    691284
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "lakshadweep__total_accounts": {
+   "name": "lakshadweep__total_accounts",
+   "label": "All deposit accounts · Lakshadweep",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    100606,
+    102342,
+    null,
+    null,
+    null,
+    95790,
+    99960,
+    104102
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "madhya_pradesh__total_accounts": {
+   "name": "madhya_pradesh__total_accounts",
+   "label": "All deposit accounts · Madhya Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    105532190,
+    110583441,
+    null,
+    null,
+    null,
+    133314358,
+    134849940,
+    137532880
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "maharashtra__total_accounts": {
+   "name": "maharashtra__total_accounts",
+   "label": "All deposit accounts · Maharashtra",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    197887425,
+    211184851,
+    null,
+    null,
+    null,
+    267519063,
+    277626455,
+    267979795
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "manipur__total_accounts": {
+   "name": "manipur__total_accounts",
+   "label": "All deposit accounts · Manipur",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    2743213,
+    2896180,
+    null,
+    null,
+    null,
+    3661460,
+    3547022,
+    3575179
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "meghalaya__total_accounts": {
+   "name": "meghalaya__total_accounts",
+   "label": "All deposit accounts · Meghalaya",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    2840817,
+    2995065,
+    null,
+    null,
+    null,
+    3687269,
+    3788961,
+    3904988
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "mizoram__total_accounts": {
+   "name": "mizoram__total_accounts",
+   "label": "All deposit accounts · Mizoram",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    1416119,
+    1490844,
+    null,
+    null,
+    null,
+    1759105,
+    1767141,
+    1801133
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "nagaland__total_accounts": {
+   "name": "nagaland__total_accounts",
+   "label": "All deposit accounts · Nagaland",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    1479138,
+    1571267,
+    null,
+    null,
+    null,
+    1914326,
+    1995571,
+    2001299
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "nct_of_delhi__total_accounts": {
+   "name": "nct_of_delhi__total_accounts",
+   "label": "All deposit accounts · Delhi",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    50850314,
+    53149594,
+    null,
+    null,
+    null,
+    152815310,
+    177585837,
+    194147526
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "odisha__total_accounts": {
+   "name": "odisha__total_accounts",
+   "label": "All deposit accounts · Odisha",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    62128831,
+    65762478,
+    null,
+    null,
+    null,
+    81616282,
+    83010308,
+    84729417
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "puducherry__total_accounts": {
+   "name": "puducherry__total_accounts",
+   "label": "All deposit accounts · Puducherry",
+   "group": "State",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    2830751,
+    3034786,
+    null,
+    null,
+    null,
+    3567357,
+    3527876,
+    3531727
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "punjab__total_accounts": {
+   "name": "punjab__total_accounts",
+   "label": "All deposit accounts · Punjab",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    59582908,
+    62079607,
+    null,
+    null,
+    null,
+    76466367,
+    71719654,
+    72439198
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "rajasthan__total_accounts": {
+   "name": "rajasthan__total_accounts",
+   "label": "All deposit accounts · Rajasthan",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    91436253,
+    96474388,
+    null,
+    null,
+    null,
+    120702553,
+    120090026,
+    124209650
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "sikkim__total_accounts": {
+   "name": "sikkim__total_accounts",
+   "label": "All deposit accounts · Sikkim",
+   "group": "State",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    1030769,
+    1094265,
+    null,
+    null,
+    null,
+    1274785,
+    1317684,
+    1302526
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "tamil_nadu__total_accounts": {
+   "name": "tamil_nadu__total_accounts",
+   "label": "All deposit accounts · Tamil Nadu",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    141073289,
+    150024247,
+    null,
+    null,
+    null,
+    173548102,
+    171538879,
+    172694810
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "telangana__total_accounts": {
+   "name": "telangana__total_accounts",
+   "label": "All deposit accounts · Telangana",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    68060069,
+    69524662,
+    null,
+    null,
+    null,
+    80808682,
+    82690243,
+    85822922
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "tripura__total_accounts": {
+   "name": "tripura__total_accounts",
+   "label": "All deposit accounts · Tripura",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    5381675,
+    5563642,
+    null,
+    null,
+    null,
+    6087440,
+    6108469,
+    6819249
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "uttar_pradesh__total_accounts": {
+   "name": "uttar_pradesh__total_accounts",
+   "label": "All deposit accounts · Uttar Pradesh",
+   "group": "State",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    270239353,
+    281156529,
+    null,
+    null,
+    null,
+    369115511,
+    366591192,
+    373404929
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "uttarakhand__total_accounts": {
+   "name": "uttarakhand__total_accounts",
+   "label": "All deposit accounts · Uttarakhand",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    19457870,
+    20252707,
+    null,
+    null,
+    null,
+    24285000,
+    23705063,
+    24220992
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "west_bengal__total_accounts": {
+   "name": "west_bengal__total_accounts",
+   "label": "All deposit accounts · West Bengal",
+   "group": "State",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    147376054,
+    152653530,
+    null,
+    null,
+    null,
+    186945284,
+    185799864,
+    190796561
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "andaman_and_nicobar_islands__total": {
+   "name": "andaman_and_nicobar_islands__total",
+   "label": "All deposits · Andaman & Nicobar Islands",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    5185.83,
+    5811.13,
+    null,
+    null,
+    null,
+    7745.68,
+    8549.05,
+    9560.46
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "andhra_pradesh__total": {
+   "name": "andhra_pradesh__total",
+   "label": "All deposits · Andhra Pradesh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    300451.81,
+    324872.71,
+    null,
+    null,
+    null,
+    480579.69,
+    529673.33,
+    603093.45
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "arunachal_pradesh__total": {
+   "name": "arunachal_pradesh__total",
+   "label": "All deposits · Arunachal Pradesh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    16658.77,
+    17170.78,
+    null,
+    null,
+    null,
+    29204.66,
+    33113.54,
+    36137.15
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "assam__total": {
+   "name": "assam__total",
+   "label": "All deposits · Assam",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    147091.12,
+    164298.56,
+    null,
+    null,
+    null,
+    220474.3,
+    234070,
+    248135.04
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "bihar__total": {
+   "name": "bihar__total",
+   "label": "All deposits · Bihar",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    353168.81,
+    375706.7,
+    null,
+    null,
+    null,
+    524251.05,
+    568726.16,
+    622055.54
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "chandigarh__total": {
+   "name": "chandigarh__total",
+   "label": "All deposits · Chandigarh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    68300.27,
+    72551.97,
+    null,
+    null,
+    null,
+    114088.58,
+    126595.76,
+    132890.62
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "chhattisgarh__total": {
+   "name": "chhattisgarh__total",
+   "label": "All deposits · Chhattisgarh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    142655.68,
+    160542.09,
+    null,
+    null,
+    null,
+    243955.17,
+    268160.66,
+    300808.56
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "dadra_and_nagar_haveli__total": {
+   "name": "dadra_and_nagar_haveli__total",
+   "label": "All deposits · Dadra & Nagar Haveli",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    3994.18,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "dadra_and_nagar_haveli_and_daman_and_diu__total": {
+   "name": "dadra_and_nagar_haveli_and_daman_and_diu__total",
+   "label": "All deposits · Dadra and Nagar Haveli and Daman and Diu",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    null,
+    9978.85,
+    null,
+    null,
+    null,
+    15654.5,
+    16964.99,
+    18127.79
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "daman_and_diu__total": {
+   "name": "daman_and_diu__total",
+   "label": "All deposits · Daman & Diu",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    5054.9,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "goa__total": {
+   "name": "goa__total",
+   "label": "All deposits · Goa",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    71135.31,
+    76533.17,
+    null,
+    null,
+    null,
+    112021.36,
+    120662.36,
+    128861.52
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "gujarat__total": {
+   "name": "gujarat__total",
+   "label": "All deposits · Gujarat",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    674921.56,
+    738912.25,
+    null,
+    null,
+    null,
+    1195365.01,
+    1273071.9,
+    1393771.15
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "haryana__total": {
+   "name": "haryana__total",
+   "label": "All deposits · Haryana",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    409974.45,
+    475351.63,
+    null,
+    null,
+    null,
+    788798.22,
+    888771.57,
+    1003433.79
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "himachal_pradesh__total": {
+   "name": "himachal_pradesh__total",
+   "label": "All deposits · Himachal Pradesh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    95529.46,
+    103544.61,
+    null,
+    null,
+    null,
+    150334.42,
+    162530.58,
+    176893.65
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "jammu_and_kashmir__total": {
+   "name": "jammu_and_kashmir__total",
+   "label": "All deposits · Jammu & Kashmir",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    118121.76,
+    128025.5,
+    null,
+    null,
+    null,
+    175966.81,
+    191981.82,
+    211593.34
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "jharkhand__total": {
+   "name": "jharkhand__total",
+   "label": "All deposits · Jharkhand",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    218584.69,
+    234105.51,
+    null,
+    null,
+    null,
+    336723.93,
+    367362.18,
+    402558.6
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "karnataka__total": {
+   "name": "karnataka__total",
+   "label": "All deposits · Karnataka",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    934363.56,
+    1061241.88,
+    null,
+    null,
+    null,
+    1682410.99,
+    1888707.73,
+    2150148.98
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "kerala__total": {
+   "name": "kerala__total",
+   "label": "All deposits · Kerala",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    495761.76,
+    545023.8,
+    null,
+    null,
+    null,
+    803411.09,
+    894854.76,
+    1000985.86
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "ladakh__total": {
+   "name": "ladakh__total",
+   "label": "All deposits · Ladakh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    4954.84,
+    null,
+    null,
+    null,
+    8847.77,
+    9884.97,
+    10950.24
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "lakshadweep__total": {
+   "name": "lakshadweep__total",
+   "label": "All deposits · Lakshadweep",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    1095.58,
+    1114.62,
+    null,
+    null,
+    null,
+    1531.57,
+    1540.25,
+    1887.7
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "madhya_pradesh__total": {
+   "name": "madhya_pradesh__total",
+   "label": "All deposits · Madhya Pradesh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    368951.15,
+    396778.93,
+    null,
+    null,
+    null,
+    617814.2,
+    673476.25,
+    758989.95
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "maharashtra__total": {
+   "name": "maharashtra__total",
+   "label": "All deposits · Maharashtra",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    2607844.9,
+    2807751.02,
+    null,
+    null,
+    null,
+    4667846.79,
+    5233966.14,
+    5888416.06
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "manipur__total": {
+   "name": "manipur__total",
+   "label": "All deposits · Manipur",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    9927.14,
+    10368.83,
+    null,
+    null,
+    null,
+    15669.12,
+    16805.73,
+    18564.04
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "meghalaya__total": {
+   "name": "meghalaya__total",
+   "label": "All deposits · Meghalaya",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    24063.4,
+    23755.98,
+    null,
+    null,
+    null,
+    34372.13,
+    37778.89,
+    38857.1
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "mizoram__total": {
+   "name": "mizoram__total",
+   "label": "All deposits · Mizoram",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    9254.94,
+    11332.2,
+    null,
+    null,
+    null,
+    15713.36,
+    17462.25,
+    20097.95
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "nagaland__total": {
+   "name": "nagaland__total",
+   "label": "All deposits · Nagaland",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    11182.86,
+    12242.24,
+    null,
+    null,
+    null,
+    17135.07,
+    18789.02,
+    19642.91
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "nct_of_delhi__total": {
+   "name": "nct_of_delhi__total",
+   "label": "All deposits · Delhi",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    1210108.36,
+    1238244.51,
+    null,
+    null,
+    null,
+    1855609.45,
+    2071013.29,
+    2239351.96
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "odisha__total": {
+   "name": "odisha__total",
+   "label": "All deposits · Odisha",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    309553.82,
+    341140.19,
+    null,
+    null,
+    null,
+    522543.06,
+    583925.11,
+    644120.22
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "puducherry__total": {
+   "name": "puducherry__total",
+   "label": "All deposits · Puducherry",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    17817.86,
+    20042.61,
+    null,
+    null,
+    null,
+    30226.01,
+    32927.41,
+    36486.98
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "punjab__total": {
+   "name": "punjab__total",
+   "label": "All deposits · Punjab",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    379577,
+    410987.01,
+    null,
+    null,
+    null,
+    617488.86,
+    668830.09,
+    740541.98
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "rajasthan__total": {
+   "name": "rajasthan__total",
+   "label": "All deposits · Rajasthan",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    379007.91,
+    420149.69,
+    null,
+    null,
+    null,
+    670969.96,
+    741436.44,
+    812887.57
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "sikkim__total": {
+   "name": "sikkim__total",
+   "label": "All deposits · Sikkim",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    9632.15,
+    10129.91,
+    null,
+    null,
+    null,
+    14748.11,
+    16290.3,
+    17709.97
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "tamil_nadu__total": {
+   "name": "tamil_nadu__total",
+   "label": "All deposits · Tamil Nadu",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    798738.42,
+    899037.53,
+    null,
+    null,
+    null,
+    1344553.3,
+    1463026.35,
+    1657773.11
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "telangana__total": {
+   "name": "telangana__total",
+   "label": "All deposits · Telangana",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    458580.76,
+    498183.98,
+    null,
+    null,
+    null,
+    788090.75,
+    867570.84,
+    972821.54
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "tripura__total": {
+   "name": "tripura__total",
+   "label": "All deposits · Tripura",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    24880.04,
+    26486.64,
+    null,
+    null,
+    null,
+    37109.03,
+    42139.65,
+    44826.77
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "uttar_pradesh__total": {
+   "name": "uttar_pradesh__total",
+   "label": "All deposits · Uttar Pradesh",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    1041506.65,
+    1144902.06,
+    null,
+    null,
+    null,
+    1745806.75,
+    1909884.77,
+    2122713.92
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "uttarakhand__total": {
+   "name": "uttarakhand__total",
+   "label": "All deposits · Uttarakhand",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    137040.36,
+    149549.32,
+    null,
+    null,
+    null,
+    222834.81,
+    246009.77,
+    268430.61
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "west_bengal__total": {
+   "name": "west_bengal__total",
+   "label": "All deposits · West Bengal",
+   "group": "State",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    779291.28,
+    827831.79,
+    null,
+    null,
+    null,
+    1143462.52,
+    1225284.48,
+    1322140.2
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  }
+ }
+}
