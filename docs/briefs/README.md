@@ -33,6 +33,15 @@ The owner (Bhuvanesh) follows along from a phone. Keep your status file readable
   `executablePath: '/usr/bin/google-chrome'`. Install it in a scratch directory outside
   the repo, never into the repo's `package.json`.
 
+## Disk (one machine, many sessions)
+
+The machine's disk filled once (2026-10-10, 00:10) with several sessions building at once.
+Delete your `dist/` after each check (about 700 MB per build; rebuildable), keep
+`data/raw/http-cache` trimmed to what you still need, hard-link or stream large files rather
+than copying them, and stage anything archive-sized in `data/archive/staging/<family>/`. If
+a write fails with ENOSPC, message the coordinator; never delete anything outside your
+worktree.
+
 ## Files you own, files you share
 
 - **Own** (create freely): everything named for your slug: `data/series/<slug>-*.json`,
