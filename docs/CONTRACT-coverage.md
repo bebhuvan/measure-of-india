@@ -73,6 +73,24 @@ rules:
 `bundle` may be a list. Optional `series` (a list of series keys) is checked against the
 bundle when given.
 
+## Deep-archive candidates
+
+Some sources publish a finer grain than a chart bundle can carry (district x occupation x
+bank group, ILO three-way survey cubes, state x month climate cuts): millions of rows. They
+are neither dropped nor forced into `data/series/`. A rule marks them
+
+```yaml
+  - match: "bsr1:1220:*"
+    status: excluded
+    archive: true
+    rolls_up_to: [credit-district-bankgroup]
+    reason: "Published by RBI at district x bank group x population group x occupation; 3.3m rows, too large for a chart bundle. Held for the deep-archive tier; district x bank group is baked."
+```
+
+and the deep-archive builder (to come, hosting is the owner's decision) publishes every
+`archive: true` rule as compressed downloads listed in a committed manifest. The gate checks
+that `rolls_up_to` names baked bundles.
+
 ## What the gate checks
 
 `node scripts/coverage.mjs` (and `npm run gates`):

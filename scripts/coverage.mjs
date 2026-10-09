@@ -64,6 +64,13 @@ for (const file of ledgers) {
       fail(`${tag}: ${r.status} needs a reason a reader would accept (a sentence, not a word)`);
     if (r.status === "pending" && !(typeof r.scheduled === "string" && r.scheduled.trim()))
       fail(`${tag}: pending needs \`scheduled\`: the work item that will decide it (e.g. "wave 2: prices deeper")`);
+    // deep-archive candidates (PLAN-launch §2): finer grain held out of the chart bundles;
+    // must name the baked bundle(s) carrying the coarser cut it rolls up to
+    if (r.archive === true) {
+      if (r.status !== "excluded") fail(`${tag}: archive: true goes with status excluded (held for the deep-archive tier)`);
+      if (!asList(r.rolls_up_to).length) fail(`${tag}: archive: true needs rolls_up_to: the baked bundle(s) with the coarser cut`);
+      for (const slug of asList(r.rolls_up_to)) if (!bundle(slug)) fail(`${tag}: rolls_up_to bundle ${slug} not in data/series/`);
+    }
     for (const slug of asList(r.bundle)) {
       const b = bundle(slug);
       if (!b) { fail(`${tag}: bundle ${slug} not in data/series/`); continue; }
