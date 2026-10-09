@@ -1003,6 +1003,23 @@ dossiers:
     ranges:
       inr_lakh_crore: [0, 400]
 
+  # --- states (state economies) ---------------------------------------------
+  states:
+    # regression floor: the newest year any state reports (2025-26 for 16 states)
+    stale_after: "2025-04"
+    family: mospi
+    # also reads the RBI Handbook of Statistics on Indian States, every table, from the
+    # databank family (read-only). Its SDP tables carry meta.dossier "states" (seams below);
+    # the rest carry meta.dossier "states-hbs", base "as published" (no ruler to change).
+    geo: IND
+    product: states
+    frequency: annual
+    base: "2011-12"
+    release_calendar: "irregular: each state's DES sends estimates to MoSPI as it makes them; MoSPI refreshes the regional tables a few times a year"
+    revision_policy: "Each year is the state's latest estimate; states revise at different times and the API carries no revision label. The newest year is usually an advance or quick estimate."
+    source_agency: "MoSPI, National Statistical Office (state estimates from each state's Directorate of Economics and Statistics)"
+    release_url: https://www.mospi.gov.in
+
 
 # ---------------------------------------------------------------------------
 # SEAMS: the base-year registry (2026-10). One entry per base (or
@@ -1107,3 +1124,13 @@ seams:
       from: "2025-04"
       to: null
       bundles: [isp]
+  # --- states: the SDP tables (MoSPI 2011-12; the RBI Handbook carries 2004-05 too) ---
+  states:
+    - base: "2004-05"
+      from: "2004-04"
+      to: "2014-04"
+      bundles: [states-hbs-t019-2004, states-hbs-t020-2004, states-hbs-t021-2004, states-hbs-t022-2004, states-hbs-t023-2004, states-hbs-t024-2004, states-hbs-t030-2004, states-hbs-t032-2004, states-hbs-t033-2004, states-hbs-t034-2004, states-hbs-t035-2004, states-hbs-t036-2004, states-hbs-t037-2004, states-hbs-t038-2004, states-hbs-t039-2004, states-hbs-t040-2004, states-hbs-t041-2004, states-hbs-t042-2004, states-hbs-t043-2004, states-hbs-t045-2004, states-hbs-t046-2004, states-hbs-t048-2004, states-hbs-t049-2004, states-hbs-t050-2004, states-hbs-t051-2004, states-hbs-t052-2004]
+    - base: "2011-12"
+      from: "2011-04"
+      to: null
+      bundles: [states-gsdp-current, states-gsdp-constant, states-nsdp-current, states-nsdp-constant, states-pcnsdp-current, states-pcnsdp-constant, states-pcgsdp-current, states-pcgsdp-constant, states-gsva-current, states-gsva-constant, states-nsva-current, states-nsva-constant, states-taxes-current, states-taxes-constant, states-growth-real, states-growth-nominal, states-structure, states-spread, states-industry-shares, states-finances, states-hbs-t019, states-hbs-t020, states-hbs-t021, states-hbs-t022, states-hbs-t023, states-hbs-t024, states-hbs-t025, states-hbs-t026, states-hbs-t027, states-hbs-t028, states-hbs-t029, states-hbs-t030, states-hbs-t031, states-hbs-t032, states-hbs-t033, states-hbs-t034, states-hbs-t035, states-hbs-t036, states-hbs-t037, states-hbs-t038, states-hbs-t039, states-hbs-t040, states-hbs-t041, states-hbs-t042, states-hbs-t043, states-hbs-t044, states-hbs-t045, states-hbs-t046, states-hbs-t047, states-hbs-t048, states-hbs-t049, states-hbs-t050, states-hbs-t051, states-hbs-t052]
