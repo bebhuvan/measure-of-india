@@ -103,4 +103,6 @@ Hard rules — breaking any of these is a bug regardless of what else works:
 
 Run `npm run gates` (after a build if you touched anything render-side).
 If you touched data or prose, run `npm run prose:dry` too. Do not commit
-unless asked. Never edit `data/raw/` by hand — it is the audit trail.
+unless asked. Never edit `data/raw/` by hand — it is the audit trail. Raw dumps
+over about 25 MB live in the Hugging Face deep archive instead, indexed by sha256 from
+`data/raw/` (docs/PLAN-launch.md §2b).

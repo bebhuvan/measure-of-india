@@ -1,0 +1,49 @@
+# Coverage ledger: India in the World Bank's Poverty and Inequality Platform (docs/CONTRACT-coverage.md).
+# One bundle per comparable spell of surveys (poverty-pip-<first year>) plus the lineup.
+# Measures not drawn on a plate are listed in the guide's "Every cut" tables and download from /data/.
+family: poverty
+guides: [poverty]
+catalogue: data/coverage/poverty.catalogue.json
+rules:
+  # drawn
+  - match: ["pip:survey:*:headcount:3_00", "pip:survey:*:headcount:4_20", "pip:survey:*:headcount:8_30"]
+    status: shown
+    bundle: [poverty-pip-1977, poverty-pip-1983, poverty-pip-1987, poverty-pip-1993, poverty-pip-2011, poverty-pip-2022]
+    plate: "§03 Every survey since 1977 (and §02 The line decides, §07 Why the numbers differ, for the latest survey)"
+  - match: "pip:survey:*:gini"
+    status: shown
+    bundle: [poverty-pip-1977, poverty-pip-1983, poverty-pip-1987, poverty-pip-1993, poverty-pip-2011, poverty-pip-2022]
+    plate: "§06 How unequal: the Gini index at every survey"
+  - match: "pip:survey:2022_2023:decile*"
+    status: shown
+    bundle: poverty-pip-2022
+    plate: "§06 How unequal: consumption by tenth"
+  - match: "pip:survey:2022_2023:spr"
+    status: shown
+    bundle: poverty-pip-2022
+    plate: "§07 Why the numbers differ"
+  - match: "pip:survey:*:reporting_pop"
+    status: shown
+    bundle: [poverty-pip-1977, poverty-pip-1983, poverty-pip-1987, poverty-pip-1993, poverty-pip-2011, poverty-pip-2022]
+    plate: "§05 How many, and how far below (counts = share x population)"
+  - match: "pip:lineup:headcount:3_00"
+    status: shown
+    bundle: poverty-pip-lineup
+    plate: "§04 A decade without a survey (and §03, pale)"
+  # baked: in the bundles, the Every cut tables and the downloads
+  - match: "pip:survey:*"
+    status: baked
+    bundle: [poverty-pip-1977, poverty-pip-1983, poverty-pip-1987, poverty-pip-1993, poverty-pip-2011, poverty-pip-2022]
+  - match: ["pip:lineup:headcount:4_20", "pip:lineup:headcount:8_30"]
+    status: baked
+    bundle: poverty-pip-lineup
+  # decided against
+  - match: "pip:lineup:distribution"
+    status: excluded
+    reason: "The lineup's Gini, median and decile shares are model interpolations of the whole distribution between surveys; the guide reports the distribution only where a survey measured it (the lineup mean is baked)."
+  - match: ["pip:level:rural", "pip:level:urban"]
+    status: excluded
+    reason: "PIP's current release (20260922) publishes no rural or urban estimate for India at any survey, checked 2026-10-09; the guide says so and links the consumption guide's rural and urban survey figures."
+  - match: "pip:aux:*"
+    status: excluded
+    reason: "These PIP tables are inputs to the World Bank's model (national accounts per head) or regional and global aggregates, not measures of India."

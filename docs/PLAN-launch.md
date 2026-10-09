@@ -70,7 +70,37 @@ the bundles, no client fetch) covers the long tail (all 358 CPI items, all HS ch
 all states). A reader can always get from the headline to the finest cut the source
 publishes.
 
-## 3. Sources and how each enters
+## 2b. The deep archive (owner's decision, 2026-10-09)
+
+Some sources publish a finer grain than a chart bundle can carry: RBI district and centre-wise
+credit tables (about 10 million rows), the ILO's three-way survey cubes (about 950,000 cells),
+climate cuts by state and month. They are neither dropped nor forced into `data/series/`.
+Ledger rules mark them `archive: true` with `rolls_up_to` (`docs/CONTRACT-coverage.md`).
+
+- **Host:** a public Hugging Face dataset, `huggingface.co/datasets/bebhuvan1/india-atlas-archive`
+  (the owner's account; uploads read `HF_TOKEN` from the git-ignored `.env`, a write token
+  checked 2026-10-09, never printed and never in the repo). Chosen over Cloudflare R2: free for public data, every upload is a commit (so
+  each data vintage is kept and citable, which fits rule 5), a table viewer for readers,
+  and a place researchers already look. The manifest makes an R2 mirror possible later.
+- **Format:** Parquet per cut (HF's viewer reads it), plus gzipped CSV for spreadsheet users.
+  Same long shape for every file: the cut's dimensions, date, value, unit, source, vintage.
+- **Manifest:** `data/archive/manifest.json`, committed: for each file, the ledger rule it
+  comes from, source, rows, sha256, vintage, the HF commit it was uploaded at, and the baked
+  bundle it rolls up to. The every-cut table links each `rolls_up_to` bundle to its archive
+  files.
+- **What lives where (decided 2026-10-09, when trade's tariff lines reached ~490 MB):** git
+  holds everything the site renders (the chart bundles) and every raw dump under about
+  25 MB. Heavier material goes to the archive: HS 6/8-digit trade, credit's district and
+  centre tables, ILO cubes, climate state-by-month cuts, and large raw audit-trail dumps.
+  It is staged in the git-ignored `data/archive/staging/<family>/`. A raw dump that moves
+  to the archive leaves a committed index in `data/raw/` (each call or file, its retrieval
+  time, sha256 and rows), so the audit trail stays verifiable from git (AGENTS.md hard
+  rule on `data/raw/` amended accordingly).
+- **Builder:** `scripts/archive.mjs` reads every `archive: true` rule, exports through the
+  family adapters' raw readers, writes locally (git-ignored), verifies row counts against the
+  catalogue, uploads, and updates the manifest. Run after the trade and credit families merge.
+
+
 
 | Transport | Used for | Reader | Status |
 |---|---|---|---|

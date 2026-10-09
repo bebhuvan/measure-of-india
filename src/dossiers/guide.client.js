@@ -100,3 +100,65 @@ if (MO) new MO((ms) => {
     else for (const n of m.addedNodes) n.nodeType === 1 ? tidyTree(n) : n.nodeType === 3 && !SKIP.has(n.parentElement?.tagName) && (n.nodeValue.includes(" · ") || n.nodeValue.includes(" — ")) && (n.nodeValue = tidy(n.nodeValue));
   }
 }).observe(document.body, { childList: true, subtree: true, characterData: true });
+
+/* ---------- phone plates open at today ----------
+ * On phones a plate's main plot keeps its authored width and scrolls sideways (DESIGN.md §3),
+ * and time runs left to right, so the latest period sits at the far right. A scrolling plot zone
+ * whose chart has TIME on its x axis therefore opens at its right end: after layout, and again
+ * whenever its size changes (fonts, rotation), until the reader scrolls it themselves. A quiet
+ * cue above the plot says there is more to the left, and goes once the reader reaches the start.
+ * Every other chart (horizontal bars, dot strips: category names sit on the left) keeps its
+ * left edge. The chart decides, not a list of plates: Plot's figure carries its own scales
+ * (plot.scale("x"), the hook addCrosshair uses too), and a time or utc x scale, or a band
+ * scale over dates, is time. A chart built by hand from several Plot panels declares data-x on
+ * its own SVG where it is built. The finding is written on the zone as data-x="time|other". */
+{
+  const zones = [...document.querySelectorAll(".plotzone")];
+  const touched = new WeakSet();
+  let programmatic = false;
+  const cueOf = new Map();
+  const cue = (z) => {
+    let c = cueOf.get(z);
+    if (!c) {
+      c = document.createElement("div");
+      c.className = "pz-cue"; c.hidden = true; c.setAttribute("aria-hidden", "true");
+      c.textContent = "← Earlier years";
+      z.before(c); cueOf.set(z, c);
+    }
+    return c;
+  };
+  const xKind = (z) => {
+    if (z.dataset.x) return z.dataset.x;
+    // a chart assembled by hand (several Plot panels in one SVG) declares data-x where it is built
+    const declared = z.querySelector("svg[data-x], figure[data-x]")?.getAttribute("data-x");
+    if (declared) return (z.dataset.x = declared === "time" ? "time" : "other");
+    const fig = [...z.querySelectorAll("figure, svg")].find((el) => typeof el.scale === "function" && el.scale("x"));
+    if (!fig) return "";   // not drawn yet (or not a Plot chart): decide on the next pass
+    const x = fig.scale("x");
+    const time = x.type === "time" || x.type === "utc"
+      || ((x.type === "band" || x.type === "point") && x.domain?.length && x.domain.every((v) => v instanceof Date));
+    return (z.dataset.x = time ? "time" : "other");
+  };
+  const update = (z) => {
+    if (xKind(z) !== "time") return;
+    const max = z.scrollWidth - z.clientWidth;
+    if (max <= 4) { if (cueOf.has(z)) cueOf.get(z).hidden = true; return; }
+    if (!touched.has(z)) { programmatic = true; z.scrollLeft = max; programmatic = false; }
+    cue(z).hidden = z.scrollLeft <= 4;
+  };
+  const all = () => zones.forEach(update);
+  for (const z of zones) {
+    z.addEventListener("scroll", () => {
+      if (!programmatic) touched.add(z);
+      if (cueOf.has(z)) cueOf.get(z).hidden = z.scrollLeft <= 4 || z.scrollWidth - z.clientWidth <= 4;
+    }, { passive: true });
+  }
+  if (typeof window !== "undefined") {
+    // after layout; jsdom (the qc gate) has no requestAnimationFrame, so fall back to a tick
+    const raf = window.requestAnimationFrame?.bind(window) ?? ((f) => setTimeout(f, 0));
+    if (document.readyState === "complete") raf(all);
+    else window.addEventListener("load", () => raf(all));
+    window.addEventListener("resize", all);
+    if (window.ResizeObserver) { const ro = new ResizeObserver(() => all()); zones.forEach((z) => ro.observe(z)); }
+  }
+}

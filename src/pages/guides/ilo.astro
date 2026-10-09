@@ -1,0 +1,782 @@
+---
+import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
+import EveryCut from "../../components/EveryCut.astro";
+import GuideData from "../../components/GuideData.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+import { load, pick, at, last, first, flagged, K, PEERS } from "../../dossiers/ilo.data.js";
+const D = bySlug["ilo"];
+
+// ---- the series the plates draw, embedded for the client (src/dossiers/ilo.data.js) ----
+const sexes = ["t", "m", "f"];
+const DATA = {
+  lfpr: pick("ilo-est-eap-2wap", sexes.map((s) => K.lfpr(s))),
+  ur: pick("ilo-est-une-2eap", [K.ur("t"), K.ur("t", "y15_24")]),
+  neet: pick("ilo-est-eip-2eet", [...sexes.map(K.neet), "eip_2eet_sex_nb__sex_t"]),
+  emp: pick("ilo-est-emp-2emp", [K.emp(), ...["total", "1", "2", "3", "5"].map(K.ste), ...["total", "agr", "ind", "ser"].map(K.eco), ...["total", "cat1", "cat2", "cat34"].map(K.cla)]),
+  proj: pick("ilo-est-projections", sexes.map((s) => K.lfpr(s))),
+  slfpr: pick("ilo-plfs-eap", [K.sLfpr("t"),
+    ...["y15_19", "y20_24", "y25_29", "y30_34", "y35_39", "y40_44", "y45_49", "y50_54", "y55_59", "y60_64", "yge65"].map((b) => K.sLfpr("f", "5yrbands_" + b)),
+    ...["ltb", "bas", "int", "adv"].map((e) => K.sLfprEdu("f", e)), ...["f", "m"].flatMap((s) => ["rur", "urb"].map((g) => K.sLfprGeo(s, g)))]),
+  nlfpr: pick("ilo-nss-eap", [K.sLfpr("t")]),
+  clfpr: pick("ilo-census", [K.sLfpr("t")]),
+  mospi: pick("plfs-annual", ["lfpr_psss", "lfpr_cws"]),
+  sur: pick("ilo-plfs-une", [K.sUr("t")]),
+  nur: pick("ilo-nss-une", [K.sUr("t")]),
+  sneet: pick("ilo-plfs-sdg", [K.sNeet("f")]),
+  nneet: pick("ilo-nss-more", [K.sNeet("f")]),
+  inf: pick("ilo-plfs-sdg", ["total", "agr", "ind", "ser"].map(K.sInf)),
+  lshare: pick("ilo-est-lap-2gdp", [K.lshare]),
+  ldist: pick("ilo-est-lap-2lid", Array.from({ length: 10 }, (_, i) => K.decile(i + 1))),
+  hours: pick("ilo-est-how-2emp", sexes.map(K.hours)),
+  earn: pick("ilo-plfs-ear", sexes.map(K.sEarn)),
+  gap: pick("ilo-plfs-ear", ["ear_ggap_ocu_rt__ocu_skill_total"]),
+  opw: pick("ilo-est-gdp-211p", [K.opw]),
+  ...Object.fromEntries(PEERS.map(([g]) => ["peer_" + g, pick("ilo-peer-" + g, [K.lfpr("f"), K.ur("t", "y15_24"), K.neet("t"), K.ste("total"), K.ste("3"), K.ste("5"), K.opw])])),
+};
+
+// ---- figures named in the copy, read from the bundles at build time ----
+const f1 = (v) => v.toFixed(1);
+const E = "ilo-est-eap-2wap";
+const estYear = last(E, K.lfpr("t")).year;                      // the edition's last estimated year
+const edition = load(E).meta.edition;                            // "ILO modelled estimates, Nov. 2025"
+const urReal = flagged("ilo-est-une-2eap", K.ur("t"), "R");
+const lfprReal = flagged(E, K.lfpr("t"), "R");
+const plfsYear = last("ilo-plfs-eap", K.sLfpr("t")).year;
+const plfsFirst = first("ilo-plfs-eap", K.sLfpr("t")).year;
+const mospiLast = load("plfs-annual").dates.at(-1).slice(0, 4);
+const mospiRound = `${mospiLast}-${String(+mospiLast + 1).slice(2)}`;
+const empNow = last("ilo-est-emp-2emp", K.emp()), emp91 = first("ilo-est-emp-2emp", K.emp());
+const exPoor = (y) => at("ilo-est-emp-2emp", K.cla("cat1"), y), clsTot = (y) => at("ilo-est-emp-2emp", K.cla("total"), y);
+const clsLast = last("ilo-est-emp-2emp", K.cla("cat1")).year;
+const neetF = last("ilo-est-eip-2eet", K.neet("f")), neetT = last("ilo-est-eip-2eet", K.neet("t"));
+const wF = last(E, K.lfpr("f")), w05 = at(E, K.lfpr("f"), 2005);
+const T = {
+  women: `Women's participation fell from ${f1(w05)}% in 2005 to ${f1(Math.min(...[2015, 2016, 2017, 2018, 2019, 2020].map((y) => at(E, K.lfpr("f"), y))))}% and has climbed back to ${f1(wF.value)}%`,
+  urFirst: urReal[0], urLast: urReal.at(-1),
+  poverty: `Workers in households living on under $3 a day: ${(exPoor(1991) / 1000).toFixed(0)} million in 1991, ${(exPoor(clsLast) / 1000).toFixed(0)} million in ${clsLast}`,
+  neet: `${f1(neetF.value)}% of young women are neither working nor studying, against ${f1(at("ilo-est-eip-2eet", K.neet("m"), +neetF.year))}% of young men`,
+};
+const earnF = last("ilo-plfs-ear", K.sEarn("f")).value, earnM = last("ilo-plfs-ear", K.sEarn("m")).value;
+const infT = last("ilo-plfs-sdg", K.sInf("total")).value, infNag = last("ilo-plfs-sdg", "sdg_0831_sex_eco_rt__sex_t__eco_sector_nag").value;
+const opwI = last("ilo-est-gdp-211p", K.opw).value, opwC = last("ilo-peer-chn", K.opw).value;
+const lsh = last("ilo-est-lap-2gdp", K.lshare).value, top10 = last("ilo-est-lap-2lid", K.decile(10)).value;
+T.earn = `A woman employee earns ₹${Math.round((100 * earnF) / earnM)} for every ₹100 a man earns`;
+T.inf = `${f1(infT)}% of workers are informal; outside farming, ${f1(infNag)}%`;
+T.opw = `An Indian worker produces ${Math.round((100 * opwI) / opwC)}% of what a Chinese worker does`;
+T.lsh = `Labour is paid ${f1(lsh)}% of India's income`;
+T.top10 = `The best-paid tenth of workers earn ${f1(top10)}% of all labour income`;
+const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
+---
+<Base
+  title="Work, as the ILO counts it · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/ilo/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<script type="application/json" id="ilo-data" is:inline set:html={JSON.stringify(DATA)}></script>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">The International Labour Organization counts work in every country on the same definitions, so India can be read beside China or Bangladesh, and back to 1990. Its numbers are clean and long. Many of them are also a model's estimates, not a survey's measurements, and this guide keeps the two apart.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>ILO, ILOSTAT</b></span>
+      <span>Instruments <b>ILO modelled estimates; PLFS, NSS and Census as processed by the ILO</b></span>
+      <span>Frequency <b>Annual, calendar years</b></span>
+      <span>Edition <b>{edition}</b></span>
+      <span>Latest estimate <b id="m-latest">–</b></span>
+      <span>Population <b>Age 15 and above</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Indians at work, ILO estimate</div><div class="v acc" id="n-emp">–</div><div class="d" id="d-emp">–</div><div class="nspark" id="nspark-emp"></div></div>
+      <div class="num"><div class="l">In the labour force, everyone 15+</div><div class="v" id="n-lfpr">–</div><div class="d" id="d-lfpr">–</div></div>
+      <div class="num"><div class="l">Women in the labour force</div><div class="v" id="n-women">–</div><div class="d" id="d-women">–</div></div>
+      <div class="num"><div class="l">Young women not in work or study</div><div class="v" id="n-neet">–</div><div class="d" id="d-neet">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 the current reading: inputs ilo-est-eap-2wap, ilo-est-emp-2emp; prose: generated slots -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">ILO modelled estimates, {estYear}</span></div>
+    <div class="reading-top">
+      <div><span class="rk">People at work, aged 15+</span><div class="big" id="rb-emp">–</div></div>
+      <p class="rt-cap">Everyone who did at least an hour's work for pay, profit or family gain in a reference week, as the ILO's model estimates it for {estYear}. A farmer, a street vendor and a software engineer count the same.</p>
+      <div class="rt-side"><span class="rk">In the labour force</span><div class="rt-side-v" id="rb-lfpr">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the estimates say</span>
+        <Prose slot="ilo.current-reading.what-the-print-says" />
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What they do not say</span>
+        <Prose slot="ilo.current-reading.what-it-does-not-say" />
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 how to read the ILO's numbers: evergreen -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>How to read the ILO's numbers</h2><span class="line"></span></div>
+    <div class="prose">
+      <p>ILOSTAT holds two kinds of figure for India, and they answer different questions. The first is the ILO's <b>modelled estimates</b>. Every November the ILO runs a statistical model over every country's surveys, fills the years no survey covered, and projects a few years ahead. The result is a smooth annual line from 1990, on one definition, for every country. It is how the ILO can say anything about the world as a whole. But for most years the line is not a measurement of India. The ILO marks each figure: a handful are "real values" taken from Indian surveys; the rest are imputed, and the ILO itself says imputed figures carry high uncertainty and should not be used to rank countries.</p>
+      <p>The second kind is the ILO's <b>own processing of Indian survey data</b>. The ILO takes the unit-level files of the Periodic Labour Force Survey (PLFS), the older National Sample Survey (NSS) rounds and the Census, and recomputes the standard indicators on its own definitions. These are measurements, but not MoSPI's: the ILO uses calendar years and the current weekly status, where MoSPI's headline uses July to June years and the usual status. The numbers differ, and both are right about what they measure.</p>
+      <p>This guide draws the two kinds apart, in different marks, and never joins them. A modelled year the ILO flags as real is a solid dot on the line; a projection is dashed. Every survey series carries the ILO's own flag where it calls a figure unreliable.</p>
+    </div>
+  </section>
+
+  <!-- § 03 participation: inputs ilo-est-eap-2wap (t, m, f), ilo-est-projections -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>How many Indians work</h2><span class="line"></span><span class="unit">Labour force participation, ILO modelled estimates</span></div>
+    <div class="break">
+      <figure id="cb-lfpr" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{T.women}</h3>
+            <div class="sub">Share of people aged 15 and over who work or are looking for work, by sex, 1990 to {estYear}, with the ILO's projections dashed. Dots mark years the ILO flags as taken from a survey.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-lfpr">–</div><div class="c">women, {estYear}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Women</button>
+            <button class="chip"><i style="background:#5F6675"></i>Men</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Everyone 15+</button>
+          </div>
+          <div class="plotzone"><div id="plot-lfpr" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: ILO, ILOSTAT, {edition}, DF_EAP_2WAP_SEX_AGE_RT. Thirteenth ICLS definitions.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Participation counts everyone who has work or wants it, out of everyone of working age. A woman who spends her days on her family's fields counts if the work is for the market or for the family's own farm produce; a woman who cooks, cleans and looks after children at home does not, however long her day.</p>
+            <p>The smoothness is the model's. Between surveys the ILO draws the line itself, so a gentle slope across several years says less than it seems to.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf.est}</span>
+            <p>Women's participation stands at <b id="ex-lfpr-now">–</b>, up from a low of <b id="ex-lfpr-low">–</b>, but still below <b id="ex-lfpr-peak">–</b> in 2005. Of the years from 1990, the ILO flags {lfprReal.length ? lfprReal.join(", ") : "none"} as taken directly from a survey; every other point is the model's.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 04 rulers: inputs ilo-est-eap-2wap, ilo-plfs-eap-dwap, ilo-nss-eap-dwap, ilo-census-eap-dwap, plfs-annual (jobs guide) -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>One question, five rulers</h2><span class="line"></span><span class="unit">Labour force participation, everyone 15+</span></div>
+    <div class="break">
+      <figure id="cb-rulers" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Ask about the whole year and more Indians count as working than if you ask about last week</h3>
+            <div class="sub">Labour force participation, everyone aged 15 and over: the ILO's model, the ILO's processing of PLFS, NSS and Census data, and MoSPI's own PLFS figures on two definitions. Each instrument drawn separately, never joined.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-rulers">–</div><div class="c">usual status above weekly status, MoSPI {mospiRound}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>PLFS, ILO processing</button>
+            <button class="chip"><i style="background:#C47A16"></i>PLFS, MoSPI, usual status</button>
+            <button class="chip"><i style="background:#E2B36F"></i>PLFS, MoSPI, weekly status</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>ILO model</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#5F6675"></i>NSS rounds</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #5F6675"></i>Census</button>
+          </div>
+          <div class="plotzone"><div id="plot-rulers" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: ILO, ILOSTAT (modelled estimates; PLFS, NSS and Census unit data processed by the ILO, DF_EAP_DWAP_SEX_AGE_RT); MoSPI, PLFS annual reports. MoSPI's July-June years are plotted at the January in their middle.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>MoSPI's headline asks what a person did for most of the past year, and counts a second, smaller activity too. That catches the woman who works the harvest for three months and the man between jobs for a few weeks. The weekly question asks only about the past seven days, so it counts fewer. The ILO recomputes the weekly measure from the same survey files, on calendar years.</p>
+            <p>The NSS rounds and the Census used different questions and samples again. The 1971 Census asked about work in a way that left most women out, which is why its point sits so low.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf.plfs}</span>
+            <p>For {mospiRound}, MoSPI's usual-status participation is <b id="ex-r-psss">–</b> and its weekly-status figure <b id="ex-r-cws">–</b>. For calendar 2024 the ILO's processing of the same survey gives <b id="ex-r-ilo">–</b> and its model <b id="ex-r-est">–</b>. None of these is wrong; each answers a different question.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 unemployment: inputs ilo-est-une-2eap (with bounds), ilo-plfs-une-deap, ilo-nss-une-deap -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>A model is not a measurement</h2><span class="line"></span><span class="unit">Unemployment rate, ILO modelled estimates</span></div>
+    <div class="break">
+      <figure id="cb-unemp" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Before {T.urFirst}, the ILO's unemployment rate for India is the model's guess, inside a wide band</h3>
+            <div class="sub">Unemployment rate, everyone 15+ and young people 15 to 24, ILO modelled estimates, with the ILO's uncertainty band for everyone 15+. Dots on the lines mark years the ILO took from a survey; free dots are the ILO's own processing of PLFS (filled) and NSS (hollow).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-unemp">–</div><div class="c">everyone 15+, {estYear}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Everyone 15+, model</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Aged 15-24, model</button>
+            <button class="chip"><i style="background:#E7EBFC"></i>The ILO's uncertainty band</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#5F6675"></i>PLFS, ILO processing</button>
+          </div>
+          <div class="plotzone"><div id="plot-unemp" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: ILO, ILOSTAT, {edition}, DF_UNE_2EAP_SEX_AGE_RT, with the ILO's published lower and upper bounds; survey points from DF_UNE_DEAP_SEX_AGE_RT.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The flat stretch is not a stable job market. India did run surveys in those years, the NSS rounds drawn as hollow dots, but the ILO's model did not take them as its unemployment figure. It imputed one, and its own band around those years runs from a few per cent to the mid-teens, so any value inside it is as defensible as the line. From {T.urFirst} the band closes because the model takes the PLFS figure directly.</p>
+            <p>Unemployment in India is a narrow measure. Most people who need work cannot afford to be without it for long, so they take whatever there is. A low rate says little about how good the work is.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf.est}</span>
+            <p>The model holds unemployment at about <b id="ex-u-flat">–</b> through the 2000s, with a band of <b id="ex-u-band">–</b> in 2000. The NSS rounds of those years, as the ILO itself processed them, measured between <b id="ex-u-nss">–</b>. From <b id="ex-u-first">–</b> it follows the survey: <b id="ex-u-now">–</b> for everyone 15+ and <b id="ex-u-youth">–</b> for those aged 15 to 24 in {estYear}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 women: inputs ilo-plfs-eap-dwap (5-year bands, education, rural/urban) -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>Why so few women are counted at work</h2><span class="line"></span><span class="unit">PLFS as processed by the ILO, {plfsFirst} and {plfsYear}</span></div>
+    <div class="break">
+      <figure id="cb-women-age" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Women's participation rose at every age between {plfsFirst} and {plfsYear}</h3>
+            <div class="sub">Women in the labour force by five-year age band, per cent, calendar {plfsYear} (bars) and {plfsFirst} (hollow dots). Current weekly status.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-women-age">–</div><div class="c">the highest band, {plfsYear}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #5F6675"></i>{plfsFirst}</button>
+            <button class="chip"><i style="background:#C9CED6"></i>{plfsYear}</button>
+          </div>
+          <div class="plotzone"><div id="plot-women-age" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: ILO, ILOSTAT, PLFS unit data processed by the ILO, DF_EAP_DWAP_SEX_AGE_RT (5-year bands).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Participation climbs through a woman's twenties and peaks in her forties, after marriage and young children. Young women aged 20 to 24 are often in college or newly married, which keeps their figure low.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf.plfs}</span>
+            <p>The highest band is <b id="ex-wa-peak">–</b>. Among women aged 20 to 24, <b id="ex-wa-young">–</b> are in the labour force, against <b id="ex-wa-young0">–</b> in {plfsFirst}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-women-edu" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Women who finish school but not college are the least likely to be at work</h3>
+            <div class="sub">Women aged 15+ in the labour force by level of education, per cent, calendar {plfsYear} (bars) and {plfsFirst} (hollow dots).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-women-edu">–</div><div class="c">upper secondary, {plfsYear}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-women-edu" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: ILO, ILOSTAT, PLFS unit data processed by the ILO, DF_EAP_DWAP_SEX_EDU_RT (aggregate levels).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The shape is a U. Women with little schooling work because their families need the income, mostly on farms. Women with some secondary schooling often leave farm work but find few jobs they or their families consider suitable nearby. Graduates find office, teaching and health jobs, and come back.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf.plfs}</span>
+            <p>Women with less than basic schooling: <b id="ex-we-low">–</b> in the labour force. Upper secondary: <b id="ex-we-mid">–</b>. Graduates and above: <b id="ex-we-high">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-women-area" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The rise in women's work is a village story</h3>
+            <div class="sub">Labour force participation, aged 15+, by sex and rural or urban area, per cent, calendar years {plfsFirst} to {plfsYear}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-women-area">–</div><div class="c">rural women, {plfsYear}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Rural women</button>
+            <button class="chip"><i style="background:#5F6675"></i>Urban women</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Rural men</button>
+            <button class="chip"><i style="background:#C9CED6"></i>Urban men</button>
+          </div>
+          <div class="plotzone"><div id="plot-women-area" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: ILO, ILOSTAT, PLFS unit data processed by the ILO, DF_EAP_DWAP_SEX_GEO_RT.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Much of the rise is women on family farms and in small household enterprises, counted as unpaid helpers or working on their own account. Whether it reflects new opportunity or families needing more hands after hard years, the survey cannot say.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf.plfs}</span>
+            <p>Rural women's participation went from <b id="ex-wr-rur0">–</b> to <b id="ex-wr-rur">–</b>; urban women's from <b id="ex-wr-urb0">–</b> to <b id="ex-wr-urb">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 NEET: inputs ilo-est-eip-2eet, ilo-plfs-sdg-0861, ilo-nss-sdg-0861 -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>Young people neither working nor studying</h2><span class="line"></span><span class="unit">Aged 15 to 24</span></div>
+    <div class="break">
+      <figure id="cb-neet" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{T.neet}</h3>
+            <div class="sub">Share of people aged 15 to 24 not in employment, education or training, by sex, ILO modelled estimates, with the ILO's processing of PLFS (hollow blue) and NSS (hollow grey) for young women.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-neet">–</div><div class="c">young women, {estYear}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Young women</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>All youth</button>
+            <button class="chip"><i style="background:#5F6675"></i>Young men</button>
+          </div>
+          <div class="plotzone"><div id="plot-neet" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: ILO, ILOSTAT, {edition}, DF_EIP_2EET_SEX_RT; SDG indicator 8.6.1 from PLFS and NSS unit data, DF_SDG_0861_SEX_RT.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>NEET is wider than unemployment. It counts the young man looking for work, and also the young woman at home who is not looking at all. In India most young people counted as NEET are women whose days go to housework, care or waiting to marry.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf.est}</span>
+            <p>The model puts young women's NEET rate at <b id="ex-n-f">–</b>, down from <b id="ex-n-f0">–</b>; young men's at <b id="ex-n-m">–</b>. In all, <b id="ex-n-num">–</b> young Indians were neither working nor studying. The ILO's processing of PLFS puts young women at <b id="ex-n-plfs">–</b> in {plfsYear}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 kinds of work: inputs ilo-est-emp-2emp (status, sector), ilo-plfs-sdg-0831 -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>What kind of work</h2><span class="line"></span><span class="unit">Status, sector and informality</span></div>
+    <div class="break">
+      <figure id="cb-status" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Most Indians who work still work for themselves or their family, not for a wage</h3>
+            <div class="sub">Share of everyone employed by status in employment, ILO modelled estimates, 1991 to {estYear}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-status">–</div><div class="c">employees, {estYear}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#5F6675"></i>Own-account workers</button>
+            <button class="chip"><i style="background:#2E4BD8"></i>Employees</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Contributing family workers</button>
+            <button class="chip"><i style="background:#C9CED6"></i>Employers</button>
+          </div>
+          <div class="plotzone"><div id="plot-status" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: ILO, ILOSTAT, {edition}, DF_EMP_2EMP_SEX_STE_NB, ICSE-93. Shares computed from the ILO's counts.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>An own-account worker runs a one-person business: a farmer on her own plot, an autorickshaw driver, a tailor. A contributing family worker helps in a family business without a wage of their own. An employee works for someone else, for a wage or salary, though most Indian employees still have no written contract.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf.est}</span>
+            <p>Employees are <b id="ex-s-emp">–</b> of everyone at work, up from <b id="ex-s-emp0">–</b> in 1991. Own-account workers are <b id="ex-s-own">–</b> and family workers <b id="ex-s-fam">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-sector" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Farming's share of work fell for three decades, then rose again after 2019</h3>
+            <div class="sub">Share of everyone employed by broad sector, ILO modelled estimates, 1991 to {estYear}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-sector">–</div><div class="c">in agriculture, {estYear}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Agriculture</button>
+            <button class="chip"><i style="background:#5F6675"></i>Services</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Industry</button>
+          </div>
+          <div class="plotzone"><div id="plot-sector" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: ILO, ILOSTAT, {edition}, DF_EMP_2EMP_SEX_ECO_NB, broad sectors. Industry includes construction.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>As economies grow, work usually moves off the farm into factories and offices. India's move was slow and went mostly into construction and small services. The pandemic sent many back to the village, and the farm's share rose.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf.est}</span>
+            <p>Agriculture employs <b id="ex-e-agr">–</b> of workers, against <b id="ex-e-agr0">–</b> in 1991 and a low of <b id="ex-e-low">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-informal" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{T.inf}</h3>
+            <div class="sub">Share of employment that is informal (no social security through the job, or work in an unregistered enterprise), by sector, PLFS as processed by the ILO, calendar {plfsYear} (bars) and {plfsFirst} (hollow dots).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-informal">–</div><div class="c">all work, {plfsYear}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-informal" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: ILO, ILOSTAT, SDG indicator 8.3.1 from PLFS unit data, DF_SDG_0831_SEX_ECO_RT. The ILO publishes no modelled informality series for India.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Informal work is work without the protections a formal job carries: no provident fund, no paid leave, no written contract, or a business that is not registered. A salaried driver paid in cash with no provident fund is informal, even though he has a wage.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf.plfs}</span>
+            <p>Informal work is <b id="ex-i-tot">–</b> of all employment, against <b id="ex-i-tot0">–</b> in {plfsFirst}. In agriculture it is <b id="ex-i-agr">–</b>; in services <b id="ex-i-ser">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 pay and poverty: inputs ilo-est-emp-2emp (class), ilo-est-lap-2gdp, ilo-est-lap-2lid, ilo-est-how-2emp, ilo-plfs-ear-emta, ilo-plfs-ear-ggap -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>Working, and still poor</h2><span class="line"></span><span class="unit">Working poverty, labour's share, hours and pay</span></div>
+    <div class="break">
+      <figure id="cb-poverty" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{T.poverty}</h3>
+            <div class="sub">Employed people by their household's income or spending per person a day, in 2021 international (PPP) dollars, ILO modelled estimates, millions.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-poverty">–</div><div class="c">under $3 a day, {asOf.cls}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Under $3 a day</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>$3 to $4.20</button>
+            <button class="chip"><i style="background:#5F6675"></i>$4.20 or more</button>
+          </div>
+          <div class="plotzone"><div id="plot-poverty" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: ILO, ILOSTAT, {edition}, DF_EMP_2EMP_SEX_AGE_CLA_NB. Lines at the World Bank's 2021 PPP poverty lines.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A worker is "working poor" when the household they live in falls below a poverty line, however hard they work. Three dollars a day at purchasing power parity is the money that buys in India what three dollars buys in the United States: a very low bar. The ILO models these numbers from household surveys of spending, and India ran none between 2011-12 and 2022-23, so the years between rest on the model.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf.cls}</span>
+            <p>In 1991, <b id="ex-p-ex0">–</b> workers, <b id="ex-p-ex0s">–</b> of all, lived in households under $3 a day. In {asOf.cls} the ILO estimates <b id="ex-p-ex">–</b>, <b id="ex-p-exs">–</b>, with another <b id="ex-p-mod">–</b> between $3 and $4.20.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-lshare" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{T.lsh}</h3>
+            <div class="sub">Labour income share of GDP: wages of employees plus the estimated labour part of what the self-employed earn, ILO modelled estimates.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-lshare">–</div><div class="c">{estYear}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-lshare" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: ILO, ILOSTAT, {edition}, DF_LAP_2GDP_NOC_RT. The self-employed's labour income is imputed from employees with similar characteristics.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Every rupee of national income goes either to work or to capital: wages and the earnings of the self-employed on one side, profits, rent and interest on the other. In India most workers are self-employed, so the ILO has to split a farmer's or shopkeeper's income into a "wage" for her work and a return on her land or shop. That split is an estimate.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf.est}</span>
+            <p>Labour's share is <b id="ex-ls">–</b> of GDP, against <b id="ex-ls-0">–</b> in 2004.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-deciles" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{T.top10}</h3>
+            <div class="sub">Share of all labour income earned by each tenth of workers, from the lowest-paid to the highest-paid, ILO modelled estimates, {estYear} (bars) and 2004 (hollow dots).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-deciles">–</div><div class="c">the top tenth, {estYear}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-deciles" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: ILO, ILOSTAT, {load("ilo-est-lap-2lid").meta.edition}, DF_LAP_2LID_QTL_RT. The ILO flags its India deciles as model-based extrapolations for most years.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Line every worker up from the lowest-paid to the highest-paid and cut the line into ten equal groups. If pay were equal, each group would earn a tenth of the total. The bars show how far India is from that.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf.est}</span>
+            <p>The top tenth earn <b id="ex-d-top">–</b> of labour income, against <b id="ex-d-top0">–</b> in 2004. The bottom half together earn <b id="ex-d-bottom">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-hours" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Indians in work put in long weeks, women fewer paid hours than men</h3>
+            <div class="sub">Average hours actually worked in a week per employed person, by sex, ILO modelled estimates.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-hours">–</div><div class="c">everyone, {estYear}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Women</button>
+            <button class="chip"><i style="background:#5F6675"></i>Men</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Everyone</button>
+          </div>
+          <div class="plotzone"><div id="plot-hours" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: ILO, ILOSTAT, {edition}, DF_HOW_2EMP_SEX_NB.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>These are hours of work for pay or profit, not housework or care. Women's lower average partly reflects the many women newly counted in part-time farm and family work, and leaves out the unpaid hours they put in at home.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf.est}</span>
+            <p>Women in work average <b id="ex-h-f">–</b> hours a week and men <b id="ex-h-m">–</b>. Women averaged <b id="ex-h-f0">–</b> hours in 2019.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-earn" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{T.earn}</h3>
+            <div class="sub">Average monthly earnings of employees aged 15+, by sex, rupees at current prices, PLFS as processed by the ILO, calendar years. Not adjusted for inflation.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-earn">–</div><div class="c">all employees, {plfsYear}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Women</button>
+            <button class="chip"><i style="background:#5F6675"></i>Men</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>All employees</button>
+          </div>
+          <div class="plotzone"><div id="plot-earn" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: ILO, ILOSTAT, PLFS unit data processed by the ILO, DF_EAR_EMTA_SEX_AGE_NB and DF_EAR_GGAP_OCU_RT. Employees only: the self-employed are not covered.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Only employees report earnings in the survey; the farmer and the shopkeeper do not, and they are most of India's workers. The figures are in rupees of each year, so part of the rise is prices, not pay.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf.plfs}</span>
+            <p>The average employee earned <b id="ex-er-t">–</b> a month, against <b id="ex-er-t0">–</b> in {plfsFirst}. A woman's average was <b id="ex-er-ratio">–</b> of a man's; on the ILO's hourly measure the gender pay gap is <b id="ex-er-gap">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 10 peers: inputs ilo-peer-chn/bgd/idn/vnm, ilo-est-* (India), ilo-est-gdp-211p -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>India beside its neighbours</h2><span class="line"></span><span class="unit">China, Bangladesh, Indonesia, Vietnam, ILO modelled estimates</span></div>
+    <div class="break">
+      <figure id="cb-peers" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>On the ILO's common yardstick, Indian women are the least likely of the five to be at work</h3>
+            <div class="sub">Four measures, 1991 to {estYear}, per cent: women's labour force participation; unemployment among 15 to 24 year olds; young people not in employment, education or training; own-account and family workers as a share of employment. India in blue, the four peers in grey.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-peers">–</div><div class="c">Indian women in the labour force</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>India</button>
+            <button class="chip"><i style="background:#C9CED6"></i>China, Bangladesh, Indonesia, Vietnam</button>
+          </div>
+          <div class="plotzone"><div id="plot-peers" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: ILO, ILOSTAT, {edition} for each country. Most of these are imputed for most years; the ILO advises against ranking countries on imputed figures.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The four peers are a fixed list: China, the neighbour every comparison starts with; Bangladesh, the neighbour where women went into garment factories; Indonesia, a large, mostly rural Asian economy; and Vietnam, which moved workers off farms fastest. Each line is the ILO's model on the same definitions, which is the point of comparing them, and also the limit.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf.est}</span>
+            <p>Women's participation: India <b id="ex-pw-ind">–</b>, Bangladesh <b id="ex-pw-bgd">–</b>, Indonesia <b id="ex-pw-idn">–</b>, China <b id="ex-pw-chn">–</b>, Vietnam <b id="ex-pw-vnm">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break">
+      <figure id="cb-output" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{T.opw}</h3>
+            <div class="sub">GDP per employed person, constant 2021 international dollars at purchasing power parity, ILO modelled estimates.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-output">–</div><div class="c">India, {estYear}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>India</button>
+            <button class="chip"><i style="background:#C9CED6"></i>Peers</button>
+          </div>
+          <div class="plotzone"><div id="plot-output" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: ILO, ILOSTAT, {edition}, DF_GDP_211P_NOC_NB.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Output per worker is the whole economy's production divided by everyone employed. It rises when workers move from low-output farms to factories and offices, and when each job uses more machines and skill. It is the root of what wages can be.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asOf.est}</span>
+            <p>India's output per worker is <b id="ex-o-ind">–</b>, up from <b id="ex-o-ind0">–</b> in 1991. China's is <b id="ex-o-chn">–</b>, up from <b id="ex-o-chn0">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 11 what this measures: evergreen -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="prose">
+      <p>The ILO is the United Nations agency for work. Its statistical database, ILOSTAT, collects labour statistics from national agencies, reprocesses survey files where it can get them, and publishes everything on the standards agreed at the International Conference of Labour Statisticians (ICLS). Indian data reaches ILOSTAT from MoSPI's surveys and from the Labour Bureau and other offices.</p>
+      <p>The modelled estimates follow the thirteenth ICLS definition of work, which counts producing goods for the family's own use, such as grain grown for the household. The newer nineteenth ICLS definition does not; the ILO's survey series name the definition they use. Most of the ILO's India survey series are on the older definition.</p>
+      <p>Each ILO edition re-estimates the whole history: the 2010 figure in the November 2025 edition may differ from the 2010 figure in the 2024 edition. This guide keeps the edition with the data and archives the previous one when a new edition lands. The ILO publishes about 2.5 million figures for India across 693 tables; this guide carries every modelled series and every survey table cut by sex and one other characteristic, and lists the rest with links in the coverage ledger.</p>
+    </div>
+  </section>
+
+  <!-- § 12 misreadings -->
+  <section>
+    <div class="sec-head"><span class="no">12</span><h2>How to misread these numbers</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li><span class="no">1</span><div><h3>"The ILO says India's unemployment was steady through the 2000s."</h3><p>For those years the ILO's model did not take an Indian survey figure as its own; it imputed one and drew a flat line inside a wide band. Only from {T.urFirst} does the line follow measured data.</p></div></li>
+      <li><span class="no">2</span><div><h3>"The ILO and MoSPI disagree, so one of them is wrong."</h3><p>They ask different questions of the same survey: work last week against work over the year, calendar years against July to June. Compare like with like, and never join one to the other.</p></div></li>
+      <li><span class="no">3</span><div><h3>"Women's participation has risen, so women have found jobs."</h3><p>Much of the rise is women counted in unpaid family farm and household work. That is real work, but not the salaried job the phrase suggests.</p></div></li>
+      <li><span class="no">4</span><div><h3>"India ranks below Bangladesh on women at work."</h3><p>The ILO itself warns that imputed estimates should not be used to rank countries. The comparison shows a gap on common definitions; it is not a league table.</p></div></li>
+      <li><span class="no">5</span><div><h3>"The ILO's projection for 2027 tells us what will happen."</h3><p>It tells us what the model expects if recent trends hold. No survey stands behind it.</p></div></li>
+    </ul>
+  </section>
+
+  <EveryCut slug="ilo" />
+  <GuideData slug="ilo" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>International Labour Organization, ILOSTAT, read through its SDMX data service (sdmx.ilo.org): the ILO {edition} and the ILO's processing of India's PLFS, NSS and Census unit data, plus administrative series. MoSPI's PLFS figures beside them come from the jobs guide's bundle. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Checked by hand against the ILO's labelled tables: unemployment rate 2024, 4.173%, flagged real; PLFS women's participation 2024, 34.389%.</p>
+      </div>
+      <div>
+        <h6>Method</h6>
+        <p>Values are as the ILO publishes them, with the ILO's own flags (real, unreliable, break in series) and uncertainty bounds kept on each series. Shares of employment by status, sector and class are computed from the ILO's counts. Nothing is estimated here.</p>
+      </div>
+      <div>
+        <h6>Revisions and breaks</h6>
+        <p>Each instrument (model, PLFS, NSS, Census, each administrative source) is its own series, never joined. Projection years sit in their own file. A new ILO edition replaces the modelled history, and the previous edition is archived.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Version 1.0, built October 2026 from the ILO's November 2025 edition and its PLFS processing to {plfsYear}. Revised with each ILO edition.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, work as the ILO counts it</span>
+      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/ilo.client.js";
+</script>
+</Base>

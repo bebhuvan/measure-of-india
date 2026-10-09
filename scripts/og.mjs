@@ -127,9 +127,11 @@ const CARDS = [
     foot: (b, S) => `IIP ${S.general.data.at(-1).value.toFixed(2)}% y/y · ${b.meta.latestPeriod} · Source: MoSPI/NSO · base 2022-23`,
   },
   {
-    slug: "external", bundleSlug: "rbi-forex",
-    keys: ["reserves"], d0: 0, d1: 750, band: null, trend: null, scale: 0.001, suffix: " bn",
-    foot: (b, S) => `Reserves $${(S.reserves.data.at(-1).value / 1000).toFixed(0)} bn · ${b.meta.latestPeriod} · Source: RBI`,
+    // external (lb/external): weekly reserves since 2001, RBI DBIE
+    slug: "external", bundleSlug: "external-reserves-weekly",
+    keys: ["total_usd"], d0: 0, d1: 900, band: null, trend: null, scale: 0.001, yStep: 200, fmt: (v) => "$" + v.toFixed(0) + " bn", mr: 200,
+    prep: (S) => { S.total_usd = { ...S.total_usd, label: "Reserves", color: "#2E4BD8" }; },
+    foot: (b, S) => `Foreign exchange reserves $${(S.total_usd.data.at(-1).value / 1000).toFixed(0)} bn, week of ${b.dates.at(-1)}. Source: RBI DBIE`,
   },
   {
     slug: "jobs", bundleSlug: "plfs-quarterly",
@@ -202,11 +204,109 @@ const CARDS = [
     prep: (S) => { S.household_term = { ...S.household_term, label: "Fixed deposits" }; S.household_savings = { ...S.household_savings, label: "Savings" }; S.household_current = { ...S.household_current, label: "Current" }; },
     foot: (b, S) => `Household bank deposits, March ${b.dates.at(-1).slice(0, 4)}. Source: RBI, BSR-2`,
   },
+  // services: 75 years of services exports and imports (RBI), US$ billion
+  {
+    slug: "services", bundleSlug: "services-bop-annual",
+    keys: ["s1_2_1_credit", "s1_2_1_debit"], d0: 0, d1: 450, band: null, trend: null,
+    scale: 0.001, yStep: 100, fmt: (v) => "$" + v.toFixed(0) + " bn", mr: 220,
+    prep: (S) => { S.s1_2_1_credit = { ...S.s1_2_1_credit, label: "Exports", color: "#2E4BD8" }; S.s1_2_1_debit = { ...S.s1_2_1_debit, label: "Imports", color: "#C47A16" }; },
+    foot: (b) => { const y = +b.dates.at(-1).slice(0, 4); return `Services exports and imports, 1950-51 to ${y}-${String((y + 1) % 100).padStart(2, "0")}. Source: RBI`; },
+  },
+  // --- states (state economies) ---
+  {
+    slug: "states", bundleSlug: "states-spread",
+    keys: ["gap_current", "gap_constant"], d0: 0, d1: 14, band: null, trend: null,
+    yStep: 2, fmt: (v) => v.toFixed(1) + "×", mr: 220,
+    prep: (S) => { S.gap_current = { ...S.gap_current, label: "Current prices", color: "#2E4BD8" }; S.gap_constant = { ...S.gap_constant, label: "Constant prices", color: "#A3A9B4" }; },
+    foot: (b) => `Richest state's income per person ÷ poorest's, ${b.meta.panel.length} states, 2011-12 to ${(() => { const y = +b.dates.at(-1).slice(0, 4); return `${y}-${String((y + 1) % 100).padStart(2, "0")}`; })()}. Source: MoSPI`,
+  },
+  // --- rates (atlas-rates) ---
+  {
+    slug: "rates", bundleSlug: "rates-monthly",
+    keys: ["repo", "sdf"], d0: 0, d1: 10, band: null, trend: null,
+    yStep: 2, fmt: (v) => v.toFixed(2) + "%", mr: 200,
+    prep: (S) => {
+      const from = (s) => ({ ...s, data: s.data.filter((d) => d.date >= new Date(Date.UTC(2011, 4, 1))) });
+      S.repo = { ...from(S.repo), label: "Repo rate", color: "#2E4BD8" };
+      S.sdf = { ...from(S.sdf), label: "SDF (floor)", color: "#A3A9B4" };
+    },
+    foot: (b) => `RBI policy repo rate at month-end, May 2011 to ${monthOf(b)}. Source: RBI`,
+  },
+  // credit (lb/credit)
+  {
+    slug: "credit", bundleSlug: "credit-growth",
+    keys: ["headline", "personal_loans", "industry"], d0: -5, d1: 35, band: null, trend: null,
+    yStep: 5, fmt: (v) => v.toFixed(1) + "%", mr: 230,
+    prep: (S) => { S.headline = { ...S.headline, label: "Bank credit", color: "#2E4BD8" }; S.personal_loans = { ...S.personal_loans, label: "Personal loans", color: "#5F6675" }; S.industry = { ...S.industry, label: "Industry", color: "#A3A9B4" }; },
+    foot: (b, S) => { const d = b.dates.at(-1); return `Bank credit growth on a year earlier, ${["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}. Source: RBI, sectoral deployment of bank credit`; },
+  },
   {
     slug: "manufacturing", bundleSlug: "wdi-manufacturing",
     keys: ["mva_pct_gdp", "industry_pct_gdp"], d0: 0, d1: 30, band: null, trend: null,
     yStep: 10, fmt: (v) => v.toFixed(1) + "%", mr: 220,
     foot: (b, S) => `Manufacturing ${S.mva_pct_gdp.data.at(-1).value.toFixed(1)}% of GDP · 2025 · Source: World Bank WDI`,
+  },
+  // ---- bis family session ----
+  {
+    slug: "debt", bundleSlug: "bis-credit",
+    keys: ["households", "companies", "government"], d0: 0, d1: 100, band: null, trend: null,
+    yStep: 25, fmt: (v) => v.toFixed(1) + "%", mr: 230,
+    prep: (S) => {
+      const from = new Date(Date.UTC(2007, 3, 1));
+      // households and companies stop at the last measured quarter: BIS estimates the rest with the split frozen
+      for (const [k, label, color] of [["households", "Households", "#2E4BD8"], ["companies", "Companies", "#5F6675"], ["government", "Government", "#A3A9B4"]]) {
+        const est = new Set((S[k].estimated ?? []).map((d) => new Date(d + "T00:00:00Z").getTime()));
+        S[k] = { ...S[k], label, color, data: S[k].data.filter((d) => d.date >= from && !est.has(d.date.getTime())) };
+      }
+    },
+    foot: (b, S) => `Debt, % of GDP, to the last quarter measured. Source: BIS total credit statistics`,
+  },
+  {
+    slug: "housing", bundleSlug: "bis-property",
+    keys: ["nominal", "real"], d0: 50, d1: 400, band: null, trend: null,
+    yStep: 50, fmt: (v) => v.toFixed(0), mr: 200,
+    prep: (S) => { S.nominal = { ...S.nominal, label: "Nominal", color: "#2E4BD8" }; S.real = { ...S.real, label: "Real", color: "#C47A16" }; },
+    foot: (b, S) => `Residential property prices, index 2010 = 100, ${b.dates.at(-1).slice(0, 4)} Q${Math.ceil(+b.dates.at(-1).slice(5, 7) / 3)}. Source: BIS`,
+  },
+  // ---- end bis family ----
+  // worldbank family (2026-10-09)
+  {
+    // the lineup gives the shape; the foot quotes the survey reading
+    slug: "poverty", bundleSlug: "poverty-pip-lineup",
+    keys: ["headcount_3_00", "headcount_4_20"], d0: 0, d1: 90, band: null, trend: null,
+    yStep: 20, fmt: (v) => v.toFixed(1) + "%", mr: 260,
+    prep: (S) => {
+      const keep = (s) => ({ ...s, data: s.data.filter((d) => d.value != null) });
+      S.headcount_3_00 = { ...keep(S.headcount_3_00), label: "$3.00 line, estimate", color: "#2E4BD8" };
+      S.headcount_4_20 = { ...keep(S.headcount_4_20), label: "$4.20 line, estimate", color: "#5F6675" };
+    },
+    foot: (b) => { const s = load("poverty-pip-2022"); return `Share below each line, World Bank estimates to ${b.meta.lastSurveyYear}. Survey reading, HCES ${s.meta.surveys.at(-1).period}: ${s.series.headcount_3_00.data.at(-1).toFixed(1)}% below $3.00. Source: World Bank PIP`; },
+  },
+  {
+    slug: "population", bundleSlug: "population-wpp",
+    keys: ["tpopulation1july"], d0: 0, d1: 1.6, band: null, trend: null,
+    scale: 1e-6, yStep: 0.4, fmt: (v) => v.toFixed(2) + " bn", mr: 200,
+    prep: (S) => { S.tpopulation1july = { ...S.tpopulation1july, label: "Population", color: "#2E4BD8" }; },
+    foot: (b, S) => `India's population, UN estimate, ${b.dates.at(-1).slice(0, 4)}: ${S.tpopulation1july.data.at(-1).value.toFixed(3)} billion. Source: UN World Population Prospects 2024`,
+  },
+  // climate (lb/climate)
+  {
+    slug: "climate", bundleSlug: "climate-temp-annual",
+    keys: ["temperature_anomaly"], d0: -1.5, d1: 1, band: null, trend: null,
+    yStep: 0.5, fmt: (v) => (v < 0 ? "−" : "+") + Math.abs(v).toFixed(1) + "°C", mr: 220,
+    prep: (S) => { S.temperature_anomaly = { ...S.temperature_anomaly, label: "Against 1991-2020", color: "#2E4BD8" }; },
+    foot: (b) => `India's annual temperature against the 1991-2020 average, 1940 to ${b.dates.at(-1).slice(0, 4)}. Source: Copernicus ERA5, via Our World in Data`,
+  },
+  // ilo
+  {
+    slug: "ilo", bundleSlug: "ilo-est-eap-2wap",
+    keys: ["eap_2wap_sex_age_rt__sex_m__age_ythadult_yge15", "eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15"], d0: 0, d1: 100, band: null, trend: null,
+    yStep: 20, fmt: (v) => v.toFixed(1) + "%", mr: 220,
+    prep: (S) => {
+      S.eap_2wap_sex_age_rt__sex_m__age_ythadult_yge15 = { ...S.eap_2wap_sex_age_rt__sex_m__age_ythadult_yge15, label: "Men", color: "#5F6675" };
+      S.eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15 = { ...S.eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15, label: "Women", color: "#2E4BD8" };
+    },
+    foot: (b) => `Labour force participation, aged 15+, 1990 to ${b.dates.at(-1).slice(0, 4)}, ILO modelled estimates. Source: ILO, ILOSTAT`,
   },
   // --- trade (lb/trade) ---
   {

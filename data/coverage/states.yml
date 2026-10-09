@@ -1,0 +1,797 @@
+# Coverage ledger: state economies (docs/CONTRACT-coverage.md). First matching rule decides.
+# Catalogue: scripts/lib/products/states.mjs --catalogue (MoSPI NAS regional indicators x price x
+# state x industry; every RBI Handbook of States report). Written 2026-10-09 by the states session.
+family: states
+guides: [states]
+catalogue: data/coverage/states.catalogue.json
+rules:
+  # server defects (validate reports them on every run)
+  - match: ["nas:30:*:karnataka", "nas:30:*:karnataka:*"]
+    status: excluded
+    reason: "MoSPI serves Karnataka's NSVA as a copy of its GSVA at current prices (current equals constant on every row, checked 2026-10-09), so it is not NSVA and is left out."
+  - match: ["nas:32:*:karnataka"]
+    status: excluded
+    reason: "MoSPI's indicator 32 for Karnataka repeats its per-capita GSDP (indicator 31); Karnataka's per-capita NSDP comes from indicator 25, which is correct and matches the RBI Handbook."
+  # rows MoSPI lists but serves empty
+  - match: ["nas:29:constant:ladakh:agriculture", "nas:29:constant:ladakh:agriculture:crops", "nas:29:constant:ladakh:agriculture:fishing", "nas:29:constant:ladakh:agriculture:forestry", "nas:29:constant:ladakh:agriculture:livestock", "nas:29:constant:ladakh:construction", "nas:29:constant:ladakh:financial", "nas:29:constant:ladakh:manufacturing", "nas:29:constant:ladakh:mining", "nas:29:constant:ladakh:other_services", "nas:29:constant:ladakh:public_admin", "nas:29:constant:ladakh:real_estate", "nas:29:constant:ladakh:total", "nas:29:constant:ladakh:trade_hotels", "nas:29:constant:ladakh:trade_hotels:hotels", "nas:29:constant:ladakh:trade_hotels:trade_repair", "nas:29:constant:ladakh:transport_comm", "nas:29:constant:ladakh:transport_comm:air", "nas:29:constant:ladakh:transport_comm:communication", "nas:29:constant:ladakh:transport_comm:railways", "nas:29:constant:ladakh:transport_comm:road", "nas:29:constant:ladakh:transport_comm:storage", "nas:29:constant:ladakh:transport_comm:transport_services", "nas:29:constant:ladakh:transport_comm:water", "nas:29:constant:ladakh:utilities", "nas:30:constant:ladakh:agriculture", "nas:30:constant:ladakh:agriculture:crops", "nas:30:constant:ladakh:agriculture:fishing", "nas:30:constant:ladakh:agriculture:forestry", "nas:30:constant:ladakh:agriculture:livestock", "nas:30:constant:ladakh:construction", "nas:30:constant:ladakh:financial", "nas:30:constant:ladakh:manufacturing", "nas:30:constant:ladakh:mining", "nas:30:constant:ladakh:other_services", "nas:30:constant:ladakh:public_admin", "nas:30:constant:ladakh:real_estate", "nas:30:constant:ladakh:total", "nas:30:constant:ladakh:trade_hotels", "nas:30:constant:ladakh:trade_hotels:hotels", "nas:30:constant:ladakh:trade_hotels:trade_repair", "nas:30:constant:ladakh:transport_comm", "nas:30:constant:ladakh:transport_comm:air", "nas:30:constant:ladakh:transport_comm:communication", "nas:30:constant:ladakh:transport_comm:railways", "nas:30:constant:ladakh:transport_comm:road", "nas:30:constant:ladakh:transport_comm:storage", "nas:30:constant:ladakh:transport_comm:transport_services", "nas:30:constant:ladakh:transport_comm:water", "nas:30:constant:ladakh:utilities", "nas:31:constant:ladakh", "nas:32:constant:ladakh", "nas:33:constant:ladakh", "nas:34:constant:ladakh"]
+    status: blocked
+    reason: "MoSPI serves Ladakh only at current prices, for 2022-23 and 2023-24; these constant-price rows came back empty on 2026-10-09."
+  - match: ["nas:29:constant:chhattisgarh:trade_hotels:hotels", "nas:29:constant:chhattisgarh:transport_comm:air", "nas:29:constant:chhattisgarh:transport_comm:transport_services", "nas:29:constant:gujarat:trade_hotels:hotels", "nas:29:constant:gujarat:transport_comm:air", "nas:29:constant:gujarat:transport_comm:transport_services", "nas:29:constant:gujarat:transport_comm:water", "nas:29:constant:tripura:transport_comm:air", "nas:29:constant:tripura:transport_comm:road", "nas:29:constant:tripura:transport_comm:water", "nas:29:current:chhattisgarh:trade_hotels:hotels", "nas:29:current:chhattisgarh:transport_comm:air", "nas:29:current:chhattisgarh:transport_comm:transport_services", "nas:29:current:gujarat:trade_hotels:hotels", "nas:29:current:gujarat:transport_comm:air", "nas:29:current:gujarat:transport_comm:transport_services", "nas:29:current:gujarat:transport_comm:water", "nas:29:current:tripura:transport_comm:air", "nas:29:current:tripura:transport_comm:road", "nas:29:current:tripura:transport_comm:water", "nas:30:constant:chhattisgarh:trade_hotels:hotels", "nas:30:constant:chhattisgarh:transport_comm:air", "nas:30:constant:chhattisgarh:transport_comm:transport_services", "nas:30:constant:chhattisgarh:transport_comm:water", "nas:30:constant:gujarat:trade_hotels:hotels", "nas:30:constant:gujarat:transport_comm:air", "nas:30:constant:gujarat:transport_comm:transport_services", "nas:30:constant:gujarat:transport_comm:water", "nas:30:constant:haryana:transport_comm:water", "nas:30:constant:tripura:transport_comm:air", "nas:30:constant:tripura:transport_comm:road", "nas:30:constant:tripura:transport_comm:water", "nas:30:current:chhattisgarh:trade_hotels:hotels", "nas:30:current:chhattisgarh:transport_comm:air", "nas:30:current:chhattisgarh:transport_comm:transport_services", "nas:30:current:gujarat:trade_hotels:hotels", "nas:30:current:gujarat:transport_comm:air", "nas:30:current:gujarat:transport_comm:transport_services", "nas:30:current:gujarat:transport_comm:water", "nas:30:current:haryana:transport_comm:water", "nas:30:current:tripura:transport_comm:air", "nas:30:current:tripura:transport_comm:road", "nas:30:current:tripura:transport_comm:water", "nas:34:constant:chhattisgarh", "nas:34:current:chhattisgarh"]
+    status: blocked
+    reason: "MoSPI lists this sub-industry for the state but serves no value in any year (checked 2026-10-09); the state does not publish it."
+  # MoSPI regional accounts, base 2011-12
+  - match: "nas:23:current:*"
+    status: shown
+    bundle: ["states-gsdp-current"]
+    plate: "§04 How big each state's economy is"
+  - match: "nas:23:constant:*"
+    status: shown
+    bundle: ["states-gsdp-constant", "states-growth-real"]
+    plate: "§05 Who grows fastest"
+  - match: "nas:24:*"
+    status: baked
+    bundle: ["states-nsdp-current", "states-nsdp-constant"]
+  - match: "nas:25:*"
+    status: shown
+    bundle: ["states-pcnsdp-current", "states-pcnsdp-constant", "states-spread"]
+    plate: "§02 Income per person, state by state"
+  - match: ["nas:32:*:assam", "nas:32:*:haryana", "nas:32:*:nagaland", "nas:32:*:ladakh"]
+    status: shown
+    bundle: ["states-pcnsdp-current", "states-pcnsdp-constant"]
+    plate: "§02 Income per person, state by state"
+  - match: "nas:32:*"
+    status: excluded
+    reason: "Indicator 32 repeats indicator 25 in every cell where both are served (validate checks it); indicator 25 is baked and 32 is used only for the four states 25 omits."
+  # MoSPI's one-decimal growth rates: the cross-check of the growth we compute from levels
+  - match: ["nas:26:*", "nas:27:*", "nas:28:*"]
+    status: baked
+    bundle: ["states-growth-real", "states-growth-nominal"]
+  - match: "nas:29:current:*"
+    status: shown
+    bundle: ["states-gsva-current", "states-structure", "states-industry-shares"]
+    plate: "§06 What each state's economy runs on"
+  - match: "nas:29:constant:*"
+    status: baked
+    bundle: ["states-gsva-constant"]
+  - match: "nas:30:*"
+    status: baked
+    bundle: ["states-nsva-current", "states-nsva-constant"]
+  - match: "nas:31:*"
+    status: baked
+    bundle: ["states-pcgsdp-current", "states-pcgsdp-constant"]
+  - match: ["nas:33:*", "nas:34:*"]
+    status: baked
+    bundle: ["states-taxes-current", "states-taxes-constant"]
+  # RBI Handbook of Statistics on Indian States: every report baked as its own bundle
+  # Table 1: State-wise Gross Enrolment Ratio
+  - match: "hbs:1557"
+    status: baked
+    bundle: states-hbs-t001
+  # Table 2: State-wise Birth Rate
+  - match: "hbs:1558"
+    status: baked
+    bundle: states-hbs-t002
+  # Table 3: State-wise Death Rate
+  - match: "hbs:1559"
+    status: baked
+    bundle: states-hbs-t003
+  # Table 4: State-wise Infant Mortality Rate
+  - match: "hbs:1560"
+    status: baked
+    bundle: states-hbs-t004
+  # Table 5: State-wise Maternal Mortality Ratio
+  - match: "hbs:1561"
+    status: baked
+    bundle: states-hbs-t005
+  # Table 6: State-wise Total Fertility Rate
+  - match: "hbs:1562"
+    status: baked
+    bundle: states-hbs-t006
+  # Table 7: State-wise Life Expectancy
+  - match: "hbs:1563"
+    status: baked
+    bundle: states-hbs-t007
+  # Table 8: State-wise Unemployment Rate: Usual Status (Adjusted) (Rural)
+  - match: "hbs:1564"
+    status: baked
+    bundle: states-hbs-t008
+  # Table 9: State-wise Unemployment Rate: Usual Status (Adjusted) (Urban)
+  - match: "hbs:1565"
+    status: baked
+    bundle: states-hbs-t009
+  # Table 10: State-wise Poverty Estimates - Multi-dimensional Poverty Index
+  - match: "hbs:1566"
+    status: baked
+    bundle: states-hbs-t010
+  # Table 11: State-wise Natural Population Growth Rate
+  - match: "hbs:1567"
+    status: baked
+    bundle: states-hbs-t011
+  # Table 14: State-wise Children Aged 6-59 Months Who are Anaemic
+  - match: "hbs:1568"
+    status: baked
+    bundle: states-hbs-t014
+  # Table 15: State-wise Pregnant Women Aged 15-49 Years Who are Anaemic
+  - match: "hbs:1569"
+    status: baked
+    bundle: states-hbs-t015
+  # Table 16: State-wise Health Infrastructure – Doctors and Specialists
+  - match: "hbs:1570"
+    status: baked
+    bundle: states-hbs-t016
+  # Table 17: State-wise Number of Government Hospitals and Beds
+  - match: "hbs:1571"
+    status: baked
+    bundle: states-hbs-t017
+  # Table 18: State-wise Public Expenditure on Health
+  - match: "hbs:1572"
+    status: baked
+    bundle: states-hbs-t018
+  # Table 19: Per Capita Net State Domestic Product (Current Prices)
+  - match: "hbs:1573"
+    status: baked
+    bundle: ["states-hbs-t019-2004", "states-hbs-t019"]
+  # Table 20: Per Capita Net State Domestic Product (Constant Prices)
+  - match: "hbs:1574"
+    status: baked
+    bundle: ["states-hbs-t020-2004", "states-hbs-t020"]
+  # Table 21: Gross State Domestic Product (Current Prices)
+  - match: "hbs:1575"
+    status: baked
+    bundle: ["states-hbs-t021-2004", "states-hbs-t021"]
+  # Table 22: Gross State Domestic Product (Constant Prices)
+  - match: "hbs:1576"
+    status: baked
+    bundle: ["states-hbs-t022-2004", "states-hbs-t022"]
+  # Table 23: Net State Domestic Product (Current Prices)
+  - match: "hbs:1577"
+    status: baked
+    bundle: ["states-hbs-t023-2004", "states-hbs-t023"]
+  # Table 24: Net State Domestic Product (Constant Prices)
+  - match: "hbs:1578"
+    status: baked
+    bundle: ["states-hbs-t024-2004", "states-hbs-t024"]
+  # Table 29: Gross State Value Added by Economic Activity - Agriculture (Current Prices)
+  - match: "hbs:1579"
+    status: baked
+    bundle: states-hbs-t029
+  # Table 30: Gross State Value Added by Economic Activity - Agriculture (Constant Prices)
+  - match: "hbs:1580"
+    status: baked
+    bundle: ["states-hbs-t030-2004", "states-hbs-t030"]
+  # Table 31: Net State Value Added by Economic Activity - Agriculture (Current Prices)
+  - match: "hbs:1581"
+    status: baked
+    bundle: states-hbs-t031
+  # Table 32: Net State Value Added by Economic Activity - Agriculture (Constant Prices)
+  - match: "hbs:1582"
+    status: baked
+    bundle: ["states-hbs-t032-2004", "states-hbs-t032"]
+  # Table 33: Gross State Value Added by Economic Activity - Manufacturing (Current Prices)
+  - match: "hbs:1583"
+    status: baked
+    bundle: ["states-hbs-t033-2004", "states-hbs-t033"]
+  # Table 34: Gross State Value Added by Economic Activity - Manufacturing (Constant Prices)
+  - match: "hbs:1584"
+    status: baked
+    bundle: ["states-hbs-t034-2004", "states-hbs-t034"]
+  # Table 35: Net State Value Added by Economic Activity - Manufacturing (Current Prices)
+  - match: "hbs:1585"
+    status: baked
+    bundle: ["states-hbs-t035-2004", "states-hbs-t035"]
+  # Table 36: Net State Value Added by Economic Activity - Manufacturing (Constant Prices)
+  - match: "hbs:1586"
+    status: baked
+    bundle: ["states-hbs-t036-2004", "states-hbs-t036"]
+  # Table 37: Gross State Value Added by Economic Activity - Construction (Current Prices)
+  - match: "hbs:1587"
+    status: baked
+    bundle: ["states-hbs-t037-2004", "states-hbs-t037"]
+  # Table 38: Gross State Value Added by Economic Activity - Construction (Constant Prices)
+  - match: "hbs:1588"
+    status: baked
+    bundle: ["states-hbs-t038-2004", "states-hbs-t038"]
+  # Table 39: Net State Value Added by Economic Activity - Construction (Current Prices)
+  - match: "hbs:1589"
+    status: baked
+    bundle: ["states-hbs-t039-2004", "states-hbs-t039"]
+  # Table 40: Net State Value Added by Economic Activity - Construction (Constant Prices)
+  - match: "hbs:1590"
+    status: baked
+    bundle: ["states-hbs-t040-2004", "states-hbs-t040"]
+  # Table 41: Gross State Value Added by Economic Activity - Industry (Current Prices)
+  - match: "hbs:1591"
+    status: baked
+    bundle: ["states-hbs-t041-2004", "states-hbs-t041"]
+  # Table 42: Gross State Value Added by Economic Activity - Industry (Constant Prices)
+  - match: "hbs:1592"
+    status: baked
+    bundle: ["states-hbs-t042-2004", "states-hbs-t042"]
+  # Table 43: Net State Value Added by Economic Activity - Industry (Current Prices)
+  - match: "hbs:1593"
+    status: baked
+    bundle: ["states-hbs-t043-2004", "states-hbs-t043"]
+  # Table 44: Net State Value Added by Economic Activity - Industry (Constant Prices)
+  - match: "hbs:1594"
+    status: baked
+    bundle: states-hbs-t044
+  # Table 48: Table 48 : NET STATE VALUE ADDED BY ECONOMIC ACTIVITY - FINANCIAL SERVICES (CONSTANT PRICES)
+  - match: "hbs:1597"
+    status: baked
+    bundle: ["states-hbs-t048-2004", "states-hbs-t048"]
+  # Table 49: Gross State Value Added by Economic Activity - Services (Current Prices)
+  - match: "hbs:1598"
+    status: baked
+    bundle: ["states-hbs-t049-2004", "states-hbs-t049"]
+  # Table 50: Gross State Value Added by Economic Activity - Services (Constant Prices)
+  - match: "hbs:1599"
+    status: baked
+    bundle: ["states-hbs-t050-2004", "states-hbs-t050"]
+  # Table 51: Net State Value Added by Economic Activity - Services (Current Prices)
+  - match: "hbs:1600"
+    status: baked
+    bundle: ["states-hbs-t051-2004", "states-hbs-t051"]
+  # Table 52: Net State Value Added by Economic Activity - Services (Constant Prices)
+  - match: "hbs:1601"
+    status: baked
+    bundle: ["states-hbs-t052-2004", "states-hbs-t052"]
+  # Table 53: State-wise Pattern of Land Use - Gross Sown Area
+  - match: "hbs:1602"
+    status: baked
+    bundle: states-hbs-t053
+  # Table 54: State-wise Pattern of Land Use- Net Sown Area
+  - match: "hbs:1603"
+    status: baked
+    bundle: states-hbs-t054
+  # Table 55: State-wise Pattern of Land Use - Gross Irrigated Area
+  - match: "hbs:1604"
+    status: baked
+    bundle: states-hbs-t055
+  # Table 56: State-wise Pattern of Land Use - Net Irrigated Area
+  - match: "hbs:1605"
+    status: baked
+    bundle: states-hbs-t056
+  # Table 57: State-wise Pattern of Land Use - Cropping Intensity
+  - match: "hbs:1606"
+    status: baked
+    bundle: states-hbs-t057
+  # Table 58: State-wise Production of Foodgrains - Rice
+  - match: "hbs:1607"
+    status: baked
+    bundle: states-hbs-t058
+  # Table 59: State-wise Production of Foodgrains - Wheat
+  - match: "hbs:1608"
+    status: baked
+    bundle: states-hbs-t059
+  # Table 60: State-wise Production of Foodgrains - Coarse Cereals
+  - match: "hbs:1609"
+    status: baked
+    bundle: states-hbs-t060
+  # Table 61: State-wise Production of Foodgrains - Pulses
+  - match: "hbs:1610"
+    status: baked
+    bundle: states-hbs-t061
+  # Table 62: State-wise Production of Total Foodgrains
+  - match: "hbs:1611"
+    status: baked
+    bundle: states-hbs-t062
+  # Table 63: State-wise Production of Non-Foodgrains - Oilseeds
+  - match: "hbs:1612"
+    status: baked
+    bundle: states-hbs-t063
+  # Table 64: State-wise Production of Non-Foodgrains - Cotton (Lintt)
+  - match: "hbs:1613"
+    status: baked
+    bundle: states-hbs-t064
+  # Table 65: State-wise Production of Non-Foodgrains - Sugarcane
+  - match: "hbs:1614"
+    status: baked
+    bundle: states-hbs-t065
+  # Table 66: State-wise Production of Non-Foodgrains - Raw Jute & Mesta
+  - match: "hbs:1615"
+    status: baked
+    bundle: states-hbs-t066
+  # Table 67: State-wise Area of Foodgrains - Rice
+  - match: "hbs:1616"
+    status: baked
+    bundle: states-hbs-t067
+  # Table 68: State-wise Area of Foodgrains - Wheat
+  - match: "hbs:1617"
+    status: baked
+    bundle: states-hbs-t068
+  # Table 69: State-wise Area of Foodgrains - Coarse Cereals
+  - match: "hbs:1618"
+    status: baked
+    bundle: states-hbs-t069
+  # Table 70: State-wise Area of Foodgrains - Pulses
+  - match: "hbs:1619"
+    status: baked
+    bundle: states-hbs-t070
+  # Table 71: State-wise Area of Total Foodgrains
+  - match: "hbs:1620"
+    status: baked
+    bundle: states-hbs-t071
+  # Table 72: State-wise Area of Total Fruits
+  - match: "hbs:1621"
+    status: baked
+    bundle: states-hbs-t072
+  # Table 73: State-wise Area of Total Vegetables
+  - match: "hbs:1622"
+    status: baked
+    bundle: states-hbs-t073
+  # Table 74: State-wise Production of Total Fruits
+  - match: "hbs:1623"
+    status: baked
+    bundle: states-hbs-t074
+  # Table 75: State-wise Production of Total Vegetables
+  - match: "hbs:1624"
+    status: baked
+    bundle: states-hbs-t075
+  # Table 76: State-wise Area of Non-Foodgrains - Oilseeds
+  - match: "hbs:1625"
+    status: baked
+    bundle: states-hbs-t076
+  # Table 77: State-wise Area of Non-Foodgrains - Cotton (Lintt)
+  - match: "hbs:1626"
+    status: baked
+    bundle: states-hbs-t077
+  # Table 78: State-wise Area of Non-Foodgrains - Sugarcane
+  - match: "hbs:1627"
+    status: baked
+    bundle: states-hbs-t078
+  # Table 79: State-wise Area of Non-Foodgrains - Raw Jute & Mesta
+  - match: "hbs:1628"
+    status: baked
+    bundle: states-hbs-t079
+  # Table 80: State-wise Estimates of Yield - Rice
+  - match: "hbs:1629"
+    status: baked
+    bundle: states-hbs-t080
+  # Table 81: State-wise Estimates of Yield - Wheat
+  - match: "hbs:1630"
+    status: baked
+    bundle: states-hbs-t081
+  # Table 82: State-wise Estimates of Yield - Coarse Cereals
+  - match: "hbs:1631"
+    status: baked
+    bundle: states-hbs-t082
+  # Table 83: State-wise Estimates of Yield - Pulses
+  - match: "hbs:1632"
+    status: baked
+    bundle: states-hbs-t083
+  # Table 84: State-wise Estimates of Yield - Total Foodgrains
+  - match: "hbs:1633"
+    status: baked
+    bundle: states-hbs-t084
+  # Table 85: State-wise Estimates of Yield - Oilseeds
+  - match: "hbs:1634"
+    status: baked
+    bundle: states-hbs-t085
+  # Table 86: State-wise Estimates of Yield - Cotton (Lintt)
+  - match: "hbs:1635"
+    status: baked
+    bundle: states-hbs-t086
+  # Table 87: State-wise Estimates of Yield - Sugarcane
+  - match: "hbs:1636"
+    status: baked
+    bundle: states-hbs-t087
+  # Table 88: State-wise Estimates of Yield - Raw Jute & Mesta
+  - match: "hbs:1637"
+    status: baked
+    bundle: states-hbs-t088
+  # Table 90: State-wise Meat Production
+  - match: "hbs:1638"
+    status: baked
+    bundle: states-hbs-t090
+  # Table 91: State-wise Milk Production
+  - match: "hbs:1639"
+    status: baked
+    bundle: states-hbs-t091
+  # Table 92: State-wise Egg Production
+  - match: "hbs:1640"
+    status: baked
+    bundle: states-hbs-t092
+  # Table 93: State-wise Fish Production
+  - match: "hbs:1641"
+    status: baked
+    bundle: states-hbs-t093
+  # Table 94: State-wise Wool Production
+  - match: "hbs:1642"
+    status: baked
+    bundle: states-hbs-t094
+  # Table 95: State-wise RIDF Sanction and Disbursements
+  - match: "hbs:1643"
+    status: baked
+    bundle: states-hbs-t095
+  # Table 96: State-wise Storage Capacity of Foodgrains
+  - match: "hbs:1644"
+    status: baked
+    bundle: states-hbs-t096
+  # Table 97: Storage Capacity for Foodgrains and Utilisation under FCI
+  - match: "hbs:1645"
+    status: baked
+    bundle: states-hbs-t097
+  # Table 98: State-wise Cold Storage Capacity
+  - match: "hbs:1646"
+    status: baked
+    bundle: states-hbs-t098
+  # Table 99: State-wise Forest Cover
+  - match: "hbs:1647"
+    status: baked
+    bundle: states-hbs-t099
+  # Table 101: State-wise Tree Cover
+  - match: "hbs:1648"
+    status: baked
+    bundle: states-hbs-t101
+  # Table 102: Sub-Division-Wise Annual Rainfall
+  - match: "hbs:1649"
+    status: baked
+    bundle: states-hbs-t102
+  # Table 105: State-wise Expenditure on Relief on Natural Calamities
+  - match: "hbs:1650"
+    status: baked
+    bundle: states-hbs-t105
+  # Table 106: State-wise Sustainable Development Goals (SDGs) Score
+  - match: "hbs:1651"
+    status: baked
+    bundle: states-hbs-t106
+  # Table 108: State-wise Average Inflation (CPI) - General
+  - match: "hbs:1652"
+    status: baked
+    bundle: states-hbs-t108
+  # Table 109: State-wise Average Inflation (CPI) - Food and Beverages
+  - match: "hbs:1653"
+    status: baked
+    bundle: states-hbs-t109
+  # Table 110: State-wise Average Inflation (CPI) - Fuel and Light
+  - match: "hbs:1654"
+    status: baked
+    bundle: states-hbs-t110
+  # Table 111: State-wise Average Inflation (CPI) - Housing (Urban)
+  - match: "hbs:1655"
+    status: baked
+    bundle: states-hbs-t111
+  # Table 112: State-wise Average Daily Wage Rates in Rural India (Men - Construction Workers)
+  - match: "hbs:1656"
+    status: baked
+    bundle: states-hbs-t112
+  # Table 113: State-wise Average Daily Wage Rates in Rural India (Men - General Agricultural Labourers)
+  - match: "hbs:1657"
+    status: baked
+    bundle: states-hbs-t113
+  # Table 114: State-wise Average Daily Wage Rates in Rural India (Men - Horticulture Workers)
+  - match: "hbs:1658"
+    status: baked
+    bundle: states-hbs-t114
+  # Table 115: State-wise Average Daily Wage Rates in Rural India (Men - Non-Agricultural Labourers)
+  - match: "hbs:1659"
+    status: baked
+    bundle: states-hbs-t115
+  # Table 116: State-wise Number of Factories
+  - match: "hbs:1660"
+    status: baked
+    bundle: states-hbs-t116
+  # Table 117: State-wise Fixed Capital
+  - match: "hbs:1661"
+    status: baked
+    bundle: states-hbs-t117
+  # Table 118: State-wise Working Capital
+  - match: "hbs:1662"
+    status: baked
+    bundle: states-hbs-t118
+  # Table 119: State-wise Physical Working Capital
+  - match: "hbs:1663"
+    status: baked
+    bundle: states-hbs-t119
+  # Table 120: State-wise Productive Capital
+  - match: "hbs:1664"
+    status: baked
+    bundle: states-hbs-t120
+  # Table 121: State-wise Invested Capital
+  - match: "hbs:1665"
+    status: baked
+    bundle: states-hbs-t121
+  # Table 122: State-wise Number of Workers
+  - match: "hbs:1666"
+    status: baked
+    bundle: states-hbs-t122
+  # Table 123: State-wise Total Persons Engaged
+  - match: "hbs:1667"
+    status: baked
+    bundle: states-hbs-t123
+  # Table 124: State-wise Total Emoluments
+  - match: "hbs:1668"
+    status: baked
+    bundle: states-hbs-t124
+  # Table 125: State-wise Total Input
+  - match: "hbs:1669"
+    status: baked
+    bundle: states-hbs-t125
+  # Table 126: State-wise Value of Gross Output
+  - match: "hbs:1670"
+    status: baked
+    bundle: states-hbs-t126
+  # Table 127: State-wise Net Value Added
+  - match: "hbs:1671"
+    status: baked
+    bundle: states-hbs-t127
+  # Table 128: State-wise Gross Value Added
+  - match: "hbs:1672"
+    status: baked
+    bundle: states-hbs-t128
+  # Table 129: State-wise Net Fixed Capital Formation
+  - match: "hbs:1673"
+    status: baked
+    bundle: states-hbs-t129
+  # Table 130: State-wise Gross Fixed Capital Formation
+  - match: "hbs:1674"
+    status: baked
+    bundle: states-hbs-t130
+  # Table 131: State-wise Gross Capital Formation
+  - match: "hbs:1675"
+    status: baked
+    bundle: states-hbs-t131
+  # Table 132: State-wise Number of Employees
+  - match: "hbs:1676"
+    status: baked
+    bundle: states-hbs-t132
+  # Table 133: State-wise Number of Mandays - Employees
+  - match: "hbs:1677"
+    status: baked
+    bundle: states-hbs-t133
+  # Table 134: State-wise Medium & Small Scale Industries - Total Number of Units
+  - match: "hbs:1678"
+    status: baked
+    bundle: states-hbs-t134
+  # Table 135: State-wise Medium & Small Scale Industries - Total Investments
+  - match: "hbs:1679"
+    status: baked
+    bundle: states-hbs-t135
+  # Table 136: State-wise Medium & Small Scale Industries - Total Production
+  - match: "hbs:1680"
+    status: baked
+    bundle: states-hbs-t136
+  # Table 137: State-wise Medium & Small Scale Industries - Total Employment
+  - match: "hbs:1681"
+    status: baked
+    bundle: states-hbs-t137
+  # Table 138: State-wise Per Capita Availability of Power
+  - match: "hbs:1682"
+    status: baked
+    bundle: states-hbs-t138
+  # Table 139: State-wise Availability of Power
+  - match: "hbs:1683"
+    status: baked
+    bundle: states-hbs-t139
+  # Table 140: State-wise Installed Capacity of Power
+  - match: "hbs:1684"
+    status: baked
+    bundle: states-hbs-t140
+  # Table 141: State-wise Power Requirement
+  - match: "hbs:1685"
+    status: baked
+    bundle: states-hbs-t141
+  # Table 143: State-wise Total Installed Capacity of Grid Interactive Renewable Power
+  - match: "hbs:1686"
+    status: baked
+    bundle: states-hbs-t143
+  # Table 144: State-wise Length of National Highways
+  - match: "hbs:1687"
+    status: baked
+    bundle: states-hbs-t144
+  # Table 145: State-wise Railway Route
+  - match: "hbs:1688"
+    status: baked
+    bundle: states-hbs-t145
+  # Table 146: State-wise Length of Roads
+  - match: "hbs:1689"
+    status: baked
+    bundle: states-hbs-t146
+  # Table 147: State-wise Length of State Highways
+  - match: "hbs:1690"
+    status: baked
+    bundle: states-hbs-t147
+  # Table 148: State-wise Electricity Transmission & Distribution Losses
+  - match: "hbs:1692"
+    status: baked
+    bundle: states-hbs-t148
+  # Table 149: State-wise Telephones per 100 Population
+  - match: "hbs:1693"
+    status: baked
+    bundle: states-hbs-t149
+  # Table 150: State-wise Road Constructed under PMGSY
+  - match: "hbs:1694"
+    status: baked
+    bundle: states-hbs-t150
+  # Table 152: State-wise Distribution of Offices of Scheduled Commercial Banks
+  - match: "hbs:1695"
+    status: baked
+    bundle: states-hbs-t152
+  # Table 153: State-wise Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Sanction
+  - match: "hbs:1696"
+    status: baked
+    bundle: states-hbs-t153
+  # Table 154: State-wise Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation
+  - match: "hbs:1697"
+    status: baked
+    bundle: states-hbs-t154
+  # Table 155: State-wise Deposits by Scheduled Commercial Banks in India
+  - match: "hbs:1698"
+    status: baked
+    bundle: states-hbs-t155
+  # Table 156: State-wise Credit by Scheduled Commercial Banks in India
+  - match: "hbs:1699"
+    status: baked
+    bundle: states-hbs-t156
+  # Table 157: State-wise Credit to Agriculture by Scheduled Commercial Banks
+  - match: "hbs:1700"
+    status: baked
+    bundle: states-hbs-t157
+  # Table 158: State-wise Credit to Industry by Scheduled Commercial Banks
+  - match: "hbs:1701"
+    status: baked
+    bundle: states-hbs-t158
+  # Table 159: State-wise Personal Loans by Scheduled Commercial Banks
+  - match: "hbs:1702"
+    status: baked
+    bundle: states-hbs-t159
+  # Table 160: State-wise Deposits of Regional Rural Banks
+  - match: "hbs:1703"
+    status: baked
+    bundle: states-hbs-t160
+  # Table 161: State-wise Credit of Regional Rural Banks
+  - match: "hbs:1704"
+    status: baked
+    bundle: states-hbs-t161
+  # Table 162: State-wise Credit-Deposit Ratio of Regional Rural Banks
+  - match: "hbs:1705"
+    status: baked
+    bundle: states-hbs-t162
+  # Table 163: State-wise Number of Branches of Regional Rural Banks
+  - match: "hbs:1706"
+    status: baked
+    bundle: states-hbs-t163
+  # Table 164: State-wise Gross Fiscal Deficit
+  - match: "hbs:1707"
+    status: shown
+    bundle: ["states-hbs-t164", "states-finances"]
+    plate: "§07 State finances"
+  # Table 165: State-wise Revenue Deficit
+  - match: "hbs:1708"
+    status: shown
+    bundle: ["states-hbs-t165", "states-finances"]
+    plate: "§07 State finances"
+  # Table 167: State-wise Primary Deficit
+  - match: "hbs:1709"
+    status: baked
+    bundle: states-hbs-t167
+  # Table 168: State-wise Own Tax Revenue
+  - match: "hbs:1710"
+    status: shown
+    bundle: ["states-hbs-t168", "states-finances"]
+    plate: "§07 State finances"
+  # Table 169: State-wise Own Non-Tax Revenue
+  - match: "hbs:1711"
+    status: baked
+    bundle: states-hbs-t169
+  # Table 170: State-wise Interest Payments
+  - match: "hbs:1712"
+    status: baked
+    bundle: states-hbs-t170
+  # Table 171: State-wise Pension
+  - match: "hbs:1713"
+    status: baked
+    bundle: states-hbs-t171
+  # Table 173: State-wise Capital Expenditure
+  - match: "hbs:1714"
+    status: baked
+    bundle: states-hbs-t173
+  # Table 174: State-wise Capital Outlay
+  - match: "hbs:1715"
+    status: baked
+    bundle: states-hbs-t174
+  # Table 175: State-wise Social Sector Expenditure
+  - match: "hbs:1716"
+    status: baked
+    bundle: states-hbs-t175
+  # Table 176: State-wise Composition of Outstanding Liabilities
+  - match: "hbs:1717"
+    status: shown
+    bundle: ["states-hbs-t176", "states-finances"]
+    plate: "§07 State finances"
+  # Table 177: State-wise Outstanding Guarantees of State Governments
+  - match: "hbs:1718"
+    status: baked
+    bundle: states-hbs-t177
+  # Table 12: State-wise Gender Parity Index of Gross Enrolment Ratio by Level of School Education
+  - match: "hbs:1719"
+    status: baked
+    bundle: states-hbs-t012
+  # Table 13: State-wise Domestic Tourist Visits
+  - match: "hbs:1720"
+    status: baked
+    bundle: states-hbs-t013
+  # Table 25: Gross State Value Added (Current Prices)
+  - match: "hbs:1721"
+    status: baked
+    bundle: states-hbs-t025
+  # Table 26: Gross State Value Added (Constant Prices)
+  - match: "hbs:1722"
+    status: baked
+    bundle: states-hbs-t026
+  # Table 27: Net State Value Added (Current Prices)
+  - match: "hbs:1723"
+    status: baked
+    bundle: states-hbs-t027
+  # Table 28: Net State Value Added (Constant Prices)
+  - match: "hbs:1724"
+    status: baked
+    bundle: states-hbs-t028
+  # Table 45: Gross State Value Added by Economic Activity - Financial Services (Current Prices)
+  - match: "hbs:1725"
+    status: baked
+    bundle: ["states-hbs-t045-2004", "states-hbs-t045"]
+  # Table 46: Gross State Value Added by Economic Activity - Financial Services (Constant Prices)
+  - match: "hbs:1726"
+    status: baked
+    bundle: ["states-hbs-t046-2004", "states-hbs-t046"]
+  # Table 47: Net State Value Added by Economic Activity - Financial Services (Current Prices)
+  - match: "hbs:1727"
+    status: baked
+    bundle: states-hbs-t047
+  # Table 89: State-wise Consumption of Fertiliser (N,P&K)
+  - match: "hbs:1728"
+    status: baked
+    bundle: states-hbs-t089
+  # Table 100: State-wise Afforestation under different schemes
+  - match: "hbs:1729"
+    status: baked
+    bundle: states-hbs-t100
+  # Table 103: State-wise Average Number of Cold Wave Days
+  - match: "hbs:1730"
+    status: baked
+    bundle: states-hbs-t103
+  # Table 104: State-wise Average Number of Heat Wave Days
+  - match: "hbs:1731"
+    status: baked
+    bundle: states-hbs-t104
+  # Table 107: State-wise Status of Ground Water Extraction in India
+  - match: "hbs:1732"
+    status: baked
+    bundle: states-hbs-t107
+  # Table 142: State-wise Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met
+  - match: "hbs:1733"
+    status: baked
+    bundle: states-hbs-t142
+  # Table 151: State-wise Number of Schools by Management and Availability of Functional Computer Facility
+  - match: "hbs:1734"
+    status: baked
+    bundle: states-hbs-t151
+  # Table 166: State-wise Revenue Expenditure
+  - match: "hbs:1735"
+    status: baked
+    bundle: states-hbs-t166
+  # Table 172: State-wise Capital Receipts
+  - match: "hbs:1736"
+    status: baked
+    bundle: states-hbs-t172
+  # Table 178: Market Borrowings of State Governments
+  - match: "hbs:1737"
+    status: baked
+    bundle: states-hbs-t178
+  # Table 179: State-wise Gender-wise Subscribers of National Pension System (NPS) All Citizen
+  - match: "hbs:1738"
+    status: baked
+    bundle: states-hbs-t179
+  # Table 180: State-wise Gender-wise Enrolments under Atal Pension Yojana (APY)
+  - match: "hbs:1739"
+    status: baked
+    bundle: states-hbs-t180
+  # Table 181: State-wise Exports
+  - match: "hbs:1740"
+    status: baked
+    bundle: states-hbs-t181
+  # Table 182: State-Wise Foreign Tourist Visits
+  - match: "hbs:1741"
+    status: baked
+    bundle: states-hbs-t182

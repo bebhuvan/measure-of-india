@@ -1,8 +1,7 @@
 # Coverage ledger: Manufacturing in the World Bank's WDI (docs/CONTRACT-coverage.md).
-# Catalogue: node scripts/lib/products/worldbank-wdi.mjs --catalogue. Omissions left for the
-# coordinator: value added in current US$, current and constant rupees; industry value added
-# beyond its share of GDP; industry value added per worker; manufactures' share of imports.
-# Note: this guide has no data/sources.yml entry, so `npm run data` does not refresh it.
+# Catalogue: node scripts/lib/products/worldbank-wdi.mjs --catalogue. The indicators not drawn
+# here are baked in the worldbank family's WDI topic bundles. Refreshed by `npm run data`
+# (data/sources.yml dossiers.manufacturing, added 2026-10-09).
 family: manufacturing
 guides: [manufacturing]
 catalogue: data/coverage/manufacturing.catalogue.json
@@ -24,9 +23,14 @@ rules:
     bundle: wdi-manufacturing-exports
     plate: "Plate 5: what the export ledger says"
 
-  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
-  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
-  - match:
-      - "wdi:ind:*"
-    status: pending
-    scheduled: "wave 2: manufacturing fuller (with atlas-worldbank)"
+  # Decided 2026-10-09 by the worldbank family session: the rest of the catalogue is baked in
+  # the WDI topic bundles (every WDI indicator for India), downloadable and in the guides'
+  # every-cut tables; this guide's plates already draw the share, level and growth.
+  - match: ["wdi:ind:nv.ind.manf.cd", "wdi:ind:nv.ind.manf.cn", "wdi:ind:nv.ind.manf.kn", "wdi:ind:nv.ind.totl.cd", "wdi:ind:nv.ind.totl.cn", "wdi:ind:nv.ind.totl.kd", "wdi:ind:nv.ind.totl.kd.zg", "wdi:ind:nv.ind.totl.kn", "wdi:ind:nv.ind.empl.kd"]
+    status: baked
+    bundle: worldbank-national-accounts
+    series: [nv_ind_manf_cd, nv_ind_manf_cn, nv_ind_manf_kn, nv_ind_totl_cd, nv_ind_totl_cn, nv_ind_totl_kd, nv_ind_totl_kd_zg, nv_ind_totl_kn, nv_ind_empl_kd]
+  - match: "wdi:ind:tm.val.manf.zs.un"
+    status: baked
+    bundle: worldbank-trade
+    series: [tm_val_manf_zs_un]

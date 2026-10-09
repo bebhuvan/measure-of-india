@@ -1,0 +1,1610 @@
+# Coverage ledger: money, bank credit and bank health (docs/CONTRACT-coverage.md).
+# Catalogue: node scripts/lib/products/credit.mjs --catalogue (the DBIE money, banking, BSR-1,
+# spatial, NBFC, Statistical Tables and Trend and Progress menus, the Handbook's and Bulletin's
+# money and banking tables, the WSS money and bank tables, and the parsed sectoral-credit, CAS
+# money and NBFC datasets, itemised by series).
+# How each report was decided (2026-10-09): reports read by credit.mjs are shown or baked; every
+# other report with rows is baked by credit-deep.mjs, one bundle per table; a report whose rows
+# are the same figures as a baked report (100% of a hash sample of its date-value pairs found in
+# the other, any unit) is baked through its twin; tables too large for a chart bundle are held
+# for the deep-archive tier (coordinator's rule, 2026-10-09), each naming the baked bundles its
+# coarser cuts live in; reports with no rows in the mirror are blocked or, for notes, excluded.
+# Nothing here is pending.
+family: credit
+guides:
+  - credit
+catalogue: data/coverage/credit.catalogue.json
+rules:
+  - match:
+      - sibc:sectors:new:*
+      - sibc:sectors:section42:*
+    status: shown
+    bundle: credit-sectors
+    plate: "§05 Who borrows: home loans are the largest single kind of bank credit"
+  - match: sibc:sectors:old:*
+    status: shown
+    bundle: credit-sectors-2007
+    plate: "§05 Who borrows: since 2007 banks have turned from lending to industry to lending to people"
+  - match: sibc:industry:new:*
+    status: shown
+    bundle: credit-industry
+    plate: §07 Industry, services and the finance companies
+  - match: sibc:industry:old:*
+    status: baked
+    bundle: credit-industry-2007
+  - match: sibc:*:release:*
+    status: shown
+    bundle:
+      - credit-sectors
+      - credit-industry
+      - credit-sectors-2007
+      - credit-industry-2007
+      - credit-growth
+    plate: "§05 Who borrows: which kinds of credit are growing fastest"
+  - match: growth:*
+    status: shown
+    bundle: credit-growth
+    plate: "§05 Who borrows: which kinds of credit are growing fastest"
+  - match:
+      - cas:msc-f-rn:*
+      - cas:mss-f-rn:*
+    status: shown
+    bundle:
+      - credit-money
+      - credit-money-growth
+    plate: "§09 Money: how much there is, and whether it still drives prices"
+  - match: cas:montry-ratios-rn:*
+    status: shown
+    bundle: credit-money-ratios
+    plate: "§09 Money: how much there is, and whether it still drives prices"
+  - match:
+      - cas:bmc-m-rn:*
+      - cas:mss-m-rn:*
+    status: baked
+    bundle: credit-money-monthly
+  - match:
+      - cas:rmc-m-rn:*
+      - cas:rms-m-rn:*
+    status: baked
+    bundle: credit-reserve-money
+  - match:
+      - cas:rmc-w-rn:*
+      - cas:rms-w-rn:*
+    status: baked
+    bundle: credit-reserve-money-weekly
+  - match:
+      - cas:csurycom-f-rn:*
+      - cas:csurysor-f-rn:*
+    status: baked
+    bundle: credit-bank-survey
+  - match:
+      - cas:rbi-asset-w-rn:*
+      - cas:rbi-liab-w-rn:*
+    status: baked
+    bundle: credit-rbi-balance-sheet
+  - match: cas:mon-ag-rn:*
+    status: baked
+    bundle: credit-money-annual
+  - match: nbfc:*
+    status: shown
+    bundle: credit-nbfc
+    plate: "§07 Industry, services and the finance companies: NBFCs"
+  - match: position:*
+    status: baked
+    bundle:
+      - credit-scb
+      - credit-deep-scheduled-banks
+  - match: dbie:329
+    status: shown
+    bundle: &a28
+      - credit-crar
+    plate: §11 Are the banks healthy? The bad-loan cycle
+  - match: dbie:330
+    status: shown
+    bundle: &a29
+      - credit-npa
+      - credit-npa-amounts
+    plate: §11 Are the banks healthy? The bad-loan cycle
+  - match: dbie:332
+    status: shown
+    bundle:
+      - credit-depth
+    plate: "§04 How fast credit grows: bank credit as a share of the economy"
+  - match: dbie:689
+    status: shown
+    bundle:
+      - credit-scb
+      - credit-scb-ratios
+    plate: §04 How fast credit grows
+  - match: dbie:947
+    status: shown
+    bundle:
+      - credit-size
+    plate: "§06 Loans to people: loan sizes"
+  - match: dbie:949
+    status: shown
+    bundle:
+      - credit-lending-rates
+    plate: "§06 Loans to people: what a loan costs"
+  - match: dbie:1114
+    status: shown
+    bundle:
+      - credit-npa-movement
+      - credit-npa-movement-banks
+    plate: §11 Are the banks healthy? The clean-up
+  - match: dbie:1130
+    status: shown
+    bundle: &a52
+      - credit-food
+      - credit-scb-ratios
+    plate: §08 Food credit
+  - match: dbie:1134
+    status: shown
+    bundle:
+      - credit-utilisation
+    plate: "§10 Where the credit goes: credit-deposit ratios by state"
+  - match: dbie:1415
+    status: shown
+    bundle:
+      - credit-places
+      - credit-states
+      - credit-states-cd
+      - credit-offices
+      - credit-places-states
+    plate: "§10 Where the credit goes: by population group"
+  - match: dbie:1427
+    status: shown
+    bundle:
+      - credit-states-cd-annual
+      - credit-states-annual
+      - credit-offices-annual
+      - credit-places-annual
+      - credit-places-states-annual
+    plate: "§10 Where the credit goes: credit-deposit ratios by state"
+  - match: dbie:1508
+    status: shown
+    bundle:
+      - credit-frauds
+      - credit-frauds-half-year
+    plate: §11 Are the banks healthy? Frauds
+  - match: dbie:1555
+    status: shown
+    bundle:
+      - credit-women
+      - credit-women-districts
+    plate: "§10 Where the credit goes: women's share"
+  - match: dbie:336
+    status: baked
+    bundle: &a30
+      - credit-loan-quality
+      - credit-loan-quality-banks
+      - credit-npa-banks
+  - match: dbie:539
+    status: baked
+    bundle: &a33
+      - credit-sectors-ex-merger
+  - match: dbie:941
+    status: baked
+    bundle:
+      - credit-population-group
+  - match: dbie:942
+    status: baked
+    bundle:
+      - credit-bank-groups
+  - match: dbie:943
+    status: baked
+    bundle:
+      - credit-states-bsr1
+  - match: dbie:944
+    status: baked
+    bundle:
+      - credit-occupation
+  - match: dbie:945
+    status: baked
+    bundle:
+      - credit-account-type
+  - match: dbie:946
+    status: baked
+    bundle:
+      - credit-organisation
+  - match: dbie:948
+    status: baked
+    bundle:
+      - credit-interest-rates
+  - match: dbie:963
+    status: baked
+    bundle:
+      - credit-states-occupation
+  - match: dbie:1465
+    status: baked
+    bundle: &a57
+      - credit-states-2017
+      - credit-states-cd-2017
+      - credit-offices-2017
+      - credit-places-2017
+      - credit-places-states-2017
+  - match: dbie:1483
+    status: baked
+    bundle:
+      - credit-states-2004
+      - credit-states-cd-2004
+      - credit-offices-2004
+      - credit-places-2004
+      - credit-places-states-2004
+  - match: dbie:6
+    status: baked
+    bundle: &a1
+      - credit-deep-cash-balances
+  - match: dbie:7
+    status: baked
+    bundle: &a2
+      - credit-deep-reserve-money-weekly
+  - match: dbie:13
+    status: baked
+    bundle: &a3
+      - credit-deep-money-stock-wss
+  - match: dbie:15
+    status: baked
+    bundle: &a4
+      - credit-deep-standing-facilities
+  - match: dbie:16
+    status: baked
+    bundle: &a5
+      - credit-deep-liquidity-aggregates
+  - match: dbie:20
+    status: baked
+    bundle: &a6
+      - credit-deep-rbi-weekly-statement
+  - match: dbie:22
+    status: baked
+    bundle:
+      - credit-deep-money-stock-measures
+      - credit-deep-money-stock-measures-annual
+  - match: dbie:23
+    status: baked
+    bundle:
+      - credit-deep-money-sources-bulletin
+  - match: dbie:24
+    status: baked
+    bundle: &a7
+      - credit-deep-monetary-survey
+  - match: dbie:25
+    status: baked
+    bundle:
+      - credit-deep-money-stock-fortnightly
+  - match: dbie:39
+    status: baked
+    bundle: &a8
+      - credit-deep-rbi-liabilities-assets
+  - match: dbie:42
+    status: baked
+    bundle: &a9
+      - credit-deep-scb-section42-full
+  - match: dbie:44
+    status: baked
+    bundle: &a10
+      - credit-deep-industry-monthly
+  - match: dbie:72
+    status: baked
+    bundle: &a11
+      - credit-deep-agri-institutional
+  - match: dbie:89
+    status: baked
+    bundle: &a12
+      - credit-deep-rbi-accounts-annual
+  - match: dbie:96
+    status: baked
+    bundle: &a13
+      - credit-deep-average-money
+  - match: dbie:97
+    status: baked
+    bundle: &a14
+      - credit-deep-money-components-handbook
+      - credit-deep-money-components-handbook-annual
+  - match: dbie:98
+    status: baked
+    bundle: &a15
+      - credit-deep-money-sources-annual
+  - match: dbie:103
+    status: baked
+    bundle:
+      - credit-deep-savings-deposits
+  - match: dbie:112
+    status: baked
+    bundle: &a16
+      - credit-deep-rrb-indicators
+  - match: dbie:114
+    status: baked
+    bundle:
+      - credit-deep-credit-population-annual
+      - credit-deep-deposits-population-annual
+  - match: dbie:115
+    status: baked
+    bundle:
+      - credit-deep-branches-population
+  - match: dbie:117
+    status: baked
+    bundle: &a17
+      - credit-deep-bank-balance-sheet
+  - match: dbie:118
+    status: baked
+    bundle: &a18
+      - credit-deep-cooperative-npa
+  - match: dbie:188
+    status: baked
+    bundle: &a19
+      - credit-deep-industry-monthly-2007
+      - credit-deep-industry-monthly
+  - match: dbie:199
+    status: baked
+    bundle: &a20
+      - credit-deep-bank-employees
+  - match: dbie:200
+    status: baked
+    bundle: &a21
+      - credit-deep-shg
+  - match: dbie:215
+    status: baked
+    bundle: &a22
+      - credit-deep-money-sources-handbook
+  - match: dbie:252
+    status: baked
+    bundle: &a23
+      - credit-deep-money-components-annual
+  - match: dbie:255
+    status: baked
+    bundle: &a24
+      - credit-deep-pacs
+  - match: dbie:281
+    status: baked
+    bundle: &a25
+      - credit-deep-state-cooperative-banks
+  - match: dbie:291
+    status: baked
+    bundle: &a26
+      - credit-deep-sectoral-annual-old
+      - credit-deep-sectoral-annual
+      - credit-deep-sectoral-annual-long
+  - match: dbie:299
+    status: baked
+    bundle:
+      - credit-deep-term-deposit-maturity
+  - match: dbie:322
+    status: baked
+    bundle: &a27
+      - credit-deep-state-coop-banks-monthly
+  - match: dbie:443
+    status: baked
+    bundle: &a31
+      - credit-deep-commercial-bank-survey
+  - match: dbie:446
+    status: baked
+    bundle:
+      - credit-deep-notes-coins
+  - match: dbie:450
+    status: baked
+    bundle:
+      - credit-deep-nbfc-deposits
+  - match: dbie:473
+    status: baked
+    bundle:
+      - credit-deep-agri-short-term
+  - match: dbie:474
+    status: baked
+    bundle:
+      - credit-deep-agri-scb
+  - match: dbie:526
+    status: baked
+    bundle: &a32
+      - credit-deep-industry-annual-long
+      - credit-deep-industry-annual
+  - match: dbie:544
+    status: baked
+    bundle: &a34
+      - credit-deep-monetary-survey-monthly
+  - match: dbie:546
+    status: baked
+    bundle: &a35
+      - credit-deep-rbi-survey
+  - match: dbie:568
+    status: baked
+    bundle:
+      - credit-deep-money-growth-annual
+  - match: dbie:609
+    status: baked
+    bundle: &a36
+      - credit-deep-select-aggregates-handbook
+  - match: dbie:615
+    status: baked
+    bundle:
+      - credit-deep-offices-banks
+  - match: dbie:618
+    status: baked
+    bundle:
+      - credit-deep-offices-states
+  - match: dbie:619
+    status: baked
+    bundle:
+      - credit-deep-offices-bank-groups
+  - match: dbie:621
+    status: baked
+    bundle:
+      - credit-deep-coop-offices-districts
+  - match: dbie:639
+    status: baked
+    bundle: &a37
+      - credit-deep-scheduled-banks-annual
+  - match: dbie:642
+    status: baked
+    bundle:
+      - credit-deep-offices-abroad
+  - match: dbie:661
+    status: baked
+    bundle: &a38
+      - credit-deep-derivatives
+  - match: dbie:662
+    status: baked
+    bundle:
+      - credit-deep-cheque-clearances
+  - match: dbie:665
+    status: baked
+    bundle: &a39
+      - credit-deep-asset-classification
+  - match: dbie:705
+    status: baked
+    bundle:
+      - credit-deep-scb-investments-old
+  - match: dbie:706
+    status: baked
+    bundle: &a40
+      - credit-deep-state-investments
+  - match: dbie:722
+    status: baked
+    bundle: &a41
+      - credit-deep-state-coop-banks-states
+  - match: dbie:723
+    status: baked
+    bundle: &a42
+      - credit-deep-banks-abroad
+  - match: dbie:725
+    status: baked
+    bundle: &a43
+      - credit-deep-dccb-states
+  - match: dbie:729
+    status: baked
+    bundle:
+      - credit-deep-reserve-money-annual
+  - match: dbie:733
+    status: baked
+    bundle: &a44
+      - credit-deep-insured-deposits
+  - match: dbie:734
+    status: baked
+    bundle:
+      - credit-deep-coop-branches-states
+  - match: dbie:735
+    status: baked
+    bundle:
+      - credit-deep-walr-bank-groups
+  - match: dbie:743
+    status: baked
+    bundle:
+      - credit-deep-clearing-houses
+  - match: dbie:745
+    status: baked
+    bundle:
+      - credit-deep-offices-abroad-banks
+  - match: dbie:747
+    status: baked
+    bundle:
+      - credit-deep-scb-investments-offices
+  - match: dbie:749
+    status: baked
+    bundle:
+      - credit-deep-agri-indirect
+  - match: dbie:756
+    status: baked
+    bundle:
+      - credit-deep-farmers-landholding-short
+  - match: dbie:757
+    status: baked
+    bundle:
+      - credit-deep-farmers-landholding-long
+  - match: dbie:758
+    status: baked
+    bundle:
+      - credit-deep-small-industries
+  - match: dbie:760
+    status: baked
+    bundle:
+      - credit-deep-nbfc-financials
+  - match: dbie:762
+    status: baked
+    bundle:
+      - credit-deep-sick-units
+  - match: dbie:764
+    status: baked
+    bundle:
+      - credit-deep-monetary-ratios
+  - match: dbie:781
+    status: baked
+    bundle:
+      - credit-deep-reserve-money-monthly
+  - match: dbie:790
+    status: baked
+    bundle:
+      - credit-deep-agri-long-term
+  - match: dbie:872
+    status: baked
+    bundle:
+      - credit-deep-scb-growth-annual
+  - match: dbie:879
+    status: baked
+    bundle: &a45
+      - credit-deep-scb-annual-aggregates
+  - match: dbie:901
+    status: baked
+    bundle:
+      - credit-deep-select-aggregates
+  - match: dbie:905
+    status: baked
+    bundle: &a46
+      - credit-deep-food-procurement
+  - match: dbie:906
+    status: baked
+    bundle: &a47
+      - credit-deep-exporters
+  - match: dbie:910
+    status: baked
+    bundle: &a48
+      - credit-deep-npa-by-sector
+  - match: dbie:950
+    status: baked
+    bundle:
+      - credit-deep-bsr1-pop-bankgroup
+  - match: dbie:951
+    status: baked
+    bundle:
+      - credit-deep-bsr1-state-pop
+  - match: dbie:952
+    status: baked
+    bundle:
+      - credit-deep-bsr1-state-bankgroup
+  - match: dbie:953
+    status: baked
+    bundle:
+      - credit-deep-bsr1-bankgroup-size
+  - match: dbie:954
+    status: baked
+    bundle:
+      - credit-deep-bsr1-size-rate
+  - match: dbie:955
+    status: baked
+    bundle:
+      - credit-deep-bsr1-account-rate
+  - match: dbie:956
+    status: baked
+    bundle:
+      - credit-deep-bsr1-bankgroup-rate
+  - match: dbie:957
+    status: baked
+    bundle:
+      - credit-deep-bsr1-account-occupation
+  - match: dbie:958
+    status: baked
+    bundle:
+      - credit-deep-bsr1-organisation-occupation
+  - match: dbie:959
+    status: baked
+    bundle:
+      - credit-deep-bsr1-rate-occupation
+  - match: dbie:960
+    status: baked
+    bundle:
+      - credit-deep-bsr1-size-occupation
+  - match: dbie:961
+    status: baked
+    bundle:
+      - credit-deep-bsr1-pop-occupation
+  - match: dbie:962
+    status: baked
+    bundle:
+      - credit-deep-bsr1-pop-occupation-small
+  - match: dbie:964
+    status: baked
+    bundle:
+      - credit-deep-bsr1-state-occupation-small
+  - match: dbie:965
+    status: baked
+    bundle:
+      - credit-deep-bsr1-bankgroup-occupation
+  - match: dbie:967
+    status: baked
+    bundle:
+      - credit-deep-bsr1-rate-2014
+  - match: dbie:968
+    status: baked
+    bundle:
+      - credit-deep-bsr1-size-rate-2014
+  - match: dbie:969
+    status: baked
+    bundle:
+      - credit-deep-bsr1-bankgroup-rate-2017
+  - match: dbie:970
+    status: baked
+    bundle:
+      - credit-deep-bsr1-rate-occupation-2014
+  - match: dbie:971
+    status: baked
+    bundle:
+      - credit-deep-bsr1-account-rate-2014
+  - match: dbie:972
+    status: baked
+    bundle:
+      - credit-deep-bsr1-bankgroup-2014
+  - match: dbie:973
+    status: baked
+    bundle:
+      - credit-deep-bsr1-pop-bankgroup-2014
+  - match: dbie:974
+    status: baked
+    bundle:
+      - credit-deep-bsr1-bankgroup-size-2014
+  - match: dbie:975
+    status: baked
+    bundle:
+      - credit-deep-bsr1-bankgroup-rate-2014
+  - match: dbie:978
+    status: baked
+    bundle:
+      - credit-deep-bsr1-state-bankgroup-2014
+  - match: dbie:983
+    status: baked
+    bundle:
+      - credit-deep-priority-sector-banks
+  - match: dbie:987
+    status: baked
+    bundle: &a49
+      - credit-deep-bank-group-business
+  - match: dbie:998
+    status: baked
+    bundle: &a50
+      - credit-deep-scheduled-banks
+  - match: dbie:1001
+    status: baked
+    bundle: &a51
+      - credit-deep-unclaimed-deposits
+  - match: dbie:1003
+    status: baked
+    bundle:
+      - credit-deep-priority-sector-states
+  - match: dbie:1056
+    status: baked
+    bundle:
+      - credit-deep-bank-group-ratios
+  - match: dbie:1057
+    status: baked
+    bundle:
+      - credit-deep-employees-banks
+  - match: dbie:1058
+    status: baked
+    bundle:
+      - credit-deep-restructured-loans
+  - match: dbie:1077
+    status: baked
+    bundle:
+      - credit-deep-crar-banks
+  - match: dbie:1078
+    status: baked
+    bundle:
+      - credit-deep-bank-ratios
+  - match: dbie:1079
+    status: baked
+    bundle:
+      - credit-deep-contingent-liabilities
+  - match: dbie:1084
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-occupation
+  - match: dbie:1085
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-size
+  - match: dbie:1086
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-account-type
+  - match: dbie:1087
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-pop-occupation-small
+  - match: dbie:1088
+    status: baked
+    bundle:
+      - credit-deep-sensitive-sectors-banks
+  - match: dbie:1089
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-pop-occupation
+  - match: dbie:1090
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-occupation-account
+  - match: dbie:1091
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-occupation-account-small
+  - match: dbie:1092
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-occupation-organisation
+  - match: dbie:1093
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-occupation-organisation-small
+  - match: dbie:1094
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-account-organisation
+  - match: dbie:1095
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-account-organisation-small
+  - match: dbie:1096
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-size-organisation
+  - match: dbie:1097
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-size-account
+  - match: dbie:1112
+    status: baked
+    bundle:
+      - credit-deep-bank-earnings
+  - match: dbie:1113
+    status: baked
+    bundle:
+      - credit-deep-bank-provisions
+  - match: dbie:1115
+    status: baked
+    bundle:
+      - credit-deep-bank-profit-appropriation
+  - match: dbie:1119
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-small-borrowers
+  - match: dbie:1120
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-occupation-size
+  - match: dbie:1122
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-rate-organisation
+  - match: dbie:1123
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-size-rate
+  - match: dbie:1124
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-rate-organisation-small
+  - match: dbie:1125
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-rate-account
+  - match: dbie:1126
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-rate-account-small
+  - match: dbie:1127
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-occupation-rate
+  - match: dbie:1128
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-occupation-rate-small
+  - match: dbie:1129
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-rate-size-account
+  - match: dbie:1131
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-bank-groups
+  - match: dbie:1132
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-pop-sanction-use
+  - match: dbie:1133
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-pop-sanction-use-ex-food
+  - match: dbie:1135
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-state-pop-sanction-use
+  - match: dbie:1136
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-pop-occupation-share
+  - match: dbie:1137
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-organisation
+  - match: dbie:1138
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-size-bankgroup
+  - match: dbie:1139
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-bankgroup-pop-size
+  - match: dbie:1140
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-state-pop
+  - match: dbie:1141
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-state-bankgroup
+  - match: dbie:1142
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-pop-bankgroup-small
+  - match: dbie:1143
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-state-bankgroup-size
+  - match: dbie:1144
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-state-pop-small
+  - match: dbie:1145
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-districts
+  - match: dbie:1149
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-pop-occupation-bankgroup
+  - match: dbie:1152
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-state-occupation-pop-small
+  - match: dbie:1198
+    status: baked
+    bundle:
+      - credit-deep-nbfc-sectors-2016
+  - match: dbie:1209
+    status: baked
+    bundle:
+      - credit-deep-abridged-balance-sheets
+  - match: dbie:1214
+    status: baked
+    bundle: &a53
+      - credit-deep-coop-balance-sheets
+  - match: dbie:1248
+    status: baked
+    bundle:
+      - credit-deep-scb-resources
+  - match: dbie:1413
+    status: baked
+    bundle:
+      - credit-deep-spatial-glance
+  - match: dbie:1414
+    status: baked
+    bundle:
+      - credit-deep-spatial-centres
+  - match: dbie:1417
+    status: baked
+    bundle:
+      - credit-deep-spatial-deposit-types
+  - match: dbie:1421
+    status: baked
+    bundle: &a54
+      - credit-deep-spatial-office-size
+  - match: dbie:1425
+    status: baked
+    bundle:
+      - credit-deep-spatial-glance-annual
+  - match: dbie:1426
+    status: baked
+    bundle:
+      - credit-deep-spatial-centres-annual
+  - match: dbie:1428
+    status: baked
+    bundle:
+      - credit-deep-spatial-deposit-types-annual
+  - match: dbie:1432
+    status: baked
+    bundle: &a55
+      - credit-deep-spatial-office-size-annual
+  - match: dbie:1463
+    status: baked
+    bundle:
+      - credit-deep-spatial-glance-2017
+  - match: dbie:1464
+    status: baked
+    bundle: &a56
+      - credit-deep-spatial-centres-2017
+  - match: dbie:1466
+    status: baked
+    bundle:
+      - credit-deep-spatial-deposit-types-2017
+  - match: dbie:1470
+    status: baked
+    bundle: &a58
+      - credit-deep-spatial-office-size-2017
+  - match: dbie:1481
+    status: baked
+    bundle:
+      - credit-deep-spatial-glance-2004
+  - match: dbie:1482
+    status: baked
+    bundle:
+      - credit-deep-spatial-centres-2004
+  - match: dbie:1484
+    status: baked
+    bundle:
+      - credit-deep-spatial-deposit-types-2004
+  - match: dbie:1488
+    status: baked
+    bundle:
+      - credit-deep-spatial-office-size-2004
+  - match: dbie:1489
+    status: baked
+    bundle:
+      - credit-deep-spatial-office-size-2004
+  - match: dbie:1509
+    status: baked
+    bundle:
+      - credit-deep-tp-international-liabilities
+  - match: dbie:1510
+    status: baked
+    bundle:
+      - credit-deep-tp-international-assets
+  - match: dbie:1511
+    status: baked
+    bundle:
+      - credit-deep-tp-international-claims
+  - match: dbie:1512
+    status: baked
+    bundle:
+      - credit-deep-tp-off-balance-sheet
+  - match: dbie:1513
+    status: baked
+    bundle:
+      - credit-deep-tp-sensitive-sectors
+  - match: dbie:1514
+    status: baked
+    bundle:
+      - credit-deep-tp-overseas-operations
+  - match: dbie:1515
+    status: baked
+    bundle:
+      - credit-deep-tp-shareholding
+  - match: dbie:1516
+    status: baked
+    bundle:
+      - credit-deep-tp-banking-glance
+  - match: dbie:1517
+    status: baked
+    bundle:
+      - credit-deep-tp-claims-by-country
+  - match: dbie:1518
+    status: baked
+    bundle:
+      - credit-deep-tp-branches-atms
+  - match: dbie:1519
+    status: baked
+    bundle:
+      - credit-deep-tp-microfinance
+  - match: dbie:1520
+    status: baked
+    bundle:
+      - credit-deep-tp-rrb-states
+  - match: dbie:1521
+    status: baked
+    bundle:
+      - credit-deep-tp-rrb-psl
+  - match: dbie:1522
+    status: baked
+    bundle:
+      - credit-deep-tp-ucb-performance
+  - match: dbie:1523
+    status: baked
+    bundle:
+      - credit-deep-tp-ucb-parameters
+  - match: dbie:1524
+    status: baked
+    bundle:
+      - credit-deep-tp-dccb-health
+  - match: dbie:1525
+    status: baked
+    bundle:
+      - credit-deep-tp-pacs-members
+  - match: dbie:1526
+    status: baked
+    bundle:
+      - credit-deep-tp-pacs
+  - match: dbie:1527
+    status: baked
+    bundle:
+      - credit-deep-tp-scb-coop-health
+  - match: dbie:1528
+    status: baked
+    bundle:
+      - credit-deep-tp-pacs-states
+  - match: dbie:1529
+    status: baked
+    bundle:
+      - credit-deep-tp-scardb-balance-sheet
+  - match: dbie:1530
+    status: baked
+    bundle:
+      - credit-deep-tp-scardb-performance
+  - match: dbie:1531
+    status: baked
+    bundle:
+      - credit-deep-tp-scardb-asset-quality
+  - match: dbie:1532
+    status: baked
+    bundle:
+      - credit-deep-tp-pcardb-performance
+  - match: dbie:1533
+    status: baked
+    bundle:
+      - credit-deep-tp-pcardb-asset-quality
+  - match: dbie:1534
+    status: baked
+    bundle:
+      - credit-deep-tp-nbfc-balance-sheet
+  - match: dbie:1535
+    status: baked
+    bundle:
+      - credit-deep-tp-nbfc-d-balance-sheet
+  - match: dbie:1536
+    status: baked
+    bundle:
+      - credit-deep-tp-pcardb-balance-sheet
+  - match: dbie:1537
+    status: baked
+    bundle:
+      - credit-deep-tp-kcc-states
+      - credit-deep-tp-kcc
+  - match: dbie:1538
+    status: baked
+    bundle:
+      - credit-deep-tp-scardb-regions
+  - match: dbie:1539
+    status: baked
+    bundle:
+      - credit-deep-tp-pcardb-regions
+  - match: dbie:1540
+    status: baked
+    bundle:
+      - credit-deep-tp-nbfc-ul-balance-sheet
+  - match: dbie:1541
+    status: baked
+    bundle:
+      - credit-deep-tp-nbfc-ml-balance-sheet
+  - match: dbie:1542
+    status: baked
+    bundle:
+      - credit-deep-tp-nbfc-credit
+  - match: dbie:1543
+    status: baked
+    bundle:
+      - credit-deep-tp-nbfc-ul-performance
+  - match: dbie:1544
+    status: baked
+    bundle:
+      - credit-deep-tp-nbfc-ml-performance
+  - match: dbie:1545
+    status: baked
+    bundle:
+      - credit-deep-tp-fi-assistance
+  - match: dbie:1546
+    status: baked
+    bundle:
+      - credit-deep-tp-primary-dealers
+  - match: dbie:1547
+    status: baked
+    bundle:
+      - credit-deep-tp-primary-dealer-indicators
+  - match: dbie:1548
+    status: baked
+    bundle:
+      - credit-deep-flow-of-resources
+  - match: dbie:1549
+    status: baked
+    bundle:
+      - credit-deep-credit-to-commercial-sector
+  - match: dbie:1553
+    status: baked
+    bundle:
+      - credit-deep-bsr1a-district-gender
+  - match:
+      - dbie:326
+    status: baked
+    bundle: *a1
+  - match:
+      - dbie:26
+      - dbie:614
+      - dbie:751
+    status: baked
+    bundle: *a2
+  - match:
+      - dbie:770
+    status: baked
+    bundle: *a3
+  - match:
+      - dbie:545
+    status: baked
+    bundle: *a4
+  - match:
+      - dbie:101
+    status: baked
+    bundle: *a5
+  - match:
+      - dbie:447
+      - dbie:761
+    status: baked
+    bundle: *a6
+  - match:
+      - dbie:556
+    status: baked
+    bundle: *a7
+  - match:
+      - dbie:613
+    status: baked
+    bundle: *a8
+  - match:
+      - dbie:741
+    status: baked
+    bundle: *a9
+  - match:
+      - dbie:540
+    status: baked
+    bundle: *a10
+  - match:
+      - dbie:337
+    status: baked
+    bundle: *a11
+  - match:
+      - dbie:1004
+    status: baked
+    bundle: *a12
+  - match:
+      - dbie:445
+    status: baked
+    bundle: *a13
+  - match:
+      - dbie:1373
+    status: baked
+    bundle: *a14
+  - match:
+      - dbie:547
+    status: baked
+    bundle: *a15
+  - match:
+      - dbie:331
+    status: baked
+    bundle: *a16
+  - match:
+      - dbie:323
+    status: baked
+    bundle: *a17
+  - match:
+      - dbie:325
+    status: baked
+    bundle: *a18
+  - match:
+      - dbie:765
+    status: baked
+    bundle: *a19
+  - match:
+      - dbie:557
+    status: baked
+    bundle: *a20
+  - match:
+      - dbie:338
+    status: baked
+    bundle: *a21
+  - match:
+      - dbie:444
+    status: baked
+    bundle: *a22
+  - match:
+      - dbie:586
+    status: baked
+    bundle: *a23
+  - match:
+      - dbie:324
+    status: baked
+    bundle: *a24
+  - match:
+      - dbie:579
+    status: baked
+    bundle: *a25
+  - match:
+      - dbie:999
+    status: baked
+    bundle: *a26
+  - match:
+      - dbie:28
+    status: baked
+    bundle: *a27
+  - match:
+      - dbie:296
+    status: baked
+    bundle: *a28
+  - match:
+      - dbie:254
+    status: baked
+    bundle: *a29
+  - match:
+      - dbie:986
+    status: baked
+    bundle: *a30
+  - match:
+      - dbie:27
+      - dbie:100
+      - dbie:903
+    status: baked
+    bundle: *a31
+  - match:
+      - dbie:541
+    status: baked
+    bundle: *a32
+  - match:
+      - dbie:40
+      - dbie:152
+      - dbie:766
+    status: baked
+    bundle: *a33
+  - match:
+      - dbie:826
+    status: baked
+    bundle: *a34
+  - match:
+      - dbie:554
+    status: baked
+    bundle: *a35
+  - match:
+      - dbie:803
+    status: baked
+    bundle: *a36
+  - match:
+      - dbie:937
+    status: baked
+    bundle: *a37
+  - match:
+      - dbie:679
+    status: baked
+    bundle: *a38
+  - match:
+      - dbie:640
+    status: baked
+    bundle: *a39
+  - match:
+      - dbie:909
+    status: baked
+    bundle: *a40
+  - match:
+      - dbie:988
+    status: baked
+    bundle: *a41
+  - match:
+      - dbie:904
+    status: baked
+    bundle: *a42
+  - match:
+      - dbie:939
+    status: baked
+    bundle: *a43
+  - match:
+      - dbie:938
+    status: baked
+    bundle: *a44
+  - match:
+      - dbie:813
+    status: baked
+    bundle: *a45
+  - match:
+      - dbie:736
+    status: baked
+    bundle: *a46
+  - match:
+      - dbie:704
+    status: baked
+    bundle: *a47
+  - match:
+      - dbie:641
+    status: baked
+    bundle: *a48
+  - match:
+      - dbie:991
+    status: baked
+    bundle: *a49
+  - match:
+      - dbie:43
+    status: baked
+    bundle: *a50
+  - match:
+      - dbie:1005
+    status: baked
+    bundle: *a51
+  - match:
+      - dbie:9
+    status: baked
+    bundle: *a52
+  - match:
+      - dbie:1215
+    status: baked
+    bundle: *a53
+  - match:
+      - dbie:1422
+    status: baked
+    bundle: *a54
+  - match:
+      - dbie:1433
+    status: baked
+    bundle: *a55
+  - match:
+      - dbie:1066
+    status: baked
+    bundle: *a56
+  - match:
+      - dbie:1002
+    status: baked
+    bundle: *a57
+  - match:
+      - dbie:1471
+    status: baked
+    bundle: *a58
+  - match: dbie:703
+    status: excluded
+    reason: The same table as report 737 (ownership of deposits), which the deposits guide's ledger decides.
+  - match: dbie:1223
+    status: excluded
+    reason: The same table as report 1199 (BSR-2 deposits by district), which the deposits guide's ledger decides.
+  - match: dbie:1222
+    status: excluded
+    reason: The same table as report 1220, published under another menu; 1220 is held for the deep-archive tier.
+  - match:
+      - dbie:744
+      - dbie:1216
+    status: excluded
+    reason: "A list, by name, of which regional rural banks merged into which: there are no figures in it to bake."
+  - match: dbie:616
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-deep-offices-banks
+      - credit-deep-offices-states
+    reason: Published by RBI at state, bank, population group and kind of office, every quarter; 3,91,669 rows, too large for a chart bundle. Held for the deep-archive tier; the bank and the state cuts is baked in credit-deep-offices-banks and credit-deep-offices-states.
+  - match: dbie:966
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-states-occupation
+      - credit-deep-bsr1-state-bankgroup
+      - credit-deep-bsr1-state-pop
+    reason: Published by RBI at state, population group, bank group and occupation (BSR-1 table 3.8), every quarter; 6,35,166 rows, too large for a chart bundle. Held for the deep-archive tier; the state by occupation, bank-group and population-group cuts is baked in credit-states-occupation and credit-deep-bsr1-state-bankgroup and credit-deep-bsr1-state-pop.
+  - match: dbie:977
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-deep-bsr1-state-bankgroup-2014
+      - credit-deep-bsr1-state-pop
+    reason: Published by RBI at state, population group, bank group and occupation (BSR-1 table 3.8, the old bank groups), every quarter to 2017; 1,67,649 rows, too large for a chart bundle. Held for the deep-archive tier; the state by bank-group and population-group cuts is baked in credit-deep-bsr1-state-bankgroup-2014 and credit-deep-bsr1-state-pop.
+  - match: dbie:1111
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-deep-bank-balance-sheet
+      - credit-deep-scheduled-banks-annual
+    reason: Published by RBI at bank and balance-sheet line, each year; 1,96,503 rows, too large for a chart bundle. Held for the deep-archive tier; the bank-group balance sheets is baked in credit-deep-bank-balance-sheet and credit-deep-scheduled-banks-annual.
+  - match: dbie:1116
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-deep-bank-balance-sheet
+    reason: Published by RBI at bank, balance-sheet line and maturity bucket, each year; 19,31,904 rows, too large for a chart bundle. Held for the deep-archive tier; the consolidated balance sheet of all scheduled commercial banks is baked in credit-deep-bank-balance-sheet.
+  - match: dbie:1150
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-deep-bsr1a-state-bankgroup
+      - credit-deep-bsr1a-occupation
+    reason: Published by RBI at state, occupation and bank group, March 2026; 8,861 rows, too large for a chart bundle. Held for the deep-archive tier; the state by bank-group and occupation cuts is baked in credit-deep-bsr1a-state-bankgroup and credit-deep-bsr1a-occupation.
+  - match: dbie:1151
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-deep-bsr1a-state-pop
+      - credit-deep-bsr1a-pop-occupation
+    reason: Published by RBI at state, occupation and population group, March 2026; 7,913 rows, too large for a chart bundle. Held for the deep-archive tier; the state by population-group and occupation cuts is baked in credit-deep-bsr1a-state-pop and credit-deep-bsr1a-pop-occupation.
+  - match: dbie:1153
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-deep-bsr1a-districts
+      - credit-states-occupation
+    reason: Published by RBI at district and occupation, March 2026; 30,922 rows, too large for a chart bundle. Held for the deep-archive tier; the district total and the state by occupation cut is baked in credit-deep-bsr1a-districts and credit-states-occupation.
+  - match: dbie:1220
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-deep-bsr1a-districts
+      - credit-deep-bsr1a-pop-occupation-bankgroup
+    reason: Published by RBI at district, bank group, population group and occupation, each March; 32,94,558 rows, too large for a chart bundle. Held for the deep-archive tier; the district total and the population, occupation and bank-group cut is baked in credit-deep-bsr1a-districts and credit-deep-bsr1a-pop-occupation-bankgroup.
+  - match: dbie:1418
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-places-states
+      - credit-states-cd
+    reason: Published by RBI at district, bank group and population group (offices, deposits, credit), every quarter from March 2023; 74,075 rows, too large for a chart bundle. Held for the deep-archive tier; the state cut is baked in credit-places-states and credit-states-cd.
+  - match: dbie:1419
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-deep-spatial-deposit-types
+    reason: Published by RBI at district, bank group and population group (deposits by type), every quarter from March 2023; 74,075 rows, too large for a chart bundle. Held for the deep-archive tier; the state cut is baked in credit-deep-spatial-deposit-types.
+  - match: dbie:1420
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-states
+      - credit-places-states
+    reason: Published by RBI at centre (town), bank group and population group, every quarter from March 2023; 6,71,679 rows, too large for a chart bundle. Held for the deep-archive tier; the state, bank-group and population-group cut is baked in credit-states and credit-places-states.
+  - match: dbie:1429
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-places-states-annual
+      - credit-states-cd-annual
+    reason: Published by RBI at district, bank group and population group (offices, deposits, credit), every March from 2023; 28,173 rows, too large for a chart bundle. Held for the deep-archive tier; the state cut is baked in credit-places-states-annual and credit-states-cd-annual.
+  - match: dbie:1430
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-deep-spatial-deposit-types-annual
+    reason: Published by RBI at district, bank group and population group (deposits by type), every March from 2023; 28,173 rows, too large for a chart bundle. Held for the deep-archive tier; the state cut is baked in credit-deep-spatial-deposit-types-annual.
+  - match: dbie:1431
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-states-annual
+      - credit-places-states-annual
+    reason: Published by RBI at centre (town), bank group and population group, every March from 2023; 2,71,771 rows, too large for a chart bundle. Held for the deep-archive tier; the state, bank-group and population-group cut is baked in credit-states-annual and credit-places-states-annual.
+  - match: dbie:1462
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-deep-bsr1a-districts
+      - credit-deep-bsr1a-occupation
+    reason: Published by RBI at district and detailed occupation, each March; 22,52,862 rows, too large for a chart bundle. Held for the deep-archive tier; the district total and the all-India occupation cut is baked in credit-deep-bsr1a-districts and credit-deep-bsr1a-occupation.
+  - match: dbie:1467
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-places-states-2017
+      - credit-states-cd-2017
+    reason: Published by RBI at district, bank group and population group (offices, deposits, credit), every quarter from June 2017 to December 2022; 1,42,654 rows, too large for a chart bundle. Held for the deep-archive tier; the state cut is baked in credit-places-states-2017 and credit-states-cd-2017.
+  - match: dbie:1468
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-deep-spatial-deposit-types-2017
+    reason: Published by RBI at district, bank group and population group (deposits by type), every quarter from June 2017 to December 2022; 1,42,654 rows, too large for a chart bundle. Held for the deep-archive tier; the state cut is baked in credit-deep-spatial-deposit-types-2017.
+  - match: dbie:1469
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-states-2017
+      - credit-places-states-2017
+    reason: Published by RBI at centre (town), bank group and population group, every quarter from June 2017 to December 2022; 14,55,975 rows, too large for a chart bundle. Held for the deep-archive tier; the state, bank-group and population-group cut is baked in credit-states-2017 and credit-places-states-2017.
+  - match: dbie:1485
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-places-states-2004
+      - credit-states-cd-2004
+    reason: Published by RBI at district, bank group and population group (offices, deposits, credit), every quarter from March 2004 to March 2017; 3,06,838 rows, too large for a chart bundle. Held for the deep-archive tier; the state cut is baked in credit-places-states-2004 and credit-states-cd-2004.
+  - match: dbie:1486
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-deep-spatial-deposit-types-2004
+    reason: Published by RBI at district, bank group and population group (deposits by type), every quarter from March 2004 to March 2017; 2,83,162 rows, too large for a chart bundle. Held for the deep-archive tier; the state cut is baked in credit-deep-spatial-deposit-types-2004.
+  - match: dbie:1487
+    status: excluded
+    archive: true
+    rolls_up_to:
+      - credit-states-2004
+      - credit-places-states-2004
+    reason: Published by RBI at centre (town), bank group and population group, every quarter from March 2004 to March 2017; 28,45,715 rows, too large for a chart bundle. Held for the deep-archive tier; the state, bank-group and population-group cut is baked in credit-states-2004 and credit-places-states-2004.
+  - match: dbie:976
+    status: blocked
+    reason: The Data Bank's copy prints every cell of this table (BSR-1 bank group by occupation, old bank groups) two or more times with different values and no column to tell them apart, so no figure can be attributed (checked 2026-10-09).
+  - match:
+      - dbie:1121
+      - dbie:1257
+      - dbie:1258
+      - dbie:1259
+      - dbie:1378
+      - dbie:1423
+      - dbie:1434
+      - dbie:1472
+      - dbie:1490
+    status: excluded
+    reason: "Notes explaining the tables in words: there are no figures in them to bake (their caveats are carried in each bundle's note)."
+  - match:
+      - dbie:1006
+      - dbie:1007
+      - dbie:1008
+      - dbie:1009
+      - dbie:1010
+      - dbie:1011
+      - dbie:1012
+      - dbie:1013
+      - dbie:1014
+      - dbie:1015
+      - dbie:1016
+      - dbie:1017
+      - dbie:1018
+      - dbie:1019
+      - dbie:1020
+      - dbie:1021
+      - dbie:1022
+      - dbie:1023
+      - dbie:1024
+      - dbie:1025
+      - dbie:1026
+      - dbie:1027
+      - dbie:1028
+      - dbie:1029
+      - dbie:1030
+      - dbie:1031
+      - dbie:1032
+      - dbie:1033
+      - dbie:1034
+      - dbie:1035
+      - dbie:1036
+      - dbie:1037
+      - dbie:1038
+      - dbie:1039
+      - dbie:1040
+      - dbie:1041
+      - dbie:1042
+      - dbie:1043
+      - dbie:1044
+      - dbie:1045
+      - dbie:1046
+      - dbie:1047
+      - dbie:1048
+      - dbie:1049
+      - dbie:1050
+      - dbie:1051
+      - dbie:1052
+      - dbie:1053
+      - dbie:1054
+      - dbie:1055
+      - dbie:1383
+      - dbie:1435
+      - dbie:1480
+      - dbie:1552
+    status: blocked
+    reason: The RBI publishes these Basic Statistical Returns volumes as PDF documents, not as data tables; the Data Bank mirror holds no rows for them (checked 2026-10-09).
+  - match:
+      - dbie:617
+      - dbie:1221
+      - dbie:1456
+    status: blocked
+    reason: Listed in the DBIE catalogue but the Data Bank mirror holds no rows for it (checked 2026-10-09).

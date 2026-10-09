@@ -207,3 +207,93 @@ fails on the omissions above, by design.
 - `cpialrl-states-2019` is baked but not in the cpi registry `bundles`, so no page shows it.
 - Several state labels are lower case from the source (`plfs-states`, `cpi-states`:
   "andaman nicobar islands", "West bengal").
+
+# Round 2 (2026-10-09, after merging launch-build: 23 guides)
+
+## 1. verify.mjs traces every figure (hard rule 3)
+
+- `pipeline/lib/figures.mjs` extracts every numeric token (Indian and Western grouping) with
+  the word after it: lakh, crore, lakh crore, thousand, million, billion, trillion, bn, mn,
+  %, pt, bps, °C, mm, times or x, GW, TWh, years. Not figures, masked first: fiscal years
+  (2025-26), Q1 FY27, the day of a date, base strings (2024=100), codes (HS 03, NIC 01-03,
+  Table 2.11), digit ordinals, and rate denominators ("per 1,00,000" is the unit). Bare
+  years still go through the old year pass.
+- Allowed set: every facts number at 0, 1 and 2 dp (half-up as well as the float's own
+  rounding, so 13.85 reads 13.9), absolute values, 3 dp below 1. Restating at another scale
+  goes only through the series' own unit (`UNIT_SCALE`: usd_million x1e6, inr_crore x1e7,
+  thousand x1e3 ...), so 437,000 US$ million traces as "$437 billion" and fails as "$437
+  million". A key that names its scale (`peak_bn`, a whole `bn:` section) fixes the scale
+  of everything under it. Base values round to the thousand or lakh a sentence writes
+  ("about 979,000" from 979.179 thousand). Breadth counts (series counts, rising/falling)
+  trace only as counts, never as rates, which keeps the old "358%" guard.
+- All 34 prose files: 435 figures traced; one real failure (below). Mutation checks: a
+  wrong scale, an invented amount, a shifted decimal, a changed count and a count turned
+  into a percent all fail. Tests in `test/figures.test.mjs`.
+- **Real untraced figure, for regeneration:** `pipeline/out/prose-consumption.current-reading.what-the-print-says.md`:
+  "The urban-rural gap held at roughly 1.7 times" (6,996 / 4,122, a ratio the writer
+  computed; it is not in the facts sheet). Either regenerate, or add the urban-to-rural
+  MPCE ratio to the consumption facts sheet.
+- Adding a unit: a family whose bundles use a new money or count unit adds it to
+  `UNIT_SCALE` in `pipeline/lib/figures.mjs`; until then its numbers trace only as written.
+
+## 2. Phones: scrolling plates open at today
+
+- `src/dossiers/guide.client.js`: every plot zone that scrolls sideways opens at its right
+  (latest) end after layout, and again on resize and size change (ResizeObserver), until the
+  reader scrolls it. A quiet "← Earlier years" line above the plot (`.pz-cue`, phones only)
+  shows while there is more to the left. The sideways scroll itself is unchanged (DESIGN §3).
+- Checked at 390px in Chrome: cpi 16, gdp 10, external 19, climate 22 scrolling zones, all
+  at their latest end with the cue, no page errors; CPI §02 looked at by eye.
+
+## 3. Every-cut weight: an inline cap and bundle families
+
+- `everyCutPlan(d)` in `src/dossiers/everycut.js` decides where every series appears, once:
+  inline on the guide page up to `INLINE_CAP` rows (600 by default, `everyCutInline` in a
+  registry entry overrides), a bundle over 150 series on its own view, a registry family of
+  small bundles in one paged view, and the files past the cap in "The remaining files". The
+  component, the long-tail route and qc all read the same plan.
+- Why 600, not 1,500: the heavy pages already inlined fewer than 1,500 rows (ILO 960 rows
+  at 0.87 MB, states 1,188, climate 1,514 at 1.43 MB), so a 1,500 cap would have changed
+  nothing. At 600: states 0.87 MB to 0.50 MB, ILO 0.87 to 0.61, climate 1.43 to 0.69,
+  rates 0.72, external 0.51.
+- `everyCutFamilies` (registry): `[{ id, label, match }]`, `match` a slug prefix or a list;
+  a family can claim bundles on disk the registry does not list. The states entry now has
+  `handbook` for `states-hbs-`: all 208 Handbook bundles (12,276 series) are in every-cut, in
+  one view of 14 pages, filterable by file. (One field added to the states registry entry.)
+- qc counts rows per file across the guide page and every long-tail page and requires each
+  bundle's count to equal its series count: all 23 guides pass, 0 duplicates or misses
+  (ILO 41,656 series, services 27,851, states 16,877, climate 16,804). Pages also hold to
+  the 1.2 MB budget; the largest long-tail page is under 1.1 MB.
+
+# Round 3 (2026-10-09, after merging launch-build: 24 guides with credit)
+
+## 1. Only time charts open at their latest end
+
+- The round-2 change opened every scrolling plot zone at its right end, which hid the category
+  names of horizontal bar plates. Now `guide.client.js` asks the chart itself: Plot's figure
+  carries its scales (`plot.scale("x")`, the hook addCrosshair uses), and a time or utc x
+  scale, or a band scale over dates, is time. A chart assembled by hand from several Plot
+  panels declares `data-x` on its own SVG where it is built (climate's `panels()` derives it
+  from its panels' scales). The finding is written on the zone as `data-x="time|other"`; zones
+  not yet drawn (charts drawn later) are decided when they draw.
+- Site-wide at 390px, after scrolling every page so lazy charts draw: 163 time zones (157
+  scroll), 109 other zones (all scroll, all kept at their left edge), 4 zones with no chart.
+  0 misplaced. Credit: 11 time, 11 bar plates (cb-who, cb-fast, cb-cost, cb-size,
+  cb-industries, cb-nbfc, cb-states, cb-pop, cb-women, cb-npaflow, cb-frauds); states: 1 time,
+  7 other (cb-pc, cb-size, cb-growth, cb-converge, cb-structure, cb-industries, cb-finance);
+  cpi 11 time, 5 other; gdp 13 time.
+
+## 2. Data and downloads summarises families
+
+- `GuideData.astro` reads the same plan as every-cut (`everyCutPlan`): the guide's own bundles
+  stay one row each; each registry family (`everyCutFamilies`) is one row with its label,
+  file count, series count, span, newest vintage, and a link "All N files" to the family's
+  long-tail view. That view now opens with a file list (`#files`, opened by the link) where
+  every file of the family downloads as CSV and JSON: every file is on the guide page or one
+  click from it.
+- The description column takes 46% of the table (it was squeezed, wrapping rows to a dozen
+  lines). Data and downloads at 1440px: credit about 60,000 to 11,354 px (its 63 own bundles
+  still listed one by one), states 2,970, climate 8,257, cpi 2,255.
+- qc: every bundle of the registry entry, and every file a family claims, must have a
+  download link on the guide page or sit in a family whose view is linked from the guide
+  page and carries that file's link. All 24 guides pass.

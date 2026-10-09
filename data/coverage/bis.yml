@@ -1,0 +1,125 @@
+# Coverage ledger: BIS statistics for India (docs/CONTRACT-coverage.md).
+# Catalogue: BIS's own series-key listing for area IN in eleven dataflows, plus the comparison
+# series baked for 13 peer economies (node scripts/lib/products/bis.mjs --catalogue).
+family: bis
+guides: [debt, housing]
+catalogue: data/coverage/bis.catalogue.json
+rules:
+  # ---- total credit (WS_TC) ----
+  - match: ["bis:tc:q:in:c:a:m:770:a", "bis:tc:q:in:h:a:m:770:a", "bis:tc:q:in:n:a:m:770:a", "bis:tc:q:in:g:a:n:770:a"]
+    status: shown
+    bundle: bis-credit
+    series: [total, households, companies, government]
+    plate: "debt §02 Who owes it (cb-sectors)"
+  - match: ["bis:tc:q:in:p:a:m:770:a", "bis:tc:q:in:p:b:m:770:a"]
+    status: shown
+    bundle: bis-credit
+    series: [private, private_banks]
+    plate: "debt §02 Seventy-five years of private borrowing (cb-long)"
+  - match: ["bis:tc:q:in:h:a:m:xdc:a", "bis:tc:q:in:n:a:m:xdc:a", "bis:tc:q:in:g:a:n:xdc:a"]
+    status: shown
+    bundle: bis-credit-inr
+    series: [households, companies, government]
+    plate: "debt §03 The same debts in rupees (cb-inr)"
+  - match: ["bis:tc:q:in:c:a:m:xdc:a", "bis:tc:q:in:p:a:m:xdc:a", "bis:tc:q:in:p:b:m:xdc:a", "bis:tc:q:in:*:xdc:u"]
+    status: baked
+    bundle: bis-credit-inr
+  - match: "bis:tc:q:in:*:usd:a"
+    status: baked
+    bundle: bis-credit-usd
+  # ---- credit gap, debt service ----
+  - match: "bis:credit_gap:q:in:p:a:*"
+    status: shown
+    bundle: bis-credit-gap
+    series: [ratio, trend, gap]
+    plate: "debt §04 The credit gap (cb-gap)"
+  - match: "bis:dsr:q:in:p"
+    status: shown
+    bundle: bis-dsr
+    series: [private]
+    plate: "debt §05 Can they pay? (cb-dsr)"
+  # ---- property prices ----
+  - match: ["bis:spp:q:in:n:628", "bis:spp:q:in:r:628"]
+    status: shown
+    bundle: bis-property
+    series: [nominal, real]
+    plate: "housing §02 Nominal and real (cb-nr)"
+  - match: ["bis:spp:q:in:n:771", "bis:spp:q:in:r:771"]
+    status: shown
+    bundle: bis-property
+    series: [nominal_yoy, real_yoy]
+    plate: "housing §02 Change on a year ago (cb-yoy)"
+  - match: ["bis:dpp:q:in:3:1:0:0:6:0", "bis:dpp:q:in:5:1:0:0:6:0", "bis:dpp:q:in:6:1:0:0:6:0"]
+    status: shown
+    bundle: bis-property-cities
+    plate: "housing §04 Three rulers (cb-rulers)"
+  - match: "bis:dpp:q:in:4:1:0:0:6:0"
+    status: shown
+    bundle: bis-property-10cities
+    plate: "housing §04 Three rulers (cb-rulers)"
+  # ---- foreign-currency credit ----
+  - match: ["bis:gli:q:usd:in:n:a:i:b:usd", "bis:gli:q:usd:in:n:b:i:g:usd"]
+    status: shown
+    bundle: bis-gli
+    series: [usd, usd_bank_loans]
+    plate: "debt §07 Debt in other currencies (cb-gli)"
+  - match: "bis:gli:q:*:in:*"
+    status: baked
+    bundle: bis-gli
+  # ---- cross-check copies for the rates and external guides ----
+  - match: "bis:cbpol:m:in"
+    status: baked
+    bundle: bis-policy-rate
+  - match: "bis:cbpol:d:in"
+    status: baked
+    bundle: bis-policy-rate-daily
+  - match: ["bis:eer:m:n:b:in", "bis:eer:m:r:b:in"]
+    status: baked
+    bundle: bis-eer
+  - match: "bis:eer:d:n:b:in"
+    status: baked
+    bundle: bis-eer-daily
+  - match: "bis:xru:m:in:inr:*"
+    status: baked
+    bundle: bis-xru-monthly
+  - match: "bis:xru:q:in:inr:*"
+    status: baked
+    bundle: bis-xru-quarterly
+  - match: "bis:xru:a:in:inr:*"
+    status: baked
+    bundle: bis-xru-annual
+  - match: "bis:xru:d:in:inr:a"
+    status: excluded
+    reason: "The daily rupee-dollar rate is the RBI's reference rate, which the rates and external guides take from the RBI as the source of record; BIS's daily copy is not mirrored in the Data Bank and would duplicate it."
+  - match: "bis:long_cpi:m:in:*"
+    status: baked
+    bundle: bis-cpi-long
+  - match: "bis:long_cpi:a:in:*"
+    status: baked
+    bundle: bis-cpi-long-annual
+  # ---- peers: one bundle per economy ----
+  - match: ["bis:peer:*:households", "bis:peer:*:companies", "bis:peer:*:government"]
+    status: shown
+    bundle: [bis-peer-usa, bis-peer-chn, bis-peer-emu, bis-peer-gbr, bis-peer-jpn, bis-peer-kor, bis-peer-idn, bis-peer-bra, bis-peer-zaf, bis-peer-mex, bis-peer-tur, bis-peer-aus, bis-peer-can]
+    plate: "debt §06 Compared with other economies (cb-peers)"
+  - match: "bis:peer:*:credit_gap"
+    status: shown
+    bundle: [bis-peer-usa, bis-peer-chn, bis-peer-emu, bis-peer-gbr, bis-peer-jpn, bis-peer-kor, bis-peer-idn, bis-peer-bra, bis-peer-zaf, bis-peer-mex, bis-peer-tur, bis-peer-aus, bis-peer-can]
+    plate: "debt §06 The credit gap compared (cb-peergap)"
+  - match: ["bis:peer:usa:dsr", "bis:peer:chn:dsr"]
+    status: shown
+    bundle: [bis-peer-usa, bis-peer-chn]
+    plate: "debt §05 Can they pay? (cb-dsr)"
+  - match: "bis:peer:*:dsr"
+    status: baked
+    bundle: [bis-peer-gbr, bis-peer-jpn, bis-peer-kor, bis-peer-idn, bis-peer-bra, bis-peer-zaf, bis-peer-mex, bis-peer-tur, bis-peer-aus, bis-peer-can]
+  - match: "bis:peer:*:real_house_prices_yoy"
+    status: shown
+    bundle: [bis-peer-usa, bis-peer-chn, bis-peer-emu, bis-peer-gbr, bis-peer-jpn, bis-peer-kor, bis-peer-idn, bis-peer-bra, bis-peer-zaf, bis-peer-mex, bis-peer-tur, bis-peer-aus, bis-peer-can]
+    plate: "housing §06 Compared with other economies (cb-peers)"
+  - match: "bis:peer:*:private"
+    status: baked
+    bundle: [bis-peer-usa, bis-peer-chn, bis-peer-emu, bis-peer-gbr, bis-peer-jpn, bis-peer-kor, bis-peer-idn, bis-peer-bra, bis-peer-zaf, bis-peer-mex, bis-peer-tur, bis-peer-aus, bis-peer-can]
+  - match: "bis:peer:*:total"
+    status: baked
+    bundle: [bis-peer-usa, bis-peer-chn, bis-peer-emu, bis-peer-gbr, bis-peer-jpn, bis-peer-kor, bis-peer-idn, bis-peer-bra, bis-peer-zaf, bis-peer-mex, bis-peer-tur, bis-peer-aus, bis-peer-can]

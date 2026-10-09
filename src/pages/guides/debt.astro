@@ -1,0 +1,424 @@
+---
+import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
+import GuideData from "../../components/GuideData.astro";
+import EveryCut from "../../components/EveryCut.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+import creditB from "../../../data/series/bis-credit.json";
+import gliB from "../../../data/series/bis-gli.json";
+const D = bySlug["debt"];
+// periods named in the copy, read from the bundles (quarters dated at their first month)
+const M3 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const qlab = (iso) => { const m = +iso.slice(5, 7) - 1; return `${M3[m]} to ${M3[m + 2]} ${iso.slice(0, 4)}`; };
+const LQ = qlab(creditB.dates.at(-1));
+const LQG = qlab(gliB.dates.at(-1));
+---
+<Base
+  title="How much India owes · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/debt/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">Every loan is a bet on the future: that a salary will keep coming, that a factory will sell what it makes, that taxes will keep rising. The Bank for International Settlements adds up those bets for more than forty other economies on one set of rules, so they can be compared.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>Bank for International Settlements</b></span>
+      <span>Measure <b>Loans and bonds owed by non-financial borrowers</b></span>
+      <span>Frequency <b>Quarterly</b></span>
+      <span>Window <b>1951 to {creditB.dates.at(-1).slice(0, 4)}</b></span>
+      <span>Latest <b id="m-latest">–</b></span>
+      <span>Unit <b>% of GDP</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Debt of households, companies and government, % of GDP</div><div class="v acc" id="n-total">–</div><div class="d" id="d-total">–</div><div class="nspark" id="nspark-total"></div></div>
+      <div class="num"><div class="l">Households' debt, % of GDP, last measured</div><div class="v" id="n-hh">–</div><div class="d" id="d-hh">–</div></div>
+      <div class="num"><div class="l">Credit-to-GDP gap</div><div class="v" id="n-gap">–</div><div class="d" id="d-gap">–</div></div>
+      <div class="num"><div class="l">Debt service ratio, households and companies</div><div class="v" id="n-dsr">–</div><div class="d" id="d-dsr">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="reading-top">
+      <div><span class="rk">India's non-financial debt</span><div class="big" id="rb-total">–</div></div>
+      <p class="rt-cap">Everything Indian households, companies and governments owed in loans and bonds, as a share of a year's GDP. Put plainly: for every ₹100 the economy produces in a year, borrowers owe about <b id="cr-per100">–</b>.</p>
+      <div class="rt-side"><span class="rk">In rupees</span><div class="rt-side-v" id="rb-inr">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the figures say</span>
+        <Prose slot="debt.current-reading.what-the-figures-say" />
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What they do not say</span>
+        <Prose slot="debt.current-reading.what-they-do-not-say" />
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 who owes -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>Who owes it</h2><span class="line"></span><span class="unit">% of GDP, quarterly</span></div>
+    <div class="break">
+      <figure id="cb-sectors" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Households' debt rose against GDP from 2016 to 2023, the last quarter measured; companies owe less than in 2012</h3>
+            <div class="sub">Debt of households, non-financial companies and government, % of GDP. Government from 1981; households and companies from 2007, when BIS begins the split. Pale dashed ends are BIS estimates, in which the split between households and companies is held fixed.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-sectors">–</div><div class="c">households, last measured</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Households</button>
+            <button class="chip"><i style="background:#5F6675"></i>Companies</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Government</button>
+            <button class="chip"><i style="background:#AFBBF0"></i>BIS estimate (dashed)</button>
+          </div>
+          <div class="plotzone"><div id="plot-sectors" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: BIS total credit statistics (WS_TC), break-adjusted. Government debt at nominal value; other borrowers at market value.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/TOTAL_CREDIT" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each line is what one kind of borrower owes, divided by a year's GDP. Household debt is home loans, gold loans, credit cards, personal loans and the borrowing of small family businesses, from banks and from finance companies. Company debt is what businesses outside finance owe in loans and bonds. Government is the Centre and the states together.</p>
+            <p>A rising line means debt grew faster than the economy, not that anyone borrowed recklessly. Incomes and prices both feed GDP, so high inflation shrinks these ratios even when nobody repays a rupee.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {LQ}</span>
+            <p>In <span id="ex-s-q">–</span>, the last quarter the RBI's financial accounts cover, households owed <b id="ex-s-hh">–</b> of GDP (<b id="ex-s-hh07">–</b> when the series began in 2007, peak <b id="ex-s-hhpk">–</b>) and companies <b id="ex-s-co">–</b>, down from a peak of <b id="ex-s-copk">–</b> in <span id="ex-s-copkq">–</span>. BIS's estimates since then put households at <b id="ex-s-hhe">–</b> and companies at <b id="ex-s-coe">–</b>, but they hold the split between the two fixed, so we do not know how either has really moved. Government debt stood at <b id="ex-s-gov">–</b>, below its peak of <b id="ex-s-govpk">–</b> in <span id="ex-s-govpkq">–</span>, when the pandemic cut GDP and raised borrowing at once.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-long" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Seventy-five years of private borrowing, and banks still lend most of it</h3>
+            <div class="sub">Credit to households and companies together, % of GDP, from all lenders and from banks alone, 1951 to the latest quarter.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-long">–</div><div class="c">all lenders, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>From all lenders</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>From banks only</button>
+          </div>
+          <div class="plotzone"><div id="plot-long" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: BIS total credit statistics (WS_TC), private non-financial sector, break-adjusted.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/TOTAL_CREDIT" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The gap between the two lines is credit from lenders that are not banks: finance companies, housing finance companies, bond markets and lenders abroad. The longer the gap, the more borrowing happens outside the banks the RBI supervises most closely.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {LQ}</span>
+            <p>Private borrowers owed <b id="ex-l-now">–</b> of GDP on BIS's estimate, against <b id="ex-l-first">–</b> in 1951. Banks lent <b id="ex-l-banks">–</b> of GDP of it. In <span id="ex-l-q">–</span>, the last quarter measured, banks' share was about <b id="ex-l-share">–</b>; BIS's estimates since hold that share fixed.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 03 in rupees -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>The same debts in rupees</h2><span class="line"></span><span class="unit">₹ lakh crore, current prices</span></div>
+    <div class="break">
+      <figure id="cb-inr" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>In rupees, household debt was more than six times its 2007 level by the end of 2023</h3>
+            <div class="sub">Debt of households, companies and government, ₹ lakh crore at current prices, quarterly from 2007. BIS publishes the amounts in ₹ billion; 1,000 billion is one lakh crore.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-inr">–</div><div class="c">households, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Households</button>
+            <button class="chip"><i style="background:#5F6675"></i>Companies</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Government</button>
+          </div>
+          <div class="plotzone"><div id="plot-inr" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: BIS total credit statistics (WS_TC), domestic currency, break-adjusted. Not adjusted for inflation.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/TOTAL_CREDIT" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Rupee amounts grow with prices and with the economy, so a line that climbs here can be flat as a share of GDP. Read this chart for scale and the one above it for weight. BIS also publishes these debts without its adjustment for breaks; both versions are in the data download.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {LQ}</span>
+            <p>In <span id="ex-i-q">–</span>, the last quarter measured, households owed <b id="ex-i-hh">–</b>, against <b id="ex-i-hh07">–</b> in 2007, <b id="ex-i-x">–</b> as much. On BIS's estimate for the latest quarter, all non-financial borrowers together owed <b id="ex-i-tot">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 04 the credit gap -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>The credit gap</h2><span class="line"></span><span class="unit">Credit against its own trend</span></div>
+    <div class="break">
+      <figure id="cb-gap" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>On BIS's estimates, private credit has moved above its long-run trend for the first time since 2012</h3>
+            <div class="sub">Above: credit to households and companies, % of GDP, with its long-run trend (dashed). Below: the gap between them, in percentage points, with the two thresholds bank regulators use. Pale stretches are BIS estimates.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-gap">–</div><div class="c">gap, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Credit, % of GDP</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Trend</button>
+            <button class="chip"><i style="background:#C47A16"></i>Basel buffer thresholds</button>
+          </div>
+          <div class="plotzone"><div id="plot-gap" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: BIS credit-to-GDP gaps (WS_CREDIT_GAP). Trend: one-sided Hodrick-Prescott filter, smoothing 400,000.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/CREDIT_GAPS" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The trend is where credit would be if it kept growing at its usual pace relative to the economy; the gap is how far it has run ahead or fallen behind. Studies across countries found that banking crises tend to follow long stretches when the gap sat above about ten points, so the global bank regulators in Basel suggested that banks start setting aside extra capital (the countercyclical buffer) once the gap passes two points, and the full buffer at ten.</p>
+            <p>The trend uses only the past, so it lags. After a long fall in credit, as in India after 2013, the trend itself sinks, and a modest recovery can show as a positive gap. The RBI treats the gap as one signal among several.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {LQ}</span>
+            <p>The gap was <b id="ex-g-gap">–</b>, positive since <span id="ex-g-since">–</span>. It reached its widest, <b id="ex-g-max">–</b>, in <span id="ex-g-maxq">–</span>, during the credit boom before the global financial crisis, and its deepest, <b id="ex-g-min">–</b>, in <span id="ex-g-minq">–</span>, after banks pulled back to deal with bad loans.</p>
+            <p>Those latest quarters are not measured. After <span id="ex-g-measq">–</span>, when the gap stood at <b id="ex-g-meas">–</b>, BIS estimates private credit by scaling it with bank credit until the RBI's financial accounts catch up. On that estimate, credit to households and companies (government excluded) was <b id="ex-g-yoy">–</b> higher in rupees than a year earlier, against <b id="ex-g-yoy1">–</b> in the year before; with government included, all borrowers' debt grew <b id="ex-g-tot">–</b>. We do not know yet whether the measured figures will confirm the swing.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 can they pay -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>Can they pay?</h2><span class="line"></span><span class="unit">Debt service ratio, % of income</span></div>
+    <div class="break">
+      <figure id="cb-dsr" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>An eighth of private income goes on repaying debt, less than in China or the US</h3>
+            <div class="sub">Interest and principal paid by households and companies together, as a share of their income, quarterly: India, China and the United States.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-dsr">–</div><div class="c">India, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>India</button>
+            <button class="chip"><i style="background:#C47A16"></i>China</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>United States</button>
+          </div>
+          <div class="plotzone"><div id="plot-dsr" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: BIS debt service ratios (WS_DSR), private non-financial sector. BIS does not split India's ratio into households and companies; it computes the ratio from the credit stock, so India's latest quarters rest on BIS's credit estimates.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/DSR" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Debt as a share of GDP says how much is owed; the debt service ratio says how heavy it is to carry. It is the EMI question asked of a whole economy: of every ₹100 of income households and companies earn, how much goes straight to lenders. It rises when debt grows faster than income, when interest rates rise, and when loans get shorter.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {LQ}</span>
+            <p>India's ratio was <b id="ex-d-now">–</b>, up from <b id="ex-d-ya">–</b> a year earlier and below its peak of <b id="ex-d-pk">–</b> in <span id="ex-d-pkq">–</span>. China's was <b id="ex-d-cn">–</b> and the United States' <b id="ex-d-us">–</b>. The RBI's policy rate stood at <b id="ex-d-pol">–</b> in <span id="ex-d-polm">–</span>, the latest month BIS has posted.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 compared -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>Compared with other economies</h2><span class="line"></span><span class="unit">India and 13 economies, latest quarter</span></div>
+    <div class="break">
+      <figure id="cb-peers" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>India owes less than China or the rich world, more than most emerging economies</h3>
+            <div class="sub">Debt of households, companies and government (at nominal value), % of GDP, latest quarter BIS publishes for each economy, ranked by their sum. India's bar in blue.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-peers">–</div><div class="c">India's rank, most indebted first</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Households</button>
+            <button class="chip"><i style="background:#5F6675"></i>Companies</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Government</button>
+          </div>
+          <div class="plotzone"><div id="plot-peers" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: BIS total credit statistics (WS_TC). Korea: BIS publishes government debt at market value only, so it is left out of Korea's bar and ranking.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/TOTAL_CREDIT" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Richer economies carry more debt because lenders trust their incomes and their courts, and because long home loans are common. A high bar is not by itself a danger sign: Japan's government owes about twice its GDP, mostly to its own citizens. What matters is who owes, in what currency, and whether incomes keep up.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {LQ}</span>
+            <p>India's three borrowers owed <b id="ex-p-in">–</b> of GDP, ranking <b id="ex-p-rank">–</b>, against <b id="ex-p-cn">–</b> in China and <b id="ex-p-us">–</b> in the United States. On household debt alone India ranks <b id="ex-p-hhrank">–</b>. India's figures for the latest quarter are BIS estimates, with households and companies split as in late 2023.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-peergap" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Few economies have credit running above trend; India is one of them</h3>
+            <div class="sub">Credit-to-GDP gap, percentage points, latest quarter: India and 13 economies.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-peergap">–</div><div class="c">economies above trend</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-peergap" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: BIS credit-to-GDP gaps (WS_CREDIT_GAP).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/CREDIT_GAPS" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Most rich economies are still working off the debt they built before 2008, so their gaps are deeply negative. The gap compares each economy with its own past, never with another's level, which is why it can be positive in India at a far lower debt than in Canada.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {LQ}</span>
+            <p>Of <b id="ex-pg-of">–</b> economies, <b id="ex-pg-n">–</b> had credit above trend: <span id="ex-pg-list">–</span>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 foreign currency -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>Debt in other currencies</h2><span class="line"></span><span class="unit">US dollar credit to Indian borrowers outside banks</span></div>
+    <div class="break">
+      <figure id="cb-gli" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Indian borrowers' dollar debt has eased from its 2020 peak</h3>
+            <div class="sub">US dollar loans and bonds owed by Indian borrowers other than banks, US$ billion, quarterly from 2000, and the bank-loan part of it.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-gli">–</div><div class="c">latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Loans and bonds</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Bank loans only</button>
+          </div>
+          <div class="plotzone"><div id="plot-gli" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: BIS global liquidity indicators (WS_GLI). Rupee figure: dollars times the quarter's average rupee rate (BIS WS_XRU), computed here.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/GLI" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Borrowing in dollars is cheaper when dollar interest rates are low, but it carries a hidden cost: if the rupee falls, the same dollar debt takes more rupees to repay. These figures count dollar credit from banks anywhere in the world and from bonds sold abroad, to Indian companies and other borrowers outside the banking system.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {LQG}</span>
+            <p>Dollar credit stood at <b id="ex-f-usd">–</b>, <b id="ex-f-yoy">–</b> on a year earlier and below its peak of <b id="ex-f-pk">–</b> in <span id="ex-f-pkq">–</span>. At the quarter's average rate of <b id="ex-f-rate">–</b> a dollar (<b id="ex-f-r16">–</b> ten years earlier), that is about <b id="ex-f-inr">–</b>. Indian borrowers also owed <b id="ex-f-eur">–</b> in euros and <b id="ex-f-jpy">–</b> in yen.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 what this measures -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="prose">
+      <p>The Bank for International Settlements, a bank for central banks based in Basel, collects credit statistics from national authorities (for India, the RBI) and puts them on one definition. "Credit" here means loans and debt securities owed by borrowers outside the financial sector: households, non-financial companies and government. It counts what they owe to everyone, banks and non-banks, Indian and foreign. Debts between banks, and the borrowing of finance companies themselves, are left out so nothing is counted twice.</p>
+      <p>Shares of GDP divide the debt at the end of a quarter by GDP over the four quarters to then. BIS adjusts the series for breaks, such as a new data source or a merger that moves loans from one kind of lender to another; the unadjusted rupee series are in the download. For India, BIS splits households from companies only from 2007, and in the years to 2011 the two parts add up to more than the private total by as much as 8.4 points, because each series is adjusted for breaks separately. From 2012 they reconcile.</p>
+      <p>For India, BIS takes total credit from the RBI's annual financial accounts and spreads each year across quarters with bank credit. The financial accounts arrive with a long lag, so BIS fills the latest quarters with an estimate: bank credit multiplied by the ratio between the two in the last quarter the accounts cover, with the split between households and companies held at that quarter's shares. BIS's documentation says so; its data files do not flag the estimated values. This guide marks them, draws them as pale dashed lines, and quotes households and companies only for measured quarters. When the RBI publishes new accounts, BIS replaces the estimates and the recent history can change a great deal.</p>
+      <p>The debt service ratio estimates interest and principal payments from the debt stock, average interest rates and average loan lengths. The credit gap compares the private credit ratio with a slow-moving trend computed only from past data. All three are BIS constructions on national data; the RBI publishes its own measures of household and corporate debt, which differ in coverage.</p>
+    </div>
+  </section>
+
+  <!-- § 09 misreadings -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>How to misread these numbers</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li><span class="no">1</span><div><h3>"India's debt is nearly twice its GDP, so India owes almost twice what it earns."</h3><p>The ratio adds up what three different sets of borrowers owe and compares it with one year's income. Loans run for years, so a home loan of three years' salary is normal. Much of the debt is also owed to Indian savers, through their bank deposits, not to foreigners.</p></div></li>
+      <li><span class="no">2</span><div><h3>"Household debt jumped by five points of GDP since 2023."</h3><p>Not on any measurement. For the latest quarters BIS scales India's private credit with bank credit and keeps the household share fixed, so households and companies appear to grow at exactly the same pace. The last measured quarter is the one to quote; the rest will be replaced when the RBI's financial accounts arrive.</p></div></li>
+      <li><span class="no">3</span><div><h3>"Household debt is rising, so families are in trouble."</h3><p>A higher ratio means more borrowing relative to the economy, much of it home loans backed by houses. Trouble shows in the ability to pay: the debt service ratio, defaults and how evenly the debt is spread. These figures are national totals and cannot say how many families are stretched.</p></div></li>
+      <li><span class="no">4</span><div><h3>"The credit gap is positive, so a crisis is coming."</h3><p>The gap is an early warning used across many countries, not a forecast for one. India's gap turned positive after a decade far below trend, partly because the trend itself sank. And the latest quarters of the gap rest on BIS's estimates, not on measured credit. It is a reason to watch, not a verdict.</p></div></li>
+      <li><span class="no">5</span><div><h3>"Government debt here is the fiscal deficit."</h3><p>The deficit is a year's new borrowing; this is the stock of everything owed by the Centre and the states together. It also differs from the Budget's own debt figures, which count some liabilities BIS does not and value them differently.</p></div></li>
+      <li><span class="no">6</span><div><h3>"India owes less than China, so it is safer."</h3><p>Lower debt is one fact among several. China's debt is mostly owed inside China in its own currency; India's dollar debt, though smaller, depends on the rupee. Safety depends on incomes, currencies and who holds the debt, not only on its size.</p></div></li>
+    </ul>
+  </section>
+
+  <EveryCut slug="debt" />
+  <GuideData slug="debt" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>Bank for International Settlements statistics: total credit (WS_TC), credit-to-GDP gaps (WS_CREDIT_GAP), debt service ratios (WS_DSR), global liquidity indicators (WS_GLI), US dollar exchange rates (WS_XRU) and central bank policy rates (WS_CBPOL), read from the owner's Data Bank mirror of the BIS statistics API. Source: BIS. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Checked by hand: India's private credit, 105.1% of GDP in January to March 2026, households 49.1 and companies 56.0, government 83.5, gap 4.3 points, as published on the BIS data portal.</p>
+      </div>
+      <div>
+        <h6>Method</h6>
+        <p>Values are as BIS publishes them. Rupee amounts are converted from ₹ billion to ₹ lakh crore; the rupee value of dollar debt is computed from the quarter's average exchange rate. The comparison ranks the sum of the three borrowers' debts, with government at nominal value. Nothing is estimated.</p>
+      </div>
+      <div>
+        <h6>Revisions and breaks</h6>
+        <p>BIS revises these series as national authorities revise theirs, and each quarterly update can change several years of history. Break adjustment is BIS's own; BIS flags a break in households' unadjusted credit in January to March 2024. India's private credit after the last financial-accounts quarter is a BIS estimate, marked as such in every download.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Version 1.0, built October 2026 from BIS data to January to March 2026. Revised each quarter when BIS publishes. BIS does not endorse this guide.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, debt</span>
+      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/debt.client.js";
+</script>
+</Base>

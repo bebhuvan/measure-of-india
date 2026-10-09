@@ -1,0 +1,132 @@
+// scripts/lib/products/cckp-vars.mjs: display metadata for every CCKP variable code.
+//
+// Labels and units follow the `long_name` attribute inside CCKP's own NetCDF files (read
+// from the file headers on 2026-10-09; the codes are listed in docs/reference/cckp.md),
+// rewritten in plain words. Thresholds are CCKP's. `theme` decides which bundle a
+// variable is baked into. The adapter fails on a code that is not here, so a new CCKP
+// variable cannot slip into a bundle unlabelled.
+//
+// unit vocabulary (validate.mjs ranges key on it): degC, days, mm, mm_day, pct, wm2, ms,
+// degday_c, degday_f, doy (day of the year), index, risk_ratio, person_days
+
+export const THEMES = {
+  temp: "Temperature",
+  hotdays: "Hot days and warm nights",
+  heatstress: "Heat and humidity",
+  rain: "Rain and drought",
+  energy: "Cooling, heating, wind, sun and air",
+};
+
+export const VARS = {
+  // temperature
+  tas: { theme: "temp", unit: "degC", label: "Mean air temperature" },
+  tasmax: { theme: "temp", unit: "degC", label: "Mean daily maximum temperature" },
+  tasmin: { theme: "temp", unit: "degC", label: "Mean daily minimum temperature" },
+  txx: { theme: "temp", unit: "degC", label: "Hottest day of the period (highest daily maximum)" },
+  tnn: { theme: "temp", unit: "degC", label: "Coldest night of the period (lowest daily minimum)" },
+  tx3day: { theme: "temp", unit: "degC", label: "Hottest 3-day spell (highest 3-day average maximum)" },
+  tx5day: { theme: "temp", unit: "degC", label: "Hottest 5-day spell (highest 5-day average maximum)" },
+  wsdi: { theme: "temp", unit: "days", label: "Warm spell days (runs of 6 or more unusually hot days)" },
+  csdi: { theme: "temp", unit: "days", label: "Cold spell days (runs of 6 or more unusually cold days)" },
+  sd: { theme: "temp", unit: "days", label: "Summer days (maximum of 25°C or more)" },
+  fd: { theme: "temp", unit: "days", label: "Frost days (minimum below 0°C)" },
+  id: { theme: "temp", unit: "days", label: "Ice days (maximum below 0°C)" },
+  freezethaw: { theme: "temp", unit: "days", label: "Freeze-thaw days (crossing 0°C within a day)" },
+  wchilln17f: { theme: "temp", unit: "days", label: "Days with wind chill below −17°F" },
+  tx84rr: { theme: "temp", unit: "risk_ratio", label: "Heat excess mortality risk (CCKP index)" },
+  gsl: { theme: "temp", unit: "days", label: "Growing season length (days above 5°C)" },
+  gslstart: { theme: "temp", unit: "doy", label: "Growing season start (day of the year)" },
+  gslend: { theme: "temp", unit: "doy", label: "Growing season end (day of the year)" },
+  gdd10: { theme: "temp", unit: "degday_c", label: "Growing degree days above 10°C" },
+  // hot days and warm nights
+  hd30: { theme: "hotdays", unit: "days", label: "Days of 30°C or more" },
+  hd35: { theme: "hotdays", unit: "days", label: "Days of 35°C or more" },
+  hd40: { theme: "hotdays", unit: "days", label: "Days of 40°C or more" },
+  hd42: { theme: "hotdays", unit: "days", label: "Days of 42°C or more" },
+  hd45: { theme: "hotdays", unit: "days", label: "Days of 45°C or more" },
+  hd50: { theme: "hotdays", unit: "days", label: "Days of 50°C or more" },
+  tr: { theme: "hotdays", unit: "days", label: "Warm nights (minimum of 20°C or more)" },
+  tr23: { theme: "hotdays", unit: "days", label: "Warm nights (minimum of 23°C or more)" },
+  tr26: { theme: "hotdays", unit: "days", label: "Hot nights (minimum of 26°C or more)" },
+  tr29: { theme: "hotdays", unit: "days", label: "Hot nights (minimum of 29°C or more)" },
+  tr32: { theme: "hotdays", unit: "days", label: "Hot nights (minimum of 32°C or more)" },
+  // heat and humidity
+  hi: { theme: "heatstress", unit: "degC", label: "Mean heat index (how hot it feels, US NWS formula)" },
+  hi35: { theme: "heatstress", unit: "days", label: "Days with a heat index of 35°C or more" },
+  hi37: { theme: "heatstress", unit: "days", label: "Days with a heat index of 37°C or more" },
+  hi39: { theme: "heatstress", unit: "days", label: "Days with a heat index of 39°C or more" },
+  hi41: { theme: "heatstress", unit: "days", label: "Days with a heat index of 41°C or more" },
+  hix1day: { theme: "heatstress", unit: "degC", label: "Highest one-day heat index" },
+  hix3day: { theme: "heatstress", unit: "degC", label: "Highest 3-day heat index" },
+  hix5day: { theme: "heatstress", unit: "degC", label: "Highest 5-day heat index" },
+  wbt: { theme: "heatstress", unit: "degC", label: "Mean wet-bulb temperature (Stull)" },
+  wbt25: { theme: "heatstress", unit: "days", label: "Days with a wet-bulb temperature of 25°C or more" },
+  wbt27: { theme: "heatstress", unit: "days", label: "Days with a wet-bulb temperature of 27°C or more" },
+  wbt29: { theme: "heatstress", unit: "days", label: "Days with a wet-bulb temperature of 29°C or more" },
+  wbt31: { theme: "heatstress", unit: "days", label: "Days with a wet-bulb temperature of 31°C or more" },
+  wbtx1day: { theme: "heatstress", unit: "degC", label: "Highest one-day wet-bulb temperature" },
+  wbtx3day: { theme: "heatstress", unit: "degC", label: "Highest 3-day wet-bulb temperature" },
+  wbtx5day: { theme: "heatstress", unit: "degC", label: "Highest 5-day wet-bulb temperature" },
+  esi: { theme: "heatstress", unit: "degC", label: "Mean environmental stress index" },
+  esi26: { theme: "heatstress", unit: "days", label: "Days with an environmental stress index of 26°C or more" },
+  esi29: { theme: "heatstress", unit: "days", label: "Days with an environmental stress index of 29°C or more" },
+  esi32: { theme: "heatstress", unit: "days", label: "Days with an environmental stress index of 32°C or more" },
+  esi35: { theme: "heatstress", unit: "days", label: "Days with an environmental stress index of 35°C or more" },
+  esix1day: { theme: "heatstress", unit: "degC", label: "Highest one-day environmental stress index" },
+  esix3day: { theme: "heatstress", unit: "degC", label: "Highest 3-day environmental stress index" },
+  esix5day: { theme: "heatstress", unit: "degC", label: "Highest 5-day environmental stress index" },
+  swbgt: { theme: "heatstress", unit: "degC", label: "Mean simplified wet-bulb globe temperature" },
+  swbgt26: { theme: "heatstress", unit: "days", label: "Days with a simplified wet-bulb globe temperature of 26 or more" },
+  swbgt29: { theme: "heatstress", unit: "days", label: "Days with a simplified wet-bulb globe temperature of 29 or more" },
+  swbgt32: { theme: "heatstress", unit: "days", label: "Days with a simplified wet-bulb globe temperature of 32 or more" },
+  swbgtx1day: { theme: "heatstress", unit: "degC", label: "Highest one-day simplified wet-bulb globe temperature" },
+  swbgtx3day: { theme: "heatstress", unit: "degC", label: "Highest 3-day simplified wet-bulb globe temperature" },
+  swbgtx5day: { theme: "heatstress", unit: "degC", label: "Highest 5-day simplified wet-bulb globe temperature" },
+  arbovir: { theme: "heatstress", unit: "days", label: "Hot humid days (35°C or more with humidity of 70% or more)" },
+  ehf2: { theme: "heatstress", unit: "person_days", label: "Heatwave person-days of extreme exposure (change from 1995-2014)" },
+  // rain and drought
+  pr: { theme: "rain", unit: "mm", label: "Rainfall" },
+  prpercnt: { theme: "rain", unit: "pct", label: "Rainfall, per cent (CCKP: percent of total precipitation)" },
+  rx1day: { theme: "rain", unit: "mm", label: "Wettest day (largest one-day rainfall)" },
+  rx5day: { theme: "rain", unit: "mm", label: "Wettest 5 days (largest 5-day rainfall)" },
+  rxmonth: { theme: "rain", unit: "mm", label: "Wettest month (largest monthly rainfall)" },
+  r10mm: { theme: "rain", unit: "days", label: "Days with 10 mm of rain or more" },
+  r20mm: { theme: "rain", unit: "days", label: "Days with 20 mm of rain or more" },
+  r50mm: { theme: "rain", unit: "days", label: "Days with 50 mm of rain or more" },
+  r95p: { theme: "rain", unit: "mm", label: "Rain falling on very wet days (above the local 95th percentile)" },
+  r99p: { theme: "rain", unit: "mm", label: "Rain falling on extremely wet days (above the local 99th percentile)" },
+  r95ptot: { theme: "rain", unit: "pct", label: "Share of rain falling on very wet days" },
+  r99ptot: { theme: "rain", unit: "pct", label: "Share of rain falling on extremely wet days" },
+  sdii: { theme: "rain", unit: "mm_day", label: "Rain per wet day" },
+  wd: { theme: "rain", unit: "days", label: "Wet days (1 mm or more)" },
+  cdd: { theme: "rain", unit: "days", label: "Longest dry spell (consecutive days under 1 mm)" },
+  cwd: { theme: "rain", unit: "days", label: "Longest wet spell (consecutive days of 1 mm or more)" },
+  d5mm: { theme: "rain", unit: "days", label: "Agriculturally dry days (CCKP definition)" },
+  rsdi20mm: { theme: "rain", unit: "days", label: "Longest run of days above 20 mm in a month" },
+  spei12: { theme: "rain", unit: "index", label: "Drought index, 12-month SPEI (below zero is drier than normal)" },
+  r100mm3day: { theme: "rain", unit: "days", label: "3-day rain events above 100 mm (change from 1995-2014)" },
+  r150mm5day: { theme: "rain", unit: "days", label: "5-day rain events above 150 mm (change from 1995-2014)" },
+  etohar: { theme: "rain", unit: "mm", label: "Evaporative demand (Hargreaves reference evapotranspiration)" },
+  etopen: { theme: "rain", unit: "mm", label: "Evaporative demand (Penman-Monteith reference evapotranspiration)" },
+  dd20: { theme: "rain", unit: "days", label: "Very dry-air days (relative humidity below 20%)" },
+  // cooling, heating, wind, sun and air
+  cdd65: { theme: "energy", unit: "degday_f", label: "Cooling degree days (above 65°F)" },
+  hdd65: { theme: "energy", unit: "degday_f", label: "Heating degree days (below 65°F)" },
+  cdd22: { theme: "energy", unit: "degday_c", label: "Cooling degree days (above 22°C)" },
+  hdd22: { theme: "energy", unit: "degday_c", label: "Heating degree days (below 22°C)" },
+  hurs: { theme: "energy", unit: "pct", label: "Relative humidity" },
+  rlds: { theme: "energy", unit: "wm2", label: "Longwave radiation reaching the ground" },
+  rsds: { theme: "energy", unit: "wm2", label: "Sunlight reaching the ground (shortwave radiation)" },
+  sfcwind: { theme: "energy", unit: "ms", label: "Mean wind speed" },
+  sfcwindx: { theme: "energy", unit: "ms", label: "Highest daily mean wind speed" },
+  sfcgust: { theme: "energy", unit: "ms", label: "Mean of daily maximum gusts" },
+  sfcgustx: { theme: "energy", unit: "ms", label: "Strongest gust" },
+  wind90m03: { theme: "energy", unit: "days", label: "Still days at hub height (wind 0 to 3 m/s at 90 m)" },
+  wind90m1025: { theme: "energy", unit: "days", label: "Windy days at hub height (wind 10 to 25 m/s at 90 m)" },
+};
+
+// map-only and categorical products CCKP lists as variables but does not aggregate to
+// places (the API returns nothing for them): catalogued, never baked
+export const MAP_ONLY = new Set(["hdcat", "hdiff", "hdtr", "hdtrhi", "hdtrhipopdensitycat", "hdtrpopdensitycat", "hicat", "trcat", "rsns"]);
+
+export const UNIT_LABEL = { degC: "°C", days: "days", mm: "mm", mm_day: "mm per wet day", pct: "%", wm2: "W/m²", ms: "m/s", degday_c: "°C degree days", degday_f: "°F degree days", doy: "day of year", index: "index", risk_ratio: "ratio", person_days: "person-days" };

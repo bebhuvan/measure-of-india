@@ -25,7 +25,7 @@ export const HEADLINE = {
   gdp:           { value: (b) => `${last(b, "gdp").toFixed(2)}%`, what: "real GDP growth, year on year", period: quarter },
   wpi:           { value: (b) => `${last(b, "headline").toFixed(2)}%`, what: "wholesale price inflation, year on year", period: month },
   iip:           { value: (b) => `${last(b, "general").toFixed(2)}%`, what: "industrial output growth, year on year", period: month },
-  external:      { value: (b) => `$${Math.round(last(b, "reserves") / 1000)} bn`, what: "foreign exchange reserves", period: month },
+  external:      { value: (b) => { const v = last(b, "current_account") / 1000; return `${v < 0 ? "−" : "+"}$${Math.abs(v).toFixed(1)} bn`; }, what: "current account balance, the quarter's surplus (+) or deficit (−)", period: quarter },
   jobs:          { value: (b) => `${last(b, "ur").toFixed(1)}%`, what: "unemployment rate, age 15 and over", period: month },
   consumption:   { value: (b) => `₹${inr(last(b, "rural"))}`, what: "rural spending per person per month", period: fy },
   factories:     { value: (b) => `${(last(b, "factories_in_operation") / 1e5).toFixed(2)} lakh`, what: "factories in operation", period: fy },
@@ -36,6 +36,24 @@ export const HEADLINE = {
                    what: "children aged 6 to 59 months with anaemia", period: () => "NFHS-5, 2019-21" },
   manufacturing: { value: (b) => `${last(b, "mva_pct_gdp").toFixed(1)}%`, what: "manufacturing's share of GDP", period: (b) => lastDate(b).slice(0, 4) },
   deposits:      { value: (b) => `₹${last(b, "household_total").toFixed(1)} lakh crore`, what: "households' bank deposits", period: (b) => `March ${lastDate(b).slice(0, 4)}` },
+  // bis family session
+  debt:          { value: (b) => `${last(b, "total").toFixed(1)}%`, what: "debt of households, companies and government, % of GDP (BIS estimate)", period: quarter },
+  housing:       { value: (b) => `${last(b, "real_yoy").toFixed(1)}%`, what: "real house prices, change on a year ago", period: quarter },
+  // services
+  services:      { value: (b) => `${last(b, "services").toFixed(1)}%`, what: "services' share of gross value added", period: fy },
+  // states: the richest state's income per person as a multiple of the poorest's (fixed panel)
+  states:        { value: (b) => `${last(b, "gap_current").toFixed(1)} times`, what: "income per person, richest state against poorest", period: fy },
+  // worldbank family (2026-10-09)
+  poverty:       { value: (b) => `${last(b, "headcount_3_00").toFixed(1)}%`, what: "of Indians below $3.00 a day (2021 PPP)", period: (b) => `HCES ${lastDate(b).slice(0, 4)}-${String(+lastDate(b).slice(0, 4) + 1).slice(2)}` },
+  population:    { value: (b) => `${(last(b, "tpopulation1july") / 1e6).toFixed(3)} billion`, what: "people in India, UN estimate", period: (b) => lastDate(b).slice(0, 4) },
+  // climate: the month's departure from its own 1991-2020 average (ERA5, OWID)
+  climate:       { value: (b) => `${last(b, "temperature_anomaly") < 0 ? "−" : "+"}${Math.abs(last(b, "temperature_anomaly")).toFixed(2)}°C`, what: "India's temperature against the 1991-2020 average for the month", period: month },
+  // ilo
+  ilo:           { value: (b) => `${last(b, "eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15").toFixed(1)}%`, what: "women aged 15+ in the labour force, ILO estimate", period: (b) => lastDate(b).slice(0, 4) },
+  // --- rates (atlas-rates) ---
+  rates:         { value: (b) => `${last(b, "repo").toFixed(2)}%`, what: "the RBI's policy repo rate", period: (b) => `from ${b.meta.vintage.slice(8, 10).replace(/^0/, "")} ${MONTHS[+b.meta.vintage.slice(5, 7) - 1]} ${b.meta.vintage.slice(0, 4)}` },
+  // credit (lb/credit)
+  credit:        { value: (b) => `${last(b, "headline").toFixed(1)}%`, what: "growth of bank credit, year on year", period: month },
   // trade (lb/trade): the month's merchandise trade balance, US$ billion, signed (a deficit is negative)
   trade:         { value: (b) => `${last(b, "balance") < 0 ? "−" : ""}$${Math.abs(last(b, "balance") / 1000).toFixed(1)} bn`, what: "merchandise trade balance (exports minus imports)", period: month },
 };
@@ -48,7 +66,7 @@ export const SPARK = {
   gdp:           { bundle: "gdp-2022", series: "gdp" },
   wpi:           { bundle: "wpi-2022", series: "headline" },
   iip:           { bundle: "iip-2022", series: "general" },
-  external:      { bundle: "rbi-forex", series: "reserves", n: 120 },
+  external:      { bundle: "external-bop", series: "current_account", n: 40 },
   jobs:          { bundle: "plfs-monthly", series: "ur" },
   consumption:   { bundle: "hces-mpce", series: "rural", slope: true },
   factories:     { bundle: "asi-headline", series: "factories_in_operation" },
@@ -58,6 +76,22 @@ export const SPARK = {
   nfhs:          { bundle: "nfhs-anaemia", label: "Children age 6-59", slope: true },
   manufacturing: { bundle: "wdi-manufacturing", series: "mva_pct_gdp" },
   deposits:      { bundle: "deposits-owners", series: "household_total" },
+  // bis family session
+  debt:          { bundle: "bis-credit", series: "total", n: 120 },
+  housing:       { bundle: "bis-property", series: "real" },
+  // services
+  services:      { bundle: "services-gva-2022-share", series: "services" },
+  states:        { bundle: "states-spread", series: "gap_current" },
+  // worldbank family (2026-10-09): the lineup (model estimates) gives the poverty spark a shape; surveys alone are 2 points
+  poverty:       { bundle: "poverty-pip-lineup", series: "headcount_3_00" },
+  population:    { bundle: "population-wpp", series: "tpopulation1july" },
+  climate:       { bundle: "climate-temp-annual", series: "temperature_anomaly" },   // climate: annual, 1940 on
+  // ilo
+  ilo:           { bundle: "ilo-est-eap-2wap", series: "eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15" },
+  // --- rates (atlas-rates): the repo rate at each month-end since the MPC began
+  rates:         { bundle: "rates-monthly", series: "repo", n: 121 },
+  // credit (lb/credit)
+  credit:        { bundle: "credit-growth", series: "headline" },
   trade:         { bundle: "trade-total", series: "exports", n: 60 },   // trade (lb/trade)
 };
 

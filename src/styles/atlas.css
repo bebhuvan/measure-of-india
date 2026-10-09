@@ -204,6 +204,7 @@ p+p{margin-top:1.05em}
 .legend .chip:hover{color:var(--ink)}
 
 .plotzone{position:relative;padding:14px 0 0}
+.pz-cue{display:none}
 .plotzone svg{font-family:var(--sans);font-size:11.5px}   /* Plot defaults to 10px; nothing on the site is that small */
 .plotzone svg text{paint-order:stroke;stroke:#FFFFFF;stroke-width:4px;stroke-linejoin:round;font-variant-numeric:tabular-nums}
 .plotzone svg{touch-action:pan-y}
@@ -300,6 +301,9 @@ p+p{margin-top:1.05em}
   /* Plates are authored wide. Shrinking them to phone width makes 12px labels unreadable,
      so the plot scrolls sideways instead. */
   .plotzone{overflow-x:auto;padding-bottom:8px}
+  /* a scrolling plot opens at its latest end (guide.client.js); this cue says there is more */
+  .pz-cue{display:block;font-family:var(--sans);font-size:.78rem;color:var(--muted);margin:8px 0 -6px}
+  .pz-cue[hidden]{display:none}
   /* Only a plate's main plot gets the 700px floor: an svg directly in the plotzone, or in its
      #plot-* holder. Everything nested deeper (small-multiple panels, ledger sparklines) is
      authored narrow and fits its own slot; forcing 700px clipped those grids to their first half. */
@@ -349,6 +353,8 @@ section .break + .break > figure[id^="cb-"]{margin-top:72px !important;padding-t
 .em-table th{font-weight:400;font-size:.8rem;color:var(--muted);text-align:left;padding:0 16px 10px 0;border-bottom:1px solid var(--rule-2)}
 .em-table td{padding:12px 16px 12px 0;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-soft)}
 .em-table .w{color:var(--ink);max-width:28em}
+/* the description column takes the room: narrow, it wrapped each row to a dozen lines */
+.em-table th:first-child,.em-table td.w{width:46%}
 .em-table small{display:block;font-size:.78rem;color:var(--muted);margin-top:2px}
 .em-table .cur .w{font-weight:500}
 .em-table .n{text-align:right;font-variant-numeric:tabular-nums}
