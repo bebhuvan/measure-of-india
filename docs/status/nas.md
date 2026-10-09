@@ -99,8 +99,8 @@ Session: atlas-nas, branch `lb/nas`, port 4424. Guide: `gdp`. Brief: `docs/brief
   comment), `scripts/validate.mjs` (PRODUCTS rows, identity block), `scripts/qc.mjs` (gdp
   checks), `src/dossiers/everycut.js` (CUT_BY_BUNDLE), `pipeline/asof-manifest.json` (8 gdp
   entries), `pipeline/slots.yml` (gdp briefs), registry gdp entry (bundles, version, stamp).
-- Generated outputs that will conflict: `pipeline/out/prose-manifest.json` is untouched in git
-  terms only if unchanged; facts-gdp.json changed.
+- Generated outputs that may conflict at merge: `pipeline/out/facts-gdp.json` and the three
+  `prose-gdp.*.md` files (prose-manifest.json is unchanged).
 - Suggested for HISTORY: the API growth-rate truncation, stage labels that are not vintages,
   the ignored approach cut, the ₹ lakh label on taxes.
 
