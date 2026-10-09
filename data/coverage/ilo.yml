@@ -89,13 +89,92 @@ rules:
     status: baked
     bundle: ilo-plfs-q
 
-  # ---- survey cubes held back (an owner decision, docs/status/ilo.md) ----
-  - match: ["ilo:plfs:a:d3:*", "ilo:nss:a:d3:*"]
+  # ---- survey cubes held for the deep-archive tier (owner decision pending, docs/status/ilo.md) ----
+  - match: "ilo:nss:a:d3:eap_*"
     status: excluded
-    reason: "Three-way cubes (sex by two further classifications) that the ILO computed from PLFS and NSS unit data, about 951,000 Indian cells of which roughly one in six carries the ILO's own unreliable flag; they stay at ILOSTAT, linked from the guide, while every table by sex and one classification is baked."
+    archive: true
+    rolls_up_to: ilo-nss-eap
+    reason: "Three-way cubes (sex by two further classifications) the ILO computed from NSS unit data, 21,638 Indian cells; held for the deep-archive tier, while the coarser tables by sex and one classification are baked in ilo-nss-eap."
+  - match: "ilo:nss:a:d3:ees_*"
+    status: excluded
+    archive: true
+    rolls_up_to: ilo-nss-ees
+    reason: "Three-way cubes (sex by two further classifications) the ILO computed from NSS unit data, 28,283 Indian cells; held for the deep-archive tier, while the coarser tables by sex and one classification are baked in ilo-nss-ees."
+  - match: "ilo:nss:a:d3:eip_*"
+    status: excluded
+    archive: true
+    rolls_up_to: ilo-nss-eip
+    reason: "Three-way cubes (sex by two further classifications) the ILO computed from NSS unit data, 21,546 Indian cells; held for the deep-archive tier, while the coarser tables by sex and one classification are baked in ilo-nss-eip."
+  - match: "ilo:nss:a:d3:emp_*"
+    status: excluded
+    archive: true
+    rolls_up_to: ilo-nss-emp
+    reason: "Three-way cubes (sex by two further classifications) the ILO computed from NSS unit data, 139,229 Indian cells; held for the deep-archive tier, while the coarser tables by sex and one classification are baked in ilo-nss-emp."
+  - match: "ilo:nss:a:d3:ged_*"
+    status: excluded
+    archive: true
+    rolls_up_to: ilo-nss-more
+    reason: "Three-way cubes (sex by two further classifications) the ILO computed from NSS unit data, 2,232 Indian cells; held for the deep-archive tier, while the coarser tables by sex and one classification are baked in ilo-nss-more."
+  - match: "ilo:nss:a:d3:pop_*"
+    status: excluded
+    archive: true
+    rolls_up_to: ilo-nss-pop
+    reason: "Three-way cubes (sex by two further classifications) the ILO computed from NSS unit data, 13,455 Indian cells; held for the deep-archive tier, while the coarser tables by sex and one classification are baked in ilo-nss-pop."
+  - match: "ilo:nss:a:d3:une_*"
+    status: excluded
+    archive: true
+    rolls_up_to: ilo-nss-une
+    reason: "Three-way cubes (sex by two further classifications) the ILO computed from NSS unit data, 19,634 Indian cells; held for the deep-archive tier, while the coarser tables by sex and one classification are baked in ilo-nss-une."
+  - match: "ilo:plfs:a:d3:cld_*"
+    status: excluded
+    archive: true
+    rolls_up_to: ilo-plfs-more
+    reason: "Three-way cubes (sex by two further classifications) the ILO computed from PLFS unit data, 4,804 Indian cells; held for the deep-archive tier, while the coarser tables by sex and one classification are baked in ilo-plfs-more."
+  - match: "ilo:plfs:a:d3:eap_*"
+    status: excluded
+    archive: true
+    rolls_up_to: ilo-plfs-eap
+    reason: "Three-way cubes (sex by two further classifications) the ILO computed from PLFS unit data, 35,752 Indian cells; held for the deep-archive tier, while the coarser tables by sex and one classification are baked in ilo-plfs-eap."
+  - match: "ilo:plfs:a:d3:ees_*"
+    status: excluded
+    archive: true
+    rolls_up_to: ilo-plfs-ees
+    reason: "Three-way cubes (sex by two further classifications) the ILO computed from PLFS unit data, 69,669 Indian cells; held for the deep-archive tier, while the coarser tables by sex and one classification are baked in ilo-plfs-ees."
+  - match: "ilo:plfs:a:d3:eip_*"
+    status: excluded
+    archive: true
+    rolls_up_to: ilo-plfs-eip
+    reason: "Three-way cubes (sex by two further classifications) the ILO computed from PLFS unit data, 37,846 Indian cells; held for the deep-archive tier, while the coarser tables by sex and one classification are baked in ilo-plfs-eip."
+  - match: "ilo:plfs:a:d3:emp_*"
+    status: excluded
+    archive: true
+    rolls_up_to: ilo-plfs-emp
+    reason: "Three-way cubes (sex by two further classifications) the ILO computed from PLFS unit data, 415,006 Indian cells; held for the deep-archive tier, while the coarser tables by sex and one classification are baked in ilo-plfs-emp."
+  - match: "ilo:plfs:a:d3:ged_*"
+    status: excluded
+    archive: true
+    rolls_up_to: ilo-plfs-more
+    reason: "Three-way cubes (sex by two further classifications) the ILO computed from PLFS unit data, 7,431 Indian cells; held for the deep-archive tier, while the coarser tables by sex and one classification are baked in ilo-plfs-more."
+  - match: "ilo:plfs:a:d3:how_*"
+    status: excluded
+    archive: true
+    rolls_up_to: ilo-plfs-how
+    reason: "Three-way cubes (sex by two further classifications) the ILO computed from PLFS unit data, 77,671 Indian cells; held for the deep-archive tier, while the coarser tables by sex and one classification are baked in ilo-plfs-how."
+  - match: "ilo:plfs:a:d3:pop_*"
+    status: excluded
+    archive: true
+    rolls_up_to: ilo-plfs-pop
+    reason: "Three-way cubes (sex by two further classifications) the ILO computed from PLFS unit data, 24,200 Indian cells; held for the deep-archive tier, while the coarser tables by sex and one classification are baked in ilo-plfs-pop."
+  - match: "ilo:plfs:a:d3:une_*"
+    status: excluded
+    archive: true
+    rolls_up_to: ilo-plfs-une
+    reason: "Three-way cubes (sex by two further classifications) the ILO computed from PLFS unit data, 32,485 Indian cells; held for the deep-archive tier, while the coarser tables by sex and one classification are baked in ilo-plfs-une."
   - match: ["ilo:plfs:q:d2:*", "ilo:plfs:q:d3:*"]
     status: excluded
-    reason: "Quarterly PLFS tables finer than sex, or sex by age or area, that the ILO computed from one quarter's share of the survey sample, about 1.35 million Indian cells of which one in seven carries the ILO's unreliable flag; the same tables are baked on calendar years, and the quarters stay at ILOSTAT."
+    archive: true
+    rolls_up_to: ilo-plfs-q
+    reason: "Quarterly PLFS tables finer than sex, or sex by age or area, that the ILO computed from one quarter's share of the sample, about one cell in seven flagged unreliable; held for the deep-archive tier, while the coarser quarterly cuts are baked in ilo-plfs-q and the same tables on calendar years in the annual bundles."
 
   # ---- everything else the ILO publishes for India: baked, one rule per bundle ----
   - match: ["ilo:adm-ir:a:*:inj_fatl_eco_rt", "ilo:adm-ir:a:*:inj_fatl_eco_rt:*", "ilo:adm-ir:a:*:inj_fatl_sex_mig_rt", "ilo:adm-ir:a:*:inj_fatl_sex_mig_rt:*", "ilo:adm-ir:a:*:inj_nftl_eco_rt", "ilo:adm-ir:a:*:inj_nftl_eco_rt:*", "ilo:adm-ir:a:*:inj_nftl_sex_mig_rt", "ilo:adm-ir:a:*:inj_nftl_sex_mig_rt:*", "ilo:adm-ir:a:*:sdg_f881_sex_mig_rt", "ilo:adm-ir:a:*:sdg_f881_sex_mig_rt:*", "ilo:adm-ir:a:*:sdg_n881_sex_mig_rt", "ilo:adm-ir:a:*:sdg_n881_sex_mig_rt:*"]
