@@ -69,6 +69,13 @@ const PAGES = [
     ["pv-si", (b) => b["gdp-back"].series.saving_rate.data.filter((v) => v != null).at(-1).toFixed(1) + "%"],
     ["nb-q3", (b) => fmt.pct2(b["gdp-2022"].series.gdp.data.at(-2))],
     ["prov-vintage", (b) => b.gdp.meta.vintage],
+    // ---- nas (wave 2): the deep accounts' plates ----
+    ["pv-spend", (b) => fmt.pct1Minus(b["gdp-2022-annual-shares"].series.pfce.data.filter((v) => v != null).at(-1))],
+    ["pv-disc", (b) => fmt.pct1Minus(b["gdp-2022-quarterly-shares"].series.discrepancy.data.at(-1))],
+    ["pv-sect", (b) => { const S = b["gdp-2022-sectors"].series, i = S.saving_households_pct_gdp.data.findLastIndex((v) => v != null); return fmt.pct1Minus(S.saving_households_pct_gdp.data[i] - S.gfcf_households_pct_gdp.data[i]); }],
+    ["pv-hh", (b) => fmt.pct1Minus(b["gdp-2022-sectors"].series.saving_households_pct_gdp.data.filter((v) => v != null).at(-1))],
+    ["pv-make", (b) => fmt.pct1Minus(b["gdp-2022-annual-industries"].series.agriculture_share.data.filter((v) => v != null).at(-1))],
+    // ---- end nas ----
   ]},
   { url: "/guides/wpi/", slug: null, checks: [
     // title strip and §02: the CURRENT base, 2022-23 (2011-12 ended Apr 2026)

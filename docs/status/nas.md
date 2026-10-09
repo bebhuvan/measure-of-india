@@ -59,11 +59,50 @@ Session: atlas-nas, branch `lb/nas`, port 4424. Guide: `gdp`. Brief: `docs/brief
 - Per-capita income: the 2026 publication has a per-capita statement, but the API serves
   per-capita only state-wise. Not derived.
 
-## Next
+- **The guide, v1.9** (2026-10-10). Four new sections and one new plate, each titled with its finding:
+  §10 where the money goes (spending shares since 1950-51, three rulers), income from abroad
+  (transfers and primary income), the discrepancy (quarterly, both bases); §11 who saves, who
+  invests (sector dumbbell, household and government saving over time); §12 the 18
+  sub-industries; §13 how a GDP number changes after its first print (stage paths, 11 years);
+  §15 what India makes (industry shares since 1950-51). Old §10-12 renumbered 14-16; two new
+  misreadings (the rebase and household saving).
+- **Stale copy fixed**: titleblock said "Latest print Q4 FY2025-26, released 28 May 2026"; §01
+  caption described Jan-Mar 2026; the register and basket read the retired 2011-12 base and
+  typed shares (55.8, 33.5, 9.6). All now read the 2022-23 bundles at build time.
+- Slim data for the new plates rides in the page (`#gdp-deep` JSON, the climate/trade
+  pattern), so the 129 KB revisions bundle never enters the client JS.
+- **Prose** regenerated (DeepSeek), verify/lint/contract clean, read by hand against the
+  data. Two fixes on the way: the annual-accounts labels now say "real growth" (a bare
+  "Capital formation 8.11" read as a level), and the gdp slot briefs say not to rank the
+  saving rate (a share) against growth rates. One vague clause removed by hand from the
+  print-says slot.
+- Looked at 1440 and 390 (categorical plates scroll sideways from the left on phones, per
+  DESIGN §3); downloaded the sector share image. qc checks added for five new plate values.
+- OG card not regenerated: its headline and data are unchanged.
 
-Guide plates (where the money goes, income from abroad, the discrepancy, who saves, sub-
-industries, revision paths, the economy's make-up since 1950), stale "As of" notes and
-header, prose, OG card, looks at 1440 and 390.
+## Decisions
+
+- Stage growth is computed from levels, not taken from the API rate (see quirks). Years
+  2011-12 to 2013-14 entered the base already revised, so they have no "first print" and are
+  left out of the revision plate.
+- The 8 industry groups for years at a revised estimate are sums of their published parts
+  (contract rule 5, labelled in `derived`); nothing is ever split the other way.
+- proseInputs unchanged: the deep bundles mix units (crore levels with shares) and the facts
+  sheet's deep-cut summary would invite ranking them; the deep findings live on the
+  hand-governed plates under the asof gate instead.
+- The deep archive: nothing in this family is too big for a bundle (largest 129 KB). The
+  industry-by-stage cross is not a catalogue item; it is kept in the raw dumps.
+
+## For the coordinator
+
+- Shared files touched, each as one marked block: `data/sources.yml` (gdp seams lists and one
+  comment), `scripts/validate.mjs` (PRODUCTS rows, identity block), `scripts/qc.mjs` (gdp
+  checks), `src/dossiers/everycut.js` (CUT_BY_BUNDLE), `pipeline/asof-manifest.json` (8 gdp
+  entries), `pipeline/slots.yml` (gdp briefs), registry gdp entry (bundles, version, stamp).
+- Generated outputs that will conflict: `pipeline/out/prose-manifest.json` is untouched in git
+  terms only if unchanged; facts-gdp.json changed.
+- Suggested for HISTORY: the API growth-rate truncation, stage labels that are not vintages,
+  the ignored approach cut, the ₹ lakh label on taxes.
 
 ## IDH series
 

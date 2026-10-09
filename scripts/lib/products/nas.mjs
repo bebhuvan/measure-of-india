@@ -81,7 +81,8 @@ const SECTOR_META = {
   finance_realty: ["Finance & real estate", "#5F6675"],
   public_admin: ["Public administration", "#878D99"],
 };
-const ACCOUNT_KEYS = [["ndp", "NDP", "#5F6675"], ["gni", "GNI", "#878D99"], ["gndi", "GNDI", "#A3A9B4"], ["gross_saving", "Gross saving", "#C9CED6"], ["taxes", "Taxes on products", "#5F6675"], ["subsidies", "Subsidies", "#878D99"], ["cfc", "Capital consumption", "#A3A9B4"], ["gcf_industry", "Capital formation", "#C9CED6"]];
+// labels say "real growth": these are y/y rates, and a bare "Capital formation, 8.11" reads as a level
+const ACCOUNT_KEYS = [["ndp", "NDP, real growth", "#5F6675"], ["gni", "GNI, real growth", "#878D99"], ["gndi", "GNDI, real growth", "#A3A9B4"], ["gross_saving", "Gross saving, real growth", "#C9CED6"], ["taxes", "Taxes on products, real growth", "#5F6675"], ["subsidies", "Subsidies, real growth", "#878D99"], ["cfc", "Capital consumption, real growth", "#A3A9B4"], ["gcf_industry", "Capital formation, real growth", "#C9CED6"]];
 
 // One base, the full bundle set. `b` describes the base:
 //   { base_year, base, indicators, industry_totals, axisStart (quarter "YYYY-MM"
@@ -170,7 +171,7 @@ async function buildBase(root, dcfg, vintage, b) {
   // levels: the yardstick the back series is read against
   {
     const gA = yoyFromLevels(gdpAnnualCon);
-    if (gA.size) aSeries.gdp = { name: `gdp_annual_real_yoy_pct${b.nameSuffix}`, label: "GDP, fiscal year", color: "#2E4BD8", data: aAxis.map((ym) => gA.get(ym) ?? null) };
+    if (gA.size) aSeries.gdp = { name: `gdp_annual_real_yoy_pct${b.nameSuffix}`, label: "GDP, fiscal year, real growth", color: "#2E4BD8", data: aAxis.map((ym) => gA.get(ym) ?? null) };
   }
   ACCOUNT_KEYS.forEach(([k, label, color]) => {
     if (!ag[k]?.size) return;
@@ -181,7 +182,7 @@ async function buildBase(root, dcfg, vintage, b) {
   const sav = curAnnual.gross_saving ?? new Map();
   if (sav.size && gdpAnnualCur.size) {
     aSeries.saving_rate = {
-      name: `gross_saving_pct_of_nominal_gdp${b.nameSuffix}`, label: "Gross saving rate",
+      name: `gross_saving_pct_of_nominal_gdp${b.nameSuffix}`, label: "Gross saving rate, % of GDP",
       color: "#C9CED6", nominal: true,
       data: aAxis.map((ym) => {
         const s = sav.get(ym), y = gdpAnnualCur.get(ym);

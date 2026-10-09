@@ -20,6 +20,71 @@ const backNeg = back.dates.filter((d, i) => back.series.gdp.data[i] < 0).map(fy)
 const sv = back.series.saving_rate.data, iv = back.series.gfcf_rate.data;
 const invAbove = iv.filter((v, i) => v != null && sv[i] != null && v > sv[i]).length, siYears = iv.filter((v, i) => v != null && sv[i] != null).length;
 const list = (xs) => xs.slice(0, -1).join(", ") + " and " + xs.at(-1);
+
+/* ---- the deep accounts (wave 2): slim data for the client, and the findings the plate
+ * titles state, both read from the bundles at build time (never typed) ---- */
+import sh11 from "../../../data/series/gdp-annual-shares.json";
+import sh22 from "../../../data/series/gdp-2022-annual-shares.json";
+import shBack from "../../../data/series/gdp-back-shares.json";
+import qs11 from "../../../data/series/gdp-quarterly-shares.json";
+import qs22 from "../../../data/series/gdp-2022-quarterly-shares.json";
+import sec11 from "../../../data/series/gdp-sectors.json";
+import sec22 from "../../../data/series/gdp-2022-sectors.json";
+import sub11 from "../../../data/series/gdp-annual-subindustries.json";
+import sub22 from "../../../data/series/gdp-2022-annual-subindustries.json";
+import rev11 from "../../../data/series/gdp-revisions.json";
+import rev22 from "../../../data/series/gdp-2022-revisions.json";
+import ind11 from "../../../data/series/gdp-annual-industries.json";
+import ind22 from "../../../data/series/gdp-2022-annual-industries.json";
+import indBack from "../../../data/series/gdp-back-industries.json";
+const pick = (b, keys) => ({ dates: b.dates, s: Object.fromEntries(keys.filter((k) => b.series[k]).map((k) => [k, b.series[k].data])) });
+const lastOf = (b, k) => { const d = b.series[k].data; for (let i = d.length - 1; i >= 0; i--) if (d[i] != null) return { v: d[i], date: b.dates[i], i }; return null; };
+const fyOf = (iso) => `${iso.slice(0, 4)}-${String((+iso.slice(0, 4) + 1) % 100).padStart(2, "0")}`;
+import back0 from "../../../data/series/gdp-back.json";
+const SPEND = ["pfce", "gfcf", "gfce", "stocks", "valuables", "net_exports", "discrepancy"];
+const INDS = ["agriculture", "mining", "manufacturing", "utilities", "construction", "trade_hotels", "transport", "finance", "realty", "public_admin", "other_services"];
+const SECTS = ["households", "private_nfc", "private_fc", "public_nfc", "public_fc", "government"];
+const secKeys = SECTS.flatMap((k) => [`saving_${k}_pct_gdp`, `gfcf_${k}_pct_gdp`]).concat(["saving_total_pct_gdp", "gfcf_total_pct_gdp"]);
+// sub-industries: compound real growth over the whole 2011-12-base span, and shares at both ends
+const subRows = Object.keys(sub11.series).filter((k) => k.endsWith("_constant")).map((k) => {
+  const key = k.replace(/_constant$/, ""), c = sub11.series[k].data, n = c.length - 1;
+  return { key, label: sub11.series[k].label.replace(/, GVA at constant prices$/, ""), group: sub11.series[k].group,
+    cagr: Math.round((Math.pow(c[n] / c[0], 1 / n) - 1) * 1000) / 10, share0: sub11.series[`${key}_share`].data[0], share1: sub11.series[`${key}_share`].data[n] };
+});
+const GD = {
+  // the back series' investment share lives in gdp-back (gfcf_rate, from 1951-52): placed on the shares axis
+  spend: { back: (() => { const b = pick(shBack, SPEND); b.s.gfcf = shBack.dates.map((d) => { const i = back0.dates.indexOf(d); return i < 0 ? null : back0.series.gfcf_rate.data[i]; }); return b; })(), b11: pick(sh11, SPEND), b22: pick(sh22, SPEND) },
+  abroad: { back: pick(shBack, ["transfers_row", "primary_income_row"]), b11: pick(sh11, ["transfers_row", "primary_income_row"]), b22: pick(sh22, ["transfers_row", "primary_income_row"]) },
+  disc: { q11: pick(qs11, ["discrepancy"]), q22: pick(qs22, ["discrepancy"]) },
+  sect: { b11: pick(sec11, secKeys), b22: pick(sec22, secKeys) },
+  sub: { rows: subRows, from: sub11.dates[0], to: sub11.dates.at(-1), newTo: sub22.dates.at(-1) },
+  rev: { b11: pick(rev11, ["fae", "sae", "pe", "fre", "sre", "tre", "final"].map((st) => `gdp_growth_${st}_real`)), b22: pick(rev22, ["pe", "fre", "final"].map((st) => `gdp_growth_${st}_real`)) },
+  make: { back: pick(indBack, INDS.map((k) => `${k}_share`)), b11: pick(ind11, INDS.map((k) => `${k}_share`)), b22: pick(ind22, INDS.map((k) => `${k}_share`)) },
+};
+// plate titles: findings, from the data
+const pf22 = lastOf(sh22, "pfce"), pf11same = sh11.series.pfce.data[sh11.dates.indexOf(pf22.date)];
+const SPEND_T = { y: fyOf(pf22.date), new: Math.round(pf22.v), old: pf11same != null ? Math.round(pf11same) : null, back0: Math.round(shBack.series.pfce.data[0]), backY: fyOf(shBack.dates[0]), b11y: fyOf(sh11.dates[0]) };
+const tr22 = lastOf(sh22, "transfers_row"), pi22 = lastOf(sh22, "primary_income_row");
+const ABROAD_T = { y: fyOf(tr22.date), tr: tr22.v.toFixed(1), pi: Math.abs(pi22.v).toFixed(1), back0: shBack.series.transfers_row.data[0].toFixed(1) };
+const maxAbs = (b) => b.series.discrepancy.data.reduce((m, v) => (v != null && Math.abs(v) > m ? Math.abs(v) : m), 0);
+const DISC_T = { q11: maxAbs(qs11).toFixed(1), q22: maxAbs(qs22).toFixed(1), n22: qs22.dates.length };
+const hhS = lastOf(sec22, "saving_households_pct_gdp"), hhI = sec22.series.gfcf_households_pct_gdp.data[hhS.i];
+const SECT_T = { y: fyOf(hhS.date), s: hhS.v.toFixed(1), i: hhI.toFixed(1), frac: Math.round((hhI / hhS.v) * 100) };
+const hh11 = sec11.series.saving_households_pct_gdp.data, hh11L = lastOf(sec11, "saving_households_pct_gdp");
+const HH_T = { y0: fyOf(sec11.dates[0]), v0: hh11[0].toFixed(1), y1: fyOf(hh11L.date), v1: hh11L.v.toFixed(1) };
+const subBy = Object.fromEntries(subRows.map((r) => [r.key, r]));
+const SUB_T = { crops: subBy.crops.cagr.toFixed(1), livestock: subBy.livestock.cagr.toFixed(1), fishing: subBy.fishing.cagr.toFixed(1), from: fyOf(sub11.dates[0]), to: fyOf(sub11.dates.at(-1)), n: subRows.length };
+// the year whose growth moved most between its first advance and its latest estimate
+const revFirst = rev11.series.gdp_growth_first.data, revLatest = rev11.series.gdp_growth_latest.data, revR = rev11.series.gdp_growth_revision.data;
+const revI = revR.reduce((bi, v, i) => (v != null && (bi < 0 || Math.abs(v) > Math.abs(revR[bi])) ? i : bi), -1);
+const sgn = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1);
+const REV_T = { y: fyOf(rev11.dates[revI]), first: sgn(revFirst[revI]), latest: sgn(revLatest[revI]), n: revR.filter((v) => v != null).length };
+const ag0 = indBack.series.agriculture_share.data[0], agL = lastOf(ind22, "agriculture_share");
+const MAKE_T = { y0: fyOf(indBack.dates[0]), v0: Math.round(ag0), y1: fyOf(agL.date), v1: agL.v.toFixed(1) };
+// the latest quarter, for the titleblock and the reading caption
+const NB_LAST_VAL = nb22.series.gdp.data.at(-1), NB_PREV_VAL = nb22.series.gdp.data.at(-2);
+const QMONTHS = { "04": "April to June", "07": "July to September", "10": "October to December", "01": "January to March" };
+const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.at(-1).slice(0, 4)}`;
 ---
 <Base
   title="National Accounts · India Atlas"
@@ -45,8 +110,8 @@ const list = (xs) => xs.slice(0, -1).join(", ") + " and " + xs.at(-1);
       <span>Base year <b>2022–23 = 100</b></span>
       <span>Prior base <b>2011–12, to Q2 FY26</b></span>
       <span>Prices <b>Real (constant)</b></span>
-      <span>Latest print <b>Q4 FY2025–26</b></span>
-      <span>Released <b>28 May 2026</b></span>
+      <span>Latest print <b>{NB_LAST}</b></span>
+      <span>Annual accounts <b>to {SPEND_T.y}</b></span>
     </div>
     <div class="numbers">
       <div class="num"><div class="l">GDP, y/y</div><div class="v acc" id="n-gdp">–</div><div class="d" id="d-gdp">–</div><div class="nspark" id="nspark-gdp"></div></div>
@@ -58,10 +123,10 @@ const list = (xs) => xs.slice(0, -1).join(", ") + " and " + xs.at(-1);
 
   <!-- § 01 current reading -->
   <section>
-    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">Recorded 28 May 2026</span></div>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">The {NB_LAST} print</span></div>
     <div class="reading-top">
       <div><span class="rk">Current reading</span><div class="big" id="rb-big">–</div></div>
-      <p class="rt-cap">Real GDP growth, January–March 2026: a second straight quarter of gentle cooling from a multi-year peak, and still comfortably above the pre-pandemic trend.</p>
+      <p class="rt-cap">Real GDP growth, {NB_LAST_MONTHS}, on the 2022–23 base: {NB_LAST_VAL < NB_PREV_VAL ? "down" : "up"} from {NB_PREV_VAL.toFixed(2)}% the quarter before, against a rough pre-pandemic trend of 6%.</p>
       <div><div class="band-scale" id="rb-scale"></div><div class="band-chip" id="rb-band">vs 6% trend: <b>–</b></div></div>
     </div>
     <div class="reading-cols">
@@ -82,21 +147,21 @@ const list = (xs) => xs.slice(0, -1).join(", ") + " and " + xs.at(-1);
     <div class="break ledger">
       <table>
         <thead>
-          <tr><th>Series</th><th>Share of GDP</th><th>Latest y/y</th><th>vs prev. quarter</th><th>Year ago</th><th class="spark">2016 to 2025</th></tr>
+          <tr><th>Series</th><th>Share of GDP</th><th>Latest y/y</th><th>vs prev. quarter</th><th>Year ago</th><th class="spark">{NB_FIRST} to {NB_LAST}</th></tr>
         </thead>
         <tbody id="ledger-body"></tbody>
       </table>
-      <p style="margin-top:16px;font-size:.98rem;color:var(--muted);font-style:italic;max-width:62ch">Two denominators share this table: expenditure components are shares of GDP; the four industry rows are shares of nominal GVA over the last four quarters, because that is how the production side is added up. Neither set is a share of the other.</p>
+      <p style="margin-top:16px;font-size:.98rem;color:var(--muted);font-style:italic;max-width:62ch">All rows are on the 2022–23 base. Two denominators share this table: expenditure components are shares of nominal GDP in {SPEND_T.y}; the four industry rows are shares of nominal GVA over the last four quarters, because that is how the production side is added up. Neither set is a share of the other.</p>
     </div>
   </section>
 
   <!-- § 03 composition -->
   <section>
-    <div class="sec-head"><span class="no">03</span><h2>What growth is made of</h2><span class="line"></span><span class="unit">Expenditure shares, per cent of GDP</span></div>
+    <div class="sec-head"><span class="no">03</span><h2>What growth is made of</h2><span class="line"></span><span class="unit">Expenditure shares, per cent of GDP, {SPEND_T.y}</span></div>
     <div class="break basket">
       <div class="bar" id="basket-bar"></div>
       <div class="labels" id="basket-labels"></div>
-      <p class="note">The demand side of the economy, before net exports (roughly −2% of GDP) and statistical discrepancies. Consumption dwarfs everything: which is why a cautious consumer matters more to the headline than any single factory, and why "investment-led growth" at 33% is still the junior partner.</p>
+      <p class="note">The demand side of the economy in {SPEND_T.y}, on the 2022–23 base. Net exports (<b id="bk-nx">–</b>) and the statistical discrepancy (<b id="bk-disc">–</b>) close the sum to 100. Consumption dwarfs everything: which is why a cautious consumer matters more to the headline than any single factory, and why "investment-led growth" at <b id="bk-inv">–</b> of GDP is still the junior partner. Section 10 follows each share back to 1950-51.</p>
     </div>
   </section>
 
@@ -440,9 +505,247 @@ const list = (xs) => xs.slice(0, -1).join(", ") + " and " + xs.at(-1);
     </div>
   </section>
 
-  <!-- § 10 the new base -->
+  <!-- § 10 where the money goes (wave 2) -->
   <section>
-    <div class="sec-head"><span class="no">10</span><h2>The base has moved</h2><span class="line"></span><span class="unit">Base 2022–23, y/y %, quarterly</span></div>
+    <div class="sec-head"><span class="no">10</span><h2>Where the money goes</h2><span class="line"></span><span class="unit">Shares of nominal GDP, fiscal years, three rulers</span></div>
+    <div class="break">
+      <figure id="cb-spend" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Of every ₹100 of GDP, households spend about ₹{SPEND_T.new}; in {SPEND_T.backY} it was ₹{SPEND_T.back0}</h3>
+            <div class="sub">Each spending line as a share of nominal GDP: the NSO back series ({SPEND_T.backY} to {BACK_LAST}), the 2011–12 base and the 2022–23 base, three separate series, each panel on its own scale</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-spend">–</div><div class="c" id="pv-spend-c">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend"><span class="chip"><i style="background:#2E4BD8"></i>NSO back series</span><span class="chip"><i style="background:#A3A9B4"></i>Base 2011–12</span><span class="chip"><i style="background:#161A22"></i>Base 2022–23</span></div>
+          <div class="plotzone" style="padding-top:26px">
+            <div id="grid-spend" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:34px 44px"></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NAS, every share is current prices over current prices, valuables are published only from 1998-99 on the back series, each panel on its own scale, the three rulers are never joined</span>
+            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>GDP measured by spending: what households buy (consumption), what is spent on buildings, machines and roads (fixed investment), what the state spends on its own services (government consumption), goods piled up in warehouses (change in stocks), gold and jewellery bought as a store of value (valuables), and what the world buys from us less what we buy from it (net exports). Each panel is that line's share of GDP in rupees of the day.</p>
+            <p>The long view is a story of a country growing richer. In the early 1950s almost everything earned was eaten, worn or lived in; there was little left over to build with. As incomes rose, the consumption share fell and the investment share rose. That shift is what development looks like in the accounts.</p>
+            <p>The three rulers never join. The 2022–23 base counts consumption differently (new surveys, new weights), so in the years both bases cover it puts the consumption share several points lower. Neither ruler is wrong; they are different measurements of the same spending.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the {SPEND_T.y} accounts</span>
+            <p>On the new base, consumption took <b id="wm-pfce">–</b> of GDP in {SPEND_T.y}, fixed investment <b id="wm-gfcf">–</b> and government consumption <b id="wm-gfce">–</b>. Valuables, mostly gold, took <b id="wm-val">–</b>, <span id="wm-val-cmp">–</span> the change in stocks (<b id="wm-stk">–</b>). Net exports subtracted <b id="wm-nx">–</b>: India bought more from the world than it sold.</p>
+            <p>The same year on the old base put consumption at <b id="wm-pfce-old">–</b>. The gap between the two rulers, <b id="wm-gap">–</b>, compares with a largest year-to-year move of <b id="wm-move">–</b> on the old base since {SPEND_T.b11y}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-abroad" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Money sent home adds {ABROAD_T.tr}% of GDP to what Indians can spend; profits and interest paid abroad take {ABROAD_T.pi}%</h3>
+            <div class="sub">Net current transfers from abroad and net primary income from abroad, shares of nominal GDP, NSO back series and both current bases, fiscal years</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-abroad">–</div><div class="c" id="pv-abroad-c">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend"><span class="chip"><i style="background:#2E4BD8"></i>NSO back series</span><span class="chip"><i style="background:#A3A9B4"></i>Base 2011–12</span><span class="chip"><i style="background:#161A22"></i>Base 2022–23</span></div>
+          <div class="plotzone" style="padding-top:26px">
+            <div id="grid-abroad" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:34px 44px"></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NAS, net primary income and net other current transfers from the rest of the world, current prices over nominal GDP, the three rulers are never joined</span>
+            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>GDP counts what is produced inside India. Two flows across the border change what residents actually have. Primary income is earnings on work and capital that cross the border: interest on foreign loans, profits of foreign-owned companies sent home, wages of Indians working abroad for short spells. India pays out more than it receives, so the line sits below zero. Adding it to GDP gives gross national income.</p>
+            <p>Current transfers are mostly remittances: money a nurse in Riyadh or an engineer in Texas sends to parents in Kerala or Punjab. Adding them gives gross national disposable income, the widest measure of what the country can spend or save. In the 1950s the line was close to nothing; the Gulf boom of the 1970s lifted it, and the 1990s and 2000s lifted it again.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the {ABROAD_T.y} accounts</span>
+            <p>Net transfers came to <b id="ab-tr">–</b> of GDP in {ABROAD_T.y} on the new base, up from <b id="ab-tr0">–</b> in <span id="ab-tr0-y">–</span> on the back series. Net primary income was <b id="ab-pi">–</b>. Together they make gross national disposable income <b id="ab-gndi">–</b> of GDP: India's residents have slightly more to spend than the country produces.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-disc" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The two ways of adding up GDP disagree by up to {DISC_T.q11}% in a quarter on the old base, and {DISC_T.q22}% on the new</h3>
+            <div class="sub">The discrepancy: GDP less the sum of its spending components, share of nominal GDP, quarterly, both bases, computed from published levels</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-disc">–</div><div class="c" id="pv-disc-c">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend"><span class="chip"><i style="background:#A3A9B4"></i>Base 2011–12</span><span class="chip"><i style="background:#2E4BD8"></i>Base 2022–23</span></div>
+          <div class="plotzone" id="plot-disc"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NAS quarterly estimates, discrepancy computed as GDP less private and government consumption, fixed investment, change in stocks, valuables and net exports, at current prices</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>India's GDP is built from production: what each industry adds. Spending is estimated separately, from surveys, tax and trade data. The two should match, and they never quite do. The statisticians publish the gap as a line called "discrepancies" and leave it in. Above zero, measured output ran ahead of measured spending; below zero, the reverse.</p>
+            <p>The API's filter offers an approach cut (production, expenditure, income), but the data it returns is the same for every approach, so this plate computes the gap from the published levels. The annual figures are in the data table below.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the {NB_LAST} print</span>
+            <p>The latest quarter's discrepancy is <b id="dc-last">–</b> of GDP. Across the <b id="dc-n">–</b> quarters on the new base the gap averaged <b id="dc-mean">–</b> in absolute size, against <b id="dc-mean11">–</b> on the old base. The new base's final years, <span id="dc-zero">–</span>, are balanced to zero at current prices: they are the years for which MoSPI has published supply and use tables, which reconcile the two sides.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 11 who saves (wave 2) -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>Who saves, who invests</h2><span class="line"></span><span class="unit">Institutional sectors, share of nominal GDP</span></div>
+    <div class="break">
+      <figure id="cb-sect" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Households save {SECT_T.s}% of GDP and invest {SECT_T.i}%: the rest funds companies and the government</h3>
+            <div class="sub">Gross saving and gross fixed capital formation by institutional sector, share of nominal GDP, {SECT_T.y}, base 2022–23</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-sect">–</div><div class="c" id="pv-sect-c">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend"><span class="chip"><i style="background:#2E4BD8"></i>Gross saving</span><span class="chip"><i style="background:#C47A16"></i>Fixed investment</span></div>
+          <div class="plotzone" id="plot-sect"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NAS institutional-sector accounts, current prices, households include non-profit institutions serving households, financial and non-financial companies shown separately</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The accounts split the economy into kinds of owner: households (with the small charities and trusts that serve them), private companies, public-sector companies, financial firms and government. Each saves part of its income and invests part of it in new buildings, machines and roads. Where a sector saves more than it invests, the surplus flows to the others through bank deposits, insurance, provident funds, mutual funds and government bonds.</p>
+            <p>Households are India's lender. Their saving pays for their own homes and tractors and still leaves a surplus, lent to companies building factories and to governments running deficits. A government below zero on saving is spending more on salaries, pensions, interest and subsidies than it collects: it borrows before it builds a single road.</p>
+            <p>Household saving here includes physical saving (houses, gold, farm equipment) as well as financial saving. The split between the two is in MoSPI's yearly publication, not in the data this guide reads; for household borrowing see the <a href="/guides/credit/">credit</a> and <a href="/guides/debt/">debt</a> guides.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the {SECT_T.y} accounts</span>
+            <p>Households saved <b id="se-hh-s">–</b> of GDP and invested <b id="se-hh-i">–</b>, a surplus of <b id="se-hh-gap">–</b>. Private non-financial companies invested <b id="se-pc-i">–</b> against saving of <b id="se-pc-s">–</b>. General government saved <b id="se-gg-s">–</b> and invested <b id="se-gg-i">–</b>. The whole economy saved <b id="se-tot-s">–</b> of GDP.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-hh" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Household saving fell from {HH_T.v0}% of GDP in {HH_T.y0} to {HH_T.v1}% in {HH_T.y1} on the old base</h3>
+            <div class="sub">Gross saving of households and of general government, share of nominal GDP, base 2011–12 ({HH_T.y0} to {HH_T.y1}, faint) and base 2022–23, two separate series</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-hh">–</div><div class="c" id="pv-hh-c">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend"><span class="chip"><i style="background:#2E4BD8"></i>Households</span><span class="chip"><i style="background:#C47A16"></i>General government</span></div>
+          <div class="plotzone" id="plot-hh"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NAS institutional-sector accounts, saving at current prices only, the faint lines are the 2011–12 base, never joined to the 2022–23 base</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Two sectors move the national saving rate most: households, the largest saver, and government, the largest dissaver. The faint lines are the 2011–12 base; the strong ones the 2022–23 base, which measures household income and spending afresh and puts household saving at a different level for the same years.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the {SECT_T.y} accounts</span>
+            <p>Government saving fell to <b id="hh-gg-low">–</b> of GDP in <span id="hh-gg-low-y">–</span>, when revenue collapsed and relief spending rose; households saved <b id="hh-2020">–</b> that year, more than in any year since <span id="hh-2020-since">–</span>, because there was little to spend on. On the new base household saving reads <b id="hh-new">–</b> for {SECT_T.y}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 12 sub-industries (wave 2) -->
+  <section>
+    <div class="sec-head"><span class="no">12</span><h2>Inside the engines</h2><span class="line"></span><span class="unit">{SUB_T.n} sub-industries, {SUB_T.from} to {SUB_T.to}</span></div>
+    <div class="break">
+      <figure id="cb-sub" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Crops grew {SUB_T.crops}% a year; livestock {SUB_T.livestock}% and fishing {SUB_T.fishing}%</h3>
+            <div class="sub">Average annual real growth of GVA by sub-industry, {SUB_T.from} to {SUB_T.to}, base 2011–12, with each sub-industry's share of nominal GVA in {SUB_T.to}</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-sub">–</div><div class="c" id="pv-sub-c">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-sub"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NAS annual estimates, base 2011–12, compound average real growth from constant-price GVA, shares are of nominal total GVA</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Below the eight industry groups the accounts publish eighteen sub-industries: inside farming (crops, livestock, forestry, fishing), inside manufacturing (food, textiles, metals, machinery, the rest), inside trade (shops and repair, hotels and restaurants) and inside transport (rail, road, water, air, storage, communication). Each dot is the compound real growth of that sub-industry across the whole series; the figure beside the name is its share of the economy at the end.</p>
+            <p>A fast dot with a tiny share, such as storage or air transport, is a small business growing quickly. A slow dot with a big share, such as crops, moves the economy more than any of them.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the {SUB_T.to} accounts</span>
+            <p>Crops' share of the economy fell from <b id="sb-crops0">–</b> to <b id="sb-crops1">–</b> while livestock's rose from <b id="sb-live0">–</b> to <b id="sb-live1">–</b>: milk, eggs and meat now carry more of farm growth than grain. In manufacturing, food processing grew slowest, <b id="sb-food">–</b> a year, and machinery fastest, <b id="sb-mach">–</b>. Sub-industries come only with the revised estimates, so they end at {SUB_T.to}; the new base publishes them to <span id="sb-new">–</span>, in the data table below.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 13 revisions (wave 2) -->
+  <section>
+    <div class="sec-head"><span class="no">13</span><h2>How a GDP number changes after its first print</h2><span class="line"></span><span class="unit">Annual real growth at each estimate, base 2011–12</span></div>
+    <div class="break">
+      <figure id="cb-rev" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{REV_T.y} was first put at {REV_T.first}% and now stands at {REV_T.latest}%</h3>
+            <div class="sub">Each year's real GDP growth at every estimate, as a change from its first advance estimate, percentage points, {REV_T.n} years on the 2011–12 base, computed from the published levels at each stage; the two years that moved most are in blue, the other {REV_T.n - 2} in grey</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-rev">–</div><div class="c" id="pv-rev-c">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-rev"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NAS annual estimates at each stage, growth computed from levels against the previous year in the same release, the highlighted years are the largest moves up and down</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A year's growth is printed six times or more. The first advance estimate comes in early January, before the year is over, from three quarters of data and a projection. The second advance follows at the end of February, and the provisional estimate at the end of May, once the year has ended. Then come the first, second and third revised estimates, one each February, as company accounts, the industry survey, farm data and tax returns arrive. Each line starts at zero, the first print, and shows how far later prints moved from it.</p>
+            <p>Revisions are not mistakes. The early estimates lean on fast indicators (listed companies, government accounts, the industrial index); the informal economy is extrapolated from them until slow surveys arrive. When the slow data disagree with the fast, the number moves. A line above zero is a year that turned out better than first thought.</p>
+            <p>Stage growth is computed from the published levels, against the previous year's figure in the same release. MoSPI's own one-decimal rate is kept beside it in the data table; it is sometimes cut rather than rounded (it gives 9.1 for 2023-24's first revised estimate, where the press note and the levels give 9.2).</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the {SPEND_T.y} accounts</span>
+            <p>Across the <b id="rv-n">–</b> years that have been revised, the average move from the first print to the latest was <b id="rv-mean">–</b> in either direction; <b id="rv-up">–</b> of them were revised up. The biggest upward move was <b id="rv-max">–</b>; the biggest downward, <b id="rv-min">–</b>. The 2022–23 base is too young to have a path of its own: <span id="rv-22">–</span>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 14 the new base -->
+  <section>
+    <div class="sec-head"><span class="no">14</span><h2>The base has moved</h2><span class="line"></span><span class="unit">Base 2022–23, y/y %, quarterly</span></div>
     <div class="break">
       <figure id="cb-nb" style="margin:0">
         <div class="plate-head">
@@ -512,9 +815,9 @@ const list = (xs) => xs.slice(0, -1).join(", ") + " and " + xs.at(-1);
     </div>
   </section>
 
-  <!-- § 11 seventy-five years -->
+  <!-- § 15 seventy-five years -->
   <section>
-    <div class="sec-head"><span class="no">11</span><h2>Seventy-five years of growth</h2><span class="line"></span><span class="unit">Fiscal years, real GDP growth, three rulers</span></div>
+    <div class="sec-head"><span class="no">15</span><h2>Seventy-five years of growth</h2><span class="line"></span><span class="unit">Fiscal years, real GDP growth, three rulers</span></div>
     <div class="break">
       <figure id="cb-lh" style="margin:0">
         <div class="plate-head">
@@ -582,11 +885,44 @@ const list = (xs) => xs.slice(0, -1).join(", ") + " and " + xs.at(-1);
         </div>
       </figure>
     </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-make" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Farming was {MAKE_T.v0}% of the economy in {MAKE_T.y0}; by {MAKE_T.y1} it was {MAKE_T.v1}%</h3>
+            <div class="sub">Each industry's share of nominal GVA: the NSO back series ({MAKE_T.y0} to {BACK_LAST}), the 2011–12 base and the 2022–23 base, three separate series, each panel on its own scale</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-make">–</div><div class="c" id="pv-make-c">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend"><span class="chip"><i style="background:#2E4BD8"></i>NSO back series</span><span class="chip"><i style="background:#A3A9B4"></i>Base 2011–12</span><span class="chip"><i style="background:#161A22"></i>Base 2022–23</span></div>
+          <div class="plotzone" style="padding-top:26px">
+            <div id="grid-make" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:34px 44px"></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NAS, GVA by industry at current prices over total GVA; before 2004-05 the back series' industries do not add up exactly to its published total, so its shares need not sum to 100; the three rulers are never joined</span>
+            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The make-up of what India produces, industry by industry, over seventy-five years. Each panel is one industry's share of value added in rupees of the day. A falling line is not a shrinking industry: farming produces far more food today than in 1950. It means the rest of the economy grew faster.</p>
+            <p>The share of farming fell, but the share of people who farm fell far more slowly. That gap, a large share of workers producing a small share of output, is why farm incomes lag and why so many households want a job off the land (see the <a href="/guides/jobs/">jobs</a> guide).</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the {MAKE_T.y1} accounts</span>
+            <p>Agriculture's share fell from <b id="mk-ag0">–</b> to <b id="mk-ag1">–</b> on the back series. Construction rose from <b id="mk-con0">–</b> to <b id="mk-con1">–</b>, and finance from <b id="mk-fin0">–</b> to <b id="mk-fin1">–</b>. Manufacturing peaked at <b id="mk-mfg-pk">–</b> and stood at <b id="mk-mfg1">–</b> in {MAKE_T.y1} on the new base: India's growth came from services and construction more than from factories.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
   </section>
 
-  <!-- § 12 misread -->
+  <!-- § 16 misread -->
   <section>
-    <div class="sec-head"><span class="no">12</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">16</span><h2>How to misread this number</h2><span class="line"></span></div>
     <ul class="misread">
       <li>
         <span class="no">i.</span>
@@ -644,6 +980,20 @@ const list = (xs) => xs.slice(0, -1).join(", ") + " and " + xs.at(-1);
           <p>The GDP deflator prices what the economy produces; the CPI prices what households buy. In India the deflator leans on wholesale prices, so the two can point in opposite directions for quarters at a stretch: the deflator has printed below zero while consumer inflation ran positive. Deflating a household quantity with the GDP deflator is a category error.</p>
         </div>
       </li>
+      <li>
+        <span class="no">ix.</span>
+        <div>
+          <h3>"The new base says Indians spend less."</h3>
+          <p>The 2022–23 base puts consumption several points of GDP below the old base for the same years. Nobody's shopping changed: the statisticians measured it with new surveys and new weights. A level from one base and a level from the other are different rulers, and their difference is not a trend.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">x.</span>
+        <div>
+          <h3>"Household saving fell, so households are poorer."</h3>
+          <p>Saving is income not spent. It can fall because incomes fell, because spending rose, or because households took loans to buy houses, which shows up as investment rather than saving. The aggregate cannot tell these apart; read it beside borrowing in the <a href="/guides/credit/">credit</a> guide.</p>
+        </div>
+      </li>
     </ul>
   </section>
 
@@ -658,7 +1008,8 @@ const list = (xs) => xs.slice(0, -1).join(", ") + " and " + xs.at(-1);
         <h6>Source of record</h6>
         <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. "Estimates of Gross Domestic Product for the Second Quarter (July–September) of 2025–26." Press release, 28 November 2025. Constant-price levels retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>; growth rates are computed from levels, not taken from the rounded published rates.</p>
         <p>The expenditure-side series, government consumption, exports, imports, and the annual accounts (NDP, GNI, taxes and subsidies on products, capital consumption, capital formation) are drawn from the same NAS releases, same vintage. The annual income-side accounts are not published quarterly; their detailed lines end two fiscal years behind the headline, and that gap is shown, not filled.</p>
-        <p>Version 1.8 widens the intake to the rest of what the NAS tables serve: industry-wise real GVA for the eight sector groups (quarterly, with the release's own rounded growth rates kept as a cross-check), nominal GDP and the implied deflator (current-price over constant-price levels), the gross saving rate (saving is published at current prices only, so it appears as a share of nominal GDP), and the new 2022–23-base quarterly series as its own bundle: the two bases are never spliced. Q3 and Q4 of FY26, from the 27 February and 29 May 2026 releases, exist only on the new base. Not covered because the source does not serve it: national per-capita income: the API's per-capita indicators exist state-wise only, and this guide will not derive one from a population guess.</p>
+        <p>Version 1.9 (October 2026) takes in every row the API serves for the national account: every indicator on both bases at constant and current prices, every estimate stage of every year, GVA by 15 industry rows and 18 sub-industries, capital formation by industry of use, saving, investment, value added and depreciation by institutional sector, quarterly levels, and the NSO back series' full accounts from 1950-51. Shares, growth, net national income and the discrepancy are computed from published levels. Base 2022–23 levels were checked by hand against MoSPI's press release of 31 August 2026 (National Accounts Statistics 2026): real GDP of ₹3,01,15,428 crore for 2024-25 and ₹3,24,70,100 crore for 2025-26, exact. That release restated every new-base year for the new producer price and industrial production indices; the API holds the restated figure under the old stage label. Three source defects are worked around and disclosed: taxes and subsidies labelled ₹ lakh but published in ₹ crore; MoSPI's growth rates in the API sometimes cut rather than rounded; and an approach cut the data endpoint ignores.</p>
+        <p>Version 1.8 widened the intake to the rest of what the NAS tables serve: industry-wise real GVA for the eight sector groups (quarterly, with the release's own rounded growth rates kept as a cross-check), nominal GDP and the implied deflator (current-price over constant-price levels), the gross saving rate (saving is published at current prices only, so it appears as a share of nominal GDP), and the new 2022–23-base quarterly series as its own bundle: the two bases are never spliced. Q3 and Q4 of FY26, from the 27 February and 29 May 2026 releases, exist only on the new base. Not covered because the source does not serve it: national per-capita income: the API's per-capita indicators exist state-wise only, and this guide will not derive one from a population guess.</p>
       </div>
       <div>
         <h6>Revisions &amp; uncertainty</h6>
@@ -667,7 +1018,7 @@ const list = (xs) => xs.slice(0, -1).join(", ") + " and " + xs.at(-1);
       </div>
       <div>
         <h6>This guide</h6>
-        <p>Output, version 1.8, adds the eight industry engines, the deflator wedge, the saving rate and the 2022–23-base series. Next scheduled revision: 28 August 2026, on release of the Q1 FY27 print.</p>
+        <p>Output, version 1.9, adds where the money goes, income from abroad, the discrepancy, who saves and invests, the eighteen sub-industries, how a GDP number is revised, and what India has made since 1950-51. Next scheduled revision: the Q2 FY27 print, due at the end of November 2026.</p>
       </div>
     </div>
     <div class="fine">
@@ -678,6 +1029,7 @@ const list = (xs) => xs.slice(0, -1).join(", ") + " and " + xs.at(-1);
   </footer>
 
 </div>
+<script type="application/json" id="gdp-deep" set:html={JSON.stringify(GD).replace(/</g, "\\u003c")}></script>
 <script>
   import "../../dossiers/guide.client.js";
   import "../../dossiers/gdp.client.js";

@@ -75,9 +75,9 @@ export const DOSSIERS = [
     blurb: "The size and speed of the whole economy, estimated quarterly: what growth is made of, from consumption to investment and government, and what the aggregate hides.",
     description: "GDP and GVA: a decade of Indian growth, the pandemic wound, and how to read the latest quarterly print.",
     rssDescription: "The size and speed of the whole economy, estimated quarterly. Revised with the latest print.",
-    stamp: { dateText: "August 2026", vintageStyle: "vintage" },   // dateText = page-revision month (no bundle fact); vintage derives from gdp-2022 meta.vintage
+    stamp: { dateText: "October 2026", vintageStyle: "vintage" },   // dateText = page-revision month (no bundle fact); vintage derives from gdp-2022 meta.vintage
     statusNote: "Evergreen, revised with each print",
-    version: "v1.8",
+    version: "v1.9",
     proseInputs: ["gdp-2022-expenditure", "gdp-2022-industries", "gdp-2022-accounts", "gdp-2022-nominal"],
     currentBundle: "gdp-2022",
     calendar: "fiscal-apr",
