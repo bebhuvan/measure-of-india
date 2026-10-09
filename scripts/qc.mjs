@@ -703,6 +703,39 @@ for (const page of PAGES) {
   }
 }
 
+// deep archive links (docs/PLAN-launch.md §2b): every "Finer detail" link on a built page points at
+// a folder of the archive that data/archive/manifest.json lists, and every guide whose bundles
+// have archive tables rolling up to them carries the link
+{
+  const AR = await import(pathToFileURL(path.join(ROOT, "src/dossiers/archive.js")).href);
+  const EC = await import(pathToFileURL(path.join(ROOT, "src/dossiers/everycut.js")).href);
+  const man = AR.archiveManifest();
+  const listed = [...(man.tables ?? []).map((t) => t.path), ...Object.values(man.raw ?? {}).flatMap((r) => r.files.map(([rel]) => r.hf_prefix + rel))];
+  const base = AR.ARCHIVE_URL + "/tree/main/";
+  let links = 0, bad = 0;
+  const pages = [];
+  (function walk(dir) { for (const e of fs.readdirSync(dir, { withFileTypes: true })) { const p = path.join(dir, e.name); if (e.isDirectory()) walk(p); else if (e.name === "index.html") pages.push(p); } })(path.join(DIST, "guides"));
+  for (const p of pages) {
+    const h = fs.readFileSync(p, "utf8");
+    for (const m of h.matchAll(/class="archive-link" href="([^"]+)"/g)) {
+      links++;
+      const href = m[1].replace(/&amp;/g, "&");
+      const rel = href.startsWith(base) ? href.slice(base.length) : null;
+      if (!rel || !listed.some((x) => x === rel || x.startsWith(rel + "/"))) { bad++; fail(`${path.relative(DIST, p)}: archive link ${href} is not a path in data/archive/manifest.json`); }
+    }
+  }
+  for (const d of DOSSIERS) {
+    const f = path.join(DIST, "guides", d.slug, "index.html");
+    if (!fs.existsSync(f)) continue;
+    const h = fs.readFileSync(f, "utf8");
+    for (const b of EC.guideBundles(d)) {
+      const a = AR.archiveFor(b);
+      if (a && !h.includes(`href="${a.href}"`)) fail(`/guides/${d.slug}/: ${b} has ${a.tables} archive tables and the page does not link them`);
+    }
+  }
+  if (!bad) ok(`archive links: ${links} on ${pages.length} pages, all to paths in the manifest (${(man.tables ?? []).length} table files)`);
+}
+
 // static greps over our own sources (not Plot internals) — the file list is
 // the registry's, so a new dossier's client module is linted from day one
 import { DOSSIERS as QC_DOSSIERS } from "../src/dossiers/registry.js";

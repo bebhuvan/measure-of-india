@@ -124,3 +124,52 @@ export function dbieProvider(root, reportId, providerId) {
       retrieved_at: hit.retrieved, sha256: hit.sha256, document_id: hit.meta.document_id },
   };
 }
+
+/** Where a DBIE report's data lives in the Data Bank mirror: the named provider, or the largest
+ *  (small providers are SAP unit pickers). { content, encoding, provider, providerName,
+ *  rowCount, retrieved_at, sha256, document_id }. Throws if the report is not mirrored. */
+export function dbieLocate(root, reportId, providerId = null) {
+  const cands = [...index(root).entries()].filter(([k]) => k.startsWith(reportId + "|")).map(([, v]) => v)
+    .filter((v) => providerId == null || v.meta.dataprovider.id === providerId);
+  if (!cands.length) throw new Error(`databank: DBIE report ${reportId}${providerId ? ` provider ${providerId}` : ""} is not in the Data Bank mirror`);
+  const best = cands.sort((a, b) => (b.meta.dataprovider.rowCount ?? 0) - (a.meta.dataprovider.rowCount ?? 0))[0];
+  return { content: best.content, encoding: best.meta.stored_encoding, provider: best.meta.dataprovider.id, providerName: best.meta.dataprovider.name,
+    rowCount: best.meta.dataprovider.rowCount ?? null, retrieved_at: best.retrieved, sha256: best.sha256, document_id: best.meta.document_id };
+}
+
+/** Stream a DBIE report's rows as objects keyed by its header, never holding the file in memory
+ *  (the largest reports run past 500 MB unpacked). Quote-aware: DBIE text can hold ";" and line
+ *  breaks inside quotes. Blank rows are skipped. Values are trimmed strings, as dbieReport gives. */
+export async function* dbieRows(root, reportId, providerId = null) {
+  const loc = dbieLocate(root, reportId, providerId);
+  let src = fs.createReadStream(loc.content);
+  if (loc.encoding === "gzip") src = src.pipe(zlib.createGunzip());
+  let header = null, field = "", row = [], inQ = false, pendingQ = false;
+  const emit = function* () {
+    if (!row.some((c) => c.trim() !== "")) { row = []; return; }
+    if (!header) header = row.map((h) => h.trim());
+    else yield Object.fromEntries(header.map((h, i) => [h, String(row[i] ?? "").trim()]));
+    row = [];
+  };
+  src.setEncoding("utf8");
+  for await (const chunk of src) {
+    for (let i = 0; i < chunk.length; i++) {
+      const ch = chunk[i];
+      if (pendingQ) {                       // a quote inside quotes: "" is a literal quote, else the field closes
+        pendingQ = false;
+        if (ch === '"') { field += '"'; continue; }
+        inQ = false;
+      }
+      if (inQ) { if (ch === '"') pendingQ = true; else field += ch; continue; }
+      if (ch === '"') { inQ = true; continue; }
+      if (ch === ";") { row.push(field); field = ""; continue; }
+      if (ch === "\n" || ch === "\r") {
+        if (ch === "\r" && chunk[i + 1] === "\n") i++;
+        row.push(field); field = ""; yield* emit(); continue;
+      }
+      field += ch;
+    }
+  }
+  if (pendingQ) inQ = false;
+  if (field !== "" || row.length) { row.push(field); field = ""; yield* emit(); }
+}
