@@ -232,6 +232,14 @@ const CARDS = [
     },
     foot: (b) => `RBI policy repo rate at month-end, May 2011 to ${monthOf(b)}. Source: RBI`,
   },
+  // credit (lb/credit)
+  {
+    slug: "credit", bundleSlug: "credit-growth",
+    keys: ["headline", "personal_loans", "industry"], d0: -5, d1: 35, band: null, trend: null,
+    yStep: 5, fmt: (v) => v.toFixed(1) + "%", mr: 230,
+    prep: (S) => { S.headline = { ...S.headline, label: "Bank credit", color: "#2E4BD8" }; S.personal_loans = { ...S.personal_loans, label: "Personal loans", color: "#5F6675" }; S.industry = { ...S.industry, label: "Industry", color: "#A3A9B4" }; },
+    foot: (b, S) => { const d = b.dates.at(-1); return `Bank credit growth on a year earlier, ${["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}. Source: RBI, sectoral deployment of bank credit`; },
+  },
   {
     slug: "manufacturing", bundleSlug: "wdi-manufacturing",
     keys: ["mva_pct_gdp", "industry_pct_gdp"], d0: 0, d1: 30, band: null, trend: null,

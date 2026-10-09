@@ -443,6 +443,21 @@ const PAGES = [
     ["ex-bor-c", (b) => fmt.lc1(b["rates-borrowing"].series.centre_gross.data.at(-1) / 1e5)],
     ["prov-vintage", (b) => b["rates-monthly"].meta.vintage],
   ]},
+  // credit (lb/credit): title block, the headline plate and a value from each part of the guide
+  { url: "/guides/credit/", slug: null, minPlots: 18, checks: [
+    ["n-growth", (b) => b["credit-growth"].series.headline.data.at(-1).toFixed(1) + "%"],
+    ["rb-growth", (b) => b["credit-growth"].series.headline.data.at(-1).toFixed(1) + "%"],
+    ["pv-growth", (b) => fmt.pct1(b["credit-scb-ratios"].series.credit_growth.data.at(-1))],
+    ["ex-cd-now", (b) => fmt.pct1(b["credit-scb-ratios"].series.credit_deposit_ratio.data.at(-1))],
+    ["ex-w-house", (b) => { const S = b["credit-sectors"].series, i = b["credit-sectors"].dates.length - 1; return fmt.pct1((100 * S.housing.data[i]) / ["agriculture", "industry", "services", "personal_loans"].reduce((a, k) => a + S[k].data[i], 0)); }],
+    ["ex-p-gold", (b) => fmt.pct1(b["credit-growth"].series.gold_loans.data.at(-1))],
+    ["pv-m3", (b) => fmt.pct1(b["credit-money-growth"].series.m3_incl_merger.data.at(-1))],
+    ["pv-states", (b) => fmt.pct1(b["credit-states-cd-annual"].series.all_india.data.at(-1))],
+    ["pv-women", (b) => fmt.pct1(b["credit-women"].series.all_india_women_share.data.at(-1))],
+    ["pv-npa", (b) => fmt.pct1(b["credit-npa"].series.all_gnpa_ratio.data.at(-1))],
+    ["ex-nf-close", (b) => fmt.lc1(b["credit-npa-movement"].series.all_gross_closing.data.at(-1))],
+    ["prov-vintage", (b) => b["credit-growth"].meta.vintage],
+  ]},
   { url: "/", slug: null, minPlots: 1, checks: [
     // the CPI print is the 2024-base series; core stays on the 2012 base
     // (no weights served for the new base), labelled "to Dec 2025"

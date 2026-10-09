@@ -256,3 +256,409 @@ pairs:
     note: "Gross FDI inflows, equity, monthly, US$ million."
   # ---- end external ----
 
+  # credit (lb/credit): sectoral deployment of bank credit, new format, levels. IDH rupees to
+  # our ₹ lakh crore (1e-12). Every pair matches every month except March 2021, where IDH's
+  # unadjusted series carries RBI's "excluding merger" figure (report 539) and ours the raw one.
+  # IDH "Adj for mergers" (…AD19M) series are IDH's own adjustment: they match RBI's
+  # "excluding merger" rows (credit-sectors-ex-merger) on 31 of 77 months, so they are not paired. IDH's fortnightly
+  # BKASCBCTOT11F / BKLBDEPTOT11F growth (adjusted for mergers) sits on report 689's fortnight
+  # dates, which the month-start comparison cannot align; compared by hand instead (status file).
+  - bundle: credit-sectors
+    series: agriculture
+    idh: "BKASNFCAGA11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: industry
+    idh: "BKASNFCIND11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: industry_micro_small
+    idh: "BKASNFCIMS11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: industry_medium
+    idh: "BKASNFCIME11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: industry_large
+    idh: "BKASNFCILA11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: services
+    idh: "BKASNFCSVC11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: nbfcs
+    idh: "BKASNFCSNB11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: hfcs
+    idh: "BKASNFCSHF11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: pfis
+    idh: "BKASNFCSPF11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: trade
+    idh: "BKASNFCTRD11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: wholesale_trade
+    idh: "BKASNFCSWT11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: retail_trade
+    idh: "BKASNFCSRT11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: commercial_real_estate
+    idh: "BKASNFCSCR11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: transport_operators
+    idh: "BKASNFCSTO11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: computer_software
+    idh: "BKASNFCSCS11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: tourism_hotels_restaurants
+    idh: "BKASNFCSTH11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: shipping
+    idh: "BKASNFCSSH11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: aviation
+    idh: "BKASNFCSAV11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: professional_services
+    idh: "BKASNFCSPS11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: other_services
+    idh: "BKASNFCSOT11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: personal_loans
+    idh: "BKASNFCPER11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: housing
+    idh: "BKASNFCPMG11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: vehicle_loans
+    idh: "BKASNFCPVL11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: credit_cards
+    idh: "BKASNFCPCC11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: gold_loans
+    idh: "BKASNFCPGD11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: education
+    idh: "BKASNFCPEL11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: consumer_durables
+    idh: "BKASNFCPCD11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: advances_against_fds
+    idh: "BKASNFCPFD11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: advances_against_shares
+    idh: "BKASNFCPLS11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: other_personal_loans
+    idh: "BKASNFCPOT11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: psl_agriculture
+    idh: "BKASPSLAGR11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: psl_micro_small
+    idh: "BKASPSLMSE11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: psl_medium
+    idh: "BKASPSLMED11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: psl_housing
+    idh: "BKASPSLHOU11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: psl_education
+    idh: "BKASPSLEDU11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: psl_export_credit
+    idh: "BKASPSLEXP11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: psl_renewable_energy
+    idh: "BKASPSLREN11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: psl_social_infrastructure
+    idh: "BKASPSLSIF11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: psl_weaker_sections
+    idh: "BKASPSLWEA11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-sectors
+    series: psl_others
+    idh: "BKASPSLOPR11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-industry
+    series: infrastructure
+    idh: "BKASNFCIIN11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-industry
+    series: power
+    idh: "BKASNFCIIP11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-industry
+    series: roads
+    idh: "BKASNFCIIR11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-industry
+    series: telecommunications
+    idh: "BKASNFCIIT11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-industry
+    series: basic_metal_and_metal_product
+    idh: "BKASNFCIBM11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-industry
+    series: iron_and_steel
+    idh: "BKASNFCIMI11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-industry
+    series: textiles
+    idh: "BKASNFCITX11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-industry
+    series: food_processing
+    idh: "BKASNFCIFP11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-industry
+    series: chemicals_and_chemical_products
+    idh: "BKASNFCICH11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-industry
+    series: construction
+    idh: "BKASNFCICN11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-industry
+    series: all_engineering
+    idh: "BKASNFCIEN11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-industry
+    series: gems_and_jewellery
+    idh: "BKASNFCIGJ11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-industry
+    series: mining_and_quarrying
+    idh: "BKASNFCIMQ11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-industry
+    series: cement_and_cement_products
+    idh: "BKASNFCICE11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-industry
+    series: drugs_and_pharmaceuticals
+    idh: "BKASNFCICD11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-industry
+    series: fertiliser
+    idh: "BKASNFCICF11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."
+  - bundle: credit-industry
+    series: petroleum_coal_products_and_nuclear_fuels
+    idh: "BKASNFCIPC11M:IND"
+    transform: level
+    scale: 1.0e-12
+    tolerance: 0.01
+    note: "RBI sectoral deployment of bank credit (selected banks), as published; IDH carries the same RBI release."

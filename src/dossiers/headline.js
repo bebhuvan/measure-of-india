@@ -52,6 +52,8 @@ export const HEADLINE = {
   ilo:           { value: (b) => `${last(b, "eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15").toFixed(1)}%`, what: "women aged 15+ in the labour force, ILO estimate", period: (b) => lastDate(b).slice(0, 4) },
   // --- rates (atlas-rates) ---
   rates:         { value: (b) => `${last(b, "repo").toFixed(2)}%`, what: "the RBI's policy repo rate", period: (b) => `from ${b.meta.vintage.slice(8, 10).replace(/^0/, "")} ${MONTHS[+b.meta.vintage.slice(5, 7) - 1]} ${b.meta.vintage.slice(0, 4)}` },
+  // credit (lb/credit)
+  credit:        { value: (b) => `${last(b, "headline").toFixed(1)}%`, what: "growth of bank credit, year on year", period: month },
 };
 
 // The small chart beside each guide's figure: always on the current ruler, so a chart never
@@ -86,6 +88,8 @@ export const SPARK = {
   ilo:           { bundle: "ilo-est-eap-2wap", series: "eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15" },
   // --- rates (atlas-rates): the repo rate at each month-end since the MPC began
   rates:         { bundle: "rates-monthly", series: "repo", n: 121 },
+  // credit (lb/credit)
+  credit:        { bundle: "credit-growth", series: "headline" },
 };
 
 const cache = {};

@@ -94,3 +94,22 @@ export function databankQuery(root, dataset, sql) {
       sha256: crypto.createHash("sha256").update(out.slice(start)).digest("hex") },
   };
 }
+
+// credit (lb/credit): many DBIE reports carry several data providers (a "Final" and an "Old"
+// table, a food-credit table beside the business table); dbieReport() keeps only the largest.
+/** One named data provider of a DBIE report, parsed like dbieReport(). */
+export function dbieProvider(root, reportId, providerId) {
+  const hit = index(root).get(`${reportId}|${providerId}`);
+  if (!hit) throw new Error(`databank: DBIE report ${reportId} has no data provider ${providerId} in the Data Bank mirror`);
+  let buf = fs.readFileSync(hit.content);
+  if (hit.meta.stored_encoding === "gzip") buf = zlib.gunzipSync(buf);
+  const lines = buf.toString("utf8").split(/\r?\n/).filter(Boolean);
+  const split = (l) => l.split(";").map((x) => x.replace(/^"|"$/g, "").trim());
+  const header = split(lines[0]);
+  const rows = lines.slice(1).map(split).map((cells) => Object.fromEntries(header.map((h, i) => [h, cells[i] ?? ""])));
+  return {
+    header, rows,
+    provenance: { report_id: reportId, data_provider: providerId, rows: rows.length,
+      retrieved_at: hit.retrieved, sha256: hit.sha256, document_id: hit.meta.document_id },
+  };
+}
