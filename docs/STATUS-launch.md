@@ -1,6 +1,6 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 03:05.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 04:45.
 
 ## Running now: ten family sessions
 
@@ -20,7 +20,7 @@ Each writes its own log in `docs/status/<slug>.md` on its branch.
 | atlas-climate | New guide: temperature, rain, emissions (OWID, World Bank climate portal) | **merged**, follow-up merged |
 | atlas-worldbank | WDI inventory; new guides on poverty and on population | **merged** (poverty, population; all 1,395 WDI India indicators baked) |
 | atlas-bis | BIS bundles; new guides on housing prices and on debt | **merged** (debt, housing; BIS India credit after 2023 marked as BIS estimates) |
-| atlas-framework | Every-cut table, seam charts, IDH cross-check, ledgers for the 14 existing guides | round 4 running: archive builder (dry run only), gzipped raw, census summary |
+| atlas-framework | Every-cut table, seam charts, IDH cross-check, ledgers for the 14 existing guides | **merged** round 4: archive builder (dry run passed), raw gzipped (559 to 57 MB) |
 
 ## Wave 2 (started 2026-10-10 00:05): deepening the existing guides
 
@@ -28,7 +28,7 @@ Each decides every `pending` item in its ledgers (brief: `docs/briefs/wave2.md`)
 
 | Session | Guides | Pending items to decide |
 |---|---|---|
-| atlas-prices | cpi, wpi (+ CPI-IW, rural wages) | 82,269 |
+| atlas-prices | cpi, wpi (+ CPI-IW, rural wages) | **merged**: 0 pending; CPI by state to the group, items staged for the archive |
 | atlas-jobs-deep | jobs | **merged**: 0 pending (9,523 items); found the 2025 PLFS redesign splice. services-jobs-cy split at the seam too (merged) |
 | atlas-industry | iip, factories (+ eight core industries) | 45,347; paging fix merged, audit clean so far (38 ASI tables, all 52 ASUSE, IIP annual); ASI download ~2 h left |
 | atlas-nas | gdp | **merged**: 0 pending; institutional sectors, revision paths, 18 sub-industries |
@@ -93,6 +93,8 @@ throttles, so not run alongside the states and services sessions). Then the laun
 
 ## Queued (after wave 1 merges)
 
+- **Deep archive upload: waiting on the owner's go.** Dry run: 14,457 files, 6.69 crore
+  rows, 1.46 GB (climate, credit, ILO, trade; CPI items now staged too).
 - **Deep archive on Hugging Face** (owner chose 2026-10-09): `bebhuvan1/india-atlas-archive`,
   public, Parquet plus CSV, manifest in the repo (`PLAN-launch.md` §2b); write token in
   `.env` verified. Built after trade merges. Credit holds 22 reports for it, ILO 17 rules,
