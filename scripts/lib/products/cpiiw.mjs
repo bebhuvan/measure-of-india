@@ -185,11 +185,18 @@ export async function buildCpiiw(root, dcfg, vintage, cfg) {
         a.slips.length ? `Index levels for ${a.slips.join(", ")} sit far from their neighbouring months in report 699 (a keying slip): set aside, not corrected.` : ""].filter(Boolean).join(" ");
     }
     // the current base also carries the index level: the number dearness allowance is set from
-    if (B.tag === "2016") {
-      const ax = b.dates.map((d) => d.slice(0, 7));
-      b.series.general_index = { name: "cpiiw_general_index_base2016", label: "General index, level, base 2016", color: "#878D99", unit: "index", data: ax.map((m) => maps.general.get(m) ?? null) };
-    }
     writeSeries(root, `data/series/cpiiw-${B.tag}.json`, b);
+    // its own bundle, so a level never sits among rates (the facts sheet ranks a bundle's series)
+    if (B.tag === "2016") {
+      const months = [...maps.general.keys()].sort();
+      const ax = monthAxis(months[0], months.at(-1));
+      writeSeries(root, "data/series/cpiiw-2016-index.json", {
+        meta: meta(B, { latestPeriod: ax.at(-1), unit: "index", coverage: "All India, CPI for industrial workers, General Index level, base 2016=100",
+          note: "The published General Index level, base 2016=100: the number dearness allowance is computed from. From RBI DBIE report 699." }),
+        dates: ax.map((m) => `${m}-01`),
+        series: { general_index: { name: "cpiiw_general_index_base2016", label: "General index, level, base 2016", color: "#2E4BD8", unit: "index", data: ax.map((m) => maps.general.get(m) ?? null) } },
+      });
+    }
   }
 
   // ---------- 1168: centres ----------

@@ -495,7 +495,7 @@ export const CUT_BY_BUNDLE = {
     [`cpi-states-groups${sec}`, `State and group${sec ? ", " + sec.slice(1) : ""}`], [`cpi-states-subgroups${sec}`, `State and sub-group${sec ? ", " + sec.slice(1) : ""}`]])),
   "cpi-groups": "Group", "cpi-rural-detail": "Group and sub-group, rural", "cpi-urban-detail": "Group and sub-group, urban", "cpi-items-2012": "Item",
   "cpi-2012-early": "Sector, group and sub-group", "cpi-2012-early-states": "State, sector, group and sub-group",
-  "cpiiw-2016": "Group", "cpiiw-2001": "Group", "cpiiw-1982": "Group", "cpiiw-1960": "Group",
+  "cpiiw-2016": "Group", "cpiiw-2016-index": "All India", "cpiiw-2001": "Group", "cpiiw-1982": "Group", "cpiiw-1960": "Group",
   "cpiiw-centres-2016": "Centre", "cpiiw-centres-2001": "Centre", "cpiiw-centres-1982": "Centre",
   "wages-rural-2013": "Occupation", "wages-rural-1998": "Occupation", "wages-rural-states-2013": "State and occupation", "wages-rural-states-1998": "State and occupation",
   "cpialrl-states-rl-2019": "State", "cpialrl-states-rl-1986": "State", "cpialrl-groups-rl-2019": "Group",

@@ -596,7 +596,8 @@ const PRODUCTS = [
   { slug: "cpi-items-2012", dossier: "cpi", cadence: 1, staleAfter: "2025-12", range: [-95, 600] },
   { slug: "cpi-2012-early", dossier: "cpi", cadence: 1, staleAfter: "2015-12", range: [-40, 100] },
   { slug: "cpi-2012-early-states", dossier: "cpi", cadence: 1, staleAfter: "2015-12", range: [-90, 400] },
-  { slug: "cpiiw-2016", dossier: "cpiiw", cadence: 1, range: [-20, 40], base: "2016=100", seriesRange: { general_index: [100, 400] } },
+  { slug: "cpiiw-2016", dossier: "cpiiw", cadence: 1, range: [-20, 40], base: "2016=100" },
+  { slug: "cpiiw-2016-index", dossier: "cpiiw", cadence: 1, range: [100, 400], base: "2016=100" },
   { slug: "cpiiw-2001", dossier: "cpiiw", cadence: 1, staleAfter: "2020-08", range: [-20, 40], base: "2001=100" },
   { slug: "cpiiw-1982", dossier: "cpiiw", cadence: 1, staleAfter: "2005-12", range: [-20, 40], base: "1982=100" },
   { slug: "cpiiw-1960", dossier: "cpiiw", cadence: 1, staleAfter: "1988-09", range: [-30, 45], base: "1960=100" },
@@ -2934,14 +2935,15 @@ withBundle("cpi-items-2012", (b) => {
   if (n < 295 || n > 300) fail(`cpi-items-2012: ${n} items, the 2012 basket has 299`);
   else ok(`cpi-items-2012: ${n} items`);
 });
-withBundle("cpiiw-2016", (b) => {
-  // the y/y the page shows must follow from the levels it also carries
-  const L = b.series.general_index.data, Y = b.series.general.data;
+withBundle("cpiiw-2016", (b) => withBundle("cpiiw-2016-index", (x) => {
+  // the y/y the page shows must follow from the published levels
+  const lv = new Map(x.dates.map((d, i) => [d, x.series.general_index.data[i]]));
+  const ago = (d) => `${+d.slice(0, 4) - 1}${d.slice(4)}`;
   let bad = 0;
-  for (let i = 12; i < L.length; i++) if (L[i] != null && L[i - 12] != null && Y[i] != null && Math.abs((L[i] / L[i - 12] - 1) * 100 - Y[i]) > 0.01) bad++;
+  b.dates.forEach((d, i) => { const y = b.series.general.data[i], L = lv.get(d), P = lv.get(ago(d)); if (y != null && L != null && P != null && Math.abs((L / P - 1) * 100 - y) > 0.01) bad++; });
   if (bad) fail(`cpiiw-2016: ${bad} months where the y/y does not follow from the index levels`);
   else ok("cpiiw-2016: y/y follows from the published levels in every month");
-});
+}));
 withBundle("cpiiw-centres-2016", (b) => {
   const n = Object.keys(b.series).length;
   if (n !== 88) fail(`cpiiw-centres-2016: ${n} centres, the 2016 base prices 88`);

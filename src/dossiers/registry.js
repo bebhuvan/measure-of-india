@@ -65,7 +65,7 @@ export const DOSSIERS = [
       // ---- prices wave 2 (lb/prices): the deepening; the long tails sit in everyCutFamilies below
       "cpi-2024-classes", "cpi-2024-subclasses", "cpi-2024-back-sectors", "cpi-2024-rural-divisions", "cpi-2024-urban-divisions", "cpi-2024-states-divisions",
       "cpi-groups", "cpi-rural-detail", "cpi-urban-detail", "cpi-items-2012", "cpi-2012-early",
-      "cpiiw-2016", "cpiiw-2001", "cpiiw-1982", "cpiiw-1960", "cpiiw-centres-2016", "wages-rural-2013", "wages-rural-1998", "cpialrl-groups-rl-2019", "cpialrl-states-rl-2019", "cpialrl-states-rl-1986"],
+      "cpiiw-2016", "cpiiw-2016-index", "cpiiw-2001", "cpiiw-1982", "cpiiw-1960", "cpiiw-centres-2016", "wages-rural-2013", "wages-rural-1998", "cpialrl-groups-rl-2019", "cpialrl-states-rl-2019", "cpialrl-states-rl-1986"],
     // ---- prices wave 2 (lb/prices): the long tails, each family on its own paged view
     everyCutFamilies: [
       { id: "cpi-2024-sector-levels", label: "Base 2024, rural and urban: groups, classes, sub-classes and items", match: ["cpi-2024-rural-", "cpi-2024-urban-"] },
