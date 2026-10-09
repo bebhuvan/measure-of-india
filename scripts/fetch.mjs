@@ -34,6 +34,10 @@ import { buildNfhs } from "./lib/products/nfhs.mjs";
 import { buildWorldbankWdi } from "./lib/products/worldbank-wdi.mjs";
 import { buildBsr2 } from "./lib/products/bsr2.mjs";
 import { writeSeries } from "./lib/util.mjs";
+// worldbank family (2026-10-09): the WDI catalogue, PIP poverty, UN WPP population
+import { buildWdiIndia } from "./lib/products/wdi-india.mjs";
+import { buildPip } from "./lib/products/pip.mjs";
+import { buildWpp } from "./lib/products/wpp.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
@@ -42,6 +46,7 @@ const cfg = YAML.parse(fs.readFileSync(path.join(ROOT, "data/sources.yml"), "utf
 const VINTAGE = new Date().toISOString().slice(0, 10);
 
 const REGISTRY = { cpi: buildCpi, nas: buildNas, wpi: buildWpi, cpialrl: buildCpialrl, plfs: buildPlfs, rbi: buildRbi, isp: buildIsp, iip: buildIip, hces: buildHces, asi: buildAsi, asuse: buildAsuse, aishe: buildAishe, gender: buildGender, mnre: buildMnre, nfhs: buildNfhs, "worldbank-wdi": buildWorldbankWdi, bsr2: buildBsr2 };
+Object.assign(REGISTRY, { "wdi-india": buildWdiIndia, pip: buildPip, wpp: buildWpp });   // worldbank family
 
 // One product's failure must not starve the rest: collect, continue, and
 // exit non-zero at the end so CI still fails on the summary.

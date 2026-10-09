@@ -1273,5 +1273,127 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
   }
 }
 
+/* ---- worldbank family (2026-10-09): WDI catalogue, PIP poverty, UN WPP population ----
+ * Bundles are found by meta.product, so a new topic bundle or survey spell is checked
+ * the day it is baked. Ranges come from sources.yml (WDI: per unit class). */
+{
+  const files = fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => f.endsWith(".json")).map((f) => f.replace(/\.json$/, ""));
+  const byProduct = (p) => files.filter((slug) => load(slug).meta?.product === p);
+  const wdi = byProduct("wdi-india"), pipB = byProduct("pip"), wppB = byProduct("wpp");
+  // WDI: every configured group baked (a group may only be absent if WDI serves it nothing)
+  const wcfg = cfg.dossiers.worldbank;
+  const groups = wcfg.fetch.groups.map((g) => g.bundle);
+  for (const slug of wdi) if (!groups.includes(slug)) fail(`${slug}: product wdi-india but no group in sources.yml names it (orphaned bundle)`);
+  const UR = wcfg.unit_ranges;
+  for (const slug of wdi) {
+    const b = load(slug);
+    checkMeta(b, slug, "worldbank");
+    checkFreshness(b, slug, { staleAfter: slug === "worldbank-social-protection" ? "2011-01" : slug === "worldbank-gender" ? "2017-01" : wcfg.stale_after }, "worldbank");
+    checkCadence(b.dates, 12, slug);
+    const sr = Object.fromEntries(Object.entries(b.series).map(([k, s]) => [k, UR[s.unit] ?? (fail(`${slug}.${k}: unit class "${s.unit}" has no unit_ranges entry`), [-Infinity, Infinity])]));
+    checkRange(b, -Infinity, Infinity, slug, sr);
+  }
+  ok(`worldbank: ${wdi.length} WDI topic bundles, ${wdi.reduce((a, s) => a + Object.keys(load(s).series).length, 0)} series checked`);
+  const W = (code) => {
+    for (const slug of wdi) { const b = load(slug); const s = Object.values(b.series).find((x) => x.name === code); if (s) return { b, s }; }
+    return null;
+  };
+  const near = (a, b, tol) => a != null && b != null && Math.abs(a - b) <= tol;
+  // identity: the three broad age shares sum to 100
+  {
+    const a = W("SP.POP.0014.TO.ZS"), m = W("SP.POP.1564.TO.ZS"), o = W("SP.POP.65UP.TO.ZS");
+    let worst = 0;
+    a.b.dates.forEach((d, i) => { const x = a.s.data[i], y = m.s.data[i], z = o.s.data[i]; if (x != null && y != null && z != null) worst = Math.max(worst, Math.abs(x + y + z - 100)); });
+    if (worst > 0.05) fail(`population-wdi: age shares sum off 100 by ${worst.toFixed(3)}`); else ok(`population-wdi: 0-14 + 15-64 + 65+ = 100 every year (worst ${worst.toFixed(4)})`);
+  }
+  // identity: urban + rural shares = 100; male + female = total
+  {
+    const u = W("SP.URB.TOTL.IN.ZS"), r = W("SP.RUR.TOTL.ZS");
+    const bad = u.b.dates.filter((d, i) => u.s.data[i] != null && r.s.data[i] != null && !near(u.s.data[i] + r.s.data[i], 100, 0.01));
+    if (bad.length) fail(`population-wdi-urban: urban + rural != 100 at ${bad.slice(0, 3).join(", ")}`); else ok("population-wdi-urban: urban + rural shares = 100 every year");
+    const t = W("SP.POP.TOTL"), ma = W("SP.POP.TOTL.MA.IN"), fe = W("SP.POP.TOTL.FE.IN");
+    const bad2 = t.b.dates.filter((d, i) => t.s.data[i] != null && ma.s.data[i] != null && fe.s.data[i] != null && Math.abs(ma.s.data[i] + fe.s.data[i] - t.s.data[i]) / t.s.data[i] > 1e-4);
+    if (bad2.length) fail(`population-wdi: male + female != total at ${bad2.slice(0, 3).join(", ")}`); else ok("population-wdi: male + female = total every year");
+  }
+  // WPP: estimates and projection never overlap; age groups sum to the total; births - deaths = natural change
+  for (const slug of wppB) {
+    const b = load(slug);
+    checkMeta(b, slug, "population");
+    checkFreshness(b, slug, {}, "population");
+    checkCadence(b.dates, 12, slug);
+    const sr = Object.fromEntries(Object.entries(b.series).map(([k, s]) => [k, { thousand: [-1e5, 3e6], pct: [-10, 100], per_1000: [-60, 1000], years: [0, 120], per_woman: [0, 10], ratio: [0, 250], per_sq_km: [0, 1000], per_100: [0, 200], doubling_years: [0, 10000] }[s.unit] ?? (fail(`${slug}.${k}: unit "${s.unit}" has no range`), [0, 0])]));
+    checkRange(b, 0, 0, slug, sr);
+  }
+  withBundle("population-wpp", (e) => withBundle("population-wpp-projection", (p) => {
+    if (e.dates.at(-1) >= p.dates[0]) fail(`population-wpp: estimates (to ${e.dates.at(-1)}) overlap the projection (from ${p.dates[0]})`);
+    else ok(`population-wpp: estimates end ${e.dates.at(-1).slice(0, 4)}, projection starts ${p.dates[0].slice(0, 4)}, no overlap`);
+    for (const [slug, b] of [["population-wpp", e], ["population-wpp-projection", p]]) {
+      let worst = 0;
+      b.dates.forEach((d, i) => { const n = b.series.natchange?.data[i], bi = b.series.births?.data[i], de = b.series.deaths?.data[i]; if (n != null && bi != null && de != null) worst = Math.max(worst, Math.abs(bi - de - n)); });
+      if (worst > 1) fail(`${slug}: births - deaths differs from natural change by ${worst.toFixed(2)} thousand`); else ok(`${slug}: births - deaths = natural change (worst ${worst.toFixed(3)} thousand)`);
+    }
+    // WDI's population is WPP's: estimates and the medium projection, year by year
+    const t = W("SP.POP.TOTL");
+    let worst = 0, n = 0;
+    t.b.dates.forEach((d, i) => {
+      const w = t.s.data[i]; if (w == null) return;
+      const j = e.dates.indexOf(d), k = p.dates.indexOf(d);
+      const u = j >= 0 ? e.series.tpopulation1july.data[j] : k >= 0 ? p.series.tpopulation1july.data[k] : null;
+      if (u == null) return; n++; worst = Math.max(worst, Math.abs(w / (u * 1000) - 1));
+    });
+    if (worst > 0.005) fail(`population: WDI SP.POP.TOTL differs from UN WPP by ${(worst * 100).toFixed(2)}%`); else ok(`population: WDI SP.POP.TOTL equals UN WPP in all ${n} years (worst ${(worst * 100).toFixed(4)}%)`);
+  }));
+  for (const slug of ["population-wpp-age", "population-wpp-age-projection"]) withBundle(slug, (a) => withBundle(slug === "population-wpp-age" ? "population-wpp" : "population-wpp-projection", (t) => {
+    let worst = 0, worstS = 0;
+    a.dates.forEach((d, i) => {
+      const sum = Object.entries(a.series).filter(([k]) => /^age_.*_total$/.test(k)).reduce((s, [, x]) => s + x.data[i], 0);
+      const tot = t.series.tpopulation1july.data[t.dates.indexOf(d)];
+      worst = Math.max(worst, Math.abs(sum / tot - 1));
+      worstS = Math.max(worstS, Math.abs(a.series.share_0_14.data[i] + a.series.share_15_64.data[i] + a.series.share_65_plus.data[i] - 100));
+    });
+    if (worst > 0.001) fail(`${slug}: age groups sum off the total population by ${(worst * 100).toFixed(3)}%`); else ok(`${slug}: age groups sum to the total population (worst ${(worst * 100).toFixed(4)}%)`);
+    if (worstS > 0.001) fail(`${slug}: broad age shares sum off 100 by ${worstS}`); else ok(`${slug}: broad age shares sum to 100`);
+  }));
+  withBundle("population-wpp-variants", (v) => {
+    const lo = v.series.tpopulation1july__lower_95_pi?.data, md = v.series.tpopulation1july__median_pi?.data, hi = v.series.tpopulation1july__upper_95_pi?.data;
+    if (!lo || !md || !hi) fail("population-wpp-variants: the 95% interval for total population is missing");
+    else {
+      const bad = v.dates.filter((d, i) => !(lo[i] <= md[i] && md[i] <= hi[i]));
+      if (bad.length) fail(`population-wpp-variants: 95% interval out of order at ${bad.slice(0, 3).join(", ")}`); else ok("population-wpp-variants: lower 95% <= median <= upper 95% every year");
+    }
+  });
+  // PIP: one bundle per comparable spell, registered as a base in seams
+  const PR = { pct: [0, 100], ppp_usd_day: [0, 200], index_0_100: [0, 100], index: [0, 5], ratio: [0, 50], inr_per_ppp_usd: [1, 100], persons: [1e8, 2e9], million_persons: [0, 2000], inr_day: [0, 10000] };
+  for (const slug of pipB) {
+    const b = load(slug);
+    checkMeta(b, slug, "poverty", b.meta.base, b.meta.frequency);
+    checkFreshness(b, slug, slug === "poverty-pip-lineup" || slug === "poverty-pip-2022" ? {} : { stale: false }, "poverty");
+    if (b.meta.frequency === "annual") checkCadence(b.dates, 12, slug);
+    checkRange(b, 0, 0, slug, Object.fromEntries(Object.entries(b.series).map(([k, s]) => [k, PR[s.unit] ?? (fail(`${slug}.${k}: unit "${s.unit}" has no range`), [0, 0])])));
+    if (b.meta.frequency !== "irregular" && slug !== "poverty-pip-lineup") fail(`${slug}: a survey spell bundle must be irregular`);
+    if (slug === "poverty-pip-lineup") continue;
+    const lines = Object.keys(b.series).filter((k) => /^headcount_\d+_\d\d$/.test(k)).map((k) => [Number(k.slice(10).replace("_", ".")), k]).sort((x, y) => x[0] - y[0]);
+    b.dates.forEach((d, i) => {
+      for (let j = 1; j < lines.length; j++) if (b.series[lines[j][1]].data[i] < b.series[lines[j - 1][1]].data[i]) fail(`${slug}: share below $${lines[j][0]} < share below $${lines[j - 1][0]} at ${d}`);
+      const dec = Array.from({ length: 10 }, (_, k) => b.series["decile" + (k + 1)].data[i]).reduce((a, x) => a + x, 0);
+      if (!near(dec, 100, 0.1)) fail(`${slug}: decile shares sum to ${dec.toFixed(2)} at ${d}`);
+      const lcu = b.series.mean.data[i] * b.series.ppp.data[i] * b.series.cpi.data[i], pub = b.series.survey_mean_lcu.data[i];
+      if (Math.abs(lcu / pub - 1) > 0.005) fail(`${slug}: mean x ppp x cpi = ${lcu.toFixed(2)} but the survey mean is ₹${pub} at ${d}`);
+      for (const l of ["3_00", "4_20", "8_30"]) if (b.series["poverty_gap_" + l].data[i] > b.series["headcount_" + l].data[i]) fail(`${slug}: poverty gap above headcount at $${l} ${d}`);
+    });
+    // WDI republishes PIP rounded to one decimal: they must agree
+    for (const [code, key, tol] of [["SI.POV.DDAY", "headcount_3_00", 0.051], ["SI.POV.LMIC", "headcount_4_20", 0.051], ["SI.POV.UMIC", "headcount_8_30", 0.051], ["SI.POV.GINI", "gini", 0.051]]) {
+      const w = W(code); if (!w) { fail(`poverty: WDI ${code} missing for the PIP cross-check`); continue; }
+      b.dates.forEach((d, i) => { const j = w.b.dates.indexOf(d); const x = j >= 0 ? w.s.data[j] : null; if (x != null && !near(x, b.series[key].data[i], tol)) fail(`${slug}: PIP ${key} ${b.series[key].data[i]} vs WDI ${code} ${x} at ${d}`); });
+    }
+  }
+  ok(`poverty: ${pipB.length} PIP bundles; ladder monotonic, deciles sum to 100, rupee means reconcile, WDI agrees`);
+  withBundle("poverty-pip-lineup", (L) => {
+    const last = L.meta.lastSurveyYear;
+    const bad = L.dates.filter((d, i) => (Number(d.slice(0, 4)) > last) !== (L.series.headcount_3_00_nowcast?.data[i] != null));
+    if (bad.length) fail(`poverty-pip-lineup: nowcasts must be exactly the years after the last survey (${last}); off at ${bad.slice(0, 3).join(", ")}`); else ok(`poverty-pip-lineup: nowcasts are kept apart, after ${last}`);
+  });
+}
+
 if (failures) { console.error(`\n${failures} validation failure(s)`); process.exit(1); }
 console.log("validate: all checks passed");

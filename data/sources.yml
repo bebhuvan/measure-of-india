@@ -23,6 +23,14 @@ families:
       World Bank API v2 (WDI, Data360). JSON envelope [metadata, rows];
       scripts/lib/worldbank.mjs paginates it. No key required; be polite:
       per_page 500, one request at a time.
+  # worldbank family session (2026-10-09): UN WPP, the population guide's projections
+  unpd:
+    transport: http-gzip-csv
+    base: https://population.un.org/wpp/assets/Excel%20Files/
+    note: >
+      UN DESA Population Division, World Population Prospects standard CSV files (gzip,
+      all countries). scripts/lib/products/wpp.mjs downloads them with net.mjs getBuffer and
+      caches them in data/raw/http-cache for 30 days; WPP is revised every two years.
   databank:
     transport: local
     root: "~/Documents/Data/Data bank"
@@ -1003,6 +1011,109 @@ dossiers:
     ranges:
       inr_lakh_crore: [0, 400]
 
+  # --- worldbank family session (2026-10-09): WDI catalogue, poverty (PIP), population (WPP) ---
+  worldbank:
+    # every WDI indicator with India data, baked into topic bundles (no guide of its own;
+    # population-wdi* and poverty-wdi feed the population and poverty guides)
+    stale_after: "2023-01"
+    family: worldbank
+    geo: IND
+    product: wdi-india
+    frequency: annual
+    base: "n/a"
+    release_calendar: "WDI updates several times a year, without a fixed calendar; indicators carry their own lastupdated stamps"
+    revision_policy: "WDI revises history freely at every update: a new vintage can change any past value. Raw dumps keep every vintage."
+    source_agency: "World Bank, World Development Indicators"
+    release_url: https://databank.worldbank.org/source/world-development-indicators
+    # plausibility ranges per unit class (the class comes from WDI's own naming: see
+    # unitClass in scripts/lib/products/wdi-india.mjs). Loose by design: they catch a
+    # scale or unit error, not a surprising value.
+    unit_ranges:
+      pct: [-1000, 10000]
+      pct_gdp: [-500, 1000]
+      pct_change: [-100, 100000]
+      index: [-1e4, 1e7]
+      money: [-1e16, 1e17]
+      rate: [0, 1e6]
+      level: [-1e13, 1e13]
+    fetch:
+      # ordered: the first rule whose pattern matches a WDI code decides its bundle.
+      # A code no rule matches fails the bake (a new indicator needs a home).
+      groups:
+        - { bundle: population-wdi, dossier: worldbank, coverage: "Population: totals, sex, and five-year age groups (WDI, from UN WPP)", match: ["SP.POP.*"], caution: "WDI takes these from UN WPP 2024 and runs the estimates (to 2023) straight into the medium projection (2024 and 2025) in one series; the population-wpp bundles keep the two apart." }
+        - { bundle: population-wdi-vital, dossier: worldbank, coverage: "Births, deaths, fertility, life expectancy, marriage, contraception and registration (WDI)", match: ["SP.DYN.*", "SP.ADO.*", "SP.REG.*", "SP.HOU.*", "SP.M15.*", "SP.M18.*", "SP.MTR.*", "SP.UWT.*"], caution: "Births, deaths, fertility and life expectancy here come from UN WPP 2024: values after 2023 are WPP's medium projection, not estimates." }
+        - { bundle: population-wdi-urban, dossier: worldbank, coverage: "Urban and rural population, density, slums and large cities (WDI)", match: ["SP.URB.*", "SP.RUR.*", "EN.POP.*", "EN.URB.*"], caution: "Urban and rural shares come from the UN's World Urbanization Prospects 2018 applied to WPP totals: values after 2018 are projections, and India's urban share follows the Census of India's definition of a town." }
+        - { bundle: population-wdi-migration, dossier: worldbank, coverage: "International migrants and refugees (WDI)", match: ["SM.POP.*"] }
+        - { bundle: worldbank-external, dossier: worldbank, coverage: "Balance of payments, reserves, external debt, remittances and their cost (WDI)", match: ["SI.RMT.*", "BX.*", "BM.*", "BN.*", "BG.*", "DT.*", "FI.RES.*", "PX.REX.*"] }
+        - { bundle: poverty-wdi, dossier: worldbank, coverage: "Poverty headcounts and gaps at international and national lines, income shares by quintile and decile, survey means (WDI, from PIP)", match: ["SI.*"], caution: "WDI's poverty and distribution series join survey rounds that PIP marks as not comparable (different questionnaires and recall periods) into one line. Use the poverty-pip-* bundles, one per comparable spell, to compare rounds." }
+        - { bundle: worldbank-national-accounts, dossier: worldbank, coverage: "GDP, GNI, expenditure, value added by sector, savings and natural-resource rents (WDI)", match: ["NY.*", "NE.*", "NV.*"] }
+        - { bundle: worldbank-trade, dossier: worldbank, coverage: "Merchandise and services trade, tariffs, trade indices and tourism (WDI)", match: ["TX.*", "TM.*", "TG.*", "TT.*", "ST.*"] }
+        - { bundle: worldbank-prices, dossier: worldbank, coverage: "Consumer and wholesale prices, exchange rates and PPP conversion factors (WDI)", match: ["FP.*", "PA.*"] }
+        - { bundle: worldbank-finance, dossier: worldbank, coverage: "Banks, credit, money, interest rates, stock markets and account ownership (WDI)", match: ["FB.*", "FD.*", "FM.*", "FR.*", "FS.*", "FX.*", "CM.*"] }
+        - { bundle: worldbank-government, dossier: worldbank, coverage: "Government revenue, spending and debt, governance and statistical capacity, military, violence (WDI)", match: ["GC.*", "GF.*", "GOV_WGI_*", "IQ.*", "MS.*", "VC.*"] }
+        - { bundle: worldbank-education, dossier: worldbank, coverage: "Schooling, literacy, learning and education spending; the human capital index (WDI)", match: ["SE.*", "HD_HCIP_*"] }
+        - { bundle: worldbank-health, dossier: worldbank, coverage: "Health, mortality by cause, nutrition, water and sanitation, health spending, UHC (WDI)", match: ["SH.*", "SH_UHC_*", "SN.*"] }
+        - { bundle: worldbank-labour, dossier: worldbank, coverage: "Labour force, employment, unemployment and child work (WDI, mostly ILO modelled estimates)", match: ["SL.*"] }
+        - { bundle: worldbank-gender, dossier: worldbank, coverage: "Women's decisions, violence against women, time use, parliament, Women, Business and the Law (WDI)", match: ["SG.*", "GD_WBL_*"] }
+        - { bundle: worldbank-environment, dossier: worldbank, coverage: "Emissions, air pollution, water, forests, protected areas, threatened species (WDI)", match: ["EN.*", "ER.*"] }
+        - { bundle: worldbank-energy, dossier: worldbank, coverage: "Electricity access, clean cooking, energy use and renewables (WDI)", match: ["EG.*"] }
+        - { bundle: worldbank-agriculture, dossier: worldbank, coverage: "Land use, crops, yields and fertiliser (WDI)", match: ["AG.*"] }
+        - { bundle: worldbank-business, dossier: worldbank, coverage: "Firms, business entry and regulation (B-READY, Enterprise Surveys), patents, R&D, private infrastructure investment (WDI)", match: ["IC.*", "IE.*", "IP.*", "GB.*"] }
+        - { bundle: worldbank-infrastructure, dossier: worldbank, coverage: "Phones, internet, railways, air transport, ports and logistics (WDI)", match: ["IS.*", "IT.*", "LP.*"] }
+        - { bundle: worldbank-aid, dossier: worldbank, coverage: "Aid to India from donor countries (WDI)", match: ["DC.*"] }
+        - { bundle: worldbank-social-protection, dossier: worldbank, coverage: "Coverage, adequacy and incidence of social protection programmes (WDI, ASPIRE)", match: ["per_*"] }
+  poverty:
+    # PIP releases twice a year (March/April and September/October); the floor is the
+    # latest survey year PIP serves for India (HCES 2023-24 is reporting year 2023)
+    stale_after: "2023-01"
+    family: worldbank
+    geo: IND
+    product: pip
+    frequency: irregular
+    frequency_exempt: true      # survey spells are irregular; the lineup and WDI bundles are annual
+    base: "2021 PPP"
+    release_calendar: "PIP updates twice a year, in March or April and in September or October"
+    revision_policy: "Each PIP release can revise any past estimate (new PPPs, new population figures, reprocessed surveys). The raw dump keeps every release."
+    source_agency: "World Bank, Poverty and Inequality Platform (PIP)"
+    release_url: https://pip.worldbank.org/country-profiles/IND
+    fetch:
+      # the international lines (2021 PPP $ a day); pip.mjs fails if PIP's own
+      # poverty_lines table no longer lists them
+      international_lines: [3.0, 4.2, 8.3]
+      # further lines, to draw the whole distribution (share of people below each)
+      ladder: [1.0, 1.5, 2.0, 2.5, 3.5, 5.0, 6.0, 7.0, 10.0, 12.0, 15.0, 20.0, 25.0, 30.0, 40.0]
+      # PIP auxiliary tables that are inputs or global aggregates, not India measures
+      aux_tables_not_used: [gdp, pce, decomposition, regions, metaregion, region_coverage, incgrp_coverage, pop_region]
+  population:
+    stale_after: "2023-01"
+    family: unpd
+    geo: IND
+    product: wpp
+    frequency: annual
+    base: "WPP 2024"
+    release_calendar: "WPP is revised every two years (2022, 2024, next 2026)"
+    revision_policy: "Each WPP revision re-estimates the whole history from 1950 and re-projects to 2100. A new revision is a new instrument; the raw dump keeps the old one."
+    source_agency: "UN DESA Population Division, World Population Prospects 2024"
+    release_url: https://population.un.org/wpp/
+    fetch:
+      revision: "2024"
+      vintage: "2024-07-11"     # WPP 2024 release date (World Population Day)
+      loc_id: 356               # India
+      estimates_end: 2023       # last estimate year of WPP 2024; projections start 2024
+      base_url: "https://population.un.org/wpp/assets/Excel%20Files/1_Indicator%20(Standard)/CSV_FILES/"
+      files:
+        medium: WPP2024_Demographic_Indicators_Medium.csv.gz
+        variants: WPP2024_Demographic_Indicators_OtherVariants.csv.gz
+        age: WPP2024_PopulationByAge5GroupSex_Medium.csv.gz
+      # a defect in the published OtherVariants file (checked 2026-10-09, India and China
+      # alike): in the probabilistic-interval rows these columns carry impossible values
+      # (life expectancy at 15 of about 1.5 years, mortality of 1,000 per 1,000). Not baked;
+      # the catalogue still lists them and the ledger excludes them with this reason.
+      defects:
+        variants: ["Median PI", "Lower 80 PI", "Upper 80 PI", "Lower 95 PI", "Upper 95 PI"]
+        columns: [LE15, LE15Male, LE15Female, LE65, LE65Male, LE65Female, LE80, LE80Male, LE80Female, Q5, Q0040, Q0040Male, Q0040Female, Q0060, Q0060Male, Q0060Female, Q1550, Q1550Male, Q1550Female, Q1560, Q1560Male, Q1560Female]
+  # --- end worldbank family block ---
+
 
 # ---------------------------------------------------------------------------
 # SEAMS: the base-year registry (2026-10). One entry per base (or
@@ -1107,3 +1218,37 @@ seams:
       from: "2025-04"
       to: null
       bundles: [isp]
+  # worldbank family (2026-10-09): PIP's comparable spells are different rulers (different
+  # NSS schedules and recall periods, then the redesigned HCES). Each spell is a base.
+  poverty:
+    - base: "2021 PPP, comparable spell 1977"
+      from: "1977-01"
+      to: "1977-01"
+      bundles: [poverty-pip-1977]
+    - base: "2021 PPP, comparable spell 1983"
+      from: "1983-01"
+      to: "1983-01"
+      bundles: [poverty-pip-1983]
+    - base: "2021 PPP, comparable spell 1987"
+      from: "1987-01"
+      to: "1987-01"
+      bundles: [poverty-pip-1987]
+    - base: "2021 PPP, comparable spell 1993-2009"
+      from: "1993-01"
+      to: "2009-01"
+      bundles: [poverty-pip-1993]
+    - base: "2021 PPP, comparable spell 2011"
+      from: "2011-01"
+      to: "2011-01"
+      bundles: [poverty-pip-2011]
+    - base: "2021 PPP, comparable spell 2022-2023"
+      from: "2022-01"
+      to: null
+      bundles: [poverty-pip-2022]
+    # the lineup is its own ruler: model estimates for every calendar year, interpolated
+    # between surveys across the spells above and nowcast after the last. It overlaps every
+    # spell by design (reported by validate, never joined to any of them).
+    - base: "2021 PPP, World Bank lineup estimates"
+      from: "1981-01"
+      to: null
+      bundles: [poverty-pip-lineup]
