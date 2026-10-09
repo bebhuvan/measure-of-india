@@ -1,0 +1,44 @@
+---
+// "Every series, every cut": the long-tail explorer every guide carries (PLAN-launch §2,
+// docs/CONTRACT-dossier-structure.md). Lists every series of every bundle the guide uses,
+// built at render time from the baked bundles. Bundles longer than LONG_TAIL series get a
+// page of their own (/guides/<slug>/every-cut/<bundle>/), linked from here, so a guide page
+// never ships thousands of rows.
+//   <EveryCut slug="cpi" />                     place it just before <GuideData slug=... />
+//   <EveryCut slug="cpi" cuts={{ "cpi-2024": "Division" }} />   override a bundle's cut name
+import { bySlug } from "../dossiers/registry.js";
+import { rowsOf, guideBundles, bundleTitle, LONG_TAIL, paginate } from "../dossiers/everycut.js";
+import EveryCutTable from "./EveryCutTable.astro";
+interface Props { slug: string; cuts?: Record<string, string> }
+const { slug, cuts = {} } = Astro.props;
+const d = bySlug[slug];
+const names = guideBundles(d);
+const titles = Object.fromEntries(names.map((b) => [b, bundleTitle(b)]));
+const inline = [], tails = [];
+for (const b of names) {
+  const rows = rowsOf(b, { cut: cuts[b] });
+  if (rows.length > LONG_TAIL) tails.push({ b, rows, pages: paginate(rows).length, groups: new Set(rows.map((r) => r.group).filter(Boolean)).size });
+  else inline.push(...rows);
+}
+const nAll = inline.length + tails.reduce((a, t) => a + t.rows.length, 0);
+---
+<section class="endmatter everycut" aria-labelledby="ec-h" id="every-cut" data-series={nAll}>
+  <div class="em-head"><h2 id="ec-h">Every series, every cut</h2>
+    <p>All {nAll.toLocaleString("en-IN")} series behind this guide, at every level the source publishes them, including the ones no chart above draws. Find a state, an item or a sector, sort by the latest value or by the change on a year earlier, and download any file whole. A dash means the source has no figure for a year earlier, or the change would mean nothing.</p></div>
+  {tails.length > 0 && (
+    <ul class="ec-tails">
+      {tails.map((t) => (
+        <li><a href={`/guides/${slug}/every-cut/${t.b}/`}>{t.rows.length.toLocaleString("en-IN")} series: {titles[t.b]}</a>
+          <small>{t.rows[0].cut}{t.groups ? `, in ${t.groups} groups` : ""}{t.pages > 1 ? `, over ${t.pages} pages` : ""}. Each on its own page, sortable and searchable.</small></li>
+      ))}
+    </ul>
+  )}
+  {inline.length > 0 && <EveryCutTable rows={inline} id={`ec-${slug}`} titles={titles} />}
+</section>
+<style is:global>
+  .ec-tails{list-style:none;margin:22px 0 4px;font-family:var(--sans);font-size:.92rem;display:grid;gap:10px}
+  .ec-tails a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule-2)}
+  .ec-tails a:hover{border-bottom-color:var(--ink)}
+  .ec-tails a::after{content:" →"}
+  .ec-tails small{display:block;font-size:.8rem;color:var(--muted);margin-top:2px}
+</style>
