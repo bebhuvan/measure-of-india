@@ -650,7 +650,12 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, fmtX, dlNa
   wireLegend(document.getElementById("legend-w2r"), plot, ["wpi", "cpi"], V);
   const rng = (k) => { const v = pts.map((p) => p[k]); return f1(Math.min(...v)) + " and " + f1(Math.max(...v)); };
   setTxt("w2r-span", fmtDate(pts[0].date) + " to " + fmtDate(pts.at(-1).date));
-  setTxt("w2r-title", best.lag === 0 ? "Retail food moves with wholesale food, softer" : `Retail food follows wholesale food about ${best.lag} month${best.lag > 1 ? "s" : ""} later, and softer`);
+  // how much each line moves month to month (mean absolute change), so "softer" is measured, not assumed
+  const mad = (k) => pts.slice(1).reduce((t, p, i) => t + Math.abs(p[k] - pts[i][k]), 0) / (pts.length - 1);
+  const ratio = mad("w") / mad("c");
+  const softer = ratio > 1.15 ? ", and softer" : ratio < 0.87 ? ", and louder" : "";
+  setTxt("w2r-title", best.lag === 0 ? `Retail food moves with wholesale food in the same month${softer}` : `Retail food follows wholesale food about ${best.lag} month${best.lag > 1 ? "s" : ""} later${softer}`);
+  setTxt("w2r-sd", ratio.toFixed(1) + " times as much as");
   setTxt("pv-w2r", best.lag + (best.lag === 1 ? " month" : " months"));
   setTxt("pc-w2r", "best-fitting lag, correlation " + best.r.toFixed(2));
   setTxt("w2r-n", String(pts.length));

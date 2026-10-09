@@ -62,7 +62,7 @@ const PAGES = [
     ["oth-misc", (b) => fmt.pct2(b["cpi-groups"].series.miscellaneous.data.at(-1))],
     ["oth-housing", (b) => fmt.pct2(b["cpi-groups"].series.housing.data.at(-1))],
     ["pv-items12", (b) => Math.max(...Object.values(b["cpi-items-2012"].series).map((s) => s.latest_level).filter((v) => v != null)).toFixed(1)],
-    ["it12-below", (b) => fmt.count(Object.values(b["cpi-items-2012"].series).filter((s) => s.latest_level != null && s.latest_level < 100).length)],
+    ["it12-below", (b) => { const n = Object.values(b["cpi-items-2012"].series).filter((s) => s.latest_level != null && s.latest_level < 100).length; return n === 1 ? "only one item was" : fmt.count(n) + " items were"; }],
   ]},
   { url: "/guides/gdp/", slug: null, checks: [
     ["n-gdp", (b) => fmt.pct2(b["gdp-2022"].series.gdp.data.at(-1))],

@@ -1139,6 +1139,9 @@ const stateName = (k) => ({
 }
 
 /* ---------- §03 rural against urban, division by division (wave 2, lb/prices) ---------- */
+const SHORTN = { "Food and beverages": "Food", "Paan, tobacco and intoxicants": "Paan, tobacco", "Clothing and footwear": "Clothing", "Housing, water, electricity, gas and other fuels": "Housing, fuel",
+  "Furnishings, household equipment and routine household maintenance": "Furnishing", "Health": "Health", "Transport": "Transport", "Information and communication": "Info, comms",
+  "Recreation, sport and culture": "Recreation", "Education services": "Education", "Restaurants and accommodation services": "Restaurants", "Personal care, social protection and miscellaneous goods and services": "Personal care" };
 const NUMW = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
 const numWord = (n) => NUMW[n] ?? String(n);
 {
@@ -1147,12 +1150,12 @@ const numWord = (n) => NUMW[n] ?? String(n);
   const r = byCode(RD, ruDivBundle), u = byCode(UD, urDivBundle);
   const rows = Object.keys(r).filter((c) => u[c]).map((c) => {
     const rv = lastOf(r[c])?.value, uv = lastOf(u[c])?.value;
-    return rv == null || uv == null ? null : { c, name: ruDivBundle.series[Object.keys(ruDivBundle.series).find((k) => ruDivBundle.series[k].code === c)].label.replace(/, rural$/, ""), r: rv, u: uv, gap: rv - uv };
+    return rv == null || uv == null ? null : { c, name: (() => { const full = ruDivBundle.series[Object.keys(ruDivBundle.series).find((k) => ruDivBundle.series[k].code === c)].label.replace(/, rural$/, ""); return SHORTN[full] ?? full; })(), r: rv, u: uv, gap: rv - uv };
   }).filter(Boolean).sort((a, b) => Math.abs(b.gap) - Math.abs(a.gap));
   const vals = rows.flatMap((d) => [d.r, d.u]);
   const lo = Math.floor(Math.min(0, ...vals)) - 1, hi = Math.ceil(Math.max(...vals)) + 1;
   const xt = []; for (let t = Math.ceil(lo / 2) * 2; t <= hi; t += 2) xt.push(t);
-  const geo = { W: 1184, H: rows.length * 36 + 80, ml: 330, mr: 90, mt: 26, mb: 46 };
+  const geo = { W: 1184, H: rows.length * 36 + 80, ml: 170, mr: 90, mt: 26, mb: 46 };
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
@@ -1196,11 +1199,13 @@ const numWord = (n) => NUMW[n] ?? String(n);
   const SD = stDivBundle.series;
   const DIVN = {};   // code -> short name
   for (const s of Object.values(SD)) DIVN[s.code] = s.node;
-  const SHORT = { "01": "Food", "02": "Paan, tobacco", "03": "Clothing", "04": "Housing, fuel", "05": "Furnishing", "06": "Health", "07": "Transport", "08": "Info, comms", "09": "Recreation", "10": "Education", "11": "Restaurants", "12": "Personal care" };
+  // short column heads, keyed by the division's name (the codes skip 12: 01 to 11, then 13)
+  const SHORT = new Proxy({}, { get: (_, c) => SHORTN[DIVN[c]] });
   const codes = Object.keys(DIVN).sort();
   const li = stDivBundle.dates.length - 1;
   const states = {};
-  for (const [k, s] of Object.entries(SD)) (states[s.state] ??= { name: s.state, key: k.split("__")[0], cells: {} }).cells[s.code] = s.data[li];
+  const tidyState = (n) => n.replace(/ And /g, " and ").replace(/^The Dadra and Nagar Haveli and Daman and Diu$/, "Dadra, Nagar Haveli, Daman and Diu");
+  for (const [k, s] of Object.entries(SD)) (states[s.state] ??= { name: tidyState(s.state), key: k.split("__")[0], cells: {} }).cells[s.code] = s.data[li];
   const gen = (key) => states2024Bundle.series[key]?.data.at(-1) ?? null;
   const rows = Object.values(states).map((r) => ({ ...r, g: gen(r.key) })).sort((a, b) => (b.g ?? -99) - (a.g ?? -99));
   const all = rows.flatMap((r) => codes.map((c) => r.cells[c])).filter((v) => v != null);
@@ -1214,18 +1219,21 @@ const numWord = (n) => NUMW[n] ?? String(n);
   // spread per division across states
   const spread = codes.map((c) => {
     const col = rows.map((r) => ({ n: r.name, v: r.cells[c] })).filter((x) => x.v != null).sort((a, b) => b.v - a.v);
-    return { c, hi: col[0], lo: col.at(-1), w: col[0].v - col.at(-1).v };
+    // the middle half of states (interquartile range): one outlier state does not decide the ranking
+    const q = (p) => col[Math.round((col.length - 1) * p)].v;
+    return { c, hi: col[0], lo: col.at(-1), w: q(0.25) - q(0.75), q1: q(0.75), q3: q(0.25) };
   }).sort((a, b) => b.w - a.w);
   const wide = spread[0], narrow = spread.at(-1);
   const SDH = hydrate(stDivBundle);
   wireTools(document.getElementById("cb-stdiv"), null, Object.values(SDH), "india-atlas_cpi2024_states-x-divisions", fmtDate);
-  setTxt("stdiv-title", `${DIVN[wide.c]} splits the states most`);
+  setTxt("stdiv-title", `${DIVN[wide.c]}: where states differ most`);
   setTxt("pv-stdiv", wide.w.toFixed(1) + " pt");
-  setTxt("pc-stdiv", "widest column: " + (SHORT[wide.c] ?? DIVN[wide.c]).toLowerCase());
+  setTxt("pc-stdiv", "middle half of states, " + (SHORT[wide.c] ?? DIVN[wide.c]).toLowerCase());
   setTxt("stdiv-wide", DIVN[wide.c].toLowerCase());
+  setTxt("stdiv-wide-iqr", f1(wide.q1) + " to " + f1(wide.q3));
   setTxt("stdiv-wide-hi", wide.hi.n + ", " + f1(wide.hi.v));
   setTxt("stdiv-wide-lo", wide.lo.n + ", " + f1(wide.lo.v));
-  setTxt("stdiv-narrow", DIVN[narrow.c].toLowerCase() + ", " + narrow.w.toFixed(1) + " points from top to bottom");
+  setTxt("stdiv-narrow", DIVN[narrow.c].toLowerCase() + ", its middle half within " + narrow.w.toFixed(1) + " points");
   setTxt("stdiv-negcells", String(all.filter((v) => v < 0).length));
   setTxt("stdiv-cells", String(all.length));
 }
@@ -1289,7 +1297,7 @@ const numWord = (n) => NUMW[n] ?? String(n);
   setTxt("it12-botn", bot.at(-1).label.toLowerCase());
   setTxt("it12-bot", bot.at(-1).level.toFixed(1));
   setTxt("it12-med", med.toFixed(1));
-  setTxt("it12-below", String(lv.filter((v) => v < 100).length));
+  { const nb = lv.filter((v) => v < 100).length; setTxt("it12-below", nb === 1 ? "only one item was" : nb + " items were"); }
 }
 
 /* ---------- §12 CPI-AL and CPI-RL by state, base 2019 (wave 2, lb/prices) ----------
@@ -1298,12 +1306,13 @@ const numWord = (n) => NUMW[n] ?? String(n);
 {
   const yoyAt = (b, k) => { const d = b.series[k].data, i = d.length - 1; return d[i] != null && d[i - 12] != null ? Math.round((d[i] / d[i - 12] - 1) * 10000) / 100 : null; };
   if (alSt19Bundle.dates.length < 13) throw new Error("cpialrl-states-2019: fewer than 13 months, no y/y");
-  const rows = Object.keys(alSt19Bundle.series).map((k) => ({ k, name: stateName(k), al: yoyAt(alSt19Bundle, k), rl: rlSt19Bundle.series[k] ? yoyAt(rlSt19Bundle, k) : null }))
+  const shortSt = (k) => (/daman/.test(k) ? "Dadra, Nagar Haveli, Daman and Diu" : stateName(k).replace(/ And /g, " and "));
+  const rows = Object.keys(alSt19Bundle.series).map((k) => ({ k, name: shortSt(k), al: yoyAt(alSt19Bundle, k), rl: rlSt19Bundle.series[k] ? yoyAt(rlSt19Bundle, k) : null }))
     .filter((r) => r.al != null && r.rl != null).sort((a, b) => b.al - a.al);
   const vals = rows.flatMap((r) => [r.al, r.rl]);
   const lo = Math.floor(Math.min(0, ...vals)) - 1, hi = Math.ceil(Math.max(...vals)) + 1;
   const xt = []; for (let t = Math.ceil(lo / 2) * 2; t <= hi; t += 2) xt.push(t);
-  const geo = { W: 1184, H: rows.length * 26 + 80, ml: 215, mr: 90, mt: 26, mb: 46 };
+  const geo = { W: 1184, H: rows.length * 26 + 80, ml: 250, mr: 90, mt: 26, mb: 46 };
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
@@ -1382,7 +1391,7 @@ const IW = { b1960: hydrate(iw60Bundle), b1982: hydrate(iw82Bundle), b2001: hydr
   setTxt("iw-now", f1(curEnd.value));
   setTxt("iw-yago", f1(IW.b2016.general.data.at(-13).value));
   setTxt("iw-peak16", f1(p16.value) + " in " + longDate(p16.date));
-  setTxt("iw-peak", peak.p.value.toFixed(1) + "% in " + longDate(peak.p.date));
+  setTxt("iw-peak", peak.p.value.toFixed(1) + "% in " + longDate(peak.p.date) + ", on the " + peak.r.label.replace("Base ", "") + " basket");
 }
 
 /* §13 CPI-IW groups, base 2016 */

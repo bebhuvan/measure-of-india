@@ -14,6 +14,8 @@ const P24 = period("cpi-2024"), PS24 = period("cpi-2024-sectors"), PG24 = period
 const PI24 = period("cpi-2024-items"), PST24 = period("cpi-2024-states"), PAL = period("cpialrl-2019");
 // wave 2 (lb/prices): CPI-IW and rural wages
 const PIW = period("cpiiw-2016"), PIW60 = period("cpiiw-1960"), PIWC = period("cpiiw-centres-2016");
+import items12 from "../../../data/series/cpi-items-2012.json";
+const N12 = Object.keys(items12.series).length;
 const PDR = period("cpi-2024-rural-divisions"), PSD = period("cpi-2024-states-divisions"), P12 = period("cpi-groups"), PIT12 = period("cpi-items-2012");
 const PALS = period("cpialrl-states-2019");
 const PWG = period("wages-rural-2013"), PWGS = period("wages-rural-states-2013");
@@ -568,7 +570,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
         <div class="plate-head">
           <div class="t">
             <h3 id="items12-title">Thirteen years of the old basket, item by item</h3>
-            <div class="sub">All {PIT12.nWord} items of the 2012 basket ranked by their index level in {PIT12.long}: the price then against the 2012 average, which the base fixes at 100; fifteen dearest-grown and fifteen cheapest-grown shown</div>
+            <div class="sub">All {N12} items of the 2012 basket ranked by their index level in {PIT12.long}: the price then against the 2012 average, which the base fixes at 100; fifteen dearest-grown and fifteen cheapest-grown shown</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-items12">–</div><div class="c" id="pc-items12">–</div></div>
         </div>
@@ -593,7 +595,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of January 2026</span>
-            <p>By {PIT12.month} the dearest-grown item was <span id="it12-topn">–</span> at <b id="it12-top">–</b>; at the other end <span id="it12-botn">–</span> stood at <b id="it12-bot">–</b>. The median item stood at <b id="it12-med">–</b>, and <b id="it12-below">–</b> items were cheaper than in 2012.</p>
+            <p>By {PIT12.month} the dearest-grown item was <span id="it12-topn">–</span> at <b id="it12-top">–</b>; at the other end <span id="it12-botn">–</span> stood at <b id="it12-bot">–</b>. The median item stood at <b id="it12-med">–</b>, and <b id="it12-below">–</b> cheaper than in 2012.</p>
           </div>
         </div>
       </figure>
@@ -697,7 +699,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of {PSD.stamp}</span>
-            <p>The column with the widest spread across states is <b id="stdiv-wide">–</b>, from <b id="stdiv-wide-hi">–</b> to <b id="stdiv-wide-lo">–</b>. The narrowest is <b id="stdiv-narrow">–</b>. <b id="stdiv-negcells">–</b> of the <b id="stdiv-cells">–</b> state-division cells show prices lower than a year earlier.</p>
+            <p>Ranked by how far apart the middle half of states sit, the division that differs most from state to state is <b id="stdiv-wide">–</b>: its middle half runs <b id="stdiv-wide-iqr">–</b>, and its extremes are <b id="stdiv-wide-hi">–</b> and <b id="stdiv-wide-lo">–</b>. The division states agree on most is <b id="stdiv-narrow">–</b>. <b id="stdiv-negcells">–</b> of the <b id="stdiv-cells">–</b> state-division cells show prices lower than a year earlier.</p>
           </div>
         </div>
       </figure>
@@ -996,7 +998,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
           </div>
           <div class="now">
             <span class="mk">As of {PIW.stamp}</span>
-            <p>On the 2016 basket the worker's index rose <b id="iw-now">–</b> in the year to {PIW.month}, against <b id="iw-yago">–</b> a year earlier. The current basket's high so far is <b id="iw-peak16">–</b>; the whole record's high is <b id="iw-peak">–</b>,, on the 1960 basket. Dearness allowance is revised twice a year from this index, so a high reading here reaches pay packets within months.</p>
+            <p>On the 2016 basket the worker's index rose <b id="iw-now">–</b> in the year to {PIW.month}, against <b id="iw-yago">–</b> a year earlier. The current basket's high so far is <b id="iw-peak16">–</b>; the whole record's high is <b id="iw-peak">–</b>. Dearness allowance is revised twice a year from this index, so a high reading here reaches pay packets within months.</p>
           </div>
         </div>
       </figure>
@@ -1238,6 +1240,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
   .stdiv td{padding:5px 6px;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink);border-bottom:1px solid #FFFFFF}
   .stdiv td.name{font-family:var(--sans);font-size:.82rem;text-align:left;white-space:nowrap;position:sticky;left:0;background:#FFFFFF;padding-right:14px}
   .stdiv tbody tr:hover{background:transparent}
+  @media (max-width:680px){ .stdiv td.name{white-space:normal;min-width:118px;max-width:118px;font-size:.76rem;line-height:1.3} }
   /* §07 small-multiple grid — this page only */
   .sm-cap{
     font-family:var(--sans);font-size:.82rem;color:var(--muted);
