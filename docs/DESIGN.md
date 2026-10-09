@@ -104,7 +104,8 @@ the rupee sign is in latin-ext):
 - `.sitehead` (66px, 1px ink rule) → optional `.crumb` mono strip → body →
   `.provenance` footer (three columns + double-rule colophon).
 - Mobile (≤680px): nav never hides — it wraps and scrolls horizontally; grids
-  stack; full plates scroll horizontally rather than shrink past legibility.
+  stack; full plates scroll horizontally rather than shrink past legibility. A scrolling
+  plate opens at its latest end with a quiet "← Earlier years" cue (`guide.client.js`).
 
 ## 4. Dossier anatomy
 

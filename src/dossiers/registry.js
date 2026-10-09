@@ -527,6 +527,8 @@ export const DOSSIERS = [
     // the facts sheet's deep-cut summaries would set one state's 2025-26 beside another's
     // 2024-25. The prose speaks for the fixed panel only, one year throughout.
     register: { id: "reg-states", label: "State economies", unit: "Annual, MoSPI regional accounts, 2011-12 base", historyCol: "2011-12 to latest" },
+    // every-cut: all 208 Handbook bundles share one paged long-tail view (framework, round 2)
+    everyCutFamilies: [{ id: "handbook", label: "RBI Handbook of Statistics on Indian States", match: "states-hbs-" }],
     // the guide's own bundles plus the Handbook tables it draws on; all 208 Handbook bundles
     // are listed by section on the page (§12), from data/coverage/states.hbs-index.json
     bundles: ["states-spread", "states-pcnsdp-current", "states-pcnsdp-constant", "states-pcgsdp-current", "states-pcgsdp-constant", "states-gsdp-current", "states-gsdp-constant", "states-nsdp-current", "states-nsdp-constant", "states-growth-real", "states-growth-nominal", "states-structure", "states-industry-shares", "states-finances", "states-gsva-current", "states-gsva-constant", "states-nsva-current", "states-nsva-constant", "states-taxes-current", "states-taxes-constant", "states-hbs-t021", "states-hbs-t164", "states-hbs-t165", "states-hbs-t168", "states-hbs-t176"],

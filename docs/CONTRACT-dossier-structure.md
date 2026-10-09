@@ -45,9 +45,13 @@ cut, latest value with its period, change on a year earlier (points for rates an
 per cent for levels, a dash where the frequency or the sign makes it meaningless), a
 sparkline and the bundle's CSV. It is how §6's "the tail is summarized even when not
 plotted" reaches the finest cut: a reader can find any state, item or sector the guide
-baked. Bundles longer than 150 series get their own sortable page
-(`/guides/<slug>/every-cut/<bundle>/`, split at 1,000 rows, groups kept whole), linked
-from the guide. `scripts/qc.mjs` fails a guide whose table does not list every series.
+baked. The guide page inlines at most 600 rows (a registry entry's `everyCutInline` changes
+it); the rest goes to paged long-tail views (`/guides/<slug>/every-cut/<id>/`, 1,000 rows a
+page), linked from the table: a bundle longer than 150 series on its own, a registry family of
+small bundles together (`everyCutFamilies: [{ id, label, match: "<slug prefix>" }]`, which may
+claim bundles the registry does not list), and the files past the cap as "The remaining
+files". `scripts/qc.mjs` counts rows per file across every page and fails a guide unless each
+series appears exactly once.
 
 ## Binding rules
 

@@ -1,36 +1,35 @@
 ---
-// /guides/<slug>/every-cut/<bundle>/[n/]: the long tail of one bundle, every series of it in
-// one sortable table (src/components/EveryCut.astro links here for bundles longer than
-// LONG_TAIL). Bundles longer than PAGE_ROWS split over numbered pages, whole groups kept
-// together, so no page ships megabytes of HTML.
+// /guides/<slug>/every-cut/<id>/[n/]: one long-tail view of a guide's every-cut table, linked
+// from src/components/EveryCut.astro: a bundle longer than LONG_TAIL, a registry family of small
+// bundles (everyCutFamilies), or the files past the guide page's inline cap ("more"). Views over
+// PAGE_ROWS split into numbered pages, whole groups (or whole files, for families) kept together,
+// so no page ships megabytes of HTML. The plan is src/dossiers/everycut.js everyCutPlan.
 import Base from "../../../../../layouts/Base.astro";
 import EveryCutTable from "../../../../../components/EveryCutTable.astro";
 import { DOSSIERS, bySlug } from "../../../../../dossiers/registry.js";
-import { rowsOf, guideBundles, bundleTitle, loadBundle, LONG_TAIL, paginate } from "../../../../../dossiers/everycut.js";
+import { bundleTitle, loadBundle, everyCutPlan } from "../../../../../dossiers/everycut.js";
 export function getStaticPaths() {
   const out = [];
-  for (const d of DOSSIERS) {
-    for (const b of guideBundles(d)) {
-      const rows = rowsOf(b);
-      if (rows.length <= LONG_TAIL) continue;
-      const pages = paginate(rows);
-      pages.forEach((p, i) => out.push({ params: { slug: d.slug, bundle: b, page: i ? String(i + 1) : undefined }, props: { n: i, total: pages.length } }));
-    }
-  }
+  for (const d of DOSSIERS) for (const t of everyCutPlan(d).tails)
+    t.pages.forEach((_, i) => out.push({ params: { slug: d.slug, bundle: t.id, page: i ? String(i + 1) : undefined }, props: { n: i } }));
   return out;
 }
-const { slug, bundle } = Astro.params;
-const { n, total } = Astro.props;
+const { slug, bundle: id } = Astro.params;
+const { n } = Astro.props;
 const d = bySlug[slug];
-const B = loadBundle(bundle);
-const pages = paginate(rowsOf(bundle));
-const rows = pages[n];
-const title = bundleTitle(bundle);
-const hasGroups = rows.some((r) => r.group);
-const base = `/guides/${slug}/every-cut/${bundle}/`;
+const t = everyCutPlan(d).tails.find((x) => x.id === id);
+const pages = t.pages, total = pages.length, rows = pages[n];
+const single = t.kind === "bundle";
+const B = loadBundle(t.bundles[0]);
+const title = single ? bundleTitle(id) : t.label;
+const hasGroups = single && rows.some((r) => r.group);
+const base = `/guides/${slug}/every-cut/${id}/`;
 const href = (i) => (i ? `${base}${i + 1}/` : base);
-const nAll = pages.reduce((a, p) => a + p.length, 0);
-const src = String(B.meta?.source ?? "").replace(/ — /g, ": ").replace(/ · /g, ", ");
+const nAll = t.rows.length;
+const clean = (x) => String(x ?? "").replace(/ — /g, ": ").replace(/ · /g, ", ");
+const sources = [...new Set(t.bundles.map((b) => clean(loadBundle(b).meta?.source)))];
+const src = sources.length === 1 ? sources[0] : `${sources.length} sources, named per file`;
+const titles = Object.fromEntries((single ? [] : [...new Set(rows.map((r) => r.bundle))]).map((b) => [b, bundleTitle(b)]));
 ---
 <Base
   title={`${title}: every series · India Atlas`}
@@ -44,13 +43,14 @@ const src = String(B.meta?.source ?? "").replace(/ — /g, ": ").replace(/ · /g
   <div class="titleblock break ec-page">
     <div class="kicker"><a href={`/guides/${slug}/#every-cut`}>{d.title}: every series, every cut</a></div>
     <h1>{title}</h1>
-    <p class="lede">{nAll.toLocaleString("en-IN")} series, each with its latest value, its change on a year earlier and its trend.{total > 1 ? ` Page ${n + 1} of ${total}.` : ""}</p>
+    <p class="lede">{nAll.toLocaleString("en-IN")} series{single ? "" : ` from ${t.bundles.length.toLocaleString("en-IN")} files`}, each with its latest value, its change on a year earlier and its trend.{total > 1 ? ` Page ${n + 1} of ${total}.` : ""}</p>
     <div class="meta">
       <span>Source <b>{src}</b></span>
-      {B.meta?.base && <span>Base <b>{B.meta.base}</b></span>}
-      <span>Frequency <b>{B.meta?.frequency}</b></span>
-      <span>Vintage <b>{B.meta?.vintage}</b></span>
-      <span>Download <b><a href={`/data/${bundle}.csv`} download>CSV</a>, <a href={`/data/${bundle}.json`} download>JSON</a></b></span>
+      {single && B.meta?.base && <span>Base <b>{B.meta.base}</b></span>}
+      {single && <span>Frequency <b>{B.meta?.frequency}</b></span>}
+      {single && <span>Vintage <b>{B.meta?.vintage}</b></span>}
+      {single ? <span>Download <b><a href={`/data/${id}.csv`} download>CSV</a>, <a href={`/data/${id}.json`} download>JSON</a></b></span>
+        : <span>Download <b>each file's CSV from its rows</b></span>}
     </div>
   </div>
   <div class="break">
@@ -59,7 +59,7 @@ const src = String(B.meta?.source ?? "").replace(/ — /g, ": ").replace(/ · /g
         ? <b aria-current="page">{i + 1}</b>
         : <a href={href(i)}>{i + 1}</a>)}<span>{rows.length.toLocaleString("en-IN")} series on this page</span></nav>
     )}
-    <EveryCutTable rows={rows} id={`ec-${bundle}`} titles={{ [bundle]: "" }} fold={rows.length} filterBy={hasGroups ? "group" : "cut"} />
+    <EveryCutTable rows={rows} id={`ec-${id}`} titles={single ? { [id]: "" } : titles} fold={rows.length} filterBy={hasGroups ? "group" : "cut"} />
     <p class="ec-back"><a href={`/guides/${slug}/`}>Back to the guide: {d.title}</a></p>
   </div>
 </div>

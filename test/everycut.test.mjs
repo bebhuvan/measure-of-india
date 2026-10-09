@@ -63,3 +63,16 @@ test("an estimated latest value is marked, never shown as measured (CONTRACT-ser
   }
   assert.ok(checked > 0, "no estimated latest values found: the BIS India credit series should have some");
 });
+
+test("every guide's every-cut plan places each bundle exactly once, inline within the cap", async () => {
+  const { DOSSIERS } = await import("../src/dossiers/registry.js");
+  const { everyCutPlan, guideBundles, INLINE_CAP } = await import("../src/dossiers/everycut.js");
+  for (const d of DOSSIERS) {
+    const p = everyCutPlan(d);
+    const placed = [...p.inline, ...p.tails.flatMap((t) => t.bundles)];
+    assert.deepEqual([...placed].sort(), [...guideBundles(d)].sort(), d.slug);
+    assert.equal(new Set(placed).size, placed.length, `${d.slug}: a bundle placed twice`);
+    assert.ok(p.inlineRows.length <= (d.everyCutInline ?? INLINE_CAP), `${d.slug}: inline over the cap`);
+    for (const t of p.tails) assert.equal(t.pages.flat().length, t.rows.length, `${d.slug}/${t.id}: pages lose rows`);
+  }
+});

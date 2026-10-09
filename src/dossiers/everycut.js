@@ -430,7 +430,13 @@ const yearEarlier = (iso) => `${+iso.slice(0, 4) - 1}${iso.slice(4)}`;
 const TIMED = new Set(["monthly", "quarterly", "annual"]);
 
 /** Every series of one bundle as table rows. Throws on a unit it cannot show. */
+const rowsMemo = new Map();
 export function rowsOf(slug, opts = {}) {
+  const mk = slug + "|" + (opts.cut ?? "");
+  if (!rowsMemo.has(mk)) rowsMemo.set(mk, rowsOfUncached(slug, opts));
+  return rowsMemo.get(mk);
+}
+function rowsOfUncached(slug, opts = {}) {
   const b = loadBundle(slug);
   const cut = opts.cut ?? cutOf(slug);
   const rows = [];
@@ -472,19 +478,69 @@ export const LONG_TAIL = 150;
 // rows per long-tail page; longer bundles are split, packing whole groups where they exist
 export const PAGE_ROWS = 1000;
 
-/** The guide's bundles, current first, in registry order, deduplicated and present on disk. */
+// the guide page inlines at most this many rows (about 450 KB of HTML); the bundles after the
+// cap, in registry order, go to a paged long-tail view. A registry entry may set
+// `everyCutInline` to change it for one guide.
+export const INLINE_CAP = 600;
+
+const onDisk = (b) => fs.existsSync(path.join(ROOT, "data/series", b + ".json"));
+const familyMatch = (f) => { const ps = [].concat(f.match ?? []); return (b) => ps.some((p) => b.startsWith(p)); };
+let diskList = null;
+const diskBundles = () => (diskList ??= fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => f.endsWith(".json")).map((f) => f.slice(0, -5)).sort());
+
+/** The guide's bundles, current first, in registry order, deduplicated and present on disk, then
+ *  every bundle on disk that one of its `everyCutFamilies` claims (a family's `match` is a
+ *  slug prefix, or a list of them), so a family can hold bundles the registry does not list. */
 export function guideBundles(d) {
-  return [d.currentBundle, ...(d.bundles || [])].filter((b, i, a) => b && a.indexOf(b) === i && fs.existsSync(path.join(ROOT, "data/series", b + ".json")));
+  const out = [d.currentBundle, ...(d.bundles || [])].filter((b, i, a) => b && a.indexOf(b) === i && onDisk(b));
+  for (const f of d.everyCutFamilies ?? []) {
+    const m = familyMatch(f);
+    for (const b of diskBundles()) if (m(b) && !out.includes(b)) out.push(b);
+  }
+  return out;
 }
 
-/** Split one long bundle's rows into pages of at most PAGE_ROWS, keeping groups whole. */
-export function paginate(rows, size = PAGE_ROWS) {
-  if (rows.length <= size) return [rows];
-  const byGroup = new Map();
-  for (const r of rows) { const g = r.group || ""; if (!byGroup.has(g)) byGroup.set(g, []); byGroup.get(g).push(r); }
+/** Where every series of a guide appears, exactly once: inline on the guide page, or in one
+ *  long-tail view. Views: a bundle over LONG_TAIL series ("bundle"), a registry family of small
+ *  bundles ("family"), and the bundles past the inline cap ("more"). */
+export function everyCutPlan(d, { cuts = {} } = {}) {
+  const names = guideBundles(d);
+  const fams = (d.everyCutFamilies ?? []).map((f) => ({ ...f, m: familyMatch(f), bundles: [] }));
+  const ids = new Set(names);
+  const tails = [], inline = [];
+  let free = [];
+  for (const b of names) {
+    const f = fams.find((x) => x.m(b));
+    if (f) f.bundles.push(b); else free.push(b);
+  }
+  for (const f of fams) {
+    if (ids.has(f.id)) throw new Error(`everyCutFamilies: family id "${f.id}" is also a bundle slug`);
+    if (f.bundles.length) tails.push({ kind: "family", id: f.id, label: f.label, bundles: f.bundles });
+  }
+  const cap = d.everyCutInline ?? INLINE_CAP;
+  let used = 0;
+  const over = [];
+  for (const b of free) {
+    const rows = rowsOf(b, { cut: cuts[b] });
+    if (rows.length > LONG_TAIL) tails.push({ kind: "bundle", id: b, label: bundleTitle(b), bundles: [b] });
+    else if (used + rows.length <= cap && !over.length) { inline.push(b); used += rows.length; }
+    else over.push(b);
+  }
+  if (over.length) tails.push({ kind: "more", id: "more", label: "The remaining files", bundles: over });
+  for (const t of tails) {
+    t.rows = t.bundles.flatMap((b) => rowsOf(b, { cut: cuts[b] }));
+    t.pages = t.kind === "bundle" ? paginate(t.rows) : paginateBy(t.rows, (r) => r.bundle);
+  }
+  return { inline, inlineRows: inline.flatMap((b) => rowsOf(b, { cut: cuts[b] })), tails };
+}
+
+/** Split rows into pages of at most `size`, keeping each key's rows together where they fit. */
+export function paginateBy(rows, keyFn, size = PAGE_ROWS) {
+  const groups = new Map();
+  for (const r of rows) { const k = keyFn(r); if (!groups.has(k)) groups.set(k, []); groups.get(k).push(r); }
   const pages = [];
   let cur = [];
-  for (const g of byGroup.values()) {
+  for (const g of groups.values()) {
     for (let i = 0; i < g.length; i += size) {
       const chunk = g.slice(i, i + size);
       if (cur.length && cur.length + chunk.length > size) { pages.push(cur); cur = []; }
@@ -492,5 +548,11 @@ export function paginate(rows, size = PAGE_ROWS) {
     }
   }
   if (cur.length) pages.push(cur);
-  return pages;
+  return pages.length ? pages : [[]];
+}
+
+/** Split one long bundle's rows into pages of at most PAGE_ROWS, keeping groups whole. */
+export function paginate(rows, size = PAGE_ROWS) {
+  if (rows.length <= size) return [rows];
+  return paginateBy(rows, (r) => r.group || "", size);
 }
