@@ -470,8 +470,129 @@ const D = bySlug["consumption"];
   </section>
 
   <!-- § 09 misread -->
+  <!-- § 09 what a person spends, state by state (wave 2) -->
   <section>
-    <div class="sec-head"><span class="no">09</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">09</span><h2>What a person spends, state by state</h2><span class="line"></span><span class="unit">₹ per person per month, 2023-24</span></div>
+    <div class="break">
+      <figure id="cb-spend-rural" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>In the countryside, food is the biggest bill in every state; health and schooling vary several times over</h3>
+            <div class="sub">Rural India, 2023-24: what a person spends in a month on each kind of thing, ₹, without imputation. States ranked by total spending; a darker cell is a higher figure within its column.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-spend-rural">–</div><div class="c">rural food bill, highest state</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-spend-rural" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, HCES 2023-24, average monthly per capita consumption expenditure by broad category (30-day recall), ₹, without imputation. "Medicines and doctor" is medical spending outside hospital; "Hospital" is spending on stays. Every one of the 31 categories, for both rounds and both conventions, is in the data.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Find your state, then read across. Each figure is the average spent per person in a month, so a family of four spends roughly four times as much. Rent is small in villages because most families own their homes; the survey counts rent only where it is paid.</p>
+            <p>Health spending is lumpy: a few households with a hospital stay that month raise the average for everyone. The average does not say what a typical family spends; it says what the state spends, divided by its people.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>Food: <b id="ex-sp-rural-food">–</b>. Schooling: <b id="ex-sp-rural-edu">–</b>. Medicines and doctor: <b id="ex-sp-rural-med">–</b>. Across India, a rural person spends <b id="ex-sp-rural-ai">–</b> a month on food, <b id="ex-sp-rural-aiedu">–</b> on schooling and <b id="ex-sp-rural-aimed">–</b> on medicines and doctors.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-spend-urban" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>In the towns, rent, travel and schooling join food as the big bills</h3>
+            <div class="sub">Urban India, 2023-24: what a person spends in a month on each kind of thing, ₹, without imputation. States ranked by total spending; a darker cell is a higher figure within its column.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-spend-urban">–</div><div class="c">urban food bill, highest state</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-spend-urban" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, HCES 2023-24, average monthly per capita consumption expenditure by broad category (30-day recall), ₹, without imputation. "Medicines and doctor" is medical spending outside hospital; "Hospital" is spending on stays. Every one of the 31 categories, for both rounds and both conventions, is in the data.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Find your state, then read across. Each figure is the average spent per person in a month, so a family of four spends roughly four times as much. Rent in towns includes what tenants pay; owners living in their own homes are not charged an imputed rent here.</p>
+            <p>Health spending is lumpy: a few households with a hospital stay that month raise the average for everyone. The average does not say what a typical family spends; it says what the state spends, divided by its people.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>Food: <b id="ex-sp-urban-food">–</b>. Schooling: <b id="ex-sp-urban-edu">–</b>. Medicines and doctor: <b id="ex-sp-urban-med">–</b>. Across India, an urban person spends <b id="ex-sp-urban-ai">–</b> a month on food, <b id="ex-sp-urban-aiedu">–</b> on schooling and <b id="ex-sp-urban-aimed">–</b> on medicines and doctors.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-impute" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Counting free grain and goods raises rural spending by up to 7%, most in Chhattisgarh and West Bengal</h3>
+            <div class="sub">Rural India, 2023-24: how much higher a person's monthly spending is when the value of food and goods received free through government schemes is counted ("with imputation"), by state, per cent and ₹. States above the all-India rural figure are in blue.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-impute">–</div><div class="c">added, rural All India</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-impute" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, HCES 2023-24, MPCE with and without imputation, by state. The survey values free items at local prices; the public distribution system's free grain is most of it.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The headline MPCE counts only what a household paid for. Many households also receive rice or wheat free from the ration shop, and some receive school uniforms, laptops or cycles. The survey puts a value on those and publishes a second figure "with imputation". The gap between the two is a rough measure of how much the state's welfare reaches the plate.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>Most added: <b id="ex-imp-hi">–</b>. All India, rural: <b id="ex-imp-ai">–</b> a person a month; urban: <b id="ex-imp-aiu">–</b>. In <b id="ex-imp-zero">–</b> states and union territories the two figures are the same.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-ginist" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Spending is more unequal in towns than in villages in 31 of 36 states</h3>
+            <div class="sub">Gini coefficient of per-capita consumption spending, rural (blue) and urban (grey), by state, 2023-24, without imputation. 0 means everyone spends the same; higher means more unequal. Labels read urban / rural.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-ginist">–</div><div class="c">states where the town is more unequal</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-ginist" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, HCES 2023-24, Gini coefficient of per capita consumption expenditure by state and sector. Both conventions and both rounds are in the data.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each row is a state, with a dot for its villages and one for its towns. A Gini of spending runs lower than a Gini of income or wealth, because the poor spend most of what they have and the rich save, so these figures understate inequality. Compare states with each other, not with income Ginis published elsewhere.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>Most unequal: <b id="ex-gs-hi">–</b>. Least: <b id="ex-gs-lo">–</b>. All India: rural <b id="ex-gs-air">–</b>, urban <b id="ex-gs-aiu">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>How to misread this number</h2><span class="line"></span></div>
     <ul class="misread">
       <li>
         <span class="no">i.</span>
@@ -522,7 +643,8 @@ const D = bySlug["consumption"];
         <h6>Source of record</h6>
         <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. Household Consumption Expenditure Survey, 2022-23 and 2023-24 rounds, retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>.</p>
         <p>Two disclosures carry through every chart. First, the headline convention is "without imputation"; the with-imputation variants are shown and named where used. Cereal quantities are published in that convention only. Second, only these two rounds exist in the API: the 2011-12 and earlier NSS consumption rounds use a different method, are not served, and are never spliced or compared here.</p>
-        <p>All nine indicator families of the HCES release are baked into this guide's data. Eight feed the plates. The ninth, the broad-category table in rupees, is redundant by construction: each of its figures equals the published share times MPCE, within rounding. It is kept as a validation cross-check, not a chart; the state-level food shares above come from the share table itself.</p>
+        <p>All nine indicator families of the HCES release are baked into this guide's data, every one by state and for both conventions where the survey publishes both. The broad-category table in rupees feeds the state spending tables; its shares twin feeds the food-share map.</p>
+        <p><b>A misprint at source.</b> In the rupee table for 2022-23, rural, without imputation, the rows printed under Goa, Gujarat, Haryana, Himachal Pradesh, Jharkhand and Karnataka are those of Andhra Pradesh, Arunachal Pradesh, Assam, Bihar, Chhattisgarh and Delhi: each block adds up to the other state's MPCE to the rupee. Those six cells are left out; the same cells of the share table are consistent and are kept. The 2023-24 round is unaffected.</p>
       </div>
       <div>
         <h6>Revisions &amp; uncertainty</h6>
@@ -531,7 +653,7 @@ const D = bySlug["consumption"];
       </div>
       <div>
         <h6>This guide</h6>
-        <p>Consumption, version 1.1, on the 2023-24 round. v1.1 extends the first release with the social-group, household-type, cereal-quantity, cereal-value and state food-share families. Next scheduled revision: on release of the next HCES round.</p>
+        <p>Consumption, version 1.2 (October 2026), on the 2023-24 round. v1.1 extended the first release with the social-group, household-type, cereal-quantity, cereal-value and state food-share families; v1.2 adds every indicator by state, the rupee spending tables, the with-imputation figures by state and inequality by state. Next scheduled revision: on release of the next HCES round.</p>
       </div>
     </div>
     <div class="fine">

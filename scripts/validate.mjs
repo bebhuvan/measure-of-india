@@ -205,6 +205,27 @@ const PRODUCTS = [
   // gfce 22.88, saving rate 37.82; mining -17.53 in 2011-12, the year the
   // back-cast meets the current series (level 316,533 -> 261,035 as published)
   { slug: "gdp-back", dossier: "gdp", cadence: 12, staleAfter: "2011-04", range: [-20, 45], base: "2011-12", freq: "annual" },
+  // ---- nas (wave 2): the rest of the national accounts, nas-deep-build.mjs ----
+  // Levels in Rs crore (negative lines: discrepancy, net primary income, stocks, government
+  // saving); shares of nominal GDP run to 103 (GNDI exceeds GDP by the remittances);
+  // sub-industry growth reaches -62.5 (air transport, 2020-21); the back series'
+  // discrepancy reaches -13.6% of GDP (1955-56): its expenditure side is not reconciled
+  // with output before the 1990s, as published.
+  ...[["", "2011-12", { levels: "2025-04", subs: "2023-04", gcf: "2023-04", q: "2025-07" }], ["-2022", "2022-23", { levels: "2025-04", subs: "2024-04", gcf: "2024-04", q: "2026-04" }]].flatMap(([b, base, st]) => [
+    { slug: `gdp${b}-annual-levels`, dossier: "gdp", cadence: 12, staleAfter: st.levels, range: [-2e6, 5e7], base, freq: "annual" },
+    { slug: `gdp${b}-annual-growth`, dossier: "gdp", cadence: 12, staleAfter: st.levels, range: [-40, 60], base, freq: "annual" },
+    { slug: `gdp${b}-annual-shares`, dossier: "gdp", cadence: 12, staleAfter: st.levels, range: [-15, 110], base, freq: "annual" },
+    { slug: `gdp${b}-annual-industries`, dossier: "gdp", cadence: 12, staleAfter: st.levels, range: [-40, 5e7], base, freq: "annual" },
+    { slug: `gdp${b}-annual-subindustries`, dossier: "gdp", cadence: 12, staleAfter: st.subs, range: [-80, 5e7], base, freq: "annual" },
+    { slug: `gdp${b}-annual-gcf-industries`, dossier: "gdp", cadence: 12, staleAfter: st.gcf, range: [-1e6, 5e7], base, freq: "annual" },
+    { slug: `gdp${b}-sectors`, dossier: "gdp", cadence: 12, staleAfter: st.levels, range: [-3e6, 5e7], base, freq: "annual" },
+    { slug: `gdp${b}-revisions`, dossier: "gdp", cadence: 12, staleAfter: st.levels, range: [-2e6, 5e7], base, freq: "annual" },
+    { slug: `gdp${b}-quarterly-levels`, dossier: "gdp", cadence: 3, staleAfter: st.q, range: [-1e6, 2e7], base },
+    { slug: `gdp${b}-quarterly-shares`, dossier: "gdp", cadence: 3, staleAfter: st.q, range: [-15, 100], base },
+    { slug: `gdp${b}-quarterly-industry-levels`, dossier: "gdp", cadence: 3, staleAfter: st.q, range: [0, 2e7], base },
+  ]),
+  ...["levels", "growth", "shares", "industries", "subindustries"].map((k) => ({ slug: `gdp-back-${k}`, dossier: "gdp", cadence: 12, staleAfter: "2011-04", range: k === "shares" ? [-15, 110] : [-2e6, 2e7], base: "2011-12", freq: "annual" })),
+  // ---- end nas ----
   // base 2011-12 ended at Apr 2026 (the OEA moved to 2022-23) — frozen
   { slug: "wpi", dossier: "wpi", cadence: 1, staleAfter: "2026-04", range: [-30, 60], cross: ["headline", "published_headline", 0.15] },
   { slug: "wpi-groups", dossier: "wpi", cadence: 1, staleAfter: "2026-04", range: [-70, 130] },
@@ -230,15 +251,51 @@ const PRODUCTS = [
   { slug: "cpialrl-states-1986", dossier: "cpialrl", cadence: 1, staleAfter: "2025-05", range: [-20, 40], base: "1986-87=100" },
   { slug: "cpialrl-states-2019", dossier: "cpialrl", cadence: 1, range: [50, 300], base: "2019=100" },
   { slug: "cpialrl-groups-2019", dossier: "cpialrl", cadence: 1, range: [-10, 300], base: "2019=100" },
+  // ---- jobs (PLFS): two survey designs, each its own base (sources.yml seams: plfs) ----
+  // revamped design (from January 2025): the sources.yml base
   { slug: "plfs-monthly", dossier: "plfs", cadence: 1, range: [0, 100] },
-  { slug: "plfs-quarterly", dossier: "plfs", cadence: 3, staleAfter: "2026-01", range: [0, 100] },
   { slug: "plfs-cuts", dossier: "plfs", cadence: 1, range: [0, 100] },
-  { slug: "plfs-annual", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100] },
-  { slug: "plfs-states", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 45] },
-  { slug: "plfs-status", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100] },
+  { slug: "plfs-monthly-age", dossier: "plfs", cadence: 1, range: [0, 100] },
+  { slug: "plfs-q25", dossier: "plfs", cadence: 3, staleAfter: "2026-04", range: [0, 100] },
+  { slug: "plfs-q25-states-lfpr", dossier: "plfs", cadence: 3, staleAfter: "2026-04", range: [0, 100] },
+  { slug: "plfs-q25-states-wpr", dossier: "plfs", cadence: 3, staleAfter: "2026-04", range: [0, 100] },
+  { slug: "plfs-q25-states-ur", dossier: "plfs", cadence: 3, staleAfter: "2026-04", range: [0, 100] },
+  { slug: "plfs-q25-industry", dossier: "plfs", cadence: 3, staleAfter: "2026-04", range: [0, 100] },
+  { slug: "plfs-cy25-india", dossier: "plfs", cadence: 12, staleAfter: "2025-01", range: [0, 100] },
+  { slug: "plfs-cy25-states-lfpr", dossier: "plfs", cadence: 12, staleAfter: "2025-01", range: [0, 100] },
+  { slug: "plfs-cy25-states-wpr", dossier: "plfs", cadence: 12, staleAfter: "2025-01", range: [0, 100] },
+  { slug: "plfs-cy25-states-ur", dossier: "plfs", cadence: 12, staleAfter: "2025-01", range: [0, 100] },
+  { slug: "plfs-cy25-workers-states", dossier: "plfs", cadence: 12, staleAfter: "2025-01", range: [0, 100] },
+  // ₹: casual day wages from ~₹100 (a state's rural women) to regular monthly pay of
+  // ~₹1 lakh in a small UT's urban cell
+  { slug: "plfs-cy25-earnings", dossier: "plfs", cadence: 12, staleAfter: "2025-01", range: [20, 200000] },
+  // original design (2017-18 to 2024): frozen, each at its last period
+  { slug: "plfs-quarterly", dossier: "plfs", cadence: 3, staleAfter: "2024-10", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-quarterly-cuts", dossier: "plfs", cadence: 3, staleAfter: "2024-10", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-quarterly-states-lfpr", dossier: "plfs", cadence: 3, staleAfter: "2024-10", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-quarterly-states-wpr", dossier: "plfs", cadence: 3, staleAfter: "2024-10", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-quarterly-states-ur", dossier: "plfs", cadence: 3, staleAfter: "2024-10", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-quarterly-industry", dossier: "plfs", cadence: 3, staleAfter: "2024-10", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-annual", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-states", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 45], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-status", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
   // ₹ levels: casual female r+u floor ~₹165/day, regular male ceiling ~₹22k/mo
-  { slug: "plfs-earnings", dossier: "plfs", cadence: 3, staleAfter: "2024-04", range: [100, 60000] },
-  { slug: "plfs-education", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 45] },
+  { slug: "plfs-earnings", dossier: "plfs", cadence: 3, staleAfter: "2024-04", range: [100, 60000], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-education", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 45], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-ay-india", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-ay-states-lfpr", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-ay-states-wpr", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-ay-states-ur", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-ay-workers-states", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-conditions", dossier: "plfs", cadence: 12, staleAfter: "2023-07", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-earnings-cuts", dossier: "plfs", cadence: 3, staleAfter: "2024-04", range: [20, 200000], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-cy-india", dossier: "plfs", cadence: 12, staleAfter: "2024-01", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-cy-states-lfpr", dossier: "plfs", cadence: 12, staleAfter: "2024-01", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-cy-states-wpr", dossier: "plfs", cadence: 12, staleAfter: "2024-01", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-cy-states-ur", dossier: "plfs", cadence: 12, staleAfter: "2024-01", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-cy-workers-states", dossier: "plfs", cadence: 12, staleAfter: "2024-01", range: [0, 100], base: "PLFS original design (2017-18 to 2024)" },
+  { slug: "plfs-cy-earnings", dossier: "plfs", cadence: 12, staleAfter: "2024-01", range: [20, 200000], base: "PLFS original design (2017-18 to 2024)" },
+  // ---- end jobs ----
   // RBI via eSankhyiki: the mirror lags the RBI's own publications by
   // up to a year, so each bundle carries its own regression floor
   { slug: "rbi-trade", dossier: "rbi", cadence: 1, staleAfter: "2025-06", range: [-60000, 80000], cross: ["balance", "balance_published", 5] },
@@ -286,7 +343,7 @@ const PRODUCTS = [
   { slug: "hces-item-values", dossier: "hces", cadence: 12, range: [0.1, 1000] },
   // food share of MPCE by state-sector: ~36% (urban Chandigarh/Kerala end)
   // to ~58% (rural Ladakh end)
-  { slug: "hces-categories-states", dossier: "hces", cadence: 12, range: [20, 80] },
+  { slug: "hces-categories-states", dossier: "hces", cadence: 12, range: [0, 100] },
   // ASI: mixed units — counts (factories ~2.6e5, persons ~1.9e7) and ₹ lakh
   // levels (gross output ~1.2e9 lakh); ranges are wide by construction
   { slug: "asi-headline", dossier: "asi", cadence: 12, range: [0, 2.5e9] },
@@ -323,7 +380,7 @@ const PRODUCTS = [
   // state enrolment (UP ~5e6 is the ceiling) + GER (0-50) + GPI (0-2)
   { slug: "aishe-states", dossier: "aishe", cadence: 12, range: [0, 1e7] },
   // teachers by faculty type: lecturer/assistant peaks ~1.09M
-  { slug: "aishe-teachers", dossier: "aishe", cadence: 12, range: [0, 1.2e6] },
+  { slug: "aishe-teachers", dossier: "aishe", cadence: 12, range: [0, 2e6] },
   // minority enrolment: Muslims peak ~2.1M
   { slug: "aishe-minority", dossier: "aishe", cadence: 12, range: [0, 2.5e6] },
   // Gender compendium — each indicator its own source/cadence. Sex ratio is
@@ -384,7 +441,9 @@ const PRODUCTS = [
   { slug: "services-bop-annual", dossier: "services-trade", cadence: 12, staleAfter: "2025-04", range: [-500000, 1000000], freq: "annual" },
   // PLFS shares of workers, per cent
   { slug: "services-jobs-ay", dossier: "services-jobs", cadence: 12, staleAfter: "2023-07", range: [0, 100], base: "agriculture year (PLFS 2017-18 to 2023-24)" },
-  { slug: "services-jobs-cy", dossier: "services-jobs", cadence: 12, range: [0, 100] },
+  // calendar years split at the PLFS redesign (January 2025): original design frozen at 2024
+  { slug: "services-jobs-cy", dossier: "services-jobs", cadence: 12, staleAfter: "2024-01", range: [0, 100], base: "calendar year (PLFS original design, to 2024)" },
+  { slug: "services-jobs-cy25", dossier: "services-jobs", cadence: 12, range: [0, 100] },
   // ASUSE: counts (to ~7 crore), ₹ per year, per-1,000 distributions
   { slug: "services-asuse", dossier: "services-asuse", cadence: 12, range: [0, 1e9] },
   { slug: "services-asuse-profile", dossier: "services-asuse", cadence: 12, range: [0, 1000] },
@@ -1168,6 +1227,83 @@ withBundle("plfs-education", (b) => {
   ok("plfs-education: graduate UR above not-literate UR in every published year");
 });
 
+/* ---- jobs (PLFS) deep bundles: identities on every cell (scripts/lib/products/plfs-deep.mjs) ---- */
+{
+  // the three ratios: for every cell the bundles carry, WPR <= LFPR and UR = 100 x (1 - WPR/LFPR)
+  // within rounding (1.5 points; the adapter withholds cells that break it, so none may remain)
+  const rateSets = [["plfs-ay-india"], ["plfs-cy-india"], ["plfs-cy25-india"], ["plfs-q25"], ["plfs-quarterly-cuts"], ["plfs-monthly-age"],
+    ...["ay", "cy", "cy25", "q25", "quarterly"].map((t) => ["lfpr", "wpr", "ur"].map((i) => `plfs-${t}-states-${i}`))];
+  for (const set of rateSets) {
+    if (!set.every((sl) => fs.existsSync(path.join(ROOT, "data/series", sl + ".json")))) { fail(`plfs deep: missing bundle in ${set.join(", ")}`); continue; }
+    const bs = set.map(load);
+    const all = Object.assign({}, ...bs.map((b) => b.series));
+    const dates = bs[0].dates;
+    if (bs.some((b) => b.dates.join() !== dates.join())) { fail(`plfs deep: ${set.join(", ")} do not share one date axis`); continue; }
+    let n = 0, bad = 0;
+    for (const [k, s] of Object.entries(all)) {
+      if (!/(^|__)lfpr_/.test(k)) continue;
+      const w = all[k.replace(/(^|__)lfpr_/, "$1wpr_")], u = all[k.replace(/(^|__)lfpr_/, "$1ur_")];
+      if (!w || !u) continue;
+      s.data.forEach((lf, i) => {
+        const wp = w.data[i], ur = u.data[i];
+        if (lf == null || wp == null || ur == null) return;
+        n++;
+        if (wp > lf + 0.05 || Math.abs(100 * (1 - wp / lf) - ur) > 1.5) { bad++; if (bad <= 3) fail(`plfs deep ${set[0]}: ${k} at ${dates[i]}: LFPR ${lf}, WPR ${wp}, UR ${ur} break the identity`); }
+      });
+    }
+    if (!bad) ok(`plfs deep ${set[0]}${set.length > 1 ? " (+" + (set.length - 1) + ")" : ""}: WPR <= LFPR and UR = 1 - WPR/LFPR in all ${n} cells`);
+  }
+  // quarterly industry shares: agriculture + industry + services = 100 per state, gender, sector, quarter
+  for (const sl of ["plfs-quarterly-industry", "plfs-q25-industry"]) withBundle(sl, (b) => {
+    let n = 0;
+    for (const k of Object.keys(b.series).filter((k) => /(^|__)agriculture__/.test(k))) {
+      const ks = ["agriculture", "industry", "services"].map((x) => b.series[k.replace(/(^|__)agriculture__/, `$1${x}__`)]);
+      if (ks.some((s) => !s)) { fail(`${sl}: ${k} has no industry or services sibling`); continue; }
+      b.dates.forEach((d, i) => {
+        const v = ks.map((s) => s.data[i]);
+        if (v.some((x) => x == null)) return;
+        n++;
+        const sum = v.reduce((a, x) => a + x, 0);
+        if (Math.abs(sum - 100) > 0.35) fail(`${sl}: ${k} shares sum ${sum.toFixed(1)} at ${d}`);
+      });
+    }
+    ok(`${sl}: agriculture + industry + services = 100 (±0.35) in ${n} cells`);
+  });
+  // job conditions: "none of the three" can never exceed any one of the three
+  withBundle("plfs-conditions", (b) => {
+    let n = 0;
+    for (const k of Object.keys(b.series).filter((k) => /(^|__)none_of_three__/.test(k))) {
+      const parts = ["no_contract", "no_paid_leave", "no_social_security"].map((x) => b.series[k.replace(/(^|__)none_of_three__/, `$1${x}__`)]);
+      b.dates.forEach((d, i) => {
+        const v = b.series[k].data[i];
+        if (v == null) return;
+        n++;
+        for (const p of parts) if (p?.data[i] != null && v > p.data[i] + 0.15) fail(`plfs-conditions: ${k} ${v} exceeds a single condition (${p.data[i]}) at ${d}`);
+      });
+    }
+    ok(`plfs-conditions: "none of the three" never exceeds a single condition (${n} cells)`);
+  });
+  // workers by status, every state: self-employed + regular + casual = 100; own-account + helpers = self-employed (usual status)
+  for (const sl of ["plfs-ay-workers-states", "plfs-cy-workers-states", "plfs-cy25-workers-states"]) withBundle(sl, (b) => {
+    let n = 0, bad = 0;
+    for (const k of Object.keys(b.series).filter((k) => /^[a-z_]+__self_employed__[a-z]+_[a-z]+__(psss|cws)$/.test(k))) {
+      const [rg, cs, oa, hp] = ["regular", "casual", "own_account", "helper"].map((x) => b.series[k.replace("__self_employed__", `__${x}__`)]);
+      b.dates.forEach((d, i) => {
+        const se = b.series[k].data[i];
+        if (se == null || rg?.data[i] == null || cs?.data[i] == null) return;
+        n++;
+        const sum = se + rg.data[i] + cs.data[i];
+        if (Math.abs(sum - 100) > 0.35) { bad++; if (bad <= 3) fail(`${sl}: ${k} statuses sum ${sum.toFixed(1)} at ${d}`); }
+        // own-account + helpers = self-employed on the usual status only (the weekly status's
+        // self-employed also hold those with work who did not work that week)
+        if (k.endsWith("__psss") && oa?.data[i] != null && hp?.data[i] != null && Math.abs(oa.data[i] + hp.data[i] - se) > 0.35) { bad++; if (bad <= 3) fail(`${sl}: ${k} own-account + helpers != self-employed at ${d}`); }
+      });
+    }
+    if (!n) fail(`${sl}: no status cells found`);
+    else if (!bad) ok(`${sl}: statuses sum to 100 and self-employment splits add up in ${n} cells`);
+  });
+}
+
 withBundle("asuse-annual", (b) => {
   const estKeys = Object.keys(b.series).filter((k) => k.startsWith("establishments_"));
   if (!estKeys.length) fail("asuse-annual: no establishment series");
@@ -1227,12 +1363,12 @@ withBundle("aishe-access", (b) => withBundle("aishe-headline", (h) => {
 }));
 
 withBundle("aishe-headline", (b) => {
-  // the teacher reconstruction: 2021-22 must be the core5 sum (~1.58M), not
-  // the broken "All Teacher" value (12,904). Assert the last value is plausible.
+  // teachers are the published "All Teacher" total in every year (the 2021-22 "defect" was a
+  // paging artifact of the 2026-08-09 dump; docs/status/households.md)
   const t = b.series.teachers.data;
   const lastT = t.at(-1);
-  if (lastT == null || lastT < 1000000) fail(`aishe-headline: teachers 2021-22 = ${lastT} — reconstruction not applied (expected ~1.58M)`);
-  else ok(`aishe-headline: teachers 2021-22 reconstructed to ${lastT.toLocaleString("en-IN")} (source defect disclosed in meta.note)`);
+  if (lastT == null || lastT < 1000000) fail(`aishe-headline: teachers 2021-22 = ${lastT} (expected the published ~16 lakh)`);
+  else ok(`aishe-headline: teachers 2021-22 = ${lastT.toLocaleString("en-IN")} (published All Teacher)`);
   // enrolment must be strictly increasing (the expansion story)
   for (let i = 1; i < t.length; i++) {
     const e = b.series.enrolment.data;
@@ -1242,14 +1378,15 @@ withBundle("aishe-headline", (b) => {
 });
 
 withBundle("aishe-teachers", (b) => {
-  // the 2021-22 core5 sum must equal the headline reconstruction exactly
-  const FAC = ["professor", "reader_associate", "lecturer_assistant", "demonstrator", "temporary"];
-  withBundle("aishe-headline", (h) => {
-    const i = b.dates.length - 1;
-    const sum = FAC.reduce((s, f) => s + (b.series[`${f}_both`]?.data[i] ?? 0), 0);
-    if (sum !== h.series.teachers.data[i]) fail(`aishe-teachers: 2021-22 core5 sum ${sum} != headline teachers ${h.series.teachers.data[i]}`);
-    else ok(`aishe-teachers: 2021-22 core5 sum (${sum.toLocaleString("en-IN")}) = headline reconstruction`);
-  });
+  // the six faculty types add up to the published all-teachers total (All India 2020-21 is
+  // printed 34 apart; nothing else may be)
+  const FAC = ["professor", "reader_associate", "lecturer_assistant", "demonstrator", "temporary", "visiting"];
+  b.dates.forEach((d, i) => { for (const g of ["both", "male", "female"]) {
+    const sum = FAC.reduce((s, f) => s + (b.series[`${f}_${g}`]?.data[i] ?? 0), 0), all = b.series[`all_${g}`]?.data[i];
+    if (all != null && Math.abs(sum - all) > 40) fail(`aishe-teachers: ${g} ${d}: the six types sum to ${sum}, all teachers ${all}`);
+  } });
+  ok("aishe-teachers: the six faculty types sum to all teachers in every year (within 40)");
+  withBundle("aishe-headline", (h) => { if (h.series.teachers.data.at(-1) !== b.series.all_both.data.at(-1)) fail("aishe-teachers: all teachers differs from the headline"); });
   // the academic-hierarchy gender gradient: female share rises as rank falls
   // (Professor < Reader < Lecturer < Demonstrator) in every year
   b.dates.forEach((d, i) => {
@@ -1425,6 +1562,82 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
   }
 }
 
+/* ---- nas (wave 2): identities of the deep national-accounts bundles ----
+ * Published levels are whole crore, so each identity holds to a few crore. India's accounts
+ * are fixed-base, so constant-price aggregates add up too: the 11 industries sum to total
+ * GVA, the institutional sectors to the total, and taxes less subsidies to net taxes (which
+ * is also how we know the API's "Rs Lakh" label on taxes and subsidies is wrong). */
+{
+  const near = (a, b, tol) => a == null || b == null || Math.abs(a - b) <= Math.max(tol, Math.abs(b) * 2e-6);
+  const each = (slug, label, fn) => withBundle(slug, (b) => {
+    let n = 0, bad = null;
+    b.dates.forEach((d, i) => { const r = fn(b.series, i, d); if (r == null) return; n++; if (!r.ok && !bad) bad = `${d}: ${r.msg}`; });
+    if (!n) fail(`${slug}: ${label} checked 0 periods`);
+    else if (bad) fail(`${slug}: ${label} fails at ${bad}`);
+    else ok(`${slug}: ${label} (${n} periods)`);
+  });
+  const v = (S, k, i) => S[k]?.data[i] ?? null;
+  for (const b of ["gdp", "gdp-2022"]) {
+    each(`${b}-annual-levels`, "GDP = GVA + net taxes, both prices", (S, i) => {
+      const r = ["constant", "current"].map((p) => [v(S, `gdp_${p}`, i), v(S, `gva_${p}`, i), v(S, `net_taxes_${p}`, i)]).filter((x) => x.every((y) => y != null));
+      return r.length ? { ok: r.every(([g, a, t]) => near(g, a + t, 6)), msg: JSON.stringify(r) } : null;
+    });
+    each(`${b}-annual-levels`, "net taxes = taxes less subsidies (taxes and subsidies are Rs crore, not the API's Rs lakh)", (S, i) => {
+      const t = v(S, "taxes_current", i), s = v(S, "subsidies_current", i), n = v(S, "net_taxes_current", i);
+      return t == null || s == null ? null : { ok: near(n, t - s, 6), msg: `${t} - ${s} != ${n}` };
+    });
+    each(`${b}-annual-levels`, "NDP = GDP less consumption of fixed capital", (S, i) => {
+      const g = v(S, "gdp_current", i), c = v(S, "cfc_current", i), n = v(S, "ndp_current", i);
+      return c == null ? null : { ok: near(n, g - c, 6), msg: `${g} - ${c} != ${n}` };
+    });
+    each(`${b}-annual-industries`, "the 11 industries sum to total GVA at constant prices", (S, i) => {
+      const parts = ["agriculture", "mining", "manufacturing", "utilities", "construction", "trade_hotels", "transport", "finance", "realty", "public_admin", "other_services"].map((k) => v(S, `${k}_constant`, i));
+      if (parts.some((x) => x == null)) return null;
+      const sum = parts.reduce((a, x) => a + x, 0), tot = v(S, "total_constant", i);
+      return { ok: near(sum, tot, 15), msg: `${sum} != ${tot}` };
+    });
+    each(`${b}-annual-industries`, "the 8 groups sum to total GVA at current prices", (S, i) => {
+      const parts = ["agriculture", "mining", "manufacturing", "utilities", "construction", "trade_transport", "finance_realty", "public_admin_other"].map((k) => v(S, `${k}_current`, i));
+      if (parts.some((x) => x == null)) return null;
+      const sum = parts.reduce((a, x) => a + x, 0), tot = v(S, "total_current", i);
+      return { ok: near(sum, tot, 15), msg: `${sum} != ${tot}` };
+    });
+    each(`${b}-sectors`, "institutional sectors sum to the total (saving and fixed investment)", (S, i) => {
+      const sec = ["public_nfc", "private_nfc", "public_fc", "private_fc", "government", "households"];
+      const out = [];
+      for (const m of ["saving", "gfcf"]) {
+        const parts = sec.map((k) => v(S, `${m}_${k}`, i));
+        if (parts.some((x) => x == null)) continue;
+        out.push([parts.reduce((a, x) => a + x, 0), v(S, `${m}_total`, i)]);
+      }
+      return out.length ? { ok: out.every(([a, t]) => near(a, t, 15)), msg: JSON.stringify(out) } : null;
+    });
+    each(`${b}-quarterly-levels`, "quarterly GDP = GVA + net taxes", (S, i) => {
+      const g = v(S, "gdp_constant", i), a = v(S, "gva_constant", i), t = v(S, "net_taxes_constant", i);
+      return g == null || a == null || t == null ? null : { ok: near(g, a + t, 6), msg: `${a} + ${t} != ${g}` };
+    });
+    // a stage's growth must sit near the growth its levels imply against the previous year
+    // at the stage that stood in the same release; checked loosely, for the latest print
+    withBundle(`${b}-revisions`, (bb) => {
+      const st = bb.meta.stages?.map((x) => x.key) ?? [];
+      if (st.length !== 8) fail(`${b}-revisions: meta.stages must list the 8 MoSPI stages`);
+      const first = bb.series.gdp_growth_first, latest = bb.series.gdp_growth_latest;
+      if (b === "gdp" && (!first || !latest)) fail(`${b}-revisions: first and latest GDP growth missing`);
+      else ok(`${b}-revisions: ${Object.keys(bb.series).length} stage series`);
+    });
+  }
+  // the back series' industries reconcile with its total only from 2004-05: before that the
+  // sum runs above or below the published total (+471 crore in 1950-51, -4,630 in 1997-98,
+  // current prices), as published; disclosed in the bundle note, held from 2004-05 on
+  each("gdp-back-industries", "the 11 back-series industries sum to total GVA at 2011-12 prices, 2004-05 on", (S, i, d) => {
+    if (d < "2004-04-01") return null;
+    const parts = ["agriculture", "mining", "manufacturing", "utilities", "construction", "trade_hotels", "transport", "finance", "realty", "public_admin", "other_services"].map((k) => v(S, `${k}_constant`, i));
+    if (parts.some((x) => x == null)) return null;
+    const sum = parts.reduce((a, x) => a + x, 0), tot = v(S, "total_constant", i);
+    return { ok: near(sum, tot, 15), msg: `${sum} != ${tot}` };
+  });
+}
+
 /* ---- services: the family's identities (scripts/lib/products/services.mjs) ---- */
 {
   // ISP: y/y computed from index levels agrees with MoSPI's published growth (levels are
@@ -1489,7 +1702,7 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
   }));
   // PLFS: the 21 NIC sections add to 100 for every gender, sector and year (published to one
   // or two decimals: 0.6 pt)
-  for (const slug of ["services-jobs-ay", "services-jobs-cy"]) withBundle(slug, (b) => {
+  for (const slug of ["services-jobs-ay", "services-jobs-cy", "services-jobs-cy25"]) withBundle(slug, (b) => {
     const groups = {};
     for (const [k, s] of Object.entries(b.series)) { const m = k.match(/^sec_[a-u]__(.+)$/); if (m) (groups[m[1]] ??= []).push(s.data); }
     let worst = 0, at = "";
@@ -2748,6 +2961,113 @@ withBundle("wages-rural-2013", (b) => {
   if (!b.series.o1210) fail("wages-rural-2013: no general agricultural labourer series (code 1210)");
   else ok(`wages-rural-2013: ${Object.keys(b.series).length} occupations, general agricultural labourer present`);
 });
+
+/* ---- households (wave 2): consumption (hces), higher education (aishe), renewable energy
+ * (mnre), deposits (bsr2) ----
+ * Every bundle of the four families that the PRODUCTS table does not list gets the generic
+ * checks (meta against sources.yml, cadence, unit ranges, disclosed gaps). Then the family
+ * identities on the baked numbers: each would catch a misread column or a mislabelled row. */
+{
+  const listed = new Set(PRODUCTS.map((p) => p.slug));
+  const fam = [["hces-", "hces"], ["aishe-", "aishe"], ["mnre-", "mnre"], ["deposits-", "deposits"]];
+  const UR = { inr: [0, 2e5], pct_of_mpce: [0, 100], gini: [0, 1], kg_per_month: [0, 40], count: [0, 4e9],
+    // GER and GPI of tiny groups in tiny places run wild (Ladakh's Scheduled Caste women: a GER
+    // of 335, a GPI of 14.8): published as such, ranged wide; a zero PTR marks no institution
+    percent: [0, 400], index: [0, 20], pupils_per_teacher: [0, 1000], mw: [0, 3e5], inr_crore: [-1, 3e7], inr_lakh_crore: [0, 400] };
+  let n = 0;
+  for (const f of fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => fam.some(([p]) => f.startsWith(p))).sort()) {
+    const slug = f.replace(/\.json$/, "");
+    if (listed.has(slug)) continue;
+    const dossier = fam.find(([p]) => slug.startsWith(p))[1];
+    const b = load(slug);
+    checkMeta(b, slug, dossier, dossier === "deposits" ? b.meta.base : undefined, dossier === "deposits" ? b.meta.frequency : undefined);
+    if (b.dates.length > 1) checkCadence(b.dates, { monthly: 1, quarterly: 3, annual: 12 }[b.meta.frequency] ?? 12, slug);
+    const sr = {};
+    for (const [k, s] of Object.entries(b.series)) { const u = s.unit ?? b.meta.unit; if (!UR[u]) fail(`${slug}.${k}: unit "${u}" has no range`); sr[k] = UR[u] ?? [-Infinity, Infinity]; }
+    checkRange(b, -Infinity, Infinity, slug, sr);
+    n++;
+  }
+  ok(`households: ${n} wave-2 bundles checked for meta, cadence, unit ranges and gaps`);
+
+  // a generic "parts add to the total" check over series that share a prefix
+  const parts = (slug, label, total, list, tol, { sep = "__", prefixOk = () => true } = {}) => withBundle(slug, (b) => {
+    let checked = 0, bad = 0, worst = 0, at = "";
+    const prefixes = new Set(Object.keys(b.series).filter((k) => k.endsWith(sep + total)).map((k) => k.slice(0, -(sep + total).length)).filter(prefixOk));
+    for (const p of prefixes) b.dates.forEach((d, i) => {
+      const T = b.series[p + sep + total]?.data[i]; const xs = list.map((x) => b.series[p + sep + x]?.data[i]);
+      if (T == null || xs.some((v) => v == null)) return;
+      checked++; const dev = Math.abs(xs.reduce((a, v) => a + v, 0) - T); if (dev > worst) { worst = dev; at = `${p} ${d}`; } if (dev > tol) bad++;
+    });
+    if (!checked) fail(`${slug}: identity "${label}" checked nothing`);
+    else if (bad) fail(`${slug}: ${label} fails in ${bad} of ${checked} cells (worst ${worst.toFixed(3)} at ${at})`);
+    else ok(`${slug}: ${label} in all ${checked} cells (worst ${worst.toFixed(3)})`);
+  });
+
+  // HCES: shares by category add to 100 (food total + non-food total) everywhere
+  for (const [sl, foodKey] of [["hces-categories-states", (p) => p], ["hces-categories-states-imputed", (p) => p + "__food_total"], ["hces-categories-imputed", (p) => p + "__food_total"]]) withBundle(sl, (b) => {
+    let n = 0, bad = 0;
+    for (const k of Object.keys(b.series).filter((k) => k.endsWith("__non_food_total"))) { const p = k.slice(0, -"__non_food_total".length); const f = b.series[foodKey(p)];
+      if (!f) continue; b.series[k].data.forEach((v, i) => { if (v == null || f.data[i] == null) return; n++; if (Math.abs(v + f.data[i] - 100) > 0.11) bad++; }); }
+    if (!n) fail(`${sl}: food + non-food checked nothing`); else if (bad) fail(`${sl}: food + non-food != 100 in ${bad} of ${n} cells`); else ok(`${sl}: food + non-food = 100 in all ${n} cells`);
+  });
+  withBundle("hces-categories-states", (b) => { let bad = 0; const pre = Object.keys(b.series).filter((k) => !k.includes("__"));
+    for (const k of pre) b.series[k].data.forEach((v, i) => { if (v != null && (v < 20 || v > 80)) bad++; }); if (bad) fail(`hces-categories-states: ${bad} food shares outside 20-80%`); else ok("hces-categories-states: every state food share between 20% and 80%"); });
+  // HCES: rupees by category add to the MPCE (within 1%), state by state
+  for (const [sl, mp] of [["hces-categories-inr-states", "hces-states"], ["hces-categories-inr-states-imputed", "hces-states-imputed"]]) withBundle(sl, (b) => withBundle(mp, (m) => {
+    let bad = 0, n = 0;
+    for (const [k, s] of Object.entries(b.series)) { if (!k.endsWith("__food_total")) continue; const p = k.slice(0, -"__food_total".length); const nf = b.series[p + "__non_food_total"]; const mpce = m.series[p];
+      if (!nf || !mpce) continue; s.data.forEach((v, i) => { if (v == null || nf.data[i] == null || mpce.data[i] == null) return; n++; if (Math.abs(v + nf.data[i] - mpce.data[i]) / mpce.data[i] > 0.01) bad++; }); }
+    if (!n) fail(`${sl}: nothing matched ${mp}`); else if (bad) fail(`${sl}: food + non-food differs from ${mp} by over 1% in ${bad} of ${n} cells`); else ok(`${sl}: food + non-food = the state's MPCE (${mp}) within 1% in all ${n} cells`);
+  }));
+  // HCES: each state's fractile ladder rises class by class
+  withBundle("hces-fractiles-states", (b) => { const FR = ["0_5", "5_10", "10_20", "20_30", "30_40", "40_50", "50_60", "60_70", "70_80", "80_90", "90_95", "95_100"]; let bad = 0, n = 0;
+    const pre = new Set(Object.keys(b.series).map((k) => k.split("__f")[0]));
+    for (const p of pre) b.dates.forEach((d, i) => { const v = FR.map((f) => b.series[`${p}__f${f}`]?.data[i]); if (v.some((x) => x == null)) return; n++; if (v.some((x, j) => j && x < v[j - 1])) bad++; });
+    if (bad) fail(`hces-fractiles-states: ${bad} of ${n} ladders do not rise class by class`); else ok(`hces-fractiles-states: all ${n} state ladders rise class by class`); });
+  parts("hces-quantities-states", "rice + wheat + coarse + other cereals = total cereals", "total_cereals", ["rice", "wheat", "coarse_grains", "other_cereals"], 0.02);
+
+  // AISHE: levels add to all levels; women + men = both; six posts = all teachers
+  for (const g of ["both", "male", "female"]) parts("aishe-states-enrolment", `the eight levels sum to all levels (${g})`, `grand_total_${g}`,
+    ["phd", "mphil", "post_graduate", "under_graduate", "pg_diploma", "diploma", "certificate", "integrated"].map((l) => `${l}_${g}`), 2);
+  withBundle("aishe-states-enrolment", (b) => { let bad = 0, n = 0; for (const k of Object.keys(b.series).filter((k) => k.endsWith("_both"))) { const m = b.series[k.replace(/_both$/, "_male")], f = b.series[k.replace(/_both$/, "_female")]; if (!m || !f) continue;
+    b.series[k].data.forEach((v, i) => { if (v == null || m.data[i] == null || f.data[i] == null) return; n++; if (Math.abs(m.data[i] + f.data[i] - v) > 2) bad++; }); }
+    if (bad) fail(`aishe-states-enrolment: women + men != both in ${bad} of ${n} cells`); else ok(`aishe-states-enrolment: women + men = both in all ${n} cells`); });
+  for (const g of ["both", "male", "female"]) withBundle("aishe-states-teachers", (b) => { let bad = 0, n = 0;
+    for (const k of Object.keys(b.series).filter((k) => k.endsWith(`__all_${g}`))) { const p = k.slice(0, -`__all_${g}`.length);
+      b.series[k].data.forEach((v, i) => { const xs = ["professor", "reader_associate", "lecturer_assistant", "demonstrator", "temporary", "visiting"].map((f) => b.series[`${p}__${f}_${g}`]?.data[i] ?? 0); if (v == null) return; n++; if (Math.abs(xs.reduce((a, x) => a + x, 0) - v) > 40) bad++; }); }
+    if (bad) fail(`aishe-states-teachers: six posts != all teachers (${g}) in ${bad} of ${n} cells`); else ok(`aishe-states-teachers: six posts = all teachers (${g}) in all ${n} cells (within 40)`); });
+
+  // MNRE: the four bio kinds add to bio total, nationally and in every state; solar categories to solar total
+  parts("mnre-bio-categories", "four bio kinds = bio total", "total", ["bagasse", "non_bagasse", "waste_to_energy", "waste_to_energy_off_grid"], 1, { sep: "", prefixOk: () => true });
+  parts("mnre-states-bio", "four bio kinds = bio total, every state", "total", ["bagasse", "non_bagasse", "waste_to_energy", "waste_to_energy_off_grid"], 1);
+  withBundle("mnre-states-solar", (b) => { let bad = 0, n = 0, worst = 0; for (const k of Object.keys(b.series).filter((k) => !k.includes("__"))) b.series[k].data.forEach((v, i) => {
+    const xs = ["ground_mounted", "rooftop", "hybrid", "off_grid"].map((c) => b.series[`${k}__${c}`]?.data[i]); if (v == null || xs.every((x) => x == null)) return; n++; const dev = Math.abs(xs.reduce((a, x) => a + (x ?? 0), 0) - v); worst = Math.max(worst, dev); if (dev > 1) bad++; });
+    if (bad) fail(`mnre-states-solar: categories != solar total in ${bad} of ${n} cells (worst ${worst.toFixed(2)} MW)`); else ok(`mnre-states-solar: categories = solar total in all ${n} state-months`); });
+
+  // deposits: every table's parts add to its totals, on the baked (crore) values
+  const A3 = 3.5, C2 = 2;
+  for (const sl of fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => /^deposits-.*\.json$/.test(f)).map((f) => f.replace(/\.json$/, ""))) {
+    const ks = Object.keys(load(sl).series);
+    const has = (suf) => ks.some((k) => k.endsWith("__" + suf));
+    if (has("savings_accounts") && has("term_accounts")) { if (has("total")) parts(sl, "current + savings + term = all deposits", "total", ["current", "savings", "term"], A3);
+      if (has("current_accounts") && has("total_accounts")) parts(sl, "accounts: current + savings + term = all", "total_accounts", ["current_accounts", "savings_accounts", "term_accounts"], C2); }
+    else if (has("individuals") && has("others")) { parts(sl, "individuals + others = all", "total", ["individuals", "others"], A3); parts(sl, "accounts: individuals + others = all", "total_accounts", ["individuals_accounts", "others_accounts"], C2); }
+    else if (has("deposit_taking")) parts(sl, "the six owning sectors = all sectors", "total", ["government", "nfc", "deposit_taking", "other_fc", "households", "rest_of_world"], A3);
+    else if (has("psb") && has("all_banks")) parts(sl, "the bank groups = all banks", "all_banks", ["psb", "foreign", "rrb", "private", "sfb", "payments"], A3);
+    else if (has("officers")) { parts(sl, "officers + clerks + subordinates = all employees", "total", ["officers", "clerks", "subordinates"], 0); parts(sl, "women: officers + clerks + subordinates = all", "women_total", ["women_officers", "women_clerks", "women_subordinates"], 0); }
+    else if (has("current") && has("savings") && has("term")) parts(sl, "current + savings + term = all deposits", "total", ["current", "savings", "term"], A3);
+  }
+  // deposits: the values checked by hand against RBI's release of 29 May 2026 (March 2026)
+  withBundle("deposits-sectors", (b) => { const i = b.dates.indexOf("2026-03-01"); const T = b.series.total__total.data[i];
+    const hh = b.series.s4__total.data[i] / T * 100, sv = b.series.total__savings.data[i] / T * 100, tm = b.series.total__term.data[i] / T * 100;
+    if (Math.abs(hh - 59.3) > 0.05 || Math.abs(sv - 28.7) > 0.05 || Math.abs(tm - 61.6) > 0.05) fail(`deposits-sectors: March 2026 shares ${hh.toFixed(2)}/${sv.toFixed(2)}/${tm.toFixed(2)} differ from RBI's 59.3/28.7/61.6`);
+    else ok(`deposits-sectors: March 2026 households ${hh.toFixed(1)}%, savings ${sv.toFixed(1)}%, term ${tm.toFixed(1)}% = RBI's release`); });
+  withBundle("deposits-age", (b) => withBundle("deposits-sectors", (s) => { const i = b.dates.indexOf("2026-03-01"), j = s.dates.indexOf("2026-03-01");
+    const sen = (b.series.individuals__a7_60_to_69__total.data[i] + b.series.individuals__a8_70_and_above__total.data[i]) / s.series.total__total.data[j] * 100;
+    if (Math.abs(sen - 20.0) > 0.05) fail(`deposits-age: seniors ${sen.toFixed(2)}% of deposits, RBI says 20.0%`); else ok(`deposits-age: seniors hold ${sen.toFixed(2)}% of deposits = RBI's 20.0%`); }));
+  withBundle("deposits-maturity-owners", (b) => { const i = b.dates.indexOf("2026-03-01"); const sh = b.series["m4_1_to_3_years__total"].data[i] / b.series["all__total"]?.data[i] * 100;
+    if (!(Math.abs(sh - 69.8) <= 0.05)) fail(`deposits-maturity-owners: 1-3 year share ${sh} differs from RBI's 69.8%`); else ok(`deposits-maturity-owners: 1-3 years ${sh.toFixed(2)}% of term deposits = RBI's 69.8%`); });
+}
 
 if (failures) { console.error(`\n${failures} validation failure(s)`); process.exit(1); }
 console.log("validate: all checks passed");

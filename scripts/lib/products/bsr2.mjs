@@ -24,6 +24,7 @@
 // Units: amounts are rupees in the source; baked as ₹ lakh crore (1e12 rupees), 3 decimals.
 import { databankRoot, dbieReport } from "../databank.mjs";
 import { writeSeries, writeRaw } from "../util.mjs";
+import { buildBsr2Tables } from "./bsr2-tables.mjs";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -51,7 +52,13 @@ export async function buildBsr2(root, dcfg, vintage, cfg) {
   const bundle = (rel, dates, series, extra) => {
     // the axis starts at the first date any series reports (CONTRACT-series: no empty lead)
     const first = Math.max(0, dates.findIndex((_, i) => Object.values(series).some((s) => s.data[i] != null)));
-    for (const s of Object.values(series)) s.data = s.data.slice(first);
+    for (const s of Object.values(series)) {
+      s.data = s.data.slice(first);
+      // interior nulls are declared on the series that misses them (CONTRACT-series rule 2)
+      const ds = dates.slice(first), a = s.data.findIndex((v) => v != null), z = s.data.length - 1 - [...s.data].reverse().findIndex((v) => v != null);
+      const gaps = s.data.map((v, i) => (v == null && i > a && i < z ? ds[i] : null)).filter(Boolean);
+      if (gaps.length) { s.gaps = gaps; s.gapsNote = "RBI's table prints no value for this sector and type in these years; left empty."; }
+    }
     writeSeries(root, `data/series/${rel}.json`, { meta: meta({ latestPeriod: dates.at(-1).slice(0, 7), ...extra }), dates: dates.slice(first), series });
   };
 
@@ -85,6 +92,26 @@ export async function buildBsr2(root, dcfg, vintage, cfg) {
     { coverage: "Bank deposits by owner and type: households, individuals, women and all depositors, savings vs term vs current, as on 31 March",
       note: "RBI BSR-2 via DBIE report 737, SNA-based sector classification from March 2019. 'All depositors' is the sum of the five top-level sectors (derived; reconciles with DBIE report 847 ALL INDIA). Women = 'of which Female' within individuals." });
 
+  // ---------- 737, every sector code (wave 2) ----------
+  // old scheme: every code 1..52 and the grand total, one bundle; new scheme: table 1.1 (report
+  // 1200) is baked by bsr2-tables.mjs as deposits-sectors, and must equal 737 codes 54..85.
+  const label737 = new Map(R["737"].rows.map((r) => [+r["Dim Economy Sect Deposit.Item Code"], String(r["Item Description"]).trim().replace(/\s+/g, " ").replace(/\s*@$/, "")]));
+  const oldSeries = {};
+  for (let code = 1; code <= 53; code++) for (const [t, k] of [["Current", "current"], ["Saving", "savings"], ["Term", "term"], ["Total", "total"]]) {
+    const data = oldY.map((fy) => { const v = own.get(`${code}|${fy}`)?.[t]; return v == null ? null : Math.round(v / 1e5) / 100; });
+    if (!data.some((v) => v != null)) continue;
+    oldSeries[`c${code}_${k}`] = { name: `c${code}_${k}_inr_crore`, unit: "inr_crore", group: label737.get(code), color: k === "term" ? "#2E4BD8" : "#878D99",
+      label: `${{ current: "Current deposits", savings: "Savings deposits", term: "Term deposits", total: "All deposits" }[k]} · ${label737.get(code)}` };
+    oldSeries[`c${code}_${k}`].data = data;
+  }
+  bundle("deposits-sectors-2005", oldY.map(marchOf), oldSeries, { unit: "inr_crore",
+    coverage: "Bank deposits by every owning sector of the old classification (codes 1 to 53: government, companies, financial firms, farmers, wage earners, traders, trusts, foreign sector...) and by type of account, March 2003 to March 2018, ₹ crore",
+    note: "RBI BSR-2 via DBIE report 737, sector codes 1 to 53 (the classification used to March 2018). Never joined to the SNA-based classification that starts in March 2019 (deposits-sectors)." });
+  // 737's new codes 54..85 by their table code ("4.1.1"), to match table 1.1's keys (s4_1_1)
+  const newByCode = new Map();
+  for (let code = 54; code <= 85; code++) for (const fy of newY) { const o = own.get(`${code}|${fy}`); if (!o) continue;
+    const m = /^(\d+(?:\.\d+)*)\s/.exec(label737.get(code)); newByCode.set(`${m ? "s" + m[1].replace(/\./g, "_") : "total"}|${marchOf(fy)}`, o); }
+
   // ---------- 847: households by population group ----------
   const POP = [["rural", "Rural"], ["semi_urban", "Semi-urban"], ["urban", "Urban"], ["metro", "Metropolitan"], ["all_india", "All India"]];
   const p847 = new Map(); const y847 = new Set();
@@ -95,8 +122,15 @@ export async function buildBsr2(root, dcfg, vintage, cfg) {
   const D847 = [...y847].sort();
   const popSeries = (label, key, who) => Object.fromEntries(POP.map(([k, l], i) => [`${key}_${k}`,
     { name: `${key}_${k}_inr_lakh_crore`, color: k === "all_india" ? "#2E4BD8" : "#878D99", label: `${who}, ${l.toLowerCase()}`, data: D847.map((y) => r3(p847.get(`${label}|${y}`)?.[i])) }]));
-  bundle("deposits-population", D847, { ...popSeries("4 Household sector", "household", "Households"), ...popSeries("4.1.1 of which  Female", "female", "Women"), ...popSeries("ALL INDIA", "all", "All depositors") },
-    { coverage: "Bank deposits of households, women and all depositors, by rural, semi-urban, urban and metropolitan centres",
+  // every other owning sector of table 1.2, one by one (wave 2), keyed by its code
+  const otherPop = {};
+  for (const lab of [...new Set([...p847.keys()].map((k) => k.split("|")[0]))]) {
+    const m = /^(\d+(?:\.\d+)*)\s+(.*)$/.exec(lab.trim().replace(/\s+/g, " "));
+    if (!m || ["4", "4.1.1"].includes(m[1])) continue;
+    Object.assign(otherPop, Object.fromEntries(Object.entries(popSeries(lab, `s${m[1].replace(/\./g, "_")}`, `${m[1]} ${m[2]}`)).map(([k, v]) => [k, { ...v, color: "#A3A9B4" }])));
+  }
+  bundle("deposits-population", D847, { ...popSeries("4 Household sector", "household", "Households"), ...popSeries("4.1.1 of which  Female", "female", "Women"), ...popSeries("ALL INDIA", "all", "All depositors"), ...otherPop },
+    { coverage: "Bank deposits of households, women, all depositors and every other owning sector of table 1.2 (keys s<code>_<group>), by rural, semi-urban, urban and metropolitan centres",
       note: "RBI BSR-2 Table 1.2 via DBIE report 847. Population groups are classified by the location of the bank branch." });
 
   // ---------- 3.x tables: individuals' term deposits by band ----------
@@ -105,7 +139,7 @@ export async function buildBsr2(root, dcfg, vintage, cfg) {
     for (const r of R[id].rows) {
       const d = r["Dimension 1"]; if (!d) continue;          // percentage-share rows
       const y = qd(r["Quarter Date"]); ys.add(y); order.set(d, Math.min(order.get(d) ?? 99, +r["Sequence No"]));
-      out.set(`${d}|${y}`, { ind: num(r["Measure 2"]), all: num(r["Measure 6"]), indAcc: num(r["Measure 1"]), allAcc: num(r["Measure 5"]) });
+      out.set(`${d}|${y}`, { ind: num(r["Measure 2"]), oth: num(r["Measure 4"]), all: num(r["Measure 6"]), indAcc: num(r["Measure 1"]), othAcc: num(r["Measure 3"]), allAcc: num(r["Measure 5"]) });
     }
     return { out, ys: [...ys].sort(), labels: [...order.entries()].sort((a, b) => a[1] - b[1]).map(([d]) => d) };
   };
@@ -121,6 +155,12 @@ export async function buildBsr2(root, dcfg, vintage, cfg) {
       series[`${who}_accounts`] = { name: `${who}_accounts`, label: `${who === "ind" ? "Individuals" : "All depositors"}, number of term deposit accounts`,
         data: ys.map((y) => out.get(`${total}|${y}`)?.[who + "Acc"] ?? null) };
     }
+    // wave 2: others (firms, government, institutions) by band, and account counts by band
+    for (const l of [...L, total]) series[`oth_${slug(l)}`] = { name: `oth_${slug(l)}_inr_lakh_crore`, label: `Others, ${l === total ? "total" : tidy(l)}`, data: ys.map((y) => r3(out.get(`${l}|${y}`)?.oth)) };
+    series.oth_accounts = { name: "oth_accounts", label: "Others, number of term deposit accounts", data: ys.map((y) => out.get(`${total}|${y}`)?.othAcc ?? null) };
+    for (const who of ["ind", "oth", "all"]) for (const l of L) series[`${who}_acc_${slug(l)}`] = { name: `${who}_acc_${slug(l)}`,
+      label: `${{ ind: "Individuals", oth: "Others", all: "All depositors" }[who]}, accounts, ${tidy(l)}`, unit: "count", data: ys.map((y) => out.get(`${l}|${y}`)?.[who + "Acc"] ?? null) };
+    for (const v of Object.values(series)) v.unit ??= /_accounts$|_acc_/.test(v.name) ? "count" : "inr_lakh_crore";
     bundle(rel, ys, series, { coverage: cov, note, bands: L.map((l) => ({ key: slug(l), label: tidy(l) })) });
   };
   bandBundle("865", "deposits-term-rates", "TOTAL", "Term deposits by the interest rate they earn, individuals and all depositors",
@@ -142,14 +182,41 @@ export async function buildBsr2(root, dcfg, vintage, cfg) {
     label: `${who === "ind" ? "Individuals" : "All depositors"}, ${l}`,
     data: s.ys.map((y) => { const vals = srcs.map((src) => s.out.get(`${src}|${y}`)?.[who]).filter((v) => v != null); return vals.length ? r3(vals.reduce((a, b) => a + b, 0)) : null; }) };
   for (const who of ["ind", "all"]) sizeSeries[`${who}_total`] = { name: `${who}_total_inr_lakh_crore`, label: `${who === "ind" ? "Individuals" : "All depositors"}, total`, data: s.ys.map((y) => r3(s.out.get(`Total|${y}`)?.[who])) };
+  // wave 2: others by band, and accounts by band for all three (coarse bands, March 2026 summed from the fine ones)
+  const WHO = { ind: "Individuals", oth: "Others", all: "All depositors" };
+  for (const [k, l, srcs] of COARSE) sizeSeries[`oth_${k}`] = { name: `oth_${k}_inr_lakh_crore`, label: `Others, ${l}`,
+    data: s.ys.map((y) => { const vals = srcs.map((src) => s.out.get(`${src}|${y}`)?.oth).filter((v) => v != null); return vals.length ? r3(vals.reduce((a, b) => a + b, 0)) : null; }) };
+  sizeSeries.oth_total = { name: "oth_total_inr_lakh_crore", label: "Others, total", data: s.ys.map((y) => r3(s.out.get(`Total|${y}`)?.oth)) };
+  for (const who of ["ind", "oth", "all"]) {
+    for (const [k, l, srcs] of COARSE) sizeSeries[`${who}_acc_${k}`] = { name: `${who}_acc_${k}`, label: `${WHO[who]}, accounts, ${l}`, unit: "count",
+      data: s.ys.map((y) => { const vals = srcs.map((src) => s.out.get(`${src}|${y}`)?.[who + "Acc"]).filter((v) => v != null); return vals.length ? vals.reduce((a, b) => a + b, 0) : null; }) };
+    sizeSeries[`${who}_accounts`] = { name: `${who}_accounts`, label: `${WHO[who]}, number of term deposit accounts`, unit: "count", data: s.ys.map((y) => s.out.get(`Total|${y}`)?.[who + "Acc"] ?? null) };
+  }
+  for (const v of Object.values(sizeSeries)) v.unit ??= "inr_lakh_crore";
   bundle("deposits-term-size", s.ys, sizeSeries, { coverage: "Term deposits by size of deposit, four bands, individuals and all depositors",
     note: "RBI BSR-2 Table 3.6 via DBIE report 866. RBI split the bands more finely from March 2026; the March 2026 values here are exact sums of the finer bands into the four bands used before. The finer March 2026 split is in deposits-term-size-2026.", bands: COARSE.map(([k, l]) => ({ key: k, label: l })) });
   const fine = s.labels.filter((l) => l !== "Total" && s.out.has(`${l}|2026-03-01`));
   const lastY = s.ys.at(-1);
-  bundle("deposits-term-size-2026", [lastY], Object.fromEntries(["ind", "all"].flatMap((who) => fine.map((l) => [`${who}_${slug(l)}`,
-    { name: `${who}_${slug(l)}_inr_lakh_crore`, label: `${who === "ind" ? "Individuals" : "All depositors"}, ${tidy(l)}`, data: [r3(s.out.get(`${l}|${lastY}`)?.[who])] }]))),
+  bundle("deposits-term-size-2026", [lastY], Object.fromEntries(["ind", "oth", "all"].flatMap((who) => fine.flatMap((l) => [[`${who}_${slug(l)}`,
+    { name: `${who}_${slug(l)}_inr_lakh_crore`, unit: "inr_lakh_crore", label: `${WHO[who]}, ${tidy(l)}`, data: [r3(s.out.get(`${l}|${lastY}`)?.[who])] }],
+    [`${who}_acc_${slug(l)}`, { name: `${who}_acc_${slug(l)}`, unit: "count", label: `${WHO[who]}, accounts, ${tidy(l)}`, data: [s.out.get(`${l}|${lastY}`)?.[who + "Acc"] ?? null] }]]))),
     { coverage: "Term deposits by size of deposit, the finer bands RBI introduced in March 2026", note: "RBI BSR-2 Table 3.6 via DBIE report 866, March 2026 only.",
       bands: fine.map((l) => ({ key: slug(l), label: tidy(l) })) });
+
+  // ---------- every other table (wave 2): bsr2-tables.mjs ----------
+  buildBsr2Tables(root, db, dcfg, V);
+  // table 1.1 (report 1200, baked as deposits-sectors) is 737's new scheme: prove it, cell by cell
+  const t11 = JSON.parse(fs.readFileSync(path.join(root, "data/series/deposits-sectors.json"), "utf8"));
+  let checked = 0;
+  for (const [k, sr] of Object.entries(t11.series)) {
+    const typ = { current: "Current", savings: "Saving", term: "Term", total: "Total" }[k.split("__").at(-1)];
+    const code = k.split("__")[0];
+    t11.dates.forEach((d, i) => { const o = newByCode.get(`${code}|${d}`); if (!o || sr.data[i] == null || o[typ] == null) return; checked++;
+      // March 2019 rows of table 1.1 were migrated at crore precision: within one crore
+      if (Math.abs(o[typ] / 1e7 - sr.data[i]) > 1) throw new Error(`BSR-2: table 1.1 (1200) ${sr.label} ${d} = ${sr.data[i]} crore, report 737 says ${o[typ] / 1e7}`); });
+  }
+  if (checked < 800) throw new Error(`BSR-2: only ${checked} cells of table 1.1 matched report 737's new scheme`);
+  console.log(`bsr2: table 1.1 equals report 737's new scheme in all ${checked} cells`);
 }
 
 /* Catalogue (docs/CONTRACT-coverage.md): the RBI's BSR-2 deposit tables, from the DBIE report

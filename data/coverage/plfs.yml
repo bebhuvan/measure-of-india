@@ -1,92 +1,176 @@
 # Coverage ledger: Periodic Labour Force Survey, MoSPI (docs/CONTRACT-coverage.md).
-# Catalogue: node scripts/lib/products/plfs.mjs --catalogue. First matching rule wins.
-# Omissions left for the coordinator ("jobs deeper"): calendar-year annual estimates
-# (2023 to 2025, a new design and a seam), LFPR and WPR by state, religion, social group,
-# age bands, the gender x sector grid of the annual and quarterly series, the quarterly
-# bulletin's states, NIC, NCO and enterprise cuts, employment conditions (indicator 5),
-# and earnings by state.
+# Catalogue: node scripts/lib/products/plfs.mjs --catalogue (the listing's one-cut items, plus
+# every cross table getData serves, read from the archived cube: plfs:<freq>:<ind>:<ws>:x:...).
+# First matching rule wins. Decided in full by atlas-jobs-deep, 2026-10-10: every cell the
+# source serves is baked (two survey designs, never joined), drawn where it carries a finding.
+# Indicator 4 at All India is the services guide's bundles (read, not rebuilt).
 family: plfs
 guides: [jobs]
 catalogue: data/coverage/plfs.catalogue.json
 rules:
+  # ---------------- monthly bulletin (revamped design) ----------------
   - match: ["plfs:monthly:1:cws:all", "plfs:monthly:2:cws:all", "plfs:monthly:3:cws:all"]
     status: shown
     bundle: plfs-monthly
-    plate: "The current reading; One question, three stopwatches"
+    plate: "The current reading; register of series"
   - match: ["plfs:monthly:*:cws:gs:male-rural", "plfs:monthly:*:cws:gs:male-urban", "plfs:monthly:*:cws:gs:female-rural", "plfs:monthly:*:cws:gs:female-urban"]
     status: shown
     bundle: plfs-cuts
-    plate: "The parts, one plate each (gender and sector)"
-  - match: ["plfs:quarterly:1:cws:gs:person-urban", "plfs:quarterly:2:cws:gs:person-urban", "plfs:quarterly:3:cws:gs:person-urban"]
+    plate: "§06 Four labour markets in one country; The participation chasm; Who is actually working"
+  - match: "plfs:monthly:*:cws:gs:*"
+    status: baked
+    bundle: plfs-cuts
+  - match: ["plfs:monthly:3:cws:age:15-29-years", "plfs:monthly:3:cws:x:gender-sector-age:all-india"]
     status: shown
-    bundle: plfs-quarterly
-    plate: "Plate 1: the long arc, urban"
+    bundle: plfs-monthly-age
+    plate: "§06 Young women in cities queue longest for work"
+  - match: ["plfs:monthly:*:cws:age:*", "plfs:monthly:*:cws:x:*"]
+    status: baked
+    bundle: plfs-monthly-age
+
+  # ---------------- quarterly bulletin: original design (urban, to Oct-Dec 2024) and revamped (from Apr-Jun 2025) ----------------
+  - match: ["plfs:quarterly:3:cws:all", "plfs:quarterly:3:cws:gs:person-urban", "plfs:quarterly:3:cws:gs:person-rural"]
+    status: shown
+    bundle: [plfs-quarterly, plfs-q25]
+    plate: "§04 Seven years of urban unemployment, then a new survey; Villages enter the quarterly count"
+  - match: ["plfs:quarterly:*:cws:all", "plfs:quarterly:*:cws:gs:*", "plfs:quarterly:1:cws:age:*", "plfs:quarterly:2:cws:age:*", "plfs:quarterly:3:cws:age:*",
+            "plfs:quarterly:1:cws:x:*:all-india", "plfs:quarterly:2:cws:x:*:all-india", "plfs:quarterly:3:cws:x:*:all-india"]
+    status: baked
+    bundle: [plfs-quarterly, plfs-quarterly-cuts, plfs-q25, plfs-q25-industry]
+  - match: ["plfs:quarterly:3:cws:state:*", "plfs:quarterly:3:cws:x:age:*"]
+    status: shown
+    bundle: [plfs-quarterly-states-ur, plfs-q25-states-ur]
+    plate: "§04 Young people's queue for work, state by state"
+  - match: ["plfs:quarterly:1:cws:state:*", "plfs:quarterly:1:cws:x:*"]
+    status: baked
+    bundle: [plfs-quarterly-states-lfpr, plfs-q25-states-lfpr]
+  - match: ["plfs:quarterly:2:cws:state:*", "plfs:quarterly:2:cws:x:*"]
+    status: baked
+    bundle: [plfs-quarterly-states-wpr, plfs-q25-states-wpr]
+  - match: "plfs:quarterly:3:cws:x:*"
+    status: baked
+    bundle: [plfs-quarterly-states-ur, plfs-q25-states-ur]
+  - match: "plfs:quarterly:4:*"
+    status: baked
+    bundle: [plfs-quarterly-industry, plfs-q25-industry]
+
+  # ---------------- annual, indicators 1-3 (LFPR, WPR, UR) ----------------
+  # education, religion and social group are served on the usual status only
+  - match: ["plfs:annual-*:*:cws:education:*", "plfs:annual-*:*:cws:religion:*", "plfs:annual-*:*:cws:social-category:*"]
+    status: excluded
+    reason: "Not served: MoSPI publishes the education, religion and social-group cuts on the usual status (PS+SS) only; the listing offers the weekly status too, but getData holds no such rows."
+  # agriculture years (original design)
   - match: ["plfs:annual-agri:1:*:all", "plfs:annual-agri:2:*:all", "plfs:annual-agri:3:*:all"]
     status: shown
     bundle: plfs-annual
-    plate: "One question, three stopwatches"
+    plate: "§03 One question, three stopwatches; Seven years of joining the count; The redesigned survey picks up close to where the old one left off"
   - match: "plfs:annual-agri:3:*:state:*"
     status: shown
     bundle: plfs-states
-    plate: "A country of labour markets"
-  - match: ["plfs:annual-agri:4:ps-ss:broad-status-employment:*", "plfs:annual-agri:4:cws:broad-industry-work:*"]
-    status: shown
-    bundle: plfs-status
-    plate: "What work is"
-  - match: ["plfs:annual-agri:6:*:all", "plfs:annual-agri:7:*:all", "plfs:annual-agri:8:*:all", "plfs:annual-agri:6:*:gs:*-rural-plus-urban", "plfs:annual-agri:7:*:gs:*-rural-plus-urban", "plfs:annual-agri:8:*:gs:*-rural-plus-urban"]
-    status: shown
-    bundle: plfs-earnings
-    plate: "What work pays"
+    plate: "§10 Thirty-six markets, one national average"
   - match: ["plfs:annual-agri:3:ps-ss:education:*", "plfs:annual-agri:3:ps-ss:age:15-29-years"]
     status: shown
     bundle: plfs-education
-    plate: "The educated queue"
+    plate: "§09 Unemployment climbs the ladder of degrees"
+  - match: ["plfs:annual-agri:1:*:state:*", "plfs:annual-agri:1:*:x:*"]
+    status: baked
+    bundle: [plfs-ay-states-lfpr, plfs-ay-india]
+  - match: ["plfs:annual-agri:2:*:state:*", "plfs:annual-agri:2:*:x:*"]
+    status: baked
+    bundle: [plfs-ay-states-wpr, plfs-ay-india]
+  - match: "plfs:annual-agri:3:*:x:*"
+    status: baked
+    bundle: [plfs-ay-states-ur, plfs-ay-india]
+  - match: ["plfs:annual-agri:1:*", "plfs:annual-agri:2:*", "plfs:annual-agri:3:*"]
+    status: baked
+    bundle: plfs-ay-india
+  # calendar years: original design (2022-2024) and revamped (2025 on), separate bundles
+  - match: ["plfs:annual-calendar:1:ps-ss:all", "plfs:annual-calendar:3:ps-ss:all"]
+    status: shown
+    bundle: [plfs-cy-india, plfs-cy25-india]
+    plate: "§03 The redesigned survey picks up close to where the old one left off"
+  - match: ["plfs:annual-calendar:1:ps-ss:religion:*", "plfs:annual-calendar:1:ps-ss:social-category:*", "plfs:annual-calendar:1:ps-ss:x:gender-religion:all-india", "plfs:annual-calendar:1:ps-ss:x:gender-social-group:all-india"]
+    status: shown
+    bundle: plfs-cy25-india
+    plate: "§09 Women's work falls as caste rank rises"
+  - match: ["plfs:annual-calendar:2:ps-ss:x:gender:*"]
+    status: shown
+    bundle: plfs-cy25-states-wpr
+    plate: "§10 Men work at much the same rate everywhere; women's work is what separates the states"
+  - match: ["plfs:annual-calendar:1:*:state:*", "plfs:annual-calendar:1:*:x:*"]
+    status: baked
+    bundle: [plfs-cy-states-lfpr, plfs-cy25-states-lfpr, plfs-cy-india, plfs-cy25-india]
+  - match: ["plfs:annual-calendar:2:*:state:*", "plfs:annual-calendar:2:*:x:*"]
+    status: baked
+    bundle: [plfs-cy-states-wpr, plfs-cy25-states-wpr, plfs-cy-india, plfs-cy25-india]
+  - match: ["plfs:annual-calendar:3:*:state:*", "plfs:annual-calendar:3:*:x:*"]
+    status: baked
+    bundle: [plfs-cy-states-ur, plfs-cy25-states-ur, plfs-cy-india, plfs-cy25-india]
+  - match: ["plfs:annual-calendar:1:*", "plfs:annual-calendar:2:*", "plfs:annual-calendar:3:*"]
+    status: baked
+    bundle: [plfs-cy-india, plfs-cy25-india]
 
-  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
-  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
-  - match:
-      - "plfs:annual-agri:*:cws:*"
-      - "plfs:annual-agri:*:cws:*:*"
-      - "plfs:annual-agri:*:ps-ss:*"
-      - "plfs:annual-agri:*:ps-ss:*:*"
-      - "plfs:annual-calendar:*:cws:*"
-      - "plfs:annual-calendar:*:cws:*:*"
-      - "plfs:annual-calendar:*:ps-ss:*"
-      - "plfs:annual-calendar:*:ps-ss:*:*"
-      - "plfs:monthly:1:cws:age:15-29-years"
-      - "plfs:monthly:1:cws:age:all-ages"
-      - "plfs:monthly:1:cws:gs:female-rural-plus-urban"
-      - "plfs:monthly:1:cws:gs:male-rural-plus-urban"
-      - "plfs:monthly:1:cws:gs:person-rural"
-      - "plfs:monthly:1:cws:gs:person-urban"
-      - "plfs:monthly:2:cws:age:15-29-years"
-      - "plfs:monthly:2:cws:age:all-ages"
-      - "plfs:monthly:2:cws:gs:female-rural-plus-urban"
-      - "plfs:monthly:2:cws:gs:male-rural-plus-urban"
-      - "plfs:monthly:2:cws:gs:person-rural"
-      - "plfs:monthly:2:cws:gs:person-urban"
-      - "plfs:monthly:3:cws:age:15-29-years"
-      - "plfs:monthly:3:cws:age:all-ages"
-      - "plfs:monthly:3:cws:gs:female-rural-plus-urban"
-      - "plfs:monthly:3:cws:gs:male-rural-plus-urban"
-      - "plfs:monthly:3:cws:gs:person-rural"
-      - "plfs:monthly:3:cws:gs:person-urban"
-      - "plfs:quarterly:1:cws:age:*"
-      - "plfs:quarterly:1:cws:all"
-      - "plfs:quarterly:1:cws:gs:*"
-      - "plfs:quarterly:1:cws:state:*"
-      - "plfs:quarterly:2:cws:age:*"
-      - "plfs:quarterly:2:cws:all"
-      - "plfs:quarterly:2:cws:gs:*"
-      - "plfs:quarterly:2:cws:state:*"
-      - "plfs:quarterly:3:cws:age:*"
-      - "plfs:quarterly:3:cws:all"
-      - "plfs:quarterly:3:cws:gs:*"
-      - "plfs:quarterly:3:cws:state:*"
-      - "plfs:quarterly:4:cws:all"
-      - "plfs:quarterly:4:cws:broad-industry-work:*"
-      - "plfs:quarterly:4:cws:gs:*"
-      - "plfs:quarterly:4:cws:nic-group:*"
-      - "plfs:quarterly:4:cws:state:*"
-    status: pending
-    scheduled: "wave 2: jobs deeper"
+  # ---------------- indicator 4: the distribution of workers ----------------
+  - match: ["plfs:annual-agri:4:ps-ss:broad-status-employment:*", "plfs:annual-agri:4:cws:broad-industry-work:*"]
+    status: shown
+    bundle: plfs-status
+    plate: "§07 What work is; The self-employed majority, the salaried minority"
+  - match: ["plfs:annual-agri:4:*:employee-contract:*"]
+    status: excluded
+    reason: "Not served under indicator 4: its rows lost the contract dimension by 2026-10; the same job conditions are served as indicator 5 and baked in plfs-conditions."
+  - match: ["plfs:annual-calendar:4:*:employee-contract:*"]
+    status: blocked
+    reason: "Calendar years, checked 2026-10-10: the contract table is served with its employee_contract label missing (four unlabelled values per state, gender and sector), so the four conditions cannot be told apart; indicator 5, which carries them, serves agriculture years only."
+  - match: ["plfs:annual-*:4:cws:enterprise-size:*", "plfs:annual-*:4:cws:enterprise-type:*", "plfs:annual-*:4:cws:industry-section:*", "plfs:annual-*:4:cws:nco-division:*", "plfs:annual-*:4:cws:nic-group:*"]
+    status: excluded
+    reason: "Not served: MoSPI publishes the industry, occupation and enterprise tables on the usual status (PS+SS) only; the weekly status carries broad status and broad industry."
+  - match: ["plfs:annual-agri:4:ps-ss:nic-group:*", "plfs:annual-agri:4:ps-ss:x:nic-group:*", "plfs:annual-agri:4:ps-ss:x:gender-nic-group:*", "plfs:annual-agri:4:ps-ss:x:sector-nic-group:*", "plfs:annual-agri:4:ps-ss:x:gender-sector-nic-group:*"]
+    status: excluded
+    reason: "A lone NIC-group row carries no information: at All India it is the 100 per cent total of that group's tables (the tables themselves are baked in services-jobs-ay), and by state the only one served is an 'industry: (05-99)' row whose value (0.0 to 0.5) the source does not explain."
+  - match: ["plfs:annual-calendar:4:ps-ss:x:broad-status-employment:*"]
+    status: shown
+    bundle: plfs-cy25-workers-states
+    plate: "§07 In most states, fewer than three workers in ten draw a regular wage"
+  - match: ["plfs:annual-agri:4:*:x:*:all-india"]
+    status: baked
+    bundle: services-jobs-ay
+  - match: ["plfs:annual-calendar:4:*:x:*:all-india"]
+    status: baked
+    bundle: [services-jobs-cy, services-jobs-cy25]
+  - match: ["plfs:annual-agri:4:*:state:*", "plfs:annual-agri:4:*:x:*"]
+    status: baked
+    bundle: plfs-ay-workers-states
+  - match: ["plfs:annual-calendar:4:*:state:*", "plfs:annual-calendar:4:*:x:*"]
+    status: baked
+    bundle: [plfs-cy-workers-states, plfs-cy25-workers-states]
+  - match: "plfs:annual-agri:4:*"
+    status: baked
+    bundle: [services-jobs-ay, plfs-status]
+  - match: "plfs:annual-calendar:4:*"
+    status: baked
+    bundle: [services-jobs-cy, services-jobs-cy25]
+
+  # ---------------- indicator 5: regular employees' job conditions ----------------
+  - match: ["plfs:annual-agri:5:cws:all", "plfs:annual-agri:5:cws:employee-contract:*"]
+    status: shown
+    bundle: plfs-conditions
+    plate: "§08 More salaried workers have a written contract; the share with no protection at all has not moved"
+  - match: "plfs:annual-agri:5:*"
+    status: baked
+    bundle: plfs-conditions
+
+  # ---------------- indicators 6-8: earnings ----------------
+  - match: ["plfs:annual-agri:6:cws:all", "plfs:annual-agri:7:cws:all", "plfs:annual-agri:8:cws:all", "plfs:annual-agri:*:cws:gs:*-rural-plus-urban"]
+    status: shown
+    bundle: plfs-earnings
+    plate: "§08 The pay hierarchy; The casual day"
+  - match: ["plfs:annual-agri:6:*", "plfs:annual-agri:7:*", "plfs:annual-agri:8:*"]
+    status: baked
+    bundle: plfs-earnings-cuts
+  - match: ["plfs:annual-calendar:6:cws:all", "plfs:annual-calendar:6:cws:state:*", "plfs:annual-calendar:6:cws:x:gender:*", "plfs:annual-calendar:6:cws:gs:*-rural-plus-urban"]
+    status: shown
+    bundle: plfs-cy25-earnings
+    plate: "§08 A regular job pays most in one state and least in another (regular wage by state)"
+  - match: ["plfs:annual-calendar:6:*", "plfs:annual-calendar:7:*", "plfs:annual-calendar:8:*"]
+    status: baked
+    bundle: [plfs-cy-earnings, plfs-cy25-earnings]

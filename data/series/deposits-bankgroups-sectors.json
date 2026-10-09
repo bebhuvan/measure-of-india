@@ -1,0 +1,3837 @@
+{
+ "meta": {
+  "dossier": "deposits",
+  "base": "as on 31 March",
+  "unit": "mixed",
+  "source": "Reserve Bank of India, Basic Statistical Return 2 (via DBIE)",
+  "vintage": "2026-10-09",
+  "mock": false,
+  "geo": "IND",
+  "releaseDate": null,
+  "revisionPolicy": "BSR-2 stocks are final on release for the year; the sector classification changed in 2018-19 and the deposit-size bands in March 2026 (both disclosed, never spliced).",
+  "frequency": "annual",
+  "latestPeriod": "2026-03",
+  "coverage": "Deposits by owning sector and bank group, as on 31 March. Amounts in ₹ crore; accounts, offices and employees as counts.",
+  "note": "RBI BSR-2 Table 1.5 via DBIE report 850, read from the Data Bank mirror. Column meanings are fixed by identities checked on every row (scripts/lib/products/bsr2-tables.mjs). Tables 1.x include deposits of banks with other banks; tables 2.x and 3.x leave them out."
+ },
+ "dates": [
+  "2019-03-01",
+  "2020-03-01",
+  "2021-03-01",
+  "2022-03-01",
+  "2023-03-01",
+  "2024-03-01",
+  "2025-03-01",
+  "2026-03-01"
+ ],
+ "series": {
+  "total__psb": {
+   "name": "total__psb",
+   "label": "Public sector banks · All sectors",
+   "group": "All sectors",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    8076125.14,
+    8643158.14,
+    9510393.43,
+    10284318.55,
+    11126412.05,
+    12184707.66,
+    13349807.56,
+    14745693.68
+   ]
+  },
+  "total__foreign": {
+   "name": "total__foreign",
+   "label": "Foreign banks · All sectors",
+   "group": "All sectors",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    582388.35,
+    683974.06,
+    775901.02,
+    846397.6,
+    856101.1,
+    1008297.53,
+    1107623.52,
+    1263174.52
+   ]
+  },
+  "total__rrb": {
+   "name": "total__rrb",
+   "label": "Regional rural banks · All sectors",
+   "group": "All sectors",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    432885.86,
+    478222.86,
+    522480.75,
+    557978.64,
+    607980.87,
+    658684.01,
+    703204.17,
+    768246.47
+   ]
+  },
+  "total__private": {
+   "name": "total__private",
+   "label": "Private sector banks · All sectors",
+   "group": "All sectors",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    3756259.64,
+    4140956.9,
+    4780781.27,
+    5438659.98,
+    6241787.87,
+    7495570.86,
+    8405189.95,
+    9467334.43
+   ]
+  },
+  "total__sfb": {
+   "name": "total__sfb",
+   "label": "Small finance banks · All sectors",
+   "group": "All sectors",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    49092.05,
+    82480.03,
+    109569.66,
+    146030.83,
+    191199.29,
+    251118.44,
+    315390.25,
+    373370.19
+   ]
+  },
+  "total__all_banks": {
+   "name": "total__all_banks",
+   "label": "All banks · All sectors",
+   "group": "All sectors",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    12896751.04,
+    14028791.98,
+    15699126.12,
+    17273385.61,
+    19035641.51,
+    21614537.08,
+    23906261.17,
+    26654606.16
+   ]
+  },
+  "total__payments": {
+   "name": "total__payments",
+   "label": "Payments banks · All sectors",
+   "group": "All sectors",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    12160.33,
+    16158.59,
+    25045.72,
+    36786.87
+   ]
+  },
+  "s1__psb": {
+   "name": "s1__psb",
+   "label": "Public sector banks · 1 General Government",
+   "group": "1 General Government",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    974022.56,
+    998405.74,
+    1178649.22,
+    1325894.57,
+    1444731.1,
+    1554783.72,
+    1677111.94,
+    1686295.71
+   ]
+  },
+  "s1__foreign": {
+   "name": "s1__foreign",
+   "label": "Foreign banks · 1 General Government",
+   "group": "1 General Government",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    85.05,
+    273.51,
+    606.22,
+    546.54,
+    492.37,
+    288.99,
+    334.93,
+    366.36
+   ]
+  },
+  "s1__rrb": {
+   "name": "s1__rrb",
+   "label": "Regional rural banks · 1 General Government",
+   "group": "1 General Government",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    22493.45,
+    23746.72,
+    24847.63,
+    22452.93,
+    23890.88,
+    22456.58,
+    22797.73,
+    23101.85
+   ]
+  },
+  "s1__private": {
+   "name": "s1__private",
+   "label": "Private sector banks · 1 General Government",
+   "group": "1 General Government",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    187063.48,
+    153674.62,
+    134840.71,
+    192889.22,
+    229150.02,
+    422602.78,
+    465867.09,
+    467949.52
+   ]
+  },
+  "s1__sfb": {
+   "name": "s1__sfb",
+   "label": "Small finance banks · 1 General Government",
+   "group": "1 General Government",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    3165.66,
+    3539.49,
+    4174.23,
+    7797.02,
+    11998.02,
+    9254.44,
+    14439.35,
+    22256.1
+   ]
+  },
+  "s1__all_banks": {
+   "name": "s1__all_banks",
+   "label": "All banks · 1 General Government",
+   "group": "1 General Government",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    1186830.21,
+    1179640.08,
+    1343118.01,
+    1549580.28,
+    1710262.39,
+    2009386.51,
+    2180551.05,
+    2199969.53
+   ]
+  },
+  "s1__payments": {
+   "name": "s1__payments",
+   "label": "Payments banks · 1 General Government",
+   "group": "1 General Government",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "s1_1__psb": {
+   "name": "s1_1__psb",
+   "label": "Public sector banks · 1.1 Central Government",
+   "group": "1.1 Central Government",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    209874.56,
+    239949.98,
+    257092.93,
+    295662.52,
+    278012.94,
+    312141.83,
+    355006.68,
+    305456.18
+   ]
+  },
+  "s1_1__foreign": {
+   "name": "s1_1__foreign",
+   "label": "Foreign banks · 1.1 Central Government",
+   "group": "1.1 Central Government",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    83.59,
+    65.63,
+    34.53,
+    77.4,
+    59.65,
+    112.58,
+    191.1,
+    85.75
+   ]
+  },
+  "s1_1__rrb": {
+   "name": "s1_1__rrb",
+   "label": "Regional rural banks · 1.1 Central Government",
+   "group": "1.1 Central Government",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    747.04,
+    773.36,
+    813.99,
+    824.56,
+    2372.61,
+    752.13,
+    1367,
+    777.61
+   ]
+  },
+  "s1_1__private": {
+   "name": "s1_1__private",
+   "label": "Private sector banks · 1.1 Central Government",
+   "group": "1.1 Central Government",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    39444.51,
+    7952.16,
+    11457.68,
+    24935.57,
+    44707.29,
+    62159.9,
+    83083.54,
+    70403.77
+   ]
+  },
+  "s1_1__sfb": {
+   "name": "s1_1__sfb",
+   "label": "Small finance banks · 1.1 Central Government",
+   "group": "1.1 Central Government",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    378.99,
+    774.47,
+    1046.95,
+    723.28,
+    1198.83,
+    1547.3,
+    2248.61,
+    2953.83
+   ]
+  },
+  "s1_1__all_banks": {
+   "name": "s1_1__all_banks",
+   "label": "All banks · 1.1 Central Government",
+   "group": "1.1 Central Government",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    250528.69,
+    249515.6,
+    270446.08,
+    322223.33,
+    326351.33,
+    376713.74,
+    441896.94,
+    379677.13
+   ]
+  },
+  "s1_1__payments": {
+   "name": "s1_1__payments",
+   "label": "Payments banks · 1.1 Central Government",
+   "group": "1.1 Central Government",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "s1_2__psb": {
+   "name": "s1_2__psb",
+   "label": "Public sector banks · 1.2 State Government",
+   "group": "1.2 State Government",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    547149.11,
+    542350,
+    683931.62,
+    800228.52,
+    874935.01,
+    893895.69,
+    1011913.93,
+    912705.32
+   ]
+  },
+  "s1_2__foreign": {
+   "name": "s1_2__foreign",
+   "label": "Foreign banks · 1.2 State Government",
+   "group": "1.2 State Government",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    0.65,
+    206.07,
+    509.08,
+    389.43,
+    407.36,
+    162.38,
+    130.61,
+    271.37
+   ]
+  },
+  "s1_2__rrb": {
+   "name": "s1_2__rrb",
+   "label": "Regional rural banks · 1.2 State Government",
+   "group": "1.2 State Government",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    16165.76,
+    17488.21,
+    20168.04,
+    17195.11,
+    17040.74,
+    17559.34,
+    15046.78,
+    17866.8
+   ]
+  },
+  "s1_2__private": {
+   "name": "s1_2__private",
+   "label": "Private sector banks · 1.2 State Government",
+   "group": "1.2 State Government",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    119103.86,
+    103626.18,
+    89992.14,
+    125315.34,
+    134959.22,
+    239847.32,
+    244756.64,
+    245382.05
+   ]
+  },
+  "s1_2__sfb": {
+   "name": "s1_2__sfb",
+   "label": "Small finance banks · 1.2 State Government",
+   "group": "1.2 State Government",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    1357.39,
+    1309.69,
+    1297.98,
+    4237.53,
+    6369.24,
+    2897.13,
+    2308.72,
+    4863.37
+   ]
+  },
+  "s1_2__all_banks": {
+   "name": "s1_2__all_banks",
+   "label": "All banks · 1.2 State Government",
+   "group": "1.2 State Government",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    683776.77,
+    664980.15,
+    795898.86,
+    947365.93,
+    1033711.57,
+    1154361.87,
+    1274156.68,
+    1181088.91
+   ]
+  },
+  "s1_2__payments": {
+   "name": "s1_2__payments",
+   "label": "Payments banks · 1.2 State Government",
+   "group": "1.2 State Government",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "s1_3__psb": {
+   "name": "s1_3__psb",
+   "label": "Public sector banks · 1.3 Local Government",
+   "group": "1.3 Local Government",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    216998.88,
+    216105.76,
+    237624.67,
+    230003.53,
+    291783.14,
+    348746.19,
+    310191.33,
+    468134.21
+   ]
+  },
+  "s1_3__foreign": {
+   "name": "s1_3__foreign",
+   "label": "Foreign banks · 1.3 Local Government",
+   "group": "1.3 Local Government",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    0.82,
+    1.81,
+    62.61,
+    79.71,
+    25.36,
+    14.03,
+    13.22,
+    9.24
+   ]
+  },
+  "s1_3__rrb": {
+   "name": "s1_3__rrb",
+   "label": "Regional rural banks · 1.3 Local Government",
+   "group": "1.3 Local Government",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    5580.65,
+    5485.15,
+    3865.61,
+    4433.27,
+    4477.53,
+    4145.11,
+    6383.94,
+    4457.44
+   ]
+  },
+  "s1_3__private": {
+   "name": "s1_3__private",
+   "label": "Private sector banks · 1.3 Local Government",
+   "group": "1.3 Local Government",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    28515.11,
+    42096.28,
+    33390.88,
+    42638.31,
+    49483.5,
+    120595.57,
+    138026.91,
+    152163.71
+   ]
+  },
+  "s1_3__sfb": {
+   "name": "s1_3__sfb",
+   "label": "Small finance banks · 1.3 Local Government",
+   "group": "1.3 Local Government",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    1429.28,
+    1455.33,
+    1829.3,
+    2836.2,
+    4429.96,
+    4810.01,
+    9882.02,
+    14438.9
+   ]
+  },
+  "s1_3__all_banks": {
+   "name": "s1_3__all_banks",
+   "label": "All banks · 1.3 Local Government",
+   "group": "1.3 Local Government",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    252524.75,
+    265144.33,
+    276773.07,
+    279991.02,
+    350199.49,
+    478310.9,
+    464497.43,
+    639203.49
+   ]
+  },
+  "s1_3__payments": {
+   "name": "s1_3__payments",
+   "label": "Payments banks · 1.3 Local Government",
+   "group": "1.3 Local Government",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "s2__psb": {
+   "name": "s2__psb",
+   "label": "Public sector banks · 2 Non-Financial Corporations",
+   "group": "2 Non-Financial Corporations",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    567174.21,
+    654287.5,
+    745569.94,
+    940049.93,
+    1095826.16,
+    1246270.09,
+    1436565.49,
+    1666160.49
+   ]
+  },
+  "s2__foreign": {
+   "name": "s2__foreign",
+   "label": "Foreign banks · 2 Non-Financial Corporations",
+   "group": "2 Non-Financial Corporations",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    372696.14,
+    444947.96,
+    512875.95,
+    577157.39,
+    634930.11,
+    748589.72,
+    811321.5,
+    946766.1
+   ]
+  },
+  "s2__rrb": {
+   "name": "s2__rrb",
+   "label": "Regional rural banks · 2 Non-Financial Corporations",
+   "group": "2 Non-Financial Corporations",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    5445.28,
+    7545.38,
+    7976.69,
+    6361.05,
+    9409.32,
+    4806.88,
+    5185.96,
+    9301.42
+   ]
+  },
+  "s2__private": {
+   "name": "s2__private",
+   "label": "Private sector banks · 2 Non-Financial Corporations",
+   "group": "2 Non-Financial Corporations",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    886629.95,
+    1030347.81,
+    1269132.5,
+    1403961.42,
+    1503610.99,
+    1760398.67,
+    1939546.08,
+    2254425.45
+   ]
+  },
+  "s2__sfb": {
+   "name": "s2__sfb",
+   "label": "Small finance banks · 2 Non-Financial Corporations",
+   "group": "2 Non-Financial Corporations",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    4941.35,
+    6663.49,
+    11333.57,
+    15386.28,
+    17374.67,
+    27428.21,
+    40489.24,
+    49796.79
+   ]
+  },
+  "s2__all_banks": {
+   "name": "s2__all_banks",
+   "label": "All banks · 2 Non-Financial Corporations",
+   "group": "2 Non-Financial Corporations",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    1836886.94,
+    2143792.15,
+    2546888.65,
+    2942916.06,
+    3261152.5,
+    3787494.04,
+    4233108.73,
+    4926454.69
+   ]
+  },
+  "s2__payments": {
+   "name": "s2__payments",
+   "label": "Payments banks · 2 Non-Financial Corporations",
+   "group": "2 Non-Financial Corporations",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    1.25,
+    0.47,
+    0.47,
+    4.44
+   ]
+  },
+  "s2_1__psb": {
+   "name": "s2_1__psb",
+   "label": "Public sector banks · 2.1 Government",
+   "group": "2.1 Government",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    292180.33,
+    332950.51,
+    329202.95,
+    387136.57,
+    382539.43,
+    419172.14,
+    452025.96,
+    672206.39
+   ]
+  },
+  "s2_1__foreign": {
+   "name": "s2_1__foreign",
+   "label": "Foreign banks · 2.1 Government",
+   "group": "2.1 Government",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    773.22,
+    1184.6,
+    1060.23,
+    3062.1,
+    3926.97,
+    3391.65,
+    3045.14,
+    2475.15
+   ]
+  },
+  "s2_1__rrb": {
+   "name": "s2_1__rrb",
+   "label": "Regional rural banks · 2.1 Government",
+   "group": "2.1 Government",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    2657.67,
+    3412.62,
+    3026.44,
+    2791.1,
+    5836.14,
+    3502.23,
+    3809.45,
+    7016.97
+   ]
+  },
+  "s2_1__private": {
+   "name": "s2_1__private",
+   "label": "Private sector banks · 2.1 Government",
+   "group": "2.1 Government",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    198039.85,
+    226455.41,
+    215753.53,
+    250618.51,
+    249539.64,
+    259857.68,
+    273695.65,
+    285612.15
+   ]
+  },
+  "s2_1__sfb": {
+   "name": "s2_1__sfb",
+   "label": "Small finance banks · 2.1 Government",
+   "group": "2.1 Government",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    1050.18,
+    933.66,
+    1188.73,
+    1876.54,
+    1844,
+    3841.76,
+    5949.75,
+    6695.62
+   ]
+  },
+  "s2_1__all_banks": {
+   "name": "s2_1__all_banks",
+   "label": "All banks · 2.1 Government",
+   "group": "2.1 Government",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    494701.24,
+    564936.8,
+    550231.89,
+    645484.82,
+    643686.18,
+    689765.46,
+    738525.95,
+    974006.27
+   ]
+  },
+  "s2_1__payments": {
+   "name": "s2_1__payments",
+   "label": "Payments banks · 2.1 Government",
+   "group": "2.1 Government",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "s2_2__psb": {
+   "name": "s2_2__psb",
+   "label": "Public sector banks · 2.2 Non-government",
+   "group": "2.2 Non-government",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    274993.88,
+    321336.99,
+    416366.99,
+    552913.35,
+    713286.73,
+    827097.95,
+    984539.53,
+    993954.1
+   ]
+  },
+  "s2_2__foreign": {
+   "name": "s2_2__foreign",
+   "label": "Foreign banks · 2.2 Non-government",
+   "group": "2.2 Non-government",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    371922.93,
+    443763.37,
+    511815.71,
+    574095.29,
+    631003.14,
+    745198.07,
+    808276.36,
+    944290.95
+   ]
+  },
+  "s2_2__rrb": {
+   "name": "s2_2__rrb",
+   "label": "Regional rural banks · 2.2 Non-government",
+   "group": "2.2 Non-government",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    2787.62,
+    4132.76,
+    4950.25,
+    3569.96,
+    3573.18,
+    1304.65,
+    1376.51,
+    2284.45
+   ]
+  },
+  "s2_2__private": {
+   "name": "s2_2__private",
+   "label": "Private sector banks · 2.2 Non-government",
+   "group": "2.2 Non-government",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    688590.1,
+    803892.41,
+    1053378.97,
+    1153342.91,
+    1254071.35,
+    1500540.99,
+    1665850.42,
+    1968813.3
+   ]
+  },
+  "s2_2__sfb": {
+   "name": "s2_2__sfb",
+   "label": "Small finance banks · 2.2 Non-government",
+   "group": "2.2 Non-government",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    3891.17,
+    5729.82,
+    10144.84,
+    13509.74,
+    15530.67,
+    23586.45,
+    34539.49,
+    43101.17
+   ]
+  },
+  "s2_2__all_banks": {
+   "name": "s2_2__all_banks",
+   "label": "All banks · 2.2 Non-government",
+   "group": "2.2 Non-government",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    1342185.69,
+    1578855.35,
+    1996656.76,
+    2297431.24,
+    2617466.32,
+    3097728.58,
+    3494582.78,
+    3952448.41
+   ]
+  },
+  "s2_2__payments": {
+   "name": "s2_2__payments",
+   "label": "Payments banks · 2.2 Non-government",
+   "group": "2.2 Non-government",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    1.25,
+    0.47,
+    0.47,
+    4.44
+   ]
+  },
+  "s3__psb": {
+   "name": "s3__psb",
+   "label": "Public sector banks · 3 Financial Corporations",
+   "group": "3 Financial Corporations",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    297614.92,
+    281009.83,
+    237616.67,
+    321167.06,
+    472192.08,
+    523763.46,
+    652282.85,
+    886856.8
+   ]
+  },
+  "s3__foreign": {
+   "name": "s3__foreign",
+   "label": "Foreign banks · 3 Financial Corporations",
+   "group": "3 Financial Corporations",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    51199.22,
+    68476.91,
+    66558.13,
+    68468.25,
+    52452.14,
+    61378.22,
+    70554.55,
+    83969.86
+   ]
+  },
+  "s3__rrb": {
+   "name": "s3__rrb",
+   "label": "Regional rural banks · 3 Financial Corporations",
+   "group": "3 Financial Corporations",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    8581.25,
+    13675.33,
+    13507.57,
+    14924.98,
+    15325.53,
+    19277.06,
+    15352.12,
+    26350.02
+   ]
+  },
+  "s3__private": {
+   "name": "s3__private",
+   "label": "Private sector banks · 3 Financial Corporations",
+   "group": "3 Financial Corporations",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    423639.05,
+    379789.52,
+    356711.94,
+    459534.14,
+    530185,
+    638129.63,
+    812974.92,
+    990974.36
+   ]
+  },
+  "s3__sfb": {
+   "name": "s3__sfb",
+   "label": "Small finance banks · 3 Financial Corporations",
+   "group": "3 Financial Corporations",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    20673.48,
+    30318.87,
+    31710.68,
+    34771.98,
+    41409.82,
+    56471.3,
+    70212.8,
+    83050.57
+   ]
+  },
+  "s3__all_banks": {
+   "name": "s3__all_banks",
+   "label": "All banks · 3 Financial Corporations",
+   "group": "3 Financial Corporations",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    801707.92,
+    773270.46,
+    706104.99,
+    898866.41,
+    1111564.71,
+    1299019.79,
+    1621377.26,
+    2071247.38
+   ]
+  },
+  "s3__payments": {
+   "name": "s3__payments",
+   "label": "Payments banks · 3 Financial Corporations",
+   "group": "3 Financial Corporations",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0.15,
+    0.12,
+    0,
+    45.78
+   ]
+  },
+  "s3_1__psb": {
+   "name": "s3_1__psb",
+   "label": "Public sector banks · 3.1 Deposit taking corporations",
+   "group": "3.1 Deposit taking corporations",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    140854.67,
+    130456.28,
+    136870.25,
+    163116.22,
+    199403.43,
+    208022.39,
+    304706.4,
+    406219.93
+   ]
+  },
+  "s3_1__foreign": {
+   "name": "s3_1__foreign",
+   "label": "Foreign banks · 3.1 Deposit taking corporations",
+   "group": "3.1 Deposit taking corporations",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    25151.69,
+    30892.9,
+    22912.39,
+    26486.94,
+    18621.07,
+    15849.15,
+    25750.97,
+    29058.42
+   ]
+  },
+  "s3_1__rrb": {
+   "name": "s3_1__rrb",
+   "label": "Regional rural banks · 3.1 Deposit taking corporations",
+   "group": "3.1 Deposit taking corporations",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    8408.99,
+    13232.99,
+    13414.98,
+    14729.39,
+    14931.41,
+    19031.42,
+    14596.15,
+    25298.31
+   ]
+  },
+  "s3_1__private": {
+   "name": "s3_1__private",
+   "label": "Private sector banks · 3.1 Deposit taking corporations",
+   "group": "3.1 Deposit taking corporations",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    162251.02,
+    186341.64,
+    177231.01,
+    171419.97,
+    200590.11,
+    252003.84,
+    292568.6,
+    301534.07
+   ]
+  },
+  "s3_1__sfb": {
+   "name": "s3_1__sfb",
+   "label": "Small finance banks · 3.1 Deposit taking corporations",
+   "group": "3.1 Deposit taking corporations",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    12433.98,
+    23788.21,
+    26872.25,
+    30997.05,
+    35832.56,
+    47970.25,
+    60186.79,
+    67174.6
+   ]
+  },
+  "s3_1__all_banks": {
+   "name": "s3_1__all_banks",
+   "label": "All banks · 3.1 Deposit taking corporations",
+   "group": "3.1 Deposit taking corporations",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    349100.35,
+    384712.01,
+    377300.88,
+    406749.57,
+    469378.57,
+    542877.05,
+    697808.9,
+    829331.1
+   ]
+  },
+  "s3_1__payments": {
+   "name": "s3_1__payments",
+   "label": "Payments banks · 3.1 Deposit taking corporations",
+   "group": "3.1 Deposit taking corporations",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    45.77
+   ]
+  },
+  "s3_1_1__psb": {
+   "name": "s3_1_1__psb",
+   "label": "Public sector banks · 3.1.1 Banks",
+   "group": "3.1.1 Banks",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    83576.54,
+    67137.11,
+    50395.3,
+    65987.79,
+    76543.95,
+    96108.52,
+    142468.75,
+    239027.15
+   ]
+  },
+  "s3_1_1__foreign": {
+   "name": "s3_1_1__foreign",
+   "label": "Foreign banks · 3.1.1 Banks",
+   "group": "3.1.1 Banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    17044.9,
+    19185.66,
+    14968.89,
+    17706.7,
+    8982.19,
+    8415.47,
+    15895.53,
+    21496.34
+   ]
+  },
+  "s3_1_1__rrb": {
+   "name": "s3_1_1__rrb",
+   "label": "Regional rural banks · 3.1.1 Banks",
+   "group": "3.1.1 Banks",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    6317.49,
+    10800.54,
+    11580.08,
+    11741.51,
+    10907.97,
+    17084.68,
+    12789.81,
+    23739.49
+   ]
+  },
+  "s3_1_1__private": {
+   "name": "s3_1_1__private",
+   "label": "Private sector banks · 3.1.1 Banks",
+   "group": "3.1.1 Banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    139188.31,
+    163200.12,
+    156878.39,
+    144178.58,
+    166903.1,
+    200178.51,
+    233464.15,
+    236054
+   ]
+  },
+  "s3_1_1__sfb": {
+   "name": "s3_1_1__sfb",
+   "label": "Small finance banks · 3.1.1 Banks",
+   "group": "3.1.1 Banks",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    11615.29,
+    19813.5,
+    21793.49,
+    24975.95,
+    29993.42,
+    39391.84,
+    49804.56,
+    58022.91
+   ]
+  },
+  "s3_1_1__all_banks": {
+   "name": "s3_1_1__all_banks",
+   "label": "All banks · 3.1.1 Banks",
+   "group": "3.1.1 Banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    257742.53,
+    280136.92,
+    255616.16,
+    264590.53,
+    293330.63,
+    361179.02,
+    454422.79,
+    578339.88
+   ]
+  },
+  "s3_1_1__payments": {
+   "name": "s3_1_1__payments",
+   "label": "Payments banks · 3.1.1 Banks",
+   "group": "3.1.1 Banks",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "s3_1_2__psb": {
+   "name": "s3_1_2__psb",
+   "label": "Public sector banks · 3.1.2 HFCs",
+   "group": "3.1.2 HFCs",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    7917.36,
+    572.51,
+    239.72,
+    469.36,
+    288.91,
+    782.89,
+    539.85,
+    537.51
+   ]
+  },
+  "s3_1_2__foreign": {
+   "name": "s3_1_2__foreign",
+   "label": "Foreign banks · 3.1.2 HFCs",
+   "group": "3.1.2 HFCs",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    353.62,
+    258.98,
+    192.81,
+    132.49,
+    514.24,
+    52.68,
+    517.48,
+    103.24
+   ]
+  },
+  "s3_1_2__rrb": {
+   "name": "s3_1_2__rrb",
+   "label": "Regional rural banks · 3.1.2 HFCs",
+   "group": "3.1.2 HFCs",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    13.06,
+    24.94,
+    37.62,
+    43.33,
+    42.25,
+    67.25,
+    62.02,
+    105.82
+   ]
+  },
+  "s3_1_2__private": {
+   "name": "s3_1_2__private",
+   "label": "Private sector banks · 3.1.2 HFCs",
+   "group": "3.1.2 HFCs",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    3469.61,
+    4783.67,
+    1437.33,
+    823.72,
+    2025.33,
+    3252.38,
+    2257.99,
+    2831.88
+   ]
+  },
+  "s3_1_2__sfb": {
+   "name": "s3_1_2__sfb",
+   "label": "Small finance banks · 3.1.2 HFCs",
+   "group": "3.1.2 HFCs",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    47.77,
+    434.64,
+    418.6,
+    494.13,
+    276.42,
+    344.58,
+    549.07,
+    529.34
+   ]
+  },
+  "s3_1_2__all_banks": {
+   "name": "s3_1_2__all_banks",
+   "label": "All banks · 3.1.2 HFCs",
+   "group": "3.1.2 HFCs",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    11801.41,
+    6074.75,
+    2326.09,
+    1963.04,
+    3147.15,
+    4499.77,
+    3926.4,
+    4107.8
+   ]
+  },
+  "s3_1_2__payments": {
+   "name": "s3_1_2__payments",
+   "label": "Payments banks · 3.1.2 HFCs",
+   "group": "3.1.2 HFCs",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "s3_1_3__psb": {
+   "name": "s3_1_3__psb",
+   "label": "Public sector banks · 3.1.3 NBFCs other than HFCs",
+   "group": "3.1.3 NBFCs other than HFCs",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    34576.64,
+    45421.07,
+    64774.71,
+    68899.5,
+    87543.5,
+    83208.4,
+    131011.39,
+    136265.91
+   ]
+  },
+  "s3_1_3__foreign": {
+   "name": "s3_1_3__foreign",
+   "label": "Foreign banks · 3.1.3 NBFCs other than HFCs",
+   "group": "3.1.3 NBFCs other than HFCs",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    7752.75,
+    11448.08,
+    7685.21,
+    8560.7,
+    9124.64,
+    7327.08,
+    9297.7,
+    7382.75
+   ]
+  },
+  "s3_1_3__rrb": {
+   "name": "s3_1_3__rrb",
+   "label": "Regional rural banks · 3.1.3 NBFCs other than HFCs",
+   "group": "3.1.3 NBFCs other than HFCs",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    161.04,
+    102.4,
+    81.36,
+    70.83,
+    78.08,
+    86.4,
+    49.94,
+    36.59
+   ]
+  },
+  "s3_1_3__private": {
+   "name": "s3_1_3__private",
+   "label": "Private sector banks · 3.1.3 NBFCs other than HFCs",
+   "group": "3.1.3 NBFCs other than HFCs",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    13045.96,
+    8559.94,
+    6767.04,
+    10277.74,
+    13352.42,
+    22903.55,
+    23650.83,
+    25854.76
+   ]
+  },
+  "s3_1_3__sfb": {
+   "name": "s3_1_3__sfb",
+   "label": "Small finance banks · 3.1.3 NBFCs other than HFCs",
+   "group": "3.1.3 NBFCs other than HFCs",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    580.09,
+    2869.85,
+    3577.53,
+    4222.37,
+    3748.53,
+    5832.81,
+    7424.9,
+    5929.5
+   ]
+  },
+  "s3_1_3__all_banks": {
+   "name": "s3_1_3__all_banks",
+   "label": "All banks · 3.1.3 NBFCs other than HFCs",
+   "group": "3.1.3 NBFCs other than HFCs",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    56116.48,
+    68401.33,
+    82885.85,
+    92031.13,
+    113847.17,
+    119358.23,
+    171434.77,
+    175515.29
+   ]
+  },
+  "s3_1_3__payments": {
+   "name": "s3_1_3__payments",
+   "label": "Payments banks · 3.1.3 NBFCs other than HFCs",
+   "group": "3.1.3 NBFCs other than HFCs",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    45.77
+   ]
+  },
+  "s3_1_4__psb": {
+   "name": "s3_1_4__psb",
+   "label": "Public sector banks · 3.1.4 Cooperative Credit Societies",
+   "group": "3.1.4 Cooperative Credit Societies",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    14784.13,
+    17325.59,
+    21460.52,
+    27759.57,
+    35027.07,
+    27922.58,
+    30686.41,
+    30389.36
+   ]
+  },
+  "s3_1_4__foreign": {
+   "name": "s3_1_4__foreign",
+   "label": "Foreign banks · 3.1.4 Cooperative Credit Societies",
+   "group": "3.1.4 Cooperative Credit Societies",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    0.42,
+    0.18,
+    65.48,
+    87.05,
+    0,
+    53.93,
+    40.26,
+    76.09
+   ]
+  },
+  "s3_1_4__rrb": {
+   "name": "s3_1_4__rrb",
+   "label": "Regional rural banks · 3.1.4 Cooperative Credit Societies",
+   "group": "3.1.4 Cooperative Credit Societies",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    1917.4,
+    2305.1,
+    1715.91,
+    2873.72,
+    3903.11,
+    1793.1,
+    1694.37,
+    1416.41
+   ]
+  },
+  "s3_1_4__private": {
+   "name": "s3_1_4__private",
+   "label": "Private sector banks · 3.1.4 Cooperative Credit Societies",
+   "group": "3.1.4 Cooperative Credit Societies",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    6547.15,
+    9797.91,
+    12148.25,
+    16139.92,
+    18309.26,
+    25669.41,
+    33195.63,
+    36793.43
+   ]
+  },
+  "s3_1_4__sfb": {
+   "name": "s3_1_4__sfb",
+   "label": "Small finance banks · 3.1.4 Cooperative Credit Societies",
+   "group": "3.1.4 Cooperative Credit Societies",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    190.84,
+    670.22,
+    1082.63,
+    1304.6,
+    1814.19,
+    2401.02,
+    2408.26,
+    2692.84
+   ]
+  },
+  "s3_1_4__all_banks": {
+   "name": "s3_1_4__all_banks",
+   "label": "All banks · 3.1.4 Cooperative Credit Societies",
+   "group": "3.1.4 Cooperative Credit Societies",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    23439.94,
+    30099.01,
+    36472.79,
+    48164.87,
+    59053.63,
+    57840.03,
+    68024.93,
+    71368.13
+   ]
+  },
+  "s3_1_4__payments": {
+   "name": "s3_1_4__payments",
+   "label": "Payments banks · 3.1.4 Cooperative Credit Societies",
+   "group": "3.1.4 Cooperative Credit Societies",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "s3_2__psb": {
+   "name": "s3_2__psb",
+   "label": "Public sector banks · 3.2 Mutual funds",
+   "group": "3.2 Mutual funds",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    25102.58,
+    13243.13,
+    2425.55,
+    46479.31,
+    83271.26,
+    93861.24,
+    88011.89,
+    118832.88
+   ]
+  },
+  "s3_2__foreign": {
+   "name": "s3_2__foreign",
+   "label": "Foreign banks · 3.2 Mutual funds",
+   "group": "3.2 Mutual funds",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    5108.81,
+    5206.46,
+    8765.34,
+    10238.81,
+    4117.55,
+    9077.37,
+    7650.56,
+    13352.5
+   ]
+  },
+  "s3_2__rrb": {
+   "name": "s3_2__rrb",
+   "label": "Regional rural banks · 3.2 Mutual funds",
+   "group": "3.2 Mutual funds",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    8.52,
+    7.51,
+    5.95,
+    2.89,
+    1.73,
+    1.37,
+    1.36,
+    0.65
+   ]
+  },
+  "s3_2__private": {
+   "name": "s3_2__private",
+   "label": "Private sector banks · 3.2 Mutual funds",
+   "group": "3.2 Mutual funds",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    76245.38,
+    67879.51,
+    38315.05,
+    75783.53,
+    55850.07,
+    113026.86,
+    145504.02,
+    197487.32
+   ]
+  },
+  "s3_2__sfb": {
+   "name": "s3_2__sfb",
+   "label": "Small finance banks · 3.2 Mutual funds",
+   "group": "3.2 Mutual funds",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    4608.98,
+    3831.73,
+    1725.32,
+    1034.6,
+    350.08,
+    2280.01,
+    4780.97,
+    6605.55
+   ]
+  },
+  "s3_2__all_banks": {
+   "name": "s3_2__all_banks",
+   "label": "All banks · 3.2 Mutual funds",
+   "group": "3.2 Mutual funds",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    111074.28,
+    90168.34,
+    51237.21,
+    133539.16,
+    143590.69,
+    218246.84,
+    245948.81,
+    336278.9
+   ]
+  },
+  "s3_2__payments": {
+   "name": "s3_2__payments",
+   "label": "Payments banks · 3.2 Mutual funds",
+   "group": "3.2 Mutual funds",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "s3_3__psb": {
+   "name": "s3_3__psb",
+   "label": "Public sector banks · 3.3 Insurance corporations",
+   "group": "3.3 Insurance corporations",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    18973.87,
+    9854.61,
+    4132.25,
+    4270.43,
+    3165.77,
+    19103.82,
+    3855.4,
+    3823.81
+   ]
+  },
+  "s3_3__foreign": {
+   "name": "s3_3__foreign",
+   "label": "Foreign banks · 3.3 Insurance corporations",
+   "group": "3.3 Insurance corporations",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    1904.99,
+    4181.97,
+    2801.09,
+    2816.91,
+    2115.96,
+    2541.4,
+    3341.18,
+    3769.04
+   ]
+  },
+  "s3_3__rrb": {
+   "name": "s3_3__rrb",
+   "label": "Regional rural banks · 3.3 Insurance corporations",
+   "group": "3.3 Insurance corporations",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    9.05,
+    24.1,
+    25.07,
+    45.36,
+    99.49,
+    195.78,
+    320.27,
+    22.06
+   ]
+  },
+  "s3_3__private": {
+   "name": "s3_3__private",
+   "label": "Private sector banks · 3.3 Insurance corporations",
+   "group": "3.3 Insurance corporations",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    26926.53,
+    16480.55,
+    21801.69,
+    17631.7,
+    22161.46,
+    28870.4,
+    36820.22,
+    47160.81
+   ]
+  },
+  "s3_3__sfb": {
+   "name": "s3_3__sfb",
+   "label": "Small finance banks · 3.3 Insurance corporations",
+   "group": "3.3 Insurance corporations",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    555.33,
+    669.82,
+    607,
+    463.45,
+    1639.51,
+    1641.86,
+    1910.6,
+    2596.11
+   ]
+  },
+  "s3_3__all_banks": {
+   "name": "s3_3__all_banks",
+   "label": "All banks · 3.3 Insurance corporations",
+   "group": "3.3 Insurance corporations",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    48369.77,
+    31211.06,
+    29367.1,
+    25227.86,
+    29182.21,
+    52353.26,
+    46247.67,
+    57371.84
+   ]
+  },
+  "s3_3__payments": {
+   "name": "s3_3__payments",
+   "label": "Payments banks · 3.3 Insurance corporations",
+   "group": "3.3 Insurance corporations",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0.02,
+    0,
+    0,
+    0
+   ]
+  },
+  "s3_4__psb": {
+   "name": "s3_4__psb",
+   "label": "Public sector banks · 3.4 Provident and Pension Funds",
+   "group": "3.4 Provident and Pension Funds",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    18312.65,
+    22515.93,
+    3594.39,
+    3726.85,
+    3243.4,
+    2163.06,
+    2969.38,
+    1899.83
+   ]
+  },
+  "s3_4__foreign": {
+   "name": "s3_4__foreign",
+   "label": "Foreign banks · 3.4 Provident and Pension Funds",
+   "group": "3.4 Provident and Pension Funds",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    327.87,
+    395.23,
+    609.16,
+    169.5,
+    208.59,
+    158.58,
+    830.83,
+    412.32
+   ]
+  },
+  "s3_4__rrb": {
+   "name": "s3_4__rrb",
+   "label": "Regional rural banks · 3.4 Provident and Pension Funds",
+   "group": "3.4 Provident and Pension Funds",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    104.94,
+    263,
+    2.73,
+    59.24,
+    239.37,
+    8.16,
+    45.86,
+    16.69
+   ]
+  },
+  "s3_4__private": {
+   "name": "s3_4__private",
+   "label": "Private sector banks · 3.4 Provident and Pension Funds",
+   "group": "3.4 Provident and Pension Funds",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    9403.23,
+    12668.71,
+    16672.83,
+    44294.6,
+    72177.21,
+    35680.95,
+    62580.3,
+    7431.18
+   ]
+  },
+  "s3_4__sfb": {
+   "name": "s3_4__sfb",
+   "label": "Small finance banks · 3.4 Provident and Pension Funds",
+   "group": "3.4 Provident and Pension Funds",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    72.87,
+    120.82,
+    92.3,
+    76.61,
+    222.65,
+    77.82,
+    502.1,
+    955.56
+   ]
+  },
+  "s3_4__all_banks": {
+   "name": "s3_4__all_banks",
+   "label": "All banks · 3.4 Provident and Pension Funds",
+   "group": "3.4 Provident and Pension Funds",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    28221.56,
+    35963.69,
+    20971.41,
+    48326.81,
+    76091.23,
+    38088.57,
+    66928.47,
+    10715.58
+   ]
+  },
+  "s3_4__payments": {
+   "name": "s3_4__payments",
+   "label": "Payments banks · 3.4 Provident and Pension Funds",
+   "group": "3.4 Provident and Pension Funds",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "s3_5__psb": {
+   "name": "s3_5__psb",
+   "label": "Public sector banks · 3.5 Other financial intermediaries, except Insurance and pension funds",
+   "group": "3.5 Other financial intermediaries, except Insurance and pension funds",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    94371.14,
+    104939.87,
+    90594.24,
+    103574.24,
+    183108.21,
+    200612.96,
+    252739.78,
+    356080.35
+   ]
+  },
+  "s3_5__foreign": {
+   "name": "s3_5__foreign",
+   "label": "Foreign banks · 3.5 Other financial intermediaries, except Insurance and pension funds",
+   "group": "3.5 Other financial intermediaries, except Insurance and pension funds",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    18705.86,
+    27800.36,
+    31470.16,
+    28756.08,
+    27388.96,
+    33751.72,
+    32981.02,
+    37377.57
+   ]
+  },
+  "s3_5__rrb": {
+   "name": "s3_5__rrb",
+   "label": "Regional rural banks · 3.5 Other financial intermediaries, except Insurance and pension funds",
+   "group": "3.5 Other financial intermediaries, except Insurance and pension funds",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    49.76,
+    147.74,
+    58.83,
+    88.09,
+    53.54,
+    40.33,
+    388.49,
+    1012.32
+   ]
+  },
+  "s3_5__private": {
+   "name": "s3_5__private",
+   "label": "Private sector banks · 3.5 Other financial intermediaries, except Insurance and pension funds",
+   "group": "3.5 Other financial intermediaries, except Insurance and pension funds",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    148812.88,
+    96419.1,
+    102691.35,
+    150404.34,
+    179406.14,
+    208547.59,
+    275501.78,
+    437360.98
+   ]
+  },
+  "s3_5__sfb": {
+   "name": "s3_5__sfb",
+   "label": "Small finance banks · 3.5 Other financial intermediaries, except Insurance and pension funds",
+   "group": "3.5 Other financial intermediaries, except Insurance and pension funds",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    3002.32,
+    1908.29,
+    2413.81,
+    2200.27,
+    3365.02,
+    4501.37,
+    2832.34,
+    5718.74
+   ]
+  },
+  "s3_5__all_banks": {
+   "name": "s3_5__all_banks",
+   "label": "All banks · 3.5 Other financial intermediaries, except Insurance and pension funds",
+   "group": "3.5 Other financial intermediaries, except Insurance and pension funds",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    264941.96,
+    231215.35,
+    227228.39,
+    285023.02,
+    393322,
+    447454.08,
+    564443.4,
+    837549.96
+   ]
+  },
+  "s3_5__payments": {
+   "name": "s3_5__payments",
+   "label": "Payments banks · 3.5 Other financial intermediaries, except Insurance and pension funds",
+   "group": "3.5 Other financial intermediaries, except Insurance and pension funds",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0.13,
+    0.12,
+    0,
+    0
+   ]
+  },
+  "s4__psb": {
+   "name": "s4__psb",
+   "label": "Public sector banks · 4 Household",
+   "group": "4 Household",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    5800441.43,
+    6234852.02,
+    6881240.51,
+    7222014.56,
+    7620199.05,
+    8344865.28,
+    9023109.37,
+    9853528.37
+   ]
+  },
+  "s4__foreign": {
+   "name": "s4__foreign",
+   "label": "Foreign banks · 4 Household",
+   "group": "4 Household",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    84792.88,
+    96381.29,
+    125382.87,
+    128730.9,
+    97619.21,
+    108640.97,
+    121890.38,
+    123740.76
+   ]
+  },
+  "s4__rrb": {
+   "name": "s4__rrb",
+   "label": "Regional rural banks · 4 Household",
+   "group": "4 Household",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    394986.45,
+    431010.12,
+    473700.36,
+    512290.79,
+    557349.67,
+    610117.02,
+    657731.74,
+    706951.57
+   ]
+  },
+  "s4__private": {
+   "name": "s4__private",
+   "label": "Private sector banks · 4 Household",
+   "group": "4 Household",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    1851925.72,
+    2108460.2,
+    2522075.04,
+    2870541.44,
+    3393165.17,
+    3971224.59,
+    4381618.64,
+    4887064.16
+   ]
+  },
+  "s4__sfb": {
+   "name": "s4__sfb",
+   "label": "Small finance banks · 4 Household",
+   "group": "4 Household",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    19324.23,
+    39423.19,
+    58522.15,
+    85010.63,
+    112014.68,
+    151152.72,
+    176870.4,
+    201593.09
+   ]
+  },
+  "s4__all_banks": {
+   "name": "s4__all_banks",
+   "label": "All banks · 4 Household",
+   "group": "4 Household",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    8151470.71,
+    8910126.82,
+    10060920.93,
+    10818588.32,
+    11792506.7,
+    13202158.57,
+    14386265.77,
+    15809614.6
+   ]
+  },
+  "s4__payments": {
+   "name": "s4__payments",
+   "label": "Payments banks · 4 Household",
+   "group": "4 Household",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    12158.93,
+    16158,
+    25045.25,
+    36736.65
+   ]
+  },
+  "s4_1__psb": {
+   "name": "s4_1__psb",
+   "label": "Public sector banks · 4.1 Individuals (including HUF)",
+   "group": "4.1 Individuals (including HUF)",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    5158842,
+    5562926.96,
+    6069581.45,
+    6347990.52,
+    6655659.29,
+    7245165.81,
+    7789014.8,
+    8524812.44
+   ]
+  },
+  "s4_1__foreign": {
+   "name": "s4_1__foreign",
+   "label": "Foreign banks · 4.1 Individuals (including HUF)",
+   "group": "4.1 Individuals (including HUF)",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    65028.54,
+    73260.27,
+    97815.43,
+    98304.88,
+    73714.42,
+    80505.58,
+    88198.8,
+    93467.39
+   ]
+  },
+  "s4_1__rrb": {
+   "name": "s4_1__rrb",
+   "label": "Regional rural banks · 4.1 Individuals (including HUF)",
+   "group": "4.1 Individuals (including HUF)",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    366402.53,
+    396413.29,
+    437345.57,
+    471784.73,
+    510579.3,
+    566898.32,
+    611687.07,
+    665834.75
+   ]
+  },
+  "s4_1__private": {
+   "name": "s4_1__private",
+   "label": "Private sector banks · 4.1 Individuals (including HUF)",
+   "group": "4.1 Individuals (including HUF)",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    1481071.36,
+    1733489.04,
+    2101577.37,
+    2359781.36,
+    2697514.41,
+    3245320.23,
+    3610945.64,
+    3975777.22
+   ]
+  },
+  "s4_1__sfb": {
+   "name": "s4_1__sfb",
+   "label": "Small finance banks · 4.1 Individuals (including HUF)",
+   "group": "4.1 Individuals (including HUF)",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    16608.41,
+    34562.97,
+    52041.69,
+    76570.96,
+    102259.41,
+    137819.43,
+    159470.95,
+    180038.04
+   ]
+  },
+  "s4_1__all_banks": {
+   "name": "s4_1__all_banks",
+   "label": "All banks · 4.1 Individuals (including HUF)",
+   "group": "4.1 Individuals (including HUF)",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    7087952.84,
+    7800652.55,
+    8758361.52,
+    9354432.44,
+    10051885.75,
+    11291867.37,
+    12284362.52,
+    13476666.49
+   ]
+  },
+  "s4_1__payments": {
+   "name": "s4_1__payments",
+   "label": "Payments banks · 4.1 Individuals (including HUF)",
+   "group": "4.1 Individuals (including HUF)",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    12158.91,
+    16158,
+    25045.25,
+    36736.65
+   ]
+  },
+  "s4_1_1__psb": {
+   "name": "s4_1_1__psb",
+   "label": "Public sector banks · 4.1.1 of which women",
+   "group": "4.1.1 of which women",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    1680671.29,
+    1860638.03,
+    1975318.11,
+    2290178.99,
+    2559912.75,
+    2854037.44,
+    3136648.34,
+    3506416.17
+   ]
+  },
+  "s4_1_1__foreign": {
+   "name": "s4_1_1__foreign",
+   "label": "Foreign banks · 4.1.1 of which women",
+   "group": "4.1.1 of which women",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    12029.21,
+    23248.05,
+    33155.35,
+    33684.61,
+    25781.95,
+    28455.81,
+    31301.53,
+    33581.58
+   ]
+  },
+  "s4_1_1__rrb": {
+   "name": "s4_1_1__rrb",
+   "label": "Regional rural banks · 4.1.1 of which women",
+   "group": "4.1.1 of which women",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    115147.36,
+    139404.68,
+    147845.77,
+    189901.48,
+    200865.12,
+    234114.36,
+    259281.65,
+    276243.96
+   ]
+  },
+  "s4_1_1__private": {
+   "name": "s4_1_1__private",
+   "label": "Private sector banks · 4.1.1 of which women",
+   "group": "4.1.1 of which women",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    488189.42,
+    581666.91,
+    695850.33,
+    869932.16,
+    1066928.4,
+    1300494.23,
+    1436416.12,
+    1634199.65
+   ]
+  },
+  "s4_1_1__sfb": {
+   "name": "s4_1_1__sfb",
+   "label": "Small finance banks · 4.1.1 of which women",
+   "group": "4.1.1 of which women",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    7311.17,
+    14126.3,
+    21250.97,
+    30475.21,
+    43472.03,
+    58794.99,
+    70200.4,
+    79666.31
+   ]
+  },
+  "s4_1_1__all_banks": {
+   "name": "s4_1_1__all_banks",
+   "label": "All banks · 4.1.1 of which women",
+   "group": "4.1.1 of which women",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    2303348.46,
+    2619083.97,
+    2873420.54,
+    3414172.46,
+    3900593.42,
+    4482080.14,
+    4945394.41,
+    5547624.69
+   ]
+  },
+  "s4_1_1__payments": {
+   "name": "s4_1_1__payments",
+   "label": "Payments banks · 4.1.1 of which women",
+   "group": "4.1.1 of which women",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    3633.16,
+    6183.32,
+    11546.38,
+    17517.02
+   ]
+  },
+  "s4_2__psb": {
+   "name": "s4_2__psb",
+   "label": "Public sector banks · 4.2 Un-incorporated Enterprise (UIE)",
+   "group": "4.2 Un-incorporated Enterprise (UIE)",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    347510.95,
+    356820.13,
+    357683.04,
+    382060.72,
+    398828.46,
+    435089.06,
+    449432.32,
+    488903.66
+   ]
+  },
+  "s4_2__foreign": {
+   "name": "s4_2__foreign",
+   "label": "Foreign banks · 4.2 Un-incorporated Enterprise (UIE)",
+   "group": "4.2 Un-incorporated Enterprise (UIE)",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    10940.5,
+    16725.59,
+    13269.76,
+    18506.5,
+    13144.93,
+    14222.1,
+    17438.29,
+    18411.12
+   ]
+  },
+  "s4_2__rrb": {
+   "name": "s4_2__rrb",
+   "label": "Regional rural banks · 4.2 Un-incorporated Enterprise (UIE)",
+   "group": "4.2 Un-incorporated Enterprise (UIE)",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    10277.85,
+    10796.48,
+    8252.22,
+    8751.74,
+    10294.95,
+    8147.9,
+    8685.5,
+    6230.05
+   ]
+  },
+  "s4_2__private": {
+   "name": "s4_2__private",
+   "label": "Private sector banks · 4.2 Un-incorporated Enterprise (UIE)",
+   "group": "4.2 Un-incorporated Enterprise (UIE)",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    216904.43,
+    232460.03,
+    270239.78,
+    307716.61,
+    374354,
+    445531.75,
+    476137.8,
+    559739.43
+   ]
+  },
+  "s4_2__sfb": {
+   "name": "s4_2__sfb",
+   "label": "Small finance banks · 4.2 Un-incorporated Enterprise (UIE)",
+   "group": "4.2 Un-incorporated Enterprise (UIE)",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    1292.88,
+    3055.25,
+    3406.72,
+    4485.32,
+    6467.45,
+    8894.79,
+    11122.74,
+    13879.46
+   ]
+  },
+  "s4_2__all_banks": {
+   "name": "s4_2__all_banks",
+   "label": "All banks · 4.2 Un-incorporated Enterprise (UIE)",
+   "group": "4.2 Un-incorporated Enterprise (UIE)",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    586926.61,
+    619857.48,
+    652851.52,
+    721520.88,
+    803089.82,
+    911885.6,
+    962816.66,
+    1087163.73
+   ]
+  },
+  "s4_2__payments": {
+   "name": "s4_2__payments",
+   "label": "Payments banks · 4.2 Un-incorporated Enterprise (UIE)",
+   "group": "4.2 Un-incorporated Enterprise (UIE)",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0.01,
+    0.01,
+    0,
+    0
+   ]
+  },
+  "s4_2_1__psb": {
+   "name": "s4_2_1__psb",
+   "label": "Public sector banks · 4.2.1 Financial UIE",
+   "group": "4.2.1 Financial UIE",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    20947.41,
+    22308.17,
+    29288.96,
+    28100.35,
+    28112.32,
+    30848.88,
+    31684.68,
+    51742.87
+   ]
+  },
+  "s4_2_1__foreign": {
+   "name": "s4_2_1__foreign",
+   "label": "Foreign banks · 4.2.1 Financial UIE",
+   "group": "4.2.1 Financial UIE",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    3454.91,
+    5058.57,
+    5487.95,
+    9913.51,
+    4258.28,
+    4091.09,
+    6577.03,
+    4817.05
+   ]
+  },
+  "s4_2_1__rrb": {
+   "name": "s4_2_1__rrb",
+   "label": "Regional rural banks · 4.2.1 Financial UIE",
+   "group": "4.2.1 Financial UIE",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    654.32,
+    720.25,
+    1098.62,
+    577.75,
+    801.24,
+    678.13,
+    627.06,
+    559.57
+   ]
+  },
+  "s4_2_1__private": {
+   "name": "s4_2_1__private",
+   "label": "Private sector banks · 4.2.1 Financial UIE",
+   "group": "4.2.1 Financial UIE",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    6709.68,
+    6958.47,
+    10799.71,
+    22518.43,
+    57324.62,
+    103565.44,
+    122324.6,
+    119023.09
+   ]
+  },
+  "s4_2_1__sfb": {
+   "name": "s4_2_1__sfb",
+   "label": "Small finance banks · 4.2.1 Financial UIE",
+   "group": "4.2.1 Financial UIE",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    10.6,
+    10.81,
+    29.23,
+    66.82,
+    114.69,
+    167.09,
+    204.61,
+    256.32
+   ]
+  },
+  "s4_2_1__all_banks": {
+   "name": "s4_2_1__all_banks",
+   "label": "All banks · 4.2.1 Financial UIE",
+   "group": "4.2.1 Financial UIE",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    31776.93,
+    35056.27,
+    46704.47,
+    61176.86,
+    90611.14,
+    139350.63,
+    161417.98,
+    176398.9
+   ]
+  },
+  "s4_2_1__payments": {
+   "name": "s4_2_1__payments",
+   "label": "Payments banks · 4.2.1 Financial UIE",
+   "group": "4.2.1 Financial UIE",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "s4_2_2__psb": {
+   "name": "s4_2_2__psb",
+   "label": "Public sector banks · 4.2.2 Others UIE",
+   "group": "4.2.2 Others UIE",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    326563.53,
+    334511.96,
+    328394.08,
+    353960.37,
+    370716.15,
+    404240.19,
+    417747.64,
+    437160.79
+   ]
+  },
+  "s4_2_2__foreign": {
+   "name": "s4_2_2__foreign",
+   "label": "Foreign banks · 4.2.2 Others UIE",
+   "group": "4.2.2 Others UIE",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    7485.59,
+    11667.02,
+    7781.81,
+    8592.99,
+    8886.65,
+    10131.01,
+    10861.26,
+    13594.07
+   ]
+  },
+  "s4_2_2__rrb": {
+   "name": "s4_2_2__rrb",
+   "label": "Regional rural banks · 4.2.2 Others UIE",
+   "group": "4.2.2 Others UIE",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    9623.53,
+    10076.23,
+    7153.6,
+    8173.99,
+    9493.71,
+    7469.77,
+    8058.44,
+    5670.48
+   ]
+  },
+  "s4_2_2__private": {
+   "name": "s4_2_2__private",
+   "label": "Private sector banks · 4.2.2 Others UIE",
+   "group": "4.2.2 Others UIE",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    210194.75,
+    225501.56,
+    259440.07,
+    285198.18,
+    317029.39,
+    341966.31,
+    353813.21,
+    440716.34
+   ]
+  },
+  "s4_2_2__sfb": {
+   "name": "s4_2_2__sfb",
+   "label": "Small finance banks · 4.2.2 Others UIE",
+   "group": "4.2.2 Others UIE",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    1282.29,
+    3044.44,
+    3377.49,
+    4418.5,
+    6352.77,
+    8727.69,
+    10918.12,
+    13623.14
+   ]
+  },
+  "s4_2_2__all_banks": {
+   "name": "s4_2_2__all_banks",
+   "label": "All banks · 4.2.2 Others UIE",
+   "group": "4.2.2 Others UIE",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    555149.68,
+    584801.21,
+    606147.05,
+    660344.02,
+    712478.68,
+    772534.97,
+    801398.67,
+    910764.82
+   ]
+  },
+  "s4_2_2__payments": {
+   "name": "s4_2_2__payments",
+   "label": "Payments banks · 4.2.2 Others UIE",
+   "group": "4.2.2 Others UIE",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0.01,
+    0.01,
+    0,
+    0
+   ]
+  },
+  "s4_3__psb": {
+   "name": "s4_3__psb",
+   "label": "Public sector banks · 4.3 Non Profit Institutions Serving Households",
+   "group": "4.3 Non Profit Institutions Serving Households",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    294088.49,
+    315104.93,
+    453976.01,
+    491963.33,
+    565711.29,
+    664610.4,
+    784662.24,
+    839812.27
+   ]
+  },
+  "s4_3__foreign": {
+   "name": "s4_3__foreign",
+   "label": "Foreign banks · 4.3 Non Profit Institutions Serving Households",
+   "group": "4.3 Non Profit Institutions Serving Households",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    8823.84,
+    6395.43,
+    14297.68,
+    11919.52,
+    10759.85,
+    13913.29,
+    16253.3,
+    11862.26
+   ]
+  },
+  "s4_3__rrb": {
+   "name": "s4_3__rrb",
+   "label": "Regional rural banks · 4.3 Non Profit Institutions Serving Households",
+   "group": "4.3 Non Profit Institutions Serving Households",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    18306.07,
+    23800.35,
+    28102.57,
+    31754.33,
+    36475.41,
+    35070.8,
+    37359.16,
+    34886.77
+   ]
+  },
+  "s4_3__private": {
+   "name": "s4_3__private",
+   "label": "Private sector banks · 4.3 Non Profit Institutions Serving Households",
+   "group": "4.3 Non Profit Institutions Serving Households",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    153949.93,
+    142511.13,
+    150257.9,
+    203043.47,
+    321296.75,
+    280372.61,
+    294535.19,
+    351547.51
+   ]
+  },
+  "s4_3__sfb": {
+   "name": "s4_3__sfb",
+   "label": "Small finance banks · 4.3 Non Profit Institutions Serving Households",
+   "group": "4.3 Non Profit Institutions Serving Households",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    1422.94,
+    1804.98,
+    3073.74,
+    3954.35,
+    3287.82,
+    4438.5,
+    6276.71,
+    7675.58
+   ]
+  },
+  "s4_3__all_banks": {
+   "name": "s4_3__all_banks",
+   "label": "All banks · 4.3 Non Profit Institutions Serving Households",
+   "group": "4.3 Non Profit Institutions Serving Households",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    476591.26,
+    489616.8,
+    649707.9,
+    742635,
+    937531.12,
+    998405.6,
+    1139086.6,
+    1245784.39
+   ]
+  },
+  "s4_3__payments": {
+   "name": "s4_3__payments",
+   "label": "Payments banks · 4.3 Non Profit Institutions Serving Households",
+   "group": "4.3 Non Profit Institutions Serving Households",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "s4_3_1__psb": {
+   "name": "s4_3_1__psb",
+   "label": "Public sector banks · 4.3.1 Self Help Groups (SHGs)",
+   "group": "4.3.1 Self Help Groups (SHGs)",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    22388.4,
+    23003.87,
+    17807.7,
+    22417.47,
+    33975.54,
+    38995.97,
+    43074.59,
+    50603.65
+   ]
+  },
+  "s4_3_1__foreign": {
+   "name": "s4_3_1__foreign",
+   "label": "Foreign banks · 4.3.1 Self Help Groups (SHGs)",
+   "group": "4.3.1 Self Help Groups (SHGs)",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    0,
+    1.82,
+    4.16,
+    22.84,
+    1.8,
+    5.24,
+    0.91,
+    0.74
+   ]
+  },
+  "s4_3_1__rrb": {
+   "name": "s4_3_1__rrb",
+   "label": "Regional rural banks · 4.3.1 Self Help Groups (SHGs)",
+   "group": "4.3.1 Self Help Groups (SHGs)",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    5952.62,
+    8772.51,
+    8730.73,
+    11218.62,
+    15967.56,
+    18255.97,
+    19745.66,
+    19138.57
+   ]
+  },
+  "s4_3_1__private": {
+   "name": "s4_3_1__private",
+   "label": "Private sector banks · 4.3.1 Self Help Groups (SHGs)",
+   "group": "4.3.1 Self Help Groups (SHGs)",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    6506.1,
+    1065.78,
+    1338.24,
+    1553.5,
+    2791.74,
+    3240.37,
+    5377.3,
+    4903.29
+   ]
+  },
+  "s4_3_1__sfb": {
+   "name": "s4_3_1__sfb",
+   "label": "Small finance banks · 4.3.1 Self Help Groups (SHGs)",
+   "group": "4.3.1 Self Help Groups (SHGs)",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    2.19,
+    6.47,
+    5.57,
+    7.12,
+    36.35,
+    47.76,
+    25.69,
+    18.01
+   ]
+  },
+  "s4_3_1__all_banks": {
+   "name": "s4_3_1__all_banks",
+   "label": "All banks · 4.3.1 Self Help Groups (SHGs)",
+   "group": "4.3.1 Self Help Groups (SHGs)",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    34849.31,
+    32850.46,
+    27886.4,
+    35219.55,
+    52772.98,
+    60545.31,
+    68224.15,
+    74664.26
+   ]
+  },
+  "s4_3_1__payments": {
+   "name": "s4_3_1__payments",
+   "label": "Payments banks · 4.3.1 Self Help Groups (SHGs)",
+   "group": "4.3.1 Self Help Groups (SHGs)",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "s4_3_2__psb": {
+   "name": "s4_3_2__psb",
+   "label": "Public sector banks · 4.3.2 Other",
+   "group": "4.3.2 Other",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    271700.09,
+    292101.05,
+    436168.31,
+    469545.86,
+    531735.75,
+    625614.43,
+    741587.65,
+    789208.62
+   ]
+  },
+  "s4_3_2__foreign": {
+   "name": "s4_3_2__foreign",
+   "label": "Foreign banks · 4.3.2 Other",
+   "group": "4.3.2 Other",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    8823.84,
+    6393.6,
+    14293.52,
+    11896.68,
+    10758.06,
+    13908.06,
+    16252.39,
+    11861.52
+   ]
+  },
+  "s4_3_2__rrb": {
+   "name": "s4_3_2__rrb",
+   "label": "Regional rural banks · 4.3.2 Other",
+   "group": "4.3.2 Other",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    12353.45,
+    15027.84,
+    19371.83,
+    20535.71,
+    20507.85,
+    16814.83,
+    17613.5,
+    15748.2
+   ]
+  },
+  "s4_3_2__private": {
+   "name": "s4_3_2__private",
+   "label": "Private sector banks · 4.3.2 Other",
+   "group": "4.3.2 Other",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    147443.83,
+    141445.34,
+    148919.66,
+    201489.97,
+    318505.01,
+    277132.24,
+    289157.9,
+    346644.22
+   ]
+  },
+  "s4_3_2__sfb": {
+   "name": "s4_3_2__sfb",
+   "label": "Small finance banks · 4.3.2 Other",
+   "group": "4.3.2 Other",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    1420.75,
+    1798.51,
+    3068.18,
+    3947.23,
+    3251.47,
+    4390.74,
+    6251.02,
+    7657.57
+   ]
+  },
+  "s4_3_2__all_banks": {
+   "name": "s4_3_2__all_banks",
+   "label": "All banks · 4.3.2 Other",
+   "group": "4.3.2 Other",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    441741.95,
+    456766.34,
+    621821.5,
+    707415.45,
+    884758.15,
+    937860.29,
+    1070862.46,
+    1171120.12
+   ]
+  },
+  "s4_3_2__payments": {
+   "name": "s4_3_2__payments",
+   "label": "Payments banks · 4.3.2 Other",
+   "group": "4.3.2 Other",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "s5__psb": {
+   "name": "s5__psb",
+   "label": "Public sector banks · 5 Rest of the World (Non Residents)",
+   "group": "5 Rest of the World (Non Residents)",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    436872.02,
+    474603.05,
+    467317.09,
+    475192.44,
+    493463.67,
+    515025.11,
+    560737.91,
+    652852.32
+   ]
+  },
+  "s5__foreign": {
+   "name": "s5__foreign",
+   "label": "Foreign banks · 5 Rest of the World (Non Residents)",
+   "group": "5 Rest of the World (Non Residents)",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    73615.06,
+    73894.39,
+    70477.85,
+    71494.53,
+    70607.27,
+    89399.63,
+    103522.15,
+    108331.44
+   ]
+  },
+  "s5__rrb": {
+   "name": "s5__rrb",
+   "label": "Regional rural banks · 5 Rest of the World (Non Residents)",
+   "group": "5 Rest of the World (Non Residents)",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    1379.42,
+    2245.3,
+    2448.49,
+    1948.88,
+    2005.47,
+    2026.47,
+    2136.62,
+    2541.62
+   ]
+  },
+  "s5__private": {
+   "name": "s5__private",
+   "label": "Private sector banks · 5 Rest of the World (Non Residents)",
+   "group": "5 Rest of the World (Non Residents)",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    407001.43,
+    468684.75,
+    498021.07,
+    511733.77,
+    585676.7,
+    703215.19,
+    805183.22,
+    866920.95
+   ]
+  },
+  "s5__sfb": {
+   "name": "s5__sfb",
+   "label": "Small finance banks · 5 Rest of the World (Non Residents)",
+   "group": "5 Rest of the World (Non Residents)",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    987.33,
+    2534.99,
+    3829.02,
+    3064.92,
+    8402.1,
+    6811.77,
+    13378.46,
+    16673.65
+   ]
+  },
+  "s5__all_banks": {
+   "name": "s5__all_banks",
+   "label": "All banks · 5 Rest of the World (Non Residents)",
+   "group": "5 Rest of the World (Non Residents)",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    919855.26,
+    1021962.47,
+    1042093.53,
+    1063434.54,
+    1160155.21,
+    1316478.17,
+    1484958.36,
+    1647319.97
+   ]
+  },
+  "s5__payments": {
+   "name": "s5__payments",
+   "label": "Payments banks · 5 Rest of the World (Non Residents)",
+   "group": "5 Rest of the World (Non Residents)",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "s5_1__psb": {
+   "name": "s5_1__psb",
+   "label": "Public sector banks · 5.1 Non Residents",
+   "group": "5.1 Non Residents",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    410976.46,
+    435251.6,
+    460945.4,
+    469160.44,
+    486833.77,
+    508890.07,
+    549535.17,
+    646544.54
+   ]
+  },
+  "s5_1__foreign": {
+   "name": "s5_1__foreign",
+   "label": "Foreign banks · 5.1 Non Residents",
+   "group": "5.1 Non Residents",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    45363.89,
+    51110.58,
+    51112.43,
+    51654.69,
+    48047.86,
+    56221.67,
+    72916.95,
+    67918.15
+   ]
+  },
+  "s5_1__rrb": {
+   "name": "s5_1__rrb",
+   "label": "Regional rural banks · 5.1 Non Residents",
+   "group": "5.1 Non Residents",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    1378.3,
+    1630.47,
+    1940.12,
+    1948.82,
+    2005.47,
+    2026.47,
+    2135.27,
+    2540.07
+   ]
+  },
+  "s5_1__private": {
+   "name": "s5_1__private",
+   "label": "Private sector banks · 5.1 Non Residents",
+   "group": "5.1 Non Residents",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    405641.12,
+    460999.16,
+    488389.11,
+    499908.35,
+    570614.39,
+    672826.52,
+    766864.84,
+    850501.17
+   ]
+  },
+  "s5_1__sfb": {
+   "name": "s5_1__sfb",
+   "label": "Small finance banks · 5.1 Non Residents",
+   "group": "5.1 Non Residents",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    987.33,
+    2534.94,
+    3829.02,
+    3064.92,
+    8402.1,
+    6811.77,
+    13374.36,
+    16673.65
+   ]
+  },
+  "s5_1__all_banks": {
+   "name": "s5_1__all_banks",
+   "label": "All banks · 5.1 Non Residents",
+   "group": "5.1 Non Residents",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    864347.1,
+    951526.75,
+    1006216.08,
+    1025737.22,
+    1115903.57,
+    1246776.5,
+    1404826.58,
+    1584177.58
+   ]
+  },
+  "s5_1__payments": {
+   "name": "s5_1__payments",
+   "label": "Payments banks · 5.1 Non Residents",
+   "group": "5.1 Non Residents",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "s5_1_1__psb": {
+   "name": "s5_1_1__psb",
+   "label": "Public sector banks · 5.1.1 Non-Resident Indians (NRIs)",
+   "group": "5.1.1 Non-Resident Indians (NRIs)",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    381661.44,
+    404982.02,
+    448981.78,
+    460160.73,
+    479202.53,
+    501462.74,
+    542053.8,
+    634671.22
+   ]
+  },
+  "s5_1_1__foreign": {
+   "name": "s5_1_1__foreign",
+   "label": "Foreign banks · 5.1.1 Non-Resident Indians (NRIs)",
+   "group": "5.1.1 Non-Resident Indians (NRIs)",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    33624.34,
+    29303.03,
+    32808.1,
+    30969.67,
+    32391.21,
+    36031.17,
+    52770.25,
+    50816.97
+   ]
+  },
+  "s5_1_1__rrb": {
+   "name": "s5_1_1__rrb",
+   "label": "Regional rural banks · 5.1.1 Non-Resident Indians (NRIs)",
+   "group": "5.1.1 Non-Resident Indians (NRIs)",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    1365.68,
+    1628.39,
+    1939.57,
+    1945.74,
+    2002.1,
+    2026.19,
+    2135.1,
+    2536.21
+   ]
+  },
+  "s5_1_1__private": {
+   "name": "s5_1_1__private",
+   "label": "Private sector banks · 5.1.1 Non-Resident Indians (NRIs)",
+   "group": "5.1.1 Non-Resident Indians (NRIs)",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    395763.38,
+    451177.56,
+    468614.56,
+    484009.57,
+    471596.3,
+    658143.63,
+    756014.5,
+    808026.72
+   ]
+  },
+  "s5_1_1__sfb": {
+   "name": "s5_1_1__sfb",
+   "label": "Small finance banks · 5.1.1 Non-Resident Indians (NRIs)",
+   "group": "5.1.1 Non-Resident Indians (NRIs)",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    693.83,
+    2204.24,
+    3476.63,
+    2695.67,
+    7968.72,
+    6170.63,
+    12320.33,
+    14998.42
+   ]
+  },
+  "s5_1_1__all_banks": {
+   "name": "s5_1_1__all_banks",
+   "label": "All banks · 5.1.1 Non-Resident Indians (NRIs)",
+   "group": "5.1.1 Non-Resident Indians (NRIs)",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    813108.68,
+    889295.25,
+    955820.64,
+    979781.39,
+    993160.86,
+    1203834.35,
+    1365293.97,
+    1511049.54
+   ]
+  },
+  "s5_1_1__payments": {
+   "name": "s5_1_1__payments",
+   "label": "Payments banks · 5.1.1 Non-Resident Indians (NRIs)",
+   "group": "5.1.1 Non-Resident Indians (NRIs)",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "s5_1_2__psb": {
+   "name": "s5_1_2__psb",
+   "label": "Public sector banks · 5.1.2 Other",
+   "group": "5.1.2 Other",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    29315.01,
+    30269.57,
+    11963.62,
+    8999.7,
+    7631.23,
+    7427.34,
+    7481.37,
+    11873.32
+   ]
+  },
+  "s5_1_2__foreign": {
+   "name": "s5_1_2__foreign",
+   "label": "Foreign banks · 5.1.2 Other",
+   "group": "5.1.2 Other",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    11739.56,
+    21807.55,
+    18304.32,
+    20685.02,
+    15656.65,
+    20190.51,
+    20146.7,
+    17101.18
+   ]
+  },
+  "s5_1_2__rrb": {
+   "name": "s5_1_2__rrb",
+   "label": "Regional rural banks · 5.1.2 Other",
+   "group": "5.1.2 Other",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    12.61,
+    2.08,
+    0.55,
+    3.08,
+    3.37,
+    0.28,
+    0.16,
+    3.85
+   ]
+  },
+  "s5_1_2__private": {
+   "name": "s5_1_2__private",
+   "label": "Private sector banks · 5.1.2 Other",
+   "group": "5.1.2 Other",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    9877.74,
+    9821.6,
+    19774.55,
+    15898.78,
+    99018.08,
+    14682.89,
+    10850.34,
+    42474.45
+   ]
+  },
+  "s5_1_2__sfb": {
+   "name": "s5_1_2__sfb",
+   "label": "Small finance banks · 5.1.2 Other",
+   "group": "5.1.2 Other",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    293.5,
+    330.7,
+    352.4,
+    369.25,
+    433.38,
+    641.14,
+    1054.03,
+    1675.22
+   ]
+  },
+  "s5_1_2__all_banks": {
+   "name": "s5_1_2__all_banks",
+   "label": "All banks · 5.1.2 Other",
+   "group": "5.1.2 Other",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    51238.42,
+    62231.51,
+    50395.44,
+    45955.84,
+    122742.71,
+    42942.15,
+    39532.61,
+    73128.04
+   ]
+  },
+  "s5_1_2__payments": {
+   "name": "s5_1_2__payments",
+   "label": "Payments banks · 5.1.2 Other",
+   "group": "5.1.2 Other",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "s5_2__psb": {
+   "name": "s5_2__psb",
+   "label": "Public sector banks · 5.2 All Others",
+   "group": "5.2 All Others",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    25895.56,
+    39351.45,
+    6371.68,
+    6032,
+    6629.9,
+    6135.04,
+    11202.74,
+    6307.77
+   ]
+  },
+  "s5_2__foreign": {
+   "name": "s5_2__foreign",
+   "label": "Foreign banks · 5.2 All Others",
+   "group": "5.2 All Others",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    28251.16,
+    22783.81,
+    19365.43,
+    19839.84,
+    22559.42,
+    33177.96,
+    30605.2,
+    40413.29
+   ]
+  },
+  "s5_2__rrb": {
+   "name": "s5_2__rrb",
+   "label": "Regional rural banks · 5.2 All Others",
+   "group": "5.2 All Others",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    1.13,
+    614.83,
+    508.38,
+    0.06,
+    0.01,
+    0,
+    1.36,
+    1.55
+   ]
+  },
+  "s5_2__private": {
+   "name": "s5_2__private",
+   "label": "Private sector banks · 5.2 All Others",
+   "group": "5.2 All Others",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    1360.31,
+    7685.59,
+    9631.96,
+    11825.41,
+    15062.32,
+    30388.67,
+    38318.38,
+    16419.78
+   ]
+  },
+  "s5_2__sfb": {
+   "name": "s5_2__sfb",
+   "label": "Small finance banks · 5.2 All Others",
+   "group": "5.2 All Others",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    0,
+    0.05,
+    0,
+    0,
+    0,
+    0,
+    4.1,
+    0
+   ]
+  },
+  "s5_2__all_banks": {
+   "name": "s5_2__all_banks",
+   "label": "All banks · 5.2 All Others",
+   "group": "5.2 All Others",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    55508.17,
+    70435.72,
+    35877.45,
+    37697.31,
+    44251.64,
+    69701.67,
+    80131.78,
+    63142.38
+   ]
+  },
+  "s5_2__payments": {
+   "name": "s5_2__payments",
+   "label": "Payments banks · 5.2 All Others",
+   "group": "5.2 All Others",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  }
+ }
+}

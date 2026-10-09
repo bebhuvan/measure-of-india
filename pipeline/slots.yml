@@ -51,6 +51,11 @@ gdp:
     brief: >
       The quarter: growth, direction of travel vs the previous quarter, the
       composition (consumption, investment), and the GDP–GVA gap as accounting.
+      If the annual accounts appear at all, write the saving rate as "X% of GDP" and every
+      other annual line as growth ("grew X%"), and do not compare the two kinds or remark on
+      the difference. "Fastest" and "slowest" apply within the four headline series (GDP,
+      GVA, consumption, investment) unless the sentence names the wider set. The 6% line is a
+      rough pre-pandemic trend. Never say how far the annual accounts lag the quarter.
   - id: current-reading.what-it-does-not-say
     maxSentences: 5
     dateStamp: false
@@ -58,6 +63,11 @@ gdp:
     brief: >
       Distribution, the unmeasured informal sector, and revisions. Must state
       which estimate this is and that the final figure may differ.
+      If the annual accounts appear at all, write the saving rate as "X% of GDP" and every
+      other annual line as growth ("grew X%"), and do not compare the two kinds or remark on
+      the difference. "Fastest" and "slowest" apply within the four headline series (GDP,
+      GVA, consumption, investment) unless the sentence names the wider set. The 6% line is a
+      rough pre-pandemic trend. Never say how far the annual accounts lag the quarter.
   - id: as-of.plate1
     maxSentences: 6
     dateStamp: true
@@ -65,6 +75,11 @@ gdp:
     brief: >
       The trend read: the last four quarters as a sequence, position vs the 6%
       trend, and the early-estimate caution.
+      If the annual accounts appear at all, write the saving rate as "X% of GDP" and every
+      other annual line as growth ("grew X%"), and do not compare the two kinds or remark on
+      the difference. "Fastest" and "slowest" apply within the four headline series (GDP,
+      GVA, consumption, investment) unless the sentence names the wider set. The 6% line is a
+      rough pre-pandemic trend. Never say how far the annual accounts lag the quarter.
 
 wpi:
   - id: current-reading.what-the-print-says
@@ -118,8 +133,21 @@ jobs:
     mustAcknowledge: [contradictions]
     brief: >
       The unemployment rate and participation, and what moved them. Name which
-      labour market (urban women, rural men) sits highest. Concede before
-      qualifying.
+      labour market (urban women, rural men) sits highest, and say what the young
+      (15 to 29) face. Concede before qualifying. The deep-cut summaries rank
+      participation, worker and unemployment rates together: they are different
+      ratios, so never compare one kind with another and never quote a summary's
+      "range" from one to the other. Every figure here is the survey's revamped
+      design (from January 2025); never compare it with a year before 2025.
+      Two decimals only for the headline unemployment rate; every other figure at
+      one decimal. Never say "basket". Never count how many series rose or fell.
+      The sheet flags participation and the worker ratio as moving "against" the
+      headline whenever they rise as unemployment falls. They do not contradict it:
+      rising participation and employment with falling unemployment agree. Name
+      them and say plainly that more people joined the labour force and more of them
+      found work; never write "against the headline" or "contradict" for that case.
+      Use those words only if unemployment and employment truly move the wrong way
+      together (unemployment falling while the worker ratio falls too).
   - id: current-reading.what-it-does-not-say
     maxSentences: 6
     dateStamp: false
@@ -127,8 +155,10 @@ jobs:
     brief: >
       The honest limits: the UR is a ratio that can fall for the wrong reason
       (people leaving the pool); the monthly bulletin is young with no seasonal
-      history; this counts work done last week, not a pay slip. Must contain a
-      plain "we do not know".
+      history; this counts work done last week, not a pay slip; the survey was
+      redesigned in January 2025, so nothing here can be set against an earlier
+      year. Must contain a plain "we do not know". Figures at one decimal, except the
+      headline rate. Do not list the deep cuts or their series counts.
 
 consumption:
   - id: current-reading.what-the-print-says
@@ -139,16 +169,32 @@ consumption:
     mustName: [extremes]
     mustAcknowledge: [contradictions]
     brief: >
-      The average monthly spend, rural and urban, and the urban-rural gap. Name
-      any shift in food's share (Engel's law). Concede before qualifying.
+      The average monthly spend per person, rural and urban, and the urban-rural
+      gap (use cross.urbanRuralRatio, never compute a ratio). Name the highest and
+      lowest state from the hces-states input, and say once that counting free
+      items (with imputation) adds a little to each. Name any shift in food's share
+      (Engel's law). Call the latest period "the 2023-24 survey" and the earlier
+      one "the previous survey", never FY24 or FY23: these are survey rounds, not
+      financial years.
+      Two rounds are two points, not a trend: never say "rising", "a trend" or
+      "growth rate". Do not explain the change with a base effect. The fractile
+      classes are slices of the population ranked by spending: "0-5%" is the
+      poorest twentieth and "95-100%" the richest twentieth, never a tenth. Never
+      set a with-imputation figure against a without-imputation one. Concede
+      before qualifying.
   - id: current-reading.what-it-does-not-say
     maxSentences: 6
     dateStamp: false
     requiredFigures: [rural.latest]
     brief: >
-      The honest limits: the mean is not the median (the spending ladder is steep
-      at the top); imputed free goods inflate the bill; this is a two-year survey,
-      not a monthly pulse. Must contain a plain "we do not know".
+      The honest limits: an average per person is not what a typical household
+      spends, and the survey publishes no median, so say we do not know the
+      median; the with-imputation figures add the value of free items the
+      household did not pay for; spending is not income, and the Gini of spending
+      understates inequality; this is a survey of two rounds, not a monthly
+      pulse. Call the period "the 2023-24 survey", never FY24. The fractile
+      classes are slices: "95-100%" is the richest twentieth, never a tenth.
+      Vary sentence length. Must contain a plain "we do not know".
 
 factories:
   - id: current-reading.what-the-print-says

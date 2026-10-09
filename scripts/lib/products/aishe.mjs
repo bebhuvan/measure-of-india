@@ -6,16 +6,15 @@
 // client-side, the same approach as hces/rbi. Fiscal-year labels plot at
 // April of the first year ("2021-22" -> 2021-04).
 //
-// SOURCE DEFECT — teachers (ind 9), 2021-22: the API's "All Teacher" total
-// row is garbled for 2021-22 (All India = 12,904 against ~1.55M the year
-// before; every state cell is a near-zero residual). The 2021-22 "Visiting
-// Teacher" row carries the real total instead. The fetcher reconstructs the
-// 2021-22 teachers figure as the sum of the five regular faculty types
-// (Professor & Equivalent + Reader & Associate Professor +
-// Lecturer/Assistant Professor + Demonstrator/Tutor + Temporary Teacher) —
-// a sum that equals 99.0-99.2% of the published "All Teacher" total in
-// every clean year. The reconstruction is disclosed in meta.note and the
-// raw "All Teacher" 2021-22 value is preserved in the raw dump.
+// TEACHERS, 2021-22 (corrected 2026-10-10). The dump fetched on 2026-08-09 held duplicated
+// rows: the API's pages came back in an unstable order (limit 500 then), so some rows
+// appeared twice and others not at all, and the 2021-22 teacher rows looked garbled ("All
+// Teacher" = 12,904, a near-zero residual). That was read as a source defect and the total
+// was rebuilt from five faculty types. A clean refetch (2026-10-10, 100-row pages, no
+// duplicate keys) shows the published rows are sound: All Teacher 2021-22 = 15,97,688, and
+// All Teacher equals the six faculty types (the five regular posts plus visiting teachers)
+// in 546 of 549 state x year x gender cells (All India 2020-21 differs by 34 in 15.5 lakh).
+// Every page set is now checked for duplicate keys and the fetch fails if it finds any.
 //
 // Bundles baked:
 //   aishe-headline.json      — All-India 5-year headline series:
@@ -36,6 +35,8 @@
 
 import { mospi } from "../mospi.mjs";
 import { writeSeries, writeRaw } from "../util.mjs";
+import fs from "node:fs";
+import path from "node:path";
 
 const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 const slugify = (s) => String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
@@ -57,6 +58,14 @@ async function fetchAll(code) {
     if (page >= tp) break;
     page++;
   }
+  // unstable paging shows up as the same row twice (and another missing): never bake that
+  const seen = new Set();
+  for (const r of rows) {
+    const { value, ...dims } = r;
+    const k = JSON.stringify(dims);
+    if (seen.has(k)) throw new Error(`AISHE indicator ${code}: duplicate row ${k}: the API paged unstably; refetch with MOSPI_NO_CACHE=1`);
+    seen.add(k);
+  }
   return rows;
 }
 
@@ -65,9 +74,12 @@ export async function buildAishe(root, dcfg, vintage) {
   for (const code of Object.keys(dcfg.fetch.indicators)) byInd[code] = await fetchAll(code);
   writeRaw(root, "data/raw/aishe-records.json", {
     vintage,
-    note: "Complete row-sets of all 9 AISHE indicators from aishe/getAisheRecords, survey years 2017-18 to 2021-22. The 2021-22 'All Teacher' total row is a source defect (see fetcher header); its raw value is preserved here as served.",
+    note: "Complete row-sets of all 9 AISHE indicators from aishe/getAisheRecords, survey years 2017-18 to 2021-22, 100-row pages, checked for duplicate rows (see the adapter header for the 2026-08-09 dump that had them).",
     indicators: byInd,
   });
+  // vintage = the date the DATA last changed: writeRaw keeps the dump's old stamp when the
+  // body is unchanged, and the bundles carry that stamp, never the run date (hard rule 5)
+  vintage = JSON.parse(fs.readFileSync(path.join(root, "data/raw/aishe-records.json"), "utf8")).vintage;
 
   // continuous fiscal-year axis over the five served survey years
   const allYears = [...new Set(Object.values(byInd).flat().map((r) => r.year))].sort();
@@ -99,23 +111,9 @@ export async function buildAishe(root, dcfg, vintage) {
    * ========================================================= */
   const yrNote = "Survey years are fiscal (Apr–Mar), plotted at April of the first year. The five AISHE rounds served by the eSankhyiki API (2017-18 to 2021-22) are comparable by design but are never chained into a spliced index. GER (Gross Enrolment Ratio) = enrolled students ÷ the college-age population × 100; it is gross, so it can exceed 100. GPI (Gender Parity Index) = female GER ÷ male GER; 1.0 is parity.";
 
-  // teachers — published "All Teacher" Both, reconstructed for the 2021-22
-  // source defect from the sum of the five regular faculty types
-  const CORE_FACULTY = ["Professor & Equivalent", "Reader & Associate Professor", "Lecturer/Assistant Professor", "Demonstrator/Tutor", "Temporary Teacher etc."];
+  // teachers: the published "All Teacher" total, Both genders
   const tRows = ai(byInd["9"]);
-  const teacherMap = new Map();
-  for (const ym of axis) {
-    const fy = `${ym.slice(0, 4)}-${String((+ym.slice(0, 4) + 1) % 100).padStart(2, "0")}`;
-    const allT = tRows.find((r) => fyStart(r.year) === ym && r.faculty_type === "All Teacher" && r.gender === "Both");
-    const published = allT ? val(allT) : null;
-    // the defect prints a near-zero residual (~13k vs ~1.55M); reconstruct
-    if (published != null && published > 100000) {
-      teacherMap.set(ym, published);
-    } else {
-      const core = tRows.filter((r) => fyStart(r.year) === ym && r.gender === "Both" && CORE_FACULTY.includes(r.faculty_type)).reduce((a, r) => a + (val(r) ?? 0), 0);
-      if (core > 0) teacherMap.set(ym, core);
-    }
-  }
+  const teacherMap = toMap(tRows.filter((r) => r.faculty_type === "All Teacher" && r.gender === "Both"));
 
   const enrolGT = (gender) => toMap(ai(byInd["3"]).filter((r) => r.education_level === "Grand Total" && String(r.gender).toLowerCase() === String(gender).toLowerCase()));
   const gerAll = (gender) => toMap(ai(byInd["6"]).filter((r) => normSocial(r.social_category) === "all" && r.gender === gender));
@@ -136,7 +134,7 @@ export async function buildAishe(root, dcfg, vintage) {
     meta: {
       ...metaBase,
       coverage: "All India; universities, colleges, estimated student enrolment (Grand Total, Both), teachers, GER (All Categories, Both), GPI (All Categories), PTR (Regular and Distance, All Institutions)",
-      note: yrNote + " TEACHERS (2021-22): the API's 'All Teacher' total row is a source defect for 2021-22 (All India = 12,904, a near-zero residual against ~1.55M the year before; the same year's 'Visiting Teacher' row carries the real total instead). The 2021-22 figure here is reconstructed as the sum of the five regular faculty types (Professor & Equivalent + Reader & Associate Professor + Lecturer/Assistant Professor + Demonstrator/Tutor + Temporary Teacher), which equals 99.0-99.2% of the published 'All Teacher' total in every clean year. Earlier years use the published 'All Teacher' total as served.",
+      note: yrNote + " Teachers are the published 'All Teacher' total in every year, which equals the five regular posts plus visiting teachers.",
     },
     dates, series: headlineSeries,
   };
@@ -286,15 +284,15 @@ export async function buildAishe(root, dcfg, vintage) {
   /* =========================================================
    *  aishe-teachers.json — faculty hierarchy × gender (5 core types)
    * ========================================================= */
-  // The "All Teacher" total and "Visiting Teacher" rows are BOTH defective
-  // for 2021-22 (total garbled to ~13k; visiting carries the real total).
-  // The five regular faculty types below are clean in every year.
+  // every faculty type the survey publishes, the total last
   const FAC = [
     ["Professor & Equivalent", "professor", "Professor & Equivalent"],
     ["Reader & Associate Professor", "reader_associate", "Reader / Associate Prof."],
     ["Lecturer/Assistant Professor", "lecturer_assistant", "Lecturer / Asst. Prof."],
     ["Demonstrator/Tutor", "demonstrator", "Demonstrator / Tutor"],
     ["Temporary Teacher etc.", "temporary", "Temporary Teacher"],
+    ["Visiting Teacher", "visiting", "Visiting Teacher"],
+    ["All Teacher", "all", "All teachers"],
   ];
   const tchSeries = {};
   let ti = 0;
@@ -313,8 +311,8 @@ export async function buildAishe(root, dcfg, vintage) {
   const teachersBundle = {
     meta: {
       ...metaBase,
-      coverage: "All India; teachers by the five regular faculty types × gender (Both/Male/Female), all five survey years. The defective 'All Teacher' total and 'Visiting Teacher' rows are excluded — see the headline-bundle note for the 2021-22 defect.",
-      note: yrNote + " The faculty hierarchy runs from Professor & Equivalent (the senior-most rank) down to Temporary Teacher. The five types summed equal 99.0–99.2% of the published 'All Teacher' total in every clean year (the remainder is visiting/guest faculty, excluded here because its 2021-22 row is the source defect).",
+      coverage: "All India; teachers by faculty type (the five regular posts, visiting teachers, and all teachers) × gender (Both/Male/Female), all five survey years.",
+      note: yrNote + " The faculty hierarchy runs from Professor & Equivalent (the senior-most rank) down to Temporary Teacher; visiting teachers are guest faculty. The six types sum to 'All teachers' (asserted in scripts/validate.mjs, which allows the 34-teacher difference the survey prints for All India 2020-21).",
     },
     dates, series: tchSeries,
   };
@@ -354,12 +352,123 @@ export async function buildAishe(root, dcfg, vintage) {
     dates, series: minSeries,
   };
 
+  /* =========================================================
+   *  Wave 2 (2026-10-10): every indicator at every cut the API serves.
+   *  One series per state (All India included, as its own row) x the indicator's
+   *  own dimensions, exactly as published. Nothing is summed or filled; the
+   *  survey's own small inconsistencies are kept as published.
+   * ========================================================= */
+  const GEO = (rows) => [...new Set(rows.map((r) => String(r.state).trim()))].sort((a, b) => (a === "All India" ? -1 : b === "All India" ? 1 : a < b ? -1 : 1));
+  const withGaps = (s, note) => {
+    const first = s.data.findIndex((v) => v != null);
+    const last = s.data.length - 1 - [...s.data].reverse().findIndex((v) => v != null);
+    const gaps = s.data.map((v, i) => (v == null && i > first && i < last ? dates[i] : null)).filter(Boolean);
+    if (gaps.length) { s.gaps = gaps; s.gapsNote ??= note; }
+    return s;
+  };
+  const NOT_SERVED = "The survey does not report this cut for this state in these years; left empty, never filled.";
+  const deep = (rows, dimsOf, unit) => {
+    const series = {};
+    let i = 0;
+    for (const st of GEO(rows)) {
+      const sr = rows.filter((r) => String(r.state).trim() === st);
+      const combos = new Map();
+      for (const r of sr) { const d = dimsOf(r); if (d) combos.set(d.key, d); }
+      for (const d of [...combos.values()].sort((a, b) => a.order - b.order)) {
+        const m = toMap(sr.filter((r) => dimsOf(r)?.key === d.key));
+        if (!m.size) continue;
+        const key = `${slugify(st)}__${d.key}`;
+        series[key] = withGaps({ name: `aishe_${key}`, label: `${d.label} · ${st}`, group: st, color: GREYS[i++ % GREYS.length],
+          data: data(m), unit: d.unit ?? unit }, NOT_SERVED);
+      }
+    }
+    return series;
+  };
+  const G = { both: 0, male: 1, female: 2 };
+  const gk = (r) => String(r.gender).trim().toLowerCase();
+  const gl = (g) => ({ both: "women and men", male: "men", female: "women" })[g];
+
+  // universities and colleges by state
+  const instSeries = {
+    ...deep(byInd["1"], () => ({ key: "universities", label: "Universities", order: 0 }), "count"),
+    ...deep(byInd["2"], () => ({ key: "colleges", label: "Colleges", order: 1 }), "count"),
+  };
+  const institutionsBundle = { meta: { ...metaBase,
+    coverage: "States/UTs and All India; number of universities and of colleges, five survey years.",
+    note: yrNote + " Universities are reported for 33 states and UTs: the smallest UTs (Andaman and Nicobar Islands, Lakshadweep, Dadra and Nagar Haveli and Daman and Diu) have colleges but no university of their own." },
+    dates, series: instSeries };
+
+  // enrolment by state x level x gender
+  const LV = Object.fromEntries([...EDU_ORDER.map(([src, k, l], i) => [src, [k, l, i]]), ["Grand Total", ["grand_total", "All levels", 9]]]);
+  const enrolSeries = deep(byInd["3"], (r) => { const lv = LV[String(r.education_level).trim()]; const g = gk(r); if (!lv || !(g in G)) return null;
+    return { key: `${lv[0]}_${g}`, label: `Enrolment, ${lv[1]}, ${gl(g)}`, order: lv[2] * 3 + G[g] }; }, "count");
+  const enrolmentBundle = { meta: { ...metaBase,
+    coverage: "States/UTs and All India; estimated student enrolment by level (Ph.D. to certificate, and all levels) and by gender, five survey years.",
+    note: yrNote + " In every state and year the eight levels sum to 'All levels', and women plus men to the total (asserted in scripts/validate.mjs)." },
+    dates, series: enrolSeries };
+
+  // enrolment by social group (ind 4) and by minority / PWD / EWS (ind 5), state x gender
+  const SGL = { all: ["all", "All categories"], sc: ["sc", "Scheduled Castes"], st: ["st", "Scheduled Tribes"], obc: ["obc", "Other Backward Classes"] };
+  const socialSeries = deep(byInd["4"], (r) => { const c = SGL[normSocial(r.social_category)]; const g = gk(r); if (!c || !(g in G)) return null;
+    return { key: `${c[0]}_${g}`, label: `Enrolment, ${c[1]}, ${gl(g)}`, order: ["all", "sc", "st", "obc"].indexOf(c[0]) * 3 + G[g] }; }, "count");
+  const socialBundle = { meta: { ...metaBase,
+    coverage: "States/UTs and All India; estimated student enrolment of Scheduled Castes, Scheduled Tribes and Other Backward Classes, and of all categories, by gender, five survey years.",
+    note: yrNote + " The survey publishes no 'general' or 'others' group: all categories minus the three named groups is everyone else, but it is not baked as a series of its own." },
+    dates, series: socialSeries };
+  const MINL = Object.fromEntries(MIN.map(([src, k, l], i) => [src, [k, l, i]]));
+  const minStSeries = deep(byInd["5"], (r) => { const c = MINL[String(r.social_group).trim()]; const g = gk(r); if (!c || !(g in G)) return null;
+    return { key: `${c[0]}_${g}`, label: `Enrolment, ${c[1]}, ${gl(g)}`, order: c[2] * 3 + G[g] }; }, "count");
+  const minorityStatesBundle = { meta: { ...metaBase,
+    coverage: "States/UTs and All India; enrolment of Muslims, other minority communities, Economically Weaker Sections and persons with disability, by gender, five survey years.",
+    note: yrNote + " EWS starts in 2019-20, when the category was created. Counts, not rates: the survey publishes no population base for these groups." },
+    dates, series: minStSeries };
+
+  // GER (ind 6) by state x social category x gender, and GPI (ind 7) by state x social category
+  const gerSeries = {
+    ...deep(byInd["6"], (r) => { const c = SGL[normSocial(r.social_category)]; const g = gk(r); if (!c || !(g in G)) return null;
+      return { key: `ger_${c[0]}_${g}`, label: `GER, ${c[1]}, ${gl(g)}`, order: ["all", "sc", "st"].indexOf(c[0]) * 3 + G[g], unit: "percent" }; }),
+    ...deep(byInd["7"], (r) => { const c = SGL[normSocial(r.social_category)]; if (!c) return null;
+      return { key: `gpi_${c[0]}`, label: `Gender parity index, ${c[1]}`, order: 20 + ["all", "sc", "st"].indexOf(c[0]), unit: "index" }; }),
+  };
+  const gerBundle = { meta: { ...metaBase,
+    coverage: "States/UTs and All India; gross enrolment ratio (18-23 year olds) for all categories, Scheduled Castes and Scheduled Tribes, by gender, and the gender parity index for each, five survey years.",
+    note: yrNote + " Where a state has almost no Scheduled Tribe population (Punjab, Haryana, Delhi, Chandigarh, Puducherry) the survey reports no ST ratio." },
+    dates, series: gerSeries };
+
+  // pupil-teacher ratio (ind 8) by state x learning mode x institution type
+  const IT = { "All Institutions": ["all", "all institutions", 0], "University & Colleges": ["univ_colleges", "universities and colleges", 1], "University & its Constituent Units": ["univ_units", "universities and their own units", 2] };
+  const LM = { "Regular and Distance": ["reg_dist", "regular and distance", 0], "Regular": ["regular", "regular only", 1] };
+  const ptrSeries = deep(byInd["8"], (r) => { const t = IT[String(r.institution_type).trim()], m = LM[String(r.learning_mode).trim()]; if (!t || !m) return null;
+    return { key: `ptr_${m[0]}_${t[0]}`, label: `Pupils per teacher, ${t[1]}, ${m[1]} students`, order: m[2] * 3 + t[2] }; }, "pupils_per_teacher");
+  const ptrBundle = { meta: { ...metaBase,
+    coverage: "States/UTs and All India; pupil-teacher ratio (students per teacher) by institution type (all institutions, universities and colleges, universities and their own units) and by mode (regular and distance students together, or regular students only), five survey years.",
+    note: yrNote + " Distance-learning students are counted in the 'regular and distance' ratio, so it runs above the regular-only ratio wherever open universities enrol many students." },
+    dates, series: ptrSeries };
+
+  // teachers (ind 9) by state x faculty type x gender; the 2021-22 total and visiting rows left empty
+  const FT = { "Professor & Equivalent": ["professor", "professors", 0], "Reader & Associate Professor": ["reader_associate", "readers and associate professors", 1],
+    "Lecturer/Assistant Professor": ["lecturer_assistant", "lecturers and assistant professors", 2], "Demonstrator/Tutor": ["demonstrator", "demonstrators and tutors", 3],
+    "Temporary Teacher etc.": ["temporary", "temporary teachers", 4], "Visiting Teacher": ["visiting", "visiting teachers", 5], "All Teacher": ["all", "all teachers", 6] };
+  const tchStSeries = deep(byInd["9"], (r) => { const f = FT[String(r.faculty_type).trim()]; const g = gk(r); if (!f || !(g in G)) return null;
+    return { key: `${f[0]}_${g}`, label: `Teachers, ${f[1]}, ${gl(g)}`, order: f[2] * 3 + G[g] }; }, "count");
+  const teachersStatesBundle = { meta: { ...metaBase,
+    coverage: "States/UTs and All India; teachers by post (professor to temporary teacher, visiting teachers, all teachers) and by gender, five survey years.",
+    note: yrNote + " The six posts sum to all teachers in every state and year but one (All India 2020-21, 34 teachers apart in 15.5 lakh, as published)." },
+    dates, series: tchStSeries };
+
   writeSeries(root, "data/series/aishe-headline.json", headlineBundle);
   writeSeries(root, "data/series/aishe-access.json", accessBundle);
   writeSeries(root, "data/series/aishe-composition.json", compositionBundle);
   writeSeries(root, "data/series/aishe-states.json", statesBundle);
   writeSeries(root, "data/series/aishe-teachers.json", teachersBundle);
   writeSeries(root, "data/series/aishe-minority.json", minorityBundle);
+  writeSeries(root, "data/series/aishe-states-institutions.json", institutionsBundle);
+  writeSeries(root, "data/series/aishe-states-enrolment.json", enrolmentBundle);
+  writeSeries(root, "data/series/aishe-states-social.json", socialBundle);
+  writeSeries(root, "data/series/aishe-states-minority.json", minorityStatesBundle);
+  writeSeries(root, "data/series/aishe-states-ger.json", gerBundle);
+  writeSeries(root, "data/series/aishe-ptr.json", ptrBundle);
+  writeSeries(root, "data/series/aishe-states-teachers.json", teachersStatesBundle);
   return headlineBundle;
 }
 
