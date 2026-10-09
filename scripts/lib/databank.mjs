@@ -9,6 +9,8 @@
 //
 // The Data Bank root comes from INDIA_ATLAS_DATABANK (or the families.databank.root in
 // data/sources.yml). If it is missing, the adapter fails loudly rather than baking nothing.
+import { execFileSync } from "node:child_process";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -60,5 +62,33 @@ export function dbieReport(root, reportId) {
     header, rows,
     provenance: { report_id: reportId, data_provider: best.meta.dataprovider.id, rows: rows.length,
       retrieved_at: best.retrieved, sha256: best.sha256, document_id: best.meta.document_id },
+  };
+}
+
+/** Rows from one of the Data Bank's parsed datasets (policy rates, MPC votes, sectoral
+ *  credit, BIS, IMF, World Bank, India Data Hub...), through the Data Bank's own CLI:
+ *  `uv run databank query sql <dataset> "<sql>" --json`, so its publication rules choose
+ *  which parse runs count, not us. `{table}` in the SQL is the dataset view. The SQL must
+ *  carry an ORDER BY: raw archives are diffed, so row order has to be deterministic.
+ *  The view can hold the same observation once per parse run: SELECT DISTINCT (or group by
+ *  the key and keep the latest source_retrieved_at) before baking.
+ *  Returns { rows, provenance } and throws loudly on any CLI failure. */
+export function databankQuery(root, dataset, sql) {
+  if (!/\border\s+by\b/i.test(sql)) throw new Error(`databankQuery(${dataset}): SQL needs an ORDER BY so the archive is deterministic`);
+  let out;
+  try {
+    out = execFileSync("uv", ["run", "--quiet", "databank", "query", "sql", dataset, sql, "--json"], {
+      cwd: root, encoding: "utf8", maxBuffer: 1 << 30, stdio: ["ignore", "pipe", "pipe"],
+    });
+  } catch (e) {
+    throw new Error(`databankQuery(${dataset}) failed: ${(e.stderr || e.message || "").toString().slice(0, 800)}`);
+  }
+  const start = out.indexOf("[");
+  if (start < 0) throw new Error(`databankQuery(${dataset}): no JSON array in CLI output: ${out.slice(0, 300)}`);
+  const rows = JSON.parse(out.slice(start));
+  return {
+    rows,
+    provenance: { dataset, sql, rows: rows.length,
+      sha256: crypto.createHash("sha256").update(out.slice(start)).digest("hex") },
   };
 }

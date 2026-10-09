@@ -10,7 +10,7 @@
     "build": "npm run data && npm run og && astro build",
     "preview": "astro preview",
     "qc": "node scripts/qc.mjs && node scripts/lint-charts.mjs",
-    "gates": "node scripts/validate.mjs && node pipeline/asof.mjs && node scripts/qc.mjs && node scripts/lint-charts.mjs",
+    "gates": "node scripts/validate.mjs && node scripts/coverage.mjs && node pipeline/asof.mjs && node scripts/qc.mjs && node scripts/lint-charts.mjs",
     "test": "node --test",
     "facts": "node pipeline/facts.mjs --all",
     "asof": "node pipeline/asof.mjs",
@@ -18,7 +18,8 @@
     "prose": "npm run facts && node pipeline/generate.mjs --all",
     "prose:dry": "npm run facts && node pipeline/generate.mjs --all --dry-run",
     "prose:turing": "node pipeline/turing.mjs",
-    "lint:charts": "node scripts/lint-charts.mjs"
+    "lint:charts": "node scripts/lint-charts.mjs",
+    "coverage": "node scripts/coverage.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
