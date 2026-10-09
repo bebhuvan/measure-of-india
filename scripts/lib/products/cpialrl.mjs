@@ -11,7 +11,7 @@
 //   cpialrl-groups-1986.json / cpialrl-groups-2019.json — same anatomy for
 //     the five groups (indicator 2), All India; state × group stays raw.
 
-import { mospi } from "../mospi.mjs";
+import { mospi, mospiAll } from "../mospi.mjs";
 import { MONTHS, writeSeries, writeRaw, yoyFromLevels, monthAxis } from "../util.mjs";
 
 // Agriculture-year labels ("2024-2025" = Jul 2024–Jun 2025) and plain
@@ -31,15 +31,8 @@ function rowMonth(yearLabel, monthName) {
 export async function buildCpialrl(root, dcfg, vintage) {
   const { params, fields } = dcfg.fetch;
   const { state_code, ...baseParams } = params; // no state_code: one stream carries every state/UT for both bases
-  const rows = [];
-  let page = 1;
-  for (;;) {
-    const res = await mospi(dcfg.fetch.endpoint, { ...baseParams, page, limit: 500 });
-    const batch = res.data ?? [];
-    rows.push(...batch);
-    if (page >= (res.meta_data?.totalPages ?? 1)) break;
-    page++;
-  }
+  // through mospiAll (lb/prices, 2026-10-10): it checks the page set for slipped or repeated rows
+  const rows = await mospiAll(dcfg.fetch.endpoint, { ...baseParams });
   if (!rows.length) throw new Error("CPI-AL/RL: no data returned");
   process.stdout.write(`cpialrl: ${rows.length} rows (all states)\n`);
 
@@ -74,17 +67,7 @@ export async function buildCpialrl(root, dcfg, vintage) {
      group names differ across bases ("Food" on 1986, "Food and Non Alcoholic
      Beverages" on 2019) — normalised to shared keys; the stream also carries
      a General Index group that duplicates indicator 1, skipped here. */
-  const groupRows = [];
-  {
-    let page = 1;
-    for (;;) {
-      const res = await mospi(dcfg.fetch.endpoint, { ...baseParams, indicator_code: 2, page, limit: 500 });
-      const batch = res.data ?? [];
-      groupRows.push(...batch);
-      if (page >= (res.meta_data?.totalPages ?? 1)) break;
-      page++;
-    }
-  }
+  const groupRows = await mospiAll(dcfg.fetch.endpoint, { ...baseParams, indicator_code: 2 });
   process.stdout.write(`cpialrl groups: ${groupRows.length} rows\n`);
 
   const GROUP_KEY = (name) => {

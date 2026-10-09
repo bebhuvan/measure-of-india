@@ -281,9 +281,10 @@ async function buildWpi2022(root, dcfg, vintage) {
   const endYear = new Date().getUTCFullYear();
 
   for (let year = f.first_year; year <= endYear; year++) {
-    let page = 1;
-    for (;;) {
-      const res = await mospi(dcfg.fetch.endpoint, { base_year: f.base_year, year, page, limit: f.limit });
+    // through mospiAll (lb/prices, 2026-10-10): it checks every page set for slipped or
+    // repeated rows; this loop used to page by hand
+    {
+      const res = { data: await mospiAll(dcfg.fetch.endpoint, { base_year: f.base_year, year }) };
       for (const r of res.data ?? []) {
         const m = String(MONTHS.indexOf(r.month) + 1).padStart(2, "0");
         if (m === "00") continue;
@@ -312,9 +313,6 @@ async function buildWpi2022(root, dcfg, vintage) {
           (subsubLevels[slugify(r.sub_sub_group)] ??= { label: r.sub_sub_group, group: r.group, subgroup: r.sub_group, map: new Map() }).map.set(ym, v);
         }
       }
-      const total = res.meta_data?.totalPages ?? 1;
-      if (page >= total) break;
-      page++;
     }
     process.stdout.write(`wpi 2022-23 ${year}: done\n`);
   }

@@ -814,7 +814,7 @@ export async function buildCpi2024(root, dcfg, vintage) {
   writeSeries(root, "data/series/cpi-2024-items.json", bundleItems2024);
   writeSeries(root, "data/series/cpi-2024-states.json", bundleStates2024);
   writeSeries(root, "data/series/cpi-2024-states-sectors.json", bundleStatesSectors2024);
-  if (dcfg.deep2024) await buildCpi2024Deep(root, dcfg, vintage, { fd, years, divisions, backYears, releaseDate, meta });
+  if (dcfg.deep2024) await buildCpi2024Deep(root, dcfg, vintage, { fd, years, divisions, backYears, releaseDate, meta, cur, grid, stateLevels24, keyOf });
   return bundle2024;
 }
 
@@ -1021,7 +1021,7 @@ async function buildCpi2012Deep(root, dcfg, vintage, { states, axis, releaseDate
 const LEVEL_OF = (r) => r.item != null ? "item" : r.sub_class != null ? "subclass" : r.class != null ? "class" : r.group != null ? "group" : r.code == null ? "general" : "division";
 const NAME_OF = (r, lv) => ({ item: r.item, subclass: r.sub_class, class: r.class, group: r.group, division: r.division, general: "CPI (General)" }[lv]);
 
-async function buildCpi2024Deep(root, dcfg, vintage, { fd, years, backYears, meta }) {
+async function buildCpi2024Deep(root, dcfg, vintage, { fd, years, divisions, backYears, meta, cur, grid, stateLevels24, keyOf }) {
   const SEC = { combined: 3, rural: 1, urban: 2 };
   const states = fd.state.map((s) => ({ code: s.state_code, name: s.state_name, key: s.state_code === 1 ? "all_india" : slugify(s.state_name) }));
   // store[sector][stateKey][code] = { level, name, division, levels, published, imputed }
@@ -1050,6 +1050,22 @@ async function buildCpi2024Deep(root, dcfg, vintage, { fd, years, backYears, met
   process.stdout.write(`cpi-2024 deep: ${slices} slices with data, ${emptySlices} empty (months not yet released, or a sector a state does not have)\n`);
   const ai = store.combined.all_india;
   if (!ai || Object.keys(ai).length < 600) throw new Error("cpi-2024 deep: no data returned for All India combined");
+
+  // The headline, grid and state-General fetches above page by hand (a division's aggregate
+  // sits ~23 pages deep, so they cannot use mospiAll). Every value they produced must equal
+  // the same node in these slices, which mospiAll audits for slipped pages: a mismatch
+  // means one of the two reads lost or repeated a row, and nothing is baked.
+  {
+    const bad = [];
+    const cmp = (label, a, b) => { for (const [ym, v] of a ?? []) { const w = b?.get(ym); if (w != null && Math.abs(w - v) > 1e-9) bad.push(`${label} ${ym}: ${v} vs ${w}`); } };
+    const divCode = (d) => (d.division_code === 0 ? "0" : String(d.division_code).padStart(2, "0"));
+    for (const sector of ["combined", "rural", "urban"]) for (const d of divisions) cmp(`${sector} ${d.division_name}`, cur[sector][keyOf(d)].levels, store[sector].all_india?.[divCode(d)]?.levels);
+    for (const lv of Object.keys(grid)) for (const [code, g] of Object.entries(grid[lv])) cmp(`grid ${code}`, g.levels, ai[code]?.levels);
+    const stKeyOf = Object.fromEntries(fd.state.map((x) => [slugify(x.state_name), x.state_code === 1 ? "all_india" : slugify(x.state_name)]));
+    for (const sector of ["combined", "rural", "urban"]) for (const [k, st] of Object.entries(stateLevels24[sector])) cmp(`${k} ${sector} General`, st.levels, store[sector][stKeyOf[k]]?.["0"]?.levels);
+    if (bad.length) throw new Error(`cpi-2024: ${bad.length} values differ between the hand-paged fetches and the audited slices, e.g. ${bad.slice(0, 3).join("; ")}`);
+    process.stdout.write("cpi-2024: every headline, grid and state-General value equals the audited state x sector slices\n");
+  }
 
   const months = [...ai["0"].levels.keys()].sort();
   const lastMonth = months.at(-1);
