@@ -31,6 +31,16 @@ families:
       RBI DBIE webi mirror (dataset rbi_dbie_webi_rows) through scripts/lib/databank.mjs.
       Refresh the mirror with the Data Bank's own CLI (docs/RBI_DBIE_WEBI_RUNBOOK.md there),
       then run `npm run data`. Override the path with INDIA_ATLAS_DATABANK.
+  # --- trade (lb/trade) ---
+  tradestat:
+    transport: tradestat
+    base: https://tradestat.commerce.gov.in/
+    note: >
+      Ministry of Commerce TradeStat (DGCI&S customs data): Laravel forms, no API. Every call
+      GETs the form for a fresh CSRF token and cookie, then POSTs it; one request at a time
+      (scripts/lib/tradestat.mjs, on net.mjs requestRaw). An unpublished month answers HTTP 200
+      with all-zero values: never baked. Notes and traps: docs/reference/tradestat.md.
+  # --- end trade ---
 
 dossiers:
 
@@ -1003,6 +1013,37 @@ dossiers:
     ranges:
       inr_lakh_crore: [0, 400]
 
+
+  # --- trade (lb/trade) ---
+  trade:
+    # regression floor: TradeStat's monthly bank is current to the latest released month
+    stale_after: "2026-07"
+    family: tradestat
+    geo: IND
+    product: tradestat
+    frequency: monthly
+    frequency_exempt: true       # monthly and financial-year bundles side by side
+    base: "HS 2 and 4 digits"
+    release_calendar: "Quick estimates (principal commodities, provisional) about the 15th of the next month; the commodity and partner tables (final) about a month later"
+    revision_policy: "Each month is printed final (F) in its own month's table and revised final (R) in the table a year later; principal-commodity quick estimates are provisional (P). Every value carries its flag in meta.revision."
+    source_agency: "Ministry of Commerce and Industry, TradeStat (DGCI&S customs data)"
+    release_url: https://tradestat.commerce.gov.in/
+    ranges:
+      usd_million: [-150000, 150000]
+      inr_crore: [-15000000, 15000000]
+  trade-dbie:
+    stale_after: "2026-03"
+    family: databank
+    geo: IND
+    product: dbie-trade
+    frequency: monthly
+    frequency_exempt: true
+    base: "as published"
+    release_calendar: "RBI republishes DGCI&S totals monthly (provisional first, final later) and the Handbook tables yearly"
+    revision_policy: "Provisional, revised and final versions are published; we keep the most final version of each period and name it in meta.revision."
+    source_agency: "Reserve Bank of India, DBIE (DGCI&S data)"
+    release_url: https://data.rbi.org.in
+  # --- end trade ---
 
 # ---------------------------------------------------------------------------
 # SEAMS: the base-year registry (2026-10). One entry per base (or

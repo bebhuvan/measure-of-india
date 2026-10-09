@@ -132,3 +132,35 @@ export function getJson(url, opts = {}) {
 export function getText(url, opts = {}) {
   return get(url, opts, true);
 }
+
+// ---------------------------------------------------------------------------
+// requestRaw: one request with any method, headers and body, under the same
+// deadline and size-cap discipline as requestOnce, resolving with
+// { status, headers, body } and NEVER classifying the body. For form-driven
+// HTML sources (TradeStat: GET a form for its CSRF token and cookie, then POST
+// it), where the caller owns retries because each retry needs a fresh token.
+// Added for the trade family (scripts/lib/tradestat.mjs).
+// ---------------------------------------------------------------------------
+export function requestRaw(url, { method = "GET", headers = {}, body = null, timeoutMs = 60_000, deadlineMs = 180_000, maxBytes = 64 * 1024 * 1024, agent } = {}) {
+  return new Promise((resolve, reject) => {
+    const started = Date.now();
+    const chunks = [];
+    let bytes = 0, settled = false;
+    const finish = (fn, arg) => { if (!settled) { settled = true; req.destroy(); fn(arg); } };
+    const lib = url.startsWith("http:") ? http : https;
+    const req = lib.request(url, { method, headers: body != null ? { "Content-Length": Buffer.byteLength(body), ...headers } : headers, agent: agentFor(url, { agent }) }, (res) => {
+      res.on("data", (c) => {
+        chunks.push(c);
+        bytes += c.length;
+        if (bytes > maxBytes) finish(reject, Object.assign(new Error(`Response exceeds ${maxBytes} bytes for ${url}`), { fatal: true }));
+        if (Date.now() - started > deadlineMs) finish(reject, new Error(`Total deadline (${deadlineMs}ms) exceeded for ${url}`));
+      });
+      res.on("end", () => finish(resolve, { status: res.statusCode, headers: res.headers, body: Buffer.concat(chunks).toString("utf8") }));
+    });
+    req.setTimeout(timeoutMs, () => finish(reject, new Error(`Idle timeout (${timeoutMs}ms) for ${url}`)));
+    setTimeout(() => finish(reject, new Error(`Total deadline (${deadlineMs}ms) exceeded for ${url}`)), deadlineMs).unref?.();
+    req.on("error", (e) => finish(reject, e));
+    if (body != null) req.write(body);
+    req.end();
+  });
+}

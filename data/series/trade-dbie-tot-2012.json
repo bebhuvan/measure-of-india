@@ -1,0 +1,186 @@
+{
+ "meta": {
+  "dossier": "trade",
+  "source": "Reserve Bank of India, DBIE (DGCI&S data)",
+  "vintage": "2026-10-09",
+  "mock": false,
+  "geo": "IND",
+  "releaseDate": null,
+  "revisionPolicy": "x",
+  "latestPeriod": "2025-04",
+  "frequency": "annual",
+  "base": "2012-13=100",
+  "unit": "index",
+  "coverage": "Unit value and volume indices of India's exports and imports, and the terms of trade, base 2012-13=100",
+  "note": "RBI DBIE report 379 (DGCI&S indices), base 2012-13=100. A different base is a different ruler: never joined to the other bases."
+ },
+ "dates": [
+  "2013-04-01",
+  "2014-04-01",
+  "2015-04-01",
+  "2016-04-01",
+  "2017-04-01",
+  "2018-04-01",
+  "2019-04-01",
+  "2020-04-01",
+  "2021-04-01",
+  "2022-04-01",
+  "2023-04-01",
+  "2024-04-01",
+  "2025-04-01"
+ ],
+ "series": {
+  "uvi_exports": {
+   "name": "Unit value index, exports",
+   "label": "Unit value index, exports",
+   "color": "#2E4BD8",
+   "data": [
+    111.6,
+    108.58,
+    104.02,
+    107.57,
+    110.4,
+    123.93,
+    124.77,
+    140.26,
+    143.84,
+    159.61,
+    160.35,
+    163.53,
+    171.87
+   ]
+  },
+  "uvi_imports": {
+   "name": "Unit value index, imports",
+   "label": "Unit value index, imports",
+   "color": "#C47A16",
+   "data": [
+    108.35,
+    99.75,
+    84.53,
+    87.74,
+    92.17,
+    108.76,
+    102.86,
+    105.47,
+    133.67,
+    157.34,
+    140.39,
+    159.79,
+    168.01
+   ]
+  },
+  "qi_exports": {
+   "name": "Quantum (volume) index, exports",
+   "label": "Quantum (volume) index, exports",
+   "color": "#2E4BD8",
+   "data": [
+    139.35,
+    154.95,
+    185.65,
+    223.76,
+    200.2,
+    124.53,
+    145.02,
+    116.48,
+    189.48,
+    146.21,
+    201.2,
+    179.21,
+    null
+   ],
+   "withheld": [
+    "2025-04-01"
+   ],
+   "withheldNote": "2025-26: withheld. The RBI table prints a quantum index of 473.58 after 179.21, which with the unit value index implies exports grew 178% in value; the rupee value grew 5.4%. A broken print, not a measurement (checked 2026-10-09)."
+  },
+  "qi_imports": {
+   "name": "Quantum (volume) index, imports",
+   "label": "Quantum (volume) index, imports",
+   "color": "#C47A16",
+   "data": [
+    94.1,
+    103.67,
+    111.37,
+    111.88,
+    123.33,
+    126.17,
+    124.66,
+    107.16,
+    130.6,
+    147,
+    147.32,
+    163.2,
+    180.69
+   ]
+  },
+  "tot_net": {
+   "name": "Net terms of trade (export unit value over import unit value, x100)",
+   "label": "Net terms of trade (export unit value over import unit value, x100)",
+   "color": "#5F6675",
+   "data": [
+    103.01,
+    108.85,
+    123.05,
+    122.61,
+    119.78,
+    113.94,
+    121.29,
+    132.99,
+    107.61,
+    101.44,
+    114.22,
+    102.35,
+    102.3
+   ]
+  },
+  "tot_gross": {
+   "name": "Gross terms of trade (import volume over export volume, x100)",
+   "label": "Gross terms of trade (import volume over export volume, x100)",
+   "color": "#A3A9B4",
+   "data": [
+    67.53,
+    66.91,
+    59.99,
+    50,
+    61.61,
+    101.32,
+    85.96,
+    92,
+    68.92,
+    100.54,
+    73.22,
+    91.07,
+    null
+   ],
+   "withheld": [
+    "2025-04-01"
+   ],
+   "withheldNote": "2025-26: withheld. The RBI table prints a quantum index of 473.58 after 179.21, which with the unit value index implies exports grew 178% in value; the rupee value grew 5.4%. A broken print, not a measurement (checked 2026-10-09)."
+  },
+  "tot_income": {
+   "name": "Income terms of trade (net terms of trade x export volume, /100)",
+   "label": "Income terms of trade (net terms of trade x export volume, /100)",
+   "color": "#A3A9B4",
+   "data": [
+    143.55,
+    168.66,
+    228.45,
+    274.35,
+    239.79,
+    141.9,
+    175.9,
+    154.9,
+    203.9,
+    148.32,
+    229.8,
+    183.41,
+    null
+   ],
+   "withheld": [
+    "2025-04-01"
+   ],
+   "withheldNote": "2025-26: withheld. The RBI table prints a quantum index of 473.58 after 179.21, which with the unit value index implies exports grew 178% in value; the rupee value grew 5.4%. A broken print, not a measurement (checked 2026-10-09)."
+  }
+ }
+}
