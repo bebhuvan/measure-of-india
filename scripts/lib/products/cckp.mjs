@@ -29,8 +29,16 @@
 //   - An unknown facet combination returns status "success" with empty data, so every
 //     call asserts the variables it asked for.
 //
-// Hand checks: see docs/status/climate.md (one value per bundle family, traced to the
-// CCKP country page and to the raw dump).
+// Hand checks (2026-10-09):
+//   - CRU TS: CRU's own country file (crucy.v4.10.1901.2025.India.tmp.per) gives India's
+//     2016-2025 mean minus 1901-1930 as +0.91°C and 1996-2025 minus 1951-1980 as +0.57°C;
+//     from CCKP's aggregation of the same grid, +0.87 and +0.56. Levels differ by ~0.7°C
+//     (2024: 24.7 against 25.43), consistent with different India masks (CCKP has no unit
+//     for Jammu and Kashmir or Ladakh); 2024 rain agrees (1,256.1 against 1,253.48 mm).
+//   - ERA5: CCKP's published 1991-2020 climatology for India (tas 24.21°C, pr 1,189.73 mm,
+//     hd35 78.89 days) equals the mean of the annual series baked (validate.mjs checks it).
+//   - CMIP6: CCKP is the publisher; climate-cmip6-windows-temp tas SSP2-4.5 2040-2059 median
+//     +1.18°C re-read from the API by hand (cmip6-x0.25_climatology_tas_anomaly_annual_...).
 
 import fs from "node:fs";
 import path from "node:path";

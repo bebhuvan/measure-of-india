@@ -26,7 +26,11 @@
 //   - Several codebook columns are OWID's own arithmetic (growth, per capita, shares,
 //     cumulative sums); the codebook says so and so does each series label.
 //
-// Hand check: see the end of this header once done (one value per bundle family).
+// Hand checks (2026-10-09): India's 2024 fossil CO2 is 3,193.48 Mt here; the Global Carbon
+// Budget 2025 gives 3.2 GtCO2 and 8% of the world (here 8.27%). Electricity 2025: solar
+// 9.4%, wind and solar 14.4%, low-carbon 26.7% here; Ember's India page gives 9.4%, 14% and
+// 27% clean. ERA5 country averages are OWID's processing (Copernicus publishes no country
+// series): August 2026 +0.6252°C matches OWID's grapher CSV for India.
 
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";

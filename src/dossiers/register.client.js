@@ -271,3 +271,19 @@ const nfhsRows = [
   ["Women's bank account, %", "NFHS-BNK", "s-g4", nfhsFind(NF, "bank or savings")],
 ].filter(([, , , s]) => s != null);
 render("reg-nfhs", nfhsRows.map(([nm, code, sw, s]) => [nm, code, sw, s, false, "/guides/nfhs/"]), 48, "spnf", "NFHS-5", "MoSPI / IIPS");
+
+// climate (lb/climate): the month against 1991-2020 (ERA5, OWID), the station record's annual
+// mean, and nights of 26°C or more (ERA5, CCKP)
+import climateMonthlyBundle from "../../data/series/climate-temp-monthly.json";
+import climateCruBundle from "../../data/series/climate-cru.json";
+import climateHotdaysBundle from "../../data/series/climate-era5-hotdays.json";
+{
+  const CM = hydrate(climateMonthlyBundle), CR = hydrate(climateCruBundle), CH = hydrate(climateHotdaysBundle);
+  const sdeg = (v) => (v < 0 ? "−" : "+") + Math.abs(v).toFixed(2) + "°C";
+  render("reg-climate", [
+    ["Temperature against 1991-2020, monthly", "ERA5-ANOM", "s-acc", CM.temperature_anomaly, false, "/guides/climate/", null, sdeg],
+    ["Annual mean temperature, station record", "CRU-TAS", "s-g1", CR.tas, false, "/guides/climate/", null, (v) => v.toFixed(2) + "°C", "CRU TS 4.10"],
+    ["Nights of 26°C or more, a year", "ERA5-TR26", "s-g2", CH.tr26, false, "/guides/climate/", null, (v) => v.toFixed(1) + " days", "ERA5, CCKP"],
+  ], 12, "spcl", climateMonthlyBundle.meta.latestPeriod, "Copernicus ERA5 via OWID; CRU TS and ERA5 via the World Bank CCKP");
+}
+
