@@ -501,7 +501,7 @@ export function buildPlfsDeep(root, dcfg, vintage) {
   }
 
   /* ---- indicator 4, annual: the share-of-workers tables for every state ----
-   * All India is the services guide's (services-jobs-ay, services-jobs-cy: every cell, read
+   * All India is the services guide's (services-jobs-ay, services-jobs-cy, services-jobs-cy25: every cell, read
    * not rebuilt; plfs-status carries the headline split). Here: each state's cells, one
    * bundle per design and year type. A key names its cut the way services-jobs does. */
   {
@@ -546,7 +546,7 @@ export function buildPlfsDeep(root, dcfg, vintage) {
       }
       const nq = quarantineShares(series, axis, shareMember);
       if (nq) process.stdout.write(`plfs-deep: ${bslug}: ${nq} share tables withheld (no sample, or shares not adding up)\n`);
-      const b = assemble({ slug: bslug, axis, series, meta: meta0("annual", base, `States and UTs, ${label}: per cent distribution of workers aged 15 and above by status in employment, broad industry, NIC section, NCO division and enterprise type, one cut at a time, by gender and sector; usual status (PS+SS), with status and broad industry also on the weekly status (CWS). The multi-way tables by state (status within each NIC group; enterprise type and size within each NIC group) are in the deep archive (data/archive/staging/plfs/${bslug}-cross.csv.gz). All India is services-jobs-ay / services-jobs-cy (the services guide). Each table's cells add to 100.`) });
+      const b = assemble({ slug: bslug, axis, series, meta: meta0("annual", base, `States and UTs, ${label}: per cent distribution of workers aged 15 and above by status in employment, broad industry, NIC section, NCO division and enterprise type, one cut at a time, by gender and sector; usual status (PS+SS), with status and broad industry also on the weekly status (CWS). The multi-way tables by state (status within each NIC group; enterprise type and size within each NIC group) are in the deep archive (data/archive/staging/plfs/${bslug}-cross.csv.gz). All India is services-jobs-ay / services-jobs-cy / services-jobs-cy25 (the services guide). Each table's cells add to 100.`) });
       write([bslug, b]); counts[bslug] = Object.keys(b.series).length;
       if (cross.length) stageCsv(root, `${bslug}-cross.csv.gz`, ["table", "period", "state", "gender", "sector", "weekly_status", ...DIMS, "value", "unit", "base"], cross, vintage);
     };

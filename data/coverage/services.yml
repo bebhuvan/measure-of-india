@@ -95,9 +95,11 @@ rules:
     reason: "Duplicate: state value added by industry is the states guide's, from MoSPI, the source of record; RBI's Handbook of States copy is its cross-check there."
 
   # ---------- PLFS: share of workers ----------
+  # calendar years split at the PLFS redesign (2026-10-10): plates draw the revamped design
+  # (services-jobs-cy25); the original design's 2023 and 2024 cells are baked in services-jobs-cy
   - match: ["plfs:cy:sec_*", "plfs:cy:tertiary:*"]
     status: shown
-    bundle: services-jobs-cy
+    bundle: [services-jobs-cy25, services-jobs-cy]
     plate: "§06 Shops employ the most service workers; In cities, services are most work"
   - match: ["plfs:ay:own_account:*", "plfs:ay:helper:*", "plfs:ay:regular:*", "plfs:ay:casual:*"]
     status: shown
@@ -113,7 +115,7 @@ rules:
     reason: "The 100 per cent total of the status-within-group table for that group, carrying no information."
   - match: ["plfs:ay:*", "plfs:cy:*"]
     status: baked
-    bundle: [services-jobs-ay, services-jobs-cy]
+    bundle: [services-jobs-ay, services-jobs-cy, services-jobs-cy25]
 
   # ---------- ASUSE: unincorporated service enterprises ----------
   - match: ["asuse:workers:fy:*", "asuse:establishments:fy:*", "asuse:gva_per_worker:fy:*"]

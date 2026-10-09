@@ -300,7 +300,7 @@ export const CUT_BY_BUNDLE = {
   "services-gva-2011-share": "Industry", "services-gva-2011-growth": "Industry", "services-gva-2011-level": "Industry",
   "services-isp-growth": "Sub-sector", "services-isp-annual": "Sub-sector", "services-trade-monthly": "Flow",
   "services-bop-quarterly": "Category and flow", "services-invisibles-quarterly": "Purpose code", "services-bop-annual": "Category and flow",
-  "services-jobs-ay": "Industry, status, sex and place", "services-jobs-cy": "Industry, status, sex and place",
+  "services-jobs-ay": "Industry, status, sex and place", "services-jobs-cy": "Industry, status, sex and place", "services-jobs-cy25": "Industry, status, sex and place",
   "services-asuse": "Activity, sex and place", "services-asuse-profile": "Activity and profile", "services-asuse-2025": "Activity, sex and place", "services-asuse-profile-2025": "Activity and profile",
   // --- states (state economies) ---
   "states-spread": "Fixed panel of states", "states-structure": "State and sector", "states-industry-shares": "State and industry",

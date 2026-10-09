@@ -420,7 +420,9 @@ const PRODUCTS = [
   { slug: "services-bop-annual", dossier: "services-trade", cadence: 12, staleAfter: "2025-04", range: [-500000, 1000000], freq: "annual" },
   // PLFS shares of workers, per cent
   { slug: "services-jobs-ay", dossier: "services-jobs", cadence: 12, staleAfter: "2023-07", range: [0, 100], base: "agriculture year (PLFS 2017-18 to 2023-24)" },
-  { slug: "services-jobs-cy", dossier: "services-jobs", cadence: 12, range: [0, 100] },
+  // calendar years split at the PLFS redesign (January 2025): original design frozen at 2024
+  { slug: "services-jobs-cy", dossier: "services-jobs", cadence: 12, staleAfter: "2024-01", range: [0, 100], base: "calendar year (PLFS original design, to 2024)" },
+  { slug: "services-jobs-cy25", dossier: "services-jobs", cadence: 12, range: [0, 100] },
   // ASUSE: counts (to ~7 crore), ₹ per year, per-1,000 distributions
   { slug: "services-asuse", dossier: "services-asuse", cadence: 12, range: [0, 1e9] },
   { slug: "services-asuse-profile", dossier: "services-asuse", cadence: 12, range: [0, 1000] },
@@ -1564,7 +1566,7 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
   }));
   // PLFS: the 21 NIC sections add to 100 for every gender, sector and year (published to one
   // or two decimals: 0.6 pt)
-  for (const slug of ["services-jobs-ay", "services-jobs-cy"]) withBundle(slug, (b) => {
+  for (const slug of ["services-jobs-ay", "services-jobs-cy", "services-jobs-cy25"]) withBundle(slug, (b) => {
     const groups = {};
     for (const [k, s] of Object.entries(b.series)) { const m = k.match(/^sec_[a-u]__(.+)$/); if (m) (groups[m[1]] ??= []).push(s.data); }
     let worst = 0, at = "";
