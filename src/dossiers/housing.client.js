@@ -44,6 +44,8 @@ const sgn = (v, dp = 1) => (+Math.abs(v).toFixed(dp) === 0 ? "" : v < 0 ? "−" 
 const pctV = (v) => (v == null ? "—" : sgn(v));
 /** y/y within one series (index four quarters back), as {date, value} points */
 const yoyOf = (s) => s.data.map((d, i) => ({ date: d.date, value: i >= 4 && d.value != null && s.data[i - 4].value != null ? (d.value / s.data[i - 4].value - 1) * 100 : null }));
+// city names come from the sources (NHB serves them over the wire): escape before any innerHTML
+const esc = (t) => String(t).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const cityName = (label) => label.split(",")[0].replace(/ \(.*\)$/, "");
 function wireCustom(id, plot, filename, csv) {
   const el = document.getElementById(id);
@@ -159,8 +161,8 @@ setHTML("rb-nom", fmt.pct2(last(P.nominal_yoy)));
   wireCustom("cb-cities10", plot, "india-atlas_house-prices-10-cities-2010-base", "city,index_2010_11_eq_100,quarter\n" + rows.map((r) => `${r.name},${r.v},${rbi10.dates.at(-1)}`).join("\n"));
   const med = [...rows].sort((a, b) => a.v - b.v);
   setHTML("pv-cities10", rows[0].v.toFixed(0));
-  setHTML("ex-c10-top", `${rows[0].name} ${rows[0].v.toFixed(0)}`);
-  setHTML("ex-c10-bot", `${rows.at(-1).name} ${rows.at(-1).v.toFixed(0)}`);
+  setHTML("ex-c10-top", `${esc(rows[0].name)} ${rows[0].v.toFixed(0)}`);
+  setHTML("ex-c10-bot", `${esc(rows.at(-1).name)} ${rows.at(-1).v.toFixed(0)}`);
   setHTML("ex-c10-med", ((med[4].v + med[5].v) / 2).toFixed(0));
 }
 
@@ -184,8 +186,8 @@ setHTML("rb-nom", fmt.pct2(last(P.nominal_yoy)));
   setHTML("ex-c-top", rows.find((r) => r.k === "chennai").v.toFixed(1));
   setHTML("ex-c-bot", rows.find((r) => r.k === "delhi").v.toFixed(1));
   setHTML("ex-c-up", String(rows.filter((r) => r.y > 0).length));
-  setHTML("ex-c-yhi", `${ys[0].name}, ${sgn(ys[0].y)}`);
-  setHTML("ex-c-ylo", `${ys.at(-1).name}, ${sgn(ys.at(-1).y)}`);
+  setHTML("ex-c-yhi", `${esc(ys[0].name)}, ${sgn(ys[0].y)}`);
+  setHTML("ex-c-ylo", `${esc(ys.at(-1).name)}, ${sgn(ys.at(-1).y)}`);
 }
 
 /* ---------- § 04 three rulers ---------- */
@@ -237,8 +239,8 @@ setHTML("rb-nom", fmt.pct2(last(P.nominal_yoy)));
   setHTML("pv-rxcities", `${up} of ${rows.length}`);
   setHTML("ex-x-up", String(up));
   setHTML("ex-x-n", String(rows.length));
-  setHTML("ex-x-top", `${rows[0].name}, ${sgn(rows[0].v)}`);
-  setHTML("ex-x-bot", `${rows.at(-1).name}, ${sgn(rows.at(-1).v)}`);
+  setHTML("ex-x-top", `${esc(rows[0].name)}, ${sgn(rows[0].v)}`);
+  setHTML("ex-x-bot", `${esc(rows.at(-1).name)}, ${sgn(rows.at(-1).v)}`);
   setHTML("ex-x-india", sgn(lastYoy(rx25Yoy).value));
 }
 
@@ -255,10 +257,10 @@ setHTML("rb-nom", fmt.pct2(last(P.nominal_yoy)));
   wireCustom("cb-price", plot, "india-atlas_price-per-sq-ft", "city,inr_per_sq_ft,implied_646_sq_ft_flat_inr,quarter\n" + all.map((r) => `"${r.name}",${r.v},${Math.round(r.v * 646)},${rxp25.dates.at(-1)}`).join("\n"));
   const med = [...all].sort((a, b) => a.v - b.v)[Math.floor(all.length / 2)];
   setHTML("pv-price", inr(all[0].v));
-  setHTML("ex-p-top", `${all[0].name}, ${inr(all[0].v)}`);
+  setHTML("ex-p-top", `${esc(all[0].name)}, ${inr(all[0].v)}`);
   setHTML("ex-p-flat", flat(all[0].v));
-  setHTML("ex-p-bot", `${all.at(-1).name}, ${inr(all.at(-1).v)}`);
-  setHTML("ex-p-med", `${inr(med.v)} (${med.name})`);
+  setHTML("ex-p-bot", `${esc(all.at(-1).name)}, ${inr(all.at(-1).v)}`);
+  setHTML("ex-p-med", `${inr(med.v)} (${esc(med.name)})`);
   setHTML("ex-p-x", fmt.x1(all[0].v / med.v));
 }
 
@@ -275,8 +277,8 @@ setHTML("rb-nom", fmt.pct2(last(P.nominal_yoy)));
   setHTML("pv-peers", `${rank} of ${rows.length}`);
   setHTML("ex-pp-in", sgn(last(P.real_yoy), 2));
   setHTML("ex-pp-rank", `${rank} of ${rows.length}`);
-  setHTML("ex-pp-top", `${rows[0].name}, ${sgn(rows[0].v)}`);
-  setHTML("ex-pp-bot", `${rows.at(-1).name}, ${sgn(rows.at(-1).v)}`);
+  setHTML("ex-pp-top", `${esc(rows[0].name)}, ${sgn(rows[0].v)}`);
+  setHTML("ex-pp-bot", `${esc(rows.at(-1).name)}, ${sgn(rows.at(-1).v)}`);
 }
 
 /* ---------- provenance ---------- */
