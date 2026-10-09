@@ -34,6 +34,8 @@ const EDU = hydrate(educationBundle);
 
 const MN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const fmtDate = (d) => MN[d.getUTCMonth()] + " " + d.getUTCFullYear();
+// the cuts' latest month, spelled out, for descriptions (never typed in)
+const CUTS_LATEST = ["January","February","March","April","May","June","July","August","September","October","November","December"][Object.values(CUTS)[0].data.at(-1).date.getUTCMonth()] + " " + Object.values(CUTS)[0].data.at(-1).date.getUTCFullYear();
 const QN = { 0: "Jan–Mar", 3: "Apr–Jun", 6: "Jul–Sep", 9: "Oct–Dec" };
 const fmtQ = (d) => QN[d.getUTCMonth()] + " " + d.getUTCFullYear();
 const fmtAgri = (d) => {
@@ -115,18 +117,18 @@ setTxt("ex-edu-y0", f1a(first(EDU.youth_15_29)));
 
 /* ---------- register ---------- */
 const regRows = [
-  [M.ur, "UR · all-India · monthly", "Current weekly status, 15+", "s-acc", fmtDate],
-  [M.lfpr, "LFPR · all-India · monthly", "Labour force participation, 15+", "s-g1", fmtDate],
-  [M.wpr, "WPR · all-India · monthly", "Worker population ratio, 15+", "s-g2", fmtDate],
-  [Q.ur, "UR · urban · quarterly", "CWS, urban, 15+ · two disclosed gaps", "s-g3", fmtQ],
-  [Q.lfpr, "LFPR · urban · quarterly", "CWS, urban, 15+", "s-g4", fmtQ],
-  [A.ur_psss, "UR · annual · usual status", "PS+SS, agriculture years", "s-acc", fmtAgri],
-  [A.ur_cws, "UR · annual · weekly status", "CWS, agriculture years", "s-g1", fmtAgri],
+  [M.ur, "UR, all-India, monthly", "Current weekly status, 15+", "s-acc", fmtDate],
+  [M.lfpr, "LFPR, all-India, monthly", "Labour force participation, 15+", "s-g1", fmtDate],
+  [M.wpr, "WPR, all-India, monthly", "Worker population ratio, 15+", "s-g2", fmtDate],
+  [Q.ur, "UR, urban, quarterly", "CWS, urban, 15+, two disclosed gaps", "s-g3", fmtQ],
+  [Q.lfpr, "LFPR, urban, quarterly", "CWS, urban, 15+", "s-g4", fmtQ],
+  [A.ur_psss, "UR, annual, usual status", "PS+SS, agriculture years", "s-acc", fmtAgri],
+  [A.ur_cws, "UR, annual, weekly status", "CWS, agriculture years", "s-g1", fmtAgri],
   // annual-report extras: published to one decimal / whole rupees
-  [STA.self_employed_person, "Self-employed share · annual", "PS+SS, share of all workers", "s-g2", fmtAgri, f1a, arrow1],
-  [EARN.regular_person, "Regular wage · ₹ per month", "Nominal, annual reports, quarterly grain", "s-acc", fmtQ, inr, arrowInr],
-  [EARN.casual_person, "Casual wage · ₹ per day", "Non-public works, annual reports", "s-g3", fmtQ, inr, arrowInr],
-  [EDU.graduate, "UR · graduates · annual", "PS+SS, 15+, the educated queue", "s-g4", fmtAgri, f1a, arrow1],
+  [STA.self_employed_person, "Self-employed share, annual", "PS+SS, share of all workers", "s-g2", fmtAgri, f1a, arrow1],
+  [EARN.regular_person, "Regular wage, ₹ per month", "Nominal, annual reports, quarterly grain", "s-acc", fmtQ, inr, arrowInr],
+  [EARN.casual_person, "Casual wage, ₹ per day", "Non-public works, annual reports", "s-g3", fmtQ, inr, arrowInr],
+  [EDU.graduate, "UR, graduates, annual", "PS+SS, 15+, the educated queue", "s-g4", fmtAgri, f1a, arrow1],
 ];
 document.getElementById("ledger-body").innerHTML = regRows.map(([s, nm, sub, sw, fmt, fv = f1, fd = arrow], i) => {
   const data = s.data.filter((d) => d.value != null);
@@ -137,7 +139,7 @@ document.getElementById("ledger-body").innerHTML = regRows.map(([s, nm, sub, sw,
   <tr>
     <td class="name"><span class="sw ${sw}"></span>${nm}<small>${sub}</small></td>
     <td class="val">${fv(data.at(-1).value)}</td>
-    <td class="chg">${fd(data.at(-1).value - data.at(-2).value)} · vs ${fmt(data.at(-2).date)}</td>
+    <td class="chg">${fd(data.at(-1).value - data.at(-2).value)}, vs ${fmt(data.at(-2).date)}</td>
     <td class="yr">${fv(data[yi].value)}</td>
     <td class="spark" id="sp-j${i}"></td>
   </tr>`;
@@ -149,11 +151,11 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, fmtX, dlNa
   const dts = seriesList[0].data.map((d) => d.date);
   const dodged = dodgeEndLabels(seriesList.filter((s) => s.data.at(-1).value != null), (geo.d1 - geo.d0) * 0.06);
   const marks = [
-    Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-    Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
-    geo.d0 <= 0 && geo.d1 >= 0 ? Plot.ruleY([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }) : null,
+    Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+    Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+    geo.d0 <= 0 && geo.d1 >= 0 ? Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }) : null,
     ...keys.slice(1).map((k) => Plot.lineY(store[k].data, { x: "date", y: "value", stroke: store[k].color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" })),
-    Plot.lineY(store[keys[0]].data, { x: "date", y: "value", stroke: store[keys[0]].color, strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
+    Plot.lineY(store[keys[0]].data, { x: "date", y: "value", stroke: store[keys[0]].color, strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
     Plot.lineY(store[keys[0]].data.filter((d) => d.value != null).slice(-7), { x: "date", y: "value", stroke: store[keys[0]].color, strokeWidth: 4.5, strokeLinecap: "round", strokeLinejoin: "round" }),
     ...seriesList.filter((s) => s.data.at(-1).value != null).map((s) => Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: s === seriesList[0] ? 5 : 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
     ...dodged.filter((p) => Math.abs(p.y - p.value) > 0.05).map((p) => Plot.line([
@@ -161,14 +163,14 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, fmtX, dlNa
     ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
     ...dodged.map((p) => Plot.text([{ date: dts.at(-1), y: p.y }], {
       x: "date", y: "y", text: () => `${p.s.endLabel ?? p.s.label} ${fmtV(p.value)}`,
-      dx: 16, fill: p.s.color, fontSize: 14.5, fontFamily: mono,
+      dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono,
       fontWeight: p.s === seriesList[0] ? 500 : 400, textAnchor: "start",
     })),
   ].filter(Boolean);
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: fmtX },
     y: { label: "↑ per cent", labelAnchor: "top", labelArrow: false,
          tickFormat: (d) => (d === yTicks[yTicks.length - 1] ? d + "%" : String(d)), ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
@@ -189,11 +191,11 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
   const dts = seriesList[0].data.map((d) => d.date);
   const dodged = dodgeEndLabels(seriesList.filter((s) => s.data.at(-1).value != null), (geo.d1 - geo.d0) * 0.06);
   const marks = [
-    Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-    Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
-    geo.d0 === 0 ? Plot.ruleY([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }) : null,
+    Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+    Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+    geo.d0 === 0 ? Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }) : null,
     ...keys.slice(1).map((k) => Plot.lineY(store[k].data, { x: "date", y: "value", stroke: store[k].color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" })),
-    Plot.lineY(store[keys[0]].data, { x: "date", y: "value", stroke: store[keys[0]].color, strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
+    Plot.lineY(store[keys[0]].data, { x: "date", y: "value", stroke: store[keys[0]].color, strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
     Plot.lineY(store[keys[0]].data.filter((d) => d.value != null).slice(-5), { x: "date", y: "value", stroke: store[keys[0]].color, strokeWidth: 4.5, strokeLinecap: "round", strokeLinejoin: "round" }),
     ...seriesList.filter((s) => s.data.at(-1).value != null).map((s) => Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: s === seriesList[0] ? 5 : 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
     ...dodged.filter((p) => Math.abs(p.y - p.value) > (geo.d1 - geo.d0) * 0.002).map((p) => Plot.line([
@@ -201,14 +203,14 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
     ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
     ...dodged.map((p) => Plot.text([{ date: dts.at(-1), y: p.y }], {
       x: "date", y: "y", text: () => `${p.s.label} ${inr(p.value)}`,
-      dx: 16, fill: p.s.color, fontSize: 14.5, fontFamily: mono,
+      dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono,
       fontWeight: p.s === seriesList[0] ? 500 : 400, textAnchor: "start",
     })),
   ].filter(Boolean);
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => String(d.getUTCFullYear()) },
     y: { label: yLabel, labelAnchor: "top", labelArrow: false,
          tickFormat: tickFmt, ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
@@ -224,10 +226,10 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
 
 /* ---------- §03 three stopwatches: annual CWS vs usual status ---------- */
 {
-  A.ur_cws.color = "#5B564B";
-  A.ur_psss.color = "#BE3E26";
-  A.ur_cws.label = "Weekly status · CWS";
-  A.ur_psss.label = "Usual status · PS+SS";
+  A.ur_cws.color = "#5F6675";
+  A.ur_psss.color = "#2E4BD8";
+  A.ur_cws.label = "Weekly status, CWS";
+  A.ur_psss.label = "Usual status, PS+SS";
   A.ur_cws.endLabel = "CWS";
   A.ur_psss.endLabel = "PS+SS";
   const keys = ["ur_psss", "ur_cws"];
@@ -243,14 +245,14 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
 }
 
 /* ---------- §03 companion: annual LFPR — the seven-year structural story ----------
- * The monthly LFPR plate (§06) is fifteen months old. This annual companion
+ * The monthly LFPR plate (§06) is young (monthly bulletin from April 2025). This annual companion
  * runs seven agriculture years and shows the structural rise in participation
  * the monthly view cannot yet see — driven overwhelmingly by rural women. */
 {
-  A.lfpr_cws.color = "#5B564B";
-  A.lfpr_psss.color = "#BE3E26";
-  A.lfpr_cws.label = "LFPR · weekly status";
-  A.lfpr_psss.label = "LFPR · usual status";
+  A.lfpr_cws.color = "#5F6675";
+  A.lfpr_psss.color = "#2E4BD8";
+  A.lfpr_cws.label = "LFPR, weekly status";
+  A.lfpr_psss.label = "LFPR, usual status";
   A.lfpr_cws.endLabel = "weekly";
   A.lfpr_psss.endLabel = "usual";
   const keys = ["lfpr_psss", "lfpr_cws"];
@@ -281,22 +283,22 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => String(d.getUTCFullYear()) },
     y: { label: "↑ per cent", labelAnchor: "top", labelArrow: false,
          tickFormat: (d) => (d === yTicks[yTicks.length - 1] ? d + "%" : String(d)), ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
     marks: [
-      Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
-      Plot.ruleY([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+      Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
       // nulls at Apr–Jun 2019 (quarantined) and Jan–Mar 2025 (unpublished)
       // break the line — the gaps are disclosed, not interpolated
-      Plot.lineY(s.data, { x: "date", y: "value", stroke: "#BE3E26", strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.lineY(s.data.filter((d) => d.value != null).slice(-7), { x: "date", y: "value", stroke: "#BE3E26", strokeWidth: 4.5, strokeLinecap: "round", strokeLinejoin: "round" }),
-      Plot.ruleX([peak.date], { stroke: "#D8D3C4", strokeWidth: 1, strokeDasharray: "2,3" }),
-      Plot.text([{ date: peak.date, value: 22.6 }], { x: "date", y: "value", text: ["lockdown · one urban worker in five"], fontSize: 12.5, fill: "#8A857A", fontFamily: mono, textAnchor: "middle" }),
-      Plot.dot([s.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", fill: "#BE3E26", r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([s.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", text: (d) => `Urban UR ${d.value.toFixed(2)}%`, dx: 16, fill: "#BE3E26", fontSize: 14.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.lineY(s.data, { x: "date", y: "value", stroke: "#2E4BD8", strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.lineY(s.data.filter((d) => d.value != null).slice(-7), { x: "date", y: "value", stroke: "#2E4BD8", strokeWidth: 4.5, strokeLinecap: "round", strokeLinejoin: "round" }),
+      Plot.ruleX([peak.date], { stroke: "#DADDE3", strokeWidth: 1, strokeDasharray: "2,3" }),
+      Plot.text([{ date: peak.date, value: 22.6 }], { x: "date", y: "value", text: ["lockdown, one urban worker in five"], fontSize: 12.5, fill: "#878D99", fontFamily: mono, textAnchor: "middle" }),
+      Plot.dot([s.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([s.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", text: (d) => `Urban UR ${d.value.toFixed(2)}%`, dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
   });
   a11y(plot, "Urban unemployment rate, quarterly, current weekly status, 2018 to 2026",
@@ -311,10 +313,10 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
 /* ---------- §06 cuts: four labour markets ---------- */
 {
   const V = {
-    ur_female_urban: { ...CUTS.ur_female_urban, label: "Urban women", color: "#BE3E26" },
-    ur_male_urban: { ...CUTS.ur_male_urban, label: "Urban men", color: "#5B564B" },
-    ur_female_rural: { ...CUTS.ur_female_rural, label: "Rural women", color: "#A8A293" },
-    ur_male_rural: { ...CUTS.ur_male_rural, label: "Rural men", color: "#8A857A" },
+    ur_female_urban: { ...CUTS.ur_female_urban, label: "Urban women", color: "#2E4BD8" },
+    ur_male_urban: { ...CUTS.ur_male_urban, label: "Urban men", color: "#5F6675" },
+    ur_female_rural: { ...CUTS.ur_female_rural, label: "Rural women", color: "#A3A9B4" },
+    ur_male_rural: { ...CUTS.ur_male_rural, label: "Rural men", color: "#878D99" },
   };
   const keys = ["ur_female_urban", "ur_male_urban", "ur_female_rural", "ur_male_rural"];
   const geo = { W: 1184, H: 470, ml: 70, mr: 190, mt: 30, mb: 48, d0: 2, d1: 11 };
@@ -322,17 +324,17 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
   multiLine("cb-cuts", "plot-cuts", keys, V, geo, [2, 4, 6, 8, 10], xTicks,
     (d) => MN[d.getUTCMonth()] + " " + String(d.getUTCFullYear()).slice(2),
     "india-atlas_plfs_ur-by-gender-sector",
-    "Unemployment rate by gender and sector, monthly, April 2025 to June 2026",
+    "Unemployment rate by gender and sector, monthly, April 2025 to " + CUTS_LATEST,
     "Four line charts. Urban women end at " + last(CUTS.ur_female_urban).toFixed(1) + " per cent, urban men at " + last(CUTS.ur_male_urban).toFixed(1) + ", rural women at " + last(CUTS.ur_female_rural).toFixed(1) + ", rural men at " + last(CUTS.ur_male_rural).toFixed(1) + ".");
 }
 
 /* ---------- §06 cuts: the participation chasm ---------- */
 {
   const V = {
-    lfpr_female_urban: { ...CUTS.lfpr_female_urban, label: "Urban women", color: "#BE3E26" },
-    lfpr_male_urban: { ...CUTS.lfpr_male_urban, label: "Urban men", color: "#5B564B" },
-    lfpr_female_rural: { ...CUTS.lfpr_female_rural, label: "Rural women", color: "#A8A293" },
-    lfpr_male_rural: { ...CUTS.lfpr_male_rural, label: "Rural men", color: "#8A857A" },
+    lfpr_female_urban: { ...CUTS.lfpr_female_urban, label: "Urban women", color: "#2E4BD8" },
+    lfpr_male_urban: { ...CUTS.lfpr_male_urban, label: "Urban men", color: "#5F6675" },
+    lfpr_female_rural: { ...CUTS.lfpr_female_rural, label: "Rural women", color: "#A3A9B4" },
+    lfpr_male_rural: { ...CUTS.lfpr_male_rural, label: "Rural men", color: "#878D99" },
   };
   const keys = ["lfpr_female_urban", "lfpr_male_urban", "lfpr_female_rural", "lfpr_male_rural"];
   const geo = { W: 1184, H: 470, ml: 70, mr: 190, mt: 30, mb: 48, d0: 20, d1: 85 };
@@ -340,8 +342,8 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
   multiLine("cb-lfpr", "plot-lfpr", keys, V, geo, [20, 30, 40, 50, 60, 70, 80], xTicks,
     (d) => MN[d.getUTCMonth()] + " " + String(d.getUTCFullYear()).slice(2),
     "india-atlas_plfs_lfpr-by-gender-sector",
-    "Labour force participation rate by gender and sector, monthly, April 2025 to June 2026",
-    "Four line charts. Rural men end at " + last(CUTS.lfpr_male_rural).toFixed(1) + " per cent, urban men at " + last(CUTS.lfpr_male_urban).toFixed(1) + ", rural women at " + last(CUTS.lfpr_female_rural).toFixed(1) + ", urban women at " + last(CUTS.lfpr_female_urban).toFixed(1) + " — the chasm the plate is about.");
+    "Labour force participation rate by gender and sector, monthly, April 2025 to " + CUTS_LATEST,
+    "Four line charts. Rural men end at " + last(CUTS.lfpr_male_rural).toFixed(1) + " per cent, urban men at " + last(CUTS.lfpr_male_urban).toFixed(1) + ", rural women at " + last(CUTS.lfpr_female_rural).toFixed(1) + ", urban women at " + last(CUTS.lfpr_female_urban).toFixed(1) + ": the chasm the plate is about.");
 }
 
 /* ---------- §06 cuts: who is actually working (WPR) ----------
@@ -350,10 +352,10 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
 {
   setTxt("pv-wpr", last(CUTS.wpr_male_urban).toFixed(2) + "%");
   const V = {
-    wpr_male_urban: { ...CUTS.wpr_male_urban, label: "Urban men", color: "#5B564B" },
-    wpr_male_rural: { ...CUTS.wpr_male_rural, label: "Rural men", color: "#8A857A" },
-    wpr_female_rural: { ...CUTS.wpr_female_rural, label: "Rural women", color: "#A8A293" },
-    wpr_female_urban: { ...CUTS.wpr_female_urban, label: "Urban women", color: "#BE3E26" },
+    wpr_male_urban: { ...CUTS.wpr_male_urban, label: "Urban men", color: "#5F6675" },
+    wpr_male_rural: { ...CUTS.wpr_male_rural, label: "Rural men", color: "#878D99" },
+    wpr_female_rural: { ...CUTS.wpr_female_rural, label: "Rural women", color: "#A3A9B4" },
+    wpr_female_urban: { ...CUTS.wpr_female_urban, label: "Urban women", color: "#2E4BD8" },
   };
   const keys = ["wpr_male_urban", "wpr_male_rural", "wpr_female_rural", "wpr_female_urban"];
   const geo = { W: 1184, H: 470, ml: 70, mr: 190, mt: 30, mb: 48, d0: 10, d1: 85 };
@@ -361,7 +363,7 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
   multiLine("cb-wpr", "plot-wpr", keys, V, geo, [10, 30, 50, 70], xTicks,
     (d) => MN[d.getUTCMonth()] + " " + String(d.getUTCFullYear()).slice(2),
     "india-atlas_plfs_wpr-by-gender-sector",
-    "Worker population ratio (the share actually working) by gender and sector, monthly, April 2025 to June 2026",
+    "Worker population ratio (the share actually working) by gender and sector, monthly, April 2025 to " + CUTS_LATEST,
     "Four line charts. Rural men end at " + last(CUTS.wpr_male_rural).toFixed(1) + " per cent, urban men at " + last(CUTS.wpr_male_urban).toFixed(1) + ", rural women at " + last(CUTS.wpr_female_rural).toFixed(1) + ", urban women at " + last(CUTS.wpr_female_urban).toFixed(1) + ".");
 }
 
@@ -369,25 +371,25 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
 {
   const basket = (barId, labId, segs) => {
     document.getElementById(barId).innerHTML = segs.map(([n, w, c]) =>
-      `<div class="seg" style="width:${w}%;background:${c}" title="${n} — ${w.toFixed(1)}%"></div>`).join("");
+      `<div class="seg" style="width:${w}%;background:${c}" title="${n}: ${w.toFixed(1)}%"></div>`).join("");
     document.getElementById(labId).innerHTML = segs.map(([n, w, c]) =>
       `<div class="blab"><div class="n"><span class="sw" style="background:${c}"></span>${n}</div><div class="w">${w.toFixed(1)}%</div></div>`).join("");
   };
   basket("bk-st-bar", "bk-st-labels", [
-    ["Status · Self-employed", last(STA.self_employed_person), "#BE3E26"],
-    ["Regular wage/salary", last(STA.regular_person), "#5B564B"],
-    ["Casual labour", last(STA.casual_person), "#A8A293"],
+    ["Status, Self-employed", last(STA.self_employed_person), "#2E4BD8"],
+    ["Regular wage/salary", last(STA.regular_person), "#5F6675"],
+    ["Casual labour", last(STA.casual_person), "#A3A9B4"],
   ]);
   basket("bk-in-bar", "bk-in-labels", [
-    ["Industry · Agriculture & allied", last(STA.industry_primary_person), "#BE3E26"],
-    ["Industry & construction", last(STA.industry_secondary_person), "#5B564B"],
-    ["Services", last(STA.industry_tertiary_person), "#A8A293"],
+    ["Industry, Agriculture & allied", last(STA.industry_primary_person), "#2E4BD8"],
+    ["Industry & construction", last(STA.industry_secondary_person), "#5F6675"],
+    ["Services", last(STA.industry_tertiary_person), "#A3A9B4"],
   ]);
 
   const V = {
-    self_employed_person: { ...STA.self_employed_person, label: "Self-employed", color: "#BE3E26" },
-    regular_person: { ...STA.regular_person, label: "Regular wage/salary", color: "#5B564B" },
-    casual_person: { ...STA.casual_person, label: "Casual labour", color: "#A8A293" },
+    self_employed_person: { ...STA.self_employed_person, label: "Self-employed", color: "#2E4BD8" },
+    regular_person: { ...STA.regular_person, label: "Regular wage/salary", color: "#5F6675" },
+    casual_person: { ...STA.casual_person, label: "Casual labour", color: "#A3A9B4" },
   };
   const keys = ["self_employed_person", "regular_person", "casual_person"];
   const geo = { W: 1184, H: 470, ml: 70, mr: 260, mt: 30, mb: 48, d0: 15, d1: 65 };
@@ -408,7 +410,7 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
  * female self-employment line is the headline — it climbs fifteen points in
  * seven years. */
 {
-  const STATUS_COLORS = { self_employed: "#BE3E26", regular: "#5B564B", casual: "#A8A293" };
+  const STATUS_COLORS = { self_employed: "#2E4BD8", regular: "#5F6675", casual: "#A3A9B4" };
   const STATUS_LABELS = [["self_employed", "Self-employed"], ["regular", "Regular wage"], ["casual", "Casual labour"]];
   const xTicks = []; for (let y = 2017; y <= 2023; y++) xTicks.push(new Date(Date.UTC(y, 6, 1)));
 
@@ -419,21 +421,21 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
     const dts = seriesList[0].data.map((d) => d.date);
     const dodged = dodgeEndLabels(seriesList, 2.2);
     const marks = [
-      Plot.gridY([20, 30, 40, 50, 60, 70], { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleY([20], { stroke: "#E0DACA", strokeWidth: 1 }),
+      Plot.gridY([20, 30, 40, 50, 60, 70], { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([20], { stroke: "#E3E6EB", strokeWidth: 1 }),
       ...seriesList.slice(1).map((s) => Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" })),
-      Plot.lineY(seriesList[0].data, { x: "date", y: "value", stroke: seriesList[0].color, strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.lineY(seriesList[0].data, { x: "date", y: "value", stroke: seriesList[0].color, strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
       ...seriesList.map((s) => Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: 4, stroke: "#FFFFFF", strokeWidth: 1.5 })),
       ...dodged.map((p) => Plot.text([{ date: dts.at(-1), y: p.y }], {
         x: "date", y: "y", text: () => `${p.s.label} ${p.value.toFixed(1)}%`,
-        dx: 12, fill: p.s.color, fontSize: 12.5, fontFamily: mono,
+        dx: 12, fill: "#161A22", fontSize: 12.5, fontFamily: mono,
         fontWeight: p.s === seriesList[0] ? 500 : 400, textAnchor: "start",
       })),
     ];
     return Plot.plot({
       width: 570, height: 400,
       marginLeft: 56, marginRight: 160, marginTop: 28, marginBottom: 44,
-      style: { background: "transparent", fontFamily: mono, fontSize: "13px", color: "#5C574C", overflow: "visible" },
+      style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
       x: { label: null, tickSize: 0, tickPadding: 14, ticks: xTicks, tickFormat: (d) => String(d.getUTCFullYear()) },
       y: { label: "↑ per cent", labelAnchor: "top", labelArrow: false,
            tickFormat: (d) => (d === 70 ? d + "%" : String(d)), ticks: [20, 30, 40, 50, 60, 70], domain: [15, 72], tickSize: 0, tickPadding: 11 },
@@ -484,10 +486,10 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
 /* ---------- §08 what work pays: the salary ladder + the casual day ---------- */
 {
   const V = {
-    regular_male: { ...EARN.regular_male, label: "Regular · men", color: "#5B564B" },
-    regular_female: { ...EARN.regular_female, label: "Regular · women", color: "#8A857A" },
-    self_employed_male: { ...EARN.self_employed_male, label: "Self-emp · men", color: "#A8A293" },
-    self_employed_female: { ...EARN.self_employed_female, label: "Self-emp · women", color: "#BE3E26" },
+    regular_male: { ...EARN.regular_male, label: "Regular · men", color: "#5F6675" },
+    regular_female: { ...EARN.regular_female, label: "Regular · women", color: "#878D99" },
+    self_employed_male: { ...EARN.self_employed_male, label: "Self-emp · men", color: "#A3A9B4" },
+    self_employed_female: { ...EARN.self_employed_female, label: "Self-emp · women", color: "#2E4BD8" },
   };
   const keys = ["regular_male", "regular_female", "self_employed_male", "self_employed_female"];
   const geo = { W: 1184, H: 520, ml: 76, mr: 268, mt: 36, mb: 48, d0: 0, d1: 25000 };
@@ -502,9 +504,9 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
 }
 {
   const V = {
-    casual_person: { ...EARN.casual_person, label: "Person", color: "#BE3E26" },
-    casual_male: { ...EARN.casual_male, label: "Men", color: "#5B564B" },
-    casual_female: { ...EARN.casual_female, label: "Women", color: "#A8A293" },
+    casual_person: { ...EARN.casual_person, label: "Person", color: "#2E4BD8" },
+    casual_male: { ...EARN.casual_male, label: "Men", color: "#5F6675" },
+    casual_female: { ...EARN.casual_female, label: "Women", color: "#A3A9B4" },
   };
   const keys = ["casual_person", "casual_male", "casual_female"];
   const geo = { W: 1184, H: 470, ml: 76, mr: 200, mt: 30, mb: 48, d0: 100, d1: 500 };
@@ -514,13 +516,13 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
     (d) => (d === 500 ? `₹${d}` : `${d}`), "↑ ₹ per day",
     "india-atlas_plfs_casual-daily-wage",
     "Average daily wage from casual labour, other than public works, 2017-18 to 2023-24",
-    "Three line charts of nominal rupees per day. The person line runs from " + inr(first(EARN.casual_person)) + " in July-September 2017 to " + inr(last(EARN.casual_person)) + " in April-June 2024; men end at " + inr(last(EARN.casual_male)) + ", women at " + inr(last(EARN.casual_female)) + " — the lines never touch.");
+    "Three line charts of nominal rupees per day. The person line runs from " + inr(first(EARN.casual_person)) + " in July-September 2017 to " + inr(last(EARN.casual_person)) + " in April-June 2024; men end at " + inr(last(EARN.casual_male)) + ", women at " + inr(last(EARN.casual_female)) + ": the lines never touch.");
   wireLegend(document.getElementById("legend-casual"), plot, keys, V);
 }
 
 /* ---------- §09 the educated queue: UR by education level ----------
  * Ladder-ordered strip, not value-sorted: the ladder IS the story. Dark dot
- * 2023-24, pale dot 2017-18, red where the level prints at twice the
+ * 2023-24, pale dot 2017-18, blue where the level prints at twice the
  * all-India usual-status rate or more (same rule as the state strip). */
 {
   const LEVELS = [
@@ -546,27 +548,27 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: null, domain: [0, 20], ticks: xTicks, tickSize: 0, tickPadding: 12,
          tickFormat: (d) => (d === xTicks[xTicks.length - 1] ? d + "%" : String(d)) },
     y: { label: null, domain: names, tickSize: 0, tickPadding: 14 },
     marks: [
-      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleX([0], { stroke: "#E0DACA", strokeWidth: 1 }),
-      Plot.ruleX([aiPsss], { stroke: "#8A857A", strokeWidth: 1.25 }),
-      Plot.text([{ x: aiPsss }], { x: "x", y: () => names[0], dy: -26, text: () => `All-India · PS+SS ${aiPsss.toFixed(1)}%`, textAnchor: "start", dx: 7, fill: "#5B564B", fontSize: 12, fontFamily: mono }),
-      Plot.link(rows, { x1: "start", x2: "cur", y1: "name", y2: "name", stroke: "#C6C0B0", strokeWidth: 1 }),
-      Plot.dot(rows, { x: "start", y: "name", fill: "#C6C0B0", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1 }),
-      Plot.dot(rows, { x: "cur", y: "name", fill: (d) => (d.cur >= thr ? "#BE3E26" : "#5B564B"), r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([{}], { frameAnchor: "top-right", dx: 60, dy: -26, text: () => "2023-24", fill: "#8A857A", fontSize: 10.5, fontFamily: mono }),
-      Plot.text(rows, { x: () => 20, y: "name", text: (d) => d.cur.toFixed(1), dx: 60, textAnchor: "end", fill: (d) => (d.cur >= thr ? "#BE3E26" : "#8A857A"), fontSize: 12.5, fontFamily: mono }),
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+      Plot.ruleX([aiPsss], { stroke: "#878D99", strokeWidth: 1.25 }),
+      Plot.text([{ x: aiPsss }], { x: "x", y: () => names[0], dy: -26, text: () => `All-India, PS+SS ${aiPsss.toFixed(1)}%`, textAnchor: "start", dx: 7, fill: "#5F6675", fontSize: 12, fontFamily: mono }),
+      Plot.link(rows, { x1: "start", x2: "cur", y1: "name", y2: "name", stroke: "#C9CED6", strokeWidth: 1 }),
+      Plot.dot(rows, { x: "start", y: "name", fill: "#C9CED6", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1 }),
+      Plot.dot(rows, { x: "cur", y: "name", fill: (d) => (d.cur >= thr ? "#2E4BD8" : "#5F6675"), r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([{}], { frameAnchor: "top-right", dx: 60, dy: -26, text: () => "2023-24", fill: "#878D99", fontSize: 10.5, fontFamily: mono }),
+      Plot.text(rows, { x: () => 20, y: "name", text: (d) => d.cur.toFixed(1), dx: 60, textAnchor: "end", fill: (d) => (d.cur >= thr ? "#161A22" : "#878D99"), fontSize: 12.5, fontFamily: mono }),
     ],
   });
   a11y(plot, "Unemployment rate by general education level, usual status, 2023-24 with 2017-18 as pale dots",
     "Eight education rows in ladder order. The rate climbs the ladder: not literate " + rows[0].cur.toFixed(1) +
     " per cent, secondary " + rows[3].cur.toFixed(1) + ", graduate " + rows[6].cur.toFixed(1) +
     ", postgraduate " + rows[7].cur.toFixed(1) + ", around an all-India rate of " + aiPsss.toFixed(1) +
-    ". Every level's pale 2017-18 dot sits to the right of its 2023-24 dot — the whole ladder fell.");
+    ". Every level's pale 2017-18 dot sits to the right of its 2023-24 dot: the whole ladder fell.");
   document.getElementById("plot-edu").append(plot);
 
   // strip CSV: level × year matrix, hand-rolled like the state strip
@@ -661,28 +663,28 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: null, domain: [0, 19], ticks: xTicks, tickSize: 0, tickPadding: 12,
          tickFormat: (d) => (d === xTicks[xTicks.length - 1] ? d + "%" : String(d)) },
     y: { label: null, domain: names, tickSize: 0, tickPadding: 14 },
     marks: [
-      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleX([0], { stroke: "#E0DACA", strokeWidth: 1 }),
-      Plot.ruleX([aiCws], { stroke: "#C6C0B0", strokeWidth: 1.25, strokeDasharray: "2,3" }),
-      Plot.ruleX([aiPsss], { stroke: "#8A857A", strokeWidth: 1.25 }),
-      Plot.text([{ x: aiPsss }], { x: "x", y: () => names[0], dy: -26, dx: -7, text: () => `All-India · PS+SS ${aiPsss.toFixed(1)}%`, textAnchor: "end", fill: "#5B564B", fontSize: 12, fontFamily: mono }),
-      Plot.text([{ x: aiCws }], { x: "x", y: () => names[0], dy: -26, dx: 7, text: () => `CWS ${aiCws.toFixed(1)}%`, textAnchor: "start", fill: "#8A857A", fontSize: 12, fontFamily: mono }),
-      Plot.link(rows, { x1: "cws", x2: "psss", y1: "name", y2: "name", stroke: "#C6C0B0", strokeWidth: 1 }),
-      Plot.dot(rows, { x: "cws", y: "name", fill: "#C6C0B0", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1 }),
-      Plot.dot(rows, { x: "psss", y: "name", fill: (d) => (d.psss >= thr ? "#BE3E26" : "#5B564B"), r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([{}], { frameAnchor: "top-right", dx: 60, dy: -26, text: () => "PS+SS", fill: "#8A857A", fontSize: 10.5, fontFamily: mono }),
-      Plot.text(rows, { x: () => 19, y: "name", text: (d) => d.psss.toFixed(1), dx: 60, textAnchor: "end", fill: (d) => (d.psss >= thr ? "#BE3E26" : "#8A857A"), fontSize: 12.5, fontFamily: mono }),
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+      Plot.ruleX([aiCws], { stroke: "#C9CED6", strokeWidth: 1.25, strokeDasharray: "2,3" }),
+      Plot.ruleX([aiPsss], { stroke: "#878D99", strokeWidth: 1.25 }),
+      Plot.text([{ x: aiPsss }], { x: "x", y: () => names[0], dy: -26, dx: -7, text: () => `All-India, PS+SS ${aiPsss.toFixed(1)}%`, textAnchor: "end", fill: "#5F6675", fontSize: 12, fontFamily: mono }),
+      Plot.text([{ x: aiCws }], { x: "x", y: () => names[0], dy: -26, dx: 7, text: () => `CWS ${aiCws.toFixed(1)}%`, textAnchor: "start", fill: "#878D99", fontSize: 12, fontFamily: mono }),
+      Plot.link(rows, { x1: "cws", x2: "psss", y1: "name", y2: "name", stroke: "#C9CED6", strokeWidth: 1 }),
+      Plot.dot(rows, { x: "cws", y: "name", fill: "#C9CED6", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1 }),
+      Plot.dot(rows, { x: "psss", y: "name", fill: (d) => (d.psss >= thr ? "#2E4BD8" : "#5F6675"), r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([{}], { frameAnchor: "top-right", dx: 60, dy: -26, text: () => "PS+SS", fill: "#878D99", fontSize: 10.5, fontFamily: mono }),
+      Plot.text(rows, { x: () => 19, y: "name", text: (d) => d.psss.toFixed(1), dx: 60, textAnchor: "end", fill: (d) => (d.psss >= thr ? "#161A22" : "#878D99"), fontSize: 12.5, fontFamily: mono }),
     ],
   });
   a11y(plot, "Unemployment rate by State and Union Territory, 2023-24, usual status beside weekly status",
     "Sorted dot strip of " + rows.length + " States and UTs. " + top.name + " is highest at " + top.psss.toFixed(1) +
     " per cent on the usual status and " + bot.name + " lowest at " + bot.psss.toFixed(1) +
-    " — a spread of " + spread.toFixed(1) + " points around the All-India rate of " + aiPsss.toFixed(1) +
+    ": a spread of " + spread.toFixed(1) + " points around the All-India rate of " + aiPsss.toFixed(1) +
     ". Each row pairs the usual-status dot with the same year's weekly-status dot; the two are never averaged.");
   document.getElementById("plot-states").append(plot);
 

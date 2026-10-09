@@ -7,7 +7,7 @@ line: "Read AGENTS.md and follow it."
 
 ## What this site is
 
-A static reference work on Indian economic statistics: 12 dossiers, ~3,800
+A static reference work on Indian economic statistics: 13 guides, ~3,800
 data series, build-time-rendered charts, mechanically verified prose. No
 framework runtime, no database, no client-side fetching of data. Everything
 is a file, every file has a gate, every gate exits non-zero on failure.
@@ -22,7 +22,7 @@ scripts/validate.mjs                       ③ VALIDATE cadence/ranges/identitie
 npx astro build                            ④ RENDER   pages + charts from baked JSON
 pipeline/facts.mjs ─► generate.mjs         ⑤ NARRATE  LLM prose from facts sheets only
 pipeline/verify.mjs + lint.mjs + contract.mjs  ⑥ GATE  numbers traced, tells banned
-scripts/qc.mjs + lint-charts.mjs           ⑥ GATE     rendered numbers + prose freshness
+pipeline/asof.mjs + scripts/qc.mjs + lint-charts.mjs  ⑥ GATE  rendered numbers + as-of + prose freshness
 .github/workflows/update.yml ─► release PR ⑦ PUBLISH  human merges; deploy.yml ships it
 ```
 
@@ -31,7 +31,8 @@ Hard rules — breaking any of these is a bug regardless of what else works:
 1. **Never splice across instrument seams.** Different base years / methodologies
    are different rulers; they live in separate bundles, never one series.
 2. **Missing data is `null`, never 0, never gaps in the array.** Interior nulls
-   must be declared in `meta.gaps`.
+   must be declared in the `gaps` of the very series that misses them
+   (CONTRACT-series rule 2; bundle-level `meta.gaps` is retired).
 3. **Every number in prose must come from the facts sheet.** verify.mjs traces
    this mechanically; there are no exceptions, ever.
 4. **Nothing deploys without passing `npm run gates` AND a human merging the
@@ -44,7 +45,7 @@ Hard rules — breaking any of these is a bug regardless of what else works:
 | Command | What it does |
 |---|---|
 | `npm run data` | fetch all products + validate |
-| `npm run gates` | validate + qc + chart lint (the pre-merge minimum) |
+| `npm run gates` | validate + as-of freshness + qc + chart lint (the pre-merge minimum) |
 | `npm test` | unit tests: period calendars, registry integrity, atomic writes |
 | `npm run facts` | recompute facts sheets for all slugs |
 | `npm run prose` | facts + regenerate all dated prose (needs .env LLM keys) |
@@ -55,12 +56,22 @@ Hard rules — breaking any of these is a bug regardless of what else works:
 
 ## Where things live
 
-- `docs/VISION.md` — why this exists; the north star. Tactics never override it.
+- `docs/GOAL.md` — the mission, stated plainly; the current, operative edge
+- `docs/VISION.md` — the founding brief; the north star. Tactics never override these two.
 - `docs/ARCHITECTURE.md` — the system shape + the multi-source expansion model
 - `docs/DESIGN.md` — the design system: tokens, typography, dossier anatomy,
   chart engineering, rejected directions. Normative; elevate, never redesign.
 - `docs/HISTORY.md` — lineage: what was tried, rejected, retired, and why
 - `data/sources.yml` — registry: families, cadence, release-day rules, base years, ranges
+- Naming: readers see **guides** (`/guides/<slug>/`; old `/dossiers/` URLs redirect).
+  Code keeps the internal name: `src/dossiers/`, `DOSSIERS`, the `.dossiers` class.
+- `src/dossiers/headline.js` — each guide's headline figure and small-chart source;
+  the home page, guides index and RSS all quote from it.
+- `src/dossiers/periods.js` — the months, spans, counts and release dates a page names
+  ("August 2026", "eight prints", "Jan to Aug 2026"), read from the bundles at build time.
+  Never type a period into page copy; the claims around it still need re-reading each
+  release (`pipeline/asof.mjs`).
+- `scripts/migrations/` — one-off, idempotent design migrations (2026-10 palette, chart v3).
 - `src/dossiers/registry.js` — THE dossier registry: every dossier's metadata,
   current bundle, calendar, policy band, spark spec. Homepage, register, RSS,
   404, OG cards, qc and lint-charts all derive from it. Adding a dossier
@@ -82,6 +93,7 @@ Hard rules — breaking any of these is a bug regardless of what else works:
 
 - `docs/CONTRACT-series.md` — the canonical bundle shape
 - `docs/CONTRACT-render.md` — chart/page rules and budgets
+- `docs/CONTRACT-dossier-structure.md` — the normative dossier flow
 - `docs/RUNBOOK-sources.md` — how to add a data source (follow it exactly)
 - `docs/RELEASE-CHECKLIST.md` — what a human reviews before merging a release
 

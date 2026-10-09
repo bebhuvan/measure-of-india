@@ -2,15 +2,15 @@
 import Learn from "../layouts/Learn.astro";
 ---
 <Learn
-  title="India Atlas — Learn · Every number has a denominator"
-  description="Learn № 02 — base effects: every year-on-year figure is a ratio to the same month a year ago. A spike then flatters now, a collapse then haunts now. Worked from real food CPI data, 2023–2025."
+  title="Every number has a denominator · India Atlas"
+  description="Base effects: every year-on-year figure is a ratio to the same month a year ago. A spike then flatters now, a collapse then haunts now. Worked from real food CPI data, 2023–2025."
   slug="base-effects"
-  kicker="Learn № 02 — Prices · Base effects"
+  kicker="Prices: Base effects"
   h1="Every number has a <i>denominator.</i>"
   lede="A spike in one year flatters the prints of the next; a collapse haunts them. The honest question about any inflation figure is a short one: compared to what?"
   meta={[
     ["Concept", "Base effects"],
-    ["Illustrated with", "Food CPI · 2023–2025"],
+    ["Illustrated with", "Food CPI, 2023–2025"],
     ["Source", "MoSPI, NSO"],
     ["Level", "First principles"],
     ["Reading time", "7 min"],
@@ -35,15 +35,15 @@ import Learn from "../layouts/Learn.astro";
       </div>
       <div class="wm-rail">
         <aside class="margin-note">
-          <span class="mk">Margin note · i</span>
+          <span class="mk">Margin note, i</span>
           <b>Compared to what?</b> The only question a year-on-year figure answers. The answer is always the same: the same month, one year ago.
         </aside>
         <aside class="margin-note">
-          <span class="mk">Margin note · ii</span>
+          <span class="mk">Margin note, ii</span>
           <b>A spike is a gift, twelve months later.</b> High prices then mean gentle prints now, with no improvement needed in between.
         </aside>
         <aside class="margin-note">
-          <span class="mk">Margin note · iii</span>
+          <span class="mk">Margin note, iii</span>
           <b>The kindness has an expiry date.</b> Twelve months after the spike, the window slides past it and the prints must stand on their own.
         </aside>
       </div>
@@ -52,22 +52,22 @@ import Learn from "../layouts/Learn.astro";
 
   <!-- § 02 plate : the spike and the base -->
   <section>
-    <div class="sec-head"><span class="no">02</span><h2>One spike, read two ways</h2><span class="line"></span><span class="unit">Index level · y/y %</span></div>
+    <div class="sec-head"><span class="no">02</span><h2>One spike, read two ways</h2><span class="line"></span><span class="unit">Index level, y/y %</span></div>
     <p>The cleanest example in recent data sits in the food index. Below, three years drawn twice: the level above, the year-on-year rate below, with the same shaded months marked on both panels. Watch what those months do to each line.</p>
     <div class="break">
       <figure id="cb-be" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>The spike of 2024 became the calm of 2025 — same months, two readings</h3>
-            <div class="sub">Food &amp; beverages · above: index level, 2012 = 100 · below: year-on-year rate · Jan 2023 – Dec 2025 · shaded: the base</div>
+            <h3>The spike of 2024 became the calm of 2025: same months, two readings</h3>
+            <div class="sub">Food &amp; beverages, above: index level, 2012 = 100, below: year-on-year rate, Jan 2023 to Dec 2025, shaded: the base</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-be">–</div><div class="c">Dec 2025 · food y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-be">–</div><div class="c">Dec 2025, food y/y</div></div>
         </div>
         <div class="frame">
           <div class="plotzone" id="plot-be-level"><div class="cb-tip"></div></div>
           <div class="plotzone" id="plot-be-rate" style="margin-top:34px"><div class="cb-tip"></div></div>
           <div class="plotfoot">
-            <span class="src">Source — MoSPI, CPI food &amp; beverages group index, base 2012=100, vintage <span id="pf-be">–</span> · shaded band: the autumn-2024 spike, the base for the late-2025 prints</span>
+            <span class="src">Source: MoSPI, CPI food &amp; beverages group index, base 2012=100, vintage <span id="pf-be">–</span>, shaded band: the autumn-2024 spike, the base for the late-2025 prints</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -94,11 +94,11 @@ import Learn from "../layouts/Learn.astro";
 
   <!-- § 03 the arithmetic -->
   <section>
-    <div class="sec-head"><span class="no">03</span><h2>The arithmetic of the base</h2><span class="line"></span><span class="unit">A worked example · Dec 2024 → Dec 2025</span></div>
+    <div class="sec-head"><span class="no">03</span><h2>The arithmetic of the base</h2><span class="line"></span><span class="unit">A worked example, Dec 2024 → Dec 2025</span></div>
     <div class="numbers">
-      <div class="num"><div class="l">The base · Dec 2024</div><div class="v" id="n-then">–</div><div class="d">food index level · 2012 = 100</div></div>
-      <div class="num"><div class="l">The level · Dec 2025</div><div class="v" id="n-now">–</div><div class="d">food index level · 2012 = 100</div></div>
-      <div class="num"><div class="l">The ratio · Dec 2025</div><div class="v acc" id="n-rate">–</div><div class="d">the two levels divided, minus one</div></div>
+      <div class="num"><div class="l">The base, Dec 2024</div><div class="v" id="n-then">–</div><div class="d">food index level, 2012 = 100</div></div>
+      <div class="num"><div class="l">The level, Dec 2025</div><div class="v" id="n-now">–</div><div class="d">food index level, 2012 = 100</div></div>
+      <div class="num"><div class="l">The ratio, Dec 2025</div><div class="v acc" id="n-rate">–</div><div class="d">the two levels divided, minus one</div></div>
       <div class="num"><div class="l">What ₹1,000 became</div><div class="v" id="n-rupee">–</div><div class="d">same basket of food, one year later</div></div>
     </div>
     <p style="margin-top:40px">Divide <b id="ar-now">–</b> by <b id="ar-then">–</b> and the result is <b id="ar-ratio3">–</b>: the <b id="ar-print">–</b> of the print. Nothing in that division knows about harvests or gluts. It knows two levels and their ratio, and it is exactly as truthful as the month it divides by.</p>
@@ -144,8 +144,8 @@ import Learn from "../layouts/Learn.astro";
   </div>
   <div slot="prov-note">
     <h6>This note</h6>
-    <p>Learn № 02 · Prices · version 1.0. Evergreen, written to survive the next print. The autumn-2024 spike and the 2025 readings are used as history, not news; the charts redraw from the baked data on every build.</p>
-    <p>Companion dossier: <a href="/dossiers/cpi/">Dossier 01 · Consumer Price Index</a>.</p>
+    <p>Prices, version 1.0. Evergreen, written to survive the next print. The autumn-2024 spike and the 2025 readings are used as history, not news; the charts redraw from the baked data on every build.</p>
+    <p>Companion guide: <a href="/guides/cpi/">Consumer Price Index</a>.</p>
   </div>
 
 <script>

@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>India Atlas, Reading Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&family=Schibsted+Grotesk:wght@400..700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#FFFFFF;
+  --ink:#1C2033;
+  --text:#2E3347;
+  --muted:#6F748A;
+  --faint:#9A9EB0;
+  --grid:#E8EAF1;
+  --axis:#C9CCD8;
+  --indigo:#5B5FE0;
+  --indigo-soft:#A9ACEF;
+  --coral:#F2614F;
+  --band:#EEF0FE;
+  --serif:"Literata", Georgia, serif;
+  --sans:"Schibsted Grotesk", system-ui, sans-serif;
+  --side:200px;
+  --text-w:640px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--ground);color:var(--text);
+  font-family:var(--serif);font-size:20px;line-height:1.65;
+  font-variation-settings:"opsz" 14;
+  font-optical-sizing:auto;
+  text-rendering:optimizeLegibility;
+}
+a{color:inherit;text-decoration-thickness:1px;text-underline-offset:.18em;text-decoration-color:var(--axis)}
+a:hover{text-decoration-color:var(--indigo)}
+:focus-visible{outline:2px solid var(--indigo);outline-offset:3px;border-radius:2px}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* the grid: side-note column, reading column, mirror column */
+.sheet{
+  display:grid;
+  grid-template-columns:
+    [full-start] minmax(20px,1fr)
+    [wide-start] var(--side)
+    [text-start] minmax(0,var(--text-w)) [text-end]
+    var(--side) [wide-end]
+    minmax(20px,1fr) [full-end];
+}
+.sheet > *{grid-column:text}
+.wide{grid-column:wide}
+
+/* masthead */
+.mast{grid-column:wide;display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:12px 32px;padding:34px 0 0}
+.brand{font-family:var(--serif);font-variation-settings:"opsz" 36;font-weight:560;font-size:23px;letter-spacing:-.01em;color:var(--ink);text-decoration:none}
+.nav{display:flex;flex-wrap:wrap;gap:4px 28px;margin:0;padding:0;list-style:none;font-family:var(--sans);font-size:16px;line-height:1.4}
+.nav a{text-decoration:none;color:var(--text)}
+.nav a:hover{color:var(--ink);text-decoration:underline;text-decoration-color:var(--indigo)}
+.nav a[aria-current]{color:var(--ink);text-decoration:underline;text-decoration-color:var(--ink)}
+
+/* the lead: four sentences, numbers as the typographic event */
+.lead{padding:120px 0 40px}
+.dateline{font-family:var(--sans);font-size:16px;color:var(--muted);margin:0 0 36px}
+.lead h1{margin:0;font-weight:inherit;font-size:inherit}
+.claim{
+  margin:0 0 .55em;
+  font-variation-settings:"opsz" 60;
+  font-weight:330;font-size:46px;line-height:1.22;letter-spacing:-.014em;color:var(--ink);
+  max-width:21ch;
+}
+.claim .n{
+  font-variation-settings:"opsz" 72;font-weight:620;
+  font-variant-numeric:lining-nums proportional-nums;
+  letter-spacing:-.02em;
+}
+.claim .nw{white-space:nowrap}
+.claim .spark{display:inline-block;vertical-align:-.04em;margin-left:.28em}
+.claim .spark svg{display:block}
+.lead-note{font-family:var(--sans);font-size:16px;line-height:1.55;color:var(--muted);max-width:52ch;margin:44px 0 0}
+
+/* sections */
+.section{padding-top:120px}
+h2{font-variation-settings:"opsz" 60;font-weight:440;font-size:40px;line-height:1.15;letter-spacing:-.015em;color:var(--ink);margin:0 0 20px}
+h3{font-variation-settings:"opsz" 30;font-weight:520;font-size:23px;line-height:1.3;letter-spacing:-.005em;color:var(--ink);margin:0}
+.dek{font-variation-settings:"opsz" 24;font-weight:360;font-size:24px;line-height:1.5;color:var(--text);margin:0 0 8px;max-width:34em}
+p{margin:0 0 1.1em}
+
+
+/* contents */
+.contents{margin-top:56px}
+.group{display:grid;grid-template-columns:var(--side) minmax(0,1fr);margin-bottom:40px}
+.group h3{grid-column:1;font-family:var(--sans);font-size:16px;font-weight:500;color:var(--muted);letter-spacing:0;margin:0;padding-top:5px}
+.group .items{grid-column:2;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:34px 48px}
+.entry{display:block;text-decoration:none;max-width:36ch}
+.entry .t{display:block;font-variation-settings:"opsz" 30;font-weight:520;font-size:22px;line-height:1.25;color:var(--ink)}
+.entry:hover .t{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.16em;text-decoration-color:var(--indigo)}
+.entry .d{display:block;font-size:17px;line-height:1.5;color:var(--text);margin-top:6px}
+.entry .l{display:block;font-family:var(--sans);font-size:15px;color:var(--muted);margin-top:8px}
+.entry .l b{font-weight:600;color:var(--ink)}
+
+/* side notes: a subgrid row so the note sits beside its paragraph */
+.annot{grid-column:1 / -1;display:grid;grid-template-columns:subgrid}
+.row{display:grid;grid-template-columns:var(--side) minmax(0,1fr)}
+.row > .plot,.row > .multiples{grid-column:2;grid-row:1;min-width:0}
+.row > aside{grid-column:1;grid-row:1;padding-right:32px}
+.note-f1{padding-top:40px}.note-f2{padding-top:30px}
+.annot > p{grid-column:2;grid-row:1;max-width:62ch}
+.annot > aside{grid-column:1;grid-row:1;padding:5px 32px 0 0}
+.side{font-family:var(--sans);font-size:15px;line-height:1.5;color:var(--muted)}
+.side b{color:var(--text);font-weight:600}
+
+/* figures */
+figure{margin:0}
+.fig{grid-column:1 / -1;margin:72px 0 0;min-width:0}
+.fig-head{display:grid;grid-template-columns:var(--side) minmax(0,1fr);margin-bottom:22px}
+.fig-head .h{grid-column:2}
+.fig-sub{font-family:var(--sans);font-size:16px;line-height:1.5;color:var(--muted);margin:6px 0 0;max-width:60ch}
+.plot{position:relative;width:100%}
+.plot svg{display:block;overflow:visible}
+.cap{display:grid;grid-template-columns:var(--side) minmax(0,1fr);margin-top:18px}
+.cap p{grid-column:2;font-family:var(--sans);font-size:15px;line-height:1.55;color:var(--muted);margin:0;max-width:72ch}
+.key{display:flex;flex-wrap:wrap;gap:6px 22px;font-family:var(--sans);font-size:15px;color:var(--text);margin-top:12px}
+.key span{display:inline-flex;align-items:center;gap:8px}
+.key i{display:inline-block;width:10px;height:10px;border-radius:50%}
+.key i.line{width:18px;height:2px;border-radius:1px}
+
+/* svg text */
+.tk{font-family:var(--sans);font-size:14px;fill:var(--muted)}
+.lb{font-family:var(--sans);font-size:15px;fill:var(--text)}
+.lb-ink{font-family:var(--sans);font-size:15px;fill:var(--ink);font-weight:600}
+.val{font-family:var(--sans);font-size:14px;fill:var(--text)}
+.end{font-family:var(--serif);font-variation-settings:"opsz" 36;font-size:22px;font-weight:560;fill:var(--ink)}
+.halo{paint-order:stroke;stroke:var(--ground);stroke-width:5px;stroke-linejoin:round}
+.end-s{font-family:var(--sans);font-size:14px;fill:var(--muted)}
+
+.tip{
+  position:absolute;pointer-events:none;background:var(--ground);border:1px solid var(--grid);
+  padding:8px 12px;border-radius:4px;font-family:var(--sans);font-size:14px;line-height:1.35;color:var(--text);
+  white-space:nowrap;opacity:0;transform:translate(-50%,calc(-100% - 14px));
+}
+.tip b{display:block;font-family:var(--serif);font-variation-settings:"opsz" 30;font-size:20px;font-weight:560;color:var(--ink);font-variant-numeric:lining-nums}
+
+/* small multiples */
+.multiples{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:44px 40px}
+.panel h4{margin:0;font-family:var(--sans);font-size:15px;font-weight:500;color:var(--text);line-height:1.35}
+.panel .pv{font-family:var(--serif);font-variation-settings:"opsz" 36;font-size:26px;font-weight:500;color:var(--ink);line-height:1.2;margin:2px 0 8px;font-variant-numeric:lining-nums}
+.panel .pv small{font-family:var(--sans);font-size:14px;font-weight:400;color:var(--muted);margin-left:6px}
+
+/* footer */
+.foot{grid-column:wide;margin-top:150px;padding:48px 0 72px;display:grid;grid-template-columns:var(--side) minmax(0,1fr);background:linear-gradient(var(--grid),var(--grid)) top left/100% 1px no-repeat}
+.foot div{grid-column:2;font-family:var(--sans);font-size:15px;line-height:1.6;color:var(--muted);max-width:66ch}
+.foot p{margin:0 0 .9em}
+.foot .brand{font-size:19px;display:inline-block;margin-bottom:14px}
+
+@media (max-width:1180px){
+  :root{--side:160px}
+}
+@media (max-width:980px){
+  .sheet{grid-template-columns:[full-start] 20px [wide-start text-start] minmax(0,1fr) [text-end wide-end] 20px [full-end]}
+  .annot{display:block}
+  .annot > aside{padding:0;margin:-6px 0 28px;padding-left:16px;background:linear-gradient(var(--indigo-soft),var(--indigo-soft)) left top/2px 100% no-repeat}
+  .fig-head,.cap,.foot,.row{display:block}
+  .row > aside{padding:0 0 0 16px!important;margin-top:20px;background:linear-gradient(var(--indigo-soft),var(--indigo-soft)) left top/2px 100% no-repeat}
+  .group{display:block}
+  .group h3{margin-bottom:18px}
+}
+@media (max-width:640px){
+  body{font-size:18px;line-height:1.62}
+  .mast{padding-top:22px;gap:10px}
+  .nav{gap:4px 20px;font-size:15.5px}
+  .lead{padding:64px 0 24px}
+  .claim{font-size:28px;line-height:1.28;max-width:none}
+  .section{padding-top:96px}
+  h2{font-size:31px}
+  .dek{font-size:20px}
+  h3{font-size:20px}
+  .group .items{grid-template-columns:1fr;gap:28px}
+  .multiples{grid-template-columns:repeat(2,minmax(0,1fr));gap:32px 20px}
+  .panel .pv{font-size:22px}
+  .panel h4{min-height:2.7em}
+  .fig{margin-top:48px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <header class="mast">
+    <a class="brand" href="#">India Atlas</a>
+    <nav aria-label="Main"><ul class="nav">
+      <li><a href="#contents" aria-current="page">Dossiers</a></li>
+      <li><a href="#">Learn</a></li>
+      <li><a href="#">Method</a></li>
+      <li><a href="#">About</a></li>
+    </ul></nav>
+  </header>
+
+  <section class="lead" aria-labelledby="lead-h">
+    <p class="dateline">Where the economy stands, with data to June 2026</p>
+    <h1 id="lead-h" class="vh">Where the economy stands</h1>
+    <p class="claim">Prices were <span class="nw"><span class="n" data-v="cpi"></span> per cent</span> higher in June than a year <span class="nw">earlier.<span class="spark" data-spark="cpi"></span></span></p>
+    <p class="claim">The economy grew <span class="nw"><span class="n" data-v="gdp"></span> per cent</span> in the January to March <span class="nw">quarter.<span class="spark" data-spark="gdp"></span></span></p>
+    <p class="claim">Unemployment held at <span class="nw"><span class="n" data-v="ur"></span> per cent</span> of the labour <span class="nw">force.<span class="spark" data-spark="ur"></span></span></p>
+    <p class="claim">Factories, mines and power plants produced <span class="nw"><span class="n" data-v="iip"></span> per cent</span> <span class="nw">more.<span class="spark" data-spark="iip"></span></span></p>
+    <p class="lead-note">Each line compares with the same month or quarter a year before. The small lines trace roughly the last year and a half; for growth, the last three years.</p>
+  </section>
+
+  <section id="contents" class="section wide" style="grid-column:wide" aria-labelledby="contents-h">
+    <div class="fig-head" style="margin:0"><div class="h">
+      <h2 id="contents-h">The dossiers</h2>
+      <p class="dek">Thirteen long reads, one for each number that matters. Each explains what is measured, what the latest figure says, and how it is usually misread.</p>
+    </div></div>
+    <div class="contents" id="toc"></div>
+  </section>
+
+  <article class="section" style="grid-column:wide;display:grid;grid-template-columns:subgrid" aria-labelledby="cpi-h">
+    <div style="grid-column:2">
+      <h2 id="cpi-h">Consumer prices</h2>
+      <p class="dek">Every month the government prices a few hundred things a household buys and turns them into one number. In June that number rose for the fifth month running.</p>
+    </div>
+
+    <div class="annot" style="margin-top:44px">
+      <p>Prices rose 4.38 per cent in the year to June, up from 3.94 per cent in May. That makes five rises in a row since the new series opened in January at 2.73 per cent. Most of the push came from the plate. Food and beverages rose 5.06 per cent, and eating out rose faster still: restaurants and accommodation climbed 6.91 per cent. Transport jumped from 1.75 per cent in May to 4.31 per cent in June, the sharpest one-month move of any division. Villages are feeling it more than cities, with rural inflation at 4.74 per cent against 3.93 per cent in urban India. The figure is above the RBI's 4 per cent target but well inside its band of 2 to 6 per cent.</p>
+      <aside class="side"><b>The target.</b> The RBI is asked to keep inflation at 4 per cent, and is judged to have failed only if it stays outside 2 to 6 per cent for three quarters in a row.</aside>
+    </div>
+
+    <figure class="fig" aria-labelledby="f1-h">
+      <div class="fig-head"><div class="h">
+        <h3 id="f1-h">Inflation since 2014</h3>
+        <p class="fig-sub">Consumer prices, change from a year earlier, per cent. The shaded band is the RBI's tolerance range.</p>
+      </div></div>
+      <div class="row">
+        <div class="plot" id="f1"></div>
+        <aside class="side note-f1"><b>Two kinds of line.</b> The pale stretch before 2025 is a back-cast: the statistics office re-read the past decade using today's basket. From January 2025 the line is drawn from prices actually collected on that basket.</aside>
+      </div>
+      <div class="cap"><p>Source: MoSPI, National Statistics Office, 2024=100 series. Released 12 July 2026.</p></div>
+    </figure>
+
+    <figure class="fig" aria-labelledby="f2-h">
+      <div class="fig-head"><div class="h">
+        <h3 id="f2-h">What rose fastest in June</h3>
+        <p class="fig-sub">The twelve divisions of the basket, change from a year earlier, per cent.</p>
+        <div class="key"><span><i style="background:var(--coral)"></i>Faster than prices overall</span><span><i style="background:var(--indigo)"></i>Slower</span></div>
+      </div></div>
+      <div class="row">
+        <div class="plot" id="f2"></div>
+        <aside class="side note-f2"><b>Why one bar is cut.</b> Personal care includes gold, which is priced in world markets. At 16.73 per cent it would squash every other bar, so it is drawn short and labelled.</aside>
+      </div>
+      <div class="cap"><p>The statistics office has not yet published weights for the new basket, so the divisions are ranked, not added up.</p></div>
+    </figure>
+
+    <figure class="fig" aria-labelledby="f3-h">
+      <div class="fig-head"><div class="h">
+        <h3 id="f3-h">Prices by state</h3>
+        <p class="fig-sub">Change from a year earlier, June 2026, per cent. The vertical line is the all-India figure.</p>
+        <div class="key"><span><i style="background:var(--coral)"></i>Above all-India</span><span><i style="background:var(--indigo)"></i>At or below</span></div>
+      </div></div>
+      <div class="plot" id="f3"></div>
+    </figure>
+
+    <figure class="fig" aria-labelledby="f4-h">
+      <div class="fig-head"><div class="h">
+        <h3 id="f4-h">Output, by what it is used for</h3>
+        <p class="fig-sub">Index of industrial production, change from a year earlier, per cent. All six panels share one scale. Hover over any panel to read the same month across all of them.</p>
+      </div></div>
+      <div class="row">
+        <div class="multiples" id="f4"></div>
+      </div>
+      <div class="cap"><p>Source: MoSPI, Index of Industrial Production, 2022-23=100 series, from April 2024.</p></div>
+    </figure>
+  </article>
+
+  <footer class="foot">
+    <div>
+      <a class="brand" href="#">India Atlas</a>
+      <p>Prices, output and jobs figures come from the Ministry of Statistics and Programme Implementation and its National Statistics Office. Exchange rates and reserves come from the Reserve Bank of India. Nothing here is estimated by us unless the chart says so.</p>
+      <p>Different base years are different rulers. When the statistics office changes the basket or the base, we start a new line rather than join the two.</p>
+    </div>
+  </footer>
+</div>
+
+<script src="./data.js"></script>
+<script>
+(() => {
+const A = window.ATLAS;
+const NS = "http://www.w3.org/2000/svg";
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const C = { indigo:css("--indigo"), soft:css("--indigo-soft"), coral:css("--coral"), grid:css("--grid"), axis:css("--axis"), band:css("--band"), ink:css("--ink"), muted:css("--muted"), ground:css("--ground") };
+const MON = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const MON3 = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const fmt = v => v.toFixed(2);
+const el = (tag, attrs = {}, parent) => {
+  const n = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+  if (parent) parent.appendChild(n);
+  return n;
+};
+const txt = (parent, x, y, s, cls, anchor = "start", extra = {}) => {
+  const t = el("text", { x, y, class: cls, "text-anchor": anchor, ...extra }, parent);
+  t.textContent = s; return t;
+};
+const scale = (d0, d1, r0, r1) => v => r0 + (v - d0) / (d1 - d0) * (r1 - r0);
+const ser = (o, k) => o.dates.map((d, i) => ({ d, v: o.series[k].data[i] })).filter(p => p.v != null);
+const last = a => a[a.length - 1];
+const pathOf = (pts, x, y) => pts.map((p, i) => (i ? "L" : "M") + x(p) .toFixed(1) + "," + y(p).toFixed(1)).join("");
+const monthLabel = d => MON[+d.slice(5, 7) - 1] + " " + d.slice(0, 4);
+const fix = s => s.replace(/\bAnd\b/g, "and").replace(/\bOf\b/g, "of").replace(/^(The )?Dadra and Nagar Haveli and Daman and Diu$/, "Dadra, Nagar Haveli, Daman and Diu");
+
+/* ---------- lead figures and word-sized sparklines ---------- */
+const lead = {
+  cpi: ser(A.cpi, "headline").slice(-18),
+  gdp: ser(A.gdp, "gdp").slice(-12),
+  ur:  ser(A.plfs, "ur"),
+  iip: ser(A.iip, "general").slice(-18),
+};
+for (const [k, pts] of Object.entries(lead)) {
+  document.querySelector(`[data-v="${k}"]`).textContent = k === "ur" ? last(pts).v.toFixed(1) : fmt(last(pts).v);
+  const host = document.querySelector(`[data-spark="${k}"]`);
+  const w = 66, h = 26, pad = 4;
+  const vs = pts.map(p => p.v), lo = Math.min(...vs), hi = Math.max(...vs);
+  const x = (p) => pad + pts.indexOf(p) / (pts.length - 1) * (w - pad * 2);
+  const y = (p) => h - pad - (p.v - lo) / (hi - lo || 1) * (h - pad * 2);
+  const s = el("svg", { width: w, height: h, viewBox: `0 0 ${w} ${h}`, role: "img", "aria-label": `Trend, last ${pts.length} periods` }, host);
+  el("path", { d: pathOf(pts, x, y), fill: "none", stroke: C.indigo, "stroke-width": 1.6, "stroke-linejoin": "round", "stroke-linecap": "round" }, s);
+  const lp = last(pts);
+  el("circle", { cx: x(lp), cy: y(lp), r: 3, fill: C.coral, stroke: C.ground, "stroke-width": 1.5 }, s);
+}
+
+/* ---------- contents ---------- */
+const groups = [
+  ["Prices", [
+    ["Consumer prices", "What an ordinary household pays, month by month, and the number the RBI is asked to hold.", `<b>${fmt(last(ser(A.cpi,"headline")).v)}%</b> in June 2026`],
+    ["Wholesale prices", "Prices at the factory gate and the farm, and why they can part ways with what shoppers pay.", "Monthly, since 2012"],
+  ]],
+  ["The economy", [
+    ["GDP", "The size and speed of the whole economy, and what growth is made of.", `<b>${fmt(last(ser(A.gdp,"gdp")).v)}%</b> in January to March 2026`],
+    ["Industrial production", "The monthly pulse of mines, factories and power plants.", `<b>${fmt(last(ser(A.iip,"general")).v)}%</b> in June 2026`],
+    ["Factories", "Registered factories audited to the last rupee, set beside the small firms counted only since 2021.", "Annual surveys"],
+    ["Manufacturing", "Six decades of manufacturing's share of the economy, measured by the World Bank.", "Since 1960"],
+    ["External account", "Exports, imports, reserves and the rupee.", `<b>₹${last(ser(A.fx,"usdinr")).v.toFixed(2)}</b> per dollar in June 2025`],
+    ["Renewable energy", "Solar, wind, hydro and bio capacity, added month by month.", "Monthly"],
+  ]],
+  ["People", [
+    ["Jobs", "Who has work, who wants it, and three surveys that count them differently.", `<b>${last(ser(A.plfs,"ur")).v.toFixed(1)}%</b> unemployment in June 2026`],
+    ["Household consumption", "What a person spends in a month, rung by rung up the ladder.", "Survey of 2023–24"],
+    ["Higher education", "Who goes to college, who is left out, and what the enrolment ratio really measures.", "Annual surveys"],
+    ["Gender", "The sex ratio across seven censuses, and the gaps in health, schooling and work that follow.", "Census and surveys"],
+    ["Family health", "Anaemia, nutrition, maternal care and fertility across two national surveys.", "Survey of 2019–21"],
+  ]],
+];
+document.getElementById("toc").innerHTML = groups.map(([g, items]) =>
+  `<div class="group"><h3>${g}</h3><div class="items">${items.map(([t, d, l]) =>
+    `<a class="entry" href="#"><span class="t">${t}</span><span class="d">${d}</span><span class="l">${l}</span></a>`).join("")}</div></div>`).join("");
+
+/* ---------- shared tooltip ---------- */
+function tip(host) {
+  const t = document.createElement("div"); t.className = "tip"; host.appendChild(t); return t;
+}
+
+/* ---------- figure 1: headline line ---------- */
+function drawF1(host) {
+  host.querySelectorAll("svg,.tip").forEach(n => n.remove());
+  const W = host.clientWidth, narrow = W < 560;
+  const H = narrow ? 300 : 420;
+  const m = { t: 18, r: narrow ? 14 : 120, b: 34, l: 34 };
+  const pts = ser(A.cpi, "headline");
+  const t0 = Date.parse(pts[0].d), t1 = Date.parse(last(pts).d);
+  const x = scale(t0, t1, m.l, W - m.r);
+  const y = scale(0, 10, H - m.b, m.t);
+  const X = p => x(Date.parse(p.d)), Y = p => y(p.v);
+  const s = el("svg", { width: W, height: H, role: "img", "aria-label": "Line chart of consumer price inflation, January 2014 to June 2026" }, host);
+  // band
+  el("rect", { x: m.l, y: y(6), width: W - m.r - m.l, height: y(2) - y(6), fill: C.band }, s);
+  // grid
+  for (const v of [0, 2, 4, 6, 8, 10]) {
+    el("line", { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: v === 0 ? C.axis : C.grid, "stroke-width": 1, "shape-rendering": "crispEdges" }, s);
+    txt(s, m.l - 10, y(v) + 4.5, v === 10 ? "10%" : String(v), "tk", "end");
+  }
+  // target
+  el("line", { x1: m.l, x2: W - m.r, y1: y(4), y2: y(4), stroke: C.indigo, "stroke-opacity": .35, "stroke-width": 1, "shape-rendering": "crispEdges" }, s);
+  // years
+  const step = narrow ? 3 : W < 900 ? 2 : 1;
+  for (let yr = 2014; yr <= 2026; yr++) {
+    if ((yr - 2014) % step) continue;
+    const xx = x(Date.UTC(yr, 0, 1));
+    el("line", { x1: xx, x2: xx, y1: H - m.b, y2: H - m.b + 5, stroke: C.axis }, s);
+    txt(s, xx, H - m.b + 22, String(yr), "tk", "middle");
+  }
+  // back-cast and live
+  const cut = pts.findIndex(p => p.d >= "2025-01-01");
+  const back = pts.slice(0, cut + 1), live = pts.slice(cut);
+  el("path", { d: pathOf(back, X, Y), fill: "none", stroke: C.soft, "stroke-width": 1.6, "stroke-linejoin": "round", "stroke-linecap": "round" }, s);
+  el("path", { d: pathOf(live, X, Y), fill: "none", stroke: C.indigo, "stroke-width": 2.25, "stroke-linejoin": "round", "stroke-linecap": "round" }, s);
+  // end label: beside the dot when there is a margin, above it when there is not
+  const lp = last(pts);
+  el("circle", { cx: X(lp), cy: Y(lp), r: 4.5, fill: C.coral, stroke: C.ground, "stroke-width": 2 }, s);
+  const endBox = narrow
+    ? [txt(s, X(lp), Y(lp) - 32, fmt(lp.v) + "%", "end", "end"), txt(s, X(lp), Y(lp) - 14, "June 2026", "end-s", "end")]
+    : [txt(s, X(lp) + 12, Y(lp) + 6, fmt(lp.v) + "%", "end"), txt(s, X(lp) + 12, Y(lp) + 25, "June 2026", "end-s")];
+  // band and target labels go where no part of the line passes: scan for clear air
+  const segs = pts.slice(1).map((p, i) => [X(pts[i]), Y(pts[i]), X(p), Y(p)]);
+  const hitsBox = (x0, y0, x1, y1) => segs.some(([ax, ay, bx, by]) => {
+    if (Math.max(ax, bx) < x0 || Math.min(ax, bx) > x1) return false;
+    // sample the segment densely; segments are a few pixels long
+    for (let t = 0; t <= 1; t += .1) { const px = ax + (bx - ax) * t, py = ay + (by - ay) * t;
+      if (px >= x0 && px <= x1 && py >= y0 && py <= y1) return true; }
+    return false;
+  });
+  const endBoxes = endBox.map(n => n.getBBox());
+  const placeClear = (label, yBase, prefer) => {
+    const probe = txt(s, 0, 0, label, "tk"); const w = probe.getBBox().width; probe.remove();
+    const xs = []; for (let xx = m.l + 6; xx + w < W - m.r - 6; xx += 3) xs.push(xx);
+    if (prefer === "right") xs.reverse();
+    for (const xx of xs) {
+      const box = [xx - 4, yBase - 13, xx + w + 4, yBase + 4];
+      const clashEnd = endBoxes.some(b => !(box[2] < b.x || box[0] > b.x + b.width || box[3] < b.y || box[1] > b.y + b.height));
+      if (!clashEnd && !hitsBox(...box)) return txt(s, xx, yBase, label, "tk");
+    }
+    return null;
+  };
+  placeClear("Tolerance band, 2 to 6%", y(2) - 8, "right");
+  placeClear("Target, 4%", y(4) - 7, "right");
+  // hover
+  const tp = tip(host);
+  const cross = el("line", { y1: m.t, y2: H - m.b, stroke: C.ink, "stroke-opacity": .25, "stroke-width": 1, visibility: "hidden" }, s);
+  const dot = el("circle", { r: 4.5, fill: C.indigo, stroke: C.ground, "stroke-width": 2, visibility: "hidden" }, s);
+  const hit = el("rect", { x: m.l, y: m.t, width: W - m.r - m.l, height: H - m.t - m.b, fill: "transparent" }, s);
+  const show = (cx) => {
+    const t = t0 + (cx - m.l) / (W - m.r - m.l) * (t1 - t0);
+    let best = pts[0];
+    for (const p of pts) if (Math.abs(Date.parse(p.d) - t) < Math.abs(Date.parse(best.d) - t)) best = p;
+    const bx = X(best), by = Y(best);
+    cross.setAttribute("x1", bx); cross.setAttribute("x2", bx); cross.setAttribute("visibility", "visible");
+    dot.setAttribute("cx", bx); dot.setAttribute("cy", by); dot.setAttribute("visibility", "visible");
+    dot.setAttribute("fill", best.d < "2025-01-01" ? C.soft : C.indigo);
+    tp.innerHTML = `<b>${fmt(best.v)}%</b>${monthLabel(best.d)}${best.d < "2025-01-01" ? ", back-cast" : ""}`;
+    tp.style.left = Math.min(Math.max(bx, 70), W - 70) + "px"; tp.style.top = by + "px"; tp.style.opacity = 1;
+  };
+  const hide = () => { cross.setAttribute("visibility", "hidden"); dot.setAttribute("visibility", "hidden"); tp.style.opacity = 0; };
+  hit.addEventListener("pointermove", e => show(e.offsetX));
+  hit.addEventListener("pointerleave", hide);
+}
+
+/* ---------- figure 2: divisions, ranked ---------- */
+const SHORT = {
+  food_and_beverages: "Food and beverages",
+  paan_tobacco_and_intoxicants: "Paan, tobacco and intoxicants",
+  clothing_and_footwear: "Clothing and footwear",
+  housing_water_electricity_gas_and_other_fuels: "Housing, water, power and fuel",
+  furnishings_household_equipment_and_routine_household_maintenance: "Furnishings and household upkeep",
+  health: "Health",
+  transport: "Transport",
+  information_and_communication: "Phones and internet",
+  recreation_sport_and_culture: "Recreation, sport and culture",
+  education_services: "Education",
+  restaurants_and_accommodation_services: "Restaurants and hotels",
+  personal_care_social_protection_and_miscellaneous_goods_and_services: "Personal care, including gold",
+};
+function drawF2(host) {
+  host.querySelectorAll("svg").forEach(n => n.remove());
+  const W = host.clientWidth, narrow = W < 620;
+  const head = last(A.cpiDiv.series.headline.data);
+  const rows = Object.entries(A.cpiDiv.series).filter(([k]) => k !== "headline")
+    .map(([k, s]) => ({ k, label: SHORT[k] || s.label, v: last(s.data) })).sort((a, b) => b.v - a.v);
+  const labW = narrow ? 0 : 250;
+  const rowH = narrow ? 50 : 34, barH = 12;
+  const top = 34;
+  const m = { l: labW, r: 64 };
+  const H = top + rows.length * rowH + 30;
+  const cap = 8;                     // the axis ends at 8; the outlier is broken past it
+  const x = scale(0, cap, m.l, W - m.r - (narrow ? 0 : 20));
+  const s = el("svg", { width: W, height: H, role: "img", "aria-label": "Bar chart of CPI divisions, June 2026" }, host);
+  for (const v of [0, 2, 4, 6, 8]) {
+    el("line", { x1: x(v), x2: x(v), y1: top - 6, y2: H - 26, stroke: v === 0 ? C.axis : C.grid, "shape-rendering": "crispEdges" }, s);
+    txt(s, x(v), H - 6, v === 8 ? "8%" : String(v), "tk", "middle");
+  }
+  // all-items reference, labelled above the first row so no bar strikes it
+  el("line", { x1: x(head), x2: x(head), y1: top - 6, y2: H - 26, stroke: C.ink, "stroke-opacity": .55, "shape-rendering": "crispEdges" }, s);
+  txt(s, x(head), top - 14, `All items ${fmt(head)}%`, "lb-ink", "middle");
+  // value labels carry a ground-coloured halo so the reference rule stops short of them
+  rows.forEach((r, i) => {
+    const yb = top + i * rowH + (narrow ? 26 : (rowH - barH) / 2);
+    const col = r.v > head ? C.coral : C.indigo;
+    if (narrow) txt(s, 0, yb - 8, r.label, "lb");
+    else txt(s, labW - 16, yb + barH / 2 + 5, r.label, "lb", "end");
+    const over = r.v > cap;
+    const x1 = x(Math.min(r.v, cap)) + (over ? 14 : 0);
+    // 4px rounded data end, square at baseline
+    const x0 = x(0), w = Math.max(x1 - x0, 2), rr = Math.min(4, w / 2);
+    el("path", { d: `M${x0},${yb}H${x0 + w - rr}Q${x0 + w},${yb} ${x0 + w},${yb + rr}V${yb + barH - rr}Q${x0 + w},${yb + barH} ${x0 + w - rr},${yb + barH}H${x0}Z`, fill: col }, s);
+    if (over) {
+      const bx = x(cap) - 4;
+      el("path", { d: `M${bx},${yb + barH + 3}L${bx + 8},${yb - 3}`, stroke: C.ground, "stroke-width": 5 }, s);
+    }
+    txt(s, x0 + w + 8, yb + barH / 2 + 5, fmt(r.v) + "%", "val halo");
+  });
+}
+
+/* ---------- figure 3: states, two ranked ladders ---------- */
+function drawF3(host) {
+  host.querySelectorAll("svg").forEach(n => n.remove());
+  const W = host.clientWidth;
+  const head = last(A.cpi.series.headline.data);
+  const narrow = W < 600;
+  const SHORTER = { "Andaman and Nicobar Islands": "Andaman and Nicobar", "Dadra, Nagar Haveli, Daman and Diu": "Dadra, Daman and Diu" };
+  const rows = Object.values(A.cpiStates.series).map(s => {
+      const l = fix(s.label); return { label: narrow ? (SHORTER[l] || l) : l, v: last(s.data) }; })
+    .filter(r => r.v != null).sort((a, b) => b.v - a.v);
+  const cols = W >= 900 ? 2 : 1;
+  const per = Math.ceil(rows.length / cols);
+  const gap = 56, colW = (W - gap * (cols - 1)) / cols;
+  // the label column is as wide as the longest name, measured, never wider than half the column
+  const probe = el("svg", { width: 10, height: 10 }, host);
+  const longest = Math.max(...rows.map(r => { const t = txt(probe, 0, 0, r.label, "lb"); const w = t.getBBox().width; return w; }));
+  probe.remove();
+  const labW = Math.min(Math.ceil(longest) + 18, colW * 0.5), rowH = 27, top = 34;
+  const lo = 1, hi = 7;
+  const H = top + per * rowH + 30;
+  const s = el("svg", { width: W, height: H, role: "img", "aria-label": "Dot chart of consumer price inflation by state, June 2026" }, host);
+  for (let c = 0; c < cols; c++) {
+    const ox = c * (colW + gap);
+    const x = scale(lo, hi, ox + labW, ox + colW - 54);
+    for (let v = lo; v <= hi; v++) {
+      el("line", { x1: x(v), x2: x(v), y1: top - 6, y2: H - 26, stroke: C.grid, "shape-rendering": "crispEdges" }, s);
+      txt(s, x(v), H - 6, v === hi ? hi + "%" : String(v), "tk", "middle");
+    }
+    el("line", { x1: x(head), x2: x(head), y1: top - 6, y2: H - 26, stroke: C.ink, "stroke-opacity": .55, "shape-rendering": "crispEdges" }, s);
+    txt(s, x(head), top - 14, `All India ${fmt(head)}%`, "lb-ink", "middle");
+    rows.slice(c * per, (c + 1) * per).forEach((r, i) => {
+      const yy = top + i * rowH + rowH / 2;
+      txt(s, ox + labW - 16, yy + 5, r.label, "lb", "end");
+      const vx = x(r.v), refx = x(head), vw = 28;
+      const rightCrosses = vx + 10 < refx && vx + 10 + vw > refx - 3;
+      const leftFits = vx - 10 - vw > ox + labW + 2;
+      const onLeft = rightCrosses && leftFits;
+      el("line", { x1: ox + labW - 4, x2: onLeft ? vx - 14 - vw : vx, y1: yy, y2: yy, stroke: C.grid, "stroke-width": 1 }, s);
+      el("circle", { cx: vx, cy: yy, r: 5, fill: r.v > head ? C.coral : C.indigo, stroke: C.ground, "stroke-width": 2 }, s);
+      txt(s, onLeft ? vx - 10 : vx + 10, yy + 5, fmt(r.v), "val halo", onLeft ? "end" : "start");
+    });
+  }
+}
+
+/* ---------- figure 4: IIP small multiples, synced hover ---------- */
+const USE = [
+  ["use_capital_goods", "Capital goods"],
+  ["use_infrastructure_construction_goods", "Infrastructure and construction"],
+  ["use_intermediate_goods", "Intermediate goods"],
+  ["use_primary_goods", "Primary goods"],
+  ["use_consumer_durables", "Consumer durables"],
+  ["use_consumer_non_durables", "Consumer non-durables"],
+];
+function drawF4(host) {
+  host.innerHTML = "";
+  const all = USE.flatMap(([k]) => ser(A.iip, k).map(p => p.v));
+  const lo = Math.floor(Math.min(...all) / 5) * 5, hi = Math.ceil(Math.max(...all) / 5) * 5;
+  const panels = [];
+  const cols = host.clientWidth >= 640 ? 3 : 2;
+  USE.forEach(([k, name], idx) => {
+    const first = idx % cols === 0;
+    const pts = ser(A.iip, k);
+    const div = document.createElement("div"); div.className = "panel";
+    div.innerHTML = `<h4>${name}</h4><div class="pv"></div>`;
+    host.appendChild(div);
+    const W = div.clientWidth, H = 128, m = { t: 8, r: 8, b: 24, l: 30 };
+    const t0 = Date.parse(pts[0].d), t1 = Date.parse(last(pts).d);
+    const x = scale(t0, t1, m.l, W - m.r), y = scale(lo, hi, H - m.b, m.t);
+    const X = p => x(Date.parse(p.d)), Y = p => y(p.v);
+    const s = el("svg", { width: W, height: H, role: "img", "aria-label": `${name}, monthly growth` }, div);
+    for (let v = lo; v <= hi; v += 10) {
+      el("line", { x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: C.grid, "shape-rendering": "crispEdges" }, s);
+      if (first) txt(s, m.l - 7, y(v) + 4.5, v > 0 ? "+" + v : v < 0 ? "\u2212" + -v : "0", "tk", "end");
+    }
+    el("line", { x1: m.l, x2: W - m.r, y1: y(0), y2: y(0), stroke: C.axis, "shape-rendering": "crispEdges" }, s);
+    for (const yr of [2025, 2026]) {
+      const xx = x(Date.UTC(yr, 0, 1));
+      txt(s, xx, H - 5, String(yr), "tk", "middle");
+    }
+    el("path", { d: pathOf(pts, X, Y), fill: "none", stroke: C.indigo, "stroke-width": 1.75, "stroke-linejoin": "round", "stroke-linecap": "round" }, s);
+    const lp = last(pts);
+    const end = el("circle", { cx: X(lp), cy: Y(lp), r: 4, fill: C.coral, stroke: C.ground, "stroke-width": 2 }, s);
+    const cross = el("line", { y1: m.t, y2: H - m.b, stroke: C.ink, "stroke-opacity": .25, visibility: "hidden" }, s);
+    const dot = el("circle", { r: 4, fill: C.indigo, stroke: C.ground, "stroke-width": 2, visibility: "hidden" }, s);
+    const hit = el("rect", { x: m.l, y: 0, width: W - m.l - m.r, height: H, fill: "transparent" }, s);
+    const pv = div.querySelector(".pv");
+    const setHead = p => pv.innerHTML = `${fmt(p.v)}%<small>${MON3[+p.d.slice(5, 7) - 1]} ${p.d.slice(0, 4)}</small>`;
+    setHead(lp);
+    const panel = { pts, setHead, show(d) {
+        const p = pts.find(q => q.d === d); if (!p) return;
+        cross.setAttribute("x1", X(p)); cross.setAttribute("x2", X(p)); cross.setAttribute("visibility", "visible");
+        dot.setAttribute("cx", X(p)); dot.setAttribute("cy", Y(p)); dot.setAttribute("visibility", "visible");
+        end.setAttribute("visibility", "hidden"); setHead(p);
+      }, hide() { cross.setAttribute("visibility", "hidden"); dot.setAttribute("visibility", "hidden"); end.setAttribute("visibility", "visible"); setHead(lp); } };
+    panels.push(panel);
+    hit.addEventListener("pointermove", e => {
+      const t = t0 + (e.offsetX - m.l) / (W - m.l - m.r) * (t1 - t0);
+      let best = pts[0];
+      for (const p of pts) if (Math.abs(Date.parse(p.d) - t) < Math.abs(Date.parse(best.d) - t)) best = p;
+      panels.forEach(q => q.show(best.d));
+    });
+    hit.addEventListener("pointerleave", () => panels.forEach(q => q.hide()));
+  });
+}
+
+/* ---------- responsive redraw ---------- */
+const jobs = [["f1", drawF1], ["f2", drawF2], ["f3", drawF3], ["f4", drawF4]];
+const widths = new Map();
+const ro = new ResizeObserver(entries => {
+  for (const e of entries) {
+    const w = Math.round(e.contentRect.width);
+    if (widths.get(e.target) === w) continue;
+    widths.set(e.target, w);
+    jobs.find(([id]) => id === e.target.id)[1](e.target);
+  }
+});
+document.fonts.ready.then(() => jobs.forEach(([id]) => ro.observe(document.getElementById(id))));
+})();
+</script>
+</body>
+</html>

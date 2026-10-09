@@ -26,20 +26,20 @@ const setHTML = (id, h) => (document.getElementById(id).innerHTML = h);
 
 /* structural constants: the six groups and their weights, in basket order */
 const groups = [
-  ["Food & beverages", 45.86, "#BE3E26"],
-  ["Pan, tobacco & intoxicants", 2.38, "#4A463F"],
-  ["Clothing & footwear", 6.53, "#8A857A"],
-  ["Housing", 10.07, "#A8A293"],
-  ["Fuel & light", 6.84, "#C6C0B0"],
-  ["Miscellaneous · services", 28.32, "#DDD6C4"],
+  ["Food & beverages", 45.86, "#2E4BD8"],
+  ["Pan, tobacco & intoxicants", 2.38, "#4A5160"],
+  ["Clothing & footwear", 6.53, "#878D99"],
+  ["Housing", 10.07, "#A3A9B4"],
+  ["Fuel & light", 6.84, "#C9CED6"],
+  ["Miscellaneous, services", 28.32, "#DADDE3"],
 ];
 const KEYS = { "Food & beverages": "food", "Pan, tobacco & intoxicants": "pan",
   "Clothing & footwear": "clothing", "Housing": "housing", "Fuel & light": "fuel",
-  "Miscellaneous · services": "misc" };
+  "Miscellaneous, services": "misc" };
 
 /* ---------- basket composition ---------- */
 document.getElementById("basket-bar").innerHTML = groups.map(([n, w, c]) =>
-  `<div class="seg" style="width:${w}%;background:${c}" title="${n} — ${w}%"></div>`).join("");
+  `<div class="seg" style="width:${w}%;background:${c}" title="${n}: ${w}%"></div>`).join("");
 document.getElementById("basket-labels").innerHTML = groups.map(([n, w, c]) =>
   `<div class="blab"><div class="n"><span class="sw" style="background:${c}"></span>${n}</div><div class="w">${w.toFixed(2)}%</div></div>`).join("");
 
@@ -86,15 +86,15 @@ setTxt("pv-wt", groups[0][1].toFixed(2) + "%");
   const plot = Plot.plot({
     width: 1184, height: 380,
     marginLeft: 250, marginRight: 120, marginTop: 20, marginBottom: 48,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: "↑ weight in the CPI combined index · points of 100", labelAnchor: "center", labelArrow: false,
          tickFormat: (d) => String(d), ticks: [0, 10, 20, 30, 40, 50], domain: [0, 52], tickSize: 0, tickPadding: 11 },
     y: { label: null, tickSize: 0, tickPadding: 14 },
     marks: [
-      Plot.gridX([0, 10, 20, 30, 40, 50], { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleX([0], { stroke: "#E0DACA", strokeWidth: 1 }),
+      Plot.gridX([0, 10, 20, 30, 40, 50], { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#E3E6EB", strokeWidth: 1 }),
       Plot.barX(bars, { y: "group", x: "weight", fill: "color", insetTop: 14, insetBottom: 14 }),
-      Plot.text(bars, { y: "group", x: "weight", text: (d) => d.weight.toFixed(2), dx: 10, fill: "#5B564B", fontSize: 13, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(bars, { y: "group", x: "weight", text: (d) => d.weight.toFixed(2), dx: 10, fill: "#5F6675", fontSize: 12, fontFamily: mono, textAnchor: "start" }),
     ],
   });
   a11y(plot, "CPI group weights, per cent, Consumer Expenditure Survey 2011-12",

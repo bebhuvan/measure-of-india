@@ -15,19 +15,16 @@
 // Rows carry weekly_status null in both bulletins (CWS by definition), so the
 // weekly_status_code param is never sent; annual rows do carry it.
 
-import { mospi } from "../mospi.mjs";
+import { mospi, mospiAll } from "../mospi.mjs";
 import { MONTHS, writeSeries, writeRaw, monthAxis, quarterAxis } from "../util.mjs";
 
 // PLFS quarterly rows label calendar quarters by the calendar year they occur
 // in: "Jan-Mar" + year 2026 means 2026-01, not 2027-01.
 const QUARTER_START = { "Apr-Jun": "04", "Jul-Sep": "07", "Oct-Dec": "10", "Jan-Mar": "01" };
-const GREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
+const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 
 async function fetchYear(dcfg, freqCfg, indicatorCode, year, extra = {}) {
-  const res = await mospi(dcfg.fetch.endpoint, {
-    ...freqCfg, ...extra, indicator_code: indicatorCode, year, page: 1, limit: 500,
-  });
-  return res.data ?? [];
+  return mospiAll(dcfg.fetch.endpoint, { ...freqCfg, ...extra, indicator_code: indicatorCode, year });
 }
 
 // annual rows carry religion / socialGroup / General_Education /
@@ -92,9 +89,9 @@ export async function buildPlfs(root, dcfg, vintage) {
     meta: { ...metaM, coverage: "All India, 15 years and above, person, rural + urban, CWS" },
     dates: mDates,
     series: {
-      ur: { name: "unemployment_rate_pct", label: "Unemployment", color: "#BE3E26", data: pick("ur", "person", "rural + urban") },
-      lfpr: { name: "lfpr_pct", label: "Participation", color: "#5B564B", data: pick("lfpr", "person", "rural + urban") },
-      wpr: { name: "wpr_pct", label: "Workers", color: "#A8A293", data: pick("wpr", "person", "rural + urban") },
+      ur: { name: "unemployment_rate_pct", label: "Unemployment", color: "#2E4BD8", data: pick("ur", "person", "rural + urban") },
+      lfpr: { name: "lfpr_pct", label: "Participation", color: "#5F6675", data: pick("lfpr", "person", "rural + urban") },
+      wpr: { name: "wpr_pct", label: "Workers", color: "#A3A9B4", data: pick("wpr", "person", "rural + urban") },
     },
   };
   const cutCombos = [];
@@ -170,9 +167,9 @@ export async function buildPlfs(root, dcfg, vintage) {
     },
     dates: qAxis.map((ym) => `${ym}-01`),
     series: {
-      ur: { name: "unemployment_rate_urban_pct", label: "Unemployment", color: "#BE3E26", data: qAxis.map((ym) => quarterly.ur.get(ym) ?? null) },
-      lfpr: { name: "lfpr_urban_pct", label: "Participation", color: "#5B564B", data: qAxis.map((ym) => quarterly.lfpr.get(ym) ?? null) },
-      wpr: { name: "wpr_urban_pct", label: "Workers", color: "#A8A293", data: qAxis.map((ym) => quarterly.wpr.get(ym) ?? null) },
+      ur: { name: "unemployment_rate_urban_pct", label: "Unemployment", color: "#2E4BD8", data: qAxis.map((ym) => quarterly.ur.get(ym) ?? null) },
+      lfpr: { name: "lfpr_urban_pct", label: "Participation", color: "#5F6675", data: qAxis.map((ym) => quarterly.lfpr.get(ym) ?? null) },
+      wpr: { name: "wpr_urban_pct", label: "Workers", color: "#A3A9B4", data: qAxis.map((ym) => quarterly.wpr.get(ym) ?? null) },
     },
   };
 
@@ -206,7 +203,7 @@ export async function buildPlfs(root, dcfg, vintage) {
     for (const key of Object.values(IND)) {
       if (!annual[`${key}|${ws}`]?.size) continue;
       aSeries[`${key}_${ws === "CWS" ? "cws" : "psss"}`] = {
-        name: `plfs_${key}_annual_${ws === "CWS" ? "cws" : "psss"}_pct`, label: `${key.toUpperCase()} · ${ws}`, color: wi === 0 ? "#BE3E26" : "#5B564B",
+        name: `plfs_${key}_annual_${ws === "CWS" ? "cws" : "psss"}_pct`, label: `${key.toUpperCase()} · ${ws}`, color: wi === 0 ? "#2E4BD8" : "#5F6675",
         data: aAxis.map((ym) => annual[`${key}|${ws}`].get(ym) ?? null),
       };
     }
@@ -346,7 +343,7 @@ const EDU_KEYS = {
   "9.secondary & above": "secondary_above",
 };
 const QTR_START_IN_AGRI = { "Jul-Sep": [0, "07"], "Oct-Dec": [0, "10"], "Jan-Mar": [1, "01"], "Apr-Jun": [1, "04"] };
-const XGREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
+const XGREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 
 async function pageAll(endpoint, params) {
   const rows = [];
@@ -378,11 +375,15 @@ export async function buildPlfsExtras(root, dcfg, vintage, agriYears) {
     await new Promise((r) => setTimeout(r, 150));
   }
   raw.indicators.distribution = distRows;
+  // an ABSENT dimension counts as "all": the API dropped employee_contract
+  // from indicator 4 rows by 2026-10 (checked live 2026-10-09), and a strict
+  // === "all" then rejected every row
+  const isAll = (v, all = "all") => v == null || v === all;
   const allDims4 = (r) =>
-    r.enterprise_size === "all" && r.enterprise_type === "all" &&
-    r.industry_section === "All" && r.nco_division === "all" &&
-    r.nic_group === "all" && r.employee_contract === "all" &&
-    r.quarter === "all" && r.state === "All India";
+    isAll(r.enterprise_size) && isAll(r.enterprise_type) &&
+    isAll(r.industry_section, "All") && isAll(r.nco_division) &&
+    isAll(r.nic_group) && isAll(r.employee_contract) &&
+    isAll(r.quarter) && r.state === "All India";
   const stMaps = {}; // "statusKey|ws|gender|sector" -> Map("YYYY-07" -> v)
   const indMaps = {}; // "industryKey|ws|gender|sector" -> Map
   for (const r of distRows) {
@@ -413,11 +414,11 @@ export async function buildPlfsExtras(root, dcfg, vintage, agriYears) {
     if (!m?.size) throw new Error(`PLFS extras: missing status series ${mapKey}`);
     statusSeries[id] = { name: `plfs_workers_share_${id}_pct`, label, color, data: stAxis.map((ym) => m.get(ym) ?? null) };
   };
-  addStatus("self_employed_person", "self_employed|PS+SS|person|rural + urban", "Self-employed", "#BE3E26");
-  addStatus("regular_person", "regular|PS+SS|person|rural + urban", "Regular wage/salary", "#5B564B");
-  addStatus("casual_person", "casual|PS+SS|person|rural + urban", "Casual labour", "#A8A293");
-  addStatus("se_own_account_person", "se_own_account|PS+SS|person|rural + urban", "Own-account & employers", "#8A857A");
-  addStatus("se_helper_person", "se_helper|PS+SS|person|rural + urban", "Household-enterprise helpers", "#C6C0B0");
+  addStatus("self_employed_person", "self_employed|PS+SS|person|rural + urban", "Self-employed", "#2E4BD8");
+  addStatus("regular_person", "regular|PS+SS|person|rural + urban", "Regular wage/salary", "#5F6675");
+  addStatus("casual_person", "casual|PS+SS|person|rural + urban", "Casual labour", "#A3A9B4");
+  addStatus("se_own_account_person", "se_own_account|PS+SS|person|rural + urban", "Own-account & employers", "#878D99");
+  addStatus("se_helper_person", "se_helper|PS+SS|person|rural + urban", "Household-enterprise helpers", "#C9CED6");
   ["male", "female"].forEach((g, gi) => {
     for (const k of ["self_employed", "regular", "casual"])
       addStatus(`${k}_${g}`, `${k}|PS+SS|${g}|rural + urban`, `${k.replace(/_/g, " ")} · ${g}`, XGREYS[gi * 2]);
@@ -427,7 +428,7 @@ export async function buildPlfsExtras(root, dcfg, vintage, agriYears) {
     statusSeries[`industry_${k}_person`] = {
       name: `plfs_workers_share_industry_${k}_pct`,
       label: { primary: "Agriculture & allied", secondary: "Industry & construction", tertiary: "Services" }[k] + ` · ${indWs}`,
-      color: ["#BE3E26", "#5B564B", "#A8A293"][i],
+      color: ["#2E4BD8", "#5F6675", "#A3A9B4"][i],
       data: stAxis.map((ym) => m.get(ym) ?? null),
     };
   });
@@ -484,7 +485,7 @@ export async function buildPlfsExtras(root, dcfg, vintage, agriYears) {
       earnSeries[`${key}_${g}`] = {
         name: `plfs_earnings_${key}_${g}_inr`,
         label: `${key === "self_employed" ? "Self-employed" : key === "regular" ? "Regular wage" : "Casual"} · ${g} (${UNIT[key]})`,
-        color: g === "person" ? ["#BE3E26", "#5B564B", "#A8A293"][ki] : XGREYS[(ki + gi) % XGREYS.length],
+        color: g === "person" ? ["#2E4BD8", "#5F6675", "#A3A9B4"][ki] : XGREYS[(ki + gi) % XGREYS.length],
         data: eAxis.map((ym) => m.get(ym) ?? null),
       };
     });
@@ -551,7 +552,7 @@ export async function buildPlfsExtras(root, dcfg, vintage, agriYears) {
     if (!m?.size) throw new Error(`PLFS extras: missing education series ${k}`);
     eduSeries[k] = {
       name: `plfs_ur_${k}_psss_pct`, label: `UR · ${label}`,
-      color: k === "graduate" ? "#BE3E26" : XGREYS[i % XGREYS.length],
+      color: k === "graduate" ? "#2E4BD8" : XGREYS[i % XGREYS.length],
       data: eduAxis.map((ym) => m.get(ym) ?? null),
     };
   });

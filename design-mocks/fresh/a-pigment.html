@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>India Atlas, Pigment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+<style>
+/* Design A, "Pigment". Colour exists only in data. Each dossier family owns
+   one pigment, and that pigment follows it everywhere: its dot in the index,
+   its trend on the front page, its marks in its own charts. Nothing else on
+   the page is coloured. Palette order validated (dataviz validator, light). */
+:root{
+  --ground:#FFFFFF;
+  --ink:#15233D;
+  --ink-2:#4B5770;
+  --muted:#6E778B;
+  --grid:#E9ECF2;
+  --band:#F3F6FA;
+  --focus:#3E6CF0;
+
+  /* family pigments, validated in this fixed order */
+  --p-prices:#EF5F5A;      /* coral */
+  --p-external:#2A9FDC;    /* sky */
+  --p-industry:#E8901C;    /* marigold */
+  --p-growth:#3E6CF0;      /* cobalt */
+  --p-people:#1BAE8A;      /* jade */
+  --p-households:#A465DF;  /* orchid */
+  --p-prices-tint:#F7B0AD;
+
+  --wrap:1200px;
+  --gut:24px;
+  --side:48px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--ground);color:var(--ink);
+  font-family:"Host Grotesk",system-ui,sans-serif;font-weight:400;
+  font-size:20px;line-height:1.6;
+  font-feature-settings:"kern","liga";
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+a{color:inherit;text-decoration-thickness:1px;text-underline-offset:.18em}
+:focus-visible{outline:2px solid var(--focus);outline-offset:3px;border-radius:2px}
+.wrap{max-width:calc(var(--wrap) + 2*var(--side));margin:0 auto;padding:0 var(--side)}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gut)}
+.tn{font-variant-numeric:tabular-nums}
+
+/* masthead */
+.mast{padding:32px 0}
+.mast .wrap{display:flex;align-items:baseline;justify-content:space-between;gap:16px 40px;flex-wrap:wrap}
+.brand{font-size:21px;font-weight:650;letter-spacing:-.01em;text-decoration:none}
+.nav{display:flex;gap:8px 32px;flex-wrap:wrap;margin:0;padding:0;list-style:none}
+.nav a{font-size:17px;color:var(--ink-2);text-decoration:none}
+.nav a:hover{color:var(--ink);text-decoration:underline}
+.nav a[aria-current]{color:var(--ink)}
+
+/* type scale: 15 / 17 / 20 / 24 / 32 / 44 / 64 */
+h1,h2,h3{font-weight:560;margin:0;letter-spacing:-.022em;text-wrap:balance}
+h1{font-size:64px;line-height:1.04}
+h2{font-size:44px;line-height:1.08}
+h3{font-size:24px;line-height:1.25;letter-spacing:-.012em}
+p{margin:0}
+.lede{font-size:24px;line-height:1.45;color:var(--ink-2);max-width:34ch;letter-spacing:-.005em}
+.note{font-size:15px;line-height:1.55;color:var(--muted);max-width:68ch}
+.small{font-size:17px;line-height:1.5;color:var(--ink-2)}
+
+section{padding-top:136px}
+section.first{padding-top:72px}
+
+/* the entity glyph: one dot, one pigment, everywhere */
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--c);flex:none}
+
+/* ---------- front: where the economy stands ---------- */
+.front h1{grid-column:1 / span 8}
+.front .asof{grid-column:1 / span 8;margin-top:24px}
+.figs{margin-top:72px;row-gap:56px}
+.fig{grid-column:span 3}
+.fig .k{display:flex;align-items:center;gap:10px;font-size:17px;color:var(--ink-2)}
+.fig .v{font-size:72px;line-height:1;font-weight:500;letter-spacing:-.035em;margin-top:20px;white-space:nowrap}
+.fig .v .u{font-size:.42em;font-weight:450;letter-spacing:0;color:var(--ink-2);margin-left:4px}
+.fig .what{font-size:17px;line-height:1.45;color:var(--ink-2);margin-top:14px;max-width:24ch}
+.fig .spark{margin-top:22px;height:48px}
+.fig .delta{font-size:15px;color:var(--muted);margin-top:10px}
+
+/* ---------- dossier index ---------- */
+.index h2{grid-column:1 / span 7}
+.index .key{grid-column:1 / span 7;margin-top:20px}
+.kw{white-space:nowrap}
+.key .dot{width:9px;height:9px;margin:0 6px 0 2px;transform:translateY(-1px)}
+.list{list-style:none;margin:56px 0 0;padding:0}
+.row{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:var(--gut);align-items:baseline;padding:18px 0}
+.row a{text-decoration:none}
+.row .name{grid-column:1 / span 4;display:flex;align-items:baseline;gap:16px;font-size:28px;line-height:1.2;font-weight:520;letter-spacing:-.015em}
+.row .name .dot{transform:translateY(-3px)}
+.row .desc{grid-column:5 / span 6;font-size:18px;line-height:1.5;color:var(--ink-2)}
+.row .cad{grid-column:11 / span 2;text-align:right;font-size:15px;color:var(--muted)}
+.row:hover .name a{text-decoration:underline;text-decoration-thickness:1px}
+
+/* ---------- dossier slice ---------- */
+.dhead{display:flex;align-items:center;gap:16px}
+.dhead .dot{width:14px;height:14px}
+.dossier .lede{margin-top:24px;max-width:40ch}
+.meta{margin-top:28px;display:flex;flex-wrap:wrap;gap:6px 36px;font-size:15px;color:var(--muted)}
+.meta b{font-weight:500;color:var(--ink-2)}
+
+.figure{margin-top:88px}
+.figure h3{max-width:36ch}
+.figure .sub{margin-top:8px;font-size:17px;color:var(--ink-2);max-width:62ch}
+.chart{position:relative;margin-top:32px;width:100%}
+.chart svg{display:block;overflow:visible}
+.chart text{font-family:"Host Grotesk",system-ui,sans-serif;font-variant-numeric:tabular-nums;fill:var(--ink-2)}
+.figure .note{margin-top:20px}
+
+.tip{position:absolute;pointer-events:none;background:var(--ground);border:1px solid var(--grid);padding:8px 12px;font-size:15px;line-height:1.35;white-space:nowrap;opacity:0;transform:translate(-50%,0)}
+.tip b{display:block;font-size:20px;font-weight:550;font-variant-numeric:tabular-nums}
+.tip span{color:var(--ink-2)}
+
+.reading{margin-top:96px}
+.reading h3{margin-bottom:16px}
+.reading p{max-width:64ch;font-size:20px;line-height:1.65}
+
+.multiples{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:var(--gut);row-gap:48px;margin-top:40px}
+.mult .mh{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.mult .mh span:first-child{font-size:17px;font-weight:500}
+.mult .mh span:last-child{font-size:20px;font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
+.mult .chart{margin-top:12px}
+
+footer{margin-top:160px;padding:48px 0 72px;border-top:1px solid var(--grid)}
+footer .grid p{grid-column:span 6;font-size:15px;line-height:1.6;color:var(--muted);max-width:56ch}
+
+@media (max-width:1100px){
+  .fig{grid-column:span 6}
+  .row .name{grid-column:1 / span 5}
+  .row .desc{grid-column:6 / span 5}
+}
+@media (max-width:760px){
+  :root{--side:20px;--gut:16px}
+  body{font-size:18px}
+  h1{font-size:44px}
+  h2{font-size:34px}
+  h3{font-size:22px}
+  .lede{font-size:20px}
+  section{padding-top:96px}
+  section.first{padding-top:32px}
+  .mast{padding:24px 0 8px}
+  .nav{gap:6px 22px}
+  .front h1,.front .asof,.index h2,.index .key{grid-column:1 / -1}
+  .figs{margin-top:48px;row-gap:48px}
+  .fig .v{font-size:56px}
+  .row{padding:16px 0;row-gap:4px}
+  .row .name{grid-column:1 / -1;font-size:24px}
+  .row .desc{grid-column:1 / -1;padding-left:28px;font-size:17px}
+  .row .cad{grid-column:1 / -1;text-align:left;padding-left:28px}
+  .multiples{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:40px}
+  .mult .mh{flex-direction:column;gap:2px}
+  .mult .mh span:first-child{font-size:15px;white-space:nowrap}
+  .reading p{font-size:18px}
+  footer .grid p{grid-column:1 / -1;margin-bottom:12px}
+}
+@media (max-width:420px){
+  .fig{grid-column:1 / -1}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap">
+    <a class="brand" href="#">India Atlas</a>
+    <ul class="nav">
+      <li><a href="#index" aria-current="page">Dossiers</a></li>
+      <li><a href="#">Learn</a></li>
+      <li><a href="#">Method</a></li>
+      <li><a href="#">About</a></li>
+    </ul>
+  </div>
+</header>
+
+<main>
+  <section class="first front">
+    <div class="wrap grid">
+      <h1>Where India's economy stands</h1>
+      <p class="asof small">The latest official figures, released up to July 2026.</p>
+    </div>
+    <div class="wrap grid figs" id="figs"></div>
+  </section>
+
+  <section class="index" id="index">
+    <div class="wrap grid">
+      <h2>Thirteen dossiers</h2>
+      <p class="key small">Each takes one public statistic and reads it closely. Colour marks the family:
+        <span class="kw"><span class="dot" style="--c:var(--p-prices)"></span>prices</span>,
+        <span class="kw"><span class="dot" style="--c:var(--p-external)"></span>the external account</span>,
+        <span class="kw"><span class="dot" style="--c:var(--p-industry)"></span>industry</span>,
+        <span class="kw"><span class="dot" style="--c:var(--p-growth)"></span>growth</span>,
+        <span class="kw"><span class="dot" style="--c:var(--p-people)"></span>work and people</span>,
+        <span class="kw"><span class="dot" style="--c:var(--p-households)"></span>households</span>.</p>
+    </div>
+    <div class="wrap"><ul class="list" id="list"></ul></div>
+  </section>
+
+  <section class="dossier" id="cpi">
+    <div class="wrap">
+      <div class="dhead"><span class="dot" style="--c:var(--p-prices)"></span><h2>Consumer prices</h2></div>
+      <p class="lede">How much more a household pays for the same basket of goods and services than it did a year ago.</p>
+      <div class="meta">
+        <span><b>Source</b> National Statistics Office</span>
+        <span><b>Base</b> 2024 = 100</span>
+        <span><b>Latest</b> June 2026, released 12 July</span>
+      </div>
+
+      <div class="figure">
+        <h3>Inflation has risen for five months and is back above the 4% target</h3>
+        <p class="sub">Consumer price inflation, year on year, January 2014 to June 2026. The shaded band is the 2 to 6% range the RBI is asked to hold.</p>
+        <div class="chart" id="c-main" tabindex="0" role="img" aria-label="Line chart of consumer price inflation from 2014 to June 2026"></div>
+        <p class="note">The paler line before 2025 is the National Statistics Office's own back-cast: the old decade re-priced on the new 2024 basket. From January 2025 the line is live, collected prices. No figure from the retired 2012 base is used.</p>
+      </div>
+
+      <div class="reading">
+        <h3>What the June print says</h3>
+        <p>Retail inflation rose to 4.38% in June, its fifth straight monthly rise since January's 2.73%. It now sits above the RBI's 4% target, though still well inside the 2 to 6% range the central bank is asked to hold. Food and beverages, the heaviest part of the basket, rose 5.06%, and eating out rose faster at 6.91%. Villages feel it more than towns: rural prices rose 4.74% against 3.93% in cities. The spread across states is wide, from 1.62% in Mizoram to 6.36% in Telangana. One number distorts the table below. Personal care, at 16.73%, includes gold, which is priced in world markets and says little about the domestic economy.</p>
+      </div>
+
+      <div class="figure">
+        <h3>Leave out gold, and eating out and food lead the basket</h3>
+        <p class="sub">Inflation by division of the basket, June 2026, year on year. The line marks the all-items figure.</p>
+        <div class="chart" id="c-div"></div>
+        <p class="note">The NSO has not yet published weights for the 2024 basket, so divisions are ranked here rather than shown as shares of the headline.</p>
+      </div>
+
+      <div class="figure">
+        <h3>From under 2% in the North&nbsp;East to over 6% in Telangana</h3>
+        <p class="sub">Inflation by state and union territory, June 2026, year on year.</p>
+        <div class="chart" id="c-states"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="dossier" id="iip">
+    <div class="wrap">
+      <div class="dhead"><span class="dot" style="--c:var(--p-industry)"></span><h2>Industrial production</h2></div>
+      <p class="lede">The monthly pulse of factories, mines and power plants, grouped by what the goods are used for.</p>
+      <div class="figure">
+        <h3>Capital goods have led in most months since 2024</h3>
+        <p class="sub">Growth in output by use, year on year, April 2024 to June 2026. All six panels share one scale.</p>
+        <div class="multiples" id="mults"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap grid">
+    <p>Prices, national accounts, industrial output and the labour force survey are published by the National Statistics Office, Ministry of Statistics and Programme Implementation. Exchange rates, reserves and the balance of payments come from the Reserve Bank of India.</p>
+    <p>India Atlas changes nothing in the source data. Where the government changes how it measures something, the old and new series are kept apart and labelled. This page is a design study built on data released up to July 2026.</p>
+  </div>
+</footer>
+
+<script src="./data.js"></script>
+<script>
+(() => {
+const A = window.ATLAS;
+const NS = "http://www.w3.org/2000/svg";
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const C = {
+  ink: css("--ink"), ink2: css("--ink-2"), muted: css("--muted"), grid: css("--grid"), band: css("--band"),
+  ground: css("--ground"),
+  prices: css("--p-prices"), pricesTint: css("--p-prices-tint"), industry: css("--p-industry"),
+  growth: css("--p-growth"), people: css("--p-people"),
+};
+const MON = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const SMON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const d8 = s => new Date(s + "T00:00:00Z");
+const fmt = (v, dp = 2) => v.toFixed(dp);
+
+function el(tag, attrs = {}, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+const lin = (d0, d1, r0, r1) => { const f = v => r0 + (v - d0) / (d1 - d0) * (r1 - r0); return f; };
+function niceTicks(lo, hi, n = 5) {
+  const span = hi - lo, step0 = span / n, mag = 10 ** Math.floor(Math.log10(step0));
+  const step = [1, 2, 5, 10].map(m => m * mag).find(s => span / s <= n) || 10 * mag;
+  const out = []; for (let v = Math.floor(lo / step + 1e-9) * step; v < hi + step - 1e-9; v += step) out.push(+v.toFixed(6));
+  return out;
+}
+const pathOf = (pts) => {
+  let d = "", pen = false;
+  for (const p of pts) { if (p == null) { pen = false; continue; } d += (pen ? "L" : "M") + p[0].toFixed(1) + "," + p[1].toFixed(1); pen = true; }
+  return d;
+};
+function measure(svg, txt, size, weight = 400) {
+  const t = el("text", { "font-size": size, "font-weight": weight, x: -9999, y: -9999 }, svg);
+  t.textContent = txt; const w = t.getComputedTextLength(); t.remove(); return w;
+}
+function text(svg, x, y, s, o = {}) {
+  const t = el("text", { x, y, "font-size": o.size || 14, "text-anchor": o.anchor || "start", "font-weight": o.weight || 400, fill: o.fill || C.ink2 }, svg);
+  if (o.baseline) t.setAttribute("dominant-baseline", o.baseline);
+  t.textContent = s; return t;
+}
+function onResize(node, draw) {
+  let w = 0;
+  new ResizeObserver(es => { const nw = Math.round(es[0].contentRect.width); if (nw && nw !== w) { w = nw; draw(nw); } }).observe(node);
+}
+// a vertical reference rule that never strikes a label: it is drawn in
+// segments that skip every text box it would cross
+function refRule(svg, x, y1, y2, attrs) {
+  const boxes = [...svg.querySelectorAll("text")].map(t => t.getBBox())
+    .filter(b => b.x - 4 < x && b.x + b.width + 4 > x && b.y + b.height > y1 && b.y < y2)
+    .sort((a, b) => a.y - b.y);
+  let y = y1;
+  for (const b of boxes) { if (b.y - 3 > y) el("line", { x1: x, x2: x, y1: y, y2: b.y - 3, ...attrs }, svg); y = Math.max(y, b.y + b.height + 3); }
+  if (y < y2) el("line", { x1: x, x2: x, y1: y, y2, ...attrs }, svg);
+}
+const last = arr => { for (let i = arr.length - 1; i >= 0; i--) if (arr[i] != null) return [arr[i], i]; return [null, -1]; };
+const prevOf = (arr, i) => { for (let j = i - 1; j >= 0; j--) if (arr[j] != null) return arr[j]; return null; };
+
+/* ---------- front-page figures ---------- */
+const qtr = s => { const d = d8(s), m = d.getUTCMonth(), y = d.getUTCFullYear();
+  const fy = m >= 3 ? y + 1 : y; const q = m >= 3 ? Math.floor((m - 3) / 3) + 1 : 4;
+  return `Q${q} of ${fy - 1}-${String(fy).slice(2)}`; };
+const monthName = s => { const d = d8(s); return MON[d.getUTCMonth()] + " " + d.getUTCFullYear(); };
+
+const figs = [
+  { k: "Inflation", c: C.prices, b: A.cpi, s: "headline", n: 24, what: d => `Consumer prices, ${monthName(d)}, year on year`, cmp: "May", unit: "%" },
+  { k: "GDP growth", c: C.growth, b: A.gdp, s: "gdp", n: 12, what: d => `Real GDP, January to March 2026, year on year`, cmp: "the previous quarter", unit: "%" },
+  { k: "Unemployment", c: C.people, b: A.plfs, s: "ur", n: 15, what: d => `Share of the labour force without work, ${monthName(d)}`, cmp: "May", unit: "%" },
+  { k: "Industrial output", c: C.industry, b: A.iip, s: "general", n: 24, what: d => `Factories, mines and power, ${monthName(d)}, year on year`, cmp: "May", unit: "%" },
+];
+const figHost = document.getElementById("figs");
+for (const f of figs) {
+  const data = f.b.series[f.s].data, [v, i] = last(data), p = prevOf(data, i), dlt = v - p;
+  const div = document.createElement("div"); div.className = "fig";
+  const dtxt = Math.abs(dlt) < 0.005 ? `Unchanged from ${f.cmp}` : `${dlt > 0 ? "Up" : "Down"} ${fmt(Math.abs(dlt))} points from ${f.cmp}`;
+  div.innerHTML = `<div class="k"><span class="dot" style="--c:${f.c}"></span>${f.k}</div>
+    <div class="v">${fmt(v)}<span class="u">${f.unit}</span></div>
+    <p class="what">${f.what(f.b.dates[i])}</p>
+    <div class="spark"></div><p class="delta tn">${dtxt}</p>`;
+  figHost.appendChild(div);
+  const host = div.querySelector(".spark");
+  const seg = data.slice(Math.max(0, i - f.n + 1), i + 1);
+  onResize(host, w => {
+    host.innerHTML = ""; const h = 48, svg = el("svg", { width: w, height: h, viewBox: `0 0 ${w} ${h}`, "aria-hidden": "true" }, host);
+    const vals = seg.filter(x => x != null); let lo = Math.min(...vals), hi = Math.max(...vals); const pad = (hi - lo) * .15 || 1; lo -= pad; hi += pad;
+    const x = lin(0, seg.length - 1, 1, w - 6), y = lin(lo, hi, h - 4, 4);
+    el("line", { x1: 0, x2: w, y1: h - .5, y2: h - .5, stroke: C.grid }, svg);
+    el("path", { d: pathOf(seg.map((v, j) => v == null ? null : [x(j), y(v)])), fill: "none", stroke: f.c, "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+    el("circle", { cx: x(seg.length - 1), cy: y(seg.at(-1)), r: 4, fill: f.c, stroke: C.ground, "stroke-width": 2 }, svg);
+  });
+}
+
+/* ---------- dossier index ---------- */
+const DOSS = [
+  ["Consumer prices", "prices", "What the same basket costs a household compared with a year ago.", "Monthly"],
+  ["Wholesale prices", "prices", "Prices at the factory gate and the mandi, before they reach a shop.", "Monthly"],
+  ["The external account", "external", "Trade, capital flows, reserves and the rupee.", "Monthly and quarterly"],
+  ["Industrial production", "industry", "Output of factories, mines and power plants.", "Monthly"],
+  ["Factories", "industry", "The annual census of registered factories: wages, capital, output.", "Annual"],
+  ["Gross domestic product", "growth", "The size and speed of the whole economy, and what drives it.", "Quarterly"],
+  ["Manufacturing", "growth", "India's factories measured against the rest of the world.", "Annual"],
+  ["Jobs", "people", "Who works, who looks for work, and what they earn.", "Monthly and quarterly"],
+  ["Higher education", "people", "Enrolment, teachers and who gets to college.", "Annual"],
+  ["Gender", "people", "Where women and men stand on health, schooling and work.", "Annual"],
+  ["Household consumption", "households", "What families spend each month, from the poorest to the richest.", "Periodic survey"],
+  ["Family health", "households", "Nutrition, fertility and child health from the national health survey.", "Periodic survey"],
+  ["Renewable energy", "external", "Solar, wind and the rest of India's clean power capacity.", "Monthly"],
+];
+// renewable energy belongs with industry by subject; keep colour following family
+DOSS[12][1] = "industry";
+const order = ["prices", "external", "industry", "growth", "people", "households"];
+DOSS.sort((a, b) => order.indexOf(a[1]) - order.indexOf(b[1]));
+const list = document.getElementById("list");
+for (const [n, fam, d, cad] of DOSS) {
+  const li = document.createElement("li"); li.className = "row";
+  li.innerHTML = `<span class="name"><span class="dot" style="--c:var(--p-${fam})"></span><a href="#${n === "Consumer prices" ? "cpi" : n === "Industrial production" ? "iip" : ""}">${n}</a></span>
+    <span class="desc">${d}</span><span class="cad">${cad}</span>`;
+  list.appendChild(li);
+}
+
+/* ---------- main CPI line ---------- */
+(function main() {
+  const host = document.getElementById("c-main");
+  const dates = A.cpi.dates, vals = A.cpi.series.headline.data;
+  const live = dates.indexOf("2025-01-01");
+  const pts = dates.map((d, i) => ({ t: d8(d), v: vals[i], i })).filter(p => p.v != null);
+  const tip = document.createElement("div"); tip.className = "tip"; host.appendChild(tip);
+  let state = null;
+
+  function draw(w) {
+    host.querySelectorAll("svg").forEach(s => s.remove());
+    const narrow = w < 640;
+    const h = narrow ? 300 : 440;
+    const m = { t: 16, r: narrow ? 64 : 112, b: 40, l: 36 };
+    const svg = el("svg", { width: w, height: h, viewBox: `0 0 ${w} ${h}` }, null);
+    host.insertBefore(svg, tip);
+    const t0 = pts[0].t, t1 = pts.at(-1).t;
+    const lo = Math.min(0, ...pts.map(p => p.v)), hi = Math.max(...pts.map(p => p.v));
+    const yt = niceTicks(lo, Math.max(hi, 6), narrow ? 4 : 6), ymax = yt.at(-1);
+    const x = lin(+t0, +t1, m.l, w - m.r), y = lin(yt[0], ymax, h - m.b, m.t);
+
+    // band, grid
+    el("rect", { x: m.l, width: w - m.r - m.l, y: y(6), height: y(2) - y(6), fill: C.band }, svg);
+    for (const v of yt) {
+      el("line", { x1: m.l, x2: w - m.r, y1: y(v) + .5, y2: y(v) + .5, stroke: v === 0 ? "#C9CFDA" : C.grid }, svg);
+      text(svg, m.l - 10, y(v) + 5, v + (v === yt.at(-1) ? "%" : ""), { anchor: "end", size: 14 });
+    }
+    // x ticks: years
+    const y0 = t0.getUTCFullYear(), y1 = t1.getUTCFullYear(), every = narrow ? 3 : 1;
+    for (let yr = y0; yr <= y1; yr++) {
+      if ((yr - y0) % every) continue;
+      const tx = x(Date.UTC(yr, 0, 1)); if (tx < m.l - 1) continue;
+      el("line", { x1: tx + .5, x2: tx + .5, y1: h - m.b, y2: h - m.b + 5, stroke: "#C9CFDA" }, svg);
+      text(svg, tx, h - m.b + 24, String(yr), { anchor: "middle", size: 14 });
+    }
+    // target: a quiet solid ink rule at 4%, label sits on the band above the line, left
+    el("line", { x1: m.l, x2: w - m.r, y1: y(4) + .5, y2: y(4) + .5, stroke: C.ink2, "stroke-opacity": .35, "stroke-dasharray": "2 4" }, svg);
+    const lab = narrow ? "Target" : "Target, 4%";
+    const endAbove = pts.at(-1).v >= 4;
+    text(svg, w - m.r + 12, y(4) + (endAbove ? 20 : -10), lab, { size: 13, fill: C.muted });
+
+    // back-cast then live
+    const back = pts.filter(p => p.i < live), liveP = pts.filter(p => p.i >= live - 1);
+    el("path", { d: pathOf(back.map(p => [x(+p.t), y(p.v)])), fill: "none", stroke: C.pricesTint, "stroke-width": 1.75, "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+    el("path", { d: pathOf(liveP.map(p => [x(+p.t), y(p.v)])), fill: "none", stroke: C.prices, "stroke-width": 2.5, "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+    // the handoff is labelled only on wide screens, above the band where the line is clear
+    if (!narrow) {
+      const hx = x(Date.UTC(2025, 0, 1));
+      el("line", { x1: hx + .5, x2: hx + .5, y1: y(ymax) , y2: h - m.b, stroke: C.grid }, svg);
+      text(svg, hx - 8, y(ymax) + 14, "Back-cast", { anchor: "end", size: 13, fill: C.muted });
+      text(svg, hx + 8, y(ymax) + 14, "Live", { size: 13, fill: C.muted });
+    }
+    // end
+    const e = pts.at(-1);
+    el("circle", { cx: x(+e.t), cy: y(e.v), r: 5, fill: C.prices, stroke: C.ground, "stroke-width": 2 }, svg);
+    const ey = endAbove ? Math.min(y(e.v), y(4) - 10) : Math.max(y(e.v), y(4) + 22);
+    text(svg, x(+e.t) + 12, ey + 6, fmt(e.v) + "%", { size: narrow ? 17 : 20, weight: 550, fill: C.ink });
+    if (!narrow) text(svg, x(+e.t) + 12, ey - 18, "June 2026", { size: 13, fill: C.muted });
+
+    // hover layer
+    const cross = el("line", { y1: m.t, y2: h - m.b, stroke: C.ink, "stroke-opacity": .25, visibility: "hidden" }, svg);
+    const hd = el("circle", { r: 5, fill: C.prices, stroke: C.ground, "stroke-width": 2, visibility: "hidden" }, svg);
+    const hit = el("rect", { x: m.l, y: m.t, width: w - m.r - m.l, height: h - m.t - m.b, fill: "transparent" }, svg);
+    const show = k => {
+      const p = pts[k]; state = k; const px = x(+p.t), py = y(p.v);
+      cross.setAttribute("x1", px); cross.setAttribute("x2", px); cross.setAttribute("visibility", "visible");
+      hd.setAttribute("cx", px); hd.setAttribute("cy", py); hd.setAttribute("fill", p.i < live ? C.pricesTint : C.prices); hd.setAttribute("visibility", "visible");
+      tip.innerHTML = `<span>${monthName(dates[p.i])}${p.i < live ? ", back-cast" : ""}</span><b>${fmt(p.v)}%</b>`;
+      const tw = tip.offsetWidth; tip.style.left = Math.max(tw / 2, Math.min(w - tw / 2, px)) + "px"; tip.style.top = (m.t - 4) + "px"; tip.style.opacity = 1;
+      if (py < m.t + 70) tip.style.top = (h - m.b - 70) + "px";
+    };
+    const hide = () => { cross.setAttribute("visibility", "hidden"); hd.setAttribute("visibility", "hidden"); tip.style.opacity = 0; };
+    const nearest = cx => { const t = x.inv ? 0 : 0; let best = 0, bd = 1e9; pts.forEach((p, k) => { const d = Math.abs(x(+p.t) - cx); if (d < bd) { bd = d; best = k; } }); return best; };
+    hit.addEventListener("pointermove", ev => { const r = svg.getBoundingClientRect(); show(nearest(ev.clientX - r.left)); });
+    hit.addEventListener("pointerleave", hide);
+    host.onkeydown = ev => {
+      if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+      ev.preventDefault(); const k = state == null ? pts.length - 1 : Math.max(0, Math.min(pts.length - 1, state + (ev.key === "ArrowRight" ? 1 : -1))); show(k);
+    };
+    host.onblur = hide;
+  }
+  onResize(host, draw);
+})();
+
+/* ---------- divisions, ranked ---------- */
+(function divisions() {
+  const host = document.getElementById("c-div");
+  const SHORT = {
+    food_and_beverages: "Food and beverages",
+    paan_tobacco_and_intoxicants: "Paan, tobacco and intoxicants",
+    clothing_and_footwear: "Clothing and footwear",
+    housing_water_electricity_gas_and_other_fuels: "Housing, water, power and fuel",
+    furnishings_household_equipment_and_routine_household_maintenance: "Furnishings and household upkeep",
+    health: "Health",
+    transport: "Transport",
+    information_and_communication: "Phones, internet and post",
+    recreation_sport_and_culture: "Recreation, sport and culture",
+    education_services: "Education",
+    restaurants_and_accommodation_services: "Restaurants and hotels",
+    personal_care_social_protection_and_miscellaneous_goods_and_services: "Personal care, including gold",
+  };
+  const S = A.cpiDiv.series, head = last(S.headline.data)[0];
+  const rows = Object.keys(SHORT).map(k => ({ k, n: SHORT[k], v: last(S[k].data)[0] })).sort((a, b) => b.v - a.v);
+  const CAP = 8; // the axis stops at 8%; the gold outlier is broken, not allowed to squash the rest
+  function draw(w) {
+    host.innerHTML = "";
+    const narrow = w < 640, rowH = narrow ? 52 : 36, barH = 10;
+    const labW = narrow ? 0 : 280, valW = 64;
+    const m = { t: 34, l: labW, r: valW, b: 32 };
+    const h = m.t + rows.length * rowH + m.b;
+    const svg = el("svg", { width: w, height: h, viewBox: `0 0 ${w} ${h}`, role: "img", "aria-label": "Inflation by division, June 2026" }, host);
+    const x = lin(0, CAP, m.l, w - m.r);
+    const ticks = [0, 2, 4, 6, 8];
+    for (const t of ticks) {
+      el("line", { x1: x(t) + .5, x2: x(t) + .5, y1: m.t - 6, y2: h - m.b, stroke: t === 0 ? "#C9CFDA" : C.grid }, svg);
+      text(svg, x(t), h - m.b + 22, t + (t === CAP ? "%" : ""), { anchor: "middle", size: 14 });
+    }
+    rows.forEach((r, i) => {
+      const cy = m.t + i * rowH + (narrow ? rowH - barH / 2 - 8 : rowH / 2);
+      const over = r.v > CAP, x1 = over ? x(CAP) + 18 : x(r.v);
+      const y0 = cy - barH / 2;
+      // bar: square at baseline, 4px rounded end
+      const rr = Math.min(4, (x1 - x(0)) / 2);
+      el("path", { d: `M${x(0)},${y0}H${x1 - rr}Q${x1},${y0} ${x1},${y0 + rr}V${y0 + barH - rr}Q${x1},${y0 + barH} ${x1 - rr},${y0 + barH}H${x(0)}Z`, fill: C.prices }, svg);
+      if (over) { // the break: two white slashes across the bar just past the axis end
+        for (const dx of [0, 7]) el("line", { x1: x(CAP) - 3 + dx, y1: y0 + barH + 4, x2: x(CAP) + 3 + dx, y2: y0 - 4, stroke: C.ground, "stroke-width": 3 }, svg);
+      }
+      if (narrow) text(svg, m.l, cy - barH / 2 - 10, r.n, { size: 15, fill: C.ink });
+      else text(svg, m.l - 16, cy + 5, r.n, { anchor: "end", size: 16, fill: C.ink });
+      text(svg, x1 + 8, cy + 5, fmt(r.v) + "%", { size: 15, weight: 500, fill: C.ink });
+    });
+    // headline reference, label above the plot so no bar label is struck
+    const hx = x(head);
+    text(svg, hx, m.t - 14, `All items ${fmt(head)}%`, { anchor: "middle", size: 14, fill: C.ink, weight: 500 });
+    refRule(svg, hx + .5, m.t - 6, h - m.b, { stroke: C.ink, "stroke-width": 1.25 });
+  }
+  onResize(host, draw);
+})();
+
+/* ---------- states, ranked dot strip ---------- */
+(function states() {
+  const host = document.getElementById("c-states");
+  const FIX = { "NCT of Delhi": "Delhi", "The Dadra And Nagar Haveli And Daman And Diu": "Dadra, Nagar Haveli, Daman and Diu", "Andaman And Nicobar Islands": "Andaman and Nicobar" };
+  const NARROW = { "Andaman and Nicobar": "Andaman, Nicobar", "Dadra, Nagar Haveli, Daman and Diu": "Dadra, Daman, Diu", "Jammu and Kashmir": "Jammu, Kashmir" };
+  const nm = s => (FIX[s] || s).replace(/ And /g, " and ");
+  const S = A.cpiStates.series, head = last(A.cpiDiv.series.headline.data)[0];
+  const rows = Object.values(S).map(s => ({ n: nm(s.label), v: last(s.data)[0] })).filter(r => r.v != null).sort((a, b) => b.v - a.v);
+  function draw(w) {
+    host.innerHTML = "";
+    const cols = w >= 900 ? 2 : 1, colGap = 64, rowH = 30;
+    const colW = (w - colGap * (cols - 1)) / cols, per = Math.ceil(rows.length / cols);
+    const labW = Math.min(cols === 2 ? 270 : 180, colW * .48), valW = 52;
+    const m = { t: 40, b: 36 };
+    const h = m.t + per * rowH + m.b;
+    const svg = el("svg", { width: w, height: h, viewBox: `0 0 ${w} ${h}`, role: "img", "aria-label": "Inflation by state, June 2026" }, host);
+    for (let c = 0; c < cols; c++) {
+      const ox = c * (colW + colGap), x = lin(0, 7, ox + labW, ox + colW - valW);
+      for (const t of [0, 1, 2, 3, 4, 5, 6, 7]) {
+        el("line", { x1: x(t) + .5, x2: x(t) + .5, y1: m.t - 8, y2: h - m.b, stroke: t === 0 ? "#C9CFDA" : C.grid }, svg);
+        if (cols === 1 && t % 2) continue;
+        text(svg, x(t), h - m.b + 22, t + (t === 7 ? "%" : ""), { anchor: "middle", size: 13 });
+      }
+      const hx = x(head);
+      el("line", { x1: hx + .5, x2: hx + .5, y1: m.t - 8, y2: h - m.b, stroke: C.ink, "stroke-width": 1.25 }, svg);
+      text(svg, hx, m.t - 16, `India ${fmt(head)}%`, { anchor: "middle", size: 14, weight: 500, fill: C.ink });
+      rows.slice(c * per, c * per + per).forEach((r, i) => {
+        const cy = m.t + i * rowH + rowH / 2;
+        el("line", { x1: x(0), x2: x(r.v), y1: cy, y2: cy, stroke: C.pricesTint, "stroke-width": 1 }, svg);
+        el("circle", { cx: x(r.v), cy, r: 5, fill: C.prices, stroke: C.ground, "stroke-width": 2 }, svg);
+        const label = text(svg, ox + labW - 14, cy + 5, cols === 1 && NARROW[r.n] ? NARROW[r.n] : r.n, { anchor: "end", size: 15, fill: C.ink });
+        // truncate gracefully if a long name overruns its column
+        while (label.getComputedTextLength() > labW - 18 && label.textContent.length > 4) label.textContent = label.textContent.slice(0, -2) + "…";
+        text(svg, ox + colW, cy + 5, fmt(r.v), { anchor: "end", size: 15, fill: C.ink2 });
+      });
+    }
+  }
+  onResize(host, draw);
+})();
+
+/* ---------- IIP small multiples ---------- */
+(function multiples() {
+  const host = document.getElementById("mults");
+  const KEYS = [["use_capital_goods", "Capital goods"], ["use_intermediate_goods", "Intermediate goods"], ["use_infrastructure_construction_goods", "Construction goods"], ["use_primary_goods", "Primary goods"], ["use_consumer_durables", "Consumer durables"], ["use_consumer_non_durables", "Consumer non-durables"]];
+  const s0 = A.iip.series.general.data.findIndex(v => v != null);
+  const dates = A.iip.dates.slice(s0);
+  const all = KEYS.flatMap(([k]) => A.iip.series[k].data.slice(s0).filter(v => v != null));
+  const yt = niceTicks(Math.min(0, ...all), Math.max(...all), 4);
+  const lo = yt[0], hi = yt.at(-1);
+  for (const [k, n] of KEYS) {
+    const data = A.iip.series[k].data.slice(s0), [v] = last(data);
+    const d = document.createElement("div"); d.className = "mult";
+    d.innerHTML = `<div class="mh"><span>${n}</span><span>${fmt(v)}%</span></div><div class="chart"></div>`;
+    host.appendChild(d);
+    const c = d.querySelector(".chart");
+    onResize(c, w => {
+      c.innerHTML = ""; const h = 176, m = { t: 6, r: 6, b: 26, l: 28 };
+      const svg = el("svg", { width: w, height: h, viewBox: `0 0 ${w} ${h}`, role: "img", "aria-label": `${n}, growth by month` }, c);
+      const x = lin(0, dates.length - 1, m.l, w - m.r), y = lin(lo, hi, h - m.b, m.t);
+      for (const t of yt) {
+        el("line", { x1: m.l, x2: w - m.r, y1: y(t) + .5, y2: y(t) + .5, stroke: t === 0 ? "#C9CFDA" : C.grid }, svg);
+        text(svg, m.l - 8, y(t) + 4, String(t), { anchor: "end", size: 12 });
+      }
+      const yrs = [...new Set(dates.map(s => s.slice(0, 4)))];
+      for (const yr of yrs) { const i = dates.indexOf(yr + "-01-01"); if (i < 0) continue; el("line", { x1: x(i) + .5, x2: x(i) + .5, y1: h - m.b, y2: h - m.b + 4, stroke: "#C9CFDA" }, svg); text(svg, x(i), h - 6, yr, { anchor: "middle", size: 12 }); }
+      el("path", { d: pathOf(data.map((v, i) => v == null ? null : [x(i), y(v)])), fill: "none", stroke: C.industry, "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+      const [lv, li] = last(data);
+      el("circle", { cx: x(li), cy: y(lv), r: 4, fill: C.industry, stroke: C.ground, "stroke-width": 2 }, svg);
+    });
+  }
+})();
+})();
+</script>
+</body>
+</html>

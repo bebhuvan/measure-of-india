@@ -1,0 +1,407 @@
+---
+import Base from "../../layouts/Base.astro";
+import GuideData from "../../components/GuideData.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+const D = bySlug["mnre"];
+import { period } from "../../dossiers/periods.js";
+import stSolar from "../../../data/series/mnre-states-solar.json";
+import stTotal from "../../../data/series/mnre-states.json";
+// periods named in the copy, read from the bundles (src/dossiers/periods.js)
+const P = period("mnre-sources");
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const prevShort = (() => { const d = new Date(Date.UTC(+P.year, MONTHS.indexOf(P.month) - 1, 1)); return MONTHS[d.getUTCMonth()].slice(0, 3) + " " + d.getUTCFullYear(); })();
+const yearsSince2020 = (() => { const m = (+P.year - 2020) * 12 + MONTHS.indexOf(P.month); const y = Math.floor(m / 12), half = m % 12 >= 6; return `${["zero","one","two","three","four","five","six","seven","eight","nine","ten"][y] ?? y}${half ? " and a half" : ""} years`; })();
+const leader = (b) => { const r = Object.values(b.series).map((s) => ({ name: s.label.split(" · ")[1] ?? s.label, v: s.data.at(-1) })).filter((x) => x.v != null).sort((a, c) => c.v - a.v)[0]; return `${r.name.replace(/\b\w/g, (c) => c.toUpperCase())} (${Math.round(r.v / 1000)} GW)`; };
+---
+<Base
+  title="Renewable Energy · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/mnre/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">Once a month the Ministry of New and Renewable Energy counts every megawatt of solar, wind, hydro and biomass capacity installed in the country. The stock has tripled in six years: and one month in 2023 it jumped by forty-eight gigawatts overnight, because the definition changed.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>Ministry of New and Renewable Energy</b></span>
+      <span>Instrument <b>Installed capacity stock, MW, monthly</b></span>
+      <span>Coverage <b>Solar, Wind, Hydro, Bio, Grand Total</b></span>
+      <span>Window <b>{P.span}, {P.n} months</b></span>
+      <span>Latest <b>{P.short}</b></span>
+      <span>Unit <b>MW (shown in GW)</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Grand Total, GW</div><div class="v acc" id="n-total">–</div><div class="d" id="d-total">–</div><div class="nspark" id="nspark-total"></div></div>
+      <div class="num"><div class="l">Solar, share of total</div><div class="v" id="n-solar-share">–</div><div class="d" id="d-solar-share">–</div></div>
+      <div class="num"><div class="l">y/y growth, Grand Total</div><div class="v" id="n-yoy">–</div><div class="d" id="d-yoy">–</div></div>
+      <div class="num"><div class="l">#1 state, GW</div><div class="v" id="n-top-state">–</div><div class="d" id="d-top-state">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">MNRE, {P.short}</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Grand Total, {P.short}</span><div class="big" id="rb-total">–</div></div>
+      <p class="rt-cap">Cumulative installed renewable-energy capacity: every solar panel, wind turbine, hydro dam and biomass plant on the MNRE register. Solar alone is <b id="rt-solar">–</b>; the four sources together reached this stock in {yearsSince2020} of building.</p>
+      <div class="rt-side"><span class="rk">Solar, GW</span><div class="rt-side-v" id="rb-solar">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the print says</span>
+        <p>The {P.long} stock stands at <b id="cr-total">–</b> of installed renewable capacity, up from <b id="cr-total-first">–</b> in January 2020: a <b id="cr-growth">–</b> increase over {yearsSince2020}. Solar is <b id="cr-solar-share">–</b> of the total; wind, <b id="cr-wind-share">–</b>; bio and hydro, the balance.</p>
+        <p>Within solar, ground-mounted utility plants hold <b id="cr-gm-share">–</b>; rooftop (including PM Surya Ghar) <b id="cr-rt-share">–</b>. Rooftop grew <b id="cr-rt-growth">–</b> since the start of the window: the residential-solar acceleration.</p>
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What it does not say</span>
+        <p>It does not say how much electricity was generated. Installed capacity is a stock, the megawatts that exist, not the megawatt-hours that flowed. A solar panel and a wind turbine of the same capacity produce very different units of energy in a year, because the sun and the wind do not blow on the same schedule.</p>
+        <p>Nor is the Grand Total one continuous series. In December 2023, large hydro (>25 MW) was folded into the definition, adding ~47 GW in a single month. The step is annotated on every chart that crosses it; growth rates are never computed across the seam.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 register -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>The register of series</h2><span class="line"></span><span class="unit">{P.short}, vs {prevShort}, since Jan 2020</span></div>
+    <div class="break ledger">
+      <table>
+        <thead>
+          <tr><th>Series</th><th>{P.short}</th><th>vs prev. month</th><th>Jan 2020</th><th class="spark">{P.n} months</th></tr>
+        </thead>
+        <tbody id="ledger-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- § 03 composition -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>The source mix</h2><span class="line"></span><span class="unit">Share of installed capacity, {P.short}</span></div>
+    <div class="break">
+      <figure id="cb-comp" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Solar is more than half the room</h3>
+            <div class="sub">Share of Grand Total installed capacity by source, All India, {P.short}, large hydro excluded from the share (it was added in Dec 2023)</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-comp">–</div><div class="c">Solar, share of Grand Total</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone">
+            <div class="basket" style="padding:8px 0">
+              <div class="bar" id="bar-comp"></div>
+              <div class="labels" id="lab-comp"></div>
+            </div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: MNRE, cumulative installed capacity (MW) by source, shares computed from the {P.short} stock; large hydro excluded (added Dec 2023, not comparable)</span>
+            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://mnre.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The basket shows where each installed megawatt comes from. Solar (blue) is the dominant segment: more than half the total. Wind is the second block; bio and small hydro are thin slivers at the end. Large hydro is excluded from this share calculation because it entered the definition only in December 2023; including it would distort the mix.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 04 headline : Grand Total -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>Plate 1: the buildout</h2><span class="line"></span><span class="unit">Grand Total installed capacity, GW, monthly</span></div>
+    <div class="break">
+      <figure id="cb-total" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>One rising line, one definitional step</h3>
+            <div class="sub">Grand Total renewable capacity, All India, monthly {P.span}, the Dec 2023 step is a classification change (large hydro added), not capacity</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-total">–</div><div class="c">Jan 2020 → {P.short}, the climb</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone">
+            <div id="plot-total" style="position:relative"><div class="cb-tip"></div></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: MNRE, Grand Total installed capacity (MW), monthly, the Dec 2023 vertical rule marks the classification break: large hydro (>25 MW) was folded into the RE total, +48 GW in one month, not a capacity addition, growth is never computed across the seam</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://mnre.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>One rising line: a stock that almost never falls, because capacity is added faster than it retires. Read the slope, not the jumps: the buildout accelerated through 2024-26 as solar capacity was added at record pace. The one violent move is December 2023, where the line steps up by 48 GW: that is not construction, it is the reclassification of large hydro into the renewable total.</p>
+            <p>Growth rates computed across the step are meaningless: the series is two different definitions bolted together. The line is drawn as one continuous array (the source publishes it that way) but the seam is annotated so no reader mistakes the step for building.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {P.stamp}</span>
+            <p>Grand Total: <b id="ex-total-now">–</b>, from <b id="ex-total-first">–</b> in Jan 2020. The Dec 2023 step added <b id="ex-total-step">–</b>; stripping it out, the underlying buildout added <b id="ex-total-real">–</b> in {yearsSince2020}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 what this measures -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="wm-grid">
+      <div>
+        <p>This guide tracks <b>installed capacity</b>: the megawatts of renewable-energy equipment physically connected to the grid, counted at month-end by the Ministry of New and Renewable Energy. It is a stock, not a flow: it measures what exists, not what it produces. Generation (MWh) depends on capacity factor, how much the sun shines, how hard the wind blows, and is a different statistic entirely.</p>
+        <p>Five types are served. <b>Solar</b> splits into ground-mounted utility plants, rooftop (including the PM Surya Ghar residential scheme), hybrid solar-and-other, and off-grid/KUSUM pumps. <b>Wind</b> is a single total. <b>Hydro</b> splits into small (≤25 MW) and large (>25 MW). <b>Bio</b> covers biomass, bagasse cogeneration and waste-to-energy. The <b>Grand Total</b> sums everything the ministry counts as renewable.</p>
+        <p>The Grand Total crossed a classification break in December 2023, when large hydro was added to the definition. Before that, the total excluded large hydro (~47 GW); after, it includes it. The two halves are never spliced, and growth is never computed across the seam.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note, i</span>
+          <b>Capacity ≠ generation.</b> A solar GW and a wind GW produce different MWh in a year. This guide counts megawatts installed, not megawatt-hours delivered.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note, ii</span>
+          <b>The Dec 2023 step.</b> Large hydro (~47 GW) was added to the definition overnight. The Total before and after is not comparable; the seam is annotated on every chart.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note, iii</span>
+          <b>A stock that rarely falls.</b> Capacity is cumulative: added faster than it retires. The line rises; month-on-month declines are rare and small. </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 06 sources -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>Plate 2: the four sources</h2><span class="line"></span><span class="unit">Installed capacity by source, GW, monthly</span></div>
+    <div class="break">
+      <figure id="cb-sources" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Solar pulled away from everything</h3>
+            <div class="sub">Solar, Wind, Small Hydro &amp; Bio, All India, monthly {P.span}, large hydro omitted (enters Dec 2023)</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-sources">–</div><div class="c">Solar ÷ Wind, capacity ratio</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-sources">
+            <button class="chip" data-key="solar"><i style="background:#2E4BD8"></i>Solar</button>
+            <button class="chip" data-key="wind"><i style="background:#5F6675"></i>Wind</button>
+            <button class="chip" data-key="bio"><i style="background:#878D99"></i>Bio</button>
+            <button class="chip" data-key="small_hydro"><i style="background:#A3A9B4"></i>Small Hydro</button>
+          </div>
+          <div class="plotzone">
+            <div id="plot-sources" style="position:relative"><div class="cb-tip"></div></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: MNRE, installed capacity (MW) by source, large hydro omitted from this chart (it enters the definition in Dec 2023 and would dominate the scale), solar quadrupled; wind grew half as fast again; bio and small hydro are nearly flat</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://mnre.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Four lines, four speeds. Solar (blue) quadrupled, from 37 GW to 162 GW in six years, and overtook wind in 2021. Wind (grey) grew but slowly; bio (grey) and small hydro (grey) are nearly flat. The renewable buildout is, to a first approximation, a solar buildout; the other sources are the base that solar was built on top of.</p>
+            <p>Large hydro is deliberately omitted from this chart. It would sit above wind at 47 GW from Dec 2023, but it is a definitional addition, not a buildout. Showing it alongside the genuine growth sources would mislead.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {P.stamp}</span>
+            <p>Solar <b id="ex-src-solar">–</b>, Wind <b id="ex-src-wind">–</b>, Bio <b id="ex-src-bio">–</b>, Small Hydro <b id="ex-src-sh">–</b>. Solar is <b id="ex-src-ratio">–</b> wind's capacity. In Jan 2020 solar was <b id="ex-src-ratio0">–</b> wind; the crossover happened inside the window.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 solar categories -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>Plate 3: ground vs rooftop</h2><span class="line"></span><span class="unit">Solar capacity by sub-category, GW, monthly</span></div>
+    <div class="break">
+      <figure id="cb-solar" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The rooftop line steepened</h3>
+            <div class="sub">Ground Mounted &amp; Rooftop solar (incl. PM Surya Ghar), All India, monthly {P.span}</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-solar">–</div><div class="c">Rooftop, {P.short}, share of solar</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-solar">
+            <button class="chip" data-key="ground_mounted"><i style="background:#2E4BD8"></i>Ground Mounted</button>
+            <button class="chip" data-key="rooftop"><i style="background:#5F6675"></i>Rooftop (PM Surya Ghar)</button>
+          </div>
+          <div class="plotzone">
+            <div id="plot-solar" style="position:relative"><div class="cb-tip"></div></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: MNRE, solar installed capacity by sub-category, ground mounted is utility-scale; rooftop includes the PM Surya Ghar residential scheme (launched Feb 2024), rooftop grew nearly nine-fold; ground mounted grew three-and-a-half-fold</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://mnre.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Two lines, both rising fast. Ground mounted (blue) is the bulk: utility-scale solar parks in Gujarat, Rajasthan, Karnataka. Rooftop (grey) is the surprise: it steepened visibly from 2024 as the PM Surya Ghar scheme pushed residential solar onto household roofs. Rooftop grew nearly nine-fold across the window; ground mounted grew three-and-a-half-fold.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {P.stamp}</span>
+            <p>Ground mounted <b id="ex-sol-gm">–</b>, rooftop <b id="ex-sol-rt">–</b>. Rooftop is <b id="ex-sol-rtshare">–</b> of solar capacity, up from <b id="ex-sol-rtshare0">–</b> in Jan 2020. Hybrid and off-grid (KUSUM pumps) make up the balance: small but growing.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 state buildout over time -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>Plate 4: the geography of the buildout</h2><span class="line"></span><span class="unit">Top states, Grand Total capacity, GW, monthly</span></div>
+    <div class="break">
+      <figure id="cb-sttime" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Gujarat and Rajasthan pulled away</h3>
+            <div class="sub">Grand Total renewable capacity, top six states, monthly {P.span}, large hydro included from Dec 2023 (states with hydro step up)</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-sttime">–</div><div class="c">Gujarat + Rajasthan, share of all-India</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-sttime">
+            <button class="chip" data-key="gujarat"><i style="background:#2E4BD8"></i>Gujarat</button>
+            <button class="chip" data-key="rajasthan"><i style="background:#2E4BD8"></i>Rajasthan</button>
+          </div>
+          <div class="plotzone">
+            <div id="plot-sttime" style="position:relative"><div class="cb-tip"></div></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: MNRE, Grand Total installed capacity by state, Gujarat (wind + solar) and Rajasthan (solar) out-built every other state; Tamil Nadu plateaus (mature wind base); Karnataka and Himachal step up at Dec 2023 (hydro reclassification)</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://mnre.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Six lines, one per state, all rising: but at very different slopes. Gujarat and Rajasthan (blue) pulled away from the pack, together holding roughly a third of national capacity. Gujarat's line is steeper early (wind came first), Rajasthan's steeper later (solar surged). Tamil Nadu plateaus: its wind base was built years ago and grows slowly now.</p>
+            <p>The December 2023 step is visible on states with large hydro: Karnataka, Himachal Pradesh and Maharashtra jump where large hydro was added to the definition. Solar-only states (Rajasthan) do not step.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {P.stamp}</span>
+            <p><span id="ex-st-n1">–</span> <b id="ex-st-gj">–</b>, <span id="ex-st-n2">–</span> <b id="ex-st-rj">–</b>. Together <b id="ex-st-gr2">–</b> of all-India. The next four, <span id="ex-st-next4n">–</span>, hold <b id="ex-st-next4">–</b> between them.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-states" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Where the solar is: and where the wind is</h3>
+            <div class="sub">Solar capacity by state (top) &amp; Grand Total by state (bottom), {P.short}, the two rankings differ because wind-heavy states fall when only solar is counted</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-states">–</div><div class="c">Rajasthan, solar capacity, #1</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone">
+            <div id="plot-solar-states"></div>
+            <div id="plot-states" style="margin-top:26px"></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: MNRE, Solar Power Total and Grand Total by state/UT, {P.short}, {leader(stSolar)} leads solar; {leader(stTotal)} leads the total, the two rankings differ because wind capacity counts only in the total</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://mnre.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Two strips, one question each. The top strip asks <em>where is the solar?</em>: Rajasthan leads at 43 GW, then Gujarat at 33. The bottom strip asks <em>where is the total capacity?</em>: Gujarat leads at 52 GW because it also holds the country's largest wind fleet. The rankings swap because wind and solar are built in different geographies: wind on the coasts and passes (Tamil Nadu, Gujarat), solar in the desert (Rajasthan).</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {P.stamp}</span>
+            <p>Solar #1: <b id="ex-sst-top">–</b>. Total #1: <b id="ex-tst-top">–</b>. The top five states hold <b id="ex-tst-top5">–</b> of all-India total capacity.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 how to misread -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li>
+        <span class="no">i.</span>
+        <div>
+          <h3>"Renewable capacity tripled: India is powered by renewables."</h3>
+          <p>Capacity is what is installed; generation is what flows. A solar GW produces roughly a fifth of the annual energy of a coal GW, because the sun shines fewer hours. India's grid is still largely thermal; the renewable share of <em>generation</em> is far lower than the share of <em>capacity</em>.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">ii.</span>
+        <div>
+          <h3>"The Grand Total jumped 48 GW in December 2023."</h3>
+          <p>It did not. Large hydro (>25 MW) was reclassified into the renewable total that month. No turbine was built; the definition moved. The step is annotated on every chart that crosses it, and growth rates are never computed across the seam.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iii.</span>
+        <div>
+          <h3>"Wind capacity is growing steadily."</h3>
+          <p>Wind grew about 50% in six years: but almost all of that is repowering (replacing old turbines with bigger ones) and a handful of large projects. New wind site development has slowed; the growth line flatters a mature source being refreshed, not a young source being built.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iv.</span>
+        <div>
+          <h3>"Rooftop solar is still small: the residential programme failed."</h3>
+          <p>Rooftop is a smaller share than ground mounted, but it grew nearly nine-fold across the window and steepened sharply from 2024 (PM Surya Ghar). Read the slope, not the level: the rooftop line is accelerating faster than any other segment.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">v.</span>
+        <div>
+          <h3>"Gujarat and Rajasthan lead because they are sunny."</h3>
+          <p>Sun helps, but policy and land matter more. Both states offered cheap land, fast approvals and grid connectivity; other equally sunny states (parts of MP, Telangana) did not match them. Capacity follows policy and infrastructure at least as much as it follows irradiance.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <GuideData slug="mnre" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>Ministry of New and Renewable Energy, installed capacity data via the MoSPI eSankhyiki API (mnre/getDataByEnergy). Five energy types (Solar, Wind, Hydro, Bio, Total), monthly from January 2020 to {P.long}, All India and 39 states/UTs. Values are cumulative installed capacity in MW. Retrieved vintage <b id="prov-vintage">–</b>.</p>
+        <p><b>Classification break, December 2023.</b> Large hydro (>25 MW) was folded into the renewable-energy total from December 2023. Before that month, the Grand Total excluded large hydro (~47 GW); from December 2023 onward it includes it. The step is a definitional change, not a capacity addition. The guide annotates the seam on every chart that crosses it and never computes growth across it. Individual sources (Solar, Wind, Small Hydro, Bio) are unaffected.</p>
+      </div>
+      <div>
+        <h6>Revisions &amp; uncertainty</h6>
+        <p>Capacity is a cumulative stock, revised as installations are registered or retired. The series is final on release. Solar sub-categories (Ground Mounted, Rooftop, Hybrid, Off-Grid) sum exactly to the Solar Total in every month (asserted in validate.mjs). State-level data for small UTs carries interior nulls where no capacity is reported; these are disclosed in the baked file's gaps array.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Energy, version 1.0, covers the renewable capacity buildout: Grand Total (with the Dec 2023 classification break), the four sources, solar sub-categories (ground vs rooftop) and state dispersion. Next scheduled revision: with the next monthly release.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, MNRE</span>
+      <span>Vintage <span id="prov-vintage2">–</span>, capacity, not generation</span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/mnre.client.js";
+</script>
+</Base>

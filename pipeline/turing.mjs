@@ -40,17 +40,21 @@ for (let i = 0; i < Math.min(PAIRS, gens.length, corps.length); i++) {
 }
 
 async function llm(system, user) {
+  const body = {
+    model: process.env.INDIA_ATLAS_LLM_MODEL,
+    temperature: 0,
+    messages: [{ role: "system", content: system }, { role: "user", content: user }],
+  };
+  if (process.env.INDIA_ATLAS_LLM_THINKING) body.thinking = { type: process.env.INDIA_ATLAS_LLM_THINKING };
   const res = await fetch(process.env.INDIA_ATLAS_LLM_BASE + "/chat/completions", {
     method: "POST",
     headers: { "content-type": "application/json", authorization: "Bearer " + process.env.INDIA_ATLAS_LLM_KEY },
-    body: JSON.stringify({
-      model: process.env.INDIA_ATLAS_LLM_MODEL,
-      temperature: 0,
-      messages: [{ role: "system", content: system }, { role: "user", content: user }],
-    }),
+    body: JSON.stringify(body),
   });
   const json = await res.json();
-  return json.choices[0].message.content.trim();
+  const content = json.choices?.[0]?.message?.content;
+  if (!content) throw new Error("turing: judge returned no content: " + JSON.stringify(json).slice(0, 300));
+  return content.trim();
 }
 
 const JUDGE_SYS = "You are a detector of machine-written prose. You will be shown two passages from the same publication, on similar subjects. Exactly one was written by a human, the other by a machine imitating that human. Judge by rhythm, specificity, and the fingerprints of machine prose. Reply with exactly one character: 1 or 2, then one sentence of reasoning.";

@@ -1,0 +1,72 @@
+---
+import Base from "../../layouts/Base.astro";
+import "../../styles/pages.css";
+import fs from "node:fs";
+import { DOSSIERS, bySlug } from "../../dossiers/registry.js";
+import { vintageLabel, dateStamp } from "../../dossiers/display.js";
+import { headlineOf, sparkOf } from "../../dossiers/headline.js";
+import { miniSVG, lineSVG } from "../../charts/static.js";
+
+// grouped by the registry's own sections, in registry order; every figure is read from data
+const SECTIONS = [...new Set(DOSSIERS.map((d) => d.section))];
+const ent = (d) => ({ d, h: headlineOf(d), s: sparkOf(d) });
+const F = bySlug.cpi, FH = headlineOf(F);
+const linked = JSON.parse(fs.readFileSync("data/series/cpi-2024-linked.json", "utf8"));
+const featured = lineSVG({ dates: linked.dates, values: linked.series.headline.data },
+  { w: 660, h: 300, band: [F.bands.floor, F.bands.ceiling], target: F.bands.target, liveFrom: "2025-01-01",
+    label: "Consumer price inflation since 2014, against the RBI's band of 2 to 6 per cent", endLabel: FH.period });
+---
+<Base
+  title="Guides · India Atlas"
+  description="Plain-language guides to India's official economic statistics: prices, output, jobs, households, health and energy."
+  nav="guides"
+  dateStamp={dateStamp(F)}
+  canonical="https://atlas.thisindianlife.today/guides/"
+>
+<div class="page guides spage">
+  <header class="titleblock">
+    <h1>Guides</h1>
+    <p class="lede">One guide for each statistic that shapes Indian life. Each starts with the latest number, says plainly what it does and does not mean, and goes down to the states, the items and the households.</p>
+  </header>
+
+  <article class="feat break" aria-labelledby="feat-h">
+    <div class="feat-t">
+      <p class="feat-k">{F.section}</p>
+      <h2 id="feat-h"><a href="/guides/cpi/">{F.title}</a></h2>
+      <p class="feat-b">{F.blurb}</p>
+      <div class="feat-v"><b>{FH.value}</b><span>{FH.what}, {FH.period}</span></div>
+      <a class="go" href="/guides/cpi/">Read the guide</a>
+    </div>
+    <div class="feat-c" set:html={featured} />
+  </article>
+
+  <div class="index break">
+    {SECTIONS.map((sec) => (
+      <section class="grp" aria-label={sec}>
+        <h2>{sec}</h2>
+        <div class="ents">
+          {DOSSIERS.filter((d) => d.section === sec).map(ent).map(({ d, h, s }) => (
+            <a class="ent" id={d.slug} href={`/guides/${d.slug}/`}>
+              <h3>{d.title}</h3>
+              <p class="d">{d.blurb}</p>
+              <div class="v"><b>{h.value}</b><span>{h.what}, {h.period}</span></div>
+              <div class="m"><span class="nspark" set:html={miniSVG(s, { w: 140, h: 40, label: `${d.title}, history` })} />
+                <span class="fl"><span>{s.dates[0].slice(0, 4)}</span><span>{s.dates.at(-1).slice(0, 4)}</span></span></div>
+              <span class="vt">{vintageLabel(d)}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+
+  <footer class="provenance">
+    <div class="cols">
+      <div><h6>India Atlas</h6><p>A reference work on Indian economic statistics, revised as each figure is released.</p></div>
+      <div><h6>Sources</h6><p>Each guide names its source of record and the release it draws on.</p></div>
+      <div><h6>Before you cite</h6><p>Read <a href="/method/">how we work</a>.</p></div>
+    </div>
+    <div class="fine"><span>India Atlas, guides</span><span>Static, no trackers, no cookies</span><span>Set in Source Serif 4 and Golos Text</span></div>
+  </footer>
+</div>
+</Base>

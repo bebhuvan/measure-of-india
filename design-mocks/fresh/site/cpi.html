@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consumer prices · India Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400..700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./atlas.css">
+<style>
+.dhead{padding:84px 0 0}
+.facts{display:grid;grid-template-columns:repeat(5,auto);justify-content:start;gap:8px 44px;font-family:var(--sans);font-size:14px;color:var(--ink-3);margin:40px 0 0;padding:20px 0 0;border-top:1px solid var(--hair)}
+.facts b{display:block;color:var(--ink);font-weight:500;font-size:15px;margin-top:2px}
+
+.layout{display:grid;grid-template-columns:184px minmax(0,1fr);gap:72px;margin-top:88px}
+.rail{position:relative}
+.toc{position:sticky;top:32px;font-family:var(--sans);font-size:14px;line-height:1.35}
+.toc p{margin:0 0 14px;color:var(--ink-3)}
+.toc a{display:block;text-decoration:none;color:var(--ink-3);padding:6px 0 6px 14px;border-left:1.5px solid var(--hair)}
+.toc a:hover{color:var(--ink)}
+.toc a.on{color:var(--ink);border-left-color:var(--blue);font-weight:500}
+.toc .dl{margin-top:28px;padding-left:14px}
+.toc .dl a{border:0;padding:0;color:var(--ink-2);text-decoration:underline;text-decoration-color:var(--hair-2);text-underline-offset:3px}
+
+section.part{padding-top:24px;margin-bottom:120px}
+section.part > h2{margin-bottom:18px}
+.pnum{display:block;font-family:var(--sans);font-size:14px;color:var(--ink-3);margin-bottom:10px;font-variant-numeric:tabular-nums}
+
+/* the current reading */
+.reading{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:56px;align-items:end;padding:8px 0 34px;border-bottom:1px solid var(--hair)}
+.big{font-family:var(--serif);font-weight:300;font-size:112px;line-height:.86;letter-spacing:-.035em;color:var(--ink);font-variation-settings:"opsz" 60;font-variant-numeric:lining-nums}
+.big small{font-size:.36em;font-weight:300;letter-spacing:0;color:var(--ink-3);margin-left:6px}
+.bigcap{font-family:var(--sans);font-size:15px;color:var(--ink-2);margin-top:14px;line-height:1.5}
+.bigcap b{color:var(--ink);font-weight:500}
+.scale{padding-bottom:4px}
+.scale .sc-cap{font-family:var(--sans);font-size:14px;color:var(--ink-3);margin-top:8px}
+.says{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:34px}
+.says h4{font-family:var(--sans);font-size:14px;font-weight:500;margin:0 0 10px;color:var(--ink-3)}
+.says h4.not{color:var(--ink-3)}
+.says p{margin:0;font-size:18.5px;line-height:1.62;color:var(--ink);text-wrap:pretty}
+
+/* misreadings */
+.mis{list-style:none;margin:8px 0 0;padding:0;counter-reset:m}
+.mis li{display:grid;grid-template-columns:44px minmax(0,1fr);padding:28px 0;border-top:1px solid var(--hair)}
+.mis li::before{counter-increment:m;content:counter(m);font-family:var(--sans);font-size:14px;color:var(--ink-3);padding-top:6px;font-variant-numeric:tabular-nums}
+.mis q{display:block;font-family:var(--serif);font-style:italic;font-size:23px;line-height:1.38;quotes:"“" "”";margin:0 0 10px;color:var(--ink);text-wrap:balance}
+.mis p{margin:0;max-width:36em;color:var(--ink-2);text-wrap:pretty}
+
+/* method */
+.meth{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 48px;font-family:var(--sans);font-size:15px;line-height:1.55}
+.meth div{padding:16px 0;border-top:1px solid var(--hair)}
+.meth dt{color:var(--ink-3);font-size:13.5px;margin-bottom:3px}
+.meth dd{margin:0;color:var(--ink)}
+.cite{margin-top:36px;font-family:var(--sans);font-size:14px;color:var(--ink-2);background:#F7F8FA;padding:16px 20px;border-radius:3px}
+.cite b{display:block;font-weight:500;color:var(--ink-3);font-size:13px;margin-bottom:4px}
+
+.related{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 36px}
+.related a{display:block;text-decoration:none;padding:18px 0;border-top:1px solid var(--hair)}
+.related a b{display:block;font-family:var(--serif);font-weight:600;font-size:20px;line-height:1.3;font-variation-settings:"opsz" 24}
+.related a span{font-family:var(--sans);font-size:14px;color:var(--ink-3)}
+.related a:hover b{color:var(--blue)}
+
+@media (max-width:1060px){
+  .layout{grid-template-columns:minmax(0,1fr);gap:0;margin-top:56px}
+  .rail{display:none}
+}
+@media (max-width:860px){
+  .dhead{padding-top:48px}
+  .facts{grid-template-columns:repeat(2,auto);gap:14px 28px}
+  .reading{grid-template-columns:minmax(0,1fr);gap:28px}
+  .big{font-size:84px}
+  .says{grid-template-columns:minmax(0,1fr);gap:28px}
+  .meth{grid-template-columns:minmax(0,1fr)}
+  .related{grid-template-columns:minmax(0,1fr)}
+  .mis li{grid-template-columns:30px minmax(0,1fr)}
+  .mis q{font-size:20px}
+  section.part{margin-bottom:88px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <a class="brand" href="./explore.html">India Atlas</a>
+  <nav class="nav" aria-label="Main">
+    <a href="./explore.html" aria-current="page">Dossiers</a>
+    <a href="../e-ledger.html#releases">Releases</a>
+    <a href="#method">Method</a>
+    <a class="find" href="../e-ledger.html#find">Search <kbd>/</kbd></a>
+  </nav>
+</header>
+
+<header class="dhead">
+  <p class="kick"><a href="./explore.html">Dossiers</a> &nbsp;/&nbsp; Prices</p>
+  <h1>Consumer prices</h1>
+  <p class="lede">Every month the statistics office prices a few hundred things that Indian households buy, from rice and tomatoes to bus fares and school fees, and reduces them to one number. It is the number the RBI is asked to hold at 4 per cent.</p>
+  <div class="facts">
+    <div>Latest<b>June 2026</b></div>
+    <div>Released<b>12 July 2026</b></div>
+    <div>Source<b>National Statistics Office</b></div>
+    <div>Base<b>2024 = 100</b></div>
+    <div>Frequency<b>Monthly</b></div>
+  </div>
+</header>
+
+<div class="layout">
+<aside class="rail" aria-label="In this dossier">
+  <nav class="toc">
+    <p>In this dossier</p>
+    <a href="#reading">The current reading</a>
+    <a href="#context">Twelve years of prices</a>
+    <a href="#moved">What moved</a>
+    <a href="#india">Across India</a>
+    <a href="#kitchen">In the kitchen</a>
+    <a href="#measures">What it measures</a>
+    <a href="#misread">How it is misread</a>
+    <a href="#method">Method and data</a>
+    <div class="dl"><a href="#method">Download all data</a></div>
+  </nav>
+</aside>
+
+<main>
+  <section class="part" id="reading" aria-labelledby="h-reading">
+    <span class="pnum">1</span>
+    <h2 id="h-reading">The current reading</h2>
+    <div class="reading">
+      <div>
+        <div class="big">4.38<small>%</small></div>
+        <div class="bigcap">Consumer prices in <b>June 2026</b>, against June 2025. Up <b>0.44 points</b> from May.</div>
+      </div>
+      <div class="scale"><div id="bandscale" class="plot"></div><div class="sc-cap">0.38 points above the 4% target, inside the RBI's band of 2 to 6%.</div></div>
+    </div>
+    <div class="says">
+      <div><h4>What the print says</h4><p>Prices rose for the fifth month running, from 2.73 per cent in January. Food inflation climbed to 5.06 per cent and eating out to 6.91 per cent. Transport, flat until April, jumped from 1.75 per cent in May to 4.31 per cent in June.</p></div>
+      <div><h4 class="not">What it does not say</h4><p>It does not say prices rose 4.38 per cent in June alone: the figure compares June with June last year. It is not a jump from December's 1.34 per cent, which was measured on the retired 2012 basket. And it is not one number for every household: states ran from 1.62 per cent in Mizoram to 6.36 in Telangana.</p></div>
+    </div>
+  </section>
+
+  <section class="part" id="context" aria-labelledby="h-context">
+    <span class="pnum">2</span>
+    <h2 id="h-context">Twelve years of prices</h2>
+    <div class="prose"><p>The new series goes live in January 2025. The statistics office has also re-read the past decade on the new basket, which lets the line run back to 2014 without joining two different measures. Read the pale part as a careful reconstruction and the solid part as prices actually collected.</p></div>
+    <figure id="cpi-headline"></figure>
+    <figure id="cpi-rural-urban"></figure>
+  </section>
+
+  <section class="part" id="moved" aria-labelledby="h-moved">
+    <span class="pnum">3</span>
+    <h2 id="h-moved">What moved</h2>
+    <div class="prose"><p>The basket has twelve divisions. Their weights for the new base are not yet published, so the headline cannot be split into exact contributions. What can be seen is where prices moved, and how fast.</p></div>
+    <figure id="cpi-dumbbell"></figure>
+    <figure id="cpi-heat"></figure>
+  </section>
+
+  <section class="part" id="india" aria-labelledby="h-india">
+    <span class="pnum">4</span>
+    <h2 id="h-india">Across India</h2>
+    <div class="prose"><p>The national figure is an average over very different markets. A household in Hyderabad and one in Aizawl live with different prices, and state numbers move with local harvests, transport costs and taxes.</p></div>
+    <figure id="cpi-states"></figure>
+  </section>
+
+  <section class="part" id="kitchen" aria-labelledby="h-kitchen">
+    <span class="pnum">5</span>
+    <h2 id="h-kitchen">In the kitchen</h2>
+    <div class="prose"><p>Below the divisions sit 358 items. These are a few that most kitchens buy every week. Vegetable prices swing with the weather and the season; cereals and pulses move slowly; cooking oils follow world markets.</p></div>
+    <figure id="cpi-staples"></figure>
+  </section>
+
+  <section class="part" id="measures" aria-labelledby="h-measures">
+    <span class="pnum">6</span>
+    <h2 id="h-measures">What it measures</h2>
+    <div class="prose">
+      <p>The Consumer Price Index follows the prices of a fixed basket of goods and services, priced every month in markets across rural and urban India. The index is set to 100 for the base year, 2024; inflation is the change in the index from the same month a year earlier.</p>
+      <p>The basket follows the international classification of household spending, in twelve divisions from food and beverages to personal care, and is published for rural India, urban India, the two combined, and every state.</p>
+      <h4>Why a new basket</h4>
+      <p>Households spend differently than they did in 2012. Phones, data and eating out matter more; some foods matter less. Rebasing to 2024 brings the basket closer to what people buy now. The old 2012 series ended in December 2025, and the two are kept apart here because they measure with different rulers.</p>
+      <h4>What it leaves out</h4>
+      <p>The index tracks prices, not incomes, so it cannot say whether a household is better or worse off. Nor does it price what a family pays for a house it buys; housing enters as rent.</p>
+    </div>
+  </section>
+
+  <section class="part" id="misread" aria-labelledby="h-misread">
+    <span class="pnum">7</span>
+    <h2 id="h-misread">How it is misread</h2>
+    <ol class="mis">
+      <li><div><q>Prices rose 4.38 per cent last month.</q><p>The headline compares this month with the same month a year ago. The change from one month to the next is a different and much smaller number.</p></div></li>
+      <li><div><q>Inflation fell to 0.04 per cent in October 2025, so prices stopped rising.</q><p>Prices were still higher than a year earlier, only just. Falling prices would show as a number below zero, and even then some items would be rising while others fell.</p></div></li>
+      <li><div><q>June's 4.38 per cent is a leap from December's 1.34.</q><p>December's figure belongs to the retired 2012 basket; June's to the new 2024 one. Comparing them is like comparing a reading in inches with one in centimetres.</p></div></li>
+      <li><div><q>Personal care is up 16.73 per cent, so soap and shampoo are soaring.</q><p>The division includes jewellery. Gold jewellery was up 36.81 per cent in June and silver jewellery 133.2 per cent, prices set in world markets. They lift the division far more than toiletries do.</p></div></li>
+      <li><div><q>The national number is what my family faces.</q><p>It is an average across very different places and households. Rural inflation was 4.74 per cent in June against 3.93 in cities, and the state figures range widely.</p></div></li>
+    </ol>
+  </section>
+
+  <section class="part" id="method" aria-labelledby="h-method">
+    <span class="pnum">8</span>
+    <h2 id="h-method">Method and data</h2>
+    <dl class="meth">
+      <div><dt>Source of record</dt><dd>National Statistics Office, Ministry of Statistics and Programme Implementation</dd></div>
+      <div><dt>Base and coverage</dt><dd>2024 = 100. All India, rural, urban and every state; 12 divisions and 358 items</dd></div>
+      <div><dt>Release</dt><dd>Monthly, about the twelfth of the following month. June 2026 was released on 12 July 2026</dd></div>
+      <div><dt>Revisions</dt><dd>The latest month is provisional and is finalised with the next release</dd></div>
+      <div><dt>History</dt><dd>Live prices from January 2025. Before that, the statistics office's own back-cast of the new basket, to 2013</dd></div>
+      <div><dt>What we do</dt><dd>We publish the figures as released. Year-on-year changes are computed from published index levels and checked against the official rates</dd></div>
+    </dl>
+    <div class="cite"><b>Cite this dossier</b>India Atlas, “Consumer prices”, data to June 2026. atlas.thisindianlife.today/dossiers/cpi</div>
+  </section>
+
+  <section aria-labelledby="h-rel">
+    <h2 id="h-rel" style="font-size:26px;margin-bottom:18px">Read next</h2>
+    <div class="related">
+      <a href="./explore.html#wpi"><b>Wholesale prices</b><span>Prices at the factory gate, 8.36% in April 2026</span></a>
+      <a href="./explore.html#gdp"><b>GDP</b><span>The size and speed of the economy, 7.83% in Jan to Mar 2026</span></a>
+      <a href="./explore.html#hces"><b>Household consumption</b><span>What families spend, poorest to richest</span></a>
+    </div>
+  </section>
+</main>
+</div>
+
+<footer class="foot">
+  <div><b>India Atlas</b></div>
+  <div><p>Prices, output and jobs figures are published by the Ministry of Statistics and Programme Implementation and its National Statistics Office; exchange rates and reserves by the Reserve Bank of India. We estimate nothing ourselves unless a chart says so, and when a base year or basket changes we start a new series rather than join the two.</p>
+  <p>Every chart can be downloaded as an image, as SVG or as data, and shared or embedded with credit.</p></div>
+</footer>
+</div>
+
+<script src="./data.js"></script>
+<script src="./kit.js"></script>
+<script>
+(() => {
+const A = window.ATLAS, K = window.Kit, C = K.C, {mi, num, sgn, month, monS} = K;
+
+/* 1. the band scale */
+document.fonts.ready.then(() => {
+  const host = document.getElementById("bandscale");
+  const drawScale = () => { host.innerHTML = ""; K.bandScale(host, host.clientWidth, {v:4.38, band:[2, 6], target:4, max:8}); };
+  drawScale(); addEventListener("resize", drawScale);
+
+/* 2. inflation since 2014 */
+const cD = A.cpi.dates, cV = A.cpi.series.headline.data;
+K.card({
+  id:"cpi-headline", file:"india-cpi-inflation", lastT:mi(cD.at(-1)),
+  title:"Inflation has risen for five months and is back above the 4% target",
+  sub:"Consumer price inflation, change from a year earlier, per cent.",
+  source:"Source: National Statistics Office, MoSPI. Consumer Price Index, base 2024 = 100. Before January 2025 the line is the statistics office's back-cast of the new basket, drawn lighter. No figure from the retired 2012 base is used.",
+  ranges:[["2 years", mi("2024-07-01")], ["5 years", mi("2021-07-01")], ["Since 2014", 0]],
+  readout:t => { const i = cD.findIndex(d => mi(d) === t), ch = cV[i] - cV[i - 1];
+    return [month(cD[i]) + (t < mi("2025-01-01") ? ", back-cast" : ""), `${num(cV[i])}%${cV[i - 1] != null ? `<span style="font-weight:400;color:#878D99;font-size:13px;margin-left:8px">${sgn(ch)} pts</span>` : ""}`]; },
+  csv:() => "month,cpi_inflation_yoy_pct,basis\n" + cD.map((d, i) => cV[i] == null ? null : `${d.slice(0, 7)},${cV[i]},${d < "2025-01" ? "back-cast" : "collected"}`).filter(Boolean).join("\n"),
+  draw(host, W, exp, st) {
+    return K.line(host, W, {
+      from:st.from, band:[2, 6], target:4, unit:"%", endLabels:true, roomBelow:.6, animate:st.animate,
+      aria:"Line chart of consumer price inflation since 2014",
+      series:[{dates:cD, vals:cV, color:C.blue, liveFrom:"2025-01-01", endName:"June 2026"}],
+      readout:st.readout,
+      over(g) {
+        const {x, y, m, W, svg, t0, lo, narrow} = g, lf = mi("2025-01-01"), P = [K.pts(cD, cV).filter(p => p.t >= t0)];
+        const tl = "RBI target, 4%", lw = K.tw(tl) + 6, sx = K.freeSlot(m.l + 6, W - m.r - 6, y(4) - 6, lw, P, x, y);
+        if (sx != null) K.T(svg, sx, y(4) - 6, tl, {class:"lab halo"});
+        const bl = "Tolerance band, 2 to 6%", bw = K.tw(bl) + 6, bxs = K.freeSlot(m.l + 6, W - m.r - 6, y(2) - 6, bw, P, x, y);
+        if (bxs != null && !narrow) K.T(svg, bxs, y(2) - 6, bl, {class:"lab"});
+        if (lf > t0) {
+          K.S("line", {x1:x(lf), x2:x(lf), y1:m.t - 2, y2:y(0), stroke:C.ink4, "stroke-width":1}, svg);
+          K.T(svg, x(lf) - 8, m.t + 6, "Back-cast", {class:"lab halo", "text-anchor":"end"});
+          K.T(svg, x(lf) + 8, m.t + 6, "Collected prices", {class:"lab halo"});
+        }
+        if (mi("2025-10-01") >= t0) K.note(g, {t:mi("2025-10-01"), v:0.04, side:"left", drop: narrow ? 18 : 20,
+          title: narrow ? "0.04%, Oct 2025" : "0.04% in October 2025,", text:"the lowest on the new series"});
+      }
+    }, exp);
+  }
+});
+
+/* rural and urban */
+const sD = A.cpiSec.dates, sR = A.cpiSec.series.rural.data, sU = A.cpiSec.series.urban.data;
+K.card({
+  id:"cpi-rural-urban", file:"india-cpi-rural-urban", lastT:mi(sD.at(-1)),
+  title:"Village prices have risen faster than city prices since February",
+  sub:"Consumer price inflation in rural and urban India, change from a year earlier, per cent, January to June 2026. Shaded: the gap between them.",
+  source:"Source: National Statistics Office, MoSPI. Consumer Price Index, base 2024 = 100.",
+  key:[["Rural", C.gold], ["Urban", C.blue]],
+  readout:t => { const i = sD.findIndex(d => mi(d) === t); return [month(sD[i]), `${num(sR[i])}% <span style="font-weight:400;color:#878D99">and</span> ${num(sU[i])}%`]; },
+  csv:() => "month,rural_yoy_pct,urban_yoy_pct\n" + sD.map((d, i) => `${d.slice(0, 7)},${sR[i]},${sU[i]}`).join("\n"),
+  draw(host, W, exp, st) {
+    return K.line(host, W, {
+      from:0, unit:"%", endLabels:true, gap:[0, 1], animate:st.animate, h:w => w < 600 ? 250 : 300,
+      aria:"Rural and urban inflation, January to June 2026",
+      series:[{dates:sD, vals:sR, color:C.gold, endName:"Rural"}, {dates:sD, vals:sU, color:C.blue, endName:"Urban", emph:false}],
+      readout:st.readout,
+      over(g) { const i = 5, gx = g.x(mi(sD[i])) - 10, gy = (g.y(sR[i]) + g.y(sU[i])) / 2;
+        if (!g.narrow) K.T(g.svg, gx, gy + 4, `Gap of ${num(sR[i] - sU[i])} points`, {class:"lab halo", "text-anchor":"end"}); }
+    }, exp);
+  }
+});
+
+/* 3. what moved: May to June */
+const DIVN = {food_and_beverages:"Food and beverages", paan_tobacco_and_intoxicants:"Paan, tobacco and intoxicants", clothing_and_footwear:"Clothing and footwear",
+  housing_water_electricity_gas_and_other_fuels:"Housing, water, power and fuel", furnishings_household_equipment_and_routine_household_maintenance:"Furnishings and household upkeep",
+  health:"Health", transport:"Transport", information_and_communication:"Phones, internet and post", recreation_sport_and_culture:"Recreation, sport and culture",
+  education_services:"Education", restaurants_and_accommodation_services:"Eating out and hotels", personal_care_social_protection_and_miscellaneous_goods_and_services:"Personal care, including gold"};
+const SHORT = {"Paan, tobacco and intoxicants":"Paan and tobacco","Housing, water, power and fuel":"Housing and power","Furnishings and household upkeep":"Furnishings",
+  "Recreation, sport and culture":"Recreation","Phones, internet and post":"Phones and internet","Personal care, including gold":"Personal care","Eating out and hotels":"Eating out","Clothing and footwear":"Clothing"};
+const dv = A.cpiDiv.series, dD = A.cpiDiv.dates, HEAD = dv.headline.data.at(-1);
+const DIVS = Object.keys(DIVN).map(k => ({n:DIVN[k], short:SHORT[DIVN[k]], a:dv[k].data.at(-2), b:dv[k].data.at(-1), v:dv[k].data})).sort((p, q) => q.b - p.b);
+K.card({
+  id:"cpi-dumbbell", file:"india-cpi-divisions-may-june",
+  title:"Transport moved most in June, from 1.75% to 4.31%",
+  sub:"Inflation by division of the basket, May and June 2026, change from a year earlier, per cent. The axis is broken to fit personal care, which includes gold.",
+  source:"Source: National Statistics Office, MoSPI. Base 2024 = 100. Weights for the new basket are not yet published, so divisions are shown side by side, not added up.",
+  key:[["May 2026", C.ink4, "ring"], ["June 2026", C.mute, "dot"]],
+  csv:() => "division,may_2026_yoy_pct,june_2026_yoy_pct\n" + DIVS.map(r => `"${r.n}",${r.a},${r.b}`).join("\n"),
+  draw:(host, W, exp) => K.dots(host, W, {rows:DIVS, cap:8, ref:HEAD, refLabel:`All items ${num(HEAD)}`, valHead:["June", "Change"], highlight:"Transport", aria:"Inflation by division, May and June 2026"}, exp)
+});
+K.card({
+  id:"cpi-heat", file:"india-cpi-divisions-2026",
+  title:"Food inflation has risen every month this year, and eating out has more than doubled",
+  sub:"Inflation by division of the basket, month by month in 2026, change from a year earlier, per cent. Darker is higher.",
+  source:"Source: National Statistics Office, MoSPI. Base 2024 = 100. Shading steps: below 2, 2 to 4, 4 to 6, 6 to 8, 8 and above.",
+  key:[["Below 2", K.RAMP[0], "sq"], ["2 to 4", K.RAMP[1], "sq"], ["4 to 6", K.RAMP[2], "sq"], ["6 to 8", K.RAMP[3], "sq"], ["8 and above", K.RAMP[4], "sq"]],
+  csv:() => "division," + dD.map(d => d.slice(0, 7)).join(",") + "\n" + DIVS.map(r => `"${r.n}",` + r.v.join(",")).join("\n"),
+  draw:(host, W, exp) => K.heat(host, W, {cols:dD.map(d => K.M3[+d.slice(5, 7) - 1]), rows:DIVS, highlight:["Food and beverages", "Eating out and hotels"], bin:v => v < 2 ? 0 : v < 4 ? 1 : v < 6 ? 2 : v < 8 ? 3 : 4, aria:"Inflation by division and month, 2026"}, exp)
+});
+
+/* 4. states */
+const stS = A.cpiStates.series;
+const TILES = {jammu_and_kashmir:["JK",2,0], ladakh:["LA",3,0], punjab:["PB",1,1], chandigarh:["CH",2,1], himachal_pradesh:["HP",3,1], uttarakhand:["UK",4,1],
+  rajasthan:["RJ",1,2], haryana:["HR",2,2], nct_of_delhi:["DL",3,2], uttar_pradesh:["UP",4,2], bihar:["BR",5,2], sikkim:["SK",6,2], arunachal_pradesh:["AR",8,2],
+  gujarat:["GJ",1,3], madhya_pradesh:["MP",2,3], chhattisgarh:["CG",3,3], jharkhand:["JH",4,3], west_bengal:["WB",5,3], meghalaya:["ML",6,3], assam:["AS",7,3], nagaland:["NL",8,3],
+  the_dadra_and_nagar_haveli_and_daman_and_diu:["DD",0,4], maharashtra:["MH",1,4], telangana:["TG",2,4], odisha:["OD",3,4], tripura:["TR",6,4], mizoram:["MZ",7,4], manipur:["MN",8,4],
+  goa:["GA",0,5], karnataka:["KA",1,5], andhra_pradesh:["AP",2,5], lakshadweep:["LD",0,6], kerala:["KL",1,6], tamil_nadu:["TN",2,6], puducherry:["PY",3,6], andaman_and_nicobar_islands:["AN",5,6]};
+const NF = {nct_of_delhi:"Delhi", the_dadra_and_nagar_haveli_and_daman_and_diu:"Dadra, Daman and Diu", andaman_and_nicobar_islands:"Andaman and Nicobar"};
+const stName = k => NF[k] || stS[k].label.replace(/\bAnd\b/g, "and");
+const stVal = k => stS[k].data.at(-1);
+const LIST = Object.keys(stS).map(k => ({n:stName(k), v:stVal(k), em: k === "telangana" || k === "mizoram"})).concat([{n:"All India", v:HEAD, hl:true}]).sort((a, b) => b.v - a.v);
+K.card({
+  id:"cpi-states", file:"india-cpi-states",
+  title:"Inflation in Telangana is nearly four times Mizoram's",
+  sub:"Consumer price inflation by state and union territory, June 2026, change from a year earlier, per cent.",
+  source:"Source: National Statistics Office, MoSPI. Base 2024 = 100. Squares are placed roughly where each state lies and are not drawn to area; hover a square for its value.",
+  csv:() => "state,june_2026_yoy_pct\n" + LIST.map(r => `"${r.n}",${r.v}`).join("\n"),
+  draw:(host, W, exp) => K.tiles(host, W, {tiles:TILES, val:stVal, name:stName, list:LIST, highlight:["telangana", "mizoram"], bin:v => v < 2 ? 0 : v < 3 ? 1 : v < 4 ? 2 : v < 5 ? 3 : 4, binLabels:["2", "3", "4", "5"], aria:"Tile map and ranking of inflation by state"}, exp)
+});
+
+/* 5. the kitchen */
+const IT = A.cpiItems.series;
+const STN = {rice:"Rice", wheat_atta:"Wheat atta", milk_liquid:"Milk", arhar_tur:"Arhar (tur) dal", moong:"Moong", onion:"Onion", potato:"Potato", tomato:"Tomato",
+  mustard_oil:"Mustard oil", groundnut_oil:"Groundnut oil", eggs:"Eggs", chicken:"Chicken", sugar:"Sugar", tea_cups:"Tea, by the cup", lpg_cylinder_and_piped_natural_gas:"Cooking gas", petrol:"Petrol"};
+const ST = Object.keys(STN).map(k => ({n:STN[k], v:IT[k].data.at(-1)})).sort((a, b) => b.v - a.v);
+K.card({
+  id:"cpi-staples", file:"india-cpi-kitchen-staples",
+  title:"Tomatoes cost nearly a third more than a year ago; potatoes a fifth less",
+  sub:"Price change for everyday items, June 2026 against June 2025, per cent.",
+  source:"Source: National Statistics Office, MoSPI. Item indices, base 2024 = 100; change computed from published index levels. Cooking gas includes piped natural gas.",
+  key:[["Dearer than a year ago", C.blueSoft, "sq"], ["Cheaper", C.goldSoft, "sq"]],
+  csv:() => "item,june_2026_yoy_pct\n" + ST.map(r => `"${r.n}",${r.v}`).join("\n"),
+  draw:(host, W, exp) => K.diverging(host, W, {rows:ST, highlight:["Tomato", "Potato"], aria:"Price change for everyday items, June 2026"}, exp)
+});
+});
+
+/* the section index follows the reader */
+const links = [...document.querySelectorAll(".toc a[href^='#']")].filter(a => !a.closest(".dl"));
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) links.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id)); }), {rootMargin:"-30% 0px -60% 0px"});
+document.querySelectorAll("section.part").forEach(s => io.observe(s));
+})();
+</script>
+</body>
+</html>

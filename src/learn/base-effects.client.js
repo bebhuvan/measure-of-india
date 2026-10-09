@@ -66,7 +66,7 @@ setTxt("mr-a2", "+" + (lvlNow.value / lvl23.value * 100 - 100).toFixed(1) + "%")
 const d0w = flvl[0].date, d1w = flvl.at(-1).date;
 const s0 = new Date(Date.UTC(2024, 6, 1)), s1 = new Date(Date.UTC(2024, 11, 1)); // the spike window
 const xTicks = [2023, 2024, 2025].map((y) => new Date(Date.UTC(y, 0, 1)));
-const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" };
+const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#5F6675", overflow: "visible" };
 
 /* ---------- panel a : the food level ---------- */
 {
@@ -80,22 +80,22 @@ const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "13.5
     y: { label: "↑ food price level · index, 2012 = 100", labelAnchor: "top", labelArrow: false,
          tickFormat: (d) => String(d), ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
     marks: [
-      Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
-      Plot.rect([{ x1: s0, x2: s1 }], { x1: "x1", x2: "x2", y1: geo.d0, y2: geo.d1, fill: "#F8F6F1" }),
-      Plot.lineY(flvl, { x: "date", y: "value", stroke: "#BE3E26", strokeWidth: 2.75, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.dot([pk], { x: "date", y: "value", fill: "#BE3E26", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([pk], { x: "date", y: "value", text: () => "peak · " + pk.value.toFixed(1) + " · " + fmtDate(pk.date), dx: 14, dy: -16, fill: "#5B564B", fontSize: 13, fontFamily: mono, textAnchor: "start" }),
-      Plot.dot([lvlNow], { x: "date", y: "value", fill: "#BE3E26", r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([lvlNow], { x: "date", y: "value", text: () => "Dec 2025 · " + lvlNow.value.toFixed(1), dx: -6, dy: 24, fill: "#BE3E26", fontSize: 13, fontFamily: mono, fontWeight: 500, textAnchor: "end" }),
-      Plot.text([{ date: new Date(Date.UTC(2024, 8, 15)), value: 195.5 }], { x: "date", y: "value", text: ["the base"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "middle" }),
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+      Plot.rect([{ x1: s0, x2: s1 }], { x1: "x1", x2: "x2", y1: geo.d0, y2: geo.d1, fill: "#F4F6FD" }),
+      Plot.lineY(flvl, { x: "date", y: "value", stroke: "#2E4BD8", strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.dot([pk], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([pk], { x: "date", y: "value", text: () => "peak, " + pk.value.toFixed(1) + ", " + fmtDate(pk.date), dx: 14, dy: -16, fill: "#5F6675", fontSize: 12, fontFamily: mono, textAnchor: "start" }),
+      Plot.dot([lvlNow], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([lvlNow], { x: "date", y: "value", text: () => "Dec 2025, " + lvlNow.value.toFixed(1), dx: -6, dy: 24, fill: "#161A22", fontSize: 12, fontFamily: mono, fontWeight: 500, textAnchor: "end" }),
+      Plot.text([{ date: new Date(Date.UTC(2024, 8, 15)), value: 195.5 }], { x: "date", y: "value", text: ["the base"], fontSize: 12, fill: "#878D99", fontFamily: mono, textAnchor: "middle" }),
     ],
   });
   a11y(plot, "Food price level, index 2012=100, January 2023 to December 2025",
     "Line chart. The food index rises from 176.7 in January 2023 to a peak of 209.4 in October 2024, then falls to 202.1 by December 2025. The autumn-2024 spike window is shaded and marked as the base.");
   document.getElementById("plot-be-level").append(plot);
   addCrosshair(document.getElementById("plot-be-level"), plot,
-    [{ label: "Food price level", color: "#BE3E26", data: flvl }], geo, fmtDate, (v) => v.toFixed(1));
+    [{ label: "Food price level", color: "#2E4BD8", data: flvl }], geo, fmtDate, (v) => v.toFixed(1));
 }
 
 /* ---------- panel b : the y/y rate ---------- */
@@ -110,24 +110,24 @@ const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "13.5
     y: { label: "↑ food inflation · year-on-year, per cent", labelAnchor: "top", labelArrow: false,
          tickFormat: (d) => d + "%", ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
     marks: [
-      Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.rect([{ x1: s0, x2: s1 }], { x1: "x1", x2: "x2", y1: geo.d0, y2: geo.d1, fill: "#F8F6F1" }),
-      Plot.ruleY([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
-      Plot.lineY(fyoy, { x: "date", y: "value", stroke: "#5B564B", strokeWidth: 2.25, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.lineY(fyoy.slice(-13), { x: "date", y: "value", stroke: "#BE3E26", strokeWidth: 3.5, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.dot([yThen], { x: "date", y: "value", fill: "#5B564B", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([yThen], { x: "date", y: "value", text: () => "Dec 2024 · " + yThen.value.toFixed(2) + "%", dx: 14, dy: -14, fill: "#5B564B", fontSize: 13, fontFamily: mono, textAnchor: "start" }),
-      Plot.dot([yNow], { x: "date", y: "value", fill: "#BE3E26", r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([yNow], { x: "date", y: "value", text: () => "Dec 2025 · " + yNow.value.toFixed(2) + "%", dx: 12, dy: -2, fill: "#BE3E26", fontSize: 13, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
-      Plot.text([{ date: new Date(Date.UTC(2024, 8, 15)), value: -4.6 }], { x: "date", y: "value", text: ["the base"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "middle" }),
-      Plot.text([{ date: new Date(Date.UTC(2023, 6, 1)), value: 10.9 }], { x: "date", y: "value", text: ["each reading divides by a month a year back"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "middle" }),
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.rect([{ x1: s0, x2: s1 }], { x1: "x1", x2: "x2", y1: geo.d0, y2: geo.d1, fill: "#F4F6FD" }),
+      Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+      Plot.lineY(fyoy, { x: "date", y: "value", stroke: "#5F6675", strokeWidth: 2.25, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.lineY(fyoy.slice(-13), { x: "date", y: "value", stroke: "#2E4BD8", strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.dot([yThen], { x: "date", y: "value", fill: "#5F6675", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([yThen], { x: "date", y: "value", text: () => "Dec 2024, " + yThen.value.toFixed(2) + "%", dx: 14, dy: -14, fill: "#5F6675", fontSize: 12, fontFamily: mono, textAnchor: "start" }),
+      Plot.dot([yNow], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([yNow], { x: "date", y: "value", text: () => "Dec 2025, " + yNow.value.toFixed(2) + "%", dx: 12, dy: -2, fill: "#161A22", fontSize: 12, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.text([{ date: new Date(Date.UTC(2024, 8, 15)), value: -4.6 }], { x: "date", y: "value", text: ["the base"], fontSize: 12, fill: "#878D99", fontFamily: mono, textAnchor: "middle" }),
+      Plot.text([{ date: new Date(Date.UTC(2023, 6, 1)), value: 10.9 }], { x: "date", y: "value", text: ["each reading divides by a month a year back"], fontSize: 12, fill: "#878D99", fontFamily: mono, textAnchor: "middle" }),
     ],
   });
   a11y(plot, "Food inflation, year-on-year, January 2023 to December 2025",
     "Line chart. The rate peaks at 10.6 per cent in July 2023, reads 7.69 per cent in December 2024, then falls through 2025 to minus 1.85 per cent in December 2025. The shaded window marks the autumn-2024 base.");
   document.getElementById("plot-be-rate").append(plot);
   addCrosshair(document.getElementById("plot-be-rate"), plot,
-    [{ label: "Food inflation, y/y", color: "#5B564B", data: fyoy }], geo, fmtDate);
+    [{ label: "Food inflation, y/y", color: "#5F6675", data: fyoy }], geo, fmtDate);
 
   /* downloads for the two-panel frame: stack both panels into one tall card */
   const block = document.getElementById("cb-be");

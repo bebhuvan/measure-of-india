@@ -2,10 +2,10 @@
 import Learn from "../layouts/Learn.astro";
 ---
 <Learn
-  title="India Atlas — Learn · Real versus nominal"
-  description="Learn № 11 — growth can be more output or just higher prices. Nominal GDP counts both; real GDP strips the price rise out; the deflator is the economy's second inflation rate. Why an 8 per cent raise with 5 per cent inflation is really about 3."
+  title="Real versus nominal · India Atlas"
+  description="Growth can be more output or just higher prices. Nominal GDP counts both; real GDP strips the price rise out; the deflator is the economy's second inflation rate. Why an 8 per cent raise with 5 per cent inflation is really about 3."
   slug="real-vs-nominal"
-  kicker="Learn № 11 — Growth · Real versus nominal"
+  kicker="Growth: Real versus nominal"
   h1="Growth can be more output, or just <i>higher prices.</i>"
   lede="Every growth number comes in two versions: one counts higher prices as growth, one refuses to. The difference between them is the difference between a bigger economy and a costlier one, and between your raise on paper and your raise in fact."
   meta={[
@@ -27,12 +27,12 @@ import Learn from "../layouts/Learn.astro";
         <p>Say India's GDP grows 9 per cent in a year. That sentence hides a question: 9 per cent more what? One answer is real output: 9 per cent more wheat, steel, software and haircuts. The other is prices. Or it could mean the economy produced the same amounts, only costlier. Usually it is some of both, and the two readings describe very different countries.</p>
         <p>So the statisticians publish growth twice.</p>
         <aside class="defbox">
-          <div class="term">Nominal <span class="sub">at current prices · rupees as paid</span></div>
+          <div class="term">Nominal <span class="sub">at current prices, rupees as paid</span></div>
           <p>GDP measured in the prices of the day. If output is unchanged but every price rises 5 per cent, nominal GDP rises 5 per cent. It counts more production and higher prices as the same thing: growth.</p>
           <div class="eg"><b>In plain words:</b> the size of the economy in the year's own rupees.</div>
         </aside>
         <aside class="defbox">
-          <div class="term">Real <span class="sub">at constant prices · the price rise stripped out</span></div>
+          <div class="term">Real <span class="sub">at constant prices, the price rise stripped out</span></div>
           <p>GDP measured in the fixed prices of a base year, 2011–12 for the present series. Prices are held still, so any increase must come from more output. When the news reported that the economy grew 8.23 per cent in Q2 FY26, it was quoting the real figure.</p>
           <div class="eg"><b>In plain words:</b> growth you could, in principle, eat.</div>
         </aside>
@@ -40,15 +40,15 @@ import Learn from "../layouts/Learn.astro";
       </div>
       <div class="wm-rail">
         <aside class="margin-note">
-          <span class="mk">Margin note · i</span>
+          <span class="mk">Margin note, i</span>
           <b>The headline growth rate is the real one.</b> When the news reports growth, prices have already been stripped out. Nominal growth rarely leads a bulletin.
         </aside>
         <aside class="margin-note">
-          <span class="mk">Margin note · ii</span>
+          <span class="mk">Margin note, ii</span>
           <b>Nominal is not a lie.</b> Tax revenue, company turnover and your salary all arrive in current rupees. The question is which yardstick fits the question.
         </aside>
         <aside class="margin-note">
-          <span class="mk">Margin note · iii</span>
+          <span class="mk">Margin note, iii</span>
           <b>Same year, two stories.</b> A 9 per cent nominal year with 8 per cent inflation is a near-stationary economy. With 2 per cent inflation it is a boom.
         </aside>
       </div>
@@ -57,11 +57,11 @@ import Learn from "../layouts/Learn.astro";
 
   <!-- § 02 the arithmetic -->
   <section>
-    <div class="sec-head"><span class="no">02</span><h2>The arithmetic, with toy numbers</h2><span class="line"></span><span class="unit">A worked example · illustration, not data</span></div>
+    <div class="sec-head"><span class="no">02</span><h2>The arithmetic, with toy numbers</h2><span class="line"></span><span class="unit">A worked example, illustration, not data</span></div>
     <div class="numbers">
-      <div class="num"><div class="l">Nominal GDP · toy economy</div><div class="v">+10%</div><div class="d">more rupees than the year before</div></div>
-      <div class="num"><div class="l">Prices · toy economy</div><div class="v">+4%</div><div class="d">the same basket, costlier</div></div>
-      <div class="num"><div class="l">Real GDP · toy economy</div><div class="v acc">≈ +6%</div><div class="d">what is left after prices</div></div>
+      <div class="num"><div class="l">Nominal GDP, toy economy</div><div class="v">+10%</div><div class="d">more rupees than the year before</div></div>
+      <div class="num"><div class="l">Prices, toy economy</div><div class="v">+4%</div><div class="d">the same basket, costlier</div></div>
+      <div class="num"><div class="l">Real GDP, toy economy</div><div class="v acc">≈ +6%</div><div class="d">what is left after prices</div></div>
       <div class="num"><div class="l">The exact figure</div><div class="v">5.8%</div><div class="d">1.10 ÷ 1.04, minus one</div></div>
     </div>
     <p style="margin-top:40px">Imagine a toy economy whose whole output is ₹100 of rice. The next year the bill is ₹110: nominal growth is 10 per cent. But suppose the price of rice rose 4 per cent over the same year. Then only part of the extra ₹10 is more rice. Divide the money growth by the price growth, 1.10 by 1.04, and the answer is 1.058: real growth of 5.8 per cent, which rounds to about 6. The rest of the headline was price, not output.</p>
@@ -76,7 +76,7 @@ import Learn from "../layouts/Learn.astro";
       <div>
         <p>Strip prices out of GDP often enough and a pattern emerges: the ratio of the nominal figure to the real one behaves like a price index for the whole economy. It has a name, and it is published with every GDP release.</p>
         <aside class="defbox">
-          <div class="term">Deflator <span class="sub">GDP's own price index · implied, not surveyed</span></div>
+          <div class="term">Deflator <span class="sub">GDP's own price index, implied, not surveyed</span></div>
           <p>The ratio of nominal GDP to real GDP, read as a price level. Nobody goes out and collects it; it falls out of the national accounts once both versions of GDP are built. Because it covers everything produced, not only what households buy, it often differs from the CPI, sometimes by several points.</p>
           <div class="eg"><b>In plain words:</b> the CPI measures the inflation you shop with; the deflator measures the inflation the economy produces with.</div>
         </aside>
@@ -118,11 +118,11 @@ import Learn from "../layouts/Learn.astro";
       </div>
       <div class="wm-rail">
         <aside class="margin-note">
-          <span class="mk">Margin note · iv</span>
+          <span class="mk">Margin note, iv</span>
           <b>Nobody surveys the deflator.</b> It is implied by the accounts, so it is revised whenever GDP is revised. Early readings of it are estimates too.
         </aside>
         <aside class="margin-note">
-          <span class="mk">Margin note · v</span>
+          <span class="mk">Margin note, v</span>
           <b>Two rates can disagree.</b> CPI and the deflator measure different baskets of prices. A gap between them is information, not a mistake.
         </aside>
       </div>
@@ -168,8 +168,8 @@ import Learn from "../layouts/Learn.astro";
   </div>
   <div slot="prov-note">
     <h6>This note</h6>
-    <p>Learn № 11 · Growth · version 1.0. Evergreen, written to survive the next print. The toy economies on this page are arithmetic, not reporting; the deflator's behaviour is described, not forecast.</p>
-    <p>Companion dossier: <a href="/dossiers/gdp/">Dossier 02 · National Accounts</a>.</p>
+    <p>Growth, version 1.0. Evergreen, written to survive the next print. The toy economies on this page are arithmetic, not reporting; the deflator's behaviour is described, not forecast.</p>
+    <p>Companion guide: <a href="/guides/gdp/">National Accounts</a>.</p>
   </div>
 
 </Learn>

@@ -19,7 +19,7 @@ import path from "node:path";
 import { mospi } from "../mospi.mjs";
 import { MONTHS, round2, writeSeries, writeRaw, monthAxis, quarterAxis } from "../util.mjs";
 
-const GREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
+const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 
 const MONTH_NUM = (name) => MONTHS.indexOf(name) + 1;
 const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
@@ -122,8 +122,9 @@ function buildBundles(root, dcfg, vintage, byCode) {
   const metaBase = { dossier: "rbi", source: dcfg.source_agency, vintage, mock: false, geo: dcfg.geo ?? "IND", releaseDate: null, revisionPolicy: dcfg.revision_policy };
 
   // interior nulls are real gaps in eSankhyiki (e.g. USD/INR May 2024 is
-  // absent for all currencies) — disclose in meta.gaps; validate.mjs allows
-  // nulls only at these dates.
+  // absent for all currencies). Bundle-level assembly is legacy: writeSeries
+  // migrates meta.gaps onto the owning series at the write boundary
+  // (CONTRACT-series rule 2) — validate rejects the bundle-level shape.
   const gapsOn = (axis, maps) =>
     axis.filter((ym) => maps.some((m) => m.get(ym) == null)).map((ym) => `${ym}-01`);
 
@@ -146,9 +147,9 @@ function buildBundles(root, dcfg, vintage, byCode) {
     },
     dates: tAxis.map((ym) => `${ym}-01`),
     series: {
-      exports: { name: "exports_usd_millions", label: "Exports", color: "#5B564B", data: tAxis.map((ym) => trade.exports.get(ym) ?? null), unit: "USD_millions" },
-      imports: { name: "imports_usd_millions", label: "Imports", color: "#A8A293", data: tAxis.map((ym) => trade.imports.get(ym) ?? null), unit: "USD_millions" },
-      balance: { name: "trade_balance_usd_millions", label: "Balance", color: "#BE3E26", data: tAxis.map((ym) => {
+      exports: { name: "exports_usd_millions", label: "Exports", color: "#5F6675", data: tAxis.map((ym) => trade.exports.get(ym) ?? null), unit: "USD_millions" },
+      imports: { name: "imports_usd_millions", label: "Imports", color: "#A3A9B4", data: tAxis.map((ym) => trade.imports.get(ym) ?? null), unit: "USD_millions" },
+      balance: { name: "trade_balance_usd_millions", label: "Balance", color: "#2E4BD8", data: tAxis.map((ym) => {
         const e = trade.exports.get(ym), i = trade.imports.get(ym);
         return e != null && i != null ? round2(e - i) : null;
       }), unit: "USD_millions" },
@@ -167,8 +168,8 @@ function buildBundles(root, dcfg, vintage, byCode) {
     },
     dates: fAxis.map((ym) => `${ym}-01`),
     series: {
-      reserves: { name: "forex_reserves_usd_millions", label: "Reserves", color: "#BE3E26", data: fAxis.map((ym) => forex.get(ym) ?? null), unit: "USD_millions" },
-      usdinr: { name: "usdinr_monthly_avg", label: "USD/INR", color: "#5B564B", data: fAxis.map((ym) => usdinr.get(ym) ?? null), unit: "inr_per_usd" },
+      reserves: { name: "forex_reserves_usd_millions", label: "Reserves", color: "#2E4BD8", data: fAxis.map((ym) => forex.get(ym) ?? null), unit: "USD_millions" },
+      usdinr: { name: "usdinr_monthly_avg", label: "USD/INR", color: "#5F6675", data: fAxis.map((ym) => usdinr.get(ym) ?? null), unit: "inr_per_usd" },
     },
   };
 
@@ -198,10 +199,10 @@ function buildBundles(root, dcfg, vintage, byCode) {
         gaps: gapsOn(oAxis, Object.values(oil)) },
       dates: oAxis.map((ym) => `${ym}-01`),
       series: {
-        oil_exports: { name: "oil_exports_usd_millions", label: "Oil exports", color: "#A8A293", data: oAxis.map((ym) => oil.oil_exports.get(ym) ?? null), unit: "USD_millions" },
-        non_oil_exports: { name: "non_oil_exports_usd_millions", label: "Non-oil exports", color: "#5B564B", data: oAxis.map((ym) => oil.non_oil_exports.get(ym) ?? null), unit: "USD_millions" },
-        oil_imports: { name: "oil_imports_usd_millions", label: "Oil imports", color: "#C6C0B0", data: oAxis.map((ym) => oil.oil_imports.get(ym) ?? null), unit: "USD_millions" },
-        non_oil_imports: { name: "non_oil_imports_usd_millions", label: "Non-oil imports", color: "#8A857A", data: oAxis.map((ym) => oil.non_oil_imports.get(ym) ?? null), unit: "USD_millions" },
+        oil_exports: { name: "oil_exports_usd_millions", label: "Oil exports", color: "#A3A9B4", data: oAxis.map((ym) => oil.oil_exports.get(ym) ?? null), unit: "USD_millions" },
+        non_oil_exports: { name: "non_oil_exports_usd_millions", label: "Non-oil exports", color: "#5F6675", data: oAxis.map((ym) => oil.non_oil_exports.get(ym) ?? null), unit: "USD_millions" },
+        oil_imports: { name: "oil_imports_usd_millions", label: "Oil imports", color: "#C9CED6", data: oAxis.map((ym) => oil.oil_imports.get(ym) ?? null), unit: "USD_millions" },
+        non_oil_imports: { name: "non_oil_imports_usd_millions", label: "Non-oil imports", color: "#878D99", data: oAxis.map((ym) => oil.non_oil_imports.get(ym) ?? null), unit: "USD_millions" },
       },
     });
   }
@@ -230,10 +231,10 @@ function buildBundles(root, dcfg, vintage, byCode) {
         gaps: gapsOn(bAxis, Object.values(bop)) },
       dates: bAxis.map((ym) => `${ym}-01`),
       series: {
-        current_account: { name: "current_account_net_usd_millions", label: "Current account", color: "#BE3E26", data: bAxis.map((ym) => bop.current_account.get(ym) ?? null), unit: "USD_millions" },
-        capital_account: { name: "capital_account_net_usd_millions", label: "Capital account", color: "#5B564B", data: bAxis.map((ym) => bop.capital_account.get(ym) ?? null), unit: "USD_millions" },
-        errors_omissions: { name: "errors_omissions_net_usd_millions", label: "Errors & omissions", color: "#A8A293", data: bAxis.map((ym) => bop.errors_omissions.get(ym) ?? null), unit: "USD_millions" },
-        overall: { name: "overall_bop_net_usd_millions", label: "Overall balance", color: "#8A857A", data: bAxis.map((ym) => bop.overall.get(ym) ?? null), unit: "USD_millions" },
+        current_account: { name: "current_account_net_usd_millions", label: "Current account", color: "#2E4BD8", data: bAxis.map((ym) => bop.current_account.get(ym) ?? null), unit: "USD_millions" },
+        capital_account: { name: "capital_account_net_usd_millions", label: "Capital account", color: "#5F6675", data: bAxis.map((ym) => bop.capital_account.get(ym) ?? null), unit: "USD_millions" },
+        errors_omissions: { name: "errors_omissions_net_usd_millions", label: "Errors & omissions", color: "#A3A9B4", data: bAxis.map((ym) => bop.errors_omissions.get(ym) ?? null), unit: "USD_millions" },
+        overall: { name: "overall_bop_net_usd_millions", label: "Overall balance", color: "#878D99", data: bAxis.map((ym) => bop.overall.get(ym) ?? null), unit: "USD_millions" },
       },
     });
   }
@@ -261,13 +262,13 @@ function buildBundles(root, dcfg, vintage, byCode) {
   if (rMonths.length) {
     const rAxis = [];
     for (let y = Number(rMonths[0].slice(0, 4)); y <= Number(rMonths.at(-1).slice(0, 4)); y++) rAxis.push(`${y}-04`);
-    const RS = [["exports_gdp", "Exports / GDP", "#5B564B"], ["imports_gdp", "Imports / GDP", "#A8A293"], ["invisibles_net_gdp", "Invisibles net / GDP", "#8A857A"], ["cad_gdp", "CAD / GDP", "#BE3E26"], ["foreign_investment_gdp", "Foreign investment / GDP", "#C6C0B0"]];
+    const RS = [["exports_gdp", "Exports / GDP", "#5F6675"], ["imports_gdp", "Imports / GDP", "#A3A9B4"], ["invisibles_net_gdp", "Invisibles net / GDP", "#878D99"], ["cad_gdp", "CAD / GDP", "#2E4BD8"], ["foreign_investment_gdp", "Foreign investment / GDP", "#C9CED6"]];
     const rSeries = {};
     for (const [k, label, color] of RS) {
       if (!ratios[k]?.size) continue;
       rSeries[k] = { name: `bop_${k}_pct`, label, color, data: rAxis.map((ym) => ratios[k].get(ym) ?? null), unit: "pct_of_gdp" };
     }
-    rSeries.import_cover = { name: "import_cover_months", label: "Import cover of reserves", color: "#5B564B", data: rAxis.map((ym) => importCover.get(ym) ?? null), unit: "months" };
+    rSeries.import_cover = { name: "import_cover_months", label: "Import cover of reserves", color: "#5F6675", data: rAxis.map((ym) => importCover.get(ym) ?? null), unit: "months" };
     writeSeries(root, "data/series/rbi-bop-ratios.json", {
       meta: { ...metaBase, frequency: "annual", base: dcfg.base, latestPeriod: rMonths.at(-1),
         note: "Fiscal years plotted at April of the first year. Ratios as published; import cover is in months.",
@@ -302,7 +303,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
     const dAxis = [];
     for (let y = Number(dMonths[0].slice(0, 4)); y <= Number(dMonths.at(-1).slice(0, 4)); y++) dAxis.push(`${y}-03`);
     const dSeries = {};
-    const DS = [["gross_external_debt", "Gross external debt", "#BE3E26"], ["commercial_borrowing", "Commercial borrowing", "#5B564B"], ["nri_deposits", "NRI deposits", "#8A857A"], ["trade_credit", "Trade credit", "#A8A293"], ["multilateral", "Multilateral", "#C6C0B0"], ["bilateral", "Bilateral", "#5B564B"], ["imf", "IMF", "#8A857A"], ["rupee_debt", "Rupee debt", "#A8A293"]];
+    const DS = [["gross_external_debt", "Gross external debt", "#2E4BD8"], ["commercial_borrowing", "Commercial borrowing", "#5F6675"], ["nri_deposits", "NRI deposits", "#878D99"], ["trade_credit", "Trade credit", "#A3A9B4"], ["multilateral", "Multilateral", "#C9CED6"], ["bilateral", "Bilateral", "#5F6675"], ["imf", "IMF", "#878D99"], ["rupee_debt", "Rupee debt", "#A3A9B4"]];
     for (const [k, label, color] of DS) {
       if (!debt[k]?.size) continue;
       dSeries[k] = { name: `external_debt_${k}_usd_millions`, label, color, data: dAxis.map((ym) => debt[k].get(ym) ?? null), unit: "USD_millions" };
@@ -337,10 +338,10 @@ function buildBundles(root, dcfg, vintage, byCode) {
   if (nMonths.length) {
     const nAxis = monthAxis(nMonths[0], nMonths.at(-1));
     const nSeries = {};
-    const NS = [["total", "Total", "#BE3E26"], ["fcnrb", "FCNR(B)", "#5B564B"], ["nre_ra", "NR(E)RA", "#8A857A"], ["nro", "NRO", "#A8A293"]];
+    const NS = [["total", "Total", "#2E4BD8"], ["fcnrb", "FCNR(B)", "#5F6675"], ["nre_ra", "NR(E)RA", "#878D99"], ["nro", "NRO", "#A3A9B4"]];
     for (const [k, label, color] of NS) {
       if (nri.outstanding[k]?.size) nSeries[`outstanding_${k}`] = { name: `nri_deposits_outstanding_${k}_usd_millions`, label: `Outstanding · ${label}`, color, data: nAxis.map((ym) => nri.outstanding[k].get(ym) ?? null), unit: "USD_millions" };
-      if (nri.flows[k]?.size) nSeries[`flows_${k}`] = { name: `nri_deposits_flows_${k}_usd_millions`, label: `Net flows · ${label}`, color: "#C6C0B0", data: nAxis.map((ym) => nri.flows[k].get(ym) ?? null), unit: "USD_millions" };
+      if (nri.flows[k]?.size) nSeries[`flows_${k}`] = { name: `nri_deposits_flows_${k}_usd_millions`, label: `Net flows · ${label}`, color: "#C9CED6", data: nAxis.map((ym) => nri.flows[k].get(ym) ?? null), unit: "USD_millions" };
     }
     writeSeries(root, "data/series/rbi-nri.json", {
       meta: { ...metaBase, frequency: "monthly", base: dcfg.base, latestPeriod: nMonths.at(-1),
@@ -355,7 +356,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
   // USD/EUR/GBP/JPY. The rows' unit field is null throughout; the JPY values
   // (~0.59 in mid-2025) show the ingest quotes ₹ per SINGLE yen, not the
   // RBI's per-100-yen table convention. Euro starts Jan 1999 (its launch).
-  const XR = [["usd", "US Dollar", "US Dollar", "#BE3E26", "inr_per_usd"], ["euro", "Euro", "Euro", "#5B564B", "inr_per_eur"], ["gbp", "Pound Sterling", "Pound Sterling", "#8A857A", "inr_per_gbp"], ["jpy", "Japanese Yen", "Japanese Yen", "#A8A293", "inr_per_jpy"]];
+  const XR = [["usd", "US Dollar", "US Dollar", "#2E4BD8", "inr_per_usd"], ["euro", "Euro", "Euro", "#5F6675", "inr_per_eur"], ["gbp", "Pound Sterling", "Pound Sterling", "#878D99", "inr_per_gbp"], ["jpy", "Japanese Yen", "Japanese Yen", "#A3A9B4", "inr_per_jpy"]];
   const xr = {}; // key -> Map("YYYY-MM" -> rate)
   for (const r of byCode["36"] ?? []) {
     const k = XR.find(([, cur]) => cur === r.currency)?.[0];
@@ -378,7 +379,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
 
   // forward premia, inter-bank monthly average (sub 34, calendar labels):
   // % per annum by tenor; source uses "-" for unavailable months.
-  const FP = [["m1", "1-month", "#5B564B"], ["m3", "3-month", "#BE3E26"], ["m6", "6-month", "#8A857A"]];
+  const FP = [["m1", "1-month", "#5F6675"], ["m3", "3-month", "#2E4BD8"], ["m6", "6-month", "#878D99"]];
   const fp = {}; // key -> Map("YYYY-MM" -> pct)
   for (const r of byCode["34"] ?? []) {
     const k = FP.find(([, p]) => p === r.period)?.[0];
@@ -403,7 +404,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
   // gross purchases/sales, net, and the outstanding forward book. The
   // "Outstanding Net Forward Sales (–)…" label carries an EN DASH — matched
   // by prefix. "-" months (no operations reported) stay null, not zero.
-  const IV = [["purchases", "Purchase of Foreign Currency (US $ Millions)", "Gross purchases", "#5B564B"], ["sales", "Sale of Foreign Currency (US $ Millions)", "Gross sales", "#A8A293"], ["net", "Net Purchase/ Sale of Foreign Currency (US $ Millions)", "Net purchase(+)/sale(−)", "#BE3E26"], ["forward_outstanding", "Outstanding", "Outstanding forward sales(−)/purchases(+)", "#8A857A"]];
+  const IV = [["purchases", "Purchase of Foreign Currency (US $ Millions)", "Gross purchases", "#5F6675"], ["sales", "Sale of Foreign Currency (US $ Millions)", "Gross sales", "#A3A9B4"], ["net", "Net Purchase/ Sale of Foreign Currency (US $ Millions)", "Net purchase(+)/sale(−)", "#2E4BD8"], ["forward_outstanding", "Outstanding", "Outstanding forward sales(−)/purchases(+)", "#878D99"]];
   const iv = {}; // key -> Map("YYYY-MM" -> US$M)
   for (const r of byCode["28"] ?? []) {
     const k = IV.find(([, t]) => t === "Outstanding" ? String(r.transaction).startsWith("Outstanding") : r.transaction === t)?.[0];
@@ -430,7 +431,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
   // not GDP ratios — neither is baked. There is no separate software
   // sub-category in this table; software exports sit inside "Miscellaneous"
   // services, kept here as the software/business-services proxy.
-  const INV = [["invisibles", "Invisibles, Net", null, "Invisibles, net", "#5B564B"], ["services", "Non-factor Services", null, "Non-factor services, net", "#8A857A"], ["misc_services", "Non-factor Services", "Miscellaneous, Net", "Misc. services (incl. software), net", "#A8A293"], ["income", "Income, Net", null, "Income, net", "#C6C0B0"], ["private_transfers", "Private Transfers, Net", null, "Private transfers (remittances), net", "#BE3E26"]];
+  const INV = [["invisibles", "Invisibles, Net", null, "Invisibles, net", "#5F6675"], ["services", "Non-factor Services", null, "Non-factor services, net", "#878D99"], ["misc_services", "Non-factor Services", "Miscellaneous, Net", "Misc. services (incl. software), net", "#A3A9B4"], ["income", "Income, Net", null, "Income, net", "#C9CED6"], ["private_transfers", "Private Transfers, Net", null, "Private transfers (remittances), net", "#2E4BD8"]];
   const inv = {}; // key -> Map("YYYY-04" -> US$M)
   for (const r of byCode["9"] ?? []) {
     if (r.trade_category != null || !/^\d{4}/.test(r.year ?? "")) continue;
@@ -458,7 +459,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
   // field or any dimension — so levels stay in ₹ Crore here (gross ≈
   // ₹63.0 lakh crore end-Mar 2025 ≈ US$ ~737bn, sanity-checked).
   const QM = { March: "03", June: "06", September: "09", December: "12" };
-  const DQ = [["gross", "Gross External Debt Position", "Gross external debt", "#BE3E26"], ["general_government", "General Government", "General government", "#5B564B"], ["central_bank", "Central Bank", "Central bank", "#C6C0B0"], ["deposit_corps", "Deposit-taking Corporations except the Central Bank", "Deposit-taking corporations", "#8A857A"], ["other_sectors", "Other Sectors", "Other sectors", "#A8A293"], ["intercompany", "Direct Investment: Intercompany Lending", "Intercompany lending (FDI)", "#5B564B"]];
+  const DQ = [["gross", "Gross External Debt Position", "Gross external debt", "#2E4BD8"], ["general_government", "General Government", "General government", "#5F6675"], ["central_bank", "Central Bank", "Central bank", "#C9CED6"], ["deposit_corps", "Deposit-taking Corporations except the Central Bank", "Deposit-taking corporations", "#878D99"], ["other_sectors", "Other Sectors", "Other sectors", "#A3A9B4"], ["intercompany", "Direct Investment: Intercompany Lending", "Intercompany lending (FDI)", "#5F6675"]];
   const dq = {}; // key -> Map("YYYY-03|06|09|12" -> ₹ Crore)
   for (const r of byCode["27"] ?? []) {
     if (r.external_debt_term != null || r.external_debt_items != null || r.external_debt_other_sector != null) continue;
@@ -541,7 +542,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
     const paSeries = {};
     PARTNERS.forEach(([k, , label], i) => {
       if (!dot[k]) return;
-      paSeries[`exports_${k}`] = { name: `exports_to_${k}_usd_millions`, label: `${label} · exports`, color: "#5B564B", data: paAxis.map((ym) => dot[k].exports.get(ym) ?? null), unit: "USD_millions" };
+      paSeries[`exports_${k}`] = { name: `exports_to_${k}_usd_millions`, label: `${label} · exports`, color: "#5F6675", data: paAxis.map((ym) => dot[k].exports.get(ym) ?? null), unit: "USD_millions" };
       paSeries[`imports_${k}`] = { name: `imports_from_${k}_usd_millions`, label: `${label} · imports`, color: GREYS[(i + 2) % GREYS.length], data: paAxis.map((ym) => dot[k].imports.get(ym) ?? null), unit: "USD_millions" };
     });
     writeSeries(root, "data/series/rbi-trade-partners.json", {
@@ -589,7 +590,7 @@ function buildBundles(root, dcfg, vintage, byCode) {
       dates: cAxis.map((ym) => `${ym}-01`),
       series: Object.fromEntries(order.map((k, i) => [k, {
         name: `${dir}_${k}_usd_millions`, label: labels[k],
-        color: i === 0 ? "#BE3E26" : GREYS[i % GREYS.length],
+        color: i === 0 ? "#2E4BD8" : GREYS[i % GREYS.length],
         data: cAxis.map((ym) => per[k].get(ym) ?? null), unit: "USD_millions",
       }])),
       crosscheck: { total_published: cAxis.map((ym) => totals.get(ym) ?? null) },
@@ -619,9 +620,9 @@ function buildBundles(root, dcfg, vintage, byCode) {
         gaps: gapsInside(toAxis, [to.merchant, to.interbank, to.grand]) },
       dates: toAxis.map((ym) => `${ym}-01`),
       series: {
-        merchant: { name: "fx_turnover_merchant_usd_millions", label: "Merchant", color: "#5B564B", data: toAxis.map((ym) => to.merchant.get(ym) ?? null), unit: "USD_millions" },
-        interbank: { name: "fx_turnover_interbank_usd_millions", label: "Inter-bank", color: "#A8A293", data: toAxis.map((ym) => to.interbank.get(ym) ?? null), unit: "USD_millions" },
-        total: { name: "fx_turnover_total_usd_millions", label: "Total", color: "#BE3E26", data: toAxis.map((ym) => {
+        merchant: { name: "fx_turnover_merchant_usd_millions", label: "Merchant", color: "#5F6675", data: toAxis.map((ym) => to.merchant.get(ym) ?? null), unit: "USD_millions" },
+        interbank: { name: "fx_turnover_interbank_usd_millions", label: "Inter-bank", color: "#A3A9B4", data: toAxis.map((ym) => to.interbank.get(ym) ?? null), unit: "USD_millions" },
+        total: { name: "fx_turnover_total_usd_millions", label: "Total", color: "#2E4BD8", data: toAxis.map((ym) => {
           const m = to.merchant.get(ym), b = to.interbank.get(ym);
           return m != null && b != null ? round2(m + b) : null;
         }), unit: "USD_millions" },

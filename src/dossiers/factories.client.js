@@ -69,9 +69,9 @@ setHTML("d-fact", `<b>${arrow(last(H.factories_in_operation) - prevV(H.factories
 setHTML("n-pers", croreN(last(H.persons_engaged)) + pc("crore"));
 setHTML("d-pers", `<b>${arrow(last(H.persons_engaged) - prevV(H.persons_engaged), (v) => lakhOf(v) + " lakh")}</b> vs ${fy(H.persons_engaged.data.at(-2).date)}`);
 setHTML("n-inf", croreN(last(UA.establishments_all)) + pc("crore"));
-setHTML("d-inf", `<b>${arrow(last(UA.establishments_all) - prevV(UA.establishments_all), (v) => lakhOf(v) + " lakh")}</b> vs ${fy(UA.establishments_all.data.at(-2).date)} · ASUSE`);
+setHTML("d-inf", `<b>${arrow(last(UA.establishments_all) - prevV(UA.establishments_all), (v) => lakhOf(v) + " lakh")}</b> vs ${fy(UA.establishments_all.data.at(-2).date)}, ASUSE`);
 setHTML("n-mult", multAll.toFixed(1) + pc("×"));
-setHTML("d-mult", `<b>₹${lakhOf(gvaPerPersonASI)} lakh</b> vs <b>₹${lakhOf(last(UA.gva_per_worker_all))} lakh</b> · per worker · nominal`);
+setHTML("d-mult", `<b>₹${lakhOf(gvaPerPersonASI)} lakh</b> vs <b>₹${lakhOf(last(UA.gva_per_worker_all))} lakh</b>, per worker, nominal`);
 
 /* ---------- § 01 current reading ---------- */
 setHTML("rb-formal", croreN(last(H.persons_engaged)) + pc("crore"));
@@ -88,36 +88,36 @@ setTxt("cr-gpwi", "₹" + fmtIN(last(UA.gva_per_worker_all)));
 setTxt("cr-mult", multAll.toFixed(1) + "×");
 
 /* ---------- § 02 register of series ---------- */
-H.factories_in_operation.color = "#BE3E26";
-H.number_of_factories.color = "#5B564B";
-H.persons_engaged.color = "#5B564B";
-H.workers.color = "#A8A293";
-H.gva.color = "#BE3E26";
-H.emoluments.color = "#8A857A";
-H.total_output.color = "#C6C0B0";
-UA.establishments_all.color = "#A8A293";
-UA.workers_all.color = "#A8A293";
-UA.gva_per_worker_all.color = "#5B564B";
-UA.emoluments_per_hired_worker_hwe.color = "#8A857A";
+H.factories_in_operation.color = "#2E4BD8";
+H.number_of_factories.color = "#5F6675";
+H.persons_engaged.color = "#5F6675";
+H.workers.color = "#A3A9B4";
+H.gva.color = "#2E4BD8";
+H.emoluments.color = "#878D99";
+H.total_output.color = "#C9CED6";
+UA.establishments_all.color = "#A3A9B4";
+UA.workers_all.color = "#A3A9B4";
+UA.gva_per_worker_all.color = "#5F6675";
+UA.emoluments_per_hired_worker_hwe.color = "#878D99";
 
-UM.internet_all_combined.color = "#BE3E26";
-UM.reg_not_registered_combined.color = "#5B564B";
-US.own_proprietary_female_combined.color = "#8A857A";
+UM.internet_all_combined.color = "#2E4BD8";
+UM.reg_not_registered_combined.color = "#5F6675";
+US.own_proprietary_female_combined.color = "#878D99";
 const per1000 = (v) => fmtIN(v) + " / 1,000";
 
 const regRows = [
-  [H.factories_in_operation, "Factories in operation", "ASI · count · from 2008-09", "s-acc", fmtIN, fmtIN],
-  [H.persons_engaged, "Persons engaged", "ASI · count · all registered factories", "s-g1", (v) => croreN(v) + " cr", (v) => lakhOf(v) + " lakh"],
-  [H.gva, "Factory gross value added", "ASI · ₹ lakh cr · nominal", "s-acc", (v) => lakhCr(v), (v) => lakhCr(v)],
-  [H.emoluments, "Emoluments — wages & salaries", "ASI · ₹ lakh cr · nominal", "s-g4", (v) => lakhCr(v), (v) => lakhCr(v)],
-  [H.total_output, "Gross output", "ASI · ₹ lakh cr · nominal", "s-g3", (v) => lakhCr(v), (v) => lakhCr(v)],
-  [UA.establishments_all, "Establishments · unincorporated", "ASUSE · count · from 2021-22", "s-g2", (v) => croreN(v) + " cr", (v) => lakhOf(v) + " lakh"],
-  [UA.workers_all, "Workers · unincorporated", "ASUSE · count · from 2021-22", "s-g2", (v) => croreN(v) + " cr", (v) => lakhOf(v) + " lakh"],
-  [UA.gva_per_worker_all, "GVA per worker", "ASUSE · ₹ per year · market establishments", "s-g1", (v) => "₹" + fmtIN(v), (v) => "₹" + fmtIN(v)],
-  [UA.emoluments_per_hired_worker_hwe, "Emoluments per hired worker", "ASUSE · HWE only · ₹ per year", "s-g4", (v) => "₹" + fmtIN(v), (v) => "₹" + fmtIN(v)],
-  [UM.internet_all_combined, "Establishments using the internet", "ASUSE · per 1,000 · from 2021-22", "s-acc", per1000, fmtIN],
-  [UM.reg_not_registered_combined, "Registered under no act", "ASUSE · per 1,000 · from 2021-22", "s-g1", per1000, fmtIN],
-  [US.own_proprietary_female_combined, "Female-proprietor establishments", "ASUSE · per 1,000 · from 2021-22", "s-g4", per1000, fmtIN],
+  [H.factories_in_operation, "Factories in operation", "ASI, count, from 2008-09", "s-acc", fmtIN, fmtIN],
+  [H.persons_engaged, "Persons engaged", "ASI, count, all registered factories", "s-g1", (v) => croreN(v) + " cr", (v) => lakhOf(v) + " lakh"],
+  [H.gva, "Factory gross value added", "ASI, ₹ lakh cr, nominal", "s-acc", (v) => lakhCr(v), (v) => lakhCr(v)],
+  [H.emoluments, "Emoluments: wages & salaries", "ASI, ₹ lakh cr, nominal", "s-g4", (v) => lakhCr(v), (v) => lakhCr(v)],
+  [H.total_output, "Gross output", "ASI, ₹ lakh cr, nominal", "s-g3", (v) => lakhCr(v), (v) => lakhCr(v)],
+  [UA.establishments_all, "Establishments, unincorporated", "ASUSE, count, from 2021-22", "s-g2", (v) => croreN(v) + " cr", (v) => lakhOf(v) + " lakh"],
+  [UA.workers_all, "Workers, unincorporated", "ASUSE, count, from 2021-22", "s-g2", (v) => croreN(v) + " cr", (v) => lakhOf(v) + " lakh"],
+  [UA.gva_per_worker_all, "GVA per worker", "ASUSE, ₹ per year, market establishments", "s-g1", (v) => "₹" + fmtIN(v), (v) => "₹" + fmtIN(v)],
+  [UA.emoluments_per_hired_worker_hwe, "Emoluments per hired worker", "ASUSE, HWE only, ₹ per year", "s-g4", (v) => "₹" + fmtIN(v), (v) => "₹" + fmtIN(v)],
+  [UM.internet_all_combined, "Establishments using the internet", "ASUSE, per 1,000, from 2021-22", "s-acc", per1000, fmtIN],
+  [UM.reg_not_registered_combined, "Registered under no act", "ASUSE, per 1,000, from 2021-22", "s-g1", per1000, fmtIN],
+  [US.own_proprietary_female_combined, "Female-proprietor establishments", "ASUSE, per 1,000, from 2021-22", "s-g4", per1000, fmtIN],
 ];
 document.getElementById("ledger-body").innerHTML = regRows.map(([s, nm, sub, sw, fV, fD], i) => {
   const data = s.data.filter((d) => d.value != null);
@@ -125,8 +125,8 @@ document.getElementById("ledger-body").innerHTML = regRows.map(([s, nm, sub, sw,
   <tr>
     <td class="name"><span class="sw ${sw}"></span>${nm}<small>${sub}</small></td>
     <td class="val">${fV(data.at(-1).value)}</td>
-    <td class="chg">${arrow(data.at(-1).value - data.at(-2).value, fD)} · vs ${fy(data.at(-2).date)}</td>
-    <td class="yr">${fV(data[0].value)} · ${fy(data[0].date)}</td>
+    <td class="chg">${arrow(data.at(-1).value - data.at(-2).value, fD)}, vs ${fy(data.at(-2).date)}</td>
+    <td class="yr">${fV(data[0].value)}, ${fy(data[0].date)}</td>
     <td class="spark" id="sp-f${i}"></td>
   </tr>`;
 }).join("");
@@ -137,12 +137,12 @@ function linePanel(el, keys, store, geo, opts) {
   const dts = seriesList[0].data.map((d) => d.date);
   const dodged = dodgeEndLabels(seriesList, (geo.d1 - geo.d0) * (opts.gapFrac ?? 0.07));
   const marks = [
-    Plot.gridY(opts.yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-    Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
-    geo.d0 <= 0 && geo.d1 >= 0 ? Plot.ruleY([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }) : null,
+    Plot.gridY(opts.yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+    Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+    geo.d0 <= 0 && geo.d1 >= 0 ? Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }) : null,
     ...(opts.preMarks || []),
     ...keys.slice(1).map((k) => Plot.lineY(store[k].data, { x: "date", y: "value", stroke: store[k].color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" })),
-    Plot.lineY(store[keys[0]].data, { x: "date", y: "value", stroke: store[keys[0]].color, strokeWidth: opts.leadWidth ?? 3, strokeLinejoin: "round", strokeLinecap: "round", strokeDasharray: opts.leadDash }),
+    Plot.lineY(store[keys[0]].data, { x: "date", y: "value", stroke: store[keys[0]].color, strokeWidth: opts.leadWidth ?? 2, strokeLinejoin: "round", strokeLinecap: "round", strokeDasharray: opts.leadDash }),
     opts.emphasize !== false ? Plot.lineY(store[keys[0]].data.filter((d) => d.value != null).slice(-4), { x: "date", y: "value", stroke: store[keys[0]].color, strokeWidth: 4.5, strokeLinecap: "round", strokeLinejoin: "round", strokeDasharray: opts.leadDash }) : null,
     ...(opts.postMarks || []),
     ...seriesList.map((s) => Plot.dot([s.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", fill: s.color, r: s === seriesList[0] ? 5 : 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
@@ -151,14 +151,14 @@ function linePanel(el, keys, store, geo, opts) {
     ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
     ...dodged.map((p) => Plot.text([{ date: dts.at(-1), y: p.y }], {
       x: "date", y: "y", text: () => `${p.s.label} ${opts.endFmt(p.value)}`,
-      dx: 16, fill: p.s.color, fontSize: 14, fontFamily: mono,
+      dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono,
       fontWeight: p.s === seriesList[0] ? 500 : 400, textAnchor: "start",
     })),
   ].filter(Boolean);
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: null, tickSize: 0, tickPadding: 14, ticks: opts.xTicks, tickFormat: opts.xFmt },
     y: { label: opts.yLabel, labelAnchor: "top", labelArrow: false,
          tickFormat: opts.yFmt, ticks: opts.yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
@@ -196,10 +196,10 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
  * block's missing 1993-94 stays a hole in its line. */
 {
   const BLOCKS = [
-    ["b1987", L87, "NIC-1987", "#C6C0B0"],
-    ["b1998", L98, "NIC-1998", "#A8A293"],
-    ["b2004", L04, "NIC-2004", "#8A857A"],
-    ["b2008", H, "NIC-2008", "#BE3E26"],
+    ["b1987", L87, "NIC-1987", "#C9CED6"],
+    ["b1998", L98, "NIC-1998", "#A3A9B4"],
+    ["b2004", L04, "NIC-2004", "#878D99"],
+    ["b2008", H, "NIC-2008", "#2E4BD8"],
   ];
   const storeOf = (key) => Object.fromEntries(BLOCKS.map(([bk, S, lab, col]) => [bk, { ...S[key], label: lab, color: col }]));
   const factStore = storeOf("number_of_factories");
@@ -214,25 +214,25 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
     const plot = Plot.plot({
       width: geo.W, height: geo.H,
       marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-      style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+      style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
       x: { label: null, tickSize: 0, tickPadding: 14, ticks: xTicksLong, tickFormat: fy },
       y: { label: opts.yLabel, labelAnchor: "top", labelArrow: false,
            tickFormat: opts.yFmt, ticks: opts.yTicks, domain: [0, geo.d1], tickSize: 0, tickPadding: 11 },
       marks: [
-        Plot.gridY(opts.yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-        Plot.ruleY([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
-        ...seams.map((d) => Plot.ruleX([d], { stroke: "#D8D3C4", strokeWidth: 1, strokeDasharray: "2,3" })),
+        Plot.gridY(opts.yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+        Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+        ...seams.map((d) => Plot.ruleX([d], { stroke: "#DADDE3", strokeWidth: 1, strokeDasharray: "2,3" })),
         ...(opts.seamLabels ? seams.map((d, i) => Plot.text([{ date: d, value: geo.d1 * 0.97 }], {
           x: "date", y: "value", text: [["'98", "'04", "'08"][i] + " reclassified"],
-          dx: 6, fontSize: 11.5, fill: "#8A857A", fontFamily: mono, textAnchor: "start",
+          dx: 6, fontSize: 11.5, fill: "#878D99", fontFamily: mono, textAnchor: "start",
         })) : []),
-        ...sers.map((s) => Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: s.color === "#BE3E26" ? 2.75 : 1.75, strokeLinejoin: "round", strokeLinecap: "round" })),
-        ...sers.map((s) => Plot.dot([lastPt(s)], { x: "date", y: "value", fill: s.color, r: s.color === "#BE3E26" ? 4.5 : 3, stroke: "#FFFFFF", strokeWidth: 1.5 })),
+        ...sers.map((s) => Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: s.color === "#2E4BD8" ? 2.75 : 1.75, strokeLinejoin: "round", strokeLinecap: "round" })),
+        ...sers.map((s) => Plot.dot([lastPt(s)], { x: "date", y: "value", fill: s.color, r: s.color === "#2E4BD8" ? 4.5 : 3, stroke: "#FFFFFF", strokeWidth: 1.5 })),
         ...(opts.blockLabels ? sers.slice(0, 3).map((s) => Plot.text([lastPt(s)], {
           x: "date", y: "value", text: (d) => opts.endFmt(d.value),
-          dy: opts.labelDy?.[s.label] ?? -14, dx: -8, fontSize: 12, fill: s.color === "#C6C0B0" ? "#8A857A" : s.color, fontFamily: mono, textAnchor: "end",
+          dy: opts.labelDy?.[s.label] ?? -14, dx: -8, fontSize: 12, fill: "#161A22" === "#C9CED6" ? "#878D99" : s.color, fontFamily: mono, textAnchor: "end",
         })) : []),
-        Plot.text([lastPt(sers[3])], { x: "date", y: "value", text: (d) => `NIC-2008 ${opts.endFmt(d.value)}`, dx: 14, fill: "#BE3E26", fontSize: 14, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+        Plot.text([lastPt(sers[3])], { x: "date", y: "value", text: (d) => `NIC-2008 ${opts.endFmt(d.value)}`, dx: 14, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
       ],
     });
     a11y(plot, opts.a11yTitle, opts.a11yDesc);
@@ -322,8 +322,8 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
       endFmt: (v) => fmtIN(v),
       crossFmt: (v) => (v == null ? "—" : fmtIN(v)),
       preMarks: [
-        Plot.ruleX([frameBreak], { stroke: "#D8D3C4", strokeWidth: 1, strokeDasharray: "2,3" }),
-        Plot.text([{ date: frameBreak, value: 258000 }], { x: "date", y: "value", text: ["2010-11 · frame revised — a wider net, not new factories"], dx: 8, fontSize: 12.5, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
+        Plot.ruleX([frameBreak], { stroke: "#DADDE3", strokeWidth: 1, strokeDasharray: "2,3" }),
+        Plot.text([{ date: frameBreak, value: 258000 }], { x: "date", y: "value", text: ["2010-11, frame revised: a wider net, not new factories"], dx: 8, fontSize: 12.5, fill: "#878D99", fontFamily: mono, textAnchor: "start" }),
       ],
       a11yTitle: "Registered factories and factories in operation, 2008-09 to 2023-24",
       a11yDesc: "Two lines. The register rises from " + fmtIN(firstV(H.number_of_factories)) + " to " + fmtIN(last(H.number_of_factories)) + "; factories in operation from " + fmtIN(firstV(H.factories_in_operation)) + " to " + fmtIN(last(H.factories_in_operation)) + ". A step in 2010-11 marks the sampling-frame revision, annotated as a coverage change and not growth.",
@@ -353,11 +353,11 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
 {
   // ₹ lakh (source) -> ₹ lakh crore for the axis
   const M = {
-    gva: { label: "GVA", color: "#BE3E26", name: "asi_gva_lakh_crore", data: H.gva.data.map((d) => ({ date: d.date, value: d.value / 1e7 })) },
-    emoluments: { label: "Emoluments", color: "#5B564B", name: "asi_emoluments_lakh_crore", data: H.emoluments.data.map((d) => ({ date: d.date, value: d.value / 1e7 })) },
+    gva: { label: "GVA", color: "#2E4BD8", name: "asi_gva_lakh_crore", data: H.gva.data.map((d) => ({ date: d.date, value: d.value / 1e7 })) },
+    emoluments: { label: "Emoluments", color: "#5F6675", name: "asi_emoluments_lakh_crore", data: H.emoluments.data.map((d) => ({ date: d.date, value: d.value / 1e7 })) },
   };
   const yoy = {
-    label: "GVA y/y", color: "#BE3E26", name: "asi_gva_yoy_pct_derived",
+    label: "GVA y/y", color: "#2E4BD8", name: "asi_gva_yoy_pct_derived",
     data: H.gva.data.map((d, i) => ({ date: d.date, value: i === 0 ? null : (d.value / H.gva.data[i - 1].value - 1) * 100 })),
   };
   setTxt("pv-money", lakhCr(last(H.gva)));
@@ -370,7 +370,7 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   const geoM = { W: 1184, H: 400, ml: 70, mr: 230, mt: 30, mb: 42, d0: 0, d1: 26 };
   const plotM = linePanel(document.getElementById("plot-money"), ["gva", "emoluments"], M, geoM, {
     yTicks: [0, 5, 10, 15, 20, 25],
-    yLabel: "↑ ₹ lakh crore · nominal",
+    yLabel: "↑ ₹ lakh crore, nominal",
     yFmt: (d) => (d === 25 ? "₹25" : String(d)),
     xTicks: xTicksASI, xFmt: fy,
     gapFrac: 0.09,
@@ -385,15 +385,15 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   const pk21 = yoy.data[13]; // 2021-22 rebound
   const plotG = linePanel(document.getElementById("plot-grow"), ["yoy"], { yoy }, geoG, {
     yTicks: [0, 15, 30],
-    yLabel: "↑ y/y change, % · derived",
+    yLabel: "↑ y/y change, %, derived",
     yFmt: (d) => (d === 30 ? "30%" : String(d)),
     xTicks: xTicksASI, xFmt: fy,
     leadWidth: 1.75, leadDash: "4 3", emphasize: false,
     gapFrac: 0.1,
     endFmt: (v) => v.toFixed(1) + "%",
     postMarks: [
-      Plot.dot([pk21], { x: "date", y: "value", fill: "#BE3E26", r: 4, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([pk21], { x: "date", y: "value", text: (d) => "+" + d.value.toFixed(1) + "% · 2021-22 — rebound plus reflation", dx: -12, dy: -2, fontSize: 12.5, fill: "#8A857A", fontFamily: mono, textAnchor: "end" }),
+      Plot.dot([pk21], { x: "date", y: "value", fill: "#2E4BD8", r: 4, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([pk21], { x: "date", y: "value", text: (d) => "+" + d.value.toFixed(1) + "%, 2021-22: rebound plus reflation", dx: -12, dy: -2, fontSize: 12.5, fill: "#878D99", fontFamily: mono, textAnchor: "end" }),
     ],
     a11yTitle: "Year-on-year change in nominal factory GVA, derived",
     a11yDesc: "Dashed line between about minus 3 and plus 27 per cent, dipping in 2019-20 and 2020-21 and spiking to +" + pk21.value.toFixed(1) + " per cent in 2021-22, part recovery and part price surge. Latest: +" + (last(H.gva) / prevV(H.gva) * 100 - 100).toFixed(1) + " per cent.",
@@ -437,16 +437,16 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#878D99", overflow: "visible" },
     x: { label: "share of factory GVA →", labelAnchor: "right", labelArrow: false, domain: [0, 16.5], ticks: xTicks, tickSize: 0, tickPadding: 10, tickFormat: (d) => (d === 16 ? "16%" : String(d)), grid: false },
     y: { label: null, domain: rows.map((r) => r.state), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
     marks: [
-      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
-      Plot.ruleY(rows, { y: "state", x1: 0, x2: "share", stroke: (d) => (isTop(d) ? "#E5B8AE" : "#E0DACA"), strokeWidth: 1.25 }),
-      Plot.dot(rows, { y: "state", x: "share", fill: (d) => (isTop(d) ? "#BE3E26" : "#5B564B"), r: 4 }),
-      Plot.text(rows.filter((d) => !isTop(d)), { y: "state", x: "share", dx: 12, text: (d) => d.share.toFixed(1) + "%", fill: "#8A857A", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
-      Plot.text(top3, { y: "state", x: "share", dx: 12, text: (d) => d.share.toFixed(1) + "%", fill: "#BE3E26", fontSize: 11.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+      Plot.ruleY(rows, { y: "state", x1: 0, x2: "share", stroke: (d) => (isTop(d) ? "#B9C3F3" : "#E3E6EB"), strokeWidth: 1.25 }),
+      Plot.dot(rows, { y: "state", x: "share", fill: (d) => (isTop(d) ? "#2E4BD8" : "#5F6675"), r: 4 }),
+      Plot.text(rows.filter((d) => !isTop(d)), { y: "state", x: "share", dx: 12, text: (d) => d.share.toFixed(1) + "%", fill: "#878D99", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(top3, { y: "state", x: "share", dx: 12, text: (d) => d.share.toFixed(1) + "%", fill: "#161A22", fontSize: 11.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
   });
   a11y(plot, "State shares of factory gross value added, 2023-24",
@@ -495,14 +495,14 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   grid.setAttribute("aria-label", "Small-multiple grid of 16-year nominal GVA lines for " + cells.length + " NIC divisions, sorted by 2023-24 GVA. Basic metals lead at " + (cells[0].latest / totalGVA * 100).toFixed(1) + " per cent of factory GVA; the top five accented panels hold " + share5.toFixed(1) + " per cent. Each panel is on its own scale.");
   for (const c of cells) {
     const acc = top5.has(c.code);
-    const color = acc ? "#BE3E26" : "#8A857A";
+    const color = acc ? "#2E4BD8" : "#878D99";
     const cell = document.createElement("div");
     const lab = document.createElement("div");
-    lab.style.cssText = "font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:" + (acc ? "#BE3E26" : "#8A857A") + ";margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
-    lab.textContent = c.code.length > 2 ? c.name : c.code + " · " + c.name;
+    lab.style.cssText = "font-family:var(--sans);font-size:.56rem;color:" + (acc ? "#2E4BD8" : "#878D99") + ";margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
+    lab.textContent = c.code.length > 2 ? c.name : c.code + ", " + c.name;
     const val = document.createElement("div");
-    val.style.cssText = "font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.04em;color:#5C574C;margin-top:5px";
-    val.textContent = lakhCr(c.latest) + " · " + (c.latest / totalGVA * 100).toFixed(1) + "%";
+    val.style.cssText = "font-family:var(--sans);font-size:.6rem;letter-spacing:.04em;color:#5F6675;margin-top:5px";
+    val.textContent = lakhCr(c.latest) + ", " + (c.latest / totalGVA * 100).toFixed(1) + "%";
     const max = Math.max(...c.data.map((d) => d.value ?? 0));
     const mini = Plot.plot({
       width: 205, height: 62, marginLeft: 2, marginRight: 6, marginTop: 5, marginBottom: 2,
@@ -510,7 +510,7 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
       x: { axis: null },
       y: { axis: null, domain: [0, max * 1.05] },
       marks: [
-        Plot.ruleY([0], { stroke: "#E6E2D6" }),
+        Plot.ruleY([0], { stroke: "#ECEEF2" }),
         Plot.lineY(c.data, { x: "date", y: "value", stroke: color, strokeWidth: acc ? 1.75 : 1.5, strokeLinejoin: "round", strokeLinecap: "round" }),
         Plot.dot([c.data.at(-1)], { x: "date", y: "value", fill: color, r: 2.2, stroke: "#FFFFFF", strokeWidth: 1 }),
       ],
@@ -548,30 +548,30 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   const labour = [...pts].sort((a, b) => b.e / b.g - a.e / a.g).slice(0, 4);
   const labelled = new Set([...labour.map((p) => p.code), ...[...pts].sort((a, b) => b.g - a.g).slice(0, 3).map((p) => p.code)]);
   const isLab = (p) => labour.includes(p);
-  setTxt("pv-jv", labour[0].name + " · " + labour[0].e.toFixed(1) + "% of jobs, " + labour[0].g.toFixed(1) + "% of value");
-  setTxt("ex-jv-lab", labour[0].name + " — " + labour[0].e.toFixed(1) + "% of jobs, " + labour[0].g.toFixed(1) + "% of value");
+  setTxt("pv-jv", labour[0].name + ", " + labour[0].e.toFixed(1) + "% of jobs, " + labour[0].g.toFixed(1) + "% of value");
+  setTxt("ex-jv-lab", labour[0].name + ": " + labour[0].e.toFixed(1) + "% of jobs, " + labour[0].g.toFixed(1) + "% of value");
   const capTop = [...pts].sort((a, b) => b.g / b.e - a.g / a.e)[0];
-  setTxt("ex-jv-cap", capTop.name + " — " + capTop.g.toFixed(1) + "% of value, " + capTop.e.toFixed(1) + "% of jobs");
+  setTxt("ex-jv-cap", capTop.name + ": " + capTop.g.toFixed(1) + "% of value, " + capTop.e.toFixed(1) + "% of jobs");
 
   const geo = { W: 1184, H: 560, ml: 70, mr: 40, mt: 30, mb: 56 };
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: "share of factory employment →", labelAnchor: "right", labelArrow: "none", domain: [0, maxS], tickSize: 0, tickPadding: 12,
          tickFormat: (d) => String(d) + "%" },
     y: { label: "↑ share of factory value added", labelAnchor: "top", labelArrow: false, domain: [0, maxS], tickSize: 0, tickPadding: 11,
          tickFormat: (d) => (d === Math.round(maxS) ? d + "%" : String(d)) },
     marks: [
-      Plot.gridY([0, 5, 10, 15, 20], { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.gridX([0, 5, 10, 15, 20], { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.line([{ e: 0, g: 0 }, { e: maxS, g: maxS }], { x: "e", y: "g", stroke: "#C0B9A6", strokeWidth: 1, strokeDasharray: "2,4" }),
-      Plot.text([{ e: maxS * 0.86, g: maxS * 0.9 }], { x: "e", y: "g", text: ["capital-intensive →"], fontSize: 11.5, fill: "#8A857A", fontFamily: mono, textAnchor: "end" }),
-      Plot.text([{ e: maxS * 0.9, g: maxS * 0.78 }], { x: "e", y: "g", text: ["← labour-intensive"], fontSize: 11.5, fill: "#8A857A", fontFamily: mono, textAnchor: "end" }),
-      Plot.dot(pts, { x: "e", y: "g", fill: (d) => (isLab(d) ? "#BE3E26" : "#A8A293"), r: (d) => (labelled.has(d.code) ? 5.5 : 4), stroke: "#FFFFFF", strokeWidth: 1.25 }),
-      Plot.text(pts.filter((p) => labelled.has(p.code) && p.code !== "15"), { x: "e", y: "g", text: "name", dx: 9, dy: -7, fill: (d) => (isLab(d) ? "#BE3E26" : "#5B564B"), fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.gridY([0, 5, 10, 15, 20], { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.gridX([0, 5, 10, 15, 20], { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.line([{ e: 0, g: 0 }, { e: maxS, g: maxS }], { x: "e", y: "g", stroke: "#BFC4CD", strokeWidth: 1, strokeDasharray: "2,4" }),
+      Plot.text([{ e: maxS * 0.86, g: maxS * 0.9 }], { x: "e", y: "g", text: ["capital-intensive →"], fontSize: 11.5, fill: "#878D99", fontFamily: mono, textAnchor: "end" }),
+      Plot.text([{ e: maxS * 0.9, g: maxS * 0.78 }], { x: "e", y: "g", text: ["← labour-intensive"], fontSize: 11.5, fill: "#878D99", fontFamily: mono, textAnchor: "end" }),
+      Plot.dot(pts, { x: "e", y: "g", fill: (d) => (isLab(d) ? "#2E4BD8" : "#A3A9B4"), r: (d) => (labelled.has(d.code) ? 5.5 : 4), stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.text(pts.filter((p) => labelled.has(p.code) && p.code !== "15"), { x: "e", y: "g", text: "name", dx: 9, dy: -7, fill: (d) => (isLab(d) ? "#161A22" : "#5F6675"), fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
       // Leather's dot sits beneath Tobacco's — label it below, not above
-      Plot.text(pts.filter((p) => p.code === "15" && labelled.has(p.code)), { x: "e", y: "g", text: "name", dx: 9, dy: 15, fill: (d) => (isLab(d) ? "#BE3E26" : "#5B564B"), fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(pts.filter((p) => p.code === "15" && labelled.has(p.code)), { x: "e", y: "g", text: "name", dx: 9, dy: 15, fill: (d) => (isLab(d) ? "#161A22" : "#5F6675"), fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
     ],
   });
   a11y(plot, "Share of factory employment against share of factory value added, by two-digit industry, 2023-24",
@@ -614,9 +614,9 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   const share5 = rows.slice(0, 5).reduce((a, r) => a + r.share, 0);
 
   setTxt("pv-lab", share3.toFixed(1) + "%");
-  setTxt("ex-lb1", rows[0].name + " · " + rows[0].share.toFixed(1) + "%");
-  setTxt("ex-lb2", rows[1].name + " · " + rows[1].share.toFixed(1) + "%");
-  setTxt("ex-lb3", rows[2].name + " · " + rows[2].share.toFixed(1) + "%");
+  setTxt("ex-lb1", rows[0].name + ", " + rows[0].share.toFixed(1) + "%");
+  setTxt("ex-lb2", rows[1].name + ", " + rows[1].share.toFixed(1) + "%");
+  setTxt("ex-lb3", rows[2].name + ", " + rows[2].share.toFixed(1) + "%");
   setTxt("ex-lb5", share5.toFixed(1) + "%");
 
   const geo = { W: 1184, H: 30 + rows.length * 23 + 40, ml: 250, mr: 90, mt: 30, mb: 40 };
@@ -624,16 +624,16 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#878D99", overflow: "visible" },
     x: { label: "share of factory employment →", labelAnchor: "right", labelArrow: false, domain: [0, Math.ceil(rows[0].share / 2) * 2 + 1], ticks: xTicks, tickSize: 0, tickPadding: 10, tickFormat: (d) => (d === 0 ? "0" : String(d) + "%"), grid: false },
     y: { label: null, domain: rows.map((r) => r.name), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
     marks: [
-      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
-      Plot.ruleY(rows, { y: "name", x1: 0, x2: "share", stroke: (d) => (isTop(d) ? "#E5B8AE" : "#E0DACA"), strokeWidth: 1.25 }),
-      Plot.dot(rows, { y: "name", x: "share", fill: (d) => (isTop(d) ? "#BE3E26" : "#5B564B"), r: 4 }),
-      Plot.text(rows.filter((d) => !isTop(d)), { y: "name", x: "share", dx: 12, text: (d) => d.share.toFixed(1) + "%", fill: "#8A857A", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
-      Plot.text(top3, { y: "name", x: "share", dx: 12, text: (d) => d.share.toFixed(1) + "%", fill: "#BE3E26", fontSize: 11.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+      Plot.ruleY(rows, { y: "name", x1: 0, x2: "share", stroke: (d) => (isTop(d) ? "#B9C3F3" : "#E3E6EB"), strokeWidth: 1.25 }),
+      Plot.dot(rows, { y: "name", x: "share", fill: (d) => (isTop(d) ? "#2E4BD8" : "#5F6675"), r: 4 }),
+      Plot.text(rows.filter((d) => !isTop(d)), { y: "name", x: "share", dx: 12, text: (d) => d.share.toFixed(1) + "%", fill: "#878D99", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(top3, { y: "name", x: "share", dx: 12, text: (d) => d.share.toFixed(1) + "%", fill: "#161A22", fontSize: 11.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
   });
   a11y(plot, "Share of factory employment by two-digit industry, 2023-24",
@@ -653,19 +653,19 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
 
   const baskets = [
     ["bar-est", "lab-est", [
-      ["Establishments — own-account (OAE), nobody hired", estOAE, estAll, "#C6C0B0"],
-      ["Hired-worker establishments (HWE)", estHWE, estAll, "#BE3E26"],
+      ["Establishments: own-account (OAE), nobody hired", estOAE, estAll, "#C9CED6"],
+      ["Hired-worker establishments (HWE)", estHWE, estAll, "#2E4BD8"],
     ]],
     ["bar-wrk", "lab-wrk", [
-      ["Workers — in own-account establishments", wrkOAE, wrkAll, "#C6C0B0"],
-      ["Workers in hired-worker establishments", wrkHWE, wrkAll, "#BE3E26"],
+      ["Workers: in own-account establishments", wrkOAE, wrkAll, "#C9CED6"],
+      ["Workers in hired-worker establishments", wrkHWE, wrkAll, "#2E4BD8"],
     ]],
   ];
   for (const [barId, labId, segs] of baskets) {
     document.getElementById(barId).innerHTML = segs.map(([n, v, t, c]) =>
-      `<div class="seg" style="width:${(v / t * 100).toFixed(2)}%;background:${c}" title="${n} — ${(v / t * 100).toFixed(1)}%"></div>`).join("");
+      `<div class="seg" style="width:${(v / t * 100).toFixed(2)}%;background:${c}" title="${n}: ${(v / t * 100).toFixed(1)}%"></div>`).join("");
     document.getElementById(labId).innerHTML = segs.map(([n, v, t, c]) =>
-      `<div class="blab"><div class="n"><span class="sw" style="background:${c}"></span>${n}</div><div class="w">${croreN(v)} cr · ${(v / t * 100).toFixed(1)}% · 2023-24</div></div>`).join("");
+      `<div class="blab"><div class="n"><span class="sw" style="background:${c}"></span>${n}</div><div class="w">${croreN(v)} cr, ${(v / t * 100).toFixed(1)}%, 2023-24</div></div>`).join("");
   }
 
   // quarterly bulletin — counts published in hundreds ('00); a level, not a trend
@@ -677,10 +677,10 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
 /* ---------- § 07 signature plate : GVA per worker, one scale ---------- */
 {
   const rows = [
-    { cat: "Registered factory · ASI (derived)", v: gvaPerPersonASI, c: "#BE3E26" },
-    { cat: "Unincorporated · hires workers (HWE)", v: last(UA.gva_per_worker_hwe), c: "#5B564B" },
-    { cat: "Unincorporated · all establishments", v: last(UA.gva_per_worker_all), c: "#8A857A" },
-    { cat: "Unincorporated · own-account (OAE)", v: last(UA.gva_per_worker_oae), c: "#C6C0B0" },
+    { cat: "Registered factory, ASI (derived)", v: gvaPerPersonASI, c: "#2E4BD8" },
+    { cat: "Unincorporated, hires workers (HWE)", v: last(UA.gva_per_worker_hwe), c: "#5F6675" },
+    { cat: "Unincorporated, all establishments", v: last(UA.gva_per_worker_all), c: "#878D99" },
+    { cat: "Unincorporated, own-account (OAE)", v: last(UA.gva_per_worker_oae), c: "#C9CED6" },
   ];
   setTxt("pv-mult", multAll.toFixed(1) + "×");
   setTxt("ex-x1", "₹" + lakhOf(gvaPerPersonASI) + " lakh");
@@ -694,15 +694,15 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   const xTicks = [0, 400000, 800000, 1200000];
   const plot = Plot.plot({
     width: 1184, height: 270, marginLeft: 330, marginRight: 150, marginTop: 12, marginBottom: 40,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: "GVA per worker, ₹ per year · nominal · 2023-24 →", labelAnchor: "right", labelArrow: false, domain: [0, 1320000], ticks: xTicks, tickSize: 0, tickPadding: 10, tickFormat: (d) => (d === 0 ? "0" : "₹" + d / 100000 + " lakh") },
     y: { label: null, domain: rows.map((r) => r.cat), tickSize: 0, tickPadding: 14, tickFormat: (s) => String(s), padding: 0.28 },
     marks: [
-      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
       Plot.barX(rows, { y: "cat", x: "v", fill: "c" }),
-      Plot.text(rows.slice(1), { y: "cat", x: "v", dx: 12, text: (d) => "₹" + lakhOf(d.v) + " L", fill: (d) => (d.c === "#C6C0B0" ? "#8A857A" : d.c), fontSize: 13.5, fontFamily: mono, textAnchor: "start" }),
-      Plot.text([rows[0]], { y: "cat", x: "v", dx: 12, text: (d) => "₹" + lakhOf(d.v) + " L", fill: "#BE3E26", fontSize: 13.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.text(rows.slice(1), { y: "cat", x: "v", dx: 12, text: (d) => "₹" + lakhOf(d.v) + " L", fill: (d) => (d.c === "#C9CED6" ? "#878D99" : d.c), fontSize: 12, fontFamily: mono, textAnchor: "start" }),
+      Plot.text([rows[0]], { y: "cat", x: "v", dx: 12, text: (d) => "₹" + lakhOf(d.v) + " L", fill: "#161A22", fontSize: 12, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
   });
   a11y(plot, "Gross value added per worker, factory versus unincorporated establishments, 2023-24",
@@ -753,31 +753,31 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
     return Plot.plot({
       width: 1184, height: 220,
       marginLeft: 180, marginRight: 140, marginTop: 14, marginBottom: 42,
-      style: { background: "transparent", fontFamily: mono, fontSize: "13px", color: "#5C574C", overflow: "visible" },
+      style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
       x: { label: xLabel, labelAnchor: "right", labelArrow: false, domain, ticks: xTicks, tickSize: 0, tickPadding: 10, tickFormat: xFmt },
       y: { label: null, domain: acts.map(([, l]) => l), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s), padding: 0.32 },
       marks: [
-        Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-        Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
-        Plot.link(rows, { y: "activity", x1: "rural", x2: "urban", stroke: "#C6C0B0", strokeWidth: 2 }),
-        Plot.dot(flat.filter((d) => d.sector === "Rural"), { y: "activity", x: "v", fill: "#5B564B", r: 6, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-        Plot.dot(flat.filter((d) => d.sector === "Urban"), { y: "activity", x: "v", fill: "#BE3E26", r: 6, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-        Plot.text(rows.filter((d) => d.rural < d.urban), { y: "activity", x: "rural", dx: -12, text: (d) => xFmt(d.rural), fill: "#5B564B", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
-        Plot.text(rows.filter((d) => d.rural >= d.urban), { y: "activity", x: "rural", dx: 12, text: (d) => xFmt(d.rural), fill: "#5B564B", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
-        Plot.text(rows.filter((d) => d.urban <= d.rural), { y: "activity", x: "urban", dx: -12, text: (d) => xFmt(d.urban), fill: "#BE3E26", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "end" }),
-        Plot.text(rows.filter((d) => d.urban > d.rural), { y: "activity", x: "urban", dx: 12, text: (d) => xFmt(d.urban), fill: "#BE3E26", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+        Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+        Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+        Plot.link(rows, { y: "activity", x1: "rural", x2: "urban", stroke: "#C9CED6", strokeWidth: 2 }),
+        Plot.dot(flat.filter((d) => d.sector === "Rural"), { y: "activity", x: "v", fill: "#5F6675", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+        Plot.dot(flat.filter((d) => d.sector === "Urban"), { y: "activity", x: "v", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+        Plot.text(rows.filter((d) => d.rural < d.urban), { y: "activity", x: "rural", dx: -12, text: (d) => xFmt(d.rural), fill: "#5F6675", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
+        Plot.text(rows.filter((d) => d.rural >= d.urban), { y: "activity", x: "rural", dx: 12, text: (d) => xFmt(d.rural), fill: "#5F6675", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+        Plot.text(rows.filter((d) => d.urban <= d.rural), { y: "activity", x: "urban", dx: -12, text: (d) => xFmt(d.urban), fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "end" }),
+        Plot.text(rows.filter((d) => d.urban > d.rural), { y: "activity", x: "urban", dx: 12, text: (d) => xFmt(d.urban), fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
       ],
     });
   };
 
-  const plotWrk = dumbbell(wrkRows, "workers, crore → · 2023-24", (d) => (d === 0 ? "0" : croreN(d) + " cr"), [0, 3e7], [0, 1e7, 2e7, 3e7]);
+  const plotWrk = dumbbell(wrkRows, "workers, crore →, 2023-24", (d) => (d === 0 ? "0" : croreN(d) + " cr"), [0, 3e7], [0, 1e7, 2e7, 3e7]);
   a11y(plotWrk, "Informal workers by activity and sector, rural versus urban, 2023-24",
-    "Dumbbell chart, three rows. Rural workers (grey) versus urban workers (vermilion) per activity. Manufacturing: " + croreN(wrkRows[0].rural) + " crore rural, " + croreN(wrkRows[0].urban) + " crore urban. Trading: " + croreN(wrkRows[1].rural) + " rural, " + croreN(wrkRows[1].urban) + " urban. Other services: " + croreN(wrkRows[2].rural) + " rural, " + croreN(wrkRows[2].urban) + " urban.");
+    "Dumbbell chart, three rows. Rural workers (grey) versus urban workers (blue) per activity. Manufacturing: " + croreN(wrkRows[0].rural) + " crore rural, " + croreN(wrkRows[0].urban) + " crore urban. Trading: " + croreN(wrkRows[1].rural) + " rural, " + croreN(wrkRows[1].urban) + " urban. Other services: " + croreN(wrkRows[2].rural) + " rural, " + croreN(wrkRows[2].urban) + " urban.");
   document.getElementById("plot-sec-wrk").append(plotWrk);
 
-  const plotGpw = dumbbell(gpwRows, "GVA per worker, ₹ per year → · 2023-24", (d) => (d === 0 ? "0" : "₹" + lakhOf(d) + " L"), [0, 220000], [0, 50000, 100000, 150000, 200000]);
+  const plotGpw = dumbbell(gpwRows, "GVA per worker, ₹ per year →, 2023-24", (d) => (d === 0 ? "0" : "₹" + lakhOf(d) + " L"), [0, 220000], [0, 50000, 100000, 150000, 200000]);
   a11y(plotGpw, "GVA per worker in informal establishments by activity and sector, rural versus urban, 2023-24",
-    "Dumbbell chart, three rows. Rural GVA per worker (grey) versus urban (vermilion) per activity. The urban premium ranges from " + gpwGap[2].toFixed(1) + " times in other services to " + gpwGap[0].toFixed(1) + " times in manufacturing.");
+    "Dumbbell chart, three rows. Rural GVA per worker (grey) versus urban (blue) per activity. The urban premium ranges from " + gpwGap[2].toFixed(1) + " times in other services to " + gpwGap[0].toFixed(1) + " times in manufacturing.");
   document.getElementById("plot-sec-gpw").append(plotGpw);
 
   const csv = ["metric,activity,sector,value_2023_24",
@@ -814,7 +814,7 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   const share5 = rows.slice(0, 5).reduce((a, r) => a + r.share, 0);
 
   setTxt("pv-ust", share3.toFixed(1) + "%");
-  setTxt("ex-ust1", rows[0].state + " · " + rows[0].share.toFixed(1) + "%");
+  setTxt("ex-ust1", rows[0].state + ", " + rows[0].share.toFixed(1) + "%");
   setTxt("ex-ust3", share3.toFixed(1) + "%");
   setTxt("ex-ust5", share5.toFixed(1) + "%");
 
@@ -824,16 +824,16 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#878D99", overflow: "visible" },
     x: { label: "share of informal workers →", labelAnchor: "right", labelArrow: false, domain: [0, xMax], ticks: xTicks, tickSize: 0, tickPadding: 10, tickFormat: (d) => (d === 0 ? "0" : String(d) + "%"), grid: false },
     y: { label: null, domain: rows.map((r) => r.state), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
     marks: [
-      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
-      Plot.ruleY(rows, { y: "state", x1: 0, x2: "share", stroke: (d) => (isTop(d) ? "#E5B8AE" : "#E0DACA"), strokeWidth: 1.25 }),
-      Plot.dot(rows, { y: "state", x: "share", fill: (d) => (isTop(d) ? "#BE3E26" : "#5B564B"), r: 4 }),
-      Plot.text(rows.filter((d) => !isTop(d)), { y: "state", x: "share", dx: 12, text: (d) => d.share.toFixed(1) + "%", fill: "#8A857A", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
-      Plot.text(top3, { y: "state", x: "share", dx: 12, text: (d) => d.share.toFixed(1) + "%", fill: "#BE3E26", fontSize: 11.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+      Plot.ruleY(rows, { y: "state", x1: 0, x2: "share", stroke: (d) => (isTop(d) ? "#B9C3F3" : "#E3E6EB"), strokeWidth: 1.25 }),
+      Plot.dot(rows, { y: "state", x: "share", fill: (d) => (isTop(d) ? "#2E4BD8" : "#5F6675"), r: 4 }),
+      Plot.text(rows.filter((d) => !isTop(d)), { y: "state", x: "share", dx: 12, text: (d) => d.share.toFixed(1) + "%", fill: "#878D99", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(top3, { y: "state", x: "share", dx: 12, text: (d) => d.share.toFixed(1) + "%", fill: "#161A22", fontSize: 11.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
   });
   a11y(plot, "Share of informal workers by state and union territory, 2023-24",
@@ -846,9 +846,9 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
 /* ---------- § 09 : the informal firm, described ---------- */
 const renderBasket = (barId, labId, segs, denom) => {
   document.getElementById(barId).innerHTML = segs.map(([n, v, c]) =>
-    `<div class="seg" style="width:${(v / 10).toFixed(2)}%;background:${c}" title="${n} — ${v} per 1,000"></div>`).join("");
+    `<div class="seg" style="width:${(v / 10).toFixed(2)}%;background:${c}" title="${n}: ${v} per 1,000"></div>`).join("");
   document.getElementById(labId).innerHTML = segs.map(([n, v, c]) =>
-    `<div class="blab"><div class="n"><span class="sw" style="background:${c}"></span>${n}</div><div class="w">${fmtIN(v)} / 1,000 ${denom} · 2023-24</div></div>`).join("");
+    `<div class="blab"><div class="n"><span class="sw" style="background:${c}"></span>${n}</div><div class="w">${fmtIN(v)} / 1,000 ${denom}, 2023-24</div></div>`).join("");
 };
 {
   setTxt("if-reg", fmtIN(last(UM.reg_not_registered_combined)));
@@ -858,17 +858,17 @@ const renderBasket = (barId, labId, segs, denom) => {
   const soc = (g) => last(UO[`social_${g}_combined`]);
   const own = (g) => last(US[`own_${g}_combined`]);
   const socSegs = [
-    ["Other Backward Classes", soc("obc"), "#BE3E26"],
-    ["Scheduled Caste", soc("sc"), "#5B564B"],
-    ["Scheduled Tribe", soc("st"), "#8A857A"],
-    ["Others", soc("others"), "#C6C0B0"],
-    ["Not known", soc("not_known"), "#E6E2D6"],
+    ["Other Backward Classes", soc("obc"), "#2E4BD8"],
+    ["Scheduled Caste", soc("sc"), "#5F6675"],
+    ["Scheduled Tribe", soc("st"), "#878D99"],
+    ["Others", soc("others"), "#C9CED6"],
+    ["Not known", soc("not_known"), "#ECEEF2"],
   ];
   const collective = own("partnership_same_hh") + own("partnership_diff_hh") + own("shg") + own("society_trust") + own("cooperatives") + own("others");
   const sexSegs = [
-    ["Proprietary — male owner", own("proprietary_male"), "#5B564B"],
-    ["Proprietary — female owner", own("proprietary_female"), "#BE3E26"],
-    ["Partnerships, SHGs, societies, co-operatives", collective, "#C6C0B0"],
+    ["Proprietary: male owner", own("proprietary_male"), "#5F6675"],
+    ["Proprietary: female owner", own("proprietary_female"), "#2E4BD8"],
+    ["Partnerships, SHGs, societies, co-operatives", collective, "#C9CED6"],
   ];
   renderBasket("bar-social", "lab-social", socSegs, "proprietary & partnership estts.");
   renderBasket("bar-sex", "lab-sex", sexSegs, "of all establishments");
@@ -891,29 +891,29 @@ const renderBasket = (barId, labId, segs, denom) => {
   /* -- the paperwork and the wires: per-1,000 dot strip -- */
   const m = (k) => last(UM[k]);
   const rows = [
-    { cat: "Bank / post-office account — any", v: m("bank_any_account_combined"), c: "#5B564B" },
-    { cat: "Not registered under any act", v: m("reg_not_registered_combined"), c: "#C6C0B0" },
-    { cat: "Using the internet", v: m("internet_all_combined"), c: "#BE3E26" },
-    { cat: "State-specific licence / registration", v: m("reg_state_licence_combined"), c: "#8A857A" },
-    { cat: "Account in the establishment's name", v: m("bank_estab_account_combined"), c: "#8A857A" },
-    { cat: "Regional Transport Office", v: m("reg_rto_combined"), c: "#8A857A" },
-    { cat: "Shops & Establishments Act", v: m("reg_shops_estb_act_combined"), c: "#8A857A" },
-    { cat: "Using a computer", v: m("computer_all_combined"), c: "#5B564B" },
-    { cat: "GST — CGST Act", v: m("reg_cgst_act_combined"), c: "#8A857A" },
+    { cat: "Bank / post-office account: any", v: m("bank_any_account_combined"), c: "#5F6675" },
+    { cat: "Not registered under any act", v: m("reg_not_registered_combined"), c: "#C9CED6" },
+    { cat: "Using the internet", v: m("internet_all_combined"), c: "#2E4BD8" },
+    { cat: "State-specific licence / registration", v: m("reg_state_licence_combined"), c: "#878D99" },
+    { cat: "Account in the establishment's name", v: m("bank_estab_account_combined"), c: "#878D99" },
+    { cat: "Regional Transport Office", v: m("reg_rto_combined"), c: "#878D99" },
+    { cat: "Shops & Establishments Act", v: m("reg_shops_estb_act_combined"), c: "#878D99" },
+    { cat: "Using a computer", v: m("computer_all_combined"), c: "#5F6675" },
+    { cat: "GST: CGST Act", v: m("reg_cgst_act_combined"), c: "#878D99" },
   ].sort((a, b) => b.v - a.v);
   const xTicks = [0, 250, 500, 750, 1000];
   const plot = Plot.plot({
     width: 1184, height: 30 + rows.length * 34 + 40, marginLeft: 330, marginRight: 110, marginTop: 20, marginBottom: 40,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: "per 1,000 establishments · 2023-24 →", labelAnchor: "right", labelArrow: false, domain: [0, 1000], ticks: xTicks, tickSize: 0, tickPadding: 10, tickFormat: (d) => String(d) },
     y: { label: null, domain: rows.map((r) => r.cat), tickSize: 0, tickPadding: 14, tickFormat: (s) => String(s) },
     marks: [
-      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
-      Plot.ruleX([1000], { stroke: "#E0DACA", strokeWidth: 1 }),
-      Plot.ruleY(rows, { y: "cat", x1: 0, x2: "v", stroke: (d) => (d.c === "#BE3E26" ? "#E5B8AE" : "#E0DACA"), strokeWidth: 1.25 }),
-      Plot.dot(rows, { y: "cat", x: "v", fill: "c", r: 4.5 }),
-      Plot.text(rows, { y: "cat", x: "v", dx: 12, text: (d) => fmtIN(d.v), fill: (d) => (d.c === "#C6C0B0" ? "#8A857A" : d.c), fontSize: 12.5, fontFamily: mono, fontWeight: (d) => (d.c === "#BE3E26" ? 500 : 400), textAnchor: "start" }),
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+      Plot.ruleX([1000], { stroke: "#E3E6EB", strokeWidth: 1 }),
+      Plot.ruleY(rows, { y: "cat", x1: 0, x2: "v", stroke: (d) => (d.c === "#2E4BD8" ? "#B9C3F3" : "#E3E6EB"), strokeWidth: 1.25 }),
+      Plot.dot(rows, { y: "cat", x: "v", fill: "c", r: 3.5 }),
+      Plot.text(rows, { y: "cat", x: "v", dx: 12, text: (d) => fmtIN(d.v), fill: (d) => (d.c === "#C9CED6" ? "#878D99" : d.c), fontSize: 12.5, fontFamily: mono, fontWeight: (d) => (d.c === "#161A22" ? 500 : 400), textAnchor: "start" }),
     ],
   });
   a11y(plot, "Rates per 1,000 unincorporated establishments: accounts, digital use and registrations, 2023-24",
@@ -937,24 +937,24 @@ const renderBasket = (barId, labId, segs, denom) => {
   /* -- where it stands, when it works -- */
   const s = (k) => last(US[k]);
   const locSegs = [
-    ["Within the household premises", s("loc_within_household_combined"), "#5B564B"],
-    ["Fixed premises, permanent structure", s("loc_fixed_permanent_combined"), "#8A857A"],
-    ["Fixed premises, temporary / kiosk / stall", s("loc_fixed_temporary_combined"), "#A8A293"],
-    ["Fixed premises, no structure", s("loc_fixed_no_structure_combined"), "#C6C0B0"],
-    ["Mobile markets", s("loc_mobile_market_combined"), "#E0DACA"],
-    ["Street vending, no fixed premises", s("loc_street_vendor_combined"), "#BE3E26"],
+    ["Within the household premises", s("loc_within_household_combined"), "#5F6675"],
+    ["Fixed premises, permanent structure", s("loc_fixed_permanent_combined"), "#878D99"],
+    ["Fixed premises, temporary / kiosk / stall", s("loc_fixed_temporary_combined"), "#A3A9B4"],
+    ["Fixed premises, no structure", s("loc_fixed_no_structure_combined"), "#C9CED6"],
+    ["Mobile markets", s("loc_mobile_market_combined"), "#E3E6EB"],
+    ["Street vending, no fixed premises", s("loc_street_vendor_combined"), "#2E4BD8"],
   ];
   const moSegs = [
-    ["3 months or fewer", s("months_le3_combined"), "#BE3E26"],
-    ["4 – 6 months", s("months_4_6_combined"), "#C6C0B0"],
-    ["7 – 9 months", s("months_7_9_combined"), "#A8A293"],
-    ["More than 9 months", s("months_gt9_combined"), "#5B564B"],
+    ["3 months or fewer", s("months_le3_combined"), "#2E4BD8"],
+    ["4 to 6 months", s("months_4_6_combined"), "#C9CED6"],
+    ["7 to 9 months", s("months_7_9_combined"), "#A3A9B4"],
+    ["More than 9 months", s("months_gt9_combined"), "#5F6675"],
   ];
   const hrSegs = [
-    ["Under 4 hours a day", s("hours_lt4_combined"), "#C6C0B0"],
-    ["4 – 7 hours", s("hours_4_7_combined"), "#A8A293"],
-    ["8 – 11 hours", s("hours_8_11_combined"), "#5B564B"],
-    ["Over 11 hours", s("hours_gt11_combined"), "#BE3E26"],
+    ["Under 4 hours a day", s("hours_lt4_combined"), "#C9CED6"],
+    ["4 to 7 hours", s("hours_4_7_combined"), "#A3A9B4"],
+    ["8 to 11 hours", s("hours_8_11_combined"), "#5F6675"],
+    ["Over 11 hours", s("hours_gt11_combined"), "#2E4BD8"],
   ];
   renderBasket("bar-loc", "lab-loc", locSegs, "by location");
   renderBasket("bar-months", "lab-months", moSegs, "by months operated");
@@ -980,7 +980,7 @@ const renderBasket = (barId, labId, segs, denom) => {
   const codes = Object.keys(accountsBundle.series).map((k) => Number(k.slice(1))).sort((a, b) => a - b);
   const unitLabel = (code, unit) => {
     if (code === 42) return "thousand mandays";
-    return { inr_lakh: "₹ lakh · nominal", count: "count", thousand: "₹ thousand · nominal", thousand_kwh: "thousand kWh", thousand_tonne: "thousand tonnes" }[unit] ?? unit;
+    return { inr_lakh: "₹ lakh, nominal", count: "count", thousand: "₹ thousand, nominal", thousand_kwh: "thousand kWh", thousand_tonne: "thousand tonnes" }[unit] ?? unit;
   };
   const fmtVal = (code, unit, v) => {
     if (v == null) return "–";
@@ -1003,17 +1003,17 @@ const renderBasket = (barId, labId, segs, denom) => {
     const f = (v) => fmtVal(code, unit, v);
     return `
     <tr>
-      <td class="name">${s.label}<small>ASI ${code} · ${unitLabel(code, unit)}</small></td>
+      <td class="name">${s.label}<small>ASI ${code}, ${unitLabel(code, unit)}</small></td>
       <td class="val">${f(latest.value)}</td>
       <td class="chg">${arrow(latest.value - prev.value, (d) => f(d))}</td>
-      <td class="yr">${f(first.value)} · ${fy(first.date)}</td>
+      <td class="yr">${f(first.value)}, ${fy(first.date)}</td>
       <td class="spark" id="sp-a${code}"></td>
     </tr>`;
   }).join("");
   document.getElementById("acct-body").innerHTML = rowsHtml;
   codes.forEach((code) => {
     const key = "i" + String(code).padStart(2, "0");
-    spark("sp-a" + code, { ...ACC[key], color: code === 19 ? "#BE3E26" : "#5B564B" });
+    spark("sp-a" + code, { ...ACC[key], color: code === 19 ? "#2E4BD8" : "#5F6675" });
   });
 
   setTxt("pv-acct", lakhCr(last(ACC.i19)));

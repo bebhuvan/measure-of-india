@@ -3,6 +3,7 @@
 // series JSON. The generator may write ONLY from this sheet.
 // Usage: node pipeline/facts.mjs <slug>   → pipeline/out/facts-<slug>.json
 
+import YAML from "yaml";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -203,6 +204,21 @@ if (slug === "gdp") {
 if (D.proseInputs?.length) {
   const hDir = headKey != null && allSeries.find((s) => s.key === headKey)?.deltaVsYearAgo != null
     ? Math.sign(allSeries.find((s) => s.key === headKey).deltaVsYearAgo) : null;
+  // never mix rulers in one sheet: a sibling bundle of the SAME product on a
+  // different registered base (sources.yml seams) would put an old base's
+  // figures beside the current print (GDP, 2026-10: Q2 FY26 2011-12-base
+  // industries quoted beside Q1 FY27 on 2022-23). Different products sharing a
+  // guide (ASI with ASUSE) are not a seam and pass.
+  {
+    const seams = YAML.parse(fs.readFileSync(path.join(ROOT, "data/sources.yml"), "utf8")).seams ?? {};
+    for (const slug2 of D.proseInputs) {
+      const m2 = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", slug2 + ".json"), "utf8")).meta;
+      if (m2.dossier === bundle.meta.dossier && seams[m2.dossier] && m2.base !== bundle.meta.base) {
+        console.error(`facts: proseInput ${slug2} is on base "${m2.base}" but ${bundleSlug} is on "${bundle.meta.base}": point proseInputs at the current base's bundles`);
+        process.exit(1);
+      }
+    }
+  }
   facts.proseInputs = D.proseInputs.map((slug2) => {
     const b = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", slug2 + ".json"), "utf8"));
     const list = Object.entries(b.series).map(([key, s]) => seriesFacts(b.dates, { key, ...s }));

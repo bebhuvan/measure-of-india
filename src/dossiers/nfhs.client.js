@@ -3,7 +3,7 @@
 // -fertility, -household, -states), each carrying All India Combined
 // sub-indicators with NFHS-4 and NFHS-5 values on a 2-point axis.
 // The central story: anaemia WORSENED between rounds while most else improved.
-// Every comparison plate uses dumbbells (NFHS-4 grey → NFHS-5 vermilion).
+// Every comparison plate uses dumbbells (NFHS-4 grey → NFHS-5 blue).
 
 import * as Plot from "@observablehq/plot";
 import childBundle from "../../data/series/nfhs-child.json";
@@ -51,15 +51,15 @@ function dumbbell(el, items, opts) {
   const xTicks = opts.xTicks ?? [Math.floor(lo), Math.round((lo + hi) / 2), Math.ceil(hi)];
   const plot = Plot.plot({
     width: W, height: H, marginLeft: ml, marginRight: mr, marginTop: 14, marginBottom: 44,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: opts.xLabel, labelAnchor: "right", labelArrow: false, domain: [lo - pad, hi + pad], ticks: xTicks, tickSize: 0, tickPadding: 10, tickFormat: (d) => String(opts.xFmt ? opts.xFmt(d) : Math.round(d)) },
     y: { label: null, domain: rows.map((r) => r.label), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
     marks: [
-      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
-      Plot.link(rows, { y: "label", x1: "v4", x2: "v5", stroke: "#C6C0B0", strokeWidth: 2 }),
-      Plot.dot(flat.filter((d) => d.round === "NFHS-4" && d.v != null), { y: "label", x: "v", fill: "#5B564B", r: 6, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.dot(flat.filter((d) => d.round === "NFHS-5"), { y: "label", x: "v", fill: "#BE3E26", r: 6, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+      Plot.link(rows, { y: "label", x1: "v4", x2: "v5", stroke: "#C9CED6", strokeWidth: 2 }),
+      Plot.dot(flat.filter((d) => d.round === "NFHS-4" && d.v != null), { y: "label", x: "v", fill: "#5F6675", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.dot(flat.filter((d) => d.round === "NFHS-5"), { y: "label", x: "v", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       /* labels go OUTSIDE the dumbbell: the left dot's label to its left, the
        * right dot's to its right — never into the connector's path.
        * Plot ignores function-valued dx/textAnchor, so one mark per side.
@@ -77,21 +77,21 @@ function dumbbell(el, items, opts) {
         return [
           Plot.text(v4left.filter((d) => !tuck4.includes(d)), { y: "label", x: "v4",
             dx: -14, text: (d) => lbl(d.v4),
-            fill: "#5B564B", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
+            fill: "#5F6675", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
           Plot.text(tuck4, { y: "label", x: "v4",
             dy: 17, text: (d) => lbl(d.v4),
-            fill: "#5B564B", fontSize: 12.5, fontFamily: mono, textAnchor: "middle" }),
+            fill: "#5F6675", fontSize: 12.5, fontFamily: mono, textAnchor: "middle" }),
           Plot.text(v5left.filter((d) => !tuck5.includes(d)), { y: "label", x: "v5",
             dx: -14, text: (d) => lbl(d.v5),
-            fill: "#BE3E26", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "end" }),
+            fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "end" }),
           Plot.text(tuck5, { y: "label", x: "v5",
             dy: 17, text: (d) => lbl(d.v5),
-            fill: "#BE3E26", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "middle" }),
+            fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "middle" }),
         ];
       })(),
       Plot.text(rows.filter((d) => d.v4 == null || d.v4 <= d.v5), { y: "label", x: "v5",
         dx: 14, text: (d) => opts.xFmt ? opts.xFmt(d.v5) : String(Math.round(d.v5)),
-        fill: "#BE3E26", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+        fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
   });
   a11y(plot, opts.a11yTitle, opts.a11yDesc);
@@ -138,13 +138,13 @@ const M_ALC = find(adultBundle, "men age 15 years and above who consume alc");
 
 /* ---------- titleblock ---------- */
 setHTML("n-anaemia", v5(CHILD_ANAEMIA).toFixed(1) + pc("%"));
-setHTML("d-anaemia", `<b>▲ +${(v5(CHILD_ANAEMIA) - v4(CHILD_ANAEMIA)).toFixed(1)} pt</b> vs NFHS-4 · worsened`);
+setHTML("d-anaemia", `<b>▲ +${(v5(CHILD_ANAEMIA) - v4(CHILD_ANAEMIA)).toFixed(1)} pt</b> vs NFHS-4, worsened`);
 setHTML("n-imr", fmtInt(v5(IMR)) + pc("/1000"));
-setHTML("d-imr", `<b>▼ −${(v4(IMR) - v5(IMR)).toFixed(1)}</b> vs NFHS-4 · improved`);
+setHTML("d-imr", `<b>▼ −${(v4(IMR) - v5(IMR)).toFixed(1)}</b> vs NFHS-4, improved`);
 setHTML("n-institutional", v5(INST).toFixed(1) + pc("%"));
 setHTML("d-institutional", `<b>▲ +${(v5(INST) - v4(INST)).toFixed(1)} pt</b> vs NFHS-4`);
 setHTML("n-tfr", v5(TFR).toFixed(2));
-setHTML("d-tfr", `<b>▼ −${(v4(TFR) - v5(TFR)).toFixed(2)}</b> · below replacement (2.1)`);
+setHTML("d-tfr", `<b>▼ −${(v4(TFR) - v5(TFR)).toFixed(2)}</b>, below replacement (2.1)`);
 
 /* ---------- § 01 ---------- */
 setHTML("rb-anaemia", v5(CHILD_ANAEMIA).toFixed(1) + pc("%"));
@@ -182,7 +182,7 @@ document.getElementById("ledger-body").innerHTML = regRows.map(([s, nm, sw, lowe
   const d = a != null ? b - a : null;
   const goodDir = d != null ? (lowerIsBetter ? d < 0 : d > 0) : null;
   const arrow = d != null ? (d > 0 ? "▲ +" : d < 0 ? "▼ −" : "→ ") + Math.abs(d).toFixed(1) : "new";
-  return `<tr><td class="name"><span class="sw ${sw}"></span>${nm}</td><td class="val">${b.toFixed(b < 5 ? 2 : 1)}${b < 5 ? "" : pc("%")}</td><td class="chg">${goodDir != null ? `<b style="color:${goodDir ? "#5B564B" : "#BE3E26"}">${arrow}</b>` : `<b>${arrow}</b>`} · ${a != null ? a.toFixed(a < 5 ? 2 : 1) : "—"}</td><td class="yr">${a != null ? a.toFixed(a < 5 ? 2 : 1) : "—"}</td></tr>`;
+  return `<tr><td class="name"><span class="sw ${sw}"></span>${nm}</td><td class="val">${b.toFixed(b < 5 ? 2 : 1)}${b < 5 ? "" : pc("%")}</td><td class="chg">${goodDir != null ? `<b style="color:${goodDir ? "#5F6675" : "#2E4BD8"}">${arrow}</b>` : `<b>${arrow}</b>`}, ${a != null ? a.toFixed(a < 5 ? 2 : 1) : "—"}</td><td class="yr">${a != null ? a.toFixed(a < 5 ? 2 : 1) : "—"}</td></tr>`;
 }).join("");
 
 /* ---------- § 03 direction of change ---------- */
@@ -213,21 +213,21 @@ document.getElementById("ledger-body").innerHTML = regRows.map(([s, nm, sw, lowe
   const xTicks = [-Math.ceil(maxAbs), 0, Math.ceil(maxAbs)];
   const plot = Plot.plot({
     width: geo.W, height: geo.H, marginLeft: 230, marginRight: 140, marginTop: 14, marginBottom: 44,
-    style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#878D99", overflow: "visible" },
     x: { label: "← favourable · change (percentage points) · unfavourable →", labelAnchor: "center", labelArrow: false, domain: [-maxAbs * 1.15, maxAbs * 1.15], ticks: xTicks, tickSize: 0, tickPadding: 10, tickFormat: (d) => String(Math.round(d)) },
     y: { label: null, domain: items.map((d) => d.label), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
     marks: [
-      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleX([0], { stroke: "#1B1A17", strokeWidth: 1.5 }),
-      Plot.barX(items, { y: "label", x: "change", fill: (d) => (d.worsened ? "#BE3E26" : "#A8A293"), strokeWidth: 0.5 }),
-      Plot.text(items.filter((d) => !d.worsened && d.change > 0), { y: "label", x: "change", dx: 8, text: (d) => "+" + d.change.toFixed(1), fill: "#5B564B", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
-      Plot.text(items.filter((d) => !d.worsened && d.change <= 0), { y: "label", x: "change", dx: -8, text: (d) => d.change.toFixed(1), fill: "#5B564B", fontSize: 11.5, fontFamily: mono, textAnchor: "end" }),
-      Plot.text(items.filter((d) => d.worsened && d.change > 0), { y: "label", x: "change", dx: 8, text: (d) => "+" + d.change.toFixed(1), fill: "#BE3E26", fontSize: 11.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
-      Plot.text(items.filter((d) => d.worsened && d.change <= 0), { y: "label", x: "change", dx: -8, text: (d) => d.change.toFixed(1), fill: "#BE3E26", fontSize: 11.5, fontFamily: mono, fontWeight: 500, textAnchor: "end" }),
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#161A22", strokeWidth: 1.5 }),
+      Plot.barX(items, { y: "label", x: "change", fill: (d) => (d.worsened ? "#2E4BD8" : "#A3A9B4"), strokeWidth: 0.5 }),
+      Plot.text(items.filter((d) => !d.worsened && d.change > 0), { y: "label", x: "change", dx: 8, text: (d) => "+" + d.change.toFixed(1), fill: "#5F6675", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(items.filter((d) => !d.worsened && d.change <= 0), { y: "label", x: "change", dx: -8, text: (d) => d.change.toFixed(1), fill: "#5F6675", fontSize: 11.5, fontFamily: mono, textAnchor: "end" }),
+      Plot.text(items.filter((d) => d.worsened && d.change > 0), { y: "label", x: "change", dx: 8, text: (d) => "+" + d.change.toFixed(1), fill: "#161A22", fontSize: 11.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.text(items.filter((d) => d.worsened && d.change <= 0), { y: "label", x: "change", dx: -8, text: (d) => d.change.toFixed(1), fill: "#161A22", fontSize: 11.5, fontFamily: mono, fontWeight: 500, textAnchor: "end" }),
     ],
   });
   a11y(plot, "Direction of change between NFHS-4 and NFHS-5, key health indicators",
-    "Horizontal bars showing percentage-point change. Vermilion = unfavourable direction (anaemia up, obesity up, C-section up); grey = favourable. " + items.filter((d) => d.worsened).length + " of " + items.length + " indicators worsened.");
+    "Horizontal bars showing percentage-point change. Blue = unfavourable direction (anaemia up, obesity up, C-section up); grey = favourable. " + items.filter((d) => d.worsened).length + " of " + items.length + " indicators worsened.");
   document.getElementById("plot-direction").append(plot);
   const csv = "indicator,change_pct_pt,direction\n" + items.map((d) => `"${d.label}",${d.change.toFixed(2)},${d.worsened ? "unfavourable" : "favourable"}`).join("\n");
   wirePlate(document.getElementById("cb-direction"), plot, "india-atlas_nfhs_direction-of-change_nfhs4-to-nfhs5", csv);
@@ -301,13 +301,13 @@ document.getElementById("ledger-body").innerHTML = regRows.map(([s, nm, sw, lowe
 /* ---------- § 08 adult NCDs ---------- */
 {
   const items = [
-    { label: "Women — BMI below normal", v4: v4(W_THIN), v5: v5(W_THIN) },
-    { label: "Men — BMI below normal", v4: v4(M_THIN), v5: v5(M_THIN) },
-    { label: "Women — overweight/obese", v4: v4(W_OV), v5: v5(W_OV) },
-    { label: "Men — overweight/obese", v4: v4(M_OV), v5: v5(M_OV) },
-    { label: "Men — tobacco use", v4: v4(M_TOB), v5: v5(M_TOB) },
-    { label: "Women — tobacco use", v4: v4(W_TOB), v5: v5(W_TOB) },
-    { label: "Men — alcohol consumption", v4: v4(M_ALC), v5: v5(M_ALC) },
+    { label: "Women: BMI below normal", v4: v4(W_THIN), v5: v5(W_THIN) },
+    { label: "Men: BMI below normal", v4: v4(M_THIN), v5: v5(M_THIN) },
+    { label: "Women: overweight/obese", v4: v4(W_OV), v5: v5(W_OV) },
+    { label: "Men: overweight/obese", v4: v4(M_OV), v5: v5(M_OV) },
+    { label: "Men: tobacco use", v4: v4(M_TOB), v5: v5(M_TOB) },
+    { label: "Women: tobacco use", v4: v4(W_TOB), v5: v5(W_TOB) },
+    { label: "Men: alcohol consumption", v4: v4(M_ALC), v5: v5(M_ALC) },
   ];
   setHTML("pv-adult", v5(W_OV).toFixed(1) + pc("%"));
   setHTML("ex-ad-wov", v5(W_OV).toFixed(1) + pc("%"));
@@ -375,8 +375,8 @@ document.getElementById("ledger-body").innerHTML = regRows.map(([s, nm, sw, lowe
   const above = rows.filter((r) => r.v >= aiAvg).length;
   const spread = rows.at(-1).v - rows[0].v;
   setHTML("pv-states", spread.toFixed(0) + pc(" pt"));
-  setHTML("ex-st-best", rows[0].state + " · " + rows[0].v.toFixed(0) + pc("%"));
-  setHTML("ex-st-worst", rows.at(-1).state + " · " + rows.at(-1).v.toFixed(0) + pc("%"));
+  setHTML("ex-st-best", rows[0].state + ", " + rows[0].v.toFixed(0) + pc("%"));
+  setHTML("ex-st-worst", rows.at(-1).state + ", " + rows.at(-1).v.toFixed(0) + pc("%"));
   setHTML("ex-st-spread", spread.toFixed(0));
   setHTML("ex-st-above", String(above));
   setHTML("ex-st-n", String(rows.length));
@@ -386,18 +386,18 @@ document.getElementById("ledger-body").innerHTML = regRows.map(([s, nm, sw, lowe
   const isWorst = (d, i) => i >= rows.length - 3;
   const plot = Plot.plot({
     width: geo.W, height: geo.H, marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#878D99", overflow: "visible" },
     x: { label: "children anaemic, per cent →", labelAnchor: "right", labelArrow: false, domain: [30, rows.at(-1).v * 1.05], ticks: xTicks, tickSize: 0, tickPadding: 10, tickFormat: (d) => String(d) + "%" },
     y: { label: null, domain: rows.map((r) => r.state), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
     marks: [
-      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleX([aiAvg], { stroke: "#BE3E26", strokeWidth: 1.5, strokeDasharray: "3,3" }),
-      Plot.ruleY(rows, { y: "state", x1: 30, x2: "v", stroke: (d, i) => (isWorst(d, i) ? "#E5B8AE" : "#E0DACA"), strokeWidth: 1.25 }),
-      Plot.dot(rows, { y: "state", x: "v", fill: (d, i) => (isWorst(d, i) ? "#BE3E26" : "#5B564B"), r: 5.5 }),
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([aiAvg], { stroke: "#2E4BD8", strokeWidth: 1.5, strokeDasharray: "3,3" }),
+      Plot.ruleY(rows, { y: "state", x1: 30, x2: "v", stroke: (d, i) => (isWorst(d, i) ? "#B9C3F3" : "#E3E6EB"), strokeWidth: 1.25 }),
+      Plot.dot(rows, { y: "state", x: "v", fill: (d, i) => (isWorst(d, i) ? "#2E4BD8" : "#5F6675"), r: 5.5 }),
       ["start", "end", "middle"].map((a) => Plot.text(rows.filter((d) => aiSpot(d.v).anchor === a), { y: "state", x: "v",
         dx: a === "end" ? -12 : a === "start" ? 12 : 0, dy: a === "middle" ? -11 : 0,
         text: (d) => d.v.toFixed(0) + "%",
-        fill: (d, i) => (isWorst(d, i) ? "#BE3E26" : "#8A857A"), fontSize: 12.5, fontFamily: mono,
+        fill: (d, i) => (isWorst(d, i) ? "#161A22" : "#878D99"), fontSize: 12.5, fontFamily: mono,
         fontWeight: (d, i) => (isWorst(d, i) ? 500 : 400), textAnchor: a })),
     ],
   });

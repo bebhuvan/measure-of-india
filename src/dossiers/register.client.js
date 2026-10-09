@@ -86,82 +86,94 @@ const RATIO = { data: M2.rural.data.map((d, i) => ({ date: d.date, value: M2.urb
 // rows[8] (optional) overrides the section vintage — the 2024-base prints
 // arrive on their own release cycle
 const cpiRows = [
-  ["Headline CPI · base 2024", "CPI24-ALL", "s-acc", C24.headline, false, "/dossiers/cpi/", null, f1, "12 Jul 2026"],
-  ["Food & beverages · base 2024", "CPI24-FB", "s-g1", C24.food_and_beverages, false, "/dossiers/cpi/", null, f1, "12 Jul 2026"],
-  ["Headline CPI (combined) · base retired · to Dec 2025", "CPI-ALL", "s-acc", C.headline, false, "/dossiers/cpi/", "computed"],
-  ["Food & beverages · base retired · to Dec 2025", "CPI-FB", "s-g1", C.food, false, "/dossiers/cpi/"],
-  ["Fuel & light · base retired · to Dec 2025", "CPI-FUEL", "s-g2", C.fuel, false, "/dossiers/cpi/"],
-  ["Core · ex food & fuel · base retired · to Dec 2025", "IA-CORE", "s-g3", C.core, true, "/dossiers/cpi/", "derived"],
+  ["Headline CPI, base 2024", "CPI24-ALL", "s-acc", C24.headline, false, "/guides/cpi/", null, f1, "12 Jul 2026"],
+  ["Food & beverages, base 2024", "CPI24-FB", "s-g1", C24.food_and_beverages, false, "/guides/cpi/", null, f1, "12 Jul 2026"],
+  ["Headline CPI (combined), base retired, to Dec 2025", "CPI-ALL", "s-acc", C.headline, false, "/guides/cpi/", "computed"],
+  ["Food & beverages, base retired, to Dec 2025", "CPI-FB", "s-g1", C.food, false, "/guides/cpi/"],
+  ["Fuel & light, base retired, to Dec 2025", "CPI-FUEL", "s-g2", C.fuel, false, "/guides/cpi/"],
+  ["Core, ex food & fuel, base retired, to Dec 2025", "IA-CORE", "s-g3", C.core, true, "/guides/cpi/", "derived"],
 ];
 const gdpRows = [
-  ["Real GDP", "NAS-GDP", "s-acc", G.gdp, false, "/dossiers/gdp/", "computed"],
-  ["Real GVA", "NAS-GVA", "s-g1", G.gva, false, "/dossiers/gdp/"],
-  ["Consumption · PFCE", "NAS-PFCE", "s-g2", G.pfce, false, "/dossiers/gdp/", "computed"],
-  ["Investment · GFCF", "NAS-GFCF", "s-g3", G.gfcf, false, "/dossiers/gdp/", "computed"],
+  ["Real GDP", "NAS-GDP", "s-acc", G.gdp, false, "/guides/gdp/", "computed"],
+  ["Real GVA", "NAS-GVA", "s-g1", G.gva, false, "/guides/gdp/"],
+  ["Consumption, PFCE", "NAS-PFCE", "s-g2", G.pfce, false, "/guides/gdp/", "computed"],
+  ["Investment, GFCF", "NAS-GFCF", "s-g3", G.gfcf, false, "/guides/gdp/", "computed"],
 ];
 const wpiRows = [
-  ["Headline WPI", "WPI-ALL", "s-acc", W.headline, false, "/dossiers/wpi/", "computed"],
-  ["Primary articles", "WPI-PRI", "s-g1", W.primary, false, "/dossiers/wpi/"],
-  ["Fuel & power", "WPI-FUEL", "s-g2", W.fuel, false, "/dossiers/wpi/"],
-  ["Manufactured products", "WPI-MFG", "s-g3", W.manufactured, false, "/dossiers/wpi/"],
-  ["Food index", "WPI-FOOD", "s-g4", W.food_index, false, "/dossiers/wpi/"],
+  ["Headline WPI", "WPI-ALL", "s-acc", W.headline, false, "/guides/wpi/", "computed"],
+  ["Primary articles", "WPI-PRI", "s-g1", W.primary, false, "/guides/wpi/"],
+  ["Fuel & power", "WPI-FUEL", "s-g2", W.fuel, false, "/guides/wpi/"],
+  ["Manufactured products", "WPI-MFG", "s-g3", W.manufactured, false, "/guides/wpi/"],
+  ["Food index", "WPI-FOOD", "s-g4", W.food_index, false, "/guides/wpi/"],
 ];
 const iipRows = [
-  ["General (headline)", "IIP-GEN", "s-acc", I.general, false, "/dossiers/iip/", "computed"],
-  ["Manufacturing", "IIP-MFG", "s-g1", I.sector_manufacturing, false, "/dossiers/iip/"],
-  ["Capital goods", "IIP-CAP", "s-g2", I.use_capital_goods, false, "/dossiers/iip/", "computed"],
-  ["Consumer non-durables", "IIP-CND", "s-g3", I.use_consumer_non_durables, false, "/dossiers/iip/", "computed"],
+  ["General (headline)", "IIP-GEN", "s-acc", I.general, false, "/guides/iip/", "computed"],
+  ["Manufacturing", "IIP-MFG", "s-g1", I.sector_manufacturing, false, "/guides/iip/"],
+  ["Capital goods", "IIP-CAP", "s-g2", I.use_capital_goods, false, "/guides/iip/", "computed"],
+  ["Consumer non-durables", "IIP-CND", "s-g3", I.use_consumer_non_durables, false, "/guides/iip/", "computed"],
 ];
 const extRows = [
-  ["Trade balance, goods · $bn/mo", "RBI-TB", "s-acc", TB, false, "/dossiers/external/", "computed", fBn],
-  ["Forex reserves · $bn", "RBI-FX", "s-g1", FR, false, "/dossiers/external/", null, fBn],
-  ["USD / INR · monthly avg", "RBI-USD", "s-g2", FU, false, "/dossiers/external/", null, fRs],
-  ["CAD · % of GDP", "RBI-CAD", "s-g3", RC, false, "/dossiers/external/", null, f1],
-  ["Remittances · private transfers, net · $bn/yr", "RBI-REM", "s-acc", REM, false, "/dossiers/external/", null, fBn],
-  ["RBI net US$ purchase(+)/sale(−) · $bn/mo", "RBI-INT", "s-g4", IVN, false, "/dossiers/external/", null, fBn2],
-  ["Forward premia · 3-month · % p.a.", "RBI-FWP", "s-g1", FWP, false, "/dossiers/external/", null, (v) => v.toFixed(2) + "%"],
-  ["EUR / INR · monthly avg", "RBI-EUR", "s-g2", EUR, false, "/dossiers/external/", null, fRs],
-  ["Exports to USA · $bn/yr", "RBI-XUS", "s-g3", XUS, false, "/dossiers/external/", null, fBn],
-  ["Imports from China · $bn/yr", "RBI-MCN", "s-g4", MCN, false, "/dossiers/external/", null, fBn],
-  ["Petroleum, crude & products imports · $bn/yr", "RBI-MPE", "s-g1", MPET, false, "/dossiers/external/", null, fBn],
+  ["Trade balance, goods, $bn/mo", "RBI-TB", "s-acc", TB, false, "/guides/external/", "computed", fBn],
+  ["Forex reserves, $bn", "RBI-FX", "s-g1", FR, false, "/guides/external/", null, fBn],
+  ["USD / INR, monthly avg", "RBI-USD", "s-g2", FU, false, "/guides/external/", null, fRs],
+  ["CAD, % of GDP", "RBI-CAD", "s-g3", RC, false, "/guides/external/", null, f1],
+  ["Remittances, private transfers, net, $bn/yr", "RBI-REM", "s-acc", REM, false, "/guides/external/", null, fBn],
+  ["RBI net US$ purchase(+)/sale(−), $bn/mo", "RBI-INT", "s-g4", IVN, false, "/guides/external/", null, fBn2],
+  ["Forward premia, 3-month, % p.a.", "RBI-FWP", "s-g1", FWP, false, "/guides/external/", null, (v) => v.toFixed(2) + "%"],
+  ["EUR / INR, monthly avg", "RBI-EUR", "s-g2", EUR, false, "/guides/external/", null, fRs],
+  ["Exports to USA, $bn/yr", "RBI-XUS", "s-g3", XUS, false, "/guides/external/", null, fBn],
+  ["Imports from China, $bn/yr", "RBI-MCN", "s-g4", MCN, false, "/guides/external/", null, fBn],
+  ["Petroleum, crude & products imports, $bn/yr", "RBI-MPE", "s-g1", MPET, false, "/guides/external/", null, fBn],
 ];
 // HCES is two survey rounds: a two-point sparkline is a bare diagonal, so the
 // history cell degrades to a note — same choice the dossier's own ledger makes.
 const hcesRows = [
-  ["MPCE · rural · ₹/person/month", "HCES-MPCE-R", "s-acc", M2.rural, false, "/dossiers/consumption/", null, fInr],
-  ["MPCE · urban · ₹/person/month", "HCES-MPCE-U", "s-g1", M2.urban, false, "/dossiers/consumption/", null, fInr],
-  ["Urban ÷ rural MPCE", "IA-UR-RATIO", "s-g2", RATIO, true, "/dossiers/consumption/", null, (v) => v.toFixed(2) + "×"],
-  ["Consumption Gini · rural", "HCES-GINI-R", "s-g3", G2.rural, false, "/dossiers/consumption/", null, fG],
-  ["Consumption Gini · urban", "HCES-GINI-U", "s-g4", G2.urban, false, "/dossiers/consumption/", null, fG],
+  ["MPCE, rural, ₹/person/month", "HCES-MPCE-R", "s-acc", M2.rural, false, "/guides/consumption/", null, fInr],
+  ["MPCE, urban, ₹/person/month", "HCES-MPCE-U", "s-g1", M2.urban, false, "/guides/consumption/", null, fInr],
+  ["Urban ÷ rural MPCE", "IA-UR-RATIO", "s-g2", RATIO, true, "/guides/consumption/", null, (v) => v.toFixed(2) + "×"],
+  ["Consumption Gini, rural", "HCES-GINI-R", "s-g3", G2.rural, false, "/guides/consumption/", null, fG],
+  ["Consumption Gini, urban", "HCES-GINI-U", "s-g4", G2.urban, false, "/guides/consumption/", null, fG],
 ];
 const asiRows = [
-  ["Factories in operation · ASI", "ASI-FOP", "s-acc", ASI.factories_in_operation, false, "/dossiers/factories/", null, (v) => Math.round(v).toLocaleString("en-IN")],
-  ["Persons engaged · ASI", "ASI-PE", "s-g1", ASI.persons_engaged, false, "/dossiers/factories/", null, fCr],
-  ["Factory GVA · ASI · nominal · ₹ lakh cr", "ASI-GVA", "s-g2", ASI.gva, false, "/dossiers/factories/", null, fLcr],
-  ["Establishments · unincorporated · ASUSE", "ASUSE-EST", "s-g3", ASU.establishments_all, false, "/dossiers/factories/", null, fCr],
-  ["GVA per worker · informal · ASUSE · ₹/yr", "ASUSE-GVW", "s-g4", noNulls(ASU.gva_per_worker_all), false, "/dossiers/factories/", null, fInr],
+  ["Factories in operation, ASI", "ASI-FOP", "s-acc", ASI.factories_in_operation, false, "/guides/factories/", null, (v) => Math.round(v).toLocaleString("en-IN")],
+  ["Persons engaged, ASI", "ASI-PE", "s-g1", ASI.persons_engaged, false, "/guides/factories/", null, fCr],
+  ["Factory GVA, ASI, nominal, ₹ lakh cr", "ASI-GVA", "s-g2", ASI.gva, false, "/guides/factories/", null, fLcr],
+  ["Establishments, unincorporated, ASUSE", "ASUSE-EST", "s-g3", ASU.establishments_all, false, "/guides/factories/", null, fCr],
+  ["GVA per worker, informal, ASUSE, ₹/yr", "ASUSE-GVW", "s-g4", noNulls(ASU.gva_per_worker_all), false, "/guides/factories/", null, fInr],
   // v1.1 additions: the oldest classification block and the informal-firm portrait
-  ["Factories on register · NIC-1987 block", "ASI87-NF", "s-g2", ASI87.number_of_factories, false, "/dossiers/factories/", null, (v) => Math.round(v).toLocaleString("en-IN"), "block to 1997-98"],
-  ["Establishments using internet · ASUSE", "ASUSE-NET", "s-g1", ASUM.internet_all_combined, false, "/dossiers/factories/", null, (v) => Math.round(v).toLocaleString("en-IN") + " / 1,000"],
+  ["Factories on register, NIC-1987 block", "ASI87-NF", "s-g2", ASI87.number_of_factories, false, "/guides/factories/", null, (v) => Math.round(v).toLocaleString("en-IN"), "block to 1997-98"],
+  ["Establishments using internet, ASUSE", "ASUSE-NET", "s-g1", ASUM.internet_all_combined, false, "/guides/factories/", null, (v) => Math.round(v).toLocaleString("en-IN") + " / 1,000"],
 ];
 const aisheRows = [
-  ["Student enrolment · AISHE", "AISHE-ENR", "s-acc", AIH.enrolment, false, "/dossiers/aishe/", null, fCr],
-  ["Universities · AISHE", "AISHE-UNI", "s-g1", AIH.universities, false, "/dossiers/aishe/", null, (v) => Math.round(v).toLocaleString("en-IN")],
-  ["Colleges · AISHE", "AISHE-COL", "s-g2", AIH.colleges, false, "/dossiers/aishe/", null, (v) => Math.round(v).toLocaleString("en-IN")],
-  ["Teachers · AISHE · 2021-22 reconstructed", "AISHE-TEA", "s-g3", AIH.teachers, false, "/dossiers/aishe/", null, fCr],
-  ["Gross Enrolment Ratio · All Categories", "AISHE-GER", "s-g4", AIH.ger, false, "/dossiers/aishe/", null, (v) => v.toFixed(1) + "%"],
-  ["Gender Parity Index · All Categories", "AISHE-GPI", "s-acc", AIH.gpi, false, "/dossiers/aishe/", null, (v) => v.toFixed(2)],
-  ["Pupil-Teacher Ratio · all institutions", "AISHE-PTR", "s-g1", AIH.ptr, false, "/dossiers/aishe/", null, (v) => String(Math.round(v))],
+  ["Student enrolment, AISHE", "AISHE-ENR", "s-acc", AIH.enrolment, false, "/guides/aishe/", null, fCr],
+  ["Universities, AISHE", "AISHE-UNI", "s-g1", AIH.universities, false, "/guides/aishe/", null, (v) => Math.round(v).toLocaleString("en-IN")],
+  ["Colleges, AISHE", "AISHE-COL", "s-g2", AIH.colleges, false, "/guides/aishe/", null, (v) => Math.round(v).toLocaleString("en-IN")],
+  ["Teachers, AISHE, 2021-22 reconstructed", "AISHE-TEA", "s-g3", AIH.teachers, false, "/guides/aishe/", null, fCr],
+  ["Gross Enrolment Ratio, All Categories", "AISHE-GER", "s-g4", AIH.ger, false, "/guides/aishe/", null, (v) => v.toFixed(1) + "%"],
+  ["Gender Parity Index, All Categories", "AISHE-GPI", "s-acc", AIH.gpi, false, "/guides/aishe/", null, (v) => v.toFixed(2)],
+  ["Pupil-Teacher Ratio, all institutions", "AISHE-PTR", "s-g1", AIH.ptr, false, "/guides/aishe/", null, (v) => String(Math.round(v))],
 ];
 const plfsRows = [
-  ["UR · all-India · monthly CWS", "PLFS-UR", "s-acc", PM.ur, false, "/dossiers/jobs/"],
-  ["LFPR · all-India · monthly", "PLFS-LFPR", "s-g1", PM.lfpr, false, "/dossiers/jobs/"],
-  ["WPR · all-India · monthly", "PLFS-WPR", "s-g2", PM.wpr, false, "/dossiers/jobs/"],
-  ["UR · urban · quarterly CWS", "PLFS-QUR", "s-g3", PQ.ur, false, "/dossiers/jobs/"],
-  ["LFPR · urban · quarterly", "PLFS-QLFPR", "s-g4", PQ.lfpr, false, "/dossiers/jobs/"],
-  ["UR · annual · usual status PS+SS", "PLFS-AUPS", "s-acc", PA.ur_psss, false, "/dossiers/jobs/"],
-  ["UR · annual · weekly CWS", "PLFS-AUCWS", "s-g1", PA.ur_cws, false, "/dossiers/jobs/"],
+  ["UR, all-India, monthly CWS", "PLFS-UR", "s-acc", PM.ur, false, "/guides/jobs/"],
+  ["LFPR, all-India, monthly", "PLFS-LFPR", "s-g1", PM.lfpr, false, "/guides/jobs/"],
+  ["WPR, all-India, monthly", "PLFS-WPR", "s-g2", PM.wpr, false, "/guides/jobs/"],
+  ["UR, urban, quarterly CWS", "PLFS-QUR", "s-g3", PQ.ur, false, "/guides/jobs/"],
+  ["LFPR, urban, quarterly", "PLFS-QLFPR", "s-g4", PQ.lfpr, false, "/guides/jobs/"],
+  ["UR, annual, usual status PS+SS", "PLFS-AUPS", "s-acc", PA.ur_psss, false, "/guides/jobs/"],
+  ["UR, annual, weekly CWS", "PLFS-AUCWS", "s-g1", PA.ur_cws, false, "/guides/jobs/"],
 ];
+
+// Live tables take their vintage label from the bundle (same derivation as
+// display.js's "release" style: the source's release date when known, else
+// the data vintage) — a hand-typed date here rots at the next print. The
+// frozen retired-ruler tables (cpi's 2012 base, gdp's 2011-12 base) keep
+// hand-typed dates on purpose: their final release never changes, and
+// gdp.json carries no releaseDate to derive from.
+const VT_MS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const vintOf = (b) => {
+  const iso = b.meta.releaseDate ?? b.meta.vintage;
+  return `${Number(iso.slice(8, 10))} ${VT_MS[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}`;
+};
 
 function render(tbody, rows, lag, prefix, vintage, srcName = "MoSPI / NSO") {
   document.getElementById(tbody).innerHTML = rows.map(([nm, code, sw, s, derived, href, note, fmt, vt], i) => {
@@ -187,7 +199,7 @@ function render(tbody, rows, lag, prefix, vintage, srcName = "MoSPI / NSO") {
   rows.forEach(([nm, code, sw, s], i) => {
     // a series of one or two observations has no shape to draw — degrade to a note
     if (s.data.filter((d) => d.value != null).length < 3) {
-      document.getElementById(`${prefix}-${i}`).innerHTML = '<span class="code">two rounds · not charted</span>';
+      document.getElementById(`${prefix}-${i}`).innerHTML = '<span class="code">two rounds, not charted</span>';
       return;
     }
     const color = getComputedStyle(document.querySelector("." + sw)).backgroundColor;
@@ -197,7 +209,7 @@ function render(tbody, rows, lag, prefix, vintage, srcName = "MoSPI / NSO") {
       style: { background: "transparent" }, x: { axis: null },
       y: { axis: null, domain: [Math.min(...vs, 0), Math.max(...vs)] },
       marks: [
-        Plot.ruleY([0], { stroke: "#E6E2D6" }),
+        Plot.ruleY([0], { stroke: "#ECEEF2" }),
         Plot.lineY(s.data, { x: "date", y: "value", stroke: color, strokeWidth: 1.5, strokeLinejoin: "round" }),
         Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: color, r: 2.5, stroke: "#FFFFFF", strokeWidth: 1 }),
       ],
@@ -208,30 +220,42 @@ function render(tbody, rows, lag, prefix, vintage, srcName = "MoSPI / NSO") {
 }
 render("reg-cpi", cpiRows, 12, "spc", "12 Jan 2026");
 render("reg-gdp", gdpRows, 4, "spg", "28 Nov 2025");
-render("reg-wpi", wpiRows, 12, "spw", "14 May 2026", "OEA / DPIIT");
-render("reg-iip", iipRows, 12, "spi", "Jul 2026 · QE");
+render("reg-wpi", wpiRows, 12, "spw", vintOf(wpiBundle), "OEA / DPIIT");
+render("reg-iip", iipRows, 12, "spi", "Jul 2026, QE");
 render("reg-ext", extRows, 12, "spe", "Jun 2025", "RBI");
 render("reg-plfs", plfsRows, 12, "spl", "Jun 2026");
 render("reg-hces", hcesRows, 1, "sph", "2023-24 round");
 render("reg-asi", asiRows, 1, "spa", "2023-24");
 render("reg-aishe", aisheRows, 12, "spai", "2021-22 round", "Ministry of Education");
 const genderRows = [
-  ["Sex ratio · census · ♀ per 1000 ♂", "GEND-SR", "s-acc", GSR.sex_ratio, false, "/dossiers/gender/", null, (v) => String(Math.round(v))],
-  ["Maternal Mortality Ratio · per 100k", "GEND-MMR", "s-g1", GMM.mmr, false, "/dossiers/gender/", null, (v) => String(Math.round(v))],
-  ["Literacy · female · age 7+ · %", "GEND-LITF", "s-g2", GLIT.literacy_female, false, "/dossiers/gender/", null, (v) => v.toFixed(1) + "%"],
-  ["LFPR · female · 15+ · %", "GEND-LFPRF", "s-g3", GWK.lfpr_female, false, "/dossiers/gender/", null, (v) => v.toFixed(1) + "%"],
-  ["LFPR · male · 15+ · %", "GEND-LFPRM", "s-g4", GWK.lfpr_male, false, "/dossiers/gender/", null, (v) => v.toFixed(1) + "%"],
+  ["Sex ratio, census, ♀ per 1000 ♂", "GEND-SR", "s-acc", GSR.sex_ratio, false, "/guides/gender/", null, (v) => String(Math.round(v))],
+  ["Maternal Mortality Ratio, per 100k", "GEND-MMR", "s-g1", GMM.mmr, false, "/guides/gender/", null, (v) => String(Math.round(v))],
+  ["Literacy, female, age 7+, %", "GEND-LITF", "s-g2", GLIT.literacy_female, false, "/guides/gender/", null, (v) => v.toFixed(1) + "%"],
+  ["LFPR, female, 15+, %", "GEND-LFPRF", "s-g3", GWK.lfpr_female, false, "/guides/gender/", null, (v) => v.toFixed(1) + "%"],
+  ["LFPR, male, 15+, %", "GEND-LFPRM", "s-g4", GWK.lfpr_male, false, "/guides/gender/", null, (v) => v.toFixed(1) + "%"],
 ];
 render("reg-gender", genderRows, 12, "spgd", "multi-source", "MoSPI compendium");
 const mnreRows = [
-  ["Grand Total · installed · GW", "MNRE-TOT", "s-acc", MNRE.grand_total, false, "/dossiers/mnre/", null, (v) => (v / 1000).toFixed(1) + " GW"],
-  ["Solar · installed · GW", "MNRE-SOL", "s-g1", MNRE.solar, false, "/dossiers/mnre/", null, (v) => (v / 1000).toFixed(1) + " GW"],
-  ["Wind · installed · GW", "MNRE-WND", "s-g2", MNRE.wind, false, "/dossiers/mnre/", null, (v) => (v / 1000).toFixed(1) + " GW"],
-  ["Rooftop solar · installed · GW", "MNRE-RT", "s-g3", MNRE_RT.rooftop, false, "/dossiers/mnre/", null, (v) => (v / 1000).toFixed(1) + " GW"],
+  ["Grand Total, installed, GW", "MNRE-TOT", "s-acc", MNRE.grand_total, false, "/guides/mnre/", null, (v) => (v / 1000).toFixed(1) + " GW"],
+  ["Solar, installed, GW", "MNRE-SOL", "s-g1", MNRE.solar, false, "/guides/mnre/", null, (v) => (v / 1000).toFixed(1) + " GW"],
+  ["Wind, installed, GW", "MNRE-WND", "s-g2", MNRE.wind, false, "/guides/mnre/", null, (v) => (v / 1000).toFixed(1) + " GW"],
+  ["Rooftop solar, installed, GW", "MNRE-RT", "s-g3", MNRE_RT.rooftop, false, "/guides/mnre/", null, (v) => (v / 1000).toFixed(1) + " GW"],
 ];
 render("reg-mnre", mnreRows, 1, "spmn", "Jun 2026", "MNRE");
 // NFHS — 2-point, cross-sectional; the register's year-ago logic needs no change
 // (it finds the nearest observation ~365 days back, which is the NFHS-4 point)
+// Bank deposits, RBI BSR-2: annual, as on 31 March, ₹ lakh crore
+import depositsBundle from "../../data/series/deposits-owners.json";
+{
+  const DP = hydrate(depositsBundle);
+  const lc = (v) => "₹" + v.toFixed(1) + " lakh cr";
+  render("reg-deposits", [
+    ["Household deposits, all types", "BSR2-HH", "s-acc", DP.household_total, false, "/guides/deposits/", null, lc],
+    ["Household fixed (term) deposits", "BSR2-HHT", "s-g1", DP.household_term, false, "/guides/deposits/", null, lc],
+    ["Household savings accounts", "BSR2-HHS", "s-g2", DP.household_savings, false, "/guides/deposits/", null, lc],
+    ["Women's deposits", "BSR2-F", "s-g3", DP.female_total, false, "/guides/deposits/", null, lc],
+  ], 1, "spdp", "Mar 2026", "RBI BSR-2");
+}
 import nfhsAnaemiaBundle from "../../data/series/nfhs-anaemia.json";
 import nfhsChildBundle from "../../data/series/nfhs-child.json";
 import nfhsFertilityBundle from "../../data/series/nfhs-fertility.json";
@@ -240,10 +264,10 @@ const NC = hydrate(nfhsChildBundle);
 const NF = hydrate(nfhsFertilityBundle);
 const nfhsFind = (b, needle) => { const lower = needle.toLowerCase(); return Object.values(b).find((s) => s.label && s.label.toLowerCase().includes(lower)); };
 const nfhsRows = [
-  ["Child anaemia (6-59 mo) · %", "NFHS-ANM", "s-acc", nfhsFind(NA, "children age 6-59")],
-  ["Infant mortality · /1,000", "NFHS-IMR", "s-g1", nfhsFind(NC, "infant mortality")],
-  ["Stunting (under-5) · %", "NFHS-STN", "s-g2", nfhsFind(NC, "stunted")],
-  ["TFR · children/woman", "NFHS-TFR", "s-g3", nfhsFind(NF, "total fertility rate")],
-  ["Women's bank account · %", "NFHS-BNK", "s-g4", nfhsFind(NF, "bank or savings")],
+  ["Child anaemia (6-59 mo), %", "NFHS-ANM", "s-acc", nfhsFind(NA, "children age 6-59")],
+  ["Infant mortality, /1,000", "NFHS-IMR", "s-g1", nfhsFind(NC, "infant mortality")],
+  ["Stunting (under-5), %", "NFHS-STN", "s-g2", nfhsFind(NC, "stunted")],
+  ["TFR, children/woman", "NFHS-TFR", "s-g3", nfhsFind(NF, "total fertility rate")],
+  ["Women's bank account, %", "NFHS-BNK", "s-g4", nfhsFind(NF, "bank or savings")],
 ].filter(([, , , s]) => s != null);
-render("reg-nfhs", nfhsRows.map(([nm, code, sw, s]) => [nm, code, sw, s, false, "/dossiers/nfhs/"]), 48, "spnf", "NFHS-5", "MoSPI / IIPS");
+render("reg-nfhs", nfhsRows.map(([nm, code, sw, s]) => [nm, code, sw, s, false, "/guides/nfhs/"]), 48, "spnf", "NFHS-5", "MoSPI / IIPS");

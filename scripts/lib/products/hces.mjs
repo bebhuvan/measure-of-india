@@ -28,7 +28,7 @@
 import { mospi } from "../mospi.mjs";
 import { writeSeries, writeRaw } from "../util.mjs";
 
-const GREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
+const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 const slugify = (s) => String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 const fyStart = (fy) => `${String(fy).slice(0, 4)}-04`; // "2023-24" -> "2023-04"
 
@@ -89,10 +89,10 @@ export async function buildHces(root, dcfg, vintage) {
     meta: { ...metaBase, coverage: "All India, rural and urban; average MPCE in ₹", note: imputNote },
     dates,
     series: {
-      rural: { name: "hces_mpce_rural_inr", label: "Rural (without imputation)", color: "#BE3E26", data: data(mpceOf("Rural", "Without Imputation")), unit: "inr" },
-      urban: { name: "hces_mpce_urban_inr", label: "Urban (without imputation)", color: "#5B564B", data: data(mpceOf("Urban", "Without Imputation")), unit: "inr" },
-      rural_imputed: { name: "hces_mpce_rural_imputed_inr", label: "Rural (with imputation)", color: "#8A857A", data: data(mpceOf("Rural", "With Imputation")), unit: "inr" },
-      urban_imputed: { name: "hces_mpce_urban_imputed_inr", label: "Urban (with imputation)", color: "#A8A293", data: data(mpceOf("Urban", "With Imputation")), unit: "inr" },
+      rural: { name: "hces_mpce_rural_inr", label: "Rural (without imputation)", color: "#2E4BD8", data: data(mpceOf("Rural", "Without Imputation")), unit: "inr" },
+      urban: { name: "hces_mpce_urban_inr", label: "Urban (without imputation)", color: "#5F6675", data: data(mpceOf("Urban", "Without Imputation")), unit: "inr" },
+      rural_imputed: { name: "hces_mpce_rural_imputed_inr", label: "Rural (with imputation)", color: "#878D99", data: data(mpceOf("Rural", "With Imputation")), unit: "inr" },
+      urban_imputed: { name: "hces_mpce_urban_imputed_inr", label: "Urban (with imputation)", color: "#A3A9B4", data: data(mpceOf("Urban", "With Imputation")), unit: "inr" },
     },
   };
 
@@ -150,7 +150,7 @@ export async function buildHces(root, dcfg, vintage) {
       const accent = cat === "Food Total" && sector === "Rural";
       catSeries[key] = {
         name: `hces_share_${key}_pct`, label: `${cat} · ${sector}`,
-        color: accent ? "#BE3E26" : GREYS[ci++ % GREYS.length],
+        color: accent ? "#2E4BD8" : GREYS[ci++ % GREYS.length],
         data: data(toMap(rows)), unit: "pct_of_mpce",
       };
     }
@@ -171,10 +171,10 @@ export async function buildHces(root, dcfg, vintage) {
     meta: { ...metaBase, coverage: "All India, rural and urban; Gini coefficient of per-capita consumption expenditure", note: imputNote },
     dates,
     series: {
-      rural: { name: "hces_gini_rural", label: "Rural (without imputation)", color: "#BE3E26", data: data(giniOf("Rural", "Without Imputation")), unit: "gini" },
-      urban: { name: "hces_gini_urban", label: "Urban (without imputation)", color: "#5B564B", data: data(giniOf("Urban", "Without Imputation")), unit: "gini" },
-      rural_imputed: { name: "hces_gini_rural_imputed", label: "Rural (with imputation)", color: "#8A857A", data: data(giniOf("Rural", "With Imputation")), unit: "gini" },
-      urban_imputed: { name: "hces_gini_urban_imputed", label: "Urban (with imputation)", color: "#A8A293", data: data(giniOf("Urban", "With Imputation")), unit: "gini" },
+      rural: { name: "hces_gini_rural", label: "Rural (without imputation)", color: "#2E4BD8", data: data(giniOf("Rural", "Without Imputation")), unit: "gini" },
+      urban: { name: "hces_gini_urban", label: "Urban (without imputation)", color: "#5F6675", data: data(giniOf("Urban", "Without Imputation")), unit: "gini" },
+      rural_imputed: { name: "hces_gini_rural_imputed", label: "Rural (with imputation)", color: "#878D99", data: data(giniOf("Rural", "With Imputation")), unit: "gini" },
+      urban_imputed: { name: "hces_gini_urban_imputed", label: "Urban (with imputation)", color: "#A3A9B4", data: data(giniOf("Urban", "With Imputation")), unit: "gini" },
     },
   };
 
@@ -189,7 +189,7 @@ export async function buildHces(root, dcfg, vintage) {
       const key = `${gk}_${slugify(sector)}`;
       socSeries[key] = {
         name: `hces_mpce_social_${key}_inr`, label: `${group} · ${sector}`,
-        color: gk === "st" && sector === "Rural" ? "#BE3E26" : GREYS[si++ % GREYS.length],
+        color: gk === "st" && sector === "Rural" ? "#2E4BD8" : GREYS[si++ % GREYS.length],
         data: data(toMap(socRows.filter((r) => r.social_group === group && r.sector === sector))), unit: "inr",
       };
     }
@@ -237,7 +237,7 @@ export async function buildHces(root, dcfg, vintage) {
       const key = `${slugify(cereal)}_${slugify(sector)}`;
       qtySeries[key] = {
         name: `hces_qty_${key}_kg`, label: `${cereal} · ${sector}`,
-        color: cereal === "Total Cereals" && sector === "Rural" ? "#BE3E26" : GREYS[qi++ % GREYS.length],
+        color: cereal === "Total Cereals" && sector === "Rural" ? "#2E4BD8" : GREYS[qi++ % GREYS.length],
         data: data(toMap(qtyRows.filter((r) => r.cereal === cereal && r.sector === sector))), unit: "kg_per_month",
       };
     }
@@ -262,7 +262,7 @@ export async function buildHces(root, dcfg, vintage) {
       const key = `${slugify(cereal)}_${slugify(sector)}`;
       valSeries[key] = {
         name: `hces_value_${key}_inr`, label: `${cereal} · ${sector}`,
-        color: cereal === "Total Cereals" && sector === "Rural" ? "#BE3E26" : GREYS[vi++ % GREYS.length],
+        color: cereal === "Total Cereals" && sector === "Rural" ? "#2E4BD8" : GREYS[vi++ % GREYS.length],
         data: data(toMap(valRows.filter((r) => r.cereal === cereal && r.sector === sector))), unit: "inr",
       };
     }

@@ -50,6 +50,13 @@ jobs:
       - name: Fetch and validate data
         run: node scripts/fetch.mjs && node scripts/validate.mjs
 
+      # A print advance flags every .now paragraph bound to it. The release
+      # PR is still opened so a human can re-read the flagged paragraphs on
+      # it — ci.yml (which runs this gate hard) is what blocks the merge.
+      - name: As-of governance (flag stale paragraphs for the PR)
+        continue-on-error: true
+        run: node pipeline/asof.mjs
+
       - name: Regenerate dated prose
         id: prose
         if: ${{ secrets.INDIA_ATLAS_LLM_KEY != '' }}
@@ -87,5 +94,5 @@ jobs:
             --base main \
             --head "$BRANCH" \
             --title "Release $(date -u +%Y-%m-%d)" \
-            --body "Automated release. Gates already run in CI: fetch, validate, build, QC (rendered numbers + prose freshness). Reviewer: follow docs/RELEASE-CHECKLIST.md — the two prose diffs and the series diff summary. Merge to deploy."
+            --body "Automated release. Gates run in CI: fetch, validate, as-of (flags are non-blocking here; ci.yml enforces them — re-read flagged paragraphs per docs/RELEASE-CHECKLIST.md §1b), build, QC (rendered numbers + prose freshness). Reviewer: follow docs/RELEASE-CHECKLIST.md — the two prose diffs and the series diff summary. Merge to deploy."
           echo "PR_OPENED=1" >> "$GITHUB_OUTPUT"

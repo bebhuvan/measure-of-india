@@ -35,7 +35,7 @@
 import { mospi } from "../mospi.mjs";
 import { writeSeries, writeRaw, quarterAxis } from "../util.mjs";
 
-const GREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
+const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 const slugify = (s) => String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 const fyStart = (fy) => `${String(fy).slice(0, 4)}-04`;
 const Q_START = { "JAN-MAR": "01", "APR-JUN": "04", "JUL-SEP": "07", "OCT-DEC": "10" };
@@ -154,7 +154,7 @@ export async function buildAsuse(root, dcfg, vintage) {
       const accent = key === "gva_per_worker" && et === "all";
       aSeries[`${key}_${et}`] = {
         name: `asuse_${key}_${et}`, label: `${label} · ${et.toUpperCase()}`,
-        color: accent ? "#BE3E26" : GREYS[gi++ % GREYS.length],
+        color: accent ? "#2E4BD8" : GREYS[gi++ % GREYS.length],
         data: aData(m), unit,
       };
     }
@@ -239,7 +239,7 @@ export async function buildAsuse(root, dcfg, vintage) {
       const e = qMaps[sk];
       const accent = sk === "establishments_00_all_activities";
       qSeries[sk] = {
-        name: `asuse_q_${sk}`, label: e.label, color: accent ? "#BE3E26" : GREYS[i % GREYS.length],
+        name: `asuse_q_${sk}`, label: e.label, color: accent ? "#2E4BD8" : GREYS[i % GREYS.length],
         data: qAxis.map((ym) => e.map.get(ym) ?? null), unit: e.unit,
       };
     });
@@ -315,7 +315,7 @@ export async function buildAsuse(root, dcfg, vintage) {
         (r) => `Owner education · ${r.general_education_level.replace(/\.$/, "")} · ${sec}`,
         "per_1000", oSeries, oIdx);
     }
-    if (oSeries.social_obc_combined) oSeries.social_obc_combined.color = "#BE3E26";
+    if (oSeries.social_obc_combined) oSeries.social_obc_combined.color = "#2E4BD8";
   }
   const ownersBundle = {
     meta: {
@@ -372,7 +372,7 @@ export async function buildAsuse(root, dcfg, vintage) {
       () => "franchise_count",
       () => "Establishments serving as franchisee outlets · All India",
       "count", mSeries, mIdx);
-    if (mSeries.internet_all_combined) mSeries.internet_all_combined.color = "#BE3E26";
+    if (mSeries.internet_all_combined) mSeries.internet_all_combined.color = "#2E4BD8";
   }
   const modernityBundle = {
     meta: {
@@ -429,7 +429,7 @@ export async function buildAsuse(root, dcfg, vintage) {
     }
     // the average-months rows are month counts, not per-1000 shares
     for (const k of Object.keys(stSeries)) if (k.startsWith("months_avg_")) stSeries[k].unit = "months";
-    if (stSeries.own_proprietary_female_combined) stSeries.own_proprietary_female_combined.color = "#BE3E26";
+    if (stSeries.own_proprietary_female_combined) stSeries.own_proprietary_female_combined.color = "#2E4BD8";
   }
   const structureBundle = {
     meta: {

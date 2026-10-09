@@ -1,0 +1,546 @@
+---
+import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
+import GuideData from "../../components/GuideData.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+const D = bySlug["consumption"];
+---
+<Base
+  title="Consumption · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/consumption/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">Twice this decade, government surveyors sat in households from Ladakh to Lakshadweep and wrote down a month of spending: the rice, the bus fare, the school fee, the phone recharge. The result is not an income statistic and not a price index. It is the household budget of a country, averaged.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>MoSPI, NSO</b></span>
+      <span>Instrument <b>Sample survey, annual rounds</b></span>
+      <span>Rounds <b>2022-23 &amp; 2023-24</b></span>
+      <span>Coverage <b>All-India, 36 states/UTs</b></span>
+      <span>Unit <b>₹ per person per month</b></span>
+      <span>Convention <b>Without imputation</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Rural MPCE, 2023-24</div><div class="v acc" id="n-rural">–</div><div class="d" id="d-rural">–</div></div>
+      <div class="num"><div class="l">Urban MPCE, 2023-24</div><div class="v" id="n-urban">–</div><div class="d" id="d-urban">–</div></div>
+      <div class="num"><div class="l">Urban ÷ rural</div><div class="v" id="n-ratio">–</div><div class="d" id="d-ratio">–</div></div>
+      <div class="num"><div class="l">Consumption Gini, rural</div><div class="v" id="n-gini">–</div><div class="d" id="d-gini">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">Survey round, 2023-24</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Current reading: rural</span><div class="big" id="rb-big">–</div></div>
+      <p class="rt-cap">Average monthly consumption expenditure per person, 2023-24 round, without imputation. A survey mean in the rupees of the day: it is not income, and it is not adjusted for prices.</p>
+      <div class="rt-side"><span class="rk">Urban, same round</span><div class="rt-side-v" id="rb-first">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the print says</span>
+        <Prose slot="consumption.current-reading.what-the-print-says" />
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What it does not say</span>
+        <Prose slot="consumption.current-reading.what-it-does-not-say" />
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 register -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>The register of series</h2><span class="line"></span><span class="unit">2023-24, vs 2022-23</span></div>
+    <div class="break ledger">
+      <table>
+        <thead>
+          <tr><th>Series</th><th>2023-24</th><th>vs 2022-23</th><th>2022-23</th></tr>
+        </thead>
+        <tbody id="ledger-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- § 03 the ladder -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>The ladder</h2><span class="line"></span><span class="unit">₹ per person per month, without imputation</span></div>
+    <div class="break">
+      <figure id="cb-ladder" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Twelve rungs, two ladders</h3>
+            <div class="sub">Average MPCE by fractile class of the MPCE distribution, rural and urban, 2023-24, with 2022-23 in pale dots, class widths are unequal (5, 5, 10 … 5), plotted evenly</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-lad">–</div><div class="c">2023-24, top 5%, urban</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Rural, 2023-24</button>
+            <button class="chip"><i style="background:#5F6675"></i>Urban, 2023-24</button>
+            <button class="chip"><i style="background:#C9CED6"></i>2022-23 round</button>
+          </div>
+          <div class="plotzone" id="plot-ladder"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NSO, HCES, average MPCE within each fractile class, without imputation, the two rounds are comparable by design and are shown, never chained</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Line everyone up by how much they spend, cut the line into twelve classes, and average each class. That is the ladder. It steepens at the top by construction: the last rung averages the whole long tail above it. The two ladders climb apart as they rise: the same rung buys a different life in the village and in the city, and the gap between the blue and the dark line widens with every step.</p>
+            <p>The pale dots are the earlier round. Where a pale dot sits below its filled twin, that rung's spending rose. At the very top, the pale dots sit higher.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>The bottom rung of rural India spends <b id="ex-lad-bot">–</b> a head a month; the top rung of urban India, <b id="ex-lad-top">–</b>: <b id="ex-lad-mult">–</b> apart. And the top urban rung fell between the rounds, by <b id="ex-lad-drop">–</b> as published; the rural top fell <b id="ex-lad-rdrop">–</b>. Whether the rich trimmed their spending or the survey caught different rich households, we do not know.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 04 who spends what -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>Who spends what</h2><span class="line"></span><span class="unit">₹ per person per month, without imputation</span></div>
+
+    <div class="break">
+      <figure id="cb-social" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Four groups, two Indias</h3>
+            <div class="sub">Average MPCE by social group, rural and urban paired per group, sorted by rural, 2023-24, with 2022-23 in pale dots, dashed rules mark the all-India means</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-social">–</div><div class="c">rural, Others ÷ Scheduled Tribe</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Rural, 2023-24</button>
+            <button class="chip"><i style="background:#5F6675"></i>Urban, 2023-24</button>
+            <button class="chip"><i style="background:#C9CED6"></i>2022-23 round</button>
+          </div>
+          <div class="plotzone" id="plot-social"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NSO, HCES, average MPCE by social group, without imputation, the "All" row is the national mean and is drawn as the dashed rules, not repeated</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each row is a social group; the blue dot is its rural average, the dark dot its urban, and the pale dots are the earlier round. The gaps are real, and they are what this survey can honestly measure: gaps in consumption, counted at the doorstep. They are not income gaps: savings, debt and assets sit outside every dot on this page.</p>
+            <p>And an average is not a destiny. The four distributions overlap heavily; the group a household belongs to says less about its spending than the state it lives in, and the state strip below spreads far wider than any row here.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>Rural Scheduled Tribe households average <b id="ex-so-st">–</b> a head against <b id="ex-so-oth">–</b> for the Others group: <b id="ex-so-mult">–</b> apart. The gap narrowed a step: the ST figure grew <b id="ex-so-stg">–</b> on the round before, the Others figure <b id="ex-so-othg">–</b>. And the floor changes between the two Indias: in towns the lowest average belongs to Scheduled Caste households, at <b id="ex-so-scu">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-hhtype" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The household's work, the household's rupee</h3>
+            <div class="sub">Average MPCE by household employment type, rural published with a farm/non-farm split, urban aggregated, 2022-23 (pale) and 2023-24 (filled), without imputation</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-hht">–</div><div class="c">2023-24, casual labour, urban</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Rural types</button>
+            <button class="chip"><i style="background:#5F6675"></i>Urban types</button>
+            <button class="chip"><i style="background:#C9CED6"></i>2022-23 round</button>
+          </div>
+          <div class="plotzone" id="plot-hhtype"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NSO, HCES, average MPCE by household employment type, without imputation, rows sorted within each sector, dashed rules mark the all-India sector means</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The survey files each household by how it mainly earns. Villages are published with every type split by farm and non-farm work; towns come in four types. Casual labour, paid by the day, no contract, sits at the bottom of both panels, and that is the steadiest fact in this table.</p>
+            <p>The type names the earner; the rupee belongs to the household. A casual-labour average carries working members and dependants alike, and "others" is not a residue of the poor: it is households living on pensions, rent or remittances, with no earner to classify.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>A casual-labour household in town spends <b id="ex-ht-casu">–</b> a head: well under the urban mean of <b id="ex-ht-um">–</b>, and below even rural regular-wage non-farm work at <b id="ex-ht-regnf">–</b>. A regular wage buys <b id="ex-ht-ratio">–</b> the casual rupee in towns. And the top urban row is "others", at <b id="ex-ht-oth">–</b>: the earner-less households are the biggest spenders per head.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 Engel's law -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>Engel's law, observed</h2><span class="line"></span><span class="unit">share of MPCE, per cent, 2023-24</span></div>
+
+    <div class="break basket">
+      <div class="bar" id="bk-r-bar"></div>
+      <div class="labels" id="bk-r-labels"></div>
+    </div>
+    <div class="break basket" style="margin-top:26px">
+      <div class="bar" id="bk-u-bar"></div>
+      <div class="labels" id="bk-u-labels"></div>
+      <p class="note">Two rupees, split. The poorer the setting, the larger the share that eats: Engel's law, visible in a single pair of bars.</p>
+    </div>
+
+    <div class="break" style="margin-top:72px">
+      <figure id="cb-engel" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Where the rupee goes: thirteen categories, two Indias</h3>
+            <div class="sub">Share of MPCE by item category, rural vs urban, 2023-24, without imputation, the thirteen largest of 29 detail categories</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-engel">–</div><div class="c">2023-24, rural food share</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Rural</button>
+            <button class="chip"><i style="background:#5F6675"></i>Urban</button>
+          </div>
+          <div class="plotzone" id="plot-engel"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NSO, HCES, percentage share of MPCE by broad item category, 30-day recall basis, without imputation, rows sorted by the rural share</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each row is a category of spending; the blue dot marks the rural share of the rupee, the dark dot the urban. Where the dark dot sits to the right, the city spends the larger share: schooling, rent, services, processed food. Where the blue dot leads, it is mostly the kitchen: cereals, milk, vegetables, fuel for the stove.</p>
+            <p>A share is not an amount. The city's smaller food share still buys more food, because it is a slice of a larger rupee. What the shares reveal is priority under constraint: what a budget defends first.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>Food takes <b id="ex-en-fr">–</b> of the rural rupee and <b id="ex-en-fu">–</b> of the urban. The widest split is rent: <b id="ex-en-rent-u">–</b> of urban spending against <b id="ex-en-rent-r">–</b> rural, since the village mostly owns its roof: and education nearly doubles in the city, <b id="ex-en-edu-u">–</b> against <b id="ex-en-edu-r">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-shift" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>What moved between the two rounds</h3>
+            <div class="sub">Change in each category's share of MPCE, 2022-23 → 2023-24, rural (blue/grey) beside urban (pale), sorted by the rural change, all 29 detail categories</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-shift">–</div><div class="c">food share, rural, 2022-23 → 2023-24</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip" style="cursor:default"><i style="background:#2E4BD8;width:9px;height:9px;border-radius:50%"></i>Rural, 2023-24 change (≥ 0.5 pt)</span>
+            <span class="chip" style="cursor:default"><i style="background:#5F6675;width:9px;height:9px;border-radius:50%"></i>Rural, smaller moves</span>
+            <span class="chip" style="cursor:default"><i style="background:#A3A9B4;width:9px;height:9px;border-radius:50%"></i>Urban, 2023-24 change</span>
+          </div>
+          <div class="plotzone" id="plot-shift"></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, HCES 2022-23 &amp; 2023-24, percentage-point change in share of MPCE (without imputation), all 29 detail categories, including fruits, pulses, intoxicants, medical and household services previously baked but not charted, the zero rule separates categories that gained share (right) from those that lost it (left)</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each row is one category; the dots show how many percentage points its budget share gained or lost between the two survey rounds. The dark dot is rural, the pale dot urban. Read the zero rule as the dividing line: right is a category that grew as a share of spending, left is one that shrank.</p>
+            <p>The surprise is at the aggregate. Food's share rose in both sectors: <b id="ex-sh-food-r">–</b> rural, <b id="ex-sh-food-u">–</b> urban: the wrong direction for Engel's law in a single year of rising incomes. The drivers are visible on the strip: vegetables and processed food climbed, edible oil fell hardest. The oil fall is a price story, not a taste change: the same pattern as the cereal plate in §06.</p>
+          </div>
+          <div class="now">
+            <span class="mk">Between the rounds</span>
+            <p>Edible oil: <b id="ex-sh-oil">–</b> rural. Vegetables: <b id="ex-sh-veg">–</b> rural. The largest moves are all food; non-food categories barely shifted: rent, education and conveyance each moved under half a point, a sign of how sticky the consumption basket is over one year.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 the plate -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>What the plate holds</h2><span class="line"></span><span class="unit">kg per person per month, 2023-24</span></div>
+    <div class="break">
+      <figure id="cb-plate" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The shrinking staple</h3>
+            <div class="sub">Average monthly quantity of cereals per person, rural and urban, 2022-23 (pale) and 2023-24 (filled), other cereals (~0.01 kg) omitted from the plate, present in the CSV</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-plate">–</div><div class="c">2023-24, rural, all cereals</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Rural, 2023-24</button>
+            <button class="chip"><i style="background:#5F6675"></i>Urban, 2023-24</button>
+            <button class="chip"><i style="background:#C9CED6"></i>2022-23 round</button>
+          </div>
+          <div class="plotzone" id="plot-plate"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NSO, HCES, average per-capita monthly quantity of cereals, kg, published without imputation only, rice + wheat + coarse grains + other cereals = all cereals</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Everything else in this guide is rupees; this plate is weight. A kilogram needs no deflator: it is the same kilogram in both rounds and both Indias. Cereals are the one food the survey publishes by weight, and they are the budget's oldest anchor: bought first, bought everywhere.</p>
+            <p>The section above showed Engel's law in shares of money. This is the same law in physical units. As budgets grow, the plate does not grow with them: what changes is what sits beside the grain.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>A rural Indian consumes <b id="ex-q-rt1">–</b> of cereals a month, down from <b id="ex-q-rt0">–</b> in the round before; a city-dweller <b id="ex-q-ut1">–</b>, near flat. The rupees moved the other way: the rural cereal bill rose <b id="ex-q-vg">–</b> to <b id="ex-q-vr1">–</b> a head: dearer grain, not more of it. Rice still outweighs wheat in the village, <b id="ex-q-rice">–</b> to <b id="ex-q-wheat">–</b>, and the fall is almost all rice: <b id="ex-q-riced">–</b> round on round, against <b id="ex-q-wheatd">–</b> for wheat.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-val" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The same cereals, priced in rupees</h3>
+            <div class="sub">Average per-capita monthly value of cereals, ₹, both rounds, read against the kilogram plate above: kg fell while ₹ rose</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-val">–</div><div class="c">rural cereals, 2023-24, ₹/head/month</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-val"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NSO, HCES, per-capita monthly value of cereals, ₹, without imputation, the counterpart to the kilogram plate: the same baskets, a different unit</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Hold this plate next to the one above. The kilograms move left: fewer cereals eaten. The rupees move right: a larger cereal bill. Lines travelling in opposite directions can mean only one thing: the price per kilogram rose. The survey does not publish that price directly; the two plates together derive it.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>The rural cereal bill reached <b id="ex-v-rt1">–</b> a head, up from <b id="ex-v-rt0">–</b> the round before: a rise of <b id="ex-v-pct">–</b> on a quantity that fell. Every additional rupee here bought less grain than it did, not more.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 the measure -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="wm-grid">
+      <div>
+        <p>MPCE is monthly per capita consumption expenditure: the value of everything a household consumed in the reference period, divided by the number of people in it. The surveyor asks with a mixed clock, the last 30 days for everyday items, the last 365 for durables, clothing and the rare big-ticket purchase, and everything is converted to a 30-day figure per person. Home-grown grain that the family eats counts; a wedding gift given away does not.</p>
+        <p>It is a sample survey, household by household, run across every state and union territory. Each round is a cross-section: a photograph, not a film. The two rounds so far, 2022-23 and 2023-24, were designed alike, so their photographs can be held side by side; they are never averaged or chained into a trend line.</p>
+        <p>Every figure comes in two conventions. The headline is "without imputation". The "with imputation" variant adds an estimated value for goods households received free through social-welfare programmes: subsidised grain taken at zero price, a free cycle, a free uniform. And there is a wall behind the data: the previous consumption survey, 2011-12, asked its questions differently. The API does not serve it, and this guide never reaches across the redesign.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note, i</span>
+          <b>MPCE is not income.</b> Savings, taxes, debt repayment and asset purchases all live outside it. A high earner who saves half looks, in these tables, like a moderate spender.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note, ii</span>
+          <b>Means hide medians.</b> Spending distributions have long right tails, so the mean sits above the typical household. Read the fractile ladder, not just the headline.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note, iii</span>
+          <b>Never compare to 2011-12.</b> The questionnaire, recall design and item list all changed. A level comparison across the redesign is a comparison of two instruments, not two years.
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 08 the map, then the spread -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>The map, then the measure of spread</h2><span class="line"></span><span class="unit">₹ per person per month, Gini</span></div>
+
+    <div class="break">
+      <figure id="cb-states" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Thirty-six states, and two Indias in each</h3>
+            <div class="sub">Average MPCE by state/UT, rural and urban paired per state, sorted by rural, 2023-24, without imputation, dashed rules mark the all-India means</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-states">–</div><div class="c">rural spread, highest ÷ lowest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Rural</button>
+            <button class="chip"><i style="background:#5F6675"></i>Urban</button>
+          </div>
+          <div class="plotzone" id="plot-states"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NSO, HCES, state/UT average MPCE, without imputation, all-India rules from the national series, not the state average</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Every state carries both Indias. The blue dot is its villages, the dark dot its towns, and the line between them is the internal gap each state lives with. States sort by their rural dot: the vertical drift of blue dots is the inequality <em>between</em> states, the length of each connector the inequality <em>within</em> one.</p>
+            <p>Small states and UTs sit oddly high, a city-state has almost no countryside, a Himalayan state has almost no metro, so read the big populous states against each other, and the outliers as geography.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>Rural Sikkim spends <b id="ex-st-hi">–</b> a head; rural Chhattisgarh, <b id="ex-st-lo">–</b>: a spread of <b id="ex-st-mult">–</b>. Rural Delhi, at <b id="ex-st-del">–</b>, outspends the average Indian city-dweller (<b id="ex-st-urb">–</b>). The urban column runs from <b id="ex-st-uhi">–</b> down to <b id="ex-st-ulo">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-foodmap" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Engel's law across the map</h3>
+            <div class="sub">Share of MPCE going to food, by state/UT, rural and urban paired, sorted by the rural share, 2023-24, without imputation, dashed rules mark the all-India shares</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-food">–</div><div class="c">2023-24, rural Ladakh, the top row</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Rural</button>
+            <button class="chip"><i style="background:#5F6675"></i>Urban</button>
+          </div>
+          <div class="plotzone" id="plot-food"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NSO, HCES, Food Total share of MPCE by state/UT, 30-day recall, without imputation, all-India rules from the national series, not the state average</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>This is the first bar of the Engel section, drawn thirty-six times. The rule from that section holds across the map: where budgets are tighter, more of the rupee eats, so the states near the bottom of the spending strip above tend to sit near the top of this one.</p>
+            <p>A share is still not an amount. A state can hold a high row here because food is dear there, not only because budgets are thin: a Himalayan winter prices the plate differently from a delta harvest. Read the rank, then ask why.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>Rural Ladakh gives food <b id="ex-fs-hi">–</b> of its rupee; rural Kerala and rural Delhi, tied at the bottom, <b id="ex-fs-lo">–</b>. Bihar's towns give food a larger share (<b id="ex-fs-bu">–</b>) than Kerala's villages. In every state but one the dark dot sits left of the blue: the exception is Lakshadweep, whose towns hand food <b id="ex-fs-lk">–</b> against <b id="ex-fs-lkr">–</b> in its villages.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-gini" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Inequality, measured in what people spend</h3>
+            <div class="sub">Gini coefficient of per-capita consumption expenditure, sector × imputation convention, 2022-23 (pale) and 2023-24 (filled)</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-gini">–</div><div class="c">2023-24, rural, headline</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-gini"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NSO, HCES, Gini of the per-capita consumption distribution, 0 is perfect equality, 1 is one person spending everything</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A consumption Gini runs lower than an income Gini everywhere, because the rich save: spending is always more equal than earning. And a household survey undercounts the top: the richest households rarely open the door to a surveyor, and their consumption is hardest to record when they do. So read these dots as a floor under inequality, not a ceiling.</p>
+            <p>What the survey can say honestly is the direction of travel between two rounds built the same way.</p>
+          </div>
+          <div class="now">
+            <span class="mk">Between the rounds</span>
+            <p>Every dot moved left. The rural Gini fell from <b id="ex-gi-r0">–</b> to <b id="ex-gi-r1">–</b>, the urban from <b id="ex-gi-u0">–</b> to <b id="ex-gi-u1">–</b>. Counting free welfare goods lowers each figure further, those transfers flow mostly downward, while adding <b id="ex-gi-impr">–</b> to the rural mean and <b id="ex-gi-impu">–</b> to the urban.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 misread -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li>
+        <span class="no">i.</span>
+        <div>
+          <h3>"The average family lives on <b id="mr-rural">–</b> a month."</h3>
+          <p>MPCE is per <em>person</em>, not per household. A rural family of five at the average spends about <b id="mr-fam">–</b> a month. Still modest: but a different number, and the one to use when the headline gets compared to a salary.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">ii.</span>
+        <div>
+          <h3>"Spending has doubled since 2011-12."</h3>
+          <p>The survey was redesigned after 2011-12: new questionnaire, new recall structure, new item list. The old rounds measure a different thing and are not served alongside these. Any line drawn across the redesign is a comparison the survey's own designers refuse to make; this guide refuses it too.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iii.</span>
+        <div>
+          <h3>"Urban India is <b id="mr-ratio">–</b> richer."</h3>
+          <p>The gap is in nominal spending, not welfare. City prices, above all rent, are higher, so a rupee buys less there; and spending is not income in either place. The real gap in living standards is smaller than the raw ratio, though how much smaller depends on a price deflator this survey does not provide.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iv.</span>
+        <div>
+          <h3>"The Gini fell, so inequality is solved."</h3>
+          <p>This is a consumption Gini from a household survey: it misses income, misses savings, and undercounts the very top, which is where Indian inequality concentrates. The fall between two comparable rounds is real evidence: of spending compression, over one year, above a floor. That is all it is evidence of.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">v.</span>
+        <div>
+          <h3>"With-imputation is the real number."</h3>
+          <p>Neither convention is more real; they answer different questions. Without imputation counts what households actually paid: the cash-economy figure. With imputation prices in the free welfare goods they consumed: the living-standard figure. The headline convention is the first. Quoting the second without saying so moves the goalposts by a footnote.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <GuideData slug="consumption" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. Household Consumption Expenditure Survey, 2022-23 and 2023-24 rounds, retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>.</p>
+        <p>Two disclosures carry through every chart. First, the headline convention is "without imputation"; the with-imputation variants are shown and named where used. Cereal quantities are published in that convention only. Second, only these two rounds exist in the API: the 2011-12 and earlier NSS consumption rounds use a different method, are not served, and are never spliced or compared here.</p>
+        <p>All nine indicator families of the HCES release are baked into this guide's data. Eight feed the plates. The ninth, the broad-category table in rupees, is redundant by construction: each of its figures equals the published share times MPCE, within rounding. It is kept as a validation cross-check, not a chart; the state-level food shares above come from the share table itself.</p>
+      </div>
+      <div>
+        <h6>Revisions &amp; uncertainty</h6>
+        <p>Survey estimates are final on release. Each round is a cross-section; the two rounds are comparable by design but are never averaged or chained. All figures are sample estimates and carry sampling error the published tables do not quantify.</p>
+        <p>Where something is not measured, incomes, prices, the far top of the distribution, this guide says "we do not know" rather than inventing a number.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Consumption, version 1.1, on the 2023-24 round. v1.1 extends the first release with the social-group, household-type, cereal-quantity, cereal-value and state food-share families. Next scheduled revision: on release of the next HCES round.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, HCES</span>
+      <span>Vintage <span id="prov-vintage2">–</span>, never spliced with 2011-12</span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/consumption.client.js";
+</script>
+</Base>

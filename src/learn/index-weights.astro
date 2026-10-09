@@ -2,15 +2,15 @@
 import Learn from "../layouts/Learn.astro";
 ---
 <Learn
-  title="India Atlas — Learn · Why onions move inflation more than rent"
-  description="Learn № 03 — index weights: the CPI basket is not a list but a budget. How the 2011–12 Consumer Expenditure Survey decides what matters, and why your inflation is not the national inflation."
+  title="Why onions move inflation more than rent · India Atlas"
+  description="Index weights: the CPI basket is not a list but a budget. How the 2011–12 Consumer Expenditure Survey decides what matters, and why your inflation is not the national inflation."
   slug="index-weights"
-  kicker="Learn № 03 — Prices · Index weights"
+  kicker="Prices: Index weights"
   h1="Why onions move inflation more than <i>rent.</i>"
   lede="The CPI is not a list of prices. It is a budget, in which each item counts in proportion to what households actually spend on it, and the spending shares come from a survey taken in 2011–12."
   meta={[
     ["Concept", "Index weights"],
-    ["Illustrated with", "CPI group weights · CES 2011–12"],
+    ["Illustrated with", "CPI group weights, CES 2011–12"],
     ["Source", "MoSPI, NSO"],
     ["Level", "First principles"],
     ["Reading time", "7 min"],
@@ -27,7 +27,7 @@ import Learn from "../layouts/Learn.astro";
         <p>Ask how the national inflation number is built and most people picture a list: three hundred items, each checked monthly, each counting once. The picture is wrong in one decisive way. The basket is not a list but a budget. Rice and rent and bus fares do not get one vote each; they get votes in proportion to the money households actually spend on them.</p>
         <p>Those proportions are the weights. They come from the 2011–12 Consumer Expenditure Survey, a nationwide canvass of what households bought, and they have been frozen into the index ever since. Food and beverages carry 45.86 of every 100 points in the combined index. Housing carries 10.07. Pan, tobacco and intoxicants carry 2.38.</p>
         <aside class="defbox">
-          <div class="term">Weight <span class="sub">a share of spending · per cent</span></div>
+          <div class="term">Weight <span class="sub">a share of spending, per cent</span></div>
           <p>An item's share of the average household budget, which is also its share of the index. Price changes are multiplied by weights before they enter the average: a 10 per cent rise in food prices adds about 4.6 points of pressure to the index, while the same rise in pan prices adds 0.2.</p>
           <div class="eg"><b>In plain words:</b> the index hears each item in proportion to what you spend on it.</div>
         </aside>
@@ -35,15 +35,15 @@ import Learn from "../layouts/Learn.astro";
       </div>
       <div class="wm-rail">
         <aside class="margin-note">
-          <span class="mk">Margin note · i</span>
+          <span class="mk">Margin note, i</span>
           <b>46 paise of every rupee.</b> Food and beverages are 45.86 of the 100 points in the basket. Whatever food does, the index mostly does.
         </aside>
         <aside class="margin-note">
-          <span class="mk">Margin note · ii</span>
+          <span class="mk">Margin note, ii</span>
           <b>The weights are a photograph, not a mirror.</b> They show how India spent in 2011–12, frozen. They describe the average household of that year, which is nobody exactly.
         </aside>
         <aside class="margin-note">
-          <span class="mk">Margin note · iii</span>
+          <span class="mk">Margin note, iii</span>
           <b>One budget, a billion exceptions.</b> Every household runs its own weights. The national number is the average of a spread it never shows.
         </aside>
       </div>
@@ -52,7 +52,7 @@ import Learn from "../layouts/Learn.astro";
 
   <!-- § 02 the basket -->
   <section>
-    <div class="sec-head"><span class="no">02</span><h2>What the survey found</h2><span class="line"></span><span class="unit">Weights, per cent · CES 2011–12</span></div>
+    <div class="sec-head"><span class="no">02</span><h2>What the survey found</h2><span class="line"></span><span class="unit">Weights, per cent, CES 2011–12</span></div>
     <div class="break basket">
       <div class="bar" id="basket-bar"></div>
       <div class="labels" id="basket-labels"></div>
@@ -67,15 +67,15 @@ import Learn from "../layouts/Learn.astro";
       <figure id="cb-wt" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>One hundred points of spending, divided six ways — food speaks loudest</h3>
-            <div class="sub">CPI combined group weights · per cent · Consumer Expenditure Survey 2011–12</div>
+            <h3>One hundred points of spending, divided six ways: food speaks loudest</h3>
+            <div class="sub">CPI combined group weights, per cent, Consumer Expenditure Survey 2011–12</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-wt">–</div><div class="c">food &amp; beverages · share of the index</div></div>
+          <div class="plate-val"><div class="v" id="pv-wt">–</div><div class="c">food &amp; beverages, share of the index</div></div>
         </div>
         <div class="frame">
           <div class="plotzone" id="plot-wt"><div class="cb-tip"></div></div>
           <div class="plotfoot">
-            <span class="src">Source — NSO, Consumer Expenditure Survey 2011–12 · weights frozen into the CPI on base 2012=100 · unchanged since</span>
+            <span class="src">Source: NSO, Consumer Expenditure Survey 2011–12, weights frozen into the CPI on base 2012=100, unchanged since</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -102,12 +102,12 @@ import Learn from "../layouts/Learn.astro";
 
   <!-- § 04 your inflation -->
   <section>
-    <div class="sec-head"><span class="no">04</span><h2>Why your inflation is not the national inflation</h2><span class="line"></span><span class="unit">A worked example · Dec 2025</span></div>
+    <div class="sec-head"><span class="no">04</span><h2>Why your inflation is not the national inflation</h2><span class="line"></span><span class="unit">A worked example, Dec 2025</span></div>
     <div class="numbers">
-      <div class="num"><div class="l">The national print · Dec 2025</div><div class="v acc" id="n-wx-head">–</div><div class="d">headline CPI, year-on-year</div></div>
-      <div class="num"><div class="l">Food · Dec 2025</div><div class="v" id="n-wx-food">–</div><div class="d">45.86 of every 100 points</div></div>
-      <div class="num"><div class="l">Everything else · Dec 2025</div><div class="v" id="n-wx-nonfood">–</div><div class="d">the other 54.14 points, computed</div></div>
-      <div class="num"><div class="l">A food-heavy family · Dec 2025</div><div class="v" id="n-wx-fam">–</div><div class="d">60 per cent food, 40 per cent the rest</div></div>
+      <div class="num"><div class="l">The national print, Dec 2025</div><div class="v acc" id="n-wx-head">–</div><div class="d">headline CPI, year-on-year</div></div>
+      <div class="num"><div class="l">Food, Dec 2025</div><div class="v" id="n-wx-food">–</div><div class="d">45.86 of every 100 points</div></div>
+      <div class="num"><div class="l">Everything else, Dec 2025</div><div class="v" id="n-wx-nonfood">–</div><div class="d">the other 54.14 points, computed</div></div>
+      <div class="num"><div class="l">A food-heavy family, Dec 2025</div><div class="v" id="n-wx-fam">–</div><div class="d">60 per cent food, 40 per cent the rest</div></div>
     </div>
     <p style="margin-top:40px">The national number is the average budget made flesh, and no household is average. Take a family that spends 60 per cent of its budget on food, common enough in rural India, and put the remaining 40 per cent into everything else at the national rates. In December 2025 their index rose <b id="wx-fam25">–</b> while the national print read <b id="wx-h25">–</b>: same country, same month, a gap of <b id="wx-gap25">–</b>.</p>
     <p>A year earlier the arithmetic ran the other way. In December 2024 the same family's index rose <b id="wx-fam24">–</b> against a national print of <b id="wx-h24">–</b>, because food, their heaviest bill, was spiking while services were calm. Their inflation ran hotter than the headline in 2024 and cooler in 2025. Both years, it was theirs.</p>
@@ -152,8 +152,8 @@ import Learn from "../layouts/Learn.astro";
   </div>
   <div slot="prov-note">
     <h6>This note</h6>
-    <p>Learn № 03 · Prices · version 1.0. Evergreen, written to survive the next print. December 2024 and December 2025 are used as worked history, not news; the chart redraws from the baked data on every build.</p>
-    <p>Companion dossier: <a href="/dossiers/cpi/">Dossier 01 · Consumer Price Index</a>.</p>
+    <p>Prices, version 1.0. Evergreen, written to survive the next print. December 2024 and December 2025 are used as worked history, not news; the chart redraws from the baked data on every build.</p>
+    <p>Companion guide: <a href="/guides/cpi/">Consumer Price Index</a>.</p>
   </div>
 
 <script>

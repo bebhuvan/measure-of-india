@@ -71,9 +71,9 @@ setHTML("d-res", `<b>${arrow(Lr - Yr, " bn")}</b> vs a year ago`);
 setHTML("n-bal", (Lb < 0 ? "−" : "") + Math.abs(Lb).toFixed(1));
 setHTML("d-bal", `<b>${arrow(Lb - Pb, " bn")}</b> vs ${fmtDate(T.balance.data.at(-2).date)}`);
 setHTML("n-fx", rs(Lx));
-setHTML("d-fx", `<b>${(Yx <= Lx ? "▲ +" : "▼ −") + Math.abs(Lx - Yx).toFixed(2)}</b> vs a year ago · weaker ₹`);
+setHTML("d-fx", `<b>${(Yx <= Lx ? "▲ +" : "▼ −") + Math.abs(Lx - Yx).toFixed(2)}</b> vs a year ago, weaker ₹`);
 setHTML("n-cad", cad.toFixed(1) + '<span class="pc">%</span>');
-setHTML("d-cad", `FY25 · FY24 was ${cadPrev.toFixed(1)}%`);
+setHTML("d-cad", `FY25, FY24 was ${cadPrev.toFixed(1)}%`);
 
 setHTML("rb-big", "$" + Lr.toFixed(0) + '<span class="pc">bn</span>');
 setHTML("rb-prev", "$" + Yr.toFixed(0) + '<span class="pc">bn</span>');
@@ -95,7 +95,7 @@ setTxt("ex-balpk", bn2(troughOf(T.balance).value));
 setTxt("ex-res", bn(Lr));
 setTxt("ex-fx", rs(Lx));
 const pkRes = peakOf(F.reserves);
-setTxt("pf-res", `peak — ${bn(pkRes.value)}, ${fmtDate(pkRes.date)} · latest — ${bn(Lr)}`);
+setTxt("pf-res", `peak: ${bn(pkRes.value)}, ${fmtDate(pkRes.date)}, latest: ${bn(Lr)}`);
 
 /* invisibles — latest FY, plus the FY25 goods deficit from the trade table */
 const remL = INV.private_transfers.data.at(-1).value;
@@ -196,9 +196,9 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, fm
   const live = seriesList.filter((s) => s.data.at(-1).value != null);
   const dodged = dodgeEndLabels(live, (geo.d1 - geo.d0) * 0.055);
   const marks = [
-    Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-    Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
-    Plot.ruleY([0], { stroke: "#1B1A17", strokeOpacity: 0.55, strokeWidth: 1 }),
+    Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+    Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+    Plot.ruleY([0], { stroke: "#161A22", strokeOpacity: 0.55, strokeWidth: 1 }),
     ...seriesList.map((s, i) => Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: i === 0 ? 3 : 1.75, strokeLinejoin: "round", strokeLinecap: "round" })),
     ...live.map((s) => Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: s === seriesList[0] ? 5 : 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
     ...dodged.filter((p) => Math.abs(p.y - p.value) > 0.05).map((p) => Plot.line([
@@ -206,14 +206,14 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, fm
     ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
     ...dodged.map((p) => Plot.text([{ date: dts.at(-1), y: p.y }], {
       x: "date", y: "y", text: () => `${p.s.label} ${fmtV(p.value)}`,
-      dx: 16, fill: p.s.color, fontSize: 14, fontFamily: mono,
+      dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono,
       fontWeight: p.s === seriesList[0] ? 500 : 400, textAnchor: "start",
     })),
   ];
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: fmtX },
     y: { label: null, ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11, tickFormat: (d) => String(d) },
     marks,
@@ -301,11 +301,11 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, fm
     data: rows.map((r) => ({ date: r.date, value: r[key] })),
   });
   const V = {
-    goods: toSeries("goods", "Goods balance", "#BE3E26"),
-    services: toSeries("services", "Services, net", "#5B564B"),
-    transfers: toSeries("transfers", "Remittances, net", "#8A857A"),
-    income: toSeries("income", "Income, net", "#A8A293"),
-    ca: toSeries("ca", "Current account", "#C6C0B0"),
+    goods: toSeries("goods", "Goods balance", "#2E4BD8"),
+    services: toSeries("services", "Services, net", "#5F6675"),
+    transfers: toSeries("transfers", "Remittances, net", "#878D99"),
+    income: toSeries("income", "Income, net", "#A3A9B4"),
+    ca: toSeries("ca", "Current account", "#C9CED6"),
   };
   const keys = ["goods", "services", "transfers", "income", "ca"];
   const seriesList = keys.map((k) => V[k]);
@@ -329,23 +329,23 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, fm
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => String(d.getUTCFullYear()) },
     y: { label: null, ticks: [-300, -200, -100, 0, 100, 200], domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11, tickFormat: (d) => String(d) },
     marks: [
-      Plot.gridY([-300, -200, -100, 0, 100, 200], { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
-      Plot.ruleY([0], { stroke: "#1B1A17", strokeOpacity: 0.55, strokeWidth: 1 }),
+      Plot.gridY([-300, -200, -100, 0, 100, 200], { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+      Plot.ruleY([0], { stroke: "#161A22", strokeOpacity: 0.55, strokeWidth: 1 }),
       // current account: dashed, lightest — derived sum
-      Plot.lineY(V.ca.data, { x: "date", y: "value", stroke: "#C6C0B0", strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round", strokeDasharray: "4 3" }),
+      Plot.lineY(V.ca.data, { x: "date", y: "value", stroke: "#C9CED6", strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round", strokeDasharray: "4 3" }),
       // income (small deficit, lightest solid)
-      Plot.lineY(V.income.data, { x: "date", y: "value", stroke: "#A8A293", strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.lineY(V.income.data, { x: "date", y: "value", stroke: "#A3A9B4", strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
       // transfers
-      Plot.lineY(V.transfers.data, { x: "date", y: "value", stroke: "#8A857A", strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.lineY(V.transfers.data, { x: "date", y: "value", stroke: "#878D99", strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
       // services
-      Plot.lineY(V.services.data, { x: "date", y: "value", stroke: "#5B564B", strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.lineY(V.services.data, { x: "date", y: "value", stroke: "#5F6675", strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
       // goods balance — accent, heaviest
-      Plot.lineY(V.goods.data, { x: "date", y: "value", stroke: "#BE3E26", strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.lineY(V.goods.data, { x: "date", y: "value", stroke: "#2E4BD8", strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
       // end dots + labels
       ...seriesList.filter((s) => s.data.at(-1).value != null).map((s) =>
         Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: s === V.goods ? 5 : 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
@@ -354,14 +354,14 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, fm
       ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
       ...dodged.map((p) => Plot.text([{ date: dts.at(-1), y: p.y }], {
         x: "date", y: "y", text: () => `${p.s.label} ${fmtV(p.value)}`,
-        dx: 16, fill: p.s.color, fontSize: 13.5, fontFamily: mono,
+        dx: 16, fill: "#161A22", fontSize: 12, fontFamily: mono,
         fontWeight: p.s === V.goods ? 500 : 400, textAnchor: "start",
       })),
     ],
   });
   a11y(plot,
     "Current account decomposed into goods balance, services surplus, income deficit and remittances, fiscal years 1990-91 to 2024-25",
-    "Five lines in US$ billions per fiscal year. The goods deficit (vermilion) ends at " + bn2(lastRow.goods) + ", offset by a services surplus of " + bn(lastRow.services) + " and remittances of " + bn(lastRow.transfers) + "; income runs at minus " + bn(Math.abs(lastRow.income)) + ". The dashed current-account line, their sum, ends at " + bn2(lastRow.ca) + ".");
+    "Five lines in US$ billions per fiscal year. The goods deficit (blue) ends at " + bn2(lastRow.goods) + ", offset by a services surplus of " + bn(lastRow.services) + " and remittances of " + bn(lastRow.transfers) + "; income runs at minus " + bn(Math.abs(lastRow.income)) + ". The dashed current-account line, their sum, ends at " + bn2(lastRow.ca) + ".");
   document.getElementById("plot-ca").append(plot);
   wireTools(document.getElementById("cb-ca"), plot, seriesList, "india-atlas_current-account-decomposition", fmtFY, fmtV);
   addCrosshair(document.getElementById("plot-ca"), plot, seriesList, geo, fmtFY, fmtV);
@@ -404,18 +404,18 @@ function wirePlate(blockEl, plot, filename, csvText) {
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#878D99", overflow: "visible" },
     x: { label: "US$ billions, FY 2024–25 →", labelAnchor: "right", labelArrow: false, domain: [0, 120], ticks: xTicks, tickSize: 0, tickPadding: 10, tickFormat: (d) => (d === 120 ? "$120bn" : String(d)) },
     y: { label: null, domain: rows.map((r) => r.name), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
     marks: [
-      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
-      Plot.ruleY(rows, { y: "name", x1: "exp", x2: "imp", stroke: (d) => (isAcc(d) ? "#BE3E26" : "#D8D2C2"), strokeWidth: (d) => (isAcc(d) ? 2 : 1.5) }),
-      Plot.dot(rows, { y: "name", x: "exp", fill: "#5B564B", r: 4.5 }),
-      Plot.dot(rows, { y: "name", x: "imp", fill: "#C6C0B0", r: 4.5, stroke: "#8A857A", strokeWidth: 0.75 }),
-      Plot.text(rows.filter((d) => !isAcc(d)), { y: "name", x: () => 120, dx: 18, text: (d) => fmtBal(d.bal), fill: "#8A857A", fontSize: 12, fontFamily: mono, textAnchor: "start" }),
-      Plot.text(rows.filter(isAcc), { y: "name", x: () => 120, dx: 18, text: (d) => fmtBal(d.bal), fill: "#BE3E26", fontSize: 12, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
-      Plot.text([{ y: rows[0].name }], { y: "y", x: () => 120, dx: 18, dy: -22, text: () => "balance", fill: "#8A857A", fontSize: 11, fontFamily: mono, textAnchor: "start" }),
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+      Plot.ruleY(rows, { y: "name", x1: "exp", x2: "imp", stroke: (d) => (isAcc(d) ? "#2E4BD8" : "#DADDE3"), strokeWidth: (d) => (isAcc(d) ? 2 : 1.5) }),
+      Plot.dot(rows, { y: "name", x: "exp", fill: "#5F6675", r: 3.5 }),
+      Plot.dot(rows, { y: "name", x: "imp", fill: "#C9CED6", r: 3.5, stroke: "#878D99", strokeWidth: 0.75 }),
+      Plot.text(rows.filter((d) => !isAcc(d)), { y: "name", x: () => 120, dx: 18, text: (d) => fmtBal(d.bal), fill: "#878D99", fontSize: 12, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(rows.filter(isAcc), { y: "name", x: () => 120, dx: 18, text: (d) => fmtBal(d.bal), fill: "#161A22", fontSize: 12, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.text([{ y: rows[0].name }], { y: "y", x: () => 120, dx: 18, dy: -22, text: () => "balance", fill: "#878D99", fontSize: 11, fontFamily: mono, textAnchor: "start" }),
     ],
   });
   a11y(plot, "Merchandise trade with the sixteen largest partners, fiscal year 2024-25",
@@ -461,15 +461,15 @@ function wirePlate(blockEl, plot, filename, csvText) {
       keys.slice(0, 3).map((k) => SHORT[k] ?? S[k].label).join(", ") + ".");
     for (const k of keys) {
       const acc = top3.has(k);
-      const color = acc ? "#BE3E26" : "#8A857A";
+      const color = acc ? "#2E4BD8" : "#878D99";
       const cell = document.createElement("div");
       const lab = document.createElement("div");
-      lab.style.cssText = "font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:" + color + ";margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
+      lab.style.cssText = "font-family:var(--sans);font-size:.56rem;color:" + color + ";margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis";
       lab.textContent = SHORT[k] ?? S[k].label;
       const val = document.createElement("div");
-      val.style.cssText = "font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.04em;color:#5C574C;margin-top:5px";
+      val.style.cssText = "font-family:var(--sans);font-size:.6rem;letter-spacing:.04em;color:#5F6675;margin-top:5px";
       const latest = S[k].data.at(-1).value;
-      val.textContent = bn(latest) + " · " + (latest / total * 100).toFixed(1) + "%";
+      val.textContent = bn(latest) + ", " + (latest / total * 100).toFixed(1) + "%";
       const max = Math.max(...S[k].data.map((d) => d.value ?? 0));
       const mini = Plot.plot({
         width: 205, height: 62, marginLeft: 2, marginRight: 6, marginTop: 5, marginBottom: 2,
@@ -477,7 +477,7 @@ function wirePlate(blockEl, plot, filename, csvText) {
         x: { axis: null },
         y: { axis: null, domain: [0, max * 1.05] },
         marks: [
-          Plot.ruleY([0], { stroke: "#E6E2D6" }),
+          Plot.ruleY([0], { stroke: "#ECEEF2" }),
           Plot.lineY(S[k].data, { x: "date", y: "value", stroke: color, strokeWidth: acc ? 1.75 : 1.5, strokeLinejoin: "round", strokeLinecap: "round" }),
           Plot.dot([S[k].data.at(-1)], { x: "date", y: "value", fill: color, r: 2.2, stroke: "#FFFFFF", strokeWidth: 1 }),
         ],
@@ -505,18 +505,18 @@ function singleLine(blockId, plotId, s, geo, yTicks, xTicks, dlName, fmtV, a11yT
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => String(d.getUTCFullYear()) },
     y: { label: null, ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11, tickFormat: (d) => String(d) },
     marks: [
-      Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
       Plot.areaY(s.data, { x: "date", y: "value", y1: geo.d0 <= 0 ? 0 : geo.d0, fill: s.color, fillOpacity: 0.06 }),
       Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.dot([pk], { x: "date", y: "value", fill: "#BE3E26", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([pk], { x: "date", y: "value", text: () => fmtV(pk.value) + " · " + fmtDate(pk.date), dy: -12, fill: "#BE3E26", fontSize: 13, fontFamily: mono, textAnchor: "middle" }),
-      Plot.dot([s.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", fill: "#BE3E26", r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([s.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", text: (d) => fmtV(d.value), dx: 16, fill: "#BE3E26", fontSize: 14, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.dot([pk], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([pk], { x: "date", y: "value", text: () => fmtV(pk.value) + ", " + fmtDate(pk.date), dy: -12, fill: "#161A22", fontSize: 12, fontFamily: mono, textAnchor: "middle" }),
+      Plot.dot([s.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([s.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", text: (d) => fmtV(d.value), dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
   });
   a11y(plot, a11yTitle, a11yDesc + (note ? " " + note : ""));
@@ -526,7 +526,7 @@ function singleLine(blockId, plotId, s, geo, yTicks, xTicks, dlName, fmtV, a11yT
 }
 {
   const xTicks = []; for (let y = 1990; y <= 2025; y += 5) xTicks.push(new Date(Date.UTC(y, 0, 1)));
-  singleLine("cb-res", "plot-res", { ...F.reserves, color: "#BE3E26" },
+  singleLine("cb-res", "plot-res", { ...F.reserves, color: "#2E4BD8" },
     { W: 1184, H: 470, ml: 80, mr: 150, mt: 40, mb: 48, d0: 0, d1: 750 },
     [0, 200, 400, 600], xTicks,
     "india-atlas_forex-reserves_1990-2025", (v) => "$" + v.toFixed(0) + "bn",
@@ -535,7 +535,7 @@ function singleLine(blockId, plotId, s, geo, yTicks, xTicks, dlName, fmtV, a11yT
 }
 {
   const xTicks = []; for (let y = 1990; y <= 2025; y += 5) xTicks.push(new Date(Date.UTC(y, 0, 1)));
-  singleLine("cb-fx", "plot-fx", { ...F.usdinr, color: "#BE3E26" },
+  singleLine("cb-fx", "plot-fx", { ...F.usdinr, color: "#2E4BD8" },
     { W: 1184, H: 470, ml: 80, mr: 150, mt: 40, mb: 48, d0: 10, d1: 90 },
     [20, 40, 60, 80], xTicks,
     "india-atlas_usdinr_1990-2025", (v) => "₹" + v.toFixed(2),
@@ -580,7 +580,7 @@ function singleLine(blockId, plotId, s, geo, yTicks, xTicks, dlName, fmtV, a11yT
     "india-atlas_rupee_four-currencies_1966-2025",
     (v) => (v == null ? "—" : "₹" + v.toFixed(2)),
     "Rupees per dollar, pound, euro and yen, monthly average, 1966 to 2025",
-    "Four line charts. The pound ends at " + rs(lastOf(X4.gbp).value) + ", the euro at " + rs(lastOf(X4.euro).value) + ", the dollar at " + rs(lastOf(X4.usd).value) + ", the yen — quoted per single yen — near " + rs(lastOf(X4.jpy).value) + " along the floor. The euro line begins in January 1999; a source gap at May 2024 breaks all four lines.");
+    "Four line charts. The pound ends at " + rs(lastOf(X4.gbp).value) + ", the euro at " + rs(lastOf(X4.euro).value) + ", the dollar at " + rs(lastOf(X4.usd).value) + ", the yen, quoted per single yen, near " + rs(lastOf(X4.jpy).value) + " along the floor. The euro line begins in January 1999; a source gap at May 2024 breaks all four lines.");
   wireLegend(document.getElementById("legend-fx4"), plot, keys, FX);
 }
 
@@ -602,7 +602,7 @@ function singleLine(blockId, plotId, s, geo, yTicks, xTicks, dlName, fmtV, a11yT
 }
 
 /* ---------- sparkline ---------- */
-spark("nspark-res", { ...F.reserves, color: "#BE3E26" });
+spark("nspark-res", { ...F.reserves, color: "#2E4BD8" });
 
 /* ---------- provenance vintage — driven from the baked bundle, never hardcoded ---------- */
 setTxt("prov-vintage", forexBundle.meta.vintage);

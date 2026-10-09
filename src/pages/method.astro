@@ -3,7 +3,7 @@ import Base from "../layouts/Base.astro";
 import "../styles/pages.css";
 ---
 <Base
-  title="India Atlas — How we work"
+  title="How we work · India Atlas"
   description="The standing rules of India Atlas: sourcing, revisions, derived series, corrections."
   nav="method"
   dateStamp="January 2026"
@@ -16,18 +16,18 @@ import "../styles/pages.css";
   <div class="titleblock">
     <div class="kicker">Method</div>
     <h1>How we work, <i>in the open.</i></h1>
-    <p class="lede">Every number on this site can be traced back to a press release. This page explains the rules we hold ourselves to — so you can hold us to them too.</p>
+    <p class="lede">Every number on this site can be traced back to a press release. This page explains the rules we hold ourselves to: so you can hold us to them too.</p>
   </div>
 
   <section>
     <div class="sec-head"><span class="no">01</span><h2>The standing rules</h2><span class="line"></span></div>
     <ol class="rules">
-      <li><div><h3>Every observation is traceable.</h3><p>Each chart names its publisher, the exact release, and the release date. If you cannot find our source, that is our error — write to us and we will fix it or take the chart down.</p></div></li>
-      <li><div><h3>Derived series are labelled as derived.</h3><p>Some useful series are not published by anyone — core inflation is the classic example. Where we compute a series ourselves, it is drawn dashed, flagged in the register, and disclosed in the provenance footer, every time it appears.</p></div></li>
-      <li><div><h3>Conflicts are shown, not reconciled.</h3><p>When two official statistics appear to contradict — CPI versus WPI, old base versus new — we plot both as separate series and explain the difference. We never average away a disagreement.</p></div></li>
-      <li><div><h3>Plotted points are the real points.</h3><p>Our charts connect actual observations with straight lines. We do not smooth or seasonally adjust unless the source does, and we say when it does. Where the source never published a value — the CPI housing group for ten months of 2018–19 — we interpolate the index level, flag the affected months in the series metadata, and disclose it in the dossier's provenance. A peak on our chart is a number that was actually published.</p></div></li>
-      <li><div><h3>Vintages are explicit.</h3><p>Statistics that get revised — GDP above all — are quoted with their estimate vintage. When a series is restated, we show both vintages rather than silently rewriting history. Every vintage we build is committed to git, so the diff of any revision is reviewable.</p></div></li>
-      <li><div><h3>We say "we do not know".</h3><p>Where something is not measured — an official core inflation rate, the informal sector's true output — the page says so, instead of inventing a figure.</p></div></li>
+      <li><div><h3>Every observation is traceable.</h3><p>Each chart names its publisher, the exact release, and the release date. If you cannot find our source, that is our error: write to us and we will fix it or take the chart down.</p></div></li>
+      <li><div><h3>Derived series are labelled as derived.</h3><p>Some useful series are not published by anyone: core inflation is the classic example. Where we compute a series ourselves, it is drawn dashed, flagged in the register, and disclosed in the provenance footer, every time it appears.</p></div></li>
+      <li><div><h3>Conflicts are shown, not reconciled.</h3><p>When two official statistics appear to contradict, CPI versus WPI, old base versus new, we plot both as separate series and explain the difference. We never average away a disagreement.</p></div></li>
+      <li><div><h3>Plotted points are the real points.</h3><p>Our charts connect actual observations with straight lines. We do not smooth or seasonally adjust unless the source does, and we say when it does. Where the source never published a value, the CPI housing group for ten months of 2018–19, we interpolate the index level, flag the affected months in the series metadata, and disclose it in the guide's provenance. A peak on our chart is a number that was actually published.</p></div></li>
+      <li><div><h3>Vintages are explicit.</h3><p>Statistics that get revised, GDP above all, are quoted with their estimate vintage. When a series is restated, we show both vintages rather than silently rewriting history. Every vintage we build is committed to git, so the diff of any revision is reviewable.</p></div></li>
+      <li><div><h3>We say "we do not know".</h3><p>Where something is not measured, an official core inflation rate, the informal sector's true output, the page says so, instead of inventing a figure.</p></div></li>
     </ol>
   </section>
 
@@ -35,17 +35,17 @@ import "../styles/pages.css";
     <div class="sec-head"><span class="no">02</span><h2>Sources we rely on</h2><span class="line"></span></div>
     <div class="wm-grid">
       <div>
-        <p>Our primary sources are the official statistical agencies: <b>MoSPI / NSO</b> for prices, national accounts, industrial production and the big sample surveys — <b>PLFS</b> for labour, <b>HCES</b> for household consumption, the <b>ASI</b> and <b>ASUSE</b> for enterprises — all served through the eSankhyiki API; the <b>Office of the Economic Adviser</b> for wholesale prices; and the <b>RBI</b>'s external-sector tables — trade, reserves, exchange rates, intervention — for the country's ledger with the world. Each dossier cites the specific press release and release date for its latest print.</p>
-        <p>Data is pulled from the agencies' data APIs at build time, validated (monotonic dates, plausible ranges, weights that sum to 100, computed aggregates checked against published ones), and baked into the page — your browser never fetches anything. The exact vintage is printed in every footer.</p>
-        <p>Two aggregates are computed by us from published components rather than taken from a headline table: <b>headline CPI</b> (the six group indices combined with the official weights — it tracks the published headline within 0.14 points across the decade) and <b>GDP growth</b> (computed from constant-price levels, because the published growth-rate table is rounded to whole numbers).</p>
+        <p>Our primary sources are the official statistical agencies: <b>MoSPI / NSO</b> for prices, national accounts, industrial production and the big sample surveys: <b>PLFS</b> for labour, <b>HCES</b> for household consumption, the <b>ASI</b> and <b>ASUSE</b> for enterprises: all served through the eSankhyiki API; the <b>Office of the Economic Adviser</b> for wholesale prices; and the <b>RBI</b>'s external-sector tables, trade, reserves, exchange rates, intervention, for the country's ledger with the world. Each guide cites the specific press release and release date for its latest print.</p>
+        <p>Data is pulled from the agencies' data APIs at build time, validated (monotonic dates, plausible ranges, weights that sum to 100, computed aggregates checked against published ones), and baked into the page: your browser never fetches anything. The exact vintage is printed in every footer.</p>
+        <p>Two aggregates are computed by us from published components rather than taken from a headline table: <b>headline CPI</b> (the six group indices combined with the official weights: it tracks the published headline within 0.14 points across the decade) and <b>GDP growth</b> (computed from constant-price levels, because the published growth-rate table is rounded to whole numbers).</p>
       </div>
       <div class="wm-rail">
         <aside class="margin-note">
-          <span class="mk">Margin note · i</span>
-          <b>CPI is never revised. GDP always is.</b> Two official series, two opposite revision cultures. Each dossier states which kind it deals in.
+          <span class="mk">Margin note, i</span>
+          <b>CPI is never revised. GDP always is.</b> Two official series, two opposite revision cultures. Each guide states which kind it deals in.
         </aside>
         <aside class="margin-note">
-          <span class="mk">Margin note · ii</span>
+          <span class="mk">Margin note, ii</span>
           <b>Base years matter.</b> CPI uses 2012=100, GDP 2011–12=100. When a base is revised, levels shift and histories are rewritten. We flag base changes on the charts themselves.
         </aside>
       </div>
@@ -54,14 +54,14 @@ import "../styles/pages.css";
 
   <section>
     <div class="sec-head"><span class="no">03</span><h2>Corrections</h2><span class="line"></span></div>
-    <p>Errors are corrected on the page, noted in the dossier's version line, and — if they changed a conclusion — flagged at the top of the affected section for one full revision cycle.</p>
+    <p>Errors are corrected on the page, noted in the guide's version line, and, if they changed a conclusion, flagged at the top of the affected section for one full revision cycle.</p>
   </section>
 
   <footer class="provenance">
     <div class="fine">
-      <span>India Atlas · Method</span>
-      <span>v2.0 · January 2026</span>
-      <span>Set in Archivo, Newsreader &amp; Plex Mono</span>
+      <span>India Atlas, Method</span>
+      <span>v2.0, January 2026</span>
+      <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
 

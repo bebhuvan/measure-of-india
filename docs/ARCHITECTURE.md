@@ -1,8 +1,9 @@
 # ARCHITECTURE — how the Atlas is built, and how it grows
 
 The system shape, the directory map, and the multi-source expansion design.
-Status markers: **[live]** = enforced in code today · **[live]** = lands
-with the current refactor · **[planned]** = decided, not yet coded.
+Everything below marked **[live]** is enforced in code today; nothing here
+is aspirational — decided-but-uncoded work has no marker and no place in
+this document until it exists.
 
 ## 1. The pipeline
 
@@ -37,6 +38,7 @@ a file, every file has a gate, every gate exits non-zero on failure.
 | `src/charts/plumbing.js` | shared chart kit — normative (`docs/DESIGN.md` §5) |
 | `src/learn/registry.js` | Learn-section registry — the pattern the dossier registry mirrors |
 | `pipeline/` | prose machinery: corpus, voice, slots, facts, gates |
+| `test/` | unit tests: period calendars, registry integrity, atomic writes |
 | `docs/` | vision, architecture, design, contracts, runbooks |
 | `skills/` | task playbooks for agents (see `skills/README.md`) |
 | `site/` | design-phase reference implementation (plain HTML, visual spec) |
@@ -63,7 +65,8 @@ families:
 - One thin host wrapper per family in `scripts/lib/<family>.mjs` (the pattern
   `mospi.mjs` sets: family-specific TLS/pagination/cache on top of
   `net.mjs`). Adapters call their family client, never raw `fetch`.
-  `worldbank.mjs` handles the WB `[metadata, rows]` envelope.
+  `worldbank.mjs` handles the WB `[metadata, rows]` envelope. Families in
+  service today: `mospi`, `worldbank`.
 - `net.mjs` carries `getJson` and `getText` (CSV sources like OWID need the
   text path; parsing stays in `tabular.mjs`).
 - The adapter contract is unchanged: `async build(ROOT, dcfg, VINTAGE)` →
@@ -115,7 +118,8 @@ Nothing Indian leaks into machinery that serves all families:
 - The canonical bundle contract is source-neutral and already holds any
   WDI/OWID series (`docs/CONTRACT-series.md`).
 - The vintage machinery: data vintage ≠ fetch date, ever.
-- The gates: validate → build → qc → lint-charts; prose verify/lint/contract;
+- The gates: validate → build → qc → lint-charts, with the as-of freshness
+  gate alongside; prose verify/lint/contract;
   human merges the release PR. New families extend the gates, never bypass.
 - The design system (`docs/DESIGN.md`) — new dossiers render in the same
   voice and furniture. An international dossier differs in content, not in

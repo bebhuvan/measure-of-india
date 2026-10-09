@@ -2,135 +2,130 @@
 import Base from "../layouts/Base.astro";
 import "../styles/pages.css";
 import fs from "node:fs";
-import { DOSSIERS } from "../dossiers/registry.js";
-import { makePeriodLabel, MONTHS_FULL, MONTHS_SHORT } from "../../pipeline/lib/periods.mjs";
+import { DOSSIERS, bySlug } from "../dossiers/registry.js";
 import { vintageLabel } from "../dossiers/display.js";
+import { headlineOf } from "../dossiers/headline.js";
+import { briefSVG } from "../charts/static.js";
+import { MONTHS_FULL as MF } from "../../pipeline/lib/periods.mjs";
+const MONTHS_FULL = MF.map((m) => m[0].toUpperCase() + m.slice(1));
 
-// counts are computed, never hardcoded — the front page must never disagree
-// with the register after a coverage wave lands
+// The front page is a briefing: what the latest data says, in sentences computed from the
+// bundles at build time. Nothing here is typed by hand, so it can never describe a stale print.
+const read = (b) => JSON.parse(fs.readFileSync(`data/series/${b}.json`, "utf8"));
 const SERIES_FILES = fs.readdirSync("data/series").filter((f) => f.endsWith(".json"));
-const N_SERIES = SERIES_FILES.reduce((n, f) => n + Object.keys(JSON.parse(fs.readFileSync("data/series/" + f, "utf8")).series).length, 0);
-const N_DOSSIERS = DOSSIERS.length;
+const N = SERIES_FILES.reduce((n, f) => n + Object.keys(read(f.replace(/\.json$/, "")).series).length, 0).toLocaleString("en-IN");
 
-// freshness is derived, never typed: every date on this page comes from the
-// bundles themselves, so a new print can never leave a stale label behind
-const read = (s) => JSON.parse(fs.readFileSync("data/series/" + s + ".json", "utf8"));
-const cpiNew = read("cpi-2024"), cpiOld = read("cpi"), gdpNew = read("gdp-2022");
-const mLab = makePeriodLabel("monthly", "fiscal-apr");
-const qLab = makePeriodLabel("quarterly", "fiscal-apr");
-const baseOf = (b) => b.meta.base?.replace("=100", "") ?? "";
-const cpiLatest = mLab(cpiNew.dates.at(-1));          // "Jun 2026"
-const cpiPrevMo = MONTHS_SHORT[Number(cpiNew.dates.at(-2).slice(5, 7)) - 1];
-const cpiOldLast = mLab(cpiOld.dates.at(-1));         // "Dec 2025"
-const gdpLatest = qLab(gdpNew.dates.at(-1));          // "Q4 FY26"
-const gdpPrevQ = qLab(gdpNew.dates.at(-2)).split(" ")[0];
-// the page stamp is the CPI release month — the freshest print on the board
-const rel = cpiNew.meta.releaseDate ?? cpiNew.meta.vintage;
-const stamp = `${MONTHS_FULL[Number(rel.slice(5, 7)) - 1]} ${rel.slice(0, 4)}`;
-const STAMP = stamp[0].toUpperCase() + stamp.slice(1);
+const M3 = MONTHS_FULL.map((m) => m.slice(0, 3));
+const monthL = (d) => `${MONTHS_FULL[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`;
+const monthS = (d) => `${M3[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`;
+const qtrL = (d) => { const m = +d.slice(5, 7) - 1; return `${MONTHS_FULL[m]} to ${MONTHS_FULL[m + 2]} ${d.slice(0, 4)}`; };
+const qtrS = (d) => { const m = +d.slice(5, 7) - 1; return `${M3[m]} to ${M3[m + 2]} ${d.slice(0, 4)}`; };
+const p2 = (v) => `${v.toFixed(2)}%`;
+const series = (b, k) => { const j = read(b); const P = j.dates.map((d, i) => ({ d, v: j.series[k].data[i] })).filter((p) => p.v != null); return P; };
+// months of consecutive rises (or falls) ending at the latest point
+const streak = (P) => { let n = 0; const up = P.at(-1).v > P.at(-2).v; for (let i = P.length - 1; i > 0; i--) { if ((P[i].v > P[i - 1].v) === up && P[i].v !== P[i - 1].v) n++; else break; } return { n, up }; };
+const ordinal = (n) => ["", "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth"][n] ?? `${n}th`;
+
+// 1. prices: the continuous 2024-base headline (back-cast before 2025, never the retired base)
+const cpi = series("cpi-2024-linked", "headline"), cL = cpi.at(-1), cS = streak(cpi), band = bySlug.cpi.bands;
+const lastAbove = [...cpi].reverse().slice(1).find((p) => p.v > band.target);
+const runStart = (() => { let i = cpi.length - 1; while (i > 0 && cpi[i - 1].v > band.target) i--; return cpi[i]; })();
+const cpiNews = cL.v > band.target
+  ? (runStart.d === cL.d && lastAbove ? `back above the RBI's ${band.target}% target for the first time since ${monthL(lastAbove.d)}` : `above the RBI's ${band.target}% target`)
+  : cL.v < band.floor ? `below the ${band.floor}% floor of the RBI's band` : `inside the RBI's band of ${band.floor} to ${band.ceiling}%`;
+// 2. output: real GDP growth, 2022-23 base
+const gdp = series("gdp-2022", "gdp"), gL = gdp.at(-1), gP = gdp.at(-2);
+// 3. factories: IIP general, 2022-23 base
+const iip = series("iip-2022", "general"), iL = iip.at(-1), iP = iip.at(-2);
+// 4. jobs: monthly unemployment, current weekly status
+const ur = series("plfs-monthly", "ur"), uL = ur.at(-1), uP = ur.at(-2);
+
+const LEAD = [
+  { slug: "cpi", topic: "Prices", value: p2(cL.v),
+    sentence: `Consumer prices were <b>${p2(cL.v)}</b> higher in ${MONTHS_FULL[+cL.d.slice(5, 7) - 1]} than a year earlier, ${cS.up ? "up" : "down"} for the ${cS.n > 1 ? `${ordinal(cS.n)} month in a row` : "first time"}, and ${cpiNews}.`,
+    chart: briefSVG({ dates: cpi.map((p) => p.d).slice(-60), values: cpi.map((p) => p.v).slice(-60) }, { ref: band.target, refLabel: `Target ${band.target}%`, label: "Consumer price inflation, last five years", period: monthS }) },
+  { slug: "gdp", topic: "Growth", value: p2(gL.v),
+    sentence: `The economy grew <b>${p2(gL.v)}</b> in ${qtrL(gL.d)}, ${gL.v < gP.v ? "a little slower than" : gL.v > gP.v ? "faster than" : "the same as"} the ${p2(gP.v)} of the quarter before.`,
+    chart: briefSVG({ dates: gdp.map((p) => p.d), values: gdp.map((p) => p.v) }, { label: "Real GDP growth by quarter", period: qtrS }) },
+  { slug: "iip", topic: "Factories", value: p2(iL.v),
+    sentence: `Industrial output grew <b>${p2(iL.v)}</b> in ${MONTHS_FULL[+iL.d.slice(5, 7) - 1]}, ${iL.v > iP.v ? "up" : "down"} from ${p2(iP.v)} the month before.`,
+    chart: briefSVG({ dates: iip.map((p) => p.d), values: iip.map((p) => p.v) }, { ref: 0, label: "Industrial output growth by month", period: monthS }) },
+  { slug: "jobs", topic: "Jobs", value: `${uL.v.toFixed(1)}%`,
+    sentence: uL.v === uP.v ? `Unemployment held at <b>${uL.v.toFixed(1)}%</b> in ${MONTHS_FULL[+uL.d.slice(5, 7) - 1]}, the same as the month before.`
+      : `Unemployment ${uL.v > uP.v ? "rose" : "fell"} to <b>${uL.v.toFixed(1)}%</b> in ${MONTHS_FULL[+uL.d.slice(5, 7) - 1]}, from ${uP.v.toFixed(1)}% the month before.`,
+    chart: briefSVG({ dates: ur.map((p) => p.d), values: ur.map((p) => p.v) }, { label: "Unemployment rate by month", period: monthS, dp: 1 }) },
+];
+const leadSlugs = new Set(LEAD.map((l) => l.slug));
+const cpiMeta = read("cpi-2024").meta;
+const rel = cpiMeta.releaseDate ?? cpiMeta.vintage;
+const STAMP = `${MONTHS_FULL[+rel.slice(5, 7) - 1]} ${rel.slice(0, 4)}`;
+const SECTIONS = [...new Set(DOSSIERS.map((d) => d.section))];
 ---
 <Base
-  title="India Atlas — India's economic data, one dossier at a time"
-  description="Not another dashboard. Long-form dossiers on Indian economic statistics — charts, meaning, the latest print, and the ways each number is misread."
-  nav="dossiers"
+  title="India Atlas: the Indian economy, explained"
+  description={`What the latest official figures say about prices, growth, factories and jobs, with plain-language guides to every statistic and ${N} series to search and download.`}
+  nav="home"
   dateStamp={STAMP}
-  crumbLeft="Home"
-  crumbRight={`<b>${N_DOSSIERS}</b> dossiers published · <b>${N_SERIES.toLocaleString("en-IN")}</b> series baked`}
   canonical="https://atlas.thisindianlife.today/"
 >
 <div class="page home spage">
 
-  <div class="hero break">
-    <div class="kicker">India Atlas · A statistical monograph, continuously revised</div>
-    <div class="hero-grid">
-      <h1>India's economic data, <i>one dossier at a time.</i></h1>
-      <p class="lede">Not another dashboard. Each dossier devotes a whole page to a single statistical concept — the charts, the meaning, the latest print, and the ways the number is most often misread.</p>
-    </div>
-  </div>
+  <header class="brief-h">
+    <h1>The economy, as the figures stand</h1>
+    <p>From the latest official releases, to {monthL(cL.d)}. Each line opens a guide that explains it.</p>
+  </header>
 
-  <div class="frontis break">
-    <div id="frontis-plot"></div>
-    <div class="frontis-cap">
-      <span>Headline CPI, year-on-year · {mLab(cpiOld.dates[0])} – {cpiLatest} · base {baseOf(cpiOld)} to {cpiOldLast}, base {baseOf(cpiNew)} from {mLab(cpiNew.dates[0])} — never joined · shaded: RBI tolerance band</span>
-      <a href="/dossiers/cpi/">The full plate · Dossier 01 →</a>
-    </div>
-  </div>
+  <section class="brief" aria-label="The latest figures">
+    {LEAD.map((l, i) => (
+      <article class={`bi bi-${i}`}>
+        <a class="bi-link" href={`/guides/${l.slug}/`}>
+          <span class="bi-k">{l.topic}</span>
+          <p class="bi-s" set:html={l.sentence} />
+          <div class="bi-c nspark" set:html={l.chart} />
+          <span class="bi-go">Read the guide</span>
+        </a>
+      </article>
+    ))}
+  </section>
 
-  <div class="prints break">
-    <div class="ph">
-      <span class="t">The latest prints · {STAMP}</span>
-      <a href="/register/">Full register →</a>
+  <section class="find" id="find" aria-labelledby="find-l">
+    <label id="find-l" for="q">Search {N} series</label>
+    <div class="qwrap">
+      <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Inflation in Kerala, capital goods, the rupee"
+        role="combobox" aria-expanded="false" aria-controls="results" aria-autocomplete="list">
+      <ul id="results" role="listbox" hidden></ul>
     </div>
-    <div class="grid">
-      <div class="cell">
-        <div class="l">CPI inflation · {cpiLatest} · y/y · base {baseOf(cpiNew)}</div>
-        <div class="v" id="v-cpi">–</div>
-        <div class="d"><b id="d-cpi">–</b> vs {cpiPrevMo} · <a href="/dossiers/cpi/">Dossier 01 →</a></div>
-        <div class="nspark" id="sp-cpi"></div>
-      </div>
-      <div class="cell">
-        <div class="l">GDP growth · {gdpLatest} · y/y · base {baseOf(gdpNew)}</div>
-        <div class="v" id="v-gdp">–</div>
-        <div class="d"><b id="d-gdp">–</b> vs {gdpPrevQ} · <a href="/dossiers/gdp/">Dossier 02 →</a></div>
-        <div class="nspark" id="sp-gdp"></div>
-      </div>
-      <div class="cell">
-        <div class="l">Core CPI · {cpiOldLast} · y/y · derived · base {baseOf(cpiOld)}, to {cpiOldLast}</div>
-        <div class="v" id="v-core">–</div>
-        <div class="d"><b id="d-core">–</b> vs {MONTHS_SHORT[Number(cpiOld.dates.at(-2).slice(5, 7)) - 1]} · <a href="/dossiers/cpi/">Dossier 01 →</a></div>
-        <div class="nspark" id="sp-core"></div>
-      </div>
-    </div>
-  </div>
+  </section>
 
-  <section id="dossiers">
-    <div class="sec-head"><span class="no">§</span><h2>The dossiers</h2><span class="line"></span><span class="unit">№ 01 – {String(N_DOSSIERS).padStart(2, "0")} · all published</span></div>
-    <ul class="dossiers">
-      {DOSSIERS.map((d) => (
-        <li><a href={`/dossiers/${d.slug}/`}>
-          <span class="no">№ {d.no}</span>
-          <span class="nm">{d.name}</span>
-          <span class="ds">{d.blurb}</span>
-          <span class="dspark" id={`ds-${d.slug}`}></span>
-          <span class="vt"><b>Current</b><br>{vintageLabel(d)}</span>
-        </a></li>
+  <section class="index" aria-labelledby="ix-h">
+    <div class="ix-head"><h2 id="ix-h">Every guide</h2><a href="/guides/">Browse the guides</a></div>
+    <div class="ix-cols dossiers">
+      {SECTIONS.map((sec) => (
+        <div class="ix-grp">
+          <h3>{sec}</h3>
+          <ul>
+            {DOSSIERS.filter((d) => d.section === sec).map((d) => { const h = headlineOf(d); return (
+              <li data-slug={d.slug}><a href={`/guides/${d.slug}/`}>
+                <span class="ix-n">{d.title}</span>
+                <span class="ix-v" id={`v-${d.slug}`}>{h.value}</span>
+                <span class="ix-w">{h.what}, {h.period}</span>
+                <span class="vt">{vintageLabel(d)}</span>
+              </a></li>
+            ); })}
+          </ul>
+        </div>
       ))}
-    </ul>
-
-    <div class="note-block">
-      <div>
-        <h3>How to use this site</h3>
-        <p>Start with a dossier's <b>current reading</b> if you came for the news; read it end to end if you came to understand. Every chart downloads as SVG, PNG or CSV, and every number on the page is computed from the same data the charts use.</p>
-      </div>
-      <div>
-        <h3>What we promise</h3>
-        <p>Every observation traceable to its source. Derived series labelled as derived. Conflicting statistics shown side by side, never reconciled. And where something is not measured, the page says <b>we do not know</b>.</p>
-      </div>
     </div>
   </section>
 
   <footer class="provenance">
     <div class="cols">
-      <div>
-        <h6>India Atlas</h6>
-        <p>A static-first reference work for Indian economic statistics. Published continuously; each dossier carries its vintage and revision history. All data is sourced from the statistical agencies and baked into the page at build time.</p>
-      </div>
-      <div>
-        <h6>Sources</h6>
-        <p>MoSPI / NSO for prices and national accounts; Office of the Economic Adviser for wholesale prices. Each dossier cites its exact press release and release date.</p>
-      </div>
-      <div>
-        <h6>Before you cite</h6>
-        <p>Read <a href="/method/">how we work</a> before citing us.</p>
-      </div>
+      <div><h6>India Atlas</h6><p>A reference work on Indian economic statistics, revised as each figure is released. All data comes from the statistical agencies and is built into the page; nothing is estimated unless a chart says so.</p></div>
+      <div><h6>Sources</h6><p>MoSPI and the National Statistics Office, the Office of the Economic Adviser, the Reserve Bank of India, the Ministry of New and Renewable Energy and the World Bank. Each guide cites its release.</p></div>
+      <div><h6>Before you cite</h6><p>Read <a href="/method/">how we work</a>. Every chart downloads as an image or as data, with its source attached.</p></div>
     </div>
-    <div class="fine">
-      <span>India Atlas · Home</span>
-      <span>Static · no trackers · no cookies</span>
-      <span>Set in Archivo, Newsreader &amp; Plex Mono</span>
-    </div>
+    <div class="fine"><span>India Atlas</span><span>Static, no trackers, no cookies</span><span>Set in Source Serif 4 and Golos Text</span></div>
   </footer>
-
 </div>
 <script>
   import "../dossiers/home.client.js";

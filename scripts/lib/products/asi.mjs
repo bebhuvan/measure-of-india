@@ -37,7 +37,7 @@
 import { mospi } from "../mospi.mjs";
 import { writeSeries, writeRaw } from "../util.mjs";
 
-const GREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
+const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 const slugify = (s) => String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 const fyStart = (fy) => `${String(fy).slice(0, 4)}-04`; // "2023-24" -> "2023-04"
 
@@ -185,7 +185,7 @@ export async function buildAsi(root, dcfg, vintage) {
     hMaps.push(idx);
     hSeries[key] = {
       name: `asi_${key}`, label: LABELS[key] ?? key,
-      color: key === "gva" ? "#BE3E26" : GREYS[gi++ % GREYS.length],
+      color: key === "gva" ? "#2E4BD8" : GREYS[gi++ % GREYS.length],
       data: data(idx.map), unit: idx.unit,
     };
   }
@@ -276,7 +276,7 @@ export async function buildAsi(root, dcfg, vintage) {
     acctMaps.push(idx);
     acctSeries[key] = {
       name: `asi_acct_${code}_${slugify(label)}`, label,
-      color: code === 19 ? "#BE3E26" : GREYS[ai++ % GREYS.length],
+      color: code === 19 ? "#2E4BD8" : GREYS[ai++ % GREYS.length],
       data: data(idx.map), unit: idx.unit,
     };
   }
@@ -332,7 +332,7 @@ export async function buildAsi(root, dcfg, vintage) {
       lMaps.push(idx);
       lSeries[key] = {
         name: `asi${lcy}_${key}`, label: LEGACY_LABELS[key] ?? key,
-        color: key === "gva" || key === "net_value_added" ? "#BE3E26" : GREYS[gi2++ % GREYS.length],
+        color: key === "gva" || key === "net_value_added" ? "#2E4BD8" : GREYS[gi2++ % GREYS.length],
         data: lData(idx.map), unit: idx.unit,
       };
     }

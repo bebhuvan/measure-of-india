@@ -23,10 +23,21 @@ families:
       World Bank API v2 (WDI, Data360). JSON envelope [metadata, rows];
       scripts/lib/worldbank.mjs paginates it. No key required; be polite:
       per_page 500, one request at a time.
+  databank:
+    transport: local
+    root: "~/Documents/Data/Data bank"
+    note: >
+      The owner's local Data Bank (validation-first data lake). Read-only: adapters read the
+      RBI DBIE webi mirror (dataset rbi_dbie_webi_rows) through scripts/lib/databank.mjs.
+      Refresh the mirror with the Data Bank's own CLI (docs/RBI_DBIE_WEBI_RUNBOOK.md there),
+      then run `npm run data`. Override the path with INDIA_ATLAS_DATABANK.
 
 dossiers:
 
   cpi:
+    # regression floor (docs/RELEASE-CHECKLIST.md §2): the minimum period this
+    # dossier's live bundles must cover — bump it when a release moves the data
+    stale_after: "2026-06"
     family: mospi
     geo: IND
     product: cpi
@@ -142,6 +153,9 @@ dossiers:
     archive2010: true
 
   gdp:
+    # regression floor (docs/RELEASE-CHECKLIST.md §2): the minimum period this
+    # dossier's live bundles must cover — bump it when a release moves the data
+    stale_after: "2026-01"
     family: mospi
     geo: IND
     product: nas
@@ -213,13 +227,68 @@ dossiers:
         # this base codes ic21's Total row as industry 15 (the old base
         # uses 17) — pinned per base
         industry_totals: { "1": 15, "21": 15 }
+        # FULL SET (2026-10): every national indicator the 2022-23 base serves,
+        # built by the same buildBase() as 2011-12 into gdp-2022*.json:
+        # headline, expenditure, industries, nominal and the annual accounts.
+        # Industry codes 1-15 are the same on both bases (checked live
+        # 2026-10-09 via MCP get_metadata). Taxes, subsidies, CFC, primary
+        # income, transfers and saving are annual and run to 2024-25 only.
         indicators:
           "5": gdp
           "1": gva
           "10": pfce
           "9": gfcf
+          "11": gfce
+          "12": stocks
+          "13": valuables
+          "14": exports
+          "15": imports
+          "2": net_taxes
+          "3": taxes
+          "4": subsidies
+          "6": cfc
+          "7": ndp
+          "8": gcf_industry
+          "16": primary_income_row
+          "17": gni
+          "18": transfers_row
+          "19": gndi
+          "20": gross_saving
           "21": gva_growth_published  # cross-check only (rounded)
           "22": gdp_growth_published  # cross-check only (rounded)
+      # THE BACK SERIES (2026-10): the NSO's own back-cast, series=Back on base
+      # 2011-12, annual 1950-51 to 2011-12 (checked live 2026-10-09). No
+      # taxes, subsidies or growth indicators are served on it; valuables
+      # start 1998-99. Baked as gdp-back.json, an agency bridge in `seams`,
+      # never joined to the current series.
+      back:
+        base_year: "2011-12"
+        base: "2011-12"
+        industry_totals: { "1": 15 }
+        indicators:
+          "5": gdp
+          "1": gva
+          "10": pfce
+          "9": gfcf
+          "11": gfce
+          "14": exports
+          "15": imports
+          "7": ndp
+          "17": gni
+          "20": gross_saving
+        # the Back series codes industries without the combined groups 6, 9, 12
+        industries:
+          "1": agriculture
+          "2": mining
+          "3": manufacturing
+          "4": utilities
+          "5": construction
+          "7": trade_hotels
+          "8": transport
+          "10": finance
+          "11": realty
+          "13": public_admin
+          "14": other_services
       # NOT SERVED nationally: per-capita GDP/GNI/NNI. The API's per-capita
       # indicators (25, 28, 31) live in the Regional account, state-wise only
       # — there is no All-India row (checked the state filter list). The
@@ -229,6 +298,9 @@ dossiers:
     window2022: { start: "2023-Q1" }  # first quarter with a same-base year-ago level
 
   wpi:
+    # regression floor (docs/RELEASE-CHECKLIST.md §2): the minimum period this
+    # dossier's live bundles must cover — bump it when a release moves the data
+    stale_after: "2026-04"
     family: mospi
     geo: IND
     product: wpi
@@ -270,6 +342,29 @@ dossiers:
       # sub-group's latest y/y lies inside the min–max hull of its items'
       # y/y (a weighted mean must), plus item y/y recomputation from levels.
       items: full   # all 697 -> data/series/wpi-items.json + data/raw/wpi-items.json
+    # THE NEW BASE (2026-10). The 2011-12 base ENDS at Apr 2026; the OEA's
+    # current series is base 2022-23, Apr 2023 on. Baked as its own bundles
+    # (wpi-2022*.json), never spliced — same rule as cpi-2024 / iip-2022.
+    # Checked live 2026-10-09 (MCP get_metadata + getWpiRecords): 5 major
+    # groups (Food index recoded 1400000000), 29 groups, 142 sub-groups,
+    # 953 items; crude petroleum & natural gas moved into Fuel & power;
+    # limit > 100 returns HTTP 400 on this base. No weights are served, so
+    # the headline is the published index. Both bases overlap Apr 2023 –
+    # Apr 2026 (37 months of levels, 25 of y/y): pages draw both rulers
+    # through the overlap rather than joining them.
+    fetch2022:
+      base_year: "2022-23"
+      base: "2022-23=100"
+      first_year: 2023
+      limit: 100
+      # API label (case-insensitive) -> bundle key
+      major_groups:
+        "Wholesale Price Index": published_headline
+        "Primary Articles": primary
+        "Fuel & Power": fuel
+        "Manufactured Products": manufactured
+        "Food Index": food_index
+      window: { start: "2024-04" }   # first month with a same-base year-ago level
     # WPI weights, base 2011-12 — sum must equal 100.00
     weights:
       primary: 22.62
@@ -280,6 +375,9 @@ dossiers:
     window: { start: "2016-01" }
 
   cpialrl:
+    # regression floor (docs/RELEASE-CHECKLIST.md §2): the minimum period this
+    # dossier's live bundles must cover — bump it when a release moves the data
+    stale_after: "2026-05"
     family: mospi
     geo: IND
     product: cpialrl
@@ -309,6 +407,9 @@ dossiers:
       rl: y/y of index_rl (old base only)
 
   plfs:
+    # regression floor (docs/RELEASE-CHECKLIST.md §2): the minimum period this
+    # dossier's live bundles must cover — bump it when a release moves the data
+    stale_after: "2026-06"
     # multi-survey compendium: bundles legitimately mix frequencies
     frequency_exempt: true
     family: mospi
@@ -415,6 +516,9 @@ dossiers:
       # behind 36), 43/45 (₹ twins of 44/46), 48 (annual twin of 47).
 
   iip:
+    # regression floor (docs/RELEASE-CHECKLIST.md §2): the minimum period this
+    # dossier's live bundles must cover — bump it when a release moves the data
+    stale_after: "2026-06"
     family: mospi
     geo: IND
     product: iip
@@ -439,7 +543,8 @@ dossiers:
       # - iip/getIipBaseYear serves FOUR bases: 2022-23, 2011-12, 2004-05,
       #   1993-94. All four are ingested below, each as separate bundles
       #   (base-year rule). Monthly spans: 2022-23 -> Apr 2023 on;
-      #   2011-12 -> Apr 2012 – Mar 2026 (Mar 2025 never loaded);
+      #   2011-12 -> Apr 2012 – Mar 2026 (Mar 2025 missing until MoSPI
+      #   loaded it, seen 2026-10-09);
       #   2004-05 -> 2005–2017; 1993-94 -> 1994–2011.
       # - frequency "Annually" IS served for all four bases (FY-labelled
       #   rows; the year filter is ignored — the endpoint returns the whole
@@ -456,6 +561,9 @@ dossiers:
       bases: ["2022-23", "2011-12", "2004-05", "1993-94"]
 
   hces:
+    # regression floor (docs/RELEASE-CHECKLIST.md §2): the minimum period this
+    # dossier's live bundles must cover — bump it when a release moves the data
+    stale_after: "2023-04"
     family: mospi
     geo: IND
     product: hces
@@ -489,6 +597,9 @@ dossiers:
         "9": gini                  # Gini coefficient of PCE
 
   asi:
+    # regression floor (docs/RELEASE-CHECKLIST.md §2): the minimum period this
+    # dossier's live bundles must cover — bump it when a release moves the data
+    stale_after: "2023-04"
     family: mospi
     geo: IND
     product: asi
@@ -586,6 +697,9 @@ dossiers:
             "59": total_emoluments   # unit "-" at source; it is ₹ lakh (disclosed)
 
   asuse:
+    # regression floor (docs/RELEASE-CHECKLIST.md §2): the minimum period this
+    # dossier's live bundles must cover — bump it when a release moves the data
+    stale_after: "2023-04"
     family: mospi
     geo: IND
     product: asuse
@@ -651,6 +765,9 @@ dossiers:
         "50": share_other_workers
 
   isp:
+    # regression floor (docs/RELEASE-CHECKLIST.md §2): the minimum period this
+    # dossier's live bundles must cover — bump it when a release moves the data
+    stale_after: "2026-05"
     family: mospi
     geo: IND
     product: isp
@@ -667,6 +784,9 @@ dossiers:
       # param breaks filtering — do not send it.
 
   aishe:
+    # regression floor (docs/RELEASE-CHECKLIST.md §2): the minimum period this
+    # dossier's live bundles must cover — bump it when a release moves the data
+    stale_after: "2021-04"
     family: mospi
     geo: IND
     product: aishe
@@ -712,6 +832,9 @@ dossiers:
         "9": teachers
 
   gender:
+    # regression floor (docs/RELEASE-CHECKLIST.md §2): the minimum period this
+    # dossier's live bundles must cover — bump it when a release moves the data
+    stale_after: "2011-01"
     # multi-survey compendium: bundles legitimately mix frequencies
     frequency_exempt: true
     family: mospi
@@ -760,6 +883,9 @@ dossiers:
         "146": child_marriage   # % women 20-24 married before 18
 
   mnre:
+    # regression floor (docs/RELEASE-CHECKLIST.md §2): the minimum period this
+    # dossier's live bundles must cover — bump it when a release moves the data
+    stale_after: "2026-06"
     family: mospi
     geo: IND
     product: mnre
@@ -802,6 +928,9 @@ dossiers:
       state_all_india: 36
 
   nfhs:
+    # regression floor (docs/RELEASE-CHECKLIST.md §2): the minimum period this
+    # dossier's live bundles must cover — bump it when a release moves the data
+    stale_after: "2020-01"
     # multi-survey compendium: bundles legitimately mix frequencies
     frequency_exempt: true
     family: mospi
@@ -858,3 +987,123 @@ dossiers:
         adult: [13, 15, 16, 21]      # BMI, blood sugar, BP, tobacco, alcohol
         fertility: [3, 5, 19, 20]    # fertility, contraception, empowerment, violence
         household: [1]              # household profile (sanitation, water, etc.)
+
+  deposits:
+    # regression floor: BSR-2 is annual, as on 31 March
+    stale_after: "2026-03"
+    family: databank
+    geo: IND
+    product: bsr2
+    frequency: annual
+    base: "as on 31 March"
+    release_calendar: "annual, about two months after 31 March"
+    revision_policy: "BSR-2 stocks are final on release for the year; the sector classification changed in 2018-19 and the deposit-size bands in March 2026 (both disclosed, never spliced)."
+    source_agency: "Reserve Bank of India, Basic Statistical Return 2 (via DBIE)"
+    release_url: https://data.rbi.org.in
+    ranges:
+      inr_lakh_crore: [0, 400]
+
+
+# ---------------------------------------------------------------------------
+# SEAMS: the base-year registry (2026-10). One entry per base (or
+# classification) for every product whose instrument has changed ruler.
+# validate.mjs enforces it: every bundle of these dossiers is listed under
+# exactly one base, its meta.base equals that base, and its dates stay inside
+# the base's window (`to: null` = the live base). Overlaps between bases are
+# computed and reported, never joined.
+#
+# A `bridge` is allowed only where the AGENCY publishes the link itself (a
+# back series or a linking factor). Bundles that use it are listed under
+# `bridge.bundles`. We never chain-link or back-cast on our own.
+#
+# Windows are the agency's own spans for each base, checked live on the MoSPI
+# MCP server 2026-10-09 (get_metadata + get_data probes).
+seams:
+  cpi:
+    - base: "2012=100"
+      from: "2011-01"
+      to: "2025-12"
+      bundles: [cpi, cpi-rural, cpi-urban, cpi-subgroups, cpi-states, cpi-states-sectors]
+    - base: "2024=100"
+      from: "2013-01"        # series=Back from 2013; series=Current from 2025-01
+      to: null
+      bundles: [cpi-2024, cpi-2024-sectors, cpi-2024-groups, cpi-2024-items, cpi-2024-states, cpi-2024-states-sectors]
+      bridge:
+        kind: agency back series
+        what: "NSO back-cast of the 2024=100 General index, All India, 2013 to 2024 (series=Back); headline only, no components"
+        bundles: [cpi-2024-back, cpi-2024-linked]
+  wpi:
+    - base: "2011-12=100"
+      from: "2012-04"
+      to: "2026-04"
+      bundles: [wpi, wpi-groups, wpi-subgroups, wpi-items]
+    - base: "2022-23=100"
+      from: "2023-04"
+      to: null
+      bundles: [wpi-2022, wpi-2022-groups, wpi-2022-subgroups, wpi-2022-items]
+  iip:
+    - base: "1993-94=100"
+      from: "1994-04"
+      to: "2011-06"
+      bundles: [iip-1993, iip-industries-1993]
+    - base: "2004-05=100"
+      from: "2005-04"
+      to: "2017-03"
+      bundles: [iip-2004, iip-industries-2004]
+    - base: "2011-12=100"
+      from: "2012-04"
+      to: "2026-03"
+      bundles: [iip-2011, iip-industries-2011]
+    - base: "2022-23=100"
+      from: "2023-04"
+      to: null
+      bundles: [iip-2022, iip-industries-2022]
+  gdp:
+    # quarters are dated at their first month (Q2 FY26 = 2025-07); annual
+    # rows at April of the fiscal year
+    - base: "2011-12"
+      from: "2011-04"
+      to: "2025-07"
+      bundles: [gdp, gdp-expenditure, gdp-accounts, gdp-industries, gdp-nominal]
+      bridge:
+        kind: agency back series
+        what: "NSO back series (series=Back) at 2011-12 prices, annual 1950-51 to 2011-12; growth from 1951-52"
+        from: "1950-04"
+        to: "2011-04"
+        bundles: [gdp-back]
+    - base: "2022-23"
+      from: "2022-04"
+      to: null
+      bundles: [gdp-2022, gdp-2022-expenditure, gdp-2022-industries, gdp-2022-nominal, gdp-2022-accounts]
+  cpialrl:
+    - base: "1986-87=100"
+      from: "1995-07"
+      to: "2025-05"
+      bundles: [cpialrl-1986, cpialrl-states-1986]
+    - base: "2019=100"
+      from: "2025-06"
+      to: null
+      bundles: [cpialrl-2019, cpialrl-groups-2019, cpialrl-states-2019]
+  asi:
+    # not price bases: NIC classification blocks, equally never joined
+    - base: "NIC 1987"
+      from: "1992-04"
+      to: "1997-04"
+      bundles: [asi-headline-1987]
+    - base: "NIC 1998"
+      from: "1998-04"
+      to: "2003-04"
+      bundles: [asi-headline-1998]
+    - base: "NIC 2004"
+      from: "2004-04"
+      to: "2007-04"
+      bundles: [asi-headline-2004]
+    - base: "NIC 2008"
+      from: "2008-04"
+      to: null
+      bundles: [asi-headline, asi-accounts, asi-industries, asi-states]
+  isp:
+    - base: "2024-25=100"
+      from: "2025-04"
+      to: null
+      bundles: [isp]

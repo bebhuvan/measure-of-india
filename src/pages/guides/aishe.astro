@@ -1,0 +1,533 @@
+---
+import Base from "../../layouts/Base.astro";
+import GuideData from "../../components/GuideData.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+const D = bySlug["aishe"];
+---
+<Base
+  title="Higher Education · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/aishe/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">Once a year the Ministry of Education asks every university and college it can find how many students it enrolled, how many teachers it has, and what they study. The answer is a count of seats filled: and a measure of how many college-age Indians never filled one.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>Ministry of Education</b></span>
+      <span>Instrument <b>AISHE, annual census of institutions</b></span>
+      <span>Coverage <b>Universities, colleges, enrolment, teachers</b></span>
+      <span>Rounds <b>2017-18 to 2021-22</b></span>
+      <span>Latest <b>2021-22</b></span>
+      <span>Convention <b>Estimated enrolment, gross ratios</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Student enrolment, crore</div><div class="v acc" id="n-enrol">–</div><div class="d" id="d-enrol">–</div><div class="nspark" id="nspark-enrol"></div></div>
+      <div class="num"><div class="l">Gross Enrolment Ratio</div><div class="v" id="n-ger">–</div><div class="d" id="d-ger">–</div></div>
+      <div class="num"><div class="l">Gender Parity Index</div><div class="v" id="n-gpi">–</div><div class="d" id="d-gpi">–</div></div>
+      <div class="num"><div class="l">Pupil-Teacher Ratio</div><div class="v" id="n-ptr">–</div><div class="d" id="d-ptr">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">AISHE, 2021-22</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Estimated enrolment</span><div class="big" id="rb-enrol">–</div></div>
+      <p class="rt-cap">Students enrolled in higher education, 2021-22: the AISHE headline count. Beside it sits the Gross Enrolment Ratio: the share of the college-age population that enrolled, gross of repeats and in-migrants. About <b id="rt-ratio">–</b> of every hundred Indians of college age were enrolled.</p>
+      <div class="rt-side"><span class="rk">GER, per cent</span><div class="rt-side-v" id="rb-ger">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the print says</span>
+        <p>The 2021-22 round counted <b id="cr-enrol">–</b> students enrolled across <b id="cr-univ">–</b> universities and <b id="cr-coll">–</b> colleges, taught by <b id="cr-teach">–</b> teachers. Enrolment rose from <b id="cr-enrol-first">–</b> in 2017-18: a <b id="cr-growth">–</b> increase over four rounds. The Gross Enrolment Ratio reached <b id="cr-ger">–</b>, up from <b id="cr-ger-first">–</b> at the start of the window.</p>
+        <p>Women have reached enrolment-rate parity with men: the Gender Parity Index stands at <b id="cr-gpi">–</b>, where 1.0 is parity. Women are <b id="cr-fem-share">–</b> of all enrolled students. Scheduled Caste students are <b id="cr-sc-share">–</b>; Scheduled Tribe students, <b id="cr-st-share">–</b>.</p>
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What it does not say</span>
+        <p>It does not say that <b>everyone enrolled is a distinct student.</b> AISHE counts enrolments, and a person enrolled in two programmes is counted twice. The headline is a count of seats filled, not heads: and the gross ratio can exceed 100 for exactly this reason.</p>
+        <p>Nor does the GER measure how many young Indians reach college. It divides enrolments by an estimate of the 18–23 population; the denominator is a projection, and it moves with census revisions. The gap between enrolment and the college-age population is real, but its exact size is a ratio of two uncertain numbers.</p>
+        <p>What GER does not measure at all is completion. A student who enrols and drops out is counted here as fully as one who graduates. Whether the extra enrolments of the last four years became extra graduates, we do not know from this survey.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 register -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>The register of series</h2><span class="line"></span><span class="unit">2021-22, vs 2020-21, since 2017-18</span></div>
+    <div class="break ledger">
+      <table>
+        <thead>
+          <tr><th>Series</th><th>2021-22</th><th>vs prev. round</th><th>2017-18</th><th class="spark">5 rounds</th></tr>
+        </thead>
+        <tbody id="ledger-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- § 03 composition -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>What they study, who they are</h2><span class="line"></span><span class="unit">Share of enrolment, 2021-22</span></div>
+    <div class="break">
+      <figure id="cb-comp" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Under-graduate, overwhelmingly</h3>
+            <div class="sub">Estimated enrolment by level of education &amp; by social group, All India, Both, 2021-22, the eight levels sum to the Grand Total</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-comp">–</div><div class="c">Under Graduate, share of enrolment</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone">
+            <div class="basket" style="padding:8px 0 8px">
+              <div class="bar" id="bar-edu"></div>
+              <div class="labels" id="lab-edu"></div>
+            </div>
+            <div class="basket" style="padding:32px 0 8px">
+              <div class="bar" id="bar-soc"></div>
+              <div class="labels" id="lab-soc"></div>
+            </div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Education, AISHE 2021-22, estimated enrolment (Both) by education level and social group, "Others" is a residual: the API serves SC, ST and OBC but no plain Others category, so it is computed as Grand Total minus the three named groups</span>
+            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The top bar is the level of study, the bottom bar the social group. Higher education in India means, to a first approximation, the under-graduate degree: eight seats in ten sit at that level. Post-graduate is a distant second. The research track is thin, Ph.D.s are under one per cent of the room, and the certificate and M.Phil. rungs are shrinking as the system consolidates around degrees.</p>
+            <p>The social-group bar carries a residual. The survey names Scheduled Caste, Scheduled Tribe and Other Backward Classes enrolment directly; everyone else, the general category, minorities, the unclassified, falls into "Others", computed here as the remainder. Three named groups plus that residual sum to the whole.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2021-22</span>
+            <p>Under-graduate: <b id="ex-c-ug">–</b> of enrolment; post-graduate, <b id="ex-c-pg">–</b>; diploma, <b id="ex-c-dip">–</b>; Ph.D., <b id="ex-c-phd">–</b>. By group: OBC <b id="ex-c-obc">–</b>, Others <b id="ex-c-oth">–</b>, SC <b id="ex-c-sc">–</b>, ST <b id="ex-c-st">–</b>: the two reserved categories together are under a third of the room.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 04 headline plate -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>Plate 1: five rounds of growth</h2><span class="line"></span><span class="unit">enrolment, million, annual</span></div>
+    <div class="break">
+      <figure id="cb-enrol" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The room got bigger: parity in rates, not in counts</h3>
+            <div class="sub">Estimated student enrolment by gender, All India, 2017-18 to 2021-22, women in blue, men in grey</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-enrol">–</div><div class="c">2017-18 → 2021-22, enrolment growth</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-enrol">
+            <button class="chip" data-key="female"><i style="background:#2E4BD8"></i>Female</button>
+            <button class="chip" data-key="male"><i style="background:#5F6675"></i>Male</button>
+          </div>
+          <div class="plotzone">
+            <div id="plot-enrol" style="position:relative"><div class="cb-tip"></div></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Education, AISHE, estimated student enrolment, Grand Total, by gender, survey years plotted at April, the Gender Parity Index (female GER ÷ male GER) sat at or above 1.0 across the window, rate parity, though men outnumber women in absolute enrolment because the male college-age cohort is larger</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Two lines, five points each: one per survey round. Both rise: the system expanded by roughly a fifth in four years. The female line (blue) rose slightly faster in percentage terms, and the Gender Parity Index held at or above 1.0: women enrol at the same <em>rate</em> as men. But in absolute numbers men still outnumber women, and the gap between the lines is roughly stable, because the male college-age cohort is itself larger. Equal rates, unequal counts.</p>
+            <p>Read the slopes, not the levels. The 2020-21 step is the largest single-year jump: partly real expansion, partly a wider institutional net catching more colleges in the DCF (Data Capture Format) response. AISHE's coverage of institutions improved year by year, so part of any rise is the survey seeing more, not the system growing more.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2021-22</span>
+            <p>Female enrolment reached <b id="ex-e-fem">–</b>, male <b id="ex-e-male">–</b>: women are <b id="ex-e-femshare">–</b> of the total. The Gender Parity Index moved from <b id="ex-e-gpi0">–</b> to <b id="ex-e-gpi1">–</b>: rate parity, within rounding. The absolute gap between the lines stands at <b id="ex-e-gap1">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 what this measures -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="wm-grid">
+      <div>
+        <p>AISHE is an annual census of higher-education institutions, universities, colleges and stand-alone institutions, run by the Ministry of Education since 2010-11. Each institution reports its enrolment, teachers and programmes through a Data Capture Format. The survey tries to reach every institution; in practice coverage is incomplete and improving, which means year-on-year rises blend real growth with better reporting.</p>
+        <p>Three derived ratios do the heavy lifting in this guide. The <b>Gross Enrolment Ratio</b> (GER) divides total enrolment by the projected 18-to-23 population and multiplies by 100. It is gross, it counts every enrolment, including repeats and students from outside the age band, so it can exceed 100, and in the small city-states it does. The <b>Gender Parity Index</b> (GPI) is female GER divided by male GER; 1.0 means women enrol at the same rate as men. The <b>Pupil-Teacher Ratio</b> (PTR) is enrolled students per teacher, a resource measure, not a class-size measure.</p>
+        <p>The five rounds here, 2017-18 to 2021-22, are the years the eSankhyiki API serves. AISHE itself runs further back (to 2010-11), and those earlier rounds are not chained in: the institutional frame widened over time, so a longer line would mix survey-coverage gains with genuine expansion. This guide reads the five comparable rounds and says so.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note, i</span>
+          <b>Enrolments, not students.</b> A person in two programmes is counted twice. The headline counts seats filled, and GER can exceed 100 for the same reason.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note, ii</span>
+          <b>GER divides by a projection.</b> The 18–23 denominator is a population estimate, revised with each census. The ratio's precision is bounded by that estimate.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note, iii</span>
+          <b>The 2021-22 teacher total is reconstructed.</b> The API's published "All Teacher" row is garbled for that year; the figure used here is the sum of the five regular faculty types (99% of the total in clean years), disclosed in the provenance.
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 06 plate 2 : GER by social group -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>Plate 2: the access gap</h2><span class="line"></span><span class="unit">Gross Enrolment Ratio, per cent, by social group</span></div>
+    <div class="break">
+      <figure id="cb-ger" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Three lines, three speeds</h3>
+            <div class="sub">Gross Enrolment Ratio, All Categories, Scheduled Caste &amp; Scheduled Tribe, All India, 2017-18 to 2021-22</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-ger">–</div><div class="c">2021-22, ST gap to All-India GER</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-ger">
+            <button class="chip" data-key="ger_all_both"><i style="background:#2E4BD8"></i>All Categories</button>
+            <button class="chip" data-key="ger_sc_both"><i style="background:#5F6675"></i>Scheduled Caste</button>
+            <button class="chip" data-key="ger_st_both"><i style="background:#A3A9B4"></i>Scheduled Tribe</button>
+          </div>
+          <div class="plotzone">
+            <div id="plot-ger" style="position:relative"><div class="cb-tip"></div></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Education, AISHE, GER by social category (Both), the API publishes GER only for All Categories, SC and ST, there is no OBC GER series, gross of repeats and out-of-age-band enrolment</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Three GER lines, all rising, all ordered the same way: All Categories on top, Scheduled Caste below it, Scheduled Tribe at the bottom. The gaps narrowed a little over five years, but the ordering held. A Scheduled Tribe student of college age was markedly less likely to be enrolled than the All-India average throughout the window: the exact gap is dated, in the column at right.</p>
+            <p>The lines move together because they share a denominator: the same age projection, sliced by group. When the projection is revised, all three shift. Read the gaps between the lines, which are more stable than any single level.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2021-22</span>
+            <p>GER: All Categories <b id="ex-g-all">–</b>, Scheduled Caste <b id="ex-g-sc">–</b>, Scheduled Tribe <b id="ex-g-st">–</b>. The ST line sits <b id="ex-g-stgap">–</b> points below the All-India ratio; the SC gap is <b id="ex-g-scgap">–</b>. No OBC line is drawn: the survey does not publish an OBC GER.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 plate 3 : GER by gender -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>Plate 3: parity, in raw rates</h2><span class="line"></span><span class="unit">Gross Enrolment Ratio, per cent, by gender</span></div>
+    <div class="break">
+      <figure id="cb-gergen" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Women's GER, at or above men's</h3>
+            <div class="sub">Gross Enrolment Ratio, All Categories, female &amp; male, All India, 2017-18 to 2021-22, the Gender Parity Index is their ratio</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-gergen">–</div><div class="c">2021-22, GPI, female GER ÷ male GER</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-gergen">
+            <button class="chip" data-key="female"><i style="background:#2E4BD8"></i>Female GER</button>
+            <button class="chip" data-key="male"><i style="background:#5F6675"></i>Male GER</button>
+          </div>
+          <div class="plotzone">
+            <div id="plot-gergen" style="position:relative"><div class="cb-tip"></div></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Education, AISHE, GER (All Categories) by gender, the Gender Parity Index (GPI) is female GER ÷ male GER; a value at or above 1.0 means women enrol at the same or higher rate than men, the two lines nearly touch because parity is close</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>This is the chart behind the Gender Parity Index. GPI is a single number, female GER divided by male GER, and a single number hides how close the two rates are. Plotted as two lines, the story is visible: women's GER sat at or above men's across the whole window, peaking around 1.06 in the middle years and settling back to parity by 2021-22.</p>
+            <p>The lines nearly touch because the rates nearly match: that is what parity looks like. It does not mean equal numbers of men and women are enrolled: men still outnumber women in absolute enrolment (Plate 1), because the male college-age cohort is larger. Equal rates, unequal counts.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2021-22</span>
+            <p>Female GER <b id="ex-gg-fem">–</b>, male GER <b id="ex-gg-male">–</b>: women's rate is <b id="ex-gg-diff">–</b> points higher. GPI: <b id="ex-gg-gpi">–</b>. At the peak (2019-20) the index reached <b id="ex-gg-peak">–</b>; by 2021-22 it had eased back to parity.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 plate 4 : where access reaches — state GER + state enrolment -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>Plate 4: where college reaches, where students are</h2><span class="line"></span><span class="unit">State GER &amp; enrolment, 2021-22</span></div>
+    <div class="break">
+      <figure id="cb-states" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Access is a long slope, volume is a cluster</h3>
+            <div class="sub">Gross Enrolment Ratio by state/UT (top) &amp; estimated enrolment by state/UT (bottom), 2021-22, the blue rule is the All-India GER</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-states">–</div><div class="c">GER spread: highest minus lowest state</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone">
+            <div id="plot-states"></div>
+            <div id="plot-states-enr" style="margin-top:26px"></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Education, AISHE 2021-22, GER (All Categories, Both) &amp; estimated enrolment (Grand Total, Both) by state/UT, city-UTs (Chandigarh, Delhi, Puducherry) read high on GER because students cross state borders to study, enrolment tracks population, UP and Maharashtra hold the most seats</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Two strips, one question each. The top strip asks <em>does college reach here?</em>: GER by state, against the All-India rule. It is a long downward slope: the city-territories where students migrate to sit at the top, the large poor states at the bottom. The bottom strip asks <em>where are the students?</em>, pure enrolment volume, and the answer is a cluster of big states. Uttar Pradesh and Maharashtra alone hold a third of all enrolment.</p>
+            <p>The two rankings barely correlate. A state can hold many students and still enrol a small share of its college-age population (Bihar); a city can enrol a high share of a cohort it did not raise (Chandigarh). Read the two strips together: access and volume are different stories.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2021-22</span>
+            <p>Highest GER: <b id="ex-s-top">–</b>. Lowest: <b id="ex-s-bot">–</b>. States above the All-India line: <b id="ex-s-above">–</b> of <b id="ex-s-n">–</b>; the GER spread is <b id="ex-s-spread">–</b> points. By volume: <b id="ex-se-top">–</b> holds the most enrolled students (<b id="ex-se-topn">–</b>); the top three states hold <b id="ex-se-top3">–</b> of all India.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 plate 5 : what they study, in motion -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>Plate 5: what they study, in motion</h2><span class="line"></span><span class="unit">Enrolment by education level, 5 rounds, small multiples</span></div>
+    <div class="break">
+      <figure id="cb-edu" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Eight levels, eight trajectories</h3>
+            <div class="sub">Estimated enrolment by education level, Both, All India, 2017-18 to 2021-22, sorted by 2021-22 volume, each panel on its own scale</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-edu">–</div><div class="c">Integrated programmes, 5-year growth</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone">
+            <div id="grid-edu"></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Education, AISHE, estimated enrolment (Both) by education level, each panel is its own scale, Under Graduate dwarfs the rest, M.Phil. collapsed after NEP 2020 discontinued it; Integrated programmes more than doubled</span>
+            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Eight small panels, one per level of study, each on its own scale (Under Graduate would swamp the rest on a shared axis). Read the <em>shape</em> of each line, not the level: a rising line grew, a falling line shrank. The system consolidated around the degree: under-graduate and post-graduate rose; the diploma rungs held; and the two tail rungs moved hard in opposite directions.</p>
+            <p>M.Phil. fell by two-thirds: the National Education Policy 2020 discontinued it, and the line shows the policy landing in the data. Integrated programmes (a combined bachelor's-master's) more than doubled, from a small base. Certificate enrolment halved. These are real shifts in what "higher education" means, visible only when the levels are apart.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2021-22</span>
+            <p>Under-graduate: <b id="ex-edu-ug">–</b> enrolled. Integrated: <b id="ex-edu-int-gain">–</b> growth over five years. M.Phil.: <b id="ex-edu-mphil">–</b> decline. Ph.D. rose <b id="ex-edu-phd">–</b>: the research track grew, but remains under one per cent of the room.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 10 plate 6 : who teaches -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>Plate 6: who teaches</h2><span class="line"></span><span class="unit">Teachers by faculty rank &amp; gender, 2021-22</span></div>
+    <div class="break">
+      <figure id="cb-fac" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The higher the chair, the fewer the women</h3>
+            <div class="sub">Teachers by faculty type, male &amp; female, All India, 2021-22, the five regular faculty types (the defective "All Teacher" total is excluded)</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-fac">–</div><div class="c">female share, Professor &amp; Equivalent</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone">
+            <div id="plot-fac"></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Education, AISHE 2021-22, teachers by the five regular faculty types × gender, the defective "All Teacher" total and "Visiting Teacher" rows are excluded (see provenance), female share rises steadily as rank falls</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Five faculty ranks, ordered senior to junior, each with a male dot (grey) and a female dot (blue). The line between the dots is the gender gap at that rank. The pattern is monotone: the higher the chair, the fewer the women. Professors are the most male; demonstrators and tutors, the bottom of the academic hierarchy, are the only majority-female rank.</p>
+            <p>This is the classic academic pyramid, sharpened by gender. Lecturers and assistant professors are the largest rank by far (seven in ten teachers), and women hold roughly four in ten of those posts. The thinning at the top is real, but the survey says nothing about why: promotion gaps, retirement cohorts, and historic hiring all leave the same trace in a stock count.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2021-22</span>
+            <p>Female share by rank: Professors <b id="ex-fac-prof">–</b>, Reader/Associate <b id="ex-fac-read">–</b>, Lecturer/Assistant <b id="ex-fac-lec">–</b>, Temporary <b id="ex-fac-temp">–</b>, Demonstrator/Tutor <b id="ex-fac-dem">–</b>. The Lecturer/Assistant rank alone holds <b id="ex-fac-lecn">–</b> of all teachers.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 11 plate 7 : who else reaches -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>Plate 7: who else reaches college</h2><span class="line"></span><span class="unit">PWD &amp; minority enrolment, by gender, 2021-22</span></div>
+    <div class="break">
+      <figure id="cb-min" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Counts, not rates: the denominator is missing</h3>
+            <div class="sub">Estimated enrolment of Persons With Disability &amp; minority communities, male &amp; female, All India, 2021-22, EWS is a category introduced in 2019-20</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-min">–</div><div class="c">Muslim enrolment, 2021-22</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone">
+            <div id="plot-min"></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Education, AISHE 2021-22, estimated enrolment of PWD &amp; minority communities by gender, these are counts, not GER-style rates, the eligible population for each group is not served, so no access ratio is computed, EWS (Economically Weaker Sections) data begins 2020-21</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Four groups the survey names separately from the SC/ST/OBC ledger of Plate 2: Persons With Disability, Muslims, Other Minority Communities, and the newer EWS category. Each bar is split male (grey) and female (blue). These are counts: how many enrolled, not how large the group is. A small bar may mean a small community or a community that college reaches poorly: the survey serves no denominator to tell them apart.</p>
+            <p>The gender split within each group is its own signal. Muslims reach near-parity (women are half of Muslim enrolment); disability enrolment skews male, as disability identification itself does. EWS is the youngest category, its line in the data begins in 2020-21, after the reservation came in, so no trend is drawn for it yet.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2021-22</span>
+            <p>Muslims: <b id="ex-min-mus">–</b> enrolled (<b id="ex-min-musf">–</b> female). Other minorities: <b id="ex-min-om">–</b>. EWS: <b id="ex-min-ews">–</b>: first reported 2020-21. Persons With Disability: <b id="ex-min-pwd">–</b>, of whom <b id="ex-min-pwdf">–</b> are women. The disabled enrolment rate is a fraction of one per cent of the room.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 12 plate 8 : PTR -->
+  <section>
+    <div class="sec-head"><span class="no">12</span><h2>Plate 8: the resource ratio</h2><span class="line"></span><span class="unit">Pupil-Teacher Ratio, all institutions, annual</span></div>
+    <div class="break">
+      <figure id="cb-ptr" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Students per teacher, barely moving</h3>
+            <div class="sub">Pupil-Teacher Ratio, all institutions (regular &amp; distance), All India, 2017-18 to 2021-22</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-ptr">–</div><div class="c">2021-22, students per teacher</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-ptr">
+            <button class="chip" data-key="ptr"><i class="dash" style="border-color:#2E4BD8"></i>Pupil-Teacher Ratio</button>
+          </div>
+          <div class="plotzone">
+            <div id="plot-ptr" style="position:relative"><div class="cb-tip"></div></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Education, AISHE, PTR = enrolled students ÷ teachers (all institutions, regular &amp; distance), a system-wide resource ratio, not average class size, research supervisors, librarians and administrators sit in the denominator</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>One dashed line, five points. The pupil-teacher ratio is the system seen whole: every enrolled student divided by every teacher, across every institution. It fell from the high twenties to the mid-twenties over five years: a small improvement, because India added teachers slightly faster than students. The line is deliberately flat: this is a resource ratio, not a dramatic series.</p>
+            <p>Do not read it as a class size. A PTR of 26 means one teacher for roughly every 26 enrolled students across the whole system: a research supervisor with eight students and a lecture hall with 200 both feed the same average. It measures how thin the teaching staff is spread, not how big a classroom is.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2021-22</span>
+            <p>PTR: <b id="ex-ptr-now">–</b> students per teacher, down from <b id="ex-ptr-first">–</b> in 2017-18. The teacher count behind it (<b id="ex-ptr-teach">–</b>) is reconstructed for 2021-22 from the five regular faculty types: see the provenance.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 13 how to misread -->
+  <section>
+    <div class="sec-head"><span class="no">13</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li>
+        <span class="no">i.</span>
+        <div>
+          <h3>"GER of 28% means only 28% of young Indians go to college."</h3>
+          <p>GER divides <em>enrolments</em>, not distinct students, by the projected 18-to-23 population. A student enrolled in two courses counts twice; one outside the age band counts once. The ratio is a rough access measure, bounded by a population projection, not a graduation rate or a headcount.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">ii.</span>
+        <div>
+          <h3>"Chandigarh's GER is 65%: almost everyone there goes to college."</h3>
+          <p>Chandigarh is a city-territory; students from Punjab and Haryana cross into it to study and are counted in its enrolment against its own small age cohort. GER inflates wherever students migrate <em>to</em>. Read the large states for the real signal; the small UTs are artefacts of geography.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iii.</span>
+        <div>
+          <h3>"Enrolment rose 18%: higher education is booming."</h3>
+          <p>Part of every year's rise is the survey itself. AISHE's institutional coverage widened over these rounds as more colleges filed the Data Capture Format. The growth in the count blends genuine expansion with better reporting, and the survey does not separate the two.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iv.</span>
+        <div>
+          <h3>"The Gender Parity Index is 1.0: women have achieved equality in higher education."</h3>
+          <p>GPI measures enrolment <em>rates</em>, not outcomes. Women enrol at the same rate as men: but the ratio says nothing about which subjects, whether they graduate, or what they earn after. Parity of access is a milestone, not the destination.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">v.</span>
+        <div>
+          <h3>"A Pupil-Teacher Ratio of 26 means classes of 26."</h3>
+          <p>PTR is enrolled students divided by teachers across the whole system: a resource ratio, not an average class size. Research supervisors, librarians and administrators are in the numerator's denominator; a lecture hall of 200 and a seminar of 12 average out. It tells you how thin the teaching staff is spread, not how big a classroom is.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">vi.</span>
+        <div>
+          <h3>"SC and ST enrolment shares show reservation is working."</h3>
+          <p>The shares show how many enrolled, not whether seats reserved were filled or whether the gap to the general category closed. SC and ST <em>shares</em> can rise while their GER, the access rate, still trails the All-India line, because their share of the college-age population is also growing. Read GER by group (Plate 2) for access, not the composition share.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <GuideData slug="aishe" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>Ministry of Education, Department of Higher Education. All India Survey on Higher Education (AISHE), survey rounds 2017-18 to 2021-22: the five rounds the eSankhyiki API serves. Retrieved via the MoSPI eSankhyiki API, vintage <b id="prov-vintage">–</b>. The survey itself runs to 2010-11; earlier rounds are not chained in, because the institutional frame widened over time and a longer line would mix survey-coverage gains with genuine expansion.</p>
+        <p>Coverage: all nine AISHE indicators are ingested raw; six baked bundles carry the page. The headline series (universities, colleges, enrolment, teachers, GER, GPI, PTR), the access cuts (GER by social category × gender, GPI by social category, enrolment by gender), the composition (enrolment by education level and social group), the state grain (enrolment, GER and GPI by state/UT), the faculty hierarchy (teachers by the five regular faculty types × gender) and the minority cut (PWD &amp; minority enrolment by gender). Nothing is selected away: every indicator the survey publishes is on the page or in the audit dump behind it.</p>
+        <p><b>Teacher reconstruction, 2021-22.</b> The API's "All Teacher" total row is a source defect for 2021-22: All India prints 12,904 against ~1.55 million the year before, and every state cell is likewise a near-zero residual. The 2021-22 figure used here is reconstructed as the sum of the five regular faculty types (Professor &amp; Equivalent, Reader &amp; Associate Professor, Lecturer/Assistant Professor, Demonstrator/Tutor, Temporary Teacher): a sum equal to 99.0–99.2% of the published total in every clean year. Earlier years use the published "All Teacher" total as served. The raw, defective value is preserved in the audit dump.</p>
+      </div>
+      <div>
+        <h6>Revisions &amp; uncertainty</h6>
+        <p>AISHE results are final on release. The five rounds are comparable by design but are never chained into a spliced index. Enrolment counts enrolments, not distinct students; GER divides by a population projection; GPI is a ratio of ratios. Where the data carry a known defect (the 2021-22 teacher total), the reconstruction is disclosed and the raw value is kept. Where something is not measured, completion, dropout, learning, this guide says so.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Education, version 1.1, adds GER by gender (§07), the state enrolment companion strip (§08), the education-level small multiples (§09), the faculty-hierarchy plate (§10) and the PWD &amp; minority plate (§11). Next scheduled revision: on release of the 2022-23 round.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, AISHE</span>
+      <span>Vintage <span id="prov-vintage2">–</span>, enrolments, not students</span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/aishe.client.js";
+</script>
+</Base>

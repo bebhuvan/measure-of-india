@@ -2,15 +2,15 @@
 import Learn from "../layouts/Learn.astro";
 ---
 <Learn
-  title="India Atlas — Learn · GDP: what it counts, what it misses"
-  description="Learn № 09 — what GDP actually is: the value of everything produced, minus what was used up making it. What a decade of real GDP honestly measures, and the three big things it cannot see."
+  title="GDP: what it counts, what it misses · India Atlas"
+  description="What GDP actually is: the value of everything produced, minus what was used up making it. What a decade of real GDP honestly measures, and the three big things it cannot see."
   slug="gdp"
-  kicker="Learn № 09 — Growth · GDP"
+  kicker="Growth: GDP"
   h1="GDP counts the output. <i>It cannot count who gets it.</i>"
   lede="The value of everything produced in the country, minus what was used up producing it: what GDP honestly measures, and the three big things it cannot see."
   meta={[
     ["Concept", "GDP"],
-    ["Illustrated with", "Real GDP · Q1 FY17 – Q2 FY26"],
+    ["Illustrated with", "Real GDP, Q1 FY17 to Q2 FY26"],
     ["Source", "MoSPI, NSO"],
     ["Level", "First principles"],
     ["Reading time", "9 min"],
@@ -26,7 +26,7 @@ import Learn from "../layouts/Learn.astro";
       <div>
         <p>Every quarter, the government's statisticians add up the value of everything produced in the country: steel and software, wheat and haircuts, bank credit and bus rides. Then they subtract what was used up in the producing, the mill's iron ore, the cloud the software firm rents. What remains is GDP. It is the largest single number in Indian statistics, and the most argued over.</p>
         <aside class="defbox">
-          <div class="term">GDP <span class="sub">gross domestic product · a flow · quarterly</span></div>
+          <div class="term">GDP <span class="sub">gross domestic product, a flow, quarterly</span></div>
           <p>The value of all final goods and services produced within the country in a period, minus the value of the inputs used up making them. Growth of 8.23 per cent means output was that much larger than in the same quarter a year earlier, with prices held constant.</p>
           <div class="eg"><b>In plain words:</b> the size of the economy's engine, measured every three months.</div>
         </aside>
@@ -40,15 +40,15 @@ import Learn from "../layouts/Learn.astro";
       </div>
       <div class="wm-rail">
         <aside class="margin-note">
-          <span class="mk">Margin note · i</span>
+          <span class="mk">Margin note, i</span>
           <b>A flow, not a stock.</b> Wealth is the lake; GDP is the river. One bad quarter cannot be paid for out of good ones.
         </aside>
         <aside class="margin-note">
-          <span class="mk">Margin note · ii</span>
+          <span class="mk">Margin note, ii</span>
           <b>Final goods only.</b> The flour is already inside the bread's price. Count it again and the economy looks bigger without producing more.
         </aside>
         <aside class="margin-note">
-          <span class="mk">Margin note · iii</span>
+          <span class="mk">Margin note, iii</span>
           <b>Real, not nominal.</b> The chart on this page holds prices at 2011-12 levels. What grows is volume, not the price tag.
         </aside>
       </div>
@@ -57,21 +57,21 @@ import Learn from "../layouts/Learn.astro";
 
   <!-- § 02 plate : a decade of growth -->
   <section>
-    <div class="sec-head"><span class="no">02</span><h2>A decade, drawn once</h2><span class="line"></span><span class="unit">y/y % · quarterly</span></div>
+    <div class="sec-head"><span class="no">02</span><h2>A decade, drawn once</h2><span class="line"></span><span class="unit">y/y %, quarterly</span></div>
     <p>Drawn as a growth rate, the decade looks like a heart monitor: a steady pulse near 6 per cent, one arrest, a rebound off the fallen base, then a return to rhythm. The dashed rule is the rough pre-pandemic trend, drawn as a reference, not a target.</p>
     <div class="break">
       <figure id="cb-gdp" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>Thirty-eight quarters of growth — and the one the economy stopped</h3>
-            <div class="sub">Real GDP, year-on-year · constant 2011-12 prices · Q1 FY17 – Q2 FY26</div>
+            <h3>Thirty-eight quarters of growth: and the one the economy stopped</h3>
+            <div class="sub">Real GDP, year-on-year, constant 2011-12 prices, Q1 FY17 to Q2 FY26</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-gdp">–</div><div class="c">Q2 FY26 · GDP y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-gdp">–</div><div class="c">Q2 FY26, GDP y/y</div></div>
         </div>
         <div class="frame">
           <div class="plotzone" id="plot-gdp"><div class="cb-tip"></div></div>
           <div class="plotfoot">
-            <span class="src">Source — MoSPI, National Accounts, base 2011-12, vintage <span id="pf-gdp">–</span> · dashed: rough 6% pre-pandemic trend</span>
+            <span class="src">Source: MoSPI, National Accounts, base 2011-12, vintage <span id="pf-gdp">–</span>, dashed: rough 6% pre-pandemic trend</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -100,10 +100,10 @@ import Learn from "../layouts/Learn.astro";
   <section>
     <div class="sec-head"><span class="no">03</span><h2>What the number cannot see</h2><span class="line"></span><span class="unit">Three blind spots</span></div>
     <div class="numbers">
-      <div class="num"><div class="l">The print · Q2 FY26</div><div class="v acc" id="n-last">–</div><div class="d">real GDP, year-on-year</div></div>
+      <div class="num"><div class="l">The print, Q2 FY26</div><div class="v acc" id="n-last">–</div><div class="d">real GDP, year-on-year</div></div>
       <div class="num"><div class="l">The quarter before</div><div class="v" id="n-prev">–</div><div class="d">Q1 FY26, same measure</div></div>
-      <div class="num"><div class="l">Pre-pandemic average</div><div class="v" id="n-trend">–</div><div class="d">FY17 to FY20 · the dashed rule</div></div>
-      <div class="num"><div class="l">The lockdown quarter</div><div class="v" id="n-crash">–</div><div class="d">Q1 FY21 · the flow stopped</div></div>
+      <div class="num"><div class="l">Pre-pandemic average</div><div class="v" id="n-trend">–</div><div class="d">FY17 to FY20, the dashed rule</div></div>
+      <div class="num"><div class="l">The lockdown quarter</div><div class="v" id="n-crash">–</div><div class="d">Q1 FY21, the flow stopped</div></div>
     </div>
     <p style="margin-top:40px">For one number, GDP is honest about what it is. The misuse begins when it is asked questions it cannot answer. Three of them matter most.</p>
     <p><b>Distribution, first.</b> GDP is a total; it cannot say who received it. If all of a year's extra output accrues to a thin slice of households, the print still rises, and the median family sees nothing. The aggregate carries no map of its own spread.</p>
@@ -150,8 +150,8 @@ import Learn from "../layouts/Learn.astro";
   </div>
   <div slot="prov-note">
     <h6>This note</h6>
-    <p>Learn № 09 · Growth · version 1.0. Evergreen, written to survive the next print. The FY26 episode is used as history, not news; the chart redraws from the baked data on every build.</p>
-    <p>Companion dossier: <a href="/dossiers/gdp/">Dossier 02 · National Accounts</a>.</p>
+    <p>Growth, version 1.0. Evergreen, written to survive the next print. The FY26 episode is used as history, not news; the chart redraws from the baked data on every build.</p>
+    <p>Companion guide: <a href="/guides/gdp/">National Accounts</a>.</p>
   </div>
 
 <script>

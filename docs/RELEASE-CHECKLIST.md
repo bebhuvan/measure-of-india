@@ -1,10 +1,11 @@
 # RELEASE-CHECKLIST — what a human reviews before merging
 
 The release PR arrives with every mechanical gate already green (fetch →
-validate → build → QC, run by `.github/workflows/update.yml`). The machine
-has verified numbers, cadence, identities, rendered output and prose
-freshness. Your job is the judgement the machine cannot do. Five things,
-in order; budget ten minutes.
+validate → as-of → build → QC, run by `.github/workflows/update.yml` and
+re-checked by `ci.yml` on the PR itself). The machine has verified numbers,
+cadence, identities, rendered output, prose freshness and the hand-written
+"As of" paragraphs. Your job is the judgement the machine cannot do.
+Five things, in order; budget ten minutes.
 
 ## 1. The prose diff (read it like an editor)
 
@@ -25,9 +26,11 @@ in order; budget ten minutes.
 
 ## 1b. The hand-written "As of" paragraphs
 
-If a bundle's print advanced this release, `pipeline/asof.mjs` has flagged
-every `.now` paragraph bound to it (the gates fail on
-`stale "As of" paragraph: <slug>#<figure>`). For each flagged block:
+Every `.now` paragraph is governed by `pipeline/asof.mjs`, and the gate runs
+in CI (hard in `ci.yml`/`deploy.yml`; `update.yml` flags without blocking so
+this review can happen on the PR). If a bundle's print advanced this release,
+the gate has flagged every `.now` paragraph bound to it
+(`stale "As of" paragraph: <slug>#<figure>`). For each flagged block:
 re-read it against the new print, edit its stamp and any claim that no
 longer holds, then attest with `node pipeline/asof.mjs --refresh
 <slug>#<figure-id>` (or `--refresh-all` for one reviewed dossier). The
@@ -41,13 +44,14 @@ refresh is your signature that a human re-read it — do not batch it blind.
 - Any NEW bundle file: one instrument, one bundle; base year in `meta.base`.
 - Any `meta.vintage` bump without a data change is a bug (fetch-date
   stamping). Reject.
-- **Staleness floors**: if a live bundle moved forward this release, bump its
-  `stale_after` floor (dossier-level in `data/sources.yml`, or the row-level
-  `staleAfter` in `scripts/validate.mjs` for bundles on their own cadence).
-  The floor is the editorial claim "this source should never again be seen
-  covering less than this" — a release that moves the data without moving
-  the floor is leaving the gate asleep. Retired rulers keep their frozen
-  floor; do not touch those.
+- **Staleness floors**: every dossier carries a `stale_after` regression
+  floor in `data/sources.yml` (a bundle on its own cadence can override with
+  a row-level `staleAfter` in `scripts/validate.mjs`). If a live bundle
+  moved forward this release, bump its floor to the new coverage. The floor
+  is the editorial claim "this source should never again be seen covering
+  less than this" — a release that moves the data without moving the floor
+  is leaving the gate asleep. Retired rulers keep their frozen floor; do
+  not touch those.
 
 ## 3. The raw dump spot-check (one minute)
 
@@ -71,7 +75,7 @@ refresh is your signature that a human re-read it — do not batch it blind.
 ## Merge
 
 - Merge the PR. `deploy.yml` builds from the merged commit (no refetch —
-  what was reviewed is what ships), re-runs QC, deploys.
+  what was reviewed is what ships), re-runs QC and the as-of gate, deploys.
 - If you reject: close the PR, fix (usually `npm run prose` locally, or a
   fetch bug), let the next cron re-open a fresh one. Never push to the
   release branch by hand unless you re-ran `npm run gates` yourself.

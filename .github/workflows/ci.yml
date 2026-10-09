@@ -36,6 +36,12 @@ jobs:
       - name: Validate committed data
         run: node scripts/validate.mjs
 
+      # AGENTS.md rule 4: nothing ships while a hand-written "As of" paragraph
+      # still describes the previous print. This gate must run wherever the
+      # gates run — not only in a local `npm run gates`.
+      - name: As-of governance (hand-written paragraphs)
+        run: node pipeline/asof.mjs
+
       - name: Build
         run: npx astro build
 

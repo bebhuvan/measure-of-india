@@ -44,6 +44,26 @@ export function writeSeries(root, rel, obj) {
     console.log(`disclosure: ${rel} bundle-level gaps moved onto series`);
   }
   const p = path.join(root, rel);
+  // Vintage is DATA vintage (AGENTS.md hard rule 5, CONTRACT-series rule 4).
+  // Adapters stamp the run date; if the axis and every series' values are
+  // identical to the bundle already on disk, the data did not change, so the
+  // previous vintage is kept. Presentation-only edits (labels, colours, notes)
+  // never move it. This is what keeps a retired base's vintage frozen when it
+  // is re-fetched.
+  if (fs.existsSync(p) && obj.meta?.vintage) {
+    try {
+      const prev = JSON.parse(fs.readFileSync(p, "utf8"));
+      const values = (b) => JSON.stringify({
+        dates: b.dates ?? null, points: b.points ?? null,
+        series: Object.fromEntries(Object.entries(b.series ?? {}).sort(([a], [c]) => (a < c ? -1 : 1)).map(([k, s]) => [k, s.data ?? null])),
+        // published cross-check figures are data too: a change there is a revision
+        crosscheck: b.crosscheck ?? null,
+      });
+      if (prev.meta?.vintage && prev.meta.vintage !== obj.meta.vintage && values(prev) === values(obj)) {
+        obj.meta.vintage = prev.meta.vintage;
+      }
+    } catch { /* unreadable previous file: write fresh */ }
+  }
   fs.mkdirSync(path.dirname(p), { recursive: true });
   fs.writeFileSync(p + ".tmp", JSON.stringify(obj, null, 1) + "\n");
   fs.renameSync(p + ".tmp", p);

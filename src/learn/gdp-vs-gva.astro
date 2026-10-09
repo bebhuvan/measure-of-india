@@ -2,15 +2,15 @@
 import Learn from "../layouts/Learn.astro";
 ---
 <Learn
-  title="India Atlas — Learn · GDP versus GVA: the tax wedge"
-  description="Learn № 10 — two headline numbers for the same economy. GVA is production priced at the producer's gate; GDP adds taxes on products and subtracts subsidies. The wedge is accounting, not a discrepancy."
+  title="GDP versus GVA: the tax wedge · India Atlas"
+  description="Two headline numbers for the same economy. GVA is production priced at the producer's gate; GDP adds taxes on products and subtracts subsidies. The wedge is accounting, not a discrepancy."
   slug="gdp-vs-gva"
-  kicker="Learn № 10 — Growth · GDP versus GVA"
+  kicker="Growth: GDP versus GVA"
   h1="Two headline numbers, <i>one economy.</i>"
   lede="India reports two growth figures every quarter, and they never quite agree. The gap between them is exactly one thing, taxes net of subsidies: accounting, not a discrepancy."
   meta={[
     ["Concept", "GDP versus GVA"],
-    ["Illustrated with", "Real GDP and GVA · Q1 FY17 – Q2 FY26"],
+    ["Illustrated with", "Real GDP and GVA, Q1 FY17 to Q2 FY26"],
     ["Source", "MoSPI, NSO"],
     ["Level", "First principles"],
     ["Reading time", "6 min"],
@@ -26,7 +26,7 @@ import Learn from "../layouts/Learn.astro";
       <div>
         <p>Every quarter, India reports two headline growth numbers, and they never quite agree. One is GDP, measured at market prices: what buyers pay. The other is GVA, measured at basic prices: what producers receive at the factory gate. The difference between the two is exactly one thing, taxes on products minus subsidies. It is accounting, not a discrepancy.</p>
         <aside class="defbox">
-          <div class="term">GVA <span class="sub">gross value added · basic prices · the producers' side</span></div>
+          <div class="term">GVA <span class="sub">gross value added, basic prices, the producers' side</span></div>
           <p>The value produced by every sector, farms, factories and services, measured at the price the producer actually receives, before product taxes are added and subsidies netted off. Summed across sectors, it is the supply side of the economy in one number.</p>
           <div class="eg"><b>In plain words:</b> what the economy makes, priced at the factory gate.</div>
         </aside>
@@ -40,15 +40,15 @@ import Learn from "../layouts/Learn.astro";
       </div>
       <div class="wm-rail">
         <aside class="margin-note">
-          <span class="mk">Margin note · i</span>
+          <span class="mk">Margin note, i</span>
           <b>GVA is the producers' side.</b> It says how farms, factories and services are doing, sector by sector, before the government touches the price.
         </aside>
         <aside class="margin-note">
-          <span class="mk">Margin note · ii</span>
+          <span class="mk">Margin note, ii</span>
           <b>GDP is the purchasers' side.</b> It says what the whole economy, the government's slice included, is worth at the till.
         </aside>
         <aside class="margin-note">
-          <span class="mk">Margin note · iii</span>
+          <span class="mk">Margin note, iii</span>
           <b>The wedge moves.</b> When subsidies surge or tax collections jump, the two growth rates part ways. Watch the gap, not only the lines.
         </aside>
       </div>
@@ -57,21 +57,21 @@ import Learn from "../layouts/Learn.astro";
 
   <!-- § 02 plate : the two lines -->
   <section>
-    <div class="sec-head"><span class="no">02</span><h2>The same decade, measured twice</h2><span class="line"></span><span class="unit">y/y % · quarterly</span></div>
+    <div class="sec-head"><span class="no">02</span><h2>The same decade, measured twice</h2><span class="line"></span><span class="unit">y/y %, quarterly</span></div>
     <p>Drawn together, the two measures trace nearly the same path, because they measure the same economy. What separates them is the wedge, and once in the decade the wedge swings hard enough to put the lines in a different order.</p>
     <div class="break">
       <figure id="cb-gg" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>Two lines for one economy — the gap between them is the tax wedge</h3>
-            <div class="sub">Real GDP and real GVA, year-on-year · constant 2011-12 prices · Q1 FY17 – Q2 FY26</div>
+            <h3>Two lines for one economy: the gap between them is the tax wedge</h3>
+            <div class="sub">Real GDP and real GVA, year-on-year, constant 2011-12 prices, Q1 FY17 to Q2 FY26</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-gg">–</div><div class="c">Q2 FY26 · GDP y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-gg">–</div><div class="c">Q2 FY26, GDP y/y</div></div>
         </div>
         <div class="frame">
           <div class="plotzone" id="plot-gg"><div class="cb-tip"></div></div>
           <div class="plotfoot">
-            <span class="src">Source — MoSPI, National Accounts, base 2011-12, vintage <span id="pf-gg">–</span> · the vertical gap is taxes on products net of subsidies</span>
+            <span class="src">Source: MoSPI, National Accounts, base 2011-12, vintage <span id="pf-gg">–</span>, the vertical gap is taxes on products net of subsidies</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -99,10 +99,10 @@ import Learn from "../layouts/Learn.astro";
   <section>
     <div class="sec-head"><span class="no">03</span><h2>Which one to quote, and when</h2><span class="line"></span><span class="unit">A rule of thumb</span></div>
     <div class="numbers">
-      <div class="num"><div class="l">GDP · Q2 FY26</div><div class="v acc" id="n-gdp">–</div><div class="d">market prices · the headline</div></div>
-      <div class="num"><div class="l">GVA · Q2 FY26</div><div class="v" id="n-gva">–</div><div class="d">basic prices · the producers' side</div></div>
+      <div class="num"><div class="l">GDP, Q2 FY26</div><div class="v acc" id="n-gdp">–</div><div class="d">market prices, the headline</div></div>
+      <div class="num"><div class="l">GVA, Q2 FY26</div><div class="v" id="n-gva">–</div><div class="d">basic prices, the producers' side</div></div>
       <div class="num"><div class="l">The gap</div><div class="v" id="n-gap">–</div><div class="d">GDP minus GVA, points</div></div>
-      <div class="num"><div class="l">The wedge in levels</div><div class="v" id="n-wedge">–</div><div class="d">net taxes · share of GDP, Q2 FY26</div></div>
+      <div class="num"><div class="l">The wedge in levels</div><div class="v" id="n-wedge">–</div><div class="d">net taxes, share of GDP, Q2 FY26</div></div>
     </div>
     <p style="margin-top:40px">For the size and growth of the whole economy, quote GDP. It is the international standard, the budget is framed in it, and the RBI's models consume it. For the health of farms, factories and services, quote GVA: the sector detail lives on the producers' side, and the tax wedge adds nothing to that question.</p>
     <p>The everyday error is quoting one when the question belongs to the other. Asking how manufacturing fared and answering with GDP imports the government's tax slice into a question about factory gates. Asking how fast the economy is growing and answering with GVA understates what buyers actually paid. Match the number to the question, and the two headlines stop competing.</p>
@@ -147,8 +147,8 @@ import Learn from "../layouts/Learn.astro";
   </div>
   <div slot="prov-note">
     <h6>This note</h6>
-    <p>Learn № 10 · Growth · version 1.0. Evergreen, written to survive the next print. The FY21 episode is used as history, not news; the chart redraws from the baked data on every build.</p>
-    <p>Companion dossier: <a href="/dossiers/gdp/">Dossier 02 · National Accounts</a>.</p>
+    <p>Growth, version 1.0. Evergreen, written to survive the next print. The FY21 episode is used as history, not news; the chart redraws from the baked data on every build.</p>
+    <p>Companion guide: <a href="/guides/gdp/">National Accounts</a>.</p>
   </div>
 
 <script>

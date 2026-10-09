@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>India Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400..700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&display=swap" rel="stylesheet">
+<style>
+/* India Atlas, design E.
+   One signature colour (ultramarine) for the series that matters, marigold as the
+   only second colour, cool greys for everything else. Charts are self-contained
+   cards: a finding as the title, a precise subtitle, a source, and export. */
+:root{
+  --paper:#FFFFFF;
+  --ink:#161A22; --ink-2:#4A5160; --ink-3:#7F8796;
+  --hair:#ECEEF2; --hair-2:#DADDE3;
+  --blue:#2E4BD8; --blue-wash:#EEF1FD; --blue-soft:#A9B5F2;
+  --gold:#C47A16; --gold-soft:#F2C27C;
+  --serif:"Source Serif 4", Georgia, serif;
+  --sans:"Golos Text", system-ui, sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:19px;line-height:1.6;font-optical-sizing:auto;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+.wrap{max-width:1120px;margin:0 auto;padding:0 40px}
+.sans{font-family:var(--sans)}
+
+/* masthead */
+.mast{display:flex;align-items:center;justify-content:space-between;padding:26px 0;border-bottom:1px solid var(--hair)}
+.brand{font-family:var(--serif);font-weight:600;font-size:23px;letter-spacing:-.01em;text-decoration:none;font-variation-settings:"opsz" 30}
+.nav{display:flex;gap:30px;font-family:var(--sans);font-size:15.5px}
+.nav a{text-decoration:none;color:var(--ink-2)}
+.nav a:hover{color:var(--ink)}
+.nav a[aria-current]{color:var(--ink);font-weight:500}
+
+/* search: the front door */
+.find{padding:96px 0 0;max-width:820px}
+.find label{display:block;font-family:var(--sans);font-size:15px;color:var(--ink-3);margin-bottom:14px}
+.qwrap{position:relative}
+#q{width:100%;font-family:var(--serif);font-size:38px;line-height:1.2;font-variation-settings:"opsz" 48;letter-spacing:-.01em;color:var(--ink);border:0;border-bottom:1.5px solid var(--ink);padding:4px 0 14px;background:transparent;border-radius:0;outline:none}
+#q::placeholder{color:#B3B9C4}
+#q::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
+#q:focus{border-bottom-color:var(--blue)}
+.try{font-family:var(--sans);font-size:15px;color:var(--ink-3);margin-top:14px}
+.try button{color:var(--ink-2);text-decoration:underline;text-decoration-color:var(--hair-2);text-underline-offset:3px;margin-right:14px}
+.try button:hover{color:var(--blue);text-decoration-color:var(--blue)}
+#results{list-style:none;margin:0;padding:0;position:absolute;left:0;right:0;top:100%;background:var(--paper);z-index:5;border-bottom:1px solid var(--hair-2);box-shadow:0 1px 0 var(--hair)}
+#results li{display:grid;grid-template-columns:minmax(0,1fr) 84px 92px;gap:20px;align-items:center;padding:13px 2px;border-top:1px solid var(--hair);font-family:var(--sans);cursor:pointer}
+#results li[aria-selected=true]{background:#F6F7FB}
+#results .rn{font-size:16.5px;font-weight:500;color:var(--ink);line-height:1.3}
+#results .rn mark{background:none;color:var(--blue)}
+#results .rm{font-size:13.5px;color:var(--ink-3);margin-top:2px}
+#results .rv{text-align:right;font-size:17px;font-weight:600;font-variant-numeric:tabular-nums}
+#results .rv small{display:block;font-size:12.5px;font-weight:400;color:var(--ink-3)}
+#results .none{display:block;color:var(--ink-3);cursor:default}
+
+/* latest releases */
+.sect{padding-top:104px}
+.sh{display:flex;align-items:baseline;justify-content:space-between;gap:20px;border-bottom:1px solid var(--ink);padding-bottom:12px;margin-bottom:0}
+.sh h2{font-family:var(--serif);font-weight:600;font-size:24px;line-height:1.2;margin:0;letter-spacing:-.005em;font-variation-settings:"opsz" 30}
+.sh span{font-family:var(--sans);font-size:14.5px;color:var(--ink-3)}
+table.rel{width:100%;border-collapse:collapse;font-family:var(--sans)}
+.rel th{font-weight:400;font-size:13.5px;color:var(--ink-3);text-align:left;padding:12px 0 10px;border-bottom:1px solid var(--hair)}
+.rel th.n,.rel td.n{text-align:right}
+.rel td{padding:16px 0;border-bottom:1px solid var(--hair);vertical-align:middle;font-size:16px}
+.rel td.ind{font-weight:500;font-size:17px;padding-right:20px}
+.rel td.ind small{display:block;font-weight:400;font-size:13.5px;color:var(--ink-3);margin-top:2px}
+.rel td.per{color:var(--ink-2);white-space:nowrap}
+.rel td.val{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rel td.chg{color:var(--ink-2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.rel td.sp{width:132px;padding-left:28px}
+.rel tr{cursor:pointer}
+.rel tbody tr:hover td{background:#FAFBFD}
+
+/* topics */
+.topics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 40px}
+.topic{padding:20px 0 22px;border-bottom:1px solid var(--hair)}
+.topic a{text-decoration:none;font-family:var(--serif);font-weight:600;font-size:20px;line-height:1.3;font-variation-settings:"opsz" 24}
+.topic a:hover{color:var(--blue)}
+.topic p{margin:4px 0 0;font-family:var(--sans);font-size:14.5px;line-height:1.5;color:var(--ink-3)}
+
+/* dossier */
+.dossier{padding-top:136px}
+.crumb{font-family:var(--sans);font-size:14.5px;color:var(--ink-3);margin-bottom:18px}
+.crumb a{color:var(--ink-3);text-decoration:none}
+h1{font-family:var(--serif);font-weight:500;font-size:60px;line-height:1.04;letter-spacing:-.02em;margin:0 0 24px;font-variation-settings:"opsz" 60}
+.lede{font-size:23px;line-height:1.5;color:var(--ink-2);max-width:31em;margin:0 0 30px;text-wrap:pretty}
+.facts{display:flex;flex-wrap:wrap;gap:8px 36px;font-family:var(--sans);font-size:14.5px;color:var(--ink-3);padding:0 0 28px;border-bottom:1px solid var(--hair)}
+.facts b{display:block;color:var(--ink);font-weight:500;font-size:15.5px;margin-top:1px}
+.prose{max-width:34em;padding-top:36px}
+.prose p{margin:0 0 1em;text-wrap:pretty}
+
+/* chart cards */
+.card{margin:88px 0 0}
+.card h3{font-family:var(--serif);font-weight:600;font-size:27px;line-height:1.22;letter-spacing:-.01em;margin:0 0 6px;max-width:30em;font-variation-settings:"opsz" 32;text-wrap:balance}
+.card .sub{font-family:var(--sans);font-size:15.5px;line-height:1.5;color:var(--ink-2);margin:0 0 22px;max-width:46em}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:var(--sans);font-size:14.5px;margin-bottom:10px;min-height:24px}
+.ranges{display:flex;gap:2px}
+.ranges button{color:var(--ink-3);padding:3px 9px;border-radius:2px}
+.ranges button[aria-pressed=true]{color:var(--ink);background:#F1F3F7;font-weight:500}
+.readout{color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap}
+.readout b{color:var(--ink);font-weight:600;font-size:16px;margin-left:8px}
+.key{display:flex;gap:20px;color:var(--ink-2)}
+.key i{display:inline-block;width:16px;height:2.5px;vertical-align:middle;margin-right:7px;border-radius:2px}
+.key i.sq{width:10px;height:10px;border-radius:1px}
+.plot{position:relative}
+.plot svg{display:block;overflow:visible}
+.cf{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-top:18px;padding-top:12px;border-top:1px solid var(--hair);font-family:var(--sans);font-size:13.5px;line-height:1.5;color:var(--ink-3)}
+.cf .srcs{max-width:44em}
+.acts{display:flex;gap:16px;white-space:nowrap;flex-shrink:0}
+.acts button{color:var(--ink-2)}
+.acts button:hover{color:var(--blue)}
+.acts .st{color:var(--blue)}
+
+.smg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:34px 36px}
+.sm h4{font-family:var(--sans);font-size:15px;font-weight:500;margin:0;line-height:1.3}
+.sm .smv{font-family:var(--sans);font-size:13.5px;color:var(--ink-3);margin:2px 0 6px;font-variant-numeric:tabular-nums}
+.sm .smv b{font-size:17px;color:var(--ink);font-weight:600;margin-right:6px}
+
+.statewrap{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:48px;align-items:start}
+.legend{display:flex;align-items:center;gap:10px;font-family:var(--sans);font-size:13px;color:var(--ink-3);margin:14px 0 0}
+.legend .ramp{display:flex}
+.legend .ramp span{display:block;width:34px;height:8px}
+.legend .ticks{display:flex;font-variant-numeric:tabular-nums}
+.rank{list-style:none;margin:0;padding:0;font-family:var(--sans);font-size:14.5px;columns:2;column-gap:28px}
+.rank li{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-bottom:1px solid var(--hair);break-inside:avoid}
+.rank li span:first-child{color:var(--ink-2)}
+.rank li span:last-child{font-variant-numeric:tabular-nums;font-weight:500}
+.rank li.in span{color:var(--blue);font-weight:600}
+
+footer{margin-top:150px;padding:28px 0 64px;border-top:1px solid var(--hair);font-family:var(--sans);font-size:14px;line-height:1.6;color:var(--ink-3);display:grid;grid-template-columns:1fr 2fr;gap:40px}
+footer b{color:var(--ink);font-weight:600;font-family:var(--serif);font-size:18px}
+footer p{margin:0 0 .7em;max-width:46em}
+
+@media (max-width:860px){
+  body{font-size:18px}
+  .wrap{padding:0 18px}
+  .mast{flex-direction:column;align-items:flex-start;gap:12px;padding:20px 0}
+  .nav{gap:20px;flex-wrap:wrap;font-size:15px}
+  .find{padding-top:52px}
+  #q{font-size:26px}
+  #results li{grid-template-columns:minmax(0,1fr) 76px;}
+  #results li .rs{display:none}
+  .sect{padding-top:76px}
+  .rel thead{display:none}
+  .rel tr{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:12px;border-bottom:1px solid var(--hair);padding:12px 0}
+  .rel td{border:0;padding:0}
+  .rel td.ind{grid-column:1;grid-row:1 / span 2}
+  .rel td.val{grid-column:2;grid-row:1;text-align:right;font-size:20px}
+  .rel td.chg{grid-column:2;grid-row:2;text-align:right;font-size:13.5px}
+  .rel td.per{grid-column:1;grid-row:3;font-size:13.5px;color:var(--ink-3);padding-top:2px}
+  .rel td.sp{display:none}
+  .topics{grid-template-columns:minmax(0,1fr)}
+  .dossier{padding-top:96px}
+  h1{font-size:42px}
+  .lede{font-size:20px}
+  .card{margin-top:64px}
+  .card h3{font-size:23px}
+  .bar{flex-wrap:wrap}
+  .cf{flex-direction:column;gap:10px}
+  .acts{flex-wrap:wrap;gap:14px}
+  .smg{grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 18px}
+  .statewrap{grid-template-columns:minmax(0,1fr);gap:28px}
+  footer{grid-template-columns:1fr;gap:12px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<style id="chartcss"></style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <a class="brand" href="#">India Atlas</a>
+  <nav class="nav" aria-label="Main">
+    <a href="#find" aria-current="page">Indicators</a>
+    <a href="#topics">Topics</a>
+    <a href="#releases">Releases</a>
+    <a href="#">Method</a>
+  </nav>
+</header>
+
+<section class="find" id="find">
+  <label for="q">Search 3,824 official series on the Indian economy</label>
+  <div class="qwrap">
+    <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Inflation in Kerala, factory output, the rupee" role="combobox" aria-expanded="false" aria-controls="results" aria-autocomplete="list">
+    <ul id="results" role="listbox" hidden></ul>
+  </div>
+  <div class="try">Try <button data-q="Kerala">Kerala</button><button data-q="capital goods">capital goods</button><button data-q="unemployment">unemployment</button><button data-q="rupee">rupee</button></div>
+</section>
+
+<section class="sect" id="releases" aria-labelledby="rel-h">
+  <div class="sh"><h2 id="rel-h">Latest releases</h2><span>Data to June 2026</span></div>
+  <table class="rel">
+    <thead><tr><th>Indicator</th><th>Period</th><th class="n">Latest</th><th class="n">Change</th><th class="n">Two years</th></tr></thead>
+    <tbody id="relbody"></tbody>
+  </table>
+</section>
+
+<section class="sect" id="topics" aria-labelledby="top-h">
+  <div class="sh"><h2 id="top-h">Topics</h2><span>13 dossiers</span></div>
+  <div class="topics" id="topicgrid"></div>
+</section>
+
+<article class="dossier" id="cpi" aria-labelledby="cpi-h">
+  <div class="crumb"><a href="#topics">Topics</a> / Prices</div>
+  <h1 id="cpi-h">Consumer prices</h1>
+  <p class="lede">Every month the statistics office prices a few hundred things that households buy and reduces them to one number. In June that number rose for the fifth month running.</p>
+  <div class="facts">
+    <div>Latest<b>4.38% in June 2026</b></div>
+    <div>Released<b>12 July 2026</b></div>
+    <div>Source<b>National Statistics Office</b></div>
+    <div>Base<b>2024 = 100</b></div>
+  </div>
+  <div class="prose">
+    <p>Prices were 4.38 per cent higher in June than a year earlier, up from 3.94 per cent in May and 2.73 per cent in January. Food and beverages climbed 5.06 per cent and eating out 6.91 per cent, while transport jumped from 1.75 per cent in May to 4.31 per cent in June. Villages feel it more than towns, and the spread across states is wide. The headline is now above the RBI's 4 per cent target, though still well inside its band of 2 to 6 per cent.</p>
+  </div>
+  <div id="cards"></div>
+</article>
+
+<footer>
+  <div><b>India Atlas</b></div>
+  <div>
+    <p>Prices, output and jobs figures are published by the Ministry of Statistics and Programme Implementation and its National Statistics Office. Exchange rates and reserves come from the Reserve Bank of India. We estimate nothing ourselves unless a chart says so, and when a base year or basket changes we start a new series rather than join the two.</p>
+    <p>Every chart can be downloaded as an image, as SVG or as data, and shared or embedded with credit.</p>
+  </div>
+</footer>
+
+</div>
+
+<script src="./data.js"></script>
+<script>
+(() => {
+const A = window.ATLAS, NS = "http://www.w3.org/2000/svg";
+const C = { ink:"#161A22", ink2:"#4A5160", ink3:"#7F8796", hair:"#ECEEF2", hair2:"#DADDE3",
+  blue:"#2E4BD8", wash:"#EEF1FD", blueSoft:"#A9B5F2", gold:"#C47A16", goldSoft:"#F2C27C" };
+const RAMP = ["#E4E9FC","#C3CDF7","#97A7F0","#6177E3","#2E4BD8"];   // single-hue sequential for maps
+
+/* chart styles: one source, used on the page and inside exported files */
+const CHART_CSS = `
+text{font-family:'Golos Text',system-ui,sans-serif;font-variant-numeric:tabular-nums}
+.yl,.xl{font-size:13px;fill:${C.ink3}}
+.grid{stroke:${C.hair};stroke-width:1}
+.base{stroke:${C.ink3};stroke-width:1}
+.band{fill:${C.wash}}
+.tgt{stroke:${C.blue};stroke-opacity:.5;stroke-width:1;stroke-dasharray:2 3}
+.lab{font-size:12.5px;fill:${C.ink2}}
+.ann{font-size:13px;fill:${C.ink2}}
+.annb{font-size:13px;fill:${C.ink};font-weight:600}
+.lead{stroke:${C.ink3};stroke-width:.75;fill:none}
+.endv{font-size:15px;font-weight:600;fill:${C.ink}}
+.endd{font-size:12.5px;fill:${C.ink3}}
+.halo{paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round}
+.cross{stroke:${C.ink};stroke-width:.75;stroke-opacity:.55}
+.tl{font-size:12px;font-weight:600}
+`;
+document.getElementById("chartcss").textContent = ".plot " + CHART_CSS.trim().split("\n").join("\n.plot ");
+
+/* ---------- helpers ---------- */
+const S = (tag, at = {}, p) => { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); if (p) p.appendChild(e); return e; };
+const T = (p, x, y, s, at = {}) => { const t = S("text", {x, y, ...at}, p); t.textContent = s; return t; };
+const num = (v, d = 2) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(d);
+const sgn = (v, d = 2) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(d);
+const MON = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const M3 = MON.map(m => m.slice(0,3));
+const mi = iso => +iso.slice(0,4) * 12 + (+iso.slice(5,7) - 1);
+const month = iso => `${MON[+iso.slice(5,7)-1]} ${iso.slice(0,4)}`;
+const monS = iso => `${M3[+iso.slice(5,7)-1]} ${iso.slice(0,4)}`;
+const qtr = iso => { const m = +iso.slice(5,7)-1; return `${M3[m]} to ${M3[m+2]} ${iso.slice(0,4)}`; };
+const ctx = document.createElement("canvas").getContext("2d");
+const tw = (s, font = "13px 'Golos Text'") => { ctx.font = font; return ctx.measureText(s).width; };
+function niceTicks(lo, hi, n = 5) {
+  const raw = (hi - lo) / n, p = Math.pow(10, Math.floor(Math.log10(raw)));
+  const step = [1, 2, 5, 10].map(k => k * p).find(s => s >= raw);
+  const t = []; for (let v = Math.floor(lo / step + 1e-9) * step; v < hi + step - 1e-9; v += step) t.push(+v.toFixed(6));
+  return {t, step};
+}
+const pts = (dates, vals) => dates.map((d, i) => ({d, t:mi(d), v:vals[i]})).filter(p => p.v != null);
+
+/* ---------- the line chart: the house style ---------- */
+function lineChart(host, W, o, exp) {
+  const H = o.h || (W < 600 ? 300 : 400);
+  const m = {l:34, r: o.endLabels ? (W < 600 ? 74 : 112) : 12, t:12, b:30};
+  const svg = S("svg", {width:W, height:H, viewBox:`0 0 ${W} ${H}`, role:"img", "aria-label":o.aria}, host);
+  const all = o.series.map(s => ({...s, p:pts(s.dates, s.vals).filter(p => p.t >= o.from)}));
+  const t0 = Math.min(...all.map(s => s.p[0].t)), t1 = Math.max(...all.map(s => s.p.at(-1).t));
+  const vs = all.flatMap(s => s.p.map(p => p.v)).concat(o.band || []);
+  let lo = Math.min(0, ...vs), hi = Math.max(...vs);
+  const {t:ticks, step} = niceTicks(lo, hi, W < 600 ? 4 : 5);
+  lo = Math.min(lo, ticks[0]); hi = Math.max(ticks.at(-1), hi);
+  if (o.padBelow) lo -= step * .5;
+  const x = t => m.l + (t - t0) / Math.max(1, t1 - t0) * (W - m.l - m.r);
+  const y = v => m.t + (hi - v) / (hi - lo) * (H - m.t - m.b);
+
+  if (o.band) S("rect", {x:m.l, width:W - m.l - m.r, y:y(o.band[1]), height:y(o.band[0]) - y(o.band[1]), class:"band"}, svg);
+  ticks.forEach((v, i) => {
+    S("line", {x1:m.l, x2:W - m.r, y1:y(v), y2:y(v), class: v === 0 ? "base" : "grid"}, svg);
+    T(svg, m.l - 10, y(v) + 4.5, (i === ticks.length - 1 && o.unit ? num(v, step % 1 ? 1 : 0) + o.unit : num(v, step % 1 ? 1 : 0)), {class:"yl", "text-anchor":"end"});
+  });
+  if (o.target != null) {
+    S("line", {x1:m.l, x2:W - m.r, y1:y(o.target), y2:y(o.target), class:"tgt"}, svg);
+  }
+  // x axis
+  const span = t1 - t0;
+  if (span <= 14) {
+    for (let t = t0; t <= t1; t++) { const lab = M3[t % 12]; T(svg, x(t), H - 8, lab, {class:"xl", "text-anchor":"middle"}); }
+  } else {
+    const yrs = []; for (let yv = Math.ceil(t0 / 12); yv * 12 <= t1; yv++) yrs.push(yv);
+    const per = (W - m.l - m.r) / (span / 12), every = per < 34 ? 3 : per < 56 ? 2 : 1;
+    const anchorEnd = yrs.at(-1);
+    yrs.forEach(yv => { if ((anchorEnd - yv) % every) return;
+      S("line", {x1:x(yv * 12), x2:x(yv * 12), y1:H - m.b, y2:H - m.b + 5, class:"base"}, svg);
+      T(svg, x(yv * 12), H - 8, String(yv), {class:"xl", "text-anchor":"middle"}); });
+  }
+  if (o.decorate) o.decorate(svg, {x, y, m, W, H, t0, t1, lo, hi});
+  // lines
+  const path = arr => arr.map((p, i) => `${i ? "L" : "M"}${x(p.t).toFixed(2)},${y(p.v).toFixed(2)}`).join("");
+  for (const s of all) {
+    if (s.liveFrom && s.p[0].t < mi(s.liveFrom)) {
+      const k = s.p.findIndex(p => p.t >= mi(s.liveFrom));
+      S("path", {d:path(s.p.slice(0, k + 1)), fill:"none", stroke:s.color, "stroke-opacity":.38, "stroke-width":1.6, "stroke-linejoin":"round", "stroke-linecap":"round"}, svg);
+      S("path", {d:path(s.p.slice(k)), fill:"none", stroke:s.color, "stroke-width":s.w || 2.25, "stroke-linejoin":"round", "stroke-linecap":"round"}, svg);
+    } else S("path", {d:path(s.p), fill:"none", stroke:s.color, "stroke-width":s.w || 2.25, "stroke-linejoin":"round", "stroke-linecap":"round"}, svg);
+  }
+  // end labels, dodged apart
+  if (o.endLabels) {
+    const L = all.map(s => ({s, p:s.p.at(-1), y:y(s.p.at(-1).v)})).sort((a, b) => a.y - b.y);
+    for (let i = 1; i < L.length; i++) if (L[i].y - L[i-1].y < 34) L[i].y = L[i-1].y + 34;
+    for (const l of L) {
+      S("circle", {cx:x(l.p.t), cy:y(l.p.v), r:4, fill:l.s.color, stroke:"#fff", "stroke-width":2}, svg);
+      T(svg, x(l.p.t) + 12, l.y + 1, `${num(l.p.v)}%`, {class:"endv"});
+      T(svg, x(l.p.t) + 12, l.y + 17, l.s.endName || monS(l.p.d), {class:"endd"});
+    }
+  }
+  if (exp) return svg;
+  // scrubbing: a hairline, a ring on each line, and the readout above the chart
+  const cross = S("line", {y1:m.t, y2:H - m.b, class:"cross", visibility:"hidden"}, svg);
+  const rings = all.map(s => S("circle", {r:4.5, fill:"#fff", stroke:s.color, "stroke-width":2, visibility:"hidden"}, svg));
+  const hit = S("rect", {x:m.l, y:0, width:W - m.l - m.r, height:H, fill:"transparent"}, svg);
+  svg.setAttribute("tabindex", 0);
+  const p0 = all[0].p; let idx = p0.length - 1;
+  const show = i => { idx = i; const t = p0[i].t;
+    cross.setAttribute("x1", x(t)); cross.setAttribute("x2", x(t)); cross.setAttribute("visibility", "visible");
+    all.forEach((s, j) => { const q = s.p.find(p => p.t === t); if (q) { rings[j].setAttribute("cx", x(t)); rings[j].setAttribute("cy", y(q.v)); rings[j].setAttribute("visibility", "visible"); } else rings[j].setAttribute("visibility", "hidden"); });
+    o.readout(t); };
+  const clear = () => { cross.setAttribute("visibility", "hidden"); rings.forEach(r => r.setAttribute("visibility", "hidden")); o.readout(null); };
+  hit.addEventListener("pointermove", e => { const r = svg.getBoundingClientRect(); const t = t0 + (e.clientX - r.left - m.l) / (W - m.l - m.r) * (t1 - t0);
+    let b = 0; p0.forEach((p, j) => { if (Math.abs(p.t - t) < Math.abs(p0[b].t - t)) b = j; }); show(b); });
+  hit.addEventListener("pointerleave", clear);
+  svg.addEventListener("keydown", e => { if (e.key === "ArrowLeft" || e.key === "ArrowRight") { e.preventDefault(); show(Math.max(0, Math.min(p0.length - 1, idx + (e.key === "ArrowRight" ? 1 : -1)))); } });
+  svg.addEventListener("blur", clear);
+  return svg;
+}
+
+/* ---------- cards ---------- */
+const CARDS = [];
+const card = c => CARDS.push(c);
+
+/* 1. the headline */
+const cpiD = A.cpi.dates, cpiV = A.cpi.series.headline.data;
+card({
+  id:"cpi-headline", file:"india-cpi-inflation",
+  title:"Inflation has risen for five months and is back above the 4% target",
+  sub:"Consumer price inflation, change from a year earlier, per cent. Shaded: the RBI's tolerance band of 2 to 6%.",
+  source:"Source: National Statistics Office, MoSPI. Consumer Price Index, base 2024 = 100. Before January 2025 the line is the statistics office's back-cast of the new basket, drawn lighter; no figure from the retired 2012 base is used.",
+  ranges:[["2 years", mi("2024-07-01")], ["5 years", mi("2021-07-01")], ["Since 2014", 0]], range:0,
+  key:null,
+  readout:t => { const i = cpiD.findIndex(d => mi(d) === t); return [month(cpiD[i]) + (t < mi("2025-01-01") ? ", back-cast" : ""), `${num(cpiV[i])}%`]; },
+  csv:() => "month,cpi_inflation_yoy_pct,basis\n" + cpiD.map((d, i) => cpiV[i] == null ? null : `${d.slice(0,7)},${cpiV[i]},${d < "2025-01" ? "back-cast" : "collected"}`).filter(Boolean).join("\n"),
+  draw(host, W, exp, st) {
+    return lineChart(host, W, {
+      from: st.from, band:[2,6], target:4, unit:"%", endLabels:true, padBelow:true,
+      aria:"Line chart of consumer price inflation since 2014",
+      series:[{dates:cpiD, vals:cpiV, color:C.blue, liveFrom:"2025-01-01", endName:"June 2026"}],
+      readout: st.readout,
+      decorate(svg, g) {
+        const {x, y, m, W, H} = g, lf = mi("2025-01-01");
+        // the target, labelled at the left where the band is open
+        const lw = tw("Target 4%", "12.5px 'Golos Text'") + 8, ty = y(4) - 6, P = pts(cpiD, cpiV).filter(p => p.t >= g.t0);
+        let bx = null;
+        for (let x0 = m.l + 6; x0 + lw < W - m.r; x0 += 3) {
+          if (P.every(p => { const px = x(p.t); return px < x0 - 4 || px > x0 + lw + 4 || Math.abs(y(p.v) - ty) > 12; })) { bx = x0; break; }
+        }
+        if (bx != null) T(svg, bx, ty, "Target 4%", {class:"lab halo"});
+        // the seam between back-cast and collected prices
+        if (lf > g.t0) {
+          S("line", {x1:x(lf), x2:x(lf), y1:m.t, y2:y(0), stroke:C.ink3, "stroke-width":.75}, svg);
+          T(svg, x(lf) - 7, m.t + 12, "Back-cast", {class:"lab halo", "text-anchor":"end"});
+          T(svg, x(lf) + 7, m.t + 12, "Collected", {class:"lab halo"});
+        }
+        // the record low on the new series
+        const lowT = mi("2025-10-01"), lowV = 0.04;
+        if (lowT >= g.t0) {
+          const px = x(lowT), py = y(lowV), ly = y(g.lo) - 6;
+          S("circle", {cx:px, cy:py, r:3, fill:"none", stroke:C.ink, "stroke-width":1}, svg);
+          S("path", {d:`M${px},${py + 4}V${ly - 6}H${px - 10}`, class:"lead"}, svg);
+          const narrow = W < 600;
+          T(svg, px - 14, ly - 2, narrow ? "Oct 2025: 0.04%" : "October 2025: 0.04%, the lowest on the new series", {class:"ann halo", "text-anchor":"end"});
+        }
+      }
+    }, exp);
+  }
+});
+
+/* 2. villages and towns */
+const sD = A.cpiSec.dates, sR = A.cpiSec.series.rural.data, sU = A.cpiSec.series.urban.data;
+card({
+  id:"cpi-rural-urban", file:"india-cpi-rural-urban",
+  title:"Prices are rising faster in villages than in cities",
+  sub:"Consumer price inflation in rural and urban India, change from a year earlier, per cent, 2026.",
+  source:"Source: National Statistics Office, MoSPI. Consumer Price Index, base 2024 = 100.",
+  key:[["Rural", C.gold], ["Urban", C.blue]],
+  readout:t => { const i = sD.findIndex(d => mi(d) === t); return [month(sD[i]), `Rural ${num(sR[i])}%   Urban ${num(sU[i])}%`]; },
+  csv:() => "month,rural_yoy_pct,urban_yoy_pct\n" + sD.map((d, i) => `${d.slice(0,7)},${sR[i]},${sU[i]}`).join("\n"),
+  draw(host, W, exp, st) {
+    return lineChart(host, W, {
+      from:0, unit:"%", endLabels:true, h: W < 600 ? 260 : 320,
+      aria:"Rural and urban consumer price inflation, January to June 2026",
+      series:[{dates:sD, vals:sR, color:C.gold, endName:"Rural"}, {dates:sD, vals:sU, color:C.blue, endName:"Urban"}],
+      readout: st.readout
+    }, exp);
+  }
+});
+
+/* 3. divisions */
+const DIVN = {
+  food_and_beverages:"Food and beverages", paan_tobacco_and_intoxicants:"Paan, tobacco and intoxicants",
+  clothing_and_footwear:"Clothing and footwear", housing_water_electricity_gas_and_other_fuels:"Housing, water, power and fuel",
+  furnishings_household_equipment_and_routine_household_maintenance:"Furnishings and household upkeep",
+  health:"Health", transport:"Transport", information_and_communication:"Phones, internet and post",
+  recreation_sport_and_culture:"Recreation, sport and culture", education_services:"Education",
+  restaurants_and_accommodation_services:"Eating out and hotels",
+  personal_care_social_protection_and_miscellaneous_goods_and_services:"Personal care, including gold"
+};
+const dv = A.cpiDiv.series, di = A.cpiDiv.dates.length - 1, HEAD = dv.headline.data[di];
+const DIVS = Object.keys(DIVN).map(k => ({n:DIVN[k], v:dv[k].data[di], p:dv[k].data[di-1]})).sort((a, b) => b.v - a.v);
+card({
+  id:"cpi-divisions", file:"india-cpi-divisions",
+  title:"Eating out and food are rising fastest; gold distorts the top of the table",
+  sub:"Inflation in the twelve divisions of the consumer basket, June 2026, change from a year earlier, per cent.",
+  source:"Source: National Statistics Office, MoSPI. Base 2024 = 100. Weights for the new basket are not yet published, so the divisions are ranked, not added up. Personal care includes gold, which is priced in world markets; its bar is cut.",
+  key:[["Above the all-items rate", C.blue, 1], ["Below it", C.blueSoft, 1]],
+  csv:() => "division,june_2026_yoy_pct,may_2026_yoy_pct\n" + DIVS.map(r => `"${r.n}",${r.v},${r.p}`).join("\n"),
+  draw(host, W, exp) {
+    const narrow = W < 600, lab = narrow ? 0 : 250, valW = 70, cap = 8;
+    const rowH = narrow ? 46 : 32, top = 26, bh = narrow ? 9 : 11;
+    const H = top + DIVS.length * rowH + 28;
+    const svg = S("svg", {width:W, height:H, viewBox:`0 0 ${W} ${H}`, role:"img", "aria-label":"Ranked bar chart of inflation by division"}, host);
+    const x = v => lab + Math.min(v, cap + .9) / (cap + .9) * (W - lab - valW);
+    for (let v = 0; v <= cap; v += 2) {
+      S("line", {x1:x(v), x2:x(v), y1:top - 4, y2:H - 26, class: v ? "grid" : "base"}, svg);
+      T(svg, x(v), H - 8, v === cap ? "8%" : String(v), {class:"xl", "text-anchor":"middle"});
+    }
+    const hx = x(HEAD);
+    S("line", {x1:hx, x2:hx, y1:top - 4, y2:H - 26, stroke:C.ink, "stroke-width":1}, svg);
+    T(svg, hx, top - 10, `All items ${num(HEAD)}%`, {class:"annb", "text-anchor":"middle"});
+    DIVS.forEach((r, j) => {
+      const yb = top + j * rowH + (narrow ? 24 : 11);
+      if (narrow) T(svg, 0, yb - 6, r.n, {class:"ann halo"});
+      else T(svg, lab - 14, yb + bh - 1, r.n, {class:"ann", "text-anchor":"end", style:"font-size:14px;fill:" + C.ink2});
+      const col = r.v >= HEAD ? C.blue : C.blueSoft;
+      if (r.v > cap) {
+        const cut = x(cap) + 4;
+        S("rect", {x:x(0), y:yb, width:cut - x(0) - 3, height:bh, fill:col}, svg);
+        S("rect", {x:cut + 3, y:yb, width:x(cap + .9) - cut - 3, height:bh, fill:col}, svg);
+        S("path", {d:`M${cut - 4},${yb + bh + 3}L${cut + 1},${yb - 3}M${cut + 1},${yb + bh + 3}L${cut + 6},${yb - 3}`, stroke:C.ink3, "stroke-width":1}, svg);
+      } else S("rect", {x:x(0), y:yb, width:Math.max(1, x(r.v) - x(0)), height:bh, fill:col}, svg);
+      T(svg, x(Math.min(r.v, cap + .9)) + 8, yb + bh - 1, `${num(r.v)}%`, {class:"endv halo", style:"font-size:14px"});
+    });
+    return svg;
+  }
+});
+
+/* 4. states */
+const stS = A.cpiStates.series, sti = A.cpiStates.dates.length - 1;
+const TILES = {jammu_and_kashmir:["JK",2,0], ladakh:["LA",3,0], punjab:["PB",1,1], chandigarh:["CH",2,1], himachal_pradesh:["HP",3,1], uttarakhand:["UK",4,1],
+  rajasthan:["RJ",1,2], haryana:["HR",2,2], nct_of_delhi:["DL",3,2], uttar_pradesh:["UP",4,2], bihar:["BR",5,2], sikkim:["SK",6,2], arunachal_pradesh:["AR",8,2],
+  gujarat:["GJ",1,3], madhya_pradesh:["MP",2,3], chhattisgarh:["CG",3,3], jharkhand:["JH",4,3], west_bengal:["WB",5,3], meghalaya:["ML",6,3], assam:["AS",7,3], nagaland:["NL",8,3],
+  the_dadra_and_nagar_haveli_and_daman_and_diu:["DD",0,4], maharashtra:["MH",1,4], telangana:["TG",2,4], odisha:["OD",3,4], tripura:["TR",6,4], mizoram:["MZ",7,4], manipur:["MN",8,4],
+  goa:["GA",0,5], karnataka:["KA",1,5], andhra_pradesh:["AP",2,5], lakshadweep:["LD",0,6], kerala:["KL",1,6], tamil_nadu:["TN",2,6], puducherry:["PY",3,6], andaman_and_nicobar_islands:["AN",5,6]};
+const NAMEFIX = {nct_of_delhi:"Delhi", the_dadra_and_nagar_haveli_and_daman_and_diu:"Dadra, Daman and Diu", andaman_and_nicobar_islands:"Andaman and Nicobar"};
+const stName = k => NAMEFIX[k] || stS[k].label.replace(/\bAnd\b/g, "and");
+const BINS = [2, 3, 4, 5];   // <2, 2-3, 3-4, 4-5, 5+
+const binOf = v => BINS.filter(b => v >= b).length;
+const STATES = Object.keys(stS).map(k => ({k, n:stName(k), v:stS[k].data[sti]})).sort((a, b) => b.v - a.v);
+card({
+  id:"cpi-states", file:"india-cpi-states",
+  title:"Inflation in Telangana is nearly four times Mizoram's",
+  sub:"Consumer price inflation by state and union territory, June 2026, change from a year earlier, per cent.",
+  source:"Source: National Statistics Office, MoSPI. Base 2024 = 100. Squares are placed roughly where each state lies; they are not drawn to area.",
+  key:null, legend:true,
+  csv:() => "state,june_2026_yoy_pct\n" + STATES.map(r => `"${r.n}",${r.v}`).join("\n"),
+  draw(host, W, exp) {
+    const c = 64, gap = 3, cols = 9, rows = 7, w = Math.min(W, 600), sc = w / (cols * c);
+    const big = sc < .75;
+    const svg = S("svg", {width:w, height:rows * c * sc, viewBox:`0 0 ${cols * c} ${rows * c}`, role:"img", "aria-label":"Tile map of inflation by state"}, host);
+    for (const k in TILES) {
+      const [code, cx, cy] = TILES[k], v = stS[k].data[sti], b = binOf(v);
+      const g = S("g", {transform:`translate(${cx * c},${cy * c})`}, svg);
+      S("rect", {width:c - gap, height:c - gap, fill:RAMP[b]}, g);
+      const fg = b >= 3 ? "#fff" : C.ink;
+      T(g, 7, big ? 24 : 20, code, {style:`font-size:${big ? 19 : 13.5}px;font-weight:600;fill:${fg}`});
+      T(g, 7, c - gap - (big ? 8 : 9), big ? v.toFixed(1) : num(v), {style:`font-size:${big ? 18 : 13}px;fill:${fg};opacity:.92`});
+      const tt = S("title", {}, g); tt.textContent = `${stName(k)}: ${num(v)}%`;
+    }
+    return svg;
+  }
+});
+
+/* 5. factories */
+const USE = [["use_capital_goods","Capital goods"],["use_intermediate_goods","Intermediate goods"],["use_consumer_durables","Consumer durables"],
+  ["use_infrastructure_construction_goods","Infrastructure and construction"],["use_primary_goods","Primary goods"],["use_consumer_non_durables","Consumer non-durables"]];
+const iD = A.iip.dates;
+card({
+  id:"iip-use", file:"india-iip-use-based",
+  title:"Capital goods output grew 14.23% in June, fastest of the six use-based groups",
+  sub:"Index of Industrial Production by use, change from a year earlier, per cent, April 2024 to June 2026. All six panels share one scale.",
+  source:"Source: National Statistics Office, MoSPI. Index of Industrial Production, base 2022-23 = 100.",
+  key:null, multiples:true,
+  csv:() => "month," + USE.map(u => u[0]).join(",") + "\n" + iD.map((d, i) => d.slice(0,7) + "," + USE.map(u => A.iip.series[u[0]].data[i] ?? "").join(",")).filter(r => !/^[^,]+,+$/.test(r)).join("\n"),
+  draw(host, W, exp, st) {
+    const cols = W < 600 ? 2 : 3, gapX = W < 600 ? 18 : 36, pw = (W - gapX * (cols - 1)) / cols, ph = W < 600 ? 120 : 140;
+    const wrap = exp ? S("g", {}, host) : null;
+    const lo = -10, hi = 20;
+    const panels = [];
+    if (!exp) host.innerHTML = `<div class="smg"></div>`;
+    USE.forEach(([k, n], j) => {
+      const P = pts(iD, A.iip.series[k].data), t0 = P[0].t, t1 = P.at(-1).t, last = P.at(-1);
+      let svg, ox = (j % cols) * (pw + gapX), oy = Math.floor(j / cols) * (ph + 62);
+      let head;
+      if (exp) {
+        svg = S("g", {transform:`translate(${ox},${oy})`}, wrap);
+        T(svg, 0, 14, n, {style:`font-size:15px;font-weight:500;fill:${C.ink}`});
+        T(svg, 0, 36, `${num(last.v)}%`, {style:`font-size:17px;font-weight:600;fill:${C.ink}`});
+        T(svg, tw(`${num(last.v)}%`, "600 17px 'Golos Text'") + 8, 36, "Jun 2026", {class:"endd"});
+        svg = S("g", {transform:"translate(0,48)"}, svg);
+      } else {
+        const d = document.createElement("div"); d.className = "sm";
+        d.innerHTML = `<h4>${n}</h4><div class="smv"><b>${num(last.v)}%</b><span>Jun 2026</span></div>`;
+        host.firstChild.appendChild(d); head = d.querySelector(".smv");
+        svg = S("svg", {width:pw, height:ph, viewBox:`0 0 ${pw} ${ph}`, role:"img", "aria-label":`${n}, change from a year earlier`}, d);
+      }
+      const ml = j % cols === 0 ? 26 : 4, mb = 20;
+      const x = t => ml + (t - t0) / (t1 - t0) * (pw - ml - 6), y = v => 4 + (hi - v) / (hi - lo) * (ph - 4 - mb);
+      [-10, 0, 10, 20].forEach(v => { S("line", {x1:ml, x2:pw - 6, y1:y(v), y2:y(v), class: v === 0 ? "base" : "grid"}, svg);
+        if (j % cols === 0) T(svg, ml - 6, y(v) + 4, v > 0 ? "+" + v : num(v, 0), {class:"yl", "text-anchor":"end", style:"font-size:12px"}); });
+      [2025, 2026].forEach(yv => T(svg, x(yv * 12), ph - 4, String(yv), {class:"xl", "text-anchor":"middle", style:"font-size:12px"}));
+      S("path", {d:P.map((p, i) => `${i ? "L" : "M"}${x(p.t).toFixed(2)},${y(p.v).toFixed(2)}`).join(""), fill:"none", stroke:C.blue, "stroke-width":1.75, "stroke-linejoin":"round"}, svg);
+      S("circle", {cx:x(last.t), cy:y(last.v), r:3.5, fill:C.blue, stroke:"#fff", "stroke-width":1.5}, svg);
+      panels.push({svg, x, y, P, head, last, ml, pw, ph, mb});
+    });
+    if (exp) { host.setAttribute("height", Math.ceil(USE.length / cols) * (ph + 62)); return host; }
+    // synced scrubbing across all six panels
+    panels.forEach(pn => {
+      pn.cross = S("line", {y1:4, y2:pn.ph - pn.mb, class:"cross", visibility:"hidden"}, pn.svg);
+      pn.ring = S("circle", {r:4, fill:"#fff", stroke:C.blue, "stroke-width":1.75, visibility:"hidden"}, pn.svg);
+      const hit = S("rect", {x:0, y:0, width:pn.pw, height:pn.ph, fill:"transparent"}, pn.svg);
+      hit.addEventListener("pointermove", e => { const r = pn.svg.getBoundingClientRect(); const px = e.clientX - r.left;
+        let b = pn.P[0]; pn.P.forEach(p => { if (Math.abs(pn.x(p.t) - px) < Math.abs(pn.x(b.t) - px)) b = p; }); sync(b.t); });
+      hit.addEventListener("pointerleave", () => sync(null));
+    });
+    function sync(t) {
+      panels.forEach(pn => { const p = t == null ? null : pn.P.find(q => q.t === t);
+        if (!p) { pn.cross.setAttribute("visibility","hidden"); pn.ring.setAttribute("visibility","hidden");
+          pn.head.innerHTML = `<b>${num(pn.last.v)}%</b><span>Jun 2026</span>`; return; }
+        pn.cross.setAttribute("x1", pn.x(t)); pn.cross.setAttribute("x2", pn.x(t)); pn.cross.setAttribute("visibility","visible");
+        pn.ring.setAttribute("cx", pn.x(t)); pn.ring.setAttribute("cy", pn.y(p.v)); pn.ring.setAttribute("visibility","visible");
+        pn.head.innerHTML = `<b>${num(p.v)}%</b><span>${monS(p.d)}</span>`; });
+    }
+  }
+});
+
+/* ---------- card shell: header, controls, plot, footer, export ---------- */
+function mountCards() {
+  const root = document.getElementById("cards");
+  root.innerHTML = "";
+  for (const c of CARDS) {
+    const f = document.createElement("figure"); f.className = "card"; f.id = c.id; f.style.margin = "";
+    f.innerHTML = `<h3>${c.title}</h3><p class="sub">${c.sub}</p>
+      <div class="bar">${c.ranges ? `<div class="ranges" role="group" aria-label="Time range">${c.ranges.map(([l], i) => `<button aria-pressed="${i === c.ranges.length - 1}" data-i="${i}">${l}</button>`).join("")}</div>`
+        : c.key ? `<div class="key">${c.key.map(([l, col, sq]) => `<span><i class="${sq ? "sq" : ""}" style="background:${col}"></i>${l}</span>`).join("")}</div>` : "<div></div>"}
+        ${c.readout ? `<div class="readout" aria-live="polite"></div>` : ""}</div>
+      <div class="plot"></div>
+      ${c.id === "cpi-states" ? "" : ""}
+      <figcaption class="cf"><div class="srcs">${c.source}</div>
+        <div class="acts"><button data-a="png">Image</button><button data-a="svg">SVG</button><button data-a="csv">Data</button><button data-a="link">Link</button><button data-a="embed">Embed</button></div></figcaption>`;
+    root.appendChild(f);
+    c.el = f; c.state = {from: c.ranges ? c.ranges[c.ranges.length - 1][1] : 0};
+    const ro = f.querySelector(".readout");
+    if (ro) c.state.readout = t => { const latestT = Math.max(...(c.lastT ? [c.lastT] : [])); const r = c.readout(t == null ? c.lastT : t); ro.innerHTML = `${r[0]}<b>${r[1]}</b>`; };
+    if (c.ranges) f.querySelectorAll(".ranges button").forEach(b => b.addEventListener("click", () => {
+      f.querySelectorAll(".ranges button").forEach(x => x.setAttribute("aria-pressed", x === b));
+      c.state.from = c.ranges[+b.dataset.i][1]; drawCard(c);
+    }));
+    f.querySelectorAll(".acts button").forEach(b => b.addEventListener("click", () => act(c, b.dataset.a, b)));
+  }
+  CARDS.forEach(drawCard);
+}
+CARDS.forEach(c => { if (c.id === "cpi-headline") c.lastT = mi(cpiD.at(-1)); if (c.id === "cpi-rural-urban") c.lastT = mi(sD.at(-1)); });
+
+function drawCard(c) {
+  const plot = c.el.querySelector(".plot"); plot.innerHTML = "";
+  const W = plot.clientWidth;
+  if (c.id === "cpi-states") {
+    const wrap = document.createElement("div"); wrap.className = "statewrap"; plot.appendChild(wrap);
+    const left = document.createElement("div"); wrap.appendChild(left);
+    const right = document.createElement("div"); wrap.appendChild(right);
+    c.draw(left, W < 860 ? W : Math.round(W * .54), false);
+    left.insertAdjacentHTML("beforeend", legendHTML());
+    right.innerHTML = `<ol class="rank">${STATES.concat([{n:"All India", v:HEAD, k:"in"}]).sort((a, b) => b.v - a.v).map(r => `<li class="${r.k === "in" ? "in" : ""}"><span>${r.n}</span><span>${num(r.v)}</span></li>`).join("")}</ol>`;
+  } else c.draw(plot, W, false, c.state);
+  if (c.state.readout) c.state.readout(null);
+}
+const legendHTML = () => `<div class="legend"><span>Per cent</span><div><div class="ramp">${RAMP.map(r => `<span style="background:${r}"></span>`).join("")}</div>
+  <div class="ticks">${["", "2", "3", "4", "5"].map((t, i) => `<span style="width:34px;transform:translateX(-${i ? 4 : 0}px)">${t}</span>`).join("")}</div></div></div>`;
+
+/* ---------- export: share-ready image, SVG, data, link, embed ---------- */
+let FONTCSS = null;
+async function fontCSS() {
+  if (FONTCSS) return FONTCSS;
+  try {
+    const css = await (await fetch("https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,600&display=swap")).text();
+    const blocks = css.split("/*").filter(b => /^\s*latin \*\//.test(b)).map(b => "/*" + b);
+    const out = [];
+    for (const b of blocks) {
+      const url = (b.match(/url\(([^)]+)\)/) || [])[1]; if (!url) continue;
+      const buf = await (await fetch(url)).arrayBuffer();
+      let bin = ""; const u8 = new Uint8Array(buf); for (let i = 0; i < u8.length; i += 0x8000) bin += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+      out.push(b.replace(url, `data:font/woff2;base64,${btoa(bin)}`));
+    }
+    FONTCSS = out.join("\n");
+  } catch (e) { FONTCSS = ""; }
+  return FONTCSS;
+}
+function wrapText(s, font, maxW) {
+  const words = s.split(" "), lines = []; let cur = "";
+  for (const w of words) { const t = cur ? cur + " " + w : w; if (tw(t, font) > maxW && cur) { lines.push(cur); cur = w; } else cur = t; }
+  if (cur) lines.push(cur); return lines;
+}
+async function buildExport(c) {
+  const Wd = 1200, P = 56, inner = Wd - P * 2;
+  const titleF = "600 38px 'Source Serif 4'", subF = "400 19px 'Golos Text'", srcF = "400 14.5px 'Golos Text'";
+  const tl = wrapText(c.title, titleF, inner), sl = wrapText(c.sub, subF, inner);
+  let yy = P + 34;
+  const parts = [];
+  tl.forEach(l => { parts.push(`<text x="${P}" y="${yy}" style="font:600 38px 'Source Serif 4',serif;fill:${C.ink};letter-spacing:-.01em">${esc(l)}</text>`); yy += 46; });
+  yy += 2;
+  sl.forEach(l => { parts.push(`<text x="${P}" y="${yy}" style="font:400 19px 'Golos Text',sans-serif;fill:${C.ink2}">${esc(l)}</text>`); yy += 28; });
+  yy += 22;
+  // a key for multi-series charts, drawn into the file
+  if (c.key) { let kx = P; for (const [l, col, sq] of c.key) {
+    parts.push(sq ? `<rect x="${kx}" y="${yy - 10}" width="11" height="11" fill="${col}"/>` : `<rect x="${kx}" y="${yy - 6}" width="18" height="3" rx="1.5" fill="${col}"/>`);
+    parts.push(`<text x="${kx + (sq ? 18 : 26)}" y="${yy}" style="font:400 15px 'Golos Text';fill:${C.ink2}">${esc(l)}</text>`);
+    kx += (sq ? 18 : 26) + tw(l, "15px 'Golos Text'") + 28; } yy += 24; }
+  // the chart itself, redrawn at export width
+  const tmp = document.createElement("div"); tmp.style.cssText = "position:absolute;left:-99999px;width:" + inner + "px"; document.body.appendChild(tmp);
+  let chart, ch;
+  if (c.multiples) { chart = S("svg", {width:inner}, tmp); c.draw(chart, inner, true, c.state); ch = +chart.getAttribute("height"); }
+  else if (c.id === "cpi-states") {
+    chart = c.draw(tmp, 600, true); ch = +chart.getAttribute("height");
+    // ranked list beside the map, in two columns
+    const g = S("g", {transform:"translate(660,6)"}, chart); chart.setAttribute("width", inner); chart.setAttribute("viewBox", `0 0 ${inner} ${ch}`);
+    const list = STATES.slice(0, 36), per = 18, colW = (inner - 660) / 2;
+    list.forEach((r, i) => { const cx = Math.floor(i / per) * colW, cy = (i % per) * (ch / per);
+      T(g, cx, cy + 14, r.n, {style:`font-size:13.5px;fill:${C.ink2}`});
+      T(g, cx + colW - 18, cy + 14, num(r.v), {style:`font-size:13.5px;font-weight:600;fill:${C.ink}`, "text-anchor":"end"}); });
+    ch += 0;
+  } else { chart = c.draw(tmp, inner, true, c.state); ch = +chart.getAttribute("height"); }
+  const chartXML = new XMLSerializer().serializeToString(chart).replace(/^<svg[^>]*>/, "").replace(/<\/svg>$/, "");
+  tmp.remove();
+  parts.push(`<g transform="translate(${P},${yy})">${chartXML}</g>`);
+  yy += ch + 30;
+  if (c.id === "cpi-states") {
+    RAMP.forEach((r, i) => parts.push(`<rect x="${P + 60 + i * 40}" y="${yy - 14}" width="40" height="9" fill="${r}"/>`));
+    parts.push(`<text x="${P}" y="${yy - 5}" style="font:13px 'Golos Text';fill:${C.ink3}">Per cent</text>`);
+    ["2","3","4","5"].forEach((t, i) => parts.push(`<text x="${P + 100 + i * 40}" y="${yy + 12}" text-anchor="middle" style="font:13px 'Golos Text';fill:${C.ink3}">${t}</text>`));
+    yy += 30;
+  }
+  parts.push(`<line x1="${P}" x2="${Wd - P}" y1="${yy}" y2="${yy}" stroke="${C.hair2}"/>`);
+  yy += 26;
+  const srcLines = wrapText(c.source, srcF, inner - 240);
+  srcLines.forEach((l, i) => parts.push(`<text x="${P}" y="${yy + i * 21}" style="font:400 14.5px 'Golos Text';fill:${C.ink3}">${esc(l)}</text>`));
+  parts.push(`<text x="${Wd - P}" y="${yy + 2}" text-anchor="end" style="font:600 20px 'Source Serif 4',serif;fill:${C.ink}">India Atlas</text>`);
+  parts.push(`<text x="${Wd - P}" y="${yy + 23}" text-anchor="end" style="font:400 13.5px 'Golos Text';fill:${C.ink3}">atlas.thisindianlife.today</text>`);
+  yy += Math.max(srcLines.length * 21, 30) + P - 10;
+  const fonts = await fontCSS();
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${Wd}" height="${Math.ceil(yy)}" viewBox="0 0 ${Wd} ${Math.ceil(yy)}">
+<style>${fonts}\n${CHART_CSS}</style><rect width="100%" height="100%" fill="#fff"/>${parts.join("")}</svg>`;
+  return {svg, w:Wd, h:Math.ceil(yy)};
+}
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+function download(blob, name) { const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+async function toPNG(c) {
+  const {svg, w, h} = await buildExport(c);
+  const img = new Image(); const url = URL.createObjectURL(new Blob([svg], {type:"image/svg+xml"}));
+  await new Promise((res, rej) => { img.onload = res; img.onerror = rej; img.src = url; });
+  const cv = document.createElement("canvas"); cv.width = w * 2; cv.height = h * 2;
+  const g = cv.getContext("2d"); g.scale(2, 2); g.drawImage(img, 0, 0); URL.revokeObjectURL(url);
+  return new Promise(res => cv.toBlob(res, "image/png"));
+}
+async function copy(text) { try { await navigator.clipboard.writeText(text); return true; } catch (e) { return false; } }
+function flash(btn, msg) { const old = btn.textContent; btn.textContent = msg; btn.classList.add("st"); setTimeout(() => { btn.textContent = old; btn.classList.remove("st"); }, 1800); }
+async function act(c, a, btn) {
+  if (a === "png") { flash(btn, "Preparing"); download(await toPNG(c), c.file + ".png"); flash(btn, "Downloaded"); }
+  if (a === "svg") { download(new Blob([(await buildExport(c)).svg], {type:"image/svg+xml"}), c.file + ".svg"); flash(btn, "Downloaded"); }
+  if (a === "csv") { download(new Blob([c.csv() + "\n"], {type:"text/csv"}), c.file + ".csv"); flash(btn, "Downloaded"); }
+  if (a === "link") { const u = location.href.split("#")[0] + "#" + c.id; flash(btn, (await copy(u)) ? "Link copied" : "Copy failed"); }
+  if (a === "embed") { const code = `<iframe src="https://atlas.thisindianlife.today/embed/${c.id}" title="${c.title.replace(/"/g, "&quot;")}" width="100%" height="560" style="border:0"></iframe>`;
+    flash(btn, (await copy(code)) ? "Code copied" : "Copy failed"); }
+}
+window.__atlasExport = async id => (await buildExport(CARDS.find(c => c.id === id)));   // used by the mock's own checks
+
+/* ---------- home: releases, topics, search ---------- */
+const spark = (vals, w = 104, h = 26, col = C.blue) => {
+  const v = vals.filter(x => x != null), lo = Math.min(...v), hi = Math.max(...v);
+  const d = v.map((q, i) => `${i ? "L" : "M"}${(i / (v.length - 1) * (w - 6)).toFixed(1)},${(3 + (hi - q) / (hi - lo || 1) * (h - 6)).toFixed(1)}`).join("");
+  const lx = w - 6, ly = 3 + (hi - v.at(-1)) / (hi - lo || 1) * (h - 6);
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true"><path d="${d}" fill="none" stroke="${col}" stroke-width="1.5" stroke-linejoin="round"/><circle cx="${lx}" cy="${ly}" r="2.5" fill="${col}"/></svg>`;
+};
+const L2 = (b, k, n = 24) => b.series[k].data.slice(-n);
+const lastTwo = (b, k) => { const a = b.series[k].data; return [a.at(-1), a.at(-2)]; };
+const REL = [
+  {n:"Consumer price inflation", s:"Year on year, all India", per:"June 2026", sub:"Released 12 July", ...(([a, b]) => ({v:`${num(a)}%`, c:`${sgn(a - b)} pt`}))(lastTwo(A.cpi, "headline")), sp:L2(A.cpi, "headline"), href:"#cpi-headline"},
+  {n:"Industrial output", s:"Index of Industrial Production, year on year", per:"June 2026", ...(([a, b]) => ({v:`${num(a)}%`, c:`${sgn(a - b)} pt`}))(lastTwo(A.iip, "general")), sp:L2(A.iip, "general")},
+  {n:"Unemployment rate", s:"Monthly labour force survey, age 15 and over", per:"June 2026", ...(([a, b]) => ({v:`${a.toFixed(1)}%`, c: a === b ? "Unchanged" : `${sgn(a - b, 1)} pt`}))(lastTwo(A.plfs, "ur")), sp:L2(A.plfs, "ur")},
+  {n:"GDP growth", s:"Real GDP, year on year, 2022-23 prices", per:"Jan to Mar 2026", ...(([a, b]) => ({v:`${num(a)}%`, c:`${sgn(a - b)} pt`}))(lastTwo(A.gdp, "gdp")), sp:L2(A.gdp, "gdp", 12)},
+  {n:"Rupee per US dollar", s:"Monthly average, Reserve Bank of India", per:"June 2025", ...(([a, b]) => ({v:`₹${a.toFixed(2)}`, c:`${sgn(a - b)}`}))(lastTwo(A.fx, "usdinr")), sp:L2(A.fx, "usdinr")},
+];
+document.getElementById("relbody").innerHTML = REL.map(r => `<tr ${r.href ? `data-href="${r.href}"` : ""}>
+  <td class="ind">${r.n}<small>${r.s}</small></td><td class="per">${r.per}${r.sub ? `<br><span style="font-size:13.5px;color:var(--ink-3)">${r.sub}</span>` : ""}</td>
+  <td class="n val">${r.v}</td><td class="n chg">${r.c}</td><td class="n sp">${spark(r.sp)}</td></tr>`).join("");
+document.querySelectorAll("#relbody tr[data-href]").forEach(tr => tr.addEventListener("click", () => location.hash = tr.dataset.href));
+
+const TOPICS = [["Consumer prices","What households pay, and the number the RBI is asked to hold"],["Wholesale prices","Prices at the factory gate and the farm"],
+  ["GDP","The size and speed of the whole economy"],["Industrial production","The monthly pulse of mines, factories and power"],
+  ["Factories","Registered factories, audited to the last rupee"],["Manufacturing","Six decades of manufacturing's share of the economy"],
+  ["External account","Exports, imports, reserves and the rupee"],["Jobs","Who works, who looks for work, and what they earn"],
+  ["Household consumption","What families spend in a month, poorest to richest"],["Family health","Anaemia, nutrition, maternal care and fertility"],
+  ["Gender","The sex ratio and the gaps that follow it"],["Higher education","Who goes to college, and who is left out"],["Renewable energy","Solar, wind, hydro and bio capacity, state by state"]];
+document.getElementById("topicgrid").innerHTML = TOPICS.map(([n, d]) => `<div class="topic"><a href="${n === "Consumer prices" ? "#cpi" : "#"}">${n}</a><p>${d}</p></div>`).join("");
+
+// the search index: every series in the mock's data; the real site indexes all 3,824
+const IDX = [];
+const add = (name, meta, b, k, fmt, per, href, kw = "") => { const a = b.series[k].data; const v = a.at(-1); if (v == null) return;
+  IDX.push({name, meta, v:fmt(v), per, sp:a.slice(-24), href, hay:(name + " " + meta + " " + kw).toLowerCase()}); };
+const pc = v => `${num(v)}%`;
+add("Consumer price inflation, all India", "CPI, year on year, monthly", A.cpi, "headline", pc, "Jun 2026", "#cpi-headline", "inflation prices retail cpi");
+add("Consumer price inflation, rural", "CPI, year on year, monthly", A.cpiSec, "rural", pc, "Jun 2026", "#cpi-rural-urban", "inflation village");
+add("Consumer price inflation, urban", "CPI, year on year, monthly", A.cpiSec, "urban", pc, "Jun 2026", "#cpi-rural-urban", "inflation city");
+Object.keys(DIVN).forEach(k => add(`Consumer prices: ${DIVN[k]}`, "CPI division, year on year", A.cpiDiv, k, pc, "Jun 2026", "#cpi-divisions", "inflation"));
+Object.keys(stS).forEach(k => add(`Consumer price inflation, ${stName(k)}`, "CPI by state, year on year", A.cpiStates, k, pc, "Jun 2026", "#cpi-states", "inflation state"));
+[["gdp","GDP growth"],["gva","Gross value added growth"],["pfce","Private consumption growth"],["gfcf","Investment growth"]].forEach(([k, n]) => add(n, "National accounts, real, year on year, quarterly", A.gdp, k, pc, "Jan to Mar 2026", "#", "gdp growth economy"));
+Object.keys(A.gdpInd.series).forEach(k => add(`GVA growth: ${A.gdpInd.series[k].label}`, "National accounts, 2011-12 prices, quarterly", A.gdpInd, k, pc, "Jul to Sep 2025", "#", "gdp sector industry"));
+Object.keys(A.iip.series).forEach(k => add(`Industrial output: ${A.iip.series[k].label}`, "IIP, year on year, monthly", A.iip, k, pc, "Jun 2026", k.startsWith("use_") ? "#iip-use" : "#", "factory production iip manufacturing"));
+add("Unemployment rate", "Labour force survey, monthly", A.plfs, "ur", v => `${v.toFixed(1)}%`, "Jun 2026", "#", "jobs work plfs unemployment");
+add("Labour force participation rate", "Labour force survey, monthly", A.plfs, "lfpr", v => `${v.toFixed(1)}%`, "Jun 2026", "#", "jobs work plfs");
+add("Rupee per US dollar", "RBI, monthly average", A.fx, "usdinr", v => `₹${v.toFixed(2)}`, "Jun 2025", "#", "rupee dollar exchange rate fx inr");
+add("Foreign exchange reserves", "RBI, US$ million", A.fx, "reserves", v => `$${Math.round(v / 1000)} bn`, "Jun 2025", "#", "reserves forex rupee");
+
+const q = document.getElementById("q"), res = document.getElementById("results");
+if (innerWidth < 600) q.placeholder = "Kerala inflation, the rupee";
+let sel = -1, hits = [];
+const hl = (s, words) => { let out = s; words.forEach(w => { if (w.length > 1) out = out.replace(new RegExp(`(${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "ig"), "<mark>$1</mark>"); }); return out; };
+function search() {
+  const words = q.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
+  if (!words.length) { res.hidden = true; q.setAttribute("aria-expanded", "false"); return; }
+  hits = IDX.map(r => ({r, s: words.every(w => r.hay.includes(w)) ? words.reduce((a, w) => a + (r.name.toLowerCase().includes(w) ? 2 : 1), 0) - r.name.length / 400 : -1}))
+    .filter(h => h.s > 0).sort((a, b) => b.s - a.s).slice(0, 7).map(h => h.r);
+  sel = hits.length ? 0 : -1;
+  res.innerHTML = hits.length ? hits.map((r, i) => `<li role="option" id="opt${i}" aria-selected="${i === sel}" data-href="${r.href}">
+      <div><div class="rn">${hl(r.name, words)}</div><div class="rm">${r.meta}</div></div>
+      <div class="rs">${spark(r.sp, 84, 22)}</div><div class="rv">${r.v}<small>${r.per}</small></div></li>`).join("")
+    : `<li class="none">No series matches “${q.value.replace(/</g, "&lt;")}”. Try a broader word, such as prices or output.</li>`;
+  res.hidden = false; q.setAttribute("aria-expanded", "true");
+  res.querySelectorAll("li[data-href]").forEach(li => li.addEventListener("mousedown", e => { e.preventDefault(); go(li.dataset.href); }));
+}
+function go(h) { res.hidden = true; q.blur(); if (h && h !== "#") location.hash = h; }
+q.addEventListener("input", search);
+q.addEventListener("keydown", e => {
+  if (res.hidden || !hits.length) return;
+  if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); sel = (sel + (e.key === "ArrowDown" ? 1 : -1) + hits.length) % hits.length;
+    res.querySelectorAll("li").forEach((li, i) => li.setAttribute("aria-selected", i === sel)); q.setAttribute("aria-activedescendant", "opt" + sel); }
+  if (e.key === "Enter" && sel >= 0) go(hits[sel].href);
+  if (e.key === "Escape") { res.hidden = true; }
+});
+q.addEventListener("blur", () => setTimeout(() => res.hidden = true, 120));
+document.querySelectorAll(".try button").forEach(b => b.addEventListener("click", () => { q.value = b.dataset.q; q.focus(); search(); }));
+document.addEventListener("keydown", e => { if (e.key === "/" && document.activeElement !== q) { e.preventDefault(); q.focus(); } });
+
+document.fonts.ready.then(() => {
+  mountCards();
+  let w = innerWidth, pend;
+  addEventListener("resize", () => { if (innerWidth === w) return; w = innerWidth; cancelAnimationFrame(pend); pend = requestAnimationFrame(() => CARDS.forEach(drawCard)); });
+});
+})();
+</script>
+</body>
+</html>

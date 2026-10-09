@@ -82,40 +82,40 @@ setHTML("rb-first", inrBig(cur(M.urban)));
  * Two data points per series: a two-point sparkline is a bare diagonal, so
  * the history cell is replaced by the previous round's value. */
 const regRows = [
-  { nm: "MPCE · rural", sub: "₹ per person per month, without imputation", sw: "s-acc",
+  { nm: "MPCE, rural", sub: "₹ per person per month, without imputation", sw: "s-acc",
     v: inr(cur(M.rural)), d: arrowPct(cur(M.rural), prv(M.rural)), p: inr(prv(M.rural)) },
-  { nm: "MPCE · urban", sub: "₹ per person per month, without imputation", sw: "s-g1",
+  { nm: "MPCE, urban", sub: "₹ per person per month, without imputation", sw: "s-g1",
     v: inr(cur(M.urban)), d: arrowPct(cur(M.urban), prv(M.urban)), p: inr(prv(M.urban)) },
   { nm: "Urban ÷ rural", sub: "computed from the two means", sw: "s-g2",
     v: ratio1.toFixed(2) + "×", d: arrowAbs(ratio1, ratio0, 2), p: ratio0.toFixed(2) + "×" },
-  { nm: "Gini · rural", sub: "consumption, without imputation", sw: "s-g4",
+  { nm: "Gini, rural", sub: "consumption, without imputation", sw: "s-g4",
     v: g3(cur(G.rural)), d: arrowAbs(cur(G.rural), prv(G.rural), 3), p: g3(prv(G.rural)) },
-  { nm: "Gini · urban", sub: "consumption, without imputation", sw: "s-g3",
+  { nm: "Gini, urban", sub: "consumption, without imputation", sw: "s-g3",
     v: g3(cur(G.urban)), d: arrowAbs(cur(G.urban), prv(G.urban), 3), p: g3(prv(G.urban)) },
-  { nm: "Bottom 5% · rural", sub: "average MPCE of the lowest fractile class", sw: "s-g1",
+  { nm: "Bottom 5%, rural", sub: "average MPCE of the lowest fractile class", sw: "s-g1",
     v: inr(cur(F.f0_5_rural)), d: arrowPct(cur(F.f0_5_rural), prv(F.f0_5_rural)), p: inr(prv(F.f0_5_rural)) },
-  { nm: "Top 5% · urban", sub: "average MPCE of the highest fractile — fell between rounds", sw: "s-acc",
+  { nm: "Top 5%, urban", sub: "average MPCE of the highest fractile: fell between rounds", sw: "s-acc",
     v: inr(cur(F.f95_100_urban)), d: arrowPct(cur(F.f95_100_urban), prv(F.f95_100_urban)), p: inr(prv(F.f95_100_urban)) },
-  { nm: "MPCE · Scheduled Tribe, rural", sub: "lowest social-group average in villages", sw: "s-g3",
+  { nm: "MPCE, Scheduled Tribe, rural", sub: "lowest social-group average in villages", sw: "s-g3",
     v: inr(cur(SO.st_rural)), d: arrowPct(cur(SO.st_rural), prv(SO.st_rural)), p: inr(prv(SO.st_rural)) },
-  { nm: "Others ÷ ST · rural", sub: "social-group gap, computed from the two means", sw: "s-g1",
+  { nm: "Others ÷ ST, rural", sub: "social-group gap, computed from the two means", sw: "s-g1",
     v: (cur(SO.others_rural) / cur(SO.st_rural)).toFixed(2) + "×",
     d: arrowAbs(cur(SO.others_rural) / cur(SO.st_rural), prv(SO.others_rural) / prv(SO.st_rural), 2),
     p: (prv(SO.others_rural) / prv(SO.st_rural)).toFixed(2) + "×" },
-  { nm: "MPCE · casual labour, urban", sub: "lowest household-type average in towns", sw: "s-g2",
+  { nm: "MPCE, casual labour, urban", sub: "lowest household-type average in towns", sw: "s-g2",
     v: inr(cur(HT.casual_labour_urban)), d: arrowPct(cur(HT.casual_labour_urban), prv(HT.casual_labour_urban)), p: inr(prv(HT.casual_labour_urban)) },
-  { nm: "Cereals · rural quantity", sub: "kg per person per month, all cereals", sw: "s-g4",
+  { nm: "Cereals, rural quantity", sub: "kg per person per month, all cereals", sw: "s-g4",
     v: kg2(cur(Q.total_cereals_rural)), d: arrowPct(cur(Q.total_cereals_rural), prv(Q.total_cereals_rural)), p: kg2(prv(Q.total_cereals_rural)) },
-  { nm: "Food share · rural", sub: "% of MPCE, all food categories", sw: "s-g2",
+  { nm: "Food share, rural", sub: "% of MPCE, all food categories", sw: "s-g2",
     v: p2(cur(C.food_total_rural)), d: arrowPt(cur(C.food_total_rural), prv(C.food_total_rural)), p: p2(prv(C.food_total_rural)) },
-  { nm: "Food share · urban", sub: "% of MPCE, all food categories", sw: "s-g4",
+  { nm: "Food share, urban", sub: "% of MPCE, all food categories", sw: "s-g4",
     v: p2(cur(C.food_total_urban)), d: arrowPt(cur(C.food_total_urban), prv(C.food_total_urban)), p: p2(prv(C.food_total_urban)) },
 ];
 document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
   <tr>
     <td class="name"><span class="sw ${r.sw}"></span>${r.nm}<small>${r.sub}</small></td>
     <td class="val">${r.v}</td>
-    <td class="chg">${r.d} · vs 2022-23</td>
+    <td class="chg">${r.d}, vs 2022-23</td>
     <td class="yr">${r.p}</td>
   </tr>`).join("");
 
@@ -145,25 +145,25 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: null, tickSize: 0, tickPadding: 14, ticks: rows.map((r) => r.i),
          tickFormat: (d) => FRACLAB[d], domain: [-0.4, 11.55] },
     y: { label: "↑ ₹ per person per month", labelAnchor: "top", labelArrow: false,
          ticks: yTicks, domain: [0, 22000], tickSize: 0, tickPadding: 11,
          tickFormat: (d) => (d === 20000 ? "₹20,000" : grp(d)) },
     marks: [
-      Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleY([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
       // previous round, pale — never chained to the current one
-      Plot.dot(rows, { x: "i", y: "urban0", fill: "#C6C0B0", r: 3 }),
-      Plot.dot(rows, { x: "i", y: "rural0", fill: "#C6C0B0", r: 3 }),
-      Plot.lineY(rows, { x: "i", y: "urban1", stroke: "#5B564B", strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.lineY(rows, { x: "i", y: "rural1", stroke: "#BE3E26", strokeWidth: 2.75, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.dot(rows, { x: "i", y: "urban1", fill: "#5B564B", r: 4, stroke: "#FFFFFF", strokeWidth: 1.25 }),
-      Plot.dot(rows, { x: "i", y: "rural1", fill: "#BE3E26", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.25 }),
-      Plot.text([{ i: 11, y: cur(F.f95_100_urban) }], { x: "i", y: "y", text: () => "Urban " + inr(cur(F.f95_100_urban)), dx: 18, fill: "#5B564B", fontSize: 14.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
-      Plot.text([{ i: 11, y: cur(F.f95_100_rural) }], { x: "i", y: "y", text: () => "Rural " + inr(cur(F.f95_100_rural)), dx: 18, fill: "#BE3E26", fontSize: 14.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
-      Plot.text([{ i: 10.75, y: 21750 }], { x: "i", y: "y", text: () => "top 5% urban fell " + inr(topDrop) + " between rounds", fill: "#8A857A", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
+      Plot.dot(rows, { x: "i", y: "urban0", fill: "#C9CED6", r: 3 }),
+      Plot.dot(rows, { x: "i", y: "rural0", fill: "#C9CED6", r: 3 }),
+      Plot.lineY(rows, { x: "i", y: "urban1", stroke: "#5F6675", strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.lineY(rows, { x: "i", y: "rural1", stroke: "#2E4BD8", strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.dot(rows, { x: "i", y: "urban1", fill: "#5F6675", r: 4, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.dot(rows, { x: "i", y: "rural1", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.text([{ i: 11, y: cur(F.f95_100_urban) }], { x: "i", y: "y", text: () => "Urban " + inr(cur(F.f95_100_urban)), dx: 18, fill: "#5F6675", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.text([{ i: 11, y: cur(F.f95_100_rural) }], { x: "i", y: "y", text: () => "Rural " + inr(cur(F.f95_100_rural)), dx: 18, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.text([{ i: 10.75, y: 21750 }], { x: "i", y: "y", text: () => "top 5% urban fell " + inr(topDrop) + " between rounds", fill: "#878D99", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
     ],
   });
   a11y(plot, "Average MPCE by fractile class, rural and urban, 2023-24, with 2022-23 as pale dots",
@@ -202,28 +202,28 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: "₹ per person per month →", labelAnchor: "right", labelArrow: false,
          ticks: xTicks, domain: [0, 9000], tickSize: 0, tickPadding: 12,
          tickFormat: (d) => (d === 8000 ? "₹8,000" : grp(d)) },
     y: { label: null, domain: rows.map((r) => r.label), tickSize: 0, tickPadding: 12 },
     marks: [
-      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
-      Plot.ruleX([cur(M.rural)], { stroke: "#BE3E26", strokeWidth: 1, strokeDasharray: "2,3", strokeOpacity: 0.8 }),
-      Plot.ruleX([cur(M.urban)], { stroke: "#5B564B", strokeWidth: 1, strokeDasharray: "2,3", strokeOpacity: 0.8 }),
-      Plot.text([{ x: cur(M.rural) }], { x: "x", frameAnchor: "top", dy: -26, dx: -6, text: () => "all-India rural " + inr(cur(M.rural)), fill: "#BE3E26", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
-      Plot.text([{ x: cur(M.urban) }], { x: "x", frameAnchor: "top", dy: -26, dx: 6, text: () => "all-India urban " + inr(cur(M.urban)), fill: "#5B564B", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
-      Plot.link(rows, { x1: "rural1", x2: "urban1", y: "label", stroke: "#D8D3C4", strokeWidth: 1.5 }),
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+      Plot.ruleX([cur(M.rural)], { stroke: "#2E4BD8", strokeWidth: 1, strokeDasharray: "2,3", strokeOpacity: 0.8 }),
+      Plot.ruleX([cur(M.urban)], { stroke: "#5F6675", strokeWidth: 1, strokeDasharray: "2,3", strokeOpacity: 0.8 }),
+      Plot.text([{ x: cur(M.rural) }], { x: "x", frameAnchor: "top", dy: -26, dx: -6, text: () => "all-India rural " + inr(cur(M.rural)), fill: "#161A22", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
+      Plot.text([{ x: cur(M.urban) }], { x: "x", frameAnchor: "top", dy: -26, dx: 6, text: () => "all-India urban " + inr(cur(M.urban)), fill: "#5F6675", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.link(rows, { x1: "rural1", x2: "urban1", y: "label", stroke: "#DADDE3", strokeWidth: 1.5 }),
       // previous round, pale — never chained to the current one
-      Plot.dot(rows, { x: "rural0", y: "label", fill: "#C6C0B0", r: 3 }),
-      Plot.dot(rows, { x: "urban0", y: "label", fill: "#C6C0B0", r: 3 }),
-      Plot.dot(rows, { x: "urban1", y: "label", fill: "#5B564B", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.25 }),
-      Plot.dot(rows, { x: "rural1", y: "label", fill: "#BE3E26", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.dot(rows, { x: "rural0", y: "label", fill: "#C9CED6", r: 3 }),
+      Plot.dot(rows, { x: "urban0", y: "label", fill: "#C9CED6", r: 3 }),
+      Plot.dot(rows, { x: "urban1", y: "label", fill: "#5F6675", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.dot(rows, { x: "rural1", y: "label", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.25 }),
       // rural < urban in every group; the rural label drops below its dot so
       // it clears the pale previous-round dot sitting just to the left
-      Plot.text(rows, { x: "rural1", y: "label", text: (d) => inr(d.rural1), dy: 17, fill: "#BE3E26", fontSize: 12, fontFamily: mono }),
-      Plot.text(rows, { x: "urban1", y: "label", text: (d) => inr(d.urban1), dx: 12, textAnchor: "start", fill: "#5B564B", fontSize: 12, fontFamily: mono }),
+      Plot.text(rows, { x: "rural1", y: "label", text: (d) => inr(d.rural1), dy: 17, fill: "#161A22", fontSize: 12, fontFamily: mono }),
+      Plot.text(rows, { x: "urban1", y: "label", text: (d) => inr(d.urban1), dx: 12, textAnchor: "start", fill: "#5F6675", fontSize: 12, fontFamily: mono }),
     ],
   });
   a11y(plot, "Average MPCE by social group, rural and urban paired per group, 2023-24",
@@ -238,17 +238,17 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
   // rural first (published with the farm/non-farm split), urban after;
   // sorted within each sector, largest first
   const TYPES = [
-    ["regular_wage_salaried_in_non_agriculture_rural", "Rural · regular wage, non-farm", "#BE3E26"],
-    ["others_rural", "Rural · others", "#BE3E26"],
-    ["self_employed_in_non_agriculture_rural", "Rural · self-employed, non-farm", "#BE3E26"],
-    ["self_employed_in_agriculture_rural", "Rural · self-employed, farm", "#BE3E26"],
-    ["regular_wage_salaried_in_agriculture_rural", "Rural · regular wage, farm", "#BE3E26"],
-    ["casual_labour_in_non_agriculture_rural", "Rural · casual labour, non-farm", "#BE3E26"],
-    ["casual_labour_in_agriculture_rural", "Rural · casual labour, farm", "#BE3E26"],
-    ["others_urban", "Urban · others", "#5B564B"],
-    ["regular_wage_salaried_urban", "Urban · regular wage/salaried", "#5B564B"],
-    ["self_employed_urban", "Urban · self-employed", "#5B564B"],
-    ["casual_labour_urban", "Urban · casual labour", "#5B564B"],
+    ["regular_wage_salaried_in_non_agriculture_rural", "Rural, regular wage, non-farm", "#2E4BD8"],
+    ["others_rural", "Rural, others", "#2E4BD8"],
+    ["self_employed_in_non_agriculture_rural", "Rural, self-employed, non-farm", "#2E4BD8"],
+    ["self_employed_in_agriculture_rural", "Rural, self-employed, farm", "#2E4BD8"],
+    ["regular_wage_salaried_in_agriculture_rural", "Rural, regular wage, farm", "#2E4BD8"],
+    ["casual_labour_in_non_agriculture_rural", "Rural, casual labour, non-farm", "#2E4BD8"],
+    ["casual_labour_in_agriculture_rural", "Rural, casual labour, farm", "#2E4BD8"],
+    ["others_urban", "Urban, others", "#5F6675"],
+    ["regular_wage_salaried_urban", "Urban, regular wage/salaried", "#5F6675"],
+    ["self_employed_urban", "Urban, self-employed", "#5F6675"],
+    ["casual_labour_urban", "Urban, casual labour", "#5F6675"],
   ];
   const rows = TYPES.map(([k, label, c]) => ({ label, c, v1: cur(HT[k]), v0: prv(HT[k]) }));
   setTxt("pv-hht", inr(cur(HT.casual_labour_urban)));
@@ -263,28 +263,28 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: "₹ per person per month →", labelAnchor: "right", labelArrow: false,
          ticks: xTicks, domain: [0, 10000], tickSize: 0, tickPadding: 12,
          tickFormat: (d) => (d === 10000 ? "₹10,000" : grp(d)) },
     y: { label: null, domain: rows.map((r) => r.label), tickSize: 0, tickPadding: 12 },
     marks: [
-      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
-      Plot.ruleX([cur(M.rural)], { stroke: "#BE3E26", strokeWidth: 1, strokeDasharray: "2,3", strokeOpacity: 0.8 }),
-      Plot.ruleX([cur(M.urban)], { stroke: "#5B564B", strokeWidth: 1, strokeDasharray: "2,3", strokeOpacity: 0.8 }),
-      Plot.text([{ x: cur(M.rural) }], { x: "x", frameAnchor: "top", dy: -26, dx: -6, text: () => "all-India rural " + inr(cur(M.rural)), fill: "#BE3E26", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
-      Plot.text([{ x: cur(M.urban) }], { x: "x", frameAnchor: "top", dy: -26, dx: 6, text: () => "all-India urban " + inr(cur(M.urban)), fill: "#5B564B", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+      Plot.ruleX([cur(M.rural)], { stroke: "#2E4BD8", strokeWidth: 1, strokeDasharray: "2,3", strokeOpacity: 0.8 }),
+      Plot.ruleX([cur(M.urban)], { stroke: "#5F6675", strokeWidth: 1, strokeDasharray: "2,3", strokeOpacity: 0.8 }),
+      Plot.text([{ x: cur(M.rural) }], { x: "x", frameAnchor: "top", dy: -26, dx: -6, text: () => "all-India rural " + inr(cur(M.rural)), fill: "#161A22", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
+      Plot.text([{ x: cur(M.urban) }], { x: "x", frameAnchor: "top", dy: -26, dx: 6, text: () => "all-India urban " + inr(cur(M.urban)), fill: "#5F6675", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
       // round-on-round movement: pale 2022-23 dot linked to the filled 2023-24 dot
-      Plot.link(rows, { x1: "v0", x2: "v1", y: "label", stroke: "#D8D3C4", strokeWidth: 1.5 }),
-      Plot.dot(rows, { x: "v0", y: "label", fill: "#C6C0B0", r: 3 }),
-      Plot.dot(rows, { x: "v1", y: "label", fill: "c", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.link(rows, { x1: "v0", x2: "v1", y: "label", stroke: "#DADDE3", strokeWidth: 1.5 }),
+      Plot.dot(rows, { x: "v0", y: "label", fill: "#C9CED6", r: 3 }),
+      Plot.dot(rows, { x: "v1", y: "label", fill: "c", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.25 }),
       // every type rose between the rounds, so the current label sits right
       Plot.text(rows, { x: "v1", y: "label", text: (d) => inr(d.v1), dx: 12, textAnchor: "start", fill: "c", fontSize: 12, fontFamily: mono }),
     ],
   });
   a11y(plot, "Average MPCE by household employment type, rural and urban, 2023-24, with 2022-23 as pale dots",
-    "Eleven rows, rural types then urban. Casual labour is the floor of both sectors: " + inr(cur(HT.casual_labour_in_agriculture_rural)) + " for rural farm work and " + inr(cur(HT.casual_labour_urban)) + " in towns. The top urban row is others — pension, rent or remittance households — at " + inr(cur(HT.others_urban)) + ".");
+    "Eleven rows, rural types then urban. Casual labour is the floor of both sectors: " + inr(cur(HT.casual_labour_in_agriculture_rural)) + " for rural farm work and " + inr(cur(HT.casual_labour_urban)) + " in towns. The top urban row is others, pension, rent or remittance households, at " + inr(cur(HT.others_urban)) + ".");
   document.getElementById("plot-hhtype").append(plot);
   const csvList = TYPES.map(([k]) => HT[k]);
   wireTools(document.getElementById("cb-hhtype"), plot, csvList, "india-atlas_hces_household-type-mpce", fmtRound);
@@ -295,17 +295,17 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
   // food vs non-food composition bars, one per sector
   const basket = (barId, labId, sector, segs) => {
     document.getElementById(barId).innerHTML = segs.map(([n, w, c]) =>
-      `<div class="seg" style="width:${w}%;background:${c}" title="${sector} · ${n} — ${w.toFixed(2)}%"></div>`).join("");
+      `<div class="seg" style="width:${w}%;background:${c}" title="${sector}, ${n}: ${w.toFixed(2)}%"></div>`).join("");
     document.getElementById(labId).innerHTML = segs.map(([n, w, c]) =>
-      `<div class="blab"><div class="n"><span class="sw" style="background:${c}"></span>${sector} · ${n}</div><div class="w">${w.toFixed(2)}%</div></div>`).join("");
+      `<div class="blab"><div class="n"><span class="sw" style="background:${c}"></span>${sector}, ${n}</div><div class="w">${w.toFixed(2)}%</div></div>`).join("");
   };
   basket("bk-r-bar", "bk-r-labels", "Rural", [
-    ["Food", cur(C.food_total_rural), "#BE3E26"],
-    ["Non-food", cur(C.non_food_total_rural), "#C6C0B0"],
+    ["Food", cur(C.food_total_rural), "#2E4BD8"],
+    ["Non-food", cur(C.non_food_total_rural), "#C9CED6"],
   ]);
   basket("bk-u-bar", "bk-u-labels", "Urban", [
-    ["Food", cur(C.food_total_urban), "#BE3E26"],
-    ["Non-food", cur(C.non_food_total_urban), "#C6C0B0"],
+    ["Food", cur(C.food_total_urban), "#2E4BD8"],
+    ["Non-food", cur(C.non_food_total_urban), "#C9CED6"],
   ]);
 
   setTxt("pv-engel", p2(cur(C.food_total_rural)));
@@ -339,23 +339,23 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: "share of MPCE →", labelAnchor: "right", labelArrow: false,
          ticks: xTicks, domain: [0, 12], tickSize: 0, tickPadding: 12,
          tickFormat: (d) => (d === 12 ? "12%" : String(d)) },
     y: { label: null, domain, tickSize: 0, tickPadding: 12 },
     marks: [
-      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
-      Plot.link(rows, { x1: "rural", x2: "urban", y: "label", stroke: "#D8D3C4", strokeWidth: 1.5 }),
-      Plot.dot(rows, { x: "urban", y: "label", fill: "#5B564B", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.25 }),
-      Plot.dot(rows, { x: "rural", y: "label", fill: "#BE3E26", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+      Plot.link(rows, { x1: "rural", x2: "urban", y: "label", stroke: "#DADDE3", strokeWidth: 1.5 }),
+      Plot.dot(rows, { x: "urban", y: "label", fill: "#5F6675", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.dot(rows, { x: "rural", y: "label", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.25 }),
       // value labels sit on the outer side of each pair
       // (dx and textAnchor are constants in Plot, so one mark per side)
-      Plot.text(rows.filter((d) => d.rural <= d.urban), { x: "rural", y: "label", text: (d) => d.rural.toFixed(2), dx: -12, textAnchor: "end", fill: "#BE3E26", fontSize: 12, fontFamily: mono }),
-      Plot.text(rows.filter((d) => d.rural > d.urban), { x: "rural", y: "label", text: (d) => d.rural.toFixed(2), dx: 12, textAnchor: "start", fill: "#BE3E26", fontSize: 12, fontFamily: mono }),
-      Plot.text(rows.filter((d) => d.urban < d.rural), { x: "urban", y: "label", text: (d) => d.urban.toFixed(2), dx: -12, textAnchor: "end", fill: "#5B564B", fontSize: 12, fontFamily: mono }),
-      Plot.text(rows.filter((d) => d.urban >= d.rural), { x: "urban", y: "label", text: (d) => d.urban.toFixed(2), dx: 12, textAnchor: "start", fill: "#5B564B", fontSize: 12, fontFamily: mono }),
+      Plot.text(rows.filter((d) => d.rural <= d.urban), { x: "rural", y: "label", text: (d) => d.rural.toFixed(2), dx: -12, textAnchor: "end", fill: "#161A22", fontSize: 12, fontFamily: mono }),
+      Plot.text(rows.filter((d) => d.rural > d.urban), { x: "rural", y: "label", text: (d) => d.rural.toFixed(2), dx: 12, textAnchor: "start", fill: "#161A22", fontSize: 12, fontFamily: mono }),
+      Plot.text(rows.filter((d) => d.urban < d.rural), { x: "urban", y: "label", text: (d) => d.urban.toFixed(2), dx: -12, textAnchor: "end", fill: "#5F6675", fontSize: 12, fontFamily: mono }),
+      Plot.text(rows.filter((d) => d.urban >= d.rural), { x: "urban", y: "label", text: (d) => d.urban.toFixed(2), dx: 12, textAnchor: "start", fill: "#5F6675", fontSize: 12, fontFamily: mono }),
     ],
   });
   a11y(plot, "Share of MPCE by item category, rural versus urban, 2023-24",
@@ -416,26 +416,26 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#878D99", overflow: "visible" },
     x: { label: "change in share of MPCE · percentage points →", labelAnchor: "right", labelArrow: false,
          ticks: xTicks, domain: [xMin, xMax], tickSize: 0, tickPadding: 10,
          tickFormat: (d) => (d === 0 ? "0" : (d > 0 ? "+" : "") + d.toFixed(1)) },
     y: { label: null, domain: rows.map((r) => r.label), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
     marks: [
-      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
-      Plot.link(rows, { x1: "dr", x2: "du", y: "label", stroke: "#E0DACA", strokeWidth: 1.25 }),
-      Plot.dot(rows, { x: "du", y: "label", fill: "#A8A293", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1 }),
-      Plot.dot(rows, { x: "dr", y: "label", fill: (d) => (Math.abs(d.dr) >= 0.5 ? "#BE3E26" : "#5B564B"), r: 4, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+      Plot.link(rows, { x1: "dr", x2: "du", y: "label", stroke: "#E3E6EB", strokeWidth: 1.25 }),
+      Plot.dot(rows, { x: "du", y: "label", fill: "#A3A9B4", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1 }),
+      Plot.dot(rows, { x: "dr", y: "label", fill: (d) => (Math.abs(d.dr) >= 0.5 ? "#2E4BD8" : "#5F6675"), r: 4, stroke: "#FFFFFF", strokeWidth: 1.25 }),
       /* Plot ignores function-valued dx/textAnchor — one text mark per side */
-      Plot.text(rows.filter((d) => Math.abs(d.dr) >= 0.5 && d.dr > 0), { x: "dr", y: "label", text: (d) => "+" + d.dr.toFixed(2), dx: 12, textAnchor: "start", fill: "#BE3E26", fontSize: 11.5, fontFamily: mono, fontWeight: 500 }),
-      Plot.text(rows.filter((d) => Math.abs(d.dr) >= 0.5 && d.dr < 0), { x: "dr", y: "label", text: (d) => d.dr.toFixed(2), dx: -12, textAnchor: "end", fill: "#BE3E26", fontSize: 11.5, fontFamily: mono, fontWeight: 500 }),
-      Plot.text(rows.filter((d) => Math.abs(d.dr) < 0.5 && d.dr >= 0), { x: "dr", y: "label", text: (d) => (d.dr > 0 ? "+" : "") + d.dr.toFixed(2), dx: 12, textAnchor: "start", fill: "#8A857A", fontSize: 11.5, fontFamily: mono }),
-      Plot.text(rows.filter((d) => Math.abs(d.dr) < 0.5 && d.dr < 0), { x: "dr", y: "label", text: (d) => d.dr.toFixed(2), dx: -12, textAnchor: "end", fill: "#8A857A", fontSize: 11.5, fontFamily: mono }),
+      Plot.text(rows.filter((d) => Math.abs(d.dr) >= 0.5 && d.dr > 0), { x: "dr", y: "label", text: (d) => "+" + d.dr.toFixed(2), dx: 12, textAnchor: "start", fill: "#161A22", fontSize: 11.5, fontFamily: mono, fontWeight: 500 }),
+      Plot.text(rows.filter((d) => Math.abs(d.dr) >= 0.5 && d.dr < 0), { x: "dr", y: "label", text: (d) => d.dr.toFixed(2), dx: -12, textAnchor: "end", fill: "#161A22", fontSize: 11.5, fontFamily: mono, fontWeight: 500 }),
+      Plot.text(rows.filter((d) => Math.abs(d.dr) < 0.5 && d.dr >= 0), { x: "dr", y: "label", text: (d) => (d.dr > 0 ? "+" : "") + d.dr.toFixed(2), dx: 12, textAnchor: "start", fill: "#878D99", fontSize: 11.5, fontFamily: mono }),
+      Plot.text(rows.filter((d) => Math.abs(d.dr) < 0.5 && d.dr < 0), { x: "dr", y: "label", text: (d) => d.dr.toFixed(2), dx: -12, textAnchor: "end", fill: "#878D99", fontSize: 11.5, fontFamily: mono }),
     ],
   });
   a11y(plot, "Change in budget share by item category, 2022-23 to 2023-24, rural and urban",
-    "Sorted dot strip of " + rows.length + " categories. Rural changes (dark) range from " + rows.at(-1).label + " at " + (rows.at(-1).dr > 0 ? "+" : "") + rows.at(-1).dr.toFixed(2) + " points to " + rows[0].label + " at +" + rows[0].dr.toFixed(2) + ". The food share rose between rounds — against Engel's prediction. Edible oil fell most; vegetables and processed food rose most.");
+    "Sorted dot strip of " + rows.length + " categories. Rural changes (dark) range from " + rows.at(-1).label + " at " + (rows.at(-1).dr > 0 ? "+" : "") + rows.at(-1).dr.toFixed(2) + " points to " + rows[0].label + " at +" + rows[0].dr.toFixed(2) + ". The food share rose between rounds: against Engel's prediction. Edible oil fell most; vegetables and processed food rose most.");
   document.getElementById("plot-shift").append(plot);
   const csv = ["category,rural_2022_23_pct,rural_2023_24_pct,rural_change_pt,urban_2022_23_pct,urban_2023_24_pct,urban_change_pt",
     ...CATS.map(([k, label]) => `${label.replace(/,/g, "")},${prv(C[k + "_rural"])},${cur(C[k + "_rural"])},${(cur(C[k + "_rural"]) - prv(C[k + "_rural"])).toFixed(3)},${prv(C[k + "_urban"])},${cur(C[k + "_urban"])},${(cur(C[k + "_urban"]) - prv(C[k + "_urban"])).toFixed(3)}`),
@@ -454,8 +454,8 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
     ["total_cereals", "All cereals"],
   ];
   const rows = CROPS.flatMap(([k, name]) => [
-    { label: `${name} · Rural`, c: "#BE3E26", v1: cur(Q[k + "_rural"]), v0: prv(Q[k + "_rural"]) },
-    { label: `${name} · Urban`, c: "#5B564B", v1: cur(Q[k + "_urban"]), v0: prv(Q[k + "_urban"]) },
+    { label: `${name}, Rural`, c: "#2E4BD8", v1: cur(Q[k + "_rural"]), v0: prv(Q[k + "_rural"]) },
+    { label: `${name}, Urban`, c: "#5F6675", v1: cur(Q[k + "_urban"]), v0: prv(Q[k + "_urban"]) },
   ]);
   setTxt("pv-plate", kg2(cur(Q.total_cereals_rural)));
   setTxt("ex-q-rt1", kg1(cur(Q.total_cereals_rural)));
@@ -473,18 +473,18 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: "kg per person per month →", labelAnchor: "right", labelArrow: false,
          ticks: xTicks, domain: [0, 10], tickSize: 0, tickPadding: 12,
          tickFormat: (d) => (d === 10 ? "10 kg" : String(d)) },
     y: { label: null, domain: rows.map((r) => r.label), tickSize: 0, tickPadding: 12 },
     marks: [
-      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
       // round-on-round movement: pale 2022-23 dot linked to the filled 2023-24 dot
-      Plot.link(rows, { x1: "v0", x2: "v1", y: "label", stroke: "#D8D3C4", strokeWidth: 1.5 }),
-      Plot.dot(rows, { x: "v0", y: "label", fill: "#C6C0B0", r: 3.5 }),
-      Plot.dot(rows, { x: "v1", y: "label", fill: "c", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.link(rows, { x1: "v0", x2: "v1", y: "label", stroke: "#DADDE3", strokeWidth: 1.5 }),
+      Plot.dot(rows, { x: "v0", y: "label", fill: "#C9CED6", r: 3.5 }),
+      Plot.dot(rows, { x: "v1", y: "label", fill: "c", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.25 }),
       // value labels sit on the side away from the pale dot
       // (dx and textAnchor are constants in Plot, so one mark per direction)
       Plot.text(rows.filter((d) => d.v1 <= d.v0), { x: "v1", y: "label", text: (d) => kg2(d.v1), dx: -12, textAnchor: "end", fill: "c", fontSize: 12, fontFamily: mono }),
@@ -505,8 +505,8 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
 {
   const CROPS = [["rice", "Rice"], ["wheat", "Wheat"], ["coarse_grains", "Coarse grains"], ["total_cereals", "All cereals"]];
   const rows = CROPS.flatMap(([k, name]) => [
-    { label: `${name} · Rural`, c: "#BE3E26", v1: cur(IV[k + "_rural"]), v0: prv(IV[k + "_rural"]) },
-    { label: `${name} · Urban`, c: "#5B564B", v1: cur(IV[k + "_urban"]), v0: prv(IV[k + "_urban"]) },
+    { label: `${name}, Rural`, c: "#2E4BD8", v1: cur(IV[k + "_rural"]), v0: prv(IV[k + "_rural"]) },
+    { label: `${name}, Urban`, c: "#5F6675", v1: cur(IV[k + "_urban"]), v0: prv(IV[k + "_urban"]) },
   ]);
   const maxV = Math.max(...rows.map((r) => r.v1), ...rows.map((r) => r.v0));
   const xTop = Math.ceil(maxV / 50) * 50;
@@ -519,30 +519,30 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: "₹ per person per month →", labelAnchor: "right", labelArrow: false,
          ticks: xTicks, domain: [0, xTop], tickSize: 0, tickPadding: 12,
          tickFormat: (d) => (d === xTop ? "₹" + d : String(d)) },
     y: { label: null, domain: rows.map((r) => r.label), tickSize: 0, tickPadding: 12 },
     marks: [
-      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
-      Plot.link(rows, { x1: "v0", x2: "v1", y: "label", stroke: "#D8D3C4", strokeWidth: 1.5 }),
-      Plot.dot(rows, { x: "v0", y: "label", fill: "#C6C0B0", r: 3.5 }),
-      Plot.dot(rows, { x: "v1", y: "label", fill: "c", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+      Plot.link(rows, { x1: "v0", x2: "v1", y: "label", stroke: "#DADDE3", strokeWidth: 1.5 }),
+      Plot.dot(rows, { x: "v0", y: "label", fill: "#C9CED6", r: 3.5 }),
+      Plot.dot(rows, { x: "v1", y: "label", fill: "c", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.25 }),
       Plot.text(rows.filter((d) => d.v1 <= d.v0), { x: "v1", y: "label", text: (d) => inr(d.v1), dx: -12, textAnchor: "end", fill: "c", fontSize: 12, fontFamily: mono }),
       Plot.text(rows.filter((d) => d.v1 > d.v0), { x: "v1", y: "label", text: (d) => inr(d.v1), dx: 12, textAnchor: "start", fill: "c", fontSize: 12, fontFamily: mono }),
     ],
   });
   a11y(plot, "Average monthly per-capita value of cereals by type, rural and urban, both rounds",
-    "Eight rows of paired dots in rupees. Rural cereal value rose from " + inr(prv(IV.total_cereals_rural)) + " to " + inr(cur(IV.total_cereals_rural)) + " a head a month between the rounds — even as the quantity on the plate above fell. That is the price of grain climbing, not the amount eaten.");
+    "Eight rows of paired dots in rupees. Rural cereal value rose from " + inr(prv(IV.total_cereals_rural)) + " to " + inr(cur(IV.total_cereals_rural)) + " a head a month between the rounds: even as the quantity on the plate above fell. That is the price of grain climbing, not the amount eaten.");
   document.getElementById("plot-val").append(plot);
   wireTools(document.getElementById("cb-val"), plot, ["rice", "wheat", "coarse_grains", "other_cereals", "total_cereals"].flatMap((k) => [IV[k + "_rural"], IV[k + "_urban"]]), "india-atlas_hces_cereal-values", fmtRound);
 }
 
 /* ---------- § 08a the map : 36 states, paired dots ---------- */
 {
-  const SHORT = { "Dadra & Nagar Haveli and Daman & Diu": "D&N Haveli · Daman & Diu" };
+  const SHORT = { "Dadra & Nagar Haveli and Daman & Diu": "D&N Haveli, Daman & Diu" };
   const rows = Object.keys(ST)
     .filter((k) => k.endsWith("_rural"))
     .map((k) => {
@@ -574,24 +574,24 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: "₹ per person per month →", labelAnchor: "right", labelArrow: false,
          ticks: xTicks, domain: [0, 14500], tickSize: 0, tickPadding: 12,
          tickFormat: (d) => (d === 14000 ? "₹14,000" : grp(d)) },
     y: { label: null, domain: rows.map((r) => r.name), tickSize: 0, tickPadding: 12 },
     marks: [
-      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
-      Plot.ruleX([cur(M.rural)], { stroke: "#BE3E26", strokeWidth: 1, strokeDasharray: "2,3", strokeOpacity: 0.8 }),
-      Plot.ruleX([cur(M.urban)], { stroke: "#5B564B", strokeWidth: 1, strokeDasharray: "2,3", strokeOpacity: 0.8 }),
-      Plot.text([{ x: cur(M.rural) }], { x: "x", frameAnchor: "top", dy: -26, dx: -6, text: () => "all-India rural " + inr(cur(M.rural)), fill: "#BE3E26", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
-      Plot.text([{ x: cur(M.urban) }], { x: "x", frameAnchor: "top", dy: -26, dx: 6, text: () => "all-India urban " + inr(cur(M.urban)), fill: "#5B564B", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
-      Plot.link(rows, { x1: "rural", x2: "urban", y: "name", stroke: "#D8D3C4", strokeWidth: 1.5 }),
-      Plot.dot(rows, { x: "urban", y: "name", fill: "#5B564B", r: 4, stroke: "#FFFFFF", strokeWidth: 1.25 }),
-      Plot.dot(rows, { x: "rural", y: "name", fill: "#BE3E26", r: 4, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+      Plot.ruleX([cur(M.rural)], { stroke: "#2E4BD8", strokeWidth: 1, strokeDasharray: "2,3", strokeOpacity: 0.8 }),
+      Plot.ruleX([cur(M.urban)], { stroke: "#5F6675", strokeWidth: 1, strokeDasharray: "2,3", strokeOpacity: 0.8 }),
+      Plot.text([{ x: cur(M.rural) }], { x: "x", frameAnchor: "top", dy: -26, dx: -6, text: () => "all-India rural " + inr(cur(M.rural)), fill: "#161A22", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
+      Plot.text([{ x: cur(M.urban) }], { x: "x", frameAnchor: "top", dy: -26, dx: 6, text: () => "all-India urban " + inr(cur(M.urban)), fill: "#5F6675", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.link(rows, { x1: "rural", x2: "urban", y: "name", stroke: "#DADDE3", strokeWidth: 1.5 }),
+      Plot.dot(rows, { x: "urban", y: "name", fill: "#5F6675", r: 4, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.dot(rows, { x: "rural", y: "name", fill: "#2E4BD8", r: 4, stroke: "#FFFFFF", strokeWidth: 1.25 }),
       // value labels on the top and bottom rows anchor the scale
-      Plot.text(ends, { x: "rural", y: "name", text: (d) => inr(d.rural), dx: -12, textAnchor: "end", fill: "#BE3E26", fontSize: 12, fontFamily: mono }),
-      Plot.text(ends, { x: "urban", y: "name", text: (d) => inr(d.urban), dx: 12, textAnchor: "start", fill: "#5B564B", fontSize: 12, fontFamily: mono }),
+      Plot.text(ends, { x: "rural", y: "name", text: (d) => inr(d.rural), dx: -12, textAnchor: "end", fill: "#161A22", fontSize: 12, fontFamily: mono }),
+      Plot.text(ends, { x: "urban", y: "name", text: (d) => inr(d.urban), dx: 12, textAnchor: "start", fill: "#5F6675", fontSize: 12, fontFamily: mono }),
     ],
   });
   a11y(plot, "Average MPCE by state and union territory, rural and urban paired per state, 2023-24",
@@ -603,7 +603,7 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
 
 /* ---------- § 08b Engel across the map : food share by state ---------- */
 {
-  const SHORT = { "Dadra & Nagar Haveli and Daman & Diu": "D&N Haveli · Daman & Diu" };
+  const SHORT = { "Dadra & Nagar Haveli and Daman & Diu": "D&N Haveli, Daman & Diu" };
   const rows = Object.keys(FS)
     .filter((k) => k.endsWith("_rural"))
     .map((k) => {
@@ -629,23 +629,23 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: "share of MPCE going to food →", labelAnchor: "right", labelArrow: false,
          ticks: xTicks, domain: [30, 60], tickSize: 0, tickPadding: 12,
          tickFormat: (d) => (d === 60 ? "60%" : String(d)) },
     y: { label: null, domain: rows.map((r) => r.name), tickSize: 0, tickPadding: 12 },
     marks: [
-      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleX([cur(C.food_total_rural)], { stroke: "#BE3E26", strokeWidth: 1, strokeDasharray: "2,3", strokeOpacity: 0.8 }),
-      Plot.ruleX([cur(C.food_total_urban)], { stroke: "#5B564B", strokeWidth: 1, strokeDasharray: "2,3", strokeOpacity: 0.8 }),
-      Plot.text([{ x: cur(C.food_total_rural) }], { x: "x", frameAnchor: "top", dy: -26, dx: 6, text: () => "all-India rural " + p2(cur(C.food_total_rural)), fill: "#BE3E26", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
-      Plot.text([{ x: cur(C.food_total_urban) }], { x: "x", frameAnchor: "top", dy: -26, dx: -6, text: () => "all-India urban " + p2(cur(C.food_total_urban)), fill: "#5B564B", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
-      Plot.link(rows, { x1: "rural", x2: "urban", y: "name", stroke: "#D8D3C4", strokeWidth: 1.5 }),
-      Plot.dot(rows, { x: "urban", y: "name", fill: "#5B564B", r: 4, stroke: "#FFFFFF", strokeWidth: 1.25 }),
-      Plot.dot(rows, { x: "rural", y: "name", fill: "#BE3E26", r: 4, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([cur(C.food_total_rural)], { stroke: "#2E4BD8", strokeWidth: 1, strokeDasharray: "2,3", strokeOpacity: 0.8 }),
+      Plot.ruleX([cur(C.food_total_urban)], { stroke: "#5F6675", strokeWidth: 1, strokeDasharray: "2,3", strokeOpacity: 0.8 }),
+      Plot.text([{ x: cur(C.food_total_rural) }], { x: "x", frameAnchor: "top", dy: -26, dx: 6, text: () => "all-India rural " + p2(cur(C.food_total_rural)), fill: "#161A22", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text([{ x: cur(C.food_total_urban) }], { x: "x", frameAnchor: "top", dy: -26, dx: -6, text: () => "all-India urban " + p2(cur(C.food_total_urban)), fill: "#5F6675", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
+      Plot.link(rows, { x1: "rural", x2: "urban", y: "name", stroke: "#DADDE3", strokeWidth: 1.5 }),
+      Plot.dot(rows, { x: "urban", y: "name", fill: "#5F6675", r: 4, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.dot(rows, { x: "rural", y: "name", fill: "#2E4BD8", r: 4, stroke: "#FFFFFF", strokeWidth: 1.25 }),
       // value labels on the top and bottom rows anchor the scale
-      Plot.text(ends, { x: "rural", y: "name", text: (d) => p2(d.rural), dx: 12, textAnchor: "start", fill: "#BE3E26", fontSize: 12, fontFamily: mono }),
-      Plot.text(ends, { x: "urban", y: "name", text: (d) => p2(d.urban), dx: -12, textAnchor: "end", fill: "#5B564B", fontSize: 12, fontFamily: mono }),
+      Plot.text(ends, { x: "rural", y: "name", text: (d) => p2(d.rural), dx: 12, textAnchor: "start", fill: "#161A22", fontSize: 12, fontFamily: mono }),
+      Plot.text(ends, { x: "urban", y: "name", text: (d) => p2(d.urban), dx: -12, textAnchor: "end", fill: "#5F6675", fontSize: 12, fontFamily: mono }),
     ],
   });
   a11y(plot, "Share of MPCE going to food by state and union territory, rural and urban paired per state, 2023-24",
@@ -658,10 +658,10 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
 /* ---------- § 08c the Gini : four rows, two rounds ---------- */
 {
   const rows = [
-    { label: "Rural · headline", v0: prv(G.rural), v1: cur(G.rural), c: "#BE3E26" },
-    { label: "Rural · with imputation", v0: prv(G.rural_imputed), v1: cur(G.rural_imputed), c: "#8A857A" },
-    { label: "Urban · headline", v0: prv(G.urban), v1: cur(G.urban), c: "#BE3E26" },
-    { label: "Urban · with imputation", v0: prv(G.urban_imputed), v1: cur(G.urban_imputed), c: "#8A857A" },
+    { label: "Rural · headline", v0: prv(G.rural), v1: cur(G.rural), c: "#2E4BD8" },
+    { label: "Rural · with imputation", v0: prv(G.rural_imputed), v1: cur(G.rural_imputed), c: "#878D99" },
+    { label: "Urban · headline", v0: prv(G.urban), v1: cur(G.urban), c: "#2E4BD8" },
+    { label: "Urban · with imputation", v0: prv(G.urban_imputed), v1: cur(G.urban_imputed), c: "#878D99" },
   ];
   setTxt("pv-gini", g3(cur(G.rural)));
   setTxt("ex-gi-r0", g3(prv(G.rural)));
@@ -676,18 +676,18 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: "Gini →", labelAnchor: "right", labelArrow: false,
          ticks: xTicks, domain: [0.22, 0.32], tickSize: 0, tickPadding: 12,
          tickFormat: (d) => d.toFixed(2) },
     y: { label: null, domain: rows.map((r) => r.label), tickSize: 0, tickPadding: 12 },
     marks: [
-      Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.link(rows, { x1: "v1", x2: "v0", y: "label", stroke: "#D8D3C4", strokeWidth: 1.5 }),
-      Plot.dot(rows, { x: "v0", y: "label", fill: "#C6C0B0", r: 4 }),
-      Plot.dot(rows, { x: "v1", y: "label", fill: "c", r: 5, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.link(rows, { x1: "v1", x2: "v0", y: "label", stroke: "#DADDE3", strokeWidth: 1.5 }),
+      Plot.dot(rows, { x: "v0", y: "label", fill: "#C9CED6", r: 4 }),
+      Plot.dot(rows, { x: "v1", y: "label", fill: "c", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.25 }),
       Plot.text(rows, { x: "v1", y: "label", text: (d) => g3(d.v1), dx: -12, textAnchor: "end", fill: "c", fontSize: 12.5, fontFamily: mono, fontWeight: 500 }),
-      Plot.text(rows, { x: "v0", y: "label", text: (d) => g3(d.v0), dx: 12, textAnchor: "start", fill: "#A8A293", fontSize: 12.5, fontFamily: mono }),
+      Plot.text(rows, { x: "v0", y: "label", text: (d) => g3(d.v0), dx: 12, textAnchor: "start", fill: "#A3A9B4", fontSize: 12.5, fontFamily: mono }),
     ],
   });
   a11y(plot, "Gini coefficient of per-capita consumption by sector and imputation convention, both rounds",

@@ -5,6 +5,7 @@
 //     low length variance are flagged
 //  3. hedge stacking ("may potentially suggest")
 //  4. dated words in evergreen slots (--evergreen)
+//  5. house punctuation (2026-10): no spaced em dashes, no middle-dot strings
 // Usage: node pipeline/lint.mjs <prose-file> [--evergreen]
 
 import fs from "node:fs";
@@ -52,6 +53,9 @@ if (evergreen) {
     fail(`dated word in evergreen slot: "${m[0]}"`);
   }
 }
+
+// 5. house punctuation: the site sets no spaced em dashes and no " · " strings (docs/DESIGN.md §2)
+for (const m of prose.matchAll(/.{0,30}( — | · ).{0,30}/g)) fail(`house punctuation (use a colon or commas): "${m[0].trim()}"`);
 
 if (failures) { console.error(`lint: ${failures} failure(s) in ${path.basename(file)}`); process.exit(1); }
 console.log(`lint: clean — ${path.basename(file)}${evergreen ? " (evergreen rules)" : ""}`);

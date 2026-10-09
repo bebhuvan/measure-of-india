@@ -49,6 +49,101 @@ source families, explicit geography, per-dossier calendars, and a single
 dossier registry — preparing the site for World Bank (WDI, Data360) and
 Our World in Data dossier families.
 
+**2026-08-30 — Launch-readiness executed; first adversarial audit.** The
+launch-readiness plan (P1 coverage contract, P2 operational hardening, P3
+authoring framework) shipped in full and the plan document was retired —
+its durable content lives in the contracts, the skills, and the machinery
+itself (see "Retired documents"). A from-scratch adversarial audit then
+attacked the gates directly (untraceable figures, coverage omissions, false
+records, keyword stuffing, stale as-of manifests, hand-edited prose, stale
+stamps, silent series). What the audit changed:
+
+- **As-of governance is a CI gate.** `pipeline/asof.mjs` ran only in local
+  `npm run gates`; no workflow invoked it, so a release could have shipped
+  stale hand-written "As of" paragraphs with every check green. It now runs
+  hard in `ci.yml` and `deploy.yml`, and flags (non-blocking) in
+  `update.yml` so the release PR is still opened for the human re-read.
+- **Staleness floors cover every dossier.** Dossier-level `stale_after`
+  now exists in `data/sources.yml` for all 14 dossiers that had unfloored
+  live rows — the floor is a regression floor (minimum coverage; bump it on
+  each release per the checklist). Retired rulers keep their frozen floors.
+- **Hand-typed display dates purged.** The gdp titleblock carried a
+  hand-typed "Vintage 28 Nov 2025" contradicting its current bundle
+  (vintage 2026-08-07), and the register carried the same class of fact.
+  The label is now derived; live register tables derive via `vintOf()`;
+  a registry unit test ("hand-typed display dates never contradict the
+  current bundle") fails the build if the pattern returns.
+- **Facts-sheet noise is no longer citable.** `verify.mjs` walked the whole
+  facts sheet into the allowed-number set, so "inflation climbed 358%"
+  (the item ledger's seriesCount) traced cleanly. Structural counts and
+  coverage notes are excluded; the economic facts (extremes, spreads,
+  medians, contradictions) stay citable.
+- **2026-10-09 — design v2 and "guides".** The warm monograph system was
+  replaced after five rounds of mocks (`design-mocks/fresh/`): white ground,
+  one ultramarine accent with marigold for comparisons, Source Serif 4 and
+  Golos Text, sentence case. "Dossiers" became "guides" (`/guides/<slug>/`,
+  old URLs redirect). New home page (search over every series via a
+  build-time `/search-index.json`, latest figures from
+  `src/dossiers/headline.js`) and a guides index. Palette and chart rules were
+  migrated mechanically (`scripts/migrations/`); per-guide chart tuning
+  continues. Backup: `design-backups/2026-10-09-pre-redesign/`, branch
+  `design-v1-backup`.
+- **2026-10-09 (later) — guide v2 anatomy across all 13 guides.** Share menus,
+  rewritten download cards, "On this page", softer dated notes, *Data and downloads*
+  end matter with per-bundle CSV/JSON endpoints, sources as labelled rows, OG cards
+  re-rendered on the current rulers (CPI and GDP cards had led with retired bases),
+  copy migrated off em dashes and middle dots, prose lint rule 5.
+- **2026-10-09 — guide 14, "Where Indians keep their money".** First guide built from the
+  owner's local Data Bank (family `databank`, `scripts/lib/databank.mjs`, read-only) on RBI
+  DBIE BSR-2 tables 737, 847, 864, 865, 866. Two disclosed breaks: sector classification
+  (old to March 2018, new from March 2019) and deposit-size bands (finer from March 2026).
+  Verified against RBI's March 2025 release (households 60.2%, women 20.7%). The 3.x tables'
+  "broad ownership category" is individuals incl. HUF, not the household sector.
+- **2026-10-09 — data refresh, WPI on its new base, the seam registry.** Inventory of every
+  remaining data path in `docs/INVENTORY-data-paths.md`. MoSPI now answers HTTP 400 to
+  `limit` above 100 on every endpoint: the cap lives once in `scripts/lib/mospi.mjs`, with
+  `mospiAll` (pages to `totalPages`, fails unless rows equal `totalRecords`) for the callers
+  that read one page. `writeSeries` now keeps a bundle's vintage when its values are
+  unchanged (hard rule 5 had been broken by every re-run of a retired base). WPI base
+  2022-23 baked (`wpi-2022*`, 953 items, published headline: no weights served); the 2011-12
+  base ends Apr 2026 and is frozen. `seams:` in `sources.yml` registers every base of CPI,
+  WPI, IIP, GDP, CPI-AL/RL, ASI and ISP; `validate.mjs` enforces it. Found on refresh:
+  MoSPI loaded the missing IIP 2011-12 Mar 2025; PLFS indicator 4 dropped the
+  `employee_contract` field; the linked CPI bundle carried the back series' period.
+  Prose for CPI, IIP, Jobs and WPI regenerated on DeepSeek (`deepseek-flash`). The
+  verifier bound every claim in a sentence to the FIRST series named, so true sentences
+  naming several series were rejected ("nine divisions sit below the headline; health has
+  fallen seven straight months"): claims now bind to any named series and fail only when
+  false for all of them; ordinal ranks ("third-highest") no longer read as top-of-sheet
+  claims. Known gap, not yet fixed: the verifier does not catch a sentence that
+  contradicts the paragraph's own figures ("none moved against the headline" beside a
+  falling component); four such claims were removed by hand after reading every draft.
+  The prompt called a deep cut's biggest MOVER its "hottest", and the writer turned it into
+  the top of the range (IIP: beverages, the biggest riser, named over electrical equipment,
+  the highest); the prompt now gives range and movers separately. Hand-written pages named
+  periods by hand ("June 2026", "six prints", "release of 12 Jul 2026") and fixed some axis
+  ranges, so every release broke them: `src/dossiers/periods.js` now supplies periods at
+  build time and the affected axes take their range from the data. All 24 stale "As of"
+  notes (CPI, IIP, Jobs, Renewable energy) re-read against the new prints; about fifteen
+  claims had become false or were never true (for example "one urban man in two is at
+  work" against 70.7%, "the village line runs above the town line in every print", the
+  MNRE state note printing a combined share as "each") and were rewritten from the data.
+- **2026-10-09 (later) — GDP in full on the 2022-23 base, and the back series to 1950-51.**
+  `scripts/lib/products/nas.mjs` now builds every base with one `buildBase()`: the 2011-12 set is
+  unchanged in method (values moved only by MoSPI's own revisions: published growth now has
+  one decimal, a few levels by ₹1 crore) and the 2022-23 base gains expenditure, industries,
+  nominal and annual accounts (`gdp-2022-*`), now to Q1 FY27. `gdp-back.json` bakes the NSO's
+  back series (series=Back, 1950-51 to 2011-12 at 2011-12 prices), registered as an agency
+  bridge with its own window in `seams`; validate checks it meets the current series in
+  2011-12 (₹3 crore apart). New plates: eight engines on the new base, seventy-five years of
+  growth on three rulers, saving and investment since 1951-52. Fixed on the way: annual
+  rows now require a financial-year label ("2011-12" or "1999-2000"); the GDP prose had been
+  fed 2011-12-base siblings beside a 2022-23 print (facts.mjs now refuses a prose input on
+  another base of the same product); writeSeries counts published cross-checks as data; on
+  phones every small-multiple grid on the site was clipped to its first half by the
+  700px plate minimum (exempted in atlas.css).
+
+
 ## Retired mechanisms
 
 - **`--mock` fetch mode (retired 2026-08, plan P2.8).** `scripts/lib/mock.mjs`
@@ -80,6 +175,33 @@ Our World in Data dossier families.
   `Claude/Idea (Copy).md` → session handoff prompts, superseded; their
   durable content lives in `docs/DESIGN.md` (locked decisions, rejected
   directions) and this file.
+- `docs/PLAN-launch-readiness.md` (retired 2026-08-30) → the launch-readiness
+  plan: its P1 coverage contract, P2 operational hardening and P3 authoring
+  framework all shipped, so the plan had become a historical log. The
+  mechanics it introduced are documented where they live now: the census
+  and coverage ledger in `skills/analyze-series.md`, the slot floors in
+  `pipeline/slots.yml` + `docs/CONTRACT-dossier-structure.md` §4, the as-of
+  governance in `pipeline/asof.mjs` + `docs/RELEASE-CHECKLIST.md` §1b, the
+  display-stamp derivation in `src/dossiers/display.js`, and the
+  disclosure-shape rules in `docs/CONTRACT-series.md`. What remains
+  deliberately undone is listed under "Open debt" above.
+
+## Open debt (known, deliberate, not scheduled)
+
+- The verify.mjs negative guard judges multi-series sentences
+  conservatively: a record claim is rejected only when false for EVERY
+  series named, so a co-occurring generic word ("inflation" resolves to the
+  headline) can silence it. Tightening needs referent resolution, not just
+  keyword sets.
+- Client modules still carry some inline number formatting; new code must
+  use `fmt.*` from `src/charts/format.js`. Full migration is mechanical,
+  low-value churn.
+- The staleness floors are regression floors, not calendar checks: a site
+  frozen forever at its last print passes. The checklist's floor-bump habit
+  is what makes them bite; a release-calendar check (registry cadence vs
+  axis end) would make it mechanical.
+- The four hand-revised print-slot prose files (cpi/wpi/jobs) should be
+  regenerated with `npm run prose` once the LLM account has balance.
 
 ## Invariants that have survived every phase
 

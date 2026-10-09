@@ -56,7 +56,7 @@ setTxt("in-mis-reb", rebEnd.toFixed(1));
 
 /* ---------- shared x furniture ---------- */
 const xTicks = []; for (let y = 2016; y <= 2025; y++) xTicks.push(new Date(Date.UTC(y, 0, 1)));
-const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" };
+const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#5F6675", overflow: "visible" };
 
 /* ---------- plate : same decade, two rulers ---------- */
 {
@@ -71,18 +71,18 @@ const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "13.5
     y: { label: "↑ price level · two rulers, one series", labelAnchor: "top", labelArrow: false,
          tickFormat: (d) => String(d), ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
     marks: [
-      Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleY([100], { stroke: "#E0DACA", strokeWidth: 1 }),
-      Plot.lineY(pub, { x: "date", y: "value", stroke: "#BE3E26", strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.lineY(reb, { x: "date", y: "value", stroke: "#A8A293", strokeWidth: 2.25, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.dot([ePub], { x: "date", y: "value", fill: "#BE3E26", r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([ePub], { x: "date", y: "value", text: () => "published · 2012 = 100 · " + ePub.value.toFixed(1), dx: -8, dy: -16, fill: "#BE3E26", fontSize: 13, fontFamily: mono, fontWeight: 500, textAnchor: "end" }),
-      Plot.dot([eReb], { x: "date", y: "value", fill: "#A8A293", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([{ date: new Date(Date.UTC(2020, 9, 1)), value: 151.5 }], { x: "date", y: "value", text: ["rebased · Jan 2016 = 100 · " + eReb.value.toFixed(1)], fill: "#5B564B", fontSize: 13, fontFamily: mono, textAnchor: "start" }),
-      Plot.dot([pub[0]], { x: "date", y: "value", fill: "#BE3E26", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.dot([reb[0]], { x: "date", y: "value", fill: "#A8A293", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([{ date: new Date(Date.UTC(2016, 3, 1)), value: 122.5 }], { x: "date", y: "value", text: ["Jan 2016: published reads " + baseVal.toFixed(1) + ", rebased reads 100"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
-      Plot.text([{ date: new Date(Date.UTC(2021, 0, 1)), value: 197 }], { x: "date", y: "value", text: ["same shape, same rise: only the labels differ"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "middle" }),
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([100], { stroke: "#E3E6EB", strokeWidth: 1 }),
+      Plot.lineY(pub, { x: "date", y: "value", stroke: "#2E4BD8", strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.lineY(reb, { x: "date", y: "value", stroke: "#A3A9B4", strokeWidth: 2.25, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.dot([ePub], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([ePub], { x: "date", y: "value", text: () => "published, 2012 = 100, " + ePub.value.toFixed(1), dx: -8, dy: -16, fill: "#161A22", fontSize: 12, fontFamily: mono, fontWeight: 500, textAnchor: "end" }),
+      Plot.dot([eReb], { x: "date", y: "value", fill: "#A3A9B4", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([{ date: new Date(Date.UTC(2020, 9, 1)), value: 151.5 }], { x: "date", y: "value", text: ["rebased, Jan 2016 = 100, " + eReb.value.toFixed(1)], fill: "#5F6675", fontSize: 12, fontFamily: mono, textAnchor: "start" }),
+      Plot.dot([pub[0]], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.dot([reb[0]], { x: "date", y: "value", fill: "#A3A9B4", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([{ date: new Date(Date.UTC(2016, 3, 1)), value: 122.5 }], { x: "date", y: "value", text: ["Jan 2016: published reads " + baseVal.toFixed(1) + ", rebased reads 100"], fontSize: 12, fill: "#878D99", fontFamily: mono, textAnchor: "start" }),
+      Plot.text([{ date: new Date(Date.UTC(2021, 0, 1)), value: 197 }], { x: "date", y: "value", text: ["same shape, same rise: only the labels differ"], fontSize: 12, fill: "#878D99", fontFamily: mono, textAnchor: "middle" }),
     ],
   });
   a11y(plot, "CPI level on two bases, published 2012=100 and rebased January 2016=100, 2016 to 2025",
@@ -92,7 +92,7 @@ const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "13.5
     [{ name: "cpi_level_2012eq100", data: pub }, { name: "cpi_level_jan2016eq100", data: reb }],
     "india-atlas_learn_index-numbers_two-rulers_2016-2025", fmtDate);
   addCrosshair(document.getElementById("plot-rulers"), plot,
-    [{ label: "Published · 2012 = 100", color: "#BE3E26", data: pub },
-     { label: "Rebased · Jan 2016 = 100", color: "#A8A293", data: reb }],
+    [{ label: "Published · 2012 = 100", color: "#2E4BD8", data: pub },
+     { label: "Rebased · Jan 2016 = 100", color: "#A3A9B4", data: reb }],
     geo, fmtDate, (v) => v.toFixed(1));
 }

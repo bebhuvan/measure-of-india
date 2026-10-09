@@ -17,7 +17,7 @@
 import { mospi } from "../mospi.mjs";
 import { MONTHS, writeSeries, writeRaw, yoyFromLevels, monthAxis } from "../util.mjs";
 
-const GREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
+const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 // the 1993-94 base's names carry XML-escape debris ("Related_x0002_products");
 // strip it from labels (and therefore keys) — a transcription fix, not editing
@@ -121,7 +121,7 @@ export async function buildIip(root, dcfg, vintage) {
       topYoys.push(y);
       series[slugify(k)] = {
         name: `iip_${slugify(k)}_yoy_pct_base${tag}`,
-        label: labels[k], color: k === "general" ? "#BE3E26" : GREYS[i % GREYS.length],
+        label: labels[k], color: k === "general" ? "#2E4BD8" : GREYS[i % GREYS.length],
         data: axis.map((ym) => y.get(ym) ?? null),
       };
     });

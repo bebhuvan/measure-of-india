@@ -1,0 +1,52 @@
+---
+// "Data and downloads" and "Cite this guide": the end matter every guide carries.
+// Built from the registry and the bundles themselves, so the table can never disagree
+// with the charts above it.
+import fs from "node:fs";
+import { bySlug } from "../dossiers/registry.js";
+interface Props { slug: string }
+const d = bySlug[Astro.props.slug];
+const M3 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const lab = (iso, freq) => (freq === "monthly" || freq === "quarterly") ? `${M3[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}` : iso.slice(0, 4);
+const names = [d.currentBundle, ...(d.bundles || [])].filter((b, i, a) => a.indexOf(b) === i && fs.existsSync(`data/series/${b}.json`));
+const rows = names.map((b) => {
+  const j = JSON.parse(fs.readFileSync(`data/series/${b}.json`, "utf8"));
+  const m = j.meta || {};
+  // a row is named by what it covers; files without a coverage note list their first series
+  const labels = Object.values(j.series).map((x) => String(x.label || "").replace(/ · /g, ", "));
+  const what = m.coverage ? m.coverage.replace(/ — /g, ": ").replace(/ · /g, ", ")
+    : labels.slice(0, 3).join(", ") + (labels.length > 3 ? `, and ${labels.length - 3} more` : "");
+  const clean = (t) => String(t ?? "").replace(/ — /g, ": ").replace(/ · /g, ", ");
+  return { b, what, src: clean(m.source), base: m.base && m.base !== "null" && !/^n\/a/.test(m.base) ? clean(m.base) : "", freq: m.frequency,
+    n: Object.keys(j.series).length, from: lab(j.dates[0], m.frequency), to: lab(j.dates.at(-1), m.frequency), vintage: m.vintage,
+    current: b === d.currentBundle };
+});
+const nSeries = rows.reduce((a, r) => a + r.n, 0);
+const today = rows.find((r) => r.current)?.vintage ?? "";
+---
+<section class="endmatter" aria-labelledby="data-h">
+  <div class="em-head"><h2 id="data-h">Data and downloads</h2>
+    <p>Every series this guide draws on: {rows.length} files, {nSeries.toLocaleString("en-IN")} series. Each downloads as published, as JSON or as a table (CSV). Missing values are left empty, never zero.</p></div>
+  <div class="em-table">
+    <table>
+      <thead><tr><th>Data</th><th>Base</th><th>Coverage</th><th class="n">Series</th><th>Vintage</th><th class="n">Download</th></tr></thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr class={r.current ? "cur" : ""}>
+            <td class="w">{r.what}<small>{r.src}{r.current ? ". The current series this guide leads with" : ""}</small>
+              <span class="em-m">{[r.base, r.from === r.to ? r.from : `${r.from} to ${r.to}`, r.freq, `${r.n} series`, `vintage ${r.vintage}`].filter(Boolean).join(", ")}</span></td>
+            <td>{r.base}</td>
+            <td class="nw">{r.from === r.to ? r.from : `${r.from} to ${r.to}`}<small>{r.freq}</small></td>
+            <td class="n">{r.n}</td>
+            <td class="nw">{r.vintage}</td>
+            <td class="n nw"><a href={`/data/${r.b}.csv`} download>CSV</a><a href={`/data/${r.b}.json`} download>JSON</a></td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <div class="em-cite">
+    <h3>Cite this guide</h3>
+    <p>India Atlas, “{d.title}”, data vintage {today}. atlas.thisindianlife.today/guides/{d.slug}/</p>
+  </div>
+</section>

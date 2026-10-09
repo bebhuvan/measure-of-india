@@ -54,7 +54,7 @@ setTxt("se-c-drop", Math.abs(deep.chg).toFixed(1) + " per cent");
 
 /* ---------- shared x furniture ---------- */
 const xTicks = []; for (let y = 2016; y <= 2025; y++) xTicks.push(new Date(Date.UTC(y, 0, 1)));
-const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" };
+const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#5F6675", overflow: "visible" };
 
 /* ---------- plate : the calendar drawn ten times ---------- */
 {
@@ -71,20 +71,20 @@ const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "13.5
     y: { label: "↑ food price level · index, 2012 = 100", labelAnchor: "top", labelArrow: false,
          tickFormat: (d) => String(d), ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
     marks: [
-      Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.rectX(winters, { x1: "x1", x2: "x2", y1: geo.d0, y2: geo.d1, fill: "#F8F6F1" }),
-      Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
-      Plot.text([{ date: new Date(Date.UTC(2017, 0, 15)), value: 212 }], { x: "date", y: "value", text: ["Nov – Feb, every year"], fontSize: 12, fill: "#A8A293", fontFamily: mono, textAnchor: "middle" }),
-      Plot.lineY(fdata, { x: "date", y: "value", stroke: "#BE3E26", strokeWidth: 2.75, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.dot([onion], { x: "date", y: "value", fill: "#5B564B", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([{ date: onion.date, value: 147.5 }], { x: "date", y: "value", text: ["the onion spike · Dec 2019 · " + onion.value.toFixed(1)], dx: 10, fill: "#5B564B", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
-      Plot.dot([pNov], { x: "date", y: "value", fill: "#BE3E26", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.dot([pFeb], { x: "date", y: "value", fill: "#BE3E26", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([pNov], { x: "date", y: "value", text: () => "Nov 2024 · " + pNov.value.toFixed(1), dy: -14, fill: "#BE3E26", fontSize: 13, fontFamily: mono, textAnchor: "middle" }),
-      Plot.text([pFeb], { x: "date", y: "value", text: () => "Feb 2025 · " + pFeb.value.toFixed(1), dx: 12, dy: 30, fill: "#BE3E26", fontSize: 13, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
-      Plot.dot([pNow], { x: "date", y: "value", fill: "#BE3E26", r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([pNow], { x: "date", y: "value", text: () => "Dec 2025 · " + pNow.value.toFixed(1), dx: 12, dy: -2, fill: "#BE3E26", fontSize: 13, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
-      Plot.text([{ date: new Date(Date.UTC(2018, 5, 1)), value: 131 }], { x: "date", y: "value", text: ["the wobble is the season; the climb is the trend"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "middle" }),
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.rectX(winters, { x1: "x1", x2: "x2", y1: geo.d0, y2: geo.d1, fill: "#F4F6FD" }),
+      Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+      Plot.text([{ date: new Date(Date.UTC(2017, 0, 15)), value: 212 }], { x: "date", y: "value", text: ["Nov to Feb, every year"], fontSize: 12, fill: "#A3A9B4", fontFamily: mono, textAnchor: "middle" }),
+      Plot.lineY(fdata, { x: "date", y: "value", stroke: "#2E4BD8", strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.dot([onion], { x: "date", y: "value", fill: "#5F6675", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([{ date: onion.date, value: 147.5 }], { x: "date", y: "value", text: ["the onion spike, Dec 2019, " + onion.value.toFixed(1)], dx: 10, fill: "#5F6675", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.dot([pNov], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.dot([pFeb], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([pNov], { x: "date", y: "value", text: () => "Nov 2024, " + pNov.value.toFixed(1), dy: -14, fill: "#161A22", fontSize: 12, fontFamily: mono, textAnchor: "middle" }),
+      Plot.text([pFeb], { x: "date", y: "value", text: () => "Feb 2025, " + pFeb.value.toFixed(1), dx: 12, dy: 30, fill: "#161A22", fontSize: 12, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.dot([pNow], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([pNow], { x: "date", y: "value", text: () => "Dec 2025, " + pNow.value.toFixed(1), dx: 12, dy: -2, fill: "#161A22", fontSize: 12, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.text([{ date: new Date(Date.UTC(2018, 5, 1)), value: 131 }], { x: "date", y: "value", text: ["the wobble is the season; the climb is the trend"], fontSize: 12, fill: "#878D99", fontFamily: mono, textAnchor: "middle" }),
     ],
   });
   a11y(plot, "Food price level with November to February shaded, January 2016 to December 2025",
@@ -92,5 +92,5 @@ const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "13.5
   document.getElementById("plot-seas").append(plot);
   wireTools(document.getElementById("cb-seas"), plot, [{ name: "food_level_2012eq100", data: fdata }], "india-atlas_learn_seasonality_food-level_2016-2025", fmtDate);
   addCrosshair(document.getElementById("plot-seas"), plot,
-    [{ label: "Food price level", color: "#BE3E26", data: fdata }], geo, fmtDate, (v) => v.toFixed(1));
+    [{ label: "Food price level", color: "#2E4BD8", data: fdata }], geo, fmtDate, (v) => v.toFixed(1));
 }

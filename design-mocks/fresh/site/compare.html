@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chart kit, before and after</title>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400..600&family=Source+Serif+4:opsz,wght@8..60,400..600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./atlas.css">
+<style>
+body{background:#F6F7F9}
+.wrap{max-width:1640px}
+.top{padding:56px 0 8px;max-width:46em}
+.pair{margin:56px 0 0}
+.pair h2{font-size:28px;margin:0 0 8px}
+.pair .what{font-family:var(--sans);font-size:14.5px;line-height:1.6;color:var(--ink-2);max-width:62em;margin:0 0 20px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.cols figure{margin:0}
+.cols figcaption{font-family:var(--sans);font-size:13px;color:var(--ink-3);margin:0 0 8px}
+.cols img{display:block;width:100%;height:auto;border:1px solid var(--hair-2);background:#fff}
+@media (max-width:900px){.cols{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <p class="kick"><a href="./cpi.html">Consumer prices dossier</a></p>
+    <h1 style="font-size:44px">Chart kit, before and after</h1>
+    <p class="lede" style="font-size:19px">The same data and titles, drawn by the first kit and the current one (v3). Both images are the share files a reader would download.</p>
+  </div>
+
+  <section class="pair">
+    <h2>Inflation since 2014</h2>
+    <p class="what">Thinner lines and a pale solid back-cast. The band and the target are labelled inside the chart, so the subtitle only states the measure. Years read 2014, ’15 … 2026 with small ticks. The annotation is one line with a hairline leader, and the end value is the only bold text.</p>
+    <div class="cols"><figure><figcaption>Before, kit v1</figcaption><img src="./before/headline.png" alt="Kit v1 version of the inflation chart"></figure>
+      <figure><figcaption>After, kit v3</figcaption><img src="./after/headline.png" alt="Kit v2 version of the inflation chart"></figure></div>
+  </section>
+
+  <section class="pair">
+    <h2>What moved between May and June</h2>
+    <p class="what">Only transport, the row the title is about, carries colour and a bold value; the rest are grey. Values move into two aligned columns, June and change, so twenty-four floating labels become one quiet table. The connectors are thinner and the dots smaller.</p>
+    <div class="cols"><figure><figcaption>Before, kit v1</figcaption><img src="./before/divisions.png" alt="Kit v1 version of the divisions chart"></figure>
+      <figure><figcaption>After, kit v3</figcaption><img src="./after/divisions.png" alt="Kit v2 version of the divisions chart"></figure></div>
+  </section>
+
+  <section class="pair">
+    <h2>Inflation by state</h2>
+    <p class="what">A much paler scale with square corners. Tiles carry only state codes; values live in the ranked list, except for Telangana and Mizoram, the two the title compares, which are outlined and carry their numbers. The list drops from 37 bold numbers to two.</p>
+    <div class="cols"><figure><figcaption>Before, kit v1</figcaption><img src="./before/states.png" alt="Kit v1 version of the state map"></figure>
+      <figure><figcaption>After, kit v3</figcaption><img src="./after/states.png" alt="Kit v2 version of the state map"></figure></div>
+  </section>
+  <p class="small" style="margin:56px 0 80px">Earlier kits are kept as kit-v1.js and kit-v2.js. Every chart on the guide page uses kit v3.</p>
+</div>
+</body>
+</html>

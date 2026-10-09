@@ -29,7 +29,7 @@
 import { mospi } from "../mospi.mjs";
 import { writeSeries, writeRaw } from "../util.mjs";
 
-const GREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
+const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 const val = (r) => {
   const v = parseFloat(r.value);
   return Number.isFinite(v) ? v : null;

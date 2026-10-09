@@ -1,57 +1,98 @@
-# DESIGN — the India Atlas design system
+# DESIGN — the India Atlas design system (v2, 2026-10)
 
-The normative reference for every visual decision on the site. Consolidated
-from the design-phase build spec (`site/BUILD.md`, retired) and updated to the
-Astro reality. The machine-checkable parts are enforced by `scripts/qc.mjs`
-and `scripts/lint-charts.mjs`; the rest is review discipline.
+The normative reference for every visual decision on the site. v2 replaced the
+warm "monograph" system (vermilion, Archivo/Newsreader/Plex Mono, tracked
+capitals) in October 2026; v1 is archived in
+`design-backups/2026-10-09-pre-redesign/` and on the git branch
+`design-v1-backup`. The chart language was developed in `design-mocks/fresh/site/`
+(kit v1 to v3; `compare.html` shows the first and current kits side by side).
+Machine-checkable parts are enforced by `scripts/qc.mjs` and
+`scripts/lint-charts.mjs`; the rest is review discipline.
 
-The temperament: highest-tier data journalism (FT, NYT Upshot, Reuters
-Graphics) crossed with a printed monograph. White backgrounds, hairline rules,
-abundant air, charts as protagonists. **Elevate, never redesign** — the gap we
-are always closing is between a good draft and a typographer's monograph:
-same structure, transformed execution.
+The temperament: NYT, Reuters and Bloomberg graphics, set as a reference work.
+White ground, one accent, quiet greys, sentence case, numbers that carry the
+weight. **Refine, don't decorate**: every change removes noise or adds meaning.
 
 ## 1. Tokens
 
 Single source: `src/styles/atlas.css` `:root`. Never restyle per page.
 
 ```css
---bg:#FFFFFF;   --ink:#1B1A17;  --ink-soft:#4A463F;
---muted:#8A857A; --faint:#B4AFA2; --rule:#E6E2D6;
---accent:#BE3E26;                        /* vermilion: THE accent */
---grey1:#5B564B; --grey2:#A8A293; --grey3:#C6C0B0; --grey4:#8A857A;
---band:#F8F6F1;                          /* reference-band fill */
+--bg:#FFFFFF;   --ink:#161A22;   --ink-soft:#4A5160;
+--muted:#878D99; --faint:#B5BAC4; --rule:#ECEEF2; --rule-2:#DFE2E8;
+--accent:#2E4BD8;  /* ultramarine: the series a chart is about */
+--accent-soft:#B9C3F3;
+--gold:#C47A16;    /* marigold: a comparison series, never decoration */
+--grey1:#5F6675; --grey2:#A3A9B4; --grey3:#C9CED6; --band:#F4F6FD;
 ```
 
 Rules:
 
-- **One accent.** Vermilion is reserved for the primary series, key numbers,
-  kickers, and hover states. Never a second hue on a page.
-- Supporting series use the grey ramp dark→light in order of importance. A
-  **derived** series is always the lightest grey **and dashed**.
-- No gradients, no shadows, no rounded cards, no colour blocks (the corner-tick
-  `.frame` and the band fill are the only permitted fills).
-- Rules are 1px `--ink` (strong) or `--rule` (quiet). Double rules only in the
-  provenance colophon.
-- Vertical rhythm: sections `padding:112px 0 0`; prose measure `max-width:64ch`.
+- **One colour across the whole site.** No per-topic colours. Ultramarine marks
+  what the chart is about; marigold appears only when a second series is
+  compared with it; everything else is grey.
+- **Text never wears a series colour.** Labels, values and legends are ink or
+  grey; emphasis in text is weight (600), not colour. Colour lives in marks.
+- **Strong colour on thin marks only.** Areas (tiles, heat cells, bands) use
+  pale tints with dark text on top.
+- No gradients, no rounded cards, no shadows except the single soft shadow on
+  floating menus and tooltips.
+- The old palette maps one-to-one onto the new one:
+  `scripts/migrations/2026-10-palette.mjs` holds the table (also used to
+  rewrite the `color` presentation field of bundles and the adapters).
 
 ## 2. Typography
 
-Three self-hosted variable faces (`/fonts/*.woff2`, `font-display:swap`,
-display + text faces preloaded in `Base.astro`):
+Two self-hosted variable faces (`/fonts/*.woff2`, latin and latin-ext subsets,
+the rupee sign is in latin-ext):
 
 | Face | Role |
 |---|---|
-| **Archivo** (variable width/weight) | display headlines (720, −0.034em), section heads (660–680), brand |
-| **Newsreader** (variable optical size) | body prose (460, 1.18rem/1.82); **all large data numerals** at weight 300, `opsz 72`, tabular-nums |
-| **IBM Plex Mono** | axis labels, kickers, metadata, table figures, chart text |
+| **Source Serif 4** (optical sizes 8 to 60) | headlines (500), reading text (400), large numerals (300, lining), quoted misreadings (italic) |
+| **Golos Text** | everything measured or navigational: chart text, labels, metadata, tables, nav, buttons |
 
-Mono metadata has a legibility floor: nothing below .66rem (10.5px); most
-metadata sits at .7–.72rem. Quiet is a virtue, illegible is not — the floor
-was set after the register's .55–.62rem labels failed the eye test.
+- **Sentence case everywhere.** No tracked capitals, no monospace labels, no
+  numbered "№" kickers, no middle-dot strings in new copy.
+- Chart text 11.5 to 12.5px Golos, axis grey `#878D99`; nothing in body copy
+  below .75rem.
+- Large numerals are light serif (`font-weight:300`, lining figures); values in
+  tables and charts are Golos with tabular figures.
 
-Never use a hairline-contrast display face (e.g. Bodoni) for data numerals —
-thin strokes vanish on non-retina screens. (Tried, rejected, do not retry.)
+### Chart rules (v3)
+
+- One emphasised value per chart: the one the title is about (bold ink).
+- Lead lines 2px, supporting lines 1.25 to 1.75px, grid hairlines `#F0F2F5`,
+  zero line `#D3D7DE`. End dots 3 to 3.5px radius.
+- Reconstructed history (back-casts) is a solid pale tint of the series
+  colour, never transparency.
+- Label inside the chart (bands, targets, series ends) rather than in the
+  subtitle; place labels where no line crosses them.
+- Years read 2014, ’16, ’18 … 2026, with small ticks.
+- `scripts/migrations/2026-10-chart-v3.py` applied these rules mechanically to
+  every Plot chart (text fills to ink, line widths, dot sizes, chart text
+  sizes). Per-chart tuning (which row to highlight, which value to label)
+  remains editorial work, guide by guide.
+
+### Guide anatomy additions (v2)
+
+- **On this page**: a contents list under the title block, built at runtime from the guide's
+  own section headings (`src/dossiers/guide.client.js`).
+- **Plates in a run of deep cuts** are separated by air and a hairline; each plate keeps its
+  finding as the title, a plain subtitle, the chart, a one-line source and one quiet
+  **Share** menu (download image, SVG, data; copy a link to that chart). The menu is built
+  from the existing download buttons, so plumbing's handlers are untouched.
+- **Notes under a plate**: "How to read this" (evergreen) plain on the left; the dated
+  "As of" note in a soft panel on the right. The asof gate still reads its label.
+- **Downloaded images** (`composeCardSVG`): wrapped title and subtitle, the chart, a
+  hairline, the source, and "India Atlas" with the address. PNG at 3x.
+- **End matter**, in order: *Data and downloads* (`src/components/GuideData.astro`: every
+  bundle the guide uses, with coverage, base, series count, vintage and CSV/JSON links
+  served from `/data/<bundle>.json|.csv`), *Cite this guide*, then *Sources, method and
+  revisions* as labelled rows.
+- **Display punctuation**: much guide text is assembled from data labels at runtime, so
+  `guide.client.js` turns " · " into commas and " — " into colons in rendered text only.
+  Hand-written copy was migrated once (`scripts/migrations/2026-10-copy.py`); generated
+  prose is held to the same rule by `pipeline/lint.mjs` rule 5.
 
 ## 3. Layout skeleton
 
@@ -119,7 +160,7 @@ halo) → placed event labels → end dot → dodged end labels.
 - Domains admit the data's true range **including negatives**. Clamping at
   zero to look tidy is a data-integrity violation.
 - Aspect: headline ≈ 2.1:1 (1184×560); components ≈ 2.5:1 (1184×470).
-- Chart text 13–14.5px Plex Mono `#5C574C`; every SVG text carries a white
+- Chart text 11.5–12.5px Golos Text `#878D99`; every SVG text carries a white
   halo (`.plotzone svg text{paint-order:stroke}`) — a safety net, not a
   licence: no stroke may pass through a label's glyph box.
 - **No smoothing curves, ever** (`curve*`, catmull-rom, basis, monotone are
@@ -167,10 +208,16 @@ halo) → placed event labels → end dot → dodged end labels.
 8. **Bodoni Moda for data numerals** — illegible on non-retina screens.
 9. **Smoothing curves** — they falsify data. (Also a hard integrity rule.)
 10. **Top-mounted downloads** — they belong in the plotfoot.
+11. **The v1 monograph** (vermilion accent, tracked mono capitals, corner-tick
+    frames, one italic accent word per headline) — read as generic.
+12. **Terrain tints** (one hypsometric key for every percentage change) —
+    lemon-green and cartoonish; filled areas made charts loud.
+13. **Colour per topic** — turns a reference work into a dashboard.
 
 ## 8. Exploration archive
 
-`design-mocks/` holds the eight explored directions (A–H; the site is "H —
+`design-mocks/fresh/` holds the 2026-10 explorations (a to e) and the v2 site
+mock with its chart kit (`site/`). `design-mocks/` also holds the eight earlier directions (A–H; the site is "H —
 The Monograph, elevated"), the earlier `early-explorations/` (monograph,
 gazette, abstract, atlas-plate) and `matrix-explorations/` (schedule, plate,
 shirorekha, baseline, matrix, plates). Mine them for isolated ideas; do not

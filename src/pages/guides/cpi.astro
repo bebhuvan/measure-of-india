@@ -1,0 +1,940 @@
+---
+import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
+import GuideData from "../../components/GuideData.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+const D = bySlug["cpi"];
+import { period, word } from "../../dossiers/periods.js";
+import b24 from "../../../data/series/cpi-2024.json";
+import sec24 from "../../../data/series/cpi-2024-sectors.json";
+// periods named in the copy, read from the bundles (src/dossiers/periods.js)
+const P24 = period("cpi-2024"), PS24 = period("cpi-2024-sectors"), PG24 = period("cpi-2024-groups");
+const PI24 = period("cpi-2024-items"), PST24 = period("cpi-2024-states"), PAL = period("cpialrl-2019");
+const cap = (t) => t[0].toUpperCase() + t.slice(1);
+const h24 = b24.series.headline.data;
+// the current run above the 4% target, if the latest print is above it
+let runStart = h24.length - 1; while (runStart > 0 && h24[runStart - 1] > 4) runStart--;
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const monthOf = (iso) => `${MONTHS[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}`;
+const aboveSince = h24.at(-1) > 4 ? monthOf(b24.dates[runStart]) : null;
+const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.data[i]).length;
+---
+<Base
+  title="Consumer Prices · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/cpi/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">Every month, the government checks the price of roughly three hundred things an ordinary household buys: and tells us, with a single number, how much dearer life has become.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>MoSPI, NSO</b></span>
+      <span>Frequency <b>Monthly</b></span>
+      <span>Base year <b>2024 = 100, from Jan 2025</b></span>
+      <span>Prior base <b>2012 = 100, retired Dec 2025</b></span>
+      <span>Coverage <b>All-India &amp; states, rural, urban, combined</b></span>
+      <span>Latest print <b>{P24.long}</b></span>
+      <span>Released <b>{P24.releaseShort}</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Headline CPI, y/y, base 2024</div><div class="v acc" id="n-head">–</div><div class="d" id="d-head">–</div><div class="nspark" id="nspark-head"></div></div>
+      <div class="num"><div class="l">Food &amp; beverages, y/y, base 2024</div><div class="v" id="n-food">–</div><div class="d" id="d-food">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">Recorded {P24.releaseShort}</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Current reading</span><div class="big" id="rb-big">–</div></div>
+      <p class="rt-cap">Headline CPI inflation, {P24.long}, on the rebased 2024=100 index{aboveSince ? `: above the RBI's 4% target since ${aboveSince}.` : "."}</p>
+      <div><div class="band-scale" id="rb-scale"></div><div class="band-chip" id="rb-band">Position in RBI band: <b>–</b></div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the print says</span>
+        <Prose slot="cpi.current-reading.what-the-print-says" />
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What it does not say</span>
+        <Prose slot="cpi.current-reading.what-it-does-not-say" />
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 the new base -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>The new base: a continuous headline</h2><span class="line"></span><span class="unit">y/y %, base 2024, 2014 to 2026</span></div>
+    <div class="break">
+      <figure id="cb-nb" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>One continuous headline on the new ruler</h3>
+            <div class="sub">Headline CPI, year-on-year, one continuous series on base 2024=100: the NSO's back-cast (2014 to 2024, drawn lighter as reconstructed history) joined to the live print (2025 to 2026, solid), the retired 2012 ruler shown faint for comparison, never spliced across bases</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-nb">–</div><div class="c">{P24.short}, base 2024, y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-nb">
+            <button class="chip" data-key="nb_new"><i style="background:#2E4BD8"></i>Base 2024, linked (NSO back-cast + live)</button>
+            <button class="chip" data-key="nb_old"><i style="background:#C9CED6"></i>Base 2012, retired</button>
+          </div>
+          <div class="plotzone" id="plot-nb"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, the NSO publishes its own back-cast of the new index to 2013 (series=Back) and live levels from 2025 (series=Current); on the same 2024=100 base they form one continuous headline, not a cross-base splice. The 2025 year-on-year is computed at the handoff from back-cast 2024 levels to live 2025 levels. The retired 2012 series is shown faint for comparison only, band: RBI tolerance 2–6%</span>
+            <span class="dl">
+              <button data-dl="svg">SVG</button><span class="sep"></span>
+              <button data-dl="png">PNG</button><span class="sep"></span>
+              <button data-dl="csv">CSV</button><span class="sep"></span>
+              <a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a>
+            </span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The blue line is one continuous headline on the 2024 base: no seam, no splice. It exists because the NSO did the hard part itself: it back-cast the new index to 2013, re-reading the whole last decade on the new ruler, and it prints live levels from 2025. Joining the two (both base 2024=100) gives a single 2014–2026 series. The one gap, the 2025 year-on-year, is computed at the handoff, from the back-cast's 2024 levels to the live 2025 levels. No 2012 figure enters this line.</p>
+            <p>The line lightens to the left of January 2025. That paler portion is the NSO's back-cast: a reconstruction of history on the 2024 basket, not a direct measurement, and the NSO may restate it. From January 2025 the stroke turns solid: live, collected prices. The change of weight is the change of evidence. Read the solid part as fact and the lighter part as the NSO's best estimate of what the new ruler would have shown.</p>
+            <p>The faint grey line is the retired 2012 ruler, drawn for comparison. Where the two overlap they read the same months slightly differently: a different basket at work, not a contradiction. This is why the two bases are never joined into one number: they are different rulers. The continuous line sidesteps the question by staying on a single ruler throughout.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {P24.stamp}</span>
+            <p>The continuous headline stands at <b id="nb-new">–</b> in {P24.month}, having firmed every month since it opened the year at <b id="nb-jan">–</b>. The old ruler's last reading was <b id="nb-old-final">–</b> in December; over the years both describe, the two part by at most <b id="nb-shadow">–</b>: the new basket reads the old decade almost identically, then carries on alone.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 03 the new basket, opened up -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>The new basket, opened up</h2><span class="line"></span><span class="unit">y/y %, base 2024, 12 divisions, 43 groups, 358 items, rural/urban</span></div>
+
+    <div class="break">
+      <figure id="cb-div" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Twelve divisions: what the new ruler is made of</h3>
+            <div class="sub">Every COICOP-2018 division of the 2024 base, year-on-year, per cent, {P24.long}, sorted, the six-group taxonomy of the old base is gone; services are seen separately for the first time</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-div">–</div><div class="c">hottest division, {P24.short}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-div"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, release of {P24.releaseShort}, base 2024=100, the API serves no division weights, so divisions are shown as a ranked strip, not a weighted split, dashed rule: the published all-groups headline, personal care carries gold, priced in world markets</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The old base squeezed the whole service economy, rents, health, education, transport, phones, restaurants, gold, into a single 28-per-cent "miscellaneous" block. The 2024 rebase splits that block open along the international COICOP-2018 lines, and for the first time each service division gets its own reading. Read the strip as a league table of what is actually firming the new basket.</p>
+            <p>One division sits in a different country from the rest. Personal care, which carries gold, runs at <b id="div-gold">–</b>: gold is set in world markets and moves to none of the logic that governs the other eleven. Treat it as a spectator; the basket's story lives in the cluster below.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {P24.stamp}</span>
+            <p><b id="div-above">–</b> divisions run above the headline. One is gold: personal care, a world-market spectator; the rest are the domestic economy, led by restaurants and hotels at <b id="div-rest">–</b>, the line that tracks Indians eating out. Near the floor, information &amp; communication sits at <b id="div-info">–</b>: phones and data are getting dearer more slowly than most of the basket.</p>
+            <p>The spread runs from <b id="div-top">–</b> down to <b id="div-bot">–</b>: <b id="div-spread">–</b> end to end. A thirteen-division headline is the weighted average of these, and the weights are not yet published. So the headline stays the published all-groups index, and the divisions stay a ranking, honestly unweighted.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-ru24" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The village and the town, on the new ruler</h3>
+            <div class="sub">Headline CPI, rural and urban, year-on-year, per cent, base 2024=100, {PS24.span}</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-ru24">–</div><div class="c">rural y/y, {PS24.short}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-ru24">
+            <button class="chip" data-key="rural"><i style="background:#2E4BD8"></i>Rural</button>
+            <button class="chip" data-key="urban"><i style="background:#A3A9B4"></i>Urban</button>
+          </div>
+          <div class="plotzone" id="plot-ru24"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, release of {P24.releaseShort}, base 2024=100, only {PS24.nWord} prints exist; the new base opened January 2026, the rural basket still carries the heavier food weight</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The rural-urban wedge on the retired 2012 base (§10) was mostly the food wedge, amplified by eighteen points of extra food weight in the village basket. The rebase redraws both baskets with 2024 weights: and the wedge survives it. The village line runs above the town line in {ruAbove === PS24.n ? `every one of the new base's ${PS24.nWord} prints` : `${word(ruAbove)} of the new base's ${PS24.nWord} prints`}.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PS24.stamp}</span>
+            <p>Rural inflation closed {PS24.month} at <b id="ru24-r">–</b> against urban <b id="ru24-u">–</b>: a gap of <b id="ru24-gap">–</b>. The ordering is the same as on the old base, which means the structural cause, food weighing more in the village, survived the rebase. {cap(PS24.nWord)} months is too short to call a trend, but the village is not waiting for permission to run hotter.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-grid24" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The forty-three groups: the divisions, opened further</h3>
+            <div class="sub">Every group of the 2024 basket, one rung beneath the thirteen divisions, year-on-year, per cent, {PG24.span}, ordered by the latest print, blue where the group runs above the headline</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-grid24">–</div><div class="c" id="pc-grid24">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="sm-grid" id="grid24"></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, base 2024=100, 43 groups, the COICOP level beneath the 13 divisions, every y/y computed from index levels, only {PG24.nWord} prints exist, so read positions, not slopes, <b id="ex-g24-n">–</b> of 43 run above the headline</span>
+            <span class="dl"><button data-dl="csv">CSV, all 43</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>One rung down from the thirteen divisions: the forty-three groups of the international COICOP classification. Cereals, milk, electricity, garments, motor fuels, gold: each a panel on its own short clock. {cap(PG24.nWord)} months cannot show a cycle, so the lines are not the point; the ordering and the colour are. Read the grid as a ranked field: panels at the top run hot, panels at the bottom run cool, and the blue marks every group above the all-groups headline.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PG24.stamp}</span>
+            <p>The hottest group is <b id="ex-g24-hi">–</b>; the coolest <b id="ex-g24-lo">–</b>. The gold-carrying group sits at the top of the field, a world-market price passing through the basket: set it aside and the rest of the grid tells the domestic story.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-tail24" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The new basket, item by item: fifteen hottest, fifteen coldest</h3>
+            <div class="sub">All 358 items of the 2024 basket, the deepest level the NSO publishes, year-on-year, per cent, {PI24.long}, {PI24.nWord} same-base prints exist; the level column shows the climb since the 2024 average</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-tail24">–</div><div class="c" id="pc-tail24">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="ledger tail-ledger">
+            <table>
+              <thead>
+                <tr><th>Item</th><th>Latest y/y</th><th>vs prev. month</th><th>Level, 2024=100</th><th class="spark">{PI24.span}</th></tr>
+              </thead>
+              <tbody id="tail24-body"></tbody>
+            </table>
+          </div>
+          <div class="plotfoot">
+            <span class="src"><span>Source: MoSPI, ranked by {PI24.long} y/y, computed from index levels, <span id="pf-tail24">–</span>, every item row served so far is directly priced (imputation flag N), CSV carries all 358 items, {PI24.span}</span></span>
+            <span class="dl"><button data-dl="csv">CSV, all 358</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>An index this size is an argument between 358 prices, and the headline is the truce. These are the items themselves, rice to train fares to gold, ranked by the latest print. The top of the table is where a household feels inflation before the statistics do; the bottom is where prices are falling while the average firms. Thirty rows are shown; the field ships complete in the CSV.</p>
+            <p>Each row carries two different clocks. The y/y column counts the last twelve months. The level column counts from the 2024 average, which the base year fixed at 100: and because that average is barely behind us, the level is the item's whole life on this ruler so far. An item at 130 has grown three times faster than one at 110, whatever this month's y/y says.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PI24.stamp}</span>
+            <p>The {PI24.month} spread runs <b id="ex-t24span">–</b> points end to end: <span id="ex-t24topn">–</span> at <b id="ex-t24top">–</b> down to <span id="ex-t24botn">–</span> at <b id="ex-t24bot">–</b>. The median item sits at <b id="ex-t24med">–</b>, and <b id="ex-t24neg">–</b> of the 358 print below zero, in a month the headline stood at <b>{h24.at(-1).toFixed(2)}%</b>.</p>
+            <p>The level column has its own leader: <span id="ex-t24lvln">–</span> stands at <b id="ex-t24lvl">–</b> against a 2024 average of 100. And a disclosure the API makes possible: none of the 358 item indices has yet needed imputation at the all-India level: every figure in this table was compiled from collected prices.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 04 register -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>The register of series</h2><span class="line"></span><span class="unit">Weights, latest, year ago</span></div>
+    <div class="break ledger">
+      <table>
+        <thead>
+          <tr><th>Series</th><th>Weight</th><th>Latest y/y</th><th>vs prev. month</th><th>Year ago</th><th class="spark">Series span</th></tr>
+        </thead>
+        <tbody id="ledger-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- § 05 the basket -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>What is in the basket</h2><span class="line"></span><span class="unit">Weights, per cent, CES 2011–12</span></div>
+    <div class="break basket">
+      <div class="bar" id="basket-bar"></div>
+      <div class="labels" id="basket-labels"></div>
+      <p class="note">Three baskets on the 2011–12 Consumer Expenditure Survey weights: the only weights the API serves. The 2024 rebase publishes the headline and its thirteen divisions but no component weights yet, so this basket cannot move to the new ruler. The structural story is the split itself: the rural basket has no housing group at all and loads fifty-four per cent onto food; the urban basket spends a fifth on housing and barely a third on food. One bad onion crop moves the village index far more than the town's.</p>
+      <p class="note">What follows is the last complete picture on the old ruler. The food/fuel/core split, the twenty-one sub-groups and the state indices below exist only on the 2012 base, frozen at its final reading, December 2025: the new base has not published them. They migrate when the NSO releases the detail; until then the seam in §02 is the only place the two rulers meet.</p>
+    </div>
+  </section>
+
+  <!-- PART TWO divider: the transition to the retired 2012 base -->
+  <div class="part">
+    <div class="part-kick">Part Two</div>
+    <div class="part-h">The retired 2012 base: the last complete picture</div>
+    <div class="part-sub">Everything below lives on the old ruler, frozen at its final reading, December 2025. The 2024 rebase publishes the headline and its divisions, but no component weights yet: so the food/fuel/core split, the sub-groups and the state indices exist only here. They migrate when the NSO releases the detail; until then the seam in §02 is the only place the two rulers meet.</div>
+    <div class="numbers part-numbers">
+      <div class="num"><div class="l">Headline, base 2012, final print</div><div class="v" id="n-old">–</div><div class="d" id="d-old">–</div></div>
+      <div class="num"><div class="l">Core, year on year, base 2012, to Dec 2025</div><div class="v" id="n-core">–</div><div class="d" id="d-core">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 06 plate 1 -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>Plate 1: the headline and its parts</h2><span class="line"></span><span class="unit">y/y %, monthly, base 2012, to Dec 2025</span></div>
+    <div class="break">
+      <figure id="cb-main" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>A decade of the cost of living, and the three currents beneath it</h3>
+            <div class="sub">CPI combined and components, year-on-year, per cent, Jan 2016 to Dec 2025, base 2012=100, retired</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-main">–</div><div class="c">Dec 2025, headline y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-main">
+            <button class="chip" data-key="headline"><i style="background:#2E4BD8"></i>Headline</button>
+            <button class="chip" data-key="food"><i style="background:#5F6675"></i>Food &amp; beverages</button>
+            <button class="chip" data-key="fuel"><i style="background:#A3A9B4"></i>Fuel &amp; light</button>
+            <button class="chip" data-key="core"><i class="dash"></i>Core, derived</button>
+          </div>
+          <div class="plotzone" id="plot-main"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: <a href="https://www.mospi.gov.in" target="_blank" rel="noopener">MoSPI</a>, press release of 12 Jan 2026, band: RBI tolerance 2–6%, dashed: 4% target, headline &amp; core computed from group indices</span>
+            <span class="dl">
+              <button data-dl="svg">SVG</button><span class="sep"></span>
+              <button data-dl="png">PNG</button><span class="sep"></span>
+              <button data-dl="csv">CSV</button><span class="sep"></span>
+              <a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a>
+            </span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each line answers one question: how much dearer is this part of the basket than twelve months ago? The blue line is their weighted average, so it must always live between its parts: food supplies the swings, core supplies the level, fuel supplies occasional noise.</p>
+            <p>The shaded band is law, not decoration. Since 2016 the RBI must explain itself to government whenever the headline spends three straight quarters outside 2–6%. Every excursion above the ceiling, 2019–20, 2022, mid-2023, triggered that letter. The 2025 prints pose the opposite question: three straight months below the floor.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of January 2026</span>
+            <p>Inflation fell through 2025: from <b id="ex-hjan">–</b> in January to <b id="ex-hdec">–</b> in December, with the last four prints below the 2% floor of the band, ground occupied only once before, in June 2017. The food line tells you why: the vegetables that drove the 2019 and 2023 spikes have been cheap for two consecutive winters.</p>
+            <p>Watch the wedge between core and headline. While the dashed line sits above the blue one, the average is being flattered by volatile items, and the flattery expires with the next bad monsoon.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 the measure -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="wm-grid">
+      <div>
+        <p>The Consumer Price Index tracks the cost of a fixed basket of goods and services, rice, rent, bus fares, haircuts, school fees, as an urban or rural household actually buys them. When we say "inflation is 1.3 per cent", we mean this basket costs <b>1.3 per cent more than it did a year ago</b>.</p>
+        <p>The basket is not a guess. It comes from a massive survey of what households actually spent in 2011–12, and each item carries a weight proportional to its share of household budgets. Food weighs about 46 per cent; housing, 10; fuel, 7.</p>
+        <p>It is a Laspeyres index: the basket is fixed, so it measures pure price change. That fixedness is its strength and its blind spot: the number stays cleanly comparable, but slowly drifts from how India actually lives, until the base is revised.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note, i</span>
+          <b>Falling inflation ≠ falling prices.</b> The price level almost never returns. A falling rate is slower pain, not relief.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note, ii</span>
+          <b>Watch the base.</b> A high print last year flatters this year's number with nothing improving. Ask: compared to what?
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note, iii</span>
+          <b>Core is derived, not published.</b> The NSO releases no official core index; ours is computed from group indices and labelled as such.
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 08 component plates -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>The parts, one plate each</h2><span class="line"></span><span class="unit">y/y %, monthly, base 2012, to Dec 2025</span></div>
+
+    <div class="break">
+      <figure id="cb-food" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Food &amp; beverages: half the basket, all of the drama</h3>
+            <div class="sub">Weight 45.86, year-on-year, per cent, 2016–2025, base 2012=100, retired</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-food">–</div><div class="c">Dec 2025, y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-food"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, <span id="pf-food">–</span></span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The most violent line in the guide, and nearly half the basket. Spikes are usually weather, not policy: failed monsoons surface here three to six months late, and gluts push the line below zero, as in 2018–19 and again in late 2025. Negative food inflation is relief at the shop and distress on the farm, in the same figure.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of January 2026</span>
+            <p>At <b id="ex-food">–</b>, food inflation is more than nine points below its level of a year ago (<b id="ex-food-y">–</b>): partly arithmetic: the autumn 2024 spike above 10% is now in the denominator, flattering the present. The base-effect gift expires by spring.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-fuel" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Fuel &amp; light: loud, but says very little</h3>
+            <div class="sub">Weight 6.84, year-on-year, per cent, 2016–2025, base 2012=100, retired</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-fuel">–</div><div class="c">Dec 2025, y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-fuel"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, <span id="pf-fuel">–</span></span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Only loosely tied to crude: excise duty, LPG subsidy accounting and electricity tariffs dominate. A flat stretch means stable policy, not stable world prices. It moves the headline loudly and means little by itself: never infer the global energy market from this line.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of January 2026</span>
+            <p>Now <b id="ex-fuel">–</b>, after eighteen consecutive months underwater from September 2023 to February 2025. That deflation was LPG price cuts washing through the year-ago comparison: nobody's bill actually fell during it.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-core" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Core: the line the RBI actually watches</h3>
+            <div class="sub">Ex food, ex fuel, derived, weight 47.30, year-on-year, per cent, 2016–2025, base 2012=100, retired</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-core">–</div><div class="c">Dec 2025, y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-core"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: derived from MoSPI group indices, not an official series, <span id="pf-core">–</span></span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Core strips out weather and energy, the parts monetary policy cannot reach, leaving rents, health, education, transport services, gold: the demand side of the economy. It moves in long arcs, and its Indian floor is structural; the series has never sustainably visited 2%.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of January 2026</span>
+            <p>At <b id="ex-core">–</b>, core has climbed through 2025 while the headline collapsed around it. Whatever is cooling the blue line, it is not underlying demand. For rate-setters, this unremarkable line is the argument against declaring victory.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 the sub-indices, a field guide -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>The sub-indices, a field guide</h2><span class="line"></span><span class="unit">y/y %, 21 series, base 2012, to Dec 2025</span></div>
+    <div class="break">
+      <figure id="cb-sub" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Twenty-one dials behind the six groups</h3>
+            <div class="sub">Every published sub-index, year-on-year, per cent, Jan 2016 to Dec 2025, base 2012=100, retired, shaded band: RBI tolerance 2–6%, drawn to scale in every panel</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-sub">–</div><div class="c">of 21 outside 2–6%, Dec 2025</div></div>
+        </div>
+        <div class="frame">
+          <div class="sm-cap">The wild eleven: shared scale −30 to +62%</div>
+          <div class="sm-grid" id="sm-wild"></div>
+          <div class="sm-cap">The quiet ten: shared scale −4 to +16%</div>
+          <div class="sm-grid" id="sm-quiet"></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, one shared axis would iron the quiet panels flat, so the grid is split by volatility and each half discloses its own scale, housing, fuel &amp; light and pan publish no sub-indices, figures in bold sit outside the 2–6% band</span>
+            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The six groups are averages, and averages keep secrets. These are the dials beneath them: every sub-index the NSO publishes, one rule per panel: a grey line, ten years, the same shaded band. The band is the tell. Where it looks wide, the panel lives a calm life; where it thins to a sliver, the panel needed room for swings of thirty points and more.</p>
+            <p>Vegetables and pulses inhabit a different mountain range from education and health. A single shared axis would be honest about the first and silent about the second, so the grid uses two, and prints both. Compare shapes within a half; compare levels only through the numbers.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of January 2026</span>
+            <p><b id="sub-n">–</b> of the twenty-one sub-indices ended 2025 outside the tolerance band: <b id="sub-lo">–</b> below its floor, <b id="sub-hi">–</b> above its ceiling. The deflation holding the headline down is concentrated where you would guess: vegetables at <b id="sub-veg">–</b>, pulses at <b id="sub-pulses">–</b>.</p>
+            <p>The loudest dial is not food at all. Personal care &amp; effects, the sub-index that carries gold, is running at <b id="sub-gold">–</b>, the highest reading in the grid by a wide margin. And oils &amp; fats, at <b id="sub-oils">–</b>, show that not every food item joined the glut.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 10 rural vs urban -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>One index, two Indias: rural and urban</h2><span class="line"></span><span class="unit">y/y %, monthly, base 2012, to Dec 2025</span></div>
+    <div class="break">
+      <figure id="cb-ru" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The village and the town pay different prices</h3>
+            <div class="sub">Headline CPI, rural and urban against combined, year-on-year, per cent, Jan 2016 to Dec 2025</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-ru">–</div><div class="c">Dec 2025, rural y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-ru">
+            <button class="chip" data-key="combined"><i style="background:#2E4BD8"></i>Combined</button>
+            <button class="chip" data-key="rural"><i style="background:#5F6675"></i>Rural</button>
+            <button class="chip" data-key="urban"><i style="background:#A3A9B4"></i>Urban</button>
+          </div>
+          <div class="plotzone" id="plot-ru"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, press release of 12 Jan 2026, band: RBI tolerance 2–6%, the sector weights differ by design, the rural basket has no housing group</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The combined index is not a third survey; it is these two weighted together. But the baskets are built from different lives. Food weighs 54.18 in the rural basket against 36.29 in the urban one, and housing, 21.67 of the urban index, does not exist in the rural index at all, because there is no rent market to survey in most villages.</p>
+            <p>The consequence is mechanical. When food is dear, the village line rides above the town line; when food is cheap, it dives below. The wedge between the two is mostly the food wedge, amplified by eighteen points of extra weight.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of January 2026</span>
+            <p>December closed with rural inflation at <b id="ex-ru-r">–</b> and urban at <b id="ex-ru-u">–</b>: a gap of <b id="ex-ru-gap">–</b>. A year earlier the ordering was reversed: <b id="ex-ru-ry">–</b> rural against <b id="ex-ru-uy">–</b> urban. Nothing about either economy flipped. Food did: rural food is at <b id="ex-ru-rf">–</b>, urban food at <b id="ex-ru-uf">–</b>, and the heavier rural food weight turns the same glut into a bigger discount.</p>
+            <p>Strip food and fuel out and the ordering flips back: rural core runs at <b id="ex-ru-rc">–</b>, urban core at <b id="ex-ru-uc">–</b>. The village's calm is entirely a food story, and food stories end.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 11 states -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>The spread across states</h2><span class="line"></span><span class="unit">y/y %, two bases, published General index</span></div>
+    <div class="break">
+      <figure id="cb-st24" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>One month, thirty-six readings: on the new ruler</h3>
+            <div class="sub">State &amp; UT inflation, {PST24.long}, published General index, base 2024=100, year-on-year, per cent, sorted, blue: outside the 2–6% band</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-st24">–</div><div class="c">spread, highest minus lowest</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-st24"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, release of {P24.releaseShort}, the published General index of each state on the 2024 base, state baskets differ and are not recomputed on all-India weights, dashed rule: All-India, <span id="pf-st24-ai">–</span>, the strip below shows the retired base's final month; different rulers, never spliced</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The rebase reached the states with the national index: every state's General index restarts at a 2024 average of 100, and each month from January 2026 adds one same-base reading. This strip reads exactly like the retired one below it, the ends carry the news, the middle is a crowd, but the two cannot be compared number for number. A state printing low on the old ruler in December and high on the new one in June did not surge; the measure changed, and six months passed, in unknown proportion.</p>
+            <p>The count also changed. The old scheme published thirty-five state indices; the new base serves thirty-six: Arunachal Pradesh and Ladakh appear as their own series for the first time, and the merged Dadra &amp; Nagar Haveli and Daman &amp; Diu, two rows on the old ruler, is now one.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PST24.stamp}</span>
+            <p>The highest reading is <b id="st24-top">–</b>; the lowest is <b id="st24-bot">–</b>. The spread between them is <b id="st24-spread">–</b>, in a month when the national rate was <b id="st24-ai">–</b>. <b id="st24-above">–</b> of the thirty-six sit above the band's ceiling; <b id="st24-below">–</b> sit below its floor; <b id="st24-neg">–</b> print below zero.</p>
+            <p>Set against December's strip below, where deflation reached from the east to a Kerala print above nine, the new ruler's field is tighter. How much of that narrowing is the fresh basket and how much is the {word(PST24.since("2025-12-01"))} months between the two strips, we do not know; the strips are shown apart so no one has to pretend to.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-states" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>One month, thirty-five readings: the old ruler's last</h3>
+            <div class="sub">State &amp; UT inflation, December 2025, published General index, base 2012=100, retired, year-on-year, per cent, sorted, blue: outside the 2–6% band</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-states">–</div><div class="c">spread, highest minus lowest</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-states"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, the published General index of each state, state baskets differ and are not recomputed on all-India weights, dashed rule: All-India, <span id="pf-st-ai">–</span>, several state indices were not published in the lockdown months of 2020–21; those gaps are disclosed in the data</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The tolerance band is an all-India law; no state is bound by it. Each state index prices its own basket, more fish in Kerala, more wheat in Punjab, so what is shown is the published General index of each state, not a recomputation. Dispersion is the normal condition. A single national rate is always an average of genuinely different price experiences.</p>
+            <p>Read the ends, not the middle. The middle of this strip is crowded and interchangeable; the outliers are where something specific, a crop, a tariff, a supply line, is happening.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of January 2026</span>
+            <p>The highest reading is <b id="st-top">–</b>; the lowest is <b id="st-bot">–</b>. The spread between them is <b id="st-spread">–</b>: in a month when the national rate was <b id="st-ai">–</b>. Deflation is not a statistical curiosity here: <b id="st-neg">–</b> states printed below zero.</p>
+            <p><b id="st-below">–</b> of the thirty-five sit below the 2% floor, and only <b id="st-above">–</b> sit above the ceiling. The all-India number is not a typical state experience so much as a midpoint between deflation in the east and a Kerala print above nine.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-stgap" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Where the village and the town disagree most</h3>
+            <div class="sub">Rural and urban inflation, December 2025, the five states with the widest gap, per cent, published General index</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-stgap">–</div><div class="c">widest rural–urban gap</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-stgap">
+            <button class="chip" data-key="rural"><i style="background:#5F6675"></i>Rural</button>
+            <button class="chip" data-key="urban"><i style="background:#A3A9B4"></i>Urban</button>
+          </div>
+          <div class="plotzone" id="plot-stgap"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, shaded band: RBI tolerance 2–6%, the gap runs both ways: <span id="pf-stgap">–</span></span>
+            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 12 the other CPI: AL/RL -->
+  <section>
+    <div class="sec-head"><span class="no">12</span><h2>The other CPI: agricultural labourers</h2><span class="line"></span><span class="unit">y/y %, Labour Bureau, two bases, never spliced</span></div>
+    <div class="break">
+      <figure id="cb-alcpi" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Two rural populations, two inflation rates</h3>
+            <div class="sub">CPI-AL (farm-labour households) against CPI-rural (all rural households), year-on-year, per cent, Jan 2016 to May 2025, trimmed to the shared window: never spliced</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-alcpi">–</div><div class="c">CPI-AL, May 2025, y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-alcpi">
+            <button class="chip" data-key="al"><i style="background:#2E4BD8"></i>CPI-AL, farm-labour households</button>
+            <button class="chip" data-key="rural"><i style="background:#A3A9B4"></i>CPI, rural (all households)</button>
+          </div>
+          <div class="plotzone" id="plot-alcpi"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Labour Bureau (CPI-AL, base 1986-87) and MoSPI/NSO (CPI-rural, base 2012), via eSankhyiki, two surveys of two different rural populations, the farm-labour basket is heavier in food, so it swings wider</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Both lines are rural, but they describe different people. The grey line is the rural half of the national CPI: every rural household, weighted by how it spends. The blue line is the agricultural labourer alone: a poorer household, whose basket the Labour Bureau weights far more heavily toward food, and whose index reprices the floor wages that MGNREGA and state rate-cards pay.</p>
+            <p>Because food dominates the labourer's basket, the blue line is the more violent one: it rises faster in a bad monsoon and falls further in a glut. Over the decade they part by <b id="alcpi-avgap">–</b> on average, and by as much as <b id="alcpi-maxgap">–</b> in a single month.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of May 2025, the overlap's end</span>
+            <p>At the old AL base's final reading the labourer's index stood at <b id="alcpi-al">–</b> against CPI-rural's <b id="alcpi-rural">–</b>: unusually close. The two populations live in the same villages but in different baskets, and the gap between them blows wide whenever a food spike hits the labourer's heavier weighting first. The index that sets the farm wage tracks the broader village's: until the harvest breaks.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-al" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The index that sets the farm wage</h3>
+            <div class="sub">CPI-AL, year-on-year, base 1986-87 (Jul 2000 to May 2025), base 2019=100 ({PAL.span}, publisher's y/y): side by side, never spliced</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-al">–</div><div class="c">{PAL.short}, base 2019, y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-al">
+            <button class="chip" data-key="al_old"><i style="background:#878D99"></i>Base 1986-87</button>
+            <button class="chip" data-key="al_new"><i style="background:#2E4BD8"></i>Base 2019=100</button>
+          </div>
+          <div class="plotzone" id="plot-al"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Labour Bureau, via MoSPI eSankhyiki, y/y on the new base is the Bureau's own, computed on a linked back-series it does not publish, the two bases price different baskets</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The national CPI describes an average household. This one describes a specific and poorer one: the agricultural labourer, whose index the Labour Bureau has compiled to reprice rural minimum wages: MGNREGA rates and state wage floors move with it. Its basket is far heavier in food than the national CPI's, so it answers to the harvest before anything else.</p>
+            <p>The base year stood at 1986-87 for nearly four decades, the longest-serving ruler in Indian statistics, until the 2019=100 series took over from June 2025. The old and new series price different baskets, from different surveys of a different countryside. They are shown side by side, and the seam is drawn, not smoothed.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PAL.stamp}</span>
+            <p>The old ruler retired at <b id="al-old-final">–</b> in May 2025; {PAL.nWord} months into the new series, the reading is <b id="al-new">–</b>. Farm-labour inflation has firmed through the new base's first year, while the national index on the 2012 base fell below its 2% floor in late 2025.</p>
+            <p>The old series' peak: <b id="al-peak">–</b> in January 2010, in the wake of a failed monsoon: is what a food-heavy basket does when the harvest goes wrong. That exposure has not gone anywhere; only the ruler is new.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-alrl" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Two labourers, rarely apart</h3>
+            <div class="sub">CPI-AL and CPI-RL, year-on-year (publisher's), base 2019=100, {PAL.span}</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-alrl">–</div><div class="c">{PAL.short}, RL y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-alrl">
+            <button class="chip" data-key="al"><i style="background:#2E4BD8"></i>Agricultural labourers</button>
+            <button class="chip" data-key="rl"><i style="background:#5F6675"></i>Rural labourers</button>
+          </div>
+          <div class="plotzone" id="plot-alrl"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Labour Bureau, via MoSPI eSankhyiki, RL is the wider net: rural labourer households of every trade, agricultural labourers among them</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Two indices, one countryside. The rural labourers' basket contains the agricultural labourers' almost entirely, so the lines move together and part by fractions of a point. The gap, small as it is, is still information: AL above RL means the pressure sits in the farm household's own basket rather than the village's.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PAL.stamp}</span>
+            <p>AL at <b id="alrl-al">–</b>, RL at <b id="alrl-rl">–</b>: a gap of <b id="alrl-gap">–</b>, with AL on top for most of the new base's first year. Both have climbed since autumn. Set beside the national CPI's rural reading of <b id="alrl-cpirural">–</b> in December, the labourers' indices describe a different year: different basket, later months, and no band to answer to.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-algrp" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>What the labourer's rupee buys</h3>
+            <div class="sub">CPI-AL group indices, year-on-year (publisher's), base 2019=100, {PAL.span}</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-algrp">–</div><div class="c">{PAL.short}, food y/y</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-algrp">
+            <button class="chip" data-key="food"><i style="background:#2E4BD8"></i>Food</button>
+            <button class="chip" data-key="pan"><i style="background:#C9CED6"></i>Pan &amp; tobacco</button>
+            <button class="chip" data-key="fuel"><i style="background:#878D99"></i>Fuel &amp; light</button>
+            <button class="chip" data-key="clothing"><i style="background:#A3A9B4"></i>Clothing &amp; footwear</button>
+            <button class="chip" data-key="misc"><i style="background:#5F6675"></i>Miscellaneous</button>
+          </div>
+          <div class="plotzone" id="plot-algrp"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Labour Bureau, via MoSPI eSankhyiki, five groups, not six, like the rural CPI, the labourer's basket has no housing group</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Food dominates this basket, so the food line is close to being the index; the other four groups are the supporting cast. Watch fuel &amp; light separately: firewood and kerosene, not LPG cylinders, set its rhythm here, and it answers to a different market than the urban fuel bill.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PAL.stamp}</span>
+            <p>Food leads at <b id="alg-food">–</b>, with fuel &amp; light at <b id="alg-fuel">–</b> close behind; clothing (<b id="alg-cloth">–</b>) and miscellaneous (<b id="alg-misc">–</b>) trail. Note the inversion: the national CPI's food group is in deflation at <b id="alg-cpifood">–</b> as of December, while the labourer's food group was still firming {word(PAL.since("2025-12-01"))} months later. Different basket, different shops, different answer.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-alst" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Where the farm worker's rupee stretched: twenty states</h3>
+            <div class="sub">CPI-AL by state, year-on-year, per cent, May 2025, base 1986-87 (retired), sorted, the final state reading of the old ruler</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-alst">–</div><div class="c">highest state, May 2025</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-alst"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Labour Bureau, via eSankhyiki, base 1986-87, the 2019-base state series publishes levels only (no same-base year-ago yet), so this is the final state reading of the retired ruler, dashed rule: All-India CPI-AL, state baskets differ and are not recomputed</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://labourbureau.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>One countryside, many inflations. Each state's agricultural-labour index prices its own harvest, more rice in the south and east, more wheat in the north, so the spread is genuine, not noise. There is no RBI band here: the tolerance law binds the all-India CPI, not the farm labourer's basket.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of May 2025, final reading</span>
+            <p><b id="alst-above">–</b> of the twenty states sat above the All-India CPI-AL. The spread runs from <b id="alst-top">–</b> down to <b id="alst-bot">–</b>: <b id="alst-spread">–</b> end to end. This is the old ruler's last word on the states; the new 2019-base state series will take over once it carries a full year of levels.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 13 misread -->
+  <section>
+    <div class="sec-head"><span class="no">13</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li>
+        <span class="no">i.</span>
+        <div>
+          <h3>"Inflation fell, so prices fell."</h3>
+          <p>No. Falling inflation means prices are rising more slowly: disinflation. At 1.3%, the basket still costs 1.3% more than last December. Only a negative print means falling prices: and food has done exactly that for six of the last seven months, which is why this misreading is tempting right now.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">ii.</span>
+        <div>
+          <h3>"My inflation is the national inflation."</h3>
+          <p>Your basket is not the average basket. The weights are a 2011–12 snapshot; they understate urban rent, overstate cereals for the well-off, and describe nobody precisely. A family spending 60 per cent on food lives in a different index entirely.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iii.</span>
+        <div>
+          <h3>"One month tells a story."</h3>
+          <p>Vegetables can move the headline by a full point in a single month and reverse the next. Month-to-month moves are mostly seasonal noise; three consecutive months is the minimum unit of meaning, and twelve is better.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iv.</span>
+        <div>
+          <h3>"The base doesn't matter."</h3>
+          <p>Every y/y figure is a ratio to the same month a year ago. A spike then flatters now; a collapse then haunts now. Before reacting to any print, ask what the denominator was doing.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">v.</span>
+        <div>
+          <h3>"Core is the real inflation."</h3>
+          <p>Core excludes what poor households spend most on. It is watched because it is stable and policy-responsive, not because it is truer. For the cost of living as lived, the headline is the honest number.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">vi.</span>
+        <div>
+          <h3>"CPI and WPI contradict each other."</h3>
+          <p>They survey different terrain: retail consumers versus the factory gate, with different baskets and different fuels. Divergence of five points is normal. Both are correct; show them as separate series, never as a conflict to resolve.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <GuideData slug="cpi" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. "Consumer Price Index Numbers on Base 2024=100 for Rural, Urban &amp; Combined: {P24.long}." Press release, {P24.release}. Division indices retrieved via the eSankhyiki API, vintage <b id="prov-vintage24">–</b>. The rebased series prices a redrawn basket, classified into thirteen COICOP-2018-style divisions in place of the 2012 base's six groups; its index history begins January 2025, so the first same-base year-on-year rates are the 2026 prints. The API serves no component weights for this base yet: the 2024-base headline is the published all-groups index, and the weights recomputation applied to the 2012 base, the cross-check that series gets, is not yet possible here. The API's own published inflation rate is kept as a crosscheck instead (worst deviation 0.01 pt). The dashed line in §02 is the NSO's own back-cast of the new index, 2013–2024, baked as its own bundle. The two bases are never spliced.</p>
+        <p>Coverage of the 2024 base is now complete to the API's floor, audited level by level against the source's own row counts: below CPI General and the 13 divisions sit 43 groups, 92 classes, 162 sub-classes and 358 items: 668 all-India rows per month, every month from January 2025. The groups and the full item basket are baked (§03); the classes and sub-classes, intermediate aggregates between them, are archived raw. The General index of all 36 states and UTs on the new base (§11) is baked for combined, rural and urban. Every year-on-year figure is computed from index levels and only where a same-base year-ago level exists: nothing is computed across the seam. Each item row carries the API's imputation flag; every all-India combined row served so far is N, meaning compiled from collected prices. Because the API serves no weights for this base, groups and items are shown unweighted and no recomposition is asserted at any level. A base-2010 fragment also exists in the API (January 2011 to December 2014, on the pre-2012 scheme); its span predates this guide's window and it is archived, not baked.</p>
+        <p>The retired series: "Consumer Price Index Numbers on Base 2012=100 for Rural, Urban &amp; Combined, December 2025." Press release, 12 January 2026, the final print on that base. Group indices retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>.</p>
+        <p>Headline and core inflation are computed by India Atlas from the published group indices using the official weights; the computed headline tracks the published one within 0.14 pt across the decade. Core is not an official series. Housing group indices for December 2018 to September 2019 were never published; those months are linearly interpolated and flagged in the series metadata. The rural and urban headline and core series (§10) are computed the same way, on the sector weights.</p>
+        <p>The 21 sub-group indices (§09, Jan 2016 to Dec 2025) and the state series (§11) are the published MoSPI series, same vintage. State figures are the published General index of each state: state baskets differ, and nothing is recomputed on all-India weights. Several state indices were not published in April–June 2020 and April–June 2021; those months, and their year-on-year knock-on a year later, are gaps in the data, not zeros.</p>
+        <p>The CPI for Agricultural Labourers and Rural Labourers (§12) is compiled by the Labour Bureau, Ministry of Labour &amp; Employment, retrieved via eSankhyiki, vintage <b id="prov-vintage3">–</b>. The base 1986-87=100 series ends with the May 2025 print; the base 2019=100 series begins June 2025 (coverage here: Jul 2000 to May 2026). The two bases price different baskets and are never spliced. Year-on-year rates on the new base are the Bureau's own, computed on a linked back-series it does not publish.</p>
+      </div>
+      <div>
+        <h6>Revisions &amp; uncertainty</h6>
+        <p>CPI is final on release: it is never revised, which makes it unusual among Indian statistics. Where any source restates a figure, both vintages are shown as separate series.</p>
+        <p>Where something is not measured, this guide says "we do not know" rather than inventing a number.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Prices, version 2.4, adds the 358-item extremes ledger, the 43-group grid, the new-base state strip beside the retired one, three new-base group rows in the register and the base-2010 archive decision, to the 2.3 release. Next scheduled revision: 12 August 2026, on release of the July print.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, CPI</span>
+      <span>Vintage <span id="prov-vintage2">–</span>, Bases 2024=100 &amp; 2012=100 (retired), AL/RL 1986-87 &amp; 2019=100</span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<style is:global>
+  /* §07 small-multiple grid — this page only */
+  .sm-cap{
+    font-family:var(--sans);font-size:.82rem;color:var(--muted);
+    margin:30px 0 12px;display:flex;align-items:center;gap:16px;
+  }
+  .sm-cap:first-child{margin-top:4px}
+  .sm-cap::after{content:"";flex:1;border-top:1px solid var(--rule)}
+  .sm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px 28px}
+  .sm-panel{background:#FFFFFF;padding:0 0 18px;position:relative;border-top:1px solid var(--rule);padding-top:10px}
+  .sm-panel .sm-t{
+    font-family:var(--sans);font-size:.78rem;color:var(--grey1);line-height:1.55;
+    padding-right:58px;min-height:2.05em;
+  }
+  .sm-panel .sm-v{
+    position:absolute;top:10px;right:0;
+    font-family:var(--sans);font-size:.8rem;color:var(--ink-soft);
+    font-variant-numeric:tabular-nums;
+  }
+  .sm-panel .sm-v.acc{color:var(--ink);font-weight:600}
+  /* the panel's y-range at the baseline — the scale disclosure the
+   * normalized shape cannot carry. Two-sided: time window on the left,
+   * value range on the right. */
+  .sm-panel .sm-r{
+    position:absolute;bottom:1px;right:0;
+    font-family:var(--sans);font-size:.75rem;letter-spacing:.06em;
+    color:var(--faint);font-variant-numeric:tabular-nums;
+  }
+  .sm-panel .sm-r .x{float:left;margin-right:auto}
+  .sm-panel .sm-r{left:0;display:flex;justify-content:space-between;gap:8px}
+  .sm-panel svg{display:block;width:100%;height:auto}
+  @media (max-width:900px){.sm-grid{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:520px){.sm-grid{grid-template-columns:1fr}}
+  /* §03 358-item extremes ledger — layout only */
+  .tail-ledger td.val{font-size:1.5rem}
+  .tail-mid td{padding:16px 0;border-bottom:1px solid var(--rule);text-align:center;font-family:var(--sans);font-size:.8rem;color:var(--muted)}
+  /* §03 item extremes ledger — layout only, borrowed from the WPI tail ledger */
+  .tail-ledger td.val{font-size:1.5rem}
+  .tail-mid td{
+    padding:16px 0;border-bottom:1px solid var(--rule);text-align:center;
+    font-family:var(--sans);font-size:.8rem;color:var(--muted);
+  }
+  /* Part Two divider — the transition from the 2024 current print to the
+     retired 2012-base decade. Rules + type only; no color block (per docs/DESIGN.md). */
+  .part-numbers{grid-template-columns:repeat(2,minmax(0,220px));justify-content:center;gap:0 56px;padding:36px 0 0;text-align:left}
+  .part{
+    padding:52px 0 44px;margin:24px 0 8px;text-align:center;
+    border-top:1px solid var(--ink);border-bottom:1px solid var(--rule);
+  }
+  .part-kick{
+    font-family:var(--sans);font-size:.82rem;color:var(--muted);margin-bottom:14px;
+  }
+  .part-h{
+    font-family:var(--serif);font-weight:500;font-size:1.6rem;
+    letter-spacing:-0.02em;color:var(--ink);line-height:1.2;
+  }
+  .part-sub{
+    margin:16px auto 0;max-width:62ch;font-size:1.0rem;line-height:1.7;
+    color:var(--muted);font-style:italic;
+  }
+  @media(max-width:680px){.part{padding:40px 0 34px}.part-h{font-size:1.28rem}}
+ </style>
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/cpi.client.js";
+</script>
+</Base>

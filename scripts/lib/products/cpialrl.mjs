@@ -140,8 +140,8 @@ export async function buildCpialrl(root, dcfg, vintage) {
     },
     dates: axis86.map((ym) => `${ym}-01`),
     series: {
-      al: { name: "cpi_al_yoy_pct_base1986", label: "Agri labourers", color: "#BE3E26", data: axis86.map((ym) => yoy86.al.get(ym) ?? null) },
-      rl: { name: "cpi_rl_yoy_pct_base1986", label: "Rural labourers", color: "#5B564B", data: axis86.map((ym) => yoy86.rl.get(ym) ?? null) },
+      al: { name: "cpi_al_yoy_pct_base1986", label: "Agri labourers", color: "#2E4BD8", data: axis86.map((ym) => yoy86.al.get(ym) ?? null) },
+      rl: { name: "cpi_rl_yoy_pct_base1986", label: "Rural labourers", color: "#5F6675", data: axis86.map((ym) => yoy86.rl.get(ym) ?? null) },
     },
   };
 
@@ -161,10 +161,10 @@ export async function buildCpialrl(root, dcfg, vintage) {
     },
     dates: axis19.map((ym) => `${ym}-01`),
     series: {
-      al: { name: "cpi_al_index_base2019", label: "Agri labourers", color: "#BE3E26", data: axis19.map((ym) => levels["2019"].al.get(ym) ?? null), unit: "index" },
-      rl: { name: "cpi_rl_index_base2019", label: "Rural labourers", color: "#5B564B", data: axis19.map((ym) => levels["2019"].rl.get(ym) ?? null), unit: "index" },
-      al_published_yoy: { name: "cpi_al_yoy_pct_published", label: "AL inflation (published)", color: "#A8A293", data: axis19.map((ym) => published.al.get(ym) ?? null), unit: "pct" },
-      rl_published_yoy: { name: "cpi_rl_yoy_pct_published", label: "RL inflation (published)", color: "#C6C0B0", data: axis19.map((ym) => published.rl.get(ym) ?? null), unit: "pct" },
+      al: { name: "cpi_al_index_base2019", label: "Agri labourers", color: "#2E4BD8", data: axis19.map((ym) => levels["2019"].al.get(ym) ?? null), unit: "index" },
+      rl: { name: "cpi_rl_index_base2019", label: "Rural labourers", color: "#5F6675", data: axis19.map((ym) => levels["2019"].rl.get(ym) ?? null), unit: "index" },
+      al_published_yoy: { name: "cpi_al_yoy_pct_published", label: "AL inflation (published)", color: "#A3A9B4", data: axis19.map((ym) => published.al.get(ym) ?? null), unit: "pct" },
+      rl_published_yoy: { name: "cpi_rl_yoy_pct_published", label: "RL inflation (published)", color: "#C9CED6", data: axis19.map((ym) => published.rl.get(ym) ?? null), unit: "pct" },
     },
   };
 
@@ -192,7 +192,7 @@ export async function buildCpialrl(root, dcfg, vintage) {
 
   // states bundles — same base-year rule: old-base y/y and new-base levels
   // are separate files, never joined
-  const GREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
+  const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
   const stateBundle = (base, mode) => {
     const states = stateLevels[base];
     const allMonths = [...new Set(Object.values(states).flatMap((m) => [...m.al.keys()]))].sort();

@@ -21,7 +21,7 @@
 import { mospi } from "../mospi.mjs";
 import { writeSeries, writeRaw, monthAxis } from "../util.mjs";
 
-const GREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
+const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const monthNameToNum = (name) => String(MONTHS.indexOf(name) + 1).padStart(2, "0");
 const val = (r) => {
@@ -88,12 +88,12 @@ export async function buildMnre(root, dcfg, vintage) {
     },
     dates,
     series: {
-      solar: { name: "mnre_solar_total", label: "Solar Power", color: "#BE3E26", data: data(toMap(byType["1"], "Solar Power Total")), unit: "mw" },
-      wind: { name: "mnre_wind", label: "Wind Power", color: "#5B564B", data: data(toMap(byType["2"])), unit: "mw" },
-      small_hydro: { name: "mnre_small_hydro", label: "Small Hydro Power", color: "#8A857A", data: data(toMap(byType["3"], "Small Hydro Power")), unit: "mw" },
-      large_hydro: { name: "mnre_large_hydro", label: "Large Hydro Power (from 2023)", color: "#A8A293", data: data(toMap(byType["3"], "Large Hydro Power")), unit: "mw" },
-      bio: { name: "mnre_bio_total", label: "Bio Power", color: "#C6C0B0", data: data(toMap(byType["4"], "Bio Power Total")), unit: "mw" },
-      grand_total: { name: "mnre_grand_total", label: "Grand Total (published)", color: "#BE3E26", data: data(toMap(byType["5"])), unit: "mw" },
+      solar: { name: "mnre_solar_total", label: "Solar Power", color: "#2E4BD8", data: data(toMap(byType["1"], "Solar Power Total")), unit: "mw" },
+      wind: { name: "mnre_wind", label: "Wind Power", color: "#5F6675", data: data(toMap(byType["2"])), unit: "mw" },
+      small_hydro: { name: "mnre_small_hydro", label: "Small Hydro Power", color: "#878D99", data: data(toMap(byType["3"], "Small Hydro Power")), unit: "mw" },
+      large_hydro: { name: "mnre_large_hydro", label: "Large Hydro Power (from 2023)", color: "#A3A9B4", data: data(toMap(byType["3"], "Large Hydro Power")), unit: "mw" },
+      bio: { name: "mnre_bio_total", label: "Bio Power", color: "#C9CED6", data: data(toMap(byType["4"], "Bio Power Total")), unit: "mw" },
+      grand_total: { name: "mnre_grand_total", label: "Grand Total (published)", color: "#2E4BD8", data: data(toMap(byType["5"])), unit: "mw" },
     },
   };
 
@@ -108,7 +108,7 @@ export async function buildMnre(root, dcfg, vintage) {
   SOLAR_CATS.forEach(([cat, key, label], i) => {
     solSeries[key] = {
       name: `mnre_solar_${key}`, label,
-      color: key === "ground_mounted" ? "#BE3E26" : GREYS[i % GREYS.length],
+      color: key === "ground_mounted" ? "#2E4BD8" : GREYS[i % GREYS.length],
       data: data(toMap(byType["1"], cat.trim())), unit: "mw",
     };
   });

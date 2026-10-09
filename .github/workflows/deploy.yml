@@ -36,6 +36,11 @@ jobs:
       - name: QC
         run: npm run qc   # qc.mjs + lint-charts.mjs — the full post-build gate
 
+      # Last line of defence (AGENTS.md rule 4): a stale hand-written "As of"
+      # paragraph must stop the deploy, not just the PR that carried it.
+      - name: As-of governance (hand-written paragraphs)
+        run: node pipeline/asof.mjs
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:

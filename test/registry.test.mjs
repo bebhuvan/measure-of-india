@@ -24,7 +24,7 @@ test("numbers are zero-padded and sequential", () => {
 
 test("every dossier has a page, a client module and an OG card target", () => {
   for (const d of DOSSIERS) {
-    assert.ok(has(`src/pages/dossiers/${d.slug}.astro`), `missing page: ${d.slug}`);
+    assert.ok(has(`src/pages/guides/${d.slug}.astro`), `missing page: ${d.slug}`);
     assert.ok(has(`src/dossiers/${d.slug}.client.js`), `missing client module: ${d.slug}`);
   }
 });
@@ -54,5 +54,24 @@ test("prose flags agree with pipeline/slots.yml", () => {
   }
   for (const d of DOSSIERS) {
     if (d.prose) assert.ok(slots[d.slug], `${d.slug}: prose:true but no slots.yml entry`);
+  }
+});
+
+// The rot class P2.6 removed: a hand-typed full date ("Vintage 28 Nov 2025")
+// in the registry or a register table where the current bundle's own meta
+// disagrees. Full dates in hand-typed strings are allowed only for FROZEN
+// retired rulers (whose bundles carry no contradicting fact) — live rulers
+// must derive (display.js "release"/"vintage" styles, register.client vintOf).
+test("hand-typed display dates never contradict the current bundle", () => {
+  const MS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const dateShort = (iso) => `${Number(iso.slice(8, 10))} ${MS[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}`;
+  for (const d of DOSSIERS) {
+    const b = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", d.currentBundle + ".json"), "utf8"));
+    const fact = dateShort(b.meta.releaseDate ?? b.meta.vintage);
+    for (const [field, text] of [["stamp.vintageText", d.stamp?.vintageText], ["register.unit", d.register?.unit]]) {
+      if (!text) continue;
+      const m = text.match(/(\d{1,2} [A-Z][a-z]{2} \d{4})/);
+      if (m) assert.equal(m[1], fact, `${d.slug}: ${field} hand-types "${m[1]}" but the current bundle serves ${fact} — derive it`);
+    }
   }
 });

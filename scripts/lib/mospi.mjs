@@ -88,7 +88,16 @@ async function fetchWithRetry(url, retries) {
   throw lastErr;
 }
 
+// Page size cap. Since about 2026-10 every eSankhyiki endpoint answers HTTP
+// 400 to limit > 100 (checked live 2026-10-09 on cpialrl, plfs, iip, isp,
+// mnre and wpi base 2022-23; the Data Bank saw the same cap on 2026-10-01).
+// The cap is applied here, once, so no adapter can ask for more. Callers that
+// read a single page must use mospiAll below, or they would silently get the
+// first 100 rows only.
+export const MOSPI_MAX_LIMIT = 100;
+
 export async function mospi(apiPath, params = {}, retries = 6) {
+  if (params.limit != null && Number(params.limit) > MOSPI_MAX_LIMIT) params = { ...params, limit: MOSPI_MAX_LIMIT };
   const qs = new URLSearchParams();
   for (const [k, v] of Object.entries(params)) qs.set(k, String(v));
   const url = BASE + apiPath + "?" + qs.toString();
@@ -99,4 +108,25 @@ export async function mospi(apiPath, params = {}, retries = 6) {
   const json = await run;
   cacheWrite(url, json);
   return json;
+}
+
+// Every row of one query, paged at the cap. Follows meta_data.totalPages and,
+// where the endpoint reports totalRecords, fails unless the rows collected
+// match it: a short read must never pass as a complete one. Endpoints without
+// meta_data page until a short batch.
+export async function mospiAll(apiPath, params = {}) {
+  const rows = [];
+  let expected = null;
+  for (let page = 1; ; page++) {
+    const res = await mospi(apiPath, { ...params, page, limit: MOSPI_MAX_LIMIT });
+    const batch = res.data ?? [];
+    rows.push(...batch);
+    const meta = res.meta_data;
+    if (meta?.totalRecords != null) expected = Number(meta.totalRecords);
+    if (meta?.totalPages != null ? page >= Number(meta.totalPages) : batch.length < MOSPI_MAX_LIMIT) break;
+  }
+  if (expected != null && rows.length !== expected) {
+    throw new Error(`mospiAll ${apiPath} ${JSON.stringify(params)}: ${rows.length} rows collected, endpoint reports ${expected}`);
+  }
+  return rows;
 }

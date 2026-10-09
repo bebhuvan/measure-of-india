@@ -19,17 +19,17 @@ import { writeSeries, writeRaw } from "../util.mjs";
 // display metadata per series key — the page palette, assigned at bake time
 // (CONTRACT-series). Accent is reserved for the primary series of a bundle.
 const SERIES_META = {
-  mva_pct_gdp: { label: "Manufacturing value added", unit: "pct_gdp", color: "#BE3E26" },
-  industry_pct_gdp: { label: "Industry, including construction", unit: "pct_gdp", color: "#8A857A" },
-  mva_constant_usd: { label: "Manufacturing value added, constant 2015 US$", unit: "usd_constant_2015", color: "#5B564B" },
-  mva_growth: { label: "Manufacturing value added, annual growth", unit: "pct_yoy", color: "#A8A293" },
-  machinery_transport: { label: "Machinery & transport equipment", unit: "pct_of_mva", color: "#BE3E26" },
-  chemicals: { label: "Chemicals", unit: "pct_of_mva", color: "#5B564B" },
-  food_beverages_tobacco: { label: "Food, beverages & tobacco", unit: "pct_of_mva", color: "#8A857A" },
-  textiles_clothing: { label: "Textiles & clothing", unit: "pct_of_mva", color: "#A8A293" },
-  other: { label: "Other manufacturing", unit: "pct_of_mva", color: "#C6C0B0" },
-  medhi_tech_share: { label: "Medium- & high-tech share of manufacturing", unit: "pct_of_mva", color: "#BE3E26" },
-  manufactures_share_of_exports: { label: "Manufactures' share of merchandise exports", unit: "pct_of_exports", color: "#BE3E26" },
+  mva_pct_gdp: { label: "Manufacturing value added", unit: "pct_gdp", color: "#2E4BD8" },
+  industry_pct_gdp: { label: "Industry, including construction", unit: "pct_gdp", color: "#878D99" },
+  mva_constant_usd: { label: "Manufacturing value added, constant 2015 US$", unit: "usd_constant_2015", color: "#5F6675" },
+  mva_growth: { label: "Manufacturing value added, annual growth", unit: "pct_yoy", color: "#A3A9B4" },
+  machinery_transport: { label: "Machinery & transport equipment", unit: "pct_of_mva", color: "#2E4BD8" },
+  chemicals: { label: "Chemicals", unit: "pct_of_mva", color: "#5F6675" },
+  food_beverages_tobacco: { label: "Food, beverages & tobacco", unit: "pct_of_mva", color: "#878D99" },
+  textiles_clothing: { label: "Textiles & clothing", unit: "pct_of_mva", color: "#A3A9B4" },
+  other: { label: "Other manufacturing", unit: "pct_of_mva", color: "#C9CED6" },
+  medhi_tech_share: { label: "Medium- & high-tech share of manufacturing", unit: "pct_of_mva", color: "#2E4BD8" },
+  manufactures_share_of_exports: { label: "Manufactures' share of merchandise exports", unit: "pct_of_exports", color: "#2E4BD8" },
 };
 
 export async function buildWorldbankWdi(root, dcfg, vintage) {

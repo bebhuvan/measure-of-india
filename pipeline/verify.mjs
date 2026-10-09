@@ -44,7 +44,20 @@ function walk(o) {
 walk(facts.series);
 walk(facts.cross);
 if (facts.legacy) walk(facts.legacy);
-if (facts.proseInputs) walk(facts.proseInputs);
+// proseInputs summaries: the economic facts (extremes, spreads, medians,
+// contradictions) are citable; the structural fields are not — seriesCount
+// and the coverage note describe the SHEET, not the economy, and leaving
+// them in the allowed set let a figure like "inflation climbed 358%"
+// (cpi-2024-items' seriesCount, echoed in its coverage note) trace cleanly.
+// Tail breadth counts (rising/falling/belowZero) are series counts too; only
+// the median is a price fact.
+if (facts.proseInputs) {
+  for (const pi of facts.proseInputs) {
+    const { seriesCount, coverage, tail, ...citable } = pi;
+    walk(citable);
+    if (tail) walk({ median: tail.median });
+  }
+}
 // structural constants the dossier may cite (weights, shares, base years) —
 // declared per dossier in the registry, never assumed globally
 const DOSSIER = bySlug[slug];
@@ -153,10 +166,13 @@ function clausePredicate(text) {
 const sentences = prose.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter(Boolean);
 const claimFail = (msg, s) => failures.push(`${msg} — in: "${s.slice(0, 90)}…"`);
 
-for (const s of sentences) {
-  if (!claimCheck) break;
-  const key = resolveSeries(s);
-  if (!key) continue;   // no keyword matched — the claim is left to the critic
+// Every claim check for one sentence against ONE candidate series. A sentence
+// often names several series ("nine divisions sit below the headline, and
+// health, the weakest, has fallen seven straight months"); its claims may bind
+// to any of them. The loop after this function tries each named series and
+// fails the sentence only when no candidate makes its claims true; the errors
+// reported are those against the first series named (resolveSeries), as before.
+function sentenceClaims(s, key, claimFail) {
   const arr = bundle.series[key].data;
 
   // 1. strict monotonic: "<verb> every/each <unit> (since <period>)"
@@ -248,13 +264,40 @@ for (const s of sentences) {
   }
 }
 
+function namedSeries(sentence) {
+  const t = sentence.toLowerCase();
+  const hits = [];
+  for (const [kw, key] of SERIES_KWS_) {
+    const m = new RegExp("\\b" + kw + "\\b").exec(t);
+    if (m && bundle.series[key] && !hits.some((h) => h.key === key)) hits.push({ key, at: m.index });
+  }
+  const first = resolveSeries(sentence);
+  return [first, ...hits.sort((a, b) => a.at - b.at).map((h) => h.key).filter((k) => k !== first)].filter(Boolean);
+}
+for (const s of sentences) {
+  if (!claimCheck) break;
+  const cands = namedSeries(s);
+  if (!cands.length) continue;   // no keyword matched — the claim is left to the critic
+  let firstFails = null;
+  for (const key of cands) {
+    const local = [];
+    sentenceClaims(s, key, (msg, sent) => local.push(`${msg} — in: "${sent.slice(0, 90)}…"`));
+    if (!local.length) { firstFails = null; break; }
+    firstFails ??= local;
+  }
+  if (firstFails) failures.push(...firstFails);
+}
+
 // ---------- negative guard: no extreme or record the sheet contradicts ----------
 // The cross facts (facts.cross) now describe every sibling series. Prose may
 // not call a series a record, an extreme, or the top/bottom of the sheet
 // while the sheet disagrees — the error accuracy gates can't see.
 const SIBLING = /\b(?:of|among|in)\s+(?:the\s+)?(?:\w+\s+)?(?:divisions?|groups?|sectors?|parts?|bundles?|cuts?|moving parts?)\b/i;
-const HIW = /\b(record|all[- ]time high|ever|on record|in (?:the )?(?:whole )?(?:series|history)|hottest|highest|strongest|fastest|steepest|biggest|largest)\b/i;
-const LOW = /\b(lowest|coolest|softest|slowest|smallest|mildest|weakest)\b/i;
+// an ordinal before the superlative ("third-highest", "second weakest") is a
+// rank, not a top/bottom claim: the lookbehind excludes it
+const ORD = String.raw`(?<!(?:second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|2nd|3rd|[4-9]th)[- ])`;
+const HIW = new RegExp(String.raw`\b(record|all[- ]time high|ever|on record|in (?:the )?(?:whole )?(?:series|history)|${ORD}(?:hottest|highest|strongest|fastest|steepest|biggest|largest))\b`, "i");
+const LOW = new RegExp(String.raw`\b${ORD}(lowest|coolest|softest|slowest|smallest|mildest|weakest)\b`, "i");
 if (claimCheck && facts.cross) {
   for (const s of sentences) {
     const sl = s.toLowerCase();
@@ -272,13 +315,17 @@ if (claimCheck && facts.cross) {
     }
     const key = resolveSeries(s);
     if (!key) continue;
+    // the extreme may bind to any series the sentence names ("nine divisions
+    // sit below the headline, with health the coolest"): reject only when the
+    // sheet's actual top/bottom is not among them (resolveSeries returns the
+    // first series named, which is often not the one the extreme describes)
     if (HIW.test(s) && SIBLING.test(s)) {
       const top = facts.cross.topByLatest?.key;
-      if (top && top !== key) claimFail(`negative guard: ${key} is called the top of the sheet, but the sheet's top is ${top} (${facts.cross.topByLatest.label} at ${facts.cross.topByLatest.latest})`, s);
+      if (top && top !== key && !mentioned.includes(top)) claimFail(`negative guard: ${key} is called the top of the sheet, but the sheet's top is ${top} (${facts.cross.topByLatest.label} at ${facts.cross.topByLatest.latest})`, s);
     }
     if (LOW.test(s) && SIBLING.test(s)) {
       const bot = facts.cross.bottomByLatest?.key;
-      if (bot && bot !== key) claimFail(`negative guard: ${key} is called the bottom of the sheet, but the sheet's bottom is ${bot} (${facts.cross.bottomByLatest.label} at ${facts.cross.bottomByLatest.latest})`, s);
+      if (bot && bot !== key && !mentioned.includes(bot)) claimFail(`negative guard: ${key} is called the bottom of the sheet, but the sheet's bottom is ${bot} (${facts.cross.bottomByLatest.label} at ${facts.cross.bottomByLatest.latest})`, s);
     }
   }
 }

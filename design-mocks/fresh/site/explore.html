@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dossiers · India Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400..700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./atlas.css">
+<style>
+.xhead{padding:92px 0 0;max-width:46em}
+
+/* featured */
+.feat{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:64px;align-items:center;margin-top:84px;padding:44px 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--hair)}
+.feat .tag{font-family:var(--sans);font-size:14px;color:var(--ink-3);margin:0 0 14px}
+.feat h2{font-size:44px;margin:0 0 14px}
+.feat h2 a{text-decoration:none}
+.feat .find{font-size:21px;line-height:1.48;color:var(--ink-2);margin:0 0 28px;text-wrap:pretty}
+.feat .fig{display:flex;align-items:baseline;gap:12px;font-family:var(--sans)}
+.feat .fig b{font-size:52px;font-weight:600;letter-spacing:-.035em;line-height:1}
+.feat .fig span{font-size:15px;color:var(--ink-3)}
+.feat .go{display:inline-block;margin-top:28px;font-family:var(--sans);font-size:15px;font-weight:500;color:var(--blue);text-decoration:none;border-bottom:1px solid var(--blue-soft);padding-bottom:2px}
+.feat .go:hover{border-bottom-color:var(--blue)}
+.feat .plot{min-height:300px}
+
+/* findings */
+.sect{margin-top:120px}
+.shd{display:flex;justify-content:space-between;align-items:baseline;gap:20px;margin-bottom:6px}
+.shd h2{font-size:32px;margin:0}
+.shd span{font-family:var(--sans);font-size:14px;color:var(--ink-3)}
+.finds{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0 36px;margin-top:22px}
+.fd{display:flex;flex-direction:column;padding:24px 0 0;border-top:1px solid var(--hair);text-decoration:none}
+.fd .fs{font-family:var(--sans);font-size:13.5px;color:var(--ink-3);margin-bottom:12px}
+.fd .fc{height:84px;margin-bottom:16px;display:flex;align-items:flex-end}
+.fd p{font-family:var(--serif);font-size:19px;line-height:1.42;margin:0 0 12px;text-wrap:pretty;font-variation-settings:"opsz" 20}
+.fd .more{font-family:var(--sans);font-size:14px;color:var(--ink-3);margin-top:auto}
+.fd:hover p{color:var(--blue)}
+.fd .fl{display:flex;justify-content:space-between;font-family:var(--sans);font-size:11.5px;color:var(--ink-3);margin-top:4px}
+
+/* index */
+.grp{display:grid;grid-template-columns:200px minmax(0,1fr);gap:40px;padding:34px 0 10px;border-top:1px solid var(--hair)}
+.grp:first-of-type{border-top:1px solid var(--ink)}
+.grp h3{font-family:var(--serif);font-weight:500;font-style:italic;font-size:22px;margin:0;color:var(--ink-2);font-variation-settings:"opsz" 24}
+.grp h3 small{display:block;font-style:normal;font-family:var(--sans);font-size:13.5px;color:var(--ink-3);margin-top:6px}
+.ents{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 48px}
+.ent{display:grid;grid-template-columns:minmax(0,1fr) 140px;grid-template-rows:auto auto 1fr;column-gap:24px;padding:0 0 30px;text-decoration:none;scroll-margin-top:24px}
+.ent h4{grid-column:1 / -1;font-family:var(--serif);font-weight:600;font-size:23px;line-height:1.25;margin:0 0 4px;font-variation-settings:"opsz" 28}
+.ent .d{grid-column:1 / -1;font-family:var(--sans);font-size:14.5px;line-height:1.5;color:var(--ink-2);margin:0 0 16px;max-width:30em}
+.ent .v{align-self:end;font-family:var(--sans)}
+.ent .v b{display:block;font-size:27px;font-weight:600;letter-spacing:-.02em;line-height:1.05;font-variant-numeric:tabular-nums}
+.ent .v span{display:block;font-size:13px;color:var(--ink-3);margin-top:5px;line-height:1.4}
+.ent .m{align-self:end;min-width:0}
+.ent .m svg{display:block;width:100%;height:auto}
+.ent .m .fl{display:flex;justify-content:space-between;font-family:var(--sans);font-size:11.5px;color:var(--ink-3);margin-top:3px;font-variant-numeric:tabular-nums}
+.ent:hover h4{color:var(--blue)}
+.ent .soon{font-family:var(--sans);font-size:12.5px;color:var(--ink-3)}
+
+@media (max-width:1060px){
+  .finds{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 28px}
+  .grp{grid-template-columns:minmax(0,1fr);gap:16px}
+}
+@media (max-width:860px){
+  .xhead{padding-top:52px}
+  .feat{grid-template-columns:minmax(0,1fr);gap:28px;margin-top:52px;padding:30px 0}
+  .feat h2{font-size:34px}
+  .feat .find{font-size:19px}
+  .feat .fig b{font-size:42px}
+  .sect{margin-top:84px}
+  .finds{grid-template-columns:minmax(0,1fr)}
+  .shd span{display:none}
+  .ents{grid-template-columns:minmax(0,1fr)}
+  .ent{grid-template-columns:minmax(0,1fr) 120px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="mast">
+  <a class="brand" href="./explore.html">India Atlas</a>
+  <nav class="nav" aria-label="Main">
+    <a href="./explore.html" aria-current="page">Dossiers</a>
+    <a href="../e-ledger.html#releases">Releases</a>
+    <a href="./cpi.html#method">Method</a>
+    <a class="find" href="../e-ledger.html#find">Search <kbd>/</kbd></a>
+  </nav>
+</header>
+
+<header class="xhead">
+  <p class="kick">India Atlas</p>
+  <h1>The dossiers</h1>
+  <p class="lede">Thirteen long reads, one for each statistic that shapes Indian life. Each starts with the latest number, says plainly what it does and does not mean, and goes down to the states, the items and the households.</p>
+</header>
+
+<article class="feat" aria-labelledby="f-h">
+  <div>
+    <p class="tag">Prices, updated 12 July 2026</p>
+    <h2 id="f-h"><a href="./cpi.html">Consumer prices</a></h2>
+    <p class="find">Inflation has risen for five months in a row and is back above the RBI's 4 per cent target, led by food and eating out.</p>
+    <div class="fig"><b>4.38%</b><span>June 2026</span></div>
+    <a class="go" href="./cpi.html">Read the dossier</a>
+  </div>
+  <div class="plot" id="featplot" aria-label="Consumer price inflation since 2014"></div>
+</article>
+
+<section class="sect" aria-labelledby="fd-h">
+  <div class="shd"><h2 id="fd-h">From the latest data</h2><span>Four things the numbers say now</span></div>
+  <div class="finds" id="finds"></div>
+</section>
+
+<section class="sect" aria-labelledby="ix-h">
+  <div class="shd" style="margin-bottom:22px"><h2 id="ix-h">Every dossier</h2><span>13 dossiers, 3,824 series</span></div>
+  <div id="groups"></div>
+</section>
+
+<footer class="foot">
+  <div><b>India Atlas</b></div>
+  <div><p>Prices, output and jobs figures are published by the Ministry of Statistics and Programme Implementation and its National Statistics Office; exchange rates by the Reserve Bank of India; energy capacity by the Ministry of New and Renewable Energy; manufacturing's long history by the World Bank. We estimate nothing ourselves unless a chart says so.</p></div>
+</footer>
+</div>
+
+<script src="./data.js"></script>
+<script src="./kit.js"></script>
+<script>
+(() => {
+const A = window.ATLAS, K = window.Kit, C = K.C, {num, grp, mi} = K;
+const fy = iso => { const y = +iso.slice(0, 4), m = +iso.slice(5, 7), s = m >= 4 ? y : y - 1; return `${s}-${String((s + 1) % 100).padStart(2, "0")}`; };   // Indian fiscal and survey years, April to March
+const last = (b, k) => { const a = b.series[k].data; let i = a.length - 1; while (a[i] == null) i--; return {v:a[i], d:b.dates[i]}; };
+const first = (b, k) => { const a = b.series[k].data; let i = 0; while (a[i] == null) i++; return {v:a[i], d:b.dates[i]}; };
+const tail = (b, k, n) => ({d:b.dates.slice(-n), v:b.series[k].data.slice(-n)});
+const yr = iso => iso.slice(0, 4);
+
+document.fonts.ready.then(() => {
+  /* featured chart */
+  const fp = document.getElementById("featplot");
+  const drawFeat = anim => { fp.innerHTML = "";
+    K.line(fp, fp.clientWidth, {from:0, band:[2, 6], target:4, unit:"%", endLabels:true, animate:anim, h:w => w < 600 ? 250 : 320,
+      aria:"Consumer price inflation since 2014", series:[{dates:A.cpi.dates, vals:A.cpi.series.headline.data, color:C.blue, liveFrom:"2025-01-01", endName:"June 2026"}]}, false); };
+  drawFeat(true);
+  let w0 = innerWidth; addEventListener("resize", () => { if (innerWidth !== w0) { w0 = innerWidth; drawFeat(false); } });
+
+  /* findings */
+  const twoBars = (rows, w = 240, h = 84) => {
+    const mx = Math.max(...rows.map(r => Math.abs(r.v))), x0 = w / 2 + 6, sc = (w / 2 - 66) / mx;
+    return `<svg width="100%" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true"><line x1="${x0}" x2="${x0}" y1="6" y2="${h - 4}" stroke="${C.base}"/>` +
+      rows.map((r, i) => { const y = 16 + i * 34, bw = Math.abs(r.v) * sc, pos = r.v >= 0;
+        return `<rect x="${pos ? x0 : x0 - bw}" y="${y}" width="${bw}" height="13" rx="2" fill="${pos ? C.blue : C.gold}"/>
+          <text x="${pos ? x0 - 8 : x0 + 8}" y="${y + 11}" text-anchor="${pos ? "end" : "start"}" style="font:13px 'Golos Text';fill:${C.ink2}">${r.n}</text>
+          <text x="${pos ? x0 + bw + 6 : x0 - bw - 6}" y="${y + 11}" text-anchor="${pos ? "start" : "end"}" style="font:600 13px 'Golos Text';fill:${C.ink}">${r.v > 0 ? "+" : "−"}${Math.abs(r.v).toFixed(1)}%</text>`; }).join("") + `</svg>`;
+  };
+  const tom = A.cpiItems.series.tomato.data.at(-1), pot = A.cpiItems.series.potato.data.at(-1);
+  const sF = first(A.mnre, "solar"), sL = last(A.mnre, "solar");
+  const mF = first(A.wdi, "mva_pct_gdp"), mL = last(A.wdi, "mva_pct_gdp");
+  const wL = last(A.wpi, "headline");
+  const FINDS = [
+    {src:"Consumer prices, June 2026", href:"./cpi.html#kitchen", chart:twoBars([{n:"Tomato", v:tom}, {n:"Potato", v:pot}]),
+      text:`Tomatoes cost ${num(tom, 1)}% more than a year earlier. Potatoes cost ${num(-pot, 1)}% less.`},
+    {src:"Renewable energy, June 2026", href:"#mnre", chart:K.mini(A.mnre.dates, A.mnre.series.solar.data, {w:240, h:72}), fl:[yr(sF.d), yr(sL.d)],
+      text:`Installed solar capacity has grown nearly fivefold since January 2020, from ${num(sF.v / 1000, 1)} to ${num(sL.v / 1000, 1)} gigawatts.`},
+    {src:"Manufacturing, 1960 to 2025", href:"#wdi", chart:K.mini(A.wdi.dates, A.wdi.series.mva_pct_gdp.data, {w:240, h:72}), fl:[yr(mF.d), yr(mL.d)],
+      text:`Manufacturing is ${num(mL.v, 1)}% of GDP, a smaller share than in 1960, when it was ${num(mF.v, 1)}%.`},
+    {src:"Wholesale prices, April 2026", href:"#wpi", chart:K.mini(A.wpi.dates.slice(-36), A.wpi.series.headline.data.slice(-36), {w:240, h:72, zero:true}), fl:[yr(A.wpi.dates.at(-36)), yr(wL.d)],
+      text:`Wholesale inflation jumped to ${num(wL.v)}% in April from 3.89% in March, as fuel prices rose 24.71%.`},
+  ];
+  document.getElementById("finds").innerHTML = FINDS.map(f => `<a class="fd" href="${f.href}"><span class="fs">${f.src}</span>
+    <div class="fc"><div style="width:100%">${f.chart}${f.fl ? `<div class="fl"><span>${f.fl[0]}</span><span>${f.fl[1]}</span></div>` : ""}</div></div>
+    <p>${f.text}</p><span class="more">Read the dossier</span></a>`).join("");
+
+  /* every dossier */
+  const mk = (b, k, n, opts = {}) => { const t = n ? tail(b, k, n) : {d:b.dates, v:b.series[k].data}; const P = K.pts(t.d, t.v);
+    return {svg:K.mini(t.d, t.v, {w:140, h:42, ...opts}), fl:[opts.flf ? opts.flf(P[0].d) : yr(P[0].d), opts.flf ? opts.flf(P.at(-1).d) : yr(P.at(-1).d)]}; };
+  const cpiL = last(A.cpi, "headline"), gdpL = last(A.gdp, "gdp"), iipL = last(A.iip, "general"), fxL = last(A.fx, "usdinr"), urL = last(A.plfs, "ur"),
+        asiL = last(A.asi, "number_of_factories"), gerL = last(A.aishe, "ger"), sexL = last(A.sex, "sex_ratio"), imr = A.nfhs.series.i4_infant_mortality_rate_per_1000_live_births.data;
+  const GROUPS = [
+    ["Prices", "What things cost", [
+      {id:"cpi", n:"Consumer prices", href:"./cpi.html", d:"What households pay, and the number the RBI is asked to hold.", v:`${num(cpiL.v)}%`, p:"June 2026, year on year", m:mk(A.cpi, "headline", 36)},
+      {id:"wpi", n:"Wholesale prices", d:"Prices at the factory gate and the farm, and why they part ways with what shoppers pay.", v:`${num(wL.v)}%`, p:"April 2026, year on year", m:mk(A.wpi, "headline", 36, {zero:true})}]],
+    ["Output", "What the economy makes", [
+      {id:"gdp", n:"GDP", d:"The size and speed of the whole economy, and what growth is made of.", v:`${num(gdpL.v)}%`, p:"Jan to Mar 2026, year on year", m:mk(A.gdp, "gdp", 0, {flf:fy})},
+      {id:"iip", n:"Industrial production", d:"The monthly pulse of mines, factories and power plants.", v:`${num(iipL.v)}%`, p:"June 2026, year on year", m:mk(A.iip, "general", 27, {zero:true})},
+      {id:"asi", n:"Factories", d:"Registered factories audited to the last rupee, beside the small firms counted only since 2021.", v:grp(asiL.v), p:`factories in ${fy(asiL.d)}`, m:mk(A.asi, "number_of_factories", 0, {flf:fy})},
+      {id:"wdi", n:"Manufacturing", d:"Six decades of manufacturing's share of the economy, measured by the World Bank.", v:`${num(mL.v, 1)}%`, p:"of GDP in 2025", m:mk(A.wdi, "mva_pct_gdp", 0)}]],
+    ["Trade and money", "India and the world", [
+      {id:"fx", n:"External account", d:"Exports, imports, reserves and the rupee: the country's ledger with the world.", v:`₹${fxL.v.toFixed(2)}`, p:"per US dollar, June 2025", m:mk(A.fx, "usdinr", 0)}]],
+    ["Work and households", "How people earn and spend", [
+      {id:"jobs", n:"Jobs", d:"Who works, who looks for work, what they earn, and how the survey counts them.", v:`${urL.v.toFixed(1)}%`, p:"unemployed, June 2026", m:mk(A.plfs, "ur", 0, {flf:K.monS})},
+      {id:"hces", n:"Household consumption", d:"What Indian families spend in a month, from the poorest twentieth to the richest.", v:`₹${grp(A.hces.series.rural.data[1])}`, p:"a person a month, rural, 2023-24", m:mk(A.hces, "rural", 0, {kind:"slope", flf:fy})}]],
+    ["People", "Health, learning and gender", [
+      {id:"nfhs", n:"Family health", d:"Anaemia, nutrition, maternal care and fertility across two national surveys.", v:num(imr[1], 1), p:"infant deaths per 1,000 births", m:{svg:K.mini(A.nfhs.dates, imr, {w:140, h:42, kind:"slope"}), fl:["2015-16", "2019-21"]}},
+      {id:"gender", n:"Gender", d:"The sex ratio across seven censuses, and the gaps in health, schooling and work that follow.", v:String(sexL.v), p:"women per 1,000 men, Census 2011", m:mk(A.sex, "sex_ratio", 0)},
+      {id:"aishe", n:"Higher education", d:"Who goes to college, who is left out, and what the enrolment ratio really measures.", v:`${num(gerL.v, 1)}%`, p:`gross enrolment ratio, ${fy(gerL.d)}`, m:mk(A.aishe, "ger", 0, {flf:fy})}]],
+    ["Energy", "Power and its sources", [
+      {id:"mnre", n:"Renewable energy", d:"Solar, wind, hydro and bio capacity, added month by month and state by state.", v:`${num(sL.v / 1000, 1)} GW`, p:"of solar capacity, June 2026", m:mk(A.mnre, "solar", 0)}]],
+  ];
+  document.getElementById("groups").innerHTML = GROUPS.map(([g, sub, es]) => `<div class="grp"><h3>${g}<small>${sub}</small></h3><div class="ents">${es.map(e =>
+    `<a class="ent" id="${e.id}" href="${e.href || "#" + e.id}"><h4>${e.n}</h4><p class="d">${e.d}</p>
+      <div class="v"><b>${e.v}</b><span>${e.p}</span></div>
+      <div class="m">${e.m.svg}<div class="fl"><span>${e.m.fl[0]}</span><span>${e.m.fl[1]}</span></div></div></a>`).join("")}</div></div>`).join("");
+});
+})();
+</script>
+</body>
+</html>

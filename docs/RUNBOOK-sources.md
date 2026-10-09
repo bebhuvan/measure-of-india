@@ -51,6 +51,14 @@ Export `async function build<Name>(ROOT, dcfg, VINTAGE)` and register it in
 - **Archive then canonicalize.** `writeRaw()` the archival dump FIRST (it is
   the audit trail), then `writeSeries()` the canonical bundles. Never edit
   `data/raw/` by hand.
+- **Disclosure lives on the series.** Missing data is `null`; an interior
+  null is disclosed in that series' `gaps` (+ `gapsNote` for the
+  non-obvious why); an interpolated/imputed value stays in `data` but its
+  date is listed in that series' `estimated`. Never assemble a bundle-level
+  `meta.gaps` union — it is retired (CONTRACT-series rule 2) and validate
+  rejects it. If an adapter still emits the legacy shape, `writeSeries`
+  migrates it onto the series mechanically — that is a safety net, not a
+  licence; write per-series disclosure directly.
 
 ## 3. Validate — `scripts/validate.mjs`
 
@@ -71,11 +79,18 @@ source-specific identity check is not done.
 
 ## 5. Prose (if the dossier has dated slots)
 
-- `pipeline/slots.yml`: add/extend slots with `requiredFigures`.
+- `pipeline/slots.yml`: add/extend slots with `requiredFigures`; the
+  `current-reading.what-the-print-says` slot carries the coverage floors
+  (`minSeriesMentioned`, `mustName: [extremes]`, `mustAcknowledge:
+  [contradictions]`).
 - `pipeline/facts.mjs`: reads the CURRENT bundle from the registry's
   `currentBundle` (prose describes the current ruler, not a retired one) and
-  labels periods per the registry's `calendar`. Ensure the facts sheet
-  exposes the figures the slots require.
+  labels periods per the registry's `calendar`. Declare the sibling bundles
+  the writer must see as the registry's `proseInputs`. Ensure the facts
+  sheet exposes the figures the slots require.
+- Hand-written "As of" paragraphs on the page are governed: each `.now`
+  block needs a `pipeline/asof-manifest.json` entry, and the gate runs in
+  CI (`pipeline/asof.mjs`; `docs/RELEASE-CHECKLIST.md` §1b).
 - Run `npm run prose:dry` and read the prompt. If the facts sheet can't
   support the brief, fix the facts sheet, not the prompt.
 

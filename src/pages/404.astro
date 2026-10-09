@@ -5,7 +5,7 @@ import { DOSSIERS } from "../dossiers/registry.js";
 ---
 <Base
   title="Page not found — India Atlas"
-  description="The page you asked for does not exist. The dossiers are one click away."
+  description="The page you asked for does not exist. The guides are one click away."
   canonical="https://atlas.thisindianlife.today/404/"
 >
 <div class="page spage">
@@ -14,19 +14,18 @@ import { DOSSIERS } from "../dossiers/registry.js";
     <h1 style="font-size:3rem;max-width:20ch">This page does not exist.</h1>
     <p style="max-width:52ch;margin-top:18px;color:var(--ink-soft)">
       The address may be mistyped, or the page moved when the atlas was
-      reorganised. Nothing was lost — every dossier is one click away.
-    </p>
+      reorganised. Nothing was lost: every guide is one click away. </p>
     <p style="margin-top:28px">
-      <a class="btn" href="/" style="font-family:'IBM Plex Mono',monospace;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border:1px solid var(--ink);padding:10px 18px;color:var(--ink)">← Front page</a>
+      <a class="btn" href="/" style="font-family:var(--sans);font-size:.85rem;text-decoration:none;border:1px solid var(--ink);padding:10px 18px;color:var(--ink)">← Front page</a>
       &nbsp;&nbsp;
-      <a class="btn" href="/register/" style="font-family:'IBM Plex Mono',monospace;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border:1px solid var(--ink);padding:10px 18px;color:var(--ink)">The register ↑</a>
+      <a class="btn" href="/register/" style="font-family:var(--sans);font-size:.85rem;text-decoration:none;border:1px solid var(--ink);padding:10px 18px;color:var(--ink)">The register ↑</a>
     </p>
   </div>
   <div class="break" style="padding:24px 0 88px">
-    <div class="sec-head"><span class="no">§</span><h2>All {DOSSIERS.length} dossiers</h2><span class="line"></span></div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:22px;font-family:'IBM Plex Mono',monospace;font-size:.72rem;letter-spacing:.06em">
+    <div class="sec-head"><span class="no">§</span><h2>All {DOSSIERS.length} guides</h2><span class="line"></span></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:22px;font-family:var(--sans);font-size:.86rem;letter-spacing:.06em">
       {DOSSIERS.map((d) => (
-        <a href={`/dossiers/${d.slug}/`} style="text-decoration:none;color:var(--ink)">№ {d.no} · {d.name}</a>
+        <a href={`/guides/${d.slug}/`} style="text-decoration:none;color:var(--ink)">№ {d.no}, {d.name}</a>
       ))}
     </div>
   </div>

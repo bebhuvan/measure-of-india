@@ -44,20 +44,26 @@ const voice = fs.readFileSync(path.join(ROOT, "pipeline/voice.md"), "utf8");
 const rubric = fs.readFileSync(path.join(ROOT, "pipeline/rubric.md"), "utf8");
 
 async function llmOnce(system, user, temperature) {
+  const body = {
+    model: process.env.INDIA_ATLAS_LLM_MODEL,
+    temperature,
+    messages: [{ role: "system", content: system }, { role: "user", content: user }],
+  };
+  // GLM's optional thinking switch ("enabled"|"disabled") — passed through
+  // only when configured; unset means the provider default
+  if (process.env.INDIA_ATLAS_LLM_THINKING) body.thinking = { type: process.env.INDIA_ATLAS_LLM_THINKING };
   const res = await fetch(process.env.INDIA_ATLAS_LLM_BASE + "/chat/completions", {
     method: "POST",
     headers: { "content-type": "application/json", authorization: "Bearer " + process.env.INDIA_ATLAS_LLM_KEY },
-    body: JSON.stringify({
-      model: process.env.INDIA_ATLAS_LLM_MODEL,
-      temperature,
-      messages: [{ role: "system", content: system }, { role: "user", content: user }],
-    }),
+    body: JSON.stringify(body),
   });
   const json = await res.json();
   if (json.error) throw new Error("LLM API error: " + (json.error.message ?? JSON.stringify(json.error)));
   const choice = json.choices?.[0];
   if (!choice) throw new Error("LLM API returned no choices: " + JSON.stringify(json).slice(0, 400));
-  if (choice.finish_reason === "content_filter" || !choice.message?.content) return null;
+  // OpenAI names the safety stop "content_filter"; GLM names it "sensitive" —
+  // both are nondeterministic, both are resampled
+  if (choice.finish_reason === "content_filter" || choice.finish_reason === "sensitive" || !choice.message?.content) return null;
   return choice.message.content.trim();
 }
 
@@ -134,7 +140,13 @@ for (const slot of slots) {
   const coverage = Object.entries(facts.series).map(([k, s]) => `- ${s.label}: ${statusOf(k)}`);
   for (const pi of facts.proseInputs ?? []) {
     coverage.push(
-      `- [deep cut ${pi.bundle} — ${pi.seriesCount} series]: hottest ${pi.top?.label ?? "?"} at ${pi.top?.latest}, weakest ${pi.bottom?.label ?? "?"} at ${pi.bottom?.latest}`
+      // two different extremes, named for what they are: the RANGE (highest and lowest
+      // latest reading) and the MOVERS (biggest change on a year ago). Calling the mover
+      // "hottest" let the writer present it as the top of the range (IIP, Aug 2026:
+      // beverages at 18.25% was the biggest riser; electrical equipment at 30.92% was the top).
+      `- [deep cut ${pi.bundle} — ${pi.seriesCount} series]: range runs from ${pi.topByLatest?.label ?? pi.top?.label ?? "?"} at ${pi.topByLatest?.latest ?? pi.top?.latest} (highest latest reading) down to ${pi.bottomByLatest?.label ?? pi.bottom?.label ?? "?"} at ${pi.bottomByLatest?.latest ?? pi.bottom?.latest} (lowest latest reading)`
+      + (pi.top && pi.top.key !== pi.topByLatest?.key ? `; biggest rise on a year ago: ${pi.top.label}, now ${pi.top.latest} (not the highest reading)` : "")
+      + (pi.bottom && pi.bottom.key !== pi.bottomByLatest?.key ? `; biggest fall on a year ago: ${pi.bottom.label}, now ${pi.bottom.latest} (not the lowest reading)` : "")
       + (pi.tail ? `; median ${pi.tail.median}, ${pi.tail.rising} rising vs ${pi.tail.falling} falling, ${pi.tail.belowZero} below zero` : "")
       + " — summarize or name; never ignore the cut.",
     );

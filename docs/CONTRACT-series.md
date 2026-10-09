@@ -53,7 +53,11 @@ disagree, file a bug — one of them is wrong.
    non-null, interior to the series' own span, never also a gap.
 3. **One bundle, one instrument.** A base-year change, methodology revision,
    or coverage break starts a NEW bundle (`cpi.json` → `cpi-2024.json`).
-   Never splice. Pages may show both, labelled as different rulers.
+   Never splice. Pages may show both, labelled as different rulers. Every base
+   of a product that has changed ruler is registered in `data/sources.yml`
+   `seams:` (window, bundles, and an agency `bridge` only where the agency
+   publishes one); validate.mjs fails an unregistered bundle or one outside its
+   base's window.
 4. **`meta.vintage` is data vintage.** Adapters must not stamp the fetch date
    unless the body actually changed (see `writeRaw`'s comparison semantics in
    `scripts/lib/util.mjs`).

@@ -51,3 +51,5 @@ export const pt0 = (v) => v.toFixed(0) + " pt";
 export const inr2 = (v) => "₹" + v.toFixed(2);
 export const lakhN = (v) => (v / 1e5).toFixed(2);
 export const croreN = (v) => (v / 1e7).toFixed(2);
+// ₹ lakh crore, from values already in lakh crore (BSR-2 deposits)
+export const lc1 = (v) => "₹" + v.toFixed(1) + " lakh crore";

@@ -34,7 +34,7 @@ const SCAFFOLD = argv.includes("--scaffold");
 function scanBlocks() {
   const blocks = [];
   for (const d of DOSSIERS) {
-    const file = path.join(ROOT, "src/pages/dossiers", d.slug + ".astro");
+    const file = path.join(ROOT, "src/pages/guides", d.slug + ".astro");
     if (!fs.existsSync(file)) continue;
     const src = fs.readFileSync(file, "utf8");
     const figRe = /<figure id="([a-z0-9-]+)"[^>]*>([\s\S]*?)<\/figure>/g;

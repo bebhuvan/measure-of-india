@@ -1,0 +1,293 @@
+---
+import Base from "../../layouts/Base.astro";
+import GuideData from "../../components/GuideData.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+const D = bySlug["deposits"];
+---
+<Base
+  title="Where Indians keep their money · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/deposits/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">Every year the Reserve Bank asks every bank in the country who its depositors are, what kind of account they hold, what interest they earn and how long their money is locked away. The answers describe the savings of a nation that still trusts the bank more than anything else.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>Reserve Bank of India, BSR-2</b></span>
+      <span>Instrument <b>Deposits with scheduled commercial banks, including RRBs</b></span>
+      <span>Frequency <b>Annual, as on 31 March</b></span>
+      <span>Window <b>March 2005 to March 2026</b></span>
+      <span>Latest <b id="m-latest">–</b></span>
+      <span>Unit <b>₹ lakh crore</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Household deposits, all banks</div><div class="v acc" id="n-hh">–</div><div class="d" id="d-hh">–</div><div class="nspark" id="nspark-hh"></div></div>
+      <div class="num"><div class="l">Share held in fixed deposits</div><div class="v" id="n-term">–</div><div class="d" id="d-term">–</div></div>
+      <div class="num"><div class="l">Fixed-deposit money earning below 6%, individuals</div><div class="v" id="n-low">–</div><div class="d" id="d-low">–</div></div>
+      <div class="num"><div class="l">Women's share of all bank deposits</div><div class="v" id="n-women">–</div><div class="d" id="d-women">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Household bank deposits</span><div class="big" id="rb-hh">–</div></div>
+      <p class="rt-cap">Everything Indian households held in commercial banks on 31 March: savings accounts, fixed deposits and current accounts, from individuals, small shops and partnerships to charities and self-help groups.</p>
+      <div class="rt-side"><span class="rk">In fixed deposits</span><div class="rt-side-v" id="rb-term">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the figures say</span>
+        <p>Households held <b id="cr-hh">–</b> in banks, <b id="cr-hh-share">–</b> of everything deposited by anyone. Of their money, <b id="cr-term">–</b> sat in fixed deposits, <b id="cr-sav">–</b> in savings accounts and <b id="cr-cur">–</b> in current accounts.</p>
+        <p>Individuals' fixed deposits have moved with interest rates. In March 2022, <b id="cr-low22">–</b> of that money earned less than 6% a year; by <span id="cr-lastyr">–</span>, only <b id="cr-low">–</b> did, and most of it earned between 6 and 8%.</p>
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What they do not say</span>
+        <p>They do not say how much each family has saved. These are totals across every account in the country, and a few very large deposits weigh as much as millions of small ones. Nor do they count money in post office schemes, cooperative banks, mutual funds, shares or gold, which together hold much of what households save.</p>
+        <p>The household sector also includes small businesses run as proprietorships and partnerships, so a shop's working capital counts here. The interest-rate, maturity and size tables cover individuals only, a narrower group.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 how the money is held -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>Savings accounts and fixed deposits</h2><span class="line"></span><span class="unit">Household deposits by type, ₹ lakh crore</span></div>
+    <div class="break">
+      <figure id="cb-types" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>About half of household bank money has always been in fixed deposits</h3>
+            <div class="sub">Household deposits by type of account, ₹ lakh crore, as on 31 March. The household sector was redefined in 2018-19, so the two periods are drawn apart.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-types">–</div><div class="c">fixed deposits, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Fixed (term) deposits</button>
+            <button class="chip"><i style="background:#5F6675"></i>Savings accounts</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Current accounts</button>
+          </div>
+          <div class="plotzone"><div id="plot-types" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Basic Statistical Return 2 (DBIE report 737). Old sector classification to March 2018, new classification from March 2019; never joined.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Three lines, one for each kind of account. The pale lines on the left are the old definition of a household, used until March 2018; the solid lines from March 2019 use the new one, which follows the international system of national accounts. The two cannot be joined into one series, so the chart leaves a gap where the definition changed.</p>
+            <p>A savings account is money you can spend tomorrow. A fixed deposit is money you have agreed to leave alone for a set time in return for a higher rate. The split between the two is a rough measure of how much households are saving rather than simply keeping.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of March 2026</span>
+            <p>Fixed deposits <b id="ex-ty-term">–</b>, savings accounts <b id="ex-ty-sav">–</b>, current accounts <b id="ex-ty-cur">–</b>. Fixed deposits were <b id="ex-ty-share">–</b> of household deposits, against <b id="ex-ty-share19">–</b> in March 2019.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 03 at what rate -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>At what interest rate</h2><span class="line"></span><span class="unit">Individuals' fixed deposits by the rate they earn</span></div>
+    <div class="break">
+      <figure id="cb-rates" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>In 2022 most fixed-deposit money earned below 6%; by 2026 almost none did</h3>
+            <div class="sub">Individuals' term deposits by contracted interest rate, share of the rupee value, as on 31 March each year.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-rates">–</div><div class="c">earning below 6%, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-rates"></div>
+          <div class="plotzone"><div id="plot-rates" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, BSR-2 Table 3.5 (DBIE report 865). Individuals include Hindu undivided families. Rates are those contracted when each deposit was placed, not today's card rates.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each bar is one year's stock of fixed deposits held by individuals, split by the interest rate each deposit was booked at. Darker blue means a higher rate. Because deposits are locked at the rate of the day they were made, the stock changes slowly: a rate cut takes a year or two to work through, as old deposits mature and are renewed at the new rate.</p>
+            <p>The rate on a deposit is not what the saver keeps. Inflation and tax both take a share, so a 6% deposit in a year of 6% inflation earns nothing in real terms before tax.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of March 2026</span>
+            <p>Below 6%: <b id="ex-r-low">–</b> of the money. Between 6 and 7%: <b id="ex-r-67">–</b>. Between 7 and 8%: <b id="ex-r-78">–</b>. Eight per cent or more: <b id="ex-r-8">–</b>. Four years earlier, in March 2022, <b id="ex-r-low22">–</b> earned below 6%.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 04 for how long and how big -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>For how long, and in what size</h2><span class="line"></span><span class="unit">Individuals' fixed deposits, latest year</span></div>
+    <div class="break">
+      <figure id="cb-maturity" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Most fixed-deposit money comes due within a year</h3>
+            <div class="sub">Individuals' term deposits by time left until they mature, share of the rupee value, as on 31 March.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-maturity">–</div><div class="c">maturing within a year</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-maturity" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, BSR-2 Table 3.4 (DBIE report 864). Residual maturity: the time remaining, not the term the deposit was opened for.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Time left to maturity tells you how quickly deposits will be renewed at new rates. When most money comes due within a year, a change in interest rates reaches savers quickly. It also shows how short a horizon most savers keep: few lock money away for more than three years.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of March 2026</span>
+            <p>Within a year: <b id="ex-m-1y">–</b> of the money. One to three years: <b id="ex-m-3y">–</b>. Three years or more: <b id="ex-m-long">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-size" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Most of the money sits in deposits of ₹1 lakh to ₹15 lakh</h3>
+            <div class="sub">Individuals' term deposits by the size of each deposit, ₹ lakh crore, as on 31 March 2026, in the finer bands the RBI introduced that year.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-size">–</div><div class="c">in deposits of ₹1 lakh to ₹15 lakh</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-size" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, BSR-2 Table 3.6 (DBIE report 866). Size of each deposit account, not of each depositor: one family can hold several.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each bar is the total held in deposits of a given size. Small deposits are numerous but hold little; the middle bands hold most of individuals' money. For companies and institutions the picture is the opposite, with deposits of a crore or more dominating, which is why individuals are shown here on their own.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of March 2026</span>
+            <p>Deposits of ₹1 lakh to ₹15 lakh hold <b id="ex-s-mid">–</b> of individuals' fixed-deposit money; deposits under ₹1 lakh, <b id="ex-s-small">–</b>; deposits of ₹1 crore or more, <b id="ex-s-big">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 where and who -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>Where, and whose</h2><span class="line"></span><span class="unit">Household deposits by place, and women's deposits</span></div>
+    <div class="break">
+      <figure id="cb-place" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Two-fifths of household deposits sit in metropolitan branches</h3>
+            <div class="sub">Household deposits by the location of the bank branch, ₹ lakh crore, as on 31 March: March 2019 and the latest year.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-place">–</div><div class="c">metropolitan share, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>March 2019</button>
+            <button class="chip"><i style="background:#2E4BD8"></i><span id="lg-place">Latest</span></button>
+          </div>
+          <div class="plotzone"><div id="plot-place" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, BSR-2 Table 1.2 (DBIE report 847). Population groups follow the census classification of the centre where the branch sits.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Deposits are counted where the branch is, not where the depositor lives, so city branches collect some money from the towns around them. Even so, the gap is large: a rural branch serves many more depositors, each with far less.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of March 2026</span>
+            <p>Metropolitan branches held <b id="ex-p-metro">–</b> of household deposits and rural branches <b id="ex-p-rural">–</b>. Women held <b id="ex-p-women">–</b> of all bank deposits, against <b id="ex-p-women19">–</b> in March 2019.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 what this measures -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="prose">
+      <p>The Basic Statistical Return 2 is an annual census, not a sample: every scheduled commercial bank, including regional rural banks, reports every deposit account it holds on 31 March, classified by who owns it, what type of account it is, its interest rate, its term and its size. The Reserve Bank publishes the totals a few months later.</p>
+      <p>"Household sector" is a statistical category. It covers individuals and Hindu undivided families, the businesses households run without incorporating them, and non-profit bodies that serve households, such as self-help groups and trusts. The tables on interest rate, maturity and size are published for individuals only.</p>
+      <p>The classification of owners changed with the 2018-19 return to match the international system of national accounts. The old and new household series measure related but different things, so this guide shows them apart and never adds one to the other.</p>
+    </div>
+  </section>
+
+  <!-- § 07 misreadings -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>How to misread these numbers</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li><span class="no">1</span><div><h3>"The average Indian has this much in the bank."</h3><p>These are totals. Divided by the population they give an average that describes almost nobody: a few large accounts hold a large share, and many people hold very little.</p></div></li>
+      <li><span class="no">2</span><div><h3>"Fixed deposits pay 7%, so savers are doing well."</h3><p>Only after inflation and tax. A deposit earning 7% in a year of 5% inflation gains about 2% in real terms before tax, and interest is taxed at the saver's income-tax rate.</p></div></li>
+      <li><span class="no">3</span><div><h3>"Households are saving less because bank deposits grew slowly."</h3><p>Bank deposits are one place to save. Money moving into mutual funds, shares, insurance or gold is still saved; it simply sits outside these tables.</p></div></li>
+      <li><span class="no">4</span><div><h3>"Women hold a fifth of deposits, so they own a fifth of savings."</h3><p>Accounts are counted under the name of the holder, and families often open accounts in one member's name for reasons of convenience or tax. The share is a measure of accounts, not of control over money.</p></div></li>
+    </ul>
+  </section>
+
+  <GuideData slug="deposits" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>Reserve Bank of India, Basic Statistical Return 2: deposits with scheduled commercial banks including regional rural banks, annual, as on 31 March. Tables retrieved from the RBI's Database on Indian Economy (DBIE): Ownership of Deposits (report 737), Table 1.2 (847), Table 3.4 (864), Table 3.5 (865) and Table 3.6 (866), through the owner's local mirror of DBIE. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Checked against the RBI's own release for March 2025: households held 60.2% of deposits and women 20.7%, which these tables reproduce exactly.</p>
+      </div>
+      <div>
+        <h6>Method</h6>
+        <p>Amounts are converted from rupees to ₹ lakh crore. The all-depositor total under the new classification is the sum of its five top-level sectors, which matches the published all-India figure. Shares are computed from those amounts. Nothing is estimated.</p>
+      </div>
+      <div>
+        <h6>Revisions and breaks</h6>
+        <p>Two breaks are disclosed and never joined across: the change in sector classification between March 2018 and March 2019, and the finer deposit-size bands introduced in March 2026. The size chart uses the finer March 2026 bands only; the four older bands, with March 2026 summed into them, are in the data download.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Version 1.0, built October 2026 from RBI data to March 2026. Revised each year when the RBI publishes the next return.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, bank deposits</span>
+      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/deposits.client.js";
+</script>
+</Base>

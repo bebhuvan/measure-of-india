@@ -184,15 +184,36 @@ const PRODUCTS = [
   // the new base: quarterly prints continue here after Q2 FY26; separate
   // bundle, never spliced with the 2011-12 base
   { slug: "gdp-2022", dossier: "gdp", cadence: 3, range: [-10, 20], base: "2022-23", cross: ["gdp", "gdp_growth_published", 0.6], cross2: ["gva", "gva_growth_published", 0.6] },
-  { slug: "wpi", dossier: "wpi", cadence: 1, range: [-30, 60], cross: ["headline", "published_headline", 0.15] },
-  { slug: "wpi-groups", dossier: "wpi", cadence: 1, range: [-70, 130] },
-  { slug: "wpi-subgroups", dossier: "wpi", cadence: 1, range: [-80, 250] },
+  // the 2022-23 base in full (2026-10): same builder as the 2011-12 set.
+  // Ranges are provisional documentation, wide until the first bake is measured.
+  { slug: "gdp-2022-expenditure", dossier: "gdp", cadence: 3, range: [-40, 60], base: "2022-23" },
+  { slug: "gdp-2022-industries", dossier: "gdp", cadence: 3, range: [-40, 60], base: "2022-23" },
+  { slug: "gdp-2022-nominal", dossier: "gdp", cadence: 3, range: [-20, 40], base: "2022-23", cross: ["gdp_nominal", "nominal_growth_published", 0.6] },
+  { slug: "gdp-2022-accounts", dossier: "gdp", cadence: 12, staleAfter: "2025-04", range: [-40, 60], base: "2022-23", freq: "annual" },
+  // the NSO back series, 1951-52 to 2011-12 at 2011-12 prices — frozen; an
+  // agency bridge in sources.yml seams, never joined to the current series.
+  // Range documents the measured extremes: GDP -5.24 (1979-80), gfcf 22.19,
+  // gfce 22.88, saving rate 37.82; mining -17.53 in 2011-12, the year the
+  // back-cast meets the current series (level 316,533 -> 261,035 as published)
+  { slug: "gdp-back", dossier: "gdp", cadence: 12, staleAfter: "2011-04", range: [-20, 45], base: "2011-12", freq: "annual" },
+  // base 2011-12 ended at Apr 2026 (the OEA moved to 2022-23) — frozen
+  { slug: "wpi", dossier: "wpi", cadence: 1, staleAfter: "2026-04", range: [-30, 60], cross: ["headline", "published_headline", 0.15] },
+  { slug: "wpi-groups", dossier: "wpi", cadence: 1, staleAfter: "2026-04", range: [-70, 130] },
+  { slug: "wpi-subgroups", dossier: "wpi", cadence: 1, staleAfter: "2026-04", range: [-80, 250] },
+  // base 2022-23 — separate bundles, never spliced with 2011-12. No weights
+  // are served, so there is no computed-vs-published crosscheck here; the
+  // headline IS the published index (meta.note). Ranges are provisional
+  // documentation, set wide until the first bake is measured.
+  { slug: "wpi-2022", dossier: "wpi", cadence: 1, staleAfter: "2026-08", range: [-30, 60], base: "2022-23=100" },
+  { slug: "wpi-2022-groups", dossier: "wpi", cadence: 1, staleAfter: "2026-08", range: [-70, 130], base: "2022-23=100" },
+  { slug: "wpi-2022-subgroups", dossier: "wpi", cadence: 1, staleAfter: "2026-08", range: [-80, 250], base: "2022-23=100" },
+  { slug: "wpi-2022-items", dossier: "wpi", cadence: 1, staleAfter: "2026-08", range: [-90, 500], base: "2022-23=100" },
   // single named goods: the extremes are real observations (garlic +476%
   // y/y in Jan 2024; molasses swings between -83% and +361%); range is
   // documentation, not curation. Seasonal items (litchi, mango and kin)
   // carry interior nulls where the source serves 0/absent levels —
-  // disclosed in meta.gaps.
-  { slug: "wpi-items", dossier: "wpi", cadence: 1, range: [-90, 500] },
+  // disclosed per series (CONTRACT-series rule 2).
+  { slug: "wpi-items", dossier: "wpi", cadence: 1, staleAfter: "2026-04", range: [-90, 500] },
   { slug: "cpialrl-1986", dossier: "cpialrl", cadence: 1, staleAfter: "2025-05", range: [-5, 25], base: "1986-87=100" },
   { slug: "cpialrl-2019", dossier: "cpialrl", cadence: 1, range: [-10, 300], base: "2019=100" },
   // range is wide: Assam's published old-base levels spike ~20% in late 2021
@@ -489,19 +510,23 @@ withBundle("cpi-2024-items", (b) => {
 
 /* ---- WPI items (v1.2): y/y from levels, hull sanity, completeness ---- */
 
-withBundle("wpi-items", (b) => {
-  const rawFile = path.join(ROOT, "data/raw/wpi-items.json");
-  if (!fs.existsSync(rawFile)) return fail("wpi-items: data/raw/wpi-items.json missing");
+// One check for every WPI base: itemsSlug/subgroupsSlug are the baked
+// bundles, rawRel the item-level raw dump (2011-12 field names on every base),
+// minItems the basket size floor.
+function checkWpiItems(itemsSlug, subgroupsSlug, rawRel, minItems, basket) {
+withBundle(itemsSlug, (b) => {
+  const rawFile = path.join(ROOT, rawRel);
+  if (!fs.existsSync(rawFile)) return fail(`${itemsSlug}: ${rawRel} missing`);
   const raw = JSON.parse(fs.readFileSync(rawFile, "utf8"));
   const n = Object.keys(b.series).length;
-  if (n < 690) fail(`wpi-items: only ${n} item series baked (the 2011-12 basket has 697)`);
-  else ok(`wpi-items: ${n} item series baked`);
+  if (n < minItems) fail(`${itemsSlug}: only ${n} item series baked (${basket})`);
+  else ok(`${itemsSlug}: ${n} item series baked`);
   // every baked y/y must equal the recomputation from the raw index levels
   const r2 = (v) => Math.round(v * 100) / 100;
   let cells = 0, bad = 0;
   for (const [k, s] of Object.entries(b.series)) {
     const lv = raw.items[k]?.levels;
-    if (!lv) { fail(`wpi-items: ${k} missing from raw dump`); continue; }
+    if (!lv) { fail(`${itemsSlug}: ${k} missing from raw dump`); continue; }
     b.dates.forEach((d, i) => {
       const ym = d.slice(0, 7);
       const [y, m] = ym.split("-");
@@ -512,19 +537,19 @@ withBundle("wpi-items", (b) => {
       cells++;
       if (expect == null || got == null || Math.abs(expect - got) > 0.005) {
         bad++;
-        if (bad <= 5) fail(`wpi-items: ${k} ${ym} baked ${got} != recomputed ${expect}`);
+        if (bad <= 5) fail(`${itemsSlug}: ${k} ${ym} baked ${got} != recomputed ${expect}`);
       }
     });
   }
-  if (bad > 5) fail(`wpi-items: ${bad - 5} further y/y recomputation mismatches suppressed`);
-  if (!bad) ok(`wpi-items: y/y matches recomputation from raw levels (${cells} cells)`);
+  if (bad > 5) fail(`${itemsSlug}: ${bad - 5} further y/y recomputation mismatches suppressed`);
+  if (!bad) ok(`${itemsSlug}: y/y matches recomputation from raw levels (${cells} cells)`);
   // hull sanity: a sub-group index is a positive-weighted mean of its items'
   // indices, so its y/y must lie inside the min–max hull of its items' y/y
   // (exact weights are not served — no weighted recomposition is possible).
   // Checked for every sub-group-month whose full item set carries a y/y;
   // items sitting directly under a group (Atf, Electricity, …) are skipped.
   // Measured before asserting: worst deviation 0.10pt over 16,492 cells.
-  withBundle("wpi-subgroups", (sg) => {
+  withBundle(subgroupsSlug, (sg) => {
     const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
     const members = {};
     for (const [k, it] of Object.entries(raw.items)) {
@@ -542,13 +567,16 @@ withBundle("wpi-items", (b) => {
         const lo = Math.min(...vals), hi = Math.max(...vals);
         const dev = sv < lo ? lo - sv : sv > hi ? sv - hi : 0;
         if (dev > worst) { worst = dev; worstAt = `${sk} ${d.slice(0, 7)}`; }
-        if (dev > 0.75) { viol++; if (viol <= 5) fail(`wpi-items: sub-group ${sk} y/y ${sv} outside its items' hull [${lo.toFixed(2)}, ${hi.toFixed(2)}] at ${d.slice(0, 7)}`); }
+        if (dev > 0.75) { viol++; if (viol <= 5) fail(`${itemsSlug}: sub-group ${sk} y/y ${sv} outside its items' hull [${lo.toFixed(2)}, ${hi.toFixed(2)}] at ${d.slice(0, 7)}`); }
       }
     });
-    if (!checked) fail("wpi-items: hull sanity checked 0 sub-group-months");
-    else if (!viol) ok(`wpi-items: every sub-group y/y inside its items' hull (${checked} cells, worst dev ${worst.toFixed(3)}pt at ${worstAt})`);
+    if (!checked) fail(`${itemsSlug}: hull sanity checked 0 sub-group-months`);
+    else if (!viol) ok(`${itemsSlug}: every sub-group y/y inside its items' hull (${checked} cells, worst dev ${worst.toFixed(3)}pt at ${worstAt})`);
   });
 });
+}
+checkWpiItems("wpi-items", "wpi-subgroups", "data/raw/wpi-items.json", 690, "the 2011-12 basket has 697");
+checkWpiItems("wpi-2022-items", "wpi-2022-subgroups", "data/raw/wpi-2022-items.json", 940, "the 2022-23 basket has 953");
 
 /* ---- RBI v1.2 identities: partners, commodities, turnover ---- */
 
@@ -1177,6 +1205,73 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
   });
   if (worst <= 1) ok(`mnre-solar-categories: sub-categories sum to Solar Total (worst dev ${worst.toFixed(2)} MW at ${worstAt})`);
 }));
+
+/* ---- the NSO back series meets the current 2011-12 series ----
+ * The back series is a bridge only if its last year sits on the current
+ * series: its 2011-12 GDP level must equal the 2011-12-base level for the same
+ * year (measured 2026-10-09: 87,36,331 vs 87,36,328 crore, a rounding gap). */
+{
+  const bf = path.join(ROOT, "data/raw/nas-back-levels.json"), nf = path.join(ROOT, "data/raw/nas-nominal.json");
+  if (fs.existsSync(bf) && fs.existsSync(nf)) {
+    const back = JSON.parse(fs.readFileSync(bf, "utf8")).constant?.gdp?.["2011-04"];
+    const cur = JSON.parse(fs.readFileSync(nf, "utf8")).annual_constant_gdp?.["2011-04"];
+    if (back == null || cur == null) fail("gdp-back: 2011-12 GDP level missing from the back or current raw dump");
+    else if (Math.abs(back / cur - 1) > 1e-4) fail(`gdp-back: 2011-12 GDP ${back} (back series) != ${cur} (current 2011-12 base): the bridge does not meet the series`);
+    else ok(`gdp-back: 2011-12 GDP level meets the current series (${back} vs ${cur} crore)`);
+  }
+}
+
+/* ---- seams: the base-year registry (sources.yml `seams`) ----
+ * For every product that has changed ruler: each bundle of that dossier is
+ * registered under exactly one base, its meta.base matches, and its dates
+ * stay inside that base's window. Bundles drawn from an agency bridge (a
+ * published back series) are registered under the bridge, never as a
+ * second base. Overlaps between consecutive bases are reported. */
+{
+  const files = fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => f.endsWith(".json"));
+  const byDossier = {};
+  for (const f of files) {
+    const slug = f.replace(/\.json$/, "");
+    const m = load(slug).meta ?? {};
+    (byDossier[m.dossier] ??= []).push(slug);
+  }
+  for (const [dossier, bases] of Object.entries(cfg.seams ?? {})) {
+    const owner = new Map(); // bundle slug -> base entry
+    const windowOf = new Map(); // bundle slug -> { from, to } it must stay inside
+    for (const b of bases) {
+      for (const slug of [...(b.bundles ?? []), ...(b.bridge?.bundles ?? [])]) {
+        if (owner.has(slug)) fail(`seams/${dossier}: ${slug} registered under both "${owner.get(slug).base}" and "${b.base}"`);
+        owner.set(slug, b);
+        // a bridge (an agency back series) may declare its own window
+        const viaBridge = (b.bridge?.bundles ?? []).includes(slug);
+        windowOf.set(slug, viaBridge && b.bridge.from ? { from: b.bridge.from, to: b.bridge.to ?? null } : { from: b.from, to: b.to });
+      }
+    }
+    for (const slug of byDossier[dossier] ?? []) {
+      if (!owner.has(slug)) fail(`seams/${dossier}: ${slug} is not registered under any base in sources.yml seams`);
+    }
+    let inWindow = 0;
+    for (const [slug, b] of owner) {
+      const file = path.join(ROOT, "data/series", slug + ".json");
+      if (!fs.existsSync(file)) { fail(`seams/${dossier}: registered bundle ${slug} does not exist`); continue; }
+      const bundle = load(slug);
+      if (bundle.meta.dossier !== dossier) fail(`seams/${dossier}: ${slug} belongs to dossier "${bundle.meta.dossier}"`);
+      if (bundle.meta.base !== b.base) fail(`seams/${dossier}: ${slug} meta.base "${bundle.meta.base}" != registered base "${b.base}"`);
+      const first = bundle.dates[0].slice(0, 7), last = bundle.dates.at(-1).slice(0, 7);
+      const w = windowOf.get(slug);
+      if (first < w.from) fail(`seams/${dossier}: ${slug} starts ${first}, before its window on base ${b.base} begins (${w.from})`);
+      else if (w.to && last > w.to) fail(`seams/${dossier}: ${slug} runs to ${last}, after its window on base ${b.base} ends (${w.to})`);
+      else inWindow++;
+    }
+    const sorted = [...bases].sort((x, y) => (x.from < y.from ? -1 : 1));
+    const overlaps = [];
+    for (let i = 1; i < sorted.length; i++) {
+      const prev = sorted[i - 1], cur = sorted[i];
+      if (prev.to && prev.to >= cur.from) overlaps.push(`${prev.base}/${cur.base} ${cur.from}..${prev.to}`);
+    }
+    ok(`seams/${dossier}: ${owner.size} bundles on ${bases.length} bases, ${inWindow} inside their window${overlaps.length ? `; overlaps ${overlaps.join(", ")}` : ""}`);
+  }
+}
 
 if (failures) { console.error(`\n${failures} validation failure(s)`); process.exit(1); }
 console.log("validate: all checks passed");

@@ -5,7 +5,7 @@
 // month exists, so y/y becomes computable from April 2026 — published growth
 // is kept as a cross-check.
 
-import { mospi } from "../mospi.mjs";
+import { mospi, mospiAll } from "../mospi.mjs";
 import { writeSeries, writeRaw, yoyFromLevels, monthAxis } from "../util.mjs";
 
 // month_code (fiscal order) + FY label ("2026-27") -> "YYYY-MM"
@@ -22,8 +22,7 @@ export async function buildIsp(root, dcfg, vintage) {
   const publishedGrowth = {}; // sector -> Map("YYYY-MM" -> published y/y)
   const rawRows = [];
   for (let mc = 1; mc <= 12; mc++) {
-    const res = await mospi(dcfg.fetch.endpoint, { month_code: mc, page: 1, limit: 500 });
-    const rows = (res.data ?? []).filter((r) => r.frequency === "Monthly");
+    const rows = (await mospiAll(dcfg.fetch.endpoint, { month_code: mc })).filter((r) => r.frequency === "Monthly");
     rawRows.push(...rows);
     for (const r of rows) {
       const ym = ispMonth(r.year, mc);
@@ -42,12 +41,12 @@ export async function buildIsp(root, dcfg, vintage) {
   process.stdout.write(`isp: ${sectors.length} sectors, ${allMonths[0]} .. ${allMonths.at(-1)}\n`);
 
   const axis = monthAxis(allMonths[0], allMonths.at(-1));
-  const greys = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
+  const greys = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
   const series = {};
   sectors.forEach((s, i) => {
     const key = s.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
     series[key] = {
-      name: `isp_${key}_index`, label: s, color: i === 0 ? "#BE3E26" : greys[(i - 1) % greys.length],
+      name: `isp_${key}_index`, label: s, color: i === 0 ? "#2E4BD8" : greys[(i - 1) % greys.length],
       data: axis.map((ym) => levels[s].get(ym) ?? null), unit: "index",
     };
   });

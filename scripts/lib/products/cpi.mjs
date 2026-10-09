@@ -14,7 +14,7 @@ import { mospi } from "../mospi.mjs";
 import { MONTHS, round2, writeSeries, writeRaw, yoyFromLevels, monthAxis } from "../util.mjs";
 
 const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
-const GREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
+const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 
 const SECTORS = { combined: 3, rural: 1, urban: 2 };
 
@@ -208,10 +208,10 @@ export async function buildCpi(root, dcfg, vintage) {
       },
       dates,
       series: {
-        headline: { name: `headline_cpi${sfx}_yoy_pct`, label: "Headline", color: "#BE3E26", data: axis.map((ym) => yoy.headline.get(ym) ?? null), ...(headEst.length ? { estimated: headEst } : {}) },
-        food: { name: `food_beverages${sfx}_yoy_pct`, label: "Food", color: "#5B564B", data: axis.map((ym) => yoy.food.get(ym) ?? null) },
-        fuel: { name: `fuel_light${sfx}_yoy_pct`, label: "Fuel", color: "#A8A293", data: axis.map((ym) => yoy.fuel.get(ym) ?? null) },
-        core: { name: `core${sfx}_yoy_pct`, label: "Core", color: "#C6C0B0", data: axis.map((ym) => yoy.core.get(ym) ?? null), ...(coreEst.length ? { estimated: coreEst } : {}) },
+        headline: { name: `headline_cpi${sfx}_yoy_pct`, label: "Headline", color: "#2E4BD8", data: axis.map((ym) => yoy.headline.get(ym) ?? null), ...(headEst.length ? { estimated: headEst } : {}) },
+        food: { name: `food_beverages${sfx}_yoy_pct`, label: "Food", color: "#5F6675", data: axis.map((ym) => yoy.food.get(ym) ?? null) },
+        fuel: { name: `fuel_light${sfx}_yoy_pct`, label: "Fuel", color: "#A3A9B4", data: axis.map((ym) => yoy.fuel.get(ym) ?? null) },
+        core: { name: `core${sfx}_yoy_pct`, label: "Core", color: "#C9CED6", data: axis.map((ym) => yoy.core.get(ym) ?? null), ...(coreEst.length ? { estimated: coreEst } : {}) },
       },
       crosscheck: { published_headline: axis.map((ym) => yoy.published_headline.get(ym) ?? null) },
     };
@@ -577,7 +577,7 @@ export async function buildCpi2024(root, dcfg, vintage) {
     series[k] = {
       name: `cpi2024_${k}_yoy_pct`,
       label: d.division_code === HEADLINE_CODE ? "Headline · base 2024" : d.division_name,
-      color: d.division_code === HEADLINE_CODE ? "#BE3E26" : GREYS[(i - 1) % GREYS.length],
+      color: d.division_code === HEADLINE_CODE ? "#2E4BD8" : GREYS[(i - 1) % GREYS.length],
       data: axis.map((ym) => yoy.get(ym) ?? null),
     };
     pubCross[k] = axis.map((ym) => cur.combined[k].published.get(ym) ?? null);
@@ -590,7 +590,7 @@ export async function buildCpi2024(root, dcfg, vintage) {
 
   /* ---- sectors bundle: rural / urban published General index ---- */
   const secSeries = {}, secCross = {};
-  for (const [sector, color] of [["rural", "#5B564B"], ["urban", "#A8A293"]]) {
+  for (const [sector, color] of [["rural", "#5F6675"], ["urban", "#A3A9B4"]]) {
     const yoy = yoyFromLevels(cur[sector].headline.levels);
     secSeries[sector] = {
       name: `cpi2024_headline_${sector}_yoy_pct`, label: `Headline · ${sector} · base 2024`, color,
@@ -705,7 +705,7 @@ export async function buildCpi2024(root, dcfg, vintage) {
     dates: backAxis.map((ym) => `${ym}-01`),
     series: {
       headline: {
-        name: "cpi2024_back_headline_yoy_pct", label: "Headline · base 2024 · NSO back-cast", color: "#C6C0B0",
+        name: "cpi2024_back_headline_yoy_pct", label: "Headline · base 2024 · NSO back-cast", color: "#C9CED6",
         data: backAxis.map((ym) => backYoy.get(ym) ?? null),
       },
     },
@@ -767,11 +767,16 @@ export async function buildCpi2024(root, dcfg, vintage) {
       if (bundle2024.dates[i] >= "2026-01-01") { dates.push(bundle2024.dates[i]); vals.push(bundle2024.series.headline.data[i]); }
     }
     const bundleLinked2024 = {
+      // the back-cast's meta, but the period and release are the LIVE print's:
+      // the linked line ends where the current series ends, not in 2024
       meta: { ...bundleBack2024.meta,
+        latestPeriod: bundle2024.meta.latestPeriod,
+        releaseDate: bundle2024.meta.releaseDate,
+        revisionPolicy: bundle2024.meta.revisionPolicy,
         coverage: "All India, Combined; continuous General index on base 2024=100 — NSO back-cast (2013–2024) bridged to live levels (2025) and the current print (2026), one ruler throughout",
         note: "A single continuous headline on the 2024 base. The NSO publishes its own back-cast to 2013 (series=Back) and live levels from 2025 (series=Current); the 2025 year-on-year is computed at the handoff from back-cast 2024 levels to current 2025 levels. No 2012-base figure enters this series — it is not a cross-base splice. Headline only; the NSO back-casts no components." },
       dates,
-      series: { headline: { name: "cpi2024_linked_headline_yoy_pct", label: "Headline · base 2024 (linked)", color: "#BE3E26", data: vals } },
+      series: { headline: { name: "cpi2024_linked_headline_yoy_pct", label: "Headline · base 2024 (linked)", color: "#2E4BD8", data: vals } },
     };
     writeSeries(root, "data/series/cpi-2024-linked.json", bundleLinked2024);
   }

@@ -37,7 +37,7 @@
 import { mospi } from "../mospi.mjs";
 import { writeSeries, writeRaw } from "../util.mjs";
 
-const GREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
+const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 const slugify = (s) => String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 const fyStart = (fy) => `${String(fy).slice(0, 4)}-04`; // "2021-22" -> "2021-04"
 const val = (r) => {
@@ -123,13 +123,13 @@ export async function buildAishe(root, dcfg, vintage) {
   const ptrAll = toMap(ai(byInd["8"]).filter((r) => r.learning_mode === "Regular and Distance" && r.institution_type === "All Institutions"));
 
   const headlineSeries = {
-    universities: { name: "aishe_universities", label: "Universities", color: "#5B564B", data: data(toMap(ai(byInd["1"]))), unit: "count" },
-    colleges: { name: "aishe_colleges", label: "Colleges", color: "#5B564B", data: data(toMap(ai(byInd["2"]))), unit: "count" },
-    enrolment: { name: "aishe_enrolment_both", label: "Estimated student enrolment", color: "#BE3E26", data: data(enrolGT("Both")), unit: "count" },
-    teachers: { name: "aishe_teachers_all", label: "Teachers", color: "#5B564B", data: data(teacherMap), unit: "count" },
-    ger: { name: "aishe_ger_all_both", label: "Gross Enrolment Ratio · All Categories", color: "#5B564B", data: data(gerAll("Both")), unit: "percent" },
-    gpi: { name: "aishe_gpi_all", label: "Gender Parity Index · All Categories", color: "#5B564B", data: data(gpiAll), unit: "index" },
-    ptr: { name: "aishe_ptr_all", label: "Pupil-Teacher Ratio · all institutions", color: "#5B564B", data: data(ptrAll), unit: "ratio" },
+    universities: { name: "aishe_universities", label: "Universities", color: "#5F6675", data: data(toMap(ai(byInd["1"]))), unit: "count" },
+    colleges: { name: "aishe_colleges", label: "Colleges", color: "#5F6675", data: data(toMap(ai(byInd["2"]))), unit: "count" },
+    enrolment: { name: "aishe_enrolment_both", label: "Estimated student enrolment", color: "#2E4BD8", data: data(enrolGT("Both")), unit: "count" },
+    teachers: { name: "aishe_teachers_all", label: "Teachers", color: "#5F6675", data: data(teacherMap), unit: "count" },
+    ger: { name: "aishe_ger_all_both", label: "Gross Enrolment Ratio · All Categories", color: "#5F6675", data: data(gerAll("Both")), unit: "percent" },
+    gpi: { name: "aishe_gpi_all", label: "Gender Parity Index · All Categories", color: "#5F6675", data: data(gpiAll), unit: "index" },
+    ptr: { name: "aishe_ptr_all", label: "Pupil-Teacher Ratio · all institutions", color: "#5F6675", data: data(ptrAll), unit: "ratio" },
   };
   if (!headlineSeries.enrolment.data.some((v) => v != null)) throw new Error("AISHE: no enrolment data returned");
   const headlineBundle = {
@@ -154,7 +154,7 @@ export async function buildAishe(root, dcfg, vintage) {
       const key = `ger_${sc}_${g}`;
       accessSeries[key] = {
         name: `aishe_${key}`, label: `GER · ${sc === "all" ? "All Categories" : sc.toUpperCase()} · ${g}`,
-        color: sc === "all" && g === "both" ? "#BE3E26" : GREYS[ai2++ % GREYS.length],
+        color: sc === "all" && g === "both" ? "#2E4BD8" : GREYS[ai2++ % GREYS.length],
         data: data(toMap(rows)), unit: "percent",
       };
     }
@@ -166,7 +166,7 @@ export async function buildAishe(root, dcfg, vintage) {
     const key = `gpi_${sc}`;
     accessSeries[key] = {
       name: `aishe_${key}`, label: `GPI · ${sc === "all" ? "All Categories" : sc.toUpperCase()}`,
-      color: sc === "all" ? "#BE3E26" : GREYS[ai2++ % GREYS.length],
+      color: sc === "all" ? "#2E4BD8" : GREYS[ai2++ % GREYS.length],
       data: data(toMap(rows)), unit: "index",
     };
   }
@@ -175,7 +175,7 @@ export async function buildAishe(root, dcfg, vintage) {
     const key = `enrolment_${g}`;
     accessSeries[key] = {
       name: `aishe_${key}`, label: `Enrolment · ${g}`,
-      color: g === "female" ? "#BE3E26" : "#5B564B",
+      color: g === "female" ? "#2E4BD8" : "#5F6675",
       data: data(enrolGT(g)), unit: "count",
     };
   }
@@ -208,7 +208,7 @@ export async function buildAishe(root, dcfg, vintage) {
     if (!rows.length) continue;
     compSeries[key] = {
       name: `aishe_enrolment_${key}`, label,
-      color: key === "under_graduate" ? "#BE3E26" : GREYS[ci++ % GREYS.length],
+      color: key === "under_graduate" ? "#2E4BD8" : GREYS[ci++ % GREYS.length],
       data: data(toMap(rows)), unit: "count",
     };
   }
@@ -220,7 +220,7 @@ export async function buildAishe(root, dcfg, vintage) {
     groupMaps[gk] = m;
     compSeries[`social_${gk}`] = {
       name: `aishe_enrolment_social_${gk}`, label: `Enrolment · ${label}`,
-      color: gk === "obc" ? "#BE3E26" : GREYS[ci++ % GREYS.length],
+      color: gk === "obc" ? "#2E4BD8" : GREYS[ci++ % GREYS.length],
       data: data(m), unit: "count",
     };
   }
@@ -305,7 +305,7 @@ export async function buildAishe(root, dcfg, vintage) {
       const key = `${fk}_${g}`;
       tchSeries[key] = {
         name: `aishe_teachers_${key}`, label: `${label} · ${g}`,
-        color: fk === "lecturer_assistant" && g === "both" ? "#BE3E26" : GREYS[ti++ % GREYS.length],
+        color: fk === "lecturer_assistant" && g === "both" ? "#2E4BD8" : GREYS[ti++ % GREYS.length],
         data: data(toMap(rows)), unit: "count",
       };
     }
@@ -340,7 +340,7 @@ export async function buildAishe(root, dcfg, vintage) {
       const key = `${gk}_${g}`;
       minSeries[key] = {
         name: `aishe_minority_${key}`, label: `${label} · ${g}`,
-        color: gk === "muslims" && g === "both" ? "#BE3E26" : GREYS[mi++ % GREYS.length],
+        color: gk === "muslims" && g === "both" ? "#2E4BD8" : GREYS[mi++ % GREYS.length],
         data: data(toMap(rows)), unit: "count",
       };
     }

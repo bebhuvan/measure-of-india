@@ -23,15 +23,15 @@ const ISP = hydrate(ispBundle);
 // presentation palette: bundle default colors repeat across charts — assign
 // per-plate so every line on a chart is unique (the legend dimmer and end
 // labels key off color)
-S.sector_manufacturing.color = "#5B564B";
-S.sector_mining_quarrying.color = "#A8A293";
-S.sector_electricity_gas_supply.color = "#8A857A";
-S.sector_water_supply_sewerage_waste_management.color = "#C6C0B0";
+S.sector_manufacturing.color = "#5F6675";
+S.sector_mining_quarrying.color = "#A3A9B4";
+S.sector_electricity_gas_supply.color = "#878D99";
+S.sector_water_supply_sewerage_waste_management.color = "#C9CED6";
 S.sector_water_supply_sewerage_waste_management.label = "Water & waste";
-S.use_capital_goods.color = "#BE3E26";
-S.use_infrastructure_construction_goods.color = "#5B564B";
-S.use_consumer_durables.color = "#A8A293";
-S.use_consumer_non_durables.color = "#8A857A";
+S.use_capital_goods.color = "#2E4BD8";
+S.use_infrastructure_construction_goods.color = "#5F6675";
+S.use_consumer_durables.color = "#A3A9B4";
+S.use_consumer_non_durables.color = "#878D99";
 /* end labels must fit the right margin; the full bundle labels stay in the
  * legend chips and tooltips, the short forms ride the line ends */
 S.sector_electricity_gas_supply.endLabel = "Electricity";
@@ -39,13 +39,17 @@ S.sector_mining_quarrying.endLabel = "Mining";
 S.use_infrastructure_construction_goods.endLabel = "Infrastructure";
 S.use_consumer_non_durables.endLabel = "Non-durables";
 S.use_consumer_durables.endLabel = "Durables";
-IND.sub_manufacturing_manufacture_of_electrical_equipment.color = "#BE3E26";
-IND.sub_manufacturing_manufacture_of_motor_vehicles_trailers_and_semi_trailers.color = "#5B564B";
-IND.sub_manufacturing_manufacture_of_wearing_apparel.color = "#A8A293";
-IND.sub_manufacturing_manufacture_of_wood_and_products_of_wood_and_cork_except_furniture_manufacture_of_articles_of_straw_and_plaiting_materials.color = "#8A857A";
+IND.sub_manufacturing_manufacture_of_electrical_equipment.color = "#2E4BD8";
+IND.sub_manufacturing_manufacture_of_motor_vehicles_trailers_and_semi_trailers.color = "#5F6675";
+IND.sub_manufacturing_manufacture_of_wearing_apparel.color = "#A3A9B4";
+IND.sub_manufacturing_manufacture_of_wood_and_products_of_wood_and_cork_except_furniture_manufacture_of_articles_of_straw_and_plaiting_materials.color = "#878D99";
 const dates = S.general.data.map((d) => d.date);
 const MN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const fmtDate = (d) => MN[d.getUTCMonth()] + " " + d.getUTCFullYear();
+// periods named in descriptions come from the data, never typed in
+const MLONG = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const longDate = (d) => MLONG[d.getUTCMonth()] + " " + d.getUTCFullYear();
+const LATEST = longDate(S.general.data.at(-1).date);
 
 /* ---------- numbers ---------- */
 const L = {}; for (const k in S) L[k] = S[k].data.at(-1).value;
@@ -63,7 +67,7 @@ setHTML("n-head", L.general.toFixed(2) + pc);
 setHTML("n-mfg", L.sector_manufacturing.toFixed(2) + pc);
 setHTML("n-cap", L.use_capital_goods.toFixed(2) + pc);
 setHTML("n-elec", L.sector_electricity_gas_supply.toFixed(2) + pc);
-setHTML("d-head", `<b>${arrow(L.general - P.general)}</b> vs ${prevName} · ${word(L.general - P.general)}`);
+setHTML("d-head", `<b>${arrow(L.general - P.general)}</b> vs ${prevName}, ${word(L.general - P.general)}`);
 setHTML("d-mfg", `<b>${arrow(L.sector_manufacturing - P.sector_manufacturing)}</b> vs ${prevName}`);
 setHTML("d-cap", `<b>${arrow(L.use_capital_goods - P.use_capital_goods)}</b> vs ${prevName}`);
 setHTML("d-elec", `<b>${arrow(L.sector_electricity_gas_supply - P.sector_electricity_gas_supply)}</b> vs ${prevName}`);
@@ -100,7 +104,7 @@ document.getElementById("ledger-body").innerHTML = regRows.map(([k, nm, sub, sw]
   <tr>
     <td class="name"><span class="sw ${sw}"></span>${nm}<small>${sub}</small></td>
     <td class="val">${f1(L[k])}</td>
-    <td class="chg">${arrow(L[k] - P[k])} · ${word(L[k] - P[k])}</td>
+    <td class="chg">${arrow(L[k] - P[k])}, ${word(L[k] - P[k])}</td>
     <td class="yr">${f1(Y[k])}</td>
     <td class="spark" id="sp-${k}"></td>
   </tr>`).join("");
@@ -111,11 +115,11 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
   const dts = seriesList[0].data.map((d) => d.date);
   const dodged = dodgeEndLabels(seriesList.filter((s) => s.data.at(-1).value != null), (geo.d1 - geo.d0) * 0.05);
   const marks = [
-    Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-    Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
-    Plot.ruleY([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
+    Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+    Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+    Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
     ...keys.slice(1).map((k) => Plot.lineY(store[k].data, { x: "date", y: "value", stroke: store[k].color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" })),
-    Plot.lineY(store[keys[0]].data, { x: "date", y: "value", stroke: store[keys[0]].color, strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
+    Plot.lineY(store[keys[0]].data, { x: "date", y: "value", stroke: store[keys[0]].color, strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
     Plot.lineY(store[keys[0]].data.filter((d) => d.value != null).slice(-7), { x: "date", y: "value", stroke: store[keys[0]].color, strokeWidth: 4.5, strokeLinecap: "round", strokeLinejoin: "round" }),
     ...seriesList.filter((s) => s.data.at(-1).value != null).map((s) => Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: s === seriesList[0] ? 5 : 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
     ...dodged.filter((p) => Math.abs(p.y - p.value) > 0.05).map((p) => Plot.line([
@@ -123,14 +127,14 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
     ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
     ...dodged.map((p) => Plot.text([{ date: dts.at(-1), y: p.y }], {
       x: "date", y: "y", text: () => `${p.s.endLabel ?? p.s.label} ${p.value.toFixed(2)}%`,
-      dx: 16, fill: p.s.color, fontSize: 14.5, fontFamily: mono,
+      dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono,
       fontWeight: p.s === seriesList[0] ? 500 : 400, textAnchor: "start",
     })),
   ];
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => String(d.getUTCFullYear()) },
     y: { label: "↑ year-on-year, per cent", labelAnchor: "top", labelArrow: false,
          tickFormat: (d) => (d === yTicks[yTicks.length - 1] ? d + "%" : String(d)), ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
@@ -146,36 +150,36 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
 /* ---------- two bases ---------- */
 {
   // the retired base's first year has no y/y (no year-ago level); leading
-  // nulls are trimmed, interior gaps (Mar 2025 was never loaded) stay null
+  // nulls are trimmed, interior gaps stay null (Mar 2025 was missing until MoSPI loaded it, seen 2026-10)
   // and break the line — the gap is the story
   const oldData = OLD.general.data;
   const firstValid = oldData.findIndex((d) => d.value != null);
-  const old = { ...OLD.general, label: "Base 2011-12", color: "#8A857A", data: oldData.slice(firstValid) };
-  const cur = { ...S.general, label: "Base 2022-23", color: "#BE3E26" };
+  const old = { ...OLD.general, label: "Base 2011-12", color: "#878D99", data: oldData.slice(firstValid) };
+  const cur = { ...S.general, label: "Base 2022-23", color: "#2E4BD8" };
   const geo = { W: 1184, H: 520, ml: 80, mr: 195, mt: 36, mb: 48, d0: -65, d1: 140 };
   const yTicks = [-50, 0, 50, 100];
   const xTicks = []; for (let y = 2014; y <= 2026; y += 2) xTicks.push(new Date(Date.UTC(y, 0, 1)));
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => String(d.getUTCFullYear()) },
     y: { label: "↑ year-on-year, per cent", labelAnchor: "top", labelArrow: false,
          tickFormat: (d) => (d === yTicks[yTicks.length - 1] ? d + "%" : String(d)), ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
     marks: [
-      Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
-      Plot.ruleY([0], { stroke: "#1B1A17", strokeOpacity: 0.55, strokeWidth: 1 }),
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+      Plot.ruleY([0], { stroke: "#161A22", strokeOpacity: 0.55, strokeWidth: 1 }),
       Plot.lineY(old.data, { x: "date", y: "value", stroke: old.color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.lineY(cur.data, { x: "date", y: "value", stroke: cur.color, strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.ruleX([new Date(Date.UTC(2020, 3, 1))], { stroke: "#D8D3C4", strokeWidth: 1, strokeDasharray: "2,3" }),
-      Plot.text([{ date: new Date(Date.UTC(2018, 0, 1)), value: 133 }], { x: "date", y: "value", text: ["COVID-19 · −57% then +134%"], fontSize: 12.5, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
-      Plot.ruleX([new Date(Date.UTC(2023, 3, 1))], { stroke: "#C9C3B2", strokeWidth: 1 }),
-      Plot.text([{ date: new Date(Date.UTC(2023, 5, 1)), value: 132 }], { x: "date", y: "value", text: ["base revised · 2011-12 → 2022-23"], fontSize: 12.5, fill: "#5C574C", fontFamily: mono, textAnchor: "start" }),
-      Plot.dot([cur.data.at(-1)], { x: "date", y: "value", fill: cur.color, r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([cur.data.at(-1)], { x: "date", y: "value", text: (d) => `Base 2022-23 ${d.value.toFixed(2)}%`, dx: 16, fill: cur.color, fontSize: 14.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.lineY(cur.data, { x: "date", y: "value", stroke: cur.color, strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.ruleX([new Date(Date.UTC(2020, 3, 1))], { stroke: "#DADDE3", strokeWidth: 1, strokeDasharray: "2,3" }),
+      Plot.text([{ date: new Date(Date.UTC(2018, 0, 1)), value: 133 }], { x: "date", y: "value", text: ["COVID-19, −57% then +134%"], fontSize: 12.5, fill: "#878D99", fontFamily: mono, textAnchor: "start" }),
+      Plot.ruleX([new Date(Date.UTC(2023, 3, 1))], { stroke: "#CDD1D8", strokeWidth: 1 }),
+      Plot.text([{ date: new Date(Date.UTC(2023, 5, 1)), value: 132 }], { x: "date", y: "value", text: ["base revised, 2011-12 → 2022-23"], fontSize: 12.5, fill: "#5F6675", fontFamily: mono, textAnchor: "start" }),
+      Plot.dot([cur.data.at(-1)], { x: "date", y: "value", fill: cur.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([cur.data.at(-1)], { x: "date", y: "value", text: (d) => `Base 2022-23 ${d.value.toFixed(2)}%`, dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
       Plot.dot([old.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", fill: old.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([old.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", text: (d) => `Base 2011-12 ${d.value.toFixed(2)}%`, dx: 16, dy: 20, fill: old.color, fontSize: 13.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text([old.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", text: (d) => `Base 2011-12 ${d.value.toFixed(2)}%`, dx: 16, dy: 20, fill: "#161A22", fontSize: 12, fontFamily: mono, textAnchor: "start" }),
     ],
   });
   a11y(plot, "IIP year-on-year growth on the retired 2011-12 base and the current 2022-23 base",
@@ -196,8 +200,8 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
     const i = s.data.findIndex((d) => d.value != null);
     return { ...s, label, color, data: s.data.slice(i) };
   };
-  const h93 = trim(H93.general, "Base 1993-94", "#A8A293");
-  const h04 = trim(H04.general, "Base 2004-05", "#5B564B");
+  const h93 = trim(H93.general, "Base 1993-94", "#A3A9B4");
+  const h04 = trim(H04.general, "Base 2004-05", "#5F6675");
   const fmtM = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(2) + "%";
   // the one industrial winter: the deepest print either heritage ruler gave
   const trough = h04.data.reduce((a, d) => (d.value != null && d.value < a.value ? d : a), h04.data[0]);
@@ -215,28 +219,28 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => String(d.getUTCFullYear()) },
     y: { label: "↑ year-on-year, per cent", labelAnchor: "top", labelArrow: false,
          tickFormat: (d) => (d === yTicks[yTicks.length - 1] ? d + "%" : String(d)), ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
     marks: [
-      Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
-      Plot.ruleY([0], { stroke: "#1B1A17", strokeOpacity: 0.55, strokeWidth: 1 }),
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+      Plot.ruleY([0], { stroke: "#161A22", strokeOpacity: 0.55, strokeWidth: 1 }),
       Plot.lineY(h93.data, { x: "date", y: "value", stroke: h93.color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.lineY(h04.data, { x: "date", y: "value", stroke: h04.color, strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.ruleX([trough.date], { stroke: "#D8D3C4", strokeWidth: 1, strokeDasharray: "2,3" }),
-      Plot.text([{ date: new Date(Date.UTC(2008, 3, 1)), value: 24 }], { x: "date", y: "value", text: [`winter of 2008-09 · ${fmtM(trough.value)} on one ruler, +${gfc93.value.toFixed(2)}% on the other`], fontSize: 12.5, fill: "#8A857A", fontFamily: mono, textAnchor: "end" }),
-      Plot.ruleX([new Date(Date.UTC(2006, 3, 1))], { stroke: "#C9C3B2", strokeWidth: 1 }),
-      Plot.text([{ date: new Date(Date.UTC(2006, 5, 1)), value: -9.5 }], { x: "date", y: "value", text: ["base revised · 1993-94 → 2004-05"], fontSize: 12.5, fill: "#5C574C", fontFamily: mono, textAnchor: "start" }),
-      Plot.dot([trough], { x: "date", y: "value", fill: "#BE3E26", r: 4, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.ruleX([trough.date], { stroke: "#DADDE3", strokeWidth: 1, strokeDasharray: "2,3" }),
+      Plot.text([{ date: new Date(Date.UTC(2008, 3, 1)), value: 24 }], { x: "date", y: "value", text: [`winter of 2008-09, ${fmtM(trough.value)} on one ruler, +${gfc93.value.toFixed(2)}% on the other`], fontSize: 12.5, fill: "#878D99", fontFamily: mono, textAnchor: "end" }),
+      Plot.ruleX([new Date(Date.UTC(2006, 3, 1))], { stroke: "#CDD1D8", strokeWidth: 1 }),
+      Plot.text([{ date: new Date(Date.UTC(2006, 5, 1)), value: -9.5 }], { x: "date", y: "value", text: ["base revised, 1993-94 → 2004-05"], fontSize: 12.5, fill: "#5F6675", fontFamily: mono, textAnchor: "start" }),
+      Plot.dot([trough], { x: "date", y: "value", fill: "#2E4BD8", r: 4, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.dot([end93], { x: "date", y: "value", fill: h93.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       // the 1993-94 line ends mid-chart where the 2004-05 line is busy —
       // lift its label into the empty upper region on a short leader
       Plot.line([{ x: end93.date, y: end93.value + 1.2 }, { x: end93.date, y: 12.2 }], { x: "x", y: "y", stroke: h93.color, strokeWidth: 1, strokeOpacity: 0.45 }),
-      Plot.text([{ date: end93.date, value: 13 }], { x: "date", y: "value", text: [`Base 1993-94 ${end93.value.toFixed(2)}%`], dx: 6, fill: h93.color, fontSize: 13.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text([{ date: end93.date, value: 13 }], { x: "date", y: "value", text: [`Base 1993-94 ${end93.value.toFixed(2)}%`], dx: 6, fill: "#161A22", fontSize: 12, fontFamily: mono, textAnchor: "start" }),
       Plot.dot([end04], { x: "date", y: "value", fill: h04.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([end04], { x: "date", y: "value", text: (d) => `Base 2004-05 ${d.value.toFixed(2)}%`, dx: 16, fill: h04.color, fontSize: 13.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.text([end04], { x: "date", y: "value", text: (d) => `Base 2004-05 ${d.value.toFixed(2)}%`, dx: 16, fill: "#161A22", fontSize: 12, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
   });
   a11y(plot, "IIP year-on-year growth on the retired 1993-94 and 2004-05 bases, 1995 to 2017",
@@ -254,7 +258,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
   const plot = multiLine("cb-main", "plot-main", keys, S, geo, [-5, 0, 5, 10, 15],
     [2024, 2025, 2026].map((y) => new Date(Date.UTC(y, 0, 1))),
     "india-atlas_iip_sectors_base2022",
-    "IIP by sector including water supply and waste management, year-on-year, April 2024 to June 2026",
+    "IIP by sector including water supply and waste management, year-on-year, April 2024 to " + LATEST,
     "Line chart. General ends at " + L.general.toFixed(1) + " per cent, manufacturing " + L.sector_manufacturing.toFixed(1) + ", mining " + L.sector_mining_quarrying.toFixed(1) + ", electricity and gas " + L.sector_electricity_gas_supply.toFixed(1) + ", water supply and waste " + L.sector_water_supply_sewerage_waste_management.toFixed(1) + ".");
   wireLegend(document.getElementById("legend-main"), plot, keys, S);
 }
@@ -266,7 +270,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
   multiLine("cb-use", "plot-use", keys, S, geo, [-10, 0, 5, 10, 15],
     [2024, 2025, 2026].map((y) => new Date(Date.UTC(y, 0, 1))),
     "india-atlas_iip_use-based_base2022",
-    "IIP use-based categories, year-on-year, April 2024 to June 2026",
+    "IIP use-based categories, year-on-year, April 2024 to " + LATEST,
     "Line chart. Capital goods ends at " + L.use_capital_goods.toFixed(1) + " per cent against consumer non-durables at " + L.use_consumer_non_durables.toFixed(1) + ".");
 }
 
@@ -286,7 +290,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
   multiLine("cb-ind", "plot-ind", keys, IND, geo, [-10, 0, 10, 20, 30],
     [2024, 2025, 2026].map((y) => new Date(Date.UTC(y, 0, 1))),
     "india-atlas_iip_industries_base2022",
-    "Selected manufacturing industries, year-on-year, April 2024 to June 2026",
+    "Selected manufacturing industries, year-on-year, April 2024 to " + LATEST,
     "Line chart. Electrical equipment ends at +" + IND[keys[0]].data.at(-1).value.toFixed(1) + " per cent, apparel at " + IND[keys[2]].data.at(-1).value.toFixed(1) + ".");
 }
 
@@ -308,25 +312,25 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
   const extremes = rows.filter((r) => Math.abs(r.last.value) >= TH);
   setTxt("ind-n", String(rows.length));
   setTxt("ind-hot", String(extremes.length));
-  setTxt("ind-hi", rows[0].label + " · " + fmtSigned(rows[0].last.value));
-  setTxt("ind-lo", rows.at(-1).label + " · " + fmtSigned(rows.at(-1).last.value));
+  setTxt("ind-hi", rows[0].label + ", " + fmtSigned(rows[0].last.value));
+  setTxt("ind-lo", rows.at(-1).label + ", " + fmtSigned(rows.at(-1).last.value));
   const grid = document.getElementById("grid-ind22");
   for (const r of rows) {
     const ex = Math.abs(r.last.value) >= TH;
-    const col = ex ? "#BE3E26" : "#5B564B";
+    const col = ex ? "#2E4BD8" : "#5F6675";
     const div = document.createElement("div");
-    div.style.cssText = "border-top:1px solid #E6E2D6;padding-top:11px;min-width:0";
+    div.style.cssText = "border-top:1px solid #ECEEF2;padding-top:11px;min-width:0";
     div.innerHTML =
       `<div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">` +
-      `<div style="font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.09em;text-transform:uppercase;color:#8A857A;line-height:1.6;min-width:0">${r.label}</div>` +
-      `<div style="font-family:'Newsreader',serif;font-weight:300;font-size:1.3rem;font-variant-numeric:tabular-nums;white-space:nowrap;color:${ex ? "#BE3E26" : "#1B1A17"}">${fmtSigned(r.last.value)}</div></div>`;
+      `<div style="font-family:var(--sans);font-size:.58rem;color:#878D99;line-height:1.6;min-width:0">${r.label}</div>` +
+      `<div style="font-family:var(--serif);font-weight:300;font-size:1.3rem;font-variant-numeric:tabular-nums;white-space:nowrap;color:${ex ? "#2E4BD8" : "#161A22"}">${fmtSigned(r.last.value)}</div></div>`;
     const mini = Plot.plot({
       width: 260, height: 70, marginLeft: 2, marginRight: 8, marginTop: 6, marginBottom: 4,
       style: { background: "transparent" },
       x: { axis: null }, y: { axis: null, domain: [-20, 45] },
       marks: [
-        Plot.ruleY([0], { stroke: "#E0DACA", strokeWidth: 1 }),
-        Plot.lineY(r.s.data, { x: "date", y: "value", stroke: "#A8A293", strokeWidth: 1.1, strokeLinejoin: "round", clip: true }),
+        Plot.ruleY([0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+        Plot.lineY(r.s.data, { x: "date", y: "value", stroke: "#A3A9B4", strokeWidth: 1.1, strokeLinejoin: "round", clip: true }),
         Plot.dot([r.last], { x: "date", y: "value", fill: col, r: 2.6, stroke: "#FFFFFF", strokeWidth: 1 }),
       ],
     });
@@ -336,7 +340,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
     grid.append(div);
   }
   grid.setAttribute("aria-label",
-    rows.length + " small line charts, one per industry on the current 2022-23 base, April 2024 to June 2026, ordered by the latest print. " + extremes.length + " industries ended beyond plus or minus 10 per cent.");
+    rows.length + " small line charts, one per industry on the current 2022-23 base, April 2024 to " + LATEST + ", ordered by the latest print. " + extremes.length + " industries ended beyond plus or minus 10 per cent.");
   wireTools(document.getElementById("cb-ind22"), null, rows.map((r) => r.s), "india-atlas_iip_industries_base2022-all", fmtDate);
 }
 
@@ -389,20 +393,20 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
   const grid = document.getElementById("grid-old");
   for (const r of rows) {
     const ex = Math.abs(r.last.value) >= TH;
-    const col = ex ? "#BE3E26" : "#5B564B";
+    const col = ex ? "#2E4BD8" : "#5F6675";
     const div = document.createElement("div");
-    div.style.cssText = "border-top:1px solid #E6E2D6;padding-top:11px;min-width:0";
+    div.style.cssText = "border-top:1px solid #ECEEF2;padding-top:11px;min-width:0";
     div.innerHTML =
       `<div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px">` +
-      `<div style="font-family:'IBM Plex Mono',monospace;font-size:.58rem;letter-spacing:.09em;text-transform:uppercase;color:#8A857A;line-height:1.6;min-width:0">${SHORT[r.k]}</div>` +
-      `<div style="font-family:'Newsreader',serif;font-weight:300;font-size:1.3rem;font-variant-numeric:tabular-nums;white-space:nowrap;color:${ex ? "#BE3E26" : "#1B1A17"}">${fmtSigned(r.last.value)}</div></div>`;
+      `<div style="font-family:var(--sans);font-size:.58rem;color:#878D99;line-height:1.6;min-width:0">${SHORT[r.k]}</div>` +
+      `<div style="font-family:var(--serif);font-weight:300;font-size:1.3rem;font-variant-numeric:tabular-nums;white-space:nowrap;color:${ex ? "#2E4BD8" : "#161A22"}">${fmtSigned(r.last.value)}</div></div>`;
     const mini = Plot.plot({
       width: 260, height: 76, marginLeft: 2, marginRight: 8, marginTop: 6, marginBottom: 4,
       style: { background: "transparent" },
       x: { axis: null }, y: { axis: null, domain: [-40, 45] },
       marks: [
-        Plot.ruleY([0], { stroke: "#E0DACA", strokeWidth: 1 }),
-        Plot.lineY(r.s.data, { x: "date", y: "value", stroke: "#A8A293", strokeWidth: 1.1, strokeLinejoin: "round", clip: true }),
+        Plot.ruleY([0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+        Plot.lineY(r.s.data, { x: "date", y: "value", stroke: "#A3A9B4", strokeWidth: 1.1, strokeLinejoin: "round", clip: true }),
         Plot.dot([r.last], { x: "date", y: "value", fill: col, r: 2.6, stroke: "#FFFFFF", strokeWidth: 1 }),
       ],
     });
@@ -412,18 +416,18 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
     grid.append(div);
   }
   grid.setAttribute("aria-label",
-    "Twenty-three small line charts, one per manufacturing industry on the retired 2011-12 base, April 2013 to February 2026, ordered by the final print. Latest values are printed beside each panel; " + extremes.length + " industries ended beyond plus or minus 10 per cent.");
+    "Twenty-three small line charts, one per manufacturing industry on the retired 2011-12 base, April 2013 to March 2026, ordered by the final print. Latest values are printed beside each panel; " + extremes.length + " industries ended beyond plus or minus 10 per cent.");
   wireTools(document.getElementById("cb-old"), null, rows.map((r) => r.s), "india-atlas_iip_industries_base2011", fmtDate);
 }
 
 /* ---------- the services counterpart: ISP ---------- */
 {
   const pick = [
-    ["retail_trade", "#BE3E26", "Retail trade"],
-    ["road_transport", "#8A857A", "Road transport"],
-    ["banking", "#5B564B", "Banking"],
-    ["telecommunication", "#C6C0B0", "Telecommunication"],
-    ["it_computer_related_services", "#A8A293", "IT services"],
+    ["retail_trade", "#2E4BD8", "Retail trade"],
+    ["road_transport", "#878D99", "Road transport"],
+    ["banking", "#5F6675", "Banking"],
+    ["telecommunication", "#C9CED6", "Telecommunication"],
+    ["it_computer_related_services", "#A3A9B4", "IT services"],
   ];
   for (const [k, c, lb] of pick) { ISP[k].color = c; ISP[k].label = lb; }
   const keys = pick.map((p) => p[0]);
@@ -437,40 +441,44 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
   setTxt("isp-rt", lvl("retail_trade", li).toFixed(1));
   setTxt("isp-rt-yy", ((lvl("retail_trade", li) / lvl("retail_trade", yi) - 1) * 100).toFixed(1) + "%");
   setTxt("isp-bk", lvl("banking", li).toFixed(1));
-  const insMar = ISP.insurance.data[li - 2], insMay = ISP.insurance.data[li];
+  // March by date (the year-end month), not by position: positions drift with every print
+  const insMar = [...ISP.insurance.data].reverse().find((d) => d.date.getUTCMonth() === 2), insMay = ISP.insurance.data[li];
   setTxt("isp-ins-mar", insMar.value.toFixed(1));
   setTxt("isp-ins-may", insMay.value.toFixed(1));
 
-  const geo = { W: 1184, H: 470, ml: 70, mr: 250, mt: 30, mb: 48, d0: 80, d1: 160 };
-  const yTicks = [80, 100, 120, 140, 160];
+  // range from the plotted series (20-point grid), so a new print never leaves the frame
+  const ispVals = seriesList.flatMap((x) => x.data.map((d) => d.value)).filter((v) => v != null);
+  const ispLo = Math.min(80, Math.floor(Math.min(...ispVals) / 20) * 20), ispHi = Math.max(160, Math.ceil(Math.max(...ispVals) / 20) * 20);
+  const geo = { W: 1184, H: 470, ml: 70, mr: 250, mt: 30, mb: 48, d0: ispLo, d1: ispHi };
+  const yTicks = []; for (let t = ispLo; t <= ispHi; t += 20) yTicks.push(t);
   const xTicks = [new Date(Date.UTC(2025, 3, 1)), new Date(Date.UTC(2025, 6, 1)), new Date(Date.UTC(2025, 9, 1)), new Date(Date.UTC(2026, 0, 1)), new Date(Date.UTC(2026, 3, 1))];
   const dodged = dodgeEndLabels(seriesList, (geo.d1 - geo.d0) * 0.055);
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => MN[d.getUTCMonth()] + " " + String(d.getUTCFullYear()).slice(2) },
     y: { label: "↑ index · base 2024–25 = 100", labelAnchor: "top", labelArrow: false,
          ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
     marks: [
-      Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
-      Plot.ruleY([100], { stroke: "#C0B9A6", strokeWidth: 1, strokeDasharray: "2,4" }),
-      Plot.text([{ date: dsI[0], value: 88 }], { x: "date", y: "value", text: ["base-year average · 100"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+      Plot.ruleY([100], { stroke: "#BFC4CD", strokeWidth: 1, strokeDasharray: "2,4" }),
+      Plot.text([{ date: dsI[0], value: 88 }], { x: "date", y: "value", text: ["base-year average, 100"], fontSize: 12, fill: "#878D99", fontFamily: mono, textAnchor: "start" }),
       ...keys.slice(1).map((k) => Plot.lineY(ISP[k].data, { x: "date", y: "value", stroke: ISP[k].color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" })),
-      Plot.lineY(ISP.retail_trade.data, { x: "date", y: "value", stroke: ISP.retail_trade.color, strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.lineY(ISP.retail_trade.data, { x: "date", y: "value", stroke: ISP.retail_trade.color, strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
       ...seriesList.map((s) => Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: s === seriesList[0] ? 5 : 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
       ...dodged.filter((p) => Math.abs(p.y - p.value) > 0.05).map((p) => Plot.line([
         { x: dsI.at(-1), y: p.value }, { x: dsI.at(-1), y: p.y },
       ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
       ...dodged.map((p) => Plot.text([{ date: dsI.at(-1), y: p.y }], {
         x: "date", y: "y", text: () => `${p.s.label} ${p.value.toFixed(1)}`,
-        dx: 16, fill: p.s.color, fontSize: 14.5, fontFamily: mono,
+        dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono,
         fontWeight: p.s === seriesList[0] ? 500 : 400, textAnchor: "start",
       })),
     ],
   });
-  a11y(plot, "Index of Services Production, five selected series, levels, April 2025 to May 2026",
+  a11y(plot, "Index of Services Production, five selected series, levels, April 2025 to " + longDate(ISP.retail_trade.data.at(-1).date),
     "Line chart of index levels against a base-year average of 100, dashed. Retail trade ends at " + lvl("retail_trade", li).toFixed(1) + ", road transport " + lvl("road_transport", li).toFixed(1) + ", banking " + lvl("banking", li).toFixed(1) + ", telecommunication " + lvl("telecommunication", li).toFixed(1) + ", IT and computer services " + lvl("it_computer_related_services", li).toFixed(1) + ". The series is fourteen months old; no seasonal history exists.");
   document.getElementById("plot-isp").append(plot);
   wireTools(document.getElementById("cb-isp"), plot, seriesList, "india-atlas_isp_selected-services_base2024", fmtDate);
@@ -478,8 +486,8 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
   addCrosshair(document.getElementById("plot-isp"), plot, seriesList, geo, fmtDate, (v) => v.toFixed(1));
 
   /* ---- the full ISP register: all 19 series, levels ---- */
-  setTxt("isp-th-latest", "Level · " + fmtDate(dsI[li]));
-  setTxt("isp-th-yoy", "vs " + fmtDate(dsI[yi]) + " · from levels");
+  setTxt("isp-th-latest", "Level, " + fmtDate(dsI[li]));
+  setTxt("isp-th-yoy", "vs " + fmtDate(dsI[yi]) + ", from levels");
   setTxt("isp-th-year", fmtDate(dsI[yi]));
   const sparkLevel = (id, s) => {
     const vs = s.data.map((d) => d.value);
@@ -488,7 +496,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
       style: { background: "transparent" },
       x: { axis: null }, y: { axis: null, domain: [Math.min(...vs, 100), Math.max(...vs, 100)] },
       marks: [
-        Plot.ruleY([100], { stroke: "#E6E2D6" }),
+        Plot.ruleY([100], { stroke: "#ECEEF2" }),
         Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: 1.5, strokeLinejoin: "round" }),
         Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: 2.5, stroke: "#FFFFFF", strokeWidth: 1 }),
       ],
@@ -503,7 +511,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
     const vs = s.data.map((d) => d.value);
     return `
   <tr>
-    <td class="name"><span class="sw" style="background:${s.color}"></span>${s.label.trim()}<small>14 months · range ${Math.min(...vs).toFixed(1)} – ${Math.max(...vs).toFixed(1)}</small></td>
+    <td class="name"><span class="sw" style="background:${s.color}"></span>${s.label.trim()}<small>14 months, range ${Math.min(...vs).toFixed(1)} – ${Math.max(...vs).toFixed(1)}</small></td>
     <td class="val">${l.toFixed(1)}</td>
     <td class="chg">${(g >= 0 ? "▲ +" : "▼ −") + Math.abs(g).toFixed(1)}%</td>
     <td class="yr">${y.toFixed(1)}</td>
@@ -536,24 +544,24 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
         const yoy = ((s.data[li2].value / s.data[yi2].value - 1) * 100);
         const vs = s.data.map((d) => d.value);
         const div = document.createElement("div");
-        div.style.cssText = "border-top:1px solid #E6E2D6;padding-top:10px;min-width:0";
+        div.style.cssText = "border-top:1px solid #ECEEF2;padding-top:10px;min-width:0";
         const shortLabel = s.label.trim().replace(/\s+/g, " ");
         div.innerHTML =
-          `<div style="font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:.08em;text-transform:uppercase;color:#A8A293;margin-bottom:2px">${cluster}</div>` +
+          `<div style="font-family:var(--sans);font-size:.5rem;color:#A3A9B4;margin-bottom:2px">${cluster}</div>` +
           `<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">` +
-          `<div style="font-family:'IBM Plex Mono',monospace;font-size:.56rem;letter-spacing:.06em;color:#5B564C;line-height:1.5;min-width:0">${shortLabel}</div></div>` +
+          `<div style="font-family:var(--sans);font-size:.56rem;letter-spacing:.06em;color:#5B564C;line-height:1.5;min-width:0">${shortLabel}</div></div>` +
           `<div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:2px">` +
-          `<div style="font-family:'Newsreader',serif;font-weight:300;font-size:1.2rem;font-variant-numeric:tabular-nums;color:#1B1A17">${lv.toFixed(1)}</div>` +
-          `<div style="font-family:'IBM Plex Mono',monospace;font-size:.58rem;color:${yoy >= 0 ? "#5B564B" : "#BE3E26"}">${(yoy >= 0 ? "+" : "") + yoy.toFixed(1)}%</div></div>`;
+          `<div style="font-family:var(--serif);font-weight:300;font-size:1.2rem;font-variant-numeric:tabular-nums;color:#161A22">${lv.toFixed(1)}</div>` +
+          `<div style="font-family:var(--sans);font-size:.58rem;color:${yoy >= 0 ? "#5F6675" : "#2E4BD8"}">${(yoy >= 0 ? "+" : "") + yoy.toFixed(1)}%</div></div>`;
         const mini = Plot.plot({
           width: 210, height: 54, marginLeft: 2, marginRight: 6, marginTop: 4, marginBottom: 2,
           style: { background: "transparent" },
           x: { axis: null },
           y: { axis: null, domain: [Math.min(...vs, 95), Math.max(...vs, 105)] },
           marks: [
-            Plot.ruleY([100], { stroke: "#E6E2D6", strokeWidth: 1 }),
-            Plot.lineY(s.data, { x: "date", y: "value", stroke: "#A8A293", strokeWidth: 1.25, strokeLinejoin: "round" }),
-            Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: "#5B564B", r: 2.5, stroke: "#FFFFFF", strokeWidth: 1 }),
+            Plot.ruleY([100], { stroke: "#ECEEF2", strokeWidth: 1 }),
+            Plot.lineY(s.data, { x: "date", y: "value", stroke: "#A3A9B4", strokeWidth: 1.25, strokeLinejoin: "round" }),
+            Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: "#5F6675", r: 2.5, stroke: "#FFFFFF", strokeWidth: 1 }),
           ],
         });
         mini.setAttribute("aria-hidden", "true");

@@ -27,6 +27,8 @@ const pc = (u) => `<span class="pc">${u}</span>`;
 const fmtMY = (d) => ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getUTCMonth()] + " " + d.getUTCFullYear();
 const gw = (v, dp = 1) => (v / 1000).toFixed(dp);
 const last = (s) => s.data.filter((d) => d.value != null).at(-1).value;
+// the latest month, for descriptions (never typed in)
+const LATEST_SHORT = (() => { const d = S.grand_total.data.filter((x) => x.value != null).at(-1).date; return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getUTCMonth()] + " " + d.getUTCFullYear(); })();
 const prevV = (s) => s.data.filter((d) => d.value != null).at(-2).value;
 const firstV = (s) => s.data.filter((d) => d.value != null)[0].value;
 const atYearAgo = (s) => { const d = s.data.filter((d) => d.value != null); const t = d.at(-1).date.getTime() - 365.25 * 86400000; let best = null; for (const p of d) { if (p.date.getTime() <= t) best = p; else break; } return best ? best.value : null; };
@@ -53,11 +55,11 @@ setHTML("n-solar-share", (last(S.solar) / last(S.grand_total) * 100).toFixed(0) 
   const stEntries = Object.entries(statesBundle.series).map(([k, s]) => ({ k, label: s.label, v: s.data.at(-1) })).filter((d) => d.v != null).sort((a, b) => b.v - a.v);
   const top = stEntries[0];
   setHTML("n-top-state", gw(top.v, 0) + pc("GW"));
-  setHTML("d-top-state", `<b>${top.label.split(" · ")[1]}</b> · ${gw(top.v)} GW`);
+  setHTML("d-top-state", `<b>${top.label.split(" · ")[1]}</b>, ${gw(top.v)} GW`);
 }
 // titleblock sparkline
 {
-  const plot = Plot.plot({ width: 190, height: 44, marginLeft: 0, marginRight: 0, marginTop: 4, marginBottom: 4, style: { background: "transparent" }, x: { axis: null }, y: { axis: null, domain: [Math.min(...S.grand_total.data.map((d) => d.value)) - 5000, Math.max(...S.grand_total.data.map((d) => d.value)) + 5000] }, marks: [Plot.lineY(S.grand_total.data, { x: "date", y: "value", stroke: "#BE3E26", strokeWidth: 1.5, strokeLinejoin: "round" }), Plot.dot([S.grand_total.data.at(-1)], { x: "date", y: "value", fill: "#BE3E26", r: 2.5, stroke: "#FFFFFF", strokeWidth: 1 })] });
+  const plot = Plot.plot({ width: 190, height: 44, marginLeft: 0, marginRight: 0, marginTop: 4, marginBottom: 4, style: { background: "transparent" }, x: { axis: null }, y: { axis: null, domain: [Math.min(...S.grand_total.data.map((d) => d.value)) - 5000, Math.max(...S.grand_total.data.map((d) => d.value)) + 5000] }, marks: [Plot.lineY(S.grand_total.data, { x: "date", y: "value", stroke: "#2E4BD8", strokeWidth: 1.5, strokeLinejoin: "round" }), Plot.dot([S.grand_total.data.at(-1)], { x: "date", y: "value", fill: "#2E4BD8", r: 2.5, stroke: "#FFFFFF", strokeWidth: 1 })] });
   plot.setAttribute("aria-hidden", "true");
   document.getElementById("nspark-total").append(plot);
 }
@@ -77,18 +79,18 @@ setHTML("cr-rt-growth", ((last(SOL.rooftop) / firstV(SOL.rooftop) - 1) * 100).to
 
 /* ---------- § 02 register ---------- */
 const regRows = [
-  [S.grand_total, "Grand Total", "MNRE · MW · includes large hydro from Dec 2023", "s-acc", (v) => gw(v) + " GW", (v) => gw(v, 2) + " GW"],
-  [S.solar, "Solar Power", "MNRE · MW · Solar Power Total", "s-g1", (v) => gw(v) + " GW", (v) => gw(v, 2) + " GW"],
-  [S.wind, "Wind Power", "MNRE · MW", "s-g2", (v) => gw(v) + " GW", (v) => gw(v, 2) + " GW"],
-  [S.small_hydro, "Small Hydro Power", "MNRE · MW · ≤25 MW", "s-g3", (v) => gw(v, 0) + " GW", (v) => gw(v, 0) + " GW"],
-  [S.bio, "Bio Power", "MNRE · MW · Bio Power Total", "s-g4", (v) => gw(v, 0) + " GW", (v) => gw(v, 0) + " GW"],
-  [SOL.rooftop, "Solar · Rooftop (PM Surya Ghar)", "MNRE · MW", "s-acc", (v) => gw(v, 0) + " GW", (v) => gw(v, 1) + " GW"],
+  [S.grand_total, "Grand Total", "MNRE, MW, includes large hydro from Dec 2023", "s-acc", (v) => gw(v) + " GW", (v) => gw(v, 2) + " GW"],
+  [S.solar, "Solar Power", "MNRE, MW, Solar Power Total", "s-g1", (v) => gw(v) + " GW", (v) => gw(v, 2) + " GW"],
+  [S.wind, "Wind Power", "MNRE, MW", "s-g2", (v) => gw(v) + " GW", (v) => gw(v, 2) + " GW"],
+  [S.small_hydro, "Small Hydro Power", "MNRE, MW, ≤25 MW", "s-g3", (v) => gw(v, 0) + " GW", (v) => gw(v, 0) + " GW"],
+  [S.bio, "Bio Power", "MNRE, MW, Bio Power Total", "s-g4", (v) => gw(v, 0) + " GW", (v) => gw(v, 0) + " GW"],
+  [SOL.rooftop, "Solar, Rooftop (PM Surya Ghar)", "MNRE, MW", "s-acc", (v) => gw(v, 0) + " GW", (v) => gw(v, 1) + " GW"],
 ];
 document.getElementById("ledger-body").innerHTML = regRows.map(([s, nm, sub, sw, fV, fD], i) => {
   const data = s.data.filter((d) => d.value != null);
-  return `<tr><td class="name"><span class="sw ${sw}"></span>${nm}<small>${sub}</small></td><td class="val">${fV(data.at(-1).value)}</td><td class="chg">${arrow(data.at(-1).value - data.at(-2).value, fD)} · vs ${fmtMY(data.at(-2).date)}</td><td class="yr">${fV(data[0].value)} · ${fmtMY(data[0].date)}</td><td class="spark" id="sp-m${i}"></td></tr>`;
+  return `<tr><td class="name"><span class="sw ${sw}"></span>${nm}<small>${sub}</small></td><td class="val">${fV(data.at(-1).value)}</td><td class="chg">${arrow(data.at(-1).value - data.at(-2).value, fD)}, vs ${fmtMY(data.at(-2).date)}</td><td class="yr">${fV(data[0].value)}, ${fmtMY(data[0].date)}</td><td class="spark" id="sp-m${i}"></td></tr>`;
 }).join("");
-regRows.forEach(([s], i) => spark(`sp-m${i}`, { ...s, color: "#BE3E26" }));
+regRows.forEach(([s], i) => spark(`sp-m${i}`, { ...s, color: "#2E4BD8" }));
 
 /* ---------- shared helpers ---------- */
 function linePanel(el, keys, store, geo, opts) {
@@ -96,18 +98,18 @@ function linePanel(el, keys, store, geo, opts) {
   const dts = seriesList[0].data.map((d) => d.date);
   const dodged = dodgeEndLabels(seriesList, (geo.d1 - geo.d0) * (opts.gapFrac ?? 0.07));
   const marks = [
-    Plot.gridY(opts.yTicks, { stroke: "#EAE5D7", strokeWidth: 1 }),
-    Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
+    Plot.gridY(opts.yTicks, { stroke: "#EEF0F3", strokeWidth: 1 }),
+    Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
     ...(opts.preMarks || []),
     ...keys.slice(1).map((k) => Plot.lineY(store[k].data, { x: "date", y: "value", stroke: store[k].color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" })),
-    Plot.lineY(store[keys[0]].data, { x: "date", y: "value", stroke: store[keys[0]].color, strokeWidth: opts.leadWidth ?? 3, strokeLinejoin: "round", strokeLinecap: "round" }),
+    Plot.lineY(store[keys[0]].data, { x: "date", y: "value", stroke: store[keys[0]].color, strokeWidth: opts.leadWidth ?? 2, strokeLinejoin: "round", strokeLinecap: "round" }),
     ...(opts.postMarks || []),
     ...seriesList.map((s) => Plot.dot([s.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", fill: s.color, r: s === seriesList[0] ? 5 : 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
-    ...dodged.map((p) => Plot.text([{ date: dts.at(-1), y: p.y }], { x: "date", y: "y", text: () => `${p.s.label.split(" (")[0]} ${opts.endFmt(p.value)}`, dx: 16, fill: p.s.color, fontSize: 14, fontFamily: mono, fontWeight: p.s === seriesList[0] ? 500 : 400, textAnchor: "start" })),
+    ...dodged.map((p) => Plot.text([{ date: dts.at(-1), y: p.y }], { x: "date", y: "y", text: () => `${p.s.label.split(" (")[0]} ${opts.endFmt(p.value)}`, dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: p.s === seriesList[0] ? 500 : 400, textAnchor: "start" })),
   ].filter(Boolean);
   const plot = Plot.plot({
     width: geo.W, height: geo.H, marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: null, tickSize: 0, tickPadding: 14, ticks: opts.xTicks, tickFormat: opts.xFmt },
     y: { label: opts.yLabel, labelAnchor: "top", labelArrow: false, tickFormat: opts.yFmt, ticks: opts.yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
     marks,
@@ -128,21 +130,21 @@ const breakDate = new Date(Date.UTC(2023, 11, 1)); // Dec 2023
 {
   const total = last(S.grand_total);
   const segs = [
-    ["Solar Power", last(S.solar), total, "#BE3E26"],
-    ["Wind Power", last(S.wind), total, "#5B564B"],
-    ["Bio Power", last(S.bio), total, "#8A857A"],
-    ["Small Hydro", last(S.small_hydro), total, "#A8A293"],
-    ["Large Hydro (from Dec 2023)", last(S.large_hydro), total, "#C6C0B0"],
+    ["Solar Power", last(S.solar), total, "#2E4BD8"],
+    ["Wind Power", last(S.wind), total, "#5F6675"],
+    ["Bio Power", last(S.bio), total, "#878D99"],
+    ["Small Hydro", last(S.small_hydro), total, "#A3A9B4"],
+    ["Large Hydro (from Dec 2023)", last(S.large_hydro), total, "#C9CED6"],
   ].filter(([, v]) => v > 0);
-  document.getElementById("bar-comp").innerHTML = segs.map(([n, v, t, c]) => `<div class="seg" style="width:${(v / t * 100).toFixed(2)}%;background:${c}" title="${n} — ${(v / t * 100).toFixed(1)}%"></div>`).join("");
-  document.getElementById("lab-comp").innerHTML = segs.map(([n, v, t, c]) => `<div class="blab"><div class="n"><span class="sw" style="background:${c}"></span>${n}</div><div class="w">${gw(v)} GW · ${(v / t * 100).toFixed(1)}%</div></div>`).join("");
+  document.getElementById("bar-comp").innerHTML = segs.map(([n, v, t, c]) => `<div class="seg" style="width:${(v / t * 100).toFixed(2)}%;background:${c}" title="${n}: ${(v / t * 100).toFixed(1)}%"></div>`).join("");
+  document.getElementById("lab-comp").innerHTML = segs.map(([n, v, t, c]) => `<div class="blab"><div class="n"><span class="sw" style="background:${c}"></span>${n}</div><div class="w">${gw(v)} GW, ${(v / t * 100).toFixed(1)}%</div></div>`).join("");
   setHTML("pv-comp", (last(S.solar) / total * 100).toFixed(0) + pc("%"));
   wirePlate(document.getElementById("cb-comp"), null, "india-atlas_mnre_source-mix_2026-06", "source,capacity_mw,share_pct\n" + segs.map(([n, v, t]) => `"${n}",${Math.round(v)},${(v / t * 100).toFixed(1)}`).join("\n"));
 }
 
 /* ---------- § 04 headline : Grand Total ---------- */
 {
-  const store = { grand_total: { ...S.grand_total, label: "Grand Total", color: "#BE3E26" } };
+  const store = { grand_total: { ...S.grand_total, label: "Grand Total", color: "#2E4BD8" } };
   const data = store.grand_total.data.map((d) => ({ date: d.date, value: d.value }));
   const geo = { W: 1184, H: 460, ml: 70, mr: 230, mt: 30, mb: 42, d0: 80000, d1: 300000 };
   const plot = linePanel(document.getElementById("plot-total"), ["grand_total"], store, geo, {
@@ -155,11 +157,11 @@ const breakDate = new Date(Date.UTC(2023, 11, 1)); // Dec 2023
     crossFmt: (v) => (v == null ? "—" : gw(v) + " GW"),
     gapFrac: 0.1,
     preMarks: [
-      Plot.ruleX([breakDate], { stroke: "#BE3E26", strokeWidth: 1.5, strokeDasharray: "3,3" }),
-      Plot.text([{ date: breakDate, value: 285000 }], { x: "date", y: "value", text: ["Dec 2023 · large hydro added →"], dx: 8, fontSize: 12.5, fill: "#BE3E26", fontFamily: mono, textAnchor: "start" }),
+      Plot.ruleX([breakDate], { stroke: "#2E4BD8", strokeWidth: 1.5, strokeDasharray: "3,3" }),
+      Plot.text([{ date: breakDate, value: 285000 }], { x: "date", y: "value", text: ["Dec 2023, large hydro added →"], dx: 8, fontSize: 12.5, fill: "#161A22", fontFamily: mono, textAnchor: "start" }),
     ],
-    a11yTitle: "Grand Total renewable capacity, All India, monthly Jan 2020 to Jun 2026",
-    a11yDesc: "A rising line from " + gw(firstV(S.grand_total)) + " GW (Jan 2020) to " + gw(last(S.grand_total)) + " GW (Jun 2026), with a visible step at Dec 2023 where large hydro was added to the definition (+48 GW).",
+    a11yTitle: "Grand Total renewable capacity, All India, monthly Jan 2020 to " + LATEST_SHORT,
+    a11yDesc: "A rising line from " + gw(firstV(S.grand_total)) + " GW (Jan 2020) to " + gw(last(S.grand_total)) + " GW (" + LATEST_SHORT + "), with a visible step at Dec 2023 where large hydro was added to the definition (+48 GW).",
   });
   setHTML("pv-total", gw(firstV(S.grand_total)) + " → " + gw(last(S.grand_total)));
   // the step magnitude: Nov 2023 vs Dec 2023
@@ -175,7 +177,7 @@ const breakDate = new Date(Date.UTC(2023, 11, 1)); // Dec 2023
 
 /* ---------- § 06 sources ---------- */
 {
-  const store = { solar: { ...S.solar, label: "Solar", color: "#BE3E26" }, wind: { ...S.wind, label: "Wind", color: "#5B564B" }, bio: { ...S.bio, label: "Bio", color: "#8A857A" }, small_hydro: { ...S.small_hydro, label: "Small Hydro", color: "#A8A293" } };
+  const store = { solar: { ...S.solar, label: "Solar", color: "#2E4BD8" }, wind: { ...S.wind, label: "Wind", color: "#5F6675" }, bio: { ...S.bio, label: "Bio", color: "#878D99" }, small_hydro: { ...S.small_hydro, label: "Small Hydro", color: "#A3A9B4" } };
   const geo = { W: 1184, H: 460, ml: 70, mr: 230, mt: 30, mb: 42, d0: 0, d1: 175000 };
   const plot = linePanel(document.getElementById("plot-sources"), ["solar", "wind", "bio", "small_hydro"], store, geo, {
     yTicks: [40000, 80000, 120000, 160000],
@@ -185,8 +187,8 @@ const breakDate = new Date(Date.UTC(2023, 11, 1)); // Dec 2023
     endFmt: (v) => gw(v) + " GW",
     crossFmt: (v) => (v == null ? "—" : gw(v) + " GW"),
     gapFrac: 0.07,
-    a11yTitle: "Renewable capacity by source, All India, monthly Jan 2020 to Jun 2026",
-    a11yDesc: "Four lines. Solar (vermilion) quadrupled to " + gw(last(S.solar)) + " GW; wind (grey) grew to " + gw(last(S.wind)) + "; bio and small hydro are nearly flat. Solar overtook wind inside the window.",
+    a11yTitle: "Renewable capacity by source, All India, monthly Jan 2020 to " + LATEST_SHORT,
+    a11yDesc: "Four lines. Solar (blue) quadrupled to " + gw(last(S.solar)) + " GW; wind (grey) grew to " + gw(last(S.wind)) + "; bio and small hydro are nearly flat. Solar overtook wind inside the window.",
   });
   setHTML("pv-sources", (last(S.solar) / last(S.wind)).toFixed(1) + pc("×"));
   setHTML("ex-src-solar", gw(last(S.solar)) + pc("GW"));
@@ -201,7 +203,7 @@ const breakDate = new Date(Date.UTC(2023, 11, 1)); // Dec 2023
 
 /* ---------- § 07 solar categories ---------- */
 {
-  const store = { ground_mounted: { ...SOL.ground_mounted, label: "Ground Mounted", color: "#BE3E26" }, rooftop: { ...SOL.rooftop, label: "Rooftop (PM Surya Ghar)", color: "#5B564B" } };
+  const store = { ground_mounted: { ...SOL.ground_mounted, label: "Ground Mounted", color: "#2E4BD8" }, rooftop: { ...SOL.rooftop, label: "Rooftop (PM Surya Ghar)", color: "#5F6675" } };
   const geo = { W: 1184, H: 420, ml: 70, mr: 230, mt: 30, mb: 42, d0: 0, d1: 135000 };
   const plot = linePanel(document.getElementById("plot-solar"), ["ground_mounted", "rooftop"], store, geo, {
     yTicks: [30000, 60000, 90000, 120000],
@@ -211,8 +213,8 @@ const breakDate = new Date(Date.UTC(2023, 11, 1)); // Dec 2023
     endFmt: (v) => gw(v) + " GW",
     crossFmt: (v) => (v == null ? "—" : gw(v) + " GW"),
     gapFrac: 0.08,
-    a11yTitle: "Solar capacity by sub-category, All India, monthly Jan 2020 to Jun 2026",
-    a11yDesc: "Ground mounted (vermilion) reaches " + gw(last(SOL.ground_mounted)) + " GW; rooftop (grey) reaches " + gw(last(SOL.rooftop)) + " GW — rooftop grew nearly nine-fold.",
+    a11yTitle: "Solar capacity by sub-category, All India, monthly Jan 2020 to " + LATEST_SHORT,
+    a11yDesc: "Ground mounted (blue) reaches " + gw(last(SOL.ground_mounted)) + " GW; rooftop (grey) reaches " + gw(last(SOL.rooftop)) + " GW: rooftop grew nearly nine-fold.",
   });
   setHTML("pv-solar", (last(SOL.rooftop) / last(S.solar) * 100).toFixed(0) + pc("%"));
   setHTML("ex-sol-gm", gw(last(SOL.ground_mounted)) + pc("GW"));
@@ -232,17 +234,22 @@ const breakDate = new Date(Date.UTC(2023, 11, 1)); // Dec 2023
     .sort((a, b) => b.v - a.v).slice(0, 6);
   const store = {};
   topKeys.forEach((d, i) => {
-    store[d.k] = { ...ST[d.k], label: d.label, color: i < 2 ? "#BE3E26" : ["#5B564B","#8A857A","#A8A293","#C6C0B0"][i - 2] || "#C6C0B0" };
+    store[d.k] = { ...ST[d.k], label: d.label, color: i < 2 ? "#2E4BD8" : ["#5F6675","#878D99","#A3A9B4","#C9CED6"][i - 2] || "#C9CED6" };
   });
   const keys = topKeys.map((d) => d.k);
   const totalAI = last(S.grand_total);
   const gr2Share = (topKeys[0].v + topKeys[1].v) / totalAI * 100;
   const next4Share = topKeys.slice(2, 6).reduce((a, d) => a + d.v, 0) / totalAI * 100;
   setHTML("pv-sttime", gr2Share.toFixed(0) + pc("%"));
-  setHTML("ex-st-gj", gw(topKeys[0].v) + pc("GW") + " · " + topKeys[0].label);
-  setHTML("ex-st-rj", gw(topKeys[1].v) + pc("GW") + " · " + topKeys[1].label);
+  // state names come from the ranking, never typed into the page: the leaders can change
+  const tc = (t) => t.replace(/\b\w/g, (c) => c.toUpperCase());
+  setTxt("ex-st-n1", tc(topKeys[0].label)); setTxt("ex-st-n2", tc(topKeys[1].label));
+  setHTML("ex-st-gj", gw(topKeys[0].v) + pc("GW"));
+  setHTML("ex-st-rj", gw(topKeys[1].v) + pc("GW"));
   setHTML("ex-st-gr2", gr2Share.toFixed(0) + pc("%"));
-  setHTML("ex-st-next4", next4Share.toFixed(0) + pc("%") + " each");
+  const n4 = topKeys.slice(2, 6).map((d) => tc(d.label));
+  setTxt("ex-st-next4n", n4.slice(0, -1).join(", ") + " and " + n4.at(-1));
+  setHTML("ex-st-next4", next4Share.toFixed(0) + pc("%"));
 
   const geo = { W: 1184, H: 460, ml: 70, mr: 230, mt: 30, mb: 42, d0: 0, d1: 58000 };
   const plot = linePanel(document.getElementById("plot-sttime"), keys, store, geo, {
@@ -254,8 +261,8 @@ const breakDate = new Date(Date.UTC(2023, 11, 1)); // Dec 2023
     endFmt: (v) => gw(v, 0) + " GW",
     crossFmt: (v) => (v == null ? "—" : gw(v, 0) + " GW"),
     gapFrac: 0.05,
-    preMarks: [Plot.ruleX([breakDate], { stroke: "#D8D3C4", strokeWidth: 1, strokeDasharray: "2,3" })],
-    a11yTitle: "Grand Total renewable capacity, top six states, monthly Jan 2020 to Jun 2026",
+    preMarks: [Plot.ruleX([breakDate], { stroke: "#DADDE3", strokeWidth: 1, strokeDasharray: "2,3" })],
+    a11yTitle: "Grand Total renewable capacity, top six states, monthly Jan 2020 to " + LATEST_SHORT,
     a11yDesc: "Six rising lines. " + topKeys[0].label + " leads at " + gw(topKeys[0].v) + " GW, " + topKeys[1].label + " at " + gw(topKeys[1].v) + "; together " + gr2Share.toFixed(0) + " per cent of all-India. The Dec 2023 hydro reclassification steps up states with large hydro.",
   });
   wirePlate(document.getElementById("cb-sttime"), plot, "india-atlas_mnre_top-states-timeseries_2020-2026", "month," + keys.join(",") + "\n" + ST[keys[0]].data.map((d, i) => d.date.toISOString().slice(0, 7) + "," + keys.map((k) => ST[k].data[i].value ?? "").join(",")).join("\n"), fmtMY);
@@ -278,15 +285,15 @@ const breakDate = new Date(Date.UTC(2023, 11, 1)); // Dec 2023
     const isTop = (d, i) => i < 2;
     return Plot.plot({
       width: geo.W, height: geo.H, marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-      style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#5C574C", overflow: "visible" },
+      style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#878D99", overflow: "visible" },
       x: { label: label + ", GW →", labelAnchor: "right", labelArrow: false, domain: [0, rows[0].v * 1.12], ticks: xTicks, tickSize: 0, tickPadding: 10, tickFormat: (d) => (d === 0 ? "0" : String(d / 1000)) },
       y: { label: null, domain: rows.map((r) => r.state), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
       marks: [
-        Plot.gridX(xTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-        Plot.ruleX([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
-        Plot.ruleY(rows, { y: "state", x1: 0, x2: "v", stroke: (d, i) => (isTop(d, i) ? "#E5B8AE" : "#E0DACA"), strokeWidth: 1.25 }),
-        Plot.dot(rows, { y: "state", x: "v", fill: (d, i) => (isTop(d, i) ? "#BE3E26" : "#5B564B"), r: 5.5 }),
-        Plot.text(rows, { y: "state", x: "v", dx: 12, text: (d) => gw(d.v, 1) + " GW", fill: (d, i) => (isTop(d, i) ? "#BE3E26" : "#8A857A"), fontSize: 12.5, fontFamily: mono, fontWeight: (d, i) => (isTop(d, i) ? 500 : 400), textAnchor: "start" }),
+        Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+        Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+        Plot.ruleY(rows, { y: "state", x1: 0, x2: "v", stroke: (d, i) => (isTop(d, i) ? "#B9C3F3" : "#E3E6EB"), strokeWidth: 1.25 }),
+        Plot.dot(rows, { y: "state", x: "v", fill: (d, i) => (isTop(d, i) ? "#2E4BD8" : "#5F6675"), r: 5.5 }),
+        Plot.text(rows, { y: "state", x: "v", dx: 12, text: (d) => gw(d.v, 1) + " GW", fill: (d, i) => (isTop(d, i) ? "#161A22" : "#878D99"), fontSize: 12.5, fontFamily: mono, fontWeight: (d, i) => (isTop(d, i) ? 500 : 400), textAnchor: "start" }),
       ],
     });
   };
@@ -294,13 +301,13 @@ const breakDate = new Date(Date.UTC(2023, 11, 1)); // Dec 2023
   // solar by state
   const solarEntries = Object.entries(solarStatesBundle.series).map(([k, s]) => ({ state: shortState(s.label.split(" · ")[1] || k), v: s.data.at(-1) }));
   const plotSolSt = makeStrip(solarEntries, last(S.grand_total), "Solar capacity");
-  a11y(plotSolSt, "Solar Power Total capacity by state, Jun 2026", "Sorted dot strip. Rajasthan leads at " + gw(solarEntries.sort((a, b) => b.v - a.v)[0].v) + " GW, then Gujarat.");
+  a11y(plotSolSt, "Solar Power Total capacity by state, " + LATEST_SHORT, (() => { const r = solarEntries.sort((a, b) => b.v - a.v); return "Sorted dot strip. " + r[0].state + " leads at " + gw(r[0].v) + " GW, then " + r[1].state + "."; })());
   document.getElementById("plot-solar-states").append(plotSolSt);
 
   // total by state
   const totalEntries = Object.entries(statesBundle.series).map(([k, s]) => ({ state: shortState(s.label.split(" · ")[1] || k), v: s.data.at(-1) }));
   const plotTotSt = makeStrip(totalEntries, last(S.grand_total), "Grand Total capacity");
-  a11y(plotTotSt, "Grand Total renewable capacity by state, Jun 2026", "Sorted dot strip. Gujarat leads at " + gw(totalEntries.sort((a, b) => b.v - a.v)[0].v) + " GW, then Rajasthan.");
+  a11y(plotTotSt, "Grand Total renewable capacity by state, " + LATEST_SHORT, (() => { const r = totalEntries.sort((a, b) => b.v - a.v); return "Sorted dot strip. " + r[0].state + " leads at " + gw(r[0].v) + " GW, then " + r[1].state + "."; })());
   document.getElementById("plot-states").append(plotTotSt);
 
   // wire numbers
@@ -309,8 +316,8 @@ const breakDate = new Date(Date.UTC(2023, 11, 1)); // Dec 2023
   const totalAI = last(S.grand_total);
   const top5Share = totSorted.slice(0, 5).reduce((a, r) => a + r.v, 0) / totalAI * 100;
   setHTML("pv-states", gw(solSorted[0].v, 0) + pc("GW"));
-  setHTML("ex-sst-top", solSorted[0].state + " · " + gw(solSorted[0].v) + pc("GW"));
-  setHTML("ex-tst-top", totSorted[0].state + " · " + gw(totSorted[0].v) + pc("GW"));
+  setHTML("ex-sst-top", solSorted[0].state + ", " + gw(solSorted[0].v) + pc("GW"));
+  setHTML("ex-tst-top", totSorted[0].state + ", " + gw(totSorted[0].v) + pc("GW"));
   setHTML("ex-tst-top5", top5Share.toFixed(0) + pc("%"));
 
   const csv = "state,solar_mw,total_mw\n" + totSorted.map((r) => { const sol = solSorted.find((s) => s.state === r.state); return `"${r.state}",${sol ? Math.round(sol.v) : ""},${Math.round(r.v)}`; }).join("\n");

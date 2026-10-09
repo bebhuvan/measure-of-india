@@ -7,6 +7,7 @@ import bundle from "../../data/series/wpi.json";
 import groupsBundle from "../../data/series/wpi-groups.json";
 import subgroupsBundle from "../../data/series/wpi-subgroups.json";
 import itemsBundle from "../../data/series/wpi-items.json";
+import wpi2022Bundle from "../../data/series/wpi-2022.json";
 import {
   MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend,
   peakOf, peakBetween, troughOf, dodgeEndLabels, spark, saveBlob, makePlacer, annotationSpot,
@@ -16,6 +17,7 @@ const S = hydrate(bundle);
 const G = hydrate(groupsBundle);    // 29 two-digit groups, y/y from levels
 const SG = hydrate(subgroupsBundle); // 134 sub-groups, y/y from levels
 const IT = hydrate(itemsBundle);     // 697 items, y/y from levels
+const N = hydrate(wpi2022Bundle);    // base 2022-23: published headline, majors, food index
 const dates = S.headline.data.map((d) => d.date);
 const MN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const fmtDate = (d) => MN[d.getUTCMonth()] + " " + d.getUTCFullYear();
@@ -32,17 +34,93 @@ const setHTML = (id, h) => (document.getElementById(id).innerHTML = h);
 const setTxt = (id, t) => (document.getElementById(id).textContent = t);
 const f1 = (v) => v.toFixed(2) + "%";
 
-setHTML("n-head", L.headline.toFixed(2) + pc);
-setHTML("n-food", L.food_index.toFixed(2) + pc);
-setHTML("n-fuel", L.fuel.toFixed(2) + pc);
-setHTML("n-mfg", L.manufactured.toFixed(2) + pc);
-setHTML("d-head", `<b>${arrow(L.headline - P.headline)}</b> vs ${prevName} · ${word(L.headline - P.headline)}`);
-setHTML("d-food", `<b>${arrow(L.food_index - P.food_index)}</b> vs ${prevName} · ${word(L.food_index - P.food_index)}`);
-setHTML("d-fuel", `<b>${arrow(L.fuel - P.fuel)}</b> vs ${prevName} · ${word(L.fuel - P.fuel)}`);
-setHTML("d-mfg", `<b>${arrow(L.manufactured - P.manufactured)}</b> vs ${prevName} · ${word(L.manufactured - P.manufactured)}`);
+/* ---------- the title strip and §01: the CURRENT base, 2022-23 ----------
+ * The current reading is the new base's published headline and parts. The
+ * plates from §05 on stay on the 2011-12 base (to Apr 2026), labelled so. */
+const LN = {}, PN = {}; for (const k in N) { LN[k] = N[k].data.at(-1).value; PN[k] = N[k].data.at(-2).value; }
+const latestN = N.headline.data.at(-1).date, prevNameN = fmtDate(N.headline.data.at(-2).date);
+for (const [id, k] of [["head", "headline"], ["food", "food_index"], ["fuel", "fuel"], ["mfg", "manufactured"]]) {
+  setHTML("n-" + id, LN[k].toFixed(2) + pc);
+  setHTML("d-" + id, `<b>${arrow(LN[k] - PN[k])}</b> vs ${prevNameN}, ${word(LN[k] - PN[k])}`);
+}
+setHTML("rb-big", LN.headline.toFixed(2) + pc);
+setHTML("rb-prev", PN.headline.toFixed(2) + pc);
+{
+  const MONTHS_LONG = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const long = (d) => `${MONTHS_LONG[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
+  const rel = new Date(wpi2022Bundle.meta.releaseDate + "T00:00:00Z");
+  const relTxt = `${rel.getUTCDate()} ${MONTHS_LONG[rel.getUTCMonth()]} ${rel.getUTCFullYear()}, provisional`;
+  setTxt("m-latest", long(latestN)); setTxt("m-released", relTxt); setTxt("rd-unit", `Recorded ${relTxt}`);
+  // the caption's comparison: the low point of the previous twelve months
+  const last13 = N.headline.data.slice(-13, -1).filter((d) => d.value != null);
+  const lowPt = last13.reduce((a, b) => (b.value < a.value ? b : a));
+  setTxt("rt-cap", `Headline wholesale inflation, ${long(latestN)}, on the new 2022–23 base. In ${long(lowPt.date)} it was ${lowPt.value < 0 ? "−" + Math.abs(lowPt.value).toFixed(2) : lowPt.value.toFixed(2)}%, the low point of the twelve months before.`);
+}
 
-setHTML("rb-big", L.headline.toFixed(2) + pc);
-setHTML("rb-prev", P.headline.toFixed(2) + pc);
+/* ---------- §02 the new base: two rulers through the overlap ----------
+ * The OEA moved the WPI to base 2022-23; the 2011-12 base ends at Apr 2026.
+ * Both lines are the PUBLISHED headline index, y/y computed inside each base
+ * from that base's own levels. They are drawn together through the months
+ * both describe and never joined (sources.yml `seams.wpi`). The 2011-12
+ * headline here is the published one, not this page's computed headline, so
+ * the two lines are like for like. */
+{
+  const nw = N.headline;
+  const oldPub = bundle.crosscheck.published_headline
+    .map((v, i) => ({ date: dates[i], value: v }))
+    .filter((d) => d.value != null);
+  const oldS = { key: "nb_old", label: "Base 2011–12, published headline", color: "#A3A9B4", data: oldPub.filter((d) => d.date >= nw.data[0].date) };
+  const newS = { key: "nb_new", label: "Base 2022–23, published headline", color: "#2E4BD8", data: nw.data.filter((d) => d.value != null) };
+  const all = [...oldS.data, ...newS.data].map((d) => d.value);
+  const lo = Math.floor(Math.min(0, ...all)), hi = Math.ceil(Math.max(...all)) + 1;
+  const geo = { W: 1184, H: 460, ml: 70, mr: 178, mt: 36, mb: 48, d0: lo, d1: hi };
+  const step = hi - lo > 8 ? 2 : 1;
+  const yTicks = []; for (let t = Math.ceil(lo / step) * step; t <= hi; t += step) yTicks.push(t);
+  const xTicks = []; for (let y = newS.data[0].date.getUTCFullYear() + 1; y <= newS.data.at(-1).date.getUTCFullYear(); y++) xTicks.push(new Date(Date.UTC(y, 0, 1)));
+  const oldEnd = oldS.data.at(-1);
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+    x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => String(d.getUTCFullYear()) },
+    y: { label: "↑ year-on-year, per cent", labelAnchor: "top", labelArrow: false,
+         tickFormat: (d) => (d === yTicks[yTicks.length - 1] ? d + "%" : String(d)), ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
+    marks: [
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+      Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+      Plot.lineY(oldS.data, { x: "date", y: "value", stroke: oldS.color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.lineY(newS.data, { x: "date", y: "value", stroke: newS.color, strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.ruleX([oldEnd.date], { stroke: "#CDD1D8", strokeWidth: 1, strokeDasharray: "2,3" }),
+      Plot.text([{ date: oldEnd.date, value: geo.d1 - 0.4 }], { x: "date", y: "value", text: [`old base ends, ${fmtDate(oldEnd.date)}`], fontSize: 12, fill: "#5F6675", fontFamily: mono, textAnchor: "end", dx: -8 }),
+      Plot.dot([oldEnd], { x: "date", y: "value", fill: oldS.color, r: 3, stroke: "#FFFFFF", strokeWidth: 1 }),
+      Plot.dot([newS.data.at(-1)], { x: "date", y: "value", fill: newS.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([newS.data.at(-1)], { x: "date", y: "value", text: (d) => `Base 2022–23 ${d.value.toFixed(2)}%`, dx: 16, dy: -8, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+    ],
+  });
+  // overlap statistics: months both bases describe, and the widest gap
+  const oldByT = new Map(oldS.data.map((d) => [d.date.getTime(), d.value]));
+  let n = 0, gap = 0, gapAt = null, both = null;
+  for (const d of newS.data) {
+    const o = oldByT.get(d.date.getTime());
+    if (o == null) continue;
+    n++; both = { date: d.date, nw: d.value, old: o };
+    if (Math.abs(d.value - o) > gap) { gap = Math.abs(d.value - o); gapAt = d.date; }
+  }
+  a11y(plot, "Headline WPI inflation on the new 2022-23 base beside the old 2011-12 base, through the months both describe",
+    `A blue line, the 2022-23 base, runs from ${fmtDate(newS.data[0].date)} to ${fmtDate(newS.data.at(-1).date)}, ending at ${newS.data.at(-1).value.toFixed(1)} per cent. A grey line, the 2011-12 base, runs to ${fmtDate(oldEnd.date)}, ending at ${oldEnd.value.toFixed(1)} per cent. Over the ${n} months both describe they differ by at most ${gap.toFixed(1)} points. The two are different rulers and are not joined.`);
+  document.getElementById("plot-nb").append(plot);
+  wireTools(document.getElementById("cb-nb"), plot, [newS, oldS], `india-atlas_wpi2022_vs_wpi2011_headline_${newS.data[0].date.getUTCFullYear()}-${newS.data.at(-1).date.getUTCFullYear()}`);
+  wireLegend(document.getElementById("legend-nb"), plot, ["nb_new", "nb_old"], { nb_new: { color: newS.color }, nb_old: { color: oldS.color } });
+  // the title states the measured finding, nothing softer or stronger
+  setTxt("nb-title", `Two rulers, ${n} shared months, never more than ${gap.toFixed(1)} points apart`);
+  setTxt("nb-sub", `WPI headline, year-on-year, per cent, base 2022–23 (${fmtDate(newS.data[0].date)} to ${fmtDate(newS.data.at(-1).date)}) and base 2011–12 (to ${fmtDate(oldEnd.date)}), published indices, never joined`);
+  setTxt("pv-nb", f1(newS.data.at(-1).value));
+  setTxt("pc-nb", `${fmtDate(newS.data.at(-1).date)}, base 2022–23, y/y`);
+  setTxt("nb-new", f1(newS.data.at(-1).value)); setTxt("nb-new-m", fmtDate(newS.data.at(-1).date));
+  if (both) { setTxt("nb-both-new", f1(both.nw)); setTxt("nb-both-old", f1(both.old)); setTxt("nb-both-m", fmtDate(both.date)); }
+  setTxt("nb-n", String(n)); setTxt("nb-gap", gap.toFixed(1) + " pt"); setTxt("nb-gap-m", gapAt ? fmtDate(gapAt) : "–");
+}
 // §01 "current reading" prose is pipeline-generated (pipeline/out/prose-wpi.*.md).
 
 setTxt("pv-main", f1(L.headline));
@@ -51,37 +129,37 @@ setTxt("ex-fuel", f1(L.fuel)); setTxt("ex-mfg", f1(L.manufactured));
 const valAt = (s, ym) => S[s].data.find((d) => d.date.toISOString().slice(0, 7) === ym)?.value;
 setTxt("ex-hsep", f1(valAt("headline", "2025-09"))); setTxt("ex-hapr", f1(L.headline));
 const pkFuel = peakOf(S.fuel), pkMfg = peakOf(S.manufactured);
-setTxt("pf-fuel", `peak — ${pkFuel.value.toFixed(1)}%, ${fmtDate(pkFuel.date)} · latest — ${f1(L.fuel)}`);
-setTxt("pf-mfg", `peak — ${pkMfg.value.toFixed(1)}%, ${fmtDate(pkMfg.date)} · latest — ${f1(L.manufactured)}`);
+setTxt("pf-fuel", `peak: ${pkFuel.value.toFixed(1)}%, ${fmtDate(pkFuel.date)}, latest: ${f1(L.fuel)}`);
+setTxt("pf-mfg", `peak: ${pkMfg.value.toFixed(1)}%, ${fmtDate(pkMfg.date)}, latest: ${f1(L.manufactured)}`);
 
 /* ---------- register ---------- */
 const regRows = [
-  ["headline", "Headline WPI", "All commodities — computed from the three major groups", "s-acc", "100.0", "#BE3E26"],
-  ["primary", "Primary articles", "Farm, mineral — the volatile rim", "s-g1", "22.62", "#5B564B"],
-  ["fuel", "Fuel & power", "Mineral oils, electricity, coal", "s-g2", "13.15", "#A8A293"],
-  ["manufactured", "Manufactured products", "Two-thirds of the basket — the calm core", "s-g3", "64.23", "#C6C0B0"],
-  ["food_index", "Food index", "Primary + manufactured food — published directly", "s-g4", "—", "#8A857A"],
+  ["headline", "Headline WPI", "All commodities: computed from the three major groups", "s-acc", "100.0", "#2E4BD8"],
+  ["primary", "Primary articles", "Farm, mineral: the volatile rim", "s-g1", "22.62", "#5F6675"],
+  ["fuel", "Fuel & power", "Mineral oils, electricity, coal", "s-g2", "13.15", "#A3A9B4"],
+  ["manufactured", "Manufactured products", "Two-thirds of the basket: the calm core", "s-g3", "64.23", "#C9CED6"],
+  ["food_index", "Food index", "Primary + manufactured food: published directly", "s-g4", "—", "#878D99"],
 ];
 // notable 2-digit groups, from the groups bundle — weights below the majors
 // are not carried in the bundle, so the weight cell stays em-dash.
 const LG = {}, PG = {}, YG = {};
 for (const k in G) { LG[k] = G[k].data.at(-1).value; PG[k] = G[k].data.at(-2).value; YG[k] = G[k].data.at(-13).value; }
 const groupRows = [
-  ["food_articles", "Food articles", "Group · under primary — the mandi gate", "s-g1"],
-  ["crude_petroleum_natural_gas", "Crude petroleum & natural gas", "Group · under primary — the wellhead", "s-g2"],
-  ["mineral_oils", "Mineral oils", "Group · under fuel & power — the refinery gate", "s-g3"],
-  ["manufacture_of_basic_metals", "Basic metals", "Group · under manufactured — steel, aluminium", "s-g4"],
-  ["manufacture_of_chemicals_and_chemical_products", "Chemicals & chemical products", "Group · under manufactured", "s-g1"],
-  ["manufacture_of_textiles", "Textiles", "Group · under manufactured — the loom", "s-g2"],
+  ["food_articles", "Food articles", "Group, under primary: the mandi gate", "s-g1"],
+  ["crude_petroleum_natural_gas", "Crude petroleum & natural gas", "Group, under primary: the wellhead", "s-g2"],
+  ["mineral_oils", "Mineral oils", "Group, under fuel & power: the refinery gate", "s-g3"],
+  ["manufacture_of_basic_metals", "Basic metals", "Group, under manufactured: steel, aluminium", "s-g4"],
+  ["manufacture_of_chemicals_and_chemical_products", "Chemicals & chemical products", "Group, under manufactured", "s-g1"],
+  ["manufacture_of_textiles", "Textiles", "Group, under manufactured: the loom", "s-g2"],
 ];
 // notable items, from the items bundle (v1.2) — petrol carries this print's
-// fuel event to the pump grade; gold sits behind §07's other-manufacturing
+// fuel event to the pump grade; gold sits behind §08's other-manufacturing
 // story; onion is the register's memento of what usually drives a WPI panic.
 const LI = {}, PI = {}, YI = {};
 const itemRows = [
-  ["petrol", "Petrol", "Item · under mineral oils — the refinery gate, before taxes", "s-g2"],
-  ["gold_gold_ornaments", "Gold & gold ornaments", "Item · under other manufacturing — the metal behind the jewellery group", "s-g4"],
-  ["onion", "Onion", "Item · under food articles — the old headline-maker", "s-g1"],
+  ["petrol", "Petrol", "Item, under mineral oils: the refinery gate, before taxes", "s-g2"],
+  ["gold_gold_ornaments", "Gold & gold ornaments", "Item, under other manufacturing: the metal behind the jewellery group", "s-g4"],
+  ["onion", "Onion", "Item, under food articles: the old headline-maker", "s-g1"],
 ];
 for (const [k] of itemRows) { LI[k] = IT[k].data.at(-1).value; PI[k] = IT[k].data.at(-2).value; YI[k] = IT[k].data.at(-13).value; }
 document.getElementById("ledger-body").innerHTML = regRows.map(([k, nm, sub, sw, wt, col]) => `
@@ -89,7 +167,7 @@ document.getElementById("ledger-body").innerHTML = regRows.map(([k, nm, sub, sw,
     <td class="name"><span class="sw ${sw}"></span>${nm}<small>${sub}</small></td>
     <td class="wt">${wt}${wt !== "—" ? `<span class="wtrack"><i style="width:${wt}%;background:${col}"></i></span>` : ""}</td>
     <td class="val">${f1(L[k])}</td>
-    <td class="chg">${arrow(L[k] - P[k])} · ${word(L[k] - P[k])}</td>
+    <td class="chg">${arrow(L[k] - P[k])}, ${word(L[k] - P[k])}</td>
     <td class="yr">${f1(Y[k])}</td>
     <td class="spark" id="sp-${k}"></td>
   </tr>`).join("") + groupRows.map(([k, nm, sub, sw]) => `
@@ -97,7 +175,7 @@ document.getElementById("ledger-body").innerHTML = regRows.map(([k, nm, sub, sw,
     <td class="name"><span class="sw ${sw}"></span>${nm}<small>${sub}</small></td>
     <td class="wt">—</td>
     <td class="val">${f1(LG[k])}</td>
-    <td class="chg">${arrow(LG[k] - PG[k])} · ${word(LG[k] - PG[k])}</td>
+    <td class="chg">${arrow(LG[k] - PG[k])}, ${word(LG[k] - PG[k])}</td>
     <td class="yr">${f1(YG[k])}</td>
     <td class="spark" id="sp-g-${k}"></td>
   </tr>`).join("") + itemRows.map(([k, nm, sub, sw]) => `
@@ -105,19 +183,19 @@ document.getElementById("ledger-body").innerHTML = regRows.map(([k, nm, sub, sw,
     <td class="name"><span class="sw ${sw}"></span>${nm}<small>${sub}</small></td>
     <td class="wt">—</td>
     <td class="val">${f1(LI[k])}</td>
-    <td class="chg">${arrow(LI[k] - PI[k])} · ${word(LI[k] - PI[k])}</td>
+    <td class="chg">${arrow(LI[k] - PI[k])}, ${word(LI[k] - PI[k])}</td>
     <td class="yr">${f1(YI[k])}</td>
     <td class="spark" id="sp-it-${k}"></td>
   </tr>`).join("");
 
 /* ---------- basket composition ---------- */
 const groups = [
-  ["Primary articles", 22.62, "#BE3E26"],
-  ["Fuel & power", 13.15, "#4A463F"],
-  ["Manufactured products", 64.23, "#A8A293"],
+  ["Primary articles", 22.62, "#2E4BD8"],
+  ["Fuel & power", 13.15, "#4A5160"],
+  ["Manufactured products", 64.23, "#A3A9B4"],
 ];
 document.getElementById("basket-bar").innerHTML = groups.map(([n, w, c]) =>
-  `<div class="seg" style="width:${w}%;background:${c}" title="${n} — ${w}%"></div>`).join("");
+  `<div class="seg" style="width:${w}%;background:${c}" title="${n}: ${w}%"></div>`).join("");
 document.getElementById("basket-labels").innerHTML = groups.map(([n, w, c]) =>
   `<div class="blab"><div class="n"><span class="sw" style="background:${c}"></span>${n}</div><div class="w">${w.toFixed(2)}%</div></div>`).join("");
 
@@ -140,46 +218,46 @@ document.getElementById("basket-labels").innerHTML = groups.map(([n, w, c]) =>
   const placer = makePlacer(geo, dates);
   keys.forEach((k) => placer.addSeries(S[k].data));
   placer.addRuleX(new Date(Date.UTC(2020, 3, 1)));
-  const pkA = annotationSpot(placer, pk22, pk22.value.toFixed(1) + "% · " + fmtDate(pk22.date) + " · commodity shock", 13, [
+  const pkA = annotationSpot(placer, pk22, pk22.value.toFixed(1) + "%, " + fmtDate(pk22.date) + ", commodity shock", 13, [
     { x: pk22.date, y: pk22.value, anchor: "start", dx: 14, dy: 30 },
     { x: pk22.date, y: pk22.value, anchor: "end", dx: -14, dy: 30 },
     { x: pk22.date, y: pk22.value, anchor: "middle", dx: 0, dy: 32 },
     { x: pk22.date, y: pk22.value, anchor: "start", dx: 14, dy: -36 },
   ]);
-  const trA = annotationSpot(placer, tr23, tr23.value.toFixed(1) + "% · " + fmtDate(tr23.date) + " · seven months below zero", 13, [
+  const trA = annotationSpot(placer, tr23, tr23.value.toFixed(1) + "%, " + fmtDate(tr23.date) + ", seven months below zero", 13, [
     { x: tr23.date, y: tr23.value, anchor: "end", dx: -16, dy: -30 },
     { x: tr23.date, y: tr23.value, anchor: "start", dx: 16, dy: -30 },
     { x: tr23.date, y: tr23.value, anchor: "middle", dx: 0, dy: -34 },
     { x: tr23.date, y: tr23.value, anchor: "start", dx: 16, dy: 34 },
   ]);
   const marks = [
-    Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-    Plot.ruleY([-8], { stroke: "#E0DACA", strokeWidth: 1 }),
-    Plot.ruleY([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
-    Plot.ruleX([new Date(Date.UTC(2020, 3, 1))], { stroke: "#D8D3C4", strokeWidth: 1, strokeDasharray: "2,3" }),
-    Plot.text([{ date: new Date(Date.UTC(2019, 5, 1)), value: 18.6 }], { x: "date", y: "value", text: ["COVID-19"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
+    Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+    Plot.ruleY([-8], { stroke: "#E3E6EB", strokeWidth: 1 }),
+    Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+    Plot.ruleX([new Date(Date.UTC(2020, 3, 1))], { stroke: "#DADDE3", strokeWidth: 1, strokeDasharray: "2,3" }),
+    Plot.text([{ date: new Date(Date.UTC(2019, 5, 1)), value: 18.6 }], { x: "date", y: "value", text: ["COVID-19"], fontSize: 12, fill: "#878D99", fontFamily: mono, textAnchor: "start" }),
     ...["primary", "manufactured", "food_index"].map((k) => Plot.lineY(S[k].data, { x: "date", y: "value", stroke: S[k].color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" })),
-    Plot.lineY(S.headline.data, { x: "date", y: "value", stroke: S.headline.color, strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
+    Plot.lineY(S.headline.data, { x: "date", y: "value", stroke: S.headline.color, strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
     Plot.lineY(S.headline.data.slice(-13), { x: "date", y: "value", stroke: S.headline.color, strokeWidth: 4.5, strokeLinecap: "round", strokeLinejoin: "round" }),
-    Plot.dot([pk22, tr23], { x: "date", y: "value", fill: S.headline.color, r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+    Plot.dot([pk22, tr23], { x: "date", y: "value", fill: S.headline.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
     Plot.line(pkA.leader, { x: "x", y: "y", stroke: S.headline.color, strokeWidth: 1 }),
-    Plot.text([{ date: pkA.textX, value: pkA.textY }], { x: "date", y: "value", text: [pk22.value.toFixed(1) + "% · " + fmtDate(pk22.date) + " · commodity shock"], fill: S.headline.color, fontSize: 13, fontFamily: mono, textAnchor: pkA.spot.anchor }),
+    Plot.text([{ date: pkA.textX, value: pkA.textY }], { x: "date", y: "value", text: [pk22.value.toFixed(1) + "%, " + fmtDate(pk22.date) + ", commodity shock"], fill: "#161A22", fontSize: 12, fontFamily: mono, textAnchor: pkA.spot.anchor }),
     Plot.line(trA.leader, { x: "x", y: "y", stroke: S.headline.color, strokeWidth: 1 }),
-    Plot.text([{ date: trA.textX, value: trA.textY }], { x: "date", y: "value", text: [tr23.value.toFixed(1) + "% · " + fmtDate(tr23.date) + " · seven months below zero"], fill: S.headline.color, fontSize: 13, fontFamily: mono, textAnchor: trA.spot.anchor }),
+    Plot.text([{ date: trA.textX, value: trA.textY }], { x: "date", y: "value", text: [tr23.value.toFixed(1) + "%, " + fmtDate(tr23.date) + ", seven months below zero"], fill: "#161A22", fontSize: 12, fontFamily: mono, textAnchor: trA.spot.anchor }),
     ...seriesList.map((s) => Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: s === S.headline ? 5 : 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
     ...dodged.filter((p) => Math.abs(p.y - p.value) > 0.05).map((p) => Plot.line([
       { x: dates.at(-1), y: p.value }, { x: dates.at(-1), y: p.y },
     ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
     ...dodged.map((p) => Plot.text([{ date: dates.at(-1), y: p.y }], {
       x: "date", y: "y", text: () => `${p.s.label} ${p.value.toFixed(2)}%`,
-      dx: 16, fill: p.s.color, fontSize: 14.5, fontFamily: mono,
+      dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono,
       fontWeight: p.s === S.headline ? 500 : 400, textAnchor: "start",
     })),
   ];
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => String(d.getUTCFullYear()) },
     y: { label: "↑ year-on-year, per cent", labelAnchor: "top", labelArrow: false,
          tickFormat: (d) => (d === yTicks[yTicks.length - 1] ? d + "%" : String(d)), ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
@@ -203,7 +281,7 @@ function componentChart(blockId, plotId, key, d0, d1, yTicks, extraNote) {
   /* collision-aware peak annotation (placer; verified by lint-charts) */
   const placer = makePlacer(geo, dates);
   placer.addSeries(s.data).addRuleY(0);
-  const pkText = pk.value.toFixed(1) + "% · " + fmtDate(pk.date);
+  const pkText = pk.value.toFixed(1) + "%, " + fmtDate(pk.date);
   const { spot, textX, textY, leader } = annotationSpot(placer, pk, pkText, 13, [
     { x: pk.date, y: pk.value, anchor: "middle", dx: 0, dy: dir * 30 },
     { x: pk.date, y: pk.value, anchor: "start", dx: 22, dy: dir * 18 },
@@ -215,24 +293,24 @@ function componentChart(blockId, plotId, key, d0, d1, yTicks, extraNote) {
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: null, tickSize: 0, tickPadding: 16,
          ticks: [2016, 2018, 2020, 2022, 2024, 2026].map((y) => new Date(Date.UTC(y, 0, 1))),
          tickFormat: (d) => String(d.getUTCFullYear()) },
     y: { label: "↑ y/y, per cent", labelAnchor: "top", labelArrow: false,
          tickFormat: (d) => (d === yTicks[yTicks.length - 1] ? d + "%" : String(d)), ticks: yTicks, domain: [d0, d1], tickSize: 0, tickPadding: 11 },
     marks: [
-      Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleY([d0], { stroke: "#E0DACA", strokeWidth: 1 }),
-      Plot.ruleY([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+      Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
       Plot.areaY(s.data, { x: "date", y: "value", y1: d0 <= 0 ? 0 : d0, fill: s.color, fillOpacity: 0.06 }),
       Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.lineY(s.data.slice(-13), { x: "date", y: "value", stroke: s.color, strokeWidth: 4, strokeLinecap: "round", strokeLinejoin: "round" }),
-      Plot.dot([pk], { x: "date", y: "value", fill: "#BE3E26", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.line(leader, { x: "x", y: "y", stroke: "#BE3E26", strokeWidth: 1 }),
-      Plot.text([{ date: textX, value: textY }], { x: "date", y: "value", text: [pkText], fill: "#BE3E26", fontSize: 13, fontFamily: mono, textAnchor: spot.anchor }),
-      Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: "#BE3E26", r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([s.data.at(-1)], { x: "date", y: "value", text: (d) => d.value.toFixed(2) + "%", dx: 16, fill: "#BE3E26", fontSize: 14, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.lineY(s.data.slice(-13), { x: "date", y: "value", stroke: s.color, strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round" }),
+      Plot.dot([pk], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.line(leader, { x: "x", y: "y", stroke: "#2E4BD8", strokeWidth: 1 }),
+      Plot.text([{ date: textX, value: textY }], { x: "date", y: "value", text: [pkText], fill: "#161A22", fontSize: 12, fontFamily: mono, textAnchor: spot.anchor }),
+      Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([s.data.at(-1)], { x: "date", y: "value", text: (d) => d.value.toFixed(2) + "%", dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
   });
   a11y(plot, s.label + " inflation, year-on-year, 2016 to 2026",
@@ -244,14 +322,14 @@ function componentChart(blockId, plotId, key, d0, d1, yTicks, extraNote) {
 componentChart("cb-fuel", "plot-fuel", "fuel", -25, 55, [-20, 0, 20, 40], "Fuel and power is the most volatile major group in Indian price statistics.");
 componentChart("cb-mfg", "plot-mfg", "manufactured", -5, 15, [-4, 0, 4, 8, 12], "Manufactured products carry two-thirds of the basket's weight.");
 
-/* ---------- §07 : the 29 groups, one panel each ----------
+/* ---------- §08 : the 29 groups, one panel each ----------
  * Scale decision: two shared axes by volatility class. A group whose y/y has
  * ever left ±20% joins the wide axis (−50…+90, sized to the class extremes:
  * crude −46.2 … +86.4); the rest share −12…+20. One uniform axis would iron
  * the manufactured panels flat; per-panel axes would make panels
  * incomparable. Both classes stay comparable within themselves, and the
  * split is disclosed on the plate.
- * Accent decision: vermilion only where the latest |y/y| exceeds 6 — one
+ * Accent decision: blue only where the latest |y/y| exceeds 6 — one
  * story per plate: where the heat is, this print. Threshold in the plotfoot. */
 const f01 = (v) => (v < 0 ? "−" + Math.abs(v).toFixed(1) : v.toFixed(1)) + "%";
 const fmtSigned = (v) => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(1) + "%";
@@ -298,7 +376,7 @@ const SHORT = {
 
   function panel(target, r, domain) {
     const isHot = Math.abs(r.latest) > HOT;
-    const col = isHot ? "#BE3E26" : "#5B564B";
+    const col = isHot ? "#2E4BD8" : "#5F6675";
     const el = document.createElement("div");
     el.className = "gm" + (isHot ? " hot" : "");
     el.innerHTML = `<div class="gm-h"><span class="gm-t" title="${r.s.label}">${SHORT[r.k] || r.s.label}</span><span class="gm-v">${fmtSigned(r.latest)}</span></div><div class="gm-p"></div>`;
@@ -308,7 +386,7 @@ const SHORT = {
       style: { background: "transparent" },
       x: { axis: null }, y: { axis: null, domain },
       marks: [
-        Plot.ruleY([0], { stroke: "#E0DACA", strokeWidth: 1 }),
+        Plot.ruleY([0], { stroke: "#E3E6EB", strokeWidth: 1 }),
         Plot.lineY(r.s.data, { x: "date", y: "value", stroke: col, strokeWidth: isHot ? 1.5 : 1.2, strokeLinejoin: "round", strokeLinecap: "round" }),
         Plot.dot([r.s.data.at(-1)], { x: "date", y: "value", fill: col, r: 2 }),
       ],
@@ -320,8 +398,8 @@ const SHORT = {
   const gw = document.getElementById("grid-wild"), gc = document.getElementById("grid-calm");
   wild.forEach((r) => panel(gw, r, [-50, 90]));
   calm.forEach((r) => panel(gc, r, [-12, 20]));
-  setTxt("cap-wild", `The commodity rim — ${wild.length} groups whose y/y has left ±20% · shared axis −50 … +90`);
-  setTxt("cap-calm", `The manufactured mass — ${calm.length} groups · shared axis −12 … +20`);
+  setTxt("cap-wild", `The commodity rim: ${wild.length} groups whose y/y has left ±20%, shared axis −50 … +90`);
+  setTxt("cap-calm", `The manufactured mass: ${calm.length} groups, shared axis −12 … +20`);
   setTxt("pf-nhot", String(hot.length));
   gw.setAttribute("role", "img");
   gw.setAttribute("aria-label", "Small-multiple grid of the " + wild.length + " most volatile WPI groups, year-on-year, 2016 to 2026, ranked by latest value. Hottest: " + (SHORT[wild[0].k] || wild[0].s.label) + " at " + wild[0].latest.toFixed(1) + " per cent.");
@@ -329,7 +407,7 @@ const SHORT = {
   gc.setAttribute("aria-label", "Small-multiple grid of the " + calm.length + " quieter WPI groups, year-on-year, 2016 to 2026, ranked by latest value. Hottest: " + (SHORT[calm[0].k] || calm[0].s.label) + " at " + calm[0].latest.toFixed(1) + " per cent.");
 
   setTxt("pv-groups", f1(wild[0].latest));
-  setTxt("pc-groups", fmtDate(wild[0].s.data.at(-1).date) + " · " + (SHORT[wild[0].k] || wild[0].s.label) + " — hottest group");
+  setTxt("pc-groups", fmtDate(wild[0].s.data.at(-1).date) + ", " + (SHORT[wild[0].k] || wild[0].s.label) + ": hottest group");
   setTxt("ex-gcrude", f01(LG.crude_petroleum_natural_gas));
   setTxt("ex-goil", f01(LG.mineral_oils));
   setTxt("ex-gother", f01(LG.other_manufacturing));
@@ -338,7 +416,7 @@ const SHORT = {
   wireTools(document.getElementById("cb-groups"), null, [...wild, ...calm].map((r) => r.s), "india-atlas_wpi_29-groups_2016-2026");
 }
 
-/* ---------- §08 : the 134 sub-groups — extremes ledger ----------
+/* ---------- §09 : the 134 sub-groups — extremes ledger ----------
  * Grid-vs-ledger decision: a 134-panel grid at this column width is postage
  * stamps — noise dressed as rigor. The ledger shows the 15 hottest and 15
  * coldest with full sparklines; the other 104 ship in the CSV, complete. */
@@ -351,26 +429,26 @@ const SHORT = {
   const shortLabel = (r) => r.s.label.replace(/^Manufacture of /, "").replace(/^./, (c) => c.toUpperCase());
   const row = (r, rank) => `
   <tr>
-    <td class="name">${shortLabel(r)}<small>№ ${rank} of 134 · ${r.s.label}</small></td>
+    <td class="name">${shortLabel(r)}<small>№ ${rank} of 134, ${r.s.label}</small></td>
     <td class="val">${f1(r.latest)}</td>
-    <td class="chg">${arrow(r.latest - r.prevV)} · ${word(r.latest - r.prevV)}</td>
+    <td class="chg">${arrow(r.latest - r.prevV)}, ${word(r.latest - r.prevV)}</td>
     <td class="yr">${f1(r.yr)}</td>
     <td class="spark" id="sp-t${rank}"></td>
   </tr>`;
   const midCount = all.length - 30;
   document.getElementById("tail-body").innerHTML =
     top.map((r, i) => row(r, i + 1)).join("") +
-    `<tr class="tail-mid"><td colspan="5">⋯ ${midCount} sub-groups between ${f1(top.at(-1).latest)} and ${f1(bot[0].latest)} — the full field ships in the CSV ⋯</td></tr>` +
+    `<tr class="tail-mid"><td colspan="5">⋯ ${midCount} sub-groups between ${f1(top.at(-1).latest)} and ${f1(bot[0].latest)}: the full field ships in the CSV ⋯</td></tr>` +
     bot.map((r, i) => row(r, all.length - 14 + i)).join("");
-  top.forEach((r, i) => spark("sp-t" + (i + 1), { ...r.s, color: "#5B564B" }));
-  bot.forEach((r, i) => spark("sp-t" + (all.length - 14 + i), { ...r.s, color: "#5B564B" }));
+  top.forEach((r, i) => spark("sp-t" + (i + 1), { ...r.s, color: "#5F6675" }));
+  bot.forEach((r, i) => spark("sp-t" + (all.length - 14 + i), { ...r.s, color: "#5F6675" }));
 
   const vals = all.map((r) => r.latest);
   const median = (vals[66] + vals[67]) / 2;
   const negatives = vals.filter((v) => v < 0).length;
   setTxt("pv-tail", f1(top[0].latest));
-  setTxt("pc-tail", fmtDate(top[0].s.data.at(-1).date) + " · " + shortLabel(top[0]).slice(0, 34) + " — hottest sub-group");
-  setTxt("pf-tail", `cut lines — 15th hottest ${f1(top.at(-1).latest)}, 15th coldest ${f1(bot[0].latest)}`);
+  setTxt("pc-tail", fmtDate(top[0].s.data.at(-1).date) + ", " + shortLabel(top[0]).slice(0, 34) + ": hottest sub-group");
+  setTxt("pf-tail", `cut lines: 15th hottest ${f1(top.at(-1).latest)}, 15th coldest ${f1(bot[0].latest)}`);
   setTxt("ex-tspan", (top[0].latest - bot.at(-1).latest).toFixed(1));
   setTxt("ex-ttopn", shortLabel(top[0]).toLowerCase());
   setTxt("ex-ttop", f01(top[0].latest));
@@ -381,8 +459,8 @@ const SHORT = {
   wireTools(document.getElementById("cb-tail"), null, Object.keys(SG).map((k) => SG[k]), "india-atlas_wpi_134-subgroups_2016-2026");
 }
 
-/* ---------- §09 : the 697 items — extremes ledger ----------
- * Same ledger-not-grid decision as §08, one level down. Items ranked by
+/* ---------- §10 : the 697 items — extremes ledger ----------
+ * Same ledger-not-grid decision as §09, one level down. Items ranked by
  * latest y/y; lineage (group › sub-group › sub-sub-group) shown under each
  * name so a hot row traces back to the aggregate it feeds. The CSV is the
  * full latest-month cross-section: index level + y/y for every item. */
@@ -398,10 +476,10 @@ const SHORT = {
     .sort((a, b) => b.latest - a.latest || a.s.label.localeCompare(b.s.label));
   const nRanked = allI.length, nItems = Object.keys(IT).length;
   const topI = allI.slice(0, 15), botI = allI.slice(-15);
-  const chgCell = (r) => r.prevV == null ? "—" : `${arrow(r.latest - r.prevV)} · ${word(r.latest - r.prevV)}`;
+  const chgCell = (r) => r.prevV == null ? "—" : `${arrow(r.latest - r.prevV)}, ${word(r.latest - r.prevV)}`;
   const rowI = (r, rank) => `
   <tr>
-    <td class="name">${r.s.label}<small>№ ${rank} of ${nRanked} · ${r.lineage}</small></td>
+    <td class="name">${r.s.label}<small>№ ${rank} of ${nRanked}, ${r.lineage}</small></td>
     <td class="val">${f1(r.latest)}</td>
     <td class="chg">${chgCell(r)}</td>
     <td class="yr">${r.yr == null ? "—" : f1(r.yr)}</td>
@@ -409,9 +487,9 @@ const SHORT = {
   </tr>`;
   document.getElementById("items-body").innerHTML =
     topI.map((r, i) => rowI(r, i + 1)).join("") +
-    `<tr class="tail-mid"><td colspan="5">⋯ ${nRanked - 30} items between ${f1(topI.at(-1).latest)} and ${f1(botI[0].latest)} — the full field ships in the CSV ⋯</td></tr>` +
+    `<tr class="tail-mid"><td colspan="5">⋯ ${nRanked - 30} items between ${f1(topI.at(-1).latest)} and ${f1(botI[0].latest)}: the full field ships in the CSV ⋯</td></tr>` +
     botI.map((r, i) => rowI(r, nRanked - 14 + i)).join("");
-  const sparkData = (r) => ({ ...r.s, color: "#5B564B", data: r.s.data.filter((d) => d.value != null) });
+  const sparkData = (r) => ({ ...r.s, color: "#5F6675", data: r.s.data.filter((d) => d.value != null) });
   topI.forEach((r, i) => spark("sp-i" + (i + 1), sparkData(r)));
   botI.forEach((r, i) => spark("sp-i" + (nRanked - 14 + i), sparkData(r)));
 
@@ -419,8 +497,8 @@ const SHORT = {
   const medI = nRanked % 2 ? valsI[(nRanked - 1) / 2] : (valsI[nRanked / 2 - 1] + valsI[nRanked / 2]) / 2;
   const negI = valsI.filter((v) => v < 0).length;
   setTxt("pv-items", f1(topI[0].latest));
-  setTxt("pc-items", fmtDate(topI[0].s.data.at(-1).date) + " · " + topI[0].s.label.slice(0, 34) + " — hottest item");
-  setTxt("pf-items", `${nRanked} of ${nItems} items carry an April y/y · cut lines — 15th hottest ${f1(topI.at(-1).latest)}, 15th coldest ${f1(botI[0].latest)}`);
+  setTxt("pc-items", fmtDate(topI[0].s.data.at(-1).date) + ", " + topI[0].s.label.slice(0, 34) + ": hottest item");
+  setTxt("pf-items", `${nRanked} of ${nItems} items carry an April y/y, cut lines: 15th hottest ${f1(topI.at(-1).latest)}, 15th coldest ${f1(botI[0].latest)}`);
   setTxt("ex-ispan", (topI[0].latest - botI.at(-1).latest).toFixed(1));
   setTxt("ex-itopn", topI[0].s.label.toLowerCase());
   setTxt("ex-itop", f01(topI[0].latest));
@@ -451,11 +529,11 @@ const SHORT = {
 }
 
 /* ---------- ledger sparklines ---------- */
-spark("nspark-head", S.headline);
+spark("nspark-head", N.headline);   // the title-strip spark follows the current base
 for (const k of ["headline", "primary", "fuel", "manufactured", "food_index"]) spark("sp-" + k, S[k]);
-for (const [k] of groupRows) spark("sp-g-" + k, { ...G[k], color: "#5B564B" });
-for (const k of ["petrol", "gold_gold_ornaments", "onion"]) spark("sp-it-" + k, { ...IT[k], color: "#5B564B", data: IT[k].data.filter((d) => d.value != null) });
+for (const [k] of groupRows) spark("sp-g-" + k, { ...G[k], color: "#5F6675" });
+for (const k of ["petrol", "gold_gold_ornaments", "onion"]) spark("sp-it-" + k, { ...IT[k], color: "#5F6675", data: IT[k].data.filter((d) => d.value != null) });
 
-/* ---------- provenance vintage — driven from the baked bundle, never hardcoded ---------- */
+/* ---------- provenance vintage: driven from the baked bundle, never hardcoded ---------- */
 setTxt("prov-vintage", bundle.meta.vintage);
 setTxt("prov-vintage2", bundle.meta.vintage);

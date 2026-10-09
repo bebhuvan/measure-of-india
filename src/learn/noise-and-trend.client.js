@@ -1,4 +1,4 @@
-// Learn № 19 · Noise and trend — CPI y/y (thick vermilion) against m/m
+// Learn № 19 · Noise and trend — CPI y/y (thick blue) against m/m
 // (thin grey, computed from published levels), 2021-01..2025-12, with the
 // July 2023 spike annotated as weather.
 // Data: data/series/cpi.json (baked y/y) + data/raw/cpi-indices.json (levels).
@@ -48,8 +48,8 @@ const yAt = (dt) => yoy.find((d) => d.date.getTime() === dt.getTime());
 const y0 = yAt(new Date(Date.UTC(2023, 5, 1))), y1 = yAt(spike.date), y2 = yAt(rev2.date);
 const lastY = yoy.at(-1);
 
-const yoyS = { name: "cpi_yoy_pct", label: "Inflation, y/y", color: "#BE3E26", data: yoy };
-const momS = { name: "cpi_mom_pct", label: "Month-on-month", color: "#A8A293", data: mom };
+const yoyS = { name: "cpi_yoy_pct", label: "Inflation, y/y", color: "#2E4BD8", data: yoy };
+const momS = { name: "cpi_mom_pct", label: "Month-on-month", color: "#A3A9B4", data: mom };
 
 /* ---------- figure slots ---------- */
 const sgn = (v) => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(1);
@@ -74,28 +74,28 @@ setTxt("c-y2", y2.value.toFixed(1));
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
-    style: { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" },
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
     x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => String(d.getUTCFullYear()), domain: [W0, W1] },
-    y: { label: "↑ per cent · grey: m/m · vermilion: y/y", labelAnchor: "top", labelArrow: false,
+    y: { label: "↑ per cent, grey: m/m, blue: y/y", labelAnchor: "top", labelArrow: false,
          tickFormat: (d) => (d === yTicks[yTicks.length - 1] ? d + "%" : String(d)), ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
     marks: [
-      Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
-      Plot.ruleY([0], { stroke: "#1B1A17", strokeOpacity: 0.55, strokeWidth: 1 }),
-      Plot.lineY(mom, { x: "date", y: "value", stroke: "#A8A293", strokeWidth: 1.25, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.lineY(yoy, { x: "date", y: "value", stroke: "#BE3E26", strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+      Plot.ruleY([0], { stroke: "#161A22", strokeOpacity: 0.55, strokeWidth: 1 }),
+      Plot.lineY(mom, { x: "date", y: "value", stroke: "#A3A9B4", strokeWidth: 1.25, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.lineY(yoy, { x: "date", y: "value", stroke: "#2E4BD8", strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
       /* the spike and its reversal */
-      Plot.dot([spike], { x: "date", y: "value", fill: "#5B564B", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([spike], { x: "date", y: "value", text: () => "+" + spike.value.toFixed(1) + "% · " + fmtDate(spike.date) + " · weather, not climate", dy: -14, fill: "#5B564B", fontSize: 13, fontFamily: mono, textAnchor: "middle" }),
-      Plot.dot([rev1, rev2], { x: "date", y: "value", fill: "#5B564B", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([rev2], { x: "date", y: "value", text: () => "reversed within two months", dy: 22, dx: 10, fill: "#8A857A", fontSize: 12, fontFamily: mono, textAnchor: "start" }),
-      Plot.dot([lastY], { x: "date", y: "value", fill: "#BE3E26", r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([lastY], { x: "date", y: "value", text: () => lastY.value.toFixed(2) + "% · " + fmtDate(lastY.date), dx: 12, dy: -2, fill: "#BE3E26", fontSize: 13, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
-      Plot.text([{ date: new Date(Date.UTC(2022, 9, 1)), value: -2.4 }], { x: "date", y: "value", text: ["the grey line is the weather"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "middle" }),
+      Plot.dot([spike], { x: "date", y: "value", fill: "#5F6675", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([spike], { x: "date", y: "value", text: () => "+" + spike.value.toFixed(1) + "%, " + fmtDate(spike.date) + ", weather, not climate", dy: -14, fill: "#5F6675", fontSize: 12, fontFamily: mono, textAnchor: "middle" }),
+      Plot.dot([rev1, rev2], { x: "date", y: "value", fill: "#5F6675", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([rev2], { x: "date", y: "value", text: () => "reversed within two months", dy: 22, dx: 10, fill: "#878D99", fontSize: 12, fontFamily: mono, textAnchor: "start" }),
+      Plot.dot([lastY], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([lastY], { x: "date", y: "value", text: () => lastY.value.toFixed(2) + "%, " + fmtDate(lastY.date), dx: 12, dy: -2, fill: "#161A22", fontSize: 12, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.text([{ date: new Date(Date.UTC(2022, 9, 1)), value: -2.4 }], { x: "date", y: "value", text: ["the grey line is the weather"], fontSize: 12, fill: "#878D99", fontFamily: mono, textAnchor: "middle" }),
     ],
   });
   a11y(plot, "CPI inflation, month-on-month and year-on-year, January 2021 to December 2025",
-    "Two lines. The thin grey month-on-month line swings between " + Math.min(...mom.map((d) => d.value)).toFixed(1) + " and +" + spike.value.toFixed(1) + " per cent; the thick vermilion year-on-year line moves slowly between " + Math.min(...yoy.map((d) => d.value)).toFixed(1) + " and " + Math.max(...yoy.map((d) => d.value)).toFixed(1) + ". The July 2023 monthly spike of " + spike.value.toFixed(1) + " per cent reversed within two months.");
+    "Two lines. The thin grey month-on-month line swings between " + Math.min(...mom.map((d) => d.value)).toFixed(1) + " and +" + spike.value.toFixed(1) + " per cent; the thick blue year-on-year line moves slowly between " + Math.min(...yoy.map((d) => d.value)).toFixed(1) + " and " + Math.max(...yoy.map((d) => d.value)).toFixed(1) + ". The July 2023 monthly spike of " + spike.value.toFixed(1) + " per cent reversed within two months.");
   document.getElementById("plot-nt").append(plot);
   wireTools(document.getElementById("cb-nt"), plot, [yoyS, momS], "india-atlas_learn_noise-and-trend_cpi-mom-yoy_2021-2025", fmtDate);
   addCrosshair(document.getElementById("plot-nt"), plot, [yoyS, momS], geo, fmtDate);

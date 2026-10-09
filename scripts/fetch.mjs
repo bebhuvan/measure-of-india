@@ -32,6 +32,7 @@ import { buildGender } from "./lib/products/gender.mjs";
 import { buildMnre } from "./lib/products/mnre.mjs";
 import { buildNfhs } from "./lib/products/nfhs.mjs";
 import { buildWorldbankWdi } from "./lib/products/worldbank-wdi.mjs";
+import { buildBsr2 } from "./lib/products/bsr2.mjs";
 import { writeSeries } from "./lib/util.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -40,7 +41,7 @@ const ONLY = args.includes("only") ? args.slice(args.indexOf("only") + 1) : null
 const cfg = YAML.parse(fs.readFileSync(path.join(ROOT, "data/sources.yml"), "utf8"));
 const VINTAGE = new Date().toISOString().slice(0, 10);
 
-const REGISTRY = { cpi: buildCpi, nas: buildNas, wpi: buildWpi, cpialrl: buildCpialrl, plfs: buildPlfs, rbi: buildRbi, isp: buildIsp, iip: buildIip, hces: buildHces, asi: buildAsi, asuse: buildAsuse, aishe: buildAishe, gender: buildGender, mnre: buildMnre, nfhs: buildNfhs, "worldbank-wdi": buildWorldbankWdi };
+const REGISTRY = { cpi: buildCpi, nas: buildNas, wpi: buildWpi, cpialrl: buildCpialrl, plfs: buildPlfs, rbi: buildRbi, isp: buildIsp, iip: buildIip, hces: buildHces, asi: buildAsi, asuse: buildAsuse, aishe: buildAishe, gender: buildGender, mnre: buildMnre, nfhs: buildNfhs, "worldbank-wdi": buildWorldbankWdi, bsr2: buildBsr2 };
 
 // One product's failure must not starve the rest: collect, continue, and
 // exit non-zero at the end so CI still fails on the summary.
@@ -53,7 +54,7 @@ for (const [slug, dcfg] of Object.entries(cfg.dossiers)) {
   if (!fetcher) throw new Error(`no fetcher registered for product "${dcfg.product}" (dossier ${slug})`);
   console.log(`\n== ${slug} (${dcfg.product}) ==`);
   try {
-    await fetcher(ROOT, dcfg, VINTAGE);
+    await fetcher(ROOT, dcfg, VINTAGE, cfg);
   } catch (err) {
     failed.push(slug);
     console.error(`FAILED: ${slug}: ${err.message}`);

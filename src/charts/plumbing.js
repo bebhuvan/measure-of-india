@@ -1,6 +1,7 @@
 // src/charts/plumbing.js — shared chart plumbing for every dossier plate.
 // Extracted from site/dossiers/cpi.html (the reference implementation).
-// Behaviour is normative; do not restyle. The only change from the reference
+// Behaviour is normative. Visual language: v2 (2026-10 redesign, see docs/DESIGN.md).
+// The only change from the reference
 // is parameterisation: functions take explicit series/geo args instead of
 // closing over page-level globals.
 //
@@ -15,11 +16,14 @@
 
 import * as Plot from "@observablehq/plot";
 
-export const MONO = "'IBM Plex Mono', monospace";
+// Chart text is Golos Text (proportional, tabular figures). The export keeps its old name,
+// MONO, so the 15 client files that import it need no change; SANS is the honest alias.
+export const SANS = "'Golos Text', system-ui, sans-serif";
+export const MONO = SANS;
 
 /* ---------- downloads ---------- */
 /* A downloaded chart leaves the site; the site fonts must travel with it.
- * The card faces (Archivo for the title, Plex Mono for everything else) are
+ * The card faces (Source Serif 4 for the title, Golos Text for everything else) are
  * embedded as base64 woff2 @font-face rules on first use — without them the
  * SVG/PNG falls back to system fonts on the reader's machine. */
 let _fontCssPromise = null;
@@ -27,9 +31,9 @@ function embeddedFontCss() {
   if (!_fontCssPromise) {
     _fontCssPromise = (async () => {
       const faces = [
-        ["Archivo", "normal", "100 900", "archivo-normal"],
-        ["IBM Plex Mono", "normal", "400", "plex-mono-400"],
-        ["IBM Plex Mono", "normal", "500", "plex-mono-500"],
+        ["Source Serif 4", "normal", "300 700", "source-serif-4-normal-latin"],
+        ["Golos Text", "normal", "400 700", "golos-text-normal-latin"],
+        ["Golos Text", "normal", "400 700", "golos-text-normal-latin-ext"],
       ];
       const rules = await Promise.all(faces.map(async ([fam, style, weight, file]) => {
         const buf = await fetch("/fonts/" + file + ".woff2").then((r) => r.arrayBuffer());
@@ -58,45 +62,64 @@ export function serializeSVG(svg) {
  * the unit/source line, and the site brand — never a bare plot. */
 const escapeXml = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 export function composeCardSVG(svg, meta = {}) {
+  // A finished graphic, ready to post: title (the finding), subtitle, the chart, a hairline,
+  // the source in one quiet block, and the site's name. Text is wrapped by an advance-width
+  // estimate so it works the same in the browser and in jsdom (the qc gate).
   const W = +svg.getAttribute("width"), H = +svg.getAttribute("height");
-  const pad = 48;
-  const headH = meta.title ? 64 : 0;
-  // wrap the source line at "·" boundaries; reserve ~240px for the brand on the last line
-  const footLines = [];
-  if (meta.foot) {
-    const limit = 130;
+  const pad = 56, inner = W, totalW = W + pad * 2;
+  const wrap = (text, size, k, maxW) => {
+    const words = String(text || "").replace(/\s+/g, " ").trim().split(" "), out = [];
     let line = "";
-    for (const seg of meta.foot.split(" · ")) {
-      const candidate = line ? line + " · " + seg : seg;
-      if (candidate.length > limit && line) { footLines.push(line); line = seg; }
-      else line = candidate;
+    for (const w of words) {
+      const t = line ? line + " " + w : w;
+      if (t.length * size * k > maxW && line) { out.push(line); line = w; } else line = t;
     }
-    if (line) footLines.push(line);
+    if (line) out.push(line);
+    return out;
+  };
+  const titleL = meta.title ? wrap(meta.title, 30, 0.47, inner - 40) : [];
+  const subL = meta.sub ? wrap(meta.sub, 15, 0.5, inner - 60) : [];
+  const footL = meta.foot ? wrap(meta.foot, 12, 0.52, inner - 260) : [];
+  let y = pad + 24;
+  const parts = [];
+  titleL.forEach((l, i) => parts.push(`<text x="${pad}" y="${y + i * 38}" font-family="'Source Serif 4', serif" font-weight="500" font-size="30" letter-spacing="-0.3" fill="#161A22">${escapeXml(l)}</text>`));
+  y += titleL.length ? (titleL.length - 1) * 38 + 30 : 0;
+  subL.forEach((l, i) => parts.push(`<text x="${pad}" y="${y + i * 22}" font-family="'Golos Text', sans-serif" font-size="15" fill="#4A5160">${escapeXml(l)}</text>`));
+  y += subL.length ? (subL.length - 1) * 22 + 26 : 0;
+  // the colour key: taken from the chart's own legend on the page, so a shared image is never
+  // a set of unexplained colours. Swatches are read from each chip's <i> background.
+  const key = meta.key ?? [...(svg.closest?.("figure")?.querySelectorAll(".legend .chip") ?? [])].map((c) => {
+    const i = c.querySelector("i"); const st = i?.getAttribute("style") || "";
+    const col = (st.match(/background(?:-color)?:\s*([^;]+)/) || [])[1]?.trim() || "#878D99";
+    const ring = /border/.test(st) && /#fff/i.test(col);
+    const swatchCol = ring ? ((st.match(/border:[^;]*?(#[0-9A-Fa-f]{3,6})/) || [])[1] || "#878D99") : col;
+    return { label: c.textContent.replace(/\s+/g, " ").trim(), color: swatchCol, ring };
+  }).filter((k) => k.label);
+  if (key.length) {
+    let kx = pad; const ky = y + 2;
+    for (const k of key) {
+      parts.push(k.ring ? `<circle cx="${kx + 5}" cy="${ky - 4}" r="4" fill="#fff" stroke="${escapeXml(k.color)}" stroke-width="1.5"/>`
+        : `<rect x="${kx}" y="${ky - 9}" width="10" height="10" fill="${escapeXml(k.color)}"/>`);
+      parts.push(`<text x="${kx + 16}" y="${ky}" font-family="'Golos Text', sans-serif" font-size="13" fill="#4A5160">${escapeXml(k.label)}</text>`);
+      kx += 16 + k.label.length * 7 + 22;
+    }
+    y += 26;
   }
-  const footH = 24 + footLines.length * 17;
-  const totalW = W + pad * 2;
-  const chartY = pad + headH;
-  const totalH = chartY + H + footH + 16;
+  const chartY = y;
   const chart = serializeSVG(svg).replace(/<\?xml[^>]*\?>\s*/, "");
-  const parts = [
+  parts.push(`<g transform="translate(${pad},${chartY})">${chart}</g>`);
+  const footY = chartY + H + 26;
+  parts.push(`<line x1="${pad}" y1="${footY}" x2="${totalW - pad}" y2="${footY}" stroke="#E3E6EB"/>`);
+  footL.forEach((l, i) => parts.push(`<text x="${pad}" y="${footY + 24 + i * 18}" font-family="'Golos Text', sans-serif" font-size="12" fill="#878D99">${escapeXml(l)}</text>`));
+  parts.push(`<text x="${totalW - pad}" y="${footY + 25}" text-anchor="end" font-family="'Source Serif 4', serif" font-weight="500" font-size="17" fill="#161A22">India Atlas</text>`);
+  parts.push(`<text x="${totalW - pad}" y="${footY + 43}" text-anchor="end" font-family="'Golos Text', sans-serif" font-size="12" fill="#878D99">atlas.thisindianlife.today</text>`);
+  const totalH = Math.ceil(footY + Math.max(24 + footL.length * 18, 48) + pad - 16);
+  const out = [
     `<svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}">`,
     `<rect width="${totalW}" height="${totalH}" fill="#FFFFFF"/>`,
+    ...parts, `</svg>`,
   ];
-  if (meta.title) {
-    parts.push(`<rect x="${pad}" y="${pad - 6}" width="9" height="9" fill="#BE3E26"/>`);
-    parts.push(`<text x="${pad + 18}" y="${pad + 2}" font-family="Archivo, sans-serif" font-weight="680" font-size="21" letter-spacing="-0.4" fill="#1B1A17">${escapeXml(meta.title)}</text>`);
-    if (meta.sub) parts.push(`<text x="${pad}" y="${pad + 28}" font-family="'IBM Plex Mono', monospace" font-size="11" letter-spacing="1" fill="#8A857A">${escapeXml(meta.sub.toUpperCase())}</text>`);
-  }
-  parts.push(`<g transform="translate(${pad},${chartY})">${chart}</g>`);
-  const footY = chartY + H + 22;
-  parts.push(`<line x1="${pad}" y1="${footY}" x2="${totalW - pad}" y2="${footY}" stroke="#E6E2D6"/>`);
-  footLines.forEach((l, i) => {
-    parts.push(`<text x="${pad}" y="${footY + 19 + i * 17}" font-family="'IBM Plex Mono', monospace" font-size="10.5" letter-spacing="0.8" fill="#8A857A">${escapeXml(l.toUpperCase())}</text>`);
-  });
-  const brandY = footY + 19 + (footLines.length - 1) * 17;
-  parts.push(`<text x="${totalW - pad}" y="${brandY}" text-anchor="end" font-family="'IBM Plex Mono', monospace" font-size="10.5" letter-spacing="0.8" fill="#8A857A">INDIA ATLAS · THISINDIANLIFE.TODAY</text>`);
-  parts.push(`</svg>`);
-  return { svg: parts.join(""), width: totalW, height: totalH };
+  return { svg: out.join(""), width: totalW, height: totalH };
 }
 
 export function saveBlob(blob, filename) {
@@ -219,7 +242,7 @@ export function addCrosshair(container, plot, seriesList, geo, fmtDate, fmtV = (
     W = gW; xLo = ml; xHi = gW - mr;
   }
   const rule = document.createElementNS(ns, "line");
-  rule.setAttribute("stroke", "#1B1A17");
+  rule.setAttribute("stroke", "#161A22");
   rule.setAttribute("stroke-width", "1");
   rule.setAttribute("y1", ruleTop);
   rule.setAttribute("y2", ruleBot);
@@ -464,7 +487,7 @@ export function spark(id, s) {
     x: { axis: null },
     y: { axis: null, domain: [Math.min(...vs, 0), Math.max(...vs)] },
     marks: [
-      Plot.ruleY([0], { stroke: "#E6E2D6" }),
+      Plot.ruleY([0], { stroke: "#ECEEF2" }),
       Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: 1.5, strokeLinejoin: "round" }),
       Plot.dot(end ? [end] : [], { x: "date", y: "value", fill: s.color, r: 2.5, stroke: "#FFFFFF", strokeWidth: 1 }),
     ],

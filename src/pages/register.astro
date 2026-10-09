@@ -11,12 +11,12 @@ const N_SERIES = SERIES_FILES.reduce((n, f) => n + Object.keys(JSON.parse(fs.rea
 const N_DOSSIERS = DOSSIERS.length;
 ---
 <Base
-  title="India Atlas — The Register"
+  title="Indicators · India Atlas"
   description="Every series India Atlas tracks: what it is, who publishes it, its latest reading, and its shape over the decade."
   nav="register"
   dateStamp={dateStamp(DOSSIERS[0])}
   crumbLeft="<b>The Register</b>"
-  crumbRight={`<b>${N_SERIES.toLocaleString("en-IN")}</b> series baked · ${N_DOSSIERS} dossiers · updated with each print`}
+  crumbRight={`<b>${N_SERIES.toLocaleString("en-IN")}</b> series baked, ${N_DOSSIERS} guides, updated with each print`}
   canonical="https://atlas.thisindianlife.today/register/"
 >
 <div class="page register spage">
@@ -29,7 +29,7 @@ const N_DOSSIERS = DOSSIERS.length;
 
   {DOSSIERS.map((d) => (
     <section>
-      <div class="sec-head"><span class="no">{d.no}</span><h2>{d.register.label} · Dossier {d.no}</h2><span class="line"></span><span class="unit">{d.register.unit}</span></div>
+      <div class="sec-head"><span class="no">{d.no}</span><h2>{d.register.label}, Guide {d.no}</h2><span class="line"></span><span class="unit">{d.register.unit}</span></div>
       <div class="break ledger">
         <table>
           <thead><tr><th>Series</th><th>Code</th><th>{d.register.latestCol ?? "Latest"}</th><th>{d.register.agoCol ?? "Year ago"}</th><th>Vintage</th><th class="spark">{d.register.historyCol}</th></tr></thead>
@@ -41,9 +41,9 @@ const N_DOSSIERS = DOSSIERS.length;
 
   <footer class="provenance">
     <div class="fine">
-      <span>India Atlas · Register</span>
-      <span>Data: MoSPI / NSO via eSankhyiki · vintages as shown</span>
-      <span>Set in Archivo, Newsreader &amp; Plex Mono</span>
+      <span>India Atlas, Register</span>
+      <span>Data: MoSPI / NSO via eSankhyiki, vintages as shown</span>
+      <span>Set in Source Serif 4 and Golos Text</span>
     </div>
   </footer>
 

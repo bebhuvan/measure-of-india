@@ -19,7 +19,7 @@
 // only genuine glyph-strikes are flagged; the 4px white halo is meant to
 // absorb grazes.
 //
-// Usage: node scripts/lint-charts.mjs [--page /dossiers/cpi/]  (exit 1 on finds)
+// Usage: node scripts/lint-charts.mjs [--page /guides/cpi/]  (exit 1 on finds)
 
 import fs from "node:fs";
 import path from "node:path";
@@ -36,7 +36,7 @@ const VERBOSE = process.argv.includes("--verbose");
 // every dossier from the registry, every live explainer, and the front page —
 // a page added to either registry is linted here automatically
 const PAGES = [
-  ...DOSSIERS.map((d) => "/dossiers/" + d.slug + "/"),
+  ...DOSSIERS.map((d) => "/guides/" + d.slug + "/"),
   ...EXPLAINERS.filter((e) => e.live).map((e) => "/learn/" + e.slug + "/"),
   "/",
 ];

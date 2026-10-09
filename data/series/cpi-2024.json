@@ -4,10 +4,11 @@
   "frequency": "monthly",
   "base": "2024=100",
   "source": "MoSPI, National Statistical Office",
-  "vintage": "2026-08-08",
+  "vintage": "2026-10-09",
   "mock": false,
-  "latestPeriod": "2026-06",
-  "releaseDate": "2026-07-12",
+  "geo": "IND",
+  "latestPeriod": "2026-08",
+  "releaseDate": "2026-09-12",
   "coverage": "All India, Combined; CPI General + the 12 COICOP-2018-style divisions",
   "note": "Base 2024=100, a separate series from the 2012 base — never spliced. Headline is the published all-groups index (CPI General): the API serves no component weights for this base yet, so the computed-from-weights cross-check the 2012-base bundles get is not possible here. y/y is computed from published index levels; the API's own published inflation rate is kept as a crosscheck.",
   "revisionPolicy": "CPI is final on release; never revised."
@@ -18,176 +19,204 @@
   "2026-03-01",
   "2026-04-01",
   "2026-05-01",
-  "2026-06-01"
+  "2026-06-01",
+  "2026-07-01",
+  "2026-08-01"
  ],
  "series": {
   "headline": {
    "name": "cpi2024_headline_yoy_pct",
    "label": "Headline · base 2024",
-   "color": "#BE3E26",
+   "color": "#2E4BD8",
    "data": [
     2.73,
     3.21,
     3.4,
     3.48,
     3.94,
-    4.38
+    4.38,
+    4.45,
+    4.82
    ]
   },
   "food_and_beverages": {
    "name": "cpi2024_food_and_beverages_yoy_pct",
    "label": "Food and beverages",
-   "color": "#5B564B",
+   "color": "#5F6675",
    "data": [
     2.12,
     3.35,
     3.71,
     4.01,
     4.54,
-    5.06
+    5.06,
+    5.25,
+    5.66
    ]
   },
   "paan_tobacco_and_intoxicants": {
    "name": "cpi2024_paan_tobacco_and_intoxicants_yoy_pct",
    "label": "Paan, tobacco and intoxicants",
-   "color": "#8A857A",
+   "color": "#878D99",
    "data": [
     2.87,
     3.51,
     4.23,
     4.77,
     4.84,
-    4.83
+    4.82,
+    4.78,
+    4.7
    ]
   },
   "clothing_and_footwear": {
    "name": "cpi2024_clothing_and_footwear_yoy_pct",
    "label": "Clothing and footwear",
-   "color": "#A8A293",
+   "color": "#A3A9B4",
    "data": [
     2.97,
     2.81,
     2.74,
     2.81,
     2.98,
-    3.22
+    3.22,
+    3.37,
+    3.56
    ]
   },
   "housing_water_electricity_gas_and_other_fuels": {
    "name": "cpi2024_housing_water_electricity_gas_and_other_fuels_yoy_pct",
    "label": "Housing, water, electricity, gas and other fuels",
-   "color": "#C6C0B0",
+   "color": "#C9CED6",
    "data": [
     1.46,
     1.51,
     1.96,
     1.71,
     1.73,
-    1.99
+    1.99,
+    2.15,
+    2.61
    ]
   },
   "furnishings_household_equipment_and_routine_household_maintenance": {
    "name": "cpi2024_furnishings_household_equipment_and_routine_household_maintenance_yoy_pct",
    "label": "Furnishings, household equipment and routine household maintenance",
-   "color": "#5B564B",
+   "color": "#5F6675",
    "data": [
     1.45,
     1.36,
     1.39,
     1.62,
     1.9,
-    2.19
+    2.19,
+    2.4,
+    2.68
    ]
   },
   "health": {
    "name": "cpi2024_health_yoy_pct",
    "label": "Health",
-   "color": "#8A857A",
+   "color": "#878D99",
    "data": [
     2.18,
     1.9,
     1.75,
     1.65,
     1.49,
-    1.42
+    1.42,
+    1.34,
+    1.33
    ]
   },
   "transport": {
    "name": "cpi2024_transport_yoy_pct",
    "label": "Transport",
-   "color": "#A8A293",
+   "color": "#A3A9B4",
    "data": [
     0.09,
     -0.05,
     0,
     -0.01,
     1.75,
-    4.31
+    4.31,
+    4.45,
+    4.6
    ]
   },
   "information_and_communication": {
    "name": "cpi2024_information_and_communication_yoy_pct",
    "label": "Information and communication",
-   "color": "#C6C0B0",
+   "color": "#C9CED6",
    "data": [
     0.16,
     0.24,
     0.33,
     0.49,
     0.3,
-    0.42
+    0.42,
+    0.64,
+    2.02
    ]
   },
   "recreation_sport_and_culture": {
    "name": "cpi2024_recreation_sport_and_culture_yoy_pct",
    "label": "Recreation, sport and culture",
-   "color": "#5B564B",
+   "color": "#5F6675",
    "data": [
     2.32,
     2.22,
     2.48,
     2.12,
     1.98,
-    1.75
+    1.74,
+    1.64,
+    1.73
    ]
   },
   "education_services": {
    "name": "cpi2024_education_services_yoy_pct",
    "label": "Education services",
-   "color": "#8A857A",
+   "color": "#878D99",
    "data": [
     3.35,
     3.32,
     3.31,
     3.15,
     3,
-    3.34
+    3.35,
+    3.66,
+    3.73
    ]
   },
   "restaurants_and_accommodation_services": {
    "name": "cpi2024_restaurants_and_accommodation_services_yoy_pct",
    "label": "Restaurants and accommodation services",
-   "color": "#A8A293",
+   "color": "#A3A9B4",
    "data": [
     2.87,
     2.72,
     2.88,
     4.21,
     5.74,
-    6.91
+    6.91,
+    7.72,
+    8.38
    ]
   },
   "personal_care_social_protection_and_miscellaneous_goods_and_services": {
    "name": "cpi2024_personal_care_social_protection_and_miscellaneous_goods_and_services_yoy_pct",
    "label": "Personal care, social protection and miscellaneous goods and services",
-   "color": "#C6C0B0",
+   "color": "#C9CED6",
    "data": [
     19.06,
     19.65,
     18.63,
     17.67,
     18.47,
-    16.73
+    16.72,
+    14.78,
+    15.18
    ]
   }
  },
@@ -198,7 +227,9 @@
    3.4,
    3.48,
    3.93,
-   4.38
+   4.38,
+   4.45,
+   4.82
   ],
   "published_inflation": {
    "headline": [
@@ -207,7 +238,9 @@
     3.4,
     3.48,
     3.93,
-    4.38
+    4.38,
+    4.45,
+    4.82
    ],
    "food_and_beverages": [
     2.11,
@@ -215,7 +248,9 @@
     3.71,
     4.01,
     4.55,
-    5.05
+    5.05,
+    5.24,
+    5.66
    ],
    "paan_tobacco_and_intoxicants": [
     2.86,
@@ -223,7 +258,9 @@
     4.24,
     4.77,
     4.83,
-    4.83
+    4.82,
+    4.79,
+    4.71
    ],
    "clothing_and_footwear": [
     2.97,
@@ -231,7 +268,9 @@
     2.75,
     2.8,
     2.98,
-    3.23
+    3.22,
+    3.38,
+    3.56
    ],
    "housing_water_electricity_gas_and_other_fuels": [
     1.47,
@@ -239,7 +278,9 @@
     1.96,
     1.71,
     1.73,
-    1.99
+    2,
+    2.16,
+    2.61
    ],
    "furnishings_household_equipment_and_routine_household_maintenance": [
     1.45,
@@ -247,7 +288,9 @@
     1.39,
     1.61,
     1.89,
-    2.19
+    2.19,
+    2.4,
+    2.68
    ],
    "health": [
     2.19,
@@ -255,7 +298,9 @@
     1.75,
     1.65,
     1.49,
-    1.42
+    1.42,
+    1.34,
+    1.34
    ],
    "transport": [
     0.09,
@@ -263,7 +308,9 @@
     0,
     -0.01,
     1.75,
-    4.31
+    4.32,
+    4.44,
+    4.6
    ],
    "information_and_communication": [
     0.16,
@@ -271,7 +318,9 @@
     0.33,
     0.5,
     0.3,
-    0.43
+    0.43,
+    0.63,
+    2.01
    ],
    "recreation_sport_and_culture": [
     2.32,
@@ -279,7 +328,9 @@
     2.47,
     2.11,
     1.98,
-    1.75
+    1.73,
+    1.64,
+    1.74
    ],
    "education_services": [
     3.35,
@@ -287,7 +338,9 @@
     3.31,
     3.15,
     2.99,
-    3.34
+    3.35,
+    3.66,
+    3.73
    ],
    "restaurants_and_accommodation_services": [
     2.87,
@@ -295,7 +348,9 @@
     2.88,
     4.22,
     5.74,
-    6.91
+    6.91,
+    7.72,
+    8.38
    ],
    "personal_care_social_protection_and_miscellaneous_goods_and_services": [
     19.06,
@@ -303,7 +358,9 @@
     18.63,
     17.66,
     18.46,
-    16.72
+    16.72,
+    14.78,
+    15.17
    ]
   }
  }

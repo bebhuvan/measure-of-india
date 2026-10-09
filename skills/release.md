@@ -24,17 +24,20 @@ Scheduled releases run the same gates in `.github/workflows/update.yml`.
    be stale, and STOP — the QC freshness gate will correctly fail a build
    whose data moved without prose. Data and prose move together or not at
    all.)
-4. **Build + QC.**
+4. **Build + gates.**
    ```
-   npx astro build && node scripts/qc.mjs
+   npx astro build && npm run gates
    ```
+   (`gates` = validate + as-of + qc + chart lint. An as-of failure means a
+   hand-written paragraph still describes the previous print — follow
+   `docs/RELEASE-CHECKLIST.md` §1b: re-read, edit, `--refresh`, re-run.)
 5. **Branch + PR.**
    ```
    git checkout -b release/$(date -u +%Y-%m-%d)
    git add data/series data/raw pipeline/out src dist
    git commit -m "data: new vintage $(date -u +%Y-%m-%d)"
    git push origin release/$(date -u +%Y-%m-%d)
-   gh pr create --fill --body "Gates: validate, build, qc all green locally. Reviewer: docs/RELEASE-CHECKLIST.md."
+   gh pr create --fill --body "Gates: validate, as-of, build, qc all green locally. Reviewer: docs/RELEASE-CHECKLIST.md."
    ```
    Adapt the tool (`gh`) to whatever PR mechanism the operator uses if gh is
    unavailable. NEVER push to main.

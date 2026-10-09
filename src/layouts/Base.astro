@@ -4,7 +4,7 @@ import "../styles/atlas.css";
 interface Props {
   title: string;
   description?: string;
-  nav?: "dossiers" | "learn" | "register" | "method" | "about";
+  nav?: "guides" | "home" | "learn" | "register" | "method" | "about";
   dateStamp?: string;
   crumbLeft?: string;   // html
   crumbRight?: string;  // html
@@ -13,7 +13,7 @@ interface Props {
 }
 const {
   title,
-  description = "India Atlas — long-form dossiers on Indian economic statistics.",
+  description = "India Atlas: plain-language guides to India's official economic statistics, with charts you can download and share.",
   nav,
   dateStamp = "",
   crumbLeft = "",
@@ -35,7 +35,7 @@ const canonicalUrl = canonical ?? "https://atlas.thisindianlife.today/";
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="alternate" type="application/rss+xml" title="India Atlas — dossier revisions" href="/rss.xml">
+<link rel="alternate" type="application/rss+xml" title="India Atlas: guide revisions" href="/rss.xml">
 <meta property="og:title" content={title}>
 <meta property="og:description" content={description}>
 <meta property="og:type" content="article">
@@ -46,18 +46,18 @@ const canonicalUrl = canonical ?? "https://atlas.thisindianlife.today/";
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content={ogUrl}>
-<link rel="preload" href="/fonts/archivo-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/fonts/newsreader-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/fonts/plex-mono-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/source-serif-4-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/golos-text-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="sitehead">
   <div class="sh-in">
-    <a class="brand" href="/"><span class="mark"></span>India Atlas</a>
-    <nav class="sh-nav">
-      <a href="/#dossiers" aria-current={nav === "dossiers" ? "page" : undefined}>Dossiers</a><a href="/learn/" aria-current={nav === "learn" ? "page" : undefined}>Learn</a><a href="/register/" aria-current={nav === "register" ? "page" : undefined}>Register</a><a href="/method/" aria-current={nav === "method" ? "page" : undefined}>Method</a><a href="/about/" aria-current={nav === "about" ? "page" : undefined}>About</a>
+    <a class="brand" href="/">India Atlas</a>
+    <nav class="sh-nav" aria-label="Main">
+      <a href="/guides/" aria-current={nav === "guides" ? "page" : undefined}>Guides</a><a href="/learn/" aria-current={nav === "learn" ? "page" : undefined}>Learn</a><a href="/register/" aria-current={nav === "register" ? "page" : undefined}>Indicators</a><a href="/method/" aria-current={nav === "method" ? "page" : undefined}>Method</a><a href="/about/" aria-current={nav === "about" ? "page" : undefined}>About</a>
     </nav>
+    <a class="sh-search" href="/#find">Search <kbd>/</kbd></a>
     <span class="sh-date">{dateStamp}</span>
   </div>
 </header>

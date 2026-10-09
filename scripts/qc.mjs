@@ -28,7 +28,7 @@ const ok = (m) => console.log("  ok:", m);
 const PAGES = [
   // titleblock and §01 lead with the 2024-base print; the 2012-base story
   // (§05 plate, core) stays below — both bundles are checked
-  { url: "/dossiers/cpi/", slug: null, checks: [
+  { url: "/guides/cpi/", slug: null, checks: [
     ["n-head", (b) => fmt.pct2(b["cpi-2024"].series.headline.data.at(-1))],
     ["n-food", (b) => fmt.pct2(b["cpi-2024"].series.food_and_beverages.data.at(-1))],
     ["n-old", (b) => fmt.pct2(b.cpi.series.headline.data.at(-1))],
@@ -51,7 +51,7 @@ const PAGES = [
     }],
     ["pf-st24-ai", (b) => fmt.pct2(b["cpi-2024"].series.headline.data.at(-1))],
   ]},
-  { url: "/dossiers/gdp/", slug: null, checks: [
+  { url: "/guides/gdp/", slug: null, checks: [
     ["n-gdp", (b) => fmt.pct2(b["gdp-2022"].series.gdp.data.at(-1))],
     ["n-gfcf", (b) => fmt.pct2(b["gdp-2022"].series.gfcf.data.at(-1))],
     // v1.8 slots: engines, deflator wedge, saving rate, the 2022-23 base
@@ -64,12 +64,19 @@ const PAGES = [
     ["ex-defl-n", (b) => fmt.pct2(b["gdp-nominal"].series.gdp_nominal.data.at(-1))],
     ["ac-sav", (b) => fmt.pct1(b["gdp-accounts"].series.saving_rate.data.filter((v) => v != null).at(-1))],
     ["pv-nb", (b) => fmt.pct2(b["gdp-2022"].series.gdp.data.at(-1))],
+    // 2022-23 base engines and the back series (2026-10)
+    ["pv-nbind", (b) => fmt.pct2(Math.max(...Object.values(b["gdp-2022-industries"].series).map((s) => s.data.at(-1))))],
+    ["pv-si", (b) => b["gdp-back"].series.saving_rate.data.filter((v) => v != null).at(-1).toFixed(1) + "%"],
     ["nb-q3", (b) => fmt.pct2(b["gdp-2022"].series.gdp.data.at(-2))],
     ["prov-vintage", (b) => b.gdp.meta.vintage],
   ]},
-  { url: "/dossiers/wpi/", slug: null, checks: [
-    ["n-head", (b) => fmt.pct2(b.wpi.series.headline.data.at(-1))],
-    ["n-fuel", (b) => fmt.pct2(b.wpi.series.fuel.data.at(-1))],
+  { url: "/guides/wpi/", slug: null, checks: [
+    // title strip and §02: the CURRENT base, 2022-23 (2011-12 ended Apr 2026)
+    ["n-head", (b) => fmt.pct2(b["wpi-2022"].series.headline.data.at(-1))],
+    ["n-fuel", (b) => fmt.pct2(b["wpi-2022"].series.fuel.data.at(-1))],
+    ["pv-nb", (b) => fmt.pct2(b["wpi-2022"].series.headline.data.at(-1))],
+    ["nb-new", (b) => fmt.pct2(b["wpi-2022"].series.headline.data.at(-1))],
+    // the 697 items of the 2011-12 basket (plates from §10 stay on the old base)
     // v1.2 — the 697 items: hottest item, deflating-item count, onion's print
     ["pv-items", (b) => {
       const vals = Object.values(b["wpi-items"].series).map((s) => s.data.at(-1)).filter((v) => v != null);
@@ -82,7 +89,7 @@ const PAGES = [
     }],
     ["prov-vintage", (b) => b.wpi.meta.vintage],
   ]},
-  { url: "/dossiers/iip/", slug: null, checks: [
+  { url: "/guides/iip/", slug: null, checks: [
     ["n-head", (b) => fmt.pct2(b["iip-2022"].series.general.data.at(-1))],
     ["n-cap", (b) => fmt.pct2(b["iip-2022"].series.use_capital_goods.data.at(-1))],
     // v1.2 deep-ledger plate: heritage bases 1993-94 / 2004-05
@@ -101,7 +108,7 @@ const PAGES = [
     ["her-end04", (b) => fmt.pct2(b["iip-2004"].series.general.data.filter((x) => x != null).at(-1))],
     ["prov-vintage", (b) => b["iip-2022"].meta.vintage],
   ]},
-  { url: "/dossiers/external/", slug: null, checks: [
+  { url: "/guides/external/", slug: null, checks: [
     ["n-fx", (b) => fmt.inr2(b["rbi-forex"].series.usdinr.data.at(-1))],
     ["n-cad", (b) => fmt.pct1(b["rbi-bop-ratios"].series.cad_gdp.data.at(-1))],
     ["cr-res", (b) => fmt.bnRound(b["rbi-forex"].series.reserves.data.at(-1) / 1000)],
@@ -125,7 +132,7 @@ const PAGES = [
     }],
     ["prov-vintage", (b) => b["rbi-forex"].meta.vintage],
   ]},
-  { url: "/dossiers/jobs/", slug: null, checks: [
+  { url: "/guides/jobs/", slug: null, checks: [
     ["n-ur", (b) => fmt.pct2(b["plfs-monthly"].series.ur.data.at(-1))],
     ["n-fur", (b) => fmt.pct2(b["plfs-cuts"].series.ur_female_urban.data.at(-1))],
     ["pv-main", (b) => fmt.pct2(b["plfs-quarterly"].series.ur.data.at(-1))],
@@ -142,7 +149,7 @@ const PAGES = [
     ["prov-vintage", (b) => b["plfs-monthly"].meta.vintage],
     ["prov-vintage2", (b) => b["plfs-monthly"].meta.vintage],
   ]},
-  { url: "/dossiers/consumption/", slug: null, checks: [
+  { url: "/guides/consumption/", slug: null, checks: [
     ["n-rural", (b) => fmt.inrR(b["hces-mpce"].series.rural.data.at(-1))],
     ["n-urban", (b) => fmt.inrR(b["hces-mpce"].series.urban.data.at(-1))],
     ["n-gini", (b) => fmt.num3(b["hces-gini"].series.rural.data.at(-1))],
@@ -159,7 +166,7 @@ const PAGES = [
     ["prov-vintage", (b) => b["hces-mpce"].meta.vintage],
     ["prov-vintage2", (b) => b["hces-mpce"].meta.vintage],
   ]},
-  { url: "/dossiers/factories/", slug: null, checks: [
+  { url: "/guides/factories/", slug: null, checks: [
     ["n-fact", (b) => fmt.lakh2(b["asi-headline"].series.factories_in_operation.data.at(-1))],
     ["cr-fop", (b) => fmt.inr(b["asi-headline"].series.factories_in_operation.data.at(-1))],
     ["cr-gpwi", (b) => fmt.inrR(b["asuse-annual"].series.gva_per_worker_all.data.filter((v) => v != null).at(-1))],
@@ -188,7 +195,7 @@ const PAGES = [
     ["prov-vintage", (b) => b["asi-headline"].meta.vintage],
     ["prov-vintage2", (b) => b["asi-headline"].meta.vintage],
   ]},
-  { url: "/dossiers/aishe/", slug: null, checks: [
+  { url: "/guides/aishe/", slug: null, checks: [
     ["n-enrol", (b) => fmt.crore2(b["aishe-headline"].series.enrolment.data.at(-1))],
     ["n-ger", (b) => fmt.pct1(b["aishe-headline"].series.ger.data.at(-1))],
     ["n-gpi", (b) => fmt.num2(b["aishe-headline"].series.gpi.data.at(-1))],
@@ -227,7 +234,7 @@ const PAGES = [
     ["prov-vintage", (b) => b["aishe-headline"].meta.vintage],
     ["prov-vintage2", (b) => b["aishe-headline"].meta.vintage],
   ]},
-  { url: "/dossiers/gender/", slug: null, checks: [
+  { url: "/guides/gender/", slug: null, checks: [
     ["n-sr", (b) => b["gender-sexratio"].series.sex_ratio.data.at(-1) + "♀/1000♂"],
     ["n-lfpr", (b) => fmt.pct1(b["gender-work"].series.lfpr_female.data.at(-1))],
     ["n-mmr", (b) => fmt.count(b["gender-mmr"].series.mmr.data.at(-1))],
@@ -242,7 +249,7 @@ const PAGES = [
     ["prov-vintage", (b) => b["gender-sexratio"].meta.vintage],
     ["prov-vintage2", (b) => b["gender-sexratio"].meta.vintage],
   ]},
-  { url: "/dossiers/mnre/", slug: null, checks: [
+  { url: "/guides/mnre/", slug: null, checks: [
     ["n-total", (b) => fmt.gw1(b["mnre-sources"].series.grand_total.data.at(-1))],
     ["n-solar-share", (b) => fmt.pct0(b["mnre-sources"].series.solar.data.at(-1) / b["mnre-sources"].series.grand_total.data.at(-1) * 100)],
     ["cr-total", (b) => fmt.gw1(b["mnre-sources"].series.grand_total.data.at(-1))],
@@ -252,7 +259,7 @@ const PAGES = [
     ["prov-vintage", (b) => b["mnre-sources"].meta.vintage],
     ["prov-vintage2", (b) => b["mnre-sources"].meta.vintage],
   ]},
-  { url: "/dossiers/nfhs/", slug: null, checks: [
+  { url: "/guides/nfhs/", slug: null, checks: [
     ["n-anaemia", (b) => { const s = Object.values(b["nfhs-anaemia"].series).find((x) => x.label.includes("Children age 6-59")); return fmt.pct1(s.data[1]); }],
     ["n-imr", (b) => { const s = Object.values(b["nfhs-child"].series).find((x) => x.label.includes("Infant mortality")); return fmt.count(s.data[1]) + "/1000"; }],
     ["n-institutional", (b) => { const s = Object.values(b["nfhs-maternal"].series).find((x) => x.label.includes("Institutional births (in the 5 years")); return fmt.pct1(s.data[1]); }],
@@ -262,7 +269,7 @@ const PAGES = [
     ["prov-vintage", (b) => b["nfhs-anaemia"].meta.vintage],
     ["prov-vintage2", (b) => b["nfhs-anaemia"].meta.vintage],
   ]},
-  { url: "/dossiers/manufacturing/", slug: null, checks: [
+  { url: "/guides/manufacturing/", slug: null, checks: [
     ["n-share", (b) => fmt.pct1(b["wdi-manufacturing"].series.mva_pct_gdp.data.at(-1))],
     ["n-level", (b) => fmt.bnRound(b["wdi-manufacturing"].series.mva_constant_usd.data.at(-1) / 1e9)],
     ["n-growth", (b) => fmt.pct1(b["wdi-manufacturing"].series.mva_growth.data.at(-1))],
@@ -271,14 +278,24 @@ const PAGES = [
     ["prov-vintage", (b) => b["wdi-manufacturing"].meta.vintage],
     ["prov-vintage2", (b) => b["wdi-manufacturing"].meta.vintage],
   ]},
+  { url: "/guides/deposits/", slug: null, checks: [
+    // the money figures: ₹ lakh crore, straight from the BSR-2 bundles
+    ["cr-hh", (b) => fmt.lc1(b["deposits-owners"].series.household_total.data.at(-1))],
+    ["pv-types", (b) => fmt.lc1(b["deposits-owners"].series.household_term.data.at(-1))],
+    ["ex-ty-sav", (b) => fmt.lc1(b["deposits-owners"].series.household_savings.data.at(-1))],
+    ["cr-term", (b) => fmt.pct1(100 * b["deposits-owners"].series.household_term.data.at(-1) / b["deposits-owners"].series.household_total.data.at(-1))],
+    ["ex-p-women", (b) => fmt.pct1(100 * b["deposits-owners"].series.female_total.data.at(-1) / b["deposits-owners"].series.all_total.data.at(-1))],
+    ["prov-vintage", (b) => b["deposits-owners"].meta.vintage],
+  ]},
   { url: "/", slug: null, minPlots: 1, checks: [
     // the CPI print is the 2024-base series; core stays on the 2012 base
     // (no weights served for the new base), labelled "to Dec 2025"
     ["v-cpi", (b) => fmt.pct2(b["cpi-2024"].series.headline.data.at(-1)), "cpi-2024"],
     // the GDP print is the 2022-23-base series (old base ends Q2 FY26)
     ["v-gdp", (b) => fmt.pct2(b["gdp-2022"].series.gdp.data.at(-1)), "gdp-2022"],
-    ["v-core", (b) => fmt.pct2(b.cpi.series.core.data.at(-1)), "cpi"],
   ]},
+  // the guides index: one small chart per guide
+  { url: "/guides/", slug: null, minPlots: 13, checks: [] },
   { url: "/register/", slug: null, minPlots: 8, checks: [] },
   { url: "/learn/inflation/", slug: "cpi", minPlots: 3, checks: [
     ["lr-rdec", (b) => fmt.pct2(b.series.headline.data.at(-1))],
@@ -299,11 +316,11 @@ const PAGES = [
 // startup guard: the PAGES table and the dossier registry must cover each
 // other exactly — a new dossier must be impossible to ship un-gated
 {
-  const gated = PAGES.filter((p) => p.url.startsWith("/dossiers/")).map((p) => p.url.split("/")[2]);
+  const gated = PAGES.filter((p) => p.url.startsWith("/guides/") && p.url !== "/guides/").map((p) => p.url.split("/")[2]);
   const ungated = DOSSIERS.map((d) => d.slug).filter((s) => !gated.includes(s));
   const unknown = gated.filter((s) => !bySlug[s]);
   if (ungated.length || unknown.length) {
-    if (ungated.length) console.error(`qc: registry dossiers with no PAGES entry: ${ungated.map((s) => "/dossiers/" + s + "/").join(", ")}`);
+    if (ungated.length) console.error(`qc: registry dossiers with no PAGES entry: ${ungated.map((s) => "/guides/" + s + "/").join(", ")}`);
     if (unknown.length) console.error(`qc: PAGES dossier URLs not in the registry: ${unknown.join(", ")}`);
     process.exit(1);
   }
@@ -387,16 +404,16 @@ for (const page of PAGES) {
 
   // titleblock stamp and register vintage labels are DERIVED from the bundles
   // (src/dossiers/display.js) — a hand-typed or stale stamp fails here
-  if (page.url.startsWith("/dossiers/")) {
+  if (page.url.startsWith("/guides/") && page.url !== "/guides/") {
     const d = bySlug[page.url.split("/")[2]];
     const got = doc.querySelector(".sh-date")?.textContent.trim();
     const want = display.dateStamp(d);
     if (got !== want) fail(`${page.url}: titleblock stamp "${got}" != derived "${want}" (src/dossiers/display.js)`);
   }
   if (page.url === "/") {
-    const vts = [...doc.querySelectorAll(".dossiers .vt")];
-    DOSSIERS.forEach((d, i) => {
-      const got = vts[i]?.textContent.replace(/^Current/, "").trim();
+    // rows are ordered by release date, so match each guide's row by its slug, not its position
+    DOSSIERS.forEach((d) => {
+      const got = doc.querySelector(`.dossiers [data-slug="${d.slug}"] .vt`)?.textContent.trim();
       const want = display.vintageLabel(d);
       if (got !== want) fail("/: dossier row " + d.slug + " vintage label '" + got + "' != derived '" + want + "'");
     });
@@ -421,7 +438,7 @@ for (const page of PAGES) {
   else ok(`${page.url}: ${nPlots} charts rendered`);
 
   // download card composition: title + source + brand, valid SVG
-  if (page.url === "/dossiers/cpi/") {
+  if (page.url === "/guides/cpi/") {
     const { composeCardSVG } = await import(pathToFileURL(path.join(ROOT, "src/charts/plumbing.js")).href);
     const raw = doc.querySelector("#plot-main svg");
     const card = composeCardSVG(raw, {
@@ -433,7 +450,8 @@ for (const page of PAGES) {
     const text = parsed.documentElement.textContent;
     if (parsed.querySelector("parsererror")) fail("download card: SVG does not parse");
     else {
-      for (const needle of ["cost of living", "MOSPI", "INDIA ATLAS · THISINDIANLIFE.TODAY"]) {
+      // v2 card: sentence-case source line, brand set as "India Atlas" plus the address
+      for (const needle of ["cost of living", "MoSPI", "India Atlas", "atlas.thisindianlife.today"]) {
         if (!text.includes(needle)) fail(`download card: missing "${needle}"`);
       }
       ok(`download card composes (${card.width}×${card.height}, ${ (card.svg.length/1024).toFixed(0) } KB svg)`);

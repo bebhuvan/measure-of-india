@@ -2,15 +2,15 @@
 import Learn from "../layouts/Learn.astro";
 ---
 <Learn
-  title="India Atlas — Learn · Seasons in the data"
-  description="Learn № 06 — seasonality: prices keep a calendar. Vegetables glut every winter and spike some monsoons; the food level dips almost every November to February. A seasonal wobble is not a trend."
+  title="Seasons in the data · India Atlas"
+  description="Seasonality: prices keep a calendar. Vegetables glut every winter and spike some monsoons; the food level dips almost every November to February. A seasonal wobble is not a trend."
   slug="seasonality"
-  kicker="Learn № 06 — Prices · Seasonality"
+  kicker="Prices: Seasonality"
   h1="A dip on schedule is <i>not a trend.</i>"
   lede="Vegetable prices keep a calendar: the winter glut, the summer climb, the occasional monsoon spike. How to tell the season from the trend, and why winter always looks like relief."
   meta={[
     ["Concept", "Seasonality"],
-    ["Illustrated with", "Food CPI level · 2016–2025"],
+    ["Illustrated with", "Food CPI level, 2016–2025"],
     ["Source", "MoSPI, NSO"],
     ["Level", "First principles"],
     ["Reading time", "6 min"],
@@ -26,7 +26,7 @@ import Learn from "../layouts/Learn.astro";
       <div>
         <p>Vegetable prices keep a calendar. Every winter the new harvest reaches the mandis, supply gluts, and the food price level dips; every summer it climbs back. The rhythm repeats with such regularity that you can nearly read the month off the shape of the chart.</p>
         <aside class="defbox">
-          <div class="term">Seasonality <span class="sub">a calendar inside the data · repeats every year</span></div>
+          <div class="term">Seasonality <span class="sub">a calendar inside the data, repeats every year</span></div>
           <p>A pattern in a series that repeats at the same time every year: prices, output or employment rising and falling with the seasons rather than with any real change in the economy. Winter's cheap vegetables are seasonality. So is the festival-month spike in gold.</p>
           <div class="eg"><b>In plain words:</b> the data has a heartbeat, and the calendar sets its pace.</div>
         </aside>
@@ -34,15 +34,15 @@ import Learn from "../layouts/Learn.astro";
       </div>
       <div class="wm-rail">
         <aside class="margin-note">
-          <span class="mk">Margin note · i</span>
+          <span class="mk">Margin note, i</span>
           <b>The dips are the calendar, not the trend.</b> The level sags each winter and climbs each summer. Only one of those is the story.
         </aside>
         <aside class="margin-note">
-          <span class="mk">Margin note · ii</span>
+          <span class="mk">Margin note, ii</span>
           <b>Spikes have dates too.</b> The onion shock of December 2019 sat right inside the seasonal window. A season can host a crisis; it is still a season.
         </aside>
         <aside class="margin-note">
-          <span class="mk">Margin note · iii</span>
+          <span class="mk">Margin note, iii</span>
           <b>Festivals are seasons.</b> Demand rises on schedule as surely as supply does, and the data keeps both appointments.
         </aside>
       </div>
@@ -51,21 +51,21 @@ import Learn from "../layouts/Learn.astro";
 
   <!-- § 02 plate : the calendar drawn ten times -->
   <section>
-    <div class="sec-head"><span class="no">02</span><h2>The calendar, drawn ten times</h2><span class="line"></span><span class="unit">Food index level · monthly</span></div>
+    <div class="sec-head"><span class="no">02</span><h2>The calendar, drawn ten times</h2><span class="line"></span><span class="unit">Food index level, monthly</span></div>
     <p>Below is the food price level for a full decade, with the four months from November to February shaded every year. The pattern needs no model and no statistics: the line sags inside the grey bands and climbs outside them.</p>
     <div class="break">
       <figure id="cb-seas" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>The same dip, every winter — the calendar is the pattern</h3>
-            <div class="sub">CPI food &amp; beverages · index level, 2012 = 100 · shaded: November to February · Jan 2016 – Dec 2025</div>
+            <h3>The same dip, every winter: the calendar is the pattern</h3>
+            <div class="sub">CPI food &amp; beverages, index level, 2012 = 100, shaded: November to February, Jan 2016 to Dec 2025</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-seas">–</div><div class="c">Dec 2025 · index level</div></div>
+          <div class="plate-val"><div class="v" id="pv-seas">–</div><div class="c">Dec 2025, index level</div></div>
         </div>
         <div class="frame">
           <div class="plotzone" id="plot-seas"><div class="cb-tip"></div></div>
           <div class="plotfoot">
-            <span class="src">Source — MoSPI, CPI food &amp; beverages group index, base 2012=100, vintage <span id="pf-seas">–</span> · shaded bands: November – February</span>
+            <span class="src">Source: MoSPI, CPI food &amp; beverages group index, base 2012=100, vintage <span id="pf-seas">–</span>, shaded bands: November to February</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -97,7 +97,7 @@ import Learn from "../layouts/Learn.astro";
       <div>
         <p>There is a way to cancel the calendar: never compare a month with its neighbour. Compare it with itself, one year back. December against December carries the same weather, the same festivals and the same harvest on both sides of the ratio, so the seasonal wobble divides out. What remains is closer to real change.</p>
         <aside class="defbox">
-          <div class="term">Year-on-year <span class="sub">y/y · compares like with like</span></div>
+          <div class="term">Year-on-year <span class="sub">y/y, compares like with like</span></div>
           <p>A comparison of one month with the same month a year earlier. Because both sides sit in the same season, the calendar cancels, and the remaining change is the closest thing to a clean read on inflation.</p>
           <div class="eg"><b>In plain words:</b> the only fair fight between two months is the same month, twice.</div>
         </aside>
@@ -105,7 +105,7 @@ import Learn from "../layouts/Learn.astro";
       </div>
       <div class="wm-rail">
         <aside class="margin-note">
-          <span class="mk">Margin note · iv</span>
+          <span class="mk">Margin note, iv</span>
           <b>December versus December.</b> Same season on both sides, so the season cancels. That is the entire trick.
         </aside>
       </div>
@@ -151,8 +151,8 @@ import Learn from "../layouts/Learn.astro";
   </div>
   <div slot="prov-note">
     <h6>This note</h6>
-    <p>Learn № 06 · Prices · version 1.0. Evergreen, written to survive the next print. The winter of 2024–25 is used as history, not news; the chart redraws from the baked data on every build.</p>
-    <p>Companion dossier: <a href="/dossiers/cpi/">Dossier 01 · Consumer Price Index</a>.</p>
+    <p>Prices, version 1.0. Evergreen, written to survive the next print. The winter of 2024–25 is used as history, not news; the chart redraws from the baked data on every build.</p>
+    <p>Companion guide: <a href="/guides/cpi/">Consumer Price Index</a>.</p>
   </div>
 
 <script>

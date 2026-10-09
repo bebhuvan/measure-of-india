@@ -22,7 +22,7 @@
 import { mospi } from "../mospi.mjs";
 import { writeSeries, writeRaw } from "../util.mjs";
 
-const GREYS = ["#5B564B", "#8A857A", "#A8A293", "#C6C0B0"];
+const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 const val = (r) => {
   const v = parseFloat(r.value);
   return Number.isFinite(v) ? v : null;
@@ -93,26 +93,26 @@ export async function buildGender(root, dcfg, vintage) {
 
   /* ---- gender-sexratio.json — the 70-year census story ---- */
   const sexBundle = buildBundle([
-    { key: "sex_ratio", name: "gender_sex_ratio", label: "Females per 1,000 males · All India", color: "#BE3E26", unit: "ratio",
+    { key: "sex_ratio", name: "gender_sex_ratio", label: "Females per 1,000 males · All India", color: "#2E4BD8", unit: "ratio",
       map: toMap(ai(byInd["2"])) },
   ], { frequency: "decadal", coverage: "All India; females per 1,000 males, Census rounds 1951-2011", note: srcNote + " Seven census rounds. The sex ratio rose from 946 (1951) to a peak near 946, fell to 927 (1991), then recovered — the 'missing women' story in one line." });
 
   /* ---- gender-imr.json — infant mortality by gender ---- */
   const imrBundle = buildBundle([
-    { key: "imr_male", name: "gender_imr_male", label: "IMR · Male", color: "#5B564B", unit: "per_1000", map: toMap(ai(byInd["15"]).filter((r) => r.gender === "Male")) },
-    { key: "imr_female", name: "gender_imr_female", label: "IMR · Female", color: "#BE3E26", unit: "per_1000", map: toMap(ai(byInd["15"]).filter((r) => r.gender === "Female")) },
-    { key: "imr_person", name: "gender_imr_person", label: "IMR · Person", color: "#A8A293", unit: "per_1000", map: toMap(ai(byInd["15"]).filter((r) => r.gender === "Person")) },
+    { key: "imr_male", name: "gender_imr_male", label: "IMR · Male", color: "#5F6675", unit: "per_1000", map: toMap(ai(byInd["15"]).filter((r) => r.gender === "Male")) },
+    { key: "imr_female", name: "gender_imr_female", label: "IMR · Female", color: "#2E4BD8", unit: "per_1000", map: toMap(ai(byInd["15"]).filter((r) => r.gender === "Female")) },
+    { key: "imr_person", name: "gender_imr_person", label: "IMR · Person", color: "#A3A9B4", unit: "per_1000", map: toMap(ai(byInd["15"]).filter((r) => r.gender === "Person")) },
   ], { frequency: "annual", coverage: "All India; infant deaths per 1,000 live births, by gender, SRS 2008-2020", note: srcNote });
 
   /* ---- gender-lifeexp.json — life expectancy convergence ---- */
   const leBundle = buildBundle([
-    { key: "life_exp_male", name: "gender_life_exp_male", label: "Life expectancy · Male", color: "#5B564B", unit: "years", map: toMap(ai(byInd["18"]).filter((r) => r.gender === "Male")) },
-    { key: "life_exp_female", name: "gender_life_exp_female", label: "Life expectancy · Female", color: "#BE3E26", unit: "years", map: toMap(ai(byInd["18"]).filter((r) => r.gender === "Female")) },
+    { key: "life_exp_male", name: "gender_life_exp_male", label: "Life expectancy · Male", color: "#5F6675", unit: "years", map: toMap(ai(byInd["18"]).filter((r) => r.gender === "Male")) },
+    { key: "life_exp_female", name: "gender_life_exp_female", label: "Life expectancy · Female", color: "#2E4BD8", unit: "years", map: toMap(ai(byInd["18"]).filter((r) => r.gender === "Female")) },
   ], { frequency: "5-year cohorts", coverage: "All India; life expectancy at birth, by gender, 5-year periods 1990-94 to 2031-36*", note: srcNote + " Periods after 2016-20 are projections (marked '*' at source). Female life expectancy exceeds male throughout — the gap is the story." });
 
   /* ---- gender-mmr.json — maternal mortality, the biggest decline ---- */
   const mmrBundle = buildBundle([
-    { key: "mmr", name: "gender_mmr", label: "Maternal Mortality Ratio · All India", color: "#BE3E26", unit: "per_100k_live_births", map: toMap(ai(byInd["21"])) },
+    { key: "mmr", name: "gender_mmr", label: "Maternal Mortality Ratio · All India", color: "#2E4BD8", unit: "per_100k_live_births", map: toMap(ai(byInd["21"])) },
   ], { frequency: "3-year moving average", coverage: "All India; maternal deaths per 100,000 live births, 3-year moving averages 2004-06 to 2018-20", note: srcNote + " Overlapping 3-year windows plotted at each period's start year. The decline from 254 to 97 is the steepest mortality improvement in the compendium." });
 
   /* ---- gender-fertility.json — TFR by education level ---- */
@@ -122,7 +122,7 @@ export async function buildGender(root, dcfg, vintage) {
   for (const edu of EDU) {
     const rows = ai(byInd["10"]).filter((r) => r.education_level === edu && (r.sector === "Total" || r.sector == null));
     if (!rows.length) continue;
-    tfrDefs.push({ key: `tfr_${edu.toLowerCase().replace(/[^a-z0-9]+/g, "_")}`, name: `gender_tfr_${edu.toLowerCase().replace(/[^a-z0-9]+/g, "_")}`, label: `TFR · ${edu}`, color: edu === "Graduate and above" ? "#BE3E26" : GREYS[ei++ % GREYS.length], unit: "births_per_woman", map: toMap(rows) });
+    tfrDefs.push({ key: `tfr_${edu.toLowerCase().replace(/[^a-z0-9]+/g, "_")}`, name: `gender_tfr_${edu.toLowerCase().replace(/[^a-z0-9]+/g, "_")}`, label: `TFR · ${edu}`, color: edu === "Graduate and above" ? "#2E4BD8" : GREYS[ei++ % GREYS.length], unit: "births_per_woman", map: toMap(rows) });
   }
   const tfrBundle = buildBundle(tfrDefs, { frequency: "annual", coverage: "All India; total fertility rate by education level of women, 2016-2020", note: srcNote + " TFR falls with education — the gradient is the story. Replacement level is 2.1." });
 
@@ -130,7 +130,7 @@ export async function buildGender(root, dcfg, vintage) {
   const litDefs = [];
   for (const g of ["Male", "Female"]) {
     const rows = ai(byInd["55"]).filter((r) => r.gender === g && (r.sector === "Total" || r.sector == null));
-    litDefs.push({ key: `literacy_${g.toLowerCase()}`, name: `gender_literacy_${g.toLowerCase()}`, label: `Literacy · ${g}`, color: g === "Female" ? "#BE3E26" : "#5B564B", unit: "percent", map: toMap(rows) });
+    litDefs.push({ key: `literacy_${g.toLowerCase()}`, name: `gender_literacy_${g.toLowerCase()}`, label: `Literacy · ${g}`, color: g === "Female" ? "#2E4BD8" : "#5F6675", unit: "percent", map: toMap(rows) });
   }
   const litBundle = buildBundle(litDefs, { frequency: "decadal", coverage: "All India; literacy rate (age 7+), by gender, Census 1981-2011 + 2017*", note: srcNote + " 2017* is an NSO estimate, not a census round. The gender gap (male minus female) narrowed but did not close." });
 
@@ -139,12 +139,12 @@ export async function buildGender(root, dcfg, vintage) {
   for (const g of ["Male", "Female", "Person"]) {
     const rows = ai(byInd["80"]).filter((r) => r.gender === g && (r.sector === "Total" || r.sector == null) && (r.age_group === "15+" || r.age_group === "15 Years & Above"));
     if (!rows.length) continue;
-    lfprDefs.push({ key: `lfpr_${g.toLowerCase()}`, name: `gender_lfpr_${g.toLowerCase()}`, label: `LFPR · ${g} · 15+`, color: g === "Female" ? "#BE3E26" : g === "Male" ? "#5B564B" : "#A8A293", unit: "percent", map: toMap(rows) });
+    lfprDefs.push({ key: `lfpr_${g.toLowerCase()}`, name: `gender_lfpr_${g.toLowerCase()}`, label: `LFPR · ${g} · 15+`, color: g === "Female" ? "#2E4BD8" : g === "Male" ? "#5F6675" : "#A3A9B4", unit: "percent", map: toMap(rows) });
   }
   for (const g of ["Male", "Female"]) {
     const rows = ai(byInd["93"]).filter((r) => r.gender === g && (r.sector === "Total" || r.sector == null));
     if (!rows.length) continue;
-    lfprDefs.push({ key: `unemp_${g.toLowerCase()}`, name: `gender_unemp_${g.toLowerCase()}`, label: `Unemployment · ${g}`, color: g === "Female" ? "#BE3E26" : "#8A857A", unit: "percent", map: toMap(rows) });
+    lfprDefs.push({ key: `unemp_${g.toLowerCase()}`, name: `gender_unemp_${g.toLowerCase()}`, label: `Unemployment · ${g}`, color: g === "Female" ? "#2E4BD8" : "#878D99", unit: "percent", map: toMap(rows) });
   }
   const workBundle = buildBundle(lfprDefs, { frequency: "annual", coverage: "All India; LFPR (15+, usual status) and unemployment rate, by gender, PLFS", note: srcNote + " The female LFPR is the stubborn gap — far below male throughout. PLFS years are agriculture years (Jul-Jun), plotted at the start year." });
 

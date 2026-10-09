@@ -63,7 +63,7 @@ setTxt("ar-decade", Math.round((lvlNow / lvl[0].value - 1) * 100) + " per cent")
 /* ---------- shared x furniture ---------- */
 const xTicks = []; for (let y = 2016; y <= 2025; y++) xTicks.push(new Date(Date.UTC(y, 0, 1)));
 const d24 = new Date(Date.UTC(2024, 11, 1)), d25 = new Date(Date.UTC(2025, 11, 1));
-const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "13.5px", color: "#5C574C", overflow: "visible" };
+const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#5F6675", overflow: "visible" };
 
 /* ---------- plate 1a : the price level ---------- */
 {
@@ -79,23 +79,23 @@ const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "13.5
     y: { label: "↑ price level · index, 2012 = 100", labelAnchor: "top", labelArrow: false,
          tickFormat: (d) => String(d), ticks: [120, 140, 160, 180, 200], domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
     marks: [
-      Plot.gridY([120, 140, 160, 180, 200], { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
-      Plot.ruleX([d24], { stroke: "#C9C2B0", strokeWidth: 1, strokeDasharray: "2,4" }),
-      Plot.ruleX([d25], { stroke: "#C9C2B0", strokeWidth: 1, strokeDasharray: "2,4" }),
-      Plot.lineY(lvl, { x: "date", y: "value", stroke: "#BE3E26", strokeWidth: 3, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.dot([pThen], { x: "date", y: "value", fill: "#BE3E26", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.dot([pNow], { x: "date", y: "value", fill: "#BE3E26", r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([pThen], { x: "date", y: "value", text: () => "Dec 2024 · " + pThen.value.toFixed(1), dx: -12, dy: -14, fill: "#5B564B", fontSize: 13, fontFamily: mono, textAnchor: "end" }),
-      Plot.text([{ date: new Date(Date.UTC(2019, 5, 1)), value: 203.6 }], { x: "date", y: "value", text: [pNow.value.toFixed(1) + " · the highest reading is the last one"], fill: "#BE3E26", fontSize: 13, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
-      Plot.text([{ date: new Date(Date.UTC(2016, 3, 1)), value: 124.6 }], { x: "date", y: "value", text: ["what the basket costs"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
+      Plot.gridY([120, 140, 160, 180, 200], { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+      Plot.ruleX([d24], { stroke: "#CDD1D8", strokeWidth: 1, strokeDasharray: "2,4" }),
+      Plot.ruleX([d25], { stroke: "#CDD1D8", strokeWidth: 1, strokeDasharray: "2,4" }),
+      Plot.lineY(lvl, { x: "date", y: "value", stroke: "#2E4BD8", strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.dot([pThen], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.dot([pNow], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([pThen], { x: "date", y: "value", text: () => "Dec 2024, " + pThen.value.toFixed(1), dx: -12, dy: -14, fill: "#5F6675", fontSize: 12, fontFamily: mono, textAnchor: "end" }),
+      Plot.text([{ date: new Date(Date.UTC(2019, 5, 1)), value: 203.6 }], { x: "date", y: "value", text: [pNow.value.toFixed(1) + ", the highest reading is the last one"], fill: "#161A22", fontSize: 12, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.text([{ date: new Date(Date.UTC(2016, 3, 1)), value: 124.6 }], { x: "date", y: "value", text: ["what the basket costs"], fontSize: 12, fill: "#878D99", fontFamily: mono, textAnchor: "start" }),
     ],
   });
   a11y(plot, "CPI price level, index 2012=100, January 2016 to December 2025",
     "Line chart. The level rises from 126.3 to 198.0 across the decade, ending at its highest point. December 2024, 195.4, and December 2025, 198.0, are marked.");
   document.getElementById("plot-level").append(plot);
   addCrosshair(document.getElementById("plot-level"), plot,
-    [{ label: "Price level", color: "#BE3E26", data: lvl }], geo, fmtDate, (v) => v.toFixed(1));
+    [{ label: "Price level", color: "#2E4BD8", data: lvl }], geo, fmtDate, (v) => v.toFixed(1));
 }
 
 /* ---------- plate 1b : the y/y rate ---------- */
@@ -112,28 +112,28 @@ const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "13.5
     y: { label: "↑ the rate · year-on-year, per cent", labelAnchor: "top", labelArrow: false,
          tickFormat: (d) => d + "%", ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
     marks: [
-      Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.rectY([{ y1: 2, y2: 6 }], { y1: "y1", y2: "y2", x1: dates[0], x2: dates.at(-1), fill: "#F8F6F1" }),
-      Plot.ruleY([0], { stroke: "#B9B2A1", strokeWidth: 1.25 }),
-      Plot.ruleY([4], { stroke: "#C0B9A6", strokeWidth: 1, strokeDasharray: "2,4" }),
-      Plot.text([{ date: new Date(Date.UTC(2022, 1, 10)), value: 3.5 }], { x: "date", y: "value", text: ["RBI target · 4%"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
-      Plot.text([{ date: dates[2], value: 6.5 }], { x: "date", y: "value", text: ["Tolerance band · 2–6%"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "start" }),
-      Plot.ruleX([d24], { stroke: "#C9C2B0", strokeWidth: 1, strokeDasharray: "2,4" }),
-      Plot.ruleX([d25], { stroke: "#C9C2B0", strokeWidth: 1, strokeDasharray: "2,4" }),
-      Plot.lineY(h.data, { x: "date", y: "value", stroke: "#5B564B", strokeWidth: 2.25, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.lineY(h.data.slice(-13), { x: "date", y: "value", stroke: "#BE3E26", strokeWidth: 4, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.dot([pThen], { x: "date", y: "value", fill: "#5B564B", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.dot([pNow], { x: "date", y: "value", fill: "#BE3E26", r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([pThen], { x: "date", y: "value", text: () => "Dec 2024 · " + pThen.value.toFixed(2) + "%", dx: -12, dy: 56, fill: "#5B564B", fontSize: 13, fontFamily: mono, textAnchor: "end" }),
-      Plot.text([pNow], { x: "date", y: "value", text: () => "Dec 2025 · " + pNow.value.toFixed(2) + "%", dx: 12, dy: -2, fill: "#BE3E26", fontSize: 13, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
-      Plot.text([{ date: new Date(Date.UTC(2025, 6, 1)), value: 7.4 }], { x: "date", y: "value", text: ["the same 2025, drawn as a rate"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "middle" }),
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.rectY([{ y1: 2, y2: 6 }], { y1: "y1", y2: "y2", x1: dates[0], x2: dates.at(-1), fill: "#F4F6FD" }),
+      Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+      Plot.ruleY([4], { stroke: "#BFC4CD", strokeWidth: 1, strokeDasharray: "2,4" }),
+      Plot.text([{ date: new Date(Date.UTC(2022, 1, 10)), value: 3.5 }], { x: "date", y: "value", text: ["RBI target, 4%"], fontSize: 12, fill: "#878D99", fontFamily: mono, textAnchor: "start" }),
+      Plot.text([{ date: dates[2], value: 6.5 }], { x: "date", y: "value", text: ["Tolerance band, 2–6%"], fontSize: 12, fill: "#878D99", fontFamily: mono, textAnchor: "start" }),
+      Plot.ruleX([d24], { stroke: "#CDD1D8", strokeWidth: 1, strokeDasharray: "2,4" }),
+      Plot.ruleX([d25], { stroke: "#CDD1D8", strokeWidth: 1, strokeDasharray: "2,4" }),
+      Plot.lineY(h.data, { x: "date", y: "value", stroke: "#5F6675", strokeWidth: 2.25, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.lineY(h.data.slice(-13), { x: "date", y: "value", stroke: "#2E4BD8", strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.dot([pThen], { x: "date", y: "value", fill: "#5F6675", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.dot([pNow], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([pThen], { x: "date", y: "value", text: () => "Dec 2024, " + pThen.value.toFixed(2) + "%", dx: -12, dy: 56, fill: "#5F6675", fontSize: 12, fontFamily: mono, textAnchor: "end" }),
+      Plot.text([pNow], { x: "date", y: "value", text: () => "Dec 2025, " + pNow.value.toFixed(2) + "%", dx: 12, dy: -2, fill: "#161A22", fontSize: 12, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.text([{ date: new Date(Date.UTC(2025, 6, 1)), value: 7.4 }], { x: "date", y: "value", text: ["the same 2025, drawn as a rate"], fontSize: 12, fill: "#878D99", fontFamily: mono, textAnchor: "middle" }),
     ],
   });
   a11y(plot, "CPI inflation rate, year-on-year, January 2016 to December 2025",
     "Line chart. The rate ends at 1.34 per cent in December 2025, down from 5.19 per cent a year earlier. Shaded band marks the RBI tolerance range of 2 to 6 per cent.");
   document.getElementById("plot-rate").append(plot);
   addCrosshair(document.getElementById("plot-rate"), plot,
-    [{ label: "Inflation, y/y", color: "#5B564B", data: h.data }], geo, fmtDate);
+    [{ label: "Inflation, y/y", color: "#5F6675", data: h.data }], geo, fmtDate);
 
   /* downloads for the two-panel frame: stack both panels into one tall card */
   const block = document.getElementById("cb-lr");
@@ -175,7 +175,7 @@ const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "13.5
   const now = fdata.at(-1);
   const dropPct = (now.value / pk.value - 1) * 100;
   setTxt("pv-foodlvl", now.value.toFixed(1));
-  setTxt("pf-foodlvl", "peak — " + pk.value.toFixed(1) + ", " + fmtDate(pk.date) + " · latest — " + now.value.toFixed(1));
+  setTxt("pf-foodlvl", "peak: " + pk.value.toFixed(1) + ", " + fmtDate(pk.date) + ", latest: " + now.value.toFixed(1));
   setTxt("fl-peak", pk.value.toFixed(1));
   setTxt("fl-now", now.value.toFixed(1));
   setTxt("fl-drop", Math.abs(dropPct).toFixed(1) + " per cent");
@@ -192,16 +192,16 @@ const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "13.5
     y: { label: "↑ food price level · index, 2012 = 100", labelAnchor: "top", labelArrow: false,
          tickFormat: (d) => String(d), ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11 },
     marks: [
-      Plot.gridY(yTicks, { stroke: "#EDE9DA", strokeWidth: 1 }),
-      Plot.ruleY([geo.d0], { stroke: "#E0DACA", strokeWidth: 1 }),
-      Plot.areaY(fdata, { x: "date", y: "value", y1: geo.d0, fill: "#5B564B", fillOpacity: 0.05 }),
-      Plot.lineY(fdata, { x: "date", y: "value", stroke: "#5B564B", strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.lineY(fdata.filter((d) => d.date >= pk.date), { x: "date", y: "value", stroke: "#BE3E26", strokeWidth: 3.5, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.dot([pk], { x: "date", y: "value", fill: "#5B564B", r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([pk], { x: "date", y: "value", text: () => "peak · " + pk.value.toFixed(1) + " · " + fmtDate(pk.date), dy: -14, fill: "#5B564B", fontSize: 13, fontFamily: mono, textAnchor: "middle" }),
-      Plot.dot([now], { x: "date", y: "value", fill: "#BE3E26", r: 5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([now], { x: "date", y: "value", text: () => now.value.toFixed(1) + " · " + dropPct.toFixed(1) + "% from the peak", dx: -8, dy: -20, fill: "#BE3E26", fontSize: 13, fontFamily: mono, fontWeight: 500, textAnchor: "end" }),
-      Plot.text([{ date: new Date(Date.UTC(2024, 8, 1)), value: 185 }], { x: "date", y: "value", text: ["the line itself turns down: this is deflation"], fontSize: 12, fill: "#8A857A", fontFamily: mono, textAnchor: "middle" }),
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
+      Plot.areaY(fdata, { x: "date", y: "value", y1: geo.d0, fill: "#5F6675", fillOpacity: 0.05 }),
+      Plot.lineY(fdata, { x: "date", y: "value", stroke: "#5F6675", strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.lineY(fdata.filter((d) => d.date >= pk.date), { x: "date", y: "value", stroke: "#2E4BD8", strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.dot([pk], { x: "date", y: "value", fill: "#5F6675", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([pk], { x: "date", y: "value", text: () => "peak, " + pk.value.toFixed(1) + ", " + fmtDate(pk.date), dy: -14, fill: "#5F6675", fontSize: 12, fontFamily: mono, textAnchor: "middle" }),
+      Plot.dot([now], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([now], { x: "date", y: "value", text: () => now.value.toFixed(1) + ", " + dropPct.toFixed(1) + "% from the peak", dx: -8, dy: -20, fill: "#161A22", fontSize: 12, fontFamily: mono, fontWeight: 500, textAnchor: "end" }),
+      Plot.text([{ date: new Date(Date.UTC(2024, 8, 1)), value: 185 }], { x: "date", y: "value", text: ["the line itself turns down: this is deflation"], fontSize: 12, fill: "#878D99", fontFamily: mono, textAnchor: "middle" }),
     ],
   });
   a11y(plot, "Food price level, index 2012=100, January 2023 to December 2025",
@@ -209,5 +209,5 @@ const plotStyle = { background: "transparent", fontFamily: mono, fontSize: "13.5
   document.getElementById("plot-foodlvl").append(plot);
   wireTools(document.getElementById("cb-foodlvl"), plot, [{ name: "food_level_2012eq100", data: fdata }], "india-atlas_learn_inflation_food-level_2023-2025", fmtDate);
   addCrosshair(document.getElementById("plot-foodlvl"), plot,
-    [{ label: "Food price level", color: "#5B564B", data: fdata }], geo, fmtDate, (v) => v.toFixed(1));
+    [{ label: "Food price level", color: "#5F6675", data: fdata }], geo, fmtDate, (v) => v.toFixed(1));
 }

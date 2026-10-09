@@ -38,3 +38,10 @@ deliberately plainer than the author's essay voice — do not blend them.
 See banned.txt. Beyond the list: no rhetorical questions to pad, no
 throat-clearing openers ("In a welcome development…"), no verdict words
 ("strong", "robust", "healthy") without a number attached.
+
+## Punctuation (2026-10)
+
+- No spaced em dashes. Use a colon for an explanation, commas for an aside, or two sentences.
+- No middle-dot strings ("y/y · base 2024"). Write "year on year, base 2024".
+- The lint enforces both (pipeline/lint.mjs, rule 5).
+

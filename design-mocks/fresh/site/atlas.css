@@ -1,0 +1,93 @@
+/* India Atlas: shared page styles. Tokens first; nothing restyled per page. */
+:root{
+  --paper:#FFFFFF;
+  --ink:#161A22; --ink-2:#4A5160; --ink-3:#868D9B; --ink-4:#AEB4BF;
+  --hair:#ECEEF2; --hair-2:#DFE2E8;
+  --blue:#2E4BD8; --blue-soft:#AAB6F2; --wash:#F3F5FE;
+  --gold:#C47A16;
+  --serif:"Source Serif 4", Georgia, serif;
+  --sans:"Golos Text", system-ui, sans-serif;
+  --max:1160px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:24px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:19.5px;line-height:1.62;font-optical-sizing:auto;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:1px}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 40px}
+
+/* masthead */
+.mast{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:24px 0;border-bottom:1px solid var(--hair)}
+.brand{font-family:var(--serif);font-weight:600;font-size:22px;letter-spacing:-.01em;text-decoration:none;font-variation-settings:"opsz" 30;white-space:nowrap}
+.nav{display:flex;align-items:center;gap:28px;font-family:var(--sans);font-size:15px}
+.nav a{text-decoration:none;color:var(--ink-2)}
+.nav a:hover{color:var(--ink)}
+.nav a[aria-current]{color:var(--ink);font-weight:500}
+.nav .find{color:var(--ink-3);border-bottom:1px solid var(--hair-2);padding:2px 46px 4px 0;position:relative}
+.nav .find kbd{position:absolute;right:0;top:1px;font:12px var(--sans);color:var(--ink-3);border:1px solid var(--hair-2);border-radius:3px;padding:0 5px}
+
+/* type */
+.kick{font-family:var(--sans);font-size:14.5px;color:var(--ink-3);margin:0 0 16px}
+.kick a{color:var(--ink-3);text-decoration:none}
+.kick a:hover{color:var(--ink)}
+h1{font-family:var(--serif);font-weight:500;font-size:64px;line-height:1.03;letter-spacing:-.022em;margin:0 0 22px;font-variation-settings:"opsz" 60;text-wrap:balance}
+h2{font-family:var(--serif);font-weight:500;font-size:38px;line-height:1.12;letter-spacing:-.015em;margin:0 0 14px;font-variation-settings:"opsz" 48;text-wrap:balance}
+.lede{font-size:23px;line-height:1.5;color:var(--ink-2);max-width:32em;margin:0;text-wrap:pretty}
+.prose{max-width:35em}
+.prose p{margin:0 0 1.05em;text-wrap:pretty}
+.prose h4{font-family:var(--sans);font-size:15px;font-weight:600;margin:1.6em 0 .4em;letter-spacing:.005em}
+.small{font-family:var(--sans);font-size:14.5px;line-height:1.55;color:var(--ink-3)}
+
+/* chart cards */
+.card{margin:80px 0 0;padding:0}
+.card header h3{font-family:var(--serif);font-weight:500;font-size:23px;line-height:1.28;letter-spacing:-.008em;margin:0 0 6px;max-width:32em;font-variation-settings:"opsz" 28;text-wrap:balance}
+.card .sub{font-family:var(--sans);font-size:14.5px;line-height:1.55;color:var(--ink-3);margin:0 0 22px;max-width:50em;text-wrap:pretty}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;font-family:var(--sans);font-size:13.5px;margin-bottom:14px;min-height:22px}
+.ranges{display:inline-flex;gap:18px}
+.ranges button{color:var(--ink-3);font-size:13.5px;padding:2px 0;border-bottom:1px solid transparent}
+.ranges button:hover{color:var(--ink)}
+.ranges button[aria-pressed=true]{color:var(--ink);border-bottom-color:var(--ink)}
+.readout{color:var(--ink-3);font-variant-numeric:tabular-nums;white-space:nowrap;display:flex;gap:10px;align-items:baseline}
+.readout b{color:var(--ink);font-weight:500;font-size:14.5px}
+.key{display:flex;flex-wrap:wrap;gap:6px 22px;color:var(--ink-3)}
+.key i{display:inline-block;width:16px;height:2px;background:var(--c);vertical-align:middle;margin-right:8px}
+.key i.sq{width:9px;height:9px}
+.key i.dot{width:8px;height:8px;border-radius:50%}
+.key i.ring{width:8px;height:8px;border-radius:50%;background:#fff;border:1.25px solid var(--c)}
+.plot{position:relative}
+.plot svg{display:block;overflow:visible}
+.plot svg:focus-visible{outline-offset:8px}
+.cf{display:flex;justify-content:space-between;align-items:flex-start;gap:32px;margin-top:18px;font-family:var(--sans);font-size:12.5px;line-height:1.55;color:var(--ink-3)}
+.cf .srcs{max-width:52em}
+.share{position:relative;flex-shrink:0}
+.sh{font-size:13px;color:var(--ink-2);padding:1px 0;border-bottom:1px solid var(--hair-2);white-space:nowrap}
+.sh:hover,.share.open .sh{color:var(--ink);border-bottom-color:var(--ink)}
+.sh.st{color:var(--blue);border-bottom-color:var(--blue)}
+.menu{display:none;position:absolute;right:0;bottom:calc(100% + 10px);z-index:10;background:#fff;border:1px solid var(--hair-2);border-radius:3px;padding:6px 0;min-width:184px;box-shadow:0 8px 24px -12px rgba(22,26,34,.18)}
+.share.open .menu{display:block}
+.menu button{display:block;width:100%;text-align:left;padding:7px 16px;font-size:13.5px;color:var(--ink-2);white-space:nowrap}
+.menu button:hover,.menu button:focus-visible{background:#F5F6F9;color:var(--ink);outline:none}
+
+footer.foot{margin-top:160px;padding:30px 0 70px;border-top:1px solid var(--hair);font-family:var(--sans);font-size:14px;line-height:1.6;color:var(--ink-3);display:grid;grid-template-columns:1fr 2fr;gap:40px}
+footer.foot b{color:var(--ink);font-weight:600;font-family:var(--serif);font-size:19px}
+footer.foot p{margin:0 0 .7em;max-width:48em}
+
+@media (max-width:860px){
+  body{font-size:18px}
+  .wrap{padding:0 18px}
+  .mast{flex-wrap:wrap;gap:12px;padding:18px 0}
+  .nav{gap:18px;flex-wrap:wrap;font-size:14.5px}
+  .nav .find{display:none}
+  h1{font-size:42px}
+  h2{font-size:30px}
+  .lede{font-size:20px}
+  .card{margin-top:60px}
+  .card header h3{font-size:22.5px}
+  .bar{flex-wrap:wrap}
+  .cf{flex-direction:column;gap:10px}
+  .cf .share{align-self:flex-start}
+  .menu{left:0;right:auto}
+  footer.foot{grid-template-columns:1fr;gap:10px}
+}

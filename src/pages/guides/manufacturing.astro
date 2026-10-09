@@ -1,0 +1,421 @@
+---
+import Base from "../../layouts/Base.astro";
+import GuideData from "../../components/GuideData.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+const D = bySlug["manufacturing"];
+---
+<Base
+  title="Manufacturing · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/manufacturing/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">The World Bank's long ruler on Indian manufacturing: what factories add to the economy, how the mix has climbed from textiles to machinery, and what the export ledger says.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>World Bank, WDI</b></span>
+      <span>Frequency <b>Annual, calendar years</b></span>
+      <span>Base <b>Constant 2015 US$ (levels)</b></span>
+      <span>Coverage <b>India, 1960–2025</b></span>
+      <span>Latest <b>2025</b></span>
+      <span>WDI vintage <b id="meta-vintage">–</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">MVA, share of GDP</div><div class="v acc" id="n-share">–</div><div class="d" id="d-share">–</div><div class="nspark" id="nspark-share"></div></div>
+      <div class="num"><div class="l">MVA, constant 2015 US$</div><div class="v" id="n-level">–</div><div class="d" id="d-level">–</div></div>
+      <div class="num"><div class="l">MVA growth, 2025</div><div class="v" id="n-growth">–</div><div class="d" id="d-growth">–</div></div>
+      <div class="num"><div class="l">Medium- &amp; high-tech share</div><div class="v" id="n-tech">–</div><div class="d" id="d-tech">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">WDI vintage 13 July 2026, calendar 2025</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Manufacturing value added, 2025</span><div class="big" id="cr-share">–</div></div>
+      <p class="rt-cap">Manufacturing's share of GDP in calendar 2025, on the World Bank's ruler: below where it stood in 1960, and well below the 1995 peak beside it. The level, over the same sixty-five years, multiplied nearly forty-four-fold.</p>
+      <div class="rt-side"><span class="rk">The peak, 1995</span><div class="rt-side-v" id="rb-peak">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the print says</span>
+        <p>The WDI vintage of 13 July 2026 puts manufacturing value added at <b id="cr-share2">–</b> of GDP in calendar 2025, up from <b id="cr-share-2024">–</b> in 2024: the 2024 print was the lowest share on the entire series. Industry including construction stood at <b id="cr-industry">–</b>. In volume terms, factories added <b id="cr-level">–</b> of output in 2025, against <b id="cr-level-1960">–</b> in 1960, and value added grew <b id="cr-growth">–</b> in 2025 after <b id="cr-growth-2024">–</b> in 2024.</p>
+        <p>Around the headline: manufactures were <b id="cr-exports">–</b> of merchandise exports in 2024; machinery &amp; transport equipment was <b id="cr-mach">–</b> of manufacturing value added in 2023, against textiles' <b id="cr-tex">–</b>; and the medium- &amp; high-tech share last printed <b id="cr-tech">–</b>: in 2022, where that series ends.</p>
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What it does not say</span>
+        <p>It does not describe Indian fiscal years. The WDI is calendar-year: "2025" here is January–December 2025, not FY2025-26. A MoSPI print and a WDI print for "the same year" overlap by only nine months.</p>
+        <p>It is not a fixed history. The WDI revises the past freely as member countries rebase their national accounts; the 1960 you read today is not the 1960 a previous vintage served. Quote the vintage, 13 July 2026, not just the number.</p>
+        <p>And it is not the factory census. Manufacturing here is ISIC Section C from the national accounts: the whole economy's factory sector, formal and informal. The Annual Survey of Industries counts registered factories only, a different ruler with a different level; the two are never compared level-for-level.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 register -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>The register of series</h2><span class="line"></span><span class="unit">Annual, World Bank WDI, latest vs year ago</span></div>
+    <div class="break ledger">
+      <table>
+        <thead>
+          <tr><th>Series</th><th>Latest</th><th>Year ago</th><th>First</th><th class="spark">1960 to 2025</th></tr>
+        </thead>
+        <tbody id="reg-manufacturing"></tbody>
+      </table>
+      <p style="margin-top:16px;font-size:.98rem;color:var(--muted);font-style:italic;max-width:62ch">The four bundles end in different years: the headline accounts reach 2025, exports 2024, the UNIDO composition 2023, and the technology share 2022. The lags are shown, not filled.</p>
+    </div>
+  </section>
+
+  <!-- § 03 plate 1 : the share -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>Plate 1: the share that never took off</h2><span class="line"></span><span class="unit">MVA &amp; industry, per cent of GDP, 1960–2025</span></div>
+    <div class="break">
+      <figure id="cb-share" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Sixty-five years, and the slice is smaller than where it began</h3>
+            <div class="sub">Manufacturing value added and industry (including construction), per cent of GDP, calendar years 1960–2025</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-share">–</div><div class="c">2025, MVA share of GDP</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-share">
+            <button class="chip" data-key="mva_pct_gdp"><i style="background:#2E4BD8"></i>Manufacturing</button>
+            <button class="chip" data-key="industry_pct_gdp"><i style="background:#878D99"></i>Industry incl. construction</button>
+          </div>
+          <div class="plotzone" id="plot-share"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: World Bank, World Development Indicators, vintage <span id="src-vintage-share">–</span>, manufacturing = ISIC Section C, national accounts, industry adds mining, utilities and construction, calendar years, revised freely</span>
+            <span class="dl">
+              <button data-dl="svg">SVG</button><span class="sep"></span>
+              <button data-dl="png">PNG</button><span class="sep"></span>
+              <button data-dl="csv">CSV</button><span class="sep"></span>
+              <a href="https://data.worldbank.org" target="_blank" rel="noopener">Source ↗</a>
+            </span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The blue line is manufacturing alone; the grey line is the wider industry sector, which adds mining, utilities and construction. The gap between them is everything industrial that is not a factory. Manufacturing peaked at <b id="ex-share-peak">–</b> in 1995, in the first flush of the 1991 liberalisation, and has spent three decades sliding back.</p>
+            <p>The pandemic did not dent the annual share: it rose in calendar 2020, because services fell faster than factories. The lowest point of the whole series is recent: <b id="ex-share-low">–</b> in 2024.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the 13 July 2026 vintage</span>
+            <p>Manufacturing <b id="ex-share-now">–</b> in 2025, industry <b id="ex-share-ind">–</b>. In 1960 manufacturing was <b id="ex-share-1960">–</b>: the share ends the sixty-five years below where it began, while the wider industry share rose. The factories never took the slice the planners promised; construction and utilities took it instead.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 04 plate 2 : the level -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>Plate 2: the level that multiplied forty-four-fold</h2><span class="line"></span><span class="unit">MVA, constant 2015 US$, billions, 1960–2025</span></div>
+    <div class="break">
+      <figure id="cb-level" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>A shrinking slice of a much larger loaf</h3>
+            <div class="sub">Manufacturing value added, billions of constant 2015 US dollars, calendar years 1960–2025</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-level">–</div><div class="c">2025, constant 2015 US$</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-level"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: World Bank, World Development Indicators, vintage <span id="src-vintage-level">–</span>, constant 2015 US$: volumes converted at the 2015 exchange rate, a fixed-rate convention, displayed in billions (converted for display only)</span>
+            <span class="dl">
+              <button data-dl="svg">SVG</button><span class="sep"></span>
+              <button data-dl="png">PNG</button><span class="sep"></span>
+              <button data-dl="csv">CSV</button><span class="sep"></span>
+              <a href="https://data.worldbank.org" target="_blank" rel="noopener">Source ↗</a>
+            </span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The same sixty-five years as Plate 1, in volume instead of share. Indian factories added <b id="ex-level-first">–</b> of output in 1960 and <b id="ex-level-now">–</b> in 2025: a <b id="ex-level-mult">–</b> multiplication. The share can fall while the level rises, because GDP grew even faster. Both charts are true; they answer different questions.</p>
+            <p>"Constant 2015 US$" means every year's volume is priced at the 2015 exchange rate. It is a measuring convention, not a market valuation: the rupee's 2015 rate is simply the ruler the World Bank laid down.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the 13 July 2026 vintage</span>
+            <p>The level has risen every decade without exception; the fastest compounding came after 2002. There is no collapse anywhere on this chart: the "never took off" story belongs to the share, not the volume.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 plate 3 : growth -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>Plate 3: sixty-five years of factory weather</h2><span class="line"></span><span class="unit">MVA annual growth, per cent, 1961–2025</span></div>
+    <div class="break">
+      <figure id="cb-growth" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Three falls in sixty-five years: and one whipsaw</h3>
+            <div class="sub">Manufacturing value added, annual growth, per cent, calendar years 1961–2025, the zero line is drawn strong</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-growth">–</div><div class="c">2025, annual growth</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-growth"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: World Bank, World Development Indicators, vintage <span id="src-vintage-growth">–</span>, annual growth of real MVA, calendar years smear the 2020 lockdown quarters across 2019–2022: read that stretch as a whipsaw, not a crash</span>
+            <span class="dl">
+              <button data-dl="svg">SVG</button><span class="sep"></span>
+              <button data-dl="png">PNG</button><span class="sep"></span>
+              <button data-dl="csv">CSV</button><span class="sep"></span>
+              <a href="https://data.worldbank.org" target="_blank" rel="noopener">Source ↗</a>
+            </span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>One point per calendar year, growth over the year before. The line has crossed below zero only three times on this vintage: <b id="ex-growth-trough">–</b> (the deepest fall on record), 1991, and 2019. The peak was <b id="ex-growth-peak">–</b> in 2006, the height of the 2000s boom.</p>
+            <p>The pandemic does not appear as one clean crash. Annual calendar data smears the lockdown quarters (March–June 2020, in India's fiscal Q1) across neighbouring years, so 2019–2023 reads as a whipsaw: <b id="ex-growth-whipsaw">–</b>. No single annual point is "the lockdown".</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the 13 July 2026 vintage</span>
+            <p>Growth printed <b id="ex-growth-latest">–</b> in 2025, a third straight strong year after the 2022 dip. The post-2022 average is well above the sixty-five-year norm: whether it is a new trend or a rebound's tail, this series alone cannot say.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 plate 4 : composition -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>Plate 4: from textiles to machinery</h2><span class="line"></span><span class="unit">UNIDO decomposition of MVA, shares sum to 100, 1963–2023</span></div>
+    <div class="break">
+      <figure id="cb-composition" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The mix climbed the ladder, then stalled halfway</h3>
+            <div class="sub">Shares of manufacturing value added by technology group, UNIDO, five groups, summing to 100, 1963–2023</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-composition">–</div><div class="c">machinery &amp; transport, 2023</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-composition">
+            <button class="chip" data-key="machinery_transport"><i style="background:#2E4BD8"></i>Machinery &amp; transport</button>
+            <button class="chip" data-key="chemicals"><i style="background:#5F6675"></i>Chemicals</button>
+            <button class="chip" data-key="food_beverages_tobacco"><i style="background:#878D99"></i>Food, beverages &amp; tobacco</button>
+            <button class="chip" data-key="textiles_clothing"><i style="background:#A3A9B4"></i>Textiles &amp; clothing</button>
+            <button class="chip" data-key="other"><i style="background:#C9CED6"></i>Other manufacturing</button>
+          </div>
+          <div class="plotzone" id="plot-composition"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: World Bank, World Development Indicators (UNIDO), vintage <span id="src-vintage-composition">–</span>, shares of manufacturing value added, summing to ~100, "other" is the residual: metals, wood, paper, furniture and the unclassified rest, series ends 2023</span>
+            <span class="dl">
+              <button data-dl="svg">SVG</button><span class="sep"></span>
+              <button data-dl="png">PNG</button><span class="sep"></span>
+              <button data-dl="csv">CSV</button><span class="sep"></span>
+              <a href="https://data.worldbank.org" target="_blank" rel="noopener">Source ↗</a>
+            </span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Five lines that always sum to 100: one group's gain is arithmetically another's loss. The story is the long swap at the edges: textiles &amp; clothing fell from <b id="ex-comp-tex0">–</b> of factory value added in 1963 to <b id="ex-comp-tex">–</b> in 2023, while machinery &amp; transport rose from <b id="ex-comp-mach0">–</b> to <b id="ex-comp-mach">–</b>. Chemicals climbed to a 1998 peak of <b id="ex-comp-chem-peak">–</b> and has eased since.</p>
+            <p>These are shares of value added, not of output tonnage and not of jobs. A group can shrink here while employing more people than ever: value per worker is exactly what differs across the five.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the 13 July 2026 vintage</span>
+            <p>The 2023 print: machinery &amp; transport <b id="ex-comp-mach2">–</b>, its highest share on record; chemicals <b id="ex-comp-chem">–</b>; food, beverages &amp; tobacco <b id="ex-comp-food">–</b>; textiles <b id="ex-comp-tex2">–</b>. The residual "other", basic metals, wood, paper and the unclassified rest, remains the largest block at <b id="ex-comp-other">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 plate 5 : exports -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>Plate 5: what the export ledger says</h2><span class="line"></span><span class="unit">Manufactures' share of merchandise exports, 1962–2024</span></div>
+    <div class="break">
+      <figure id="cb-exports" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Two export dollars in three come from factories</h3>
+            <div class="sub">Manufactures' share of merchandise exports, per cent, UN Comtrade via the WDI, 1962–2024</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-exports">–</div><div class="c">2024, share of merchandise exports</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-exports"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: World Bank, World Development Indicators (UN Comtrade), vintage <span id="src-vintage-exports">–</span>, manufactures = SITC sections 5–8, the denominator is merchandise only: services, India's strongest export, are not in this chart, series ends 2024</span>
+            <span class="dl">
+              <button data-dl="svg">SVG</button><span class="sep"></span>
+              <button data-dl="png">PNG</button><span class="sep"></span>
+              <button data-dl="csv">CSV</button><span class="sep"></span>
+              <a href="https://data.worldbank.org" target="_blank" rel="noopener">Source ↗</a>
+            </span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Of every hundred dollars of goods India sells abroad, how many are manufactures: chemicals, machinery, textiles, gems and jewellery worked, not raw. The share rose from <b id="ex-exp-first">–</b> in 1962 to a peak of <b id="ex-exp-peak">–</b> in 1999, then gave some back as petroleum products and commodities swelled the denominator.</p>
+            <p>A falling share here does not mean falling factory exports: the numerator can grow while petroleum grows faster. And services, the sector where India is genuinely world-class, are outside this ledger entirely.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the 13 July 2026 vintage</span>
+            <p>The 2024 print: <b id="ex-exp-now">–</b>, up from <b id="ex-exp-prev">–</b> in 2023 and the highest since the early 2000s. The goods ledger is two-thirds factory-made; the remaining third is petroleum, agriculture, minerals and gems in the rough.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 plate 6 : technology -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>Plate 6: the slow climb up the technology ladder</h2><span class="line"></span><span class="unit">Medium- &amp; high-tech share of MVA, 1990–2022</span></div>
+    <div class="break">
+      <figure id="cb-tech" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Two-fifths high-tech, and stuck there for three decades</h3>
+            <div class="sub">Medium- &amp; high-technology share of manufacturing value added, UNIDO, 1990–2022, the series ends 2022</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-tech">–</div><div class="c">2022, the last print of this series</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-tech"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: World Bank, World Development Indicators (UNIDO), vintage <span id="src-vintage-tech">–</span>, medium- &amp; high-technology industries as classified by UNIDO, the series ends 2022: the UNIDO lag, shown not filled, later years: we do not know</span>
+            <span class="dl">
+              <button data-dl="svg">SVG</button><span class="sep"></span>
+              <button data-dl="png">PNG</button><span class="sep"></span>
+              <button data-dl="csv">CSV</button><span class="sep"></span>
+              <a href="https://data.worldbank.org" target="_blank" rel="noopener">Source ↗</a>
+            </span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>UNIDO sorts manufacturing into technology tiers; this line is the share of value added made by the top two: machinery, electronics, vehicles, chemicals and their kin. It opened the 1990s at <b id="ex-tech-first">–</b>, spiked to <b id="ex-tech-peak">–</b> in 1995, sank to a trough of <b id="ex-tech-trough">–</b> in 2007, and has crept back since.</p>
+            <p>The series ends in 2022. UNIDO's technology decomposition arrives years late, and the WDI serves it as-is. For 2023, 2024 and 2025: we do not know. The plateau is the finding: three decades, and the share is within two points of where it began.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the 13 July 2026 vintage</span>
+            <p>The last print is <b id="ex-tech-now">–</b> for 2022, up from <b id="ex-tech-prev">–</b> in 2021 but still below the 1995 spike. The climb out of the 2007 trough is real and slow: a point a decade, not a point a year.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 what this measures -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="wm-grid">
+      <div>
+        <p>The World Development Indicators are the World Bank's compiled ruler: for manufacturing, the Bank takes each country's national accounts, India's come from MoSPI, routed through UNIDO and the OECD, and re-expresses them on common definitions so that countries can be compared. Manufacturing is ISIC Section C: the transformation of materials into new products, whether in a registered factory or a household workshop. Value added is output minus the inputs bought from other sectors; the share of GDP is that value added over the whole economy.</p>
+        <p>Two conventions matter before any number on this page is quoted. First, the calendar: WDI years are January–December, while Indian official statistics run April–March: a WDI "2025" and a MoSPI "FY2025-26" overlap by only nine months. Second, the revision policy: the Bank revises history freely as member countries rebase their accounts, so the 1960 in this vintage is not the 1960 an earlier vintage served. Every chart here names its vintage, 13 July 2026, for exactly that reason.</p>
+        <p>The level series is in constant 2015 US dollars: each year's real volume is converted at the 2015 exchange rate and left there. That strips out both inflation and exchange-rate noise, making volumes comparable across sixty-five years: at the price of being nobody's actual money. The composition and technology shares come from UNIDO's decomposition of value added; the export share from UN Comtrade, counting SITC sections 5–8 against all merchandise.</p>
+      </div>
+      <div class="wm-rail">
+        <aside class="margin-note">
+          <span class="mk">Margin note, i</span>
+          <b>Calendar, not fiscal.</b> A WDI year ends in December; an Indian fiscal year ends in March. Never line up a WDI annual point with a MoSPI fiscal print and call the gap a discrepancy.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note, ii</span>
+          <b>History moves.</b> The WDI rewrites the past whenever a country rebases. The number to quote is the pair, value and vintage, never the value alone. </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note, iii</span>
+          <b>Not the factory census.</b> National-accounts manufacturing (ISIC C) spans the whole economy; the ASI counts registered factories only. Different rulers, different levels: never compared level-for-level. </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- § 10 how to misread -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li>
+        <span class="no">i.</span>
+        <div>
+          <h3>"The share is below 1960: India's manufacturing collapsed."</h3>
+          <p>The share fell; the level multiplied nearly forty-four-fold. Manufacturing shrank only relative to a GDP that grew even faster: services above all. A smaller slice of a much larger loaf can still be far more bread. Quote share and level together, or quote neither.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">ii.</span>
+        <div>
+          <h3>"WDI says 13.5, MoSPI says 17: someone is wrong."</h3>
+          <p>Usually no one is. The WDI runs calendar years against MoSPI's fiscal years; it revises history freely while each MoSPI print is its own vintage; the deflators and base years differ; and the WDI divides by GDP where Indian commentary often cites shares of GVA. Two honest rulers can disagree by points. Reconcile the conventions before suspecting the arithmetic.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iii.</span>
+        <div>
+          <h3>"Constant 2015 US$ is what India's factories are worth abroad."</h3>
+          <p>It is a fixed-rate convention: every year's volume priced at the 2015 exchange rate so that volumes compare across time. It is not a market valuation, not what the output would fetch if sold tomorrow, and not convertible at today's rate. The only claim it makes is about volume.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">iv.</span>
+        <div>
+          <h3>"COVID crushed Indian manufacturing by a tenth."</h3>
+          <p>Not on this ruler. The quarterly collapse of the 2020 lockdown is smeared across calendar years, and the series reads 2019–2023 as a whipsaw: a contraction in 2019, growth in 2020, a rebound, a dip in 2022, a surge in 2023. The wound is real; no single annual point on this page is it. For the crash itself, read the quarterly national accounts.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">v.</span>
+        <div>
+          <h3>"Textiles fell from 27% to 7%: the mills closed."</h3>
+          <p>That is a share of value added, not a count of mills, bales or workers. Textile output grew in volume while machinery and chemicals grew faster. And value-added shares are not employment shares: textiles still carry far more jobs per rupee of value added than the capital-intensive groups that overtook them. The ladder-climb story and the jobs story are both true, about different things.</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <GuideData slug="manufacturing" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>World Bank, World Development Indicators, data.worldbank.org: manufacturing value added (share of GDP, constant 2015 US$ level, annual growth) and industry share from national accounts via UNIDO/OECD; the technology decomposition from UNIDO; manufactures' share of merchandise exports from UN Comtrade. Vintage <b id="prov-vintage">–</b> (the WDI database last-updated stamp, not the fetch date). Four bundles are baked: the headline accounts (1960–2025), the UNIDO composition (1963–2023), the technology share (1990–2022) and the export share (1962–2024).</p>
+        <p><b>Coverage note.</b> This is the atlas's first World Bank guide; the twelve others are Indian official statistics. Manufacturing here is ISIC Section C from the national accounts: a different ruler from the Annual Survey of Industries' registered factories (Guide 08), and the two are never compared level-for-level.</p>
+      </div>
+      <div>
+        <h6>Revisions &amp; uncertainty</h6>
+        <p>The WDI revises history freely as member countries rebase their national accounts; no figure here is final, including the oldest. This guide quotes the vintage with the value for exactly that reason. The four bundles end in different years, 2025, 2024, 2023, 2022, because their source agencies report on different lags; the gaps are shown, never filled. Where a later year is unmeasured, this guide says "we do not know" rather than inventing a number.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Output, version 1.0, covers manufacturing value added (share, level, growth), the UNIDO technology composition, manufactures' share of exports and the medium- &amp; high-tech share. Next scheduled revision: on the next WDI database update.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, Manufacturing, World Bank WDI</span>
+      <span>Vintage <span id="prov-vintage2">–</span>, history revised freely</span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/manufacturing.client.js";
+</script>
+</Base>

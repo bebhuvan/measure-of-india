@@ -2,15 +2,15 @@
 import Learn from "../layouts/Learn.astro";
 ---
 <Learn
-  title="India Atlas — Learn · Year-on-year, month-on-month"
-  description="Learn № 05 — two ways to measure the same change. Year-on-year cancels the seasons and moves slowly; month-on-month is fast and mostly noise. When each is the right tool."
+  title="Year-on-year, month-on-month · India Atlas"
+  description="Two ways to measure the same change. Year-on-year cancels the seasons and moves slowly; month-on-month is fast and mostly noise. When each is the right tool."
   slug="yoy-and-mom"
-  kicker="Learn № 05 — Prices · Year-on-year, month-on-month"
+  kicker="Prices: Year-on-year, month-on-month"
   h1="One change, <i>two speeds.</i>"
   lede="Year-on-year cancels the seasons and moves slowly. Month-on-month is fast and mostly noise. When each is the right tool, and why three consecutive months is the minimum unit of meaning."
   meta={[
     ["Concept", "y/y and m/m"],
-    ["Illustrated with", "Headline CPI, both measures · 2021–2025"],
+    ["Illustrated with", "Headline CPI, both measures, 2021–2025"],
     ["Source", "MoSPI, NSO"],
     ["Level", "First principles"],
     ["Reading time", "6 min"],
@@ -26,12 +26,12 @@ import Learn from "../layouts/Learn.astro";
       <div>
         <p>The same change can be measured against two different pasts. Compare a month with the same month a year ago and you get the year-on-year rate, the form in which inflation reaches the news. Compare it with the month just gone and you get the month-on-month rate, the form in which inflation reaches the trading desk. One measure is slow and clean. The other is fast and dirty.</p>
         <aside class="defbox">
-          <div class="term">Year-on-year <span class="sub">y/y · the standard comparison</span></div>
+          <div class="term">Year-on-year <span class="sub">y/y, the standard comparison</span></div>
           <p>The change against the same month a year earlier: December against December, not against November. Comparing like with like cancels the seasons, because both months contain the same festivals and the same harvests. What remains is slower, cleaner change.</p>
           <div class="eg"><b>In plain words:</b> the measure the news means when it says the inflation rate.</div>
         </aside>
         <aside class="defbox">
-          <div class="term">Month-on-month <span class="sub">m/m · the fast comparison</span></div>
+          <div class="term">Month-on-month <span class="sub">m/m, the fast comparison</span></div>
           <p>The change against the previous month: December against November. It answers quickly, but it compares two different seasons, so in India, where prices keep a festival and harvest calendar, much of what it reports is the calendar itself.</p>
           <div class="eg"><b>In plain words:</b> speed, paid for in noise.</div>
         </aside>
@@ -39,15 +39,15 @@ import Learn from "../layouts/Learn.astro";
       </div>
       <div class="wm-rail">
         <aside class="margin-note">
-          <span class="mk">Margin note · i</span>
+          <span class="mk">Margin note, i</span>
           <b>Slow and clean, or fast and dirty.</b> Every choice of comparison window is a choice about which flaw you can live with.
         </aside>
         <aside class="margin-note">
-          <span class="mk">Margin note · ii</span>
+          <span class="mk">Margin note, ii</span>
           <b>Three months is the unit of meaning.</b> One monthly print is weather. Three pointing the same way begin to be a climate.
         </aside>
         <aside class="margin-note">
-          <span class="mk">Margin note · iii</span>
+          <span class="mk">Margin note, iii</span>
           <b>The news uses y/y for a reason.</b> It is the only comparison in which December is allowed to meet December.
         </aside>
       </div>
@@ -56,20 +56,20 @@ import Learn from "../layouts/Learn.astro";
 
   <!-- § 02 plate : the two measures -->
   <section>
-    <div class="sec-head"><span class="no">02</span><h2>Five years, heard at two speeds</h2><span class="line"></span><span class="unit">y/y % · m/m %</span></div>
+    <div class="sec-head"><span class="no">02</span><h2>Five years, heard at two speeds</h2><span class="line"></span><span class="unit">y/y %, m/m %</span></div>
     <div class="break">
       <figure id="cb-ym" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>The signal and the noise — one index, two measures of change</h3>
-            <div class="sub">CPI combined · year-on-year and month-on-month, per cent · Jan 2021 – Dec 2025 · m/m computed from the published index</div>
+            <h3>The signal and the noise: one index, two measures of change</h3>
+            <div class="sub">CPI combined, year-on-year and month-on-month, per cent, Jan 2021 to Dec 2025, m/m computed from the published index</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-ym">–</div><div class="c">Dec 2025 · y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-ym">–</div><div class="c">Dec 2025, y/y</div></div>
         </div>
         <div class="frame">
           <div class="plotzone" id="plot-ym"><div class="cb-tip"></div></div>
           <div class="plotfoot">
-            <span class="src">Source — MoSPI, CPI combined index, base 2012=100, vintage <span id="pf-ym">–</span> · m/m computed from published levels; not seasonally adjusted</span>
+            <span class="src">Source: MoSPI, CPI combined index, base 2012=100, vintage <span id="pf-ym">–</span>, m/m computed from published levels; not seasonally adjusted</span>
             <span class="dl">
               <button data-dl="svg">SVG</button><span class="sep"></span>
               <button data-dl="png">PNG</button><span class="sep"></span>
@@ -81,8 +81,8 @@ import Learn from "../layouts/Learn.astro";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>The vermilion line is the year-on-year rate; the thin grey line is the month-on-month change, computed from the same index. Watch how differently they behave. The grey line changes sign <b id="ev-flips">–</b> times in five years. The vermilion line never crosses zero once.</p>
-            <p>That is the seasons leaving the grey line and cancelling from the vermilion one. Vegetables flood the winter market and the grey line dips; the summer heat lifts them and it jumps. The vermilion line compares each month with its twin a year back, so the calendar cancels and only real change remains.</p>
+            <p>The blue line is the year-on-year rate; the thin grey line is the month-on-month change, computed from the same index. Watch how differently they behave. The grey line changes sign <b id="ev-flips">–</b> times in five years. The blue line never crosses zero once.</p>
+            <p>That is the seasons leaving the grey line and cancelling from the blue one. Vegetables flood the winter market and the grey line dips; the summer heat lifts them and it jumps. The blue line compares each month with its twin a year back, so the calendar cancels and only real change remains.</p>
           </div>
           <div class="now">
             <span class="mk">The July 2023 case</span>
@@ -96,11 +96,11 @@ import Learn from "../layouts/Learn.astro";
 
   <!-- § 03 the unit of meaning -->
   <section>
-    <div class="sec-head"><span class="no">03</span><h2>The minimum unit of meaning</h2><span class="line"></span><span class="unit">A working rule · three months</span></div>
+    <div class="sec-head"><span class="no">03</span><h2>The minimum unit of meaning</h2><span class="line"></span><span class="unit">A working rule, three months</span></div>
     <div class="numbers">
-      <div class="num"><div class="l">m/m · Dec 2025</div><div class="v" id="n-ym-mom">–</div><div class="d">one ordinary month</div></div>
-      <div class="num"><div class="l">y/y · Dec 2025</div><div class="v acc" id="n-ym-yoy">–</div><div class="d">the same month, measured slowly</div></div>
-      <div class="num"><div class="l">Largest monthly move · 2021–25</div><div class="v" id="n-ym-max">–</div><div class="d">Jul 2023 · the tomato shock</div></div>
+      <div class="num"><div class="l">m/m, Dec 2025</div><div class="v" id="n-ym-mom">–</div><div class="d">one ordinary month</div></div>
+      <div class="num"><div class="l">y/y, Dec 2025</div><div class="v acc" id="n-ym-yoy">–</div><div class="d">the same month, measured slowly</div></div>
+      <div class="num"><div class="l">Largest monthly move, 2021–25</div><div class="v" id="n-ym-max">–</div><div class="d">Jul 2023, the tomato shock</div></div>
       <div class="num"><div class="l">Sign changes in the m/m line</div><div class="v" id="n-ym-flips">–</div><div class="d">of 59 month-to-month transitions</div></div>
     </div>
     <p style="margin-top:40px">So how much speed can you trust? A working rule: one monthly print is weather, and three consecutive prints pointing the same way are the beginning of a climate. The rule exists because of what the numbers block shows. In five years the fast line flips direction <b id="ar-flips">–</b> times; treating any single flip as news would have meant crying turn, on average, once a quarter.</p>
@@ -145,8 +145,8 @@ import Learn from "../layouts/Learn.astro";
   </div>
   <div slot="prov-note">
     <h6>This note</h6>
-    <p>Learn № 05 · Prices · version 1.0. Evergreen, written to survive the next print. July 2023 and December 2025 are used as history, not news; the chart redraws from the baked data on every build.</p>
-    <p>Companion dossier: <a href="/dossiers/cpi/">Dossier 01 · Consumer Price Index</a>.</p>
+    <p>Prices, version 1.0. Evergreen, written to survive the next print. July 2023 and December 2025 are used as history, not news; the chart redraws from the baked data on every build.</p>
+    <p>Companion guide: <a href="/guides/cpi/">Consumer Price Index</a>.</p>
   </div>
 
 <script>
