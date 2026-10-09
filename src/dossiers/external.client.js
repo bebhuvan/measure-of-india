@@ -185,7 +185,7 @@ setHTML("rb-res", bnR(res.value) + pc(""));
   setHTML("ex-ca-surplus", `${surplusQ} of ${nQ}`);
 }
 {
-  const s = { ...IND.cad_to_gdp, label: "Current account, % of GDP", color: ACC };
+  const s = { ...IND.cad_to_gdp, label: "Current account", color: ACC };
   const tr = troughOf(s), L = lastPt(s), pk = peakOf(s);
   const p = lines("plot-cagdp", "cb-cagdp", [s], { d0: -5.5, d1: 3, yTicks: [-5, -4, -3, -2, -1, 0, 1, 2, 3], xTicks: yearTicks(1970, 2025, 5).map((d) => new Date(Date.UTC(d.getUTCFullYear(), 3, 1))), xFmt: yTickFmt,
     yLabel: "per cent of GDP, fiscal years", valFmt: (v) => fmt.pct1Minus(v), tipDate: fyLabel, file: "india-atlas_current-account-gdp_annual",
@@ -251,7 +251,6 @@ setHTML("rb-res", bnR(res.value) + pc(""));
   setHTML("pv-remit", fmt.bnFixed1(L.value));
   setHTML("ex-r-q", fmt.bnFixed1(L.value));
   setHTML("ex-r-year", fmt.bnFixed1(yearSum(s, iL)));
-  setHTML("ex-r-gdpshare", "–");
 }
 {
   // latest quarter of the detailed table: where the remittance money comes from
@@ -313,7 +312,7 @@ setHTML("rb-res", bnR(res.value) + pc(""));
   setHTML("ex-l-study", fmt.bnFixed1(last[1].g[3] / 1000));
   const lm = lastPt(LR.total);
   setHTML("ex-l-month", monLabel(lm.date));
-  setHTML("ex-l-edu", fmt.bnFixed1((lastPt(LR.travel_for_education)?.value ?? 0) / 1000 * 1000 / 1000));
+  { const e = lastPt(LR.travel_for_education); setHTML("ex-l-edu", "$" + fmt.inr(e.value) + " million"); setHTML("ex-l-edum", monLabel(e.date)); }
 }
 
 /* ================= §05 foreign money in and out ================= */
@@ -333,7 +332,7 @@ setHTML("rb-res", bnR(res.value) + pc(""));
 }
 {
   // FDI, monthly table: fiscal-year sums of gross inflows, repatriation and outward FDI (derived)
-  const K = [["Gross inflows into India", "a_i_a_gross_inflows_gross_investment", ACC], ["Taken back out (repatriation)", "a_i_b_repatriation_disinvestment", GOLD], ["Indian companies investing abroad", "a_ii_foreign_direct_investment_by_i", G1]];
+  const K = [["Gross inflows into India", "a_i_a_gross_inflows_gross_investment", ACC], ["Repatriated", "a_i_b_repatriation_disinvestment", GOLD], ["Indian investment abroad", "a_ii_foreign_direct_investment_by_i", G1]];
   const fys = new Map();
   FD[K[0][1]].data.forEach((d, i) => {
     if (d.value == null) return;
@@ -400,12 +399,16 @@ setHTML("rb-res", bnR(res.value) + pc(""));
   const lastM = chg.at(-1).date;
   const net = IV.net.data.filter((d) => d.date >= dOf(from) && d.date <= lastM).map((d) => ({ date: d.date, value: d.value == null ? null : d.value / 1000 }));
   const sC = { label: "Change in reserves", color: ACC, data: chg }, sN = { label: "RBI's net dollar purchases", color: GOLD, data: net };
+  // the domain follows the data: a month like August 2026 (+$59 bn) must not be clipped
+  const allV = [...chg, ...net].map((d) => d.value).filter((v) => v != null);
+  const yLo = Math.min(-20, Math.floor((Math.min(...allV) - 5) / 10) * 10), yHi = Math.max(20, Math.ceil((Math.max(...allV) + 5) / 10) * 10);
+  const yT = []; for (let v = yLo; v <= yHi; v += yHi - yLo > 80 ? 20 : 10) yT.push(v);
   const plot = Plot.plot({
     width: W, height: 430, marginLeft: 56, marginRight: 250, marginTop: 30, marginBottom: 34, style: baseStyle,
     x: { type: "utc", label: null, tickSize: 0, tickPadding: 12, ticks: yearTicks(2024, 2026, 1), tickFormat: yTickFmt },
-    y: { label: "US$ billion, a month", labelAnchor: "top", labelArrow: false, domain: [-45, 35], ticks: [-40, -30, -20, -10, 0, 10, 20, 30], tickSize: 0, tickPadding: 10, tickFormat: (v) => String(v) },
+    y: { label: "US$ billion, a month", labelAnchor: "top", labelArrow: false, domain: [yLo, yHi], ticks: yT, tickSize: 0, tickPadding: 10, tickFormat: (v) => String(v) },
     marks: [
-      Plot.gridY([-40, -30, -20, -10, 10, 20, 30], { stroke: GRID }),
+      Plot.gridY(yT.filter((v) => v !== 0), { stroke: GRID }),
       Plot.rectY(chg, { x1: (d) => new Date(+d.date - 11 * 864e5), x2: (d) => new Date(+d.date + 11 * 864e5), y1: 0, y2: "value", fill: "#AAB8F2" }),
       Plot.ruleY([0], { stroke: INK, strokeOpacity: 0.5 }),
       Plot.dot(net.filter((d) => d.value != null), { x: "date", y: "value", fill: GOLD, r: 3.5, stroke: "#fff", strokeWidth: 1 }),
@@ -421,12 +424,12 @@ setHTML("rb-res", bnR(res.value) + pc(""));
   const both = chg.map((d) => ({ d: d.date, c: d.value, n: net.find((x) => +x.date === +d.date)?.value })).filter((x) => x.n != null);
   const gaps = both.map((x) => Math.abs(x.c - x.n));
   setHTML("pv-resmove", fmt.bnFixed1(chg.at(-1).value));
-  setHTML("ex-rm-month", monLabel(lastM));
-  setHTML("ex-rm-chg", fmt.bnFixed1(chg.at(-1).value));
+  setHTML("ex-mv-month", monLabel(lastM));
+  setHTML("ex-mv-chg", fmt.bnFixed1(chg.at(-1).value));
   const lastBoth = both.at(-1);
-  setHTML("ex-rm-net", lastBoth ? fmt.bnFixed1(lastBoth.n) : "–");
-  setHTML("ex-rm-netm", lastBoth ? monLabel(lastBoth.d) : "–");
-  setHTML("ex-rm-gapmax", fmt.bnFixed1(Math.max(...gaps)));
+  setHTML("ex-mv-net", lastBoth ? fmt.bnFixed1(lastBoth.n) : "–");
+  setHTML("ex-mv-netm", lastBoth ? monLabel(lastBoth.d) : "–");
+  setHTML("ex-mv-gapmax", fmt.bnFixed1(Math.max(...gaps)));
 }
 
 /* ================= §07 the rupee ================= */
@@ -486,7 +489,7 @@ setHTML("rb-res", bnR(res.value) + pc(""));
   setHTML("ex-d-m", monLabel(L.date)); setHTML("ex-d-net", fmt.bnFixed1(L.value / 1000));
   setHTML("ex-d-fw", fmt.bnFixed1(lastPt(fw).value));
   setHTML("ex-d-fwt", `${fmt.bnFixed1(fwT.value)} in ${monLabel(fwT.date)}`);
-  const m1 = lastPt(FB.up_to_1_month_net) ?? null;
+  const m1 = lastPt(FB.upto_1_month_net) ?? null;
   setHTML("ex-d-1m", m1 ? fmt.bnFixed1(m1.value / 1000) : "–");
   const sales12 = sum(IV.sale.data.slice(-12).map((d) => d.value ?? 0)), buys12 = sum(IV.purchase.data.slice(-12).map((d) => d.value ?? 0));
   setHTML("ex-d-sold12", fmt.bnFixed1(sales12 / 1000)); setHTML("ex-d-bought12", fmt.bnFixed1(buys12 / 1000));
@@ -520,15 +523,15 @@ setHTML("rb-res", bnR(res.value) + pc(""));
   const at = (k) => DS[k]?.data.find((d) => +d.date === +L.date)?.value ?? null;
   const tot = L.value;
   const rows = [
-    ["Companies (non-financial)", "s_other_sectors_non_financial_corporations"],
-    ["Banks", "s_deposit_taking_corporations_except_the_central"],
+    ["Companies (non-financial)", "s_non_financial_corporations"],
+    ["Banks", "s_deposit_taking_corporations_except_the_central_ban"],
     ["Government", "s_general_government"],
-    ["Other financial companies", "s_other_sectors_other_financial_corporations"],
+    ["Other financial companies", "s_other_financial_corporations"],
     ["Lending within company groups", "s_direct_investment_intercompany_lending"],
     ["Reserve Bank of India", "s_central_bank"],
-    ["Households and non-profits", "s_other_sectors_households_and_nonprofit_institu"],
-  ].map(([name, k]) => ({ name, k, v: at(Object.keys(DS).find((x) => x.startsWith(k)) ?? k) })).filter((r) => r.v != null).map((r) => ({ ...r, v: (r.v / tot) * 100 })).sort((a, b) => b.v - a.v);
-  const plot = hbars("plot-sector", rows, { valueFmt: (v) => fmt.pct1(v), hl: (d) => d === rows[0], xMax: 50, xTicks: [0, 10, 20, 30, 40, 50], xFmt: (v) => v + (v === 50 ? "%" : ""), label: "share of external debt" });
+    ["Households and non-profits", "s_households_and_nonprofit_institutions_serving_hous"],
+  ].map(([name, k]) => ({ name, k, v: at(k) })).filter((r) => r.v != null).map((r) => ({ ...r, v: (r.v / tot) * 100 })).sort((a, b) => b.v - a.v);
+  const plot = hbars("plot-sector", rows, { valueFmt: (v) => fmt.pct1(v), hl: (d) => d === rows[0], xMax: 50, xTicks: [0, 10, 20, 30, 40, 50], xFmt: (v) => String(v), label: "per cent of external debt" });
   a11y(plot, "India's external debt by who borrowed, latest quarter", rows.map((r) => `${r.name} ${fmt.pct1(r.v)}`).join(", "));
   wirePlate("cb-sector", plot, "india-atlas_external-debt-by-borrower", "borrower,share_percent\n" + rows.map((r) => `"${r.name}",${r.v.toFixed(2)}`).join("\n"));
   setHTML("pv-sector", fmt.pct1(rows[0].v));

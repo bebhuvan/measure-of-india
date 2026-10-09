@@ -1171,7 +1171,7 @@ seams:
     - base: "RBI overall-BoP layout"
       from: "1948-04"
       to: null
-      bundles: [external-bop, external-bop-gross, external-bop-lines, external-bop-vintages, external-bop-inr-lines, external-bop-annual, external-bop-annual-head, external-bop-annual-inr, external-bop-indicators, external-invisibles-annual, external-invisibles-annual-inr]
+      bundles: [external-bop, external-bop-gross, external-bop-lines, external-bop-vintages, external-bop-inr-lines, external-bop-annual, external-bop-annual-head, external-bop-annual-inr, external-bop-annual-overall, external-bop-annual-overall-inr, external-bop-indicators, external-invisibles-annual, external-invisibles-annual-inr]
     - base: "BPM5"
       from: "2006-01"
       to: "2021-07"
@@ -1179,7 +1179,7 @@ seams:
     - base: "BPM6"
       from: "2010-04"
       to: null
-      bundles: [external-bop6-lines, external-bop6-inr-lines, external-invisibles, external-invisibles-people, external-iip, external-iip-head, external-iip-inr]
+      bundles: [external-bop6-lines, external-bop6-vintages, external-bop6-inr-lines, external-bop6-annual-lines, external-bop6-annual-lines-inr, external-invisibles, external-invisibles-people, external-iip, external-iip-head, external-iip-inr, external-iip-summary, external-iip-summary-inr]
   external-reer:
     # broad basket ("36" in DBIE) and 6-currency basket share base years; each base is its own ruler
     - base: "1985=100"
@@ -1187,9 +1187,9 @@ seams:
       to: "1993-03"
       bundles: [external-reer-1985]
     - base: "1993-94=100"
-      from: "1993-04"
+      from: "1993-01"        # the calendar-year 1993 average sits at January
       to: "2011-01"
-      bundles: [external-reer-1993, external-reer6-1993]
+      bundles: [external-reer-1993, external-reer6-1993, external-reer-1993-calendar, external-reer-1993-fiscal]
     - base: "2003-04=100"
       from: "1993-04"
       to: "2006-08"
@@ -1197,11 +1197,11 @@ seams:
     - base: "2004-05=100"
       from: "2003-02"
       to: "2021-12"
-      bundles: [external-reer-2004, external-reer6-2004]
+      bundles: [external-reer-2004, external-reer6-2004, external-reer-2004-calendar, external-reer-2004-fiscal]
     - base: "2015-16=100"
-      from: "2004-04"
+      from: "2004-01"        # the calendar-year 2004 average sits at January
       to: null
-      bundles: [external-reer-2015, external-reer6-2015]
+      bundles: [external-reer-2015, external-reer6-2015, external-reer-2015-calendar, external-reer-2015-fiscal, external-reer6-2015-calendar, external-reer6-2015-fiscal]
     - base: "2018-19=100"
       from: "2004-04"
       to: "2024-03"

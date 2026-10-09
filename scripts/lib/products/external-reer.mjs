@@ -68,7 +68,7 @@ export async function buildExternalReer(root, dcfg, vintage, cfg) {
       label: (key) => `${key.startsWith("reer") ? "Real" : "Nominal"} effective exchange rate, ${basket === "broad" ? "broad basket" : "6-currency basket"}, ${key.endsWith("trade") ? "trade" : "export"}-weighted (${base} = 100)`,
       order: (r) => r["Reer Neer Description"] });
     onAxis(b, monthAxis(b.dates[0], b.dates.at(-1)));
-    const fin = finish(b, "Not published for these months.");
+    const fin = finish(b, "Not published for these months.", "index");
     const rel = `external-${basket === "broad" ? "reer" : "reer6"}-${base.slice(0, 4)}`;
     const m = { dossier: "external-reer", source: dcfg.source_agency, product: "Indices of REER and NEER of the Indian rupee (DBIE report 584)", base: `${base}=100`, frequency: "monthly", unit: "index",
       geo: "IND", releaseDate: null, mock: false, revisionPolicy: dcfg.revision_policy, vintage: V, latestPeriod: fin.dates.at(-1).slice(0, 7),
@@ -79,6 +79,46 @@ export async function buildExternalReer(root, dcfg, vintage, cfg) {
     baked++;
   }
   if (!baked) throw new Error("external-reer: report 584 served no index long enough to bake");
+
+  // annual averages as RBI publishes them: calendar years (380; 1402 for the 6-currency index)
+  // and fiscal years (381; 1403). They are RBI's own annual figures, not our averages of the
+  // monthly table (they differ from a plain mean of the months RBI now shows by up to a few
+  // tenths, as RBI averages the figures it had at the time): baked as published.
+  const annP = ["380", "381", "1402", "1403"].flatMap((id) => dbieProviders(db, id).filter((x) => x.header.some((h) => /Value/.test(h))).map((x) => ({ ...x, rid: id })));
+  const VA = archive(root, `${RAW}/reer-annual.json`, vintage, "RBI DBIE: indices of REER and NEER, annual averages, calendar (380, 1402) and fiscal (381, 1403) years.", annP);
+  const groups2 = new Map();
+  for (const x of annP) for (const r of x.rows) {
+    const fiscal = x.rid === "381" || x.rid === "1403";
+    // in 380 and 381 the rows with display order 5 and 6 carry 6-currency codes under the broad
+    // basket's label, and their values are not the 6-currency annual averages (FY 2025-26 NEER
+    // reads 73.76 there, the stray February 2026 monthly value; 1403 and the mean of the months
+    // give 76.73): they are not read. The 6-currency annual index comes from 1402 and 1403.
+    if ((x.rid === "380" || x.rid === "381") && +r["Reer Neer Display Order"] >= 5) continue;
+    const six = x.rid === "1402" || x.rid === "1403";
+    const base = six ? "2015-16" : baseOf(r["Data Series"]);
+    if (!base) continue;
+    const k = `${six ? "six" : "broad"}|${base}|${fiscal ? "fy" : "cal"}`;
+    if (!groups2.has(k)) groups2.set(k, []);
+    groups2.get(k).push(r);
+  }
+  for (const [k, rows] of [...groups2.entries()].sort()) {
+    const [basket, base, kind] = k.split("|");
+    const b = bakeLong(rows, { round: 4, tol: 0.0005,
+      date: (r) => (kind === "fy" ? fyStart(r["Fiscal Year"] ?? r["Time Fis Year"]) : /^\d{4}$/.test(r["Time Cal Year"]) ? `${r["Time Cal Year"]}-01-01` : null),
+      key: (r) => `${/REER/.test(r["Reer Neer Hierarchy Level3"]) ? "reer" : "neer"}_${/Export/.test(r["Reer Neer HBs Hierarchy Level2"] ?? "") ? "export" : "trade"}`,
+      value: (r) => num(r["Reer Neer Value"]), rank: (r) => vrank(r["Version Desc"]), version: (r) => r["Version Desc"],
+      label: (key) => `${key.startsWith("reer") ? "Real" : "Nominal"} effective exchange rate, ${basket === "broad" ? "broad basket" : "6-currency basket"}, ${key.endsWith("trade") ? "trade" : "export"}-weighted, ${kind === "fy" ? "fiscal" : "calendar"}-year average (${base} = 100)`,
+      order: (r) => `${r["Reer Neer Hierarchy Level3"]}|${r["Reer Neer HBs Hierarchy Level2"]}` });
+    onAxis(b, monthAxis(b.dates[0], b.dates.at(-1), 12));
+    const fin = finish(b, "Not published for these years.", "index");
+    const rel = `external-${basket === "broad" ? "reer" : "reer6"}-${base.slice(0, 4)}-${kind === "fy" ? "fiscal" : "calendar"}`;
+    const m = { dossier: "external-reer", source: dcfg.source_agency, product: `Indices of REER and NEER, annual (DBIE report ${basket === "six" ? (kind === "fy" ? "1403" : "1402") : (kind === "fy" ? "381" : "380")})`, base: `${base}=100`,
+      frequency: "annual", unit: "index", geo: "IND", releaseDate: null, mock: false, revisionPolicy: dcfg.revision_policy, vintage: VA, latestPeriod: kind === "fy" ? fin.dates.at(-1).slice(0, 7) : fin.dates.at(-1).slice(0, 4),
+      coverage: `The rupee against a ${basket === "broad" ? "broad basket of currencies" : "basket of six currencies"}, ${kind === "fy" ? "fiscal" : "calendar"}-year averages, ${base} = 100`,
+      note: `RBI DBIE, annual averages as RBI publishes them, base ${base} = 100${kind === "fy" ? "; fiscal years plotted at April of the first year" : ""}. RBI's own annual figures, kept as published; a separate ruler from every other base.` };
+    if (fin.empty.length) m.emptyLines = fin.empty;
+    writeSeries(root, `data/series/${rel}.json`, { meta: m, dates: fin.dates, series: fin.series });
+  }
 }
 
 /* ---------------- catalogue ---------------- */
@@ -99,7 +139,7 @@ export function catalogue(db) {
   // copies of the monthly table: Bulletin (54), Handbook (306, broad basket only)
   const cell = (r) => { const v = r["Reer Neer Values"] ?? r["Reer Neer Value annual"] ?? r["Reer Neer Value"]; const d = r.Date ?? r["Time Date"];
     const s = r["Data Series_6"] ?? r["Data Series_36"] ?? r["Data Series"]; const code = r["Reer Neer Description"] ?? `${/REER/.test(r["Reer Neer Hierarchy Level3"]) ? "REER" : "NEER"}|${r["Reer Neer HBs Hierarchy Level2"]}`;
-    return d && v ? [`${d.slice(0, 10).replace(/-/g, "/")}|${baseOf(s)}|${code.replace(/^(36|6)_|_BASED_WTS$/g, "").replace(/_/g, "|").replace(/TRADE/, "Trade-weighted").replace(/EXPORT/, "Export-weighted")}`, num(v)] : null; };
+    return d && v ? [`${r._p}|${r.Version ?? ""}|${String(s).replace(/\s+/g, " ")}|${d.slice(0, 10).replace(/-/g, "/")}|${baseOf(s)}|${code.replace(/^(36|6)_|_BASED_WTS$/g, "").replace(/_/g, "|").replace(/TRADE/, "Trade-weighted").replace(/EXPORT/, "Export-weighted")}`, num(v)] : null; };
   handles["54"] = dupHandle(db, "584", "54", cell);
   items.push({ id: "dbie:54:copy", label: "Indices of REER and NEER, monthly (Bulletin, DBIE report 54): the same table as report 584", dims: { report: "54", copyOf: "584", match: handles["54"].match } });
   // 306: the Handbook's broad-basket monthly table. Its keys differ from 584's, so it is checked
@@ -107,48 +147,32 @@ export function catalogue(db) {
   {
     const P = new Map();
     for (const r of p.rows) { const b = baseOf(r[col]); if (!b || !r["Reer Neer Description"].startsWith("36_")) continue;
-      const m = r["Reer Neer Description"].match(/^36_(NEER|REER)_(TRADE|EXPORT)/); P.set(`${r.Date.slice(0, 7)}|${b}|${m[1]}|${m[2]}`, num(r[p.header.find((h) => /Value/.test(h))])); }
+      const m = r["Reer Neer Description"].match(/^36_(NEER|REER)_(TRADE|EXPORT)/); const k = `${r.Date.slice(0, 7)}|${b}|${m[1]}|${m[2]}`;
+      P.set(k, [...(P.get(k) ?? []), num(r[p.header.find((h) => /Value/.test(h))])]); }   // every version DBIE carries for the month
     let n = 0, hit = 0;
     for (const r of dbieProviders(db, "306").find((x) => x.name === "Query 2").rows) {
       const b = baseOf(r["Data Series"]); const what = r["Reer Neer Hierarchy Level3"].includes("REER") ? "REER" : "NEER"; const w = /Export/.test(r["Reer Neer HBs Hierarchy Level2"]) ? "EXPORT" : "TRADE";
-      const v = P.get(`${r["Time Date"].slice(0, 7)}|${b}|${what}|${w}`); if (v == null) continue; n++; if (Math.abs(v - num(r["Reer Neer Value"])) < 1e-3) hit++;
+      const v = P.get(`${r["Time Date"].slice(0, 7)}|${b}|${what}|${w}`); if (v == null) continue; n++; if (v.some((x) => Math.abs(x - num(r["Reer Neer Value"])) < 1e-3)) hit++;
     }
     const match = n ? Math.round((hit / n) * 10000) / 10000 : 0;
     if (match < 0.995) throw new Error(`catalogue: report 306 matches report 584 on only ${(match * 100).toFixed(2)}% of ${n} cells`);
     handles["306"] = { dupOf: "584", cells: n, match };
     items.push({ id: "dbie:306:copy", label: "Indices of NEER and REER, broad basket, monthly (Handbook, DBIE report 306): the same values as report 584", dims: { report: "306", copyOf: "584", match, cells: n } });
   }
-  // annual tables: fiscal-year (381, 286, 1403) and calendar-year (380, 275, 1402) averages of the
-  // monthly indices. Checked: each annual value against the mean of the twelve monthly values.
-  {
-    const vcol = p.header.find((h) => /Value/.test(h));
-    const M = new Map();
-    for (const r of p.rows) { const b = baseOf(r[col]); const m = r["Reer Neer Description"].match(/^(36|6)_(NEER|REER)_(TRADE|EXPORT)/); if (!b || !m) continue;
-      const k = `${m[1] === "36" ? "broad" : "six"}|${b}|${m[2]}|${m[3]}|${r.Date.slice(0, 7)}`; M.set(k, num(r[vcol])); }
-    const mean = (basket, b, what, w, months) => { const v = months.map((ym) => M.get(`${basket}|${b}|${what}|${w}|${ym}`)); return v.every((x) => x != null) ? v.reduce((a, x) => a + x, 0) / 12 : null; };
-    const fyMonths = (fy) => { const y = +fy.slice(0, 4); return [...Array(12)].map((_, i) => { const m = 4 + i; return m <= 12 ? `${y}-${String(m).padStart(2, "0")}` : `${y + 1}-${String(m - 12).padStart(2, "0")}`; }); };
-    const calMonths = (y) => [...Array(12)].map((_, i) => `${y}/${String(i + 1).padStart(2, "0")}`.replace("/", "-"));
-    for (const [id, fiscal] of [["381", true], ["286", true], ["1403", true], ["380", false], ["275", false], ["1402", false]]) {
-      let n = 0, hit = 0;
-      for (const pp of dbieProviders(db, id)) {
-        const vc = pp.header.find((h) => /Value/.test(h)); if (!vc) continue;
-        for (const r of pp.rows) {
-          const base = baseOf(r["Data Series"] ?? "") ?? (r["Reer Neer Hierarchy Level1"] === "6-Currency" ? "2015-16" : null);
-          const basket = r["Reer Neer Hierarchy Level1"] === "6-Currency" || /6 Currency/.test(r["Data Series"] ?? "") ? "six" : "broad";
-          const what = String(r["Reer Neer Hierarchy Level3"]).includes("REER") ? "REER" : "NEER";
-          const w = /Export/.test(r["Reer Neer HBs Hierarchy Level2"] ?? "") ? "EXPORT" : "TRADE";
-          const per = fiscal ? r["Fiscal Year"] ?? r["Time Fis Year"] : r["Time Cal Year"];
-          if (!base || !per) continue;
-          const mv = mean(basket, base, what, w, fiscal ? fyMonths(per) : calMonths(per));
-          if (mv == null) continue;
-          n++; if (Math.abs(mv - num(r[vc])) < 0.05) hit++;
-        }
-      }
-      const match = n ? Math.round((hit / n) * 10000) / 10000 : 0;
-      handles[id] = { averageOf: "584", cells: n, match };
-      items.push({ id: `dbie:${id}:annual`, label: `Indices of NEER and REER, ${fiscal ? "fiscal" : "calendar"}-year averages (DBIE report ${id}): checked against the mean of report 584's monthly values`,
-        dims: { report: id, averageOf: "584", fiscal, cells: n, match } });
+  // annual tables: RBI's calendar-year (380, 1402) and fiscal-year (381, 1403) averages, baked as
+  // published; the Handbook's 275 and 286 are copies of 380 and 381
+  for (const id of ["380", "381", "1402", "1403"]) {
+    for (const pp of dbieProviders(db, id)) {
+      if (!pp.header.some((h) => /Value/.test(h))) continue;
+      for (const lab of [...new Set(pp.rows.map((r) => `${baseOf(r["Data Series"] ?? "") ?? "2015-16"}:${String(r["Reer Neer Hierarchy Level3"]).replace(/^[\d.]+\s*/, "")}:${r["Reer Neer HBs Hierarchy Level2"] ?? "Trade-weighted"}${(id === "380" || id === "381") && +r["Reer Neer Display Order"] >= 5 ? ":stray-6-currency-rows" : ""}`))])
+        items.push({ id: `dbie:${id}:${slug(lab, 60)}`, label: `Effective exchange rate, annual (DBIE report ${id}): ${lab}`, dims: { report: id, freq: "annual" } });
     }
+    handles[id] = "primary";
+  }
+  const cellA = (r) => { const y = r["Fiscal Year"] ?? r["Time Cal Year"]; return y && r["Reer Neer Value"] ? [`${y}|${r["Data Series"]}|${r["Reer Neer Hierarchy Level3"]}|${r["Reer Neer HBs Hierarchy Level2"]}|${r["Version Desc"]}`, num(r["Reer Neer Value"])] : null; };
+  for (const [dup, prim] of [["275", "380"], ["286", "381"]]) {
+    handles[dup] = dupHandle(db, prim, dup, cellA);
+    items.push({ id: `dbie:${dup}:${handles[dup].unverified ? "copy-unverified" : "copy"}`, label: `Indices of NEER and REER, annual (Handbook, DBIE report ${dup}): the same table as report ${prim}`, dims: { report: dup, copyOf: prim, match: handles[dup].match } });
   }
   return { items, handles };
 }

@@ -122,7 +122,7 @@ const extRows = [
   ["USD / INR, monthly avg", "RBI-USD", "s-g2", FU, false, "/guides/external/", null, fRs],
   ["Current account, % of GDP (annual)", "RBI-CAD", "s-g3", RC, false, "/guides/external/", null, f1],
   ["Remittances received, private transfers, $bn/qtr", "RBI-REM", "s-acc", REM, false, "/guides/external/", null, fBn],
-  ["RBI net US$ purchase(+)/sale(−), $bn/mo", "RBI-INT", "s-g4", IVN, false, "/guides/external/", "computed", fBn2],
+  ["RBI net US$ purchase(+)/sale(−), $bn/mo", "RBI-INT", "s-g4", IVN, false, "/guides/external/", null, fBn2],
   ["Forward premia, 3-month, % p.a.", "RBI-FWP", "s-g1", FWP, false, "/guides/external/", null, (v) => v.toFixed(2) + "%"],
   ["EUR / INR, monthly avg", "RBI-EUR", "s-g2", EUR, false, "/guides/external/", null, fRs],
   ["Real effective exchange rate, 40 currencies (2015-16 = 100)", "RBI-REER", "s-g3", REER, false, "/guides/external/", null, (v) => v.toFixed(1)],

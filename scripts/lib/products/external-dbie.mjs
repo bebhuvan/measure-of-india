@@ -30,6 +30,7 @@ import { fileURLToPath } from "node:url";
 import YAML from "yaml";
 import { databankRoot, databankQuery } from "../databank.mjs";
 import { writeRaw } from "../util.mjs";
+import { parseCsv } from "../tabular.mjs";
 
 export { databankRoot, databankQuery };
 
@@ -69,10 +70,11 @@ function readProviders(root, reportId) {
     if (!k.startsWith(reportId + "|")) continue;
     let buf = fs.readFileSync(v.content);
     if (v.meta.stored_encoding === "gzip") buf = zlib.gunzipSync(buf);
-    const lines = buf.toString("utf8").split(/\r?\n/).filter(Boolean);
-    const split = (l) => l.split(";").map((x) => x.replace(/^"|"$/g, "").trim());
-    const header = split(lines[0]);
-    const rows = lines.slice(1).map(split).map((c) => Object.fromEntries(header.map((h, i) => [h, c[i] ?? ""])));
+    // a real CSV parse: quoted DBIE text can hold ";" (report 1076, item 3.4.2.1), which a naive
+    // split misaligns (found by atlas-services, 2026-10-09)
+    const table = parseCsv(buf.toString("utf8"), ";").filter((r) => r.some((c) => String(c).trim() !== ""));
+    const header = table[0].map((x) => String(x).trim());
+    const rows = table.slice(1).map((c) => Object.fromEntries(header.map((h, i) => [h, String(c[i] ?? "").trim()])));
     out.push({ id: v.meta.dataprovider.id, name: v.meta.dataprovider.name, header, rows,
       provenance: { report_id: String(reportId), report: v.meta.document_name ?? null, data_provider: v.meta.dataprovider.id,
         provider_name: v.meta.dataprovider.name, rows: rows.length, retrieved_at: v.retrieved, sha256: v.sha256 } });
@@ -217,7 +219,8 @@ export function bakeLong(rows, { date, key, value, rank = () => 0, version = () 
     const d = date(r); if (!d) continue;
     const k = key(r); if (k == null) continue;
     const raw = value(r);
-    const v = raw == null ? null : +(raw / unitScale).toFixed(round);
+    const sc = typeof unitScale === "function" ? unitScale(k) : unitScale;
+    const v = raw == null ? null : +(raw / sc).toFixed(round);
     const rk = rank(r);
     const ck = `${k}|${d}`;
     const list = cells.get(ck) ?? [];
@@ -272,7 +275,31 @@ export function monthAxis(first, last, step = 1) {
  * entirely empty (listed in meta.emptyLines so nothing vanishes silently), and disclose every
  * interior null on the series that misses it.
  */
-export function finish(body, gapsNote) {
+/**
+ * The unit of one series, for the every-cut table (src/dossiers/everycut.js UNITS): read from the
+ * series label where the bundle mixes units (ratios beside amounts, counts beside dollars),
+ * else the bundle's own unit.
+ */
+export function unitFor(label, metaUnit) {
+  const l = String(label);
+  if (/tonnes/i.test(l)) return "tonnes";
+  if (/paise/i.test(l)) return "paise";
+  if (/in months\)?$|cover of reserves/i.test(l)) return "months";
+  if (/per cent a year/i.test(l)) return "pct_per_annum";
+  if (/to GDP|GDP Ratio/i.test(l)) return "pct_of_gdp";
+  if (/per cent|%/i.test(l)) return "percent";
+  if (/, number$/i.test(l)) return "count";
+  if (/, years$/i.test(l)) return "years";
+  if (/SDR million/.test(l)) return "sdr_million";
+  if (/₹ crore/.test(l)) return "inr_crore";
+  if (/US\$ million/.test(l)) return "usd_million";
+  if (/^₹ per /.test(l)) return "inr_per_unit";
+  if (/Receipts to Current Payments|Investment to Exports/i.test(l)) return "percent";
+  if (metaUnit && !/mixed|percent_or_months/.test(metaUnit)) return metaUnit;
+  throw new Error(`unitFor: no unit for series "${l}" (bundle unit ${metaUnit})`);
+}
+
+export function finish(body, gapsNote, metaUnit) {
   const any = (i) => Object.values(body.series).some((s) => s.data[i] != null);
   let a = 0, b = body.dates.length - 1;
   while (a <= b && !any(a)) a++;
@@ -287,6 +314,7 @@ export function finish(body, gapsNote) {
     const gaps = [];
     for (let i = first + 1; i < last; i++) if (s.data[i] == null) gaps.push(body.dates[i]);
     if (gaps.length) { s.gaps = gaps; s.gapsNote = s.gapsNote ?? gapsNote; }
+    if (metaUnit !== undefined) s.unit = s.unit ?? unitFor(s.label ?? k, metaUnit);
   }
   return { ...body, empty };
 }
@@ -307,7 +335,7 @@ export function archive(root, rel, vintage, note, providers, keep = () => true) 
     const rows = p.rows.filter((r) => (!hasActuals || r[unitCol] === "ACTUALS") && keep(r, p));
     // compact and lossless: a column that repeats an earlier one cell for cell is stored as a
     // pointer to it; each row is one line of the kept columns joined by ";" (the source's own
-    // separator, which never occurs inside a cell because the source was split on it)
+    // separator), CSV-quoted where a cell holds ";" or a quote
     const same = {};
     const kept = [];
     for (const h of p.header) {
@@ -315,7 +343,7 @@ export function archive(root, rel, vintage, note, providers, keep = () => true) 
       if (twin) same[h] = twin; else kept.push(h);
     }
     reports[`${p.provenance.report_id}:${p.id}`] = { provenance: { ...p.provenance, rows_archived: rows.length }, header: kept, sameAs: same,
-      rows: rows.map((r) => kept.map((h) => r[h]).join(";")) };
+      rows: rows.map((r) => kept.map((h) => { const c = String(r[h] ?? ""); return /[;"]/.test(c) ? `"${c.replace(/"/g, '""')}"` : c; }).join(";")) };
   }
   writeRaw(root, rel, { vintage, note, reports });
   return JSON.parse(fs.readFileSync(path.join(root, rel), "utf8")).vintage;
@@ -377,6 +405,12 @@ async function writeCatalogue() {
     items.push({ id: `dbie:${r.report_id}:report`, label: `${r.report_name} (DBIE report ${r.report_id}, not yet read by any adapter)`,
       dims: { report: r.report_id, menu: r.menu, frequency: r.frequency, to: r.dbie_to_date } });
   }
+  // items of a report whose copy claim failed its check are marked, so a ledger rule written for
+  // verified copies cannot decide them
+  for (const it of items) {
+    const h = handled.get(String(it.dims?.report));
+    if (h?.unverified && !/:copy-unverified$/.test(it.id)) it.id = it.id.replace(/^dbie:(\d+):/, "dbie:$1:unverified:");
+  }
   const ids = new Set();
   for (const it of items) { if (ids.has(it.id)) throw new Error(`catalogue: duplicate id ${it.id}`); ids.add(it.id); }
   items.sort((a, b) => (a.id < b.id ? -1 : 1));
@@ -402,23 +436,32 @@ async function writeCatalogue() {
  * the same value (within 1e-6 relative). The generator refuses a claim below 0.995.
  */
 export function sameTable(primaryRows, dupRows, cell) {
+  // a key can carry more than one value in the primary (DBIE repeats some cells with a second,
+  // superseded value under the same version label): a duplicate cell matches if it equals any
   const P = new Map();
-  for (const r of primaryRows) { const c = cell(r); if (c) P.set(c[0], c[1]); }
+  for (const r of primaryRows) { const c = cell(r); if (c) { const a = P.get(c[0]); if (a) a.push(c[1]); else P.set(c[0], [c[1]]); } }
+  const eq = (a, b) => a === b || (a != null && b != null && Math.abs(a - b) <= 1e-6 * Math.max(1, Math.abs(a)));
   let n = 0, hit = 0;
   for (const r of dupRows) {
     const c = cell(r); if (!c) continue; n++;
-    const v = P.get(c[0]);
-    if (v != null && c[1] != null && Math.abs(v - c[1]) <= 1e-6 * Math.max(1, Math.abs(v))) hit++;
-    else if (v === c[1]) hit++;
+    if ((P.get(c[0]) ?? []).some((v) => eq(v, c[1]))) hit++;
   }
   return { cells: n, match: n ? Math.round((hit / n) * 10000) / 10000 : 0 };
 }
 
 export function dupHandle(db, primaryId, dupId, cell, pick = (ps) => ps, min = 0.995) {
-  const P = pick(dbieProviders(db, primaryId)).flatMap((p) => p.rows);
-  const D = pick(dbieProviders(db, dupId)).flatMap((p) => p.rows);
+  // rows carry their provider's name (r._p): two providers of one report can hold the same
+  // date and line in different layouts, and a cell key that ignores this collides
+  const tag = (ps) => ps.flatMap((p) => p.rows.map((r) => Object.assign(Object.create(r), { _p: p.name })));
+  const P = tag(pick(dbieProviders(db, primaryId)));
+  const D = tag(pick(dbieProviders(db, dupId)));
   const r = sameTable(P, D, cell);
-  if (r.match < min) throw new Error(`catalogue: report ${dupId} was declared a copy of ${primaryId} but only ${(r.match * 100).toFixed(2)}% of its ${r.cells} cells match`);
+  // a claim that fails is not thrown (one run reads every report and is slow): it is reported,
+  // and the report's catalogue item is marked unverified so no ledger rule for copies fits it
+  if (r.match < min) {
+    console.error(`catalogue: report ${dupId} was declared a copy of ${primaryId} but only ${(r.match * 100).toFixed(2)}% of its ${r.cells} cells match`);
+    return { dupOf: String(primaryId), ...r, unverified: true };
+  }
   return { dupOf: String(primaryId), ...r };
 }
 

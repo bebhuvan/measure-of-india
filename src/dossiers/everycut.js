@@ -69,6 +69,13 @@ export const UNITS = {
   thousand_tonne: { kind: "pct", fmt: (v) => big(v * 1000, " tonnes") },
   thousand_kwh: { kind: "pct", fmt: (v) => grp(v / 1e6, 2) + " billion kWh", note: "published in thousand kWh" },
   kg_per_month: { kind: "pct", fmt: (v) => v.toFixed(2) + " kg", note: "a month" },
+  // ---- external (lb/external): RBI DBIE external-sector units ----
+  usd_million: { kind: "pct", fmt: (v) => (v < 0 ? MINUS : "") + "$" + grp(Math.abs(v) / 1e3, 1) + " bn", note: "published in US$ million" },
+  sdr_million: { kind: "pct", fmt: (v) => "SDR " + grp(v / 1e3, 1) + " bn", note: "published in SDR million" },
+  inr_per_unit: { kind: "pct", fmt: (v) => "₹" + (Math.abs(v) >= 1 ? v.toFixed(2) : v.toPrecision(3)), note: "per unit of the currency named" },
+  paise: { kind: "diff", fmt: (v) => v.toFixed(1) + " paise", note: "per US$" },
+  tonnes: { kind: "pct", fmt: (v) => grp(v, 1) + " tonnes" },
+  // ---- end external ----
 };
 
 // series.unit, then what the series name says, then the bundle's meta.unit: a bundle-level

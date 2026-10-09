@@ -57,7 +57,7 @@ export async function buildExternalFlows(root, dcfg, vintage, cfg) {
   const P = (id) => dbieProviders(db, id);
   const meta = (extra) => ({ dossier: "external-flows", source: dcfg.source_agency, geo: "IND", releaseDate: null, mock: false, revisionPolicy: dcfg.revision_policy, base: "as published", ...extra });
   const write = (rel, body, m, gapsNote = "Not published for these periods.") => {
-    const b = finish(body, gapsNote);
+    const b = finish(body, gapsNote, m.unit);
     if (b.empty.length) m.emptyLines = b.empty;
     delete b.empty; delete b.vintages;
     writeSeries(root, `data/series/${rel}.json`, { meta: { ...m, latestPeriod: m.frequency === "weekly" || m.frequency === "daily" ? b.dates.at(-1) : b.dates.at(-1).slice(0, 7) }, dates: b.dates, series: b.series });
@@ -130,18 +130,39 @@ export async function buildExternalFlows(root, dcfg, vintage, cfg) {
   {
     const prov = P("730");
     const V = archive(root, `${RAW}/intervention.json`, vintage, "RBI DBIE report 730: sale and purchase of US dollars by the RBI (US$ and ₹), forward book maturity profile, currency futures segment.", prov);
-    const sp = (name, scale, unit) => {
+    // Keyed on the table's own outline (Item Hierarchy Level1/2): the net, the ₹ equivalent and
+    // the cumulative lines carry no item description, so a description key would drop them.
+    const sp = (name) => {
+      const unit = "US$ million";
       const p = prov.find((x) => x.name === name);
-      const K = { "Foreign Currency Purchase": "purchase", "Foreign Currency Sales": "sale", "Outstanding Net Forward sales (-) / purchase (+) at end of month": "forward_outstanding" };
-      const L = { purchase: "Gross purchases of dollars", sale: "Gross sales of dollars", forward_outstanding: "Forward book: outstanding net forward sales (−) / purchases (+), end of month" };
-      const b = bakeLong(actuals(p), { date: (r) => monthOf(r.Month), key: (r) => K[r["Sale_purchase Item Description"]] ?? null, value: (r) => num(r["Sale_purchase Item_Amount"]), unitScale: scale, round: 3,
-        label: (k) => `${L[k]}, ${unit}`, order: (r) => +r["Item Display Order"] });
+      const K = (r) => {
+        const h = r["Item Hierarchy Level1 rbib"] ?? "", h2 = r["Item Hierarchy Level2 rbib"] ?? "";
+        if (/^1 Net/.test(h)) return "net";
+        if (/^1\.1/.test(h)) return "purchase";
+        if (/^1\.2/.test(h)) return "sale";
+        if (/^2 /.test(h)) return "net_inr_equivalent";
+        if (/^3 Cumulative/.test(h)) return /Rupees|₹/.test(h2) ? "cumulative_net_inr" : "cumulative_net";
+        if (/^4 Outstanding/.test(h)) return "forward_outstanding";
+        return null;
+      };
+      const L = { net: `Net purchase (+) / sale (−), ${unit}`, purchase: `Gross purchases of dollars, ${unit}`, sale: `Gross sales of dollars, ${unit}`,
+        net_inr_equivalent: "Net purchase (+) / sale (−), ₹ equivalent at contract rate, ₹ crore",
+        cumulative_net: "Net purchase (+) / sale (−), cumulative over end-March (fiscal year to date), US$ million",
+        cumulative_net_inr: "Net purchase (+) / sale (−), cumulative over end-March (fiscal year to date), ₹ crore",
+        forward_outstanding: `Forward book: outstanding net forward sales (−) / purchases (+), end of month, ${unit}` };
+      const b = bakeLong(actuals(p), { date: (r) => monthOf(r.Month), key: K, value: (r) => num(r["Sale_purchase Item_Amount"]),
+        unitScale: (k) => (/inr/.test(k) ? CR : MN), round: 3, label: (k) => L[k], order: (r) => +r["Item Display Order"] });
       onAxis(b, monthAxis(b.dates[0], b.dates.at(-1)));
-      // net = purchases - sales, derived, only where both legs are published
-      b.series.net = { label: `Net purchase (+) / sale (−), ${unit} (derived: purchases minus sales)`, data: b.series.purchase.data.map((v, i) => (v != null && b.series.sale.data[i] != null ? +(v - b.series.sale.data[i]).toFixed(3) : null)) };
       return b;
     };
-    const usd = sp("Sale_dollar", MN, "US$ million");
+    // The "Sale_inr" provider is a cell-for-cell copy of "Sale_dollar" (2,618 of 2,618 cells equal,
+    // checked 2026-10-09): the rupee figures are the dollar table's own lines 2 and 3 (₹ crore).
+    const all = sp("Sale_dollar");
+    const pick = (keys) => ({ dates: all.dates, series: Object.fromEntries(keys.filter((k) => all.series[k]).map((k) => [k, all.series[k]])) });
+    const usd = pick(["net", "purchase", "sale", "cumulative_net", "forward_outstanding"]);
+    // Where the two legs do not add up to the published net, the table has a defect in a leg; keep
+    // all three as published and name the months.
+    const legDefects = usd.dates.filter((d, i) => [usd.series.net, usd.series.purchase, usd.series.sale].every((s) => s.data[i] != null) && Math.abs(usd.series.purchase.data[i] - usd.series.sale.data[i] - usd.series.net.data[i]) > 1);
     // futures segment, same months where published
     const fp = prov.find((x) => x.name === "Query 2");
     const FK = { "Net Purchase/Sale of Foreign Currency (US$Million) (1.1–1.2)": "futures_net", "1.1 Purchase (+)": "futures_purchase", "1.2 Sale (–)": "futures_sale" };
@@ -153,11 +174,26 @@ export async function buildExternalFlows(root, dcfg, vintage, cfg) {
     if (!usd.series.net.data.some((v) => v != null)) throw new Error("external-flows: report 730 served no dollar purchases or sales");
     write("external-intervention", usd, meta({ frequency: "monthly", unit: "usd_million", vintage: V, product: "Sale and purchase of US dollars by the RBI (DBIE report 730)",
       coverage: "The RBI's dollar desk: gross purchases and sales every month since 1995, the net, the outstanding forward book and the currency futures segment",
-      note: "RBI DBIE report 730, US$ million. Net = purchases minus sales, derived (the table publishes both legs). The forward book is a stock at the end of the month, not a flow. Months the source leaves blank are months with no reported operations, disclosed per series." }),
+      note: `RBI DBIE report 730, US$ million. Net, purchases and sales as published. The forward book is a stock at the end of the month, not a flow. Months the source leaves blank are months with no reported operations, disclosed per series.${legDefects.length ? ` Purchases minus sales does not equal the published net in ${legDefects.map((d) => d.slice(0, 7)).join(", ")} (in March 2014 the table repeats the purchase figure, 9,462, as the sale). Read the net there, not the legs.` : ""}`, legDefects }),
     "No operation reported for these months.");
-    const inr = sp("Sale_inr", CR, "₹ crore");
+    const inr = pick(["net_inr_equivalent", "cumulative_net_inr"]);
+    // A rupee cell implying more than ₹1,000 per US$ against its own dollar line is a
+    // misprint (September 2015's cumulative reads 4,489,551 between 45,849 and 57,515): left empty.
+    const misprints = [];
+    for (const [rk, uk] of [["net_inr_equivalent", "net"], ["cumulative_net_inr", "cumulative_net"]]) {
+      const s = inr.series[rk]; if (!s) continue;
+      s.data = s.data.map((v, i) => {
+        const u = all.series[uk]?.data[i];
+        if (v == null || u == null || Math.abs(u) < 500) return v;
+        const rate = Math.abs((v * 1e7) / (u * 1e6)); // the ₹ line signs sales differently in some years
+        if (rate <= 1000) return v; // only a gross misprint; the ₹ lines' own sign quirks can push a fair cell past ₹200
+        misprints.push(`${rk} ${inr.dates[i].slice(0, 7)}: ${v}`); return null;
+      });
+      if (misprints.some((m) => m.startsWith(rk))) s.gapsNote = "No operation reported for these months, or a misprinted cell (rupee value inconsistent with the dollar line by a factor of 100; see meta.misprints).";
+    }
     write("external-intervention-inr", inr, meta({ frequency: "monthly", unit: "inr_crore", vintage: V, product: "Sale and purchase of US dollars by the RBI, rupee value (DBIE report 730)",
-      coverage: "The RBI's dollar purchases and sales, valued in rupees", note: "RBI DBIE report 730, ₹ crore: the rupee amounts the RBI paid or received. Net derived as purchases minus sales." }),
+      coverage: "The rupee value of the RBI's net dollar purchases or sales, monthly and fiscal year to date",
+      note: "RBI DBIE report 730, ₹ crore: the rupee equivalent of the month's net purchase or sale at contract rates, and the cumulative net since end-March. The table publishes no rupee value for gross purchases or sales. In 2008-09 the rupee lines record sales with a positive sign, so the rupee cumulative adds sales to purchases that year; read the dollar lines for direction.", misprints }),
     "No operation reported for these months.");
     const mp = prov.find((x) => x.name === "Query 3");
     const mb = bakeLong(actuals(mp), { date: (r) => monthOf(r["D Time D Date"]), value: (r) => num(r["Maturity_breakdwown Item_values"]), unitScale: MN, round: 3,
@@ -203,6 +239,25 @@ export async function buildExternalFlows(root, dcfg, vintage, cfg) {
     "Not published on these trading days.");
   }
 
+  /* =================== daily FX turnover, daily forward premia in paise =================== */
+  {
+    const p694 = P("694").find((x) => x.name === "Query 1"), p767 = P("767")[0];
+    const VD = archive(root, `${RAW}/fx-daily.json`, vintage, "RBI DBIE: turnover in the foreign exchange market, daily (694); daily forward premia in paise (767).", [p694, p767]);
+    const t = bakeLong(p694.rows, { date: (r) => dayOf(r["Time Date"]), value: (r) => num(r["Fx Turnover Amount"]), unitScale: MN, round: 3,
+      key: (r) => [r["Turnover Description"], r["Tr Item Description"], r["Fx Currency Description"], r["Trade Description"]].map((x) => slug(x, 16)).join("_"),
+      label: (k, r) => `${r["Turnover Description"]}, ${r["Tr Item Description"].toLowerCase()}, ${r["Fx Currency Description"]}: ${r["Trade Description"].toLowerCase()}, US$ million`,
+      order: (r) => [r["Turnover Code"], r["Tr Item Code"], r["Fx Currency Code"], r["Trade Code"]].join("|") });
+    write("external-fx-turnover-daily", t, meta({ frequency: "daily", unit: "usd_million", vintage: VD, product: "Turnover in the foreign exchange market, daily (DBIE report 694)",
+      coverage: "Foreign exchange turnover every trading day since August 1998: merchant and inter-bank, spot, forward, swap and cancellations, purchases and sales",
+      note: "RBI DBIE report 694, US$ million, trading days. The daily figures do not add up exactly to the monthly table (report 1347): RBI revises the monthly totals, so both are kept as published." }), "No turnover reported on these trading days.");
+    // the paise premia; the table's reference-rate column is read too, but it is checked below
+    const d = bakeLong(p767.rows.filter((r) => !/^Reference Rate/.test(r["Item Description"])), { date: (r) => dayOf(r["Time Date"]), value: (r) => num(r["Item Value"]), round: 4,
+      key: (r) => slug(r["Item Description"].replace("(in Paise)", ""), 30), label: (k, r) => r["Item Description"].replace(" (in Paise)", ", paise per US$"), order: (r) => +r["Item Display Order"] });
+    write("external-forward-premia-paise-daily", d, meta({ frequency: "daily", unit: "paise", vintage: VD, product: "Daily forward premia, USD/INR, in paise (DBIE report 767)",
+      coverage: "Forward cash premia on the dollar every trading day since August 2000: spot, 1, 3, 6 and 12 months, in paise",
+      note: "RBI DBIE report 767, paise per US dollar, trading days. Where it overlaps report 698's paise columns (from September 2003) the two agree exactly; this table starts three years earlier. Its reference-rate column is left out (the reference rate is in external-rupee-daily)." }), "Not published on these trading days.");
+  }
+
   /* =================== the rupee's price =================== */
   {
     const V = archive(root, `${RAW}/rupee.json`, vintage, "RBI DBIE exchange-rate tables: 719, 1374, 575, 691, 720, 583, 768, 304, 156.",
@@ -219,7 +274,7 @@ export async function buildExternalFlows(root, dcfg, vintage, cfg) {
       if (!(b.series.usd?.data.at(-1) > 40)) throw new Error("external-flows: report 719 has no recent USD rate");
       write("external-rupee", b, meta({ frequency: "monthly", unit: "inr_per_unit", vintage: V, product: "Monthly average exchange rates (DBIE report 719)",
         coverage: "The rupee against the dollar, pound, euro and yen, monthly average, since 1966",
-        note: "RBI DBIE report 719, rupees per unit of foreign currency, monthly averages of the RBI/FBIL reference rate. This table quotes the yen per single yen, not per 100. The euro starts in January 1999. A higher number is a weaker rupee." }), "No rate published for these months.");
+        note: "RBI DBIE report 719, rupees per unit of foreign currency, monthly averages of the RBI/FBIL reference rate. This table quotes the yen per single yen, not per 100. The euro starts in January 1999. A higher number is a weaker rupee. From March 1992 to February 1993, under the dual exchange rate (LERMS), this table carries the official rate (₹25.89 a dollar); report 1374 (external-rupee-sdr) carries the market rate for those months (₹29.46 in March 1992). The rupee was unified at the market rate in March 1993." }), "No rate published for these months.");
     }
     // 1374: SDR and four currencies (+AED, IDR), average and month-end
     {
@@ -231,7 +286,7 @@ export async function buildExternalFlows(root, dcfg, vintage, cfg) {
       onAxis(b, monthAxis(b.dates[0], b.dates.at(-1)));
       write("external-rupee-sdr", b, meta({ frequency: "monthly", unit: "inr_per_unit", vintage: V, product: "Exchange rate of the rupee vis-a-vis the SDR, US$, £, € and ¥ (DBIE report 1374)",
         coverage: "The rupee against the SDR and the major currencies, monthly average and end of month, since 1992",
-        note: "RBI DBIE report 1374. Rupees per unit (yen per 100). The UAE dirham and Indonesian rupiah were added as reference currencies in 2026 and have only a few months." }), "No rate published for these months.");
+        note: "RBI DBIE report 1374. Rupees per unit (yen per 100). For March 1992 to February 1993 (the dual exchange rate, LERMS) it carries the market rate; report 719 (external-rupee) carries the official rate for those months. The UAE dirham and Indonesian rupiah were added as reference currencies in 2026 and have only a few months." }), "No rate published for these months.");
     }
     // 575: daily reference rate
     {
@@ -314,7 +369,7 @@ export async function buildExternalFlows(root, dcfg, vintage, cfg) {
   /* =================== foreign investment =================== */
   {
     const prov = P("34");
-    const V = archive(root, `${RAW}/foreign-investment.json`, vintage, "RBI DBIE: foreign investment inflows monthly (34, new and old formats), annual (290), net FPI investment (136).", [...prov, ...P("290"), ...P("136")]);
+    const V = archive(root, `${RAW}/foreign-investment.json`, vintage, "RBI DBIE: foreign investment inflows monthly (34, new and old formats), annual (290), yearly (1064), net FPI investment (136).", [...prov, ...P("290"), ...P("1064"), ...P("136")]);
     const fiKey = (s) => { const m = s.match(/^([A-Z](?:\.[A-Za-z]+)*\.?\)?)\s+(.*)$/); const n = (m ? m[1] : "").replace(/[.)]+$/, "").toLowerCase().replace(/\./g, "_"); return `${n ? n + "_" : ""}${slug(tidy(m ? m[2] : s).replace(/\s*\(.*$/, ""), 30)}`; };
     const fiLabel = (s) => tidy(s).replace(/\s*\([A-Za-z.+\-]+\)\s*$/, "").replace(/\s+/g, " ");
     for (const [name, rel, cov, note] of [
@@ -339,6 +394,16 @@ export async function buildExternalFlows(root, dcfg, vintage, cfg) {
       write(rel, b, meta({ frequency: "annual", unit, vintage: V, product: `Foreign investment inflows, annual (DBIE report 290, ${name})`,
         coverage: `Foreign investment, fiscal years${name.includes("NEW") || name.includes("New") ? ", the summary lines of the current layout" : ", every line of the older layout"}${unit === "inr_crore" ? ", in rupees" : ""}`,
         note: `RBI DBIE report 290 (Handbook), ${unit === "inr_crore" ? "₹ crore" : "US$ million"}, fiscal years plotted at April of the first year. The Handbook keeps two layouts: the older detailed one (1990-91 to 2022-23) and the current summary (2000-01 on); they are separate series.` }),
+      "Not published for these years.");
+    }
+    // 1064: foreign investment inflows, yearly (International Finance menu), 1990-91 to 2023-24
+    {
+      const p = P("1064")[0];
+      const b = bakeLong(actuals(p), { date: (r) => fyStart(r["Time Fis Year"]), key: (r) => fiKey(r["Item Description Bulletin"]), value: (r) => num(r["Item Value Usd Million"]), unitScale: MN, round: 3,
+        label: (k, r) => fiLabel(r["Item Description Bulletin"]), order: (r) => +r["Item Display Order"] });
+      onAxis(b, monthAxis(b.dates[0], b.dates.at(-1), 12));
+      write("external-fdi-yearly", b, meta({ frequency: "annual", unit: "usd_million", vintage: V, product: "Foreign investment inflows, yearly (DBIE report 1064)",
+        coverage: "Foreign investment, fiscal years 1990-91 to 2023-24, every line of the table", note: "RBI DBIE report 1064, US$ million, fiscal years plotted at April of the first year. A separate table from the Handbook's (report 290); its figures are kept as published." }),
       "Not published for these years.");
     }
     // 136: net FPI investment, ₹ crore, monthly
@@ -475,10 +540,10 @@ export async function buildExternalFlows(root, dcfg, vintage, cfg) {
       const p = P(id)[0]; const c = col ?? p.header.find((h) => /^Amount/.test(h));
       const taken = new Map();
       const b = bakeLong(actuals(p), { date: (r) => fyEnd(r["Fiscal Year"]),
-        key: (r) => { let k = dk(r["External Debt Classification"]); if (taken.has(k) && taken.get(k) !== r.ext_debt_code) k += "_" + r.ext_debt_code; taken.set(k, r.ext_debt_code); return k; },
+        key: (r) => { const code = r.ext_debt_code ?? r["Ext Debt Code"]; let k = dk(r["External Debt Classification"]); if (taken.has(k) && taken.get(k) !== code) k += "_" + code; taken.set(k, code); return k; },
         value: (r) => { const v = num(r[c]); return isPct(r) ? (v == null ? null : pctFix(v, scale) * scale) : v; }, unitScale: scale, round: 3,
         rank: (r) => vrank(r["Version Desc"]), version: (r) => r["Version Desc"], label: (k, r) => (isPct(r) ? `${pctLabel(r)}${/%|ratio/i.test(pctLabel(r)) ? "" : ", per cent"}` : `${dl(r["External Debt Classification"])}${unit === "usd_million" ? ", US$ million" : ", ₹ crore"}`),
-        order: (r) => +r.ext_debt_code });
+        order: (r) => +(r.ext_debt_code ?? r["Ext Debt Code"]) });
       onAxis(b, monthAxis(b.dates[0], b.dates.at(-1), 12));
       if (id === "563" && !(b.series["e_1_gross_external_debt_position"]?.data.at(-1) > 300000)) throw new Error("external-flows: external debt anchor failed (gross debt line missing or implausible)");
       write(rel, b, meta({ frequency: "annual", unit, vintage: V, product: `India's external debt, end-March (DBIE report ${id})`,
@@ -574,7 +639,7 @@ export function catalogue(db) {
   const P = (id) => dbieProviders(db, id);
   const copy = (dup, prim, cell, note, min) => {
     handles[dup] = dupHandle(db, prim, dup, cell, undefined, min);
-    add(`dbie:${dup}:copy`, `${note} (DBIE report ${dup}): the same table as report ${prim}`, { report: dup, copyOf: prim, match: handles[dup].match, cells: handles[dup].cells });
+    add(`dbie:${dup}:${handles[dup].unverified ? "copy-unverified" : "copy"}`, `${note} (DBIE report ${dup}): the same table as report ${prim}`, { report: dup, copyOf: prim, match: handles[dup].match, cells: handles[dup].cells });
   };
   // reserves
   each("574", P("574").flatMap((p) => actuals(p).map((r) => ({ ...r, _p: p.name }))), (r) => `${slug(r["Fx Reserves Code"] ?? "gold", 6)}:${slug(r["Currency Code"] ?? r._p, 8)}`, (r) => `Reserves, weekly: ${r["Components of Forex Reserves"]} (${r["Currency"] ?? r._p})`, { freq: "weekly" });
@@ -586,12 +651,19 @@ export function catalogue(db) {
   copy("53", "574", cellWk, "Foreign exchange reserves, weekly (Bulletin)");
   copy("687", "574", cellWk, "Foreign exchange reserves, weekly (Forex Reserve menu)");
   copy("95", "574", cellWk, "Foreign exchange reserves, weekly (Handbook)");
-  for (const id of ["184", "414", "415", "816"]) { const p = P(id)[0]; add(`dbie:${id}:table`, `${p.provenance.report ?? "Foreign exchange reserves"} (DBIE report ${id})`, { report: id, freq: /415|816/.test(id) ? "annual" : "monthly" }); handles[id] = "primary"; }
+  for (const id of ["184", "415"]) each(id, actuals(P(id)[0]), (r) => `${slug(r["Fx Reserves Code"], 6)}:${slug(r["Currency Code"] ?? r.currency_code, 4)}`, (r) => `Reserves, ${id === "184" ? "monthly" : "end-March"}: ${r["Components of Forex Reserves"]} (${r["Currency Code"] ?? r.currency_code})`, { freq: id === "184" ? "monthly" : "annual" });
+  add("dbie:415:volume", "Reserves, end-March: the 'Volume' provider (two unlabelled amounts a year for gold)", { report: "415" });
+  const cellRes = (r) => r["Time Date"] && r["Unit Description"] === "ACTUALS" && (r["Amount - Monthly"] ?? r.amount) ? [`${r._p}|${r["Time Date"]}|${r["Fx Reserves Code"]}|${r["Currency Code"] ?? r.currency_code}`, num(r["Amount - Monthly"] ?? r.amount)] : null;
+  copy("414", "184", cellRes, "Foreign exchange reserves, monthly (Forex Reserve menu)");
+  copy("816", "415", cellRes, "Foreign exchange reserves, end-March (Handbook)");
   // intervention, market
+  // 730's sale/purchase lines are keyed on the table outline: net, ₹ equivalent and cumulative lines
+  // carry no item description. "Sale_inr" is a cell-for-cell copy of "Sale_dollar".
+  const outline730 = (r) => [r["Item Hierarchy Level1 rbib"], r["Item Hierarchy Level2 rbib"]].filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
   each("730", P("730").flatMap((p) => actuals(p).map((r) => ({ ...r, _p: p.name }))), (r) => {
-    const d = (r["Sale_purchase Item Description"] ?? r["Future_segment Item Description"] ?? r["Maturity_breakdwown Item Description"] ?? "").replace(/\s+/g, " ").trim();
+    const d = /^Sale_/.test(r._p) ? outline730(r) : (r["Future_segment Item Description"] ?? r["Maturity_breakdwown Item Description"] ?? "").replace(/\s+/g, " ").trim();
     return d ? `${slug(r._p, 12)}:${slug(d, 40)}` : null;
-  }, (r) => `RBI dollar desk (${r._p}): ${(r["Sale_purchase Item Description"] ?? r["Future_segment Item Description"] ?? r["Maturity_breakdwown Item Description"] ?? "").replace(/\s+/g, " ").trim()}`, { freq: "monthly" });
+  }, (r) => `RBI dollar desk (${r._p}): ${/^Sale_/.test(r._p) ? outline730(r) : (r["Future_segment Item Description"] ?? r["Maturity_breakdwown Item Description"] ?? "").replace(/\s+/g, " ").trim()}`, { freq: "monthly" });
   copy("14", "730", (r) => r.Month && r["Sale_purchase Item Description"] && r["Unit Description"] === "ACTUALS" ? [`${r.Month}|${r["Sale_purchase Item Description"]}|${r["Sale_purchase Item_Amount"]}`, num(r["Sale_purchase Item_Amount"])] : null, "Sale and purchase of US dollars by the RBI (Bulletin)");
   copy("92", "730", (r) => r.Month && r["Sale_purchase Item Description"] && r["Unit Description"] === "ACTUALS" ? [`${r.Month}|${r["Sale_purchase Item Description"]}|${r["Sale_purchase Item_Amount"]}`, num(r["Sale_purchase Item_Amount"])] : null, "Sales and purchases of US dollar by the RBI (Handbook)");
   each("1347", P("1347").find((p) => p.name === "Query 1").rows, (r) => [r["Turnover Description"], r["Instrument Type"] || "all", r["Currency Type"] || "all", r["Sales Purchase Flag"]].map((x) => slug(x, 20)).join(":"),
@@ -602,7 +674,7 @@ export function catalogue(db) {
   each("558", P("558")[0].rows, (r) => slug(r["item description"], 10), (r) => `Forward premium, monthly average, ${r["item description"]}`, { freq: "monthly" });
   copy("578", "558", (r) => r.time_date && r.item_value ? [`${r.time_date}|${r["item description"]}`, num(r.item_value)] : null, "Forward premia, monthly average (Handbook)");
   each("698", P("698")[0].rows, (r) => slug(r["item description"], 30), (r) => `Forward premium, daily: ${r["item description"]}`, { freq: "daily" });
-  copy("260", "698", (r) => r["Report Date"] && r.item_value ? [`${r["Report Date"]}|${r["item description"]}`, num(r.item_value)] : null, "Daily forward premia (Handbook)");
+  copy("260", "698", (r) => r["Report Date"] && r.item_value && !/^Reference Rate/.test(r["item description"]) ? [`${r["Report Date"]}|${r["item description"]}`, num(r.item_value)] : null, "Daily forward premia (Handbook)");
   each("767", P("767")[0].rows, (r) => slug(r["Item Description"], 30), (r) => `Forward premium, daily (paise): ${r["Item Description"]}`, { freq: "daily" });
   // rupee
   each("719", P("719")[0].rows, (r) => slug(r["Currency Code Dim Currency"], 4), (r) => `Rupee monthly average: ${r["Currency Description Dim Currency"]}`, { freq: "monthly" });
@@ -614,7 +686,7 @@ export function catalogue(db) {
   each("691", P("691")[0].rows, (r) => slug(r["Forex Item Description"], 20), (r) => `Daily inter-bank USD/INR: ${r["Forex Item Description"]}`, { freq: "daily" });
   each("720", P("720")[0].rows, (r) => slug(r["Currency Code Dim Currency"], 6), (r) => `Monthly average rate: ${tidy(r["Currency Description Dim Currency"])}`, { freq: "monthly" });
   each("583", P("583").flatMap((p) => p.rows.map((r) => ({ ...r, _p: p.name }))), (r) => `${slug(r._p, 10)}:${slug(r["Currency Desc"], 12)}`, (r) => `Monthly high and low (${r._p}): ${r["Currency Desc"]}`, { freq: "monthly" });
-  copy("1505", "583", (r) => r["Time Date"] && r["Currency Desc"] ? [`${r["Time Date"]}|${r["Currency Desc"]}|${r["Hi Exchg Rate"] ?? r["Hi Buy Exchg Rate"]}`, num(r["Lw Bexchg Rate"] ?? r["Lw Sell Exchg Rate"])] : null, "Exchange rate high and low (Handbook)");
+  copy("1505", "583", (r) => r["Time Date"] && r["Currency Desc"] ? [`${r._p}|${r["Time Date"]}|${r["Currency Desc"]}|${r["Hi Exchg Rate"] ?? r["Hi Buy Exchg Rate"]}`, num(r["Lw Bexchg Rate"] ?? r["Lw Sell Exchg Rate"])] : null, "Exchange rate high and low (Handbook)");
   each("768", P("768").flatMap((p) => p.rows.map((r) => ({ ...r, _p: p.name }))), (r) => `${slug(r._p, 20)}:${slug(r["Forex Item Code"] ?? r["Currency Code"], 20)}:${slug(r["Currency Code"], 4)}`, (r) => `Month high/low (${r._p}): ${r["Forex Item Description"] ?? r["Currency Desc"]}`, { freq: "monthly" });
   each("304", P("304")[0].rows, (r) => `${slug(r.Currency, 16)}:${slug(r.Items, 12)}`, (r) => `Rupee, fiscal-year ${r.Items}: ${r.Currency}`, { freq: "annual" });
   each("156", P("156")[0].rows, (r) => `${slug(r.Currency, 16)}:${slug(r.Items, 12)}`, (r) => `Rupee, calendar-year ${r.Items}: ${r.Currency}`, { freq: "annual" });
@@ -640,7 +712,7 @@ export function catalogue(db) {
   each("1551", P("1551").find((p) => p.name === "Query 1").rows, (r) => slug(r["Item Description"], 20), (r) => `Settlement in INR: ${r["Item Description"]}`, { freq: "monthly" });
   // debt
   for (const id of ["563", "570"]) each(id, actuals(P(id)[0]), (r) => slug(r["External Debt Classification"], 50), (r) => `External debt, end-March (${id === "563" ? "US$" : "₹"}): ${r["External Debt Classification"]}`, { freq: "annual" });
-  const cellDebtA = (r) => r["Fiscal Year"] && r["External Debt Classification"] && r["Unit Description"] === "ACTUALS" ? [`${r["Fiscal Year"]}|${r.ext_debt_code}|${r["Version Desc"]}`, num(r[Object.keys(r).find((k) => /^Amount/.test(k))])] : null;
+  const cellDebtA = (r) => r["Fiscal Year"] && r["External Debt Classification"] && r["Unit Description"] === "ACTUALS" ? [`${r["Fiscal Year"]}|${r.ext_debt_code ?? r["Ext Debt Code"]}|${r["Version Desc"]}|${r["External Debt Classification"]}`, num(r[r["Amount (USD million)"] != null ? "Amount (USD million)" : "Amount (Rs. Crore)"])] : null;
   copy("561", "563", cellDebtA, "India's external debt, US$, end-March (Public Debt Statistics)");
   copy("532", "563", cellDebtA, "India's external debt, US$, end-March (Handbook)");
   copy("571", "570", cellDebtA, "India's external debt, ₹, end-March (Public Debt Statistics)");

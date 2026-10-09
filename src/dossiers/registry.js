@@ -153,7 +153,7 @@ export const DOSSIERS = [
     blurb: "India's account with the world: the current account, foreign money in and out, reserves week by week, the rupee against a basket, external debt, and the money families send and receive.",
     description: "India's balance of payments on RBI data to the latest quarter: the current account, FDI and portfolio flows, weekly reserves, the rupee's real exchange rate, external debt, remittances and the LRS, every line the RBI publishes.",
     rssDescription: "The balance of payments, reserves, the rupee and external debt, on RBI data. Revised with each release.",
-    stamp: { dateStyle: "month", vintageStyle: "vintage" },
+    stamp: { dateStyle: "vintageMonth", vintageStyle: "vintage" },   // the page mixes weekly, monthly and quarterly data: dated by data vintage
     statusNote: "Quarterly balance of payments, weekly reserves, monthly flows",
     version: "v2.0",
     // 2026-10: rebuilt on RBI DBIE (lb/external). The headline is the quarterly balance of
@@ -173,13 +173,14 @@ export const DOSSIERS = [
       "external-intervention", "external-forward-book", "external-rupee", "external-reer-2015", "external-reer6-2022",
       "external-fdi", "external-fpi", "external-lrs", "external-debt-annual", "external-debt-sector-inr", "external-nri", "external-invoicing", "external-ecb-2025",
       // every other line the RBI publishes, baked for download and the every-cut table
-      "external-bop-lines", "external-bop-inr-lines", "external-bop6-lines", "external-bop6-inr-lines", "external-bop-annual", "external-bop-annual-inr",
-      "external-invisibles", "external-invisibles-annual", "external-invisibles-annual-inr", "external-iip", "external-iip-inr", "external-iip-bpm5", "external-iip-bpm5-inr",
-      "external-reserves-weekly-inr", "external-reserves-monthly-inr", "external-reserves-annual", "external-intervention-inr", "external-fx-turnover",
+      "external-bop-lines", "external-bop-inr-lines", "external-bop6-lines", "external-bop6-vintages", "external-bop6-inr-lines", "external-bop-annual", "external-bop-annual-inr", "external-bop-annual-overall", "external-bop-annual-overall-inr", "external-bop6-annual-lines", "external-bop6-annual-lines-inr",
+      "external-invisibles", "external-invisibles-annual", "external-invisibles-annual-inr", "external-iip", "external-iip-inr", "external-iip-summary", "external-iip-summary-inr", "external-iip-bpm5", "external-iip-bpm5-inr",
+      "external-reserves-weekly-inr", "external-reserves-monthly-inr", "external-reserves-annual", "external-intervention-inr", "external-fx-turnover", "external-fx-turnover-daily", "external-forward-premia-paise-daily",
       "external-forward-premia", "external-forward-premia-daily", "external-rupee-sdr", "external-rupee-daily", "external-rupee-interbank-daily", "external-rupee-155",
       "external-rupee-highlow", "external-rupee-month-extremes", "external-rupee-annual", "external-rupee-annual-calendar",
-      "external-reer-1985", "external-reer-1993", "external-reer-2004", "external-reer6-1993", "external-reer6-2003", "external-reer6-2004", "external-reer6-2015", "external-reer6-2018",
-      "external-fdi-1995", "external-fdi-annual", "external-fdi-annual-inr", "external-fdi-annual-new", "external-fdi-annual-new-inr", "external-ecb", "external-ecb-annual",
+      "external-reer-1985", "external-reer-1993", "external-reer-2004", "external-reer-1993-calendar", "external-reer-1993-fiscal", "external-reer-2004-calendar", "external-reer-2004-fiscal",
+      "external-reer-2015-calendar", "external-reer-2015-fiscal", "external-reer6-2015-calendar", "external-reer6-2015-fiscal", "external-reer6-1993", "external-reer6-2003", "external-reer6-2004", "external-reer6-2015", "external-reer6-2018",
+      "external-fdi-1995", "external-fdi-yearly", "external-fdi-annual", "external-fdi-annual-inr", "external-fdi-annual-new", "external-fdi-annual-new-inr", "external-ecb", "external-ecb-annual",
       "external-lrs-annual", "external-nri-annual", "external-nri-annual-inr", "external-debt", "external-debt-inr", "external-debt-annual-inr",
       "external-assistance", "external-assistance-inr", "external-mf", "external-mf-inr",
     ],

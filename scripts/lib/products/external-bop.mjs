@@ -40,7 +40,7 @@ import path from "node:path";
 import { writeSeries } from "../util.mjs";
 import {
   databankRoot, dbieProviders, provider, actuals, num, quarterOf, fyStart, fyQuarter, vrank, slug, tidy, outlinePaths,
-  bakeLong, finish, archive, onAxis, monthAxis, dupHandle,
+  bakeLong, finish, archive, onAxis, monthAxis, dupHandle, sameTable,
 } from "./external-dbie.mjs";
 
 const MN = 1e6, CR = 1e7;
@@ -142,7 +142,7 @@ export async function buildExternalBop(root, dcfg, vintage, cfg) {
 
   const meta = (extra) => ({ dossier: "external-bop", source: dcfg.source_agency, geo: "IND", releaseDate: null, mock: false, revisionPolicy: dcfg.revision_policy, ...extra });
   const write = (rel, body, m) => {
-    const b = finish(body, "The line is not published for these periods.");
+    const b = finish(body, "The line is not published for these periods.", m.unit);
     if (b.empty.length) m.emptyLines = b.empty;
     delete b.empty; delete b.vintages;
     writeSeries(root, `data/series/${rel}.json`, { meta: { ...m, latestPeriod: b.dates.at(-1).slice(0, 7) }, dates: b.dates, series: b.series });
@@ -217,6 +217,30 @@ export async function buildExternalBop(root, dcfg, vintage, cfg) {
     write("external-bop6-lines", b6, meta({ frequency: "quarterly", base: "BPM6", unit: "usd_million", vintage: V.bop, product: "Standard presentation of BoP as per BPM6 (DBIE report 58)",
       coverage: "Balance of payments, IMF BPM6 standard presentation, every line, credit, debit and net",
       note: "RBI DBIE report 58, US$ million, from 2011-12. A different presentation from RBI's overall-BoP layout (report 56): primary and secondary income replace 'income' and 'transfers', the financial account is signed as net acquisition of assets minus net incurrence of liabilities. Never joined to or subtracted from the other layout." }));
+    // BPM6 revisions: 58 keeps only the latest one or two versions of a quarter, but 1076's BPM6
+    // rows still carry earlier ones (Preliminary Estimates, Partially Revised) for many quarters.
+    // Every cell the two share agrees (catalogue check); together they give each line's first estimate.
+    {
+      const lab58 = new Map(p58.map((r) => [r["Item Code"], r["Hierarchy Description"]]));
+      const r1076 = actuals(P["1076"][0]).filter((r) => r["System Type"] === "BPM6" && /^\d{4}\//.test(r["Time Date"]) && CDN[r["Cdn Description"]] && lab58.has(r["Item Code"]))
+        .map((r) => ({ "Time Date": r["Time Date"], "Item Code": r["Item Code"], "Hierarchy Description": lab58.get(r["Item Code"]), "cdn Description": r["Cdn Description"], "Amount (USD)_BPM6": r.Amount, "Version Desc": r["Version Desc"] }));
+      const all = bopTable([...p58, ...r1076], { date: (r) => quarterOf(r["Time Date"]), code: (r) => r["Item Code"], label: (r) => r["Hierarchy Description"],
+        cdn: (r) => r["cdn Description"], value: (r) => r["Amount (USD)_BPM6"], version: (r) => r["Version Desc"], scale: MN });
+      const vq = [...new Set(Object.values(all.vintages).flatMap((o) => Object.keys(o)))].sort();
+      const axis = monthAxis(vq[0], b6.dates.at(-1), 3);
+      onAxis(all, axis);
+      const series = {}, versions = {};
+      for (const [k, s] of Object.entries(all.series)) {
+        const v = all.vintages[k] ?? {};
+        // distinct versions only (58 and 1076 repeat the same cell)
+        series[`${k}_first`] = { label: `${s.label}: earliest estimate DBIE carries`, data: all.dates.map((d, i) => (v[d] ? v[d][0].value : s.data[i])) };
+        for (const d of Object.keys(v)) versions[d] = [...new Set([...(versions[d] ?? []), ...v[d].map((x) => x.version)])];
+      }
+      write("external-bop6-vintages", { dates: all.dates, series }, meta({ frequency: "quarterly", base: "BPM6", unit: "usd_million", vintage: V.bop,
+        product: "Standard presentation of BoP as per BPM6: first estimates (DBIE reports 58 and 1076)", versions,
+        coverage: "The first published estimate of every BPM6 line, for every quarter DBIE still carries an earlier version of; the latest is in external-bop6-lines",
+        note: "RBI DBIE reports 58 and 1076 (whose BPM6 rows keep versions 58 has dropped), US$ million. 'First' is the earliest version DBIE still carries for the quarter (meta.versions names them); where it carries one version, first equals latest. Subtract from external-bop6-lines for the revision." }));
+    }
     const p1502 = P["1502"].find((p) => p.header.includes("Amount (in Rupees)_BPM6"));
     const r1502 = actuals(p1502).filter((r) => /^\d{4}\//.test(r.Date) && CDN[r["cdn Description"]] && r["Version Desc"] in { Provisional: 1, "Preliminary Estimates": 1, "Partially Revised": 1, Revised: 1, Final: 1 });
     const b6i = bopTable(r1502, { date: (r) => quarterOf(r.Date), code: (r) => r["Item Code"], label: (r) => r["Hierarchy Description"],
@@ -237,6 +261,27 @@ export async function buildExternalBop(root, dcfg, vintage, cfg) {
     write(rel, b, meta({ frequency: "annual", base: "RBI overall-BoP layout", unit, vintage: V.annual, product: `Key components of India's balance of payments (DBIE report ${id})`,
       coverage: `Balance of payments, annual, every line since 1950-51${id === "878" ? ", in rupees" : ""}`,
       note: `RBI DBIE report ${id}, fiscal years plotted at April of the first year. The early decades use RBI's older capital-account lines (BO.1 to BO.6, A.1.1, A.1.2, EO.4); the modern lines start in 1990-91. Both are kept as published, never mapped onto each other.` }));
+  }
+
+  // ---------- 884 / 883, 814 / 305: annual tables of both presentations ----------
+  // RBI's own fiscal-year figures. Not our sums of the quarters: an annual table can sit at a
+  // different revision state from the quarterly one (2025-26 is "Preliminary Estimates" here and
+  // "Partially Revised" quarter by quarter), so the annual figures are kept as published.
+  {
+    const ap = ["884", "883", "814", "305"].map((id) => ({ id, p: dbieProviders(db, id).find((x) => x.header.some((h) => /^amount|^Amount/.test(h))) }));
+    const VA2 = archive(root, `${RAW}/bop-annual-tables.json`, vintage, "RBI DBIE: India's overall BoP annual, US$ (884) and rupees (883); BPM6 standard presentation annual, US$ (814) and rupees (305).", ap.map((x) => x.p));
+    for (const { id, p } of ap) {
+      const bpm6 = id === "814" || id === "305", usd = id === "884" || id === "814";
+      const col = p.header.find((h) => /^amount|^Amount/.test(h));
+      const rows = actuals(p).filter((r) => /^\d{4}-\d{2}$/.test(r[bpm6 ? "Year" : "Fiscal Year"] ?? ""));
+      const b = bopTable(rows, { date: (r) => fyStart(r[bpm6 ? "Year" : "Fiscal Year"]), code: (r) => r["Item Code"], label: (r) => (bpm6 ? r["Hierarchy Description"] : r["Balance of Payment (Annual)"]),
+        cdn: (r) => r[bpm6 ? "cdn_description" : "Cdn Description"], value: (r) => r[col], version: (r) => r["Version Desc"], scale: usd ? MN : CR });
+      onAxis(b, monthAxis(b.dates[0], b.dates.at(-1), 12));
+      write(`external-${bpm6 ? "bop6" : "bop"}-annual-${bpm6 ? "lines" : "overall"}${usd ? "" : "-inr"}`, b, meta({ frequency: "annual", base: bpm6 ? "BPM6" : "RBI overall-BoP layout", unit: usd ? "usd_million" : "inr_crore", vintage: VA2,
+        product: `${bpm6 ? "Standard presentation of BoP as per BPM6" : "India's overall balance of payments"}, annual (DBIE report ${id})`,
+        coverage: `Balance of payments, ${bpm6 ? "BPM6 standard presentation" : "RBI's overall layout"}, every line, fiscal years${usd ? "" : ", in rupees"}`,
+        note: `RBI DBIE report ${id}, fiscal years plotted at April of the first year. RBI's annual figures as published; they can sit at a different revision state from the quarterly table, so they are not replaced by sums of the quarters.` }));
+    }
   }
 
   // ---------- 427: BoP indicators ----------
@@ -329,6 +374,26 @@ export async function buildExternalBop(root, dcfg, vintage, cfg) {
           coverage: `International investment position${cat === "BPM5" ? ", old (BPM5) classification" : ""}: what India owns abroad and owes to the world, by instrument and sector${cur === "INR" ? ", in rupees" : ""}`,
           note: `RBI DBIE report 982, ${cur === "INR" ? "₹ crore" : "US$ million"}, stocks at the end of each quarter (plotted at the quarter's first month). ${cat === "BPM5" ? "The BPM5 classification, March 2006 to September 2021; replaced by BPM6 from December 2017. The overlap is two rulers, never joined. In December 2014 RBI's table gives a net position 8,233 US$ million away from assets minus liabilities; kept as published." : "The BPM6 classification, from December 2017. Net position = assets minus liabilities; a negative net position means India owes the world more than it owns abroad."}` }));
       }
+    }
+  }
+
+  // ---------- 533 / 1503: the investment position, overall summary (Handbook) ----------
+  // RBI's own summary layout (assets and liabilities by functional category and instrument),
+  // quarterly from June 2018. Its figures agree with report 982 for most cells but not all
+  // (about one in ten differs: different revision states), so it is baked as published.
+  {
+    const sp = [...dbieProviders(db, "533"), ...dbieProviders(db, "1503")].filter((x) => x.header.some((h) => /^Amount/.test(h)));
+    const VS = archive(root, `${RAW}/iip-summary.json`, vintage, "RBI DBIE: international investment position, quarterly overall summary, US$ (533) and rupees (1503).", sp);
+    for (const [id, rel, scale, unit, col] of [["533", "external-iip-summary", MN, "usd_million", "Amount Usd"], ["1503", "external-iip-summary-inr", CR, "inr_crore", "Amount Inr"]]) {
+      const x = sp.find((q) => q.header.includes(col));
+      const b = bakeLong(actuals(x).filter((r) => /^\d{4}\//.test(r["Time Date"])), { date: (r) => quarterOf(r["Time Date"]), unitScale: scale, round: 3,
+        key: (r) => `${slug(r["Item Hierarchy Level 1"] || "net", 12)}_${slug(r["Item Description"], 40)}_${r["Item Code"]}`, value: (r) => num(r[col]),
+        rank: (r) => vrank(r["Version Desc"]), version: (r) => r["Version Desc"],
+        label: (k, r) => `${r["Item Hierarchy Level 1"] ? r["Item Hierarchy Level 1"] + ": " : ""}${r["Item Description"].replace(/\s+/g, " ")}`, order: (r) => +r["Item Text Display Order"] });
+      onAxis(b, monthAxis(b.dates[0], b.dates.at(-1), 3));
+      write(rel, b, meta({ frequency: "quarterly", base: "BPM6", unit, vintage: VS, product: `International investment position of India, overall summary (DBIE report ${id})`,
+        coverage: `International investment position, RBI's summary layout, quarterly from June 2018${unit === "inr_crore" ? ", in rupees" : ""}`,
+        note: `RBI DBIE report ${id} (Handbook), stocks at the end of each quarter plotted at the quarter's first month. RBI's summary of the BPM6 position; most cells equal report 982's, about one in ten differ (different revision states), so both are kept as published.` }));
     }
   }
 
@@ -427,12 +492,16 @@ export function catalogue(db) {
     items.push(...items.filter((i) => i.id.startsWith(`dbie:${prim}:`)).map((i) => ({ id: i.id.replace(`dbie:${prim}:`, `dbie:${dup}:`), label: i.label, dims: { ...i.dims, report: dup, copyOf: prim } })));
   }
   // overall BoP annual (884 / 883 and Handbook copies 258 / 534): the fiscal-year sums of report 56 / 57's quarters
-  for (const rep of ["884", "883", "258", "534"]) {
+  for (const rep of ["884", "883"]) {
     const p = dbieProviders(db, rep)[0];
     lines(rep, actuals(p).filter((r) => /^\d{4}-\d{2}$/.test(r["Fiscal Year"] ?? "")), (r) => r["Item Code"], (r) => r["Balance of Payment (Annual)"] ?? r["Hbs Item Description"], (r) => r["Cdn Description"], { freq: "annual", unit: /88[3]|534/.test(rep) ? "inr" : "usd", annualOf: /88[3]|534/.test(rep) ? "57" : "56" });
     handles[rep] = "primary";
   }
-  // BPM6 annual (814 US$, 305 rupees): fiscal-year sums of the quarterly BPM6 table
+  for (const [dup, prim] of [["258", "884"], ["534", "883"]]) {
+    handles[dup] = dupHandle(db, prim, dup, (r) => /^\d{4}-\d{2}$/.test(r["Fiscal Year"] ?? "") && r["Unit Description"] === "ACTUALS" ? [`${r["Fiscal Year"]}|${r["Item Code"]}|${r["Cdn Description"]}|${r["Version Desc"]}`, num(r.Amount)] : null);
+    items.push({ id: `dbie:${dup}:${handles[dup].unverified ? "copy-unverified" : "copy"}`, label: `India's overall balance of payments, annual (Handbook, DBIE report ${dup}): the same table as report ${prim}`, dims: { report: dup, copyOf: prim, match: handles[dup].match } });
+  }
+  // BPM6 annual (814 US$, 305 rupees)
   for (const rep of ["814", "305"]) {
     const p = dbieProviders(db, rep)[0]; const d = p.header.find((h) => /^Date$/.test(h)) ?? "Time Date";
     lines(rep, actuals(p).filter((r) => /^\d{4}/.test(r[d] ?? "")), (r) => r["Item Code"], (r) => r["Hierarchy Description"], (r) => r.cdn_description ?? r["cdn Description"], { freq: "annual", unit: rep === "814" ? "usd" : "inr", presentation: "BPM6", annualOf: rep === "814" ? "58" : "1502" });
@@ -454,6 +523,17 @@ export function catalogue(db) {
       add(`dbie:1076:${k}`, `${sys}: ${r["Item Description"].replace(/\s+/g, " ").trim()}`, { report: "1076", system: sys, freq: "quarterly" });
     }
     handles["1076"] = "primary";
+    // its BPM6 rows claim to repeat report 58: checked cell by cell
+    const r58 = actuals(dbieProviders(db, "58")[0]).filter((r) => /^\d{4}\//.test(r["Time Date"]));
+    const r1076 = rows.filter((r) => r["System Type"] === "BPM6");
+    // 1076 keeps versions 58 has dropped, so only the cells both carry are compared: they must agree;
+    // the rest are earlier versions, baked into external-bop6-vintages.
+    const cell = (r) => [`${r["Time Date"].slice(0, 10)}|${r["Item Code"]}|${r["cdn Description"] ?? r["Cdn Description"]}|${r["Version Desc"]}`, num(r["Amount (USD)_BPM6"] ?? r.Amount)];
+    const k58 = new Set(r58.map((r) => cell(r)[0]));
+    const shared = r1076.filter((r) => k58.has(cell(r)[0]));
+    const chk = sameTable(r58, shared, cell);
+    for (const it of items) if (/^dbie:1076:bpm6:/.test(it.id)) Object.assign(it.dims, { copyOf: "58", match: chk.match, cells: chk.cells, earlierVersionCells: r1076.length - shared.length });
+    if (chk.match < 0.995) for (const it of items) if (/^dbie:1076:bpm6:/.test(it.id)) it.id = it.id.replace(":bpm6:", ":bpm6-unverified:");
   }
   // invisibles annual and copies
   for (const rep of ["807", "424"]) { const rows = actuals(dbieProviders(db, rep)[0]).filter((r) => /^\d{4}-\d{2}$/.test(r.Year));
@@ -469,9 +549,10 @@ export function catalogue(db) {
     const cell982 = (r) => { const a = r["Amount (in $ million)"] ?? r["Amount Inr"]; return /^\d{4}\//.test(r.Date ?? "") && a != null && r["Item Code"] ? [`${r.Date.slice(0, 10)}|${r["Item Code"]}|${r.version_desc}|${r["Amount Inr"] != null ? "inr" : "usd"}`, num(a)] : null; };
     for (const dup of ["60", "145", "1504", "144", "1506", "1745", "1746", "1743", "1744"]) {
       handles[dup] = dupHandle(db, "982", dup, cell982);
-      add(`dbie:${dup}:copy`, `${dup}: copy of the international investment position table (report 982)`, { report: dup, copyOf: "982", match: handles[dup].match });
+      add(`dbie:${dup}:${handles[dup].unverified ? "copy-unverified" : "copy"}`, `${dup}: copy of the international investment position table (report 982)`, { report: dup, copyOf: "982", match: handles[dup].match });
     }
-    for (const rep of ["533", "1503"]) { handles[rep] = "primary"; add(`dbie:${rep}:summary`, `International investment position, overall summary (report ${rep})`, { report: rep, freq: "quarterly" }); }
+    for (const rep of ["533", "1503"]) { handles[rep] = "primary"; const x = dbieProviders(db, rep).find((q) => q.header.some((h) => /^Amount/.test(h)));
+      for (const k of new Set(actuals(x).map((r) => `${slug(r["Item Hierarchy Level 1"] || "net", 12)}:${r["Item Code"]}`))) add(`dbie:${rep}:${k}`, `IIP overall summary (report ${rep}): line ${k}`, { report: rep, freq: "quarterly" }); }
   }
   return { items, handles };
 }

@@ -108,29 +108,24 @@ const PAGES = [
     ["her-end04", (b) => fmt.pct2(b["iip-2004"].series.general.data.filter((x) => x != null).at(-1))],
     ["prov-vintage", (b) => b["iip-2022"].meta.vintage],
   ]},
+  // external (lb/external, 2026-10): RBI DBIE bundles; amounts US$ million shown in US$ bn
   { url: "/guides/external/", slug: null, checks: [
-    ["n-fx", (b) => fmt.inr2(b["rbi-forex"].series.usdinr.data.at(-1))],
-    ["n-cad", (b) => fmt.pct1(b["rbi-bop-ratios"].series.cad_gdp.data.at(-1))],
-    ["cr-res", (b) => fmt.bnRound(b["rbi-forex"].series.reserves.data.at(-1) / 1000)],
-    // v1.2 plates — same formatter as the client (bn/bn2 on $bn values)
-    ["pv-part", (b) => {
-      const s = b["rbi-trade-partners"].series;
-      const v = (s.exports_china.data.at(-1) - s.imports_china.data.at(-1)) / 1000;
-      return fmt.bnFixed1(v);
-    }],
-    ["ex-pcm", (b) => {
-      const v = b["rbi-trade-partners"].series.imports_china.data.at(-1) / 1000;
-      return fmt.bnAuto(v);
-    }],
-    ["pv-comm", (b) => {
-      const v = b["rbi-commodities-exports"].series.engineering_goods.data.at(-1) / 1000;
-      return fmt.bnAuto(v);
-    }],
-    ["ex-cm1", (b) => {
-      const v = b["rbi-commodities-imports"].series.petroleum_crude_products.data.at(-1) / 1000;
-      return fmt.bnAuto(v);
-    }],
-    ["prov-vintage", (b) => b["rbi-forex"].meta.vintage],
+    ["n-ca", (b) => fmt.bnFixed1(b["external-bop"].series.current_account.data.at(-1) / 1000)],
+    ["pv-ca", (b) => fmt.bnFixed1(b["external-bop"].series.current_account.data.at(-1) / 1000)],
+    ["n-res", (b) => fmt.bnRound(b["external-reserves-weekly"].series.total_usd.data.at(-1) / 1000)],
+    ["n-inr", (b) => fmt.inr2(b["external-rupee"].series.usd.data.at(-1))],
+    ["n-reer", (b) => fmt.num1(b["external-reer-2015"].series.reer_trade.data.at(-1))],
+    ["pv-cagdp", (b) => fmt.pct1Minus(b["external-bop-indicators"].series.cad_to_gdp.data.at(-1))],
+    ["ex-p-goods", (b) => fmt.bnFixed1(b["external-bop"].series.goods.data.at(-1) / 1000)],
+    ["ex-p-rem", (b) => fmt.bnFixed1(b["external-bop"].series.private_transfers.data.at(-1) / 1000)],
+    ["pv-remit", (b) => fmt.bnFixed1(b["external-bop-gross"].series.remittances_in.data.at(-1) / 1000)],
+    ["ex-f-fdi", (b) => fmt.bnFixed1(b["external-bop"].series.fdi.data.at(-1) / 1000)],
+    ["ex-res-cover", (b) => fmt.num1(b["external-bop-indicators"].series.import_cover_of_reserves_in_months.data.at(-1))],
+    ["pv-debt", (b) => fmt.bnRound(b["external-debt-annual"].series.e_1_gross_external_debt_position.data.at(-1) / 1000)],
+    ["ex-debt-st", (b) => fmt.pct1(b["external-debt-annual"].series.e_5_as_of_total_debt.data.at(-1))],
+    ["pv-iip", (b) => fmt.bnFixed1(b["external-iip-head"].series.net.data.at(-1) / 1000)],
+    ["pv-desk", (b) => fmt.bnFixed1(b["external-intervention"].series.forward_outstanding.data.at(-1) / 1000)],
+    ["prov-vintage", (b) => b["external-bop"].meta.vintage],
   ]},
   { url: "/guides/jobs/", slug: null, checks: [
     ["n-ur", (b) => fmt.pct2(b["plfs-monthly"].series.ur.data.at(-1))],

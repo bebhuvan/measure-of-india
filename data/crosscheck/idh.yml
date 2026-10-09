@@ -35,66 +35,139 @@ pairs:
     scale: 1
     tolerance: 0.15
     note: "Our 2012-base headline is computed from the published group indices with the official weights (it tracks the published one within 0.14 pt); IDH carries the published all-India combined index."
-  - bundle: rbi-exchange-rates
+  - bundle: external-rupee
     series: usd
     idh: "FMFXUSDINA11M:IND"
     transform: level
     scale: 1
     tolerance: 0.01
-    note: "Monthly average ₹ per US$, RBI reference rate."
-  - bundle: rbi-forex
-    series: usdinr
+    note: "Monthly average ₹ per US$ (DBIE report 719). Flags expected for Mar 1992 to Feb 1993: 719 carries the official LERMS rate, IDH the market rate. A dozen later months differ by 0.01 to 0.03 between RBI tables."
+  - bundle: external-rupee-sdr
+    series: usd_avg
     idh: "FMFXUSDINA11M:IND"
     transform: level
     scale: 1
     tolerance: 0.01
-    note: "The same monthly average, carried in the reserves bundle."
-  - bundle: rbi-intervention
-    series: purchases
+    note: "The same monthly average from DBIE report 1374, which carries the market rate during the dual exchange rate (Mar 1992 to Feb 1993) where report 719 (external-rupee) carries the official rate."
+  - bundle: external-intervention
+    series: purchase
     idh: "FMFXRGPFXD11M:IND"
     transform: level
     scale: 0.000001
     tolerance: 1
     note: "RBI gross purchases of foreign currency in the month, US$ million."
-  - bundle: rbi-intervention
-    series: sales
+  - bundle: external-intervention
+    series: sale
     idh: "FMFXRGSFXD11M:IND"
     transform: level
     scale: 0.000001
     tolerance: 1
     note: "RBI gross sales of foreign currency in the month, US$ million."
-  - bundle: rbi-intervention
+  - bundle: external-intervention
     series: net
     idh: "FMFXRNPFXD11M:IND"
     transform: level
     scale: 0.000001
     tolerance: 1
     note: "Net purchase (+) or sale (−), US$ million."
-  - bundle: rbi-intervention
+  - bundle: external-intervention
     series: forward_outstanding
     idh: "FMFXFWORNL00M:IND"
     transform: level
     scale: 0.000001
     tolerance: 1
     note: "End-of-month outstanding net forward position, US$ million; ours is signed sales negative, IDH's net long position the same way."
-  - bundle: rbi-forward-premia
+  - bundle: external-forward-premia
     series: m1
     idh: "FMFXFPRD1M11W:IND"
     transform: monthly_mean
     scale: 1
     tolerance: 0.5
     note: "Ours is the RBI's monthly average; IDH is weekly (Friday) readings averaged here, so small gaps are construction, not error."
-  - bundle: rbi-forward-premia
+  - bundle: external-forward-premia
     series: m3
     idh: "FMFXFPRD3M11W:IND"
     transform: monthly_mean
     scale: 1
     tolerance: 0.5
     note: "As 1-month."
-  - bundle: rbi-forward-premia
+  - bundle: external-forward-premia
     series: m6
     idh: "FMFXFPRD6M11W:IND"
     transform: monthly_mean
     scale: 1
     tolerance: 0.5
     note: "As 1-month."
+  # ---- external (lb/external, 2026-10): DBIE bundles of the external account ----
+  - bundle: external-reer-2015
+    series: reer_trade
+    idh: "FMFXERRTTR16M:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.05
+    note: "REER, 40 currencies, trade weights, 2015-16 = 100 (DBIE codes it '36')."
+  - bundle: external-reer-2015
+    series: reer_export
+    idh: "FMFXERRTEX16M:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.05
+    note: "REER, 40 currencies, export weights, 2015-16 = 100."
+  - bundle: external-reer-2015
+    series: neer_trade
+    idh: "FMFXERNTTR16M:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.05
+    note: "NEER, 40 currencies, trade weights, 2015-16 = 100."
+  - bundle: external-reer-2015
+    series: neer_export
+    idh: "FMFXERNTEX16M:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.05
+    note: "NEER, 40 currencies, export weights, 2015-16 = 100."
+  - bundle: external-reer6-2015
+    series: reer_trade
+    idh: "FMFXERRSTR16M:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.05
+    note: "REER, 6 currencies, trade weights, 2015-16 = 100."
+  - bundle: external-reer6-2015
+    series: neer_trade
+    idh: "FMFXERNSTR16M:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.05
+    note: "NEER, 6 currencies, trade weights, 2015-16 = 100."
+  - bundle: external-fdi
+    series: a_i_a_gross_inflows_gross_investment
+    idh: "EXBPCDIFDI11M:IND"
+    transform: level
+    scale: 0.000001
+    tolerance: 1
+    note: "Gross FDI inflows into India, monthly, US$ million (DBIE report 34)."
+  - bundle: external-fdi
+    series: a_i_direct_investment_to_india
+    idh: "EXBPNDIFDI11M:IND"
+    transform: level
+    scale: 0.000001
+    tolerance: 1
+    note: "Direct investment to India, net of repatriation, monthly, US$ million."
+  - bundle: external-fdi
+    series: b_i_b_fpis
+    idh: "EXBPNDIFII11M:IND"
+    transform: level
+    scale: 0.000001
+    tolerance: 1
+    note: "Net portfolio investment by FPIs, monthly, US$ million (IDH EXBPNDIFPI11M matches no single line of report 34)."
+  - bundle: external-fdi
+    series: a_i_a_i_equity
+    idh: "EXBPCDIDIE11M:IND"
+    transform: level
+    scale: 0.000001
+    tolerance: 1
+    note: "Gross FDI inflows, equity, monthly, US$ million."
+  # ---- end external ----
+
