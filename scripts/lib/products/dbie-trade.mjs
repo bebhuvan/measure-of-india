@@ -89,7 +89,7 @@ export async function buildDbieTrade(root, dcfg, vintage, cfg) {
   });
   const V = JSON.parse(fs.readFileSync(path.join(root, rawRel), "utf8")).vintage;
 
-  const meta = (extra) => ({ dossier: "trade", source: dcfg.source_agency, vintage: V, mock: false, geo: "IND", releaseDate: null,
+  const meta = (extra) => ({ dossier: "trade-dbie", source: dcfg.source_agency, vintage: V, mock: false, geo: "IND", releaseDate: null,
     revisionPolicy: dcfg.revision_policy, ...extra });
   const write = (rel, dates0, series0, extra) => {
     // a continuous axis: a period the table skips becomes an interior null, disclosed below
@@ -239,13 +239,13 @@ export async function buildDbieTrade(root, dcfg, vintage, cfg) {
         const desc = (r["Imp Exp Commodity Description"] || "").replace(/\s*\|\s*/g, ", ").trim();
         const k = `${flow}_${kind}_${slug(code)}`;
         const d = fyStart(r["Fiscal Year"]); allDates.add(d);
-        if (!by.has(k)) by.set(k, { label: `${desc} (code ${code}), ${kind === "uvi" ? "unit value index" : "quantum index"}, ${flow}`, m: new Map() });
+        if (!by.has(k)) by.set(k, { label: `${desc} (code ${code}), ${kind === "uvi" ? "unit value index" : "quantum index"}, ${flow}`, group: `${flow === "exports" ? "Exports" : "Imports"}, ${kind === "uvi" ? "unit value" : "quantum"}`, m: new Map() });
         by.get(k).m.set(d, num(r.item_value));
       }
       for (const [k, x] of by) S[k] = x;
     }
     const dates = axis([...allDates]);
-    const series = Object.fromEntries([...Object.entries(S)].sort(([a], [b]) => (a < b ? -1 : 1)).map(([k, x]) => [k, { name: x.label, label: x.label, color: "#A3A9B4",
+    const series = Object.fromEntries([...Object.entries(S)].sort(([a], [b]) => (a < b ? -1 : 1)).map(([k, x]) => [k, { name: x.label, label: x.label, color: "#A3A9B4", group: x.group,
       data: dates.map((d) => (x.m.has(d) && x.m.get(d) != null ? Math.round(x.m.get(d) * 100) / 100 : null)) }]));
     write(rel, dates, series, { frequency: "annual", base, unit: "index", coverage: `Unit value and quantum indices of exports and imports by commodity (SITC-based DGCI&S groups), base ${base}, from ${from}`,
       note: `RBI DBIE reports 601 (exports) and 552 (imports), data provider ${dp}, DGCI&S indices on base ${base}. Commodity codes are the DGCI&S index codes. A different base is a different ruler.`, retired: dp === "DP3" });
@@ -296,7 +296,7 @@ export async function buildDbieTrade(root, dcfg, vintage, cfg) {
       const label = c === "Export" ? `Exports to ${cty}, US$ million` : c === "Import" ? `Imports from ${cty}, US$ million` : `${c}, ${cty}, US$ million`;
       return [`${slug(c)}__${slug(cty)}`.slice(0, 90), { name: label, label, color: "#A3A9B4", data: dates.map((d) => { const x = P.get(`${d}|${p}`); return x ? r2(x.v / 1e6) : null; }) }];
     }));
-    write("trade-dbie-direction-1987", dates, series, { frequency: "annual", base: "as published", unit: "usd_million",
+    write("trade-dbie-direction-1987", dates, series, { frequency: "annual", base: "RBI grouping to 2013-14", unit: "usd_million",
       coverage: "The older direction-of-trade table: exports to and imports from partners and groups, with commodities by partner, 1987-88 to 2013-14, US$ million",
       note: "RBI DBIE report 676, data provider DP0 (the grouping used until 2013-14). Where a year carries both a forecast and a provisional value, the provisional one is kept. A different ruler from trade-dbie-direction (2009-10 on); never joined. Groups overlap; never add them.", retired: true });
   }
@@ -346,7 +346,7 @@ export async function buildDbieTrade(root, dcfg, vintage, cfg) {
     const dates = axis([...allD]);
     const series = Object.fromEntries(Object.entries(S).map(([k, x]) => [k, { name: x.label, label: x.label, color: "#A3A9B4",
       data: dates.map((d) => { const v = x.m.get(`${d}|${x.name}`); return v == null ? null : r2(v / 1e6); }) }]));
-    write("trade-dbie-commodities-1987", dates, series, { frequency: "annual", base: "as published", unit: "usd_million",
+    write("trade-dbie-commodities-1987", dates, series, { frequency: "annual", base: "RBI grouping to 2013-14", unit: "usd_million",
       coverage: "Exports and imports by major commodity in the RBI's older grouping, 1987-88 to 2013-14, US$ million",
       note: "RBI DBIE reports 439 (exports) and 431 (imports), data provider DP0: the grouping used until 2013-14, with its own item numbering (sub-items such as 1 (a) sit inside their parent). A different ruler from trade-dbie-commodities; never joined.", retired: true });
   }
@@ -366,7 +366,7 @@ export async function buildDbieTrade(root, dcfg, vintage, cfg) {
       return [`${slug(c)}__${slug(cty)}`.slice(0, 90), { name: label, label, color: "#A3A9B4",
         data: dates.map((d) => { const x = P.get(`${d}|${p}`); return x ? r2(x.v / 1e6) : null; }) }];
     }));
-    write(rel, dates, series, { frequency: "annual", base: "as published", unit: "usd_million",
+    write(rel, dates, series, { frequency: "annual", base: dp === "DP0" ? "RBI grouping to 2013-14" : "as published", unit: "usd_million",
       coverage: `Exports of 18 select commodities to India's principal buyers, ${cov}, US$ million`,
       note: `RBI DBIE report 429, data provider ${dp}. Published in US$; shown in US$ million. The two providers use different commodity and country lists: different rulers, never joined.`, retired: dp === "DP0" });
   }

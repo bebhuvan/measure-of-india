@@ -287,6 +287,23 @@ const PAGES = [
     ["ex-p-women", (b) => fmt.pct1(100 * b["deposits-owners"].series.female_total.data.at(-1) / b["deposits-owners"].series.all_total.data.at(-1))],
     ["prov-vintage", (b) => b["deposits-owners"].meta.vintage],
   ]},
+  // --- trade (lb/trade): figures in US$ million in the bundles, shown as US$ billion ---
+  { url: "/guides/trade/", slug: null, minPlots: 12, checks: [
+    ["n-exp", (b) => fmt.bnFixed1(b["trade-total"].series.exports.data.at(-1) / 1000)],
+    ["n-imp", (b) => fmt.bnFixed1(b["trade-total"].series.imports.data.at(-1) / 1000)],
+    ["n-bal", (b) => fmt.bnFixed1(b["trade-total"].series.balance.data.at(-1) / 1000)],
+    ["rb-big", (b) => fmt.bnFixed1(b["trade-total"].series.balance.data.at(-1) / 1000)],
+    ["n-ytd", (b) => fmt.bnFixed1(b["trade-hs2-exports-ytd"].series.total.data.at(-1) / 1000)],
+    ["pv-month", (b) => fmt.bnFixed1(b["trade-total"].series.balance.data.at(-1) / 1000)],
+    ["ex-l-exp", (b) => fmt.bnFixed1(b["trade-dbie-annual"].series.exports.data.at(-1) / 1000)],
+    ["pv-oilm", (b) => fmt.bnFixed1(b["trade-dbie-monthly"].series.balance_oil.data.at(-1) / 1000)],
+    ["pv-oilgold", (b) => { const X = b["trade-principal-exports-fy"].series, M = b["trade-principal-imports-fy"].series, at = (s) => s.data.at(-1);
+      return fmt.pct1(100 * ((at(X.g20) - at(M.g20)) + (at(X.ig6) - at(M.ig6))) / (at(X.total) - at(M.total))); }],
+    ["pv-partners", (b) => fmt.bnFixed1(b["trade-partners-balance-fy"].series.china.data.at(-1) / 1000)],
+    ["pv-crude", (b) => { const s = b["trade-dbie-oil-volumes"].series, i = s.crude_imports.data.at(-1), p = s.crude_production.data.at(-1); return fmt.pct1(100 * i / (i + p)); }],
+    ["prov-vintage", (b) => b["trade-total"].meta.vintage],
+  ]},
+  // --- end trade ---
   { url: "/", slug: null, minPlots: 1, checks: [
     // the CPI print is the 2024-base series; core stays on the 2012 base
     // (no weights served for the new base), labelled "to Dec 2025"

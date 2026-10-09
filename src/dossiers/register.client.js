@@ -271,3 +271,17 @@ const nfhsRows = [
   ["Women's bank account, %", "NFHS-BNK", "s-g4", nfhsFind(NF, "bank or savings")],
 ].filter(([, , , s]) => s != null);
 render("reg-nfhs", nfhsRows.map(([nm, code, sw, s]) => [nm, code, sw, s, false, "/guides/nfhs/"]), 48, "spnf", "NFHS-5", "MoSPI / IIPS");
+// --- trade (lb/trade): merchandise trade, TradeStat (DGCI&S), monthly, US$ million -> $ bn ---
+import tradeTotalBundle from "../../data/series/trade-total.json";
+{
+  const TT = hydrate(tradeTotalBundle);
+  const bn = (v) => (v < 0 ? "−$" : "$") + Math.abs(v / 1000).toFixed(1) + " bn";
+  const m = tradeTotalBundle.dates.at(-1);
+  const lbl = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][+m.slice(5, 7) - 1] + " " + m.slice(0, 4);
+  render("reg-trade", [
+    ["Merchandise exports", "TS-EXP", "s-acc", TT.exports, false, "/guides/trade/", null, bn],
+    ["Merchandise imports", "TS-IMP", "s-g1", TT.imports, false, "/guides/trade/", null, bn],
+    ["Trade balance", "TS-BAL", "s-g2", TT.balance, false, "/guides/trade/", null, bn],
+  ], 12, "sptr", lbl, "TradeStat (DGCI&S)");
+}
+// --- end trade ---

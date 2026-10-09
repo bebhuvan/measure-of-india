@@ -8,6 +8,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";
+import { parseCsv } from "../tabular.mjs";
 
 let INDEX = null;
 function index(root) {
@@ -42,10 +43,10 @@ export function dbieProvider(root, reportId, providerId) {
   if (!hit) throw new Error(`databank: DBIE report ${reportId} provider ${providerId} is not in the Data Bank mirror`);
   let buf = fs.readFileSync(hit.content);
   if (hit.meta.stored_encoding === "gzip") buf = zlib.gunzipSync(buf);
-  const lines = buf.toString("utf8").split(/\r?\n/).filter(Boolean);
-  const split = (l) => l.split(";").map((x) => x.replace(/^"|"$/g, "").trim());
-  const header = split(lines[0]);
-  const rows = lines.slice(1).map(split).map((cells) => Object.fromEntries(header.map((h, i) => [h, cells[i] ?? ""])));
+  // a real CSV parse, as databank.mjs does: quoted DBIE text can hold ";"
+  const table = parseCsv(buf.toString("utf8"), ";").filter((r) => r.some((c) => String(c).trim() !== ""));
+  const header = table[0].map((x) => String(x).trim());
+  const rows = table.slice(1).map((cells) => Object.fromEntries(header.map((h, i) => [h, String(cells[i] ?? "").trim()])));
   return { header, rows, provenance: { report_id: reportId, data_provider: providerId, provider_name: hit.meta.dataprovider.name,
     rows: rows.length, retrieved_at: hit.retrieved, sha256: hit.sha256, document_id: hit.meta.document_id } };
 }

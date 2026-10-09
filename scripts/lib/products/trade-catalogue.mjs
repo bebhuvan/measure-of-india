@@ -11,7 +11,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { readRaw, rel, RAW, months, FIRST_MONTH, FIRST_FTPA, addMonths } from "./tradestat.mjs";
-import { editionOf } from "./tradestat-bake.mjs";
+import { editionOf, countryName, ckey } from "./tradestat-bake.mjs";
+import { decode } from "../tradestat.mjs";
 
 const FLOWS = ["export", "import"];
 const ed = (mo) => editionOf(mo).replace(/\s+/g, "").toLowerCase();   // "hs2017" | "hs2022"
@@ -36,6 +37,14 @@ export function writeTradeCatalogue(root, { latest, latestFtpa }) {
   const mos = months(FIRST_MONTH, latest);
   const marches = mos.filter((m) => m.endsWith("-03"));
 
+  // partners TradeStat has printed with trade in at least one region table since 2017; the
+  // rest of its picker (territories with no recorded trade) is catalogued as "silent"
+  const traded = new Set();
+  for (const f of fs.readdirSync(path.join(root, RAW, "meidb-region"))) {
+    const r = readRaw(root, `${RAW}/meidb-region/${f}`);
+    for (const row of r.rows) { const m = row[0].match(/^\d+\)\s*(.+)$/); if (m) traded.add(ckey(countryName(m[1]))); }
+  }
+  const silent = (name) => !traded.has(ckey(countryName(name)));
   for (const flow of FLOWS) {
     const F = flow + "s";
     // totals
@@ -45,25 +54,28 @@ export function writeTradeCatalogue(root, { latest, latestFtpa }) {
       const codes = codesIn(root, flow, lvl, "usd", mos);
       for (const unit of ["usd", "inr"]) for (const freq of ["monthly", "fy", "ytd"]) for (const [c, x] of codes)
         add(`meidb:${flow}:${unit}:${freq}:hs${lvl}:${c}`, `${x.desc} (HS ${c}), ${F}, ${unit}, ${freq}`, { flow, unit, freq, level: `hs${lvl}` });
-      for (const [c, x] of codes) add(`meidb:${flow}:qty:monthly:hs${lvl}:${c}`, `${x.desc} (HS ${c}), ${F}, quantity`, { flow, unit: "qty", level: `hs${lvl}` });
+      add(`meidb:${flow}:qty:monthly:hs${lvl}`, `HS ${lvl}-digit ${F}, quantity (the whole table)`, { flow, unit: "qty", level: `hs${lvl}` });
       for (const unit of ["usd", "inr"]) add(`meidb:${flow}:${unit}:calendar-ytd:hs${lvl}`, `HS ${lvl}-digit ${F}, calendar-year running totals, ${unit}`, { flow, unit, freq: "calendar-ytd" });
     }
     // HS 6 and 8 digits, by edition
     for (const lvl of [6, 8]) {
       const codes = codesIn(root, flow, lvl, "usd", mos);
+      // the tail: one item per code and edition where the table is baked (US$ at 6 and 8
+      // digits, quantity at 8); labels are the code only (descriptions live in the bundles)
       for (const [c, x] of codes) for (const e of x.editions) {
-        add(`meidb:${flow}:usd:monthly:hs${lvl}:${e}:${c}`, `${x.desc} (HS ${c}, ${e}), ${F}, US$`, { flow, unit: "usd", level: `hs${lvl}`, edition: e });
-        add(`meidb:${flow}:inr:monthly:hs${lvl}:${e}:${c}`, `${x.desc} (HS ${c}, ${e}), ${F}, ₹`, { flow, unit: "inr", level: `hs${lvl}`, edition: e });
-        add(`meidb:${flow}:qty:monthly:hs${lvl}:${e}:${c}`, `${x.desc} (HS ${c}, ${e}), ${F}, quantity`, { flow, unit: "qty", level: `hs${lvl}`, edition: e });
+        add(`meidb:${flow}:usd:monthly:hs${lvl}:${e}:${c}`, `HS ${c}`);
+        if (lvl === 8) add(`meidb:${flow}:qty:monthly:hs${lvl}:${e}:${c}`, `HS ${c}`);
       }
+      add(`meidb:${flow}:inr:monthly:hs${lvl}`, `HS ${lvl}-digit ${F}, ₹ (the whole table)`, { flow, unit: "inr", level: `hs${lvl}` });
+      if (lvl === 6) add(`meidb:${flow}:qty:monthly:hs${lvl}`, `HS 6-digit ${F}, quantity (the whole table)`, { flow, unit: "qty", level: "hs6" });
       for (const unit of ["usd", "inr", "qty"]) add(`meidb:${flow}:${unit}:fy:hs${lvl}`, `HS ${lvl}-digit ${F}, financial-year running totals, ${unit}`, { flow, unit, freq: "fy", level: `hs${lvl}` });
       for (const unit of ["usd", "inr", "qty"]) add(`meidb:${flow}:${unit}:calendar-ytd:hs${lvl}`, `HS ${lvl}-digit ${F}, calendar-year running totals, ${unit}`, { flow, unit, freq: "calendar-ytd" });
     }
     // partners and regions (the region table carries every country under its region)
     const reg = readRaw(root, rel.region(flow, "usd", latest));
-    const pickers = readRaw(root, rel.pickers())?.rows ?? [];
+    const pickers = (readRaw(root, rel.pickers())?.rows ?? []).map(([c, n]) => [c, decode(n)]);
     for (const unit of ["usd", "inr"]) for (const freq of ["monthly", "fy", "ytd"]) {
-      for (const [code, name] of pickers) add(`meidb:${flow}:${unit}:${freq}:country:${code}`, `${name}, ${F}, ${unit}, ${freq}`, { flow, unit, freq, cut: "country" });
+      for (const [code, name] of pickers) add(`meidb:${flow}:${unit}:${freq}:${silent(name) ? "country-silent" : "country"}:${code}`, `${name}, ${F}, ${unit}, ${freq}`);
       for (const row of reg?.rows ?? []) {
         const m = row[0].match(/^(\d+(?:\.\d+)?)\s+(.+)$/); if (!m) continue;
         add(`meidb:${flow}:${unit}:${freq}:region:${m[1]}`, `${m[2]}, ${F}, ${unit}, ${freq}`, { flow, unit, freq, cut: "region" });
@@ -75,13 +87,17 @@ export function writeTradeCatalogue(root, { latest, latestFtpa }) {
     add(`meidb:${flow}:any:any:customised-groups`, `Groups of countries the reader chooses (customised_group_of_countries_${flow})`, { flow });
     // commodity x partner
     for (const [code, name] of pickers) {
-      for (const lvl of [2, 4, 6, 8]) {
-        add(`meidb:${flow}:usd:fy:country-hs${lvl}:${code}`, `${name} x HS ${lvl}-digit, ${F}, US$, financial year`, { flow, unit: "usd", freq: "fy", cut: `country-hs${lvl}` });
-        add(`meidb:${flow}:usd:ytd:country-hs${lvl}:${code}`, `${name} x HS ${lvl}-digit, ${F}, US$, year to date`, { flow, unit: "usd", freq: "ytd", cut: `country-hs${lvl}` });
-        add(`meidb:${flow}:usd:monthly:country-hs${lvl}:${code}`, `${name} x HS ${lvl}-digit, ${F}, US$, monthly`, { flow, unit: "usd", freq: "monthly", cut: `country-hs${lvl}` });
-        for (const unit of ["inr", "qty"]) add(`meidb:${flow}:${unit}:any:country-hs${lvl}:${code}`, `${name} x HS ${lvl}-digit, ${F}, ${unit}`, { flow, unit, cut: `country-hs${lvl}` });
+      for (const lvl of [2, 4]) {
+        const c = silent(name) ? "country-silent" : "country";
+        add(`meidb:${flow}:usd:fy:${c}-hs${lvl}:${code}`, `${name} x HS ${lvl}-digit, ${F}, US$, financial year`);
+        add(`meidb:${flow}:usd:ytd:${c}-hs${lvl}:${code}`, `${name} x HS ${lvl}-digit, ${F}, US$, year to date`);
       }
     }
+    for (const lvl of [2, 4, 6, 8]) {
+      add(`meidb:${flow}:usd:monthly:country-hs${lvl}`, `Every partner x HS ${lvl}-digit, ${F}, US$, each month (the whole table)`, { flow, cut: `country-hs${lvl}` });
+      for (const unit of ["inr", "qty"]) add(`meidb:${flow}:${unit}:any:country-hs${lvl}`, `Every partner x HS ${lvl}-digit, ${F}, ${unit} (the whole table)`, { flow, unit, cut: `country-hs${lvl}` });
+    }
+    for (const lvl of [6, 8]) for (const freq of ["fy", "ytd"]) add(`meidb:${flow}:usd:${freq}:country-hs${lvl}`, `Every partner x HS ${lvl}-digit, ${F}, US$, ${freq} (the whole table)`, { flow, cut: `country-hs${lvl}` });
     add(`meidb:${flow}:any:any:commodity-all-countries`, `One HS code across every partner (commodity_wise_all_countries_${flow})`, { flow });
     add(`meidb:${flow}:any:any:region-all-commodities`, `One region across every HS code (region_wise_all_commodities_${flow})`, { flow });
     add(`meidb:${flow}:any:any:principal-commodity-hs`, `The HS lines behind each principal commodity (principal_commodity_wise_all_HSCode_${flow})`, { flow });

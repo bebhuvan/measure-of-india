@@ -3,7 +3,7 @@
 // archive, then write the coverage catalogue. See tradestat.mjs and tradestat-bake.mjs.
 import fs from "node:fs";
 import path from "node:path";
-import { fetchAll, RAW, readRaw, valueColumns, rel } from "./tradestat.mjs";
+import { fetchAll, RAW, readRaw, valueColumns, rel, writeRawIndex } from "./tradestat.mjs";
 import { allZero } from "../tradestat.mjs";
 import { bakeTradestat } from "./tradestat-bake.mjs";
 import { writeTradeCatalogue } from "./trade-catalogue.mjs";
@@ -31,6 +31,7 @@ export async function buildTradestat(root, dcfg, vintage, cfg) {
   // anchor: the source must have served the headline table for the latest month
   const anchor = readRaw(root, rel.cw("export", 2, "usd", latest));
   if (!anchor || !anchor.rows.length) throw new Error(`tradestat: no data returned: exports by chapter, ${latest}`);
+  writeRawIndex(root);
   const { written } = bakeTradestat(root, dcfg, { latest, latestFtpa });
   writeTradeCatalogue(root, { latest, latestFtpa });
   console.log(`tradestat: ${written.length} bundles`);

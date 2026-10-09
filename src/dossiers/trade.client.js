@@ -5,6 +5,7 @@
 // block and fetches the finer tables (/data/<bundle>.json, static files) only on request.
 
 import * as Plot from "@observablehq/plot";
+import { CHAPTER } from "./trade-chapters.js";
 import { MONO as sans, a11y, addCrosshair, spark, downloadSVG, downloadPNG, saveBlob, fmt } from "../charts/plumbing.js";
 
 const T = JSON.parse(document.getElementById("trade-data")?.textContent || "{}");
@@ -25,9 +26,6 @@ const growth = (a, b) => (a / b - 1) * 100;
 const yearTicks = (from, to, step) => { const out = []; for (let y = from; y <= to; y += step) out.push(new Date(Date.UTC(y, 0, 1))); return out; };
 const yr = (d) => { const y = d.getUTCFullYear(); return y % 10 === 0 || y === 1970 ? String(y) : "’" + String(y).slice(2); };
 const series = (dates, vals, label, color) => ({ label, color, data: dates.map((d, i) => ({ date: D(d), value: vals[i] ?? null })) });
-// short names for the 97 HS chapters (presentation only; the full customs wording is in the
-// downloads and the every-cut table)
-const CHAPTER = { "01": "Live animals", "02": "Meat", "03": "Fish and seafood", "04": "Dairy, eggs and honey", "05": "Other animal products", "06": "Live plants and flowers", "07": "Vegetables", "08": "Fruit and nuts", "09": "Coffee, tea and spices", "10": "Cereals", "11": "Milled grain and flour", "12": "Oilseeds", "13": "Lac, gums and resins", "14": "Vegetable plaiting materials", "15": "Animal and vegetable fats and oils", "16": "Prepared meat and fish", "17": "Sugar", "18": "Cocoa", "19": "Cereal preparations", "20": "Prepared vegetables and fruit", "21": "Other food preparations", "22": "Beverages", "23": "Food waste and animal feed", "24": "Tobacco", "25": "Salt, stone and cement", "26": "Ores", "27": "Mineral fuels and oils", "28": "Inorganic chemicals", "29": "Organic chemicals", "30": "Pharmaceutical products", "31": "Fertilisers", "32": "Dyes, paints and inks", "33": "Essential oils and cosmetics", "34": "Soaps and waxes", "35": "Glues and enzymes", "36": "Explosives and matches", "37": "Photographic goods", "38": "Other chemical products", "39": "Plastics", "40": "Rubber", "41": "Hides and skins", "42": "Leather goods", "43": "Furs", "44": "Wood", "45": "Cork", "46": "Basketwork", "47": "Pulp", "48": "Paper", "49": "Books and printed matter", "50": "Silk", "51": "Wool", "52": "Cotton", "53": "Other plant fibres", "54": "Man-made filaments", "55": "Man-made staple fibres", "56": "Wadding and rope", "57": "Carpets", "58": "Special fabrics", "59": "Coated fabrics", "60": "Knitted fabrics", "61": "Clothing, knitted", "62": "Clothing, not knitted", "63": "Other textile articles", "64": "Footwear", "65": "Headgear", "66": "Umbrellas", "67": "Feathers and artificial flowers", "68": "Stone and cement articles", "69": "Ceramics", "70": "Glass", "71": "Pearls, stones, jewellery and gold", "72": "Iron and steel", "73": "Iron and steel articles", "74": "Copper", "75": "Nickel", "76": "Aluminium", "78": "Lead", "79": "Zinc", "80": "Tin", "81": "Other base metals", "82": "Tools and cutlery", "83": "Other metal articles", "84": "Machinery and mechanical appliances", "85": "Electrical machinery and electronics", "86": "Railway equipment", "87": "Vehicles and parts", "88": "Aircraft and spacecraft", "89": "Ships and boats", "90": "Optical and medical instruments", "91": "Clocks and watches", "92": "Musical instruments", "93": "Arms and ammunition", "94": "Furniture and bedding", "95": "Toys and sports goods", "96": "Miscellaneous manufactures", "97": "Works of art", "98": "Project goods", "99": "Miscellaneous goods" };
 const shortChap = (s, code) => CHAPTER[code] ?? s.replace(/\s*\(HS \d+\)$/, "").replace(/;.*$/, "").slice(0, 46);
 const ord = (n) => n + (["th", "st", "nd", "rd"][(n % 100 > 10 && n % 100 < 14) ? 0 : n % 10] ?? "th");
 const cap = (x) => x.charAt(0).toUpperCase() + x.slice(1);
@@ -99,6 +97,8 @@ if (T.qe) {
   const byCode = Object.fromEntries(T.home.map((g) => [g.code, g]));
   const phone = byCode["8517"];
   setHTML("pv-home", mn(phone.values.at(-1)));
+  const p17 = phone.values[phone.dates.indexOf("2017-01-01")], r = T.homeRank;
+  setHTML("h-home", `Phone and telecom exports rose from ${mn(p17)} in January 2017 to ${mn(phone.values.at(-1))} in ${latestMonth}, ${r.phone === 1 ? "the largest" : ord(r.phone)} of India's ${r.of} export headings that month${r.phone === 1 ? "" : ` (the first was HS ${r.top})`}`);
   setHTML("ex-h-phone", mn(phone.values.at(-1)));
   setHTML("ex-h-phone17", mn(phone.values[phone.dates.indexOf("2017-01-01")]));
   setHTML("ex-h-crude", mn(byCode["2709"].values.at(-1)));
@@ -120,6 +120,8 @@ if (T.qe) {
   const L = T.long, i = L.dates.length - 1;
   const X = series(L.dates, L.exports.map((v) => v / 1000), "Exports", ACC), M = series(L.dates, L.imports.map((v) => v / 1000), "Imports", GOLD);
   const top = Math.ceil(Math.max(...L.imports) / 1000 / 100) * 100;
+  // the band between the two lines is the deficit: it is anchored on exports, not on zero
+  const gapBand = L.dates.map((d, k) => ({ date: D(d), lo: L.exports[k] / 1000, hi: L.imports[k] / 1000 })).filter((d) => d.lo != null && d.hi != null);
   const ends = [{ ...X.data.at(-1), t: `Exports ${bn(L.exports[i])}`, c: ACC }, { ...M.data.at(-1), t: `Imports ${bn(L.imports[i])}`, c: GOLD }];
   const plot = Plot.plot({
     width: W, height: 480, marginLeft: 48, marginRight: 150, marginTop: 30, marginBottom: 34, style: baseStyle,
@@ -128,7 +130,7 @@ if (T.qe) {
     marks: [
       Plot.gridY({ stroke: GRID }),
       Plot.ruleY([0], { stroke: BASE }),
-      Plot.areaY(L.dates.map((d, k) => ({ date: D(d), lo: L.exports[k] / 1000, hi: L.imports[k] / 1000 })).filter((d) => d.lo != null && d.hi != null), { x: "date", y1: "lo", y2: "hi", fill: "#F4F6FD" }),
+      Plot.areaY(gapBand, { x: "date", y1: "lo", y2: "hi", fill: "#F4F6FD" }),
       Plot.lineY(M.data, { x: "date", y: "value", stroke: GOLD, strokeWidth: 1.75, strokeLinejoin: "round" }),
       Plot.lineY(X.data, { x: "date", y: "value", stroke: ACC, strokeWidth: 2, strokeLinejoin: "round" }),
       Plot.dot(ends, { x: "date", y: "value", fill: (d) => d.c, r: 3, stroke: "#fff", strokeWidth: 1.5 }),
@@ -229,7 +231,7 @@ if (T.qe) {
   const lo = Math.floor(Math.min(...O.oil.filter((v) => v != null), ...O.nonoil.filter((v) => v != null)) / 1000 / 5) * 5;
   const hi = Math.max(5, Math.ceil(Math.max(...O.oil.filter((v) => v != null), ...O.nonoil.filter((v) => v != null)) / 1000 / 5) * 5);
   const plot = Plot.plot({
-    width: W, height: 440, marginLeft: 48, marginRight: 130, marginTop: 30, marginBottom: 34, style: baseStyle,
+    width: W, height: 440, marginLeft: 48, marginRight: 160, marginTop: 30, marginBottom: 34, style: baseStyle,
     x: { label: null, tickSize: 0, tickPadding: 10, ticks: yearTicks(1998, 2026, 4), tickFormat: (d) => String(d.getUTCFullYear()) },
     y: { label: "↑ US$ billion a month (below zero: deficit)", labelAnchor: "top", labelArrow: false, domain: [lo, hi], tickSize: 0, tickPadding: 10, tickFormat: (v) => (v < 0 ? "−" + Math.abs(v) : String(v)) },
     marks: [
@@ -324,7 +326,8 @@ for (const [flow, id, color] of [["exports", "chapx", ACC], ["imports", "chapm",
   a11y(plot, `India's trade balance with its largest deficit and surplus partners, ${P.fy}`, rows.map((r) => `${r.name} ${r.v.toFixed(1)}`).join(", "));
   mount("plot-partners", plot);
   const cn = P.deficits.find((r) => r.key === "china"), us = P.surpluses.find((r) => r.key === "united_states");
-  setHTML("h-partners", `India's largest trade deficit is with ${P.deficits[0].name} (${bn(P.deficits[0].bal)}); its largest surplus is with ${P.surpluses[0].name} (${bn(P.surpluses[0].bal)})`);
+  const the = (nm) => (/^(United|Netherlands|Philippines)/.test(nm) ? "the " + nm : nm);
+  setHTML("h-partners", `India's largest trade deficit is with ${the(P.deficits[0].name)} (${bn(P.deficits[0].bal)}); its largest surplus is with ${the(P.surpluses[0].name)} (${bn(P.surpluses[0].bal)})`);
   setHTML("pv-partners", bn(cn?.bal));
   setHTML("ex-p-n", String(P.inDeficit));
   setHTML("ex-p-of", String(P.n));
@@ -337,7 +340,7 @@ for (const [flow, id, color] of [["exports", "chapx", ACC], ["imports", "chapm",
   const cn = series(C.dates, C.china.bal.map((v) => (v == null ? null : v / 1000)), "China", GOLD), us = series(C.dates, C.usa.bal.map((v) => (v == null ? null : v / 1000)), "United States", ACC);
   const lo = Math.floor(Math.min(...C.china.bal.filter((v) => v != null)) / 1000 / 20) * 20, hi = Math.ceil(Math.max(...C.usa.bal.filter((v) => v != null)) / 1000 / 20) * 20;
   const plot = Plot.plot({
-    width: W, height: 440, marginLeft: 48, marginRight: 170, marginTop: 30, marginBottom: 34, style: baseStyle,
+    width: W, height: 440, marginLeft: 48, marginRight: 200, marginTop: 30, marginBottom: 34, style: baseStyle,
     x: { label: null, tickSize: 0, tickPadding: 10, ticks: yearTicks(2011, 2025, 2).map((d) => new Date(Date.UTC(d.getUTCFullYear(), 3, 1))), tickFormat: (d) => fyOf(d.toISOString()) },
     y: { label: "↑ US$ billion (below zero: deficit)", labelAnchor: "top", labelArrow: false, domain: [lo, hi], tickSize: 0, tickPadding: 10, tickFormat: (v) => (v < 0 ? "−" + Math.abs(v) : String(v)) },
     marks: [
@@ -378,7 +381,6 @@ if (T.cxc) {
   const elec = T.cxc.china.rows.find((r) => r.code === "85");
   setHTML("pv-cxc", bn(elec?.last ?? 0));
   setHTML("sub-cxc", T.cxc.us.fy);
-  setHTML("asof-cxc", T.cxc.us.fy);
   setHTML("ex-x-us1", shortChap(T.cxc.us.rows[0].label, T.cxc.us.rows[0].code).toLowerCase());
   setHTML("ex-x-us1v", bn(T.cxc.us.rows[0].last));
   setHTML("ex-x-cn1", shortChap(T.cxc.china.rows[0].label, T.cxc.china.rows[0].code).toLowerCase());
@@ -502,11 +504,10 @@ if (T.cxc) {
 /* ---------- § 09 every cut ---------- */
 {
   const E = T.explorer;
-  const lvl = document.getElementById("xp-level"), flow = document.getElementById("xp-flow"), fySel = document.getElementById("xp-fy"), q = document.getElementById("xp-q");
+  const lvl = document.getElementById("xp-level"), flow = document.getElementById("xp-flow"), q = document.getElementById("xp-q");
   const body = document.getElementById("xp-body");
   const cache = new Map();
   let state = { rows: [], fyLabels: ["", ""], sortK: "cur", sortDir: -1, file: null };
-  const fyFiles = (level, f) => (T.explorerFiles || []).filter((b) => new RegExp(`^trade-${level}-${f}-\\d{4}-\\d{2}$`).test(b)).sort().reverse();
   async function load(file) {
     if (!cache.has(file)) cache.set(file, fetch(`/data/${file}.json`).then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }));
     return cache.get(file);
@@ -533,7 +534,6 @@ if (T.cxc) {
   }
   async function update() {
     const L = lvl.value, F = flow.value;
-    document.getElementById("xp-fy-wrap").style.display = L === "hs6" || L === "hs8" ? "" : "none";
     try {
       if (L === "hs2" || L === "partners") {
         const src = L === "hs2" ? (F === "exports" ? E.hs2x : E.hs2m) : (F === "exports" ? E.px : E.pm);
@@ -543,26 +543,14 @@ if (T.cxc) {
         setHTML("xp-n", "Loading…");
         const b = await load(L === "hs4" ? `trade-hs4-${F}-fy` : `trade-partner-hs2-${F}`);
         const r = fromAnnual(b); state.rows = r.rows; state.fyLabels = r.fy;
-      } else {
-        const files = fyFiles(L, F);
-        if (!fySel.options.length || fySel.dataset.for !== L + F) { fySel.innerHTML = files.map((f) => `<option value="${f}">${f.slice(-7)}</option>`).join(""); fySel.dataset.for = L + F; }
-        setHTML("xp-n", "Loading…");
-        const b = await load(fySel.value);
-        const sum = (s) => s.data.reduce((a, v) => (v == null ? a : a + v), 0);
-        const idx = files.indexOf(fySel.value), prevFile = files[idx + 1];
-        let prev = null;
-        if (prevFile) { try { prev = await load(prevFile); } catch { prev = null; } }
-        state.rows = Object.entries(b.series).map(([k, s]) => [k, s.label, sum(s), prev?.series?.[k] ? sum(prev.series[k]) : null]);
-        state.fyLabels = [`${fySel.value.slice(-7)} (${b.dates.length} months)`, prevFile ? prevFile.slice(-7) : ""];
       }
     } catch (e) {
       state.rows = []; setHTML("xp-n", "This table could not be loaded here; it is in the data downloads below.");
     }
     render();
   }
-  lvl?.addEventListener("change", () => { fySel.innerHTML = ""; update(); });
-  flow?.addEventListener("change", () => { fySel.innerHTML = ""; update(); });
-  fySel?.addEventListener("change", update);
+  lvl?.addEventListener("change", update);
+  flow?.addEventListener("change", update);
   q?.addEventListener("input", render);
   document.querySelectorAll("#cb-every th[data-k]").forEach((th) => th.addEventListener("click", () => { const k = th.dataset.k; state.sortDir = state.sortK === k ? -state.sortDir : (k === "label" || k === "code" ? 1 : -1); state.sortK = k; render(); }));
   document.getElementById("xp-csv")?.addEventListener("click", () => saveBlob(new Blob([csvRows(["code", "description", state.fyLabels[0] || "latest", state.fyLabels[1] || "previous", "change_pct"], (state.filtered || []).map((r) => [r.code, r.label, r.cur, r.prev, r.chg == null ? "" : r.chg.toFixed(2)]))], { type: "text/csv" }), `india-atlas_trade-every-cut-${lvl.value}-${flow.value}.csv`));

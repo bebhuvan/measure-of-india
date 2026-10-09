@@ -9,6 +9,7 @@ import fs from "node:fs";
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
 import GuideData from "../../components/GuideData.astro";
+import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 import { period } from "../../dossiers/periods.js";
@@ -68,6 +69,8 @@ T.total = { dates: tot.dates, exports: tot.series.exports.data, imports: tot.ser
     ["exports", "8517", "Phones and telecom equipment"], ["exports", "2710", "Petroleum products (diesel, petrol, jet fuel)"], ["exports", "3004", "Medicines in doses"], ["exports", "1006", "Rice"],
     ["imports", "2709", "Crude oil"], ["imports", "7108", "Gold"], ["imports", "1511", "Palm oil"], ["imports", "2701", "Coal"],
   ];
+  { const i = X.dates.length - 1; const vals = Object.entries(X.series).filter(([k]) => k !== "total").map(([k, s]) => [k, s.data[i]]).filter(([, v]) => v != null).sort((a, b) => b[1] - a[1]);
+    T.homeRank = { phone: vals.findIndex(([k]) => k === "c8517") + 1, of: vals.length, top: vals[0][0].slice(1) }; }
   T.home = NAMED.map(([f, c, name]) => { const b = f === "exports" ? X : M; return { flow: f, code: c, name, label: b.series["c" + c]?.label ?? c, dates: b.dates, values: b.series["c" + c]?.data ?? [] }; });
 }
 // quantities, the last full financial year (sum of twelve published months; derived)
@@ -110,7 +113,7 @@ if (has("trade-partner-hs2-exports") && has("trade-partner-hs2-imports")) {
 {
   const ex = (slug) => { const b = B(slug); return { dates: b.dates, rows: Object.entries(b.series).map(([k, s]) => [k, s.label, s.data]) }; };
   T.explorer = { hs2x: ex("trade-hs2-exports-fy"), hs2m: ex("trade-hs2-imports-fy"), px: ex("trade-partners-exports-fy"), pm: ex("trade-partners-imports-fy") };
-  T.explorerFiles = D.bundles.filter((b) => /^trade-hs[468]-|^trade-hs4-(exports|imports)-fy$|^trade-partner-hs[24]-(exports|imports)$/.test(b) && has(b));
+
 }
 const YTD = { x: B("trade-hs2-exports-ytd"), m: B("trade-hs2-imports-ytd") };
 T.ytd = { label: YTD.x.meta.period.label, prev: [YTD.x.series.total.data[0], YTD.m.series.total.data[0]], cur: [YTD.x.series.total.data[1], YTD.m.series.total.data[1]], fy: fyOf(YTD.x.dates[1]) };
@@ -183,7 +186,7 @@ const fmtBn = (v) => `$${(v / 1000).toFixed(1)} bn`;
       <figure id="cb-home" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>Phones went from almost nothing to one of India's biggest exports; crude and gold still dominate what it buys</h3>
+            <h3><span id="h-home">–</span></h3>
             <div class="sub">Eight goods by HS heading (4 digits), monthly, US$ million, January 2017 to {PT.long}. Each panel has its own scale.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-home">–</div><div class="c">phone exports, {PT.long}</div></div>
@@ -523,7 +526,7 @@ const fmtBn = (v) => `$${(v / 1000).toFixed(1)} bn`;
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>A deficit with one country is not a problem in itself: India buys crude from the Gulf and Russia because it has no oil of its own, and pays for it partly with what it sells to the United States and Europe. Countries are where goods come from or go to as declared at customs, so goods routed through the UAE or Singapore count against those hubs.</p>
+            <p>A deficit with one country is not a problem in itself: India buys crude from the Gulf and Russia because it produces far too little of its own (see the crude oil plate below), and pays for it partly with what it sells to the United States and Europe. Countries are where goods come from or go to as declared at customs, so goods routed through the UAE or Singapore count against those hubs.</p>
           </div>
           <div class="now">
             <span class="mk">As of {T.partners.fy}</span>
@@ -588,7 +591,7 @@ const fmtBn = (v) => `$${(v / 1000).toFixed(1)} bn`;
             <p>The two lists barely overlap. India sells the United States medicines, diamonds and jewellery, clothes and, increasingly, phones; it buys from China the machinery, electronics, chemicals and parts that its factories, including the phone factories, run on.</p>
           </div>
           <div class="now">
-            <span class="mk">As of <span id="asof-cxc">–</span></span>
+            <span class="mk">As of {T.cxc ? T.cxc.us.fy : T.partners.fy}</span>
             <p>Top export to the United States: <span id="ex-x-us1">–</span>, <b id="ex-x-us1v">–</b>. Top import from China: <span id="ex-x-cn1">–</span>, <b id="ex-x-cn1v">–</b>.</p>
           </div>
         </div>
@@ -737,8 +740,8 @@ const fmtBn = (v) => `$${(v / 1000).toFixed(1)} bn`;
 
   <!-- § 09 every cut: inputs trade-hs2-*-fy, trade-partners-*-fy inline; trade-hs4/6/8 and partner x chapter tables on request -->
   <section>
-    <div class="sec-head"><span class="no">09</span><h2>Every cut</h2><span class="line"></span><span class="unit">Chapters, headings, tariff lines, partners</span></div>
-    <div class="prose"><p>Everything above is drawn from these tables. Choose a level and a flow, type a word or a code, and sort by any column. Chapters and partners are here already; headings, 6-digit subheadings and 8-digit tariff lines load when you ask for them (the 8-digit tables are a few megabytes each).</p></div>
+    <div class="sec-head"><span class="no">09</span><h2>Look up any product or partner</h2><span class="line"></span><span class="unit">Financial-year totals: chapters, headings, tariff lines, partners</span></div>
+    <div class="prose"><p>Whole-year totals for every chapter, heading and partner, and for every partner by chapter. (The table of every series, month by month, is at the end of the guide.) Choose a level and a flow, type a word or a code, and sort by any column.</p></div>
     <div class="break">
       <figure id="cb-every" style="margin:0">
         <div class="frame">
@@ -746,13 +749,10 @@ const fmtBn = (v) => `$${(v / 1000).toFixed(1)} bn`;
             <label>Level <select id="xp-level">
               <option value="hs2">HS chapters (2 digits)</option>
               <option value="hs4">HS headings (4 digits)</option>
-              <option value="hs6">HS subheadings (6 digits), one year</option>
-              <option value="hs8">Tariff lines (8 digits), one year</option>
               <option value="partners">Partner countries</option>
               <option value="cxc">Partner x chapter</option>
             </select></label>
             <label>Flow <select id="xp-flow"><option value="exports">Exports</option><option value="imports">Imports</option></select></label>
-            <label id="xp-fy-wrap">Year <select id="xp-fy"></select></label>
             <label class="xp-q">Find <input id="xp-q" type="search" placeholder="rice, 8517, Japan" autocomplete="off"></label>
             <span class="xp-n" id="xp-n">–</span>
           </div>
@@ -763,13 +763,15 @@ const fmtBn = (v) => `$${(v / 1000).toFixed(1)} bn`;
             </table>
           </div>
           <div class="plotfoot">
-            <span class="src">Source: Ministry of Commerce, TradeStat (DGCI&amp;S). US$ million. Financial years are April-to-March totals; a single-year view at 6 and 8 digits sums that year's published months.</span>
+            <span class="src">Source: Ministry of Commerce, TradeStat (DGCI&amp;S). US$ million. Financial years are April-to-March totals.</span>
             <span class="dl"><button data-dl="csv" id="xp-csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
       </figure>
     </div>
   </section>
+
+    <div class="prose xp-note"><p><b>Six- and eight-digit detail.</b> The 5,600 subheadings and 11,000 tariff lines, every month since January 2017, in dollars, rupees and quantity, are too large for these pages. They are published as files in the India Atlas data archive, one per year and flow, each on one HS edition; the headings above are their totals. <span id="xp-archive-link">The archive files are being prepared.</span></p></div>
 
   <!-- § 10 what this measures: evergreen -->
   <section>
@@ -794,6 +796,7 @@ const fmtBn = (v) => `$${(v / 1000).toFixed(1)} bn`;
     </ul>
   </section>
 
+  <EveryCut slug="trade" />
   <GuideData slug="trade" />
 
   <footer class="provenance">

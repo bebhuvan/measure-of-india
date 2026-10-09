@@ -3,11 +3,12 @@
 // Reference notes and every trap: docs/reference/tradestat.md.
 //
 // Two phases, so the slow one never has to run twice:
-//   FETCH  one archived raw file per TradeStat call, data/raw/trade/<view>/<call>.json.gz,
+//   FETCH  one archived raw file per TradeStat call, <RAW>/<view>/<call>.json.gz (git-ignored
+//          staging; data/raw/trade-index.json, committed, lists every call and its sha256),
 //          cells exactly as printed (strings), plus the page's own footnotes. A call older
 //          than its product's revision window is never fetched again unless TRADESTAT_FULL=1;
 //          a re-fetched call whose cells changed archives the old file under
-//          data/raw/trade/vintages/ first (the writeRaw semantics, gzip). TRADESTAT_OFFLINE=1
+//          <RAW>/vintages/ first (the writeRaw semantics, gzip). TRADESTAT_OFFLINE=1
 //          skips the fetch phase entirely and bakes from the archive.
 //   BAKE   data/series/trade-*.json from the archive alone (see bake.mjs alongside).
 //
@@ -36,6 +37,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";
+import crypto from "node:crypto";
 import { tsQuery, stats, allZero } from "../tradestat.mjs";
 
 /* ---------------- the views, with each form's own field names and unit codes ---------------- */
@@ -76,7 +78,11 @@ export const VIEWS = {
 
 export const FIRST_MONTH = "2018-01";        // MEIDB's picker starts January 2018
 export const FIRST_FTPA = "2010-04";         // FTPA's picker starts 2010
-export const RAW = "data/raw/trade";
+// the per-call archive is the audit trail but too heavy for git (about 300 MB gzipped): it
+// lives in the git-ignored deep-archive staging folder (PLAN-launch §2b), uploaded by the
+// archive builder; data/raw/trade-index.json (committed) lists every call with its sha256
+export const RAW = "data/archive/staging/trade-raw";
+export const RAW_INDEX = "data/raw/trade-index.json";
 const FULL = process.env.TRADESTAT_FULL === "1";
 // TRADESTAT_RESUME=1: a restarted long run skips every call already archived, even inside
 // the revision window (the window is for the next release, not for the same day)
@@ -193,6 +199,9 @@ export async function fetchAll(root, vintage, { only = null, log = console.log }
     add("cw6", rel.cw(flow, 6, "usd", mo), VIEWS.cw[flow].view, VIEWS.cw[flow].f(m, y, 6, VIEWS.cw.units.usd), 13, mo);
     add("cw8", rel.cw(flow, 8, "usd", mo), VIEWS.cw[flow].view, VIEWS.cw[flow].f(m, y, 8, VIEWS.cw.units.usd), 13, mo);
     add("cw8q", rel.cw(flow, 8, "qty", mo), VIEWS.cw[flow].view, VIEWS.cw[flow].f(m, y, 8, VIEWS.cw.units.qty), 13, mo);
+    // rupees at 6 and 8 digits: for the deep archive (data/archive/staging/trade/), not for bundles
+    add("cw6i", rel.cw(flow, 6, "inr", mo), VIEWS.cw[flow].view, VIEWS.cw[flow].f(m, y, 6, VIEWS.cw.units.inr), 13, mo);
+    add("cw8i", rel.cw(flow, 8, "inr", mo), VIEWS.cw[flow].view, VIEWS.cw[flow].f(m, y, 8, VIEWS.cw.units.inr), 13, mo);
   }
   for (const flow of ["export", "import"]) for (const mo of M) {
     const [y, m] = mo.split("-").map(Number);
@@ -241,4 +250,29 @@ export async function fetchAll(root, vintage, { only = null, log = console.log }
   log(`tradestat fetch: ${JSON.stringify(counts)}, ${stats.requests} requests, ${stats.retries} retries`);
   if (failures.length) { fs.mkdirSync(path.join(root, "logs"), { recursive: true }); fs.writeFileSync(path.join(root, "logs/tradestat-failures.txt"), failures.join("\n") + "\n"); }
   return { latest, latestFtpa, counts, failures };
+}
+
+/** The committed index of the raw archive: every call, its form and fields, when it was
+ *  taken (vintage = the run that last changed it; reportDated = the page's own date), its
+ *  data rows, and the sha256 of the stored file, so the audit trail is verifiable from git. */
+export function writeRawIndex(root) {
+  const out = [];
+  const walk = (dir) => {
+    for (const f of fs.readdirSync(path.join(root, dir)).sort()) {
+      const p = `${dir}/${f}`;
+      if (fs.statSync(path.join(root, p)).isDirectory()) { walk(p); continue; }
+      if (!f.endsWith(".json.gz")) continue;
+      const buf = fs.readFileSync(path.join(root, p));
+      const r = JSON.parse(zlib.gunzipSync(buf).toString("utf8"));
+      out.push({ file: p.slice(RAW.length + 1), view: r.view ?? null, fields: r.fields ?? null, vintage: r.vintage ?? null,
+        reportDated: r.notes?.reportDated ?? null, rows: r.rows?.length ?? 0, sha256: crypto.createHash("sha256").update(buf).digest("hex") });
+    }
+  };
+  walk(RAW);
+  const body = { note: "Index of the TradeStat per-call raw archive (gzipped JSON, cells as printed), held in the deep-archive staging folder and uploaded to the India Atlas archive (PLAN-launch §2b). sha256 is of the stored .json.gz file.", root: RAW, calls: out.length, files: out };
+  const p = path.join(root, RAW_INDEX);
+  const prev = fs.existsSync(p) ? fs.readFileSync(p, "utf8") : null;
+  const next = JSON.stringify(body).replace(/\},\{"file"/g, '},\n{"file"') + "\n";
+  if (prev !== next) fs.writeFileSync(p, next);
+  console.log(`tradestat: ${RAW_INDEX} lists ${out.length} calls`);
 }

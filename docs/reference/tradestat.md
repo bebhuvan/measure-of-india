@@ -119,3 +119,61 @@ are shown as such, never spliced.
 - HS revisions (HS 2017 to HS 2022 in April 2023) change 6 and 8 digit codes. A code
   series across that change is a seam; the 2 and 4 digit levels are stable enough to run
   through, the 8-digit level is not.
+
+## Mapped live, 2026-10-09 (the trade adapter)
+
+Every form below was read from the site (`<select name>` and `<option value>`) and then
+exercised; the adapter (`scripts/lib/products/tradestat.mjs`, `VIEWS`) holds the mapping.
+
+| View | Fields (month, year, ...) | Unit codes |
+|---|---|---|
+| `meidb/commoditywise_export` | `ddMonth ddYear comlev=all ddCommodityLevel ddReportVal ddReportYear=1` | 1 US$, 3 ₹, 2 quantity |
+| `meidb/commoditywise_import` | `imddMonth imddYear comlev=all imddCommodityLevel imddReportVal imddReportYear=1` | 1 US$, 3 ₹, 2 quantity |
+| `meidb/region_wise_all_countries_export` | `rwacexddMonth rwacexddYear rwacexddReportVal rwacexddReportYear=1` | 1 US$, 3 ₹ |
+| `meidb/region_wise_all_countries_import` | `rwacimddMonth rwacimddYear rwacimddReportVal rwacimddReportYear=1` | 1 US$, **2 ₹** |
+| `meidb/country_wise_all_commodities_export` | `cwcexddMonth cwcexddYear cwcexallcount=<country code> cwcexddCommodityLevel cwcexddReportVal cwcexddReportYear=1` | 1 US$ |
+| `meidb/country_wise_all_commodities_import` | `cwcimMonth cwcimYear cwcimallcount cwcimCommodityLevel cwcimReportVal cwcimReportYear=1` | 1 US$ |
+| `ftpa/export_commodity_group_new` | `ReportType=2 Month Year Report` | 2 US$, 1 ₹ |
+| `ftpa/import_commodity_group_new` | `IReportType=2 IMonth IYear IReport` | 2 US$, 1 ₹ |
+| `ftspcc/export_commodity_wise` | `ddMonthEx ddYearEx PCommodityEx=all ddReportValEx` | 2 US$, 1 ₹, 3 quantity, 4 ₹/unit, 5 US$/unit |
+| `ftspcc/import_commodity_wise` | `ddMonth ddYear PCommodity=all ddReportVal` | as above |
+| `ftspcc/ttrade_country_wise` | `MonthCwTt YearCwTt countryCwTt=all ReportValCwTt` | 2 US$, 1 ₹ |
+| `eidb/commodity_wise_export` / `_import` | `EidbYearCwe comType=all EidbComLevelCwe Eidb_ReportCwe` / `Eidb_YearCwi commodityType=all Eidb_ComLevelCwi Eidb_ReportCwi` | 2 US$, 1 ₹, 3 quantity |
+
+Every MEIDB view has an import twin (`..._import`), though the site's menu shows the export
+names only. The country code list is the `cwcexallcount` picker (251 entries).
+
+## What the probe and the checks found
+
+- **Unpublished months answer HTTP 200 with zeros.** Asking for August 2026 (not yet out)
+  returned the full table with every current-month value 0.00 flagged "(A)" and the year-ago
+  column filled. Treat an all-zero column as unpublished.
+- **Flags.** MEIDB prints the month itself as (F) "Final" and the same month a year earlier
+  as (R) "Revised Final". FTPA and FTSPCC print the current year as (P) "Provisional" (the
+  quick estimates). FTPA runs a month ahead of MEIDB.
+- **EIDB double-counts 2023-24 at commodity level.** In every EIDB commodity and
+  country-by-commodity table, 2023-24 values are exactly twice the MEIDB April-to-March
+  values (chapters sum to 874,144 against a printed total of 437,072). The totals tables are
+  right. MEIDB is the source of record for every annual figure.
+- **MEIDB is internally consistent.** Chapters and headings sum to the printed India total
+  (to 0.001%), every financial year equals the sum of its twelve months, and the 2023-24
+  column of the 2024-25 March table equals the 2023-24 March table's own column.
+- **Quantities** carry a unit only at 8 digits (KGS, NOS, TON, SQM, PRS, LTR, MTR, CBM and a
+  few rarer codes); at 2, 4 and 6 digits the unit cell is blank and the figures add
+  different units together.
+- **Rupees** at 8 digits are the dollar values at the month's customs rate: the ratio
+  ₹ crore / US$ million lay between 9.53 and 9.63 for every line over US$ 1 million in July
+  2026.
+- **Region tables** list every country under its region and sub-region; small territories
+  with no region sit under "6 Unspecified Region". The plain country table adds only
+  territories printed at zero. The region tables' own growth column disagrees with their
+  values (Europe 7.52% computed, 6.99% printed): compute growth, never read it.
+- **FTSPCC total trade by country**: only the March tables are whole years. A part-year table
+  (August 2026) printed partner exports summing to US$ 18,321 million against 215,488 for
+  April to August.
+- **8-digit codes change** with HS editions (HS 2022 from April 2023) and at annual ITC-HS
+  revisions (marked `*` in the tables: dropped or re-allocated, unit possibly changed, from
+  April 2024 or April 2026).
+- **Speed**: an 8-digit table is 7 to 8 MB of HTML and takes about 3 seconds end to end; the
+  full history at 6 and 8 digits plus the partner tables is about 12,700 calls (some 7 hours
+  at one request at a time).

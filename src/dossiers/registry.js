@@ -416,7 +416,7 @@ export const DOSSIERS = [
     proseConstants: [100],   // verifier whitelist: weights/shares/base years this dossier may cite
     spark: { bundle: "trade-total", series: "exports" },
     prose: true,
-    proseInputs: ["trade-hs2-exports", "trade-hs2-imports", "trade-partners-balance", "trade-principal-exports", "trade-principal-imports", "trade-dbie-monthly"],
+    proseInputs: ["trade-hs2-exports", "trade-hs2-imports", "trade-partners-balance"],
     register: { id: "reg-trade", label: "Merchandise trade", unit: "Monthly, US$ billion, TradeStat (DGCI&S)", historyCol: "Since 2017" },
     bundles: [
       "trade-total", "trade-total-inr",
@@ -425,9 +425,8 @@ export const DOSSIERS = [
       "trade-partners-balance", "trade-partners-balance-fy", "trade-partners-long", "trade-partners-long-inr",
       ...["exports", "imports"].flatMap((f) => [`trade-principal-${f}`, `trade-principal-${f}-inr`, `trade-principal-${f}-fy`, `trade-principal-${f}-fy-inr`, `trade-principal-${f}-ytd`, `trade-principal-${f}-ytd-inr`, `trade-principal-quantity-${f}`]),
       ...["hs2", "hs4"].flatMap((l) => ["exports", "imports"].flatMap((f) => [`trade-partner-${l}-${f}`, `trade-partner-${l}-${f}-ytd`])),
-      // 6 and 8 digits: one file per financial year (2016-17 holds January to March 2017 only).
-      // Extend TRADE_LAST_FY each April when the new year's first table is baked.
-      ...(() => { const TRADE_LAST_FY = 2026, out = []; for (let y = 2016; y <= TRADE_LAST_FY; y++) { const fy = `${y}-${String((y + 1) % 100).padStart(2, "0")}`; for (const f of ["exports", "imports"]) out.push(`trade-hs6-${f}-${fy}`, `trade-hs8-${f}-${fy}`, `trade-hs8-${f}-qty-${fy}`); } return out; })(),
+      // 6 and 8 digits are not bundles: they are the deep-archive tier (PLAN-launch §2b),
+      // staged by tradestat-bake.mjs and rolled up into trade-hs4-*.
       "trade-dbie-monthly", "trade-dbie-monthly-inr", "trade-dbie-annual", "trade-dbie-annual-inr", "trade-dbie-tot-2012", "trade-dbie-tot-1999", "trade-dbie-tot-1978",
       "trade-dbie-uvi-2012", "trade-dbie-uvi-1999", "trade-dbie-oil-volumes", "trade-dbie-direction", "trade-dbie-direction-1987", "trade-dbie-commodities", "trade-dbie-commodities-1987",
       "trade-dbie-commodity-partners", "trade-dbie-commodity-partners-1990",

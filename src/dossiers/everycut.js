@@ -69,6 +69,14 @@ export const UNITS = {
   thousand_tonne: { kind: "pct", fmt: (v) => big(v * 1000, " tonnes") },
   thousand_kwh: { kind: "pct", fmt: (v) => grp(v / 1e6, 2) + " billion kWh", note: "published in thousand kWh" },
   kg_per_month: { kind: "pct", fmt: (v) => v.toFixed(2) + " kg", note: "a month" },
+  // --- trade (lb/trade) ---
+  usd_million: { kind: "pct", fmt: (v) => (v < 0 ? MINUS : "") + "$" + grp(Math.abs(v) / 1e3, 2) + " bn" },
+  million_tonnes: { kind: "pct", fmt: (v) => grp(v, 1) + " million tonnes" },
+  // quantities, in the unit DGCI&S prints beside each line (never added across lines)
+  ...Object.fromEntries([["kgs", "kg"], ["kg", "kg"], ["ton", "tonnes"], ["mts", "MTS"], ["nos", "pieces"], ["sqm", "sq m"], ["prs", "pairs"], ["cbm", "cu m"],
+    ["ltr", "litres"], ["mtr", "metres"], ["cum", "CUM"], ["thn", "THN"], ["ctm", "CTM"], ["crt", "CRT"], ["thd", "THD"], ["tkw", "TKW"], ["gif", "GIF"], ["c_k", "C/K"], ["none", "no unit printed"]]
+    .map(([k, w]) => [`qty_${k}`, { kind: "pct", fmt: (v) => grp(v) + (k === "none" ? "" : " " + w), note: k === "none" ? "quantity, no unit printed" : `quantity, unit as printed (${k.toUpperCase().replace("_", "/")})` }])),
+  // --- end trade ---
 };
 
 // series.unit, then what the series name says, then the bundle's meta.unit: a bundle-level
@@ -144,6 +152,17 @@ export const CUT_BY_BUNDLE = {
   "deposits-owners": "Owner and account", "deposits-owners-2005": "Owner and account", "deposits-population": "Population group",
   "deposits-term-rates": "Interest rate band", "deposits-term-maturity": "Maturity", "deposits-term-size": "Deposit size",
   "deposits-term-size-2026": "Deposit size",
+  // --- trade (lb/trade) ---
+  "trade-total": "All India", "trade-total-inr": "All India", "trade-dbie-monthly": "Total, oil and non-oil", "trade-dbie-monthly-inr": "Total, oil and non-oil",
+  "trade-dbie-annual": "Total, oil and non-oil", "trade-dbie-annual-inr": "Total, oil and non-oil", "trade-dbie-tot-2012": "Index", "trade-dbie-tot-1999": "Index", "trade-dbie-tot-1978": "Index",
+  "trade-dbie-uvi-2012": "Commodity index", "trade-dbie-uvi-1999": "Commodity index", "trade-dbie-oil-volumes": "Crude and products",
+  "trade-dbie-direction": "Partner or group", "trade-dbie-direction-1987": "Partner and commodity", "trade-dbie-commodities": "Commodity group", "trade-dbie-commodities-1987": "Commodity group",
+  "trade-dbie-commodity-partners": "Commodity and partner", "trade-dbie-commodity-partners-1990": "Commodity and partner",
+  "trade-partners-balance": "Partner", "trade-partners-balance-fy": "Partner", "trade-partners-long": "Partner", "trade-partners-long-inr": "Partner",
+  ...Object.fromEntries(["", "-fy", "-ytd"].flatMap((t) => ["", "-inr"].flatMap((c) => ["exports", "imports"].flatMap((f) => [[`trade-regions-${f}${t}${c}`, "Region"], [`trade-principal-${f}${t}${c}`, "Principal commodity"]])))),
+  "trade-principal-quantity-exports": "Principal commodity", "trade-principal-quantity-imports": "Principal commodity",
+  ...Object.fromEntries(["hs2", "hs4"].flatMap((l) => ["exports", "imports"].flatMap((f) => ["", "-ytd"].map((t) => [`trade-partner-${l}-${f}${t}`, `Partner and HS ${l.slice(2)}-digit product`])))),
+  // --- end trade ---
 };
 // the fallback, by what a bundle's slug says it is
 export const CUT_RULES = [

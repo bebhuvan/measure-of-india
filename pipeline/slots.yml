@@ -166,3 +166,40 @@ factories:
       The honest limits: registered and informal are separate instruments, never
       summed; GVA is nominal (prices as much as product); the data lands with a
       two-year lag. Must contain a plain "we do not know".
+
+# --- trade (lb/trade) ---
+trade:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [cross.trade.exportsBn, cross.trade.importsBn, cross.trade.exportsYoYPct, cross.trade.importsYoYPct]
+    minSeriesMentioned: 3          # exports, imports and the balance: the whole current bundle
+    # no mustName extremes: with three series, "extremes" is the balance and imports, which
+    # the floor above already requires; naming them as extremes produced pipeline jargon
+    mustAcknowledge: [contradictions]
+    brief: >
+      Two short paragraphs on the latest month of final tables: exports and imports in US$
+      billion and their change on the same month a year earlier; the trade deficit against a
+      year earlier. Then what drove it: name the chapters that rose and fell most (from
+      exportDrivers and importDrivers), and say what fuel (chapter 27) and gold imports did.
+      Name the largest deficit and surplus partners of the month. Close with the year so far
+      (April to the latest month) against the same months a year earlier. For how broad the
+      month was, use only exportBreadth, importBreadth and partners.countInDeficit /
+      countInSurplus as given (say it from India's side: "India ran a deficit with N
+      partners"); never infer a count from the deep-cut summaries. US$ billion
+      to one decimal; growth in per cent to one decimal. Write for a reader, never about the
+      data sheet: no "sheet", "line", "series" or "hottest".
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [cross.trade.quickEstimate.exportsBn]
+    brief: >
+      The honest limits. These are goods only: services are not in these figures (say no more
+      about services than that; the facts sheet has no services data). Dollar values mix price and volume: a rise in fuel or gold imports can be
+      dearer oil or gold, not more of it. Growth on a year earlier depends on that month too
+      (a base effect). Give the first estimate for the next month (quickEstimate) and say it
+      is provisional and will be revised. Must contain a sentence beginning "We do not know"
+      about something these tables cannot tell (for example, how much of the change is price).
+      Give no counts of chapters or partners here: the first slot carries them, and the
+      deep-cut "rising" counts compare with the previous month, not a year earlier.
+# --- end trade ---

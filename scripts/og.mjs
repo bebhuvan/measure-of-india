@@ -208,6 +208,15 @@ const CARDS = [
     yStep: 10, fmt: (v) => v.toFixed(1) + "%", mr: 220,
     foot: (b, S) => `Manufacturing ${S.mva_pct_gdp.data.at(-1).value.toFixed(1)}% of GDP · 2025 · Source: World Bank WDI`,
   },
+  // --- trade (lb/trade) ---
+  {
+    slug: "trade", bundleSlug: "trade-total",
+    keys: ["exports", "imports"], d0: 0, d1: 90, band: null, trend: null, scale: 1 / 1000,
+    yStep: 15, fmt: (v) => "$" + v.toFixed(1) + " bn", mr: 200,
+    prep: (S) => { S.exports = { ...S.exports, label: "Exports", color: "#2E4BD8" }; S.imports = { ...S.imports, label: "Imports", color: "#C47A16" }; },
+    foot: (b) => { const m = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][+b.dates.at(-1).slice(5, 7) - 1]; return `India's merchandise exports and imports, monthly, US$ billion, to ${m} ${b.dates.at(-1).slice(0, 4)}. Source: Ministry of Commerce, TradeStat (DGCI&S)`; },
+  },
+  // --- end trade ---
 ];
 
 await ensureFonts();

@@ -73,4 +73,11 @@ export const SERIES_KWS = {
     ["net value added", "net_value_added"],
     ["number of factories", "number_of_factories"],
   ],
+  // --- trade (lb/trade) ---
+  trade: [
+    ["exports", "exports"], ["exported", "exports"], ["sold", "exports"],
+    ["imports", "imports"], ["imported", "imports"], ["bought", "imports"],
+    ["trade deficit", "balance"], ["deficit", "balance"], ["trade balance", "balance"], ["balance", "balance"], ["surplus", "balance"],
+  ],
+  // --- end trade ---
 };
