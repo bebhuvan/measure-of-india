@@ -1273,5 +1273,177 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
   }
 }
 
+/* ---- climate (lb/climate): OWID and CCKP bundles, meta.dossier "climate" ----
+ * Two products feed one guide: sources.yml `climate` (OWID) and `climate-cckp` (CCKP).
+ * Each bundle declares its instrument as meta.base; the declared base comes from that
+ * entry's `bases` map. Comparator bundles (China, US, world) carry their own geo, listed
+ * in `comparators`. Ranges key on each series' unit; identities are physical (a minimum
+ * never above a mean, a higher threshold never counting more days) or published (CCKP's
+ * own 1991-2020 climatology, OWID's fuel split). */
+{
+  const OW = cfg.dossiers.climate, CK = cfg.dossiers["climate-cckp"];
+  const files = fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => /^climate-.*\.json$/.test(f)).map((f) => f.replace(/\.json$/, ""));
+  if (files.length < 40) fail(`climate: only ${files.length} bundles baked`);
+  const declaredBase = (slug, b) => {
+    if (b.meta.product === "cckp") return slug.startsWith("climate-cru") ? CK.bases.cru : slug.includes("cmip6") ? CK.bases.cmip6 : CK.bases.era5;
+    if (b.meta.product === "owid-co2-data") return OW.bases["owid-co2"];
+    if (b.meta.product === "owid-energy-data") return OW.bases["owid-energy"];
+    return OW.bases[slug] ?? OW.bases.default;
+  };
+  // unit -> plausible range (CCKP vocabulary, then OWID's free-text units)
+  const RANGE = { degC: [-45, 60], days: [0, 366], mm: [0, 16000], mm_day: [0, 200], pct: [0, 1000], wm2: [0, 1000], ms: [0, 80],
+    degday_c: [0, 12000], degday_f: [0, 22000], doy: [0, 366], index: [-6, 6], ratio: [0, 10], person_days: [-1e12, 1e13] };
+  const owidRange = (u = "") => /%/.test(u) ? [-100, 1e7] : /°C/.test(u) ? [-20, 50] : /^people$/.test(u) ? [0, 1e10]
+    : /\$/.test(u) && /international/.test(u) ? [0, 1e15] : /hectare|tonne|^ha$|^t$/i.test(u) && !/million|per/.test(u) ? [0, 1e10] : [-1e7, 1e7];
+  const anomalyUnit = (k) => /__change__|anomaly|change/.test(k);
+  let checked = 0;
+  for (const slug of files) {
+    const b = load(slug), m = b.meta;
+    if (m.dossier !== "climate") { fail(`${slug}: meta.dossier "${m.dossier}" is not climate`); continue; }
+    const key = m.product === "cckp" ? "climate-cckp" : "climate";
+    for (const k of ["source", "vintage", "base", "frequency"]) if (m[k] == null) fail(`${slug}: meta.${k} missing`);
+    const want = declaredBase(slug, b);
+    if (m.base !== want) fail(`${slug}: meta.base "${m.base}" != sources.yml "${want}" (one instrument per bundle)`);
+    const geos = ["IND", ...(cfg.dossiers[key].comparators ?? [])];
+    if (!geos.includes(m.geo)) fail(`${slug}: meta.geo "${m.geo}" is not India or a declared comparator`);
+    const proj = /cmip6|heat-deaths/.test(slug);
+    checkFreshness(b, slug, proj || /opinion|decadal|-chn|-usa|-world/.test(slug) ? { stale: false } : { staleAfter: key === "climate-cckp" ? CK.stale_after : m.frequency === "monthly" || m.frequency === "weekly" ? OW.stale_after : "2024-01" }, key);
+    const step = { monthly: 1, seasonal: 3, annual: 12 }[m.frequency];
+    if (step) checkCadence(b.dates, step, slug);
+    const seriesRange = {};
+    for (const [k, s] of Object.entries(b.series)) {
+      if (m.product === "cckp") {
+        const r = RANGE[s.unit];
+        if (!r) { fail(`${slug}.${k}: unit "${s.unit}" has no range`); continue; }
+        // a change from 1995-2014 can be negative: widen to the symmetric range
+        seriesRange[k] = anomalyUnit(k) || slug.startsWith("climate-cmip6-states") ? [-Math.max(Math.abs(r[0]), r[1]), Math.max(Math.abs(r[0]), r[1])] : r;
+      } else seriesRange[k] = owidRange(s.unit);
+    }
+    checkRange(b, -1e13, 1e13, slug, seriesRange);
+    checked++;
+  }
+  ok(`climate: ${checked} bundles checked for instrument, geography, cadence and unit ranges`);
+
+  const ord = (slug, b, keys, at, tol = 1e-6) => {
+    // values of keys[0] <= keys[1] <= ... at every date where all are published
+    let bad = 0;
+    for (let i = 0; i < b.dates.length; i++) {
+      const v = keys.map((k) => b.series[at(k)]?.data[i]);
+      if (v.some((x) => x == null)) continue;
+      for (let j = 1; j < v.length; j++) if (v[j - 1] > v[j] + tol) { bad++; if (bad <= 3) fail(`${slug}: ${at(keys[j - 1])} ${v[j - 1]} > ${at(keys[j])} ${v[j]} at ${b.dates[i]}`); }
+    }
+    return bad;
+  };
+  const NESTS = [["tasmin", "tas", "tasmax"], ["hd50", "hd45", "hd42", "hd40", "hd35", "hd30"], ["tr32", "tr29", "tr26", "tr23", "tr"],
+    ["hi41", "hi39", "hi37", "hi35"], ["wbt31", "wbt29", "wbt27", "wbt25"], ["esi35", "esi32", "esi29", "esi26"], ["r50mm", "r20mm", "r10mm"],
+    ["r99p", "r95p"], ["rx1day", "rx5day"], ["tx5day", "tx3day", "txx"]];
+  // ERA5 and CRU, India and states, every aggregation: nested thresholds and min <= mean <= max
+  let nests = 0;
+  for (const slug of files.filter((s) => /^climate-(era5|cru)/.test(s))) {
+    const b = load(slug);
+    const suffixes = slug.includes("states") ? [...new Set(Object.keys(b.series).map((k) => k.split("__")[1]))].map((s) => "__" + s) : [""];
+    for (const nest of NESTS) for (const suf of suffixes) {
+      if (!nest.every((v) => b.series[v + suf])) continue;
+      // 0.05: CCKP aggregates each index to places separately, so area averages of nested
+      // indices can cross by a few hundredths (seen: 0.04°C, tx5day over tx3day, Chandigarh)
+      if (!ord(slug, b, nest, (k) => k + suf, 0.05)) nests++;
+    }
+  }
+  ok(`climate: ${nests} nested-threshold and min/mean/max orderings hold (ERA5 and CRU, India and states)`);
+
+  // CMIP6: p10 <= median <= p90 for every projected series
+  let pcts = 0;
+  for (const slug of files.filter((s) => /^climate-cmip6-(?!states)/.test(s))) {
+    const b = load(slug);
+    const stems = new Set(Object.keys(b.series).filter((k) => k.endsWith("__median")).map((k) => k.slice(0, -"__median".length)));
+    for (const st of stems) if (b.series[st + "__p10"] && b.series[st + "__p90"] && !ord(slug, b, ["p10", "median", "p90"], (p) => `${st}__${p}`, 0.011)) pcts++;
+  }
+  ok(`climate: CMIP6 ensemble 10th <= median <= 90th percentile in ${pcts} projected series`);
+
+  // monthly -> annual: CRU annual rainfall is the sum of its months, temperature the mean
+  withBundle("climate-cru", (a) => withBundle("climate-cru-monthly", (mo) => {
+    let worstP = 0, worstT = 0, at = null;
+    a.dates.forEach((d, i) => {
+      const y = d.slice(0, 4), idx = mo.dates.map((x, j) => (x.startsWith(y) ? j : -1)).filter((j) => j >= 0);
+      if (idx.length !== 12) return;
+      const pr = idx.map((j) => mo.series.pr.data[j]), t = idx.map((j) => mo.series.tas.data[j]);
+      if (pr.some((v) => v == null) || t.some((v) => v == null) || a.series.pr.data[i] == null) return;
+      const dp = Math.abs(pr.reduce((s, v) => s + v, 0) - a.series.pr.data[i]) / a.series.pr.data[i];
+      const dt = Math.abs(t.reduce((s, v) => s + v, 0) / 12 - a.series.tas.data[i]);
+      if (dp > worstP) { worstP = dp; at = d; }
+      worstT = Math.max(worstT, dt);
+    });
+    if (worstP > 0.01 || worstT > 0.05) fail(`climate-cru: annual is not the sum/mean of its months (rain ${(worstP * 100).toFixed(2)}%, temperature ${worstT.toFixed(3)}°C, worst ${at})`);
+    else ok(`climate-cru: annual rain = sum of months (worst ${(worstP * 100).toFixed(2)}%), annual temperature = mean of months (worst ${worstT.toFixed(3)}°C)`);
+  }));
+
+  // CCKP's own published 1991-2020 climatology equals the mean of the annual series we baked
+  for (const [slug, v] of [["climate-era5-temp", "tas"], ["climate-era5-rain", "pr"], ["climate-era5-hotdays", "hd35"]]) withBundle(slug, (b) => {
+    const pub = b.crosscheck?.[`${v}_climatology_1991_2020`]?.IND;
+    if (pub == null) return fail(`${slug}: crosscheck ${v}_climatology_1991_2020 missing`);
+    const vals = b.dates.map((d, i) => (d >= "1991" && d < "2021" ? b.series[v].data[i] : null)).filter((x) => x != null);
+    const mean = vals.reduce((s, x) => s + x, 0) / vals.length;
+    const tol = v === "pr" ? Math.abs(pub) * 0.01 : 0.06;
+    if (vals.length !== 30 || Math.abs(mean - pub) > tol) fail(`${slug}: mean of 1991-2020 ${v} ${mean.toFixed(2)} != CCKP climatology ${pub}`);
+    else ok(`${slug}: 1991-2020 mean of ${v} ${mean.toFixed(2)} matches CCKP's published climatology ${pub}`);
+  });
+  withBundle("climate-era5-states-temp", (b) => {
+    const pub = b.crosscheck?.tas_climatology_1991_2020 ?? {};
+    let worst = 0, at = null, n = 0;
+    for (const [st, p] of Object.entries(pub)) {
+      const s = b.series[`tas__${st}`];
+      if (!s || st === "IND") continue;
+      const vals = b.dates.map((d, i) => (d >= "1991" && d < "2021" ? s.data[i] : null)).filter((x) => x != null);
+      const dv = Math.abs(vals.reduce((a, x) => a + x, 0) / vals.length - p);
+      n++; if (dv > worst) { worst = dv; at = st; }
+    }
+    if (n < 30 || worst > 0.06) fail(`climate-era5-states-temp: state means differ from CCKP's 1991-2020 climatology by ${worst.toFixed(3)}°C (${at}), ${n} states compared`);
+    else ok(`climate-era5-states-temp: ${n} state 1991-2020 means within ${worst.toFixed(3)}°C of CCKP's published climatology`);
+  });
+
+  // OWID CO2: the fuel split adds up to the total; per capita and world share follow
+  for (const slug of ["climate-co2", "climate-co2-chn", "climate-co2-usa", "climate-co2-world"]) withBundle(slug, (b) => {
+    const S = b.series, parts = ["coal_co2", "oil_co2", "gas_co2", "cement_co2", "flaring_co2", "other_industry_co2"].filter((k) => S[k]);
+    let worst = 0, at = null;
+    b.dates.forEach((d, i) => {
+      if (d < "1950" || S.co2.data[i] == null) return;
+      const sum = parts.reduce((s, k) => s + (S[k].data[i] ?? 0), 0);
+      const dv = Math.abs(sum - S.co2.data[i]) / S.co2.data[i];
+      if (dv > worst) { worst = dv; at = d; }
+    });
+    if (worst > 0.02) fail(`${slug}: fuels sum off total CO2 by ${(worst * 100).toFixed(2)}% at ${at}`);
+    else ok(`${slug}: coal+oil+gas+cement+flaring(+other) = total CO2 since 1950 (worst ${(worst * 100).toFixed(2)}%)`);
+    let wpc = 0;
+    b.dates.forEach((d, i) => {
+      const c = S.co2.data[i], p = S.population?.data[i], pc = S.co2_per_capita?.data[i];
+      if (c == null || p == null || pc == null || d < "1950") return;
+      wpc = Math.max(wpc, Math.abs((c * 1e6) / p - pc) / pc);
+    });
+    if (wpc > 0.01) fail(`${slug}: CO2 per capita deviates ${(wpc * 100).toFixed(2)}% from total / population`);
+  });
+  withBundle("climate-co2", (ind) => withBundle("climate-co2-world", (w) => {
+    let worst = 0;
+    ind.dates.forEach((d, i) => {
+      const j = w.dates.indexOf(d), sh = ind.series.share_global_co2?.data[i];
+      if (j < 0 || sh == null || d < "1950") return;
+      worst = Math.max(worst, Math.abs((100 * ind.series.co2.data[i]) / w.series.co2.data[j] - sh));
+    });
+    if (worst > 0.05) fail(`climate-co2: India's share of world CO2 deviates ${worst.toFixed(3)} pt from India / World`);
+    else ok(`climate-co2: share_global_co2 = India / World within ${worst.toFixed(3)} pt`);
+  }));
+  // OWID energy: fossil and low-carbon shares of electricity are complements
+  withBundle("climate-energy", (b) => {
+    let worst = 0, at = null;
+    b.dates.forEach((d, i) => {
+      const f = b.series.fossil_share_elec?.data[i], l = b.series.low_carbon_share_elec?.data[i];
+      if (f == null || l == null) return;
+      const dv = Math.abs(f + l - 100); if (dv > worst) { worst = dv; at = d; }
+    });
+    if (worst > 0.6) fail(`climate-energy: fossil + low-carbon electricity shares = ${(100 + worst).toFixed(2)} at ${at}`);
+    else ok(`climate-energy: fossil + low-carbon shares of electricity sum to 100 (worst ${worst.toFixed(2)} pt)`);
+  });
+}
+/* ---- end climate ---- */
+
 if (failures) { console.error(`\n${failures} validation failure(s)`); process.exit(1); }
 console.log("validate: all checks passed");
