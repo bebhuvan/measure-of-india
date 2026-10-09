@@ -24,7 +24,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { databankRoot, dbieReport } from "../databank.mjs";
-import { writeSeries, writeRaw, writeJson } from "../util.mjs";
+import { writeSeries, writeRaw, writeJson, readRaw } from "../util.mjs";
 
 const BASES = [
   { tag: "HPI-Q4:2008-09", slug: "housing-rbi-2009", base: "2008-09=100", label: "base Q4 2008-09 = 100" },
@@ -43,7 +43,7 @@ export async function buildRbihpi(root, dcfg, vintage, cfg) {
   const rawRel = "data/raw/housing-rbi-hpi.json";
   writeRaw(root, rawRel, { vintage, note: "RBI DBIE report 688, House Price Index, read from the Data Bank's DBIE mirror. Every row as read.",
     provenance: rep.provenance, header: rep.header, rows: rep.rows });
-  const V = JSON.parse(fs.readFileSync(path.join(root, rawRel), "utf8")).vintage;
+  const V = readRaw(root, rawRel).vintage;
 
   // (tag, city, date) -> { Final, Provisional }
   const cell = new Map();

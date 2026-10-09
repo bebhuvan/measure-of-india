@@ -51,7 +51,7 @@ import { fileURLToPath } from "node:url";
 import { mospi, mospiAll } from "../mospi.mjs";
 import { databankRoot } from "../databank.mjs";
 import { parseCsv, parseNumber } from "../tabular.mjs";
-import { writeSeries, writeRaw, writeJson, round2 } from "../util.mjs";
+import { writeSeries, writeRaw, writeJson, round2, readRaw } from "../util.mjs";
 
 const NAS_RAW = "data/raw/states-nas.json";
 const HBS_RAW = "data/raw/states-hbs.json";
@@ -144,7 +144,7 @@ async function fetchNas(root, vintage) {
     note: "MoSPI eSankhyiki nas/getNASData, account_code 2 (regional), base 2011-12, series Current, annual. Every row of every regional indicator served, as served. `listed` is the indicator list endpoint's own reply.",
     params: NAS_P, listed, indicators,
   });
-  return JSON.parse(fs.readFileSync(path.join(root, NAS_RAW), "utf8"));
+  return readRaw(root, NAS_RAW);
 }
 
 // GSVA/NSVA industry labels as served -> stable keys. An unknown label fails the build:
@@ -682,8 +682,8 @@ function buildHandbook(root, reports, vintage, dcfg) {
  *  indicator list plus the codes it serves, with every state and industry they return; the
  *  Data Bank's catalogue of Handbook reports). Never typed. */
 export function writeCatalogue(root) {
-  const nas = JSON.parse(fs.readFileSync(path.join(root, NAS_RAW), "utf8"));
-  const hbs = JSON.parse(fs.readFileSync(path.join(root, HBS_RAW), "utf8"));
+  const nas = readRaw(root, NAS_RAW);
+  const hbs = readRaw(root, HBS_RAW);
   const items = [];
   const listed = new Set(nas.listed.map((x) => x.code));
   for (const [code, rows] of Object.entries(nas.indicators).sort((a, b) => a[0] - b[0])) {
@@ -736,7 +736,7 @@ export async function buildStates(root, dcfg, vintage, cfg) {
     note: "RBI DBIE, Handbook of Statistics on Indian States: every report in the menu, read from the local Data Bank mirror (rbi_dbie_webi_rows). Per report: the DBIE catalogue row, the data provider read (Main / Query 1), its provenance (Data Bank fetch time and content sha256), the header and every row as served.",
     reports: Object.fromEntries(reports.map((r) => [r.id, { catalog: r.catalog, document: r.document, provider: r.provider, provenance: r.provenance, header: r.header, rows: r.rows }])),
   });
-  const hbsRaw = JSON.parse(fs.readFileSync(path.join(root, HBS_RAW), "utf8"));
+  const hbsRaw = readRaw(root, HBS_RAW);
   const { made, problems } = buildHandbook(root, reports, hbsRaw.vintage, dcfg);
   buildFinances(root, JSON.parse(fs.readFileSync(path.join(root, "data/series/states-gsdp-current.json"), "utf8")), hbsRaw.vintage > nasRaw.vintage ? hbsRaw.vintage : nasRaw.vintage, dcfg);
   const t21 = made.find((m) => m.table === "21" && m.base === "2011-12");

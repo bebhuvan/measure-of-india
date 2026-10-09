@@ -40,7 +40,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { databankRoot, databankQuery } from "../databank.mjs";
 import { dbieProvider, dbieProviders } from "../databank.mjs";
-import { writeRaw, writeSeries } from "../util.mjs";
+import { writeRaw, writeSeries, readRaw } from "../util.mjs";
 
 const VERSION_RANK = { Final: 5, Revised: 4, Provisional: 2, Forecast: 1 };
 const fyStart = (fy) => `${fy.slice(0, 4)}-04-01`;                       // "2011-12" -> "2011-04-01"
@@ -93,7 +93,7 @@ export async function buildDbieTrade(root, dcfg, vintage, cfg) {
       return [k, { provenance: r.provenance, header: r.header, rows: actuals(r.rows) }];
     })),
   });
-  const V = JSON.parse(fs.readFileSync(path.join(root, rawRel), "utf8")).vintage;
+  const V = readRaw(root, rawRel).vintage;
 
   const meta = (extra) => ({ dossier: "trade-dbie", source: dcfg.source_agency, vintage: V, mock: false, geo: "IND", releaseDate: null,
     revisionPolicy: dcfg.revision_policy, ...extra });

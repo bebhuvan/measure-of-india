@@ -614,7 +614,7 @@ for (const page of PAGES) {
 
   // learn pages: level figures trace to the published index levels
   if (page.url === "/learn/inflation/") {
-    const lv = JSON.parse(fs.readFileSync(path.join(ROOT, "data/raw/cpi-indices.json"), "utf8")).levels;
+    const lv = (await import(pathToFileURL(path.join(ROOT, "scripts/lib/util.mjs")).href)).readRaw(ROOT, "data/raw/cpi-indices.json").levels;
     const want = fmt.num1(lv["combined:general"]["2025-12"]);
     const got = doc.getElementById("n-lvl-now")?.textContent.trim();
     if (got !== want) fail(`${page.url} #n-lvl-now: rendered "${got}" != data "${want}"`);

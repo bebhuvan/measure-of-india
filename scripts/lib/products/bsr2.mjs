@@ -23,7 +23,7 @@
 //
 // Units: amounts are rupees in the source; baked as ₹ lakh crore (1e12 rupees), 3 decimals.
 import { databankRoot, dbieReport } from "../databank.mjs";
-import { writeSeries, writeRaw } from "../util.mjs";
+import { writeSeries, writeRaw, readRaw } from "../util.mjs";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -45,7 +45,7 @@ export async function buildBsr2(root, dcfg, vintage, cfg) {
     reports: Object.fromEntries(Object.entries(R).map(([id, r]) => [id, { provenance: r.provenance, header: r.header, rows: r.rows }])),
   });
   // vintage = the date the DATA last changed (writeRaw keeps the old stamp when nothing changed)
-  const V = JSON.parse(fs.readFileSync(path.join(root, rawRel), "utf8")).vintage;
+  const V = readRaw(root, rawRel).vintage;
   const meta = (extra) => ({ dossier: "deposits", frequency: "annual", base: "as on 31 March", unit: "inr_lakh_crore",
     source: dcfg.source_agency, vintage: V, mock: false, geo: "IND", releaseDate: null, revisionPolicy: dcfg.revision_policy, ...extra });
   const bundle = (rel, dates, series, extra) => {

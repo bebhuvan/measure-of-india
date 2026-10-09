@@ -186,7 +186,7 @@ const fqDate = (fq) => { const [fy, q] = fq.split(":"); const y0 = +fy.slice(0, 
 export async function buildCredit(root, dcfg, vintage, cfg) {
   const db = databankRoot(cfg?.families?.databank);
   const base = { dossier: "credit", source: dcfg.source_agency, mock: false, geo: "IND", releaseDate: null, revisionPolicy: dcfg.revision_policy };
-  const stamp = (rel, obj) => { writeRaw(root, rel, { vintage, ...obj }); return JSON.parse(fs.readFileSync(path.join(root, rel), "utf8")).vintage; };
+  const stamp = (rel, obj) => writeRaw(root, rel, { vintage, ...obj });   // writeRaw returns the stored vintage
 
   /* ======================================================================================
    * 1. Section 42: bank business, fortnightly (689), food credit (1130 DPd)

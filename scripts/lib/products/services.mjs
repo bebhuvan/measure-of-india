@@ -30,7 +30,7 @@ import { fileURLToPath } from "node:url";
 import YAML from "yaml";
 import { mospi, mospiAll } from "../mospi.mjs";
 import { databankRoot, dbieReport } from "../databank.mjs";
-import { writeSeries, writeRaw, monthAxis, quarterAxis, round2 } from "../util.mjs";
+import { writeSeries, writeRaw, monthAxis, quarterAxis, round2, readRaw } from "../util.mjs";
 
 const ACC = "#2E4BD8";
 const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
@@ -662,7 +662,7 @@ export async function buildCatalogue(root) {
   }
 
   // PLFS indicator 4: every cell table served
-  const jobs = JSON.parse(fs.readFileSync(path.join(root, "data/raw/services-jobs.json"), "utf8"));
+  const jobs = readRaw(root, "data/raw/services-jobs.json");
   for (const [design, rows] of [["ay", jobs.agriculture_years], ["cy", jobs.calendar_years]]) {
     const s2 = new Set();
     for (const r of rows) {

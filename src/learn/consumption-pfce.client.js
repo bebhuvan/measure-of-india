@@ -5,7 +5,7 @@
 
 import * as Plot from "@observablehq/plot";
 import bundle from "../../data/series/gdp.json";
-import levels from "../../data/raw/nas-levels.json";
+import levels from "../../data/raw/nas-levels.json.gz";
 import { MONO as mono, hydrate, wireTools, a11y, addCrosshair, troughOf, peakOf } from "../charts/plumbing.js";
 
 const S = hydrate(bundle);
