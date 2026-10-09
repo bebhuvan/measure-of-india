@@ -16,7 +16,8 @@ const pick = (slug, re) => { const b = load(slug); return { meta: { vintage: b.m
 const PICK = {
   "services-bop-quarterly": pick("services-bop-quarterly", /^1_a_b(_\d+)?_(credit|debit|net)$/),
   "services-invisibles-quarterly": pick("services-invisibles-quarterly", /^r(41|56|57|60|63|68)$/),
-  "services-jobs-cy": pick("services-jobs-cy", /^(sec_[a-u]__(person|female|male)_all_ps|tertiary__(person|male|female)_(all|rural|urban)_cws)$/),
+  // the revamped PLFS design's calendar years only: 2023-24 (original design) is services-jobs-cy, a different ruler
+  "services-jobs-cy25": pick("services-jobs-cy25", /^(sec_[a-u]__(person|female|male)_all_ps|tertiary__(person|male|female)_(all|rural|urban)_cws)$/),
   "services-jobs-ay": pick("services-jobs-ay", /^(own_account|helper|regular|casual|self_employed)__(trade|transport|accommodation_food|other_services|tertiary|manufacturing)__person_all_ps$/),
   "services-asuse": pick("services-asuse", /^(establishments__estimated_no_of_establishments__.*__combined__all|workers__all__all__.*__combined__all|gva_per_worker__.*__(combined|rural|urban)__all)$/),
   "services-asuse-profile": pick("services-asuse-profile", /^location__.*__combined__all$/),
@@ -413,7 +414,7 @@ const fy = (p) => `${p.year}-${String((+p.year + 1) % 100).padStart(2, "0")}`;
     </div>
   </section>
 
-  <!-- § 06 granular cuts: who works in services. Inputs: services-jobs-cy, services-jobs-ay -->
+  <!-- § 06 granular cuts: who works in services. Inputs: services-jobs-cy25, services-jobs-ay (services-jobs-cy in downloads) -->
   <section>
     <div class="sec-head"><span class="no">06</span><h2>Who does the work</h2><span class="line"></span><span class="unit">PLFS, share of workers, aged 15 and over</span></div>
     <div class="prose">
@@ -436,7 +437,7 @@ const fy = (p) => `${p.year}-${String((+p.year + 1) % 100).padStart(2, "0")}`;
           </div>
           <div class="plotzone"><div id="plot-jobs" style="position:relative"></div></div>
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, Periodic Labour Force Survey, calendar-year estimates, percentage distribution of workers by industry (eSankhyiki).</span>
+            <span class="src">Source: MoSPI, Periodic Labour Force Survey, calendar-year estimates on the survey's revamped design (from January 2025), percentage distribution of workers by industry (eSankhyiki); 2023 and 2024, on the original design, are a different ruler and are in the data downloads.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -459,21 +460,21 @@ const fy = (p) => `${p.year}-${String((+p.year + 1) % 100).padStart(2, "0")}`;
         <div class="plate-head">
           <div class="t">
             <h3>In cities, services are most work; in villages, a small part</h3>
-            <div class="sub">Services' share of workers, current weekly status, by sex and place. Blue: <span id="who-y">–</span>; grey: <span id="who-y0">–</span>.</div>
+            <div class="sub">Services' share of workers, current weekly status, by sex and place, <span id="who-y">–</span>, the survey's revamped design.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-who">–</div><div class="c">of urban women workers are in services</div></div>
         </div>
         <div class="frame">
           <div class="plotzone"><div id="plot-who" style="position:relative"></div></div>
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, Periodic Labour Force Survey, calendar-year estimates, distribution of workers by broad industry, current weekly status (eSankhyiki).</span>
+            <span class="src">Source: MoSPI, Periodic Labour Force Survey, calendar-year estimates on the revamped design, distribution of workers by broad industry, current weekly status (eSankhyiki); the original design's 2023 and 2024 figures are a different ruler, in the data downloads.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Current weekly status counts what a person did in the week before the survey, which catches seasonal work better than the yearly measure. The calendar-year estimates come from the survey's new design, which visits households every month; the older yearly reports (July to June) are a different design and are kept separate in the data downloads.</p>
+            <p>Current weekly status counts what a person did in the week before the survey, which catches seasonal work better than the yearly measure. MoSPI redesigned the survey from January 2025: a new sample whose households are visited four months running. These figures are from the new design. The calendar years 2023 and 2024 and the older yearly reports (July to June) come from the original design; they are a different ruler, kept separate in the data downloads, and are not drawn here beside the new one, because a difference between them would mix the change in work with the change in the survey.</p>
           </div>
           <div class="now">
             <span class="mk">As of 2025</span>
@@ -658,7 +659,7 @@ const fy = (p) => `${p.year}-${String((+p.year + 1) % 100).padStart(2, "0")}`;
       </div>
       <div>
         <h6>Revisions and breaks</h6>
-        <p>Never joined: the 2011-12 and 2022-23 national accounts bases; the RBI's older invisibles categories and BPM6; PLFS agriculture-year reports and calendar-year estimates; ASUSE financial-year rounds and the 2025 calendar-year round. On the 2011-12 base, MoSPI serves the three combined service groups only as advance and provisional estimates while their parts carry later revisions; the services total uses the parts where they exist. The RBI's 1985-86 services row does not add up as published (a five-million-dollar gap) and is kept as published.</p>
+        <p>Never joined: the 2011-12 and 2022-23 national accounts bases; the RBI's older invisibles categories and BPM6; PLFS agriculture-year reports, the original design's calendar-year estimates (2023, 2024) and the revamped design's (2025 on: MoSPI redesigned the survey from January 2025); ASUSE financial-year rounds and the 2025 calendar-year round. On the 2011-12 base, MoSPI serves the three combined service groups only as advance and provisional estimates while their parts carry later revisions; the services total uses the parts where they exist. The RBI's 1985-86 services row does not add up as published (a five-million-dollar gap) and is kept as published.</p>
       </div>
       <div>
         <h6>This guide</h6>

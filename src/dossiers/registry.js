@@ -507,7 +507,7 @@ export const DOSSIERS = [
     bundles: ["services-gva-2022-share", "services-gva-2022-growth", "services-gva-2022-level", "services-gva-2011-share", "services-gva-2011-growth", "services-gva-2011-level",
       "gdp-2022-industries", "isp", "services-isp-growth", "services-isp-annual",
       "services-trade-monthly", "services-bop-quarterly", "services-invisibles-quarterly", "services-bop-annual",
-      "services-jobs-cy", "services-jobs-ay", "services-asuse", "services-asuse-profile", "services-asuse-2025", "services-asuse-profile-2025", "asuse-sectors"],
+      "services-jobs-cy25", "services-jobs-cy", "services-jobs-ay", "services-asuse", "services-asuse-profile", "services-asuse-2025", "services-asuse-profile-2025", "asuse-sectors"],
   },
   // ---- end services ----
   // --- states (state economies) ---
