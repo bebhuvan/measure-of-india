@@ -172,7 +172,7 @@ climate:
   - id: current-reading.what-the-print-says
     maxSentences: 7
     dateStamp: true
-    requiredFigures: [temperature_anomaly.latest, temperature_2m.latest, climate.sameMonth.rank]
+    requiredFigures: [temperature_anomaly.latest, temperature_2m.latest, climate.last12Mean]
     minSeriesMentioned: 2        # the anomaly and the average temperature it is measured against
     mustName: [extremes]
     mustAcknowledge: [contradictions]

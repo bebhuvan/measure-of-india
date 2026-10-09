@@ -23,7 +23,9 @@
 //     its first season (Dec 1949 to Feb 1950) is a fill value.
 //   - The simplified wet-bulb globe temperature family (swbgt*) in ERA5 serves fill-like
 //     numbers (about 1e18) as values for 2024 and 2025, and readings below the wet-bulb
-//     temperature they should exceed. Not baked: recorded `blocked` in the ledger.
+//     temperature they should exceed. CMIP6 serves no swbgt for India, and its wet-bulb
+//     family (wbt*) is corrupt: an India mean of about 8°C against ERA5's 19°C, zero days
+//     above every threshold. None of these is baked: recorded `blocked` in the ledger.
 //   - An unknown facet combination returns status "success" with empty data, so every
 //     call asserts the variables it asked for.
 //
@@ -207,7 +209,7 @@ function assemble(rows, keyOf, labelOf, freq, meta) {
     const first = data.findIndex((v) => v != null), last = data.length - 1 - [...data].reverse().findIndex((v) => v != null);
     const gaps = dates.filter((d, i) => i > first && i < last && data[i] == null);
     const v = VARS[r.variable];
-    series[k] = { name: `cckp_${k}`, label: labelOf(r), unit: v.unit, color: GREYS[gi++ % GREYS.length], data,
+    series[k] = { name: `cckp_${k}`, label: labelOf(r), unit: v.unit, group: v.label, color: GREYS[gi++ % GREYS.length], data,
       ...(gaps.length ? { gaps, gapsNote: "CCKP serves no valid value for these periods (a missing value or its fill code)." } : {}) };
   }
   return { meta: { ...meta, latestPeriod: freq === "annual" ? dates.at(-1).slice(0, 4) : dates.at(-1).slice(0, 7) }, dates, series };
@@ -219,7 +221,7 @@ export async function buildCckp(root, dcfg, vintage) {
   const F = dcfg.fetch;
   const raw = {};
   const bundles = {};
-  const skip = new Set(F.skip_vars ?? []);
+  const skip = (coll, v) => (F.skip_vars?.[coll] ?? []).includes(v);
   const metaBase = (base, freq, coverage, note) => ({
     dossier: "climate", source: "World Bank Climate Change Knowledge Portal", product: "cckp", base, frequency: freq,
     unit: "see each series", vintage, geo: "IND", releaseDate: null, mock: false, coverage, note,
@@ -235,7 +237,7 @@ export async function buildCckp(root, dcfg, vintage) {
   raw.geocodes = Object.fromEntries(stateCodes.map((c) => [c, names.get(c)]));
 
   const disc = { era5: await discover("era5"), cru: await discover("cru"), cmip6: await discover("cmip6") };
-  const varsIn = (coll, theme) => Object.keys(disc[coll]).filter((v) => !MAP_ONLY.has(v) && !skip.has(v) && VARS[v]?.theme === theme).sort();
+  const varsIn = (coll, theme) => Object.keys(disc[coll]).filter((v) => !MAP_ONLY.has(v) && !skip(coll, v) && VARS[v]?.theme === theme).sort();
   for (const coll of Object.keys(disc)) for (const v of Object.keys(disc[coll])) if (!MAP_ONLY.has(v) && !VARS[v]) throw new Error(`cckp: variable "${v}" in ${coll} has no display metadata (scripts/lib/products/cckp-vars.mjs)`);
 
   // ERA5 timeseries period, per aggregation: the newest period CCKP has published
@@ -257,7 +259,7 @@ export async function buildCckp(root, dcfg, vintage) {
         const missing = vs.filter((v) => !rows.some((r) => r.variable === v));
         if (missing.length) console.warn(`cckp: ERA5 ${agg} served nothing for ${missing.join(", ")}`);
       }
-      const slug = `climate-era5-${theme}${agg === "annual" ? "" : "-" + agg}`;
+      const slug = agg === "seasonal" ? `climate-seasons-era5-${theme}` : `climate-era5-${theme}${agg === "annual" ? "" : "-" + agg}`;
       const b = assemble(rows, (r) => r.variable, (r) => VARS[r.variable].label, agg, metaBase(dcfg.bases.era5, agg === "seasonal" ? "seasonal" : agg,
         `India, ${THEMES[theme].toLowerCase()}: ${vars.length} ERA5 indices, ${agg}, CCKP area average over India's land.`,
         `ERA5 reanalysis (Copernicus Climate Change Service, ECMWF), aggregated by the World Bank CCKP. ${agg === "seasonal" ? seasonNote + " " : ""}Missing values (a fill code) are left empty.`));
@@ -301,7 +303,7 @@ export async function buildCckp(root, dcfg, vintage) {
       const b = assemble(rows, (r) => r.variable, (r) => VARS[r.variable].label, agg, metaBase(dcfg.bases.cru, agg,
         `India: ${vars.length} CRU TS ${ver} variables, ${agg}, ${period}, CCKP area average.`,
         `CRU TS ${ver}, Climatic Research Unit, University of East Anglia: monthly station readings interpolated to a 0.5° grid, aggregated by CCKP. ${agg === "seasonal" ? seasonNote : ""}`));
-      if (b) bundles[`climate-cru${agg === "annual" ? "" : "-" + agg}`] = b;
+      if (b) bundles[agg === "seasonal" ? "climate-seasons-cru" : `climate-cru${agg === "annual" ? "" : "-" + agg}`] = b;
       if (agg === "annual") {
         const rs = await cckp(`cru-x0.5_timeseries_${vars.join(",")}_timeseries_annual_${period}_mean_historical_cru_ts${ver}_mean`, stateCodes);
         raw[`cru:annual:${period}:states`] = rs.data;
@@ -370,7 +372,7 @@ export async function buildCckp(root, dcfg, vintage) {
     const ws = assemble(reDate(winRows), (r) => `${r.variable}__${r.product === "anomaly" ? "change" : "level"}__${r.scenario}__${r.percentile}`,
       (r) => `${VARS[r.variable].label}, ${r.product === "anomaly" ? "change from 1995-2014" : "20-year average"}, ${SSP_LABEL[r.scenario]}, ${PCT_LABEL[r.percentile]}`, "windows",
       metaBase(dcfg.bases.cmip6, "irregular", `India, ${THEMES[theme].toLowerCase()}: CMIP6 20-year averages and changes from 1995-2014, for ${WINDOWS.join(", ")} (each dated by its first year; 1995 is the 1995-2014 reference).`, projNote));
-    if (ws) bundles[`climate-cmip6-${theme}-windows`] = ws;
+    if (ws) bundles[`climate-cmip6-windows-${theme}`] = ws;
     const st = assemble(reDate(stRows), (r) => `${r.variable}__${r.scenario}__${stateKey(r.geo)}`,
       (r) => `${VARS[r.variable].label}, change from 1995-2014, ${SSP_LABEL[r.scenario]}, median, ${names.get(r.geo)}`, "windows",
       metaBase(dcfg.bases.cmip6, "irregular", `States and union territories: CMIP6 change from 1995-2014 by 20-year window (dated by first year), ensemble median, ${THEMES[theme].toLowerCase()}.`, projNote));

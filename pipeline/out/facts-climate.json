@@ -6,9 +6,21 @@
  "latestPeriod": "Aug 2026",
  "releaseDate": "2026-09-11",
  "bands": null,
+ "ruler": {
+  "bundle": "climate-temp-monthly",
+  "base": "ERA5 reanalysis, OWID country average",
+  "product": "climate",
+  "window": {
+   "from": "1940-01",
+   "to": null
+  },
+  "current": true,
+  "agencyLink": null
+ },
  "series": {
   "temperature_2m": {
    "label": "Average surface temperature",
+   "ruler": "ERA5 reanalysis, OWID country average, climate-temp-monthly",
    "levelBased": false,
    "latest": {
     "value": 26.991652,
@@ -57,6 +69,7 @@
   },
   "temperature_anomaly": {
    "label": "Temperature anomaly",
+   "ruler": "ERA5 reanalysis, OWID country average, climate-temp-monthly",
    "levelBased": false,
    "latest": {
     "value": 0.6251755,
@@ -179,6 +192,17 @@
    "bundle": "climate-temp-annual",
    "seriesCount": 2,
    "base": "ERA5 reanalysis, OWID country average",
+   "ruler": {
+    "bundle": "climate-temp-annual",
+    "base": "ERA5 reanalysis, OWID country average",
+    "product": "climate",
+    "window": {
+     "from": "1940-01",
+     "to": null
+    },
+    "current": true,
+    "agencyLink": null
+   },
    "coverage": "India: OWID dataset surface_temperature_annual_average (2 series), 1940 to 2025.",
    "top": {
     "key": "temperature_2m",
@@ -220,6 +244,17 @@
    "bundle": "climate-rain-owid",
    "seriesCount": 2,
    "base": "ERA5 reanalysis, OWID country average",
+   "ruler": {
+    "bundle": "climate-rain-owid",
+    "base": "ERA5 reanalysis, OWID country average",
+    "product": "climate",
+    "window": {
+     "from": "1940-01",
+     "to": null
+    },
+    "current": true,
+    "agencyLink": null
+   },
    "coverage": "India: OWID dataset total_precipitation_annual (2 series), 1940 to 2025.",
    "top": {
     "key": "precipitation_anomaly",

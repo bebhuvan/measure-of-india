@@ -1088,9 +1088,13 @@ dossiers:
       cmip6: "CMIP6 ensemble, CCKP 0.25-degree"
     fetch:
       cmip6_windows: ["2020-2039", "2040-2059", "2060-2079", "2080-2099"]
-      # simplified wet-bulb globe temperature: ERA5 serves corrupt values (see the adapter
-      # header and data/coverage/climate-cckp.yml, status blocked)
-      skip_vars: [swbgt, swbgt26, swbgt29, swbgt32, swbgtx1day, swbgtx3day, swbgtx5day]
+      # variables not baked, per collection (status blocked in data/coverage/climate-cckp.yml):
+      # ERA5 simplified WBGT serves fill-like values for 2024-25 and readings below wet-bulb;
+      # CMIP6 serves no WBGT for India, and its wet-bulb family is corrupt (an India mean of
+      # about 8°C against ERA5's 19°C, zero days above every threshold), checked 2026-10-09
+      skip_vars:
+        era5: [swbgt, swbgt26, swbgt29, swbgt32, swbgtx1day, swbgtx3day, swbgtx5day]
+        cmip6: [swbgt, swbgt26, swbgt29, swbgt32, wbt, wbt25, wbt27, wbt29, wbt31]
   # --- end climate ---
 
 
@@ -1215,7 +1219,7 @@ seams:
     - base: "CRU TS station grid, CCKP 0.5-degree"
       from: "1901-01"
       to: null
-      bundles: [climate-cru, climate-cru-monthly, climate-cru-seasonal, climate-cru-states]
+      bundles: [climate-cru, climate-cru-monthly, climate-cru-states, climate-seasons-cru]
     - base: "ERA5 reanalysis, OWID country average"
       from: "1940-01"
       to: null
@@ -1223,11 +1227,11 @@ seams:
     - base: "CMIP6 ensemble, CCKP 0.25-degree"
       from: "1950-01"
       to: null
-      bundles: [climate-cmip6-energy, climate-cmip6-energy-hist, climate-cmip6-energy-windows, climate-cmip6-heatstress, climate-cmip6-heatstress-hist, climate-cmip6-heatstress-windows, climate-cmip6-hotdays, climate-cmip6-hotdays-hist, climate-cmip6-hotdays-windows, climate-cmip6-rain, climate-cmip6-rain-hist, climate-cmip6-rain-windows, climate-cmip6-states-energy, climate-cmip6-states-heatstress, climate-cmip6-states-hotdays, climate-cmip6-states-rain, climate-cmip6-states-temp, climate-cmip6-temp, climate-cmip6-temp-hist, climate-cmip6-temp-windows]
+      bundles: [climate-cmip6-energy, climate-cmip6-energy-hist, climate-cmip6-heatstress, climate-cmip6-heatstress-hist, climate-cmip6-hotdays, climate-cmip6-hotdays-hist, climate-cmip6-rain, climate-cmip6-rain-hist, climate-cmip6-states-energy, climate-cmip6-states-heatstress, climate-cmip6-states-hotdays, climate-cmip6-states-rain, climate-cmip6-states-temp, climate-cmip6-temp, climate-cmip6-temp-hist, climate-cmip6-windows-energy, climate-cmip6-windows-heatstress, climate-cmip6-windows-hotdays, climate-cmip6-windows-rain, climate-cmip6-windows-temp]
     - base: "ERA5 reanalysis, CCKP 0.25-degree"
       from: "1950-01"
       to: null
-      bundles: [climate-era5-energy, climate-era5-energy-monthly, climate-era5-energy-seasonal, climate-era5-heatstress, climate-era5-heatstress-monthly, climate-era5-heatstress-seasonal, climate-era5-hotdays, climate-era5-hotdays-monthly, climate-era5-hotdays-seasonal, climate-era5-rain, climate-era5-rain-monthly, climate-era5-rain-seasonal, climate-era5-states-energy, climate-era5-states-heatstress, climate-era5-states-hotdays, climate-era5-states-rain, climate-era5-states-temp, climate-era5-temp, climate-era5-temp-monthly, climate-era5-temp-seasonal]
+      bundles: [climate-era5-energy, climate-era5-energy-monthly, climate-era5-heatstress, climate-era5-heatstress-monthly, climate-era5-hotdays, climate-era5-hotdays-monthly, climate-era5-rain, climate-era5-rain-monthly, climate-era5-states-energy, climate-era5-states-heatstress, climate-era5-states-hotdays, climate-era5-states-rain, climate-era5-states-temp, climate-era5-temp, climate-era5-temp-monthly, climate-seasons-era5-energy, climate-seasons-era5-heatstress, climate-seasons-era5-hotdays, climate-seasons-era5-rain, climate-seasons-era5-temp]
     - base: "GWIS satellite burned area, via OWID"
       from: "2002-01"
       to: null

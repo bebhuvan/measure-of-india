@@ -166,7 +166,7 @@ export function climateData() {
   };
 
   /* ---------- projections (CMIP6; never joined to observations) ---------- */
-  const W = B("climate-cmip6-temp-windows"), WH = B("climate-cmip6-hotdays-windows"), WS = B("climate-cmip6-heatstress-windows"), WE = B("climate-cmip6-energy-windows");
+  const W = B("climate-cmip6-windows-temp"), WH = B("climate-cmip6-windows-hotdays"), WS = B("climate-cmip6-windows-heatstress"), WE = B("climate-cmip6-windows-energy");
   const SSPS = ["ssp126", "ssp245", "ssp370", "ssp585"];
   const WINS = W.dates.filter((d) => d !== "1995-01-01").map((d) => yr(d));
   const wval = (b, k, y) => b.series[k]?.data[b.dates.indexOf(`${y}-01-01`)] ?? null;

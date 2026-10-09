@@ -7,7 +7,7 @@
 // variable cannot slip into a bundle unlabelled.
 //
 // unit vocabulary (validate.mjs ranges key on it): degC, days, mm, mm_day, pct, wm2, ms,
-// degday_c, degday_f, doy (day of the year), index, ratio, person_days
+// degday_c, degday_f, doy (day of the year), index, risk_ratio, person_days
 
 export const THEMES = {
   temp: "Temperature",
@@ -33,7 +33,7 @@ export const VARS = {
   id: { theme: "temp", unit: "days", label: "Ice days (maximum below 0°C)" },
   freezethaw: { theme: "temp", unit: "days", label: "Freeze-thaw days (crossing 0°C within a day)" },
   wchilln17f: { theme: "temp", unit: "days", label: "Days with wind chill below −17°F" },
-  tx84rr: { theme: "temp", unit: "ratio", label: "Heat excess mortality risk (CCKP index)" },
+  tx84rr: { theme: "temp", unit: "risk_ratio", label: "Heat excess mortality risk (CCKP index)" },
   gsl: { theme: "temp", unit: "days", label: "Growing season length (days above 5°C)" },
   gslstart: { theme: "temp", unit: "doy", label: "Growing season start (day of the year)" },
   gslend: { theme: "temp", unit: "doy", label: "Growing season end (day of the year)" },
@@ -129,4 +129,4 @@ export const VARS = {
 // places (the API returns nothing for them): catalogued, never baked
 export const MAP_ONLY = new Set(["hdcat", "hdiff", "hdtr", "hdtrhi", "hdtrhipopdensitycat", "hdtrpopdensitycat", "hicat", "trcat", "rsns"]);
 
-export const UNIT_LABEL = { degC: "°C", days: "days", mm: "mm", mm_day: "mm per wet day", pct: "%", wm2: "W/m²", ms: "m/s", degday_c: "°C degree days", degday_f: "°F degree days", doy: "day of year", index: "index", ratio: "ratio", person_days: "person-days" };
+export const UNIT_LABEL = { degC: "°C", days: "days", mm: "mm", mm_day: "mm per wet day", pct: "%", wm2: "W/m²", ms: "m/s", degday_c: "°C degree days", degday_f: "°F degree days", doy: "day of year", index: "index", risk_ratio: "ratio", person_days: "person-days" };

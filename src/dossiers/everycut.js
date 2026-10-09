@@ -69,6 +69,33 @@ export const UNITS = {
   thousand_tonne: { kind: "pct", fmt: (v) => big(v * 1000, " tonnes") },
   thousand_kwh: { kind: "pct", fmt: (v) => grp(v / 1e6, 2) + " billion kWh", note: "published in thousand kWh" },
   kg_per_month: { kind: "pct", fmt: (v) => v.toFixed(2) + " kg", note: "a month" },
+  // climate (lb/climate): CCKP climate indices and OWID emissions and energy
+  degc: { kind: "diff", fmt: (v) => v.toFixed(2) + "°C" },   // bundles write degC; unitOf lowercases
+  days: { kind: "diff", fmt: (v) => grp(v, 1) + " days", note: "days a year (or in the period)" },
+  mm: { kind: "pct", fmt: (v) => grp(v, 1) + " mm" },
+  mm_day: { kind: "diff", fmt: (v) => v.toFixed(2) + " mm", note: "per wet day" },
+  wm2: { kind: "diff", fmt: (v) => grp(v, 1) + " W/m²" },
+  ms: { kind: "diff", fmt: (v) => v.toFixed(2) + " m/s" },
+  degday_c: { kind: "pct", fmt: (v) => grp(v) + " °C-days", note: "degree days" },
+  degday_f: { kind: "pct", fmt: (v) => grp(v) + " °F-days", note: "degree days" },
+  doy: { kind: "diff", fmt: (v) => grp(v, 1), note: "day of the year" },
+  risk_ratio: { kind: "diff", fmt: (v) => v.toFixed(2), note: "risk ratio" },
+  person_days: { kind: "diff", fmt: (v) => big(v, ""), note: "person-days" },
+  mt: { kind: "pct", fmt: (v) => grp(v, 1) + " Mt" },
+  mt_co2e: { kind: "pct", fmt: (v) => grp(v, 1) + " Mt", note: "CO₂-equivalent" },
+  t_per_person: { kind: "diff", fmt: (v) => v.toFixed(2) + " t", note: "per person" },
+  t_co2e_per_person: { kind: "diff", fmt: (v) => v.toFixed(2) + " t", note: "CO₂-equivalent per person" },
+  intl_usd_2011: { kind: "pct", fmt: (v) => "$" + grp(v / 1e9, 1) + " bn", note: "international-$, 2011 prices" },
+  kg_per_intl_usd: { kind: "diff", fmt: (v) => v.toFixed(3) + " kg", note: "per international-$" },
+  g_per_kwh: { kind: "diff", fmt: (v) => grp(v) + " g", note: "per kWh" },
+  g_co2e_per_kwh: { kind: "diff", fmt: (v) => grp(v) + " g", note: "CO₂-equivalent per kWh" },
+  kwh_per_person: { kind: "pct", fmt: (v) => grp(v) + " kWh", note: "per person" },
+  kwh_per_intl_usd: { kind: "diff", fmt: (v) => v.toFixed(2) + " kWh", note: "per international-$" },
+  twh: { kind: "pct", fmt: (v) => grp(v, 1) + " TWh" },
+  hectares: { kind: "pct", fmt: (v) => big(v, " ha") },
+  tonnes: { kind: "pct", fmt: (v) => big(v, " tonnes") },
+  per_100k: { kind: "diff", fmt: (v) => v.toFixed(1), note: "per 1,00,000 people" },
+  // end climate
 };
 
 // series.unit, then what the series name says, then the bundle's meta.unit: a bundle-level
@@ -144,6 +171,16 @@ export const CUT_BY_BUNDLE = {
   "deposits-owners": "Owner and account", "deposits-owners-2005": "Owner and account", "deposits-population": "Population group",
   "deposits-term-rates": "Interest rate band", "deposits-term-maturity": "Maturity", "deposits-term-size": "Deposit size",
   "deposits-term-size-2026": "Deposit size",
+  // climate (lb/climate); state bundles fall to the "-states" rule
+  ...Object.fromEntries([
+    ...["co2", "energy"].flatMap((d) => [[`climate-${d}-chn`, "China"], [`climate-${d}-usa`, "United States"], [`climate-${d}-world`, "World"]]),
+    ...["temp", "hotdays", "heatstress", "rain", "energy"].flatMap((t) => [
+      [`climate-seasons-era5-${t}`, "Season"], [`climate-cmip6-${t}`, "Scenario and model spread"],
+      [`climate-cmip6-${t}-hist`, "Model historical runs"], [`climate-cmip6-windows-${t}`, "Scenario, 20-year window"],
+      [`climate-cmip6-states-${t}`, "State and scenario, 20-year window"]]),
+    ["climate-seasons-cru", "Season"], ["climate-burned-area", "Land type"], ["climate-warming-contrib", "Gas and source"],
+    ["climate-opinion-youth", "Survey question"], ["climate-heat-deaths", "Projection year"],
+  ]),
 };
 // the fallback, by what a bundle's slug says it is
 export const CUT_RULES = [
@@ -177,6 +214,13 @@ function groupOf(s) {
 // survey rounds dated by one year on the axis, named as the source names them
 export const PERIOD_LABELS = {
   "nfhs-": { "2016-01-01": "NFHS-4, 2015-16", "2020-01-01": "NFHS-5, 2019-21" },
+  // climate (lb/climate): seasons dated by their first month (December by the later year),
+  // CMIP6 20-year windows dated by their first year, OWID decades by their first year
+  "climate-seasons-": Object.fromEntries(Array.from({ length: 130 }, (_, i) => 1900 + i).flatMap((y) => [
+    [`${y}-01-01`, `Dec ${y - 1} to Feb ${y}`], [`${y}-04-01`, `Mar to May ${y}`], [`${y}-07-01`, `Jun to Aug ${y}`], [`${y}-10-01`, `Sep to Nov ${y}`]])),
+  "climate-cmip6-windows-": { "1995-01-01": "1995-2014", "2020-01-01": "2020-2039", "2040-01-01": "2040-2059", "2060-01-01": "2060-2079", "2080-01-01": "2080-2099" },
+  "climate-cmip6-states-": { "2020-01-01": "2020-2039", "2040-01-01": "2040-2059", "2060-01-01": "2060-2079", "2080-01-01": "2080-2099" },
+  "climate-temp-decadal": Object.fromEntries(Array.from({ length: 10 }, (_, i) => [`${1940 + 10 * i}-01-01`, `${1940 + 10 * i}s`])),
 };
 export function periodLabel(slug, bundle, iso) {
   for (const [pre, map] of Object.entries(PERIOD_LABELS)) if (slug.startsWith(pre) && map[iso]) return map[iso];

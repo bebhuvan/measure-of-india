@@ -6,7 +6,7 @@
 // joined; projections are hollow and dashed.
 
 import * as Plot from "@observablehq/plot";
-import { MONO as sans, a11y, addCrosshair, spark, downloadSVG, downloadPNG, saveBlob, fmt } from "../charts/plumbing.js";
+import { MONO as sans, a11y, addCrosshair, spark, downloadSVG, downloadPNG, saveBlob, seamMarks, fmt } from "../charts/plumbing.js";
 
 const C = JSON.parse(document.getElementById("climate-data")?.textContent ?? "null");
 const INK = "#161A22", GRID = "#F0F2F5", BASE = "#D3D7DE", MUTED = "#878D99", ACC = "#2E4BD8", GOLD = "#C47A16";
@@ -86,7 +86,7 @@ if (C) {
   });
   document.getElementById("legend-stripes").innerHTML = [-2, -1, 0, 1, 2].map((v) => {
     const c = v < 0 ? (v === -2 ? "#6F86E4" : "#B7C3F2") : v === 0 ? "#FFFFFF" : v === 1 ? "#EAC48E" : "#D58A1E";
-    return `<span class="chip"><i style="background:${c};border:1px solid #DFE2E8;width:10px;height:10px"></i>${v === 0 ? "0" : (v < 0 ? "−" : "+") + Math.abs(v)}°C${Math.abs(v) === 2 ? " or more" : ""}</span>`;
+    return `<span class="chip"><i style="background:${c};border:1px solid #DFE2E8;width:10px;height:10px"></i>${v === 0 ? "0" : (v < 0 ? "−" : "+") + Math.abs(v)}°C${v === 2 ? " or warmer" : v === -2 ? " or colder" : ""}</span>`;
   }).join("");
   const n2000 = cells.filter((c) => c.y >= 2000), cool = n2000.filter((c) => c.v < 0).length;
   place("stripes", plot, "India's monthly temperature against the 1991-2020 average, January 1940 onward",
@@ -139,8 +139,9 @@ if (C) {
     marks: [
       Plot.gridY([-1, -0.5, 0.5, 1], { stroke: GRID }),
       Plot.ruleY([0], { stroke: BASE }),
-      Plot.lineY(era, { x: "date", y: "value", stroke: G3, strokeWidth: 1.5, strokeLinejoin: "round" }),
-      Plot.lineY(cru, { x: "date", y: "value", stroke: ACC, strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
+      // two instruments on one axis: the "side" seam, marked where the reanalysis begins
+      ...seamMarks("side", [{ data: cru, color: ACC, width: 2, label: "Stations" }, { data: era, color: G3, width: 1.5, label: "Reanalysis" }],
+        { text: "Reanalysis begins, 1950", at: yd(1950), y: 1.12, anchor: "end" }),
       Plot.dot(ends, { x: "date", y: "value", fill: (d) => d.c, r: 3.5, stroke: "#fff", strokeWidth: 1.5 }),
       Plot.text(ends, { x: "date", y: "ly", text: (d) => `${d.label} ${sd1(d.value)}°C`, dx: 10, textAnchor: "start", fill: INK, fontSize: 12.5, fontWeight: (d) => (d.c === ACC ? 600 : 400) }),
     ],
@@ -198,7 +199,7 @@ if (C) {
   const ticks = []; for (let t = Math.ceil(lo / 20) * 20; t <= hi; t += 20) ticks.push(t);
   const plot = Plot.plot({
     width: W, height: 50 + rows.length * 28, marginLeft: 230, marginRight: 60, marginTop: 24, marginBottom: 30, style: baseStyle,
-    x: { label: "change in days a year", labelAnchor: "right", labelArrow: false, domain: [lo - 6, hi + 4], ticks, tickSize: 0, tickPadding: 8, tickFormat: (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v) },
+    x: { label: "change in days a year", labelAnchor: "right", labelArrow: false, domain: [lo - 6, hi + 14], ticks, tickSize: 0, tickPadding: 8, tickFormat: (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v) },
     y: { label: null, domain: rows.map((r) => r.name), tickSize: 0, tickPadding: 14 },
     fy: { axis: null },
     marks: [
@@ -270,10 +271,12 @@ if (C) {
 /* ---------- lines with end labels (emissions, energy, fires) ---------- */
 function linesPlot(series, { domain, ticks, yLabel, fmtTick, fmtEnd, height = 440, x0 = 1950, x1, marginRight = 170, step = 10 }) {
   const ends = series.map((s) => ({ ...s.data.at(-1), s })).sort((a, b) => b.value - a.value);
-  // dodge end labels: keep 15 px apart in value space
-  const px = (domain[1] - domain[0]) / (height - 64);
-  for (let i = 1; i < ends.length; i++) ends[i].ly = Math.min(ends[i].value, (ends[i - 1].ly ?? ends[i - 1].value) - 15 * px);
-  ends[0].ly = ends[0].value;
+  // dodge end labels 15 px apart in value space: push down from the top, then, if the stack
+  // runs below the floor, lift it back up from the bottom (labels never sit under the axis)
+  const px = (domain[1] - domain[0]) / (height - 64), gap = 15 * px;
+  ends.forEach((e, i) => (e.ly = i ? Math.min(e.value, ends[i - 1].ly - gap) : e.value));
+  const floor = domain[0] + gap * 0.4;
+  for (let i = ends.length - 1; i >= 0; i--) ends[i].ly = Math.max(ends[i].ly, i === ends.length - 1 ? floor : ends[i + 1].ly + gap);
   return Plot.plot({
     width: W, height, marginLeft: 56, marginRight, marginTop: 30, marginBottom: 34, style: baseStyle,
     x: { label: null, tickSize: 0, tickPadding: 12, ticks: yearTicks(x0, x1, step), tickFormat: yearFmt },
@@ -355,7 +358,7 @@ if (C) {
   const NAMES = { coal: "Coal", oil: "Oil", gas: "Gas", nuclear: "Nuclear", hydro: "Hydro", solar: "Solar", wind: "Wind", biofuel: "Biofuels", other_renewables: "Other renewables" };
   const COL = { coal: ACC, oil: G1, gas: G2, hydro: G3, nuclear: G4, solar: GOLD, wind: "#E3B977", biofuel: "#DFE2E8", other_renewables: "#DFE2E8" };
   const draw = (id, rows, year, x0, top, ticks, file, what) => {
-    const shown = rows.filter((r) => r.last != null && r.last >= 1);   // series under 1% sit in the download, labelled there
+    const shown = rows.filter((r) => r.last != null && r.last >= 2);   // sources under 2% sit in the CSV download, not on the chart
     const S = shown.map((r) => ser(r.data, NAMES[r.f], COL[r.f], r.f === "coal"));
     chipLegend("legend-" + id, S);
     const plot = linesPlot(S, { domain: [0, top], ticks, yLabel: "per cent", fmtTick: (v) => v + (v === ticks.at(-1) ? "%" : ""), fmtEnd: (v) => fmt.num1(v) + "%", x0, x1: year, step: 5, marginRight: 190 });

@@ -40,6 +40,23 @@ export const DATASETS = {
 };
 export const GEOS = { IND: { name: "India", iso: "IND" }, CHN: { name: "China", iso: "CHN" }, USA: { name: "United States", iso: "USA" }, WLD: { name: "World", iso: "" } };
 const SKIP_COLS = new Set(["country", "year", "iso_code"]);
+// OWID writes units in words; bundles carry a short code the every-cut table and validate
+// know (src/dossiers/everycut.js UNITS, climate block). An unknown unit fails the bake.
+export const OWID_UNITS = {
+  "%": "pct", "°C": "degC", "people": "count", "": "count",
+  "international-$ in 2011 prices ($)": "intl_usd_2011", "million tonnes (Mt)": "mt", "million tonnes CO₂ equivalents (Mt)": "mt_co2e",
+  "tonnes per person (t/person)": "t_per_person", "tonnes of CO₂ equivalents per person (t/person)": "t_co2e_per_person",
+  "kilograms per international-$ (kg/$)": "kg_per_intl_usd", "grams per kilowatt-hour (g/kWh)": "g_per_kwh",
+  "grams of CO₂ equivalents per kilowatt-hour (gCO₂)": "g_co2e_per_kwh", "kilowatt-hours per person (kWh)": "kwh_per_person",
+  "kilowatt-hours (kWh)": "kwh_per_person",   // the energy codebook's per-capita columns ("Measured in kilowatt-hours per person")
+  "kilowatt-hours per $ (kWh)": "kwh_per_intl_usd", "terawatt-hours (TWh)": "twh",
+  "ha": "hectares", "hectares": "hectares", "t": "tonnes", "tonnes": "tonnes", "per 100,000": "per_100k", "millimeters": "mm", "mm": "mm",
+};
+const unitCode = (u, where) => {
+  const c = OWID_UNITS[u ?? ""];
+  if (!c) throw new Error(`owid-climate: unit "${u}" (${where}) has no code in OWID_UNITS`);
+  return c;
+};
 const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 const key = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 
@@ -167,7 +184,7 @@ function csvBundles(name, cb, rows, dcfg, vintage) {
       if (!m) continue;
       const data = years.map((y) => m.get(y) ?? null);
       const gaps = gapsOf(dates, data);
-      series[c.column] = { name: `owid_${name}_${c.column}`, label: c.title, unit: c.unit || null, color: GREYS[gi++ % GREYS.length], data,
+      series[c.column] = { name: `owid_${name}_${c.column}`, label: c.title, unit: unitCode(c.unit, `${name}.${c.column}`), color: GREYS[gi++ % GREYS.length], data,
         ...(gaps.length ? { gaps, gapsNote: "Not published by OWID for these years." } : {}) };
     }
     const slug = dcfg.fetch.csv_bundles[name][g];
@@ -264,7 +281,7 @@ export async function buildOwidClimate(root, dcfg, vintage) {
       const data = dates.map((t) => vals.get(t) ?? null);
       if (!data.some((v) => v != null)) continue;
       const gaps = gapsOf(dates, data);
-      series[k] = { name: `owid_${ind.dataset}_${k}`, label: ind.name, unit: ind.shortUnit ?? ind.unit, color: GREYS[gi++ % GREYS.length], data,
+      series[k] = { name: `owid_${ind.dataset}_${k}`, label: ind.name, unit: unitCode(ind.shortUnit ?? ind.unit ?? "", ind.catalogPath), color: GREYS[gi++ % GREYS.length], data,
         source: ind.producer, catalogPath: ind.catalogPath.replace(/\/\d{4}-\d{2}-\d{2}\//, "/"),
         ...(gaps.length ? { gaps, gapsNote: "Not published by OWID for these periods." } : {}) };
     }

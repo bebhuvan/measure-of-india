@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
 import GuideData from "../../components/GuideData.astro";
+import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 import { climateData } from "../../dossiers/climate.data.js";
@@ -18,7 +19,9 @@ const sd2 = (v) => (v < 0 ? "−" : "+") + fmt.num2(Math.abs(v)) + "°C";
 const sd1 = (v) => (v < 0 ? "−" : "+") + fmt.num1(Math.abs(v)) + "°C";
 const d1 = (v) => fmt.num1(v) + "°C";
 const days = (v) => fmt.count(v) + (Math.round(v) === 1 ? " day" : " days");
-const ord = (n) => n + (n % 100 >= 11 && n % 100 <= 13 ? "th" : ["th", "st", "nd", "rd"][n % 10] ?? "th");
+const ORD = ["first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth"];
+const ord = (n) => ORD[n - 1] ?? n + (n % 100 >= 11 && n % 100 <= 13 ? "th" : ["th", "st", "nd", "rd"][n % 10] ?? "th");
+const sgn1 = (v) => (v < 0 ? "−" : "+") + fmt.num1(Math.abs(v));
 const M = C.month;
 const heat = Object.fromEntries(C.heat.map((p) => [p.k, p]));
 const st = [...C.states].sort((a, b) => b.tasCru - a.tasCru);
@@ -55,7 +58,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
   canonical="https://atlas.thisindianlife.today/guides/climate/"
   ogImage={`/og/${D.slug}.png`}
 >
-<script type="application/json" id="climate-data" set:html={JSON.stringify(C)} />
+<script type="application/json" id="climate-data" set:html={JSON.stringify(C).replace(/</g, "\\u003c")} />
 <div class="page">
 
   <div class="titleblock break">
@@ -104,7 +107,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
         <div class="plate-head">
           <div class="t">
             <h3>Since 2000, cool months have become rare</h3>
-            <div class="sub">Every month since January 1940: India's average temperature against the 1991-2020 average for that month, °C. One row a year, one cell a month.</div>
+            <div class="sub">Every month since January 1940: India's average temperature against the 1991-2020 average for that month, °C. One column a year, one row a month.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-stripes">{sd2(M.anom)}</div><div class="c">{M.short}</div></div>
         </div>
@@ -119,7 +122,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Read down for years, across for months. Blue cells were cooler than the 1991-2020 normal for that month, ochre cells warmer, white cells close to it. The baseline is itself recent: a white cell is a month as warm as the 1990s and 2000s, already warmer than the 1940s.</p>
+            <p>Read across for years, down for months. Blue cells were cooler than the 1991-2020 normal for that month, ochre cells warmer, white cells close to it. The baseline is itself recent: a white cell is a month as warm as the 1990s and 2000s, already warmer than the 1940s.</p>
             <p>ERA5 is a reanalysis: a weather model run backwards over every observation available (stations, balloons, satellites), producing a complete, consistent picture of each day. It is not a thermometer reading, and its early decades rest on far fewer observations than its recent ones.</p>
           </div>
           <div class="now">
@@ -144,7 +147,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
       <div class="wm-rail">
         <aside class="margin-note">
           <span class="mk">Margin note, i</span>
-          <b>Wet-bulb temperature.</b> Wrap a thermometer in a wet cloth and fan it. The reading it settles at is the coolest sweat can make your skin. At 35°C even a healthy, resting person in shade cannot shed heat for long; heavy work becomes dangerous far below that.
+          <b>Wet-bulb temperature.</b> Wrap a thermometer in a wet cloth and fan it. The reading it settles at is the coolest sweat can make your skin. A wet-bulb of 35°C is often cited as the point where even a resting person in shade cannot shed heat for long; heavy work becomes dangerous well below it.
         </aside>
         <aside class="margin-note">
           <span class="mk">Margin note, ii</span>
@@ -345,7 +348,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           </div>
           <div class="now">
             <span class="mk">As of {C.century.cruLast}</span>
-            <p>The largest rises in humid days: {wbtTop.map((s) => `${s.name} (+${fmt.num1(s.wbt27)})`).join(", ")}. Days of 40°C or more fell most in {lowest40.name} (<b id="ex-sh-low">{fmt.num1(lowest40.hd40)}</b> a year). In Delhi, humid days rose by <b id="ex-sh-delhi">{fmt.num1(delhi.wbt27)}</b> a year while 40°C days changed by {fmt.num1(delhi.hd40)}.</p>
+            <p>The largest rises in humid days: {wbtTop.map((s) => `${s.name} (+${fmt.num1(s.wbt27)})`).join(", ")}. Days of 40°C or more fell most in {lowest40.name} (<b id="ex-sh-low">{sgn1(lowest40.hd40)}</b> a year). In Delhi, humid days rose by <b id="ex-sh-delhi">{fmt.num1(delhi.wbt27)}</b> a year while 40°C days changed by {sgn1(delhi.hd40)}.</p>
           </div>
         </div>
       </figure>
@@ -362,7 +365,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
             <h3>A century of monsoons: no long decline in the national total, and the droughts stand out</h3>
             <div class="sub">Annual rainfall averaged over India's land, millimetres, 1901 to {C.century.cruLast}. The line marks the {w(W.base)} average.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-rain">{fmt.count(R.annual.at(-1)[1])} mm</div><div class="c">{R.annual.at(-1)[0]}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-rain">{fmt.inr(R.annual.at(-1)[1])} mm</div><div class="c">{R.annual.at(-1)[0]}</div></div>
         </div>
         <div class="frame">
           <div class="plotzone"><div id="plot-rain" style="position:relative"><div class="cb-tip"></div></div></div>
@@ -374,11 +377,11 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Each bar is one year's rain. About four-fifths of it falls from June to September. A bar far below the line is a drought year, and in an economy where half the farmland is still rain-fed, it shows up within months in farm incomes, rural wages and food prices.</p>
+            <p>Each bar is one year's rain. About four-fifths of it falls from June to September. A bar far below the line is a drought year, and in an economy where much of the farmland still depends on rain, it shows up within months in farm incomes, rural wages and food prices.</p>
           </div>
           <div class="now">
             <span class="mk">As of {C.century.cruLast}</span>
-            <p>Average annual rain: <b id="ex-r-base">{fmt.count(R.base)} mm</b> in {w(W.base)}, <b id="ex-r-recent">{fmt.count(R.recent)} mm</b> in {w(W.recent)}. June to September brought <b id="ex-r-jjas">{fmt.num1(R.jjasRecent)}%</b> of the year's rain in the recent period, against {fmt.num1(R.jjasBase)}% before. The driest years on the record: {R.driest.map(([y]) => y).join(", ")}.</p>
+            <p>Average annual rain: <b id="ex-r-base">{fmt.inr(R.base)} mm</b> in {w(W.base)}, <b id="ex-r-recent">{fmt.inr(R.recent)} mm</b> in {w(W.recent)}. June to September brought <b id="ex-r-jjas">{fmt.num1(R.jjasRecent)}%</b> of the year's rain in the recent period, against {fmt.num1(R.jjasBase)}% before. The driest years on the record: {R.driest.map(([y]) => y).join(", ")}.</p>
           </div>
         </div>
       </figure>
@@ -436,7 +439,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>An extreme downpour falls on a district, not on a country. Averaged over all of India, a cloudburst in one valley is diluted by dry days everywhere else, so national averages of extremes move slowly even when local floods grow more frequent. Studies of individual stations find more very heavy rain in central India; this national average neither confirms nor rules that out.</p>
+            <p>An extreme downpour falls on a district, not on a country. Averaged over all of India, a cloudburst in one valley is diluted by dry days everywhere else, so national averages of extremes move slowly even when local floods grow more frequent. This national average can neither confirm nor rule out more frequent local downpours.</p>
           </div>
           <div class="now">
             <span class="mk">As of {C.century.era5Last}</span>
@@ -634,7 +637,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="legend" id="legend-energy"></div>
           <div class="plotzone"><div id="plot-energy" style="position:relative"><div class="cb-tip"></div></div></div>
           <div class="plotfoot">
-            <span class="src">Source: Energy Institute Statistical Review of World Energy, via Our World in Data (CC BY 4.0). Excludes firewood, crop waste and dung burned in homes, which the Statistical Review does not count.</span>
+            <span class="src">Source: Energy Institute Statistical Review of World Energy, via Our World in Data (CC BY 4.0). Excludes firewood, crop waste and dung burned in homes. Sources under 2% are in the CSV download.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ourworldindata.org/energy/country/india" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -664,7 +667,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           <div class="legend" id="legend-power"></div>
           <div class="plotzone"><div id="plot-power" style="position:relative"><div class="cb-tip"></div></div></div>
           <div class="plotfoot">
-            <span class="src">Source: Ember and the Energy Institute, via Our World in Data (CC BY 4.0). Installed capacity, as distinct from generation, is in the renewable energy guide.</span>
+            <span class="src">Source: Ember and the Energy Institute, via Our World in Data (CC BY 4.0). Sources under 2% (biofuels, other renewables, oil) are drawn only in the CSV download. Installed capacity is in the renewable energy guide.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ourworldindata.org/electricity-mix" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -682,7 +685,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
     </div>
   </section>
 
-  <!-- § 10 projections: inputs climate-cmip6-temp-windows, climate-cmip6-hotdays-windows, climate-cmip6-heatstress-windows, climate-cmip6-states-temp -->
+  <!-- § 10 projections: inputs climate-cmip6-windows-temp, climate-cmip6-windows-hotdays, climate-cmip6-windows-heatstress, climate-cmip6-states-temp -->
   <section>
     <div class="sec-head"><span class="no">10</span><h2>A child born today</h2><span class="line"></span><span class="unit">CMIP6 projections, change from 1995-2014; model output, not data</span></div>
     <div class="break">
@@ -725,7 +728,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
       <figure id="cb-proj-heat" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>Days of extreme humid heat are projected to multiply {fmt.num1(pd("hi41", "ssp245", 2040) / pref("hi41"))} times by mid-century, nights of 26°C or more by half</h3>
+            <h3>Days of extreme humid heat are projected to multiply {fmt.num1(pd("hi41", "ssp245", 2040) / pref("hi41"))} times by mid-century, nights of 26°C or more by {fmt.count(100 * (pd("tr26", "ssp245", 2040) / pref("tr26") - 1))}%</h3>
             <div class="sub">Projected days a year at an average spot in India, for 20-year windows, under SSP2-4.5 (blue) and SSP5-8.5 (ochre), ensemble median; the grey line is the models' own 1995-2014 level.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-projheat">{days(pd("tr26", "ssp245", 2040))}</div><div class="c">nights of 26°C or more, 2040-2059, SSP2-4.5</div></div>
@@ -733,7 +736,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
         <div class="frame">
           <div class="plotzone"><div id="plot-proj-heat" style="position:relative"></div></div>
           <div class="plotfoot">
-            <span class="src">Source: CMIP6 multi-model ensemble median, indices by the World Bank CCKP. Wet-bulb day counts are published by CCKP as yearly series only; they are in the data downloads.</span>
+            <span class="src">Source: CMIP6 multi-model ensemble median, indices by the World Bank CCKP. CCKP's projected wet-bulb series for India are corrupt at source (an India mean near 8°C) and are not used.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org/country/india/climate-data-projections" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -780,7 +783,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
     </div>
   </section>
 
-  <!-- § 11 the cost of heat: inputs climate-era5-energy (cdd65), climate-cmip6-energy-windows (cdd65), climate-heat-deaths, climate-burned-area -->
+  <!-- § 11 the cost of heat: inputs climate-era5-energy (cdd65), climate-cmip6-windows-energy (cdd65), climate-heat-deaths, climate-burned-area -->
   <section>
     <div class="sec-head"><span class="no">11</span><h2>What a hotter day costs</h2><span class="line"></span><span class="unit">Cooling, health and fire</span></div>
     <div class="wm-grid">
@@ -873,7 +876,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>A satellite sees a scorch mark, not its cause. In India, most burnt cropland is stubble set alight after the harvest, in Punjab and Haryana after rice in October and November, and across the plains before the summer crop. Its smoke is a large part of north India's winter air pollution. Forest fires come mostly in the dry months, March to May.</p>
+            <p>A satellite sees a scorch mark, not its cause. In India, most burnt cropland is stubble set alight after the harvest, in Punjab and Haryana after rice in October and November, and across the plains before the summer crop. Its smoke adds to north India's winter haze. In the weekly satellite record, burning peaks in March and April and again in October and November.</p>
           </div>
           <div class="now">
             <span class="mk">As of {fires.firesAll.at(-1)[0]}</span>
@@ -929,6 +932,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
     </ul>
   </section>
 
+  <EveryCut slug="climate" />
   <GuideData slug="climate" />
 
   <footer class="provenance">
@@ -944,7 +948,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
       </div>
       <div>
         <h6>Revisions and breaks</h6>
-        <p>Station, reanalysis and model records are separate instruments and never joined. OWID's annual figure for the current, unfinished year is not shown. CCKP's simplified wet-bulb globe temperature series are not used: for 2024 and 2025 they carry corrupt values. One CMIP6 percentile series that CCKP serves on the wrong side of its own median is withheld.</p>
+        <p>Station, reanalysis and model records are separate instruments and never joined. OWID's annual figure for the current, unfinished year is not shown. CCKP's simplified wet-bulb globe temperature series are not used: for 2024 and 2025 they carry corrupt values. The projected wet-bulb series, and one CMIP6 percentile series that CCKP serves on the wrong side of its own median, are withheld as source defects.</p>
       </div>
       <div>
         <h6>This guide</h6>

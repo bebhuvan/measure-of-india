@@ -1285,16 +1285,19 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
   const files = fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => /^climate-.*\.json$/.test(f)).map((f) => f.replace(/\.json$/, ""));
   if (files.length < 40) fail(`climate: only ${files.length} bundles baked`);
   const declaredBase = (slug, b) => {
-    if (b.meta.product === "cckp") return slug.startsWith("climate-cru") ? CK.bases.cru : slug.includes("cmip6") ? CK.bases.cmip6 : CK.bases.era5;
+    if (b.meta.product === "cckp") return /-cru(-|$)/.test(slug) ? CK.bases.cru : slug.includes("cmip6") ? CK.bases.cmip6 : CK.bases.era5;
     if (b.meta.product === "owid-co2-data") return OW.bases["owid-co2"];
     if (b.meta.product === "owid-energy-data") return OW.bases["owid-energy"];
     return OW.bases[slug] ?? OW.bases.default;
   };
   // unit -> plausible range (CCKP vocabulary, then OWID's free-text units)
   const RANGE = { degC: [-45, 60], days: [0, 366], mm: [0, 16000], mm_day: [0, 200], pct: [0, 1000], wm2: [0, 1000], ms: [0, 80],
-    degday_c: [0, 12000], degday_f: [0, 22000], doy: [0, 366], index: [-6, 6], ratio: [0, 10], person_days: [-1e12, 1e13] };
-  const owidRange = (u = "") => /%/.test(u) ? [-100, 1e7] : /°C/.test(u) ? [-20, 50] : /^people$/.test(u) ? [0, 1e10]
-    : /\$/.test(u) && /international/.test(u) ? [0, 1e15] : /hectare|tonne|^ha$|^t$/i.test(u) && !/million|per/.test(u) ? [0, 1e10] : [-1e7, 1e7];
+    degday_c: [0, 12000], degday_f: [0, 22000], doy: [0, 366], index: [-6, 6], risk_ratio: [0, 10], person_days: [-1e12, 1e13] };
+  // OWID unit codes (scripts/lib/products/owid-climate.mjs OWID_UNITS)
+  const OWID_RANGE = { pct: [-100, 1e7], degC: [-20, 50], count: [0, 1e10], intl_usd_2011: [0, 1e15], hectares: [0, 1e9], tonnes: [0, 1e10],
+    mt: [-1e7, 1e7], mt_co2e: [-1e7, 1e7], t_per_person: [-100, 100], t_co2e_per_person: [-100, 100], kg_per_intl_usd: [-10, 10], g_per_kwh: [0, 5000],
+    g_co2e_per_kwh: [0, 5000], kwh_per_person: [-1e6, 1e6], kwh_per_intl_usd: [0, 50], twh: [-1e6, 1e6], per_100k: [-1000, 1000], mm: [-5000, 16000] };   // mm: an anomaly can be negative
+  const owidRange = (u) => OWID_RANGE[u];
   const anomalyUnit = (k) => /__change__|anomaly|change/.test(k);
   let checked = 0;
   for (const slug of files) {
@@ -1317,7 +1320,8 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
         if (!r) { fail(`${slug}.${k}: unit "${s.unit}" has no range`); continue; }
         // a change from 1995-2014 can be negative: widen to the symmetric range
         seriesRange[k] = anomalyUnit(k) || slug.startsWith("climate-cmip6-states") ? [-Math.max(Math.abs(r[0]), r[1]), Math.max(Math.abs(r[0]), r[1])] : r;
-      } else seriesRange[k] = owidRange(s.unit);
+      } else if (!owidRange(s.unit)) fail(`${slug}.${k}: unit "${s.unit}" has no range`);
+      else seriesRange[k] = owidRange(s.unit);
     }
     checkRange(b, -1e13, 1e13, slug, seriesRange);
     checked++;
