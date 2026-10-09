@@ -35,6 +35,7 @@ import { buildWorldbankWdi } from "./lib/products/worldbank-wdi.mjs";
 import { buildBsr2 } from "./lib/products/bsr2.mjs";
 // services guide: five products, one adapter
 import { buildServicesIsp, buildServicesNas, buildServicesTrade, buildServicesJobs, buildServicesAsuse } from "./lib/products/services.mjs";
+import { buildStates } from "./lib/products/states.mjs";
 import { writeSeries } from "./lib/util.mjs";
 // bis family session: BIS, RBI house price index, NHB RESIDEX
 import { buildBis } from "./lib/products/bis.mjs";
@@ -51,6 +52,8 @@ const REGISTRY = { cpi: buildCpi, nas: buildNas, wpi: buildWpi, cpialrl: buildCp
 Object.assign(REGISTRY, { bis: buildBis, rbihpi: buildRbihpi, residex: buildResidex });   // bis family session
 // services guide
 Object.assign(REGISTRY, { "services-isp": buildServicesIsp, "services-nas": buildServicesNas, "services-trade": buildServicesTrade, "services-jobs": buildServicesJobs, "services-asuse": buildServicesAsuse });
+// states family session
+Object.assign(REGISTRY, { states: buildStates });
 
 // One product's failure must not starve the rest: collect, continue, and
 // exit non-zero at the end so CI still fails on the summary.

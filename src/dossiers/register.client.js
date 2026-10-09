@@ -314,3 +314,16 @@ import svcTradeBundle from "../../data/series/services-trade-monthly.json";
   ], 1, "spsv", vintOf(svcShareBundle), "MoSPI / RBI");
 }
 // ---- end services ----
+// --- states (state economies): MoSPI regional accounts, fixed panel, annual ---
+import statesSpreadBundle from "../../data/series/states-spread.json";
+{
+  const SP = hydrate(statesSpreadBundle);
+  const fy = statesSpreadBundle.dates.at(-1).slice(0, 4);
+  const vt = `${fy}-${String((+fy + 1) % 100).padStart(2, "0")}`;
+  render("reg-states", [
+    ["Richest state's income per person, times the poorest's", "IA-ST-GAP", "s-acc", SP.gap_current, true, "/guides/states/", null, (v) => v.toFixed(1) + "×"],
+    ["Income per person, middle state, ₹", "IA-ST-MED", "s-g1", SP.median_current, true, "/guides/states/", null, (v) => "₹" + Math.round(v).toLocaleString("en-IN")],
+    ["Income per person, poorest state, ₹", "IA-ST-LOW", "s-g2", SP.poorest_current, true, "/guides/states/", null, (v) => "₹" + Math.round(v).toLocaleString("en-IN")],
+    ["Real GSDP growth, middle state", "IA-ST-GRW", "s-g3", SP.median_real_growth, true, "/guides/states/", null, (v) => v.toFixed(1) + "%"],
+  ], 1, "spst", vt, "MoSPI regional accounts");
+}

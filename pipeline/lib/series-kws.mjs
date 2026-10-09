@@ -100,4 +100,13 @@ export const SERIES_KWS = {
     ["utilities", "utilities"], ["electricity", "utilities"], ["construction", "construction"],
     ["services", "services"], ["service", "services"],
   ],
+  // --- states (state economies): the fixed-panel spread bundle, states-spread ---
+  states: [
+    ["at constant prices", "gap_constant"], ["constant prices", "gap_constant"],
+    ["times", "gap_current"], ["multiple", "gap_current"], ["gap", "gap_current"],
+    ["spread", "cv_constant"], ["coefficient of variation", "cv_constant"], ["dispersion", "cv_constant"],
+    ["richest", "richest_current"], ["poorest", "poorest_current"],
+    ["middle state", "median_current"], ["median", "median_current"],
+    ["real growth", "median_real_growth"], ["grew", "median_real_growth"], ["growth", "median_real_growth"],
+  ],
 };

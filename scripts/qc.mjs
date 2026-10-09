@@ -339,6 +339,23 @@ const PAGES = [
     ["prov-vintage", (b) => b["services-gva-2022-share"].meta.vintage],
   ]},
   // ---- end services ----
+  // --- states (state economies): title block from the fixed panel; plate values recomputed
+  // here from the bundles, independently of the page's code
+  { url: "/guides/states/", slug: null, checks: [
+    ["n-gap", (b) => fmt.x1(b["states-spread"].series.gap_current.data.at(-1))],
+    ["n-rich", (b) => fmt.inrR(b["states-spread"].series.richest_current.data.at(-1))],
+    ["n-poor", (b) => fmt.inrR(b["states-spread"].series.poorest_current.data.at(-1))],
+    ["n-grow", (b) => fmt.pct1(b["states-spread"].series.median_real_growth.data.at(-1))],
+    ["ex-gap-0", (b) => fmt.x1(b["states-spread"].series.gap_current.data[0])],
+    ["ex-cv-l", (b) => fmt.pct1(b["states-spread"].series.cv_constant.data.at(-1))],
+    ["pv-pc", (b) => { const B = b["states-pcnsdp-current"], i = B.dates.indexOf(b["states-spread"].dates.at(-1)); return fmt.inrR(Math.max(...Object.entries(B.series).filter(([k]) => k !== "jammu_and_kashmir_state").map(([, s]) => s.data[i]).filter((v) => v != null))); }],
+    ["pv-size", (b) => { const B = b["states-gsdp-current"], i = B.dates.indexOf(b["states-spread"].dates.at(-1)); return "₹" + (Math.max(...Object.values(B.series).map((s) => s.data[i]).filter((v) => v != null)) / 1e5).toFixed(2) + " lakh cr"; }],
+    ["pv-growth", (b) => {
+      const B = b["states-gsdp-constant"], D = b["states-spread"].dates, i0 = B.dates.indexOf(D[0]), i1 = B.dates.indexOf(D.at(-1)), n = +D.at(-1).slice(0, 4) - +D[0].slice(0, 4);
+      return fmt.pct1(Math.max(...Object.entries(B.series).filter(([k]) => !k.startsWith("jammu_and_kashmir")).map(([, s]) => s.data[i0] > 0 && s.data[i1] != null ? (Math.pow(s.data[i1] / s.data[i0], 1 / n) - 1) * 100 : -Infinity)));
+    }],
+    ["prov-vintage", (b) => b["states-pcnsdp-current"].meta.vintage],
+  ]},
   { url: "/", slug: null, minPlots: 1, checks: [
     // the CPI print is the 2024-base series; core stays on the 2012 base
     // (no weights served for the new base), labelled "to Dec 2025"

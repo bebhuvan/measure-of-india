@@ -210,6 +210,14 @@ const CARDS = [
     prep: (S) => { S.s1_2_1_credit = { ...S.s1_2_1_credit, label: "Exports", color: "#2E4BD8" }; S.s1_2_1_debit = { ...S.s1_2_1_debit, label: "Imports", color: "#C47A16" }; },
     foot: (b) => { const y = +b.dates.at(-1).slice(0, 4); return `Services exports and imports, 1950-51 to ${y}-${String((y + 1) % 100).padStart(2, "0")}. Source: RBI`; },
   },
+  // --- states (state economies) ---
+  {
+    slug: "states", bundleSlug: "states-spread",
+    keys: ["gap_current", "gap_constant"], d0: 0, d1: 14, band: null, trend: null,
+    yStep: 2, fmt: (v) => v.toFixed(1) + "×", mr: 220,
+    prep: (S) => { S.gap_current = { ...S.gap_current, label: "Current prices", color: "#2E4BD8" }; S.gap_constant = { ...S.gap_constant, label: "Constant prices", color: "#A3A9B4" }; },
+    foot: (b) => `Richest state's income per person ÷ poorest's, ${b.meta.panel.length} states, 2011-12 to ${(() => { const y = +b.dates.at(-1).slice(0, 4); return `${y}-${String((y + 1) % 100).padStart(2, "0")}`; })()}. Source: MoSPI`,
+  },
   {
     slug: "manufacturing", bundleSlug: "wdi-manufacturing",
     keys: ["mva_pct_gdp", "industry_pct_gdp"], d0: 0, d1: 30, band: null, trend: null,

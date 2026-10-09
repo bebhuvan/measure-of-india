@@ -263,3 +263,41 @@ services:
       Keep figures few, and write each with its unit (per cent, US$ billion). Talk only about
       service industries; leave farms, factories and utilities out.
 # ---- end services ----
+
+# --- states (state economies) ---
+states:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [gap_current.latest, gap_current.min, richest_current.latest, poorest_current.latest]
+    minSeriesMentioned: 4        # the multiple, richest, poorest, and the spread or the middle state
+    # no mustName extremes: the sheet mixes units (a multiple, rupees, per cent), so its
+    # "top and bottom movers" compare unlike things and pushed the writer into doing so
+    mustAcknowledge: [contradictions]
+    brief: >
+      The gap between India's states in the latest year the fixed panel covers: the
+      richest state's income per person as a multiple of the poorest's, the two
+      figures themselves in rupees, and where the multiple stood
+      in 2011-12. The path was not steady: the multiple's low (gap_current.min) came
+      early, in FY14, below today's level, then it rose and has fallen again since; say
+      that plainly rather than calling the fall a steady drift. Say whether the spread
+      across all states narrowed, and how fast the
+      typical state grew in real terms (that figure is the median of all the states'
+      growth rates, not the growth of the median-income state; say "the typical state's
+      economy grew"). The sheet does not name the states: do not name any, and never
+      mention the sheet or your sources. Income per person is production, not earnings:
+      never write "earned". The sheet's figures are of different kinds (a multiple, rupees,
+      a percentage, a growth rate): never rank or compare one kind against another, and
+      never call the sheet a "basket". Concede before qualifying.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [gap_current.latest]
+    brief: >
+      The honest limits: income per person is production per resident, not what people
+      take home, so commuters and migrants distort it (states that receive workers look
+      richer, states that send them look poorer); every state counts once, whatever its
+      size; the latest year is an estimate each state will revise; the rupee distance
+      between richest and poorest can widen while the multiple narrows. Cite only the
+      multiple; the other column carries the numbers. Do not mention growth. Use
+      "they", never "he". Must contain a plain "we do not know".

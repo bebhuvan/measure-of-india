@@ -1345,6 +1345,179 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
   }));
 }
 
+/* ---- states: state economies (MoSPI regional accounts + RBI Handbook of States) ----
+ * One contiguous block (docs/briefs/README.md). Ranges document the measured extremes of the
+ * 2026-10-09 bake: Maharashtra's GSDP (~₹45 lakh crore) is the level ceiling; per-capita runs
+ * from Bihar (~₹22,000 in 2011-12) to Sikkim and Goa (~₹6-7 lakh); the 2020-21 lockdown year
+ * and small economies give real growth from about -30% to +40%. */
+{
+  const ST = [
+    // [slug, range, extra]
+    ["states-gsdp-current", [100, 8e6]], ["states-gsdp-constant", [100, 5e6]],
+    ["states-nsdp-current", [100, 8e6]], ["states-nsdp-constant", [100, 5e6]],
+    ["states-pcnsdp-current", [10000, 1.5e6]], ["states-pcnsdp-constant", [10000, 8e5]],
+    ["states-pcgsdp-current", [10000, 1.5e6]], ["states-pcgsdp-constant", [10000, 8e5]],
+    // value added by industry: a sub-industry can be negative (losses in a small UT)
+    ["states-gsva-current", [-1e5, 8e6]], ["states-gsva-constant", [-1e5, 5e6]],
+    ["states-nsva-current", [-1e5, 8e6]], ["states-nsva-constant", [-1e5, 5e6]],
+    ["states-taxes-current", [0, 1e6]], ["states-taxes-constant", [0, 6e5]],
+    ["states-growth-real", [-60, 80]], ["states-growth-nominal", [-60, 90]],
+    ["states-structure", [0, 100]], ["states-industry-shares", [-5, 100]],
+    // deficits, own tax and debt over GSDP: a revenue surplus is negative; debt runs to ~60% (Punjab-type)
+    ["states-finances", [-30, 150], { staleAfter: "2022-04" }],
+    // the fixed panel ends at the latest year three-quarters of states report
+    ["states-spread", [-20, 2e6], { staleAfter: "2024-04", seriesRange: { gap_current: [1, 30], gap_constant: [1, 30], cv_constant: [0, 200] } }],
+  ];
+  for (const [slug, range, extra = {}] of ST) {
+    const file = path.join(ROOT, "data/series", slug + ".json");
+    if (!fs.existsSync(file)) { fail(`${slug}: data/series/${slug}.json missing`); continue; }
+    const b = load(slug);
+    const row = { slug, dossier: "states", cadence: 12, ...extra };
+    checkMeta(b, slug, "states", "2011-12", "annual");
+    checkFreshness(b, slug, row, "states");
+    checkCadence(b.dates, 12, slug);
+    checkRange(b, range[0], range[1], slug, extra.seriesRange);
+    if (Object.keys(b.series).some((k) => /^jammu_and_kashmir(__|$)/.test(k))) fail(`${slug}: an unsplit Jammu & Kashmir series (the territory changed in 2019-20)`);
+    for (const [k, s] of Object.entries(b.series)) {
+      const span = (() => { const f = s.data.findIndex((v) => v != null); const l = s.data.length - 1 - [...s.data].reverse().findIndex((v) => v != null); return [b.dates[f], b.dates[l]]; })();
+      if (/^jammu_and_kashmir_state/.test(k) && span[1] > "2018-04-01") fail(`${slug}.${k}: the J&K state series runs past 2018-19 (${span[1]})`);
+      if (/^jammu_and_kashmir_ut/.test(k) && span[0] < (slug.startsWith("states-growth") ? "2020-04-01" : "2019-04-01")) fail(`${slug}.${k}: the J&K UT series starts ${span[0]}, before the UT existed (or growth crosses the split)`);
+    }
+    console.log(`  ${slug}: ${b.dates.length} pts, ${Object.keys(b.series).length} series, ${b.dates[0]} .. ${b.dates.at(-1)}, vintage ${b.meta.vintage}`);
+  }
+
+  // identities on the published figures (every state, every year, both prices)
+  withBundle("states-gsva-current", () => {
+    for (const pk of ["current", "constant"]) {
+      for (const [what, va] of [["gsdp", "gsva"], ["nsdp", "nsva"]]) {
+        const P = load(`states-${what}-${pk}`), V = load(`states-${va}-${pk}`), T = load(`states-taxes-${pk}`);
+        let worst = 0, worstAt = "", n = 0;
+        for (const [k, s] of Object.entries(P.series)) {
+          if (s.derived) continue;
+          s.data.forEach((v, i) => {
+            const d = P.dates[i], at = (B, key) => B.series[key]?.data[B.dates.indexOf(d)];
+            const x = at(V, `${k}__total`), t = at(T, `${k}__taxes`), sb = at(T, `${k}__subsidies`);
+            if (v == null || x == null || t == null || sb == null) return;
+            const dev = Math.abs(x + t - sb - v); n++;
+            if (dev > worst) { worst = dev; worstAt = `${k} ${d}`; }
+          });
+        }
+        // published crore values are whole numbers: rounding alone moves the sum by < ₹1 crore
+        if (!n) fail(`states-${what}-${pk}: identity checked no cells`);
+        else if (worst > 1) fail(`states-${what}-${pk}: ${va.toUpperCase()} + taxes - subsidies misses the published ${what.toUpperCase()} by ₹${worst.toFixed(2)} crore at ${worstAt}`);
+        else ok(`states-${what}-${pk}: ${what.toUpperCase()} = ${va.toUpperCase()} + taxes - subsidies within ₹${worst.toFixed(2)} crore (${n} cells): the identity behind the derived states`);
+      }
+      // industries sum to the total; sub-industries sum to their industry
+      const V = load(`states-gsva-${pk}`), inds = V.meta.industries;
+      let worst = 0, worstAt = "", n = 0;
+      const states = new Set(Object.keys(V.series).map((k) => k.split("__")[0]));
+      for (const st of states) V.dates.forEach((d, i) => {
+        const g = (key) => V.series[`${st}__${key}`]?.data[i];
+        const check = (parts, whole, tag) => {
+          const xs = parts.map(g), w = g(whole);
+          if (w == null || xs.some((x) => x == null) || !xs.length) return;
+          const dev = Math.abs(xs.reduce((a, b) => a + b, 0) - w) / Math.max(1, Math.abs(w)); n++;
+          if (dev > worst) { worst = dev; worstAt = `${st} ${tag} ${d}`; }
+        };
+        check(inds.filter((x) => !x.parent && x.key !== "total").map((x) => x.key), "total", "industries");
+        for (const p of new Set(inds.filter((x) => x.parent).map((x) => x.parent))) check(inds.filter((x) => x.parent === p).map((x) => x.key), p, p);
+      });
+      if (worst > 0.002) fail(`states-gsva-${pk}: parts miss their total by ${(worst * 100).toFixed(2)}% at ${worstAt}`);
+      else ok(`states-gsva-${pk}: industries and sub-industries add up within ${(worst * 100).toFixed(3)}% (${n} sums)`);
+    }
+    // per-capita NSDP: indicator 32 (baked) repeats indicator 25 wherever both are served
+    const raw = JSON.parse(fs.readFileSync(path.join(ROOT, "data/raw/states-nas.json"), "utf8")).indicators;
+    // except a copied block (32 repeating 31, per-capita GSDP: Karnataka on 2026-10-09), which
+    // the adapter excludes; the copy is reported here so it is seen on every run
+    const i25 = new Map((raw[25] ?? []).map((r) => [`${r.state}|${r.year}`, r]));
+    const i31 = new Map((raw[31] ?? []).map((r) => [`${r.state}|${r.year}`, r.current_price]));
+    const copies = new Set([...new Set((raw[32] ?? []).map((r) => r.state))].filter((st) => (raw[32] ?? []).filter((r) => r.state === st && r.current_price != null).every((r) => r.current_price === i31.get(`${r.state}|${r.year}`))));
+    if (copies.size) ok(`states: NAS 32 is a copy of 31 for ${[...copies].join(", ")} (excluded by the adapter; 25 used)`);
+    if (load("states-pcnsdp-current").series.karnataka?.data[0] !== Number(i25.get("Karnataka|2011-12")?.current_price)) fail("states-pcnsdp-current: Karnataka 2011-12 is not MoSPI indicator 25's value");
+    let diff = 0, n = 0;
+    for (const r of raw[32] ?? []) { if (copies.has(r.state)) continue; const o = i25.get(`${r.state}|${r.year}`); if (!o) continue; for (const f of ["current_price", "constant_price"]) { if (o[f] == null && r[f] == null) continue; n++; if (Number(o[f]) !== Number(r[f])) diff++; } }
+    if (!n || diff) fail(`states: per-capita NSDP indicators 25 and 32 disagree in ${diff} of ${n} cells`);
+    else ok(`states: per-capita NSDP indicators 25 and 32 agree in all ${n} cells (32 also covers Assam, Haryana, Nagaland, Ladakh)`);
+    // growth from levels against MoSPI's one-decimal growth indicators
+    for (const pk of ["real", "nominal"]) {
+      const G = load(`states-growth-${pk}`), pub = G.crosscheck?.published_growth ?? {};
+      let worst = 0, worstAt = "", n = 0;
+      for (const [k, arr] of Object.entries(pub)) arr.forEach((p, i) => {
+        const v = G.series[k]?.data[i]; if (p == null || v == null) return; n++;
+        const dev = Math.abs(v - p); if (dev > worst) { worst = dev; worstAt = `${k} ${G.dates[i]}`; }
+      });
+      // one-decimal publication (±0.05) plus whole-crore levels in small states
+      if (n < 500) fail(`states-growth-${pk}: only ${n} cells cross-checked against MoSPI's growth indicators`);
+      else if (worst > 0.15) fail(`states-growth-${pk}: computed growth deviates ${worst.toFixed(2)}pt from MoSPI's published growth at ${worstAt}`);
+      else ok(`states-growth-${pk}: computed from levels within ${worst.toFixed(3)}pt of MoSPI's published growth (${n} cells)`);
+    }
+    // structure: three shares make the whole
+    const S = load("states-structure");
+    let bad = 0;
+    const sts = new Set(Object.keys(S.series).map((k) => k.split("__")[0]));
+    for (const st of sts) S.dates.forEach((d, i) => {
+      const xs = ["agriculture", "industry", "services"].map((g) => S.series[`${st}__${g}`]?.data[i]);
+      if (xs.every((x) => x != null) && Math.abs(xs.reduce((a, b) => a + b, 0) - 100) > 0.05) bad++;
+    });
+    if (bad) fail(`states-structure: ${bad} state-years where farm, industry and services do not sum to 100`);
+    else ok(`states-structure: farm + industry + services = 100 for every state-year`);
+    // the spread panel: richest above middle above poorest, the ratio matches its parts
+    const P = load("states-spread"), s = P.series;
+    let badP = 0;
+    P.dates.forEach((d, i) => {
+      if (!(s.richest_current.data[i] >= s.median_current.data[i] && s.median_current.data[i] >= s.poorest_current.data[i])) badP++;
+      if (Math.abs(s.richest_current.data[i] / s.poorest_current.data[i] - s.gap_current.data[i]) > 0.006) badP++;
+    });
+    if (badP) fail(`states-spread: ${badP} inconsistent panel cells`);
+    else ok(`states-spread: ${P.meta.panel.length}-state panel consistent (richest >= middle >= poorest; ratio = richest / poorest)`);
+  });
+
+  // the RBI Handbook against MoSPI: the same NSO figures until the Handbook's vintage
+  // (2025 edition) falls behind MoSPI's revisions. Exact to 2020-21 (measured 2026-10-09);
+  // later years differ by up to ~18% for small states revised since (Goa).
+  withBundle("states-hbs-t021", (h) => {
+    for (const [hb, ms] of [["states-hbs-t021", "states-gsdp-current"], ["states-hbs-t022", "states-gsdp-constant"], ["states-hbs-t023", "states-nsdp-current"]]) {
+      const H = load(hb), M = load(ms);
+      let worst = 0, worstAt = "", n = 0;
+      for (const [k, s] of Object.entries(M.series)) {
+        if (!H.series[k] || s.derived) continue;
+        M.dates.forEach((d, i) => {
+          if (d > "2020-04-01") return;
+          const j = H.dates.indexOf(d); const a = s.data[i], b = j >= 0 ? H.series[k].data[j] : null;
+          if (a == null || b == null) return; n++;
+          const dev = Math.abs(b / 1e7 / a - 1); if (dev > worst) { worst = dev; worstAt = `${k} ${d}`; }
+        });
+      }
+      if (n < 200) fail(`${hb}: only ${n} cells compared with MoSPI`);
+      else if (worst > 0.0005) fail(`${hb}: RBI Handbook differs from MoSPI ${ms} by ${(worst * 100).toFixed(2)}% at ${worstAt} (to 2020-21, where both carry the same NSO vintage)`);
+      else ok(`${hb}: RBI Handbook = MoSPI ${ms} within ${(worst * 100).toFixed(3)}% to 2020-21 (${n} cells)`);
+    }
+  });
+
+  // every Handbook table baked: shape, disclosure, axis
+  {
+    const idx = JSON.parse(fs.readFileSync(path.join(ROOT, "data/coverage/states.hbs-index.json"), "utf8"));
+    if (idx.problems?.length) fail(`states-hbs: ${idx.problems.length} Handbook table(s) did not bake: ${idx.problems.slice(0, 3).join("; ")}`);
+    const tables = new Set(idx.tables.map((t) => t.table));
+    if (tables.size < 180) fail(`states-hbs: only ${tables.size} Handbook tables baked (182 on 2026-10-09)`);
+    let n = 0;
+    for (const t of idx.tables) {
+      if (!t.bundle) continue;
+      const file = path.join(ROOT, "data/series", t.bundle + ".json");
+      if (!fs.existsSync(file)) { fail(`${t.bundle}: missing`); continue; }
+      const b = load(t.bundle);
+      const dossier = t.sdp ? "states" : "states-hbs";
+      if (b.meta.dossier !== dossier) fail(`${t.bundle}: meta.dossier ${b.meta.dossier}, expected ${dossier}`);
+      checkMeta(b, t.bundle, dossier, t.sdp ? (t.base ?? "2011-12") : "as published", "annual");
+      if (!b.meta.sparse) checkCadence(b.dates, 12, t.bundle);
+      checkRange(b, -1e16, 1e16, t.bundle);
+      if (Object.keys(b.series).some((k) => /^jammu_and_kashmir(__|$)/.test(k))) fail(`${t.bundle}: an unsplit Jammu & Kashmir series`);
+      n++;
+    }
+    ok(`states-hbs: ${n} Handbook bundles from ${tables.size} tables pass shape, disclosure and split checks`);
+  }
+}
+
 /* ---- seams: the base-year registry (sources.yml `seams`) ----
  * For every product that has changed ruler: each bundle of that dossier is
  * registered under exactly one base, its meta.base matches, and its dates

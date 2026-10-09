@@ -83,6 +83,32 @@ export const UNITS = {
   usd_mn: { kind: "pct", fmt: (v) => (v < 0 ? MINUS : "") + "$" + grp(Math.abs(v) / 1e3, 1) + " bn", note: "published in US$ million" },
   usd_bn: { kind: "pct", fmt: (v) => (v < 0 ? MINUS : "") + "$" + grp(Math.abs(v), 1) + " bn" },
   // ---- end services ----
+  // --- states (state economies: MoSPI regional accounts and every RBI Handbook of States table) ---
+  inr_amount: { kind: "pct", fmt: (v) => (Math.abs(v) >= 1e12 ? "₹" + grp(v / 1e12, 2) + " lakh crore" : "₹" + grp(v / 1e7, Math.abs(v) >= 1e9 ? 0 : 2) + " crore")},
+  inr_per_day: { kind: "pct", fmt: (v) => "₹" + grp(v, 1), note: "a day" },
+  pct_share: { kind: "pt", fmt: (v) => v.toFixed(1) + "%", note: "share" },
+  pct_of_gsdp: { kind: "pt", fmt: (v) => v.toFixed(1) + "%", note: "of GSDP" },
+  multiple: { kind: "diff", fmt: (v) => v.toFixed(2) + "×" },
+  mpi_index: { kind: "diff", fmt: (v) => v.toFixed(3), note: "multidimensional poverty index, 0 to 1" },
+  gpi: { kind: "diff", fmt: (v) => v.toFixed(2), note: "gender parity index, 1 = parity" },
+  score: { kind: "diff", fmt: (v) => grp(v), note: "score out of 100" },
+  thousand_hectares: { kind: "pct", fmt: (v) => grp(v, 1) + " thousand ha" },
+  thousand_bales: { kind: "pct", fmt: (v) => grp(v, 1) + " thousand bales" },
+  kg_per_hectare: { kind: "pct", fmt: (v) => grp(v) + " kg per ha" },
+  lakh_count: { kind: "pct", fmt: (v) => big(v * 1e5, ""), note: "published in lakh" },
+  lakh_tonnes: { kind: "pct", fmt: (v) => grp(v, 2) + " lakh tonnes" },
+  thousand_kg: { kind: "pct", fmt: (v) => grp(v, 1) + " thousand kg" },
+  count_x1e7: { kind: "pct", fmt: (v) => grp(v / 1e7), note: "count; DBIE stores it times 10^7" },
+  tonnes: { kind: "pct", fmt: (v) => big(v, " tonnes") },
+  sq_km: { kind: "pct", fmt: (v) => grp(v) + " sq km" },
+  mm: { kind: "pct", fmt: (v) => grp(v, 1) + " mm" },
+  days: { kind: "diff", fmt: (v) => grp(v, 1) + " days" },
+  bcm: { kind: "pct", fmt: (v) => grp(v, 2) + " bn cubic m" },
+  kwh: { kind: "pct", fmt: (v) => grp(v, 1) + " kWh", note: "per person" },
+  crore_kwh: { kind: "pct", fmt: (v) => grp(v) + " crore kWh" },
+  km: { kind: "pct", fmt: (v) => grp(v) + " km" },
+  per_100_people: { kind: "diff", fmt: (v) => grp(v, 1), note: "per 100 people" },
+  usd: { kind: "pct", fmt: (v) => (Math.abs(v) >= 1e9 ? "$" + grp(v / 1e9, 2) + " bn" : "$" + grp(v / 1e6, 1) + " mn") },
 };
 
 // series.unit, then what the series name says, then the bundle's meta.unit: a bundle-level
@@ -178,6 +204,11 @@ export const CUT_BY_BUNDLE = {
   "services-bop-quarterly": "Category and flow", "services-invisibles-quarterly": "Purpose code", "services-bop-annual": "Category and flow",
   "services-jobs-ay": "Industry, status, sex and place", "services-jobs-cy": "Industry, status, sex and place",
   "services-asuse": "Activity, sex and place", "services-asuse-profile": "Activity and profile", "services-asuse-2025": "Activity, sex and place", "services-asuse-profile-2025": "Activity and profile",
+  // --- states (state economies) ---
+  "states-spread": "Fixed panel of states", "states-structure": "State and sector", "states-industry-shares": "State and industry",
+  "states-gsva-current": "State and industry", "states-gsva-constant": "State and industry", "states-nsva-current": "State and industry",
+  "states-nsva-constant": "State and industry", "states-taxes-current": "State", "states-taxes-constant": "State",
+  "states-growth-real": "State", "states-growth-nominal": "State", "states-finances": "State",
 };
 // the fallback, by what a bundle's slug says it is
 export const CUT_RULES = [
@@ -192,6 +223,8 @@ export const CUT_RULES = [
   [/-commodit(y|ies)(-|$)/, "Commodity"],
   [/-(hs\d|chapters?)(-|$)/, "Product"],
   [/-countr(y|ies)(-|$)/, "Country"],
+  // --- states: every other states-* bundle (MoSPI levels, all RBI Handbook tables) is by state
+  [/^states-/, "State"],
 ];
 export function cutOf(slug) {
   if (CUT_BY_BUNDLE[slug]) return CUT_BY_BUNDLE[slug];

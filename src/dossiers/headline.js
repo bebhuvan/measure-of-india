@@ -41,6 +41,8 @@ export const HEADLINE = {
   housing:       { value: (b) => `${last(b, "real_yoy").toFixed(1)}%`, what: "real house prices, change on a year ago", period: quarter },
   // services
   services:      { value: (b) => `${last(b, "services").toFixed(1)}%`, what: "services' share of gross value added", period: fy },
+  // states: the richest state's income per person as a multiple of the poorest's (fixed panel)
+  states:        { value: (b) => `${last(b, "gap_current").toFixed(1)} times`, what: "income per person, richest state against poorest", period: fy },
 };
 
 // The small chart beside each guide's figure: always on the current ruler, so a chart never
@@ -66,6 +68,7 @@ export const SPARK = {
   housing:       { bundle: "bis-property", series: "real" },
   // services
   services:      { bundle: "services-gva-2022-share", series: "services" },
+  states:        { bundle: "states-spread", series: "gap_current" },
 };
 
 const cache = {};
