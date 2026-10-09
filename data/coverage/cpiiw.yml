@@ -1,0 +1,38 @@
+# Coverage ledger: CPI for Industrial Workers, Labour Bureau, via RBI DBIE reports 699 and 1168
+# (docs/CONTRACT-coverage.md). Catalogue: node scripts/lib/products/cpiiw.mjs --catalogue.
+# First matching rule wins. Written 2026-10-10 (lb/prices, wave 2).
+family: cpiiw
+guides: [cpi]
+catalogue: data/coverage/cpiiw.catalogue.json
+rules:
+  - match: "cpiiw:1986-87:*"
+    status: excluded
+    reason: "Report 699 labels 28 scattered rows (2016 to 2020) as a CPI-IW base 1986-87, with values such as 1,340 for pan; CPI-IW never had that base (it is the CPI-AL/RL base), so the rows are a labelling defect in the report and are not baked."
+  - match: "cpiiw:*:centre:all-india"
+    status: excluded
+    reason: "The centre table's All India row repeats report 699's All India General Index (and, for September 2023, repeats August's figure by mistake); All India is baked once, from report 699."
+  - match: "cpiiw:2016:all-india:general-index"
+    status: shown
+    bundle: [cpiiw-2016]
+    plate: "§12 The factory worker's index, four bases"
+  - match: "cpiiw:2016:all-india:*"
+    status: shown
+    bundle: [cpiiw-2016]
+    plate: "§12 What the factory worker's rupee buys"
+  - match: ["cpiiw:2001:all-india:general-index", "cpiiw:1982:all-india:general-index", "cpiiw:1960:all-india:general-index"]
+    status: shown
+    bundle: [cpiiw-2001, cpiiw-1982, cpiiw-1960]
+    plate: "§12 The factory worker's index, four bases"
+  - match: ["cpiiw:2001:all-india:*", "cpiiw:1982:all-india:*", "cpiiw:1960:all-india:*"]
+    status: baked
+    bundle: [cpiiw-2001, cpiiw-1982, cpiiw-1960]
+  - match: "cpiiw:2016:centre:*"
+    status: shown
+    bundle: cpiiw-centres-2016
+    plate: "§12 Eighty-eight towns, one index"
+  - match: "cpiiw:2001:centre:*"
+    status: baked
+    bundle: cpiiw-centres-2001
+  - match: "cpiiw:1982:centre:*"
+    status: baked
+    bundle: cpiiw-centres-1982

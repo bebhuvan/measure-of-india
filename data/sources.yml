@@ -151,7 +151,10 @@ dossiers:
     derived:
       headline: weighted index of all six groups, then y/y   # never stored independently
       core: weighted index of [pan, clothing, housing, misc], then y/y
-    window: { start: "2016-01" }
+    window: { start: "2014-01" }   # wave 2: was 2016-01; the Current series serves levels from 2013
+    # wave 2 (lb/prices): every group and sub-group for every state and sector, the 299
+    # items and the NSO back series (2011-12 levels) -> buildCpi2012Deep in cpi.mjs
+    deep2012: true
     # ---- base 2024=100 (rebased series) ----
     # The 2012-base stream stopped at Dec 2025; from Jan 2025 the API serves a
     # rebased series on 2024=100 with a COICOP-2018-style hierarchy (13
@@ -200,6 +203,10 @@ dossiers:
         series: Current
         state_code: 1       # All India (this base; 99 in the 2012 base)
     window2024: { start: "2026-01" }   # first month with a same-base year-ago level
+    # wave 2 (lb/prices): every node for every state x sector, classes and sub-classes, the
+    # rural and urban back series -> buildCpi2024Deep in cpi.mjs (state x class, sub-class and
+    # item go to the deep archive, data/archive/staging/cpi/)
+    deep2024: true
     # ---- base 2010=100: ARCHIVED, NOT BAKED ----
     # Probed live 2026-08-08: getCpiFilterByLevelAndBaseYear?base_year=2010
     # serves a 48-month fragment, Jan 2011 – Dec 2014, on the pre-2012 scheme
@@ -426,6 +433,28 @@ dossiers:
         "Manufactured Products": manufactured
         "Food Index": food_index
       window: { start: "2024-04" }   # first month with a same-base year-ago level
+    # THE RETIRED BASES (wave 2, lb/prices). getWpiRecords still serves 2004-05 (2005 to
+    # 2017: 676 items) and 1993-94 (1994 to 2010: 437 items) with the 2022-23 field names.
+    # Baked as wpi-2004* and wpi-1993*, each its own ruler (seams: below). No weights are
+    # served; the headline is the published index. Labels differ by base (1993-94 has
+    # "PRIMARY ARTICLE" and "FUEL POWER LIGHT & LUBRICANTS"): mapped here, not in code.
+    fetchOld:
+      - base_year: "2004-05"
+        base: "2004-05=100"
+        tag: "2004"
+        major_groups:
+          "Wholesale Price Index": published_headline
+          "PRIMARY ARTICLES": primary
+          "FUEL & POWER": fuel
+          "MANUFACTURED PRODUCTS": manufactured
+      - base_year: "1993-94"
+        base: "1993-94=100"
+        tag: "1993"
+        major_groups:
+          "Wholesale Price Index": published_headline
+          "PRIMARY ARTICLE": primary
+          "FUEL POWER LIGHT & LUBRICANTS": fuel
+          "MANUFACTURED PRODUCTS": manufactured
     # WPI weights, base 2011-12 — sum must equal 100.00
     weights:
       primary: 22.62
@@ -1577,6 +1606,37 @@ dossiers:
     source_agency: "Reserve Bank of India, DBIE (DGCI&S data)"
     release_url: https://data.rbi.org.in
   # --- end trade ---
+  # --- prices (lb/prices, wave 2) ---
+  cpiiw:
+    # CPI for industrial workers, Labour Bureau, from RBI DBIE reports 699 (All India,
+    # General and groups) and 1168 (centre-wise General Index), via the Data Bank.
+    # Four bases, each its own bundle (seams: below); the Bureau's linking factors between
+    # bases are not in the reports, so no linked line is drawn.
+    stale_after: "2026-06"
+    family: databank
+    geo: IND
+    product: cpiiw
+    frequency: monthly
+    base: "2016=100"          # current base; 2001, 1982 and 1960 bundles declare their own
+    release_calendar: "last working day of the following month"
+    revision_policy: "Final on release; never revised."
+    source_agency: "Labour Bureau, Ministry of Labour and Employment (via RBI DBIE)"
+    release_url: https://labourbureau.gov.in
+  wages-rural:
+    # Wage Rates in Rural India, Labour Bureau, from RBI DBIE report 664 via the Data Bank.
+    # Daily wage in rupees by occupation and state. Two occupation schemes (18 occupations
+    # to Oct 2013, 25 from Nov 2013), each its own pair of bundles, never joined.
+    stale_after: "2025-01"
+    family: databank
+    geo: IND
+    product: wages-rural
+    frequency: monthly
+    base: "occupations 2013 (25)"   # the 1998 scheme's bundles declare their own
+    release_calendar: "monthly, with a lag of about a year in the DBIE mirror"
+    revision_policy: "Final on release."
+    source_agency: "Labour Bureau, Wage Rates in Rural India (via RBI DBIE)"
+    release_url: https://labourbureau.gov.in
+  # --- end prices ---
 
 # ---------------------------------------------------------------------------
 # SEAMS: the base-year registry (2026-10). One entry per base (or
@@ -1649,6 +1709,34 @@ seams:
       from: "2022-04"
       to: null
       bundles: [gdp-2022, gdp-2022-expenditure, gdp-2022-industries, gdp-2022-nominal, gdp-2022-accounts]
+  # prices (lb/prices, wave 2)
+  cpiiw:
+    - base: "1960=100"
+      from: "1968-08"
+      to: "1988-09"
+      bundles: [cpiiw-1960]
+    - base: "1982=100"
+      from: "1983-04"        # DBIE 699 carries the 1982-base Food group from Apr 1983; the General Index from Oct 1988
+      to: "2005-12"
+      bundles: [cpiiw-1982, cpiiw-centres-1982]
+    - base: "2001=100"
+      from: "2006-01"
+      to: "2020-09"
+      bundles: [cpiiw-2001, cpiiw-centres-2001]
+    - base: "2016=100"
+      from: "2020-09"
+      to: null
+      bundles: [cpiiw-2016, cpiiw-centres-2016]
+  wages-rural:
+    - base: "occupations 1998 (18)"
+      from: "1998-04"
+      to: "2013-10"
+      bundles: [wages-rural-1998, wages-rural-states-1998]
+    - base: "occupations 2013 (25)"
+      from: "2013-11"
+      to: null
+      bundles: [wages-rural-2013, wages-rural-states-2013]
+  # end prices
   cpialrl:
     - base: "1986-87=100"
       from: "1995-07"

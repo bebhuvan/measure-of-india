@@ -270,6 +270,71 @@ export async function buildCpialrl(root, dcfg, vintage) {
   const g86 = groupBundle("1986", "yoy");
   const g19 = groupBundle("2019", "levels");
 
+  /* ---- wave 2 (lb/prices): the rest of what the Bureau serves ----
+     RL beside AL for every state on both bases; state x group (AL and RL) on both bases;
+     All-India RL groups on base 2019. The old base serves its groups state-wise only (no
+     All-India group rows), for the 20 states it covered. Same anatomy as above: old base
+     y/y from levels, new base published levels (and the publisher's y/y where it exists). */
+  const NAMES = Object.fromEntries(rows.concat(groupRows).filter((r) => r.state && r.state !== "All India").map((r) => [slugify(r.state), r.state]));
+  const tidy = (sk) => (NAMES[sk] ?? sk.replace(/_/g, " ")).replace(/\b([a-z])/g, (m) => m.toUpperCase()).replace(/\bAnd\b/g, "and");
+  const flatBundle = (base, entries, coverage, mode) => {
+    const months = [...new Set(entries.flatMap((e) => [...e.map.keys()]))].sort();
+    if (!months.length) return null;
+    const src = entries.map((e) => ({ ...e, use: mode === "yoy" ? yoyFromLevels(e.map) : e.map }));
+    const ym = [...new Set(src.flatMap((e) => [...e.use.keys()]))].sort();
+    const ax = monthAxis(ym[0], ym.at(-1));
+    const dates = ax.map((m) => `${m}-01`);
+    const series = {};
+    src.forEach((e, i) => {
+      if (!e.use.size) return;
+      const data = ax.map((m) => e.use.get(m) ?? null);
+      const first = data.findIndex((v) => v != null);
+      const last = data.length - 1 - [...data].reverse().findIndex((v) => v != null);
+      const gaps = dates.filter((d, j) => j > first && j < last && data[j] == null);
+      series[e.key] = { name: e.name, label: e.label, color: GREYS[i % GREYS.length], unit: mode === "yoy" ? "pct_yoy" : "index", ...(e.group ? { group: e.group } : {}), data,
+        ...(gaps.length ? { gaps, gapsNote: "The Bureau published no index for these months (or none a year earlier)." } : {}) };
+    });
+    return {
+      meta: {
+        dossier: "cpialrl", frequency: "monthly", base: base === "1986" ? "1986-87=100" : "2019=100",
+        source: dcfg.source_agency, vintage, mock: false, geo: dcfg.geo ?? "IND",
+        latestPeriod: ax.at(-1), releaseDate: null, coverage, revisionPolicy: dcfg.revision_policy,
+        note: base === "1986"
+          ? "Old base (1986-87=100), 20 states. Year-on-year computed from published levels inside this base. Superseded by base 2019=100 from June 2025: never joined."
+          : "New base (2019=100), 34 states and UTs, from June 2025. Published index levels; year-on-year exists from June 2026, inside this base only.",
+      },
+      dates, series,
+    };
+  };
+  const stEntries = (base, t, mode) => Object.keys(stateLevels[base]).sort().filter((sk) => stateLevels[base][sk][t].size).map((sk) => ({
+    key: sk, map: stateLevels[base][sk][t], group: tidy(sk),
+    name: `cpi_${t}_${sk}_${mode === "yoy" ? "yoy_pct" : "index"}_base${base}`, label: `${tidy(sk)}, CPI-${t.toUpperCase()}`,
+  }));
+  const grpEntries = (base, t, mode) => Object.keys(gStates[base]).sort().flatMap((sk) => Object.keys(GROUP_LABELS).filter((gk) => gStates[base][sk][gk]?.[t].size).map((gk) => ({
+    key: `${sk}__${gk}`, map: gStates[base][sk][gk][t], group: tidy(sk),
+    name: `cpi_${t}_${sk}_${gk}_${mode === "yoy" ? "yoy_pct" : "index"}_base${base}`, label: `${tidy(sk)}: ${GROUP_LABELS[gk]}, CPI-${t.toUpperCase()}`,
+  })));
+  const deep = {
+    "cpialrl-states-rl-1986": flatBundle("1986", stEntries("1986", "rl", "yoy"), "States, General Index (RL), base 1986-87, y/y", "yoy"),
+    "cpialrl-states-rl-2019": flatBundle("2019", stEntries("2019", "rl", "levels"), "States and UTs, General Index (RL), base 2019, index levels", "levels"),
+    "cpialrl-states-groups-1986": flatBundle("1986", [...grpEntries("1986", "al", "yoy"), ...grpEntries("1986", "rl", "yoy")], "State x group, CPI-AL and CPI-RL, base 1986-87, y/y", "yoy"),
+    "cpialrl-states-groups-2019": flatBundle("2019", [...grpEntries("2019", "al", "levels"), ...grpEntries("2019", "rl", "levels")], "State x group, CPI-AL and CPI-RL, base 2019, index levels", "levels"),
+  };
+  // All-India RL groups, base 2019: levels and the publisher's y/y, as cpialrl-groups-2019 does for AL
+  {
+    const keys = Object.keys(GROUP_LABELS).filter((gk) => gLevels["2019"][gk]?.rl.size);
+    const months = [...new Set(keys.flatMap((gk) => [...gLevels["2019"][gk].rl.keys()]))].sort();
+    const ax = monthAxis(months[0], months.at(-1));
+    const series = {};
+    keys.forEach((gk, i) => {
+      series[gk] = { name: `cpi_rl_${gk}_index_base2019`, label: `${GROUP_LABELS[gk]}, CPI-RL`, color: GREYS[i % GREYS.length], unit: "index", data: ax.map((m) => gLevels["2019"][gk].rl.get(m) ?? null) };
+      series[`${gk}_published_yoy`] = { name: `cpi_rl_${gk}_yoy_pct_published`, label: `${GROUP_LABELS[gk]}, CPI-RL (published y/y)`, color: GREYS[(i + 2) % GREYS.length], unit: "pct", data: ax.map((m) => gPublished.rl[gk]?.get(m) ?? null) };
+    });
+    for (const [k, s] of Object.entries(series)) if (s.data.every((v) => v == null)) delete series[k];
+    deep["cpialrl-groups-rl-2019"] = { meta: { ...g19.meta, coverage: "All India, Group Index (RL), base 2019" }, dates: ax.map((m) => `${m}-01`), series };
+  }
+  for (const [slug, b] of Object.entries(deep)) if (b && Object.keys(b.series).length) writeSeries(root, `data/series/${slug}.json`, b);
+
   writeSeries(root, "data/series/cpialrl-1986.json", bundle86);
   writeSeries(root, "data/series/cpialrl-2019.json", bundle19);
   if (s86) writeSeries(root, "data/series/cpialrl-states-1986.json", s86);

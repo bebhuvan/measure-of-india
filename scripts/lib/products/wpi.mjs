@@ -4,7 +4,7 @@
 // published headline and the published Food index are fetched for
 // cross-check and display, never substituted for the computed headline.
 
-import { mospi } from "../mospi.mjs";
+import { mospi, mospiAll } from "../mospi.mjs";
 import { MONTHS, writeSeries, writeRaw, yoyFromLevels, monthAxis } from "../util.mjs";
 
 const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
@@ -234,7 +234,10 @@ export async function buildWpi(root, dcfg, vintage) {
   writeSeries(root, "data/series/wpi-groups.json", groupsBundle);
   writeSeries(root, "data/series/wpi-subgroups.json", subgroupsBundle);
   writeSeries(root, "data/series/wpi-items.json", itemsBundle);
+  // wave 2 (lb/prices): the sub-sub-group aggregates between sub-group and item, baked
+  writeSeries(root, "data/series/wpi-subsubgroups.json", subsubBundle(subsubLevels, axis, dates, groupsBundle.meta, "wpi_ssg_", "Sub-sub-groups between the sub-groups and the items, base 2011-12"));
   if (dcfg.fetch2022) await buildWpi2022(root, dcfg, vintage);
+  for (const old of dcfg.fetchOld ?? []) await buildWpiOld(root, dcfg, vintage, old);
   return bundle;
 }
 
@@ -392,6 +395,128 @@ async function buildWpi2022(root, dcfg, vintage) {
   writeSeries(root, "data/series/wpi-2022-groups.json", groups);
   writeSeries(root, "data/series/wpi-2022-subgroups.json", subgroups);
   writeSeries(root, "data/series/wpi-2022-items.json", items);
+  writeSeries(root, "data/series/wpi-2022-subsubgroups.json", subsubBundle(subsubLevels, axis, dates, groups.meta, "wpi_ssg_", "Sub-sub-groups between the sub-groups and the items, base 2022-23"));
+}
+
+// y/y bundle of the sub-sub-group aggregates (wave 2, lb/prices), each series carrying its
+// group and sub-group so the every-cut table can filter by them
+function subsubBundle(levels, axis, dates, baseMeta, prefix, coverage) {
+  const series = {};
+  Object.keys(levels).sort().forEach((k, i) => {
+    const yy = yoyFromLevels(levels[k].map);
+    const data = axis.map((ym) => yy.get(ym) ?? null);
+    const first = data.findIndex((v) => v != null);
+    const last = data.length - 1 - [...data].reverse().findIndex((v) => v != null);
+    const gaps = first < 0 ? [] : dates.filter((d, j) => j > first && j < last && data[j] == null);
+    series[k] = { name: `${prefix}${k}_yoy_pct`, label: levels[k].label, lineage: [levels[k].group, levels[k].subgroup].filter(Boolean).join(" › "), group: levels[k].group ?? undefined,
+      color: GREYS[i % GREYS.length], unit: "pct_yoy", data, ...(gaps.length ? { gaps } : {}) };
+  });
+  for (const [k, s] of Object.entries(series)) if (s.data.every((v) => v == null)) delete series[k];
+  return { meta: { ...baseMeta, coverage }, dates, series };
+}
+
+/* =========================================================================
+ * The retired bases, 2004-05 and 1993-94 (wave 2, lb/prices). The API still serves both
+ * through getWpiRecords (base_year param; same field names as 2022-23). Each base is its own
+ * set of bundles (wpi-2004*, wpi-1993*), never joined to another (AGENTS.md rule 1):
+ *   wpi-<tag>              published headline and the three major groups, y/y
+ *   wpi-<tag>-groups, -subgroups, -subsubgroups, -items   the whole tree, y/y
+ * The headline is the published index (no recomposition from weights is asserted). y/y is
+ * computed from published levels inside the base, so each base's first year has none.
+ * Pagination is checked: every (node, month) must appear once per year's stream.
+ * ========================================================================= */
+async function buildWpiOld(root, dcfg, vintage, f) {
+  const MAJOR = Object.fromEntries(Object.entries(f.major_groups).map(([label, key]) => [label.trim().toLowerCase(), key]));
+  const levels = Object.fromEntries(Object.values(MAJOR).map((k) => [k, new Map()]));
+  const groupLevels = {}, subgroupLevels = {}, subsubLevels = {}, itemLevels = {};
+  const filt = (await mospi("wpi/getWpiData", { base_year: f.base_year })).data ?? {};
+  const years = (filt.year ?? []).map((y) => Number(y.year)).sort();
+  if (!years.length) throw new Error(`WPI ${f.base_year}: the filter lists no years`);
+  let repeats = 0;
+  for (const year of years) {
+    const rows = await mospiAll(dcfg.fetch.endpoint, { base_year: f.base_year, year });
+    const seen = new Set();
+    for (const r of rows) {
+      const id = [r.major_group, r.group, r.sub_group, r.sub_sub_group, r.item, r.month].join("|");
+      if (seen.has(id)) { repeats++; continue; }
+      seen.add(id);
+      const m = String(MONTHS.indexOf(r.month) + 1).padStart(2, "0");
+      if (m === "00") continue;
+      const v = parseFloat(r.index_value);
+      if (!Number.isFinite(v) || v === 0) continue;
+      const key = MAJOR[String(r.major_group ?? "").trim().toLowerCase()];
+      if (!key) throw new Error(`WPI ${f.base_year}: unknown major group "${r.major_group}"`);
+      const ym = `${r.year}-${m}`;
+      if (r.group == null) { levels[key].set(ym, v); continue; }
+      const lineage = { majorgroup: r.major_group.trim(), group: r.group, subgroup: r.sub_group ?? null, sub_subgroup: r.sub_sub_group ?? null };
+      if (r.item != null) {
+        let k = slugify(r.item);
+        const prior = itemLevels[k];
+        if (prior && (prior.group !== lineage.group || prior.subgroup !== lineage.subgroup || prior.sub_subgroup !== lineage.sub_subgroup)) k = `${k}__${slugify(lineage.sub_subgroup ?? lineage.subgroup ?? lineage.group)}`;
+        (itemLevels[k] ??= { label: r.item.trim(), ...lineage, map: new Map() }).map.set(ym, v);
+      } else if (r.sub_group == null) {
+        (groupLevels[slugify(r.group)] ??= { label: r.group.trim(), map: new Map() }).map.set(ym, v);
+      } else if (r.sub_sub_group == null) {
+        (subgroupLevels[slugify(r.sub_group)] ??= { label: r.sub_group.trim(), group: r.group, map: new Map() }).map.set(ym, v);
+      } else {
+        (subsubLevels[slugify(r.sub_sub_group)] ??= { label: r.sub_sub_group.trim(), group: r.group, subgroup: r.sub_group, map: new Map() }).map.set(ym, v);
+      }
+    }
+    process.stdout.write(`wpi ${f.base_year} ${year}: ${rows.length} rows\n`);
+  }
+  if (repeats) process.stdout.write(`wpi ${f.base_year}: ${repeats} repeated rows across page boundaries skipped\n`);
+  const months = [...levels.published_headline.keys()].sort();
+  if (!months.length) throw new Error(`WPI ${f.base_year}: no data returned`);
+  const yy0 = [...yoyFromLevels(levels.published_headline).keys()].sort();
+  const axis = monthAxis(yy0[0], months.at(-1));
+  const dates = axis.map((ym) => `${ym}-01`);
+  const meta = (coverage, note) => ({
+    dossier: "wpi", frequency: "monthly", base: f.base, source: dcfg.source_agency, vintage, mock: false, geo: dcfg.geo ?? "IND",
+    latestPeriod: axis.at(-1), releaseDate: null, coverage, revisionPolicy: dcfg.revision_policy,
+    note: `Retired base ${f.base}, ${months[0]} to ${months.at(-1)} as served by the API. y/y computed from published index levels inside this base; never joined to another base.${note ? " " + note : ""}`,
+  });
+  const yoySeries = (map, extra) => {
+    const yy = yoyFromLevels(map);
+    const data = axis.map((ym) => yy.get(ym) ?? null);
+    const first = data.findIndex((v) => v != null);
+    const last = data.length - 1 - [...data].reverse().findIndex((v) => v != null);
+    const gaps = first === -1 ? [] : dates.filter((d, j) => j > first && j < last && data[j] == null);
+    return { unit: "pct_yoy", ...extra, data, ...(gaps.length ? { gaps } : {}) };
+  };
+  const tree = (obj, prefix, withLineage) => {
+    const out = {};
+    Object.keys(obj).sort().forEach((k, i) => {
+      const o = obj[k];
+      out[k] = yoySeries(o.map, { name: `wpi${f.tag}_${prefix}${k}_yoy_pct`, label: o.label, color: GREYS[i % GREYS.length],
+        ...(withLineage ? { lineage: [o.majorgroup, o.group, o.subgroup, o.sub_subgroup].filter(Boolean).join(" › "), group: o.group, latestIndex: o.map.get(months.at(-1)) ?? null } : o.group ? { group: o.group } : {}) });
+    });
+    for (const [k, s] of Object.entries(out)) if (s.data.every((v) => v == null)) delete out[k];
+    return out;
+  };
+  const headline = {
+    meta: meta(`All India; published headline and the three major groups, base ${f.base}`, "The headline is the published WPI; no recomposition from weights is asserted."),
+    dates,
+    series: {
+      headline: yoySeries(levels.published_headline, { name: `wpi${f.tag}_headline_yoy_pct`, label: `Headline, base ${f.base_year}`, color: "#2E4BD8" }),
+      primary: yoySeries(levels.primary, { name: `wpi${f.tag}_primary_yoy_pct`, label: "Primary articles", color: "#5F6675" }),
+      fuel: yoySeries(levels.fuel, { name: `wpi${f.tag}_fuel_yoy_pct`, label: "Fuel and power", color: "#A3A9B4" }),
+      manufactured: yoySeries(levels.manufactured, { name: `wpi${f.tag}_manufactured_yoy_pct`, label: "Manufactured products", color: "#C9CED6" }),
+    },
+  };
+  const unit = `index, base ${f.base}`;
+  writeRaw(root, `data/raw/wpi-${f.tag}-items.json`, {
+    vintage, unit, coverage: `the whole tree of base ${f.base_year}: major groups, groups, sub-groups, sub-sub-groups and items, with lineage, index levels`,
+    majors: Object.fromEntries(Object.entries(levels).map(([k, m]) => [k, Object.fromEntries([...m.entries()].sort())])),
+    groups: Object.fromEntries(Object.entries(groupLevels).map(([k, o]) => [k, { label: o.label, levels: Object.fromEntries([...o.map.entries()].sort()) }])),
+    subgroups: Object.fromEntries(Object.entries(subgroupLevels).map(([k, o]) => [k, { label: o.label, group: o.group, levels: Object.fromEntries([...o.map.entries()].sort()) }])),
+    sub_subgroups: Object.fromEntries(Object.entries(subsubLevels).map(([k, o]) => [k, { label: o.label, group: o.group, subgroup: o.subgroup, levels: Object.fromEntries([...o.map.entries()].sort()) }])),
+    items: Object.fromEntries(Object.entries(itemLevels).sort().map(([k, { map, ...rest }]) => [k, { ...rest, levels: Object.fromEntries([...map.entries()].sort()) }])),
+  });
+  writeSeries(root, `data/series/wpi-${f.tag}.json`, headline);
+  writeSeries(root, `data/series/wpi-${f.tag}-groups.json`, { meta: meta(`Groups beneath the major groups, base ${f.base_year}`), dates, series: tree(groupLevels, "") });
+  writeSeries(root, `data/series/wpi-${f.tag}-subgroups.json`, { meta: meta(`Sub-groups, base ${f.base_year}`), dates, series: tree(subgroupLevels, "") });
+  writeSeries(root, `data/series/wpi-${f.tag}-subsubgroups.json`, { meta: meta(`Sub-sub-groups, base ${f.base_year}`), dates, series: tree(subsubLevels, "ssg_") });
+  writeSeries(root, `data/series/wpi-${f.tag}-items.json`, { meta: meta(`The ${Object.keys(itemLevels).length} items of the ${f.base_year} basket`, "Item weights are not served by the API, so no recomposition is asserted; latestIndex is each item's level in the base's last month."), dates, series: tree(itemLevels, "item_", true) });
 }
 
 /* Catalogue (docs/CONTRACT-coverage.md): what the OEA publishes through eSankhyiki, from
