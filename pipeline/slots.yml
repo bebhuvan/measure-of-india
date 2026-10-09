@@ -12,11 +12,31 @@ cpi:
     mustAcknowledge: [contradictions]
     bannedWords: []
     brief: >
-      Two short paragraphs on the new 2024-base print (June 2026): the headline,
-      what drives it (food and beverages, transport, restaurants — and personal
-      care / gold as a world-market spectator to set apart), and the firming run
-      since the series opened in January. Name the band position. Concede what is
-      genuine before qualifying it.
+      Two short paragraphs on the latest 2024-base print (name its month from the
+      sheet, never from memory): the headline, what drives it (food and beverages,
+      transport, restaurants, and personal care / gold as a world-market spectator to
+      set apart), and the run since the series opened in January. Name the band
+      position. Then the cuts that answer "what does inflation look like for me": the
+      rural and urban division gap (proseInputs cpi-2024-rural-divisions and
+      -urban-divisions), the state spread by division (cpi-2024-states-divisions), and
+      the industrial worker's index (cpiiw-2016: a different instrument, the Labour
+      Bureau's, for the same month; its sheet summarises its six groups only, so name
+      their range and leave the general rate to the §13 plate, without remarking on
+      what the sheet lacks). Concede what is genuine before qualifying it.
+      READING THE SHEET (wave 2): "topMover"/"bottomMover" (cross) and "top"/"bottom"
+      (proseInputs) rank series by how much their rate CHANGED, not by the rate itself:
+      never call a mover the highest or smallest; the highest and lowest RATES are
+      "topByLatest" and "bottomByLatest". "rising" and "falling" in a tail count series whose rate rose or fell
+      on the previous month, not prices rising or falling: say "faster than last month". The sheet's
+      13 main series are the General index (the headline) plus TWELVE divisions: write
+      "twelve divisions", never "thirteen". The 2024 base publishes NO weights: never call
+      a division the largest or say what share of the basket it is. Before saying a division
+      alone did something (eased, rose), check every division's deltaVsPrev; name all that did.
+      Do not draw causal conclusions the figures do not show.
+      CPI-IW (cpiiw-2016): "general_index" is an index LEVEL (154.4), not a rate; its change
+      on a year earlier in points is not a per cent. Quote the worker's inflation from the
+      series "general" (a y/y rate), or quote only the level. Every figure on this page is
+      already year-on-year: never write that there is no year-ago reading. Every rate is a per cent: write the %.
   - id: current-reading.what-it-does-not-say
     maxSentences: 6
     dateStamp: false
@@ -24,17 +44,45 @@ cpi:
     brief: >
       The honest limits of the new base: the API serves no component weights, so
       no core index can be computed on it — the last core reading lives on the
-      retired 2012 base, which closed at a different headline. The June figure
-      and the December figure are different rulers, not a jump. Must contain a
+      retired 2012 base, which closed at a different headline. The latest figure
+      and the December 2025 figure are different rulers, not a jump. Must contain a
       plain "we do not know" sentence.
+      READING THE SHEET (wave 2): "topMover"/"bottomMover" (cross) and "top"/"bottom"
+      (proseInputs) rank series by how much their rate CHANGED, not by the rate itself:
+      never call a mover the highest or smallest; the highest and lowest RATES are
+      "topByLatest" and "bottomByLatest". "rising" and "falling" in a tail count series whose rate rose or fell
+      on the previous month, not prices rising or falling: say "faster than last month". The sheet's
+      13 main series are the General index (the headline) plus TWELVE divisions: write
+      "twelve divisions", never "thirteen". The 2024 base publishes NO weights: never call
+      a division the largest or say what share of the basket it is. Before saying a division
+      alone did something (eased, rose), check every division's deltaVsPrev; name all that did.
+      Do not draw causal conclusions the figures do not show.
+      CPI-IW (cpiiw-2016): "general_index" is an index LEVEL (154.4), not a rate; its change
+      on a year earlier in points is not a per cent. Quote the worker's inflation from the
+      series "general" (a y/y rate), or quote only the level. Every figure on this page is
+      already year-on-year: never write that there is no year-ago reading. Every rate is a per cent: write the %.
   - id: as-of.newbase
     maxSentences: 6
     dateStamp: true
     requiredFigures: [headline.latest, headline.yearStart]
     brief: >
-      The new base's first half-year in one arc: where it opened (January), where
-      it stands (June), its position in the RBI tolerance band, and the one thing
-      to watch. Reads like a newspaper's second paragraph.
+      The new base's months so far in one arc: where it opened (January), where
+      it stands (the latest month in the sheet), its position in the RBI tolerance
+      band, and the one thing to watch. Reads like a newspaper's second paragraph.
+      READING THE SHEET (wave 2): "topMover"/"bottomMover" (cross) and "top"/"bottom"
+      (proseInputs) rank series by how much their rate CHANGED, not by the rate itself:
+      never call a mover the highest or smallest; the highest and lowest RATES are
+      "topByLatest" and "bottomByLatest". "rising" and "falling" in a tail count series whose rate rose or fell
+      on the previous month, not prices rising or falling: say "faster than last month". The sheet's
+      13 main series are the General index (the headline) plus TWELVE divisions: write
+      "twelve divisions", never "thirteen". The 2024 base publishes NO weights: never call
+      a division the largest or say what share of the basket it is. Before saying a division
+      alone did something (eased, rose), check every division's deltaVsPrev; name all that did.
+      Do not draw causal conclusions the figures do not show.
+      CPI-IW (cpiiw-2016): "general_index" is an index LEVEL (154.4), not a rate; its change
+      on a year earlier in points is not a per cent. Quote the worker's inflation from the
+      series "general" (a y/y rate), or quote only the level. Every figure on this page is
+      already year-on-year: never write that there is no year-ago reading. Every rate is a per cent: write the %.
 
 gdp:
   - id: current-reading.what-the-print-says
@@ -89,6 +137,11 @@ wpi:
       The headline wholesale print and its three moving parts (primary, fuel,
       manufactured). Name which group did the lifting this month. Concede the
       genuine before qualifying it.
+      READING THE SHEET (wave 2): "topMover"/"bottomMover" (cross) and "top"/"bottom"
+      (proseInputs) rank series by how much their rate CHANGED, not by the rate itself:
+      never call a mover the highest or smallest; the highest and lowest RATES are
+      "topByLatest" and "bottomByLatest". "rising" and "falling" in a tail count series whose rate rose or fell
+      on the previous month, not prices rising or falling: say "faster than last month". Every rate is a per cent: write the %.
   - id: current-reading.what-it-does-not-say
     maxSentences: 6
     dateStamp: false
@@ -97,6 +150,11 @@ wpi:
       The honest limits: this is the factory gate, not the shop (no services, no
       retail margins); pass-through is slow; and it is provisional, revised in
       about eight weeks. Must contain a plain "we do not know" or "provisional".
+      READING THE SHEET (wave 2): "topMover"/"bottomMover" (cross) and "top"/"bottom"
+      (proseInputs) rank series by how much their rate CHANGED, not by the rate itself:
+      never call a mover the highest or smallest; the highest and lowest RATES are
+      "topByLatest" and "bottomByLatest". "rising" and "falling" in a tail count series whose rate rose or fell
+      on the previous month, not prices rising or falling: say "faster than last month". Every rate is a per cent: write the %.
 
 iip:
   - id: current-reading.what-the-print-says

@@ -52,7 +52,8 @@ export const DOSSIERS = [
     stamp: { dateStyle: "release", vintageStyle: "release" },
     statusNote: "Evergreen, revised with each print",
     version: "v2.4",
-    proseInputs: ["cpi-2024-groups", "cpi-2024-states", "cpi-2024-states-sectors", "cpi-2024-items", "cpi-2024-sectors"],
+    proseInputs: ["cpi-2024-groups", "cpi-2024-states", "cpi-2024-states-sectors", "cpi-2024-items", "cpi-2024-sectors",
+      "cpi-2024-rural-divisions", "cpi-2024-urban-divisions", "cpi-2024-states-divisions", "cpiiw-2016"],   // prices wave 2
     currentBundle: "cpi-2024",
     calendar: "fiscal-apr",
     bands: { floor: 2, target: 4, ceiling: 6 },   // policy band, where one exists in law (CPI only)
@@ -60,7 +61,21 @@ export const DOSSIERS = [
     spark: { bundle: "cpi", series: "headline" },   // retired 2012 base: the long history
     prose: true,
     register: { id: "reg-cpi", label: "Prices", unit: "Monthly, base 2024 from Jan 2026, base 2012 retired Dec 2025", historyCol: "History" },
-    bundles: ["cpi", "cpi-rural", "cpi-urban", "cpi-subgroups", "cpi-states", "cpi-states-sectors", "cpialrl-2019", "cpialrl-1986", "cpialrl-groups-2019", "cpi-2024", "cpi-2024-back", "cpi-2024-linked", "cpi-2024-sectors", "cpi-2024-groups", "cpi-2024-items", "cpi-2024-states", "cpialrl-states-1986", "cpialrl-states-2019"],
+    bundles: ["cpi", "cpi-rural", "cpi-urban", "cpi-subgroups", "cpi-states", "cpi-states-sectors", "cpialrl-2019", "cpialrl-1986", "cpialrl-groups-2019", "cpi-2024", "cpi-2024-back", "cpi-2024-linked", "cpi-2024-sectors", "cpi-2024-groups", "cpi-2024-items", "cpi-2024-states", "cpialrl-states-1986", "cpialrl-states-2019",
+      // ---- prices wave 2 (lb/prices): the deepening; the long tails sit in everyCutFamilies below
+      "cpi-2024-classes", "cpi-2024-subclasses", "cpi-2024-back-sectors", "cpi-2024-rural-divisions", "cpi-2024-urban-divisions", "cpi-2024-states-divisions",
+      "cpi-groups", "cpi-rural-detail", "cpi-urban-detail", "cpi-items-2012", "cpi-2012-early",
+      "cpiiw-2016", "cpiiw-2016-index", "cpiiw-2001", "cpiiw-1982", "cpiiw-1960", "cpiiw-centres-2016", "wages-rural-2013", "wages-rural-1998", "cpialrl-groups-rl-2019", "cpialrl-states-rl-2019", "cpialrl-states-rl-1986"],
+    // ---- prices wave 2 (lb/prices): the long tails, each family on its own paged view
+    everyCutFamilies: [
+      { id: "cpi-2024-sector-levels", label: "Base 2024, rural and urban: groups, classes, sub-classes and items", match: ["cpi-2024-rural-", "cpi-2024-urban-"] },
+      { id: "cpi-2024-states-deep", label: "Base 2024, every state by division and by group, combined, rural and urban", match: ["cpi-2024-states-divisions-", "cpi-2024-states-groups"] },
+      { id: "cpi-2012-states-deep", label: "Base 2012, every state by group and by sub-group, combined, rural and urban", match: ["cpi-states-groups", "cpi-states-subgroups"] },
+      { id: "cpi-2012-early-by-state", label: "Base 2012, every state, 2012 to 2015 (2012 and 2013 on the NSO back series)", match: ["cpi-2012-early-states"] },
+      { id: "cpiiw-centres", label: "CPI for industrial workers, by centre, three bases", match: ["cpiiw-centres-2001", "cpiiw-centres-1982"] },
+      { id: "wages-rural-states", label: "Rural daily wages, every state by occupation, two occupation lists", match: ["wages-rural-states-"] },
+      { id: "cpialrl-states-deep", label: "CPI-AL and CPI-RL, every state by group, two bases", match: ["cpialrl-states-groups-"] },
+    ],
   },
   {
     slug: "gdp",
@@ -105,14 +120,20 @@ export const DOSSIERS = [
     statusNote: "Evergreen, revised with each print",
     version: "v1.2",
     currentBundle: "wpi-2022",
-    proseInputs: ["wpi-2022-groups", "wpi-2022-subgroups", "wpi-2022-items"],
+    proseInputs: ["wpi-2022-groups", "wpi-2022-subgroups", "wpi-2022-items", "wpi-2022-subsubgroups"],   // subsubgroups: prices wave 2
     calendar: "fiscal-apr",
     bands: null,
     proseConstants: [100, 2011, 2022, 2023],   // verifier whitelist: weights/shares/base years this dossier may cite
     spark: { bundle: "wpi", series: "headline" },   // retired 2011-12 base: the long history
     prose: true,
     register: { id: "reg-wpi", label: "Wholesale prices", unit: "Monthly, provisional, 2022-23 base current, 2011-12 base through April 2026", historyCol: "2016 to 2026" },
-    bundles: ["wpi", "wpi-groups", "wpi-subgroups", "wpi-items", "wpi-2022", "wpi-2022-groups", "wpi-2022-subgroups", "wpi-2022-items"],
+    bundles: ["wpi", "wpi-groups", "wpi-subgroups", "wpi-items", "wpi-2022", "wpi-2022-groups", "wpi-2022-subgroups", "wpi-2022-items",
+      // ---- prices wave 2 (lb/prices): sub-sub-groups and the two retired bases
+      "wpi-subsubgroups", "wpi-2022-subsubgroups", "wpi-2004", "wpi-1993"],
+    everyCutFamilies: [
+      { id: "wpi-2004-tree", label: "Base 2004-05, the whole tree: groups, sub-groups, sub-sub-groups and items", match: ["wpi-2004-"] },
+      { id: "wpi-1993-tree", label: "Base 1993-94, the whole tree: groups, sub-groups, sub-sub-groups and items", match: ["wpi-1993-"] },
+    ],
   },
   {
     slug: "iip",

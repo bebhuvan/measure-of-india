@@ -582,6 +582,45 @@ const PRODUCTS = [
   { slug: "external-reer6-2015-calendar", dossier: "external-reer", cadence: 12, freq: "annual", staleAfter: "2025-01", range: [40, 200] },
   { slug: "external-reer6-2015-fiscal", dossier: "external-reer", cadence: 12, freq: "annual", staleAfter: "2025-04", range: [40, 200] },
   // ---- end external ----
+  // ---- prices wave 2 (lb/prices): CPI deep, CPI-IW, rural wages, CPI-AL/RL deep, WPI old bases ----
+  ...["cpi-2024-classes", "cpi-2024-subclasses", ...["rural", "urban"].flatMap((s) => ["divisions", "groups", "classes", "subclasses", "items"].map((l) => `cpi-2024-${s}-${l}`))]
+    .map((slug) => ({ slug, dossier: "cpi", cadence: 1, range: [-70, 300], base: "2024=100" })),
+  ...["", "-rural", "-urban"].flatMap((s) => [`cpi-2024-states-divisions${s}`, `cpi-2024-states-groups${s}`])
+    .map((slug) => ({ slug, dossier: "cpi", cadence: 1, range: [-80, 300], base: "2024=100" })),
+  { slug: "cpi-2024-back-sectors", dossier: "cpi", cadence: 1, staleAfter: "2024-12", range: [-8, 20], base: "2024=100" },
+  { slug: "cpi-groups", dossier: "cpi", cadence: 1, staleAfter: "2025-12", range: [-30, 70] },
+  { slug: "cpi-rural-detail", dossier: "cpi", cadence: 1, staleAfter: "2025-12", range: [-50, 120] },
+  { slug: "cpi-urban-detail", dossier: "cpi", cadence: 1, staleAfter: "2025-12", range: [-50, 120] },
+  ...["", "-rural", "-urban"].flatMap((s) => [`cpi-states-groups${s}`, `cpi-states-subgroups${s}`])
+    .map((slug) => ({ slug, dossier: "cpi", cadence: 1, staleAfter: "2025-12", range: [-90, 400] })),
+  { slug: "cpi-items-2012", dossier: "cpi", cadence: 1, staleAfter: "2025-12", range: [-95, 600] },
+  { slug: "cpi-2012-early", dossier: "cpi", cadence: 1, staleAfter: "2015-12", range: [-40, 100] },
+  { slug: "cpi-2012-early-states", dossier: "cpi", cadence: 1, staleAfter: "2015-12", range: [-90, 400] },
+  { slug: "cpiiw-2016", dossier: "cpiiw", cadence: 1, range: [-20, 40], base: "2016=100" },
+  { slug: "cpiiw-2016-index", dossier: "cpiiw", cadence: 1, range: [100, 400], base: "2016=100" },
+  { slug: "cpiiw-2001", dossier: "cpiiw", cadence: 1, staleAfter: "2020-08", range: [-20, 40], base: "2001=100" },
+  { slug: "cpiiw-1982", dossier: "cpiiw", cadence: 1, staleAfter: "2005-12", range: [-20, 40], base: "1982=100" },
+  { slug: "cpiiw-1960", dossier: "cpiiw", cadence: 1, staleAfter: "1988-09", range: [-30, 45], base: "1960=100" },
+  { slug: "cpiiw-centres-2016", dossier: "cpiiw", cadence: 1, range: [-30, 50], base: "2016=100" },
+  { slug: "cpiiw-centres-2001", dossier: "cpiiw", cadence: 1, staleAfter: "2020-08", range: [-50, 80], base: "2001=100" },
+  { slug: "cpiiw-centres-1982", dossier: "cpiiw", cadence: 1, staleAfter: "2005-12", range: [-50, 80], base: "1982=100" },
+  // rupees a day: the lowest occupation-state cells near Rs 15 in 1998, the highest near Rs 1,500 now
+  { slug: "wages-rural-2013", dossier: "wages-rural", cadence: 1, range: [50, 3000] },
+  { slug: "wages-rural-states-2013", dossier: "wages-rural", cadence: 1, range: [20, 3000] },
+  { slug: "wages-rural-1998", dossier: "wages-rural", cadence: 1, staleAfter: "2013-10", range: [5, 1500], base: "occupations 1998 (18)" },
+  { slug: "wages-rural-states-1998", dossier: "wages-rural", cadence: 1, staleAfter: "2013-10", range: [5, 1500], base: "occupations 1998 (18)" },
+  { slug: "cpialrl-states-rl-1986", dossier: "cpialrl", cadence: 1, staleAfter: "2025-05", range: [-25, 45], base: "1986-87=100" },
+  { slug: "cpialrl-states-groups-1986", dossier: "cpialrl", cadence: 1, staleAfter: "2025-05", range: [-60, 120], base: "1986-87=100" },
+  { slug: "cpialrl-states-rl-2019", dossier: "cpialrl", cadence: 1, range: [50, 300], base: "2019=100" },
+  { slug: "cpialrl-states-groups-2019", dossier: "cpialrl", cadence: 1, range: [50, 300], base: "2019=100" },
+  { slug: "cpialrl-groups-rl-2019", dossier: "cpialrl", cadence: 1, range: [-10, 300], base: "2019=100" },
+  { slug: "wpi-subsubgroups", dossier: "wpi", cadence: 1, staleAfter: "2026-04", range: [-90, 500] },
+  { slug: "wpi-2022-subsubgroups", dossier: "wpi", cadence: 1, staleAfter: "2026-08", range: [-90, 500], base: "2022-23=100" },
+  ...[["2004", "2004-05=100", "2017-03"], ["1993", "1993-94=100", "2010-03"]].flatMap(([t, base, stale]) => [
+    { slug: `wpi-${t}`, dossier: "wpi", cadence: 1, staleAfter: stale, range: [-30, 60], base },
+    ...["groups", "subgroups", "subsubgroups", "items"].map((l) => ({ slug: `wpi-${t}-${l}`, dossier: "wpi", cadence: 1, staleAfter: stale, range: [-95, 900], base })),
+  ]),
+  // ---- end prices wave 2 ----
 ];
 
 for (const p of PRODUCTS) {
@@ -2881,6 +2920,39 @@ function ratesRanges(slug, byUnit) {
   });
 }
 
+/* ---- prices wave 2 (lb/prices): identities for the deepening ---- */
+// y/y computed from levels against the NSO's own published inflation, on every new base-2024 bundle
+for (const slug of ["cpi-2024-classes", "cpi-2024-subclasses", ...["rural", "urban"].flatMap((s) => ["divisions", "groups", "classes", "subclasses", "items"].map((l) => `cpi-2024-${s}-${l}`)),
+  ...["", "-rural", "-urban"].flatMap((s) => [`cpi-2024-states-divisions${s}`, `cpi-2024-states-groups${s}`])]) crossInflationMap(slug, 0.15);
+crossInflationMap("cpi-2024-back-sectors", 0.25);   // the back-cast's own rate, as cpi-2024-back
+withBundle("cpi-2024-states-divisions", (b) => {
+  const states = new Set(Object.values(b.series).map((s) => s.state));
+  if (states.size !== 36) fail(`cpi-2024-states-divisions: ${states.size} states/UTs, expected 36`);
+  else ok("cpi-2024-states-divisions: all 36 states/UTs present");
+});
+withBundle("cpi-items-2012", (b) => {
+  const n = Object.keys(b.series).length;
+  if (n < 295 || n > 300) fail(`cpi-items-2012: ${n} items, the 2012 basket has 299`);
+  else ok(`cpi-items-2012: ${n} items`);
+});
+withBundle("cpiiw-2016", (b) => withBundle("cpiiw-2016-index", (x) => {
+  // the y/y the page shows must follow from the published levels
+  const lv = new Map(x.dates.map((d, i) => [d, x.series.general_index.data[i]]));
+  const ago = (d) => `${+d.slice(0, 4) - 1}${d.slice(4)}`;
+  let bad = 0;
+  b.dates.forEach((d, i) => { const y = b.series.general.data[i], L = lv.get(d), P = lv.get(ago(d)); if (y != null && L != null && P != null && Math.abs((L / P - 1) * 100 - y) > 0.01) bad++; });
+  if (bad) fail(`cpiiw-2016: ${bad} months where the y/y does not follow from the index levels`);
+  else ok("cpiiw-2016: y/y follows from the published levels in every month");
+}));
+withBundle("cpiiw-centres-2016", (b) => {
+  const n = Object.keys(b.series).length;
+  if (n !== 88) fail(`cpiiw-centres-2016: ${n} centres, the 2016 base prices 88`);
+  else ok("cpiiw-centres-2016: all 88 centres present");
+});
+withBundle("wages-rural-2013", (b) => {
+  if (!b.series.o1210) fail("wages-rural-2013: no general agricultural labourer series (code 1210)");
+  else ok(`wages-rural-2013: ${Object.keys(b.series).length} occupations, general agricultural labourer present`);
+});
 
 /* ---- households (wave 2): consumption (hces), higher education (aishe), renewable energy
  * (mnre), deposits (bsr2) ----

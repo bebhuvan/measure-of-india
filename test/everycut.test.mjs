@@ -76,3 +76,7 @@ test("every guide's every-cut plan places each bundle exactly once, inline withi
     for (const t of p.tails) assert.equal(t.pages.flat().length, t.rows.length, `${d.slug}/${t.id}: pages lose rows`);
   }
 });
+
+test("UNITS holds only units (every entry formats a value)", () => {
+  for (const [k, u] of Object.entries(UNITS)) assert.equal(typeof u?.fmt, "function", `UNITS.${k} is not a unit (a cut label in the wrong map?)`);
+});

@@ -1,11 +1,31 @@
 # Coverage ledger: CPI for Agricultural and Rural Labourers, Labour Bureau
 # (docs/CONTRACT-coverage.md). Catalogue: node scripts/lib/products/cpialrl.mjs --catalogue.
-# Omissions left for the coordinator: RL groups and RL states, 1986-87 groups, state x group,
-# and states the 1986-87 bundle does not carry.
+# Wave 2 (lb/prices, 2026-10-10) decided every pending item: see the block at the end.
 family: cpialrl
 guides: [cpi]
 catalogue: data/coverage/cpialrl.catalogue.json
 rules:
+  # wave 2 (lb/prices): pairs the listing offers but the Bureau never served (checked 2026-10-10)
+  - match:
+      - "cpialrl:1986-1987:*:andaman-and-nicobar-islands:*"
+      - "cpialrl:1986-1987:*:arunachal-pradesh:*"
+      - "cpialrl:1986-1987:*:chhattisgarh:*"
+      - "cpialrl:1986-1987:*:daman-and-diu-dadra-nagar-and-haveli:*"
+      - "cpialrl:1986-1987:*:delhi:*"
+      - "cpialrl:1986-1987:*:goa:*"
+      - "cpialrl:1986-1987:*:jharkhand:*"
+      - "cpialrl:1986-1987:*:lakshadweep:*"
+      - "cpialrl:1986-1987:*:mizoram:*"
+      - "cpialrl:1986-1987:*:nagaland:*"
+      - "cpialrl:1986-1987:*:puducherry:*"
+      - "cpialrl:1986-1987:*:sikkim:*"
+      - "cpialrl:1986-1987:*:telangana:*"
+      - "cpialrl:1986-1987:*:uttarakhand:*"
+    status: excluded
+    reason: "The 1986-87 series covered twenty states; the listing offers this state on that base but the Bureau served no index for it in any month (it entered the series with the 2019 base)."
+  - match: "cpialrl:2019:al:delhi:*"
+    status: excluded
+    reason: "Delhi has a rural labourers' index on the 2019 base but no agricultural labourers' index: the Bureau served no CPI-AL rows for it."
   - match: ["cpialrl:1986-1987:al:all-india:general-index", "cpialrl:1986-1987:rl:all-india:general-index"]
     status: shown
     bundle: cpialrl-1986
@@ -30,12 +50,23 @@ rules:
     status: baked
     bundle: cpialrl-states-2019
 
-  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
-  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
-  - match:
-      - "cpialrl:1986-1987:al:*:*"
-      - "cpialrl:1986-1987:rl:*:*"
-      - "cpialrl:2019:al:*:*"
-      - "cpialrl:2019:rl:*:*"
-    status: pending
-    scheduled: "wave 2: prices deeper"
+  # ---- wave 2 (lb/prices, 2026-10-10): every pending item decided ----
+  - match: ["cpialrl:2019:al:*:general-index", "cpialrl:2019:rl:*:general-index"]
+    status: shown
+    bundle: [cpialrl-states-2019, cpialrl-states-rl-2019]
+    plate: "§12 The farm and rural labourer, state by state, on the new base"
+  - match: "cpialrl:1986-1987:rl:*:general-index"
+    status: baked
+    bundle: cpialrl-states-rl-1986
+  - match: ["cpialrl:2019:rl:all-india:*"]
+    status: baked
+    bundle: cpialrl-groups-rl-2019
+  - match: ["cpialrl:2019:al:*:*", "cpialrl:2019:rl:*:*"]
+    status: baked
+    bundle: cpialrl-states-groups-2019
+  - match: ["cpialrl:1986-1987:al:all-india:*", "cpialrl:1986-1987:rl:all-india:*"]
+    status: excluded
+    reason: "On the 1986-87 base the Bureau serves group indices state by state only; there are no All-India group rows (checked 2026-10-10), and summing states would need weights the Bureau does not publish."
+  - match: ["cpialrl:1986-1987:al:*:*", "cpialrl:1986-1987:rl:*:*"]
+    status: baked
+    bundle: cpialrl-states-groups-1986

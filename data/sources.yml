@@ -110,6 +110,9 @@ dossiers:
     release_url: https://www.mospi.gov.in
     fetch:
       endpoint: cpi/getCPIData
+      # the 2012 base ended Dec 2025 and CPI is never revised: its six baked bundles are not
+      # fetched again (cpi.mjs); set false to re-ingest them from the API
+      retired: true
       params:
         base_year: 2012
         level: Group
@@ -152,6 +155,10 @@ dossiers:
       headline: weighted index of all six groups, then y/y   # never stored independently
       core: weighted index of [pan, clothing, housing, misc], then y/y
     window: { start: "2016-01" }
+    # wave 2 (lb/prices): every group and sub-group for every state and sector, the 299
+    # items, and the years 2012 to 2015 before the window above (cpi-2012-early*, 2012 and
+    # 2013 resting on the NSO back series) -> buildCpi2012Deep in cpi.mjs
+    deep2012: true
     # ---- base 2024=100 (rebased series) ----
     # The 2012-base stream stopped at Dec 2025; from Jan 2025 the API serves a
     # rebased series on 2024=100 with a COICOP-2018-style hierarchy (13
@@ -200,6 +207,10 @@ dossiers:
         series: Current
         state_code: 1       # All India (this base; 99 in the 2012 base)
     window2024: { start: "2026-01" }   # first month with a same-base year-ago level
+    # wave 2 (lb/prices): every node for every state x sector, classes and sub-classes, the
+    # rural and urban back series -> buildCpi2024Deep in cpi.mjs (state x class, sub-class and
+    # item go to the deep archive, data/archive/staging/cpi/)
+    deep2024: true
     # ---- base 2010=100: ARCHIVED, NOT BAKED ----
     # Probed live 2026-08-08: getCpiFilterByLevelAndBaseYear?base_year=2010
     # serves a 48-month fragment, Jan 2011 – Dec 2014, on the pre-2012 scheme
@@ -378,6 +389,9 @@ dossiers:
     release_url: https://eaindustry.nic.in
     fetch:
       endpoint: wpi/getWpiRecords
+      # the 2011-12 base ended Apr 2026 and is final: not fetched again (wpi.mjs reads its
+      # raw dump for the wave-2 sub-sub-groups); set false to re-ingest it from the API
+      retired: true
       params:
         base_year: "2011-12"
         limit: 500
@@ -431,6 +445,28 @@ dossiers:
         "Manufactured Products": manufactured
         "Food Index": food_index
       window: { start: "2024-04" }   # first month with a same-base year-ago level
+    # THE RETIRED BASES (wave 2, lb/prices). getWpiRecords still serves 2004-05 (2005 to
+    # 2017: 676 items) and 1993-94 (1994 to 2010: 437 items) with the 2022-23 field names.
+    # Baked as wpi-2004* and wpi-1993*, each its own ruler (seams: below). No weights are
+    # served; the headline is the published index. Labels differ by base (1993-94 has
+    # "PRIMARY ARTICLE" and "FUEL POWER LIGHT & LUBRICANTS"): mapped here, not in code.
+    fetchOld:
+      - base_year: "2004-05"
+        base: "2004-05=100"
+        tag: "2004"
+        major_groups:
+          "Wholesale Price Index": published_headline
+          "PRIMARY ARTICLES": primary
+          "FUEL & POWER": fuel
+          "MANUFACTURED PRODUCTS": manufactured
+      - base_year: "1993-94"
+        base: "1993-94=100"
+        tag: "1993"
+        major_groups:
+          "Wholesale Price Index": published_headline
+          "PRIMARY ARTICLE": primary
+          "FUEL POWER LIGHT & LUBRICANTS": fuel
+          "MANUFACTURED PRODUCTS": manufactured
     # WPI weights, base 2011-12 — sum must equal 100.00
     weights:
       primary: 22.62
@@ -1524,6 +1560,37 @@ dossiers:
     source_agency: "Reserve Bank of India, DBIE (DGCI&S data)"
     release_url: https://data.rbi.org.in
   # --- end trade ---
+  # --- prices (lb/prices, wave 2) ---
+  cpiiw:
+    # CPI for industrial workers, Labour Bureau, from RBI DBIE reports 699 (All India,
+    # General and groups) and 1168 (centre-wise General Index), via the Data Bank.
+    # Four bases, each its own bundle (seams: below); the Bureau's linking factors between
+    # bases are not in the reports, so no linked line is drawn.
+    stale_after: "2026-06"
+    family: databank
+    geo: IND
+    product: cpiiw
+    frequency: monthly
+    base: "2016=100"          # current base; 2001, 1982 and 1960 bundles declare their own
+    release_calendar: "last working day of the following month"
+    revision_policy: "Final on release; never revised."
+    source_agency: "Labour Bureau, Ministry of Labour and Employment (via RBI DBIE)"
+    release_url: https://labourbureau.gov.in
+  wages-rural:
+    # Wage Rates in Rural India, Labour Bureau, from RBI DBIE report 664 via the Data Bank.
+    # Daily wage in rupees by occupation and state. Two occupation schemes (18 occupations
+    # to Oct 2013, 25 from Nov 2013), each its own pair of bundles, never joined.
+    stale_after: "2025-01"
+    family: databank
+    geo: IND
+    product: wages-rural
+    frequency: monthly
+    base: "occupations 2013 (25)"   # the 1998 scheme's bundles declare their own
+    release_calendar: "monthly, with a lag of about a year in the DBIE mirror"
+    revision_policy: "Final on release."
+    source_agency: "Labour Bureau, Wage Rates in Rural India (via RBI DBIE)"
+    release_url: https://labourbureau.gov.in
+  # --- end prices ---
 
 # ---------------------------------------------------------------------------
 # SEAMS: the base-year registry (2026-10). One entry per base (or
@@ -1544,24 +1611,45 @@ seams:
     - base: "2012=100"
       from: "2011-01"
       to: "2025-12"
-      bundles: [cpi, cpi-rural, cpi-urban, cpi-subgroups, cpi-states, cpi-states-sectors]
+      bundles: [cpi, cpi-rural, cpi-urban, cpi-subgroups, cpi-states, cpi-states-sectors,
+        cpi-groups, cpi-rural-detail, cpi-urban-detail, cpi-states-groups, cpi-states-groups-rural, cpi-states-groups-urban,
+        cpi-states-subgroups, cpi-states-subgroups-rural, cpi-states-subgroups-urban, cpi-items-2012]   # second line on: prices wave 2
+      bridge:
+        kind: agency back series
+        what: "NSO back series on the 2012=100 base (series=Back): index levels for 2011 and 2012, every state, sector, group and sub-group; carries y/y for 2012, and for 2013 at the handoff to the Current series; 2014-15 are Current over Current"
+        from: "2012-01"
+        to: "2015-12"
+        bundles: [cpi-2012-early, cpi-2012-early-states]
     - base: "2024=100"
       from: "2013-01"        # series=Back from 2013; series=Current from 2025-01
       to: null
-      bundles: [cpi-2024, cpi-2024-sectors, cpi-2024-groups, cpi-2024-items, cpi-2024-states, cpi-2024-states-sectors]
+      bundles: [cpi-2024, cpi-2024-sectors, cpi-2024-groups, cpi-2024-items, cpi-2024-states, cpi-2024-states-sectors,
+        cpi-2024-classes, cpi-2024-subclasses, cpi-2024-rural-divisions, cpi-2024-rural-groups, cpi-2024-rural-classes, cpi-2024-rural-subclasses, cpi-2024-rural-items,
+        cpi-2024-urban-divisions, cpi-2024-urban-groups, cpi-2024-urban-classes, cpi-2024-urban-subclasses, cpi-2024-urban-items,
+        cpi-2024-states-divisions, cpi-2024-states-divisions-rural, cpi-2024-states-divisions-urban,
+        cpi-2024-states-groups, cpi-2024-states-groups-rural, cpi-2024-states-groups-urban]   # second line on: prices wave 2
       bridge:
         kind: agency back series
-        what: "NSO back-cast of the 2024=100 General index, All India, 2013 to 2024 (series=Back); headline only, no components"
-        bundles: [cpi-2024-back, cpi-2024-linked]
+        what: "NSO back-cast of the 2024=100 General index, 2013 to 2024 (series=Back): All India combined, and (prices wave 2) rural and urban; headline only, no components"
+        bundles: [cpi-2024-back, cpi-2024-linked, cpi-2024-back-sectors]
   wpi:
     - base: "2011-12=100"
       from: "2012-04"
       to: "2026-04"
-      bundles: [wpi, wpi-groups, wpi-subgroups, wpi-items]
+      bundles: [wpi, wpi-groups, wpi-subgroups, wpi-items, wpi-subsubgroups]
     - base: "2022-23=100"
       from: "2023-04"
       to: null
-      bundles: [wpi-2022, wpi-2022-groups, wpi-2022-subgroups, wpi-2022-items]
+      bundles: [wpi-2022, wpi-2022-groups, wpi-2022-subgroups, wpi-2022-items, wpi-2022-subsubgroups]
+    # prices wave 2: the two retired bases the API still serves
+    - base: "2004-05=100"
+      from: "2005-04"
+      to: "2017-03"
+      bundles: [wpi-2004, wpi-2004-groups, wpi-2004-subgroups, wpi-2004-subsubgroups, wpi-2004-items]
+    - base: "1993-94=100"
+      from: "1994-04"
+      to: "2010-12"
+      bundles: [wpi-1993, wpi-1993-groups, wpi-1993-subgroups, wpi-1993-subsubgroups, wpi-1993-items]
   iip:
     - base: "1993-94=100"
       from: "1994-04"
@@ -1596,15 +1684,43 @@ seams:
       from: "2022-04"
       to: null
       bundles: [gdp-2022, gdp-2022-expenditure, gdp-2022-industries, gdp-2022-nominal, gdp-2022-accounts, gdp-2022-annual-levels, gdp-2022-annual-growth, gdp-2022-annual-shares, gdp-2022-annual-industries, gdp-2022-annual-subindustries, gdp-2022-annual-gcf-industries, gdp-2022-sectors, gdp-2022-revisions, gdp-2022-quarterly-levels, gdp-2022-quarterly-shares, gdp-2022-quarterly-industry-levels]
+  # prices (lb/prices, wave 2)
+  cpiiw:
+    - base: "1960=100"
+      from: "1968-08"
+      to: "1988-09"
+      bundles: [cpiiw-1960]
+    - base: "1982=100"
+      from: "1983-04"        # DBIE 699 carries the 1982-base Food group from Apr 1983; the General Index from Oct 1988
+      to: "2005-12"
+      bundles: [cpiiw-1982, cpiiw-centres-1982]
+    - base: "2001=100"
+      from: "2006-01"
+      to: "2020-09"
+      bundles: [cpiiw-2001, cpiiw-centres-2001]
+    - base: "2016=100"
+      from: "2020-09"
+      to: null
+      bundles: [cpiiw-2016, cpiiw-2016-index, cpiiw-centres-2016]
+  wages-rural:
+    - base: "occupations 1998 (18)"
+      from: "1998-04"
+      to: "2013-10"
+      bundles: [wages-rural-1998, wages-rural-states-1998]
+    - base: "occupations 2013 (25)"
+      from: "2013-11"
+      to: null
+      bundles: [wages-rural-2013, wages-rural-states-2013]
+  # end prices
   cpialrl:
     - base: "1986-87=100"
       from: "1995-07"
       to: "2025-05"
-      bundles: [cpialrl-1986, cpialrl-states-1986]
+      bundles: [cpialrl-1986, cpialrl-states-1986, cpialrl-states-rl-1986, cpialrl-states-groups-1986]
     - base: "2019=100"
       from: "2025-06"
       to: null
-      bundles: [cpialrl-2019, cpialrl-groups-2019, cpialrl-states-2019]
+      bundles: [cpialrl-2019, cpialrl-groups-2019, cpialrl-states-2019, cpialrl-states-rl-2019, cpialrl-states-groups-2019, cpialrl-groups-rl-2019]
   asi:
     # not price bases: NIC classification blocks, equally never joined
     - base: "NIC 1987"

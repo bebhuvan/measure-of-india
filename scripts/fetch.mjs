@@ -33,6 +33,8 @@ import { buildMnre } from "./lib/products/mnre.mjs";
 import { buildNfhs } from "./lib/products/nfhs.mjs";
 import { buildWorldbankWdi } from "./lib/products/worldbank-wdi.mjs";
 import { buildBsr2 } from "./lib/products/bsr2.mjs";
+import { buildCpiiw } from "./lib/products/cpiiw.mjs";   // prices (lb/prices)
+import { buildWagesRural } from "./lib/products/wagesrural.mjs";
 // services guide: five products, one adapter
 import { buildServicesIsp, buildServicesNas, buildServicesTrade, buildServicesJobs, buildServicesAsuse } from "./lib/products/services.mjs";
 import { buildStates } from "./lib/products/states.mjs";
@@ -76,6 +78,7 @@ Object.assign(REGISTRY, { "external-bop": buildExternalBop, "external-flows": bu
 // credit (lb/credit)
 Object.assign(REGISTRY, { credit: buildCredit });
 Object.assign(REGISTRY, { tradestat: buildTradestat, "dbie-trade": buildDbieTrade });   // trade (lb/trade)
+Object.assign(REGISTRY, { cpiiw: buildCpiiw, "wages-rural": buildWagesRural });   // prices (lb/prices)
 
 // One product's failure must not starve the rest: collect, continue, and
 // exit non-zero at the end so CI still fails on the summary.

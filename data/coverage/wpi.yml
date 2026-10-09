@@ -1,11 +1,32 @@
 # Coverage ledger: Wholesale Price Index, OEA (docs/CONTRACT-coverage.md).
 # Catalogue: node scripts/lib/products/wpi.mjs --catalogue. First matching rule wins.
-# Omissions left for the coordinator: the sub-sub-groups on both live bases (archived raw,
-# not baked) and the two old bases, 2004-05 and 1993-94, which the API still serves.
+# Wave 2 (lb/prices, 2026-10-10) decided every pending item: see the block at the end.
 family: wpi
 guides: [wpi]
 catalogue: data/coverage/wpi.catalogue.json
 rules:
+  # wave 2 (lb/prices, 2026-10-10): the old bases' irregular nodes, each checked against the raw dump
+  - match: ["wpi:1993-94:major:3", "wpi:1993-94:group:4", "wpi:1993-94:group:5", "wpi:1993-94:group:6"]
+    status: excluded
+    reason: "On the 1993-94 base the API serves the Fuel, power, light and lubricants major group and its three groups (coal mining, mineral oils, electricity) as four rows with every label blank, so no value can be attributed to any of them; the fuel items under them are baked."
+  - match: ["wpi:1993-94:subsubgroup:12", "wpi:1993-94:item:252", "wpi:2004-05:group:7", "wpi:2004-05:subgroup:54", "wpi:2004-05:subgroup:58"]
+    status: excluded
+    reason: "The API serves this node twice in the same month with two different values (1993-94 pesticides; 2004-05 wood products, drugs and medicines, petrochemical intermediates), so neither can be attributed; the items beneath it are baked."
+  - match: ["wpi:2004-05:item:403", "wpi:2004-05:subgroup:39"]
+    status: excluded
+    reason: "Listed by the 2004-05 filter as \"Others\" with no parent named, and served in no month: there is no index to bake."
+  - match: ["wpi:2004-05:subgroup:14", "wpi:2004-05:subgroup:15", "wpi:2004-05:subgroup:16"]
+    status: baked
+    bundle: wpi-2004-groups
+    # coal, mineral oils, electricity: listed as sub-groups, served in the sub-group field with the group blank; they are the fuel major's groups, baked as groups
+  - match: "wpi:2004-05:item:102"
+    status: baked
+    bundle: wpi-2004-subgroups
+    # crude petroleum: listed as an item, served as the sub-group under minerals
+  - match: "wpi:1993-94:item:304"
+    status: baked
+    bundle: wpi-1993-subgroups
+    # cement: listed as an item, served as the sub-group under non-metallic mineral products
   # ---- base 2022-23, current
   - match: "wpi:2022-23:major:*"
     status: shown
@@ -39,23 +60,38 @@ rules:
     bundle: wpi-items
     plate: "§10 The 697 items"
 
-  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
-  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
-  - match:
-      - "wpi:1993-94:group:*"
-      - "wpi:1993-94:item:*"
-      - "wpi:1993-94:major:*"
-      - "wpi:1993-94:subgroup:*"
-      - "wpi:1993-94:subsubgroup:*"
-      - "wpi:2004-05:group:*"
-      - "wpi:2004-05:item:*"
-      - "wpi:2004-05:major:*"
-      - "wpi:2004-05:subgroup:*"
-      - "wpi:2004-05:subsubgroup:*"
-      - "wpi:2011-12:subsubgroup:1101010100"
-      - "wpi:2011-12:subsubgroup:1101010200"
-      - "wpi:2011-12:subsubgroup:1101020100"
-      - "wpi:2011-12:subsubgroup:1101020200"
-      - "wpi:2022-23:subsubgroup:*"
-    status: pending
-    scheduled: "wave 2: prices deeper"
+  # ---- wave 2 (lb/prices, 2026-10-10): every pending item decided ----
+  - match: "wpi:2011-12:subsubgroup:*"
+    status: baked
+    bundle: wpi-subsubgroups
+  - match: "wpi:2022-23:subsubgroup:*"
+    status: baked
+    bundle: wpi-2022-subsubgroups
+  - match: ["wpi:2004-05:major:*", "wpi:1993-94:major:*"]
+    status: shown
+    bundle: [wpi-2004, wpi-1993]
+    plate: "§02 Thirty years of wholesale prices, on four rulers"
+  - match: "wpi:2004-05:group:*"
+    status: baked
+    bundle: wpi-2004-groups
+  - match: "wpi:2004-05:subgroup:*"
+    status: baked
+    bundle: wpi-2004-subgroups
+  - match: "wpi:2004-05:subsubgroup:*"
+    status: baked
+    bundle: wpi-2004-subsubgroups
+  - match: "wpi:2004-05:item:*"
+    status: baked
+    bundle: wpi-2004-items
+  - match: "wpi:1993-94:group:*"
+    status: baked
+    bundle: wpi-1993-groups
+  - match: "wpi:1993-94:subgroup:*"
+    status: baked
+    bundle: wpi-1993-subgroups
+  - match: "wpi:1993-94:subsubgroup:*"
+    status: baked
+    bundle: wpi-1993-subsubgroups
+  - match: "wpi:1993-94:item:*"
+    status: baked
+    bundle: wpi-1993-items

@@ -206,8 +206,6 @@ export const UNITS = {
   unstated: { kind: "pct", fmt: (v) => grp(v, 1), note: "the source does not state the unit" },
   // --- end health-gender ---
   // --- nas (gdp guide, wave 2) ---
-  ...Object.fromEntries(["gdp", "gdp-2022"].flatMap((b) => Object.entries({ "annual-levels": "Indicator", "annual-growth": "Indicator", "annual-shares": "Component of GDP", "annual-industries": "Industry", "annual-subindustries": "Sub-industry", "annual-gcf-industries": "Industry of use", "sectors": "Institutional sector", "revisions": "Estimate stage", "quarterly-levels": "Indicator", "quarterly-shares": "Component of GDP", "quarterly-industry-levels": "Industry" }).map(([k, c]) => [`${b}-${k}`, c]))),
-  "gdp-back-levels": "Indicator", "gdp-back-growth": "Indicator", "gdp-back-shares": "Component of GDP", "gdp-back-industries": "Industry", "gdp-back-subindustries": "Sub-industry",
   // --- end nas ---
   // --- households (wave 2: consumption, aishe, mnre, deposits) ---
   pupils_per_teacher: { kind: "diff", fmt: (v) => grp(v), note: "students per teacher" },
@@ -488,6 +486,21 @@ export const CUT_BY_BUNDLE = {
     "maturity-states": "State and original maturity", "employees-states": "State, post and gender", "employees-bankgroups": "Population group, bank group and post", "age": "Age, individuals and women" })
     .map(([k, c]) => [`deposits-q-${k}`, c + ", quarterly"])),
   // --- end households ---
+  // --- prices (lb/prices, wave 2) ---
+  "cpi-2024-classes": "Class", "cpi-2024-subclasses": "Sub-class", "cpi-2024-back-sectors": "Sector",
+  ...Object.fromEntries(["rural", "urban"].flatMap((sec) => [["divisions", "Division"], ["groups", "Group"], ["classes", "Class"], ["subclasses", "Sub-class"], ["items", "Item"]].map(([l, c]) => [`cpi-2024-${sec}-${l}`, `${c}, ${sec}`]))),
+  ...Object.fromEntries(["", "-rural", "-urban"].flatMap((sec) => [[`cpi-2024-states-divisions${sec}`, `State and division${sec ? ", " + sec.slice(1) : ""}`], [`cpi-2024-states-groups${sec}`, `State and group${sec ? ", " + sec.slice(1) : ""}`],
+    [`cpi-states-groups${sec}`, `State and group${sec ? ", " + sec.slice(1) : ""}`], [`cpi-states-subgroups${sec}`, `State and sub-group${sec ? ", " + sec.slice(1) : ""}`]])),
+  "cpi-groups": "Group", "cpi-rural-detail": "Group and sub-group, rural", "cpi-urban-detail": "Group and sub-group, urban", "cpi-items-2012": "Item",
+  "cpi-2012-early": "Sector, group and sub-group", "cpi-2012-early-states": "State, sector, group and sub-group",
+  "cpiiw-2016": "Group", "cpiiw-2016-index": "All India", "cpiiw-2001": "Group", "cpiiw-1982": "Group", "cpiiw-1960": "Group",
+  "cpiiw-centres-2016": "Centre", "cpiiw-centres-2001": "Centre", "cpiiw-centres-1982": "Centre",
+  "wages-rural-2013": "Occupation", "wages-rural-1998": "Occupation", "wages-rural-states-2013": "State and occupation", "wages-rural-states-1998": "State and occupation",
+  "cpialrl-states-rl-2019": "State", "cpialrl-states-rl-1986": "State", "cpialrl-groups-rl-2019": "Group",
+  "cpialrl-states-groups-2019": "State and group", "cpialrl-states-groups-1986": "State and group",
+  "wpi-subsubgroups": "Sub-sub-group", "wpi-2022-subsubgroups": "Sub-sub-group",
+  ...Object.fromEntries(["2004", "1993"].flatMap((t) => [[`wpi-${t}`, "All India"], [`wpi-${t}-groups`, "Group"], [`wpi-${t}-subgroups`, "Sub-group"], [`wpi-${t}-subsubgroups`, "Sub-sub-group"], [`wpi-${t}-items`, "Item"]])),
+  // --- end prices ---
 };
 // the fallback, by what a bundle's slug says it is
 export const CUT_RULES = [

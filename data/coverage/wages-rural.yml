@@ -1,0 +1,28 @@
+# Coverage ledger: Wage Rates in Rural India, Labour Bureau, via RBI DBIE report 664
+# (docs/CONTRACT-coverage.md). Catalogue: node scripts/lib/products/wagesrural.mjs --catalogue.
+# First matching rule wins. Written 2026-10-10 (lb/prices, wave 2). The report spells one
+# state two ways (Orissa, Odisha); both ids fold into the Odisha series.
+family: wages-rural
+guides: [cpi]
+catalogue: data/coverage/wages-rural.catalogue.json
+rules:
+  - match: "wages-rural:2013:all-india:1210-*"
+    status: shown
+    bundle: wages-rural-2013
+    plate: "§12 Did the farm wage keep up with farm prices?"
+  - match: "wages-rural:2013:all-india:*"
+    status: baked
+    bundle: wages-rural-2013
+  - match: "wages-rural:2013:*:1210-*"
+    status: shown
+    bundle: wages-rural-states-2013
+    plate: "§12 A day's farm wage, state by state"
+  - match: "wages-rural:2013:*"
+    status: baked
+    bundle: wages-rural-states-2013
+  - match: "wages-rural:1998:all-india:*"
+    status: baked
+    bundle: wages-rural-1998
+  - match: "wages-rural:1998:*"
+    status: baked
+    bundle: wages-rural-states-1998
