@@ -620,32 +620,41 @@ for (const page of PAGES) {
   if (missingTitle.length) fail(`${page.url}: ${missingTitle.length} plates missing <title>`);
 }
 
-// every-cut (F6, framework): each guide lists every series of every bundle it uses, inline or
-// on a long-tail page of its own; the row counts must equal the bundles' series counts
+// every-cut (F6, framework): each guide lists every series of every bundle it uses EXACTLY
+// ONCE, inline or in one long-tail view (src/dossiers/everycut.js everyCutPlan). Rows are
+// counted per file across the guide page and every long-tail page, and each file's count must
+// equal its bundle's series count: a missing, doubled or misplaced bundle fails here. The guide
+// page and each long-tail page also stay inside their HTML budgets (docs/CONTRACT-render.md).
 {
   const EC = await import(pathToFileURL(path.join(ROOT, "src/dossiers/everycut.js")).href);
+  const rowsPerFile = (h, into) => { for (const m of h.matchAll(/<tr data-o="\d+" data-file="([^"]+)"/g)) into.set(m[1], (into.get(m[1]) ?? 0) + 1); };
   for (const d of DOSSIERS) {
     const file = path.join(DIST, "guides", d.slug, "index.html");
     if (!fs.existsSync(file)) continue;   // "not built" is already reported above
     const html = fs.readFileSync(file, "utf8");
     if (!html.includes('id="every-cut"')) { fail(`/guides/${d.slug}/: no every-cut table (src/components/EveryCut.astro)`); continue; }
-    let want = 0, got = (html.match(/<tr data-o=/g) || []).length, tails = 0;
-    for (const b of EC.guideBundles(d)) {
-      const n = Object.keys(EC.loadBundle(b).series).length;
-      want += n;
-      if (n <= EC.LONG_TAIL) continue;
-      tails++;
-      const pages = EC.paginate(EC.rowsOf(b));
-      pages.forEach((pg, i) => {
-        const pf = path.join(DIST, "guides", d.slug, "every-cut", b, i ? String(i + 1) : "", "index.html");
+    if (html.length > 1.2e6) fail(`/guides/${d.slug}/: ${(html.length / 1e6).toFixed(2)} MB of HTML (budget 1.2 MB; lower everyCutInline)`);
+    const seen = new Map();
+    rowsPerFile(html, seen);
+    const plan = EC.everyCutPlan(d);
+    for (const t of plan.tails) {
+      t.pages.forEach((_, i) => {
+        const pf = path.join(DIST, "guides", d.slug, "every-cut", t.id, i ? String(i + 1) : "", "index.html");
         if (!fs.existsSync(pf)) { fail(`every-cut page missing: ${path.relative(DIST, pf)}`); return; }
         const h = fs.readFileSync(pf, "utf8");
-        got += (h.match(/<tr data-o=/g) || []).length;
+        rowsPerFile(h, seen);
         if (h.length > 1.2e6) fail(`${path.relative(DIST, pf)}: ${(h.length / 1e6).toFixed(2)} MB of HTML (budget 1.2 MB, docs/CONTRACT-render.md)`);
       });
     }
-    if (got !== want) fail(`/guides/${d.slug}/: every-cut lists ${got} series, the bundles hold ${want}`);
-    else ok(`/guides/${d.slug}/: every-cut lists all ${want} series${tails ? ` (${tails} long tail page set${tails > 1 ? "s" : ""})` : ""}`);
+    let want = 0, bad = [];
+    for (const b of EC.guideBundles(d)) {
+      const n = Object.keys(EC.loadBundle(b).series).length;
+      want += n;
+      if ((seen.get(b) ?? 0) !== n) bad.push(`${b} ${seen.get(b) ?? 0}/${n}`);
+    }
+    for (const b of seen.keys()) if (!EC.guideBundles(d).includes(b)) bad.push(`${b} is not a bundle of this guide`);
+    if (bad.length) fail(`/guides/${d.slug}/: every-cut does not list each series exactly once: ${bad.slice(0, 5).join("; ")}${bad.length > 5 ? ` (+${bad.length - 5})` : ""}`);
+    else ok(`/guides/${d.slug}/: every-cut lists all ${want} series once (${plan.inlineRows.length} inline${plan.tails.length ? `, ${plan.tails.length} long-tail view${plan.tails.length > 1 ? "s" : ""}` : ""})`);
   }
 }
 

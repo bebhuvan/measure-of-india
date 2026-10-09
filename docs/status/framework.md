@@ -244,3 +244,23 @@ fails on the omissions above, by design.
   shows while there is more to the left. The sideways scroll itself is unchanged (DESIGN §3).
 - Checked at 390px in Chrome: cpi 16, gdp 10, external 19, climate 22 scrolling zones, all
   at their latest end with the cue, no page errors; CPI §02 looked at by eye.
+
+## 3. Every-cut weight: an inline cap and bundle families
+
+- `everyCutPlan(d)` in `src/dossiers/everycut.js` decides where every series appears, once:
+  inline on the guide page up to `INLINE_CAP` rows (600 by default, `everyCutInline` in a
+  registry entry overrides), a bundle over 150 series on its own view, a registry family of
+  small bundles in one paged view, and the files past the cap in "The remaining files". The
+  component, the long-tail route and qc all read the same plan.
+- Why 600, not 1,500: the heavy pages already inlined fewer than 1,500 rows (ILO 960 rows
+  at 0.87 MB, states 1,188, climate 1,514 at 1.43 MB), so a 1,500 cap would have changed
+  nothing. At 600: states 0.87 MB to 0.50 MB, ILO 0.87 to 0.61, climate 1.43 to 0.69,
+  rates 0.72, external 0.51.
+- `everyCutFamilies` (registry): `[{ id, label, match }]`, `match` a slug prefix or a list;
+  a family can claim bundles on disk the registry does not list. The states entry now has
+  `handbook` for `states-hbs-`: all 208 Handbook bundles (12,276 series) are in every-cut, in
+  one view of 14 pages, filterable by file. (One field added to the states registry entry.)
+- qc counts rows per file across the guide page and every long-tail page and requires each
+  bundle's count to equal its series count: all 23 guides pass, 0 duplicates or misses
+  (ILO 41,656 series, services 27,851, states 16,877, climate 16,804). Pages also hold to
+  the 1.2 MB budget; the largest long-tail page is under 1.1 MB.
