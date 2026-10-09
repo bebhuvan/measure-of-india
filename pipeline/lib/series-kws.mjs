@@ -86,4 +86,18 @@ export const SERIES_KWS = {
     ["real index", "real"], ["real prices", "real_yoy"], ["after inflation", "real_yoy"], ["inflation-adjusted", "real_yoy"], ["real", "real_yoy"],
     ["nominal index", "nominal"], ["rupee prices", "nominal_yoy"], ["nominal", "nominal_yoy"],
   ],
+  // services: the current bundle is services-gva-2022-share (shares of GVA by industry)
+  services: [
+    ["trade, hotels, transport", "trade_transport_comm"], ["trade, hotels and transport", "trade_transport_comm"], ["trade and transport", "trade_transport_comm"],
+    ["finance, real estate", "finance_realty_prof"], ["finance and real estate", "finance_realty_prof"], ["financial, real estate", "finance_realty_prof"],
+    ["public administration, defence and other", "public_admin_other"], ["public administration and other", "public_admin_other"],
+    ["trade and repair", "trade_repair"], ["trade, repair", "trade_hotels"], ["hotels and restaurants", "hotels_restaurants"], ["hotels", "hotels_restaurants"], ["restaurants", "hotels_restaurants"],
+    ["transport, storage", "transport_comm"], ["railways", "railways"], ["road transport", "road_transport"], ["water transport", "water_transport"], ["air transport", "air_transport"], ["airlines", "air_transport"],
+    ["incidental to transport", "transport_services"], ["storage", "storage"], ["communication", "communication"], ["broadcasting", "communication"],
+    ["real estate", "realty_prof"], ["dwellings", "realty_prof"], ["professional", "realty_prof"], ["financial services", "finance"], ["finance", "finance"],
+    ["public administration", "public_admin"], ["defence", "public_admin"], ["other services", "other_services"],
+    ["farms, mines", "goods"], ["goods", "goods"], ["agriculture", "agriculture"], ["farming", "agriculture"], ["mining", "mining"], ["manufacturing", "manufacturing"],
+    ["utilities", "utilities"], ["electricity", "utilities"], ["construction", "construction"],
+    ["services", "services"], ["service", "services"],
+  ],
 };

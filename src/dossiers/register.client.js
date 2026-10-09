@@ -300,3 +300,17 @@ import bisCitiesBundle from "../../data/series/bis-property-cities.json";
     ["RBI house price index, 18 cities, 2022-23 = 100", "RBI-HPI-18", "s-g3", PC.cities_18, false, "/guides/housing/", null, ix],
   ], 4, "spho", qv(bisPropertyBundle), "BIS");
 }
+// ---- services: annual share of GVA (2022-23 base) and monthly trade (RBI) ----
+import svcShareBundle from "../../data/series/services-gva-2022-share.json";
+import svcTradeBundle from "../../data/series/services-trade-monthly.json";
+{
+  const SH = hydrate(svcShareBundle), TR = hydrate(svcTradeBundle);
+  const bn = (v) => "$" + v.toFixed(1) + " bn";
+  render("reg-services", [
+    ["Services, share of GVA", "NAS-SVC", "s-acc", SH.services, true, "/guides/services/", "computed"],
+    ["Finance, real estate, professional, share", "NAS-SVC9", "s-g1", SH.finance_realty_prof, false, "/guides/services/", "computed"],
+    ["Services exports, monthly", "RBI-SX", "s-g2", TR.exports, false, "/guides/services/", null, bn, vintOf(svcTradeBundle)],
+    ["Services imports, monthly", "RBI-SM", "s-g3", TR.imports, false, "/guides/services/", null, bn, vintOf(svcTradeBundle)],
+  ], 1, "spsv", vintOf(svcShareBundle), "MoSPI / RBI");
+}
+// ---- end services ----

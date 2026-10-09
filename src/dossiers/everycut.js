@@ -77,6 +77,12 @@ export const UNITS = {
   pp: { kind: "diff", fmt: (v) => (v < 0 ? MINUS : v > 0 ? "+" : "") + Math.abs(v).toFixed(1) + " pt", note: "percentage points" },
   inr_per_sqft: { kind: "pct", fmt: (v) => "₹" + grp(v), note: "per sq ft" },
   // ---- end bis family ----
+  // ---- services ----
+  pct_of_gva: { kind: "pt", fmt: (v) => v.toFixed(1) + "%", note: "of GVA" },
+  pct_of_workers: { kind: "pt", fmt: (v) => v.toFixed(1) + "%", note: "of workers" },
+  usd_mn: { kind: "pct", fmt: (v) => (v < 0 ? MINUS : "") + "$" + grp(Math.abs(v) / 1e3, 1) + " bn", note: "published in US$ million" },
+  usd_bn: { kind: "pct", fmt: (v) => (v < 0 ? MINUS : "") + "$" + grp(Math.abs(v), 1) + " bn" },
+  // ---- end services ----
 };
 
 // series.unit, then what the series name says, then the bundle's meta.unit: a bundle-level
@@ -165,6 +171,13 @@ export const CUT_BY_BUNDLE = {
   "deposits-owners": "Owner and account", "deposits-owners-2005": "Owner and account", "deposits-population": "Population group",
   "deposits-term-rates": "Interest rate band", "deposits-term-maturity": "Maturity", "deposits-term-size": "Deposit size",
   "deposits-term-size-2026": "Deposit size",
+  // services
+  "services-gva-2022-share": "Industry", "services-gva-2022-growth": "Industry", "services-gva-2022-level": "Industry",
+  "services-gva-2011-share": "Industry", "services-gva-2011-growth": "Industry", "services-gva-2011-level": "Industry",
+  "services-isp-growth": "Sub-sector", "services-isp-annual": "Sub-sector", "services-trade-monthly": "Flow",
+  "services-bop-quarterly": "Category and flow", "services-invisibles-quarterly": "Purpose code", "services-bop-annual": "Category and flow",
+  "services-jobs-ay": "Industry, status, sex and place", "services-jobs-cy": "Industry, status, sex and place",
+  "services-asuse": "Activity, sex and place", "services-asuse-profile": "Activity and profile", "services-asuse-2025": "Activity, sex and place", "services-asuse-profile-2025": "Activity and profile",
 };
 // the fallback, by what a bundle's slug says it is
 export const CUT_RULES = [

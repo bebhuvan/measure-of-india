@@ -202,6 +202,14 @@ const CARDS = [
     prep: (S) => { S.household_term = { ...S.household_term, label: "Fixed deposits" }; S.household_savings = { ...S.household_savings, label: "Savings" }; S.household_current = { ...S.household_current, label: "Current" }; },
     foot: (b, S) => `Household bank deposits, March ${b.dates.at(-1).slice(0, 4)}. Source: RBI, BSR-2`,
   },
+  // services: 75 years of services exports and imports (RBI), US$ billion
+  {
+    slug: "services", bundleSlug: "services-bop-annual",
+    keys: ["s1_2_1_credit", "s1_2_1_debit"], d0: 0, d1: 450, band: null, trend: null,
+    scale: 0.001, yStep: 100, fmt: (v) => "$" + v.toFixed(0) + " bn", mr: 220,
+    prep: (S) => { S.s1_2_1_credit = { ...S.s1_2_1_credit, label: "Exports", color: "#2E4BD8" }; S.s1_2_1_debit = { ...S.s1_2_1_debit, label: "Imports", color: "#C47A16" }; },
+    foot: (b) => { const y = +b.dates.at(-1).slice(0, 4); return `Services exports and imports, 1950-51 to ${y}-${String((y + 1) % 100).padStart(2, "0")}. Source: RBI`; },
+  },
   {
     slug: "manufacturing", bundleSlug: "wdi-manufacturing",
     keys: ["mva_pct_gdp", "industry_pct_gdp"], d0: 0, d1: 30, band: null, trend: null,

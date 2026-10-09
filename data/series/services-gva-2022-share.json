@@ -1,0 +1,501 @@
+{
+ "meta": {
+  "dossier": "services-nas",
+  "frequency": "annual",
+  "base": "2022-23",
+  "source": "MoSPI, National Statistical Office",
+  "vintage": "2026-10-09",
+  "mock": false,
+  "geo": "IND",
+  "releaseDate": null,
+  "revisionPolicy": "Revised continuously; each year moves from advance to provisional to revised to final estimates over about three years.",
+  "estimates": "2022-23: Final Estimates; 2023-24: Final Estimates; 2024-25: First Revised Estimates; 2025-26: Provisional Estimates",
+  "latestPeriod": "2025-04",
+  "unit": "pct_of_gva",
+  "coverage": "All India, annual, base 2022-23: each industry's and sub-industry's share of total GVA at current prices",
+  "note": "Shares of nominal (current-price) GVA, computed from the published levels. \"Services, all\" is the sum of the NSO's three service groups (trade, hotels, transport and communication; finance, real estate and professional services; public administration, defence and other services), built per year from the six finer groups when all six are published (they carry the NSO's later revised estimates; the combined groups on the 2011-12 base are served only at advance and provisional stages) and from the three groups otherwise; the series' \"revisions\" field names which. It is derived, not published. Base 2022-23 only; never joined to the other base."
+ },
+ "dates": [
+  "2022-04-01",
+  "2023-04-01",
+  "2024-04-01",
+  "2025-04-01"
+ ],
+ "series": {
+  "services": {
+   "name": "gva_services_share_pct_base2022",
+   "label": "Services, all (derived from the published service groups)",
+   "color": "#2E4BD8",
+   "unit": "pct_of_gva",
+   "level": "derived",
+   "data": [
+    51.99,
+    52.62,
+    52.88,
+    54.03
+   ],
+   "revisions": [
+    "six groups",
+    "six groups",
+    "six groups",
+    "three groups"
+   ]
+  },
+  "trade_transport_comm": {
+   "name": "gva_trade_transport_comm_share_pct_base2022",
+   "label": "Trade, hotels, transport and communication",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "level": "industry",
+   "data": [
+    13.7,
+    14.07,
+    13.85,
+    14.31
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    "Provisional Estimates"
+   ]
+  },
+  "trade_hotels": {
+   "name": "gva_trade_hotels_share_pct_base2022",
+   "label": "Trade, repair, hotels and restaurants",
+   "color": "#A3A9B4",
+   "unit": "pct_of_gva",
+   "level": "industry",
+   "data": [
+    8.17,
+    8.54,
+    8.5,
+    null
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    null
+   ]
+  },
+  "trade_repair": {
+   "name": "gva_trade_repair_share_pct_base2022",
+   "label": "Trade and repair services",
+   "color": "#C9CED6",
+   "unit": "pct_of_gva",
+   "level": "sub-industry",
+   "data": [
+    7,
+    7.25,
+    7.2,
+    null
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    null
+   ]
+  },
+  "hotels_restaurants": {
+   "name": "gva_hotels_restaurants_share_pct_base2022",
+   "label": "Hotels and restaurants",
+   "color": "#5F6675",
+   "unit": "pct_of_gva",
+   "level": "sub-industry",
+   "data": [
+    1.17,
+    1.29,
+    1.3,
+    null
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    null
+   ]
+  },
+  "transport_comm": {
+   "name": "gva_transport_comm_share_pct_base2022",
+   "label": "Transport, storage and communication",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "level": "industry",
+   "data": [
+    5.53,
+    5.53,
+    5.36,
+    null
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    null
+   ]
+  },
+  "railways": {
+   "name": "gva_railways_share_pct_base2022",
+   "label": "Railways",
+   "color": "#A3A9B4",
+   "unit": "pct_of_gva",
+   "level": "sub-industry",
+   "data": [
+    0.61,
+    0.59,
+    0.57,
+    null
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    null
+   ]
+  },
+  "road_transport": {
+   "name": "gva_road_transport_share_pct_base2022",
+   "label": "Road transport",
+   "color": "#C9CED6",
+   "unit": "pct_of_gva",
+   "level": "sub-industry",
+   "data": [
+    2.54,
+    2.57,
+    2.34,
+    null
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    null
+   ]
+  },
+  "water_transport": {
+   "name": "gva_water_transport_share_pct_base2022",
+   "label": "Water transport",
+   "color": "#5F6675",
+   "unit": "pct_of_gva",
+   "level": "sub-industry",
+   "data": [
+    0.08,
+    0.08,
+    0.08,
+    null
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    null
+   ]
+  },
+  "air_transport": {
+   "name": "gva_air_transport_share_pct_base2022",
+   "label": "Air transport",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "level": "sub-industry",
+   "data": [
+    0.09,
+    0.14,
+    0.15,
+    null
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    null
+   ]
+  },
+  "transport_services": {
+   "name": "gva_transport_services_share_pct_base2022",
+   "label": "Services incidental to transport",
+   "color": "#A3A9B4",
+   "unit": "pct_of_gva",
+   "level": "sub-industry",
+   "data": [
+    0.54,
+    0.56,
+    0.57,
+    null
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    null
+   ]
+  },
+  "storage": {
+   "name": "gva_storage_share_pct_base2022",
+   "label": "Storage",
+   "color": "#C9CED6",
+   "unit": "pct_of_gva",
+   "level": "sub-industry",
+   "data": [
+    0.12,
+    0.12,
+    0.15,
+    null
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    null
+   ]
+  },
+  "communication": {
+   "name": "gva_communication_share_pct_base2022",
+   "label": "Communication and broadcasting",
+   "color": "#5F6675",
+   "unit": "pct_of_gva",
+   "level": "sub-industry",
+   "data": [
+    1.56,
+    1.48,
+    1.49,
+    null
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    null
+   ]
+  },
+  "finance_realty_prof": {
+   "name": "gva_finance_realty_prof_share_pct_base2022",
+   "label": "Finance, real estate and professional services",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "level": "industry",
+   "data": [
+    25.38,
+    25.49,
+    26,
+    26.55
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    "Provisional Estimates"
+   ]
+  },
+  "finance": {
+   "name": "gva_finance_share_pct_base2022",
+   "label": "Financial services",
+   "color": "#A3A9B4",
+   "unit": "pct_of_gva",
+   "level": "industry",
+   "data": [
+    6.2,
+    6.28,
+    6.38,
+    null
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    null
+   ]
+  },
+  "realty_prof": {
+   "name": "gva_realty_prof_share_pct_base2022",
+   "label": "Real estate, ownership of dwellings and professional services",
+   "color": "#C9CED6",
+   "unit": "pct_of_gva",
+   "level": "industry",
+   "data": [
+    19.17,
+    19.21,
+    19.62,
+    null
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    null
+   ]
+  },
+  "public_admin_other": {
+   "name": "gva_public_admin_other_share_pct_base2022",
+   "label": "Public administration, defence and other services",
+   "color": "#5F6675",
+   "unit": "pct_of_gva",
+   "level": "industry",
+   "data": [
+    12.91,
+    13.06,
+    13.03,
+    13.18
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    "Provisional Estimates"
+   ]
+  },
+  "public_admin": {
+   "name": "gva_public_admin_share_pct_base2022",
+   "label": "Public administration and defence",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "level": "industry",
+   "data": [
+    6,
+    5.82,
+    5.79,
+    null
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    null
+   ]
+  },
+  "other_services": {
+   "name": "gva_other_services_share_pct_base2022",
+   "label": "Other services (education, health, personal)",
+   "color": "#A3A9B4",
+   "unit": "pct_of_gva",
+   "level": "industry",
+   "data": [
+    6.91,
+    7.24,
+    7.24,
+    null
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    null
+   ]
+  },
+  "goods": {
+   "name": "gva_goods_share_pct_base2022",
+   "label": "Farms, mines, factories, utilities and construction (derived)",
+   "color": "#C9CED6",
+   "unit": "pct_of_gva",
+   "level": "derived",
+   "data": [
+    48.01,
+    47.38,
+    47.12,
+    45.97
+   ],
+   "revisions": [
+    "sum of five industries",
+    "sum of five industries",
+    "sum of five industries",
+    "sum of five industries"
+   ]
+  },
+  "agriculture": {
+   "name": "gva_agriculture_share_pct_base2022",
+   "label": "Agriculture, forestry and fishing",
+   "color": "#5F6675",
+   "unit": "pct_of_gva",
+   "level": "industry",
+   "data": [
+    19.92,
+    19.34,
+    19.33,
+    18.2
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    "Provisional Estimates"
+   ]
+  },
+  "mining": {
+   "name": "gva_mining_share_pct_base2022",
+   "label": "Mining and quarrying",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "level": "industry",
+   "data": [
+    2.12,
+    2.04,
+    1.98,
+    1.89
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    "Provisional Estimates"
+   ]
+  },
+  "manufacturing": {
+   "name": "gva_manufacturing_share_pct_base2022",
+   "label": "Manufacturing",
+   "color": "#A3A9B4",
+   "unit": "pct_of_gva",
+   "level": "industry",
+   "data": [
+    14.62,
+    14.61,
+    14.51,
+    14.88
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    "Provisional Estimates"
+   ]
+  },
+  "utilities": {
+   "name": "gva_utilities_share_pct_base2022",
+   "label": "Electricity, gas, water and other utilities",
+   "color": "#C9CED6",
+   "unit": "pct_of_gva",
+   "level": "industry",
+   "data": [
+    2.48,
+    2.77,
+    2.79,
+    2.61
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    "Provisional Estimates"
+   ]
+  },
+  "construction": {
+   "name": "gva_construction_share_pct_base2022",
+   "label": "Construction",
+   "color": "#5F6675",
+   "unit": "pct_of_gva",
+   "level": "industry",
+   "data": [
+    8.87,
+    8.62,
+    8.5,
+    8.39
+   ],
+   "revisions": [
+    "Final Estimates",
+    "Final Estimates",
+    "First Revised Estimates",
+    "Provisional Estimates"
+   ]
+  }
+ }
+}

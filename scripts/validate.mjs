@@ -374,6 +374,34 @@ const PRODUCTS = [
   { slug: "wdi-manufacturing-composition", dossier: "manufacturing", cadence: 12, staleAfter: "2023-01", range: [0, 100] },
   { slug: "wdi-manufacturing-tech", dossier: "manufacturing", cadence: 12, staleAfter: "2022-01", range: [0, 100] },
   { slug: "wdi-manufacturing-exports", dossier: "manufacturing", cadence: 12, staleAfter: "2024-01", range: [0, 100] },
+  // ---- services (scripts/lib/products/services.mjs) ----
+  // ISP y/y on a young trial base: April 2026 prints run from -14 (air) to +37 (hotels);
+  // range is documentation, wide while the series is a few months old.
+  { slug: "services-isp-growth", dossier: "services-isp", cadence: 1, range: [-60, 120] },
+  { slug: "services-isp-annual", dossier: "services-isp", cadence: 12, staleAfter: "2025-04", range: [50, 200], freq: "annual" },
+  // NAS shares of nominal GVA (0-60), real y/y on the 2011-12 base spans the 2020-21 lockdown
+  // (air transport -62.5, storage +112.7 in 2017-18 as published), levels ₹ lakh crore
+  { slug: "services-gva-2022-share", dossier: "services-nas", cadence: 12, range: [0, 100] },
+  { slug: "services-gva-2022-growth", dossier: "services-nas", cadence: 12, range: [-40, 60] },
+  { slug: "services-gva-2022-level", dossier: "services-nas", cadence: 12, range: [0, 400] },
+  { slug: "services-gva-2011-share", dossier: "services-nas", cadence: 12, range: [0, 100], base: "2011-12" },
+  { slug: "services-gva-2011-growth", dossier: "services-nas", cadence: 12, range: [-80, 130], base: "2011-12" },
+  { slug: "services-gva-2011-level", dossier: "services-nas", cadence: 12, range: [0, 400], base: "2011-12" },
+  // DBIE services trade, US$ billion monthly and US$ million quarterly/annual; nets swing sign.
+  // The monthly table lags RBI's press releases (DBIE 1501 to May 2026 on 2026-10-09).
+  { slug: "services-trade-monthly", dossier: "services-trade", cadence: 1, range: [-10, 60], freq: "monthly" },
+  { slug: "services-bop-quarterly", dossier: "services-trade", cadence: 3, range: [-200000, 300000], freq: "quarterly" },
+  { slug: "services-invisibles-quarterly", dossier: "services-trade", cadence: 3, staleAfter: "2025-04", range: [-1000, 150000], freq: "quarterly" },
+  { slug: "services-bop-annual", dossier: "services-trade", cadence: 12, staleAfter: "2025-04", range: [-500000, 1000000], freq: "annual" },
+  // PLFS shares of workers, per cent
+  { slug: "services-jobs-ay", dossier: "services-jobs", cadence: 12, staleAfter: "2023-07", range: [0, 100], base: "agriculture year (PLFS 2017-18 to 2023-24)" },
+  { slug: "services-jobs-cy", dossier: "services-jobs", cadence: 12, range: [0, 100] },
+  // ASUSE: counts (to ~7 crore), ₹ per year, per-1,000 distributions
+  { slug: "services-asuse", dossier: "services-asuse", cadence: 12, range: [0, 1e9] },
+  { slug: "services-asuse-profile", dossier: "services-asuse", cadence: 12, range: [0, 1000] },
+  { slug: "services-asuse-2025", dossier: "services-asuse", cadence: 12, staleAfter: "2025-01", range: [0, 1e9], base: "calendar-year round (ASUSE 2025)" },
+  { slug: "services-asuse-profile-2025", dossier: "services-asuse", cadence: 12, staleAfter: "2025-01", range: [0, 1000], base: "calendar-year round (ASUSE 2025)" },
+  // ---- end services ----
 ];
 
 for (const p of PRODUCTS) {
@@ -1228,6 +1256,93 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
     else if (Math.abs(back / cur - 1) > 1e-4) fail(`gdp-back: 2011-12 GDP ${back} (back series) != ${cur} (current 2011-12 base): the bridge does not meet the series`);
     else ok(`gdp-back: 2011-12 GDP level meets the current series (${back} vs ${cur} crore)`);
   }
+}
+
+/* ---- services: the family's identities (scripts/lib/products/services.mjs) ---- */
+{
+  // ISP: y/y computed from index levels agrees with MoSPI's published growth (levels are
+  // published to one or two decimals, so a 0.15 pt tolerance)
+  for (const slug of ["services-isp-growth", "services-isp-annual"]) withBundle(slug, (b) => {
+    let worst = 0, at = null;
+    for (const [k, s] of Object.entries(b.series)) s.data.forEach((v, i) => {
+      const p = b.crosscheck?.[k]?.[i]; if (v == null || p == null) return;
+      const d = Math.abs((slug === "services-isp-annual" ? v - 100 : v) - p); if (d > worst) { worst = d; at = `${k} ${b.dates[i]}`; }
+    });
+    if (worst > 0.15) fail(`${slug}: computed growth deviates ${worst.toFixed(2)} pt from published at ${at}`);
+    else ok(`${slug}: computed growth within ${worst.toFixed(3)} pt of MoSPI's published rate`);
+  });
+  // NAS: parts add to their groups at current prices, and the derived services total built from
+  // the three groups equals the one built from the six finer groups (rounding: 0.5%)
+  for (const base of ["2022", "2011"]) withBundle(`services-gva-${base}-level`, (b) => {
+    const S = b.series; let worst = 0, at = "";
+    const chk = (whole, parts) => b.dates.forEach((d, i) => {
+      const w = S[whole]?.data[i]; const ps = parts.map((p) => S[p]?.data[i]);
+      if (w == null || ps.some((v) => v == null)) return;
+      // compare like with like: the NSO serves groups and parts at different revision stages
+      // on the 2011-12 base (groups advance/provisional only); only same-stage years must add up
+      const rv = (k) => S[k]?.revisions?.[i];
+      if (whole === "total_gva" ? [S.services.revisions?.[i] === "six groups" ? "trade_hotels" : "trade_transport_comm", "agriculture"].some((p) => rv(p) !== rv(whole))
+        : parts.some((p) => rv(p) !== rv(whole))) return;
+      const dev = Math.abs(ps.reduce((a, c) => a + c, 0) / w - 1); if (dev > worst) { worst = dev; at = `${whole} ${d}`; }
+    });
+    chk("trade_transport_comm", ["trade_hotels", "transport_comm"]); chk("finance_realty_prof", ["finance", "realty_prof"]); chk("public_admin_other", ["public_admin", "other_services"]);
+    chk("trade_hotels", ["trade_repair", "hotels_restaurants"]); chk("transport_comm", ["railways", "road_transport", "water_transport", "air_transport", "transport_services", "storage", "communication"]);
+    chk("total_gva", ["services", "goods"]);
+    b.crosscheck?.services_from_six_groups?.forEach((v, i) => { const w = S.services.data[i]; if (v == null || w == null) return; const dev = Math.abs(v / w - 1); if (dev > worst) { worst = dev; at = `services (3 vs 6 groups) ${b.dates[i]}`; } });
+    if (worst > 0.005) fail(`services-gva-${base}-level: parts do not add to their group (${(worst * 100).toFixed(2)}% at ${at})`);
+    else ok(`services-gva-${base}-level: every group equals the sum of its parts (worst ${(worst * 100).toFixed(3)}%)`);
+  });
+  // BoP: credit - debit = net for every services item, quarterly and annual (US$ 0.5 million)
+  for (const slug of ["services-bop-quarterly", "services-bop-annual"]) withBundle(slug, (b) => {
+    let worst = 0, at = "";
+    for (const k of Object.keys(b.series).filter((k) => k.endsWith("_credit"))) {
+      const base = k.slice(0, -7); const c = b.series[k].data, d = b.series[base + "_debit"]?.data, n = b.series[base + "_net"]?.data; if (!d || !n) continue;
+      c.forEach((v, i) => {
+        if (v == null || d[i] == null || n[i] == null) return;
+        // as published: RBI's 1985-86 services row prints net 1,187 against 3,316 - 2,124 = 1,192
+        if (slug === "services-bop-annual" && base === "s1_2_1" && b.dates[i] === "1985-04-01") return;
+        const e = Math.abs(v - d[i] - n[i]); if (e > worst) { worst = e; at = `${base} ${b.dates[i]}`; }
+      });
+    }
+    if (worst > 1) fail(`${slug}: credit - debit != net by US$ ${worst.toFixed(1)} million at ${at}`);
+    else ok(`${slug}: credit - debit = net for every item (worst US$ ${worst.toFixed(2)} million)`);
+  });
+  // the monthly table and the quarterly BoP: three months sum to the quarter within 3%
+  // (monthly data are provisional; RBI revises them pro rata once the quarter is compiled)
+  withBundle("services-trade-monthly", (m) => withBundle("services-bop-quarterly", (q) => {
+    let worst = 0, at = "", n = 0;
+    q.dates.forEach((d, i) => {
+      const y = +d.slice(0, 4), mo = +d.slice(5, 7); const ms = [0, 1, 2].map((k) => { const mm = mo + k; return `${mm > 12 ? y + 1 : y}-${String(((mm - 1) % 12) + 1).padStart(2, "0")}-01`; });
+      const vs = ms.map((x) => m.series.exports.data[m.dates.indexOf(x)]); const qv = q.series["1_a_b_credit"].data[i];
+      if (vs.some((v) => v == null) || qv == null || ms.some((x) => m.dates.indexOf(x) < 0)) return;
+      n++; const dev = Math.abs((vs.reduce((a, c) => a + c, 0) * 1000) / qv - 1); if (dev > worst) { worst = dev; at = d; }
+    });
+    if (worst > 0.03) fail(`services-trade-monthly: three months differ from the BoP quarter by ${(worst * 100).toFixed(1)}% at ${at}`);
+    else ok(`services-trade-monthly: monthly exports sum to the BoP quarter within ${(worst * 100).toFixed(2)}% (${n} quarters)`);
+  }));
+  // PLFS: the 21 NIC sections add to 100 for every gender, sector and year (published to one
+  // or two decimals: 0.6 pt)
+  for (const slug of ["services-jobs-ay", "services-jobs-cy"]) withBundle(slug, (b) => {
+    const groups = {};
+    for (const [k, s] of Object.entries(b.series)) { const m = k.match(/^sec_[a-u]__(.+)$/); if (m) (groups[m[1]] ??= []).push(s.data); }
+    let worst = 0, at = "";
+    for (const [g, arrs] of Object.entries(groups)) b.dates.forEach((d, i) => {
+      const vs = arrs.map((a) => a[i]); if (vs.every((v) => v == null)) return;
+      const dev = Math.abs(vs.reduce((a, c) => a + (c ?? 0), 0) - 100); if (dev > worst) { worst = dev; at = `${g} ${d}`; }
+    });
+    if (!Object.keys(groups).length) fail(`${slug}: no NIC-section series`);
+    else if (worst > 0.6) fail(`${slug}: NIC sections sum to 100 ± ${worst.toFixed(2)} at ${at}`);
+    else ok(`${slug}: NIC sections sum to 100 in every cell (worst ${worst.toFixed(2)} pt, ${Object.keys(groups).length} cells)`);
+  });
+  // ASUSE: the published aggregates in this bundle equal the factories guide's asuse-sectors
+  // (same source rows, two adapters): establishments, combined, Other Services and All
+  withBundle("services-asuse", (a) => withBundle("asuse-sectors", (s) => {
+    const pairs = [["establishments__estimated_no_of_establishments__other_services_group__rural__all", "establishments_rural_other_services"], ["establishments__estimated_no_of_establishments__trading__urban__all", "establishments_urban_trading"], ["workers__all__all__all_activities__rural__all", "workers_rural_all"]];
+    let bad = 0;
+    for (const [ka, ks] of pairs) a.dates.forEach((d, i) => { const j = s.dates.indexOf(d); const x = a.series[ka]?.data[i], y = s.series[ks]?.data[j]; if (x != null && y != null && x !== y) { bad++; fail(`services-asuse: ${ka} ${d} = ${x} but asuse-sectors ${ks} = ${y}`); } });
+    if (!a.series[pairs[0][0]]) fail("services-asuse: establishments, Other Services, rural, all establishments: series missing");
+    else if (!bad) ok("services-asuse: published aggregates agree with asuse-sectors");
+  }));
 }
 
 /* ---- seams: the base-year registry (sources.yml `seams`) ----

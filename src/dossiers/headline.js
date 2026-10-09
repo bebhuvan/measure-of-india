@@ -39,6 +39,8 @@ export const HEADLINE = {
   // bis family session
   debt:          { value: (b) => `${last(b, "total").toFixed(1)}%`, what: "debt of households, companies and government, % of GDP (BIS estimate)", period: quarter },
   housing:       { value: (b) => `${last(b, "real_yoy").toFixed(1)}%`, what: "real house prices, change on a year ago", period: quarter },
+  // services
+  services:      { value: (b) => `${last(b, "services").toFixed(1)}%`, what: "services' share of gross value added", period: fy },
 };
 
 // The small chart beside each guide's figure: always on the current ruler, so a chart never
@@ -62,6 +64,8 @@ export const SPARK = {
   // bis family session
   debt:          { bundle: "bis-credit", series: "total", n: 120 },
   housing:       { bundle: "bis-property", series: "real" },
+  // services
+  services:      { bundle: "services-gva-2022-share", series: "services" },
 };
 
 const cache = {};

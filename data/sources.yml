@@ -1020,6 +1020,92 @@ dossiers:
     ranges:
       inr_lakh_crore: [0, 400]
 
+  # ---- services (the services guide; adapter scripts/lib/products/services.mjs) ----
+  # Five products, one dossier key each, so every bundle is checked against its own base.
+  services-isp:
+    stale_after: "2026-07"
+    frequency_exempt: true    # the monthly y/y and the one annual year
+    family: mospi
+    geo: IND
+    product: services-isp
+    frequency: monthly
+    base: "2024-25=100"
+    release_calendar: "monthly, about two months after the reference month"
+    revision_policy: "TRIAL SERIES: methodology may change without notice. Treat every vintage as provisional."
+    source_agency: "MoSPI, National Statistical Office"
+    release_url: https://www.mospi.gov.in
+    fetch:
+      endpoint: isp/getISPRecords
+      # monthly rows carry no month field: fetched per month_code (1=April..12=March);
+      # annual rows with frequency_code 1. The year param breaks filtering: never sent.
+  services-nas:
+    stale_after: "2025-04"
+    family: mospi
+    geo: IND
+    product: services-nas
+    frequency: annual
+    base: "2022-23"
+    release_calendar: "annual estimates with the end-February and end-May releases"
+    revision_policy: "Revised continuously; each year moves from advance to provisional to revised to final estimates over about three years."
+    source_agency: "MoSPI, National Statistical Office"
+    release_url: https://www.mospi.gov.in
+    fetch:
+      endpoint: nas/getNASData
+      params: { series: Current, account_code: 1 }
+      # GVA (indicator 1), annual, all 15 industries and the 9 service sub-industries (codes
+      # 10-18; 1-9 are farm and factory sub-industries, the GDP guide's). The sub-industry
+      # dimension is annual only; quarterly rows carry the 8-group table (gdp-*-industries).
+      bases:
+        - { base_year: "2022-23", slug: "2022", nameSuffix: "_base2022" }
+        - { base_year: "2011-12", slug: "2011", nameSuffix: "" }
+  services-trade:
+    stale_after: "2026-04"
+    frequency_exempt: true    # monthly totals, quarterly categories, annual long table
+    family: databank
+    geo: IND
+    product: services-trade
+    frequency: quarterly
+    base: "as published (US$)"
+    release_calendar: "monthly totals about 45 days after the month (RBI press release); BoP quarterly about 80 days after the quarter"
+    revision_policy: "Monthly figures are provisional and revised when the quarterly BoP is compiled; BoP quarters move from preliminary to partially revised. The latest version of each period is kept."
+    source_agency: "Reserve Bank of India (DBIE, via the local Data Bank)"
+    release_url: https://data.rbi.org.in
+  services-jobs:
+    stale_after: "2025-01"
+    frequency_exempt: true
+    family: mospi
+    geo: IND
+    product: services-jobs
+    frequency: annual
+    base: "calendar year (PLFS new design)"
+    release_calendar: "annual report, about five months after the year"
+    revision_policy: "Final on release. Agriculture-year reports (July to June, 2017-18 to 2023-24) and calendar-year estimates (new design, published for 2023 on) are two designs, never joined."
+    source_agency: "MoSPI, National Statistical Office (PLFS)"
+    release_url: https://www.mospi.gov.in
+    fetch:
+      endpoint: plfs/getData
+      indicator_code: 4     # percentage distribution of workers; rejects age/gender/sector params
+      agriculture_years: ["2017-18", "2018-19", "2019-20", "2020-21", "2021-22", "2022-23", "2023-24"]
+      calendar_years: ["2023", "2024", "2025"]
+  services-asuse:
+    stale_after: "2023-04"
+    family: mospi
+    geo: IND
+    product: services-asuse
+    frequency: annual
+    base: "survey 2021-22 onward"
+    release_calendar: "annual, with the quarterly bulletin in between"
+    revision_policy: "Survey estimates are final on release. The 2025 round moved to a calendar-year reference period: a separate bundle."
+    source_agency: "MoSPI, National Statistical Office (ASUSE)"
+    release_url: https://www.mospi.gov.in
+    fetch:
+      endpoint: asuse/getAsuseRecords
+      # every ASUSE indicator that carries the activity dimension; only service activities
+      # (and the All, Trading and Other Services aggregates) are kept
+      indicators: [1, 3, 6, 10, 12, 14, 16, 22, 26, 30, 32, 34]
+      years: ["2021-22", "2022-23", "2023-24", "2025"]
+  # ---- end services ----
+
 
   # ---- bis family session: BIS (housing, debt), RBI house price index, NHB RESIDEX ----
   bis:
@@ -1188,3 +1274,37 @@ seams:
       to: null
       bundles: [housing-residex-2025, housing-residex-prices-2025]
   # ---- end bis family ----
+  # ---- services ----
+  services-nas:
+    - base: "2011-12"
+      from: "2011-04"
+      to: "2025-04"
+      bundles: [services-gva-2011-share, services-gva-2011-growth, services-gva-2011-level]
+    - base: "2022-23"
+      from: "2022-04"
+      to: null
+      bundles: [services-gva-2022-share, services-gva-2022-growth, services-gva-2022-level]
+  services-isp:
+    - base: "2024-25=100"
+      from: "2025-04"
+      to: null
+      bundles: [services-isp-growth, services-isp-annual]
+  services-jobs:
+    - base: "agriculture year (PLFS 2017-18 to 2023-24)"
+      from: "2017-07"
+      to: "2023-07"
+      bundles: [services-jobs-ay]
+    - base: "calendar year (PLFS new design)"
+      from: "2023-01"
+      to: null
+      bundles: [services-jobs-cy]
+  services-asuse:
+    - base: "survey 2021-22 onward"
+      from: "2021-04"
+      to: "2023-04"
+      bundles: [services-asuse, services-asuse-profile]
+    - base: "calendar-year round (ASUSE 2025)"
+      from: "2025-01"
+      to: null
+      bundles: [services-asuse-2025, services-asuse-profile-2025]
+  # ---- end services ----

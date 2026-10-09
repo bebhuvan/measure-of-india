@@ -1,0 +1,138 @@
+# Coverage ledger: services (docs/CONTRACT-coverage.md). First matching rule decides.
+# Catalogue: node scripts/lib/products/services.mjs --catalogue
+family: services
+guides: [services]
+catalogue: data/coverage/services.catalogue.json
+rules:
+  # ---------- ISP (trial, base 2024-25 = 100) ----------
+  - match: "isp:monthly:*"
+    status: shown
+    bundle: [services-isp-growth, isp]
+    plate: "§04 A monthly pulse, still on trial (growth by sub-sector)"
+  - match: "isp:annual:*"
+    status: shown
+    bundle: services-isp-annual
+    plate: "§04 Over a full year, shops, hotels and repair grew most"
+
+  # ---------- NAS, annual: services industries and sub-industries, both bases ----------
+  - match: ["nas:2022:annual:ind:6", "nas:2022:annual:ind:9", "nas:2022:annual:ind:12", "nas:2022:annual:ind:15"]
+    status: shown
+    bundle: [services-gva-2022-share, services-gva-2022-growth, services-gva-2022-level]
+    plate: "§01 current reading; §03 Services have taken a slowly rising share"
+  - match: ["nas:2022:annual:sub:*", "nas:2022:annual:ind:7", "nas:2022:annual:ind:8", "nas:2022:annual:ind:10", "nas:2022:annual:ind:11", "nas:2022:annual:ind:13", "nas:2022:annual:ind:14"]
+    status: shown
+    bundle: [services-gva-2022-share, services-gva-2022-growth, services-gva-2022-level]
+    plate: "§02 The biggest service is not software; §03 real growth by sub-industry"
+  - match: "nas:2022:annual:ind:*"
+    status: baked
+    bundle: [services-gva-2022-share, services-gva-2022-growth, services-gva-2022-level]
+  - match: ["nas:2011:annual:ind:6", "nas:2011:annual:ind:9", "nas:2011:annual:ind:12", "nas:2011:annual:ind:7", "nas:2011:annual:ind:8", "nas:2011:annual:ind:10", "nas:2011:annual:ind:11", "nas:2011:annual:ind:13", "nas:2011:annual:ind:14", "nas:2011:annual:ind:15"]
+    status: shown
+    bundle: [services-gva-2011-share, services-gva-2011-growth, services-gva-2011-level]
+    plate: "§03 Services have taken a slowly rising share (the 2011-12 ruler)"
+  - match: ["nas:2011:annual:sub:*", "nas:2011:annual:ind:*"]
+    status: baked
+    bundle: [services-gva-2011-share, services-gva-2011-growth, services-gva-2011-level]
+  # quarterly: the NSO serves only the 8-group table; the GDP guide bakes it
+  - match: ["nas:2022:quarterly:ind:6", "nas:2022:quarterly:ind:9", "nas:2022:quarterly:ind:12"]
+    status: shown
+    bundle: gdp-2022-industries
+    series: [trade_transport, finance_realty, public_admin]
+    plate: "§03 Quarter by quarter, finance and property have led"
+  - match: "nas:2022:quarterly:ind:15"
+    status: baked
+    bundle: gdp-2022
+    series: [gva]
+  - match: "nas:2022:quarterly:ind:*"
+    status: baked
+    bundle: gdp-2022-industries
+  - match: "nas:2011:quarterly:ind:15"
+    status: baked
+    bundle: gdp
+    series: [gva]
+  - match: "nas:2011:quarterly:ind:*"
+    status: baked
+    bundle: gdp-industries
+
+  # ---------- RBI DBIE ----------
+  - match: ["dbie:1501:*"]
+    status: shown
+    bundle: services-trade-monthly
+    plate: "§05 Every month, India sells about twice the services it buys"
+  - match: ["dbie:1076:bpm6:1.a.b:*", "dbie:1076:bpm6:1.a.b.1:*", "dbie:1076:bpm6:1.a.b.2:*", "dbie:1076:bpm6:1.a.b.3:*", "dbie:1076:bpm6:1.a.b.4:*", "dbie:1076:bpm6:1.a.b.5:*", "dbie:1076:bpm6:1.a.b.6:*", "dbie:1076:bpm6:1.a.b.7:*", "dbie:1076:bpm6:1.a.b.8:*", "dbie:1076:bpm6:1.a.b.9:*", "dbie:1076:bpm6:1.a.b.10:*", "dbie:1076:bpm6:1.a.b.11:*", "dbie:1076:bpm6:1.a.b.12:*", "dbie:1076:bpm6:1.a.b.13:*"]
+    status: shown
+    bundle: services-bop-quarterly
+    plate: "§05 Computer services and business services are most of what India sells"
+  - match: "dbie:1076:bpm6:*"
+    status: baked
+    bundle: services-bop-quarterly
+  - match: ["dbie:1076:purpose:receipts:41", "dbie:1076:purpose:receipts:57", "dbie:1076:purpose:receipts:60", "dbie:1076:purpose:receipts:68"]
+    status: shown
+    bundle: services-invisibles-quarterly
+    plate: "§05 Consulting and research sold abroad have climbed fast"
+  - match: "dbie:1076:purpose:*"
+    status: baked
+    bundle: services-invisibles-quarterly
+  - match: "dbie:1076:report"
+    status: shown
+    bundle: [services-bop-quarterly, services-invisibles-quarterly]
+    plate: "§05 the BPM6 categories and the purpose codes"
+  - match: ["dbie:807:1.2.1:*", "dbie:807:1.2.1.5.1:*"]
+    status: shown
+    bundle: services-bop-annual
+    plate: "§05 Seventy-five years of services trade"
+  - match: ["dbie:807:*"]
+    status: baked
+    bundle: services-bop-annual
+  - match: ["dbie:131:report"]
+    status: excluded
+    reason: "Duplicate: the same Handbook table of invisibles in US dollars as report 807, which is the copy baked here."
+  - match: ["dbie:132:report", "dbie:424:report"]
+    status: excluded
+    reason: "Duplicate in rupees of report 807's dollar table: the same transactions converted at each year's exchange rate."
+  - match: ["dbie:1597:report", "dbie:1598:report", "dbie:1599:report", "dbie:1600:report", "dbie:1601:report", "dbie:1725:report", "dbie:1726:report", "dbie:1727:report"]
+    status: excluded
+    reason: "Duplicate: state value added by industry is the states guide's, from MoSPI, the source of record; RBI's Handbook of States copy is its cross-check there."
+
+  # ---------- PLFS: share of workers ----------
+  - match: ["plfs:cy:sec_*", "plfs:cy:tertiary:*"]
+    status: shown
+    bundle: services-jobs-cy
+    plate: "§06 Shops employ the most service workers; In cities, services are most work"
+  - match: ["plfs:ay:own_account:*", "plfs:ay:helper:*", "plfs:ay:regular:*", "plfs:ay:casual:*"]
+    status: shown
+    bundle: services-jobs-ay
+    plate: "§06 Shopkeeping is self-employment; salaried work is in the other services"
+  # a lone NIC group (no other cut) is the 100% total of a within-group table; the non-farm rows
+  # with no cut carry an undocumented value (0.2 to 0.5)
+  - match: ["plfs:ay:trade:*", "plfs:ay:transport:*", "plfs:ay:accommodation_food:*", "plfs:ay:other_services:*", "plfs:ay:agriculture:*", "plfs:ay:mining:*", "plfs:ay:manufacturing:*", "plfs:ay:utilities:*", "plfs:ay:construction:*", "plfs:ay:nonfarm:*", "plfs:ay:nonfarm_wide:*"]
+    status: excluded
+    reason: "These rows carry no information: each is the 100 per cent total of a within-group table, or a non-farm row with no cut whose value the source does not explain."
+  - match: ["plfs:ay:secondary:*:ps", "plfs:ay:tertiary:*:ps"]
+    status: excluded
+    reason: "The 100 per cent total of the status-within-group table for that group, carrying no information."
+  - match: ["plfs:ay:*", "plfs:cy:*"]
+    status: baked
+    bundle: [services-jobs-ay, services-jobs-cy]
+
+  # ---------- ASUSE: unincorporated service enterprises ----------
+  - match: ["asuse:workers:fy:*", "asuse:establishments:fy:*", "asuse:gva_per_worker:fy:*"]
+    status: shown
+    bundle: services-asuse
+    plate: "§07 Retail shops employ more informal service workers; GVA per worker"
+  - match: "asuse:location:fy:*"
+    status: shown
+    bundle: services-asuse-profile
+    plate: "§07 Many service businesses are run from home or from the street"
+  - match: ["asuse:emoluments:fy:*", "asuse:gva_per_establishment:fy:*"]
+    status: baked
+    bundle: services-asuse
+  - match: "asuse:*:fy:*"
+    status: baked
+    bundle: services-asuse-profile
+  - match: ["asuse:workers:cy:*", "asuse:establishments:cy:*", "asuse:gva_per_worker:cy:*", "asuse:emoluments:cy:*", "asuse:gva_per_establishment:cy:*"]
+    status: baked
+    bundle: services-asuse-2025
+  - match: "asuse:*:cy:*"
+    status: baked
+    bundle: services-asuse-profile-2025
