@@ -104,3 +104,5 @@ listings, `encoding` for binary), defaults unchanged. Not touched: `src/dossiers
 - New misreading on the page (no. 2): monthly temperature always falls into the monsoon;
   watch the anomaly, not the level.
 - Size exclusion: unchanged, with the owner.
+
+- Size exclusions now carry `archive: true` and `rolls_up_to` (the baked bundles with the coarser cut) in `data/coverage/climate-cckp.yml`, held for the deep-archive tier; still `excluded`, not baked.
