@@ -29,7 +29,7 @@ Each decides every `pending` item in its ledgers (brief: `docs/briefs/wave2.md`)
 | Session | Guides | Pending items to decide |
 |---|---|---|
 | atlas-prices | cpi, wpi (+ CPI-IW, rural wages) | 82,269 |
-| atlas-jobs-deep | jobs | **merged**: 0 pending (9,523 items); found the 2025 PLFS redesign splice. Now fixing the same splice in services-jobs-cy |
+| atlas-jobs-deep | jobs | **merged**: 0 pending (9,523 items); found the 2025 PLFS redesign splice. services-jobs-cy split at the seam too (merged) |
 | atlas-industry | iip, factories (+ eight core industries) | 45,347 |
 | atlas-nas | gdp | **merged**: 0 pending; institutional sectors, revision paths, 18 sub-industries |
 
@@ -79,8 +79,6 @@ throttles, so not run alongside the states and services sessions). Then the laun
 
 ## For the launch-pass prose review
 
-- jobs: "Both moved against the headline" frames rising employment beside falling
-  unemployment as a contradiction; they agree.
 - gdp: growth quoted to two decimals ("7.82%", computed from levels) where MoSPI and the
   press print one ("7.8%"). Decide a site-wide rule: published precision for headline
   growth, with the computed figure only where it is the point.
