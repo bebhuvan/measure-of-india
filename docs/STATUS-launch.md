@@ -34,7 +34,7 @@ Each decides every `pending` item in its ledgers (brief: `docs/briefs/wave2.md`)
 | atlas-nas | gdp | **merged**: 0 pending; institutional sectors, revision paths, 18 sub-industries |
 
 | atlas-health-gender | nfhs, gender | 15,538 (started 01:30) |
-| atlas-households | consumption, aishe, mnre, deposits | 1,670 (started 01:30) |
+| atlas-households | consumption, aishe, mnre, deposits | **merged**: 0 pending; BSR-2 decoded; found our own corrupted AISHE download |
 
 ## Coordinator (this session) meanwhile
 
@@ -76,6 +76,14 @@ throttles, so not run alongside the states and services sessions). Then the laun
 - Phone charts open at the latest end, with an "Earlier years" cue.
 - Every-cut pages are lighter (states 0.87 to 0.50 MB, climate 1.43 to 0.69 MB), and all 208
   RBI Handbook tables are in the states guide's every-cut view.
+
+## For the launch pass
+
+- **Full fresh MoSPI refresh as an integrity audit.** Our AISHE dump of 2026-08-09 was
+  corrupted by the API's unstable paging (a row repeated, another dropped, count intact).
+  `mospiAll` now detects a repeated row in any page set, re-reads it in 100-row pages and
+  compares, and fails loudly if the two disagree. Re-running every MoSPI adapter with
+  MOSPI_NO_CACHE=1 after wave 2 checks every dump on the site the same way.
 
 ## For the launch-pass prose review
 
