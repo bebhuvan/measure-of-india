@@ -848,3 +848,63 @@ export async function buildCpi2010Archive(root, dcfg, vintage) {
     levels, published_inflation: published,
   });
 }
+
+/* =========================================================================
+ * Catalogue (docs/CONTRACT-coverage.md): what MoSPI publishes for the CPI, from the
+ * filter listings (cpi/getCpiFilterByLevelAndBaseYear), one call per base and series.
+ *   cpi:2024:<state>:<sector>:<level>:<code-name>   base 2024, Current: every node of the
+ *       hierarchy (general, 13 divisions, 43 groups, 92 classes, 162 sub-classes, 358 items)
+ *       for every state and sector the listing offers. A probe of Andhra Pradesh, rural,
+ *       Aug 2026 served 649 of the 669 nodes: the listing offers the cross, a slice may
+ *       leave a few nodes empty.
+ *   cpi:2024-back:<state>:<sector>:general        the NSO back series (All India only)
+ *   cpi:2012:<state>:<sector>:group|subgroup:<code-name>   base 2012, Current and Back
+ *   cpi:2012:all-india:combined:item:<code-name>  the 299 items (All India only)
+ *   cpi:2010:<state>:<sector>:group|subgroup:<code-name>   the archived 2010 fragment
+ * ========================================================================= */
+import { writeCatalogue, idPart, catalogueCli } from "../catalogue.mjs";
+export async function catalogueCpi() {
+  const items = [];
+  const filt = async (base_year, level, series) => {
+    const r = await mospi("cpi/getCpiFilterByLevelAndBaseYear", { base_year, level, series });
+    return Array.isArray(r.data) ? r.data[0] : r.data;
+  };
+  const SECT = (f) => (f.sector ?? []).map((s) => idPart(s.sector_name));
+  // base 2024, Current
+  const f24 = await filt("2024", "Item", "Current");
+  const nodes = [{ level: "general", code: "0-general", name: "CPI (General)" }];
+  for (const d of f24.division) if (d.division_code !== 0) nodes.push({ level: "division", code: `${d.division_code}-${idPart(d.division_name)}`, name: d.division_name });
+  for (const g of f24.group) nodes.push({ level: "group", code: `${g.group_code}-${idPart(g.group_name)}`, name: g.group_name });
+  for (const c of f24.Class) nodes.push({ level: "class", code: `${c.class_code}-${idPart(c.class_name)}`, name: c.class_name });
+  for (const s of f24.sub_class) nodes.push({ level: "subclass", code: `${s.sub_class_code}-${idPart(s.sub_class_name)}`, name: s.sub_class_name });
+  for (const it of f24.item) nodes.push({ level: "item", code: `${it.item_code}-${idPart(it.item_name)}`, name: it.item_name });
+  for (const st of f24.state) for (const sec of SECT(f24)) for (const n of nodes)
+    items.push({ id: `cpi:2024:${idPart(st.state_name)}:${sec}:${n.level}:${n.code}`, ...(st.state_code === 1 ? { label: n.name } : {}) });   // labels once, on All India: the tail repeats them
+  // base 2024, Back (the NSO back-cast)
+  const b24 = await filt("2024", "Group", "Back");
+  for (const st of b24.state) for (const sec of SECT(b24)) items.push({ id: `cpi:2024-back:${idPart(st.state_name)}:${sec}:general`, label: "CPI (General), NSO back series" });
+  // base 2012 and the archived 2010 fragment, group level, every series the listing names
+  for (const base of ["2012", "2010"]) {
+    const fg = await filt(base, "Group", "Current");
+    const series = (fg.series ?? [{ series: "Current" }]).map((s) => s.series);
+    for (const ser of series) {
+      const f = ser === "Current" ? fg : await filt(base, "Group", ser);
+      if (!f?.state) continue;
+      const tag = ser === "Current" ? base : `${base}-${idPart(ser)}`;
+      for (const st of f.state) for (const sec of SECT(f)) {
+        for (const g of f.group ?? []) items.push({ id: `cpi:${tag}:${idPart(st.state_name)}:${sec}:group:${idPart(g.group_code)}-${idPart(g.group_name)}`, label: g.group_name });
+        for (const s of f.subgroup ?? []) if (!/-overall$/i.test(s.subgroup_name)) items.push({ id: `cpi:${tag}:${idPart(st.state_name)}:${sec}:subgroup:${idPart(s.subgroup_code)}-${idPart(s.subgroup_name)}`, label: s.subgroup_name });
+      }
+    }
+  }
+  // base 2012 items: All India, combined only
+  const fi = await filt("2012", "Item", "Current");
+  for (const it of fi.item) items.push({ id: `cpi:2012:all-india:combined:item:${idPart(it.item_code)}-${idPart(it.item_name)}`, label: it.item_name });
+  writeCatalogue("cpi", {
+    source: "MoSPI, NSO: Consumer Price Index (eSankhyiki API)",
+    generator: "scripts/lib/products/cpi.mjs --catalogue",
+    note: "From the filter listings, one call per base and series. Ids: cpi:<base>:<state>:<sector>:<level>:<code-name>. The listing offers every state x sector x node; a slice can leave a few nodes empty (Andhra Pradesh rural, Aug 2026: 649 of 669 on base 2024).",
+    items,
+  });
+}
+await catalogueCli(import.meta.url, catalogueCpi);

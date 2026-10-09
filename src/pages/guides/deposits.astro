@@ -1,6 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import GuideData from "../../components/GuideData.astro";
+import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["deposits"];
@@ -254,6 +255,8 @@ const D = bySlug["deposits"];
       <li><span class="no">4</span><div><h3>"Women hold a fifth of deposits, so they own a fifth of savings."</h3><p>Accounts are counted under the name of the holder, and families often open accounts in one member's name for reasons of convenience or tax. The share is a measure of accounts, not of control over money.</p></div></li>
     </ul>
   </section>
+
+  <EveryCut slug="deposits" />
 
   <GuideData slug="deposits" />
 

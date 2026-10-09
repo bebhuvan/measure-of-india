@@ -15,6 +15,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import zlib from "node:zlib";
+import { parseCsv } from "./tabular.mjs";
 
 export function databankRoot(familyCfg) {
   const p = process.env.INDIA_ATLAS_DATABANK || (familyCfg?.root ?? "").replace(/^~(?=\/)/, os.homedir());
@@ -54,10 +55,11 @@ export function dbieReport(root, reportId) {
   const best = cands.sort((a, b) => (b.meta.dataprovider.rowCount ?? 0) - (a.meta.dataprovider.rowCount ?? 0))[0];
   let buf = fs.readFileSync(best.content);
   if (best.meta.stored_encoding === "gzip") buf = zlib.gunzipSync(buf);
-  const lines = buf.toString("utf8").split(/\r?\n/).filter(Boolean);
-  const split = (l) => l.split(";").map((x) => x.replace(/^"|"$/g, "").trim());
-  const header = split(lines[0]);
-  const rows = lines.slice(1).map(split).map((cells) => Object.fromEntries(header.map((h, i) => [h, cells[i] ?? ""])));
+  // a real CSV parse: quoted DBIE text can hold ";" (report 1076, item 3.4.2.1), which a
+  // naive split misaligns (found by atlas-services, 2026-10-09)
+  const table = parseCsv(buf.toString("utf8"), ";").filter((r) => r.some((c) => String(c).trim() !== ""));
+  const header = table[0].map((x) => String(x).trim());
+  const rows = table.slice(1).map((cells) => Object.fromEntries(header.map((h, i) => [h, String(cells[i] ?? "").trim()])));
   return {
     header, rows,
     provenance: { report_id: reportId, data_provider: best.meta.dataprovider.id, rows: rows.length,

@@ -14,7 +14,7 @@ import nbIndBundle from "../../data/series/gdp-2022-industries.json";
 import nbAccBundle from "../../data/series/gdp-2022-accounts.json";
 import backBundle from "../../data/series/gdp-back.json";
 import {
-  MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend,
+  MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend, seamMarks, seamOverlap,
   peakOf, troughOf, peakBetween, dodgeEndLabels, spark, makePlacer, annotationSpot,
 } from "../charts/plumbing.js";
 
@@ -627,7 +627,7 @@ setTxt("ac-sav0", ACC.saving_rate.data.find((d) => d.value != null).value.toFixe
  * is what the plate is about, so it carries the accent. */
 const fyLabel = (d) => { const y = d.getUTCFullYear(); return y + "-" + String((y + 1) % 100).padStart(2, "0"); };
 {
-  const back = { ...BACK.gdp, key: "lh_back", label: "Back series, 2011-12 prices", color: "#2E4BD8" };
+  const back = { ...BACK.gdp, key: "lh_back", label: "NSO back series, 2011-12 prices", color: "#2E4BD8" };
   const b11 = { ...ACC.gdp, key: "lh_b11", label: "Base 2011-12", color: "#878D99" };
   const b22 = { ...NBACC.gdp, key: "lh_b22", label: "Base 2022-23", color: "#5F6675" };
   const lines = [back, b11, b22].map((x) => ({ ...x, data: x.data.filter((d) => d.value != null) }));
@@ -652,9 +652,10 @@ const fyLabel = (d) => { const y = d.getUTCFullYear(); return y + "-" + String((
     marks: [
       Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
       Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
-      Plot.lineY(b11.data.filter((d) => d.value != null), { x: "date", y: "value", stroke: b11.color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.lineY(lines[2].data, { x: "date", y: "value", stroke: b22.color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.lineY(lines[0].data, { x: "date", y: "value", stroke: back.color, strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
+      // the shared seam: three rulers side by side, never joined. No marker: the back series
+      // ends in 2011-12 and the 2011-12 base's annual growth starts a year later, so the rulers
+      // never meet. The back series, the plate's subject, is drawn last, on top.
+      ...seamMarks("side", [lines[1], lines[2], lines[0]], false),
       Plot.dot([low], { x: "date", y: "value", fill: back.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.text([low], { x: "date", y: "value", text: (d) => `${fyLabel(d.date)}, ${d.value < 0 ? "−" : ""}${Math.abs(d.value).toFixed(1)}%`, dy: 16, fill: "#5F6675", fontSize: 12, fontFamily: mono, textAnchor: "middle" }),
       ...lines.map((x) => Plot.dot([x.data.at(-1)], { x: "date", y: "value", fill: x.color, r: 3, stroke: "#FFFFFF", strokeWidth: 1.25 })),
@@ -664,7 +665,7 @@ const fyLabel = (d) => { const y = d.getUTCFullYear(); return y + "-" + String((
     ],
   });
   a11y(plot, `Real GDP growth by fiscal year, ${fyLabel(back.data[0].date)} to ${fyLabel(lines[2].data.at(-1).date)}, on three separate rulers`,
-    `A long blue line, the NSO back series at 2011-12 prices, runs from ${fyLabel(back.data[0].date)} to ${fyLabel(back.data.at(-1).date)}; its low is ${low.value.toFixed(1)} per cent in ${fyLabel(low.date)} and its high ${high.value.toFixed(1)} per cent in ${fyLabel(high.date)}. Two grey lines continue on the 2011-12 base from ${fyLabel(b11.data.find((d) => d.value != null).date)} and on the 2022-23 base from ${fyLabel(lines[2].data[0].date)}. The three are separate series and are not joined.`);
+    `A long blue line, the NSO's own back series at 2011-12 prices, runs from ${fyLabel(back.data[0].date)} to ${fyLabel(back.data.at(-1).date)}; its low is ${low.value.toFixed(1)} per cent in ${fyLabel(low.date)} and its high ${high.value.toFixed(1)} per cent in ${fyLabel(high.date)}. Two grey lines continue on the 2011-12 base from ${fyLabel(b11.data.find((d) => d.value != null).date)} and on the 2022-23 base from ${fyLabel(lines[2].data[0].date)}. The three are separate series and are not joined.`);
   document.getElementById("plot-lh").append(plot);
   wireTools(document.getElementById("cb-lh"), plot, lines, "india-atlas_national-accounts_gdp-growth_back-series_1951-2026", (d) => fyLabel(d));
   wireLegend(document.getElementById("legend-lh"), plot, ["lh_back", "lh_b11", "lh_b22"], { lh_back: { color: back.color }, lh_b11: { color: b11.color }, lh_b22: { color: b22.color } });
