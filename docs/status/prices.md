@@ -65,8 +65,10 @@ sector slices on every run, and they agree.
 - Deep archive: `data/archive/staging/cpi/` holds state x sector x class, sub-class and item
   for base 2024 (1.2 million rows, 9.6 MB csv.gz), ledger rule `archive: true`, rolls up to
   the `cpi-2024-states-groups*` bundles. Not uploaded.
-- IDH series to pair: none found for CPI-IW, rural wages or the old WPI bases in the Data Bank's
-  `india_data_hub_series` mirror (it holds no macro prices series yet; see framework's request).
+- IDH series to pair: checked 2026-10-10 against the Data Bank's `india_data_hub_series`
+  (916 series ids). The only price index is `INCPBLCPIA12M:IND`, IDH's spliced CPI, already
+  excluded in `data/crosscheck/idh.yml`; nothing for CPI-IW, rural wages, CPI-AL/RL or WPI.
+  The framework's request for IDH macro series (CPI-IW 2016 base among them) stands.
 
 ## Decisions
 
