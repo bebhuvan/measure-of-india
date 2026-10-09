@@ -197,6 +197,30 @@ if (slug === "gdp") {
   })();
 }
 
+// climate (lb/climate): a month's anomaly means little alone. The writer gets its rank
+// among the same calendar month since 1940, the last twelve months' mean, the current
+// year's count of months above normal, and the century context from the station record
+// (CRU TS: 2016-2025 against 1901-1930, and the warming rate per decade).
+if (slug === "climate") {
+  const a = bundle.series.temperature_anomaly.data, d = bundle.dates;
+  const L = d.length - 1, m = d[L].slice(5, 7), yr = d[L].slice(0, 4);
+  const same = d.map((x, i) => ({ y: x.slice(0, 4), v: a[i] })).filter((x, i) => d[i].slice(5, 7) === m && x.v != null).sort((p, q) => q.v - p.v);
+  const r2 = (v) => Math.round(v * 100) / 100;
+  const last12 = a.slice(-12).filter((v) => v != null);
+  const ytd = d.map((x, i) => (x.startsWith(yr) ? a[i] : null)).filter((v) => v != null);
+  const cru = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/climate-cru.json"), "utf8"));
+  const cy = (y0, y1) => { const v = cru.dates.map((x, i) => (+x.slice(0, 4) >= y0 && +x.slice(0, 4) <= y1 ? cru.series.tas.data[i] : null)).filter((z) => z != null); return v.reduce((s2, z) => s2 + z, 0) / v.length; };
+  const slope = (y0) => { const p2 = cru.dates.map((x, i) => [+x.slice(0, 4), cru.series.tas.data[i]]).filter(([y, v]) => y >= y0 && v != null); const mx = p2.reduce((s2, q) => s2 + q[0], 0) / p2.length, my = p2.reduce((s2, q) => s2 + q[1], 0) / p2.length; return 10 * p2.reduce((s2, [x, y]) => s2 + (x - mx) * (y - my), 0) / p2.reduce((s2, [x]) => s2 + (x - mx) ** 2, 0); };
+  const cl = cru.dates.at(-1).slice(0, 4);
+  facts.climate = {
+    note: "temperature_anomaly is the month's departure from that calendar month's 1991-2020 average (ERA5, OWID). Ranks count the same calendar month in every year since 1940; rank 1 is the warmest.",
+    sameMonth: { month: periodLabel(d[L]).split(" ")[0], rank: same.findIndex((x) => x.y === yr) + 1, of: same.length, warmest: { year: +same[0].y, value: r2(same[0].v) }, coolest: { year: +same.at(-1).y, value: r2(same.at(-1).v) } },
+    last12Mean: r2(last12.reduce((s2, v) => s2 + v, 0) / last12.length),
+    yearToDate: { year: +yr, months: ytd.length, aboveNormal: ytd.filter((v) => v > 0).length, mean: r2(ytd.reduce((s2, v) => s2 + v, 0) / ytd.length) },
+    century: { source: `CRU TS station record, India, annual mean temperature, 1901 to ${cl}`, change: r2(cy(2016, 2025) - cy(1901, 1930)), from: "1901-1930", to: "2016-2025", perDecadeSince1901: r2(slope(1901)), perDecadeSince1976: r2(slope(1976)) },
+  };
+}
+
 // the writer's window on the SIBLING bundles (registry `proseInputs`): the
 // deep cuts — groups, items, states, sectors — summarized as field facts
 // (rankings, extremes, contradictions), never 358 raw rows. Every number

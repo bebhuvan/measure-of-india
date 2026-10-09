@@ -287,6 +287,41 @@ const PAGES = [
     ["ex-p-women", (b) => fmt.pct1(100 * b["deposits-owners"].series.female_total.data.at(-1) / b["deposits-owners"].series.all_total.data.at(-1))],
     ["prov-vintage", (b) => b["deposits-owners"].meta.vintage],
   ]},
+  // climate (lb/climate): figures recomputed here from the bundles, independently of
+  // src/dossiers/climate.data.js, through the shared formatters
+  ...(() => {
+    const yr = (d) => +d.slice(0, 4), mean = (a) => a.reduce((s, v) => s + v, 0) / a.length;
+    const wm = (b, k, y0, y1) => mean(b.dates.map((d, i) => (yr(d) >= y0 && yr(d) <= y1 ? b.series[k].data[i] : null)).filter((v) => v != null));
+    const sd = (v, f) => (v < 0 ? "−" : "+") + f(Math.abs(v)) + "°C";
+    const dys = (v) => fmt.count(v) + (Math.round(v) === 1 ? " day" : " days");
+    const an = (b) => b["climate-temp-monthly"].series.temperature_anomaly.data;
+    const lastYr = (b, s, k) => { const i = b[s].dates.indexOf(b[s].dates.filter((d, j) => b[s].series[k].data[j] != null).at(-1)); return b[s].series[k].data[i]; };
+    return [{ url: "/guides/climate/", slug: null, minPlots: 18, checks: [
+      ["n-anom", (b) => sd(an(b).at(-1), fmt.num2)],
+      ["rb-anom", (b) => sd(an(b).at(-1), fmt.num2)],
+      ["rb-12", (b) => sd(mean(an(b).slice(-12)), fmt.num2)],
+      ["n-rank", (b) => { const d = b["climate-temp-monthly"].dates, m = d.at(-1).slice(5, 7); const vals = d.map((x, i) => [x, an(b)[i]]).filter(([x, v]) => x.slice(5, 7) === m && v != null).sort((p, q) => q[1] - p[1]); const r = vals.findIndex(([x]) => x === d.at(-1)) + 1; return r + (r % 100 >= 11 && r % 100 <= 13 ? "th" : ["th", "st", "nd", "rd"][r % 10] ?? "th"); }],
+      ["n-century", (b) => sd(wm(b["climate-cru"], "tas", 2016, 2025) - wm(b["climate-cru"], "tas", 1901, 1930), fmt.num1)],
+      ["n-nights", (b) => dys(wm(b["climate-era5-hotdays"], "tr26", 1996, 2025))],
+      ["d-nights", (b) => dys(wm(b["climate-era5-hotdays"], "tr26", 1951, 1980))],
+      ["lr-wbt1", (b) => dys(wm(b["climate-era5-heatstress"], "wbt27", 1996, 2025))],
+      ["lr-hd0", (b) => dys(wm(b["climate-era5-hotdays"], "hd40", 1951, 1980))],
+      ["ex-h-tr", (b) => dys(lastYr(b, "climate-era5-hotdays", "tr26"))],
+      ["n-pc", (b) => fmt.num1(b["climate-co2"].series.co2_per_capita.data.at(-1)) + " t"],
+      ["d-pc", (b) => fmt.num1(b["climate-co2-world"].series.co2_per_capita.data.at(-1)) + " t"],
+      ["pv-co2", (b) => fmt.inr(b["climate-co2"].series.co2.data.at(-1)) + " Mt"],
+      ["ex-e-share", (b) => fmt.num1(b["climate-co2"].series.share_global_co2.data.at(-1)) + "%"],
+      ["ex-s-cum", (b) => fmt.num1(b["climate-co2"].series.share_global_cumulative_co2.data.at(-1)) + "%"],
+      ["pv-stock", (b) => fmt.num1(b["climate-co2"].series.share_of_temperature_change_from_ghg.data.at(-1)) + "%"],
+      ["ex-r-base", (b) => fmt.count(wm(b["climate-cru"], "pr", 1951, 1980)) + " mm"],
+      ["ex-c-r1976", (b) => { const c = b["climate-cru"]; const p = c.dates.map((d, i) => [yr(d), c.series.tas.data[i]]).filter(([y, v]) => y >= 1976 && v != null); const mx = mean(p.map((x) => x[0])), my = mean(p.map((x) => x[1])); return fmt.num2(10 * p.reduce((s, [x, y]) => s + (x - mx) * (y - my), 0) / p.reduce((s, [x]) => s + (x - mx) ** 2, 0)) + "°C"; }],
+      ["ex-en-coal", (b) => { const e = b["climate-energy"]; return fmt.num1(lastYr(b, "climate-energy", "coal_share_energy")) + "%"; }],
+      ["ex-p-245-40", (b) => { const w = b["climate-cmip6-temp-windows"]; return sd(w.series.tas__change__ssp245__median.data[w.dates.indexOf("2040-01-01")], fmt.num1); }],
+      ["ex-p-585-80", (b) => { const w = b["climate-cmip6-temp-windows"]; return sd(w.series.tas__change__ssp585__median.data[w.dates.indexOf("2080-01-01")], fmt.num1); }],
+      ["ex-s-delhi", (b) => sd(wm(b["climate-cru-states"], "tas__delhi", 1996, 2025) - wm(b["climate-cru-states"], "tas__delhi", 1951, 1980), fmt.num1)],
+      ["prov-vintage", (b) => b["climate-temp-monthly"].meta.vintage],
+    ]}];
+  })(),
   { url: "/", slug: null, minPlots: 1, checks: [
     // the CPI print is the 2024-base series; core stays on the 2012 base
     // (no weights served for the new base), labelled "to Dec 2025"

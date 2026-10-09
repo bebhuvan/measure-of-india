@@ -1,0 +1,261 @@
+{
+ "dossier": "climate",
+ "bundle": "climate-temp-monthly",
+ "base": "ERA5 reanalysis, OWID country average",
+ "vintage": "2026-09-11",
+ "latestPeriod": "Aug 2026",
+ "releaseDate": "2026-09-11",
+ "bands": null,
+ "series": {
+  "temperature_2m": {
+   "label": "Average surface temperature",
+   "levelBased": false,
+   "latest": {
+    "value": 26.991652,
+    "period": "Aug 2026"
+   },
+   "previous": {
+    "value": 27.53179,
+    "period": "Jul 2026"
+   },
+   "yearAgo": {
+    "value": 26.608639,
+    "period": "Aug 2025"
+   },
+   "deltaVsPrev": -0.54,
+   "deltaVsYear": 0.38,
+   "ratioVsYearAgo": 1.01,
+   "growthVsPrevPct": null,
+   "growthVsYearPct": null,
+   "run": {
+    "direction": "down",
+    "length": 3,
+    "since": "May 2026"
+   },
+   "min": {
+    "value": 15.025769,
+    "period": "Jan 1953"
+   },
+   "max": {
+    "value": 30.944853,
+    "period": "May 1944"
+   },
+   "streaks": {
+    "negative": 0
+   },
+   "last4": [
+    29.873842,
+    29.470566,
+    27.53179,
+    26.991652
+   ],
+   "yearStart": {
+    "value": 16.85548,
+    "period": "Jan 2026"
+   },
+   "baseEffect": null
+  },
+  "temperature_anomaly": {
+   "label": "Temperature anomaly",
+   "levelBased": false,
+   "latest": {
+    "value": 0.6251755,
+    "period": "Aug 2026"
+   },
+   "previous": {
+    "value": 0.55903435,
+    "period": "Jul 2026"
+   },
+   "yearAgo": {
+    "value": 0.2421627,
+    "period": "Aug 2025"
+   },
+   "deltaVsPrev": 0.07,
+   "deltaVsYear": 0.38,
+   "ratioVsYearAgo": 2.58,
+   "growthVsPrevPct": null,
+   "growthVsYearPct": null,
+   "run": {
+    "direction": "up",
+    "length": 1,
+    "since": "Jul 2026"
+   },
+   "min": {
+    "value": -3.4180965,
+    "period": "Apr 1951"
+   },
+   "max": {
+    "value": 2.0760632,
+    "period": "Feb 2006"
+   },
+   "streaks": {
+    "negative": 0
+   },
+   "last4": [
+    -0.08374596,
+    0.6189041,
+    0.55903435,
+    0.6251755
+   ],
+   "yearStart": {
+    "value": 0.008792877,
+    "period": "Jan 2026"
+   },
+   "baseEffect": null
+  }
+ },
+ "cross": {
+  "headlineKey": null,
+  "countAboveHeadline": null,
+  "countBelowHeadline": null,
+  "topMover": {
+   "key": "temperature_2m",
+   "label": "Average surface temperature",
+   "latest": 26.991652,
+   "latestPeriod": "2026-08",
+   "deltaVsYearAgo": 0.383
+  },
+  "bottomMover": {
+   "key": "temperature_anomaly",
+   "label": "Temperature anomaly",
+   "latest": 0.6251755,
+   "latestPeriod": "2026-08",
+   "deltaVsYearAgo": 0.383
+  },
+  "topByLatest": {
+   "key": "temperature_2m",
+   "label": "Average surface temperature",
+   "latest": 26.991652,
+   "latestPeriod": "2026-08",
+   "deltaVsYearAgo": 0.383
+  },
+  "bottomByLatest": {
+   "key": "temperature_anomaly",
+   "label": "Temperature anomaly",
+   "latest": 0.6251755,
+   "latestPeriod": "2026-08",
+   "deltaVsYearAgo": 0.383
+  },
+  "spreadLatest": 26.37,
+  "contradictions": [],
+  "ranking": [
+   "temperature_2m",
+   "temperature_anomaly"
+  ]
+ },
+ "climate": {
+  "note": "temperature_anomaly is the month's departure from that calendar month's 1991-2020 average (ERA5, OWID). Ranks count the same calendar month in every year since 1940; rank 1 is the warmest.",
+  "sameMonth": {
+   "month": "Aug",
+   "rank": 2,
+   "of": 87,
+   "warmest": {
+    "year": 2023,
+    "value": 0.84
+   },
+   "coolest": {
+    "year": 1943,
+    "value": -2
+   }
+  },
+  "last12Mean": 0.24,
+  "yearToDate": {
+   "year": 2026,
+   "months": 8,
+   "aboveNormal": 7,
+   "mean": 0.45
+  },
+  "century": {
+   "source": "CRU TS station record, India, annual mean temperature, 1901 to 2025",
+   "change": 0.87,
+   "from": "1901-1930",
+   "to": "2016-2025",
+   "perDecadeSince1901": 0.07,
+   "perDecadeSince1976": 0.15
+  }
+ },
+ "proseInputs": [
+  {
+   "bundle": "climate-temp-annual",
+   "seriesCount": 2,
+   "base": "ERA5 reanalysis, OWID country average",
+   "coverage": "India: OWID dataset surface_temperature_annual_average (2 series), 1940 to 2025.",
+   "top": {
+    "key": "temperature_2m",
+    "label": "Average surface temperature",
+    "latest": 24.234177,
+    "latestPeriod": "2025-01",
+    "deltaVsYearAgo": -0.5042
+   },
+   "bottom": {
+    "key": "temperature_anomaly",
+    "label": "Temperature anomaly",
+    "latest": 0.068268776,
+    "latestPeriod": "2025-01",
+    "deltaVsYearAgo": -0.5042
+   },
+   "topByLatest": {
+    "key": "temperature_2m",
+    "label": "Average surface temperature",
+    "latest": 24.234177,
+    "latestPeriod": "2025-01",
+    "deltaVsYearAgo": -0.5042
+   },
+   "bottomByLatest": {
+    "key": "temperature_anomaly",
+    "label": "Temperature anomaly",
+    "latest": 0.068268776,
+    "latestPeriod": "2025-01",
+    "deltaVsYearAgo": -0.5042
+   },
+   "spread": 0,
+   "countAboveHeadline": null,
+   "contradictions": [],
+   "ranking": [
+    "temperature_2m",
+    "temperature_anomaly"
+   ]
+  },
+  {
+   "bundle": "climate-rain-owid",
+   "seriesCount": 2,
+   "base": "ERA5 reanalysis, OWID country average",
+   "coverage": "India: OWID dataset total_precipitation_annual (2 series), 1940 to 2025.",
+   "top": {
+    "key": "precipitation_anomaly",
+    "label": "Annual precipitation anomaly",
+    "latest": 219.26234,
+    "latestPeriod": "2025-01",
+    "deltaVsYearAgo": 22.1925
+   },
+   "bottom": {
+    "key": "total_precipitation",
+    "label": "Annual precipitation",
+    "latest": 1404.35,
+    "latestPeriod": "2025-01",
+    "deltaVsYearAgo": 22.1925
+   },
+   "topByLatest": {
+    "key": "total_precipitation",
+    "label": "Annual precipitation",
+    "latest": 1404.35,
+    "latestPeriod": "2025-01",
+    "deltaVsYearAgo": 22.1925
+   },
+   "bottomByLatest": {
+    "key": "precipitation_anomaly",
+    "label": "Annual precipitation anomaly",
+    "latest": 219.26234,
+    "latestPeriod": "2025-01",
+    "deltaVsYearAgo": 22.1925
+   },
+   "spread": 0,
+   "countAboveHeadline": null,
+   "contradictions": [],
+   "ranking": [
+    "precipitation_anomaly",
+    "total_precipitation"
+   ]
+  }
+ ]
+}

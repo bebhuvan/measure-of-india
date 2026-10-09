@@ -208,6 +208,14 @@ const CARDS = [
     yStep: 10, fmt: (v) => v.toFixed(1) + "%", mr: 220,
     foot: (b, S) => `Manufacturing ${S.mva_pct_gdp.data.at(-1).value.toFixed(1)}% of GDP · 2025 · Source: World Bank WDI`,
   },
+  // climate (lb/climate)
+  {
+    slug: "climate", bundleSlug: "climate-temp-annual",
+    keys: ["temperature_anomaly"], d0: -1.5, d1: 1, band: null, trend: null,
+    yStep: 0.5, fmt: (v) => (v < 0 ? "−" : "+") + Math.abs(v).toFixed(1) + "°C", mr: 220,
+    prep: (S) => { S.temperature_anomaly = { ...S.temperature_anomaly, label: "Against 1991-2020", color: "#2E4BD8" }; },
+    foot: (b) => `India's annual temperature against the 1991-2020 average, 1940 to ${b.dates.at(-1).slice(0, 4)}. Source: Copernicus ERA5, via Our World in Data`,
+  },
 ];
 
 await ensureFonts();
