@@ -345,8 +345,7 @@ export function archive(root, rel, vintage, note, providers, keep = () => true) 
     reports[`${p.provenance.report_id}:${p.id}`] = { provenance: { ...p.provenance, rows_archived: rows.length }, header: kept, sameAs: same,
       rows: rows.map((r) => kept.map((h) => { const c = String(r[h] ?? ""); return /[;"]/.test(c) ? `"${c.replace(/"/g, '""')}"` : c; }).join(";")) };
   }
-  writeRaw(root, rel, { vintage, note, reports });
-  return JSON.parse(fs.readFileSync(path.join(root, rel), "utf8")).vintage;
+  return writeRaw(root, rel, { vintage, note, reports });   // the stored vintage
 }
 
 /* ---------------- the catalogue ---------------- */

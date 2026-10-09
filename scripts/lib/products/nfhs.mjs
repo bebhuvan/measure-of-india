@@ -52,7 +52,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { mospi, mospiAll } from "../mospi.mjs";
 import { getJson } from "../net.mjs";
-import { writeSeries, writeRaw } from "../util.mjs";
+import { writeSeries, writeRaw, readRaw, readRawFile, rawExists } from "../util.mjs";
 
 /* ---------- the 21 tables ---------- */
 export const TABLES = {
@@ -365,8 +365,8 @@ export function bakeNfhs(root, dcfg, raw, dhs) {
 export async function buildNfhs(root, dcfg, vintage) {
   await fetchNfhsRaw(root, dcfg, vintage);
   await fetchDhsCrosscheck(root, vintage);
-  const raw = JSON.parse(fs.readFileSync(path.join(root, "data/raw/nfhs-records.json"), "utf8"));
-  const dhs = JSON.parse(fs.readFileSync(path.join(root, "data/raw/nfhs-dhs-crosscheck.json"), "utf8"));
+  const raw = readRaw(root, "data/raw/nfhs-records.json");
+  const dhs = readRaw(root, "data/raw/nfhs-dhs-crosscheck.json");
   return bakeNfhs(root, dcfg, raw, dhs);
 }
 
@@ -387,11 +387,11 @@ export async function catalogueNfhs() {
 await catalogueCli(import.meta.url, catalogueNfhs);
 if (process.argv[1] && path.resolve(process.argv[1]).endsWith("products/nfhs.mjs") && process.argv.includes("--bake")) {
   const { dcfg } = sourceCfg("nfhs");
-  const raw = JSON.parse(fs.readFileSync(path.join(ROOT, "data/raw/nfhs-records.json"), "utf8"));
+  const raw = readRaw(ROOT, "data/raw/nfhs-records.json");
   const dp = path.join(ROOT, "data/raw/nfhs-dhs-crosscheck.json");
-  if (!fs.existsSync(dp)) await fetchDhsCrosscheck(ROOT, new Date().toISOString().slice(0, 10));
-  if (!fs.existsSync(path.join(ROOT, "data/raw/nfhs-filters.json"))) await fetchNfhsFilters(ROOT, dcfg, raw.vintage);
-  const dhs = JSON.parse(fs.readFileSync(dp, "utf8"));
+  if (!rawExists(ROOT, "data/raw/nfhs-dhs-crosscheck.json")) await fetchDhsCrosscheck(ROOT, new Date().toISOString().slice(0, 10));
+  if (!rawExists(ROOT, "data/raw/nfhs-filters.json")) await fetchNfhsFilters(ROOT, dcfg, raw.vintage);
+  const dhs = readRawFile(dp);
   const { written, ledgerFacts } = bakeNfhs(ROOT, dcfg, raw, dhs);
   console.log(`nfhs: ${written.length} bundles; ${ledgerFacts.quarantined.length} NFHS-4 sub-indicators withheld`);
 }

@@ -13,6 +13,7 @@
 //   6. baked: everything else, in its round's table bundle.
 // Run it after the adapter (node scripts/lib/products/nfhs.mjs --bake) and after any change to
 // the plates; node scripts/coverage.mjs then checks the result.
+import { readRaw } from "../util.mjs";
 import fs from "node:fs";
 import path from "node:path";
 import YAML from "yaml";
@@ -20,8 +21,8 @@ import { ROOT, idPart } from "../catalogue.mjs";
 import { QUARANTINE, TABLES, cleanLabel, geoKey } from "./nfhs.mjs";
 
 const cat = JSON.parse(fs.readFileSync(path.join(ROOT, "data/coverage/nfhs.catalogue.json"), "utf8")).items;
-const filters = JSON.parse(fs.readFileSync(path.join(ROOT, "data/raw/nfhs-filters.json"), "utf8")).filters;
-const raw = JSON.parse(fs.readFileSync(path.join(ROOT, "data/raw/nfhs-records.json"), "utf8")).indicators;
+const filters = readRaw(ROOT, "data/raw/nfhs-filters.json").filters;
+const raw = readRaw(ROOT, "data/raw/nfhs-records.json").indicators;
 const bundle = (round, t) => { const p = path.join(ROOT, "data/series", `nfhs-${round}-${TABLES[t][0]}.json`); return fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, "utf8")) : null; };
 const ROUND = { "2-nfhs-4": { n: 4, api: "nfhs-4" }, "3-nfhs-5": { n: 5, api: "nfhs-5" } };
 

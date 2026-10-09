@@ -661,7 +661,7 @@ for (const page of PAGES) {
 
   // learn pages: level figures trace to the published index levels
   if (page.url === "/learn/inflation/") {
-    const lv = JSON.parse(fs.readFileSync(path.join(ROOT, "data/raw/cpi-indices.json"), "utf8")).levels;
+    const lv = (await import(pathToFileURL(path.join(ROOT, "scripts/lib/util.mjs")).href)).readRaw(ROOT, "data/raw/cpi-indices.json").levels;
     const want = fmt.num1(lv["combined:general"]["2025-12"]);
     const got = doc.getElementById("n-lvl-now")?.textContent.trim();
     if (got !== want) fail(`${page.url} #n-lvl-now: rendered "${got}" != data "${want}"`);
@@ -748,6 +748,39 @@ for (const page of PAGES) {
     if (bad.length) fail(`/guides/${d.slug}/: every-cut does not list each series exactly once: ${bad.slice(0, 5).join("; ")}${bad.length > 5 ? ` (+${bad.length - 5})` : ""}`);
     else ok(`/guides/${d.slug}/: every-cut lists all ${want} series once (${plan.inlineRows.length} inline${plan.tails.length ? `, ${plan.tails.length} long-tail view${plan.tails.length > 1 ? "s" : ""}` : ""})`);
   }
+}
+
+// deep archive links (docs/PLAN-launch.md §2b): every "Finer detail" link on a built page points at
+// a folder of the archive that data/archive/manifest.json lists, and every guide whose bundles
+// have archive tables rolling up to them carries the link
+{
+  const AR = await import(pathToFileURL(path.join(ROOT, "src/dossiers/archive.js")).href);
+  const EC = await import(pathToFileURL(path.join(ROOT, "src/dossiers/everycut.js")).href);
+  const man = AR.archiveManifest();
+  const listed = [...(man.tables ?? []).map((t) => t.path), ...Object.values(man.raw ?? {}).flatMap((r) => r.files.map(([rel]) => r.hf_prefix + rel))];
+  const base = AR.ARCHIVE_URL + "/tree/main/";
+  let links = 0, bad = 0;
+  const pages = [];
+  (function walk(dir) { for (const e of fs.readdirSync(dir, { withFileTypes: true })) { const p = path.join(dir, e.name); if (e.isDirectory()) walk(p); else if (e.name === "index.html") pages.push(p); } })(path.join(DIST, "guides"));
+  for (const p of pages) {
+    const h = fs.readFileSync(p, "utf8");
+    for (const m of h.matchAll(/class="archive-link" href="([^"]+)"/g)) {
+      links++;
+      const href = m[1].replace(/&amp;/g, "&");
+      const rel = href.startsWith(base) ? href.slice(base.length) : null;
+      if (!rel || !listed.some((x) => x === rel || x.startsWith(rel + "/"))) { bad++; fail(`${path.relative(DIST, p)}: archive link ${href} is not a path in data/archive/manifest.json`); }
+    }
+  }
+  for (const d of DOSSIERS) {
+    const f = path.join(DIST, "guides", d.slug, "index.html");
+    if (!fs.existsSync(f)) continue;
+    const h = fs.readFileSync(f, "utf8");
+    for (const b of EC.guideBundles(d)) {
+      const a = AR.archiveFor(b);
+      if (a && !h.includes(`href="${a.href}"`)) fail(`/guides/${d.slug}/: ${b} has ${a.tables} archive tables and the page does not link them`);
+    }
+  }
+  if (!bad) ok(`archive links: ${links} on ${pages.length} pages, all to paths in the manifest (${(man.tables ?? []).length} table files)`);
 }
 
 // static greps over our own sources (not Plot internals) — the file list is

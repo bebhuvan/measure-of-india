@@ -9,6 +9,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import YAML from "yaml";
+import { readRawFile } from "./lib/util.mjs";
+// raw dumps are stored gzipped (scripts/lib/util.mjs readRawFile reads either form)
+const rawFileExists = (f) => fs.existsSync(f) || fs.existsSync(f + ".gz");
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const cfg = YAML.parse(fs.readFileSync(path.join(ROOT, "data/sources.yml"), "utf8"));
@@ -709,8 +712,8 @@ withBundle("cpi-2024-items", (b) => {
 });
 {
   const rawFile = path.join(ROOT, "data/raw/cpi-2024-indices.json");
-  if (fs.existsSync(rawFile)) {
-    const raw = JSON.parse(fs.readFileSync(rawFile, "utf8"));
+  if (rawFileExists(rawFile)) {
+    const raw = readRawFile(rawFile);
     let bad = 0;
     for (const [key, months] of Object.entries(raw.levels)) {
       if (key.startsWith("back:")) continue; // back-cast falls to ~55 by 2013, by design
@@ -730,8 +733,8 @@ withBundle("cpi-2024-items", (b) => {
 function checkWpiItems(itemsSlug, subgroupsSlug, rawRel, minItems, basket) {
 withBundle(itemsSlug, (b) => {
   const rawFile = path.join(ROOT, rawRel);
-  if (!fs.existsSync(rawFile)) return fail(`${itemsSlug}: ${rawRel} missing`);
-  const raw = JSON.parse(fs.readFileSync(rawFile, "utf8"));
+  if (!rawFileExists(rawFile)) return fail(`${itemsSlug}: ${rawRel} missing`);
+  const raw = readRawFile(rawFile);
   const n = Object.keys(b.series).length;
   if (n < minItems) fail(`${itemsSlug}: only ${n} item series baked (${basket})`);
   else ok(`${itemsSlug}: ${n} item series baked`);
@@ -885,9 +888,9 @@ withBundle("gdp-industries", (b) => {
   // level identity from the raw dumps: the 8 sectors sum to Total GVA
   const indFile = path.join(ROOT, "data/raw/nas-industries.json");
   const totFile = path.join(ROOT, "data/raw/nas-levels.json");
-  if (fs.existsSync(indFile) && fs.existsSync(totFile)) {
-    const ind = JSON.parse(fs.readFileSync(indFile, "utf8")).constant;
-    const tot = JSON.parse(fs.readFileSync(totFile, "utf8")).levels.gva;
+  if (rawFileExists(indFile) && rawFileExists(totFile)) {
+    const ind = readRawFile(indFile).constant;
+    const tot = readRawFile(totFile).levels.gva;
     let worst = 0, worstAt = null, n = 0;
     for (const [ym, t] of Object.entries(tot)) {
       const s = Object.values(ind).reduce((a, m) => a + (m[ym] ?? NaN), 0);
@@ -995,8 +998,8 @@ withBundle("hces-item-values", (b) => {
   // redundancy cross-check against indicator 3 (broad categories in ₹, not
   // baked as a bundle): its All-India "Cereal" row must equal Total Cereals
   const rawFile = path.join(ROOT, "data/raw/hces-records.json");
-  if (fs.existsSync(rawFile)) {
-    const ind3 = JSON.parse(fs.readFileSync(rawFile, "utf8")).indicators?.["3"] ?? [];
+  if (rawFileExists(rawFile)) {
+    const ind3 = readRawFile(rawFile).indicators?.["3"] ?? [];
     let checked = 0;
     b.dates.forEach((d, i) => {
       const fy = `${d.slice(0, 4)}-${String((+d.slice(0, 4) + 1) % 100).padStart(2, "0")}`;
@@ -1502,9 +1505,9 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
  * year (measured 2026-10-09: 87,36,331 vs 87,36,328 crore, a rounding gap). */
 {
   const bf = path.join(ROOT, "data/raw/nas-back-levels.json"), nf = path.join(ROOT, "data/raw/nas-nominal.json");
-  if (fs.existsSync(bf) && fs.existsSync(nf)) {
-    const back = JSON.parse(fs.readFileSync(bf, "utf8")).constant?.gdp?.["2011-04"];
-    const cur = JSON.parse(fs.readFileSync(nf, "utf8")).annual_constant_gdp?.["2011-04"];
+  if (rawFileExists(bf) && rawFileExists(nf)) {
+    const back = readRawFile(bf).constant?.gdp?.["2011-04"];
+    const cur = readRawFile(nf).annual_constant_gdp?.["2011-04"];
     if (back == null || cur == null) fail("gdp-back: 2011-12 GDP level missing from the back or current raw dump");
     else if (Math.abs(back / cur - 1) > 1e-4) fail(`gdp-back: 2011-12 GDP ${back} (back series) != ${cur} (current 2011-12 base): the bridge does not meet the series`);
     else ok(`gdp-back: 2011-12 GDP level meets the current series (${back} vs ${cur} crore)`);
@@ -1755,7 +1758,7 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
       else ok(`states-gsva-${pk}: industries and sub-industries add up within ${(worst * 100).toFixed(3)}% (${n} sums)`);
     }
     // per-capita NSDP: indicator 32 (baked) repeats indicator 25 wherever both are served
-    const raw = JSON.parse(fs.readFileSync(path.join(ROOT, "data/raw/states-nas.json"), "utf8")).indicators;
+    const raw = readRawFile(path.join(ROOT, "data/raw/states-nas.json")).indicators;
     // except a copied block (32 repeating 31, per-capita GSDP: Karnataka on 2026-10-09), which
     // the adapter excludes; the copy is reported here so it is seen on every run
     const i25 = new Map((raw[25] ?? []).map((r) => [`${r.state}|${r.year}`, r]));
@@ -1977,7 +1980,7 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
   }
   // growth equals the RBI's printed growth wherever a release printed a one-year comparison
   {
-    const g = load("credit-growth"), raw = JSON.parse(fs.readFileSync(path.join(ROOT, "data/raw/credit-sectoral.json"), "utf8")).rbi_sectoral_credit;
+    const g = load("credit-growth"), raw = readRawFile(path.join(ROOT, "data/raw/credit-sectoral.json")).rbi_sectoral_credit;
     const c = Object.fromEntries(raw.columns.map((k, i) => [k, i])); const s = load("credit-sectors");
     const printed = new Map();
     for (const r of raw.rows) if (r[c.category_code] === "I" && r[c.growth_yoy_pct] != null && r[c.release_date] >= "2024-01-01" && Math.abs((Date.parse(r[c.observation_date]) - Date.parse(r[c.year_ago_date])) / 864e5 - 365) <= 20) { const p = printed.get(r[c.observation_date]); if (!p || +r[c.release_prid] > +p.prid) printed.set(r[c.observation_date], { v: r[c.growth_yoy_pct], prid: r[c.release_prid] }); }

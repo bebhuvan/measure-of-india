@@ -5,7 +5,7 @@
 
 import * as Plot from "@observablehq/plot";
 import bundle from "../../data/series/cpi.json";
-import levels from "../../data/raw/cpi-indices.json";
+import levels from "../../data/raw/cpi-indices.json.gz";
 
 // the raw store keys levels by sector since the full-grid ingest; these pages
 // read the combined sector only, mapped back to the legacy flat keys

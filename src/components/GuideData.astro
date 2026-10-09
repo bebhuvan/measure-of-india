@@ -8,6 +8,7 @@
 import fs from "node:fs";
 import { bySlug } from "../dossiers/registry.js";
 import { everyCutPlan, guideBundles } from "../dossiers/everycut.js";
+import { archiveFor } from "../dossiers/archive.js";
 interface Props { slug: string }
 const d = bySlug[Astro.props.slug];
 const M3 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -22,7 +23,7 @@ const info = (b) => {
     : labels.slice(0, 3).join(", ") + (labels.length > 3 ? `, and ${labels.length - 3} more` : "");
   return { b, what, src: clean(m.source), base: m.base && m.base !== "null" && !/^n\/a/.test(m.base) ? clean(m.base) : "", freq: m.frequency,
     n: Object.keys(j.series).length, d0: j.dates[0], d1: j.dates.at(-1), from: lab(j.dates[0], m.frequency), to: lab(j.dates.at(-1), m.frequency), vintage: m.vintage,
-    current: b === d.currentBundle };
+    current: b === d.currentBundle, arc: archiveFor(b) };
 };
 const fams = everyCutPlan(d).tails.filter((t) => t.kind === "family");
 const inFamily = new Set(fams.flatMap((f) => f.bundles));
@@ -32,7 +33,10 @@ const famRows = fams.map((f) => {
   const d0 = fi.map((x) => x.d0).sort()[0], d1 = fi.map((x) => x.d1).sort().at(-1);
   const vint = fi.map((x) => x.vintage).filter(Boolean).sort().at(-1) ?? "";
   const srcs = [...new Set(fi.map((x) => x.src))];
-  return { id: f.id, label: f.label, files: fi.length, n: fi.reduce((a, x) => a + x.n, 0), from: d0.slice(0, 4), to: d1.slice(0, 4), vintage: vint,
+  // the archive tables under any of the family's files, counted once
+  const arcs = fi.map((x) => x.arc).filter(Boolean);
+  const arc = arcs.length ? { tables: arcs.reduce((a, x) => a + x.tables, 0), href: arcs.length === 1 ? arcs[0].href : arcs[0].href.replace(/\/tables\/([^/]+)\/.*$/, "/tables/$1") } : null;
+  return { id: f.id, label: f.label, files: fi.length, arc, n: fi.reduce((a, x) => a + x.n, 0), from: d0.slice(0, 4), to: d1.slice(0, 4), vintage: vint,
     src: srcs.length === 1 ? srcs[0] : `${srcs.length} sources` };
 });
 const nFiles = rows.length + famRows.reduce((a, f) => a + f.files, 0);
@@ -49,6 +53,7 @@ const today = rows.find((r) => r.current)?.vintage ?? "";
         {rows.map((r) => (
           <tr class={r.current ? "cur" : ""}>
             <td class="w">{r.what}<small>{r.src}{r.current ? ". The current series this guide leads with" : ""}</small>
+              {r.arc && <small><a class="archive-link" href={r.arc.href}>Finer detail: {r.arc.tables.toLocaleString("en-IN")} {r.arc.tables === 1 ? "table" : "tables"} in the archive</a></small>}
               <span class="em-m">{[r.base, r.from === r.to ? r.from : `${r.from} to ${r.to}`, r.freq, `${r.n} series`, `vintage ${r.vintage}`].filter(Boolean).join(", ")}</span></td>
             <td>{r.base}</td>
             <td class="nw">{r.from === r.to ? r.from : `${r.from} to ${r.to}`}<small>{r.freq}</small></td>
@@ -60,6 +65,7 @@ const today = rows.find((r) => r.current)?.vintage ?? "";
         {famRows.map((f) => (
           <tr class="fam">
             <td class="w">{f.label}<small>{f.src}. {f.files.toLocaleString("en-IN")} files, listed on their own page</small>
+              {f.arc && <small><a class="archive-link" href={f.arc.href}>Finer detail: {f.arc.tables.toLocaleString("en-IN")} {f.arc.tables === 1 ? "table" : "tables"} in the archive</a></small>}
               <span class="em-m">{[`${f.from} to ${f.to}`, `${f.files} files`, `${f.n.toLocaleString("en-IN")} series`, `vintage ${f.vintage}`].join(", ")}</span></td>
             <td></td>
             <td class="nw">{f.from === f.to ? f.from : `${f.from} to ${f.to}`}<small>{f.files.toLocaleString("en-IN")} files</small></td>

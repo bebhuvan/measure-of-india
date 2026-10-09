@@ -213,7 +213,7 @@ export async function buildRbiRates(root, dcfg, vintage, cfg) {
   const db = databankRoot(cfg?.families?.databank);
   const { write, written } = makeWriter(root, dcfg, vintage);
   const RAW = {};
-  const rawStamp = (rel, body) => { writeRaw(root, rel, { vintage, ...body }); return JSON.parse(fs.readFileSync(path.join(root, rel), "utf8")).vintage; };
+  const rawStamp = (rel, body) => writeRaw(root, rel, { vintage, ...body });   // writeRaw returns the stored vintage
 
   /* =================== 1. policy rates since 1935 =================== */
   // Hand check (RBI press release "Monetary Policy Statement, 2026-27: Resolution of the Monetary

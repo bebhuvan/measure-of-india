@@ -2,6 +2,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import zlib from "node:zlib";
 
 export const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 export const round2 = (v) => Math.round(v * 100) / 100;
@@ -87,32 +88,63 @@ function canon(v) {
 }
 const stable = (obj) => JSON.stringify(canon(obj));
 
+// Raw dumps are stored gzipped (round 4, framework): data/raw/<name>.json.gz. Callers keep naming
+// them by their JSON path ("data/raw/cpi-indices.json"); these helpers resolve the stored file,
+// so an adapter never needs to know which form is on disk, and a not-yet-migrated .json still
+// reads. Every adapter reads raw through readRaw / readRawFile; the one-off migration is
+// scripts/migrations/2026-10-raw-gzip.mjs.
+const gzName = (rel) => (rel.endsWith(".gz") ? rel : rel + ".gz");
+/** The stored file of a raw dump named by its .json path: the .json.gz if present, else the .json. */
+export function rawPath(root, rel) {
+  const gz = path.join(root, gzName(rel));
+  if (fs.existsSync(gz)) return gz;
+  return path.join(root, rel.replace(/\.gz$/, ""));
+}
+export const rawExists = (root, rel) => fs.existsSync(rawPath(root, rel));
+/** A raw dump, parsed: from .json.gz or .json, whichever is stored. */
+export function readRawFile(file) {
+  const buf = fs.readFileSync(fs.existsSync(gzName(file)) ? gzName(file) : file);
+  return JSON.parse((buf[0] === 0x1f && buf[1] === 0x8b ? zlib.gunzipSync(buf) : buf).toString("utf8"));
+}
+export const readRaw = (root, rel) => readRawFile(path.join(root, rel.replace(/\.gz$/, "")));
+/** The bytes a raw dump is stored as: the same JSON text as before, gzipped deterministically
+ *  (no file name or time in the header), so an unchanged dump is byte-identical run to run. */
+export const gzipRaw = (text) => zlib.gzipSync(text, { level: 9 });
+
 // Vintage-safe raw writer. Raw dumps are the audit trail: if the source body
 // changes between runs (a revision), the previous file is archived to
-// data/raw/vintages/<name>.<old-vintage>.json before the new one lands, so no
+// data/raw/vintages/<name>.<old-vintage>.json.gz before the new one lands, so no
 // vintage is ever overwritten silently. If the body is unchanged, the file —
 // and its original vintage stamp — is left untouched. Comparison is
-// order-insensitive (see canon above).
+// order-insensitive (see canon above). Returns the vintage now stored.
 export function writeRaw(root, rel, obj) {
-  const p = path.join(root, rel);
-  if (fs.existsSync(p)) {
-    const prev = JSON.parse(fs.readFileSync(p, "utf8"));
+  rel = rel.replace(/\.gz$/, "");
+  const plain = path.join(root, rel), gz = path.join(root, gzName(rel));
+  const stored = fs.existsSync(gz) ? gz : fs.existsSync(plain) ? plain : null;
+  if (stored) {
+    const prev = readRawFile(stored);
     const { vintage: pv, ...prevBody } = prev;
     const { vintage: nv, ...nextBody } = obj;
     if (stable(prevBody) === stable(nextBody)) {
       console.log(`unchanged ${rel} (vintage ${pv} kept)`);
-      return;
+      if (stored === plain) { fs.writeFileSync(gz, gzipRaw(fs.readFileSync(plain))); fs.rmSync(plain); }
+      return pv;
     }
-    const archive = path.join(root, path.dirname(rel), "vintages", `${path.basename(rel, ".json")}.${pv}.json`);
-    if (!fs.existsSync(archive)) {
+    const archive = path.join(root, path.dirname(rel), "vintages", `${path.basename(rel, ".json")}.${pv}.json.gz`);
+    if (!fs.existsSync(archive) && !fs.existsSync(archive.replace(/\.gz$/, ""))) {
       fs.mkdirSync(path.dirname(archive), { recursive: true });
-      fs.writeFileSync(archive, JSON.stringify(prev, null, 1) + "\n");
+      fs.writeFileSync(archive, gzipRaw(JSON.stringify(prev, null, 1) + "\n"));
       console.log(`revision detected in ${rel}: archived vintage ${pv} -> ${path.relative(root, archive)}`);
     } else {
       console.log(`revision detected in ${rel}: vintage ${pv} already archived`);
     }
   }
-  writeJson(root, rel, obj);
+  fs.mkdirSync(path.dirname(gz), { recursive: true });
+  fs.writeFileSync(gz + ".tmp", gzipRaw(JSON.stringify(obj, null, 1) + "\n"));
+  fs.renameSync(gz + ".tmp", gz);
+  if (fs.existsSync(plain)) fs.rmSync(plain);
+  console.log(`wrote ${gzName(rel)}`);
+  return obj.vintage ?? null;
 }
 
 // y/y growth from a Map("YYYY-MM" -> level). Lag is implicit: the same month
