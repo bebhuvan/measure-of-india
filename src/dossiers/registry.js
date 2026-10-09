@@ -393,6 +393,37 @@ export const DOSSIERS = [
     register: { id: "reg-deposits", label: "Bank deposits", unit: "Annual, RBI BSR-2, as on 31 March, ₹ lakh crore", historyCol: "Since 2019" },
     bundles: ["deposits-owners", "deposits-owners-2005", "deposits-population", "deposits-term-rates", "deposits-term-maturity", "deposits-term-size", "deposits-term-size-2026"],
   },
+  // --- states (state economies) ---
+  {
+    slug: "states",
+    no: "15",
+    section: "Output",
+    name: "State economies",
+    title: "State economies",   // the topic as a reader names it: nav, lists, search
+    kickerTitle: "State domestic product, MoSPI and RBI",
+    crumbTitle: "State economies",
+    headline: "One country, <i>many economies.</i>",
+    ogTitle: "One country, many economies.",
+    blurb: "How big each state's economy is, how fast it grows, how much it produces per person, and what it runs on: farms, factories or services. From Sikkim and Goa to Bihar.",
+    description: "State domestic product for every state and union territory: GSDP, income per person, growth, industry mix and state finances, 2011-12 to 2025-26, from MoSPI and the RBI Handbook of Statistics on Indian States.",
+    rssDescription: "The size, speed and shape of every state's economy. Revised when states publish new estimates.",
+    stamp: { dateStyle: "vintageMonth", vintageStyle: "vintage" },
+    statusNote: "Annual, revised as each state publishes; 2011-12 base",
+    version: "v1.0",
+    currentBundle: "states-spread",
+    calendar: "fiscal-apr",
+    bands: null,
+    proseConstants: [100, 2011, 2012, 2014, 2019],   // base year 2011-12, the 2014 and 2019 splits
+    spark: { bundle: "states-spread", series: "gap_current" },
+    prose: true,
+    // no proseInputs: every state bundle is ragged (states publish different latest years), and
+    // the facts sheet's deep-cut summaries would set one state's 2025-26 beside another's
+    // 2024-25. The prose speaks for the fixed panel only, one year throughout.
+    register: { id: "reg-states", label: "State economies", unit: "Annual, MoSPI regional accounts, 2011-12 base", historyCol: "2011-12 to latest" },
+    // the guide's own bundles plus the Handbook tables it draws on; all 208 Handbook bundles
+    // are listed by section on the page (§12), from data/coverage/states.hbs-index.json
+    bundles: ["states-spread", "states-pcnsdp-current", "states-pcnsdp-constant", "states-pcgsdp-current", "states-pcgsdp-constant", "states-gsdp-current", "states-gsdp-constant", "states-nsdp-current", "states-nsdp-constant", "states-growth-real", "states-growth-nominal", "states-structure", "states-industry-shares", "states-finances", "states-gsva-current", "states-gsva-constant", "states-nsva-current", "states-nsva-constant", "states-taxes-current", "states-taxes-constant", "states-hbs-t021", "states-hbs-t164", "states-hbs-t165", "states-hbs-t168", "states-hbs-t176"],
+  },
 ];
 export const bySlug = Object.fromEntries(DOSSIERS.map((d) => [d.slug, d]));
 

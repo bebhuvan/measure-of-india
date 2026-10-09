@@ -428,8 +428,8 @@ function buildSpread(out, put) {
     cv_constant: "Spread of income per person across states (coefficient of variation, per cent), constant prices",
     richest_current: "Income per person in the richest state, ₹, current prices",
     poorest_current: "Income per person in the poorest state, ₹, current prices",
-    median_current: "Income per person in the middle state (median), ₹, current prices",
-    median_real_growth: "Real GSDP growth of the middle state (median), per cent",
+    median_current: "Income per person of the median state in the panel, ₹, current prices",
+    median_real_growth: "Median of the panel states' real GSDP growth rates, per cent",
   };
   const series = Object.fromEntries(Object.entries(S).map(([k, data]) => [k, { name: k, label: L[k], derived: true, data }]));
   return put("states-spread", { dates, series }, { unit: "mixed: see series labels",

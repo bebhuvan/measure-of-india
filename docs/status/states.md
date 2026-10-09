@@ -1,41 +1,72 @@
 # states: state economies
 
-Session `atlas-states`, branch `lb/states`, preview port 4405. Brief: `docs/briefs/states.md`.
+Session `atlas-states`, branch `lb/states`, port 4405. Brief: `docs/briefs/states.md`.
+Status: **done**, 2026-10-09. All gates green.
 
-## Done
-- Read the briefs, contracts, design and skills.
-- Probed MoSPI NAS regional account (account_code 2): 12 indicators, 23 to 34. 32 (per-capita
-  NSDP) is served but missing from the indicator list.
-- Surveyed all 182 RBI Handbook of States reports in the Data Bank mirror.
+## What shipped
+- **Guide** `/guides/states/` ("One country, many economies"): title block, current reading
+  (generated prose), 8 plates, a sortable every-state table, the same state in other guides,
+  method, 5 misreadings, all 182 Handbook tables listed by section, data, provenance.
+- Plates: income per person by state; is the gap closing (richest ÷ poorest, fixed panel);
+  size (GSDP); average real growth 2011-12 to 2024-25; convergence scatter (correlation
+  −0.31); farm / industry / services shares; 11-industry heat table; state debt and deficit.
+- **Headline:** the richest state's income per person is 9.3 times the poorest's in 2024-25
+  (Sikkim ₹6,46,183, Bihar ₹69,211), down from 11.9 in 2011-12; in rupees the distance grew.
+- **Adapter** `scripts/lib/products/states.mjs` (MoSPI NAS regional 23 to 34 + every RBI
+  Handbook table from the Data Bank), catalogue generator, raw dumps
+  `data/raw/states-nas.json`, `data/raw/states-hbs.json`.
+- **Bundles:** 21 MoSPI and derived (`states-*`), 208 Handbook (`states-hbs-t*`).
+- **Coverage** `data/coverage/states.yml`: 4,214 items, 971 shown, 3,034 baked, 110 excluded,
+  99 blocked.
+- validate block, seams (2004-05 / 2011-12), registry, headline, register rows, OG card,
+  qc PAGES, 8 as-of entries, prose slots + corpus + series keywords.
+- `docs/reference/nas-regional.md`: every source quirk below, in detail.
 
-## Next
-- Adapter `scripts/lib/products/states.mjs`, catalogue, bundles, validate, ledger.
-- The guide, gates, prose, look at it, status.
+## Checks
+- `npx astro build`, `npm run gates`, `npm test` (18/18), `npm run prose:dry`: green.
+- Hand checks: RBI Handbook Table 19 (rbi.org.in) Bihar 2024-25 ₹69,321 = our t019; MoSPI
+  GSDP AP 2025-26 ₹17,62,357 crore = our bundle. Handbook = MoSPI to 2020-21 (validate).
+- Prose generated (DeepSeek), read against the data line by line; three rounds to remove a
+  meta sentence, "earned", a median mix-up, a cross-unit "weakest reading" and a
+  non-sequitur about the FY14 low. Final text checks out.
+- Looked at 1440 and 390 px; read every chart; downloaded the gap PNG and the income CSV.
 
-## Decisions
-- **J&K is two series.** RBI's Table 19 footnote: J&K figures for 2011-12 to 2018-19 cover J&K
-  and Ladakh; 2019-20 on cover the UT of J&K only. MoSPI's J&K row is the same series. We split
-  it at 2019-20 (`jammu_kashmir_state`, `jammu_kashmir_ut`) and never compute growth across it.
-  2019-20 itself straddles the change (31 Oct 2019); disclosed.
-- **Andhra Pradesh.** MoSPI and the Handbook's 2011-12-base SDP tables carry Andhra Pradesh and
-  Telangana separately from 2011-12 (the states' own figures for today's territories). Other
-  Handbook tables (state finances etc.) carry undivided AP under the same code until Telangana
-  appears in 2014-15: those years become `andhra_pradesh_undivided`, never joined.
-- **Four states have no published GSDP indicator.** MoSPI's GSDP, NSDP and growth indicators
-  (23 to 28) serve 30 states; Assam, Haryana, Nagaland and Ladakh are absent, though their GSVA,
-  taxes, subsidies and per-capita figures (29 to 34) are served. GSDP = GSVA + taxes on
-  products - subsidies holds to rounding for all 30 (checked); for the four we bake GSDP from
-  those published parts, flagged `derived` on the series and in its label.
-- Growth is computed from constant-price levels (two decimals); MoSPI's one-decimal growth
-  indicators are kept as a cross-check (validate).
+## Decisions (for HISTORY)
+- **J&K is two series**, split at 2019-20 (RBI footnote: to 2018-19 it includes Ladakh).
+- **Undivided Andhra Pradesh** in older Handbook tables is its own series.
+- **GSDP for Assam, Haryana, Nagaland, Ladakh** (absent from MoSPI's GSDP indicator) is built
+  from MoSPI's own GSVA + taxes − subsidies, flagged `derived`; the identity holds for all
+  30 published states to under ₹1 crore.
+- **Cross-state plates compare one year**, the latest year three-quarters of states report
+  (2024-25); 2025-26 (15 states) is in the table, never ranked against 2024-25.
+- **The gap uses a fixed panel** (31 states with every year), so it moves only when incomes
+  move. Unweighted.
+- **Prose has no proseInputs**: state bundles are ragged and the facts sheet's deep cuts
+  would set 2025-26 beside 2024-25. `mustName: extremes` dropped for this slot: the sheet
+  mixes units, so "movers" compared unlike things.
+- **State finances** = Handbook actuals over MoSPI GSDP (computed, labelled); budget and
+  revised estimates left out.
+- GuideData lists the guide's 25 bundles; all 208 Handbook bundles are in §12, by section
+  (the full list made the page 53,000 px tall).
 
-## Source quirks
-- MoSPI state GSDP/NSDP are in ₹ crore, GSVA/taxes in ₹ lakh, per capita in ₹.
-- No revision field on state rows: each year is the state's latest estimate, and we cannot
-  tell which years are advance or provisional for which state.
-- RBI Handbook amounts are served in rupees; the Handbook (2025 edition) lags MoSPI by a
-  vintage, so values differ slightly in recent years (AP 2023-24 GSDP: MoSPI ₹14,23,900 cr,
-  Handbook ₹14,22,094 cr).
+## Source quirks and defects
+- MoSPI indicator 32 is served but unlisted; 35+ answer HTTP 500.
+- **Karnataka**: NSVA (30) is a copy of its GSVA; 32 is a copy of per-capita GSDP. Both
+  excluded with disclosure; 25 used for Karnataka.
+- RBI Table 176, end-March 2015: Delhi, Puducherry, Tripura, Uttarakhand liabilities 5 to 10×
+  their neighbours; left out of the debt ratios, kept as published in t176.
+- Handbook: 182 distinct tables (not 159); report 1651's largest provider is a display list.
+- MoSPI carries no revision labels; which years are advance estimates, we do not know.
+- No IDH series match these bundles.
 
-## Blocked
-- Nothing yet.
+## For the coordinator
+- Shared files touched, each one contiguous block: `data/sources.yml` (dossier + seams),
+  `scripts/fetch.mjs` (import + registry key), `scripts/validate.mjs`, `scripts/qc.mjs`,
+  `scripts/og.mjs`, `src/dossiers/registry.js` (no: "15"; renumber if it clashes),
+  `src/dossiers/headline.js`, `src/dossiers/register.client.js`,
+  `pipeline/asof-manifest.json`, `pipeline/slots.yml`, `pipeline/lib/series-kws.mjs`.
+- `pipeline/out/prose-manifest.json` regenerated here; expect a conflict.
+- Others' bundles: none charted. The "same state in other guides" block links to cpi, jobs,
+  consumption, factories, mnre, nfhs, gender, aishe, deposits by slug.
+- Not done, worth doing: a weighted (population) spread needs a population series we do not
+  bake; a Handbook-vs-MoSPI revisions plate.

@@ -1,0 +1,495 @@
+---
+import Base from "../../layouts/Base.astro";
+import GuideData from "../../components/GuideData.astro";
+import Prose from "../../components/Prose.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+const D = bySlug["states"];
+// every RBI Handbook table, baked as its own bundle, grouped by the Handbook's sections
+import fs from "node:fs";
+const HBS = JSON.parse(fs.readFileSync("data/coverage/states.hbs-index.json", "utf8"));
+const cap = (t) => t.toLowerCase().replace(/^./, (c) => c.toUpperCase());
+const hbsRows = HBS.tables.filter((t) => t.bundle).map((t) => {
+  const m = JSON.parse(fs.readFileSync(`data/series/${t.bundle}.json`, "utf8"));
+  const d = m.dates;
+  const lab = (iso) => m.meta.periodKind === "fy" ? `${iso.slice(0, 4)}-${String((+iso.slice(0, 4) + 1) % 100).padStart(2, "0")}` : iso.slice(0, 4);
+  return { table: +t.table, bundle: t.bundle, section: cap(m.meta.hbs.section), title: m.meta.hbs.title.replace(/^Table \d+\s*:\s*/i, ""), base: t.base,
+    span: d.length > 1 ? `${lab(d[0])} to ${lab(d.at(-1))}` : lab(d[0]), n: Object.keys(m.series).length };
+}).sort((a, b) => a.table - b.table || (a.base ?? "").localeCompare(b.base ?? ""));
+const hbsSections = [...new Set(hbsRows.map((r) => r.section))].map((sec) => ({ sec, rows: hbsRows.filter((r) => r.section === sec) }));
+// the other guides that carry a state-level cut: titles come from the registry
+const other = (slug) => bySlug[slug] ? { href: `/guides/${slug}/`, title: bySlug[slug].title } : null;
+const ELSEWHERE = [
+  ["cpi", "Prices", "Consumer price inflation for every state, rural and urban, on both bases."],
+  ["jobs", "Jobs", "Unemployment rate by state, from the Periodic Labour Force Survey."],
+  ["consumption", "Spending", "What households spend per person each month, by state, rural and urban."],
+  ["factories", "Factories", "Registered factories, workers and value added by state, from the Annual Survey of Industries."],
+  ["mnre", "Clean power", "Solar, wind and other renewable capacity installed in each state."],
+  ["nfhs", "Health", "Child nutrition, anaemia and household amenities by state, from NFHS-5."],
+  ["gender", "Women and men", "Sex ratio and other gender indicators by state."],
+  ["aishe", "Colleges", "Enrolment and the gross enrolment ratio in higher education by state."],
+  ["deposits", "Bank deposits", "Bank deposits; the state-wise credit and deposit tables are baked in this guide's data (Handbook tables 152 to 163)."],
+].map(([slug, kind, what]) => ({ ...other(slug), kind, what })).filter((x) => x.href);
+---
+<Base
+  title="State economies · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/states/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<style is:global>
+  .st-table{overflow-x:auto;margin-top:8px}
+  .st-table table{width:100%;min-width:980px;border-collapse:collapse;font-family:var(--sans);font-size:.88rem}
+  .st-table th{font-weight:400;font-size:.78rem;color:var(--muted);text-align:right;padding:0 0 10px 14px;border-bottom:1px solid var(--rule-2);vertical-align:bottom}
+  .st-table th:first-child,.st-table td:first-child{text-align:left;padding-left:0}
+  .st-table th button{all:unset;cursor:pointer;border-bottom:1px dotted var(--faint)}
+  .st-table th button:hover,.st-table th button[aria-sort]{color:var(--ink)}
+  .st-table td{padding:9px 0 9px 14px;border-bottom:1px solid var(--rule);text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-soft);white-space:nowrap}
+  .st-table td:first-child{color:var(--ink);white-space:normal}
+  .st-table td small{display:block;font-size:.74rem;color:var(--muted)}
+  .st-table tr:hover td{background:#F8F9FB}
+  .elsewhere{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px 40px;margin-top:10px}
+  .elsewhere a{display:block;text-decoration:none;color:var(--ink);border-top:1px solid var(--rule-2);padding-top:12px}
+  .elsewhere a b{font-weight:500;display:block;font-family:var(--sans);font-size:.95rem}
+  .elsewhere a span{display:block;color:var(--ink-soft);font-size:.92rem;margin-top:4px;line-height:1.5}
+  .elsewhere a:hover b{color:var(--accent)}
+  .hbs-list details{border-top:1px solid var(--rule)}
+  .hbs-list details:last-child{border-bottom:1px solid var(--rule)}
+  .hbs-list summary{cursor:pointer;padding:13px 0;font-family:var(--sans);font-size:.95rem;color:var(--ink)}
+  .hbs-list summary b{font-weight:500}
+  .hbs-list summary span{color:var(--muted);font-size:.85rem;margin-left:8px}
+  .hbs-list ul{list-style:none;margin:0 0 14px;padding:0;font-family:var(--sans);font-size:.88rem}
+  .hbs-list li{display:grid;grid-template-columns:1fr auto auto;gap:4px 24px;padding:7px 0;border-top:1px solid #F3F4F7;color:var(--ink-soft)}
+  .hbs-list li .m{color:var(--muted);white-space:nowrap}
+  .hbs-list li .d a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--rule-2);margin-left:12px}
+  @media (max-width:680px){.hbs-list li{grid-template-columns:1fr}.hbs-list li .d a{margin:0 14px 0 0}}
+</style>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">Each state measures its own economy, and the gaps between them are wider than between many countries. This guide sets every state and union territory side by side: how much it produces, how much that is per person, how fast it grows, and what it runs on.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>MoSPI, NSO, from each state's Directorate of Economics and Statistics; RBI Handbook of Statistics on Indian States</b></span>
+      <span>Base <b>2011-12 prices</b></span>
+      <span>Frequency <b>Annual, fiscal years</b></span>
+      <span>States and UTs <b id="m-count">–</b></span>
+      <span>Latest <b id="m-latest">–</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Income per person, richest state against poorest</div><div class="v acc" id="n-gap">–</div><div class="d" id="d-gap">–</div><div class="nspark" id="nspark-gap"></div></div>
+      <div class="num"><div class="l">Income per person, richest state</div><div class="v" id="n-rich">–</div><div class="d" id="d-rich">–</div></div>
+      <div class="num"><div class="l">Income per person, poorest state</div><div class="v" id="n-poor">–</div><div class="d" id="d-poor">–</div></div>
+      <div class="num"><div class="l">Real growth, the typical state</div><div class="v" id="n-grow">–</div><div class="d" id="d-grow">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading. Inputs: states-spread (all series); prose: generated slots -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Richest state against poorest</span><div class="big" id="rb-gap">–</div></div>
+      <p class="rt-cap">What the richest state produces per person, as a multiple of what the poorest produces, among the <b id="rt-panel">–</b> states and union territories that report every year since 2011-12. In <span id="rt-first">–</span> the multiple was <b id="rt-gap0">–</b>.</p>
+      <div class="rt-side"><span class="rk">Spread across states</span><div class="rt-side-v" id="rb-cv">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the figures say</span>
+        <Prose slot="states.current-reading.what-the-print-says" />
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What they do not say</span>
+        <Prose slot="states.current-reading.what-it-does-not-say" />
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 income per person. Inputs: states-pcnsdp-current (every state), states-spread (median) -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>Income per person, state by state</h2><span class="line"></span><span class="unit">Per-capita NSDP, ₹ a year, current prices</span></div>
+    <div class="break">
+      <figure id="cb-pc" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-pc">–</h3>
+            <div class="sub">Net state domestic product per person, ₹ a year at current prices, <span id="s-pc-year">–</span>. A hollow circle marks 2011-12. Pale bars are states whose latest year is earlier. The states that have already published 2025-26 are in the table in section 08.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-pc">–</div><div class="c" id="pc-pc">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-pc" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NAS regional accounts, indicator 25 (indicator 32 for Assam, Haryana, Nagaland and Ladakh). Each state's own population estimate, as published.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Per-capita net state domestic product is everything produced inside a state in a year, less the wear on its machines and buildings, divided by the people who live there. It is the closest thing to an average income each state publishes, but it measures production, not what people take home: a factory's profits count where the factory stands, even when its owners live elsewhere.</p>
+            <p>Divide by 365 to get a feel for it. A figure of ₹73,000 is about ₹200 a day per person, before anyone has paid for food, rent or school fees, and before the money is split, very unequally, between wages, profits and taxes.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2024-25</span>
+            <p>Highest: <b id="ex-pc-top">–</b>. Lowest: <b id="ex-pc-low">–</b>, about <b id="ex-pc-lowday">–</b> a day. The median state produced <b id="ex-pc-med">–</b> per person. <b id="ex-pc-n25">–</b> states and union territories have already published 2025-26, mostly as advance estimates.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 03 the gap over time. Inputs: states-spread (gap_current, gap_constant, cv_constant, richest, poorest, median) -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>Is the gap closing?</h2><span class="line"></span><span class="unit">A fixed panel of states, 2011-12 onward</span></div>
+    <div class="break">
+      <figure id="cb-gap" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-gap">–</h3>
+            <div class="sub">Income per person in the richest state, as a multiple of the poorest's. The same <span id="s-gap-n">–</span> states and union territories every year, so the line moves only when incomes move.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-gap">–</div><div class="c" id="pc-gap">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>At current prices</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>At constant 2011-12 prices</button>
+          </div>
+          <div class="plotzone"><div id="plot-gap" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: India Atlas computation from MoSPI per-capita NSDP (states-spread). Not in the panel: Jammu and Kashmir (its territory changed in 2019-20), Ladakh and Nagaland (years missing).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/data/states-spread.csv">Data</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A ratio compares only the two ends. The spread across all states, measured by how far the typical state sits from the average, tells the same story more fully; it is in the note beside this one and in the data. Both count every state once, whatever its size: Sikkim weighs as much as Uttar Pradesh.</p>
+            <p>A falling multiple means poorer states grew a little faster in percentage terms. The rupee distance can still widen. Ten per cent of a large income is more rupees than twelve per cent of a small one, which is why the gap can close and widen at the same time.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2024-25</span>
+            <p>The multiple went from <b id="ex-gap-0">–</b> in 2011-12 to <b id="ex-gap-l">–</b>. The spread across states fell from <b id="ex-cv-0">–</b> to <b id="ex-cv-l">–</b>. In rupees the distance between the richest and the poorest grew from <b id="ex-gap-r0">–</b> to <b id="ex-gap-rl">–</b> a year.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 04 size. Inputs: states-gsdp-current (every state; four derived) -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>How big each state's economy is</h2><span class="line"></span><span class="unit">GSDP, ₹ lakh crore, current prices</span></div>
+    <div class="break">
+      <figure id="cb-size" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-size">–</h3>
+            <div class="sub">Gross state domestic product, ₹ lakh crore at current prices, <span id="s-size-year">–</span>. Marked †: built from MoSPI's own value added, taxes and subsidies, because MoSPI's GSDP table leaves the state out.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-size">–</div><div class="c" id="pc-size">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-size" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NAS regional accounts, indicator 23; † GSVA (29) plus taxes (33) less subsidies (34), the identity that reproduces every published GSDP.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Gross state domestic product is the value of everything produced inside a state's borders in a year, at the prices of that year. It is the state's own version of GDP, and the measure behind every claim that one state is "a trillion-dollar economy".</p>
+            <p>Size and prosperity are different questions. Uttar Pradesh is one of the largest economies here and one of the poorest per person, because it is home to more people than almost any country in the world. Goa and Sikkim are small economies and among the richest per person.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2024-25</span>
+            <p>The largest: <b id="ex-size-1">–</b>, then <b id="ex-size-2">–</b> and <b id="ex-size-3">–</b>. The five largest produce <b id="ex-size-top5">–</b> of the total of the states shown. <b id="ex-size-big">–</b>'s economy is <b id="ex-size-x">–</b> the size of <b id="ex-size-small">–</b>'s.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 growth and convergence. Inputs: states-gsdp-constant, states-pcnsdp-constant, states-growth-real -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>Who grows fastest, and are poorer states catching up?</h2><span class="line"></span><span class="unit">Real growth, 2011-12 to 2024-25</span></div>
+    <div class="break">
+      <figure id="cb-growth" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-growth">–</h3>
+            <div class="sub">Average real growth of GSDP a year, per cent, 2011-12 to <span id="s-growth-year">–</span>, at constant 2011-12 prices. The dotted line is the median rate.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-growth">–</div><div class="c" id="pc-growth">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-growth" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: India Atlas computation from MoSPI GSDP at constant 2011-12 prices: the compound annual rate between the two years. † Built from published parts. Year-by-year growth for every state is in states-growth-real.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/data/states-growth-real.csv">Data</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each dot is one state's average yearly growth over thirteen years, after removing price increases. Over that span, a state growing at 7% a year doubles its economy in about ten years; one growing at 5% takes about fourteen. Small differences in yearly growth add up to large differences in where a state ends up.</p>
+            <p>The span includes the 2020-21 lockdown year, when nearly every state's economy shrank, and the rebound after it. A state that fell less and recovered fast looks better here than one that grew faster before 2020.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2024-25</span>
+            <p>Fastest: <b id="ex-gr-top">–</b>. Slowest: <b id="ex-gr-low">–</b>. The median rate was <b id="ex-gr-med">–</b> a year. In 2020-21, <b id="ex-gr-neg">–</b> of the <b id="ex-gr-negn">–</b> states with figures shrank.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-converge" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-converge">–</h3>
+            <div class="sub">Each dot is a state. Across: income per person in 2011-12, ₹. Up: average real growth of income per person a year, 2011-12 to <span id="s-conv-year">–</span>, per cent. If poorer states were catching up, the dots would slope down from left to right.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-converge">–</div><div class="c">correlation, income and growth</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-converge" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: India Atlas computation from MoSPI per-capita NSDP at constant 2011-12 prices. The same panel as the gap chart.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/data/states-pcnsdp-constant.csv">Data</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Economists call it convergence: poorer places growing faster than richer ones, so that the distance shrinks over time. The correlation in the corner measures how strongly the dots slope. Minus one would mean every poorer state grew faster; zero means income in 2011-12 tells you nothing about growth since; plus one would mean the rich pulled away.</p>
+            <p>Growth here is per person, so a state whose population grows fast needs faster growth of its economy just to stand still.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2024-25</span>
+            <p>The correlation is <b id="ex-cv-r">–</b>. <b id="ex-cv-poor">–</b>, the poorest state in 2011-12, grew its income per person by <b id="ex-cv-poorg">–</b> a year; <b id="ex-cv-rich">–</b>, the richest, by <b id="ex-cv-richg">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 what each economy runs on. Inputs: states-structure, states-industry-shares -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>What each state's economy runs on</h2><span class="line"></span><span class="unit">Share of GSVA, current prices</span></div>
+    <div class="break">
+      <figure id="cb-structure" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-structure">–</h3>
+            <div class="sub">Agriculture, industry and services as a share of each state's gross value added, per cent, <span id="s-str-year">–</span>, at current prices. Sorted by the share of farming, forestry and fishing.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-structure">–</div><div class="c" id="pc-structure">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i class="sq" style="background:#2E4BD8;width:10px;height:10px"></i>Agriculture, forestry, fishing</span>
+            <span class="chip"><i class="sq" style="background:#A3A9B4;width:10px;height:10px"></i>Industry: mining, manufacturing, utilities, construction</span>
+            <span class="chip"><i class="sq" style="background:#DFE2E8;width:10px;height:10px"></i>Services</span>
+          </div>
+          <div class="plotzone"><div id="plot-structure" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: India Atlas computation from MoSPI GSVA by industry (indicator 29), current prices.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/data/states-structure.csv">Data</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Gross value added is what each industry adds to the materials it buys: a mill's value added is its cloth less its cotton, power and dyes. The shares say where a state's income is made, not where its people work. Farming's share of value added is far smaller than its share of jobs in almost every state, which is the arithmetic behind low farm incomes.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2024-25</span>
+            <p>Farming's share is highest in <b id="ex-st-agtop">–</b> and lowest in <b id="ex-st-aglow">–</b>. Industry's share is highest in <b id="ex-st-intop">–</b>. Services' share is highest in <b id="ex-st-svtop">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-industries" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-industries">–</h3>
+            <div class="sub">Each industry's share of each state's gross value added, per cent, <span id="s-ind-year">–</span>, current prices. Darker cells are larger shares; each row adds up to 100.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-industries">–</div><div class="c" id="pc-industries">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-industries" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: India Atlas computation from MoSPI GSVA by industry (indicator 29), current prices. Sub-industries (crops, livestock, road transport, hotels and others) are in states-gsva-current.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/data/states-industry-shares.csv">Data</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Read across a row to see one state's economy; read down a column to see which states lean on an industry. The real estate column also holds professional services, software among them, and the rent people would pay on homes they own, an imputed figure; that is why it is largest where software and business services cluster. Mining stands out where there are minerals, coal or oil, as in Assam, Odisha, Jharkhand and Chhattisgarh; Goa's iron ore mining has been largely shut since 2018. Public administration is large where the government is the main employer, as in the north-east, Jammu and Kashmir and the island territories.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2024-25</span>
+            <p>Manufacturing's share is highest in <b id="ex-in-mfg">–</b>. Mining's is highest in <b id="ex-in-min">–</b>. Public administration's is highest in <b id="ex-in-pub">–</b>. Financial services' is highest in <b id="ex-in-fin">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 state finances. Inputs: states-finances (from RBI Handbook tables 164, 165, 168, 176 and MoSPI GSDP) -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>State finances</h2><span class="line"></span><span class="unit">Debt and deficit, per cent of GSDP</span></div>
+    <div class="break">
+      <figure id="cb-finance" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="h-finance">–</h3>
+            <div class="sub">Outstanding liabilities of each state government at the end of March <span id="s-fin-end">–</span>, as a share of its GSDP for <span id="s-fin-year">–</span>, per cent. Beside each bar: that year's gross fiscal deficit, the borrowing needed to close the year, as a share of GSDP; a minus is a surplus.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-finance">–</div><div class="c" id="pc-finance">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-finance" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: India Atlas computation: RBI Handbook of Statistics on Indian States, Tables 164 and 176 (actuals only), over MoSPI GSDP at current prices for the same year.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/data/states-finances.csv">Data</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A state's debt is what its government owes: market loans, loans from the centre, and the provident funds and deposits it holds for others. Set against the size of its economy, it says how heavy the load is. Each state's own fiscal responsibility law sets its deficit limit, usually 3% of GSDP, and the centre has allowed more in some years.</p>
+            <p>Interest on that debt comes before roads, schools and hospitals. A state that owes a large share of its GSDP spends a large share of its revenue on interest, which is money it cannot spend on its people.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2022-23</span>
+            <p>Highest debt: <b id="ex-fn-top">–</b>. Lowest: <b id="ex-fn-low">–</b>. The median state owed <b id="ex-fn-med">–</b> of its GSDP. Largest deficit that year: <b id="ex-fn-gfd">–</b>. These are the latest actuals the Handbook carries for most states; later years are budget or revised estimates and are left out.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 every cut. Inputs: states-gsdp-current, states-pcnsdp-current, states-growth-real, states-gsdp-constant, states-structure, states-finances -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>Every state, every measure</h2><span class="line"></span><span class="unit">Click a heading to sort</span></div>
+    <div class="prose"><p>Every state and union territory MoSPI serves, with the latest year each has published. Sort by any column. Years differ between states because each publishes on its own timetable; the column beside the figure says which year it is. Jammu and Kashmir appears twice: as the state, with Ladakh, to 2018-19, and as the union territory from 2019-20. Nothing is filled in where a state has not published.</p></div>
+    <div class="break st-table" id="st-table">
+      <table>
+        <thead><tr>
+          <th><button data-k="name">State or UT</button></th>
+          <th><button data-k="year">Latest year</button></th>
+          <th><button data-k="gsdp">GSDP, ₹ lakh cr</button></th>
+          <th><button data-k="pc">Income per person, ₹</button></th>
+          <th><button data-k="g">Real growth, latest year</button></th>
+          <th><button data-k="cagr">Real growth a year, 2011-12 on</button></th>
+          <th><button data-k="ag">Farm share</button></th>
+          <th><button data-k="ind">Industry share</button></th>
+          <th><button data-k="sv">Services share</button></th>
+          <th><button data-k="debt">Debt, % GSDP</button></th>
+          <th><button data-k="gfd">Deficit, % GSDP</button></th>
+        </tr></thead>
+        <tbody id="st-body"></tbody>
+      </table>
+    </div>
+    <div class="prose"><p style="font-size:.9rem;color:var(--muted)">Income per person is per-capita NSDP at current prices. Growth is real, at constant 2011-12 prices. Shares are of GSVA at current prices for the latest year. Debt and deficit are for 2022-23, the latest year of actuals. † GSDP built from MoSPI's published parts. The full tables, including every industry and sub-industry and all 182 tables of the RBI Handbook, are in the data downloads below.</p></div>
+  </section>
+
+  <!-- § 09 the same state elsewhere. Evergreen; links only -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>The same state in other guides</h2><span class="line"></span></div>
+    <div class="prose"><p>State figures for prices, jobs, spending and more live in the guides for those measures, each from its own source of record.</p></div>
+    <div class="elsewhere">
+      {ELSEWHERE.map((x) => <a href={x.href}><b>{x.title}</b><span>{x.what}</span></a>)}
+    </div>
+  </section>
+
+  <!-- § 10 what this measures. Evergreen -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="prose">
+      <p>India has no single statistician for its states. Each state's Directorate of Economics and Statistics estimates its own domestic product, following methods the National Statistical Office sets, and sends the figures to MoSPI, which publishes them together. Some items cannot be measured inside one state, such as railways, banking, communications and central government, so the national totals for those are shared out between states by formulas based on things like deposits, employees or traffic.</p>
+      <p>Every figure here is on the 2011-12 base: values at constant prices are in 2011-12 rupees, which is how growth after inflation is measured. India's national accounts moved to a 2022-23 base in 2026. The state series have not moved yet, so state figures cannot be added up and compared with the new national GDP.</p>
+      <p>States publish on their own timetables. The latest year is usually an advance or quick estimate and is revised, sometimes by several per cent, as tax, crop and company data arrive. MoSPI does not label which years are final for which state, and neither do we know. Andhra Pradesh and Telangana are shown separately from 2011-12, as each state now estimates its own past. Jammu and Kashmir is shown as two series because its territory changed in October 2019.</p>
+      <p>The RBI's Handbook of Statistics on Indian States reprints these figures with a lag of about a year and adds state finances, farm output, power, roads, banking, health and prices. Its domestic product tables match MoSPI's exactly up to 2020-21; for later years the Handbook carries an older round of revisions. This guide draws on MoSPI for the economy and on the Handbook for state finances, and bakes every Handbook table into its data.</p>
+    </div>
+  </section>
+
+  <!-- § 11 misreadings. Evergreen -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>How to misread these numbers</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li><span class="no">1</span><div><h3>"People in Delhi earn seven times what people in Bihar earn."</h3><p>Per-capita product counts what is produced in a place, divided by the people who live there. Lakhs of people produce inside Delhi, Goa or Chandigarh but live outside, so those figures are inflated; states that send workers away, like Bihar, produce less than their people earn, because remittances from Mumbai or Dubai are counted where the work is done. Household spending surveys, in the consumption guide, show a much smaller gap.</p></div></li>
+      <li><span class="no">2</span><div><h3>"Sikkim is the richest state, so Sikkimese are the richest Indians."</h3><p>Sikkim's figure is large production from hydropower and pharmaceutical plants divided by a small population. Much of the profit belongs to companies based elsewhere. A high per-capita product in a small state can describe a few large plants more than the lives of its people.</p></div></li>
+      <li><span class="no">3</span><div><h3>"The states add up to India's GDP."</h3><p>They do not, quite. Some states have not published the latest year, the state figures are on the 2011-12 base while national GDP has moved to 2022-23, and states revise on their own timetables. Compare states with each other, not with a sum.</p></div></li>
+      <li><span class="no">4</span><div><h3>"This state grew 12% last year."</h3><p>Check whether that is at current or constant prices. A state's economy measured in the rupees of each year grows with prices as well as output. Real growth, at constant prices, is the one to compare. And the latest year is an estimate that will be revised.</p></div></li>
+      <li><span class="no">5</span><div><h3>"Poor states are catching up, so the problem is solving itself."</h3><p>The multiple between the richest and poorest has narrowed, but the gap in rupees has kept growing, and at recent rates it would take decades for the poorest states to reach today's middle.</p></div></li>
+    </ul>
+  </section>
+
+  <!-- § 12 every Handbook table. Inputs: data/coverage/states.hbs-index.json and the states-hbs-* bundles -->
+  <section>
+    <div class="sec-head"><span class="no">12</span><h2>Every table of the RBI Handbook</h2><span class="line"></span><span class="unit">{hbsRows.length} files, as published</span></div>
+    <div class="prose"><p>The RBI's Handbook of Statistics on Indian States has {new Set(hbsRows.map((r) => r.table)).size} tables, from birth rates and forest cover to bank credit and state debt. Every one is here as published, one file per table (the domestic product tables carry the old 2004-05 base as a separate file), with each state a column, undivided Andhra Pradesh and Jammu and Kashmir before and after 2019 kept apart. Values are as the RBI serves them: rupee amounts are in rupees.</p></div>
+    <div class="break hbs-list">
+      {hbsSections.map((g) => (
+        <details>
+          <summary><b>{g.sec}</b> <span>{g.rows.length} {g.rows.length === 1 ? "file" : "files"}</span></summary>
+          <ul>
+            {g.rows.map((r) => (
+              <li><span class="t">Table {r.table}: {r.title}{r.base === "2004-05" ? " (base 2004-05)" : ""}</span><span class="m">{r.span}, {r.n} series</span><span class="d"><a href={`/data/${r.bundle}.csv`} download>CSV</a><a href={`/data/${r.bundle}.json`} download>JSON</a></span></li>
+            ))}
+          </ul>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <GuideData slug="states" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Sources of record</h6>
+        <p>MoSPI, National Accounts Statistics, regional accounts (eSankhyiki, indicators 23 to 34, base 2011-12), estimates by each state's Directorate of Economics and Statistics. RBI, Handbook of Statistics on Indian States, all 182 tables, retrieved from the RBI's Database on Indian Economy through the owner's local mirror. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Checked by hand: the Handbook's Table 19 gives Bihar ₹69,321 per person for 2024-25, as baked; MoSPI's newer round gives ₹69,211.</p>
+      </div>
+      <div>
+        <h6>Method</h6>
+        <p>Growth is computed from levels and checked against MoSPI's own one-decimal rates. GSDP for Assam, Haryana, Nagaland and Ladakh, which MoSPI's GSDP table omits, is built from MoSPI's published value added, taxes and subsidies, the identity that reproduces every published state. Shares, ratios, the panel of states and correlations are India Atlas computations; nothing is estimated or filled.</p>
+      </div>
+      <div>
+        <h6>Breaks and defects</h6>
+        <p>Jammu and Kashmir is split at 2019-20; undivided Andhra Pradesh in the Handbook's older tables is a separate series. Two MoSPI defects are left out: Karnataka's net value added, served as a copy of its gross value added, and Karnataka's figure under indicator 32, a copy of per-capita GSDP. The Handbook's end-March 2015 debt for Delhi, Puducherry, Tripura and Uttarakhand, several times the years either side, is left out of the debt ratios.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Version 1.0, built October 2026. Revised when MoSPI publishes new state estimates and when the RBI publishes the next Handbook.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, state economies</span>
+      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/states.client.js";
+</script>
+</Base>
