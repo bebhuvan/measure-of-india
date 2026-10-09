@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2024-04",
-  "unit": "as served by DBIE",
+  "unit": "pct",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Credit-Deposit Ratio of Regional Rural Banks: RBI Handbook of Statistics on Indian States, Table 162",
-  "note": "DBIE report 1705, data provider \"Main\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: none; measures: region, value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1705, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: region, value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2003-04-01",
@@ -47,9 +47,11 @@
   "2024-04-01"
  ],
  "series": {
-  "region_north_eastern_region__region": {
-   "name": "region_north_eastern_region__region",
-   "label": "North Eastern Region: region",
+  "region_north_eastern_region": {
+   "name": "region_north_eastern_region",
+   "label": "North Eastern Region: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     36.3,
     41.3,
@@ -75,9 +77,11 @@
     52.5
    ]
   },
-  "assam__value_1": {
-   "name": "assam__value_1",
-   "label": "Assam: value 1",
+  "assam": {
+   "name": "assam",
+   "label": "Assam: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     37.9,
     44.2,
@@ -103,9 +107,11 @@
     63.8
    ]
   },
-  "meghalaya__value_1": {
-   "name": "meghalaya__value_1",
-   "label": "Meghalaya: value 1",
+  "meghalaya": {
+   "name": "meghalaya",
+   "label": "Meghalaya: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     26.3,
     24.8,
@@ -131,9 +137,11 @@
     37.9
    ]
   },
-  "mizoram__value_1": {
-   "name": "mizoram__value_1",
-   "label": "Mizoram: value 1",
+  "mizoram": {
+   "name": "mizoram",
+   "label": "Mizoram: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     36.2,
     57.3,
@@ -159,9 +167,11 @@
     64.1
    ]
   },
-  "region_eastern_region__region": {
-   "name": "region_eastern_region__region",
-   "label": "Eastern Region: region",
+  "region_eastern_region": {
+   "name": "region_eastern_region",
+   "label": "Eastern Region: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     38,
     42.7,
@@ -187,9 +197,11 @@
     59.9
    ]
   },
-  "bihar__value_1": {
-   "name": "bihar__value_1",
-   "label": "Bihar: value 1",
+  "bihar": {
+   "name": "bihar",
+   "label": "Bihar: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     28,
     33.1,
@@ -215,9 +227,11 @@
     63.8
    ]
   },
-  "jharkhand__value_1": {
-   "name": "jharkhand__value_1",
-   "label": "Jharkhand: value 1",
+  "jharkhand": {
+   "name": "jharkhand",
+   "label": "Jharkhand: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     24.6,
     29.3,
@@ -243,9 +257,11 @@
     59.6
    ]
   },
-  "arunachal_pradesh__value_1": {
-   "name": "arunachal_pradesh__value_1",
-   "label": "Arunachal Pradesh: value 1",
+  "arunachal_pradesh": {
+   "name": "arunachal_pradesh",
+   "label": "Arunachal Pradesh: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     59.4,
     53.3,
@@ -271,9 +287,11 @@
     34.1
    ]
   },
-  "region_northern_region__region": {
-   "name": "region_northern_region__region",
-   "label": "Northern Region: region",
+  "region_northern_region": {
+   "name": "region_northern_region",
+   "label": "Northern Region: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     42.8,
     49.7,
@@ -299,9 +317,11 @@
     74.8
    ]
   },
-  "ladakh__value_1": {
-   "name": "ladakh__value_1",
-   "label": "Ladakh: value 1",
+  "ladakh": {
+   "name": "ladakh",
+   "label": "Ladakh: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     null,
     null,
@@ -327,9 +347,11 @@
     116.2
    ]
   },
-  "west_bengal__value_1": {
-   "name": "west_bengal__value_1",
-   "label": "West Bengal: value 1",
+  "west_bengal": {
+   "name": "west_bengal",
+   "label": "West Bengal: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     39.8,
     43.6,
@@ -355,9 +377,11 @@
     56
    ]
   },
-  "nagaland__value_1": {
-   "name": "nagaland__value_1",
-   "label": "Nagaland: value 1",
+  "nagaland": {
+   "name": "nagaland",
+   "label": "Nagaland: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     42.6,
     43.2,
@@ -383,9 +407,11 @@
     47.1
    ]
   },
-  "manipur__value_1": {
-   "name": "manipur__value_1",
-   "label": "Manipur: value 1",
+  "manipur": {
+   "name": "manipur",
+   "label": "Manipur: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     52.8,
     64.9,
@@ -411,9 +437,11 @@
     58.2
    ]
   },
-  "tripura__value_1": {
-   "name": "tripura__value_1",
-   "label": "Tripura: value 1",
+  "tripura": {
+   "name": "tripura",
+   "label": "Tripura: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     32.3,
     34.3,
@@ -439,9 +467,11 @@
     39.9
    ]
   },
-  "region_central_region__region": {
-   "name": "region_central_region__region",
-   "label": "Central Region: region",
+  "region_central_region": {
+   "name": "region_central_region",
+   "label": "Central Region: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     36.7,
     41.5,
@@ -467,9 +497,11 @@
     62
    ]
   },
-  "uttar_pradesh__value_1": {
-   "name": "uttar_pradesh__value_1",
-   "label": "Uttar Pradesh: value 1",
+  "uttar_pradesh": {
+   "name": "uttar_pradesh",
+   "label": "Uttar Pradesh: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     36,
     40.9,
@@ -495,9 +527,11 @@
     61.6
    ]
   },
-  "punjab__value_1": {
-   "name": "punjab__value_1",
-   "label": "Punjab: value 1",
+  "punjab": {
+   "name": "punjab",
+   "label": "Punjab: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     46.9,
     51.2,
@@ -523,9 +557,11 @@
     80.9
    ]
   },
-  "haryana__value_1": {
-   "name": "haryana__value_1",
-   "label": "Haryana: value 1",
+  "haryana": {
+   "name": "haryana",
+   "label": "Haryana: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     56,
     61.6,
@@ -551,9 +587,11 @@
     71.6
    ]
   },
-  "jammu_and_kashmir_state__value_1": {
-   "name": "jammu_and_kashmir_state__value_1",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): value 1",
+  "jammu_and_kashmir_state": {
+   "name": "jammu_and_kashmir_state",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     20.5,
     22.2,
@@ -579,9 +617,11 @@
     null
    ]
   },
-  "himachal_pradesh__value_1": {
-   "name": "himachal_pradesh__value_1",
-   "label": "Himachal Pradesh: value 1",
+  "himachal_pradesh": {
+   "name": "himachal_pradesh",
+   "label": "Himachal Pradesh: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     25.2,
     29,
@@ -607,9 +647,11 @@
     46.6
    ]
   },
-  "rajasthan__value_1": {
-   "name": "rajasthan__value_1",
-   "label": "Rajasthan: value 1",
+  "rajasthan": {
+   "name": "rajasthan",
+   "label": "Rajasthan: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     45.5,
     55,
@@ -635,9 +677,11 @@
     81
    ]
   },
-  "region_western_region__region": {
-   "name": "region_western_region__region",
-   "label": "Western Region: region",
+  "region_western_region": {
+   "name": "region_western_region",
+   "label": "Western Region: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     46.2,
     50.7,
@@ -663,9 +707,11 @@
     74.7
    ]
   },
-  "gujarat__value_1": {
-   "name": "gujarat__value_1",
-   "label": "Gujarat: value 1",
+  "gujarat": {
+   "name": "gujarat",
+   "label": "Gujarat: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     44.6,
     45.1,
@@ -691,9 +737,11 @@
     70
    ]
   },
-  "maharashtra__value_1": {
-   "name": "maharashtra__value_1",
-   "label": "Maharashtra: value 1",
+  "maharashtra": {
+   "name": "maharashtra",
+   "label": "Maharashtra: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     47.7,
     56.1,
@@ -719,9 +767,11 @@
     80.3
    ]
   },
-  "madhya_pradesh__value_1": {
-   "name": "madhya_pradesh__value_1",
-   "label": "Madhya Pradesh: value 1",
+  "madhya_pradesh": {
+   "name": "madhya_pradesh",
+   "label": "Madhya Pradesh: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     42.5,
     48.5,
@@ -747,9 +797,11 @@
     69
    ]
   },
-  "chhattisgarh__value_1": {
-   "name": "chhattisgarh__value_1",
-   "label": "Chhattisgarh: value 1",
+  "chhattisgarh": {
+   "name": "chhattisgarh",
+   "label": "Chhattisgarh: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     28.4,
     31.6,
@@ -775,9 +827,11 @@
     56
    ]
   },
-  "region_southern_region__region": {
-   "name": "region_southern_region__region",
-   "label": "Southern Region: region",
+  "region_southern_region": {
+   "name": "region_southern_region",
+   "label": "Southern Region: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     80.3,
     92.3,
@@ -803,9 +857,11 @@
     111.8
    ]
   },
-  "andhra_pradesh__value_1": {
-   "name": "andhra_pradesh__value_1",
-   "label": "Andhra Pradesh: value 1",
+  "andhra_pradesh": {
+   "name": "andhra_pradesh",
+   "label": "Andhra Pradesh: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     71.9,
     86.2,
@@ -831,9 +887,11 @@
     118.3
    ]
   },
-  "telangana__value_1": {
-   "name": "telangana__value_1",
-   "label": "Telangana: value 1",
+  "telangana": {
+   "name": "telangana",
+   "label": "Telangana: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     null,
     null,
@@ -859,9 +917,11 @@
     145.7
    ]
   },
-  "karnataka__value_1": {
-   "name": "karnataka__value_1",
-   "label": "Karnataka: value 1",
+  "karnataka": {
+   "name": "karnataka",
+   "label": "Karnataka: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     84.1,
     91.8,
@@ -887,9 +947,11 @@
     89.3
    ]
   },
-  "tamil_nadu__value_1": {
-   "name": "tamil_nadu__value_1",
-   "label": "Tamil Nadu: value 1",
+  "tamil_nadu": {
+   "name": "tamil_nadu",
+   "label": "Tamil Nadu: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     83.9,
     98.7,
@@ -915,9 +977,11 @@
     118.4
    ]
   },
-  "kerala__value_1": {
-   "name": "kerala__value_1",
-   "label": "Keralam: value 1",
+  "kerala": {
+   "name": "kerala",
+   "label": "Keralam: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     96.2,
     109.1,
@@ -943,9 +1007,11 @@
     102.7
    ]
   },
-  "all_india__value_1": {
-   "name": "all_india__value_1",
-   "label": "All India: value 1",
+  "all_india": {
+   "name": "all_india",
+   "label": "All India: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     46.5,
     53.2,
@@ -971,9 +1037,11 @@
     77.6
    ]
   },
-  "odisha__value_1": {
-   "name": "odisha__value_1",
-   "label": "Odisha: value 1",
+  "odisha": {
+   "name": "odisha",
+   "label": "Odisha: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     59.3,
     64.7,
@@ -999,9 +1067,11 @@
     57.9
    ]
   },
-  "uttarakhand__value_1": {
-   "name": "uttarakhand__value_1",
-   "label": "Uttarakhand: value 1",
+  "uttarakhand": {
+   "name": "uttarakhand",
+   "label": "Uttarakhand: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     33.1,
     35.8,
@@ -1027,9 +1097,11 @@
     54
    ]
   },
-  "puducherry__value_1": {
-   "name": "puducherry__value_1",
-   "label": "Puducherry: value 1",
+  "puducherry": {
+   "name": "puducherry",
+   "label": "Puducherry: Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     null,
     null,
@@ -1055,9 +1127,11 @@
     127.5
    ]
   },
-  "jammu_and_kashmir_ut__value_1": {
-   "name": "jammu_and_kashmir_ut__value_1",
-   "label": "Jammu & Kashmir (UT, from 2019-20): value 1",
+  "jammu_and_kashmir_ut": {
+   "name": "jammu_and_kashmir_ut",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Credit-Deposit Ratio of Regional Rural Banks",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     null,
     null,

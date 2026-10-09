@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2024-04",
-  "unit": "as served by DBIE",
+  "unit": "inr_amount",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Capital Outlay: RBI Handbook of Statistics on Indian States, Table 174",
-  "note": "DBIE report 1715, data provider \"Main\". Values exactly as DBIE serves them (rupee amounts are served in rupees). Periods: fiscal years, dated at April. Dimensions: none; measures: actual, budget estimate, revised estimate. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1715, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: actual, budget estimate, revised estimate. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -48,7 +48,9 @@
  "series": {
   "assam__actual": {
    "name": "assam__actual",
-   "label": "Assam: actual",
+   "label": "Assam: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     21810000000,
     10850000000,
@@ -75,7 +77,9 @@
   },
   "assam__budget_estimate": {
    "name": "assam__budget_estimate",
-   "label": "Assam: budget estimate",
+   "label": "Assam: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -102,7 +106,9 @@
   },
   "assam__revised_estimate": {
    "name": "assam__revised_estimate",
-   "label": "Assam: revised estimate",
+   "label": "Assam: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -129,7 +135,9 @@
   },
   "meghalaya__actual": {
    "name": "meghalaya__actual",
-   "label": "Meghalaya: actual",
+   "label": "Meghalaya: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     2460000000,
     2590000000,
@@ -156,7 +164,9 @@
   },
   "meghalaya__budget_estimate": {
    "name": "meghalaya__budget_estimate",
-   "label": "Meghalaya: budget estimate",
+   "label": "Meghalaya: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -183,7 +193,9 @@
   },
   "meghalaya__revised_estimate": {
    "name": "meghalaya__revised_estimate",
-   "label": "Meghalaya: revised estimate",
+   "label": "Meghalaya: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -210,7 +222,9 @@
   },
   "mizoram__actual": {
    "name": "mizoram__actual",
-   "label": "Mizoram: actual",
+   "label": "Mizoram: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     3300000000,
     4510000000,
@@ -237,7 +251,9 @@
   },
   "mizoram__budget_estimate": {
    "name": "mizoram__budget_estimate",
-   "label": "Mizoram: budget estimate",
+   "label": "Mizoram: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -264,7 +280,9 @@
   },
   "mizoram__revised_estimate": {
    "name": "mizoram__revised_estimate",
-   "label": "Mizoram: revised estimate",
+   "label": "Mizoram: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -291,7 +309,9 @@
   },
   "bihar__actual": {
    "name": "bihar__actual",
-   "label": "Bihar: actual",
+   "label": "Bihar: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     12050000000,
     20840000000,
@@ -318,7 +338,9 @@
   },
   "bihar__budget_estimate": {
    "name": "bihar__budget_estimate",
-   "label": "Bihar: budget estimate",
+   "label": "Bihar: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -345,7 +367,9 @@
   },
   "bihar__revised_estimate": {
    "name": "bihar__revised_estimate",
-   "label": "Bihar: revised estimate",
+   "label": "Bihar: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -372,7 +396,9 @@
   },
   "jharkhand__actual": {
    "name": "jharkhand__actual",
-   "label": "Jharkhand: actual",
+   "label": "Jharkhand: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     20120000000,
     22220000000,
@@ -399,7 +425,9 @@
   },
   "jharkhand__budget_estimate": {
    "name": "jharkhand__budget_estimate",
-   "label": "Jharkhand: budget estimate",
+   "label": "Jharkhand: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -426,7 +454,9 @@
   },
   "jharkhand__revised_estimate": {
    "name": "jharkhand__revised_estimate",
-   "label": "Jharkhand: revised estimate",
+   "label": "Jharkhand: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -453,7 +483,9 @@
   },
   "arunachal_pradesh__actual": {
    "name": "arunachal_pradesh__actual",
-   "label": "Arunachal Pradesh: actual",
+   "label": "Arunachal Pradesh: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     3750000000,
     4380000000,
@@ -480,7 +512,9 @@
   },
   "arunachal_pradesh__budget_estimate": {
    "name": "arunachal_pradesh__budget_estimate",
-   "label": "Arunachal Pradesh: budget estimate",
+   "label": "Arunachal Pradesh: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -507,7 +541,9 @@
   },
   "arunachal_pradesh__revised_estimate": {
    "name": "arunachal_pradesh__revised_estimate",
-   "label": "Arunachal Pradesh: revised estimate",
+   "label": "Arunachal Pradesh: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -534,7 +570,9 @@
   },
   "west_bengal__actual": {
    "name": "west_bengal__actual",
-   "label": "West Bengal: actual",
+   "label": "West Bengal: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     18350000000,
     16530000000,
@@ -561,7 +599,9 @@
   },
   "west_bengal__budget_estimate": {
    "name": "west_bengal__budget_estimate",
-   "label": "West Bengal: budget estimate",
+   "label": "West Bengal: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -588,7 +628,9 @@
   },
   "west_bengal__revised_estimate": {
    "name": "west_bengal__revised_estimate",
-   "label": "West Bengal: revised estimate",
+   "label": "West Bengal: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -615,7 +657,9 @@
   },
   "nagaland__actual": {
    "name": "nagaland__actual",
-   "label": "Nagaland: actual",
+   "label": "Nagaland: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     3790000000,
     5180000000,
@@ -642,7 +686,9 @@
   },
   "nagaland__budget_estimate": {
    "name": "nagaland__budget_estimate",
-   "label": "Nagaland: budget estimate",
+   "label": "Nagaland: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -669,7 +715,9 @@
   },
   "nagaland__revised_estimate": {
    "name": "nagaland__revised_estimate",
-   "label": "Nagaland: revised estimate",
+   "label": "Nagaland: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -696,7 +744,9 @@
   },
   "manipur__actual": {
    "name": "manipur__actual",
-   "label": "Manipur: actual",
+   "label": "Manipur: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     5210000000,
     6160000000,
@@ -723,7 +773,9 @@
   },
   "manipur__budget_estimate": {
    "name": "manipur__budget_estimate",
-   "label": "Manipur: budget estimate",
+   "label": "Manipur: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -750,7 +802,9 @@
   },
   "manipur__revised_estimate": {
    "name": "manipur__revised_estimate",
-   "label": "Manipur: revised estimate",
+   "label": "Manipur: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -777,7 +831,9 @@
   },
   "sikkim__actual": {
    "name": "sikkim__actual",
-   "label": "Sikkim: actual",
+   "label": "Sikkim: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     3540000000,
     3460000000,
@@ -804,7 +860,9 @@
   },
   "sikkim__budget_estimate": {
    "name": "sikkim__budget_estimate",
-   "label": "Sikkim: budget estimate",
+   "label": "Sikkim: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -831,7 +889,9 @@
   },
   "sikkim__revised_estimate": {
    "name": "sikkim__revised_estimate",
-   "label": "Sikkim: revised estimate",
+   "label": "Sikkim: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -858,7 +918,9 @@
   },
   "tripura__actual": {
    "name": "tripura__actual",
-   "label": "Tripura: actual",
+   "label": "Tripura: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     6370000000,
     7440000000,
@@ -885,7 +947,9 @@
   },
   "tripura__budget_estimate": {
    "name": "tripura__budget_estimate",
-   "label": "Tripura: budget estimate",
+   "label": "Tripura: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -912,7 +976,9 @@
   },
   "tripura__revised_estimate": {
    "name": "tripura__revised_estimate",
-   "label": "Tripura: revised estimate",
+   "label": "Tripura: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -939,7 +1005,9 @@
   },
   "uttar_pradesh__actual": {
    "name": "uttar_pradesh__actual",
-   "label": "Uttar Pradesh: actual",
+   "label": "Uttar Pradesh: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     56530000000,
     87110000000,
@@ -966,7 +1034,9 @@
   },
   "uttar_pradesh__budget_estimate": {
    "name": "uttar_pradesh__budget_estimate",
-   "label": "Uttar Pradesh: budget estimate",
+   "label": "Uttar Pradesh: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -993,7 +1063,9 @@
   },
   "uttar_pradesh__revised_estimate": {
    "name": "uttar_pradesh__revised_estimate",
-   "label": "Uttar Pradesh: revised estimate",
+   "label": "Uttar Pradesh: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1020,7 +1092,9 @@
   },
   "delhi__actual": {
    "name": "delhi__actual",
-   "label": "Delhi: actual",
+   "label": "Delhi: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     14260000000,
     15020000000,
@@ -1047,7 +1121,9 @@
   },
   "delhi__budget_estimate": {
    "name": "delhi__budget_estimate",
-   "label": "Delhi: budget estimate",
+   "label": "Delhi: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1074,7 +1150,9 @@
   },
   "delhi__revised_estimate": {
    "name": "delhi__revised_estimate",
-   "label": "Delhi: revised estimate",
+   "label": "Delhi: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1101,7 +1179,9 @@
   },
   "punjab__actual": {
    "name": "punjab__actual",
-   "label": "Punjab: actual",
+   "label": "Punjab: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     6820000000,
     15170000000,
@@ -1128,7 +1208,9 @@
   },
   "punjab__budget_estimate": {
    "name": "punjab__budget_estimate",
-   "label": "Punjab: budget estimate",
+   "label": "Punjab: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1155,7 +1237,9 @@
   },
   "punjab__revised_estimate": {
    "name": "punjab__revised_estimate",
-   "label": "Punjab: revised estimate",
+   "label": "Punjab: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1182,7 +1266,9 @@
   },
   "haryana__actual": {
    "name": "haryana__actual",
-   "label": "Haryana: actual",
+   "label": "Haryana: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     8970000000,
     16120000000,
@@ -1209,7 +1295,9 @@
   },
   "haryana__budget_estimate": {
    "name": "haryana__budget_estimate",
-   "label": "Haryana: budget estimate",
+   "label": "Haryana: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1236,7 +1324,9 @@
   },
   "haryana__revised_estimate": {
    "name": "haryana__revised_estimate",
-   "label": "Haryana: revised estimate",
+   "label": "Haryana: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1263,7 +1353,9 @@
   },
   "jammu_and_kashmir_state__actual": {
    "name": "jammu_and_kashmir_state__actual",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): actual",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     25360000000,
     33620000000,
@@ -1290,7 +1382,9 @@
   },
   "himachal_pradesh__actual": {
    "name": "himachal_pradesh__actual",
-   "label": "Himachal Pradesh: actual",
+   "label": "Himachal Pradesh: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     6540000000,
     8210000000,
@@ -1317,7 +1411,9 @@
   },
   "himachal_pradesh__budget_estimate": {
    "name": "himachal_pradesh__budget_estimate",
-   "label": "Himachal Pradesh: budget estimate",
+   "label": "Himachal Pradesh: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1344,7 +1440,9 @@
   },
   "himachal_pradesh__revised_estimate": {
    "name": "himachal_pradesh__revised_estimate",
-   "label": "Himachal Pradesh: revised estimate",
+   "label": "Himachal Pradesh: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1371,7 +1469,9 @@
   },
   "rajasthan__actual": {
    "name": "rajasthan__actual",
-   "label": "Rajasthan: actual",
+   "label": "Rajasthan: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     34880000000,
     42940000000,
@@ -1398,7 +1498,9 @@
   },
   "rajasthan__budget_estimate": {
    "name": "rajasthan__budget_estimate",
-   "label": "Rajasthan: budget estimate",
+   "label": "Rajasthan: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1425,7 +1527,9 @@
   },
   "rajasthan__revised_estimate": {
    "name": "rajasthan__revised_estimate",
-   "label": "Rajasthan: revised estimate",
+   "label": "Rajasthan: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1452,7 +1556,9 @@
   },
   "all_states_and_uts__actual": {
    "name": "all_states_and_uts__actual",
-   "label": "All States And Uts: actual",
+   "label": "All States And Uts: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     615590000000,
     793510000000,
@@ -1479,7 +1585,9 @@
   },
   "all_states_and_uts__budget_estimate": {
    "name": "all_states_and_uts__budget_estimate",
-   "label": "All States And Uts: budget estimate",
+   "label": "All States And Uts: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1506,7 +1614,9 @@
   },
   "all_states_and_uts__revised_estimate": {
    "name": "all_states_and_uts__revised_estimate",
-   "label": "All States And Uts: revised estimate",
+   "label": "All States And Uts: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1533,7 +1643,9 @@
   },
   "gujarat__actual": {
    "name": "gujarat__actual",
-   "label": "Gujarat: actual",
+   "label": "Gujarat: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     41000000000,
     69590000000,
@@ -1560,7 +1672,9 @@
   },
   "gujarat__budget_estimate": {
    "name": "gujarat__budget_estimate",
-   "label": "Gujarat: budget estimate",
+   "label": "Gujarat: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1587,7 +1701,9 @@
   },
   "gujarat__revised_estimate": {
    "name": "gujarat__revised_estimate",
-   "label": "Gujarat: revised estimate",
+   "label": "Gujarat: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1614,7 +1730,9 @@
   },
   "maharashtra__actual": {
    "name": "maharashtra__actual",
-   "label": "Maharashtra: actual",
+   "label": "Maharashtra: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     78770000000,
     100780000000,
@@ -1641,7 +1759,9 @@
   },
   "maharashtra__budget_estimate": {
    "name": "maharashtra__budget_estimate",
-   "label": "Maharashtra: budget estimate",
+   "label": "Maharashtra: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1668,7 +1788,9 @@
   },
   "maharashtra__revised_estimate": {
    "name": "maharashtra__revised_estimate",
-   "label": "Maharashtra: revised estimate",
+   "label": "Maharashtra: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1695,7 +1817,9 @@
   },
   "goa__actual": {
    "name": "goa__actual",
-   "label": "Goa: actual",
+   "label": "Goa: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     4260000000,
     5800000000,
@@ -1722,7 +1846,9 @@
   },
   "goa__budget_estimate": {
    "name": "goa__budget_estimate",
-   "label": "Goa: budget estimate",
+   "label": "Goa: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1749,7 +1875,9 @@
   },
   "goa__revised_estimate": {
    "name": "goa__revised_estimate",
-   "label": "Goa: revised estimate",
+   "label": "Goa: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1776,7 +1904,9 @@
   },
   "madhya_pradesh__actual": {
    "name": "madhya_pradesh__actual",
-   "label": "Madhya Pradesh: actual",
+   "label": "Madhya Pradesh: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     49510000000,
     66230000000,
@@ -1803,7 +1933,9 @@
   },
   "madhya_pradesh__budget_estimate": {
    "name": "madhya_pradesh__budget_estimate",
-   "label": "Madhya Pradesh: budget estimate",
+   "label": "Madhya Pradesh: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1830,7 +1962,9 @@
   },
   "madhya_pradesh__revised_estimate": {
    "name": "madhya_pradesh__revised_estimate",
-   "label": "Madhya Pradesh: revised estimate",
+   "label": "Madhya Pradesh: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1857,7 +1991,9 @@
   },
   "chhattisgarh__actual": {
    "name": "chhattisgarh__actual",
-   "label": "Chhattisgarh: actual",
+   "label": "Chhattisgarh: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     12790000000,
     14870000000,
@@ -1884,7 +2020,9 @@
   },
   "chhattisgarh__budget_estimate": {
    "name": "chhattisgarh__budget_estimate",
-   "label": "Chhattisgarh: budget estimate",
+   "label": "Chhattisgarh: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1911,7 +2049,9 @@
   },
   "chhattisgarh__revised_estimate": {
    "name": "chhattisgarh__revised_estimate",
-   "label": "Chhattisgarh: revised estimate",
+   "label": "Chhattisgarh: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1938,7 +2078,9 @@
   },
   "andhra_pradesh_undivided__actual": {
    "name": "andhra_pradesh_undivided__actual",
-   "label": "Andhra Pradesh (undivided, to 2013-14): actual",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     54140000000,
     76620000000,
@@ -1965,7 +2107,9 @@
   },
   "telangana__actual": {
    "name": "telangana__actual",
-   "label": "Telangana: actual",
+   "label": "Telangana: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1992,7 +2136,9 @@
   },
   "telangana__budget_estimate": {
    "name": "telangana__budget_estimate",
-   "label": "Telangana: budget estimate",
+   "label": "Telangana: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2019,7 +2165,9 @@
   },
   "telangana__revised_estimate": {
    "name": "telangana__revised_estimate",
-   "label": "Telangana: revised estimate",
+   "label": "Telangana: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2046,7 +2194,9 @@
   },
   "karnataka__actual": {
    "name": "karnataka__actual",
-   "label": "Karnataka: actual",
+   "label": "Karnataka: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     46740000000,
     58220000000,
@@ -2073,7 +2223,9 @@
   },
   "karnataka__budget_estimate": {
    "name": "karnataka__budget_estimate",
-   "label": "Karnataka: budget estimate",
+   "label": "Karnataka: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2100,7 +2252,9 @@
   },
   "karnataka__revised_estimate": {
    "name": "karnataka__revised_estimate",
-   "label": "Karnataka: revised estimate",
+   "label": "Karnataka: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2127,7 +2281,9 @@
   },
   "tamil_nadu__actual": {
    "name": "tamil_nadu__actual",
-   "label": "Tamil Nadu: actual",
+   "label": "Tamil Nadu: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     45640000000,
     40550000000,
@@ -2154,7 +2310,9 @@
   },
   "tamil_nadu__budget_estimate": {
    "name": "tamil_nadu__budget_estimate",
-   "label": "Tamil Nadu: budget estimate",
+   "label": "Tamil Nadu: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2181,7 +2339,9 @@
   },
   "tamil_nadu__revised_estimate": {
    "name": "tamil_nadu__revised_estimate",
-   "label": "Tamil Nadu: revised estimate",
+   "label": "Tamil Nadu: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2208,7 +2368,9 @@
   },
   "kerala__actual": {
    "name": "kerala__actual",
-   "label": "Keralam: actual",
+   "label": "Keralam: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     6820000000,
     8170000000,
@@ -2235,7 +2397,9 @@
   },
   "kerala__budget_estimate": {
    "name": "kerala__budget_estimate",
-   "label": "Keralam: budget estimate",
+   "label": "Keralam: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2262,7 +2426,9 @@
   },
   "kerala__revised_estimate": {
    "name": "kerala__revised_estimate",
-   "label": "Keralam: revised estimate",
+   "label": "Keralam: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2289,7 +2455,9 @@
   },
   "odisha__actual": {
    "name": "odisha__actual",
-   "label": "Odisha: actual",
+   "label": "Odisha: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     10560000000,
     10380000000,
@@ -2316,7 +2484,9 @@
   },
   "odisha__budget_estimate": {
    "name": "odisha__budget_estimate",
-   "label": "Odisha: budget estimate",
+   "label": "Odisha: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2343,7 +2513,9 @@
   },
   "odisha__revised_estimate": {
    "name": "odisha__revised_estimate",
-   "label": "Odisha: revised estimate",
+   "label": "Odisha: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2370,7 +2542,9 @@
   },
   "uttarakhand__actual": {
    "name": "uttarakhand__actual",
-   "label": "Uttarakhand: actual",
+   "label": "Uttarakhand: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     11270000000,
     17050000000,
@@ -2397,7 +2571,9 @@
   },
   "uttarakhand__budget_estimate": {
    "name": "uttarakhand__budget_estimate",
-   "label": "Uttarakhand: budget estimate",
+   "label": "Uttarakhand: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2424,7 +2600,9 @@
   },
   "uttarakhand__revised_estimate": {
    "name": "uttarakhand__revised_estimate",
-   "label": "Uttarakhand: revised estimate",
+   "label": "Uttarakhand: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2451,7 +2629,9 @@
   },
   "puducherry__actual": {
    "name": "puducherry__actual",
-   "label": "Puducherry: actual",
+   "label": "Puducherry: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     2890000000,
@@ -2478,7 +2658,9 @@
   },
   "puducherry__budget_estimate": {
    "name": "puducherry__budget_estimate",
-   "label": "Puducherry: budget estimate",
+   "label": "Puducherry: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2505,7 +2687,9 @@
   },
   "puducherry__revised_estimate": {
    "name": "puducherry__revised_estimate",
-   "label": "Puducherry: revised estimate",
+   "label": "Puducherry: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2532,7 +2716,9 @@
   },
   "andhra_pradesh__actual": {
    "name": "andhra_pradesh__actual",
-   "label": "Andhra Pradesh: actual",
+   "label": "Andhra Pradesh: Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2559,7 +2745,9 @@
   },
   "andhra_pradesh__budget_estimate": {
    "name": "andhra_pradesh__budget_estimate",
-   "label": "Andhra Pradesh: budget estimate",
+   "label": "Andhra Pradesh: Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2586,7 +2774,9 @@
   },
   "andhra_pradesh__revised_estimate": {
    "name": "andhra_pradesh__revised_estimate",
-   "label": "Andhra Pradesh: revised estimate",
+   "label": "Andhra Pradesh: Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2613,7 +2803,9 @@
   },
   "jammu_and_kashmir_ut__actual": {
    "name": "jammu_and_kashmir_ut__actual",
-   "label": "Jammu & Kashmir (UT, from 2019-20): actual",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Capital Outlay: actual",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2640,7 +2832,9 @@
   },
   "jammu_and_kashmir_ut__budget_estimate": {
    "name": "jammu_and_kashmir_ut__budget_estimate",
-   "label": "Jammu & Kashmir (UT, from 2019-20): budget estimate",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Capital Outlay: budget estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2667,7 +2861,9 @@
   },
   "jammu_and_kashmir_ut__revised_estimate": {
    "name": "jammu_and_kashmir_ut__revised_estimate",
-   "label": "Jammu & Kashmir (UT, from 2019-20): revised estimate",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Capital Outlay: revised estimate",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,

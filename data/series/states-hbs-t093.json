@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2023-04",
-  "unit": "Lakh Tonnes",
+  "unit": "lakh_tonnes",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Fish Production: RBI Handbook of Statistics on Indian States, Table 93",
-  "note": "DBIE report 1641, data provider \"Query 1\". Values exactly as DBIE serves them; DBIE's unit label: Lakh Tonnes (rupee amounts are served in rupees). Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1641, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: Lakh Tonnes. Periods: fiscal years, dated at April. Dimensions: none; measures: value. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -47,7 +47,9 @@
  "series": {
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     63.05,
     6.57,
@@ -73,7 +75,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.33,
     0.01,
@@ -99,7 +103,9 @@
   },
   "andhra_pradesh_undivided": {
    "name": "andhra_pradesh_undivided",
-   "label": "Andhra Pradesh (undivided, to 2013-14)",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     8.53,
     0.89,
@@ -125,7 +131,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -151,7 +159,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.03,
     0,
@@ -177,7 +187,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     1.86,
     0.19,
@@ -203,7 +215,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     2.68,
     0.28,
@@ -229,7 +243,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0,
     0,
@@ -255,7 +271,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     1.2,
     0.13,
@@ -281,7 +299,9 @@
   },
   "dadra_and_nagar_haveli": {
    "name": "dadra_and_nagar_haveli",
-   "label": "Dadra & Nagar Haveli",
+   "label": "Dadra & Nagar Haveli: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0,
     0,
@@ -307,7 +327,9 @@
   },
   "daman_and_diu": {
    "name": "daman_and_diu",
-   "label": "Daman & Diu",
+   "label": "Daman & Diu: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.13,
     0.02,
@@ -333,7 +355,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.01,
     0,
@@ -359,7 +383,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     9.9,
     0.1,
@@ -385,7 +411,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     6.35,
     0.73,
@@ -411,7 +439,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.42,
     0.05,
@@ -437,7 +467,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.07,
     0.01,
@@ -463,7 +495,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.19,
     0.02,
@@ -489,7 +523,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -515,7 +551,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.22,
     0.03,
@@ -541,7 +579,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     2.51,
     0.3,
@@ -567,7 +607,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     6.78,
     0.64,
@@ -593,7 +635,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.12,
     0.01,
@@ -619,7 +663,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.62,
     0.06,
@@ -645,7 +691,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     5.48,
     0.58,
@@ -671,7 +719,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.18,
     0.02,
@@ -697,7 +747,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.06,
     0,
@@ -723,7 +775,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.04,
     0,
@@ -749,7 +803,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.05,
     0.01,
@@ -775,7 +831,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     3.16,
     0.33,
@@ -801,7 +859,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.37,
     0.02,
@@ -827,7 +887,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.78,
     0.09,
@@ -853,7 +915,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.16,
     0.02,
@@ -879,7 +943,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0,
     0,
@@ -905,7 +971,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     4.59,
     0.46,
@@ -931,7 +999,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -957,7 +1027,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.2,
     0.02,
@@ -983,7 +1055,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.03,
     0,
@@ -1009,7 +1083,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     2.77,
     0.29,
@@ -1035,7 +1111,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Fish Production",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     12.15,
     1.25,

@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2023-04",
-  "unit": "Thousand Tonnes",
+  "unit": "thousand_tonne",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Milk Production: RBI Handbook of Statistics on Indian States, Table 91",
-  "note": "DBIE report 1639, data provider \"Query 1\". Values exactly as DBIE serves them; DBIE's unit label: Thousand Tonnes. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1639, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: Thousand Tonnes. Periods: fiscal years, dated at April. Dimensions: none; measures: value. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -47,7 +47,9 @@
  "series": {
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     92484,
     97066,
@@ -73,7 +75,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     24,
     20,
@@ -99,7 +103,9 @@
   },
   "andhra_pradesh_undivided": {
    "name": "andhra_pradesh_undivided",
-   "label": "Andhra Pradesh (undivided, to 2013-14)",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     7257,
     7624,
@@ -125,7 +131,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -151,7 +159,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     48,
     48,
@@ -177,7 +187,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     739,
     747,
@@ -203,7 +215,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     4743,
     5060,
@@ -229,7 +243,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     43,
     46,
@@ -255,7 +271,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     831,
     839,
@@ -281,7 +299,9 @@
   },
   "dadra_and_nagar_haveli": {
    "name": "dadra_and_nagar_haveli",
-   "label": "Dadra & Nagar Haveli",
+   "label": "Dadra & Nagar Haveli: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     4,
     5,
@@ -312,7 +332,9 @@
   },
   "daman_and_diu": {
    "name": "daman_and_diu",
-   "label": "Daman & Diu",
+   "label": "Daman & Diu: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     1,
     1,
@@ -338,7 +360,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     303,
     310,
@@ -371,7 +395,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     57,
     56,
@@ -397,7 +423,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     6745,
     6960,
@@ -423,7 +451,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     5222,
     5299,
@@ -449,7 +479,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     870,
     869,
@@ -475,7 +507,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     1422,
     1400,
@@ -501,7 +535,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -527,7 +563,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     1330,
     1335,
@@ -553,7 +591,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     3917,
     4022,
@@ -579,7 +619,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     2025,
     2063,
@@ -605,7 +647,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     1,
     2,
@@ -631,7 +675,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     5506,
     6283,
@@ -657,7 +703,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     6567,
     6769,
@@ -683,7 +731,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     75,
     77,
@@ -709,7 +759,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     71,
     73,
@@ -735,7 +787,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     16,
     15,
@@ -761,7 +815,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     69,
     74,
@@ -787,7 +843,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     1283,
     1342,
@@ -813,7 +871,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     41,
     43,
@@ -839,7 +899,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     8554,
     8909,
@@ -865,7 +927,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     8310,
     8713,
@@ -891,7 +955,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     46,
     48,
@@ -917,7 +983,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     4784,
     5474,
@@ -943,7 +1011,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -969,7 +1039,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     86,
     87,
@@ -995,7 +1067,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     1195,
     1206,
@@ -1021,7 +1095,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     16512,
     17356,
@@ -1047,7 +1123,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Milk Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     3790,
     3891,

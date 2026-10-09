@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2023-04",
-  "unit": "Thousand Tonnes",
+  "unit": "thousand_tonne",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Meat Production: RBI Handbook of Statistics on Indian States, Table 90",
-  "note": "DBIE report 1638, data provider \"Query 1\". Values exactly as DBIE serves them; DBIE's unit label: Thousand Tonnes. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1638, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: Thousand Tonnes. Periods: fiscal years, dated at April. Dimensions: none; measures: value. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -47,7 +47,9 @@
  "series": {
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     2212,
     2310,
@@ -73,7 +75,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     1,
     null,
@@ -110,7 +114,9 @@
   },
   "andhra_pradesh_undivided": {
    "name": "andhra_pradesh_undivided",
-   "label": "Andhra Pradesh (undivided, to 2013-14)",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     451,
     457,
@@ -136,7 +142,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -162,7 +170,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     8,
     20,
@@ -188,7 +198,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     25,
     27,
@@ -214,7 +226,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     175,
     176,
@@ -240,7 +254,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     1,
     1,
@@ -266,7 +282,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     4,
     4,
@@ -292,7 +310,9 @@
   },
   "daman_and_diu": {
    "name": "daman_and_diu",
-   "label": "Daman & Diu",
+   "label": "Daman & Diu: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -318,7 +338,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     31,
     31,
@@ -350,7 +372,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -380,7 +404,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     13,
     18,
@@ -406,7 +432,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     9,
     7,
@@ -432,7 +460,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     3,
     3,
@@ -458,7 +488,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     null,
     27,
@@ -484,7 +516,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -510,7 +544,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     43,
     43,
@@ -536,7 +572,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     99,
     100,
@@ -562,7 +600,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     87,
     56,
@@ -588,7 +628,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -618,7 +660,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     16,
     19,
@@ -644,7 +688,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     230,
     236,
@@ -670,7 +716,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     23,
     23,
@@ -696,7 +744,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     36,
     37,
@@ -722,7 +772,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     9,
     9,
@@ -748,7 +800,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     61,
     63,
@@ -774,7 +828,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     51,
     52,
@@ -800,7 +856,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     3,
     7,
@@ -826,7 +884,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     4,
     4,
@@ -852,7 +912,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     64,
     68,
@@ -878,7 +940,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -904,7 +968,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     85,
     119,
@@ -930,7 +996,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -956,7 +1024,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     9,
     12,
@@ -982,7 +1052,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     6,
     6,
@@ -1008,7 +1080,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     190,
     198,
@@ -1034,7 +1108,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Meat Production",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     475,
     487,

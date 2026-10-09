@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2024-04",
-  "unit": "as served by DBIE",
+  "unit": "inr_amount",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Deposits of Regional Rural Banks: RBI Handbook of Statistics on Indian States, Table 160",
-  "note": "DBIE report 1703, data provider \"Main\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1, region. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1703, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: value, region. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2003-04-01",
@@ -47,9 +47,11 @@
   "2024-04-01"
  ],
  "series": {
-  "assam__value_1": {
-   "name": "assam__value_1",
-   "label": "Assam: value 1",
+  "assam": {
+   "name": "assam",
+   "label": "Assam: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     15870000000,
     17200000000,
@@ -75,9 +77,11 @@
     127050000000
    ]
   },
-  "region_north_eastern_region__region": {
-   "name": "region_north_eastern_region__region",
-   "label": "North Eastern Region: region",
+  "region_north_eastern_region": {
+   "name": "region_north_eastern_region",
+   "label": "North Eastern Region: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     26620000000,
     29500000000,
@@ -103,9 +107,11 @@
     348360000000
    ]
   },
-  "meghalaya__value_1": {
-   "name": "meghalaya__value_1",
-   "label": "Meghalaya: value 1",
+  "meghalaya": {
+   "name": "meghalaya",
+   "label": "Meghalaya: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     1760000000,
     2200000000,
@@ -131,9 +137,11 @@
     40110000000
    ]
   },
-  "mizoram__value_1": {
-   "name": "mizoram__value_1",
-   "label": "Mizoram: value 1",
+  "mizoram": {
+   "name": "mizoram",
+   "label": "Mizoram: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     1380000000,
     1410000000,
@@ -159,9 +167,11 @@
     58280000000
    ]
   },
-  "bihar__value_1": {
-   "name": "bihar__value_1",
-   "label": "Bihar: value 1",
+  "bihar": {
+   "name": "bihar",
+   "label": "Bihar: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     50570000000,
     54990000000,
@@ -187,9 +197,11 @@
     478050000000
    ]
   },
-  "region_eastern_region__region": {
-   "name": "region_eastern_region__region",
-   "label": "Eastern Region: region",
+  "region_eastern_region": {
+   "name": "region_eastern_region",
+   "label": "Eastern Region: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     133400000000,
     144010000000,
@@ -215,9 +227,11 @@
     1204620000000
    ]
   },
-  "jharkhand__value_1": {
-   "name": "jharkhand__value_1",
-   "label": "Jharkhand: value 1",
+  "jharkhand": {
+   "name": "jharkhand",
+   "label": "Jharkhand: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     14350000000,
     15870000000,
@@ -243,9 +257,11 @@
     115700000000
    ]
   },
-  "arunachal_pradesh__value_1": {
-   "name": "arunachal_pradesh__value_1",
-   "label": "Arunachal Pradesh: value 1",
+  "arunachal_pradesh": {
+   "name": "arunachal_pradesh",
+   "label": "Arunachal Pradesh: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     560000000,
     640000000,
@@ -271,9 +287,11 @@
     15110000000
    ]
   },
-  "ladakh__value_1": {
-   "name": "ladakh__value_1",
-   "label": "Ladakh: value 1",
+  "ladakh": {
+   "name": "ladakh",
+   "label": "Ladakh: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     null,
     null,
@@ -299,9 +317,11 @@
     470000000
    ]
   },
-  "region_northern_region__region": {
-   "name": "region_northern_region__region",
-   "label": "Northern Region: region",
+  "region_northern_region": {
+   "name": "region_northern_region",
+   "label": "Northern Region: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     74950000000,
     82250000000,
@@ -327,9 +347,11 @@
     1090010000000
    ]
   },
-  "west_bengal__value_1": {
-   "name": "west_bengal__value_1",
-   "label": "West Bengal: value 1",
+  "west_bengal": {
+   "name": "west_bengal",
+   "label": "West Bengal: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     39210000000,
     41190000000,
@@ -355,9 +377,11 @@
     330370000000
    ]
   },
-  "nagaland__value_1": {
-   "name": "nagaland__value_1",
-   "label": "Nagaland: value 1",
+  "nagaland": {
+   "name": "nagaland",
+   "label": "Nagaland: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     120000000,
     130000000,
@@ -383,9 +407,11 @@
     1670000000
    ]
   },
-  "manipur__value_1": {
-   "name": "manipur__value_1",
-   "label": "Manipur: value 1",
+  "manipur": {
+   "name": "manipur",
+   "label": "Manipur: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     310000000,
     370000000,
@@ -411,9 +437,11 @@
     5480000000
    ]
   },
-  "tripura__value_1": {
-   "name": "tripura__value_1",
-   "label": "Tripura: value 1",
+  "tripura": {
+   "name": "tripura",
+   "label": "Tripura: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     6620000000,
     7560000000,
@@ -439,9 +467,11 @@
     100660000000
    ]
   },
-  "uttar_pradesh__value_1": {
-   "name": "uttar_pradesh__value_1",
-   "label": "Uttar Pradesh: value 1",
+  "uttar_pradesh": {
+   "name": "uttar_pradesh",
+   "label": "Uttar Pradesh: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     129610000000,
     142460000000,
@@ -467,9 +497,11 @@
     1342430000000
    ]
   },
-  "region_central_region__region": {
-   "name": "region_central_region__region",
-   "label": "Central Region: region",
+  "region_central_region": {
+   "name": "region_central_region",
+   "label": "Central Region: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     187830000000,
     206520000000,
@@ -495,9 +527,11 @@
     1921950000000
    ]
   },
-  "punjab__value_1": {
-   "name": "punjab__value_1",
-   "label": "Punjab: value 1",
+  "punjab": {
+   "name": "punjab",
+   "label": "Punjab: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     9020000000,
     10250000000,
@@ -523,9 +557,11 @@
     150780000000
    ]
   },
-  "haryana__value_1": {
-   "name": "haryana__value_1",
-   "label": "Haryana: value 1",
+  "haryana": {
+   "name": "haryana",
+   "label": "Haryana: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     14860000000,
     16730000000,
@@ -551,9 +587,11 @@
     240550000000
    ]
   },
-  "jammu_and_kashmir_state__value_1": {
-   "name": "jammu_and_kashmir_state__value_1",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): value 1",
+  "jammu_and_kashmir_state": {
+   "name": "jammu_and_kashmir_state",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     9150000000,
     9710000000,
@@ -579,9 +617,11 @@
     null
    ]
   },
-  "himachal_pradesh__value_1": {
-   "name": "himachal_pradesh__value_1",
-   "label": "Himachal Pradesh: value 1",
+  "himachal_pradesh": {
+   "name": "himachal_pradesh",
+   "label": "Himachal Pradesh: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     6910000000,
     7270000000,
@@ -607,9 +647,11 @@
     92880000000
    ]
   },
-  "rajasthan__value_1": {
-   "name": "rajasthan__value_1",
-   "label": "Rajasthan: value 1",
+  "rajasthan": {
+   "name": "rajasthan",
+   "label": "Rajasthan: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     35010000000,
     38290000000,
@@ -635,9 +677,11 @@
     527700000000
    ]
   },
-  "gujarat__value_1": {
-   "name": "gujarat__value_1",
-   "label": "Gujarat: value 1",
+  "gujarat": {
+   "name": "gujarat",
+   "label": "Gujarat: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     14650000000,
     16570000000,
@@ -663,9 +707,11 @@
     250380000000
    ]
   },
-  "region_western_region__region": {
-   "name": "region_western_region__region",
-   "label": "Western Region: region",
+  "region_western_region": {
+   "name": "region_western_region",
+   "label": "Western Region: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     30810000000,
     33490000000,
@@ -691,9 +737,11 @@
     459350000000
    ]
   },
-  "maharashtra__value_1": {
-   "name": "maharashtra__value_1",
-   "label": "Maharashtra: value 1",
+  "maharashtra": {
+   "name": "maharashtra",
+   "label": "Maharashtra: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     16170000000,
     16910000000,
@@ -719,9 +767,11 @@
     208970000000
    ]
   },
-  "madhya_pradesh__value_1": {
-   "name": "madhya_pradesh__value_1",
-   "label": "Madhya Pradesh: value 1",
+  "madhya_pradesh": {
+   "name": "madhya_pradesh",
+   "label": "Madhya Pradesh: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     38060000000,
     41230000000,
@@ -747,9 +797,11 @@
     315900000000
    ]
   },
-  "chhattisgarh__value_1": {
-   "name": "chhattisgarh__value_1",
-   "label": "Chhattisgarh: value 1",
+  "chhattisgarh": {
+   "name": "chhattisgarh",
+   "label": "Chhattisgarh: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     14370000000,
     16280000000,
@@ -775,9 +827,11 @@
     178570000000
    ]
   },
-  "andhra_pradesh__value_1": {
-   "name": "andhra_pradesh__value_1",
-   "label": "Andhra Pradesh: value 1",
+  "andhra_pradesh": {
+   "name": "andhra_pradesh",
+   "label": "Andhra Pradesh: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     47640000000,
     51910000000,
@@ -803,9 +857,11 @@
     528830000000
    ]
   },
-  "region_southern_region__region": {
-   "name": "region_southern_region__region",
-   "label": "Southern Region: region",
+  "region_southern_region": {
+   "name": "region_southern_region",
+   "label": "Southern Region: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     105480000000,
     118700000000,
@@ -831,9 +887,11 @@
     1879860000000
    ]
   },
-  "telangana__value_1": {
-   "name": "telangana__value_1",
-   "label": "Telangana: value 1",
+  "telangana": {
+   "name": "telangana",
+   "label": "Telangana: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     null,
     null,
@@ -859,9 +917,11 @@
     284960000000
    ]
   },
-  "karnataka__value_1": {
-   "name": "karnataka__value_1",
-   "label": "Karnataka: value 1",
+  "karnataka": {
+   "name": "karnataka",
+   "label": "Karnataka: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     34820000000,
     41030000000,
@@ -887,9 +947,11 @@
     552580000000
    ]
   },
-  "tamil_nadu__value_1": {
-   "name": "tamil_nadu__value_1",
-   "label": "Tamil Nadu: value 1",
+  "tamil_nadu": {
+   "name": "tamil_nadu",
+   "label": "Tamil Nadu: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     7880000000,
     8480000000,
@@ -915,9 +977,11 @@
     232340000000
    ]
   },
-  "kerala__value_1": {
-   "name": "kerala__value_1",
-   "label": "Keralam: value 1",
+  "kerala": {
+   "name": "kerala",
+   "label": "Keralam: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     15140000000,
     17290000000,
@@ -943,9 +1007,11 @@
     268270000000
    ]
   },
-  "all_india__value_1": {
-   "name": "all_india__value_1",
-   "label": "All India: value 1",
+  "all_india": {
+   "name": "all_india",
+   "label": "All India: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     559090000000,
     614470000000,
@@ -971,9 +1037,11 @@
     6904140000000
    ]
   },
-  "odisha__value_1": {
-   "name": "odisha__value_1",
-   "label": "Odisha: value 1",
+  "odisha": {
+   "name": "odisha",
+   "label": "Odisha: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     29270000000,
     31960000000,
@@ -999,9 +1067,11 @@
     280490000000
    ]
   },
-  "uttarakhand__value_1": {
-   "name": "uttarakhand__value_1",
-   "label": "Uttarakhand: value 1",
+  "uttarakhand": {
+   "name": "uttarakhand",
+   "label": "Uttarakhand: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     5790000000,
     6550000000,
@@ -1027,9 +1097,11 @@
     85050000000
    ]
   },
-  "puducherry__value_1": {
-   "name": "puducherry__value_1",
-   "label": "Puducherry: value 1",
+  "puducherry": {
+   "name": "puducherry",
+   "label": "Puducherry: Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     null,
     null,
@@ -1055,9 +1127,11 @@
     12880000000
    ]
   },
-  "jammu_and_kashmir_ut__value_1": {
-   "name": "jammu_and_kashmir_ut__value_1",
-   "label": "Jammu & Kashmir (UT, from 2019-20): value 1",
+  "jammu_and_kashmir_ut": {
+   "name": "jammu_and_kashmir_ut",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Deposits of Regional Rural Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     null,
     null,

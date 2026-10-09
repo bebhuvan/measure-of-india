@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2023-04",
-  "unit": "Thousand Kgs",
+  "unit": "thousand_kg",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Wool Production: RBI Handbook of Statistics on Indian States, Table 94",
-  "note": "DBIE report 1642, data provider \"Query 1\". Values exactly as DBIE serves them; DBIE's unit label: Thousand Kgs. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1642, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: Thousand Kgs. Periods: fiscal years, dated at April. Dimensions: none; measures: value. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -47,7 +47,9 @@
  "series": {
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     44575,
     44884,
@@ -73,7 +75,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -99,7 +103,9 @@
   },
   "andhra_pradesh_undivided": {
    "name": "andhra_pradesh_undivided",
-   "label": "Andhra Pradesh (undivided, to 2013-14)",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     3678,
     3978,
@@ -125,7 +131,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     16,
     14,
@@ -151,7 +159,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     378,
     220,
@@ -177,7 +187,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -203,7 +215,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     255,
     null,
@@ -233,7 +247,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     2950,
     3123,
@@ -259,7 +275,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     1304,
     1136,
@@ -285,7 +303,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     1600,
     1603,
@@ -311,7 +331,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     7120,
     7400,
@@ -337,7 +359,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -363,7 +387,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     348,
     353,
@@ -389,7 +415,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     6448,
     150,
@@ -415,7 +443,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     681,
     5598,
@@ -441,7 +471,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     1620,
     1640,
@@ -467,7 +499,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     566,
     712,
@@ -493,7 +527,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     15049,
     15405,
@@ -519,7 +555,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     4,
     2,
@@ -545,7 +583,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     750,
     750,
@@ -571,7 +611,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -597,7 +639,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     148,
     150,
@@ -623,7 +667,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     1965,
     1459,
@@ -649,7 +695,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Wool Production",
+   "unit": "thousand_kg",
+   "group": "Agriculture and allied",
    "data": [
     659,
     866,

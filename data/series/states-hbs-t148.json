@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2022-04",
-  "unit": "as served by DBIE",
+  "unit": "pct",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Electricity Transmission & Distribution Losses: RBI Handbook of Statistics on Indian States, Table 148",
-  "note": "DBIE report 1692, data provider \"Main\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1692, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: value. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -46,7 +46,9 @@
  "series": {
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     51.8,
     40.3,
@@ -71,7 +73,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     28.4,
     40.2,
@@ -96,7 +100,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     66.1,
     39.2,
@@ -121,7 +127,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     38.9,
     44,
@@ -146,7 +154,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     19.6,
     26.8,
@@ -171,7 +181,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     42.9,
     49.7,
@@ -196,7 +208,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     28.5,
     24.8,
@@ -221,7 +235,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     48.3,
     59,
@@ -246,7 +262,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     70.6,
     63.1,
@@ -271,7 +289,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     50.5,
     10.7,
@@ -296,7 +316,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     59.5,
     41.1,
@@ -321,7 +343,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     12.6,
     24.3,
@@ -346,7 +370,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     34.4,
     32.6,
@@ -371,7 +397,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     45.4,
     48.6,
@@ -396,7 +424,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     25.4,
     27.6,
@@ -421,7 +451,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     32.1,
     30.5,
@@ -446,7 +478,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     30.4,
     31.6,
@@ -471,7 +505,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     41.1,
     44.9,
@@ -496,7 +532,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     28.9,
     23.6,
@@ -521,7 +559,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     44.7,
     39.9,
@@ -546,7 +586,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     30.4,
     27.9,
@@ -571,7 +613,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     34.4,
     31.6,
@@ -596,7 +640,9 @@
   },
   "daman_and_diu": {
    "name": "daman_and_diu",
-   "label": "Daman & Diu",
+   "label": "Daman & Diu: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     15.6,
     21.6,
@@ -621,7 +667,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     35.9,
     19.7,
@@ -646,7 +694,9 @@
   },
   "dadra_and_nagar_haveli": {
    "name": "dadra_and_nagar_haveli",
-   "label": "Dadra & Nagar Haveli",
+   "label": "Dadra & Nagar Haveli: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     16,
     19.9,
@@ -671,7 +721,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     41.3,
     40.1,
@@ -696,7 +748,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     28.1,
     31.1,
@@ -721,7 +775,9 @@
   },
   "andhra_pradesh_undivided": {
    "name": "andhra_pradesh_undivided",
-   "label": "Andhra Pradesh (undivided, to 2013-14)",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     23.9,
     20.1,
@@ -746,7 +802,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -771,7 +829,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     26.1,
     29.8,
@@ -796,7 +856,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     10.2,
     11.2,
@@ -821,7 +883,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     19.3,
     18.7,
@@ -846,7 +910,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     22.5,
     23.5,
@@ -871,7 +937,9 @@
   },
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     31.3,
     30.4,
@@ -896,7 +964,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     44,
     45.6,
@@ -921,7 +991,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     39.3,
     36,
@@ -946,7 +1018,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     18.2,
     18.5,
@@ -971,7 +1045,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -996,7 +1072,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Electricity Transmission & Distribution Losses",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,

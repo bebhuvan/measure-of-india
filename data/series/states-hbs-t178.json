@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2024-04",
-  "unit": "as served by DBIE",
+  "unit": "inr_amount",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "Market Borrowings of State Governments: RBI Handbook of Statistics on Indian States, Table 178",
-  "note": "DBIE report 1737, data provider \"Main\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: Item Description; measures: value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1737, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: Item Description; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2017-04-01",
@@ -35,7 +35,9 @@
  "series": {
   "assam__repayments": {
    "name": "assam__repayments",
-   "label": "Assam: Repayments",
+   "label": "Assam: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     9630000000,
     25060000000,
@@ -49,7 +51,9 @@
   },
   "assam__gross_amount_raised": {
    "name": "assam__gross_amount_raised",
-   "label": "Assam: Gross Amount Raised",
+   "label": "Assam: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     77600000000,
     105950000000,
@@ -63,7 +67,9 @@
   },
   "meghalaya__repayments": {
    "name": "meghalaya__repayments",
-   "label": "Meghalaya: Repayments",
+   "label": "Meghalaya: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     1960000000,
     2590000000,
@@ -77,7 +83,9 @@
   },
   "meghalaya__gross_amount_raised": {
    "name": "meghalaya__gross_amount_raised",
-   "label": "Meghalaya: Gross Amount Raised",
+   "label": "Meghalaya: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     11160000000,
     11220000000,
@@ -91,7 +99,9 @@
   },
   "mizoram__repayments": {
    "name": "mizoram__repayments",
-   "label": "Mizoram: Repayments",
+   "label": "Mizoram: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     1470000000,
     1230000000,
@@ -105,7 +115,9 @@
   },
   "mizoram__gross_amount_raised": {
    "name": "mizoram__gross_amount_raised",
-   "label": "Mizoram: Gross Amount Raised",
+   "label": "Mizoram: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     4240000000,
     null,
@@ -123,7 +135,9 @@
   },
   "bihar__repayments": {
    "name": "bihar__repayments",
-   "label": "Bihar: Repayments",
+   "label": "Bihar: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     10920000000,
     33970000000,
@@ -137,7 +151,9 @@
   },
   "bihar__gross_amount_raised": {
    "name": "bihar__gross_amount_raised",
-   "label": "Bihar: Gross Amount Raised",
+   "label": "Bihar: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     100000000000,
     143000000000,
@@ -151,7 +167,9 @@
   },
   "jharkhand__repayments": {
    "name": "jharkhand__repayments",
-   "label": "Jharkhand: Repayments",
+   "label": "Jharkhand: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     11920000000,
     14860000000,
@@ -165,7 +183,9 @@
   },
   "jharkhand__gross_amount_raised": {
    "name": "jharkhand__gross_amount_raised",
-   "label": "Jharkhand: Gross Amount Raised",
+   "label": "Jharkhand: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     60000000000,
     55090000000,
@@ -179,7 +199,9 @@
   },
   "arunachal_pradesh__repayments": {
    "name": "arunachal_pradesh__repayments",
-   "label": "Arunachal Pradesh: Repayments",
+   "label": "Arunachal Pradesh: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     1850000000,
     260000000,
@@ -197,7 +219,9 @@
   },
   "arunachal_pradesh__gross_amount_raised": {
    "name": "arunachal_pradesh__gross_amount_raised",
-   "label": "Arunachal Pradesh: Gross Amount Raised",
+   "label": "Arunachal Pradesh: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     8880000000,
     7190000000,
@@ -211,7 +235,9 @@
   },
   "west_bengal__repayments": {
    "name": "west_bengal__repayments",
-   "label": "West Bengal: Repayments",
+   "label": "West Bengal: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     116070000000,
     123970000000,
@@ -225,7 +251,9 @@
   },
   "west_bengal__gross_amount_raised": {
    "name": "west_bengal__gross_amount_raised",
-   "label": "West Bengal: Gross Amount Raised",
+   "label": "West Bengal: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     369110000000,
     428280000000,
@@ -239,7 +267,9 @@
   },
   "nagaland__repayments": {
    "name": "nagaland__repayments",
-   "label": "Nagaland: Repayments",
+   "label": "Nagaland: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     3690000000,
     4670000000,
@@ -253,7 +283,9 @@
   },
   "nagaland__gross_amount_raised": {
    "name": "nagaland__gross_amount_raised",
-   "label": "Nagaland: Gross Amount Raised",
+   "label": "Nagaland: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     11350000000,
     8220000000,
@@ -267,7 +299,9 @@
   },
   "manipur__repayments": {
    "name": "manipur__repayments",
-   "label": "Manipur: Repayments",
+   "label": "Manipur: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     2470000000,
     3030000000,
@@ -281,7 +315,9 @@
   },
   "manipur__gross_amount_raised": {
    "name": "manipur__gross_amount_raised",
-   "label": "Manipur: Gross Amount Raised",
+   "label": "Manipur: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     5250000000,
     9700000000,
@@ -295,7 +331,9 @@
   },
   "odisha__repayments": {
    "name": "odisha__repayments",
-   "label": "Odisha: Repayments",
+   "label": "Odisha: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     10000000000,
@@ -309,7 +347,9 @@
   },
   "odisha__gross_amount_raised": {
    "name": "odisha__gross_amount_raised",
-   "label": "Odisha: Gross Amount Raised",
+   "label": "Odisha: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     84380000000,
     55000000000,
@@ -323,7 +363,9 @@
   },
   "sikkim__repayments": {
    "name": "sikkim__repayments",
-   "label": "Sikkim: Repayments",
+   "label": "Sikkim: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     2500000000,
     2930000000,
@@ -341,7 +383,9 @@
   },
   "sikkim__gross_amount_raised": {
    "name": "sikkim__gross_amount_raised",
-   "label": "Sikkim: Gross Amount Raised",
+   "label": "Sikkim: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     9950000000,
     10880000000,
@@ -355,7 +399,9 @@
   },
   "tripura__repayments": {
    "name": "tripura__repayments",
-   "label": "Tripura: Repayments",
+   "label": "Tripura: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     1560000000,
@@ -369,7 +415,9 @@
   },
   "tripura__gross_amount_raised": {
    "name": "tripura__gross_amount_raised",
-   "label": "Tripura: Gross Amount Raised",
+   "label": "Tripura: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     11370000000,
     15430000000,
@@ -383,7 +431,9 @@
   },
   "uttar_pradesh__repayments": {
    "name": "uttar_pradesh__repayments",
-   "label": "Uttar Pradesh: Repayments",
+   "label": "Uttar Pradesh: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     44220000000,
     126930000000,
@@ -397,7 +447,9 @@
   },
   "uttar_pradesh__gross_amount_raised": {
    "name": "uttar_pradesh__gross_amount_raised",
-   "label": "Uttar Pradesh: Gross Amount Raised",
+   "label": "Uttar Pradesh: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     416000000000,
     460000000000,
@@ -411,7 +463,9 @@
   },
   "uttarakhand__repayments": {
    "name": "uttarakhand__repayments",
-   "label": "Uttarakhand: Repayments",
+   "label": "Uttarakhand: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     8300000000,
     10110000000,
@@ -425,7 +479,9 @@
   },
   "uttarakhand__gross_amount_raised": {
    "name": "uttarakhand__gross_amount_raised",
-   "label": "Uttarakhand: Gross Amount Raised",
+   "label": "Uttarakhand: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     66600000000,
     63000000000,
@@ -439,7 +495,9 @@
   },
   "punjab__repayments": {
    "name": "punjab__repayments",
-   "label": "Punjab: Repayments",
+   "label": "Punjab: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     41210000000,
     50610000000,
@@ -453,7 +511,9 @@
   },
   "punjab__gross_amount_raised": {
    "name": "punjab__gross_amount_raised",
-   "label": "Punjab: Gross Amount Raised",
+   "label": "Punjab: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     174700000000,
     221150000000,
@@ -467,7 +527,9 @@
   },
   "haryana__repayments": {
    "name": "haryana__repayments",
-   "label": "Haryana: Repayments",
+   "label": "Haryana: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     8000000000,
     32950000000,
@@ -481,7 +543,9 @@
   },
   "haryana__gross_amount_raised": {
    "name": "haryana__gross_amount_raised",
-   "label": "Haryana: Gross Amount Raised",
+   "label": "Haryana: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     166400000000,
     212650000000,
@@ -495,7 +559,9 @@
   },
   "jammu_and_kashmir_state__repayments": {
    "name": "jammu_and_kashmir_state__repayments",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Repayments",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     22260000000,
     17570000000,
@@ -509,7 +575,9 @@
   },
   "jammu_and_kashmir_state__gross_amount_raised": {
    "name": "jammu_and_kashmir_state__gross_amount_raised",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Gross Amount Raised",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     62000000000,
     66840000000,
@@ -523,7 +591,9 @@
   },
   "himachal_pradesh__repayments": {
    "name": "himachal_pradesh__repayments",
-   "label": "Himachal Pradesh: Repayments",
+   "label": "Himachal Pradesh: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     20490000000,
     21020000000,
@@ -537,7 +607,9 @@
   },
   "himachal_pradesh__gross_amount_raised": {
    "name": "himachal_pradesh__gross_amount_raised",
-   "label": "Himachal Pradesh: Gross Amount Raised",
+   "label": "Himachal Pradesh: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     46000000000,
     42100000000,
@@ -551,7 +623,9 @@
   },
   "rajasthan__repayments": {
    "name": "rajasthan__repayments",
-   "label": "Rajasthan: Repayments",
+   "label": "Rajasthan: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     81370000000,
     129920000000,
@@ -565,7 +639,9 @@
   },
   "rajasthan__gross_amount_raised": {
    "name": "rajasthan__gross_amount_raised",
-   "label": "Rajasthan: Gross Amount Raised",
+   "label": "Rajasthan: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     249140000000,
     331780000000,
@@ -579,7 +655,9 @@
   },
   "gujarat__repayments": {
    "name": "gujarat__repayments",
-   "label": "Gujarat: Repayments",
+   "label": "Gujarat: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     82150000000,
     95340000000,
@@ -593,7 +671,9 @@
   },
   "gujarat__gross_amount_raised": {
    "name": "gujarat__gross_amount_raised",
-   "label": "Gujarat: Gross Amount Raised",
+   "label": "Gujarat: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     240000000000,
     369710000000,
@@ -607,7 +687,9 @@
   },
   "total__repayments": {
    "name": "total__repayments",
-   "label": "Total: Repayments",
+   "label": "Total: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     788190000000,
     1296800000000,
@@ -621,7 +703,9 @@
   },
   "total__gross_amount_raised": {
    "name": "total__gross_amount_raised",
-   "label": "Total: Gross Amount Raised",
+   "label": "Total: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     4191000000000,
     4783230000000,
@@ -635,7 +719,9 @@
   },
   "maharashtra__repayments": {
    "name": "maharashtra__repayments",
-   "label": "Maharashtra: Repayments",
+   "label": "Maharashtra: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     85200000000,
     177620000000,
@@ -649,7 +735,9 @@
   },
   "maharashtra__gross_amount_raised": {
    "name": "maharashtra__gross_amount_raised",
-   "label": "Maharashtra: Gross Amount Raised",
+   "label": "Maharashtra: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     450000000000,
     208690000000,
@@ -663,7 +751,9 @@
   },
   "goa__repayments": {
    "name": "goa__repayments",
-   "label": "Goa: Repayments",
+   "label": "Goa: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     4000000000,
     5000000000,
@@ -677,7 +767,9 @@
   },
   "goa__gross_amount_raised": {
    "name": "goa__gross_amount_raised",
-   "label": "Goa: Gross Amount Raised",
+   "label": "Goa: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     18000000000,
     23500000000,
@@ -691,7 +783,9 @@
   },
   "madhya_pradesh__repayments": {
    "name": "madhya_pradesh__repayments",
-   "label": "Madhya Pradesh: Repayments",
+   "label": "Madhya Pradesh: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     18750000000,
     54950000000,
@@ -705,7 +799,9 @@
   },
   "madhya_pradesh__gross_amount_raised": {
    "name": "madhya_pradesh__gross_amount_raised",
-   "label": "Madhya Pradesh: Gross Amount Raised",
+   "label": "Madhya Pradesh: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     150000000000,
     204960000000,
@@ -719,7 +815,9 @@
   },
   "chhattisgarh__repayments": {
    "name": "chhattisgarh__repayments",
-   "label": "Chhattisgarh: Repayments",
+   "label": "Chhattisgarh: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -733,7 +831,9 @@
   },
   "chhattisgarh__gross_amount_raised": {
    "name": "chhattisgarh__gross_amount_raised",
-   "label": "Chhattisgarh: Gross Amount Raised",
+   "label": "Chhattisgarh: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     81000000000,
     129000000000,
@@ -747,7 +847,9 @@
   },
   "andhra_pradesh__repayments": {
    "name": "andhra_pradesh__repayments",
-   "label": "Andhra Pradesh: Repayments",
+   "label": "Andhra Pradesh: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     38780000000,
     63760000000,
@@ -761,7 +863,9 @@
   },
   "andhra_pradesh__gross_amount_raised": {
    "name": "andhra_pradesh__gross_amount_raised",
-   "label": "Andhra Pradesh: Gross Amount Raised",
+   "label": "Andhra Pradesh: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     228000000000,
     302000000000,
@@ -775,7 +879,9 @@
   },
   "telangana__repayments": {
    "name": "telangana__repayments",
-   "label": "Telangana: Repayments",
+   "label": "Telangana: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     27720000000,
     45570000000,
@@ -789,7 +895,9 @@
   },
   "telangana__gross_amount_raised": {
    "name": "telangana__gross_amount_raised",
-   "label": "Telangana: Gross Amount Raised",
+   "label": "Telangana: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     246000000000,
     267400000000,
@@ -803,7 +911,9 @@
   },
   "karnataka__repayments": {
    "name": "karnataka__repayments",
-   "label": "Karnataka: Repayments",
+   "label": "Karnataka: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     47500000000,
     74170000000,
@@ -817,7 +927,9 @@
   },
   "karnataka__gross_amount_raised": {
    "name": "karnataka__gross_amount_raised",
-   "label": "Karnataka: Gross Amount Raised",
+   "label": "Karnataka: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     220980000000,
     396000000000,
@@ -831,7 +943,9 @@
   },
   "tamil_nadu__repayments": {
    "name": "tamil_nadu__repayments",
-   "label": "Tamil Nadu: Repayments",
+   "label": "Tamil Nadu: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     49420000000,
     108480000000,
@@ -845,7 +959,9 @@
   },
   "tamil_nadu__gross_amount_raised": {
    "name": "tamil_nadu__gross_amount_raised",
-   "label": "Tamil Nadu: Gross Amount Raised",
+   "label": "Tamil Nadu: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     409650000000,
     431250000000,
@@ -859,7 +975,9 @@
   },
   "kerala__repayments": {
    "name": "kerala__repayments",
-   "label": "Keralam: Repayments",
+   "label": "Keralam: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     42970000000,
     55160000000,
@@ -873,7 +991,9 @@
   },
   "kerala__gross_amount_raised": {
    "name": "kerala__gross_amount_raised",
-   "label": "Keralam: Gross Amount Raised",
+   "label": "Keralam: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     205000000000,
     195000000000,
@@ -887,7 +1007,9 @@
   },
   "puducherry__repayments": {
    "name": "puducherry__repayments",
-   "label": "Puducherry: Repayments",
+   "label": "Puducherry: Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     3370000000,
     3500000000,
@@ -901,7 +1023,9 @@
   },
   "puducherry__gross_amount_raised": {
    "name": "puducherry__gross_amount_raised",
-   "label": "Puducherry: Gross Amount Raised",
+   "label": "Puducherry: Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     8250000000,
     8250000000,
@@ -915,7 +1039,9 @@
   },
   "jammu_and_kashmir_ut__repayments": {
    "name": "jammu_and_kashmir_ut__repayments",
-   "label": "Jammu & Kashmir (UT, from 2019-20): Repayments",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Market Borrowings of State Governments: Repayments",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -929,7 +1055,9 @@
   },
   "jammu_and_kashmir_ut__gross_amount_raised": {
    "name": "jammu_and_kashmir_ut__gross_amount_raised",
-   "label": "Jammu & Kashmir (UT, from 2019-20): Gross Amount Raised",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Market Borrowings of State Governments: Gross Amount Raised",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,

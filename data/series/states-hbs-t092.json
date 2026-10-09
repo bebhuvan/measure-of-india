@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2023-04",
-  "unit": "Lakh Nos.",
+  "unit": "lakh_count",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Egg Production: RBI Handbook of Statistics on Indian States, Table 92",
-  "note": "DBIE report 1640, data provider \"Query 1\". Values exactly as DBIE serves them; DBIE's unit label: Lakh Nos. (rupee amounts are served in rupees). Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1640, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: Lakh Nos.. Periods: fiscal years, dated at April. Dimensions: none; measures: value. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -47,7 +47,9 @@
  "series": {
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     452009,
     462307,
@@ -73,7 +75,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     530,
     477,
@@ -99,7 +103,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -125,7 +131,9 @@
   },
   "andhra_pradesh_undivided": {
    "name": "andhra_pradesh_undivided",
-   "label": "Andhra Pradesh (undivided, to 2013-14)",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     158040,
     164534,
@@ -151,7 +159,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     90,
     73,
@@ -177,7 +187,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     5216,
     5359,
@@ -203,7 +215,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     7894,
     10012,
@@ -229,7 +243,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     280,
     280,
@@ -255,7 +271,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     8795,
     8875,
@@ -281,7 +299,9 @@
   },
   "dadra_and_nagar_haveli": {
    "name": "dadra_and_nagar_haveli",
-   "label": "Dadra & Nagar Haveli",
+   "label": "Dadra & Nagar Haveli: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     50,
     48,
@@ -307,7 +327,9 @@
   },
   "daman_and_diu": {
    "name": "daman_and_diu",
-   "label": "Daman & Diu",
+   "label": "Daman & Diu: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     9,
     11,
@@ -333,7 +355,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     264,
     196,
@@ -359,7 +383,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     146,
     146,
@@ -385,7 +411,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     5031,
     5775,
@@ -411,7 +439,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     14816,
     15126,
@@ -437,7 +467,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     811,
     753,
@@ -463,7 +495,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -489,7 +523,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     6105,
     6320,
@@ -515,7 +551,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     6980,
     6970,
@@ -541,7 +579,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     17719,
     18348,
@@ -567,7 +607,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     11974,
     11956,
@@ -593,7 +635,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     120,
     124,
@@ -619,7 +663,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     9023,
     9414,
@@ -645,7 +691,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     34362,
     35227,
@@ -671,7 +719,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     822,
     835,
@@ -697,7 +747,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     946,
     973,
@@ -723,7 +775,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     317,
     326,
@@ -749,7 +803,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     755,
     868,
@@ -775,7 +831,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     12160,
     12787,
@@ -801,7 +859,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     102,
     105,
@@ -827,7 +887,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     36800,
     35200,
@@ -853,7 +915,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     6932,
     7029,
@@ -879,7 +943,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     140,
     146,
@@ -905,7 +971,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     63948,
     62225,
@@ -931,7 +999,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -957,7 +1027,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     1071,
     1100,
@@ -983,7 +1055,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     1866,
     1673,
@@ -1009,7 +1083,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     9018,
     9228,
@@ -1035,7 +1111,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Egg Production",
+   "unit": "lakh_count",
+   "group": "Agriculture and allied",
    "data": [
     28877,
     29637,

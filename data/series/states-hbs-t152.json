@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2024-04",
-  "unit": "as served by DBIE",
+  "unit": "count",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Distribution of Offices of Scheduled Commercial Banks: RBI Handbook of Statistics on Indian States, Table 152",
-  "note": "DBIE report 1695, data provider \"Main\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1, region. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1695, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: value, region. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2003-04-01",
@@ -47,9 +47,11 @@
   "2024-04-01"
  ],
  "series": {
-  "assam__value_1": {
-   "name": "assam__value_1",
-   "label": "Assam: value 1",
+  "assam": {
+   "name": "assam",
+   "label": "Assam: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     1256,
     1272,
@@ -75,9 +77,11 @@
     3236
    ]
   },
-  "region_north_eastern_region__region": {
-   "name": "region_north_eastern_region__region",
-   "label": "North Eastern Region: region",
+  "region_north_eastern_region": {
+   "name": "region_north_eastern_region",
+   "label": "North Eastern Region: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     1918,
     1942,
@@ -103,9 +107,11 @@
     5238
    ]
   },
-  "meghalaya__value_1": {
-   "name": "meghalaya__value_1",
-   "label": "Meghalaya: value 1",
+  "meghalaya": {
+   "name": "meghalaya",
+   "label": "Meghalaya: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     182,
     185,
@@ -131,9 +137,11 @@
     394
    ]
   },
-  "mizoram__value_1": {
-   "name": "mizoram__value_1",
-   "label": "Mizoram: value 1",
+  "mizoram": {
+   "name": "mizoram",
+   "label": "Mizoram: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     79,
     80,
@@ -159,9 +167,11 @@
     241
    ]
   },
-  "bihar__value_1": {
-   "name": "bihar__value_1",
-   "label": "Bihar: value 1",
+  "bihar": {
+   "name": "bihar",
+   "label": "Bihar: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     3618,
     3646,
@@ -187,9 +197,11 @@
     8226
    ]
   },
-  "region_eastern_region__region": {
-   "name": "region_eastern_region__region",
-   "label": "Eastern Region: region",
+  "region_eastern_region": {
+   "name": "region_eastern_region",
+   "label": "Eastern Region: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     12043,
     12211,
@@ -215,9 +227,11 @@
     28084
    ]
   },
-  "jharkhand__value_1": {
-   "name": "jharkhand__value_1",
-   "label": "Jharkhand: value 1",
+  "jharkhand": {
+   "name": "jharkhand",
+   "label": "Jharkhand: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     1493,
     1511,
@@ -243,9 +257,11 @@
     3518
    ]
   },
-  "arunachal_pradesh__value_1": {
-   "name": "arunachal_pradesh__value_1",
-   "label": "Arunachal Pradesh: value 1",
+  "arunachal_pradesh": {
+   "name": "arunachal_pradesh",
+   "label": "Arunachal Pradesh: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     67,
     68,
@@ -271,9 +287,11 @@
     229
    ]
   },
-  "ladakh__value_1": {
-   "name": "ladakh__value_1",
-   "label": "Ladakh: value 1",
+  "ladakh": {
+   "name": "ladakh",
+   "label": "Ladakh: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     null,
     null,
@@ -299,9 +317,11 @@
     103
    ]
   },
-  "region_northern_region__region": {
-   "name": "region_northern_region__region",
-   "label": "Northern Region: region",
+  "region_northern_region": {
+   "name": "region_northern_region",
+   "label": "Northern Region: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     11243,
     11564,
@@ -327,9 +347,11 @@
     29781
    ]
   },
-  "west_bengal__value_1": {
-   "name": "west_bengal__value_1",
-   "label": "West Bengal: value 1",
+  "west_bengal": {
+   "name": "west_bengal",
+   "label": "West Bengal: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     4581,
     4661,
@@ -355,9 +377,11 @@
     10159
    ]
   },
-  "nagaland__value_1": {
-   "name": "nagaland__value_1",
-   "label": "Nagaland: value 1",
+  "nagaland": {
+   "name": "nagaland",
+   "label": "Nagaland: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     71,
     73,
@@ -383,9 +407,11 @@
     231
    ]
   },
-  "manipur__value_1": {
-   "name": "manipur__value_1",
-   "label": "Manipur: value 1",
+  "manipur": {
+   "name": "manipur",
+   "label": "Manipur: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     78,
     78,
@@ -411,9 +437,11 @@
     261
    ]
   },
-  "sikkim__value_1": {
-   "name": "sikkim__value_1",
-   "label": "Sikkim: value 1",
+  "sikkim": {
+   "name": "sikkim",
+   "label": "Sikkim: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     49,
     55,
@@ -439,9 +467,11 @@
     185
    ]
   },
-  "tripura__value_1": {
-   "name": "tripura__value_1",
-   "label": "Tripura: value 1",
+  "tripura": {
+   "name": "tripura",
+   "label": "Tripura: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     185,
     186,
@@ -467,9 +497,11 @@
     646
    ]
   },
-  "andaman_and_nicobar_islands__value_1": {
-   "name": "andaman_and_nicobar_islands__value_1",
-   "label": "Andaman & Nicobar Islands: value 1",
+  "andaman_and_nicobar_islands": {
+   "name": "andaman_and_nicobar_islands",
+   "label": "Andaman & Nicobar Islands: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     32,
     33,
@@ -495,9 +527,11 @@
     76
    ]
   },
-  "uttar_pradesh__value_1": {
-   "name": "uttar_pradesh__value_1",
-   "label": "Uttar Pradesh: value 1",
+  "uttar_pradesh": {
+   "name": "uttar_pradesh",
+   "label": "Uttar Pradesh: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     8367,
     8475,
@@ -523,9 +557,11 @@
     19436
    ]
   },
-  "region_central_region__region": {
-   "name": "region_central_region__region",
-   "label": "Central Region: region",
+  "region_central_region": {
+   "name": "region_central_region",
+   "label": "Central Region: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     13817,
     13996,
@@ -551,9 +587,11 @@
     32915
    ]
   },
-  "delhi__value_1": {
-   "name": "delhi__value_1",
-   "label": "Delhi: value 1",
+  "delhi": {
+   "name": "delhi",
+   "label": "Delhi: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     1616,
     1712,
@@ -579,9 +617,11 @@
     3981
    ]
   },
-  "punjab__value_1": {
-   "name": "punjab__value_1",
-   "label": "Punjab: value 1",
+  "punjab": {
+   "name": "punjab",
+   "label": "Punjab: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     2693,
     2764,
@@ -607,9 +647,11 @@
     6952
    ]
   },
-  "haryana__value_1": {
-   "name": "haryana__value_1",
-   "label": "Haryana: value 1",
+  "haryana": {
+   "name": "haryana",
+   "label": "Haryana: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     1640,
     1692,
@@ -635,9 +677,11 @@
     5683
    ]
   },
-  "chandigarh__value_1": {
-   "name": "chandigarh__value_1",
-   "label": "Chandigarh: value 1",
+  "chandigarh": {
+   "name": "chandigarh",
+   "label": "Chandigarh: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     221,
     233,
@@ -663,9 +707,11 @@
     461
    ]
   },
-  "jammu_and_kashmir_state__value_1": {
-   "name": "jammu_and_kashmir_state__value_1",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): value 1",
+  "jammu_and_kashmir_state": {
+   "name": "jammu_and_kashmir_state",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     856,
     875,
@@ -691,9 +737,11 @@
     null
    ]
   },
-  "himachal_pradesh__value_1": {
-   "name": "himachal_pradesh__value_1",
-   "label": "Himachal Pradesh: value 1",
+  "himachal_pradesh": {
+   "name": "himachal_pradesh",
+   "label": "Himachal Pradesh: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     795,
     807,
@@ -719,9 +767,11 @@
     1819
    ]
   },
-  "rajasthan__value_1": {
-   "name": "rajasthan__value_1",
-   "label": "Rajasthan: value 1",
+  "rajasthan": {
+   "name": "rajasthan",
+   "label": "Rajasthan: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     3422,
     3481,
@@ -747,9 +797,11 @@
     8786
    ]
   },
-  "gujarat__value_1": {
-   "name": "gujarat__value_1",
-   "label": "Gujarat: value 1",
+  "gujarat": {
+   "name": "gujarat",
+   "label": "Gujarat: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     3767,
     3807,
@@ -775,9 +827,11 @@
     9513
    ]
   },
-  "region_western_region__region": {
-   "name": "region_western_region__region",
-   "label": "Western Region: region",
+  "region_western_region": {
+   "name": "region_western_region",
+   "label": "Western Region: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     10701,
     10894,
@@ -803,9 +857,11 @@
     25148
    ]
   },
-  "maharashtra__value_1": {
-   "name": "maharashtra__value_1",
-   "label": "Maharashtra: value 1",
+  "maharashtra": {
+   "name": "maharashtra",
+   "label": "Maharashtra: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     6565,
     6708,
@@ -831,9 +887,11 @@
     14832
    ]
   },
-  "daman_and_diu__value_1": {
-   "name": "daman_and_diu__value_1",
-   "label": "Daman & Diu: value 1",
+  "daman_and_diu": {
+   "name": "daman_and_diu",
+   "label": "Daman & Diu: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     16,
     16,
@@ -859,9 +917,11 @@
     null
    ]
   },
-  "goa__value_1": {
-   "name": "goa__value_1",
-   "label": "Goa: value 1",
+  "goa": {
+   "name": "goa",
+   "label": "Goa: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     341,
     351,
@@ -887,9 +947,11 @@
     690
    ]
   },
-  "dadra_and_nagar_haveli__value_1": {
-   "name": "dadra_and_nagar_haveli__value_1",
-   "label": "Dadra & Nagar Haveli: value 1",
+  "dadra_and_nagar_haveli": {
+   "name": "dadra_and_nagar_haveli",
+   "label": "Dadra & Nagar Haveli: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     12,
     12,
@@ -915,9 +977,11 @@
     113
    ]
   },
-  "madhya_pradesh__value_1": {
-   "name": "madhya_pradesh__value_1",
-   "label": "Madhya Pradesh: value 1",
+  "madhya_pradesh": {
+   "name": "madhya_pradesh",
+   "label": "Madhya Pradesh: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     3521,
     3560,
@@ -943,9 +1007,11 @@
     7949
    ]
   },
-  "chhattisgarh__value_1": {
-   "name": "chhattisgarh__value_1",
-   "label": "Chhattisgarh: value 1",
+  "chhattisgarh": {
+   "name": "chhattisgarh",
+   "label": "Chhattisgarh: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     1051,
     1063,
@@ -971,9 +1037,11 @@
     3187
    ]
   },
-  "andhra_pradesh__value_1": {
-   "name": "andhra_pradesh__value_1",
-   "label": "Andhra Pradesh: value 1",
+  "andhra_pradesh": {
+   "name": "andhra_pradesh",
+   "label": "Andhra Pradesh: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     5400,
     5519,
@@ -999,9 +1067,11 @@
     8087
    ]
   },
-  "region_southern_region__region": {
-   "name": "region_southern_region__region",
-   "label": "Southern Region: region",
+  "region_southern_region": {
+   "name": "region_southern_region",
+   "label": "Southern Region: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     18923,
     19362,
@@ -1027,9 +1097,11 @@
     46640
    ]
   },
-  "telangana__value_1": {
-   "name": "telangana__value_1",
-   "label": "Telangana: value 1",
+  "telangana": {
+   "name": "telangana",
+   "label": "Telangana: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     null,
     null,
@@ -1055,9 +1127,11 @@
     6269
    ]
   },
-  "karnataka__value_1": {
-   "name": "karnataka__value_1",
-   "label": "Karnataka: value 1",
+  "karnataka": {
+   "name": "karnataka",
+   "label": "Karnataka: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     4992,
     5114,
@@ -1083,9 +1157,11 @@
     11395
    ]
   },
-  "lakshadweep__value_1": {
-   "name": "lakshadweep__value_1",
-   "label": "Lakshadweep: value 1",
+  "lakshadweep": {
+   "name": "lakshadweep",
+   "label": "Lakshadweep: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     9,
     9,
@@ -1111,9 +1187,11 @@
     17
    ]
   },
-  "tamil_nadu__value_1": {
-   "name": "tamil_nadu__value_1",
-   "label": "Tamil Nadu: value 1",
+  "tamil_nadu": {
+   "name": "tamil_nadu",
+   "label": "Tamil Nadu: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     4916,
     5021,
@@ -1139,9 +1217,11 @@
     13204
    ]
   },
-  "kerala__value_1": {
-   "name": "kerala__value_1",
-   "label": "Keralam: value 1",
+  "kerala": {
+   "name": "kerala",
+   "label": "Keralam: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     3522,
     3609,
@@ -1167,9 +1247,11 @@
     7380
    ]
   },
-  "all_india__value_1": {
-   "name": "all_india__value_1",
-   "label": "All India: value 1",
+  "all_india": {
+   "name": "all_india",
+   "label": "All India: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     68645,
     69969,
@@ -1195,9 +1277,11 @@
     167806
    ]
   },
-  "odisha__value_1": {
-   "name": "odisha__value_1",
-   "label": "Odisha: value 1",
+  "odisha": {
+   "name": "odisha",
+   "label": "Odisha: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     2270,
     2305,
@@ -1223,9 +1307,11 @@
     5920
    ]
   },
-  "uttarakhand__value_1": {
-   "name": "uttarakhand__value_1",
-   "label": "Uttarakhand: value 1",
+  "uttarakhand": {
+   "name": "uttarakhand",
+   "label": "Uttarakhand: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     878,
     898,
@@ -1251,9 +1337,11 @@
     2343
    ]
   },
-  "puducherry__value_1": {
-   "name": "puducherry__value_1",
-   "label": "Puducherry: value 1",
+  "puducherry": {
+   "name": "puducherry",
+   "label": "Puducherry: Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     84,
     90,
@@ -1279,9 +1367,11 @@
     288
    ]
   },
-  "jammu_and_kashmir_ut__value_1": {
-   "name": "jammu_and_kashmir_ut__value_1",
-   "label": "Jammu & Kashmir (UT, from 2019-20): value 1",
+  "jammu_and_kashmir_ut": {
+   "name": "jammu_and_kashmir_ut",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Distribution of Offices of Scheduled Commercial Banks",
+   "unit": "count",
+   "group": "Banking",
    "data": [
     null,
     null,

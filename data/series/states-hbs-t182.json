@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2024-01",
-  "unit": "as served by DBIE",
+  "unit": "count",
   "periodKind": "calendar",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-Wise Foreign Tourist Visits: RBI Handbook of Statistics on Indian States, Table 182",
-  "note": "DBIE report 1741, data provider \"Query 1\". Values exactly as DBIE serves them. Periods: calendar years. Dimensions: none; measures: value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1741, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: calendar years. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2011-01-01",
@@ -41,7 +41,9 @@
  "series": {
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     16400,
     17500,
@@ -61,7 +63,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     4800,
     5300,
@@ -81,7 +85,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     700,
     700,
@@ -101,7 +107,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     972500,
     1096900,
@@ -121,7 +129,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     72500,
     31900,
@@ -141,7 +151,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     4800,
     5100,
@@ -161,7 +173,9 @@
   },
   "ladakh": {
    "name": "ladakh",
-   "label": "Ladakh",
+   "label": "Ladakh: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     null,
     null,
@@ -181,7 +195,9 @@
   },
   "dadra_and_nagar_haveli_and_daman_and_diu": {
    "name": "dadra_and_nagar_haveli_and_daman_and_diu",
-   "label": "Dadra And Nagar Haveli And Daman And Diu",
+   "label": "Dadra And Nagar Haveli And Daman And Diu: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     5900,
     5800,
@@ -201,7 +217,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     1213300,
     1219600,
@@ -221,7 +239,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     2100,
     2500,
@@ -241,7 +261,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     600,
     700,
@@ -261,7 +283,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     60700,
     64700,
@@ -281,7 +305,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     23600,
     26500,
@@ -301,7 +327,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     6000,
     7800,
@@ -321,7 +349,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     15800,
     17500,
@@ -341,7 +371,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     1887100,
     1994500,
@@ -361,7 +393,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     124700,
     124600,
@@ -381,7 +415,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     2159900,
     2346000,
@@ -401,7 +437,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     151000,
     143800,
@@ -421,7 +459,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     130400,
     233000,
@@ -441,7 +481,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     37200,
     34100,
@@ -461,7 +503,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     71600,
     78800,
@@ -481,7 +525,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     484500,
     500300,
@@ -501,7 +547,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     1352000,
     1451400,
@@ -521,7 +569,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     166000,
     174200,
@@ -541,7 +591,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     4815400,
     2651900,
@@ -561,7 +613,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     445900,
     450500,
@@ -581,7 +635,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     269600,
     275900,
@@ -601,7 +657,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     4000,
     4200,
@@ -621,7 +679,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     264600,
     292800,
@@ -641,7 +701,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     null,
     null,
@@ -661,7 +723,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     574000,
     595400,
@@ -681,7 +745,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     600,
     600,
@@ -701,7 +767,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     3373900,
     3561700,
@@ -721,7 +789,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     733000,
     793700,
@@ -741,7 +811,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     52300,
     52900,
@@ -761,7 +833,9 @@
   },
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     19497100,
     18263100,
@@ -781,7 +855,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Foreign Tourist Visits",
+   "unit": "count",
+   "group": "External",
    "data": [
     null,
     null,

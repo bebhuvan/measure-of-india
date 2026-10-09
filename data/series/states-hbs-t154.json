@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2024-04",
-  "unit": "as served by DBIE",
+  "unit": "pct",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation: RBI Handbook of Statistics on Indian States, Table 154",
-  "note": "DBIE report 1697, data provider \"Main\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: none; measures: state, region. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1697, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: state, region. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2003-04-01",
@@ -47,9 +47,11 @@
   "2024-04-01"
  ],
  "series": {
-  "assam__state": {
-   "name": "assam__state",
-   "label": "Assam: state",
+  "assam": {
+   "name": "assam",
+   "label": "Assam: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     35.7,
     41.9,
@@ -75,9 +77,11 @@
     66
    ]
   },
-  "region_north_eastern_region__region": {
-   "name": "region_north_eastern_region__region",
-   "label": "North Eastern Region: region",
+  "region_north_eastern_region": {
+   "name": "region_north_eastern_region",
+   "label": "North Eastern Region: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     33.7,
     44.6,
@@ -103,9 +107,11 @@
     58
    ]
   },
-  "meghalaya__state": {
-   "name": "meghalaya__state",
-   "label": "Meghalaya: state",
+  "meghalaya": {
+   "name": "meghalaya",
+   "label": "Meghalaya: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     42.6,
     85.7,
@@ -131,9 +137,11 @@
     40.7
    ]
   },
-  "mizoram__state": {
-   "name": "mizoram__state",
-   "label": "Mizoram: state",
+  "mizoram": {
+   "name": "mizoram",
+   "label": "Mizoram: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     39.7,
     59.1,
@@ -159,9 +167,11 @@
     51.8
    ]
   },
-  "bihar__state": {
-   "name": "bihar__state",
-   "label": "Bihar: state",
+  "bihar": {
+   "name": "bihar",
+   "label": "Bihar: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     26.9,
     31.4,
@@ -187,9 +197,11 @@
     53.5
    ]
   },
-  "region_eastern_region__region": {
-   "name": "region_eastern_region__region",
-   "label": "Eastern Region: region",
+  "region_eastern_region": {
+   "name": "region_eastern_region",
+   "label": "Eastern Region: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     45.2,
     50.4,
@@ -215,9 +227,11 @@
     51.7
    ]
   },
-  "jharkhand__state": {
-   "name": "jharkhand__state",
-   "label": "Jharkhand: state",
+  "jharkhand": {
+   "name": "jharkhand",
+   "label": "Jharkhand: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     26.9,
     30.6,
@@ -243,9 +257,11 @@
     41.1
    ]
   },
-  "arunachal_pradesh__state": {
-   "name": "arunachal_pradesh__state",
-   "label": "Arunachal Pradesh: state",
+  "arunachal_pradesh": {
+   "name": "arunachal_pradesh",
+   "label": "Arunachal Pradesh: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     25.2,
     30,
@@ -271,9 +287,11 @@
     32.2
    ]
   },
-  "ladakh__state": {
-   "name": "ladakh__state",
-   "label": "Ladakh: state",
+  "ladakh": {
+   "name": "ladakh",
+   "label": "Ladakh: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     null,
     null,
@@ -299,9 +317,11 @@
     44.2
    ]
   },
-  "region_northern_region__region": {
-   "name": "region_northern_region__region",
-   "label": "Northern Region: region",
+  "region_northern_region": {
+   "name": "region_northern_region",
+   "label": "Northern Region: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     56.8,
     62.2,
@@ -327,9 +347,11 @@
     80
    ]
   },
-  "west_bengal__state": {
-   "name": "west_bengal__state",
-   "label": "West Bengal: state",
+  "west_bengal": {
+   "name": "west_bengal",
+   "label": "West Bengal: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     53.8,
     56.8,
@@ -355,9 +377,11 @@
     54.3
    ]
   },
-  "nagaland__state": {
-   "name": "nagaland__state",
-   "label": "Nagaland: state",
+  "nagaland": {
+   "name": "nagaland",
+   "label": "Nagaland: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     15.2,
     23.2,
@@ -383,9 +407,11 @@
     53.5
    ]
   },
-  "manipur__state": {
-   "name": "manipur__state",
-   "label": "Manipur: state",
+  "manipur": {
+   "name": "manipur",
+   "label": "Manipur: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     31.8,
     42.6,
@@ -411,9 +437,11 @@
     79.7
    ]
   },
-  "odisha__state": {
-   "name": "odisha__state",
-   "label": "Odisha: state",
+  "odisha": {
+   "name": "odisha",
+   "label": "Odisha: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     58.6,
     74.7,
@@ -439,9 +467,11 @@
     51
    ]
   },
-  "sikkim__state": {
-   "name": "sikkim__state",
-   "label": "Sikkim: state",
+  "sikkim": {
+   "name": "sikkim",
+   "label": "Sikkim: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     23,
     29.3,
@@ -467,9 +497,11 @@
     43.8
    ]
   },
-  "tripura__state": {
-   "name": "tripura__state",
-   "label": "Tripura: state",
+  "tripura": {
+   "name": "tripura",
+   "label": "Tripura: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     24.7,
     29,
@@ -495,9 +527,11 @@
     45.4
    ]
   },
-  "andaman_and_nicobar_islands__state": {
-   "name": "andaman_and_nicobar_islands__state",
-   "label": "Andaman & Nicobar Islands: state",
+  "andaman_and_nicobar_islands": {
+   "name": "andaman_and_nicobar_islands",
+   "label": "Andaman & Nicobar Islands: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     42.2,
     43.8,
@@ -523,9 +557,11 @@
     52.5
    ]
   },
-  "uttar_pradesh__state": {
-   "name": "uttar_pradesh__state",
-   "label": "Uttar Pradesh: state",
+  "uttar_pradesh": {
+   "name": "uttar_pradesh",
+   "label": "Uttar Pradesh: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     38,
     42.2,
@@ -551,9 +587,11 @@
     54
    ]
   },
-  "region_central_region__region": {
-   "name": "region_central_region__region",
-   "label": "Central Region: region",
+  "region_central_region": {
+   "name": "region_central_region",
+   "label": "Central Region: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     39.9,
     45.8,
@@ -579,9 +617,11 @@
     61.7
    ]
   },
-  "uttarakhand__state": {
-   "name": "uttarakhand__state",
-   "label": "Uttarakhand: state",
+  "uttarakhand": {
+   "name": "uttarakhand",
+   "label": "Uttarakhand: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     23.4,
     29.1,
@@ -607,9 +647,11 @@
     43.5
    ]
   },
-  "delhi__state": {
-   "name": "delhi__state",
-   "label": "Delhi: state",
+  "delhi": {
+   "name": "delhi",
+   "label": "Delhi: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     57.9,
     62.5,
@@ -635,9 +677,11 @@
     88.1
    ]
   },
-  "punjab__state": {
-   "name": "punjab__state",
-   "label": "Punjab: state",
+  "punjab": {
+   "name": "punjab",
+   "label": "Punjab: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     45.7,
     49.7,
@@ -663,9 +707,11 @@
     61.3
    ]
   },
-  "haryana__state": {
-   "name": "haryana__state",
-   "label": "Haryana: state",
+  "haryana": {
+   "name": "haryana",
+   "label": "Haryana: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     59.6,
     63.2,
@@ -691,9 +737,11 @@
     76.2
    ]
   },
-  "chandigarh__state": {
-   "name": "chandigarh__state",
-   "label": "Chandigarh: state",
+  "chandigarh": {
+   "name": "chandigarh",
+   "label": "Chandigarh: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     107,
     97,
@@ -719,9 +767,11 @@
     75
    ]
   },
-  "jammu_and_kashmir_state__state": {
-   "name": "jammu_and_kashmir_state__state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): state",
+  "jammu_and_kashmir_state": {
+   "name": "jammu_and_kashmir_state",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     41.7,
     50.9,
@@ -747,9 +797,11 @@
     null
    ]
   },
-  "himachal_pradesh__state": {
-   "name": "himachal_pradesh__state",
-   "label": "Himachal Pradesh: state",
+  "himachal_pradesh": {
+   "name": "himachal_pradesh",
+   "label": "Himachal Pradesh: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     42.7,
     50.9,
@@ -775,9 +827,11 @@
     39.2
    ]
   },
-  "rajasthan__state": {
-   "name": "rajasthan__state",
-   "label": "Rajasthan: state",
+  "rajasthan": {
+   "name": "rajasthan",
+   "label": "Rajasthan: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     62.8,
     76.5,
@@ -803,9 +857,11 @@
     94.2
    ]
   },
-  "gujarat__state": {
-   "name": "gujarat__state",
-   "label": "Gujarat: state",
+  "gujarat": {
+   "name": "gujarat",
+   "label": "Gujarat: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     54.8,
     60.9,
@@ -831,9 +887,11 @@
     88.4
    ]
   },
-  "region_western_region__region": {
-   "name": "region_western_region__region",
-   "label": "Western Region: region",
+  "region_western_region": {
+   "name": "region_western_region",
+   "label": "Western Region: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     63.2,
     71.8,
@@ -859,9 +917,11 @@
     85.1
    ]
   },
-  "maharashtra__state": {
-   "name": "maharashtra__state",
-   "label": "Maharashtra: state",
+  "maharashtra": {
+   "name": "maharashtra",
+   "label": "Maharashtra: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     66.5,
     75.9,
@@ -887,9 +947,11 @@
     85.7
    ]
   },
-  "daman_and_diu__state": {
-   "name": "daman_and_diu__state",
-   "label": "Daman & Diu: state",
+  "daman_and_diu": {
+   "name": "daman_and_diu",
+   "label": "Daman & Diu: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     49.8,
     48.3,
@@ -915,9 +977,11 @@
     null
    ]
   },
-  "goa__state": {
-   "name": "goa__state",
-   "label": "Goa: state",
+  "goa": {
+   "name": "goa",
+   "label": "Goa: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     27.3,
     30.3,
@@ -943,9 +1007,11 @@
     28.6
    ]
   },
-  "dadra_and_nagar_haveli__state": {
-   "name": "dadra_and_nagar_haveli__state",
-   "label": "Dadra & Nagar Haveli: state",
+  "dadra_and_nagar_haveli": {
+   "name": "dadra_and_nagar_haveli",
+   "label": "Dadra & Nagar Haveli: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     118.8,
     110.8,
@@ -971,9 +1037,11 @@
     52.1
    ]
   },
-  "madhya_pradesh__state": {
-   "name": "madhya_pradesh__state",
-   "label": "Madhya Pradesh: state",
+  "madhya_pradesh": {
+   "name": "madhya_pradesh",
+   "label": "Madhya Pradesh: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     50.1,
     61.2,
@@ -999,9 +1067,11 @@
     81.7
    ]
   },
-  "chhattisgarh__state": {
-   "name": "chhattisgarh__state",
-   "label": "Chhattisgarh: state",
+  "chhattisgarh": {
+   "name": "chhattisgarh",
+   "label": "Chhattisgarh: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     44.9,
     49.9,
@@ -1027,9 +1097,11 @@
     83.2
    ]
   },
-  "andhra_pradesh__state": {
-   "name": "andhra_pradesh__state",
-   "label": "Andhra Pradesh: state",
+  "andhra_pradesh": {
+   "name": "andhra_pradesh",
+   "label": "Andhra Pradesh: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     70.9,
     83.3,
@@ -1055,9 +1127,11 @@
     157.2
    ]
   },
-  "region_southern_region__region": {
-   "name": "region_southern_region__region",
-   "label": "Southern Region: region",
+  "region_southern_region": {
+   "name": "region_southern_region",
+   "label": "Southern Region: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     72.7,
     83.9,
@@ -1083,9 +1157,11 @@
     99.9
    ]
   },
-  "telangana__state": {
-   "name": "telangana__state",
-   "label": "Telangana: state",
+  "telangana": {
+   "name": "telangana",
+   "label": "Telangana: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     null,
     null,
@@ -1111,9 +1187,11 @@
     120.5
    ]
   },
-  "karnataka__state": {
-   "name": "karnataka__state",
-   "label": "Karnataka: state",
+  "karnataka": {
+   "name": "karnataka",
+   "label": "Karnataka: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     69,
     80.5,
@@ -1139,9 +1217,11 @@
     72.6
    ]
   },
-  "lakshadweep__state": {
-   "name": "lakshadweep__state",
-   "label": "Lakshadweep: state",
+  "lakshadweep": {
+   "name": "lakshadweep",
+   "label": "Lakshadweep: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     10,
     23.7,
@@ -1167,9 +1247,11 @@
     12.7
    ]
   },
-  "tamil_nadu__state": {
-   "name": "tamil_nadu__state",
-   "label": "Tamil Nadu: state",
+  "tamil_nadu": {
+   "name": "tamil_nadu",
+   "label": "Tamil Nadu: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     96.1,
     105.4,
@@ -1195,9 +1277,11 @@
     120.5
    ]
   },
-  "kerala__state": {
-   "name": "kerala__state",
-   "label": "Keralam: state",
+  "kerala": {
+   "name": "kerala",
+   "label": "Keralam: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     47.8,
     57.5,
@@ -1223,9 +1307,11 @@
     70.8
    ]
   },
-  "puducherry__state": {
-   "name": "puducherry__state",
-   "label": "Puducherry: state",
+  "puducherry": {
+   "name": "puducherry",
+   "label": "Puducherry: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     42.6,
     43.9,
@@ -1251,9 +1337,11 @@
     74.6
    ]
   },
-  "all_india__state": {
-   "name": "all_india__state",
-   "label": "All India: state",
+  "all_india": {
+   "name": "all_india",
+   "label": "All India: Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     58.2,
     66,
@@ -1279,9 +1367,11 @@
     80.1
    ]
   },
-  "jammu_and_kashmir_ut__state": {
-   "name": "jammu_and_kashmir_ut__state",
-   "label": "Jammu & Kashmir (UT, from 2019-20): state",
+  "jammu_and_kashmir_ut": {
+   "name": "jammu_and_kashmir_ut",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Credit-Deposit Ratio of Scheduled Commercial Banks - According to Place of Utilisation",
+   "unit": "pct",
+   "group": "Banking",
    "data": [
     null,
     null,

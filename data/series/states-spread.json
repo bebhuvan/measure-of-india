@@ -10,7 +10,7 @@
   "releaseDate": null,
   "revisionPolicy": "Each year is the state's latest estimate; states revise at different times and the API carries no revision label. The newest year is usually an advance or quick estimate.",
   "latestPeriod": "2024-04",
-  "unit": "mixed: see series labels",
+  "unit": "per series",
   "coverage": "The gap between states: richest against poorest, spread and middle state, a fixed panel of 31 states and UTs, 2011-12 to 2024-25",
   "note": "Derived from states-pcnsdp-current, states-pcnsdp-constant and states-growth-real (MoSPI per-capita NSDP, indicator 32; GSDP levels). Panel: every state and UT with per-capita NSDP at both prices in every year to the latest year at least three-quarters of states report. Unweighted: each state counts once. Not in the panel: Jammu & Kashmir (UT, from 2019-20), Jammu & Kashmir (state, with Ladakh, to 2018-19), Ladakh, Nagaland. Income per person is per-capita NSDP.",
   "panel": [
@@ -322,6 +322,7 @@
   "gap_current": {
    "name": "gap_current",
    "label": "Richest state's income per person as a multiple of the poorest's, current prices",
+   "unit": "multiple",
    "derived": true,
    "data": [
     11.93,
@@ -343,6 +344,7 @@
   "gap_constant": {
    "name": "gap_constant",
    "label": "Richest state's income per person as a multiple of the poorest's, constant prices",
+   "unit": "multiple",
    "derived": true,
    "data": [
     11.93,
@@ -364,6 +366,7 @@
   "cv_constant": {
    "name": "cv_constant",
    "label": "Spread of income per person across states (coefficient of variation, per cent), constant prices",
+   "unit": "pct",
    "derived": true,
    "data": [
     57.99,
@@ -385,6 +388,7 @@
   "richest_current": {
    "name": "richest_current",
    "label": "Income per person in the richest state, ₹, current prices",
+   "unit": "inr",
    "derived": true,
    "data": [
     259444,
@@ -406,6 +410,7 @@
   "poorest_current": {
    "name": "poorest_current",
    "label": "Income per person in the poorest state, ₹, current prices",
+   "unit": "inr",
    "derived": true,
    "data": [
     21750,
@@ -427,6 +432,7 @@
   "median_current": {
    "name": "median_current",
    "label": "Income per person of the median state in the panel, ₹, current prices",
+   "unit": "inr",
    "derived": true,
    "data": [
     85577,
@@ -448,6 +454,7 @@
   "median_real_growth": {
    "name": "median_real_growth",
    "label": "Median of the panel states' real GSDP growth rates, per cent",
+   "unit": "pct_yoy",
    "derived": true,
    "data": [
     null,

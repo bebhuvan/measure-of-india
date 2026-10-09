@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2022-04",
-  "unit": "as served by DBIE",
+  "unit": "years",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Life Expectancy: RBI Handbook of Statistics on Indian States, Table 7",
-  "note": "DBIE report 1563, data provider \"Query 1\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: Item Description; measures: value 1. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1563, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: Item Description; measures: value. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "1996-04-01",
@@ -54,7 +54,9 @@
  "series": {
   "all_india__male": {
    "name": "all_india__male",
-   "label": "All India: Male",
+   "label": "All India: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     60.4,
     61.9,
@@ -87,7 +89,9 @@
   },
   "all_india__total": {
    "name": "all_india__total",
-   "label": "All India: Total",
+   "label": "All India: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     61.1,
     62.6,
@@ -120,7 +124,9 @@
   },
   "all_india__female": {
    "name": "all_india__female",
-   "label": "All India: Female",
+   "label": "All India: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     61.8,
     63.2,
@@ -153,7 +159,9 @@
   },
   "andhra_pradesh_undivided__male": {
    "name": "andhra_pradesh_undivided__male",
-   "label": "Andhra Pradesh (undivided, to 2013-14): Male",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     61.2,
     61.4,
@@ -186,7 +194,9 @@
   },
   "andhra_pradesh_undivided__total": {
    "name": "andhra_pradesh_undivided__total",
-   "label": "Andhra Pradesh (undivided, to 2013-14): Total",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     62.4,
     62.6,
@@ -219,7 +229,9 @@
   },
   "andhra_pradesh_undivided__female": {
    "name": "andhra_pradesh_undivided__female",
-   "label": "Andhra Pradesh (undivided, to 2013-14): Female",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     63.5,
     63.7,
@@ -252,7 +264,9 @@
   },
   "andhra_pradesh__male": {
    "name": "andhra_pradesh__male",
-   "label": "Andhra Pradesh: Male",
+   "label": "Andhra Pradesh: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -285,7 +299,9 @@
   },
   "andhra_pradesh__total": {
    "name": "andhra_pradesh__total",
-   "label": "Andhra Pradesh: Total",
+   "label": "Andhra Pradesh: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -318,7 +334,9 @@
   },
   "andhra_pradesh__female": {
    "name": "andhra_pradesh__female",
-   "label": "Andhra Pradesh: Female",
+   "label": "Andhra Pradesh: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -351,7 +369,9 @@
   },
   "assam__male": {
    "name": "assam__male",
-   "label": "Assam: Male",
+   "label": "Assam: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     56.6,
     56.9,
@@ -384,7 +404,9 @@
   },
   "assam__total": {
    "name": "assam__total",
-   "label": "Assam: Total",
+   "label": "Assam: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     56.9,
     57.2,
@@ -417,7 +439,9 @@
   },
   "assam__female": {
    "name": "assam__female",
-   "label": "Assam: Female",
+   "label": "Assam: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     57.1,
     57.4,
@@ -450,7 +474,9 @@
   },
   "bihar__female": {
    "name": "bihar__female",
-   "label": "Bihar: Female",
+   "label": "Bihar: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     58.4,
     58.7,
@@ -483,7 +509,9 @@
   },
   "bihar__total": {
    "name": "bihar__total",
-   "label": "Bihar: Total",
+   "label": "Bihar: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     59.4,
     59.6,
@@ -516,7 +544,9 @@
   },
   "bihar__male": {
    "name": "bihar__male",
-   "label": "Bihar: Male",
+   "label": "Bihar: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     60.4,
     60.5,
@@ -549,7 +579,9 @@
   },
   "chhattisgarh__male": {
    "name": "chhattisgarh__male",
-   "label": "Chhattisgarh: Male",
+   "label": "Chhattisgarh: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -582,7 +614,9 @@
   },
   "chhattisgarh__total": {
    "name": "chhattisgarh__total",
-   "label": "Chhattisgarh: Total",
+   "label": "Chhattisgarh: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -615,7 +649,9 @@
   },
   "chhattisgarh__female": {
    "name": "chhattisgarh__female",
-   "label": "Chhattisgarh: Female",
+   "label": "Chhattisgarh: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -648,7 +684,9 @@
   },
   "delhi__male": {
    "name": "delhi__male",
-   "label": "Delhi: Male",
+   "label": "Delhi: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -681,7 +719,9 @@
   },
   "delhi__female": {
    "name": "delhi__female",
-   "label": "Delhi: Female",
+   "label": "Delhi: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -714,7 +754,9 @@
   },
   "delhi__total": {
    "name": "delhi__total",
-   "label": "Delhi: Total",
+   "label": "Delhi: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -747,7 +789,9 @@
   },
   "gujarat__male": {
    "name": "gujarat__male",
-   "label": "Gujarat: Male",
+   "label": "Gujarat: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     60.9,
     61.4,
@@ -780,7 +824,9 @@
   },
   "gujarat__total": {
    "name": "gujarat__total",
-   "label": "Gujarat: Total",
+   "label": "Gujarat: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     61.9,
     62.4,
@@ -813,7 +859,9 @@
   },
   "gujarat__female": {
    "name": "gujarat__female",
-   "label": "Gujarat: Female",
+   "label": "Gujarat: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     62.9,
     63.3,
@@ -846,7 +894,9 @@
   },
   "haryana__male": {
    "name": "haryana__male",
-   "label": "Haryana: Male",
+   "label": "Haryana: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     63.7,
     63.9,
@@ -879,7 +929,9 @@
   },
   "haryana__total": {
    "name": "haryana__total",
-   "label": "Haryana: Total",
+   "label": "Haryana: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     64.2,
     64.4,
@@ -912,7 +964,9 @@
   },
   "haryana__female": {
    "name": "haryana__female",
-   "label": "Haryana: Female",
+   "label": "Haryana: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     64.6,
     64.8,
@@ -945,7 +999,9 @@
   },
   "himachal_pradesh__male": {
    "name": "himachal_pradesh__male",
-   "label": "Himachal Pradesh: Male",
+   "label": "Himachal Pradesh: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     64.6,
     64.8,
@@ -978,7 +1034,9 @@
   },
   "himachal_pradesh__total": {
    "name": "himachal_pradesh__total",
-   "label": "Himachal Pradesh: Total",
+   "label": "Himachal Pradesh: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     64.9,
     65.2,
@@ -1011,7 +1069,9 @@
   },
   "himachal_pradesh__female": {
    "name": "himachal_pradesh__female",
-   "label": "Himachal Pradesh: Female",
+   "label": "Himachal Pradesh: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     65.2,
     65.5,
@@ -1044,7 +1104,9 @@
   },
   "jammu_and_kashmir_state__male": {
    "name": "jammu_and_kashmir_state__male",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Male",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -1077,7 +1139,9 @@
   },
   "jammu_and_kashmir_state__female": {
    "name": "jammu_and_kashmir_state__female",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Female",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -1110,7 +1174,9 @@
   },
   "jammu_and_kashmir_state__total": {
    "name": "jammu_and_kashmir_state__total",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Total",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -1143,7 +1209,9 @@
   },
   "jammu_and_kashmir_ut__male": {
    "name": "jammu_and_kashmir_ut__male",
-   "label": "Jammu & Kashmir (UT, from 2019-20): Male",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -1176,7 +1244,9 @@
   },
   "jammu_and_kashmir_ut__total": {
    "name": "jammu_and_kashmir_ut__total",
-   "label": "Jammu & Kashmir (UT, from 2019-20): Total",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -1209,7 +1279,9 @@
   },
   "jammu_and_kashmir_ut__female": {
    "name": "jammu_and_kashmir_ut__female",
-   "label": "Jammu & Kashmir (UT, from 2019-20): Female",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -1242,7 +1314,9 @@
   },
   "jharkhand__male": {
    "name": "jharkhand__male",
-   "label": "Jharkhand: Male",
+   "label": "Jharkhand: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -1275,7 +1349,9 @@
   },
   "jharkhand__total": {
    "name": "jharkhand__total",
-   "label": "Jharkhand: Total",
+   "label": "Jharkhand: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -1308,7 +1384,9 @@
   },
   "jharkhand__female": {
    "name": "jharkhand__female",
-   "label": "Jharkhand: Female",
+   "label": "Jharkhand: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -1341,7 +1419,9 @@
   },
   "karnataka__male": {
    "name": "karnataka__male",
-   "label": "Karnataka: Male",
+   "label": "Karnataka: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     61.6,
     62,
@@ -1374,7 +1454,9 @@
   },
   "karnataka__total": {
    "name": "karnataka__total",
-   "label": "Karnataka: Total",
+   "label": "Karnataka: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     63.3,
     63.7,
@@ -1407,7 +1489,9 @@
   },
   "karnataka__female": {
    "name": "karnataka__female",
-   "label": "Karnataka: Female",
+   "label": "Karnataka: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     64.9,
     65.3,
@@ -1440,7 +1524,9 @@
   },
   "kerala__male": {
    "name": "kerala__male",
-   "label": "Keralam: Male",
+   "label": "Keralam: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     70.4,
     70.5,
@@ -1473,7 +1559,9 @@
   },
   "kerala__total": {
    "name": "kerala__total",
-   "label": "Keralam: Total",
+   "label": "Keralam: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     73.2,
     73.3,
@@ -1506,7 +1594,9 @@
   },
   "kerala__female": {
    "name": "kerala__female",
-   "label": "Keralam: Female",
+   "label": "Keralam: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     75.9,
     76,
@@ -1539,7 +1629,9 @@
   },
   "madhya_pradesh__female": {
    "name": "madhya_pradesh__female",
-   "label": "Madhya Pradesh: Female",
+   "label": "Madhya Pradesh: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     55.2,
     55.7,
@@ -1572,7 +1664,9 @@
   },
   "madhya_pradesh__total": {
    "name": "madhya_pradesh__total",
-   "label": "Madhya Pradesh: Total",
+   "label": "Madhya Pradesh: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     55.4,
     55.9,
@@ -1605,7 +1699,9 @@
   },
   "madhya_pradesh__male": {
    "name": "madhya_pradesh__male",
-   "label": "Madhya Pradesh: Male",
+   "label": "Madhya Pradesh: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     55.6,
     56,
@@ -1638,7 +1734,9 @@
   },
   "maharashtra__male": {
    "name": "maharashtra__male",
-   "label": "Maharashtra: Male",
+   "label": "Maharashtra: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     64.1,
     64.3,
@@ -1671,7 +1769,9 @@
   },
   "maharashtra__total": {
    "name": "maharashtra__total",
-   "label": "Maharashtra: Total",
+   "label": "Maharashtra: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     65.4,
     65.6,
@@ -1704,7 +1804,9 @@
   },
   "maharashtra__female": {
    "name": "maharashtra__female",
-   "label": "Maharashtra: Female",
+   "label": "Maharashtra: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     66.6,
     66.8,
@@ -1737,7 +1839,9 @@
   },
   "odisha__female": {
    "name": "odisha__female",
-   "label": "Odisha: Female",
+   "label": "Odisha: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     57,
     57.5,
@@ -1770,7 +1874,9 @@
   },
   "odisha__male": {
    "name": "odisha__male",
-   "label": "Odisha: Male",
+   "label": "Odisha: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     57.1,
     57.4,
@@ -1803,7 +1909,9 @@
   },
   "odisha__total": {
    "name": "odisha__total",
-   "label": "Odisha: Total",
+   "label": "Odisha: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     57.1,
     57.5,
@@ -1836,7 +1944,9 @@
   },
   "punjab__male": {
    "name": "punjab__male",
-   "label": "Punjab: Male",
+   "label": "Punjab: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     66.7,
     66.8,
@@ -1869,7 +1979,9 @@
   },
   "punjab__total": {
    "name": "punjab__total",
-   "label": "Punjab: Total",
+   "label": "Punjab: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     67.8,
     67.9,
@@ -1902,7 +2014,9 @@
   },
   "punjab__female": {
    "name": "punjab__female",
-   "label": "Punjab: Female",
+   "label": "Punjab: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     68.8,
     69,
@@ -1935,7 +2049,9 @@
   },
   "rajasthan__male": {
    "name": "rajasthan__male",
-   "label": "Rajasthan: Male",
+   "label": "Rajasthan: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     59.1,
     59.4,
@@ -1968,7 +2084,9 @@
   },
   "rajasthan__total": {
    "name": "rajasthan__total",
-   "label": "Rajasthan: Total",
+   "label": "Rajasthan: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     59.6,
     59.9,
@@ -2001,7 +2119,9 @@
   },
   "rajasthan__female": {
    "name": "rajasthan__female",
-   "label": "Rajasthan: Female",
+   "label": "Rajasthan: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     60.1,
     60.4,
@@ -2034,7 +2154,9 @@
   },
   "tamil_nadu__male": {
    "name": "tamil_nadu__male",
-   "label": "Tamil Nadu: Male",
+   "label": "Tamil Nadu: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     63.2,
     63.5,
@@ -2067,7 +2189,9 @@
   },
   "tamil_nadu__total": {
    "name": "tamil_nadu__total",
-   "label": "Tamil Nadu: Total",
+   "label": "Tamil Nadu: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     64.2,
     64.5,
@@ -2100,7 +2224,9 @@
   },
   "tamil_nadu__female": {
    "name": "tamil_nadu__female",
-   "label": "Tamil Nadu: Female",
+   "label": "Tamil Nadu: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     65.1,
     65.5,
@@ -2133,7 +2259,9 @@
   },
   "telangana__male": {
    "name": "telangana__male",
-   "label": "Telangana: Male",
+   "label": "Telangana: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -2166,7 +2294,9 @@
   },
   "telangana__female": {
    "name": "telangana__female",
-   "label": "Telangana: Female",
+   "label": "Telangana: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -2199,7 +2329,9 @@
   },
   "telangana__total": {
    "name": "telangana__total",
-   "label": "Telangana: Total",
+   "label": "Telangana: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -2232,7 +2364,9 @@
   },
   "uttarakhand__male": {
    "name": "uttarakhand__male",
-   "label": "Uttarakhand: Male",
+   "label": "Uttarakhand: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -2265,7 +2399,9 @@
   },
   "uttarakhand__female": {
    "name": "uttarakhand__female",
-   "label": "Uttarakhand: Female",
+   "label": "Uttarakhand: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -2298,7 +2434,9 @@
   },
   "uttarakhand__total": {
    "name": "uttarakhand__total",
-   "label": "Uttarakhand: Total",
+   "label": "Uttarakhand: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -2331,7 +2469,9 @@
   },
   "uttar_pradesh__female": {
    "name": "uttar_pradesh__female",
-   "label": "Uttar Pradesh: Female",
+   "label": "Uttar Pradesh: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     56.9,
     57.3,
@@ -2364,7 +2504,9 @@
   },
   "uttar_pradesh__total": {
    "name": "uttar_pradesh__total",
-   "label": "Uttar Pradesh: Total",
+   "label": "Uttar Pradesh: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     57.5,
     57.9,
@@ -2397,7 +2539,9 @@
   },
   "uttar_pradesh__male": {
    "name": "uttar_pradesh__male",
-   "label": "Uttar Pradesh: Male",
+   "label": "Uttar Pradesh: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     58.1,
     58.5,
@@ -2430,7 +2574,9 @@
   },
   "west_bengal__male": {
    "name": "west_bengal__male",
-   "label": "West Bengal: Male",
+   "label": "West Bengal: Life Expectancy: Male",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     62.2,
     62.5,
@@ -2463,7 +2609,9 @@
   },
   "west_bengal__total": {
    "name": "west_bengal__total",
-   "label": "West Bengal: Total",
+   "label": "West Bengal: Life Expectancy: Total",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     62.9,
     63.2,
@@ -2496,7 +2644,9 @@
   },
   "west_bengal__female": {
    "name": "west_bengal__female",
-   "label": "West Bengal: Female",
+   "label": "West Bengal: Life Expectancy: Female",
+   "unit": "years",
+   "group": "Social and demographic indicators",
    "data": [
     63.6,
     63.9,

@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2024-04",
-  "unit": "as served by DBIE",
+  "unit": "inr_amount",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "Gross State Value Added (Current Prices): RBI Handbook of Statistics on Indian States, Table 25",
-  "note": "DBIE report 1721, data provider \"Query 1\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1721, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2011-04-01",
@@ -41,7 +41,9 @@
  "series": {
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     1352902000000,
     1486097400000,
@@ -61,7 +63,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     189218200000,
     207386700000,
@@ -81,7 +85,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     74300800000,
     85131500000,
@@ -101,7 +107,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     2416985000000,
     2766991200000,
@@ -121,7 +129,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     1391295900000,
     1608266900000,
@@ -141,7 +151,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     108547000000,
     124035400000,
@@ -161,7 +173,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     4984698400000,
     5661116400000,
@@ -181,7 +195,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     120667600000,
     140121900000,
@@ -201,7 +217,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     127291200000,
     137246900000,
@@ -221,7 +239,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     2202316900000,
     2491629500000,
@@ -241,7 +261,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     108921000000,
     119674200000,
@@ -261,7 +283,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     187955300000,
     212893800000,
@@ -281,7 +305,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     40375500000,
     45022300000,
@@ -301,7 +327,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     6949144800000,
     7927450500000,
@@ -321,7 +349,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     1083328300000,
     1237488000000,
@@ -341,7 +371,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     3032324900000,
     3425875400000,
@@ -361,7 +393,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     2537742700000,
     2808378200000,
@@ -381,7 +415,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     2740746300000,
     3198944800000,
@@ -401,7 +437,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     187315100000,
     215606300000,
@@ -421,7 +459,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     747607300000,
     830898300000,
@@ -441,7 +481,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     694027800000,
     789084000000,
@@ -461,7 +503,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     4169835400000,
     4720633400000,
@@ -481,7 +525,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     5519210700000,
     6451554900000,
@@ -501,7 +547,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     11444184400000,
     12950416300000,
@@ -521,7 +569,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     394056600000,
     348730200000,
@@ -541,7 +591,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     3036885900000,
     3664188000000,
@@ -561,7 +613,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     1484298200000,
     1661333300000,
@@ -581,7 +635,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     3497530300000,
     3794767100000,
@@ -601,7 +657,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     3360501100000,
     3752626100000,
@@ -621,7 +679,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     5522136400000,
     6315579000000,
@@ -641,7 +701,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     6930221200000,
     7847716800000,
@@ -661,7 +723,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     3362931000000,
     3812828700000,
@@ -681,7 +745,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     148120100000,
     164714500000,
@@ -701,7 +767,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     null,
     null,
@@ -721,7 +789,9 @@
   },
   "ladakh": {
    "name": "ladakh",
-   "label": "Ladakh",
+   "label": "Ladakh: Gross State Value Added (Current Prices)",
+   "unit": "inr_amount",
+   "group": "State domestic product",
    "data": [
     null,
     null,

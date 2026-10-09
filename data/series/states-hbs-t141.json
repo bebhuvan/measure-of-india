@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2024-04",
-  "unit": "as served by DBIE",
+  "unit": "crore_kwh",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Power Requirement: RBI Handbook of Statistics on Indian States, Table 141",
-  "note": "DBIE report 1685, data provider \"Main\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split)."
+  "note": "DBIE report 1685, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: value. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split)."
  },
  "dates": [
   "2004-04-01",
@@ -48,7 +48,9 @@
  "series": {
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     379,
     405,
@@ -75,7 +77,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     137,
     138,
@@ -102,7 +106,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     24,
     23,
@@ -129,7 +135,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     720,
     796,
@@ -156,7 +164,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     363,
     403,
@@ -183,7 +193,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     16,
     21,
@@ -210,7 +222,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     2316,
     2494,
@@ -237,7 +251,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     33,
     41,
@@ -264,7 +280,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     54,
     51,
@@ -291,7 +309,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     null,
     21,
@@ -318,7 +338,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     70,
     75,
@@ -345,7 +367,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     null,
     24,
@@ -372,7 +396,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     5202,
     5568,
@@ -399,7 +425,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     2116,
     2160,
@@ -426,7 +454,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     3339,
     3568,
@@ -453,7 +483,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     2180,
     2379,
@@ -480,7 +512,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     116,
     126,
@@ -507,7 +541,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     814,
     907,
@@ -534,7 +570,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     400,
     430,
@@ -561,7 +599,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     2921,
     3205,
@@ -588,7 +628,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     5968,
     5714,
@@ -615,7 +657,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     9272,
     10277,
@@ -642,7 +686,9 @@
   },
   "daman_and_diu": {
    "name": "daman_and_diu",
-   "label": "Daman & Diu",
+   "label": "Daman & Diu: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     112,
     135,
@@ -669,7 +715,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     215,
     234,
@@ -696,7 +744,9 @@
   },
   "dadra_and_nagar_haveli": {
    "name": "dadra_and_nagar_haveli",
-   "label": "Dadra & Nagar Haveli",
+   "label": "Dadra & Nagar Haveli: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     183,
     254,
@@ -723,7 +773,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     3481,
     3685,
@@ -750,7 +802,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     1175,
     1301,
@@ -777,7 +831,9 @@
   },
   "andhra_pradesh_undivided": {
    "name": "andhra_pradesh_undivided",
-   "label": "Andhra Pradesh (undivided, to 2013-14)",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     5042,
     5303,
@@ -804,7 +860,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -831,7 +889,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     3516,
     3460,
@@ -858,7 +918,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     null,
     2,
@@ -885,7 +947,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     4787,
     5419,
@@ -912,7 +976,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     1269,
     1367,
@@ -939,7 +1005,9 @@
   },
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     59137,
     63155,
@@ -966,7 +1034,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     1398,
     1521,
@@ -993,7 +1063,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     463,
     516,
@@ -1020,7 +1092,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     154,
     168,
@@ -1047,7 +1121,9 @@
   },
   "jammu_and_kashmir_and_ladakh": {
    "name": "jammu_and_kashmir_and_ladakh",
-   "label": "Jammu & Kashmir And Ladakh",
+   "label": "Jammu & Kashmir And Ladakh: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -1074,7 +1150,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Power Requirement",
+   "unit": "crore_kwh",
+   "group": "Infrastructure",
    "data": [
     null,
     null,

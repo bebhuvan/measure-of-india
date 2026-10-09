@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2022-04",
-  "unit": "Per Cent",
+  "unit": "per_100k_live_births",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Maternal Mortality Ratio: RBI Handbook of Statistics on Indian States, Table 5",
-  "note": "DBIE report 1561, data provider \"Query 1\". Values exactly as DBIE serves them; DBIE's unit label: Per Cent. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split)."
+  "note": "DBIE report 1561, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: Per Cent. Periods: fiscal years, dated at April. Dimensions: none; measures: value. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split)."
  },
  "dates": [
   "2000-04-01",
@@ -50,7 +50,9 @@
  "series": {
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     327,
     null,
@@ -91,7 +93,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -120,7 +124,9 @@
   },
   "andhra_pradesh_undivided": {
    "name": "andhra_pradesh_undivided",
-   "label": "Andhra Pradesh (undivided, to 2013-14)",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     220,
     null,
@@ -159,7 +165,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     398,
     null,
@@ -200,7 +208,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     400,
     null,
@@ -241,7 +251,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -270,7 +282,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     202,
     null,
@@ -311,7 +325,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     176,
     null,
@@ -352,7 +368,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -381,7 +399,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     266,
     null,
@@ -422,7 +442,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     149,
     null,
@@ -463,7 +485,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     407,
     null,
@@ -504,7 +528,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     169,
     null,
@@ -545,7 +571,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     424,
     null,
@@ -586,7 +614,9 @@
   },
   "others": {
    "name": "others",
-   "label": "Others",
+   "label": "Others: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -622,7 +652,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     177,
     null,
@@ -663,7 +695,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     501,
     null,
@@ -704,7 +738,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     167,
     null,
@@ -745,7 +781,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -774,7 +812,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     null,
@@ -803,7 +843,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     539,
     null,
@@ -844,7 +886,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Maternal Mortality Ratio",
+   "unit": "per_100k_live_births",
+   "group": "Social and demographic indicators",
    "data": [
     218,
     null,

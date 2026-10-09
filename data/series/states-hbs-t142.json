@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2024-04",
-  "unit": "as served by DBIE",
+  "unit": "per series",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: RBI Handbook of Statistics on Indian States, Table 142",
-  "note": "DBIE report 1733, data provider \"Main\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: Item Hierarchy Level 1, Item Description; measures: value 1. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1733, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: Item Hierarchy Level 1, Item Description; measures: value. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2013-04-01",
@@ -39,7 +39,9 @@
  "series": {
   "all_india__surplus_deficit__megawatt": {
    "name": "all_india__surplus_deficit__megawatt",
-   "label": "All India: Surplus(+) / Deficit(-): Megawatt",
+   "label": "All India: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -6103,
     -7006,
@@ -57,7 +59,9 @@
   },
   "all_india__surplus_deficit__per_cent": {
    "name": "all_india__surplus_deficit__per_cent",
-   "label": "All India: Surplus(+) / Deficit(-): Per cent",
+   "label": "All India: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -4.5,
     -4.7,
@@ -75,7 +79,9 @@
   },
   "all_india__peak_met__megawatt": {
    "name": "all_india__peak_met__megawatt",
-   "label": "All India: Peak Met: Megawatt",
+   "label": "All India: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     129815,
     141160,
@@ -93,7 +99,9 @@
   },
   "all_india__peak_demand__megawatt": {
    "name": "all_india__peak_demand__megawatt",
-   "label": "All India: Peak Demand: Megawatt",
+   "label": "All India: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     135918,
     148166,
@@ -111,7 +119,9 @@
   },
   "andaman_and_nicobar_islands__surplus_deficit__per_cent": {
    "name": "andaman_and_nicobar_islands__surplus_deficit__per_cent",
-   "label": "Andaman & Nicobar Islands: Surplus(+) / Deficit(-): Per cent",
+   "label": "Andaman & Nicobar Islands: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -20,
     -20,
@@ -129,7 +139,9 @@
   },
   "andaman_and_nicobar_islands__surplus_deficit__megawatt": {
    "name": "andaman_and_nicobar_islands__surplus_deficit__megawatt",
-   "label": "Andaman & Nicobar Islands: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Andaman & Nicobar Islands: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -8,
     -8,
@@ -147,7 +159,9 @@
   },
   "andaman_and_nicobar_islands__peak_met__megawatt": {
    "name": "andaman_and_nicobar_islands__peak_met__megawatt",
-   "label": "Andaman & Nicobar Islands: Peak Met: Megawatt",
+   "label": "Andaman & Nicobar Islands: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     32,
     32,
@@ -169,7 +183,9 @@
   },
   "andaman_and_nicobar_islands__peak_demand__megawatt": {
    "name": "andaman_and_nicobar_islands__peak_demand__megawatt",
-   "label": "Andaman & Nicobar Islands: Peak Demand: Megawatt",
+   "label": "Andaman & Nicobar Islands: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     40,
     40,
@@ -191,7 +207,9 @@
   },
   "andhra_pradesh_undivided__surplus_deficit__megawatt": {
    "name": "andhra_pradesh_undivided__surplus_deficit__megawatt",
-   "label": "Andhra Pradesh (undivided, to 2013-14): Surplus(+) / Deficit(-): Megawatt",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -910,
     null,
@@ -209,7 +227,9 @@
   },
   "andhra_pradesh_undivided__surplus_deficit__per_cent": {
    "name": "andhra_pradesh_undivided__surplus_deficit__per_cent",
-   "label": "Andhra Pradesh (undivided, to 2013-14): Surplus(+) / Deficit(-): Per cent",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -6.5,
     null,
@@ -227,7 +247,9 @@
   },
   "andhra_pradesh_undivided__peak_met__megawatt": {
    "name": "andhra_pradesh_undivided__peak_met__megawatt",
-   "label": "Andhra Pradesh (undivided, to 2013-14): Peak Met: Megawatt",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     13162,
     null,
@@ -245,7 +267,9 @@
   },
   "andhra_pradesh_undivided__peak_demand__megawatt": {
    "name": "andhra_pradesh_undivided__peak_demand__megawatt",
-   "label": "Andhra Pradesh (undivided, to 2013-14): Peak Demand: Megawatt",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     14072,
     null,
@@ -263,7 +287,9 @@
   },
   "arunachal_pradesh__surplus_deficit__megawatt": {
    "name": "arunachal_pradesh__surplus_deficit__megawatt",
-   "label": "Arunachal Pradesh: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Arunachal Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -1,
     -13,
@@ -281,7 +307,9 @@
   },
   "arunachal_pradesh__surplus_deficit__per_cent": {
    "name": "arunachal_pradesh__surplus_deficit__per_cent",
-   "label": "Arunachal Pradesh: Surplus(+) / Deficit(-): Per cent",
+   "label": "Arunachal Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -0.8,
     -9.4,
@@ -299,7 +327,9 @@
   },
   "arunachal_pradesh__peak_met__megawatt": {
    "name": "arunachal_pradesh__peak_met__megawatt",
-   "label": "Arunachal Pradesh: Peak Met: Megawatt",
+   "label": "Arunachal Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     124,
     126,
@@ -317,7 +347,9 @@
   },
   "arunachal_pradesh__peak_demand__megawatt": {
    "name": "arunachal_pradesh__peak_demand__megawatt",
-   "label": "Arunachal Pradesh: Peak Demand: Megawatt",
+   "label": "Arunachal Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     125,
     139,
@@ -335,7 +367,9 @@
   },
   "assam__surplus_deficit__megawatt": {
    "name": "assam__surplus_deficit__megawatt",
-   "label": "Assam: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Assam: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -109,
     -193,
@@ -353,7 +387,9 @@
   },
   "assam__surplus_deficit__per_cent": {
    "name": "assam__surplus_deficit__per_cent",
-   "label": "Assam: Surplus(+) / Deficit(-): Per cent",
+   "label": "Assam: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -8.2,
     -13.3,
@@ -371,7 +407,9 @@
   },
   "assam__peak_met__megawatt": {
    "name": "assam__peak_met__megawatt",
-   "label": "Assam: Peak Met: Megawatt",
+   "label": "Assam: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     1220,
     1257,
@@ -389,7 +427,9 @@
   },
   "assam__peak_demand__megawatt": {
    "name": "assam__peak_demand__megawatt",
-   "label": "Assam: Peak Demand: Megawatt",
+   "label": "Assam: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     1329,
     1450,
@@ -407,7 +447,9 @@
   },
   "bihar__surplus_deficit__megawatt": {
    "name": "bihar__surplus_deficit__megawatt",
-   "label": "Bihar: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Bihar: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -153,
     -120,
@@ -425,7 +467,9 @@
   },
   "bihar__surplus_deficit__per_cent": {
    "name": "bihar__surplus_deficit__per_cent",
-   "label": "Bihar: Surplus(+) / Deficit(-): Per cent",
+   "label": "Bihar: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -6.2,
     -4,
@@ -443,7 +487,9 @@
   },
   "bihar__peak_met__megawatt": {
    "name": "bihar__peak_met__megawatt",
-   "label": "Bihar: Peak Met: Megawatt",
+   "label": "Bihar: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     2312,
     2874,
@@ -461,7 +507,9 @@
   },
   "bihar__peak_demand__megawatt": {
    "name": "bihar__peak_demand__megawatt",
-   "label": "Bihar: Peak Demand: Megawatt",
+   "label": "Bihar: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     2465,
     2994,
@@ -479,7 +527,9 @@
   },
   "chandigarh__surplus_deficit__megawatt": {
    "name": "chandigarh__surplus_deficit__megawatt",
-   "label": "Chandigarh: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Chandigarh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     0,
     0,
@@ -497,7 +547,9 @@
   },
   "chandigarh__surplus_deficit__per_cent": {
    "name": "chandigarh__surplus_deficit__per_cent",
-   "label": "Chandigarh: Surplus(+) / Deficit(-): Per cent",
+   "label": "Chandigarh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     0,
     0,
@@ -515,7 +567,9 @@
   },
   "chandigarh__peak_demand__megawatt": {
    "name": "chandigarh__peak_demand__megawatt",
-   "label": "Chandigarh: Peak Demand: Megawatt",
+   "label": "Chandigarh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     345,
     367,
@@ -533,7 +587,9 @@
   },
   "chandigarh__peak_met__megawatt": {
    "name": "chandigarh__peak_met__megawatt",
-   "label": "Chandigarh: Peak Met: Megawatt",
+   "label": "Chandigarh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     345,
     367,
@@ -551,7 +607,9 @@
   },
   "chhattisgarh__surplus_deficit__megawatt": {
    "name": "chhattisgarh__surplus_deficit__megawatt",
-   "label": "Chhattisgarh: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Chhattisgarh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -45,
     -179,
@@ -569,7 +627,9 @@
   },
   "chhattisgarh__surplus_deficit__per_cent": {
    "name": "chhattisgarh__surplus_deficit__per_cent",
-   "label": "Chhattisgarh: Surplus(+) / Deficit(-): Per cent",
+   "label": "Chhattisgarh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -1.3,
     -4.7,
@@ -587,7 +647,9 @@
   },
   "chhattisgarh__peak_met__megawatt": {
    "name": "chhattisgarh__peak_met__megawatt",
-   "label": "Chhattisgarh: Peak Met: Megawatt",
+   "label": "Chhattisgarh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     3320,
     3638,
@@ -605,7 +667,9 @@
   },
   "chhattisgarh__peak_demand__megawatt": {
    "name": "chhattisgarh__peak_demand__megawatt",
-   "label": "Chhattisgarh: Peak Demand: Megawatt",
+   "label": "Chhattisgarh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     3365,
     3817,
@@ -623,7 +687,9 @@
   },
   "dadra_and_nagar_haveli__surplus_deficit__megawatt": {
    "name": "dadra_and_nagar_haveli__surplus_deficit__megawatt",
-   "label": "Dadra & Nagar Haveli: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Dadra & Nagar Haveli: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     0,
     0,
@@ -641,7 +707,9 @@
   },
   "dadra_and_nagar_haveli__surplus_deficit__per_cent": {
    "name": "dadra_and_nagar_haveli__surplus_deficit__per_cent",
-   "label": "Dadra & Nagar Haveli: Surplus(+) / Deficit(-): Per cent",
+   "label": "Dadra & Nagar Haveli: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     0,
     0,
@@ -659,7 +727,9 @@
   },
   "dadra_and_nagar_haveli__peak_demand__megawatt": {
    "name": "dadra_and_nagar_haveli__peak_demand__megawatt",
-   "label": "Dadra & Nagar Haveli: Peak Demand: Megawatt",
+   "label": "Dadra & Nagar Haveli: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     661,
     714,
@@ -677,7 +747,9 @@
   },
   "dadra_and_nagar_haveli__peak_met__megawatt": {
    "name": "dadra_and_nagar_haveli__peak_met__megawatt",
-   "label": "Dadra & Nagar Haveli: Peak Met: Megawatt",
+   "label": "Dadra & Nagar Haveli: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     661,
     714,
@@ -695,7 +767,9 @@
   },
   "daman_and_diu__surplus_deficit__megawatt": {
    "name": "daman_and_diu__surplus_deficit__megawatt",
-   "label": "Daman & Diu: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Daman & Diu: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -25,
     0,
@@ -713,7 +787,9 @@
   },
   "daman_and_diu__surplus_deficit__per_cent": {
    "name": "daman_and_diu__surplus_deficit__per_cent",
-   "label": "Daman & Diu: Surplus(+) / Deficit(-): Per cent",
+   "label": "Daman & Diu: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -7.8,
     0,
@@ -731,7 +807,9 @@
   },
   "daman_and_diu__peak_met__megawatt": {
    "name": "daman_and_diu__peak_met__megawatt",
-   "label": "Daman & Diu: Peak Met: Megawatt",
+   "label": "Daman & Diu: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     297,
     301,
@@ -749,7 +827,9 @@
   },
   "daman_and_diu__peak_demand__megawatt": {
    "name": "daman_and_diu__peak_demand__megawatt",
-   "label": "Daman & Diu: Peak Demand: Megawatt",
+   "label": "Daman & Diu: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     322,
     301,
@@ -767,7 +847,9 @@
   },
   "damodar_valley_corporation__surplus_deficit__megawatt": {
    "name": "damodar_valley_corporation__surplus_deficit__megawatt",
-   "label": "Damodar Valley Corporation: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Damodar Valley Corporation: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     0,
     -63,
@@ -785,7 +867,9 @@
   },
   "damodar_valley_corporation__surplus_deficit__per_cent": {
    "name": "damodar_valley_corporation__surplus_deficit__per_cent",
-   "label": "Damodar Valley Corporation: Surplus(+) / Deficit(-): Per cent",
+   "label": "Damodar Valley Corporation: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     0,
     -2.4,
@@ -803,7 +887,9 @@
   },
   "damodar_valley_corporation__peak_demand__megawatt": {
    "name": "damodar_valley_corporation__peak_demand__megawatt",
-   "label": "Damodar Valley Corporation: Peak Demand: Megawatt",
+   "label": "Damodar Valley Corporation: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     2745,
     2653,
@@ -821,7 +907,9 @@
   },
   "damodar_valley_corporation__peak_met__megawatt": {
    "name": "damodar_valley_corporation__peak_met__megawatt",
-   "label": "Damodar Valley Corporation: Peak Met: Megawatt",
+   "label": "Damodar Valley Corporation: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     2745,
     2590,
@@ -839,7 +927,9 @@
   },
   "delhi__surplus_deficit__megawatt": {
    "name": "delhi__surplus_deficit__megawatt",
-   "label": "Delhi: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Delhi: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -382,
     -81,
@@ -857,7 +947,9 @@
   },
   "delhi__surplus_deficit__per_cent": {
    "name": "delhi__surplus_deficit__per_cent",
-   "label": "Delhi: Surplus(+) / Deficit(-): Per cent",
+   "label": "Delhi: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -6.3,
     -1.3,
@@ -875,7 +967,9 @@
   },
   "delhi__peak_met__megawatt": {
    "name": "delhi__peak_met__megawatt",
-   "label": "Delhi: Peak Met: Megawatt",
+   "label": "Delhi: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     5653,
     5925,
@@ -893,7 +987,9 @@
   },
   "delhi__peak_demand__megawatt": {
    "name": "delhi__peak_demand__megawatt",
-   "label": "Delhi: Peak Demand: Megawatt",
+   "label": "Delhi: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     6035,
     6006,
@@ -911,7 +1007,9 @@
   },
   "eastern_region__surplus_deficit__megawatt": {
    "name": "eastern_region__surplus_deficit__megawatt",
-   "label": "Eastern Region: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Eastern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -290,
     -108,
@@ -929,7 +1027,9 @@
   },
   "eastern_region__surplus_deficit__per_cent": {
    "name": "eastern_region__surplus_deficit__per_cent",
-   "label": "Eastern Region: Surplus(+) / Deficit(-): Per cent",
+   "label": "Eastern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -1.8,
     -0.6,
@@ -947,7 +1047,9 @@
   },
   "eastern_region__peak_met__megawatt": {
    "name": "eastern_region__peak_met__megawatt",
-   "label": "Eastern Region: Peak Met: Megawatt",
+   "label": "Eastern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     15598,
     16932,
@@ -965,7 +1067,9 @@
   },
   "eastern_region__peak_demand__megawatt": {
    "name": "eastern_region__peak_demand__megawatt",
-   "label": "Eastern Region: Peak Demand: Megawatt",
+   "label": "Eastern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     15888,
     17040,
@@ -983,7 +1087,9 @@
   },
   "goa__surplus_deficit__megawatt": {
    "name": "goa__surplus_deficit__megawatt",
-   "label": "Goa: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Goa: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     0,
     -12,
@@ -1001,7 +1107,9 @@
   },
   "goa__surplus_deficit__per_cent": {
    "name": "goa__surplus_deficit__per_cent",
-   "label": "Goa: Surplus(+) / Deficit(-): Per cent",
+   "label": "Goa: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     0,
     -2.4,
@@ -1019,7 +1127,9 @@
   },
   "goa__peak_demand__megawatt": {
    "name": "goa__peak_demand__megawatt",
-   "label": "Goa: Peak Demand: Megawatt",
+   "label": "Goa: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     529,
     501,
@@ -1037,7 +1147,9 @@
   },
   "goa__peak_met__megawatt": {
    "name": "goa__peak_met__megawatt",
-   "label": "Goa: Peak Met: Megawatt",
+   "label": "Goa: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     529,
     489,
@@ -1055,7 +1167,9 @@
   },
   "gujarat__surplus_deficit__megawatt": {
    "name": "gujarat__surplus_deficit__megawatt",
-   "label": "Gujarat: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Gujarat: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     0,
     -104,
@@ -1073,7 +1187,9 @@
   },
   "gujarat__surplus_deficit__per_cent": {
    "name": "gujarat__surplus_deficit__per_cent",
-   "label": "Gujarat: Surplus(+) / Deficit(-): Per cent",
+   "label": "Gujarat: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     0,
     -0.8,
@@ -1091,7 +1207,9 @@
   },
   "gujarat__peak_demand__megawatt": {
    "name": "gujarat__peak_demand__megawatt",
-   "label": "Gujarat: Peak Demand: Megawatt",
+   "label": "Gujarat: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     12201,
     13603,
@@ -1109,7 +1227,9 @@
   },
   "gujarat__peak_met__megawatt": {
    "name": "gujarat__peak_met__megawatt",
-   "label": "Gujarat: Peak Met: Megawatt",
+   "label": "Gujarat: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     12201,
     13499,
@@ -1127,7 +1247,9 @@
   },
   "haryana__surplus_deficit__megawatt": {
    "name": "haryana__surplus_deficit__megawatt",
-   "label": "Haryana: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Haryana: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     0,
     0,
@@ -1145,7 +1267,9 @@
   },
   "haryana__surplus_deficit__per_cent": {
    "name": "haryana__surplus_deficit__per_cent",
-   "label": "Haryana: Surplus(+) / Deficit(-): Per cent",
+   "label": "Haryana: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     0,
     0,
@@ -1163,7 +1287,9 @@
   },
   "haryana__peak_demand__megawatt": {
    "name": "haryana__peak_demand__megawatt",
-   "label": "Haryana: Peak Demand: Megawatt",
+   "label": "Haryana: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     8114,
     9152,
@@ -1181,7 +1307,9 @@
   },
   "haryana__peak_met__megawatt": {
    "name": "haryana__peak_met__megawatt",
-   "label": "Haryana: Peak Met: Megawatt",
+   "label": "Haryana: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     8114,
     9152,
@@ -1199,7 +1327,9 @@
   },
   "himachal_pradesh__surplus_deficit__megawatt": {
    "name": "himachal_pradesh__surplus_deficit__megawatt",
-   "label": "Himachal Pradesh: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Himachal Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -169,
     0,
@@ -1217,7 +1347,9 @@
   },
   "himachal_pradesh__surplus_deficit__per_cent": {
    "name": "himachal_pradesh__surplus_deficit__per_cent",
-   "label": "Himachal Pradesh: Surplus(+) / Deficit(-): Per cent",
+   "label": "Himachal Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -10.8,
     0,
@@ -1235,7 +1367,9 @@
   },
   "himachal_pradesh__peak_met__megawatt": {
    "name": "himachal_pradesh__peak_met__megawatt",
-   "label": "Himachal Pradesh: Peak Met: Megawatt",
+   "label": "Himachal Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     1392,
     1422,
@@ -1253,7 +1387,9 @@
   },
   "himachal_pradesh__peak_demand__megawatt": {
    "name": "himachal_pradesh__peak_demand__megawatt",
-   "label": "Himachal Pradesh: Peak Demand: Megawatt",
+   "label": "Himachal Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     1561,
     1422,
@@ -1271,7 +1407,9 @@
   },
   "jammu_and_kashmir_state__surplus_deficit__megawatt": {
    "name": "jammu_and_kashmir_state__surplus_deficit__megawatt",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Surplus(+) / Deficit(-): Megawatt",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -502,
     -511,
@@ -1289,7 +1427,9 @@
   },
   "jammu_and_kashmir_state__surplus_deficit__per_cent": {
    "name": "jammu_and_kashmir_state__surplus_deficit__per_cent",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Surplus(+) / Deficit(-): Per cent",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -20.1,
     -20,
@@ -1307,7 +1447,9 @@
   },
   "jammu_and_kashmir_state__peak_met__megawatt": {
    "name": "jammu_and_kashmir_state__peak_met__megawatt",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Peak Met: Megawatt",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     1998,
     2043,
@@ -1325,7 +1467,9 @@
   },
   "jammu_and_kashmir_state__peak_demand__megawatt": {
    "name": "jammu_and_kashmir_state__peak_demand__megawatt",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Peak Demand: Megawatt",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     2500,
     2554,
@@ -1343,7 +1487,9 @@
   },
   "jharkhand__surplus_deficit__megawatt": {
    "name": "jharkhand__surplus_deficit__megawatt",
-   "label": "Jharkhand: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Jharkhand: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -42,
     -20,
@@ -1361,7 +1507,9 @@
   },
   "jharkhand__surplus_deficit__per_cent": {
    "name": "jharkhand__surplus_deficit__per_cent",
-   "label": "Jharkhand: Surplus(+) / Deficit(-): Per cent",
+   "label": "Jharkhand: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -3.8,
     -1.9,
@@ -1379,7 +1527,9 @@
   },
   "jharkhand__peak_met__megawatt": {
    "name": "jharkhand__peak_met__megawatt",
-   "label": "Jharkhand: Peak Met: Megawatt",
+   "label": "Jharkhand: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     1069,
     1055,
@@ -1397,7 +1547,9 @@
   },
   "jharkhand__peak_demand__megawatt": {
    "name": "jharkhand__peak_demand__megawatt",
-   "label": "Jharkhand: Peak Demand: Megawatt",
+   "label": "Jharkhand: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     1111,
     1075,
@@ -1415,7 +1567,9 @@
   },
   "karnataka__surplus_deficit__megawatt": {
    "name": "karnataka__surplus_deficit__megawatt",
-   "label": "Karnataka: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Karnataka: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -717,
     -452,
@@ -1433,7 +1587,9 @@
   },
   "karnataka__surplus_deficit__per_cent": {
    "name": "karnataka__surplus_deficit__per_cent",
-   "label": "Karnataka: Surplus(+) / Deficit(-): Per cent",
+   "label": "Karnataka: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -7.2,
     -4.5,
@@ -1451,7 +1607,9 @@
   },
   "karnataka__peak_met__megawatt": {
    "name": "karnataka__peak_met__megawatt",
-   "label": "Karnataka: Peak Met: Megawatt",
+   "label": "Karnataka: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     9223,
     9549,
@@ -1469,7 +1627,9 @@
   },
   "karnataka__peak_demand__megawatt": {
    "name": "karnataka__peak_demand__megawatt",
-   "label": "Karnataka: Peak Demand: Megawatt",
+   "label": "Karnataka: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     9940,
     10001,
@@ -1487,7 +1647,9 @@
   },
   "kerala__surplus_deficit__megawatt": {
    "name": "kerala__surplus_deficit__megawatt",
-   "label": "Keralam: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Keralam: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -98,
     -166,
@@ -1505,7 +1667,9 @@
   },
   "kerala__surplus_deficit__per_cent": {
    "name": "kerala__surplus_deficit__per_cent",
-   "label": "Keralam: Surplus(+) / Deficit(-): Per cent",
+   "label": "Keralam: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -2.7,
     -4.4,
@@ -1523,7 +1687,9 @@
   },
   "kerala__peak_met__megawatt": {
    "name": "kerala__peak_met__megawatt",
-   "label": "Keralam: Peak Met: Megawatt",
+   "label": "Keralam: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     3573,
     3594,
@@ -1541,7 +1707,9 @@
   },
   "kerala__peak_demand__megawatt": {
    "name": "kerala__peak_demand__megawatt",
-   "label": "Keralam: Peak Demand: Megawatt",
+   "label": "Keralam: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     3671,
     3760,
@@ -1559,7 +1727,9 @@
   },
   "lakshadweep__surplus_deficit__megawatt": {
    "name": "lakshadweep__surplus_deficit__megawatt",
-   "label": "Lakshadweep: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Lakshadweep: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     0,
     0,
@@ -1577,7 +1747,9 @@
   },
   "lakshadweep__surplus_deficit__per_cent": {
    "name": "lakshadweep__surplus_deficit__per_cent",
-   "label": "Lakshadweep: Surplus(+) / Deficit(-): Per cent",
+   "label": "Lakshadweep: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     0,
     0,
@@ -1595,7 +1767,9 @@
   },
   "lakshadweep__peak_demand__megawatt": {
    "name": "lakshadweep__peak_demand__megawatt",
-   "label": "Lakshadweep: Peak Demand: Megawatt",
+   "label": "Lakshadweep: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     9,
     8,
@@ -1617,7 +1791,9 @@
   },
   "lakshadweep__peak_met__megawatt": {
    "name": "lakshadweep__peak_met__megawatt",
-   "label": "Lakshadweep: Peak Met: Megawatt",
+   "label": "Lakshadweep: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     9,
     8,
@@ -1639,7 +1815,9 @@
   },
   "madhya_pradesh__surplus_deficit__megawatt": {
    "name": "madhya_pradesh__surplus_deficit__megawatt",
-   "label": "Madhya Pradesh: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Madhya Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     0,
     -38,
@@ -1657,7 +1835,9 @@
   },
   "madhya_pradesh__surplus_deficit__per_cent": {
    "name": "madhya_pradesh__surplus_deficit__per_cent",
-   "label": "Madhya Pradesh: Surplus(+) / Deficit(-): Per cent",
+   "label": "Madhya Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     0,
     -0.4,
@@ -1675,7 +1855,9 @@
   },
   "madhya_pradesh__peak_demand__megawatt": {
    "name": "madhya_pradesh__peak_demand__megawatt",
-   "label": "Madhya Pradesh: Peak Demand: Megawatt",
+   "label": "Madhya Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     9716,
     9755,
@@ -1693,7 +1875,9 @@
   },
   "madhya_pradesh__peak_met__megawatt": {
    "name": "madhya_pradesh__peak_met__megawatt",
-   "label": "Madhya Pradesh: Peak Met: Megawatt",
+   "label": "Madhya Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     9716,
     9717,
@@ -1711,7 +1895,9 @@
   },
   "maharashtra__surplus_deficit__megawatt": {
    "name": "maharashtra__surplus_deficit__megawatt",
-   "label": "Maharashtra: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Maharashtra: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -1655,
     -343,
@@ -1729,7 +1915,9 @@
   },
   "maharashtra__surplus_deficit__per_cent": {
    "name": "maharashtra__surplus_deficit__per_cent",
-   "label": "Maharashtra: Surplus(+) / Deficit(-): Per cent",
+   "label": "Maharashtra: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -8.6,
     -1.7,
@@ -1747,7 +1935,9 @@
   },
   "maharashtra__peak_met__megawatt": {
    "name": "maharashtra__peak_met__megawatt",
-   "label": "Maharashtra: Peak Met: Megawatt",
+   "label": "Maharashtra: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     17621,
     19804,
@@ -1765,7 +1955,9 @@
   },
   "maharashtra__peak_demand__megawatt": {
    "name": "maharashtra__peak_demand__megawatt",
-   "label": "Maharashtra: Peak Demand: Megawatt",
+   "label": "Maharashtra: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     19276,
     20147,
@@ -1783,7 +1975,9 @@
   },
   "manipur__surplus_deficit__megawatt": {
    "name": "manipur__surplus_deficit__megawatt",
-   "label": "Manipur: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Manipur: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -1,
     -4,
@@ -1801,7 +1995,9 @@
   },
   "manipur__surplus_deficit__per_cent": {
    "name": "manipur__surplus_deficit__per_cent",
-   "label": "Manipur: Surplus(+) / Deficit(-): Per cent",
+   "label": "Manipur: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -0.7,
     -2.7,
@@ -1819,7 +2015,9 @@
   },
   "manipur__peak_met__megawatt": {
    "name": "manipur__peak_met__megawatt",
-   "label": "Manipur: Peak Met: Megawatt",
+   "label": "Manipur: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     133,
     146,
@@ -1837,7 +2035,9 @@
   },
   "manipur__peak_demand__megawatt": {
    "name": "manipur__peak_demand__megawatt",
-   "label": "Manipur: Peak Demand: Megawatt",
+   "label": "Manipur: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     134,
     150,
@@ -1855,7 +2055,9 @@
   },
   "meghalaya__surplus_deficit__megawatt": {
    "name": "meghalaya__surplus_deficit__megawatt",
-   "label": "Meghalaya: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Meghalaya: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -13,
     -3,
@@ -1873,7 +2075,9 @@
   },
   "meghalaya__surplus_deficit__per_cent": {
    "name": "meghalaya__surplus_deficit__per_cent",
-   "label": "Meghalaya: Surplus(+) / Deficit(-): Per cent",
+   "label": "Meghalaya: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -3.8,
     -0.8,
@@ -1891,7 +2095,9 @@
   },
   "meghalaya__peak_met__megawatt": {
    "name": "meghalaya__peak_met__megawatt",
-   "label": "Meghalaya: Peak Met: Megawatt",
+   "label": "Meghalaya: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     330,
     367,
@@ -1909,7 +2115,9 @@
   },
   "meghalaya__peak_demand__megawatt": {
    "name": "meghalaya__peak_demand__megawatt",
-   "label": "Meghalaya: Peak Demand: Megawatt",
+   "label": "Meghalaya: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     343,
     370,
@@ -1927,7 +2135,9 @@
   },
   "mizoram__surplus_deficit__per_cent": {
    "name": "mizoram__surplus_deficit__per_cent",
-   "label": "Mizoram: Surplus(+) / Deficit(-): Per cent",
+   "label": "Mizoram: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -2.4,
     -2.2,
@@ -1945,7 +2155,9 @@
   },
   "mizoram__surplus_deficit__megawatt": {
    "name": "mizoram__surplus_deficit__megawatt",
-   "label": "Mizoram: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Mizoram: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -2,
     -2,
@@ -1963,7 +2175,9 @@
   },
   "mizoram__peak_met__megawatt": {
    "name": "mizoram__peak_met__megawatt",
-   "label": "Mizoram: Peak Met: Megawatt",
+   "label": "Mizoram: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     82,
     88,
@@ -1981,7 +2195,9 @@
   },
   "mizoram__peak_demand__megawatt": {
    "name": "mizoram__peak_demand__megawatt",
-   "label": "Mizoram: Peak Demand: Megawatt",
+   "label": "Mizoram: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     84,
     90,
@@ -1999,7 +2215,9 @@
   },
   "nagaland__surplus_deficit__megawatt": {
    "name": "nagaland__surplus_deficit__megawatt",
-   "label": "Nagaland: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Nagaland: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -3,
     -12,
@@ -2017,7 +2235,9 @@
   },
   "nagaland__surplus_deficit__per_cent": {
    "name": "nagaland__surplus_deficit__per_cent",
-   "label": "Nagaland: Surplus(+) / Deficit(-): Per cent",
+   "label": "Nagaland: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -2.8,
     -8.6,
@@ -2035,7 +2255,9 @@
   },
   "nagaland__peak_met__megawatt": {
    "name": "nagaland__peak_met__megawatt",
-   "label": "Nagaland: Peak Met: Megawatt",
+   "label": "Nagaland: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     106,
     128,
@@ -2053,7 +2275,9 @@
   },
   "nagaland__peak_demand__megawatt": {
    "name": "nagaland__peak_demand__megawatt",
-   "label": "Nagaland: Peak Demand: Megawatt",
+   "label": "Nagaland: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     109,
     140,
@@ -2071,7 +2295,9 @@
   },
   "north_eastern_region__surplus_deficit__megawatt": {
    "name": "north_eastern_region__surplus_deficit__megawatt",
-   "label": "North-eastern Region: Surplus(+) / Deficit(-): Megawatt",
+   "label": "North-eastern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -116,
     -326,
@@ -2089,7 +2315,9 @@
   },
   "north_eastern_region__surplus_deficit__per_cent": {
    "name": "north_eastern_region__surplus_deficit__per_cent",
-   "label": "North-eastern Region: Surplus(+) / Deficit(-): Per cent",
+   "label": "North-eastern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -5.4,
     -12.9,
@@ -2107,7 +2335,9 @@
   },
   "north_eastern_region__peak_met__megawatt": {
    "name": "north_eastern_region__peak_met__megawatt",
-   "label": "North-eastern Region: Peak Met: Megawatt",
+   "label": "North-eastern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     2048,
     2202,
@@ -2125,7 +2355,9 @@
   },
   "north_eastern_region__peak_demand__megawatt": {
    "name": "north_eastern_region__peak_demand__megawatt",
-   "label": "North-eastern Region: Peak Demand: Megawatt",
+   "label": "North-eastern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     2164,
     2528,
@@ -2143,7 +2375,9 @@
   },
   "northern_region__surplus_deficit__megawatt": {
    "name": "northern_region__surplus_deficit__megawatt",
-   "label": "Northern Region: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Northern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -3160,
     -4335,
@@ -2161,7 +2395,9 @@
   },
   "northern_region__surplus_deficit__per_cent": {
    "name": "northern_region__surplus_deficit__per_cent",
-   "label": "Northern Region: Surplus(+) / Deficit(-): Per cent",
+   "label": "Northern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -6.9,
     -8.3,
@@ -2179,7 +2415,9 @@
   },
   "northern_region__peak_met__megawatt": {
    "name": "northern_region__peak_met__megawatt",
-   "label": "Northern Region: Peak Met: Megawatt",
+   "label": "Northern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     42774,
     47642,
@@ -2197,7 +2435,9 @@
   },
   "northern_region__peak_demand__megawatt": {
    "name": "northern_region__peak_demand__megawatt",
-   "label": "Northern Region: Peak Demand: Megawatt",
+   "label": "Northern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     45934,
     51977,
@@ -2215,7 +2455,9 @@
   },
   "odisha__surplus_deficit__megawatt": {
    "name": "odisha__surplus_deficit__megawatt",
-   "label": "Odisha: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Odisha: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -5,
     -28,
@@ -2233,7 +2475,9 @@
   },
   "odisha__surplus_deficit__per_cent": {
    "name": "odisha__surplus_deficit__per_cent",
-   "label": "Odisha: Surplus(+) / Deficit(-): Per cent",
+   "label": "Odisha: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -0.1,
     -0.7,
@@ -2251,7 +2495,9 @@
   },
   "odisha__peak_met__megawatt": {
    "name": "odisha__peak_met__megawatt",
-   "label": "Odisha: Peak Met: Megawatt",
+   "label": "Odisha: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     3722,
     3892,
@@ -2269,7 +2515,9 @@
   },
   "odisha__peak_demand__megawatt": {
    "name": "odisha__peak_demand__megawatt",
-   "label": "Odisha: Peak Demand: Megawatt",
+   "label": "Odisha: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     3727,
     3920,
@@ -2287,7 +2535,9 @@
   },
   "puducherry__surplus_deficit__megawatt": {
    "name": "puducherry__surplus_deficit__megawatt",
-   "label": "Puducherry: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Puducherry: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -18,
     -41,
@@ -2305,7 +2555,9 @@
   },
   "puducherry__surplus_deficit__per_cent": {
    "name": "puducherry__surplus_deficit__per_cent",
-   "label": "Puducherry: Surplus(+) / Deficit(-): Per cent",
+   "label": "Puducherry: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -5.1,
     -10.5,
@@ -2323,7 +2575,9 @@
   },
   "puducherry__peak_met__megawatt": {
    "name": "puducherry__peak_met__megawatt",
-   "label": "Puducherry: Peak Met: Megawatt",
+   "label": "Puducherry: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     333,
     348,
@@ -2341,7 +2595,9 @@
   },
   "puducherry__peak_demand__megawatt": {
    "name": "puducherry__peak_demand__megawatt",
-   "label": "Puducherry: Peak Demand: Megawatt",
+   "label": "Puducherry: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     351,
     389,
@@ -2359,7 +2615,9 @@
   },
   "punjab__surplus_deficit__megawatt": {
    "name": "punjab__surplus_deficit__megawatt",
-   "label": "Punjab: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Punjab: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -1356,
     -1511,
@@ -2377,7 +2635,9 @@
   },
   "punjab__surplus_deficit__per_cent": {
    "name": "punjab__surplus_deficit__per_cent",
-   "label": "Punjab: Surplus(+) / Deficit(-): Per cent",
+   "label": "Punjab: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -13.4,
     -13.1,
@@ -2395,7 +2655,9 @@
   },
   "punjab__peak_met__megawatt": {
    "name": "punjab__peak_met__megawatt",
-   "label": "Punjab: Peak Met: Megawatt",
+   "label": "Punjab: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     8733,
     10023,
@@ -2413,7 +2675,9 @@
   },
   "punjab__peak_demand__megawatt": {
    "name": "punjab__peak_demand__megawatt",
-   "label": "Punjab: Peak Demand: Megawatt",
+   "label": "Punjab: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     10089,
     11534,
@@ -2431,7 +2695,9 @@
   },
   "rajasthan__surplus_deficit__megawatt": {
    "name": "rajasthan__surplus_deficit__megawatt",
-   "label": "Rajasthan: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Rajasthan: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -9,
     0,
@@ -2449,7 +2715,9 @@
   },
   "rajasthan__surplus_deficit__per_cent": {
    "name": "rajasthan__surplus_deficit__per_cent",
-   "label": "Rajasthan: Surplus(+) / Deficit(-): Per cent",
+   "label": "Rajasthan: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -0.1,
     0,
@@ -2467,7 +2735,9 @@
   },
   "rajasthan__peak_met__megawatt": {
    "name": "rajasthan__peak_met__megawatt",
-   "label": "Rajasthan: Peak Met: Megawatt",
+   "label": "Rajasthan: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     10038,
     10642,
@@ -2485,7 +2755,9 @@
   },
   "rajasthan__peak_demand__megawatt": {
    "name": "rajasthan__peak_demand__megawatt",
-   "label": "Rajasthan: Peak Demand: Megawatt",
+   "label": "Rajasthan: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     10047,
     10642,
@@ -2503,7 +2775,9 @@
   },
   "sikkim__surplus_deficit__megawatt": {
    "name": "sikkim__surplus_deficit__megawatt",
-   "label": "Sikkim: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Sikkim: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     0,
     0,
@@ -2521,7 +2795,9 @@
   },
   "sikkim__surplus_deficit__per_cent": {
    "name": "sikkim__surplus_deficit__per_cent",
-   "label": "Sikkim: Surplus(+) / Deficit(-): Per cent",
+   "label": "Sikkim: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     0,
     0,
@@ -2539,7 +2815,9 @@
   },
   "sikkim__peak_demand__megawatt": {
    "name": "sikkim__peak_demand__megawatt",
-   "label": "Sikkim: Peak Demand: Megawatt",
+   "label": "Sikkim: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     90,
     83,
@@ -2557,7 +2835,9 @@
   },
   "sikkim__peak_met__megawatt": {
    "name": "sikkim__peak_met__megawatt",
-   "label": "Sikkim: Peak Met: Megawatt",
+   "label": "Sikkim: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     90,
     83,
@@ -2575,7 +2855,9 @@
   },
   "southern_region__surplus_deficit__megawatt": {
    "name": "southern_region__surplus_deficit__megawatt",
-   "label": "Southern Region: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Southern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -2967,
     -2047,
@@ -2593,7 +2875,9 @@
   },
   "southern_region__surplus_deficit__per_cent": {
    "name": "southern_region__surplus_deficit__per_cent",
-   "label": "Southern Region: Surplus(+) / Deficit(-): Per cent",
+   "label": "Southern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -7.6,
     -5.2,
@@ -2611,7 +2895,9 @@
   },
   "southern_region__peak_met__megawatt": {
    "name": "southern_region__peak_met__megawatt",
-   "label": "Southern Region: Peak Met: Megawatt",
+   "label": "Southern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     36048,
     37047,
@@ -2629,7 +2915,9 @@
   },
   "southern_region__peak_demand__megawatt": {
    "name": "southern_region__peak_demand__megawatt",
-   "label": "Southern Region: Peak Demand: Megawatt",
+   "label": "Southern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     39015,
     39094,
@@ -2647,7 +2935,9 @@
   },
   "tamil_nadu__surplus_deficit__megawatt": {
    "name": "tamil_nadu__surplus_deficit__megawatt",
-   "label": "Tamil Nadu: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Tamil Nadu: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -1030,
     -209,
@@ -2665,7 +2955,9 @@
   },
   "tamil_nadu__surplus_deficit__per_cent": {
    "name": "tamil_nadu__surplus_deficit__per_cent",
-   "label": "Tamil Nadu: Surplus(+) / Deficit(-): Per cent",
+   "label": "Tamil Nadu: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -7.6,
     -1.5,
@@ -2683,7 +2975,9 @@
   },
   "tamil_nadu__peak_met__megawatt": {
    "name": "tamil_nadu__peak_met__megawatt",
-   "label": "Tamil Nadu: Peak Met: Megawatt",
+   "label": "Tamil Nadu: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     12492,
     13498,
@@ -2701,7 +2995,9 @@
   },
   "tamil_nadu__peak_demand__megawatt": {
    "name": "tamil_nadu__peak_demand__megawatt",
-   "label": "Tamil Nadu: Peak Demand: Megawatt",
+   "label": "Tamil Nadu: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     13522,
     13707,
@@ -2719,7 +3015,9 @@
   },
   "telangana__peak_demand__megawatt": {
    "name": "telangana__peak_demand__megawatt",
-   "label": "Telangana: Peak Demand: Megawatt",
+   "label": "Telangana: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     7884,
@@ -2737,7 +3035,9 @@
   },
   "telangana__peak_met__megawatt": {
    "name": "telangana__peak_met__megawatt",
-   "label": "Telangana: Peak Met: Megawatt",
+   "label": "Telangana: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     6755,
@@ -2755,7 +3055,9 @@
   },
   "telangana__surplus_deficit__megawatt": {
    "name": "telangana__surplus_deficit__megawatt",
-   "label": "Telangana: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Telangana: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     -1129,
@@ -2773,7 +3075,9 @@
   },
   "telangana__surplus_deficit__per_cent": {
    "name": "telangana__surplus_deficit__per_cent",
-   "label": "Telangana: Surplus(+) / Deficit(-): Per cent",
+   "label": "Telangana: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     -14.3,
@@ -2791,7 +3095,9 @@
   },
   "tripura__surplus_deficit__megawatt": {
    "name": "tripura__surplus_deficit__megawatt",
-   "label": "Tripura: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Tripura: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -4,
     -44,
@@ -2809,7 +3115,9 @@
   },
   "tripura__surplus_deficit__per_cent": {
    "name": "tripura__surplus_deficit__per_cent",
-   "label": "Tripura: Surplus(+) / Deficit(-): Per cent",
+   "label": "Tripura: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -1.6,
     -14.2,
@@ -2827,7 +3135,9 @@
   },
   "tripura__peak_met__megawatt": {
    "name": "tripura__peak_met__megawatt",
-   "label": "Tripura: Peak Met: Megawatt",
+   "label": "Tripura: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     250,
     266,
@@ -2845,7 +3155,9 @@
   },
   "tripura__peak_demand__megawatt": {
    "name": "tripura__peak_demand__megawatt",
-   "label": "Tripura: Peak Demand: Megawatt",
+   "label": "Tripura: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     254,
     310,
@@ -2863,7 +3175,9 @@
   },
   "uttarakhand__surplus_deficit__megawatt": {
    "name": "uttarakhand__surplus_deficit__megawatt",
-   "label": "Uttarakhand: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Uttarakhand: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     0,
     0,
@@ -2881,7 +3195,9 @@
   },
   "uttarakhand__surplus_deficit__per_cent": {
    "name": "uttarakhand__surplus_deficit__per_cent",
-   "label": "Uttarakhand: Surplus(+) / Deficit(-): Per cent",
+   "label": "Uttarakhand: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     0,
     0,
@@ -2899,7 +3215,9 @@
   },
   "uttarakhand__peak_demand__megawatt": {
    "name": "uttarakhand__peak_demand__megawatt",
-   "label": "Uttarakhand: Peak Demand: Megawatt",
+   "label": "Uttarakhand: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     1826,
     1930,
@@ -2917,7 +3235,9 @@
   },
   "uttarakhand__peak_met__megawatt": {
    "name": "uttarakhand__peak_met__megawatt",
-   "label": "Uttarakhand: Peak Met: Megawatt",
+   "label": "Uttarakhand: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     1826,
     1930,
@@ -2935,7 +3255,9 @@
   },
   "uttar_pradesh__surplus_deficit__megawatt": {
    "name": "uttar_pradesh__surplus_deficit__megawatt",
-   "label": "Uttar Pradesh: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Uttar Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -762,
     -2667,
@@ -2953,7 +3275,9 @@
   },
   "uttar_pradesh__surplus_deficit__per_cent": {
    "name": "uttar_pradesh__surplus_deficit__per_cent",
-   "label": "Uttar Pradesh: Surplus(+) / Deficit(-): Per cent",
+   "label": "Uttar Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -5.8,
     -17,
@@ -2971,7 +3295,9 @@
   },
   "uttar_pradesh__peak_met__megawatt": {
    "name": "uttar_pradesh__peak_met__megawatt",
-   "label": "Uttar Pradesh: Peak Met: Megawatt",
+   "label": "Uttar Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     12327,
     13003,
@@ -2989,7 +3315,9 @@
   },
   "uttar_pradesh__peak_demand__megawatt": {
    "name": "uttar_pradesh__peak_demand__megawatt",
-   "label": "Uttar Pradesh: Peak Demand: Megawatt",
+   "label": "Uttar Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     13089,
     15670,
@@ -3007,7 +3335,9 @@
   },
   "west_bengal__surplus_deficit__megawatt": {
    "name": "west_bengal__surplus_deficit__megawatt",
-   "label": "West Bengal: Surplus(+) / Deficit(-): Megawatt",
+   "label": "West Bengal: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -31,
     -20,
@@ -3025,7 +3355,9 @@
   },
   "west_bengal__surplus_deficit__per_cent": {
    "name": "west_bengal__surplus_deficit__per_cent",
-   "label": "West Bengal: Surplus(+) / Deficit(-): Per cent",
+   "label": "West Bengal: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -0.4,
     -0.3,
@@ -3043,7 +3375,9 @@
   },
   "west_bengal__peak_met__megawatt": {
    "name": "west_bengal__peak_met__megawatt",
-   "label": "West Bengal: Peak Met: Megawatt",
+   "label": "West Bengal: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     7294,
     7524,
@@ -3061,7 +3395,9 @@
   },
   "west_bengal__peak_demand__megawatt": {
    "name": "west_bengal__peak_demand__megawatt",
-   "label": "West Bengal: Peak Demand: Megawatt",
+   "label": "West Bengal: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     7325,
     7544,
@@ -3079,7 +3415,9 @@
   },
   "western_region__surplus_deficit__megawatt": {
    "name": "western_region__surplus_deficit__megawatt",
-   "label": "Western Region: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Western Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     -1004,
     -1021,
@@ -3097,7 +3435,9 @@
   },
   "western_region__surplus_deficit__per_cent": {
    "name": "western_region__surplus_deficit__per_cent",
-   "label": "Western Region: Surplus(+) / Deficit(-): Per cent",
+   "label": "Western Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     -2.4,
     -2.3,
@@ -3115,7 +3455,9 @@
   },
   "western_region__peak_met__megawatt": {
    "name": "western_region__peak_met__megawatt",
-   "label": "Western Region: Peak Met: Megawatt",
+   "label": "Western Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     40331,
     43145,
@@ -3133,7 +3475,9 @@
   },
   "western_region__peak_demand__megawatt": {
    "name": "western_region__peak_demand__megawatt",
-   "label": "Western Region: Peak Demand: Megawatt",
+   "label": "Western Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     41335,
     44166,
@@ -3151,7 +3495,9 @@
   },
   "andhra_pradesh__surplus_deficit__megawatt": {
    "name": "andhra_pradesh__surplus_deficit__megawatt",
-   "label": "Andhra Pradesh: Surplus(+) / Deficit(-): Megawatt",
+   "label": "Andhra Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     -360,
@@ -3169,7 +3515,9 @@
   },
   "andhra_pradesh__surplus_deficit__per_cent": {
    "name": "andhra_pradesh__surplus_deficit__per_cent",
-   "label": "Andhra Pradesh: Surplus(+) / Deficit(-): Per cent",
+   "label": "Andhra Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Surplus(+) / Deficit(-): Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     -5,
@@ -3187,7 +3535,9 @@
   },
   "andhra_pradesh__peak_met__megawatt": {
    "name": "andhra_pradesh__peak_met__megawatt",
-   "label": "Andhra Pradesh: Peak Met: Megawatt",
+   "label": "Andhra Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     6784,
@@ -3205,7 +3555,9 @@
   },
   "andhra_pradesh__peak_demand__megawatt": {
    "name": "andhra_pradesh__peak_demand__megawatt",
-   "label": "Andhra Pradesh: Peak Demand: Megawatt",
+   "label": "Andhra Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     7144,
@@ -3223,7 +3575,9 @@
   },
   "all_india__demand_not_met__per_cent": {
    "name": "all_india__demand_not_met__per_cent",
-   "label": "All India: Demand Not Met: Per cent",
+   "label": "All India: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3241,7 +3595,9 @@
   },
   "all_india__demand_not_met__megawatt": {
    "name": "all_india__demand_not_met__megawatt",
-   "label": "All India: Demand Not Met: Megawatt",
+   "label": "All India: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3259,7 +3615,9 @@
   },
   "andaman_and_nicobar_islands__demand_not_met__megawatt": {
    "name": "andaman_and_nicobar_islands__demand_not_met__megawatt",
-   "label": "Andaman & Nicobar Islands: Demand Not Met: Megawatt",
+   "label": "Andaman & Nicobar Islands: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3281,7 +3639,9 @@
   },
   "andaman_and_nicobar_islands__demand_not_met__per_cent": {
    "name": "andaman_and_nicobar_islands__demand_not_met__per_cent",
-   "label": "Andaman & Nicobar Islands: Demand Not Met: Per cent",
+   "label": "Andaman & Nicobar Islands: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3303,7 +3663,9 @@
   },
   "andhra_pradesh__demand_not_met__per_cent": {
    "name": "andhra_pradesh__demand_not_met__per_cent",
-   "label": "Andhra Pradesh: Demand Not Met: Per cent",
+   "label": "Andhra Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3321,7 +3683,9 @@
   },
   "andhra_pradesh__demand_not_met__megawatt": {
    "name": "andhra_pradesh__demand_not_met__megawatt",
-   "label": "Andhra Pradesh: Demand Not Met: Megawatt",
+   "label": "Andhra Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3339,7 +3703,9 @@
   },
   "arunachal_pradesh__demand_not_met__per_cent": {
    "name": "arunachal_pradesh__demand_not_met__per_cent",
-   "label": "Arunachal Pradesh: Demand Not Met: Per cent",
+   "label": "Arunachal Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3357,7 +3723,9 @@
   },
   "arunachal_pradesh__demand_not_met__megawatt": {
    "name": "arunachal_pradesh__demand_not_met__megawatt",
-   "label": "Arunachal Pradesh: Demand Not Met: Megawatt",
+   "label": "Arunachal Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3375,7 +3743,9 @@
   },
   "assam__demand_not_met__per_cent": {
    "name": "assam__demand_not_met__per_cent",
-   "label": "Assam: Demand Not Met: Per cent",
+   "label": "Assam: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3393,7 +3763,9 @@
   },
   "assam__demand_not_met__megawatt": {
    "name": "assam__demand_not_met__megawatt",
-   "label": "Assam: Demand Not Met: Megawatt",
+   "label": "Assam: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3411,7 +3783,9 @@
   },
   "bihar__demand_not_met__per_cent": {
    "name": "bihar__demand_not_met__per_cent",
-   "label": "Bihar: Demand Not Met: Per cent",
+   "label": "Bihar: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3429,7 +3803,9 @@
   },
   "bihar__demand_not_met__megawatt": {
    "name": "bihar__demand_not_met__megawatt",
-   "label": "Bihar: Demand Not Met: Megawatt",
+   "label": "Bihar: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3447,7 +3823,9 @@
   },
   "chandigarh__demand_not_met__megawatt": {
    "name": "chandigarh__demand_not_met__megawatt",
-   "label": "Chandigarh: Demand Not Met: Megawatt",
+   "label": "Chandigarh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3465,7 +3843,9 @@
   },
   "chandigarh__demand_not_met__per_cent": {
    "name": "chandigarh__demand_not_met__per_cent",
-   "label": "Chandigarh: Demand Not Met: Per cent",
+   "label": "Chandigarh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3483,7 +3863,9 @@
   },
   "chhattisgarh__demand_not_met__per_cent": {
    "name": "chhattisgarh__demand_not_met__per_cent",
-   "label": "Chhattisgarh: Demand Not Met: Per cent",
+   "label": "Chhattisgarh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3501,7 +3883,9 @@
   },
   "chhattisgarh__demand_not_met__megawatt": {
    "name": "chhattisgarh__demand_not_met__megawatt",
-   "label": "Chhattisgarh: Demand Not Met: Megawatt",
+   "label": "Chhattisgarh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3519,7 +3903,9 @@
   },
   "dadra_and_nagar_haveli__demand_not_met__megawatt": {
    "name": "dadra_and_nagar_haveli__demand_not_met__megawatt",
-   "label": "Dadra & Nagar Haveli: Demand Not Met: Megawatt",
+   "label": "Dadra & Nagar Haveli: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3537,7 +3923,9 @@
   },
   "dadra_and_nagar_haveli__demand_not_met__per_cent": {
    "name": "dadra_and_nagar_haveli__demand_not_met__per_cent",
-   "label": "Dadra & Nagar Haveli: Demand Not Met: Per cent",
+   "label": "Dadra & Nagar Haveli: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3555,7 +3943,9 @@
   },
   "daman_and_diu__demand_not_met__per_cent": {
    "name": "daman_and_diu__demand_not_met__per_cent",
-   "label": "Daman & Diu: Demand Not Met: Per cent",
+   "label": "Daman & Diu: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3573,7 +3963,9 @@
   },
   "daman_and_diu__demand_not_met__megawatt": {
    "name": "daman_and_diu__demand_not_met__megawatt",
-   "label": "Daman & Diu: Demand Not Met: Megawatt",
+   "label": "Daman & Diu: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3591,7 +3983,9 @@
   },
   "damodar_valley_corporation__demand_not_met__megawatt": {
    "name": "damodar_valley_corporation__demand_not_met__megawatt",
-   "label": "Damodar Valley Corporation: Demand Not Met: Megawatt",
+   "label": "Damodar Valley Corporation: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3609,7 +4003,9 @@
   },
   "damodar_valley_corporation__demand_not_met__per_cent": {
    "name": "damodar_valley_corporation__demand_not_met__per_cent",
-   "label": "Damodar Valley Corporation: Demand Not Met: Per cent",
+   "label": "Damodar Valley Corporation: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3627,7 +4023,9 @@
   },
   "delhi__demand_not_met__megawatt": {
    "name": "delhi__demand_not_met__megawatt",
-   "label": "Delhi: Demand Not Met: Megawatt",
+   "label": "Delhi: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3645,7 +4043,9 @@
   },
   "delhi__demand_not_met__per_cent": {
    "name": "delhi__demand_not_met__per_cent",
-   "label": "Delhi: Demand Not Met: Per cent",
+   "label": "Delhi: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3663,7 +4063,9 @@
   },
   "eastern_region__demand_not_met__per_cent": {
    "name": "eastern_region__demand_not_met__per_cent",
-   "label": "Eastern Region: Demand Not Met: Per cent",
+   "label": "Eastern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3681,7 +4083,9 @@
   },
   "eastern_region__demand_not_met__megawatt": {
    "name": "eastern_region__demand_not_met__megawatt",
-   "label": "Eastern Region: Demand Not Met: Megawatt",
+   "label": "Eastern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3699,7 +4103,9 @@
   },
   "goa__demand_not_met__megawatt": {
    "name": "goa__demand_not_met__megawatt",
-   "label": "Goa: Demand Not Met: Megawatt",
+   "label": "Goa: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3717,7 +4123,9 @@
   },
   "goa__demand_not_met__per_cent": {
    "name": "goa__demand_not_met__per_cent",
-   "label": "Goa: Demand Not Met: Per cent",
+   "label": "Goa: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3735,7 +4143,9 @@
   },
   "gujarat__demand_not_met__per_cent": {
    "name": "gujarat__demand_not_met__per_cent",
-   "label": "Gujarat: Demand Not Met: Per cent",
+   "label": "Gujarat: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3753,7 +4163,9 @@
   },
   "gujarat__demand_not_met__megawatt": {
    "name": "gujarat__demand_not_met__megawatt",
-   "label": "Gujarat: Demand Not Met: Megawatt",
+   "label": "Gujarat: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3771,7 +4183,9 @@
   },
   "haryana__demand_not_met__megawatt": {
    "name": "haryana__demand_not_met__megawatt",
-   "label": "Haryana: Demand Not Met: Megawatt",
+   "label": "Haryana: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3789,7 +4203,9 @@
   },
   "haryana__demand_not_met__per_cent": {
    "name": "haryana__demand_not_met__per_cent",
-   "label": "Haryana: Demand Not Met: Per cent",
+   "label": "Haryana: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3807,7 +4223,9 @@
   },
   "himachal_pradesh__demand_not_met__megawatt": {
    "name": "himachal_pradesh__demand_not_met__megawatt",
-   "label": "Himachal Pradesh: Demand Not Met: Megawatt",
+   "label": "Himachal Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3825,7 +4243,9 @@
   },
   "himachal_pradesh__demand_not_met__per_cent": {
    "name": "himachal_pradesh__demand_not_met__per_cent",
-   "label": "Himachal Pradesh: Demand Not Met: Per cent",
+   "label": "Himachal Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3843,7 +4263,9 @@
   },
   "jammu_and_kashmir_ut__demand_not_met__per_cent": {
    "name": "jammu_and_kashmir_ut__demand_not_met__per_cent",
-   "label": "Jammu & Kashmir (UT, from 2019-20): Demand Not Met: Per cent",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3861,7 +4283,9 @@
   },
   "jammu_and_kashmir_ut__demand_not_met__megawatt": {
    "name": "jammu_and_kashmir_ut__demand_not_met__megawatt",
-   "label": "Jammu & Kashmir (UT, from 2019-20): Demand Not Met: Megawatt",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3879,7 +4303,9 @@
   },
   "jammu_and_kashmir_ut__peak_met__megawatt": {
    "name": "jammu_and_kashmir_ut__peak_met__megawatt",
-   "label": "Jammu & Kashmir (UT, from 2019-20): Peak Met: Megawatt",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3897,7 +4323,9 @@
   },
   "jammu_and_kashmir_ut__peak_demand__megawatt": {
    "name": "jammu_and_kashmir_ut__peak_demand__megawatt",
-   "label": "Jammu & Kashmir (UT, from 2019-20): Peak Demand: Megawatt",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3915,7 +4343,9 @@
   },
   "jharkhand__demand_not_met__per_cent": {
    "name": "jharkhand__demand_not_met__per_cent",
-   "label": "Jharkhand: Demand Not Met: Per cent",
+   "label": "Jharkhand: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3933,7 +4363,9 @@
   },
   "jharkhand__demand_not_met__megawatt": {
    "name": "jharkhand__demand_not_met__megawatt",
-   "label": "Jharkhand: Demand Not Met: Megawatt",
+   "label": "Jharkhand: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3951,7 +4383,9 @@
   },
   "karnataka__demand_not_met__per_cent": {
    "name": "karnataka__demand_not_met__per_cent",
-   "label": "Karnataka: Demand Not Met: Per cent",
+   "label": "Karnataka: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3969,7 +4403,9 @@
   },
   "karnataka__demand_not_met__megawatt": {
    "name": "karnataka__demand_not_met__megawatt",
-   "label": "Karnataka: Demand Not Met: Megawatt",
+   "label": "Karnataka: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -3987,7 +4423,9 @@
   },
   "kerala__demand_not_met__per_cent": {
    "name": "kerala__demand_not_met__per_cent",
-   "label": "Keralam: Demand Not Met: Per cent",
+   "label": "Keralam: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4005,7 +4443,9 @@
   },
   "kerala__demand_not_met__megawatt": {
    "name": "kerala__demand_not_met__megawatt",
-   "label": "Keralam: Demand Not Met: Megawatt",
+   "label": "Keralam: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4023,7 +4463,9 @@
   },
   "lakshadweep__demand_not_met__megawatt": {
    "name": "lakshadweep__demand_not_met__megawatt",
-   "label": "Lakshadweep: Demand Not Met: Megawatt",
+   "label": "Lakshadweep: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4045,7 +4487,9 @@
   },
   "lakshadweep__demand_not_met__per_cent": {
    "name": "lakshadweep__demand_not_met__per_cent",
-   "label": "Lakshadweep: Demand Not Met: Per cent",
+   "label": "Lakshadweep: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4067,7 +4511,9 @@
   },
   "madhya_pradesh__demand_not_met__per_cent": {
    "name": "madhya_pradesh__demand_not_met__per_cent",
-   "label": "Madhya Pradesh: Demand Not Met: Per cent",
+   "label": "Madhya Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4085,7 +4531,9 @@
   },
   "madhya_pradesh__demand_not_met__megawatt": {
    "name": "madhya_pradesh__demand_not_met__megawatt",
-   "label": "Madhya Pradesh: Demand Not Met: Megawatt",
+   "label": "Madhya Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4103,7 +4551,9 @@
   },
   "maharashtra__demand_not_met__megawatt": {
    "name": "maharashtra__demand_not_met__megawatt",
-   "label": "Maharashtra: Demand Not Met: Megawatt",
+   "label": "Maharashtra: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4121,7 +4571,9 @@
   },
   "maharashtra__demand_not_met__per_cent": {
    "name": "maharashtra__demand_not_met__per_cent",
-   "label": "Maharashtra: Demand Not Met: Per cent",
+   "label": "Maharashtra: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4139,7 +4591,9 @@
   },
   "manipur__demand_not_met__per_cent": {
    "name": "manipur__demand_not_met__per_cent",
-   "label": "Manipur: Demand Not Met: Per cent",
+   "label": "Manipur: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4157,7 +4611,9 @@
   },
   "manipur__demand_not_met__megawatt": {
    "name": "manipur__demand_not_met__megawatt",
-   "label": "Manipur: Demand Not Met: Megawatt",
+   "label": "Manipur: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4175,7 +4631,9 @@
   },
   "meghalaya__demand_not_met__megawatt": {
    "name": "meghalaya__demand_not_met__megawatt",
-   "label": "Meghalaya: Demand Not Met: Megawatt",
+   "label": "Meghalaya: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4193,7 +4651,9 @@
   },
   "meghalaya__demand_not_met__per_cent": {
    "name": "meghalaya__demand_not_met__per_cent",
-   "label": "Meghalaya: Demand Not Met: Per cent",
+   "label": "Meghalaya: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4211,7 +4671,9 @@
   },
   "mizoram__demand_not_met__megawatt": {
    "name": "mizoram__demand_not_met__megawatt",
-   "label": "Mizoram: Demand Not Met: Megawatt",
+   "label": "Mizoram: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4229,7 +4691,9 @@
   },
   "mizoram__demand_not_met__per_cent": {
    "name": "mizoram__demand_not_met__per_cent",
-   "label": "Mizoram: Demand Not Met: Per cent",
+   "label": "Mizoram: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4247,7 +4711,9 @@
   },
   "nagaland__demand_not_met__per_cent": {
    "name": "nagaland__demand_not_met__per_cent",
-   "label": "Nagaland: Demand Not Met: Per cent",
+   "label": "Nagaland: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4265,7 +4731,9 @@
   },
   "nagaland__demand_not_met__megawatt": {
    "name": "nagaland__demand_not_met__megawatt",
-   "label": "Nagaland: Demand Not Met: Megawatt",
+   "label": "Nagaland: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4283,7 +4751,9 @@
   },
   "north_eastern_region__demand_not_met__per_cent": {
    "name": "north_eastern_region__demand_not_met__per_cent",
-   "label": "North-eastern Region: Demand Not Met: Per cent",
+   "label": "North-eastern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4301,7 +4771,9 @@
   },
   "north_eastern_region__demand_not_met__megawatt": {
    "name": "north_eastern_region__demand_not_met__megawatt",
-   "label": "North-eastern Region: Demand Not Met: Megawatt",
+   "label": "North-eastern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4319,7 +4791,9 @@
   },
   "northern_region__demand_not_met__per_cent": {
    "name": "northern_region__demand_not_met__per_cent",
-   "label": "Northern Region: Demand Not Met: Per cent",
+   "label": "Northern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4337,7 +4811,9 @@
   },
   "northern_region__demand_not_met__megawatt": {
    "name": "northern_region__demand_not_met__megawatt",
-   "label": "Northern Region: Demand Not Met: Megawatt",
+   "label": "Northern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4355,7 +4831,9 @@
   },
   "odisha__demand_not_met__megawatt": {
    "name": "odisha__demand_not_met__megawatt",
-   "label": "Odisha: Demand Not Met: Megawatt",
+   "label": "Odisha: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4373,7 +4851,9 @@
   },
   "odisha__demand_not_met__per_cent": {
    "name": "odisha__demand_not_met__per_cent",
-   "label": "Odisha: Demand Not Met: Per cent",
+   "label": "Odisha: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4391,7 +4871,9 @@
   },
   "puducherry__demand_not_met__megawatt": {
    "name": "puducherry__demand_not_met__megawatt",
-   "label": "Puducherry: Demand Not Met: Megawatt",
+   "label": "Puducherry: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4409,7 +4891,9 @@
   },
   "puducherry__demand_not_met__per_cent": {
    "name": "puducherry__demand_not_met__per_cent",
-   "label": "Puducherry: Demand Not Met: Per cent",
+   "label": "Puducherry: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4427,7 +4911,9 @@
   },
   "punjab__demand_not_met__megawatt": {
    "name": "punjab__demand_not_met__megawatt",
-   "label": "Punjab: Demand Not Met: Megawatt",
+   "label": "Punjab: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4445,7 +4931,9 @@
   },
   "punjab__demand_not_met__per_cent": {
    "name": "punjab__demand_not_met__per_cent",
-   "label": "Punjab: Demand Not Met: Per cent",
+   "label": "Punjab: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4463,7 +4951,9 @@
   },
   "rajasthan__demand_not_met__megawatt": {
    "name": "rajasthan__demand_not_met__megawatt",
-   "label": "Rajasthan: Demand Not Met: Megawatt",
+   "label": "Rajasthan: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4481,7 +4971,9 @@
   },
   "rajasthan__demand_not_met__per_cent": {
    "name": "rajasthan__demand_not_met__per_cent",
-   "label": "Rajasthan: Demand Not Met: Per cent",
+   "label": "Rajasthan: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4499,7 +4991,9 @@
   },
   "sikkim__demand_not_met__megawatt": {
    "name": "sikkim__demand_not_met__megawatt",
-   "label": "Sikkim: Demand Not Met: Megawatt",
+   "label": "Sikkim: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4517,7 +5011,9 @@
   },
   "sikkim__demand_not_met__per_cent": {
    "name": "sikkim__demand_not_met__per_cent",
-   "label": "Sikkim: Demand Not Met: Per cent",
+   "label": "Sikkim: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4535,7 +5031,9 @@
   },
   "southern_region__demand_not_met__per_cent": {
    "name": "southern_region__demand_not_met__per_cent",
-   "label": "Southern Region: Demand Not Met: Per cent",
+   "label": "Southern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4553,7 +5051,9 @@
   },
   "southern_region__demand_not_met__megawatt": {
    "name": "southern_region__demand_not_met__megawatt",
-   "label": "Southern Region: Demand Not Met: Megawatt",
+   "label": "Southern Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4571,7 +5071,9 @@
   },
   "tamil_nadu__demand_not_met__per_cent": {
    "name": "tamil_nadu__demand_not_met__per_cent",
-   "label": "Tamil Nadu: Demand Not Met: Per cent",
+   "label": "Tamil Nadu: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4589,7 +5091,9 @@
   },
   "tamil_nadu__demand_not_met__megawatt": {
    "name": "tamil_nadu__demand_not_met__megawatt",
-   "label": "Tamil Nadu: Demand Not Met: Megawatt",
+   "label": "Tamil Nadu: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4607,7 +5111,9 @@
   },
   "telangana__demand_not_met__megawatt": {
    "name": "telangana__demand_not_met__megawatt",
-   "label": "Telangana: Demand Not Met: Megawatt",
+   "label": "Telangana: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4625,7 +5131,9 @@
   },
   "telangana__demand_not_met__per_cent": {
    "name": "telangana__demand_not_met__per_cent",
-   "label": "Telangana: Demand Not Met: Per cent",
+   "label": "Telangana: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4643,7 +5151,9 @@
   },
   "tripura__demand_not_met__per_cent": {
    "name": "tripura__demand_not_met__per_cent",
-   "label": "Tripura: Demand Not Met: Per cent",
+   "label": "Tripura: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4661,7 +5171,9 @@
   },
   "tripura__demand_not_met__megawatt": {
    "name": "tripura__demand_not_met__megawatt",
-   "label": "Tripura: Demand Not Met: Megawatt",
+   "label": "Tripura: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4679,7 +5191,9 @@
   },
   "uttarakhand__demand_not_met__megawatt": {
    "name": "uttarakhand__demand_not_met__megawatt",
-   "label": "Uttarakhand: Demand Not Met: Megawatt",
+   "label": "Uttarakhand: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4697,7 +5211,9 @@
   },
   "uttarakhand__demand_not_met__per_cent": {
    "name": "uttarakhand__demand_not_met__per_cent",
-   "label": "Uttarakhand: Demand Not Met: Per cent",
+   "label": "Uttarakhand: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4715,7 +5231,9 @@
   },
   "uttar_pradesh__demand_not_met__per_cent": {
    "name": "uttar_pradesh__demand_not_met__per_cent",
-   "label": "Uttar Pradesh: Demand Not Met: Per cent",
+   "label": "Uttar Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4733,7 +5251,9 @@
   },
   "uttar_pradesh__demand_not_met__megawatt": {
    "name": "uttar_pradesh__demand_not_met__megawatt",
-   "label": "Uttar Pradesh: Demand Not Met: Megawatt",
+   "label": "Uttar Pradesh: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4751,7 +5271,9 @@
   },
   "west_bengal__demand_not_met__per_cent": {
    "name": "west_bengal__demand_not_met__per_cent",
-   "label": "West Bengal: Demand Not Met: Per cent",
+   "label": "West Bengal: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4769,7 +5291,9 @@
   },
   "west_bengal__demand_not_met__megawatt": {
    "name": "west_bengal__demand_not_met__megawatt",
-   "label": "West Bengal: Demand Not Met: Megawatt",
+   "label": "West Bengal: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4787,7 +5311,9 @@
   },
   "western_region__demand_not_met__megawatt": {
    "name": "western_region__demand_not_met__megawatt",
-   "label": "Western Region: Demand Not Met: Megawatt",
+   "label": "Western Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4805,7 +5331,9 @@
   },
   "western_region__demand_not_met__per_cent": {
    "name": "western_region__demand_not_met__per_cent",
-   "label": "Western Region: Demand Not Met: Per cent",
+   "label": "Western Region: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4823,7 +5351,9 @@
   },
   "dadra_and_nagar_haveli_and_daman_and_diu__demand_not_met__per_cent": {
    "name": "dadra_and_nagar_haveli_and_daman_and_diu__demand_not_met__per_cent",
-   "label": "Dadra And Nagar Haveli And Daman And Diu: Demand Not Met: Per cent",
+   "label": "Dadra And Nagar Haveli And Daman And Diu: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Per cent",
+   "unit": "pct",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4841,7 +5371,9 @@
   },
   "dadra_and_nagar_haveli_and_daman_and_diu__demand_not_met__megawatt": {
    "name": "dadra_and_nagar_haveli_and_daman_and_diu__demand_not_met__megawatt",
-   "label": "Dadra And Nagar Haveli And Daman And Diu: Demand Not Met: Megawatt",
+   "label": "Dadra And Nagar Haveli And Daman And Diu: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Demand Not Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4859,7 +5391,9 @@
   },
   "dadra_and_nagar_haveli_and_daman_and_diu__peak_met__megawatt": {
    "name": "dadra_and_nagar_haveli_and_daman_and_diu__peak_met__megawatt",
-   "label": "Dadra And Nagar Haveli And Daman And Diu: Peak Met: Megawatt",
+   "label": "Dadra And Nagar Haveli And Daman And Diu: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Met: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,
@@ -4877,7 +5411,9 @@
   },
   "dadra_and_nagar_haveli_and_daman_and_diu__peak_demand__megawatt": {
    "name": "dadra_and_nagar_haveli_and_daman_and_diu__peak_demand__megawatt",
-   "label": "Dadra And Nagar Haveli And Daman And Diu: Peak Demand: Megawatt",
+   "label": "Dadra And Nagar Haveli And Daman And Diu: Actual Power Supply Position in terms of Peak Demand vis-à-vis Peak Met: Peak Demand: Megawatt",
+   "unit": "mw",
+   "group": "Infrastructure",
    "data": [
     null,
     null,

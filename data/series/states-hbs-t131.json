@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2023-04",
-  "unit": "as served by DBIE",
+  "unit": "inr_amount",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Gross Capital Formation: RBI Handbook of Statistics on Indian States, Table 131",
-  "note": "DBIE report 1675, data provider \"Query 1\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1675, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -47,7 +47,9 @@
  "series": {
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     1100729000000,
     1715670100000,
@@ -73,7 +75,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     5900000,
     50500000,
@@ -99,7 +103,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     68442900000,
     107512100000,
@@ -125,7 +131,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -151,7 +159,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     12030700000,
     12338300000,
@@ -177,7 +187,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     10181100000,
     -5797700000,
@@ -203,7 +215,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     995300000,
     1393400000,
@@ -229,7 +243,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     38133900000,
     56247500000,
@@ -255,7 +271,9 @@
   },
   "dadra_and_nagar_haveli": {
    "name": "dadra_and_nagar_haveli",
-   "label": "Dadra & Nagar Haveli",
+   "label": "Dadra & Nagar Haveli: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     15230200000,
     20249200000,
@@ -281,7 +299,9 @@
   },
   "daman_and_diu": {
    "name": "daman_and_diu",
-   "label": "Daman & Diu",
+   "label": "Daman & Diu: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     10310900000,
     11227300000,
@@ -307,7 +327,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     9990800000,
     8003300000,
@@ -333,7 +355,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     7089600000,
     10841900000,
@@ -359,7 +383,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     140219500000,
     330642600000,
@@ -385,7 +411,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     49344700000,
     57480300000,
@@ -411,7 +439,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     7187200000,
     23375200000,
@@ -437,7 +467,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -463,7 +495,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     4563800000,
     5347400000,
@@ -489,7 +523,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     35657700000,
     51991600000,
@@ -515,7 +551,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     93068800000,
     141551800000,
@@ -541,7 +579,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     22234600000,
     23053700000,
@@ -567,7 +607,9 @@
   },
   "ladakh": {
    "name": "ladakh",
-   "label": "Ladakh",
+   "label": "Ladakh: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -593,7 +635,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -619,7 +663,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     29444300000,
     39178900000,
@@ -645,7 +691,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     181770500000,
     288053100000,
@@ -671,7 +719,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     18500000,
     6600000,
@@ -697,7 +747,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     143700000,
     678400000,
@@ -723,7 +775,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -749,7 +803,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     38100000,
     103200000,
@@ -775,7 +831,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     23990400000,
     79312200000,
@@ -801,7 +859,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     5600600000,
     7142600000,
@@ -827,7 +887,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     28934700000,
     43079700000,
@@ -853,7 +915,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     29434600000,
     36988500000,
@@ -879,7 +943,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -905,7 +971,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     145815900000,
     191746100000,
@@ -931,7 +999,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -957,7 +1027,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     313900000,
     1276300000,
@@ -983,7 +1055,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     11801800000,
     21343200000,
@@ -1009,7 +1083,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     77654500000,
     106779900000,
@@ -1035,7 +1111,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Gross Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     41079700000,
     44472900000,

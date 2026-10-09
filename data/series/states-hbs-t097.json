@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2025-03",
-  "unit": "Lakh Metric Tonnes",
+  "unit": "per series",
   "periodKind": "asOn",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "Storage Capacity for Foodgrains and Utilisation under FCI: RBI Handbook of Statistics on Indian States, Table 97",
-  "note": "DBIE report 1645, data provider \"Query 1\". Values exactly as DBIE serves them; DBIE's unit label: Lakh Metric Tonnes (rupee amounts are served in rupees). Periods: as on the date served. Dimensions: none; measures: total capacity, utilisation, utilisation per cent. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1645, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: Lakh Metric Tonnes. Periods: as on the date served. Dimensions: none; measures: storage capacity, capacity in use, utilisation. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2019-03-01",
@@ -32,9 +32,11 @@
   "2025-03-01"
  ],
  "series": {
-  "andaman_and_nicobar_islands__total_capacity": {
-   "name": "andaman_and_nicobar_islands__total_capacity",
-   "label": "Andaman & Nicobar Islands: total capacity",
+  "andaman_and_nicobar_islands__storage_capacity": {
+   "name": "andaman_and_nicobar_islands__storage_capacity",
+   "label": "Andaman & Nicobar Islands: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.07,
     0.07,
@@ -45,9 +47,11 @@
     0.07
    ]
   },
-  "andaman_and_nicobar_islands__utilisation": {
-   "name": "andaman_and_nicobar_islands__utilisation",
-   "label": "Andaman & Nicobar Islands: utilisation",
+  "andaman_and_nicobar_islands__capacity_in_use": {
+   "name": "andaman_and_nicobar_islands__capacity_in_use",
+   "label": "Andaman & Nicobar Islands: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.05,
     0.04,
@@ -58,9 +62,11 @@
     0.06
    ]
   },
-  "andaman_and_nicobar_islands__utilisation_per_cent": {
-   "name": "andaman_and_nicobar_islands__utilisation_per_cent",
-   "label": "Andaman & Nicobar Islands: utilisation per cent",
+  "andaman_and_nicobar_islands__utilisation": {
+   "name": "andaman_and_nicobar_islands__utilisation",
+   "label": "Andaman & Nicobar Islands: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     71,
     57,
@@ -71,9 +77,11 @@
     81
    ]
   },
-  "andhra_pradesh__total_capacity": {
-   "name": "andhra_pradesh__total_capacity",
-   "label": "Andhra Pradesh: total capacity",
+  "andhra_pradesh__storage_capacity": {
+   "name": "andhra_pradesh__storage_capacity",
+   "label": "Andhra Pradesh: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     13.74,
     14.6,
@@ -84,9 +92,11 @@
     11.71
    ]
   },
-  "andhra_pradesh__utilisation": {
-   "name": "andhra_pradesh__utilisation",
-   "label": "Andhra Pradesh: utilisation",
+  "andhra_pradesh__capacity_in_use": {
+   "name": "andhra_pradesh__capacity_in_use",
+   "label": "Andhra Pradesh: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     10.84,
     9.14,
@@ -97,9 +107,11 @@
     9.72
    ]
   },
-  "andhra_pradesh__utilisation_per_cent": {
-   "name": "andhra_pradesh__utilisation_per_cent",
-   "label": "Andhra Pradesh: utilisation per cent",
+  "andhra_pradesh__utilisation": {
+   "name": "andhra_pradesh__utilisation",
+   "label": "Andhra Pradesh: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     79,
     63,
@@ -110,9 +122,11 @@
     83
    ]
   },
-  "arunachal_pradesh__total_capacity": {
-   "name": "arunachal_pradesh__total_capacity",
-   "label": "Arunachal Pradesh: total capacity",
+  "arunachal_pradesh__storage_capacity": {
+   "name": "arunachal_pradesh__storage_capacity",
+   "label": "Arunachal Pradesh: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.3,
     0.33,
@@ -123,9 +137,11 @@
     0.42
    ]
   },
-  "arunachal_pradesh__utilisation": {
-   "name": "arunachal_pradesh__utilisation",
-   "label": "Arunachal Pradesh: utilisation",
+  "arunachal_pradesh__capacity_in_use": {
+   "name": "arunachal_pradesh__capacity_in_use",
+   "label": "Arunachal Pradesh: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.18,
     0.24,
@@ -136,9 +152,11 @@
     0.37
    ]
   },
-  "arunachal_pradesh__utilisation_per_cent": {
-   "name": "arunachal_pradesh__utilisation_per_cent",
-   "label": "Arunachal Pradesh: utilisation per cent",
+  "arunachal_pradesh__utilisation": {
+   "name": "arunachal_pradesh__utilisation",
+   "label": "Arunachal Pradesh: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     60,
     73,
@@ -149,9 +167,11 @@
     88
    ]
   },
-  "assam__total_capacity": {
-   "name": "assam__total_capacity",
-   "label": "Assam: total capacity",
+  "assam__storage_capacity": {
+   "name": "assam__storage_capacity",
+   "label": "Assam: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     3.98,
     4.18,
@@ -162,9 +182,11 @@
     5.31
    ]
   },
-  "assam__utilisation": {
-   "name": "assam__utilisation",
-   "label": "Assam: utilisation",
+  "assam__capacity_in_use": {
+   "name": "assam__capacity_in_use",
+   "label": "Assam: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     3.24,
     3.66,
@@ -175,9 +197,11 @@
     3.96
    ]
   },
-  "assam__utilisation_per_cent": {
-   "name": "assam__utilisation_per_cent",
-   "label": "Assam: utilisation per cent",
+  "assam__utilisation": {
+   "name": "assam__utilisation",
+   "label": "Assam: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     81,
     88,
@@ -188,9 +212,11 @@
     75
    ]
   },
-  "bihar__total_capacity": {
-   "name": "bihar__total_capacity",
-   "label": "Bihar: total capacity",
+  "bihar__storage_capacity": {
+   "name": "bihar__storage_capacity",
+   "label": "Bihar: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     10.41,
     11.08,
@@ -201,9 +227,11 @@
     11.69
    ]
   },
-  "bihar__utilisation": {
-   "name": "bihar__utilisation",
-   "label": "Bihar: utilisation",
+  "bihar__capacity_in_use": {
+   "name": "bihar__capacity_in_use",
+   "label": "Bihar: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     6.9,
     8.79,
@@ -214,9 +242,11 @@
     8.72
    ]
   },
-  "bihar__utilisation_per_cent": {
-   "name": "bihar__utilisation_per_cent",
-   "label": "Bihar: utilisation per cent",
+  "bihar__utilisation": {
+   "name": "bihar__utilisation",
+   "label": "Bihar: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     66,
     79,
@@ -227,9 +257,11 @@
     75
    ]
   },
-  "chandigarh__total_capacity": {
-   "name": "chandigarh__total_capacity",
-   "label": "Chandigarh: total capacity",
+  "chandigarh__storage_capacity": {
+   "name": "chandigarh__storage_capacity",
+   "label": "Chandigarh: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.06,
     0.06,
@@ -240,9 +272,11 @@
     0.09
    ]
   },
-  "chandigarh__utilisation": {
-   "name": "chandigarh__utilisation",
-   "label": "Chandigarh: utilisation",
+  "chandigarh__capacity_in_use": {
+   "name": "chandigarh__capacity_in_use",
+   "label": "Chandigarh: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.04,
     0.05,
@@ -253,9 +287,11 @@
     0.08
    ]
   },
-  "chandigarh__utilisation_per_cent": {
-   "name": "chandigarh__utilisation_per_cent",
-   "label": "Chandigarh: utilisation per cent",
+  "chandigarh__utilisation": {
+   "name": "chandigarh__utilisation",
+   "label": "Chandigarh: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     67,
     83,
@@ -266,9 +302,11 @@
     89
    ]
   },
-  "chhattisgarh__total_capacity": {
-   "name": "chhattisgarh__total_capacity",
-   "label": "Chhattisgarh: total capacity",
+  "chhattisgarh__storage_capacity": {
+   "name": "chhattisgarh__storage_capacity",
+   "label": "Chhattisgarh: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     6.95,
     9.15,
@@ -279,9 +317,11 @@
     19.89
    ]
   },
-  "chhattisgarh__utilisation": {
-   "name": "chhattisgarh__utilisation",
-   "label": "Chhattisgarh: utilisation",
+  "chhattisgarh__capacity_in_use": {
+   "name": "chhattisgarh__capacity_in_use",
+   "label": "Chhattisgarh: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     5.27,
     8.88,
@@ -292,9 +332,11 @@
     18.59
    ]
   },
-  "chhattisgarh__utilisation_per_cent": {
-   "name": "chhattisgarh__utilisation_per_cent",
-   "label": "Chhattisgarh: utilisation per cent",
+  "chhattisgarh__utilisation": {
+   "name": "chhattisgarh__utilisation",
+   "label": "Chhattisgarh: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     76,
     97,
@@ -305,9 +347,11 @@
     93
    ]
   },
-  "delhi__total_capacity": {
-   "name": "delhi__total_capacity",
-   "label": "Delhi: total capacity",
+  "delhi__storage_capacity": {
+   "name": "delhi__storage_capacity",
+   "label": "Delhi: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     3.67,
     3.67,
@@ -318,9 +362,11 @@
     3.28
    ]
   },
-  "delhi__utilisation": {
-   "name": "delhi__utilisation",
-   "label": "Delhi: utilisation",
+  "delhi__capacity_in_use": {
+   "name": "delhi__capacity_in_use",
+   "label": "Delhi: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     2.64,
     2.84,
@@ -331,9 +377,11 @@
     2.17
    ]
   },
-  "delhi__utilisation_per_cent": {
-   "name": "delhi__utilisation_per_cent",
-   "label": "Delhi: utilisation per cent",
+  "delhi__utilisation": {
+   "name": "delhi__utilisation",
+   "label": "Delhi: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     72,
     77,
@@ -344,9 +392,11 @@
     66
    ]
   },
-  "goa__total_capacity": {
-   "name": "goa__total_capacity",
-   "label": "Goa: total capacity",
+  "goa__storage_capacity": {
+   "name": "goa__storage_capacity",
+   "label": "Goa: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.2,
     0.2,
@@ -357,9 +407,11 @@
     0.19
    ]
   },
-  "goa__utilisation": {
-   "name": "goa__utilisation",
-   "label": "Goa: utilisation",
+  "goa__capacity_in_use": {
+   "name": "goa__capacity_in_use",
+   "label": "Goa: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.19,
     0.2,
@@ -370,9 +422,11 @@
     0.16
    ]
   },
-  "goa__utilisation_per_cent": {
-   "name": "goa__utilisation_per_cent",
-   "label": "Goa: utilisation per cent",
+  "goa__utilisation": {
+   "name": "goa__utilisation",
+   "label": "Goa: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     95,
     100,
@@ -383,9 +437,11 @@
     87
    ]
   },
-  "gujarat__total_capacity": {
-   "name": "gujarat__total_capacity",
-   "label": "Gujarat: total capacity",
+  "gujarat__storage_capacity": {
+   "name": "gujarat__storage_capacity",
+   "label": "Gujarat: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     6.39,
     6.62,
@@ -396,9 +452,11 @@
     9.34
    ]
   },
-  "gujarat__utilisation": {
-   "name": "gujarat__utilisation",
-   "label": "Gujarat: utilisation",
+  "gujarat__capacity_in_use": {
+   "name": "gujarat__capacity_in_use",
+   "label": "Gujarat: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     5.74,
     6.57,
@@ -409,9 +467,11 @@
     8.51
    ]
   },
-  "gujarat__utilisation_per_cent": {
-   "name": "gujarat__utilisation_per_cent",
-   "label": "Gujarat: utilisation per cent",
+  "gujarat__utilisation": {
+   "name": "gujarat__utilisation",
+   "label": "Gujarat: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     90,
     99,
@@ -422,9 +482,11 @@
     91
    ]
   },
-  "haryana__total_capacity": {
-   "name": "haryana__total_capacity",
-   "label": "Haryana: total capacity",
+  "haryana__storage_capacity": {
+   "name": "haryana__storage_capacity",
+   "label": "Haryana: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     57.65,
     61.93,
@@ -435,9 +497,11 @@
     64.02
    ]
   },
-  "haryana__utilisation": {
-   "name": "haryana__utilisation",
-   "label": "Haryana: utilisation",
+  "haryana__capacity_in_use": {
+   "name": "haryana__capacity_in_use",
+   "label": "Haryana: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     40.81,
     55.85,
@@ -448,9 +512,11 @@
     53.32
    ]
   },
-  "haryana__utilisation_per_cent": {
-   "name": "haryana__utilisation_per_cent",
-   "label": "Haryana: utilisation per cent",
+  "haryana__utilisation": {
+   "name": "haryana__utilisation",
+   "label": "Haryana: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     71,
     90,
@@ -461,9 +527,11 @@
     83
    ]
   },
-  "himachal_pradesh__total_capacity": {
-   "name": "himachal_pradesh__total_capacity",
-   "label": "Himachal Pradesh: total capacity",
+  "himachal_pradesh__storage_capacity": {
+   "name": "himachal_pradesh__storage_capacity",
+   "label": "Himachal Pradesh: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.53,
     0.72,
@@ -474,9 +542,11 @@
     1
    ]
   },
-  "himachal_pradesh__utilisation": {
-   "name": "himachal_pradesh__utilisation",
-   "label": "Himachal Pradesh: utilisation",
+  "himachal_pradesh__capacity_in_use": {
+   "name": "himachal_pradesh__capacity_in_use",
+   "label": "Himachal Pradesh: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.47,
     0.75,
@@ -487,9 +557,11 @@
     0.87
    ]
   },
-  "himachal_pradesh__utilisation_per_cent": {
-   "name": "himachal_pradesh__utilisation_per_cent",
-   "label": "Himachal Pradesh: utilisation per cent",
+  "himachal_pradesh__utilisation": {
+   "name": "himachal_pradesh__utilisation",
+   "label": "Himachal Pradesh: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     89,
     104,
@@ -500,9 +572,11 @@
     87
    ]
   },
-  "jammu_and_kashmir_ut__total_capacity": {
-   "name": "jammu_and_kashmir_ut__total_capacity",
-   "label": "Jammu & Kashmir (UT, from 2019-20): total capacity",
+  "jammu_and_kashmir_ut__storage_capacity": {
+   "name": "jammu_and_kashmir_ut__storage_capacity",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     null,
     2.6,
@@ -513,9 +587,11 @@
     2.48
    ]
   },
-  "jammu_and_kashmir_ut__utilisation": {
-   "name": "jammu_and_kashmir_ut__utilisation",
-   "label": "Jammu & Kashmir (UT, from 2019-20): utilisation",
+  "jammu_and_kashmir_ut__capacity_in_use": {
+   "name": "jammu_and_kashmir_ut__capacity_in_use",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     null,
     2.2,
@@ -526,9 +602,11 @@
     1.97
    ]
   },
-  "jammu_and_kashmir_ut__utilisation_per_cent": {
-   "name": "jammu_and_kashmir_ut__utilisation_per_cent",
-   "label": "Jammu & Kashmir (UT, from 2019-20): utilisation per cent",
+  "jammu_and_kashmir_ut__utilisation": {
+   "name": "jammu_and_kashmir_ut__utilisation",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     null,
     85,
@@ -539,9 +617,11 @@
     79
    ]
   },
-  "jammu_and_kashmir_state__total_capacity": {
-   "name": "jammu_and_kashmir_state__total_capacity",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): total capacity",
+  "jammu_and_kashmir_state__storage_capacity": {
+   "name": "jammu_and_kashmir_state__storage_capacity",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     2.46,
     null,
@@ -552,9 +632,11 @@
     null
    ]
   },
-  "jammu_and_kashmir_state__utilisation": {
-   "name": "jammu_and_kashmir_state__utilisation",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): utilisation",
+  "jammu_and_kashmir_state__capacity_in_use": {
+   "name": "jammu_and_kashmir_state__capacity_in_use",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     1.45,
     null,
@@ -565,9 +647,11 @@
     null
    ]
   },
-  "jammu_and_kashmir_state__utilisation_per_cent": {
-   "name": "jammu_and_kashmir_state__utilisation_per_cent",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): utilisation per cent",
+  "jammu_and_kashmir_state__utilisation": {
+   "name": "jammu_and_kashmir_state__utilisation",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     59,
     null,
@@ -578,9 +662,11 @@
     null
    ]
   },
-  "jharkhand__total_capacity": {
-   "name": "jharkhand__total_capacity",
-   "label": "Jharkhand: total capacity",
+  "jharkhand__storage_capacity": {
+   "name": "jharkhand__storage_capacity",
+   "label": "Jharkhand: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     3.79,
     3.9,
@@ -591,9 +677,11 @@
     4.71
    ]
   },
-  "jharkhand__utilisation": {
-   "name": "jharkhand__utilisation",
-   "label": "Jharkhand: utilisation",
+  "jharkhand__capacity_in_use": {
+   "name": "jharkhand__capacity_in_use",
+   "label": "Jharkhand: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     3.64,
     3.63,
@@ -604,9 +692,11 @@
     3.56
    ]
   },
-  "jharkhand__utilisation_per_cent": {
-   "name": "jharkhand__utilisation_per_cent",
-   "label": "Jharkhand: utilisation per cent",
+  "jharkhand__utilisation": {
+   "name": "jharkhand__utilisation",
+   "label": "Jharkhand: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     96,
     93,
@@ -617,9 +707,11 @@
     76
    ]
   },
-  "karnataka__total_capacity": {
-   "name": "karnataka__total_capacity",
-   "label": "Karnataka: total capacity",
+  "karnataka__storage_capacity": {
+   "name": "karnataka__storage_capacity",
+   "label": "Karnataka: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     9.44,
     10.06,
@@ -630,9 +722,11 @@
     10.21
    ]
   },
-  "karnataka__utilisation": {
-   "name": "karnataka__utilisation",
-   "label": "Karnataka: utilisation",
+  "karnataka__capacity_in_use": {
+   "name": "karnataka__capacity_in_use",
+   "label": "Karnataka: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     7.38,
     8.03,
@@ -643,9 +737,11 @@
     6.55
    ]
   },
-  "karnataka__utilisation_per_cent": {
-   "name": "karnataka__utilisation_per_cent",
-   "label": "Karnataka: utilisation per cent",
+  "karnataka__utilisation": {
+   "name": "karnataka__utilisation",
+   "label": "Karnataka: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     78,
     80,
@@ -656,9 +752,11 @@
     64
    ]
   },
-  "kerala__total_capacity": {
-   "name": "kerala__total_capacity",
-   "label": "Keralam: total capacity",
+  "kerala__storage_capacity": {
+   "name": "kerala__storage_capacity",
+   "label": "Keralam: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     5.62,
     5.63,
@@ -669,9 +767,11 @@
     6
    ]
   },
-  "kerala__utilisation": {
-   "name": "kerala__utilisation",
-   "label": "Keralam: utilisation",
+  "kerala__capacity_in_use": {
+   "name": "kerala__capacity_in_use",
+   "label": "Keralam: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     4.2,
     4.65,
@@ -682,9 +782,11 @@
     5.02
    ]
   },
-  "kerala__utilisation_per_cent": {
-   "name": "kerala__utilisation_per_cent",
-   "label": "Keralam: utilisation per cent",
+  "kerala__utilisation": {
+   "name": "kerala__utilisation",
+   "label": "Keralam: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     75,
     83,
@@ -695,9 +797,11 @@
     84
    ]
   },
-  "madhya_pradesh__total_capacity": {
-   "name": "madhya_pradesh__total_capacity",
-   "label": "Madhya Pradesh: total capacity",
+  "madhya_pradesh__storage_capacity": {
+   "name": "madhya_pradesh__storage_capacity",
+   "label": "Madhya Pradesh: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     8.08,
     8.25,
@@ -708,9 +812,11 @@
     14.32
    ]
   },
-  "madhya_pradesh__utilisation": {
-   "name": "madhya_pradesh__utilisation",
-   "label": "Madhya Pradesh: utilisation",
+  "madhya_pradesh__capacity_in_use": {
+   "name": "madhya_pradesh__capacity_in_use",
+   "label": "Madhya Pradesh: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     3.18,
     4.28,
@@ -721,9 +827,11 @@
     13.14
    ]
   },
-  "madhya_pradesh__utilisation_per_cent": {
-   "name": "madhya_pradesh__utilisation_per_cent",
-   "label": "Madhya Pradesh: utilisation per cent",
+  "madhya_pradesh__utilisation": {
+   "name": "madhya_pradesh__utilisation",
+   "label": "Madhya Pradesh: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     39,
     52,
@@ -734,9 +842,11 @@
     92
    ]
   },
-  "maharashtra__total_capacity": {
-   "name": "maharashtra__total_capacity",
-   "label": "Maharashtra: total capacity",
+  "maharashtra__storage_capacity": {
+   "name": "maharashtra__storage_capacity",
+   "label": "Maharashtra: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     19.89,
     20.38,
@@ -747,9 +857,11 @@
     18.85
    ]
   },
-  "maharashtra__utilisation": {
-   "name": "maharashtra__utilisation",
-   "label": "Maharashtra: utilisation",
+  "maharashtra__capacity_in_use": {
+   "name": "maharashtra__capacity_in_use",
+   "label": "Maharashtra: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     17.63,
     18.35,
@@ -760,9 +872,11 @@
     15.15
    ]
   },
-  "maharashtra__utilisation_per_cent": {
-   "name": "maharashtra__utilisation_per_cent",
-   "label": "Maharashtra: utilisation per cent",
+  "maharashtra__utilisation": {
+   "name": "maharashtra__utilisation",
+   "label": "Maharashtra: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     89,
     90,
@@ -773,9 +887,11 @@
     80
    ]
   },
-  "manipur__total_capacity": {
-   "name": "manipur__total_capacity",
-   "label": "Manipur: total capacity",
+  "manipur__storage_capacity": {
+   "name": "manipur__storage_capacity",
+   "label": "Manipur: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.32,
     0.49,
@@ -786,9 +902,11 @@
     0.65
    ]
   },
-  "manipur__utilisation": {
-   "name": "manipur__utilisation",
-   "label": "Manipur: utilisation",
+  "manipur__capacity_in_use": {
+   "name": "manipur__capacity_in_use",
+   "label": "Manipur: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.28,
     0.33,
@@ -799,9 +917,11 @@
     0.44
    ]
   },
-  "manipur__utilisation_per_cent": {
-   "name": "manipur__utilisation_per_cent",
-   "label": "Manipur: utilisation per cent",
+  "manipur__utilisation": {
+   "name": "manipur__utilisation",
+   "label": "Manipur: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     88,
     67,
@@ -812,9 +932,11 @@
     68
    ]
   },
-  "meghalaya__total_capacity": {
-   "name": "meghalaya__total_capacity",
-   "label": "Meghalaya: total capacity",
+  "meghalaya__storage_capacity": {
+   "name": "meghalaya__storage_capacity",
+   "label": "Meghalaya: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.22,
     0.22,
@@ -825,9 +947,11 @@
     0.44
    ]
   },
-  "meghalaya__utilisation": {
-   "name": "meghalaya__utilisation",
-   "label": "Meghalaya: utilisation",
+  "meghalaya__capacity_in_use": {
+   "name": "meghalaya__capacity_in_use",
+   "label": "Meghalaya: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.2,
     0.21,
@@ -838,9 +962,11 @@
     0.28
    ]
   },
-  "meghalaya__utilisation_per_cent": {
-   "name": "meghalaya__utilisation_per_cent",
-   "label": "Meghalaya: utilisation per cent",
+  "meghalaya__utilisation": {
+   "name": "meghalaya__utilisation",
+   "label": "Meghalaya: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     91,
     95,
@@ -851,9 +977,11 @@
     63
    ]
   },
-  "mizoram__total_capacity": {
-   "name": "mizoram__total_capacity",
-   "label": "Mizoram: total capacity",
+  "mizoram__storage_capacity": {
+   "name": "mizoram__storage_capacity",
+   "label": "Mizoram: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.25,
     0.25,
@@ -864,9 +992,11 @@
     0.32
    ]
   },
-  "mizoram__utilisation": {
-   "name": "mizoram__utilisation",
-   "label": "Mizoram: utilisation",
+  "mizoram__capacity_in_use": {
+   "name": "mizoram__capacity_in_use",
+   "label": "Mizoram: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.18,
     0.14,
@@ -877,9 +1007,11 @@
     0.16
    ]
   },
-  "mizoram__utilisation_per_cent": {
-   "name": "mizoram__utilisation_per_cent",
-   "label": "Mizoram: utilisation per cent",
+  "mizoram__utilisation": {
+   "name": "mizoram__utilisation",
+   "label": "Mizoram: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     72,
     56,
@@ -890,9 +1022,11 @@
     51
    ]
   },
-  "nagaland__total_capacity": {
-   "name": "nagaland__total_capacity",
-   "label": "Nagaland: total capacity",
+  "nagaland__storage_capacity": {
+   "name": "nagaland__storage_capacity",
+   "label": "Nagaland: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.41,
     0.46,
@@ -903,9 +1037,11 @@
     0.57
    ]
   },
-  "nagaland__utilisation": {
-   "name": "nagaland__utilisation",
-   "label": "Nagaland: utilisation",
+  "nagaland__capacity_in_use": {
+   "name": "nagaland__capacity_in_use",
+   "label": "Nagaland: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.39,
     0.45,
@@ -916,9 +1052,11 @@
     0.43
    ]
   },
-  "nagaland__utilisation_per_cent": {
-   "name": "nagaland__utilisation_per_cent",
-   "label": "Nagaland: utilisation per cent",
+  "nagaland__utilisation": {
+   "name": "nagaland__utilisation",
+   "label": "Nagaland: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     95,
     98,
@@ -929,9 +1067,11 @@
     75
    ]
   },
-  "odisha__total_capacity": {
-   "name": "odisha__total_capacity",
-   "label": "Odisha: total capacity",
+  "odisha__storage_capacity": {
+   "name": "odisha__storage_capacity",
+   "label": "Odisha: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     5.35,
     5.67,
@@ -942,9 +1082,11 @@
     6.49
    ]
   },
-  "odisha__utilisation": {
-   "name": "odisha__utilisation",
-   "label": "Odisha: utilisation",
+  "odisha__capacity_in_use": {
+   "name": "odisha__capacity_in_use",
+   "label": "Odisha: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     4.03,
     5.16,
@@ -955,9 +1097,11 @@
     3.27
    ]
   },
-  "odisha__utilisation_per_cent": {
-   "name": "odisha__utilisation_per_cent",
-   "label": "Odisha: utilisation per cent",
+  "odisha__utilisation": {
+   "name": "odisha__utilisation",
+   "label": "Odisha: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     75,
     91,
@@ -968,9 +1112,11 @@
     50
    ]
   },
-  "puducherry__total_capacity": {
-   "name": "puducherry__total_capacity",
-   "label": "Puducherry: total capacity",
+  "puducherry__storage_capacity": {
+   "name": "puducherry__storage_capacity",
+   "label": "Puducherry: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     1.32,
     1.34,
@@ -981,9 +1127,11 @@
     0.51
    ]
   },
-  "puducherry__utilisation": {
-   "name": "puducherry__utilisation",
-   "label": "Puducherry: utilisation",
+  "puducherry__capacity_in_use": {
+   "name": "puducherry__capacity_in_use",
+   "label": "Puducherry: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     1.06,
     1.19,
@@ -994,9 +1142,11 @@
     0.34
    ]
   },
-  "puducherry__utilisation_per_cent": {
-   "name": "puducherry__utilisation_per_cent",
-   "label": "Puducherry: utilisation per cent",
+  "puducherry__utilisation": {
+   "name": "puducherry__utilisation",
+   "label": "Puducherry: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     80,
     89,
@@ -1007,9 +1157,11 @@
     66
    ]
   },
-  "punjab__total_capacity": {
-   "name": "punjab__total_capacity",
-   "label": "Punjab: total capacity",
+  "punjab__storage_capacity": {
+   "name": "punjab__storage_capacity",
+   "label": "Punjab: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     116.05,
     119.11,
@@ -1020,9 +1172,11 @@
     146.26
    ]
   },
-  "punjab__utilisation": {
-   "name": "punjab__utilisation",
-   "label": "Punjab: utilisation",
+  "punjab__capacity_in_use": {
+   "name": "punjab__capacity_in_use",
+   "label": "Punjab: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     113.42,
     123.48,
@@ -1033,9 +1187,11 @@
     137.98
    ]
   },
-  "punjab__utilisation_per_cent": {
-   "name": "punjab__utilisation_per_cent",
-   "label": "Punjab: utilisation per cent",
+  "punjab__utilisation": {
+   "name": "punjab__utilisation",
+   "label": "Punjab: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     98,
     104,
@@ -1046,9 +1202,11 @@
     94
    ]
   },
-  "rajasthan__total_capacity": {
-   "name": "rajasthan__total_capacity",
-   "label": "Rajasthan: total capacity",
+  "rajasthan__storage_capacity": {
+   "name": "rajasthan__storage_capacity",
+   "label": "Rajasthan: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     18.47,
     19.26,
@@ -1059,9 +1217,11 @@
     18.06
    ]
   },
-  "rajasthan__utilisation": {
-   "name": "rajasthan__utilisation",
-   "label": "Rajasthan: utilisation",
+  "rajasthan__capacity_in_use": {
+   "name": "rajasthan__capacity_in_use",
+   "label": "Rajasthan: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     9.83,
     10.71,
@@ -1072,9 +1232,11 @@
     10.81
    ]
   },
-  "rajasthan__utilisation_per_cent": {
-   "name": "rajasthan__utilisation_per_cent",
-   "label": "Rajasthan: utilisation per cent",
+  "rajasthan__utilisation": {
+   "name": "rajasthan__utilisation",
+   "label": "Rajasthan: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     53,
     56,
@@ -1085,9 +1247,11 @@
     60
    ]
   },
-  "sikkim__total_capacity": {
-   "name": "sikkim__total_capacity",
-   "label": "Sikkim: total capacity",
+  "sikkim__storage_capacity": {
+   "name": "sikkim__storage_capacity",
+   "label": "Sikkim: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.11,
     0.11,
@@ -1098,9 +1262,11 @@
     0.11
    ]
   },
-  "sikkim__utilisation": {
-   "name": "sikkim__utilisation",
-   "label": "Sikkim: utilisation",
+  "sikkim__capacity_in_use": {
+   "name": "sikkim__capacity_in_use",
+   "label": "Sikkim: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.05,
     0.08,
@@ -1111,9 +1277,11 @@
     0.1
    ]
   },
-  "sikkim__utilisation_per_cent": {
-   "name": "sikkim__utilisation_per_cent",
-   "label": "Sikkim: utilisation per cent",
+  "sikkim__utilisation": {
+   "name": "sikkim__utilisation",
+   "label": "Sikkim: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     45,
     73,
@@ -1124,9 +1292,11 @@
     83
    ]
   },
-  "tamil_nadu__total_capacity": {
-   "name": "tamil_nadu__total_capacity",
-   "label": "Tamil Nadu: total capacity",
+  "tamil_nadu__storage_capacity": {
+   "name": "tamil_nadu__storage_capacity",
+   "label": "Tamil Nadu: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     12.33,
     13.67,
@@ -1137,9 +1307,11 @@
     12.68
    ]
   },
-  "tamil_nadu__utilisation": {
-   "name": "tamil_nadu__utilisation",
-   "label": "Tamil Nadu: utilisation",
+  "tamil_nadu__capacity_in_use": {
+   "name": "tamil_nadu__capacity_in_use",
+   "label": "Tamil Nadu: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     10.6,
     12.27,
@@ -1150,9 +1322,11 @@
     11.19
    ]
   },
-  "tamil_nadu__utilisation_per_cent": {
-   "name": "tamil_nadu__utilisation_per_cent",
-   "label": "Tamil Nadu: utilisation per cent",
+  "tamil_nadu__utilisation": {
+   "name": "tamil_nadu__utilisation",
+   "label": "Tamil Nadu: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     86,
     90,
@@ -1163,9 +1337,11 @@
     88
    ]
   },
-  "telangana__total_capacity": {
-   "name": "telangana__total_capacity",
-   "label": "Telangana: total capacity",
+  "telangana__storage_capacity": {
+   "name": "telangana__storage_capacity",
+   "label": "Telangana: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     13.27,
     21.53,
@@ -1176,9 +1352,11 @@
     20.83
    ]
   },
-  "telangana__utilisation": {
-   "name": "telangana__utilisation",
-   "label": "Telangana: utilisation",
+  "telangana__capacity_in_use": {
+   "name": "telangana__capacity_in_use",
+   "label": "Telangana: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     11.39,
     19.88,
@@ -1189,9 +1367,11 @@
     12.37
    ]
   },
-  "telangana__utilisation_per_cent": {
-   "name": "telangana__utilisation_per_cent",
-   "label": "Telangana: utilisation per cent",
+  "telangana__utilisation": {
+   "name": "telangana__utilisation",
+   "label": "Telangana: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     86,
     92,
@@ -1202,9 +1382,11 @@
     59
    ]
   },
-  "total__total_capacity": {
-   "name": "total__total_capacity",
-   "label": "Total: total capacity",
+  "total__storage_capacity": {
+   "name": "total__storage_capacity",
+   "label": "Total: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     388.65,
     412.03,
@@ -1215,9 +1397,11 @@
     458.71
    ]
   },
-  "total__utilisation": {
-   "name": "total__utilisation",
-   "label": "Total: utilisation",
+  "total__capacity_in_use": {
+   "name": "total__capacity_in_use",
+   "label": "Total: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     306.25,
     356.88,
@@ -1228,9 +1412,11 @@
     386.07
    ]
   },
-  "total__utilisation_per_cent": {
-   "name": "total__utilisation_per_cent",
-   "label": "Total: utilisation per cent",
+  "total__utilisation": {
+   "name": "total__utilisation",
+   "label": "Total: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     79,
     87,
@@ -1241,9 +1427,11 @@
     84
    ]
   },
-  "total_east_zone__total_capacity": {
-   "name": "total_east_zone__total_capacity",
-   "label": "Total East Zone: total capacity",
+  "total_east_zone__storage_capacity": {
+   "name": "total_east_zone__storage_capacity",
+   "label": "Total East Zone: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     29.83,
     30.73,
@@ -1254,9 +1442,11 @@
     33.45
    ]
   },
-  "total_east_zone__utilisation": {
-   "name": "total_east_zone__utilisation",
-   "label": "Total East Zone: utilisation",
+  "total_east_zone__capacity_in_use": {
+   "name": "total_east_zone__capacity_in_use",
+   "label": "Total East Zone: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     21.35,
     25.28,
@@ -1267,9 +1457,11 @@
     22.84
    ]
   },
-  "total_east_zone__utilisation_per_cent": {
-   "name": "total_east_zone__utilisation_per_cent",
-   "label": "Total East Zone: utilisation per cent",
+  "total_east_zone__utilisation": {
+   "name": "total_east_zone__utilisation",
+   "label": "Total East Zone: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     72,
     82,
@@ -1280,9 +1472,11 @@
     68
    ]
   },
-  "total_north_east_zone__total_capacity": {
-   "name": "total_north_east_zone__total_capacity",
-   "label": "Total North-east  Zone: total capacity",
+  "total_north_east_zone__storage_capacity": {
+   "name": "total_north_east_zone__storage_capacity",
+   "label": "Total North-east  Zone: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     5.92,
     6.37,
@@ -1293,9 +1487,11 @@
     8.33
    ]
   },
-  "total_north_east_zone__utilisation": {
-   "name": "total_north_east_zone__utilisation",
-   "label": "Total North-east  Zone: utilisation",
+  "total_north_east_zone__capacity_in_use": {
+   "name": "total_north_east_zone__capacity_in_use",
+   "label": "Total North-east  Zone: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     4.72,
     5.33,
@@ -1306,9 +1502,11 @@
     6.08
    ]
   },
-  "total_north_east_zone__utilisation_per_cent": {
-   "name": "total_north_east_zone__utilisation_per_cent",
-   "label": "Total North-east  Zone: utilisation per cent",
+  "total_north_east_zone__utilisation": {
+   "name": "total_north_east_zone__utilisation",
+   "label": "Total North-east  Zone: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     80,
     84,
@@ -1319,9 +1517,11 @@
     73
    ]
   },
-  "total_north_zone__total_capacity": {
-   "name": "total_north_zone__total_capacity",
-   "label": "Total North Zone: total capacity",
+  "total_north_zone__storage_capacity": {
+   "name": "total_north_zone__storage_capacity",
+   "label": "Total North Zone: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     255.6,
     263.44,
@@ -1332,9 +1532,11 @@
     292.32
    ]
   },
-  "total_north_zone__utilisation": {
-   "name": "total_north_zone__utilisation",
-   "label": "Total North Zone: utilisation",
+  "total_north_zone__capacity_in_use": {
+   "name": "total_north_zone__capacity_in_use",
+   "label": "Total North Zone: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     202.65,
     232.78,
@@ -1345,9 +1547,11 @@
     254.88
    ]
   },
-  "total_north_zone__utilisation_per_cent": {
-   "name": "total_north_zone__utilisation_per_cent",
-   "label": "Total North Zone: utilisation per cent",
+  "total_north_zone__utilisation": {
+   "name": "total_north_zone__utilisation",
+   "label": "Total North Zone: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     79,
     88,
@@ -1358,9 +1562,11 @@
     87
    ]
   },
-  "total_south_zone__total_capacity": {
-   "name": "total_south_zone__total_capacity",
-   "label": "Total South Zone: total capacity",
+  "total_south_zone__storage_capacity": {
+   "name": "total_south_zone__storage_capacity",
+   "label": "Total South Zone: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     55.79,
     66.89,
@@ -1371,9 +1577,11 @@
     62.03
    ]
   },
-  "total_south_zone__utilisation": {
-   "name": "total_south_zone__utilisation",
-   "label": "Total South Zone: utilisation",
+  "total_south_zone__capacity_in_use": {
+   "name": "total_south_zone__capacity_in_use",
+   "label": "Total South Zone: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     45.52,
     55.2,
@@ -1384,9 +1592,11 @@
     46.72
    ]
   },
-  "total_south_zone__utilisation_per_cent": {
-   "name": "total_south_zone__utilisation_per_cent",
-   "label": "Total South Zone: utilisation per cent",
+  "total_south_zone__utilisation": {
+   "name": "total_south_zone__utilisation",
+   "label": "Total South Zone: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     82,
     83,
@@ -1397,9 +1607,11 @@
     75
    ]
   },
-  "total_west_zone__total_capacity": {
-   "name": "total_west_zone__total_capacity",
-   "label": "Total West Zone: total capacity",
+  "total_west_zone__storage_capacity": {
+   "name": "total_west_zone__storage_capacity",
+   "label": "Total West Zone: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     41.51,
     44.6,
@@ -1410,9 +1622,11 @@
     62.58
    ]
   },
-  "total_west_zone__utilisation": {
-   "name": "total_west_zone__utilisation",
-   "label": "Total West Zone: utilisation",
+  "total_west_zone__capacity_in_use": {
+   "name": "total_west_zone__capacity_in_use",
+   "label": "Total West Zone: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     32.01,
     38.28,
@@ -1423,9 +1637,11 @@
     55.55
    ]
   },
-  "total_west_zone__utilisation_per_cent": {
-   "name": "total_west_zone__utilisation_per_cent",
-   "label": "Total West Zone: utilisation per cent",
+  "total_west_zone__utilisation": {
+   "name": "total_west_zone__utilisation",
+   "label": "Total West Zone: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     77,
     86,
@@ -1436,9 +1652,11 @@
     89
    ]
   },
-  "tripura__total_capacity": {
-   "name": "tripura__total_capacity",
-   "label": "Tripura: total capacity",
+  "tripura__storage_capacity": {
+   "name": "tripura__storage_capacity",
+   "label": "Tripura: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.44,
     0.44,
@@ -1449,9 +1667,11 @@
     0.62
    ]
   },
-  "tripura__utilisation": {
-   "name": "tripura__utilisation",
-   "label": "Tripura: utilisation",
+  "tripura__capacity_in_use": {
+   "name": "tripura__capacity_in_use",
+   "label": "Tripura: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.25,
     0.3,
@@ -1462,9 +1682,11 @@
     0.44
    ]
   },
-  "tripura__utilisation_per_cent": {
-   "name": "tripura__utilisation_per_cent",
-   "label": "Tripura: utilisation per cent",
+  "tripura__utilisation": {
+   "name": "tripura__utilisation",
+   "label": "Tripura: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     57,
     68,
@@ -1475,9 +1697,11 @@
     72
    ]
   },
-  "uttarakhand__total_capacity": {
-   "name": "uttarakhand__total_capacity",
-   "label": "Uttarakhand: total capacity",
+  "uttarakhand__storage_capacity": {
+   "name": "uttarakhand__storage_capacity",
+   "label": "Uttarakhand: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     1.85,
     1.92,
@@ -1488,9 +1712,11 @@
     2.09
    ]
   },
-  "uttarakhand__utilisation": {
-   "name": "uttarakhand__utilisation",
-   "label": "Uttarakhand: utilisation",
+  "uttarakhand__capacity_in_use": {
+   "name": "uttarakhand__capacity_in_use",
+   "label": "Uttarakhand: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     1.41,
     1.68,
@@ -1501,9 +1727,11 @@
     1.72
    ]
   },
-  "uttarakhand__utilisation_per_cent": {
-   "name": "uttarakhand__utilisation_per_cent",
-   "label": "Uttarakhand: utilisation per cent",
+  "uttarakhand__utilisation": {
+   "name": "uttarakhand__utilisation",
+   "label": "Uttarakhand: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     76,
     88,
@@ -1514,9 +1742,11 @@
     82
    ]
   },
-  "uttar_pradesh__total_capacity": {
-   "name": "uttar_pradesh__total_capacity",
-   "label": "Uttar Pradesh: total capacity",
+  "uttar_pradesh__storage_capacity": {
+   "name": "uttar_pradesh__storage_capacity",
+   "label": "Uttar Pradesh: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     54.86,
     54.17,
@@ -1527,9 +1757,11 @@
     54.73
    ]
   },
-  "uttar_pradesh__utilisation": {
-   "name": "uttar_pradesh__utilisation",
-   "label": "Uttar Pradesh: utilisation",
+  "uttar_pradesh__capacity_in_use": {
+   "name": "uttar_pradesh__capacity_in_use",
+   "label": "Uttar Pradesh: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     32.58,
     35.22,
@@ -1540,9 +1772,11 @@
     45.75
    ]
   },
-  "uttar_pradesh__utilisation_per_cent": {
-   "name": "uttar_pradesh__utilisation_per_cent",
-   "label": "Uttar Pradesh: utilisation per cent",
+  "uttar_pradesh__utilisation": {
+   "name": "uttar_pradesh__utilisation",
+   "label": "Uttar Pradesh: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     59,
     65,
@@ -1553,9 +1787,11 @@
     84
    ]
   },
-  "west_bengal__total_capacity": {
-   "name": "west_bengal__total_capacity",
-   "label": "West Bengal: total capacity",
+  "west_bengal__storage_capacity": {
+   "name": "west_bengal__storage_capacity",
+   "label": "West Bengal: Storage Capacity for Foodgrains and Utilisation under FCI: storage capacity",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     10.17,
     9.97,
@@ -1566,9 +1802,11 @@
     10.45
    ]
   },
-  "west_bengal__utilisation": {
-   "name": "west_bengal__utilisation",
-   "label": "West Bengal: utilisation",
+  "west_bengal__capacity_in_use": {
+   "name": "west_bengal__capacity_in_use",
+   "label": "West Bengal: Storage Capacity for Foodgrains and Utilisation under FCI: capacity in use",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     6.73,
     7.62,
@@ -1579,9 +1817,11 @@
     7.2
    ]
   },
-  "west_bengal__utilisation_per_cent": {
-   "name": "west_bengal__utilisation_per_cent",
-   "label": "West Bengal: utilisation per cent",
+  "west_bengal__utilisation": {
+   "name": "west_bengal__utilisation",
+   "label": "West Bengal: Storage Capacity for Foodgrains and Utilisation under FCI: utilisation",
+   "unit": "pct",
+   "group": "Agriculture and allied",
    "data": [
     66,
     76,

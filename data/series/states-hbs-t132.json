@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2023-04",
-  "unit": "Units",
+  "unit": "count",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Number of Employees: RBI Handbook of Statistics on Indian States, Table 132",
-  "note": "DBIE report 1676, data provider \"Query 1\". Values exactly as DBIE serves them; DBIE's unit label: Units. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1676, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: Units. Periods: fiscal years, dated at April. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2008-04-01",
@@ -43,7 +43,9 @@
  "series": {
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     61,
     76,
@@ -65,7 +67,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     171018,
     178860,
@@ -87,7 +91,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -109,7 +115,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     21999,
     22224,
@@ -131,7 +139,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     9574,
     11792,
@@ -153,7 +163,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     3958,
     3637,
@@ -175,7 +187,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -197,7 +211,9 @@
   },
   "dadra_and_nagar_haveli": {
    "name": "dadra_and_nagar_haveli",
-   "label": "Dadra & Nagar Haveli",
+   "label": "Dadra & Nagar Haveli: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     20885,
     23368,
@@ -219,7 +235,9 @@
   },
   "daman_and_diu": {
    "name": "daman_and_diu",
-   "label": "Daman & Diu",
+   "label": "Daman & Diu: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     19005,
     21485,
@@ -241,7 +259,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     37818,
     35294,
@@ -263,7 +283,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     12550,
     12754,
@@ -285,7 +307,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     248182,
     263690,
@@ -307,7 +331,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     228763,
     119756,
@@ -329,7 +355,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     25393,
     28709,
@@ -351,7 +379,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     9408,
     8651,
@@ -373,7 +403,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -395,7 +427,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     40205,
     35915,
@@ -417,7 +451,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     169967,
     300914,
@@ -439,7 +475,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     48080,
     48084,
@@ -461,7 +499,9 @@
   },
   "ladakh": {
    "name": "ladakh",
-   "label": "Ladakh",
+   "label": "Ladakh: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -483,7 +523,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -505,7 +547,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     69588,
     69548,
@@ -527,7 +571,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     449559,
     443547,
@@ -549,7 +595,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     285,
     460,
@@ -571,7 +619,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     982,
     1220,
@@ -593,7 +643,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -615,7 +667,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     372,
     302,
@@ -637,7 +691,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     37678,
     39289,
@@ -659,7 +715,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     9638,
     10587,
@@ -681,7 +739,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     105101,
     106968,
@@ -703,7 +763,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     73031,
     81942,
@@ -725,7 +787,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -747,7 +811,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     303435,
     335429,
@@ -769,7 +835,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -791,7 +859,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     2156,
     2321,
@@ -813,7 +883,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     56547,
     49410,
@@ -835,7 +907,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     158577,
     166030,
@@ -857,7 +931,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Number of Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     97979,
     103447,

@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2023-04",
-  "unit": "LAKH",
+  "unit": "inr_amount",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Total Emoluments: RBI Handbook of Statistics on Indian States, Table 124",
-  "note": "DBIE report 1668, data provider \"Query 1\". Values exactly as DBIE serves them; DBIE's unit label: LAKH (rupee amounts are served in rupees). Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1668, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: LAKH. Periods: fiscal years, dated at April. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -47,7 +47,9 @@
  "series": {
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     644059400000,
     740082000000,
@@ -73,7 +75,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     14700000,
     25900000,
@@ -99,7 +103,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     45753100000,
     52740900000,
@@ -125,7 +131,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -151,7 +159,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     5611800000,
     6086600000,
@@ -177,7 +187,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     2835600000,
     2925200000,
@@ -203,7 +215,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     1066300000,
     1132000000,
@@ -229,7 +243,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     12852600000,
     14519700000,
@@ -255,7 +271,9 @@
   },
   "dadra_and_nagar_haveli": {
    "name": "dadra_and_nagar_haveli",
-   "label": "Dadra & Nagar Haveli",
+   "label": "Dadra & Nagar Haveli: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     4633000000,
     4869000000,
@@ -281,7 +299,9 @@
   },
   "daman_and_diu": {
    "name": "daman_and_diu",
-   "label": "Daman & Diu",
+   "label": "Daman & Diu: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     4539400000,
     6140000000,
@@ -307,7 +327,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     9562300000,
     11169900000,
@@ -333,7 +355,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     4100500000,
     4609800000,
@@ -359,7 +383,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     67422100000,
     76265400000,
@@ -385,7 +411,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     31287900000,
     36189600000,
@@ -411,7 +439,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     3302400000,
     5176500000,
@@ -437,7 +467,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     1892000000,
     2118700000,
@@ -463,7 +495,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -489,7 +523,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     19734600000,
     22576000000,
@@ -515,7 +551,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     46819500000,
     56256000000,
@@ -541,7 +579,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     16960300000,
     19149000000,
@@ -567,7 +607,9 @@
   },
   "ladakh": {
    "name": "ladakh",
-   "label": "Ladakh",
+   "label": "Ladakh: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -593,7 +635,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -619,7 +663,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     16995000000,
     18043700000,
@@ -645,7 +691,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     132420100000,
     151332000000,
@@ -671,7 +719,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     39800000,
     40600000,
@@ -697,7 +747,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     225800000,
     293900000,
@@ -723,7 +775,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -749,7 +803,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     68300000,
     82200000,
@@ -775,7 +831,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     12615900000,
     14042800000,
@@ -801,7 +859,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     2738200000,
     3867900000,
@@ -827,7 +887,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     21515500000,
     25741200000,
@@ -853,7 +915,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     17327800000,
     20194000000,
@@ -879,7 +943,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -905,7 +971,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     74965700000,
     87322600000,
@@ -931,7 +999,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -957,7 +1027,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     286800000,
     361700000,
@@ -983,7 +1055,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     5395000000,
     6696200000,
@@ -1009,7 +1083,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     41517600000,
     48551700000,
@@ -1035,7 +1111,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Total Emoluments",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     39559800000,
     41561300000,

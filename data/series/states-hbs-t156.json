@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2024-04",
-  "unit": "as served by DBIE",
+  "unit": "inr_amount",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Credit by Scheduled Commercial Banks in India: RBI Handbook of Statistics on Indian States, Table 156",
-  "note": "DBIE report 1699, data provider \"Main\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1, region. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1699, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: value, region. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2003-04-01",
@@ -47,9 +47,11 @@
   "2024-04-01"
  ],
  "series": {
-  "assam__value_1": {
-   "name": "assam__value_1",
-   "label": "Assam: value 1",
+  "assam": {
+   "name": "assam",
+   "label": "Assam: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     46120000000,
     62710000000,
@@ -75,9 +77,11 @@
     1544730000000
    ]
   },
-  "region_north_eastern_region__region": {
-   "name": "region_north_eastern_region__region",
-   "label": "North Eastern Region: region",
+  "region_north_eastern_region": {
+   "name": "region_north_eastern_region",
+   "label": "North Eastern Region: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     70330000000,
     97330000000,
@@ -103,9 +107,11 @@
     2321480000000
    ]
   },
-  "meghalaya__value_1": {
-   "name": "meghalaya__value_1",
-   "label": "Meghalaya: value 1",
+  "meghalaya": {
+   "name": "meghalaya",
+   "label": "Meghalaya: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     9530000000,
     13370000000,
@@ -131,9 +137,11 @@
     153910000000
    ]
   },
-  "mizoram__value_1": {
-   "name": "mizoram__value_1",
-   "label": "Mizoram: value 1",
+  "mizoram": {
+   "name": "mizoram",
+   "label": "Mizoram: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     2490000000,
     3770000000,
@@ -159,9 +167,11 @@
     90490000000
    ]
   },
-  "bihar__value_1": {
-   "name": "bihar__value_1",
-   "label": "Bihar: value 1",
+  "bihar": {
+   "name": "bihar",
+   "label": "Bihar: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     89670000000,
     113790000000,
@@ -187,9 +197,11 @@
     3044400000000
    ]
   },
-  "region_eastern_region__region": {
-   "name": "region_eastern_region__region",
-   "label": "Eastern Region: region",
+  "region_eastern_region": {
+   "name": "region_eastern_region",
+   "label": "Eastern Region: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     754360000000,
     950910000000,
@@ -215,9 +227,11 @@
     14310590000000
    ]
   },
-  "jharkhand__value_1": {
-   "name": "jharkhand__value_1",
-   "label": "Jharkhand: value 1",
+  "jharkhand": {
+   "name": "jharkhand",
+   "label": "Jharkhand: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     62980000000,
     81280000000,
@@ -243,9 +257,11 @@
     1510960000000
    ]
   },
-  "arunachal_pradesh__value_1": {
-   "name": "arunachal_pradesh__value_1",
-   "label": "Arunachal Pradesh: value 1",
+  "arunachal_pradesh": {
+   "name": "arunachal_pradesh",
+   "label": "Arunachal Pradesh: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     1720000000,
     2630000000,
@@ -271,9 +287,11 @@
     106530000000
    ]
   },
-  "ladakh__value_1": {
-   "name": "ladakh__value_1",
-   "label": "Ladakh: value 1",
+  "ladakh": {
+   "name": "ladakh",
+   "label": "Ladakh: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     null,
     null,
@@ -299,9 +317,11 @@
     43640000000
    ]
   },
-  "region_northern_region__region": {
-   "name": "region_northern_region__region",
-   "label": "Northern Region: region",
+  "region_northern_region": {
+   "name": "region_northern_region",
+   "label": "Northern Region: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     1920440000000,
     2442100000000,
@@ -327,9 +347,11 @@
     38891970000000
    ]
   },
-  "west_bengal__value_1": {
-   "name": "west_bengal__value_1",
-   "label": "West Bengal: value 1",
+  "west_bengal": {
+   "name": "west_bengal",
+   "label": "West Bengal: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     475990000000,
     585750000000,
@@ -355,9 +377,11 @@
     6658330000000
    ]
   },
-  "nagaland__value_1": {
-   "name": "nagaland__value_1",
-   "label": "Nagaland: value 1",
+  "nagaland": {
+   "name": "nagaland",
+   "label": "Nagaland: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     2060000000,
     3000000000,
@@ -383,9 +407,11 @@
     100480000000
    ]
   },
-  "manipur__value_1": {
-   "name": "manipur__value_1",
-   "label": "Manipur: value 1",
+  "manipur": {
+   "name": "manipur",
+   "label": "Manipur: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     2390000000,
     4220000000,
@@ -411,9 +437,11 @@
     133960000000
    ]
   },
-  "sikkim__value_1": {
-   "name": "sikkim__value_1",
-   "label": "Sikkim: value 1",
+  "sikkim": {
+   "name": "sikkim",
+   "label": "Sikkim: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     2570000000,
     3730000000,
@@ -439,9 +467,11 @@
     71360000000
    ]
   },
-  "tripura__value_1": {
-   "name": "tripura__value_1",
-   "label": "Tripura: value 1",
+  "tripura": {
+   "name": "tripura",
+   "label": "Tripura: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     6020000000,
     7610000000,
@@ -467,9 +497,11 @@
     191380000000
    ]
   },
-  "andaman_and_nicobar_islands__value_1": {
-   "name": "andaman_and_nicobar_islands__value_1",
-   "label": "Andaman & Nicobar Islands: value 1",
+  "andaman_and_nicobar_islands": {
+   "name": "andaman_and_nicobar_islands",
+   "label": "Andaman & Nicobar Islands: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     1550000000,
     1950000000,
@@ -495,9 +527,11 @@
     44850000000
    ]
   },
-  "uttar_pradesh__value_1": {
-   "name": "uttar_pradesh__value_1",
-   "label": "Uttar Pradesh: value 1",
+  "uttar_pradesh": {
+   "name": "uttar_pradesh",
+   "label": "Uttar Pradesh: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     396190000000,
     513450000000,
@@ -523,9 +557,11 @@
     10314630000000
    ]
   },
-  "region_central_region__region": {
-   "name": "region_central_region__region",
-   "label": "Central Region: region",
+  "region_central_region": {
+   "name": "region_central_region",
+   "label": "Central Region: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     698940000000,
     895460000000,
@@ -551,9 +587,11 @@
     19116350000000
    ]
   },
-  "delhi__value_1": {
-   "name": "delhi__value_1",
-   "label": "Delhi: value 1",
+  "delhi": {
+   "name": "delhi",
+   "label": "Delhi: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     1095520000000,
     1396620000000,
@@ -579,9 +617,11 @@
     18236690000000
    ]
   },
-  "punjab__value_1": {
-   "name": "punjab__value_1",
-   "label": "Punjab: value 1",
+  "punjab": {
+   "name": "punjab",
+   "label": "Punjab: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     265540000000,
     329350000000,
@@ -607,9 +647,11 @@
     4103190000000
    ]
   },
-  "haryana__value_1": {
-   "name": "haryana__value_1",
-   "label": "Haryana: value 1",
+  "haryana": {
+   "name": "haryana",
+   "label": "Haryana: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     145760000000,
     189080000000,
@@ -635,9 +677,11 @@
     6774850000000
    ]
   },
-  "chandigarh__value_1": {
-   "name": "chandigarh__value_1",
-   "label": "Chandigarh: value 1",
+  "chandigarh": {
+   "name": "chandigarh",
+   "label": "Chandigarh: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     109410000000,
     110340000000,
@@ -663,9 +707,11 @@
     949190000000
    ]
   },
-  "jammu_and_kashmir_state__value_1": {
-   "name": "jammu_and_kashmir_state__value_1",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): value 1",
+  "jammu_and_kashmir_state": {
+   "name": "jammu_and_kashmir_state",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     55050000000,
     77860000000,
@@ -691,9 +737,11 @@
     null
    ]
   },
-  "himachal_pradesh__value_1": {
-   "name": "himachal_pradesh__value_1",
-   "label": "Himachal Pradesh: value 1",
+  "himachal_pradesh": {
+   "name": "himachal_pradesh",
+   "label": "Himachal Pradesh: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     32640000000,
     44740000000,
@@ -719,9 +767,11 @@
     637300000000
    ]
   },
-  "rajasthan__value_1": {
-   "name": "rajasthan__value_1",
-   "label": "Rajasthan: value 1",
+  "rajasthan": {
+   "name": "rajasthan",
+   "label": "Rajasthan: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     216520000000,
     294120000000,
@@ -747,9 +797,11 @@
     6984140000000
    ]
   },
-  "gujarat__value_1": {
-   "name": "gujarat__value_1",
-   "label": "Gujarat: value 1",
+  "gujarat": {
+   "name": "gujarat",
+   "label": "Gujarat: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     357130000000,
     453900000000,
@@ -775,9 +827,11 @@
     11258940000000
    ]
   },
-  "region_western_region__region": {
-   "name": "region_western_region__region",
-   "label": "Western Region: region",
+  "region_western_region": {
+   "name": "region_western_region",
+   "label": "Western Region: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     2984460000000,
     4112910000000,
@@ -803,9 +857,11 @@
     56524010000000
    ]
   },
-  "maharashtra__value_1": {
-   "name": "maharashtra__value_1",
-   "label": "Maharashtra: value 1",
+  "maharashtra": {
+   "name": "maharashtra",
+   "label": "Maharashtra: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     2603230000000,
     3627710000000,
@@ -831,9 +887,11 @@
     44831710000000
    ]
   },
-  "daman_and_diu__value_1": {
-   "name": "daman_and_diu__value_1",
-   "label": "Daman & Diu: value 1",
+  "daman_and_diu": {
+   "name": "daman_and_diu",
+   "label": "Daman & Diu: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     770000000,
     860000000,
@@ -859,9 +917,11 @@
     null
    ]
   },
-  "goa__value_1": {
-   "name": "goa__value_1",
-   "label": "Goa: value 1",
+  "goa": {
+   "name": "goa",
+   "label": "Goa: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     22810000000,
     29160000000,
@@ -887,9 +947,11 @@
     345050000000
    ]
   },
-  "dadra_and_nagar_haveli__value_1": {
-   "name": "dadra_and_nagar_haveli__value_1",
-   "label": "Dadra & Nagar Haveli: value 1",
+  "dadra_and_nagar_haveli": {
+   "name": "dadra_and_nagar_haveli",
+   "label": "Dadra & Nagar Haveli: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     510000000,
     1270000000,
@@ -915,9 +977,11 @@
     88320000000
    ]
   },
-  "madhya_pradesh__value_1": {
-   "name": "madhya_pradesh__value_1",
-   "label": "Madhya Pradesh: value 1",
+  "madhya_pradesh": {
+   "name": "madhya_pradesh",
+   "label": "Madhya Pradesh: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     206560000000,
     262090000000,
@@ -943,9 +1007,11 @@
     5500950000000
    ]
   },
-  "chhattisgarh__value_1": {
-   "name": "chhattisgarh__value_1",
-   "label": "Chhattisgarh: value 1",
+  "chhattisgarh": {
+   "name": "chhattisgarh",
+   "label": "Chhattisgarh: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     58490000000,
     72110000000,
@@ -971,9 +1037,11 @@
     2230980000000
    ]
   },
-  "andhra_pradesh__value_1": {
-   "name": "andhra_pradesh__value_1",
-   "label": "Andhra Pradesh: value 1",
+  "andhra_pradesh": {
+   "name": "andhra_pradesh",
+   "label": "Andhra Pradesh: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     558510000000,
     734620000000,
@@ -999,9 +1067,11 @@
     8325270000000
    ]
   },
-  "region_southern_region__region": {
-   "name": "region_southern_region__region",
-   "label": "Southern Region: region",
+  "region_southern_region": {
+   "name": "region_southern_region",
+   "label": "Southern Region: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     2374590000000,
     3025970000000,
@@ -1027,9 +1097,11 @@
     56704250000000
    ]
   },
-  "telangana__value_1": {
-   "name": "telangana__value_1",
-   "label": "Telangana: value 1",
+  "telangana": {
+   "name": "telangana",
+   "label": "Telangana: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     null,
     null,
@@ -1055,9 +1127,11 @@
     10456860000000
    ]
   },
-  "karnataka__value_1": {
-   "name": "karnataka__value_1",
-   "label": "Karnataka: value 1",
+  "karnataka": {
+   "name": "karnataka",
+   "label": "Karnataka: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     591390000000,
     794610000000,
@@ -1083,9 +1157,11 @@
     13715140000000
    ]
   },
-  "lakshadweep__value_1": {
-   "name": "lakshadweep__value_1",
-   "label": "Lakshadweep: value 1",
+  "lakshadweep": {
+   "name": "lakshadweep",
+   "label": "Lakshadweep: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     80000000,
     90000000,
@@ -1111,9 +1187,11 @@
     1950000000
    ]
   },
-  "tamil_nadu__value_1": {
-   "name": "tamil_nadu__value_1",
-   "label": "Tamil Nadu: value 1",
+  "tamil_nadu": {
+   "name": "tamil_nadu",
+   "label": "Tamil Nadu: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     906400000000,
     1108520000000,
@@ -1139,9 +1217,11 @@
     17627460000000
    ]
   },
-  "kerala__value_1": {
-   "name": "kerala__value_1",
-   "label": "Keralam: value 1",
+  "kerala": {
+   "name": "kerala",
+   "label": "Keralam: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     309740000000,
     377370000000,
@@ -1167,9 +1247,11 @@
     6331960000000
    ]
   },
-  "all_india__value_1": {
-   "name": "all_india__value_1",
-   "label": "All India: value 1",
+  "all_india": {
+   "name": "all_india",
+   "label": "All India: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     8803120000000,
     11524680000000,
@@ -1195,9 +1277,11 @@
     187868650000000
    ]
   },
-  "odisha__value_1": {
-   "name": "odisha__value_1",
-   "label": "Odisha: value 1",
+  "odisha": {
+   "name": "odisha",
+   "label": "Odisha: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     121600000000,
     164420000000,
@@ -1223,9 +1307,11 @@
     2980690000000
    ]
   },
-  "uttarakhand__value_1": {
-   "name": "uttarakhand__value_1",
-   "label": "Uttarakhand: value 1",
+  "uttarakhand": {
+   "name": "uttarakhand",
+   "label": "Uttarakhand: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     37700000000,
     47820000000,
@@ -1251,9 +1337,11 @@
     1069790000000
    ]
   },
-  "puducherry__value_1": {
-   "name": "puducherry__value_1",
-   "label": "Puducherry: value 1",
+  "puducherry": {
+   "name": "puducherry",
+   "label": "Puducherry: Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     8470000000,
     10760000000,
@@ -1279,9 +1367,11 @@
     245610000000
    ]
   },
-  "jammu_and_kashmir_ut__value_1": {
-   "name": "jammu_and_kashmir_ut__value_1",
-   "label": "Jammu & Kashmir (UT, from 2019-20): value 1",
+  "jammu_and_kashmir_ut": {
+   "name": "jammu_and_kashmir_ut",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Credit by Scheduled Commercial Banks in India",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     null,
     null,

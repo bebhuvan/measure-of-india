@@ -1,7 +1,7 @@
 # states: state economies
 
 Session `atlas-states`, branch `lb/states`, port 4405. Brief: `docs/briefs/states.md`.
-Status: **done**, 2026-10-09. All gates green.
+Status: **done**, 2026-10-09 (second pass after the coordinator's review). All gates green.
 
 ## What shipped
 - **Guide** `/guides/states/` ("One country, many economies"): title block, current reading
@@ -48,6 +48,26 @@ Status: **done**, 2026-10-09. All gates green.
   revised estimates left out.
 - GuideData lists the guide's 25 bundles; all 208 Handbook bundles are in §12, by section
   (the full list made the page 53,000 px tall).
+
+## Second pass (coordinator review, 2026-10-09)
+- Merged launch-build (every-cut table, seam helpers, tests).
+- **Units:** every series carries a real unit. The Handbook's 182 tables are mapped one by
+  one in `HBS_UNITS` (states.mjs) from each table's unit column, its Report Info divisor and
+  unit providers, and the value magnitudes; an undeclared table fails the build. New unit
+  codes in `src/dossiers/everycut.js` (states block). Corrections to DBIE's own unit column:
+  Table 5 maternal mortality is per 1,00,000 live births, Table 11 natural growth per 1,000,
+  Table 75 thousand tonnes, Table 95 projects stored ×10^7; Table 181 exports are US$ (All
+  India $437 bn, 2024-25), Table 139/141 crore kWh, Table 100 thousand hectares.
+- **Labels:** unnamed columns in Tables 105, 166, 171, 175 are named actual / revised /
+  budget estimate only after a check that they follow Table 164's pattern (one year each,
+  after the last actual); Table 89's second column is the zone total; Table 97's columns are
+  capacity, capacity in use, utilisation. Every series label now names its measure.
+- **Every-cut table** on the guide: the guide's own 25 bundles (5,576 series; the six over
+  150 series on their own pages). Handbook series carry `group` = Handbook section, MoSPI
+  industry series `group` = state. The 208 Handbook bundles stay in §12 by section rather
+  than in the registry: inline they would add about 9,000 rows to the guide page.
+- Sweep: no series in any states bundle has an empty or placeholder unit or a column-index
+  label (16,877 series checked).
 
 ## Source quirks and defects
 - MoSPI indicator 32 is served but unlisted; 35+ answer HTTP 500.

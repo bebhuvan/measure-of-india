@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2021-04",
-  "unit": "Thousand Tonnes",
+  "unit": "thousand_tonne",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Consumption of Fertiliser (N,P&K): RBI Handbook of Statistics on Indian States, Table 89",
-  "note": "DBIE report 1728, data provider \"Query 1\". Values exactly as DBIE serves them; DBIE's unit label: Thousand Tonnes. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1, value 2. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1728, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: Thousand Tonnes. Periods: fiscal years, dated at April. Dimensions: none; measures: state, zone total. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2013-04-01",
@@ -34,9 +34,11 @@
   "2021-04-01"
  ],
  "series": {
-  "all_india__value_1": {
-   "name": "all_india__value_1",
-   "label": "All India: value 1",
+  "all_india__state": {
+   "name": "all_india__state",
+   "label": "All India: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     24482.4,
     25576.1,
@@ -49,9 +51,11 @@
     29796.3
    ]
   },
-  "andaman_and_nicobar_islands__value_1": {
-   "name": "andaman_and_nicobar_islands__value_1",
-   "label": "Andaman & Nicobar Islands: value 1",
+  "andaman_and_nicobar_islands__state": {
+   "name": "andaman_and_nicobar_islands__state",
+   "label": "Andaman & Nicobar Islands: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     1.1,
     1.1,
@@ -64,9 +68,11 @@
     0.7
    ]
   },
-  "andhra_pradesh__value_1": {
-   "name": "andhra_pradesh__value_1",
-   "label": "Andhra Pradesh: value 1",
+  "andhra_pradesh__state": {
+   "name": "andhra_pradesh__state",
+   "label": "Andhra Pradesh: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     1780.3,
     1738.8,
@@ -79,9 +85,11 @@
     1699.6
    ]
   },
-  "arunachal_pradesh__value_1": {
-   "name": "arunachal_pradesh__value_1",
-   "label": "Arunachal Pradesh: value 1",
+  "arunachal_pradesh__state": {
+   "name": "arunachal_pradesh__state",
+   "label": "Arunachal Pradesh: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     0,
     0,
@@ -94,9 +102,11 @@
     0
    ]
   },
-  "assam__value_1": {
-   "name": "assam__value_1",
-   "label": "Assam: value 1",
+  "assam__state": {
+   "name": "assam__state",
+   "label": "Assam: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     273,
     286.4,
@@ -109,9 +119,11 @@
     261.6
    ]
   },
-  "bihar__value_1": {
-   "name": "bihar__value_1",
-   "label": "Bihar: value 1",
+  "bihar__state": {
+   "name": "bihar__state",
+   "label": "Bihar: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     1260.8,
     1346.2,
@@ -124,9 +136,11 @@
     1613.5
    ]
   },
-  "chandigarh__value_1": {
-   "name": "chandigarh__value_1",
-   "label": "Chandigarh: value 1",
+  "chandigarh__state": {
+   "name": "chandigarh__state",
+   "label": "Chandigarh: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     0,
     0,
@@ -139,9 +153,11 @@
     0
    ]
   },
-  "chhattisgarh__value_1": {
-   "name": "chhattisgarh__value_1",
-   "label": "Chhattisgarh: value 1",
+  "chhattisgarh__state": {
+   "name": "chhattisgarh__state",
+   "label": "Chhattisgarh: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     567.7,
     605.4,
@@ -154,9 +170,11 @@
     758
    ]
   },
-  "dadra_and_nagar_haveli__value_1": {
-   "name": "dadra_and_nagar_haveli__value_1",
-   "label": "Dadra & Nagar Haveli: value 1",
+  "dadra_and_nagar_haveli__state": {
+   "name": "dadra_and_nagar_haveli__state",
+   "label": "Dadra & Nagar Haveli: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     0.9,
     1.1,
@@ -169,9 +187,11 @@
     0.4
    ]
   },
-  "daman_and_diu__value_1": {
-   "name": "daman_and_diu__value_1",
-   "label": "Daman & Diu: value 1",
+  "daman_and_diu__state": {
+   "name": "daman_and_diu__state",
+   "label": "Daman & Diu: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     0.1,
     0,
@@ -184,9 +204,11 @@
     0
    ]
   },
-  "delhi__value_1": {
-   "name": "delhi__value_1",
-   "label": "Delhi: value 1",
+  "delhi__state": {
+   "name": "delhi__state",
+   "label": "Delhi: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     3.6,
     8.6,
@@ -199,9 +221,11 @@
     14.7
    ]
   },
-  "goa__value_1": {
-   "name": "goa__value_1",
-   "label": "Goa: value 1",
+  "goa__state": {
+   "name": "goa__state",
+   "label": "Goa: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     5.2,
     4.5,
@@ -214,9 +238,11 @@
     3.2
    ]
   },
-  "gujarat__value_1": {
-   "name": "gujarat__value_1",
-   "label": "Gujarat: value 1",
+  "gujarat__state": {
+   "name": "gujarat__state",
+   "label": "Gujarat: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     1564.9,
     1684,
@@ -229,9 +255,11 @@
     1699.8
    ]
   },
-  "haryana__value_1": {
-   "name": "haryana__value_1",
-   "label": "Haryana: value 1",
+  "haryana__state": {
+   "name": "haryana__state",
+   "label": "Haryana: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     1164.7,
     1303.2,
@@ -244,9 +272,11 @@
     1374
    ]
   },
-  "himachal_pradesh__value_1": {
-   "name": "himachal_pradesh__value_1",
-   "label": "Himachal Pradesh: value 1",
+  "himachal_pradesh__state": {
+   "name": "himachal_pradesh__state",
+   "label": "Himachal Pradesh: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     50.2,
     53.1,
@@ -259,9 +289,11 @@
     56
    ]
   },
-  "jammu_and_kashmir_ut__value_1": {
-   "name": "jammu_and_kashmir_ut__value_1",
-   "label": "Jammu & Kashmir (UT, from 2019-20): value 1",
+  "jammu_and_kashmir_ut__state": {
+   "name": "jammu_and_kashmir_ut__state",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -274,9 +306,11 @@
     120.1
    ]
   },
-  "jammu_and_kashmir_state__value_1": {
-   "name": "jammu_and_kashmir_state__value_1",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): value 1",
+  "jammu_and_kashmir_state__state": {
+   "name": "jammu_and_kashmir_state__state",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     103.4,
     110.1,
@@ -289,9 +323,11 @@
     null
    ]
   },
-  "jharkhand__value_1": {
-   "name": "jharkhand__value_1",
-   "label": "Jharkhand: value 1",
+  "jharkhand__state": {
+   "name": "jharkhand__state",
+   "label": "Jharkhand: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     103.5,
     114.6,
@@ -304,9 +340,11 @@
     201.8
    ]
   },
-  "karnataka__value_1": {
-   "name": "karnataka__value_1",
-   "label": "Karnataka: value 1",
+  "karnataka__state": {
+   "name": "karnataka__state",
+   "label": "Karnataka: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     1640.7,
     1832,
@@ -319,9 +357,11 @@
     2192.4
    ]
   },
-  "kerala__value_1": {
-   "name": "kerala__value_1",
-   "label": "Keralam: value 1",
+  "kerala__state": {
+   "name": "kerala__state",
+   "label": "Keralam: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     322.2,
     209.5,
@@ -334,9 +374,11 @@
     166.1
    ]
   },
-  "lakshadweep__value_1": {
-   "name": "lakshadweep__value_1",
-   "label": "Lakshadweep: value 1",
+  "lakshadweep__state": {
+   "name": "lakshadweep__state",
+   "label": "Lakshadweep: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     0,
     0,
@@ -349,9 +391,11 @@
     0
    ]
   },
-  "madhya_pradesh__value_1": {
-   "name": "madhya_pradesh__value_1",
-   "label": "Madhya Pradesh: value 1",
+  "madhya_pradesh__state": {
+   "name": "madhya_pradesh__state",
+   "label": "Madhya Pradesh: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     1901,
     1796.9,
@@ -364,9 +408,11 @@
     2651.7
    ]
   },
-  "maharashtra__value_1": {
-   "name": "maharashtra__value_1",
-   "label": "Maharashtra: value 1",
+  "maharashtra__state": {
+   "name": "maharashtra__state",
+   "label": "Maharashtra: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     2784.8,
     2814.7,
@@ -379,9 +425,11 @@
     3135.6
    ]
   },
-  "manipur__value_1": {
-   "name": "manipur__value_1",
-   "label": "Manipur: value 1",
+  "manipur__state": {
+   "name": "manipur__state",
+   "label": "Manipur: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     10.8,
     15.1,
@@ -394,9 +442,11 @@
     12.4
    ]
   },
-  "meghalaya__value_1": {
-   "name": "meghalaya__value_1",
-   "label": "Meghalaya: value 1",
+  "meghalaya__state": {
+   "name": "meghalaya__state",
+   "label": "Meghalaya: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     4.8,
     0,
@@ -409,9 +459,11 @@
     0
    ]
   },
-  "mizoram__value_1": {
-   "name": "mizoram__value_1",
-   "label": "Mizoram: value 1",
+  "mizoram__state": {
+   "name": "mizoram__state",
+   "label": "Mizoram: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     3.5,
     0,
@@ -424,9 +476,11 @@
     1.3
    ]
   },
-  "nagaland__value_1": {
-   "name": "nagaland__value_1",
-   "label": "Nagaland: value 1",
+  "nagaland__state": {
+   "name": "nagaland__state",
+   "label": "Nagaland: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     2.1,
     2.6,
@@ -439,9 +493,11 @@
     0.2
    ]
   },
-  "odisha__value_1": {
-   "name": "odisha__value_1",
-   "label": "Odisha: value 1",
+  "odisha__state": {
+   "name": "odisha__state",
+   "label": "Odisha: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     487.1,
     499.5,
@@ -454,9 +510,11 @@
     587.4
    ]
   },
-  "puducherry__value_1": {
-   "name": "puducherry__value_1",
-   "label": "Puducherry: value 1",
+  "puducherry__state": {
+   "name": "puducherry__state",
+   "label": "Puducherry: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     15.8,
     11.6,
@@ -469,9 +527,11 @@
     11.5
    ]
   },
-  "punjab__value_1": {
-   "name": "punjab__value_1",
-   "label": "Punjab: value 1",
+  "punjab__state": {
+   "name": "punjab__state",
+   "label": "Punjab: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     1713.3,
     1717.8,
@@ -484,9 +544,11 @@
     1989.8
    ]
   },
-  "rajasthan__value_1": {
-   "name": "rajasthan__value_1",
-   "label": "Rajasthan: value 1",
+  "rajasthan__state": {
+   "name": "rajasthan__state",
+   "label": "Rajasthan: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     1217.6,
     1299,
@@ -499,9 +561,11 @@
     1611.4
    ]
   },
-  "sikkim__value_1": {
-   "name": "sikkim__value_1",
-   "label": "Sikkim: value 1",
+  "sikkim__state": {
+   "name": "sikkim__state",
+   "label": "Sikkim: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     0,
     0,
@@ -514,9 +578,11 @@
     0
    ]
   },
-  "tamil_nadu__value_1": {
-   "name": "tamil_nadu__value_1",
-   "label": "Tamil Nadu: value 1",
+  "tamil_nadu__state": {
+   "name": "tamil_nadu__state",
+   "label": "Tamil Nadu: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     905.7,
     1014.8,
@@ -529,9 +595,11 @@
     1129.6
    ]
   },
-  "telangana__value_1": {
-   "name": "telangana__value_1",
-   "label": "Telangana: value 1",
+  "telangana__state": {
+   "name": "telangana__state",
+   "label": "Telangana: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     1339.2,
     1177.6,
@@ -544,9 +612,11 @@
     1636.4
    ]
   },
-  "total_east_zone__value_2": {
-   "name": "total_east_zone__value_2",
-   "label": "Total East Zone: value 2",
+  "total_east_zone__zone_total": {
+   "name": "total_east_zone__zone_total",
+   "label": "Total East Zone: Consumption of Fertiliser (N,P&K): zone total",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     3945.6,
     4467.9,
@@ -559,9 +629,11 @@
     3078.3
    ]
   },
-  "total_north_east_zone__value_2": {
-   "name": "total_north_east_zone__value_2",
-   "label": "Total North-east  Zone: value 2",
+  "total_north_east_zone__zone_total": {
+   "name": "total_north_east_zone__zone_total",
+   "label": "Total North-east  Zone: Consumption of Fertiliser (N,P&K): zone total",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     294.9,
     312,
@@ -574,9 +646,11 @@
     317.1
    ]
   },
-  "total_north_zone__value_2": {
-   "name": "total_north_zone__value_2",
-   "label": "Total North Zone: value 2",
+  "total_north_zone__zone_total": {
+   "name": "total_north_zone__zone_total",
+   "label": "Total North Zone: Consumption of Fertiliser (N,P&K): zone total",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     7040,
     7634.6,
@@ -589,9 +663,11 @@
     8859.5
    ]
   },
-  "total_south_zone__value_2": {
-   "name": "total_south_zone__value_2",
-   "label": "Total South Zone: value 2",
+  "total_south_zone__zone_total": {
+   "name": "total_south_zone__zone_total",
+   "label": "Total South Zone: Consumption of Fertiliser (N,P&K): zone total",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     6004.8,
     5985.4,
@@ -604,9 +680,11 @@
     6836.2
    ]
   },
-  "total_west_zone__value_2": {
-   "name": "total_west_zone__value_2",
-   "label": "Total West Zone: value 2",
+  "total_west_zone__zone_total": {
+   "name": "total_west_zone__zone_total",
+   "label": "Total West Zone: Consumption of Fertiliser (N,P&K): zone total",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     8042.2,
     8205.6,
@@ -619,9 +697,11 @@
     9860.1
    ]
   },
-  "tripura__value_1": {
-   "name": "tripura__value_1",
-   "label": "Tripura: value 1",
+  "tripura__state": {
+   "name": "tripura__state",
+   "label": "Tripura: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     22.9,
     19.1,
@@ -634,9 +714,11 @@
     19.4
    ]
   },
-  "uttarakhand__value_1": {
-   "name": "uttarakhand__value_1",
-   "label": "Uttarakhand: value 1",
+  "uttarakhand__state": {
+   "name": "uttarakhand__state",
+   "label": "Uttarakhand: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     162.8,
     170.4,
@@ -649,9 +731,11 @@
     135.9
    ]
   },
-  "uttar_pradesh__value_1": {
-   "name": "uttar_pradesh__value_1",
-   "label": "Uttar Pradesh: value 1",
+  "uttar_pradesh__state": {
+   "name": "uttar_pradesh__state",
+   "label": "Uttar Pradesh: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     3842,
     4271.6,
@@ -664,9 +748,11 @@
     5169.1
    ]
   },
-  "west_bengal__value_1": {
-   "name": "west_bengal__value_1",
-   "label": "West Bengal: value 1",
+  "west_bengal__state": {
+   "name": "west_bengal__state",
+   "label": "West Bengal: Consumption of Fertiliser (N,P&K): state",
+   "unit": "thousand_tonne",
+   "group": "Agriculture and allied",
    "data": [
     1226.9,
     1466.9,

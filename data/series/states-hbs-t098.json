@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2022-03",
-  "unit": "Metric Tonnes",
+  "unit": "tonnes",
   "periodKind": "asOn",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Cold Storage Capacity: RBI Handbook of Statistics on Indian States, Table 98",
-  "note": "DBIE report 1646, data provider \"Query 1\". Values exactly as DBIE serves them; DBIE's unit label: Metric Tonnes. Periods: as on the date served. Dimensions: none; measures: value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1646, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: Metric Tonnes. Periods: as on the date served. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2015-03-01",
@@ -35,7 +35,9 @@
  "series": {
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     32729271,
     34050359,
@@ -49,7 +51,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     210,
     210,
@@ -63,7 +67,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     1622320,
     1729286,
@@ -77,7 +83,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     5000,
     5000,
@@ -91,7 +99,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     126179,
     152706,
@@ -105,7 +115,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     1411395,
     1416095,
@@ -119,7 +131,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     12462,
     12462,
@@ -133,7 +147,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     470546,
     484557,
@@ -147,7 +163,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     129857,
     129857,
@@ -161,7 +179,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     7705,
     7705,
@@ -175,7 +195,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     2323175,
     2570973,
@@ -189,7 +211,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     638601,
     695795,
@@ -203,7 +227,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     53009,
     105726,
@@ -217,7 +243,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     69769,
     100976,
@@ -231,7 +259,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -245,7 +275,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     221680,
     226680,
@@ -259,7 +291,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     536333,
     548001,
@@ -273,7 +307,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     78355,
     78105,
@@ -287,7 +323,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     15,
     15,
@@ -301,7 +339,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     1168321,
     1253715,
@@ -315,7 +355,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     762798,
     881860,
@@ -329,7 +371,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     2175,
     3000,
@@ -343,7 +387,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     8200,
     8200,
@@ -357,7 +403,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     3931,
     4471,
@@ -371,7 +419,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     6150,
     6150,
@@ -385,7 +435,9 @@
   },
   "nhb_states": {
    "name": "nhb_states",
-   "label": "Nhb/states",
+   "label": "Nhb/states: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -399,7 +451,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     366699,
     523139,
@@ -413,7 +467,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     85,
     85,
@@ -427,7 +483,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     2051377,
     2152003,
@@ -441,7 +499,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     490888,
     521387,
@@ -455,7 +515,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     2100,
     2100,
@@ -469,7 +531,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     304771,
     316583,
@@ -483,7 +547,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -497,7 +563,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     45477,
     45477,
@@ -511,7 +579,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     89689,
     148921,
@@ -525,7 +595,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     13807762,
     13978608,
@@ -539,7 +611,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Cold Storage Capacity",
+   "unit": "tonnes",
+   "group": "Agriculture and allied",
    "data": [
     5912237,
     5940511,

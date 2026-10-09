@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2024-04",
-  "unit": "Kg. Per Hectare",
+  "unit": "kg_per_hectare",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Estimates of Yield - Sugarcane: RBI Handbook of Statistics on Indian States, Table 87",
-  "note": "DBIE report 1636, data provider \"Main\". Values exactly as DBIE serves them; DBIE's unit label: Kg. Per Hectare. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1636, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: Kg. Per Hectare. Periods: fiscal years, dated at April. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -48,7 +48,9 @@
  "series": {
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     74072,
     74010,
@@ -80,7 +82,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     5000,
     4000,
@@ -112,7 +116,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -143,7 +149,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     36308,
     35500,
@@ -179,7 +187,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     36333,
     32857,
@@ -210,7 +220,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     84867,
     74905,
@@ -241,7 +253,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -268,7 +282,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     47636,
     47818,
@@ -299,7 +315,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     4750,
     3286,
@@ -326,7 +344,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     2476,
     2563,
@@ -353,7 +373,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     2000,
     2000,
@@ -380,7 +402,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     21345,
     9654,
@@ -407,7 +431,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     94333,
     134779,
@@ -434,7 +460,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     20143,
     18667,
@@ -461,7 +489,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     47367,
     47932,
@@ -488,7 +518,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     36983,
     37231,
@@ -515,7 +547,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     39460,
     42822,
@@ -542,7 +576,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     40914,
     43694,
@@ -569,7 +605,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     50500,
     50818,
@@ -596,7 +634,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     48526,
     61089,
@@ -623,7 +663,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     60196,
     60733,
@@ -650,7 +692,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     55838,
     65828,
@@ -677,7 +721,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     60733,
     58201,
@@ -704,7 +750,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     62000,
     64409,
@@ -731,7 +779,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     60116,
     57857,
@@ -758,7 +808,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     63194,
     77551,
@@ -785,7 +837,9 @@
   },
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     64752,
     66919,
@@ -812,7 +866,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     66231,
     83180,
@@ -839,7 +895,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     80202,
     83411,
@@ -866,7 +924,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     74948,
     76765,
@@ -893,7 +953,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Estimates of Yield - Sugarcane",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     100845,
     104671,

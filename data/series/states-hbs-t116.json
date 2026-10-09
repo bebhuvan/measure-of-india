@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2023-04",
-  "unit": "Units",
+  "unit": "count",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Number of Factories: RBI Handbook of Statistics on Indian States, Table 116",
-  "note": "DBIE report 1660, data provider \"Query 1\". Values exactly as DBIE serves them; DBIE's unit label: Units. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1660, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: Units. Periods: fiscal years, dated at April. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -47,7 +47,9 @@
  "series": {
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     136353,
     140160,
@@ -73,7 +75,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     21,
     12,
@@ -99,7 +103,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     15572,
     15790,
@@ -125,7 +131,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -151,7 +159,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     1710,
     1864,
@@ -177,7 +187,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     1674,
     1669,
@@ -203,7 +215,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     287,
     296,
@@ -229,7 +243,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     1343,
     1478,
@@ -255,7 +271,9 @@
   },
   "dadra_and_nagar_haveli": {
    "name": "dadra_and_nagar_haveli",
-   "label": "Dadra & Nagar Haveli",
+   "label": "Dadra & Nagar Haveli: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     1059,
     1124,
@@ -281,7 +299,9 @@
   },
   "daman_and_diu": {
    "name": "daman_and_diu",
-   "label": "Daman & Diu",
+   "label": "Daman & Diu: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     1681,
     1534,
@@ -307,7 +327,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     3156,
     3312,
@@ -333,7 +355,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     518,
     543,
@@ -359,7 +383,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     13603,
     14055,
@@ -385,7 +411,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     4339,
     4304,
@@ -411,7 +439,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     653,
     808,
@@ -437,7 +467,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     424,
     519,
@@ -463,7 +495,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -489,7 +523,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     1607,
     1590,
@@ -515,7 +551,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     7596,
     7835,
@@ -541,7 +579,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     5493,
     5643,
@@ -567,7 +607,9 @@
   },
   "ladakh": {
    "name": "ladakh",
-   "label": "Ladakh",
+   "label": "Ladakh: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -593,7 +635,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -619,7 +663,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     3028,
     2951,
@@ -645,7 +691,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     18912,
     18711,
@@ -671,7 +719,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     55,
     59,
@@ -697,7 +747,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     58,
     66,
@@ -723,7 +775,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -749,7 +803,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     113,
     109,
@@ -775,7 +831,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     1749,
     1862,
@@ -801,7 +859,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     619,
     637,
@@ -827,7 +887,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     7575,
     8332,
@@ -853,7 +915,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     5740,
     6005,
@@ -879,7 +943,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -905,7 +971,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     21053,
     21265,
@@ -931,7 +999,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -957,7 +1027,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     275,
     307,
@@ -983,7 +1055,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     752,
     900,
@@ -1009,7 +1083,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     9582,
     10503,
@@ -1035,7 +1111,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Number of Factories",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     6105,
     6077,

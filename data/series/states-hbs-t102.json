@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2024-03",
-  "unit": "Millimeter",
+  "unit": "mm",
   "periodKind": "asOn",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "Sub-Division-Wise Annual Rainfall: RBI Handbook of Statistics on Indian States, Table 102",
-  "note": "DBIE report 1649, data provider \"Main\". Values exactly as DBIE serves them; DBIE's unit label: Millimeter. Periods: as on the date served. Dimensions: none; measures: value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1649, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: Millimeter. Periods: as on the date served. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2000-03-01",
@@ -52,7 +52,9 @@
  "series": {
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     1207,
     1247,
@@ -83,7 +85,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     1191.5,
     1254.4,
@@ -114,7 +118,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     2451.8,
     2545.7,
@@ -151,7 +157,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     1097.2,
     1672.5,
@@ -182,7 +190,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     2763.2,
     3080.9,
@@ -213,7 +223,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     1712.9,
     1544.4,
@@ -244,7 +256,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     405.3,
     441,
@@ -275,7 +289,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     984.6,
     952.7,
@@ -310,7 +326,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     1068.4,
     991.8,
@@ -341,7 +359,9 @@
   },
   "assam_and_meghalaya": {
    "name": "assam_and_meghalaya",
-   "label": "Assam & Meghalaya",
+   "label": "Assam & Meghalaya: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     2487,
     2178.4,
@@ -372,7 +392,9 @@
   },
   "naga_mani_mizo_tripura": {
    "name": "naga_mani_mizo_tripura",
-   "label": "Naga Mani Mizo Tripura",
+   "label": "Naga Mani Mizo Tripura: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     2363.9,
     2149,
@@ -403,7 +425,9 @@
   },
   "himalayan_west_bengal_and_sikkim": {
    "name": "himalayan_west_bengal_and_sikkim",
-   "label": "Himalayan West Bengal & Sikkim",
+   "label": "Himalayan West Bengal & Sikkim: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     2908,
     2612.6,
@@ -434,7 +458,9 @@
   },
   "gangetic_west_bengal": {
    "name": "gangetic_west_bengal",
-   "label": "Gangetic West Bengal",
+   "label": "Gangetic West Bengal: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     1572.1,
     1540.6,
@@ -465,7 +491,9 @@
   },
   "east_uttar_pradesh": {
    "name": "east_uttar_pradesh",
-   "label": "East Uttar Pradesh",
+   "label": "East Uttar Pradesh: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     946.8,
     973.8,
@@ -496,7 +524,9 @@
   },
   "haryana_delhi_and_chandigarh": {
    "name": "haryana_delhi_and_chandigarh",
-   "label": "Haryana, Delhi & Chandigarh",
+   "label": "Haryana, Delhi & Chandigarh: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     384.4,
     485.5,
@@ -527,7 +557,9 @@
   },
   "west_rajasthan": {
    "name": "west_rajasthan",
-   "label": "West Rajasthan",
+   "label": "West Rajasthan: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     235.3,
     285.3,
@@ -558,7 +590,9 @@
   },
   "west_madhya_pradesh": {
    "name": "west_madhya_pradesh",
-   "label": "West Madhya Pradesh",
+   "label": "West Madhya Pradesh: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     null,
     787,
@@ -589,7 +623,9 @@
   },
   "east_madhya_pradesh": {
    "name": "east_madhya_pradesh",
-   "label": "East Madhya Pradesh",
+   "label": "East Madhya Pradesh: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     874.2,
     1170.1,
@@ -620,7 +656,9 @@
   },
   "gujarat_region": {
    "name": "gujarat_region",
-   "label": "Gujarat Region",
+   "label": "Gujarat Region: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     550.6,
     849,
@@ -651,7 +689,9 @@
   },
   "saurashtra_and_kutch": {
    "name": "saurashtra_and_kutch",
-   "label": "Saurashtra & Kutch",
+   "label": "Saurashtra & Kutch: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     286.1,
     510.2,
@@ -682,7 +722,9 @@
   },
   "konkan_and_goa": {
    "name": "konkan_and_goa",
-   "label": "Konkan & Goa",
+   "label": "Konkan & Goa: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     3133.2,
     2395.4,
@@ -713,7 +755,9 @@
   },
   "madhya_maharashtra": {
    "name": "madhya_maharashtra",
-   "label": "Madhya Maharashtra",
+   "label": "Madhya Maharashtra: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     701.6,
     785.1,
@@ -744,7 +788,9 @@
   },
   "marathwada": {
    "name": "marathwada",
-   "label": "Marathwada",
+   "label": "Marathwada: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     684.4,
     732.4,
@@ -775,7 +821,9 @@
   },
   "vidarbha": {
    "name": "vidarbha",
-   "label": "Vidarbha",
+   "label": "Vidarbha: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     1105.2,
     1122.1,
@@ -806,7 +854,9 @@
   },
   "coastal_andhra_pradesh": {
    "name": "coastal_andhra_pradesh",
-   "label": "Coastal Andhra Pradesh",
+   "label": "Coastal Andhra Pradesh: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     992.3,
     1009.3,
@@ -837,7 +887,9 @@
   },
   "rayalseema": {
    "name": "rayalseema",
-   "label": "Rayalseema",
+   "label": "Rayalseema: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     871.3,
     924.5,
@@ -868,7 +920,9 @@
   },
   "coastal_karnataka": {
    "name": "coastal_karnataka",
-   "label": "Coastal Karnataka",
+   "label": "Coastal Karnataka: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     3351.3,
     3111.6,
@@ -903,7 +957,9 @@
   },
   "north_interior_karnataka": {
    "name": "north_interior_karnataka",
-   "label": "North Interior Karnataka",
+   "label": "North Interior Karnataka: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     712.4,
     598,
@@ -934,7 +990,9 @@
   },
   "south_interior_karnataka": {
    "name": "south_interior_karnataka",
-   "label": "South Interior Karnataka",
+   "label": "South Interior Karnataka: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     1207.2,
     926.3,
@@ -965,7 +1023,9 @@
   },
   "west_uttar_pradesh": {
    "name": "west_uttar_pradesh",
-   "label": "West Uttar Pradesh",
+   "label": "West Uttar Pradesh: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     771.4,
     661.7,
@@ -996,7 +1056,9 @@
   },
   "east_rajasthan": {
    "name": "east_rajasthan",
-   "label": "East Rajasthan",
+   "label": "East Rajasthan: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     440,
     551.2,
@@ -1027,7 +1089,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     1078,
     922.3,
@@ -1058,7 +1122,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     1372.1,
     1380.6,
@@ -1089,7 +1155,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     972,
     483.4,
@@ -1120,7 +1188,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     2412.6,
     2931.1,
@@ -1151,7 +1221,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     null,
     1600.1,
@@ -1182,7 +1254,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Sub-Division-Wise Annual Rainfall",
+   "unit": "mm",
+   "group": "Environment",
    "data": [
     null,
     null,

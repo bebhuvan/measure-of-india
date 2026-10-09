@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2023-04",
-  "unit": "as served by DBIE",
+  "unit": "inr_amount",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Gross Value Added: RBI Handbook of Statistics on Indian States, Table 128",
-  "note": "DBIE report 1672, data provider \"Query 1\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1672, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -47,7 +47,9 @@
  "series": {
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     3096200900000,
     3646970600000,
@@ -73,7 +75,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     116700000,
     136700000,
@@ -99,7 +103,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     196702700000,
     209293300000,
@@ -125,7 +131,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -151,7 +159,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     42300700000,
     41091800000,
@@ -177,7 +187,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     11541500000,
     6694100000,
@@ -203,7 +215,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     2553700000,
     2722000000,
@@ -229,7 +243,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     94890300000,
     80300500000,
@@ -255,7 +271,9 @@
   },
   "dadra_and_nagar_haveli": {
    "name": "dadra_and_nagar_haveli",
-   "label": "Dadra & Nagar Haveli",
+   "label": "Dadra & Nagar Haveli: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     55097300000,
     38229000000,
@@ -281,7 +299,9 @@
   },
   "daman_and_diu": {
    "name": "daman_and_diu",
-   "label": "Daman & Diu",
+   "label": "Daman & Diu: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     30599200000,
     48845800000,
@@ -307,7 +327,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     27952900000,
     30632900000,
@@ -333,7 +355,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     33845900000,
     36738700000,
@@ -359,7 +383,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     446240200000,
     576883900000,
@@ -385,7 +411,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     139105100000,
     157252200000,
@@ -411,7 +439,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     26325100000,
     62266500000,
@@ -437,7 +467,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     6495200000,
     11163300000,
@@ -463,7 +495,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -489,7 +523,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     179569400000,
     140428000000,
@@ -515,7 +551,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     240648300000,
     244327200000,
@@ -541,7 +579,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     48295000000,
     52330700000,
@@ -567,7 +607,9 @@
   },
   "ladakh": {
    "name": "ladakh",
-   "label": "Ladakh",
+   "label": "Ladakh: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -593,7 +635,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -619,7 +663,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     69331500000,
     85736600000,
@@ -645,7 +691,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     603915200000,
     840620700000,
@@ -671,7 +719,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     69100000,
     107900000,
@@ -697,7 +747,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     1081400000,
     2623400000,
@@ -723,7 +775,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -749,7 +803,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     219000000,
     368500000,
@@ -775,7 +831,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     73947800000,
     77463500000,
@@ -801,7 +859,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     17139200000,
     32789500000,
@@ -827,7 +887,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     69908500000,
     79452800000,
@@ -853,7 +915,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     80617200000,
     96031600000,
@@ -879,7 +943,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -905,7 +971,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     269384800000,
     337826000000,
@@ -931,7 +999,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -957,7 +1027,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     2381600000,
     1173100000,
@@ -983,7 +1055,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     22119300000,
     38075700000,
@@ -1009,7 +1083,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     176911800000,
     198134400000,
@@ -1035,7 +1111,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Gross Value Added",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     126895300000,
     117230300000,

@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2023-04",
-  "unit": "as served by DBIE",
+  "unit": "inr_amount",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Invested Capital: RBI Handbook of Statistics on Indian States, Table 121",
-  "note": "DBIE report 1665, data provider \"Query 1\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1665, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -47,7 +47,9 @@
  "series": {
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     7594177000000,
     9015786100000,
@@ -73,7 +75,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     808200000,
     792000000,
@@ -99,7 +103,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     520009400000,
     598577600000,
@@ -125,7 +131,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -151,7 +159,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     102260800000,
     109097600000,
@@ -177,7 +187,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     59565600000,
     52974000000,
@@ -203,7 +215,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     6215200000,
     6666500000,
@@ -229,7 +243,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     160383300000,
     206703500000,
@@ -255,7 +271,9 @@
   },
   "dadra_and_nagar_haveli": {
    "name": "dadra_and_nagar_haveli",
-   "label": "Dadra & Nagar Haveli",
+   "label": "Dadra & Nagar Haveli: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     102408900000,
     98522200000,
@@ -281,7 +299,9 @@
   },
   "daman_and_diu": {
    "name": "daman_and_diu",
-   "label": "Daman & Diu",
+   "label": "Daman & Diu: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     46756000000,
     80257200000,
@@ -307,7 +327,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     52993200000,
     59700100000,
@@ -333,7 +355,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     62219900000,
     61538800000,
@@ -359,7 +383,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     1232751900000,
     1639718700000,
@@ -385,7 +411,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     264930300000,
     298720000000,
@@ -411,7 +439,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     74139100000,
     108454000000,
@@ -437,7 +467,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     13043000000,
     19249700000,
@@ -463,7 +495,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -489,7 +523,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     209579200000,
     248282400000,
@@ -515,7 +551,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     537576600000,
     620073600000,
@@ -541,7 +579,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     126117900000,
     146513500000,
@@ -567,7 +607,9 @@
   },
   "ladakh": {
    "name": "ladakh",
-   "label": "Ladakh",
+   "label": "Ladakh: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -593,7 +635,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -619,7 +663,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     244533800000,
     267688500000,
@@ -645,7 +691,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     1436858200000,
     1577042200000,
@@ -671,7 +719,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     134400000,
     136400000,
@@ -697,7 +747,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     2171900000,
     4244400000,
@@ -723,7 +775,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -749,7 +803,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     645400000,
     731400000,
@@ -775,7 +831,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     199241100000,
     286764600000,
@@ -801,7 +859,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     31505300000,
     39232900000,
@@ -827,7 +887,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     192518700000,
     237316600000,
@@ -853,7 +915,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     211923500000,
     239099500000,
@@ -879,7 +943,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -905,7 +971,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     770255500000,
     937671300000,
@@ -931,7 +999,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -957,7 +1027,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     1488600000,
     2779300000,
@@ -983,7 +1055,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     52960000000,
     72870600000,
@@ -1009,7 +1083,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     516077600000,
     594123200000,
@@ -1035,7 +1111,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Invested Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     362104400000,
     400243900000,

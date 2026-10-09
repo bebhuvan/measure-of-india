@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2024-04",
-  "unit": "as served by DBIE",
+  "unit": "usd",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Exports: RBI Handbook of Statistics on Indian States, Table 181",
-  "note": "DBIE report 1740, data provider \"Query 1\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1740, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2017-04-01",
@@ -35,7 +35,9 @@
  "series": {
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     384000000,
     370000000,
@@ -49,7 +51,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     85000000,
     54000000,
@@ -63,7 +67,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     1000000,
     1000000,
@@ -77,7 +83,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     1353000000,
     1641000000,
@@ -91,7 +99,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     1117000000,
     1253000000,
@@ -105,7 +115,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     5000000,
     2000000,
@@ -119,7 +131,9 @@
   },
   "ladakh": {
    "name": "ladakh",
-   "label": "Ladakh",
+   "label": "Ladakh: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     0,
     0,
@@ -133,7 +147,9 @@
   },
   "dadra_and_nagar_haveli_and_daman_and_diu": {
    "name": "dadra_and_nagar_haveli_and_daman_and_diu",
-   "label": "Dadra And Nagar Haveli And Daman And Diu",
+   "label": "Dadra And Nagar Haveli And Daman And Diu: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     3005000000,
     3197000000,
@@ -147,7 +163,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     9290000000,
     10057000000,
@@ -161,7 +179,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     4000000,
     3000000,
@@ -175,7 +195,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     1000000,
     3000000,
@@ -189,7 +211,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     7585000000,
     6303000000,
@@ -203,7 +227,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     14000000,
     8000000,
@@ -217,7 +243,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     3000000,
     2000000,
@@ -231,7 +259,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     31000000,
     4000000,
@@ -245,7 +275,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     13804000000,
     16289000000,
@@ -259,7 +291,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     1455000000,
     2351000000,
@@ -273,7 +307,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     8714000000,
     9465000000,
@@ -287,7 +323,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     5788000000,
     6038000000,
@@ -301,7 +339,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     13263000000,
     13833000000,
@@ -315,7 +355,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     70000000,
     72000000,
@@ -329,7 +371,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     148000000,
     196000000,
@@ -343,7 +387,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     1222000000,
     1323000000,
@@ -357,7 +403,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     6952000000,
     7062000000,
@@ -371,7 +419,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     66817000000,
     67412000000,
@@ -385,7 +435,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     69712000000,
     72809000000,
@@ -399,7 +451,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     2103000000,
     2064000000,
@@ -413,7 +467,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     5250000000,
     6382000000,
@@ -427,7 +483,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     1523000000,
     1244000000,
@@ -441,7 +499,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     13023000000,
     14086000000,
@@ -455,7 +515,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     6572000000,
     7168000000,
@@ -469,7 +531,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     18053000000,
     17341000000,
@@ -483,7 +547,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     1000000,
     0,
@@ -497,7 +563,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     29757000000,
     30526000000,
@@ -511,7 +579,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     7308000000,
     9834000000,
@@ -525,7 +595,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     415000000,
     393000000,
@@ -539,7 +611,9 @@
   },
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     303526000000,
     330078000000,
@@ -553,7 +627,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Exports",
+   "unit": "usd",
+   "group": "External",
    "data": [
     null,
     null,

@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2024-04",
-  "unit": "as served by DBIE",
+  "unit": "inr_crore",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Revenue Expenditure: RBI Handbook of Statistics on Indian States, Table 166",
-  "note": "DBIE report 1735, data provider \"Main\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: none; measures: value1, value3, value2. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1735, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: actual, budget estimate, revised estimate. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -46,9 +46,11 @@
   "2024-04-01"
  ],
  "series": {
-  "assam__value1": {
-   "name": "assam__value1",
-   "label": "Assam: value1",
+  "assam__actual": {
+   "name": "assam__actual",
+   "label": "Assam: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     10229,
     10536,
@@ -73,9 +75,11 @@
     null
    ]
   },
-  "assam__value3": {
-   "name": "assam__value3",
-   "label": "Assam: value3",
+  "assam__budget_estimate": {
+   "name": "assam__budget_estimate",
+   "label": "Assam: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -100,9 +104,11 @@
     110092
    ]
   },
-  "assam__value2": {
-   "name": "assam__value2",
-   "label": "Assam: value2",
+  "assam__revised_estimate": {
+   "name": "assam__revised_estimate",
+   "label": "Assam: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -127,9 +133,11 @@
     null
    ]
   },
-  "meghalaya__value1": {
-   "name": "meghalaya__value1",
-   "label": "Meghalaya: value1",
+  "meghalaya__actual": {
+   "name": "meghalaya__actual",
+   "label": "Meghalaya: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     1596,
     1674,
@@ -154,9 +162,11 @@
     null
    ]
   },
-  "meghalaya__value3": {
-   "name": "meghalaya__value3",
-   "label": "Meghalaya: value3",
+  "meghalaya__budget_estimate": {
+   "name": "meghalaya__budget_estimate",
+   "label": "Meghalaya: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -181,9 +191,11 @@
     19653
    ]
   },
-  "meghalaya__value2": {
-   "name": "meghalaya__value2",
-   "label": "Meghalaya: value2",
+  "meghalaya__revised_estimate": {
+   "name": "meghalaya__revised_estimate",
+   "label": "Meghalaya: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -208,9 +220,11 @@
     null
    ]
   },
-  "mizoram__value1": {
-   "name": "mizoram__value1",
-   "label": "Mizoram: value1",
+  "mizoram__actual": {
+   "name": "mizoram__actual",
+   "label": "Mizoram: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     1394,
     1588,
@@ -235,9 +249,11 @@
     null
    ]
   },
-  "mizoram__value3": {
-   "name": "mizoram__value3",
-   "label": "Mizoram: value3",
+  "mizoram__budget_estimate": {
+   "name": "mizoram__budget_estimate",
+   "label": "Mizoram: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -262,9 +278,11 @@
     11822
    ]
   },
-  "mizoram__value2": {
-   "name": "mizoram__value2",
-   "label": "Mizoram: value2",
+  "mizoram__revised_estimate": {
+   "name": "mizoram__revised_estimate",
+   "label": "Mizoram: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -289,9 +307,11 @@
     null
    ]
   },
-  "bihar__value1": {
-   "name": "bihar__value1",
-   "label": "Bihar: value1",
+  "bihar__actual": {
+   "name": "bihar__actual",
+   "label": "Bihar: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     14638,
     17756,
@@ -316,9 +336,11 @@
     null
    ]
   },
-  "bihar__value3": {
-   "name": "bihar__value3",
-   "label": "Bihar: value3",
+  "bihar__budget_estimate": {
+   "name": "bihar__budget_estimate",
+   "label": "Bihar: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -343,9 +365,11 @@
     225677
    ]
   },
-  "bihar__value2": {
-   "name": "bihar__value2",
-   "label": "Bihar: value2",
+  "bihar__revised_estimate": {
+   "name": "bihar__revised_estimate",
+   "label": "Bihar: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -370,9 +394,11 @@
     null
    ]
   },
-  "jharkhand__value1": {
-   "name": "jharkhand__value1",
-   "label": "Jharkhand: value1",
+  "jharkhand__actual": {
+   "name": "jharkhand__actual",
+   "label": "Jharkhand: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     8419,
     9756,
@@ -397,9 +423,11 @@
     null
    ]
   },
-  "jharkhand__value3": {
-   "name": "jharkhand__value3",
-   "label": "Jharkhand: value3",
+  "jharkhand__budget_estimate": {
+   "name": "jharkhand__budget_estimate",
+   "label": "Jharkhand: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -424,9 +452,11 @@
     91832
    ]
   },
-  "jharkhand__value2": {
-   "name": "jharkhand__value2",
-   "label": "Jharkhand: value2",
+  "jharkhand__revised_estimate": {
+   "name": "jharkhand__revised_estimate",
+   "label": "Jharkhand: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -451,9 +481,11 @@
     null
    ]
   },
-  "arunachal_pradesh__value1": {
-   "name": "arunachal_pradesh__value1",
-   "label": "Arunachal Pradesh: value1",
+  "arunachal_pradesh__actual": {
+   "name": "arunachal_pradesh__actual",
+   "label": "Arunachal Pradesh: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     1510,
     1668,
@@ -478,9 +510,11 @@
     null
    ]
   },
-  "arunachal_pradesh__value3": {
-   "name": "arunachal_pradesh__value3",
-   "label": "Arunachal Pradesh: value3",
+  "arunachal_pradesh__budget_estimate": {
+   "name": "arunachal_pradesh__budget_estimate",
+   "label": "Arunachal Pradesh: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -505,9 +539,11 @@
     25932
    ]
   },
-  "arunachal_pradesh__value2": {
-   "name": "arunachal_pradesh__value2",
-   "label": "Arunachal Pradesh: value2",
+  "arunachal_pradesh__revised_estimate": {
+   "name": "arunachal_pradesh__revised_estimate",
+   "label": "Arunachal Pradesh: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -532,9 +568,11 @@
     null
    ]
   },
-  "west_bengal__value1": {
-   "name": "west_bengal__value1",
-   "label": "West Bengal: value1",
+  "west_bengal__actual": {
+   "name": "west_bengal__actual",
+   "label": "West Bengal: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     28146,
     31117,
@@ -559,9 +597,11 @@
     null
    ]
   },
-  "west_bengal__value3": {
-   "name": "west_bengal__value3",
-   "label": "West Bengal: value3",
+  "west_bengal__budget_estimate": {
+   "name": "west_bengal__budget_estimate",
+   "label": "West Bengal: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -586,9 +626,11 @@
     268203
    ]
   },
-  "west_bengal__value2": {
-   "name": "west_bengal__value2",
-   "label": "West Bengal: value2",
+  "west_bengal__revised_estimate": {
+   "name": "west_bengal__revised_estimate",
+   "label": "West Bengal: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -613,9 +655,11 @@
     null
    ]
   },
-  "nagaland__value1": {
-   "name": "nagaland__value1",
-   "label": "Nagaland: value1",
+  "nagaland__actual": {
+   "name": "nagaland__actual",
+   "label": "Nagaland: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     1685,
     2061,
@@ -640,9 +684,11 @@
     null
    ]
   },
-  "nagaland__value3": {
-   "name": "nagaland__value3",
-   "label": "Nagaland: value3",
+  "nagaland__budget_estimate": {
+   "name": "nagaland__budget_estimate",
+   "label": "Nagaland: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -667,9 +713,11 @@
     16893
    ]
   },
-  "nagaland__value2": {
-   "name": "nagaland__value2",
-   "label": "Nagaland: value2",
+  "nagaland__revised_estimate": {
+   "name": "nagaland__revised_estimate",
+   "label": "Nagaland: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -694,9 +742,11 @@
     null
    ]
   },
-  "manipur__value1": {
-   "name": "manipur__value1",
-   "label": "Manipur: value1",
+  "manipur__actual": {
+   "name": "manipur__actual",
+   "label": "Manipur: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     1651,
     2005,
@@ -721,9 +771,11 @@
     null
    ]
   },
-  "manipur__value3": {
-   "name": "manipur__value3",
-   "label": "Manipur: value3",
+  "manipur__budget_estimate": {
+   "name": "manipur__budget_estimate",
+   "label": "Manipur: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -748,9 +800,11 @@
     20628
    ]
   },
-  "manipur__value2": {
-   "name": "manipur__value2",
-   "label": "Manipur: value2",
+  "manipur__revised_estimate": {
+   "name": "manipur__revised_estimate",
+   "label": "Manipur: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -775,9 +829,11 @@
     null
    ]
   },
-  "sikkim__value1": {
-   "name": "sikkim__value1",
-   "label": "Sikkim: value1",
+  "sikkim__actual": {
+   "name": "sikkim__actual",
+   "label": "Sikkim: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     1723,
     1768,
@@ -802,9 +858,11 @@
     null
    ]
   },
-  "sikkim__value3": {
-   "name": "sikkim__value3",
-   "label": "Sikkim: value3",
+  "sikkim__budget_estimate": {
+   "name": "sikkim__budget_estimate",
+   "label": "Sikkim: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -829,9 +887,11 @@
     10250
    ]
   },
-  "sikkim__value2": {
-   "name": "sikkim__value2",
-   "label": "Sikkim: value2",
+  "sikkim__revised_estimate": {
+   "name": "sikkim__revised_estimate",
+   "label": "Sikkim: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -856,9 +916,11 @@
     null
    ]
   },
-  "tripura__value1": {
-   "name": "tripura__value1",
-   "label": "Tripura: value1",
+  "tripura__actual": {
+   "name": "tripura__actual",
+   "label": "Tripura: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     2183,
     2392,
@@ -883,9 +945,11 @@
     null
    ]
   },
-  "tripura__value3": {
-   "name": "tripura__value3",
-   "label": "Tripura: value3",
+  "tripura__budget_estimate": {
+   "name": "tripura__budget_estimate",
+   "label": "Tripura: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -910,9 +974,11 @@
     21171
    ]
   },
-  "tripura__value2": {
-   "name": "tripura__value2",
-   "label": "Tripura: value2",
+  "tripura__revised_estimate": {
+   "name": "tripura__revised_estimate",
+   "label": "Tripura: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -937,9 +1003,11 @@
     null
    ]
   },
-  "uttar_pradesh__value1": {
-   "name": "uttar_pradesh__value1",
-   "label": "Uttar Pradesh: value1",
+  "uttar_pradesh__actual": {
+   "name": "uttar_pradesh__actual",
+   "label": "Uttar Pradesh: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     44610,
     46617,
@@ -964,9 +1032,11 @@
     null
    ]
   },
-  "uttar_pradesh__value3": {
-   "name": "uttar_pradesh__value3",
-   "label": "Uttar Pradesh: value3",
+  "uttar_pradesh__budget_estimate": {
+   "name": "uttar_pradesh__budget_estimate",
+   "label": "Uttar Pradesh: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -991,9 +1061,11 @@
     532655
    ]
   },
-  "uttar_pradesh__value2": {
-   "name": "uttar_pradesh__value2",
-   "label": "Uttar Pradesh: value2",
+  "uttar_pradesh__revised_estimate": {
+   "name": "uttar_pradesh__revised_estimate",
+   "label": "Uttar Pradesh: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1018,9 +1090,11 @@
     null
    ]
   },
-  "delhi__value1": {
-   "name": "delhi__value1",
-   "label": "Delhi: value1",
+  "delhi__actual": {
+   "name": "delhi__actual",
+   "label": "Delhi: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     5827,
     6515,
@@ -1045,9 +1119,11 @@
     null
    ]
   },
-  "delhi__value3": {
-   "name": "delhi__value3",
-   "label": "Delhi: value3",
+  "delhi__budget_estimate": {
+   "name": "delhi__budget_estimate",
+   "label": "Delhi: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1072,9 +1148,11 @@
     60911
    ]
   },
-  "delhi__value2": {
-   "name": "delhi__value2",
-   "label": "Delhi: value2",
+  "delhi__revised_estimate": {
+   "name": "delhi__revised_estimate",
+   "label": "Delhi: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1099,9 +1177,11 @@
     null
    ]
   },
-  "punjab__value1": {
-   "name": "punjab__value1",
-   "label": "Punjab: value1",
+  "punjab__actual": {
+   "name": "punjab__actual",
+   "label": "Punjab: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     17198,
     18208,
@@ -1126,9 +1206,11 @@
     null
    ]
   },
-  "punjab__value3": {
-   "name": "punjab__value3",
-   "label": "Punjab: value3",
+  "punjab__budget_estimate": {
+   "name": "punjab__budget_estimate",
+   "label": "Punjab: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1153,9 +1235,11 @@
     127134
    ]
   },
-  "punjab__value2": {
-   "name": "punjab__value2",
-   "label": "Punjab: value2",
+  "punjab__revised_estimate": {
+   "name": "punjab__revised_estimate",
+   "label": "Punjab: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1180,9 +1264,11 @@
     null
    ]
   },
-  "haryana__value1": {
-   "name": "haryana__value1",
-   "label": "Haryana: value1",
+  "haryana__actual": {
+   "name": "haryana__actual",
+   "label": "Haryana: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     11407,
     12640,
@@ -1207,9 +1293,11 @@
     null
    ]
   },
-  "haryana__value3": {
-   "name": "haryana__value3",
-   "label": "Haryana: value3",
+  "haryana__budget_estimate": {
+   "name": "haryana__budget_estimate",
+   "label": "Haryana: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1234,9 +1322,11 @@
     134456
    ]
   },
-  "haryana__value2": {
-   "name": "haryana__value2",
-   "label": "Haryana: value2",
+  "haryana__revised_estimate": {
+   "name": "haryana__revised_estimate",
+   "label": "Haryana: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1261,9 +1351,11 @@
     null
    ]
   },
-  "jammu_and_kashmir_state__value1": {
-   "name": "jammu_and_kashmir_state__value1",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): value1",
+  "jammu_and_kashmir_state__actual": {
+   "name": "jammu_and_kashmir_state__actual",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     8188,
     9724,
@@ -1288,9 +1380,11 @@
     null
    ]
   },
-  "himachal_pradesh__value1": {
-   "name": "himachal_pradesh__value1",
-   "label": "Himachal Pradesh: value1",
+  "himachal_pradesh__actual": {
+   "name": "himachal_pradesh__actual",
+   "label": "Himachal Pradesh: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     5793,
     6466,
@@ -1315,9 +1409,11 @@
     null
    ]
   },
-  "himachal_pradesh__value3": {
-   "name": "himachal_pradesh__value3",
-   "label": "Himachal Pradesh: value3",
+  "himachal_pradesh__budget_estimate": {
+   "name": "himachal_pradesh__budget_estimate",
+   "label": "Himachal Pradesh: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1342,9 +1438,11 @@
     46667
    ]
   },
-  "himachal_pradesh__value2": {
-   "name": "himachal_pradesh__value2",
-   "label": "Himachal Pradesh: value2",
+  "himachal_pradesh__revised_estimate": {
+   "name": "himachal_pradesh__revised_estimate",
+   "label": "Himachal Pradesh: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1369,9 +1467,11 @@
     null
    ]
   },
-  "rajasthan__value1": {
-   "name": "rajasthan__value1",
-   "label": "Rajasthan: value1",
+  "rajasthan__actual": {
+   "name": "rajasthan__actual",
+   "label": "Rajasthan: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     19906,
     21499,
@@ -1396,9 +1496,11 @@
     null
    ]
   },
-  "rajasthan__value3": {
-   "name": "rajasthan__value3",
-   "label": "Rajasthan: value3",
+  "rajasthan__budget_estimate": {
+   "name": "rajasthan__budget_estimate",
+   "label": "Rajasthan: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1423,9 +1525,11 @@
     290219
    ]
   },
-  "rajasthan__value2": {
-   "name": "rajasthan__value2",
-   "label": "Rajasthan: value2",
+  "rajasthan__revised_estimate": {
+   "name": "rajasthan__revised_estimate",
+   "label": "Rajasthan: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1450,9 +1554,11 @@
     null
    ]
   },
-  "all_states_and_uts__value1": {
-   "name": "all_states_and_uts__value1",
-   "label": "All States And Uts: value1",
+  "all_states_and_uts__actual": {
+   "name": "all_states_and_uts__actual",
+   "label": "All States And Uts: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     408497,
     438034,
@@ -1477,9 +1583,11 @@
     null
    ]
   },
-  "all_states_and_uts__value3": {
-   "name": "all_states_and_uts__value3",
-   "label": "All States And Uts: value3",
+  "all_states_and_uts__budget_estimate": {
+   "name": "all_states_and_uts__budget_estimate",
+   "label": "All States And Uts: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1504,9 +1612,11 @@
     4753928
    ]
   },
-  "all_states_and_uts__value2": {
-   "name": "all_states_and_uts__value2",
-   "label": "All States And Uts: value2",
+  "all_states_and_uts__revised_estimate": {
+   "name": "all_states_and_uts__revised_estimate",
+   "label": "All States And Uts: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1531,9 +1641,11 @@
     null
    ]
   },
-  "gujarat__value1": {
-   "name": "gujarat__value1",
-   "label": "Gujarat: value1",
+  "gujarat__actual": {
+   "name": "gujarat__actual",
+   "label": "Gujarat: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     24302,
     25466,
@@ -1558,9 +1670,11 @@
     null
    ]
   },
-  "gujarat__value3": {
-   "name": "gujarat__value3",
-   "label": "Gujarat: value3",
+  "gujarat__budget_estimate": {
+   "name": "gujarat__budget_estimate",
+   "label": "Gujarat: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1585,9 +1699,11 @@
     219832
    ]
   },
-  "gujarat__value2": {
-   "name": "gujarat__value2",
-   "label": "Gujarat: value2",
+  "gujarat__revised_estimate": {
+   "name": "gujarat__revised_estimate",
+   "label": "Gujarat: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1612,9 +1728,11 @@
     null
    ]
   },
-  "maharashtra__value1": {
-   "name": "maharashtra__value1",
-   "label": "Maharashtra: value1",
+  "maharashtra__actual": {
+   "name": "maharashtra__actual",
+   "label": "Maharashtra: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     51047,
     52280,
@@ -1639,9 +1757,11 @@
     null
    ]
   },
-  "maharashtra__value3": {
-   "name": "maharashtra__value3",
-   "label": "Maharashtra: value3",
+  "maharashtra__budget_estimate": {
+   "name": "maharashtra__budget_estimate",
+   "label": "Maharashtra: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1666,9 +1786,11 @@
     519514
    ]
   },
-  "maharashtra__value2": {
-   "name": "maharashtra__value2",
-   "label": "Maharashtra: value2",
+  "maharashtra__revised_estimate": {
+   "name": "maharashtra__revised_estimate",
+   "label": "Maharashtra: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1693,9 +1815,11 @@
     null
    ]
   },
-  "goa__value1": {
-   "name": "goa__value1",
-   "label": "Goa: value1",
+  "goa__actual": {
+   "name": "goa__actual",
+   "label": "Goa: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     1943,
     2191,
@@ -1720,9 +1844,11 @@
     null
    ]
   },
-  "goa__value3": {
-   "name": "goa__value3",
-   "label": "Goa: value3",
+  "goa__budget_estimate": {
+   "name": "goa__budget_estimate",
+   "label": "Goa: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1747,9 +1873,11 @@
     19888
    ]
   },
-  "goa__value2": {
-   "name": "goa__value2",
-   "label": "Goa: value2",
+  "goa__revised_estimate": {
+   "name": "goa__revised_estimate",
+   "label": "Goa: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1774,9 +1902,11 @@
     null
    ]
   },
-  "madhya_pradesh__value1": {
-   "name": "madhya_pradesh__value1",
-   "label": "Madhya Pradesh: value1",
+  "madhya_pradesh__actual": {
+   "name": "madhya_pradesh__actual",
+   "label": "Madhya Pradesh: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     18026,
     20564,
@@ -1801,9 +1931,11 @@
     null
    ]
   },
-  "madhya_pradesh__value3": {
-   "name": "madhya_pradesh__value3",
-   "label": "Madhya Pradesh: value3",
+  "madhya_pradesh__budget_estimate": {
+   "name": "madhya_pradesh__budget_estimate",
+   "label": "Madhya Pradesh: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1828,9 +1960,11 @@
     261644
    ]
   },
-  "madhya_pradesh__value2": {
-   "name": "madhya_pradesh__value2",
-   "label": "Madhya Pradesh: value2",
+  "madhya_pradesh__revised_estimate": {
+   "name": "madhya_pradesh__revised_estimate",
+   "label": "Madhya Pradesh: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1855,9 +1989,11 @@
     null
    ]
   },
-  "chhattisgarh__value1": {
-   "name": "chhattisgarh__value1",
-   "label": "Chhattisgarh: value1",
+  "chhattisgarh__actual": {
+   "name": "chhattisgarh__actual",
+   "label": "Chhattisgarh: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     7103,
     7457,
@@ -1882,9 +2018,11 @@
     null
    ]
   },
-  "chhattisgarh__value3": {
-   "name": "chhattisgarh__value3",
-   "label": "Chhattisgarh: value3",
+  "chhattisgarh__budget_estimate": {
+   "name": "chhattisgarh__budget_estimate",
+   "label": "Chhattisgarh: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1909,9 +2047,11 @@
     124840
    ]
   },
-  "chhattisgarh__value2": {
-   "name": "chhattisgarh__value2",
-   "label": "Chhattisgarh: value2",
+  "chhattisgarh__revised_estimate": {
+   "name": "chhattisgarh__revised_estimate",
+   "label": "Chhattisgarh: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1936,9 +2076,11 @@
     null
    ]
   },
-  "andhra_pradesh_undivided__value1": {
-   "name": "andhra_pradesh_undivided__value1",
-   "label": "Andhra Pradesh (undivided, to 2013-14): value1",
+  "andhra_pradesh_undivided__actual": {
+   "name": "andhra_pradesh_undivided__actual",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     31307,
     34915,
@@ -1963,9 +2105,11 @@
     null
    ]
   },
-  "telangana__value1": {
-   "name": "telangana__value1",
-   "label": "Telangana: value1",
+  "telangana__actual": {
+   "name": "telangana__actual",
+   "label": "Telangana: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -1990,9 +2134,11 @@
     null
    ]
   },
-  "telangana__value3": {
-   "name": "telangana__value3",
-   "label": "Telangana: value3",
+  "telangana__budget_estimate": {
+   "name": "telangana__budget_estimate",
+   "label": "Telangana: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2017,9 +2163,11 @@
     220945
    ]
   },
-  "telangana__value2": {
-   "name": "telangana__value2",
-   "label": "Telangana: value2",
+  "telangana__revised_estimate": {
+   "name": "telangana__revised_estimate",
+   "label": "Telangana: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2044,9 +2192,11 @@
     null
    ]
   },
-  "karnataka__value1": {
-   "name": "karnataka__value1",
-   "label": "Karnataka: value1",
+  "karnataka__actual": {
+   "name": "karnataka__actual",
+   "label": "Karnataka: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     24932,
     28041,
@@ -2071,9 +2221,11 @@
     null
    ]
   },
-  "karnataka__value3": {
-   "name": "karnataka__value3",
-   "label": "Karnataka: value3",
+  "karnataka__budget_estimate": {
+   "name": "karnataka__budget_estimate",
+   "label": "Karnataka: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2098,9 +2250,11 @@
     290531
    ]
   },
-  "karnataka__value2": {
-   "name": "karnataka__value2",
-   "label": "Karnataka: value2",
+  "karnataka__revised_estimate": {
+   "name": "karnataka__revised_estimate",
+   "label": "Karnataka: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2125,9 +2279,11 @@
     null
    ]
   },
-  "tamil_nadu__value1": {
-   "name": "tamil_nadu__value1",
-   "label": "Tamil Nadu: value1",
+  "tamil_nadu__actual": {
+   "name": "tamil_nadu__actual",
+   "label": "Tamil Nadu: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     29155,
     32009,
@@ -2152,9 +2308,11 @@
     null
    ]
   },
-  "tamil_nadu__value3": {
-   "name": "tamil_nadu__value3",
-   "label": "Tamil Nadu: value3",
+  "tamil_nadu__budget_estimate": {
+   "name": "tamil_nadu__budget_estimate",
+   "label": "Tamil Nadu: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2179,9 +2337,11 @@
     348289
    ]
   },
-  "tamil_nadu__value2": {
-   "name": "tamil_nadu__value2",
-   "label": "Tamil Nadu: value2",
+  "tamil_nadu__revised_estimate": {
+   "name": "tamil_nadu__revised_estimate",
+   "label": "Tamil Nadu: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2206,9 +2366,11 @@
     null
    ]
   },
-  "kerala__value1": {
-   "name": "kerala__value1",
-   "label": "Keralam: value1",
+  "kerala__actual": {
+   "name": "kerala__actual",
+   "label": "Keralam: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     17169,
     18424,
@@ -2233,9 +2395,11 @@
     null
    ]
   },
-  "kerala__value3": {
-   "name": "kerala__value3",
-   "label": "Keralam: value3",
+  "kerala__budget_estimate": {
+   "name": "kerala__budget_estimate",
+   "label": "Keralam: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2260,9 +2424,11 @@
     166501
    ]
   },
-  "kerala__value2": {
-   "name": "kerala__value2",
-   "label": "Keralam: value2",
+  "kerala__revised_estimate": {
+   "name": "kerala__revised_estimate",
+   "label": "Keralam: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2287,9 +2453,11 @@
     null
    ]
   },
-  "odisha__value1": {
-   "name": "odisha__value1",
-   "label": "Odisha: value1",
+  "odisha__actual": {
+   "name": "odisha__actual",
+   "label": "Odisha: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     12373,
     13604,
@@ -2314,9 +2482,11 @@
     null
    ]
   },
-  "odisha__value3": {
-   "name": "odisha__value3",
-   "label": "Odisha: value3",
+  "odisha__budget_estimate": {
+   "name": "odisha__budget_estimate",
+   "label": "Odisha: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2341,9 +2511,11 @@
     183563
    ]
   },
-  "odisha__value2": {
-   "name": "odisha__value2",
-   "label": "Odisha: value2",
+  "odisha__revised_estimate": {
+   "name": "odisha__revised_estimate",
+   "label": "Odisha: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2368,9 +2540,11 @@
     null
    ]
   },
-  "uttarakhand__value1": {
-   "name": "uttarakhand__value1",
-   "label": "Uttarakhand: value1",
+  "uttarakhand__actual": {
+   "name": "uttarakhand__actual",
+   "label": "Uttarakhand: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     5036,
     5611,
@@ -2395,9 +2569,11 @@
     null
    ]
   },
-  "uttarakhand__value3": {
-   "name": "uttarakhand__value3",
-   "label": "Uttarakhand: value3",
+  "uttarakhand__budget_estimate": {
+   "name": "uttarakhand__budget_estimate",
+   "label": "Uttarakhand: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2422,9 +2598,11 @@
     55816
    ]
   },
-  "uttarakhand__value2": {
-   "name": "uttarakhand__value2",
-   "label": "Uttarakhand: value2",
+  "uttarakhand__revised_estimate": {
+   "name": "uttarakhand__revised_estimate",
+   "label": "Uttarakhand: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2449,9 +2627,11 @@
     null
    ]
   },
-  "puducherry__value1": {
-   "name": "puducherry__value1",
-   "label": "Puducherry: value1",
+  "puducherry__actual": {
+   "name": "puducherry__actual",
+   "label": "Puducherry: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     1794,
@@ -2476,9 +2656,11 @@
     null
    ]
   },
-  "puducherry__value3": {
-   "name": "puducherry__value3",
-   "label": "Puducherry: value3",
+  "puducherry__budget_estimate": {
+   "name": "puducherry__budget_estimate",
+   "label": "Puducherry: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2503,9 +2685,11 @@
     10970
    ]
   },
-  "puducherry__value2": {
-   "name": "puducherry__value2",
-   "label": "Puducherry: value2",
+  "puducherry__revised_estimate": {
+   "name": "puducherry__revised_estimate",
+   "label": "Puducherry: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2530,9 +2714,11 @@
     null
    ]
   },
-  "andhra_pradesh__value1": {
-   "name": "andhra_pradesh__value1",
-   "label": "Andhra Pradesh: value1",
+  "andhra_pradesh__actual": {
+   "name": "andhra_pradesh__actual",
+   "label": "Andhra Pradesh: Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2557,9 +2743,11 @@
     null
    ]
   },
-  "andhra_pradesh__value3": {
-   "name": "andhra_pradesh__value3",
-   "label": "Andhra Pradesh: value3",
+  "andhra_pradesh__budget_estimate": {
+   "name": "andhra_pradesh__budget_estimate",
+   "label": "Andhra Pradesh: Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2584,9 +2772,11 @@
     235917
    ]
   },
-  "andhra_pradesh__value2": {
-   "name": "andhra_pradesh__value2",
-   "label": "Andhra Pradesh: value2",
+  "andhra_pradesh__revised_estimate": {
+   "name": "andhra_pradesh__revised_estimate",
+   "label": "Andhra Pradesh: Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2611,9 +2801,11 @@
     null
    ]
   },
-  "jammu_and_kashmir_ut__value1": {
-   "name": "jammu_and_kashmir_ut__value1",
-   "label": "Jammu & Kashmir (UT, from 2019-20): value1",
+  "jammu_and_kashmir_ut__actual": {
+   "name": "jammu_and_kashmir_ut__actual",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Revenue Expenditure: actual",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2638,9 +2830,11 @@
     null
    ]
   },
-  "jammu_and_kashmir_ut__value3": {
-   "name": "jammu_and_kashmir_ut__value3",
-   "label": "Jammu & Kashmir (UT, from 2019-20): value3",
+  "jammu_and_kashmir_ut__budget_estimate": {
+   "name": "jammu_and_kashmir_ut__budget_estimate",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Revenue Expenditure: budget estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,
@@ -2665,9 +2859,11 @@
     81486
    ]
   },
-  "jammu_and_kashmir_ut__value2": {
-   "name": "jammu_and_kashmir_ut__value2",
-   "label": "Jammu & Kashmir (UT, from 2019-20): value2",
+  "jammu_and_kashmir_ut__revised_estimate": {
+   "name": "jammu_and_kashmir_ut__revised_estimate",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Revenue Expenditure: revised estimate",
+   "unit": "inr_crore",
+   "group": "Fiscal",
    "data": [
     null,
     null,

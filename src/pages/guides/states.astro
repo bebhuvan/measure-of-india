@@ -1,6 +1,7 @@
 ---
 import Base from "../../layouts/Base.astro";
 import GuideData from "../../components/GuideData.astro";
+import EveryCut from "../../components/EveryCut.astro";
 import Prose from "../../components/Prose.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
@@ -456,6 +457,8 @@ const ELSEWHERE = [
       ))}
     </div>
   </section>
+
+  <EveryCut slug="states" />
 
   <GuideData slug="states" />
 

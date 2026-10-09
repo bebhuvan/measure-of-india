@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2024-04",
-  "unit": "LAKH",
+  "unit": "inr_amount",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Expenditure on Relief on Natural Calamities: RBI Handbook of Statistics on Indian States, Table 105",
-  "note": "DBIE report 1650, data provider \"Main\". Values exactly as DBIE serves them; DBIE's unit label: LAKH (rupee amounts are served in rupees). Periods: fiscal years, dated at April. Dimensions: none; measures: value 1, value 2, value 3. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1650, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: LAKH. Periods: fiscal years, dated at April. Dimensions: none; measures: actual, revised estimate, budget estimate. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2011-04-01",
@@ -39,9 +39,11 @@
   "2024-04-01"
  ],
  "series": {
-  "assam__value_1": {
-   "name": "assam__value_1",
-   "label": "Assam: value 1",
+  "assam__actual": {
+   "name": "assam__actual",
+   "label": "Assam: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     2836200000,
     2913300000,
@@ -59,9 +61,11 @@
     null
    ]
   },
-  "assam__value_2": {
-   "name": "assam__value_2",
-   "label": "Assam: value 2",
+  "assam__revised_estimate": {
+   "name": "assam__revised_estimate",
+   "label": "Assam: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -79,9 +83,11 @@
     null
    ]
   },
-  "assam__value_3": {
-   "name": "assam__value_3",
-   "label": "Assam: value 3",
+  "assam__budget_estimate": {
+   "name": "assam__budget_estimate",
+   "label": "Assam: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -99,9 +105,11 @@
     20509600000
    ]
   },
-  "meghalaya__value_1": {
-   "name": "meghalaya__value_1",
-   "label": "Meghalaya: value 1",
+  "meghalaya__actual": {
+   "name": "meghalaya__actual",
+   "label": "Meghalaya: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     147800000,
     166900000,
@@ -119,9 +127,11 @@
     null
    ]
   },
-  "meghalaya__value_2": {
-   "name": "meghalaya__value_2",
-   "label": "Meghalaya: value 2",
+  "meghalaya__revised_estimate": {
+   "name": "meghalaya__revised_estimate",
+   "label": "Meghalaya: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -139,9 +149,11 @@
     null
    ]
   },
-  "meghalaya__value_3": {
-   "name": "meghalaya__value_3",
-   "label": "Meghalaya: value 3",
+  "meghalaya__budget_estimate": {
+   "name": "meghalaya__budget_estimate",
+   "label": "Meghalaya: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -159,9 +171,11 @@
     1890400000
    ]
   },
-  "mizoram__value_1": {
-   "name": "mizoram__value_1",
-   "label": "Mizoram: value 1",
+  "mizoram__actual": {
+   "name": "mizoram__actual",
+   "label": "Mizoram: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     76000000,
     152800000,
@@ -179,9 +193,11 @@
     null
    ]
   },
-  "mizoram__value_2": {
-   "name": "mizoram__value_2",
-   "label": "Mizoram: value 2",
+  "mizoram__revised_estimate": {
+   "name": "mizoram__revised_estimate",
+   "label": "Mizoram: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -199,9 +215,11 @@
     null
    ]
   },
-  "mizoram__value_3": {
-   "name": "mizoram__value_3",
-   "label": "Mizoram: value 3",
+  "mizoram__budget_estimate": {
+   "name": "mizoram__budget_estimate",
+   "label": "Mizoram: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -219,9 +237,11 @@
     605000000
    ]
   },
-  "bihar__value_1": {
-   "name": "bihar__value_1",
-   "label": "Bihar: value 1",
+  "bihar__actual": {
+   "name": "bihar__actual",
+   "label": "Bihar: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     5474400000,
     2112500000,
@@ -239,9 +259,11 @@
     null
    ]
   },
-  "bihar__value_2": {
-   "name": "bihar__value_2",
-   "label": "Bihar: value 2",
+  "bihar__revised_estimate": {
+   "name": "bihar__revised_estimate",
+   "label": "Bihar: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -259,9 +281,11 @@
     null
    ]
   },
-  "bihar__value_3": {
-   "name": "bihar__value_3",
-   "label": "Bihar: value 3",
+  "bihar__budget_estimate": {
+   "name": "bihar__budget_estimate",
+   "label": "Bihar: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -279,9 +303,11 @@
     51379300000
    ]
   },
-  "jharkhand__value_1": {
-   "name": "jharkhand__value_1",
-   "label": "Jharkhand: value 1",
+  "jharkhand__actual": {
+   "name": "jharkhand__actual",
+   "label": "Jharkhand: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     -243500000,
     2809200000,
@@ -299,9 +325,11 @@
     null
    ]
   },
-  "jharkhand__value_2": {
-   "name": "jharkhand__value_2",
-   "label": "Jharkhand: value 2",
+  "jharkhand__revised_estimate": {
+   "name": "jharkhand__revised_estimate",
+   "label": "Jharkhand: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -319,9 +347,11 @@
     null
    ]
   },
-  "jharkhand__value_3": {
-   "name": "jharkhand__value_3",
-   "label": "Jharkhand: value 3",
+  "jharkhand__budget_estimate": {
+   "name": "jharkhand__budget_estimate",
+   "label": "Jharkhand: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -339,9 +369,11 @@
     16261600000
    ]
   },
-  "arunachal_pradesh__value_1": {
-   "name": "arunachal_pradesh__value_1",
-   "label": "Arunachal Pradesh: value 1",
+  "arunachal_pradesh__actual": {
+   "name": "arunachal_pradesh__actual",
+   "label": "Arunachal Pradesh: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     1374900000,
     1457800000,
@@ -359,9 +391,11 @@
     null
    ]
   },
-  "arunachal_pradesh__value_2": {
-   "name": "arunachal_pradesh__value_2",
-   "label": "Arunachal Pradesh: value 2",
+  "arunachal_pradesh__revised_estimate": {
+   "name": "arunachal_pradesh__revised_estimate",
+   "label": "Arunachal Pradesh: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -379,9 +413,11 @@
     null
    ]
   },
-  "arunachal_pradesh__value_3": {
-   "name": "arunachal_pradesh__value_3",
-   "label": "Arunachal Pradesh: value 3",
+  "arunachal_pradesh__budget_estimate": {
+   "name": "arunachal_pradesh__budget_estimate",
+   "label": "Arunachal Pradesh: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -399,9 +435,11 @@
     4500800000
    ]
   },
-  "west_bengal__value_1": {
-   "name": "west_bengal__value_1",
-   "label": "West Bengal: value 1",
+  "west_bengal__actual": {
+   "name": "west_bengal__actual",
+   "label": "West Bengal: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     11920000000,
     3363000000,
@@ -419,9 +457,11 @@
     null
    ]
   },
-  "west_bengal__value_2": {
-   "name": "west_bengal__value_2",
-   "label": "West Bengal: value 2",
+  "west_bengal__revised_estimate": {
+   "name": "west_bengal__revised_estimate",
+   "label": "West Bengal: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -439,9 +479,11 @@
     null
    ]
   },
-  "west_bengal__value_3": {
-   "name": "west_bengal__value_3",
-   "label": "West Bengal: value 3",
+  "west_bengal__budget_estimate": {
+   "name": "west_bengal__budget_estimate",
+   "label": "West Bengal: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -459,9 +501,11 @@
     17617900000
    ]
   },
-  "nagaland__value_1": {
-   "name": "nagaland__value_1",
-   "label": "Nagaland: value 1",
+  "nagaland__actual": {
+   "name": "nagaland__actual",
+   "label": "Nagaland: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     1100000,
     106700000,
@@ -479,9 +523,11 @@
     null
    ]
   },
-  "nagaland__value_2": {
-   "name": "nagaland__value_2",
-   "label": "Nagaland: value 2",
+  "nagaland__revised_estimate": {
+   "name": "nagaland__revised_estimate",
+   "label": "Nagaland: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -499,9 +545,11 @@
     null
    ]
   },
-  "nagaland__value_3": {
-   "name": "nagaland__value_3",
-   "label": "Nagaland: value 3",
+  "nagaland__budget_estimate": {
+   "name": "nagaland__budget_estimate",
+   "label": "Nagaland: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -519,9 +567,11 @@
     550300000
    ]
   },
-  "manipur__value_1": {
-   "name": "manipur__value_1",
-   "label": "Manipur: value 1",
+  "manipur__actual": {
+   "name": "manipur__actual",
+   "label": "Manipur: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     92200000,
     139300000,
@@ -539,9 +589,11 @@
     null
    ]
   },
-  "manipur__value_2": {
-   "name": "manipur__value_2",
-   "label": "Manipur: value 2",
+  "manipur__revised_estimate": {
+   "name": "manipur__revised_estimate",
+   "label": "Manipur: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -559,9 +611,11 @@
     null
    ]
   },
-  "manipur__value_3": {
-   "name": "manipur__value_3",
-   "label": "Manipur: value 3",
+  "manipur__budget_estimate": {
+   "name": "manipur__budget_estimate",
+   "label": "Manipur: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -579,9 +633,11 @@
     3278300000
    ]
   },
-  "odisha__value_1": {
-   "name": "odisha__value_1",
-   "label": "Odisha: value 1",
+  "odisha__actual": {
+   "name": "odisha__actual",
+   "label": "Odisha: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     17097900000,
     4599100000,
@@ -599,9 +655,11 @@
     null
    ]
   },
-  "odisha__value_2": {
-   "name": "odisha__value_2",
-   "label": "Odisha: value 2",
+  "odisha__revised_estimate": {
+   "name": "odisha__revised_estimate",
+   "label": "Odisha: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -619,9 +677,11 @@
     null
    ]
   },
-  "odisha__value_3": {
-   "name": "odisha__value_3",
-   "label": "Odisha: value 3",
+  "odisha__budget_estimate": {
+   "name": "odisha__budget_estimate",
+   "label": "Odisha: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -639,9 +699,11 @@
     39872200000
    ]
   },
-  "sikkim__value_1": {
-   "name": "sikkim__value_1",
-   "label": "Sikkim: value 1",
+  "sikkim__actual": {
+   "name": "sikkim__actual",
+   "label": "Sikkim: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     2362900000,
     262000000,
@@ -659,9 +721,11 @@
     null
    ]
   },
-  "sikkim__value_2": {
-   "name": "sikkim__value_2",
-   "label": "Sikkim: value 2",
+  "sikkim__revised_estimate": {
+   "name": "sikkim__revised_estimate",
+   "label": "Sikkim: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -679,9 +743,11 @@
     null
    ]
   },
-  "sikkim__value_3": {
-   "name": "sikkim__value_3",
-   "label": "Sikkim: value 3",
+  "sikkim__budget_estimate": {
+   "name": "sikkim__budget_estimate",
+   "label": "Sikkim: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -699,9 +765,11 @@
     2988500000
    ]
   },
-  "tripura__value_1": {
-   "name": "tripura__value_1",
-   "label": "Tripura: value 1",
+  "tripura__actual": {
+   "name": "tripura__actual",
+   "label": "Tripura: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     411600000,
     5200000,
@@ -719,9 +787,11 @@
     null
    ]
   },
-  "tripura__value_2": {
-   "name": "tripura__value_2",
-   "label": "Tripura: value 2",
+  "tripura__revised_estimate": {
+   "name": "tripura__revised_estimate",
+   "label": "Tripura: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -739,9 +809,11 @@
     null
    ]
   },
-  "tripura__value_3": {
-   "name": "tripura__value_3",
-   "label": "Tripura: value 3",
+  "tripura__budget_estimate": {
+   "name": "tripura__budget_estimate",
+   "label": "Tripura: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -759,9 +831,11 @@
     886200000
    ]
   },
-  "uttar_pradesh__value_1": {
-   "name": "uttar_pradesh__value_1",
-   "label": "Uttar Pradesh: value 1",
+  "uttar_pradesh__actual": {
+   "name": "uttar_pradesh__actual",
+   "label": "Uttar Pradesh: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     11147700000,
     6302500000,
@@ -779,9 +853,11 @@
     null
    ]
   },
-  "uttar_pradesh__value_2": {
-   "name": "uttar_pradesh__value_2",
-   "label": "Uttar Pradesh: value 2",
+  "uttar_pradesh__revised_estimate": {
+   "name": "uttar_pradesh__revised_estimate",
+   "label": "Uttar Pradesh: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -799,9 +875,11 @@
     null
    ]
   },
-  "uttar_pradesh__value_3": {
-   "name": "uttar_pradesh__value_3",
-   "label": "Uttar Pradesh: value 3",
+  "uttar_pradesh__budget_estimate": {
+   "name": "uttar_pradesh__budget_estimate",
+   "label": "Uttar Pradesh: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -819,9 +897,11 @@
     40799400000
    ]
   },
-  "uttarakhand__value_1": {
-   "name": "uttarakhand__value_1",
-   "label": "Uttarakhand: value 1",
+  "uttarakhand__actual": {
+   "name": "uttarakhand__actual",
+   "label": "Uttarakhand: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     6291500000,
     1354200000,
@@ -839,9 +919,11 @@
     null
    ]
   },
-  "uttarakhand__value_2": {
-   "name": "uttarakhand__value_2",
-   "label": "Uttarakhand: value 2",
+  "uttarakhand__revised_estimate": {
+   "name": "uttarakhand__revised_estimate",
+   "label": "Uttarakhand: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -859,9 +941,11 @@
     null
    ]
   },
-  "uttarakhand__value_3": {
-   "name": "uttarakhand__value_3",
-   "label": "Uttarakhand: value 3",
+  "uttarakhand__budget_estimate": {
+   "name": "uttarakhand__budget_estimate",
+   "label": "Uttarakhand: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -879,9 +963,11 @@
     14822600000
    ]
   },
-  "delhi__value_1": {
-   "name": "delhi__value_1",
-   "label": "Delhi: value 1",
+  "delhi__actual": {
+   "name": "delhi__actual",
+   "label": "Delhi: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     129800000,
     123200000,
@@ -899,9 +985,11 @@
     null
    ]
   },
-  "delhi__value_2": {
-   "name": "delhi__value_2",
-   "label": "Delhi: value 2",
+  "delhi__revised_estimate": {
+   "name": "delhi__revised_estimate",
+   "label": "Delhi: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -919,9 +1007,11 @@
     null
    ]
   },
-  "delhi__value_3": {
-   "name": "delhi__value_3",
-   "label": "Delhi: value 3",
+  "delhi__budget_estimate": {
+   "name": "delhi__budget_estimate",
+   "label": "Delhi: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -939,9 +1029,11 @@
     1418500000
    ]
   },
-  "punjab__value_1": {
-   "name": "punjab__value_1",
-   "label": "Punjab: value 1",
+  "punjab__actual": {
+   "name": "punjab__actual",
+   "label": "Punjab: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     3652400000,
     3698500000,
@@ -959,9 +1051,11 @@
     null
    ]
   },
-  "punjab__value_2": {
-   "name": "punjab__value_2",
-   "label": "Punjab: value 2",
+  "punjab__revised_estimate": {
+   "name": "punjab__revised_estimate",
+   "label": "Punjab: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -979,9 +1073,11 @@
     null
    ]
   },
-  "punjab__value_3": {
-   "name": "punjab__value_3",
-   "label": "Punjab: value 3",
+  "punjab__budget_estimate": {
+   "name": "punjab__budget_estimate",
+   "label": "Punjab: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -999,9 +1095,11 @@
     7025300000
    ]
   },
-  "haryana__value_1": {
-   "name": "haryana__value_1",
-   "label": "Haryana: value 1",
+  "haryana__actual": {
+   "name": "haryana__actual",
+   "label": "Haryana: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     1541700000,
     1944900000,
@@ -1019,9 +1117,11 @@
     null
    ]
   },
-  "haryana__value_2": {
-   "name": "haryana__value_2",
-   "label": "Haryana: value 2",
+  "haryana__revised_estimate": {
+   "name": "haryana__revised_estimate",
+   "label": "Haryana: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1039,9 +1139,11 @@
     null
    ]
   },
-  "haryana__value_3": {
-   "name": "haryana__value_3",
-   "label": "Haryana: value 3",
+  "haryana__budget_estimate": {
+   "name": "haryana__budget_estimate",
+   "label": "Haryana: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1059,9 +1161,11 @@
     5851500000
    ]
   },
-  "jammu_and_kashmir_state__value_1": {
-   "name": "jammu_and_kashmir_state__value_1",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): value 1",
+  "jammu_and_kashmir_state__actual": {
+   "name": "jammu_and_kashmir_state__actual",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     184000000,
     780300000,
@@ -1079,9 +1183,11 @@
     null
    ]
   },
-  "himachal_pradesh__value_1": {
-   "name": "himachal_pradesh__value_1",
-   "label": "Himachal Pradesh: value 1",
+  "himachal_pradesh__actual": {
+   "name": "himachal_pradesh__actual",
+   "label": "Himachal Pradesh: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     1413000000,
     1923000000,
@@ -1099,9 +1205,11 @@
     null
    ]
   },
-  "himachal_pradesh__value_2": {
-   "name": "himachal_pradesh__value_2",
-   "label": "Himachal Pradesh: value 2",
+  "himachal_pradesh__revised_estimate": {
+   "name": "himachal_pradesh__revised_estimate",
+   "label": "Himachal Pradesh: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1119,9 +1227,11 @@
     null
    ]
   },
-  "himachal_pradesh__value_3": {
-   "name": "himachal_pradesh__value_3",
-   "label": "Himachal Pradesh: value 3",
+  "himachal_pradesh__budget_estimate": {
+   "name": "himachal_pradesh__budget_estimate",
+   "label": "Himachal Pradesh: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1139,9 +1249,11 @@
     5250000000
    ]
   },
-  "rajasthan__value_1": {
-   "name": "rajasthan__value_1",
-   "label": "Rajasthan: value 1",
+  "rajasthan__actual": {
+   "name": "rajasthan__actual",
+   "label": "Rajasthan: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     9396500000,
     7810500000,
@@ -1159,9 +1271,11 @@
     null
    ]
   },
-  "rajasthan__value_2": {
-   "name": "rajasthan__value_2",
-   "label": "Rajasthan: value 2",
+  "rajasthan__revised_estimate": {
+   "name": "rajasthan__revised_estimate",
+   "label": "Rajasthan: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1179,9 +1293,11 @@
     null
    ]
   },
-  "rajasthan__value_3": {
-   "name": "rajasthan__value_3",
-   "label": "Rajasthan: value 3",
+  "rajasthan__budget_estimate": {
+   "name": "rajasthan__budget_estimate",
+   "label": "Rajasthan: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1199,9 +1315,11 @@
     27967600000
    ]
   },
-  "gujarat__value_1": {
-   "name": "gujarat__value_1",
-   "label": "Gujarat: value 1",
+  "gujarat__actual": {
+   "name": "gujarat__actual",
+   "label": "Gujarat: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     5463200000,
     5738900000,
@@ -1219,9 +1337,11 @@
     null
    ]
   },
-  "gujarat__value_2": {
-   "name": "gujarat__value_2",
-   "label": "Gujarat: value 2",
+  "gujarat__revised_estimate": {
+   "name": "gujarat__revised_estimate",
+   "label": "Gujarat: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1239,9 +1359,11 @@
     null
    ]
   },
-  "gujarat__value_3": {
-   "name": "gujarat__value_3",
-   "label": "Gujarat: value 3",
+  "gujarat__budget_estimate": {
+   "name": "gujarat__budget_estimate",
+   "label": "Gujarat: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1259,9 +1381,11 @@
     6656300000
    ]
   },
-  "maharashtra__value_1": {
-   "name": "maharashtra__value_1",
-   "label": "Maharashtra: value 1",
+  "maharashtra__actual": {
+   "name": "maharashtra__actual",
+   "label": "Maharashtra: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     19999300000,
     27929200000,
@@ -1279,9 +1403,11 @@
     null
    ]
   },
-  "maharashtra__value_2": {
-   "name": "maharashtra__value_2",
-   "label": "Maharashtra: value 2",
+  "maharashtra__revised_estimate": {
+   "name": "maharashtra__revised_estimate",
+   "label": "Maharashtra: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1299,9 +1425,11 @@
     null
    ]
   },
-  "maharashtra__value_3": {
-   "name": "maharashtra__value_3",
-   "label": "Maharashtra: value 3",
+  "maharashtra__budget_estimate": {
+   "name": "maharashtra__budget_estimate",
+   "label": "Maharashtra: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1319,9 +1447,11 @@
     80921700000
    ]
   },
-  "goa__value_1": {
-   "name": "goa__value_1",
-   "label": "Goa: value 1",
+  "goa__actual": {
+   "name": "goa__actual",
+   "label": "Goa: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     45200000,
     23100000,
@@ -1339,9 +1469,11 @@
     null
    ]
   },
-  "goa__value_2": {
-   "name": "goa__value_2",
-   "label": "Goa: value 2",
+  "goa__revised_estimate": {
+   "name": "goa__revised_estimate",
+   "label": "Goa: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1359,9 +1491,11 @@
     null
    ]
   },
-  "goa__value_3": {
-   "name": "goa__value_3",
-   "label": "Goa: value 3",
+  "goa__budget_estimate": {
+   "name": "goa__budget_estimate",
+   "label": "Goa: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1379,9 +1513,11 @@
     211200000
    ]
   },
-  "madhya_pradesh__value_1": {
-   "name": "madhya_pradesh__value_1",
-   "label": "Madhya Pradesh: value 1",
+  "madhya_pradesh__actual": {
+   "name": "madhya_pradesh__actual",
+   "label": "Madhya Pradesh: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     5985900000,
     7522100000,
@@ -1399,9 +1535,11 @@
     null
    ]
   },
-  "madhya_pradesh__value_2": {
-   "name": "madhya_pradesh__value_2",
-   "label": "Madhya Pradesh: value 2",
+  "madhya_pradesh__revised_estimate": {
+   "name": "madhya_pradesh__revised_estimate",
+   "label": "Madhya Pradesh: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1419,9 +1557,11 @@
     null
    ]
   },
-  "madhya_pradesh__value_3": {
-   "name": "madhya_pradesh__value_3",
-   "label": "Madhya Pradesh: value 3",
+  "madhya_pradesh__budget_estimate": {
+   "name": "madhya_pradesh__budget_estimate",
+   "label": "Madhya Pradesh: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1439,9 +1579,11 @@
     34896000000
    ]
   },
-  "chhattisgarh__value_1": {
-   "name": "chhattisgarh__value_1",
-   "label": "Chhattisgarh: value 1",
+  "chhattisgarh__actual": {
+   "name": "chhattisgarh__actual",
+   "label": "Chhattisgarh: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     1771000000,
     1882300000,
@@ -1459,9 +1601,11 @@
     null
    ]
   },
-  "chhattisgarh__value_2": {
-   "name": "chhattisgarh__value_2",
-   "label": "Chhattisgarh: value 2",
+  "chhattisgarh__revised_estimate": {
+   "name": "chhattisgarh__revised_estimate",
+   "label": "Chhattisgarh: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1479,9 +1623,11 @@
     null
    ]
   },
-  "chhattisgarh__value_3": {
-   "name": "chhattisgarh__value_3",
-   "label": "Chhattisgarh: value 3",
+  "chhattisgarh__budget_estimate": {
+   "name": "chhattisgarh__budget_estimate",
+   "label": "Chhattisgarh: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1499,9 +1645,11 @@
     5356900000
    ]
   },
-  "andhra_pradesh_undivided__value_1": {
-   "name": "andhra_pradesh_undivided__value_1",
-   "label": "Andhra Pradesh (undivided, to 2013-14): value 1",
+  "andhra_pradesh_undivided__actual": {
+   "name": "andhra_pradesh_undivided__actual",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     12769800000,
     7370000000,
@@ -1519,9 +1667,11 @@
     null
    ]
   },
-  "karnataka__value_1": {
-   "name": "karnataka__value_1",
-   "label": "Karnataka: value 1",
+  "karnataka__actual": {
+   "name": "karnataka__actual",
+   "label": "Karnataka: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     2393700000,
     9675500000,
@@ -1539,9 +1689,11 @@
     null
    ]
   },
-  "karnataka__value_2": {
-   "name": "karnataka__value_2",
-   "label": "Karnataka: value 2",
+  "karnataka__revised_estimate": {
+   "name": "karnataka__revised_estimate",
+   "label": "Karnataka: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1559,9 +1711,11 @@
     null
    ]
   },
-  "karnataka__value_3": {
-   "name": "karnataka__value_3",
-   "label": "Karnataka: value 3",
+  "karnataka__budget_estimate": {
+   "name": "karnataka__budget_estimate",
+   "label": "Karnataka: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1579,9 +1733,11 @@
     12273300000
    ]
   },
-  "tamil_nadu__value_1": {
-   "name": "tamil_nadu__value_1",
-   "label": "Tamil Nadu: value 1",
+  "tamil_nadu__actual": {
+   "name": "tamil_nadu__actual",
+   "label": "Tamil Nadu: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     11893500000,
     5317100000,
@@ -1599,9 +1755,11 @@
     null
    ]
   },
-  "tamil_nadu__value_2": {
-   "name": "tamil_nadu__value_2",
-   "label": "Tamil Nadu: value 2",
+  "tamil_nadu__revised_estimate": {
+   "name": "tamil_nadu__revised_estimate",
+   "label": "Tamil Nadu: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1619,9 +1777,11 @@
     null
    ]
   },
-  "tamil_nadu__value_3": {
-   "name": "tamil_nadu__value_3",
-   "label": "Tamil Nadu: value 3",
+  "tamil_nadu__budget_estimate": {
+   "name": "tamil_nadu__budget_estimate",
+   "label": "Tamil Nadu: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1639,9 +1799,11 @@
     190000
    ]
   },
-  "kerala__value_1": {
-   "name": "kerala__value_1",
-   "label": "Keralam: value 1",
+  "kerala__actual": {
+   "name": "kerala__actual",
+   "label": "Keralam: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     1418100000,
     2449300000,
@@ -1659,9 +1821,11 @@
     null
    ]
   },
-  "kerala__value_2": {
-   "name": "kerala__value_2",
-   "label": "Keralam: value 2",
+  "kerala__revised_estimate": {
+   "name": "kerala__revised_estimate",
+   "label": "Keralam: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1679,9 +1843,11 @@
     null
    ]
   },
-  "kerala__value_3": {
-   "name": "kerala__value_3",
-   "label": "Keralam: value 3",
+  "kerala__budget_estimate": {
+   "name": "kerala__budget_estimate",
+   "label": "Keralam: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1699,9 +1865,11 @@
     4853100000
    ]
   },
-  "puducherry__value_1": {
-   "name": "puducherry__value_1",
-   "label": "Puducherry: value 1",
+  "puducherry__actual": {
+   "name": "puducherry__actual",
+   "label": "Puducherry: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     1849600000,
     -30700000,
@@ -1719,9 +1887,11 @@
     null
    ]
   },
-  "puducherry__value_2": {
-   "name": "puducherry__value_2",
-   "label": "Puducherry: value 2",
+  "puducherry__revised_estimate": {
+   "name": "puducherry__revised_estimate",
+   "label": "Puducherry: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1739,9 +1909,11 @@
     null
    ]
   },
-  "puducherry__value_3": {
-   "name": "puducherry__value_3",
-   "label": "Puducherry: value 3",
+  "puducherry__budget_estimate": {
+   "name": "puducherry__budget_estimate",
+   "label": "Puducherry: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1759,9 +1931,11 @@
     107500000
    ]
   },
-  "all_india__value_1": {
-   "name": "all_india__value_1",
-   "label": "All India: value 1",
+  "all_india__actual": {
+   "name": "all_india__actual",
+   "label": "All India: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     136917800000,
     109808600000,
@@ -1779,9 +1953,11 @@
     null
    ]
   },
-  "all_india__value_2": {
-   "name": "all_india__value_2",
-   "label": "All India: value 2",
+  "all_india__revised_estimate": {
+   "name": "all_india__revised_estimate",
+   "label": "All India: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1799,9 +1975,11 @@
     null
    ]
   },
-  "all_india__value_3": {
-   "name": "all_india__value_3",
-   "label": "All India: value 3",
+  "all_india__budget_estimate": {
+   "name": "all_india__budget_estimate",
+   "label": "All India: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1819,9 +1997,11 @@
     444833800000
    ]
   },
-  "telangana__value_1": {
-   "name": "telangana__value_1",
-   "label": "Telangana: value 1",
+  "telangana__actual": {
+   "name": "telangana__actual",
+   "label": "Telangana: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1839,9 +2019,11 @@
     null
    ]
   },
-  "telangana__value_2": {
-   "name": "telangana__value_2",
-   "label": "Telangana: value 2",
+  "telangana__revised_estimate": {
+   "name": "telangana__revised_estimate",
+   "label": "Telangana: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1859,9 +2041,11 @@
     null
    ]
   },
-  "telangana__value_3": {
-   "name": "telangana__value_3",
-   "label": "Telangana: value 3",
+  "telangana__budget_estimate": {
+   "name": "telangana__budget_estimate",
+   "label": "Telangana: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1879,9 +2063,11 @@
     1035600000
    ]
   },
-  "andhra_pradesh__value_1": {
-   "name": "andhra_pradesh__value_1",
-   "label": "Andhra Pradesh: value 1",
+  "andhra_pradesh__actual": {
+   "name": "andhra_pradesh__actual",
+   "label": "Andhra Pradesh: Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1899,9 +2085,11 @@
     null
    ]
   },
-  "andhra_pradesh__value_2": {
-   "name": "andhra_pradesh__value_2",
-   "label": "Andhra Pradesh: value 2",
+  "andhra_pradesh__revised_estimate": {
+   "name": "andhra_pradesh__revised_estimate",
+   "label": "Andhra Pradesh: Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1919,9 +2107,11 @@
     null
    ]
   },
-  "andhra_pradesh__value_3": {
-   "name": "andhra_pradesh__value_3",
-   "label": "Andhra Pradesh: value 3",
+  "andhra_pradesh__budget_estimate": {
+   "name": "andhra_pradesh__budget_estimate",
+   "label": "Andhra Pradesh: Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1939,9 +2129,11 @@
     31939200000
    ]
   },
-  "jammu_and_kashmir_ut__value_1": {
-   "name": "jammu_and_kashmir_ut__value_1",
-   "label": "Jammu & Kashmir (UT, from 2019-20): value 1",
+  "jammu_and_kashmir_ut__actual": {
+   "name": "jammu_and_kashmir_ut__actual",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Expenditure on Relief on Natural Calamities: actual",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1959,9 +2151,11 @@
     null
    ]
   },
-  "jammu_and_kashmir_ut__value_2": {
-   "name": "jammu_and_kashmir_ut__value_2",
-   "label": "Jammu & Kashmir (UT, from 2019-20): value 2",
+  "jammu_and_kashmir_ut__revised_estimate": {
+   "name": "jammu_and_kashmir_ut__revised_estimate",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Expenditure on Relief on Natural Calamities: revised estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -1979,9 +2173,11 @@
     null
    ]
   },
-  "jammu_and_kashmir_ut__value_3": {
-   "name": "jammu_and_kashmir_ut__value_3",
-   "label": "Jammu & Kashmir (UT, from 2019-20): value 3",
+  "jammu_and_kashmir_ut__budget_estimate": {
+   "name": "jammu_and_kashmir_ut__budget_estimate",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Expenditure on Relief on Natural Calamities: budget estimate",
+   "unit": "inr_amount",
+   "group": "Environment",
    "data": [
     null,
     null,

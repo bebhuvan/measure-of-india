@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2024-04",
-  "unit": "as served by DBIE",
+  "unit": "inr_amount",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Credit to Agriculture by Scheduled Commercial Banks: RBI Handbook of Statistics on Indian States, Table 157",
-  "note": "DBIE report 1700, data provider \"Main\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1, region. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1700, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: value, region. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2003-04-01",
@@ -47,9 +47,11 @@
   "2024-04-01"
  ],
  "series": {
-  "assam__value_1": {
-   "name": "assam__value_1",
-   "label": "Assam: value 1",
+  "assam": {
+   "name": "assam",
+   "label": "Assam: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     5260000000,
     5490000000,
@@ -75,9 +77,11 @@
     163250000000
    ]
   },
-  "region_north_eastern_region__region": {
-   "name": "region_north_eastern_region__region",
-   "label": "North Eastern Region: region",
+  "region_north_eastern_region": {
+   "name": "region_north_eastern_region",
+   "label": "North Eastern Region: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     7830000000,
     8970000000,
@@ -103,9 +107,11 @@
     224690000000
    ]
   },
-  "meghalaya__value_1": {
-   "name": "meghalaya__value_1",
-   "label": "Meghalaya: value 1",
+  "meghalaya": {
+   "name": "meghalaya",
+   "label": "Meghalaya: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     820000000,
     500000000,
@@ -131,9 +137,11 @@
     8490000000
    ]
   },
-  "mizoram__value_1": {
-   "name": "mizoram__value_1",
-   "label": "Mizoram: value 1",
+  "mizoram": {
+   "name": "mizoram",
+   "label": "Mizoram: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     200000000,
     970000000,
@@ -159,9 +167,11 @@
     8420000000
    ]
   },
-  "bihar__value_1": {
-   "name": "bihar__value_1",
-   "label": "Bihar: value 1",
+  "bihar": {
+   "name": "bihar",
+   "label": "Bihar: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     19260000000,
     29740000000,
@@ -187,9 +197,11 @@
     699320000000
    ]
   },
-  "region_eastern_region__region": {
-   "name": "region_eastern_region__region",
-   "label": "Eastern Region: region",
+  "region_eastern_region": {
+   "name": "region_eastern_region",
+   "label": "Eastern Region: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     77670000000,
     98230000000,
@@ -215,9 +227,11 @@
     1973870000000
    ]
   },
-  "jharkhand__value_1": {
-   "name": "jharkhand__value_1",
-   "label": "Jharkhand: value 1",
+  "jharkhand": {
+   "name": "jharkhand",
+   "label": "Jharkhand: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     5150000000,
     8430000000,
@@ -243,9 +257,11 @@
     184380000000
    ]
   },
-  "arunachal_pradesh__value_1": {
-   "name": "arunachal_pradesh__value_1",
-   "label": "Arunachal Pradesh: value 1",
+  "arunachal_pradesh": {
+   "name": "arunachal_pradesh",
+   "label": "Arunachal Pradesh: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     270000000,
     300000000,
@@ -271,9 +287,11 @@
     5650000000
    ]
   },
-  "ladakh__value_1": {
-   "name": "ladakh__value_1",
-   "label": "Ladakh: value 1",
+  "ladakh": {
+   "name": "ladakh",
+   "label": "Ladakh: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     null,
     null,
@@ -299,9 +317,11 @@
     3080000000
    ]
   },
-  "region_northern_region__region": {
-   "name": "region_northern_region__region",
-   "label": "Northern Region: region",
+  "region_northern_region": {
+   "name": "region_northern_region",
+   "label": "Northern Region: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     218710000000,
     281310000000,
@@ -327,9 +347,11 @@
     3983670000000
    ]
   },
-  "west_bengal__value_1": {
-   "name": "west_bengal__value_1",
-   "label": "West Bengal: value 1",
+  "west_bengal": {
+   "name": "west_bengal",
+   "label": "West Bengal: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     38330000000,
     38560000000,
@@ -355,9 +377,11 @@
     624210000000
    ]
   },
-  "nagaland__value_1": {
-   "name": "nagaland__value_1",
-   "label": "Nagaland: value 1",
+  "nagaland": {
+   "name": "nagaland",
+   "label": "Nagaland: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     210000000,
     300000000,
@@ -383,9 +407,11 @@
     4970000000
    ]
   },
-  "manipur__value_1": {
-   "name": "manipur__value_1",
-   "label": "Manipur: value 1",
+  "manipur": {
+   "name": "manipur",
+   "label": "Manipur: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     240000000,
     380000000,
@@ -411,9 +437,11 @@
     9840000000
    ]
   },
-  "sikkim__value_1": {
-   "name": "sikkim__value_1",
-   "label": "Sikkim: value 1",
+  "sikkim": {
+   "name": "sikkim",
+   "label": "Sikkim: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     150000000,
     180000000,
@@ -439,9 +467,11 @@
     2570000000
    ]
   },
-  "tripura__value_1": {
-   "name": "tripura__value_1",
-   "label": "Tripura: value 1",
+  "tripura": {
+   "name": "tripura",
+   "label": "Tripura: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     830000000,
     1020000000,
@@ -467,9 +497,11 @@
     24060000000
    ]
   },
-  "andaman_and_nicobar_islands__value_1": {
-   "name": "andaman_and_nicobar_islands__value_1",
-   "label": "Andaman & Nicobar Islands: value 1",
+  "andaman_and_nicobar_islands": {
+   "name": "andaman_and_nicobar_islands",
+   "label": "Andaman & Nicobar Islands: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     430000000,
     400000000,
@@ -495,9 +527,11 @@
     3650000000
    ]
   },
-  "uttar_pradesh__value_1": {
-   "name": "uttar_pradesh__value_1",
-   "label": "Uttar Pradesh: value 1",
+  "uttar_pradesh": {
+   "name": "uttar_pradesh",
+   "label": "Uttar Pradesh: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     103180000000,
     138850000000,
@@ -523,9 +557,11 @@
     2116460000000
    ]
   },
-  "region_central_region__region": {
-   "name": "region_central_region__region",
-   "label": "Central Region: region",
+  "region_central_region": {
+   "name": "region_central_region",
+   "label": "Central Region: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     171330000000,
     229340000000,
@@ -551,9 +587,11 @@
     3769330000000
    ]
   },
-  "delhi__value_1": {
-   "name": "delhi__value_1",
-   "label": "Delhi: value 1",
+  "delhi": {
+   "name": "delhi",
+   "label": "Delhi: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     49550000000,
     67560000000,
@@ -579,9 +617,11 @@
     505940000000
    ]
   },
-  "punjab__value_1": {
-   "name": "punjab__value_1",
-   "label": "Punjab: value 1",
+  "punjab": {
+   "name": "punjab",
+   "label": "Punjab: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     55930000000,
     73080000000,
@@ -607,9 +647,11 @@
     849510000000
    ]
   },
-  "haryana__value_1": {
-   "name": "haryana__value_1",
-   "label": "Haryana: value 1",
+  "haryana": {
+   "name": "haryana",
+   "label": "Haryana: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     39520000000,
     48710000000,
@@ -635,9 +677,11 @@
     743030000000
    ]
   },
-  "chandigarh__value_1": {
-   "name": "chandigarh__value_1",
-   "label": "Chandigarh: value 1",
+  "chandigarh": {
+   "name": "chandigarh",
+   "label": "Chandigarh: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     11810000000,
     10580000000,
@@ -663,9 +707,11 @@
     85260000000
    ]
   },
-  "jammu_and_kashmir_state__value_1": {
-   "name": "jammu_and_kashmir_state__value_1",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): value 1",
+  "jammu_and_kashmir_state": {
+   "name": "jammu_and_kashmir_state",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     2790000000,
     3180000000,
@@ -691,9 +737,11 @@
     null
    ]
   },
-  "himachal_pradesh__value_1": {
-   "name": "himachal_pradesh__value_1",
-   "label": "Himachal Pradesh: value 1",
+  "himachal_pradesh": {
+   "name": "himachal_pradesh",
+   "label": "Himachal Pradesh: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     4340000000,
     7700000000,
@@ -719,9 +767,11 @@
     99460000000
    ]
   },
-  "rajasthan__value_1": {
-   "name": "rajasthan__value_1",
-   "label": "Rajasthan: value 1",
+  "rajasthan": {
+   "name": "rajasthan",
+   "label": "Rajasthan: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     54780000000,
     70500000000,
@@ -747,9 +797,11 @@
     1585290000000
    ]
   },
-  "gujarat__value_1": {
-   "name": "gujarat__value_1",
-   "label": "Gujarat: value 1",
+  "gujarat": {
+   "name": "gujarat",
+   "label": "Gujarat: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     45370000000,
     60040000000,
@@ -775,9 +827,11 @@
     1068040000000
    ]
   },
-  "region_western_region__region": {
-   "name": "region_western_region__region",
-   "label": "Western Region: region",
+  "region_western_region": {
+   "name": "region_western_region",
+   "label": "Western Region: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     146500000000,
     184270000000,
@@ -803,9 +857,11 @@
     2790600000000
    ]
   },
-  "maharashtra__value_1": {
-   "name": "maharashtra__value_1",
-   "label": "Maharashtra: value 1",
+  "maharashtra": {
+   "name": "maharashtra",
+   "label": "Maharashtra: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     100150000000,
     123460000000,
@@ -831,9 +887,11 @@
     1703300000000
    ]
   },
-  "daman_and_diu__value_1": {
-   "name": "daman_and_diu__value_1",
-   "label": "Daman & Diu: value 1",
+  "daman_and_diu": {
+   "name": "daman_and_diu",
+   "label": "Daman & Diu: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     60000000,
     10000000,
@@ -859,9 +917,11 @@
     null
    ]
   },
-  "goa__value_1": {
-   "name": "goa__value_1",
-   "label": "Goa: value 1",
+  "goa": {
+   "name": "goa",
+   "label": "Goa: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     720000000,
     710000000,
@@ -887,9 +947,11 @@
     16750000000
    ]
   },
-  "dadra_and_nagar_haveli__value_1": {
-   "name": "dadra_and_nagar_haveli__value_1",
-   "label": "Dadra & Nagar Haveli: value 1",
+  "dadra_and_nagar_haveli": {
+   "name": "dadra_and_nagar_haveli",
+   "label": "Dadra & Nagar Haveli: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     200000000,
     50000000,
@@ -915,9 +977,11 @@
     2500000000
    ]
   },
-  "madhya_pradesh__value_1": {
-   "name": "madhya_pradesh__value_1",
-   "label": "Madhya Pradesh: value 1",
+  "madhya_pradesh": {
+   "name": "madhya_pradesh",
+   "label": "Madhya Pradesh: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     54120000000,
     72700000000,
@@ -943,9 +1007,11 @@
     1268290000000
    ]
   },
-  "chhattisgarh__value_1": {
-   "name": "chhattisgarh__value_1",
-   "label": "Chhattisgarh: value 1",
+  "chhattisgarh": {
+   "name": "chhattisgarh",
+   "label": "Chhattisgarh: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     7810000000,
     10170000000,
@@ -971,9 +1037,11 @@
     279180000000
    ]
   },
-  "andhra_pradesh__value_1": {
-   "name": "andhra_pradesh__value_1",
-   "label": "Andhra Pradesh: value 1",
+  "andhra_pradesh": {
+   "name": "andhra_pradesh",
+   "label": "Andhra Pradesh: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     107800000000,
     145750000000,
@@ -999,9 +1067,11 @@
     2823190000000
    ]
   },
-  "region_southern_region__region": {
-   "name": "region_southern_region__region",
-   "label": "Southern Region: region",
+  "region_southern_region": {
+   "name": "region_southern_region",
+   "label": "Southern Region: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     340410000000,
     441720000000,
@@ -1027,9 +1097,11 @@
     11460080000000
    ]
   },
-  "telangana__value_1": {
-   "name": "telangana__value_1",
-   "label": "Telangana: value 1",
+  "telangana": {
+   "name": "telangana",
+   "label": "Telangana: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     null,
     null,
@@ -1055,9 +1127,11 @@
     1445650000000
    ]
   },
-  "karnataka__value_1": {
-   "name": "karnataka__value_1",
-   "label": "Karnataka: value 1",
+  "karnataka": {
+   "name": "karnataka",
+   "label": "Karnataka: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     97380000000,
     125440000000,
@@ -1083,9 +1157,11 @@
     1992800000000
    ]
   },
-  "lakshadweep__value_1": {
-   "name": "lakshadweep__value_1",
-   "label": "Lakshadweep: value 1",
+  "lakshadweep": {
+   "name": "lakshadweep",
+   "label": "Lakshadweep: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     10000000,
     30000000,
@@ -1111,9 +1187,11 @@
     420000000
    ]
   },
-  "tamil_nadu__value_1": {
-   "name": "tamil_nadu__value_1",
-   "label": "Tamil Nadu: value 1",
+  "tamil_nadu": {
+   "name": "tamil_nadu",
+   "label": "Tamil Nadu: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     90650000000,
     124320000000,
@@ -1139,9 +1217,11 @@
     3817570000000
    ]
   },
-  "kerala__value_1": {
-   "name": "kerala__value_1",
-   "label": "Keralam: value 1",
+  "kerala": {
+   "name": "kerala",
+   "label": "Keralam: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     43610000000,
     44910000000,
@@ -1167,9 +1247,11 @@
     1310500000000
    ]
   },
-  "all_india__value_1": {
-   "name": "all_india__value_1",
-   "label": "All India: value 1",
+  "all_india": {
+   "name": "all_india",
+   "label": "All India: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     962450000000,
     1243850000000,
@@ -1195,9 +1277,11 @@
     24202230000000
    ]
   },
-  "odisha__value_1": {
-   "name": "odisha__value_1",
-   "label": "Odisha: value 1",
+  "odisha": {
+   "name": "odisha",
+   "label": "Odisha: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     14350000000,
     20930000000,
@@ -1223,9 +1307,11 @@
     459750000000
    ]
   },
-  "uttarakhand__value_1": {
-   "name": "uttarakhand__value_1",
-   "label": "Uttarakhand: value 1",
+  "uttarakhand": {
+   "name": "uttarakhand",
+   "label": "Uttarakhand: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     6220000000,
     7620000000,
@@ -1251,9 +1337,11 @@
     105390000000
    ]
   },
-  "puducherry__value_1": {
-   "name": "puducherry__value_1",
-   "label": "Puducherry: value 1",
+  "puducherry": {
+   "name": "puducherry",
+   "label": "Puducherry: Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     960000000,
     1270000000,
@@ -1279,9 +1367,11 @@
     69950000000
    ]
   },
-  "jammu_and_kashmir_ut__value_1": {
-   "name": "jammu_and_kashmir_ut__value_1",
-   "label": "Jammu & Kashmir (UT, from 2019-20): value 1",
+  "jammu_and_kashmir_ut": {
+   "name": "jammu_and_kashmir_ut",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Credit to Agriculture by Scheduled Commercial Banks",
+   "unit": "inr_amount",
+   "group": "Banking",
    "data": [
     null,
     null,

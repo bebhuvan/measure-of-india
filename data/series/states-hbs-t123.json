@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2023-04",
-  "unit": "Units",
+  "unit": "count",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Total Persons Engaged: RBI Handbook of Statistics on Indian States, Table 123",
-  "note": "DBIE report 1667, data provider \"Query 1\". Values exactly as DBIE serves them; DBIE's unit label: Units. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1667, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: Units. Periods: fiscal years, dated at April. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -47,7 +47,9 @@
  "series": {
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     8453624,
     9111680,
@@ -73,7 +75,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     251,
     338,
@@ -99,7 +103,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     933473,
     972634,
@@ -125,7 +131,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -151,7 +159,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     119548,
     128662,
@@ -177,7 +187,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     61775,
     67447,
@@ -203,7 +215,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     9972,
     10752,
@@ -229,7 +243,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     106409,
     112254,
@@ -255,7 +271,9 @@
   },
   "dadra_and_nagar_haveli": {
    "name": "dadra_and_nagar_haveli",
-   "label": "Dadra & Nagar Haveli",
+   "label": "Dadra & Nagar Haveli: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     58306,
     64820,
@@ -281,7 +299,9 @@
   },
   "daman_and_diu": {
    "name": "daman_and_diu",
-   "label": "Daman & Diu",
+   "label": "Daman & Diu: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     68812,
     79434,
@@ -307,7 +327,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     121128,
     127999,
@@ -333,7 +355,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     37581,
     39046,
@@ -359,7 +383,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     808618,
     887511,
@@ -385,7 +411,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     354861,
     396155,
@@ -411,7 +439,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     44287,
     56838,
@@ -437,7 +467,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     31090,
     40609,
@@ -463,7 +495,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -489,7 +523,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     152530,
     148300,
@@ -515,7 +551,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     553457,
     641864,
@@ -541,7 +579,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     317834,
     336997,
@@ -567,7 +607,9 @@
   },
   "ladakh": {
    "name": "ladakh",
-   "label": "Ladakh",
+   "label": "Ladakh: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -593,7 +635,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -619,7 +663,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     216563,
     217758,
@@ -645,7 +691,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     1162346,
     1245096,
@@ -671,7 +719,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     1835,
     1970,
@@ -697,7 +747,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     3037,
     4332,
@@ -723,7 +775,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -749,7 +803,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     2821,
     2862,
@@ -775,7 +831,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     145747,
     144554,
@@ -801,7 +859,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     40695,
     42597,
@@ -827,7 +887,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     391081,
     439246,
@@ -853,7 +915,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     268437,
     290941,
@@ -879,7 +943,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -905,7 +971,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     1268335,
     1355789,
@@ -931,7 +999,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -957,7 +1027,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     15392,
     19221,
@@ -983,7 +1055,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     51762,
     71097,
@@ -1009,7 +1083,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     587702,
     648449,
@@ -1035,7 +1111,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Total Persons Engaged",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     517939,
     516107,

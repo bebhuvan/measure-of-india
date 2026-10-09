@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2023-04",
-  "unit": "as served by DBIE",
+  "unit": "count",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Number of Mandays - Employees: RBI Handbook of Statistics on Indian States, Table 133",
-  "note": "DBIE report 1677, data provider \"Query 1\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1677, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -47,7 +47,9 @@
  "series": {
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     77000,
     113000,
@@ -73,7 +75,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     276877000,
     290452000,
@@ -99,7 +103,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -125,7 +131,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     34074000,
     36342000,
@@ -151,7 +159,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     14554000,
     15020000,
@@ -177,7 +187,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     3002000,
     3302000,
@@ -203,7 +215,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -229,7 +243,9 @@
   },
   "dadra_and_nagar_haveli": {
    "name": "dadra_and_nagar_haveli",
-   "label": "Dadra & Nagar Haveli",
+   "label": "Dadra & Nagar Haveli: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     18357000,
     20380000,
@@ -255,7 +271,9 @@
   },
   "daman_and_diu": {
    "name": "daman_and_diu",
-   "label": "Daman & Diu",
+   "label": "Daman & Diu: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     20716000,
     24320000,
@@ -281,7 +299,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     35896000,
     38403000,
@@ -307,7 +327,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     11911000,
     12352000,
@@ -333,7 +355,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     244873000,
     267958000,
@@ -359,7 +383,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     103307000,
     116041000,
@@ -385,7 +411,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     13324000,
     12835000,
@@ -411,7 +439,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     9530000,
     12338000,
@@ -437,7 +467,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -463,7 +495,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     48258000,
     48993000,
@@ -489,7 +523,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     166629000,
     191932000,
@@ -515,7 +551,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     81004000,
     85404000,
@@ -541,7 +579,9 @@
   },
   "ladakh": {
    "name": "ladakh",
-   "label": "Ladakh",
+   "label": "Ladakh: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -567,7 +607,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -593,7 +635,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     67241000,
     67348000,
@@ -619,7 +663,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     364321000,
     388652000,
@@ -645,7 +691,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     445000,
     460000,
@@ -671,7 +719,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     945000,
     1345000,
@@ -697,7 +747,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -723,7 +775,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     735000,
     722000,
@@ -749,7 +803,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     48613000,
     47650000,
@@ -775,7 +831,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     12988000,
     13568000,
@@ -801,7 +859,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     110307000,
     126065000,
@@ -827,7 +887,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     82217000,
     89002000,
@@ -853,7 +915,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -879,7 +943,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     384569000,
     412182000,
@@ -905,7 +971,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -931,7 +999,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     3049000,
     3712000,
@@ -957,7 +1027,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     15582000,
     20627000,
@@ -983,7 +1055,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     174504000,
     190766000,
@@ -1009,7 +1083,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Number of Mandays - Employees",
+   "unit": "count",
+   "group": "Industry",
    "data": [
     161143000,
     160306000,

@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2024-04",
-  "unit": "as served by DBIE",
+  "unit": "inr_amount",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Capital Receipts: RBI Handbook of Statistics on Indian States, Table 172",
-  "note": "DBIE report 1736, data provider \"Main\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1736, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -48,7 +48,9 @@
  "series": {
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     151110000000,
     209570000000,
@@ -75,7 +77,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     36900000000,
     128210000000,
@@ -102,7 +106,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     24810000000,
     43390000000,
@@ -129,7 +135,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     492030000000,
     988220000000,
@@ -156,7 +164,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     68530000000,
     55210000000,
@@ -183,7 +193,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     40870000000,
     70760000000,
@@ -210,7 +222,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     1095300000000,
     1101880000000,
@@ -237,7 +251,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     33190000000,
     51590000000,
@@ -264,7 +280,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     53200000000,
     50720000000,
@@ -291,7 +309,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     225960000000,
     421260000000,
@@ -318,7 +338,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     21120000000,
     23420000000,
@@ -345,7 +367,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     45970000000,
     99130000000,
@@ -372,7 +396,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     1751500000000,
     3043010000000,
@@ -399,7 +425,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     277880000000,
     399370000000,
@@ -426,7 +454,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     45390000000,
     62160000000,
@@ -453,7 +483,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     264370000000,
     432460000000,
@@ -480,7 +512,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     421510000000,
     957980000000,
@@ -507,7 +541,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     23740000000,
     36780000000,
@@ -534,7 +570,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     124820000000,
     198820000000,
@@ -561,7 +599,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     668070000000,
     924210000000,
@@ -588,7 +628,9 @@
   },
   "all_states_and_uts": {
    "name": "all_states_and_uts",
-   "label": "All States And Uts",
+   "label": "All States And Uts: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     11787120000000,
     17116540000000,
@@ -615,7 +657,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     789650000000,
     1039760000000,
@@ -642,7 +686,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     775560000000,
     1201730000000,
@@ -669,7 +715,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     48720000000,
     94030000000,
@@ -696,7 +744,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     446200000000,
     633840000000,
@@ -723,7 +773,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     296300000000,
     374360000000,
@@ -750,7 +802,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     1529100000000,
     1648000000000,
@@ -777,7 +831,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     0,
     0,
@@ -804,7 +860,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     662630000000,
     1015870000000,
@@ -831,7 +889,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     868900000000,
     1335780000000,
@@ -858,7 +918,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     503790000000,
     537180000000,
@@ -885,7 +947,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     0,
     3590000000,
@@ -912,7 +976,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
    "data": [
     null,
     null,

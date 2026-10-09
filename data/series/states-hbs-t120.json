@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2023-04",
-  "unit": "as served by DBIE",
+  "unit": "inr_amount",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Productive Capital: RBI Handbook of Statistics on Indian States, Table 120",
-  "note": "DBIE report 1664, data provider \"Query 1\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1664, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -47,7 +47,9 @@
  "series": {
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     6731232200000,
     7914028800000,
@@ -73,7 +75,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     792000000,
     812900000,
@@ -99,7 +103,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     445259600000,
     446717500000,
@@ -125,7 +131,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -151,7 +159,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     90727000000,
     101970000000,
@@ -177,7 +187,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     52495400000,
     43389300000,
@@ -203,7 +215,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     6902300000,
     7066000000,
@@ -229,7 +243,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     154531900000,
     184957800000,
@@ -255,7 +271,9 @@
   },
   "dadra_and_nagar_haveli": {
    "name": "dadra_and_nagar_haveli",
-   "label": "Dadra & Nagar Haveli",
+   "label": "Dadra & Nagar Haveli: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     112989200000,
     126540200000,
@@ -281,7 +299,9 @@
   },
   "daman_and_diu": {
    "name": "daman_and_diu",
-   "label": "Daman & Diu",
+   "label": "Daman & Diu: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     52665600000,
     63051100000,
@@ -307,7 +327,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     58465100000,
     89339400000,
@@ -333,7 +355,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     54670200000,
     60344400000,
@@ -359,7 +383,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     1090202700000,
     1478019200000,
@@ -385,7 +411,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     230006000000,
     257835700000,
@@ -411,7 +439,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     77613100000,
     112612500000,
@@ -437,7 +467,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     12311900000,
     21217500000,
@@ -463,7 +495,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -489,7 +523,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     241389000000,
     210890600000,
@@ -515,7 +551,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     468444200000,
     551028900000,
@@ -541,7 +579,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     107934600000,
     119322300000,
@@ -567,7 +607,9 @@
   },
   "ladakh": {
    "name": "ladakh",
-   "label": "Ladakh",
+   "label": "Ladakh: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -593,7 +635,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -619,7 +663,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     239802400000,
     239291700000,
@@ -645,7 +691,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     1203820600000,
     1314926700000,
@@ -671,7 +719,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     143800000,
     144200000,
@@ -697,7 +747,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     3081400000,
     5878300000,
@@ -723,7 +775,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -749,7 +803,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     630400000,
     594400000,
@@ -775,7 +831,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     173051200000,
     260065700000,
@@ -801,7 +859,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     38422100000,
     41004500000,
@@ -827,7 +887,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     176149700000,
     229271900000,
@@ -853,7 +915,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     203861100000,
     236810400000,
@@ -879,7 +943,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -905,7 +971,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     646168100000,
     773286300000,
@@ -931,7 +999,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -957,7 +1027,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     1612400000,
     2326900000,
@@ -983,7 +1055,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     40571400000,
     68383200000,
@@ -1009,7 +1083,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     435751000000,
     515524600000,
@@ -1035,7 +1111,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Productive Capital",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     310766600000,
     351404800000,

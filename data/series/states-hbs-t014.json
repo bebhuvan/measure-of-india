@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2020-04",
-  "unit": "Per Cent",
+  "unit": "pct",
   "periodKind": "fy",
   "sparse": true,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Children Aged 6-59 Months Who are Anaemic: RBI Handbook of Statistics on Indian States, Table 14",
-  "note": "DBIE report 1568, data provider \"Query 1\". Values exactly as DBIE serves them; DBIE's unit label: Per Cent. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1568, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: Per Cent. Periods: fiscal years, dated at April. Dimensions: none; measures: value. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2005-04-01",
@@ -30,7 +30,9 @@
  "series": {
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     69.5,
     58.4,
@@ -39,7 +41,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     null,
     49,
@@ -48,7 +52,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     null,
     58.6,
@@ -57,7 +63,9 @@
   },
   "andhra_pradesh_undivided": {
    "name": "andhra_pradesh_undivided",
-   "label": "Andhra Pradesh (undivided, to 2013-14)",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     70.8,
     null,
@@ -66,7 +74,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     56.9,
     50.7,
@@ -75,7 +85,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     69.6,
     35.7,
@@ -84,7 +96,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     78,
     63.5,
@@ -93,7 +107,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     null,
     73.1,
@@ -102,7 +118,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     71.2,
     41.6,
@@ -111,7 +129,9 @@
   },
   "dadra_and_nagar_haveli": {
    "name": "dadra_and_nagar_haveli",
-   "label": "Dadra & Nagar Haveli",
+   "label": "Dadra & Nagar Haveli: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     null,
     84.6,
@@ -120,7 +140,9 @@
   },
   "daman_and_diu": {
    "name": "daman_and_diu",
-   "label": "Daman & Diu",
+   "label": "Daman & Diu: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     null,
     73.8,
@@ -129,7 +151,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     57,
     62.6,
@@ -138,7 +162,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     38.2,
     48.3,
@@ -147,7 +173,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     69.7,
     62.6,
@@ -156,7 +184,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     72.3,
     71.7,
@@ -165,7 +195,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     54.7,
     53.7,
@@ -174,7 +206,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     58.6,
     43.3,
@@ -183,7 +217,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     null,
     null,
@@ -192,7 +228,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     70.3,
     69.9,
@@ -201,7 +239,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     70.4,
     60.9,
@@ -210,7 +250,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     44.5,
     35.6,
@@ -219,7 +261,9 @@
   },
   "ladakh": {
    "name": "ladakh",
-   "label": "Ladakh",
+   "label": "Ladakh: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     null,
     null,
@@ -228,7 +272,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     null,
     51.9,
@@ -237,7 +283,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     74.1,
     68.9,
@@ -246,7 +294,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     63.4,
     53.8,
@@ -255,7 +305,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     41.1,
     23.9,
@@ -264,7 +316,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     64.4,
     48,
@@ -273,7 +327,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     44.2,
     17.7,
@@ -282,7 +338,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     null,
     21.6,
@@ -291,7 +349,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     65,
     44.6,
@@ -300,7 +360,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     null,
     44.9,
@@ -309,7 +371,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     66.4,
     56.6,
@@ -318,7 +382,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     69.7,
     60.3,
@@ -327,7 +393,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     59.2,
     55.1,
@@ -336,7 +404,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     64.2,
     50.7,
@@ -345,7 +415,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     null,
     60.7,
@@ -354,7 +426,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     62.9,
     48.3,
@@ -363,7 +437,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     61.4,
     59.8,
@@ -372,7 +448,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     73.9,
     63.2,
@@ -381,7 +459,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Children Aged 6-59 Months Who are Anaemic",
+   "unit": "pct",
+   "group": "Health",
    "data": [
     61,
     54.2,

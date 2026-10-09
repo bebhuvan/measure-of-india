@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2019-04",
-  "unit": "as served by DBIE",
+  "unit": "inr_amount",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Public Expenditure on Health: RBI Handbook of Statistics on Indian States, Table 18",
-  "note": "DBIE report 1572, data provider \"Query 1\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1572, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: value. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2012-04-01",
@@ -35,7 +35,9 @@
  "series": {
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     1980000000,
     2020000000,
@@ -49,7 +51,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     null,
     null,
@@ -63,7 +67,9 @@
   },
   "andhra_pradesh_undivided": {
    "name": "andhra_pradesh_undivided",
-   "label": "Andhra Pradesh (undivided, to 2013-14)",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     73840000000,
     63730000000,
@@ -77,7 +83,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     2830000000,
     3570000000,
@@ -91,7 +99,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     15390000000,
     17110000000,
@@ -105,7 +115,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     25660000000,
     26550000000,
@@ -119,7 +131,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     2250000000,
     2530000000,
@@ -133,7 +147,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     13150000000,
     15820000000,
@@ -147,7 +163,9 @@
   },
   "dadra_and_nagar_haveli": {
    "name": "dadra_and_nagar_haveli",
-   "label": "Dadra & Nagar Haveli",
+   "label": "Dadra & Nagar Haveli: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     570000000,
     630000000,
@@ -161,7 +179,9 @@
   },
   "daman_and_diu": {
    "name": "daman_and_diu",
-   "label": "Daman & Diu",
+   "label": "Daman & Diu: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     450000000,
     420000000,
@@ -175,7 +195,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     27340000000,
     30670000000,
@@ -189,7 +211,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     4250000000,
     4630000000,
@@ -203,7 +227,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     46750000000,
     51380000000,
@@ -217,7 +243,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     17210000000,
     18950000000,
@@ -231,7 +259,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     10970000000,
     11750000000,
@@ -245,7 +275,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     12050000000,
     13650000000,
@@ -259,7 +291,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     null,
     null,
@@ -273,7 +307,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     10100000000,
     11490000000,
@@ -287,7 +323,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     40420000000,
     46560000000,
@@ -301,7 +339,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     32440000000,
     36380000000,
@@ -315,7 +355,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     420000000,
     440000000,
@@ -329,7 +371,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     33420000000,
     34910000000,
@@ -343,7 +387,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     64330000000,
     74100000000,
@@ -357,7 +403,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     3320000000,
     4120000000,
@@ -371,7 +419,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     3990000000,
     4520000000,
@@ -385,7 +435,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     2250000000,
     3480000000,
@@ -399,7 +451,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     3760000000,
     3020000000,
@@ -413,7 +467,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     18100000000,
     20140000000,
@@ -427,7 +483,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     3000000000,
     3610000000,
@@ -441,7 +499,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     20470000000,
     20980000000,
@@ -455,7 +515,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     39390000000,
     47960000000,
@@ -469,7 +531,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     2450000000,
     2560000000,
@@ -483,7 +547,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     54840000000,
     62020000000,
@@ -497,7 +563,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     null,
     null,
@@ -511,7 +579,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     3180000000,
     4090000000,
@@ -525,7 +595,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     9660000000,
     10740000000,
@@ -539,7 +611,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     87980000000,
     94880000000,
@@ -553,7 +627,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Public Expenditure on Health",
+   "unit": "inr_amount",
+   "group": "Health",
    "data": [
     40960000000,
     49200000000,

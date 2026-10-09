@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2020-04",
-  "unit": "ACTUAL",
+  "unit": "per series",
   "periodKind": "fy",
   "sparse": true,
   "hbs": {
@@ -20,920 +20,1148 @@
    "duplicates": []
   },
   "coverage": "State-wise Poverty Estimates - Multi-dimensional Poverty Index: RBI Handbook of Statistics on Indian States, Table 10",
-  "note": "DBIE report 1566, data provider \"Main\". Values exactly as DBIE serves them; DBIE's unit label: ACTUAL. Periods: fiscal years, dated at April. Dimensions: none; measures: value hr, value int, value mpi. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1566, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: ACTUAL. Periods: fiscal years, dated at April. Dimensions: none; measures: headcount ratio, intensity, multidimensional poverty index. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2015-04-01",
   "2020-04-01"
  ],
  "series": {
-  "all_india__value_hr": {
-   "name": "all_india__value_hr",
-   "label": "All India: value hr",
+  "all_india__headcount_ratio": {
+   "name": "all_india__headcount_ratio",
+   "label": "All India: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     24.85,
     14.96
    ]
   },
-  "all_india__value_int": {
-   "name": "all_india__value_int",
-   "label": "All India: value int",
+  "all_india__intensity": {
+   "name": "all_india__intensity",
+   "label": "All India: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     47.14,
     44.39
    ]
   },
-  "all_india__value_mpi": {
-   "name": "all_india__value_mpi",
-   "label": "All India: value mpi",
+  "all_india__multidimensional_poverty_index": {
+   "name": "all_india__multidimensional_poverty_index",
+   "label": "All India: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.12,
     0.07
    ]
   },
-  "andaman_and_nicobar_islands__value_hr": {
-   "name": "andaman_and_nicobar_islands__value_hr",
-   "label": "Andaman & Nicobar Islands: value hr",
+  "andaman_and_nicobar_islands__headcount_ratio": {
+   "name": "andaman_and_nicobar_islands__headcount_ratio",
+   "label": "Andaman & Nicobar Islands: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     4.29,
     2.3
    ]
   },
-  "andaman_and_nicobar_islands__value_int": {
-   "name": "andaman_and_nicobar_islands__value_int",
-   "label": "Andaman & Nicobar Islands: value int",
+  "andaman_and_nicobar_islands__intensity": {
+   "name": "andaman_and_nicobar_islands__intensity",
+   "label": "Andaman & Nicobar Islands: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     40.5,
     40.62
    ]
   },
-  "andaman_and_nicobar_islands__value_mpi": {
-   "name": "andaman_and_nicobar_islands__value_mpi",
-   "label": "Andaman & Nicobar Islands: value mpi",
+  "andaman_and_nicobar_islands__multidimensional_poverty_index": {
+   "name": "andaman_and_nicobar_islands__multidimensional_poverty_index",
+   "label": "Andaman & Nicobar Islands: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.02,
     0.01
    ]
   },
-  "andhra_pradesh__value_hr": {
-   "name": "andhra_pradesh__value_hr",
-   "label": "Andhra Pradesh: value hr",
+  "andhra_pradesh__headcount_ratio": {
+   "name": "andhra_pradesh__headcount_ratio",
+   "label": "Andhra Pradesh: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     11.77,
     6.06
    ]
   },
-  "andhra_pradesh__value_int": {
-   "name": "andhra_pradesh__value_int",
-   "label": "Andhra Pradesh: value int",
+  "andhra_pradesh__intensity": {
+   "name": "andhra_pradesh__intensity",
+   "label": "Andhra Pradesh: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     43.28,
     41.12
    ]
   },
-  "andhra_pradesh__value_mpi": {
-   "name": "andhra_pradesh__value_mpi",
-   "label": "Andhra Pradesh: value mpi",
+  "andhra_pradesh__multidimensional_poverty_index": {
+   "name": "andhra_pradesh__multidimensional_poverty_index",
+   "label": "Andhra Pradesh: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.05,
     0.03
    ]
   },
-  "arunachal_pradesh__value_hr": {
-   "name": "arunachal_pradesh__value_hr",
-   "label": "Arunachal Pradesh: value hr",
+  "arunachal_pradesh__headcount_ratio": {
+   "name": "arunachal_pradesh__headcount_ratio",
+   "label": "Arunachal Pradesh: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     24.23,
     13.76
    ]
   },
-  "arunachal_pradesh__value_int": {
-   "name": "arunachal_pradesh__value_int",
-   "label": "Arunachal Pradesh: value int",
+  "arunachal_pradesh__intensity": {
+   "name": "arunachal_pradesh__intensity",
+   "label": "Arunachal Pradesh: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     47.25,
     43.04
    ]
   },
-  "arunachal_pradesh__value_mpi": {
-   "name": "arunachal_pradesh__value_mpi",
-   "label": "Arunachal Pradesh: value mpi",
+  "arunachal_pradesh__multidimensional_poverty_index": {
+   "name": "arunachal_pradesh__multidimensional_poverty_index",
+   "label": "Arunachal Pradesh: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.12,
     0.06
    ]
   },
-  "assam__value_hr": {
-   "name": "assam__value_hr",
-   "label": "Assam: value hr",
+  "assam__headcount_ratio": {
+   "name": "assam__headcount_ratio",
+   "label": "Assam: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     32.65,
     19.35
    ]
   },
-  "assam__value_int": {
-   "name": "assam__value_int",
-   "label": "Assam: value int",
+  "assam__intensity": {
+   "name": "assam__intensity",
+   "label": "Assam: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     47.88,
     44.41
    ]
   },
-  "assam__value_mpi": {
-   "name": "assam__value_mpi",
-   "label": "Assam: value mpi",
+  "assam__multidimensional_poverty_index": {
+   "name": "assam__multidimensional_poverty_index",
+   "label": "Assam: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.16,
     0.09
    ]
   },
-  "bihar__value_hr": {
-   "name": "bihar__value_hr",
-   "label": "Bihar: value hr",
+  "bihar__headcount_ratio": {
+   "name": "bihar__headcount_ratio",
+   "label": "Bihar: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     51.89,
     33.76
    ]
   },
-  "bihar__value_int": {
-   "name": "bihar__value_int",
-   "label": "Bihar: value int",
+  "bihar__intensity": {
+   "name": "bihar__intensity",
+   "label": "Bihar: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     51.01,
     47.4
    ]
   },
-  "bihar__value_mpi": {
-   "name": "bihar__value_mpi",
-   "label": "Bihar: value mpi",
+  "bihar__multidimensional_poverty_index": {
+   "name": "bihar__multidimensional_poverty_index",
+   "label": "Bihar: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.27,
     0.16
    ]
   },
-  "chandigarh__value_hr": {
-   "name": "chandigarh__value_hr",
-   "label": "Chandigarh: value hr",
+  "chandigarh__headcount_ratio": {
+   "name": "chandigarh__headcount_ratio",
+   "label": "Chandigarh: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     5.97,
     3.52
    ]
   },
-  "chandigarh__value_int": {
-   "name": "chandigarh__value_int",
-   "label": "Chandigarh: value int",
+  "chandigarh__intensity": {
+   "name": "chandigarh__intensity",
+   "label": "Chandigarh: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     43.39,
     47.41
    ]
   },
-  "chandigarh__value_mpi": {
-   "name": "chandigarh__value_mpi",
-   "label": "Chandigarh: value mpi",
+  "chandigarh__multidimensional_poverty_index": {
+   "name": "chandigarh__multidimensional_poverty_index",
+   "label": "Chandigarh: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.03,
     0.02
    ]
   },
-  "chhattisgarh__value_hr": {
-   "name": "chhattisgarh__value_hr",
-   "label": "Chhattisgarh: value hr",
+  "chhattisgarh__headcount_ratio": {
+   "name": "chhattisgarh__headcount_ratio",
+   "label": "Chhattisgarh: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     29.9,
     16.37
    ]
   },
-  "chhattisgarh__value_int": {
-   "name": "chhattisgarh__value_int",
-   "label": "Chhattisgarh: value int",
+  "chhattisgarh__intensity": {
+   "name": "chhattisgarh__intensity",
+   "label": "Chhattisgarh: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     44.64,
     42.61
    ]
   },
-  "chhattisgarh__value_mpi": {
-   "name": "chhattisgarh__value_mpi",
-   "label": "Chhattisgarh: value mpi",
+  "chhattisgarh__multidimensional_poverty_index": {
+   "name": "chhattisgarh__multidimensional_poverty_index",
+   "label": "Chhattisgarh: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.13,
     0.07
    ]
   },
-  "dadra_and_nagar_haveli_and_daman_and_diu__value_hr": {
-   "name": "dadra_and_nagar_haveli_and_daman_and_diu__value_hr",
-   "label": "Dadra And Nagar Haveli And Daman And Diu: value hr",
+  "dadra_and_nagar_haveli_and_daman_and_diu__headcount_ratio": {
+   "name": "dadra_and_nagar_haveli_and_daman_and_diu__headcount_ratio",
+   "label": "Dadra And Nagar Haveli And Daman And Diu: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     19.58,
     9.21
    ]
   },
-  "dadra_and_nagar_haveli_and_daman_and_diu__value_int": {
-   "name": "dadra_and_nagar_haveli_and_daman_and_diu__value_int",
-   "label": "Dadra And Nagar Haveli And Daman And Diu: value int",
+  "dadra_and_nagar_haveli_and_daman_and_diu__intensity": {
+   "name": "dadra_and_nagar_haveli_and_daman_and_diu__intensity",
+   "label": "Dadra And Nagar Haveli And Daman And Diu: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     44.23,
     42.15
    ]
   },
-  "dadra_and_nagar_haveli_and_daman_and_diu__value_mpi": {
-   "name": "dadra_and_nagar_haveli_and_daman_and_diu__value_mpi",
-   "label": "Dadra And Nagar Haveli And Daman And Diu: value mpi",
+  "dadra_and_nagar_haveli_and_daman_and_diu__multidimensional_poverty_index": {
+   "name": "dadra_and_nagar_haveli_and_daman_and_diu__multidimensional_poverty_index",
+   "label": "Dadra And Nagar Haveli And Daman And Diu: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.09,
     0.04
    ]
   },
-  "delhi__value_hr": {
-   "name": "delhi__value_hr",
-   "label": "Delhi: value hr",
+  "delhi__headcount_ratio": {
+   "name": "delhi__headcount_ratio",
+   "label": "Delhi: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     4.44,
     3.43
    ]
   },
-  "delhi__value_int": {
-   "name": "delhi__value_int",
-   "label": "Delhi: value int",
+  "delhi__intensity": {
+   "name": "delhi__intensity",
+   "label": "Delhi: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     43.92,
     41.99
    ]
   },
-  "delhi__value_mpi": {
-   "name": "delhi__value_mpi",
-   "label": "Delhi: value mpi",
+  "delhi__multidimensional_poverty_index": {
+   "name": "delhi__multidimensional_poverty_index",
+   "label": "Delhi: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.02,
     0.01
    ]
   },
-  "goa__value_hr": {
-   "name": "goa__value_hr",
-   "label": "Goa: value hr",
+  "goa__headcount_ratio": {
+   "name": "goa__headcount_ratio",
+   "label": "Goa: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     3.76,
     0.84
    ]
   },
-  "goa__value_int": {
-   "name": "goa__value_int",
-   "label": "Goa: value int",
+  "goa__intensity": {
+   "name": "goa__intensity",
+   "label": "Goa: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     40.13,
     38.69
    ]
   },
-  "goa__value_mpi": {
-   "name": "goa__value_mpi",
-   "label": "Goa: value mpi",
+  "goa__multidimensional_poverty_index": {
+   "name": "goa__multidimensional_poverty_index",
+   "label": "Goa: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.02,
     0
    ]
   },
-  "gujarat__value_hr": {
-   "name": "gujarat__value_hr",
-   "label": "Gujarat: value hr",
+  "gujarat__headcount_ratio": {
+   "name": "gujarat__headcount_ratio",
+   "label": "Gujarat: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     18.47,
     11.66
    ]
   },
-  "gujarat__value_int": {
-   "name": "gujarat__value_int",
-   "label": "Gujarat: value int",
+  "gujarat__intensity": {
+   "name": "gujarat__intensity",
+   "label": "Gujarat: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     44.97,
     43.25
    ]
   },
-  "gujarat__value_mpi": {
-   "name": "gujarat__value_mpi",
-   "label": "Gujarat: value mpi",
+  "gujarat__multidimensional_poverty_index": {
+   "name": "gujarat__multidimensional_poverty_index",
+   "label": "Gujarat: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.08,
     0.05
    ]
   },
-  "haryana__value_hr": {
-   "name": "haryana__value_hr",
-   "label": "Haryana: value hr",
+  "haryana__headcount_ratio": {
+   "name": "haryana__headcount_ratio",
+   "label": "Haryana: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     11.88,
     7.07
    ]
   },
-  "haryana__value_int": {
-   "name": "haryana__value_int",
-   "label": "Haryana: value int",
+  "haryana__intensity": {
+   "name": "haryana__intensity",
+   "label": "Haryana: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     44.4,
     43.34
    ]
   },
-  "haryana__value_mpi": {
-   "name": "haryana__value_mpi",
-   "label": "Haryana: value mpi",
+  "haryana__multidimensional_poverty_index": {
+   "name": "haryana__multidimensional_poverty_index",
+   "label": "Haryana: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.05,
     0.03
    ]
   },
-  "himachal_pradesh__value_hr": {
-   "name": "himachal_pradesh__value_hr",
-   "label": "Himachal Pradesh: value hr",
+  "himachal_pradesh__headcount_ratio": {
+   "name": "himachal_pradesh__headcount_ratio",
+   "label": "Himachal Pradesh: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     7.59,
     4.93
    ]
   },
-  "himachal_pradesh__value_int": {
-   "name": "himachal_pradesh__value_int",
-   "label": "Himachal Pradesh: value int",
+  "himachal_pradesh__intensity": {
+   "name": "himachal_pradesh__intensity",
+   "label": "Himachal Pradesh: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     39.44,
     40.22
    ]
   },
-  "himachal_pradesh__value_mpi": {
-   "name": "himachal_pradesh__value_mpi",
-   "label": "Himachal Pradesh: value mpi",
+  "himachal_pradesh__multidimensional_poverty_index": {
+   "name": "himachal_pradesh__multidimensional_poverty_index",
+   "label": "Himachal Pradesh: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.03,
     0.02
    ]
   },
-  "jammu_and_kashmir_ut__value_hr": {
-   "name": "jammu_and_kashmir_ut__value_hr",
-   "label": "Jammu & Kashmir (UT, from 2019-20): value hr",
+  "jammu_and_kashmir_ut__headcount_ratio": {
+   "name": "jammu_and_kashmir_ut__headcount_ratio",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     4.8
    ]
   },
-  "jammu_and_kashmir_ut__value_int": {
-   "name": "jammu_and_kashmir_ut__value_int",
-   "label": "Jammu & Kashmir (UT, from 2019-20): value int",
+  "jammu_and_kashmir_ut__intensity": {
+   "name": "jammu_and_kashmir_ut__intensity",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     42.11
    ]
   },
-  "jammu_and_kashmir_ut__value_mpi": {
-   "name": "jammu_and_kashmir_ut__value_mpi",
-   "label": "Jammu & Kashmir (UT, from 2019-20): value mpi",
+  "jammu_and_kashmir_ut__multidimensional_poverty_index": {
+   "name": "jammu_and_kashmir_ut__multidimensional_poverty_index",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     null,
     0.02
    ]
   },
-  "jammu_and_kashmir_state__value_hr": {
-   "name": "jammu_and_kashmir_state__value_hr",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): value hr",
+  "jammu_and_kashmir_state__headcount_ratio": {
+   "name": "jammu_and_kashmir_state__headcount_ratio",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     12.56,
     null
    ]
   },
-  "jammu_and_kashmir_state__value_int": {
-   "name": "jammu_and_kashmir_state__value_int",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): value int",
+  "jammu_and_kashmir_state__intensity": {
+   "name": "jammu_and_kashmir_state__intensity",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     44.17,
     null
    ]
   },
-  "jammu_and_kashmir_state__value_mpi": {
-   "name": "jammu_and_kashmir_state__value_mpi",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): value mpi",
+  "jammu_and_kashmir_state__multidimensional_poverty_index": {
+   "name": "jammu_and_kashmir_state__multidimensional_poverty_index",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.06,
     null
    ]
   },
-  "jharkhand__value_hr": {
-   "name": "jharkhand__value_hr",
-   "label": "Jharkhand: value hr",
+  "jharkhand__headcount_ratio": {
+   "name": "jharkhand__headcount_ratio",
+   "label": "Jharkhand: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     42.1,
     28.81
    ]
   },
-  "jharkhand__value_int": {
-   "name": "jharkhand__value_int",
-   "label": "Jharkhand: value int",
+  "jharkhand__intensity": {
+   "name": "jharkhand__intensity",
+   "label": "Jharkhand: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     47.92,
     45.59
    ]
   },
-  "jharkhand__value_mpi": {
-   "name": "jharkhand__value_mpi",
-   "label": "Jharkhand: value mpi",
+  "jharkhand__multidimensional_poverty_index": {
+   "name": "jharkhand__multidimensional_poverty_index",
+   "label": "Jharkhand: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.2,
     0.13
    ]
   },
-  "karnataka__value_hr": {
-   "name": "karnataka__value_hr",
-   "label": "Karnataka: value hr",
+  "karnataka__headcount_ratio": {
+   "name": "karnataka__headcount_ratio",
+   "label": "Karnataka: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     12.77,
     7.58
    ]
   },
-  "karnataka__value_int": {
-   "name": "karnataka__value_int",
-   "label": "Karnataka: value int",
+  "karnataka__intensity": {
+   "name": "karnataka__intensity",
+   "label": "Karnataka: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     42.76,
     41.21
    ]
   },
-  "karnataka__value_mpi": {
-   "name": "karnataka__value_mpi",
-   "label": "Karnataka: value mpi",
+  "karnataka__multidimensional_poverty_index": {
+   "name": "karnataka__multidimensional_poverty_index",
+   "label": "Karnataka: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.06,
     0.03
    ]
   },
-  "kerala__value_hr": {
-   "name": "kerala__value_hr",
-   "label": "Keralam: value hr",
+  "kerala__headcount_ratio": {
+   "name": "kerala__headcount_ratio",
+   "label": "Keralam: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     0.7,
     0.55
    ]
   },
-  "kerala__value_int": {
-   "name": "kerala__value_int",
-   "label": "Keralam: value int",
+  "kerala__intensity": {
+   "name": "kerala__intensity",
+   "label": "Keralam: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     38.99,
     36.92
    ]
   },
-  "kerala__value_mpi": {
-   "name": "kerala__value_mpi",
-   "label": "Keralam: value mpi",
+  "kerala__multidimensional_poverty_index": {
+   "name": "kerala__multidimensional_poverty_index",
+   "label": "Keralam: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0,
     0
    ]
   },
-  "ladakh__value_hr": {
-   "name": "ladakh__value_hr",
-   "label": "Ladakh: value hr",
+  "ladakh__headcount_ratio": {
+   "name": "ladakh__headcount_ratio",
+   "label": "Ladakh: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     12.7,
     3.53
    ]
   },
-  "ladakh__value_int": {
-   "name": "ladakh__value_int",
-   "label": "Ladakh: value int",
+  "ladakh__intensity": {
+   "name": "ladakh__intensity",
+   "label": "Ladakh: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     40.37,
     41.2
    ]
   },
-  "ladakh__value_mpi": {
-   "name": "ladakh__value_mpi",
-   "label": "Ladakh: value mpi",
+  "ladakh__multidimensional_poverty_index": {
+   "name": "ladakh__multidimensional_poverty_index",
+   "label": "Ladakh: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.05,
     0.02
    ]
   },
-  "lakshadweep__value_hr": {
-   "name": "lakshadweep__value_hr",
-   "label": "Lakshadweep: value hr",
+  "lakshadweep__headcount_ratio": {
+   "name": "lakshadweep__headcount_ratio",
+   "label": "Lakshadweep: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     1.82,
     1.11
    ]
   },
-  "lakshadweep__value_int": {
-   "name": "lakshadweep__value_int",
-   "label": "Lakshadweep: value int",
+  "lakshadweep__intensity": {
+   "name": "lakshadweep__intensity",
+   "label": "Lakshadweep: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     35.8,
     36.47
    ]
   },
-  "lakshadweep__value_mpi": {
-   "name": "lakshadweep__value_mpi",
-   "label": "Lakshadweep: value mpi",
+  "lakshadweep__multidimensional_poverty_index": {
+   "name": "lakshadweep__multidimensional_poverty_index",
+   "label": "Lakshadweep: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.01,
     0
    ]
   },
-  "madhya_pradesh__value_hr": {
-   "name": "madhya_pradesh__value_hr",
-   "label": "Madhya Pradesh: value hr",
+  "madhya_pradesh__headcount_ratio": {
+   "name": "madhya_pradesh__headcount_ratio",
+   "label": "Madhya Pradesh: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     36.57,
     20.63
    ]
   },
-  "madhya_pradesh__value_int": {
-   "name": "madhya_pradesh__value_int",
-   "label": "Madhya Pradesh: value int",
+  "madhya_pradesh__intensity": {
+   "name": "madhya_pradesh__intensity",
+   "label": "Madhya Pradesh: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     47.25,
     43.7
    ]
   },
-  "madhya_pradesh__value_mpi": {
-   "name": "madhya_pradesh__value_mpi",
-   "label": "Madhya Pradesh: value mpi",
+  "madhya_pradesh__multidimensional_poverty_index": {
+   "name": "madhya_pradesh__multidimensional_poverty_index",
+   "label": "Madhya Pradesh: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.17,
     0.09
    ]
   },
-  "maharashtra__value_hr": {
-   "name": "maharashtra__value_hr",
-   "label": "Maharashtra: value hr",
+  "maharashtra__headcount_ratio": {
+   "name": "maharashtra__headcount_ratio",
+   "label": "Maharashtra: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     14.8,
     7.81
    ]
   },
-  "maharashtra__value_int": {
-   "name": "maharashtra__value_int",
-   "label": "Maharashtra: value int",
+  "maharashtra__intensity": {
+   "name": "maharashtra__intensity",
+   "label": "Maharashtra: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     43.76,
     41.77
    ]
   },
-  "maharashtra__value_mpi": {
-   "name": "maharashtra__value_mpi",
-   "label": "Maharashtra: value mpi",
+  "maharashtra__multidimensional_poverty_index": {
+   "name": "maharashtra__multidimensional_poverty_index",
+   "label": "Maharashtra: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.07,
     0.03
    ]
   },
-  "manipur__value_hr": {
-   "name": "manipur__value_hr",
-   "label": "Manipur: value hr",
+  "manipur__headcount_ratio": {
+   "name": "manipur__headcount_ratio",
+   "label": "Manipur: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     16.96,
     8.1
    ]
   },
-  "manipur__value_int": {
-   "name": "manipur__value_int",
-   "label": "Manipur: value int",
+  "manipur__intensity": {
+   "name": "manipur__intensity",
+   "label": "Manipur: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     44.61,
     41.91
    ]
   },
-  "manipur__value_mpi": {
-   "name": "manipur__value_mpi",
-   "label": "Manipur: value mpi",
+  "manipur__multidimensional_poverty_index": {
+   "name": "manipur__multidimensional_poverty_index",
+   "label": "Manipur: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.08,
     0.03
    ]
   },
-  "meghalaya__value_hr": {
-   "name": "meghalaya__value_hr",
-   "label": "Meghalaya: value hr",
+  "meghalaya__headcount_ratio": {
+   "name": "meghalaya__headcount_ratio",
+   "label": "Meghalaya: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     32.54,
     27.79
    ]
   },
-  "meghalaya__value_int": {
-   "name": "meghalaya__value_int",
-   "label": "Meghalaya: value int",
+  "meghalaya__intensity": {
+   "name": "meghalaya__intensity",
+   "label": "Meghalaya: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     48.08,
     48.01
    ]
   },
-  "meghalaya__value_mpi": {
-   "name": "meghalaya__value_mpi",
-   "label": "Meghalaya: value mpi",
+  "meghalaya__multidimensional_poverty_index": {
+   "name": "meghalaya__multidimensional_poverty_index",
+   "label": "Meghalaya: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.16,
     0.13
    ]
   },
-  "mizoram__value_hr": {
-   "name": "mizoram__value_hr",
-   "label": "Mizoram: value hr",
+  "mizoram__headcount_ratio": {
+   "name": "mizoram__headcount_ratio",
+   "label": "Mizoram: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     9.78,
     5.3
    ]
   },
-  "mizoram__value_int": {
-   "name": "mizoram__value_int",
-   "label": "Mizoram: value int",
+  "mizoram__intensity": {
+   "name": "mizoram__intensity",
+   "label": "Mizoram: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     47.42,
     45.62
    ]
   },
-  "mizoram__value_mpi": {
-   "name": "mizoram__value_mpi",
-   "label": "Mizoram: value mpi",
+  "mizoram__multidimensional_poverty_index": {
+   "name": "mizoram__multidimensional_poverty_index",
+   "label": "Mizoram: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.05,
     0.02
    ]
   },
-  "nagaland__value_hr": {
-   "name": "nagaland__value_hr",
-   "label": "Nagaland: value hr",
+  "nagaland__headcount_ratio": {
+   "name": "nagaland__headcount_ratio",
+   "label": "Nagaland: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     25.16,
     15.43
    ]
   },
-  "nagaland__value_int": {
-   "name": "nagaland__value_int",
-   "label": "Nagaland: value int",
+  "nagaland__intensity": {
+   "name": "nagaland__intensity",
+   "label": "Nagaland: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     46.29,
     42.61
    ]
   },
-  "nagaland__value_mpi": {
-   "name": "nagaland__value_mpi",
-   "label": "Nagaland: value mpi",
+  "nagaland__multidimensional_poverty_index": {
+   "name": "nagaland__multidimensional_poverty_index",
+   "label": "Nagaland: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.12,
     0.07
    ]
   },
-  "odisha__value_hr": {
-   "name": "odisha__value_hr",
-   "label": "Odisha: value hr",
+  "odisha__headcount_ratio": {
+   "name": "odisha__headcount_ratio",
+   "label": "Odisha: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     29.34,
     15.68
    ]
   },
-  "odisha__value_int": {
-   "name": "odisha__value_int",
-   "label": "Odisha: value int",
+  "odisha__intensity": {
+   "name": "odisha__intensity",
+   "label": "Odisha: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     46.42,
     44.5
    ]
   },
-  "odisha__value_mpi": {
-   "name": "odisha__value_mpi",
-   "label": "Odisha: value mpi",
+  "odisha__multidimensional_poverty_index": {
+   "name": "odisha__multidimensional_poverty_index",
+   "label": "Odisha: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.14,
     0.07
    ]
   },
-  "puducherry__value_hr": {
-   "name": "puducherry__value_hr",
-   "label": "Puducherry: value hr",
+  "puducherry__headcount_ratio": {
+   "name": "puducherry__headcount_ratio",
+   "label": "Puducherry: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     1.71,
     0.85
    ]
   },
-  "puducherry__value_int": {
-   "name": "puducherry__value_int",
-   "label": "Puducherry: value int",
+  "puducherry__intensity": {
+   "name": "puducherry__intensity",
+   "label": "Puducherry: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     38.55,
     38.03
    ]
   },
-  "puducherry__value_mpi": {
-   "name": "puducherry__value_mpi",
-   "label": "Puducherry: value mpi",
+  "puducherry__multidimensional_poverty_index": {
+   "name": "puducherry__multidimensional_poverty_index",
+   "label": "Puducherry: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.01,
     0
    ]
   },
-  "punjab__value_hr": {
-   "name": "punjab__value_hr",
-   "label": "Punjab: value hr",
+  "punjab__headcount_ratio": {
+   "name": "punjab__headcount_ratio",
+   "label": "Punjab: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     5.57,
     4.75
    ]
   },
-  "punjab__value_int": {
-   "name": "punjab__value_int",
-   "label": "Punjab: value int",
+  "punjab__intensity": {
+   "name": "punjab__intensity",
+   "label": "Punjab: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     43.74,
     41.22
    ]
   },
-  "punjab__value_mpi": {
-   "name": "punjab__value_mpi",
-   "label": "Punjab: value mpi",
+  "punjab__multidimensional_poverty_index": {
+   "name": "punjab__multidimensional_poverty_index",
+   "label": "Punjab: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.02,
     0.02
    ]
   },
-  "rajasthan__value_hr": {
-   "name": "rajasthan__value_hr",
-   "label": "Rajasthan: value hr",
+  "rajasthan__headcount_ratio": {
+   "name": "rajasthan__headcount_ratio",
+   "label": "Rajasthan: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     28.86,
     15.31
    ]
   },
-  "rajasthan__value_int": {
-   "name": "rajasthan__value_int",
-   "label": "Rajasthan: value int",
+  "rajasthan__intensity": {
+   "name": "rajasthan__intensity",
+   "label": "Rajasthan: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     47.34,
     42.7
    ]
   },
-  "rajasthan__value_mpi": {
-   "name": "rajasthan__value_mpi",
-   "label": "Rajasthan: value mpi",
+  "rajasthan__multidimensional_poverty_index": {
+   "name": "rajasthan__multidimensional_poverty_index",
+   "label": "Rajasthan: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.14,
     0.07
    ]
   },
-  "sikkim__value_hr": {
-   "name": "sikkim__value_hr",
-   "label": "Sikkim: value hr",
+  "sikkim__headcount_ratio": {
+   "name": "sikkim__headcount_ratio",
+   "label": "Sikkim: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     3.82,
     2.6
    ]
   },
-  "sikkim__value_int": {
-   "name": "sikkim__value_int",
-   "label": "Sikkim: value int",
+  "sikkim__intensity": {
+   "name": "sikkim__intensity",
+   "label": "Sikkim: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     41.2,
     41.02
    ]
   },
-  "sikkim__value_mpi": {
-   "name": "sikkim__value_mpi",
-   "label": "Sikkim: value mpi",
+  "sikkim__multidimensional_poverty_index": {
+   "name": "sikkim__multidimensional_poverty_index",
+   "label": "Sikkim: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.02,
     0.01
    ]
   },
-  "tamil_nadu__value_hr": {
-   "name": "tamil_nadu__value_hr",
-   "label": "Tamil Nadu: value hr",
+  "tamil_nadu__headcount_ratio": {
+   "name": "tamil_nadu__headcount_ratio",
+   "label": "Tamil Nadu: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     4.76,
     2.2
    ]
   },
-  "tamil_nadu__value_int": {
-   "name": "tamil_nadu__value_int",
-   "label": "Tamil Nadu: value int",
+  "tamil_nadu__intensity": {
+   "name": "tamil_nadu__intensity",
+   "label": "Tamil Nadu: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     39.97,
     38.7
    ]
   },
-  "tamil_nadu__value_mpi": {
-   "name": "tamil_nadu__value_mpi",
-   "label": "Tamil Nadu: value mpi",
+  "tamil_nadu__multidimensional_poverty_index": {
+   "name": "tamil_nadu__multidimensional_poverty_index",
+   "label": "Tamil Nadu: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.02,
     0.01
    ]
   },
-  "telangana__value_hr": {
-   "name": "telangana__value_hr",
-   "label": "Telangana: value hr",
+  "telangana__headcount_ratio": {
+   "name": "telangana__headcount_ratio",
+   "label": "Telangana: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     13.18,
     5.88
    ]
   },
-  "telangana__value_int": {
-   "name": "telangana__value_int",
-   "label": "Telangana: value int",
+  "telangana__intensity": {
+   "name": "telangana__intensity",
+   "label": "Telangana: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     43.29,
     40.85
    ]
   },
-  "telangana__value_mpi": {
-   "name": "telangana__value_mpi",
-   "label": "Telangana: value mpi",
+  "telangana__multidimensional_poverty_index": {
+   "name": "telangana__multidimensional_poverty_index",
+   "label": "Telangana: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.06,
     0.02
    ]
   },
-  "tripura__value_hr": {
-   "name": "tripura__value_hr",
-   "label": "Tripura: value hr",
+  "tripura__headcount_ratio": {
+   "name": "tripura__headcount_ratio",
+   "label": "Tripura: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     16.62,
     13.11
    ]
   },
-  "tripura__value_int": {
-   "name": "tripura__value_int",
-   "label": "Tripura: value int",
+  "tripura__intensity": {
+   "name": "tripura__intensity",
+   "label": "Tripura: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     45.03,
     42.68
    ]
   },
-  "tripura__value_mpi": {
-   "name": "tripura__value_mpi",
-   "label": "Tripura: value mpi",
+  "tripura__multidimensional_poverty_index": {
+   "name": "tripura__multidimensional_poverty_index",
+   "label": "Tripura: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.08,
     0.06
    ]
   },
-  "uttarakhand__value_hr": {
-   "name": "uttarakhand__value_hr",
-   "label": "Uttarakhand: value hr",
+  "uttarakhand__headcount_ratio": {
+   "name": "uttarakhand__headcount_ratio",
+   "label": "Uttarakhand: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     17.67,
     9.67
    ]
   },
-  "uttarakhand__value_int": {
-   "name": "uttarakhand__value_int",
-   "label": "Uttarakhand: value int",
+  "uttarakhand__intensity": {
+   "name": "uttarakhand__intensity",
+   "label": "Uttarakhand: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     44.35,
     41.99
    ]
   },
-  "uttarakhand__value_mpi": {
-   "name": "uttarakhand__value_mpi",
-   "label": "Uttarakhand: value mpi",
+  "uttarakhand__multidimensional_poverty_index": {
+   "name": "uttarakhand__multidimensional_poverty_index",
+   "label": "Uttarakhand: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.08,
     0.04
    ]
   },
-  "uttar_pradesh__value_hr": {
-   "name": "uttar_pradesh__value_hr",
-   "label": "Uttar Pradesh: value hr",
+  "uttar_pradesh__headcount_ratio": {
+   "name": "uttar_pradesh__headcount_ratio",
+   "label": "Uttar Pradesh: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     37.68,
     22.93
    ]
   },
-  "uttar_pradesh__value_int": {
-   "name": "uttar_pradesh__value_int",
-   "label": "Uttar Pradesh: value int",
+  "uttar_pradesh__intensity": {
+   "name": "uttar_pradesh__intensity",
+   "label": "Uttar Pradesh: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     47.6,
     44.83
    ]
   },
-  "uttar_pradesh__value_mpi": {
-   "name": "uttar_pradesh__value_mpi",
-   "label": "Uttar Pradesh: value mpi",
+  "uttar_pradesh__multidimensional_poverty_index": {
+   "name": "uttar_pradesh__multidimensional_poverty_index",
+   "label": "Uttar Pradesh: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.18,
     0.1
    ]
   },
-  "west_bengal__value_hr": {
-   "name": "west_bengal__value_hr",
-   "label": "West Bengal: value hr",
+  "west_bengal__headcount_ratio": {
+   "name": "west_bengal__headcount_ratio",
+   "label": "West Bengal: Poverty Estimates - Multi-dimensional Poverty Index: headcount ratio",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     21.29,
     11.89
    ]
   },
-  "west_bengal__value_int": {
-   "name": "west_bengal__value_int",
-   "label": "West Bengal: value int",
+  "west_bengal__intensity": {
+   "name": "west_bengal__intensity",
+   "label": "West Bengal: Poverty Estimates - Multi-dimensional Poverty Index: intensity",
+   "unit": "pct",
+   "group": "Social and demographic indicators",
    "data": [
     45.5,
     42.35
    ]
   },
-  "west_bengal__value_mpi": {
-   "name": "west_bengal__value_mpi",
-   "label": "West Bengal: value mpi",
+  "west_bengal__multidimensional_poverty_index": {
+   "name": "west_bengal__multidimensional_poverty_index",
+   "label": "West Bengal: Poverty Estimates - Multi-dimensional Poverty Index: multidimensional poverty index",
+   "unit": "mpi_index",
+   "group": "Social and demographic indicators",
    "data": [
     0.1,
     0.05

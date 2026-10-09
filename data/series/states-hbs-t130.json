@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2023-04",
-  "unit": "as served by DBIE",
+  "unit": "inr_amount",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Gross Fixed Capital Formation: RBI Handbook of Statistics on Indian States, Table 130",
-  "note": "DBIE report 1674, data provider \"Query 1\". Values exactly as DBIE serves them. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1674, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -47,7 +47,9 @@
  "series": {
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     752504600000,
     1260767400000,
@@ -73,7 +75,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     6600000,
     33200000,
@@ -99,7 +103,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     44033200000,
     72448100000,
@@ -125,7 +131,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -151,7 +159,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     6924500000,
     10110800000,
@@ -177,7 +187,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     1124000000,
     1212000000,
@@ -203,7 +215,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     735100000,
     990900000,
@@ -229,7 +243,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     40058000000,
     40534100000,
@@ -255,7 +271,9 @@
   },
   "dadra_and_nagar_haveli": {
    "name": "dadra_and_nagar_haveli",
-   "label": "Dadra & Nagar Haveli",
+   "label": "Dadra & Nagar Haveli: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     9627600000,
     13177400000,
@@ -281,7 +299,9 @@
   },
   "daman_and_diu": {
    "name": "daman_and_diu",
-   "label": "Daman & Diu",
+   "label": "Daman & Diu: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     4546000000,
     9927900000,
@@ -307,7 +327,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     5378800000,
     5938400000,
@@ -333,7 +355,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     4380700000,
     6917700000,
@@ -359,7 +383,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     85833800000,
     254828200000,
@@ -385,7 +411,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     36604100000,
     43150400000,
@@ -411,7 +439,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     6030800000,
     17409900000,
@@ -437,7 +467,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     2651500000,
     3351800000,
@@ -463,7 +495,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -489,7 +523,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     23320100000,
     40013100000,
@@ -515,7 +551,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     60742500000,
     115074500000,
@@ -541,7 +579,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     9918300000,
     9828400000,
@@ -567,7 +607,9 @@
   },
   "ladakh": {
    "name": "ladakh",
-   "label": "Ladakh",
+   "label": "Ladakh: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -593,7 +635,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -619,7 +663,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     26371700000,
     26985000000,
@@ -645,7 +691,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     137086300000,
     188861700000,
@@ -671,7 +719,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     2100000,
@@ -697,7 +747,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     116500000,
     773300000,
@@ -723,7 +775,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -749,7 +803,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     32900000,
     31200000,
@@ -775,7 +831,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     19845100000,
     66662200000,
@@ -801,7 +859,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     3216600000,
     5246100000,
@@ -827,7 +887,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     21644300000,
     32293000000,
@@ -853,7 +915,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     22038300000,
     23678800000,
@@ -879,7 +943,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -905,7 +971,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     98764200000,
     134195300000,
@@ -931,7 +999,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     null,
     null,
@@ -957,7 +1027,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     123900000,
     603000000,
@@ -983,7 +1055,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     7772600000,
     15709200000,
@@ -1009,7 +1083,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     51363700000,
     91383100000,
@@ -1035,7 +1111,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Gross Fixed Capital Formation",
+   "unit": "inr_amount",
+   "group": "Industry",
    "data": [
     22212900000,
     29396700000,

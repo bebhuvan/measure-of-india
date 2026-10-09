@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2023-03",
-  "unit": "Square Kilometre",
+  "unit": "sq_km",
   "periodKind": "asOn",
   "sparse": true,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Tree Cover: RBI Handbook of Statistics on Indian States, Table 101",
-  "note": "DBIE report 1648, data provider \"Main\". Values exactly as DBIE serves them; DBIE's unit label: Square Kilometre. Periods: as on the date served. Dimensions: none; measures: value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1648, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: Square Kilometre. Periods: as on the date served. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2001-03-01",
@@ -38,7 +38,9 @@
  "series": {
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     1942,
     935,
@@ -55,7 +57,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     140,
     352,
@@ -72,7 +76,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     95,
     130,
@@ -89,7 +95,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     3693,
     1620,
@@ -106,7 +114,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     2694,
     5012,
@@ -123,7 +133,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     478,
     363,
@@ -140,7 +152,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     3264,
     1731,
@@ -157,7 +171,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     70,
     217,
@@ -174,7 +190,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     95,
     136,
@@ -191,7 +209,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     4364,
     6381,
@@ -208,7 +228,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     14,
     22,
@@ -225,7 +247,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     68,
     116,
@@ -242,7 +266,9 @@
   },
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     83,
     33,
@@ -259,7 +285,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     7545,
     7715,
@@ -276,7 +304,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     448,
     571,
@@ -293,7 +323,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     40,
     98,
@@ -310,7 +342,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     1634,
     1608,
@@ -327,7 +361,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     1526,
     1415,
@@ -344,7 +380,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     2,
     8,
@@ -361,7 +399,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     2217,
     3826,
@@ -378,7 +418,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     397,
     491,
@@ -395,7 +437,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     5286,
     8638,
@@ -412,7 +456,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     4036,
     10586,
@@ -429,7 +475,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     8269,
     9320,
@@ -446,7 +494,9 @@
   },
   "daman_and_diu": {
    "name": "daman_and_diu",
-   "label": "Daman & Diu",
+   "label": "Daman & Diu: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     4,
     6,
@@ -467,7 +517,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     62,
     136,
@@ -484,7 +536,9 @@
   },
   "dadra_and_nagar_haveli": {
    "name": "dadra_and_nagar_haveli",
-   "label": "Dadra & Nagar Haveli",
+   "label": "Dadra & Nagar Haveli: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     27,
     35,
@@ -501,7 +555,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     5751,
     7250,
@@ -518,7 +574,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     3535,
     6723,
@@ -535,7 +593,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     9011,
     12120,
@@ -552,7 +612,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -569,7 +631,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     7446,
     5371,
@@ -586,7 +650,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     null,
     2,
@@ -603,7 +669,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     6054,
     4991,
@@ -620,7 +688,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     1146,
     1903,
@@ -637,7 +707,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     35,
     35,
@@ -654,7 +726,9 @@
   },
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     81472,
     99896,
@@ -671,7 +745,9 @@
   },
   "ladakh": {
    "name": "ladakh",
-   "label": "Ladakh",
+   "label": "Ladakh: Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     null,
     null,
@@ -688,7 +764,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Tree Cover",
+   "unit": "sq_km",
+   "group": "Environment",
    "data": [
     null,
     null,

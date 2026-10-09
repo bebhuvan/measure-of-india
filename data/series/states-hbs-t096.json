@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2025-03",
-  "unit": "Lakh Metric Tonnes",
+  "unit": "lakh_tonnes",
   "periodKind": "asOn",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Storage Capacity of Foodgrains: RBI Handbook of Statistics on Indian States, Table 96",
-  "note": "DBIE report 1644, data provider \"Query 1\". Values exactly as DBIE serves them; DBIE's unit label: Lakh Metric Tonnes (rupee amounts are served in rupees). Periods: as on the date served. Dimensions: none; measures: value 1. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1644, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: Lakh Metric Tonnes. Periods: as on the date served. Dimensions: none; measures: value. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2013-03-01",
@@ -40,7 +40,9 @@
  "series": {
   "andaman_and_nicobar_islands": {
    "name": "andaman_and_nicobar_islands",
-   "label": "Andaman & Nicobar Islands",
+   "label": "Andaman & Nicobar Islands: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.1,
     0.1,
@@ -59,7 +61,9 @@
   },
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -78,7 +82,9 @@
   },
   "andhra_pradesh_undivided": {
    "name": "andhra_pradesh_undivided",
-   "label": "Andhra Pradesh (undivided, to 2013-14)",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     91.3,
     68.47,
@@ -97,7 +103,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.23,
     0.23,
@@ -116,7 +124,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     6.07,
     6.25,
@@ -135,7 +145,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     11.21,
     11.5,
@@ -154,7 +166,9 @@
   },
   "chandigarh": {
    "name": "chandigarh",
-   "label": "Chandigarh",
+   "label": "Chandigarh: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     3.7,
     4.09,
@@ -173,7 +187,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     23.66,
     23.7,
@@ -192,7 +208,9 @@
   },
   "dadra_and_nagar_haveli": {
    "name": "dadra_and_nagar_haveli",
-   "label": "Dadra & Nagar Haveli",
+   "label": "Dadra & Nagar Haveli: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0,
     0,
@@ -211,7 +229,9 @@
   },
   "daman_and_diu": {
    "name": "daman_and_diu",
-   "label": "Daman & Diu",
+   "label": "Daman & Diu: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0,
     0,
@@ -230,7 +250,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     5.16,
     5.14,
@@ -249,7 +271,9 @@
   },
   "goa": {
    "name": "goa",
-   "label": "Goa",
+   "label": "Goa: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.5,
     0.5,
@@ -268,7 +292,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     17.21,
     18.33,
@@ -287,7 +313,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     57.66,
     64.78,
@@ -306,7 +334,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.45,
     0.45,
@@ -325,7 +355,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     1.41,
     1.75,
@@ -344,7 +376,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -363,7 +397,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     1.69,
     2.11,
@@ -382,7 +418,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     24.16,
     25.02,
@@ -401,7 +439,9 @@
   },
   "kerala": {
    "name": "kerala",
-   "label": "Keralam",
+   "label": "Keralam: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     9.06,
     9,
@@ -420,7 +460,9 @@
   },
   "ladakh": {
    "name": "ladakh",
-   "label": "Ladakh",
+   "label": "Ladakh: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -439,7 +481,9 @@
   },
   "lakshadweep": {
    "name": "lakshadweep",
-   "label": "Lakshadweep",
+   "label": "Lakshadweep: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0,
     0,
@@ -458,7 +502,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     59.2,
     68.63,
@@ -477,7 +523,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     50.66,
     53.43,
@@ -496,7 +544,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.3,
     0.31,
@@ -515,7 +565,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.4,
     0.42,
@@ -534,7 +586,9 @@
   },
   "mizoram": {
    "name": "mizoram",
-   "label": "Mizoram",
+   "label": "Mizoram: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.26,
     0.26,
@@ -553,7 +607,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.46,
     0.46,
@@ -572,7 +628,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     15.33,
     14.09,
@@ -591,7 +649,9 @@
   },
   "puducherry": {
    "name": "puducherry",
-   "label": "Puducherry",
+   "label": "Puducherry: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.84,
     0.84,
@@ -610,7 +670,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     168.1,
     182.66,
@@ -629,7 +691,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     38.78,
     39.88,
@@ -648,7 +712,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.11,
     0.11,
@@ -667,7 +733,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     23.36,
     24.41,
@@ -686,7 +754,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -705,7 +775,9 @@
   },
   "total": {
    "name": "total",
-   "label": "Total",
+   "label": "Total: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     737.14,
     741.83,
@@ -724,7 +796,9 @@
   },
   "total_east_zone": {
    "name": "total_east_zone",
-   "label": "Total East Zone",
+   "label": "Total East Zone: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     48.02,
     47.46,
@@ -743,7 +817,9 @@
   },
   "total_north_east_zone": {
    "name": "total_north_east_zone",
-   "label": "Total North-east  Zone",
+   "label": "Total North-east  Zone: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     8.48,
     8.77,
@@ -762,7 +838,9 @@
   },
   "total_north_zone": {
    "name": "total_north_zone",
-   "label": "Total North Zone",
+   "label": "Total North Zone: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     380.6,
     393.18,
@@ -781,7 +859,9 @@
   },
   "total_south_zone": {
    "name": "total_south_zone",
-   "label": "Total South Zone",
+   "label": "Total South Zone: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     148.82,
     127.84,
@@ -800,7 +880,9 @@
   },
   "total_west_zone": {
    "name": "total_west_zone",
-   "label": "Total West Zone",
+   "label": "Total West Zone: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     151.22,
     164.58,
@@ -819,7 +901,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     0.76,
     0.83,
@@ -838,7 +922,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     2.73,
     2.84,
@@ -857,7 +943,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     102.63,
     91.59,
@@ -876,7 +964,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Storage Capacity of Foodgrains",
+   "unit": "lakh_tonnes",
+   "group": "Agriculture and allied",
    "data": [
     19.68,
     19.64,

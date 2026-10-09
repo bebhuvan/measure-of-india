@@ -9,7 +9,7 @@
   "geo": "IND",
   "releaseDate": null,
   "latestPeriod": "2024-04",
-  "unit": "Kg. Per Hectare",
+  "unit": "kg_per_hectare",
   "periodKind": "fy",
   "sparse": false,
   "hbs": {
@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Estimates of Yield - Wheat: RBI Handbook of Statistics on Indian States, Table 81",
-  "note": "DBIE report 1630, data provider \"Main\". Values exactly as DBIE serves them; DBIE's unit label: Kg. Per Hectare. Periods: fiscal years, dated at April. Dimensions: none; measures: value 1. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1630, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor); DBIE's unit column says: Kg. Per Hectare. Periods: fiscal years, dated at April. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -48,7 +48,9 @@
  "series": {
   "andhra_pradesh": {
    "name": "andhra_pradesh",
-   "label": "Andhra Pradesh",
+   "label": "Andhra Pradesh: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     556,
     818,
@@ -81,7 +83,9 @@
   },
   "manipur": {
    "name": "manipur",
-   "label": "Manipur",
+   "label": "Manipur: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -108,7 +112,9 @@
   },
   "tamil_nadu": {
    "name": "tamil_nadu",
-   "label": "Tamil Nadu",
+   "label": "Tamil Nadu: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -135,7 +141,9 @@
   },
   "telangana": {
    "name": "telangana",
-   "label": "Telangana",
+   "label": "Telangana: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -167,7 +175,9 @@
   },
   "karnataka": {
    "name": "karnataka",
-   "label": "Karnataka",
+   "label": "Karnataka: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     740,
     858,
@@ -194,7 +204,9 @@
   },
   "chhattisgarh": {
    "name": "chhattisgarh",
-   "label": "Chhattisgarh",
+   "label": "Chhattisgarh: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     853,
     886,
@@ -221,7 +233,9 @@
   },
   "nagaland": {
    "name": "nagaland",
-   "label": "Nagaland",
+   "label": "Nagaland: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     1585,
     1583,
@@ -248,7 +262,9 @@
   },
   "himachal_pradesh": {
    "name": "himachal_pradesh",
-   "label": "Himachal Pradesh",
+   "label": "Himachal Pradesh: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     1890,
     1894,
@@ -275,7 +291,9 @@
   },
   "jammu_and_kashmir_state": {
    "name": "jammu_and_kashmir_state",
-   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19)",
+   "label": "Jammu & Kashmir (state, with Ladakh, to 2018-19): Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     1910,
     1790,
@@ -302,7 +320,9 @@
   },
   "sikkim": {
    "name": "sikkim",
-   "label": "Sikkim",
+   "label": "Sikkim: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     1456,
     1385,
@@ -329,7 +349,9 @@
   },
   "assam": {
    "name": "assam",
-   "label": "Assam",
+   "label": "Assam: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     1066,
     1074,
@@ -356,7 +378,9 @@
   },
   "maharashtra": {
    "name": "maharashtra",
-   "label": "Maharashtra",
+   "label": "Maharashtra: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     1344,
     1393,
@@ -383,7 +407,9 @@
   },
   "odisha": {
    "name": "odisha",
-   "label": "Odisha",
+   "label": "Odisha: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     1250,
     1364,
@@ -410,7 +436,9 @@
   },
   "jharkhand": {
    "name": "jharkhand",
-   "label": "Jharkhand",
+   "label": "Jharkhand: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     2381,
     1340,
@@ -437,7 +465,9 @@
   },
   "arunachal_pradesh": {
    "name": "arunachal_pradesh",
-   "label": "Arunachal Pradesh",
+   "label": "Arunachal Pradesh: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     2023,
     1525,
@@ -464,7 +494,9 @@
   },
   "meghalaya": {
    "name": "meghalaya",
-   "label": "Meghalaya",
+   "label": "Meghalaya: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     1778,
     1714,
@@ -491,7 +523,9 @@
   },
   "bihar": {
    "name": "bihar",
-   "label": "Bihar",
+   "label": "Bihar: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     1609,
     1617,
@@ -518,7 +552,9 @@
   },
   "madhya_pradesh": {
    "name": "madhya_pradesh",
-   "label": "Madhya Pradesh",
+   "label": "Madhya Pradesh: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     1735,
     1613,
@@ -545,7 +581,9 @@
   },
   "uttarakhand": {
    "name": "uttarakhand",
-   "label": "Uttarakhand",
+   "label": "Uttarakhand: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     2038,
     1633,
@@ -572,7 +610,9 @@
   },
   "tripura": {
    "name": "tripura",
-   "label": "Tripura",
+   "label": "Tripura: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     2545,
     2636,
@@ -599,7 +639,9 @@
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",
-   "label": "Jammu & Kashmir (UT, from 2019-20)",
+   "label": "Jammu & Kashmir (UT, from 2019-20): Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     null,
     null,
@@ -626,7 +668,9 @@
   },
   "west_bengal": {
    "name": "west_bengal",
-   "label": "West Bengal",
+   "label": "West Bengal: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     2103,
     2109,
@@ -653,7 +697,9 @@
   },
   "uttar_pradesh": {
    "name": "uttar_pradesh",
-   "label": "Uttar Pradesh",
+   "label": "Uttar Pradesh: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     2502,
     2627,
@@ -680,7 +726,9 @@
   },
   "gujarat": {
    "name": "gujarat",
-   "label": "Gujarat",
+   "label": "Gujarat: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     2482,
     2700,
@@ -707,7 +755,9 @@
   },
   "all_india": {
    "name": "all_india",
-   "label": "All India",
+   "label": "All India: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     2602,
     2619,
@@ -734,7 +784,9 @@
   },
   "rajasthan": {
    "name": "rajasthan",
-   "label": "Rajasthan",
+   "label": "Rajasthan: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     2839,
     2762,
@@ -761,7 +813,9 @@
   },
   "haryana": {
    "name": "haryana",
-   "label": "Haryana",
+   "label": "Haryana: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     3901,
     3844,
@@ -788,7 +842,9 @@
   },
   "delhi": {
    "name": "delhi",
-   "label": "Delhi",
+   "label": "Delhi: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     3944,
     4339,
@@ -815,7 +871,9 @@
   },
   "punjab": {
    "name": "punjab",
-   "label": "Punjab",
+   "label": "Punjab: Estimates of Yield - Wheat",
+   "unit": "kg_per_hectare",
+   "group": "Agriculture and allied",
    "data": [
     4221,
     4179,
