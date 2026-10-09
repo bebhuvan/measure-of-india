@@ -135,9 +135,17 @@ Data Bank's IDH config. Wanted, all-India unless said, full history, every vinta
   and accounts by band; state, district, bank group, metro, age and gender tables; the whole
   quarterly BSR-2.
 
-## Next
+## Checks done by eye
 
-Send the done message to the coordinator.
+Every-cut table on CPI at 1440 and 390 (filter by state, sort by change), the WPI 953-item
+long-tail page at both widths; the five seam plates (CPI §02 and CPI-AL, WPI §02, IIP, GDP
+§11) at 1440; one share image downloaded from CPI §02 through the Share menu (PNG 3888 x
+2544: title, key, chart, source, brand all present).
+
+## State
+
+Done. Gates: build, validate, asof, qc, chart lint, 27 tests and prose:dry green; coverage
+fails on the omissions above, by design.
 
 ## Note for family sessions: adding the every-cut table
 
