@@ -3,13 +3,14 @@ import fs from "node:fs";
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
 import GuideData from "../../components/GuideData.astro";
+import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 import { period } from "../../dossiers/periods.js";
 const D = bySlug["services"];
 const load = (slug) => JSON.parse(fs.readFileSync(`data/series/${slug}.json`, "utf8"));
 // the large bundles ride in the page as picks of the series the plates draw; the whole files
-// are in the downloads and the explorer below (CONTRACT-render: page JS budget)
+// are in the downloads and the every-series table below (CONTRACT-render: page JS budget)
 const pick = (slug, re) => { const b = load(slug); return { meta: { vintage: b.meta.vintage, versions: b.meta.versions ?? null }, dates: b.dates,
   series: Object.fromEntries(Object.entries(b.series).filter(([k]) => re.test(k)).map(([k, s]) => [k, { name: s.name, label: s.label, color: s.color, data: s.data }])) }; };
 const PICK = {
@@ -23,8 +24,6 @@ const PICK = {
 const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
 const PS = period("services-gva-2022-share"), PT = period("services-trade-monthly"), PI = period("services-isp-growth");
 const fy = (p) => `${p.year}-${String((+p.year + 1) % 100).padStart(2, "0")}`;
-// the explorer: every bundle this guide draws on, opened on demand
-const cuts = D.bundles.map((b) => { const j = load(b); return { b, n: Object.keys(j.series).length, what: (j.meta.coverage ?? (b === "isp" ? "All India, 19 service sub-sectors of the trial Index of Services Production: monthly index levels, base 2024-25 = 100 (the industrial production guide's bundle)" : Object.values(j.series).slice(0, 3).map((x) => x.label).join(", "))).replace(/ — /g, ": ").replace(/ · /g, ", "), from: j.dates[0].slice(0, 7), to: j.dates.at(-1).slice(0, 7) }; });
 ---
 <Base
   title="Services · India Atlas"
@@ -604,7 +603,7 @@ const cuts = D.bundles.map((b) => { const j = load(b); return { b, n: Object.key
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Each bar adds to 100 per cent of that activity's establishments. A business run from home has no rent to pay, which is why tutors, tailors and beauticians so often work from a room in the house. The survey's other profiles (ownership, the owner's social group, hours worked, months open, registration) are in the downloads and the explorer below.</p>
+            <p>Each bar adds to 100 per cent of that activity's establishments. A business run from home has no rent to pay, which is why tutors, tailors and beauticians so often work from a room in the house. The survey's other profiles (ownership, the owner's social group, hours worked, months open, registration) are in the every-series table and the downloads below.</p>
           </div>
           <div class="now">
             <span class="mk">As of 2023-24</span>
@@ -615,25 +614,9 @@ const cuts = D.bundles.map((b) => { const j = load(b); return { b, n: Object.key
     </div>
   </section>
 
-  <!-- § 08 every cut: the long tail, reachable -->
-  <section>
-    <div class="sec-head"><span class="no">08</span><h2>Every cut</h2><span class="line"></span><span class="unit">Every series this guide holds, opened on demand</span></div>
-    <div class="prose">
-      <p>The plates above show the cuts that carry a finding. Everything else the sources publish on services is here: every sub-sector, every BoP category and purpose code, every PLFS cell by sex and place, every ASUSE activity and profile. Open a file to see its series with their latest values, and filter by any word.</p>
-    </div>
-    <div class="break cuts">
-      {cuts.map((c) => (
-        <details class="cut" data-bundle={c.b}>
-          <summary><span class="cut-n">{c.n.toLocaleString("en-IN")} series</span><span class="cut-w">{c.what}</span><span class="cut-d">{c.from} to {c.to}</span></summary>
-          <div class="cut-body"><p class="cut-load">Loading…</p></div>
-        </details>
-      ))}
-    </div>
-  </section>
-
   <!-- § 09 what this measures (evergreen) -->
   <section>
-    <div class="sec-head"><span class="no">09</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">08</span><h2>What this measures</h2><span class="line"></span></div>
     <div class="prose">
       <p>Four instruments, each answering a different question. Keep them apart.</p>
       <p><b>The national accounts</b> measure value added: what each industry's output is worth after the inputs it uses up. They include the informal economy, estimated from surveys and indicators, and government services, valued at what they cost. They are the broadest measure and the slowest: annual detail arrives a year or more late and is revised for about three years. India rebased its national accounts to 2022-23 in 2026; the 2011-12 series continues alongside for history. The two rulers are never joined here.</p>
@@ -646,7 +629,7 @@ const cuts = D.bundles.map((b) => { const j = load(b); return { b, n: Object.key
 
   <!-- § 10 misreadings -->
   <section>
-    <div class="sec-head"><span class="no">10</span><h2>How to misread these numbers</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">09</span><h2>How to misread these numbers</h2><span class="line"></span></div>
     <ul class="misread">
       <li><span class="no">1</span><div><h3>"India is a software economy."</h3><p>Software is India's largest services export, but a small part of what services produce at home. Most service output is trade, rent and property, finance, transport, government and the work of small shops, schools and clinics.</p></div></li>
       <li><span class="no">2</span><div><h3>"Services employ most Indians."</h3><p>Services produce more than half of output but employ about a third of workers. Farming still employs more people. Most service jobs are self-employment in small shops and stalls, not salaried office work.</p></div></li>
@@ -656,6 +639,8 @@ const cuts = D.bundles.map((b) => { const j = load(b); return { b, n: Object.key
       <li><span class="no">6</span><div><h3>"Services exports are profit for India."</h3><p>Exports are receipts, not earnings. A software firm's export revenue pays its salaries, rent and taxes in India. That spending is why services exports matter for jobs, and why receipts are larger than the value added behind them.</p></div></li>
     </ul>
   </section>
+
+  <EveryCut slug="services" />
 
   <GuideData slug="services" />
 
@@ -689,26 +674,6 @@ const cuts = D.bundles.map((b) => { const j = load(b); return { b, n: Object.key
 
 </div>
 <style is:global>
-  /* §08 every-cut explorer: layout only */
-  .prose + .break{margin-top:40px}
-  /* labels printed inside filled bars: no white halo (it would thicken white text into a blob) */
-  .plotzone svg g.on-fill text{stroke:none}
-  .cuts details.cut{border-top:1px solid var(--rule);padding:12px 0}
-  .cuts details.cut:last-child{border-bottom:1px solid var(--rule)}
-  .cuts summary{cursor:pointer;display:grid;grid-template-columns:120px 1fr 170px;gap:16px;font-family:var(--sans);font-size:.86rem;color:var(--ink-soft);list-style:none}
-  .cuts summary::-webkit-details-marker{display:none}
-  .cuts .cut-n{font-variant-numeric:tabular-nums;color:var(--ink)}
-  .cuts .cut-d{color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
-  .cuts .cut-body{padding:14px 0 4px}
-  .cuts .cut-filter{width:100%;max-width:420px;font:inherit;font-family:var(--sans);font-size:.86rem;padding:7px 10px;border:1px solid var(--rule-2);margin-bottom:10px}
-  .cuts .cut-scroll{max-height:460px;overflow:auto}
-  .cuts table{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:.8rem}
-  .cuts th{text-align:left;color:var(--muted);font-weight:400;border-bottom:1px solid var(--rule-2);padding:6px 8px;position:sticky;top:0;background:var(--bg)}
-  .cuts td{border-bottom:1px solid var(--rule);padding:6px 8px;vertical-align:top;color:var(--ink-soft)}
-  .cuts td small{display:block;color:var(--faint);font-size:.75rem}
-  .cuts .n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-  .cuts .more,.cuts .cut-err,.cuts .cut-load{color:var(--muted);font-family:var(--sans);font-size:.8rem}
-  @media(max-width:680px){.cuts summary{grid-template-columns:1fr}.cuts .cut-d{text-align:left}}
 </style>
 <script>
   import "../../dossiers/guide.client.js";

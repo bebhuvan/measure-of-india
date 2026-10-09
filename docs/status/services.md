@@ -1,14 +1,15 @@
 # Services (`services`): status
 
-Branch `lb/services`. Updated 2026-10-09. **Done**, all gates green.
+Branch `lb/services`. Updated 2026-10-09. **Done**, all gates green; merged launch-build (428204b) at the coordinator's request.
 
 ## What is built
 
 - **Guide** `/guides/services/`: 10 sections, 16 plates. What counts as a service (lived
   reality), size and growth (NAS, two bases), the trial ISP, services trade (75 years, monthly,
   BPM6 categories, purpose codes behind GCC-type work), who works in services (PLFS),
-  informal service enterprises (ASUSE), an "Every cut" explorer (loads each bundle's JSON
-  only when opened), what this measures, six misreadings, data and provenance.
+  informal service enterprises (ASUSE), what this measures, six misreadings, the framework's
+  every-cut table (all 27,851 series, 8 long-tail page sets), data and provenance. The
+  page-local explorer of the first commit was replaced by the framework table.
 - **Adapter** `scripts/lib/products/services.mjs`: five products, one dossier key each in
   `sources.yml` (`services-isp`, `-nas`, `-trade`, `-jobs`, `-asuse`), plus `--catalogue`.
 - **14 bundles**: `services-isp-growth`, `-isp-annual`; `services-gva-{2022,2011}-{share,growth,level}`;
@@ -25,7 +26,7 @@ Branch `lb/services`. Updated 2026-10-09. **Done**, all gates green.
 ## Gates (at the commit)
 
 `npx astro build` ok; `npm run gates` ok (validate, coverage, asof, qc, chart lint);
-`npm test` 18/18; `npm run prose:dry` ok; both prose files pass verify.
+`npm test` 27/27; `npm run prose:dry` ok; both prose files pass verify.
 
 ## Hand checks (against the agencies' own releases)
 
@@ -99,3 +100,13 @@ services and UPI by merchant code).
 
 - When DBIE catches up, monthly trade gains Jun to Aug 2026; asof stamps will flag.
 - State services (GSVA by state) belongs to the states guide; a link from here once it lands.
+
+## After the launch-build merge (2026-10-09)
+
+- Re-ran the DBIE adapter on the quote-aware `dbieReport` (5dc314d): only the raw archive
+  changed (it now keeps the 5,232 previously misaligned financial-account rows of 1076); every
+  services bundle came out identical. The pre-fix raw is archived in `data/raw/vintages/`.
+- Every-cut units added in one block in `src/dossiers/everycut.js` (`pct_of_gva`,
+  `pct_of_workers`, `usd_mn`, `usd_bn`) plus cut names for the 14 bundles. Long tails carry
+  `group`: BPM6 category (BoP quarterly), flow (purpose codes), table family (PLFS), service
+  activity (ASUSE).

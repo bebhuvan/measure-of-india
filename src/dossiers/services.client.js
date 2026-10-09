@@ -8,8 +8,6 @@
 //                        RBI DBIE: monthly totals, BPM6 categories, purpose codes, 1950-51 on
 //   services-jobs-*      PLFS: share of workers by industry (calendar years; agriculture years)
 //   services-asuse*      ASUSE: unincorporated service enterprises by activity
-// The "Every cut" explorer at the end fetches a bundle's JSON from /data/ only when a reader
-// opens it (CONTRACT-render: below-the-fold ledgers load lazily).
 
 import * as Plot from "@observablehq/plot";
 import share22 from "../../data/series/services-gva-2022-share.json";
@@ -23,7 +21,7 @@ import tradeM from "../../data/series/services-trade-monthly.json";
 import bopA from "../../data/series/services-bop-annual.json";
 // the large bundles (jobs, enterprises, BoP detail) ride in the page as build-time picks of
 // just the series the plates draw (src/pages/guides/services.astro, #svc-data): the whole
-// files are megabytes and stay in the downloads and the explorer
+// files are megabytes and stay in the downloads and the every-series table
 const PICK = JSON.parse(document.getElementById("svc-data")?.textContent || "{}");
 const bopQ = PICK["services-bop-quarterly"], invQ = PICK["services-invisibles-quarterly"], jobsCy = PICK["services-jobs-cy"], jobsAy = PICK["services-jobs-ay"];
 const asuse = PICK["services-asuse"], asuseProfile = PICK["services-asuse-profile"];
@@ -42,7 +40,6 @@ const monthOf = (iso) => `${MONTHS[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}`;
 const qOf = (iso) => { const m = +iso.slice(5, 7) - 1; return `${M3[m]} to ${M3[m + 2]} ${iso.slice(0, 4)}`; };
 const bn = (mn) => mn / 1000;
 const csvOf = (header, rows) => [header.join(","), ...rows.map((r) => r.map((v) => (v == null ? "" : /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : v)).join(","))].join("\n");
-const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 const short = (s, n = 44) => (s.length > n ? s.slice(0, n - 1).trimEnd() + "…" : s);
 
 function wirePlate(id, plot, filename, csv) {
@@ -635,34 +632,6 @@ const asKey = (ind, act, sector = "combined", et = "all") => `${ind}${MID[ind] ?
   setHTML("ex-aw-edu", home("education").toFixed(1) + "%");
   wirePlate("cb-awhere", plot, "india-atlas_informal-services-where-they-operate", csvOf(["activity", "location", "share_of_establishments_pct", "survey_year"], rows.map((r) => [r.label, r.loc, r.v, asFy])));
 }
-
-/* ======================== § 08 every cut: the lazy explorer ======================== */
-document.querySelectorAll("details.cut[data-bundle]").forEach((det) => {
-  det.addEventListener("toggle", async () => {
-    if (!det.open || det.dataset.loaded) return;
-    det.dataset.loaded = "1";
-    const box = det.querySelector(".cut-body");
-    try {
-      const b = await fetch(`/data/${det.dataset.bundle}.json`).then((r) => r.json());
-      const dates = b.dates;
-      const rows = Object.entries(b.series).map(([k, s]) => {
-        const i = lastIdx(s.data); const f = s.data.findIndex((v) => v != null);
-        return { k, label: s.label, first: f >= 0 ? dates[f].slice(0, 7) : "", last: i >= 0 ? dates[i].slice(0, 7) : "", v: i >= 0 ? s.data[i] : null, prev: i > 0 ? s.data[i - 1] : null };
-      });
-      box.innerHTML = `<input class="cut-filter" type="search" placeholder="Filter ${rows.length.toLocaleString("en-IN")} series" aria-label="Filter series"><div class="cut-scroll"><table><thead><tr><th>Series</th><th>From</th><th>Latest</th><th class="n">Value</th><th class="n">Previous</th></tr></thead><tbody></tbody></table></div>`;
-      const tb = box.querySelector("tbody"), inp = box.querySelector("input");
-      const draw = (q) => {
-        const re = q ? new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i") : null;
-        const hit = rows.filter((r) => !re || re.test(r.label) || re.test(r.k)).slice(0, 400);
-        tb.innerHTML = hit.map((r) => `<tr><td>${esc(r.label)}<small>${esc(r.k)}</small></td><td>${r.first}</td><td>${r.last}</td><td class="n">${r.v == null ? "—" : r.v.toLocaleString("en-IN")}</td><td class="n">${r.prev == null ? "—" : r.prev.toLocaleString("en-IN")}</td></tr>`).join("") +
-          (rows.filter((r) => !re || re.test(r.label) || re.test(r.k)).length > 400 ? `<tr><td colspan="5" class="more">First 400 shown; narrow the filter, or download the whole file.</td></tr>` : "");
-      };
-      draw(""); inp.addEventListener("input", () => draw(inp.value.trim()));
-    } catch {
-      box.innerHTML = `<p class="cut-err">This table could not be loaded here. The whole file is in the downloads below.</p>`;
-    }
-  });
-});
 
 /* ======================== provenance ======================== */
 setHTML("prov-vintage", share22.meta.vintage);

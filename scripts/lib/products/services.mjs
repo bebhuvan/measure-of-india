@@ -354,7 +354,9 @@ export async function buildServicesTrade(root, dcfg, vintage, cfg) {
         const data = axis.map((d) => usdMn(best.get(`${code}|${fl}|${d}`)?.v ?? null));
         if (!data.some((v) => v != null)) continue;
         const what = code === "1.A" ? "Goods and services" : code === "1.A.a" ? "Goods" : code === "1.A.b" ? "Services, all" : items.get(code);
+        const top = code.split(".").slice(0, 4).join(".");
         series[key] = { name: `bop_${key}_usd_mn`, label: `${what}, ${fl === "credit" ? "exports (credit)" : fl === "debit" ? "imports (debit)" : "net"}`, code, flow: fl,
+          group: top === code && code.split(".").length < 4 ? (code === "1.A.b" ? "Services, all" : "Goods, for context") : `${top} ${items.get(top) ?? ""}`.trim(),
           color: code === "1.A.b" && fl === "credit" ? ACC : "#A3A9B4", unit: "usd_mn", data };
       }
     });
@@ -379,7 +381,7 @@ export async function buildServicesTrade(root, dcfg, vintage, cfg) {
       const [fl, ord] = ik.split("|");
       const data = axis.map((d) => usdMn(best.get(`${fl}|${ord}|${d}`)?.v ?? null));
       if (!data.some((v) => v != null)) return;
-      series[`${fl === "receipts" ? "r" : "p"}${ord}`] = { name: `invisibles_${fl}_${ord}_usd_mn`, label: `${items.get(ik)} (${fl})`, flow: fl, order: +ord,
+      series[`${fl === "receipts" ? "r" : "p"}${ord}`] = { name: `invisibles_${fl}_${ord}_usd_mn`, label: `${items.get(ik)} (${fl})`, flow: fl, order: +ord, group: fl === "receipts" ? "Receipts" : "Payments",
         color: "#A3A9B4", unit: "usd_mn", data };
     });
     // quarantine: a quarter whose services total runs > 2.5x the mean of its neighbours holds a
@@ -500,7 +502,9 @@ export async function buildServicesJobs(root, dcfg, vintage) {
     const ds = [...new Set([...cells.keys()].map((k) => k.split("|")[1]))].sort();
     const dates = yearAxis(+ds[0].slice(0, 4), +ds.at(-1).slice(0, 4), ds[0].slice(5, 7));
     const series = {};
-    for (const key of order) series[key] = { name: `plfs_workers_${key}_pct`, label: labels.get(key), color: /^sec_[g-u]__|^tertiary__|^trade__|^transport__|^accommodation_food__|^other_services__/.test(key) ? ACC : "#A3A9B4", unit: "pct_of_workers", data: dates.map((d) => cells.get(`${key}|${d}`) ?? null) };
+    const fam = (key) => key.startsWith("sec_") ? "Industry (NIC section)" : key.startsWith("nco_") ? "Occupation (NCO division)" : /^(ent_|size_)/.test(key) ? "Non-farm workers by enterprise type and size"
+      : /^(primary|secondary|tertiary)__.*_cws$/.test(key) ? "Broad industry (current weekly status)" : key.split("__").length > 2 ? "Status within each industry group" : "Status of all workers";
+    for (const key of order) series[key] = { name: `plfs_workers_${key}_pct`, label: labels.get(key), group: fam(key), color: /^sec_[g-u]__|^tertiary__|^trade__|^transport__|^accommodation_food__|^other_services__/.test(key) ? ACC : "#A3A9B4", unit: "pct_of_workers", data: dates.map((d) => cells.get(`${key}|${d}`) ?? null) };
     discloseGaps(dates, series, "The PLFS report did not publish this cell for this year.");
     writeSeries(root, `data/series/${slug}.json`, { meta: { dossier: "services-jobs", frequency: "annual", unit: "pct_of_workers", source: dcfg.source_agency, vintage, mock: false, geo: dcfg.geo ?? "IND",
       releaseDate: null, revisionPolicy: dcfg.revision_policy, latestPeriod: dates.at(-1).slice(0, 7), ...extra }, dates, series });
@@ -560,7 +564,7 @@ export async function buildServicesAsuse(root, dcfg, vintage) {
     ["2025", (y) => /^\d{4}$/.test(y), (y) => `${y}-01-01`, "calendar-year round (ASUSE 2025)", "-2025"],
   ]) {
     for (const part of ["core", "profile"]) {
-      const cells = new Map(), labels = new Map(), units = new Map(), order = [];
+      const cells = new Map(), labels = new Map(), units = new Map(), groups = new Map(), order = [];
       for (const [code, rows] of Object.entries(byInd)) {
         if ((part === "core") !== ASUSE_CORE.has(+code)) continue;
         for (const r of rows) {
@@ -575,6 +579,7 @@ export async function buildServicesAsuse(root, dcfg, vintage) {
             const ind = tidy(String(r.indicator).replace(/^State\/UT-wise /, ""));
             labels.set(key, `${ind}${extra.length ? ": " + extra.map((k) => tidy(r[k])).join(", ") : ""}; ${act === "All" ? "all activities" : act}; ${tidy(r.sector)}; ${{ hwe: "hired-worker establishments", oae: "own-account establishments", all: "all establishments" }[et] ?? et}`);
             units.set(key, +code === 1 || +code === 26 ? "count" : [30, 32, 34].includes(+code) ? (/number/i.test(extra.map((k) => r[k]).join(" ")) ? "count" : "inr_per_year") : "per_1000");
+            groups.set(key, act === "All" ? "All activities" : act);
             order.push(key);
           }
           const d = dateOf(String(r.year)); const ck = `${key}|${d}`;
@@ -586,7 +591,7 @@ export async function buildServicesAsuse(root, dcfg, vintage) {
       const ds = [...new Set([...cells.keys()].map((k) => k.split("|")[1]))].sort();
       const dates = yearAxis(+ds[0].slice(0, 4), +ds.at(-1).slice(0, 4), ds[0].slice(5, 7));
       const series = {};
-      for (const key of order) series[key] = { name: `asuse_${key}`, label: labels.get(key), color: /__all_activities__/.test(key) ? "#A3A9B4" : ACC, unit: units.get(key), data: dates.map((d) => cells.get(`${key}|${d}`) ?? null) };
+      for (const key of order) series[key] = { name: `asuse_${key}`, label: labels.get(key), group: groups.get(key), color: /__all_activities__/.test(key) ? "#A3A9B4" : ACC, unit: units.get(key), data: dates.map((d) => cells.get(`${key}|${d}`) ?? null) };
       discloseGaps(dates, series, "ASUSE did not publish this cell in this round.");
       const slug = `services-asuse${part === "profile" ? "-profile" : ""}${sfx}`;
       writeSeries(root, `data/series/${slug}.json`, { meta: { dossier: "services-asuse", frequency: "annual", base, source: dcfg.source_agency, vintage, mock: false, geo: dcfg.geo ?? "IND",
