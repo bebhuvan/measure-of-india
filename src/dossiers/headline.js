@@ -50,6 +50,8 @@ export const HEADLINE = {
   climate:       { value: (b) => `${last(b, "temperature_anomaly") < 0 ? "−" : "+"}${Math.abs(last(b, "temperature_anomaly")).toFixed(2)}°C`, what: "India's temperature against the 1991-2020 average for the month", period: month },
   // ilo
   ilo:           { value: (b) => `${last(b, "eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15").toFixed(1)}%`, what: "women aged 15+ in the labour force, ILO estimate", period: (b) => lastDate(b).slice(0, 4) },
+  // --- rates (atlas-rates) ---
+  rates:         { value: (b) => `${last(b, "repo").toFixed(2)}%`, what: "the RBI's policy repo rate", period: (b) => `from ${b.meta.vintage.slice(8, 10).replace(/^0/, "")} ${MONTHS[+b.meta.vintage.slice(5, 7) - 1]} ${b.meta.vintage.slice(0, 4)}` },
 };
 
 // The small chart beside each guide's figure: always on the current ruler, so a chart never
@@ -82,6 +84,8 @@ export const SPARK = {
   climate:       { bundle: "climate-temp-annual", series: "temperature_anomaly" },   // climate: annual, 1940 on
   // ilo
   ilo:           { bundle: "ilo-est-eap-2wap", series: "eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15" },
+  // --- rates (atlas-rates): the repo rate at each month-end since the MPC began
+  rates:         { bundle: "rates-monthly", series: "repo", n: 121 },
 };
 
 const cache = {};

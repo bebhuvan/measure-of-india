@@ -634,6 +634,36 @@ export const DOSSIERS = [
       "ilo-nss-pop", "ilo-official", "ilo-plfs-ees", "ilo-plfs-eip", "ilo-plfs-emp", "ilo-plfs-how", "ilo-plfs-more",
       "ilo-plfs-pop", "ilo-plfs-q", "ilo-special", "ilo-ssi"],
   },
+  // --- rates (atlas-rates family session, 2026-10) ---
+  {
+    slug: "rates",
+    no: "23",
+    section: "Money",
+    name: "Interest Rates and Monetary Policy",
+    title: "Interest rates",   // the topic as a reader names it: nav, lists, search
+    kickerTitle: "Interest rates and monetary policy, RBI",
+    crumbTitle: "Interest rates, RBI",
+    headline: "The price of <i>money.</i>",
+    ogTitle: "The price of money.",
+    blurb: "What the RBI decides and why, every MPC vote since 2016, and how a change in the repo rate reaches your home loan, your fixed deposit and the government's borrowing.",
+    description: "Interest rates in India: the repo rate since 1935, every Monetary Policy Committee decision and vote, lending and deposit rates by bank, call money, Treasury bills, the bond yield curve, state borrowing costs and real interest rates.",
+    rssDescription: "The repo rate, the MPC's votes, and what banks charge and pay. Revised after each policy meeting and each monthly lending-rate release.",
+    stamp: { dateStyle: "vintageMonth", vintageStyle: "vintage" },   // the latest decision is the data vintage of rates-monthly
+    statusNote: "Revised after each MPC meeting and monthly rate release",
+    version: "v1.0",
+    currentBundle: "rates-monthly",
+    calendar: "fiscal-apr",
+    bands: null,   // the 2-6% band is for inflation, not for interest rates
+    proseConstants: [4, 2, 6, 25, 100, 2016, 2011, 2019, 2022],   // the inflation target and band (law), a 25 bp step, the MPC (2016), the corridor and benchmark reforms
+    spark: { bundle: "rates-monthly", series: "repo" },
+    prose: true,
+    proseInputs: ["rates-mpc", "rates-lending", "rates-real"],
+    register: { id: "reg-rates", label: "Interest rates", unit: "Policy rates as decided; lending and deposit rates monthly; per cent a year", historyCol: "Since 2016" },
+    bundles: ["rates-monthly", "rates-policy", "rates-mpc", "rates-mpc-votes", "rates-lending", "rates-mclr", "rates-mclr-banks", "rates-walr-sectors", "rates-walr-occupation", "rates-benchmarks",
+      "rates-wss", "rates-real", "rates-real-cpi2012", "rates-call-daily", "rates-call-daily-detail", "rates-call-monthly", "rates-money-market", "rates-mibor", "rates-liquidity", "rates-laf", "rates-omo", "rates-market-repo",
+      "rates-cd", "rates-cp", "rates-tbill-91", "rates-tbill-182", "rates-tbill-364", "rates-tbill-cmb", "rates-tbill-14", "rates-tbill-sgl", "rates-gsec-curve", "rates-gsec-annual", "rates-gsec-auctions", "rates-gsec-auctions-fy",
+      "rates-sdl-states", "rates-borrowing", "rates-borrowing-weekly", "rates-state-borrowing", "rates-state-borrowing-monthly", "rates-structure", "rates-walr-1992", "rates-walr-groups-2005"],
+  },
 ];
 export const bySlug = Object.fromEntries(DOSSIERS.map((d) => [d.slug, d]));
 

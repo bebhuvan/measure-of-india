@@ -39,6 +39,7 @@ import { buildStates } from "./lib/products/states.mjs";
 import { buildOwidClimate } from "./lib/products/owid-climate.mjs";   // climate
 import { buildCckp } from "./lib/products/cckp.mjs";                  // climate
 import { buildIlostat } from "./lib/products/ilostat.mjs";   // ilo
+import { buildRbiRates } from "./lib/products/rbirates.mjs";
 import { writeSeries } from "./lib/util.mjs";
 // bis family session: BIS, RBI house price index, NHB RESIDEX
 import { buildBis } from "./lib/products/bis.mjs";
@@ -55,7 +56,7 @@ const ONLY = args.includes("only") ? args.slice(args.indexOf("only") + 1) : null
 const cfg = YAML.parse(fs.readFileSync(path.join(ROOT, "data/sources.yml"), "utf8"));
 const VINTAGE = new Date().toISOString().slice(0, 10);
 
-const REGISTRY = { cpi: buildCpi, nas: buildNas, wpi: buildWpi, cpialrl: buildCpialrl, plfs: buildPlfs, rbi: buildRbi, isp: buildIsp, iip: buildIip, hces: buildHces, asi: buildAsi, asuse: buildAsuse, aishe: buildAishe, gender: buildGender, mnre: buildMnre, nfhs: buildNfhs, "worldbank-wdi": buildWorldbankWdi, bsr2: buildBsr2, "owid-climate": buildOwidClimate, cckp: buildCckp, ilostat: buildIlostat };
+const REGISTRY = { cpi: buildCpi, nas: buildNas, wpi: buildWpi, cpialrl: buildCpialrl, plfs: buildPlfs, rbi: buildRbi, isp: buildIsp, iip: buildIip, hces: buildHces, asi: buildAsi, asuse: buildAsuse, aishe: buildAishe, gender: buildGender, mnre: buildMnre, nfhs: buildNfhs, "worldbank-wdi": buildWorldbankWdi, bsr2: buildBsr2, "owid-climate": buildOwidClimate, cckp: buildCckp, ilostat: buildIlostat, rbirates: buildRbiRates };
 Object.assign(REGISTRY, { bis: buildBis, rbihpi: buildRbihpi, residex: buildResidex });   // bis family session
 // services guide
 Object.assign(REGISTRY, { "services-isp": buildServicesIsp, "services-nas": buildServicesNas, "services-trade": buildServicesTrade, "services-jobs": buildServicesJobs, "services-asuse": buildServicesAsuse });

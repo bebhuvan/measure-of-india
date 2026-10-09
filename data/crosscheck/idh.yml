@@ -114,3 +114,72 @@ pairs:
     tolerance: 0.25
     note: "BIS's end-of-month policy rate against the mean of IDH's weekly repo rate in the month: equal except in months with a rate change (the mean blends the two rates), and in earlier decades when the RBI's policy rate was not the repo rate."
   # ---- end bis family ----
+  # --- rates (atlas-rates) ---
+  # IDH's weekly policy-rate series map onto our month-end levels (the last week of each month
+  # wins); a change made after a month's last Friday shows as a one-month difference.
+  # Not paired: the daily call rate, T-bill auction yields, CD and CP rates (IDH carries them
+  # daily or weekly, and the cross-check compares monthly only), FBIL par and zero-coupon
+  # yields and corporate bond spreads (no Atlas bundle).
+  - bundle: rates-monthly
+    series: repo
+    idh: "MOIRRBIRPO11W:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.001
+    note: "Policy repo rate. Ours is the level in force at month-end from the Handbook and MPC resolutions; IDH's is the RBI's weekly (WSS) series."
+  - bundle: rates-monthly
+    series: reverse_repo
+    idh: "MOIRRBIRRO11W:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.001
+    note: "Fixed reverse repo rate."
+  - bundle: rates-monthly
+    series: sdf
+    idh: "MOIRRBISDF11W:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.001
+    note: "Standing deposit facility rate, from April 2022."
+  - bundle: rates-monthly
+    series: msf
+    idh: "MOIRRBIMSF11W:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.001
+    note: "Marginal standing facility rate, from May 2011."
+  - bundle: rates-monthly
+    series: bank_rate
+    idh: "MOIRRBIBKR11W:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.001
+    note: "Bank Rate."
+  - bundle: rates-monthly
+    series: crr
+    idh: "MOIRRBICRR11W:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.001
+    note: "Cash reserve ratio. The Handbook restates a June 2002 CRR date between editions (2002-06-01 or 2002-06-15)."
+  - bundle: rates-monthly
+    series: slr
+    idh: "MOIRRBISLR11W:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.001
+    note: "Statutory liquidity ratio."
+  - bundle: rates-call-monthly
+    series: average
+    idh: "CMMMCALLRT11D:IND"
+    transform: monthly_mean
+    scale: 1
+    tolerance: 0.2
+    note: "The Handbook's monthly average is weighted by turnover; IDH's daily series is averaged equally here, so the two can differ in volatile months."
+  - bundle: rates-gsec-curve
+    series: y10
+    idh: "FMDMGSEC1011M:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.1
+    note: "Ours is the RBI's month-end SGL yield at exactly 10 years to maturity; IDH's month-end 10-year yield may be read from a benchmark bond, so small gaps are expected."

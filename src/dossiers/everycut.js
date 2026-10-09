@@ -168,6 +168,13 @@ export const UNITS = {
   per_100k_workers: { kind: "diff", fmt: (v) => grp(v, 1), note: "per 1,00,000 workers" },
   dependency_ratio: { kind: "diff", fmt: (v) => v.toFixed(2), note: "people per worker" },
   score: { kind: "diff", fmt: (v) => grp(v, 1), note: "ILO score" },
+  // --- rates (atlas-rates) ---
+  pct_points: { kind: "diff", fmt: (v) => (v < 0 ? MINUS : "") + Math.abs(v).toFixed(2) + " pt", note: "percentage points" },
+  bps: { kind: "diff", fmt: (v) => (v < 0 ? MINUS : v > 0 ? "+" : "") + Math.abs(v) + " bp", note: "basis points" },
+  days: { kind: "diff", fmt: (v) => grp(v) + " days" },
+  times: { kind: "diff", fmt: (v) => v.toFixed(2) + "×", note: "bids per rupee offered" },
+  vote: { kind: "diff", fmt: (v) => (v === 1 ? "with" : v === 0 ? "against" : String(v)), note: "1 = voted with the decision, 0 = against" },
+  inr_per_100: { kind: "diff", fmt: (v) => "₹" + v.toFixed(4), note: "per ₹100 of face value" },
 };
 
 // series.unit, then what the series name says, then the bundle's meta.unit: a bundle-level
@@ -285,6 +292,19 @@ export const CUT_BY_BUNDLE = {
     ["climate-seasons-cru", "Season"], ["climate-burned-area", "Land type"], ["climate-warming-contrib", "Gas and source"],
     ["climate-opinion-youth", "Survey question"], ["climate-heat-deaths", "Projection year"],
   ]),
+  // --- rates (atlas-rates) ---
+  "rates-monthly": "Policy rate", "rates-policy": "Policy rate", "rates-mpc": "Decision", "rates-mpc-votes": "Member",
+  "rates-lending": "Rate and bank group", "rates-mclr": "Bank group", "rates-mclr-banks": "Bank", "rates-walr-sectors": "Loan purpose",
+  "rates-walr-occupation": "Borrower occupation", "rates-benchmarks": "Benchmark and bank group", "rates-wss": "Rate",
+  "rates-real": "Rate", "rates-real-cpi2012": "Rate", "rates-call-daily": "Measure", "rates-call-daily-detail": "Measure",
+  "rates-call-monthly": "Measure", "rates-money-market": "Market segment", "rates-mibor": "Tenor", "rates-liquidity": "Operation",
+  "rates-laf": "Operation", "rates-omo": "Operation", "rates-market-repo": "Security", "rates-cd": "Measure", "rates-cp": "Measure",
+  "rates-tbill-91": "Auction measure", "rates-tbill-182": "Auction measure", "rates-tbill-364": "Auction measure",
+  "rates-tbill-cmb": "Auction measure", "rates-tbill-14": "Auction measure", "rates-tbill-sgl": "Residual maturity",
+  "rates-gsec-curve": "Years to maturity", "rates-gsec-annual": "Government", "rates-gsec-auctions": "Auction measure",
+  "rates-gsec-auctions-fy": "Auction measure", "rates-sdl-states": "State", "rates-borrowing": "Government",
+  "rates-borrowing-weekly": "Government", "rates-state-borrowing": "State", "rates-state-borrowing-monthly": "State",
+  "rates-structure": "Rate", "rates-walr-1992": "Loan type", "rates-walr-groups-2005": "Occupation and bank group",
 };
 // the fallback, by what a bundle's slug says it is
 export const CUT_RULES = [

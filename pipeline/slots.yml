@@ -416,3 +416,34 @@ ilo:
       counting women's work at all depends on what the survey calls work. Must contain a
       plain "we do not know".
 
+
+# --- rates (atlas-rates) ---
+rates:
+  - id: current-reading.what-the-print-says
+    maxSentences: 6
+    dateStamp: true
+    requiredFigures: [repo.latest, repo.previous, sdf.latest, msf.latest]
+    minSeriesMentioned: 3        # the repo rate and the corridor around it (floor, ceiling)
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
+    brief: >
+      Paragraph one: the decision of the latest Monetary Policy Committee meeting (the repo
+      rate after it and before it, the SDF floor and MSF ceiling that moved with it, and the
+      change in the cash reserve ratio over the year). Paragraph two: what banks were charging
+      and paying in the latest lending-rate release, using only figures the sheet gives for
+      loans or deposits and saying which is which (a deposit rate is never a lending rate),
+      and what a fixed deposit earned after inflation from the real-rate figures. Do not
+      describe the bond market. Name the month of the decision. Concede before qualifying.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 5
+    dateStamp: false
+    requiredFigures: [repo.latest]
+    brief: >
+      The honest limits, without repeating the figures of the other slot beyond the repo
+      rate itself: a change in the repo rate reaches loans priced off it within three months
+      and other loans far more slowly; the bank rates in the sheet describe months before the
+      decision, so they cannot show its effect yet; the minutes, with each member's reasons,
+      come about two weeks after a meeting. Real rates subtract the inflation that happened,
+      not what savers expected. Do not say anything about how the members voted. Must
+      contain a plain "we do not know" (for example: how quickly banks will pass the change on,
+      or where inflation goes next).

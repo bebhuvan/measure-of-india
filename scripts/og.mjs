@@ -218,6 +218,18 @@ const CARDS = [
     prep: (S) => { S.gap_current = { ...S.gap_current, label: "Current prices", color: "#2E4BD8" }; S.gap_constant = { ...S.gap_constant, label: "Constant prices", color: "#A3A9B4" }; },
     foot: (b) => `Richest state's income per person ÷ poorest's, ${b.meta.panel.length} states, 2011-12 to ${(() => { const y = +b.dates.at(-1).slice(0, 4); return `${y}-${String((y + 1) % 100).padStart(2, "0")}`; })()}. Source: MoSPI`,
   },
+  // --- rates (atlas-rates) ---
+  {
+    slug: "rates", bundleSlug: "rates-monthly",
+    keys: ["repo", "sdf"], d0: 0, d1: 10, band: null, trend: null,
+    yStep: 2, fmt: (v) => v.toFixed(2) + "%", mr: 200,
+    prep: (S) => {
+      const from = (s) => ({ ...s, data: s.data.filter((d) => d.date >= new Date(Date.UTC(2011, 4, 1))) });
+      S.repo = { ...from(S.repo), label: "Repo rate", color: "#2E4BD8" };
+      S.sdf = { ...from(S.sdf), label: "SDF (floor)", color: "#A3A9B4" };
+    },
+    foot: (b) => `RBI policy repo rate at month-end, May 2011 to ${monthOf(b)}. Source: RBI`,
+  },
   {
     slug: "manufacturing", bundleSlug: "wdi-manufacturing",
     keys: ["mva_pct_gdp", "industry_pct_gdp"], d0: 0, d1: 30, band: null, trend: null,
