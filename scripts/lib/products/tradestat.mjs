@@ -16,6 +16,18 @@
 // 2026-10-09 every 2023-24 commodity value in EIDB was exactly twice the MEIDB figure (its
 // chapter sum is 874,144 against a printed total of 437,072), so EIDB never feeds a bundle.
 //
+// HAND CHECKS (2026-10-09) against the DGCI&S quick-estimates tables released with the
+// Department of Commerce's PIB release of 13 August 2026 (US$ million):
+//   gold, HS 7108, imports July 2025 (R)        3,973.90  vs QE "Gold" 3,974
+//   coal, coke and briquettes, HS 2701-2704, imports July 2025   2,361.34 vs QE 2,361
+//   rice, HS 1006, exports July 2025 (R)          921.15  vs QE "Rice" 921; July 2026 860.37 vs 860
+//   vegetable oils, HS 1507-1515, imports July 2025  1,931.99 vs QE "Vegetable Oil" 1,935
+//     (the QE group takes a few more lines; within 0.2%)
+//   total exports 2025-26 (March 2026 cumulative)   441,452.14 vs QE total 441,452
+// The 2023-24 column of the 2024-25 call against the 2023-24 call: in MEIDB the two agree to
+// the cent at chapter level (FY 2023-24 exports 437,072.05 in both); the "fish at 12,248"
+// the first probe saw is EIDB's double count, not a revision.
+//
 // Revision flags: each MEIDB call prints the same month a year earlier flagged (R) "Revised
 // Final" and the month itself flagged (F) "Final"; FTPA prints (P) "Provisional". A month's
 // value is taken from the call a year later (R) when that call exists, else from its own
@@ -66,6 +78,9 @@ export const FIRST_MONTH = "2018-01";        // MEIDB's picker starts January 20
 export const FIRST_FTPA = "2010-04";         // FTPA's picker starts 2010
 export const RAW = "data/raw/trade";
 const FULL = process.env.TRADESTAT_FULL === "1";
+// TRADESTAT_RESUME=1: a restarted long run skips every call already archived, even inside
+// the revision window (the window is for the next release, not for the same day)
+const RESUME = process.env.TRADESTAT_RESUME === "1";
 
 const pad = (n) => String(n).padStart(2, "0");
 export const ym = (y, m) => `${y}-${pad(m)}`;
@@ -141,7 +156,7 @@ export async function fetchAll(root, vintage, { only = null, log = console.log }
 
   // pickers: the country list and principal-commodity list, as the forms serve them
   {
-    const html = await (await import("../net.mjs")).requestRaw("https://tradestat.commerce.gov.in/" + VIEWS.cxc.export.view, { headers: { "User-Agent": "IndiaAtlas/1.0" } });
+    const html = await (await import("../tradestat.mjs")).requestRaw("https://tradestat.commerce.gov.in/" + VIEWS.cxc.export.view, { headers: { "User-Agent": "IndiaAtlas/1.0" } });
     const opts = (name) => [...(html.body.match(new RegExp(`<select[^>]*name="${name}"[\\s\\S]*?</select>`))?.[0] ?? "").matchAll(/<option[^>]*value="([^"]*)"[^>]*>([^<]*)/g)]
       .map((o) => [o[1].trim(), o[2].trim()]).filter(([v]) => v && v !== "all");
     const countries = opts("cwcexallcount");
@@ -202,7 +217,7 @@ export async function fetchAll(root, vintage, { only = null, log = console.log }
     add(`cxc${lvl}`, rel.cxc(flow, lvl, code, mo), VIEWS.cxc[flow].view, VIEWS.cxc[flow].f(m, y, code, lvl), 2, mo);
   }
 
-  const todo = jobs.filter((j) => (!only || only.includes(j.group)) && (!fs.existsSync(path.join(root, j.file)) || within(j.mo, j.windowMonths)));
+  const todo = jobs.filter((j) => (!only || only.includes(j.group)) && (!fs.existsSync(path.join(root, j.file)) || (!RESUME && within(j.mo, j.windowMonths))));
   counts.skipped = jobs.length - todo.length;
   log(`tradestat: ${jobs.length} calls in the plan, ${todo.length} to fetch now, ${counts.skipped} already archived and settled`);
   let n = 0;

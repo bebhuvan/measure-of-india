@@ -77,6 +77,7 @@ export function writeTradeCatalogue(root, { latest, latestFtpa }) {
     for (const [code, name] of pickers) {
       for (const lvl of [2, 4, 6, 8]) {
         add(`meidb:${flow}:usd:fy:country-hs${lvl}:${code}`, `${name} x HS ${lvl}-digit, ${F}, US$, financial year`, { flow, unit: "usd", freq: "fy", cut: `country-hs${lvl}` });
+        add(`meidb:${flow}:usd:ytd:country-hs${lvl}:${code}`, `${name} x HS ${lvl}-digit, ${F}, US$, year to date`, { flow, unit: "usd", freq: "ytd", cut: `country-hs${lvl}` });
         add(`meidb:${flow}:usd:monthly:country-hs${lvl}:${code}`, `${name} x HS ${lvl}-digit, ${F}, US$, monthly`, { flow, unit: "usd", freq: "monthly", cut: `country-hs${lvl}` });
         for (const unit of ["inr", "qty"]) add(`meidb:${flow}:${unit}:any:country-hs${lvl}:${code}`, `${name} x HS ${lvl}-digit, ${F}, ${unit}`, { flow, unit, cut: `country-hs${lvl}` });
       }

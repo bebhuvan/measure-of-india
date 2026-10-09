@@ -92,21 +92,49 @@ function parseCommodity(raw, expectMonth) {
   return { cols: { mPrev, mCur, cPrev, cCur }, items, total };
 }
 
+/** MEIDB region table (every region, sub-region and country) -> same shape as parseCommodity.
+ *  Keys: "r:<n>" region, "s:<n.n>" sub-region, "c:<country key>" country (under its region). */
+function parseRegion(raw, expectMonth) {
+  if (!raw) return null;
+  const vc = valueColumns(raw.header);
+  if (vc.length !== 4) throw new Error(`tradestat bake: ${raw.view}: expected 4 value columns, saw ${vc.length}`);
+  const [mPrev, mCur, cPrev, cCur] = vc;
+  const lab = `${M3[+expectMonth.slice(5, 7) - 1]}-${expectMonth.slice(0, 4)}`;
+  if (mCur.label !== lab) throw new Error(`tradestat bake: ${raw.view} asked for ${lab}, the table is for ${mCur.label}`);
+  const items = new Map(); let region = null, sub = null;
+  for (const r of raw.rows) {
+    const v = [mPrev, mCur, cPrev, cCur].map((c) => parseNumber(r[c.i]));
+    const name = (r[0] ?? "").trim();
+    let m;
+    if ((m = name.match(/^(\d+)\s+(.+)$/))) { region = m[2]; sub = null; items.set(`r:${m[1]}`, { desc: m[2], kind: "region", v }); }
+    else if ((m = name.match(/^(\d+\.\d+)\s+(.+)$/))) { sub = m[2]; items.set(`s:${m[1]}`, { desc: m[2], kind: "subregion", region, v }); }
+    else if ((m = name.match(/^\d+\)\s*(.+)$/))) {
+      const key = `c:${ckey(countryName(m[1]))}`;
+      if (items.has(key)) throw new Error(`tradestat bake: ${raw.view} ${expectMonth}: country ${m[1]} listed twice`);
+      items.set(key, { desc: m[1], kind: "country", region, sub, v });
+    }
+  }
+  return { cols: { mPrev, mCur, cPrev, cCur }, items, total: null };
+}
+
 /* ---------------- monthly assembly ---------------- */
 /** For one (flow, level, unit): Map(month -> { flag, items: Map(code -> {value, desc, unit, star}), total }) */
-function monthlyPanel(root, flow, lvl, unit, latest, { sameEdition = false } = {}) {
+function monthlyPanel(root, flow, lvl, unit, latest, opts = {}) {
+  return panelOf(root, (mo) => rel.cw(flow, lvl, unit, mo), parseCommodity, latest, opts);
+}
+function panelOf(root, fileOf, parse, latest, { sameEdition = false } = {}) {
   const out = new Map();
   const first = addMonths(FIRST_MONTH, -12);
   for (const mo of months(first, latest)) {
-    const own = mo >= FIRST_MONTH ? parseCommodity(call(root, rel.cw(flow, lvl, unit, mo)), mo) : null;
+    const own = mo >= FIRST_MONTH ? parse(call(root, fileOf(mo)), mo) : null;
     const nextMo = addMonths(mo, 12);
-    let next = nextMo <= latest ? parseCommodity(call(root, rel.cw(flow, lvl, unit, nextMo)), nextMo) : null;
+    let next = nextMo <= latest ? parse(call(root, fileOf(nextMo)), nextMo) : null;
     if (next && sameEdition && editionOf(nextMo) !== editionOf(mo)) next = null;
     if (next && mo < FIRST_MONTH && sameEdition && editionOf(nextMo) !== editionOf(FIRST_MONTH)) next = null;
     const src = next ? { p: next, col: 0, flag: next.cols.mPrev.flag ?? "R" } : own ? { p: own, col: 1, flag: own.cols.mCur.flag ?? "F" } : null;
     if (!src) continue;
     const items = new Map();
-    for (const [code, it] of src.p.items) items.set(code, { value: it.v[src.col], desc: it.desc, unit: it.unit, star: it.star });
+    for (const [code, it] of src.p.items) items.set(code, { value: it.v[src.col], desc: it.desc, unit: it.unit, star: it.star, kind: it.kind, region: it.region, sub: it.sub });
     // descriptions and units: the month's own call speaks for its own code list when it exists
     if (own && next) for (const [code, it] of own.items) if (items.has(code)) Object.assign(items.get(code), { desc: it.desc, unit: it.unit ?? items.get(code).unit });
     out.set(mo, { flag: src.flag, items, total: src.p.total?.[src.col] ?? null, edition: editionOf(src === null ? mo : (next ? nextMo : mo)) });
@@ -116,28 +144,31 @@ function monthlyPanel(root, flow, lvl, unit, latest, { sameEdition = false } = {
 
 /** FY panel from March cumulatives: Map(fy -> { flag, items: Map(code -> value), total }) plus the year to date. */
 function fyPanel(root, flow, lvl, unit, latest) {
+  return fyPanelOf(root, (mo) => rel.cw(flow, lvl, unit, mo), parseCommodity, latest);
+}
+function fyPanelOf(root, fileOf, parse, latest) {
   const out = new Map();
   const marches = months(FIRST_MONTH, latest).filter((m) => m.endsWith("-03"));
   for (const mar of marches) {
-    const p = parseCommodity(call(root, rel.cw(flow, lvl, unit, mar)), mar);
+    const p = parse(call(root, fileOf(mar)), mar);
     if (!p) continue;
     const fy = fyOf(mar), prevFy = fyOf(addMonths(mar, -12));
     // this call: the year just ended (F) and, revised, the year before (R)
-    out.set(prevFy, { flag: p.cols.cPrev.flag ?? "R", total: p.total?.[2], items: new Map([...p.items].map(([c, it]) => [c, { value: it.v[2], desc: it.desc }])) });
-    if (!out.has(fy) || out.get(fy).flag !== "R") out.set(fy, { flag: p.cols.cCur.flag ?? "F", total: p.total?.[3], items: new Map([...p.items].map(([c, it]) => [c, { value: it.v[3], desc: it.desc }])) });
+    out.set(prevFy, { flag: p.cols.cPrev.flag ?? "R", total: p.total?.[2], items: new Map([...p.items].map(([c, it]) => [c, { value: it.v[2], desc: it.desc, kind: it.kind, region: it.region, sub: it.sub }])) });
+    if (!out.has(fy) || out.get(fy).flag !== "R") out.set(fy, { flag: p.cols.cCur.flag ?? "F", total: p.total?.[3], items: new Map([...p.items].map(([c, it]) => [c, { value: it.v[3], desc: it.desc, kind: it.kind, region: it.region, sub: it.sub }])) });
   }
   // re-apply: a later March call's R print outranks an earlier call's F print for the same year
   for (const mar of marches) {
-    const p = parseCommodity(call(root, rel.cw(flow, lvl, unit, mar)), mar);
+    const p = parse(call(root, fileOf(mar)), mar);
     if (!p) continue;
     const prevFy = fyOf(addMonths(mar, -12));
     out.set(prevFy, { flag: p.cols.cPrev.flag ?? "R", total: p.total?.[2], items: new Map([...p.items].map(([c, it]) => [c, { value: it.v[2], desc: it.desc }])) });
   }
   let ytd = null;
   if (!latest.endsWith("-03")) {
-    const p = parseCommodity(call(root, rel.cw(flow, lvl, unit, latest)), latest);
+    const p = parse(call(root, fileOf(latest)), latest);
     if (p) ytd = { label: `${p.cols.cCur.label}`, prevLabel: p.cols.cPrev.label, flags: [p.cols.cPrev.flag, p.cols.cCur.flag], total: [p.total?.[2], p.total?.[3]],
-      items: new Map([...p.items].map(([c, it]) => [c, { prev: it.v[2], cur: it.v[3], desc: it.desc }])) };
+      items: new Map([...p.items].map(([c, it]) => [c, { prev: it.v[2], cur: it.v[3], desc: it.desc, kind: it.kind, region: it.region, sub: it.sub }])) };
   }
   return { years: out, ytd };
 }
@@ -145,6 +176,8 @@ function fyPanel(root, flow, lvl, unit, latest) {
 /* ---------------- writing ---------------- */
 function bundleWriter(root, V, dcfg) {
   return (relName, dates, series, extra) => {
+    // a code with no value in any period of this bundle (listed in other months only) is not baked here
+    for (const k of Object.keys(series)) if (series[k].data.every((v) => v == null)) delete series[k];
     const has = (i) => Object.values(series).some((s) => s.data[i] != null);
     let a = 0, b = dates.length - 1;
     while (a < b && !has(a)) a++;
@@ -233,5 +266,263 @@ export function bakeTradestat(root, dcfg, { latest, latestFtpa }) {
       coverage: `India's merchandise exports, imports and trade balance every month since January 2017, ${UNIT[unit][0]} (TradeStat)`,
       note: "The printed India totals of TradeStat's MEIDB chapter tables (R print where a year-later table exists, else F). The balance is exports minus imports, computed here." });
   }
+  /* ---- partners and regions, monthly, financial year and year to date, US$ and ₹ ---- */
+  const partnerPanels = {};
+  for (const unit of ["usd", "inr"]) for (const flow of ["export", "import"]) {
+    const P = panelOf(root, (mo) => rel.region(flow, unit, mo), parseRegion, latest);
+    const F = fyPanelOf(root, (mo) => rel.region(flow, unit, mo), parseRegion, latest);
+    partnerPanels[`${flow}_${unit}`] = { P, F };
+    const mos = [...P.keys()].sort();
+    const fys = [...F.years.keys()].sort();
+    const keys = new Map();
+    for (const m of mos) for (const [k, it] of P.get(m).items) keys.set(k, it);
+    const label = (k, it) => it.kind === "country" ? `${countryName(it.desc)} (${/Unspecified/i.test(it.region) ? "no region assigned" : it.region})` : it.kind === "region" ? `${it.desc}, all countries` : `${it.desc} (${it.region})`;
+    const suffix = unit === "inr" ? "-inr" : "";
+    for (const [kind, name] of [["country", "partners"], ["region", "regions"]]) {
+      const ks = [...keys].filter(([, it]) => (kind === "country" ? it.kind === "country" : it.kind !== "country")).map(([k]) => k).sort();
+      const sk = (k) => k.replace(/^[a-z]:/, (m) => ({ "c:": "", "r:": "region_", "s:": "sub_" })[m]).replace(/\./g, "_");
+      const mk = (getter, n) => Object.fromEntries(ks.map((k) => [sk(k), { name: sk(k), label: label(k, keys.get(k)), color: "#A3A9B4", region: keys.get(k).region ?? null, data: Array.from({ length: n }, (_, i) => r2(getter(i, k))) }]));
+      const what = kind === "country" ? "partner country" : "region and sub-region";
+      W(`trade-${name}-${FLOW[flow]}${suffix}`, mos.map(iso), mk((i, k) => P.get(mos[i]).items.get(k)?.value ?? null, mos.length), { frequency: "monthly", base: "HS 2 and 4 digits", unit: UNIT[unit][1],
+        revision: Object.fromEntries(mos.map((m) => [iso(m), P.get(m).flag])),
+        coverage: `India's merchandise ${FLOW[flow]} by ${what}, every month since January 2017, ${UNIT[unit][0]}`,
+        note: "TradeStat MEIDB region-wise table (every country under its region and sub-region). R print from the table a year later where one exists, else F. Country names are tidied from TradeStat's (CHINA P RP to China); the label carries the region." });
+      W(`trade-${name}-${FLOW[flow]}-fy${suffix}`, fys.map(fyStartIso), mk((i, k) => F.years.get(fys[i]).items.get(k)?.value ?? null, fys.length), { frequency: "annual", base: "HS 2 and 4 digits", unit: UNIT[unit][1],
+        revision: Object.fromEntries(fys.map((fy) => [fyStartIso(fy), F.years.get(fy).flag])),
+        coverage: `India's merchandise ${FLOW[flow]} by ${what}, every financial year since 2016-17, ${UNIT[unit][0]}`,
+        note: "TradeStat MEIDB: the March region table's April-to-March cumulative (R from the following March where available)." });
+      if (F.ytd) {
+        const curFy = fyOf(latest), prevFy = fyOf(addMonths(latest, -12));
+        W(`trade-${name}-${FLOW[flow]}-ytd${suffix}`, [fyStartIso(prevFy), fyStartIso(curFy)], mk((i, k) => (i ? F.ytd.items.get(k)?.cur : F.ytd.items.get(k)?.prev) ?? null, 2), { frequency: "annual", base: "HS 2 and 4 digits", unit: UNIT[unit][1],
+          period: { from: "04", to: latest.slice(5, 7), label: `April to ${MONTHS[+latest.slice(5, 7) - 1]}` }, revision: { [fyStartIso(prevFy)]: F.ytd.flags[0], [fyStartIso(curFy)]: F.ytd.flags[1] },
+          coverage: `India's merchandise ${FLOW[flow]} by ${what}, April to ${MONTHS[+latest.slice(5, 7) - 1]} this year and a year earlier, ${UNIT[unit][0]}`,
+          note: "TradeStat MEIDB region table, cumulative columns of the latest month. A part of a year: never compare with full years." });
+      }
+    }
+  }
+  // balance by partner: exports minus imports (derived), monthly and financial year, US$
+  for (const [suffix, which] of [["", "P"], ["-fy", "F"]]) {
+    const E = partnerPanels.export_usd[which], I = partnerPanels.import_usd[which];
+    const periods = which === "P" ? [...E.keys()].sort() : [...E.years.keys()].sort();
+    const get = (X, p) => (which === "P" ? X.get(p) : X.years.get(p));
+    const ks = new Set();
+    for (const p of periods) for (const [k, it] of get(E, p).items) if (it.kind === "country") ks.add(k);
+    const series = {};
+    for (const k of [...ks].sort()) {
+      const it = [...periods].reverse().map((p) => get(E, p).items.get(k)).find(Boolean);
+      series[k.slice(2)] = { name: k.slice(2), label: `${countryName(it.desc)}: exports minus imports (derived)`, color: "#5F6675", region: it.region,
+        data: periods.map((p) => { const e = get(E, p).items.get(k)?.value, m = get(I, p)?.items.get(k)?.value; return e == null || m == null ? null : r2(e - m); }) };
+    }
+    W(`trade-partners-balance${suffix}`, periods.map((p) => (which === "P" ? iso(p) : fyStartIso(p))), series, { frequency: which === "P" ? "monthly" : "annual", base: "HS 2 and 4 digits", unit: "usd_million",
+      coverage: `India's trade balance with each partner (exports minus imports), ${which === "P" ? "every month since January 2017" : "every financial year since 2016-17"}, US$ million`,
+      note: "Derived here: TradeStat's exports to a country minus its imports from that country, both from the MEIDB region tables. A deficit is negative." });
+  }
+
+  /* ---- principal commodities (FTPA): monthly (derived from cumulatives) and financial year ---- */
+  for (const unit of ["usd", "inr"]) for (const flow of ["export", "import"]) {
+    const parse = (mo) => {
+      const raw = call(root, rel.ftpa(flow, unit, mo));
+      if (!raw) return null;
+      const vc = valueColumns(raw.header);
+      if (vc.length !== 2) throw new Error(`tradestat bake: FTPA ${flow} ${mo}: expected 2 value columns, saw ${vc.length}`);
+      const items = new Map(); let total = null, group = null;
+      for (const r of raw.rows) {
+        const name = (r[0] ?? "").trim(); const v = vc.map((c) => parseNumber(r[c.i]));
+        if (/^Total$/i.test(name)) { total = v; continue; }
+        let m;
+        if ((m = name.match(/^(\d{1,2})\s+(.+)$/))) { group = m[2]; items.set(`g${m[1].padStart(2, "0")}`, { desc: m[2], kind: "group", v }); }
+        else if ((m = name.match(/^([A-Z]\d|ZZ)\s+(.+)$/))) { const k = `i${m[1].toLowerCase()}`; if (!items.has(k)) items.set(k, { desc: m[2], kind: "item", group, v }); }
+      }
+      return { prevFlag: vc[0].flag, curFlag: vc[1].flag ?? "P", items, total };
+    };
+    const firstCall = FIRST_FTPA, ftMonths = months(addMonths(firstCall, -12), latestFtpa);
+    const C = new Map(); for (const mo of months(firstCall, latestFtpa)) C.set(mo, parse(mo));
+    // cumulative to month m: revised (from the call a year later) or provisional (own call)
+    const cumR = (mo, k) => { const c = C.get(addMonths(mo, 12)); if (!c) return undefined; return k === "total" ? c.total?.[0] : c.items.get(k)?.v[0]; };
+    const cumP = (mo, k) => { const c = C.get(mo); if (!c) return undefined; return k === "total" ? c.total?.[1] : c.items.get(k)?.v[1]; };
+    const keys = new Map(); for (const c of C.values()) if (c) for (const [k, it] of c.items) keys.set(k, it);
+    const monthly = new Map(), flags = new Map();
+    for (const mo of ftMonths) {
+      const april = mo.endsWith("-04"), prev = addMonths(mo, -1);
+      const haveR = C.has(addMonths(mo, 12)) && (april || C.has(addMonths(prev, 12)));
+      const haveP = C.has(mo) && (april || C.has(prev));
+      if (!haveR && !haveP) continue;
+      const f = haveR ? cumR : cumP;
+      flags.set(mo, haveR ? "R" : (C.get(mo)?.curFlag ?? "P"));
+      const val = (k) => { const a = f(mo, k), b = april ? 0 : f(prev, k); return a == null || b == null ? null : r2(a - b); };
+      monthly.set(mo, { val });
+    }
+    const mos = [...monthly.keys()].sort();
+    const lab = (k, it) => it.kind === "group" ? `${tidyDesc(it.desc)} (group ${+k.slice(1)})` : `${tidyDesc(it.desc)} (${k.slice(1).toUpperCase()})`;
+    const series = {};
+    for (const [k, it] of [...keys].sort()) series[k] = { name: k, label: lab(k, it), color: "#A3A9B4", group: it.group ? tidyDesc(it.group) : null, data: mos.map((m) => monthly.get(m).val(k)) };
+    series.total = { name: "total", label: `Total ${FLOW[flow]}`, color: "#2E4BD8", data: mos.map((m) => monthly.get(m).val("total")) };
+    const suffix = unit === "inr" ? "-inr" : "";
+    W(`trade-principal-${FLOW[flow]}${suffix}`, mos.map(iso), series, { frequency: "monthly", base: "principal commodities (DGCI&S)", unit: UNIT[unit][1],
+      revision: Object.fromEntries(mos.map((m) => [iso(m), flags.get(m)])),
+      coverage: `India's merchandise ${FLOW[flow]} by principal commodity (the groups the monthly press release uses: petroleum, gold, electronics, pulses, rice and about 165 more), every month since April 2009, ${UNIT[unit][0]}`,
+      note: "TradeStat FTPA principal-commodity tables, which print only April-to-month running totals. Each month here is derived: this month's running total minus last month's, both from the same print (R from the tables a year later where they exist, else the provisional P tables). 'total' is derived the same way from the printed total." });
+    // financial years: the March running total; the current year to date from the latest table
+    const fys = [], fyv = new Map(), fyf = new Map();
+    for (const mo of ftMonths.filter((m) => m.endsWith("-03"))) {
+      const r = C.has(addMonths(mo, 12)), p = C.has(mo);
+      if (!r && !p) continue;
+      const fy = fyOf(mo); fys.push(fy); fyf.set(fy, r ? "R" : (C.get(mo)?.curFlag ?? "P"));
+      fyv.set(fy, (k) => (r ? cumR(mo, k) : cumP(mo, k)) ?? null);
+    }
+    const fseries = {};
+    for (const [k, it] of [...keys].sort()) fseries[k] = { name: k, label: lab(k, it), color: "#A3A9B4", group: it.group ? tidyDesc(it.group) : null, data: fys.map((fy) => r2(fyv.get(fy)(k))) };
+    fseries.total = { name: "total", label: `Total ${FLOW[flow]}`, color: "#2E4BD8", data: fys.map((fy) => r2(fyv.get(fy)("total"))) };
+    W(`trade-principal-${FLOW[flow]}-fy${suffix}`, fys.map(fyStartIso), fseries, { frequency: "annual", base: "principal commodities (DGCI&S)", unit: UNIT[unit][1],
+      revision: Object.fromEntries(fys.map((fy) => [fyStartIso(fy), fyf.get(fy)])),
+      coverage: `India's merchandise ${FLOW[flow]} by principal commodity, every financial year since 2009-10, ${UNIT[unit][0]}`,
+      note: "TradeStat FTPA: the March running total (April to March), revised (R) from the following year's table where it exists, else provisional (P)." });
+    if (!latestFtpa.endsWith("-03")) {
+      const c = C.get(latestFtpa), curFy = fyOf(latestFtpa), prevFy = fyOf(addMonths(latestFtpa, -12));
+      const ys = {};
+      for (const [k, it] of [...keys].sort()) ys[k] = { name: k, label: lab(k, it), color: "#A3A9B4", group: it.group ? tidyDesc(it.group) : null, data: [r2(c.items.get(k)?.v[0] ?? null), r2(c.items.get(k)?.v[1] ?? null)] };
+      ys.total = { name: "total", label: `Total ${FLOW[flow]}`, color: "#2E4BD8", data: [r2(c.total?.[0]), r2(c.total?.[1])] };
+      W(`trade-principal-${FLOW[flow]}-ytd${suffix}`, [fyStartIso(prevFy), fyStartIso(curFy)], ys, { frequency: "annual", base: "principal commodities (DGCI&S)", unit: UNIT[unit][1],
+        period: { from: "04", to: latestFtpa.slice(5, 7), label: `April to ${MONTHS[+latestFtpa.slice(5, 7) - 1]}` }, revision: { [fyStartIso(prevFy)]: c.prevFlag ?? "R", [fyStartIso(curFy)]: c.curFlag },
+        coverage: `India's merchandise ${FLOW[flow]} by principal commodity, April to ${MONTHS[+latestFtpa.slice(5, 7) - 1]} this year (the quick estimates) and a year earlier, ${UNIT[unit][0]}`,
+        note: "TradeStat FTPA, the latest table's two running totals. This year's column is provisional (P), the quick estimates of the monthly press release. A part of a year." });
+    }
+  }
+
+  /* ---- partners since 2009-10 (FTSPCC total trade, March tables = whole financial years) ---- */
+  for (const unit of ["usd", "inr"]) {
+    const marches = months(FIRST_FTPA, latestFtpa).filter((m) => m.endsWith("-03"));
+    const T = new Map();
+    for (const mar of marches) {
+      const raw = call(root, rel.ttrade(unit, mar)); if (!raw) continue;
+      const h0 = raw.header[0] ?? [];
+      const flagCur = /\(P\)/.test(h0.find((c) => c.startsWith(`${+mar.slice(0, 4) - 1}-`)) ?? "") ? "P" : null;
+      const rows = new Map();
+      for (const r of raw.rows) { if (!/^\d+$/.test(r[0] ?? "")) continue; rows.set(ckey(countryName(r[1])), { desc: r[1], prev: r.slice(2, 6).map(parseNumber), cur: r.slice(6, 10).map(parseNumber) }); }
+      T.set(mar, { rows, flagCur });
+    }
+    const fyList = [];
+    const valueOf = new Map();
+    for (const mar of [...T.keys()].sort()) {
+      const fy = fyOf(mar), prevFy = fyOf(addMonths(mar, -12));
+      // the year just ended (this table) unless a later table revises it; the year before, revised
+      for (const [k, x] of T.get(mar).rows) {
+        valueOf.set(`${prevFy}|${k}`, { v: x.prev, flag: "R", desc: x.desc });
+        if (!valueOf.has(`${fy}|${k}`) || valueOf.get(`${fy}|${k}`).flag !== "R") valueOf.set(`${fy}|${k}`, { v: x.cur, flag: T.get(mar).flagCur ?? "F", desc: x.desc });
+      }
+      if (!fyList.includes(prevFy)) fyList.push(prevFy);
+      if (!fyList.includes(fy)) fyList.push(fy);
+    }
+    // the later table's revised column wins over the earlier table's own column
+    for (const mar of [...T.keys()].sort()) { const prevFy = fyOf(addMonths(mar, -12)); for (const [k, x] of T.get(mar).rows) valueOf.set(`${prevFy}|${k}`, { v: x.prev, flag: "R", desc: x.desc }); }
+    const fys = fyList.sort();
+    const ks = [...new Set([...valueOf.keys()].map((k) => k.split("|")[1]))].sort();
+    const series = {};
+    for (const k of ks) {
+      const desc = [...fys].reverse().map((fy) => valueOf.get(`${fy}|${k}`)?.desc).find(Boolean);
+      for (const [j, what] of [[0, "exports"], [1, "imports"], [3, "balance"]])
+        series[`${k}__${what}`] = { name: `${k}__${what}`, label: `${countryName(desc)}: ${what === "balance" ? "trade balance (as printed)" : what}`, color: "#A3A9B4",
+          data: fys.map((fy) => r2(valueOf.get(`${fy}|${k}`)?.v[j] ?? null)) };
+    }
+    W(`trade-partners-long${unit === "inr" ? "-inr" : ""}`, fys.map(fyStartIso), series, { frequency: "annual", base: "principal commodities (DGCI&S)", unit: UNIT[unit][1],
+      revision: Object.fromEntries(fys.map((fy) => [fyStartIso(fy), [...valueOf.entries()].find(([kk]) => kk.startsWith(fy + "|"))?.[1].flag ?? null])),
+      coverage: `India's exports to, imports from and trade balance with every partner, every financial year since 2009-10, ${UNIT[unit][0]} (the long partner history)`,
+      note: "TradeStat FTSPCC total-trade table, read only from its March tables (whole financial years); each year is the revised column of the following March's table where it exists. A different publication from the monthly partner tables (2017 on): shown beside them, never joined. Balance as printed." });
+  }
+
+  /* ---- principal-commodity quantities (FTSPCC), monthly since January 2017 ---- */
+  for (const flow of ["export", "import"]) {
+    const parse = (raw, mo) => {
+      if (!raw) return null;
+      const vc = valueColumns(raw.header);
+      if (vc.length !== 4) throw new Error(`tradestat bake: FTSPCC ${flow} ${mo}: expected 4 value columns, saw ${vc.length}`);
+      const items = new Map();
+      for (const r of raw.rows) {
+        const m = (r[1] ?? "").match(/^([A-Z]\d|ZZ),\s*(.+)$/); if (!m || !r[2]) continue;
+        items.set(`i${m[1].toLowerCase()}_${r[2].toLowerCase()}`, { desc: `${m[2]}`, unit: r[2], v: vc.map((c) => parseNumber(r[c.i])) });
+      }
+      return { cols: { mPrev: { flag: "R" }, mCur: { flag: vc[1].flag ?? "P" } }, items, total: null };
+    };
+    const P = panelOf(root, (mo) => rel.ftspccQty(flow, mo), parse, latest);
+    const mos = [...P.keys()].sort();
+    const keys = new Map(); for (const m of mos) for (const [k, it] of P.get(m).items) keys.set(k, it);
+    const series = {};
+    for (const [k, it] of [...keys].sort()) series[k] = { name: k, label: `${tidyDesc(it.desc)} (${k.slice(1, 3).toUpperCase()}), ${it.unit.toLowerCase() === "ton" ? "tonnes" : it.unit.toLowerCase() === "kgs" ? "kilograms" : it.unit}`, unitOfMeasure: it.unit, color: "#A3A9B4",
+      data: mos.map((m) => P.get(m).items.get(k)?.value ?? null) };
+    W(`trade-principal-quantity-${FLOW[flow]}`, mos.map(iso), series, { frequency: "monthly", base: "principal commodities (DGCI&S)", unit: "quantity",
+      revision: Object.fromEntries(mos.map((m) => [iso(m), P.get(m).flag])),
+      coverage: `How much India ${flow === "export" ? "sells" : "buys"}, by weight or count: ${FLOW[flow]} of each principal commodity in its own unit (tonnes, kilograms, numbers), every month since January 2017`,
+      note: "TradeStat FTSPCC principal-commodity tables, quantity view. Each line is in the unit printed beside it; lines in different units are never added. The year-earlier column of a table a year later (unflagged) replaces the provisional (P) print where it exists." });
+  }
+
+  /* ---- HS 6 and 8 digits: one bundle per financial year and flow, never across HS editions ---- */
+  for (const [lvl, unit] of [[6, "usd"], [8, "usd"], [8, "qty"]]) for (const flow of ["export", "import"]) {
+    if (!fs.existsSync(path.join(root, rel.cw(flow, lvl, unit, latest)))) { console.warn(`  tradestat bake: HS ${lvl} ${unit} ${flow} not archived yet, skipped`); continue; }
+    const P = monthlyPanel(root, flow, lvl, unit, latest, { sameEdition: true });
+    const mos = [...P.keys()].sort();
+    const byFy = new Map(); for (const m of mos) (byFy.get(fyOf(m)) ?? byFy.set(fyOf(m), []).get(fyOf(m))).push(m);
+    for (const [fy, fm] of byFy) {
+      const editions = new Set(fm.map(editionOf));
+      if (editions.size !== 1) throw new Error(`tradestat bake: HS ${lvl} ${fy} spans two HS editions`);
+      const edition = [...editions][0];
+      const keys = new Map();
+      for (const m of fm) for (const [c, it] of P.get(m).items) {
+        const k = unit === "qty" ? `c${c}_${(it.unit || "none").toLowerCase().replace(/[^a-z0-9]+/g, "")}` : `c${c}`;
+        keys.set(k, { code: c, ...it });
+      }
+      const series = {};
+      for (const [k, it] of [...keys].sort()) {
+        series[k] = { name: k, label: `${tidyDesc(it.desc)} (HS ${it.code})${unit === "qty" ? `, ${it.unit || "no unit printed"}` : ""}`, color: "#A3A9B4",
+          data: fm.map((m) => { const x = P.get(m).items.get(it.code); return x && (unit !== "qty" || (x.unit || "none") === (it.unit || "none")) ? (unit === "qty" ? x.value : r2(x.value)) : null; }) };
+        if (it.star) series[k].codeNote = "Marked * in TradeStat: the code was dropped or re-allocated, and its unit may have changed, at an annual ITC-HS revision (April 2024 or April 2026).";
+      }
+      const tag = unit === "qty" ? "-qty" : "";
+      W(`trade-hs${lvl}-${FLOW[flow]}${tag}-${fy}`, fm.map(iso), series, { frequency: "monthly", base: edition, unit: UNIT[unit][1], closed: fy !== fyOf(latest),
+        revision: Object.fromEntries(fm.map((m) => [iso(m), P.get(m).flag])),
+        coverage: `India's merchandise ${FLOW[flow]} by ${lvl === 8 ? "tariff line (ITC-HS 8 digits)" : "HS subheading (6 digits)"}, ${unit === "qty" ? "quantity in each line's own unit" : UNIT[unit][0]}, each month of ${fy}, ${edition}`,
+        note: `TradeStat MEIDB at ${lvl} digits. One financial year per file, on one HS edition (${edition}); codes are not comparable across editions (HS 2017 to HS 2022 in April 2023). The revised print (R) is used only when the year-later table uses the same edition; 2022-23 therefore stays on its own final (F) prints.${unit === "qty" ? " Quantities are in each line's printed unit and are never added across lines." : ""}` });
+    }
+  }
+
+  /* ---- commodity x partner, financial years and year to date, US$ (HS 2 and 4 digits) ---- */
+  const pickers = readRaw(root, rel.pickers())?.rows ?? [];
+  for (const lvl of [2, 4]) for (const flow of ["export", "import"]) {
+    if (!pickers.length || !fs.existsSync(path.join(root, rel.cxc(flow, lvl, pickers[0][0], latest)))) { console.warn(`  tradestat bake: commodity x partner HS ${lvl} ${flow} not archived yet, skipped`); continue; }
+    const fysAll = new Set(), cells = new Map(), flags = new Map(), ytdCells = new Map(); let ytdFlags = null;
+    const descs = new Map();
+    let missing = 0;
+    for (const [code, name] of pickers) {
+      const ck = ckey(countryName(name));
+      const F = fyPanelOf(root, (mo) => rel.cxc(flow, lvl, code, mo), (raw, mo) => (raw ? parseCommodity(raw, mo) : null), latest);
+      if (!F.years.size) { missing++; continue; }
+      for (const [fy, x] of F.years) {
+        fysAll.add(fy); flags.set(fy, x.flag);
+        for (const [c, it] of x.items) { if (it.value == null || it.value === 0) continue; descs.set(c, it.desc); cells.set(`${fy}|${ck}|${c}`, it.value); cells.set(`name|${ck}`, name); }
+      }
+      if (F.ytd) { ytdFlags = F.ytd.flags; for (const [c, it] of F.ytd.items) { if (!it.prev && !it.cur) continue; descs.set(c, it.desc); ytdCells.set(`${ck}|${c}`, [it.prev, it.cur]); cells.set(`name|${ck}`, name); } }
+    }
+    if (missing) console.warn(`  tradestat bake: commodity x partner HS ${lvl} ${flow}: ${missing} partners have no archived tables yet`);
+    const fys = [...fysAll].sort();
+    const pairs = [...new Set([...cells.keys()].filter((k) => !k.startsWith("name|")).map((k) => k.split("|").slice(1).join("|")))].sort();
+    const series = {};
+    for (const p of pairs) {
+      const [ck, c] = p.split("|");
+      series[`${ck}__c${c}`] = { name: `${ck}__c${c}`, label: `${countryName(cells.get(`name|${ck}`))}: ${tidyDesc(descs.get(c))} (HS ${c})`, color: "#A3A9B4", data: fys.map((fy) => r2(cells.get(`${fy}|${p}`) ?? null)) };
+    }
+    W(`trade-partner-hs${lvl}-${FLOW[flow]}`, fys.map(fyStartIso), series, { frequency: "annual", base: "HS 2 and 4 digits", unit: "usd_million",
+      revision: Object.fromEntries(fys.map((fy) => [fyStartIso(fy), flags.get(fy)])),
+      coverage: `What India ${flow === "export" ? "sells to" : "buys from"} each partner, by HS ${lvl === 2 ? "chapter" : "heading"}: every partner x every ${lvl === 2 ? "chapter" : "heading"} traded, each financial year since 2016-17, US$ million`,
+      note: "TradeStat MEIDB country-wise all-commodities tables, March calls (April-to-March cumulatives; R from the following March where it exists). Only pairs with trade are listed: a missing pair traded nothing that year (TradeStat prints no line for it)." });
+    if (ytdCells.size) {
+      const curFy = fyOf(latest), prevFy = fyOf(addMonths(latest, -12));
+      const ys = {};
+      for (const [p, v] of [...ytdCells].sort()) { const [ck, c] = p.split("|"); ys[`${ck}__c${c}`] = { name: `${ck}__c${c}`, label: `${countryName(cells.get(`name|${ck}`))}: ${tidyDesc(descs.get(c))} (HS ${c})`, color: "#A3A9B4", data: [r2(v[0]), r2(v[1])] }; }
+      W(`trade-partner-hs${lvl}-${FLOW[flow]}-ytd`, [fyStartIso(prevFy), fyStartIso(curFy)], ys, { frequency: "annual", base: "HS 2 and 4 digits", unit: "usd_million",
+        period: { from: "04", to: latest.slice(5, 7), label: `April to ${MONTHS[+latest.slice(5, 7) - 1]}` }, revision: { [fyStartIso(prevFy)]: ytdFlags?.[0] ?? null, [fyStartIso(curFy)]: ytdFlags?.[1] ?? null },
+        coverage: `What India ${flow === "export" ? "sells to" : "buys from"} each partner by HS ${lvl === 2 ? "chapter" : "heading"}, April to ${MONTHS[+latest.slice(5, 7) - 1]} this year and a year earlier, US$ million`,
+        note: "TradeStat MEIDB country-wise all-commodities tables, the latest month's cumulative columns. A part of a year." });
+    }
+  }
+
   return { written, V };
 }

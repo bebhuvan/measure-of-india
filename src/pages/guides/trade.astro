@@ -1,0 +1,857 @@
+---
+// Guide 15, merchandise trade. Data: data/series/trade-*.json (TradeStat via
+// scripts/lib/products/tradestat*.mjs; RBI DBIE via scripts/lib/products/dbie-trade.mjs).
+// The bundles are large (HS 4 digits monthly is 1.7 MB), so the plates' data is cut here at
+// build time and embedded as one JSON block; the client never fetches a series to draw a
+// plate. The every-cut explorer fetches its finer tables (/data/<bundle>.json, static files)
+// only when a reader asks for them.
+import fs from "node:fs";
+import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
+import GuideData from "../../components/GuideData.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+import { period } from "../../dossiers/periods.js";
+const D = bySlug["trade"];
+const B = (s) => JSON.parse(fs.readFileSync(`data/series/${s}.json`, "utf8"));
+const has = (s) => fs.existsSync(`data/series/${s}.json`);
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const monthOf = (iso) => `${MONTHS[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}`;
+const fyOf = (iso) => `${iso.slice(0, 4)}-${String((+iso.slice(0, 4) + 1) % 100).padStart(2, "0")}`;
+const r1 = (v) => (v == null ? null : Math.round(v * 10) / 10);
+
+const PT = period("trade-total");
+const tot = B("trade-total");
+const L = tot.dates.length - 1;
+
+/* ---- the plates' data ---- */
+const T = {};
+T.vintage = tot.meta.vintage;
+T.total = { dates: tot.dates, exports: tot.series.exports.data, imports: tot.series.imports.data, balance: tot.series.balance.data, revision: tot.meta.revision };
+{
+  const a = B("trade-dbie-annual");
+  T.long = { dates: a.dates, exports: a.series.exports.data, imports: a.series.imports.data, balance: a.series.balance.data };
+  const ai = B("trade-dbie-annual-inr");
+  T.ccy = { dates: a.dates, usd: a.series.exports.data, inr: a.dates.map((d) => ai.series.exports.data[ai.dates.indexOf(d)] ?? null), usdImp: a.series.imports.data, inrImp: a.dates.map((d) => ai.series.imports.data[ai.dates.indexOf(d)] ?? null) };
+  const m = B("trade-dbie-monthly");
+  const i0 = m.dates.indexOf("1997-04-01");
+  T.oilm = { dates: m.dates.slice(i0), balance: m.series.balance.data.slice(i0), oil: m.series.balance_oil.data.slice(i0), nonoil: m.series.balance_non_oil.data.slice(i0), lastRev: m.meta.revision[m.dates.at(-1)] };
+}
+// oil and gold in the deficit: one publication (FTPA principal commodities), financial years
+{
+  const X = B("trade-principal-exports-fy"), M = B("trade-principal-imports-fy");
+  const at = (b, k, d) => b.series[k]?.data[b.dates.indexOf(d)] ?? null;
+  T.oilgold = X.dates.map((d) => {
+    const bal = at(X, "total", d) - at(M, "total", d);
+    const pet = at(X, "g20", d) - at(M, "g20", d);
+    const gold = at(X, "ig6", d) - at(M, "ig6", d);
+    return { fy: fyOf(d), bal: r1(bal), pet: r1(pet), gold: r1(gold), rest: r1(bal - pet - gold), flag: X.meta.revision[d] };
+  });
+  // the groups, first and latest full year
+  const first = X.dates[0], last = X.dates.at(-1);
+  const grp = (b) => Object.entries(b.series).filter(([k]) => /^g\d\d$/.test(k)).map(([k, s]) => ({ key: k, label: s.label.replace(/\s*\(group \d+\)$/, ""), first: at(b, k, first), last: at(b, k, last) }));
+  T.groups = { firstFy: fyOf(first), lastFy: fyOf(last), exports: grp(X), imports: grp(M), totalX: [at(X, "total", first), at(X, "total", last)], totalM: [at(M, "total", first), at(M, "total", last)] };
+  // the latest quick estimate (one month ahead of the final tables)
+  const qx = B("trade-principal-exports"), qm = B("trade-principal-imports");
+  T.qe = { date: qx.dates.at(-1), exports: qx.series.total.data.at(-1), imports: qm.series.total.data.at(-1), flag: qx.meta.revision[qx.dates.at(-1)],
+    exportsYearAgo: qx.series.total.data.at(-13), importsYearAgo: qm.series.total.data.at(-13) };
+}
+// chapters, latest full financial year
+{
+  const top = (slug) => { const b = B(slug), n = b.dates.length - 1; return { fy: fyOf(b.dates[n]), prevFy: fyOf(b.dates[n - 1]), rows: Object.entries(b.series).filter(([k]) => k !== "total").map(([k, s]) => ({ code: k.slice(1), label: s.label, last: s.data[n], prev: s.data[n - 1] })).filter((r) => r.last != null).sort((a, c) => c.last - a.last), total: b.series.total.data[n] }; };
+  T.chapters = { exports: top("trade-hs2-exports-fy"), imports: top("trade-hs2-imports-fy") };
+}
+// named goods (HS 4 digits, monthly, US$ million): runs through both HS editions
+{
+  const X = B("trade-hs4-exports"), M = B("trade-hs4-imports");
+  const NAMED = [
+    ["exports", "8517", "Phones and telecom equipment"], ["exports", "2710", "Petroleum products (diesel, petrol, jet fuel)"], ["exports", "3004", "Medicines in doses"], ["exports", "1006", "Rice"],
+    ["imports", "2709", "Crude oil"], ["imports", "7108", "Gold"], ["imports", "1511", "Palm oil"], ["imports", "2701", "Coal"],
+  ];
+  T.home = NAMED.map(([f, c, name]) => { const b = f === "exports" ? X : M; return { flow: f, code: c, name, label: b.series["c" + c]?.label ?? c, dates: b.dates, values: b.series["c" + c]?.data ?? [] }; });
+}
+// quantities, the last full financial year (sum of twelve published months; derived)
+{
+  const Q = { exports: B("trade-principal-quantity-exports"), imports: B("trade-principal-quantity-imports") };
+  const fyEnd = T.chapters.exports.fy; const y0 = +fyEnd.slice(0, 4);
+  const months = Array.from({ length: 12 }, (_, k) => `${k < 9 ? y0 : y0 + 1}-${String(((k + 3) % 12) + 1).padStart(2, "0")}-01`);
+  const fySum = (f, key) => { const b = Q[f], s = b.series[key]; if (!s) return null; const v = months.map((d) => s.data[b.dates.indexOf(d)]); return v.some((x) => x == null) ? null : v.reduce((a, x) => a + x, 0); };
+  T.qty = { fy: fyEnd,
+    gold: fySum("imports", "ig6_kgs"), vegoil: fySum("imports", "ib8_ton"), crude: fySum("imports", "is5_ton"), coal: fySum("imports", "if1_ton"),
+    riceB: fySum("exports", "ia3_ton"), riceNB: fySum("exports", "ia4_ton"), products: fySum("exports", "is6_ton") };
+  const o = B("trade-dbie-oil-volumes");
+  T.crude = { dates: o.dates, imports: o.series.crude_imports.data, production: o.series.crude_production.data };
+}
+// partners
+{
+  const F = B("trade-partners-balance-fy"), n = F.dates.length - 1;
+  const X = B("trade-partners-exports-fy"), M = B("trade-partners-imports-fy");
+  const rows = Object.entries(F.series).map(([k, s]) => ({ key: k, name: s.label.replace(/: exports minus imports \(derived\)$/, ""), bal: s.data[n], exp: X.series[k]?.data[n] ?? null, imp: M.series[k]?.data[n] ?? null })).filter((r) => r.bal != null && !/unspecified/i.test(r.name));
+  rows.sort((a, c) => a.bal - c.bal);
+  T.partners = { fy: fyOf(F.dates[n]), deficits: rows.slice(0, 10), surpluses: rows.slice(-10).reverse(), n: rows.length, inDeficit: rows.filter((r) => r.bal < 0).length };
+  const Lg = B("trade-partners-long"), pick = (k) => ({ exp: Lg.series[`${k}__exports`]?.data, imp: Lg.series[`${k}__imports`]?.data, bal: Lg.series[`${k}__balance`]?.data });
+  T.chinaus = { dates: Lg.dates, china: pick("china"), usa: pick("united_states"), flag: Lg.meta.revision };
+  const RX = B("trade-regions-exports-fy"), RM = B("trade-regions-imports-fy"), rn = RX.dates.length - 1;
+  T.regions = Object.entries(RX.series).filter(([k]) => /^region_/.test(k)).map(([k, s]) => ({ name: s.label.replace(/, all countries$/, ""), exp: s.data[rn], imp: RM.series[k]?.data[rn] ?? null }));
+  // exports and imports, partners' share of the latest year
+  T.partnerTotals = { exp: X.series && Object.values(X.series).reduce((a, s) => a + (s.data[n] ?? 0), 0), imp: Object.values(M.series).reduce((a, s) => a + (s.data[n] ?? 0), 0) };
+}
+// commodity x partner: what goes to the United States, what comes from China
+if (has("trade-partner-hs2-exports") && has("trade-partner-hs2-imports")) {
+  const top = (slug, ck) => { const b = B(slug), n = b.dates.length - 1; return { fy: fyOf(b.dates[n]), rows: Object.entries(b.series).filter(([k]) => k.startsWith(ck + "__")).map(([k, s]) => ({ code: k.split("__c")[1], label: s.label.replace(/^[^:]+:\s*/, ""), last: s.data[n] })).filter((r) => r.last != null).sort((a, c) => c.last - a.last).slice(0, 10) }; };
+  T.cxc = { us: top("trade-partner-hs2-exports", "united_states"), china: top("trade-partner-hs2-imports", "china") };
+}
+// prices and volumes (DGCI&S indices, base 2012-13)
+{
+  const t = B("trade-dbie-tot-2012");
+  T.tot = { dates: t.dates, uviX: t.series.uvi_exports.data, uviM: t.series.uvi_imports.data, qiX: t.series.qi_exports.data, qiM: t.series.qi_imports.data, net: t.series.tot_net.data, withheld: t.series.qi_exports.withheldNote ?? null };
+}
+// the every-cut explorer: chapters and partners inline; finer tables load on request
+{
+  const ex = (slug) => { const b = B(slug); return { dates: b.dates, rows: Object.entries(b.series).map(([k, s]) => [k, s.label, s.data]) }; };
+  T.explorer = { hs2x: ex("trade-hs2-exports-fy"), hs2m: ex("trade-hs2-imports-fy"), px: ex("trade-partners-exports-fy"), pm: ex("trade-partners-imports-fy") };
+  T.explorerFiles = D.bundles.filter((b) => /^trade-hs[468]-|^trade-hs4-(exports|imports)-fy$|^trade-partner-hs[24]-(exports|imports)$/.test(b) && has(b));
+}
+const YTD = { x: B("trade-hs2-exports-ytd"), m: B("trade-hs2-imports-ytd") };
+T.ytd = { label: YTD.x.meta.period.label, prev: [YTD.x.series.total.data[0], YTD.m.series.total.data[0]], cur: [YTD.x.series.total.data[1], YTD.m.series.total.data[1]], fy: fyOf(YTD.x.dates[1]) };
+const latestFy = T.chapters.exports.fy;
+const fmtBn = (v) => `$${(v / 1000).toFixed(1)} bn`;
+---
+<Base
+  title="What India Buys and Sells · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/trade/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">Every container that leaves an Indian port and every tanker that docks is declared to customs, line by line. Added up each month, those declarations tell you what the country makes for the world, what it cannot do without, and whom it depends on.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>Ministry of Commerce, TradeStat (DGCI&amp;S)</b></span>
+      <span>Long view <b>RBI, DBIE, since 1970-71</b></span>
+      <span>Frequency <b>Monthly</b></span>
+      <span>Detail <b>98 chapters to 11,000 tariff lines, 240 partners</b></span>
+      <span>Latest month <b>{PT.long}</b></span>
+      <span>Unit <b>US$, with ₹ where it matters</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Exports, {PT.long}</div><div class="v acc" id="n-exp">–</div><div class="d" id="d-exp">–</div><div class="nspark" id="nspark-exp"></div></div>
+      <div class="num"><div class="l">Imports, {PT.long}</div><div class="v" id="n-imp">–</div><div class="d" id="d-imp">–</div></div>
+      <div class="num"><div class="l">Trade balance, {PT.long}</div><div class="v" id="n-bal">–</div><div class="d" id="d-bal">–</div></div>
+      <div class="num"><div class="l">Exports, {T.ytd.label} {T.ytd.fy}</div><div class="v" id="n-ytd">–</div><div class="d" id="d-ytd">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading: data inputs trade-total (all three series), trade-principal-* (quick estimate); prose: generated slots -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">{PT.long}, final tables</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Trade balance</span><div class="big" id="rb-big">–</div></div>
+      <p class="rt-cap">India's merchandise trade balance in {PT.long}: what it sold abroad minus what it bought. A minus sign is a deficit. Services, which India sells well, are not in this number.</p>
+      <div class="rt-side"><span class="rk">Exports</span><div class="rt-side-v" id="rb-exp">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the figures say</span>
+        <Prose slot="trade.current-reading.what-the-print-says" />
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What they do not say</span>
+        <Prose slot="trade.current-reading.what-it-does-not-say" />
+      </div>
+    </div>
+    <p class="qe-note">The first estimate for <span id="qe-month">–</span> is already out: exports <b id="qe-exp">–</b> and imports <b id="qe-imp">–</b> (provisional quick estimates, revised when the final tables arrive a month later).</p>
+  </section>
+
+  <!-- § 02 lived reality: inputs trade-hs4-exports, trade-hs4-imports (8517, 2710, 3004, 1006, 2709, 7108, 1511, 2701), trade-principal-quantity-*; prose: evergreen + governed As-of -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>What it has to do with your house</h2><span class="line"></span><span class="unit">Eight goods, monthly, US$ million</span></div>
+    <div class="prose">
+      <p>The phone in your pocket, the oil in your kitchen and the petrol in your scooter all have a line in these tables. India now sells phones to the world by the billion dollars a month. Most of the edible oil it cooks with is bought abroad, palm oil above all. Most of the crude its refineries turn into petrol and diesel arrives by tanker, and some of that diesel and jet fuel goes straight back out as exports.</p>
+      <p>That is what these numbers are. In {T.qty.fy} India bought <b id="lv-oil">–</b> of vegetable oil, <b id="lv-gold">–</b> of gold and <b id="lv-crude">–</b> of crude oil, and sold <b id="lv-rice">–</b> of rice. Each line below is one of those goods, month by month since 2017.</p>
+    </div>
+    <div class="break">
+      <figure id="cb-home" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Phones went from almost nothing to one of India's biggest exports; crude and gold still dominate what it buys</h3>
+            <div class="sub">Eight goods by HS heading (4 digits), monthly, US$ million, January 2017 to {PT.long}. Each panel has its own scale.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-home">–</div><div class="c">phone exports, {PT.long}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-home" class="sm-grid" role="img" aria-label="Eight goods, monthly trade values"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Commerce, TradeStat (DGCI&amp;S customs data), MEIDB. HS headings: 8517 telephones and telecom equipment, 2710 petroleum products, 3004 medicaments in doses, 1006 rice, 2709 crude oil, 7108 gold, 1511 palm oil, 2701 coal.</span>
+            <span class="dl"><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each panel is one HS heading, the four-digit level of the international customs code, which has not changed meaning since 2017. Scales differ: crude runs to billions of dollars a month, rice to hundreds of millions. Read the shape and the number in the corner, not the height against the next panel.</p>
+            <p>Values are dollars at the time of each shipment. A taller crude line can mean more barrels or dearer barrels; the plate on prices and volumes below separates the two.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PT.long}</span>
+            <p>Phone exports were <b id="ex-h-phone">–</b> in {PT.month}, against <b id="ex-h-phone17">–</b> in January 2017. Crude imports were <b id="ex-h-crude">–</b> and gold <b id="ex-h-gold">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 03 how to read this: evergreen, human-written -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>How to read these numbers</h2><span class="line"></span></div>
+    <div class="prose">
+      <p><b>What is counted.</b> Merchandise trade is goods that physically cross India's customs border, valued when they are declared. Exports are counted free on board, at the Indian port; imports include the cost of freight and insurance to India. Software, tourism, shipping and other services are a separate account, and so are the money flows that pay for all of it.</p>
+      <p><b>Who counts it.</b> The Directorate General of Commercial Intelligence and Statistics (DGCI&amp;S) in Kolkata compiles every shipping bill and bill of entry. The Ministry of Commerce publishes quick estimates for a month about two weeks after it ends, and the detailed tables, by product and partner, a few weeks later. The RBI republishes the totals; this guide uses the Ministry's tables for detail and the RBI's for the long history, and never joins the two.</p>
+      <p><b>Revisions.</b> Every month is printed three times: a provisional quick estimate, a final figure in that month's detailed table, and a revised final figure in the same month's table a year later. This guide uses the latest print and records which one each number is.</p>
+      <p><b>The codes.</b> Products are classified by the Harmonized System: 2 digits for a chapter (09 is coffee, tea and spices), 4 for a heading (0902 is tea), 6 for a subheading, and India's own 8 digits for a tariff line (09024020 is black tea in packets). The 2- and 4-digit levels are comparable over time. The 6- and 8-digit codes were rewritten in April 2023, when India moved from HS 2017 to HS 2022, and some lines change each April, so this guide never draws one 8-digit line across those breaks.</p>
+      <p><b>Dollars and rupees.</b> Trade is invoiced mostly in dollars, so the dollar series is the natural measure. Rupee values grow faster whenever the rupee weakens, without a single extra container leaving port.</p>
+    </div>
+  </section>
+
+  <!-- § 04 the long view: inputs trade-dbie-annual, trade-total -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>The long view</h2><span class="line"></span><span class="unit">US$ billion, financial years since 1970-71 and months since 2017</span></div>
+    <div class="break">
+      <figure id="cb-long" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3><span id="h-long">–</span></h3>
+            <div class="sub">Merchandise exports and imports, US$ billion, financial years 1970-71 to {T.long.dates.length ? fyOf(T.long.dates.at(-1)) : ""}. RBI's republication of DGCI&amp;S data.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-long">–</div><div class="c">deficit, {fyOf(T.long.dates.at(-1))}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Exports</button>
+            <button class="chip"><i style="background:#C47A16"></i>Imports</button>
+          </div>
+          <div class="plotzone"><div id="plot-long" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Database on Indian Economy (report 649), DGCI&amp;S data. Financial years, April to March.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The space between the two lines is the trade deficit. It is not a loss in the way a household's overspending is: India pays for it with what it earns from services, the money its workers abroad send home, and foreign investment. When the gap narrows sharply, it is usually because imports fell, not because exports boomed.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {fyOf(T.long.dates.at(-1))}</span>
+            <p>Exports <b id="ex-l-exp">–</b>, imports <b id="ex-l-imp">–</b>, a balance of <b id="ex-l-bal">–</b>. Exports were <b id="ex-l-x">–</b> times their 1990-91 level. India ran a surplus in only <span id="ex-l-surp">–</span>. The gap narrowed most in <span id="ex-l-narrow">–</span>, when imports fell.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-month" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3><span id="h-month">–</span></h3>
+            <div class="sub">Merchandise exports, imports and the balance, US$ billion, January 2017 to {PT.long}. TradeStat's final and revised tables.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-month">–</div><div class="c">balance, {PT.long}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Exports</button>
+            <button class="chip"><i style="background:#C47A16"></i>Imports</button>
+            <button class="chip"><i style="background:#878D99"></i>Balance</button>
+          </div>
+          <div class="plotzone"><div id="plot-month" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Commerce, TradeStat (DGCI&amp;S), MEIDB India totals. Each month is its revised print where one exists.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Exporters rush to ship before the financial year closes, so March is usually the peak and April falls back. Compare a month with the same month a year earlier, not with the month before. The deep trough in April 2020 is the national lockdown.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PT.long}</span>
+            <p>The balance in {PT.month} was <b id="ex-m-bal">–</b>, against <b id="ex-m-bal1">–</b> a year earlier. The largest monthly deficit in this series was <b id="ex-m-max">–</b>, in <span id="ex-m-maxd">–</span>. March was the busiest export month in <span id="ex-m-march">–</span> full financial years.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 oil and gold: inputs trade-principal-exports-fy, trade-principal-imports-fy (g20, ig6, total), trade-dbie-monthly (balance_oil, balance_non_oil) -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>How much of the deficit is oil and gold</h2><span class="line"></span><span class="unit">US$ billion, financial years since 2009-10</span></div>
+    <div class="break">
+      <figure id="cb-oilgold" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3><span id="h-oilgold">–</span></h3>
+            <div class="sub">The merchandise trade balance split into petroleum (crude and products, exports minus imports), gold, and everything else, US$ billion, financial years 2009-10 to {T.groups.lastFy}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-oilgold">–</div><div class="c">oil and gold's share of the deficit, {T.groups.lastFy}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i class="sq" style="background:#2E4BD8;width:10px;height:10px"></i>Petroleum</button>
+            <button class="chip"><i class="sq" style="background:#C47A16;width:10px;height:10px"></i>Gold</button>
+            <button class="chip"><i class="sq" style="background:#C9CED6;width:10px;height:10px"></i>Everything else</button>
+          </div>
+          <div class="plotzone"><div id="plot-oilgold" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Commerce, TradeStat, principal commodities (FTPA): group 20 petroleum, crude and products; item G6 gold. Balances computed as exports minus imports.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each bar is one year's deficit, cut into three. India buys crude and petroleum products and also sells refined products abroad, so the petroleum bar is what it bought minus what it sold. Gold is almost all imported, for jewellery, savings and weddings, and only a little goes back out as gold itself; jewellery exports are counted in the third part.</p>
+            <p>When oil is dear the blue part grows without India buying a barrel more. When gold is dear, Indians often buy fewer tonnes but pay more dollars.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {T.groups.lastFy}</span>
+            <p>The balance was <b id="ex-og-bal">–</b>: petroleum <b id="ex-og-pet">–</b>, gold <b id="ex-og-gold">–</b>, everything else <b id="ex-og-rest">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-oilm" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The oil deficit swings with world prices; the rest of the deficit has grown more steadily</h3>
+            <div class="sub">Monthly trade balance in oil and in everything else, US$ billion, April 1997 to {monthOf(T.oilm.dates.at(-1))}. RBI's republication; the latest month is provisional.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-oilm">–</div><div class="c">oil balance, latest month</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Oil</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Non-oil</button>
+          </div>
+          <div class="plotzone"><div id="plot-oilm" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, DBIE reports 426 and 433 (DGCI&amp;S data). Oil exports are petroleum products; oil imports are crude and products. Balances computed as exports minus imports.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Below zero is a deficit. The oil line falls when crude is expensive (2008, 2012 to 2014, 2022) and recovers when it is cheap (2016, 2020). In this series gold sits inside non-oil, so the grey line carries both gold and India's growing appetite for electronics, machinery and chemicals.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {monthOf(T.oilm.dates.at(-1))}</span>
+            <p>Oil balance <b id="ex-om-oil">–</b>, non-oil balance <b id="ex-om-non">–</b> in {monthOf(T.oilm.dates.at(-1))} (<span id="ex-om-rev">–</span>).</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 anatomy: inputs trade-principal-*-fy (21 groups), trade-hs2-*-fy (98 chapters) -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>What India sells, and what it buys</h2><span class="line"></span><span class="unit">US$ billion, by group and by chapter</span></div>
+    <div class="break">
+      <figure id="cb-sell" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3><span id="h-sell">–</span></h3>
+            <div class="sub">Exports by the Ministry's 21 principal-commodity groups, US$ billion, {T.groups.firstFy} (circle) and {T.groups.lastFy} (bar).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-sell">–</div><div class="c">electronics exports, {T.groups.lastFy}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>{T.groups.firstFy}</button>
+            <button class="chip"><i style="background:#2E4BD8"></i>{T.groups.lastFy}</button>
+          </div>
+          <div class="plotzone"><div id="plot-sell" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Commerce, TradeStat, principal commodities (FTPA), revised where available.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The groups are the Ministry's own: they follow how industries are organised (engineering, chemicals, textiles) rather than the customs chapters. Each bar is the latest full year; the circle is the same group fifteen years earlier, in dollars of each year, so some of the growth is inflation.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {T.groups.lastFy}</span>
+            <p>The largest export groups were <span id="ex-s-1">–</span>, <span id="ex-s-2">–</span> and <span id="ex-s-3">–</span>. Electronics rose from <b id="ex-s-el0">–</b> to <b id="ex-s-el1">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-buy" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3><span id="h-buy">–</span></h3>
+            <div class="sub">Imports by the same 21 groups, US$ billion, {T.groups.firstFy} (circle) and {T.groups.lastFy} (bar).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-buy">–</div><div class="c">petroleum imports, {T.groups.lastFy}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>{T.groups.firstFy}</button>
+            <button class="chip"><i style="background:#C47A16"></i>{T.groups.lastFy}</button>
+          </div>
+          <div class="plotzone"><div id="plot-buy" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Commerce, TradeStat, principal commodities (FTPA), revised where available.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Read it beside the export plate. Electronics appears on both: India imports components and finished goods while exporting assembled phones, so a rise in electronics exports usually comes with a rise in electronics imports.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {T.groups.lastFy}</span>
+            <p>The largest import groups were <span id="ex-b-1">–</span>, <span id="ex-b-2">–</span> and <span id="ex-b-3">–</span>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-chapx" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3><span id="h-chapx">–</span></h3>
+            <div class="sub">The twelve largest HS chapters (2 digits) of India's exports, US$ billion, {T.chapters.exports.fy} (bar), with {T.chapters.exports.prevFy} as a circle.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-chapx">–</div><div class="c">of exports in these twelve chapters</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>{T.chapters.exports.prevFy}</button>
+            <button class="chip"><i style="background:#2E4BD8"></i>{T.chapters.exports.fy}</button>
+          </div>
+          <div class="plotzone"><div id="plot-chapx" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Commerce, TradeStat (DGCI&amp;S), MEIDB: March tables, April-to-March totals.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A chapter is the customs code's broadest shelf: chapter 27 is all mineral fuels, crude and products alike; chapter 85 is electrical machinery, from phones to transformers; chapter 71 is pearls, stones, jewellery and gold. The every-cut table at the end of this guide opens each chapter into its headings and tariff lines.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {T.chapters.exports.fy}</span>
+            <p>The top export chapter was <span id="ex-c-x1">–</span> at <b id="ex-c-x1v">–</b>, then <span id="ex-c-x2">–</span> at <b id="ex-c-x2v">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-chapm" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3><span id="h-chapm">–</span></h3>
+            <div class="sub">The twelve largest HS chapters of India's imports, US$ billion, {T.chapters.imports.fy} (bar), with {T.chapters.imports.prevFy} as a circle.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-chapm">–</div><div class="c">of imports in these twelve chapters</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>{T.chapters.imports.prevFy}</button>
+            <button class="chip"><i style="background:#C47A16"></i>{T.chapters.imports.fy}</button>
+          </div>
+          <div class="plotzone"><div id="plot-chapm" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Commerce, TradeStat (DGCI&amp;S), MEIDB: March tables, April-to-March totals.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Imports are more concentrated than exports: a handful of chapters (fuels, electronics, gold and stones, machinery) make up most of the bill, which is why oil and gold prices move India's deficit so much.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {T.chapters.imports.fy}</span>
+            <p>The top import chapter was <span id="ex-c-m1">–</span> at <b id="ex-c-m1v">–</b>, then <span id="ex-c-m2">–</span> at <b id="ex-c-m2v">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 partners: inputs trade-partners-balance-fy, trade-partners-*-fy, trade-partners-long, trade-regions-*-fy -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>With whom</h2><span class="line"></span><span class="unit">US$ billion, financial years</span></div>
+    <div class="break">
+      <figure id="cb-partners" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3><span id="h-partners">–</span></h3>
+            <div class="sub">Trade balance with India's ten largest deficit partners and ten largest surplus partners, US$ billion, {T.partners.fy}. Exports minus imports.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-partners">–</div><div class="c">deficit with China, {T.partners.fy}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-partners" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Commerce, TradeStat (DGCI&amp;S), MEIDB region-wise tables, March cumulatives. Balance computed as exports minus imports.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A deficit with one country is not a problem in itself: India buys crude from the Gulf and Russia because it has no oil of its own, and pays for it partly with what it sells to the United States and Europe. Countries are where goods come from or go to as declared at customs, so goods routed through the UAE or Singapore count against those hubs.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {T.partners.fy}</span>
+            <p>India ran a deficit with <b id="ex-p-n">–</b> of <span id="ex-p-of">–</span> partners. Deficit with China <b id="ex-p-cn">–</b>; surplus with the United States <b id="ex-p-us">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-chinaus" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3><span id="h-chinaus">–</span></h3>
+            <div class="sub">Trade balance with China and with the United States, US$ billion, financial years 2009-10 to {fyOf(T.chinaus.dates.at(-1))}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-chinaus">–</div><div class="c">imports from China, {fyOf(T.chinaus.dates.at(-1))}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>United States</button>
+            <button class="chip"><i style="background:#C47A16"></i>China</button>
+          </div>
+          <div class="plotzone"><div id="plot-chinaus" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Commerce, TradeStat, total trade by country (FTSPCC), March tables, revised where available.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>This is a separate ministry table from the monthly partner tables above, so it reaches back to 2009-10. The two agree where they overlap but are drawn apart.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {fyOf(T.chinaus.dates.at(-1))}</span>
+            <p>India bought <b id="ex-cu-cnm">–</b> from China and sold it <b id="ex-cu-cnx">–</b>. It sold the United States <b id="ex-cu-usx">–</b> and bought <b id="ex-cu-usm">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-cxc" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>What goes to America, and what comes from China</h3>
+            <div class="sub">The ten largest HS chapters in India's exports to the United States and its imports from China, US$ billion, <span id="sub-cxc">–</span>.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-cxc">–</div><div class="c">electrical machinery from China</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-cxc" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Commerce, TradeStat (DGCI&amp;S), MEIDB country-wise all-commodities tables, March cumulatives.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The two lists barely overlap. India sells the United States medicines, diamonds and jewellery, clothes and, increasingly, phones; it buys from China the machinery, electronics, chemicals and parts that its factories, including the phone factories, run on.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of <span id="asof-cxc">–</span></span>
+            <p>Top export to the United States: <span id="ex-x-us1">–</span>, <b id="ex-x-us1v">–</b>. Top import from China: <span id="ex-x-cn1">–</span>, <b id="ex-x-cn1v">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-regions" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3><span id="h-regions">–</span></h3>
+            <div class="sub">Exports and imports by region, US$ billion, {T.partners.fy}. TradeStat's regions; small territories it does not assign sit under "unspecified".</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-regions">–</div><div class="c">of imports from Asia</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Exports</button>
+            <button class="chip"><i style="background:#C47A16"></i>Imports</button>
+          </div>
+          <div class="plotzone"><div id="plot-regions" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Commerce, TradeStat (DGCI&amp;S), MEIDB region-wise tables, March cumulatives.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Asia here includes the Gulf states, among India's largest sources of crude oil (they sit near the top of the deficit list above), as well as China, South-East Asia and South Asia. America here is North and Latin America together.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {T.partners.fy}</span>
+            <p>Asia took <b id="ex-r-ax">–</b> of India's exports and supplied <b id="ex-r-am">–</b> of its imports.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 granular: prices and volumes, currency. Inputs trade-dbie-tot-2012, trade-dbie-oil-volumes, trade-dbie-annual, trade-dbie-annual-inr -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>Prices or volumes</h2><span class="line"></span><span class="unit">Indices, tonnes, and the rupee</span></div>
+    <div class="break">
+      <figure id="cb-tot" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3><span id="h-tot">–</span></h3>
+            <div class="sub">Unit value (price) and quantum (volume) indices of exports and imports, 2012-13 = 100, financial years 2013-14 to {fyOf(T.tot.dates.at(-1))}. DGCI&amp;S indices.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-tot">–</div><div class="c">net terms of trade, latest year</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Export prices</button>
+            <button class="chip"><i style="background:#C47A16"></i>Import prices</button>
+            <button class="chip"><i class="dash"></i>Export volume</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Import volume</button>
+          </div>
+          <div class="plotzone"><div id="plot-tot" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, DBIE report 379 (DGCI&amp;S index numbers), base 2012-13 = 100. The export volume index for the latest year is withheld: see the note below.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A unit value index tracks the average price per unit of the goods traded; a quantum index tracks how much was traded. When an export headline says "record", ask which one moved. The net terms of trade divide export prices by import prices: above 100 means a unit of exports buys more imports than it did in 2012-13.</p>
+            <p>The indices cover only goods that are counted in units, so they move less tidily than the dollar totals. The export volume index in particular jumps from year to year in ways the value of exports does not; read it as rough.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {fyOf(T.tot.dates.at(-1))}</span>
+            <p>Export prices stood at <b id="ex-t-ux">–</b> and import prices at <b id="ex-t-um">–</b> (2012-13 = 100). <span id="ex-t-withheld">–</span></p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-crude" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3><span id="h-crude">–</span></h3>
+            <div class="sub">Crude oil produced in India and crude oil imported, million tonnes, financial years 1972-73 to {fyOf(T.crude.dates.at(-1))}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-crude">–</div><div class="c">imported share, latest year</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#C47A16"></i>Imported</button>
+            <button class="chip"><i style="background:#5F6675"></i>Produced in India</button>
+          </div>
+          <div class="plotzone"><div id="plot-crude" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics on the Indian Economy (DBIE report 148), Ministry of Petroleum and Natural Gas data.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Tonnes do not change with the price of oil, so this is the plate to read when the dollar bill for crude jumps. India's own oil fields have produced less each year for over a decade while refining has grown, so every extra litre of fuel the country uses is, in effect, imported.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {fyOf(T.crude.dates.at(-1))}</span>
+            <p>Imported <b id="ex-cr-imp">–</b>, produced <b id="ex-cr-prod">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-ccy" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3><span id="h-ccy">–</span></h3>
+            <div class="sub">Growth of merchandise exports over the previous year, in US dollars and in rupees, per cent, financial years 1991-92 to {fyOf(T.ccy.dates.at(-1))}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-ccy">–</div><div class="c">years when rupee growth beat dollar growth</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>In US dollars</button>
+            <button class="chip"><i style="background:#C47A16"></i>In rupees</button>
+          </div>
+          <div class="plotzone"><div id="plot-ccy" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, DBIE reports 649 (US$) and 432 (₹), DGCI&amp;S data. Growth computed from the annual values.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The gap between the two lines is, roughly, how much the rupee lost against the dollar that year. A headline that reports exports in rupees will usually look better than one in dollars; neither is wrong, but only the dollar figure tells you whether India sold more to the world.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {fyOf(T.ccy.dates.at(-1))}</span>
+            <p>Exports grew <b id="ex-cc-usd">–</b> in dollars and <b id="ex-cc-inr">–</b> in rupees.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 every cut: inputs trade-hs2-*-fy, trade-partners-*-fy inline; trade-hs4/6/8 and partner x chapter tables on request -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>Every cut</h2><span class="line"></span><span class="unit">Chapters, headings, tariff lines, partners</span></div>
+    <div class="prose"><p>Everything above is drawn from these tables. Choose a level and a flow, type a word or a code, and sort by any column. Chapters and partners are here already; headings, 6-digit subheadings and 8-digit tariff lines load when you ask for them (the 8-digit tables are a few megabytes each).</p></div>
+    <div class="break">
+      <figure id="cb-every" style="margin:0">
+        <div class="frame">
+          <div class="xp-controls">
+            <label>Level <select id="xp-level">
+              <option value="hs2">HS chapters (2 digits)</option>
+              <option value="hs4">HS headings (4 digits)</option>
+              <option value="hs6">HS subheadings (6 digits), one year</option>
+              <option value="hs8">Tariff lines (8 digits), one year</option>
+              <option value="partners">Partner countries</option>
+              <option value="cxc">Partner x chapter</option>
+            </select></label>
+            <label>Flow <select id="xp-flow"><option value="exports">Exports</option><option value="imports">Imports</option></select></label>
+            <label id="xp-fy-wrap">Year <select id="xp-fy"></select></label>
+            <label class="xp-q">Find <input id="xp-q" type="search" placeholder="rice, 8517, Japan" autocomplete="off"></label>
+            <span class="xp-n" id="xp-n">–</span>
+          </div>
+          <div class="ledger xp-table">
+            <table>
+              <thead><tr><th data-k="code">Code</th><th data-k="label">Description</th><th data-k="cur" class="n" id="xp-h-cur">–</th><th data-k="prev" class="n" id="xp-h-prev">–</th><th data-k="chg" class="n">Change</th></tr></thead>
+              <tbody id="xp-body"></tbody>
+            </table>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Commerce, TradeStat (DGCI&amp;S). US$ million. Financial years are April-to-March totals; a single-year view at 6 and 8 digits sums that year's published months.</span>
+            <span class="dl"><button data-dl="csv" id="xp-csv">CSV</button><a href="https://tradestat.commerce.gov.in/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 10 what this measures: evergreen -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>What this measures, and what it leaves out</h2><span class="line"></span></div>
+    <div class="prose">
+      <p>The figures count goods, valued in dollars at the exchange rates customs notifies every fortnight, at the moment they cross the border. They do not count services, which India sells well: software, business services and travel earn a large share of India's foreign income and make its overall deficit with the world much smaller than its deficit in goods. That is the subject of the external account guide.</p>
+      <p>They do not say who made the goods or where the value was added. A phone exported from India may contain a Chinese screen, a Korean chip and an Indian assembly line; the full price counts as an Indian export and the parts count as imports. They also do not say where goods were finally used: oil shipped to a Dutch port may end up in Germany.</p>
+      <p>Smuggled goods, informal border trade and goods that never pass customs are missing. So are values hidden by mis-invoicing. And a small share of trade every month has no country assigned ("unspecified"), which can swing a partner's figure.</p>
+    </div>
+  </section>
+
+  <!-- § 11 misreadings -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>How to misread these numbers</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li><span class="no">1</span><div><h3>"Exports hit a record this month."</h3><p>Check three things first. Was the same month a year ago unusually weak, so that growth is flattered by the base? Did oil prices rise, lifting the value of petroleum-product exports without any more being shipped? And is it March, when exports peak every year? A record in dollars can be an ordinary month in tonnes.</p></div></li>
+      <li><span class="no">2</span><div><h3>"The trade deficit means India is losing money."</h3><p>A country that imports crude to refine and gold to save will run a goods deficit. What matters is whether services earnings, remittances and investment cover it, which is what the current account and the reserves show.</p></div></li>
+      <li><span class="no">3</span><div><h3>"India's deficit with China is money flowing to China."</h3><p>Partner balances describe where goods were declared to come from and go to. Much of what India buys from China becomes something India sells elsewhere: phones, medicines made from Chinese ingredients, solar panels. A bilateral deficit is not a measure of dependence or loss on its own.</p></div></li>
+      <li><span class="no">4</span><div><h3>"Gold imports fell, so Indians are buying less gold."</h3><p>Imports are measured in dollars. When the gold price rises sharply, Indians often buy fewer tonnes but pay more; when it falls they may buy more weight for less money. Look at the quantity, in kilograms, before concluding anything about demand.</p></div></li>
+      <li><span class="no">5</span><div><h3>"Exports grew 12% in rupees, so exporters did well."</h3><p>If the rupee fell 8% against the dollar that year, most of that growth is the exchange rate. The dollar figure tells you whether the world bought more from India.</p></div></li>
+      <li><span class="no">6</span><div><h3>"This tariff line jumped tenfold, so a new industry was born."</h3><p>At 8 digits, codes are rewritten every few years and a line can absorb goods that used to be counted elsewhere. Before reading a jump at the tariff-line level, check the 4-digit heading it belongs to.</p></div></li>
+    </ul>
+  </section>
+
+  <GuideData slug="trade" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>Commodity and partner detail: Ministry of Commerce and Industry, TradeStat (tradestat.commerce.gov.in), which publishes DGCI&amp;S customs data: the monthly export-import data bank (MEIDB), principal-commodity tables (FTPA and FTSPCC). The long history and the oil split: RBI, Database on Indian Economy, through the owner's local mirror of DBIE. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Checked against the Ministry's quick-estimates release of 13 August 2026: gold imports for July 2025 (US$ 3,974 million), rice exports (US$ 921 million) and coal imports (US$ 2,361 million) match these tables to the million, and 2025-26 exports total US$ 441,452 million in both.</p>
+      </div>
+      <div>
+        <h6>Method</h6>
+        <p>Every TradeStat table this guide uses is archived as served. A month's value is the revised print from the table a year later where one exists, else its own final print; the principal-commodity monthly values are differences of the published running totals. Balances, growth rates and shares are computed here. Nothing is estimated or filled in.</p>
+        <p>TradeStat's annual bank (EIDB) is not used: its 2023-24 commodity tables count every shipment twice (the chapters add up to exactly twice the printed total), which is why some figures for that year circulate at double their true size.</p>
+      </div>
+      <div>
+        <h6>Revisions and breaks</h6>
+        <p>Three prints per month (provisional, final, revised final), recorded per value. The 6- and 8-digit codes changed with HS 2022 in April 2023 and are kept in separate yearly files; 2- and 4-digit series run through. The RBI's index numbers sit on three bases (1978-79, 1999-2000, 2012-13), never joined; its export volume index for 2025-26 is withheld as a broken print.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Version 1.0, built October 2026 from data to {PT.long}. Revised each month when the Ministry publishes the next tables.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, merchandise trade</span>
+      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<script type="application/json" id="trade-data" set:html={JSON.stringify(T)}></script>
+<style is:global>
+  /* trade guide only: the small-multiple grid of named goods and the every-cut explorer */
+  .now b{white-space:nowrap}
+  .qe-note{font-family:var(--sans);font-size:.88rem;color:var(--ink-soft);margin:22px 0 0;max-width:880px}
+  .sm-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:26px 30px}
+  .sm-panel{border-top:1px solid var(--rule);padding-top:10px;position:relative}
+  .sm-panel .sm-t{font-family:var(--sans);font-size:.8rem;color:var(--grey1);line-height:1.45;padding-right:72px;min-height:2.4em}
+  .sm-panel .sm-t small{display:block;color:var(--muted)}
+  .sm-panel .sm-v{position:absolute;top:10px;right:0;font-family:var(--sans);font-size:.82rem;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+  .sm-panel svg{width:100%;height:auto;display:block}
+  @media (max-width:900px){.sm-grid{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:520px){.sm-grid{grid-template-columns:1fr}}
+  .xp-controls{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:flex-end;font-family:var(--sans);font-size:.85rem;color:var(--ink-soft);padding:6px 0 18px}
+  .xp-controls label{display:flex;flex-direction:column;gap:5px}
+  .xp-controls select,.xp-controls input{font:inherit;color:var(--ink);background:#fff;border:1px solid var(--rule-2);padding:6px 8px;min-width:150px}
+  .xp-controls .xp-q input{min-width:220px}
+  .xp-controls .xp-n{margin-left:auto;color:var(--muted)}
+  .xp-table{max-height:640px;overflow:auto}
+  .xp-table th{cursor:pointer;position:sticky;top:0;background:#fff}
+  .xp-table th.n,.xp-table td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .xp-table td{padding:9px 20px 9px 0;font-family:var(--sans);font-size:.88rem}
+  .xp-table td.c{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+</style>
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/trade.client.js";
+</script>
+</Base>

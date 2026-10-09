@@ -74,7 +74,7 @@ export async function buildDbieTrade(root, dcfg, vintage, cfg) {
   const db = databankRoot(cfg?.families?.databank);
   const SPEC = [["433", "DP0"], ["648", "DP0"], ["426", "DP0"], ["425", "DP0"], ["649", "DP0"], ["432", "DP0"], ["379", "DP0"],
     ["601", "DP0"], ["552", "DP0"], ["601", "DP3"], ["552", "DP3"], ["148", "DP1"], ["676", "DP1"], ["439", "DP1"], ["431", "DP1"],
-    ["439", "DP0"], ["431", "DP0"], ["429", "DP1"], ["429", "DP0"]];
+    ["439", "DP0"], ["431", "DP0"], ["429", "DP1"], ["429", "DP0"], ["676", "DP0"]];
   const R = {};
   for (const [id, dp] of SPEC) R[`${id}:${dp}`] = dbieProvider(db, id, dp);
 
@@ -91,7 +91,19 @@ export async function buildDbieTrade(root, dcfg, vintage, cfg) {
 
   const meta = (extra) => ({ dossier: "trade", source: dcfg.source_agency, vintage: V, mock: false, geo: "IND", releaseDate: null,
     revisionPolicy: dcfg.revision_policy, ...extra });
-  const write = (rel, dates, series, extra) => {
+  const write = (rel, dates0, series0, extra) => {
+    // a continuous axis: a period the table skips becomes an interior null, disclosed below
+    const step = { monthly: 1, annual: 12 }[extra.frequency];
+    let dates = dates0, series = series0;
+    if (step && dates0.length > 1) {
+      const full = [];
+      for (let d = dates0[0]; d <= dates0.at(-1);) { full.push(d); let [y, m] = d.split("-").map(Number); m += step; while (m > 12) { m -= 12; y++; } d = `${y}-${String(m).padStart(2, "0")}-01`; }
+      if (full.length !== dates0.length) {
+        const at = new Map(dates0.map((d, i) => [d, i]));
+        for (const s of Object.values(series)) s.data = full.map((d) => (at.has(d) ? s.data[at.get(d)] : null));
+        dates = full;
+      }
+    }
     // a line the source prints with no value in any period carries nothing: not baked (the
     // catalogue skips blank lines the same way)
     const empty = Object.keys(series).filter((k) => series[k].data.every((v) => v == null));
@@ -141,10 +153,10 @@ export async function buildDbieTrade(root, dcfg, vintage, cfg) {
   };
   monthly("433:DP0", "426:DP0", "Aggregate Value Monthly", 1e6, "US$ million", "trade-dbie-monthly", "usd_million",
     "India's merchandise exports, imports and trade balance each month since April 1990, with oil and non-oil since April 1997, US$ million",
-    "RBI DBIE report 433 (totals) and 426 (oil and non-oil), DGCI&S data as republished by the RBI. The latest months are provisional (quick estimates); meta.revision names the version of each month. Oil exports are petroleum products; oil imports are crude oil and petroleum products.");
+    "RBI DBIE report 433 (totals) and 426 (oil and non-oil), DGCI&S data as republished by the RBI. In February and March 2017 the oil and non-oil exports sum about 1.3% above the total (the split is an earlier print); shown as published. The latest months are provisional (quick estimates); meta.revision names the version of each month. Oil exports are petroleum products; oil imports are crude oil and petroleum products.");
   monthly("648:DP0", "425:DP0", "Aggregate value Monthly", 1e7, "₹ crore", "trade-dbie-monthly-inr", "inr_crore",
     "India's merchandise exports, imports and trade balance each month since April 1990, with oil and non-oil since April 1997, ₹ crore",
-    "RBI DBIE report 648 (totals) and 425 (oil and non-oil), DGCI&S data as republished by the RBI, in rupees. meta.revision names the version of each month.");
+    "RBI DBIE report 648 (totals) and 425 (oil and non-oil), DGCI&S data as republished by the RBI, in rupees. In February and March 2017 the oil split is an earlier print than the total and does not add to it, and the June 2001 balance is printed as -1,970 crore against exports minus imports of -1,904; both shown as published. meta.revision names the version of each month.");
 
   /* ---------- annual since 1970-71: 649 (US$), 432 (₹) ---------- */
   const annual = (id, div, unitLabel, rel, unit, coverage) => {
@@ -209,7 +221,7 @@ export async function buildDbieTrade(root, dcfg, vintage, cfg) {
         });
       }
       write(rel, dates, S, { frequency: "annual", base, unit: "index", coverage: `Unit value and volume indices of India's exports and imports, and the terms of trade, base ${base}`,
-        note: `RBI DBIE report 379 (DGCI&S indices), base ${base}. A different base is a different ruler: never joined to the other bases.` });
+        note: `RBI DBIE report 379 (DGCI&S indices), base ${base}. A different base is a different ruler: never joined to the other bases.`, retired: base !== "2012-13=100" });
     }
   }
 
@@ -236,7 +248,7 @@ export async function buildDbieTrade(root, dcfg, vintage, cfg) {
     const series = Object.fromEntries([...Object.entries(S)].sort(([a], [b]) => (a < b ? -1 : 1)).map(([k, x]) => [k, { name: x.label, label: x.label, color: "#A3A9B4",
       data: dates.map((d) => (x.m.has(d) && x.m.get(d) != null ? Math.round(x.m.get(d) * 100) / 100 : null)) }]));
     write(rel, dates, series, { frequency: "annual", base, unit: "index", coverage: `Unit value and quantum indices of exports and imports by commodity (SITC-based DGCI&S groups), base ${base}, from ${from}`,
-      note: `RBI DBIE reports 601 (exports) and 552 (imports), data provider ${dp}, DGCI&S indices on base ${base}. Commodity codes are the DGCI&S index codes. A different base is a different ruler.` });
+      note: `RBI DBIE reports 601 (exports) and 552 (imports), data provider ${dp}, DGCI&S indices on base ${base}. Commodity codes are the DGCI&S index codes. A different base is a different ruler.`, retired: dp === "DP3" });
   }
 
   /* ---------- crude oil and petroleum products, tonnes: 148 ---------- */
@@ -270,6 +282,23 @@ export async function buildDbieTrade(root, dcfg, vintage, cfg) {
     write("trade-dbie-direction", dates, S, { frequency: "annual", base: "as published", unit: "usd_million",
       coverage: "Direction of India's trade: exports to and imports from 40 partner countries and the RBI's groups (OECD, OPEC, SAARC, EU and others), every year since 2009-10, US$ million",
       note: "RBI DBIE report 676, data provider DP1 (the current grouping, from 2009-10). Groups overlap (a country sits in its region and its economic group); never add groups together. The older grouping (1987-88 to 2013-14) is a different table and is not joined." });
+  }
+
+  /* ---------- the older direction table, 1987-88 to 2013-14: 676 DP0 ---------- */
+  {
+    const rows = actuals(R["676:DP0"].rows);
+    const P = pickFinal(rows, (r) => `${fyStart(r["Fiscal Year"])}|${r.Commodity}|${r.Country}`, (r) => num(r["Export Import Value Old"]),
+      (r) => [VERSION_RANK[r["Version Desc"]] ?? 0, r["Version Desc"]]);
+    const dates = axis([...P.keys()].map((k) => k.split("|")[0]));
+    const pairs = [...new Set([...P.keys()].map((k) => k.split("|").slice(1).join("|")))].sort();
+    const series = Object.fromEntries(pairs.map((p) => {
+      const [c, cty] = p.split("|");
+      const label = c === "Export" ? `Exports to ${cty}, US$ million` : c === "Import" ? `Imports from ${cty}, US$ million` : `${c}, ${cty}, US$ million`;
+      return [`${slug(c)}__${slug(cty)}`.slice(0, 90), { name: label, label, color: "#A3A9B4", data: dates.map((d) => { const x = P.get(`${d}|${p}`); return x ? r2(x.v / 1e6) : null; }) }];
+    }));
+    write("trade-dbie-direction-1987", dates, series, { frequency: "annual", base: "as published", unit: "usd_million",
+      coverage: "The older direction-of-trade table: exports to and imports from partners and groups, with commodities by partner, 1987-88 to 2013-14, US$ million",
+      note: "RBI DBIE report 676, data provider DP0 (the grouping used until 2013-14). Where a year carries both a forecast and a provisional value, the provisional one is kept. A different ruler from trade-dbie-direction (2009-10 on); never joined. Groups overlap; never add them.", retired: true });
   }
 
   /* ---------- major commodity groups: 439 / 431, new (DP1) and old (DP0) groupings ---------- */
@@ -319,7 +348,7 @@ export async function buildDbieTrade(root, dcfg, vintage, cfg) {
       data: dates.map((d) => { const v = x.m.get(`${d}|${x.name}`); return v == null ? null : r2(v / 1e6); }) }]));
     write("trade-dbie-commodities-1987", dates, series, { frequency: "annual", base: "as published", unit: "usd_million",
       coverage: "Exports and imports by major commodity in the RBI's older grouping, 1987-88 to 2013-14, US$ million",
-      note: "RBI DBIE reports 439 (exports) and 431 (imports), data provider DP0: the grouping used until 2013-14, with its own item numbering (sub-items such as 1 (a) sit inside their parent). A different ruler from trade-dbie-commodities; never joined." });
+      note: "RBI DBIE reports 439 (exports) and 431 (imports), data provider DP0: the grouping used until 2013-14, with its own item numbering (sub-items such as 1 (a) sit inside their parent). A different ruler from trade-dbie-commodities; never joined.", retired: true });
   }
 
   /* ---------- select commodities to principal countries: 429 ---------- */
@@ -339,7 +368,7 @@ export async function buildDbieTrade(root, dcfg, vintage, cfg) {
     }));
     write(rel, dates, series, { frequency: "annual", base: "as published", unit: "usd_million",
       coverage: `Exports of 18 select commodities to India's principal buyers, ${cov}, US$ million`,
-      note: `RBI DBIE report 429, data provider ${dp}. Published in US$; shown in US$ million. The two providers use different commodity and country lists: different rulers, never joined.` });
+      note: `RBI DBIE report 429, data provider ${dp}. Published in US$; shown in US$ million. The two providers use different commodity and country lists: different rulers, never joined.`, retired: dp === "DP0" });
   }
 
   writeDbieCatalogue(root, db, R);
@@ -370,6 +399,7 @@ function writeDbieCatalogue(root, db, R) {
     "148:DP1": (r) => sl(r["Item Description"]), "676:DP1": (r) => `${sl(r.export_import_indicator)}:${sl(r["Country Name"])}`,
     "439:DP1": (r) => sl(r["Item Serial Code"]), "431:DP1": (r) => sl(r["Item Serial Code"]),
     "439:DP0": (r) => sl(r.Commodity), "431:DP0": (r) => sl(r.Commodity),
+    "676:DP0": (r) => `${sl(r.Commodity)}:${sl(r.Country)}`,
     "429:DP1": (r) => `${sl(r["Commodity Description"])}:${sl(r["Country Name"])}`, "429:DP0": (r) => `${sl(r["Description Commodity"])}:${sl(r.Country)}`,
   };
   for (const [id, r] of [...reports].sort((a, b) => +a[0] - +b[0])) {

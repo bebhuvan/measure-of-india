@@ -393,6 +393,47 @@ export const DOSSIERS = [
     register: { id: "reg-deposits", label: "Bank deposits", unit: "Annual, RBI BSR-2, as on 31 March, ₹ lakh crore", historyCol: "Since 2019" },
     bundles: ["deposits-owners", "deposits-owners-2005", "deposits-population", "deposits-term-rates", "deposits-term-maturity", "deposits-term-size", "deposits-term-size-2026"],
   },
+  // --- trade (lb/trade) ---
+  {
+    slug: "trade",
+    no: "15",
+    section: "External",
+    name: "Merchandise Trade",
+    title: "What India buys and sells",   // the topic as a reader names it: nav, lists, search
+    kickerTitle: "Merchandise trade, DGCI&S customs data",
+    crumbTitle: "Merchandise trade",
+    headline: "What India sells, <i>and what it buys.</i>",
+    ogTitle: "What India sells, and what it buys.",
+    blurb: "Every shipment that crosses India's customs border, counted each month: what the country sells and buys, from crude oil and gold to phones and rice, and with whom.",
+    description: "India's merchandise exports and imports by commodity and partner, every month since 2017 down to the 8-digit tariff line, with the long view since 1970-71.",
+    rssDescription: "What India sells and buys, and with whom: exports, imports and the trade deficit, revised with each monthly release.",
+    stamp: { dateStyle: "month", vintageStyle: "vintage" },
+    statusNote: "Monthly, revised with each release",
+    version: "v1.0",
+    currentBundle: "trade-total",
+    calendar: "fiscal-apr",
+    bands: null,
+    proseConstants: [100],   // verifier whitelist: weights/shares/base years this dossier may cite
+    spark: { bundle: "trade-total", series: "exports" },
+    prose: true,
+    proseInputs: ["trade-hs2-exports", "trade-hs2-imports", "trade-partners-balance", "trade-principal-exports", "trade-principal-imports", "trade-dbie-monthly"],
+    register: { id: "reg-trade", label: "Merchandise trade", unit: "Monthly, US$ billion, TradeStat (DGCI&S)", historyCol: "Since 2017" },
+    bundles: [
+      "trade-total", "trade-total-inr",
+      ...["hs2", "hs4"].flatMap((l) => ["exports", "imports"].flatMap((f) => ["", "-fy", "-ytd"].flatMap((t) => [`trade-${l}-${f}${t}`, `trade-${l}-${f}${t}-inr`]))),
+      ...["partners", "regions"].flatMap((l) => ["exports", "imports"].flatMap((f) => ["", "-fy", "-ytd"].flatMap((t) => [`trade-${l}-${f}${t}`, `trade-${l}-${f}${t}-inr`]))),
+      "trade-partners-balance", "trade-partners-balance-fy", "trade-partners-long", "trade-partners-long-inr",
+      ...["exports", "imports"].flatMap((f) => [`trade-principal-${f}`, `trade-principal-${f}-inr`, `trade-principal-${f}-fy`, `trade-principal-${f}-fy-inr`, `trade-principal-${f}-ytd`, `trade-principal-${f}-ytd-inr`, `trade-principal-quantity-${f}`]),
+      ...["hs2", "hs4"].flatMap((l) => ["exports", "imports"].flatMap((f) => [`trade-partner-${l}-${f}`, `trade-partner-${l}-${f}-ytd`])),
+      // 6 and 8 digits: one file per financial year (2016-17 holds January to March 2017 only).
+      // Extend TRADE_LAST_FY each April when the new year's first table is baked.
+      ...(() => { const TRADE_LAST_FY = 2026, out = []; for (let y = 2016; y <= TRADE_LAST_FY; y++) { const fy = `${y}-${String((y + 1) % 100).padStart(2, "0")}`; for (const f of ["exports", "imports"]) out.push(`trade-hs6-${f}-${fy}`, `trade-hs8-${f}-${fy}`, `trade-hs8-${f}-qty-${fy}`); } return out; })(),
+      "trade-dbie-monthly", "trade-dbie-monthly-inr", "trade-dbie-annual", "trade-dbie-annual-inr", "trade-dbie-tot-2012", "trade-dbie-tot-1999", "trade-dbie-tot-1978",
+      "trade-dbie-uvi-2012", "trade-dbie-uvi-1999", "trade-dbie-oil-volumes", "trade-dbie-direction", "trade-dbie-direction-1987", "trade-dbie-commodities", "trade-dbie-commodities-1987",
+      "trade-dbie-commodity-partners", "trade-dbie-commodity-partners-1990",
+    ],
+  },
+  // --- end trade ---
 ];
 export const bySlug = Object.fromEntries(DOSSIERS.map((d) => [d.slug, d]));
 
