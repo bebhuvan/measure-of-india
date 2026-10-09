@@ -1363,5 +1363,85 @@
   "bundle": "credit-frauds",
   "latestDate": "2025-03-01",
   "stamp": "{fyOf(load(\"credit-frauds\").dates.at(-1))}"
+ },
+ "trade#cb-home": {
+  "bundle": "trade-hs4-exports",
+  "latestDate": "2026-07-01",
+  "stamp": "{PT.long}"
+ },
+ "trade#cb-long": {
+  "bundle": "trade-dbie-annual",
+  "latestDate": "2025-04-01",
+  "stamp": "{fyOf(T.long.dates.at(-1))}"
+ },
+ "trade#cb-month": {
+  "bundle": "trade-total",
+  "latestDate": "2026-07-01",
+  "stamp": "{PT.long}"
+ },
+ "trade#cb-oilgold": {
+  "bundle": "trade-principal-exports-fy",
+  "latestDate": "2025-04-01",
+  "stamp": "{T.groups.lastFy}"
+ },
+ "trade#cb-oilm": {
+  "bundle": "trade-dbie-monthly",
+  "latestDate": "2026-07-01",
+  "stamp": "{monthOf(T.oilm.dates.at(-1))}"
+ },
+ "trade#cb-sell": {
+  "bundle": "trade-principal-exports-fy",
+  "latestDate": "2025-04-01",
+  "stamp": "{T.groups.lastFy}"
+ },
+ "trade#cb-buy": {
+  "bundle": "trade-principal-imports-fy",
+  "latestDate": "2025-04-01",
+  "stamp": "{T.groups.lastFy}"
+ },
+ "trade#cb-chapx": {
+  "bundle": "trade-hs2-exports-fy",
+  "latestDate": "2025-04-01",
+  "stamp": "{T.chapters.exports.fy}"
+ },
+ "trade#cb-chapm": {
+  "bundle": "trade-hs2-imports-fy",
+  "latestDate": "2025-04-01",
+  "stamp": "{T.chapters.imports.fy}"
+ },
+ "trade#cb-partners": {
+  "bundle": "trade-partners-balance-fy",
+  "latestDate": "2025-04-01",
+  "stamp": "{T.partners.fy}"
+ },
+ "trade#cb-chinaus": {
+  "bundle": "trade-partners-long",
+  "latestDate": "2025-04-01",
+  "stamp": "{fyOf(T.chinaus.dates.at(-1))}"
+ },
+ "trade#cb-regions": {
+  "bundle": "trade-regions-exports-fy",
+  "latestDate": "2025-04-01",
+  "stamp": "{T.partners.fy}"
+ },
+ "trade#cb-tot": {
+  "bundle": "trade-dbie-tot-2012",
+  "latestDate": "2025-04-01",
+  "stamp": "{fyOf(T.tot.dates.at(-1))}"
+ },
+ "trade#cb-crude": {
+  "bundle": "trade-dbie-oil-volumes",
+  "latestDate": "2025-04-01",
+  "stamp": "{fyOf(T.crude.dates.at(-1))}"
+ },
+ "trade#cb-ccy": {
+  "bundle": "trade-dbie-annual",
+  "latestDate": "2025-04-01",
+  "stamp": "{fyOf(T.ccy.dates.at(-1))}"
+ },
+ "trade#cb-cxc": {
+  "bundle": "trade-partner-hs2-exports",
+  "latestDate": "2025-04-01",
+  "stamp": "{T.cxc ? T.cxc.us.fy : T.partners.fy}"
  }
 }

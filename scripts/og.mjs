@@ -308,6 +308,15 @@ const CARDS = [
     },
     foot: (b) => `Labour force participation, aged 15+, 1990 to ${b.dates.at(-1).slice(0, 4)}, ILO modelled estimates. Source: ILO, ILOSTAT`,
   },
+  // --- trade (lb/trade) ---
+  {
+    slug: "trade", bundleSlug: "trade-total",
+    keys: ["exports", "imports"], d0: 0, d1: 90, band: null, trend: null, scale: 1 / 1000,
+    yStep: 15, fmt: (v) => "$" + v.toFixed(1) + " bn", mr: 200,
+    prep: (S) => { S.exports = { ...S.exports, label: "Exports", color: "#2E4BD8" }; S.imports = { ...S.imports, label: "Imports", color: "#C47A16" }; },
+    foot: (b) => { const m = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][+b.dates.at(-1).slice(5, 7) - 1]; return `India's merchandise exports and imports, monthly, US$ billion, to ${m} ${b.dates.at(-1).slice(0, 4)}. Source: Ministry of Commerce, TradeStat (DGCI&S)`; },
+  },
+  // --- end trade ---
 ];
 
 await ensureFonts();

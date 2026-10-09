@@ -415,3 +415,17 @@ import creditNpaBundle from "../../data/series/credit-npa.json";
     ["Gross NPA ratio, all commercial banks", "RBI-GNPA", "s-g3", CN.all_gnpa_ratio, false, "/guides/credit/", null, p1, mon(creditNpaBundle.dates.at(-1))],
   ], 12, "spcr", mon(creditGrowthBundle.dates.at(-1)), "RBI");
 }
+// --- trade (lb/trade): merchandise trade, TradeStat (DGCI&S), monthly, US$ million -> $ bn ---
+import tradeTotalBundle from "../../data/series/trade-total.json";
+{
+  const TT = hydrate(tradeTotalBundle);
+  const bn = (v) => (v < 0 ? "−$" : "$") + Math.abs(v / 1000).toFixed(1) + " bn";
+  const m = tradeTotalBundle.dates.at(-1);
+  const lbl = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][+m.slice(5, 7) - 1] + " " + m.slice(0, 4);
+  render("reg-trade", [
+    ["Merchandise exports", "TS-EXP", "s-acc", TT.exports, false, "/guides/trade/", null, bn],
+    ["Merchandise imports", "TS-IMP", "s-g1", TT.imports, false, "/guides/trade/", null, bn],
+    ["Trade balance", "TS-BAL", "s-g2", TT.balance, false, "/guides/trade/", null, bn],
+  ], 12, "sptr", lbl, "TradeStat (DGCI&S)");
+}
+// --- end trade ---

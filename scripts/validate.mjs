@@ -1831,6 +1831,127 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
   for (const [sl, k, d, v, tol] of HAND) { const b = load(sl), i = b.dates.indexOf(d), got = i >= 0 ? b.series[k]?.data[i] : null; if (!near(got, v, tol)) fail(`credit hand-check: ${sl}.${k} at ${d} is ${got}, checked by hand as ${v}`); else ok(`credit hand-check: ${sl}.${k} at ${d} = ${got}`); }
 }
 
+/* ---- trade (lb/trade): TradeStat and DBIE merchandise-trade bundles ----
+ * Every trade-* bundle gets the generic checks (meta vs sources.yml, cadence, ranges, gap
+ * disclosure, freshness). Family identities: parts sum to the printed total, balance is
+ * exports minus imports, oil plus non-oil is the total, a financial year is the sum of its
+ * months, and the two publications of one customs record agree where they overlap. */
+{
+  const files = fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => /^trade-.*\.json$/.test(f)).map((f) => f.replace(/\.json$/, ""));
+  // ranges document the measured extremes: the 2025-26 deficit (-333,248 US$ mn), imports
+  // ~776,000; commodity quantum indices reach several thousand on a small base and print 0
+  // for a year with no trade
+  const RANGES = { usd_million: [-500000, 1000000], inr_crore: [-40000000, 90000000], index: [0, 50000], million_tonnes: [0, 400], quantity: [0, 1e15] };
+  const near = (a, b, tol) => a != null && b != null && Math.abs(a - b) <= tol;
+  for (const slug of files) {
+    const b = load(slug);
+    const key = /^trade-dbie/.test(slug) ? "trade-dbie" : "trade";
+    const freq = b.meta.frequency;
+    checkMeta(b, slug, key, b.meta.base, freq);
+    const step = { monthly: 1, quarterly: 3, annual: 12 }[freq];
+    if (!step) fail(`${slug}: frequency "${freq}" unknown`);
+    else if (!/-ytd/.test(slug)) checkCadence(b.dates, step, slug);
+    // commodity-level quantum indices start from tiny base-year volumes (electric current
+    // exports, SITC 35, print near 5 million on base 2012-13): documented, not curated
+    const [lo, hi] = /-uvi-/.test(slug) ? [0, 1e7] : RANGES[b.meta.unit] ?? [-Infinity, Infinity];
+    checkRange(b, lo, hi, slug);
+    // retired rulers (older bases and groupings, closed HS-edition years) are frozen; live
+    // annual bundles must reach the financial year that holds the monthly floor's year-ago month
+    const floor = cfg.dossiers[key]?.stale_after;
+    const fyFloor = floor ? `${+floor.slice(0, 4) - (floor.slice(5, 7) < "04" ? 2 : 1)}-04` : null;
+    checkFreshness(b, slug, b.meta.retired || b.meta.closed ? { stale: false } : { staleAfter: freq === "monthly" ? floor : fyFloor }, key);
+    if (b.meta.revision) for (const d of Object.keys(b.meta.revision)) if (!b.dates.includes(d)) fail(`${slug}: meta.revision names ${d}, not on the axis`);
+  }
+  ok(`trade: ${files.length} bundles through the generic checks`);
+
+  // balance = exports - imports; oil + non-oil = total (DBIE monthly and annual, both currencies)
+  for (const slug of ["trade-dbie-monthly", "trade-dbie-monthly-inr", "trade-dbie-annual", "trade-dbie-annual-inr", "trade-total", "trade-total-inr"].filter((x) => files.includes(x))) {
+    const S = load(slug).series, D = load(slug).dates;
+    const tol = /inr/.test(slug) ? 30 : 3;
+    let bad = 0, worst = 0;
+    D.forEach((d, i) => {
+      const e = S.exports.data[i], m = S.imports.data[i], bl = S.balance.data[i];
+      // known: the RBI prints a June 2001 rupee balance of -1,970 crore against exports minus
+      // imports of -1,904 (its own arithmetic slip); shown as published, disclosed in the note
+      if (e != null && m != null && bl != null && !(slug === "trade-dbie-monthly-inr" && d === "2001-06-01") && !near(e - m, bl, tol)) { bad++; worst = Math.max(worst, Math.abs(e - m - bl)); }
+      for (const f of ["exports", "imports"]) {
+        const o = S[f + "_oil"]?.data[i], n = S[f + "_non_oil"]?.data[i], t = S[f].data[i];
+        // the RBI's oil split can lag a revision of the total by a few months: 0.5% tolerance
+        // known: in the RBI's own tables the Feb and Mar 2017 oil split (an earlier print) sums
+        // about 1.3% above the revised total; disclosed in the bundle note, not smoothed
+        const KNOWN = ["2017-02-01", "2017-03-01"];
+        if (o != null && n != null && t != null && !KNOWN.includes(d) && !near(o + n, t, Math.max(tol, Math.abs(t) * 0.005))) { bad++; worst = Math.max(worst, Math.abs(o + n - t)); if (bad < 4) console.error(`   ${slug} ${d} ${f}: oil ${o} + non-oil ${n} != ${t}`); }
+      }
+    });
+    if (bad) fail(`${slug}: ${bad} identity breaks (balance or oil split), worst ${worst.toFixed(2)}`);
+    else ok(`${slug}: balance = exports - imports and oil + non-oil = total in every period`);
+  }
+
+  // TradeStat: chapters and headings sum to the printed India total (rounding: 0.05 per line)
+  for (const slug of files.filter((f) => /^trade-hs[24]-(exports|imports)(-fy|-ytd)?(-inr)?$/.test(f))) {
+    const b = load(slug), keys = Object.keys(b.series).filter((k) => k !== "total");
+    let worst = 0, at = null;
+    b.dates.forEach((d, i) => {
+      const t = b.series.total.data[i]; if (t == null) return;
+      const sum = keys.reduce((a, k) => a + (b.series[k].data[i] ?? 0), 0);
+      const dev = Math.abs(sum - t) / Math.max(1, Math.abs(t));
+      if (dev > worst) { worst = dev; at = d; }
+    });
+    if (worst > 0.001) fail(`${slug}: lines sum ${(worst * 100).toFixed(3)}% away from the printed total at ${at}`);
+    else ok(`${slug}: lines sum to the printed total within ${(worst * 100).toFixed(4)}%`);
+  }
+  // a financial year is the sum of its twelve months (US$, both flows, HS 2)
+  for (const f of ["exports", "imports"]) {
+    if (!files.includes(`trade-hs2-${f}`) || !files.includes(`trade-hs2-${f}-fy`)) continue;
+    const M = load(`trade-hs2-${f}`), Y = load(`trade-hs2-${f}-fy`);
+    let worst = 0, at = null, n = 0;
+    Y.dates.forEach((d, j) => {
+      const y0 = +d.slice(0, 4), months = Array.from({ length: 12 }, (_, k) => `${k < 9 ? y0 : y0 + 1}-${String(((k + 3) % 12) + 1).padStart(2, "0")}-01`);
+      const idx = months.map((m) => M.dates.indexOf(m));
+      if (idx.some((i) => i < 0)) return;
+      const sum = idx.reduce((a, i) => a + M.series.total.data[i], 0), t = Y.series.total.data[j];
+      const dev = Math.abs(sum - t) / t; n++;
+      if (dev > worst) { worst = dev; at = d; }
+    });
+    // the monthly values take each month's latest print; the March cumulative is one print: they can differ by revisions
+    if (worst > 0.01) fail(`trade-hs2-${f}-fy: a financial year differs ${(worst * 100).toFixed(2)}% from the sum of its months at ${at}`);
+    else ok(`trade-hs2-${f}-fy: ${n} years within ${(worst * 100).toFixed(3)}% of the sum of their months`);
+  }
+  // the two publications of one customs record agree (TradeStat annual vs RBI annual, US$)
+  if (files.includes("trade-hs2-exports-fy") && files.includes("trade-dbie-annual")) {
+    const A = load("trade-dbie-annual");
+    for (const f of ["exports", "imports"]) {
+      const Y = load(`trade-hs2-${f}-fy`);
+      let worst = 0, at = null;
+      Y.dates.forEach((d, j) => { const i = A.dates.indexOf(d); if (i < 0 || A.series[f].data[i] == null) return; const dev = Math.abs(Y.series.total.data[j] / A.series[f].data[i] - 1); if (dev > worst) { worst = dev; at = d; } });
+      if (worst > 0.01) fail(`trade: TradeStat and RBI annual ${f} differ ${(worst * 100).toFixed(2)}% at ${at}`);
+      else ok(`trade: TradeStat and RBI annual ${f} agree within ${(worst * 100).toFixed(2)}% (different prints of one record)`);
+    }
+  }
+  // partners: every country sums to the India total (regions overlap nothing)
+  for (const f of ["exports", "imports"]) {
+    const slug = `trade-partners-${f}`; if (!files.includes(slug)) continue;
+    const P = load(slug), T = load("trade-total");
+    let worst = 0, at = null;
+    P.dates.forEach((d, i) => { const j = T.dates.indexOf(d); if (j < 0) return; const sum = Object.values(P.series).reduce((a, s) => a + (s.data[i] ?? 0), 0); const dev = Math.abs(sum / T.series[f].data[j] - 1); if (dev > worst) { worst = dev; at = d; } });
+    if (worst > 0.002) fail(`${slug}: partners sum ${(worst * 100).toFixed(3)}% away from India's total at ${at}`);
+    else ok(`${slug}: partners sum to India's total within ${(worst * 100).toFixed(3)}%`);
+  }
+  // the EIDB defect stays documented, not hidden: report whether it is still there
+  {
+    const zlib = await import("node:zlib");
+    const f = path.join(ROOT, "data/raw/trade/eidb-check/export-hs2-usd-2023.json.gz");
+    if (fs.existsSync(f)) {
+      const r = JSON.parse(zlib.gunzipSync(fs.readFileSync(f)).toString());
+      const num = (c) => parseFloat(String(c).replace(/,/g, ""));
+      const body = r.rows.filter((x) => /^\d\d$/.test(x[1]));
+      const tot = r.rows.find((x) => /Total/.test(x.join(" ")));
+      const ratio = body.reduce((a, x) => a + num(x[5]), 0) / num(tot[3]);
+      ok(`trade: EIDB 2023-24 chapter sum is ${ratio.toFixed(3)} x its printed total (the double count that keeps EIDB out of every bundle)`);
+    }
+  }
+}
+
 /* ---- seams: the base-year registry (sources.yml `seams`) ----
  * For every product that has changed ruler: each bundle of that dossier is
  * registered under exactly one base, its meta.base matches, and its dates

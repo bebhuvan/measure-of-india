@@ -54,6 +54,8 @@ export const HEADLINE = {
   rates:         { value: (b) => `${last(b, "repo").toFixed(2)}%`, what: "the RBI's policy repo rate", period: (b) => `from ${b.meta.vintage.slice(8, 10).replace(/^0/, "")} ${MONTHS[+b.meta.vintage.slice(5, 7) - 1]} ${b.meta.vintage.slice(0, 4)}` },
   // credit (lb/credit)
   credit:        { value: (b) => `${last(b, "headline").toFixed(1)}%`, what: "growth of bank credit, year on year", period: month },
+  // trade (lb/trade): the month's merchandise trade balance, US$ billion, signed (a deficit is negative)
+  trade:         { value: (b) => `${last(b, "balance") < 0 ? "−" : ""}$${Math.abs(last(b, "balance") / 1000).toFixed(1)} bn`, what: "merchandise trade balance (exports minus imports)", period: month },
 };
 
 // The small chart beside each guide's figure: always on the current ruler, so a chart never
@@ -90,6 +92,7 @@ export const SPARK = {
   rates:         { bundle: "rates-monthly", series: "repo", n: 121 },
   // credit (lb/credit)
   credit:        { bundle: "credit-growth", series: "headline" },
+  trade:         { bundle: "trade-total", series: "exports", n: 60 },   // trade (lb/trade)
 };
 
 const cache = {};

@@ -82,6 +82,16 @@ families:
       Structure messages are XML, data is SDMX-CSV (format=csvfile). One request in flight,
       400ms apart, cached under data/raw/http-cache. rplumber.ilo.org returns empty bodies
       (2026-10-09) and is not used.
+  # --- trade (lb/trade) ---
+  tradestat:
+    transport: tradestat
+    base: https://tradestat.commerce.gov.in/
+    note: >
+      Ministry of Commerce TradeStat (DGCI&S customs data): Laravel forms, no API. Every call
+      GETs the form for a fresh CSRF token and cookie, then POSTs it; one request at a time
+      (scripts/lib/tradestat.mjs, on net.mjs requestRaw). An unpublished month answers HTTP 200
+      with all-zero values: never baked. Notes and traps: docs/reference/tradestat.md.
+  # --- end trade ---
 
 dossiers:
 
@@ -1537,6 +1547,37 @@ dossiers:
       inr_lakh_crore: [0, 400]
 
 
+  # --- trade (lb/trade) ---
+  trade:
+    # regression floor: TradeStat's monthly bank is current to the latest released month
+    stale_after: "2026-07"
+    family: tradestat
+    geo: IND
+    product: tradestat
+    frequency: monthly
+    frequency_exempt: true       # monthly and financial-year bundles side by side
+    base: "TradeStat, as published"
+    release_calendar: "Quick estimates (principal commodities, provisional) about the 15th of the next month; the commodity and partner tables (final) about a month later"
+    revision_policy: "Each month is printed final (F) in its own month's table and revised final (R) in the table a year later; principal-commodity quick estimates are provisional (P). Every value carries its flag in meta.revision."
+    source_agency: "Ministry of Commerce and Industry, TradeStat (DGCI&S customs data)"
+    release_url: https://tradestat.commerce.gov.in/
+    ranges:
+      usd_million: [-150000, 150000]
+      inr_crore: [-15000000, 15000000]
+  trade-dbie:
+    stale_after: "2026-03"
+    family: databank
+    geo: IND
+    product: dbie-trade
+    frequency: monthly
+    frequency_exempt: true
+    base: "as published"
+    release_calendar: "RBI republishes DGCI&S totals monthly (provisional first, final later) and the Handbook tables yearly"
+    revision_policy: "Provisional, revised and final versions are published; we keep the most final version of each period and name it in meta.revision."
+    source_agency: "Reserve Bank of India, DBIE (DGCI&S data)"
+    release_url: https://data.rbi.org.in
+  # --- end trade ---
+
 # ---------------------------------------------------------------------------
 # SEAMS: the base-year registry (2026-10). One entry per base (or
 # classification) for every product whose instrument has changed ruler.
@@ -1947,3 +1988,36 @@ seams:
       from: "2026-03"
       to: null
       bundles: [credit-utilisation]
+  # --- trade (lb/trade) ---
+  # TradeStat: the 2- and 4-digit, partner and principal-commodity tables run through the HS
+  # editions. The 6- and 8-digit tables (one file per financial year on one edition: HS 2017
+  # to 2022-23, HS 2022 from April 2023) are the deep-archive tier, not bundles.
+  trade:
+    - base: "TradeStat, as published"
+      from: "2009-04"
+      to: null
+      bundles: [trade-total, trade-total-inr, trade-hs2-exports, trade-hs2-exports-inr, trade-hs2-exports-fy, trade-hs2-exports-fy-inr, trade-hs2-exports-ytd, trade-hs2-exports-ytd-inr, trade-hs2-imports, trade-hs2-imports-inr, trade-hs2-imports-fy, trade-hs2-imports-fy-inr, trade-hs2-imports-ytd, trade-hs2-imports-ytd-inr, trade-hs4-exports, trade-hs4-exports-inr, trade-hs4-exports-fy, trade-hs4-exports-fy-inr, trade-hs4-exports-ytd, trade-hs4-exports-ytd-inr, trade-hs4-imports, trade-hs4-imports-inr, trade-hs4-imports-fy, trade-hs4-imports-fy-inr, trade-hs4-imports-ytd, trade-hs4-imports-ytd-inr, trade-partners-exports, trade-partners-exports-inr, trade-partners-exports-fy, trade-partners-exports-fy-inr, trade-partners-exports-ytd, trade-partners-exports-ytd-inr, trade-partners-imports, trade-partners-imports-inr, trade-partners-imports-fy, trade-partners-imports-fy-inr, trade-partners-imports-ytd, trade-partners-imports-ytd-inr, trade-regions-exports, trade-regions-exports-inr, trade-regions-exports-fy, trade-regions-exports-fy-inr, trade-regions-exports-ytd, trade-regions-exports-ytd-inr, trade-regions-imports, trade-regions-imports-inr, trade-regions-imports-fy, trade-regions-imports-fy-inr, trade-regions-imports-ytd, trade-regions-imports-ytd-inr, trade-principal-exports, trade-principal-exports-inr, trade-principal-exports-fy, trade-principal-exports-fy-inr, trade-principal-exports-ytd, trade-principal-exports-ytd-inr, trade-principal-imports, trade-principal-imports-inr, trade-principal-imports-fy, trade-principal-imports-fy-inr, trade-principal-imports-ytd, trade-principal-imports-ytd-inr, trade-partners-balance, trade-partners-balance-fy, trade-partners-long, trade-partners-long-inr, trade-principal-quantity-exports, trade-principal-quantity-imports, trade-partner-hs2-exports, trade-partner-hs2-exports-ytd, trade-partner-hs2-imports, trade-partner-hs2-imports-ytd]
+  # RBI DBIE: totals as published; the RBI's older commodity and partner groupings (to
+  # 2013-14) beside the current ones (from 2009-10); index numbers on three bases.
+  trade-dbie:
+    - base: "as published"
+      from: "1970-04"
+      to: null
+      bundles: [trade-dbie-monthly, trade-dbie-monthly-inr, trade-dbie-annual, trade-dbie-annual-inr, trade-dbie-oil-volumes, trade-dbie-direction, trade-dbie-commodities, trade-dbie-commodity-partners]
+    - base: "RBI grouping to 2013-14"
+      from: "1987-04"
+      to: "2013-04"
+      bundles: [trade-dbie-commodities-1987, trade-dbie-direction-1987, trade-dbie-commodity-partners-1990]
+    - base: "1978-79=100"
+      from: "1970-04"
+      to: "2007-04"
+      bundles: [trade-dbie-tot-1978]
+    - base: "1999-2000=100"
+      from: "1999-04"
+      to: "2018-04"
+      bundles: [trade-dbie-tot-1999, trade-dbie-uvi-1999]
+    - base: "2012-13=100"
+      from: "2013-04"
+      to: null
+      bundles: [trade-dbie-tot-2012, trade-dbie-uvi-2012]
+  # --- end trade ---

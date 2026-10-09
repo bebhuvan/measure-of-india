@@ -230,4 +230,11 @@ export const SERIES_KWS = {
     ["other personal loans", "other_personal_loans"], ["unsecured", "other_personal_loans"],
     ["personal loans", "personal_loans"], ["personal", "personal_loans"], ["retail loans", "personal_loans"],
   ],
+  // --- trade (lb/trade) ---
+  trade: [
+    ["exports", "exports"], ["exported", "exports"], ["sold", "exports"],
+    ["imports", "imports"], ["imported", "imports"], ["bought", "imports"],
+    ["trade deficit", "balance"], ["deficit", "balance"], ["trade balance", "balance"], ["balance", "balance"], ["surplus", "balance"],
+  ],
+  // --- end trade ---
 };

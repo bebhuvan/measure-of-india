@@ -314,6 +314,69 @@ if (slug === "climate") {
     century: { source: `CRU TS station record, India, annual mean temperature, 1901 to ${cl}`, change: r2(cy(2016, 2025) - cy(1901, 1930)), from: "1901-1930", to: "2016-2025", perDecadeSince1901: r2(slope(1901)), perDecadeSince1976: r2(slope(1976)) },
   };
 }
+// --- trade (lb/trade): the month's figures in the units the prose uses (US$ billion, one
+// decimal; growth in per cent), the drivers by chapter, the first estimate for the next month,
+// and the partners. Every figure is computed here from the baked bundles.
+if (slug === "trade") {
+  const { chapterName } = await import("../src/dossiers/trade-chapters.js");
+  const B = (s) => JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", s + ".json"), "utf8"));
+  const r1 = (v) => (v == null ? null : Math.round(v * 10) / 10);
+  const bn = (v) => r1(v / 1000);
+  const g = (a, b) => (a == null || b == null || b === 0 ? null : r1((a / b - 1) * 100));
+  const S = bundle.series, n = bundle.dates.length - 1;
+  const X = S.exports.data, M = S.imports.data, BL = S.balance.data;
+  const T = {
+    month: periodLabel(bundle.dates[n]), yearAgoMonth: periodLabel(bundle.dates[n - 12]),
+    print: bundle.meta.revision?.[bundle.dates[n]] === "F" ? "final (the month's own detailed table)" : "revised",
+    exports_bn: bn(X[n]), imports_bn: bn(M[n]), balance_bn: bn(BL[n]), deficit_bn: bn(-BL[n]),
+    exports_year_ago_bn: bn(X[n - 12]), imports_year_ago_bn: bn(M[n - 12]), balance_year_ago_bn: bn(BL[n - 12]), deficit_year_ago_bn: bn(-BL[n - 12]),
+    exportsYoYPct: g(X[n], X[n - 12]), importsYoYPct: g(M[n], M[n - 12]),
+    exports_prev_month_bn: bn(X[n - 1]), imports_prev_month_bn: bn(M[n - 1]), deficit_prev_month_bn: bn(-BL[n - 1]),
+  };
+  // the largest monthly deficit on record in this series
+  let kmin = 0; BL.forEach((v, k) => { if (v != null && v < BL[kmin]) kmin = k; });
+  T.largestDeficit = { bn: bn(-BL[kmin]), period: periodLabel(bundle.dates[kmin]) };
+  // the year so far
+  const YX = B("trade-hs2-exports-ytd"), YM = B("trade-hs2-imports-ytd");
+  T.yearToDate = { months: YX.meta.period?.label, exports_bn: bn(YX.series.total.data[1]), exports_prev_bn: bn(YX.series.total.data[0]), exportsGrowthPct: g(YX.series.total.data[1], YX.series.total.data[0]),
+    imports_bn: bn(YM.series.total.data[1]), imports_prev_bn: bn(YM.series.total.data[0]), importsGrowthPct: g(YM.series.total.data[1], YM.series.total.data[0]) };
+  // drivers: chapters whose value moved most against the same month a year earlier (US$ billion)
+  const movers = (slug2) => {
+    const b = B(slug2), i = b.dates.indexOf(bundle.dates[n]), j = b.dates.indexOf(bundle.dates[n - 12]);
+    const rows = Object.entries(b.series).filter(([k]) => k !== "total").map(([k, s]) => ({ chapter: `${chapterName(k.slice(1), s.label)} (HS ${k.slice(1)})`, now: s.data[i], ago: s.data[j] }))
+      .filter((r) => r.now != null && r.ago != null)
+      .map((r) => ({ chapter: r.chapter, now_bn: bn(r.now), year_ago_bn: bn(r.ago), change_bn: bn(r.now - r.ago), change_mn: Math.round(r.now - r.ago), now_mn: Math.round(r.now), growthPct: g(r.now, r.ago), _d: r.now - r.ago }));
+    rows.sort((a, b2) => b2._d - a._d);   // exact changes: rounding to 0.1 bn would tie the small falls
+    for (const r of rows) delete r._d;
+    return { largestRises: rows.slice(0, 3), largestFalls: rows.slice(-3).reverse() };
+  };
+  T.exportDrivers = movers("trade-hs2-exports");
+  T.importDrivers = movers("trade-hs2-imports");
+  // the first estimate for the next month (principal-commodity quick estimates, provisional)
+  const QX = B("trade-principal-exports"), QM = B("trade-principal-imports"), q = QX.dates.length - 1;
+  if (QX.dates[q] > bundle.dates[n]) T.quickEstimate = { month: periodLabel(QX.dates[q]), print: "provisional quick estimate",
+    exports_bn: bn(QX.series.total.data[q]), imports_bn: bn(QM.series.total.data[q]), balance_bn: bn(QX.series.total.data[q] - QM.series.total.data[q]),
+    exports_year_ago_bn: bn(QX.series.total.data[q - 12]), exportsYoYPct: g(QX.series.total.data[q], QX.series.total.data[q - 12]), importsYoYPct: g(QM.series.total.data[q], QM.series.total.data[q - 12]) };
+  // partners this month: the largest deficits and surpluses (US$ billion)
+  const P = B("trade-partners-balance"), pi = P.dates.indexOf(bundle.dates[n]);
+  const prow = Object.entries(P.series).map(([k, s]) => ({ partner: s.label.replace(/: exports minus imports \(derived\)$/, ""), balance_bn: bn(s.data[pi]), raw: s.data[pi] })).filter((r) => r.raw != null && !/unspecified/i.test(r.partner)).sort((a, b2) => a.raw - b2.raw);
+  T.partners = { largestDeficits: prow.slice(0, 3), largestSurpluses: prow.slice(-3).reverse(),
+    countInDeficit: prow.filter((r) => r.raw < 0).length, countInSurplus: prow.filter((r) => r.raw > 0).length, countListed: prow.length,
+    note: "countInDeficit and countInSurplus count partners by the sign of this month's balance (any size); partners with no trade either way are in neither." };
+  for (const r of prow) delete r.raw;
+  // how broad the month was: chapters above and below the same month a year earlier
+  const breadth = (slug2) => { const b = B(slug2), i = b.dates.indexOf(bundle.dates[n]), j = b.dates.indexOf(bundle.dates[n - 12]);
+    const ch = Object.entries(b.series).filter(([k]) => k !== "total").map(([, s]) => [s.data[i], s.data[j]]).filter(([a, c]) => a != null && c != null);
+    return { chaptersCompared: ch.length, chaptersHigher: ch.filter(([a, c]) => a > c).length, chaptersLower: ch.filter(([a, c]) => a < c).length }; };
+  T.exportBreadth = breadth("trade-hs2-exports");
+  T.importBreadth = breadth("trade-hs2-imports");
+  // oil and gold this month: HS 27 (mineral fuels) and HS 7108 (gold) imports
+  const H2 = B("trade-hs2-imports"), H4 = B("trade-hs4-imports"), i2 = H2.dates.indexOf(bundle.dates[n]), i4 = H4.dates.indexOf(bundle.dates[n]);
+  T.fuelImports = { bn: bn(H2.series.c27.data[i2]), year_ago_bn: bn(H2.series.c27.data[i2 - 12]), growthPct: g(H2.series.c27.data[i2], H2.series.c27.data[i2 - 12]), shareOfImportsPct: r1(100 * H2.series.c27.data[i2] / M[n]) };
+  T.goldImports = { bn: bn(H4.series.c7108.data[i4]), year_ago_bn: bn(H4.series.c7108.data[i4 - 12]), growthPct: g(H4.series.c7108.data[i4], H4.series.c7108.data[i4 - 12]) };
+  facts.cross.trade = T;
+}
+// --- end trade ---
 
 // the writer's window on the SIBLING bundles (registry `proseInputs`): the
 // deep cuts — groups, items, states, sectors — summarized as field facts
