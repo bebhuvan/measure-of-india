@@ -352,3 +352,19 @@ import popAgeBundle from "../../data/series/population-wpp-age.json";
     ["Share aged 15 to 64", "WPP-WA", "s-g4", PA2.share_15_64, true, "/guides/population/", null, (v) => v.toFixed(1) + "%"],
   ], 1, "sppo", popBundle.meta.vintage, "UN WPP 2024");
 }
+
+// climate (lb/climate): the month against 1991-2020 (ERA5, OWID), the station record's annual
+// mean, and nights of 26°C or more (ERA5, CCKP)
+import climateMonthlyBundle from "../../data/series/climate-temp-monthly.json";
+import climateCruBundle from "../../data/series/climate-cru.json";
+import climateHotdaysBundle from "../../data/series/climate-era5-hotdays.json";
+{
+  const CM = hydrate(climateMonthlyBundle), CR = hydrate(climateCruBundle), CH = hydrate(climateHotdaysBundle);
+  const sdeg = (v) => (v < 0 ? "−" : "+") + Math.abs(v).toFixed(2) + "°C";
+  render("reg-climate", [
+    ["Temperature against 1991-2020, monthly", "ERA5-ANOM", "s-acc", CM.temperature_anomaly, false, "/guides/climate/", null, sdeg],
+    ["Annual mean temperature, station record", "CRU-TAS", "s-g1", CR.tas, false, "/guides/climate/", null, (v) => v.toFixed(2) + "°C", "CRU TS 4.10"],
+    ["Nights of 26°C or more, a year", "ERA5-TR26", "s-g2", CH.tr26, false, "/guides/climate/", null, (v) => v.toFixed(1) + " days", "ERA5, CCKP"],
+  ], 12, "spcl", climateMonthlyBundle.meta.latestPeriod, "Copernicus ERA5 via OWID; CRU TS and ERA5 via the World Bank CCKP");
+}
+

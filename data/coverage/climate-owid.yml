@@ -1,0 +1,118 @@
+# Coverage ledger: Our World in Data, for the climate guide (docs/CONTRACT-coverage.md).
+# Catalogue: scripts/lib/products/owid-climate.mjs --catalogue. First matching rule wins.
+family: climate-owid
+guides: [climate]
+catalogue: data/coverage/climate-owid.catalogue.json
+rules:
+  # --- CO2 dataset: what the plates draw ---
+  - match: ["owid:co2:co2:ind", "owid:co2:co2:chn", "owid:co2:co2:usa", "owid:co2:co2_growth_prct:ind"]
+    status: shown
+    bundle: [climate-co2, climate-co2-chn, climate-co2-usa]
+    plate: "§08 India is the third-largest emitter (cb-co2)"
+  - match: "owid:co2:co2_per_capita:*"
+    status: shown
+    bundle: [climate-co2, climate-co2-chn, climate-co2-usa, climate-co2-world]
+    plate: "§08 Per person, India emits less than half the world average (cb-percap)"
+  - match: ["owid:co2:share_global_co2:ind", "owid:co2:share_global_co2:chn", "owid:co2:share_global_co2:usa",
+            "owid:co2:share_global_cumulative_co2:ind", "owid:co2:share_global_cumulative_co2:chn", "owid:co2:share_global_cumulative_co2:usa",
+            "owid:co2:share_of_temperature_change_from_ghg:ind", "owid:co2:share_of_temperature_change_from_ghg:chn", "owid:co2:share_of_temperature_change_from_ghg:usa"]
+    status: shown
+    bundle: [climate-co2, climate-co2-chn, climate-co2-usa]
+    plate: "§08 India's share of the warming so far (cb-stock)"
+  - match: ["owid:co2:coal_co2:ind", "owid:co2:oil_co2:ind", "owid:co2:gas_co2:ind", "owid:co2:cement_co2:ind", "owid:co2:flaring_co2:ind"]
+    status: shown
+    bundle: climate-co2
+    plate: "§08 Coal makes two-thirds of India's carbon dioxide (cb-fuels)"
+  - match: ["owid:co2:co2_including_luc:ind", "owid:co2:methane:ind", "owid:co2:nitrous_oxide:ind", "owid:co2:total_ghg:ind", "owid:co2:consumption_co2:ind"]
+    status: shown
+    bundle: climate-co2
+    plate: "§08 Methane adds a quarter again (cb-gases)"
+  # --- CO2 dataset: columns with no value for a geography ---
+  - match: ["owid:co2:other_industry_co2:ind", "owid:co2:other_co2_per_capita:ind", "owid:co2:cumulative_other_co2:ind",
+            "owid:co2:share_global_other_co2:ind", "owid:co2:share_global_cumulative_other_co2:ind"]
+    status: excluded
+    reason: "The Global Carbon Project reports no separate other-industry CO2 for India, so OWID publishes no value for these columns."
+  - match: "owid:co2:*:ind"
+    status: baked
+    bundle: climate-co2
+  - match: "owid:co2:*:chn"
+    status: baked
+    bundle: climate-co2-chn
+  - match: "owid:co2:*:usa"
+    status: baked
+    bundle: climate-co2-usa
+  - match: "owid:co2:*:wld"
+    status: baked
+    bundle: climate-co2-world
+  # --- energy dataset ---
+  - match: ["owid:energy:coal_share_energy:ind", "owid:energy:oil_share_energy:ind", "owid:energy:gas_share_energy:ind", "owid:energy:nuclear_share_energy:ind",
+            "owid:energy:hydro_share_energy:ind", "owid:energy:solar_share_energy:ind", "owid:energy:wind_share_energy:ind", "owid:energy:biofuel_share_energy:ind",
+            "owid:energy:other_renewables_share_energy:ind", "owid:energy:fossil_share_energy:ind"]
+    status: shown
+    bundle: climate-energy
+    plate: "§09 Coal still supplies more than half of all the energy India uses (cb-energy)"
+  - match: ["owid:energy:coal_share_elec:ind", "owid:energy:oil_share_elec:ind", "owid:energy:gas_share_elec:ind", "owid:energy:nuclear_share_elec:ind",
+            "owid:energy:hydro_share_elec:ind", "owid:energy:solar_share_elec:ind", "owid:energy:wind_share_elec:ind", "owid:energy:biofuel_share_elec:ind",
+            "owid:energy:other_renewables_share_elec:ind", "owid:energy:carbon_intensity_elec:ind", "owid:energy:per_capita_electricity:ind"]
+    status: shown
+    bundle: climate-energy
+    plate: "§09 Solar and wind now make one unit of electricity in seven (cb-power)"
+  - match: ["owid:energy:other_renewable_exc_biofuel_electricity:ind", "owid:energy:other_renewables_elec_per_capita_exc_biofuel:ind", "owid:energy:other_renewables_share_elec_exc_biofuel:ind",
+            "owid:energy:other_renewable_exc_biofuel_electricity:chn", "owid:energy:other_renewables_elec_per_capita_exc_biofuel:chn", "owid:energy:other_renewables_share_elec_exc_biofuel:chn"]
+    status: excluded
+    reason: "OWID publishes no value for these other-renewables-excluding-biofuel columns for India or China; the sources do not split them."
+  - match: ["owid:energy:net_elec_imports:wld", "owid:energy:net_elec_imports_share_demand:wld"]
+    status: excluded
+    reason: "The world as a whole imports no electricity from anywhere, so OWID publishes no value for its net imports."
+  - match: "owid:energy:*:ind"
+    status: baked
+    bundle: climate-energy
+  - match: "owid:energy:*:chn"
+    status: baked
+    bundle: climate-energy-chn
+  - match: "owid:energy:*:usa"
+    status: baked
+    bundle: climate-energy-usa
+  - match: "owid:energy:*:wld"
+    status: baked
+    bundle: climate-energy-world
+  # --- OWID climate indicators, India ---
+  - match: "owid:climate:surface_temperature:*"
+    status: shown
+    bundle: climate-temp-monthly
+    plate: "§01 The current reading and Since 2000, cool months have become rare (cb-stripes)"
+  - match: ["owid:climate:surface_temperature_annual_average:temperature_2m:ind", "owid:climate:surface_temperature_annual_average:temperature_anomaly:ind"]
+    status: baked
+    bundle: climate-temp-annual
+  - match: "owid:climate:surface_temperature_annual_average:*decadal*"
+    status: baked
+    bundle: climate-temp-decadal
+  - match: ["owid:climate:surface_temperature_monthly:*", "owid:climate:surface_temperature_anomalies:*", "owid:climate:surface_country_level_monthly_anomaly:*"]
+    status: excluded
+    reason: "These are the same monthly ERA5 values rearranged by year, decade or calendar month for OWID's charts (checked equal); the monthly series itself is baked in full."
+  - match: "owid:climate:total_precipitation_annual:*"
+    status: baked
+    bundle: climate-rain-owid
+  - match: "owid:climate:yearly_burned_area:*"
+    status: shown
+    bundle: climate-burned-area
+    plate: "§11 Most of the land that burns in India each year is farmland (cb-fires)"
+  - match: "owid:climate:wildfires_by_year:*"
+    status: baked
+    bundle: climate-wildfires
+  - match: "owid:climate:weekly_wildfires:*"
+    status: baked
+    bundle: climate-wildfires-weekly
+  - match: ["owid:climate:wildfires_by_week:*", "owid:climate:wildfires_by_week_average:*"]
+    status: excluded
+    reason: "These are running totals and multi-year averages of the weekly wildfire series, which is baked in full and sums to them."
+  - match: "owid:emissions:national_contributions:*"
+    status: baked
+    bundle: climate-warming-contrib
+  - match: "owid:fasttrack:heat_deaths_undp_climate_horizons:*"
+    status: shown
+    bundle: climate-heat-deaths
+    plate: "§11 Temperature-related deaths are projected to rise (cb-deaths)"
+  - match: "owid:climate:young_people_opinions_climate_change__hickman_et_al__2021:*"
+    status: baked
+    bundle: climate-opinion-youth

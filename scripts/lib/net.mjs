@@ -39,7 +39,10 @@ function agentFor(url, opts = {}) {
 // Follows up to 3 redirects (http→https moves and CDN hops are ordinary);
 // each hop gets a fresh deadline.
 const REDIRECT_STATUS = new Set([301, 302, 303, 307, 308]);
-export function requestOnce(url, { agent, timeoutMs = 60_000, deadlineMs = 120_000, maxBytes = 64 * 1024 * 1024, asText = false, redirectsLeft = 3 } = {}) {
+// `markup: true` accepts a body that starts with "<" (XML listings such as S3's); by default
+// such a body is read as a throttling gateway's HTML page. `encoding: "latin1"` keeps every
+// byte of a binary body (an xlsx) one-to-one in the string: Buffer.from(body, "latin1").
+export function requestOnce(url, { agent, timeoutMs = 60_000, deadlineMs = 120_000, maxBytes = 64 * 1024 * 1024, asText = false, redirectsLeft = 3, markup = false, encoding = "utf8" } = {}) {
   return new Promise((resolve, reject) => {
     const started = Date.now();
     let body = "";
@@ -48,10 +51,10 @@ export function requestOnce(url, { agent, timeoutMs = 60_000, deadlineMs = 120_0
     const finish = (fn, arg) => { if (!settled) { settled = true; req.destroy(); fn(arg); } };
 
     const req = (url.startsWith("http:") ? http : https).get(url, { agent: agentFor(url, { agent }) }, (res) => {
-      res.setEncoding("utf8");
+      res.setEncoding(encoding);
       if (REDIRECT_STATUS.has(res.statusCode) && res.headers.location && redirectsLeft > 0) {
         const next = new URL(res.headers.location, url).toString();
-        return finish(resolve, requestOnce(next, { agent, timeoutMs, deadlineMs, maxBytes, asText, redirectsLeft: redirectsLeft - 1 }));
+        return finish(resolve, requestOnce(next, { agent, timeoutMs, deadlineMs, maxBytes, asText, redirectsLeft: redirectsLeft - 1, markup, encoding }));
       }
       res.on("data", (c) => {
         body += c;
@@ -79,7 +82,7 @@ export function requestOnce(url, { agent, timeoutMs = 60_000, deadlineMs = 120_0
           err.fatal = status >= 400 && status < 500 && status !== 429; // 4xx (except 429) will not heal
           return finish(reject, err);
         }
-        if (body.trimStart().startsWith("<")) {
+        if (!markup && body.trimStart().startsWith("<")) {
           // an HTML error/login page served with 200 is how throttling gateways behave
           const err = new Error(`Non-JSON response for ${url}`);
           err.throttled = true;

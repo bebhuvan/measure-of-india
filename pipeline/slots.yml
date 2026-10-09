@@ -355,3 +355,31 @@ population:
       history every two years; a national figure hides large differences between states;
       India's own official figures can differ. Do not discuss projections or forecasts. Plain,
       literal sentences, no metaphors. Must contain a plain "we do not know".
+
+# --- climate (lb/climate) ---
+climate:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [temperature_anomaly.latest, temperature_2m.latest, climate.last12Mean]
+    minSeriesMentioned: 2        # the anomaly and the average temperature it is measured against
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
+    brief: >
+      The month just published: how far India's average temperature sat from the
+      1991-2020 average for that month, what the month's average actually was in
+      degrees, and where it ranks among the same month in every year since 1940.
+      Then the last twelve months as a whole and how many months of the current
+      year ran above their normal. Concede a cool or ordinary month plainly; one
+      month is weather, not climate.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [temperature_anomaly.latest, climate.century.change]
+    brief: >
+      The honest limits: one month is weather, and an anomaly against 1991-2020 hides
+      the warming already inside that baseline (the century figure from the station
+      record shows how much). The national average blurs states, days and nights,
+      and dry heat and humid heat. Recent months are revised. Must contain a plain
+      "we do not know".
+# --- end climate ---

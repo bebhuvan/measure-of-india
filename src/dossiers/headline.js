@@ -46,6 +46,8 @@ export const HEADLINE = {
   // worldbank family (2026-10-09)
   poverty:       { value: (b) => `${last(b, "headcount_3_00").toFixed(1)}%`, what: "of Indians below $3.00 a day (2021 PPP)", period: (b) => `HCES ${lastDate(b).slice(0, 4)}-${String(+lastDate(b).slice(0, 4) + 1).slice(2)}` },
   population:    { value: (b) => `${(last(b, "tpopulation1july") / 1e6).toFixed(3)} billion`, what: "people in India, UN estimate", period: (b) => lastDate(b).slice(0, 4) },
+  // climate: the month's departure from its own 1991-2020 average (ERA5, OWID)
+  climate:       { value: (b) => `${last(b, "temperature_anomaly") < 0 ? "−" : "+"}${Math.abs(last(b, "temperature_anomaly")).toFixed(2)}°C`, what: "India's temperature against the 1991-2020 average for the month", period: month },
 };
 
 // The small chart beside each guide's figure: always on the current ruler, so a chart never
@@ -75,6 +77,7 @@ export const SPARK = {
   // worldbank family (2026-10-09): the lineup (model estimates) gives the poverty spark a shape; surveys alone are 2 points
   poverty:       { bundle: "poverty-pip-lineup", series: "headcount_3_00" },
   population:    { bundle: "population-wpp", series: "tpopulation1july" },
+  climate:       { bundle: "climate-temp-annual", series: "temperature_anomaly" },   // climate: annual, 1940 on
 };
 
 const cache = {};

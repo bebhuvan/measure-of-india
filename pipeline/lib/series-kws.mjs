@@ -61,6 +61,11 @@ export const SERIES_KWS = {
     ["imputed", "rural_imputed"], ["imputation", "rural_imputed"],
     ["gini", "rural"],
   ],
+  // climate (lb/climate): the monthly ERA5 bundle has two series
+  climate: [
+    ["anomaly", "temperature_anomaly"], ["above the 1991", "temperature_anomaly"], ["above its 1991", "temperature_anomaly"], ["warmer than", "temperature_anomaly"], ["cooler than", "temperature_anomaly"], ["above normal", "temperature_anomaly"], ["below normal", "temperature_anomaly"],
+    ["average temperature", "temperature_2m"], ["averaged", "temperature_2m"], ["mean temperature", "temperature_2m"],
+  ],
   factories: [
     ["factories in operation", "factories_in_operation"], ["operating factories", "factories_in_operation"], ["factories", "factories_in_operation"],
     ["gva", "gva"], ["value added", "gva"],

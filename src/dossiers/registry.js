@@ -565,6 +565,35 @@ export const DOSSIERS = [
     bundles: ["population-wpp", "population-wpp-projection", "population-wpp-variants", "population-wpp-age", "population-wpp-age-projection", "population-wdi", "population-wdi-vital", "population-wdi-urban", "population-wdi-migration"],
   },
   // --- end worldbank family block ---
+  // --- climate (lb/climate) ---
+  {
+    slug: "climate",
+    no: "21",
+    section: "Environment",
+    name: "Climate and temperature",
+    title: "Climate and heat",   // the topic as a reader names it: nav, lists, search
+    kickerTitle: "Temperature, rain, emissions and projections",
+    crumbTitle: "Climate and temperature",
+    headline: "How much hotter India has become, <i>and what comes next.</i>",
+    ogTitle: "How much hotter India has become.",
+    blurb: "A century of Indian temperature and rain, the heat people actually live through, what India emits against China, the US and the world, and what the climate models project for a child born today.",
+    description: "India's changing climate as an economic fact: warming since 1901, by month and by state; hot nights and humid heat; the monsoon; emissions and the energy mix; and CMIP6 projections to 2100.",
+    rssDescription: "India's temperature, monthly, against the 1991-2020 normal, with the long record, the heat, the monsoon, emissions and projections. Revised as the data move.",
+    stamp: { dateStyle: "month", vintageStyle: "month" },
+    statusNote: "Monthly temperature, records since 1901, projections to 2100",
+    version: "v1.0",
+    currentBundle: "climate-temp-monthly",
+    proseInputs: ["climate-temp-annual", "climate-rain-owid"],   // same instrument as the current bundle (ERA5, OWID); facts.mjs refuses mixed rulers
+    calendar: "calendar",
+    bands: null,
+    // structural numbers the prose may cite: baseline years and the reference windows
+    proseConstants: [100, 1901, 1940, 1951, 1980, 1991, 2020, 26, 27, 35, 40, 41],
+    spark: { bundle: "climate-temp-annual", series: "temperature_anomaly" },
+    prose: true,
+    register: { id: "reg-climate", label: "Climate", unit: "Monthly ERA5 anomaly from 1991-2020; annual records from 1901 (CRU) and 1950 (ERA5)", historyCol: "Since 1940" },
+    bundles: ["climate-temp-monthly", "climate-burned-area","climate-cmip6-energy","climate-cmip6-energy-hist","climate-cmip6-heatstress","climate-cmip6-heatstress-hist","climate-cmip6-hotdays","climate-cmip6-hotdays-hist","climate-cmip6-rain","climate-cmip6-rain-hist","climate-cmip6-states-energy","climate-cmip6-states-heatstress","climate-cmip6-states-hotdays","climate-cmip6-states-rain","climate-cmip6-states-temp","climate-cmip6-temp","climate-cmip6-temp-hist","climate-cmip6-windows-energy","climate-cmip6-windows-heatstress","climate-cmip6-windows-hotdays","climate-cmip6-windows-rain","climate-cmip6-windows-temp","climate-co2","climate-co2-chn","climate-co2-usa","climate-co2-world","climate-cru","climate-cru-monthly","climate-cru-states","climate-energy","climate-energy-chn","climate-energy-usa","climate-energy-world","climate-era5-energy","climate-era5-energy-monthly","climate-era5-heatstress","climate-era5-heatstress-monthly","climate-era5-hotdays","climate-era5-hotdays-monthly","climate-era5-rain","climate-era5-rain-monthly","climate-era5-states-energy","climate-era5-states-heatstress","climate-era5-states-hotdays","climate-era5-states-rain","climate-era5-states-temp","climate-era5-temp","climate-era5-temp-monthly","climate-heat-deaths","climate-opinion-youth","climate-rain-owid","climate-seasons-cru","climate-seasons-era5-energy","climate-seasons-era5-heatstress","climate-seasons-era5-hotdays","climate-seasons-era5-rain","climate-seasons-era5-temp","climate-temp-annual","climate-temp-decadal","climate-warming-contrib","climate-wildfires","climate-wildfires-weekly"],
+  },
+  // --- end climate ---
 ];
 export const bySlug = Object.fromEntries(DOSSIERS.map((d) => [d.slug, d]));
 

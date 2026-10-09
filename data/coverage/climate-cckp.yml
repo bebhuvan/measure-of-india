@@ -1,0 +1,159 @@
+# Coverage ledger: World Bank Climate Change Knowledge Portal, for the climate guide
+# (docs/CONTRACT-coverage.md). Catalogue: scripts/lib/products/cckp.mjs --catalogue, from
+# CCKP's own S3 bucket. Item ids: cckp:<collection>:<variable>:<product>:<aggregation>:
+# <scenario>[:<percentile>]:<geography>. First matching rule wins.
+family: climate-cckp
+guides: [climate]
+catalogue: data/coverage/climate-cckp.catalogue.json
+rules:
+  # --- source defects (2026-10-09) ---
+  - match: ["cckp:era5:swbgt*:*"]
+    status: blocked
+    reason: "On 2026-10-09 CCKP served ERA5 simplified WBGT with fill-like values (about 1e18) for 2024 and 2025, and readings below the wet-bulb temperature they must exceed."
+  - match: ["cckp:cmip6:swbgt*:*"]
+    status: blocked
+    reason: "On 2026-10-09 the CCKP API returned no CMIP6 simplified WBGT data for India or its states for any product requested."
+  - match: ["cckp:cmip6:wbt*:*"]
+    status: blocked
+    reason: "On 2026-10-09 CCKP served CMIP6 wet-bulb series for India with a mean near 8°C, against 19°C in ERA5, and zero days above every threshold: corrupt at source."
+  - match: "cckp:cmip6:rxmonth:anomaly:annual:ssp119:p90:ind"
+    status: blocked
+    reason: "On 2026-10-09 CCKP served this 90th percentile below its own median and 10th percentile; it is withheld, the median and 10th percentile are baked."
+
+  - match: ["cckp:cmip6:csdi:anomaly:annual:ssp119:*", "cckp:cmip6:esi:anomaly:annual:*", "cckp:cmip6:esi26:anomaly:annual:*", "cckp:cmip6:esi29:anomaly:annual:*", "cckp:cmip6:esi32:anomaly:annual:*", "cckp:cmip6:esi35:anomaly:annual:*", "cckp:cmip6:etohar:anomaly:annual:*", "cckp:cmip6:etopen:anomaly:annual:*", "cckp:cmip6:gsl:anomaly:annual:ssp119:*", "cckp:cmip6:gslend:anomaly:annual:ssp119:*", "cckp:cmip6:gslstart:anomaly:annual:ssp119:*", "cckp:cmip6:hdd22:anomaly:annual:*", "cckp:cmip6:r100mm3day:anomaly:annual:ssp119:*", "cckp:cmip6:r150mm5day:anomaly:annual:*", "cckp:cmip6:rlds:anomaly:annual:*", "cckp:cmip6:rsdi20mm:anomaly:annual:*", "cckp:cmip6:rsds:anomaly:annual:*", "cckp:cmip6:sdii:timeseries:annual:ssp119:*", "cckp:cmip6:sfcwind:anomaly:annual:*", "cckp:cmip6:sfcwindx:anomaly:annual:*", "cckp:cmip6:wsdi:anomaly:annual:ssp119:*"]
+    status: blocked
+    reason: "On 2026-10-09 the CCKP API returned no data for India for these variable, product and scenario combinations, though CCKP's bucket lists the gridded files."
+
+  # --- what the plates draw ---
+  - match: ["cckp:era5:tas:timeseries:annual:historical:ind", "cckp:cru:tas:timeseries:annual:historical:ind"]
+    status: shown
+    bundle: [climate-era5-temp, climate-cru]
+    plate: "§04 India has warmed about 0.9°C since the early 1900s (cb-century)"
+  - match: ["cckp:era5:hd40:timeseries:annual:historical:ind", "cckp:era5:tr26:timeseries:annual:historical:ind"]
+    status: shown
+    bundle: climate-era5-hotdays
+    plate: "§02 Warm nights and humid days have multiplied (cb-heat)"
+  - match: ["cckp:era5:wbt27:timeseries:annual:historical:ind", "cckp:era5:hi41:timeseries:annual:historical:ind"]
+    status: shown
+    bundle: climate-era5-heatstress
+    plate: "§02 Warm nights and humid days have multiplied (cb-heat)"
+  - match: ["cckp:era5:rx5day:timeseries:annual:historical:ind", "cckp:era5:r99ptot:timeseries:annual:historical:ind", "cckp:era5:r50mm:timeseries:annual:historical:ind", "cckp:era5:cdd:timeseries:annual:historical:ind"]
+    status: shown
+    bundle: climate-era5-rain
+    plate: "§07 Across India as a whole, rain extremes have barely moved (cb-rain-extremes)"
+  - match: "cckp:era5:cdd65:timeseries:annual:historical:ind"
+    status: shown
+    bundle: climate-era5-energy
+    plate: "§11 The heat a building must shed (cb-cool)"
+  - match: ["cckp:era5:tas:timeseries:annual:historical:states", "cckp:era5:tasmax:timeseries:annual:historical:states", "cckp:era5:tasmin:timeseries:annual:historical:states"]
+    status: shown
+    bundle: climate-era5-states-temp
+    plate: "§06 Which states (cb-states) and §12 Every state, every measure"
+  - match: ["cckp:era5:hd40:timeseries:annual:historical:states", "cckp:era5:tr26:timeseries:annual:historical:states"]
+    status: shown
+    bundle: climate-era5-states-hotdays
+    plate: "§06 Humid heat has spread across the Gangetic plain (cb-states-humid) and §12"
+  - match: ["cckp:era5:wbt27:timeseries:annual:historical:states", "cckp:era5:hi41:timeseries:annual:historical:states"]
+    status: shown
+    bundle: climate-era5-states-heatstress
+    plate: "§06 Humid heat has spread across the Gangetic plain (cb-states-humid) and §12"
+  - match: ["cckp:cru:pr:timeseries:annual:historical:ind", "cckp:cru:tasmax:timeseries:annual:historical:ind", "cckp:cru:tasmin:timeseries:annual:historical:ind"]
+    status: shown
+    bundle: climate-cru
+    plate: "§07 A century of monsoons (cb-rain) and §05 Which months, and which hours (cb-months)"
+  - match: ["cckp:cru:tas:timeseries:monthly:historical:ind", "cckp:cru:tasmax:timeseries:monthly:historical:ind", "cckp:cru:tasmin:timeseries:monthly:historical:ind", "cckp:cru:pr:timeseries:monthly:historical:ind"]
+    status: shown
+    bundle: climate-cru-monthly
+    plate: "§05 Winter and the months after the monsoon warmed most (cb-months) and §07 (cb-rain-months)"
+  - match: ["cckp:cru:tas:timeseries:annual:historical:states", "cckp:cru:pr:timeseries:annual:historical:states"]
+    status: shown
+    bundle: climate-cru-states
+    plate: "§06 Which states (cb-states) and §12 Every state, every measure"
+  - match: "cckp:cmip6:tas:anomaly:annual:ssp*:ind"
+    status: shown
+    bundle: climate-cmip6-windows-temp
+    plate: "§10 A child born today (cb-proj)"
+  - match: ["cckp:cmip6:tr26:climatology:annual:*:median:ind", "cckp:cmip6:hd40:climatology:annual:*:median:ind"]
+    status: shown
+    bundle: climate-cmip6-windows-hotdays
+    plate: "§10 Days of extreme humid heat are projected to multiply (cb-proj-heat)"
+  - match: "cckp:cmip6:hi41:climatology:annual:*:median:ind"
+    status: shown
+    bundle: climate-cmip6-windows-heatstress
+    plate: "§10 Days of extreme humid heat are projected to multiply (cb-proj-heat)"
+  - match: "cckp:cmip6:cdd65:climatology:annual:*:median:ind"
+    status: shown
+    bundle: climate-cmip6-windows-energy
+    plate: "§11 The heat a building must shed (cb-cool)"
+  - match: "cckp:cmip6:tas:anomaly:annual:ssp*:median:states"
+    status: shown
+    bundle: climate-cmip6-states-temp
+    plate: "§10 The projected warming is highest in the north (cb-proj-states) and §12"
+
+  # --- baked: every other series the API aggregates, India and states, annual ---
+  - match: ["cckp:era5:*:timeseries:annual:historical:ind", "cckp:era5:*:timeseries:monthly:historical:ind"]
+    status: baked
+    bundle: [climate-era5-temp, climate-era5-hotdays, climate-era5-heatstress, climate-era5-rain, climate-era5-energy,
+             climate-era5-temp-monthly, climate-era5-hotdays-monthly, climate-era5-heatstress-monthly, climate-era5-rain-monthly, climate-era5-energy-monthly]
+  - match: "cckp:era5:*:timeseries:seasonal:historical:ind"
+    status: baked
+    bundle: [climate-seasons-era5-temp, climate-seasons-era5-hotdays, climate-seasons-era5-heatstress, climate-seasons-era5-rain, climate-seasons-era5-energy]
+  - match: "cckp:era5:*:timeseries:annual:historical:states"
+    status: baked
+    bundle: [climate-era5-states-temp, climate-era5-states-hotdays, climate-era5-states-heatstress, climate-era5-states-rain, climate-era5-states-energy]
+  - match: ["cckp:cru:*:timeseries:annual:historical:ind", "cckp:cru:*:timeseries:monthly:historical:ind"]
+    status: baked
+    bundle: [climate-cru, climate-cru-monthly]
+  - match: "cckp:cru:*:timeseries:seasonal:historical:ind"
+    status: baked
+    bundle: climate-seasons-cru
+  - match: "cckp:cru:*:timeseries:annual:historical:states"
+    status: baked
+    bundle: climate-cru-states
+  - match: "cckp:cmip6:*:timeseries:annual:ssp*:ind"
+    status: baked
+    bundle: [climate-cmip6-temp, climate-cmip6-hotdays, climate-cmip6-heatstress, climate-cmip6-rain, climate-cmip6-energy]
+  - match: "cckp:cmip6:*:timeseries:annual:historical:*:ind"
+    status: baked
+    bundle: [climate-cmip6-temp-hist, climate-cmip6-hotdays-hist, climate-cmip6-heatstress-hist, climate-cmip6-rain-hist, climate-cmip6-energy-hist]
+  - match: ["cckp:cmip6:*:climatology:annual:*:ind", "cckp:cmip6:*:anomaly:annual:ssp*:ind"]
+    status: baked
+    bundle: [climate-cmip6-windows-temp, climate-cmip6-windows-hotdays, climate-cmip6-windows-heatstress, climate-cmip6-windows-rain, climate-cmip6-windows-energy]
+  - match: "cckp:cmip6:*:anomaly:annual:ssp*:median:states"
+    status: baked
+    bundle: [climate-cmip6-states-temp, climate-cmip6-states-hotdays, climate-cmip6-states-heatstress, climate-cmip6-states-rain, climate-cmip6-states-energy]
+
+  # --- not baked, each for a reason about the data ---
+  - match: ["cckp:era5:*:climatology:*", "cckp:cru:*:climatology:*"]
+    status: excluded
+    reason: "Each is a 20- or 30-year average of an annual, seasonal or monthly series that is baked in full; validate.mjs checks CCKP's 1991-2020 figures against our own averages."
+  - match: ["cckp:era5:*:trend:*", "cckp:cmip6:*:trend:*"]
+    status: excluded
+    reason: "Each is the straight-line slope of a series that is baked in full, so it is reproduced exactly from the baked data."
+  - match: ["cckp:era5:*:anomaly:*"]
+    status: excluded
+    reason: "Each is a monthly or seasonal series minus a CCKP average of itself; the series is baked in full and the average is reproduced from it."
+  - match: ["cckp:era5:*:timeseries:seasonal:historical:states", "cckp:era5:*:timeseries:monthly:historical:states", "cckp:cru:*:timeseries:seasonal:historical:states", "cckp:cru:*:timeseries:monthly:historical:states"]
+    status: excluded
+    reason: "State-by-season and state-by-month series would multiply the archive about fifteenfold; the annual state series and the national seasonal and monthly series are baked, and CCKP serves these on request."
+  - match: ["cckp:cmip6:*:timeseries:annual:*:states", "cckp:cmip6:*:timeseries:seasonal:*", "cckp:cmip6:*:climatology:annual:*:states", "cckp:cmip6:*:anomaly:annual:ssp*:p10:states", "cckp:cmip6:*:anomaly:annual:ssp*:p90:states", "cckp:cmip6:*:anomaly:annual:historical:*"]
+    status: excluded
+    reason: "These state-level and seasonal projection tables repeat the same model runs at a size the archive cannot carry; national time series with the full model range and state median changes for every window are baked, and CCKP serves the rest on request."
+  - match: ["cckp:cmip6:*:climatology:monthly:*", "cckp:cmip6:*:climatology:seasonal:*", "cckp:cmip6:*:anomaly:monthly:*", "cckp:cmip6:*:anomaly:seasonal:*"]
+    status: excluded
+    reason: "These are 20-year averages for each month or season of a nominal year, which the bundle date axis cannot hold without inventing dates; the annual windows and annual series are baked."
+  - match: ["cckp:cmip6:*:climatology:period:*"]
+    status: excluded
+    reason: "These are 30-year windows CCKP computes for return-period maps; the same index in 20-year annual windows and as an annual series is baked."
+  - match: ["cckp:*:*:timeseries-smooth:*", "cckp:*:*:timeseriessmooth:*", "cckp:*:*:*smooth:*"]
+    status: excluded
+    reason: "Each is a smoothed copy of a series baked unsmoothed; this site never draws smoothed lines because they invent values between published points."
+  - match: ["cckp:*:map-only", "cckp:*:*:*:*:*:grid", "cckp:*:*:*:*:*:*:grid"]
+    status: excluded
+    reason: "Each is a gridded map layer (natural variability, ENSO correlation, percentiles, heatwave maps, return levels, year of change) that CCKP does not aggregate to India or its states."
+  - match: "cckp:cmip6:*:single-models"
+    status: excluded
+    reason: "One model's run is one draw from the ensemble; the ensemble median and 10th to 90th percentile summarise all of them and are baked."
+  - match: "cckp:cru:*:earlier-versions"
+    status: excluded
+    reason: "Earlier CRU TS versions are superseded vintages of the same series; the newest version is baked and git keeps the history."
