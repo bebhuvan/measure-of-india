@@ -33,8 +33,8 @@ Each decides every `pending` item in its ledgers (brief: `docs/briefs/wave2.md`)
 | atlas-industry | iip, factories (+ eight core industries) | 45,347 |
 | atlas-nas | gdp | **merged**: 0 pending; institutional sectors, revision paths, 18 sub-industries |
 
-Next: health and gender (nfhs, gender), households (hces, aishe, mnre, deposits), once
-MoSPI load allows.
+| atlas-health-gender | nfhs, gender | 15,538 (started 01:30) |
+| atlas-households | consumption, aishe, mnre, deposits | 1,670 (started 01:30) |
 
 ## Coordinator (this session) meanwhile
 
