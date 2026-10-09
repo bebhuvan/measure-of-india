@@ -15,6 +15,21 @@ const nicRows = [...new Set(Object.keys(ind.series).filter((k) => k.startsWith("
 const byWage = [...nicRows].sort((a, b) => a.wage - b.wage), bySize = [...nicRows].sort((a, b) => a.size - b.size);
 const inrK = (v) => v >= 1e5 ? `₹${(v / 1e5).toFixed(1)} lakh` : `₹${Math.round(v / 1000)},000`;
 const nm = (c) => SHORTN[c] ?? c;
+// the calendar-year 2025 ASUSE round: workers by detailed activity and gender
+import u25 from "../../../data/series/asuse-2025-t26.json";
+import ua from "../../../data/series/asuse-annual.json";
+const NOT_ACT = new Set(["All India", "OAE", "HWE", "Urban", "Rural", "Other Services", "Trading Activities", "Manufacturing Activities"]);
+const actW = {};
+for (const s of Object.values(u25.series)) { const [a, g, w] = s.label.split(" · "); if (w === "working time: all") (actW[a] ??= {})[g] = s.data[0]; }
+const u25All = actW["All India"]["gender: all"], u25F = actW["All India"].Female;
+const trades = Object.entries(actW).filter(([a]) => !NOT_ACT.has(a)).map(([a, v]) => ({ a, n: v["gender: all"], f: v.Female })).sort((x, y) => y.n - x.n);
+const nextThree = trades.slice(1, 4).reduce((t, r) => t + r.n, 0);
+const lakhN = (v) => (v >= 1e7 ? `${(v / 1e7).toFixed(1)} crore` : `${Math.round(v / 1e5)} lakh`);
+const wShare = trades.filter((r) => r.n >= 5e5).map((r) => ({ ...r, sh: r.f / r.n })).sort((x, y) => y.sh - x.sh);
+const per = (x) => { const p = Math.round(x * 10); return p >= 1 ? `${["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"][p]} in ten` : `${Math.round(x * 1000)} in a thousand`; };
+const lc = (t) => t.replace(/^Manufacture of /, "").toLowerCase();
+const fyWorkers = ua.series.workers_all.data.filter((v) => v != null).at(-1);
+const list3 = (rs) => rs.map((r) => `${lc(r.a)} (${(100 * r.sh).toFixed(100 * r.sh < 10 ? 1 : 0)}%)`).join(", ").replace(/, ([^,]*)$/, " and $1");
 ---
 <Base
   title="Enterprises · India Atlas"
@@ -505,6 +520,64 @@ const nm = (c) => SHORTN[c] ?? c;
           <div class="now">
             <span class="mk">As of 2023-24</span>
             <p>The largest is <b id="ex-ust1">–</b>. The top three states together hold <b id="ex-ust3">–</b> of informal workers; the top five, <b id="ex-ust5">–</b>. Against the factory GVA top three's share, concentration here is markedly lower.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <script type="application/json" id="u25-data" set:html={JSON.stringify({ all: u25All, f: u25F, trades })}></script>
+      <figure id="cb-trades" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{lc(trades[0].a).replace(/^./, (c) => c.toUpperCase())} employs {lakhN(trades[0].n)} people, more than the next three trades together</h3>
+            <div class="sub">Workers in unincorporated non-farm enterprises by detailed activity, calendar year 2025 (the new ASUSE round), all {trades.length} activities the survey publishes, sorted</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-trades">–</div><div class="c">informal workers, 2025, crore</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-trades"></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NSO, ASUSE 2025 (calendar year), table 26, estimated workers by activity, all genders, full and part time. The 2025 round covers January to December, a different reference period from the financial-year rounds of 2021-22 to 2023-24, so its levels are shown on their own</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>These are the shops, stalls, workshops and service counters that are not companies: the kirana store, the tailor, the auto-rickshaw owner, the tuition centre, the roadside dhaba. Each bar counts the people who work in them, owners and helpers included. Retail is the giant because a shop is the easiest business in India to open: little capital, often no registration at all, frequently run from the front room of a house.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2025</span>
+            <p>The 2025 round counts {lakhN(u25All)} workers in all. The next three trades after {lc(trades[0].a)}, {lc(trades[1].a)}, {lc(trades[2].a)} and {lc(trades[3].a)}, hold {lakhN(nextThree)} together. The last financial-year round, 2023-24, counted {lakhN(fyWorkers)}; the two rounds cover different twelve months and are not one series, so the gap between them is not a measure of growth.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-women" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{per(wShare[0].sh).replace(/^./, (c) => c.toUpperCase())} workers in informal {lc(wShare[0].a)} units are women; in {lc(wShare.at(-1).a)}, {per(wShare.at(-1).sh)}</h3>
+            <div class="sub">Women's share of workers in unincorporated non-farm enterprises, by detailed activity, 2025, activities with at least five lakh workers, sorted; the dashed line is all activities</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-women">–</div><div class="c">women's share, all informal workers, 2025</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-women"></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NSO, ASUSE 2025, table 26: female workers divided by all workers, per activity, computed by India Atlas. Activities with fewer than five lakh workers are left off the chart (their shares rest on few sampled enterprises) and are in the downloads</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Much informal work done by women happens at home: rolling bidis, stitching garments on piece rates, weaving, running a tuition class from the verandah. Work outside the home, on the road or in the repair shop, is almost entirely men's. The survey counts a woman as a worker in an enterprise only if she works in it; women who work on the family farm or only at home for the household are outside this count altogether.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2025</span>
+            <p>Women were {(100 * u25F / u25All).toFixed(1)}% of informal workers in 2025. The highest shares are in {list3(wShare.slice(0, 3))}; the lowest in {list3(wShare.slice(-3).reverse())}.</p>
           </div>
         </div>
       </figure>

@@ -710,6 +710,66 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   setTxt("sz-low", sr.slice(-3).reverse().map((r) => r.name.toLowerCase() + " (" + Math.round(r.size) + ")").join(", "));
 }
 
+/* ---------- § 07 plates: the 2025 round, workers by trade and women's share ----------
+ * The ASUSE 2025 table is 1.7 MB, so the page carries a build-time pick of the figures these
+ * two plates draw (#u25-data, written by the page from asuse-2025-t26); the whole table is in
+ * the downloads and the every-cut view. */
+{
+  const U = JSON.parse(document.getElementById("u25-data").textContent);
+  const lc = (t) => { const x = t.replace(/^Manufacture of /, ""); return x.charAt(0) + x.slice(1).toLowerCase(); };
+  const short = (t) => { const x = lc(t); return x.length > 44 ? x.slice(0, 42).replace(/[ ,]+\S*$/, "") + "…" : x; };
+  const rows = U.trades.map((r) => ({ ...r, name: short(r.a) }));
+  setTxt("pv-trades", (U.all / 1e7).toFixed(2));
+  {
+    const geo = { W: 1184, H: 30 + rows.length * 20 + 40, ml: 330, mr: 110, mt: 30, mb: 40 };
+    const top = rows[0];
+    const plot = Plot.plot({
+      width: geo.W, height: geo.H, marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+      style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+      x: { label: "workers, lakh →", labelAnchor: "right", labelArrow: false, tickSize: 0, tickPadding: 10, tickFormat: (d) => String(Math.round(d / 1e5)) },
+      y: { label: null, domain: rows.map((r) => r.name), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
+      marks: [
+        Plot.gridX({ stroke: "#F0F2F5", ticks: 6 }),
+        Plot.barX(rows, { x: "n", y: "name", fill: (d) => (d === top ? "#2E4BD8" : "#C9CED6"), insetTop: 3, insetBottom: 3 }),
+        Plot.ruleX([0], { stroke: "#B5BAC4" }),
+        Plot.text(rows.filter((d) => d !== top), { x: "n", y: "name", dx: 8, textAnchor: "start", text: (d) => (d.n >= 1e5 ? (d.n / 1e5).toFixed(1) + " lakh" : fmtIN(d.n)), fill: "#878D99", fontSize: 11.5, fontFamily: mono }),
+        Plot.text([top], { x: "n", y: "name", dx: 8, textAnchor: "start", text: (d) => (d.n / 1e5).toFixed(1) + " lakh", fill: "#161A22", fontWeight: 500, fontSize: 11.5, fontFamily: mono }),
+      ],
+    });
+    a11y(plot, "Informal workers by detailed activity, 2025", "Bar chart of " + rows.length + " activities. " + rows.slice(0, 3).map((r) => r.name + " " + (r.n / 1e5).toFixed(1) + " lakh").join(", ") + ".");
+    document.getElementById("plot-trades").append(plot);
+    const csv = ["activity,workers_2025,female_workers_2025", ...rows.map((r) => `"${r.a}",${r.n},${r.f}`)].join("\n");
+    wirePlate(document.getElementById("cb-trades"), plot, "india-atlas_asuse-2025_workers-by-activity", csv);
+  }
+  {
+    const all = U.f / U.all;
+    const ws = rows.filter((r) => r.n >= 5e5).map((r) => ({ ...r, sh: (100 * r.f) / r.n })).sort((a, b) => b.sh - a.sh);
+    const ext = [ws[0], ws.at(-1)];
+    setTxt("pv-women", (100 * all).toFixed(1) + "%");
+    const geo = { W: 1184, H: 30 + ws.length * 22 + 40, ml: 330, mr: 90, mt: 30, mb: 40 };
+    const plot = Plot.plot({
+      width: geo.W, height: geo.H, marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+      style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+      x: { label: "women's share of workers →", labelAnchor: "right", labelArrow: false, domain: [0, 100], tickSize: 0, tickPadding: 10, tickFormat: (d) => (d === 0 ? "0" : d + "%") },
+      y: { label: null, domain: ws.map((r) => r.name), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
+      marks: [
+        Plot.gridX([25, 50, 75, 100], { stroke: "#F0F2F5" }),
+        Plot.ruleX([0], { stroke: "#B5BAC4" }),
+        Plot.ruleX([100 * all], { stroke: "#161A22", strokeOpacity: 0.5, strokeDasharray: "3,3" }),
+        Plot.text([{ x: 100 * all, y: ws[0].name }], { x: "x", y: "y", text: ["all activities " + (100 * all).toFixed(1) + "%"], dy: -16, dx: 6, textAnchor: "start", fill: "#4A5160", fontSize: 11.5, fontFamily: mono }),
+        Plot.ruleY(ws, { y: "name", x1: 0, x2: "sh", stroke: (d) => (ext.includes(d) ? "#B9C3F3" : "#E3E6EB"), strokeWidth: 1.25 }),
+        Plot.dot(ws, { y: "name", x: "sh", fill: (d) => (ext.includes(d) ? "#2E4BD8" : "#5F6675"), r: 4 }),
+        Plot.text(ws.filter((d) => !ext.includes(d)), { y: "name", x: "sh", dx: 10, textAnchor: "start", text: (d) => d.sh.toFixed(1) + "%", fill: "#878D99", fontSize: 11.5, fontFamily: mono }),
+        Plot.text(ext, { y: "name", x: "sh", dx: 10, textAnchor: "start", text: (d) => d.sh.toFixed(1) + "%", fill: "#161A22", fontWeight: 500, fontSize: 11.5, fontFamily: mono }),
+      ],
+    });
+    a11y(plot, "Women's share of informal workers by activity, 2025", "Sorted dot strip of " + ws.length + " activities, from " + ws[0].name + " at " + ws[0].sh.toFixed(1) + " per cent to " + ws.at(-1).name + " at " + ws.at(-1).sh.toFixed(1) + "; all activities " + (100 * all).toFixed(1) + ".");
+    document.getElementById("plot-women").append(plot);
+    const csv = ["activity,workers_2025,female_workers_2025,female_share_pct", ...ws.map((r) => `"${r.a}",${r.n},${r.f},${r.sh.toFixed(2)}`)].join("\n");
+    wirePlate(document.getElementById("cb-women"), plot, "india-atlas_asuse-2025_women-share-by-activity", csv);
+  }
+}
+
 /* ---------- § 07 the other economy ---------- */
 {
   const estOAE = last(UA.establishments_oae), estHWE = last(UA.establishments_hwe), estAll = last(UA.establishments_all);
