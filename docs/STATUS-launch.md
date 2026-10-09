@@ -1,6 +1,6 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-09, 20:30.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-09, 21:00.
 
 ## Running now: ten family sessions
 
@@ -20,7 +20,7 @@ Each writes its own log in `docs/status/<slug>.md` on its branch.
 | atlas-climate | New guide: temperature, rain, emissions (OWID, World Bank climate portal) | **merged**, follow-up merged |
 | atlas-worldbank | WDI inventory; new guides on poverty and on population | **merged** (poverty, population; all 1,395 WDI India indicators baked) |
 | atlas-bis | BIS bundles; new guides on housing prices and on debt | **merged** (debt, housing; BIS India credit after 2023 marked as BIS estimates) |
-| atlas-framework | Every-cut table, seam charts, IDH cross-check, ledgers for the 14 existing guides | merged; round 2 running: verifier traces every number, phone charts open at the latest end, lighter every-cut pages |
+| atlas-framework | Every-cut table, seam charts, IDH cross-check, ledgers for the 14 existing guides | **merged**, round 2 merged (verifier traces every figure; phone charts open at today; lighter every-cut) |
 
 ## Coordinator (this session) meanwhile
 
@@ -56,13 +56,17 @@ throttles, so not run alongside the states and services sessions). Then the laun
   stance to calibrated tightening", which blocks meeting 63's promotion; 2019-20 G-sec
   notified amounts disagree with DBIE report 559 on 17 days.
 
-## Found and being fixed
+## Fixed
 
-- **The prose verifier only checked percentages and points.** Rupee and dollar amounts,
-  °C, mm, index levels and ratios were never traced to the facts sheet (found by
-  atlas-external). All prose so far was also read by hand, and a probe traced all 23 US$
-  figures in the external prose, but the guarantee was weaker than AGENTS.md says. Fix
-  running in atlas-framework; then every prose file on the site is re-verified.
+- **The prose verifier now traces every figure**, not only percentages: amounts with
+  lakh/crore/billion, °C, mm, index levels, ratios, each scaled by its series' own unit.
+  All 34 prose files on the site pass. It caught one real miss (a ratio the consumption
+  writer computed itself; the ratio is now in the facts sheet). Limit, recorded in HISTORY:
+  tracing proves a figure exists in the sheet, not that the sentence attaches it to the
+  right period, so the hand read stays.
+- Phone charts open at the latest end, with an "Earlier years" cue.
+- Every-cut pages are lighter (states 0.87 to 0.50 MB, climate 1.43 to 0.69 MB), and all 208
+  RBI Handbook tables are in the states guide's every-cut view.
 
 ## Queued (after wave 1 merges)
 
