@@ -1,47 +1,43 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-09.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-09, 18:20.
 
-## Live on the branch
+## Running now: ten family sessions
+
+Each is a Claude Code session in its own worktree (`~/Documents/Bhuvan projects/atlas-worktrees/<slug>`,
+branch `lb/<slug>`), named `atlas-<slug>` in Remote Control. Rules: `docs/briefs/README.md`.
+Each writes its own log in `docs/status/<slug>.md` on its branch.
+
+| Session | Builds | State |
+|---|---|---|
+| atlas-external | External account rebuilt on DBIE: BoP, weekly reserves, FDI and FPI, external debt, REER | started 18:17 |
+| atlas-trade | New guide: merchandise trade from TradeStat, HS 2 to 8 digit, partners | started 18:18 |
+| atlas-credit | New guide: credit by sector, money supply, bank health | started 18:18 |
+| atlas-rates | New guide: policy rates since 1935, MPC votes, lending and deposit rates, yields | started 18:18 |
+| atlas-states | New guide: state GDP, per-capita income, what each state runs on | started 18:18 |
+| atlas-services | New guide: services output, exports, enterprises, jobs | started 18:18 |
+| atlas-ilo | New guide: the ILO's labour estimates for India | started 18:18 |
+| atlas-climate | New guide: temperature, rain, emissions (OWID, World Bank climate portal) | started 18:18 |
+| atlas-worldbank | WDI inventory; new guides on poverty and on population | started 18:18 |
+| atlas-bis | BIS bundles; new guides on housing prices and on debt | started 18:18 |
+
+## Coordinator (this session) meanwhile
+
+- India Data Hub cross-check (F5).
+- The every-cut table (F6) and the shared seam treatment for charts (F4).
+- Coverage ledgers for the 14 existing guides.
+- Merging each family as it reports done, with the gates re-run after every merge.
+
+## Next wave (after these merge)
+
+Jobs deeper, industry deeper, prices deeper, national accounts remainder (all MoSPI, which
+throttles, so not run alongside the states and services sessions). Then the launch pass.
+
+## Done on the branch
 
 - 14 guides, all gates green (checkpoint `77384bd`).
+- Launch plan, coverage contract and gate, Data Bank query helper, briefs (`da691ac`).
 
-## Now
-
-- F1: coverage ledger and gate.
-
-## Next
-
-F2 Data Bank parsed reader, F3 TradeStat reader, F4 seam charts, F5 IDH cross-check,
-F6 every-cut explorer. Then guides: external account on DBIE, trade, money and credit,
-rates, state economies, services, jobs deeper, industry deeper, prices deeper.
-
-## Framework
-
-| Piece | State |
-|---|---|
-| F1 coverage ledger | in progress |
-| F2 Data Bank parsed reader | to do |
-| F3 TradeStat reader | probed, works (`docs/reference/tradestat.md`) |
-| F4 seam charts | to do |
-| F5 IDH cross-check | to do; key exists in the Data Bank |
-| F6 every-cut explorer | to do |
-
-## Guides
-
-| Family | Guide | State |
-|---|---|---|
-| External account (DBIE) | `external` | to do |
-| Trade | `trade` | to do |
-| Money and credit | `credit` | to do |
-| Rates and policy | `rates` | to do |
-| State economies | `states` | to do |
-| Services | `services` | to do |
-| Jobs, deeper | `jobs` | to do |
-| Industry, deeper | `iip`, `factories` | to do |
-| Prices, deeper | `cpi`, `wpi` | to do |
-| National accounts remainder | `gdp` | to do |
-
-## Blocked or waiting on the owner
+## Waiting on the owner
 
 - Nothing yet.
