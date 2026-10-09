@@ -28,6 +28,9 @@ Branch `lb/ilo`. Port 4407. Updated 2026-10-09. **State: done, gates green.**
 
 ## Decisions (for HISTORY.md)
 
+- **Archive tier (interim, 2026-10-09).** The size-excluded cubes carry `archive: true` and
+  `rolls_up_to: <baked bundle>` in the ledger (16 cube rules by instrument and topic, one
+  quarterly rule), status `excluded`, held for the deep-archive tier the owner is deciding on.
 - **Scale: owner to confirm.** Baked: every modelled series; every PLFS and NSS table by sex
   and one other classification (annual); quarterly PLFS by sex, and rates by sex and age or
   area; every Census and administrative series. About 200,000 observations, 18 MB of bundles,
