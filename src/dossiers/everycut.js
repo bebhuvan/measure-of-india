@@ -280,14 +280,19 @@ export function rowsOf(slug, opts = {}) {
     const row = {
       bundle: slug, key, label: tidy(s.label || key), cut, group: groupOf(s), unit: u, unitNote: U.note || "", base: bundleBase(slug, b),
       latest: null, latestText: "—", period: "", change: null, changeText: "—", spark: sparkPath(s.data),
+      estimated: false, changeEstimated: false, estimatedNote: s.estimatedNote || "",
     };
+    // CONTRACT-series 2b: a value listed in series.estimated is never shown as if measured
+    const est = new Set(s.estimated ?? []);
     if (li >= 0) {
       const v = s.data[li], iso = b.dates[li];
       row.latest = v; row.latestText = minus(U.fmt(v)); row.period = periodLabel(slug, b, iso);
+      row.estimated = est.has(iso);
       if (TIMED.has(b.meta?.frequency)) {
         const j = b.dates.indexOf(yearEarlier(iso));
         const p = j >= 0 ? s.data[j] : null;
         if (p != null) {
+          row.changeEstimated = row.estimated || est.has(b.dates[j]);
           if (U.kind === "pt") { row.change = v - p; row.changeText = signed(row.change, (x) => x.toFixed(1) + " pt"); }
           else if (U.kind === "diff") { row.change = v - p; row.changeText = signed(row.change, (x) => U.fmt(x).replace(/^[₹$]/, "")); }
           else if (p > 0 && v >= 0) { row.change = (v / p - 1) * 100; row.changeText = signed(row.change, (x) => x.toFixed(1) + "%"); }

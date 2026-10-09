@@ -40,8 +40,8 @@ const num = (v) => (v == null ? "" : String(Math.round(v * 1e4) / 1e4));
           <tr data-o={i} data-file={r.bundle} data-v={num(r.latest)} data-c={num(r.change)}>
             <td class="w">{r.label}<small>{cap([filterBy === "group" ? r.cut : r.group, r.unitNote, r.base].filter(Boolean).join(", "))}</small></td>
             <td class="ct">{facet(r)}</td>
-            <td class="n v">{r.latestText}<small>{r.period}</small></td>
-            <td class="n c">{r.changeText}</td>
+            <td class="n v" title={r.estimated ? r.estimatedNote || "An estimate, not a measurement" : undefined}>{r.latestText}<small>{r.period}{r.estimated && ", est."}</small></td>
+            <td class="n c" title={r.changeEstimated ? "Uses an estimated value" : undefined}>{r.changeText}{r.changeEstimated && <small> est.</small>}</td>
             <td class="sp">{r.spark && (
               <svg width={SPARK_W} height={SPARK_H} viewBox={`0 0 ${SPARK_W} ${SPARK_H}`} aria-hidden="true">
                 {r.spark.zero != null && <line x1="0" x2={SPARK_W} y1={r.spark.zero} y2={r.spark.zero} />}
