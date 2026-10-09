@@ -20,12 +20,10 @@ Each writes its own log in `docs/status/<slug>.md` on its branch.
 | atlas-climate | New guide: temperature, rain, emissions (OWID, World Bank climate portal) | started 18:18 |
 | atlas-worldbank | WDI inventory; new guides on poverty and on population | started 18:18 |
 | atlas-bis | BIS bundles; new guides on housing prices and on debt | started 18:18 |
+| atlas-framework | Every-cut table, seam charts, IDH cross-check, ledgers for the 14 existing guides | started 18:24 |
 
 ## Coordinator (this session) meanwhile
 
-- India Data Hub cross-check (F5).
-- The every-cut table (F6) and the shared seam treatment for charts (F4).
-- Coverage ledgers for the 14 existing guides.
 - Merging each family as it reports done, with the gates re-run after every merge.
 
 ## Next wave (after these merge)
