@@ -166,3 +166,40 @@ factories:
       The honest limits: registered and informal are separate instruments, never
       summed; GVA is nominal (prices as much as product); the data lands with a
       two-year lag. Must contain a plain "we do not know".
+
+# ---- services ----
+services:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [services.latest, finance_realty_prof.latest, trade_transport_comm.latest, public_admin_other.latest]
+    minSeriesMentioned: 4        # the services total and the three service groups
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
+    brief: >
+      The latest year on the 2022-23 base: services' share of gross value added and how it
+      moved, which of the three service groups is largest, and what the sibling sheets add:
+      the fastest and slowest service sub-industries in real terms (services-gva-2022-growth),
+      the latest month of services exports and imports (services-trade-monthly), and the
+      latest month of the trial ISP's sub-sectors (services-isp-growth). Name the estimate
+      (provisional, revised) where it matters. Concede what is genuine before qualifying it.
+      Periods differ by sheet: the share is for FY26; sub-industry growth stops at 2024-25
+      (FY25), the latest year with sub-industry detail; trade is May 2026; the ISP is July 2026.
+      Name each figure's own period, and call the ISP a trial. Services and goods shares add
+      to 100 by construction: never present one as explaining the other. Write every growth
+      rate or share with a per cent sign.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [services.latest]
+    brief: >
+      The honest limits: a share of output is not a share of jobs or incomes; the ISP is a
+      trial covering only the formal part of services, with no overall index; the latest
+      annual figures are provisional and will be revised; the informal service economy is
+      estimated, not measured each year. Must contain a plain "we do not know" sentence.
+      PLFS does publish services' share of jobs (about a third), so never say the number of
+      service jobs is unknown; what is not known is, for example, how fast the informal service
+      businesses grow year to year, since ASUSE runs a year or more behind.
+      Keep figures few, and write each with its unit (per cent, US$ billion). Talk only about
+      service industries; leave farms, factories and utilities out.
+# ---- end services ----

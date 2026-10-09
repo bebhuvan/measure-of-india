@@ -393,6 +393,37 @@ export const DOSSIERS = [
     register: { id: "reg-deposits", label: "Bank deposits", unit: "Annual, RBI BSR-2, as on 31 March, ₹ lakh crore", historyCol: "Since 2019" },
     bundles: ["deposits-owners", "deposits-owners-2005", "deposits-population", "deposits-term-rates", "deposits-term-maturity", "deposits-term-size", "deposits-term-size-2026"],
   },
+  // ---- services ----
+  {
+    slug: "services",
+    no: "15",
+    section: "Output",
+    name: "Services",
+    title: "Services",   // the topic as a reader names it: nav, lists, search
+    kickerTitle: "Services in the national accounts, trade, jobs and enterprises",
+    crumbTitle: "Services",
+    headline: "More than half the economy, <i>mostly unseen.</i>",
+    ogTitle: "More than half the economy, mostly unseen.",
+    blurb: "The shop, the bus, the bank, the clinic and the software firm: how big India's services are, which are growing, what India sells to the world, and who does the work.",
+    description: "India's services: their share of GDP by industry, the trial monthly Index of Services Production, services exports by category since 1950-51, services jobs from PLFS and informal service enterprises from ASUSE.",
+    rssDescription: "Services output, trade, jobs and enterprises from MoSPI and the RBI. Revised with each release.",
+    stamp: { dateStyle: "vintageMonth", vintageStyle: "vintage" },
+    statusNote: "New guide, revised with each release",
+    version: "v1.0",
+    currentBundle: "services-gva-2022-share",
+    proseInputs: ["services-gva-2022-growth", "services-isp-growth", "services-trade-monthly"],
+    calendar: "fiscal-apr",
+    bands: null,
+    proseConstants: [100, 19, 2022, 2023, 2024, 2025, 60],   // 19 ISP sub-sectors, ~60% coverage, the bases
+    spark: { bundle: "services-gva-2022-share", series: "services" },
+    prose: true,
+    register: { id: "reg-services", label: "Services", unit: "Annual share of GVA, 2022-23 base; monthly trade and ISP", historyCol: "Since 2022-23" },
+    bundles: ["services-gva-2022-share", "services-gva-2022-growth", "services-gva-2022-level", "services-gva-2011-share", "services-gva-2011-growth", "services-gva-2011-level",
+      "gdp-2022-industries", "isp", "services-isp-growth", "services-isp-annual",
+      "services-trade-monthly", "services-bop-quarterly", "services-invisibles-quarterly", "services-bop-annual",
+      "services-jobs-cy", "services-jobs-ay", "services-asuse", "services-asuse-profile", "services-asuse-2025", "services-asuse-profile-2025", "asuse-sectors"],
+  },
+  // ---- end services ----
 ];
 export const bySlug = Object.fromEntries(DOSSIERS.map((d) => [d.slug, d]));
 

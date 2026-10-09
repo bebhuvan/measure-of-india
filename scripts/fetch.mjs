@@ -33,6 +33,8 @@ import { buildMnre } from "./lib/products/mnre.mjs";
 import { buildNfhs } from "./lib/products/nfhs.mjs";
 import { buildWorldbankWdi } from "./lib/products/worldbank-wdi.mjs";
 import { buildBsr2 } from "./lib/products/bsr2.mjs";
+// services guide: five products, one adapter
+import { buildServicesIsp, buildServicesNas, buildServicesTrade, buildServicesJobs, buildServicesAsuse } from "./lib/products/services.mjs";
 import { writeSeries } from "./lib/util.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -42,6 +44,8 @@ const cfg = YAML.parse(fs.readFileSync(path.join(ROOT, "data/sources.yml"), "utf
 const VINTAGE = new Date().toISOString().slice(0, 10);
 
 const REGISTRY = { cpi: buildCpi, nas: buildNas, wpi: buildWpi, cpialrl: buildCpialrl, plfs: buildPlfs, rbi: buildRbi, isp: buildIsp, iip: buildIip, hces: buildHces, asi: buildAsi, asuse: buildAsuse, aishe: buildAishe, gender: buildGender, mnre: buildMnre, nfhs: buildNfhs, "worldbank-wdi": buildWorldbankWdi, bsr2: buildBsr2 };
+// services guide
+Object.assign(REGISTRY, { "services-isp": buildServicesIsp, "services-nas": buildServicesNas, "services-trade": buildServicesTrade, "services-jobs": buildServicesJobs, "services-asuse": buildServicesAsuse });
 
 // One product's failure must not starve the rest: collect, continue, and
 // exit non-zero at the end so CI still fails on the summary.

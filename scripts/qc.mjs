@@ -287,6 +287,26 @@ const PAGES = [
     ["ex-p-women", (b) => fmt.pct1(100 * b["deposits-owners"].series.female_total.data.at(-1) / b["deposits-owners"].series.all_total.data.at(-1))],
     ["prov-vintage", (b) => b["deposits-owners"].meta.vintage],
   ]},
+  // ---- services ----
+  { url: "/guides/services/", slug: null, checks: [
+    // title block: share of GVA (2022-23 base), annual services exports (RBI 807), service jobs (PLFS CY)
+    ["n-share", (b) => fmt.pct1(b["services-gva-2022-share"].series.services.data.at(-1))],
+    ["rb-share", (b) => fmt.pct1(b["services-gva-2022-share"].series.services.data.at(-1))],
+    ["n-exp", (b) => "$" + Math.round(b["services-bop-annual"].series.s1_2_1_credit.data.at(-1) / 1000) + " bn"],
+    ["n-jobs", (b) => fmt.pct1(b["services-jobs-cy"].series.tertiary__person_all_cws.data.at(-1))],
+    ["rb-side", (b) => fmt.bnAuto(b["services-trade-monthly"].series.exports.data.at(-1))],
+    ["pv-long", (b) => fmt.pct1(b["services-gva-2022-share"].series.services.data.at(-1))],
+    ["pv-quarter", (b) => fmt.pct2(b["gdp-2022-industries"].series.finance_realty.data.at(-1))],
+    ["ex-mo-exp", (b) => fmt.bnFixed1(b["services-trade-monthly"].series.exports.data.at(-1))],
+    ["ex-mo-imp", (b) => fmt.bnFixed1(b["services-trade-monthly"].series.imports.data.at(-1))],
+    ["ex-tl-sw", (b) => fmt.bnAuto(b["services-bop-annual"].series.s1_2_1_5_1_credit.data.at(-1) / 1000)],
+    ["pv-isp", (b) => { const v = Object.values(b["services-isp-growth"].series).map((s) => s.data.at(-1)).filter((x) => x != null); return `${v.filter((x) => x >= 10).length} of ${v.length}`; }],
+    ["pv-ispa", (b) => fmt.pct1(Math.max(...Object.values(b["services-isp-annual"].series).map((s) => s.data.at(-1))) - 100)],
+    ["pv-status", (b) => fmt.pct1(b["services-jobs-ay"].series.regular__tertiary__person_all_ps.data.at(-1))],
+    ["pv-agva", (b) => "₹" + fmt.inr(b["services-asuse"].series.gva_per_worker__other_services_group__combined__all.data.at(-1))],
+    ["prov-vintage", (b) => b["services-gva-2022-share"].meta.vintage],
+  ]},
+  // ---- end services ----
   { url: "/", slug: null, minPlots: 1, checks: [
     // the CPI print is the 2024-base series; core stays on the 2012 base
     // (no weights served for the new base), labelled "to Dec 2025"

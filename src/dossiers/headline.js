@@ -36,6 +36,8 @@ export const HEADLINE = {
                    what: "children aged 6 to 59 months with anaemia", period: () => "NFHS-5, 2019-21" },
   manufacturing: { value: (b) => `${last(b, "mva_pct_gdp").toFixed(1)}%`, what: "manufacturing's share of GDP", period: (b) => lastDate(b).slice(0, 4) },
   deposits:      { value: (b) => `₹${last(b, "household_total").toFixed(1)} lakh crore`, what: "households' bank deposits", period: (b) => `March ${lastDate(b).slice(0, 4)}` },
+  // services
+  services:      { value: (b) => `${last(b, "services").toFixed(1)}%`, what: "services' share of gross value added", period: fy },
 };
 
 // The small chart beside each guide's figure: always on the current ruler, so a chart never
@@ -56,6 +58,8 @@ export const SPARK = {
   nfhs:          { bundle: "nfhs-anaemia", label: "Children age 6-59", slope: true },
   manufacturing: { bundle: "wdi-manufacturing", series: "mva_pct_gdp" },
   deposits:      { bundle: "deposits-owners", series: "household_total" },
+  // services
+  services:      { bundle: "services-gva-2022-share", series: "services" },
 };
 
 const cache = {};

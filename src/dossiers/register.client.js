@@ -271,3 +271,17 @@ const nfhsRows = [
   ["Women's bank account, %", "NFHS-BNK", "s-g4", nfhsFind(NF, "bank or savings")],
 ].filter(([, , , s]) => s != null);
 render("reg-nfhs", nfhsRows.map(([nm, code, sw, s]) => [nm, code, sw, s, false, "/guides/nfhs/"]), 48, "spnf", "NFHS-5", "MoSPI / IIPS");
+// ---- services: annual share of GVA (2022-23 base) and monthly trade (RBI) ----
+import svcShareBundle from "../../data/series/services-gva-2022-share.json";
+import svcTradeBundle from "../../data/series/services-trade-monthly.json";
+{
+  const SH = hydrate(svcShareBundle), TR = hydrate(svcTradeBundle);
+  const bn = (v) => "$" + v.toFixed(1) + " bn";
+  render("reg-services", [
+    ["Services, share of GVA", "NAS-SVC", "s-acc", SH.services, true, "/guides/services/", "computed"],
+    ["Finance, real estate, professional, share", "NAS-SVC9", "s-g1", SH.finance_realty_prof, false, "/guides/services/", "computed"],
+    ["Services exports, monthly", "RBI-SX", "s-g2", TR.exports, false, "/guides/services/", null, bn, vintOf(svcTradeBundle)],
+    ["Services imports, monthly", "RBI-SM", "s-g3", TR.imports, false, "/guides/services/", null, bn, vintOf(svcTradeBundle)],
+  ], 1, "spsv", vintOf(svcShareBundle), "MoSPI / RBI");
+}
+// ---- end services ----

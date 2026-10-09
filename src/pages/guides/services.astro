@@ -1,0 +1,717 @@
+---
+import fs from "node:fs";
+import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
+import GuideData from "../../components/GuideData.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+import { period } from "../../dossiers/periods.js";
+const D = bySlug["services"];
+const load = (slug) => JSON.parse(fs.readFileSync(`data/series/${slug}.json`, "utf8"));
+// the large bundles ride in the page as picks of the series the plates draw; the whole files
+// are in the downloads and the explorer below (CONTRACT-render: page JS budget)
+const pick = (slug, re) => { const b = load(slug); return { meta: { vintage: b.meta.vintage, versions: b.meta.versions ?? null }, dates: b.dates,
+  series: Object.fromEntries(Object.entries(b.series).filter(([k]) => re.test(k)).map(([k, s]) => [k, { name: s.name, label: s.label, color: s.color, data: s.data }])) }; };
+const PICK = {
+  "services-bop-quarterly": pick("services-bop-quarterly", /^1_a_b(_\d+)?_(credit|debit|net)$/),
+  "services-invisibles-quarterly": pick("services-invisibles-quarterly", /^r(41|56|57|60|63|68)$/),
+  "services-jobs-cy": pick("services-jobs-cy", /^(sec_[a-u]__(person|female|male)_all_ps|tertiary__(person|male|female)_(all|rural|urban)_cws)$/),
+  "services-jobs-ay": pick("services-jobs-ay", /^(own_account|helper|regular|casual|self_employed)__(trade|transport|accommodation_food|other_services|tertiary|manufacturing)__person_all_ps$/),
+  "services-asuse": pick("services-asuse", /^(establishments__estimated_no_of_establishments__.*__combined__all|workers__all__all__.*__combined__all|gva_per_worker__.*__(combined|rural|urban)__all)$/),
+  "services-asuse-profile": pick("services-asuse-profile", /^location__.*__combined__all$/),
+};
+const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
+const PS = period("services-gva-2022-share"), PT = period("services-trade-monthly"), PI = period("services-isp-growth");
+const fy = (p) => `${p.year}-${String((+p.year + 1) % 100).padStart(2, "0")}`;
+// the explorer: every bundle this guide draws on, opened on demand
+const cuts = D.bundles.map((b) => { const j = load(b); return { b, n: Object.keys(j.series).length, what: (j.meta.coverage ?? (b === "isp" ? "All India, 19 service sub-sectors of the trial Index of Services Production: monthly index levels, base 2024-25 = 100 (the industrial production guide's bundle)" : Object.values(j.series).slice(0, 3).map((x) => x.label).join(", "))).replace(/ — /g, ": ").replace(/ · /g, ", "), from: j.dates[0].slice(0, 7), to: j.dates.at(-1).slice(0, 7) }; });
+---
+<Base
+  title="Services · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/services/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<script type="application/json" id="svc-data" set:html={pickJson}></script>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">The haircut, the bus ride, the bank account, the school fee, the rent and the software sold to a bank in Ohio are all services. Together they produce more than half of what India makes in a year, and most of the growth. This guide shows how big each kind is, what India sells abroad, and who does the work.</p>
+    </div>
+    <div class="meta">
+      <span>Sources <b>MoSPI (national accounts, ISP, PLFS, ASUSE) and the RBI</b></span>
+      <span>Frequency <b>Annual, quarterly and monthly</b></span>
+      <span>Bases <b>GVA 2022-23 and 2011-12, never joined; ISP 2024-25 = 100, a trial</b></span>
+      <span>Latest <b id="m-latest">–</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Services' share of gross value added</div><div class="v acc" id="n-share">–</div><div class="d" id="d-share">–</div><div class="nspark" id="nspark-share"></div></div>
+      <div class="num"><div class="l">Services exports in the year</div><div class="v" id="n-exp">–</div><div class="d" id="d-exp">–</div></div>
+      <div class="num"><div class="l">Share of workers in services</div><div class="v" id="n-jobs">–</div><div class="d" id="d-jobs">–</div></div>
+      <div class="num"><div class="l">Trial index, sub-sectors growing fast</div><div class="v" id="n-isp">–</div><div class="d" id="d-isp">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 the current reading: generated prose (pipeline/slots.yml, services) -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Services, share of GVA</span><div class="big" id="rb-share">–</div></div>
+      <p class="rt-cap">The part of the year's production that comes from services, at current prices, in <span id="rt-fy">–</span> (the <span id="rt-est">–</span>), on the national accounts' 2022-23 base.</p>
+      <div class="rt-side"><span class="rk" id="rb-side-l">–</span><div class="rt-side-v" id="rb-side">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the figures say</span>
+        <Prose slot="services.current-reading.what-the-print-says" />
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What they do not say</span>
+        <Prose slot="services.current-reading.what-it-does-not-say" />
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 lived reality: what counts as a service. Inputs: services-gva-2022-share (13 sub-industries) -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>What counts as a service</h2><span class="line"></span><span class="unit">Share of GVA by service industry, <span id="mix-fy">–</span></span></div>
+    <div class="prose">
+      <p>A service is anything sold that is not a thing: work done for you, rather than goods handed over. Follow one ordinary day. The milk and vegetables come through a shop, which is trade. The auto, the bus and the train are transport, and the phone recharge on the way is communication. The salary lands in a bank, the EMI goes out of it and the insurance premium is deducted: finance. The rent is real estate. The child's school, the clinic visit, the tailor, the barber and the cook who comes in the morning are other services. The police station, the municipal office and the army are public administration. Behind the shop counter there are also warehouses, couriers and accountants, all services.</p>
+      <p>The national accounts sort these into three groups: trade, hotels, transport and communication; finance, real estate and professional services; and public administration, defence and other services. Software and the back offices of foreign banks sit in the second group, under professional services; they also lead the export figures further down.</p>
+    </div>
+    <div class="break">
+      <figure id="cb-mix" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The biggest service is not software but rent, property and professional work</h3>
+            <div class="sub">Each service sub-industry's share of India's gross value added at current prices, national accounts, 2022-23 base. Blue: finance, real estate and professional services; dark grey: trade, hotels, transport and communication; light grey: public administration and other services.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-mix">–</div><div class="c">real estate, dwellings and professional services</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-mix" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, National Accounts Statistics, GVA by industry and sub-industry (eSankhyiki). Shares computed by India Atlas from published current-price levels.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each bar is the share of the whole economy's value added, so the bars add up to the services total, a little over half. "Real estate, dwellings and professional" is large mainly because the national accounts count the rent that owner-occupiers would pay themselves, as well as rent paid, property dealing, law, accounting and software. It is not a measure of construction, which the accounts treat as industry.</p>
+            <p>In rupees, one per cent of GVA in a recent year is roughly ₹3 lakh crore of value added.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2024-25</span>
+            <p>In <span id="ex-mix-fy">–</span>, the latest year with sub-industry detail, services were <b id="ex-mix-svc">–</b> of GVA. Real estate, dwellings and professional services were <b id="ex-mix-realty">–</b>, trade and repair <b id="ex-mix-trade">–</b>, other services such as schools, clinics and personal services <b id="ex-mix-other">–</b>, and finance <b id="ex-mix-fin">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 03 the anatomy: size and growth. Inputs: services-gva-2011-share, services-gva-2022-share, services-gva-2022-growth, gdp-2022-industries -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>How big, and which part is growing</h2><span class="line"></span><span class="unit">National accounts, two bases, never joined</span></div>
+    <div class="break">
+      <figure id="cb-long" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Services have taken a slowly rising share of the economy</h3>
+            <div class="sub">Services' share of gross value added at current prices, financial years. Pale: the 2011-12 base; blue: the 2022-23 base. Two rulers, drawn side by side and never joined.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-long">–</div><div class="c">2022-23 base, latest year</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#B9C3F3"></i>2011-12 base</button>
+            <button class="chip"><i style="background:#2E4BD8"></i>2022-23 base</button>
+          </div>
+          <div class="plotzone"><div id="plot-long" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, National Accounts Statistics. "Services" is the sum of the three published service groups, or of their six parts where only the parts are published; computed by India Atlas.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The two lines measure the same idea with different rulers. The 2022-23 base uses newer data sources and weights, so its level sits lower than the old series for the same years. Compare the slope within each line, never the gap between them.</p>
+            <p>A rising share can come from services growing faster in volume or from their prices rising faster than those of goods. The 2020-21 dip is the lockdown, when hotels, transport and shops shut while farms kept working.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2025-26</span>
+            <p>On the old base the share went from <b id="ex-long-old0">–</b> in <span id="ex-long-old0y">–</span> to <b id="ex-long-old1">–</b> in <span id="ex-long-old1y">–</span>, the last year it was estimated. On the new base it went from <b id="ex-long-new0">–</b> in 2022-23 to <b id="ex-long-new1">–</b> in <span id="ex-long-new1y">–</span>. The latest years on both bases are early estimates and will be revised.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-growth" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Air travel, storage and phones grew fastest; hotels, roads and railways slowest</h3>
+            <div class="sub">Real growth of each service sub-industry, the two latest years with sub-industry detail, 2022-23 base. Dashed line: all services.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-growth">–</div><div class="c">all services, real growth</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i><span id="lg-growth-a">–</span></button>
+            <button class="chip"><i style="background:#2E4BD8"></i><span id="lg-growth-b">–</span></button>
+          </div>
+          <div class="plotzone"><div id="plot-growth" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, National Accounts Statistics, GVA at constant 2022-23 prices. Growth computed by India Atlas from published levels.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Real growth strips out price changes: it is the change in the volume of service delivered, valued at 2022-23 prices. Small industries swing more. Storage and air transport are each well under one per cent of the economy, so a fast year there moves the total far less than a slow year in trade.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2024-25</span>
+            <p>In <span id="ex-gr-fy">–</span> the fastest was <b id="ex-gr-top">–</b> and the slowest <b id="ex-gr-bot">–</b>. All services grew <b id="ex-gr-tot">–</b>, against <b id="ex-gr-gva">–</b> for the whole economy's GVA. The next year has group totals but no sub-industry detail yet (<span id="ex-gr-latest">–</span> for all services).</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-quarter" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Trade and transport swing the most; finance and property grow more steadily</h3>
+            <div class="sub">Real growth of the three service groups over the same quarter a year earlier, 2022-23 base. Drawn from the GDP guide's quarterly industry table.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-quarter">–</div><div class="c">finance, real estate, professional, latest quarter</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-quarter" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, quarterly estimates of GDP, GVA by industry at constant prices. Growth computed by India Atlas from levels.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The quarterly accounts publish services only in these three groups. They arrive about two months after the quarter ends and are revised for years, so a single quarter is a first draft. The GDP guide has the full quarterly table.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of Apr to Jun 2026</span>
+            <p>In <span id="ex-q-q">–</span>, finance, real estate and professional services grew <b id="ex-q-fin">–</b>; trade, hotels, transport and communication <b id="ex-q-trade">–</b>; public administration and other services <b id="ex-q-pub">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 04 the monthly trial index. Inputs: services-isp-growth, services-isp-annual -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>A monthly pulse, still on trial</h2><span class="line"></span><span class="unit">Index of Services Production, base 2024-25 = 100</span></div>
+    <div class="prose">
+      <p>Factories have had a monthly index since the 1950s. Services, the bigger half, had none until July 2026, when MoSPI began publishing a trial Index of Services Production for 19 sub-sectors. It is built mostly from GST returns, deflated by the matching consumer or wholesale price index, with railway, airline, shipping, banking and insurance figures from their regulators. It covers only formal firms, about three-fifths of services, and there is no overall index yet: MoSPI says it will publish one after it has tested how stable the sub-sector indices are. Every figure in this section is a trial and may be recast.</p>
+    </div>
+    <div class="break">
+      <figure id="cb-isp" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>About half the service sub-sectors are growing in double digits; air transport is shrinking</h3>
+            <div class="sub">Trial ISP, growth over the same month a year earlier, by sub-sector. Blue: the latest month; grey: the months before it. A trial series: treat every value as provisional.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-isp">–</div><div class="c">sub-sectors growing 10% or more</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i><span id="lg-isp-m">–</span></button>
+            <button class="chip"><i style="background:#C9CED6"></i><span id="lg-isp-span">–</span></button>
+          </div>
+          <div class="plotzone"><div id="plot-isp" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, trial Index of Services Production, base 2024-25 = 100 (eSankhyiki). Growth computed by India Atlas from the index; it matches MoSPI's published rates within 0.15 points. Trial series.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The index started in April 2025, so year-on-year growth exists only from April 2026. Growth of 20 or 30 per cent in shops and hotels is large for a real index. Part of it may be more businesses filing GST returns rather than more business being done, which is one reason the series is a trial. Read the ranking and the direction, and wait for a longer record before trusting the size.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of July 2026</span>
+            <p>In <span id="ex-isp-m">–</span>, <b id="ex-isp-n">–</b> of the 19 sub-sectors grew 10% or more. The fastest was <b id="ex-isp-top">–</b> and the slowest <b id="ex-isp-bot">–</b>; <b id="ex-isp-neg">–</b> shrank. Air transport has been below its year-ago level in every month of the record.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-ispa" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Over a full year, shops, hotels and repair grew most; post and courier shrank</h3>
+            <div class="sub">Trial ISP, annual index for <span id="ispa-fy">–</span> against the base year 2024-25 = 100, shown as growth. One year is all the trial series has.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-ispa">–</div><div class="c">fastest sub-sector</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-ispa" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, trial Index of Services Production, annual (eSankhyiki; first release, 14 July 2026). Trial series.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Because the base year is set to 100, the annual index minus 100 is the year's growth. The national accounts measure the same industries differently, from more sources and with informal firms included, so the two will not agree. When they differ, the national accounts are the broader measure.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2025-26</span>
+            <p>In <span id="ex-ispa-fy">–</span>, the fastest sub-sector was <b id="ex-ispa-top">–</b> and the slowest <b id="ex-ispa-bot">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 selling services to the world. Inputs: services-bop-annual, services-trade-monthly, services-bop-quarterly, services-invisibles-quarterly -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>Selling services to the world</h2><span class="line"></span><span class="unit">RBI balance of payments, US$</span></div>
+    <div class="prose">
+      <p>India buys more goods from the world than it sells, every year. Services pay for much of the gap. The big earners are software and IT services, and a growing set of "other business services": engineering, research, consulting, accounting and back-office work. Much of the newer work is done in global capability centres, the Indian offices that multinationals own and staff themselves, from Bengaluru, Hyderabad, Pune, Chennai and Gurugram. A GCC's bill to its parent company abroad is a services export, recorded under computer services, R&amp;D or professional services. No official series counts GCCs as such; their work is inside these categories.</p>
+    </div>
+    <div class="break">
+      <figure id="cb-trade-long" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Seventy-five years of services trade, and the software boom inside it</h3>
+            <div class="sub">India's services receipts (exports) and payments (imports), and software receipts, US$ billion a year, financial years from 1950-51, logarithmic scale: each step up is ten times the one below.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-trade-long">–</div><div class="c">services exports, latest year</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-trade-long" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics on the Indian Economy, invisibles by category of transactions (DBIE report 807). Software services are shown from 1997-98, the first year the table separates them.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>On a logarithmic scale equal distances are equal multiples, so a straight line is steady percentage growth. Services exports barely moved until about 1970, climbed through the 1970s and 1980s, rose steeply after the 1991 reforms and the arrival of offshore IT work, and have grown about ten times since 2004-05. This table uses the RBI's older categories; the plates below use the newer international standard (BPM6), which classifies some items differently, so the two are never added together.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2025-26</span>
+            <p>In <span id="ex-tl-fy">–</span> India exported <b id="ex-tl-exp">–</b> of services and imported <b id="ex-tl-imp">–</b>. Software alone was <b id="ex-tl-sw">–</b>, or <b id="ex-tl-swsh">–</b> of services exports. Services exports were <b id="ex-tl-merch">–</b> of the value of merchandise exports. In <span id="ex-tl-e0y">–</span> they were <b id="ex-tl-e0">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-monthly" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Every month, India sells about twice the services it buys</h3>
+            <div class="sub">Services exports and imports, US$ billion a month, as first published by the RBI. Provisional, revised when the quarterly balance of payments is compiled.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-monthly">–</div><div class="c">exports, latest month</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-monthly" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, monthly data on India's international trade in services (DBIE report 1501, read from the Atlas's local mirror of DBIE).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The monthly figures come from banks' reports of foreign-exchange receipts and payments, released about six weeks after the month. They are revised once the quarter's full balance of payments is compiled, so the three months of a quarter may not add up to the later quarterly total. March is usually the year's peak, as firms settle annual contracts. The break in early 2020 is February 2020, a month the RBI's table does not carry.</p>
+            <p>The RBI's DBIE table lags its press releases by a few months; the Atlas reads DBIE, so the latest months here can trail the newspapers.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of May 2026</span>
+            <p>In <span id="ex-mo-m">–</span>, services exports were <b id="ex-mo-exp">–</b> and imports <b id="ex-mo-imp">–</b>, a surplus of <b id="ex-mo-net">–</b>. Exports were <b id="ex-mo-yoy">–</b> above the same month a year earlier.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-cats" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Computer services and business services are most of what India sells</h3>
+            <div class="sub">Services exports (blue) and imports (gold) by category, US$ billion, the four latest quarters (<span id="cats-span">–</span>), international standard BPM6.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-cats">–</div><div class="c">of exports from these two categories</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Exports</button>
+            <button class="chip"><i style="background:#C47A16"></i>Imports</button>
+          </div>
+          <div class="plotzone"><div id="plot-cats" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, standard presentation of the balance of payments (BPM6), quarterly (DBIE report 1076). The most mature version of each quarter is used.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>India is a net seller of computer and business services and a net buyer of transport (freight carried by foreign ships and airlines), of the right to use foreign patents, brands and software licences, and, in most years, of travel: Indians spend more abroad than foreign visitors spend in India. The RBI publishes this table's finer sub-items (computer services alone, R&amp;D alone) only up to 2020-21 and for one later quarter; the purpose-code table in the next plate carries that detail to more recent quarters.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of Apr to Jun 2026</span>
+            <p>Over <span id="ex-c-span">–</span>, telecom, computer and information services earned <b id="ex-c-ict">–</b> and other business services <b id="ex-c-obs">–</b>, out of <b id="ex-c-tot">–</b> of services exports. India paid <b id="ex-c-tr">–</b> for transport and <b id="ex-c-ip">–</b> to use foreign intellectual property. The latest quarter is <span id="ex-c-ver">–</span> and will be revised.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-gcc" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Consulting and research sold abroad have more than tripled since 2020</h3>
+            <div class="sub">Receipts for professional and management consulting, technical and trade-related services, and research and development, US$ billion a quarter, from banks' purpose codes.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-gcc">–</div><div class="c">consulting receipts, latest quarter</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-gcc" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, invisibles by category of transactions, receipts by purpose code, quarterly (DBIE report 1076). These tables run a few quarters behind the BPM6 table.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>When money arrives from abroad, the bank asks what it is for and files it under a purpose code. These lines add up those codes. "Professional and management consulting" includes legal, accounting, advertising, architecture, engineering and management consultancy; much of it is billed by Indian subsidiaries of foreign firms to their parents. The codes describe the payment, not the firm, so they cannot say how much comes from capability centres and how much from independent firms. We do not know that split. The RBI's table files the whole of 2012-13 under January to March 2013; that quarter is left out of these lines.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of Apr to Jun 2025</span>
+            <p>In <span id="ex-g-q">–</span>, consulting receipts were <b id="ex-g-cons">–</b>, against <b id="ex-g-cons5">–</b> five years earlier (<span id="ex-g-q5">–</span>). Research and development earned <b id="ex-g-rd">–</b> and software services, the largest single code, <b id="ex-g-sw">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 granular cuts: who works in services. Inputs: services-jobs-cy, services-jobs-ay -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>Who does the work</h2><span class="line"></span><span class="unit">PLFS, share of workers, aged 15 and over</span></div>
+    <div class="prose">
+      <p>Services produce more than half of output but employ about a third of workers, because the work is split between a few high-earning jobs (a software engineer, a bank officer) and very many low-earning ones (a shop helper, a delivery rider, a domestic worker). Farming still employs more people than all services together. The Periodic Labour Force Survey counts workers by the industry they work in; the plates below use its published tables.</p>
+    </div>
+    <div class="break">
+      <figure id="cb-jobs" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Shops employ the most service workers; women are over-represented in teaching, health and domestic work</h3>
+            <div class="sub">Share of all workers in each service industry (NIC 2008 section), <span id="jobs-y">–</span>, usual status. Ring: everyone; grey dot: men; gold dot: women (each as a share of their own workers).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-jobs">–</div><div class="c">of workers in service industries</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:2px solid #2E4BD8"></i>Everyone</button>
+            <button class="chip"><i style="background:#5F6675"></i>Men</button>
+            <button class="chip"><i style="background:#C47A16"></i>Women</button>
+          </div>
+          <div class="plotzone"><div id="plot-jobs" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, Periodic Labour Force Survey, calendar-year estimates, percentage distribution of workers by industry (eSankhyiki).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each value is the share of all workers who work mainly in that industry. Usual status counts a person's main activity over the past year, plus any regular side work. A woman counted under "households as employers" is a domestic worker: a cook, a cleaner, a nanny employed by a family.</p>
+            <p>The figure at the top of the page uses current weekly status, which counts what people did in the survey week and picks up a little more service work, so it is slightly higher than the usual-status total here.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2025</span>
+            <p>In <span id="ex-j-y">–</span>, service industries employed <b id="ex-j-svc">–</b> of workers, against <b id="ex-j-agri">–</b> in farming. Trade alone employed <b id="ex-j-trade">–</b>; information and communication, the home of IT, <b id="ex-j-ict">–</b>. Education employed <b id="ex-j-edu-f">–</b> of working women and <b id="ex-j-edu-m">–</b> of working men; domestic work, <b id="ex-j-dom-f">–</b> of women.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-who" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>In cities, services are most work; in villages, a small part</h3>
+            <div class="sub">Services' share of workers, current weekly status, by sex and place. Blue: <span id="who-y">–</span>; grey: <span id="who-y0">–</span>.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-who">–</div><div class="c">of urban women workers are in services</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-who" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, Periodic Labour Force Survey, calendar-year estimates, distribution of workers by broad industry, current weekly status (eSankhyiki).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Current weekly status counts what a person did in the week before the survey, which catches seasonal work better than the yearly measure. The calendar-year estimates come from the survey's new design, which visits households every month; the older yearly reports (July to June) are a different design and are kept separate in the data downloads.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2025</span>
+            <p>In <span id="ex-w-y">–</span>, services employed <b id="ex-w-fu">–</b> of working women in towns and cities but <b id="ex-w-fr">–</b> in villages; for men the figures were <b id="ex-w-mu">–</b> and <b id="ex-w-mr">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-status" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Shopkeeping is self-employment; salaried work is in the other services</h3>
+            <div class="sub">How the workers in each service group are employed, <span id="status-ay">–</span>, usual status, per cent of the group's workers. Manufacturing for comparison.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-status">–</div><div class="c">of service workers on a regular wage or salary</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="lg-status"></div>
+          <div class="plotzone"><div id="plot-status" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, Periodic Labour Force Survey annual report (agriculture year, July to June), distribution of workers by status within each industry group (eSankhyiki).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Own-account workers run their own business without hired help: the kirana owner, the auto driver who owns his auto. Unpaid helpers are family members working in it. A regular wage or salary does not by itself mean a written contract or social security; PLFS finds that many regular employees have neither. "Other services" here covers information, finance, real estate, professional work, government, education and health.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>In <span id="ex-s-ay">–</span>, <b id="ex-s-reg">–</b> of all service workers had a regular wage or salary. In trade, <b id="ex-s-trade-se">–</b> were self-employed; in the other services, <b id="ex-s-oth-reg">–</b> were salaried. Casual labour was <b id="ex-s-acc-cas">–</b> of the workforce in hotels and food service.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06b granular cuts: informal enterprises. Inputs: services-asuse, services-asuse-profile -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>The informal service economy</h2><span class="line"></span><span class="unit">ASUSE, unincorporated non-farm enterprises</span></div>
+    <div class="prose">
+      <p>Most service businesses in India are not companies. They are proprietors and partnerships: the paan shop, the tuition centre in a front room, the tailor, the tea stall, the small transport operator. MoSPI's Annual Survey of Unincorporated Sector Enterprises (ASUSE) counts them. It covers businesses that are not registered as companies, outside farming; the factories guide shows its manufacturing side.</p>
+    </div>
+    <div class="break">
+      <figure id="cb-asize" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Retail shops employ more informal service workers than anything else</h3>
+            <div class="sub">Workers in unincorporated service enterprises by activity, <span id="asize-fy">–</span>, rural and urban together, all establishment types.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-asize">–</div><div class="c">workers in informal trade and services</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-asize" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, Annual Survey of Unincorporated Sector Enterprises, estimated workers by activity (eSankhyiki).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Workers include owners, unpaid family helpers and hired workers, full-time and part-time. A crore is ten million; a lakh is a hundred thousand. Food service and accommodation are shown apart because the survey publishes them apart.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>In <span id="ex-as-fy">–</span>, informal trade and services employed <b id="ex-as-tot">–</b> people in <b id="ex-as-est">–</b> establishments: <b id="ex-as-share">–</b> of all workers in unincorporated enterprises. The largest activity was <b id="ex-as-top">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-agva" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>An informal service worker produces a few lakh rupees of value a year</h3>
+            <div class="sub">Gross value added per worker in unincorporated service enterprises, ₹ a year, <span id="agva-fy">–</span>. Blue: urban; ring: rural. Dashed line: all activities, urban.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-agva">–</div><div class="c">per worker a year, other services</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Urban</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>Rural</button>
+          </div>
+          <div class="plotzone"><div id="plot-agva" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, Annual Survey of Unincorporated Sector Enterprises, annual GVA per worker, market establishments (eSankhyiki).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Gross value added per worker is what the business's sales are worth after paying for its materials and other inputs, divided among everyone who works in it, before paying wages, rent or interest. It is an upper bound on what the owner and workers can take home, not their income.</p>
+            <p>Urban financial services sit far to the right: informal moneylenders, chit funds and agents earn margins on money rather than on materials, and few people work in them, so value per worker is high. The axis keeps them in view rather than cut them off.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>In <span id="ex-ag-fy">–</span>, an informal worker in other services produced <b id="ex-ag-svc">–</b> a year, about <b id="ex-ag-mo">–</b> a month; in trade, <b id="ex-ag-tr">–</b>. Across all informal activities the figure was <b id="ex-ag-u">–</b> in towns and <b id="ex-ag-r">–</b> in villages.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-awhere" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Many service businesses are run from home or from the street</h3>
+            <div class="sub">Where unincorporated service enterprises operate, share of establishments, <span id="awhere-fy">–</span>, rural and urban together. Sorted by the share run from home.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-awhere">–</div><div class="c">of other-service businesses run from home</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="lg-awhere"></div>
+          <div class="plotzone"><div id="plot-awhere" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, Annual Survey of Unincorporated Sector Enterprises, per 1,000 distribution of establishments by type of location (eSankhyiki). "No fixed place" adds the survey's mobile-market and street-vendor categories.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://esankhyiki.mospi.gov.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each bar adds to 100 per cent of that activity's establishments. A business run from home has no rent to pay, which is why tutors, tailors and beauticians so often work from a room in the house. The survey's other profiles (ownership, the owner's social group, hours worked, months open, registration) are in the downloads and the explorer below.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2023-24</span>
+            <p>In <span id="ex-aw-fy">–</span>, <b id="ex-aw-svc">–</b> of other-service establishments were run from home: <b id="ex-aw-pers">–</b> of personal services and <b id="ex-aw-edu">–</b> of education. Among retail shops, <b id="ex-aw-ret">–</b> had no fixed place of business.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 every cut: the long tail, reachable -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>Every cut</h2><span class="line"></span><span class="unit">Every series this guide holds, opened on demand</span></div>
+    <div class="prose">
+      <p>The plates above show the cuts that carry a finding. Everything else the sources publish on services is here: every sub-sector, every BoP category and purpose code, every PLFS cell by sex and place, every ASUSE activity and profile. Open a file to see its series with their latest values, and filter by any word.</p>
+    </div>
+    <div class="break cuts">
+      {cuts.map((c) => (
+        <details class="cut" data-bundle={c.b}>
+          <summary><span class="cut-n">{c.n.toLocaleString("en-IN")} series</span><span class="cut-w">{c.what}</span><span class="cut-d">{c.from} to {c.to}</span></summary>
+          <div class="cut-body"><p class="cut-load">Loading…</p></div>
+        </details>
+      ))}
+    </div>
+  </section>
+
+  <!-- § 09 what this measures (evergreen) -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="prose">
+      <p>Four instruments, each answering a different question. Keep them apart.</p>
+      <p><b>The national accounts</b> measure value added: what each industry's output is worth after the inputs it uses up. They include the informal economy, estimated from surveys and indicators, and government services, valued at what they cost. They are the broadest measure and the slowest: annual detail arrives a year or more late and is revised for about three years. India rebased its national accounts to 2022-23 in 2026; the 2011-12 series continues alongside for history. The two rulers are never joined here.</p>
+      <p><b>The Index of Services Production</b> measures the monthly volume of formal service activity in 19 sub-sectors, mainly from GST returns. It is quick but partial, and it is a trial.</p>
+      <p><b>The balance of payments</b> measures services sold to and bought from the rest of the world, from banks' reports of foreign-exchange transactions and company surveys. It is in US dollars and counts transactions, not value added.</p>
+      <p><b>The labour force survey and ASUSE</b> count people and businesses. PLFS asks households what work each member does; ASUSE visits informal businesses and asks what they sell, spend and pay.</p>
+      <p>Each answers its own question. Services can be more than half of value added, about a third of jobs and close to half of exports at the same time, and none of those numbers is wrong.</p>
+    </div>
+  </section>
+
+  <!-- § 10 misreadings -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>How to misread these numbers</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li><span class="no">1</span><div><h3>"India is a software economy."</h3><p>Software is India's largest services export, but a small part of what services produce at home. Most service output is trade, rent and property, finance, transport, government and the work of small shops, schools and clinics.</p></div></li>
+      <li><span class="no">2</span><div><h3>"Services employ most Indians."</h3><p>Services produce more than half of output but employ about a third of workers. Farming still employs more people. Most service jobs are self-employment in small shops and stalls, not salaried office work.</p></div></li>
+      <li><span class="no">3</span><div><h3>"Shops grew 30%, so consumers are spending 30% more."</h3><p>The trial services index is young, built from GST filings and limited to formal firms. Some of its growth can be businesses moving into the tax net rather than more sales. Read its direction, and wait before trusting its size.</p></div></li>
+      <li><span class="no">4</span><div><h3>"Services' share fell when the new GDP series came out."</h3><p>The two series are different bases of the national accounts. The 2022-23 base measures the economy with new sources and sits at a different level. Compare change within a base, never across the seam.</p></div></li>
+      <li><span class="no">5</span><div><h3>"Real estate is a quarter of services, so property must be booming."</h3><p>Most of it is imputed rent: the national accounts count the rent owners would pay to live in their own homes, which rises steadily with the housing stock. It is a real part of living standards, but it is not sales of property.</p></div></li>
+      <li><span class="no">6</span><div><h3>"Services exports are profit for India."</h3><p>Exports are receipts, not earnings. A software firm's export revenue pays its salaries, rent and taxes in India. That spending is why services exports matter for jobs, and why receipts are larger than the value added behind them.</p></div></li>
+    </ul>
+  </section>
+
+  <GuideData slug="services" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Sources of record</h6>
+        <p>Ministry of Statistics and Programme Implementation, National Statistics Office: National Accounts Statistics (GVA by industry and sub-industry, 2011-12 and 2022-23 bases), the trial Index of Services Production (base 2024-25), the Periodic Labour Force Survey and the Annual Survey of Unincorporated Sector Enterprises, all through the eSankhyiki API. Reserve Bank of India: monthly trade in services, the balance of payments by category and purpose code, and the long annual invisibles table, from its Database on Indian Economy through the Atlas's local, read-only mirror. Data vintage <b id="prov-vintage">–</b>; trade vintage <b id="prov-trade-v">–</b>.</p>
+        <p>Checked by hand against the agencies' own releases: MoSPI's first ISP release (14 July 2026: retail trade 130.5 for 2025-26, 137.50 for April 2026) and its 29 July release (retail trade up 13.3% in May 2026); the RBI's balance-of-payments press release of 27 June 2025 (net services US$ 53.3 billion in January to March 2025, US$ 42.7 billion a year earlier); and its 30 June 2026 release on monthly services trade (May 2026 receipts US$ 33,355 million, payments US$ 17,637 million).</p>
+      </div>
+      <div>
+        <h6>Method</h6>
+        <p>Shares of GVA are computed from published current-price levels; real growth from constant-price levels, never taken from rounded published rates. The services total is the sum of the published service groups. ISP growth is computed from the index and checked against MoSPI's rates. RBI values are stored once each (DBIE repeats every value once per display unit), and for each period the most mature version is used. PLFS and ASUSE values are published shares, counts and rupee figures, shown as published.</p>
+      </div>
+      <div>
+        <h6>Revisions and breaks</h6>
+        <p>Never joined: the 2011-12 and 2022-23 national accounts bases; the RBI's older invisibles categories and BPM6; PLFS agriculture-year reports and calendar-year estimates; ASUSE financial-year rounds and the 2025 calendar-year round. On the 2011-12 base, MoSPI serves the three combined service groups only as advance and provisional estimates while their parts carry later revisions; the services total uses the parts where they exist. The RBI's 1985-86 services row does not add up as published (a five-million-dollar gap) and is kept as published.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Version 1.0, built October 2026. Revised with each national accounts, ISP, RBI and survey release. The RBI's DBIE copy of the monthly services data lags its press releases; the Atlas follows DBIE.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, services</span>
+      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<style is:global>
+  /* §08 every-cut explorer: layout only */
+  .prose + .break{margin-top:40px}
+  /* labels printed inside filled bars: no white halo (it would thicken white text into a blob) */
+  .plotzone svg g.on-fill text{stroke:none}
+  .cuts details.cut{border-top:1px solid var(--rule);padding:12px 0}
+  .cuts details.cut:last-child{border-bottom:1px solid var(--rule)}
+  .cuts summary{cursor:pointer;display:grid;grid-template-columns:120px 1fr 170px;gap:16px;font-family:var(--sans);font-size:.86rem;color:var(--ink-soft);list-style:none}
+  .cuts summary::-webkit-details-marker{display:none}
+  .cuts .cut-n{font-variant-numeric:tabular-nums;color:var(--ink)}
+  .cuts .cut-d{color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+  .cuts .cut-body{padding:14px 0 4px}
+  .cuts .cut-filter{width:100%;max-width:420px;font:inherit;font-family:var(--sans);font-size:.86rem;padding:7px 10px;border:1px solid var(--rule-2);margin-bottom:10px}
+  .cuts .cut-scroll{max-height:460px;overflow:auto}
+  .cuts table{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:.8rem}
+  .cuts th{text-align:left;color:var(--muted);font-weight:400;border-bottom:1px solid var(--rule-2);padding:6px 8px;position:sticky;top:0;background:var(--bg)}
+  .cuts td{border-bottom:1px solid var(--rule);padding:6px 8px;vertical-align:top;color:var(--ink-soft)}
+  .cuts td small{display:block;color:var(--faint);font-size:.75rem}
+  .cuts .n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .cuts .more,.cuts .cut-err,.cuts .cut-load{color:var(--muted);font-family:var(--sans);font-size:.8rem}
+  @media(max-width:680px){.cuts summary{grid-template-columns:1fr}.cuts .cut-d{text-align:left}}
+</style>
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/services.client.js";
+</script>
+</Base>
