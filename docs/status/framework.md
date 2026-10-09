@@ -12,9 +12,21 @@ Session: atlas-framework, branch `lb/framework`, port 4411. Brief: `docs/briefs/
   at 1,000 rows with groups kept whole. qc checks the row counts equal the bundles'
   series counts (CPI 629, WPI 1,994, factories 892 ...). Looked at 1440 and 390.
 
+- **F4 seams on charts** (2026-10-09). `seamMarks(treatment, rulers, marker)` and
+  `seamOverlap(a, b)` in `src/charts/plumbing.js`: "side", "overlap", "agency", nothing
+  else; it throws on one ruler, on an agency link whose label names no agency, or on a
+  back-cast stretch outside an agency seam. Moved onto it: CPI §02 (agency: NSO back-cast,
+  now a solid pale tint instead of 55% opacity, per DESIGN), CPI-AL (side), WPI §02
+  (overlap), IIP two bases (side), GDP §11 three rulers (side, no marker: they never
+  meet; legend now says "NSO back series"). Facts sheets carry `ruler` on every series,
+  every proseInputs summary and the CPI legacy block (bundle, base, product, seam window,
+  agency link) from `sources.yml seams:`. verify.mjs skips `ruler` keys and no longer
+  lets the digits of a base string ("2022-23=100") trace a figure; every existing prose
+  file still verifies.
+
 ## Next
 
-F4 seams on charts, F5 IDH cross-check, ledgers for 13 guides.
+F5 IDH cross-check, ledgers for 13 guides.
 
 ## Note for family sessions: adding the every-cut table
 
