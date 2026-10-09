@@ -1125,3 +1125,34 @@ seams:
       from: "2025-04"
       to: null
       bundles: [isp]
+  # credit (lb/credit): two products whose ruler changed. Sectoral deployment of bank credit
+  # changed classification in January 2019 (new codes and sectors; the old format runs on to
+  # December 2020 for comparison). The spatial statements changed coverage in March 2023
+  # (regional rural banks leave the quarterly statement) and are published in three report
+  # generations; the annual statement keeps RRBs. Never joined.
+  credit-sibc:
+    - base: "SIBC 2007 format"
+      from: "2007-04"
+      to: "2020-12"
+      bundles: [credit-sectors-2007, credit-industry-2007]
+    - base: "SIBC 2019 format"
+      from: "2019-01"
+      to: null
+      bundles: [credit-sectors, credit-industry, credit-growth]
+  credit-place:
+    - base: "Spatial statements, including regional rural banks"
+      from: "2004-03"
+      to: "2022-12"
+      bundles: [credit-states-2004, credit-states-cd-2004, credit-offices-2004, credit-places-2004, credit-states-2017, credit-states-cd-2017, credit-offices-2017, credit-places-2017]
+    - base: "Spatial statements, excluding regional rural banks"
+      from: "2023-03"
+      to: null
+      bundles: [credit-states, credit-states-cd, credit-offices, credit-places]
+    - base: "Spatial statements, annual, including regional rural banks"
+      from: "2023-03"
+      to: null
+      bundles: [credit-states-annual, credit-states-cd-annual, credit-offices-annual, credit-places-annual]
+    - base: "BSR-1, as on 31 March"
+      from: "2026-03"
+      to: null
+      bundles: [credit-utilisation]

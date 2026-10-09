@@ -158,6 +158,8 @@ function industryKeys(rows) {
 const STATE_NAME = { "NCT OF DELHI": "Delhi", "JAMMU & KASHMIR": "Jammu and Kashmir", "ANDAMAN & NICOBAR ISLANDS": "Andaman and Nicobar Islands",
   "DADRA AND NAGAR HAVELI AND DAMAN AND DIU": "Dadra and Nagar Haveli and Daman and Diu", "DADRA & NAGAR HAVELI": "Dadra and Nagar Haveli", "DAMAN & DIU": "Daman and Diu" };
 const stateName = (s) => STATE_NAME[s] ?? s.toLowerCase().replace(/\b[a-z]/g, (c) => c.toUpperCase()).replace(/\bAnd\b/g, "and").replace(/ & /g, " and ");
+/** a continuous axis of quarter-end months from the first to the last date (gaps become nulls) */
+const quarterAxis = (dates) => { const ds = [...dates].sort(), out = []; let [y, m] = ds[0].split("-").map(Number); for (;;) { const k = `${y}-${String(m).padStart(2, "0")}-01`; if (k > ds.at(-1)) break; out.push(k); m += 3; if (m > 12) { m -= 12; y++; } } return out; };
 const SPLITS = { TELANGANA: "ANDHRA PRADESH", LADAKH: "JAMMU & KASHMIR" };   // new unit -> the state it was carved from
 const fqDate = (fq) => { const [fy, q] = fq.split(":"); const y0 = +fy.slice(0, 4); return { Q1: `${y0}-06-01`, Q2: `${y0}-09-01`, Q3: `${y0}-12-01`, Q4: `${y0 + 1}-03-01` }[q]; };
 
@@ -186,14 +188,23 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
   });
 
   // value per (date, item): the Final row if one exists, else the Provisional
-  const pick = new Map();   // "date|group|code" -> { v, ver }
+  const pick = new Map(), prov = new Map();   // "date|group|code" -> { v, ver }
   for (const r of rows689) {
     const k = `${iso(r["Time Date"])}|${r["Bank Group Name"]}|${r["Item Code"]}`;
     const v = num(r["Item Value"]), ver = r["Version Desc"];
+    if (ver === "Provisional" && v != null) prov.set(k, { v, ver });
     const prev = pick.get(k);
     if (!prev || (prev.ver !== "Final" && ver === "Final") || (prev.v == null && v != null)) pick.set(k, { v, ver });
   }
   const D42 = [...new Set(rows689.map((r) => iso(r["Time Date"])))].sort();
+  // Source defect: on some dates (mid-2021) the Final rows do not add up (Final bank credit is
+  // not Final loans plus bills) while the Provisional rows do. Bank credit and its five parts
+  // are taken as one set: the Final set where it adds up, else the Provisional set where that
+  // adds up. The dates switched are disclosed in the bundle note.
+  const CREDIT_SET = ["0250", "0260", "0280", "0290", "0310", "0320"];
+  const addsUp = (m, d) => { const v = CREDIT_SET.map((c) => m.get(`${d}|ALL SCBS|${c}`)?.v); return v.every((x) => x != null) && Math.abs(v[0] - v.slice(1).reduce((a, c) => a + c, 0)) <= 2e10; };
+  const provDates = [];
+  for (const d of D42) if (!addsUp(pick, d) && addsUp(prov, d)) { for (const c of CREDIT_SET) pick.set(`${d}|ALL SCBS|${c}`, prov.get(`${d}|ALL SCBS|${c}`)); provDates.push(d); }
   const g42 = (code, grp = "ALL SCBS") => D42.map((d) => { const o = pick.get(`${d}|${grp}|${code}`); return o?.v == null ? null : r3(o.v / LC); });
   const finalShare = D42.filter((d) => pick.get(`${d}|ALL SCBS|0250`)?.ver === "Final").length;
 
@@ -256,10 +267,10 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
     const b = adj.length - 1 - [...adj].reverse().findIndex((v) => v != null);
     s42[k].data = adj.map((v, i) => (a >= 0 && i >= a && i <= b ? v : null));
   }
-  const m42 = (extra) => ({ ...base, vintage: V42, frequency: "fortnightly", base: "Section 42 return", unit: "inr_lakh_crore", ...extra });
+  const m42 = (extra) => ({ ...base, dossier: "credit-s42", vintage: V42, frequency: "fortnightly", base: "Section 42 return", unit: "inr_lakh_crore", ...extra });
   const scb = bundleOut(root, "credit-scb", m42({
     coverage: "Business of all scheduled commercial banks in India, every reporting fortnight since June 1997: deposits, credit, investments, cash and inter-bank positions",
-    note: `RBI DBIE report 689 (Section 42 return), ₹ lakh crore. Final figures where RBI has published them (${finalShare} of ${D42.length} dates), provisional otherwise. Reporting dates were alternate Fridays until November 2025; from 15 December 2025 they are the 15th and the last day of each month (Banking Laws (Amendment) Act 2025). The "excluding the HDFC merger" series are RBI's adjusted figures, published from 14 July 2023 to 22 August 2025. Investments by instrument (the non-SLR rows) end at July 2026 in the source.`,
+    note: `RBI DBIE report 689 (Section 42 return), ₹ lakh crore. Final figures where RBI has published them (${finalShare} of ${D42.length} dates), provisional otherwise.${provDates.length ? ` On ${provDates.join(", ")} the Final rows do not add up (bank credit is not loans plus bills) while the Provisional rows do, so bank credit and its parts are the Provisional figures on those dates.` : ""} Reporting dates were alternate Fridays until November 2025; from 15 December 2025 they are the 15th and the last day of each month (Banking Laws (Amendment) Act 2025). The "excluding the HDFC merger" series are RBI's adjusted figures, published from 14 July 2023 to 22 August 2025. Investments by instrument (the non-SLR rows) end at July 2026 in the source.`,
     reportingCalendarChange: "2025-12-15",
   }), D42, s42, "Not reported for this date in DBIE report 689.");
 
@@ -287,7 +298,7 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
   const DF = [...fpick.keys()].sort();
   const creditAt = new Map(scb.dates.map((d, i) => [d, scb.series.credit.data[i]]));
   const food = DF.map((d) => r3(fpick.get(d).v / LC));
-  bundleOut(root, "credit-food", { ...base, vintage: V42, frequency: "fortnightly", base: "Section 42 return", unit: "inr_lakh_crore",
+  bundleOut(root, "credit-food", { ...base, dossier: "credit-s42", vintage: V42, frequency: "fortnightly", base: "Section 42 return", unit: "inr_lakh_crore",
     coverage: "Food credit: bank loans to the Food Corporation of India and state agencies for buying and storing grain, every fortnight since 1993",
     note: "RBI DBIE report 1130 (data provider DPd, item 7a.1 Food Credit), ₹ lakh crore; Final where published, else Provisional. The share of bank credit is derived where the date matches a report-689 reporting date." },
   DF, {
@@ -353,19 +364,19 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
         byCode.get(code).set(m, r.amount_inr_cr);
       }
     }
-    // Bank credit, food and non-food credit are Section 42 figures: on a few dates the export
-    // prints the next fortnight's figure (2023-10-20 carries 2023-11-03's). Where the export
-    // disagrees with report 689 and the press release agrees with it, the press release wins.
+    // Bank credit, food and non-food credit are Section 42 figures. On some dates the export
+    // prints the next fortnight's (2021-06-18 carries 2021-07-02's bank credit). Wherever report
+    // 689 has the same reporting date, bank credit is taken from it, food credit from report
+    // 1130 and non-food credit as the difference; the dates that changed are disclosed.
     const fixed = [];
-    if (statement === "sectors" && fmt === "new") {
+    if (statement === "sectors") {
       const s42at = new Map(scb.dates.map((d, i) => [d, scb.series.credit.data[i]]));
+      const foodAt = new Map(DF.map((d, i) => [d, food[i]]));
       for (const m of [...rep.keys()]) {
-        const d = rep.get(m), ref = s42at.get(d), h = byCode.get("I")?.get(m);
-        if (ref == null || h == null || Math.abs(h / CR_LC / ref - 1) < 0.002) continue;
-        const rel = latestRel.get(`sectors|${d}|I`);
-        if (!rel || Math.abs(rel.amount_inr_cr / CR_LC / ref - 1) >= 0.002) continue;
-        for (const c of ["I", "II", "III"]) { const rr = latestRel.get(`sectors|${d}|${c}`); if (rr) byCode.get(c).set(m, rr.amount_inr_cr); }
-        fixed.push(d);
+        const d = rep.get(m), c = s42at.get(d), f = foodAt.get(d), h = byCode.get("I")?.get(m);
+        if (c == null || f == null || h == null) continue;
+        if (Math.abs(h / CR_LC / c - 1) >= 0.002) fixed.push(d);
+        byCode.get("I").set(m, c * CR_LC); byCode.get("II").set(m, f * CR_LC); byCode.get("III").set(m, (c - f) * CR_LC);
       }
     }
     const months = [...rep.keys()].sort();
@@ -388,8 +399,8 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
       series[km[0]] = { name: `${km[0]}_inr_lakh_crore`, label: km[1], code, data: axis.map((m) => (mp.has(m) ? r3(mp.get(m) / CR_LC) : null)) };
     }
     const ex = extra(axis);
-    if (C.fixed.length) ex.note += ` Bank, food and non-food credit on ${C.fixed.join(", ")} are taken from the RBI press release: the export prints the following fortnight's Section 42 figures on those dates.`;
-    const out = bundleOut(root, rel, { ...base, vintage: VS, frequency: "monthly", unit: "inr_lakh_crore", reportingDates: axis.map((m) => repByMonth.get(m) ?? null), ...ex }, axis, series,
+    if (statement === "sectors") ex.note += ` Bank, food and non-food credit are the Section 42 figures of the same reporting date (DBIE reports 689 and 1130) wherever those reports carry it${C.fixed.length ? `; on ${C.fixed.join(", ")} the export printed a different fortnight's figures` : ""}.`;
+    const out = bundleOut(root, rel, { ...base, dossier: "credit-sibc", vintage: VS, frequency: "monthly", unit: "inr_lakh_crore", reportingDates: axis.map((m) => repByMonth.get(m) ?? null), ...ex }, axis, series,
       "No figure for this month in the RBI's export (the industry statement skips some months in its old format).");
     out.reportDates = out.dates.map((m) => repByMonth.get(m) ?? null);
     out.fixed = C.fixed;
@@ -432,7 +443,7 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
   };
   const GS = growthBundle(newS, "sectors", Object.keys(SECTORS_NEW).filter((c) => !c.startsWith("5.")));
   GS.series.headline.color = "#2E4BD8";
-  const cur = bundleOut(root, "credit-growth", { ...base, vintage: VS, frequency: "monthly", unit: "pct", base: "SIBC 2019 format",
+  const cur = bundleOut(root, "credit-growth", { ...base, dossier: "credit-sibc", vintage: VS, frequency: "monthly", unit: "pct", base: "SIBC 2019 format",
     coverage: "Growth of bank credit on a year earlier, in total and for every sector and type of personal loan, monthly since January 2020",
     note: "Derived from credit-sectors. Where an RBI press release printed a year-ago figure for the month (December 2022 on), growth is the published amount over RBI's own printed year-ago amount, so it matches the release; earlier months compare with the same month a year before. The headline is bank credit of all scheduled commercial banks (Section 42). From December 2025 RBI compares month-end figures with the last reporting Friday a year earlier. July 2023 to June 2024 includes the HDFC merger's one-time jump; see credit-scb-ratios for growth excluding it.",
     yearAgoDates: Object.fromEntries(GS.comps),
@@ -486,7 +497,7 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
     }
     if (dropped) extra = { ...extra, note: `${extra.note} ${dropped} zeros printed for discontinued series that exclude the merger (after June 2025) are dropped as not published.` };
     if (identity) identity(D, series);
-    return bundleOut(root, rel, { ...base, vintage: VM, ...extra }, D, series, "Not published for this date in the RBI's Data Query table.");
+    return bundleOut(root, rel, { ...base, dossier: "credit-money", vintage: VM, ...extra }, D, series, "Not published for this date in the RBI's Data Query table.");
   };
   const MERGER = "Series marked 'including the HDFC merger' are RBI's figures from July 2023 that count HDFC Ltd's balance sheet inside the banking system; the plain series exclude it until they stop (time deposits and M3 in June 2025). The two are different rulers and are never joined.";
   const money = casBundle(["MSC_F_RN", "MSS_F_RN"], "credit-money", { frequency: "fortnightly", base: "M3, RBI money stock", unit: "inr_lakh_crore",
@@ -516,7 +527,7 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
   {
     const M = money.series, D = money.dates;
     const g = (k) => yoyByDate(D, M[k].data);
-    bundleOut(root, "credit-money-growth", { ...base, vintage: VM, frequency: "fortnightly", base: "M3, RBI money stock", unit: "pct",
+    bundleOut(root, "credit-money-growth", { ...base, dossier: "credit-money", vintage: VM, frequency: "fortnightly", base: "M3, RBI money stock", unit: "pct",
       coverage: "Growth of money on a year earlier, every fortnight since 2002: M3 (excluding and including the HDFC merger), M1, currency with the public, deposits, and bank credit to the commercial sector",
       note: `Derived from credit-money: each date against the reporting date closest to one year earlier (within 10 days). Growth is computed inside each ruler: the series excluding the merger against itself, the series including it against itself (from July 2024, when a year of it exists). ${MERGER}` },
     D, {
@@ -596,7 +607,7 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
   });
   const march = (d) => `${d.slice(0, 4)}-03-01`;
   const fyEnd = (fy) => `${+fy.slice(0, 4) + 1}-03-01`;     // "2024-25" -> "2025-03-01"
-  const H_ = (extra) => ({ ...base, vintage: VH, frequency: "annual", ...extra });
+  const H_ = (extra) => ({ ...base, dossier: "credit-health", vintage: VH, frequency: "annual", ...extra });
 
   // ---- 330: NPAs by bank group ----
   {
@@ -753,7 +764,7 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
     reports: { ...Object.fromEntries(Object.entries(SP).map(([id, r]) => [id, { provenance: r.provenance, columns: r.header, rows: r.rows.map((x) => r.header.map((h) => x[h])) }])),
       "1134": { provenance: S1134.provenance, columns: S1134.header, rows: S1134.rows.map((x) => S1134.header.map((h) => x[h])) } },
   });
-  const P_ = (extra) => ({ ...base, vintage: VP, ...extra });
+  const P_ = (extra) => ({ ...base, dossier: "credit-place", vintage: VP, ...extra });
   const spatial = (ids, suffix, cover, notePart) => {
     // state x date -> [offices, deposits, credit]; also population group and bank group totals
     const st = new Map(), pg = new Map(), bg = new Map(), dates = new Set(), flagOf = new Map();
@@ -797,12 +808,17 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
     }
     if (cd.all_india) cd.all_india.color = "#2E4BD8";
     const PGN = { RURAL: "rural", "SEMI URBAN": "semi_urban", URBAN: "urban", METROPOLITAN: "metro" }, PGL = { rural: "Rural", semi_urban: "Semi-urban", urban: "Urban", metro: "Metropolitan" };
+    // centres are classed rural to metropolitan by census population; when the RBI moved from
+    // the 2001 to the 2011 census (2015-16) every centre could change class: two rulers
+    const flags = [...new Set(D.map((d) => flagOf.get(d)))].sort();
     const groups = {};
-    for (const [src, k] of Object.entries(PGN)) for (const [i, mk, ml] of [[1, "deposits", "deposits"], [2, "credit", "credit"]])
-      groups[`${k}_${mk}`] = { name: `${k}_${mk}_inr_lakh_crore`, label: `${PGL[k]} centres, ${ml}`, data: D.map((d) => { const o = pg.get(`${src}|${d}`); return o ? r3(o[i] / LC) : null; }) };
+    for (const f of flags) for (const [src, k] of Object.entries(PGN)) for (const [i, mk, ml] of [[1, "deposits", "deposits"], [2, "credit", "credit"]]) {
+      const kk = flags.length > 1 ? `${k}_${mk}_census${f}` : `${k}_${mk}`;
+      groups[kk] = { name: `${kk}_inr_lakh_crore`, label: `${PGL[k]} centres, ${ml}${flags.length > 1 ? ` (centres classed by the ${f} census)` : ""}`, data: D.map((d) => { const o = flagOf.get(d) === f ? pg.get(`${src}|${d}`) : null; return o ? r3(o[i] / LC) : null; }) };
+    }
     for (const b of [...new Set([...bg.keys()].map((k) => k.split("|")[0]))].sort()) for (const [i, mk] of [[1, "deposits"], [2, "credit"]])
       groups[`${slug(b)}_${mk}`] = { name: `${slug(b)}_${mk}_inr_lakh_crore`, label: `${tidy(b).toLowerCase().replace(/^\w/, (c) => c.toUpperCase()).replace("Sbi", "SBI")}, ${mk}`, data: D.map((d) => { const o = bg.get(`${b}|${d}`); return o ? r3(o[i] / LC) : null; }) };
-    const meta = (unit, what) => P_({ frequency: ids.includes("1427") ? "annual" : "quarterly", base: `Spatial statements, ${cover}`, unit, coverage: `${what}, ${notePart}`,
+    const meta = (unit, what) => P_({ frequency: ids.includes("1427") ? "annual" : "quarterly", base: ids.includes("1427") ? `Spatial statements, annual, ${cover}` : `Spatial statements, ${cover}`, unit, coverage: `${what}, ${notePart}`,
       note: `RBI quarterly statistics on deposits and credit of scheduled commercial banks, statement 3A (DBIE ${ids.join(" and ")}), ${cover}. Summed over bank groups and population groups to each state; by the location of the branch that books the deposit or loan. Dated to the last month of each quarter.` });
     bundleOut(root, `credit-states${suffix}`, meta("inr_lakh_crore", "Bank deposits and credit in every state and union territory, ₹ lakh crore"), D, amt, "Not reported for this state in this quarter.");
     bundleOut(root, `credit-states-cd${suffix}`, meta("pct", "Credit-deposit ratio of every state and union territory: credit booked in the state as a share of deposits booked there"), D, cd, "Not reported for this state in this quarter.");
@@ -849,7 +865,7 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
     note: "RBI Basic Statistical Return 1 (BSR-1), quarterly tables on outstanding credit of scheduled commercial banks (excluding RRBs), read from the local Data Bank's DBIE mirror: 941 population group, 942 bank group, 943 state, 944 occupation, 945 type of account, 946 organisation (incl. male and female individuals), 947 size of credit limit, 948 interest rate range, 949 weighted average lending rate by occupation, 963 state x occupation, 1555 district x gender (credit to individuals). Amounts in rupees.",
     reports: Object.fromEntries(Object.entries(BR).map(([id, r]) => [id, { provenance: r.provenance, columns: r.header, rows: r.rows.map((x) => r.header.map((h) => x[h])) }])),
   });
-  const B_ = (extra) => ({ ...base, vintage: VB, frequency: "quarterly", base: "BSR-1 quarterly, excluding RRBs", ...extra });
+  const B_ = (extra) => ({ ...base, dossier: "credit-bsr1", vintage: VB, frequency: "quarterly", base: "BSR-1 quarterly, excluding RRBs", ...extra });
   const qEnd = (s) => `${iso(s).slice(0, 7)}-01`;
   const clean = (l) => tidy(String(l).replace(/^\s*(\(?[a-z0-9ivx]+[.)]\)?\s+)/i, "")).replace(/\s+/g, " ").trim();
   const sentence = (l) => (l === l.toUpperCase() ? l.toLowerCase().replace(/^\w/, (c) => c.toUpperCase()) : l);
@@ -862,7 +878,7 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
       if (!keys.has(k)) keys.set(k, +r["Sorting Order"] || keys.size);
       for (const [col] of measures) v.set(`${k}|${col}|${d}`, num(r[col]));
     }
-    const D = [...dates].sort(), series = {}, used = new Set();
+    const D = quarterAxis(dates), series = {}, used = new Set();
     for (const [k] of [...keys].sort((a, b) => a[1] - b[1])) {
       let ks = slug(clean(k)) || slug(k); if (used.has(ks)) ks = `${ks}_${keys.get(k)}`; used.add(ks);
       for (const [col, suf, ml] of measures) {
@@ -872,7 +888,7 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
       }
     }
     return bundleOut(root, rel, B_({ unit: measures.length > 1 ? "mixed: inr_lakh_crore (amount, limit), lakh accounts" : measures[0][1] === "rate" ? "pct" : "inr_lakh_crore",
-      coverage, note: `RBI BSR-1 quarterly (DBIE ${id}), outstanding credit of scheduled commercial banks excluding RRBs, as at the end of each quarter (dated to that month). Amounts and limits in ₹ lakh crore; accounts in lakh. ${note}`.trim() }), D, series, "Not reported for this quarter.");
+      coverage, note: `RBI BSR-1 quarterly (DBIE ${id}), outstanding credit of scheduled commercial banks excluding RRBs, as at the end of each quarter (dated to that month). Amounts and limits in ₹ lakh crore; accounts in lakh. ${note}`.trim() }), D, series, "Not published for this quarter: the RBI's table skips it (September 2014).");
   };
   bsr1("944", "credit-occupation", "Bank credit by the borrower's occupation, at every level the RBI publishes: agriculture, industries one by one, transport, professional services, personal loans by type, trade, finance, every quarter since March 2014");
   bsr1("941", "credit-population-group", "Bank credit by the population group of the branch: rural, semi-urban, urban, metropolitan, every quarter since March 2014", { key: (r) => r["Key Description 1"] });
@@ -889,7 +905,7 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
   {
     const rows = BR["963"].rows, dates = new Set(), v = new Map(), states = new Map(), occs = new Map();
     for (const r of rows) { const d = qEnd(r["Reporting Date"]); dates.add(d); states.set(r["Key3 Description 2"], +r["Sorting Order3"]); occs.set(r["Key4 Description 1"], +r["Sorting Order4"]); v.set(`${r["Key3 Description 2"]}|${r["Key4 Description 1"]}|${d}`, num(r["Set1 Total Amount Outstanding"])); }
-    const D = [...dates].sort(), series = {};
+    const D = quarterAxis(dates), series = {};
     for (const [st] of [...states].sort((a, b) => a[1] - b[1])) for (const [oc] of [...occs].sort((a, b) => a[1] - b[1])) {
       const data = D.map((d) => { const x = v.get(`${st}|${oc}|${d}`); return x == null ? null : r3(x / LC); });
       if (data.some((x) => x != null)) series[`${slug(st)}__${slug(clean(oc))}`] = { name: `${slug(st)}__${slug(clean(oc))}_inr_lakh_crore`, label: `${st.replace(/ & /g, " and ")}: ${sentence(clean(oc))}`, data };
@@ -913,7 +929,7 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
     // where the source prints an all-India row it must equal the sum of its districts
     for (const d of dates) { const a = acc.get(`ALL INDIA (printed)|${d}`), b = acc.get(`ALL INDIA|${d}`); if (a && b && Math.abs(a[5] / b[5] - 1) > 0.002) throw new Error(`credit: 1555 ${d}: printed all-India ${a[5]} != sum of districts ${b[5]}`); }
     if (bad > rows.length * 0.01) throw new Error(`credit: 1555 male + female != total on ${bad} rows: the measure layout moved`);
-    const D = [...dates].sort(), series = {};
+    const D = quarterAxis(dates), series = {};
     const names = [...new Set([...acc.keys()].map((k) => k.split("|")[0]))].filter((x) => !x.startsWith("ALL INDIA")).sort();
     for (const st of ["ALL INDIA", ...names]) {
       const k = st === "ALL INDIA" ? "all_india" : slug(stateName(st)), L = st === "ALL INDIA" ? "All India" : stateName(st);
@@ -948,7 +964,7 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
         data: axis.map((m) => { const r = [...latest.values()].find((x) => monthKey(x.observation_date) === m && x.category_code === c); return r ? r3(r.amount_inr_cr / CR_LC) : null; }) };
     }
     series.nbfc_credit.color = "#2E4BD8";
-    bundleOut(root, "credit-nbfc", { ...base, vintage: VN, frequency: "monthly", base: "Selected NBFCs and HFCs", unit: "inr_lakh_crore",
+    bundleOut(root, "credit-nbfc", { ...base, dossier: "credit-nbfc", vintage: VN, frequency: "monthly", base: "Selected NBFCs and HFCs", unit: "inr_lakh_crore",
       coverage: "Credit given by non-banking finance companies (NBFCs and housing finance companies) by sector, for the months the RBI's release prints, from May 2024",
       note: "RBI, Sectoral Deployment of Credit by NBFCs (selected NBFCs and HFCs, in the monthly sectoral-credit release), ₹ lakh crore, latest release per month. The release prints the current month, the same month a year earlier and the previous March, so months between are not published: they are gaps, not zeros. Housing loans include those of HFCs." }, axis, series, "Not printed in any release: the RBI publishes the current month, a year earlier and March.");
   }

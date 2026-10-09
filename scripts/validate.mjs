@@ -1221,6 +1221,81 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
   }
 }
 
+/* ---- credit (lb/credit): money, credit and banks ----
+ * Every credit-* bundle: meta, cadence, ranges by unit. Then the family's identities, each
+ * of which has caught or would catch a real failure: deposits = demand + time; non-food =
+ * bank credit - food; industry = its three sizes; the NPA flow balances; M3 = its parts;
+ * credit used in a state = what is sanctioned there and used there + what comes from
+ * elsewhere; growth equals the RBI's printed growth; and the values checked by hand against
+ * RBI publications (docs/status/credit.md) stay what they were. */
+{
+  const files = fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => /^credit-.*\.json$/.test(f)).map((f) => f.replace(/\.json$/, ""));
+  if (files.length < 50) fail(`credit: only ${files.length} credit-* bundles (expected 55)`);
+  // growth rates of small or negative stocks (net RBI credit to government) run to thousands of per cent
+  const RANGE = { inr_lakh_crore: [-100, 400], pct: [-100, 2500], count: [0, 200000], ratio: [0, 20] };
+  for (const slug of files) {
+    const b = load(slug);
+    checkMeta(b, slug, "credit", b.meta.base, b.meta.frequency);
+    if (b.meta.frequency === "monthly") checkCadence(b.dates, 1, slug);
+    if (b.meta.frequency === "quarterly") checkCadence(b.dates, 3, slug);
+    if (b.meta.frequency === "annual" && !["credit-frauds"].includes(slug)) checkCadence(b.dates, 12, slug);
+    if (["fortnightly", "weekly", "irregular"].includes(b.meta.frequency)) for (let i = 1; i < b.dates.length; i++) if (b.dates[i] <= b.dates[i - 1]) fail(`${slug}: dates not ascending at ${b.dates[i]}`);
+    const unit = String(b.meta.unit).split(":")[0];
+    // mixed bundles carry the unit in each series name
+    const sr = {};
+    if (unit === "mixed") for (const [k, s] of Object.entries(b.series)) sr[k] = /_pct$/.test(s.name) ? RANGE.pct : /_accounts$/.test(s.name) ? [0, 100000] : /_offices$/.test(s.name) ? [0, 200000] : /_cases$/.test(s.name) ? [0, 100000] : /_amount$/.test(s.name) && slug.startsWith("credit-frauds") ? [0, 200000] : RANGE.inr_lakh_crore;
+    const [lo, hi] = slug === "credit-money-annual" ? [-10000, 10000] : RANGE[unit] ?? [-1e9, 1e9];
+    checkRange(b, lo, hi, slug, sr);
+  }
+  const near = (a, b, tol) => a != null && b != null && Math.abs(a - b) <= tol;
+  const ident = (slug, label, fn) => { const b = load(slug); let n = 0, bad = 0, worst = 0, at = null;
+    b.dates.forEach((d, i) => { const r = fn(b.series, i, d); if (!r) return; n++; const dev = Math.abs(r[0] - r[1]); if (dev > worst) { worst = dev; at = d; } if (dev > r[2]) bad++; });
+    if (!n) fail(`credit ${slug}: identity "${label}" checked no dates`);
+    else if (bad) fail(`credit ${slug}: ${label} fails on ${bad} of ${n} dates (worst ${worst.toFixed(3)} at ${at})`);
+    else ok(`credit ${slug}: ${label} (${n} dates, worst ${worst.toFixed(3)})`); };
+  ident("credit-scb", "deposits = demand + time", (S, i) => S.deposits.data[i] != null && S.demand_deposits.data[i] != null && S.time_deposits.data[i] != null && [S.deposits.data[i], S.demand_deposits.data[i] + S.time_deposits.data[i], 0.02]);
+  ident("credit-scb", "credit = loans + bills", (S, i) => { const p = ["loans_cash_credit_overdrafts", "inland_bills_purchased", "inland_bills_discounted", "foreign_bills_purchased", "foreign_bills_discounted"].map((k) => S[k].data[i]); return S.credit.data[i] != null && p.every((v) => v != null) && [S.credit.data[i], p.reduce((a, c) => a + c, 0), 0.02]; });
+  for (const sl of ["credit-sectors", "credit-sectors-2007"]) {
+    ident(sl, "non-food = bank credit - food", (S, i) => S.bank_credit.data[i] != null && S.food_credit.data[i] != null && S.non_food_credit.data[i] != null && [S.non_food_credit.data[i], S.bank_credit.data[i] - S.food_credit.data[i], 0.005]);
+    ident(sl, "industry = micro and small + medium + large", (S, i) => S.industry.data[i] != null && [S.industry.data[i], S.industry_micro_small.data[i] + S.industry_medium.data[i] + S.industry_large.data[i], 0.02]);
+    ident(sl, "the four sectors sit inside non-food credit (selected banks: 85-100%)", (S, i) => { const sum = ["agriculture", "industry", "services", "personal_loans"].reduce((a, k) => a + (S[k].data[i] ?? NaN), 0); return Number.isFinite(sum) && [Math.min(Math.max(sum / S.non_food_credit.data[i], 0.85), 1.0), sum / S.non_food_credit.data[i], 0]; });
+  }
+  ident("credit-sectors", "personal loans = the sum of their nine types", (S, i) => { const p = ["consumer_durables", "housing", "advances_against_fds", "advances_against_shares", "credit_cards", "education", "vehicle_loans", "gold_loans", "other_personal_loans"].map((k) => S[k].data[i]); return S.personal_loans.data[i] != null && p.every((v) => v != null) && [S.personal_loans.data[i], p.reduce((a, c) => a + c, 0), 0.02]; });
+  // the monthly sectoral bank credit is the Section 42 figure of the same reporting date
+  {
+    const s = load("credit-sectors"), f = load("credit-scb"); let n = 0, bad = 0;
+    s.dates.forEach((m, i) => { const d = s.meta.reportingDates[i], j = f.dates.indexOf(d); if (j < 0 || s.series.bank_credit.data[i] == null) return; n++; if (Math.abs(s.series.bank_credit.data[i] / f.series.credit.data[j] - 1) > 0.003) { bad++; fail(`credit-sectors: bank credit ${s.series.bank_credit.data[i]} on ${d} != Section 42 ${f.series.credit.data[j]}`); } });
+    if (!bad) ok(`credit-sectors: bank credit equals the Section 42 return on ${n} shared reporting dates`);
+  }
+  // growth equals the RBI's printed growth wherever a release printed a one-year comparison
+  {
+    const g = load("credit-growth"), raw = JSON.parse(fs.readFileSync(path.join(ROOT, "data/raw/credit-sectoral.json"), "utf8")).rbi_sectoral_credit;
+    const c = Object.fromEntries(raw.columns.map((k, i) => [k, i])); const s = load("credit-sectors");
+    const printed = new Map();
+    for (const r of raw.rows) if (r[c.category_code] === "I" && r[c.growth_yoy_pct] != null && r[c.release_date] >= "2024-01-01" && Math.abs((Date.parse(r[c.observation_date]) - Date.parse(r[c.year_ago_date])) / 864e5 - 365) <= 20) { const p = printed.get(r[c.observation_date]); if (!p || +r[c.release_prid] > +p.prid) printed.set(r[c.observation_date], { v: r[c.growth_yoy_pct], prid: r[c.release_prid] }); }
+    let n = 0, bad = 0;
+    g.dates.forEach((m, i) => { const d = s.meta.reportingDates[s.dates.indexOf(m)], p = printed.get(d); if (!p || g.series.headline.data[i] == null) return; n++; if (Math.abs(p.v - g.series.headline.data[i]) > 0.05) { bad++; fail(`credit-growth: headline ${g.series.headline.data[i]} in ${m} != RBI printed ${p.v.toFixed(2)}`); } });
+    if (n < 12) fail(`credit-growth: only ${n} months matched to RBI printed growth`); else if (!bad) ok(`credit-growth: headline equals RBI's printed growth on ${n} months`);
+  }
+  ident("credit-money", "M3 = currency + demand + time + other deposits with RBI", (S, i) => S.m3.data[i] != null && [S.m3.data[i], S.currency_with_public.data[i] + S.demand_deposits.data[i] + S.time_deposits.data[i] + S.other_deposits_rbi.data[i], 0.05]);
+  ident("credit-money", "M3 including the merger = its parts", (S, i) => S.m3_incl_merger.data[i] != null && [S.m3_incl_merger.data[i], S.currency_with_public.data[i] + S.demand_deposits.data[i] + S.time_deposits_incl_merger.data[i] + S.other_deposits_rbi.data[i], 0.05]);
+  ident("credit-money-monthly", "M3 = M1 + time deposits", (S, i) => S.m3.data[i] != null && S.time_deposits.data[i] != null && [S.m3.data[i], S.m1.data[i] + S.time_deposits.data[i], 0.05]);
+  for (const g of ["all", "public", "private"]) ident("credit-npa-movement", `${g}: closing = opening + additions - reductions - write-offs`, (S, i) => [`${g}_gross_opening`, `${g}_gross_additions`, `${g}_gross_reductions`, `${g}_gross_write_offs`, `${g}_gross_closing`].every((k) => S[k]?.data[i] != null) && [S[`${g}_gross_closing`].data[i], S[`${g}_gross_opening`].data[i] + S[`${g}_gross_additions`].data[i] - S[`${g}_gross_reductions`].data[i] - S[`${g}_gross_write_offs`].data[i], 0.05]);
+  {
+    const m = load("credit-npa-movement"), a = load("credit-npa-amounts"); let n = 0, bad = 0;
+    m.dates.forEach((d, i) => { const j = a.dates.indexOf(d), x = m.series.all_gross_closing.data[i], y = j >= 0 ? a.series.all_gnpa.data[j] : null; if (x == null || y == null) return; n++; if (Math.abs(x / y - 1) > 0.05) { bad++; fail(`credit: NPA movement closing ${x} != report 330 gross NPAs ${y} in ${d}`); } });
+    if (!bad) ok(`credit: report 1114 summed bank by bank meets report 330's gross NPAs within 5% (${n} years)`);
+  }
+  ident("credit-utilisation", "credit used = used where sanctioned + brought in from other states", (S, i) => { const out = []; for (const k of Object.keys(S).filter((k) => k.endsWith("_utilised") && k !== "all_india_utilised")) { const st = k.replace(/_utilised$/, ""); out.push(Math.abs(S[k].data[i] - S[`${st}_sanctioned_used_here`].data[i] - S[`${st}_sanctioned_elsewhere_used_here`].data[i])); } return [Math.max(...out), 0, 0.01]; });
+  ident("credit-women", "women's credit sits inside credit to individuals", (S, i) => S.all_india_women_amount.data[i] != null && [Math.min(S.all_india_women_amount.data[i], S.all_india_individuals_amount.data[i]), S.all_india_women_amount.data[i], 0]);
+  // values checked by hand against RBI publications (docs/status/credit.md): they must not move
+  // unless the RBI revises them, in which case re-check and update both places
+  const HAND = [
+    ["credit-npa", "all_gnpa_ratio", "2018-03-01", 11.2, 0.05],
+  ];
+  for (const [sl, k, d, v, tol] of HAND) { const b = load(sl), i = b.dates.indexOf(d), got = i >= 0 ? b.series[k]?.data[i] : null; if (!near(got, v, tol)) fail(`credit hand-check: ${sl}.${k} at ${d} is ${got}, checked by hand as ${v}`); else ok(`credit hand-check: ${sl}.${k} at ${d} = ${got}`); }
+}
+
 /* ---- seams: the base-year registry (sources.yml `seams`) ----
  * For every product that has changed ruler: each bundle of that dossier is
  * registered under exactly one base, its meta.base matches, and its dates
