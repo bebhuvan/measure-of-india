@@ -235,3 +235,12 @@ fails on the omissions above, by design.
   MPCE ratio to the consumption facts sheet.
 - Adding a unit: a family whose bundles use a new money or count unit adds it to
   `UNIT_SCALE` in `pipeline/lib/figures.mjs`; until then its numbers trace only as written.
+
+## 2. Phones: scrolling plates open at today
+
+- `src/dossiers/guide.client.js`: every plot zone that scrolls sideways opens at its right
+  (latest) end after layout, and again on resize and size change (ResizeObserver), until the
+  reader scrolls it. A quiet "← Earlier years" line above the plot (`.pz-cue`, phones only)
+  shows while there is more to the left. The sideways scroll itself is unchanged (DESIGN §3).
+- Checked at 390px in Chrome: cpi 16, gdp 10, external 19, climate 22 scrolling zones, all
+  at their latest end with the cue, no page errors; CPI §02 looked at by eye.

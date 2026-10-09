@@ -204,6 +204,7 @@ p+p{margin-top:1.05em}
 .legend .chip:hover{color:var(--ink)}
 
 .plotzone{position:relative;padding:14px 0 0}
+.pz-cue{display:none}
 .plotzone svg{font-family:var(--sans);font-size:11.5px}   /* Plot defaults to 10px; nothing on the site is that small */
 .plotzone svg text{paint-order:stroke;stroke:#FFFFFF;stroke-width:4px;stroke-linejoin:round;font-variant-numeric:tabular-nums}
 .plotzone svg{touch-action:pan-y}
@@ -300,6 +301,9 @@ p+p{margin-top:1.05em}
   /* Plates are authored wide. Shrinking them to phone width makes 12px labels unreadable,
      so the plot scrolls sideways instead. */
   .plotzone{overflow-x:auto;padding-bottom:8px}
+  /* a scrolling plot opens at its latest end (guide.client.js); this cue says there is more */
+  .pz-cue{display:block;font-family:var(--sans);font-size:.78rem;color:var(--muted);margin:8px 0 -6px}
+  .pz-cue[hidden]{display:none}
   /* Only a plate's main plot gets the 700px floor: an svg directly in the plotzone, or in its
      #plot-* holder. Everything nested deeper (small-multiple panels, ledger sparklines) is
      authored narrow and fits its own slot; forcing 700px clipped those grids to their first half. */
