@@ -362,3 +362,16 @@ export async function buildAishe(root, dcfg, vintage) {
   writeSeries(root, "data/series/aishe-minority.json", minorityBundle);
   return headlineBundle;
 }
+
+/* Catalogue (docs/CONTRACT-coverage.md): aishe/getAisheIndicatorList and
+ * aishe/getAisheFilterByIndicatorId, one cut at a time: aishe:<indicator>:all | :<dimension>:<value>. */
+import { writeCatalogue, indicatorCatalogue, catalogueCli } from "../catalogue.mjs";
+export async function catalogueAishe() {
+  const inds = (await mospi("aishe/getAisheIndicatorList", {})).data ?? [];
+  const items = await indicatorCatalogue({ mospi, prefix: "aishe", indicators: Array.isArray(inds) ? inds : inds.indicator ?? [],
+    filter: (ind) => ["aishe/getAisheFilterByIndicatorId", { indicator_code: ind.indicator_code }] });
+  writeCatalogue("aishe", { source: "Ministry of Education: All India Survey on Higher Education (via MoSPI eSankhyiki)",
+    generator: "scripts/lib/products/aishe.mjs --catalogue",
+    note: "From getAisheIndicatorList and getAisheFilterByIndicatorId: one cut at a time. All five survey years sit inside every item.", items });
+}
+await catalogueCli(import.meta.url, catalogueAishe);

@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
 import GuideData from "../../components/GuideData.astro";
+import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["jobs"];
@@ -593,6 +594,8 @@ const q12From = qDates[qDates.length - 12].slice(0, 4);
       </li>
     </ul>
   </section>
+
+  <EveryCut slug="jobs" />
 
   <GuideData slug="jobs" />
 
