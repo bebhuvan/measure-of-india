@@ -102,7 +102,7 @@ export async function buildResidex(root, dcfg, vintage) {
   for (const B of BASES) {
     const R = raw.bases[B.tag];
     const idx = new Map(), prc = new Map();   // key -> { label, obs: Map(date -> v) }
-    const put = (M, key, label, d, v) => { if (!M.has(key)) M.set(key, { label, obs: new Map() }); if (v != null) M.get(key).obs.set(d, v); };
+    const put = (M, key, label, d, v, unit) => { if (!M.has(key)) M.set(key, { label, unit, obs: new Map() }); if (v != null) M.get(key).obs.set(d, v); };
     for (const pm of [2, 1]) for (const row of R.country[pm]) {
       const d = qDate(row), m = METHODS[pm];
       put(idx, `india_hfc${m.suffix}`, `India, HPI at assessment prices (${m.label})`, d, num(row.HFC_COUNTRY_INDEX));
@@ -115,10 +115,10 @@ export async function buildResidex(root, dcfg, vintage) {
         for (const row of R.city[c.value]?.[lk]?.[pm] ?? []) {
           const d = qDate(row);
           put(idx, `${k}_${L}${m.suffix}`, `${c.text}, HPI at ${LOOKUPS[lk]} (${m.label})`, d, num(row[`${lk}_INDEX`]));
-          for (const [mk, f, what] of PRICE) put(prc, `${k}_${L}_${mk}${m.suffix}`, `${c.text}, ${LOOKUPS[lk]}, ₹ per sq ft, ${what} (${m.label})`, d, num(row[f]));
+          for (const [mk, f, what] of PRICE) put(prc, `${k}_${L}_${mk}${m.suffix}`, `${c.text}, ${LOOKUPS[lk]}, ₹ per sq ft, ${what} (${m.label})`, d, num(row[f]), "inr_per_sqft");
           if (pm === 2) {
-            put(prc, `${k}_${L}_records`, `${c.text}, ${LOOKUPS[lk]}, usable records behind the index`, d, num(row.REC_COUNT));
-            for (const [mk, f, what] of MOE) if (f in row) put(prc, `${k}_${L}_${mk}`, `${c.text}, ${LOOKUPS[lk]}, margin of error, per cent, ${what}`, d, num(row[f]));
+            put(prc, `${k}_${L}_records`, `${c.text}, ${LOOKUPS[lk]}, usable records behind the index`, d, num(row.REC_COUNT), "count");
+            for (const [mk, f, what] of MOE) if (f in row) put(prc, `${k}_${L}_${mk}`, `${c.text}, ${LOOKUPS[lk]}, margin of error, per cent, ${what}`, d, num(row[f]), "pct");
           }
         }
       }
@@ -133,7 +133,7 @@ export async function buildResidex(root, dcfg, vintage) {
         const data = dates.map((d) => s.obs.get(d) ?? null);
         const f = data.findIndex((v) => v != null), l = data.length - 1 - [...data].reverse().findIndex((v) => v != null);
         const gaps = dates.filter((d, i) => i > f && i < l && data[i] == null);
-        series[key] = { name: key, label: s.label, data, ...(gaps.length ? { gaps, gapsNote: "NHB serves no value (or a zero placeholder) for these quarters." } : {}) };
+        series[key] = { name: key, label: s.label, ...(s.unit ? { unit: s.unit } : {}), data, ...(gaps.length ? { gaps, gapsNote: "NHB serves no value (or a zero placeholder) for these quarters." } : {}) };
       }
       return { dates, series };
     };

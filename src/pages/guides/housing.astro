@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
 import GuideData from "../../components/GuideData.astro";
+import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 import propB from "../../../data/series/bis-property.json";
@@ -236,7 +237,7 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
           </div>
           <div class="now">
             <span class="mk">As of {LX}</span>
-            <p>On the latest quarter each publishes, BIS shows <b id="ex-r-bis">–</b>, the RBI's 18-city index <b id="ex-r-rbi">–</b> and RESIDEX <b id="ex-r-rx">–</b>.</p>
+            <p>On the latest quarter each publishes, BIS shows <b id="ex-r-bis">–</b>, the RBI's 18-city index <b id="ex-r-rbi">–</b> and RESIDEX <b id="ex-r-rx">–</b>. The RBI's two bases overlap for <b id="ex-r-ovn">–</b> quarters, in which their changes on a year differ by up to <b id="ex-r-ovgap">–</b>: one more reason never to join them.</p>
           </div>
         </div>
       </figure>
@@ -369,6 +370,7 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
     </ul>
   </section>
 
+  <EveryCut slug="housing" />
   <GuideData slug="housing" />
 
   <footer class="provenance">

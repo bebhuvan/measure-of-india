@@ -54,6 +54,11 @@ function idhOnOurAxis(obs, transform, scale) {
     for (const [k, v] of monthly) { const p = monthly.get(yearEarlier(k)); if (p) out.set(k, (v / p - 1) * 100); }
     return out;
   }
+  // bis family: IDH dates a quarter by its last day (2026-06-30); our quarterly bundles by its first month (2026-04-01)
+  if (transform === "quarter_level") {
+    for (const [d, v] of obs) { const m = +d.slice(5, 7) - 2; out.set(`${d.slice(0, 4)}-${String(m).padStart(2, "0")}-01`, v * scale); }
+    return out;
+  }
   throw new Error(`crosscheck-idh: unknown transform "${transform}"`);
 }
 

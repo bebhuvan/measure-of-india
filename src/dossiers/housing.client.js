@@ -27,7 +27,7 @@ import mex from "../../data/series/bis-peer-mex.json";
 import tur from "../../data/series/bis-peer-tur.json";
 import aus from "../../data/series/bis-peer-aus.json";
 import can from "../../data/series/bis-peer-can.json";
-import { MONO as sans, hydrate, a11y, addCrosshair, spark, wireTools, downloadSVG, downloadPNG, saveBlob, fmt } from "../charts/plumbing.js";
+import { MONO as sans, hydrate, a11y, addCrosshair, spark, wireTools, downloadSVG, downloadPNG, saveBlob, fmt, seamMarks, seamOverlap } from "../charts/plumbing.js";
 
 const P = hydrate(propB);
 const setHTML = (id, h) => { const el = document.getElementById(id); if (el) el.innerHTML = h; };
@@ -199,8 +199,12 @@ setHTML("rb-nom", fmt.pct2(last(P.nominal_yoy)));
     { data: rx18Yoy, c: GOLD, name: "RESIDEX, 2017-18 base", w: 1.5 },
     { data: rx25Yoy, c: GOLD, name: "RESIDEX, 2024-25 base", w: 1.5 },
   ];
-  const marks = [Plot.gridY([-10, 10, 20, 30], { stroke: GRID }), Plot.ruleY([0], { stroke: BASE })];
-  for (const l of lines) marks.push(Plot.lineY(l.data, { x: "date", y: "value", stroke: l.c, strokeWidth: l.w, strokeLinejoin: "round" }));
+  // each agency's base change is a seam (data/sources.yml seams): growth inside each base, drawn
+  // through the quarters both bases describe, never joined (seamMarks "overlap")
+  const marks = [Plot.gridY([-10, 10, 20, 30], { stroke: GRID }), Plot.ruleY([0], { stroke: BASE }),
+    Plot.lineY(lines[0].data, { x: "date", y: "value", stroke: lines[0].c, strokeWidth: lines[0].w, strokeLinejoin: "round" }),
+    ...seamMarks("overlap", [{ data: rbi10Yoy, color: G1, width: 1.5 }, { data: rbiYoy, color: G1, width: 1.5 }], { text: "RBI: 10 cities end", y: 27 }),
+    ...seamMarks("overlap", [{ data: rx18Yoy, color: GOLD, width: 1.5 }, { data: rx25Yoy, color: GOLD, width: 1.5 }], { text: "RESIDEX rebased", y: 21, anchor: "start" })];
   // end labels for the live rulers only; the retired bases (RBI 10 cities, RESIDEX 2017-18) end mid-chart and are named in the legend and the crosshair
   const ends = lines.filter((l) => !/10 cities|2017-18/.test(l.name)).map((l) => ({ l, e: l.data.filter((d) => d.value != null).at(-1) })).filter((x) => x.e);
   // end labels, dodged by value so they never overlap
@@ -224,6 +228,9 @@ setHTML("rb-nom", fmt.pct2(last(P.nominal_yoy)));
   setHTML("ex-r-bis", `${sgn(latest[0])} (${qlab(lastYoy(P.nominal_yoy.data).date)})`);
   setHTML("ex-r-rbi", `${sgn(latest[1])} (${qlab(lastYoy(rbiYoy).date)})`);
   setHTML("ex-r-rx", `${sgn(latest[2])} (${qlab(rxLast.date)})`);
+  const ov = seamOverlap({ data: rbi10Yoy }, { data: rbiYoy });
+  setHTML("ex-r-ovn", String(ov.n));
+  setHTML("ex-r-ovgap", ov.gap.toFixed(1) + " points");
 }
 
 /* ---------- § 05 RESIDEX cities ---------- */

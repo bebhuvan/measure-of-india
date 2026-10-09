@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
 import GuideData from "../../components/GuideData.astro";
+import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 import creditB from "../../../data/series/bis-credit.json";
@@ -384,6 +385,7 @@ const LQG = qlab(gliB.dates.at(-1));
     </ul>
   </section>
 
+  <EveryCut slug="debt" />
   <GuideData slug="debt" />
 
   <footer class="provenance">

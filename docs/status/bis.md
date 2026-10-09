@@ -19,6 +19,13 @@ Branch `lb/bis`. Guides `debt` and `housing`. Updated 2026-10-09.
 - Debt prose regenerated with the estimate in the facts sheet (`facts.mjs` exposes `estimated` with the last measured value); read by hand. One regenerated draft claimed "the total is measured" (false) and was discarded for the earlier passing draft.
 - The 19.3% is private credit; all borrowers including government grew 14.0%. The page says both.
 
+## After merging launch-build (428204b)
+
+- Every-cut table on both guides (`<EveryCut>`); six units added to `UNITS` (₹/US$/€/¥ billion, percentage points, ₹ per sq ft) and my bundles' cuts to `CUT_BY_BUNDLE`, one block each; `series.unit` set in the adapters where bundles mix units. Long-tail pages for the RESIDEX bundles over 150 series.
+- Seams: the three-rulers plate draws the RBI 10-to-18-city change and the RESIDEX rebase with `seamMarks("overlap")`; the note quotes `seamOverlap` (the RBI bases overlap for several quarters and differ by up to a few points).
+- facts.mjs conflict resolved keeping both `ruler` and `estimated`.
+- IDH pairs added to `data/crosscheck/idh.yml` (bis block), with a `quarter_level` transform in `scripts/crosscheck-idh.mjs` (IDH dates quarters by their last day). HPI 15/16 match; the one miss is RBI's revision of Q4 2025-26 (116.2) that BIS lacks. Policy rate 294/303; misses are rate-change months and the early 2000s, when the policy rate was not the repo.
+
 ## Findings worth a reader's attention
 
 - On BIS's estimates the credit gap turned positive (+4.3 pt) for the first time since 2012; the last measured gap (Q4 2023) was −9.1.

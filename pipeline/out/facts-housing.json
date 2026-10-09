@@ -6,9 +6,19 @@
  "latestPeriod": "Q1 2026",
  "releaseDate": null,
  "bands": null,
+ "ruler": {
+  "bundle": "bis-property",
+  "base": "2010=100",
+  "product": null,
+  "window": null,
+  "current": null,
+  "agencyLink": null,
+  "note": "no registered seam: this product has one ruler"
+ },
  "series": {
   "nominal": {
    "label": "Residential property prices, nominal, index 2010 = 100",
+   "ruler": "2010=100, bis-property",
    "estimated": null,
    "latest": {
     "value": 366.84,
@@ -54,6 +64,7 @@
   },
   "real": {
    "label": "Residential property prices, real (deflated by CPI), index 2010 = 100",
+   "ruler": "2010=100, bis-property",
    "estimated": null,
    "latest": {
     "value": 161.94,
@@ -99,6 +110,7 @@
   },
   "nominal_yoy": {
    "label": "Residential property prices, nominal, % change on a year ago",
+   "ruler": "2010=100, bis-property",
    "estimated": null,
    "levelBased": false,
    "latest": {
@@ -145,6 +157,7 @@
   },
   "real_yoy": {
    "label": "Residential property prices, real, % change on a year ago",
+   "ruler": "2010=100, bis-property",
    "estimated": null,
    "levelBased": false,
    "latest": {
@@ -308,6 +321,17 @@
    "bundle": "housing-rbi-2022-yoy",
    "seriesCount": 18,
    "base": "2022-23=100",
+   "ruler": {
+    "bundle": "housing-rbi-2022-yoy",
+    "base": "2022-23=100",
+    "product": "rbihpi",
+    "window": {
+     "from": "2022-04",
+     "to": null
+    },
+    "current": true,
+    "agencyLink": null
+   },
    "coverage": "House prices in 18 cities, % change on a year ago, base 2022-23 = 100",
    "top": {
     "key": "chandigarh",
@@ -357,6 +381,15 @@
    "bundle": "bis-property-cities",
    "seriesCount": 3,
    "base": "2022-23=100",
+   "ruler": {
+    "bundle": "bis-property-cities",
+    "base": "2022-23=100",
+    "product": null,
+    "window": null,
+    "current": null,
+    "agencyLink": null,
+    "note": "no registered seam: this product has one ruler"
+   },
    "coverage": "RBI house price indices for Delhi, Mumbai and the 18-city all-India composite, as relayed by BIS",
    "top": {
     "key": "cities_18",

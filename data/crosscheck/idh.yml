@@ -98,3 +98,19 @@ pairs:
     scale: 1
     tolerance: 0.5
     note: "As 1-month."
+  # ---- bis family session ----
+  - bundle: bis-property-cities
+    series: cities_18
+    idh: "MOHPNIDXAC23Q:IND"
+    transform: quarter_level
+    scale: 1
+    tolerance: 0.1
+    note: "RBI's 18-city all-India house price index (2022-23 = 100) as relayed by BIS. BIS lags RBI by a release: BIS's Q4 2025-26 is 115.85 (RBI's first print), RBI later revised it to 116.2, so the latest quarters may differ."
+  - bundle: bis-policy-rate
+    series: policy_rate
+    idh: "MOIRRBIRPO11W:IND"
+    transform: monthly_mean
+    scale: 1
+    tolerance: 0.25
+    note: "BIS's end-of-month policy rate against the mean of IDH's weekly repo rate in the month: equal except in months with a rate change (the mean blends the two rates), and in earlier decades when the RBI's policy rate was not the repo rate."
+  # ---- end bis family ----

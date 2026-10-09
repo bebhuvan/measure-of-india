@@ -201,7 +201,7 @@ export async function buildBis(root, dcfg, vintage, cfg) {
   write("bis-credit-gap", markEst(assemble([
     ["ratio", "BIS:WS_CREDIT_GAP|Q.IN.P.A.A", "Credit to the private non-financial sector, % of GDP"],
     ["trend", "BIS:WS_CREDIT_GAP|Q.IN.P.A.B", "Long-run trend of the ratio (one-sided HP filter), % of GDP"],
-    ["gap", "BIS:WS_CREDIT_GAP|Q.IN.P.A.C", "Credit-to-GDP gap: ratio minus trend, percentage points"],
+    ["gap", "BIS:WS_CREDIT_GAP|Q.IN.P.A.C", "Credit-to-GDP gap: ratio minus trend, percentage points", { unit: "pp" }],
   ], I, { step: 3, dp: 1 }), ["ratio", "trend", "gap"]), { frequency: "quarterly", base: "% of GDP", unit: "pct_gdp", coverage: "India's credit-to-GDP ratio, its trend and the gap", note: "BIS credit-to-GDP gaps (WS_CREDIT_GAP): the trend is a one-sided Hodrick-Prescott filter with a large smoothing parameter (400,000), so each quarter's trend uses only data up to that quarter. Gap = ratio minus trend (checked)." });
   write("bis-dsr", assemble([["private", "BIS:WS_DSR|Q.IN.P", "Debt service ratio, private non-financial sector, % of income"]], I, { step: 3, dp: 1 }),
     { frequency: "quarterly", base: "% of income", unit: "pct", coverage: "Share of income India's households and companies spend on interest and principal", note: "BIS debt service ratios (WS_DSR): interest payments plus amortisation divided by income, for the private non-financial sector as a whole. BIS publishes no household or company split for India." });
@@ -261,7 +261,8 @@ export async function buildBis(root, dcfg, vintage, cfg) {
 
   // ---------- peers: one bundle per economy ----------
   for (const [a, [iso3, name]] of Object.entries(PEERS)) {
-    const defs = PEER_SERIES.map(([k, flow, pat, label]) => [k, `${flow}|${pat.replace("{A}", a)}`, label]).filter(([, ref]) => P.get(ref)?.obs.size);
+    const UNIT = { credit_gap: "pp", dsr: "pct", real_house_prices_yoy: "pct_yoy" };
+    const defs = PEER_SERIES.map(([k, flow, pat, label]) => [k, `${flow}|${pat.replace("{A}", a)}`, label, { unit: UNIT[k] ?? "pct_gdp" }]).filter(([, ref]) => P.get(ref)?.obs.size);
     const missing = PEER_SERIES.filter(([k]) => !defs.some((d) => d[0] === k)).map(([k]) => k);
     const asm = assemble(defs, P, { step: 3, dp: 2 });
     writeSeries(root, `data/series/bis-peer-${iso3.toLowerCase()}.json`, {
