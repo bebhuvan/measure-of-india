@@ -1,0 +1,39 @@
+# Coverage ledger: National Family Health Survey, NFHS-4 and NFHS-5 (docs/CONTRACT-coverage.md).
+# Catalogue: node scripts/lib/products/nfhs.mjs --catalogue. Every item is one sub-indicator
+# in one round. The guide bakes All India (rural + urban) for 15 of the 21 tables in both
+# rounds, and four NFHS-5 indicators by state. Omissions left for the coordinator ("family
+# health, fuller"): tables 2, 6, 7, 11, 17 and 18; the remaining sub-indicators of tables 5
+# and 10; rural and urban for every table; states for everything but the four, and NFHS-4
+# states.
+family: nfhs
+guides: [nfhs]
+catalogue: data/coverage/nfhs.catalogue.json
+rules:
+  - match: "nfhs:14:*:*:all"
+    status: shown
+    bundle: nfhs-anaemia
+    plate: "Plate 1: the anaemia reversal"
+  - match: ["nfhs:4:*:*:all", "nfhs:12:*:*:all", "nfhs:10:58-*:*:all", "nfhs:10:59-*:*:all", "nfhs:10:60-*:*:all", "nfhs:10:62-*:*:all", "nfhs:10:63-*:*:all", "nfhs:10:64-*:*:all", "nfhs:10:65-*:*:all", "nfhs:10:66-*:*:all", "nfhs:10:68-*:*:all", "nfhs:10:136-*:*:all"]
+    status: shown
+    bundle: nfhs-child
+    plate: "Plate 2: child survival and nutrition"
+  - match: ["nfhs:8:*:*:all", "nfhs:9:*:*:all"]
+    status: shown
+    bundle: nfhs-maternal
+    plate: "Plate 3: where the births happen"
+  - match: ["nfhs:13:*:*:all", "nfhs:15:*:*:all", "nfhs:16:*:*:all", "nfhs:21:*:*:all"]
+    status: shown
+    bundle: nfhs-adult
+    plate: "Plate 4: the dual burden"
+  - match: ["nfhs:3:*:*:all", "nfhs:5:35-*:*:all", "nfhs:19:*:*:all", "nfhs:20:*:*:all"]
+    status: shown
+    bundle: nfhs-fertility
+    plate: "Plate 5: fertility, empowerment, safety"
+  - match: "nfhs:1:*:*:all"
+    status: shown
+    bundle: nfhs-household
+    plate: "Plate 6: the household backdrop"
+  - match: ["nfhs:14:92-*:3-nfhs-5:state:*", "nfhs:12:81-*:3-nfhs-5:state:*", "nfhs:9:50-*:3-nfhs-5:state:*", "nfhs:4:26-*:3-nfhs-5:state:*"]
+    status: shown
+    bundle: nfhs-states
+    plate: "Plate 7: where anaemia is worst"

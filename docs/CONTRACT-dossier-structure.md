@@ -35,6 +35,20 @@ render-side companion to `CONTRACT-render.md` (mechanics) and the output of
    instrument, then the provenance footer: every number's path back to the
    source dump.
 
+## End matter
+
+After §7 every guide carries, in order: **Every series, every cut**
+(`src/components/EveryCut.astro`), then **Data and downloads**
+(`src/components/GuideData.astro`). The every-cut table lists every series of every
+bundle in the guide's registry entry, built at render time from the baked bundles: label,
+cut, latest value with its period, change on a year earlier (points for rates and shares,
+per cent for levels, a dash where the frequency or the sign makes it meaningless), a
+sparkline and the bundle's CSV. It is how §6's "the tail is summarized even when not
+plotted" reaches the finest cut: a reader can find any state, item or sector the guide
+baked. Bundles longer than 150 series get their own sortable page
+(`/guides/<slug>/every-cut/<bundle>/`, split at 1,000 rows, groups kept whole), linked
+from the guide. `scripts/qc.mjs` fails a guide whose table does not list every series.
+
 ## Binding rules
 
 - Every section declares its data inputs (bundles + series keys from the

@@ -1,0 +1,38 @@
+# Coverage ledger: bank deposits, RBI BSR-2 (docs/CONTRACT-coverage.md).
+# Catalogue: node scripts/lib/products/bsr2.mjs --catalogue. Omissions left for the
+# coordinator (and atlas-credit, which builds money and credit): deposits of government,
+# corporations, financial firms and non-residents one by one (today only summed into "all
+# depositors"); the finer household split (unincorporated enterprises, NPISH, SHGs); the
+# "others" ownership category and account counts by band in tables 3.4 to 3.6; and every
+# BSR-2 table not read: state, district, bank group and metropolitan tables, age of
+# depositors, district by gender, and the whole quarterly BSR-2.
+family: deposits
+guides: [deposits]
+catalogue: data/coverage/deposits.catalogue.json
+rules:
+  - match: ["bsr2:737:71:*", "bsr2:737:72:*", "bsr2:737:73:*"]
+    status: shown
+    bundle: deposits-owners
+    plate: "The current reading; Savings accounts and fixed deposits"
+  - match: ["bsr2:737:37:*", "bsr2:737:53:*"]
+    status: shown
+    bundle: deposits-owners-2005
+    plate: "Savings accounts and fixed deposits (the old classification, to 2018)"
+  - match: ["bsr2:847:4-household-sector:*", "bsr2:847:4.1.1-of-which-female:*", "bsr2:847:all-india:*"]
+    status: shown
+    bundle: deposits-population
+    plate: "Where, and whose"
+  - match: ["bsr2:865:*:individuals:amount", "bsr2:865:*:total:amount", "bsr2:865:total:individuals:accounts", "bsr2:865:total:total:accounts"]
+    status: shown
+    bundle: deposits-term-rates
+    plate: "At what interest rate"
+  - match: ["bsr2:864:*:individuals:amount", "bsr2:864:*:total:amount", "bsr2:864:grand-total:individuals:accounts", "bsr2:864:grand-total:total:accounts"]
+    status: shown
+    bundle: deposits-term-maturity
+    plate: "For how long, and in what size"
+  # the size bands were redrawn in 2026: the latest year's fine bands are drawn, the coarse
+  # bands that run through every year are baked
+  - match: ["bsr2:866:*:individuals:amount", "bsr2:866:*:total:amount"]
+    status: shown
+    bundle: [deposits-term-size-2026, deposits-term-size]
+    plate: "For how long, and in what size"

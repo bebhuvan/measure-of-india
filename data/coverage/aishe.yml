@@ -1,0 +1,36 @@
+# Coverage ledger: All India Survey on Higher Education (docs/CONTRACT-coverage.md).
+# Catalogue: node scripts/lib/products/aishe.mjs --catalogue. Rounds 2017-18 to 2021-22
+# sit inside every item. Omissions left for the coordinator: universities, colleges,
+# teachers, social-group and minority enrolment and PTR by state; social-group and minority
+# enrolment by gender alone; teachers by gender alone; PTR by institution type and mode.
+family: aishe
+guides: [aishe]
+catalogue: data/coverage/aishe.catalogue.json
+rules:
+  - match: ["aishe:1:all", "aishe:2:all", "aishe:3:all", "aishe:6:all", "aishe:7:all", "aishe:8:all", "aishe:9:all"]
+    status: shown
+    bundle: aishe-headline
+    plate: "Plate 1: five rounds of growth; Plate 8: the resource ratio"
+  - match: ["aishe:3:education-level:*", "aishe:4:all", "aishe:4:social-category:*"]
+    status: shown
+    bundle: aishe-composition
+    plate: "What they study, who they are; Plate 5: what they study, in motion"
+  - match: ["aishe:3:gender:*", "aishe:6:gender:*", "aishe:6:social-category:*", "aishe:7:social-category:*"]
+    status: shown
+    bundle: aishe-access
+    plate: "Plate 2: the access gap; Plate 3: parity, in raw rates"
+  - match: "aishe:5:social-group:*"
+    status: shown
+    bundle: aishe-minority
+    plate: "Plate 7: who else reaches college"
+  - match: ["aishe:9:faculty-type:6-visiting-teacher", "aishe:9:faculty-type:7-all-teacher"]
+    status: excluded
+    reason: "The source's 2021-22 All Teacher row is a near-zero residual and its Visiting Teacher row carries the real total, so neither can be read as published; the total is rebuilt from the five regular faculty types."
+  - match: "aishe:9:faculty-type:*"
+    status: shown
+    bundle: aishe-teachers
+    plate: "Plate 6: who teaches"
+  - match: ["aishe:3:state:*", "aishe:6:state:*", "aishe:7:state:*"]
+    status: shown
+    bundle: aishe-states
+    plate: "Plate 4: where college reaches, where students are"

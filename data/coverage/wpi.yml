@@ -1,0 +1,40 @@
+# Coverage ledger: Wholesale Price Index, OEA (docs/CONTRACT-coverage.md).
+# Catalogue: node scripts/lib/products/wpi.mjs --catalogue. First matching rule wins.
+# Omissions left for the coordinator: the sub-sub-groups on both live bases (archived raw,
+# not baked) and the two old bases, 2004-05 and 1993-94, which the API still serves.
+family: wpi
+guides: [wpi]
+catalogue: data/coverage/wpi.catalogue.json
+rules:
+  # ---- base 2022-23, current
+  - match: "wpi:2022-23:major:*"
+    status: shown
+    bundle: wpi-2022
+    plate: "§01 The current reading; §02 The new base: two rulers through the overlap"
+  - match: "wpi:2022-23:group:*"
+    status: baked
+    bundle: wpi-2022-groups
+  - match: "wpi:2022-23:subgroup:*"
+    status: baked
+    bundle: wpi-2022-subgroups
+  - match: "wpi:2022-23:item:*"
+    status: baked
+    bundle: wpi-2022-items
+  # ---- base 2011-12, ended April 2026. The headline is computed from the three major
+  # groups with the official weights; the published headline is its cross-check.
+  - match: "wpi:2011-12:major:*"
+    status: shown
+    bundle: wpi
+    plate: "§05 Plate 1: the headline and its parts; §07 The parts, one plate each"
+  - match: "wpi:2011-12:group:*"
+    status: shown
+    bundle: wpi-groups
+    plate: "§08 The groups, one by one"
+  - match: "wpi:2011-12:subgroup:*"
+    status: shown
+    bundle: wpi-subgroups
+    plate: "§09 The long tail: 134 sub-groups"
+  - match: "wpi:2011-12:item:*"
+    status: shown
+    bundle: wpi-items
+    plate: "§10 The 697 items"

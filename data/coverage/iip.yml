@@ -1,0 +1,55 @@
+# Coverage ledger: Index of Industrial Production, MoSPI (docs/CONTRACT-coverage.md).
+# Catalogue: node scripts/lib/products/iip.mjs --catalogue. Every monthly category and
+# industry of every base is baked (counts checked against the listing: 11/32, 10/23, 9/22,
+# 9/17). Omission left for the coordinator: the annual (financial-year) series of all bases.
+family: iip
+guides: [iip]
+catalogue: data/coverage/iip.catalogue.json
+rules:
+  - match: "iip:2022-23:monthly:general"
+    status: shown
+    bundle: iip-2022
+    series: [general]
+    plate: "§01 The current reading; §03 Four ledgers, one index"
+  - match: ["iip:2022-23:monthly:sectoral:*", "iip:2022-23:monthly:use-based:*"]
+    status: shown
+    bundle: iip-2022
+    plate: "§05 Plate 1: the sectors; §07 The parts, one plate each"
+  - match: "iip:2022-23:monthly:industry:*"
+    status: shown
+    bundle: iip-industries-2022
+    plate: "§07 The current-base industry field"
+  - match: "iip:2011-12:monthly:general"
+    status: shown
+    bundle: iip-2011
+    series: [general]
+    plate: "§03 Four ledgers, one index (two bases)"
+  - match: ["iip:2011-12:monthly:sectoral:*", "iip:2011-12:monthly:use-based:*"]
+    status: baked
+    bundle: iip-2011
+  - match: "iip:2011-12:monthly:industry:*"
+    status: shown
+    bundle: iip-industries-2011
+    plate: "§04 The long ledger: 23 industries"
+  - match: "iip:2004-05:monthly:general"
+    status: shown
+    bundle: iip-2004
+    series: [general]
+    plate: "§03 Four ledgers, one index (the deep ledger)"
+  - match: ["iip:2004-05:monthly:sectoral:*", "iip:2004-05:monthly:use-based:*"]
+    status: baked
+    bundle: iip-2004
+  - match: "iip:2004-05:monthly:industry:*"
+    status: baked
+    bundle: iip-industries-2004
+  - match: "iip:1993-94:monthly:general"
+    status: shown
+    bundle: iip-1993
+    series: [general]
+    plate: "§03 Four ledgers, one index (the deep ledger)"
+  - match: ["iip:1993-94:monthly:sectoral:*", "iip:1993-94:monthly:use-based:*"]
+    status: baked
+    bundle: iip-1993
+  - match: "iip:1993-94:monthly:industry:*"
+    status: baked
+    bundle: iip-industries-1993

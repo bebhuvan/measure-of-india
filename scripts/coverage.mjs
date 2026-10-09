@@ -75,7 +75,22 @@ for (const file of ledgers) {
     r.hits++;
     if (tally[r.status] != null) tally[r.status]++;
   }
-  if (undecided.length) fail(`${where}: ${undecided.length} catalogue item(s) undecided, e.g. ${undecided.slice(0, 5).join(", ")}`);
+  if (undecided.length) {
+    fail(`${where}: ${undecided.length} catalogue item(s) undecided, e.g. ${undecided.slice(0, 5).join(", ")}`);
+    // --list: the undecided items as a few globs. Within each branch (first two id parts),
+    // any position taking more than six values (states, codes, items) is folded to *.
+    if (process.argv.includes("--list")) {
+      const byHead = new Map();
+      for (const id of undecided) { const p = id.split(":"), h = p.slice(0, 2).join(":"); if (!byHead.has(h)) byHead.set(h, []); byHead.get(h).push(p); }
+      const g = new Map();
+      for (const parts of byHead.values()) {
+        const card = [];
+        for (const p of parts) p.forEach((v, i) => (card[i] ??= new Set()).add(v));
+        for (const p of parts) { const k = p.map((v, i) => (i >= 2 && card[i].size > 6 ? "*" : v)).join(":"); g.set(k, (g.get(k) ?? 0) + 1); }
+      }
+      for (const [k, n] of [...g].sort()) console.error(`    ${String(n).padStart(6)}  ${k}`);
+    }
+  }
   for (const r of rules) if (!r.hits) fail(`${where} rule ${r.i + 1} (${asList(r.match).join(", ")}): matches no catalogue item (stale)`);
   ok(`${L.family || file}: ${items.length} items — ${tally.shown} shown, ${tally.baked} baked, ${tally.excluded} excluded, ${tally.blocked} blocked`);
 }

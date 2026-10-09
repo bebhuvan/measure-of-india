@@ -575,3 +575,48 @@ const ALL_DIMS_EDU = (r) =>
   (r.religion ?? "all") === "all" && (r.socialGroup ?? "all") === "all" &&
   (r.employee_contract ?? "all") === "all" && (r.quarter ?? "all") === "all" &&
   r.state === "All India" && r.gender === "person" && r.sector === "rural + urban";
+
+/* Catalogue (docs/CONTRACT-coverage.md): what MoSPI publishes from the PLFS, from
+ * plfs/getFrequency, plfs/getIndicatorListByFrequency and plfs/getFilterByIndicatorId.
+ * One item per indicator x weekly status (CWS or PS+SS, different measures) x one cut, the
+ * other dimensions at their headline (All India, person, rural + urban, 15 years and above):
+ *   plfs:<monthly|quarterly|annual-agri|annual-calendar>:<indicator>:<cws|ps-ss>:all
+ *   ...:gs:<gender>-<sector>     the gender x sector grid (the bulletins' own cut)
+ *   ...:state:<state>   ...:age:<band>   ...:<dimension>:<value>   every other listed cut */
+import { writeCatalogue, idPart, catalogueCli } from "../catalogue.mjs";
+export async function cataloguePlfs() {
+  const items = [];
+  const freqs = (await mospi("plfs/getFrequency", {})).data ?? [];
+  const SKIP = new Set(["year", "year_type", "quarter", "month", "weekly_status", "gender", "sector"]);
+  const DEFAULT = /^(all|all india|15 years and above|person|rural \+ urban)$/i;
+  for (const fr of freqs) {
+    const freq = { 1: "annual", 2: "quarterly", 3: "monthly" }[fr.frequency_code];
+    const inds = (await mospi("plfs/getIndicatorListByFrequency", { frequency_code: fr.frequency_code })).data ?? [];
+    for (const ind of inds) {
+      const f = (await mospi("plfs/getFilterByIndicatorId", { indicator_code: ind.indicator_code, frequency_code: fr.frequency_code })).data ?? {};
+      const yts = freq === "annual" ? (f.year_type ?? []).map((y) => (y.year_type_code === 2 ? "annual-calendar" : "annual-agri")) : [freq];
+      const wss = (f.weekly_status ?? [{ description: "CWS" }]).map((w) => idPart(w.description.replace("+", "-")));
+      const genders = (f.gender ?? []).map((g) => idPart(g.description)), sectors = (f.sector ?? []).map((s) => idPart(s.description.replace("+", "plus")));
+      for (const yt of yts) for (const ws of wss) {
+        const head = `plfs:${yt}:${ind.indicator_code}:${ws}`;
+        items.push({ id: `${head}:all`, label: `${ind.description}, ${ws.toUpperCase()}` });
+        for (const g of genders) for (const s of sectors) if (!(g === "person" && s === "rural-plus-urban")) items.push({ id: `${head}:gs:${g}-${s}` });
+        for (const [dim, vals] of Object.entries(f)) {
+          if (SKIP.has(dim) || !Array.isArray(vals)) continue;
+          for (const v of vals) {
+            const name = v.description ?? v[Object.keys(v).find((k) => /name$/.test(k))];
+            if (DEFAULT.test(String(name).trim())) continue;
+            items.push({ id: `${head}:${idPart(dim)}:${idPart(name)}` });
+          }
+        }
+      }
+    }
+  }
+  writeCatalogue("plfs", {
+    source: "MoSPI, NSO: Periodic Labour Force Survey (eSankhyiki API)",
+    generator: "scripts/lib/products/plfs.mjs --catalogue",
+    note: "From getFrequency, getIndicatorListByFrequency and getFilterByIndicatorId. One cut at a time over the headline (All India, person, rural + urban, 15+), plus the gender x sector grid. The listing offers every weekly status and year type for every indicator; not every pair is served.",
+    items,
+  });
+}
+await catalogueCli(import.meta.url, cataloguePlfs);

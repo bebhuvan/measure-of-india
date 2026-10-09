@@ -1,0 +1,25 @@
+# Coverage ledger: Manufacturing in the World Bank's WDI (docs/CONTRACT-coverage.md).
+# Catalogue: node scripts/lib/products/worldbank-wdi.mjs --catalogue. Omissions left for the
+# coordinator: value added in current US$, current and constant rupees; industry value added
+# beyond its share of GDP; industry value added per worker; manufactures' share of imports.
+# Note: this guide has no data/sources.yml entry, so `npm run data` does not refresh it.
+family: manufacturing
+guides: [manufacturing]
+catalogue: data/coverage/manufacturing.catalogue.json
+rules:
+  - match: ["wdi:ind:nv.ind.manf.zs", "wdi:ind:nv.ind.totl.zs", "wdi:ind:nv.ind.manf.kd", "wdi:ind:nv.ind.manf.kd.zg"]
+    status: shown
+    bundle: wdi-manufacturing
+    plate: "Plate 1: the share that never took off; Plate 2: the level that multiplied forty-four-fold; Plate 3: sixty-five years of factory weather"
+  - match: ["wdi:ind:nv.mnf.mtrn.zs.un", "wdi:ind:nv.mnf.chem.zs.un", "wdi:ind:nv.mnf.fbto.zs.un", "wdi:ind:nv.mnf.txtl.zs.un", "wdi:ind:nv.mnf.othr.zs.un"]
+    status: shown
+    bundle: wdi-manufacturing-composition
+    plate: "Plate 4: from textiles to machinery"
+  - match: "wdi:ind:nv.mnf.tech.zs.un"
+    status: shown
+    bundle: wdi-manufacturing-tech
+    plate: "Plate 6: the slow climb up the technology ladder"
+  - match: "wdi:ind:tx.val.manf.zs.un"
+    status: shown
+    bundle: wdi-manufacturing-exports
+    plate: "Plate 5: what the export ledger says"
