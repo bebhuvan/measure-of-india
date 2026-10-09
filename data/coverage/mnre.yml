@@ -1,0 +1,34 @@
+# Coverage ledger: renewable installed capacity, MNRE (docs/CONTRACT-coverage.md).
+# Catalogue: node scripts/lib/products/mnre.mjs --catalogue. Omissions left for the
+# coordinator: wind, hydro and bio capacity by state, and the bio-power categories
+# (bagasse cogeneration, non-bagasse, waste to energy on and off grid).
+family: mnre
+guides: [mnre]
+catalogue: data/coverage/mnre.catalogue.json
+rules:
+  - match: ["mnre:1:all", "mnre:1:category:5-*", "mnre:2:all", "mnre:3:all", "mnre:3:category:*", "mnre:4:all", "mnre:4:category:15-*", "mnre:5:all"]
+    status: shown
+    bundle: mnre-sources
+    plate: "Plate 1: the buildout; Plate 2: the four sources"
+  - match: ["mnre:1:category:1-*", "mnre:1:category:2-*", "mnre:1:category:3-*", "mnre:1:category:4-*"]
+    status: shown
+    bundle: mnre-solar-categories
+    plate: "Plate 3: ground vs rooftop"
+  - match: "mnre:5:state:*"
+    status: shown
+    bundle: mnre-states
+    plate: "Plate 4: the geography of the buildout"
+  - match: "mnre:1:state:*"
+    status: shown
+    bundle: mnre-states-solar
+    plate: "Plate 4: the geography of the buildout (solar)"
+
+  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
+  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
+  - match:
+      - "mnre:2:state:*"
+      - "mnre:3:state:*"
+      - "mnre:4:category:*"
+      - "mnre:4:state:*"
+    status: pending
+    scheduled: "wave 2: renewable energy fuller"

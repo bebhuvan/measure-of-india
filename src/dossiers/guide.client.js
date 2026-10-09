@@ -7,7 +7,7 @@
 
 /* ---------- on this page ---------- */
 const tb = document.querySelector(".titleblock");
-const heads = [...document.querySelectorAll("section > .sec-head h2")];
+const heads = [...document.querySelectorAll("section > .sec-head h2, section.everycut > .em-head h2")];
 if (tb && heads.length > 2) {
   const slug = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48);
   const used = new Set();

@@ -149,7 +149,7 @@ Two discrepancies to settle before building:
   2026-27; today's MCP metadata shows Q1 to Q4 of 2025-26 on the 2022-23 base. Not
   checked further.
 
-**Proposal: make seams a registry, not a case-by-case fix.** *Points 1 and 4 built 2026-10-09 (`seams:` in `sources.yml`, enforced by `validate.mjs`); the shared chart treatment (point 3) is still to do.*
+**Proposal: make seams a registry, not a case-by-case fix.** *Points 1 and 4 built 2026-10-09 (`seams:` in `sources.yml`, enforced by `validate.mjs`); point 3 built 2026-10-09 on lb/framework (`seamMarks` in `plumbing.js`, the CPI, CPI-AL, WPI, IIP and GDP plates moved onto it; `ruler` on every facts-sheet number).*
 1. A `bases:` block per product in `data/sources.yml`: each base with its first and
    last period, the overlap window, and the official bridge if one exists (with its
    source URL). `validate.mjs` reads it and fails a bundle whose dates leave its base's

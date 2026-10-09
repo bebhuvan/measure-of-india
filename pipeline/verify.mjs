@@ -35,7 +35,8 @@ function walk(o) {
   if (o == null) return;
   if (typeof o === "number") return addNum(o);
   if (Array.isArray(o)) return o.forEach(walk);
-  if (typeof o === "object") return Object.values(o).forEach(walk);
+  // `ruler` names the base a number is on (facts.mjs rulerOf): structure, never a citable figure
+  if (typeof o === "object") return Object.entries(o).forEach(([k, v]) => { if (k !== "ruler") walk(v); });
   if (typeof o === "string") {
     // pull numbers out of strings like "0.66 pt below the 2% floor"
     for (const m of o.matchAll(/-?\d+\.\d+|-?\d+/g)) addNum(parseFloat(m[0]));
@@ -52,10 +53,11 @@ if (facts.peers) { walk(facts.peers.rankings); walk(facts.peers.china); walk(fac
 // them in the allowed set let a figure like "inflation climbed 358%"
 // (cpi-2024-items' seriesCount, echoed in its coverage note) trace cleanly.
 // Tail breadth counts (rising/falling/belowZero) are series counts too; only
-// the median is a price fact.
+// the median is a price fact. The base string ("2022-23=100") is a ruler's name: its
+// digits are not figures ("23%" must not trace to it).
 if (facts.proseInputs) {
   for (const pi of facts.proseInputs) {
-    const { seriesCount, coverage, tail, ...citable } = pi;
+    const { seriesCount, coverage, tail, base, ruler, ...citable } = pi;
     walk(citable);
     if (tail) walk({ median: tail.median });
   }
