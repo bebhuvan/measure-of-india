@@ -798,7 +798,9 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   // quarterly bulletin — counts published in hundreds ('00); a level, not a trend
   const qEst = UQ.establishments_00_all_activities;
   setTxt("q-now", croreN(last(qEst) * 100) + " crore");
-  setTxt("q-then", croreN(firstV(qEst) * 100) + " crore");
+  // the same quarter a year earlier (four quarters back on the bulletin's axis)
+  const qYear = qEst.data.at(-5)?.value;
+  if (qYear != null && document.getElementById("q-then")) setTxt("q-then", croreN(qYear * 100) + " crore");
 }
 
 /* ---------- § 07 signature plate : GVA per worker, one scale ---------- */

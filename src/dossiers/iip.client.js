@@ -21,7 +21,7 @@ import core04Bundle from "../../data/series/core-2004.json";
 import core11Bundle from "../../data/series/core-2011.json";
 import {
   MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend, seamMarks, seamOverlap,
-  peakOf, dodgeEndLabels, spark,
+  peakOf, dodgeEndLabels, spark, fmt,
 } from "../charts/plumbing.js";
 
 const S = hydrate(bundle);
@@ -270,7 +270,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
   // cannot address both — the tooltip would lie
 }
 
-const fS = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(2) + "%";   // signed with a true minus
+const fS = fmt.pct2Minus;   // signed with a true minus
 
 /* ---------- financial years on five rulers ---------- */
 {

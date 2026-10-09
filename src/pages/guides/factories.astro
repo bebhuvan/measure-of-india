@@ -30,6 +30,11 @@ const per = (x) => { const p = Math.round(x * 10); return p >= 1 ? `${["no", "on
 const lc = (t) => t.replace(/^Manufacture of /, "").toLowerCase();
 const fyWorkers = ua.series.workers_all.data.filter((v) => v != null).at(-1);
 const list3 = (rs) => rs.map((r) => `${lc(r.a)} (${(100 * r.sh).toFixed(100 * r.sh < 10 ? 1 : 0)}%)`).join(", ").replace(/, ([^,]*)$/, " and $1");
+// the quarterly bulletin: its latest quarter and the same quarter a year earlier
+import uq from "../../../data/series/asuse-quarterly.json";
+const Q3 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const qLab = (d) => `${Q3[+d.slice(5, 7) - 1]}–${Q3[+d.slice(5, 7) + 1]} ${d.slice(0, 4)}`;
+const qNow = qLab(uq.dates.at(-1)), qPrev = uq.dates.length > 4 ? qLab(uq.dates.at(-5)) : null, qFirst = qLab(uq.dates[0]);
 ---
 <Base
   title="Enterprises · India Atlas"
@@ -54,7 +59,7 @@ const list3 = (rs) => rs.map((r) => `${lc(r.a)} (${(100 * r.sh).toFixed(100 * r.
       <span>Instruments <b>ASI annual, ASUSE annual + quarterly</b></span>
       <span>Coverage <b>Registered factories, unincorporated establishments</b></span>
       <span>Latest ASI <b>2023-24</b></span>
-      <span>Latest ASUSE <b>2023-24, bulletin Jan–Mar 2026</b></span>
+      <span>Latest ASUSE <b>2023-24 and calendar 2025, bulletin {qNow}</b></span>
       <span>Rupees <b>Nominal, as published</b></span>
     </div>
     <div class="numbers">
@@ -425,7 +430,7 @@ const list3 = (rs) => rs.map((r) => `${lc(r.a)} (${(100 * r.sh).toFixed(100 * r.
     <div class="break basket" style="margin-top:36px">
       <div class="bar" id="bar-wrk"></div>
       <div class="labels" id="lab-wrk"></div>
-      <p class="note" id="note-q">A quarterly ASUSE bulletin began with Jan–Mar 2025. It is five quarters old: a reading of scale, not yet of trend: <b id="q-now">–</b> establishments counted in Jan–Mar 2026, against <b id="q-then">–</b> a year earlier. We read the level and wait.</p>
+      <p class="note" id="note-q">A quarterly ASUSE bulletin began with {qFirst}. It is {uq.dates.length} quarters old: a reading of scale, not yet of trend: <b id="q-now">–</b> establishments counted in {qNow}{qPrev ? <Fragment>, against <b id="q-then">–</b> in {qPrev}</Fragment> : ""}. We read the level and wait.</p>
     </div>
 
     <div class="break" style="margin-top:104px">
