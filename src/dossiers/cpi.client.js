@@ -73,6 +73,8 @@ const fmtDate = (d) => MN[d.getUTCMonth()] + " " + d.getUTCFullYear();
 // periods named in captions and descriptions come from the data, never typed in
 const MLONG = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const longDate = (d) => MLONG[d.getUTCMonth()] + " " + d.getUTCFullYear();
+const firstOf = (s) => s.data.find((d) => d.value != null);
+const lastOf = (s) => [...s.data].reverse().find((d) => d.value != null);
 const spanLong = (data) => longDate(data[0].date) + " to " + longDate(data.at(-1).date);
 
 /* ---------- drive every displayed number from the data ---------- */
@@ -1339,8 +1341,6 @@ const numWord = (n) => NUMW[n] ?? String(n);
  * Each basket's y/y is computed inside its own base (cpiiw-<base>.json). The rulers are
  * drawn side by side; a hairline marks where each new basket's first y/y begins. */
 const IW = { b1960: hydrate(iw60Bundle), b1982: hydrate(iw82Bundle), b2001: hydrate(iw01Bundle), b2016: hydrate(iw16Bundle) };
-const firstOf = (s) => s.data.find((d) => d.value != null);
-const lastOf = (s) => [...s.data].reverse().find((d) => d.value != null);
 {
   const COL = { b1960: "#C9CED6", b1982: "#A3A9B4", b2001: "#5F6675", b2016: "#2E4BD8" };
   const rulers = Object.entries(IW).map(([k, B]) => ({ ...B.general, key: k, color: COL[k], label: "Base " + k.slice(1), data: B.general.data.filter((d) => d.value != null) }));

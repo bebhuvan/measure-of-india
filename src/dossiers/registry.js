@@ -71,7 +71,7 @@ export const DOSSIERS = [
       { id: "cpi-2024-sector-levels", label: "Base 2024, rural and urban: groups, classes, sub-classes and items", match: ["cpi-2024-rural-", "cpi-2024-urban-"] },
       { id: "cpi-2024-states-deep", label: "Base 2024, every state by division and by group, combined, rural and urban", match: ["cpi-2024-states-divisions-", "cpi-2024-states-groups"] },
       { id: "cpi-2012-states-deep", label: "Base 2012, every state by group and by sub-group, combined, rural and urban", match: ["cpi-states-groups", "cpi-states-subgroups"] },
-      { id: "cpi-2012-early-states", label: "Base 2012, every state, 2012 to 2015 (2012 and 2013 on the NSO back series)", match: ["cpi-2012-early-states"] },
+      { id: "cpi-2012-early-by-state", label: "Base 2012, every state, 2012 to 2015 (2012 and 2013 on the NSO back series)", match: ["cpi-2012-early-states"] },
       { id: "cpiiw-centres", label: "CPI for industrial workers, by centre, three bases", match: ["cpiiw-centres-2001", "cpiiw-centres-1982"] },
       { id: "wages-rural-states", label: "Rural daily wages, every state by occupation, two occupation lists", match: ["wages-rural-states-"] },
       { id: "cpialrl-states-deep", label: "CPI-AL and CPI-RL, every state by group, two bases", match: ["cpialrl-states-groups-"] },

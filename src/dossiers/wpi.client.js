@@ -598,7 +598,11 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, fmtX, dlNa
       ...seamMarks("side", rulers, { solid: true }),
       Plot.text(rulers, { x: (r) => r.data[0].date, y: geo.d1 - 1, text: (r) => r.label, dx: 6, textAnchor: "start", fill: "#5F6675", fontSize: 12, fontFamily: mono }),
       Plot.dot([peak, trough], { x: "date", y: "value", fill: "#878D99", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([peak], { x: "date", y: "value", text: (d) => d.value.toFixed(1) + "%, " + fmtDate(d.date), dx: 10, textAnchor: "start", fill: "#5F6675", fontSize: 12, fontFamily: mono }),
+      // the peak's label sits on the side away from the nearest seam rule (labels are never struck by rules)
+      ...(() => { const seams = rulers.slice(1).map((r) => r.data[0].date.getTime()); const t = peak.date.getTime();
+        const right = seams.filter((x) => x > t).map((x) => x - t), left = seams.filter((x) => x <= t).map((x) => t - x);
+        const goLeft = Math.min(...right, Infinity) < Math.min(...left, Infinity);
+        return [Plot.text([peak], { x: "date", y: "value", text: (d) => d.value.toFixed(1) + "%, " + fmtDate(d.date), dx: goLeft ? -10 : 10, textAnchor: goLeft ? "end" : "start", fill: "#5F6675", fontSize: 12, fontFamily: mono })]; })(),
       Plot.text([trough], { x: "date", y: "value", text: (d) => d.value.toFixed(1) + "%, " + fmtDate(d.date), dy: 16, textAnchor: "middle", fill: "#5F6675", fontSize: 12, fontFamily: mono }),
       Plot.dot([end], { x: "date", y: "value", fill: "#2E4BD8", r: 4, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.text([end], { x: "date", y: "value", text: (d) => "Base 2022–23 " + d.value.toFixed(2) + "%", dx: 12, textAnchor: "start", fill: "#161A22", fontSize: 12.5, fontWeight: 500, fontFamily: mono }),
@@ -636,7 +640,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, fmtX, dlNa
   const vals = pts.flatMap((p) => [p.w, p.c]);
   const lo = Math.floor(Math.min(...vals) / 2) * 2, hi = Math.ceil(Math.max(...vals) / 2) * 2;
   const yTicks = []; for (let t = lo; t <= hi; t += 2) yTicks.push(t);
-  const geo = { W: 1184, H: 480, ml: 70, mr: 170, mt: 30, mb: 48, d0: lo - 0.5, d1: hi + 0.5 };
+  const geo = { W: 1184, H: 480, ml: 70, mr: 210, mt: 30, mb: 48, d0: lo - 0.5, d1: hi + 0.5 };
   const xTicks = []; for (let y = pts[0].date.getUTCFullYear(); y <= pts.at(-1).date.getUTCFullYear(); y += 2) xTicks.push(new Date(Date.UTC(y, 0, 1)));
   const MLONG = ["January","February","March","April","May","June","July","August","September","October","November","December"];
   const plot = multiLine("cb-w2r", "plot-w2r", ["wpi", "cpi"], V, geo, yTicks, xTicks, (d) => String(d.getUTCFullYear()),
