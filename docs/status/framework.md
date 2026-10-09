@@ -207,3 +207,31 @@ fails on the omissions above, by design.
 - `cpialrl-states-2019` is baked but not in the cpi registry `bundles`, so no page shows it.
 - Several state labels are lower case from the source (`plfs-states`, `cpi-states`:
   "andaman nicobar islands", "West bengal").
+
+# Round 2 (2026-10-09, after merging launch-build: 23 guides)
+
+## 1. verify.mjs traces every figure (hard rule 3)
+
+- `pipeline/lib/figures.mjs` extracts every numeric token (Indian and Western grouping) with
+  the word after it: lakh, crore, lakh crore, thousand, million, billion, trillion, bn, mn,
+  %, pt, bps, °C, mm, times or x, GW, TWh, years. Not figures, masked first: fiscal years
+  (2025-26), Q1 FY27, the day of a date, base strings (2024=100), codes (HS 03, NIC 01-03,
+  Table 2.11), digit ordinals, and rate denominators ("per 1,00,000" is the unit). Bare
+  years still go through the old year pass.
+- Allowed set: every facts number at 0, 1 and 2 dp (half-up as well as the float's own
+  rounding, so 13.85 reads 13.9), absolute values, 3 dp below 1. Restating at another scale
+  goes only through the series' own unit (`UNIT_SCALE`: usd_million x1e6, inr_crore x1e7,
+  thousand x1e3 ...), so 437,000 US$ million traces as "$437 billion" and fails as "$437
+  million". A key that names its scale (`peak_bn`, a whole `bn:` section) fixes the scale
+  of everything under it. Base values round to the thousand or lakh a sentence writes
+  ("about 979,000" from 979.179 thousand). Breadth counts (series counts, rising/falling)
+  trace only as counts, never as rates, which keeps the old "358%" guard.
+- All 34 prose files: 435 figures traced; one real failure (below). Mutation checks: a
+  wrong scale, an invented amount, a shifted decimal, a changed count and a count turned
+  into a percent all fail. Tests in `test/figures.test.mjs`.
+- **Real untraced figure, for regeneration:** `pipeline/out/prose-consumption.current-reading.what-the-print-says.md`:
+  "The urban-rural gap held at roughly 1.7 times" (6,996 / 4,122, a ratio the writer
+  computed; it is not in the facts sheet). Either regenerate, or add the urban-to-rural
+  MPCE ratio to the consumption facts sheet.
+- Adding a unit: a family whose bundles use a new money or count unit adds it to
+  `UNIT_SCALE` in `pipeline/lib/figures.mjs`; until then its numbers trace only as written.
