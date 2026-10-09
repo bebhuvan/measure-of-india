@@ -109,4 +109,21 @@ export const SERIES_KWS = {
     ["middle state", "median_current"], ["median", "median_current"],
     ["real growth", "median_real_growth"], ["grew", "median_real_growth"], ["growth", "median_real_growth"],
   ],
+  // worldbank family (2026-10-09)
+  poverty: [
+    ["3\\.00", "headcount_3_00"], ["extreme poverty", "headcount_3_00"], ["4\\.20", "headcount_4_20"], ["8\\.30", "headcount_8_30"],
+    ["poverty gap", "poverty_gap_3_00"], ["severity", "poverty_severity_3_00"],
+    ["gini", "gini"], ["median", "median"], ["mean", "mean"], ["average", "mean"],
+    ["richest tenth", "decile10"], ["top tenth", "decile10"], ["poorest tenth", "decile1"], ["bottom tenth", "decile1"],
+    ["societal", "spr"], ["prosperity gap", "pg"],
+  ],
+  population: [
+    ["fertility", "tfr"], ["children per woman", "tfr"],
+    ["median age", "medianagepop"], ["life expectancy", "lex"],
+    ["births", "births"], ["deaths", "deaths"], ["infant", "imr"],
+    ["migration", "netmigrations"], ["density", "popdensity"], ["sex ratio at birth", "srb"],
+    ["growth rate", "popgrowthrate"], ["grew", "popgrowthrate"],
+    ["billion", "population_billion"], ["crore", "population_crore"],
+    ["population", "tpopulation1july"], ["people", "tpopulation1july"],
+  ],
 };

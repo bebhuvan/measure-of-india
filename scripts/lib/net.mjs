@@ -132,3 +132,52 @@ export function getJson(url, opts = {}) {
 export function getText(url, opts = {}) {
   return get(url, opts, true);
 }
+
+// ---------------------------------------------------------------------------
+// getBuffer: binary bodies (gzip CSV dumps such as UN WPP), with the same
+// deadline, size cap, redirect and retry/throttle discipline as getJson.
+// Added 2026-10-09 by the worldbank family session (UN WPP adapter); kept as a
+// separate self-contained function so the text path above is untouched.
+function bufferOnce(url, { timeoutMs = 60_000, deadlineMs = 600_000, maxBytes = 256 * 1024 * 1024, redirectsLeft = 3 } = {}) {
+  return new Promise((resolve, reject) => {
+    const started = Date.now();
+    const chunks = [];
+    let bytes = 0, settled = false;
+    const finish = (fn, arg) => { if (!settled) { settled = true; req.destroy(); fn(arg); } };
+    const req = (url.startsWith("http:") ? http : https).get(url, { agent: agentFor(url) }, (res) => {
+      if (REDIRECT_STATUS.has(res.statusCode) && res.headers.location && redirectsLeft > 0) {
+        return finish(resolve, bufferOnce(new URL(res.headers.location, url).toString(), { timeoutMs, deadlineMs, maxBytes, redirectsLeft: redirectsLeft - 1 }));
+      }
+      res.on("data", (c) => {
+        chunks.push(c);
+        bytes += c.length;
+        if (bytes > maxBytes) finish(reject, Object.assign(new Error(`Response exceeds ${maxBytes} bytes for ${url}`), { fatal: true }));
+        if (Date.now() - started > deadlineMs) finish(reject, new Error(`Total deadline (${deadlineMs}ms) exceeded for ${url}`));
+      });
+      res.on("end", () => {
+        const status = res.statusCode;
+        if (status === 429 || status >= 500) return finish(reject, Object.assign(new Error(`HTTP ${status} for ${url}`), { throttled: true, retryAfter: Number(res.headers["retry-after"]) || null }));
+        if (status !== 200) return finish(reject, Object.assign(new Error(`HTTP ${status} for ${url}`), { fatal: status >= 400 && status < 500 }));
+        finish(resolve, Buffer.concat(chunks));
+      });
+    });
+    req.setTimeout(timeoutMs, () => finish(reject, new Error(`Idle timeout (${timeoutMs}ms) for ${url}`)));
+    setTimeout(() => finish(reject, new Error(`Total deadline (${deadlineMs}ms) exceeded for ${url}`)), deadlineMs).unref?.();
+    req.on("error", (e) => finish(reject, e));
+  });
+}
+
+export async function getBuffer(url, opts = {}) {
+  const { retries = 4, onRetry } = opts;
+  let lastErr;
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try { return await bufferOnce(url, opts); } catch (err) {
+      lastErr = err;
+      if (err.fatal || attempt === retries) break;
+      const delay = err.retryAfter ? err.retryAfter * 1000 : Math.min((err.throttled ? 8000 * 2 ** (attempt - 1) : 1500 * attempt), 120_000);
+      onRetry?.(attempt, delay, err);
+      await new Promise((r) => setTimeout(r, delay));
+    }
+  }
+  throw lastErr;
+}

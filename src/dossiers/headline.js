@@ -43,6 +43,9 @@ export const HEADLINE = {
   services:      { value: (b) => `${last(b, "services").toFixed(1)}%`, what: "services' share of gross value added", period: fy },
   // states: the richest state's income per person as a multiple of the poorest's (fixed panel)
   states:        { value: (b) => `${last(b, "gap_current").toFixed(1)} times`, what: "income per person, richest state against poorest", period: fy },
+  // worldbank family (2026-10-09)
+  poverty:       { value: (b) => `${last(b, "headcount_3_00").toFixed(1)}%`, what: "of Indians below $3.00 a day (2021 PPP)", period: (b) => `HCES ${lastDate(b).slice(0, 4)}-${String(+lastDate(b).slice(0, 4) + 1).slice(2)}` },
+  population:    { value: (b) => `${(last(b, "tpopulation1july") / 1e6).toFixed(3)} billion`, what: "people in India, UN estimate", period: (b) => lastDate(b).slice(0, 4) },
 };
 
 // The small chart beside each guide's figure: always on the current ruler, so a chart never
@@ -69,6 +72,9 @@ export const SPARK = {
   // services
   services:      { bundle: "services-gva-2022-share", series: "services" },
   states:        { bundle: "states-spread", series: "gap_current" },
+  // worldbank family (2026-10-09): the lineup (model estimates) gives the poverty spark a shape; surveys alone are 2 points
+  poverty:       { bundle: "poverty-pip-lineup", series: "headcount_3_00" },
+  population:    { bundle: "population-wpp", series: "tpopulation1july" },
 };
 
 const cache = {};

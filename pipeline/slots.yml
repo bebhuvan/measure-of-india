@@ -301,3 +301,57 @@ states:
       between richest and poorest can widen while the multiple narrows. Cite only the
       multiple; the other column carries the numbers. Do not mention growth. Use
       "they", never "he". Must contain a plain "we do not know".
+
+# --- worldbank family (2026-10-09): poverty (World Bank PIP) and population (UN WPP 2024) ---
+poverty:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [headcount_3_00.latest, headcount_4_20.latest, headcount_8_30.latest, gini.latest]
+    minSeriesMentioned: 4        # the three lines and one distribution measure
+    bannedWords: []
+    brief: >
+      Two short paragraphs on the latest survey (HCES 2023-24, PIP reporting year 2023) against
+      the one before it in the same comparable spell (HCES 2022-23, reporting year 2022): the
+      share of Indians below $3.00, $4.20 and $8.30 a day (2021 PPP), and the number of people
+      below $3.00. Say plainly how much the answer depends on the line. Then one distribution
+      fact: the Gini or the share of the richest and poorest tenths. Call the rounds 2022-23 and
+      2023-24. The facts cover only this survey design; give no figure for earlier surveys.
+      Write for a reader: never mention "the sheet", rankings or series names.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [headcount_3_00.latest]
+    brief: >
+      The honest limits: the lines are the World Bank's international lines, not an Indian
+      official line (India has none since 2011-12); consumption per person is not income or
+      wealth, and the survey misses the very rich; the redesigned HCES is not comparable with
+      2011-12, so part of the fall between them is the new questionnaire; the years between
+      surveys are World Bank model estimates. PIP publishes no rural or urban split for India.
+      Must contain a plain "we do not know".
+
+population:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [population_billion.latest, tfr.latest, medianagepop.latest, lex.latest]
+    minSeriesMentioned: 5        # population, fertility, age, life expectancy, and births or deaths
+    bannedWords: []
+    brief: >
+      Two short paragraphs on the UN's latest estimate year (WPP 2024, estimate for 2023): how
+      many Indians there are (cite population_billion or population_crore, never the thousands), how fast the
+      number grows, the fertility rate against replacement (2.1), the median age, life
+      expectancy, and births against deaths, and how long fertility has been falling. Say
+      nothing about projections: the facts hold estimates only, and the plates below carry the
+      UN's projections. Plain words, no jargon. Write for a reader: never mention "the sheet", rankings or series names.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [population_crore.latest]
+    brief: >
+      The honest limits of the estimate itself: India has not taken a census since 2011, so the
+      figure is the UN's model, built from that census, sample registration of births and
+      deaths, and surveys, and the next census will revise it; the UN re-estimates the whole
+      history every two years; a national figure hides large differences between states;
+      India's own official figures can differ. Do not discuss projections or forecasts. Plain,
+      literal sentences, no metaphors. Must contain a plain "we do not know".

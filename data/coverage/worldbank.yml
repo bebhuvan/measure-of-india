@@ -1,0 +1,127 @@
+# Coverage ledger: the World Bank's World Development Indicators for India (docs/CONTRACT-coverage.md).
+# Every WDI indicator with India data is baked into a topic bundle, downloadable at /data/<bundle>.
+# Population and poverty indicators are listed in full in those guides' "Every cut" tables; the
+# guides draw on the primary sources (UN WPP, PIP) and use WDI where it is the only source.
+# `note` names the guide that covers a topic from its primary source; WDI's copy is a cross-check.
+family: worldbank
+guides: []
+catalogue: data/coverage/worldbank.catalogue.json
+rules:
+  - match: "wdi:sp:urb:totl:in:zs"
+    status: shown
+    bundle: population-wdi-urban
+    plate: "§07 How fast cities grow: urban share"
+    series: [sp_urb_totl_in_zs]
+  - match: "wdi:sp:urb:grow"
+    status: shown
+    bundle: population-wdi-urban
+    plate: "§07 How fast cities grow: urban and rural growth"
+    series: [sp_urb_grow]
+  - match: "wdi:sp:rur:totl:zg"
+    status: shown
+    bundle: population-wdi-urban
+    plate: "§07 How fast cities grow: urban and rural growth"
+    series: [sp_rur_totl_zg]
+  - match: "wdi:si:pov:nahc"
+    status: shown
+    bundle: poverty-wdi
+    plate: "§07 Why the numbers differ"
+    series: [si_pov_nahc]
+  - match: "wdi:si:pov:mpwb"
+    status: shown
+    bundle: poverty-wdi
+    plate: "§07 Why the numbers differ"
+    series: [si_pov_mpwb]
+  - match: "wdi:si:pov:mpun"
+    status: shown
+    bundle: poverty-wdi
+    plate: "§07 Why the numbers differ"
+    series: [si_pov_mpun]
+  - match: ["wdi:sp:pop:*"]
+    status: baked
+    bundle: population-wdi
+    note: "Listed in the population guide's Every cut table; plates draw from UN WPP directly."
+  - match: ["wdi:sp:dyn:*", "wdi:sp:ado:*", "wdi:sp:reg:*", "wdi:sp:hou:*", "wdi:sp:m15:*", "wdi:sp:m18:*", "wdi:sp:mtr:*", "wdi:sp:uwt:*"]
+    status: baked
+    bundle: population-wdi-vital
+    note: "Listed in the population guide's Every cut table; plates draw from UN WPP directly."
+  - match: ["wdi:sp:urb:*", "wdi:sp:rur:*", "wdi:en:pop:*", "wdi:en:urb:*"]
+    status: baked
+    bundle: population-wdi-urban
+    note: "Listed in the population guide's Every cut table; plates draw from UN WPP directly."
+  - match: ["wdi:sm:pop:*"]
+    status: baked
+    bundle: population-wdi-migration
+    note: "Listed in the population guide's Every cut table; plates draw from UN WPP directly."
+  - match: ["wdi:si:rmt:*", "wdi:bx:*", "wdi:bm:*", "wdi:bn:*", "wdi:bg:*", "wdi:dt:*", "wdi:fi:res:*", "wdi:px:rex:*"]
+    status: baked
+    bundle: worldbank-external
+    note: "Covered by the external (RBI, balance of payments) guide from its primary source where one exists; this is WDI's copy, baked for completeness."
+  - match: ["wdi:si:*"]
+    status: baked
+    bundle: poverty-wdi
+    note: "Listed in the poverty guide's Every cut table; plates draw from PIP directly, one bundle per comparable spell."
+  - match: ["wdi:ny:*", "wdi:ne:*", "wdi:nv:*"]
+    status: baked
+    bundle: worldbank-national-accounts
+    note: "Covered by the gdp (MoSPI national accounts) and manufacturing (WDI) guide from its primary source where one exists; this is WDI's copy, baked for completeness."
+  - match: ["wdi:tx:*", "wdi:tm:*", "wdi:tg:*", "wdi:tt:*", "wdi:st:*"]
+    status: baked
+    bundle: worldbank-trade
+    note: "Covered by the external and trade (Ministry of Commerce) guide from its primary source where one exists; this is WDI's copy, baked for completeness."
+  - match: ["wdi:fp:*", "wdi:pa:*"]
+    status: baked
+    bundle: worldbank-prices
+    note: "Covered by the cpi and wpi (MoSPI, Office of the Economic Adviser) guide from its primary source where one exists; this is WDI's copy, baked for completeness."
+  - match: ["wdi:fb:*", "wdi:fd:*", "wdi:fm:*", "wdi:fr:*", "wdi:fs:*", "wdi:fx:*", "wdi:cm:*"]
+    status: baked
+    bundle: worldbank-finance
+    note: "Covered by the deposits and credit (RBI) guide from its primary source where one exists; this is WDI's copy, baked for completeness."
+  - match: ["wdi:gc:*", "wdi:gf:*", "wdi:gov_wgi_*", "wdi:iq:*", "wdi:ms:*", "wdi:vc:*"]
+    status: baked
+    bundle: worldbank-government
+    note: "No guide covers this topic yet; baked and downloadable."
+  - match: ["wdi:se:*", "wdi:hd_hcip_*"]
+    status: baked
+    bundle: worldbank-education
+    note: "Covered by the aishe (higher education); no school guide yet guide from its primary source where one exists; this is WDI's copy, baked for completeness."
+  - match: ["wdi:sh:*", "wdi:sh_uhc_*", "wdi:sn:*"]
+    status: baked
+    bundle: worldbank-health
+    note: "Covered by the nfhs (NFHS) guide from its primary source where one exists; this is WDI's copy, baked for completeness."
+  - match: ["wdi:sl:*"]
+    status: baked
+    bundle: worldbank-labour
+    note: "Covered by the jobs (PLFS) and the ILO session guide from its primary source where one exists; this is WDI's copy, baked for completeness."
+  - match: ["wdi:sg:*", "wdi:gd_wbl_*"]
+    status: baked
+    bundle: worldbank-gender
+    note: "Covered by the gender (MoSPI compendium) guide from its primary source where one exists; this is WDI's copy, baked for completeness."
+  - match: ["wdi:en:*", "wdi:er:*"]
+    status: baked
+    bundle: worldbank-environment
+    note: "Covered by the the climate session guide from its primary source where one exists; this is WDI's copy, baked for completeness."
+  - match: ["wdi:eg:*"]
+    status: baked
+    bundle: worldbank-energy
+    note: "Covered by the mnre and the climate session guide from its primary source where one exists; this is WDI's copy, baked for completeness."
+  - match: ["wdi:ag:*"]
+    status: baked
+    bundle: worldbank-agriculture
+    note: "No guide covers this topic yet; baked and downloadable."
+  - match: ["wdi:ic:*", "wdi:ie:*", "wdi:ip:*", "wdi:gb:*"]
+    status: baked
+    bundle: worldbank-business
+    note: "No guide covers this topic yet; baked and downloadable."
+  - match: ["wdi:is:*", "wdi:it:*", "wdi:lp:*"]
+    status: baked
+    bundle: worldbank-infrastructure
+    note: "No guide covers this topic yet; baked and downloadable."
+  - match: ["wdi:dc:*"]
+    status: baked
+    bundle: worldbank-aid
+    note: "No guide covers this topic yet; baked and downloadable."
+  - match: ["wdi:per_*"]
+    status: baked
+    bundle: worldbank-social-protection
+    note: "No guide covers this topic yet; baked and downloadable."

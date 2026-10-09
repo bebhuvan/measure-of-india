@@ -327,3 +327,28 @@ import statesSpreadBundle from "../../data/series/states-spread.json";
     ["Real GSDP growth, middle state", "IA-ST-GRW", "s-g3", SP.median_real_growth, true, "/guides/states/", null, (v) => v.toFixed(1) + "%"],
   ], 1, "spst", vt, "MoSPI regional accounts");
 }
+
+// worldbank family (2026-10-09): poverty (World Bank PIP) and population (UN WPP 2024)
+import povertyBundle from "../../data/series/poverty-pip-lineup.json";
+import popBundle from "../../data/series/population-wpp.json";
+import popAgeBundle from "../../data/series/population-wpp-age.json";
+{
+  // the lineup carries a value every year (World Bank model estimates); survey years live in the guide
+  const PV = hydrate(povertyBundle);
+  const p1 = (v) => v.toFixed(1) + "%";
+  const est = (s) => ({ ...s, data: s.data.filter((d) => d.value != null) });
+  render("reg-poverty", [
+    ["Below $3.00 a day (2021 PPP), World Bank estimate", "PIP-LU-300", "s-acc", est(PV.headcount_3_00), true, "/guides/poverty/", null, p1],
+    ["Below $4.20 a day (2021 PPP), World Bank estimate", "PIP-LU-420", "s-g1", est(PV.headcount_4_20), true, "/guides/poverty/", null, p1],
+    ["Below $8.30 a day (2021 PPP), World Bank estimate", "PIP-LU-830", "s-g2", est(PV.headcount_8_30), true, "/guides/poverty/", null, p1],
+  ], 1, "sppv", povertyBundle.meta.vintage, "World Bank PIP");
+  const PP = hydrate(popBundle), PA2 = hydrate(popAgeBundle);
+  const bnF = (v) => (v / 1e6).toFixed(3) + " bn";
+  render("reg-population", [
+    ["Population, 1 July", "WPP-POP", "s-acc", PP.tpopulation1july, false, "/guides/population/", null, bnF],
+    ["Median age, years", "WPP-MED", "s-g1", PP.medianagepop, false, "/guides/population/", null, (v) => v.toFixed(1)],
+    ["Total fertility rate", "WPP-TFR", "s-g2", PP.tfr, false, "/guides/population/", null, (v) => v.toFixed(2)],
+    ["Life expectancy at birth, years", "WPP-LEX", "s-g3", PP.lex, false, "/guides/population/", null, (v) => v.toFixed(1)],
+    ["Share aged 15 to 64", "WPP-WA", "s-g4", PA2.share_15_64, true, "/guides/population/", null, (v) => v.toFixed(1) + "%"],
+  ], 1, "sppo", popBundle.meta.vintage, "UN WPP 2024");
+}

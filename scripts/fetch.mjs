@@ -41,6 +41,10 @@ import { writeSeries } from "./lib/util.mjs";
 import { buildBis } from "./lib/products/bis.mjs";
 import { buildRbihpi } from "./lib/products/rbihpi.mjs";
 import { buildResidex } from "./lib/products/residex.mjs";
+// worldbank family (2026-10-09): the WDI catalogue, PIP poverty, UN WPP population
+import { buildWdiIndia } from "./lib/products/wdi-india.mjs";
+import { buildPip } from "./lib/products/pip.mjs";
+import { buildWpp } from "./lib/products/wpp.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
@@ -54,6 +58,7 @@ Object.assign(REGISTRY, { bis: buildBis, rbihpi: buildRbihpi, residex: buildResi
 Object.assign(REGISTRY, { "services-isp": buildServicesIsp, "services-nas": buildServicesNas, "services-trade": buildServicesTrade, "services-jobs": buildServicesJobs, "services-asuse": buildServicesAsuse });
 // states family session
 Object.assign(REGISTRY, { states: buildStates });
+Object.assign(REGISTRY, { "wdi-india": buildWdiIndia, pip: buildPip, wpp: buildWpp });   // worldbank family
 
 // One product's failure must not starve the rest: collect, continue, and
 // exit non-zero at the end so CI still fails on the summary.

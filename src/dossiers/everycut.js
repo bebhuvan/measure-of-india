@@ -109,6 +109,27 @@ export const UNITS = {
   km: { kind: "pct", fmt: (v) => grp(v) + " km" },
   per_100_people: { kind: "diff", fmt: (v) => grp(v, 1), note: "per 100 people" },
   usd: { kind: "pct", fmt: (v) => (Math.abs(v) >= 1e9 ? "$" + grp(v / 1e9, 2) + " bn" : "$" + grp(v / 1e6, 1) + " mn") },
+  // worldbank (2026-10-09): WDI unit classes (scripts/lib/products/wdi-india.mjs unitClass), UN WPP, PIP
+  pct_change: { kind: "pt", fmt: (v) => v.toFixed(1) + "%", note: "change" },
+  usd: { kind: "pct", fmt: (v) => (v < 0 ? MINUS : "") + "$" + (Math.abs(v) >= 1e9 ? grp(Math.abs(v) / 1e9, 1) + " bn" : Math.abs(v) >= 1e6 ? grp(Math.abs(v) / 1e6, 1) + " mn" : grp(Math.abs(v), 2)), note: "US$" },
+  lcu: { kind: "pct", fmt: (v) => (v < 0 ? MINUS : "") + "₹" + big(Math.abs(v), ""), note: "rupees" },
+  ppp_usd: { kind: "pct", fmt: (v) => (v < 0 ? MINUS : "") + "$" + (Math.abs(v) >= 1e9 ? grp(Math.abs(v) / 1e9, 1) + " bn" : grp(Math.abs(v), 2)), note: "PPP dollars" },
+  rate: { kind: "diff", fmt: (v) => grp(v, 1), note: "rate, per the unit in its name" },
+  level: { kind: "pct", fmt: (v) => (v < 0 ? MINUS : "") + big(Math.abs(v), "") },
+  billion: { kind: "pct", fmt: (v) => v.toFixed(3) + " billion" },
+  crore: { kind: "pct", fmt: (v) => grp(v, 2) + " crore" },
+  per_sq_km: { kind: "pct", fmt: (v) => grp(v, 1), note: "people per sq km" },
+  per_woman: { kind: "diff", fmt: (v) => v.toFixed(2), note: "per woman" },
+  per_100: { kind: "diff", fmt: (v) => grp(v, 1), note: "per 100 aged 15 to 64" },
+  doubling_years: { kind: "diff", fmt: (v) => grp(v, 1) + " yrs" },
+  males_per_100_females: { kind: "diff", fmt: (v) => v.toFixed(1), note: "males per 100 females" },
+  ppp_usd_day: { kind: "pct", fmt: (v) => "$" + v.toFixed(2), note: "a day, 2021 PPP" },
+  gini_index: { kind: "diff", fmt: (v) => v.toFixed(1), note: "Gini index, 0 to 100" },
+  coefficient: { kind: "diff", fmt: (v) => v.toFixed(4) },
+  multiple: { kind: "diff", fmt: (v) => v.toFixed(2), note: "times" },
+  inr_per_ppp_usd: { kind: "diff", fmt: (v) => "₹" + v.toFixed(2), note: "per 2021 PPP dollar" },
+  million_persons: { kind: "pct", fmt: (v) => grp(v, 1) + " million" },
+  inr_day: { kind: "pct", fmt: (v) => "₹" + v.toFixed(2), note: "a day" },
 };
 
 // series.unit, then what the series name says, then the bundle's meta.unit: a bundle-level
@@ -209,6 +230,13 @@ export const CUT_BY_BUNDLE = {
   "states-gsva-current": "State and industry", "states-gsva-constant": "State and industry", "states-nsva-current": "State and industry",
   "states-nsva-constant": "State and industry", "states-taxes-current": "State", "states-taxes-constant": "State",
   "states-growth-real": "State", "states-growth-nominal": "State", "states-finances": "State",
+  // worldbank (2026-10-09)
+  "population-wpp": "Indicator, estimate", "population-wpp-projection": "Indicator, projection",
+  "population-wpp-variants": "Indicator and variant", "population-wpp-age": "Age and sex", "population-wpp-age-projection": "Age and sex, projection",
+  "population-wdi": "Age and sex", "population-wdi-vital": "Indicator", "population-wdi-urban": "Urban or rural", "population-wdi-migration": "Indicator",
+  "poverty-pip-1977": "Measure and line", "poverty-pip-1983": "Measure and line", "poverty-pip-1987": "Measure and line",
+  "poverty-pip-1993": "Measure and line", "poverty-pip-2011": "Measure and line", "poverty-pip-2022": "Measure and line",
+  "poverty-pip-lineup": "Line", "poverty-wdi": "Measure",
 };
 // the fallback, by what a bundle's slug says it is
 export const CUT_RULES = [
@@ -244,6 +272,11 @@ function groupOf(s) {
 // survey rounds dated by one year on the axis, named as the source names them
 export const PERIOD_LABELS = {
   "nfhs-": { "2016-01-01": "NFHS-4, 2015-16", "2020-01-01": "NFHS-5, 2019-21" },
+  // worldbank (2026-10-09): PIP survey rounds, dated by reporting year
+  "poverty-pip-1977": { "1977-01-01": "NSS 1977-78" }, "poverty-pip-1983": { "1983-01-01": "NSS 1983" },
+  "poverty-pip-1987": { "1987-01-01": "NSS 1987-88" },
+  "poverty-pip-1993": { "1993-01-01": "NSS 1993-94", "2004-01-01": "NSS 2004-05", "2009-01-01": "NSS 2009-10" },
+  "poverty-pip-2011": { "2011-01-01": "NSS 2011-12" }, "poverty-pip-2022": { "2022-01-01": "HCES 2022-23", "2023-01-01": "HCES 2023-24" },
 };
 export function periodLabel(slug, bundle, iso) {
   for (const [pre, map] of Object.entries(PERIOD_LABELS)) if (slug.startsWith(pre) && map[iso]) return map[iso];
