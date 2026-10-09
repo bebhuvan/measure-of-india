@@ -7,7 +7,70 @@ guides: [ilo]
 catalogue: data/coverage/ilo.catalogue.json
 rules:
   # ---- drawn on the guide's plates (see each plate's figure id) ----
-  # (shown rules are inserted here)
+  - match: ["ilo:est:a:d2:eap_2wap_sex_age_rt:sex:age_ythadult"]
+    status: shown
+    bundle: [ilo-est-eap-2wap, ilo-est-projections]
+    plate: "How many Indians work, #cb-lfpr"
+  - match: ["ilo:plfs:a:d2:eap_dwap_sex_age_rt:sex:age_ythadult", "ilo:nss:a:d2:eap_dwap_sex_age_rt:sex:age_ythadult", "ilo:census:a:d2:eap_dwap_sex_age_rt:sex:age_ythadult"]
+    status: shown
+    bundle: [ilo-plfs-eap, ilo-nss-eap, ilo-census]
+    plate: "One question, five rulers, #cb-rulers"
+  - match: ["ilo:est:a:d2:une_2eap_sex_age_rt:sex:age_ythadult", "ilo:plfs:a:d2:une_deap_sex_age_rt:sex:age_ythadult", "ilo:nss:a:d2:une_deap_sex_age_rt:sex:age_ythadult"]
+    status: shown
+    bundle: [ilo-est-une-2eap, ilo-plfs-une, ilo-nss-une]
+    plate: "A model is not a measurement, #cb-unemp"
+  - match: ["ilo:plfs:a:d2:eap_dwap_sex_age_rt:sex:age_5yrbands"]
+    status: shown
+    bundle: [ilo-plfs-eap]
+    plate: "Why so few women are counted at work, #cb-women-age"
+  - match: ["ilo:plfs:a:d2:eap_dwap_sex_edu_rt:sex:edu_aggregate"]
+    status: shown
+    bundle: [ilo-plfs-eap]
+    plate: "Why so few women are counted at work, #cb-women-edu"
+  - match: ["ilo:plfs:a:d2:eap_dwap_sex_geo_rt:sex:geo_cov"]
+    status: shown
+    bundle: [ilo-plfs-eap]
+    plate: "Why so few women are counted at work, #cb-women-area"
+  - match: ["ilo:est:a:d1:eip_2eet_sex_rt:sex", "ilo:plfs:a:d1:sdg_0861_sex_rt:sex", "ilo:nss:a:d1:sdg_0861_sex_rt:sex"]
+    status: shown
+    bundle: [ilo-est-eip-2eet, ilo-plfs-sdg, ilo-nss-more]
+    plate: "Young people neither working nor studying, #cb-neet"
+  - match: ["ilo:est:a:d2:emp_2emp_sex_ste_nb:sex:ste_icse93"]
+    status: shown
+    bundle: [ilo-est-emp-2emp]
+    plate: "What kind of work, #cb-status"
+  - match: ["ilo:est:a:d2:emp_2emp_sex_eco_nb:sex:eco_sector"]
+    status: shown
+    bundle: [ilo-est-emp-2emp]
+    plate: "What kind of work, #cb-sector"
+  - match: ["ilo:plfs:a:d2:sdg_0831_sex_eco_rt:sex:eco_sector"]
+    status: shown
+    bundle: [ilo-plfs-sdg]
+    plate: "What kind of work, #cb-informal"
+  - match: ["ilo:est:a:d3:emp_2emp_sex_age_cla_nb:sex:age_ythadult:cla_ecocla"]
+    status: shown
+    bundle: [ilo-est-emp-2emp]
+    plate: "Working, and still poor, #cb-poverty"
+  - match: ["ilo:est:a:d0:lap_2gdp_noc_rt"]
+    status: shown
+    bundle: [ilo-est-lap-2gdp]
+    plate: "Working, and still poor, #cb-lshare"
+  - match: ["ilo:est:a:d1:how_2emp_sex_nb:sex"]
+    status: shown
+    bundle: [ilo-est-how-2emp]
+    plate: "Working, and still poor, #cb-hours"
+  - match: ["ilo:plfs:a:d2:ear_emta_sex_age_nb:sex:age_ythadult", "ilo:plfs:a:d1:ear_ggap_ocu_rt:ocu_skill"]
+    status: shown
+    bundle: [ilo-plfs-ear]
+    plate: "Working, and still poor, #cb-earn"
+  - match: ["ilo:est:a:d0:gdp_211p_noc_nb"]
+    status: shown
+    bundle: [ilo-est-gdp-211p]
+    plate: "India beside its neighbours, #cb-output"
+  - match: ["ilo:est:a:d1:lap_2lid_qtl_rt:dcl_decile"]
+    status: shown
+    bundle: [ilo-est-lap-2lid]
+    plate: "Working, and still poor, #cb-deciles"
 
   # ---- copies of other agencies' numbers: set aside ----
   - match: "ilo:*:*:*:cpi_*"
@@ -80,30 +143,18 @@ rules:
   - match: ["ilo:est:a:*:gdp_205u_noc_nb", "ilo:est:a:*:gdp_205u_noc_nb:*"]
     status: baked
     bundle: [ilo-est-gdp-205u, ilo-est-projections]
-  - match: ["ilo:est:a:*:gdp_211p_noc_nb", "ilo:est:a:*:gdp_211p_noc_nb:*"]
-    status: baked
-    bundle: [ilo-est-gdp-211p, ilo-est-projections]
   - match: ["ilo:est:a:*:gdp_2hrw_noc_nb", "ilo:est:a:*:gdp_2hrw_noc_nb:*"]
     status: baked
     bundle: [ilo-est-gdp-2hrw, ilo-est-projections]
   - match: ["ilo:est:a:*:gdp_2tot_noc_nb", "ilo:est:a:*:gdp_2tot_noc_nb:*"]
     status: baked
     bundle: [ilo-est-gdp-2tot, ilo-est-projections]
-  - match: ["ilo:est:a:*:how_2emp_sex_nb", "ilo:est:a:*:how_2emp_sex_nb:*"]
-    status: baked
-    bundle: [ilo-est-how-2emp, ilo-est-projections]
   - match: ["ilo:est:a:*:how_2tdp_sex_rt", "ilo:est:a:*:how_2tdp_sex_rt:*"]
     status: baked
     bundle: [ilo-est-how-2tdp, ilo-est-projections]
   - match: ["ilo:est:a:*:how_2tot_sex_nb", "ilo:est:a:*:how_2tot_sex_nb:*"]
     status: baked
     bundle: [ilo-est-how-2tot, ilo-est-projections]
-  - match: ["ilo:est:a:*:lap_2gdp_noc_rt", "ilo:est:a:*:lap_2gdp_noc_rt:*"]
-    status: baked
-    bundle: [ilo-est-lap-2gdp, ilo-est-projections]
-  - match: ["ilo:est:a:*:lap_2lid_qtl_rt", "ilo:est:a:*:lap_2lid_qtl_rt:*"]
-    status: baked
-    bundle: [ilo-est-lap-2lid, ilo-est-projections]
   - match: ["ilo:est:a:*:luu_2lu2_sex_age_rt", "ilo:est:a:*:luu_2lu2_sex_age_rt:*", "ilo:est:a:*:luu_2lu2_sex_rt", "ilo:est:a:*:luu_2lu2_sex_rt:*"]
     status: baked
     bundle: [ilo-est-luu-2lu2, ilo-est-projections]
@@ -128,9 +179,6 @@ rules:
   - match: ["ilo:est:a:*:sdg_b821_noc_rt", "ilo:est:a:*:sdg_b821_noc_rt:*"]
     status: baked
     bundle: [ilo-est-sdg-b821, ilo-est-projections]
-  - match: ["ilo:est:a:*:une_2eap_sex_age_rt", "ilo:est:a:*:une_2eap_sex_age_rt:*"]
-    status: baked
-    bundle: [ilo-est-une-2eap, ilo-est-projections]
   - match: ["ilo:est:a:*:une_2une_sex_age_nb", "ilo:est:a:*:une_2une_sex_age_nb:*"]
     status: baked
     bundle: [ilo-est-une-2une, ilo-est-projections]

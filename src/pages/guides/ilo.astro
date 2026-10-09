@@ -154,7 +154,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="plotzone"><div id="plot-lfpr" style="position:relative"><div class="cb-tip"></div></div></div>
           <div class="plotfoot">
-            <span class="src">Source: ILO, ILOSTAT, modelled estimates ({edition}), DF_EAP_2WAP_SEX_AGE_RT. Thirteenth ICLS definitions.</span>
+            <span class="src">Source: ILO, ILOSTAT, {edition}, DF_EAP_2WAP_SEX_AGE_RT. Thirteenth ICLS definitions.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -236,7 +236,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="plotzone"><div id="plot-unemp" style="position:relative"><div class="cb-tip"></div></div></div>
           <div class="plotfoot">
-            <span class="src">Source: ILO, ILOSTAT, modelled estimates ({edition}), DF_UNE_2EAP_SEX_AGE_RT, with the ILO's published lower and upper bounds; survey points from DF_UNE_DEAP_SEX_AGE_RT.</span>
+            <span class="src">Source: ILO, ILOSTAT, {edition}, DF_UNE_2EAP_SEX_AGE_RT, with the ILO's published lower and upper bounds; survey points from DF_UNE_DEAP_SEX_AGE_RT.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -248,7 +248,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="now">
             <span class="mk">As of {asOf.est}</span>
-            <p>The model holds unemployment at about <b id="ex-u-flat">–</b> through the 2000s, with a band of <b id="ex-u-band">–</b> in 2000. From <b id="ex-u-first">–</b> it follows the survey: <b id="ex-u-now">–</b> for everyone 15+ and <b id="ex-u-youth">–</b> for those aged 15 to 24 in {estYear}.</p>
+            <p>The model holds unemployment at about <b id="ex-u-flat">–</b> through the 2000s, with a band of <b id="ex-u-band">–</b> in 2000. The NSS rounds of those years, as the ILO itself processed them, measured between <b id="ex-u-nss">–</b>. From <b id="ex-u-first">–</b> it follows the survey: <b id="ex-u-now">–</b> for everyone 15+ and <b id="ex-u-youth">–</b> for those aged 15 to 24 in {estYear}.</p>
           </div>
         </div>
       </figure>
@@ -374,7 +374,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="plotzone"><div id="plot-neet" style="position:relative"><div class="cb-tip"></div></div></div>
           <div class="plotfoot">
-            <span class="src">Source: ILO, ILOSTAT, modelled estimates ({edition}), DF_EIP_2EET_SEX_RT; SDG indicator 8.6.1 from PLFS and NSS unit data, DF_SDG_0861_SEX_RT.</span>
+            <span class="src">Source: ILO, ILOSTAT, {edition}, DF_EIP_2EET_SEX_RT; SDG indicator 8.6.1 from PLFS and NSS unit data, DF_SDG_0861_SEX_RT.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -413,7 +413,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="plotzone"><div id="plot-status" style="position:relative"><div class="cb-tip"></div></div></div>
           <div class="plotfoot">
-            <span class="src">Source: ILO, ILOSTAT, modelled estimates ({edition}), DF_EMP_2EMP_SEX_STE_NB, ICSE-93. Shares computed from the ILO's counts.</span>
+            <span class="src">Source: ILO, ILOSTAT, {edition}, DF_EMP_2EMP_SEX_STE_NB, ICSE-93. Shares computed from the ILO's counts.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -446,7 +446,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="plotzone"><div id="plot-sector" style="position:relative"><div class="cb-tip"></div></div></div>
           <div class="plotfoot">
-            <span class="src">Source: ILO, ILOSTAT, modelled estimates ({edition}), DF_EMP_2EMP_SEX_ECO_NB, broad sectors. Industry includes construction.</span>
+            <span class="src">Source: ILO, ILOSTAT, {edition}, DF_EMP_2EMP_SEX_ECO_NB, broad sectors. Industry includes construction.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -512,14 +512,14 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="plotzone"><div id="plot-poverty" style="position:relative"><div class="cb-tip"></div></div></div>
           <div class="plotfoot">
-            <span class="src">Source: ILO, ILOSTAT, modelled estimates ({edition}), DF_EMP_2EMP_SEX_AGE_CLA_NB. Lines at the World Bank's 2021 PPP poverty lines.</span>
+            <span class="src">Source: ILO, ILOSTAT, {edition}, DF_EMP_2EMP_SEX_AGE_CLA_NB. Lines at the World Bank's 2021 PPP poverty lines.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>A worker is "working poor" when the household they live in falls below a poverty line, however hard they work. Three dollars a day at international prices is roughly what it takes to buy, in India, what three dollars buys in the United States: a very low bar. The ILO models these numbers from household surveys of spending, which India ran rarely between 2011-12 and 2022-23, so the middle years rest on the model.</p>
+            <p>A worker is "working poor" when the household they live in falls below a poverty line, however hard they work. Three dollars a day at purchasing power parity is the money that buys in India what three dollars buys in the United States: a very low bar. The ILO models these numbers from household surveys of spending, and India ran none between 2011-12 and 2022-23, so the years between rest on the model.</p>
           </div>
           <div class="now">
             <span class="mk">As of {asOf.cls}</span>
@@ -540,7 +540,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
         <div class="frame">
           <div class="plotzone"><div id="plot-lshare" style="position:relative"><div class="cb-tip"></div></div></div>
           <div class="plotfoot">
-            <span class="src">Source: ILO, ILOSTAT, modelled estimates ({edition}), DF_LAP_2GDP_NOC_RT. The self-employed's labour income is imputed from employees with similar characteristics.</span>
+            <span class="src">Source: ILO, ILOSTAT, {edition}, DF_LAP_2GDP_NOC_RT. The self-employed's labour income is imputed from employees with similar characteristics.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -568,7 +568,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
         <div class="frame">
           <div class="plotzone"><div id="plot-deciles" style="position:relative"></div></div>
           <div class="plotfoot">
-            <span class="src">Source: ILO, ILOSTAT, modelled estimates (September 2025 edition), DF_LAP_2LID_QTL_RT. The ILO flags its India deciles as model-based extrapolations for most years.</span>
+            <span class="src">Source: ILO, ILOSTAT, {load("ilo-est-lap-2lid").meta.edition}, DF_LAP_2LID_QTL_RT. The ILO flags its India deciles as model-based extrapolations for most years.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -601,7 +601,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="plotzone"><div id="plot-hours" style="position:relative"><div class="cb-tip"></div></div></div>
           <div class="plotfoot">
-            <span class="src">Source: ILO, ILOSTAT, modelled estimates ({edition}), DF_HOW_2EMP_SEX_NB.</span>
+            <span class="src">Source: ILO, ILOSTAT, {edition}, DF_HOW_2EMP_SEX_NB.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -671,7 +671,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="plotzone"><div id="plot-peers" style="position:relative"></div></div>
           <div class="plotfoot">
-            <span class="src">Source: ILO, ILOSTAT, modelled estimates ({edition}) for each country. Most of these are imputed for most years; the ILO advises against ranking countries on imputed figures.</span>
+            <span class="src">Source: ILO, ILOSTAT, {edition} for each country. Most of these are imputed for most years; the ILO advises against ranking countries on imputed figures.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -703,7 +703,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="plotzone"><div id="plot-output" style="position:relative"><div class="cb-tip"></div></div></div>
           <div class="plotfoot">
-            <span class="src">Source: ILO, ILOSTAT, modelled estimates ({edition}), DF_GDP_211P_NOC_NB.</span>
+            <span class="src">Source: ILO, ILOSTAT, {edition}, DF_GDP_211P_NOC_NB.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://ilostat.ilo.org/data/" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -751,7 +751,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>International Labour Organization, ILOSTAT, read through its SDMX data service (sdmx.ilo.org): the ILO modelled estimates ({edition}) and the ILO's processing of India's PLFS, NSS and Census unit data, plus administrative series. MoSPI's PLFS figures beside them come from the jobs guide's bundle. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>International Labour Organization, ILOSTAT, read through its SDMX data service (sdmx.ilo.org): the ILO {edition} and the ILO's processing of India's PLFS, NSS and Census unit data, plus administrative series. MoSPI's PLFS figures beside them come from the jobs guide's bundle. Data vintage <b id="prov-vintage">–</b>.</p>
         <p>Checked by hand against the ILO's labelled tables: unemployment rate 2024, 4.173%, flagged real; PLFS women's participation 2024, 34.389%.</p>
       </div>
       <div>

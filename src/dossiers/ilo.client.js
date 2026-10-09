@@ -52,7 +52,7 @@ function dodge(items, gap) {
  * A time-series plate. series: [{ s (hydrated), label, color, width, dash, dots, hollow, end }]
  * end: text for the end label (null = none). Optional band: { lo:[{date,value}], hi, color }.
  */
-function timeChart(id, { series, from, to, seam = false, step = 5, yDomain, yTicks, yFmt = (v) => String(v), yLabel, height = 440, mr = 200, rules = [], bands = [], tipFmt = (v) => (v == null ? "—" : v.toFixed(1)), title, desc, fname }) {
+function timeChart(id, { series, from, to, seam = false, ml = 48, step = 5, yDomain, yTicks, yFmt = (v) => String(v), yLabel, height = 440, mr = 200, rules = [], bands = [], tipFmt = (v) => (v == null ? "—" : v.toFixed(1)), title, desc, fname }) {
   const host = document.getElementById("plot-" + id);
   if (!host) return null;
   const ticks = yearTicks(from, to, step);
@@ -84,7 +84,7 @@ function timeChart(id, { series, from, to, seam = false, step = 5, yDomain, yTic
     marks.push(Plot.text([{ x: Y(to), y: l.y / pxPerUnit }], { x: "x", y: "y", text: () => l.text, dx: 12, textAnchor: "start", fill: INK, fontSize: 12.5, fontWeight: l.bold ? 600 : 400 }));
   }
   const plot = Plot.plot({
-    width: W, height, marginLeft: 48, marginRight: mr, marginTop: 30, marginBottom: 34, style,
+    width: W, height, marginLeft: ml, marginRight: mr, marginTop: 30, marginBottom: 34, style,
     x: { type: "utc", domain: [Y(from), Y(to)], ticks, tickFormat: yearFmt(ticks), tickSize: 4, tickPadding: 8, label: null },
     y: { domain: yDomain, ticks: yTicks, tickFormat: yFmt, tickSize: 0, tickPadding: 10, label: yLabel, labelAnchor: "top", labelArrow: false },
     marks,
@@ -109,8 +109,9 @@ function hbars(id, rows, { xMax, xTicks, xFmt, label, valueFmt, hl, title, desc,
       Plot.gridX(xTicks.slice(1), { stroke: GRID }),
       Plot.barX(rows, { y: "name", x: "v", fill: (d) => (hl(d) ? ACC : "#C9CED6"), insetTop: 11, insetBottom: 11 }),
       Plot.dot(rows.filter((r) => r.was != null), { y: "name", x: "was", r: 4, fill: "#fff", stroke: G1, strokeWidth: 1.5 }),
-      // the value sits right of whichever is further out, the bar or the earlier dot
-      Plot.text(rows, { y: "name", x: (d) => Math.max(d.v, d.was ?? 0), text: (d) => valueFmt(d.v), dx: 10, textAnchor: "start", fill: INK, fontSize: 12.5, fontWeight: (d) => (hl(d) ? 600 : 400) }),
+      // the value sits at the bar's end; only an earlier dot just beyond the bar pushes it past
+      // the dot (a dot far beyond the bar is left alone, so the value never reads as the dot's)
+      Plot.text(rows, { y: "name", x: (d) => (d.was != null && d.was > d.v && (d.was - d.v) * ((W - ml - 100) / xMax) < 60 ? d.was : d.v), text: (d) => valueFmt(d.v), dx: 10, textAnchor: "start", fill: INK, fontSize: 12.5, fontWeight: (d) => (hl(d) ? 600 : 400) }),
       Plot.ruleX([0], { stroke: BASE }),
     ],
   });
@@ -185,7 +186,7 @@ if (B.slfpr && B.nlfpr && B.clfpr && E && B.mospi) {
   // MoSPI's July-June survey years are plotted at their middle (1 January of the second year)
   const shift = (s) => ({ ...s, data: s.data.map((d) => ({ date: new Date(Date.UTC(yr(d.date) + 1, 0, 1)), value: d.value })) });
   const ser = [
-    { s: E[keyL("t")], label: "ILO model", color: G2, width: 1.5, end: "ILO model" },
+    { s: E[keyL("t")], label: "ILO model", color: G2, width: 1.5, end: `ILO model ${p1(lastP(E[keyL("t")]).value)}` },
     { s: B.clfpr.S[sk("t")], label: "Census (ILO processing)", color: G1, dots: true, hollow: true, end: null },
     { s: B.nlfpr.S[sk("t")], label: "NSS rounds (ILO processing)", color: G1, dots: true, end: null },
     { s: shift(MO.lfpr_psss), label: "PLFS, MoSPI, usual status", color: GOLD, width: 1.75, end: `MoSPI, usual status ${p1(lastP(MO.lfpr_psss).value)}` },
@@ -235,6 +236,7 @@ if (U) {
   setHTML("ex-u-first", String(firstReal));
   setHTML("ex-u-now", p1(lastP(U[k]).value));
   setHTML("ex-u-youth", p1(lastP(U[ky]).value));
+  if (nssU) { const v = nn(nssU).map((d) => d.value); setHTML("ex-u-nss", `${p1(Math.min(...v))} to ${p1(Math.max(...v))}`); }
 }
 
 /* ======================================================================
@@ -453,7 +455,7 @@ if (B.earn) {
       { s: S[k("t")], label: "All employees", color: G2, width: 1.6, end: `All ${rs(lastP(S[k("t")]).value)}` },
       { s: S[k("f")], label: "Women", color: ACC, width: 2.25, bold: true, end: `Women ${rs(lastP(S[k("f")]).value)}` },
     ],
-    from: fy, to: ly, step: 1, yDomain: [0, 30000], yTicks: [0, 5000, 10000, 15000, 20000, 25000, 30000], yFmt: (v) => "₹" + fmt.inr(v), yLabel: "average monthly earnings of employees, rupees, current prices", height: 400, tipFmt: (v) => (v == null ? "—" : rs(v)),
+    from: fy, to: ly, step: 1, ml: 70, yDomain: [0, 30000], yTicks: [0, 5000, 10000, 15000, 20000, 25000, 30000], yFmt: (v) => "₹" + fmt.inr(v), yLabel: "average monthly earnings of employees, rupees, current prices", height: 400, tipFmt: (v) => (v == null ? "—" : rs(v)),
     title: "Average monthly earnings of employees, PLFS as processed by the ILO", fname: "earnings",
     desc: `All employees ${rs(firstP(S[k("t")]).value)} in ${fy}, ${rs(lastP(S[k("t")]).value)} in ${ly}; women ${rs(lastP(S[k("f")]).value)}, men ${rs(lastP(S[k("m")]).value)}.`,
   });
@@ -520,7 +522,7 @@ if (E && PEERS.every(([g]) => B["peer_" + g])) {
     { s: B.opw.S.gdp_211p_noc_nb, label: "India", color: ACC, width: 2.25, bold: true, end: `India $${fmt.inr(lastP(B.opw.S.gdp_211p_noc_nb).value)}` }];
   const fy = yr(firstP(B.opw.S.gdp_211p_noc_nb).date), ly = yr(lastP(B.opw.S.gdp_211p_noc_nb).date);
   timeChart("output", {
-    series: ser, from: fy, to: ly, step: 5, yDomain: [0, 50000], yTicks: [0, 10000, 20000, 30000, 40000, 50000], yFmt: (v) => "$" + fmt.inr(v), yLabel: "GDP per employed person, constant 2021 international dollars (PPP)", height: 400, mr: 190, tipFmt: (v) => (v == null ? "—" : "$" + fmt.inr(v)),
+    series: ser, from: fy, to: ly, step: 5, ml: 70, yDomain: [0, 50000], yTicks: [0, 10000, 20000, 30000, 40000, 50000], yFmt: (v) => "$" + fmt.inr(v), yLabel: "GDP per employed person, constant 2021 international dollars (PPP)", height: 400, mr: 190, tipFmt: (v) => (v == null ? "—" : "$" + fmt.inr(v)),
     title: "Output per worker, India and its peers, ILO modelled estimates", fname: "output-per-worker",
     desc: `India $${fmt.inr(lastP(B.opw.S.gdp_211p_noc_nb).value)} in ${ly}; China $${fmt.inr(lastP(opw(B.peer_chn)).value)}.`,
   });

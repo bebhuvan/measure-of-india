@@ -488,3 +488,43 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   }, null, 1) + "\n");
   console.log(`catalogue: ${items.length} items from ${flows.filter((f) => f.nRows).length} flows (requests ${ilo.requests})`);
 }
+
+// ---------------------------------------------------------------------------
+// CLI: node scripts/lib/products/ilostat.mjs --spotcheck
+// One value per bundle, re-read from the ILO's labelled CSV (format=csvfilewithlabels) with the
+// cache bypassed, and compared with the baked bundle: the latest value of each bundle's first
+// series. A second, independent path through the API to the same number.
+// ---------------------------------------------------------------------------
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url) && process.argv.includes("--spotcheck")) {
+  const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
+  const { getText } = await import("../net.mjs");
+  const { parseCsv } = await import("../tabular.mjs");
+  const files = fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => /^ilo-.*\.json$/.test(f)).sort();
+  let bad = 0;
+  for (const f of files) {
+    const b = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", f), "utf8"));
+    const [key, s] = Object.entries(b.series)[0];
+    let li = s.data.length - 1; while (s.data[li] == null) li--;
+    const flow = b.meta.flows.find((id) => key.startsWith(id.replace(/^DF_/, "").toLowerCase() + "__") || key === id.replace(/^DF_/, "").toLowerCase());
+    const area = b.meta.geo;
+    const iso = b.dates[li], t = b.meta.frequency === "quarterly" ? `${iso.slice(0, 4)}-Q${(+iso.slice(5, 7) + 2) / 3}` : iso.slice(0, 4);
+    const c = await ilo.constraint(flow);
+    let rows = null;
+    for (let n = c.dims.length; n <= c.dims.length + 2 && !rows; n++) {
+      try {
+        const csv = await getText(`${ilo.BASE}data/ILO,${flow},1.0/${[area, ...Array(n - 1).fill("")].join(".")}?startPeriod=${t}&endPeriod=${t}&format=csvfilewithlabels`, { retries: 3 });
+        const [head, ...body] = parseCsv(csv, ",").filter((r) => r.length > 1);
+        rows = body.map((r) => Object.fromEntries(head.map((h, i) => [h, r[i]])));
+      } catch (e) { if (!/422/.test(e.message)) throw e; }
+    }
+    const dims = c.dims.filter((d) => !["REF_AREA", "FREQ", "MEASURE"].includes(d));
+    const want = rows.find((r) => [flow.replace(/^DF_/, "").toLowerCase(), ...dims.map((d) => short(r[d]))].join("__") === key.replace(/__[a-z0-9_]+_(?=[a-z])/, (m) => m) && instrument(r.SOURCE).base === (b.meta.base.replace(/, projections$/, "")))
+      ?? rows.find((r) => key.endsWith(dims.map((d) => short(r[d])).join("__")) && instrument(r.SOURCE).base === b.meta.base.replace(/, projections$/, ""));
+    const got = want ? Number(want.OBS_VALUE) : null;
+    const okv = got === s.data[li];
+    if (!okv) bad++;
+    console.log(`${okv ? "ok  " : "FAIL"} ${f.replace(/\.json$/, "").padEnd(24)} ${key} ${t}: bundle ${s.data[li]}, ILO labelled CSV ${got}${want ? ` (${want["Measure"] ?? ""}${dims.map((d) => ", " + (want[CUT_NAME[d] ?? d] ?? want[Object.keys(want)[Object.keys(want).indexOf(d) + 1]] ?? "")).join("")})` : ""}`);
+  }
+  console.log(bad ? `spotcheck: ${bad} mismatch(es)` : `spotcheck: all ${files.length} bundles match the ILO's labelled CSV`);
+  process.exitCode = bad ? 1 : 0;
+}
