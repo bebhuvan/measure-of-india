@@ -343,7 +343,7 @@ const PRODUCTS = [
   { slug: "hces-item-values", dossier: "hces", cadence: 12, range: [0.1, 1000] },
   // food share of MPCE by state-sector: ~36% (urban Chandigarh/Kerala end)
   // to ~58% (rural Ladakh end)
-  { slug: "hces-categories-states", dossier: "hces", cadence: 12, range: [20, 80] },
+  { slug: "hces-categories-states", dossier: "hces", cadence: 12, range: [0, 100] },
   // ASI: mixed units — counts (factories ~2.6e5, persons ~1.9e7) and ₹ lakh
   // levels (gross output ~1.2e9 lakh); ranges are wide by construction
   { slug: "asi-headline", dossier: "asi", cadence: 12, range: [0, 2.5e9] },
@@ -380,7 +380,7 @@ const PRODUCTS = [
   // state enrolment (UP ~5e6 is the ceiling) + GER (0-50) + GPI (0-2)
   { slug: "aishe-states", dossier: "aishe", cadence: 12, range: [0, 1e7] },
   // teachers by faculty type: lecturer/assistant peaks ~1.09M
-  { slug: "aishe-teachers", dossier: "aishe", cadence: 12, range: [0, 1.2e6] },
+  { slug: "aishe-teachers", dossier: "aishe", cadence: 12, range: [0, 2e6] },
   // minority enrolment: Muslims peak ~2.1M
   { slug: "aishe-minority", dossier: "aishe", cadence: 12, range: [0, 2.5e6] },
   // Gender compendium — each indicator its own source/cadence. Sex ratio is
@@ -1323,12 +1323,12 @@ withBundle("aishe-access", (b) => withBundle("aishe-headline", (h) => {
 }));
 
 withBundle("aishe-headline", (b) => {
-  // the teacher reconstruction: 2021-22 must be the core5 sum (~1.58M), not
-  // the broken "All Teacher" value (12,904). Assert the last value is plausible.
+  // teachers are the published "All Teacher" total in every year (the 2021-22 "defect" was a
+  // paging artifact of the 2026-08-09 dump; docs/status/households.md)
   const t = b.series.teachers.data;
   const lastT = t.at(-1);
-  if (lastT == null || lastT < 1000000) fail(`aishe-headline: teachers 2021-22 = ${lastT} — reconstruction not applied (expected ~1.58M)`);
-  else ok(`aishe-headline: teachers 2021-22 reconstructed to ${lastT.toLocaleString("en-IN")} (source defect disclosed in meta.note)`);
+  if (lastT == null || lastT < 1000000) fail(`aishe-headline: teachers 2021-22 = ${lastT} (expected the published ~16 lakh)`);
+  else ok(`aishe-headline: teachers 2021-22 = ${lastT.toLocaleString("en-IN")} (published All Teacher)`);
   // enrolment must be strictly increasing (the expansion story)
   for (let i = 1; i < t.length; i++) {
     const e = b.series.enrolment.data;
@@ -1338,14 +1338,15 @@ withBundle("aishe-headline", (b) => {
 });
 
 withBundle("aishe-teachers", (b) => {
-  // the 2021-22 core5 sum must equal the headline reconstruction exactly
-  const FAC = ["professor", "reader_associate", "lecturer_assistant", "demonstrator", "temporary"];
-  withBundle("aishe-headline", (h) => {
-    const i = b.dates.length - 1;
-    const sum = FAC.reduce((s, f) => s + (b.series[`${f}_both`]?.data[i] ?? 0), 0);
-    if (sum !== h.series.teachers.data[i]) fail(`aishe-teachers: 2021-22 core5 sum ${sum} != headline teachers ${h.series.teachers.data[i]}`);
-    else ok(`aishe-teachers: 2021-22 core5 sum (${sum.toLocaleString("en-IN")}) = headline reconstruction`);
-  });
+  // the six faculty types add up to the published all-teachers total (All India 2020-21 is
+  // printed 34 apart; nothing else may be)
+  const FAC = ["professor", "reader_associate", "lecturer_assistant", "demonstrator", "temporary", "visiting"];
+  b.dates.forEach((d, i) => { for (const g of ["both", "male", "female"]) {
+    const sum = FAC.reduce((s, f) => s + (b.series[`${f}_${g}`]?.data[i] ?? 0), 0), all = b.series[`all_${g}`]?.data[i];
+    if (all != null && Math.abs(sum - all) > 40) fail(`aishe-teachers: ${g} ${d}: the six types sum to ${sum}, all teachers ${all}`);
+  } });
+  ok("aishe-teachers: the six faculty types sum to all teachers in every year (within 40)");
+  withBundle("aishe-headline", (h) => { if (h.series.teachers.data.at(-1) !== b.series.all_both.data.at(-1)) fail("aishe-teachers: all teachers differs from the headline"); });
   // the academic-hierarchy gender gradient: female share rises as rank falls
   // (Professor < Reader < Lecturer < Demonstrator) in every year
   b.dates.forEach((d, i) => {
@@ -2886,6 +2887,114 @@ function ratesRanges(slug, byUnit) {
     if (bad) fail(`rates-structure: ${bad} range(s) with the low end above the high end`);
     else ok("rates-structure: every printed range runs low to high");
   });
+}
+
+
+/* ---- households (wave 2): consumption (hces), higher education (aishe), renewable energy
+ * (mnre), deposits (bsr2) ----
+ * Every bundle of the four families that the PRODUCTS table does not list gets the generic
+ * checks (meta against sources.yml, cadence, unit ranges, disclosed gaps). Then the family
+ * identities on the baked numbers: each would catch a misread column or a mislabelled row. */
+{
+  const listed = new Set(PRODUCTS.map((p) => p.slug));
+  const fam = [["hces-", "hces"], ["aishe-", "aishe"], ["mnre-", "mnre"], ["deposits-", "deposits"]];
+  const UR = { inr: [0, 2e5], pct_of_mpce: [0, 100], gini: [0, 1], kg_per_month: [0, 40], count: [0, 4e9],
+    // GER and GPI of tiny groups in tiny places run wild (Ladakh's Scheduled Caste women: a GER
+    // of 335, a GPI of 14.8): published as such, ranged wide; a zero PTR marks no institution
+    percent: [0, 400], index: [0, 20], pupils_per_teacher: [0, 1000], mw: [0, 3e5], inr_crore: [-1, 3e7], inr_lakh_crore: [0, 400] };
+  let n = 0;
+  for (const f of fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => fam.some(([p]) => f.startsWith(p))).sort()) {
+    const slug = f.replace(/\.json$/, "");
+    if (listed.has(slug)) continue;
+    const dossier = fam.find(([p]) => slug.startsWith(p))[1];
+    const b = load(slug);
+    checkMeta(b, slug, dossier, dossier === "deposits" ? b.meta.base : undefined, dossier === "deposits" ? b.meta.frequency : undefined);
+    if (b.dates.length > 1) checkCadence(b.dates, { monthly: 1, quarterly: 3, annual: 12 }[b.meta.frequency] ?? 12, slug);
+    const sr = {};
+    for (const [k, s] of Object.entries(b.series)) { const u = s.unit ?? b.meta.unit; if (!UR[u]) fail(`${slug}.${k}: unit "${u}" has no range`); sr[k] = UR[u] ?? [-Infinity, Infinity]; }
+    checkRange(b, -Infinity, Infinity, slug, sr);
+    n++;
+  }
+  ok(`households: ${n} wave-2 bundles checked for meta, cadence, unit ranges and gaps`);
+
+  // a generic "parts add to the total" check over series that share a prefix
+  const parts = (slug, label, total, list, tol, { sep = "__", prefixOk = () => true } = {}) => withBundle(slug, (b) => {
+    let checked = 0, bad = 0, worst = 0, at = "";
+    const prefixes = new Set(Object.keys(b.series).filter((k) => k.endsWith(sep + total)).map((k) => k.slice(0, -(sep + total).length)).filter(prefixOk));
+    for (const p of prefixes) b.dates.forEach((d, i) => {
+      const T = b.series[p + sep + total]?.data[i]; const xs = list.map((x) => b.series[p + sep + x]?.data[i]);
+      if (T == null || xs.some((v) => v == null)) return;
+      checked++; const dev = Math.abs(xs.reduce((a, v) => a + v, 0) - T); if (dev > worst) { worst = dev; at = `${p} ${d}`; } if (dev > tol) bad++;
+    });
+    if (!checked) fail(`${slug}: identity "${label}" checked nothing`);
+    else if (bad) fail(`${slug}: ${label} fails in ${bad} of ${checked} cells (worst ${worst.toFixed(3)} at ${at})`);
+    else ok(`${slug}: ${label} in all ${checked} cells (worst ${worst.toFixed(3)})`);
+  });
+
+  // HCES: shares by category add to 100 (food total + non-food total) everywhere
+  for (const [sl, foodKey] of [["hces-categories-states", (p) => p], ["hces-categories-states-imputed", (p) => p + "__food_total"], ["hces-categories-imputed", (p) => p + "__food_total"]]) withBundle(sl, (b) => {
+    let n = 0, bad = 0;
+    for (const k of Object.keys(b.series).filter((k) => k.endsWith("__non_food_total"))) { const p = k.slice(0, -"__non_food_total".length); const f = b.series[foodKey(p)];
+      if (!f) continue; b.series[k].data.forEach((v, i) => { if (v == null || f.data[i] == null) return; n++; if (Math.abs(v + f.data[i] - 100) > 0.11) bad++; }); }
+    if (!n) fail(`${sl}: food + non-food checked nothing`); else if (bad) fail(`${sl}: food + non-food != 100 in ${bad} of ${n} cells`); else ok(`${sl}: food + non-food = 100 in all ${n} cells`);
+  });
+  withBundle("hces-categories-states", (b) => { let bad = 0; const pre = Object.keys(b.series).filter((k) => !k.includes("__"));
+    for (const k of pre) b.series[k].data.forEach((v, i) => { if (v != null && (v < 20 || v > 80)) bad++; }); if (bad) fail(`hces-categories-states: ${bad} food shares outside 20-80%`); else ok("hces-categories-states: every state food share between 20% and 80%"); });
+  // HCES: rupees by category add to the MPCE (within 1%), state by state
+  for (const [sl, mp] of [["hces-categories-inr-states", "hces-states"], ["hces-categories-inr-states-imputed", "hces-states-imputed"]]) withBundle(sl, (b) => withBundle(mp, (m) => {
+    let bad = 0, n = 0;
+    for (const [k, s] of Object.entries(b.series)) { if (!k.endsWith("__food_total")) continue; const p = k.slice(0, -"__food_total".length); const nf = b.series[p + "__non_food_total"]; const mpce = m.series[p];
+      if (!nf || !mpce) continue; s.data.forEach((v, i) => { if (v == null || nf.data[i] == null || mpce.data[i] == null) return; n++; if (Math.abs(v + nf.data[i] - mpce.data[i]) / mpce.data[i] > 0.01) bad++; }); }
+    if (!n) fail(`${sl}: nothing matched ${mp}`); else if (bad) fail(`${sl}: food + non-food differs from ${mp} by over 1% in ${bad} of ${n} cells`); else ok(`${sl}: food + non-food = the state's MPCE (${mp}) within 1% in all ${n} cells`);
+  }));
+  // HCES: each state's fractile ladder rises class by class
+  withBundle("hces-fractiles-states", (b) => { const FR = ["0_5", "5_10", "10_20", "20_30", "30_40", "40_50", "50_60", "60_70", "70_80", "80_90", "90_95", "95_100"]; let bad = 0, n = 0;
+    const pre = new Set(Object.keys(b.series).map((k) => k.split("__f")[0]));
+    for (const p of pre) b.dates.forEach((d, i) => { const v = FR.map((f) => b.series[`${p}__f${f}`]?.data[i]); if (v.some((x) => x == null)) return; n++; if (v.some((x, j) => j && x < v[j - 1])) bad++; });
+    if (bad) fail(`hces-fractiles-states: ${bad} of ${n} ladders do not rise class by class`); else ok(`hces-fractiles-states: all ${n} state ladders rise class by class`); });
+  parts("hces-quantities-states", "rice + wheat + coarse + other cereals = total cereals", "total_cereals", ["rice", "wheat", "coarse_grains", "other_cereals"], 0.02);
+
+  // AISHE: levels add to all levels; women + men = both; six posts = all teachers
+  for (const g of ["both", "male", "female"]) parts("aishe-states-enrolment", `the eight levels sum to all levels (${g})`, `grand_total_${g}`,
+    ["phd", "mphil", "post_graduate", "under_graduate", "pg_diploma", "diploma", "certificate", "integrated"].map((l) => `${l}_${g}`), 2);
+  withBundle("aishe-states-enrolment", (b) => { let bad = 0, n = 0; for (const k of Object.keys(b.series).filter((k) => k.endsWith("_both"))) { const m = b.series[k.replace(/_both$/, "_male")], f = b.series[k.replace(/_both$/, "_female")]; if (!m || !f) continue;
+    b.series[k].data.forEach((v, i) => { if (v == null || m.data[i] == null || f.data[i] == null) return; n++; if (Math.abs(m.data[i] + f.data[i] - v) > 2) bad++; }); }
+    if (bad) fail(`aishe-states-enrolment: women + men != both in ${bad} of ${n} cells`); else ok(`aishe-states-enrolment: women + men = both in all ${n} cells`); });
+  for (const g of ["both", "male", "female"]) withBundle("aishe-states-teachers", (b) => { let bad = 0, n = 0;
+    for (const k of Object.keys(b.series).filter((k) => k.endsWith(`__all_${g}`))) { const p = k.slice(0, -`__all_${g}`.length);
+      b.series[k].data.forEach((v, i) => { const xs = ["professor", "reader_associate", "lecturer_assistant", "demonstrator", "temporary", "visiting"].map((f) => b.series[`${p}__${f}_${g}`]?.data[i] ?? 0); if (v == null) return; n++; if (Math.abs(xs.reduce((a, x) => a + x, 0) - v) > 40) bad++; }); }
+    if (bad) fail(`aishe-states-teachers: six posts != all teachers (${g}) in ${bad} of ${n} cells`); else ok(`aishe-states-teachers: six posts = all teachers (${g}) in all ${n} cells (within 40)`); });
+
+  // MNRE: the four bio kinds add to bio total, nationally and in every state; solar categories to solar total
+  parts("mnre-bio-categories", "four bio kinds = bio total", "total", ["bagasse", "non_bagasse", "waste_to_energy", "waste_to_energy_off_grid"], 1, { sep: "", prefixOk: () => true });
+  parts("mnre-states-bio", "four bio kinds = bio total, every state", "total", ["bagasse", "non_bagasse", "waste_to_energy", "waste_to_energy_off_grid"], 1);
+  withBundle("mnre-states-solar", (b) => { let bad = 0, n = 0, worst = 0; for (const k of Object.keys(b.series).filter((k) => !k.includes("__"))) b.series[k].data.forEach((v, i) => {
+    const xs = ["ground_mounted", "rooftop", "hybrid", "off_grid"].map((c) => b.series[`${k}__${c}`]?.data[i]); if (v == null || xs.every((x) => x == null)) return; n++; const dev = Math.abs(xs.reduce((a, x) => a + (x ?? 0), 0) - v); worst = Math.max(worst, dev); if (dev > 1) bad++; });
+    if (bad) fail(`mnre-states-solar: categories != solar total in ${bad} of ${n} cells (worst ${worst.toFixed(2)} MW)`); else ok(`mnre-states-solar: categories = solar total in all ${n} state-months`); });
+
+  // deposits: every table's parts add to its totals, on the baked (crore) values
+  const A3 = 3.5, C2 = 2;
+  for (const sl of fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => /^deposits-.*\.json$/.test(f)).map((f) => f.replace(/\.json$/, ""))) {
+    const ks = Object.keys(load(sl).series);
+    const has = (suf) => ks.some((k) => k.endsWith("__" + suf));
+    if (has("savings_accounts") && has("term_accounts")) { if (has("total")) parts(sl, "current + savings + term = all deposits", "total", ["current", "savings", "term"], A3);
+      if (has("current_accounts") && has("total_accounts")) parts(sl, "accounts: current + savings + term = all", "total_accounts", ["current_accounts", "savings_accounts", "term_accounts"], C2); }
+    else if (has("individuals") && has("others")) { parts(sl, "individuals + others = all", "total", ["individuals", "others"], A3); parts(sl, "accounts: individuals + others = all", "total_accounts", ["individuals_accounts", "others_accounts"], C2); }
+    else if (has("deposit_taking")) parts(sl, "the six owning sectors = all sectors", "total", ["government", "nfc", "deposit_taking", "other_fc", "households", "rest_of_world"], A3);
+    else if (has("psb") && has("all_banks")) parts(sl, "the bank groups = all banks", "all_banks", ["psb", "foreign", "rrb", "private", "sfb", "payments"], A3);
+    else if (has("officers")) { parts(sl, "officers + clerks + subordinates = all employees", "total", ["officers", "clerks", "subordinates"], 0); parts(sl, "women: officers + clerks + subordinates = all", "women_total", ["women_officers", "women_clerks", "women_subordinates"], 0); }
+    else if (has("current") && has("savings") && has("term")) parts(sl, "current + savings + term = all deposits", "total", ["current", "savings", "term"], A3);
+  }
+  // deposits: the values checked by hand against RBI's release of 29 May 2026 (March 2026)
+  withBundle("deposits-sectors", (b) => { const i = b.dates.indexOf("2026-03-01"); const T = b.series.total__total.data[i];
+    const hh = b.series.s4__total.data[i] / T * 100, sv = b.series.total__savings.data[i] / T * 100, tm = b.series.total__term.data[i] / T * 100;
+    if (Math.abs(hh - 59.3) > 0.05 || Math.abs(sv - 28.7) > 0.05 || Math.abs(tm - 61.6) > 0.05) fail(`deposits-sectors: March 2026 shares ${hh.toFixed(2)}/${sv.toFixed(2)}/${tm.toFixed(2)} differ from RBI's 59.3/28.7/61.6`);
+    else ok(`deposits-sectors: March 2026 households ${hh.toFixed(1)}%, savings ${sv.toFixed(1)}%, term ${tm.toFixed(1)}% = RBI's release`); });
+  withBundle("deposits-age", (b) => withBundle("deposits-sectors", (s) => { const i = b.dates.indexOf("2026-03-01"), j = s.dates.indexOf("2026-03-01");
+    const sen = (b.series.individuals__a7_60_to_69__total.data[i] + b.series.individuals__a8_70_and_above__total.data[i]) / s.series.total__total.data[j] * 100;
+    if (Math.abs(sen - 20.0) > 0.05) fail(`deposits-age: seniors ${sen.toFixed(2)}% of deposits, RBI says 20.0%`); else ok(`deposits-age: seniors hold ${sen.toFixed(2)}% of deposits = RBI's 20.0%`); }));
+  withBundle("deposits-maturity-owners", (b) => { const i = b.dates.indexOf("2026-03-01"); const sh = b.series["m4_1_to_3_years__total"].data[i] / b.series["all__total"]?.data[i] * 100;
+    if (!(Math.abs(sh - 69.8) <= 0.05)) fail(`deposits-maturity-owners: 1-3 year share ${sh} differs from RBI's 69.8%`); else ok(`deposits-maturity-owners: 1-3 years ${sh.toFixed(2)}% of term deposits = RBI's 69.8%`); });
 }
 
 if (failures) { console.error(`\n${failures} validation failure(s)`); process.exit(1); }

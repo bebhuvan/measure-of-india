@@ -1,0 +1,981 @@
+{
+ "meta": {
+  "dossier": "deposits",
+  "base": "as on 31 March",
+  "unit": "mixed",
+  "source": "Reserve Bank of India, Basic Statistical Return 2 (via DBIE)",
+  "vintage": "2026-10-09",
+  "mock": false,
+  "geo": "IND",
+  "releaseDate": null,
+  "revisionPolicy": "BSR-2 stocks are final on release for the year; the sector classification changed in 2018-19 and the deposit-size bands in March 2026 (both disclosed, never spliced).",
+  "frequency": "annual",
+  "latestPeriod": "2026-03",
+  "coverage": "Deposits of individuals, women and others by bank group, as on 31 March. Amounts in ₹ crore; accounts, offices and employees as counts.",
+  "note": "RBI BSR-2 Table 2.5 via DBIE report 855, read from the Data Bank mirror. Column meanings are fixed by identities checked on every row (scripts/lib/products/bsr2-tables.mjs)."
+ },
+ "dates": [
+  "2019-03-01",
+  "2020-03-01",
+  "2021-03-01",
+  "2022-03-01",
+  "2023-03-01",
+  "2024-03-01",
+  "2025-03-01",
+  "2026-03-01"
+ ],
+ "series": {
+  "psb__individuals_accounts": {
+   "name": "psb__individuals_accounts",
+   "label": "Accounts of individuals · Public sector banks",
+   "group": "Public sector banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    1351880948,
+    1405128669,
+    1407230898,
+    1495735998,
+    1556813794,
+    1596876394,
+    1574854623,
+    1610516658
+   ]
+  },
+  "psb__individuals": {
+   "name": "psb__individuals",
+   "label": "Deposits of individuals · Public sector banks",
+   "group": "Public sector banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    5158842,
+    5562926.96,
+    6069581.45,
+    6347990.52,
+    6655659.29,
+    7245165.81,
+    7789014.8,
+    8524812.44
+   ]
+  },
+  "psb__women_accounts": {
+   "name": "psb__women_accounts",
+   "label": "Accounts of women · Public sector banks",
+   "group": "Public sector banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    420263258,
+    442680142,
+    472190750,
+    519564288,
+    570225128,
+    601812967,
+    616087801,
+    649087850
+   ]
+  },
+  "psb__women": {
+   "name": "psb__women",
+   "label": "Deposits of women · Public sector banks",
+   "group": "Public sector banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    1680671.29,
+    1860638.03,
+    1975318.11,
+    2290178.99,
+    2559912.75,
+    2854037.44,
+    3136648.34,
+    3506416.17
+   ]
+  },
+  "psb__others_accounts": {
+   "name": "psb__others_accounts",
+   "label": "Accounts of others · Public sector banks",
+   "group": "Public sector banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    75325107,
+    64757628,
+    64352562,
+    62525742,
+    65365659,
+    68752095,
+    68622793,
+    70268622
+   ]
+  },
+  "psb__others": {
+   "name": "psb__others",
+   "label": "Deposits of others · Public sector banks",
+   "group": "Public sector banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    2833706.6,
+    3013094.07,
+    3390416.67,
+    3870340.25,
+    4394208.81,
+    4843433.33,
+    5418324.01,
+    5981854.09
+   ]
+  },
+  "psb__total_accounts": {
+   "name": "psb__total_accounts",
+   "label": "All accounts · Public sector banks",
+   "group": "Public sector banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    1427206055,
+    1469886297,
+    1471583460,
+    1558261740,
+    1622179453,
+    1665628489,
+    1643477416,
+    1680785280
+   ]
+  },
+  "psb__total": {
+   "name": "psb__total",
+   "label": "All deposits · Public sector banks",
+   "group": "Public sector banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    7992548.6,
+    8576021.03,
+    9459998.13,
+    10218330.76,
+    11049868.1,
+    12088599.14,
+    13207338.81,
+    14506666.53
+   ]
+  },
+  "foreign__individuals_accounts": {
+   "name": "foreign__individuals_accounts",
+   "label": "Accounts of individuals · Foreign banks",
+   "group": "Foreign banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    5508290,
+    6082277,
+    7368109,
+    8138505,
+    7712235,
+    7545231,
+    7808475,
+    7130367
+   ]
+  },
+  "foreign__individuals": {
+   "name": "foreign__individuals",
+   "label": "Deposits of individuals · Foreign banks",
+   "group": "Foreign banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    65028.54,
+    73260.27,
+    97815.43,
+    98304.88,
+    73714.42,
+    80505.58,
+    88198.8,
+    93467.39
+   ]
+  },
+  "foreign__women_accounts": {
+   "name": "foreign__women_accounts",
+   "label": "Accounts of women · Foreign banks",
+   "group": "Foreign banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    702618,
+    1242347,
+    2095947,
+    2259449,
+    1998946,
+    1998812,
+    2027649,
+    1955028
+   ]
+  },
+  "foreign__women": {
+   "name": "foreign__women",
+   "label": "Deposits of women · Foreign banks",
+   "group": "Foreign banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    12029.21,
+    23248.05,
+    33155.35,
+    33684.61,
+    25781.95,
+    28455.81,
+    31301.53,
+    33581.58
+   ]
+  },
+  "foreign__others_accounts": {
+   "name": "foreign__others_accounts",
+   "label": "Accounts of others · Foreign banks",
+   "group": "Foreign banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    1030949,
+    1272091,
+    2312645,
+    2310066,
+    1667186,
+    1994912,
+    2153812,
+    1878220
+   ]
+  },
+  "foreign__others": {
+   "name": "foreign__others",
+   "label": "Deposits of others · Foreign banks",
+   "group": "Foreign banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    500314.91,
+    591528.13,
+    663116.7,
+    730386.03,
+    773404.48,
+    919376.48,
+    1003529.19,
+    1148210.79
+   ]
+  },
+  "foreign__total_accounts": {
+   "name": "foreign__total_accounts",
+   "label": "All accounts · Foreign banks",
+   "group": "Foreign banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    6539239,
+    7354368,
+    9680754,
+    10448571,
+    9379421,
+    9540143,
+    9962287,
+    9008587
+   ]
+  },
+  "foreign__total": {
+   "name": "foreign__total",
+   "label": "All deposits · Foreign banks",
+   "group": "Foreign banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    565343.45,
+    664788.4,
+    760932.13,
+    828690.9,
+    847118.9,
+    999882.05,
+    1091727.99,
+    1241678.18
+   ]
+  },
+  "rrb__individuals_accounts": {
+   "name": "rrb__individuals_accounts",
+   "label": "Accounts of individuals · Regional rural banks",
+   "group": "Regional rural banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    235206010,
+    243208177,
+    253483416,
+    265137050,
+    277511851,
+    286808292,
+    292862359,
+    304110804
+   ]
+  },
+  "rrb__individuals": {
+   "name": "rrb__individuals",
+   "label": "Deposits of individuals · Regional rural banks",
+   "group": "Regional rural banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    366402.53,
+    396413.29,
+    437345.57,
+    471784.73,
+    510579.3,
+    566898.32,
+    611687.07,
+    665834.75
+   ]
+  },
+  "rrb__women_accounts": {
+   "name": "rrb__women_accounts",
+   "label": "Accounts of women · Regional rural banks",
+   "group": "Regional rural banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    85568105,
+    96972983,
+    98392750,
+    121917336,
+    124019320,
+    132297007,
+    135747533,
+    137970246
+   ]
+  },
+  "rrb__women": {
+   "name": "rrb__women",
+   "label": "Deposits of women · Regional rural banks",
+   "group": "Regional rural banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    115147.36,
+    139404.68,
+    147845.77,
+    189901.48,
+    200865.12,
+    234114.36,
+    259281.65,
+    276243.96
+   ]
+  },
+  "rrb__others_accounts": {
+   "name": "rrb__others_accounts",
+   "label": "Accounts of others · Regional rural banks",
+   "group": "Regional rural banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    17780898,
+    24286775,
+    24130863,
+    22480380,
+    14523227,
+    11299585,
+    10169528,
+    9937272
+   ]
+  },
+  "rrb__others": {
+   "name": "rrb__others",
+   "label": "Deposits of others · Regional rural banks",
+   "group": "Regional rural banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    60165.84,
+    71009.03,
+    73555.09,
+    74452.4,
+    86493.6,
+    74701.01,
+    78727.3,
+    78672.24
+   ]
+  },
+  "rrb__total_accounts": {
+   "name": "rrb__total_accounts",
+   "label": "All accounts · Regional rural banks",
+   "group": "Regional rural banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    252986908,
+    267494952,
+    277614279,
+    287617430,
+    292035078,
+    298107877,
+    303031887,
+    314048076
+   ]
+  },
+  "rrb__total": {
+   "name": "rrb__total",
+   "label": "All deposits · Regional rural banks",
+   "group": "Regional rural banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    426568.37,
+    467422.32,
+    510900.67,
+    546237.13,
+    597072.91,
+    641599.33,
+    690414.37,
+    744506.98
+   ]
+  },
+  "private__individuals_accounts": {
+   "name": "private__individuals_accounts",
+   "label": "Accounts of individuals · Private sector banks",
+   "group": "Private sector banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    254382624,
+    281665569,
+    306307928,
+    337409383,
+    377663118,
+    414772724,
+    436313821,
+    407617805
+   ]
+  },
+  "private__individuals": {
+   "name": "private__individuals",
+   "label": "Deposits of individuals · Private sector banks",
+   "group": "Private sector banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    1481071.36,
+    1733489.04,
+    2101577.37,
+    2359781.36,
+    2697514.41,
+    3245320.23,
+    3610945.64,
+    3975777.22
+   ]
+  },
+  "private__women_accounts": {
+   "name": "private__women_accounts",
+   "label": "Accounts of women · Private sector banks",
+   "group": "Private sector banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    95571959,
+    109354620,
+    117552720,
+    130229828,
+    151458734,
+    166698174,
+    176584377,
+    163705837
+   ]
+  },
+  "private__women": {
+   "name": "private__women",
+   "label": "Deposits of women · Private sector banks",
+   "group": "Private sector banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    488189.42,
+    581666.91,
+    695850.33,
+    869932.16,
+    1066928.4,
+    1300494.23,
+    1436416.12,
+    1634199.65
+   ]
+  },
+  "private__others_accounts": {
+   "name": "private__others_accounts",
+   "label": "Accounts of others · Private sector banks",
+   "group": "Private sector banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    23962101,
+    26823264,
+    28954485,
+    31376404,
+    35153137,
+    38768371,
+    41044661,
+    44205670
+   ]
+  },
+  "private__others": {
+   "name": "private__others",
+   "label": "Deposits of others · Private sector banks",
+   "group": "Private sector banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    2135999.98,
+    2244267.74,
+    2522325.51,
+    2934700.03,
+    3377370.36,
+    4050072.12,
+    4560780.16,
+    5255503.22
+   ]
+  },
+  "private__total_accounts": {
+   "name": "private__total_accounts",
+   "label": "All accounts · Private sector banks",
+   "group": "Private sector banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    278344725,
+    308488833,
+    335262413,
+    368785787,
+    412816255,
+    453541095,
+    477358482,
+    451823475
+   ]
+  },
+  "private__total": {
+   "name": "private__total",
+   "label": "All deposits · Private sector banks",
+   "group": "Private sector banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    3617071.34,
+    3977756.78,
+    4623902.88,
+    5294481.4,
+    6074884.77,
+    7295392.35,
+    8171725.8,
+    9231280.43
+   ]
+  },
+  "sfb__individuals_accounts": {
+   "name": "sfb__individuals_accounts",
+   "label": "Accounts of individuals · Small finance banks",
+   "group": "Small finance banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    7504959,
+    15563809,
+    22017736,
+    29408839,
+    35917432,
+    42728471,
+    43873107,
+    50067354
+   ]
+  },
+  "sfb__individuals": {
+   "name": "sfb__individuals",
+   "label": "Deposits of individuals · Small finance banks",
+   "group": "Small finance banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    16608.41,
+    34562.97,
+    52041.69,
+    76570.96,
+    102259.41,
+    137819.43,
+    159470.95,
+    180038.04
+   ]
+  },
+  "sfb__women_accounts": {
+   "name": "sfb__women_accounts",
+   "label": "Accounts of women · Small finance banks",
+   "group": "Small finance banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    5873781,
+    12417515,
+    16206463,
+    20429893,
+    25884539,
+    30181416,
+    31001875,
+    32078029
+   ]
+  },
+  "sfb__women": {
+   "name": "sfb__women",
+   "label": "Deposits of women · Small finance banks",
+   "group": "Small finance banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    7311.17,
+    14126.3,
+    21250.97,
+    30475.21,
+    43472.03,
+    58794.99,
+    70200.4,
+    79666.31
+   ]
+  },
+  "sfb__others_accounts": {
+   "name": "sfb__others_accounts",
+   "label": "Accounts of others · Small finance banks",
+   "group": "Small finance banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    137761,
+    259215,
+    367205,
+    477465,
+    722864,
+    888459,
+    1064618,
+    1007846
+   ]
+  },
+  "sfb__others": {
+   "name": "sfb__others",
+   "label": "Deposits of others · Small finance banks",
+   "group": "Small finance banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    20868.35,
+    28103.56,
+    35734.47,
+    44483.92,
+    58946.46,
+    73907.17,
+    106114.74,
+    135309.24
+   ]
+  },
+  "sfb__total_accounts": {
+   "name": "sfb__total_accounts",
+   "label": "All accounts · Small finance banks",
+   "group": "Small finance banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    7642720,
+    15823024,
+    22384941,
+    29886304,
+    36640296,
+    43616930,
+    44937725,
+    51075200
+   ]
+  },
+  "sfb__total": {
+   "name": "sfb__total",
+   "label": "All deposits · Small finance banks",
+   "group": "Small finance banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    37476.76,
+    62666.53,
+    87776.17,
+    121054.88,
+    161205.87,
+    211726.6,
+    265585.69,
+    315347.28
+   ]
+  },
+  "payments__individuals_accounts": {
+   "name": "payments__individuals_accounts",
+   "label": "Accounts of individuals · Payments banks",
+   "group": "Payments banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    150751135,
+    181935528,
+    214524075,
+    237705737
+   ]
+  },
+  "payments__individuals": {
+   "name": "payments__individuals",
+   "label": "Deposits of individuals · Payments banks",
+   "group": "Payments banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    12158.91,
+    16158,
+    25045.25,
+    36736.65
+   ]
+  },
+  "payments__women_accounts": {
+   "name": "payments__women_accounts",
+   "label": "Accounts of women · Payments banks",
+   "group": "Payments banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    44130294,
+    58376508,
+    77495018,
+    88715653
+   ]
+  },
+  "payments__women": {
+   "name": "payments__women",
+   "label": "Deposits of women · Payments banks",
+   "group": "Payments banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    3633.16,
+    6183.32,
+    11546.38,
+    17517.02
+   ]
+  },
+  "payments__others_accounts": {
+   "name": "payments__others_accounts",
+   "label": "Accounts of others · Payments banks",
+   "group": "Payments banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    3443,
+    3390,
+    2268,
+    10086
+   ]
+  },
+  "payments__others": {
+   "name": "payments__others",
+   "label": "Deposits of others · Payments banks",
+   "group": "Payments banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    1.41,
+    0.59,
+    0.47,
+    50.22
+   ]
+  },
+  "payments__total_accounts": {
+   "name": "payments__total_accounts",
+   "label": "All accounts · Payments banks",
+   "group": "Payments banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    150754578,
+    181938918,
+    214526343,
+    237715823
+   ]
+  },
+  "payments__total": {
+   "name": "payments__total",
+   "label": "All deposits · Payments banks",
+   "group": "Payments banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    12160.33,
+    16158.59,
+    25045.72,
+    36786.87
+   ]
+  },
+  "all_banks__individuals_accounts": {
+   "name": "all_banks__individuals_accounts",
+   "label": "Accounts of individuals · All banks",
+   "group": "All banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    1854482831,
+    1951648501,
+    1996408087,
+    2135829775,
+    2406369565,
+    2530666640,
+    2570236460,
+    2617148725
+   ]
+  },
+  "all_banks__individuals": {
+   "name": "all_banks__individuals",
+   "label": "Deposits of individuals · All banks",
+   "group": "All banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    7087952.84,
+    7800652.55,
+    8758361.52,
+    9354432.44,
+    10051885.75,
+    11291867.37,
+    12284362.52,
+    13476666.49
+   ]
+  },
+  "all_banks__women_accounts": {
+   "name": "all_banks__women_accounts",
+   "label": "Accounts of women · All banks",
+   "group": "All banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    607979721,
+    662667607,
+    706438630,
+    794400794,
+    917716961,
+    991364884,
+    1038944253,
+    1073512643
+   ]
+  },
+  "all_banks__women": {
+   "name": "all_banks__women",
+   "label": "Deposits of women · All banks",
+   "group": "All banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    2303348.46,
+    2619083.97,
+    2873420.54,
+    3414172.46,
+    3900593.42,
+    4482080.14,
+    4945394.41,
+    5547624.69
+   ]
+  },
+  "all_banks__others_accounts": {
+   "name": "all_banks__others_accounts",
+   "label": "Accounts of others · All banks",
+   "group": "All banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    118236816,
+    117398973,
+    120117760,
+    119170057,
+    117435516,
+    121706812,
+    123057680,
+    127307716
+   ]
+  },
+  "all_banks__others": {
+   "name": "all_banks__others",
+   "label": "Deposits of others · All banks",
+   "group": "All banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    5551055.68,
+    5948002.51,
+    6685148.45,
+    7654362.63,
+    8690425.13,
+    9961490.7,
+    11167475.86,
+    12599599.79
+   ]
+  },
+  "all_banks__total_accounts": {
+   "name": "all_banks__total_accounts",
+   "label": "All accounts · All banks",
+   "group": "All banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    1972719647,
+    2069047474,
+    2116525847,
+    2254999832,
+    2523805081,
+    2652373452,
+    2693294140,
+    2744456441
+   ]
+  },
+  "all_banks__total": {
+   "name": "all_banks__total",
+   "label": "All deposits · All banks",
+   "group": "All banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    12639008.51,
+    13748655.06,
+    15443509.97,
+    17008795.08,
+    18742310.88,
+    21253358.07,
+    23451838.38,
+    26076266.28
+   ]
+  }
+ }
+}

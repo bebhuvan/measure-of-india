@@ -1,0 +1,854 @@
+{
+ "meta": {
+  "dossier": "deposits",
+  "base": "as on 31 March",
+  "unit": "mixed",
+  "source": "Reserve Bank of India, Basic Statistical Return 2 (via DBIE)",
+  "vintage": "2026-10-09",
+  "mock": false,
+  "geo": "IND",
+  "releaseDate": null,
+  "revisionPolicy": "BSR-2 stocks are final on release for the year; the sector classification changed in 2018-19 and the deposit-size bands in March 2026 (both disclosed, never spliced).",
+  "frequency": "annual",
+  "latestPeriod": "2026-03",
+  "coverage": "Deposits by population group and type of account, as on 31 March. Amounts in ₹ crore; accounts, offices and employees as counts.",
+  "note": "RBI BSR-2 Table 2.1 via DBIE report 851, read from the Data Bank mirror. Column meanings are fixed by identities checked on every row (scripts/lib/products/bsr2-tables.mjs)."
+ },
+ "dates": [
+  "2019-03-01",
+  "2020-03-01",
+  "2021-03-01",
+  "2022-03-01",
+  "2023-03-01",
+  "2024-03-01",
+  "2025-03-01",
+  "2026-03-01"
+ ],
+ "series": {
+  "rural__offices": {
+   "name": "rural__offices",
+   "label": "Bank offices · Rural",
+   "group": "Rural",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    50224,
+    52317,
+    52634,
+    53121,
+    54130,
+    55038,
+    56134,
+    57086
+   ]
+  },
+  "rural__current_accounts": {
+   "name": "rural__current_accounts",
+   "label": "Current accounts · Rural",
+   "group": "Rural",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    18908567,
+    19330637,
+    21223019,
+    29676672,
+    36576830,
+    44598787,
+    14371278,
+    14540228
+   ]
+  },
+  "rural__current": {
+   "name": "rural__current",
+   "label": "Current deposits · Rural",
+   "group": "Rural",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    51167.78,
+    53860.06,
+    63791.01,
+    69122.59,
+    77679.69,
+    91602.08,
+    95125.51,
+    109336.06
+   ]
+  },
+  "rural__savings_accounts": {
+   "name": "rural__savings_accounts",
+   "label": "Savings accounts · Rural",
+   "group": "Rural",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    599500026,
+    636269022,
+    655022976,
+    696787451,
+    723344320,
+    738511860,
+    771616462,
+    793327128
+   ]
+  },
+  "rural__savings": {
+   "name": "rural__savings",
+   "label": "Savings deposits · Rural",
+   "group": "Rural",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    723791.52,
+    806624.75,
+    904259.81,
+    1004787.51,
+    1084991.46,
+    1192740.94,
+    1278710.46,
+    1426881.05
+   ]
+  },
+  "rural__term_accounts": {
+   "name": "rural__term_accounts",
+   "label": "Term deposit accounts · Rural",
+   "group": "Rural",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    49052122,
+    49280855,
+    49414505,
+    48561907,
+    47054042,
+    49366437,
+    51298890,
+    50539325
+   ]
+  },
+  "rural__term": {
+   "name": "rural__term",
+   "label": "Term deposits · Rural",
+   "group": "Rural",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    582334.11,
+    644968.81,
+    697387.1,
+    728138.21,
+    803937.69,
+    929773.59,
+    1067832.85,
+    1201269.54
+   ]
+  },
+  "rural__total_accounts": {
+   "name": "rural__total_accounts",
+   "label": "All deposit accounts · Rural",
+   "group": "Rural",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    667460715,
+    704880514,
+    null,
+    null,
+    null,
+    832477084,
+    837286630,
+    858406681
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "rural__total": {
+   "name": "rural__total",
+   "label": "All deposits · Rural",
+   "group": "Rural",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    1357293.41,
+    1505453.62,
+    null,
+    null,
+    null,
+    2214116.61,
+    2441668.82,
+    2737486.65
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "semi_urban__offices": {
+   "name": "semi_urban__offices",
+   "label": "Bank offices · Semi-urban",
+   "group": "Semi-urban",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    39344,
+    42034,
+    42648,
+    42492,
+    43930,
+    45382,
+    46796,
+    48003
+   ]
+  },
+  "semi_urban__current_accounts": {
+   "name": "semi_urban__current_accounts",
+   "label": "Current accounts · Semi-urban",
+   "group": "Semi-urban",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    20463182,
+    21513474,
+    22608215,
+    30578776,
+    37986404,
+    42616283,
+    20555091,
+    20246818
+   ]
+  },
+  "semi_urban__current": {
+   "name": "semi_urban__current",
+   "label": "Current deposits · Semi-urban",
+   "group": "Semi-urban",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    129889.05,
+    133204.09,
+    149865.99,
+    171804.86,
+    187407.82,
+    210964.58,
+    220105.52,
+    252457
+   ]
+  },
+  "semi_urban__savings_accounts": {
+   "name": "semi_urban__savings_accounts",
+   "label": "Savings accounts · Semi-urban",
+   "group": "Semi-urban",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    511690316,
+    538717265,
+    553115047,
+    586764895,
+    618587394,
+    639187618,
+    662514238,
+    675698345
+   ]
+  },
+  "semi_urban__savings": {
+   "name": "semi_urban__savings",
+   "label": "Savings deposits · Semi-urban",
+   "group": "Semi-urban",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    949687.99,
+    1036891.19,
+    1160716.71,
+    1310117.24,
+    1371504.64,
+    1477801.25,
+    1552499.01,
+    1728224.09
+   ]
+  },
+  "semi_urban__term_accounts": {
+   "name": "semi_urban__term_accounts",
+   "label": "Term deposit accounts · Semi-urban",
+   "group": "Semi-urban",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    56694209,
+    56447850,
+    56644615,
+    56055348,
+    55094653,
+    58343910,
+    60972774,
+    62469771
+   ]
+  },
+  "semi_urban__term": {
+   "name": "semi_urban__term",
+   "label": "Term deposits · Semi-urban",
+   "group": "Semi-urban",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    981171.14,
+    1098872.74,
+    1187338.29,
+    1257753.84,
+    1396201.17,
+    1644646.26,
+    1853562.56,
+    2085211.55
+   ]
+  },
+  "semi_urban__total_accounts": {
+   "name": "semi_urban__total_accounts",
+   "label": "All deposit accounts · Semi-urban",
+   "group": "Semi-urban",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    588847707,
+    616678589,
+    null,
+    null,
+    null,
+    740147811,
+    744042103,
+    758414934
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "semi_urban__total": {
+   "name": "semi_urban__total",
+   "label": "All deposits · Semi-urban",
+   "group": "Semi-urban",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    2060748.18,
+    2268968.01,
+    null,
+    null,
+    null,
+    3333412.09,
+    3626167.1,
+    4065892.64
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "urban__offices": {
+   "name": "urban__offices",
+   "label": "Bank offices · Urban",
+   "group": "Urban",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    26845,
+    28541,
+    29130,
+    29121,
+    29671,
+    30752,
+    31586,
+    32416
+   ]
+  },
+  "urban__current_accounts": {
+   "name": "urban__current_accounts",
+   "label": "Current accounts · Urban",
+   "group": "Urban",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    17245443,
+    17711098,
+    18170923,
+    24373205,
+    27936024,
+    31854040,
+    16680580,
+    16213992
+   ]
+  },
+  "urban__current": {
+   "name": "urban__current",
+   "label": "Current deposits · Urban",
+   "group": "Urban",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    215515.91,
+    226536.82,
+    258875.42,
+    315171.11,
+    335450.42,
+    368970.2,
+    391024.3,
+    435614.45
+   ]
+  },
+  "urban__savings_accounts": {
+   "name": "urban__savings_accounts",
+   "label": "Savings accounts · Urban",
+   "group": "Urban",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    261807969,
+    271139416,
+    276834312,
+    295059688,
+    353166392,
+    398710919,
+    411613917,
+    415567231
+   ]
+  },
+  "urban__savings": {
+   "name": "urban__savings",
+   "label": "Savings deposits · Urban",
+   "group": "Urban",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    950237.16,
+    1027611.68,
+    1155280.48,
+    1349561.46,
+    1426774.21,
+    1479972.66,
+    1523410.99,
+    1648295.94
+   ]
+  },
+  "urban__term_accounts": {
+   "name": "urban__term_accounts",
+   "label": "Term deposit accounts · Urban",
+   "group": "Urban",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    59693717,
+    61339539,
+    61357074,
+    60685630,
+    62762095,
+    66375491,
+    68990784,
+    70430451
+   ]
+  },
+  "urban__term": {
+   "name": "urban__term",
+   "label": "Term deposits · Urban",
+   "group": "Urban",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    1531299.86,
+    1715324.58,
+    1839663.15,
+    1980459.59,
+    2267603.56,
+    2635386.85,
+    2986897.26,
+    3319109.65
+   ]
+  },
+  "urban__total_accounts": {
+   "name": "urban__total_accounts",
+   "label": "All deposit accounts · Urban",
+   "group": "Urban",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    338747129,
+    350190053,
+    null,
+    null,
+    null,
+    496940450,
+    497285281,
+    502211674
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "urban__total": {
+   "name": "urban__total",
+   "label": "All deposits · Urban",
+   "group": "Urban",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    2697052.93,
+    2969473.07,
+    null,
+    null,
+    null,
+    4484329.71,
+    4901332.55,
+    5403020.03
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "metro__offices": {
+   "name": "metro__offices",
+   "label": "Bank offices · Metropolitan",
+   "group": "Metropolitan",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    28961,
+    30210,
+    30073,
+    30024,
+    30911,
+    32044,
+    33290,
+    34568
+   ]
+  },
+  "metro__current_accounts": {
+   "name": "metro__current_accounts",
+   "label": "Current accounts · Metropolitan",
+   "group": "Metropolitan",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    24392477,
+    27451495,
+    29684021,
+    37255617,
+    42458208,
+    47382019,
+    35531049,
+    35738488
+   ]
+  },
+  "metro__current": {
+   "name": "metro__current",
+   "label": "Current deposits · Metropolitan",
+   "group": "Metropolitan",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    793636.9,
+    860154.94,
+    1068472.3,
+    1153709.7,
+    1265684.25,
+    1389252.09,
+    1574657.13,
+    1712513.48
+   ]
+  },
+  "metro__savings_accounts": {
+   "name": "metro__savings_accounts",
+   "label": "Savings accounts · Metropolitan",
+   "group": "Metropolitan",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    270292148,
+    283474131,
+    283247557,
+    300657347,
+    425123886,
+    435299350,
+    475694974,
+    484554118
+   ]
+  },
+  "metro__savings": {
+   "name": "metro__savings",
+   "label": "Savings deposits · Metropolitan",
+   "group": "Metropolitan",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    1493657.52,
+    1644731.82,
+    2048655.42,
+    2306066.05,
+    2407181.68,
+    2497636.17,
+    2602486.06,
+    2853322.71
+   ]
+  },
+  "metro__term_accounts": {
+   "name": "metro__term_accounts",
+   "label": "Term deposit accounts · Metropolitan",
+   "group": "Metropolitan",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    82979471,
+    86372692,
+    89203583,
+    88543296,
+    93714833,
+    100126738,
+    103454103,
+    105130546
+   ]
+  },
+  "metro__term": {
+   "name": "metro__term",
+   "label": "Term deposits · Metropolitan",
+   "group": "Metropolitan",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    4236619.57,
+    4499873.6,
+    4909204.29,
+    5362102.91,
+    6117894.3,
+    7334611.4,
+    8305526.72,
+    9304030.76
+   ]
+  },
+  "metro__total_accounts": {
+   "name": "metro__total_accounts",
+   "label": "All deposit accounts · Metropolitan",
+   "group": "Metropolitan",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    377664096,
+    397298318,
+    null,
+    null,
+    null,
+    582808107,
+    614680126,
+    625423152
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "metro__total": {
+   "name": "metro__total",
+   "label": "All deposits · Metropolitan",
+   "group": "Metropolitan",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    6523913.99,
+    7004760.36,
+    null,
+    null,
+    null,
+    11221499.66,
+    12482669.91,
+    13869866.96
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "all_india__offices": {
+   "name": "all_india__offices",
+   "label": "Bank offices · All India",
+   "group": "All India",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    145374,
+    153102,
+    154485,
+    154758,
+    158642,
+    163216,
+    167806,
+    172073
+   ]
+  },
+  "all_india__current_accounts": {
+   "name": "all_india__current_accounts",
+   "label": "Current accounts · All India",
+   "group": "All India",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    81009669,
+    86006704,
+    91686178,
+    121884270,
+    144957466,
+    166451129,
+    87137998,
+    86739526
+   ]
+  },
+  "all_india__current": {
+   "name": "all_india__current",
+   "label": "Current deposits · All India",
+   "group": "All India",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    1190209.63,
+    1273755.91,
+    1541004.72,
+    1709808.26,
+    1866222.18,
+    2060788.96,
+    2280912.47,
+    2509921
+   ]
+  },
+  "all_india__savings_accounts": {
+   "name": "all_india__savings_accounts",
+   "label": "Savings accounts · All India",
+   "group": "All India",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    1643290459,
+    1729599834,
+    1768219892,
+    1879269381,
+    2120221992,
+    2211709747,
+    2321439591,
+    2369146822
+   ]
+  },
+  "all_india__savings": {
+   "name": "all_india__savings",
+   "label": "Savings deposits · All India",
+   "group": "All India",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    4117374.2,
+    4515859.43,
+    5268912.41,
+    5970532.26,
+    6290451.99,
+    6648151.02,
+    6957106.52,
+    7656723.79
+   ]
+  },
+  "all_india__term_accounts": {
+   "name": "all_india__term_accounts",
+   "label": "Term deposit accounts · All India",
+   "group": "All India",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    248419519,
+    253440936,
+    256619777,
+    253846181,
+    258625623,
+    274212576,
+    284716551,
+    288570093
+   ]
+  },
+  "all_india__term": {
+   "name": "all_india__term",
+   "label": "Term deposits · All India",
+   "group": "All India",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    7331424.69,
+    7959039.72,
+    8633592.83,
+    9328454.56,
+    10585636.71,
+    12544418.09,
+    14213819.39,
+    15909621.49
+   ]
+  },
+  "all_india__total_accounts": {
+   "name": "all_india__total_accounts",
+   "label": "All deposit accounts · All India",
+   "group": "All India",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    1972719647,
+    2069047474,
+    null,
+    null,
+    null,
+    2652373452,
+    2693294140,
+    2744456441
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "all_india__total": {
+   "name": "all_india__total",
+   "label": "All deposits · All India",
+   "group": "All India",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    12639008.51,
+    13748655.06,
+    null,
+    null,
+    null,
+    21253358.07,
+    23451838.38,
+    26076266.28
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  }
+ }
+}
