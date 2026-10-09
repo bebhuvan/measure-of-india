@@ -1003,6 +1003,31 @@ dossiers:
     ranges:
       inr_lakh_crore: [0, 400]
 
+  # --- rates (atlas-rates family session, 2026-10) ---
+  rates:
+    # regression floor: the slowest monthly feed is the lending-rate release (data to M-1);
+    # each bundle carries its own floor in scripts/validate.mjs
+    stale_after: "2026-08"
+    family: databank
+    geo: IND
+    product: rbirates
+    frequency: monthly
+    # event-dated (policy changes, MPC meetings, auctions), daily, weekly, fortnightly,
+    # monthly, quarterly and annual bundles: the instrument sets the cadence
+    frequency_exempt: true
+    base: "n/a"
+    release_calendar: "policy: MPC meetings six times a year; lending and deposit rates: last working day of each month (WALR/WADTDR for the previous month, MCLR for the month); auctions weekly; DBIE tables as the RBI loads them"
+    revision_policy: "Policy rates and auction results are final when announced. The Handbook restates a few effective dates between editions (newest edition wins, differences listed in rates-policy meta). Lending and deposit rates: each monthly release repeats the full history; the newest release wins."
+    source_agency: "Reserve Bank of India (via the Data Bank)"
+    release_url: https://www.rbi.org.in
+    # rulers that changed, kept as separate series (never joined): the corridor floor (fixed
+    # reverse repo to 7 Apr 2022, SDF from 8 Apr 2022); the operating rate (Bank Rate, then the
+    # LAF repo, then the policy repo with the call rate as the operating target from May 2011);
+    # lending benchmarks (BPLR, base rate Jul 2010, MCLR Apr 2016, external benchmarks Oct 2019);
+    # real rates on CPI 2012=100 (to Dec 2025) and CPI 2024=100 (from Jan 2025), one bundle each.
+    ranges:
+      pct: [-30, 60]
+
 
 # ---------------------------------------------------------------------------
 # SEAMS: the base-year registry (2026-10). One entry per base (or

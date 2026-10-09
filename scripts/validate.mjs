@@ -365,6 +365,56 @@ const PRODUCTS = [
   { slug: "wdi-manufacturing-composition", dossier: "manufacturing", cadence: 12, staleAfter: "2023-01", range: [0, 100] },
   { slug: "wdi-manufacturing-tech", dossier: "manufacturing", cadence: 12, staleAfter: "2022-01", range: [0, 100] },
   { slug: "wdi-manufacturing-exports", dossier: "manufacturing", cadence: 12, staleAfter: "2024-01", range: [0, 100] },
+  // --- rates (atlas-rates family session, 2026-10). Interest rates in per cent; amounts in ₹ crore.
+  // Ranges document the measured extremes, they do not curate them: call money printed 80% in the
+  // 1990s (monthly high) and MIBOR 68%; one foreign bank's 1-year MCLR is 1.56%; a credit-card WALR
+  // of 38.9%; CD rates of 26 to 37% in early 1998 and a CP rate of 37.73% (30 Nov 2017) are as
+  // printed. Negative tenors and rates the RBI's tables print are left empty by the adapter.
+  // Event-dated, daily and weekly bundles skip the monthly cadence check (noCadence).
+  { slug: "rates-policy", dossier: "rates", noCadence: true, freq: "irregular", staleAfter: "2026-10", range: [0, 40] },
+  { slug: "rates-monthly", dossier: "rates", cadence: 1, staleAfter: "2026-10", range: [0, 40] },
+  { slug: "rates-mpc", dossier: "rates", noCadence: true, freq: "irregular", staleAfter: "2026-10", range: [-100, 100] },
+  { slug: "rates-mpc-votes", dossier: "rates", noCadence: true, freq: "irregular", staleAfter: "2026-08", range: [0, 6] },
+  { slug: "rates-lending", dossier: "rates", cadence: 1, staleAfter: "2026-08", range: [1, 16] },
+  { slug: "rates-mclr", dossier: "rates", cadence: 1, staleAfter: "2026-09", range: [1, 16] },
+  { slug: "rates-mclr-banks", dossier: "rates", cadence: 1, staleAfter: "2026-09", range: [1, 16] },
+  { slug: "rates-walr-sectors", dossier: "rates", cadence: 1, staleAfter: "2026-08", range: [3, 16] },
+  { slug: "rates-benchmarks", dossier: "rates", cadence: 3, freq: "quarterly", staleAfter: "2026-06", range: [0, 100] },
+  { slug: "rates-call-daily", dossier: "rates", noCadence: true, freq: "daily", staleAfter: "2026-09", range: [0, 100], seriesRange: ratesRanges("rates-call-daily", { inr_crore: [0, 250000] }) },
+  { slug: "rates-call-daily-detail", dossier: "rates", noCadence: true, freq: "daily", staleAfter: "2026-09", range: [0, 100], seriesRange: ratesRanges("rates-call-daily-detail", { inr_crore: [0, 250000] }) },
+  { slug: "rates-call-monthly", dossier: "rates", cadence: 1, staleAfter: "2026-09", range: [0, 100] },
+  { slug: "rates-money-market", dossier: "rates", noCadence: true, freq: "daily", staleAfter: "2026-09", range: [0, 20], seriesRange: ratesRanges("rates-money-market", { inr_crore: [0, 2e6] }) },
+  { slug: "rates-mibor", dossier: "rates", noCadence: true, freq: "daily", staleAfter: "2026-09", range: [0, 100] },
+  // liquidity operations print a few negative amounts (long-term repo unwinds), kept as printed
+  { slug: "rates-liquidity", dossier: "rates", noCadence: true, freq: "daily", staleAfter: "2026-09", range: [-1e5, 2e6] },
+  { slug: "rates-laf", dossier: "rates", noCadence: true, freq: "daily", staleAfter: "2026-10", range: [0, 5000], seriesRange: ratesRanges("rates-laf", { pct: [0, 100], inr_crore: [0, 2e6] }) },
+  { slug: "rates-cd", dossier: "rates", noCadence: true, freq: "fortnightly", staleAfter: "2026-09", range: [0, 40], seriesRange: ratesRanges("rates-cd", { inr_crore: [0, 2e6] }) },
+  { slug: "rates-cp", dossier: "rates", noCadence: true, freq: "fortnightly", staleAfter: "2026-09", range: [0, 40], seriesRange: ratesRanges("rates-cp", { inr_crore: [0, 2e6] }) },
+  { slug: "rates-tbill-91", dossier: "rates", noCadence: true, freq: "weekly", staleAfter: "2026-09", range: [0, 1e5], seriesRange: ratesRanges("rates-tbill-91", { pct: [0, 20], inr_crore: [0, 1e6] }) },
+  { slug: "rates-tbill-182", dossier: "rates", noCadence: true, freq: "weekly", staleAfter: "2026-09", range: [0, 1e5], seriesRange: ratesRanges("rates-tbill-182", { pct: [0, 20], inr_crore: [0, 1e6] }) },
+  { slug: "rates-tbill-364", dossier: "rates", noCadence: true, freq: "weekly", staleAfter: "2026-09", range: [0, 1e5], seriesRange: ratesRanges("rates-tbill-364", { pct: [0, 20], inr_crore: [0, 1e6] }) },
+  // the DBIE table carries cash management bills to May 2020 and the 14-day bill 1997 to 2001: frozen
+  { slug: "rates-tbill-cmb", dossier: "rates", noCadence: true, freq: "irregular", staleAfter: "2020-05", range: [0, 1e5], seriesRange: ratesRanges("rates-tbill-cmb", { pct: [0, 20], inr_crore: [0, 1e6] }) },
+  { slug: "rates-tbill-14", dossier: "rates", noCadence: true, freq: "weekly", staleAfter: "2001-05", range: [0, 1e4], seriesRange: ratesRanges("rates-tbill-14", { pct: [0, 20] }) },
+  { slug: "rates-tbill-sgl", dossier: "rates", cadence: 1, staleAfter: "2026-06", range: [0, 20] },
+  { slug: "rates-gsec-curve", dossier: "rates", cadence: 1, staleAfter: "2026-08", range: [-5, 20] },
+  { slug: "rates-gsec-annual", dossier: "rates", cadence: 12, freq: "annual", staleAfter: "2025-04", range: [0, 20] },
+  { slug: "rates-borrowing", dossier: "rates", cadence: 12, freq: "annual", staleAfter: "2025-04", range: [0, 5e6] },
+  { slug: "rates-borrowing-weekly", dossier: "rates", noCadence: true, freq: "weekly", staleAfter: "2026-09", range: [-5e5, 5e6] },
+  { slug: "rates-state-borrowing-monthly", dossier: "rates", cadence: 1, staleAfter: "2026-07", range: [-1e5, 1e5] },
+  { slug: "rates-state-borrowing", dossier: "rates", cadence: 12, freq: "annual", staleAfter: "2024-04", range: [0, 2e6] },
+  { slug: "rates-wss", dossier: "rates", noCadence: true, freq: "weekly", staleAfter: "2026-09", range: [0, 40] },
+  { slug: "rates-structure", dossier: "rates", cadence: 12, freq: "annual", staleAfter: "2026-04", range: [0, 40] },
+  { slug: "rates-gsec-auctions", dossier: "rates", noCadence: true, freq: "irregular", staleAfter: "2026-09", range: [0, 100], seriesRange: ratesRanges("rates-gsec-auctions", { pct: [0, 20], inr_crore: [0, 5e5] }) },
+  { slug: "rates-gsec-auctions-fy", dossier: "rates", cadence: 12, freq: "annual", staleAfter: "2026-04", range: [0, 500], seriesRange: ratesRanges("rates-gsec-auctions-fy", { pct: [0, 20], inr_crore: [0, 1e7] }) },
+  { slug: "rates-sdl-states", dossier: "rates", cadence: 12, freq: "annual", staleAfter: "2026-04", range: [0, 20], seriesRange: ratesRanges("rates-sdl-states", { inr_crore: [0, 2e6] }) },
+  { slug: "rates-walr-1992", dossier: "rates", cadence: 12, freq: "annual", staleAfter: "2014-03", range: [0, 100] },
+  { slug: "rates-walr-groups-2005", dossier: "rates", cadence: 12, freq: "annual", staleAfter: "2014-03", range: [0, 40] },
+  { slug: "rates-walr-occupation", dossier: "rates", noCadence: true, freq: "irregular", staleAfter: "2026-06", range: [0, 60] },
+  { slug: "rates-omo", dossier: "rates", cadence: 1, staleAfter: "2026-06", range: [-5e5, 5e5] },
+  { slug: "rates-market-repo", dossier: "rates", noCadence: true, freq: "weekly", staleAfter: "2026-09", range: [0, 5000], seriesRange: ratesRanges("rates-market-repo", { pct: [0, 100], inr_crore: [0, 5e6] }) },
+  { slug: "rates-real", dossier: "rates", cadence: 1, staleAfter: "2026-08", range: [-20, 20], base: "CPI 2024=100" },
+  { slug: "rates-real-cpi2012", dossier: "rates", cadence: 1, staleAfter: "2025-12", range: [-20, 20], base: "CPI 2012=100" },
 ];
 
 for (const p of PRODUCTS) {
@@ -1271,6 +1321,140 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
     }
     ok(`seams/${dossier}: ${owner.size} bundles on ${bases.length} bases, ${inWindow} inside their window${overlaps.length ? `; overlaps ${overlaps.join(", ")}` : ""}`);
   }
+}
+
+/* ---- rates (atlas-rates family session): identities across the RBI's own tables ---- */
+// series ranges by unit suffix (name ends _pct, _inr_crore, ...), so a bundle mixing rates and
+// rupee amounts checks each against its own scale
+function ratesRanges(slug, byUnit) {
+  const f = path.join(ROOT, "data/series", slug + ".json");
+  if (!fs.existsSync(f)) return {};
+  const b = JSON.parse(fs.readFileSync(f, "utf8"));
+  const out = {};
+  for (const [k, s] of Object.entries(b.series)) for (const [u, r] of Object.entries(byUnit)) if (String(s.name).endsWith("_" + u)) out[k] = r;
+  return out;
+}
+{
+  const near = (a, b, t) => a != null && b != null && Math.abs(a - b) <= t;
+  // the corridor: floor <= repo <= ceiling on every date the rates coexist
+  withBundle("rates-policy", (b) => {
+    const s = b.series; let bad = 0;
+    b.dates.forEach((d, i) => {
+      const r = s.repo.data[i]; if (r == null) return;
+      if (s.msf.data[i] != null && s.msf.data[i] < r) bad++;
+      if (s.sdf.data[i] != null && s.sdf.data[i] > r) bad++;
+      if (s.reverse_repo.data[i] != null && s.reverse_repo.data[i] > r) bad++;
+    });
+    if (bad) fail(`rates-policy: ${bad} date(s) where the corridor is out of order (floor above repo or ceiling below it)`);
+    else ok("rates-policy: SDF and reverse repo at or below the repo rate, MSF at or above it, on every date");
+  });
+  // every MPC decision is a change event in the policy history (or a hold at the level in force)
+  withBundle("rates-mpc", (m) => withBundle("rates-policy", (p) => {
+    let bad = [];
+    m.dates.forEach((d, i) => {
+      let j = -1; for (let k = 0; k < p.dates.length && p.dates[k] <= d; k++) j = k;
+      const lvl = j >= 0 ? p.series.repo.data[j] : null, want = m.series.repo.data[i];
+      if (!near(lvl, want, 1e-9)) bad.push(`${d}: MPC ${want} vs policy history ${lvl}`);
+      const prev = i > 0 ? m.series.repo.data[i - 1] : null;
+      if (prev != null && !near(Math.round((want - prev) * 100), m.series.change_bps.data[i], 0.5)) bad.push(`${d}: change ${m.series.change_bps.data[i]} bps vs ${prev} -> ${want}`);
+    });
+    if (bad.length) fail(`rates-mpc: ${bad.length} meeting(s) disagree with the policy-rate history, e.g. ${bad.slice(0, 3).join("; ")}`);
+    else ok(`rates-mpc: all ${m.dates.length} decisions equal the policy-rate history and their own changes`);
+  }));
+  withBundle("rates-mpc-votes", (b) => {
+    const members = Object.keys(b.series).filter((k) => k !== "votes_for" && k !== "votes_against");
+    let bad = 0;
+    b.dates.forEach((d, i) => {
+      const f = b.series.votes_for.data[i], a = b.series.votes_against.data[i];
+      const seated = members.filter((k) => b.series[k].data[i] != null);
+      const withD = seated.filter((k) => b.series[k].data[i] === 1).length;
+      if (f + a !== 6 || seated.length !== 6 || withD !== f) bad++;
+    });
+    if (bad) fail(`rates-mpc-votes: ${bad} meeting(s) where the six members' votes do not add up to the split`);
+    else ok(`rates-mpc-votes: six members and a split that adds up at all ${b.dates.length} meetings with minutes`);
+  });
+  // the weekly supplement's repo rate equals the policy history on the same Friday
+  withBundle("rates-wss", (w) => withBundle("rates-policy", (p) => {
+    let n = 0, bad = [];
+    w.dates.forEach((d, i) => {
+      const v = w.series.repo.data[i]; if (v == null) return;
+      let j = -1; for (let k = 0; k < p.dates.length && p.dates[k] <= d; k++) j = k;
+      n++; if (!near(v, p.series.repo.data[j], 1e-9)) bad.push(`${d}: WSS ${v} vs ${p.series.repo.data[j]}`);
+    });
+    // a decision announced on a Friday can reach the table a week late; allow a handful
+    if (bad.length > 8) fail(`rates-wss: repo rate differs from the policy history on ${bad.length} of ${n} weeks, e.g. ${bad.slice(0, 3).join("; ")}`);
+    else ok(`rates-wss: repo rate equals the policy history on ${n - bad.length} of ${n} weeks${bad.length ? ` (${bad.join("; ")})` : ""}`);
+  }));
+  withBundle("rates-benchmarks", (b) => {
+    let worst = 0;
+    for (const g of ["all", "public", "private", "foreign"]) b.dates.forEach((d, i) => {
+      const parts = ["eblr", "mclr", "base_rate", "others"].map((x) => b.series[`${g}_${x}`]?.data[i]);
+      if (parts.some((v) => v == null)) return;
+      worst = Math.max(worst, Math.abs(parts.reduce((a, c) => a + c, 0) - 100));
+    });
+    if (worst > 0.6) fail(`rates-benchmarks: benchmark shares miss 100 by ${worst.toFixed(2)} pt`);
+    else ok(`rates-benchmarks: benchmark shares add to 100 within ${worst.toFixed(2)} pt`);
+  });
+  withBundle("rates-mclr", (b) => {
+    let bad = 0;
+    for (const g of ["all", "public", "private", "foreign"]) b.dates.forEach((d, i) => { const lo = b.series[`${g}_min`].data[i], md = b.series[`${g}_median`].data[i], hi = b.series[`${g}_max`].data[i]; if (lo != null && md != null && hi != null && !(lo <= md && md <= hi)) bad++; });
+    if (bad) fail(`rates-mclr: ${bad} month-group(s) where the median MCLR is outside the lowest and highest bank`);
+    else ok("rates-mclr: median MCLR between the lowest and highest bank in every month and group");
+  });
+  // the daily call rate sits inside the day's range, and its monthly average matches the RBI's own
+  withBundle("rates-call-daily", (b) => withBundle("rates-call-monthly", (m) => {
+    let out = 0;
+    b.dates.forEach((d, i) => { const w = b.series.wacr.data[i], lo = b.series.low.data[i], hi = b.series.high.data[i]; if (w != null && lo != null && hi != null && (w < lo - 0.005 || w > hi + 0.005)) out++; });
+    if (out > 5) fail(`rates-call-daily: weighted average call rate outside the day's range on ${out} days`);
+    else ok(`rates-call-daily: weighted average call rate inside the day's lowest and highest deal (${out} exceptions)`);
+    // the Handbook's monthly average is weighted by turnover: rebuild it from the daily rates
+    const byM = new Map();
+    b.dates.forEach((d, i) => { const v = b.series.wacr.data[i], w = b.series.turnover.data[i]; if (v == null || !w) return; const k = d.slice(0, 7) + "-01"; const e = byM.get(k) ?? byM.set(k, []).get(k); e.push([v, w]); });
+    let n = 0; const off = [];
+    for (const [k, vs] of byM) { const j = m.dates.indexOf(k); const pub = j >= 0 ? m.series.average.data[j] : null; if (pub == null || vs.length < 15) continue; n++; const W = vs.reduce((a, c) => a + c[1], 0); const dlt = Math.abs(vs.reduce((a, c) => a + c[0] * c[1], 0) / W - pub); if (dlt > 0.15) off.push(`${k.slice(0, 7)} (${dlt.toFixed(2)})`); }
+    // measured 2026-10: 3 of 258 months differ by more than 0.15 pt, all in 2007
+    if (off.length > n * 0.03) fail(`rates-call-monthly: the RBI's monthly average differs from the turnover-weighted daily rates by more than 0.15 pt in ${off.length} of ${n} months: ${off.join(", ")}`);
+    else ok(`rates-call-monthly: monthly averages equal the turnover-weighted daily rates within 0.15 pt in ${n - off.length} of ${n} months (${off.join(", ")})`);
+  }));
+  for (const t of ["91", "182", "364"]) withBundle(`rates-tbill-${t}`, (b) => {
+    let n = 0, bad = 0;
+    // from 2001: earlier totals include amounts the table does not print separately (bundle note)
+    b.dates.forEach((d, i) => { if (d < "2001-04-01") return; const ti = b.series.total_issue.data[i], c = b.series.accepted_comp.data[i], nc = b.series.accepted_noncomp?.data[i], dv = b.series.devolvement?.data[i]; if (ti == null || c == null) return; n++; if (Math.abs(ti - (c + (nc ?? 0) + (dv ?? 0))) > Math.max(1, ti * 0.001)) bad++; });
+    if (bad > n * 0.02) fail(`rates-tbill-${t}: total issue != accepted plus devolvement on ${bad} of ${n} auctions`);
+    else ok(`rates-tbill-${t}: total issue = accepted (competitive + non-competitive) + devolvement on ${n - bad} of ${n} auctions`);
+  });
+  withBundle("rates-gsec-curve", (b) => {
+    let worst = 0;
+    b.dates.forEach((d, i) => { const s = b.series.spread_10_1.data[i]; if (s != null) worst = Math.max(worst, Math.abs(s - (b.series.y10.data[i] - b.series.y1.data[i]))); });
+    if (worst > 1e-3) fail(`rates-gsec-curve: term spread differs from 10y - 1y by ${worst}`);
+    else ok("rates-gsec-curve: term spread = 10-year minus 1-year yield in every month");
+  });
+  for (const [slug, cpiSlug] of [["rates-real", "cpi-2024-linked"], ["rates-real-cpi2012", "cpi"]]) withBundle(slug, (r) => withBundle(cpiSlug, (c) => withBundle("rates-monthly", (m) => {
+    let n = 0, worst = 0;
+    r.dates.forEach((d, i) => { const ci = c.dates.indexOf(d), mi = m.dates.indexOf(d); const v = r.series.repo.data[i]; if (v == null || ci < 0 || mi < 0) return; n++; worst = Math.max(worst, Math.abs(v - (m.series.repo.data[mi] - c.series.headline.data[ci]))); });
+    if (worst > 0.006) fail(`${slug}: real repo differs from repo minus CPI inflation by ${worst.toFixed(3)}`);
+    else ok(`${slug}: real repo = month-end repo minus ${cpiSlug} inflation in all ${n} months`);
+  })));
+  withBundle("rates-sdl-states", (b) => {
+    let worst = 0;
+    b.dates.forEach((d, i) => { const all = b.series.all_raised.data[i]; const sum = Object.entries(b.series).filter(([k]) => k.endsWith("_raised") && k !== "all_raised").reduce((t, [, s]) => t + (s.data[i] ?? 0), 0); worst = Math.max(worst, Math.abs(all - sum)); });
+    if (worst > 1) fail(`rates-sdl-states: all-state total differs from the sum of states by ₹${worst.toFixed(2)} crore`);
+    else ok("rates-sdl-states: the all-state total is the sum of the states in every year");
+  });
+  withBundle("rates-borrowing", (b) => {
+    let bad = 0;
+    b.dates.forEach((d, i) => { for (const w of ["centre", "states"]) { const g = b.series[`${w}_gross`].data[i], n = b.series[`${w}_net`].data[i]; if (g != null && n != null && n > g + 0.5) bad++; } });
+    if (bad) fail(`rates-borrowing: net borrowing above gross in ${bad} year(s)`);
+    else ok("rates-borrowing: net market borrowing never exceeds gross");
+  });
+  withBundle("rates-structure", (b) => {
+    let bad = 0;
+    // as printed: the 1971-72 short-term G-sec range reads 4.21 to 4.17
+    const KNOWN = new Set(["gsec_short_low|1971-04-01"]);
+    for (const k of Object.keys(b.series).filter((k) => k.endsWith("_low"))) { const h = b.series[k.replace(/_low$/, "_high")]; b.series[k].data.forEach((v, i) => { if (v != null && h?.data[i] != null && v > h.data[i] && !KNOWN.has(`${k}|${b.dates[i]}`)) bad++; }); }
+    if (bad) fail(`rates-structure: ${bad} range(s) with the low end above the high end`);
+    else ok("rates-structure: every printed range runs low to high");
+  });
 }
 
 if (failures) { console.error(`\n${failures} validation failure(s)`); process.exit(1); }
