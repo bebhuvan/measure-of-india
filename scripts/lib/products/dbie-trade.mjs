@@ -39,8 +39,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { databankRoot, databankQuery } from "../databank.mjs";
-import { dbieProvider, dbieProviders } from "./dbie-providers.mjs";
-import { writeRaw, writeSeries } from "../util.mjs";
+import { dbieProvider, dbieProviders } from "../databank.mjs";
+import { writeRaw, writeSeries, readRaw } from "../util.mjs";
 
 const VERSION_RANK = { Final: 5, Revised: 4, Provisional: 2, Forecast: 1 };
 const fyStart = (fy) => `${fy.slice(0, 4)}-04-01`;                       // "2011-12" -> "2011-04-01"
@@ -76,7 +76,13 @@ export async function buildDbieTrade(root, dcfg, vintage, cfg) {
     ["601", "DP0"], ["552", "DP0"], ["601", "DP3"], ["552", "DP3"], ["148", "DP1"], ["676", "DP1"], ["439", "DP1"], ["431", "DP1"],
     ["439", "DP0"], ["431", "DP0"], ["429", "DP1"], ["429", "DP0"], ["676", "DP0"]];
   const R = {};
-  for (const [id, dp] of SPEC) R[`${id}:${dp}`] = dbieProvider(db, id, dp);
+  // provenance as trade has always archived it: databank.mjs's, plus the provider's name
+  for (const [id, dp] of SPEC) {
+    const r = dbieProvider(db, id, dp);
+    const name = dbieProviders(db, id).find((p) => p.id === dp)?.name;
+    const { report_id, data_provider, ...rest } = r.provenance;
+    R[`${id}:${dp}`] = { ...r, provenance: { report_id, data_provider, provider_name: name, ...rest } };
+  }
 
   // ---------- the audit trail: ACTUALS rows only (every other unit row repeats the same value) ----------
   const rawRel = "data/raw/trade-dbie.json";
@@ -87,7 +93,7 @@ export async function buildDbieTrade(root, dcfg, vintage, cfg) {
       return [k, { provenance: r.provenance, header: r.header, rows: actuals(r.rows) }];
     })),
   });
-  const V = JSON.parse(fs.readFileSync(path.join(root, rawRel), "utf8")).vintage;
+  const V = readRaw(root, rawRel).vintage;
 
   const meta = (extra) => ({ dossier: "trade-dbie", source: dcfg.source_agency, vintage: V, mock: false, geo: "IND", releaseDate: null,
     revisionPolicy: dcfg.revision_policy, ...extra });

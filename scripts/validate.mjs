@@ -9,6 +9,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import YAML from "yaml";
+import { readRawFile } from "./lib/util.mjs";
+// raw dumps are stored gzipped (scripts/lib/util.mjs readRawFile reads either form)
+const rawFileExists = (f) => fs.existsSync(f) || fs.existsSync(f + ".gz");
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const cfg = YAML.parse(fs.readFileSync(path.join(ROOT, "data/sources.yml"), "utf8"));
@@ -383,36 +386,11 @@ const PRODUCTS = [
   { slug: "aishe-teachers", dossier: "aishe", cadence: 12, range: [0, 2e6] },
   // minority enrolment: Muslims peak ~2.1M
   { slug: "aishe-minority", dossier: "aishe", cadence: 12, range: [0, 2.5e6] },
-  // Gender compendium — each indicator its own source/cadence. Sex ratio is
-  // decadal census (120-month steps); MMR & literacy have irregular cadences
-  // (overlapping 3-year periods; mixed census + NSO estimate) and skip the
-  // cadence check. Ranges: sex ratio 900-1000, IMR 0-100, life-exp 40-80,
-  // MMR 0-300, TFR 0-6, literacy 0-100, LFPR/unemp 0-100.
-  { slug: "gender-sexratio", dossier: "gender", cadence: 120, range: [900, 1000] },
-  { slug: "gender-imr", dossier: "gender", cadence: 12, range: [0, 100] },
-  { slug: "gender-lifeexp", dossier: "gender", noCadence: true, range: [40, 85] },
-  { slug: "gender-mmr", dossier: "gender", noCadence: true, range: [0, 300] },
-  { slug: "gender-fertility", dossier: "gender", cadence: 12, range: [0, 6] },
-  { slug: "gender-literacy", dossier: "gender", noCadence: true, range: [0, 100] },
-  { slug: "gender-work", dossier: "gender", cadence: 12, range: [0, 100] },
-  // some tribal/UT populations have sex ratio >1000 (more females than males)
-  { slug: "gender-states", dossier: "gender", noCadence: true, range: [0, 1200] },
   // MNRE: installed capacity in MW. Grand Total peaks ~289k; states peak ~52k
   { slug: "mnre-sources", dossier: "mnre", cadence: 1, range: [0, 300000] },
   { slug: "mnre-solar-categories", dossier: "mnre", cadence: 1, range: [0, 200000] },
   { slug: "mnre-states", dossier: "mnre", cadence: 1, range: [0, 60000] },
   { slug: "mnre-states-solar", dossier: "mnre", cadence: 1, range: [0, 50000] },
-  // NFHS: 2-point cross-sections (NFHS-4, NFHS-5). Wide ranges: IMR in per
-  // 1000, most indicators in per cent. noCadence (2 points, irregular).
-  { slug: "nfhs-child", dossier: "nfhs", noCadence: true, range: [0, 100] },
-  // maternal mixes per cent with OOP expenditure (₹) and counts — wide range
-  { slug: "nfhs-maternal", dossier: "nfhs", noCadence: true, range: [0, 3500] },
-  { slug: "nfhs-anaemia", dossier: "nfhs", noCadence: true, range: [0, 100] },
-  { slug: "nfhs-adult", dossier: "nfhs", noCadence: true, range: [0, 100] },
-  { slug: "nfhs-fertility", dossier: "nfhs", noCadence: true, range: [0, 100] },
-  // household carries sex ratios (up to ~1020) alongside per cent
-  { slug: "nfhs-household", dossier: "nfhs", noCadence: true, range: [0, 1200] },
-  { slug: "nfhs-states", dossier: "nfhs", noCadence: true, range: [0, 100] },
   // World Bank WDI (first non-MoSPI family): annual, calendar years. The
   // headline bundle mixes % of GDP with a constant-2015-US$ level — the
   // level carries its own range. Growth dips to about -10 (2020 lockdown).
@@ -604,6 +582,45 @@ const PRODUCTS = [
   { slug: "external-reer6-2015-calendar", dossier: "external-reer", cadence: 12, freq: "annual", staleAfter: "2025-01", range: [40, 200] },
   { slug: "external-reer6-2015-fiscal", dossier: "external-reer", cadence: 12, freq: "annual", staleAfter: "2025-04", range: [40, 200] },
   // ---- end external ----
+  // ---- prices wave 2 (lb/prices): CPI deep, CPI-IW, rural wages, CPI-AL/RL deep, WPI old bases ----
+  ...["cpi-2024-classes", "cpi-2024-subclasses", ...["rural", "urban"].flatMap((s) => ["divisions", "groups", "classes", "subclasses", "items"].map((l) => `cpi-2024-${s}-${l}`))]
+    .map((slug) => ({ slug, dossier: "cpi", cadence: 1, range: [-70, 300], base: "2024=100" })),
+  ...["", "-rural", "-urban"].flatMap((s) => [`cpi-2024-states-divisions${s}`, `cpi-2024-states-groups${s}`])
+    .map((slug) => ({ slug, dossier: "cpi", cadence: 1, range: [-80, 300], base: "2024=100" })),
+  { slug: "cpi-2024-back-sectors", dossier: "cpi", cadence: 1, staleAfter: "2024-12", range: [-8, 20], base: "2024=100" },
+  { slug: "cpi-groups", dossier: "cpi", cadence: 1, staleAfter: "2025-12", range: [-30, 70] },
+  { slug: "cpi-rural-detail", dossier: "cpi", cadence: 1, staleAfter: "2025-12", range: [-50, 120] },
+  { slug: "cpi-urban-detail", dossier: "cpi", cadence: 1, staleAfter: "2025-12", range: [-50, 120] },
+  ...["", "-rural", "-urban"].flatMap((s) => [`cpi-states-groups${s}`, `cpi-states-subgroups${s}`])
+    .map((slug) => ({ slug, dossier: "cpi", cadence: 1, staleAfter: "2025-12", range: [-90, 400] })),
+  { slug: "cpi-items-2012", dossier: "cpi", cadence: 1, staleAfter: "2025-12", range: [-95, 600] },
+  { slug: "cpi-2012-early", dossier: "cpi", cadence: 1, staleAfter: "2015-12", range: [-40, 100] },
+  { slug: "cpi-2012-early-states", dossier: "cpi", cadence: 1, staleAfter: "2015-12", range: [-90, 400] },
+  { slug: "cpiiw-2016", dossier: "cpiiw", cadence: 1, range: [-20, 40], base: "2016=100" },
+  { slug: "cpiiw-2016-index", dossier: "cpiiw", cadence: 1, range: [100, 400], base: "2016=100" },
+  { slug: "cpiiw-2001", dossier: "cpiiw", cadence: 1, staleAfter: "2020-08", range: [-20, 40], base: "2001=100" },
+  { slug: "cpiiw-1982", dossier: "cpiiw", cadence: 1, staleAfter: "2005-12", range: [-20, 40], base: "1982=100" },
+  { slug: "cpiiw-1960", dossier: "cpiiw", cadence: 1, staleAfter: "1988-09", range: [-30, 45], base: "1960=100" },
+  { slug: "cpiiw-centres-2016", dossier: "cpiiw", cadence: 1, range: [-30, 50], base: "2016=100" },
+  { slug: "cpiiw-centres-2001", dossier: "cpiiw", cadence: 1, staleAfter: "2020-08", range: [-50, 80], base: "2001=100" },
+  { slug: "cpiiw-centres-1982", dossier: "cpiiw", cadence: 1, staleAfter: "2005-12", range: [-50, 80], base: "1982=100" },
+  // rupees a day: the lowest occupation-state cells near Rs 15 in 1998, the highest near Rs 1,500 now
+  { slug: "wages-rural-2013", dossier: "wages-rural", cadence: 1, range: [50, 3000] },
+  { slug: "wages-rural-states-2013", dossier: "wages-rural", cadence: 1, range: [20, 3000] },
+  { slug: "wages-rural-1998", dossier: "wages-rural", cadence: 1, staleAfter: "2013-10", range: [5, 1500], base: "occupations 1998 (18)" },
+  { slug: "wages-rural-states-1998", dossier: "wages-rural", cadence: 1, staleAfter: "2013-10", range: [5, 1500], base: "occupations 1998 (18)" },
+  { slug: "cpialrl-states-rl-1986", dossier: "cpialrl", cadence: 1, staleAfter: "2025-05", range: [-25, 45], base: "1986-87=100" },
+  { slug: "cpialrl-states-groups-1986", dossier: "cpialrl", cadence: 1, staleAfter: "2025-05", range: [-60, 120], base: "1986-87=100" },
+  { slug: "cpialrl-states-rl-2019", dossier: "cpialrl", cadence: 1, range: [50, 300], base: "2019=100" },
+  { slug: "cpialrl-states-groups-2019", dossier: "cpialrl", cadence: 1, range: [50, 300], base: "2019=100" },
+  { slug: "cpialrl-groups-rl-2019", dossier: "cpialrl", cadence: 1, range: [-10, 300], base: "2019=100" },
+  { slug: "wpi-subsubgroups", dossier: "wpi", cadence: 1, staleAfter: "2026-04", range: [-90, 500] },
+  { slug: "wpi-2022-subsubgroups", dossier: "wpi", cadence: 1, staleAfter: "2026-08", range: [-90, 500], base: "2022-23=100" },
+  ...[["2004", "2004-05=100", "2017-03"], ["1993", "1993-94=100", "2010-03"]].flatMap(([t, base, stale]) => [
+    { slug: `wpi-${t}`, dossier: "wpi", cadence: 1, staleAfter: stale, range: [-30, 60], base },
+    ...["groups", "subgroups", "subsubgroups", "items"].map((l) => ({ slug: `wpi-${t}-${l}`, dossier: "wpi", cadence: 1, staleAfter: stale, range: [-95, 900], base })),
+  ]),
+  // ---- end prices wave 2 ----
 ];
 
 for (const p of PRODUCTS) {
@@ -734,8 +751,8 @@ withBundle("cpi-2024-items", (b) => {
 });
 {
   const rawFile = path.join(ROOT, "data/raw/cpi-2024-indices.json");
-  if (fs.existsSync(rawFile)) {
-    const raw = JSON.parse(fs.readFileSync(rawFile, "utf8"));
+  if (rawFileExists(rawFile)) {
+    const raw = readRawFile(rawFile);
     let bad = 0;
     for (const [key, months] of Object.entries(raw.levels)) {
       if (key.startsWith("back:")) continue; // back-cast falls to ~55 by 2013, by design
@@ -755,8 +772,8 @@ withBundle("cpi-2024-items", (b) => {
 function checkWpiItems(itemsSlug, subgroupsSlug, rawRel, minItems, basket) {
 withBundle(itemsSlug, (b) => {
   const rawFile = path.join(ROOT, rawRel);
-  if (!fs.existsSync(rawFile)) return fail(`${itemsSlug}: ${rawRel} missing`);
-  const raw = JSON.parse(fs.readFileSync(rawFile, "utf8"));
+  if (!rawFileExists(rawFile)) return fail(`${itemsSlug}: ${rawRel} missing`);
+  const raw = readRawFile(rawFile);
   const n = Object.keys(b.series).length;
   if (n < minItems) fail(`${itemsSlug}: only ${n} item series baked (${basket})`);
   else ok(`${itemsSlug}: ${n} item series baked`);
@@ -910,9 +927,9 @@ withBundle("gdp-industries", (b) => {
   // level identity from the raw dumps: the 8 sectors sum to Total GVA
   const indFile = path.join(ROOT, "data/raw/nas-industries.json");
   const totFile = path.join(ROOT, "data/raw/nas-levels.json");
-  if (fs.existsSync(indFile) && fs.existsSync(totFile)) {
-    const ind = JSON.parse(fs.readFileSync(indFile, "utf8")).constant;
-    const tot = JSON.parse(fs.readFileSync(totFile, "utf8")).levels.gva;
+  if (rawFileExists(indFile) && rawFileExists(totFile)) {
+    const ind = readRawFile(indFile).constant;
+    const tot = readRawFile(totFile).levels.gva;
     let worst = 0, worstAt = null, n = 0;
     for (const [ym, t] of Object.entries(tot)) {
       const s = Object.values(ind).reduce((a, m) => a + (m[ym] ?? NaN), 0);
@@ -1020,8 +1037,8 @@ withBundle("hces-item-values", (b) => {
   // redundancy cross-check against indicator 3 (broad categories in ₹, not
   // baked as a bundle): its All-India "Cereal" row must equal Total Cereals
   const rawFile = path.join(ROOT, "data/raw/hces-records.json");
-  if (fs.existsSync(rawFile)) {
-    const ind3 = JSON.parse(fs.readFileSync(rawFile, "utf8")).indicators?.["3"] ?? [];
+  if (rawFileExists(rawFile)) {
+    const ind3 = readRawFile(rawFile).indicators?.["3"] ?? [];
     let checked = 0;
     b.dates.forEach((d, i) => {
       const fy = `${d.slice(0, 4)}-${String((+d.slice(0, 4) + 1) % 100).padStart(2, "0")}`;
@@ -1377,59 +1394,115 @@ withBundle("aishe-minority", (b) => {
   else ok(`aishe-minority: EWS starts at ${b.dates[firstEws]} (disclosed late-start gap, not a fetch failure)`);
 });
 
-/* ---- Gender compendium: directional identities ---- */
+/* ---- health-gender: the NFHS (nfhs-4-*, nfhs-5-*) and the gender compendium (gender-t*) ----
+ * Bundles are found by prefix, so a table or indicator baked tomorrow is checked the day it lands.
+ * Ranges are per unit; the identities are the surveys' own arithmetic. */
+{
+  const files = fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => f.endsWith(".json")).map((f) => f.replace(/\.json$/, ""));
+  const NF = files.filter((f) => /^nfhs-[45]-/.test(f)), GT = files.filter((f) => /^gender-t\d{3}/.test(f));
+  const nfhsCfg = cfg.dossiers.nfhs, genderCfg = cfg.dossiers.gender;
+  const RANGE = { percent: [0, 200], pp: [-60, 60], ratio: [500, 1600], births_per_woman: [0.5, 8], per_1000: [0, 1000], per_1000_women: [0, 320],
+    per_100k_live_births: [0, 1000], years: [0, 100], inr: [0, 1e6], inr_amount: [0, 1e13], inr_crore: [0, 1e8], inr_lakh: [0, 1e9],
+    count: [0, 1e10], million_persons: [0, 2000], thousand: [0, 1e8], gpi: [0, 10], minutes: [0, 1440], per_100_males: [0, 1000],
+    per_lakh_women: [0, 1000], multiple: [0, 10], unstated: [0, 1e8] };
+  const ranges = (b, slug) => {
+    const r = {};
+    for (const [k, s2] of Object.entries(b.series)) { if (!RANGE[s2.unit]) fail(`${slug}.${k}: unit "${s2.unit}" has no range in validate.mjs`); else r[k] = RANGE[s2.unit]; }
+    return r;
+  };
+  // NFHS: one round per bundle, one date, the round's base; every cell in range
+  if (NF.length < 30) fail(`nfhs: only ${NF.length} nfhs-4-/nfhs-5- bundles (expected 37)`);
+  const ROUND = { 4: { base: "NFHS-4 (2015-16)", date: "2016-01-01" }, 5: { base: "NFHS-5 (2019-21)", date: "2020-01-01" } };
+  let triplets = 0, flagged = 0;
+  for (const slug of NF) {
+    const b = load(slug), R = ROUND[slug[5]];
+    checkMeta(b, slug, "nfhs", R.base);
+    checkFreshness(b, slug, slug.startsWith("nfhs-5-") ? {} : { stale: false }, "nfhs");
+    if (b.dates.length !== 1 || b.dates[0] !== R.date) fail(`${slug}: a round is one cross-section dated ${R.date}; got ${b.dates.join(", ")}`);
+    checkRange(b, -Infinity, Infinity, slug, ranges(b, slug));
+    // the round's total lies between its rural and urban figures (a combined rate is a weighted
+    // mean of the two), except where the source's own cell is flagged inconsistent
+    const by = {};
+    for (const [k, s2] of Object.entries(b.series)) (by[k.replace(/__(total|rural|urban)$/, "")] ??= {})[s2.sector] = s2;
+    for (const [k, o] of Object.entries(by)) {
+      if (!o.total || !o.rural || !o.urban || o.total.flags?.caution || o.rural.flags?.caution || o.urban.flags?.caution) continue;
+      const t = o.total.data[0], lo = Math.min(o.rural.data[0], o.urban.data[0]), hi = Math.max(o.rural.data[0], o.urban.data[0]);
+      triplets++;
+      if (t < lo - Math.max(0.15, hi * 0.005) || t > hi + Math.max(0.15, hi * 0.005)) {
+        if (o.total.flags?.inconsistent) { flagged++; continue; }
+        fail(`${slug}.${k}: total ${t} outside rural ${o.rural.data[0]} and urban ${o.urban.data[0]}`);
+      }
+    }
+    // the DHS cross-check the adapter ran is on the bundle: every pair agrees or is a re-proved quarantine
+    for (const c of b.meta.crosscheck_dhs ?? []) if (!c.agrees && !c.quarantined) fail(`${slug}: DHS ${c.dhs} ${c.dhsValue} vs API ${c.api}`);
+  }
+  ok(`nfhs: ${NF.length} bundles; the total lies between rural and urban in ${triplets - flagged} of ${triplets} places (${flagged} flagged at source)`);
+  // the quarantined NFHS-4 sub-indicators never reach a bundle
+  for (const slug of NF.filter((x) => x.startsWith("nfhs-4-"))) {
+    const q = load(slug).meta.quarantined ?? [];
+    for (const s2 of Object.values(load(slug).series)) if (q.some((x) => x.sub === s2.group)) fail(`${slug}: quarantined sub-indicator "${s2.group}" was baked`);
+  }
+  // the story anchor: child anaemia rose between the rounds (All India, total)
+  {
+    const k = "children_age_6_59_months_who_are_anaemic_11__all_india__total";
+    const a4 = load("nfhs-4-anaemia").series[k]?.data[0], a5 = load("nfhs-5-anaemia").series[k]?.data[0];
+    if (a4 == null || a5 == null) fail("nfhs: All India child anaemia missing in a round");
+    else ok(`nfhs: child anaemia ${a4}% (NFHS-4) and ${a5}% (NFHS-5)`);
+  }
 
-withBundle("gender-lifeexp", (b) => {
-  // female life expectancy > male in every period (the universal pattern)
-  b.dates.forEach((d, i) => {
-    const m = b.series.life_exp_male?.data[i], f = b.series.life_exp_female?.data[i];
-    if (m != null && f != null && f <= m) fail(`gender-lifeexp: female (${f}) <= male (${m}) at ${d}`);
-  });
-  ok("gender-lifeexp: female > male in every period");
-});
-
-withBundle("gender-mmr", (b) => {
-  // MMR strictly declining (the steepest mortality improvement)
-  const v = b.series.mmr.data.filter((x) => x != null);
-  for (let i = 1; i < v.length; i++) if (v[i] >= v[i - 1]) fail(`gender-mmr: not declining at index ${i} (${v[i - 1]} -> ${v[i]})`);
-  ok(`gender-mmr: strictly declining (${v[0]} -> ${v.at(-1)})`);
-});
-
-withBundle("gender-literacy", (b) => {
-  // male literacy > female in every year (the gap, closing but not closed)
-  b.dates.forEach((d, i) => {
-    const m = b.series.literacy_male?.data[i], f = b.series.literacy_female?.data[i];
-    if (m != null && f != null && f >= m) fail(`gender-literacy: female (${f}) >= male (${m}) at ${d}`);
-  });
-  ok("gender-literacy: male > female (gap closing, not closed)");
-});
-
-withBundle("gender-work", (b) => {
-  // male LFPR > female LFPR in every year (the stubborn work gap)
-  b.dates.forEach((d, i) => {
-    const m = b.series.lfpr_male?.data[i], f = b.series.lfpr_female?.data[i];
-    if (m != null && f != null && f >= m) fail(`gender-work: female LFPR (${f}) >= male (${m}) at ${d}`);
-  });
-  ok("gender-work: male LFPR > female throughout");
-});
-
-withBundle("gender-fertility", (b) => {
-  // TFR declines with education: graduate < illiterate in every year
-  b.dates.forEach((d, i) => {
-    const ill = b.series.tfr_illiterate?.data[i], grad = b.series.tfr_graduate_and_above?.data[i];
-    if (ill != null && grad != null && grad >= ill) fail(`gender-fertility: graduate TFR (${grad}) >= illiterate (${ill}) at ${d}`);
-  });
-  ok("gender-fertility: TFR declines with education (graduate < illiterate)");
-});
-
-withBundle("gender-sexratio", (b) => {
-  // the 1991 nadir: the lowest sex ratio in the series
-  const v = b.series.sex_ratio.data;
-  const minIdx = v.indexOf(Math.min(...v));
-  const minY = b.dates[minIdx].slice(0, 4);
-  if (minY !== "1991") fail(`gender-sexratio: nadir at ${minY}, expected 1991`);
-  else ok(`gender-sexratio: 1991 is the nadir (${v[minIdx]}) — the 'missing women' low point`);
-});
+  // gender: every compendium bundle, its unit ranges, and the identities of its tables
+  if (GT.length < 150) fail(`gender: only ${GT.length} gender-t bundles (expected about 180)`);
+  for (const slug of GT) {
+    const b = load(slug);
+    checkMeta(b, slug, "gender", b.meta.base);
+    checkFreshness(b, slug, slug === "gender-t007" ? {} : { stale: false }, "gender");
+    checkRange(b, -Infinity, Infinity, slug, ranges(b, slug));
+    if (!b.meta.compendiumTable) fail(`${slug}: no compendium table named`);
+  }
+  const S = (slug, k) => load(slug).series[k]?.data ?? [];
+  // the census sex ratio's low point is 1991 (the "missing women" census)
+  { const b = load("gender-t002"), v = b.series.all_india.data; const i = v.indexOf(Math.min(...v.filter((x) => x != null)));
+    if (b.dates[i].slice(0, 4) !== "1991") fail(`gender-t002: census sex ratio low point at ${b.dates[i]}, expected 1991`); else ok(`gender-t002: the census sex ratio bottoms in 1991 (${v[i]})`); }
+  // sex ratio at birth: the combined ratio lies between rural and urban in every window and state
+  { const b = load("gender-t007"); let n = 0;
+    for (const [k, s2] of Object.entries(b.series)) { if (!k.startsWith("total__")) continue; const g = k.slice(7);
+      s2.data.forEach((t, i) => { const r = b.series["rural__" + g]?.data[i], u = b.series["urban__" + g]?.data[i]; if (t == null || r == null || u == null) return; n++;
+        if (t < Math.min(r, u) - 1 || t > Math.max(r, u) + 1) fail(`gender-t007.${k}: ${t} outside rural ${r} and urban ${u} at ${b.dates[i]}`); }); }
+    ok(`gender-t007: sex ratio at birth, total between rural and urban in ${n} windows`); }
+  // women outlive men in every life-expectancy period, SRS and projection alike
+  { const m = S("gender-t018", "male__all_india"), f = S("gender-t018", "female__all_india");
+    m.forEach((v, i) => { if (v != null && f[i] != null && f[i] <= v) fail(`gender-t018: female ${f[i]} <= male ${v} at ${load("gender-t018").dates[i]}`); });
+    ok("gender-t018: female life expectancy above male in every period"); }
+  // census literacy: male above female in every census
+  { const m = S("gender-t055-census", "total__male__all_india"), f = S("gender-t055-census", "total__female__all_india");
+    if (!m.length || !f.length) fail("gender-t055-census: All India male/female literacy missing");
+    m.forEach((v, i) => { if (v != null && f[i] != null && f[i] >= v) fail(`gender-t055-census: female literacy ${f[i]} >= male ${v}`); }); }
+  // shares that must add to 100: birth order (t011), projected ages per sex and year (t004),
+  // workers by industry per sector and sex (t091), and by status: regular + casual + all
+  // self-employed per sector and sex (t090; "all" is the 100 itself, the self-employed parts are a subtotal)
+  const sumCheck = (slug, take, groupOf) => {
+    const b = load(slug); const sums = {};
+    for (const [k, s2] of Object.entries(b.series)) { if (!take(k)) continue; const g = groupOf(k);
+      s2.data.forEach((v, i) => { if (v == null) return; const key = g + "|" + b.dates[i]; sums[key] = (sums[key] ?? 0) + v; }); }
+    const off = Object.entries(sums).filter(([, v]) => Math.abs(v - 100) > 1.2);
+    if (!Object.keys(sums).length) fail(`${slug}: no share groups found`);
+    else if (off.length) fail(`${slug}: ${off.length} share groups do not sum to 100 (first: ${off[0][0]} = ${off[0][1].toFixed(1)})`);
+    else ok(`${slug}: ${Object.keys(sums).length} share groups sum to 100`);
+  };
+  sumCheck("gender-t011", () => true, (k) => k.split("__")[0]);
+  sumCheck("gender-t004", () => true, (k) => k.split("__")[0]);
+  sumCheck("gender-t091-cy25", () => true, (k) => k.split("__").slice(0, 2).join("__"));
+  sumCheck("gender-t090-cy25", (k) => /__(regular_wage_salaried_employee|casual_labour|self_employed_all_self_employed)__/.test(k), (k) => k.split("__").slice(0, 2).join("__"));
+  // the compendium's NFHS reprints match the NFHS bundles where both are baked (All India, total)
+  { let n = 0;
+    const pairs = [["gender-t146-nfhs5", "all_india", "nfhs-5-marriage-fertility", "women_age_20_24_years_married_before_age_18__all_india__total"],
+      ["gender-t146-nfhs4", "all_india", "nfhs-4-marriage-fertility", "women_age_20_24_years_married_before_age_18__all_india__total"],
+      ["gender-t051-nfhs5", "all_india", "nfhs-5-hiv-knowledge", "women_age_15_49_years_who_have_comprehensive__all_india__total"]];
+    for (const [g, gk, nf, nk] of pairs) { const a = load(g).series[gk]?.data[0], c = load(nf).series[nk]?.data[0];
+      if (a == null || c == null) { fail(`gender/nfhs reprint check: ${g}.${gk} or ${nf}.${nk} missing`); continue; }
+      n++; if (Math.abs(a - c) > 0.06) fail(`${g}: compendium prints ${a}, the NFHS API ${c}`); }
+    ok(`gender: ${n} NFHS reprints match the NFHS bundles`); }
+}
 
 /* ---- MNRE: classification break + solar category identity ---- */
 
@@ -1449,50 +1522,6 @@ withBundle("mnre-sources", (b) => {
   const sNow = b.series.solar.data.at(-1), wNow = b.series.wind.data.at(-1);
   if (sNow != null && wNow != null && sNow <= wNow) fail(`mnre-sources: Solar (${sNow}) has not overtaken Wind (${wNow})`);
   else ok(`mnre-sources: Solar (${(sNow / 1000).toFixed(1)} GW) > Wind (${(wNow / 1000).toFixed(1)} GW)`);
-});
-
-/* ---- NFHS: the direction-of-change identities ---- */
-// NOTE: these blocks must stay OUTSIDE the mnre-sources callback above —
-// nesting them inside meant one early return in an MNRE check silently
-// disabled every NFHS identity.
-
-withBundle("nfhs-anaemia", (b) => {
-  // child anaemia WORSENED: NFHS-5 > NFHS-4
-  const s = Object.values(b.series).find((x) => x.label.toLowerCase().includes("children age 6-59"));
-  if (!s || s.data[0] == null || s.data[1] == null) return fail("nfhs-anaemia: child anaemia series missing");
-  if (s.data[1] <= s.data[0]) fail(`nfhs-anaemia: child anaemia did not worsen (${s.data[0]} → ${s.data[1]})`);
-  else ok(`nfhs-anaemia: child anaemia worsened (${s.data[0]}% → ${s.data[1]}%) — the central story`);
-  // women anaemia also worsened
-  const w = Object.values(b.series).find((x) => x.label.toLowerCase().includes("all women age 15-49"));
-  if (w && w.data[0] != null && w.data[1] != null && w.data[1] > w.data[0]) ok(`nfhs-anaemia: women anaemia also worsened (${w.data[0]}% → ${w.data[1]}%)`);
-});
-
-withBundle("nfhs-child", (b) => {
-  // IMR improved: NFHS-5 < NFHS-4
-  const imr = Object.values(b.series).find((x) => x.label.toLowerCase().includes("infant mortality"));
-  if (imr && imr.data[0] != null && imr.data[1] != null) {
-    if (imr.data[1] >= imr.data[0]) fail(`nfhs-child: IMR did not improve (${imr.data[0]} → ${imr.data[1]})`);
-    else ok(`nfhs-child: IMR improved (${imr.data[0]} → ${imr.data[1]} per 1,000)`);
-  }
-  // stunting improved
-  const stunt = Object.values(b.series).find((x) => x.label.toLowerCase().includes("stunted"));
-  if (stunt && stunt.data[0] != null && stunt.data[1] != null && stunt.data[1] < stunt.data[0]) ok(`nfhs-child: stunting improved (${stunt.data[0]}% → ${stunt.data[1]}%)`);
-});
-
-withBundle("nfhs-fertility", (b) => {
-  // TFR below replacement in NFHS-5
-  const tfr = Object.values(b.series).find((x) => x.label.toLowerCase().includes("total fertility rate"));
-  if (tfr && tfr.data[1] != null) {
-    if (tfr.data[1] > 2.1) fail(`nfhs-fertility: TFR ${tfr.data[1]} not below replacement (2.1)`);
-    else ok(`nfhs-fertility: TFR ${tfr.data[1]} — below replacement (2.1)`);
-  }
-  // bank accounts jumped massively
-  const bank = Object.values(b.series).find((x) => x.label.toLowerCase().includes("bank or savings"));
-  if (bank && bank.data[0] != null && bank.data[1] != null) {
-    const jump = bank.data[1] - bank.data[0];
-    if (jump < 30) fail(`nfhs-fertility: bank account jump only ${jump.toFixed(0)}pt — expected >30`);
-    else ok(`nfhs-fertility: women's bank account jumped ${jump.toFixed(0)}pt (${bank.data[0]}% → ${bank.data[1]}%) — the Jan Dhan effect`);
-  }
 });
 
 withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
@@ -1515,9 +1544,9 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
  * year (measured 2026-10-09: 87,36,331 vs 87,36,328 crore, a rounding gap). */
 {
   const bf = path.join(ROOT, "data/raw/nas-back-levels.json"), nf = path.join(ROOT, "data/raw/nas-nominal.json");
-  if (fs.existsSync(bf) && fs.existsSync(nf)) {
-    const back = JSON.parse(fs.readFileSync(bf, "utf8")).constant?.gdp?.["2011-04"];
-    const cur = JSON.parse(fs.readFileSync(nf, "utf8")).annual_constant_gdp?.["2011-04"];
+  if (rawFileExists(bf) && rawFileExists(nf)) {
+    const back = readRawFile(bf).constant?.gdp?.["2011-04"];
+    const cur = readRawFile(nf).annual_constant_gdp?.["2011-04"];
     if (back == null || cur == null) fail("gdp-back: 2011-12 GDP level missing from the back or current raw dump");
     else if (Math.abs(back / cur - 1) > 1e-4) fail(`gdp-back: 2011-12 GDP ${back} (back series) != ${cur} (current 2011-12 base): the bridge does not meet the series`);
     else ok(`gdp-back: 2011-12 GDP level meets the current series (${back} vs ${cur} crore)`);
@@ -1768,7 +1797,7 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
       else ok(`states-gsva-${pk}: industries and sub-industries add up within ${(worst * 100).toFixed(3)}% (${n} sums)`);
     }
     // per-capita NSDP: indicator 32 (baked) repeats indicator 25 wherever both are served
-    const raw = JSON.parse(fs.readFileSync(path.join(ROOT, "data/raw/states-nas.json"), "utf8")).indicators;
+    const raw = readRawFile(path.join(ROOT, "data/raw/states-nas.json")).indicators;
     // except a copied block (32 repeating 31, per-capita GSDP: Karnataka on 2026-10-09), which
     // the adapter excludes; the copy is reported here so it is seen on every run
     const i25 = new Map((raw[25] ?? []).map((r) => [`${r.state}|${r.year}`, r]));
@@ -1990,7 +2019,7 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
   }
   // growth equals the RBI's printed growth wherever a release printed a one-year comparison
   {
-    const g = load("credit-growth"), raw = JSON.parse(fs.readFileSync(path.join(ROOT, "data/raw/credit-sectoral.json"), "utf8")).rbi_sectoral_credit;
+    const g = load("credit-growth"), raw = readRawFile(path.join(ROOT, "data/raw/credit-sectoral.json")).rbi_sectoral_credit;
     const c = Object.fromEntries(raw.columns.map((k, i) => [k, i])); const s = load("credit-sectors");
     const printed = new Map();
     for (const r of raw.rows) if (r[c.category_code] === "I" && r[c.growth_yoy_pct] != null && r[c.release_date] >= "2024-01-01" && Math.abs((Date.parse(r[c.observation_date]) - Date.parse(r[c.year_ago_date])) / 864e5 - 365) <= 20) { const p = printed.get(r[c.observation_date]); if (!p || +r[c.release_prid] > +p.prid) printed.set(r[c.observation_date], { v: r[c.growth_yoy_pct], prid: r[c.release_prid] }); }
@@ -3046,6 +3075,39 @@ function ratesRanges(slug, byUnit) {
   });
 }
 
+/* ---- prices wave 2 (lb/prices): identities for the deepening ---- */
+// y/y computed from levels against the NSO's own published inflation, on every new base-2024 bundle
+for (const slug of ["cpi-2024-classes", "cpi-2024-subclasses", ...["rural", "urban"].flatMap((s) => ["divisions", "groups", "classes", "subclasses", "items"].map((l) => `cpi-2024-${s}-${l}`)),
+  ...["", "-rural", "-urban"].flatMap((s) => [`cpi-2024-states-divisions${s}`, `cpi-2024-states-groups${s}`])]) crossInflationMap(slug, 0.15);
+crossInflationMap("cpi-2024-back-sectors", 0.25);   // the back-cast's own rate, as cpi-2024-back
+withBundle("cpi-2024-states-divisions", (b) => {
+  const states = new Set(Object.values(b.series).map((s) => s.state));
+  if (states.size !== 36) fail(`cpi-2024-states-divisions: ${states.size} states/UTs, expected 36`);
+  else ok("cpi-2024-states-divisions: all 36 states/UTs present");
+});
+withBundle("cpi-items-2012", (b) => {
+  const n = Object.keys(b.series).length;
+  if (n < 295 || n > 300) fail(`cpi-items-2012: ${n} items, the 2012 basket has 299`);
+  else ok(`cpi-items-2012: ${n} items`);
+});
+withBundle("cpiiw-2016", (b) => withBundle("cpiiw-2016-index", (x) => {
+  // the y/y the page shows must follow from the published levels
+  const lv = new Map(x.dates.map((d, i) => [d, x.series.general_index.data[i]]));
+  const ago = (d) => `${+d.slice(0, 4) - 1}${d.slice(4)}`;
+  let bad = 0;
+  b.dates.forEach((d, i) => { const y = b.series.general.data[i], L = lv.get(d), P = lv.get(ago(d)); if (y != null && L != null && P != null && Math.abs((L / P - 1) * 100 - y) > 0.01) bad++; });
+  if (bad) fail(`cpiiw-2016: ${bad} months where the y/y does not follow from the index levels`);
+  else ok("cpiiw-2016: y/y follows from the published levels in every month");
+}));
+withBundle("cpiiw-centres-2016", (b) => {
+  const n = Object.keys(b.series).length;
+  if (n !== 88) fail(`cpiiw-centres-2016: ${n} centres, the 2016 base prices 88`);
+  else ok("cpiiw-centres-2016: all 88 centres present");
+});
+withBundle("wages-rural-2013", (b) => {
+  if (!b.series.o1210) fail("wages-rural-2013: no general agricultural labourer series (code 1210)");
+  else ok(`wages-rural-2013: ${Object.keys(b.series).length} occupations, general agricultural labourer present`);
+});
 
 /* ---- households (wave 2): consumption (hces), higher education (aishe), renewable energy
  * (mnre), deposits (bsr2) ----

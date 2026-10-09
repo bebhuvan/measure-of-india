@@ -29,7 +29,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { nhbPost, nhbGet } from "../nhb.mjs";
-import { writeSeries, writeRaw, writeJson } from "../util.mjs";
+import { writeSeries, writeRaw, writeJson, readRaw } from "../util.mjs";
 
 const BASES = [
   { ctl: "DashboardBY2013", base: "2012-13=100", tag: "2013", label: "base 2012-13 = 100" },
@@ -97,7 +97,7 @@ export async function buildResidex(root, dcfg, vintage) {
 
   const rawRel = "data/raw/housing-residex.json";
   writeRaw(root, rawRel, { vintage, note: "NHB RESIDEX dashboard responses, as served: the city list, then per base (2013, 2018, 2025) the all-India index (COUNTRY, BOTH_INDEX) and each city's HFC and UC series, by method (2 = four-quarter moving average, 1 = current quarter).", ...raw });
-  const V = JSON.parse(fs.readFileSync(path.join(root, rawRel), "utf8")).vintage;
+  const V = readRaw(root, rawRel).vintage;
 
   for (const B of BASES) {
     const R = raw.bases[B.tag];

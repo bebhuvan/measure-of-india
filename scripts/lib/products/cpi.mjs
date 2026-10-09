@@ -10,8 +10,11 @@
 //   cpi-states.json     — published General index y/y per state/UT (combined)
 //   cpi-states-sectors.json — published General index y/y per state/UT, rural + urban
 
-import { mospi } from "../mospi.mjs";
+import { mospi, mospiAll } from "../mospi.mjs";
 import { MONTHS, round2, writeSeries, writeRaw, yoyFromLevels, monthAxis } from "../util.mjs";
+import fs from "node:fs";
+import path from "node:path";
+import zlib from "node:zlib";
 
 const slugify = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
@@ -100,6 +103,16 @@ function weightedIndex(levels, keys, W, months) {
 
 export async function buildCpi(root, dcfg, vintage) {
   const { subByCode, states } = await cpiMeta(dcfg);
+  // The 2012 base stopped at December 2025 and CPI is final on release: with `retired: true`
+  // its six baked bundles are not fetched again (about 2,700 calls); the wave-2 deep bake
+  // and the 2024 base run as usual, on the baked axis.
+  if (dcfg.fetch.retired) {
+    const b = JSON.parse(fs.readFileSync(path.join(root, "data/series/cpi.json"), "utf8"));
+    if (dcfg.deep2012) await buildCpi2012Deep(root, dcfg, vintage, { states, axis: b.dates.map((d) => d.slice(0, 7)), releaseDate: b.meta.releaseDate, endYear: 2025 });
+    if (dcfg.fetch2024) await buildCpi2024(root, dcfg, vintage);
+    if (dcfg.archive2010) await buildCpi2010Archive(root, dcfg, vintage);
+    return b;
+  }
   const allCodes = Object.keys(subByCode);
   const nameToKey = (name) => {
     for (const c of allCodes) if (subByCode[c].name === name) return subByCode[c].key;
@@ -333,6 +346,7 @@ export async function buildCpi(root, dcfg, vintage) {
   writeSeries(root, "data/series/cpi-states.json", bundleStates);
   writeSeries(root, "data/series/cpi-states-sectors.json", bundleStatesSectors);
 
+  if (dcfg.deep2012) await buildCpi2012Deep(root, dcfg, vintage, { states, axis, releaseDate, endYear });
   if (dcfg.fetch2024) await buildCpi2024(root, dcfg, vintage);
   if (dcfg.archive2010) await buildCpi2010Archive(root, dcfg, vintage);
   return bundleCombined;
@@ -421,6 +435,18 @@ async function fetch2024GridMonth(dcfg, year, monthCode) {
     if (batch.length < 100 || added === 0) break;
   }
   return rows;
+}
+
+// One (state, sector, month) slice of the whole base-2024 hierarchy: General, divisions,
+// groups, classes, sub-classes and items in one stream (about 540 to 669 rows, 6 or 7
+// pages). mospiAll fails unless the rows collected equal the endpoint's totalRecords; the
+// caller also checks each node appears once. The parameter set is fixed so a re-run replays
+// the resume cache exactly.
+export async function fetch2024Slice(dcfg, stateCode, sectorCode, year, monthCode) {
+  return mospiAll(dcfg.fetch2024.endpoint, {
+    ...dcfg.fetch2024.params, series: "Current", state_code: stateCode,
+    sector_code: sectorCode, year, month_code: monthCode,
+  });
 }
 
 // General index (division 0) for one (state, sector, year): 12 rows max
@@ -788,7 +814,372 @@ export async function buildCpi2024(root, dcfg, vintage) {
   writeSeries(root, "data/series/cpi-2024-items.json", bundleItems2024);
   writeSeries(root, "data/series/cpi-2024-states.json", bundleStates2024);
   writeSeries(root, "data/series/cpi-2024-states-sectors.json", bundleStatesSectors2024);
+  if (dcfg.deep2024) await buildCpi2024Deep(root, dcfg, vintage, { fd, years, divisions, backYears, releaseDate, meta, cur, grid, stateLevels24, keyOf });
   return bundle2024;
+}
+
+/* =========================================================================
+ * Base 2012, deep (wave 2, lb/prices). The bundles above carry the headline, food, fuel,
+ * core, the 21 combined sub-groups and the General index by state. This adds the rest of
+ * what the NSO serves on the 2012 base:
+ *   cpi-groups                         All India combined: pan, clothing, housing, misc
+ *   cpi-rural-detail, cpi-urban-detail All India by sector: the groups not in cpi-rural /
+ *                                      cpi-urban, the Consumer Food Price index, every sub-group
+ *   cpi-states-groups[-rural|-urban]   state x every group (General is in cpi-states)
+ *   cpi-states-subgroups[-rural|-urban] state x every sub-group
+ *   cpi-items-2012                     the 299 items, All India combined (served from 2014)
+ *   cpi-2012-early, cpi-2012-early-states  2012 to 2015, the years before the main bundles'
+ *                                      window: 2012 from the NSO back series (series=Back, levels
+ *                                      for 2011 and 2012), 2013 at the handoff (Current 2013 over
+ *                                      Back 2012), 2014-15 Current over Current. One 2012=100
+ *                                      ruler; an agency bridge in sources.yml seams.
+ *
+ * Fetching. One call per (state, sector, year) carries every group and sub-group (about 336
+ * rows, 4 pages). The API's pagination on this base is LOSSY: a page boundary can repeat
+ * some rows and drop others while the total still matches (All India combined 2020: 336
+ * rows, 331 distinct). So each year's rows are grouped by month, and any month with a
+ * repeated node or fewer nodes than the year's fullest month is fetched again on its own
+ * (month_code is honoured: 28 rows, one page, no boundary).
+ * ========================================================================= */
+async function fetch2012Year(dcfg, params, keyOf) {
+  const rows = await mospiAll(dcfg.fetch.endpoint, { base_year: 2012, level: params.level ?? "Group", series: params.series, state_code: params.state_code, sector_code: params.sector_code, year: params.year });
+  const byMonth = new Map();
+  for (const r of rows) (byMonth.get(r.month) ?? byMonth.set(r.month, []).get(r.month)).push(r);
+  const full = Math.max(0, ...[...byMonth.values()].map((rs) => new Set(rs.map(keyOf)).size));
+  const out = [];
+  let refetched = 0;
+  for (const [month, rs] of byMonth) {
+    const distinct = new Set(rs.map(keyOf)).size;
+    if (distinct === rs.length && distinct === full) { out.push(...rs); continue; }
+    const mc = MONTHS.indexOf(month) + 1;
+    const again = await mospiAll(dcfg.fetch.endpoint, { base_year: 2012, level: params.level ?? "Group", series: params.series, state_code: params.state_code, sector_code: params.sector_code, year: params.year, month_code: mc });
+    if (new Set(again.map(keyOf)).size !== again.length) throw new Error(`cpi 2012: ${JSON.stringify(params)} ${month} repeats a node even alone`);
+    out.push(...again);
+    refetched++;
+  }
+  return { rows: out, refetched };
+}
+
+async function buildCpi2012Deep(root, dcfg, vintage, { states, axis, releaseDate, endYear }) {
+  const startYear = 2013;   // the Current series serves levels from January 2013
+  const SEC = { combined: 3, rural: 1, urban: 2 };
+  const nodeKey = (r) => (/-overall$/i.test(r.subgroup ?? "") || r.subgroup == null ? `g:${r.group}` : `s:${r.group}|${r.subgroup}`);
+  const nodeLabel = (k) => (k.startsWith("g:") ? k.slice(2) : k.split("|")[1]);
+  const stList = Object.entries(states).map(([name, code]) => ({ name: String(code) === "99" ? "All India" : name, code, key: String(code) === "99" ? "all_india" : slugify(name) }));
+  // lv[series][sector][stateKey][node] = Map(ym -> level)
+  const lv = { Current: {}, Back: {} };
+  let refetched = 0;
+  for (const st of stList) for (const [sector, sc] of Object.entries(SEC)) {
+    for (const [series, years] of [["Current", Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i)], ["Back", [2011, 2012]]]) for (const year of years) {
+      const { rows, refetched: n } = await fetch2012Year(dcfg, { series, state_code: st.code, sector_code: sc, year }, (r) => `${nodeKey(r)}|${r.month}`);
+      refetched += n;
+      for (const r of rows) {
+        const m = String(MONTHS.indexOf(r.month) + 1).padStart(2, "0");
+        const v = parseFloat(r.index);
+        if (m === "00" || !Number.isFinite(v) || v === 0) continue;
+        ((((lv[series][sector] ??= {})[st.key] ??= {})[nodeKey(r)]) ??= new Map()).set(`${r.year}-${m}`, v);
+      }
+    }
+  }
+  process.stdout.write(`cpi 2012 deep: ${stList.length} states x 3 sectors fetched; ${refetched} month(s) re-read alone after a lossy page\n`);
+  if (!lv.Current.combined?.all_india?.["g:General Index"]?.size && !Object.keys(lv.Current.combined?.all_india ?? {}).length) throw new Error("cpi 2012 deep: no data returned");
+
+  /* the 299 items, All India combined; the item level carries no codes, only names */
+  const itemLv = {};
+  for (let year = 2014; year <= endYear; year++) {
+    const { rows } = await fetch2012Year(dcfg, { level: "Item", series: "Current", state_code: 99, sector_code: 3, year }, (r) => `${r.item}|${r.month}`);
+    for (const r of rows) {
+      const m = String(MONTHS.indexOf(r.month) + 1).padStart(2, "0");
+      const v = parseFloat(r.index);
+      if (m === "00" || !Number.isFinite(v) || v === 0) continue;
+      (itemLv[r.item] ??= new Map()).set(`${r.year}-${m}`, v);
+    }
+  }
+  if (Object.keys(itemLv).length < 290) throw new Error(`cpi 2012 items: ${Object.keys(itemLv).length} items, expected 299`);
+
+  const dates = axis.map((m) => `${m}-01`);
+  const lastMonth = axis.at(-1);
+  const meta = (coverage, extra = {}) => ({
+    dossier: "cpi", frequency: "monthly", base: dcfg.base, source: dcfg.source_agency, vintage, mock: false,
+    geo: dcfg.geo ?? "IND", latestPeriod: lastMonth, releaseDate, coverage, revisionPolicy: dcfg.revision_policy, ...extra,
+  });
+  const ser = (map, ax, extra) => {
+    const yy = yoyFromLevels(map);
+    const ds = ax.map((m) => `${m}-01`);
+    const data = ax.map((m) => yy.get(m) ?? null);
+    const first = data.findIndex((v) => v != null);
+    const last = data.length - 1 - [...data].reverse().findIndex((v) => v != null);
+    const gaps = first < 0 ? [] : ds.filter((d, j) => j > first && j < last && data[j] == null);
+    return { color: GREYS[0], unit: "pct_yoy", ...extra, data, ...(gaps.length ? { gaps, gapsNote: "The NSO published no index for these months (chiefly April and May 2020 and 2021, when price collection stopped), or none a year earlier." } : {}) };
+  };
+  const out = {};
+  const keyName = (k) => slugify(nodeLabel(k));
+  const isGroup = (k) => k.startsWith("g:");
+  const GENERAL = (k) => /^g:general/i.test(k);
+  const BAKED_GROUPS = /^g:(general|food and beverages|fuel and light)/i;   // already in cpi / cpi-rural / cpi-urban
+  // All India
+  {
+    const ai = lv.Current.combined.all_india;
+    const series = {};
+    for (const k of Object.keys(ai).filter((k) => isGroup(k) && !BAKED_GROUPS.test(k) && !/consumer food/i.test(k)).sort())
+      series[keyName(k)] = ser(ai[k], axis, { name: `cpi_${keyName(k)}_yoy_pct`, label: nodeLabel(k) });
+    out["cpi-groups"] = { meta: meta("All India, Combined; the four groups beyond food and fuel (pan, clothing, housing, miscellaneous)"), dates, series };
+    for (const sector of ["rural", "urban"]) {
+      const a = lv.Current[sector].all_india;
+      const series = {};
+      for (const k of Object.keys(a).filter((k) => !BAKED_GROUPS.test(k)).sort())
+        series[keyName(k)] = ser(a[k], axis, { name: `cpi_${sector}_${keyName(k)}_yoy_pct`, label: `${nodeLabel(k)}, ${sector}`, group: isGroup(k) ? "Groups" : k.slice(2).split("|")[0] });
+      out[`cpi-${sector}-detail`] = { meta: meta(`All India, ${sector[0].toUpperCase() + sector.slice(1)}; the groups not in cpi-${sector}, the Consumer Food Price index and every sub-group`), dates, series };
+    }
+  }
+  // states x groups, states x sub-groups
+  for (const sector of ["combined", "rural", "urban"]) for (const kind of ["groups", "subgroups"]) {
+    const series = {};
+    for (const st of stList) {
+      if (st.key === "all_india") continue;
+      const nodes = lv.Current[sector]?.[st.key] ?? {};
+      for (const k of Object.keys(nodes).filter((k) => (kind === "groups" ? isGroup(k) && !GENERAL(k) : !isGroup(k))).sort())
+        series[`${st.key}__${keyName(k)}`] = ser(nodes[k], axis, { name: `cpi_${st.key}_${sector}_${keyName(k)}_yoy_pct`, label: `${st.name}: ${nodeLabel(k)}${sector === "combined" ? "" : ", " + sector}`, group: st.name, state: st.name });
+    }
+    for (const [k, s] of Object.entries(series)) if (s.data.every((v) => v == null)) delete series[k];
+    out[`cpi-states-${kind}${sector === "combined" ? "" : "-" + sector}`] = { meta: meta(`States/UTs x ${kind === "groups" ? "group" : "sub-group"}, ${sector[0].toUpperCase() + sector.slice(1)}; published indices`), dates, series };
+  }
+  // items
+  {
+    const itAxis = monthAxis("2015-01", lastMonth);
+    const series = {};
+    for (const name of Object.keys(itemLv).sort()) {
+      const own = [...itemLv[name].keys()].sort();
+      series[slugify(name)] = ser(itemLv[name], itAxis, { name: `cpi_item_${slugify(name)}_yoy_pct`, label: name, latest_level: itemLv[name].get(own.at(-1)) ?? null, latest_level_month: own.at(-1) });
+    }
+    out["cpi-items-2012"] = { meta: { ...meta(`All India, Combined; the ${Object.keys(series).length} items of the 2012 basket (served from January 2014, so y/y from January 2015)`), note: "Item indices carry no weights in the API, so no recomposition is asserted. latest_level is each item's index (2012=100) at its last published month." }, dates: itAxis.map((m) => `${m}-01`), series };
+  }
+  // the early years, 2012 to 2015: before the main bundles' window opens (January 2016).
+  // y/y for 2012 is Back over Back, for 2013 Current over Back (the handoff), for 2014 and
+  // 2015 Current over Current: one 2012=100 ruler throughout, the first two years resting on
+  // the NSO's own back series (an agency bridge in sources.yml seams).
+  {
+    const eax = monthAxis("2012-01", "2015-12");
+    const joined = (sector, stKey, k) => {
+      const m = new Map();
+      for (const [ym, v] of lv.Back[sector]?.[stKey]?.[k] ?? []) if (ym <= "2012-12") m.set(ym, v);
+      for (const [ym, v] of lv.Current[sector]?.[stKey]?.[k] ?? []) if (ym >= "2013-01" && ym <= "2015-12") m.set(ym, v);
+      return m;
+    };
+    const mk = (stFilter) => {
+      const series = {};
+      for (const st of stList.filter(stFilter)) for (const sector of ["combined", "rural", "urban"]) {
+        const nodes = new Set([...Object.keys(lv.Back[sector]?.[st.key] ?? {}), ...Object.keys(lv.Current[sector]?.[st.key] ?? {})]);
+        for (const k of [...nodes].sort()) {
+          const s = ser(joined(sector, st.key, k), eax, { name: `cpi_early_${st.key}_${sector}_${keyName(k)}_yoy_pct`, label: `${st.key === "all_india" ? "" : st.name + ": "}${nodeLabel(k)}, ${sector}`, group: st.key === "all_india" ? sector : st.name });
+          if (s.data.some((v) => v != null)) series[`${st.key === "all_india" ? "" : st.key + "__"}${sector}__${keyName(k)}`] = s;
+        }
+      }
+      return series;
+    };
+    const note = "The 2012 base's early years, January 2012 to December 2015, before this guide's main 2012-base bundles open (January 2016). One 2012=100 ruler: y/y for 2012 is the NSO back series (series=Back) over itself, for 2013 the Current level over the Back level a year earlier, for 2014 and 2015 Current over Current.";
+    out["cpi-2012-early"] = { meta: { ...meta("All India, three sectors; every group and sub-group, 2012 to 2015"), latestPeriod: "2015-12", releaseDate: null, note }, dates: eax.map((m) => `${m}-01`), series: mk((st) => st.key === "all_india") };
+    out["cpi-2012-early-states"] = { meta: { ...meta("States/UTs, three sectors; every group and sub-group, 2012 to 2015"), latestPeriod: "2015-12", releaseDate: null, note }, dates: eax.map((m) => `${m}-01`), series: mk((st) => st.key !== "all_india") };
+  }
+
+  // raw: every level read, one row string per (series, sector, state, node)
+  {
+    const rows = [];
+    for (const [series, bySec] of Object.entries(lv)) for (const [sector, bySt] of Object.entries(bySec)) for (const stKey of Object.keys(bySt).sort()) for (const k of Object.keys(bySt[stKey]).sort())
+      rows.push([series, sector, stKey, k.slice(2), ...[...bySt[stKey][k].entries()].sort().map(([m, v]) => `${m}=${v}`)].join(";"));
+    for (const name of Object.keys(itemLv).sort()) rows.push(["Item", "combined", "all_india", name, ...[...itemLv[name].entries()].sort().map(([m, v]) => `${m}=${v}`)].join(";"));
+    writeRaw(root, "data/raw/cpi-2012-grid.json", {
+      vintage, unit: "index, base 2012=100",
+      note: "Every group and sub-group the NSO serves on the 2012 base for every state/UT and All India x sector (series Current and Back), and the 299 All-India items. Each row: series;sector;state;node (group, or group|sub-group);then month=level pairs.",
+      rows,
+    });
+  }
+  for (const [slug, b] of Object.entries(out)) writeSeries(root, `data/series/${slug}.json`, b);
+}
+
+/* =========================================================================
+ * Base 2024, deep (wave 2, lb/prices): every node of the hierarchy for every state and
+ * sector the NSO publishes, plus the NSO back series for rural and urban.
+ *
+ * One fetch2024Slice per (state, sector, month): 36 states/UTs and All India x combined,
+ * rural, urban x every Current month = about 2,300 slices of 6 or 7 pages. Every slice must
+ * hold each node once (checked), and its row count must equal totalRecords (mospiAll).
+ *
+ * Baked (y/y from levels, on the window2024 axis, the first month with a same-base
+ * year-ago level):
+ *   cpi-2024-classes, cpi-2024-subclasses           All India combined, 92 and 162
+ *   cpi-2024-<rural|urban>-<divisions|groups|classes|subclasses|items>   All India by sector
+ *   cpi-2024-states-divisions[-rural|-urban]        36 states x 12 divisions
+ *   cpi-2024-states-groups[-rural|-urban]           36 states x 43 groups
+ *   cpi-2024-back-sectors                           NSO back series, rural and urban General
+ * Archived (deep-archive tier, PLAN-launch §2b; git-ignored staging, long csv.gz):
+ *   data/archive/staging/cpi/cpi-2024-states-<class|subclass|item>.csv.gz  state x sector x
+ *   node x month: index level, y/y, the NSO's published inflation, imputation flag.
+ * Raw (the audit trail): data/raw/cpi-2024-states-grid.json, every level of every slice,
+ * one row string per node.
+ * ========================================================================= */
+const LEVEL_OF = (r) => r.item != null ? "item" : r.sub_class != null ? "subclass" : r.class != null ? "class" : r.group != null ? "group" : r.code == null ? "general" : "division";
+const NAME_OF = (r, lv) => ({ item: r.item, subclass: r.sub_class, class: r.class, group: r.group, division: r.division, general: "CPI (General)" }[lv]);
+
+async function buildCpi2024Deep(root, dcfg, vintage, { fd, years, divisions, backYears, meta, cur, grid, stateLevels24, keyOf }) {
+  const SEC = { combined: 3, rural: 1, urban: 2 };
+  const states = fd.state.map((s) => ({ code: s.state_code, name: s.state_name, key: s.state_code === 1 ? "all_india" : slugify(s.state_name) }));
+  // store[sector][stateKey][code] = { level, name, division, levels, published, imputed }
+  const store = { combined: {}, rural: {}, urban: {} };
+  let slices = 0, emptySlices = 0;
+  const thisMonth = new Date().toISOString().slice(0, 7);
+  for (const st of states) for (const [sector, sc] of Object.entries(SEC)) for (const year of years) for (let mc = 1; mc <= 12; mc++) {
+    const ymm = `${year}-${String(mc).padStart(2, "0")}`;
+    if (ymm >= thisMonth) continue;   // a month's CPI is released on the 12th of the next month at the earliest
+    const rows = await fetch2024Slice(dcfg, st.code, sc, year, mc);
+    if (!rows.length) { emptySlices++; continue; }
+    slices++;
+    const seen = new Set();
+    for (const r of rows) {
+      const lv = LEVEL_OF(r), code = r.code ?? "0";
+      if (seen.has(code)) throw new Error(`cpi-2024 deep: node ${code} twice in ${st.name} ${sector} ${ymm}`);
+      seen.add(code);
+      const v = parseFloat(r.index);
+      const node = ((store[sector][st.key] ??= {})[code] ??= { level: lv, name: NAME_OF(r, lv), division: r.division, levels: new Map(), published: new Map(), imputed: [] });
+      if (Number.isFinite(v) && v !== 0) node.levels.set(ymm, v);
+      const inf = parseFloat(r.inflation);
+      if (Number.isFinite(inf)) node.published.set(ymm, inf);
+      if (r.imputation === "Y") node.imputed.push(ymm);
+    }
+  }
+  process.stdout.write(`cpi-2024 deep: ${slices} slices with data, ${emptySlices} empty (months not yet released, or a sector a state does not have)\n`);
+  const ai = store.combined.all_india;
+  if (!ai || Object.keys(ai).length < 600) throw new Error("cpi-2024 deep: no data returned for All India combined");
+
+  // The headline, grid and state-General fetches above page by hand (a division's aggregate
+  // sits ~23 pages deep, so they cannot use mospiAll). Every value they produced must equal
+  // the same node in these slices, which mospiAll audits for slipped pages: a mismatch
+  // means one of the two reads lost or repeated a row, and nothing is baked.
+  {
+    const bad = [];
+    const cmp = (label, a, b) => { for (const [ym, v] of a ?? []) { const w = b?.get(ym); if (w != null && Math.abs(w - v) > 1e-9) bad.push(`${label} ${ym}: ${v} vs ${w}`); } };
+    const divCode = (d) => (d.division_code === 0 ? "0" : String(d.division_code).padStart(2, "0"));
+    for (const sector of ["combined", "rural", "urban"]) for (const d of divisions) cmp(`${sector} ${d.division_name}`, cur[sector][keyOf(d)].levels, store[sector].all_india?.[divCode(d)]?.levels);
+    for (const lv of Object.keys(grid)) for (const [code, g] of Object.entries(grid[lv])) cmp(`grid ${code}`, g.levels, ai[code]?.levels);
+    const stKeyOf = Object.fromEntries(fd.state.map((x) => [slugify(x.state_name), x.state_code === 1 ? "all_india" : slugify(x.state_name)]));
+    for (const sector of ["combined", "rural", "urban"]) for (const [k, st] of Object.entries(stateLevels24[sector])) cmp(`${k} ${sector} General`, st.levels, store[sector][stKeyOf[k]]?.["0"]?.levels);
+    if (bad.length) throw new Error(`cpi-2024: ${bad.length} values differ between the hand-paged fetches and the audited slices, e.g. ${bad.slice(0, 3).join("; ")}`);
+    process.stdout.write("cpi-2024: every headline, grid and state-General value equals the audited state x sector slices\n");
+  }
+
+  const months = [...ai["0"].levels.keys()].sort();
+  const lastMonth = months.at(-1);
+  const axis = monthAxis(dcfg.window2024.start, lastMonth);
+  const dates = axis.map((m) => `${m}-01`);
+  const yoyData = (node) => { const yy = yoyFromLevels(node.levels); return axis.map((m) => yy.get(m) ?? null); };
+  const withGaps = (s) => {
+    const first = s.data.findIndex((v) => v != null);
+    const last = s.data.length - 1 - [...s.data].reverse().findIndex((v) => v != null);
+    const gaps = first < 0 ? [] : dates.filter((d, j) => j > first && j < last && s.data[j] == null);
+    return gaps.length ? { ...s, gaps, gapsNote: "The NSO published no index for this cut in these months, or none a year earlier." } : s;
+  };
+  const stName = Object.fromEntries(states.map((s) => [s.key, s.name]));
+  const LVL = { division: "divisions", group: "groups", class: "classes", subclass: "subclasses", item: "items" };
+  const LVLN = { division: "division", group: "group", class: "class", subclass: "sub-class", item: "item" };
+  const nodesOf = (sector, stKey, lv) => Object.entries(store[sector][stKey] ?? {}).filter(([, n]) => n.level === lv).sort(([a], [b]) => (a < b ? -1 : 1));
+  const out = {};
+  const put = (slug, coverage, series, extra = {}) => {
+    const cross = {};
+    for (const [k, s] of Object.entries(series)) { cross[k] = s._pub; delete s._pub; }
+    for (const [k, s] of Object.entries(series)) if (s.data.every((v) => v == null)) { delete series[k]; delete cross[k]; }
+    out[slug] = { meta: meta(coverage, extra), dates, series, crosscheck: { published_inflation: cross } };
+  };
+  const seriesOf = (node, code, key, label, name, extra = {}) => withGaps({
+    name, label, color: GREYS[0], code: code === "0" ? null : code, division: node.division, unit: "pct_yoy", ...extra,
+    data: yoyData(node), _pub: axis.map((m) => node.published.get(m) ?? null),
+    ...(node.imputed.length ? { imputed_months: [...node.imputed].sort() } : {}),
+  });
+  // All India: classes and sub-classes (combined); every level by sector
+  for (const lv of ["class", "subclass"]) {
+    const series = {};
+    for (const [code, n] of nodesOf("combined", "all_india", lv)) series[`${slugify(n.name)}_${code.replace(/\./g, "_")}`] = seriesOf(n, code, null, n.name, `cpi2024_${lv}_${code.replace(/\./g, "_")}_yoy_pct`);
+    put(`cpi-2024-${LVL[lv]}`, `All India, Combined; the ${Object.keys(series).length} ${LVLN[lv]}${lv === "class" ? "es" : "es"} of the 2024 basket`, series);
+  }
+  for (const sector of ["rural", "urban"]) for (const lv of ["division", "group", "class", "subclass", "item"]) {
+    const series = {};
+    for (const [code, n] of nodesOf(sector, "all_india", lv)) series[`${slugify(n.name)}_${code.replace(/\./g, "_")}`] = seriesOf(n, code, null, `${n.name}, ${sector}`, `cpi2024_${sector}_${lv}_${code.replace(/\./g, "_")}_yoy_pct`, { group: n.division });
+    put(`cpi-2024-${sector}-${LVL[lv]}`, `All India, ${sector[0].toUpperCase() + sector.slice(1)}; the ${Object.keys(series).length} ${LVL[lv].replace("subclasses", "sub-classes")} of the 2024 basket`, series);
+  }
+  // states x divisions and groups, each sector
+  for (const lv of ["division", "group"]) for (const sector of ["combined", "rural", "urban"]) {
+    const series = {};
+    for (const st of states) {
+      if (st.key === "all_india") continue;
+      for (const [code, n] of nodesOf(sector, st.key, lv)) series[`${st.key}__${code.replace(/\./g, "_")}`] = seriesOf(n, code, null, `${st.name}: ${n.name}${sector === "combined" ? "" : ", " + sector}`, `cpi2024_${st.key}_${sector}_${lv}_${code.replace(/\./g, "_")}_yoy_pct`, { group: st.name, state: st.name, node: n.name });
+    }
+    put(`cpi-2024-states-${LVL[lv]}${sector === "combined" ? "" : "-" + sector}`, `States/UTs x ${LVL[lv]}, ${sector[0].toUpperCase() + sector.slice(1)}; published indices (state baskets differ, no all-India weights applied)`, series);
+  }
+
+  // back series, rural and urban General (the NSO's own back-cast on this base)
+  {
+    const back = {};
+    for (const [sector, sc] of [["rural", 1], ["urban", 2]]) {
+      const rows = [];
+      for (const year of backYears) rows.push(...await fetch2024DivisionYear(dcfg, sc, 0, year, "Back"));
+      back[sector] = rows2024ToMaps(rows);
+    }
+    const bm = [...new Set([...back.rural.levels.keys(), ...back.urban.levels.keys()])].sort();
+    const yy = { rural: yoyFromLevels(back.rural.levels), urban: yoyFromLevels(back.urban.levels) };
+    const ym = [...new Set([...yy.rural.keys(), ...yy.urban.keys()])].sort();
+    if (!ym.length) throw new Error("cpi-2024 back sectors: no data returned");
+    const bax = monthAxis(ym[0], ym.at(-1));
+    out["cpi-2024-back-sectors"] = {
+      meta: { ...meta("All India, Rural and Urban; General index only, NSO back series"), latestPeriod: bax.at(-1), releaseDate: null,
+        note: "The NSO's own back-cast of the 2024-base General index for rural and urban India (series=Back), " + bm[0].slice(0, 4) + " to " + bm.at(-1).slice(0, 4) + ". A linking series published by the NSO, not by India Atlas; never merged with the 2012-base series or with the Current series." },
+      dates: bax.map((m) => `${m}-01`),
+      series: Object.fromEntries(["rural", "urban"].map((sector, i) => [sector, { name: `cpi2024_back_${sector}_yoy_pct`, label: `Headline, ${sector}, base 2024, NSO back-cast`, color: GREYS[i], unit: "pct_yoy", data: bax.map((m) => yy[sector].get(m) ?? null) }])),
+      crosscheck: { published_inflation: Object.fromEntries(["rural", "urban"].map((sector) => [sector, bax.map((m) => back[sector].published.get(m) ?? null)])) },
+    };
+    writeRaw(root, "data/raw/cpi-2024-back-sectors.json", { vintage, unit: "index, base 2024=100", levels: Object.fromEntries(["rural", "urban"].map((s) => [s, Object.fromEntries([...back[s].levels.entries()].sort())])), published_inflation: Object.fromEntries(["rural", "urban"].map((s) => [s, Object.fromEntries([...back[s].published.entries()].sort())])) });
+  }
+
+  // raw: every node of every slice, one row string per (sector, state, code)
+  {
+    const allMonths = [...new Set(Object.values(store).flatMap((bySt) => Object.values(bySt).flatMap((nodes) => Object.values(nodes).flatMap((n) => [...n.levels.keys()]))))].sort();
+    const rows = [];
+    for (const [sector, bySt] of Object.entries(store)) for (const stKey of Object.keys(bySt).sort()) for (const [code, n] of Object.entries(bySt[stKey]).sort(([a], [b]) => (a < b ? -1 : 1)))
+      rows.push([sector, stKey, n.level, code, n.name, ...allMonths.map((m) => n.levels.get(m) ?? ""), ...allMonths.map((m) => n.published.get(m) ?? ""), n.imputed.sort().join(" ")].join(";"));
+    writeRaw(root, "data/raw/cpi-2024-states-grid.json", {
+      vintage, unit: "index, base 2024=100",
+      note: "Every node of the base-2024 hierarchy for every state/UT (and All India) x sector x month the NSO serves (getCPIData, series=Current, one call per state x sector x month). " +
+        "Each row: sector;state;level;code;name; then the index level for each month in `months`; then the NSO's published inflation for each month; then the months the item's index was imputed (flag Y). Empty cell = not served.",
+      states: stName, months: allMonths, rows,
+    });
+  }
+
+  // deep archive: state x sector x (class, sub-class, item), long csv.gz
+  {
+    const STAGE = "data/archive/staging/cpi";
+    fs.mkdirSync(path.join(root, STAGE), { recursive: true });
+    const csvCell = (v) => (v == null ? "" : /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v));
+    const files = [];
+    for (const lv of ["class", "subclass", "item"]) {
+      const lines = [["state", "sector", "level", "code", "name", "division", "date", "index", "yoy_pct", "published_inflation_pct", "imputed", "unit", "base", "source", "vintage"].join(",")];
+      let n = 0;
+      for (const sector of ["combined", "rural", "urban"]) for (const st of states) {
+        if (st.key === "all_india") continue;
+        for (const [code, node] of nodesOf(sector, st.key, lv)) {
+          const yy = yoyFromLevels(node.levels);
+          for (const m of [...node.levels.keys()].sort()) {
+            lines.push([st.name, sector, LVLN[lv], code, node.name, node.division, `${m}-01`, node.levels.get(m), yy.get(m) ?? "", node.published.get(m) ?? "", node.imputed.includes(m) ? "Y" : "N", "index", "2024=100", "MoSPI, NSO", vintage].map(csvCell).join(","));
+            n++;
+          }
+        }
+      }
+      const file = `${STAGE}/cpi-2024-states-${LVL[lv]}.csv.gz`;
+      fs.writeFileSync(path.join(root, file), zlib.gzipSync(lines.join("\n") + "\n", { level: 9 }));
+      files.push({ file, rows: n, level: LVLN[lv], rolls_up_to: ["cpi-2024-states-groups", "cpi-2024-states-groups-rural", "cpi-2024-states-groups-urban"] });
+    }
+    fs.writeFileSync(path.join(root, STAGE, "files.json"), JSON.stringify({ note: "Staged base-2024 CPI state x sector x class, sub-class and item tables for the deep archive (long format, one row per state, sector, node and month).", files }, null, 1) + "\n");
+    process.stdout.write(`cpi-2024 deep: archive ${files.map((f) => `${f.level} ${f.rows}`).join(", ")} rows in ${STAGE}\n`);
+  }
+
+  for (const [slug, b] of Object.entries(out)) writeSeries(root, `data/series/${slug}.json`, b);
 }
 
 /* =========================================================================

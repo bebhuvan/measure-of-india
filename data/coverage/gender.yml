@@ -1,601 +1,854 @@
-# Coverage ledger: Women and Men in India, MoSPI's gender compendium
-# (docs/CONTRACT-coverage.md). Catalogue: node scripts/lib/products/gender.mjs --catalogue.
-# The guide bakes 10 of the compendium's 154 indicators. Omissions left for the coordinator
-# ("women and men, up to date" in docs/INVENTORY-data-paths.md): the other 144 indicators
-# (health, education, work, time use, finance, political voice, crime), the sector cuts of
-# fertility, literacy and work, the census sex ratio by state, and every year of the state
-# tables but the latest.
+# Coverage ledger: Women and Men in India 2025, MoSPI's gender compendium (docs/CONTRACT-coverage.md).
+# Catalogue: node scripts/lib/products/gender.mjs --catalogue (the live indicator list, each
+# indicator's filter listing, and the codes MoSPI's MCP definitions list that the API no longer serves).
+# WRITTEN BY node scripts/lib/products/gender-ledger.mjs from the catalogue, the raw dump, the
+# baked bundles and the guide's plates: edit that script (its PLATES table mirrors
+# src/pages/guides/gender.astro), not this file. Every served indicator is baked in full (one
+# bundle per indicator, split by instrument where the compendium joins two); the plates draw
+# the cuts named below.
 family: gender
-guides: [gender]
+guides:
+  - gender
 catalogue: data/coverage/gender.catalogue.json
 rules:
-  - match: "gender:2:all"
-    status: shown
-    bundle: gender-sexratio
-    plate: "Plate 1: the seventy-year count"
-  - match: ["gender:15:all", "gender:15:gender:*", "gender:21:all"]
-    status: shown
-    bundle: [gender-imr, gender-mmr]
-    plate: "Plate 2: survival"
-  - match: ["gender:18:all", "gender:18:gender:*"]
-    status: shown
-    bundle: gender-lifeexp
-    plate: "Plate 3: living longer, living apart"
-  - match: ["gender:10:all", "gender:10:education-level:*"]
-    status: shown
-    bundle: gender-fertility
-    plate: "Plate 4: fewer births, by education"
-  - match: ["gender:55:all", "gender:55:gender:*"]
-    status: shown
-    bundle: gender-literacy
-    plate: "Plate 5: the literacy gap"
-  - match: ["gender:80:all", "gender:80:gender:*", "gender:93:all", "gender:93:gender:*"]
-    status: shown
-    bundle: gender-work
-    plate: "Plate 6: the work gap"
-  # the latest year only: earlier years of these state tables are an omission
-  - match: ["gender:6:state-ut:*", "gender:16:state-ut:*"]
-    status: shown
-    bundle: gender-states
-    plate: "Plate 7: where the balance is worst (latest year)"
-
-  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
-  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
   - match:
-      - "gender:100:activity:*"
-      - "gender:100:age-group:*"
-      - "gender:100:all"
-      - "gender:100:gender:*"
-      - "gender:101:age-group:*"
-      - "gender:101:all"
-      - "gender:101:gender:*"
-      - "gender:101:sector:*"
-      - "gender:101:sub-indicator:*"
-      - "gender:102:activity:*"
-      - "gender:102:age-group:*"
-      - "gender:102:all"
-      - "gender:102:gender:*"
-      - "gender:102:sector:*"
-      - "gender:103:activity:2-unpaid-activity-sna"
-      - "gender:103:activity:3-unpaid-activity-non-sna"
-      - "gender:103:activity:4-paid-activity"
-      - "gender:103:activity:6-residual-other-activities"
-      - "gender:103:all"
-      - "gender:103:gender:1-male"
-      - "gender:103:gender:2-female"
-      - "gender:104:activity:*"
-      - "gender:104:all"
-      - "gender:104:gender:*"
-      - "gender:104:sub-indicator:*"
-      - "gender:105:all"
-      - "gender:105:bank-group:*"
-      - "gender:105:employment-category:*"
-      - "gender:105:gender:*"
-      - "gender:105:sector:*"
-      - "gender:106:all"
-      - "gender:106:employment-category:*"
-      - "gender:106:gender:*"
-      - "gender:106:state-ut:*"
-      - "gender:107:all"
-      - "gender:107:deposit-amount:*"
-      - "gender:107:sector:*"
-      - "gender:107:sub-indicator:*"
-      - "gender:108:all"
-      - "gender:108:deposit-amount:*"
-      - "gender:108:state-ut:*"
-      - "gender:108:sub-indicator:*"
-      - "gender:109:all"
-      - "gender:109:gender:*"
-      - "gender:109:scheme:*"
-      - "gender:109:state-ut:*"
-      - "gender:10:sector:1-rural"
-      - "gender:10:sector:2-urban"
-      - "gender:110:all"
-      - "gender:110:state-ut:*"
-      - "gender:110:sub-indicator:*"
-      - "gender:111:all"
-      - "gender:111:gender:*"
-      - "gender:111:state-ut:*"
-      - "gender:112:all"
-      - "gender:112:gender:*"
-      - "gender:112:state-ut:*"
-      - "gender:112:sub-indicator:*"
-      - "gender:113:all"
-      - "gender:113:gender:*"
-      - "gender:113:state-ut:*"
-      - "gender:114:activity:*"
-      - "gender:114:all"
-      - "gender:114:gender:*"
-      - "gender:114:state-ut:*"
-      - "gender:115:all"
-      - "gender:115:gender:*"
-      - "gender:115:state-ut:*"
-      - "gender:116:activity:*"
-      - "gender:116:all"
-      - "gender:116:state-ut:*"
-      - "gender:116:sub-indicator:*"
-      - "gender:117:activity:*"
-      - "gender:117:all"
-      - "gender:117:state-ut:*"
-      - "gender:117:sub-indicator:*"
-      - "gender:118:all"
-      - "gender:118:gender:*"
-      - "gender:118:state-ut:*"
-      - "gender:119:all"
-      - "gender:119:broad-activity-category:*"
-      - "gender:119:state-ut:*"
-      - "gender:11:all"
-      - "gender:11:birth-order:1-1"
-      - "gender:11:birth-order:2-2"
-      - "gender:11:birth-order:3-3"
-      - "gender:11:birth-order:4-4"
-      - "gender:11:sector:1-rural"
-      - "gender:11:sector:2-urban"
-      - "gender:120:all"
-      - "gender:120:broad-activity-category:*"
-      - "gender:120:state-ut:*"
-      - "gender:121:all"
-      - "gender:121:state-ut:*"
-      - "gender:121:sub-indicator:*"
-      - "gender:122:all"
-      - "gender:122:broad-activity-category:*"
-      - "gender:122:sector:*"
-      - "gender:122:type-of-establishment:*"
-      - "gender:123:all"
-      - "gender:123:sub-indicator:*"
-      - "gender:124:all"
-      - "gender:124:lok-sabha-election:*"
-      - "gender:124:sub-indicator:*"
-      - "gender:125:all"
-      - "gender:125:state-ut:*"
-      - "gender:125:sub-indicator:*"
-      - "gender:126:all"
-      - "gender:126:gender:*"
-      - "gender:126:state-ut:*"
-      - "gender:127:all"
-      - "gender:127:state-ut:*"
-      - "gender:127:sub-indicator:*"
-      - "gender:128:all"
-      - "gender:128:gender:*"
-      - "gender:128:lok-sabha-election:*"
-      - "gender:128:sub-indicator:*"
-      - "gender:129:all"
-      - "gender:129:state-ut:*"
-      - "gender:129:sub-indicator:*"
-      - "gender:12:all"
-      - "gender:12:sector:*"
-      - "gender:12:state-ut:*"
-      - "gender:130:all"
-      - "gender:130:court:*"
-      - "gender:130:sub-indicator:*"
-      - "gender:131:all"
-      - "gender:131:gender:1-male"
-      - "gender:131:gender:2-female"
-      - "gender:131:gender:4-transgender"
-      - "gender:131:sub-indicator:95-board-of-directors"
-      - "gender:131:sub-indicator:96-senior-management-positions"
-      - "gender:131:sub-indicator:97-other-management-positions"
-      - "gender:132:all"
-      - "gender:132:police:*"
-      - "gender:132:sub-indicator:*"
-      - "gender:133:all"
-      - "gender:133:state-ut:*"
-      - "gender:134:all"
-      - "gender:134:gender:*"
-      - "gender:134:sub-indicator:*"
-      - "gender:135:all"
-      - "gender:135:gender:*"
-      - "gender:135:service:*"
-      - "gender:136:all"
-      - "gender:136:state-ut:*"
-      - "gender:136:sub-indicator:*"
-      - "gender:137:all"
-      - "gender:137:state-ut:*"
-      - "gender:137:sub-indicator:*"
-      - "gender:138:all"
-      - "gender:138:sector:*"
-      - "gender:138:state-ut:*"
-      - "gender:13:age-group:*"
-      - "gender:13:all"
-      - "gender:13:education-level:*"
-      - "gender:13:sector:*"
-      - "gender:140:all"
-      - "gender:140:crime-head:*"
-      - "gender:140:sub-indicator:*"
-      - "gender:141:all"
-      - "gender:141:crime-head:*"
-      - "gender:141:state-ut:*"
-      - "gender:141:sub-indicator:*"
-      - "gender:142:age-group:*"
-      - "gender:142:all"
-      - "gender:142:state-ut:*"
-      - "gender:142:sub-indicator:*"
-      - "gender:143:all"
-      - "gender:143:state-ut:*"
-      - "gender:143:sub-indicator:*"
-      - "gender:144:all"
-      - "gender:144:crime-head:*"
-      - "gender:144:sub-indicator:*"
-      - "gender:145:all"
-      - "gender:145:crime-head:*"
-      - "gender:145:sub-indicator:*"
-      - "gender:146:all"
-      - "gender:146:state-ut:*"
-      - "gender:147:all"
-      - "gender:147:state-ut:*"
-      - "gender:149:all"
-      - "gender:149:gender:1-male"
-      - "gender:149:gender:2-female"
-      - "gender:149:gender:4-transgender"
-      - "gender:149:sub-indicator:173-suicide-rate"
-      - "gender:149:sub-indicator:174-male-female-ratio"
-      - "gender:149:sub-indicator:175-incidence"
-      - "gender:14:all"
-      - "gender:14:sector:*"
-      - "gender:14:state-ut:*"
-      - "gender:150:all"
-      - "gender:150:category:*"
-      - "gender:150:gender:*"
-      - "gender:150:sub-indicator:*"
-      - "gender:151:all"
-      - "gender:151:state-ut:*"
-      - "gender:151:sub-indicator:*"
-      - "gender:152:all"
-      - "gender:152:gender:1-male"
-      - "gender:152:gender:2-female"
-      - "gender:152:sector:1-rural"
-      - "gender:152:sector:2-urban"
-      - "gender:153:all"
-      - "gender:153:gender:*"
-      - "gender:153:sector:*"
-      - "gender:153:sub-indicator:*"
-      - "gender:154:all"
-      - "gender:154:gender:*"
-      - "gender:154:state-ut:*"
-      - "gender:155:all"
-      - "gender:155:state-ut:*"
-      - "gender:155:sub-indicator:*"
-      - "gender:156:all"
-      - "gender:156:state-ut:*"
-      - "gender:156:sub-indicator:*"
-      - "gender:157:all"
-      - "gender:157:sub-indicator:*"
-      - "gender:159:all"
-      - "gender:159:gender:*"
-      - "gender:159:state-ut:*"
-      - "gender:160:all"
-      - "gender:160:category:*"
-      - "gender:160:gender:*"
-      - "gender:160:sub-indicator:*"
-      - "gender:161:all"
-      - "gender:161:education-level:*"
-      - "gender:161:state-ut:*"
-      - "gender:162:all"
-      - "gender:162:gender:*"
-      - "gender:162:sector:*"
-      - "gender:162:state-ut:*"
-      - "gender:163:all"
-      - "gender:163:gender:*"
-      - "gender:163:sector:*"
-      - "gender:163:state-ut:*"
-      - "gender:164:all"
-      - "gender:164:board:*"
-      - "gender:164:gender:*"
-      - "gender:164:state-ut:*"
-      - "gender:164:sub-indicator:*"
-      - "gender:165:all"
-      - "gender:165:board:*"
-      - "gender:165:gender:*"
-      - "gender:165:state-ut:*"
-      - "gender:165:sub-indicator:*"
-      - "gender:166:all"
-      - "gender:166:board:*"
-      - "gender:166:gender:*"
-      - "gender:166:state-ut:*"
-      - "gender:166:sub-indicator:*"
-      - "gender:167:all"
-      - "gender:167:board:*"
-      - "gender:167:gender:*"
-      - "gender:167:state-ut:*"
-      - "gender:167:sub-indicator:*"
-      - "gender:168:all"
-      - "gender:168:education-level:*"
-      - "gender:168:state-ut:*"
-      - "gender:169:all"
-      - "gender:169:country:*"
-      - "gender:169:gender:*"
-      - "gender:16:all"
-      - "gender:16:gender:1-male"
-      - "gender:16:gender:2-female"
-      - "gender:16:sector:1-rural"
-      - "gender:16:sector:2-urban"
-      - "gender:170:all"
-      - "gender:170:education-level:*"
-      - "gender:170:sub-indicator:*"
-      - "gender:170:subject:*"
-      - "gender:171:all"
-      - "gender:171:gender:*"
-      - "gender:171:scheme:*"
-      - "gender:171:state-ut:*"
-      - "gender:172:all"
-      - "gender:172:state-ut:*"
-      - "gender:172:sub-indicator:*"
-      - "gender:173:all"
-      - "gender:173:gender:1-male"
-      - "gender:173:gender:2-female"
-      - "gender:173:sub-indicator:101-number-of-officers-allotted-indian-admin"
-      - "gender:173:sub-indicator:102-officers-in-indian-economic-service-ies"
-      - "gender:173:sub-indicator:103-officers-in-indian-statistical-service"
-      - "gender:173:sub-indicator:104-tentative-number-of-officers-in-subordin"
-      - "gender:174:all"
-      - "gender:174:gender:*"
-      - "gender:174:state-ut:*"
-      - "gender:174:sub-indicator:*"
-      - "gender:175:all"
-      - "gender:175:gender:*"
-      - "gender:175:sector:*"
-      - "gender:175:state-ut:*"
-      - "gender:176:all"
-      - "gender:176:state-ut:*"
-      - "gender:176:sub-indicator:*"
-      - "gender:177:activity:*"
-      - "gender:177:all"
-      - "gender:177:state-ut:*"
-      - "gender:177:sub-indicator:*"
-      - "gender:17:all"
-      - "gender:17:gender:*"
-      - "gender:17:state-ut:*"
-      - "gender:19:all"
-      - "gender:19:gender:*"
-      - "gender:19:sector:*"
-      - "gender:19:state-ut:*"
-      - "gender:1:all"
-      - "gender:1:gender:1-male"
-      - "gender:1:gender:2-female"
-      - "gender:1:sector:1-rural"
-      - "gender:1:sector:2-urban"
-      - "gender:20:all"
-      - "gender:20:gender:*"
-      - "gender:20:state-ut:*"
-      - "gender:21:state-ut:*"
-      - "gender:22:all"
-      - "gender:22:state-ut:*"
-      - "gender:22:sub-indicator:*"
-      - "gender:23:all"
-      - "gender:23:state-ut:*"
-      - "gender:23:sub-indicator:*"
-      - "gender:24:all"
-      - "gender:24:family-planning-method:*"
-      - "gender:24:state-ut:*"
-      - "gender:25:all"
-      - "gender:25:state-ut:*"
-      - "gender:25:unmet-need-for-family-planning:*"
-      - "gender:26:all"
-      - "gender:26:demand-for-family-planning:*"
-      - "gender:26:state-ut:*"
-      - "gender:27:all"
-      - "gender:27:gender:*"
-      - "gender:27:state-ut:*"
-      - "gender:28:all"
-      - "gender:28:gender:*"
-      - "gender:28:state-ut:*"
-      - "gender:29:all"
-      - "gender:29:gender:*"
-      - "gender:29:state-ut:*"
-      - "gender:2:state-ut:*"
-      - "gender:30:all"
-      - "gender:30:gender:*"
-      - "gender:30:state-ut:*"
-      - "gender:31:all"
-      - "gender:31:gender:*"
-      - "gender:31:state-ut:*"
-      - "gender:31:sub-indicator:*"
-      - "gender:3:all"
-      - "gender:3:gender:1-male"
-      - "gender:3:gender:2-female"
-      - "gender:4:age-group:*"
-      - "gender:4:all"
-      - "gender:4:gender:*"
-      - "gender:50:all"
-      - "gender:50:sector:*"
-      - "gender:50:state-ut:*"
-      - "gender:50:sub-indicator:*"
-      - "gender:51:all"
-      - "gender:51:state-ut:*"
-      - "gender:52:all"
-      - "gender:52:sector:*"
-      - "gender:52:state-ut:*"
-      - "gender:52:sub-indicator:*"
-      - "gender:53:all"
-      - "gender:53:ayush-category:*"
-      - "gender:53:gender:*"
-      - "gender:53:state-ut:*"
-      - "gender:54:all"
-      - "gender:54:state-ut:*"
-      - "gender:54:sub-indicator:*"
-      - "gender:55:sector:1-rural"
-      - "gender:55:sector:2-urban"
-      - "gender:56:all"
-      - "gender:56:gender:*"
-      - "gender:56:sector:*"
-      - "gender:56:sub-indicator:*"
-      - "gender:57:all"
-      - "gender:57:sector:*"
-      - "gender:57:state-ut:*"
-      - "gender:58:all"
-      - "gender:58:gender:*"
-      - "gender:58:state-ut:*"
-      - "gender:59:all"
-      - "gender:59:gender:*"
-      - "gender:59:sector:*"
-      - "gender:59:state-ut:*"
-      - "gender:5:age-group:*"
-      - "gender:5:all"
-      - "gender:5:state-ut:*"
-      - "gender:60:all"
-      - "gender:60:education-level:*"
-      - "gender:60:gender:*"
-      - "gender:61:all"
-      - "gender:61:education-level:*"
-      - "gender:61:gender:*"
-      - "gender:62:all"
-      - "gender:62:education-level:12-primary-i-v"
-      - "gender:62:education-level:13-upper-primary-vi-viii"
-      - "gender:62:education-level:14-elementary-i-viii"
-      - "gender:62:education-level:15-secondary-ix-x"
-      - "gender:62:education-level:16-higher-secondary-xi-xii"
-      - "gender:62:education-level:17-higher-education"
-      - "gender:63:all"
-      - "gender:63:education-level:*"
-      - "gender:63:state-ut:*"
-      - "gender:64:all"
-      - "gender:64:state-ut:*"
-      - "gender:65:all"
-      - "gender:65:discipline:*"
-      - "gender:65:gender:*"
-      - "gender:66:all"
-      - "gender:66:discipline:*"
-      - "gender:66:education-level:*"
-      - "gender:66:gender:*"
-      - "gender:67:all"
-      - "gender:67:education-level:*"
-      - "gender:68:age-group:26-15-years-and-above"
-      - "gender:68:age-group:27-25-years-and-above"
-      - "gender:68:all"
-      - "gender:68:gender:1-male"
-      - "gender:68:gender:2-female"
-      - "gender:68:sector:1-rural"
-      - "gender:68:sector:2-urban"
-      - "gender:69:age-group:26-15-years-and-above"
-      - "gender:69:age-group:27-25-years-and-above"
-      - "gender:69:all"
-      - "gender:69:gender:1-male"
-      - "gender:69:gender:2-female"
-      - "gender:69:sector:1-rural"
-      - "gender:69:sector:2-urban"
-      - "gender:6:all"
-      - "gender:70:all"
-      - "gender:70:gender:*"
-      - "gender:70:sector:*"
-      - "gender:70:state-ut:*"
-      - "gender:71:all"
-      - "gender:71:gender:*"
-      - "gender:71:sector:*"
-      - "gender:71:state-ut:*"
-      - "gender:72:all"
-      - "gender:72:gender:*"
-      - "gender:72:state-ut:*"
-      - "gender:73:all"
-      - "gender:73:education-level:*"
-      - "gender:73:gender:*"
-      - "gender:74:all"
-      - "gender:74:education-level:12-primary-i-v"
-      - "gender:74:education-level:13-upper-primary-vi-viii"
-      - "gender:74:education-level:15-secondary-ix-x"
-      - "gender:74:gender:1-male"
-      - "gender:74:gender:2-female"
-      - "gender:77:all"
-      - "gender:77:education-level:61-primary-i-v"
-      - "gender:77:education-level:62-upper-primary-vi-viii"
-      - "gender:77:education-level:63-secondary-ix-x"
-      - "gender:77:education-level:64-higher-secondary-xi-xii"
-      - "gender:78:all"
-      - "gender:78:gender:*"
-      - "gender:78:state-ut:*"
-      - "gender:78:sub-indicator:*"
-      - "gender:79:all"
-      - "gender:79:category:*"
-      - "gender:79:gender:*"
-      - "gender:79:state-ut:*"
-      - "gender:7:all"
-      - "gender:7:sector:*"
-      - "gender:7:state-ut:*"
-      - "gender:80:age-group:28-15-29"
-      - "gender:80:age-group:30-15"
-      - "gender:80:age-group:31-all-ages"
-      - "gender:80:sector:1-rural"
-      - "gender:80:sector:2-urban"
-      - "gender:81:all"
-      - "gender:81:gender:*"
-      - "gender:81:sector:*"
-      - "gender:81:state-ut:*"
-      - "gender:82:all"
-      - "gender:82:gender:*"
-      - "gender:82:sector:*"
-      - "gender:82:state-ut:*"
-      - "gender:83:all"
-      - "gender:83:gender:*"
-      - "gender:83:sector:*"
-      - "gender:83:state-ut:*"
-      - "gender:84:all"
-      - "gender:84:gender:*"
-      - "gender:84:sector:*"
-      - "gender:84:state-ut:*"
-      - "gender:85:all"
-      - "gender:85:gender:1-male"
-      - "gender:85:gender:2-female"
-      - "gender:85:sector:1-rural"
-      - "gender:85:sector:2-urban"
-      - "gender:86:age-group:*"
-      - "gender:86:all"
-      - "gender:86:gender:*"
-      - "gender:86:sector:*"
-      - "gender:87:all"
-      - "gender:87:gender:*"
-      - "gender:87:sector:*"
-      - "gender:87:state-ut:*"
-      - "gender:88:all"
-      - "gender:88:gender:*"
-      - "gender:88:nco-division:*"
-      - "gender:88:sector:*"
-      - "gender:88:state-ut:*"
-      - "gender:89:all"
-      - "gender:89:employment-category:*"
-      - "gender:89:gender:*"
-      - "gender:89:sector:*"
-      - "gender:89:state-ut:*"
-      - "gender:8:all"
-      - "gender:8:education-level:*"
-      - "gender:8:sector:*"
-      - "gender:90:all"
-      - "gender:90:employment-category:*"
-      - "gender:90:gender:*"
-      - "gender:90:sector:*"
-      - "gender:91:all"
-      - "gender:91:gender:*"
-      - "gender:91:industry:*"
-      - "gender:91:sector:*"
-      - "gender:92:all"
-      - "gender:92:gender:*"
-      - "gender:92:sector:*"
-      - "gender:92:state-ut:*"
-      - "gender:93:sector:1-rural"
-      - "gender:93:sector:2-urban"
-      - "gender:94:age-group:*"
-      - "gender:94:all"
-      - "gender:94:gender:*"
-      - "gender:94:sector:*"
-      - "gender:95:all"
-      - "gender:95:gender:*"
-      - "gender:95:sector:*"
-      - "gender:95:state-ut:*"
-      - "gender:96:activity:*"
-      - "gender:96:all"
-      - "gender:96:gender:*"
-      - "gender:96:sector:*"
-      - "gender:97:activity:*"
-      - "gender:97:all"
-      - "gender:97:gender:*"
-      - "gender:98:activity:*"
-      - "gender:98:all"
-      - "gender:98:gender:*"
-      - "gender:98:sub-indicator:*"
-      - "gender:99:activity:*"
-      - "gender:99:all"
-      - "gender:99:gender:*"
-      - "gender:99:sector:*"
-      - "gender:9:age-group:*"
-      - "gender:9:all"
-      - "gender:9:sector:*"
-    status: pending
-    scheduled: "wave 2: women and men to 2025"
+      - gender:139:all
+      - gender:148:all
+      - gender:32:all
+      - gender:33:all
+      - gender:34:all
+      - gender:35:all
+      - gender:36:all
+      - gender:37:all
+      - gender:38:all
+      - gender:39:all
+      - gender:75:all
+      - gender:76:all
+    status: blocked
+    reason: Listed in MoSPI's own definitions for its eSankhyiki MCP server (github.com/nso-india/esankhyiki-mcp, definitions/gender_definitions.json) but absent from the live indicator list; gender/getGenderRecords answers "No Data Found" for each (checked 2026-10-10).
+  - match:
+      - gender:103:activity:2-unpaid-activity-sna
+      - gender:103:activity:3-unpaid-activity-non-sna
+      - gender:103:activity:4-paid-activity
+      - gender:103:all
+      - gender:103:gender:*
+      - gender:104:activity:1-unpaid-activity
+      - gender:104:activity:4-paid-activity
+      - gender:104:all
+      - gender:104:gender:*
+    status: shown
+    bundle:
+      - gender-t103
+      - gender-t104
+    plate: §08 Unpaid and paid work, Time Use Survey
+  - match:
+      - gender:108:all
+      - gender:109:all
+      - gender:109:gender:*
+      - gender:109:scheme:*
+      - gender:111:all
+      - gender:111:gender:*
+      - gender:113:all
+      - gender:113:gender:*
+      - gender:114:all
+      - gender:114:gender:*
+      - gender:115:all
+      - gender:115:gender:*
+      - gender:118:all
+      - gender:118:gender:*
+    status: shown
+    bundle:
+      - gender-t108
+      - gender-t109
+      - gender-t111
+      - gender-t113
+      - gender-t114
+      - gender-t115
+      - gender-t118
+    plate: §09 Money in women's names
+  - match:
+      - gender:10:all
+      - gender:10:education-level:*
+    status: shown
+    bundle:
+      - gender-t010
+    plate: §05 Children per woman by schooling
+  - match:
+      - gender:123:all
+      - gender:125:all
+      - gender:126:all
+      - gender:126:gender:*
+      - gender:127:all
+      - gender:130:all
+      - gender:131:all
+      - gender:131:gender:*
+      - gender:172:all
+    status: shown
+    bundle:
+      - gender-t123
+      - gender-t125
+      - gender-t126-states
+      - gender-t126-total
+      - gender-t127
+      - gender-t130
+      - gender-t131
+      - gender-t172
+    plate: §10 Voice and office
+  - match:
+      - gender:124:all
+    status: shown
+    bundle:
+      - gender-t124
+    plate: §10 Women's share of Lok Sabha seats
+  - match:
+      - gender:140:all
+      - gender:140:crime-head:*
+    status: shown
+    bundle:
+      - gender-t140
+    plate: §11 Crimes by head
+  - match:
+      - gender:141:all
+      - gender:141:state-ut:*
+    status: shown
+    bundle:
+      - gender-t141
+    plate: §11 Crimes against women by state
+  - match:
+      - gender:145:all
+      - gender:145:crime-head:*
+    status: shown
+    bundle:
+      - gender-t145
+    plate: §11 Convictions
+  - match:
+      - gender:14:all
+      - gender:14:state-ut:*
+    status: shown
+    bundle:
+      - gender-t014
+    plate: §05 Age at marriage by state
+  - match:
+      - gender:15:all
+      - gender:15:gender:*
+    status: shown
+    bundle:
+      - gender-t015
+    plate: §04 Infant deaths, girls and boys
+  - match:
+      - gender:160:all
+      - gender:160:gender:*
+      - gender:160:sub-indicator:*
+    status: shown
+    bundle:
+      - gender-t160
+    plate: §12 What women and men die of
+  - match:
+      - gender:18:all
+      - gender:18:gender:*
+    status: shown
+    bundle:
+      - gender-t018
+    plate: §04 Life expectancy, women and men
+  - match:
+      - gender:21:all
+    status: shown
+    bundle:
+      - gender-t021
+    plate: §04 Maternal deaths
+  - match:
+      - gender:21:state-ut:*
+    status: shown
+    bundle:
+      - gender-t021
+    plate: §04 Maternal deaths by state
+  - match:
+      - gender:2:all
+    status: shown
+    bundle:
+      - gender-t002
+    plate: §03 Seven censuses
+  - match:
+      - gender:55:all
+      - gender:55:gender:*
+    status: shown
+    bundle:
+      - gender-t055-census
+      - gender-t055-nss
+    plate: §06 Literacy, census and NSS
+  - match:
+      - gender:60:all
+      - gender:60:education-level:*
+      - gender:60:gender:*
+      - gender:74:all
+      - gender:74:education-level:*
+      - gender:74:gender:*
+    status: shown
+    bundle:
+      - gender-t060
+      - gender-t074
+    plate: §06 Enrolment and dropout
+  - match:
+      - gender:70:all
+      - gender:70:gender:*
+      - gender:70:state-ut:*
+    status: shown
+    bundle:
+      - gender-t070
+    plate: §06 Years of schooling by state
+  - match:
+      - gender:7:all
+      - gender:7:sector:*
+    status: shown
+    bundle:
+      - gender-t007
+    plate: "§03 The count: sex ratio at birth"
+  - match:
+      - gender:7:state-ut:*
+    status: shown
+    bundle:
+      - gender-t007
+    plate: §03 Sex ratio at birth by state
+  - match:
+      - gender:82:all
+      - gender:82:gender:*
+      - gender:82:state-ut:*
+    status: shown
+    bundle:
+      - gender-t082-cy25
+    plate: §07 Labour force participation by state
+  - match:
+      - gender:85:all
+      - gender:85:gender:*
+    status: shown
+    bundle:
+      - gender-t085-ay
+      - gender-t085-cy
+      - gender-t085-cy25
+    plate: §07 Women and men at work, three PLFS rulers
+  - match:
+      - gender:87:all
+      - gender:87:gender:*
+      - gender:87:state-ut:*
+    status: shown
+    bundle:
+      - gender-t087-cy25
+    plate: §07 Rural casual wages by state
+  - match: gender:1:*
+    status: baked
+    bundle:
+      - gender-t001
+  - match: gender:2:*
+    status: baked
+    bundle:
+      - gender-t002
+  - match: gender:3:*
+    status: baked
+    bundle:
+      - gender-t003
+  - match: gender:4:*
+    status: baked
+    bundle:
+      - gender-t004
+  - match: gender:5:*
+    status: baked
+    bundle:
+      - gender-t005
+  - match: gender:6:*
+    status: baked
+    bundle:
+      - gender-t006
+  - match: gender:8:*
+    status: baked
+    bundle:
+      - gender-t008
+  - match: gender:9:*
+    status: baked
+    bundle:
+      - gender-t009
+  - match: gender:10:*
+    status: baked
+    bundle:
+      - gender-t010
+  - match: gender:11:*
+    status: baked
+    bundle:
+      - gender-t011
+  - match: gender:12:*
+    status: baked
+    bundle:
+      - gender-t012
+  - match: gender:13:*
+    status: baked
+    bundle:
+      - gender-t013
+  - match: gender:14:*
+    status: baked
+    bundle:
+      - gender-t014
+  - match: gender:16:*
+    status: baked
+    bundle:
+      - gender-t016
+  - match: gender:17:*
+    status: baked
+    bundle:
+      - gender-t017
+  - match: gender:19:*
+    status: baked
+    bundle:
+      - gender-t019
+  - match: gender:20:*
+    status: baked
+    bundle:
+      - gender-t020
+  - match: gender:22:*
+    status: baked
+    bundle:
+      - gender-t022-nfhs4
+      - gender-t022-nfhs5
+  - match: gender:23:*
+    status: baked
+    bundle:
+      - gender-t023-nfhs4
+      - gender-t023-nfhs5
+  - match: gender:24:*
+    status: baked
+    bundle:
+      - gender-t024-nfhs4
+      - gender-t024-nfhs5
+  - match: gender:25:*
+    status: baked
+    bundle:
+      - gender-t025-nfhs4
+      - gender-t025-nfhs5
+  - match: gender:26:*
+    status: baked
+    bundle:
+      - gender-t026-nfhs4
+      - gender-t026-nfhs5
+  - match: gender:27:*
+    status: baked
+    bundle:
+      - gender-t027-nfhs5
+  - match: gender:28:*
+    status: baked
+    bundle:
+      - gender-t028-nfhs4
+      - gender-t028-nfhs5
+  - match: gender:29:*
+    status: baked
+    bundle:
+      - gender-t029
+  - match: gender:30:*
+    status: baked
+    bundle:
+      - gender-t030
+  - match: gender:31:*
+    status: baked
+    bundle:
+      - gender-t031
+  - match: gender:50:*
+    status: baked
+    bundle:
+      - gender-t050-nfhs5
+  - match: gender:51:*
+    status: baked
+    bundle:
+      - gender-t051-nfhs4
+      - gender-t051-nfhs5
+  - match: gender:52:*
+    status: baked
+    bundle:
+      - gender-t052-nfhs4
+      - gender-t052-nfhs5
+  - match: gender:53:*
+    status: baked
+    bundle:
+      - gender-t053
+  - match: gender:54:*
+    status: baked
+    bundle:
+      - gender-t054
+  - match: gender:55:*
+    status: baked
+    bundle:
+      - gender-t055-census
+      - gender-t055-nss
+  - match: gender:56:*
+    status: baked
+    bundle:
+      - gender-t056
+  - match: gender:57:*
+    status: baked
+    bundle:
+      - gender-t057
+  - match: gender:58:*
+    status: baked
+    bundle:
+      - gender-t058-census
+      - gender-t058-nss
+  - match: gender:59:*
+    status: baked
+    bundle:
+      - gender-t059
+  - match: gender:61:*
+    status: baked
+    bundle:
+      - gender-t061
+  - match: gender:62:*
+    status: baked
+    bundle:
+      - gender-t062-esag
+      - gender-t062-udise
+  - match: gender:63:*
+    status: baked
+    bundle:
+      - gender-t063
+  - match: gender:64:*
+    status: baked
+    bundle:
+      - gender-t064
+  - match: gender:65:*
+    status: baked
+    bundle:
+      - gender-t065
+  - match: gender:66:*
+    status: baked
+    bundle:
+      - gender-t066
+  - match: gender:67:*
+    status: baked
+    bundle:
+      - gender-t067
+  - match: gender:68:*
+    status: baked
+    bundle:
+      - gender-t068
+  - match: gender:69:*
+    status: baked
+    bundle:
+      - gender-t069
+  - match: gender:70:*
+    status: baked
+    bundle:
+      - gender-t070
+  - match: gender:71:*
+    status: baked
+    bundle:
+      - gender-t071
+  - match: gender:72:*
+    status: baked
+    bundle:
+      - gender-t072-ay
+      - gender-t072-cy25
+  - match: gender:73:*
+    status: baked
+    bundle:
+      - gender-t073
+  - match: gender:77:*
+    status: baked
+    bundle:
+      - gender-t077
+  - match: gender:78:*
+    status: baked
+    bundle:
+      - gender-t078
+  - match: gender:79:*
+    status: baked
+    bundle:
+      - gender-t079
+  - match: gender:80:*
+    status: baked
+    bundle:
+      - gender-t080-cy
+      - gender-t080-cy25
+  - match: gender:81:*
+    status: baked
+    bundle:
+      - gender-t081-cy25
+  - match: gender:82:*
+    status: baked
+    bundle:
+      - gender-t082-cy25
+  - match: gender:83:*
+    status: baked
+    bundle:
+      - gender-t083-ay
+      - gender-t083-cy25
+  - match: gender:84:*
+    status: baked
+    bundle:
+      - gender-t084-cy25
+  - match: gender:85:*
+    status: baked
+    bundle:
+      - gender-t085-ay
+      - gender-t085-cy
+      - gender-t085-cy25
+  - match: gender:86:*
+    status: baked
+    bundle:
+      - gender-t086-cy25
+  - match: gender:87:*
+    status: baked
+    bundle:
+      - gender-t087-cy25
+  - match: gender:88:*
+    status: baked
+    bundle:
+      - gender-t088-cy25
+  - match: gender:89:*
+    status: baked
+    bundle:
+      - gender-t089-cy25
+  - match: gender:90:*
+    status: baked
+    bundle:
+      - gender-t090-cy25
+  - match: gender:91:*
+    status: baked
+    bundle:
+      - gender-t091-ay
+      - gender-t091-cy
+      - gender-t091-cy25
+  - match: gender:92:*
+    status: baked
+    bundle:
+      - gender-t092-cy25
+  - match: gender:93:*
+    status: baked
+    bundle:
+      - gender-t093-ay
+      - gender-t093-cy
+      - gender-t093-cy25
+  - match: gender:94:*
+    status: baked
+    bundle:
+      - gender-t094-cy25
+  - match: gender:95:*
+    status: baked
+    bundle:
+      - gender-t095-cy25
+  - match: gender:96:*
+    status: baked
+    bundle:
+      - gender-t096
+  - match: gender:97:*
+    status: baked
+    bundle:
+      - gender-t097
+  - match: gender:98:*
+    status: baked
+    bundle:
+      - gender-t098
+  - match: gender:99:*
+    status: baked
+    bundle:
+      - gender-t099
+  - match: gender:100:*
+    status: baked
+    bundle:
+      - gender-t100
+  - match: gender:101:*
+    status: baked
+    bundle:
+      - gender-t101
+  - match: gender:102:*
+    status: baked
+    bundle:
+      - gender-t102
+  - match: gender:103:*
+    status: baked
+    bundle:
+      - gender-t103
+  - match: gender:104:*
+    status: baked
+    bundle:
+      - gender-t104
+  - match: gender:105:*
+    status: baked
+    bundle:
+      - gender-t105
+  - match: gender:106:*
+    status: baked
+    bundle:
+      - gender-t106
+  - match: gender:107:*
+    status: baked
+    bundle:
+      - gender-t107
+  - match: gender:108:*
+    status: baked
+    bundle:
+      - gender-t108
+  - match: gender:109:*
+    status: baked
+    bundle:
+      - gender-t109
+  - match: gender:110:*
+    status: baked
+    bundle:
+      - gender-t110
+  - match: gender:111:*
+    status: baked
+    bundle:
+      - gender-t111
+  - match: gender:112:*
+    status: baked
+    bundle:
+      - gender-t112
+  - match: gender:113:*
+    status: baked
+    bundle:
+      - gender-t113
+  - match: gender:114:*
+    status: baked
+    bundle:
+      - gender-t114
+  - match: gender:115:*
+    status: baked
+    bundle:
+      - gender-t115
+  - match: gender:116:*
+    status: baked
+    bundle:
+      - gender-t116
+  - match: gender:117:*
+    status: baked
+    bundle:
+      - gender-t117
+  - match: gender:118:*
+    status: baked
+    bundle:
+      - gender-t118
+  - match: gender:119:*
+    status: baked
+    bundle:
+      - gender-t119
+  - match: gender:120:*
+    status: baked
+    bundle:
+      - gender-t120
+  - match: gender:121:*
+    status: baked
+    bundle:
+      - gender-t121
+  - match: gender:122:*
+    status: baked
+    bundle:
+      - gender-t122
+  - match: gender:123:*
+    status: baked
+    bundle:
+      - gender-t123
+  - match: gender:124:*
+    status: baked
+    bundle:
+      - gender-t124
+  - match: gender:125:*
+    status: baked
+    bundle:
+      - gender-t125
+  - match: gender:126:*
+    status: baked
+    bundle:
+      - gender-t126-states
+      - gender-t126-total
+  - match: gender:127:*
+    status: baked
+    bundle:
+      - gender-t127
+  - match: gender:128:*
+    status: baked
+    bundle:
+      - gender-t128
+  - match: gender:129:*
+    status: baked
+    bundle:
+      - gender-t129
+  - match: gender:130:*
+    status: baked
+    bundle:
+      - gender-t130
+  - match: gender:131:*
+    status: baked
+    bundle:
+      - gender-t131
+  - match: gender:132:*
+    status: baked
+    bundle:
+      - gender-t132
+  - match: gender:133:*
+    status: baked
+    bundle:
+      - gender-t133-cumulative
+      - gender-t133-yearly
+  - match: gender:134:*
+    status: baked
+    bundle:
+      - gender-t134
+  - match: gender:135:*
+    status: baked
+    bundle:
+      - gender-t135
+  - match: gender:136:*
+    status: baked
+    bundle:
+      - gender-t136
+  - match: gender:137:*
+    status: baked
+    bundle:
+      - gender-t137
+  - match: gender:138:*
+    status: baked
+    bundle:
+      - gender-t138-nfhs4
+      - gender-t138-nfhs5
+  - match: gender:140:*
+    status: baked
+    bundle:
+      - gender-t140
+  - match: gender:141:*
+    status: baked
+    bundle:
+      - gender-t141
+  - match: gender:142:*
+    status: baked
+    bundle:
+      - gender-t142
+  - match: gender:143:*
+    status: baked
+    bundle:
+      - gender-t143-nfhs4
+      - gender-t143-nfhs5
+  - match: gender:144:*
+    status: baked
+    bundle:
+      - gender-t144
+  - match: gender:145:*
+    status: baked
+    bundle:
+      - gender-t145
+  - match: gender:146:*
+    status: baked
+    bundle:
+      - gender-t146-nfhs4
+      - gender-t146-nfhs5
+  - match: gender:147:*
+    status: baked
+    bundle:
+      - gender-t147-nfhs4
+      - gender-t147-nfhs5
+  - match: gender:149:*
+    status: baked
+    bundle:
+      - gender-t149
+  - match: gender:150:*
+    status: baked
+    bundle:
+      - gender-t150
+  - match: gender:151:*
+    status: baked
+    bundle:
+      - gender-t151
+  - match: gender:152:*
+    status: baked
+    bundle:
+      - gender-t152
+  - match: gender:153:*
+    status: baked
+    bundle:
+      - gender-t153
+  - match: gender:154:*
+    status: baked
+    bundle:
+      - gender-t154
+  - match: gender:155:*
+    status: baked
+    bundle:
+      - gender-t155
+  - match: gender:156:*
+    status: baked
+    bundle:
+      - gender-t156
+  - match: gender:157:*
+    status: baked
+    bundle:
+      - gender-t157
+  - match: gender:159:*
+    status: baked
+    bundle:
+      - gender-t159
+  - match: gender:160:*
+    status: baked
+    bundle:
+      - gender-t160
+  - match: gender:161:*
+    status: baked
+    bundle:
+      - gender-t161
+  - match: gender:162:*
+    status: baked
+    bundle:
+      - gender-t162
+  - match: gender:163:*
+    status: baked
+    bundle:
+      - gender-t163
+  - match: gender:164:*
+    status: baked
+    bundle:
+      - gender-t164
+  - match: gender:165:*
+    status: baked
+    bundle:
+      - gender-t165
+  - match: gender:166:*
+    status: baked
+    bundle:
+      - gender-t166
+  - match: gender:167:*
+    status: baked
+    bundle:
+      - gender-t167
+  - match: gender:168:*
+    status: baked
+    bundle:
+      - gender-t168
+  - match: gender:169:*
+    status: baked
+    bundle:
+      - gender-t169
+  - match: gender:170:*
+    status: baked
+    bundle:
+      - gender-t170
+  - match: gender:171:*
+    status: baked
+    bundle:
+      - gender-t171
+  - match: gender:172:*
+    status: baked
+    bundle:
+      - gender-t172
+  - match: gender:173:*
+    status: baked
+    bundle:
+      - gender-t173
+  - match: gender:174:*
+    status: baked
+    bundle:
+      - gender-t174
+  - match: gender:175:*
+    status: baked
+    bundle:
+      - gender-t175
+  - match: gender:176:*
+    status: baked
+    bundle:
+      - gender-t176
+  - match: gender:177:*
+    status: baked
+    bundle:
+      - gender-t177

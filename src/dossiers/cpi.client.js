@@ -20,8 +20,23 @@ import groups2024Bundle from "../../data/series/cpi-2024-groups.json";
 import items2024Bundle from "../../data/series/cpi-2024-items.json";
 import states2024Bundle from "../../data/series/cpi-2024-states.json";
 import alStates86Bundle from "../../data/series/cpialrl-states-1986.json";
+// wave 2 (lb/prices): CPI for industrial workers (four bases, centres) and rural wages
+import iw60Bundle from "../../data/series/cpiiw-1960.json";
+import iw82Bundle from "../../data/series/cpiiw-1982.json";
+import iw01Bundle from "../../data/series/cpiiw-2001.json";
+import iw16Bundle from "../../data/series/cpiiw-2016.json";
+import iwCenBundle from "../../data/series/cpiiw-centres-2016.json";
+import wageBundle from "../../data/series/wages-rural-2013.json";
+import wageStBundle from "../../data/series/wages-rural-states-2013.json";
+import alSt19Bundle from "../../data/series/cpialrl-states-2019.json";
+import rlSt19Bundle from "../../data/series/cpialrl-states-rl-2019.json";
+import ruDivBundle from "../../data/series/cpi-2024-rural-divisions.json";
+import urDivBundle from "../../data/series/cpi-2024-urban-divisions.json";
+import stDivBundle from "../../data/series/cpi-2024-states-divisions.json";
+import groups12Bundle from "../../data/series/cpi-groups.json";
+import items12Bundle from "../../data/series/cpi-items-2012.json";
 import {
-  MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend, seamMarks, seamOverlap,
+  SEAM_RULE, fmt, MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend, seamMarks, seamOverlap,
   peakOf, peakBetween, dodgeEndLabels, spark, downloadCSV, stripLabelSide, stripLabelSpot, makePlacer, annotationSpot,
 } from "../charts/plumbing.js";
 
@@ -58,6 +73,8 @@ const fmtDate = (d) => MN[d.getUTCMonth()] + " " + d.getUTCFullYear();
 // periods named in captions and descriptions come from the data, never typed in
 const MLONG = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const longDate = (d) => MLONG[d.getUTCMonth()] + " " + d.getUTCFullYear();
+const firstOf = (s) => s.data.find((d) => d.value != null);
+const lastOf = (s) => [...s.data].reverse().find((d) => d.value != null);
 const spanLong = (data) => longDate(data[0].date) + " to " + longDate(data.at(-1).date);
 
 /* ---------- drive every displayed number from the data ---------- */
@@ -81,8 +98,10 @@ setHTML("n-head", L24.headline.toFixed(2) + pc);
 setHTML("n-food", L24.food_and_beverages.toFixed(2) + pc);
 setHTML("n-old", L.headline.toFixed(2) + pc);
 setHTML("n-core", L.core.toFixed(2) + pc);
-setHTML("d-head", `<b>${arrow(L24.headline - P24.headline)}</b> vs May, ${bandNote(L24.headline)}`);
-setHTML("d-food", `<b>${arrow(L24.food_and_beverages - P24.food_and_beverages)}</b> vs May, ${word(L24.food_and_beverages - P24.food_and_beverages)}`);
+// the previous month is named from the data (it read "vs May" by hand, stale since July)
+const prevM24 = MN[S24.headline.data.at(-2).date.getUTCMonth()];
+setHTML("d-head", `<b>${arrow(L24.headline - P24.headline)}</b> vs ${prevM24}, ${bandNote(L24.headline)}`);
+setHTML("d-food", `<b>${arrow(L24.food_and_beverages - P24.food_and_beverages)}</b> vs ${prevM24}, ${word(L24.food_and_beverages - P24.food_and_beverages)}`);
 setHTML("d-old", `base retired, series ends Dec 2025`);
 setHTML("d-core", `<b>${arrow(L.core - P.core)}</b> vs Nov, to Dec 2025`);
 
@@ -982,7 +1001,7 @@ const stateName = (k) => ({
     ],
   });
   a11y(plot, "CPI for agricultural labourers, year-on-year, on the retired 1986-87 base and the new 2019 base",
-    "Two line charts side by side on one time axis, never spliced. The old base runs July 2000 to May 2025, peaking at " + pk.value.toFixed(1) + " per cent in January 2010 and retiring at " + oldS.data.at(-1).value.toFixed(1) + ". The new base runs June 2025 to May 2026 and ends at " + newS.data.at(-1).value.toFixed(1) + " per cent.");
+    "Two line charts side by side on one time axis, never spliced. The old base runs July 2000 to May 2025, peaking at " + pk.value.toFixed(1) + " per cent in " + longDate(pk.date) + " and retiring at " + oldS.data.at(-1).value.toFixed(1) + ". The new base runs " + spanLong(newS.data.filter((d) => d.value != null)) + " and ends at " + newS.data.at(-1).value.toFixed(1) + " per cent.");
   document.getElementById("plot-al").append(plot);
   wireTools(document.getElementById("cb-al"), plot, [newPad, oldPad], "india-atlas_cpial_two-bases_2000-2026");
   // no crosshair: the two bases have different spans, so a shared index
@@ -1117,6 +1136,409 @@ const stateName = (k) => ({
   setTxt("alst-bot", bot.name + ", " + bot.v.toFixed(2) + "%");
   setTxt("alst-spread", (top.v - bot.v).toFixed(1) + " points");
   setTxt("alst-above", String(aboveN));
+}
+
+/* ---------- §03 rural against urban, division by division (wave 2, lb/prices) ---------- */
+const SHORTN = { "Food and beverages": "Food", "Paan, tobacco and intoxicants": "Paan, tobacco", "Clothing and footwear": "Clothing", "Housing, water, electricity, gas and other fuels": "Housing, fuel",
+  "Furnishings, household equipment and routine household maintenance": "Furnishing", "Health": "Health", "Transport": "Transport", "Information and communication": "Info, comms",
+  "Recreation, sport and culture": "Recreation", "Education services": "Education", "Restaurants and accommodation services": "Restaurants", "Personal care, social protection and miscellaneous goods and services": "Personal care" };
+const NUMW = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
+const numWord = (n) => NUMW[n] ?? String(n);
+{
+  const RD = hydrate(ruDivBundle), UD = hydrate(urDivBundle);
+  const byCode = (B, raw) => Object.fromEntries(Object.entries(raw.series).map(([k, s]) => [s.code, B[k]]));
+  const r = byCode(RD, ruDivBundle), u = byCode(UD, urDivBundle);
+  const rows = Object.keys(r).filter((c) => u[c]).map((c) => {
+    const rv = lastOf(r[c])?.value, uv = lastOf(u[c])?.value;
+    return rv == null || uv == null ? null : { c, name: (() => { const full = ruDivBundle.series[Object.keys(ruDivBundle.series).find((k) => ruDivBundle.series[k].code === c)].label.replace(/, rural$/, ""); return SHORTN[full] ?? full; })(), r: rv, u: uv, gap: rv - uv };
+  }).filter(Boolean).sort((a, b) => Math.abs(b.gap) - Math.abs(a.gap));
+  const vals = rows.flatMap((d) => [d.r, d.u]);
+  const lo = Math.floor(Math.min(0, ...vals)) - 1, hi = Math.ceil(Math.max(...vals)) + 1;
+  const xt = []; for (let t = Math.ceil(lo / 2) * 2; t <= hi; t += 2) xt.push(t);
+  const geo = { W: 1184, H: rows.length * 36 + 80, ml: 170, mr: 90, mt: 26, mb: 46 };
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+    x: { label: "year-on-year, per cent →", labelAnchor: "right", labelArrow: "none", domain: [lo, hi], ticks: xt, tickSize: 0, tickPadding: 12, tickFormat: (d) => (d === xt.at(-1) ? d + "%" : String(d)) },
+    y: { label: null, domain: rows.map((d) => d.name), tickSize: 0, tickPadding: 14 },
+    marks: [
+      Plot.gridX(xt, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+      Plot.link(rows, { x1: "r", x2: "u", y: "name", stroke: "#C9CED6", strokeWidth: 2 }),
+      Plot.dot(rows, { x: "u", y: "name", r: 4.5, fill: "#A3A9B4", stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.dot(rows, { x: "r", y: "name", r: 4.5, fill: "#2E4BD8", stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      /* labels outside the dumbbell, one text mark per side */
+      Plot.text(rows.filter((d) => d.r < d.u), { x: "r", y: "name", text: (d) => d.r.toFixed(2) + "%", dx: -12, dy: 0.5, fill: "#161A22", fontSize: 11.5, fontFamily: mono, textAnchor: "end" }),
+      Plot.text(rows.filter((d) => d.r >= d.u), { x: "r", y: "name", text: (d) => d.r.toFixed(2) + "%", dx: 12, dy: 0.5, fill: "#161A22", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(rows.filter((d) => d.r < d.u), { x: "u", y: "name", text: (d) => d.u.toFixed(2) + "%", dx: 12, dy: 0.5, fill: "#878D99", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(rows.filter((d) => d.r >= d.u), { x: "u", y: "name", text: (d) => d.u.toFixed(2) + "%", dx: -12, dy: 0.5, fill: "#878D99", fontSize: 11.5, fontFamily: mono, textAnchor: "end" }),
+    ],
+  });
+  const when = longDate(lastOf(Object.values(RD)[0]).date);
+  const rhi = rows.filter((d) => d.r > d.u).length;
+  a11y(plot, "Rural against urban inflation for each of the twelve divisions of the 2024 base, " + when,
+    "Dumbbell strip sorted by the gap. " + rows.map((d) => d.name + ": rural " + d.r.toFixed(1) + ", urban " + d.u.toFixed(1)).join("; ") + ".");
+  document.getElementById("plot-divru").append(plot);
+  wireTools(document.getElementById("cb-divru"), plot, Object.keys(r).flatMap((c) => [r[c], u[c]]).filter(Boolean), "india-atlas_cpi2024_rural-urban_divisions", fmtDate);
+  wireLegend(document.getElementById("legend-divru"), plot, ["rural", "urban"], { rural: { color: "#2E4BD8" }, urban: { color: "#A3A9B4" } });
+  const top = rows[0], bot = rows.at(-1);
+  setTxt("divru-title", rhi >= rows.length / 2 ? `The village pays more in ${numWord(rhi)} of twelve divisions` : `The town pays more in ${numWord(rows.length - rhi)} of twelve divisions`);
+  setTxt("pv-divru", (top.gap > 0 ? "+" : "") + top.gap.toFixed(1) + " pt");
+  setTxt("pc-divru", "widest gap: " + top.name.toLowerCase());
+  setTxt("divru-rhi", numWord(rhi));
+  setTxt("divru-top", top.name.toLowerCase() + ", rural " + f1(top.r) + " against urban " + f1(top.u));
+  setTxt("divru-bot", bot.name.toLowerCase() + " (" + Math.abs(bot.gap).toFixed(2) + " points apart)");
+}
+
+/* ---------- §11 state x division table (wave 2, lb/prices) ----------
+ * One row per state, one column per division, latest month; the first column is the
+ * state's General index (cpi-2024-states). Cells are pale tints of the accent (DESIGN §1:
+ * areas carry tints, text stays ink); falling prices are a grey tint. */
+{
+  const SD = stDivBundle.series;
+  const DIVN = {};   // code -> short name
+  for (const s of Object.values(SD)) DIVN[s.code] = s.node;
+  // short column heads, keyed by the division's name (the codes skip 12: 01 to 11, then 13)
+  const SHORT = new Proxy({}, { get: (_, c) => SHORTN[DIVN[c]] });
+  const codes = Object.keys(DIVN).sort();
+  const li = stDivBundle.dates.length - 1;
+  const states = {};
+  const tidyState = (n) => n.replace(/ And /g, " and ").replace(/^The Dadra and Nagar Haveli and Daman and Diu$/, "Dadra, Nagar Haveli, Daman and Diu");
+  for (const [k, s] of Object.entries(SD)) (states[s.state] ??= { name: tidyState(s.state), key: k.split("__")[0], cells: {} }).cells[s.code] = s.data[li];
+  const gen = (key) => states2024Bundle.series[key]?.data.at(-1) ?? null;
+  const rows = Object.values(states).map((r) => ({ ...r, g: gen(r.key) })).sort((a, b) => (b.g ?? -99) - (a.g ?? -99));
+  const all = rows.flatMap((r) => codes.map((c) => r.cells[c])).filter((v) => v != null);
+  const hiV = Math.max(...all);
+  const tintOf = (v) => (v == null ? "transparent" : v < 0 ? "#ECEEF2" : `rgba(46,75,216,${(0.06 + 0.34 * Math.min(1, v / hiV)).toFixed(3)})`);
+  const cell = (v) => `<td style="background:${tintOf(v)}">${v == null ? "—" : v.toFixed(1)}</td>`;
+  const tbl = document.getElementById("stdiv-table");
+  tbl.innerHTML = `<thead><tr><th>State</th><th>General</th>${codes.map((c) => `<th title="${DIVN[c]}">${SHORT[c] ?? DIVN[c]}</th>`).join("")}</tr></thead><tbody>` +
+    rows.map((r) => `<tr><td class="name">${r.name}</td>${cell(r.g)}${codes.map((c) => cell(r.cells[c])).join("")}</tr>`).join("") + "</tbody>";
+  tbl.setAttribute("aria-label", "Table of year-on-year inflation for " + rows.length + " states and union territories by twelve divisions, " + longDate(new Date(stDivBundle.dates[li] + "T00:00:00Z")));
+  // spread per division across states
+  const spread = codes.map((c) => {
+    const col = rows.map((r) => ({ n: r.name, v: r.cells[c] })).filter((x) => x.v != null).sort((a, b) => b.v - a.v);
+    // the middle half of states (interquartile range): one outlier state does not decide the ranking
+    const q = (p) => col[Math.round((col.length - 1) * p)].v;
+    return { c, hi: col[0], lo: col.at(-1), w: q(0.25) - q(0.75), q1: q(0.75), q3: q(0.25) };
+  }).sort((a, b) => b.w - a.w);
+  const wide = spread[0], narrow = spread.at(-1);
+  const SDH = hydrate(stDivBundle);
+  wireTools(document.getElementById("cb-stdiv"), null, Object.values(SDH), "india-atlas_cpi2024_states-x-divisions", fmtDate);
+  setTxt("stdiv-title", `${DIVN[wide.c]}: where states differ most`);
+  setTxt("pv-stdiv", wide.w.toFixed(1) + " pt");
+  setTxt("pc-stdiv", "middle half of states, " + (SHORT[wide.c] ?? DIVN[wide.c]).toLowerCase());
+  setTxt("stdiv-wide", DIVN[wide.c].toLowerCase());
+  setTxt("stdiv-wide-iqr", f1(wide.q1) + " to " + f1(wide.q3));
+  setTxt("stdiv-wide-hi", wide.hi.n + ", " + f1(wide.hi.v));
+  setTxt("stdiv-wide-lo", wide.lo.n + ", " + f1(wide.lo.v));
+  setTxt("stdiv-narrow", DIVN[narrow.c].toLowerCase() + ", its middle half within " + narrow.w.toFixed(1) + " points");
+  setTxt("stdiv-negcells", String(all.filter((v) => v < 0).length));
+  setTxt("stdiv-cells", String(all.length));
+}
+
+/* ---------- §08 the other four groups of the 2012 base (wave 2, lb/prices) ---------- */
+{
+  const G = hydrate(groups12Bundle);
+  const keys = ["miscellaneous", "housing", "clothing_and_footwear", "pan_tobacco_and_intoxicants"].filter((k) => G[k]);
+  const LAB = { miscellaneous: "Miscellaneous", housing: "Housing", clothing_and_footwear: "Clothing", pan_tobacco_and_intoxicants: "Pan, tobacco" };
+  const COL = { miscellaneous: "#2E4BD8", housing: "#5F6675", clothing_and_footwear: "#A3A9B4", pan_tobacco_and_intoxicants: "#C9CED6" };
+  const V = Object.fromEntries(keys.map((k) => [k, { ...G[k], label: LAB[k], color: COL[k] }]));
+  const vals = keys.flatMap((k) => V[k].data.map((d) => d.value)).filter((v) => v != null);
+  const lo = Math.floor(Math.min(0, ...vals)), hi = Math.ceil(Math.max(...vals));
+  const yTicks = []; for (let t = Math.floor(lo / 2) * 2; t <= hi; t += 2) yTicks.push(t);
+  const geo = { W: 1184, H: 470, ml: 70, mr: 170, mt: 30, mb: 48, d0: lo - 0.5, d1: hi + 0.5 };
+  const d0 = V[keys[0]].data[0].date, d1 = V[keys[0]].data.at(-1).date;
+  const xTicks = []; for (let y = d0.getUTCFullYear(); y <= d1.getUTCFullYear(); y += 2) xTicks.push(new Date(Date.UTC(y, 0, 1)));
+  const plot = multiLine("cb-other", "plot-other", keys, V, geo, yTicks, xTicks, (d) => String(d.getUTCFullYear()),
+    "india-atlas_cpi2012_other-four-groups",
+    "CPI, the four groups beyond food and fuel, base 2012, " + spanLong(V[keys[0]].data),
+    "Four line charts. " + keys.map((k) => LAB[k] + " ends at " + V[k].data.at(-1).value.toFixed(1) + " per cent").join("; ") + ".");
+  wireLegend(document.getElementById("legend-other"), plot, keys, V);
+  const sd = (k) => { const v = V[k].data.map((d) => d.value).filter((x) => x != null); const m = v.reduce((a, b) => a + b, 0) / v.length; return Math.sqrt(v.reduce((a, b) => a + (b - m) ** 2, 0) / v.length); };
+  const bySd = [...keys].sort((a, b) => sd(a) - sd(b));
+  setTxt("pv-other", f1(V.miscellaneous.data.at(-1).value));
+  setTxt("pc-other", "miscellaneous, " + fmtDate(d1));
+  setTxt("oth-misc", f1(V.miscellaneous.data.at(-1).value));
+  setTxt("oth-housing", f1(V.housing.data.at(-1).value));
+  setTxt("oth-cloth", f1(V.clothing_and_footwear.data.at(-1).value));
+  setTxt("oth-pan", f1(V.pan_tobacco_and_intoxicants.data.at(-1).value));
+  setTxt("oth-steady", LAB[bySd[0]].toLowerCase());
+  setTxt("oth-wild", LAB[bySd.at(-1)].toLowerCase());
+}
+
+/* ---------- §09 the 2012 basket, item by item: levels against 2012=100 (wave 2) ---------- */
+{
+  const IT = hydrate(items12Bundle);
+  const all = Object.entries(items12Bundle.series).map(([k, s]) => ({ k, s: IT[k], label: s.label, level: s.latest_level, y: lastOf(IT[k])?.value ?? null }))
+    .filter((r) => r.level != null).sort((a, b) => b.level - a.level);
+  const top = all.slice(0, 15), bot = all.slice(-15);
+  const row = (r, rank) => `
+  <tr>
+    <td class="name">${r.label}<small>№ ${rank} of ${all.length}</small></td>
+    <td class="val">${r.level.toFixed(1)}</td>
+    <td class="chg">${r.y == null ? "—" : f1(r.y)}</td>
+    <td class="spark" id="sp-i12-${rank}"></td>
+  </tr>`;
+  document.getElementById("items12-body").innerHTML = top.map((r, i) => row(r, i + 1)).join("") +
+    `<tr class="tail-mid"><td colspan="4">⋯ ${all.length - 30} items between ${top.at(-1).level.toFixed(1)} and ${bot[0].level.toFixed(1)}: the full basket ships in the CSV ⋯</td></tr>` +
+    bot.map((r, i) => row(r, all.length - 14 + i)).join("");
+  top.forEach((r, i) => spark("sp-i12-" + (i + 1), { ...r.s, color: "#5F6675" }));
+  bot.forEach((r, i) => spark("sp-i12-" + (all.length - 14 + i), { ...r.s, color: "#5F6675" }));
+  const lv = all.map((r) => r.level);
+  const med = (lv[Math.floor((lv.length - 1) / 2)] + lv[Math.ceil((lv.length - 1) / 2)]) / 2;
+  wireTools(document.getElementById("cb-items12"), null, Object.values(IT), "india-atlas_cpi2012_items", fmtDate);
+  setTxt("items12-title", `${top[0].label} grew dearest of the old basket: ${(top[0].level / 100).toFixed(1)} times its 2012 price`);
+  setTxt("pv-items12", top[0].level.toFixed(1));
+  setTxt("pc-items12", top[0].label.slice(0, 34) + ", index, 2012=100");
+  setTxt("it12-topn", top[0].label.toLowerCase());
+  setTxt("it12-top", top[0].level.toFixed(1));
+  setTxt("it12-botn", bot.at(-1).label.toLowerCase());
+  setTxt("it12-bot", bot.at(-1).level.toFixed(1));
+  setTxt("it12-med", med.toFixed(1));
+  { const nb = lv.filter((v) => v < 100).length; setTxt("it12-below", nb === 1 ? "only one item was" : nb + " items were"); }
+}
+
+/* ---------- §12 CPI-AL and CPI-RL by state, base 2019 (wave 2, lb/prices) ----------
+ * The Bureau publishes state LEVELS on the new base; with a full year of them, y/y is
+ * computed here, same month a year earlier, same base. */
+{
+  const yoyAt = (b, k) => { const d = b.series[k].data, i = d.length - 1; return d[i] != null && d[i - 12] != null ? Math.round((d[i] / d[i - 12] - 1) * 10000) / 100 : null; };
+  if (alSt19Bundle.dates.length < 13) throw new Error("cpialrl-states-2019: fewer than 13 months, no y/y");
+  const shortSt = (k) => (/daman/.test(k) ? "Dadra, Nagar Haveli, Daman and Diu" : stateName(k).replace(/ And /g, " and "));
+  const rows = Object.keys(alSt19Bundle.series).map((k) => ({ k, name: shortSt(k), al: yoyAt(alSt19Bundle, k), rl: rlSt19Bundle.series[k] ? yoyAt(rlSt19Bundle, k) : null }))
+    .filter((r) => r.al != null && r.rl != null).sort((a, b) => b.al - a.al);
+  const vals = rows.flatMap((r) => [r.al, r.rl]);
+  const lo = Math.floor(Math.min(0, ...vals)) - 1, hi = Math.ceil(Math.max(...vals)) + 1;
+  const xt = []; for (let t = Math.ceil(lo / 2) * 2; t <= hi; t += 2) xt.push(t);
+  const geo = { W: 1184, H: rows.length * 26 + 80, ml: 250, mr: 90, mt: 26, mb: 46 };
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+    x: { label: "year-on-year, per cent →", labelAnchor: "right", labelArrow: "none", domain: [lo, hi], ticks: xt, tickSize: 0, tickPadding: 12, tickFormat: (d) => (d === xt.at(-1) ? d + "%" : String(d)) },
+    y: { label: null, domain: rows.map((r) => r.name), tickSize: 0, tickPadding: 14 },
+    marks: [
+      Plot.gridX(xt, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+      Plot.link(rows, { x1: "al", x2: "rl", y: "name", stroke: "#C9CED6", strokeWidth: 2 }),
+      Plot.dot(rows, { x: "rl", y: "name", r: 4, fill: "#A3A9B4", stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.dot(rows, { x: "al", y: "name", r: 4, fill: "#2E4BD8", stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.text(rows.filter((d) => d.al < d.rl), { x: "al", y: "name", text: (d) => d.al.toFixed(2) + "%", dx: -12, dy: 0.5, fill: "#161A22", fontSize: 11.5, fontFamily: mono, textAnchor: "end" }),
+      Plot.text(rows.filter((d) => d.al >= d.rl), { x: "al", y: "name", text: (d) => d.al.toFixed(2) + "%", dx: 12, dy: 0.5, fill: "#161A22", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+    ],
+  });
+  const when = longDate(new Date(alSt19Bundle.dates.at(-1) + "T00:00:00Z"));
+  const alhi = rows.filter((r) => r.al > r.rl).length;
+  a11y(plot, "CPI-AL and CPI-RL by state, year-on-year, " + when + ", base 2019",
+    "Dumbbell strip of " + rows.length + " states sorted by CPI-AL. Highest " + rows[0].name + " at " + rows[0].al.toFixed(1) + " per cent; lowest " + rows.at(-1).name + " at " + rows.at(-1).al.toFixed(1) + ". Agricultural labourers' inflation is above rural labourers' in " + alhi + " states.");
+  document.getElementById("plot-alst19").append(plot);
+  const dts = alSt19Bundle.dates.map((d) => new Date(d + "T00:00:00Z"));
+  const asYoy = (b, k, label) => ({ name: b.series[k].name.replace("_index_", "_yoy_pct_"), label, color: "#5F6675", data: dts.map((d, i) => ({ date: d, value: i >= 12 && b.series[k].data[i] != null && b.series[k].data[i - 12] != null ? Math.round((b.series[k].data[i] / b.series[k].data[i - 12] - 1) * 10000) / 100 : null })).filter((x, i) => i >= 12) });
+  wireTools(document.getElementById("cb-alst19"), plot, rows.flatMap((r) => [asYoy(alSt19Bundle, r.k, r.name + ", CPI-AL"), asYoy(rlSt19Bundle, r.k, r.name + ", CPI-RL")]), "india-atlas_cpi-al-rl_states_base2019", fmtDate);
+  wireLegend(document.getElementById("legend-alst19"), plot, ["al", "rl"], { al: { color: "#2E4BD8" }, rl: { color: "#A3A9B4" } });
+  setTxt("pv-alst19", f1(rows[0].al));
+  setTxt("pc-alst19", rows[0].name + ", CPI-AL, " + fmtDate(new Date(alSt19Bundle.dates.at(-1) + "T00:00:00Z")));
+  setTxt("alst19-top", rows[0].name + ", " + f1(rows[0].al));
+  setTxt("alst19-bot", rows.at(-1).name + ", " + f1(rows.at(-1).al));
+  setTxt("alst19-alhi", String(alhi));
+  setTxt("alst19-n", String(rows.length));
+}
+
+/* ---------- §13 CPI-IW: four bases, never joined (wave 2, lb/prices) ----------
+ * Each basket's y/y is computed inside its own base (cpiiw-<base>.json). The rulers are
+ * drawn side by side; a hairline marks where each new basket's first y/y begins. */
+const IW = { b1960: hydrate(iw60Bundle), b1982: hydrate(iw82Bundle), b2001: hydrate(iw01Bundle), b2016: hydrate(iw16Bundle) };
+{
+  const COL = { b1960: "#C9CED6", b1982: "#A3A9B4", b2001: "#5F6675", b2016: "#2E4BD8" };
+  const rulers = Object.entries(IW).map(([k, B]) => ({ ...B.general, key: k, color: COL[k], label: "Base " + k.slice(1), data: B.general.data.filter((d) => d.value != null) }));
+  const all = rulers.flatMap((r) => r.data.map((d) => d.value));
+  const lo = Math.floor(Math.min(...all) / 5) * 5, hi = Math.ceil(Math.max(...all) / 5) * 5;
+  const yTicks = []; for (let t = lo; t <= hi; t += 5) yTicks.push(t);
+  const geo = { W: 1184, H: 540, ml: 70, mr: 150, mt: 40, mb: 48, d0: lo - 1, d1: hi + 1 };
+  const y0 = rulers[0].data[0].date.getUTCFullYear(), y1 = rulers.at(-1).data.at(-1).date.getUTCFullYear();
+  const xTicks = []; for (let y = Math.ceil(y0 / 5) * 5; y <= y1; y += 5) xTicks.push(new Date(Date.UTC(y, 0, 1)));
+  const peak = rulers.map((r) => ({ r, p: peakOf(r) })).reduce((a, b) => (b.p.value > a.p.value ? b : a));
+  const cur = rulers.at(-1), curEnd = lastOf(cur);
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+    x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => String(d.getUTCFullYear()) },
+    y: { label: "↑ year-on-year, per cent", labelAnchor: "top", labelArrow: false, ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11,
+         tickFormat: (d) => (d === yTicks.at(-1) ? d + "%" : String(d)) },
+    marks: [
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+      // every changeover but the last; seamMarks draws the rulers and the last changeover
+      Plot.ruleX(rulers.slice(1, -1).map((r) => r.data[0].date), { stroke: SEAM_RULE, strokeWidth: 1 }),
+      ...seamMarks("side", rulers, { solid: true }),
+      Plot.text(rulers, { x: (r) => r.data[0].date, y: geo.d0 + 1.5, text: (r) => r.label, dx: 6, textAnchor: "start", fill: "#5F6675", fontSize: 12, fontFamily: mono }),
+      Plot.dot([peak.p], { x: "date", y: "value", fill: "#878D99", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([peak.p], { x: "date", y: "value", text: (d) => d.value.toFixed(1) + "%, " + fmtDate(d.date), dx: 10, textAnchor: "start", fill: "#5F6675", fontSize: 12, fontFamily: mono }),
+      Plot.dot([curEnd], { x: "date", y: "value", fill: cur.color, r: 4, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.text([curEnd], { x: "date", y: "value", text: (d) => "Base 2016 " + d.value.toFixed(2) + "%", dx: 12, textAnchor: "start", fill: "#161A22", fontSize: 12.5, fontWeight: 500, fontFamily: mono }),
+    ],
+  });
+  a11y(plot, "CPI for industrial workers, year-on-year, on four bases from " + y0 + " to " + y1,
+    "Four line charts side by side on one time axis, never joined: base 1960, 1982, 2001 and 2016. The highest reading is " + peak.p.value.toFixed(1) + " per cent in " + longDate(peak.p.date) + ". The current base ends at " + curEnd.value.toFixed(1) + " per cent in " + longDate(curEnd.date) + ".");
+  document.getElementById("plot-iw").append(plot);
+  wireTools(document.getElementById("cb-iw"), plot, rulers, "india-atlas_cpi-iw_four-bases_" + y0 + "-" + y1, fmtDate);
+  wireLegend(document.getElementById("legend-iw"), plot, Object.keys(IW), Object.fromEntries(Object.entries(COL).map(([k, c]) => [k, { color: c }])));
+  const p16 = peakOf(IW.b2016.general);
+  setTxt("pv-iw", f1(curEnd.value));
+  setTxt("iw-now", f1(curEnd.value));
+  setTxt("iw-yago", f1(IW.b2016.general.data.at(-13).value));
+  setTxt("iw-peak16", f1(p16.value) + " in " + longDate(p16.date));
+  setTxt("iw-peak", peak.p.value.toFixed(1) + "% in " + longDate(peak.p.date) + ", on the " + peak.r.label.replace("Base ", "") + " basket");
+}
+
+/* §13 CPI-IW groups, base 2016 */
+{
+  const G = IW.b2016;
+  const LAB = { food: "Food", housing: "Housing", fuel: "Fuel and light", clothing: "Clothing", pan: "Pan, tobacco", misc: "Miscellaneous" };
+  const COL = { food: "#2E4BD8", housing: "#5F6675", fuel: "#878D99", clothing: "#A3A9B4", pan: "#C9CED6", misc: "#C9CED6" };
+  const keys = Object.keys(LAB);
+  const V = Object.fromEntries(keys.map((k) => [k, { ...G[k], label: LAB[k], color: COL[k] }]));
+  const vals = keys.flatMap((k) => V[k].data.map((d) => d.value)).filter((v) => v != null);
+  const lo = Math.floor(Math.min(...vals, 0)), hi = Math.ceil(Math.max(...vals));
+  const yTicks = []; for (let t = lo; t <= hi; t += 2) yTicks.push(t);
+  const geo = { W: 1184, H: 470, ml: 70, mr: 190, mt: 30, mb: 48, d0: lo - 0.3, d1: hi + 0.3 };
+  const xTicks = []; for (let y = G.food.data[0].date.getUTCFullYear() + 1; y <= G.food.data.at(-1).date.getUTCFullYear(); y++) xTicks.push(new Date(Date.UTC(y, 0, 1)));
+  const plot = multiLine("cb-iwgrp", "plot-iwgrp", keys, V, geo, yTicks, xTicks, (d) => String(d.getUTCFullYear()),
+    "india-atlas_cpi-iw_groups_base2016",
+    "CPI for industrial workers, six groups, year-on-year, base 2016, " + spanLong(G.food.data),
+    "Six line charts. " + keys.map((k) => LAB[k] + " ends at " + V[k].data.at(-1).value.toFixed(1) + " per cent").join("; ") + ".");
+  wireLegend(document.getElementById("legend-iwgrp"), plot, keys, V);
+  const rows = keys.map((k) => ({ k, v: V[k].data.at(-1).value })).sort((a, b) => b.v - a.v);
+  const fNow = V.food.data.at(-1).value, fY = V.food.data.at(-13).value;
+  setTxt("pv-iwgrp", f1(rows[0].v));
+  setTxt("pc-iwgrp", LAB[rows[0].k] + ", " + fmtDate(G.food.data.at(-1).date));
+  setTxt("iwg-top", LAB[rows[0].k] + ", " + f1(rows[0].v));
+  setTxt("iwg-bot", LAB[rows.at(-1).k] + ", " + f1(rows.at(-1).v));
+  setTxt("iwg-food", f1(fNow)); setTxt("iwg-food-y", f1(fY));
+  setTxt("iwg-food-dir", fNow > fY ? "food has gathered pace over the year" : "food has slowed over the year");
+}
+
+/* §13 CPI-IW by centre: the hottest and coolest twelve, the middle summarised */
+{
+  const C = hydrate(iwCenBundle);
+  const ai = lastOf(IW.b2016.general).value;
+  const all = Object.values(C).map((s) => ({ s, name: s.label.replace(/ \(.*\)$/, ""), state: (s.label.match(/\((.*)\)$/) || [])[1], v: s.data.at(-1).value }))
+    .filter((r) => r.v != null).sort((a, b) => b.v - a.v);
+  const N = 12, mid = all.slice(N, -N);
+  const GAP = `${mid.length} more centres, ${mid.at(-1).v.toFixed(1)}% to ${mid[0].v.toFixed(1)}%`;
+  const rows = [...all.slice(0, N), { name: GAP, gap: true }, ...all.slice(-N)];
+  const label = (r) => (r.gap ? r.name : r.name + ", " + r.state);
+  const dots = rows.filter((r) => !r.gap);
+  const lo = Math.floor(Math.min(0, ...dots.map((r) => r.v))) - 1, hi = Math.ceil(Math.max(...dots.map((r) => r.v))) + 1;
+  const xt = []; for (let t = Math.ceil(lo / 2) * 2; t <= hi; t += 2) xt.push(t);
+  const geo = { W: 1184, H: rows.length * 28 + 80, ml: 300, mr: 90, mt: 34, mb: 46 };
+  const spot = (v) => stripLabelSpot(geo, lo, hi, v, [ai, 0]);
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+    x: { label: null, domain: [lo, hi], ticks: xt, tickSize: 0, tickPadding: 12, tickFormat: (d) => (d === xt.at(-1) ? d + "%" : String(d)) },
+    y: { label: null, domain: rows.map(label), tickSize: 0, tickPadding: 14 },
+    marks: [
+      Plot.gridX(xt, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+      Plot.ruleX([ai], { stroke: "#161A22", strokeWidth: 1, strokeDasharray: "3,3" }),
+      Plot.text([{ x: ai }], { x: "x", text: () => "All India, " + f1(ai), frameAnchor: "top", dy: -16, dx: 5, fill: "#161A22", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.dot(dots, { x: "v", y: label, r: 5, fill: (d) => (d.v > ai ? "#2E4BD8" : "#878D99"), stroke: "#FFFFFF", strokeWidth: 1 }),
+      ["start", "end", "middle"].map((a) => Plot.text(dots.filter((d) => spot(d.v).anchor === a), { x: "v", y: label, text: (d) => d.v.toFixed(2) + "%",
+        dx: a === "end" ? -12 : a === "start" ? 12 : 0, dy: a === "middle" ? -11 : 0.5, fill: (d) => (d.v > ai ? "#161A22" : "#878D99"), fontSize: 12, fontFamily: mono, textAnchor: a })),
+    ],
+  });
+  const top = all[0], bot = all.at(-1);
+  a11y(plot, "CPI for industrial workers by centre, " + longDate(C[Object.keys(C)[0]].data.at(-1).date) + ", the twelve highest and twelve lowest of " + all.length + " centres",
+    "Dot strip. " + top.name + " is highest at " + top.v.toFixed(1) + " per cent, " + bot.name + " lowest at " + bot.v.toFixed(1) + ". All India is " + ai.toFixed(1) + " per cent. " + GAP + " sit between the two groups shown.");
+  document.getElementById("plot-iwcen").append(plot);
+  wireTools(document.getElementById("cb-iwcen"), plot, all.map((r) => r.s), "india-atlas_cpi-iw_centres_base2016");
+  setTxt("pv-iwcen", (top.v - bot.v).toFixed(1) + " pt");
+  setTxt("iwc-top", top.name + " (" + top.state + "), " + f1(top.v));
+  setTxt("iwc-bot", bot.name + " (" + bot.state + "), " + f1(bot.v));
+  setTxt("iwc-spread", (top.v - bot.v).toFixed(1) + " points");
+  setTxt("iwc-above", String(all.filter((r) => r.v > ai).length));
+  setTxt("iwc-n", String(all.length));
+  setTxt("iwc-ai", f1(ai));
+  setTxt("iwc-neg", String(all.filter((r) => r.v < 0).length));
+}
+
+/* §13 rural wages: did the farm wage keep up with farm prices?
+ * Wage growth is computed here from the Bureau's published daily wage (same month a year
+ * earlier); CPI-AL y/y is the base 1986-87 bundle's. Drawn only where both exist. */
+const WG = hydrate(wageBundle);
+{
+  const w = WG.o1210, al = AL86.al;
+  const byT = new Map(w.data.map((d) => [d.date.getTime(), d.value]));
+  const alT = new Map(al.data.map((d) => [d.date.getTime(), d.value]));
+  const pts = w.data.map((d) => {
+    const prev = byT.get(Date.UTC(d.date.getUTCFullYear() - 1, d.date.getUTCMonth(), 1));
+    return { date: d.date, w: d.value != null && prev != null ? Math.round((d.value / prev - 1) * 10000) / 100 : null, a: alT.get(d.date.getTime()) ?? null };
+  }).filter((p) => p.w != null && p.a != null);
+  const V = {
+    wage: { name: "wage_growth_general_agri_labourer_yoy_pct", label: "Wage growth", color: "#2E4BD8", data: pts.map((p) => ({ date: p.date, value: p.w })) },
+    al: { name: "cpi_al_yoy_pct_base1986", label: "CPI-AL", color: "#C47A16", data: pts.map((p) => ({ date: p.date, value: p.a })) },
+  };
+  const vals = pts.flatMap((p) => [p.w, p.a]);
+  const lo = Math.floor(Math.min(0, ...vals)), hi = Math.ceil(Math.max(...vals));
+  const yTicks = []; for (let t = Math.floor(lo / 2) * 2; t <= hi; t += 2) yTicks.push(t);
+  const geo = { W: 1184, H: 470, ml: 70, mr: 180, mt: 30, mb: 48, d0: lo - 0.5, d1: hi + 0.5 };
+  const xTicks = []; for (let y = pts[0].date.getUTCFullYear() + 1; y <= pts.at(-1).date.getUTCFullYear(); y++) xTicks.push(new Date(Date.UTC(y, 0, 1)));
+  const plot = multiLine("cb-wage", "plot-wage", ["wage", "al"], V, geo, yTicks, xTicks, (d) => String(d.getUTCFullYear()),
+    "india-atlas_rural-wage_vs_cpi-al",
+    "Growth of the daily wage of a general agricultural labourer against CPI-AL inflation, " + spanLong(V.wage.data),
+    "Two line charts. Wage growth ends at " + pts.at(-1).w.toFixed(1) + " per cent, CPI-AL inflation at " + pts.at(-1).a.toFixed(1) + ". The wage grew faster than prices in " + pts.filter((p) => p.w > p.a).length + " of " + pts.length + " months.");
+  wireLegend(document.getElementById("legend-wage"), plot, ["wage", "al"], V);
+  const lastW = lastOf(w), firstW = firstOf(w);
+  setTxt("wage-span", fmtDate(pts[0].date) + " to " + fmtDate(pts.at(-1).date));
+  setTxt("pv-wage", fmt.inrR(lastW.value));
+  setTxt("wg-now", fmt.inrR(lastW.value));
+  setTxt("wg-first", fmt.inrR(firstW.value));
+  setTxt("wg-n", String(pts.length));
+  setTxt("wg-above", String(pts.filter((p) => p.w > p.a).length));
+  setTxt("wg-gap", (pts.reduce((t, p) => t + (p.w - p.a), 0) / pts.length).toFixed(1) + " points");
+}
+
+/* §13 rural wages by state: general agricultural labourer, latest month each state reports */
+{
+  const ST = hydrate(wageStBundle);
+  const ai = lastOf(WG.o1210).value;
+  const rows = Object.entries(wageStBundle.series).filter(([k]) => k.endsWith("_1210"))
+    .map(([k, raw]) => ({ s: ST[k], name: raw.state, last: lastOf(ST[k]) })).filter((r) => r.last)
+    .map((r) => ({ ...r, v: r.last.value })).sort((a, b) => b.v - a.v);
+  const hi = Math.ceil(Math.max(...rows.map((r) => r.v)) / 100) * 100 + 100;
+  const xt = []; for (let t = 0; t <= hi; t += 100) xt.push(t);
+  const geo = { W: 1184, H: rows.length * 30 + 80, ml: 190, mr: 90, mt: 34, mb: 46 };
+  const spot = (v) => stripLabelSpot(geo, 0, hi, v, [ai]);
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H,
+    marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+    x: { label: "rupees a day →", labelAnchor: "right", labelArrow: "none", domain: [0, hi], ticks: xt, tickSize: 0, tickPadding: 12, tickFormat: (d) => "₹" + fmt.inr(d) },
+    y: { label: null, domain: rows.map((r) => r.name), tickSize: 0, tickPadding: 14 },
+    marks: [
+      Plot.gridX(xt, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([ai], { stroke: "#161A22", strokeWidth: 1, strokeDasharray: "3,3" }),
+      Plot.text([{ x: ai }], { x: "x", text: () => "All India, " + fmt.inrR(ai), frameAnchor: "top", dy: -16, dx: 5, fill: "#161A22", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.dot(rows, { x: "v", y: "name", r: 5.5, fill: (d) => (d.v > ai ? "#2E4BD8" : "#878D99"), stroke: "#FFFFFF", strokeWidth: 1 }),
+      ["start", "end", "middle"].map((a) => Plot.text(rows.filter((d) => spot(d.v).anchor === a), { x: "v", y: "name", text: (d) => fmt.inrR(d.v) + (d.last.date.getTime() < lastOf(WG.o1210).date.getTime() ? ", " + fmtDate(d.last.date) : ""),
+        dx: a === "end" ? -12 : a === "start" ? 12 : 0, dy: a === "middle" ? -11 : 0.5, fill: (d) => (d.v > ai ? "#161A22" : "#878D99"), fontSize: 12, fontFamily: mono, textAnchor: a })),
+    ],
+  });
+  const top = rows[0], bot = rows.at(-1);
+  a11y(plot, "Daily wage of a general agricultural labourer by state, rupees, latest month each state reports",
+    "Dot strip. " + top.name + " pays most at " + Math.round(top.v) + " rupees a day, " + bot.name + " least at " + Math.round(bot.v) + ". All India is " + Math.round(ai) + " rupees.");
+  document.getElementById("plot-wagest").append(plot);
+  wireTools(document.getElementById("cb-wagest"), plot, rows.map((r) => r.s), "india-atlas_rural-wage_states");
+  setTxt("pv-wagest", fmt.inrR(top.v) + " to " + fmt.inrR(bot.v));
+  setTxt("wgs-top", top.name + ", " + fmt.inrR(top.v));
+  setTxt("wgs-bot", bot.name + ", " + fmt.inrR(bot.v));
+  setTxt("wgs-ratio", (top.v / bot.v).toFixed(1));
+  setTxt("wgs-ai", fmt.inrR(ai));
 }
 
 /* (the 2024-base state strip is drawn once, in the §11 block above — a second

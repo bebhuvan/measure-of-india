@@ -25,6 +25,9 @@ let failures = 0;
 const fail = (m) => { failures++; console.error("FAIL:", m); };
 const ok = (m) => console.log("  ok:", m);
 
+// health-gender: an NFHS value (All India, total unless named) and a round's states, by sub-indicator
+const nfhsV = (b, round, table, re, geo = "All India", sector = "total") => Object.values(b[`nfhs-${round}-${table}`].series).find((s) => re.test(s.group) && s.geo === geo && s.sector === sector).data[0];
+const nfhsStates = (b, round, table, re) => Object.values(b[`nfhs-${round}-${table}`].series).filter((s) => re.test(s.group) && s.sector === "total" && s.geo !== "All India").map((s) => ({ geo: s.geo, v: s.data[0] }));
 const PAGES = [
   // titleblock and §01 lead with the 2024-base print; the 2012-base story
   // (§05 plate, core) stays below — both bundles are checked
@@ -50,6 +53,19 @@ const PAGES = [
       return fmt.pt1(Math.max(...vals) - Math.min(...vals));
     }],
     ["pf-st24-ai", (b) => fmt.pct2(b["cpi-2024"].series.headline.data.at(-1))],
+    // ---- prices wave 2 (lb/prices): CPI-IW, rural wages, state x division, the 2012 groups and items
+    ["pv-iw", (b) => fmt.pct2(b["cpiiw-2016"].series.general.data.at(-1))],
+    ["iw-yago", (b) => fmt.pct2(b["cpiiw-2016"].series.general.data.at(-13))],
+    ["iwg-food", (b) => fmt.pct2(b["cpiiw-2016"].series.food.data.at(-1))],
+    ["iwc-n", (b) => fmt.count(Object.values(b["cpiiw-centres-2016"].series).filter((s) => s.data.at(-1) != null).length)],
+    ["iwc-ai", (b) => fmt.pct2(b["cpiiw-2016"].series.general.data.at(-1))],
+    ["pv-wage", (b) => fmt.inrR(b["wages-rural-2013"].series.o1210.data.filter((v) => v != null).at(-1))],
+    ["wgs-ai", (b) => fmt.inrR(b["wages-rural-2013"].series.o1210.data.filter((v) => v != null).at(-1))],
+    ["stdiv-cells", (b) => fmt.count(Object.values(b["cpi-2024-states-divisions"].series).filter((s) => s.data.at(-1) != null).length)],
+    ["oth-misc", (b) => fmt.pct2(b["cpi-groups"].series.miscellaneous.data.at(-1))],
+    ["oth-housing", (b) => fmt.pct2(b["cpi-groups"].series.housing.data.at(-1))],
+    ["pv-items12", (b) => Math.max(...Object.values(b["cpi-items-2012"].series).map((s) => s.latest_level).filter((v) => v != null)).toFixed(1)],
+    ["it12-below", (b) => { const n = Object.values(b["cpi-items-2012"].series).filter((s) => s.latest_level != null && s.latest_level < 100).length; return n === 1 ? "only one item was" : fmt.count(n) + " items were"; }],
   ]},
   { url: "/guides/gdp/", slug: null, checks: [
     ["n-gdp", (b) => fmt.pct2(b["gdp-2022"].series.gdp.data.at(-1))],
@@ -95,6 +111,10 @@ const PAGES = [
       return fmt.pct1Minus(v);
     }],
     ["prov-vintage", (b) => b.wpi.meta.vintage],
+    // ---- prices wave 2 (lb/prices): four bases, wholesale to retail
+    ["pv-long", (b) => fmt.pct2(b["wpi-2022"].series.headline.data.at(-1))],
+    ["long-now", (b) => fmt.pct2(b["wpi-2022"].series.headline.data.at(-1))],
+    ["w2r-n", (b) => { const c = new Map(b.cpi.dates.map((d, i) => [d, b.cpi.series.food.data[i]])); return fmt.count(b.wpi.dates.filter((d, i) => b.wpi.series.food_index.data[i] != null && c.get(d) != null).length); }],
   ]},
   { url: "/guides/iip/", slug: null, checks: [
     // industry (wave 2): financial years, the core eight
@@ -264,20 +284,21 @@ const PAGES = [
     ["prov-vintage", (b) => b["aishe-headline"].meta.vintage],
     ["prov-vintage2", (b) => b["aishe-headline"].meta.vintage],
   ]},
-  { url: "/guides/gender/", slug: null, checks: [
-    ["n-sr", (b) => b["gender-sexratio"].series.sex_ratio.data.at(-1) + "♀/1000♂"],
-    ["n-lfpr", (b) => fmt.pct1(b["gender-work"].series.lfpr_female.data.at(-1))],
-    ["n-mmr", (b) => fmt.count(b["gender-mmr"].series.mmr.data.at(-1))],
-    ["cr-sr", (b) => String(b["gender-sexratio"].series.sex_ratio.data.at(-1))],
-    ["cr-mmr", (b) => fmt.count(b["gender-mmr"].series.mmr.data.at(-1)) + "/100k"],
-    ["cr-lit-f", (b) => fmt.pct1(b["gender-literacy"].series.literacy_female.data.at(-1))],
-    ["cr-lfpr-f", (b) => fmt.pct1(b["gender-work"].series.lfpr_female.data.at(-1))],
-    ["pv-sr", (b) => b["gender-sexratio"].series.sex_ratio.data[0] + " → " + b["gender-sexratio"].series.sex_ratio.data.at(-1)],
-    ["pv-mmr", (b) => b["gender-mmr"].series.mmr.data[0] + " → " + fmt.count(b["gender-mmr"].series.mmr.data.at(-1))],
-    ["pv-tfr", (b) => fmt.num2(b["gender-fertility"].series.tfr_graduate_and_above.data.at(-1))],
-    ["pv-lfpr", (b) => fmt.pct1(b["gender-work"].series.lfpr_female.data.at(-1))],
-    ["prov-vintage", (b) => b["gender-sexratio"].meta.vintage],
-    ["prov-vintage2", (b) => b["gender-sexratio"].meta.vintage],
+  // health-gender: the compendium's tables, read straight from their bundles
+  { url: "/guides/gender/", slug: null, minPlots: 18, checks: [
+    ["n-srb", (b) => fmt.count(b["gender-t007"].series.total__all_india.data.at(-1))],
+    ["rb-srb", (b) => fmt.count(b["gender-t007"].series.total__all_india.data.at(-1))],
+    ["rb-srb-then", (b) => fmt.count(b["gender-t007"].series.total__all_india.data[0])],
+    ["n-lfpr", (b) => fmt.pct1(b["gender-t082-cy25"].series.total__female__all_india.data.at(-1))],
+    ["n-ls", (b) => { const c = b["gender-t124"].series.elected_female__all_india__count.data, s = b["gender-t124"].series.number_of_seats_available_for_election__all_india.data; return fmt.pct1(Math.round(1000 * c.at(-1) / s.at(-1)) / 10); }],
+    ["n-time", (b) => fmt.count(b["gender-t104"].series.average_time_in_minutes_spent_in_a_day_per_person__female__unpaid_activity__all_india.data.at(-1))],
+    ["pv-mmr", (b) => fmt.count(b["gender-t021"].series.all_india.data.at(-1))],
+    ["pv-imr", (b) => fmt.count(b["gender-t015"].series.female__all_india.data.at(-1))],
+    ["pv-crime", (b) => fmt.num1(b["gender-t141"].series.rates_of_crimes__total_crimes_against_women__all_india.data.at(-1))],
+    ["pv-lfpr", (b) => fmt.pct1(b["gender-t082-cy25"].series.total__female__all_india.data.at(-1))],
+    ["pv-census", (b) => fmt.count(b["gender-t002"].series.all_india.data.at(-1))],
+    ["prov-vintage", (b) => b["gender-t007"].meta.vintage],
+    ["prov-vintage2", (b) => b["gender-t007"].meta.vintage],
   ]},
   { url: "/guides/mnre/", slug: null, checks: [
     ["n-total", (b) => fmt.gw1(b["mnre-sources"].series.grand_total.data.at(-1))],
@@ -292,15 +313,23 @@ const PAGES = [
     ["prov-vintage", (b) => b["mnre-sources"].meta.vintage],
     ["prov-vintage2", (b) => b["mnre-sources"].meta.vintage],
   ]},
-  { url: "/guides/nfhs/", slug: null, checks: [
-    ["n-anaemia", (b) => { const s = Object.values(b["nfhs-anaemia"].series).find((x) => x.label.includes("Children age 6-59")); return fmt.pct1(s.data[1]); }],
-    ["n-imr", (b) => { const s = Object.values(b["nfhs-child"].series).find((x) => x.label.includes("Infant mortality")); return fmt.count(s.data[1]) + "/1000"; }],
-    ["n-institutional", (b) => { const s = Object.values(b["nfhs-maternal"].series).find((x) => x.label.includes("Institutional births (in the 5 years")); return fmt.pct1(s.data[1]); }],
-    ["n-tfr", (b) => { const s = Object.values(b["nfhs-fertility"].series).find((x) => x.label.includes("Total Fertility Rate")); return fmt.num2(s.data[1]); }],
-    ["cr-anaemia", (b) => { const s = Object.values(b["nfhs-anaemia"].series).find((x) => x.label.includes("Children age 6-59")); return fmt.pct1(s.data[1]); }],
-    ["pv-anaemia", (b) => { const s = Object.values(b["nfhs-anaemia"].series).find((x) => x.label.includes("Children age 6-59")); return fmt.pt1Plus(s.data[1] - s.data[0]); }],
-    ["prov-vintage", (b) => b["nfhs-anaemia"].meta.vintage],
-    ["prov-vintage2", (b) => b["nfhs-anaemia"].meta.vintage],
+  // health-gender: NFHS-5 and NFHS-4 read from their own bundles (two rounds, two rulers)
+  { url: "/guides/nfhs/", slug: null, minPlots: 18, checks: [
+    ["n-anaemia", (b) => fmt.pct1(nfhsV(b, 5, "anaemia", /^Children age 6-59/))],
+    ["rb-anaemia", (b) => fmt.pct1(nfhsV(b, 5, "anaemia", /^Children age 6-59/))],
+    ["d-anaemia", (b) => fmt.pct1(nfhsV(b, 4, "anaemia", /^Children age 6-59/)) + " in NFHS-4"],
+    ["n-stunting", (b) => fmt.pct1(nfhsV(b, 5, "child-nutrition", /are stunted/))],
+    ["n-institutional", (b) => fmt.pct1(nfhsV(b, 5, "delivery", /^Institutional births \(in/))],
+    ["n-bp", (b) => fmt.pct1(nfhsV(b, 5, "blood-pressure", /^Men .*Elevated blood pressure \(Systolic ≥140/))],
+    ["pv-anaemia", (b) => fmt.pct1(nfhsV(b, 5, "anaemia", /^Children age 6-59/))],
+    ["ex-an-rose", (b) => { const s5 = nfhsStates(b, 5, "anaemia", /^Children age 6-59/), s4 = new Map(nfhsStates(b, 4, "anaemia", /^Children age 6-59/).map((x) => [x.geo, x.v])); return fmt.count(s5.filter((x) => s4.has(x.geo) && x.v > s4.get(x.geo)).length); }],
+    ["pv-cancer", (b) => fmt.pct1(nfhsV(b, 5, "cancer-screening", /cervical/))],
+    ["pv-violence", (b) => fmt.pct1(nfhsV(b, 5, "violence", /spousal violence/))],
+    ["pv-tfr", (b) => fmt.num2(nfhsV(b, 5, "marriage-fertility", /Total Fertility/))],
+    ["ex-bi-oop", (b) => fmt.inr(nfhsV(b, 5, "maternity", /out-of-pocket/))],
+    ["pv-household", (b) => fmt.pct1(nfhsV(b, 5, "household", /improved sanitation/))],
+    ["prov-vintage", (b) => b["nfhs-5-anaemia"].meta.vintage],
+    ["prov-vintage2", (b) => b["nfhs-5-anaemia"].meta.vintage],
   ]},
   { url: "/guides/manufacturing/", slug: null, checks: [
     ["n-share", (b) => fmt.pct1(b["wdi-manufacturing"].series.mva_pct_gdp.data.at(-1))],
@@ -658,7 +687,7 @@ for (const page of PAGES) {
 
   // learn pages: level figures trace to the published index levels
   if (page.url === "/learn/inflation/") {
-    const lv = JSON.parse(fs.readFileSync(path.join(ROOT, "data/raw/cpi-indices.json"), "utf8")).levels;
+    const lv = (await import(pathToFileURL(path.join(ROOT, "scripts/lib/util.mjs")).href)).readRaw(ROOT, "data/raw/cpi-indices.json").levels;
     const want = fmt.num1(lv["combined:general"]["2025-12"]);
     const got = doc.getElementById("n-lvl-now")?.textContent.trim();
     if (got !== want) fail(`${page.url} #n-lvl-now: rendered "${got}" != data "${want}"`);
@@ -745,6 +774,39 @@ for (const page of PAGES) {
     if (bad.length) fail(`/guides/${d.slug}/: every-cut does not list each series exactly once: ${bad.slice(0, 5).join("; ")}${bad.length > 5 ? ` (+${bad.length - 5})` : ""}`);
     else ok(`/guides/${d.slug}/: every-cut lists all ${want} series once (${plan.inlineRows.length} inline${plan.tails.length ? `, ${plan.tails.length} long-tail view${plan.tails.length > 1 ? "s" : ""}` : ""})`);
   }
+}
+
+// deep archive links (docs/PLAN-launch.md §2b): every "Finer detail" link on a built page points at
+// a folder of the archive that data/archive/manifest.json lists, and every guide whose bundles
+// have archive tables rolling up to them carries the link
+{
+  const AR = await import(pathToFileURL(path.join(ROOT, "src/dossiers/archive.js")).href);
+  const EC = await import(pathToFileURL(path.join(ROOT, "src/dossiers/everycut.js")).href);
+  const man = AR.archiveManifest();
+  const listed = [...(man.tables ?? []).map((t) => t.path), ...Object.values(man.raw ?? {}).flatMap((r) => r.files.map(([rel]) => r.hf_prefix + rel))];
+  const base = AR.ARCHIVE_URL + "/tree/main/";
+  let links = 0, bad = 0;
+  const pages = [];
+  (function walk(dir) { for (const e of fs.readdirSync(dir, { withFileTypes: true })) { const p = path.join(dir, e.name); if (e.isDirectory()) walk(p); else if (e.name === "index.html") pages.push(p); } })(path.join(DIST, "guides"));
+  for (const p of pages) {
+    const h = fs.readFileSync(p, "utf8");
+    for (const m of h.matchAll(/class="archive-link" href="([^"]+)"/g)) {
+      links++;
+      const href = m[1].replace(/&amp;/g, "&");
+      const rel = href.startsWith(base) ? href.slice(base.length) : null;
+      if (!rel || !listed.some((x) => x === rel || x.startsWith(rel + "/"))) { bad++; fail(`${path.relative(DIST, p)}: archive link ${href} is not a path in data/archive/manifest.json`); }
+    }
+  }
+  for (const d of DOSSIERS) {
+    const f = path.join(DIST, "guides", d.slug, "index.html");
+    if (!fs.existsSync(f)) continue;
+    const h = fs.readFileSync(f, "utf8");
+    for (const b of EC.guideBundles(d)) {
+      const a = AR.archiveFor(b);
+      if (a && !h.includes(`href="${a.href}"`)) fail(`/guides/${d.slug}/: ${b} has ${a.tables} archive tables and the page does not link them`);
+    }
+  }
+  if (!bad) ok(`archive links: ${links} on ${pages.length} pages, all to paths in the manifest (${(man.tables ?? []).length} table files)`);
 }
 
 // static greps over our own sources (not Plot internals) — the file list is

@@ -39,7 +39,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import YAML from "yaml";
 import { databankRoot, databankQuery } from "../databank.mjs";
 import { bisSeriesKeys } from "../bis.mjs";
-import { writeSeries, writeRaw, writeJson } from "../util.mjs";
+import { writeSeries, writeRaw, writeJson, readRaw } from "../util.mjs";
 
 // The comparison set: the Data Bank's BIS peer list. BIS area code -> ISO3 (euro area: the
 // World Bank's EMU aggregate code).
@@ -137,7 +137,7 @@ export async function buildBis(root, dcfg, vintage, cfg) {
     note: "BIS statistics for India and 13 comparison economies, read from the owner's Data Bank (bis_series, bis_daily) with the latest retrieval of each observation. Rows: [date, value, obs_status, Data Bank retrieval time].",
     india: compact(india), daily: compact(daily), peers: compact(peers),
   });
-  const V = JSON.parse(fs.readFileSync(path.join(root, rawRel), "utf8")).vintage;
+  const V = readRaw(root, rawRel).vintage;
 
   const I = index(india.rows), D = index(daily.rows), P = index(peers.rows);
   const meta = (extra) => ({ dossier: "bis", source: dcfg.source_agency, vintage: V, mock: false, geo: "IND", releaseDate: null,

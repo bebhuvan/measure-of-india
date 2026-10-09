@@ -34,6 +34,17 @@ if (slug === "--all") {
 // the CURRENT ruler — the registry's currentBundle, not a retired base.
 const D = bySlug[slug];
 if (!D) { console.error(`facts: dossier "${slug}" is not in src/dossiers/registry.js`); process.exit(1); }
+// health-gender: a guide whose current bundle is not a time series (two survey rounds, a
+// many-agency compendium) names a module that assembles its sheet in the same shape
+if (D.factsModule) {
+  const { pathToFileURL } = await import("node:url");
+  const build = (await import(pathToFileURL(path.join(ROOT, D.factsModule)).href)).default;
+  const sheet = await build(slug, ROOT, D);
+  fs.mkdirSync(path.join(ROOT, "pipeline/out"), { recursive: true });
+  fs.writeFileSync(path.join(ROOT, "pipeline/out", `facts-${slug}.json`), JSON.stringify(sheet, null, 1) + "\n");
+  console.log("wrote", `pipeline/out/facts-${slug}.json`, `(${Object.keys(sheet.series).length} series, from ${D.factsModule})`);
+  process.exit(0);
+}
 const bundleSlug = D.currentBundle;
 const bundle = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", bundleSlug + ".json"), "utf8"));
 const monthly = bundle.meta.frequency === "monthly";

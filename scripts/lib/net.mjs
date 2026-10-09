@@ -42,7 +42,9 @@ const REDIRECT_STATUS = new Set([301, 302, 303, 307, 308]);
 // `markup: true` accepts a body that starts with "<" (XML listings such as S3's); by default
 // such a body is read as a throttling gateway's HTML page. `encoding: "latin1"` keeps every
 // byte of a binary body (an xlsx) one-to-one in the string: Buffer.from(body, "latin1").
-export function requestOnce(url, { agent, timeoutMs = 60_000, deadlineMs = 120_000, maxBytes = 64 * 1024 * 1024, asText = false, redirectsLeft = 3, markup = false, encoding = "utf8" } = {}) {
+// `headers` (added 2026-10-10, health-gender: the DHS Program API refuses a request without a
+// User-Agent) is passed through as request headers; omitted, nothing changes.
+export function requestOnce(url, { agent, timeoutMs = 60_000, deadlineMs = 120_000, maxBytes = 64 * 1024 * 1024, asText = false, redirectsLeft = 3, markup = false, encoding = "utf8", headers } = {}) {
   return new Promise((resolve, reject) => {
     const started = Date.now();
     let body = "";
@@ -50,11 +52,11 @@ export function requestOnce(url, { agent, timeoutMs = 60_000, deadlineMs = 120_0
     let settled = false;
     const finish = (fn, arg) => { if (!settled) { settled = true; req.destroy(); fn(arg); } };
 
-    const req = (url.startsWith("http:") ? http : https).get(url, { agent: agentFor(url, { agent }) }, (res) => {
+    const req = (url.startsWith("http:") ? http : https).get(url, { agent: agentFor(url, { agent }), ...(headers ? { headers } : {}) }, (res) => {
       res.setEncoding(encoding);
       if (REDIRECT_STATUS.has(res.statusCode) && res.headers.location && redirectsLeft > 0) {
         const next = new URL(res.headers.location, url).toString();
-        return finish(resolve, requestOnce(next, { agent, timeoutMs, deadlineMs, maxBytes, asText, redirectsLeft: redirectsLeft - 1, markup, encoding }));
+        return finish(resolve, requestOnce(next, { agent, timeoutMs, deadlineMs, maxBytes, asText, redirectsLeft: redirectsLeft - 1, markup, encoding, headers }));
       }
       res.on("data", (c) => {
         body += c;

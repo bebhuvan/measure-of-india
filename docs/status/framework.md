@@ -297,3 +297,87 @@ fails on the omissions above, by design.
 - qc: every bundle of the registry entry, and every file a family claims, must have a
   download link on the guide page or sit in a family whose view is linked from the guide
   page and carries that file's link. All 24 guides pass.
+
+# Round 4 (2026-10-10, after merging launch-build: 25 guides with trade)
+
+## 1. The deep-archive builder (dry run only; nothing uploaded)
+
+- `scripts/archive.mjs` (`npm run archive`): a dry run unless `--upload`; `--family f`
+  (repeatable), `--staging <dir>` (default `data/archive/staging` in the tree it runs in),
+  `--keep` to leave the built files in `data/archive/build/` (git-ignored; the dry run hashes
+  and deletes them, so a full run needs only one table's room at a time). Staged files are
+  hard-linked, never copied. Export hooks in `scripts/lib/archive/` (credit, ilo,
+  climate-cckp; trade stages files and only maps them to rules); contract in its README.
+- Every table is written as csv.gz and zstd Parquet in one long shape, counted, and checked:
+  credit against the Data Bank's row count per report (ACTUALS rows only where a report
+  repeats each value per display unit); ILO against the catalogue's observation counts per
+  flow (772 tables, every one exact); trade against its staging index, and its 12,627 raw
+  calls by sha256 against `data/raw/trade-index.json` (0 mismatches); every row and raw file
+  scanned for India Data Hub (0 hits); Hugging Face limits (largest folder 4,654 files).
+- **CCKP serves nothing for SSP1-1.9 seasonal series** (54 catalogue items, national and
+  state): the gridded NetCDF files are on S3 but the aggregation API returns `[]`, even for
+  one variable, one percentile, India. The climate hook re-asks every empty facet alone; empty
+  again, the items go into the manifest as `unserved` on their table (a non-empty single call
+  would fail the export as a misread). The climate ledger still lists them as archive items;
+  its owner may want a rule saying so.
+- Dry run, 2026-10-10 (trade read from the main tree's staging, as asked):
+
+  | family | files | rows | size |
+  |---|---:|---:|---:|
+  | climate-cckp | 18 (9 tables) | 1,45,29,365 | 98.4 MB |
+  | credit | 44 (22 tables) | 2,81,80,620 | 762.7 MB |
+  | ilo | 1,544 (772 tables) | 22,98,088 | 43.9 MB |
+  | trade | 12,851 (112 tables + 12,627 raw) | 2,19,04,442 | 557.2 MB |
+  | total | 14,457 | 6,69,12,515 | 1,462.2 MB |
+
+- `data/archive/manifest.json` (committed, 3.7 MB): per file its rule, source, rows and
+  expected rows, sha256, vintage, `rolls_up_to`, dataset path, and after upload its commit.
+  `--upload` (not run) creates the public dataset, writes the card, commits per family and
+  skips files whose sha256 already went up.
+- Links: every-cut and Data and downloads show "Finer detail: N tables in the archive" for
+  bundles the manifest rolls up to; trade's `#xp-archive-link` links the HS6/HS8 tables. qc
+  checks every link is a manifest path and every guide with archive tables links them:
+  119 links on 511 pages. They 404 until the upload runs.
+
+## 4. dbieProvider folded into databank.mjs (0655460)
+
+- One quote-aware `dbieProvider(root, report, provider)` and `dbieProviders` in
+  `scripts/lib/databank.mjs`; credit's naive line split is gone, trade's
+  `products/dbie-providers.mjs` is deleted. Trade adds the provider name to its archived
+  provenance at the call site, so both raw dumps keep their shape.
+- Rebuilt from the Data Bank, no network: credit and trade-dbie dates and values identical,
+  every raw dump "unchanged".
+
+## 2. Raw dumps gzipped (ac4aef1)
+
+- `writeRaw` stores `<name>.json.gz` (the same JSON text, gzipped deterministically),
+  archives revisions as `.json.gz`, returns the stored vintage; `readRaw` / `readRawFile` read
+  either form. Callers still name dumps by their `.json` path. Every adapter, validate and qc
+  read through them; the learn pages import `.json.gz` through a build-time Vite loader in
+  `astro.config.mjs`. Archive indexes (`*-index.json`) stay plain.
+- Migration `scripts/migrations/2026-10-raw-gzip.mjs`: 182 dumps, 575.6 MB to 35.2 MB
+  (data/raw on disk 559 MB to 39 MB), each checked to decompress to its committed bytes, and
+  idempotent (a second run does nothing). None is over 25 MB compressed (largest 3.3 MB), so
+  nothing moved to the archive staging.
+- **The check, and its limit.** Most adapters have no rebuild-from-raw path: they fetch (with
+  a cache) and then write raw. What I could prove: (1) every raw dump decompresses to its
+  exact committed bytes; (2) every adapter that can bake with no network rebuilt with
+  identical dates and values in every bundle and every raw dump "unchanged": rbi
+  (RBI_FROM_RAW=1), deposits, credit, rates, external-bop/flows/reer, bis, rbihpi,
+  services-trade, trade-dbie. The MoSPI, World Bank, ILO, CCKP, OWID, NHB and TradeStat
+  adapters were not re-run (network, and MoSPI throttles); their only raw interaction is
+  writeRaw's comparison, covered by (1) and the tests.
+- **Drift found, not mine to fix:** rebaking changes text only: 16 trade-dbie bundles carry
+  `revisionPolicy: "x"` (a placeholder; sources.yml has the real sentence), 5 rbi-* bundles
+  lack `meta.geo`, and external-bop6-vintages labels say "first estimate" where the adapter now
+  writes "earliest estimate DBIE carries". I restored the committed files; a rebake by their
+  families picks the fixes up.
+
+## 3. Census summaries (0113353)
+
+- `scripts/census.mjs`: a bundle over 150 series keeps its tail counts, its 15 highest and
+  lowest by level and by change, up to 100 notable series, and the two ends of its ranking;
+  `--full` keeps everything. Nothing reads a census file to write or check prose (facts.mjs
+  recomputes through census-core). trade 53 MB to 4.9 MB (now committed), services-asuse
+  24 MB to 0.36 MB, credit-place 6.3 to 1.1 MB. A census still over 10 MB is written to the
+  git-ignored `census-<dossier>.full.json`. Test: committed census files are under 10 MB.

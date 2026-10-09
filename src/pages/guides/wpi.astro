@@ -6,6 +6,9 @@ import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["wpi"];
+import { period } from "../../dossiers/periods.js";
+// wave 2 (lb/prices): the retired bases and the wholesale-to-retail plate
+const PW93 = period("wpi-1993"), PW22 = period("wpi-2022"), PW11 = period("wpi");
 ---
 <Base
   title="Wholesale Prices · India Atlas"
@@ -98,6 +101,41 @@ const D = bySlug["wpi"];
           <div class="now">
             <span class="mk">As of September 2026</span>
             <p>On the new base, wholesale inflation was <b id="nb-new">–</b> in <span id="nb-new-m">–</span>. In <span id="nb-both-m">–</span>, the last month both indices describe, the new base read <b id="nb-both-new">–</b> and the old base <b id="nb-both-old">–</b>. Across the <span id="nb-n">–</span> months the two share, they part by at most <b id="nb-gap">–</b>, in <span id="nb-gap-m">–</span>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-long" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="long-title">Thirty years of wholesale prices, on four rulers</h3>
+            <div class="sub">Headline WPI, year-on-year, per cent, {PW93.firstShort} to {PW22.short}: bases 1993–94, 2004–05, 2011–12 and 2022–23, each computed inside its own base, drawn side by side where they overlap, never joined</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-long">–</div><div class="c" id="pc-long">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-long">
+            <button class="chip" data-key="b1993"><i style="background:#C9CED6"></i>Base 1993–94</button>
+            <button class="chip" data-key="b2004"><i style="background:#A3A9B4"></i>Base 2004–05</button>
+            <button class="chip" data-key="b2011"><i style="background:#5F6675"></i>Base 2011–12</button>
+            <button class="chip" data-key="b2022"><i style="background:#2E4BD8"></i>Base 2022–23</button>
+          </div>
+          <div class="plotzone" id="plot-long"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Office of the Economic Adviser, DPIIT, via MoSPI eSankhyiki, the published headline index on each base, year-on-year from its own levels; the 2011–12 line starts in 2016, where this guide's bundle starts</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://eaindustry.nic.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The wholesale index has been rebuilt three times since 1994, each time with a bigger basket weighted to a newer economy: 437 items on the 1993–94 base, 676 on 2004–05, 697 on 2011–12 and 953 on 2022–23. Each colour is one basket. Where two colours run over the same months, they are two rulers measuring the same economy, and their small disagreement is the difference between the baskets.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PW22.stamp}</span>
+            <p>The highest reading in three decades is <b id="long-peak">–</b>; the lowest is <b id="long-trough">–</b>. Today's reading on the newest ruler is <b id="long-now">–</b>.</p>
           </div>
         </div>
       </figure>
@@ -384,9 +422,47 @@ const D = bySlug["wpi"];
     </div>
   </section>
 
-  <!-- § 11 misread -->
+  <!-- § 11 wholesale to retail (wave 2, lb/prices) -->
   <section>
-    <div class="sec-head"><span class="no">11</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">11</span><h2>From the factory gate to the shop</h2><span class="line"></span><span class="unit">WPI food index against CPI food, y/y %, base 2011–12 and 2012</span></div>
+    <div class="break">
+      <figure id="cb-w2r" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3 id="w2r-title">Wholesale food and retail food</h3>
+            <div class="sub">WPI food index (base 2011–12) and CPI food and beverages (base 2012), year-on-year, per cent, <span id="w2r-span">–</span>: two different instruments from two different offices, drawn on one axis, never combined</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-w2r">–</div><div class="c" id="pc-w2r">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-w2r">
+            <button class="chip" data-key="wpi"><i style="background:#2E4BD8"></i>Wholesale food (WPI)</button>
+            <button class="chip" data-key="cpi"><i style="background:#C47A16"></i>Retail food (CPI)</button>
+          </div>
+          <div class="plotzone" id="plot-w2r"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: OEA, DPIIT (WPI food index) and MoSPI, NSO (CPI food and beverages), via eSankhyiki, the lag is the shift of the retail line, in months, that best matches the wholesale line (highest correlation of the two y/y series over the shared months, shifts of 0 to 6 tried)</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://eaindustry.nic.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A tomato is sold at least twice: once in the mandi, once at the cart. The wholesale index records the first sale, the consumer index the second. The two baskets differ (the WPI food index has no restaurant meals; the CPI has no sugar sold to factories), and the retail price adds transport, rent and the shopkeeper's margin, which move slowly. So the retail line tracks the wholesale one without matching it point for point; the plate measures how closely, and with what delay.</p>
+            <p>This is the link people mean when they say wholesale prices "pass through" to the shop. It is real for food. For manufactured goods the pass-through is weaker and slower, which is why a fall in the headline WPI rarely shows up as cheaper goods on the shelf.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of January 2026</span>
+            <p>Over the <b id="w2r-n">–</b> months both series cover, the retail line matches the wholesale line best when shifted <b id="w2r-lag">–</b> later (correlation <b id="w2r-r">–</b>). Wholesale food swung between <b id="w2r-wrange">–</b>; retail food between <b id="w2r-crange">–</b>. Month to month, the wholesale line moved <b id="w2r-sd">–</b> the retail one.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 12 misread -->
+  <section>
+    <div class="sec-head"><span class="no">12</span><h2>How to misread this number</h2><span class="line"></span></div>
     <ul class="misread">
       <li>
         <span class="no">i.</span>
