@@ -474,6 +474,79 @@ export function dodgeEndLabels(seriesList, gap) {
   return pts;
 }
 
+/* ---------- seams: two rulers on one chart ----------
+ * A base change gives two rulers, never one series (AGENTS.md hard rule 1; the seams are
+ * registered in data/sources.yml `seams:`). Every plate that draws more than one ruler
+ * draws it through seamMarks, in one of three treatments and nothing else
+ * (docs/INVENTORY-data-paths.md "Base years", proposal point 2):
+ *   "side"    rulers side by side on one time axis; a changeover marker where the new
+ *             ruler starts. Lines are never joined across the marker.
+ *   "overlap" growth computed inside each base from that base's own levels, both lines
+ *             drawn through the months both describe; the marker where the old ruler ends.
+ *   "agency"  a linked line, only where the agency publishes the link (NSO back series,
+ *             a published linking factor). Its reconstructed stretch is a solid pale tint
+ *             of the line's colour (DESIGN.md: never transparency), the measured stretch
+ *             solid; the marker sits at the handoff and its text names the agency.
+ * Rulers are given oldest first; the last one is drawn on top. Each ruler:
+ *   { data: [{date, value}], color, width = 1.75 (the last ruler 2), label?,
+ *     reconstructedUntil?: Date (agency only: points before it are the agency's back-cast) }
+ * marker: { text, at?: Date, y: value at which the text sits, anchor = "end", dx = -8,
+ *           solid?: bool (a solid hairline instead of the dashed one), fontSize = 12 }
+ *         or false for no marker (a plate whose rulers do not meet).
+ * Returns Plot marks; spread them into the plate's marks between grid and end labels.
+ * Throws on a misuse that would read as a splice: one ruler, an "agency" seam whose marker
+ * text names no agency, or an "agency" ruler without its reconstructedUntil. */
+export const SEAM_RULE = "#CDD1D8";
+export function tint(hex, k = 0.55) {
+  const n = parseInt(hex.slice(1), 16), c = [n >> 16, (n >> 8) & 255, n & 255].map((v) => Math.round(v + (255 - v) * k));
+  return "#" + c.map((v) => v.toString(16).padStart(2, "0")).join("").toUpperCase();
+}
+const lastPublished = (data) => { for (let i = data.length - 1; i >= 0; i--) if (data[i].value != null) return data[i]; return null; };
+const firstPublished = (data) => data.find((d) => d.value != null) ?? null;
+export function seamMarks(treatment, rulers, marker = {}) {
+  if (!["side", "overlap", "agency"].includes(treatment)) throw new Error(`seamMarks: unknown treatment "${treatment}" (side, overlap or agency)`);
+  if (treatment !== "agency" && rulers.length < 2) throw new Error("seamMarks: a seam needs two rulers");
+  const line = (data, color, width, extra = {}) => Plot.lineY(data, { x: "date", y: "value", stroke: color, strokeWidth: width, strokeLinejoin: "round", strokeLinecap: "round", ...extra });
+  const marks = [];
+  let at = marker ? marker.at : null;
+  rulers.forEach((r, i) => {
+    const width = r.width ?? (i === rulers.length - 1 ? 2 : 1.75);
+    const extra = r.opacity != null ? { strokeOpacity: r.opacity } : {};
+    if (r.reconstructedUntil) {
+      if (treatment !== "agency") throw new Error("seamMarks: only an agency seam has a reconstructed stretch");
+      const cut = r.reconstructedUntil;
+      // the measured stretch starts at the last reconstructed point, so the agency's line never breaks
+      const lastBack = [...r.data].reverse().find((d) => d.date < cut);
+      marks.push(line(r.data.filter((d) => d.date < cut), tint(r.color), width, extra));
+      marks.push(line(r.data.filter((d) => d.date >= (lastBack ? lastBack.date : cut)), r.color, width, extra));
+      at ??= cut;
+    } else marks.push(line(r.data, r.color, width, extra));
+  });
+  if (treatment === "agency" && !rulers.some((r) => r.reconstructedUntil)) throw new Error("seamMarks: an agency seam needs the ruler's reconstructedUntil");
+  if (!marker) return marks;
+  if (treatment === "agency" && !/\b(NSO|MoSPI|RBI|Labour Bureau|OEA|agency|World Bank)\b/.test(marker.text || "")) throw new Error("seamMarks: an agency link must be labelled as the agency's (name it in marker.text)");
+  at ??= treatment === "side" ? firstPublished(rulers.at(-1).data)?.date : lastPublished(rulers[0].data)?.date;
+  marks.push(Plot.ruleX([at], { stroke: SEAM_RULE, strokeWidth: 1, ...(marker.solid ? {} : { strokeDasharray: "2,3" }) }));
+  if (marker.text) {
+    const anchor = marker.anchor ?? "end";
+    marks.push(Plot.text([{ date: marker.textAt ?? at, value: marker.y }], { x: "date", y: "value", text: [marker.text], fontSize: marker.fontSize ?? 12, fill: "#5F6675", fontFamily: SANS, textAnchor: anchor, dx: marker.dx ?? (anchor === "end" ? -8 : anchor === "start" ? 8 : 0) }));
+  }
+  return marks;
+}
+/* The months (quarters, years) two rulers both describe: how many, the widest gap and
+ * where, and the last shared point. For the plate's reading of an overlap seam. */
+export function seamOverlap(a, b) {
+  const byT = new Map(a.data.filter((d) => d.value != null).map((d) => [d.date.getTime(), d.value]));
+  let n = 0, gap = 0, gapAt = null, last = null;
+  for (const d of b.data) {
+    const o = byT.get(d.date.getTime());
+    if (o == null || d.value == null) continue;
+    n++; last = { date: d.date, a: o, b: d.value };
+    if (Math.abs(d.value - o) > gap) { gap = Math.abs(d.value - o); gapAt = d.date; }
+  }
+  return { n, gap, gapAt, last };
+}
+
 /* ---------- sparkline ---------- */
 export function spark(id, s) {
   const vs = s.data.map((d) => d.value).filter((v) => v != null);

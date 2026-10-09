@@ -162,3 +162,31 @@ export async function buildIip(root, dcfg, vintage) {
   };
   for (const base of bases) emit(base);
 }
+
+/* Catalogue (docs/CONTRACT-coverage.md): what MoSPI publishes for the IIP, from
+ * iip/getIipBaseYear and iip/getIipFilter for every base x frequency:
+ *   iip:<base>:<monthly|annual>:general
+ *   iip:<base>:<monthly|annual>:<sectoral|use-based>:<code>-<name>
+ *   iip:<base>:<monthly|annual>:industry:<code>-<name>   (NIC 2-digit) */
+import { writeCatalogue, idPart, catalogueCli } from "../catalogue.mjs";
+export async function catalogueIip() {
+  const items = [];
+  const meta = (await mospi("iip/getIipBaseYear", {})).data ?? {};
+  for (const { base_year: base } of meta.base_year ?? []) for (const { frequency } of meta.frequency ?? []) {
+    const f = (await mospi("iip/getIipFilter", { base_year: base, frequency })).data ?? {};
+    const fr = frequency === "Monthly" ? "monthly" : "annual";
+    for (const c of f.category ?? []) {
+      const t = idPart(String(c.type).replace(/ category$/i, ""));
+      items.push(t === "general" ? { id: `iip:${base}:${fr}:general`, label: "General index" }
+        : { id: `iip:${base}:${fr}:${t}:${c.category_code}-${idPart(c.category_name)}`, label: c.category_name });
+    }
+    for (const s of f.subcategory ?? []) items.push({ id: `iip:${base}:${fr}:industry:${idPart(s.subcategory_code)}-${idPart(s.subcategory_name)}`, label: s.subcategory_name });
+  }
+  writeCatalogue("iip", {
+    source: "MoSPI, NSO: Index of Industrial Production (eSankhyiki API)",
+    generator: "scripts/lib/products/iip.mjs --catalogue",
+    note: "From getIipBaseYear and getIipFilter per base and frequency. Ids: iip:<base>:<frequency>:<type>:<code>-<name>.",
+    items,
+  });
+}
+await catalogueCli(import.meta.url, catalogueIip);

@@ -1,0 +1,110 @@
+---
+// The every-cut table itself: rows from src/dossiers/everycut.js, sorting and filtering by
+// src/dossiers/everycut.client.js. Used by EveryCut.astro on a guide and by the long-tail
+// pages (/guides/<slug>/every-cut/<bundle>/). Server-rendered: every row is in the HTML,
+// so the table reads without script; the script only sorts, filters and folds.
+import { SPARK_W, SPARK_H } from "../dossiers/everycut.js";
+interface Props { rows: any[]; id: string; titles: Record<string, string>; fold?: number; filterBy?: "cut" | "group" }
+const { rows, id, titles, fold = 25, filterBy = "cut" } = Astro.props;
+const facet = (r) => (filterBy === "group" ? r.group : r.cut) || "Other";
+const facets = [...new Set(rows.map(facet))];
+const files = [...new Set(rows.map((r) => r.bundle))];
+const cap = (t) => (t ? t[0].toUpperCase() + t.slice(1) : t);
+const num = (v) => (v == null ? "" : String(Math.round(v * 1e4) / 1e4));
+---
+<div class="ec" id={id} data-fold={fold}>
+  <div class="ec-tools">
+    <label class="ec-q"><span>Find</span><input type="search" placeholder="A state, an item, a sector" autocomplete="off" /></label>
+    {facets.length > 1 && (
+      <label><span>{filterBy === "group" ? "Group" : "Cut"}</span>
+        <select data-f="facet"><option value="">All</option>{facets.map((c) => <option value={c}>{c}</option>)}</select></label>
+    )}
+    {files.length > 1 && (
+      <label><span>Data</span>
+        <select data-f="file"><option value="">All files</option>{files.map((b) => <option value={b}>{titles[b] ?? b}</option>)}</select></label>
+    )}
+    <span class="ec-n" aria-live="polite">{rows.length.toLocaleString("en-IN")} series</span>
+  </div>
+  <div class="ec-wrap">
+    <table>
+      <thead><tr>
+        <th scope="col"><button type="button" data-sort="label">Series</button></th>
+        <th scope="col"><button type="button" data-sort="facet">{filterBy === "group" ? "Group" : "Cut"}</button></th>
+        <th scope="col" class="n"><button type="button" data-sort="v">Latest</button></th>
+        <th scope="col" class="n"><button type="button" data-sort="c">Change on a year earlier</button></th>
+        <th scope="col" class="sp">Trend</th>
+        <th scope="col" class="n">Data</th>
+      </tr></thead>
+      <tbody>
+        {rows.map((r, i) => (
+          <tr data-o={i} data-file={r.bundle} data-v={num(r.latest)} data-c={num(r.change)}>
+            <td class="w">{r.label}<small>{cap([filterBy === "group" ? r.cut : r.group, r.unitNote, r.base].filter(Boolean).join(", "))}</small></td>
+            <td class="ct">{facet(r)}</td>
+            <td class="n v">{r.latestText}<small>{r.period}</small></td>
+            <td class="n c">{r.changeText}</td>
+            <td class="sp">{r.spark && (
+              <svg width={SPARK_W} height={SPARK_H} viewBox={`0 0 ${SPARK_W} ${SPARK_H}`} aria-hidden="true">
+                {r.spark.zero != null && <line x1="0" x2={SPARK_W} y1={r.spark.zero} y2={r.spark.zero} />}
+                <path d={r.spark.d} /><circle cx={r.spark.end[0]} cy={r.spark.end[1]} r="1.75" />
+              </svg>)}</td>
+            <td class="n"><a href={`/data/${r.bundle}.csv`} download>CSV</a></td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  {rows.length > fold && <button type="button" class="ec-more" hidden>Show all {rows.length.toLocaleString("en-IN")} series</button>}
+  <p class="ec-none" hidden>No series match. Clear the search to see them all.</p>
+</div>
+<script>
+  import "../dossiers/everycut.client.js";
+</script>
+<style is:global>
+  .ec{margin-top:26px;font-family:var(--sans)}
+  .ec-tools{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 22px;padding-bottom:14px;border-bottom:1px solid var(--rule-2)}
+  .ec-tools label{display:flex;flex-direction:column;gap:4px;font-size:.78rem;color:var(--muted)}
+  .ec-tools input,.ec-tools select{font:inherit;font-size:.9rem;color:var(--ink);background:var(--bg);border:0;border-bottom:1px solid var(--rule-2);padding:4px 0;min-width:12em;max-width:22em;border-radius:0}
+  .ec-tools input:focus,.ec-tools select:focus{border-bottom-color:var(--ink);outline:none}
+  .ec-q input{min-width:16em}
+  .ec-n{margin-left:auto;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+  .ec-wrap table{width:100%;border-collapse:collapse;font-size:.88rem}
+  .ec-wrap tr[hidden]{display:none !important}
+  .ec-wrap th{font-weight:400;font-size:.78rem;color:var(--muted);text-align:left;padding:12px 14px 8px 0;border-bottom:1px solid var(--rule-2);vertical-align:bottom}
+  .ec-wrap th button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:inherit}
+  .ec-wrap th button:hover{color:var(--ink)}
+  .ec-wrap th[aria-sort] button{color:var(--ink)}
+  .ec-wrap th[aria-sort="ascending"] button::after{content:" ↑"}
+  .ec-wrap th[aria-sort="descending"] button::after{content:" ↓"}
+  .ec-wrap td{padding:9px 14px 9px 0;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-soft)}
+  .ec-wrap td.w{color:var(--ink);max-width:30em}
+  .ec-wrap small{display:block;font-size:.75rem;color:var(--muted);margin-top:1px;line-height:1.4}
+  .ec-wrap .n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .ec-wrap td.v{color:var(--ink)}
+  .ec-wrap td.ct{font-size:.8rem;color:var(--muted);max-width:16em;line-height:1.45}
+  .ec-wrap .sp{width:80px;padding-top:11px}
+  .ec-wrap svg{display:block;overflow:visible}
+  .ec-wrap svg path{fill:none;stroke:var(--grey1);stroke-width:1.25;stroke-linejoin:round;stroke-linecap:round}
+  .ec-wrap svg line{stroke:var(--rule-2);stroke-width:1}
+  .ec-wrap svg circle{fill:var(--accent)}
+  .ec-wrap td a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--rule-2)}
+  .ec-wrap td a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+  .ec-more{margin-top:16px;font:inherit;font-size:.88rem;color:var(--ink);background:none;border:0;border-bottom:1px solid var(--ink);padding:0 0 1px;cursor:pointer}
+  .ec-none{margin-top:16px;font-size:.88rem;color:var(--muted)}
+  @media (max-width:680px){
+    .ec-tools label,.ec-q{flex:1 1 100%}
+    .ec-tools input,.ec-tools select{min-width:0;max-width:none;width:100%}
+    .ec-n{margin-left:0}
+    .ec-wrap thead tr{display:flex;flex-wrap:wrap;gap:4px 16px;padding-bottom:8px;border-bottom:1px solid var(--rule-2)}
+    .ec-wrap thead th{padding:0;border:0}
+    .ec-wrap thead th.sp,.ec-wrap thead th:last-child{display:none}
+    .ec-wrap tbody tr{display:grid;grid-template-columns:1fr auto auto;gap:2px 12px;padding:11px 0;border-bottom:1px solid var(--rule)}
+    .ec-wrap tbody td{border:0;padding:0}
+    .ec-wrap td.w{grid-column:1 / -1;max-width:none}
+    .ec-wrap td.ct{grid-column:1 / -1;order:2}
+    .ec-wrap td.v{grid-column:1;text-align:left;order:3}
+    .ec-wrap td.v small{display:inline;margin-left:6px}
+    .ec-wrap td.c{order:4}
+    .ec-wrap td.sp{order:5;width:auto;padding-top:2px}
+    .ec-wrap td:last-child{display:none}
+  }
+</style>
