@@ -75,3 +75,24 @@ rules:
   - match: ["nas:2011-12:back:annual:1-*", "nas:2011-12:back:annual:10-*", "nas:2011-12:back:annual:11-*", "nas:2011-12:back:annual:1:industry:*"]
     status: baked
     bundle: gdp-back
+
+  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
+  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
+  - match:
+      - "nas:2011-12:back:annual:*"
+      - "nas:2011-12:back:annual:*:subindustry:*"
+      - "nas:2011-12:current:annual:*"
+      - "nas:2011-12:current:annual:*:approach:*"
+      - "nas:2011-12:current:annual:*:industry:*"
+      - "nas:2011-12:current:annual:*:institutional-sector:*"
+      - "nas:2011-12:current:annual:*:revision:*"
+      - "nas:2011-12:current:annual:*:subindustry:*"
+      - "nas:2011-12:current:quarterly:*"
+      - "nas:2022-23:current:annual:*"
+      - "nas:2022-23:current:annual:*:industry:*"
+      - "nas:2022-23:current:annual:*:institutional-sector:*"
+      - "nas:2022-23:current:annual:*:revision:*"
+      - "nas:2022-23:current:annual:*:subindustry:*"
+      - "nas:2022-23:current:quarterly:*"
+    status: pending
+    scheduled: "wave 2: national accounts remainder"

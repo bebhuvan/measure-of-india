@@ -23,3 +23,10 @@ rules:
     status: shown
     bundle: wdi-manufacturing-exports
     plate: "Plate 5: what the export ledger says"
+
+  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
+  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
+  - match:
+      - "wdi:ind:*"
+    status: pending
+    scheduled: "wave 2: manufacturing fuller (with atlas-worldbank)"

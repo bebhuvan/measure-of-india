@@ -53,3 +53,25 @@ rules:
   - match: "iip:1993-94:monthly:industry:*"
     status: baked
     bundle: iip-industries-1993
+
+  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
+  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
+  - match:
+      - "iip:1993-94:annual:general"
+      - "iip:1993-94:annual:industry:*"
+      - "iip:1993-94:annual:sectoral:*"
+      - "iip:1993-94:annual:use-based:*"
+      - "iip:2004-05:annual:general"
+      - "iip:2004-05:annual:industry:*"
+      - "iip:2004-05:annual:sectoral:*"
+      - "iip:2004-05:annual:use-based:*"
+      - "iip:2011-12:annual:general"
+      - "iip:2011-12:annual:industry:*"
+      - "iip:2011-12:annual:sectoral:*"
+      - "iip:2011-12:annual:use-based:*"
+      - "iip:2022-23:annual:general"
+      - "iip:2022-23:annual:industry:*"
+      - "iip:2022-23:annual:sectoral:*"
+      - "iip:2022-23:annual:use-based:*"
+    status: pending
+    scheduled: "wave 2: industry deeper"

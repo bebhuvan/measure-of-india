@@ -9,3 +9,10 @@ rules:
     status: shown
     bundle: isp
     plate: "§08 The services counterpart: ISP"
+
+  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
+  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
+  - match:
+      - "isp:annual:*"
+    status: pending
+    scheduled: "wave 2: industry deeper"

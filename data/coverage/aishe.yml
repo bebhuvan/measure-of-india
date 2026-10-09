@@ -34,3 +34,21 @@ rules:
     status: shown
     bundle: aishe-states
     plate: "Plate 4: where college reaches, where students are"
+
+  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
+  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
+  - match:
+      - "aishe:1:state:*"
+      - "aishe:2:state:*"
+      - "aishe:4:gender:*"
+      - "aishe:4:state:*"
+      - "aishe:5:all"
+      - "aishe:5:gender:*"
+      - "aishe:5:state:*"
+      - "aishe:8:institution-type:*"
+      - "aishe:8:learning-mode:*"
+      - "aishe:8:state:*"
+      - "aishe:9:gender:*"
+      - "aishe:9:state:*"
+    status: pending
+    scheduled: "wave 2: higher education fuller"

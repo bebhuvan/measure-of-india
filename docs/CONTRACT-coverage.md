@@ -68,6 +68,7 @@ rules:
 | `baked` | in a bundle, the census, the facts sheet and the guide's data downloads; not drawn | `bundle` |
 | `excluded` | deliberately left out | `reason`: one sentence a reader would accept |
 | `blocked` | the source fails or refuses | `reason` naming the error and the date |
+| `pending` | an omission we know about and have scheduled, not yet decided | `scheduled`: the work item that will decide it |
 
 `bundle` may be a list. Optional `series` (a list of series keys) is checked against the
 bundle when given.
@@ -82,7 +83,12 @@ bundle when given.
 4. every named bundle exists in `data/series/`, and every named series exists in it;
 5. `excluded` and `blocked` reasons are non-empty sentences;
 6. `--strict` (the launch setting): every guide in `src/dossiers/registry.js` is listed in
-   some ledger's `guides`.
+   some ledger's `guides`, and no item is `pending`.
+
+`pending` exists so the gate can stay green between merges without hiding anything: a
+known omission is written into the ledger, named, and tied to the work that will close it,
+and every run prints the pending count. It is not a fifth way to be done. A family session
+finishing its own guide leaves nothing pending in its own ledger.
 
 `--list` prints each ledger's undecided items folded into a few globs (any id position
 taking more than six values becomes `*`), which is the omission list to schedule.

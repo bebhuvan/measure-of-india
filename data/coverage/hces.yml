@@ -51,3 +51,41 @@ rules:
     status: shown
     bundle: hces-gini
     plate: "The map, then the measure of spread"
+
+  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
+  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
+  - match:
+      - "hces:1:2-with-imputation:state:*"
+      - "hces:2:state:*"
+      - "hces:3:1-without-imputation:all"
+      - "hces:3:1-without-imputation:item-category:*"
+      - "hces:3:1-without-imputation:sector:*"
+      - "hces:3:1-without-imputation:state:*"
+      - "hces:3:2-with-imputation:all"
+      - "hces:3:2-with-imputation:item-category:*"
+      - "hces:3:2-with-imputation:sector:*"
+      - "hces:3:2-with-imputation:state:*"
+      - "hces:4:2-with-imputation:all"
+      - "hces:4:2-with-imputation:item-category:*"
+      - "hces:4:2-with-imputation:sector:*"
+      - "hces:4:2-with-imputation:state:*"
+      - "hces:5:state:*"
+      - "hces:6:1-without-imputation:state:*"
+      - "hces:6:2-with-imputation:all"
+      - "hces:6:2-with-imputation:cereal:*"
+      - "hces:6:2-with-imputation:sector:*"
+      - "hces:6:2-with-imputation:state:*"
+      - "hces:7:1-without-imputation:state:*"
+      - "hces:7:2-with-imputation:all"
+      - "hces:7:2-with-imputation:employment-of-households:*"
+      - "hces:7:2-with-imputation:sector:*"
+      - "hces:7:2-with-imputation:state:*"
+      - "hces:8:1-without-imputation:state:*"
+      - "hces:8:2-with-imputation:all"
+      - "hces:8:2-with-imputation:sector:*"
+      - "hces:8:2-with-imputation:social-group:*"
+      - "hces:8:2-with-imputation:state:*"
+      - "hces:9:1-without-imputation:state:*"
+      - "hces:9:2-with-imputation:state:*"
+    status: pending
+    scheduled: "wave 2: household spending fuller"

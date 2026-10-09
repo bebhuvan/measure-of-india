@@ -22,3 +22,13 @@ rules:
     status: shown
     bundle: mnre-states-solar
     plate: "Plate 4: the geography of the buildout (solar)"
+
+  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
+  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
+  - match:
+      - "mnre:2:state:*"
+      - "mnre:3:state:*"
+      - "mnre:4:category:*"
+      - "mnre:4:state:*"
+    status: pending
+    scheduled: "wave 2: renewable energy fuller"

@@ -38,3 +38,12 @@ rules:
     status: shown
     bundle: asuse-quarterly
     plate: "The other economy, counted at last (the quarterly bulletin)"
+
+  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
+  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
+  - match:
+      - "asuse:annual:*:*"
+      - "asuse:annual:*:*:*"
+      - "asuse:annual:*:*:*:*"
+    status: pending
+    scheduled: "wave 2: industry deeper"

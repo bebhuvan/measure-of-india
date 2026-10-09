@@ -29,3 +29,13 @@ rules:
   - match: "cpialrl:2019:al:*:general-index"
     status: baked
     bundle: cpialrl-states-2019
+
+  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
+  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
+  - match:
+      - "cpialrl:1986-1987:al:*:*"
+      - "cpialrl:1986-1987:rl:*:*"
+      - "cpialrl:2019:al:*:*"
+      - "cpialrl:2019:rl:*:*"
+    status: pending
+    scheduled: "wave 2: prices deeper"

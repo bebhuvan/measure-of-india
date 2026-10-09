@@ -38,3 +38,24 @@ rules:
     status: shown
     bundle: wpi-items
     plate: "§10 The 697 items"
+
+  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
+  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
+  - match:
+      - "wpi:1993-94:group:*"
+      - "wpi:1993-94:item:*"
+      - "wpi:1993-94:major:*"
+      - "wpi:1993-94:subgroup:*"
+      - "wpi:1993-94:subsubgroup:*"
+      - "wpi:2004-05:group:*"
+      - "wpi:2004-05:item:*"
+      - "wpi:2004-05:major:*"
+      - "wpi:2004-05:subgroup:*"
+      - "wpi:2004-05:subsubgroup:*"
+      - "wpi:2011-12:subsubgroup:1101010100"
+      - "wpi:2011-12:subsubgroup:1101010200"
+      - "wpi:2011-12:subsubgroup:1101020100"
+      - "wpi:2011-12:subsubgroup:1101020200"
+      - "wpi:2022-23:subsubgroup:*"
+    status: pending
+    scheduled: "wave 2: prices deeper"

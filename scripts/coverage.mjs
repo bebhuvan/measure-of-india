@@ -2,7 +2,8 @@
 // scripts/coverage.mjs — the omission gate (docs/CONTRACT-coverage.md).
 //
 // For every family ledger in data/coverage/<family>.yml, checks that each item of the
-// generated source catalogue is decided by a rule (shown / baked / excluded / blocked),
+// generated source catalogue is decided by a rule (shown / baked / excluded / blocked, or
+// pending: an omission named and scheduled, allowed until --strict),
 // that every rule still matches something, and that named bundles and series exist.
 // --strict also requires every registered guide to sit under some ledger (the launch bar).
 //
@@ -18,7 +19,7 @@ const COV = path.join(ROOT, "data", "coverage");
 const SERIES = path.join(ROOT, "data", "series");
 const strict = process.argv.includes("--strict");
 
-const STATUSES = new Set(["shown", "baked", "excluded", "blocked"]);
+const STATUSES = new Set(["shown", "baked", "excluded", "blocked", "pending"]);
 let failures = 0;
 const fail = (m) => { failures++; console.error("FAIL:", m); };
 const ok = (m) => console.log("  ok:", m);
@@ -38,6 +39,7 @@ function bundle(slug) {
 
 const ledgers = fs.existsSync(COV) ? fs.readdirSync(COV).filter((f) => /\.ya?ml$/.test(f)).sort() : [];
 const guidesCovered = new Set();
+let pendingTotal = 0;
 
 for (const file of ledgers) {
   const where = `coverage/${file}`;
@@ -60,6 +62,8 @@ for (const file of ledgers) {
     if (r.status === "shown" && !r.plate) fail(`${tag}: shown needs the plate it is drawn on`);
     if ((r.status === "excluded" || r.status === "blocked") && !(typeof r.reason === "string" && r.reason.trim().split(/\s+/).length >= 4))
       fail(`${tag}: ${r.status} needs a reason a reader would accept (a sentence, not a word)`);
+    if (r.status === "pending" && !(typeof r.scheduled === "string" && r.scheduled.trim()))
+      fail(`${tag}: pending needs \`scheduled\`: the work item that will decide it (e.g. "wave 2: prices deeper")`);
     for (const slug of asList(r.bundle)) {
       const b = bundle(slug);
       if (!b) { fail(`${tag}: bundle ${slug} not in data/series/`); continue; }
@@ -67,7 +71,7 @@ for (const file of ledgers) {
     }
   }
 
-  const tally = { shown: 0, baked: 0, excluded: 0, blocked: 0 };
+  const tally = { shown: 0, baked: 0, excluded: 0, blocked: 0, pending: 0 };
   let undecided = [];
   for (const it of items) {
     const r = rules.find((r) => r.res.some((re) => re.test(it.id)));
@@ -92,7 +96,9 @@ for (const file of ledgers) {
     }
   }
   for (const r of rules) if (!r.hits) fail(`${where} rule ${r.i + 1} (${asList(r.match).join(", ")}): matches no catalogue item (stale)`);
-  ok(`${L.family || file}: ${items.length} items — ${tally.shown} shown, ${tally.baked} baked, ${tally.excluded} excluded, ${tally.blocked} blocked`);
+  if (tally.pending && strict) fail(`${where}: ${tally.pending} item(s) still pending (launch requires every item decided)`);
+  ok(`${L.family || file}: ${items.length} items — ${tally.shown} shown, ${tally.baked} baked, ${tally.excluded} excluded, ${tally.blocked} blocked` + (tally.pending ? `, ${tally.pending} PENDING` : ""));
+  pendingTotal += tally.pending;
 }
 
 // guides without a ledger
@@ -106,4 +112,4 @@ if (missing.length) {
 }
 
 if (failures) { console.error(`\ncoverage: ${failures} failure(s)`); process.exit(1); }
-console.log(`coverage: ${ledgers.length} ledger(s) clean`);
+console.log(`coverage: ${ledgers.length} ledger(s) clean` + (pendingTotal ? ` — ${pendingTotal} item(s) pending, scheduled (fail under --strict)` : ""));
