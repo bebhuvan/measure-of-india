@@ -1,0 +1,407 @@
+---
+import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
+import GuideData from "../../components/GuideData.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+import propB from "../../../data/series/bis-property.json";
+import rbi22 from "../../../data/series/housing-rbi-2022.json";
+import rbi10 from "../../../data/series/housing-rbi-2010.json";
+import rx25 from "../../../data/series/housing-residex-2025.json";
+const D = bySlug["housing"];
+// periods named in the copy, read from the bundles (quarters dated at their first month)
+const M3 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const qlab = (iso) => { const m = +iso.slice(5, 7) - 1; return `${M3[m]} to ${M3[m + 2]} ${iso.slice(0, 4)}`; };
+const LQ = qlab(propB.dates.at(-1));
+const LR = qlab(rbi22.dates.at(-1));
+const LR10 = qlab(rbi10.dates.at(-1));
+const LX = qlab(rx25.dates.at(-1));
+const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series).length;
+---
+<Base
+  title="House prices · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/housing/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">A home is the largest thing most Indian families ever buy, and its price is the hardest to pin down: no two flats are alike and few change hands each year. Three official bodies measure it, each in its own way. Read together, they say how fast homes are getting dearer, and where.</p>
+    </div>
+    <div class="meta">
+      <span>Sources <b>BIS, RBI, National Housing Bank</b></span>
+      <span>Frequency <b>Quarterly</b></span>
+      <span>Rulers <b>Three, never joined</b></span>
+      <span>Cities <b>Up to 50</b></span>
+      <span>Latest <b id="m-latest">–</b></span>
+      <span>Unit <b>Index; ₹ per sq ft</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">House prices in rupees, change on a year ago</div><div class="v acc" id="n-nom">–</div><div class="d" id="d-nom">–</div><div class="nspark" id="nspark-real"></div></div>
+      <div class="num"><div class="l">House prices after inflation, change on a year ago</div><div class="v" id="n-real">–</div><div class="d" id="d-real">–</div></div>
+      <div class="num"><div class="l">RBI 18-city index, change on a year ago</div><div class="v" id="n-rbi">–</div><div class="d" id="d-rbi">–</div></div>
+      <div class="num"><div class="l">NHB RESIDEX, India, change on a year ago</div><div class="v" id="n-rx">–</div><div class="d" id="d-rx">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Real house prices, change on a year ago</span><div class="big" id="rb-real">–</div></div>
+      <p class="rt-cap">How much dearer homes became than a year earlier, after taking out the rise in the prices of everything else a household buys. In rupees the rise was larger.</p>
+      <div class="rt-side"><span class="rk">In rupees</span><div class="rt-side-v" id="rb-nom">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the figures say</span>
+        <Prose slot="housing.current-reading.what-the-figures-say" />
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What they do not say</span>
+        <Prose slot="housing.current-reading.what-they-do-not-say" />
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 nominal and real -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>In rupees, and after inflation</h2><span class="line"></span><span class="unit">BIS, India, index 2010 = 100</span></div>
+    <div class="break">
+      <figure id="cb-nr" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>In rupees homes cost several times their 2010 price; after inflation, far less, and below the 2019 peak</h3>
+            <div class="sub">Residential property prices in India, nominal and real (deflated by consumer prices), index 2010 = 100, quarterly.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-nr">–</div><div class="c">real index, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Nominal, in rupees</button>
+            <button class="chip"><i style="background:#C47A16"></i>Real, after inflation</button>
+          </div>
+          <div class="plotzone"><div id="plot-nr" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: BIS selected residential property prices (WS_SPP), compiled from the RBI's house price index. Source: BIS.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/RPP" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Both lines start at 100 in 2010. The blue line is the price of a home in rupees. The gold line divides it by consumer prices, so it asks a different question: compared with everything else a family buys, have homes become dearer? When the blue line rises and the gold line is flat, homes are only keeping pace with inflation.</p>
+            <p>Real prices matter for the buyer who must save for a deposit out of a salary that also rises with inflation. Nominal prices matter for the seller and for the size of the loan.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {LQ}</span>
+            <p>The nominal index stood at <b id="ex-nr-nom">–</b>, <b id="ex-nr-x">–</b> its 2010 level. The real index stood at <b id="ex-nr-real">–</b>, <b id="ex-nr-below">–</b> below its peak of <b id="ex-nr-pk">–</b> in <span id="ex-nr-pkq">–</span>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-yoy" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Since 2019, house prices have barely outpaced inflation</h3>
+            <div class="sub">Residential property prices, % change on the same quarter a year earlier, nominal and real.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-yoy">–</div><div class="c">real, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Nominal</button>
+            <button class="chip"><i style="background:#C47A16"></i>Real</button>
+          </div>
+          <div class="plotzone"><div id="plot-yoy" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: BIS selected residential property prices (WS_SPP), year-on-year changes as published by BIS.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/RPP" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The gap between the two lines is roughly the rate of consumer price inflation. Above zero, the real line says homes got dearer than other things; below zero, cheaper. In the early 2010s prices rose by a fifth a year in rupees and well ahead of inflation; since then the two lines have drawn close.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {LQ}</span>
+            <p>Nominal prices rose <b id="ex-y-nom">–</b> on a year earlier and real prices <b id="ex-y-real">–</b>. Over the last <span id="ex-y-n">–</span> quarters the real change averaged <b id="ex-y-avg">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 03 cities -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>City by city</h2><span class="line"></span><span class="unit">RBI house price index</span></div>
+    <div class="break">
+      <figure id="cb-cities10" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Over fifteen years, Lucknow's prices quadrupled; Kanpur's did not double</h3>
+            <div class="sub">RBI house price index, {nRbi10} cities, index 2010-11 = 100, latest quarter of the 2010-11 base ({LR10}). An index of 300 means three times the 2010-11 price.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-cities10">–</div><div class="c">highest, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-cities10" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI house price index (DBIE report 688), base 2010-11. Final values except the last quarter, which is provisional.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each bar is one city's index at the end of the 2010-11 series. Because every city starts at 100, the bar's length is the city's own rise since 2010-11, not its price level: a short bar in Mumbai does not mean Mumbai is cheap, only that its prices rose less from an already high level.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {LR10}</span>
+            <p>The highest index was <b id="ex-c10-top">–</b>, the lowest <b id="ex-c10-bot">–</b>. The middle of the ten cities stood at about <b id="ex-c10-med">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-cities" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>On the new 2022-23 base, Chennai has risen most and Delhi has fallen</h3>
+            <div class="sub">RBI house price index, {nRbi} cities, index 2022-23 = 100, latest quarter ({LR}), with the change on a year ago shown beside each bar.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-cities">–</div><div class="c">highest, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-cities" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI house price index (DBIE report 688), base 2022-23. The latest quarter is provisional; RBI revised several cities sharply between provisional and final in 2025.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The RBI builds each city's index from sales registered with the state, comparing like with like as far as the records allow. In a single quarter only a few thousand homes may sell in a city, and the mix changes: a quarter heavy with sales in an expensive suburb can push the index up without any flat getting dearer. One-year changes in single cities are therefore noisy; Kolkata's index rose by about half between late 2023 and mid-2025, then gave it all back within a year.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {LR}</span>
+            <p>Chennai's index stood at <b id="ex-c-top">–</b> and Delhi's at <b id="ex-c-bot">–</b>. On a year earlier, <b id="ex-c-up">–</b> of the {nRbi} cities rose; the largest rise was <span id="ex-c-yhi">–</span> and the largest fall <span id="ex-c-ylo">–</span>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 04 three rulers -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>Three rulers</h2><span class="line"></span><span class="unit">BIS, RBI and NHB, change on a year ago</span></div>
+    <div class="break">
+      <figure id="cb-rulers" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Three measures of India's house prices, rising at different speeds</h3>
+            <div class="sub">Change on a year ago, per cent: the BIS series, the RBI's all-India index (10 cities on the 2010-11 base, then 18 cities on the 2022-23 base) and NHB RESIDEX for India on its 2017-18 and 2024-25 bases. Each line stays on its own base; none is joined to another.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-rulers">–</div><div class="c">spread between rulers, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>BIS, nominal</button>
+            <button class="chip"><i style="background:#5F6675"></i>RBI, all-India (10 cities to Jan to Mar 2025, then 18 cities)</button>
+            <button class="chip"><i style="background:#C47A16"></i>NHB RESIDEX, India (2017-18 base to Oct to Dec 2025, then 2024-25 base)</button>
+          </div>
+          <div class="plotzone"><div id="plot-rulers" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Sources: BIS (WS_SPP, WS_DPP); RBI house price index via BIS; NHB RESIDEX, assessment prices, four-quarter moving average. Changes for RBI and NHB computed here from each base's index.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://residex.nhbonline.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The RBI's index uses the prices recorded when a sale is registered. NHB's RESIDEX uses the values banks and housing finance companies put on homes when they lend against them, smoothed over four quarters. BIS's series is built from the RBI's. Different sources, different cities and different weights give different numbers; where they agree on direction, the direction is probably real.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {LX}</span>
+            <p>On the latest quarter each publishes, BIS shows <b id="ex-r-bis">–</b>, the RBI's 18-city index <b id="ex-r-rbi">–</b> and RESIDEX <b id="ex-r-rx">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 fifty cities -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>Fifty cities, and what a flat costs</h2><span class="line"></span><span class="unit">NHB RESIDEX, base 2024-25</span></div>
+    <div class="break">
+      <figure id="cb-rxcities" style="margin:0">
+        <div class="plate-head">
+          <div class="t" id="t-rxcities">
+            <h3>Across fifty cities, most rose in the past year; a few fell</h3>
+            <div class="sub">NHB RESIDEX at assessment prices, change on a year ago to {LX}, per cent, four-quarter moving average, base 2024-25.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-rxcities">–</div><div class="c">cities that rose</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-rxcities" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: NHB RESIDEX (residex.nhbonline.org.in), HPI at assessment prices, base 2024-25.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://residex.nhbonline.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each bar compares a city's index with a year earlier. The moving average smooths out a single quarter's noise but makes turns show late, by up to a year. NHB also publishes each quarter on its own; both versions are in the data download.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {LX}</span>
+            <p><b id="ex-x-up">–</b> of <b id="ex-x-n">–</b> cities rose on a year earlier. The fastest was <span id="ex-x-top">–</span>; the slowest <span id="ex-x-bot">–</span>. The all-India index rose <b id="ex-x-india">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-price" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>A square foot in Mumbai costs nearly four times what it does in the middle city</h3>
+            <div class="sub">Average price per square foot of carpet area at which lenders valued homes, ₹, latest quarter, with the implied price of a 646 sq ft (60 sq m) flat. Twenty cities with the highest prices, and the lowest-priced city.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-price">–</div><div class="c">highest, per sq ft</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-price" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: NHB RESIDEX, assessment prices, weighted average carpet-area price, four-quarter moving average, base 2024-25. Flat price = price per sq ft × 646, computed here.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://residex.nhbonline.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Carpet area is the floor you can walk on, inside the walls; builders often quote a larger "super built-up" area, so a carpet-area price looks higher than an advertised one. These are averages over a whole city, from posh districts to the outskirts, of homes that someone took a loan to buy.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {LX}</span>
+            <p>The highest average price was <b id="ex-p-top">–</b> a square foot, which puts a 646 sq ft flat at about <b id="ex-p-flat">–</b>. The lowest was <b id="ex-p-bot">–</b>. The median city stood at <b id="ex-p-med">–</b>; Mumbai's price is <b id="ex-p-x">–</b> that.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 compared -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>Compared with other economies</h2><span class="line"></span><span class="unit">Real house prices, change on a year ago</span></div>
+    <div class="break">
+      <figure id="cb-peers" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>After inflation, India's house prices are rising slowly; in several large economies they are falling</h3>
+            <div class="sub">Real residential property prices, % change on a year ago, latest quarter BIS publishes for each economy.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-peers">–</div><div class="c">India's rank, fastest first</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-peers" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: BIS selected residential property prices (WS_SPP), real. Latest quarters differ by a quarter or two between economies.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/RPP" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each country's series is compiled by its own authorities and only harmonised by BIS, so small differences mean little. The comparison is useful for direction: whether homes are getting dearer than other things in most places, or only in some.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {LQ}</span>
+            <p>India's real change, <b id="ex-pp-in">–</b>, ranked <b id="ex-pp-rank">–</b>. The fastest was <span id="ex-pp-top">–</span>; the slowest <span id="ex-pp-bot">–</span>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 affordability -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>Are homes getting more affordable?</h2><span class="line"></span></div>
+    <div class="prose">
+      <p>Affordability is a price set against an income, and these indices measure only the price. What they can say is how homes moved against other prices: since the real index peaked in 2019, homes have become slightly cheaper relative to everything else a household buys, after a decade in which they became much dearer. For a family whose income kept pace with inflation, that means the house it wanted in 2019 is a little easier to afford now, and the house it wanted in 2010 a good deal harder.</p>
+      <p>What they cannot say is whether incomes kept pace, how interest rates changed the cost of a loan, or what happened in the smaller towns these indices do not cover. The RBI runs a separate survey of home loan affordability that is not part of this guide. We do not know, from these numbers alone, whether a typical family finds a home easier to buy than a decade ago.</p>
+    </div>
+  </section>
+
+  <!-- § 08 what this measures -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="prose">
+      <p><b>The RBI's house price index</b> is built from transaction prices that state registration authorities send the Reserve Bank. It covered nine cities from 2008-09, ten cities on a 2010-11 base, and eighteen cities on a 2022-23 base; each base is a separate ruler and this guide never joins them. The all-India figure is a weighted average of the cities. The latest quarter is provisional and is often revised.</p>
+      <p><b>NHB RESIDEX</b> is the National Housing Bank's index, launched in 2007. Since 2017-18 it uses the valuations banks and housing finance companies record when they lend against a home ("assessment prices"), and until 2024 it also tracked developers' prices for flats under construction. It covers about fifty cities on three bases: 2012-13, 2017-18 and 2024-25. NHB publishes both a four-quarter moving average and the quarter on its own, and prices per square foot by size of home.</p>
+      <p><b>BIS</b>, the Bank for International Settlements, collects house price series from national authorities and puts them on a common footing. Its India series comes from the RBI's index, rebased to 2010 = 100 and linked across the RBI's bases by BIS; the real series divides by consumer prices. Use it to compare India with other countries and to see real prices; use the RBI and NHB series for cities.</p>
+    </div>
+  </section>
+
+  <!-- § 09 misreadings -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>How to misread these numbers</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li><span class="no">1</span><div><h3>"The index for Lucknow is higher than Mumbai's, so homes in Lucknow cost more."</h3><p>An index measures change, not level. Each city starts at 100 in its base year. Lucknow's higher index means its prices rose more; Mumbai's prices per square foot remain far higher.</p></div></li>
+      <li><span class="no">2</span><div><h3>"House prices doubled, so property beat every other investment."</h3><p>In rupees, perhaps. After inflation the gain is much smaller, and the index leaves out stamp duty, brokerage, maintenance and the cost of the loan, as well as the rent an owner saves or earns.</p></div></li>
+      <li><span class="no">3</span><div><h3>"Kolkata's prices fell by a third in a year."</h3><p>A single city's index can swing with the mix of homes sold in a quarter. Look at several quarters, and at whether the other rulers agree, before reading a city's one-year move as a trend.</p></div></li>
+      <li><span class="no">4</span><div><h3>"The RBI's index and RESIDEX disagree, so one of them is wrong."</h3><p>They measure different things: registered sale prices against lenders' valuations, different cities, different weights, a moving average against a single quarter. Disagreement on size is normal; disagreement on direction is the thing to notice.</p></div></li>
+      <li><span class="no">5</span><div><h3>"The index covers India."</h3><p>It covers big cities. Most Indians live in smaller towns and villages, where no official house price index exists.</p></div></li>
+    </ul>
+  </section>
+
+  <GuideData slug="housing" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>Reserve Bank of India, house price index (DBIE report 688), through the owner's Data Bank mirror of DBIE; National Housing Bank, RESIDEX dashboards; Bank for International Settlements, residential property prices (WS_SPP, WS_DPP), through the Data Bank's BIS mirror. Source: BIS. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Checked by hand: the RBI's 18-city all-India index for January to March 2026, 115.85 here, against 115.9 in the RBI's press release of 29 May 2026 (later revised to 116.2, a revision BIS has not yet picked up).</p>
+      </div>
+      <div>
+        <h6>Method</h6>
+        <p>Values are as published. Changes on a year ago for the RBI and NHB series are computed here from each base's own index; the price of a 646 sq ft flat is NHB's price per square foot times 646. Final RBI values are used where published, provisional otherwise. Zeros that NHB serves for missing values are treated as missing.</p>
+      </div>
+      <div>
+        <h6>Revisions and breaks</h6>
+        <p>Three RBI bases (2008-09, 2010-11, 2022-23) and three NHB bases (2012-13, 2017-18, 2024-25) are separate rulers and are never joined here. BIS links the RBI's bases in its own series; that link is BIS's. NHB's back-casts of newer bases into older years are not used.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Version 1.0, built October 2026. Revised each quarter as the RBI, NHB and BIS publish. BIS does not endorse this guide.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, house prices</span>
+      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/housing.client.js";
+</script>
+</Base>

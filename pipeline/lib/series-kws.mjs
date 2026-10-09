@@ -73,4 +73,17 @@ export const SERIES_KWS = {
     ["net value added", "net_value_added"],
     ["number of factories", "number_of_factories"],
   ],
+  // ---- bis family session ----
+  debt: [
+    ["all borrowers", "total"], ["total debt", "total"], ["non-financial", "total"], ["overall", "total"],
+    ["from banks", "private_banks"], ["bank credit", "private_banks"], ["banks", "private_banks"],
+    ["households", "households"], ["household", "households"], ["families", "households"],
+    ["companies", "companies"], ["corporate", "companies"], ["firms", "companies"], ["businesses", "companies"],
+    ["government", "government"], ["public debt", "government"],
+    ["private", "private"],
+  ],
+  housing: [
+    ["real index", "real"], ["real prices", "real_yoy"], ["after inflation", "real_yoy"], ["inflation-adjusted", "real_yoy"], ["real", "real_yoy"],
+    ["nominal index", "nominal"], ["rupee prices", "nominal_yoy"], ["nominal", "nominal_yoy"],
+  ],
 };

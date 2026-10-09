@@ -44,6 +44,8 @@ function walk(o) {
 walk(facts.series);
 walk(facts.cross);
 if (facts.legacy) walk(facts.legacy);
+// bis family: India's position among the comparison economies (facts.peers)
+if (facts.peers) { walk(facts.peers.rankings); walk(facts.peers.china); walk(facts.peers.unitedStates); }
 // proseInputs summaries: the economic facts (extremes, spreads, medians,
 // contradictions) are citable; the structural fields are not — seriesCount
 // and the coverage note describe the SHEET, not the economy, and leaving

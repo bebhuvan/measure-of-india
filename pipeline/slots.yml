@@ -166,3 +166,56 @@ factories:
       The honest limits: registered and informal are separate instruments, never
       summed; GVA is nominal (prices as much as product); the data lands with a
       two-year lag. Must contain a plain "we do not know".
+
+# ---- bis family session ----
+debt:
+  - id: current-reading.what-the-figures-say
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [total.latest, households.latest, companies.latest, government.latest]
+    minSeriesMentioned: 4        # the total and at least three of the borrowers
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
+    brief: >
+      The quarter's debt picture as a share of GDP: the total, then who owes it
+      (households, companies, government), which moved most on a year ago and which
+      moved the other way. Bring in the credit gap and the debt service ratio from
+      the sibling summaries, and one comparison with China or the United States from
+      the peer rankings. Concede what is genuine before qualifying it.
+  - id: current-reading.what-they-do-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [households.latest]
+    brief: >
+      The honest limits: these are national totals, so they cannot say how many
+      families or firms are stretched or how the debt is spread; a ratio to GDP moves
+      with inflation and growth as well as with borrowing; BIS revises the history
+      each quarter. Must contain a plain "we do not know".
+
+housing:
+  - id: current-reading.what-the-figures-say
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [nominal_yoy.latest, real_yoy.latest]
+    minSeriesMentioned: 2        # nominal and real
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
+    brief: >
+      House prices in the quarter: the change on a year ago in rupees (nominal) and
+      after inflation (real), and where the real index stands against its own past.
+      Bring in the city spread from the RBI's 18-city summary (fastest and slowest
+      city on a year ago). Those city figures are one quarter LATER than the BIS
+      series (their latestPeriod is 2026-04, April to June 2026) and the latest
+      quarter is provisional: say so in the same sentence, and warn that single
+      cities swing with the mix of homes sold. Then how India's real change ranks
+      among the comparison economies. Concede before qualifying.
+  - id: current-reading.what-they-do-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [real_yoy.latest]
+    brief: >
+      Do not repeat the other column's figures: cite the real change once and no
+      other index level. The honest limits: an index of registered transactions in a few big cities
+      is not the price of every home; it says nothing about incomes, so it cannot by
+      itself say whether homes are affordable; registered values can sit below what
+      buyers actually pay. Must contain a plain "we do not know".

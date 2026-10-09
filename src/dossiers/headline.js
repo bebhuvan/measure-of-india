@@ -36,6 +36,9 @@ export const HEADLINE = {
                    what: "children aged 6 to 59 months with anaemia", period: () => "NFHS-5, 2019-21" },
   manufacturing: { value: (b) => `${last(b, "mva_pct_gdp").toFixed(1)}%`, what: "manufacturing's share of GDP", period: (b) => lastDate(b).slice(0, 4) },
   deposits:      { value: (b) => `₹${last(b, "household_total").toFixed(1)} lakh crore`, what: "households' bank deposits", period: (b) => `March ${lastDate(b).slice(0, 4)}` },
+  // bis family session
+  debt:          { value: (b) => `${last(b, "total").toFixed(1)}%`, what: "debt of households, companies and government, % of GDP", period: quarter },
+  housing:       { value: (b) => `${last(b, "real_yoy").toFixed(1)}%`, what: "real house prices, change on a year ago", period: quarter },
 };
 
 // The small chart beside each guide's figure: always on the current ruler, so a chart never
@@ -56,6 +59,9 @@ export const SPARK = {
   nfhs:          { bundle: "nfhs-anaemia", label: "Children age 6-59", slope: true },
   manufacturing: { bundle: "wdi-manufacturing", series: "mva_pct_gdp" },
   deposits:      { bundle: "deposits-owners", series: "household_total" },
+  // bis family session
+  debt:          { bundle: "bis-credit", series: "total", n: 120 },
+  housing:       { bundle: "bis-property", series: "real" },
 };
 
 const cache = {};

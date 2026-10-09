@@ -1,0 +1,32 @@
+# Coverage ledger: NHB RESIDEX (three bases, India and 50 cities).
+family: bis-residex
+guides: [housing]
+catalogue: data/coverage/bis-residex.catalogue.json
+rules:
+  - match: "residex:2025:india:hfc:index:ma4"
+    status: shown
+    bundle: housing-residex-2025
+    series: [india_hfc]
+    plate: "housing §04 Three rulers (cb-rulers)"
+  - match: "residex:2018:india:hfc:index:ma4"
+    status: shown
+    bundle: housing-residex-2018
+    series: [india_hfc]
+    plate: "housing §04 Three rulers (cb-rulers)"
+  - match: "residex:2025:*:hfc:index:ma4"
+    status: shown
+    bundle: housing-residex-2025
+    plate: "housing §05 Fifty cities (cb-rxcities)"
+  - match: "residex:2025:*:hfc:price:ma4"
+    status: shown
+    bundle: housing-residex-prices-2025
+    plate: "housing §05 What a flat costs (cb-price)"
+  - match: "residex:2025:*"
+    status: baked
+    bundle: [housing-residex-2025, housing-residex-prices-2025]
+  - match: ["residex:2018:*:index:*", "residex:2013:*:index:*"]
+    status: baked
+    bundle: [housing-residex-2018, housing-residex-2013]
+  - match: ["residex:2018:*", "residex:2013:*"]
+    status: baked
+    bundle: [housing-residex-prices-2018, housing-residex-prices-2013]
