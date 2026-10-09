@@ -62,6 +62,10 @@ build.
 - **Page JS (gzipped): ≤ 150 KB** above the shared Plot/plumbing chunk.
   Below-the-fold ledgers that blow the budget move to lazily fetched JSON —
   not more inlining.
+- **HTML: a guide page stays well under 1 MB; a long-tail every-cut page under 1.2 MB**
+  (qc fails it). Long tables are paginated onto their own static pages, never inlined
+  whole and never fetched at runtime: the every-cut table puts bundles over 150 series on
+  `/guides/<slug>/every-cut/<bundle>/` and splits those at 1,000 rows.
 - **No runtime data fetching of published series.** Data rides in the bundle
   the page was built from; the deployed site performs zero data requests
   beyond static assets.

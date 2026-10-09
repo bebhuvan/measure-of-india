@@ -43,6 +43,24 @@ const calendar = D.calendar ?? "fiscal-apr";   // "fiscal-apr" for Indian offici
 const bands = D.bands ?? null;   // a policy band (e.g. the RBI 2–6% tolerance) exists only where the law says so
 const periodLabel = makePeriodLabel(bundle.meta.frequency, calendar);
 
+// the ruler of every number (F4, docs/INVENTORY-data-paths.md "Base years" point 3): the
+// bundle a figure comes from, its base, and where data/sources.yml `seams:` places that base.
+// Every series entry, every proseInputs summary and the legacy block carry one, so the writer
+// can always say which ruler a number is on. Structural, never citable: verify.mjs skips
+// `ruler` keys when it collects the numbers prose may use.
+const SEAMS = YAML.parse(fs.readFileSync(path.join(ROOT, "data/sources.yml"), "utf8")).seams ?? {};
+function rulerOf(b) {
+  const meta = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", b + ".json"), "utf8")).meta ?? {};
+  for (const [product, bases] of Object.entries(SEAMS)) {
+    for (const e of bases ?? []) {
+      const win = { from: e.from ?? null, to: e.to ?? null };
+      if ((e.bundles ?? []).includes(b)) return { bundle: b, base: e.base, product, window: win, current: e.to == null, agencyLink: null };
+      if ((e.bridge?.bundles ?? []).includes(b)) return { bundle: b, base: e.base, product, window: win, current: e.to == null, agencyLink: e.bridge.what ?? e.bridge.kind };
+    }
+  }
+  return { bundle: b, base: meta.base ?? null, product: null, window: null, current: null, agencyLink: null, note: "no registered seam: this product has one ruler" };
+}
+
 function streak(data, pred) {
   let n = 0;
   for (let i = data.length - 1; i >= 0 && pred(data[i].value); i--) n++;
@@ -57,6 +75,7 @@ const facts = {
   latestPeriod: periodLabel(bundle.dates.at(-1)),
   releaseDate: bundle.meta.releaseDate,
   bands,
+  ruler: rulerOf(bundleSlug),
   series: {},
 };
 
@@ -90,6 +109,7 @@ for (const [k, s] of Object.entries(bundle.series)) {
   }
   const entry = {
     label: s.label,
+    ruler: facts.ruler.base == null ? bundleSlug : `${facts.ruler.base}, ${bundleSlug}`,
     levelBased,
     latest: { value: L, period: periodLabel(data.at(-1).date) },
     previous: { value: P, period: periodLabel(data.at(-2).date) },
@@ -181,6 +201,7 @@ if (slug === "cpi") {
   const old = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/cpi.json"), "utf8"));
   facts.legacy = {
     retiredBase: old.meta.base,
+    ruler: rulerOf("cpi"),
     oldHeadline: { value: old.series.headline.data.at(-1), period: periodLabel(old.dates.at(-1)) },
     core: { value: old.series.core.data.at(-1), period: periodLabel(old.dates.at(-1)) },
     note: "The 2024 base serves no component weights, so no core index can be computed on it; the core figure is the retired 2012 base's final reading.",
@@ -228,6 +249,7 @@ if (D.proseInputs?.length) {
       bundle: slug2,
       seriesCount: list.length,
       base: b.meta.base,
+      ruler: rulerOf(slug2),
       coverage: b.meta.coverage ?? null,
       top: mover(e.topByDelta ?? bl[0] ?? null),
       bottom: mover(e.bottomByDelta ?? bl.at(-1) ?? null),

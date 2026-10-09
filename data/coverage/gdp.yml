@@ -1,0 +1,98 @@
+# Coverage ledger: National Accounts Statistics, National account, MoSPI
+# (docs/CONTRACT-coverage.md). Catalogue: node scripts/lib/products/nas.mjs --catalogue.
+# The two bases mirror each other: rules are written once per base. Omissions left for the
+# coordinator (the "national accounts remainder" wave): annual GVA, consumption, investment,
+# trade and income aggregates outside the accounts bundle; quarterly net taxes, change in
+# stock and valuables (raw only today); the 15 industries and 18 sub-industries annually;
+# institutional sectors; revision stages; the approach split; the back series beyond GDP,
+# GVA by industry, the demand engines and saving.
+family: gdp
+guides: [gdp]
+catalogue: data/coverage/gdp.catalogue.json
+rules:
+  # the API's own growth rates: rounded, kept as a cross-check of growth computed from levels
+  - match: ["nas:*:*:*:21-*", "nas:*:*:*:21:*", "nas:*:*:*:22-*", "nas:*:*:*:22:*"]
+    status: excluded
+    reason: "The API's growth-rate indicators are rounded (whole numbers until 2026-10, one decimal since); growth is computed here from constant-price levels, and the API's rate is kept only as the cross-check."
+  # ---- quarterly, base 2022-23 (current)
+  - match: ["nas:2022-23:current:quarterly:5-*", "nas:2022-23:current:quarterly:1-*", "nas:2022-23:current:quarterly:10-*", "nas:2022-23:current:quarterly:9-*", "nas:2022-23:current:quarterly:1:industry:15-*"]
+    status: shown
+    bundle: [gdp-2022, gdp-2022-nominal]
+    plate: "The current reading; The base has moved"
+  - match: ["nas:2022-23:current:quarterly:11-*", "nas:2022-23:current:quarterly:14-*", "nas:2022-23:current:quarterly:15-*"]
+    status: baked
+    bundle: gdp-2022-expenditure
+  - match: "nas:2022-23:current:quarterly:1:industry:*"
+    status: shown
+    bundle: gdp-2022-industries
+    plate: "The base has moved (engines on the 2022-23 base)"
+  # ---- quarterly, base 2011-12 (frozen at Q2 FY26)
+  - match: ["nas:2011-12:current:quarterly:5-*", "nas:2011-12:current:quarterly:1-*", "nas:2011-12:current:quarterly:10-*", "nas:2011-12:current:quarterly:9-*", "nas:2011-12:current:quarterly:1:industry:15-*"]
+    status: shown
+    bundle: [gdp, gdp-nominal]
+    plate: "Plate 1: a decade of growth, with its wound; The parts, one plate each; The deflator wedge"
+  - match: ["nas:2011-12:current:quarterly:11-*", "nas:2011-12:current:quarterly:14-*", "nas:2011-12:current:quarterly:15-*"]
+    status: shown
+    bundle: gdp-expenditure
+    plate: "What growth is made of; The parts, one plate each"
+  - match: "nas:2011-12:current:quarterly:1:industry:*"
+    status: shown
+    bundle: gdp-industries
+    plate: "Eight engines"
+  # ---- annual accounts, both bases
+  - match: "nas:2022-23:current:annual:5-*"
+    status: shown
+    bundle: gdp-2022-accounts
+    series: [gdp]
+    plate: "Seventy-five years of growth"
+  - match: ["nas:2022-23:current:annual:7-*", "nas:2022-23:current:annual:17-*", "nas:2022-23:current:annual:3-*", "nas:2022-23:current:annual:4-*", "nas:2022-23:current:annual:6-*", "nas:2022-23:current:annual:8-*", "nas:2022-23:current:annual:20-*"]
+    status: baked
+    bundle: gdp-2022-accounts
+  - match: "nas:2011-12:current:annual:5-*"
+    status: shown
+    bundle: gdp-accounts
+    series: [gdp]
+    plate: "Seventy-five years of growth"
+  - match: ["nas:2011-12:current:annual:7-*", "nas:2011-12:current:annual:17-*", "nas:2011-12:current:annual:3-*", "nas:2011-12:current:annual:4-*", "nas:2011-12:current:annual:6-*", "nas:2011-12:current:annual:8-*", "nas:2011-12:current:annual:20-*"]
+    status: baked
+    bundle: gdp-accounts
+  # ---- the NSO back series, 1950-51 to 2011-12
+  - match: "nas:2011-12:back:annual:5-*"
+    status: shown
+    bundle: gdp-back
+    series: [gdp]
+    plate: "Seventy-five years of growth"
+  - match: "nas:2011-12:back:annual:20-*"
+    status: shown
+    bundle: gdp-back
+    series: [saving_rate]
+    plate: "Seventy-five years of growth (saving and investment)"
+  - match: "nas:2011-12:back:annual:9-*"
+    status: shown
+    bundle: gdp-back
+    series: [gfcf, gfcf_rate]
+    plate: "Seventy-five years of growth (saving and investment)"
+  - match: ["nas:2011-12:back:annual:1-*", "nas:2011-12:back:annual:10-*", "nas:2011-12:back:annual:11-*", "nas:2011-12:back:annual:1:industry:*"]
+    status: baked
+    bundle: gdp-back
+
+  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
+  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
+  - match:
+      - "nas:2011-12:back:annual:*"
+      - "nas:2011-12:back:annual:*:subindustry:*"
+      - "nas:2011-12:current:annual:*"
+      - "nas:2011-12:current:annual:*:approach:*"
+      - "nas:2011-12:current:annual:*:industry:*"
+      - "nas:2011-12:current:annual:*:institutional-sector:*"
+      - "nas:2011-12:current:annual:*:revision:*"
+      - "nas:2011-12:current:annual:*:subindustry:*"
+      - "nas:2011-12:current:quarterly:*"
+      - "nas:2022-23:current:annual:*"
+      - "nas:2022-23:current:annual:*:industry:*"
+      - "nas:2022-23:current:annual:*:institutional-sector:*"
+      - "nas:2022-23:current:annual:*:revision:*"
+      - "nas:2022-23:current:annual:*:subindustry:*"
+      - "nas:2022-23:current:quarterly:*"
+    status: pending
+    scheduled: "wave 2: national accounts remainder"

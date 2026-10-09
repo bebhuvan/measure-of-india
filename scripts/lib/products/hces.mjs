@@ -313,3 +313,17 @@ export async function buildHces(root, dcfg, vintage) {
   writeSeries(root, "data/series/hces-categories-states.json", foodStatesBundle);
   return mpceBundle;
 }
+
+/* Catalogue (docs/CONTRACT-coverage.md): hces/getHcesIndicatorList and
+ * hces/getHcesFilterByIndicatorId. The imputation basis (with, without) is a different
+ * measure, crossed with every cut: hces:<indicator>:<imputation>:all | :<dimension>:<value>. */
+import { writeCatalogue, indicatorCatalogue, catalogueCli } from "../catalogue.mjs";
+export async function catalogueHces() {
+  const inds = (await mospi("hces/getHcesIndicatorList", {})).data ?? [];
+  const items = await indicatorCatalogue({ mospi, prefix: "hces", indicators: inds, cross: ["imputation_type"],
+    filter: (ind) => ["hces/getHcesFilterByIndicatorId", { indicator_code: ind.indicator_code }] });
+  writeCatalogue("hces", { source: "MoSPI, NSO: Household Consumption Expenditure Survey (eSankhyiki API)",
+    generator: "scripts/lib/products/hces.mjs --catalogue",
+    note: "From getHcesIndicatorList and getHcesFilterByIndicatorId: one cut at a time, crossed with the imputation basis. Both survey years (2022-23, 2023-24) sit inside every item.", items });
+}
+await catalogueCli(import.meta.url, catalogueHces);

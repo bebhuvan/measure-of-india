@@ -1,0 +1,49 @@
+# Coverage ledger: Annual Survey of Unincorporated Sector Enterprises, MoSPI
+# (docs/CONTRACT-coverage.md). Catalogue: node scripts/lib/products/asuse.mjs --catalogue.
+# Omissions left for the coordinator ("industry deeper", and the services guide for the
+# service activities): the 2025 round (inside every annual item; the bundles stop at
+# 2023-24), the 49 detailed activity categories, the state-wise twins of the distribution
+# tables (4, 7, 11, 13, 15, 17, 21, 23, 29, 31, 35), workers by gender, type and working time,
+# hired-worker emoluments by activity, audit status, service contracts, and the portrait
+# tables by activity and establishment type.
+family: asuse
+guides: [factories]
+catalogue: data/coverage/asuse.catalogue.json
+rules:
+  - match: ["asuse:annual:1:*:all", "asuse:annual:1:*:establishment-type:*", "asuse:annual:26:all", "asuse:annual:26:establishment-type:*", "asuse:annual:30:all", "asuse:annual:30:establishment-type:*", "asuse:annual:32:all", "asuse:annual:32:establishment-type:*", "asuse:annual:34:all", "asuse:annual:34:establishment-type:*"]
+    status: shown
+    bundle: asuse-annual
+    plate: "The other economy, counted at last"
+  - match: ["asuse:annual:1:5-*:sector:*", "asuse:annual:1:5-*:activity-category:26-manufacturing-activities", "asuse:annual:1:5-*:activity-category:33-trading-activities", "asuse:annual:1:5-*:activity-category:49-other-services"]
+    status: shown
+    bundle: asuse-sectors
+    plate: "The other economy, counted at last (by activity, rural and urban)"
+  - match: ["asuse:annual:2:*:state-ut:*", "asuse:annual:27:state-ut:*", "asuse:annual:33:state-ut:*"]
+    status: shown
+    bundle: asuse-states
+    plate: "The other economy, counted at last (by state)"
+  - match: ["asuse:annual:3:all", "asuse:annual:3:sector:*", "asuse:annual:3:ownership-type:*", "asuse:annual:10:all", "asuse:annual:10:sector:*", "asuse:annual:10:location-of-establishment:*", "asuse:annual:12:all", "asuse:annual:12:sector:*", "asuse:annual:12:nature-of-operation:*", "asuse:annual:14:all", "asuse:annual:14:sector:*", "asuse:annual:14:no-of-months-operated:*", "asuse:annual:16:all", "asuse:annual:16:sector:*", "asuse:annual:16:no-of-working-hours:*", "asuse:annual:19:all", "asuse:annual:19:sector:*", "asuse:annual:19:npi-status:*"]
+    status: shown
+    bundle: asuse-structure
+    plate: "The informal firm, described"
+  - match: ["asuse:annual:5:all", "asuse:annual:5:sector:*", "asuse:annual:5:general-education-level:*", "asuse:annual:6:all", "asuse:annual:6:sector:*", "asuse:annual:6:social-group-of-owner-major-partner:*"]
+    status: shown
+    bundle: asuse-owners
+    plate: "The informal firm, described (who owns it)"
+  - match: ["asuse:annual:9:all", "asuse:annual:9:sector:*", "asuse:annual:9:account-holder:*", "asuse:annual:20:all", "asuse:annual:20:sector:*", "asuse:annual:20:sub-indicator:*", "asuse:annual:20:establishment-type:*", "asuse:annual:22:all", "asuse:annual:22:sector:*", "asuse:annual:22:sub-indicator:*", "asuse:annual:22:acts-agency-of-registration:*", "asuse:annual:25:all"]
+    status: shown
+    bundle: asuse-modernity
+    plate: "The informal firm, described (how modern it is)"
+  - match: ["asuse:quarterly:*:all", "asuse:quarterly:*:sector:*", "asuse:quarterly:*:broad-activity-category:*"]
+    status: shown
+    bundle: asuse-quarterly
+    plate: "The other economy, counted at last (the quarterly bulletin)"
+
+  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
+  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
+  - match:
+      - "asuse:annual:*:*"
+      - "asuse:annual:*:*:*"
+      - "asuse:annual:*:*:*:*"
+    status: pending
+    scheduled: "wave 2: industry deeper"
