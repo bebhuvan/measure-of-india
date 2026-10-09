@@ -165,16 +165,32 @@ consumption:
     mustName: [extremes]
     mustAcknowledge: [contradictions]
     brief: >
-      The average monthly spend, rural and urban, and the urban-rural gap. Name
-      any shift in food's share (Engel's law). Concede before qualifying.
+      The average monthly spend per person, rural and urban, and the urban-rural
+      gap (use cross.urbanRuralRatio, never compute a ratio). Name the highest and
+      lowest state from the hces-states input, and say once that counting free
+      items (with imputation) adds a little to each. Name any shift in food's share
+      (Engel's law). Call the latest period "the 2023-24 survey" and the earlier
+      one "the previous survey", never FY24 or FY23: these are survey rounds, not
+      financial years.
+      Two rounds are two points, not a trend: never say "rising", "a trend" or
+      "growth rate". Do not explain the change with a base effect. The fractile
+      classes are slices of the population ranked by spending: "0-5%" is the
+      poorest twentieth and "95-100%" the richest twentieth, never a tenth. Never
+      set a with-imputation figure against a without-imputation one. Concede
+      before qualifying.
   - id: current-reading.what-it-does-not-say
     maxSentences: 6
     dateStamp: false
     requiredFigures: [rural.latest]
     brief: >
-      The honest limits: the mean is not the median (the spending ladder is steep
-      at the top); imputed free goods inflate the bill; this is a two-year survey,
-      not a monthly pulse. Must contain a plain "we do not know".
+      The honest limits: an average per person is not what a typical household
+      spends, and the survey publishes no median, so say we do not know the
+      median; the with-imputation figures add the value of free items the
+      household did not pay for; spending is not income, and the Gini of spending
+      understates inequality; this is a survey of two rounds, not a monthly
+      pulse. Call the period "the 2023-24 survey", never FY24. The fractile
+      classes are slices: "95-100%" is the richest twentieth, never a tenth.
+      Vary sentence length. Must contain a plain "we do not know".
 
 factories:
   - id: current-reading.what-the-print-says

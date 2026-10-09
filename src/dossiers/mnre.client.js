@@ -10,6 +10,10 @@ import sourcesBundle from "../../data/series/mnre-sources.json";
 import solarBundle from "../../data/series/mnre-solar-categories.json";
 import statesBundle from "../../data/series/mnre-states.json";
 import solarStatesBundle from "../../data/series/mnre-states-solar.json";
+import windStatesBundle from "../../data/series/mnre-states-wind.json";
+import hydroStatesBundle from "../../data/series/mnre-states-hydro.json";
+import bioStatesBundle from "../../data/series/mnre-states-bio.json";
+import bioBundle from "../../data/series/mnre-bio-categories.json";
 import {
   MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend,
   dodgeEndLabels, spark, downloadSVG, downloadPNG, saveBlob,
@@ -29,6 +33,8 @@ const gw = (v, dp = 1) => (v / 1000).toFixed(dp);
 const last = (s) => s.data.filter((d) => d.value != null).at(-1).value;
 // the latest month, for descriptions (never typed in)
 const LATEST_SHORT = (() => { const d = S.grand_total.data.filter((x) => x.value != null).at(-1).date; return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getUTCMonth()] + " " + d.getUTCFullYear(); })();
+// the same month a year earlier, for the title-block deltas (never typed in)
+const YEAR_AGO_SHORT = LATEST_SHORT.replace(/\d{4}$/, (y) => String(+y - 1));
 const prevV = (s) => s.data.filter((d) => d.value != null).at(-2).value;
 const firstV = (s) => s.data.filter((d) => d.value != null)[0].value;
 const atYearAgo = (s) => { const d = s.data.filter((d) => d.value != null); const t = d.at(-1).date.getTime() - 365.25 * 86400000; let best = null; for (const p of d) { if (p.date.getTime() <= t) best = p; else break; } return best ? best.value : null; };
@@ -42,17 +48,17 @@ setHTML("n-solar-share", (last(S.solar) / last(S.grand_total) * 100).toFixed(0) 
   const yrAgoTotal = atYearAgo(S.grand_total), yrAgoSolar = atYearAgo(S.solar);
   const shareNow = last(S.solar) / last(S.grand_total) * 100;
   const shareThen = yrAgoSolar && yrAgoTotal ? yrAgoSolar / yrAgoTotal * 100 : null;
-  setHTML("d-solar-share", shareThen != null ? `<b>${arrow(shareNow - shareThen, (v) => v.toFixed(0) + " pt")}</b> vs Jun 2025` : "—");
+  setHTML("d-solar-share", shareThen != null ? `<b>${arrow(shareNow - shareThen, (v) => v.toFixed(0) + " pt")}</b> vs ${YEAR_AGO_SHORT}` : "—");
 }
 {
   const yoy = atYearAgo(S.grand_total);
   const yoyPct = yoy ? ((last(S.grand_total) / yoy - 1) * 100) : null;
   setHTML("n-yoy", yoyPct != null ? "+" + yoyPct.toFixed(0) + pc("%") : "—");
-  setHTML("d-yoy", yoyPct != null ? `<b>▲ +${gw(last(S.grand_total) - yoy)} GW</b> vs Jun 2025` : "—");
+  setHTML("d-yoy", yoyPct != null ? `<b>▲ +${gw(last(S.grand_total) - yoy)} GW</b> vs ${YEAR_AGO_SHORT}` : "—");
 }
 {
   // top state
-  const stEntries = Object.entries(statesBundle.series).map(([k, s]) => ({ k, label: s.label, v: s.data.at(-1) })).filter((d) => d.v != null).sort((a, b) => b.v - a.v);
+  const stEntries = Object.entries(statesBundle.series).filter(([k]) => !k.includes("__")).map(([k, s]) => ({ k, label: s.label, v: s.data.at(-1) })).filter((d) => d.v != null).sort((a, b) => b.v - a.v);
   const top = stEntries[0];
   setHTML("n-top-state", gw(top.v, 0) + pc("GW"));
   setHTML("d-top-state", `<b>${top.label.split(" · ")[1]}</b>, ${gw(top.v)} GW`);
@@ -299,7 +305,8 @@ const breakDate = new Date(Date.UTC(2023, 11, 1)); // Dec 2023
   };
 
   // solar by state
-  const solarEntries = Object.entries(solarStatesBundle.series).map(([k, s]) => ({ state: shortState(s.label.split(" · ")[1] || k), v: s.data.at(-1) }));
+  // state totals only (keys without "__"; the categories by state sit beside them)
+  const solarEntries = Object.entries(solarStatesBundle.series).filter(([k]) => !k.includes("__")).map(([k, s]) => ({ state: shortState(s.label.split(" · ")[1] || k), v: s.data.at(-1) }));
   const plotSolSt = makeStrip(solarEntries, last(S.grand_total), "Solar capacity");
   a11y(plotSolSt, "Solar Power Total capacity by state, " + LATEST_SHORT, (() => { const r = solarEntries.sort((a, b) => b.v - a.v); return "Sorted dot strip. " + r[0].state + " leads at " + gw(r[0].v) + " GW, then " + r[1].state + "."; })());
   document.getElementById("plot-solar-states").append(plotSolSt);
@@ -322,6 +329,112 @@ const breakDate = new Date(Date.UTC(2023, 11, 1)); // Dec 2023
 
   const csv = "state,solar_mw,total_mw\n" + totSorted.map((r) => { const sol = solSorted.find((s) => s.state === r.state); return `"${r.state}",${sol ? Math.round(sol.v) : ""},${Math.round(r.v)}`; }).join("\n");
   wirePlate(document.getElementById("cb-states"), plotTotSt, "india-atlas_mnre_state-solar-total_2026-06", csv);
+}
+
+
+/* ---------- § 09 plate 5 : each source's own map (wave 2) ---------- */
+{
+  const SRC = [
+    ["Wind", windStatesBundle, null],
+    ["Large hydro", hydroStatesBundle, "__large_hydro"],
+    ["Small hydro", hydroStatesBundle, "__small_hydro"],
+    ["Bio power", bioStatesBundle, "__total"],
+  ];
+  const TOP = 8;
+  const short = (s) => ({ "Andaman and Nicobar Islands": "Andaman & Nicobar", "Jammu and Kashmir": "Jammu & Kashmir" })[s] || s;
+  const rows = [], all = {};
+  for (const [name, b, suf] of SRC) {
+    const ent = Object.entries(b.series).filter(([k]) => (suf ? k.endsWith(suf) : !k.includes("__")))
+      .map(([, s]) => ({ state: s.group, v: s.data.filter((x) => x != null).at(-1) ?? null, last: s.data.at(-1) }))
+      .filter((d) => d.last != null && d.last > 0);
+    const tot = ent.reduce((a, d) => a + d.last, 0);
+    ent.sort((a, c) => c.last - a.last);
+    all[name] = { ent, tot };
+    ent.slice(0, TOP).forEach((d, i) => rows.push({ source: name, rank: i + 1, state: short(d.state), share: (d.last / tot) * 100, mw: d.last }));
+  }
+  const plot = Plot.plot({
+    width: 1184, height: 30 + TOP * 44 + 30, marginLeft: 8, marginRight: 8, marginTop: 34, marginBottom: 10,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+    fx: { domain: SRC.map((d) => d[0]), label: null, padding: 0.12, tickSize: 0, tickPadding: 8, axis: "top" },
+    x: { domain: [0, 34], axis: null },
+    y: { domain: d3range(TOP), axis: null, padding: 0 },
+    marks: [
+      Plot.ruleX([0], { stroke: "#D3D7DE" }),
+      Plot.barX(rows, { fx: "source", y: "rank", x: "share", fill: (d) => (d.rank <= 3 ? "#2E4BD8" : "#C9CED6"), insetTop: 24, insetBottom: 8 }),
+      // state name above its bar, value at the bar's end
+      Plot.text(rows, { fx: "source", y: "rank", x: 0, text: "state", textAnchor: "start", dy: -8, fill: "#161A22", fontSize: 12, fontWeight: (d) => (d.rank <= 3 ? 600 : 400) }),
+      Plot.text(rows, { fx: "source", y: "rank", x: "share", text: (d) => `${d.share.toFixed(0)}%`, textAnchor: "start", dx: 6, dy: 8, fill: "#4A5160", fontSize: 11.5 }),
+    ],
+  });
+  a11y(plot, "State shares of each renewable source, " + LATEST_SHORT, SRC.map(([n]) => `${n}: ` + all[n].ent.slice(0, 3).map((d) => `${d.state} ${(d.last / all[n].tot * 100).toFixed(0)}%`).join(", ")).join(". "));
+  document.getElementById("plot-srcmap").append(plot);
+  const topN = (n, k) => all[n].ent.slice(0, k).reduce((a, d) => a + d.last, 0) / all[n].tot * 100;
+  const lead = (n, k = 3) => all[n].ent.slice(0, k).map((d) => `${d.state} ${(d.last / all[n].tot * 100).toFixed(0)}%`).join(", ");
+  setHTML("pv-srcmap", topN("Wind", 7).toFixed(1) + pc("%"));
+  setHTML("ex-sm-wind", lead("Wind"));
+  setHTML("ex-sm-lh", lead("Large hydro"));
+  setHTML("ex-sm-sh", lead("Small hydro"));
+  setHTML("ex-sm-bio", lead("Bio power"));
+  const csv = "source,state,installed_mw,share_of_source_pct\n" + SRC.flatMap(([n]) => all[n].ent.map((d) => `${n},"${d.state}",${d.last},${(d.last / all[n].tot * 100).toFixed(2)}`)).join("\n");
+  wirePlate(document.getElementById("cb-srcmap"), plot, "india-atlas_mnre_source-maps_" + LATEST_SHORT.replace(" ", "-").toLowerCase(), csv);
+}
+function d3range(n) { return Array.from({ length: n }, (_, i) => i + 1); }
+
+/* ---------- § 09 rooftop by state (wave 2) ---------- */
+{
+  const ent = Object.entries(solarStatesBundle.series).filter(([k]) => k.endsWith("__rooftop"))
+    .map(([, s]) => ({ state: s.group, v: s.data.at(-1) })).filter((d) => d.v != null && d.v > 0).sort((a, c) => c.v - a.v);
+  const tot = ent.reduce((a, d) => a + d.v, 0);
+  const rows = ent.slice(0, 15);
+  const plot = Plot.plot({
+    width: 1184, height: 30 + rows.length * 30 + 40, marginLeft: 200, marginRight: 90, marginTop: 30, marginBottom: 40,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#878D99", overflow: "visible" },
+    x: { label: "rooftop solar, GW →", labelAnchor: "right", labelArrow: false, domain: [0, Math.ceil(rows[0].v / 1000) * 1000 * 1.05], ticks: [0, 2000, 4000, 6000, 8000], tickSize: 0, tickPadding: 10, tickFormat: (d) => (d === 0 ? "0" : String(d / 1000)) },
+    y: { label: null, domain: rows.map((r) => r.state), tickSize: 0, tickPadding: 12 },
+    marks: [
+      Plot.gridX([2000, 4000, 6000, 8000], { stroke: "#F0F2F5" }),
+      Plot.barX(rows, { y: "state", x: "v", fill: (d, i) => (i < 2 ? "#2E4BD8" : "#C9CED6"), insetTop: 8, insetBottom: 8 }),
+      Plot.text(rows, { y: "state", x: "v", dx: 8, text: (d) => gw(d.v, 2) + " GW", textAnchor: "start", fill: "#161A22", fontSize: 12.5, fontWeight: (d, i) => (i < 2 ? 600 : 400) }),
+      Plot.ruleX([0], { stroke: "#B5BAC4" }),
+    ],
+  });
+  a11y(plot, "Rooftop solar capacity by state, " + LATEST_SHORT, rows.slice(0, 5).map((r) => `${r.state} ${gw(r.v, 2)} GW`).join(", "));
+  document.getElementById("plot-rooftop").append(plot);
+  const share2 = (ent[0].v + ent[1].v) / tot * 100;
+  setHTML("pv-rooftop", share2.toFixed(0) + pc("%"));
+  setHTML("ex-rt-total", gw(tot) + pc("GW"));
+  setTxt("ex-rt-n1", ent[0].state); setHTML("ex-rt-v1", gw(ent[0].v, 2) + pc("GW"));
+  setTxt("ex-rt-n2", ent[1].state); setHTML("ex-rt-v2", gw(ent[1].v, 2) + pc("GW"));
+  setHTML("ex-rt-share", share2.toFixed(0) + pc("%"));
+  wirePlate(document.getElementById("cb-rooftop"), plot, "india-atlas_mnre_rooftop-by-state", "state,rooftop_mw\n" + ent.map((d) => `"${d.state}",${d.v}`).join("\n"));
+}
+
+/* ---------- § 10 bio power by kind (wave 2) ---------- */
+{
+  const B = hydrate(bioBundle);
+  const KEYS = [["bagasse", "Bagasse", "#2E4BD8"], ["non_bagasse", "Other biomass", "#5F6675"], ["waste_to_energy_off_grid", "Waste to energy, off-grid", "#878D99"], ["waste_to_energy", "Waste to energy, grid", "#A3A9B4"]];
+  const store = Object.fromEntries(KEYS.map(([k, label, color]) => [k, { ...B[k], label, color }]));
+  const geo = { W: 1184, H: 420, ml: 70, mr: 300, mt: 30, mb: 42, d0: 0, d1: 11000 };
+  const plot = linePanel(document.getElementById("plot-bio"), KEYS.map((d) => d[0]), store, geo, {
+    yTicks: [2000, 4000, 6000, 8000, 10000],
+    yLabel: "↑ bio-power capacity, MW",
+    yFmt: (d) => String(d / 1000) + "k",
+    xTicks: xTicksM, xFmt: (d) => String(d.getUTCFullYear()),
+    endFmt: (v) => gw(v, 2) + " GW",
+    crossFmt: (v) => (v == null ? "—" : gw(v, 2) + " GW"),
+    gapFrac: 0.07,
+    a11yTitle: "Bio-power capacity by kind, All India, monthly Jan 2020 to " + LATEST_SHORT,
+    a11yDesc: "Bagasse cogeneration reaches " + gw(last(B.bagasse), 2) + " GW; the other three kinds are each below " + gw(Math.max(last(B.non_bagasse), last(B.waste_to_energy), last(B.waste_to_energy_off_grid)), 2) + " GW.",
+  });
+  const tot = last(B.total);
+  setHTML("pv-bio", (last(B.bagasse) / tot * 100).toFixed(0) + pc("%"));
+  setHTML("ex-bio-bag", gw(last(B.bagasse), 2) + pc("GW"));
+  setHTML("ex-bio-nb", gw(last(B.non_bagasse), 2) + pc("GW"));
+  setHTML("ex-bio-wte", gw(last(B.waste_to_energy), 2) + pc("GW"));
+  setHTML("ex-bio-off", gw(last(B.waste_to_energy_off_grid), 2) + pc("GW"));
+  setHTML("ex-bio-growth", ((tot / firstV(B.total) - 1) * 100).toFixed(0) + pc("%"));
+  setHTML("ex-bio-solar", ((last(S.solar) / firstV(S.solar) - 1) * 100).toFixed(0) + pc("%"));
+  wirePlate(document.getElementById("cb-bio"), plot, "india-atlas_mnre_bio-power-by-kind", "month," + KEYS.map((d) => d[0] + "_mw").join(",") + ",total_mw\n" + B.total.data.map((d, i) => d.date.toISOString().slice(0, 7) + "," + KEYS.map(([k]) => B[k].data[i].value ?? "").join(",") + "," + (d.value ?? "")).join("\n"));
 }
 
 /* ---------- provenance ---------- */

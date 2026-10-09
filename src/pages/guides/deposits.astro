@@ -28,7 +28,7 @@ const D = bySlug["deposits"];
       <span>Source <b>Reserve Bank of India, BSR-2</b></span>
       <span>Instrument <b>Deposits with scheduled commercial banks, including RRBs</b></span>
       <span>Frequency <b>Annual, as on 31 March</b></span>
-      <span>Window <b>March 2005 to March 2026</b></span>
+      <span>Window <b>March 2003 to March 2026; quarterly to June 2026</b></span>
       <span>Latest <b id="m-latest">–</b></span>
       <span>Unit <b>₹ lakh crore</b></span>
     </div>
@@ -235,19 +235,302 @@ const D = bySlug["deposits"];
     </div>
   </section>
 
-  <!-- § 06 what this measures -->
   <section>
-    <div class="sec-head"><span class="no">06</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">06</span><h2>Who else keeps money in banks</h2><span class="line"></span><span class="unit">Deposits by owning sector, all banks, ₹ lakh crore</span></div>
+    <div class="break">
+      <figure id="cb-sectors" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Households still hold most of the money, but their share has slipped as companies keep more in banks</h3>
+            <div class="sub">Deposits by owner, as on 31 March 2026 (bars) and 31 March 2019 (dots), share of all deposits. Sub-groups are indented under their sector.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-sectors">–</div><div class="c">households' share, March 2026</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>March 2026</span>
+            <span class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #878D99"></i>March 2019</span>
+          </div>
+          <div class="plotzone"><div id="plot-sectors" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, BSR-2 Table 1.1 (DBIE report 1200), sector classification of the System of National Accounts, used since March 2019. Tables 1.x include deposits that banks keep with other banks.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Every deposit has an owner, and the RBI sorts owners the way national accountants do: government, companies that make or sell things (non-financial corporations), financial firms, households, and people and firms abroad. Households include individuals and the small businesses, trusts and self-help groups that households run.</p>
+            <p>The shares move slowly, so a change of a few points over seven years is large. A falling household share does not mean households saved less; it can mean companies parked more cash in banks, or that households moved savings to mutual funds and shares.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of March 2026</span>
+            <p>Households <b id="ex-sc-hh">–</b> of deposits (<b id="ex-sc-hh19">–</b> in 2019). Non-financial companies <b id="ex-sc-nfc">–</b> (<b id="ex-sc-nfc19">–</b>). Government <b id="ex-sc-gov">–</b>. Non-resident Indians <b id="ex-sc-nri">–</b>. Self-help groups <b id="ex-sc-shg">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>How old the savers are</h2><span class="line"></span><span class="unit">Deposits of individuals by age, ₹ lakh crore</span></div>
+    <div class="break">
+      <figure id="cb-age" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>People over 60 hold two-fifths of what individuals keep in banks, and most of it in fixed deposits</h3>
+            <div class="sub">Deposits of individuals by the age of the account holder, as on 31 March 2026, ₹ lakh crore, split into fixed deposits and savings and current accounts.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-age">–</div><div class="c">held by people aged 60 and above</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>Fixed deposits</span>
+            <span class="chip"><i style="background:#B9C3F3"></i>Savings and current accounts</span>
+          </div>
+          <div class="plotzone"><div id="plot-age" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, BSR-2 Table 2.11 (DBIE report 1260), age-wise distribution of individual depositors. Individuals include Hindu undivided families. The table covers about 99% of individuals' deposits in table 2.6 (accounts with no recorded age, presumably, are left out).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each bar is the money held by people of one age group, the darker part in fixed deposits. Savings build over a working life and are spent slowly after it, so the older groups hold the most. Older savers also keep more of it fixed, for the interest.</p>
+            <p>This is why a cut in deposit rates is felt hardest by retired households: for many of them the interest on a fixed deposit is a monthly income, not a bonus.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of March 2026</span>
+            <p>Aged 60 and above: <b id="ex-age-60">–</b> of individuals' deposits (<b id="ex-age-60-23">–</b> in March 2023), <b id="ex-age-60-term">–</b> of it in fixed deposits. Aged 25 to 39: <b id="ex-age-25">–</b>. Under 18: <b id="ex-age-minor">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-womenst" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Women's share of individuals' deposits runs from under a third to nearly half, state by state</h3>
+            <div class="sub">Deposits held by women as a share of all deposits of individuals, by state, as on 31 March 2026, per cent.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-womenst">–</div><div class="c">women's share, All India</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-womenst" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, BSR-2 Table 2.6 (DBIE report 856). Women are counted inside individuals: the table's "of which female" column.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A deposit is counted under the name of its holder. Where the bar is long, more of the money in individuals' names is in women's names; that is not the same as women controlling it, but it is a measure of whose name the account opens in.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of March 2026</span>
+            <p>Highest: <b id="ex-ws-hi">–</b>. Lowest: <b id="ex-ws-lo">–</b>. All India: <b id="ex-ws-ai">–</b>, against <b id="ex-ws-ai19">–</b> in March 2019.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>Where the money sits</h2><span class="line"></span><span class="unit">Deposits by state and district, all banks</span></div>
+    <div class="break">
+      <figure id="cb-states" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Maharashtra holds more than a fifth of India's bank deposits; three states hold nearly two-fifths</h3>
+            <div class="sub">Deposits by state, as on 31 March 2026, share of all deposits (tables 2.x, which leave out deposits of banks with banks).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-states">–</div><div class="c">held in Maharashtra's branches</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-states" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, BSR-2 Table 2.3 (DBIE report 853). Deposits are counted where the branch is, so corporate head offices in Mumbai and Delhi swell those states.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A state's share of deposits reflects where firms and governments bank as much as where families save. Mumbai's branches hold the accounts of companies operating across the country.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of March 2026</span>
+            <p><span id="ex-st-n1">–</span> <b id="ex-st-mh">–</b>, the next two (<span id="ex-st-n23">–</span>) <b id="ex-st-next">–</b>. <b id="ex-st-small">–</b> states and union territories hold less than 1% each.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-districts" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Twenty-six of India's nearly 800 districts hold half of all bank deposits</h3>
+            <div class="sub">The 30 districts with the most deposits, as on 31 March 2026, share of all deposits. A district's total is the sum of its rural, semi-urban, urban and metropolitan branches.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-districts">–</div><div class="c">districts that hold half the money</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-districts" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, BSR-2 Table 2.7 (DBIE report 857), deposits by district and population group, summed by district. Every district, with its accounts and branches, is in the table at the end of this guide.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each bar is one district's share of the country's deposits. Mumbai's two districts and Bengaluru Urban alone hold about a fifth. Most districts hold well under half a per cent each, though they are where most depositors live.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of March 2026</span>
+            <p>Mumbai <b id="ex-di-1">–</b>, Bengaluru Urban <b id="ex-di-2">–</b>. Districts that together hold half of all deposits: <b id="ex-di-half">–</b> of <b id="ex-di-n">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>Which banks, and who works in them</h2><span class="line"></span><span class="unit">Bank groups, deposits and staff</span></div>
+    <div class="break">
+      <figure id="cb-banks" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Private banks' share of deposits rose by about six points in seven years, mostly from public sector banks</h3>
+            <div class="sub">Share of all deposits by bank group, as on 31 March, 2019 to 2026.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-banks">–</div><div class="c">private banks' share, March 2026</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-banks" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, BSR-2 Table 1.5 (DBIE report 850). Bank groups as RBI classifies them each year; small finance banks and payments banks are newer groups.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each line is a group's share of the country's deposits. Public sector banks still hold more than half, but private banks have gained every year. Regional rural banks, the deposit-takers of the countryside, have been slowly losing share.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of March 2026</span>
+            <p>Public sector banks <b id="ex-bk-psb">–</b> (<b id="ex-bk-psb19">–</b> in 2019), private banks <b id="ex-bk-pvt">–</b> (<b id="ex-bk-pvt19">–</b>), foreign banks <b id="ex-bk-for">–</b>, regional rural banks <b id="ex-bk-rrb">–</b>, small finance banks <b id="ex-bk-sfb">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-staff" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Women are a quarter of bank employees, and fewer still in small finance banks</h3>
+            <div class="sub">Women's share of employees by bank group, as on 31 March 2026, with the number of employees.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-staff">–</div><div class="c">women's share of bank staff, All India</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-staff" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, BSR-2 Table 4.2 (DBIE report 870), employees by bank group and population group, officers, clerks and subordinate staff.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The share of women among bank staff has crept up from about 24% to 26% since 2019. It is lowest in the small finance banks and the payments banks, the two newest kinds of bank.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of March 2026</span>
+            <p>Bank employees: <b id="ex-sf-n">–</b>, <b id="ex-sf-w">–</b> of them women. Highest share: <b id="ex-sf-hi">–</b>. Lowest: <b id="ex-sf-lo">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>Booked for how long, and the quarterly return</h2><span class="line"></span><span class="unit">Term deposits by original term; deposits by quarter</span></div>
+    <div class="break">
+      <figure id="cb-origmat" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Seven in ten rupees in fixed deposits are now booked for one to three years, up from half in 2022</h3>
+            <div class="sub">All term deposits by the term they were booked for (original maturity), share of the money, as on 31 March, 2019 to 2026.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-origmat">–</div><div class="c">booked for one to three years, March 2026</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-origmat" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, BSR-2 Table 3.1 (DBIE report 861). Original maturity is the term at booking; the time left (residual maturity) is in Plate 4.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each band is a share of the money in fixed deposits. When rates are expected to rise, savers book short so they can renew at a better rate; when rates are high, they lock in for longer. The shift since 2022 into one-to-three-year deposits followed the rise in deposit rates.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of March 2026</span>
+            <p>One to three years: <b id="ex-om-13">–</b>. Under a year: <b id="ex-om-1">–</b>. Five years and more: <b id="ex-om-5">–</b> (<b id="ex-om-519">–</b> in 2019).</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-quarterly" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Between the annual returns, deposits grew every quarter, and the household share dips each March</h3>
+            <div class="sub">Deposits with scheduled commercial banks excluding regional rural banks, by quarter, March 2023 to June 2026, ₹ lakh crore (line), and households' share (labels).</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-quarterly">–</div><div class="c">deposits, latest quarter</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-quarterly" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, quarterly BSR-2 Table 1.1 (DBIE report 1302). The quarterly return leaves out regional rural banks, so it is a different total from the annual return and is drawn on its own.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The quarterly return is a second instrument: it covers the same banks except the regional rural banks, so its March total sits a few lakh crore below the annual figure. Read it for movement within the year. The household share falls each March, as the deposits of companies and governments swell at the close of the financial year.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of June 2026</span>
+            <p>Deposits <b id="ex-q-tot">–</b> in the latest quarter, <b id="ex-q-yoy">–</b> on a year earlier. Households' share <b id="ex-q-hh">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 11 what this measures -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>What this measures</h2><span class="line"></span></div>
     <div class="prose">
       <p>The Basic Statistical Return 2 is an annual census, not a sample: every scheduled commercial bank, including regional rural banks, reports every deposit account it holds on 31 March, classified by who owns it, what type of account it is, its interest rate, its term and its size. The Reserve Bank publishes the totals a few months later.</p>
       <p>"Household sector" is a statistical category. It covers individuals and Hindu undivided families, the businesses households run without incorporating them, and non-profit bodies that serve households, such as self-help groups and trusts. The tables on interest rate, maturity and size are published for individuals only.</p>
       <p>The classification of owners changed with the 2018-19 return to match the international system of national accounts. The old and new household series measure related but different things, so this guide shows them apart and never adds one to the other.</p>
+      <p>Two totals appear in the RBI's tables. The ownership tables (1.x) include deposits that banks keep with other banks; the tables by type, place and term (2.x and 3.x) leave them out, so they run about ₹6 lakh crore lower. Since 2023 the RBI also runs a quarterly return, which leaves out regional rural banks. This guide never mixes the three: each chart says which table it reads.</p>
     </div>
   </section>
 
   <!-- § 07 misreadings -->
   <section>
-    <div class="sec-head"><span class="no">07</span><h2>How to misread these numbers</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">12</span><h2>How to misread these numbers</h2><span class="line"></span></div>
     <ul class="misread">
       <li><span class="no">1</span><div><h3>"The average Indian has this much in the bank."</h3><p>These are totals. Divided by the population they give an average that describes almost nobody: a few large accounts hold a large share, and many people hold very little.</p></div></li>
       <li><span class="no">2</span><div><h3>"Fixed deposits pay 7%, so savers are doing well."</h3><p>Only after inflation and tax. A deposit earning 7% in a year of 5% inflation gains about 2% in real terms before tax, and interest is taxed at the saver's income-tax rate.</p></div></li>
@@ -265,12 +548,12 @@ const D = bySlug["deposits"];
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Reserve Bank of India, Basic Statistical Return 2: deposits with scheduled commercial banks including regional rural banks, annual, as on 31 March. Tables retrieved from the RBI's Database on Indian Economy (DBIE): Ownership of Deposits (report 737), Table 1.2 (847), Table 3.4 (864), Table 3.5 (865) and Table 3.6 (866), through the owner's local mirror of DBIE. Data vintage <b id="prov-vintage">–</b>.</p>
-        <p>Checked against the RBI's own release for March 2025: households held 60.2% of deposits and women 20.7%, which these tables reproduce exactly.</p>
+        <p>Reserve Bank of India, Basic Statistical Return 2: deposits with scheduled commercial banks including regional rural banks, annual, as on 31 March, and the quarterly return (from March 2023, excluding regional rural banks). Every BSR-2 table DBIE publishes: ownership (reports 737 and 1200), tables 1.2 to 1.5, 2.1 to 2.12, 3.1 to 3.8 and 4.1 to 4.2, annual and quarterly, and the 2010 to 2018 district table, read through the owner's local mirror of DBIE. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Checked against the RBI's own releases. March 2025: households held 60.2% of deposits and women 20.7%. March 2026 (release of 29 May 2026): households 59.3%, savings deposits 28.7%, term deposits 61.6%, senior citizens 20.0%, term deposits booked for one to three years 69.8%. These tables reproduce every one.</p>
       </div>
       <div>
         <h6>Method</h6>
-        <p>Amounts are converted from rupees to ₹ lakh crore. The all-depositor total under the new classification is the sum of its five top-level sectors, which matches the published all-India figure. Shares are computed from those amounts. Nothing is estimated.</p>
+        <p>Amounts are converted from rupees to ₹ lakh crore (₹ crore in the deeper tables). The all-depositor total under the new classification is the sum of its five top-level sectors, which matches the published all-India figure. DBIE exports these tables without column titles; each column is named from RBI's table layout and proved by sums that must hold in every row (current, savings and term deposits add to the total; individuals and others to all depositors; the bank groups to all banks). The rows of percentages DBIE prints under each table (with a minus sign) are left out and recomputed. District totals are sums of a district's branches by population group. Nothing is estimated.</p>
       </div>
       <div>
         <h6>Revisions and breaks</h6>
@@ -278,7 +561,7 @@ const D = bySlug["deposits"];
       </div>
       <div>
         <h6>This guide</h6>
-        <p>Version 1.0, built October 2026 from RBI data to March 2026. Revised each year when the RBI publishes the next return.</p>
+        <p>Version 1.1 (October 2026), from RBI data to March 2026 (annual) and June 2026 (quarterly). v1.1 adds every BSR-2 table: owners one by one, age, states, districts, bank groups, staff, original maturity and the quarterly return. Revised each year when the RBI publishes the next return.</p>
       </div>
     </div>
     <div class="fine">
