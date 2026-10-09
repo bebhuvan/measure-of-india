@@ -87,7 +87,7 @@ function bundleOut(root, rel, meta, dates, series, gapNote) {
 }
 
 // label tidying for display: RBI's ampersands, footnote digits and "of which" fragments
-const tidy = (l) => String(l).replace(/[¹²³⁴⁵⁶⁷⁸⁹⁰]/g, "").replace(/\s+\d$/, "").replace(/(\D)\d$/, "$1").replace(/\s*of which,?\s*$/i, "")
+const tidy = (l) => String(l).replace(/[¹²³⁴⁵⁶⁷⁸⁹⁰]/g, "").replace(/([a-z)])\d$/, "$1").replace(/\s*of which,?\s*$/i, "")
   .replace(/ & /g, " and ").replace(/&/g, " and ").replace(/\s+/g, " ").replace(/\s+,/g, ",").trim();
 const norm = (l) => tidy(l).toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 const slug = (l) => norm(l).replace(/ /g, "_").slice(0, 48);
@@ -153,6 +153,13 @@ function industryKeys(rows) {
   }
   return key;
 }
+
+// state names as a reader writes them
+const STATE_NAME = { "NCT OF DELHI": "Delhi", "JAMMU & KASHMIR": "Jammu and Kashmir", "ANDAMAN & NICOBAR ISLANDS": "Andaman and Nicobar Islands",
+  "DADRA AND NAGAR HAVELI AND DAMAN AND DIU": "Dadra and Nagar Haveli and Daman and Diu", "DADRA & NAGAR HAVELI": "Dadra and Nagar Haveli", "DAMAN & DIU": "Daman and Diu" };
+const stateName = (s) => STATE_NAME[s] ?? s.toLowerCase().replace(/\b[a-z]/g, (c) => c.toUpperCase()).replace(/\bAnd\b/g, "and").replace(/ & /g, " and ");
+const SPLITS = { TELANGANA: "ANDHRA PRADESH", LADAKH: "JAMMU & KASHMIR" };   // new unit -> the state it was carved from
+const fqDate = (fq) => { const [fy, q] = fq.split(":"); const y0 = +fy.slice(0, 4); return { Q1: `${y0}-06-01`, Q2: `${y0}-09-01`, Q3: `${y0}-12-01`, Q4: `${y0 + 1}-03-01` }[q]; };
 
 export async function buildCredit(root, dcfg, vintage, cfg) {
   const db = databankRoot(cfg?.families?.databank);
@@ -431,6 +438,520 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
     yearAgoDates: Object.fromEntries(GS.comps),
   }, newS.dates, GS.series, "No year-earlier figure for this month.");
   void cur; void oldS; void newI;
+
+  /* ======================================================================================
+   * 3. Money: M3, M1, reserve money and their sources (DBIE Data Query tables)
+   * ==================================================================================== */
+  const MONEY_DSDS = ["MSC_F_RN", "MSS_F_RN", "BMC_M_RN", "MSS_M_RN", "RMC_M_RN", "RMS_M_RN", "RMC_W_RN", "RMS_W_RN", "MON_AG_RN", "MONTRY_RATIOS_RN", "CSURYCOM_F_RN", "CSURYSOR_F_RN", "RBI_ASSET_W_RN", "RBI_LIAB_W_RN"];
+  const CAS = databankQuery(db, "rbi_dbie_cas_money",
+    `select distinct dsd_code, series_key, series_label, frequency, unit_code, observation_date, value from {table} where dsd_code in (${MONEY_DSDS.map((d) => `'${d}'`).join(", ")}) order by dsd_code, series_key, observation_date`);
+  if (CAS.rows.length < 50000) throw new Error(`credit: rbi_dbie_cas_money served ${CAS.rows.length} money rows; expected the 1952-2026 tables (>50,000)`);
+  const VM = stamp("data/raw/credit-money.json", {
+    note: "RBI DBIE Data Query (CAS) money tables, read from the local Data Bank (rbi_dbie_cas_money). Values in RBI 'actuals': rupees (INR), per cent (PT) or ratio (RO). Series codes ending _IM are RBI's figures including the July 2023 HDFC merger.",
+    provenance: CAS.provenance, columns: ["dsd_code", "series_key", "series_label", "frequency", "unit_code", "observation_date", "value"],
+    rows: CAS.rows.map((r) => [r.dsd_code, r.series_key, r.series_label, r.frequency, r.unit_code, r.observation_date, r.value]),
+  });
+  // one value per (dsd, series, date): the view repeats observations once per parse run
+  const casSeries = new Map();   // dsd -> Map(seriesKey -> { label, unit, pts: Map(date -> value) })
+  for (const r of CAS.rows) {
+    const m = casSeries.get(r.dsd_code) ?? casSeries.set(r.dsd_code, new Map()).get(r.dsd_code);
+    const s = m.get(r.series_key) ?? m.set(r.series_key, { label: r.series_label, unit: r.unit_code, pts: new Map() }).get(r.series_key);
+    const prev = s.pts.get(r.observation_date);
+    if (prev != null && r.value != null && Math.abs(prev - r.value) > 1e-6 * Math.abs(prev)) throw new Error(`credit: ${r.dsd_code} ${r.series_key} ${r.observation_date} carries two values (${prev}, ${r.value})`);
+    if (r.value != null) s.pts.set(r.observation_date, r.value);
+  }
+  const codeOf = (sk) => sk.split("|").map((p) => p.split("=")[1]).filter((c) => c && c !== "N_A" && !/^(INR|PT|RO|USD|IX)$/.test(c)).join("_").toLowerCase();
+  const casLabel = (sk, l) => { const parts = l.split(" / ").map((x) => x.trim()).filter((x) => x && x !== "Not applicable"); const im = /_IM\b|_IM\|/.test(sk); return tidy(parts[0]).replace(/^Other' /, "Other ") + (parts.length > 1 && !im ? ` (${tidy(parts.slice(1).join(", "))})` : "") + (im ? ", including the HDFC merger" : ""); };
+  /** One bundle from a set of CAS tables. alias: code -> [key, label]; dateFn maps observation dates. */
+  const casBundle = (dsds, rel, extra, { alias = {}, unitDiv = LC, dateFn = (d) => d, keep = null, identity = null } = {}) => {
+    const series = {}, dates = new Set();
+    for (const dsd of dsds) for (const [sk, s] of casSeries.get(dsd) ?? []) {
+      const code = codeOf(sk); if (keep && !keep.includes(code)) continue;
+      const [key, label] = alias[code] ?? [code, casLabel(sk, s.label)];
+      if (series[key]) throw new Error(`credit: ${rel} key ${key} appears twice`);
+      const pts = new Map([...s.pts].map(([d, v]) => [dateFn(d), s.unit === "INR" ? v / unitDiv : v]));
+      for (const d of pts.keys()) dates.add(d);
+      series[key] = { name: key, label, code: sk, pts };
+    }
+    const D = [...dates].sort();
+    for (const s of Object.values(series)) { s.data = D.map((d) => (s.pts.has(d) ? r3(s.pts.get(d)) : null)); delete s.pts; }
+    // Source defect: once RBI stopped a series that excludes the HDFC merger (mid-2025), these
+    // tables keep printing it as 0 while its "including the merger" twin carries the figure.
+    // A 0 from July 2023 on, in a series that has such a twin, is not a value: dropped.
+    let dropped = 0;
+    const twinOf = (s) => Object.values(series).find((x) => x !== s && x.code.replace(/_IM\b/, "") !== x.code && x.code.replace(/_IM\b/, "").replace(/=N_A/g, "") !== "" && codeOf(x.code).replace(/_im$/, "") === codeOf(s.code));
+    for (const s of Object.values(series)) {
+      if (/_IM\b/.test(s.code) || !twinOf(s)) continue;
+      s.data = s.data.map((v, i) => (v === 0 && D[i] >= "2023-07-01" ? (dropped++, null) : v));
+    }
+    if (dropped) extra = { ...extra, note: `${extra.note} ${dropped} zeros printed for discontinued series that exclude the merger (after June 2025) are dropped as not published.` };
+    if (identity) identity(D, series);
+    return bundleOut(root, rel, { ...base, vintage: VM, ...extra }, D, series, "Not published for this date in the RBI's Data Query table.");
+  };
+  const MERGER = "Series marked 'including the HDFC merger' are RBI's figures from July 2023 that count HDFC Ltd's balance sheet inside the banking system; the plain series exclude it until they stop (time deposits and M3 in June 2025). The two are different rulers and are never joined.";
+  const money = casBundle(["MSC_F_RN", "MSS_F_RN"], "credit-money", { frequency: "fortnightly", base: "M3, RBI money stock", unit: "inr_lakh_crore",
+    coverage: "Money supply (M3) every fortnight since 2001: currency with the public, demand and time deposits with banks, and where the money comes from (bank credit to government and to the commercial sector, foreign exchange assets)",
+    note: `RBI DBIE Data Query tables MSC_F (money stock components) and MSS_F (sources), ₹ lakh crore. M1 is derived as currency with the public plus demand deposits plus other deposits with the RBI. ${MERGER}` },
+    { alias: { cf1: ["currency_with_public", "Currency with the public"], cf15: ["demand_deposits", "Demand deposits with banks"], cf16: ["other_deposits_rbi", "Other deposits with the RBI"],
+      cf4: ["time_deposits", "Time deposits with banks"], cf4_im: ["time_deposits_incl_merger", "Time deposits with banks, including the HDFC merger"],
+      cf5: ["m3", "Broad money (M3)"], cf5_im: ["m3_incl_merger", "Broad money (M3), including the HDFC merger"],
+      sf1: ["net_bank_credit_to_government", "Net bank credit to government"], sf1_im: ["net_bank_credit_to_government_incl_merger", "Net bank credit to government, including the HDFC merger"],
+      sf11: ["rbi_credit_to_government", "Net RBI credit to government"], sf12: ["other_banks_credit_to_government", "Other banks' credit to government"], sf12_im: ["other_banks_credit_to_government_incl_merger", "Other banks' credit to government, including the HDFC merger"],
+      sf2: ["credit_to_commercial_sector", "Bank credit to the commercial sector"], sf2_im: ["credit_to_commercial_sector_incl_merger", "Bank credit to the commercial sector, including the HDFC merger"],
+      sf21: ["rbi_credit_to_commercial_sector", "RBI credit to the commercial sector"], sf22: ["other_banks_credit_to_commercial_sector", "Other banks' credit to the commercial sector"], sf22_im: ["other_banks_credit_to_commercial_sector_incl_merger", "Other banks' credit to the commercial sector, including the HDFC merger"],
+      sf3: ["net_foreign_exchange_assets", "Net foreign exchange assets of the banking sector"], sf4: ["government_currency", "Government's currency liabilities to the public"],
+      sf5: ["net_non_monetary_liabilities", "Banking sector's net non-monetary liabilities"], sf5_im: ["net_non_monetary_liabilities_incl_merger", "Banking sector's net non-monetary liabilities, including the HDFC merger"],
+      sf51: ["rbi_net_non_monetary_liabilities", "RBI's net non-monetary liabilities"], sf52: ["other_net_non_monetary_liabilities", "Other net non-monetary liabilities"] } });
+  // derived M1, beside its parts
+  {
+    const f = path.join(root, "data/series/credit-money.json"), b = JSON.parse(fs.readFileSync(f, "utf8"));
+    const S = b.series;
+    S.m1 = { name: "m1", label: "Narrow money (M1), derived: currency with the public, demand deposits and other deposits with the RBI",
+      data: b.dates.map((_, i) => (S.currency_with_public.data[i] != null && S.demand_deposits.data[i] != null && S.other_deposits_rbi.data[i] != null ? r3(S.currency_with_public.data[i] + S.demand_deposits.data[i] + S.other_deposits_rbi.data[i]) : null)) };
+    disclose(b.dates, S.m1, "A component is missing for this date.");
+    writeSeries(root, "data/series/credit-money.json", b);
+    money.series.m1 = S.m1;
+  }
+  // growth of money, fortnightly, inside each ruler
+  {
+    const M = money.series, D = money.dates;
+    const g = (k) => yoyByDate(D, M[k].data);
+    bundleOut(root, "credit-money-growth", { ...base, vintage: VM, frequency: "fortnightly", base: "M3, RBI money stock", unit: "pct",
+      coverage: "Growth of money on a year earlier, every fortnight since 2002: M3 (excluding and including the HDFC merger), M1, currency with the public, deposits, and bank credit to the commercial sector",
+      note: `Derived from credit-money: each date against the reporting date closest to one year earlier (within 10 days). Growth is computed inside each ruler: the series excluding the merger against itself, the series including it against itself (from July 2024, when a year of it exists). ${MERGER}` },
+    D, {
+      m3: { name: "m3_yoy_pct", label: "Broad money (M3), growth on a year earlier", color: "#2E4BD8", data: g("m3") },
+      m3_incl_merger: { name: "m3_incl_merger_yoy_pct", label: "Broad money (M3) including the HDFC merger, growth on a year earlier", data: g("m3_incl_merger") },
+      m1: { name: "m1_yoy_pct", label: "Narrow money (M1), growth on a year earlier", data: g("m1") },
+      currency_with_public: { name: "currency_yoy_pct", label: "Currency with the public, growth on a year earlier", data: g("currency_with_public") },
+      demand_deposits: { name: "demand_deposits_yoy_pct", label: "Demand deposits, growth on a year earlier", data: g("demand_deposits") },
+      time_deposits: { name: "time_deposits_yoy_pct", label: "Time deposits, growth on a year earlier", data: g("time_deposits") },
+      time_deposits_incl_merger: { name: "time_deposits_incl_merger_yoy_pct", label: "Time deposits including the HDFC merger, growth on a year earlier", data: g("time_deposits_incl_merger") },
+      credit_to_commercial_sector: { name: "credit_to_commercial_sector_yoy_pct", label: "Bank credit to the commercial sector, growth on a year earlier", data: g("credit_to_commercial_sector") },
+      credit_to_commercial_sector_incl_merger: { name: "credit_to_commercial_sector_incl_merger_yoy_pct", label: "Bank credit to the commercial sector including the HDFC merger, growth on a year earlier", data: g("credit_to_commercial_sector_incl_merger") },
+      currency_share_m3: { name: "currency_share_of_m3_pct", label: "Currency with the public as a share of M3", data: D.map((_, i) => { const m3 = M.m3.data[i] ?? M.m3_incl_merger.data[i]; return M.currency_with_public.data[i] != null && m3 ? r2((100 * M.currency_with_public.data[i]) / m3) : null; }) },
+    }, "No reporting date within ten days of one year earlier, or a level missing.");
+  }
+  const monthEnd = (d) => monthKey(d);
+  casBundle(["BMC_M_RN", "MSS_M_RN"], "credit-money-monthly", { frequency: "monthly", base: "M3, RBI money stock", unit: "inr_lakh_crore",
+    coverage: "Money supply month by month since 1991: M3 and M1, their components, and their sources",
+    note: `RBI DBIE Data Query tables BMC_M (broad money components, monthly) and MSS_M (sources of money stock, monthly), ₹ lakh crore, last reporting Friday of each month (dated to the month). ${MERGER}` },
+    { dateFn: monthEnd, identity: (D, S) => {
+      // Source defect: after time deposits excluding the merger stop (June 2025), the table's
+      // broad money keeps printing, equal to narrow money alone. M3 = M1 + time deposits, so M3
+      // is kept only where its time deposits are published.
+      let n = 0; S.m3.data = S.m3.data.map((v, i) => (v != null && S.time_deposits.data[i] == null ? (n++, null) : v));
+      if (n) S.m3.gapsNote = `Dropped ${n} months after June 2025 where the source prints M3 equal to M1 (its time deposits discontinued).`;
+    }, alias: { cms1: ["m3", "Broad money (M3)"], cms11: ["m1", "Narrow money (M1)"], cms1101: ["currency_with_public", "Currency with the public"], cms1102: ["other_deposits_rbi", "Other deposits with the RBI"],
+      cms1103: ["demand_deposits", "Demand deposits"], cms1104: ["cash_with_banks", "Cash with banks"], cms12: ["time_deposits", "Time deposits"], cms12_im: ["time_deposits_incl_merger", "Time deposits, including the HDFC merger"], cms1_im: ["m3_incl_merger", "Broad money (M3), including the HDFC merger"] } });
+  casBundle(["RMC_M_RN", "RMS_M_RN"], "credit-reserve-money", { frequency: "monthly", base: "Reserve money (M0)", unit: "inr_lakh_crore",
+    coverage: "Reserve money (M0), the RBI's own money, month by month since 1991: currency in circulation, banks' deposits with the RBI, and its sources",
+    note: "RBI DBIE Data Query tables RMC_M (reserve money components, monthly, from 1991) and RMS_M (sources, monthly, from 2001), ₹ lakh crore, dated to the month." },
+    { dateFn: monthEnd, alias: { com1: ["reserve_money", "Reserve money (M0)"], com11: ["currency_in_circulation", "Currency in circulation"], com12: ["other_deposits_rbi", "Other deposits with the RBI"], com13: ["bankers_deposits_rbi", "Bankers' deposits with the RBI"],
+      sor1: ["rbi_claims_government", "RBI's net claims on government"], sor2: ["rbi_claims_central_government", "RBI's claims on the central government"], sor3: ["rbi_claims_banks_commercial", "RBI's claims on banks and the commercial sector"],
+      sor4: ["rbi_claims_banks", "RBI's claims on banks, including NABARD"], sor5: ["rbi_claims_commercial", "RBI's claims on the commercial sector, excluding NABARD"], sor6: ["rbi_net_foreign_assets", "Net foreign exchange assets of the RBI"],
+      sor7: ["government_currency", "Government's currency liabilities to the public"], sor8: ["rbi_net_non_monetary_liabilities", "Net non-monetary liabilities of the RBI"] } });
+  casBundle(["RMC_W_RN", "RMS_W_RN"], "credit-reserve-money-weekly", { frequency: "weekly", base: "Reserve money (M0)", unit: "inr_lakh_crore",
+    coverage: "Reserve money (M0) and its sources every week, July 2001 to December 2025",
+    note: "RBI DBIE Data Query tables RMC_W and RMS_W (weekly), ₹ lakh crore. The weekly table ends in December 2025 in the source; the monthly table continues." });
+  casBundle(["CSURYCOM_F_RN", "CSURYSOR_F_RN"], "credit-bank-survey", { frequency: "fortnightly", base: "Commercial bank survey", unit: "inr_lakh_crore",
+    coverage: "The commercial bank survey every fortnight since 1999: banks' deposits by maturity and their credit to government and the commercial sector, foreign assets and reserves",
+    note: `RBI DBIE Data Query tables CSURYCOM_F (components) and CSURYSOR_F (sources), ₹ lakh crore. ${MERGER}` });
+  casBundle(["RBI_ASSET_W_RN", "RBI_LIAB_W_RN"], "credit-rbi-balance-sheet", { frequency: "weekly", base: "RBI weekly statement of affairs", unit: "inr_lakh_crore",
+    coverage: "The Reserve Bank's own balance sheet every week since July 2004: notes issued, deposits held, foreign assets, loans and investments",
+    note: "RBI DBIE Data Query tables RBI_ASSET_W and RBI_LIAB_W (weekly statement of affairs), ₹ lakh crore." });
+  const yearEnd = (d) => `${d.slice(0, 4)}-03-01`;
+  casBundle(["MON_AG_RN"], "credit-money-annual", { frequency: "annual", base: "RBI monetary aggregates, annual", unit: "pct",
+    coverage: "Annual growth of money and its sources, as published by the RBI, every financial year since 1970-71",
+    note: "RBI DBIE Data Query table MON_AG (monetary aggregates: variations, per cent), as published, financial years ending March, dated to March." },
+    { unitDiv: 1, dateFn: yearEnd, alias: { brd_mon: ["m3", "Broad money (M3), growth"], nar_mon: ["m1", "Narrow money (M1), growth"], res_mon: ["reserve_money", "Reserve money (M0), growth"], cur_pub: ["currency_with_public", "Currency with the public, growth"],
+      dd: ["demand_deposits", "Demand deposits, growth"], tim_de: ["time_deposits", "Time deposits, growth"], net_rbi_ccg: ["net_rbi_credit_central_government", "Net RBI credit to the central government, growth"],
+      nfeabs: ["net_foreign_exchange_assets", "Net foreign exchange assets of the banking sector, growth"], oth_bnk_ccs: ["other_banks_credit_commercial", "Other banks' credit to the commercial sector, growth"],
+      oth_bnk_cg: ["other_banks_credit_government", "Other banks' credit to government, growth"], rbi_ccs: ["rbi_credit_commercial", "RBI credit to the commercial sector, growth"], rbi_net_cb: ["rbi_net_claims_banks", "RBI's net claims on banks, growth"] } });
+  casBundle(["MONTRY_RATIOS_RN"], "credit-money-ratios", { frequency: "annual", base: "RBI monetary ratios, annual", unit: "ratio",
+    coverage: "Monetary ratios every financial year since 1951-52: the money multiplier (M3 over reserve money), the income velocity of money (GDP over M3), and the currency-deposit ratio",
+    note: "RBI DBIE Data Query table MONTRY_RATIOS, as published, financial years ending March, dated to March. GDP is at current market prices on the national accounts base RBI used for each year." },
+    { unitDiv: 1, dateFn: yearEnd, alias: { ro1: ["currency_to_demand_deposits", "Currency with the public over demand deposits"], ro2: ["reserves_to_demand_deposits", "Bank reserves over demand deposits"],
+      ro3: ["currency_to_deposits", "Currency with the public over aggregate deposits"], ro4: ["reserves_to_deposits", "Bank reserves over aggregate deposits"], ro5: ["m1_multiplier", "Narrow money over reserve money (M1 multiplier)"],
+      ro6: ["m3_multiplier", "Broad money over reserve money (money multiplier)"], ro7: ["velocity_m3", "GDP over broad money (income velocity of M3)"], ro8: ["velocity_m1", "GDP over narrow money"], ro9: ["gdp_to_currency", "GDP over currency with the public"] } });
+
+  /* ======================================================================================
+   * 4. Banking health, annual, as on 31 March
+   * ==================================================================================== */
+  const R330 = dbieReport(db, "330"), R329 = dbieReport(db, "329"), R1114 = dbieReport(db, "1114"), R1508 = dbieReport(db, "1508"), R336 = dbieReport(db, "336"), R332 = dbieReport(db, "332");
+  const one = (rows, col, val) => rows.filter((r) => r[col] === val);
+  const rows330 = one(R330.rows, "Unit Description", "ACTUALS"), rows1114 = one(R1114.rows, "Unit Description", "ACTUALS"), rows336 = one(R336.rows, "Derived Unit Decs.Unit Description", "ACTUALS");
+  if (rows330.length < 900 || rows1114.length < 10000 || rows336.length < 5000) throw new Error(`credit: banking-health reports served too little (330: ${rows330.length}, 1114: ${rows1114.length}, 336: ${rows336.length})`);
+  const VH = stamp("data/raw/credit-health.json", {
+    note: "Banking health tables from the RBI's DBIE (local Data Bank mirror): 330 gross and net NPAs by bank group; 329 banks by capital adequacy band; 1114 movement of NPAs, bank by bank; 1508 frauds by banking operation; 336 classification of loan assets, bank by bank; 332 select ratios of scheduled commercial banks. One display unit kept where DBIE repeats values per unit (the unit columns of 1114 and 336 are junk: SECONDS, LAKH TONNES; their values are rupees).",
+    reports: {
+      "330": { provenance: R330.provenance, filter: "Unit Description = ACTUALS", columns: ["Time Date", "Institution", "Items", "Value"], rows: rows330.map((r) => [iso(r["Time Date"]), r.Institution, r.Items, r.Value]) },
+      "329": { provenance: R329.provenance, columns: ["Time Fis Year", "Bank Group Name", "Item Description", "No Of Banks"], rows: R329.rows.map((r) => [r["Time Fis Year"], r["Bank Group Name"], r["Item Description"], r["No Of Banks"]]) },
+      "1114": { provenance: R1114.provenance, filter: "Unit Description = ACTUALS", columns: ["Time Cal Year", "Bank Name", "Bank Group Name", "Bal Sheet Hierarchy Level2", "Bal Sheet Description", "Version Desc", "Item Value"],
+        rows: rows1114.map((r) => [r["Time Cal Year"], r["Bank Name"], r["Bank Group Name"], r["Bal Sheet Hierarchy Level2"], r["Bal Sheet Description"], r["Version Desc"], r["Item Value"]]) },
+      "1508": { provenance: R1508.provenance, columns: ["Time Date", "Operation Description", "Na Description", "Version Desc", "Item Value", "Special Data Value"], rows: R1508.rows.map((r) => [iso(r["Time Date"]), r["Operation Description"], r["Na Description"], r["Version Desc"], r["Item Value"], r["Special Data Value"]]) },
+      "336": { provenance: R336.provenance, filter: "Derived Unit Decs.Unit Description = ACTUALS", columns: ["Time Date", "Bank Name", "Bank Group Name", "Classification Name", "Amount"], rows: rows336.map((r) => [iso(r["Time Date"]), r["Bank Name"], r["Bank Group Name"], r["Classification Name"], r.Amount]) },
+      "332": { provenance: R332.provenance, columns: ["Time Date", "Item Category", "Item Name", "Ratio"], rows: R332.rows.map((r) => [iso(r["Time Date"]), r["Item Category"], r["Item Name"], r.Ratio]) },
+    },
+  });
+  const march = (d) => `${d.slice(0, 4)}-03-01`;
+  const fyEnd = (fy) => `${+fy.slice(0, 4) + 1}-03-01`;     // "2024-25" -> "2025-03-01"
+  const H_ = (extra) => ({ ...base, vintage: VH, frequency: "annual", ...extra });
+
+  // ---- 330: NPAs by bank group ----
+  {
+    const GROUPS = [["Scheduled Commercial Banks", "all", "All scheduled commercial banks"], ["Public Sector Banks", "public", "Public sector banks"], ["Private Sector Banks", "private_pre2011", "Private sector banks"],
+      ["Old Private Sector Banks", "private_old", "Old private sector banks"], ["New Private Sector Banks", "private_new", "New private sector banks"], ["Foreign Banks In India", "foreign", "Foreign banks"], ["Small Finance Banks", "small_finance", "Small finance banks"]];
+    const ITEMS = { "NPA Gross As Percentage of Gross Advances": ["gnpa_ratio", "gross NPA ratio (gross NPAs as a share of gross advances)"], "NPA Net As Percentage of Net Advances": ["nnpa_ratio", "net NPA ratio (net NPAs as a share of net advances)"],
+      "NPA Gross As Percentage of Total Assets": ["gnpa_to_assets", "gross NPAs as a share of total assets"], "NPA Net As Percentage of Total Assets": ["nnpa_to_assets", "net NPAs as a share of total assets"],
+      "NPA Gross Amount": ["gnpa", "gross NPAs"], "NPA Net Amount": ["nnpa", "net NPAs"], "GROSS ADVANCES": ["gross_advances", "gross advances"], "NET ADVANCES": ["net_advances", "net advances"] };
+    const v = new Map(); const years = new Set();
+    for (const r of rows330) { const d = march(iso(r["Time Date"])); years.add(d); v.set(`${r.Institution}|${r.Items}|${d}`, num(r.Value)); }
+    const Y = [...years].sort();
+    // Source defect: before 2011 the "Private Sector Banks" row of the ratio items is the SUM of
+    // the old and new private banks' ratios (13.3 = 10.7 + 2.6 in 1997), not a ratio. Dropped.
+    // From March 2014 the source labels all private sector banks "New Private Sector Banks"
+    // (their NPAs equal old plus new of the year before); the series is relabelled to say so.
+    let droppedSum = 0;
+    const ratios = {}, amounts = {};
+    for (const [inst, gk, gl] of GROUPS) for (const [item, [ik, il]] of Object.entries(ITEMS)) {
+      const isRatio = /ratio|share/.test(il);
+      let data = Y.map((d) => v.get(`${inst}|${item}|${d}`) ?? null);
+      if (gk === "private_pre2011" && isRatio) data = data.map((x, i) => { const o = v.get(`Old Private Sector Banks|${item}|${Y[i]}`), n = v.get(`New Private Sector Banks|${item}|${Y[i]}`); return x != null && o != null && n != null && Math.abs(x - (o + n)) < 0.01 ? (droppedSum++, null) : x; });
+      if (data.every((x) => x == null)) continue;
+      const label = gk === "private_new" ? `Private sector banks (new private banks to March 2013; all private banks from March 2014, as the source labels them)` : gl;
+      if (isRatio) ratios[`${gk}_${ik}`] = { name: `${gk}_${ik}_pct`, label: `${label}, ${il}`, data: data.map(r2) };
+      else amounts[`${gk}_${ik}`] = { name: `${gk}_${ik}_inr_lakh_crore`, label: `${label}, ${il}`, data: data.map((x) => (x == null ? null : r3(x / LC))) };
+    }
+    ratios.all_gnpa_ratio.color = "#2E4BD8";
+    bundleOut(root, "credit-npa", H_({ base: "RBI bank groups, as on 31 March", unit: "pct",
+      coverage: "Bad loans: gross and net non-performing assets as a share of advances and of assets, for all scheduled commercial banks and each bank group, every March since 1997",
+      note: `RBI DBIE report 330 (Gross and Net NPAs of Scheduled Commercial Banks, bank group-wise), per cent, as published. Bank groups change: old and new private banks are reported apart until March 2013 and together from March 2014 (under the label "New Private Sector Banks"); small finance banks appear from March 2019. ${droppedSum} values of the pre-2011 "Private Sector Banks" row that are the sum of two ratios, not a ratio, are dropped.` }), Y, ratios, "Not reported for this bank group in this year.");
+    bundleOut(root, "credit-npa-amounts", H_({ base: "RBI bank groups, as on 31 March", unit: "inr_lakh_crore",
+      coverage: "Bad loans in rupees: gross and net NPAs and gross and net advances, all scheduled commercial banks and each bank group, every March since 1997",
+      note: "RBI DBIE report 330, converted from rupees to ₹ lakh crore. Bank groups as in credit-npa." }), Y, amounts, "Not reported for this bank group in this year.");
+  }
+
+  // ---- 1114: movement of NPAs, summed over banks ----
+  {
+    const acc = new Map(); const years = new Set(); const groups = new Set();
+    const pickV = new Map();   // bank|year|level|desc -> {v, ver}
+    for (const r of rows1114) { const k = `${r["Bank Name"]}|${r["Time Cal Year"]}|${r["Bal Sheet Hierarchy Level2"]}|${r["Bal Sheet Description"]}`; const vv = num(r["Item Value"]), ver = r["Version Desc"]; const p = pickV.get(k); if (vv == null) continue; if (!p || (p.ver !== "Final" && ver === "Final")) pickV.set(k, { v: vv, ver, grp: r["Bank Group Name"] }); }
+    const GRP = (g) => (/PUBLIC|NATIONALISED|STATE BANK/.test(g) ? "public" : /PRIVATE/.test(g) ? "private" : /FOREIGN/.test(g) ? "foreign" : /SMALL FINANCE/.test(g) ? "small_finance" : /PAYMENTS/.test(g) ? "payments" : "other");
+    for (const [k, o] of pickV) {
+      const [, y, lvl, desc] = k.split("|"); const d = `${y}-03-01`; years.add(d);
+      const g = GRP(o.grp); groups.add(g);
+      for (const gg of ["all", g]) { const kk = `${gg}|${lvl}|${desc}|${d}`; acc.set(kk, (acc.get(kk) ?? 0) + o.v); }
+    }
+    const Y = [...years].sort(), series = {};
+    const DESCS = [["Opening Balance", "opening", "at the start of the year"], ["Addition during the Year", "additions", "added during the year (fresh slippages)"], ["Reduction during the Year", "reductions", "reduced during the year (recoveries and upgrades)"], ["Write-off during the Year", "write_offs", "written off during the year"], ["Closing Balance", "closing", "at the end of the year"]];
+    const GL = { all: "All scheduled commercial banks", public: "Public sector banks", private: "Private sector banks", foreign: "Foreign banks", small_finance: "Small finance banks", payments: "Payments banks" };
+    for (const g of ["all", "public", "private", "foreign", "small_finance"]) for (const [lvl, lk] of [["Gross NPAs", "gross"], ["Net NPAs", "net"]]) for (const [desc, dk, dl] of DESCS) {
+      const data = Y.map((d) => { const x = acc.get(`${g}|${lvl}|${desc}|${d}`); return x == null ? null : r3(x / LC); });
+      if (data.some((x) => x != null)) series[`${g}_${lk}_${dk}`] = { name: `${g}_${lk}_${dk}_inr_lakh_crore`, label: `${GL[g]}, ${lk} NPAs ${dl}`, data };
+    }
+    bundleOut(root, "credit-npa-movement", H_({ base: "RBI bank groups, as on 31 March", unit: "inr_lakh_crore",
+      coverage: "How bad loans move each year: gross and net NPAs at the start, added, recovered or upgraded, written off, and at the end, all banks and by bank group, 2004-05 to 2024-25",
+      note: "RBI DBIE report 1114 (Movement of NPAs of Scheduled Commercial Banks), bank by bank, summed here to all banks and to bank groups (public: nationalised banks, SBI and its associates; private: old, new and all private banks; small finance banks), ₹ lakh crore; Final where published. The report's unit column is unreliable (it lists SECONDS, LAKH TONNES and the like); values are rupees, which reconcile with report 330's bank-group NPAs." }), Y, series, "No bank of this group reported this item in this year.");
+  }
+
+  // ---- 329: banks by capital adequacy band ----
+  {
+    const v = new Map(), years = new Set(), bands = new Map();
+    for (const r of R329.rows) { const d = fyEnd(r["Time Fis Year"]); years.add(d); v.set(`${r["Bank Group Name"]}|${r["Item Description"]}|${d}`, num(r["No Of Banks"])); bands.set(r["Item Description"], +r["Item Display Order"]); }
+    const Y = [...years].sort(), series = {};
+    const GK = { "ALL SCBS": "all", "PUBLIC SECTOR BANKS": "public", "NATIONALISED BANKS": "nationalised", "SBI AND ITS ASSOCIATES": "sbi_group", "STATE BANK OF INDIA AND ITS ASSOCIATES": "sbi_group", "OLD PRIVATE SECTOR BANKS": "private_old", "NEW PRIVATE SECTOR BANKS": "private_new", "FOREIGN BANKS": "foreign" };
+    const GLB = { all: "All scheduled commercial banks", public: "Public sector banks", nationalised: "Nationalised banks", sbi_group: "SBI and its associates", private_old: "Old private sector banks", private_new: "New private sector banks", foreign: "Foreign banks" };
+    for (const g of new Set(R329.rows.map((r) => r["Bank Group Name"]))) for (const [b] of [...bands].sort((a, c) => a[1] - c[1])) {
+      const gk = GK[g]; if (!gk) { console.warn(`credit: 329 bank group "${g}" not mapped`); continue; }
+      const key = `${gk}_${b.toLowerCase().replace(/ per cent/, "").replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "")}`;
+      const data = Y.map((d) => v.get(`${g}|${b}|${d}`) ?? null);
+      if (data.every((x) => x == null)) continue;
+      if (series[key]) { series[key].data = series[key].data.map((x, i) => x ?? data[i]); continue; }   // SBI group under two names in different years
+      series[key] = { name: `${key}_banks`, label: `${GLB[gk]}: number of banks with capital adequacy ${b.toLowerCase().replace("per cent", "per cent of risk-weighted assets")}`, data };
+    }
+    // derived: banks below the 9% regulatory minimum (in force from 1999-2000), all banks
+    const below4 = series.all_below_4?.data ?? [], b49 = series.all_between_4_9?.data ?? [], below9 = series.all_below_9?.data ?? [];
+    if (!below4.length || !b49.length || !below9.length) throw new Error("credit: 329 lost a band (below 4, 4-9 or below 9 per cent)");
+    series.all_below_minimum = { name: "all_below_9pct_banks", label: "All scheduled commercial banks: number below the 9% minimum (derived: below 4% plus 4 to 9% until 2006-07)", color: "#2E4BD8",
+      data: Y.map((d, i) => (below9[i] != null ? below9[i] : d >= "2000-03-01" && below4[i] != null && b49[i] != null ? below4[i] + b49[i] : null)) };
+    bundleOut(root, "credit-crar", H_({ base: "RBI bank groups, as on 31 March", unit: "count",
+      coverage: "How many banks hold enough capital: banks counted by capital adequacy ratio band, all banks and by bank group, every March since 1996",
+      note: "RBI DBIE report 329 (Distribution of Scheduled Commercial Banks by CRAR), number of banks, as published. The bands change over time (4/8/10 per cent to 1999; 4/9/10 to 2007; 9/10 per cent after), so each band is its own series. The count below the 9% minimum is derived for 2000 to 2007 by adding two published bands." }), Y, series, "This band was not used in this year.");
+  }
+
+  // ---- 1508: frauds by banking operation ----
+  {
+    const v = new Map(), years = new Set(), half = new Set(), ops = new Map();
+    for (const r of R1508.rows) {
+      const d = iso(r["Time Date"]); const x = num(r["Item Value"]); if (x == null) continue;
+      const k = `${r["Operation Description"]}|${r["Na Description"]}|${d}`; const p = v.get(k);
+      if (!p || (p.ver !== "Final" && r["Version Desc"] === "Final")) v.set(k, { x, ver: r["Version Desc"] });
+      (d.slice(5, 7) === "03" ? years : half).add(d); ops.set(r["Operation Description"], +r["Operation Code"]);
+    }
+    const mk = (dates, dfn) => { const out = {}; for (const [op] of [...ops].sort((a, c) => a[1] - c[1])) for (const [na, nk, unitDiv, nl] of [["No.", "cases", 1, "number of cases"], ["Amount", "amount", 1e7, "amount involved, ₹ crore"]]) {
+      const key = `${slug(op)}_${nk}`; const data = dates.map((d) => { const o = v.get(`${op}|${na}|${d}`); return o == null ? null : r2(o.x / unitDiv); });
+      if (data.some((x) => x != null)) out[key] = { name: key, label: `${op === "Total" ? "All frauds" : tidy(op).replace(/,etc\.$/, ", etc.")}: ${nl}`, data }; } return out; };
+    const YF = [...years].sort();
+    bundleOut(root, "credit-frauds", H_({ base: "RBI, date of reporting", unit: "mixed: count and inr_crore",
+      coverage: "Bank frauds by banking operation (loans, cards and internet, cash, deposits, cheques, foreign exchange, off-balance sheet), number of cases and amount, every financial year since 2004-05",
+      note: "RBI DBIE report 1508 (Report on Trend and Progress: frauds in various banking operations, based on the date of reporting), scheduled commercial banks and select financial institutions as RBI reports them. Amount in ₹ crore, number in cases. A fraud is counted in the year it is reported, which can be years after it happened. Financial years dated to their March." }), YF.map((d) => `${d.slice(0, 4)}-03-01`), mk(YF), "Not reported for this operation in this year.");
+    const YH = [...half].sort();
+    if (YH.length) bundleOut(root, "credit-frauds-half-year", H_({ base: "RBI, date of reporting", frequency: "irregular", unit: "mixed: count and inr_crore",
+      coverage: "Bank frauds in the first half of the financial year (April to September), by banking operation, provisional",
+      note: "RBI DBIE report 1508, the April-September figures RBI prints beside the annual table; provisional, and not comparable with full years." }), YH, mk(YH), "Not reported.");
+  }
+
+  // ---- 336: classification of loan assets, bank by bank ----
+  {
+    const v = new Map(), years = new Set(), banks = new Map();
+    for (const r of rows336) { const d = march(iso(r["Time Date"])); years.add(d); const x = num(r.Amount); if (x == null) continue; v.set(`${r["Bank Name"]}|${r["Classification Name"]}|${d}`, x); banks.set(r["Bank Name"], r["Bank Group Name"]); }
+    const Y = [...years].sort();
+    const CL = [["Standard Advances", "standard", "standard (performing) advances"], ["Sub-Standard Advances", "sub_standard", "sub-standard advances (NPA for up to a year)"], ["Doubtful Advances", "doubtful", "doubtful advances (NPA for more than a year)"], ["Loss Advances", "loss", "loss advances (identified as uncollectable)"], ["Gross NPAs", "gnpa", "gross NPAs"], ["Total Gross Advances (ALE)", "gross_advances", "gross advances"]];
+    const tot = {};
+    for (const [c, ck, cl] of CL) tot[ck] = { name: `${ck}_inr_lakh_crore`, label: `All scheduled commercial banks, ${cl} (sum of banks)`, data: Y.map((d) => { let s = 0, n = 0; for (const b of banks.keys()) { const x = v.get(`${b}|${c}|${d}`); if (x != null) { s += x; n++; } } return n ? r3(s / LC) : null; }) };
+    bundleOut(root, "credit-loan-quality", H_({ base: "RBI asset classification, as on 31 March", unit: "inr_lakh_crore",
+      coverage: "Every bank loan by its health: standard, sub-standard, doubtful and loss advances, summed over all scheduled commercial banks, every March since 2004",
+      note: "RBI DBIE report 336 (Bank-wise and bank group-wise classification of loan assets), summed over every bank in the report, ₹ lakh crore. The report's unit column is unreliable; values are rupees." }), Y, tot, "No bank reported this item in this year.");
+    const per = {};
+    for (const [b, g] of [...banks].sort()) {
+      const data = Y.map((d) => { const n = v.get(`${b}|Gross NPAs|${d}`), a = v.get(`${b}|Total Gross Advances (ALE)|${d}`); return n != null && a ? r2((100 * n) / a) : null; });
+      if (data.every((x) => x == null)) continue;
+      per[slug(b)] = { name: `${slug(b)}_gnpa_ratio_pct`, label: `${tidy(b).replace(/\b(LIMITED|LTD\.?)\b/gi, "").replace(/\s+/g, " ").trim()} (${tidy(g).toLowerCase()}), gross NPA ratio`, data };
+    }
+    bundleOut(root, "credit-npa-banks", H_({ base: "RBI asset classification, as on 31 March", unit: "pct",
+      coverage: "Gross NPA ratio of every scheduled commercial bank, bank by bank, every March since 2004",
+      note: "RBI DBIE report 336: gross NPAs over gross advances, computed for each bank from the two published amounts. Banks that merged or closed stop; banks that opened start late." }), Y, per, "This bank reported no figure this year.");
+  }
+
+  // ---- 332: bank deposits and credit against GDP and deposits, since 1951 ----
+  {
+    const v = new Map(), years = new Set();
+    for (const r of R332.rows) { const d = march(iso(r["Time Date"])); years.add(d); v.set(`${r["Item Category"]}|${r["Item Name"]}|${d}`, num(r.Ratio)); }
+    const Y = [...years].sort(), series = {};
+    for (const cat of [...new Set(R332.rows.map((r) => r["Item Category"]))]) for (const nm of ["As per cent to GDP", "As per cent to Aggregate Deposits"]) {
+      const data = Y.map((d) => v.get(`${cat}|${nm}|${d}`) ?? null);
+      // a 0 where the source has no figure (total investments before 1970s) is not a value
+      const clean = data.map((x) => (x === 0 ? null : x));
+      if (clean.every((x) => x == null) || (cat === "Aggregate Deposits" && nm === "As per cent to Aggregate Deposits")) continue;
+      const key = `${slug(cat)}_${nm.includes("GDP") ? "to_gdp" : "to_deposits"}`;
+      series[key] = { name: `${key}_pct`, label: `${tidy(cat).replace("Excluding Merger", "excluding the HDFC merger")}, ${nm.replace("As per cent to", "as a share of").replace("Aggregate Deposits", "deposits")}`, data: clean.map(r2) };
+    }
+    if (series.credit_to_gdp) series.credit_to_gdp.color = "#2E4BD8";
+    bundleOut(root, "credit-depth", H_({ base: "RBI select ratios, financial year", unit: "pct",
+      coverage: "How deep banking runs: scheduled commercial banks' deposits, credit and investments as a share of GDP and of deposits, every year since 1950-51",
+      note: "RBI DBIE report 332 (Scheduled Commercial Banks: Ratios), per cent, as published, financial years dated to March. GDP at current market prices on the national accounts base RBI used. The rows excluding the HDFC merger are RBI's own. A 0 printed where the source has no figure is dropped." }), Y, series, "Not published for this year.");
+  }
+
+  /* ======================================================================================
+   * 5. Credit by place: the spatial statements (BSR-7) and BSR-1 sanction vs utilisation
+   * ==================================================================================== */
+  const SP = { "1483": dbieReport(db, "1483"), "1465": dbieReport(db, "1465"), "1415": dbieReport(db, "1415"), "1427": dbieProvider(db, "1427", "DP1") };
+  const S1134 = dbieProvider(db, "1134", "DP5");
+  const VP = stamp("data/raw/credit-place.json", {
+    note: "Deposits and credit of scheduled commercial banks by state, bank group and population group, from the RBI's quarterly and annual spatial statements (statement 3A; DBIE reports 1483: Mar 2004 to Mar 2017, 1465: Jun 2017 to Dec 2022, 1415: Mar 2023 on, excluding RRBs; 1427: annual, including RRBs), and BSR-1 table 1.3, credit by place of sanction and of utilisation (DBIE 1134). Measures: 1 reporting offices, 2 deposits, 3 credit (rupees); 1134: 1 credit sanctioned in the state, 2 of which used in the state, 3 used in other states, 4 sanctioned elsewhere and used here, 5 credit used in the state.",
+    reports: { ...Object.fromEntries(Object.entries(SP).map(([id, r]) => [id, { provenance: r.provenance, columns: r.header, rows: r.rows.map((x) => r.header.map((h) => x[h])) }])),
+      "1134": { provenance: S1134.provenance, columns: S1134.header, rows: S1134.rows.map((x) => S1134.header.map((h) => x[h])) } },
+  });
+  const P_ = (extra) => ({ ...base, vintage: VP, ...extra });
+  const spatial = (ids, suffix, cover, notePart) => {
+    // state x date -> [offices, deposits, credit]; also population group and bank group totals
+    const st = new Map(), pg = new Map(), bg = new Map(), dates = new Set(), flagOf = new Map();
+    // where a quarter is printed under both census population classifications (2015-16), the
+    // 2011 one is kept; state totals are the same under both (checked below)
+    const rowsAll = ids.flatMap((id) => SP[id].rows);
+    for (const r of rowsAll) { const d = fqDate(r["Fiscal Quarter"]); const f = r["Census Flag"]; if (!flagOf.has(d) || f > flagOf.get(d)) flagOf.set(d, f); }
+    const chk = new Map();
+    for (const r of rowsAll) {
+      const d = fqDate(r["Fiscal Quarter"]); const m = [num(r["Measure 1"]), num(r["Measure 2"]), num(r["Measure 3"])];
+      const ck = `${d}|${r["Census Flag"]}`; const c = chk.get(ck) ?? [0, 0]; c[0] += m[1] ?? 0; c[1] += m[2] ?? 0; chk.set(ck, c);
+      if (r["Census Flag"] !== flagOf.get(d)) continue;
+      dates.add(d);
+      for (const [map, k] of [[st, `${r["Dimension 5"]}|${d}`], [pg, `${r["Dimension 2"].replace("SEMI-URBAN", "SEMI URBAN")}|${d}`], [bg, `${r["Dimension 1"]}|${d}`], [st, `ALL INDIA|${d}`]]) {
+        const o = map.get(k) ?? [0, 0, 0]; m.forEach((x, i) => (o[i] += x ?? 0)); map.set(k, o);
+      }
+    }
+    for (const d of dates) { const a = chk.get(`${d}|2001`), b = chk.get(`${d}|2011`); if (a && b && (Math.abs(a[0] / b[0] - 1) > 1e-6 || Math.abs(a[1] / b[1] - 1) > 1e-6)) throw new Error(`credit: spatial ${ids} ${d}: totals differ between the 2001 and 2011 census classifications`); }
+    const D = [...dates].sort();
+    const states = [...new Set([...st.keys()].map((k) => k.split("|")[0]))].filter((x) => x !== "ALL INDIA").sort();
+    const amt = {}, cd = {}, off = {};
+    // A state that lost territory to a new state or union territory inside the bundle's span
+    // (Andhra Pradesh to Telangana in 2014, Jammu and Kashmir to Ladakh in 2019) is a different
+    // unit before and after: two series, never one (the states brief; AGENTS.md rule 1).
+    const firstOf = (name) => D.find((d) => st.has(`${name}|${d}`));
+    const segments = [];
+    for (const name of ["ALL INDIA", ...states]) {
+      const k = name === "ALL INDIA" ? "all_india" : slug(stateName(name)), L = name === "ALL INDIA" ? "All India" : stateName(name);
+      const child = Object.entries(SPLITS).find(([, par]) => par === name)?.[0];
+      const cut = child && states.includes(child) && firstOf(child) > D[0] ? firstOf(child) : null;
+      if (!cut) { segments.push([name, k, L, () => true]); continue; }
+      segments.push([name, k, `${L} (before ${stateName(child)} was separated)`, (d) => d < cut]);
+      segments.push([name, `${k}_from_${cut.slice(0, 4)}`, `${L} (after ${stateName(child)} was separated)`, (d) => d >= cut]);
+    }
+    for (const [name, k, L, keep] of segments) {
+      const o = (d) => (keep(d) ? st.get(`${name}|${d}`) : null);
+      amt[`${k}_deposits`] = { name: `${k}_deposits_inr_lakh_crore`, label: `${L}, deposits`, data: D.map((d) => { const x = o(d); return x ? r3(x[1] / LC) : null; }) };
+      amt[`${k}_credit`] = { name: `${k}_credit_inr_lakh_crore`, label: `${L}, credit`, data: D.map((d) => { const x = o(d); return x ? r3(x[2] / LC) : null; }) };
+      cd[k] = { name: `${k}_cd_ratio_pct`, label: `${L}, credit-deposit ratio`, data: D.map((d) => { const x = o(d); return x && x[1] ? r2((100 * x[2]) / x[1]) : null; }) };
+      off[k] = { name: `${k}_offices`, label: `${L}, bank offices reporting`, data: D.map((d) => o(d)?.[0] ?? null) };
+    }
+    if (cd.all_india) cd.all_india.color = "#2E4BD8";
+    const PGN = { RURAL: "rural", "SEMI URBAN": "semi_urban", URBAN: "urban", METROPOLITAN: "metro" }, PGL = { rural: "Rural", semi_urban: "Semi-urban", urban: "Urban", metro: "Metropolitan" };
+    const groups = {};
+    for (const [src, k] of Object.entries(PGN)) for (const [i, mk, ml] of [[1, "deposits", "deposits"], [2, "credit", "credit"]])
+      groups[`${k}_${mk}`] = { name: `${k}_${mk}_inr_lakh_crore`, label: `${PGL[k]} centres, ${ml}`, data: D.map((d) => { const o = pg.get(`${src}|${d}`); return o ? r3(o[i] / LC) : null; }) };
+    for (const b of [...new Set([...bg.keys()].map((k) => k.split("|")[0]))].sort()) for (const [i, mk] of [[1, "deposits"], [2, "credit"]])
+      groups[`${slug(b)}_${mk}`] = { name: `${slug(b)}_${mk}_inr_lakh_crore`, label: `${tidy(b).toLowerCase().replace(/^\w/, (c) => c.toUpperCase()).replace("Sbi", "SBI")}, ${mk}`, data: D.map((d) => { const o = bg.get(`${b}|${d}`); return o ? r3(o[i] / LC) : null; }) };
+    const meta = (unit, what) => P_({ frequency: ids.includes("1427") ? "annual" : "quarterly", base: `Spatial statements, ${cover}`, unit, coverage: `${what}, ${notePart}`,
+      note: `RBI quarterly statistics on deposits and credit of scheduled commercial banks, statement 3A (DBIE ${ids.join(" and ")}), ${cover}. Summed over bank groups and population groups to each state; by the location of the branch that books the deposit or loan. Dated to the last month of each quarter.` });
+    bundleOut(root, `credit-states${suffix}`, meta("inr_lakh_crore", "Bank deposits and credit in every state and union territory, ₹ lakh crore"), D, amt, "Not reported for this state in this quarter.");
+    bundleOut(root, `credit-states-cd${suffix}`, meta("pct", "Credit-deposit ratio of every state and union territory: credit booked in the state as a share of deposits booked there"), D, cd, "Not reported for this state in this quarter.");
+    bundleOut(root, `credit-offices${suffix}`, meta("count", "Bank offices reporting, in every state and union territory"), D, off, "Not reported for this state in this quarter.");
+    bundleOut(root, `credit-places${suffix}`, meta("inr_lakh_crore", "Deposits and credit by population group (rural, semi-urban, urban, metropolitan centres) and by bank group, all India"), D, groups, "Not reported in this quarter.");
+  };
+  spatial(["1483"], "-2004", "including regional rural banks", "every quarter from March 2004 to March 2017");
+  spatial(["1465"], "-2017", "including regional rural banks", "every quarter from June 2017 to December 2022");
+  spatial(["1415"], "", "excluding regional rural banks", "every quarter since March 2023");
+  spatial(["1427"], "-annual", "including regional rural banks", "every March since 2023");
+
+  // ---- 1134: credit by place of sanction and of utilisation, March 2026 ----
+  {
+    const D = [...new Set(S1134.rows.map((r) => `${iso(r["Reporting Date"]).slice(0, 7)}-01`))].sort();
+    if (D.length !== 1) console.warn(`credit: 1134 carries ${D.length} dates; the bundle keeps all`);
+    const series = {};
+    const add = (k, label, f) => { series[k] = { name: k, label, data: D.map((d) => f(d)) }; };
+    const rowsBy = new Map(S1134.rows.filter((r) => r["Dimension 2"]).map((r) => [`${r["Dimension 2"]}|${iso(r["Reporting Date"]).slice(0, 7)}-01`, r]));
+    const regions = new Map(S1134.rows.filter((r) => !r["Dimension 2"]).map((r) => [`${r["Dimension 1"]}|${iso(r["Reporting Date"]).slice(0, 7)}-01`, r]));
+    const allInd = (d, m) => [...regions.entries()].filter(([k]) => k.endsWith(d)).reduce((a, [, r]) => a + num(r[m]), 0);
+    add("all_india_sanctioned", "All India, credit by place of sanction", (d) => r3(allInd(d, "Measure 1") / LC));
+    add("all_india_utilised", "All India, credit by place of utilisation", (d) => r3(allInd(d, "Measure 5") / LC));
+    for (const name of [...new Set(S1134.rows.map((r) => r["Dimension 2"]).filter(Boolean))].sort()) {
+      const k = slug(stateName(name)), L = stateName(name);
+      const g = (m) => (d) => { const r = rowsBy.get(`${name}|${d}`); return r ? r3(num(r[m]) / LC) : null; };
+      add(`${k}_sanctioned`, `${L}, credit sanctioned by branches in the state`, g("Measure 1"));
+      add(`${k}_sanctioned_used_here`, `${L}, of which used in the state`, g("Measure 2"));
+      add(`${k}_sanctioned_used_elsewhere`, `${L}, of which used in other states`, g("Measure 3"));
+      add(`${k}_sanctioned_elsewhere_used_here`, `${L}, credit sanctioned in other states and used here`, g("Measure 4"));
+      add(`${k}_utilised`, `${L}, credit used in the state (place of utilisation)`, g("Measure 5"));
+    }
+    bundleOut(root, "credit-utilisation", P_({ frequency: "annual", base: "BSR-1, as on 31 March", unit: "inr_lakh_crore",
+      coverage: "Where loans are booked and where the money is used, state by state: credit by place of sanction and by place of utilisation, March 2026",
+      note: "RBI BSR-1 table 1.3 (DBIE 1134): outstanding credit of scheduled commercial banks (including RRBs) by the state of the branch that sanctioned it and by the state where it is used, ₹ lakh crore. Credit used in a state = sanctioned and used there + sanctioned elsewhere and used there." }), D, series, "Not reported.");
+  }
+
+  /* ======================================================================================
+   * 6. BSR-1, quarterly: who holds bank loans (occupation, organisation, gender), in what
+   *    size, at what rate, where (population group, state, district), by bank group
+   * ==================================================================================== */
+  const B1 = { "941": "DP0", "942": "DP0", "943": "DP0", "944": "DP0", "945": "DP0", "946": "DP0", "947": "DP0", "948": "DP0", "949": "DP0", "963": "DP0", "1555": "DP0" };
+  const BR = Object.fromEntries(Object.entries(B1).map(([id, dp]) => [id, dbieProvider(db, id, dp)]));
+  const VB = stamp("data/raw/credit-bsr1.json", {
+    note: "RBI Basic Statistical Return 1 (BSR-1), quarterly tables on outstanding credit of scheduled commercial banks (excluding RRBs), read from the local Data Bank's DBIE mirror: 941 population group, 942 bank group, 943 state, 944 occupation, 945 type of account, 946 organisation (incl. male and female individuals), 947 size of credit limit, 948 interest rate range, 949 weighted average lending rate by occupation, 963 state x occupation, 1555 district x gender (credit to individuals). Amounts in rupees.",
+    reports: Object.fromEntries(Object.entries(BR).map(([id, r]) => [id, { provenance: r.provenance, columns: r.header, rows: r.rows.map((x) => r.header.map((h) => x[h])) }])),
+  });
+  const B_ = (extra) => ({ ...base, vintage: VB, frequency: "quarterly", base: "BSR-1 quarterly, excluding RRBs", ...extra });
+  const qEnd = (s) => `${iso(s).slice(0, 7)}-01`;
+  const clean = (l) => tidy(String(l).replace(/^\s*(\(?[a-z0-9ivx]+[.)]\)?\s+)/i, "")).replace(/\s+/g, " ").trim();
+  const sentence = (l) => (l === l.toUpperCase() ? l.toLowerCase().replace(/^\w/, (c) => c.toUpperCase()) : l);
+  /** a quarterly "key" table: one series per key and measure (amount and limit in ₹ lakh crore,
+   *  accounts in lakh, offices as counts) */
+  const bsr1 = (id, rel, coverage, { key = (r) => r["Key Description 1"], date = (r) => qEnd(r["Time Date"]), measures = [["Amount Outstanding", "amount", "credit outstanding"], ["Credit Limit", "limit", "credit limits sanctioned"], ["No of Accounts", "accounts", "loan accounts, lakh"]], note = "" } = {}) => {
+    const rows = BR[id].rows, dates = new Set(), keys = new Map(), v = new Map();
+    for (const r of rows) {
+      const k = key(r); if (!k) continue; const d = date(r); dates.add(d);
+      if (!keys.has(k)) keys.set(k, +r["Sorting Order"] || keys.size);
+      for (const [col] of measures) v.set(`${k}|${col}|${d}`, num(r[col]));
+    }
+    const D = [...dates].sort(), series = {}, used = new Set();
+    for (const [k] of [...keys].sort((a, b) => a[1] - b[1])) {
+      let ks = slug(clean(k)) || slug(k); if (used.has(ks)) ks = `${ks}_${keys.get(k)}`; used.add(ks);
+      for (const [col, suf, ml] of measures) {
+        const div = suf === "accounts" ? 1e5 : suf === "offices" ? 1 : suf === "rate" ? 1 : LC;
+        const data = D.map((d) => { const x = v.get(`${k}|${col}|${d}`); return x == null ? null : suf === "rate" ? r2(x) : r3(x / div); });
+        if (data.some((x) => x != null)) series[`${ks}_${suf}`] = { name: `${ks}_${suf}`, label: `${sentence(clean(k))}, ${ml}`, data };
+      }
+    }
+    return bundleOut(root, rel, B_({ unit: measures.length > 1 ? "mixed: inr_lakh_crore (amount, limit), lakh accounts" : measures[0][1] === "rate" ? "pct" : "inr_lakh_crore",
+      coverage, note: `RBI BSR-1 quarterly (DBIE ${id}), outstanding credit of scheduled commercial banks excluding RRBs, as at the end of each quarter (dated to that month). Amounts and limits in ₹ lakh crore; accounts in lakh. ${note}`.trim() }), D, series, "Not reported for this quarter.");
+  };
+  bsr1("944", "credit-occupation", "Bank credit by the borrower's occupation, at every level the RBI publishes: agriculture, industries one by one, transport, professional services, personal loans by type, trade, finance, every quarter since March 2014");
+  bsr1("941", "credit-population-group", "Bank credit by the population group of the branch: rural, semi-urban, urban, metropolitan, every quarter since March 2014", { key: (r) => r["Key Description 1"] });
+  bsr1("943", "credit-states-bsr1", "Bank credit by state and union territory (place of sanction), every quarter since March 2014", { key: (r) => r["Key Description 2"], note: "States are as the RBI lists them in each quarter: Telangana from December 2014, Ladakh from December 2019, and Dadra and Nagar Haveli with Daman and Diu merged from March 2020. Andhra Pradesh and Jammu and Kashmir before those dates are larger units than after, so read their series across those quarters as two." });
+  bsr1("942", "credit-bank-groups", "Bank credit by bank group: public sector, private sector, foreign, small finance banks, every quarter since June 2017", { key: (r) => r["Item Hierarchy_NewBG"], measures: [["Amount Outstanding", "amount", "credit outstanding"], ["Credit Limit", "limit", "credit limits sanctioned"], ["No of Accounts", "accounts", "loan accounts, lakh"], ["No of Offices", "offices", "offices reporting"]] });
+  bsr1("945", "credit-account-type", "Bank credit by type of account: cash credit, overdraft, demand, medium and long-term loans, bills and packing credit, every quarter since March 2014");
+  bsr1("946", "credit-organisation", "Bank credit by the kind of borrower: government, public and private companies, co-operatives, households (individuals, men and women), microfinance institutions, non-residents, every quarter since March 2014",
+    { key: (r) => { const k = r["Key Description 1"]; return /^a\)\s+Male/.test(k.trim()) ? "Individuals, male" : /^b\)\s+Female/.test(k.trim()) ? "Individuals, female" : k; } });
+  bsr1("947", "credit-size", "Bank credit by the size of the credit limit, from loans of ₹25,000 or less to loans above ₹100 crore, every quarter since March 2014");
+  bsr1("948", "credit-interest-rates", "Bank loans by the interest rate they carry, in one-point bands from below 5% to 13% and above, every quarter since March 2021", { note: "Bands are the interest rate on each outstanding loan. Bills purchased and discounted carry no rate and are shown apart." });
+  bsr1("949", "credit-lending-rates", "Weighted average lending rate on outstanding loans, by the borrower's occupation, every quarter since March 2014",
+    { date: (r) => qEnd(r["Reporting Date"]), measures: [["Credit Limit", "rate", "weighted average lending rate, per cent"]], note: "The source names the rate column 'Credit Limit'; its values are interest rates in per cent (about 10%), which is what the table's title says they are." });
+  // 963: state x occupation group, amount outstanding only
+  {
+    const rows = BR["963"].rows, dates = new Set(), v = new Map(), states = new Map(), occs = new Map();
+    for (const r of rows) { const d = qEnd(r["Reporting Date"]); dates.add(d); states.set(r["Key3 Description 2"], +r["Sorting Order3"]); occs.set(r["Key4 Description 1"], +r["Sorting Order4"]); v.set(`${r["Key3 Description 2"]}|${r["Key4 Description 1"]}|${d}`, num(r["Set1 Total Amount Outstanding"])); }
+    const D = [...dates].sort(), series = {};
+    for (const [st] of [...states].sort((a, b) => a[1] - b[1])) for (const [oc] of [...occs].sort((a, b) => a[1] - b[1])) {
+      const data = D.map((d) => { const x = v.get(`${st}|${oc}|${d}`); return x == null ? null : r3(x / LC); });
+      if (data.some((x) => x != null)) series[`${slug(st)}__${slug(clean(oc))}`] = { name: `${slug(st)}__${slug(clean(oc))}_inr_lakh_crore`, label: `${st.replace(/ & /g, " and ")}: ${sentence(clean(oc))}`, data };
+    }
+    bundleOut(root, "credit-states-occupation", B_({ unit: "inr_lakh_crore", coverage: "Bank credit in every state by the borrower's occupation group (agriculture, industry, transport, services, personal loans, trade, finance), every quarter since March 2014",
+      note: "RBI BSR-1 quarterly table 3.6 (DBIE 963), amount outstanding, ₹ lakh crore, by state of the sanctioning branch. States as listed by the RBI each quarter (see credit-states-bsr1)." }), D, series, "Not reported for this state in this quarter.");
+  }
+  // 1555: credit to individuals by gender, district rows summed to states and all India
+  {
+    const rows = BR["1555"].rows, dates = new Set(), acc = new Map();
+    // the table's six measures: 1, 2 accounts and amount of men; 3, 4 of women; 5, 6 totals (5 = 1 + 3 and 6 = 2 + 4, checked)
+    let bad = 0;
+    for (const r of rows) {
+      const d = qEnd(r["Period End Date"]); dates.add(d); const m = [1, 2, 3, 4, 5, 6].map((i) => num(r[`Measure_${i}`]) ?? 0);
+      if (Math.abs(m[0] + m[2] - m[4]) > 1 || Math.abs(m[1] + m[3] - m[5]) > 1000) bad++;
+      // the source prints an ALL INDIA row beside the district rows in some quarters: it is
+      // read as its own figure, never added to the districts
+      const st = r.Dimension_2 === "ALL INDIA" || r.Dimension_1 === "ALL INDIA" ? "ALL INDIA (printed)" : r.Dimension_2;
+      for (const k of st === "ALL INDIA (printed)" ? [`${st}|${d}`] : [`${st}|${d}`, `ALL INDIA|${d}`]) { const o = acc.get(k) ?? [0, 0, 0, 0, 0, 0]; m.forEach((x, i) => (o[i] += x)); acc.set(k, o); }
+    }
+    // where the source prints an all-India row it must equal the sum of its districts
+    for (const d of dates) { const a = acc.get(`ALL INDIA (printed)|${d}`), b = acc.get(`ALL INDIA|${d}`); if (a && b && Math.abs(a[5] / b[5] - 1) > 0.002) throw new Error(`credit: 1555 ${d}: printed all-India ${a[5]} != sum of districts ${b[5]}`); }
+    if (bad > rows.length * 0.01) throw new Error(`credit: 1555 male + female != total on ${bad} rows: the measure layout moved`);
+    const D = [...dates].sort(), series = {};
+    const names = [...new Set([...acc.keys()].map((k) => k.split("|")[0]))].filter((x) => !x.startsWith("ALL INDIA")).sort();
+    for (const st of ["ALL INDIA", ...names]) {
+      const k = st === "ALL INDIA" ? "all_india" : slug(stateName(st)), L = st === "ALL INDIA" ? "All India" : stateName(st);
+      const g = (f) => D.map((d) => { const o = acc.get(`${st}|${d}`); return o ? f(o) : null; });
+      series[`${k}_women_share`] = { name: `${k}_women_share_of_amount_pct`, label: `${L}, women's share of bank credit to individuals`, data: g((o) => (o[5] ? r2((100 * o[3]) / o[5]) : null)) };
+      series[`${k}_women_accounts_share`] = { name: `${k}_women_share_of_accounts_pct`, label: `${L}, women's share of individuals' loan accounts`, data: g((o) => (o[4] ? r2((100 * o[2]) / o[4]) : null)) };
+      series[`${k}_women_amount`] = { name: `${k}_women_amount_inr_lakh_crore`, label: `${L}, credit to women, ₹ lakh crore`, data: g((o) => r3(o[3] / LC)) };
+      series[`${k}_individuals_amount`] = { name: `${k}_individuals_amount_inr_lakh_crore`, label: `${L}, credit to all individuals, ₹ lakh crore`, data: g((o) => r3(o[5] / LC)) };
+    }
+    series.all_india_women_share.color = "#2E4BD8";
+    bundleOut(root, "credit-women", B_({ unit: "mixed: pct (shares), inr_lakh_crore (amounts)",
+      coverage: "Bank credit to women: women's share of bank loans to individuals, by amount and by number of accounts, in every state, every quarter since March 2014",
+      note: "RBI BSR-1 quarterly table 1.10 (DBIE 1555), district-wise and gender-wise credit to individuals, summed here to states and all India. Measures 1-2 are men's accounts and amounts, 3-4 women's, 5-6 the totals (checked: men + women = total). Credit to individuals only; loans to firms, including those women own, are not counted here." }), D, series, "Not reported for this state in this quarter.");
+  }
+
+  /* ======================================================================================
+   * 7. NBFCs' own credit (selected NBFCs and HFCs)
+   * ==================================================================================== */
+  {
+    const N = databankQuery(db, "rbi_nbfc_credit", "select distinct observation_date, category_code, category_label, amount_inr_cr, year_ago_date, year_ago_amount_inr_cr, growth_yoy_pct, release_date, release_prid from {table} order by observation_date, category_code, release_prid");
+    const VN = stamp("data/raw/credit-nbfc.json", { note: "Credit by selected NBFCs and HFCs, by sector, from the RBI's monthly sectoral-credit release, read from the local Data Bank (rbi_nbfc_credit). ₹ crore.", provenance: N.provenance,
+      columns: ["observation_date", "category_code", "category_label", "amount_inr_cr", "year_ago_date", "year_ago_amount_inr_cr", "growth_yoy_pct", "release_date", "release_prid"], rows: N.rows.map((r) => [r.observation_date, r.category_code, r.category_label, r.amount_inr_cr, r.year_ago_date, r.year_ago_amount_inr_cr, r.growth_yoy_pct, r.release_date, r.release_prid]) });
+    const latest = new Map();
+    for (const r of N.rows) { if (r.amount_inr_cr == null) continue; const k = `${r.observation_date}|${r.category_code}`; const p = latest.get(k); if (!p || +r.release_prid > +p.release_prid) latest.set(k, r); }
+    const months = [...new Set([...latest.keys()].map((k) => monthKey(k.split("|")[0])))].sort();
+    const axis = (() => { const out = []; let [y, m] = months[0].split("-").map(Number); for (;;) { const k = `${y}-${String(m).padStart(2, "0")}-01`; if (k > months.at(-1)) break; out.push(k); m++; if (m > 12) { m = 1; y++; } } return out; })();
+    const codes = new Map(N.rows.map((r) => [r.category_code, r.category_label]));
+    const series = {};
+    for (const [c, l] of [...codes].sort((a, b) => (a[0] === "total" ? -1 : b[0] === "total" ? 1 : a[0].localeCompare(b[0], undefined, { numeric: true })))) {
+      const k = c === "total" ? "nbfc_credit" : slug(tidy(l).replace(/\*+$/, "").replace(/ of which$/i, ""));
+      series[k] = { name: `${k}_inr_lakh_crore`, label: c === "total" ? "NBFC credit, all sectors" : `NBFC credit: ${tidy(l).replace(/\*+$/, "").replace(/ of which$/i, "")}`,
+        data: axis.map((m) => { const r = [...latest.values()].find((x) => monthKey(x.observation_date) === m && x.category_code === c); return r ? r3(r.amount_inr_cr / CR_LC) : null; }) };
+    }
+    series.nbfc_credit.color = "#2E4BD8";
+    bundleOut(root, "credit-nbfc", { ...base, vintage: VN, frequency: "monthly", base: "Selected NBFCs and HFCs", unit: "inr_lakh_crore",
+      coverage: "Credit given by non-banking finance companies (NBFCs and housing finance companies) by sector, for the months the RBI's release prints, from May 2024",
+      note: "RBI, Sectoral Deployment of Credit by NBFCs (selected NBFCs and HFCs, in the monthly sectoral-credit release), ₹ lakh crore, latest release per month. The release prints the current month, the same month a year earlier and the previous March, so months between are not published: they are gaps, not zeros. Housing loans include those of HFCs." }, axis, series, "Not printed in any release: the RBI publishes the current month, a year earlier and March.");
+  }
 
   return { db, base, stamp };
 }
