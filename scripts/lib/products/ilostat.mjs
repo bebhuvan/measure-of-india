@@ -32,10 +32,10 @@
 // `lower`/`upper` = the ILO's uncertainty bounds, where it publishes bounds that differ from
 // the value. Nothing is computed here: every value is as the ILO serves it.
 //
-// Hand check (2026-10-09): ILOEST unemployment rate, India, total 15+, 2024 = 4.173 (OBS_STATUS
-// R) in DF_UNE_2EAP_SEX_AGE_RT, matching the ILOSTAT country profile; PLFS female LFPR 15+,
-// calendar 2024 = 34.389 in DF_EAP_DWAP_SEX_AGE_RT. Both checked against the API's labelled
-// CSV (format=csvfilewithlabels) by hand, and recorded in docs/status/ilo.md.
+// Hand check (2026-10-09), against the ILO's own labelled CSV (format=csvfilewithlabels, read by
+// eye, not by this code): ILOEST unemployment rate, India, Total, 15+, 2024 = 4.173, status R
+// (DF_UNE_2EAP_SEX_AGE_RT); PLFS women's LFPR, 15+, 2024 = 34.389 (DF_EAP_DWAP_SEX_AGE_RT).
+// Both are asserted in scripts/validate.mjs so a new edition forces a fresh check.
 
 import fs from "node:fs";
 import path from "node:path";
