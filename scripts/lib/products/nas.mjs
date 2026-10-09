@@ -375,3 +375,48 @@ export async function buildNas(root, dcfg, vintage) {
   if (dcfg.fetch.back) await buildBack(root, dcfg, vintage);
   return bundle;
 }
+
+/* Catalogue (docs/CONTRACT-coverage.md): what MoSPI publishes in the national accounts
+ * (account 1, National), from nas/getNasIndicatorList and nas/getNasFilterByIndicatorId for
+ * every base x series x frequency x indicator the list offers:
+ *   nas:<base>:<series>:<annual|quarterly>:<indicator-code>-<name>          the total
+ *   nas:<base>:<series>:<annual|quarterly>:<indicator>:<dimension>:<code>-<name>   each cut
+ * (industry, sub-industry, institutional sector, revision stage ... whatever the filter
+ * lists besides years and quarters). The Regional account (state GDP) is catalogued by the
+ * states guide, not here. A combination the filter refuses (HTTP 400) is not published. */
+import { mospi as mospiOne } from "../mospi.mjs";
+import { writeCatalogue, idPart, catalogueCli } from "../catalogue.mjs";
+export async function catalogueNas() {
+  const items = [];
+  const list = (await mospiOne("nas/getNasIndicatorList", { account_code: 1 })).data ?? {};
+  const SKIP = new Set(["year", "quarterly", "month"]);
+  const dims = new Set();
+  for (const { base_year } of list.base_year ?? []) for (const { series } of list.series ?? []) for (const fr of list.frequency ?? []) {
+    if (!String(fr.series).split(/,\s*/).includes(series)) continue;
+    const freq = fr.description === "Quarterly" ? "quarterly" : "annual";
+    for (const ind of list.indicator ?? []) {
+      let f;
+      try { f = (await mospiOne("nas/getNasFilterByIndicatorId", { indicator_code: ind.indicator_code, base_year, series, frequency_code: fr.frequency_code, account_code: 1 }, 2)).data; }
+      catch (e) { if (/HTTP 4\d\d/.test(e.message)) continue; throw e; }
+      if (!f || !(f.year ?? []).length) continue;   // no years: this base/series does not carry the indicator
+      const head = `nas:${base_year}:${idPart(series)}:${freq}:${ind.indicator_code}`;
+      items.push({ id: `${head}-${idPart(ind.description)}`, label: ind.description });
+      for (const [field, vals] of Object.entries(f)) {
+        if (SKIP.has(field) || !Array.isArray(vals)) continue;
+        dims.add(field);
+        for (const v of vals) {
+          const code = v[`${field}_code`] ?? v.code ?? v[Object.keys(v).find((k) => /code$/.test(k))];
+          const name = v[`${field}_name`] ?? v.description ?? v[Object.keys(v).find((k) => /name$|description$/.test(k))] ?? code;
+          items.push({ id: `${head}:${idPart(field)}:${idPart(code)}-${idPart(name)}`, label: `${ind.description}, ${name}` });
+        }
+      }
+    }
+  }
+  writeCatalogue("gdp", {
+    source: "MoSPI, NSO: National Accounts Statistics, National account (eSankhyiki API)",
+    generator: "scripts/lib/products/nas.mjs --catalogue",
+    note: `From getNasIndicatorList (account 1) and getNasFilterByIndicatorId per base, series, frequency and indicator. Dimensions seen: ${[...dims].sort().join(", ")}. Price basis (constant, current) is a column of every row, not a cut; growth-rate indicators are the API's own rounded rates.`,
+    items,
+  });
+}
+await catalogueCli(import.meta.url, catalogueNas);

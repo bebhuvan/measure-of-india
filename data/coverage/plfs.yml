@@ -1,0 +1,43 @@
+# Coverage ledger: Periodic Labour Force Survey, MoSPI (docs/CONTRACT-coverage.md).
+# Catalogue: node scripts/lib/products/plfs.mjs --catalogue. First matching rule wins.
+# Omissions left for the coordinator ("jobs deeper"): calendar-year annual estimates
+# (2023 to 2025, a new design and a seam), LFPR and WPR by state, religion, social group,
+# age bands, the gender x sector grid of the annual and quarterly series, the quarterly
+# bulletin's states, NIC, NCO and enterprise cuts, employment conditions (indicator 5),
+# and earnings by state.
+family: plfs
+guides: [jobs]
+catalogue: data/coverage/plfs.catalogue.json
+rules:
+  - match: ["plfs:monthly:1:cws:all", "plfs:monthly:2:cws:all", "plfs:monthly:3:cws:all"]
+    status: shown
+    bundle: plfs-monthly
+    plate: "The current reading; One question, three stopwatches"
+  - match: ["plfs:monthly:*:cws:gs:male-rural", "plfs:monthly:*:cws:gs:male-urban", "plfs:monthly:*:cws:gs:female-rural", "plfs:monthly:*:cws:gs:female-urban"]
+    status: shown
+    bundle: plfs-cuts
+    plate: "The parts, one plate each (gender and sector)"
+  - match: ["plfs:quarterly:1:cws:gs:person-urban", "plfs:quarterly:2:cws:gs:person-urban", "plfs:quarterly:3:cws:gs:person-urban"]
+    status: shown
+    bundle: plfs-quarterly
+    plate: "Plate 1: the long arc, urban"
+  - match: ["plfs:annual-agri:1:*:all", "plfs:annual-agri:2:*:all", "plfs:annual-agri:3:*:all"]
+    status: shown
+    bundle: plfs-annual
+    plate: "One question, three stopwatches"
+  - match: "plfs:annual-agri:3:*:state:*"
+    status: shown
+    bundle: plfs-states
+    plate: "A country of labour markets"
+  - match: ["plfs:annual-agri:4:ps-ss:broad-status-employment:*", "plfs:annual-agri:4:cws:broad-industry-work:*"]
+    status: shown
+    bundle: plfs-status
+    plate: "What work is"
+  - match: ["plfs:annual-agri:6:*:all", "plfs:annual-agri:7:*:all", "plfs:annual-agri:8:*:all", "plfs:annual-agri:6:*:gs:*-rural-plus-urban", "plfs:annual-agri:7:*:gs:*-rural-plus-urban", "plfs:annual-agri:8:*:gs:*-rural-plus-urban"]
+    status: shown
+    bundle: plfs-earnings
+    plate: "What work pays"
+  - match: ["plfs:annual-agri:3:ps-ss:education:*", "plfs:annual-agri:3:ps-ss:age:15-29-years"]
+    status: shown
+    bundle: plfs-education
+    plate: "The educated queue"

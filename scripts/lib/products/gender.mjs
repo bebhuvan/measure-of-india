@@ -187,3 +187,17 @@ export async function buildGender(root, dcfg, vintage) {
   writeSeries(root, "data/series/gender-states.json", statesBundle);
   return sexBundle;
 }
+
+/* Catalogue (docs/CONTRACT-coverage.md): gender/getGenderIndicatorList and
+ * gender/getGenderFilterByIndicatorId for all of the compendium's indicators, one cut at a
+ * time: gender:<indicator>:all | :<dimension>:<value>. */
+import { writeCatalogue, indicatorCatalogue, catalogueCli } from "../catalogue.mjs";
+export async function catalogueGender() {
+  const inds = (await mospi("gender/getGenderIndicatorList", {})).data ?? [];
+  const items = await indicatorCatalogue({ mospi, prefix: "gender", indicators: Array.isArray(inds) ? inds : inds.indicator ?? [],
+    filter: (ind) => ["gender/getGenderFilterByIndicatorId", { indicator_code: ind.indicator_code }] });
+  writeCatalogue("gender", { source: "MoSPI: Women and Men in India, the multi-source gender compendium (eSankhyiki API)",
+    generator: "scripts/lib/products/gender.mjs --catalogue",
+    note: "From getGenderIndicatorList and getGenderFilterByIndicatorId: one cut at a time; each indicator's own years sit inside it.", items });
+}
+await catalogueCli(import.meta.url, catalogueGender);

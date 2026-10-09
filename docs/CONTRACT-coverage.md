@@ -31,6 +31,12 @@ Ids are stable, lowercase, colon-separated from coarse to fine, so a glob can ad
 whole branch (`meidb:export:hs8:*`). Where a source has an enormous tail (11,000 HS lines,
 358 CPI items x 37 states) list it: the catalogue is a file, not a page.
 
+Helpers live in `scripts/lib/catalogue.mjs`: `writeCatalogue` (sorted, one item per line,
+so a regenerated catalogue diffs cleanly), `catalogueCli` (runs an adapter's catalogue
+function under `--catalogue`), and `indicatorCatalogue` for the common MoSPI survey shape
+(an indicator list plus a filter listing per indicator): one item per indicator x one cut,
+with measures such as a survey round or an imputation basis crossed rather than cut.
+
 **2. The ledger**: `data/coverage/<family>.yml`, written by the person or agent building the
 guide. An ordered list of rules; the **first** rule whose `match` fits an item decides it.
 
@@ -77,6 +83,9 @@ bundle when given.
 5. `excluded` and `blocked` reasons are non-empty sentences;
 6. `--strict` (the launch setting): every guide in `src/dossiers/registry.js` is listed in
    some ledger's `guides`.
+
+`--list` prints each ledger's undecided items folded into a few globs (any id position
+taking more than six values becomes `*`), which is the omission list to schedule.
 
 It prints a per-family tally (items shown / baked / excluded / blocked) so the share of a
 source a guide draws is visible on every run.

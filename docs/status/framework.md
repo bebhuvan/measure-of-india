@@ -64,9 +64,80 @@ Data Bank's IDH config. Wanted, all-India unless said, full history, every vinta
 - **Trade**: monthly merchandise exports, imports, balance (US$ and ₹), oil and non-oil;
   services exports and imports.
 
+- **Ledgers for the 13 existing guides** (2026-10-09). A `--catalogue` mode in every adapter
+  (`node scripts/lib/products/<adapter>.mjs --catalogue`) built on `scripts/lib/catalogue.mjs`,
+  16 catalogues and 16 ledgers in `data/coverage/`. `coverage --strict` now lists only
+  `external` without a ledger (skipped per the brief: atlas-external is rebuilding it).
+  The gate FAILS on purpose: the omissions below are undecided, for you to schedule.
+  `node scripts/coverage.mjs --list` prints them as globs. Everything else is green
+  (build, validate, asof, qc, chart lint, 27 tests, prose:dry).
+
+  | Family (guide) | Items | Shown | Baked | Excluded |
+  |---|---|---|---|---|
+  | cpi (cpi) | 83,690 | 591 | 72 | 3,024 |
+  | cpialrl (cpi) | 980 | 30 | 34 | 0 |
+  | gdp (gdp) | 621 | 34 | 32 | 118 |
+  | wpi (wpi) | 3,344 | 870 | 1,124 | 0 |
+  | iip (iip) | 266 | 69 | 64 | 0 |
+  | isp (iip) | 38 | 19 | 0 | 0 |
+  | plfs (jobs) | 1,719 | 127 | 0 | 0 |
+  | hces (consumption) | 803 | 169 | 0 | 0 |
+  | asi (factories) | 43,794 | 488 | 0 | 57 |
+  | asuse (factories) | 2,275 | 329 | 0 | 0 |
+  | aishe | 372 | 145 | 0 | 2 |
+  | gender | 4,828 | 86 | 0 | 0 |
+  | mnre | 212 | 91 | 0 | 0 |
+  | nfhs | 11,152 | 356 | 0 | 0 |
+  | manufacturing (WDI) | 21 | 11 | 0 | 0 |
+  | deposits (BSR-2) | 791 | 101 | 0 | 0 |
+
+  What an item is: an indicator crossed with one cut (contract wording). Catalogues come
+  from the source's listing calls, not from probing every slice: MoSPI is shared with the
+  states and services sessions, so about 450 metadata calls in all, one at a time. Where a
+  listing offers a cross (CPI state x sector x node), a probe checked the shape (Andhra
+  Pradesh rural, Aug 2026: 649 of 669 nodes served), so a few listed items may be empty.
+
+## Omissions for the coordinator to schedule (the undecided items)
+
+- **cpi** (prices deeper): base-2024 classes and sub-classes (raw only); base-2024 rural and
+  urban below the General index; base-2024 state x division, group, class, item (about 73,000
+  items); base-2024 back series for rural and urban; base-2012 groups other than general,
+  food, fuel (housing, pan, clothing, misc: raw only, used to compute the headline); rural
+  and urban sub-groups; state groups and sub-groups; the 299 base-2012 items; the 2011-13
+  base-2012 back series.
+- **cpialrl**: RL groups, RL states, 1986-87 groups, state x group, states missing from the
+  1986-87 bundle.
+- **gdp** (national accounts remainder): annual GVA, PFCE, GFCF, GFCE, trade, income
+  aggregates; quarterly net taxes, change in stock, valuables; 15 industries and 18
+  sub-industries annually; institutional sectors; revision stages; approach split; the back
+  series beyond GDP, GVA by industry, engines and saving.
+- **wpi**: sub-sub-groups (raw only); the 2004-05 and 1993-94 bases (the API serves both).
+- **iip, isp**: the annual (financial-year) series.
+- **plfs** (jobs deeper): calendar-year estimates; LFPR and WPR by state; religion, social
+  group, age; gender x sector of the annual and quarterly series; quarterly states; NIC, NCO,
+  enterprise cuts; indicator 5; earnings by state.
+- **hces**: "with imputation" below All India; MPCE in rupees by category; fractiles,
+  quantities, household type, social group and Gini by state; categories by state beyond
+  the food share.
+- **asi** (industry deeper): non-core indicators by industry and state; 3- and 4-digit NIC;
+  older blocks beyond the comparable core.
+- **asuse**: the 2025 round; 49 detailed activities; state twins of the distribution
+  tables; workers by gender and type; portrait tables by activity.
+- **aishe**: universities, colleges, teachers, social-group and minority enrolment and PTR by
+  state; PTR by institution type and mode.
+- **gender**: 144 of 154 compendium indicators; sector cuts; earlier years of state tables.
+- **nfhs**: tables 2, 6, 7, 11, 17, 18; the rest of tables 5 and 10; rural and urban; states
+  beyond four indicators; NFHS-4 states.
+- **mnre**: wind, hydro and bio by state; bio-power categories.
+- **manufacturing**: value added in current US$ and rupees; industry beyond share of GDP;
+  value added per worker; manufactures' share of imports.
+- **deposits**: other owning sectors one by one; finer household split; "others" category
+  and accounts by band; state, district, bank group, metro, age and gender tables; the whole
+  quarterly BSR-2.
+
 ## Next
 
-Ledgers for 13 guides.
+Send the done message to the coordinator.
 
 ## Note for family sessions: adding the every-cut table
 
@@ -105,7 +176,23 @@ Ledgers for 13 guides.
 - The guide's "On this page" list now includes "Every series, every cut"
   (`src/dossiers/guide.client.js`, one selector added).
 
+- Ledger exclusions, each about the data: CPI base 2010 (a 2011-14 fragment superseded by
+  2012); NAS growth-rate indicators (the API's rounded rates; growth is computed from
+  levels); ASI NIC 98 (listed, no rows: households are outside the factory frame); AISHE
+  2021-22 "All Teacher" and "Visiting Teacher" rows (the source defect the bundle notes).
+- Two partial cuts are marked shown with a comment, since an item cannot say "partly":
+  HCES categories by state (food share only) and gender state tables (latest year only).
+- `cpialrl-states-2019` was baked but missing from the cpi registry `bundles`; added (one
+  line in `src/dossiers/registry.js`), so it now appears in downloads and every-cut.
+
 ## Data quirks found (other owners)
+
+- **The manufacturing guide has no `data/sources.yml` entry** (git history: it never had
+  one), so `npm run data` never refreshes the WDI bundles. Needs a dossier entry with
+  product `worldbank-wdi`; atlas-worldbank may be the natural owner.
+- MoSPI CPI base 2012 lists a "Back" series: real, but only 2011 to 2013.
+- MoSPI NAS: the filter call needs base, series, frequency and account together (HTTP 400
+  otherwise). PLFS, ASUSE and MNRE list time (quarter, month) as a dimension.
 
 - `nfhs-child` (nfhs): mortality rates labelled "(per 1000 live births)" carry
   `unit: percent`. The table trusts the label; the bundle should say `per_1000`.

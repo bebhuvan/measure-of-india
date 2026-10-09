@@ -471,3 +471,21 @@ export async function buildAsuse(root, dcfg, vintage) {
   else process.stdout.write("asuse: quarterly indicators returned no usable dated rows — asuse-quarterly.json not written\n");
   return annualBundle;
 }
+
+/* Catalogue (docs/CONTRACT-coverage.md): asuse/getAsuseIndicatorListByFrequency (annual and
+ * quarterly) and asuse/getAsuseFilterByIndicatorId, one cut at a time. The "establishments"
+ * dimension (a count or a percentage) is a measure, not a cut, so it is crossed:
+ *   asuse:<annual|quarterly>:<indicator>[:<measure>]:all | :<dimension>:<value> */
+import { writeCatalogue, indicatorCatalogue, catalogueCli } from "../catalogue.mjs";
+export async function catalogueAsuse() {
+  const items = [];
+  for (const [fc, fr] of [[1, "annual"], [2, "quarterly"]]) {
+    const inds = (await mospi("asuse/getAsuseIndicatorListByFrequency", { frequency_code: fc })).data ?? [];
+    items.push(...await indicatorCatalogue({ mospi, prefix: `asuse:${fr}`, indicators: inds, cross: ["establishments"], skip: ["year", "quarter"],
+      filter: (ind) => ["asuse/getAsuseFilterByIndicatorId", { indicator_code: ind.indicator_code, frequency_code: fc }] }));
+  }
+  writeCatalogue("asuse", { source: "MoSPI, NSO: Annual Survey of Unincorporated Sector Enterprises (eSankhyiki API)",
+    generator: "scripts/lib/products/asuse.mjs --catalogue",
+    note: "From getAsuseIndicatorListByFrequency and getAsuseFilterByIndicatorId: one cut at a time; rounds 2021-22 to 2025 sit inside every annual item.", items });
+}
+await catalogueCli(import.meta.url, catalogueAsuse);

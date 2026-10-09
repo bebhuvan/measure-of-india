@@ -1,0 +1,53 @@
+# Coverage ledger: Household Consumption Expenditure Survey, MoSPI (docs/CONTRACT-coverage.md).
+# Catalogue: node scripts/lib/products/hces.mjs --catalogue. The source has no combined
+# (rural + urban) figure: every bundle carries rural and urban side by side.
+# Omissions left for the coordinator: the "with imputation" basis below All India (states,
+# categories, household type, social group, item values), MPCE in rupees by category
+# (indicator 3), the fractile ladder, quantities, household type, social group and Gini by
+# state, and the state category split beyond the food share.
+family: hces
+guides: [consumption]
+catalogue: data/coverage/hces.catalogue.json
+rules:
+  - match: ["hces:1:*:all", "hces:1:*:sector:*"]
+    status: shown
+    bundle: hces-mpce
+    plate: "The current reading"
+  - match: "hces:1:1-without-imputation:state:*"
+    status: shown
+    bundle: hces-states
+    plate: "The map, then the measure of spread"
+  - match: ["hces:2:all", "hces:2:sector:*", "hces:2:mpce-fractile-classes:*"]
+    status: shown
+    bundle: hces-fractiles
+    plate: "The ladder"
+  - match: ["hces:4:1-without-imputation:all", "hces:4:1-without-imputation:sector:*", "hces:4:1-without-imputation:item-category:*"]
+    status: shown
+    bundle: hces-categories
+    plate: "Engel's law, observed"
+  # the state cut is baked for the food share only (hces-categories-states); the other
+  # thirty categories by state remain an omission, recorded in docs/status/framework.md
+  - match: "hces:4:1-without-imputation:state:*"
+    status: shown
+    bundle: hces-categories-states
+    plate: "The map, then the measure of spread (food share by state)"
+  - match: ["hces:5:all", "hces:5:sector:*", "hces:5:cereal:*"]
+    status: shown
+    bundle: hces-quantities
+    plate: "What the plate holds"
+  - match: ["hces:6:1-without-imputation:all", "hces:6:1-without-imputation:sector:*", "hces:6:1-without-imputation:cereal:*"]
+    status: shown
+    bundle: hces-item-values
+    plate: "What the plate holds"
+  - match: ["hces:7:1-without-imputation:all", "hces:7:1-without-imputation:sector:*", "hces:7:1-without-imputation:employment-of-households:*"]
+    status: shown
+    bundle: hces-household-type
+    plate: "Who spends what"
+  - match: ["hces:8:1-without-imputation:all", "hces:8:1-without-imputation:sector:*", "hces:8:1-without-imputation:social-group:*"]
+    status: shown
+    bundle: hces-social
+    plate: "Who spends what"
+  - match: ["hces:9:*:all", "hces:9:*:sector:*"]
+    status: shown
+    bundle: hces-gini
+    plate: "The map, then the measure of spread"

@@ -1,0 +1,40 @@
+# Coverage ledger: Annual Survey of Industries, MoSPI (docs/CONTRACT-coverage.md).
+# Catalogue: node scripts/lib/products/asi.mjs --catalogue. NIC blocks are never spliced.
+# Omissions left for the coordinator ("industry deeper"): the 51 non-core indicators by
+# industry and by state, the 3- and 4-digit NIC levels, every indicator of the older blocks
+# beyond the comparable core, their states, industries and rural/urban split.
+family: asi
+guides: [factories]
+catalogue: data/coverage/asi.catalogue.json
+rules:
+  - match: "asi:*:*:nic2:98"
+    status: excluded
+    reason: "The listing names NIC 98, households producing for their own use, but the survey serves no rows for it (No Data Found, checked 2026-10-09): households are outside the factory frame."
+  - match: ["asi:2008:1:all", "asi:2008:2:all", "asi:2008:3:all", "asi:2008:6:all", "asi:2008:15:all", "asi:2008:18:all", "asi:2008:19:all", "asi:2008:21:all", "asi:2008:31:all", "asi:2008:32:all", "asi:2008:43:all"]
+    status: shown
+    bundle: [asi-headline, asi-accounts]
+    plate: "Plate 2: sixteen years of counting factories; Plate 3: the money, in the rupees of its day"
+  - match: "asi:2008:*:all"
+    status: shown
+    bundle: asi-accounts
+    plate: "The factory accounts, complete"
+  - match: ["asi:2008:2:nic2:*", "asi:2008:3:nic2:*", "asi:2008:15:nic2:*", "asi:2008:19:nic2:*", "asi:2008:31:nic2:*", "asi:2008:43:nic2:*"]
+    status: shown
+    bundle: asi-industries
+    plate: "Plate 5: what the factories make"
+  - match: ["asi:2008:2:state:*", "asi:2008:3:state:*", "asi:2008:15:state:*", "asi:2008:19:state:*", "asi:2008:31:state:*", "asi:2008:43:state:*"]
+    status: shown
+    bundle: asi-states
+    plate: "Plate 4: where the factory rupee is made"
+  - match: ["asi:2004:1:all", "asi:2004:2:all", "asi:2004:3:all", "asi:2004:6:all", "asi:2004:15:all", "asi:2004:18:all", "asi:2004:19:all", "asi:2004:21:all", "asi:2004:31:all", "asi:2004:32:all", "asi:2004:43:all"]
+    status: shown
+    bundle: asi-headline-2004
+    plate: "Plate 1: the long century"
+  - match: ["asi:1998:1:all", "asi:1998:3:all", "asi:1998:6:all", "asi:1998:15:all", "asi:1998:18:all", "asi:1998:21:all", "asi:1998:31:all", "asi:1998:32:all", "asi:1998:44:all"]
+    status: shown
+    bundle: asi-headline-1998
+    plate: "Plate 1: the long century"
+  - match: ["asi:1987:1:all", "asi:1987:3:all", "asi:1987:6:all", "asi:1987:15:all", "asi:1987:18:all", "asi:1987:21:all", "asi:1987:31:all", "asi:1987:32:all", "asi:1987:59:all"]
+    status: shown
+    bundle: asi-headline-1987
+    plate: "Plate 1: the long century"

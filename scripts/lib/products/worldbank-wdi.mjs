@@ -110,3 +110,20 @@ export async function buildWorldbankWdi(root, dcfg, vintage) {
   for (const [slug, bundle] of Object.entries(bundles)) writeSeries(root, `data/series/${slug}.json`, bundle);
   return bundles;
 }
+
+/* Catalogue (docs/CONTRACT-coverage.md) for the manufacturing guide: every indicator in the
+ * World Bank's own WDI listing (source/2/indicator) on manufacturing and its industry
+ * context, for India: codes NV.IND.* (industry and manufacturing value added),
+ * NV.MNF.* (manufacturing composition and technology) and T?.VAL.MANF.* (manufactures in
+ * trade). The rest of WDI is the World Bank family's catalogue, not this guide's.
+ *   wdi:ind:<indicator code, lower case> */
+import { writeCatalogue, catalogueCli } from "../catalogue.mjs";
+export async function catalogueWdiManufacturing() {
+  const all = await wb("source/2/indicator", { per_page: 1000 });
+  const items = all.filter((i) => /^(NV\.IND\.|NV\.MNF\.|TX\.VAL\.MANF|TM\.VAL\.MANF)/.test(i.id))
+    .map((i) => ({ id: `wdi:ind:${i.id.toLowerCase()}`, label: i.name }));
+  writeCatalogue("manufacturing", { source: "World Bank: World Development Indicators, India (API v2)",
+    generator: "scripts/lib/products/worldbank-wdi.mjs --catalogue",
+    note: "From source/2/indicator, filtered to NV.IND.*, NV.MNF.*, TX.VAL.MANF.* and TM.VAL.MANF.*: manufacturing and its industry context. Country IND.", items });
+}
+await catalogueCli(import.meta.url, catalogueWdiManufacturing);

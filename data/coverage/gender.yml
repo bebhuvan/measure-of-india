@@ -1,0 +1,40 @@
+# Coverage ledger: Women and Men in India, MoSPI's gender compendium
+# (docs/CONTRACT-coverage.md). Catalogue: node scripts/lib/products/gender.mjs --catalogue.
+# The guide bakes 10 of the compendium's 154 indicators. Omissions left for the coordinator
+# ("women and men, up to date" in docs/INVENTORY-data-paths.md): the other 144 indicators
+# (health, education, work, time use, finance, political voice, crime), the sector cuts of
+# fertility, literacy and work, the census sex ratio by state, and every year of the state
+# tables but the latest.
+family: gender
+guides: [gender]
+catalogue: data/coverage/gender.catalogue.json
+rules:
+  - match: "gender:2:all"
+    status: shown
+    bundle: gender-sexratio
+    plate: "Plate 1: the seventy-year count"
+  - match: ["gender:15:all", "gender:15:gender:*", "gender:21:all"]
+    status: shown
+    bundle: [gender-imr, gender-mmr]
+    plate: "Plate 2: survival"
+  - match: ["gender:18:all", "gender:18:gender:*"]
+    status: shown
+    bundle: gender-lifeexp
+    plate: "Plate 3: living longer, living apart"
+  - match: ["gender:10:all", "gender:10:education-level:*"]
+    status: shown
+    bundle: gender-fertility
+    plate: "Plate 4: fewer births, by education"
+  - match: ["gender:55:all", "gender:55:gender:*"]
+    status: shown
+    bundle: gender-literacy
+    plate: "Plate 5: the literacy gap"
+  - match: ["gender:80:all", "gender:80:gender:*", "gender:93:all", "gender:93:gender:*"]
+    status: shown
+    bundle: gender-work
+    plate: "Plate 6: the work gap"
+  # the latest year only: earlier years of these state tables are an omission
+  - match: ["gender:6:state-ut:*", "gender:16:state-ut:*"]
+    status: shown
+    bundle: gender-states
+    plate: "Plate 7: where the balance is worst (latest year)"

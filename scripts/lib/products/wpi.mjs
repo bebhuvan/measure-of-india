@@ -393,3 +393,27 @@ async function buildWpi2022(root, dcfg, vintage) {
   writeSeries(root, "data/series/wpi-2022-subgroups.json", subgroups);
   writeSeries(root, "data/series/wpi-2022-items.json", items);
 }
+
+/* Catalogue (docs/CONTRACT-coverage.md): what the OEA publishes through eSankhyiki, from
+ * wpi/getWpiBaseYear and each base's wpi/getWpiData filter listing:
+ *   wpi:<base>:<major|group|subgroup|subsubgroup|item>:<code>  (All India; the WPI has no states) */
+import { writeCatalogue, catalogueCli } from "../catalogue.mjs";
+export async function catalogueWpi() {
+  const items = [];
+  const bases = ((await mospi("wpi/getWpiBaseYear", {})).data ?? []).map((b) => b.label);
+  const LEVELS = [["major_group", "major"], ["group", "group"], ["sub_group", "subgroup"], ["sub_sub_group", "subsubgroup"], ["item", "item"]];
+  for (const base of bases) {
+    const f = (await mospi("wpi/getWpiData", { base_year: base })).data ?? {};
+    for (const [field, level] of LEVELS) for (const n of f[field] ?? []) {
+      const code = n[`${field}_code`];
+      items.push({ id: `wpi:${base}:${level}:${code}`, label: n.label });
+    }
+  }
+  writeCatalogue("wpi", {
+    source: "Office of the Economic Adviser, DPIIT: Wholesale Price Index (via MoSPI eSankhyiki)",
+    generator: "scripts/lib/products/wpi.mjs --catalogue",
+    note: "From getWpiBaseYear and getWpiData per base. Ids: wpi:<base>:<level>:<code>. Major groups include the headline (1000000000) and the Food index.",
+    items,
+  });
+}
+await catalogueCli(import.meta.url, catalogueWpi);
