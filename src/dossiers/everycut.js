@@ -198,6 +198,10 @@ export const UNITS = {
     ["ltr", "litres"], ["mtr", "metres"], ["cum", "CUM"], ["thn", "THN"], ["ctm", "CTM"], ["crt", "CRT"], ["thd", "THD"], ["tkw", "TKW"], ["gif", "GIF"], ["c_k", "C/K"], ["none", "no unit printed"]]
     .map(([k, w]) => [`qty_${k}`, { kind: "pct", fmt: (v) => grp(v) + (k === "none" ? "" : " " + w), note: k === "none" ? "quantity, no unit printed" : `quantity, unit as printed (${k.toUpperCase().replace("_", "/")})` }])),
   // --- end trade ---
+  // --- nas (gdp guide, wave 2) ---
+  ...Object.fromEntries(["gdp", "gdp-2022"].flatMap((b) => Object.entries({ "annual-levels": "Indicator", "annual-growth": "Indicator", "annual-shares": "Component of GDP", "annual-industries": "Industry", "annual-subindustries": "Sub-industry", "annual-gcf-industries": "Industry of use", "sectors": "Institutional sector", "revisions": "Estimate stage", "quarterly-levels": "Indicator", "quarterly-shares": "Component of GDP", "quarterly-industry-levels": "Industry" }).map(([k, c]) => [`${b}-${k}`, c]))),
+  "gdp-back-levels": "Indicator", "gdp-back-growth": "Indicator", "gdp-back-shares": "Component of GDP", "gdp-back-industries": "Industry", "gdp-back-subindustries": "Sub-industry",
+  // --- end nas ---
 };
 
 // series.unit, then what the series name says, then the bundle's meta.unit: a bundle-level
@@ -445,6 +449,10 @@ export const CUT_BY_BUNDLE = {
   "trade-principal-quantity-exports": "Principal commodity", "trade-principal-quantity-imports": "Principal commodity",
   ...Object.fromEntries(["hs2", "hs4"].flatMap((l) => ["exports", "imports"].flatMap((f) => ["", "-ytd"].map((t) => [`trade-partner-${l}-${f}${t}`, `Partner and HS ${l.slice(2)}-digit product`])))),
   // --- end trade ---
+  // --- nas (gdp guide, wave 2) ---
+  ...Object.fromEntries(["gdp", "gdp-2022"].flatMap((b) => Object.entries({ "annual-levels": "Indicator", "annual-growth": "Indicator", "annual-shares": "Component of GDP", "annual-industries": "Industry", "annual-subindustries": "Sub-industry", "annual-gcf-industries": "Industry of use", "sectors": "Institutional sector", "revisions": "Estimate stage", "quarterly-levels": "Indicator", "quarterly-shares": "Component of GDP", "quarterly-industry-levels": "Industry" }).map(([k, c]) => [`${b}-${k}`, c]))),
+  "gdp-back-levels": "Indicator", "gdp-back-growth": "Indicator", "gdp-back-shares": "Component of GDP", "gdp-back-industries": "Industry", "gdp-back-subindustries": "Sub-industry",
+  // --- end nas ---
 };
 // the fallback, by what a bundle's slug says it is
 export const CUT_RULES = [

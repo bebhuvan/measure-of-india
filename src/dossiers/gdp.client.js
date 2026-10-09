@@ -11,6 +11,7 @@ import indBundle from "../../data/series/gdp-industries.json";
 import nomBundle from "../../data/series/gdp-nominal.json";
 import nbBundle from "../../data/series/gdp-2022.json";
 import nbIndBundle from "../../data/series/gdp-2022-industries.json";
+import nbExpBundle from "../../data/series/gdp-2022-expenditure.json";
 import nbAccBundle from "../../data/series/gdp-2022-accounts.json";
 import backBundle from "../../data/series/gdp-back.json";
 import {
@@ -25,6 +26,10 @@ const IND = hydrate(indBundle);   // 8-sector real GVA, same quarter grid as S
 const N = hydrate(nomBundle);     // nominal GDP, real GDP, implied deflator
 const NB = hydrate(nbBundle);     // the 2022-23 base — separate axis, never spliced
 const NBIND = hydrate(nbIndBundle); // 8-sector real GVA on the 2022-23 base
+const NBE = hydrate(nbExpBundle);   // government, exports, imports on the 2022-23 base
+// the deep accounts (wave 2): slim data the page baked from the gdp-*-annual, -sectors,
+// -revisions and back bundles at build time (src/pages/guides/gdp.astro, GD)
+const GD = JSON.parse(document.getElementById("gdp-deep")?.textContent || "{}");
 const NBACC = hydrate(nbAccBundle); // annual accounts on the 2022-23 base
 const BACK = hydrate(backBundle);   // the NSO back series, 1951-52 to 2011-12, a separate ruler
 // presentation palette for the expenditure plate — unique per line
@@ -118,14 +123,20 @@ setTxt("ac-cfc", f1(accLast("cfc").value));
   setTxt("ac-cfc-hi", Math.max(...vs).toFixed(1) + "%");
 }
 
-/* ---------- register ---------- */
-const SH = indBundle.shares; // sector shares of NOMINAL GVA, last four quarters
+/* ---------- register: the 2022-23 base, where the quarterly series now lives ---------- */
+const SH = nbIndBundle.shares; // sector shares of NOMINAL GVA, last four quarters, base 2022-23
+const NBX = { ...NB, ...NBE, ...NBIND };
+const RL = {}, RP = {}, RY = {};
+for (const k in NBX) { const d = NBX[k].data; RL[k] = d.at(-1).value; RP[k] = d.at(-2).value; RY[k] = d.at(-5)?.value ?? null; }
+// expenditure shares of nominal GDP, latest fiscal year on the 2022-23 base
+const sp22 = GD.spend?.b22 ?? { dates: [], s: {} };
+const spLast = (k) => { const a = sp22.s[k] ?? []; for (let i = a.length - 1; i >= 0; i--) if (a[i] != null) return a[i]; return null; };
 const regRows = [
   ["gdp", "Real GDP", "Market prices, the headline", "s-acc", null, "#2E4BD8"],
   ["gva", "Real GVA", "Basic prices, before net taxes", "s-g1", null, "#5F6675"],
-  ["pfce", "Consumption, PFCE", "Household spending", "s-g2", 55.8, "#A3A9B4"],
-  ["gfcf", "Investment, GFCF", "Machines, buildings, infrastructure", "s-g3", 33.5, "#878D99"],
-  ["gfce", "Government, GFCE", "The state's own consumption", "s-g4", 9.6, "#878D99"],
+  ["pfce", "Consumption, PFCE", "Household spending", "s-g2", spLast("pfce"), "#A3A9B4"],
+  ["gfcf", "Investment, GFCF", "Machines, buildings, infrastructure", "s-g3", spLast("gfcf"), "#878D99"],
+  ["gfce", "Government, GFCE", "The state's own consumption", "s-g4", spLast("gfce"), "#878D99"],
   ["exports", "Exports, goods & services", "Demand from abroad", "s-g1", null, "#5F6675"],
   ["imports", "Imports, goods & services", "Enters with a minus sign", "s-acc", null, "#2E4BD8"],
   // production side — the four most telling engines; shares are of GVA (see table note)
@@ -134,27 +145,34 @@ const regRows = [
   ["construction", "Construction, GVA", "Where investment becomes jobs, share of GVA", "s-g3", SH.construction, "#5F6675"],
   ["finance_realty", "Finance & real estate, GVA", "The largest engine, share of GVA", "s-g4", SH.finance_realty, "#5F6675"],
 ];
+const fRow = (v) => (v == null ? "—" : f1(v));
 document.getElementById("ledger-body").innerHTML = regRows.map(([k, nm, sub, sw, share, col]) => `
   <tr>
     <td class="name"><span class="sw ${sw}"></span>${nm}<small>${sub}</small></td>
-    <td class="wt">${share === null ? "—" : share.toFixed(1) + '<span class="wtrack"><i style="width:' + share + '%;background:' + col + '"></i></span>'}</td>
-    <td class="val">${f1(L[k])}</td>
-    <td class="chg">${arrow(L[k] - P[k])}, ${word(L[k] - P[k])}</td>
-    <td class="yr">${f1(Y[k])}</td>
+    <td class="wt">${share == null ? "—" : share.toFixed(1) + '<span class="wtrack"><i style="width:' + share + '%;background:' + col + '"></i></span>'}</td>
+    <td class="val">${fRow(RL[k])}</td>
+    <td class="chg">${arrow(RL[k] - RP[k])}, ${word(RL[k] - RP[k])}</td>
+    <td class="yr">${fRow(RY[k])}</td>
     <td class="spark" id="sp-${k}"></td>
   </tr>`).join("");
 
-/* ---------- expenditure composition ---------- */
-const groups = [
-  ["Consumption, PFCE", 55.8, "#2E4BD8"],
-  ["Investment, GFCF", 33.5, "#5F6675"],
-  ["Government, GFCE", 9.6, "#A3A9B4"],
-  ["Valuables & disc.", 1.1, "#DADDE3"],
-];
-document.getElementById("basket-bar").innerHTML = groups.map(([n, w, c]) =>
-  `<div class="seg" style="width:${w}%;background:${c}" title="${n}: ${w}%"></div>`).join("");
-document.getElementById("basket-labels").innerHTML = groups.map(([n, w, c]) =>
-  `<div class="blab"><div class="n"><span class="sw" style="background:${c}"></span>${n}</div><div class="w">${w.toFixed(1)}% of GDP</div></div>`).join("");
+/* ---------- expenditure composition: latest fiscal year, base 2022-23 ---------- */
+{
+  const groups = [
+    ["Consumption, PFCE", spLast("pfce"), "#2E4BD8"],
+    ["Investment, GFCF", spLast("gfcf"), "#5F6675"],
+    ["Government, GFCE", spLast("gfce"), "#A3A9B4"],
+    ["Stocks & valuables", (spLast("stocks") ?? 0) + (spLast("valuables") ?? 0), "#DADDE3"],
+  ];
+  document.getElementById("basket-bar").innerHTML = groups.map(([n, w, c]) =>
+    `<div class="seg" style="width:${w}%;background:${c}" title="${n}: ${w.toFixed(1)}%"></div>`).join("");
+  document.getElementById("basket-labels").innerHTML = groups.map(([n, w, c]) =>
+    `<div class="blab"><div class="n"><span class="sw" style="background:${c}"></span>${n}</div><div class="w">${w.toFixed(1)}% of GDP</div></div>`).join("");
+  const sgn1 = (v) => (v < 0 ? "−" : "+") + Math.abs(v).toFixed(1) + "%";
+  setTxt("bk-nx", sgn1(spLast("net_exports")));
+  setTxt("bk-disc", sgn1(spLast("discrepancy")));
+  setTxt("bk-inv", spLast("gfcf").toFixed(1) + "%");
+}
 
 /* ---------- plate 1 : GDP + GVA + PFCE ---------- */
 {
@@ -726,18 +744,365 @@ const fyLabel = (d) => { const y = d.getUTCFullYear(); return y + "-" + String((
 }
 
 /* ---------- ledger sparklines ---------- */
-spark("nspark-gdp", S.gdp);
-spark("sp-gdp", S.gdp);
-spark("sp-gva", S.gva);
-spark("sp-pfce", S.pfce);
-spark("sp-gfcf", S.gfcf);
-spark("sp-gfce", E.gfce);
-spark("sp-exports", E.exports);
-spark("sp-imports", E.imports);
-spark("sp-agriculture", IND.agriculture);
-spark("sp-manufacturing", IND.manufacturing);
-spark("sp-construction", IND.construction);
-spark("sp-finance_realty", IND.finance_realty);
+spark("nspark-gdp", NB.gdp);
+for (const [k] of regRows) spark("sp-" + k, NBX[k]);
+
+/* ====================================================================================
+ * The deep accounts (wave 2): §10 where the money goes, income from abroad, the
+ * discrepancy; §11 who saves; §12 sub-industries; §13 revisions; §15 what India makes.
+ * Data: GD, baked by the page from the gdp-*-annual, -sectors, -revisions and back bundles.
+ * Rulers (back series, base 2011-12, base 2022-23) are drawn side by side, never joined.
+ * ==================================================================================== */
+const ISO = (d) => new Date(d + "T00:00:00Z");
+const pts = (block, k) => (block?.s?.[k] ?? []).map((v, i) => ({ date: ISO(block.dates[i]), value: v })).filter((d) => d.value != null);
+const fyL = (d) => { const y = d.getUTCFullYear(); return y + "-" + String((y + 1) % 100).padStart(2, "0"); };
+const pct1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
+const RULERS = [["back", "NSO back series", "#2E4BD8"], ["b11", "base 2011-12", "#A3A9B4"], ["b22", "base 2022-23", "#161A22"]];
+
+/* small multiples over three rulers: one panel per key, each on its own scale. The header
+ * prints the newest ruler's latest value; the foot names the span. */
+function rulerGrid(gridId, src, panels, file) {
+  const grid = document.getElementById(gridId);
+  if (!grid) return [];
+  const csv = [];
+  for (const [k, nm, sub] of panels) {
+    const rulers = RULERS.map(([r, lab, color]) => ({ key: r, label: `${nm}, ${lab}`, name: `${k}_${r}`, color, data: pts(src[r], k) })).filter((r) => r.data.length);
+    if (!rulers.length) continue;
+    csv.push(...rulers);
+    const newest = rulers.at(-1), last = newest.data.at(-1);
+    const vs = rulers.flatMap((r) => r.data.map((d) => d.value));
+    const lo = Math.min(...vs, 0), hi = Math.max(...vs, 0), pad = (hi - lo) * 0.1 + 0.2;
+    const first = rulers[0].data[0];
+    const div = document.createElement("div");
+    div.style.cssText = "border-top:1px solid #ECEEF2;padding-top:14px;min-width:0";
+    div.innerHTML =
+      `<div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px">` +
+      `<div style="min-width:0"><div style="font-size:1.02rem;color:#161A22;line-height:1.35">${nm}</div>` +
+      `<div style="font-family:var(--sans);font-size:.56rem;color:#878D99;margin-top:3px">${sub}</div></div>` +
+      `<div style="text-align:right;flex-shrink:0"><div style="font-family:var(--serif);font-weight:300;font-size:1.55rem;font-variant-numeric:tabular-nums;white-space:nowrap;color:#161A22">${pct1(last.value)}</div>` +
+      `<div style="font-family:var(--sans);font-size:.56rem;color:#878D99;margin-top:3px">${fyL(last.date)}, ${RULERS.find(([r]) => r === newest.key)[1]}</div></div></div>`;
+    const marks = [Plot.ruleY([0], { stroke: "#DADDE3", strokeWidth: 1 })];
+    marks.push(...(rulers.length > 1 ? seamMarks("side", rulers.map((r, i) => ({ ...r, width: i === rulers.length - 1 ? 2 : 1.6 })), false) : [Plot.lineY(rulers[0].data, { x: "date", y: "value", stroke: rulers[0].color, strokeWidth: 1.75 })]));
+    marks.push(Plot.dot([last], { x: "date", y: "value", fill: newest.color, r: 3, stroke: "#FFFFFF", strokeWidth: 1.25 }));
+    const mini = Plot.plot({
+      width: 300, height: 104, marginLeft: 4, marginRight: 10, marginTop: 10, marginBottom: 6,
+      style: { background: "transparent" }, x: { axis: null }, y: { axis: null, domain: [lo - pad, hi + pad] }, marks,
+    });
+    mini.setAttribute("aria-hidden", "true");
+    mini.style.width = "100%"; mini.style.height = "auto";
+    div.append(mini);
+    const foot = document.createElement("div");
+    foot.style.cssText = "display:flex;justify-content:space-between;font-family:var(--sans);font-size:.55rem;color:#B5BAC4;margin-top:2px";
+    foot.innerHTML = `<span>${fyL(first.date)}, ${pct1(first.value)}</span><span>${fyL(last.date)}</span>`;
+    div.append(foot);
+    grid.append(div);
+  }
+  return csv;
+}
+
+/* ---------- §10 where the money goes ---------- */
+{
+  const panels = [
+    ["pfce", "Consumption", "Households' spending, PFCE"],
+    ["gfcf", "Fixed investment", "Buildings, machines, roads, GFCF"],
+    ["gfce", "Government consumption", "The state's own services, GFCE"],
+    ["stocks", "Change in stocks", "Goods added to inventories"],
+    ["valuables", "Valuables", "Gold, silver, jewellery"],
+    ["net_exports", "Net exports", "Exports less imports"],
+  ];
+  const csv = rulerGrid("grid-spend", GD.spend, panels);
+  document.getElementById("grid-spend")?.setAttribute("aria-label", "Six small line charts of spending as a share of GDP: consumption, fixed investment, government consumption, change in stocks, valuables and net exports, on the NSO back series and the two current bases, never joined.");
+  wireTools(document.getElementById("cb-spend"), null, csv, "india-atlas_national-accounts_spending-shares_1950-2026", fyL);
+  const b22 = GD.spend.b22, b11 = GD.spend.b11;
+  const lastI = b22.s.pfce.map((v, i) => (v != null ? i : -1)).filter((i) => i >= 0).at(-1);
+  const y = b22.dates[lastI], v = (k) => b22.s[k][lastI];
+  const oldI = b11.dates.indexOf(y), old = oldI >= 0 ? b11.s.pfce[oldI] : null;
+  setTxt("pv-spend", pct1(v("pfce")));
+  setTxt("pv-spend-c", fyL(ISO(y)) + ", consumption, base 2022–23");
+  setTxt("wm-pfce", pct1(v("pfce"))); setTxt("wm-gfcf", pct1(v("gfcf"))); setTxt("wm-gfce", pct1(v("gfce")));
+  setTxt("wm-val", pct1(v("valuables"))); setTxt("wm-stk", pct1(v("stocks")));
+  setTxt("wm-val-cmp", v("valuables") > v("stocks") ? "more than" : v("valuables") < v("stocks") ? "less than" : "the same as");
+  setTxt("wm-nx", pct1(Math.abs(v("net_exports"))));
+  setTxt("wm-pfce-old", old == null ? "—" : pct1(old));
+  setTxt("wm-gap", old == null ? "—" : Math.abs(old - v("pfce")).toFixed(1) + " points");
+  const p11 = b11.s.pfce.filter((x) => x != null);
+  const move = Math.max(...p11.slice(1).map((x, i) => Math.abs(x - p11[i])));
+  setTxt("wm-move", move.toFixed(1) + " points");
+}
+
+/* ---------- §10 income from abroad ---------- */
+{
+  const panels = [
+    ["transfers_row", "Net current transfers from abroad", "Mostly remittances from Indians working abroad"],
+    ["primary_income_row", "Net primary income from abroad", "Interest, profits and wages crossing the border"],
+  ];
+  const csv = rulerGrid("grid-abroad", GD.abroad, panels);
+  document.getElementById("grid-abroad")?.setAttribute("aria-label", "Two small line charts, shares of GDP since 1950-51: net current transfers from abroad, rising from near zero to about 3 per cent, and net primary income, below zero, on three rulers never joined.");
+  wireTools(document.getElementById("cb-abroad"), null, csv, "india-atlas_national-accounts_income-from-abroad_1950-2026", fyL);
+  const t = pts(GD.abroad.b22, "transfers_row").at(-1), p = pts(GD.abroad.b22, "primary_income_row").at(-1);
+  const t0 = pts(GD.abroad.back, "transfers_row")[0];
+  setTxt("pv-abroad", pct1(t.value));
+  setTxt("pv-abroad-c", fyL(t.date) + ", transfers, % of GDP");
+  setTxt("ab-tr", pct1(t.value)); setTxt("ab-tr0", pct1(t0.value)); setTxt("ab-tr0-y", fyL(t0.date)); setTxt("ab-pi", pct1(p.value));
+  setTxt("ab-gndi", (100 + t.value + p.value).toFixed(1) + "%");
+}
+
+/* ---------- §10 the discrepancy: two ways of adding up ---------- */
+{
+  const a = { key: "b11", label: "Discrepancy, base 2011-12", name: "discrepancy_pct_gdp_base2011", color: "#A3A9B4", data: pts(GD.disc.q11, "discrepancy") };
+  const b = { key: "b22", label: "Discrepancy, base 2022-23", name: "discrepancy_pct_gdp_base2022", color: "#2E4BD8", data: pts(GD.disc.q22, "discrepancy") };
+  const all = [...a.data, ...b.data].map((d) => d.value);
+  const lo = Math.floor(Math.min(...all)) - 1, hi = Math.ceil(Math.max(...all)) + 1;
+  const geo = { W: 1184, H: 400, ml: 70, mr: 200, mt: 30, mb: 48, d0: lo, d1: hi };
+  const yTicks = []; for (let t = Math.ceil(lo / 2) * 2; t <= hi; t += 2) yTicks.push(t);
+  const xTicks = []; for (let y = 2012; y <= b.data.at(-1).date.getUTCFullYear(); y += 2) xTicks.push(new Date(Date.UTC(y, 0, 1)));
+  const dodged = dodgeEndLabels([a, b], (hi - lo) * 0.06);
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H, marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+    x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => String(d.getUTCFullYear()) },
+    y: { label: "↑ GDP less spending, % of GDP", labelAnchor: "top", labelArrow: false, ticks: yTicks, domain: [lo, hi], tickSize: 0, tickPadding: 11,
+         tickFormat: (d) => (d === yTicks.at(-1) ? d + "%" : (d < 0 ? "−" + Math.abs(d) : String(d))) },
+    marks: [
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([0], { stroke: "#161A22", strokeOpacity: 0.55, strokeWidth: 1 }),
+      ...seamMarks("overlap", [a, b], false),
+      Plot.dot(b.data, { x: "date", y: "value", fill: b.color, r: 2.5 }),
+      ...[a, b].map((s) => Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: s.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 })),
+      ...dodged.filter((p) => Math.abs(p.y - p.value) > 0.05).map((p) => Plot.line([{ x: p.s.data.at(-1).date, y: p.value }, { x: p.s.data.at(-1).date, y: p.y }], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
+      ...dodged.map((p) => Plot.text([{ date: p.s.data.at(-1).date, y: p.y }], { x: "date", y: "y", text: () => `${p.s.key === "b22" ? "Base 2022–23" : "Base 2011–12"} ${pct1(p.value)}`, dx: 14, fill: "#161A22", fontSize: 12, fontFamily: mono, textAnchor: "start" })),
+    ],
+  });
+  const mean = (xs) => xs.reduce((s, d) => s + Math.abs(d.value), 0) / xs.length;
+  a11y(plot, "The discrepancy between GDP and its spending components, share of GDP, quarterly, both bases",
+    `Two lines around zero. On the 2011-12 base the gap swings up to ${Math.max(...a.data.map((d) => Math.abs(d.value))).toFixed(1)} per cent of GDP; on the 2022-23 base up to ${Math.max(...b.data.map((d) => Math.abs(d.value))).toFixed(1)}. The latest quarter reads ${b.data.at(-1).value.toFixed(1)} per cent.`);
+  document.getElementById("plot-disc").append(plot);
+  wireTools(document.getElementById("cb-disc"), plot, [a, b], "india-atlas_national-accounts_discrepancy_quarterly", fmtDate);
+  addCrosshair(document.getElementById("plot-disc"), plot, [a, b], geo, fmtDate);
+  setTxt("pv-disc", pct1(b.data.at(-1).value));
+  setTxt("pv-disc-c", fmtDate(b.data.at(-1).date) + ", % of GDP");
+  setTxt("dc-last", pct1(b.data.at(-1).value));
+  setTxt("dc-n", String(b.data.length));
+  setTxt("dc-mean", mean(b.data).toFixed(1) + "%");
+  setTxt("dc-mean11", mean(a.data).toFixed(1) + "%");
+  const zero = (GD.spend.b22.s.discrepancy ?? []).map((v, i) => (v === 0 ? fyL(ISO(GD.spend.b22.dates[i])) : null)).filter(Boolean);
+  setTxt("dc-zero", zero.length ? zero.join(" and ") : "none so far");
+}
+
+/* ---------- §11 who saves, who invests: one dumbbell per sector ---------- */
+{
+  const src = GD.sect.b22;
+  const SECTORS = [["households", "Households"], ["private_nfc", "Private companies"], ["private_fc", "Private financial firms"], ["public_nfc", "Public-sector companies"], ["public_fc", "Public financial firms"], ["government", "General government"]];
+  const li = src.s.saving_households_pct_gdp.map((v, i) => (v != null ? i : -1)).filter((i) => i >= 0).at(-1);
+  const year = fyL(ISO(src.dates[li]));
+  const rows = SECTORS.map(([k, nm]) => ({ k, nm, s: src.s[`saving_${k}_pct_gdp`][li], i: src.s[`gfcf_${k}_pct_gdp`][li] }));
+  const all = rows.flatMap((r) => [r.s, r.i]);
+  const lo = Math.floor(Math.min(...all, 0)) - 2, hi = Math.ceil(Math.max(...all)) + 3;
+  const H = 70 + rows.length * 54;
+  const left = rows.map((r) => ({ nm: r.nm, v: Math.min(r.s, r.i), kind: r.s <= r.i ? "s" : "i" }));
+  const right = rows.map((r) => ({ nm: r.nm, v: Math.max(r.s, r.i), kind: r.s > r.i ? "s" : "i" }));
+  const xTicks = []; for (let t = Math.ceil(lo / 5) * 5; t <= hi; t += 5) xTicks.push(t);
+  const plot = Plot.plot({
+    width: 1184, height: H, marginLeft: 220, marginRight: 60, marginTop: 30, marginBottom: 40,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+    x: { label: "share of GDP, per cent →", labelAnchor: "right", labelArrow: false, domain: [lo, hi], ticks: xTicks, tickSize: 0, tickPadding: 10, tickFormat: (d) => (d < 0 ? "−" + Math.abs(d) : String(d)) },
+    y: { label: null, domain: rows.map((r) => r.nm), tickSize: 0, tickPadding: 14 },
+    marks: [
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#161A22", strokeOpacity: 0.55, strokeWidth: 1 }),
+      Plot.ruleY(rows, { y: "nm", x1: (r) => Math.min(r.s, r.i), x2: (r) => Math.max(r.s, r.i), stroke: "#C9CED6", strokeWidth: 2 }),
+      Plot.dot(rows, { y: "nm", x: "i", fill: "#C47A16", r: 5.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      Plot.dot(rows, { y: "nm", x: "s", fill: "#2E4BD8", r: 5.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
+      // labels outside the two dots, never between them
+      Plot.text(left, { y: "nm", x: "v", text: (d) => pct1(d.v), dx: -12, textAnchor: "end", fill: "#161A22", fontSize: 12, fontFamily: mono }),
+      Plot.text(right, { y: "nm", x: "v", text: (d) => pct1(d.v), dx: 12, textAnchor: "start", fill: "#161A22", fontSize: 12, fontFamily: mono }),
+    ],
+  });
+  const hh = rows[0], gg = rows.at(-1), pc = rows[1];
+  a11y(plot, `Gross saving and fixed investment by institutional sector, share of GDP, ${year}`,
+    `Dumbbells, one per sector. Households save ${hh.s.toFixed(1)} per cent of GDP and invest ${hh.i.toFixed(1)}. Private companies save ${pc.s.toFixed(1)} and invest ${pc.i.toFixed(1)}. General government saves ${gg.s.toFixed(1)} and invests ${gg.i.toFixed(1)}.`);
+  document.getElementById("plot-sect").append(plot);
+  wireTools(document.getElementById("cb-sect"), plot, [
+    { name: `gross_saving_pct_of_gdp_${year}`, data: rows.map((r) => ({ date: r.nm, value: r.s })) },
+    { name: `gfcf_pct_of_gdp_${year}`, data: rows.map((r) => ({ date: r.nm, value: r.i })) },
+  ], "india-atlas_national-accounts_saving-investment-by-sector_" + year, (d) => d);
+  setTxt("pv-sect", pct1(hh.s - hh.i));
+  setTxt("pv-sect-c", year + ", households' surplus, % of GDP");
+  setTxt("se-hh-s", pct1(hh.s)); setTxt("se-hh-i", pct1(hh.i)); setTxt("se-hh-gap", (hh.s - hh.i).toFixed(1) + " points");
+  setTxt("se-pc-i", pct1(pc.i)); setTxt("se-pc-s", pct1(pc.s));
+  setTxt("se-gg-s", pct1(gg.s)); setTxt("se-gg-i", pct1(gg.i));
+  setTxt("se-tot-s", pct1(src.s.saving_total_pct_gdp[li]));
+}
+
+/* ---------- §11 household and government saving over time, two rulers ---------- */
+{
+  const mk = (blk, k, lab, color, opacity, r) => ({ key: `${k}_${r}`, label: lab, name: `${k}_${r}`, color, opacity, data: pts(blk, k) });
+  const hh11 = mk(GD.sect.b11, "saving_households_pct_gdp", "Households, base 2011-12", "#2E4BD8", 0.4, "b11");
+  const hh22 = mk(GD.sect.b22, "saving_households_pct_gdp", "Households, base 2022-23", "#2E4BD8", 1, "b22");
+  const gg11 = mk(GD.sect.b11, "saving_government_pct_gdp", "Government, base 2011-12", "#C47A16", 0.4, "b11");
+  const gg22 = mk(GD.sect.b22, "saving_government_pct_gdp", "Government, base 2022-23", "#C47A16", 1, "b22");
+  const lines = [hh11, hh22, gg11, gg22];
+  const all = lines.flatMap((l) => l.data.map((d) => d.value));
+  const lo = Math.floor(Math.min(...all) / 5) * 5, hi = Math.ceil(Math.max(...all) / 5) * 5;
+  const geo = { W: 1184, H: 440, ml: 70, mr: 230, mt: 30, mb: 48, d0: lo, d1: hi };
+  const yTicks = []; for (let t = lo; t <= hi; t += 5) yTicks.push(t);
+  const xTicks = []; for (let y = 2012; y <= hh22.data.at(-1).date.getUTCFullYear(); y += 2) xTicks.push(new Date(Date.UTC(y, 3, 1)));
+  const ends = [hh22, gg22];
+  const dodged = dodgeEndLabels(ends, (hi - lo) * 0.06);
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H, marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+    x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => String(fyL(d)) },
+    y: { label: "↑ gross saving, % of GDP", labelAnchor: "top", labelArrow: false, ticks: yTicks, domain: [lo, hi], tickSize: 0, tickPadding: 11,
+         tickFormat: (d) => (d === yTicks.at(-1) ? d + "%" : (d < 0 ? "−" + Math.abs(d) : String(d))) },
+    marks: [
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([0], { stroke: "#161A22", strokeOpacity: 0.55, strokeWidth: 1 }),
+      ...seamMarks("overlap", [hh11, hh22], false),
+      ...seamMarks("overlap", [gg11, gg22], false),
+      ...lines.map((l) => Plot.dot(l.data, { x: "date", y: "value", fill: l.color, fillOpacity: l.opacity, r: 2.5 })),
+      ...dodged.filter((p) => Math.abs(p.y - p.value) > 0.05).map((p) => Plot.line([{ x: p.s.data.at(-1).date, y: p.value }, { x: p.s.data.at(-1).date, y: p.y }], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
+      ...dodged.map((p) => Plot.text([{ date: p.s.data.at(-1).date, y: p.y }], { x: "date", y: "y", text: () => `${p.s.label.split(",")[0]} ${pct1(p.value)}`, dx: 14, fill: "#161A22", fontSize: 12, fontFamily: mono, textAnchor: "start" })),
+    ],
+  });
+  const ggLow = gg11.data.reduce((m, d) => (d.value < m.value ? d : m));
+  const hhAt = hh11.data.find((d) => d.date.getTime() === ggLow.date.getTime());
+  const before = hh11.data.filter((d) => d.date < ggLow.date && d.value >= hhAt.value);
+  a11y(plot, "Household and government gross saving, share of GDP, both bases",
+    `Households save between ${Math.min(...hh11.data.map((d) => d.value)).toFixed(1)} and ${Math.max(...hh11.data.map((d) => d.value)).toFixed(1)} per cent of GDP on the 2011-12 base; government saving falls to ${ggLow.value.toFixed(1)} in ${fyL(ggLow.date)}. The 2022-23 base reads households at ${hh22.data.at(-1).value.toFixed(1)} in ${fyL(hh22.data.at(-1).date)}.`);
+  document.getElementById("plot-hh").append(plot);
+  wireTools(document.getElementById("cb-hh"), plot, lines, "india-atlas_national-accounts_household-government-saving", fyL);
+  addCrosshair(document.getElementById("plot-hh"), plot, lines, geo, fyL);
+  setTxt("pv-hh", pct1(hh22.data.at(-1).value));
+  setTxt("pv-hh-c", fyL(hh22.data.at(-1).date) + ", households, base 2022–23");
+  setTxt("hh-gg-low", pct1(ggLow.value)); setTxt("hh-gg-low-y", fyL(ggLow.date));
+  setTxt("hh-2020", pct1(hhAt.value));
+  setTxt("hh-2020-since", before.length ? fyL(before.at(-1).date) : "the series began");
+  setTxt("hh-new", pct1(hh22.data.at(-1).value));
+}
+
+/* ---------- §12 sub-industries: compound real growth, one dot each ---------- */
+{
+  const rows = [...(GD.sub?.rows ?? [])].sort((a, b) => b.cagr - a.cagr);
+  const ACC = new Set(["crops", "livestock", "fishing"]);
+  const lo = Math.floor(Math.min(...rows.map((r) => r.cagr), 0)), hi = Math.ceil(Math.max(...rows.map((r) => r.cagr))) + 2;
+  const xTicks = []; for (let t = lo; t <= hi; t += 2) xTicks.push(t);
+  const plot = Plot.plot({
+    width: 1184, height: 60 + rows.length * 30, marginLeft: 290, marginRight: 150, marginTop: 30, marginBottom: 40,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+    x: { label: "average real growth a year, per cent →", labelAnchor: "right", labelArrow: false, domain: [lo, hi], ticks: xTicks, tickSize: 0, tickPadding: 10, tickFormat: (d) => d + "%" },
+    y: { label: null, domain: rows.map((r) => r.label), tickSize: 0, tickPadding: 14 },
+    marks: [
+      Plot.gridX(xTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleX([0], { stroke: "#161A22", strokeOpacity: 0.55, strokeWidth: 1 }),
+      Plot.ruleY(rows, { y: "label", x1: 0, x2: "cagr", stroke: "#E3E6EB", strokeWidth: 1 }),
+      Plot.dot(rows, { y: "label", x: "cagr", fill: (r) => (ACC.has(r.key) ? "#2E4BD8" : "#878D99"), r: 4.5, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      Plot.text(rows, { y: "label", x: "cagr", text: (r) => `${r.cagr.toFixed(1)}%, ${r.share1.toFixed(1)}% of GVA`, dx: 12, textAnchor: "start", fill: "#161A22", fontSize: 11.5, fontFamily: mono }),
+    ],
+  });
+  const by = Object.fromEntries(rows.map((r) => [r.key, r]));
+  const from = fyL(ISO(GD.sub.from)), to = fyL(ISO(GD.sub.to));
+  a11y(plot, `Average annual real growth of GVA by sub-industry, ${from} to ${to}`,
+    `Eighteen dots, sorted. Fastest: ${rows[0].label}, ${rows[0].cagr.toFixed(1)} per cent a year. Slowest: ${rows.at(-1).label}, ${rows.at(-1).cagr.toFixed(1)}. Crops grew ${by.crops.cagr.toFixed(1)}, livestock ${by.livestock.cagr.toFixed(1)}, fishing ${by.fishing.cagr.toFixed(1)}.`);
+  document.getElementById("plot-sub").append(plot);
+  wireTools(document.getElementById("cb-sub"), plot, [
+    { name: `average_real_growth_pct_${from}_to_${to}`, data: rows.map((r) => ({ date: r.label, value: r.cagr })) },
+    { name: `share_of_nominal_gva_${from}`, data: rows.map((r) => ({ date: r.label, value: r.share0 })) },
+    { name: `share_of_nominal_gva_${to}`, data: rows.map((r) => ({ date: r.label, value: r.share1 })) },
+  ], "india-atlas_national-accounts_sub-industries_" + from + "_" + to, (d) => d);
+  setTxt("pv-sub", by.livestock.cagr.toFixed(1) + "%");
+  setTxt("pv-sub-c", "livestock, a year, " + from + " to " + to);
+  setTxt("sb-crops0", by.crops.share0.toFixed(1) + "%"); setTxt("sb-crops1", by.crops.share1.toFixed(1) + "%");
+  setTxt("sb-live0", by.livestock.share0.toFixed(1) + "%"); setTxt("sb-live1", by.livestock.share1.toFixed(1) + "%");
+  setTxt("sb-food", by.food_products.cagr.toFixed(1) + "%"); setTxt("sb-mach", by.machinery.cagr.toFixed(1) + "%");
+  // the new base's last sub-industry year, from the every-cut bundle the page lists
+  setTxt("sb-new", GD.sub.newTo ? fyL(ISO(GD.sub.newTo)) : "—");
+}
+
+/* ---------- §13 revisions: each year's path from its first print ---------- */
+{
+  const STG = [["fae", "First advance"], ["sae", "Second advance"], ["pe", "Provisional"], ["fre", "First revised"], ["sre", "Second revised"], ["tre", "Third revised or final"]];
+  const src = GD.rev.b11;
+  const years = src.dates.map((d, i) => ({ d, i })).filter(({ i }) => src.s.gdp_growth_fae_real?.[i] != null);
+  const paths = years.map(({ d, i }) => {
+    const first = src.s.gdp_growth_fae_real[i];
+    const steps = STG.map(([k, nm], j) => {
+      const v = k === "tre" ? (src.s.gdp_growth_tre_real?.[i] ?? src.s.gdp_growth_final_real?.[i]) : src.s[`gdp_growth_${k}_real`]?.[i];
+      return v == null ? null : { x: j, v, rev: v - first, stage: nm };
+    }).filter(Boolean);
+    return { fy: fyL(ISO(d)), first, steps, last: steps.at(-1) };
+  }).filter((p) => p.steps.length > 1);
+  const up = paths.reduce((m, p) => (p.last.rev > m.last.rev ? p : m)), down = paths.reduce((m, p) => (p.last.rev < m.last.rev ? p : m));
+  const hl = new Set([up.fy, down.fy]);
+  const all = paths.flatMap((p) => p.steps.map((s) => s.rev));
+  const lo = Math.floor(Math.min(...all) * 2) / 2 - 0.5, hi = Math.ceil(Math.max(...all) * 2) / 2 + 0.5;
+  const yTicks = []; for (let t = Math.ceil(lo); t <= hi; t += 1) yTicks.push(t);
+  const rowsAll = paths.flatMap((p) => p.steps.map((s) => ({ ...s, fy: p.fy })));
+  const sgnPt = (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + " pt";
+  const plot = Plot.plot({
+    width: 1184, height: 460, marginLeft: 70, marginRight: 230, marginTop: 30, marginBottom: 52,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+    x: { label: null, domain: [-0.2, STG.length - 0.8], ticks: STG.map((_, j) => j), tickFormat: (j) => String(STG[j][1]), tickSize: 0, tickPadding: 16 },
+    y: { label: "↑ change from the first print, percentage points", labelAnchor: "top", labelArrow: false, domain: [lo, hi], ticks: yTicks, tickSize: 0, tickPadding: 11,
+         tickFormat: (d) => (d > 0 ? "+" + d : d < 0 ? "−" + Math.abs(d) : "0") },
+    marks: [
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([0], { stroke: "#161A22", strokeOpacity: 0.55, strokeWidth: 1 }),
+      Plot.line(rowsAll.filter((r) => !hl.has(r.fy)), { x: "x", y: "rev", z: "fy", stroke: "#C9CED6", strokeWidth: 1.25 }),
+      Plot.line(rowsAll.filter((r) => hl.has(r.fy)), { x: "x", y: "rev", z: "fy", stroke: "#2E4BD8", strokeWidth: 2.25 }),
+      Plot.dot(rowsAll.filter((r) => hl.has(r.fy)), { x: "x", y: "rev", fill: "#2E4BD8", r: 3, stroke: "#FFFFFF", strokeWidth: 1.25 }),
+      ...[up, down].map((p) => Plot.text([p.last], { x: "x", y: "rev", text: () => `${p.fy}: ${pct1(p.first)} first, ${pct1(p.last.v)} now`, dx: 12, textAnchor: "start", fill: "#161A22", fontSize: 12, fontFamily: mono })),
+    ],
+  });
+  const revs = paths.map((p) => p.last.rev);
+  const meanAbs = revs.reduce((s, v) => s + Math.abs(v), 0) / revs.length;
+  a11y(plot, "How each year's GDP growth moved from its first advance estimate, base 2011-12",
+    `${paths.length} grey lines start at zero and move as later estimates arrive. Highlighted: ${up.fy}, first ${up.first.toFixed(1)} per cent, now ${up.last.v.toFixed(1)}; and ${down.fy}, first ${down.first.toFixed(1)}, now ${down.last.v.toFixed(1)}. The average move was ${meanAbs.toFixed(1)} points.`);
+  document.getElementById("plot-rev").append(plot);
+  wireTools(document.getElementById("cb-rev"), plot, STG.map(([k, nm]) => ({
+    name: `gdp_real_growth_${k}`, data: paths.map((p) => ({ date: p.fy, value: p.steps.find((s) => s.stage === nm)?.v ?? null })),
+  })), "india-atlas_national-accounts_gdp-revisions_base2011", (d) => d);
+  setTxt("pv-rev", meanAbs.toFixed(1) + " pt");
+  setTxt("pv-rev-c", "average move, first print to latest");
+  setTxt("rv-n", String(paths.length));
+  setTxt("rv-mean", meanAbs.toFixed(1) + " points");
+  setTxt("rv-up", String(revs.filter((v) => v > 0).length));
+  setTxt("rv-max", `${sgnPt(up.last.rev)} (${up.fy})`);
+  setTxt("rv-min", `${sgnPt(down.last.rev)} (${down.fy})`);
+  const r22 = GD.rev.b22, n22 = r22.dates.filter((d, i) => ["pe", "fre", "final"].some((k) => r22.s[`gdp_growth_${k}_real`]?.[i] != null)).length;
+  setTxt("rv-22", `it holds ${n22} years, each at a single stage so far`);
+}
+
+/* ---------- §15 what India makes: industry shares since 1950-51 ---------- */
+{
+  const panels = [
+    ["agriculture_share", "Agriculture", "Crops, livestock, forestry, fishing"],
+    ["manufacturing_share", "Manufacturing", "Factories and workshops"],
+    ["construction_share", "Construction", "Buildings, roads, works"],
+    ["trade_hotels_share", "Trade, hotels, restaurants", "Shops, repair, eating out"],
+    ["transport_share", "Transport and communication", "Rail, road, air, phones"],
+    ["finance_share", "Financial services", "Banks, insurance"],
+    ["realty_share", "Real estate and professional", "Dwellings, IT, consulting"],
+    ["public_admin_share", "Public administration", "Government and defence"],
+    ["other_services_share", "Other services", "Schools, hospitals, personal"],
+    ["mining_share", "Mining", "Coal, oil, ores"],
+    ["utilities_share", "Electricity, gas, water", "The utilities"],
+  ];
+  const csv = rulerGrid("grid-make", GD.make, panels);
+  document.getElementById("grid-make")?.setAttribute("aria-label", "Eleven small line charts of each industry's share of GVA since 1950-51, on the NSO back series and the two current bases, never joined. Agriculture falls from about half to under a fifth; services rise.");
+  wireTools(document.getElementById("cb-make"), null, csv, "india-atlas_national-accounts_industry-shares_1950-2026", fyL);
+  const bk = (k) => pts(GD.make.back, k), nw = (k) => pts(GD.make.b22, k);
+  const ag0 = bk("agriculture_share")[0], ag1 = bk("agriculture_share").at(-1);
+  setTxt("pv-make", pct1(nw("agriculture_share").at(-1).value));
+  setTxt("pv-make-c", fyL(nw("agriculture_share").at(-1).date) + ", agriculture, base 2022–23");
+  setTxt("mk-ag0", `${pct1(ag0.value)} in ${fyL(ag0.date)}`); setTxt("mk-ag1", `${pct1(ag1.value)} in ${fyL(ag1.date)}`);
+  setTxt("mk-con0", pct1(bk("construction_share")[0].value)); setTxt("mk-con1", pct1(bk("construction_share").at(-1).value));
+  setTxt("mk-fin0", pct1(bk("finance_share")[0].value)); setTxt("mk-fin1", pct1(bk("finance_share").at(-1).value));
+  const mfg = [...bk("manufacturing_share"), ...pts(GD.make.b11, "manufacturing_share")];
+  const pk = mfg.reduce((m, d) => (d.value > m.value ? d : m));
+  setTxt("mk-mfg-pk", `${pct1(pk.value)} in ${fyL(pk.date)}`);
+  setTxt("mk-mfg1", pct1(nw("manufacturing_share").at(-1).value));
+}
 
 /* ---------- provenance vintage — driven from the baked bundle, never hardcoded ---------- */
 setTxt("prov-vintage", bundle.meta.vintage);

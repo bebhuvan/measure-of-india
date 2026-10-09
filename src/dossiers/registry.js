@@ -75,9 +75,9 @@ export const DOSSIERS = [
     blurb: "The size and speed of the whole economy, estimated quarterly: what growth is made of, from consumption to investment and government, and what the aggregate hides.",
     description: "GDP and GVA: a decade of Indian growth, the pandemic wound, and how to read the latest quarterly print.",
     rssDescription: "The size and speed of the whole economy, estimated quarterly. Revised with the latest print.",
-    stamp: { dateText: "August 2026", vintageStyle: "vintage" },   // dateText = page-revision month (no bundle fact); vintage derives from gdp-2022 meta.vintage
+    stamp: { dateText: "October 2026", vintageStyle: "vintage" },   // dateText = page-revision month (no bundle fact); vintage derives from gdp-2022 meta.vintage
     statusNote: "Evergreen, revised with each print",
-    version: "v1.8",
+    version: "v1.9",
     proseInputs: ["gdp-2022-expenditure", "gdp-2022-industries", "gdp-2022-accounts", "gdp-2022-nominal"],
     currentBundle: "gdp-2022",
     calendar: "fiscal-apr",
@@ -86,7 +86,7 @@ export const DOSSIERS = [
     spark: { bundle: "gdp", series: "gdp" },   // retired 2011-12 base: the long history
     prose: true,
     register: { id: "reg-gdp", label: "Output", unit: "Quarterly, 2022-23 base current, 2011-12 base through Q2 FY26", historyCol: "2016 to 2025" },
-    bundles: ["gdp", "gdp-expenditure", "gdp-accounts", "gdp-industries", "gdp-nominal", "gdp-2022", "gdp-2022-expenditure", "gdp-2022-industries", "gdp-2022-nominal", "gdp-2022-accounts", "gdp-back"],
+    bundles: ["gdp-2022", "gdp-2022-expenditure", "gdp-2022-industries", "gdp-2022-nominal", "gdp-2022-accounts", "gdp-2022-annual-levels", "gdp-2022-annual-growth", "gdp-2022-annual-shares", "gdp-2022-annual-industries", "gdp-2022-annual-subindustries", "gdp-2022-annual-gcf-industries", "gdp-2022-sectors", "gdp-2022-revisions", "gdp-2022-quarterly-levels", "gdp-2022-quarterly-shares", "gdp-2022-quarterly-industry-levels", "gdp", "gdp-expenditure", "gdp-accounts", "gdp-industries", "gdp-nominal", "gdp-annual-levels", "gdp-annual-growth", "gdp-annual-shares", "gdp-annual-industries", "gdp-annual-subindustries", "gdp-annual-gcf-industries", "gdp-sectors", "gdp-revisions", "gdp-quarterly-levels", "gdp-quarterly-shares", "gdp-quarterly-industry-levels", "gdp-back", "gdp-back-levels", "gdp-back-growth", "gdp-back-shares", "gdp-back-industries", "gdp-back-subindustries"],
   },
   {
     slug: "wpi",
