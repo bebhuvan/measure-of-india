@@ -710,6 +710,69 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   setTxt("sz-low", sr.slice(-3).reverse().map((r) => r.name.toLowerCase() + " (" + Math.round(r.size) + ")").join(", "));
 }
 
+/* ---------- § 08 inside the shelf: the 4-digit classes and the state x division mix ----------
+ * Build-time picks (#asi-deep-data) from asi-nic4, asi-nic2, asi-accounts, asi-states-all and the
+ * per-state asi-state-nic2-* bundles; the whole tables are in the downloads. */
+{
+  const A = JSON.parse(document.getElementById("asi-deep-data")?.textContent || "null");
+  if (A && A.topClasses.length) {
+    const short = (t) => { const x = t.replace(/^(\d+) Manufacture of /, "$1 ").replace(/^(\d+) (.)/, (m, c, ch) => c + " " + ch.toUpperCase()); return x.length > 52 ? x.slice(0, 50).replace(/[ ,]+\S*$/, "") + "…" : x; };
+    const rows = A.topClasses.map((r) => ({ ...r, name: short(r.name) }));
+    const top = rows[0];
+    const share = rows.reduce((a, r) => a + r.sh, 0), psh = rows.reduce((a, r) => a + (r.psh ?? 0), 0);
+    setTxt("pv-nic4", share.toFixed(1) + "%");
+    setTxt("n4-top", top.name.replace(/^\d+ /, "").toLowerCase() + " (NIC " + top.code + "), " + top.sh.toFixed(1) + "%");
+    setTxt("n4-share", share.toFixed(1) + "%");
+    setTxt("n4-pshare", psh.toFixed(1) + "%");
+    const geo = { W: 1184, H: 30 + rows.length * 24 + 40, ml: 380, mr: 150, mt: 30, mb: 40 };
+    const max = Math.max(...rows.map((r) => r.sh)) * 1.1;
+    const plot = Plot.plot({
+      width: geo.W, height: geo.H, marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+      style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+      x: { label: "share of factory value added →", labelAnchor: "right", labelArrow: false, domain: [0, max], tickSize: 0, tickPadding: 10, tickFormat: (d) => (d === 0 ? "0" : d + "%") },
+      y: { label: null, domain: rows.map((r) => r.name), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
+      marks: [
+        Plot.gridX({ stroke: "#F0F2F5", ticks: 5 }),
+        Plot.barX(rows, { x: "sh", y: "name", fill: (d) => (d === top ? "#2E4BD8" : "#C9CED6"), insetTop: 4, insetBottom: 4 }),
+        Plot.ruleX([0], { stroke: "#B5BAC4" }),
+        Plot.text(rows.filter((d) => d !== top), { x: "sh", y: "name", dx: 8, textAnchor: "start", text: (d) => d.sh.toFixed(1) + "%", fill: "#4A5160", fontSize: 11.5, fontFamily: mono }),
+        Plot.text([top], { x: "sh", y: "name", dx: 8, textAnchor: "start", text: (d) => d.sh.toFixed(1) + "%", fill: "#161A22", fontWeight: 500, fontSize: 11.5, fontFamily: mono }),
+        Plot.text(rows.filter((d) => d.psh != null), { x: "sh", y: "name", dx: 62, textAnchor: "start", text: (d) => "jobs " + d.psh.toFixed(1) + "%", fill: "#A3A9B4", fontSize: 11, fontFamily: mono }),
+      ],
+    });
+    a11y(plot, "The 20 largest 4-digit factory classes by share of value added", "Bar chart. " + rows.slice(0, 3).map((r) => r.name + " " + r.sh.toFixed(1) + " per cent").join(", ") + "; together the twenty make " + share.toFixed(1) + " per cent of factory value added and " + psh.toFixed(1) + " per cent of jobs.");
+    document.getElementById("plot-nic4").append(plot);
+    const csv = ["nic4,class,gva_share_pct,employment_share_pct", ...A.topClasses.map((r) => `${r.code},"${r.name}",${r.sh.toFixed(2)},${r.psh?.toFixed(2) ?? ""}`)].join("\n");
+    wirePlate(document.getElementById("cb-nic4"), plot, "india-atlas_asi_top-4-digit-classes", csv);
+  }
+  if (A && A.mix.length) {
+    const dn = (c) => { const d = A.divs.find((x) => x.code === c); const n = d.name.replace(/^\d+ /, "").replace(/^Manufacture of /, ""); const s2 = n.split(/,| and /)[0]; return s2.charAt(0).toUpperCase() + s2.slice(1).toLowerCase(); };
+    const cols = [...A.divs.map((d) => d.code), "other"];
+    const colName = (c) => (c === "other" ? "All other" : dn(c));
+    const cells = A.mix.flatMap((m) => [...m.cells.map((c) => ({ state: m.state, col: colName(c.code), sh: c.sh })), { state: m.state, col: "All other", sh: m.other }]);
+    const peak = cells.filter((c) => c.col !== "All other" && c.sh != null).sort((a, b) => b.sh - a.sh)[0];
+    const varied = [...A.mix].sort((a, b) => b.other - a.other)[0];
+    setTxt("pv-statemix", peak.sh.toFixed(1) + "%");
+    setTxt("sm-peak", peak.col.toLowerCase() + " in " + peak.state + ", " + peak.sh.toFixed(1) + "% of its factory value added");
+    setTxt("sm-div", varied.state + " (" + varied.other.toFixed(1) + "% in divisions outside the eight)");
+    const plot = Plot.plot({
+      width: 1184, height: 60 + A.mix.length * 34 + 30, marginLeft: 160, marginRight: 10, marginTop: 70, marginBottom: 10,
+      style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#4A5160", overflow: "visible" },
+      x: { label: null, domain: cols.map(colName), axis: "top", tickSize: 0, tickPadding: 8, tickFormat: (s) => String(s) },
+      y: { label: null, domain: A.mix.map((m) => m.state), tickSize: 0, tickPadding: 10, tickFormat: (s) => String(s) },
+      color: { type: "linear", domain: [0, 40], range: ["#FFFFFF", "#B9C3F3"], clamp: true },
+      marks: [
+        Plot.cell(cells.filter((c) => c.sh != null), { x: "col", y: "state", fill: "sh", inset: 1 }),
+        Plot.text(cells.filter((c) => c.sh != null), { x: "col", y: "state", text: (d) => d.sh.toFixed(1), fill: "#161A22", fontSize: 11.5, fontFamily: mono }),
+      ],
+    });
+    a11y(plot, "Share of each state's factory value added by division", "Grid of twelve states by eight divisions and all other. The largest cell is " + peak.col + " in " + peak.state + " at " + peak.sh.toFixed(1) + " per cent.");
+    document.getElementById("plot-statemix").append(plot);
+    const csv = ["state," + cols.map((c) => `"${colName(c)}"`).join(","), ...A.mix.map((m) => `"${m.state}",` + [...m.cells.map((c) => c.sh?.toFixed(2) ?? ""), m.other.toFixed(2)].join(","))].join("\n");
+    wirePlate(document.getElementById("cb-statemix"), plot, "india-atlas_asi_state-by-division-mix", csv);
+  }
+}
+
 /* ---------- § 07 plates: the 2025 round, workers by trade and women's share ----------
  * The ASUSE 2025 table is 1.7 MB, so the page carries a build-time pick of the figures these
  * two plates draw (#u25-data, written by the page from asuse-2025-t26); the whole table is in

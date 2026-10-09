@@ -2005,6 +2005,53 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
     else ok(`${slug}: All India categories sum to ${sum.join(", ")} per 1,000`);
   }
 
+  // ASI: the complete tables of every NIC block. Counts are non-negative; money can be negative
+  // only in the stock-change, net-income and net-profit lines (24-30) and in value added and
+  // capital formation (19-23) for small cuts that made losses.
+  const ASI_BLOCK = { "": "NIC 2008", "-2004": "NIC 2004", "-1998": "NIC 1998", "-1987": "NIC 1987" };
+  const asiTables = files.filter((f) => /^asi(-\d{4})?-(nic[234]|states(-all)?|state-nic2-.+|accounts|sectors)$/.test(f) && f !== "asi-accounts");
+  for (const slug of asiTables) {
+    const b = load(slug), tag = (slug.match(/^asi(-\d{4})?-/) ?? [])[1] ?? "";
+    checkMeta(b, slug, "asi", ASI_BLOCK[tag], "annual");
+    checkCadence(b.dates, 12, slug);
+    const rng = {};
+    for (const [k, s] of Object.entries(b.series)) {
+      const code = +k.slice(1, 3);
+      const neg = (code >= 19 && code <= 30) || (code >= 60);   // 1987 block codes run past 57
+      rng[k] = s.unit === "count" || s.unit === "thousand" ? [0, 1e9] : neg ? [-1e10, 1e10] : [0, 1e10];
+    }
+    checkRange(b, -Infinity, Infinity, slug, rng);
+    checkFreshness(b, slug, { staleAfter: { "": "2023-04", "-2004": "2007-04", "-1998": "2003-04", "-1987": "1997-04" }[tag] }, "asi");
+  }
+  ok(`asi: ${asiTables.length} complete tables through the generic checks`);
+  // the parts add up: every 2-digit division's GVA sums to the All-India figure (NIC 2008)
+  if (files.includes("asi-nic2") && files.includes("asi-accounts")) {
+    const n2 = load("asi-nic2"), acc = load("asi-accounts");
+    let worst = 0, at = null;
+    acc.dates.forEach((d, i) => {
+      const t = acc.series.i19.data[i]; if (t == null) return;
+      const sum = Object.entries(n2.series).filter(([k]) => k.startsWith("i19_")).reduce((a, [, s]) => a + (s.data[n2.dates.indexOf(d)] ?? 0), 0);
+      const dev = Math.abs(sum / t - 1); if (dev > worst) { worst = dev; at = d; }
+    });
+    if (worst > 0.005) fail(`asi-nic2: divisions' GVA sums ${(worst * 100).toFixed(2)}% away from All India at ${at}`);
+    else ok(`asi-nic2: divisions' GVA sums to All India within ${(worst * 100).toFixed(3)}%`);
+  }
+  // persons engaged = workers + other employees + unpaid family members (i31 = i32 + i38 + i41)
+  // at every grain: this is the check that catches a shifted indicator copy
+  for (const slug of asiTables.filter((f) => /-nic[234]$|-states/.test(f) && !/-1987|-1998/.test(f))) {
+    const b = load(slug); let bad = 0, n = 0;
+    for (const k of Object.keys(b.series).filter((x) => x.startsWith("i31"))) {
+      const sfx = k.slice(3), w = b.series["i32" + sfx], o = b.series["i38" + sfx], u = b.series["i41" + sfx];
+      if (!w || !o) continue;
+      b.dates.forEach((d, i) => {
+        const p = b.series[k].data[i]; if (p == null || w.data[i] == null || o.data[i] == null) return;
+        n++; if (Math.abs(w.data[i] + o.data[i] + (u?.data[i] ?? 0) - p) > Math.max(2, p * 0.002)) { bad++; if (bad <= 3) console.error(`   ${slug} ${k} ${d}: ${w.data[i]} + ${o.data[i]} + ${u?.data[i] ?? 0} != ${p}`); }
+      });
+    }
+    if (bad) fail(`${slug}: persons engaged != workers + other employees + unpaid in ${bad} of ${n} cells`);
+    else ok(`${slug}: persons engaged = workers + other employees + unpaid in all ${n} cells`);
+  }
+
   // annual growth as published vs computed from the published (rounded) annual levels
   for (const slug of ["iip-annual-2022", "iip-annual-2011", "iip-annual-2004", "iip-annual-1993", "core-2011", "core-2004", "core-1993"].filter((x) => files.includes(x))) {
     const b = load(slug); let worst = 0, at = null, n = 0;

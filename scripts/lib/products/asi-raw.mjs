@@ -77,15 +77,13 @@ function purgePageCache(root, cy, code, pages) {
 async function fetchTable(root, cy, ind) {
   const t0 = Date.now();
   const rows = await mospiAll("asi/getASIData", { classification_year: cy, indicator_code: ind.indicator_code });
-  // paging stability: a repeated key with a different value means pages overlapped
-  const seen = new Map();
-  let clash = 0;
-  for (const r of rows) {
-    const k = keyOf(r);
-    if (seen.has(k) && seen.get(k) !== r.value && r.nic_code !== "99999") clash++;
-    seen.set(k, r.value);
-  }
-  if (clash) throw new Error(`asi raw ${cy}-${ind.indicator_code}: ${clash} repeated keys with different values (unstable paging?)`);
+  // paging stability: every row has a unique (year, state, sector, nic_type, nic_code) key (the
+  // NIC 99999 copies differ by nic_type), so any repeat means pages overlapped and, with the
+  // row count matching totalRecords, that another row was dropped: fail, never stage it
+  const seen = new Set();
+  let rep = 0;
+  for (const r of rows) { const k = keyOf(r); if (seen.has(k)) rep++; seen.add(k); }
+  if (rep) throw new Error(`asi raw ${cy}-${ind.indicator_code}: ${rep} repeated row keys (pages slipped)`);
   const gz = zlib.gzipSync(JSON.stringify(rows), { level: 9 });
   const p = file(root, cy, ind.indicator_code);
   fs.mkdirSync(path.dirname(p), { recursive: true });

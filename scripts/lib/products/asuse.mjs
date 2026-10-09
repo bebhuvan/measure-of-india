@@ -565,7 +565,9 @@ function bakeTables(root, all, listAnnual, metaBase, dcfg) {
         const key = dims.map((k) => slugV(tidyV(k, r[k]))).join("__") || "all_india";
         const unit = UNIT(code, r);
         if (!unit) throw new Error(`asuse t${code}: no unit for row ${JSON.stringify(r)}`);
-        const label = (dims.some((k) => CUTS.includes(k)) ? "" : "All India · ") + dims.map((k) => tidyV(k, r[k])).join(" · ");
+        // a table category at its "All" total is named with its dimension ("gender: all")
+        const human = (k) => k.replace(/_+$/, "").replace(/[_/]+/g, " ").toLowerCase().trim();
+        const label = (dims.some((k) => CUTS.includes(k)) ? "" : "All India · ") + dims.map((k) => (!CUTS.includes(k) && String(r[k]).trim() === "All" ? `${human(k)}: all` : tidyV(k, r[k]))).join(" · ");
         let e = series.get(key);
         if (!e) series.set(key, e = { label, unit, cells: new Map(), group: r["state/UT"] && r["state/UT"] !== "All India" ? r["state/UT"] : tidyV("a", r.activity_category ?? r.broad_activity_category ?? "All") });
         if (e.label !== label) throw new Error(`asuse t${code}: key collision ${key}: "${e.label}" vs "${label}"`);
