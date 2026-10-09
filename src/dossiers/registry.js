@@ -60,7 +60,7 @@ export const DOSSIERS = [
     spark: { bundle: "cpi", series: "headline" },   // retired 2012 base: the long history
     prose: true,
     register: { id: "reg-cpi", label: "Prices", unit: "Monthly, base 2024 from Jan 2026, base 2012 retired Dec 2025", historyCol: "History" },
-    bundles: ["cpi", "cpi-rural", "cpi-urban", "cpi-subgroups", "cpi-states", "cpi-states-sectors", "cpialrl-2019", "cpialrl-1986", "cpialrl-groups-2019", "cpi-2024", "cpi-2024-back", "cpi-2024-linked", "cpi-2024-sectors", "cpi-2024-groups", "cpi-2024-items", "cpi-2024-states", "cpialrl-states-1986"],
+    bundles: ["cpi", "cpi-rural", "cpi-urban", "cpi-subgroups", "cpi-states", "cpi-states-sectors", "cpialrl-2019", "cpialrl-1986", "cpialrl-groups-2019", "cpi-2024", "cpi-2024-back", "cpi-2024-linked", "cpi-2024-sectors", "cpi-2024-groups", "cpi-2024-items", "cpi-2024-states", "cpialrl-states-1986", "cpialrl-states-2019"],
   },
   {
     slug: "gdp",

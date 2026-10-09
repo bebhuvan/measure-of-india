@@ -369,3 +369,30 @@ export async function buildAsi(root, dcfg, vintage) {
   }
   return headlineBundle;
 }
+
+/* Catalogue (docs/CONTRACT-coverage.md): what MoSPI publishes from the ASI, from
+ * asi/getNicClassificationYear and each block's asi/getAsiFilter (which lists the block's
+ * indicators, states, NIC codes at every digit level, and for the older blocks a sector).
+ * One item per indicator x one cut, the others at All India, all industries:
+ *   asi:<block>:<indicator>:all | :state:<state> | :nic2|nic3|nic4:<code> | :sector:<sector> */
+import { writeCatalogue, idPart, catalogueCli } from "../catalogue.mjs";
+export async function catalogueAsi() {
+  const items = [];
+  const blocks = ((await mospi("asi/getNicClassificationYear", {})).data ?? []).map((b) => b.classification_year);
+  for (const cy of blocks) {
+    const f = (await mospi("asi/getAsiFilter", { classification_year: cy })).data ?? {};
+    const cuts = [];
+    for (const s of f.state ?? []) if (s.state_code !== 99) cuts.push(`state:${idPart(s.state_name)}`);
+    // NIC 99999 is "All", the :all item itself, listed again at every digit level
+    for (const d of [2, 3, 4]) for (const n of f[`nic_${d}_digit`] ?? []) if (n.nic_code !== "99999") cuts.push(`nic${d}:${idPart(n.nic_code)}`);
+    for (const s of f.sector ?? []) if (!/combined/i.test(s.sector_name)) cuts.push(`sector:${idPart(s.sector_name)}`);
+    for (const ind of f.indicator ?? []) {
+      items.push({ id: `asi:${cy}:${ind.indicator_code}:all`, label: ind.indicator_name });
+      for (const c of cuts) items.push({ id: `asi:${cy}:${ind.indicator_code}:${c}` });
+    }
+  }
+  writeCatalogue("asi", { source: "MoSPI, NSO: Annual Survey of Industries (eSankhyiki API)",
+    generator: "scripts/lib/products/asi.mjs --catalogue",
+    note: "From getNicClassificationYear and getAsiFilter per NIC block (2008, 2004, 1998, 1987): every indicator x one cut (a state, a NIC code at 2, 3 or 4 digits, a sector). State x industry is also served and not listed here.", items });
+}
+await catalogueCli(import.meta.url, catalogueAsi);

@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
 import GuideData from "../../components/GuideData.astro";
+import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["iip"];
@@ -455,6 +456,8 @@ const list = (xs) => xs.slice(0, -1).join(", ") + " and " + xs.at(-1);
       </li>
     </ul>
   </section>
+
+  <EveryCut slug="iip" />
 
   <GuideData slug="iip" />
 

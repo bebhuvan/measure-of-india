@@ -159,3 +159,19 @@ export async function buildNfhs(root, dcfg, vintage) {
   }
   return bundles.anaemia;
 }
+
+/* Catalogue (docs/CONTRACT-coverage.md): nfhs/getNfhsIndicatorList (21 tables) and
+ * nfhs/getnfhsFilterByIndicatorId. Each table's sub-indicators are separate measures, and so
+ * are the two rounds: both are crossed with every cut.
+ *   nfhs:<table>:<sub-indicator>:<round>:all | :state:<state> | :sector:<sector> */
+import { writeCatalogue, indicatorCatalogue, catalogueCli } from "../catalogue.mjs";
+export async function catalogueNfhs() {
+  const inds = (await mospi("nfhs/getNfhsIndicatorList", {})).data ?? [];
+  const items = await indicatorCatalogue({ mospi, prefix: "nfhs", indicators: Array.isArray(inds) ? inds : inds.indicator ?? [],
+    cross: ["sub_indicator", "survey"],
+    filter: (ind) => ["nfhs/getnfhsFilterByIndicatorId", { indicator_code: ind.indicator_code }] });
+  writeCatalogue("nfhs", { source: "MoSPI / IIPS: National Family Health Survey, NFHS-4 and NFHS-5 (eSankhyiki API)",
+    generator: "scripts/lib/products/nfhs.mjs --catalogue",
+    note: "From getNfhsIndicatorList and getnfhsFilterByIndicatorId: every sub-indicator and round, one cut at a time (state, or rural/urban).", items });
+}
+await catalogueCli(import.meta.url, catalogueNfhs);

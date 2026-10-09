@@ -9,7 +9,7 @@ import subgroupsBundle from "../../data/series/wpi-subgroups.json";
 import itemsBundle from "../../data/series/wpi-items.json";
 import wpi2022Bundle from "../../data/series/wpi-2022.json";
 import {
-  MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend,
+  MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend, seamMarks, seamOverlap,
   peakOf, peakBetween, troughOf, dodgeEndLabels, spark, saveBlob, makePlacer, annotationSpot,
 } from "../charts/plumbing.js";
 
@@ -89,24 +89,16 @@ setHTML("rb-prev", PN.headline.toFixed(2) + pc);
       Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
       Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
       Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
-      Plot.lineY(oldS.data, { x: "date", y: "value", stroke: oldS.color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.lineY(newS.data, { x: "date", y: "value", stroke: newS.color, strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.ruleX([oldEnd.date], { stroke: "#CDD1D8", strokeWidth: 1, strokeDasharray: "2,3" }),
-      Plot.text([{ date: oldEnd.date, value: geo.d1 - 0.4 }], { x: "date", y: "value", text: [`old base ends, ${fmtDate(oldEnd.date)}`], fontSize: 12, fill: "#5F6675", fontFamily: mono, textAnchor: "end", dx: -8 }),
+      // the shared seam treatment: growth inside each base, both drawn through the overlap
+      ...seamMarks("overlap", [oldS, newS], { text: `old base ends, ${fmtDate(oldEnd.date)}`, y: geo.d1 - 0.4 }),
       Plot.dot([oldEnd], { x: "date", y: "value", fill: oldS.color, r: 3, stroke: "#FFFFFF", strokeWidth: 1 }),
       Plot.dot([newS.data.at(-1)], { x: "date", y: "value", fill: newS.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.text([newS.data.at(-1)], { x: "date", y: "value", text: (d) => `Base 2022–23 ${d.value.toFixed(2)}%`, dx: 16, dy: -8, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
   });
   // overlap statistics: months both bases describe, and the widest gap
-  const oldByT = new Map(oldS.data.map((d) => [d.date.getTime(), d.value]));
-  let n = 0, gap = 0, gapAt = null, both = null;
-  for (const d of newS.data) {
-    const o = oldByT.get(d.date.getTime());
-    if (o == null) continue;
-    n++; both = { date: d.date, nw: d.value, old: o };
-    if (Math.abs(d.value - o) > gap) { gap = Math.abs(d.value - o); gapAt = d.date; }
-  }
+  const ov = seamOverlap(oldS, newS);
+  const { n, gap, gapAt } = ov, both = ov.last && { date: ov.last.date, nw: ov.last.b, old: ov.last.a };
   a11y(plot, "Headline WPI inflation on the new 2022-23 base beside the old 2011-12 base, through the months both describe",
     `A blue line, the 2022-23 base, runs from ${fmtDate(newS.data[0].date)} to ${fmtDate(newS.data.at(-1).date)}, ending at ${newS.data.at(-1).value.toFixed(1)} per cent. A grey line, the 2011-12 base, runs to ${fmtDate(oldEnd.date)}, ending at ${oldEnd.value.toFixed(1)} per cent. Over the ${n} months both describe they differ by at most ${gap.toFixed(1)} points. The two are different rulers and are not joined.`);
   document.getElementById("plot-nb").append(plot);
