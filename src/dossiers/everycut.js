@@ -148,7 +148,7 @@ export const CUT_BY_BUNDLE = {
   "deposits-term-rates": "Interest rate band", "deposits-term-maturity": "Maturity", "deposits-term-size": "Deposit size",
   "deposits-term-size-2026": "Deposit size",
   // credit (lb/credit)
-  "credit-growth": "Sector", "credit-sectors": "Sector", "credit-sectors-2007": "Sector", "credit-industry": "Industry", "credit-industry-2007": "Industry",
+  "credit-growth": "Sector", "credit-sectors": "Sector", "credit-sectors-ex-merger": "Sector", "credit-sectors-2007": "Sector", "credit-industry": "Industry", "credit-industry-2007": "Industry",
   "credit-scb": "Balance sheet item", "credit-scb-ratios": "All India", "credit-food": "All India",
   "credit-money": "Component and source", "credit-money-growth": "Component", "credit-money-monthly": "Component and source", "credit-money-annual": "Component and source",
   "credit-money-ratios": "Ratio", "credit-reserve-money": "Component and source", "credit-reserve-money-weekly": "Component and source", "credit-bank-survey": "Component and source",

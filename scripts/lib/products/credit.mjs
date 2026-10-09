@@ -438,6 +438,28 @@ export async function buildCredit(root, dcfg, vintage, cfg) {
     coverage: "Bank credit to industry by industry: mining, food processing, textiles, chemicals, metals, engineering, vehicles, construction, infrastructure (power, roads, telecom, ports, airports, railways) and more, monthly since January 2019",
     note: `RBI, Industry-wise Deployment of Bank Credit (RBIB Table 16), new format, ₹ lakh crore, selected banks (about 95% of non-food credit): the DBIE export to ${histMax.industry}, then the press-release workbooks.` }));
 
+  /* ---------- 2a. RBI's sectoral series excluding mergers (DBIE 539) ---------- */
+  // Report 539 carries, beside each big aggregate, RBI's own figure "(Excluding Merger)" (codes
+  // ending _1). They differ from the raw figures from January 2021 (an earlier amalgamation) and
+  // again from July 2023 (HDFC Ltd into HDFC Bank), and stop after June 2025 (0 printed after:
+  // not a value). Baked as published, beside the raw series, never joined to them.
+  {
+    const R539 = dbieProvider(db, "539", "DP0");
+    const rows = R539.rows.filter((r) => r["Unit Description"] === "ACTUALS" && /_1$/.test(r["Item Code"]));
+    stamp("data/raw/credit-sectors-ex-merger.json", { note: "RBI DBIE report 539 data provider DP0 (Deployment of Bank Credit by Major Sectors), the rows 'Excluding Merger' (item codes ending _1), ACTUALS unit only. Rupees.",
+      provenance: R539.provenance, columns: ["Reporting Date", "Item Code", "Item Description", "Amount (Rs. Crore)"], rows: rows.map((r) => [iso(r["Reporting Date"]), r["Item Code"], r["Item Description"], r["Amount (Rs. Crore)"]]) });
+    const KEYS = { "I_1": ["bank_credit", "Bank credit"], "III_1": ["non_food_credit", "Non-food credit"], "2_1": ["industry", "Industry"], "3_1": ["services", "Services"], "3.1_1": ["transport_operators", "Transport operators"],
+      "3.8_1": ["commercial_real_estate", "Commercial real estate"], "4_1": ["personal_loans", "Personal loans"], "4.2_1": ["housing", "Housing loans"], "4.9_1": ["other_personal_loans", "Other personal loans"], "5.4_1": ["psl_housing", "Priority sector: housing"] };
+    const v = new Map(), months = new Set();
+    for (const r of rows) { const k = KEYS[r["Item Code"]]; if (!k) { console.warn(`credit: 539 ex-merger code ${r["Item Code"]} not mapped`); continue; } const x = num(r["Amount (Rs. Crore)"]); if (!x) continue; const m = monthKey(iso(r["Reporting Date"])); months.add(m); v.set(`${k[0]}|${m}`, x); }
+    const axis = monthAxis([...months].sort());
+    const series = Object.fromEntries(Object.values(KEYS).map(([k, l]) => [k, { name: `${k}_ex_merger_inr_lakh_crore`, label: `${l}, excluding mergers (RBI)`, data: axis.map((m) => (v.has(`${k}|${m}`) ? r3(v.get(`${k}|${m}`) / LC) : null)) }]));
+    bundleOut(root, "credit-sectors-ex-merger", { ...base, dossier: "credit-sibc", vintage: VS, frequency: "monthly", unit: "inr_lakh_crore", base: "SIBC 2019 format",
+      coverage: "Bank credit by sector excluding the effect of bank mergers, as the RBI publishes it beside the raw figures, January 2019 to June 2025",
+      note: "RBI DBIE report 539, the 'Excluding Merger' rows, ₹ lakh crore, the month's last reporting Friday. They differ from the raw figures (credit-sectors) from January 2021 to April 2022 for an earlier amalgamation, and from July 2023 for HDFC Ltd's merger into HDFC Bank; RBI stopped them after June 2025. Bank credit excluding mergers is printed only from February 2023. Never joined to the raw series." },
+      axis, series, "Not printed for this month in report 539.");
+  }
+
   /* ---------- 2b. growth on a year earlier, the guide's current bundle ---------- */
   // Each month's growth uses RBI's own printed year-ago figure where a press release printed
   // one (December 2022 on), else the same month a year earlier in the series. From December
