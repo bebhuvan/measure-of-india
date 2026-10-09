@@ -417,17 +417,10 @@ export async function buildHces(root, dcfg, vintage) {
   Object.assign(foodStatesBundle.series, fullCatStates);
   foodStatesBundle.meta.coverage = "States/UTs × rural/urban; percentage share of MPCE by broad item category (30-day recall), without imputation. Keys <state>_<sector> are the Food Total share; <state>_<sector>__<category> every other category.";
   foodStatesBundle.meta.note = "Food Total plus Non-Food Total is 100 in every state and sector; the detail categories sum to their aggregate.";
-  // the national rows the survey publishes with imputation join their bundles
-  const addImputed = (bundle, rows, dimOf, unit) => {
-    for (const [k, v] of Object.entries(deep(rows.filter((r) => r.state === "All India"), dimOf, unit, "With Imputation"))) {
-      const key = k.replace(/^all_india_/, "") + "_imputed";
-      bundle.series[key] = { ...v, name: `${v.name}_imputed`, label: `${v.label.replace(" · All India", "")} (with imputation)` };
-      delete bundle.series[key].group;
-    }
-  };
-  addImputed(itemValuesBundle, byInd["6"], cerDim, "inr");
-  addImputed(hhTypeBundle, byInd["7"], htDim, "inr");
-  addImputed(socialBundle, byInd["8"], sgDim, "inr");
+  // the national rows with imputation (indicators 6, 7, 8) are the All India rows of the
+  // -states bundles below; the national bundles stay on the headline convention alone, so a
+  // ranking across their series never mixes the two conventions
+
 
   if (!mpceBundle.series.rural.data.some((v) => v != null)) throw new Error("HCES: no MPCE data returned");
   writeSeries(root, "data/series/hces-mpce.json", mpceBundle);

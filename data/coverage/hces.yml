@@ -1,10 +1,9 @@
 # Coverage ledger: Household Consumption Expenditure Survey, MoSPI (docs/CONTRACT-coverage.md).
 # Catalogue: node scripts/lib/products/hces.mjs --catalogue. The source has no combined
 # (rural + urban) figure: every bundle carries rural and urban side by side.
-# Omissions left for the coordinator: the "with imputation" basis below All India (states,
-# categories, household type, social group, item values), MPCE in rupees by category
-# (indicator 3), the fractile ladder, quantities, household type, social group and Gini by
-# state, and the state category split beyond the food share.
+# Wave 2 (households, 2026-10-10): every indicator at every cut, both imputation bases, baked;
+# nothing pending. Six 2022-23 rural rupee-by-category state cells are misprinted at source
+# and left out by rule (named in hces-categories-inr-states' note); the cut itself is baked.
 family: hces
 guides: [consumption]
 catalogue: data/coverage/hces.catalogue.json
@@ -25,8 +24,7 @@ rules:
     status: shown
     bundle: hces-categories
     plate: "Engel's law, observed"
-  # the state cut is baked for the food share only (hces-categories-states); the other
-  # thirty categories by state remain an omission, recorded in docs/status/framework.md
+  # the food share by state is drawn; every other category by state is baked in the same bundle
   - match: "hces:4:1-without-imputation:state:*"
     status: shown
     bundle: hces-categories-states
@@ -52,40 +50,55 @@ rules:
     bundle: hces-gini
     plate: "The map, then the measure of spread"
 
-  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
-  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
-  - match:
-      - "hces:1:2-with-imputation:state:*"
-      - "hces:2:state:*"
-      - "hces:3:1-without-imputation:all"
-      - "hces:3:1-without-imputation:item-category:*"
-      - "hces:3:1-without-imputation:sector:*"
-      - "hces:3:1-without-imputation:state:*"
-      - "hces:3:2-with-imputation:all"
-      - "hces:3:2-with-imputation:item-category:*"
-      - "hces:3:2-with-imputation:sector:*"
-      - "hces:3:2-with-imputation:state:*"
-      - "hces:4:2-with-imputation:all"
-      - "hces:4:2-with-imputation:item-category:*"
-      - "hces:4:2-with-imputation:sector:*"
-      - "hces:4:2-with-imputation:state:*"
-      - "hces:5:state:*"
-      - "hces:6:1-without-imputation:state:*"
-      - "hces:6:2-with-imputation:all"
-      - "hces:6:2-with-imputation:cereal:*"
-      - "hces:6:2-with-imputation:sector:*"
-      - "hces:6:2-with-imputation:state:*"
-      - "hces:7:1-without-imputation:state:*"
-      - "hces:7:2-with-imputation:all"
-      - "hces:7:2-with-imputation:employment-of-households:*"
-      - "hces:7:2-with-imputation:sector:*"
-      - "hces:7:2-with-imputation:state:*"
-      - "hces:8:1-without-imputation:state:*"
-      - "hces:8:2-with-imputation:all"
-      - "hces:8:2-with-imputation:sector:*"
-      - "hces:8:2-with-imputation:social-group:*"
-      - "hces:8:2-with-imputation:state:*"
-      - "hces:9:1-without-imputation:state:*"
-      - "hces:9:2-with-imputation:state:*"
-    status: pending
-    scheduled: "wave 2: household spending fuller"
+  # wave 2 (households, 2026-10-10)
+  - match: "hces:1:2-with-imputation:state:*"
+    status: shown
+    bundle: hces-states-imputed
+    plate: "Counting free grain and goods raises rural spending by up to 7%"
+  - match: "hces:2:state:*"
+    status: baked
+    bundle: hces-fractiles-states
+  - match: "hces:3:1-without-imputation:state:*"
+    status: shown
+    bundle: hces-categories-inr-states
+    plate: "What a person spends, state by state"
+  - match: "hces:3:2-with-imputation:state:*"
+    status: baked
+    bundle: hces-categories-inr-states-imputed
+  - match: ["hces:3:*:all", "hces:3:*:sector:*", "hces:3:*:item-category:*"]
+    status: baked
+    bundle: hces-categories-inr
+  - match: ["hces:4:2-with-imputation:all", "hces:4:2-with-imputation:sector:*", "hces:4:2-with-imputation:item-category:*"]
+    status: baked
+    bundle: hces-categories-imputed
+  - match: "hces:4:2-with-imputation:state:*"
+    status: baked
+    bundle: hces-categories-states-imputed
+  - match: "hces:5:state:*"
+    status: baked
+    bundle: hces-quantities-states
+  - match: ["hces:6:2-with-imputation:all", "hces:6:2-with-imputation:sector:*", "hces:6:2-with-imputation:cereal:*"]
+    status: baked
+    bundle: hces-item-values-states
+  - match: "hces:6:*:state:*"
+    status: baked
+    bundle: hces-item-values-states
+  - match: ["hces:7:2-with-imputation:all", "hces:7:2-with-imputation:sector:*", "hces:7:2-with-imputation:employment-of-households:*"]
+    status: baked
+    bundle: hces-household-type-states
+  - match: "hces:7:*:state:*"
+    status: baked
+    bundle: hces-household-type-states
+  - match: ["hces:8:2-with-imputation:all", "hces:8:2-with-imputation:sector:*", "hces:8:2-with-imputation:social-group:*"]
+    status: baked
+    bundle: hces-social-states
+  - match: "hces:8:*:state:*"
+    status: baked
+    bundle: hces-social-states
+  - match: "hces:9:1-without-imputation:state:*"
+    status: shown
+    bundle: hces-gini-states
+    plate: "Spending is more unequal in towns than in villages in 31 of 36 states"
+  - match: "hces:9:2-with-imputation:state:*"
+    status: baked
+    bundle: hces-gini-states

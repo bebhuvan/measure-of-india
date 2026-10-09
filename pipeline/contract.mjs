@@ -92,6 +92,11 @@ if (slot.dateStamp) {
         || new RegExp(`\\bFY\\s*${qm[2]}\\b`, "i").test(prose)
         || new RegExp(`\\b${year}\\b`).test(prose)
         || new RegExp(`\\b${ord}\\s+quarter\\b`, "i").test(prose);
+    } else if (/^FY(\d{2})$/.test(lp)) {
+      // an annual fiscal label: "FY24" or the same year written out, "2023-24" (survey
+      // rounds and annual returns are named that way; households wave 2, 2026-10-10)
+      const yy = +lp.slice(2), y0 = 2000 + yy - 1;
+      ok = new RegExp(`\\b${lp}\\b`).test(prose) || new RegExp(`\\b${y0}[-–]${String(yy).padStart(2, "0")}\\b`).test(prose);
     } else {
       ok = new RegExp(`\\b${lp.replace(/\s+/g, "\\s+")}\\b`).test(prose)
         || (new RegExp(`\\b${lp.split(" ")[0]}\\b`).test(prose) && prose.includes(lp.split(" ")[1]));

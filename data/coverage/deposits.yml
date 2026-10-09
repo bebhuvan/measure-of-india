@@ -1,11 +1,10 @@
 # Coverage ledger: bank deposits, RBI BSR-2 (docs/CONTRACT-coverage.md).
-# Catalogue: node scripts/lib/products/bsr2.mjs --catalogue. Omissions left for the
-# coordinator (and atlas-credit, which builds money and credit): deposits of government,
-# corporations, financial firms and non-residents one by one (today only summed into "all
-# depositors"); the finer household split (unincorporated enterprises, NPISH, SHGs); the
-# "others" ownership category and account counts by band in tables 3.4 to 3.6; and every
-# BSR-2 table not read: state, district, bank group and metropolitan tables, age of
-# depositors, district by gender, and the whole quarterly BSR-2.
+# Catalogue: node scripts/lib/products/bsr2.mjs --catalogue. Reports the adapter reads row by
+# row (737, 847, 864-866) are itemised; every other BSR-2 report is one item. Wave 2
+# (households, 2026-10-10): every report the Data Bank's DBIE mirror holds is decoded and baked
+# (bsr2-tables.mjs: column meanings proved by identities on every row); district-sized tables go
+# to the deep archive; the publication volumes and one quarterly table the mirror does not hold
+# are blocked. Nothing pending.
 family: deposits
 guides: [deposits]
 catalogue: data/coverage/deposits.catalogue.json
@@ -37,129 +36,200 @@ rules:
     bundle: [deposits-term-size-2026, deposits-term-size]
     plate: "For how long, and in what size"
 
-  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
-  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
-  - match:
-      - "bsr2:1199"
-      - "bsr2:1200"
-      - "bsr2:1260"
-      - "bsr2:1261"
-      - "bsr2:1262"
-      - "bsr2:1263"
-      - "bsr2:1264"
-      - "bsr2:1265"
-      - "bsr2:1266"
-      - "bsr2:1267"
-      - "bsr2:1268"
-      - "bsr2:1269"
-      - "bsr2:1270"
-      - "bsr2:1271"
-      - "bsr2:1272"
-      - "bsr2:1273"
-      - "bsr2:1274"
-      - "bsr2:1275"
-      - "bsr2:1276"
-      - "bsr2:1277"
-      - "bsr2:1278"
-      - "bsr2:1279"
-      - "bsr2:1280"
-      - "bsr2:1281"
-      - "bsr2:1282"
-      - "bsr2:1283"
-      - "bsr2:1284"
-      - "bsr2:1285"
-      - "bsr2:1286"
-      - "bsr2:1287"
-      - "bsr2:1288"
-      - "bsr2:1289"
-      - "bsr2:1290"
-      - "bsr2:1291"
-      - "bsr2:1302"
-      - "bsr2:1303"
-      - "bsr2:1304"
-      - "bsr2:1305"
-      - "bsr2:1306"
-      - "bsr2:1307"
-      - "bsr2:1308"
-      - "bsr2:1309"
-      - "bsr2:1310"
-      - "bsr2:1311"
-      - "bsr2:1312"
-      - "bsr2:1313"
-      - "bsr2:1314"
-      - "bsr2:1315"
-      - "bsr2:1316"
-      - "bsr2:1317"
-      - "bsr2:1318"
-      - "bsr2:1319"
-      - "bsr2:1320"
-      - "bsr2:1321"
-      - "bsr2:1322"
-      - "bsr2:1323"
-      - "bsr2:1324"
-      - "bsr2:1325"
-      - "bsr2:1326"
-      - "bsr2:1327"
-      - "bsr2:1329"
-      - "bsr2:1330"
-      - "bsr2:1331"
-      - "bsr2:1332"
-      - "bsr2:1333"
-      - "bsr2:1334"
-      - "bsr2:1335"
-      - "bsr2:1336"
-      - "bsr2:1337"
-      - "bsr2:1338"
-      - "bsr2:1339"
-      - "bsr2:1340"
-      - "bsr2:1341"
-      - "bsr2:1342"
-      - "bsr2:1343"
-      - "bsr2:1344"
-      - "bsr2:1345"
-      - "bsr2:1346"
-      - "bsr2:1554"
-      - "bsr2:1556"
-      - "bsr2:737:*:current"
-      - "bsr2:737:*:saving"
-      - "bsr2:737:*:term"
-      - "bsr2:737:*:total"
-      - "bsr2:847:*:all-india"
-      - "bsr2:847:*:metro"
-      - "bsr2:847:*:rural"
-      - "bsr2:847:*:semi-urban"
-      - "bsr2:847:*:urban"
-      - "bsr2:848"
-      - "bsr2:849"
-      - "bsr2:850"
-      - "bsr2:851"
-      - "bsr2:852"
-      - "bsr2:853"
-      - "bsr2:854"
-      - "bsr2:855"
-      - "bsr2:856"
-      - "bsr2:857"
-      - "bsr2:858"
-      - "bsr2:859"
-      - "bsr2:860"
-      - "bsr2:861"
-      - "bsr2:862"
-      - "bsr2:863"
-      - "bsr2:864:*:individuals:accounts"
-      - "bsr2:864:*:others:accounts"
-      - "bsr2:864:*:others:amount"
-      - "bsr2:864:*:total:accounts"
-      - "bsr2:865:*:individuals:accounts"
-      - "bsr2:865:*:others:accounts"
-      - "bsr2:865:*:others:amount"
-      - "bsr2:865:*:total:accounts"
-      - "bsr2:866:*:individuals:accounts"
-      - "bsr2:866:*:others:accounts"
-      - "bsr2:866:*:others:amount"
-      - "bsr2:866:*:total:accounts"
-      - "bsr2:867"
-      - "bsr2:868"
-      - "bsr2:869"
-      - "bsr2:870"
-    status: pending
-    scheduled: "wave 2: money and credit (deposits tables)"
+  # wave 2 (households, 2026-10-10)
+  - match: ["bsr2:737:54:*", "bsr2:737:55:*", "bsr2:737:56:*", "bsr2:737:57:*", "bsr2:737:58:*", "bsr2:737:59:*", "bsr2:737:60:*", "bsr2:737:61:*", "bsr2:737:62:*", "bsr2:737:63:*", "bsr2:737:64:*", "bsr2:737:65:*", "bsr2:737:66:*", "bsr2:737:67:*", "bsr2:737:68:*", "bsr2:737:69:*", "bsr2:737:70:*", "bsr2:737:74:*", "bsr2:737:75:*", "bsr2:737:76:*", "bsr2:737:77:*", "bsr2:737:78:*", "bsr2:737:79:*", "bsr2:737:80:*", "bsr2:737:81:*", "bsr2:737:82:*", "bsr2:737:83:*", "bsr2:737:84:*", "bsr2:737:85:*"]
+    status: shown
+    bundle: deposits-sectors
+    plate: "Who else keeps money in banks"
+  - match: ["bsr2:737:1:*", "bsr2:737:2:*", "bsr2:737:3:*", "bsr2:737:4:*", "bsr2:737:5:*", "bsr2:737:6:*", "bsr2:737:7:*", "bsr2:737:8:*", "bsr2:737:9:*", "bsr2:737:10:*", "bsr2:737:11:*", "bsr2:737:12:*", "bsr2:737:13:*", "bsr2:737:14:*", "bsr2:737:15:*", "bsr2:737:16:*", "bsr2:737:17:*", "bsr2:737:18:*", "bsr2:737:19:*", "bsr2:737:20:*", "bsr2:737:21:*", "bsr2:737:22:*", "bsr2:737:23:*", "bsr2:737:24:*", "bsr2:737:25:*", "bsr2:737:26:*", "bsr2:737:27:*", "bsr2:737:28:*", "bsr2:737:29:*", "bsr2:737:30:*", "bsr2:737:31:*", "bsr2:737:32:*", "bsr2:737:33:*", "bsr2:737:34:*", "bsr2:737:35:*", "bsr2:737:36:*", "bsr2:737:38:*", "bsr2:737:39:*", "bsr2:737:40:*", "bsr2:737:41:*", "bsr2:737:42:*", "bsr2:737:43:*", "bsr2:737:44:*", "bsr2:737:45:*", "bsr2:737:46:*", "bsr2:737:47:*", "bsr2:737:48:*", "bsr2:737:49:*", "bsr2:737:50:*", "bsr2:737:51:*", "bsr2:737:52:*"]
+    status: baked
+    bundle: deposits-sectors-2005
+  - match: "bsr2:847:*"
+    status: baked
+    bundle: deposits-population
+  - match: "bsr2:864:*"
+    status: baked
+    bundle: deposits-term-maturity
+  - match: "bsr2:865:*"
+    status: baked
+    bundle: deposits-term-rates
+  - match: "bsr2:866:*"
+    status: baked
+    bundle: [deposits-term-size, deposits-term-size-2026]
+  # annual tables, read whole
+  - match: "bsr2:1200"
+    status: shown
+    bundle: deposits-sectors
+    plate: "Who else keeps money in banks"
+  - match: "bsr2:850"
+    status: shown
+    bundle: deposits-bankgroups-sectors
+    plate: "Which banks, and who works in them"
+  - match: "bsr2:853"
+    status: shown
+    bundle: deposits-states-type
+    plate: "Where the money sits (states)"
+  - match: "bsr2:856"
+    status: shown
+    bundle: deposits-states-owners
+    plate: "How old the savers are (women by state)"
+  - match: "bsr2:857"
+    status: shown
+    bundle: deposits-districts
+    plate: "Where the money sits (districts)"
+  - match: "bsr2:861"
+    status: shown
+    bundle: deposits-maturity-owners
+    plate: "Booked for how long"
+  - match: "bsr2:870"
+    status: shown
+    bundle: deposits-employees-bankgroups
+    plate: "Which banks, and who works in them (staff)"
+  - match: "bsr2:1260"
+    status: shown
+    bundle: deposits-age
+    plate: "How old the savers are"
+  - match: "bsr2:848"
+    status: baked
+    bundle: deposits-states-sectors
+  - match: "bsr2:849"
+    status: baked
+    bundle: deposits-metros-sectors
+  - match: "bsr2:851"
+    status: baked
+    bundle: deposits-population-type
+  - match: "bsr2:852"
+    status: baked
+    bundle: deposits-bankgroups-type
+  - match: "bsr2:854"
+    status: baked
+    bundle: deposits-population-owners
+  - match: "bsr2:855"
+    status: baked
+    bundle: deposits-bankgroups-owners
+  - match: "bsr2:858"
+    status: baked
+    bundle: deposits-states-population-type
+  - match: "bsr2:859"
+    status: baked
+    bundle: deposits-states-bankgroups-type
+  - match: "bsr2:860"
+    status: baked
+    bundle: deposits-bankgroups-population-type
+  - match: "bsr2:862"
+    status: baked
+    bundle: deposits-maturity-population
+  - match: "bsr2:863"
+    status: baked
+    bundle: deposits-maturity-bankgroups
+  - match: "bsr2:867"
+    status: baked
+    bundle: deposits-maturity-population-owners
+  - match: "bsr2:868"
+    status: baked
+    bundle: deposits-maturity-states
+  - match: "bsr2:869"
+    status: baked
+    bundle: deposits-employees-states
+  # table 2.12, district x gender: all-deposit accounts and amount baked; the split by type of account is in the deep archive
+  - match: "bsr2:1554"
+    status: baked
+    bundle: deposits-districts-gender
+  - match: "bsr2:1199"
+    status: excluded
+    archive: true
+    rolls_up_to: [deposits-states-2010]
+    reason: "Published by RBI at district x population group x bank group for 2009-10 to 2017-18 (53,236 rows, old bank groups); held for the deep-archive tier, and its state, population-group and bank-group totals are baked as sums of the district rows."
+  # the quarterly BSR-2 (from March 2023; excludes regional rural banks): its own instrument
+  - match: "bsr2:1302"
+    status: shown
+    bundle: deposits-q-sectors
+    plate: "The quarterly return"
+  - match: "bsr2:1304"
+    status: baked
+    bundle: deposits-q-states-sectors
+  - match: "bsr2:1305"
+    status: baked
+    bundle: deposits-q-metros-sectors
+  - match: "bsr2:1306"
+    status: baked
+    bundle: deposits-q-bankgroups-sectors
+  - match: "bsr2:1307"
+    status: baked
+    bundle: deposits-q-population-type
+  - match: "bsr2:1308"
+    status: baked
+    bundle: deposits-q-bankgroups-type
+  - match: "bsr2:1309"
+    status: baked
+    bundle: deposits-q-states-type
+  - match: "bsr2:1310"
+    status: baked
+    bundle: deposits-q-population-owners
+  - match: "bsr2:1311"
+    status: baked
+    bundle: deposits-q-bankgroups-owners
+  - match: "bsr2:1312"
+    status: baked
+    bundle: deposits-q-states-owners
+  - match: "bsr2:1314"
+    status: baked
+    bundle: deposits-q-states-population-type
+  - match: "bsr2:1315"
+    status: baked
+    bundle: deposits-q-states-bankgroups-type
+  - match: "bsr2:1316"
+    status: baked
+    bundle: deposits-q-bankgroups-population-type
+  - match: "bsr2:1317"
+    status: baked
+    bundle: deposits-q-maturity-owners
+  - match: "bsr2:1318"
+    status: baked
+    bundle: deposits-q-maturity-population
+  - match: "bsr2:1319"
+    status: baked
+    bundle: deposits-q-maturity-bankgroups
+  - match: "bsr2:1320"
+    status: baked
+    bundle: deposits-q-term-maturity
+  - match: "bsr2:1321"
+    status: baked
+    bundle: deposits-q-term-rates
+  - match: "bsr2:1322"
+    status: baked
+    bundle: deposits-q-term-size
+  - match: "bsr2:1323"
+    status: baked
+    bundle: deposits-q-maturity-population-owners
+  - match: "bsr2:1324"
+    status: baked
+    bundle: deposits-q-maturity-states
+  - match: "bsr2:1325"
+    status: baked
+    bundle: deposits-q-employees-states
+  - match: "bsr2:1326"
+    status: baked
+    bundle: deposits-q-employees-bankgroups
+  - match: "bsr2:1346"
+    status: baked
+    bundle: deposits-q-age
+  - match: "bsr2:1313"
+    status: excluded
+    archive: true
+    rolls_up_to: [deposits-q-states-type]
+    reason: "Published by RBI quarterly at district x population group (26,570 rows); held for the deep-archive tier, and the state totals are baked."
+  - match: "bsr2:1556"
+    status: excluded
+    archive: true
+    rolls_up_to: [deposits-q-states-owners]
+    reason: "Published by RBI quarterly at district x gender x type of deposit (21,764 rows); held for the deep-archive tier, and the state totals of individuals and women are baked."
+  - match: ["bsr2:1261", "bsr2:1327"]
+    status: excluded
+    reason: "RBI's notes on the tables are text, not statistics; the definitions they give are summarised in the guide's method notes."
+  - match: "bsr2:1303"
+    status: blocked
+    reason: "Quarterly table 1.2 (ownership by population group) has no rows in the Data Bank's DBIE mirror on 2026-10-10; the annual table 1.2 (report 847) is baked. Asked of the Data Bank via the coordinator."
+  - match: ["bsr2:126*", "bsr2:127*", "bsr2:128*", "bsr2:1290", "bsr2:1291", "bsr2:133*", "bsr2:134*", "bsr2:1329"]
+    status: blocked
+    reason: "The BSR publication volumes (Vol 1 to 47) have no rows in the Data Bank's DBIE mirror on 2026-10-10 (DBIE serves them as PDF documents); the tables they print are read one by one from their own reports above."

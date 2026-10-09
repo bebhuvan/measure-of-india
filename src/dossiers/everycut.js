@@ -202,6 +202,9 @@ export const UNITS = {
   ...Object.fromEntries(["gdp", "gdp-2022"].flatMap((b) => Object.entries({ "annual-levels": "Indicator", "annual-growth": "Indicator", "annual-shares": "Component of GDP", "annual-industries": "Industry", "annual-subindustries": "Sub-industry", "annual-gcf-industries": "Industry of use", "sectors": "Institutional sector", "revisions": "Estimate stage", "quarterly-levels": "Indicator", "quarterly-shares": "Component of GDP", "quarterly-industry-levels": "Industry" }).map(([k, c]) => [`${b}-${k}`, c]))),
   "gdp-back-levels": "Indicator", "gdp-back-growth": "Indicator", "gdp-back-shares": "Component of GDP", "gdp-back-industries": "Industry", "gdp-back-subindustries": "Sub-industry",
   // --- end nas ---
+  // --- households (wave 2: consumption, aishe, mnre, deposits) ---
+  pupils_per_teacher: { kind: "diff", fmt: (v) => grp(v), note: "students per teacher" },
+  // --- end households ---
 };
 
 // series.unit, then what the series name says, then the bundle's meta.unit: a bundle-level
@@ -453,6 +456,35 @@ export const CUT_BY_BUNDLE = {
   ...Object.fromEntries(["gdp", "gdp-2022"].flatMap((b) => Object.entries({ "annual-levels": "Indicator", "annual-growth": "Indicator", "annual-shares": "Component of GDP", "annual-industries": "Industry", "annual-subindustries": "Sub-industry", "annual-gcf-industries": "Industry of use", "sectors": "Institutional sector", "revisions": "Estimate stage", "quarterly-levels": "Indicator", "quarterly-shares": "Component of GDP", "quarterly-industry-levels": "Industry" }).map(([k, c]) => [`${b}-${k}`, c]))),
   "gdp-back-levels": "Indicator", "gdp-back-growth": "Indicator", "gdp-back-shares": "Component of GDP", "gdp-back-industries": "Industry", "gdp-back-subindustries": "Sub-industry",
   // --- end nas ---
+  // --- households (wave 2: consumption, aishe, mnre, deposits) ---
+  "hces-states-imputed": "State and sector", "hces-fractiles-states": "State, sector and spending class", "hces-categories-inr": "Spending category and sector",
+  "hces-categories-imputed": "Spending category and sector", "hces-categories-states-imputed": "State, sector and category", "hces-categories-inr-states": "State, sector and category",
+  "hces-categories-inr-states-imputed": "State, sector and category", "hces-quantities-states": "State, sector and cereal", "hces-item-values-states": "State, sector and cereal",
+  "hces-household-type-states": "State, sector and household type", "hces-social-states": "State, sector and social group", "hces-gini-states": "State and sector",
+  "aishe-states-institutions": "State and institution", "aishe-states-enrolment": "State, level and gender", "aishe-states-social": "State, social group and gender",
+  "aishe-states-minority": "State, community and gender", "aishe-states-ger": "State, social group and gender", "aishe-ptr": "State, institution and mode",
+  "aishe-states-teachers": "State, post and gender",
+  "mnre-states": "State", "mnre-states-solar": "State and solar category", "mnre-bio-categories": "Kind of bio power", "mnre-states-wind": "State",
+  "mnre-states-hydro": "State and size of plant", "mnre-states-bio": "State and kind of bio power",
+  "deposits-sectors": "Owning sector and account", "deposits-sectors-2005": "Owning sector and account", "deposits-states-sectors": "State and owning sector",
+  "deposits-metros-sectors": "City and owning sector", "deposits-bankgroups-sectors": "Owning sector and bank group", "deposits-population-type": "Population group and account",
+  "deposits-bankgroups-type": "Bank group and account", "deposits-states-type": "State and account", "deposits-population-owners": "Population group and owner",
+  "deposits-bankgroups-owners": "Bank group and owner", "deposits-states-owners": "State and owner", "deposits-districts": "District and population group",
+  "deposits-states-population-type": "State, population group and account", "deposits-states-bankgroups-type": "State, bank group and account",
+  "deposits-bankgroups-population-type": "Bank group, population group and account", "deposits-districts-gender": "District, individuals and women",
+  "deposits-maturity-owners": "Original maturity and owner", "deposits-maturity-population": "Original maturity and population group",
+  "deposits-maturity-bankgroups": "Original maturity and bank group", "deposits-maturity-population-owners": "Population group, maturity and owner",
+  "deposits-maturity-states": "State and original maturity", "deposits-employees-states": "State, post and gender", "deposits-employees-bankgroups": "Population group, bank group and post",
+  "deposits-age": "Age, individuals and women", "deposits-states-2010": "State, population group or bank group",
+  ...Object.fromEntries(Object.entries({ "sectors": "Owning sector and account", "states-sectors": "State and owning sector", "metros-sectors": "City and owning sector",
+    "bankgroups-sectors": "Owning sector and bank group", "population-type": "Population group and account", "bankgroups-type": "Bank group and account", "states-type": "State and account",
+    "population-owners": "Population group and owner", "bankgroups-owners": "Bank group and owner", "states-owners": "State and owner", "states-population-type": "State, population group and account",
+    "states-bankgroups-type": "State, bank group and account", "bankgroups-population-type": "Bank group, population group and account", "maturity-owners": "Original maturity and owner",
+    "maturity-population": "Original maturity and population group", "maturity-bankgroups": "Original maturity and bank group", "term-maturity": "Residual maturity and owner",
+    "term-rates": "Interest rate band and owner", "term-size": "Deposit size and owner", "maturity-population-owners": "Population group, maturity and owner",
+    "maturity-states": "State and original maturity", "employees-states": "State, post and gender", "employees-bankgroups": "Population group, bank group and post", "age": "Age, individuals and women" })
+    .map(([k, c]) => [`deposits-q-${k}`, c + ", quarterly"])),
+  // --- end households ---
 };
 // the fallback, by what a bundle's slug says it is
 export const CUT_RULES = [

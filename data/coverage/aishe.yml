@@ -1,8 +1,8 @@
 # Coverage ledger: All India Survey on Higher Education (docs/CONTRACT-coverage.md).
 # Catalogue: node scripts/lib/products/aishe.mjs --catalogue. Rounds 2017-18 to 2021-22
-# sit inside every item. Omissions left for the coordinator: universities, colleges,
-# teachers, social-group and minority enrolment and PTR by state; social-group and minority
-# enrolment by gender alone; teachers by gender alone; PTR by institution type and mode.
+# sit inside every item. Wave 2 (households, 2026-10-10): every indicator by state and by
+# every cut, baked; nothing pending. The 2021-22 "All Teacher defect" excluded in v1.0 was a
+# corrupted download (unstable paging), not the source: the rows are now baked.
 family: aishe
 guides: [aishe]
 catalogue: data/coverage/aishe.catalogue.json
@@ -23,9 +23,6 @@ rules:
     status: shown
     bundle: aishe-minority
     plate: "Plate 7: who else reaches college"
-  - match: ["aishe:9:faculty-type:6-visiting-teacher", "aishe:9:faculty-type:7-all-teacher"]
-    status: excluded
-    reason: "The source's 2021-22 All Teacher row is a near-zero residual and its Visiting Teacher row carries the real total, so neither can be read as published; the total is rebuilt from the five regular faculty types."
   - match: "aishe:9:faculty-type:*"
     status: shown
     bundle: aishe-teachers
@@ -35,20 +32,28 @@ rules:
     bundle: aishe-states
     plate: "Plate 4: where college reaches, where students are"
 
-  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
-  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
-  - match:
-      - "aishe:1:state:*"
-      - "aishe:2:state:*"
-      - "aishe:4:gender:*"
-      - "aishe:4:state:*"
-      - "aishe:5:all"
-      - "aishe:5:gender:*"
-      - "aishe:5:state:*"
-      - "aishe:8:institution-type:*"
-      - "aishe:8:learning-mode:*"
-      - "aishe:8:state:*"
-      - "aishe:9:gender:*"
-      - "aishe:9:state:*"
-    status: pending
-    scheduled: "wave 2: higher education fuller"
+  # wave 2 (households, 2026-10-10)
+  - match: "aishe:2:state:*"
+    status: shown
+    bundle: aishe-states-institutions
+    plate: "Uttar Pradesh alone has nearly a fifth of India's colleges"
+  - match: "aishe:1:state:*"
+    status: baked
+    bundle: aishe-states-institutions
+  - match: ["aishe:4:gender:*", "aishe:4:state:*"]
+    status: baked
+    bundle: aishe-states-social
+  - match: ["aishe:5:all", "aishe:5:gender:*", "aishe:5:state:*"]
+    status: baked
+    bundle: [aishe-minority, aishe-states-minority]
+  - match: "aishe:8:state:*"
+    status: shown
+    bundle: aishe-ptr
+    plate: "A college teacher in Bihar has more than four times as many students as one in Tamil Nadu"
+  - match: ["aishe:8:institution-type:*", "aishe:8:learning-mode:*"]
+    status: baked
+    bundle: aishe-ptr
+  - match: ["aishe:9:gender:*", "aishe:9:state:*"]
+    status: shown
+    bundle: aishe-states-teachers
+    plate: "Women are now nearly half of college students almost everywhere, but a quarter of the teachers in Bihar"
