@@ -1,0 +1,596 @@
+# Coverage ledger: ILOSTAT for India (docs/CONTRACT-coverage.md). First matching rule wins.
+# Catalogue: node scripts/lib/products/ilostat.mjs --catalogue (one item per instrument,
+# frequency, dataflow and classification versions; ids ilo:<instrument>:<freq>:d<cuts>:<flow>:...).
+# Bundles: one per instrument, frequency and indicator family (scripts/lib/products/ilostat.mjs).
+family: ilo
+guides: [ilo]
+catalogue: data/coverage/ilo.catalogue.json
+rules:
+  # ---- drawn on the guide's plates (see each plate's figure id) ----
+  # (shown rules are inserted here)
+
+  # ---- copies of other agencies' numbers: set aside ----
+  - match: "ilo:*:*:*:cpi_*"
+    status: excluded
+    reason: "ILOSTAT's copy of India's consumer price index; MoSPI is its source of record and the consumer prices guide carries it from there, so a copy here would only be a cross-check."
+  - match: "ilo:*:*:*:ccf_*"
+    status: excluded
+    reason: "Exchange rates and PPP conversion factors that ILOSTAT copies from the IMF and the World Bank; they are conversion tools, not labour statistics, and their sources of record publish them directly."
+  - match: "ilo:*_cur_*"
+    status: excluded
+    reason: "Rupee earnings that the ILO has converted into US dollars and PPP dollars at its own exchange rates; the rupee series they are computed from are baked here."
+
+  # ---- survey cubes held back (an owner decision, docs/status/ilo.md) ----
+  - match: ["ilo:plfs:a:d3:*", "ilo:nss:a:d3:*"]
+    status: excluded
+    reason: "Three-way cubes (sex by two further classifications) that the ILO computed from PLFS and NSS unit data, about 951,000 Indian cells of which roughly one in six carries the ILO's own unreliable flag; they stay at ILOSTAT, linked from the guide, while every table by sex and one classification is baked."
+  - match: ["ilo:plfs:q:d2:eap_dwap_sex_age_rt:*", "ilo:plfs:q:d2:emp_dwap_sex_age_rt:*", "ilo:plfs:q:d2:une_deap_sex_age_rt:*", "ilo:plfs:q:d2:eip_dwap_sex_age_rt:*", "ilo:plfs:q:d2:eap_dwap_sex_geo_rt:*", "ilo:plfs:q:d2:emp_dwap_sex_geo_rt:*", "ilo:plfs:q:d2:une_deap_sex_geo_rt:*"]
+    status: baked
+    bundle: [ilo-plfs-q-eap-dwap, ilo-plfs-q-eip-dwap, ilo-plfs-q-emp-dwap, ilo-plfs-q-une-deap]
+  - match: ["ilo:plfs:q:d2:*", "ilo:plfs:q:d3:*"]
+    status: excluded
+    reason: "Quarterly PLFS tables finer than sex, or sex by age or area, that the ILO computed from one quarter's share of the survey sample, about 1.35 million Indian cells of which one in seven carries the ILO's unreliable flag; the same tables are baked on calendar years, and the quarters stay at ILOSTAT."
+
+  # ---- everything else the ILO publishes for India: baked, one bundle per family ----
+  - match: ilo:adm-ir:a:*:inj_fatl_*
+    status: baked
+    bundle: ilo-adm-ir-inj-fatl
+  - match: ilo:adm-ir:a:*:inj_nftl_*
+    status: baked
+    bundle: ilo-adm-ir-inj-nftl
+  - match: ilo:adm-ir:a:*:sdg_f881_*
+    status: baked
+    bundle: ilo-adm-ir-sdg-f881
+  - match: ilo:adm-ir:a:*:sdg_n881_*
+    status: baked
+    bundle: ilo-adm-ir-sdg-n881
+  - match: ilo:adm-lir:a:*:inj_days_*
+    status: baked
+    bundle: ilo-adm-lir-inj-days
+  - match: ilo:adm-lir:a:*:inj_fatl_*
+    status: baked
+    bundle: ilo-adm-lir-inj-fatl
+  - match: ilo:adm-lir:a:*:inj_nftl_*
+    status: baked
+    bundle: ilo-adm-lir-inj-nftl
+  - match: ilo:adm-lir:a:*:inj_work_*
+    status: baked
+    bundle: ilo-adm-lir-inj-work
+  - match: ilo:census:a:*:eap_dwap_*
+    status: baked
+    bundle: ilo-census-eap-dwap
+  - match: ilo:census:a:*:eap_teap_*
+    status: baked
+    bundle: ilo-census-eap-teap
+  - match: ilo:census:a:*:eip_dwap_*
+    status: baked
+    bundle: ilo-census-eip-dwap
+  - match: ilo:census:a:*:eip_teip_*
+    status: baked
+    bundle: ilo-census-eip-teip
+  - match: ilo:census:a:*:pop_mfrc_*
+    status: baked
+    bundle: ilo-census-pop-mfrc
+  - match: ilo:census:a:*:pop_xwap_*
+    status: baked
+    bundle: ilo-census-pop-xwap
+  - match: ilo:emi:a:*:ees_tees_*
+    status: baked
+    bundle: ilo-emi-ees-tees
+  - match: ilo:emi:a:*:emp_publ_*
+    status: baked
+    bundle: ilo-emi-emp-publ
+  - match: ilo:emi:a:*:emp_xpse_*
+    status: baked
+    bundle: ilo-emi-emp-xpse
+  - match: ilo:est:a:*:cld_2pop_*
+    status: baked
+    bundle:
+      - ilo-est-cld-2pop
+      - ilo-est-projections
+  - match: ilo:est:a:*:eap_2eap_*
+    status: baked
+    bundle:
+      - ilo-est-eap-2eap
+      - ilo-est-projections
+  - match: ilo:est:a:*:eap_2wap_*
+    status: baked
+    bundle:
+      - ilo-est-eap-2wap
+      - ilo-est-projections
+  - match: ilo:est:a:*:eip_2eet_*
+    status: baked
+    bundle:
+      - ilo-est-eip-2eet
+      - ilo-est-projections
+  - match: ilo:est:a:*:eip_2eip_*
+    status: baked
+    bundle:
+      - ilo-est-eip-2eip
+      - ilo-est-projections
+  - match: ilo:est:a:*:eip_2wap_*
+    status: baked
+    bundle:
+      - ilo-est-eip-2wap
+      - ilo-est-projections
+  - match: ilo:est:a:*:emp_2emp_*
+    status: baked
+    bundle:
+      - ilo-est-emp-2emp
+      - ilo-est-projections
+  - match: ilo:est:a:*:emp_2fte_*
+    status: baked
+    bundle:
+      - ilo-est-emp-2fte
+      - ilo-est-projections
+  - match: ilo:est:a:*:emp_2tru_*
+    status: baked
+    bundle:
+      - ilo-est-emp-2tru
+      - ilo-est-projections
+  - match: ilo:est:a:*:emp_2wap_*
+    status: baked
+    bundle:
+      - ilo-est-emp-2wap
+      - ilo-est-projections
+  - match: ilo:est:a:*:gdp_205u_*
+    status: baked
+    bundle:
+      - ilo-est-gdp-205u
+      - ilo-est-projections
+  - match: ilo:est:a:*:gdp_211p_*
+    status: baked
+    bundle:
+      - ilo-est-gdp-211p
+      - ilo-est-projections
+  - match: ilo:est:a:*:gdp_2hrw_*
+    status: baked
+    bundle:
+      - ilo-est-gdp-2hrw
+      - ilo-est-projections
+  - match: ilo:est:a:*:gdp_2tot_*
+    status: baked
+    bundle:
+      - ilo-est-gdp-2tot
+      - ilo-est-projections
+  - match: ilo:est:a:*:how_2emp_*
+    status: baked
+    bundle:
+      - ilo-est-how-2emp
+      - ilo-est-projections
+  - match: ilo:est:a:*:how_2tdp_*
+    status: baked
+    bundle:
+      - ilo-est-how-2tdp
+      - ilo-est-projections
+  - match: ilo:est:a:*:how_2tot_*
+    status: baked
+    bundle:
+      - ilo-est-how-2tot
+      - ilo-est-projections
+  - match: ilo:est:a:*:lap_2gdp_*
+    status: baked
+    bundle:
+      - ilo-est-lap-2gdp
+      - ilo-est-projections
+  - match: ilo:est:a:*:lap_2lid_*
+    status: baked
+    bundle:
+      - ilo-est-lap-2lid
+      - ilo-est-projections
+  - match: ilo:est:a:*:luu_2lu2_*
+    status: baked
+    bundle:
+      - ilo-est-luu-2lu2
+      - ilo-est-projections
+  - match: ilo:est:a:*:pop_2ldr_*
+    status: baked
+    bundle:
+      - ilo-est-pop-2ldr
+      - ilo-est-projections
+  - match: ilo:est:a:*:pop_2pop_*
+    status: baked
+    bundle:
+      - ilo-est-pop-2pop
+      - ilo-est-projections
+  - match: ilo:est:a:*:pop_2wap_*
+    status: baked
+    bundle:
+      - ilo-est-pop-2wap
+      - ilo-est-projections
+  - match: ilo:est:a:*:sdg_0111_*
+    status: baked
+    bundle:
+      - ilo-est-sdg-0111
+      - ilo-est-projections
+  - match: ilo:est:a:*:sdg_0821_*
+    status: baked
+    bundle:
+      - ilo-est-sdg-0821
+      - ilo-est-projections
+  - match: ilo:est:a:*:sdg_1041_*
+    status: baked
+    bundle:
+      - ilo-est-sdg-1041
+      - ilo-est-projections
+  - match: ilo:est:a:*:sdg_b821_*
+    status: baked
+    bundle:
+      - ilo-est-sdg-b821
+      - ilo-est-projections
+  - match: ilo:est:a:*:une_2eap_*
+    status: baked
+    bundle:
+      - ilo-est-une-2eap
+      - ilo-est-projections
+  - match: ilo:est:a:*:une_2une_*
+    status: baked
+    bundle:
+      - ilo-est-une-2une
+      - ilo-est-projections
+  - match: ilo:eus-estimates:a:*:ilr_tumt_*
+    status: baked
+    bundle: ilo-eus-estimates-ilr-tumt
+  - match: ilo:ihd:a:*:ees_xtmp_*
+    status: baked
+    bundle: ilo-ihd-ees-xtmp
+  - match: ilo:ilo-estimates:a:*:emp_temp_*
+    status: baked
+    bundle: ilo-ilo-estimates-emp-temp
+  - match: ilo:ilo-policy:a:*:sdg_08b1_*
+    status: baked
+    bundle: ilo-ilo-policy-sdg-08b1
+  - match: ilo:ilo-textual:a:*:sdg_0882_*
+    status: baked
+    bundle: ilo-ilo-textual-sdg-0882
+  - match: ilo:legislation:a:*:ear_inee_*
+    status: baked
+    bundle: ilo-legislation-ear-inee
+  - match: ilo:mea:a:*:pop_mnas_*
+    status: baked
+    bundle: ilo-mea-pop-mnas
+  - match: ilo:moia:a:*:pop_mnao_*
+    status: baked
+    bundle: ilo-moia-pop-mnao
+  - match: ilo:moia:a:*:pop_mnas_*
+    status: baked
+    bundle: ilo-moia-pop-mnas
+  - match: ilo:nss:a:*:eap_dwap_*
+    status: baked
+    bundle: ilo-nss-eap-dwap
+  - match: ilo:nss:a:*:eap_teap_*
+    status: baked
+    bundle: ilo-nss-eap-teap
+  - match: ilo:nss:a:*:ear_emta_*
+    status: baked
+    bundle: ilo-nss-ear-emta
+  - match: ilo:nss:a:*:ear_emtg_*
+    status: baked
+    bundle: ilo-nss-ear-emtg
+  - match: ilo:nss:a:*:ear_emtm_*
+    status: baked
+    bundle: ilo-nss-ear-emtm
+  - match: ilo:nss:a:*:ear_tmta_*
+    status: baked
+    bundle: ilo-nss-ear-tmta
+  - match: ilo:nss:a:*:ees_tees_*
+    status: baked
+    bundle: ilo-nss-ees-tees
+  - match: ilo:nss:a:*:ees_xplv_*
+    status: baked
+    bundle: ilo-nss-ees-xplv
+  - match: ilo:nss:a:*:eip_3eet_*
+    status: baked
+    bundle: ilo-nss-eip-3eet
+  - match: ilo:nss:a:*:eip_dwap_*
+    status: baked
+    bundle: ilo-nss-eip-dwap
+  - match: ilo:nss:a:*:eip_neet_*
+    status: baked
+    bundle: ilo-nss-eip-neet
+  - match: ilo:nss:a:*:eip_teip_*
+    status: baked
+    bundle: ilo-nss-eip-teip
+  - match: ilo:nss:a:*:emp_3ifl_*
+    status: baked
+    bundle: ilo-nss-emp-3ifl
+  - match: ilo:nss:a:*:emp_dwap_*
+    status: baked
+    bundle: ilo-nss-emp-dwap
+  - match: ilo:nss:a:*:emp_nifl_*
+    status: baked
+    bundle: ilo-nss-emp-nifl
+  - match: ilo:nss:a:*:emp_pifl_*
+    status: baked
+    bundle: ilo-nss-emp-pifl
+  - match: ilo:nss:a:*:emp_pter_*
+    status: baked
+    bundle: ilo-nss-emp-pter
+  - match: ilo:nss:a:*:emp_publ_*
+    status: baked
+    bundle: ilo-nss-emp-publ
+  - match: ilo:nss:a:*:emp_temp_*
+    status: baked
+    bundle: ilo-nss-emp-temp
+  - match: ilo:nss:a:*:emp_tnif_*
+    status: baked
+    bundle: ilo-nss-emp-tnif
+  - match: ilo:nss:a:*:emp_tour_*
+    status: baked
+    bundle: ilo-nss-emp-tour
+  - match: ilo:nss:a:*:emp_tpif_*
+    status: baked
+    bundle: ilo-nss-emp-tpif
+  - match: ilo:nss:a:*:ged_plfp_*
+    status: baked
+    bundle: ilo-nss-ged-plfp
+  - match: ilo:nss:a:*:ged_twap_*
+    status: baked
+    bundle: ilo-nss-ged-twap
+  - match: ilo:nss:a:*:pop_3vet_*
+    status: baked
+    bundle: ilo-nss-pop-3vet
+  - match: ilo:nss:a:*:pop_xvet_*
+    status: baked
+    bundle: ilo-nss-pop-xvet
+  - match: ilo:nss:a:*:pop_xwap_*
+    status: baked
+    bundle: ilo-nss-pop-xwap
+  - match: ilo:nss:a:*:sdg_0552_*
+    status: baked
+    bundle: ilo-nss-sdg-0552
+  - match: ilo:nss:a:*:sdg_0831_*
+    status: baked
+    bundle: ilo-nss-sdg-0831
+  - match: ilo:nss:a:*:sdg_0852_*
+    status: baked
+    bundle: ilo-nss-sdg-0852
+  - match: ilo:nss:a:*:sdg_0861_*
+    status: baked
+    bundle: ilo-nss-sdg-0861
+  - match: ilo:nss:a:*:sdg_0922_*
+    status: baked
+    bundle: ilo-nss-sdg-0922
+  - match: ilo:nss:a:*:sdg_t552_*
+    status: baked
+    bundle: ilo-nss-sdg-t552
+  - match: ilo:nss:a:*:une_deap_*
+    status: baked
+    bundle: ilo-nss-une-deap
+  - match: ilo:nss:a:*:une_tune_*
+    status: baked
+    bundle: ilo-nss-une-tune
+  - match: ilo:official:a:*:lai_vist_*
+    status: baked
+    bundle: ilo-official-lai-vist
+  - match: ilo:official:a:*:str_days_*
+    status: baked
+    bundle: ilo-official-str-days
+  - match: ilo:official:a:*:str_tstr_*
+    status: baked
+    bundle: ilo-official-str-tstr
+  - match: ilo:official:a:*:str_work_*
+    status: baked
+    bundle: ilo-official-str-work
+  - match: ilo:plfs:a:*:cld_tpop_*
+    status: baked
+    bundle: ilo-plfs-cld-tpop
+  - match: ilo:plfs:a:*:cld_xchl_*
+    status: baked
+    bundle: ilo-plfs-cld-xchl
+  - match: ilo:plfs:a:*:cld_xgpb_*
+    status: baked
+    bundle: ilo-plfs-cld-xgpb
+  - match: ilo:plfs:a:*:cld_xhaz_*
+    status: baked
+    bundle: ilo-plfs-cld-xhaz
+  - match: ilo:plfs:a:*:cld_xsna_*
+    status: baked
+    bundle: ilo-plfs-cld-xsna
+  - match: ilo:plfs:a:*:eap_dwap_*
+    status: baked
+    bundle: ilo-plfs-eap-dwap
+  - match: ilo:plfs:a:*:eap_teap_*
+    status: baked
+    bundle: ilo-plfs-eap-teap
+  - match: ilo:plfs:a:*:ear_chra_*
+    status: baked
+    bundle: ilo-plfs-ear-chra
+  - match: ilo:plfs:a:*:ear_cmta_*
+    status: baked
+    bundle: ilo-plfs-ear-cmta
+  - match: ilo:plfs:a:*:ear_ehra_*
+    status: baked
+    bundle: ilo-plfs-ear-ehra
+  - match: ilo:plfs:a:*:ear_ehrg_*
+    status: baked
+    bundle: ilo-plfs-ear-ehrg
+  - match: ilo:plfs:a:*:ear_ehrm_*
+    status: baked
+    bundle: ilo-plfs-ear-ehrm
+  - match: ilo:plfs:a:*:ear_emta_*
+    status: baked
+    bundle: ilo-plfs-ear-emta
+  - match: ilo:plfs:a:*:ear_emtg_*
+    status: baked
+    bundle: ilo-plfs-ear-emtg
+  - match: ilo:plfs:a:*:ear_emtm_*
+    status: baked
+    bundle: ilo-plfs-ear-emtm
+  - match: ilo:plfs:a:*:ear_ggap_*
+    status: baked
+    bundle: ilo-plfs-ear-ggap
+  - match: ilo:plfs:a:*:ear_shra_*
+    status: baked
+    bundle: ilo-plfs-ear-shra
+  - match: ilo:plfs:a:*:ear_smta_*
+    status: baked
+    bundle: ilo-plfs-ear-smta
+  - match: ilo:plfs:a:*:ear_xfls_*
+    status: baked
+    bundle: ilo-plfs-ear-xfls
+  - match: ilo:plfs:a:*:ear_xtlp_*
+    status: baked
+    bundle: ilo-plfs-ear-xtlp
+  - match: ilo:plfs:a:*:ees_care_*
+    status: baked
+    bundle: ilo-plfs-ees-care
+  - match: ilo:plfs:a:*:ees_stem_*
+    status: baked
+    bundle: ilo-plfs-ees-stem
+  - match: ilo:plfs:a:*:ees_tees_*
+    status: baked
+    bundle: ilo-plfs-ees-tees
+  - match: ilo:plfs:a:*:ees_xplv_*
+    status: baked
+    bundle: ilo-plfs-ees-xplv
+  - match: ilo:plfs:a:*:ees_xtmp_*
+    status: baked
+    bundle: ilo-plfs-ees-xtmp
+  - match: ilo:plfs:a:*:eip_3eet_*
+    status: baked
+    bundle: ilo-plfs-eip-3eet
+  - match: ilo:plfs:a:*:eip_dwap_*
+    status: baked
+    bundle: ilo-plfs-eip-dwap
+  - match: ilo:plfs:a:*:eip_neet_*
+    status: baked
+    bundle: ilo-plfs-eip-neet
+  - match: ilo:plfs:a:*:eip_rcar_*
+    status: baked
+    bundle: ilo-plfs-eip-rcar
+  - match: ilo:plfs:a:*:eip_teip_*
+    status: baked
+    bundle: ilo-plfs-eip-teip
+  - match: ilo:plfs:a:*:emp_3ifl_*
+    status: baked
+    bundle: ilo-plfs-emp-3ifl
+  - match: ilo:plfs:a:*:emp_care_*
+    status: baked
+    bundle: ilo-plfs-emp-care
+  - match: ilo:plfs:a:*:emp_cnif_*
+    status: baked
+    bundle: ilo-plfs-emp-cnif
+  - match: ilo:plfs:a:*:emp_cpif_*
+    status: baked
+    bundle: ilo-plfs-emp-cpif
+  - match: ilo:plfs:a:*:emp_dwap_*
+    status: baked
+    bundle: ilo-plfs-emp-dwap
+  - match: ilo:plfs:a:*:emp_nifl_*
+    status: baked
+    bundle: ilo-plfs-emp-nifl
+  - match: ilo:plfs:a:*:emp_pifl_*
+    status: baked
+    bundle: ilo-plfs-emp-pifl
+  - match: ilo:plfs:a:*:emp_pter_*
+    status: baked
+    bundle: ilo-plfs-emp-pter
+  - match: ilo:plfs:a:*:emp_snif_*
+    status: baked
+    bundle: ilo-plfs-emp-snif
+  - match: ilo:plfs:a:*:emp_spif_*
+    status: baked
+    bundle: ilo-plfs-emp-spif
+  - match: ilo:plfs:a:*:emp_stem_*
+    status: baked
+    bundle: ilo-plfs-emp-stem
+  - match: ilo:plfs:a:*:emp_temp_*
+    status: baked
+    bundle: ilo-plfs-emp-temp
+  - match: ilo:plfs:a:*:ged_plfp_*
+    status: baked
+    bundle: ilo-plfs-ged-plfp
+  - match: ilo:plfs:a:*:ged_twap_*
+    status: baked
+    bundle: ilo-plfs-ged-twap
+  - match: ilo:plfs:a:*:how_care_*
+    status: baked
+    bundle: ilo-plfs-how-care
+  - match: ilo:plfs:a:*:how_eare_*
+    status: baked
+    bundle: ilo-plfs-how-eare
+  - match: ilo:plfs:a:*:how_stee_*
+    status: baked
+    bundle: ilo-plfs-how-stee
+  - match: ilo:plfs:a:*:how_stem_*
+    status: baked
+    bundle: ilo-plfs-how-stem
+  - match: ilo:plfs:a:*:how_temp_*
+    status: baked
+    bundle: ilo-plfs-how-temp
+  - match: ilo:plfs:a:*:how_xees_*
+    status: baked
+    bundle: ilo-plfs-how-xees
+  - match: ilo:plfs:a:*:pop_3vet_*
+    status: baked
+    bundle: ilo-plfs-pop-3vet
+  - match: ilo:plfs:a:*:pop_xvet_*
+    status: baked
+    bundle: ilo-plfs-pop-xvet
+  - match: ilo:plfs:a:*:pop_xwap_*
+    status: baked
+    bundle: ilo-plfs-pop-xwap
+  - match: ilo:plfs:a:*:sdg_0552_*
+    status: baked
+    bundle: ilo-plfs-sdg-0552
+  - match: ilo:plfs:a:*:sdg_0831_*
+    status: baked
+    bundle: ilo-plfs-sdg-0831
+  - match: ilo:plfs:a:*:sdg_0851_*
+    status: baked
+    bundle: ilo-plfs-sdg-0851
+  - match: ilo:plfs:a:*:sdg_0852_*
+    status: baked
+    bundle: ilo-plfs-sdg-0852
+  - match: ilo:plfs:a:*:sdg_0861_*
+    status: baked
+    bundle: ilo-plfs-sdg-0861
+  - match: ilo:plfs:a:*:sdg_0922_*
+    status: baked
+    bundle: ilo-plfs-sdg-0922
+  - match: ilo:plfs:a:*:sdg_a871_*
+    status: baked
+    bundle: ilo-plfs-sdg-a871
+  - match: ilo:plfs:a:*:sdg_t552_*
+    status: baked
+    bundle: ilo-plfs-sdg-t552
+  - match: ilo:plfs:a:*:une_deap_*
+    status: baked
+    bundle: ilo-plfs-une-deap
+  - match: ilo:plfs:a:*:une_tune_*
+    status: baked
+    bundle: ilo-plfs-une-tune
+  - match: ilo:plfs:q:*:ear_ehra_*
+    status: baked
+    bundle: ilo-plfs-q-ear-ehra
+  - match: ilo:plfs:q:*:ear_emta_*
+    status: baked
+    bundle: ilo-plfs-q-ear-emta
+  - match: ilo:plfs:q:*:eip_neet_*
+    status: baked
+    bundle: ilo-plfs-q-eip-neet
+  - match: ilo:plfs:q:*:emp_nifl_*
+    status: baked
+    bundle: ilo-plfs-q-emp-nifl
+  - match: ilo:plfs:q:*:emp_pifl_*
+    status: baked
+    bundle: ilo-plfs-q-emp-pifl
+  - match: ilo:plfs:q:*:how_temp_*
+    status: baked
+    bundle: ilo-plfs-q-how-temp
+  - match: ilo:plfs:q:*:how_xees_*
+    status: baked
+    bundle: ilo-plfs-q-how-xees
+  - match: ilo:special:a:*:str_days_*
+    status: baked
+    bundle: ilo-special-str-days
+  - match: ilo:special:a:*:str_tstr_*
+    status: baked
+    bundle: ilo-special-str-tstr
+  - match: ilo:special:a:*:str_work_*
+    status: baked
+    bundle: ilo-special-str-work
+  - match: ilo:ssi:a:*:sdg_0131_*
+    status: baked
+    bundle: ilo-ssi-sdg-0131

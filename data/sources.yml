@@ -32,6 +32,16 @@ families:
       Refresh the mirror with the Data Bank's own CLI (docs/RBI_DBIE_WEBI_RUNBOOK.md there),
       then run `npm run data`. Override the path with INDIA_ATLAS_DATABANK.
 
+  # ---- ilo (ILOSTAT) ----
+  ilostat:
+    transport: ilostat
+    base: https://sdmx.ilo.org/rest/
+    note: >
+      ILOSTAT's SDMX 2.1 REST API (scripts/lib/ilostat.mjs; docs/reference/ilostat.md). No key.
+      Structure messages are XML, data is SDMX-CSV (format=csvfile). One request in flight,
+      400ms apart, cached under data/raw/http-cache. rplumber.ilo.org returns empty bodies
+      (2026-10-09) and is not used.
+
 dossiers:
 
   cpi:
@@ -1004,6 +1014,37 @@ dossiers:
       inr_lakh_crore: [0, 400]
 
 
+  # ---- ilo (ILOSTAT): work in India as the ILO counts it ----
+  ilo:
+    # regression floor: the ILOEST edition must reach 2024, PLFS (ILO processing) 2024
+    stale_after: "2024-01"
+    frequency_exempt: true          # annual modelled + annual and quarterly survey bundles
+    family: ilostat
+    geo: IND
+    product: ilostat
+    frequency: annual
+    base: "varies by instrument (ILOEST edition; PLFS, NSS, Census as processed by the ILO)"
+    release_calendar: "ILOEST: one edition a year (November); survey series as the ILO processes each new PLFS year or quarter"
+    revision_policy: "Each ILOEST edition re-estimates the whole modelled history; the raw dump of the previous edition is archived under data/raw/vintages. Survey series change when the ILO reprocesses the unit data."
+    source_agency: "International Labour Organization, ILOSTAT"
+    release_url: https://ilostat.ilo.org
+    # peer countries: a short, fixed list, drawn in grey beside India
+    peers: [CHN, BGD, IDN, VNM]
+    peerFlows: [DF_EAP_2WAP_SEX_AGE_RT, DF_EMP_2WAP_SEX_AGE_RT, DF_UNE_2EAP_SEX_AGE_RT, DF_EIP_2EET_SEX_RT, DF_EMP_2IFL_SEX_RT,
+      DF_EMP_2EMP_SEX_STE_NB, DF_EMP_2EMP_SEX_ECO_NB, DF_EMP_2EMP_SEX_AGE_CLA_NB, DF_EMP_2EMP_SEX_AGE_NB, DF_LAP_2GDP_NOC_RT,
+      DF_GDP_211P_NOC_NB, DF_HOW_2EMP_SEX_NB]
+    bake:
+      # survey tables (PLFS, NSS): how many classifications (sex counts as one) a baked table may
+      # carry. Deeper cubes stay at ILOSTAT, listed in the catalogue and the ledger. Raising
+      # annualMaxCuts to 3 bakes ~1.9 million more observations (docs/status/ilo.md).
+      annualMaxCuts: 2
+      quarterlyMaxCuts: 1
+      # ...except the core quarterly rates by sex and age, and by sex and area, which are baked
+      quarterlyFlows: [DF_EAP_DWAP_SEX_AGE_RT, DF_EMP_DWAP_SEX_AGE_RT, DF_UNE_DEAP_SEX_AGE_RT, DF_EIP_DWAP_SEX_AGE_RT,
+        DF_EAP_DWAP_SEX_GEO_RT, DF_EMP_DWAP_SEX_GEO_RT, DF_UNE_DEAP_SEX_GEO_RT]
+      # ILOSTAT's copies of other agencies' data and currency conversions: listed, never baked
+      excludeFlows: ["^DF_CPI_", "^DF_CCF_", "_CUR_"]
+
 # ---------------------------------------------------------------------------
 # SEAMS: the base-year registry (2026-10). One entry per base (or
 # classification) for every product whose instrument has changed ruler.
@@ -1107,3 +1148,82 @@ seams:
       from: "2025-04"
       to: null
       bundles: [isp]
+  # ilo (ILOSTAT): not price bases but instruments, each its own ruler, never joined.
+  # Generated from the baked bundles; a new ilo bundle fails validate until it is listed here.
+  ilo:
+    - base: "Labour inspectorate records (ADM-IR)"
+      from: "1971-01"
+      to: null
+      bundles: [ilo-adm-ir-inj-fatl, ilo-adm-ir-inj-nftl, ilo-adm-ir-sdg-f881, ilo-adm-ir-sdg-n881]
+    - base: "Labour inspectorate records (ADM-LIR)"
+      from: "1969-01"
+      to: null
+      bundles: [ilo-adm-lir-inj-days, ilo-adm-lir-inj-fatl, ilo-adm-lir-inj-nftl, ilo-adm-lir-inj-work]
+    - base: "Population Census, ILO processing"
+      from: "1961-01"
+      to: "2001-01"          # the ILO holds Census economic questions to 2001
+      bundles: [ilo-census-eap-dwap, ilo-census-eap-teap, ilo-census-eip-dwap, ilo-census-eip-teip, ilo-census-pop-mfrc, ilo-census-pop-xwap]
+    - base: "Employment Market Information survey"
+      from: "1969-01"
+      to: null
+      bundles: [ilo-emi-ees-tees, ilo-emi-emp-publ, ilo-emi-emp-xpse]
+    - base: "ILO modelled estimates (ILOEST)"
+      from: "1990-01"
+      to: null
+      bundles: [ilo-est-cld-2pop, ilo-est-eap-2eap, ilo-est-eap-2wap, ilo-est-eip-2eet, ilo-est-eip-2eip, ilo-est-eip-2wap, ilo-est-emp-2emp, ilo-est-emp-2fte, ilo-est-emp-2tru, ilo-est-emp-2wap, ilo-est-gdp-205u, ilo-est-gdp-211p, ilo-est-gdp-2hrw, ilo-est-gdp-2tot, ilo-est-how-2emp, ilo-est-how-2tdp, ilo-est-how-2tot, ilo-est-lap-2gdp, ilo-est-lap-2lid, ilo-est-luu-2lu2, ilo-est-pop-2ldr, ilo-est-pop-2pop, ilo-est-pop-2wap, ilo-est-sdg-0111, ilo-est-sdg-0821, ilo-est-sdg-1041, ilo-est-sdg-b821, ilo-est-une-2eap, ilo-est-une-2une, ilo-peer-bgd, ilo-peer-chn, ilo-peer-idn, ilo-peer-vnm]
+    - base: "ILO modelled estimates (ILOEST), projections"
+      from: "2024-01"
+      to: null
+      bundles: [ilo-est-projections]
+    - base: "Estimates based on the NSS employment-unemployment surveys"
+      from: "2000-01"
+      to: null
+      bundles: [ilo-eus-estimates-ilr-tumt]
+    - base: "Institute for Human Development estimates"
+      from: "1983-01"
+      to: null
+      bundles: [ilo-ihd-ees-xtmp]
+    - base: "ILO estimates"
+      from: "2022-01"
+      to: null
+      bundles: [ilo-ilo-estimates-emp-temp]
+    - base: "ILO Employment Policy Gateway"
+      from: "2019-01"
+      to: null
+      bundles: [ilo-ilo-policy-sdg-08b1]
+    - base: "ILO calculations from ILO textual sources"
+      from: "2015-01"
+      to: null
+      bundles: [ilo-ilo-textual-sdg-0882]
+    - base: "Labour legislation"
+      from: "2000-01"
+      to: null
+      bundles: [ilo-legislation-ear-inee]
+    - base: "Ministry of External Affairs records"
+      from: "2018-01"
+      to: null
+      bundles: [ilo-mea-pop-mnas]
+    - base: "Ministry of Overseas Indian Affairs, annual report"
+      from: "2008-01"
+      to: null
+      bundles: [ilo-moia-pop-mnao, ilo-moia-pop-mnas]
+    - base: "NSS employment-unemployment rounds, ILO processing"
+      from: "1994-01"
+      to: "2012-01"          # the NSS quinquennial rounds ended with 2011-12; PLFS replaced them
+      bundles: [ilo-nss-eap-dwap, ilo-nss-eap-teap, ilo-nss-ear-emta, ilo-nss-ear-emtg, ilo-nss-ear-emtm, ilo-nss-ear-tmta, ilo-nss-ees-tees, ilo-nss-ees-xplv, ilo-nss-eip-3eet, ilo-nss-eip-dwap, ilo-nss-eip-neet, ilo-nss-eip-teip, ilo-nss-emp-3ifl, ilo-nss-emp-dwap, ilo-nss-emp-nifl, ilo-nss-emp-pifl, ilo-nss-emp-pter, ilo-nss-emp-publ, ilo-nss-emp-temp, ilo-nss-emp-tnif, ilo-nss-emp-tour, ilo-nss-emp-tpif, ilo-nss-ged-plfp, ilo-nss-ged-twap, ilo-nss-pop-3vet, ilo-nss-pop-xvet, ilo-nss-pop-xwap, ilo-nss-sdg-0552, ilo-nss-sdg-0831, ilo-nss-sdg-0852, ilo-nss-sdg-0861, ilo-nss-sdg-0922, ilo-nss-sdg-t552, ilo-nss-une-deap, ilo-nss-une-tune]
+    - base: "Official estimates"
+      from: "2009-01"
+      to: null
+      bundles: [ilo-official-lai-vist, ilo-official-str-days, ilo-official-str-tstr, ilo-official-str-work]
+    - base: "PLFS unit data, ILO processing"
+      from: "2017-01"
+      to: null
+      bundles: [ilo-plfs-cld-tpop, ilo-plfs-cld-xchl, ilo-plfs-cld-xgpb, ilo-plfs-cld-xhaz, ilo-plfs-cld-xsna, ilo-plfs-eap-dwap, ilo-plfs-eap-teap, ilo-plfs-ear-chra, ilo-plfs-ear-cmta, ilo-plfs-ear-ehra, ilo-plfs-ear-ehrg, ilo-plfs-ear-ehrm, ilo-plfs-ear-emta, ilo-plfs-ear-emtg, ilo-plfs-ear-emtm, ilo-plfs-ear-ggap, ilo-plfs-ear-shra, ilo-plfs-ear-smta, ilo-plfs-ear-xfls, ilo-plfs-ear-xtlp, ilo-plfs-ees-care, ilo-plfs-ees-stem, ilo-plfs-ees-tees, ilo-plfs-ees-xplv, ilo-plfs-ees-xtmp, ilo-plfs-eip-3eet, ilo-plfs-eip-dwap, ilo-plfs-eip-neet, ilo-plfs-eip-rcar, ilo-plfs-eip-teip, ilo-plfs-emp-3ifl, ilo-plfs-emp-care, ilo-plfs-emp-cnif, ilo-plfs-emp-cpif, ilo-plfs-emp-dwap, ilo-plfs-emp-nifl, ilo-plfs-emp-pifl, ilo-plfs-emp-pter, ilo-plfs-emp-snif, ilo-plfs-emp-spif, ilo-plfs-emp-stem, ilo-plfs-emp-temp, ilo-plfs-ged-plfp, ilo-plfs-ged-twap, ilo-plfs-how-care, ilo-plfs-how-eare, ilo-plfs-how-stee, ilo-plfs-how-stem, ilo-plfs-how-temp, ilo-plfs-how-xees, ilo-plfs-pop-3vet, ilo-plfs-pop-xvet, ilo-plfs-pop-xwap, ilo-plfs-q-eap-dwap, ilo-plfs-q-ear-ehra, ilo-plfs-q-ear-emta, ilo-plfs-q-eip-dwap, ilo-plfs-q-eip-neet, ilo-plfs-q-emp-dwap, ilo-plfs-q-emp-nifl, ilo-plfs-q-emp-pifl, ilo-plfs-q-how-temp, ilo-plfs-q-how-xees, ilo-plfs-q-une-deap, ilo-plfs-sdg-0552, ilo-plfs-sdg-0831, ilo-plfs-sdg-0851, ilo-plfs-sdg-0852, ilo-plfs-sdg-0861, ilo-plfs-sdg-0922, ilo-plfs-sdg-a871, ilo-plfs-sdg-t552, ilo-plfs-une-deap, ilo-plfs-une-tune]
+    - base: "Special data collection (ILO questionnaire)"
+      from: "1969-01"
+      to: null
+      bundles: [ilo-special-str-days, ilo-special-str-tstr, ilo-special-str-work]
+    - base: "ILO Social Security Inquiry"
+      from: "2000-01"
+      to: null
+      bundles: [ilo-ssi-sdg-0131]
