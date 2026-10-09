@@ -1,6 +1,6 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-09, 21:30.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 00:10.
 
 ## Running now: ten family sessions
 
@@ -11,7 +11,7 @@ Each writes its own log in `docs/status/<slug>.md` on its branch.
 | Session | Builds | State |
 |---|---|---|
 | atlas-external | External account rebuilt on DBIE: BoP, weekly reserves, FDI and FPI, external debt, REER | **merged** (BoP to Q1 FY27, weekly reserves to 25 Sep 2026, FDI/FPI, debt, REER) |
-| atlas-trade | New guide: merchandise trade from TradeStat, HS 2 to 8 digit, partners | started 18:18 |
+| atlas-trade | New guide: merchandise trade from TradeStat, HS 2 to 8 digit, partners | **merged** (HS 2/4, partners, regions; 6/8-digit staged for the archive) |
 | atlas-credit | New guide: credit by sector, money supply, bank health | **merged** (credit by sector, money, banks; 228 deep RBI tables; 22 held for the archive) |
 | atlas-rates | New guide: policy rates since 1935, MPC votes, lending and deposit rates, yields | **merged** (repo rate since 1935, every MPC vote, lending rates, yields) |
 | atlas-states | New guide: state GDP, per-capita income, what each state runs on | **merged** (state economies; all 182 RBI Handbook tables, every unit resolved) |
@@ -20,7 +20,21 @@ Each writes its own log in `docs/status/<slug>.md` on its branch.
 | atlas-climate | New guide: temperature, rain, emissions (OWID, World Bank climate portal) | **merged**, follow-up merged |
 | atlas-worldbank | WDI inventory; new guides on poverty and on population | **merged** (poverty, population; all 1,395 WDI India indicators baked) |
 | atlas-bis | BIS bundles; new guides on housing prices and on debt | **merged** (debt, housing; BIS India credit after 2023 marked as BIS estimates) |
-| atlas-framework | Every-cut table, seam charts, IDH cross-check, ledgers for the 14 existing guides | round 3 running: bar charts on phones keep their labels; a shorter data-downloads list |
+| atlas-framework | Every-cut table, seam charts, IDH cross-check, ledgers for the 14 existing guides | round 4 running: archive builder (dry run only), gzipped raw, census summary |
+
+## Wave 2 (started 2026-10-10 00:05): deepening the existing guides
+
+Each decides every `pending` item in its ledgers (brief: `docs/briefs/wave2.md`).
+
+| Session | Guides | Pending items to decide |
+|---|---|---|
+| atlas-prices | cpi, wpi (+ CPI-IW, rural wages) | 82,269 |
+| atlas-jobs-deep | jobs | 1,592 |
+| atlas-industry | iip, factories (+ eight core industries) | 45,347 |
+| atlas-nas | gdp | 437 |
+
+Next: health and gender (nfhs, gender), households (hces, aishe, mnre, deposits), once
+MoSPI load allows.
 
 ## Coordinator (this session) meanwhile
 
@@ -41,7 +55,7 @@ throttles, so not run alongside the states and services sessions). Then the laun
   state x item, ASI 3-4 digit, NFHS tables, 144 gender indicators). Each is in its ledger as
   `pending`, scheduled for wave 2. Gates pass; the launch setting (`--strict`) fails until
   they are decided.
-- Merged guides on the branch: 24 (bis, services, states, worldbank, climate, ilo, rates, external, credit in). Still building: trade.
+- **Wave 1 complete: 25 guides on the branch**, 537 pages, all gates green, all 38 prose files verify.
 - Every-cut marks estimated values (", est."), enforced by a test.
 - DBIE reader fixed (quoted ";" misaligned 5,232 rows of report 1076).
 
