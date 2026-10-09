@@ -215,10 +215,13 @@ const CARDS = [
     yStep: 25, fmt: (v) => v.toFixed(1) + "%", mr: 230,
     prep: (S) => {
       const from = new Date(Date.UTC(2007, 3, 1));
-      for (const [k, label, color] of [["households", "Households", "#2E4BD8"], ["companies", "Companies", "#5F6675"], ["government", "Government", "#A3A9B4"]])
-        S[k] = { ...S[k], label, color, data: S[k].data.filter((d) => d.date >= from) };
+      // households and companies stop at the last measured quarter: BIS estimates the rest with the split frozen
+      for (const [k, label, color] of [["households", "Households", "#2E4BD8"], ["companies", "Companies", "#5F6675"], ["government", "Government", "#A3A9B4"]]) {
+        const est = new Set((S[k].estimated ?? []).map((d) => new Date(d + "T00:00:00Z").getTime()));
+        S[k] = { ...S[k], label, color, data: S[k].data.filter((d) => d.date >= from && !est.has(d.date.getTime())) };
+      }
     },
-    foot: (b, S) => `Debt, % of GDP, ${b.dates.at(-1).slice(0, 4)} Q${Math.ceil(+b.dates.at(-1).slice(5, 7) / 3)}. Source: BIS total credit statistics`,
+    foot: (b, S) => `Debt, % of GDP, to the last quarter measured. Source: BIS total credit statistics`,
   },
   {
     slug: "housing", bundleSlug: "bis-property",

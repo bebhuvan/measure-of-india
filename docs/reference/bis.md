@@ -27,7 +27,24 @@ The coverage catalogue comes from BIS itself: `https://stats.bis.org/api/v1/data
 - India's government debt is published at nominal value only (`G.A.N`); other borrowers at market value. BIS's total `C` equals private + government to 0.1 pt.
 - Households + companies exceed the private total by up to 8.4 pt in 2007-2011 (separate break adjustment); they reconcile from 2012. validate asserts it from 2012.
 - Households' unadjusted INR credit carries OBS_STATUS B (break) in 2024 Q1.
-- Private credit in INR rose 7.3% in Q4 2025 and 5.1% in Q1 2026 (19.3% y/y, against 11.7% the year before). No break flagged. Disclosed on the debt guide as "we do not know yet".
+- **India's latest private credit is a BIS estimate, not a measurement.** BIS's documentation
+  ("Long series on total credit and domestic bank credit to the private non-financial sector, data
+  documentation", India entry, updated 14 Sep 2026, https://www.bis.org/pages/statistics/credit-private-documentation.pdf):
+  "From Q4 2011 onwards annual financial accounts data; intra-year pattern of annual total credit data
+  derived from quarterly domestic bank credit series. The most recent periods which are not yet available
+  at source are estimated using bank credit series multiplied by the ratio between the last financial
+  accounts observation and the corresponding bank credit observation." The observations carry no flag:
+  WS_TC returns OBS_STATUS A and OBS_CONF F for every India quarter (checked live 2026-10-09 with full
+  attributes). In the data the extrapolation shows as households/private, companies/private and
+  banks/private frozen at their Q4 2023 values (0.46709, 0.53291, 0.61069) for Q1 2024 to Q1 2026, so all
+  three grow at the private total's pace (7.3% q/q in Q4 2025, 19.3% y/y in Q1 2026; all borrowers
+  including government 14.0% y/y). The adapter detects the frozen run mechanically and lists those 9
+  quarters in `estimated` (with `estimatedNote`) on private, households, companies, bank credit and the
+  total in all three units, and on the credit-gap ratio, trend and gap. The guide quotes households and
+  companies only for Q4 2023 (43.8% and 50.0% of GDP; the 2007 peak of 46.2% is higher, so the earlier
+  "highest since 2007" claim was an artefact of the estimate and has gone). The DSR is computed from the
+  same credit stock. Scan of every other India series (and peers' household/company shares) for a constant
+  ratio to a parent over the latest quarters: no other case (two hits were rounding coincidences).
 - Korea has no `G.A.N` (government at nominal value); the euro area has no DSR.
 - BIS's India property series (SPP, DPP) are the RBI's indices. BIS 18-city Q1 2026 = 115.85; RBI press release 29 May 2026 = 115.9 (checked). RBI later revised Q4 2025-26 to 116.2; BIS has not picked it up and lacks Q1 2026-27.
 

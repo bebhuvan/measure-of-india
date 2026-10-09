@@ -285,8 +285,8 @@ import bisCitiesBundle from "../../data/series/bis-property-cities.json";
   const pt = (v) => (v < 0 ? "−" : "+") + Math.abs(v).toFixed(1) + " pt";
   render("reg-debt", [
     ["Debt of all non-financial borrowers, % of GDP", "BIS-TC-C", "s-acc", CR.total, false, "/guides/debt/", null, pg],
-    ["Households' debt, % of GDP", "BIS-TC-H", "s-g1", CR.households, false, "/guides/debt/", null, pg],
-    ["Companies' debt, % of GDP", "BIS-TC-N", "s-g2", CR.companies, false, "/guides/debt/", null, pg],
+    ["Households' debt, % of GDP (latest quarters BIS estimates)", "BIS-TC-H", "s-g1", CR.households, false, "/guides/debt/", null, pg],
+    ["Companies' debt, % of GDP (latest quarters BIS estimates)", "BIS-TC-N", "s-g2", CR.companies, false, "/guides/debt/", null, pg],
     ["Government debt, % of GDP", "BIS-TC-G", "s-g3", CR.government, false, "/guides/debt/", null, pg],
     ["Credit-to-GDP gap", "BIS-CG", "s-g1", GP.gap, false, "/guides/debt/", null, pt],
     ["Debt service ratio, private sector", "BIS-DSR", "s-g2", DS.private, false, "/guides/debt/", null, pg],

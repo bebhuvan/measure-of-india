@@ -90,8 +90,14 @@ for (const [k, s] of Object.entries(bundle.series)) {
     const startIdx = vals.length - 1 - run.length;
     run.since = startIdx >= 0 ? periodLabel(data[startIdx].date) : periodLabel(data[0].date) + " (series start)";
   }
+  // estimated points (CONTRACT-series 2b): the writer must know which readings are an
+  // estimator's, and what the last measured reading was (BIS extrapolates India's credit)
+  const estSet = new Set(s.estimated ?? []);
+  const lastMeasured = [...data].reverse().find((d) => d.value != null && !estSet.has(d.date));
   const entry = {
     label: s.label,
+    estimated: estSet.size ? { from: periodLabel(s.estimated[0]), periods: estSet.size, latestIsEstimate: estSet.has(data.at(-1).date),
+      lastMeasured: lastMeasured ? { value: lastMeasured.value, period: periodLabel(lastMeasured.date) } : null, note: s.estimatedNote ?? null } : null,
     levelBased,
     latest: { value: L, period: periodLabel(data.at(-1).date) },
     previous: { value: P, period: periodLabel(data.at(-2).date) },

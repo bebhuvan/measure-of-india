@@ -43,6 +43,24 @@ const xYears = (ys) => ({ label: null, tickSize: 0, tickPadding: 10, ticks: ys.m
 const LQ = creditB.dates.at(-1);
 const pctV = (v) => (v == null ? "—" : v.toFixed(1) + "%");
 
+/* BIS extrapolates India's latest credit quarters (series.estimated; CONTRACT-series 2b): after the
+ * last quarter of the RBI's financial accounts it scales private credit with bank credit and freezes
+ * the household/company split. Estimated stretches are drawn as a pale dashed tail, labelled "est.",
+ * and every claim about households or companies uses the last measured quarter. */
+const iso = (d) => d.toISOString().slice(0, 10);
+const estOf = (b, k) => new Set(b.series[k]?.estimated ?? []);
+const lastMeasured = (s, set) => s.data.filter((d) => d.value != null && !set.has(iso(d.date))).at(-1);
+const TINT = { [ACC]: "#AFBBF0", [G1]: "#B5BAC4", [G2]: "#D5D9E0" };
+function linesWithEst(data, set, c, w, extra = {}) {
+  const m = data.map((d) => (set.has(iso(d.date)) ? { ...d, value: null } : d));
+  const f = data.findIndex((d) => set.has(iso(d.date)));
+  const e = f < 0 ? [] : data.slice(Math.max(0, f - 1));
+  return [Plot.lineY(m, { x: "date", y: "value", stroke: c, strokeWidth: w, strokeLinejoin: "round", strokeLinecap: "round", ...extra }),
+    ...(e.length ? [Plot.lineY(e, { x: "date", y: "value", stroke: TINT[c] ?? c, strokeWidth: w, strokeDasharray: "3 3" })] : [])];
+}
+const EST = estOf(creditB, "households");
+const isEst = (d) => EST.has(iso(d.date));
+
 /* peers, one bundle each (CONTRACT-series rule 8) */
 const PEERS = [["United States", usa], ["China", chn], ["Euro area", emu], ["United Kingdom", gbr], ["Japan", jpn], ["Korea", kor], ["Indonesia", idn],
   ["Brazil", bra], ["South Africa", zaf], ["Mexico", mex], ["Türkiye", tur], ["Australia", aus], ["Canada", can]];
@@ -57,16 +75,15 @@ const yearAgo = (s) => s.data[s.data.length - 5]?.value;
 setHTML("m-latest", qlab(LQ));
 setHTML("u-reading", `BIS, ${qlab(LQ)}`);
 setHTML("n-total", fmt.pct1(tot));
-setHTML("d-total", `<b>${fmt.pt1(tot - yearAgo(C.total)).replace(/^(?!-)/, "+").replace("-", "−")}</b> on a year ago`);
-setHTML("n-hh", fmt.pct1(hh));
-setHTML("d-hh", `the highest since the series began in 2007`);
+setHTML("d-total", `<b>${fmt.pt1(tot - yearAgo(C.total)).replace(/^(?!-)/, "+").replace("-", "−")}</b> on a year ago${estOf(creditB, "total").has(LQ) ? ", BIS estimate" : ""}`);
+const hhM = lastMeasured(C.households, EST);
+setHTML("n-hh", fmt.pct1(hhM.value));
+setHTML("d-hh", EST.size ? `${qlab(hhM.date)}, the last measured quarter; BIS estimate for ${qlab(LQ)} <b>${fmt.pct1(hh)}</b>` : qlab(hhM.date));
 setHTML("n-gap", (gap >= 0 ? "+" : "−") + Math.abs(gap).toFixed(1) + pc(" pt"));
-setHTML("d-gap", `<b>${fmt.pct1(last(G.ratio))}</b> of GDP against a trend of <b>${fmt.pct1(last(G.trend))}</b>`);
+setHTML("d-gap", `${estOf(gapB, "gap").size ? "BIS estimate: " : ""}<b>${fmt.pct1(last(G.ratio))}</b> of GDP against a trend of <b>${fmt.pct1(last(G.trend))}</b>`);
 setHTML("n-dsr", fmt.pct1(dsr));
 setHTML("d-dsr", `of income goes on interest and repayments`);
 spark("nspark-total", { ...C.total, data: C.total.data.filter((d) => d.date >= yr(2005)), color: ACC });
-// the headline is the household record: assert it, so a future print that is not a record cannot keep the words
-if (hh < Math.max(...C.households.data.map((d) => d.value ?? -Infinity))) setHTML("d-hh", `peak <b>${fmt.pct1(Math.max(...C.households.data.map((d) => d.value ?? -Infinity)))}</b>`);
 
 /* ---------- § 01 ---------- */
 setHTML("rb-total", fmt.pct1(tot) + pc(" of GDP"));
@@ -78,14 +95,14 @@ setHTML("cr-per100", `₹${Math.round(tot)}`);
   const KEYS = [["households", ACC, "Households", 2], ["companies", G1, "Companies", 1.5], ["government", G2, "Government", 1.5]];
   const from = yr(1981);
   const marks = [Plot.gridY([25, 50, 75, 100], { stroke: GRID }), Plot.ruleY([0], { stroke: BASE })];
-  for (const [k, c, , w] of KEYS) marks.push(Plot.lineY(C[k].data.filter((d) => d.date >= from), { x: "date", y: "value", stroke: c, strokeWidth: w, strokeLinejoin: "round", strokeLinecap: "round" }));
+  for (const [k, c, , w] of KEYS) marks.push(...linesWithEst(C[k].data.filter((d) => d.date >= from), estOf(creditB, k), c, w));
   for (const [k, c, name] of KEYS) {
-    const e = lastPt(C[k]);
-    marks.push(Plot.dot([e], { x: "date", y: "value", fill: c, r: 3, stroke: "#fff", strokeWidth: 1.5 }));
-    marks.push(Plot.text([e], { x: "date", y: "value", text: (d) => `${name} ${d.value.toFixed(1)}%`, dx: 10, dy: k === "companies" ? 4 : 0, textAnchor: "start", fill: INK, fontSize: 12.5, fontWeight: k === "households" ? 600 : 400 }));
+    const e = lastPt(C[k]), est = estOf(creditB, k).has(iso(e.date));
+    marks.push(Plot.dot([e], { x: "date", y: "value", fill: est ? "#fff" : c, stroke: c, r: 3, strokeWidth: 1.5 }));
+    marks.push(Plot.text([e], { x: "date", y: "value", text: (d) => `${name} ${d.value.toFixed(1)}%${est ? " est." : ""}`, dx: 10, dy: k === "companies" ? 4 : 0, textAnchor: "start", fill: INK, fontSize: 12.5, fontWeight: k === "households" ? 600 : 400 }));
   }
   marks.push(Plot.text([{ x: yr(2007), y: 22 }], { x: "x", y: "y", text: () => "Households and companies are measured from 2007", textAnchor: "start", fill: MUTED, fontSize: 11.5 }));
-  const plot = Plot.plot({ width: W, height: 440, marginLeft: 44, marginRight: 170, marginTop: 30, marginBottom: 34, style: baseStyle,
+  const plot = Plot.plot({ width: W, height: 440, marginLeft: 44, marginRight: 195, marginTop: 30, marginBottom: 34, style: baseStyle,
     x: xYears([1981, 1990, 2000, 2010, 2020, 2026]),
     y: { label: "% of GDP", labelAnchor: "top", labelArrow: false, domain: [0, 100], ticks: [0, 25, 50, 75, 100], tickSize: 0, tickPadding: 10 }, marks });
   a11y(plot, "Debt of India's households, companies and government, % of GDP", `In ${qlab(LQ)} households owed ${fmt.pct1(hh)} of GDP, companies ${fmt.pct1(co)} and government ${fmt.pct1(gov)}.`);
@@ -94,10 +111,15 @@ setHTML("cr-per100", `₹${Math.round(tot)}`);
   addCrosshair(document.getElementById("plot-sectors"), plot, series, null, qlab, pctV);
   wireTools(document.getElementById("cb-sectors"), plot, series, "india-atlas_debt-by-borrower");
   const peakCo = C.companies.data.reduce((a, d) => (d.value != null && d.value > a.value ? d : a), { value: -1 });
-  setHTML("pv-sectors", fmt.pct1(hh));
-  setHTML("ex-s-hh", fmt.pct1(hh));
+  const coM = lastMeasured(C.companies, EST);
+  setHTML("pv-sectors", fmt.pct1(hhM.value));
+  setHTML("ex-s-hh", fmt.pct1(hhM.value));
+  setHTML("ex-s-q", qlab(hhM.date));
+  setHTML("ex-s-hhe", fmt.pct1(hh));
+  setHTML("ex-s-coe", fmt.pct1(co));
+  setHTML("ex-s-hhpk", fmt.pct1(Math.max(...C.households.data.filter((d) => d.value != null && !isEst(d)).map((d) => d.value))));
   setHTML("ex-s-hh07", fmt.pct1(C.households.data.find((d) => d.value != null).value));
-  setHTML("ex-s-co", fmt.pct1(co));
+  setHTML("ex-s-co", fmt.pct1(coM.value));
   setHTML("ex-s-copk", fmt.pct1(peakCo.value));
   setHTML("ex-s-copkq", qlab(peakCo.date));
   setHTML("ex-s-gov", fmt.pct1(gov));
@@ -110,13 +132,13 @@ setHTML("cr-per100", `₹${Math.round(tot)}`);
 {
   const KEYS = [["private", ACC, "All lenders", 2], ["private_banks", G2, "Banks only", 1.5]];
   const marks = [Plot.gridY([25, 50, 75, 100, 125], { stroke: GRID }), Plot.ruleY([0], { stroke: BASE })];
-  for (const [k, c, , w] of KEYS) marks.push(Plot.lineY(C[k].data, { x: "date", y: "value", stroke: c, strokeWidth: w, strokeLinejoin: "round" }));
+  for (const [k, c, , w] of KEYS) marks.push(...linesWithEst(C[k].data, estOf(creditB, k), c, w));
   for (const [k, c, name] of KEYS) {
-    const e = lastPt(C[k]);
-    marks.push(Plot.dot([e], { x: "date", y: "value", fill: c, r: 3, stroke: "#fff", strokeWidth: 1.5 }));
-    marks.push(Plot.text([e], { x: "date", y: "value", text: (d) => `${name} ${d.value.toFixed(1)}%`, dx: 10, textAnchor: "start", fill: INK, fontSize: 12.5, fontWeight: k === "private" ? 600 : 400 }));
+    const e = lastPt(C[k]), est = estOf(creditB, k).has(iso(e.date));
+    marks.push(Plot.dot([e], { x: "date", y: "value", fill: est ? "#fff" : c, stroke: c, r: 3, strokeWidth: 1.5 }));
+    marks.push(Plot.text([e], { x: "date", y: "value", text: (d) => `${name} ${d.value.toFixed(1)}%${est ? " est." : ""}`, dx: 10, textAnchor: "start", fill: INK, fontSize: 12.5, fontWeight: k === "private" ? 600 : 400 }));
   }
-  const plot = Plot.plot({ width: W, height: 420, marginLeft: 44, marginRight: 170, marginTop: 30, marginBottom: 34, style: baseStyle,
+  const plot = Plot.plot({ width: W, height: 420, marginLeft: 44, marginRight: 200, marginTop: 30, marginBottom: 34, style: baseStyle,
     x: xYears([1951, 1960, 1970, 1980, 1990, 2000, 2010, 2026]),
     y: { label: "% of GDP", labelAnchor: "top", labelArrow: false, domain: [0, 125], ticks: [0, 25, 50, 75, 100, 125], tickSize: 0, tickPadding: 10 }, marks });
   const first = C.private.data.find((d) => d.value != null);
@@ -129,7 +151,9 @@ setHTML("cr-per100", `₹${Math.round(tot)}`);
   setHTML("ex-l-first", fmt.pct1(first.value));
   setHTML("ex-l-now", fmt.pct1(last(C.private)));
   setHTML("ex-l-banks", fmt.pct1(last(C.private_banks)));
-  setHTML("ex-l-share", fmt.pct0((100 * last(C.private_banks)) / last(C.private)));
+  const pM = lastMeasured(C.private, EST), bM = lastMeasured(C.private_banks, EST);
+  setHTML("ex-l-share", fmt.pct0((100 * bM.value) / pM.value));
+  setHTML("ex-l-q", qlab(pM.date));
 }
 
 /* ---------- § 04 in rupees ---------- */
@@ -138,13 +162,13 @@ setHTML("cr-per100", `₹${Math.round(tot)}`);
   const KEYS = [["government", G2, "Government"], ["companies", G1, "Companies"], ["households", ACC, "Households"]];
   const toLC = (s) => ({ ...s, data: s.data.filter((d) => d.date >= yr(2007)).map((d) => ({ ...d, value: d.value == null ? null : d.value / 1000 })) });
   const marks = [Plot.gridY([100, 200, 300], { stroke: GRID }), Plot.ruleY([0], { stroke: BASE })];
-  for (const [k, c] of KEYS) marks.push(Plot.lineY(toLC(I[k]).data, { x: "date", y: "value", stroke: c, strokeWidth: k === "households" ? 2 : 1.5, strokeLinejoin: "round" }));
+  for (const [k, c] of KEYS) marks.push(...linesWithEst(toLC(I[k]).data, estOf(inrB, k), c, k === "households" ? 2 : 1.5));
   for (const [k, c, name] of KEYS) {
-    const e = lastPt(toLC(I[k]));
-    marks.push(Plot.dot([e], { x: "date", y: "value", fill: c, r: 3, stroke: "#fff", strokeWidth: 1.5 }));
-    marks.push(Plot.text([e], { x: "date", y: "value", text: (d) => `${name} ₹${Math.round(d.value)} lakh cr`, dx: 10, textAnchor: "start", fill: INK, fontSize: 12.5, fontWeight: k === "households" ? 600 : 400 }));
+    const e = lastPt(toLC(I[k])), est = estOf(inrB, k).has(iso(e.date));
+    marks.push(Plot.dot([e], { x: "date", y: "value", fill: est ? "#fff" : c, stroke: c, r: 3, strokeWidth: 1.5 }));
+    marks.push(Plot.text([e], { x: "date", y: "value", text: (d) => `${name} ₹${Math.round(d.value)} lakh cr${est ? " est." : ""}`, dx: 10, textAnchor: "start", fill: INK, fontSize: 12.5, fontWeight: k === "households" ? 600 : 400 }));
   }
-  const plot = Plot.plot({ width: W, height: 400, marginLeft: 44, marginRight: 230, marginTop: 30, marginBottom: 34, style: baseStyle,
+  const plot = Plot.plot({ width: W, height: 400, marginLeft: 44, marginRight: 260, marginTop: 30, marginBottom: 34, style: baseStyle,
     x: xYears([2007, 2010, 2014, 2018, 2022, 2026]),
     y: { label: "₹ lakh crore", labelAnchor: "top", labelArrow: false, domain: [0, 300], ticks: [0, 100, 200, 300], tickSize: 0, tickPadding: 10, tickFormat: (v) => String(v) }, marks });
   const h0 = I.households.data.find((d) => d.date >= yr(2007) && d.value != null);
@@ -154,9 +178,11 @@ setHTML("cr-per100", `₹${Math.round(tot)}`);
   addCrosshair(document.getElementById("plot-inr"), plot, series, null, qlab, (v) => (v == null ? "—" : "₹" + Math.round(v) + " lakh cr"));
   wireTools(document.getElementById("cb-inr"), plot, series, "india-atlas_debt-in-rupees");
   setHTML("pv-inr", "₹" + Math.round(last(I.households) / 1000) + " lakh crore");
-  setHTML("ex-i-hh", "₹" + Math.round(last(I.households) / 1000) + " lakh crore");
+  const iM = lastMeasured(I.households, estOf(inrB, "households"));
+  setHTML("ex-i-hh", "₹" + Math.round(iM.value / 1000) + " lakh crore");
+  setHTML("ex-i-q", qlab(iM.date));
   setHTML("ex-i-hh07", "₹" + Math.round(h0.value / 1000) + " lakh crore");
-  setHTML("ex-i-x", fmt.x1(last(I.households) / h0.value));
+  setHTML("ex-i-x", fmt.x1(iM.value / h0.value));
   setHTML("ex-i-tot", "₹" + Math.round(last(I.total) / 1000) + " lakh crore");
 }
 
@@ -168,14 +194,14 @@ setHTML("cr-per100", `₹${Math.round(tot)}`);
     y: { label: "% of GDP", labelAnchor: "top", labelArrow: false, domain: [0, 125], ticks: [0, 25, 50, 75, 100, 125], tickSize: 0, tickPadding: 10 },
     marks: [Plot.gridY([25, 50, 75, 100, 125], { stroke: GRID }), Plot.ruleY([0], { stroke: BASE }),
       Plot.lineY(G.trend.data.filter((d) => d.date >= yr(1961)), { x: "date", y: "value", stroke: G2, strokeWidth: 1.5, strokeDasharray: "4 3" }),
-      Plot.lineY(G.ratio.data.filter((d) => d.date >= yr(1961)), { x: "date", y: "value", stroke: ACC, strokeWidth: 2, strokeLinejoin: "round" }),
+      ...linesWithEst(G.ratio.data.filter((d) => d.date >= yr(1961)), estOf(gapB, "ratio"), ACC, 2),
       Plot.text([lastPt(G.ratio)], { x: "date", y: "value", text: (d) => `Credit ${d.value.toFixed(1)}%`, dx: 10, dy: -8, textAnchor: "start", fill: INK, fontSize: 12.5, fontWeight: 600 }),
       Plot.text([lastPt(G.trend)], { x: "date", y: "value", text: (d) => `Trend ${d.value.toFixed(1)}%`, dx: 10, dy: 9, textAnchor: "start", fill: INK, fontSize: 12.5 })] });
   const bottom = Plot.plot({ width: W, height: 240, marginLeft: 44, marginRight: 150, marginTop: 24, marginBottom: 34, style: baseStyle,
     x: xYears([1961, 1970, 1980, 1990, 2000, 2010, 2020, 2026]),
     y: { label: "gap, points", labelAnchor: "top", labelArrow: false, domain: [-25, 25], ticks: [-20, -10, 0, 10, 20], tickSize: 0, tickPadding: 10, tickFormat: (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v) },
     marks: [Plot.gridY([-20, -10, 10, 20], { stroke: GRID }),
-      Plot.rectY(g, { x1: (d) => new Date(+d.date - 30 * 864e5), x2: (d) => new Date(+d.date + 30 * 864e5), y1: 0, y2: "value", fill: (d) => (d.value >= 0 ? ACC : G3) }),
+      Plot.rectY(g, { x1: (d) => new Date(+d.date - 30 * 864e5), x2: (d) => new Date(+d.date + 30 * 864e5), y1: 0, y2: "value", fill: (d) => (estOf(gapB, "gap").has(iso(d.date)) ? (d.value >= 0 ? "#AFBBF0" : "#E3E6EB") : d.value >= 0 ? ACC : G3) }),
       Plot.ruleY([0], { stroke: BASE }),
       Plot.ruleY([2, 10], { stroke: GOLD, strokeDasharray: "3 3" }),
       Plot.text([{ x: yr(2026), y: 2 }], { x: "x", y: "y", text: () => "2 pt: buffer starts", dx: 10, dy: 6, textAnchor: "start", fill: MUTED, fontSize: 11.5 }),
@@ -204,6 +230,11 @@ setHTML("cr-per100", `₹${Math.round(tot)}`);
   const P = hydrate(inrB).private.data, n = P.length;
   setHTML("ex-g-yoy", fmt.pct1((P[n - 1].value / P[n - 5].value - 1) * 100));
   setHTML("ex-g-yoy1", fmt.pct1((P[n - 5].value / P[n - 9].value - 1) * 100));
+  const T = hydrate(inrB).total.data;
+  setHTML("ex-g-tot", fmt.pct1((T[n - 1].value / T[n - 5].value - 1) * 100));
+  const gM = lastMeasured(G.gap, estOf(gapB, "gap"));
+  setHTML("ex-g-meas", (gM.value >= 0 ? "+" : "−") + Math.abs(gM.value).toFixed(1) + " points");
+  setHTML("ex-g-measq", qlab(gM.date));
 }
 
 /* ---------- § 06 debt service ---------- */

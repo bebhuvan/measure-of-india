@@ -32,6 +32,13 @@ function checkCadence(dates, stepMonths, slug) {
   }
 }
 
+// true when every published point from index i to the series' last point is listed as estimated
+function trailingEst(s, dates, i, last) {
+  const est = new Set(s.estimated ?? []);
+  for (let j = i; j <= last; j++) if (s.data[j] != null && !est.has(dates[j])) return false;
+  return true;
+}
+
 function checkRange(bundle, lo, hi, slug, seriesRange) {
   // CONTRACT-series rule 2: disclosure lives on the series. A bundle-level
   // meta.gaps union survived only in the legacy shape; writeSeries migrates
@@ -53,7 +60,9 @@ function checkRange(bundle, lo, hi, slug, seriesRange) {
       const i = bundle.dates.indexOf(d);
       if (i === -1) fail(`${slug}.${k}: estimated date ${d} is not on the axis`);
       else if (s.data[i] == null) fail(`${slug}.${k}: estimated ${d} carries no value`);
-      else if (i <= first || i >= last) fail(`${slug}.${k}: estimated ${d} is not interior to the series' span`);
+      // interior (an interpolation) or part of one unbroken run that ends the series (an agency's
+      // extrapolation of its latest periods, e.g. BIS India credit; CONTRACT-series rule 2b)
+      else if (i <= first || (i >= last && !trailingEst(s, bundle.dates, i, last))) fail(`${slug}.${k}: estimated ${d} is neither interior to the series' span nor part of a trailing run of estimates`);
       else if (gaps.has(d)) fail(`${slug}.${k}: ${d} cannot be both estimated and a gap`);
     }
     s.data.forEach((v, i) => {
@@ -1361,6 +1370,20 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
     if (w2 > 0.25) fail(`bis-credit: private != households + companies by ${w2.toFixed(2)} pt from 2012`); else ok(`bis-credit: private = households + companies from 2012 (worst ${w2.toFixed(2)} pt)`);
     if (w3 > 0.15) fail(`bis-credit: private credit != credit-gap ratio by ${w3.toFixed(2)} pt`); else ok(`bis-credit: private credit equals the credit-gap ratio (worst ${w3.toFixed(2)} pt)`);
   }));
+  // BIS's India extrapolation (series.estimated): in every estimated quarter households/private and
+  // banks/private equal their last measured ratio, which is what the adapter's detection claims
+  withBundle("bis-credit-inr", (b) => {
+    const S = b.series, est = new Set(S.households.estimated ?? []);
+    if (!est.size) return ok("bis-credit-inr: no BIS-estimated quarters this vintage");
+    const j0 = b.dates.findIndex((d) => est.has(d)) - 1;
+    let w = 0;
+    for (const k of ["households", "companies", "private_banks"]) {
+      const r0 = S[k].data[j0] / S.private.data[j0];
+      b.dates.forEach((d, i) => { if (est.has(d)) w = Math.max(w, Math.abs(S[k].data[i] / S.private.data[i] - r0) / r0); });
+      if (JSON.stringify(S[k].estimated) !== JSON.stringify(S.households.estimated)) fail(`bis-credit-inr.${k}: estimated dates differ from households'`);
+    }
+    if (w > 1e-5) fail(`bis-credit-inr: estimated quarters do not hold the last measured split (worst ${w})`); else ok(`bis-credit-inr: ${est.size} BIS-estimated quarters hold the ${b.dates[j0].slice(0, 7)} split`);
+  });
   withBundle("bis-property", (b) => {
     let w = 0;
     for (const k of ["nominal", "real"]) b.dates.forEach((d, i) => { const a = b.series[k].data[i], z = b.series[k].data[i - 4], y = b.series[k + "_yoy"].data[i]; if (i >= 4 && a != null && z != null && y != null) w = Math.max(w, Math.abs((a / z - 1) * 100 - y)); });

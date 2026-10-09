@@ -12,10 +12,17 @@ Branch `lb/bis`. Guides `debt` and `housing`. Updated 2026-10-09.
 - **Guides**: `debt` (9 sections, 8 plates) and `housing` (9 sections, 8 plates), registry, headline, register rows, OG cards, qc PAGES, 16 asof entries, prose slots, corpus, keyword maps. Prose generated (DeepSeek) and read by hand against the data.
 - **Gates**: `npx astro build`, `npm run gates`, `npm test` (18 pass), `npm run prose:dry` all green. Looked at 1440 and 390 px; share image downloaded (credit gap, both panels).
 
+## Correction after the coordinator's review (2026-10-09)
+
+- India's private credit after Q4 2023 is a **BIS estimate** (bank credit times the last financial-accounts ratio; household/company split frozen). BIS's documentation says so; its data flags nothing. Now marked `estimated` on 9 quarters of every private-credit series and the credit gap, drawn as pale dashed tails, labelled "est.", and households/companies quoted only for Q4 2023 (43.8% and 50.0%). The "highest household debt since 2007" claim was an artefact and is gone (measured peak 46.2% in 2007).
+- CONTRACT-series rule 2b and `validate.mjs` now accept a trailing run of estimates (an agency's extrapolation), not only interior ones. validate also checks the estimated quarters hold the last measured split.
+- Debt prose regenerated with the estimate in the facts sheet (`facts.mjs` exposes `estimated` with the last measured value); read by hand. One regenerated draft claimed "the total is measured" (false) and was discarded for the earlier passing draft.
+- The 19.3% is private credit; all borrowers including government grew 14.0%. The page says both.
+
 ## Findings worth a reader's attention
 
-- India's credit gap turned positive (+4.3 pt) for the first time since 2012. Most of the swing is two quarters: private credit in rupees +19.3% y/y vs 11.7% a year earlier, no break flagged by BIS. The page says we do not know yet whether that is borrowing or new data.
-- Household debt 49.1% of GDP, highest since the series began (2007).
+- On BIS's estimates the credit gap turned positive (+4.3 pt) for the first time since 2012; the last measured gap (Q4 2023) was −9.1.
+- Household debt was 43.8% of GDP in Q4 2023, the last measured quarter.
 - Real house prices are 8.3% below their 2019 peak; nominal +4.2% y/y, real +1.1%.
 - RBI revises city HPIs sharply between provisional and final (Chandigarh 109.0 vs 128.3).
 

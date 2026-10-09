@@ -149,6 +149,37 @@ export async function buildBis(root, dcfg, vintage, cfg) {
   };
   const TC = (k) => `BIS:WS_TC|Q.IN.${k}`;
 
+  // ---------- BIS's own extrapolation of India's latest quarters ----------
+  // BIS documentation (Long series on total credit, India entry, updated 14 Sep 2026): from Q4 2011
+  // total credit comes from the RBI's annual financial accounts, and "the most recent periods which
+  // are not yet available at source are estimated using bank credit series multiplied by the ratio
+  // between the last financial accounts observation and the corresponding bank credit observation."
+  // BIS flags none of it (OBS_STATUS A, OBS_CONF F). We detect it mechanically: the trailing run in
+  // which households / private (₹, break-adjusted) stays constant. The run's first quarter is the
+  // last financial-accounts observation; every later quarter is an estimate, on every series built
+  // from private credit (private, households, companies, bank credit, the total, the credit gap).
+  const EST = (() => {
+    const h = I.get(TC("H.A.M.XDC.A"))?.obs, p = I.get(TC("P.A.M.XDC.A"))?.obs;
+    if (!h || !p) throw new Error("bis: no data returned for India's household or private credit (WS_TC)");
+    const ds = [...h.keys()].filter((d) => p.has(d)).sort();
+    const ratio = (d) => h.get(d) / p.get(d), last = ratio(ds.at(-1));
+    let i = ds.length - 1;
+    while (i > 0 && Math.abs(ratio(ds[i - 1]) - last) <= 1e-6 * last) i--;
+    const est = ds.slice(i + 1);   // ds[i] is the last measured quarter
+    if (est.length) console.log(`bis: India credit extrapolated by BIS after ${ds[i]} (${est.length} quarters, households/private frozen at ${last.toFixed(5)})`);
+    return { anchor: ds[i], dates: new Set(est) };
+  })();
+  const ESTNOTE = `Estimated by BIS: after ${EST.anchor.slice(0, 7)} (the last quarter of the RBI's financial accounts) BIS extends private credit with bank credit and keeps the household/company split fixed. BIS documentation, India entry; not flagged in the observation status.`;
+  const markEst = (asm, keys) => {
+    for (const k of keys) {
+      const s = asm.series[k]; if (!s) continue;
+      const est = asm.dates.filter((d, i) => EST.dates.has(d) && s.data[i] != null);
+      if (est.length) { s.estimated = est; s.estimatedNote = ESTNOTE; }
+    }
+    return asm;
+  };
+  const PRIV_KEYS = ["total", "private", "households", "companies", "private_banks", "private_unadjusted", "households_unadjusted", "companies_unadjusted", "private_banks_unadjusted"];
+
   // ---------- total credit (WS_TC) ----------
   const SECT = [["total", "C.A.M", "All non-financial borrowers (households, companies, government)"],
     ["private", "P.A.M", "Private non-financial sector (households and companies)"],
@@ -156,22 +187,22 @@ export async function buildBis(root, dcfg, vintage, cfg) {
     ["companies", "N.A.M", "Non-financial companies"],
     ["government", "G.A.N", "General government (debt at nominal value)"],
     ["private_banks", "P.B.M", "Private non-financial sector, credit from banks only"]];
-  const notesTC = "BIS total credit statistics (WS_TC). Credit covers loans and debt securities from all lenders (domestic and foreign, banks and non-banks), break-adjusted by BIS; government debt is at nominal value, other borrowers at market value. Shares of GDP use BIS's four-quarter GDP.";
-  write("bis-credit", assemble(SECT.map(([k, c, l]) => [k, TC(`${c}.770.A`), `${l}, % of GDP`]), I, { step: 3, dp: 1 }),
+  const notesTC = "BIS total credit statistics (WS_TC). Latest quarters of private credit are BIS estimates (series.estimated). Credit covers loans and debt securities from all lenders (domestic and foreign, banks and non-banks), break-adjusted by BIS; government debt is at nominal value, other borrowers at market value. Shares of GDP use BIS's four-quarter GDP.";
+  write("bis-credit", markEst(assemble(SECT.map(([k, c, l]) => [k, TC(`${c}.770.A`), `${l}, % of GDP`]), I, { step: 3, dp: 1 }), PRIV_KEYS),
     { frequency: "quarterly", base: "% of GDP", unit: "pct_gdp", coverage: "Credit to India's non-financial borrowers by sector, % of GDP", note: notesTC });
-  write("bis-credit-inr", assemble([
+  write("bis-credit-inr", markEst(assemble([
     ...SECT.map(([k, c, l]) => [k, TC(`${c}.XDC.A`), `${l}, ₹ billion`]),
     ...SECT.filter(([k]) => ["private", "households", "companies", "private_banks"].includes(k)).map(([k, c, l]) => [`${k}_unadjusted`, TC(`${c}.XDC.U`), `${l}, ₹ billion, not adjusted for breaks`]),
-  ], I, { step: 3, dp: 3 }), { frequency: "quarterly", base: "INR billion, current prices", unit: "inr_bn", coverage: "Credit to India's non-financial borrowers by sector, ₹ billion, with and without BIS's break adjustment", note: notesTC + " Unadjusted series are as reported; BIS flags a break in households' unadjusted credit in Q1 2024." });
-  write("bis-credit-usd", assemble(SECT.map(([k, c, l]) => [k, TC(`${c}.USD.A`), `${l}, US$ billion`]), I, { step: 3, dp: 3 }),
+  ], I, { step: 3, dp: 3 }), PRIV_KEYS), { frequency: "quarterly", base: "INR billion, current prices", unit: "inr_bn", coverage: "Credit to India's non-financial borrowers by sector, ₹ billion, with and without BIS's break adjustment", note: notesTC + " Unadjusted series are as reported; BIS flags a break in households' unadjusted credit in Q1 2024." });
+  write("bis-credit-usd", markEst(assemble(SECT.map(([k, c, l]) => [k, TC(`${c}.USD.A`), `${l}, US$ billion`]), I, { step: 3, dp: 3 }), PRIV_KEYS),
     { frequency: "quarterly", base: "USD billion, current prices", unit: "usd_bn", coverage: "Credit to India's non-financial borrowers by sector, US$ billion", note: notesTC + " Converted to US dollars by BIS at end-quarter exchange rates." });
 
   // ---------- credit gap, debt service ----------
-  write("bis-credit-gap", assemble([
+  write("bis-credit-gap", markEst(assemble([
     ["ratio", "BIS:WS_CREDIT_GAP|Q.IN.P.A.A", "Credit to the private non-financial sector, % of GDP"],
     ["trend", "BIS:WS_CREDIT_GAP|Q.IN.P.A.B", "Long-run trend of the ratio (one-sided HP filter), % of GDP"],
     ["gap", "BIS:WS_CREDIT_GAP|Q.IN.P.A.C", "Credit-to-GDP gap: ratio minus trend, percentage points"],
-  ], I, { step: 3, dp: 1 }), { frequency: "quarterly", base: "% of GDP", unit: "pct_gdp", coverage: "India's credit-to-GDP ratio, its trend and the gap", note: "BIS credit-to-GDP gaps (WS_CREDIT_GAP): the trend is a one-sided Hodrick-Prescott filter with a large smoothing parameter (400,000), so each quarter's trend uses only data up to that quarter. Gap = ratio minus trend (checked)." });
+  ], I, { step: 3, dp: 1 }), ["ratio", "trend", "gap"]), { frequency: "quarterly", base: "% of GDP", unit: "pct_gdp", coverage: "India's credit-to-GDP ratio, its trend and the gap", note: "BIS credit-to-GDP gaps (WS_CREDIT_GAP): the trend is a one-sided Hodrick-Prescott filter with a large smoothing parameter (400,000), so each quarter's trend uses only data up to that quarter. Gap = ratio minus trend (checked)." });
   write("bis-dsr", assemble([["private", "BIS:WS_DSR|Q.IN.P", "Debt service ratio, private non-financial sector, % of income"]], I, { step: 3, dp: 1 }),
     { frequency: "quarterly", base: "% of income", unit: "pct", coverage: "Share of income India's households and companies spend on interest and principal", note: "BIS debt service ratios (WS_DSR): interest payments plus amortisation divided by income, for the private non-financial sector as a whole. BIS publishes no household or company split for India." });
 

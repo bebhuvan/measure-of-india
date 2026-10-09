@@ -290,9 +290,11 @@ const PAGES = [
   // ---- bis family session: debt (BIS total credit) ----
   { url: "/guides/debt/", slug: null, checks: [
     ["n-total", (b) => fmt.pct1(b["bis-credit"].series.total.data.at(-1))],
-    ["n-hh", (b) => fmt.pct1(b["bis-credit"].series.households.data.at(-1))],
+    // households are quoted for the last MEASURED quarter: later quarters are BIS estimates (series.estimated)
+    ["n-hh", (b) => { const B = b["bis-credit"], est = new Set(B.series.households.estimated ?? []); const i = B.dates.findLastIndex((d, j) => B.series.households.data[j] != null && !est.has(d)); return fmt.pct1(B.series.households.data[i]); }],
+    ["ex-s-hhe", (b) => fmt.pct1(b["bis-credit"].series.households.data.at(-1))],
     ["n-dsr", (b) => fmt.pct1(b["bis-dsr"].series.private.data.at(-1))],
-    ["ex-s-co", (b) => fmt.pct1(b["bis-credit"].series.companies.data.at(-1))],
+    ["ex-s-co", (b) => { const B = b["bis-credit"], est = new Set(B.series.companies.estimated ?? []); const i = B.dates.findLastIndex((d, j) => B.series.companies.data[j] != null && !est.has(d)); return fmt.pct1(B.series.companies.data[i]); }],
     ["ex-s-gov", (b) => fmt.pct1(b["bis-credit"].series.government.data.at(-1))],
     ["pv-long", (b) => fmt.pct1(b["bis-credit"].series.private.data.at(-1))],
     ["ex-l-banks", (b) => fmt.pct1(b["bis-credit"].series.private_banks.data.at(-1))],

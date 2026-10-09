@@ -37,7 +37,7 @@ export const HEADLINE = {
   manufacturing: { value: (b) => `${last(b, "mva_pct_gdp").toFixed(1)}%`, what: "manufacturing's share of GDP", period: (b) => lastDate(b).slice(0, 4) },
   deposits:      { value: (b) => `₹${last(b, "household_total").toFixed(1)} lakh crore`, what: "households' bank deposits", period: (b) => `March ${lastDate(b).slice(0, 4)}` },
   // bis family session
-  debt:          { value: (b) => `${last(b, "total").toFixed(1)}%`, what: "debt of households, companies and government, % of GDP", period: quarter },
+  debt:          { value: (b) => `${last(b, "total").toFixed(1)}%`, what: "debt of households, companies and government, % of GDP (BIS estimate)", period: quarter },
   housing:       { value: (b) => `${last(b, "real_yoy").toFixed(1)}%`, what: "real house prices, change on a year ago", period: quarter },
 };
 
