@@ -24,9 +24,49 @@ Session: atlas-framework, branch `lb/framework`, port 4411. Brief: `docs/briefs/
   lets the digits of a base string ("2022-23=100") trace a figure; every existing prose
   file still verifies.
 
+- **F5 IDH cross-check** (2026-10-09). `npm run crosscheck:idh` (`scripts/crosscheck-idh.mjs`,
+  manifest `data/crosscheck/idh.yml`). Reads IDH from the Data Bank's `india_data_hub_series`
+  via `databankQuery`, latest vintage per observation, month-end dates onto our month-start
+  axis, transforms `level`, `yoy_from_index`, `monthly_mean`, then compares on shared dates.
+  Report to `pipeline/out/crosscheck-idh.json` (git-ignored, checked). Never a gate.
+  First run, 10 pairs, 7 match on every shared date:
+  - cpi.headline (our computed 2012-base y/y) vs IDH CPI index y/y: 120/120 within 0.15 pt,
+    worst 0.14 pt (Jun 2020).
+  - rbi-intervention purchases, sales, net, forward book: exact on all 122 to 328 months.
+  - rbi-forward-premia 3m, 6m: all within 0.5; 1m: 164/166 (weekly mean vs RBI monthly mean).
+  - USD/INR (rbi-exchange-rates, rbi-forex): 377/400. The 12 months Mar 1992 to Feb 1993 are
+    the dual exchange rate (LERMS): ours is the official rate (25.89), IDH the market rate
+    (29.46 and up). The other 11 misses are 2 to 3 paise. **For atlas-external:** say which
+    rate the bundle carries for 1992-93.
+  - Staleness the check shows: IDH runs to Jul to Sep 2026 on every external-account pair;
+    our MoSPI-mirror bundles stop at Jun to Aug 2025 (atlas-external is replacing them).
+  - Not paired, with reasons, in the manifest header: IDH's spliced CPI (a splice), NEER/REER,
+    FDI/FPI, policy and money-market rates, bank credit (no Atlas bundle yet).
+
+## Request for the Data Bank: IDH macro series the Atlas wants
+
+The Data Bank mirrors no IDH series for these families, and holds no IDH catalogue for them,
+so the ids below must be looked up in IDH's own catalogue (`/em/filter`) by whoever runs the
+Data Bank's IDH config. Wanted, all-India unless said, full history, every vintage kept:
+
+- **GDP (NAS)**: quarterly and annual real and nominal GDP, GVA, and GVA by the 8 (2011-12)
+  and 15 (2022-23) industries; PFCE, GFCE, GFCF, exports, imports; GDP deflator; both bases
+  as separate series (never IDH's spliced versions).
+- **CPI**: all-India combined, rural, urban general index on 2012 and 2024 bases; the 2012
+  groups (food, fuel, housing...) and the 2024 divisions; CPI-AL and CPI-RL (1986-87 and 2019
+  bases); CPI-IW (2016 base).
+- **WPI**: headline and the three major groups (primary, fuel and power, manufactured) on
+  2011-12 and 2022-23 bases; WPI food index.
+- **IIP**: general, sectors (mining, manufacturing, electricity), use-based groups, on 2011-12
+  and 2022-23 bases; the eight core industries.
+- **PLFS**: monthly CWS unemployment rate, LFPR, WPR (15+, rural, urban, by gender);
+  quarterly urban; annual usual-status rates.
+- **Trade**: monthly merchandise exports, imports, balance (US$ and ₹), oil and non-oil;
+  services exports and imports.
+
 ## Next
 
-F5 IDH cross-check, ledgers for 13 guides.
+Ledgers for 13 guides.
 
 ## Note for family sessions: adding the every-cut table
 

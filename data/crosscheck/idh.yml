@@ -1,0 +1,100 @@
+# data/crosscheck/idh.yml: our bundle series paired with India Data Hub series, for
+# scripts/crosscheck-idh.mjs. IDH is a paid service: this file holds only series ids and
+# how to compare them, never an IDH value. Values are read at run time from the Data Bank's
+# parsed `india_data_hub_series` (read-only) and the report is written to the git-ignored
+# pipeline/out/crosscheck-idh.json. A disagreement is a flag to investigate, never a gate.
+#
+# Per pair:
+#   bundle, series   ours (data/series/<bundle>.json)
+#   idh              the IDH series_id
+#   transform        level: compare values as they are (after scale)
+#                    yoy_from_index: IDH is an index; compare its year-on-year per cent
+#                      change (same month a year earlier) with our y/y series
+#                    monthly_mean: IDH is weekly; compare the mean of its weeks in each
+#                      month with our monthly average (a different construction: expect
+#                      small gaps, hence a wider tolerance)
+#   scale            multiply IDH by this to reach our unit (IDH US$ are whole dollars;
+#                    our external-account bundles are US$ million, so 1e-6)
+#   tolerance        largest absolute difference, in our unit, still called a match
+#   note             what the pair is and any known reason they could differ
+#
+# Pairs found 2026-10-09 among the 916 series the Data Bank mirrors. Not paired, and why:
+#   INCPBLCPIA12M:IND  "CPI Index, spliced series, 2012 = 100": IDH's own splice of CPI-IW and
+#                      CPI bases; the Atlas never compares against a splice (AGENTS.md rule 1).
+#   FMFXER*16M:IND     NEER and REER (2015-16 base): no Atlas bundle yet (atlas-external).
+#   EXBPNDIFDI / FPI   monthly FDI and FPI flows: no Atlas bundle yet (atlas-external).
+#   MOIR*, CMMM*       policy rates, money-market rates and liquidity: no bundle yet (atlas-rates).
+#   BKAS*, BKLB*       bank credit and deposits, monthly and fortnightly: no bundle yet
+#                      (atlas-credit); the deposits guide is BSR-2 annual, a different survey.
+source: "India Data Hub, via the Data Bank's india_data_hub_series (read-only)"
+pairs:
+  - bundle: cpi
+    series: headline
+    idh: "MOINCPAALL12M:IND"
+    transform: yoy_from_index
+    scale: 1
+    tolerance: 0.15
+    note: "Our 2012-base headline is computed from the published group indices with the official weights (it tracks the published one within 0.14 pt); IDH carries the published all-India combined index."
+  - bundle: rbi-exchange-rates
+    series: usd
+    idh: "FMFXUSDINA11M:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.01
+    note: "Monthly average ₹ per US$, RBI reference rate."
+  - bundle: rbi-forex
+    series: usdinr
+    idh: "FMFXUSDINA11M:IND"
+    transform: level
+    scale: 1
+    tolerance: 0.01
+    note: "The same monthly average, carried in the reserves bundle."
+  - bundle: rbi-intervention
+    series: purchases
+    idh: "FMFXRGPFXD11M:IND"
+    transform: level
+    scale: 0.000001
+    tolerance: 1
+    note: "RBI gross purchases of foreign currency in the month, US$ million."
+  - bundle: rbi-intervention
+    series: sales
+    idh: "FMFXRGSFXD11M:IND"
+    transform: level
+    scale: 0.000001
+    tolerance: 1
+    note: "RBI gross sales of foreign currency in the month, US$ million."
+  - bundle: rbi-intervention
+    series: net
+    idh: "FMFXRNPFXD11M:IND"
+    transform: level
+    scale: 0.000001
+    tolerance: 1
+    note: "Net purchase (+) or sale (−), US$ million."
+  - bundle: rbi-intervention
+    series: forward_outstanding
+    idh: "FMFXFWORNL00M:IND"
+    transform: level
+    scale: 0.000001
+    tolerance: 1
+    note: "End-of-month outstanding net forward position, US$ million; ours is signed sales negative, IDH's net long position the same way."
+  - bundle: rbi-forward-premia
+    series: m1
+    idh: "FMFXFPRD1M11W:IND"
+    transform: monthly_mean
+    scale: 1
+    tolerance: 0.5
+    note: "Ours is the RBI's monthly average; IDH is weekly (Friday) readings averaged here, so small gaps are construction, not error."
+  - bundle: rbi-forward-premia
+    series: m3
+    idh: "FMFXFPRD3M11W:IND"
+    transform: monthly_mean
+    scale: 1
+    tolerance: 0.5
+    note: "As 1-month."
+  - bundle: rbi-forward-premia
+    series: m6
+    idh: "FMFXFPRD6M11W:IND"
+    transform: monthly_mean
+    scale: 1
+    tolerance: 0.5
+    note: "As 1-month."
