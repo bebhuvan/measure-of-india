@@ -83,6 +83,11 @@ export const UNITS = {
   usd_mn: { kind: "pct", fmt: (v) => (v < 0 ? MINUS : "") + "$" + grp(Math.abs(v) / 1e3, 1) + " bn", note: "published in US$ million" },
   usd_bn: { kind: "pct", fmt: (v) => (v < 0 ? MINUS : "") + "$" + grp(Math.abs(v), 1) + " bn" },
   // ---- end services ----
+  // ---- jobs (PLFS) ----
+  pct_of_employees: { kind: "pt", fmt: (v) => v.toFixed(1) + "%", note: "of regular employees" },
+  inr_per_month: { kind: "pct", fmt: (v) => "₹" + grp(v), note: "a month" },
+  inr_per_30_days: { kind: "pct", fmt: (v) => "₹" + grp(v), note: "per 30 days" },
+  // ---- end jobs ----
   // --- states (state economies: MoSPI regional accounts and every RBI Handbook of States table) ---
   inr_amount: { kind: "pct", fmt: (v) => (Math.abs(v) >= 1e12 ? "₹" + grp(v / 1e12, 2) + " lakh crore" : "₹" + grp(v / 1e7, Math.abs(v) >= 1e9 ? 0 : 2) + " crore")},
   inr_per_day: { kind: "pct", fmt: (v) => "₹" + grp(v, 1), note: "a day" },
@@ -254,6 +259,15 @@ export const CUT_BY_BUNDLE = {
   // jobs
   "plfs-monthly": "All India", "plfs-quarterly": "Urban", "plfs-annual": "All India", "plfs-cuts": "Gender and sector",
   "plfs-status": "Employment status", "plfs-earnings": "Employment type and gender", "plfs-education": "Education",
+  "plfs-monthly-age": "Age, gender and sector", "plfs-quarterly-cuts": "Gender and age, urban", "plfs-q25": "Gender, sector and age",
+  "plfs-ay-india": "Gender, sector, age, education, religion, social group", "plfs-cy-india": "Gender, sector, age, education, religion, social group",
+  "plfs-cy25-india": "Gender, sector, age, education, religion, social group",
+  ...Object.fromEntries(["ay", "cy", "cy25", "quarterly", "q25"].flatMap((t) => ["lfpr", "wpr", "ur"].map((i) => [`plfs-${t}-states-${i}`, "State, gender, sector, age, education"]))),
+  "plfs-quarterly-industry": "State, industry, gender", "plfs-q25-industry": "State, industry, gender and sector",
+  "plfs-ay-workers-states": "State, kind of work, gender and sector", "plfs-cy-workers-states": "State, kind of work, gender and sector",
+  "plfs-cy25-workers-states": "State, kind of work, gender and sector", "plfs-conditions": "State, condition, gender and sector",
+  "plfs-earnings-cuts": "State, kind of work, gender and sector", "plfs-cy-earnings": "State, kind of work, gender and sector",
+  "plfs-cy25-earnings": "State, kind of work, gender and sector",
   // consumption
   "hces-mpce": "Rural or urban", "hces-gini": "Rural or urban", "hces-fractiles": "Spending class",
   "hces-categories": "Spending category", "hces-categories-states": "State and category", "hces-social": "Social group",

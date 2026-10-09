@@ -130,7 +130,19 @@ const PAGES = [
   { url: "/guides/jobs/", slug: null, checks: [
     ["n-ur", (b) => fmt.pct2(b["plfs-monthly"].series.ur.data.at(-1))],
     ["n-fur", (b) => fmt.pct2(b["plfs-cuts"].series.ur_female_urban.data.at(-1))],
-    ["pv-main", (b) => fmt.pct2(b["plfs-quarterly"].series.ur.data.at(-1))],
+    // jobs-deep: plate 1 shows the revamped design's urban rate; the new plates' headline values
+    ["pv-main", (b) => fmt.pct1(b["plfs-q25"].series.ur_cws__person_urban__a15plus.data.at(-1))],
+    ["ex-q1", (b) => fmt.pct2(b["plfs-quarterly"].series.ur.data.filter((v) => v != null).at(-1))],
+    ["pv-seam", (b) => fmt.pct1(b["plfs-cy25-india"].series.lfpr_psss__person_all__a15plus.data.at(-1))],
+    ["pv-q25", (b) => fmt.pct1(b["plfs-q25"].series.ur_cws__person_all__a15plus.data.at(-1))],
+    ["ex-q25r", (b) => fmt.pct1(b["plfs-q25"].series.ur_cws__person_rural__a15plus.data.at(-1))],
+    ["pv-ystates", (b) => fmt.pct1(b["plfs-q25"].series.ur_cws__person_all__a15_29.data.at(-1))],
+    ["pv-youth", (b) => fmt.pct1(b["plfs-monthly-age"].series.ur_cws__female_urban__a15_29.data.at(-1))],
+    ["pv-paystates", (b) => fmt.inrR(b["plfs-cy25-earnings"].series.regular__person_all.data.at(-1))],
+    ["ex-ps-f", (b) => fmt.inrR(b["plfs-cy25-earnings"].series.regular__female_all.data.at(-1))],
+    ["pv-cond", (b) => fmt.pct1(b["plfs-conditions"].series.none_of_three__person_all.data.at(-1))],
+    ["ex-c-nc0", (b) => fmt.pct1(b["plfs-conditions"].series.no_contract__person_all.data[0])],
+    ["pv-social", (b) => fmt.pct1(b["plfs-cy25-india"].series.lfpr_psss__female_all__a15plus.data.at(-1))],
     ["pv-annual", (b) => fmt.pct2(b["plfs-annual"].series.ur_psss.data.at(-1))],
     ["ex-p0", (b) => fmt.pct2(b["plfs-annual"].series.ur_psss.data[0])],
     // annual-report extras (v1.2): composition, earnings, education

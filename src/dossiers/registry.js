@@ -200,8 +200,10 @@ export const DOSSIERS = [
     rssDescription: "The Periodic Labour Force Survey: unemployment, participation, and the three stopwatches India times its workers with. Revised with each bulletin.",
     stamp: { dateStyle: "monthNext", vintageStyle: "month" },
     statusNote: "Evergreen, revised with each bulletin",
-    version: "v1.3",
-    proseInputs: ["plfs-cuts", "plfs-states", "plfs-status", "plfs-earnings"],
+    version: "v1.4",
+    // the dated prose describes the current ruler (the revamped design, from January 2025):
+    // facts.mjs refuses a sibling on the original design's base
+    proseInputs: ["plfs-cuts", "plfs-monthly-age", "plfs-q25"],
     currentBundle: "plfs-monthly",
     calendar: "fiscal-apr",
     bands: null,
@@ -209,7 +211,15 @@ export const DOSSIERS = [
     spark: { bundle: "plfs-monthly", series: "ur" },
     prose: true,
     register: { id: "reg-plfs", label: "Labour", unit: "Monthly, quarterly, annual, CWS & PS+SS, never spliced", historyCol: "History" },
-    bundles: ["plfs-monthly", "plfs-quarterly", "plfs-annual", "plfs-cuts", "plfs-states", "plfs-status", "plfs-earnings", "plfs-education"],
+    // jobs-deep (2026-10-10): the whole PLFS cube, both survey designs
+    everyCutFamilies: [
+      { id: "plfs-states-annual", label: "LFPR, WPR and UR for every state, annual (agriculture and calendar years)", match: ["plfs-ay-states-", "plfs-cy-states-", "plfs-cy25-states-"] },
+      { id: "plfs-states-quarterly", label: "LFPR, WPR and UR for the bulletin's 22 states, quarterly", match: ["plfs-quarterly-states-", "plfs-q25-states-"] },
+      { id: "plfs-workers-by-state", label: "Kinds of work in every state: status, industry, occupation, enterprise", match: ["plfs-ay-workers-", "plfs-cy-workers-", "plfs-cy25-workers-"] },
+      { id: "plfs-pay-and-conditions", label: "Earnings and job conditions in every state", match: ["plfs-earnings-cuts", "plfs-cy-earnings", "plfs-cy25-earnings", "plfs-conditions"] },
+    ],
+    bundles: ["plfs-monthly", "plfs-quarterly", "plfs-annual", "plfs-cuts", "plfs-states", "plfs-status", "plfs-earnings", "plfs-education",
+      "plfs-monthly-age", "plfs-q25", "plfs-q25-industry", "plfs-quarterly-cuts", "plfs-quarterly-industry", "plfs-ay-india", "plfs-cy-india", "plfs-cy25-india"],
   },
   {
     slug: "consumption",

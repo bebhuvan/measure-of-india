@@ -476,10 +476,10 @@ dossiers:
     family: mospi
     geo: IND
     product: plfs
-    frequency: monthly        # primary bundle; a quarterly bundle is also emitted
-    base: "survey 2017-18 onward"   # no index base; design breaks are the analogue
-    release_calendar: "monthly bulletin ~mid following month; quarterly bulletin thereafter"
-    revision_policy: "Final on release. Monthly bulletin (rural+urban, CWS) began Apr 2025; earlier history is the quarterly bulletin (urban, CWS) — separate series, never joined."
+    frequency: monthly        # primary bundle; quarterly and annual bundles are also emitted
+    base: "PLFS revamped design (from January 2025)"   # the current ruler; seams: plfs below
+    release_calendar: "monthly bulletin ~mid following month; quarterly bulletin ~6 weeks after the quarter; calendar-year report ~4 months after the year"
+    revision_policy: "Final on release. Two survey designs, never joined: the original design (agriculture years 2017-18 to 2023-24, calendar years 2022 to 2024, the urban quarterly bulletin to Oct-Dec 2024) and the revamped design from January 2025 (monthly bulletin from Apr 2025, quarterly bulletin with rural areas and states from Apr-Jun 2025, calendar year 2025 on)."
     source_agency: "MoSPI, National Statistical Office"
     release_url: https://www.mospi.gov.in
     fetch:
@@ -488,48 +488,21 @@ dossiers:
         "1": lfpr
         "2": wpr
         "3": ur
-      dims:                   # 15+, person, All India
-        age_code: 1
-        gender_code: 3
-        state_code: 99
-      monthly:
-        frequency_code: 3
-        sector_code: 3        # rural + urban — from Apr 2025
-      quarterly:
-        frequency_code: 2
-        sector_code: 2        # urban — the longstanding quarterly bulletin
-      # NOTE: monthly and quarterly rows carry weekly_status null (CWS by
-      # definition in both bulletins); passing weekly_status_code filters
-      # everything out — it is deliberately not set.
-      # Annual rows carry religion/social_category/education/contract
-      # breakdowns alongside "all" rows — the fetcher keeps only "all".
-      # A second annual stream without state_code carries every state/UT;
-      # curated as plfs-states.json (UR by state, CWS + PS+SS).
-      #
-      # ANNUAL-REPORT EXTRAS (fetched by buildPlfsExtras, raw in
-      # data/raw/plfs-extras.json; agriculture years, never spliced with the
-      # bulletins). The product serves eight indicators in total:
-      #   4 — percentage distribution of workers (by broad status in
-      #       employment, broad industry, NIC section, NCO division,
-      #       enterprise size/type, contract) -> plfs-status.json.
-      #       Server rejects age/gender/sector params for this indicator;
-      #       fetched unfiltered, filtered client-side. Single population
-      #       per cell, matching the published 15+ statements.
-      #   5 — % of regular wage employees by employment condition (no written
-      #       contract / no paid leave / no social security): listed by
-      #       getIndicatorList but getData answers HTTP 500 on every
-      #       combination tried — NOT fetchable, skipped.
-      #   6 — avg wage/salary earnings of regular employees (₹/month)
-      #   7 — avg casual labour wage, non-public works (₹/day)
-      #   8 — avg gross earnings from self-employment (₹/30 days)
-      #       6-8 -> plfs-earnings.json, quarterly grain inside each
-      #       agriculture year. The 2017-18 rural+urban cells of 6 and 8 are
-      #       quarantined (implied urban weight breaks the structure of every
-      #       later year); rural/urban sector cells match the published
-      #       report and stay in raw. Calendar-year rows (new design, from
-      #       2022) are archived raw only.
-      #   3 with education_code 1-9 / age_code 2 -> plfs-education.json
-      #       (UR by education level + the 15-29 youth cut, PS+SS).
+      # THE CUBE (scripts/lib/products/plfs-cube.mjs): every indicator x frequency x year is
+      # fetched unfiltered, every page, and archived as served to data/raw/plfs/<freq>/
+      # (gzipped JSON, indexed in data/raw/plfs-index.json). Every bundle is cut from those
+      # rows (plfs.mjs: the curated headline bundles; plfs-deep.mjs: everything else), so no
+      # filter quirk of the API can make two bundles disagree. A release-cycle run refetches
+      # only call sets a release can change; PLFS_CUBE_FULL=1 re-asks for all of them.
+      # The eight indicators: 1 LFPR, 2 WPR, 3 UR (state x gender x sector x age band, with
+      # education, religion and social group cuts on the annual side); 4 percentage
+      # distribution of workers (status, industry, NIC section and group, NCO division,
+      # enterprise type and size, contract; quarterly: broad industry); 5 regular employees'
+      # job conditions (served since about 2026-10; it answered HTTP 500 before); 6 regular
+      # wage (₹/month), 7 casual wage (₹/day), 8 self-employment earnings (₹/30 days).
+      # Source defects (quarantined in plfs-deep.mjs, disclosed on each series): OCR debris
+      # in values ("l0.8", "IS.2", "20. I"), a WPR of 415, the Apr-Jun 2019 UR column, and
+      # the Jul-Sep 2025 LFPR state labels shifted one row from Jammu & Kashmir on.
 
   rbi:
     # 2026-10: the external guide moved to RBI DBIE (dossiers external-bop / external-flows /
@@ -2021,3 +1994,18 @@ seams:
       to: null
       bundles: [trade-dbie-tot-2012, trade-dbie-uvi-2012]
   # --- end trade ---
+  # ---- jobs (PLFS): two survey designs, never joined (scripts/lib/products/plfs-deep.mjs) ----
+  # MoSPI revamped the PLFS sample design and estimation from January 2025 ("Changes in
+  # Periodic Labour Force Survey from 2025"); the original design ran July 2017 to December
+  # 2024 (agriculture years, calendar years 2022-2024, the urban quarterly bulletin). No
+  # agency link between them is published: plates draw the two side by side (seamMarks "side").
+  plfs:
+    - base: "PLFS original design (2017-18 to 2024)"
+      from: "2017-07"
+      to: "2024-10"
+      bundles: [plfs-annual, plfs-states, plfs-status, plfs-earnings, plfs-education, plfs-quarterly, plfs-quarterly-cuts, plfs-quarterly-states-lfpr, plfs-quarterly-states-wpr, plfs-quarterly-states-ur, plfs-quarterly-industry, plfs-ay-india, plfs-ay-states-lfpr, plfs-ay-states-wpr, plfs-ay-states-ur, plfs-ay-workers-states, plfs-conditions, plfs-earnings-cuts, plfs-cy-india, plfs-cy-states-lfpr, plfs-cy-states-wpr, plfs-cy-states-ur, plfs-cy-workers-states, plfs-cy-earnings]
+    - base: "PLFS revamped design (from January 2025)"
+      from: "2025-01"
+      to: null
+      bundles: [plfs-monthly, plfs-cuts, plfs-monthly-age, plfs-q25, plfs-q25-states-lfpr, plfs-q25-states-wpr, plfs-q25-states-ur, plfs-q25-industry, plfs-cy25-india, plfs-cy25-states-lfpr, plfs-cy25-states-wpr, plfs-cy25-states-ur, plfs-cy25-workers-states, plfs-cy25-earnings]
+  # ---- end jobs ----
