@@ -204,3 +204,17 @@ export async function buildMnre(root, dcfg, vintage) {
   writeSeries(root, "data/series/mnre-states-solar.json", stSolarBundle);
   return sourcesBundle;
 }
+
+/* Catalogue (docs/CONTRACT-coverage.md): mnre/getTypeOfRenewableEnergy and
+ * mnre/getFilterByEnergy per type, one cut at a time (a capacity category, or a state):
+ *   mnre:<type>:all | :category:<category> | :state:<state> */
+import { writeCatalogue, indicatorCatalogue, catalogueCli } from "../catalogue.mjs";
+export async function catalogueMnre() {
+  const types = ((await mospi("mnre/getTypeOfRenewableEnergy", {})).data ?? []).map((t) => ({ indicator_code: t.type_of_renewable_energy_code, label: t.label }));
+  const items = await indicatorCatalogue({ mospi, prefix: "mnre", indicators: types,
+    filter: (t) => ["mnre/getFilterByEnergy", { type_of_renewable_energy_code: t.indicator_code }] });
+  writeCatalogue("mnre", { source: "Ministry of New and Renewable Energy: installed renewable capacity (via MoSPI eSankhyiki)",
+    generator: "scripts/lib/products/mnre.mjs --catalogue",
+    note: "From getTypeOfRenewableEnergy and getFilterByEnergy: each energy type x one cut (a capacity category, or a state); monthly from Jan 2020.", items });
+}
+await catalogueCli(import.meta.url, catalogueMnre);

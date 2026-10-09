@@ -27,6 +27,10 @@ definition of done (section 6). Families in launch scope:
 | G | External account | `external` | BoP to Q1 FY26, reserves to Jun 2025, via MoSPI's mirror | move to DBIE: BoP to the latest quarter with vintages, weekly reserves, international investment position, external debt, REER and NEER, FDI and FPI (portfolio flows), ECBs, LRS remittances, rupee invoicing |
 | H | Money and credit | new `credit` (with `deposits`) | deposits guide (BSR-2) | bank credit by sector and industry (2007 on), food credit, deposits and credit fortnightly (1997 on), M3 and reserve money, credit-deposit ratios by state, NBFC credit; banking health (NPAs, CRAR) as a section or its own guide |
 | I | Interest rates and monetary policy | new `rates` | none | policy rates since 1935, every MPC decision and vote since 2016, WALR, WADTDR, MCLR by bank group, call rate, T-bill and G-sec yields, auctions |
+| J | Work, the ILO's estimates | new `ilo` | none | ILOSTAT modelled and survey series for India at every breakdown; a separate instrument from PLFS, never spliced (added 2026-10-09 at the owner's request: clean and dense) |
+| K | Climate | new `climate` | none (`mnre` covers renewable capacity) | temperature, rain, heat days, emissions, energy mix, projections: Our World in Data and the World Bank Climate Change Knowledge Portal (ERA5, CRU, CMIP6, Global Carbon Project) |
+| L | World Bank | new `poverty`, `population` | WDI in `manufacturing` | the whole WDI India catalogue baked and ledgered; PIP poverty and inequality; population and demography |
+| M | BIS | new `housing`, `debt` | none | BIS series baked as `bis-*` for every guide to use; residential property prices with RBI's HPI; total credit by sector, credit gap, debt service ratios |
 
 Not in launch scope (they follow, in the inventory's order): time use, schools (UDISE+),
 public finance, payments, energy balance, environment, gender to 2025, NFHS fuller,
@@ -157,9 +161,10 @@ deploy workflow dry-run; domain and analytics confirmed with the owner; a final
   `main` stays the last released state; the owner merges.
 - One commit per framework piece and per guide, each with the gates green at that
   commit. Nothing is pushed without the owner asking.
-- Families with no shared files in flight can be built in parallel, each by an agent in
-  its own git worktree branched from `launch-build`, merged back one at a time with the
-  gates re-run after each merge. Shared files (registry, sources.yml, qc PAGES, og.mjs,
+- Families are built in parallel by separate Claude Code sessions (not subagents: the
+  owner's call on cost), each in its own git worktree branched from `launch-build`, named
+  `atlas-<slug>` for Remote Control, following `docs/briefs/README.md` and its family brief.
+  The coordinator merges each back one at a time with the gates re-run after each merge. Shared files (registry, sources.yml, qc PAGES, og.mjs,
   the asof manifest, slots.yml) are append-only edits, so merges stay mechanical.
 - One session owns this work tree at a time. On 2026-10-09 the earlier sessions
   (inventory, design, build) were asked to stand down and confirmed idle.

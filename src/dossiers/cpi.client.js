@@ -21,7 +21,7 @@ import items2024Bundle from "../../data/series/cpi-2024-items.json";
 import states2024Bundle from "../../data/series/cpi-2024-states.json";
 import alStates86Bundle from "../../data/series/cpialrl-states-1986.json";
 import {
-  MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend,
+  MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend, seamMarks, seamOverlap,
   peakOf, peakBetween, dodgeEndLabels, spark, downloadCSV, stripLabelSide, stripLabelSpot, makePlacer, annotationSpot,
 } from "../charts/plumbing.js";
 
@@ -155,14 +155,11 @@ setTxt("pf-core", `peak: ${pkCore.value.toFixed(1)}%, ${fmtDate(pkCore.date)}, l
       Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
       Plot.ruleY([4], { stroke: "#BFC4CD", strokeWidth: 1, strokeDasharray: "2,4" }),
       Plot.text([{ date: nbRbiSpot.x, value: nbRbiSpot.y }], { x: "date", y: "value", text: ["RBI target, 4%"], fontSize: 12, fill: "#878D99", fontFamily: mono, textAnchor: nbRbiSpot.anchor }),
-      Plot.lineY(oldS.data, { x: "date", y: "value", stroke: oldS.color, strokeWidth: 1.5, strokeOpacity: 0.7, strokeLinejoin: "round", strokeLinecap: "round" }),
-      // the continuous 2024-base headline, in two evidence regimes:
-      // NSO back-cast (reconstructed history, to 2024) — lighter, thinner
-      Plot.lineY(linked.data.filter((d) => d.date < handoff), { x: "date", y: "value", stroke: linked.color, strokeWidth: 2, strokeOpacity: 0.55, strokeLinejoin: "round", strokeLinecap: "round" }),
-      // live measurement (from Dec 2024 levels onward) — solid; starts at the join so the line never breaks
-      Plot.lineY(linked.data.filter((d) => d.date >= new Date(Date.UTC(2024, 11, 1))), { x: "date", y: "value", stroke: linked.color, strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.ruleX([handoff], { stroke: "#CDD1D8", strokeWidth: 1, strokeDasharray: "2,3" }),
-      Plot.text([{ date: handoff, value: 9.4 }], { x: "date", y: "value", text: ["live print begins, Jan 2025"], fontSize: 12, fill: "#5F6675", fontFamily: mono, textAnchor: "end", dx: -8 }),
+      // the shared agency seam: the retired 2012 ruler faint; the continuous 2024-base headline in
+      // two evidence regimes, the NSO back-cast (reconstructed, to 2024) as a pale tint and the
+      // live measurement solid from the join, so the agency's line never breaks
+      ...seamMarks("agency", [{ ...oldS, width: 1.5, opacity: 0.7 }, { ...linked, reconstructedUntil: handoff }],
+        { text: "NSO back-cast to Dec 2024, live from Jan 2025", y: 9.4 }),
       Plot.dot([oldS.data.at(-1)], { x: "date", y: "value", fill: oldS.color, r: 3, stroke: "#FFFFFF", strokeWidth: 1 }),
       Plot.dot([linked.data.at(-1)], { x: "date", y: "value", fill: linked.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.text([linked.data.at(-1)], { x: "date", y: "value", text: (d) => `Base 2024 ${d.value.toFixed(2)}%`, dx: 16, dy: -8, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
@@ -177,10 +174,7 @@ setTxt("pf-core", `peak: ${pkCore.value.toFixed(1)}%, ${fmtDate(pkCore.date)}, l
   setTxt("pv-nb", f1(L24.headline));
   setTxt("nb-jan", f1(FIRST24)); setTxt("nb-new", f1(L24.headline));
   setTxt("nb-old-final", f1(L.headline));
-  const oldByT = new Map(oldS.data.map((d) => [d.date.getTime(), d.value]));
-  let shadow = 0;
-  for (const d of linked.data) { const o = oldByT.get(d.date.getTime()); if (d.value != null && o != null) shadow = Math.max(shadow, Math.abs(d.value - o)); }
-  setTxt("nb-shadow", shadow.toFixed(1) + " pt");
+  setTxt("nb-shadow", seamOverlap(oldS, linked).gap.toFixed(1) + " pt");
 }
 
 /* ---------- §03 the new basket, opened up ----------
@@ -977,12 +971,10 @@ const stateName = (k) => ({
       Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
       Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
       Plot.ruleY([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
-      Plot.lineY(oldPad.data, { x: "date", y: "value", stroke: oldS.color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.lineY(newPad.data, { x: "date", y: "value", stroke: newS.color, strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
+      // the shared seam: two rulers side by side, the changeover marked where the new one starts
+      ...seamMarks("side", [oldPad, newPad], { text: "base revised, 1986-87 → 2019", y: 18.4, fontSize: 12.5, solid: true }),
       Plot.dot([pk], { x: "date", y: "value", fill: "#878D99", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.text([{ date: pk.date, value: pk.value + 1.3 }], { x: "date", y: "value", text: () => pk.value.toFixed(1) + "%, " + fmtDate(pk.date) + ", after the failed monsoon", fill: "#878D99", fontSize: 12, fontFamily: mono, textAnchor: "middle" }),
-      Plot.ruleX([seam], { stroke: "#CDD1D8", strokeWidth: 1 }),
-      Plot.text([{ date: seam, value: 18.4 }], { x: "date", y: "value", text: ["base revised, 1986-87 → 2019"], fontSize: 12.5, fill: "#5F6675", fontFamily: mono, textAnchor: "end", dx: -8 }),
       Plot.dot([oldS.data.at(-1)], { x: "date", y: "value", fill: oldS.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.text([{ date: oldLabelSpot.textX, value: oldLabelSpot.textY }], { x: "date", y: "value", text: [`Base 1986-87 ${oldS.data.at(-1).value.toFixed(2)}%`], fill: "#161A22", fontSize: 12, fontFamily: mono, textAnchor: oldLabelSpot.spot.anchor }),
       Plot.dot([newS.data.at(-1)], { x: "date", y: "value", fill: newS.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),

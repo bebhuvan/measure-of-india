@@ -169,6 +169,17 @@ halo) → placed event labels → end dot → dodged end labels.
 - Sparklines: 170×38, axes off, y-domain `[min(0, min), max]`, zero rule,
   1.25px line, 2px end dot, `aria-hidden`.
 
+### Seams (two rulers on one chart)
+
+A base change is two rulers, never one line (AGENTS.md rule 1). Every plate that draws more
+than one ruler uses `seamMarks(treatment, rulers, marker)` in `plumbing.js`, with one of three
+treatments: **side** (rulers side by side, a changeover hairline where the new one starts),
+**overlap** (growth inside each base, both drawn through the shared months, the hairline
+where the old one ends; `seamOverlap()` gives the shared months and widest gap), **agency**
+(a linked line only where the agency publishes the link: its back-cast a solid pale tint,
+the live stretch solid, the hairline at the handoff and its label naming the agency). The
+facts sheet names the ruler of every number (`ruler` in `pipeline/facts.mjs`).
+
 ### Furniture and interaction
 
 - Every plate: `a11y()` (role, aria-label stating ending values, `<title>`),
