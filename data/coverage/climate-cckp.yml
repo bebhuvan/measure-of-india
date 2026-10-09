@@ -135,10 +135,14 @@ rules:
     reason: "Each is a monthly or seasonal series minus a CCKP average of itself; the series is baked in full and the average is reproduced from it."
   - match: ["cckp:era5:*:timeseries:seasonal:historical:states", "cckp:era5:*:timeseries:monthly:historical:states", "cckp:cru:*:timeseries:seasonal:historical:states", "cckp:cru:*:timeseries:monthly:historical:states"]
     status: excluded
-    reason: "State-by-season and state-by-month series would multiply the archive about fifteenfold; the annual state series and the national seasonal and monthly series are baked, and CCKP serves these on request."
+    archive: true
+    rolls_up_to: [climate-era5-states-temp, climate-era5-states-hotdays, climate-era5-states-heatstress, climate-era5-states-rain, climate-era5-states-energy, climate-cru-states]
+    reason: "Held for the deep-archive tier: state-by-season and state-by-month series would multiply the chart bundles about fifteenfold; the annual state series and the national seasonal and monthly series are baked."
   - match: ["cckp:cmip6:*:timeseries:annual:*:states", "cckp:cmip6:*:timeseries:seasonal:*", "cckp:cmip6:*:climatology:annual:*:states", "cckp:cmip6:*:anomaly:annual:ssp*:p10:states", "cckp:cmip6:*:anomaly:annual:ssp*:p90:states", "cckp:cmip6:*:anomaly:annual:historical:*"]
     status: excluded
-    reason: "These state-level and seasonal projection tables repeat the same model runs at a size the archive cannot carry; national time series with the full model range and state median changes for every window are baked, and CCKP serves the rest on request."
+    archive: true
+    rolls_up_to: [climate-cmip6-states-temp, climate-cmip6-states-hotdays, climate-cmip6-states-heatstress, climate-cmip6-states-rain, climate-cmip6-states-energy, climate-cmip6-temp, climate-cmip6-hotdays, climate-cmip6-heatstress, climate-cmip6-rain, climate-cmip6-energy]
+    reason: "Held for the deep-archive tier: these state-level and seasonal projection tables repeat the same model runs at a size the chart bundles cannot carry; national time series with the full model range and state median changes for every window are baked."
   - match: ["cckp:cmip6:*:climatology:monthly:*", "cckp:cmip6:*:climatology:seasonal:*", "cckp:cmip6:*:anomaly:monthly:*", "cckp:cmip6:*:anomaly:seasonal:*"]
     status: excluded
     reason: "These are 20-year averages for each month or season of a nominal year, which the bundle date axis cannot hold without inventing dates; the annual windows and annual series are baked."
