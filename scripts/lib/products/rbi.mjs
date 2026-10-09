@@ -17,7 +17,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { mospi } from "../mospi.mjs";
-import { MONTHS, round2, writeSeries as writeSeriesFile, writeRaw, monthAxis, quarterAxis } from "../util.mjs";
+import { MONTHS, round2, writeSeries as writeSeriesFile, writeRaw, monthAxis, quarterAxis, readRawFile } from "../util.mjs";
 
 const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 
@@ -58,8 +58,8 @@ export async function buildRbi(root, dcfg, vintage) {
     // the code is the number before the first "-" in the filename.
     const dir = path.join(root, "data/raw/rbi");
     for (const f of fs.readdirSync(dir)) {
-      const m = f.match(/^(\d+)-.*\.json$/);
-      if (m) byCode[m[1]] = JSON.parse(fs.readFileSync(path.join(dir, f), "utf8")).rows;
+      const m = f.match(/^(\d+)-.*\.json(\.gz)?$/);
+      if (m) byCode[m[1]] = readRawFile(path.join(dir, f.replace(/\.gz$/, ""))).rows;
     }
     process.stdout.write(`rbi: RBI_FROM_RAW — loaded ${Object.keys(byCode).length} archived tables from disk\n`);
     return buildBundles(root, dcfg, vintage, byCode);

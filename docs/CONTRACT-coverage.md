@@ -87,9 +87,32 @@ are neither dropped nor forced into `data/series/`. A rule marks them
     reason: "Published by RBI at district x bank group x population group x occupation; 3.3m rows, too large for a chart bundle. Held for the deep-archive tier; district x bank group is baked."
 ```
 
-and the deep-archive builder (to come, hosting is the owner's decision) publishes every
-`archive: true` rule as compressed downloads listed in a committed manifest. The gate checks
-that `rolls_up_to` names baked bundles.
+and the deep-archive builder publishes every `archive: true` rule to the public Hugging Face
+dataset `bebhuvan1/india-atlas-archive` (docs/PLAN-launch.md §2b). The gate checks that
+`rolls_up_to` names baked bundles.
+
+**The builder**, `scripts/archive.mjs` (`npm run archive`; a dry run unless `--upload`):
+
+- exports each family's archive rules through its hook, `scripts/lib/archive/<family>.mjs`
+  (`tables()`: the contract is in `scripts/lib/archive/README.md`), or takes the family's
+  staged files as they are (`data/archive/staging/<family>/files.json`, and raw calls in
+  `staging/<family>-raw/` indexed by the committed `data/raw/<family>-index.json`);
+  `--staging <dir>` points at another tree's staging;
+- writes Parquet and csv.gz per table in one long shape (the cut's dimensions, date, value,
+  unit, flags, source, vintage) under `tables/<family>/<table>/<vintage>/`;
+- checks, before anything leaves the machine: rows against the catalogue, the source's own
+  count or the staging index; sha256 of every file; Hugging Face's limits (50 GB a file,
+  10,000 files a folder); and that no input names India Data Hub;
+- writes `data/archive/manifest.json` (committed): per file, its rule, source, rows, sha256,
+  vintage, `rolls_up_to`, path on the dataset, and after upload the commit it went up in;
+  re-runs upload only files whose sha256 changed;
+- lists, on a table's manifest entry, any catalogue items the source's API serves nothing for
+  (`unserved`, with how that was checked), so an archive rule never loses items silently;
+- every-cut, Data and downloads and trade's §09 link a bundle to the tables that roll up to
+  it ("Finer detail: N tables in the archive"); qc checks every such link is a manifest path.
+
+A family adds a hook (or stages files) when it adds an `archive: true` rule; the builder fails
+a rule it cannot export.
 
 ## What the gate checks
 

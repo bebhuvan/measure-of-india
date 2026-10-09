@@ -54,7 +54,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { writeSeries, round2 } from "../util.mjs";
+import { writeSeries, round2, readRaw } from "../util.mjs";
 
 export const STAGES = [
   // [key, API label, rank (maturity), short label]
@@ -643,7 +643,7 @@ function buildBack(dump, o) {
 }
 
 export function buildNasDeep(root, dcfg, vintage) {
-  const rd = (n) => JSON.parse(fs.readFileSync(path.join(root, "data/raw", n), "utf8"));
+  const rd = (n) => readRaw(root, path.join("data/raw", n));
   const metaOf = (base) => ({ dossier: "gdp", base, source: dcfg.source_agency, vintage, mock: false, geo: dcfg.geo ?? "IND", releaseDate: null, revisionPolicy: dcfg.revision_policy });
   const written = {
     ...buildCurrent(rd("nas-deep-2011-current-annual.json"), rd("nas-deep-2011-current-quarterly.json"), { slug: "gdp", nameSuffix: "", baseYear: "2011-12", meta: metaOf(dcfg.base) }),

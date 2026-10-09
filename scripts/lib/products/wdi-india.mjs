@@ -50,7 +50,7 @@ import { fileURLToPath } from "node:url";
 import YAML from "yaml";
 import { wb, wbCountryZip } from "../worldbank.mjs";
 import { parseCsv } from "../tabular.mjs";
-import { writeSeries, writeRaw, writeJson } from "../util.mjs";
+import { writeSeries, writeRaw, writeJson, readRaw } from "../util.mjs";
 
 const toRegex = (g) => new RegExp("^" + g.split("*").map((s) => s.replace(/[.+?^${}()|[\]\\]/g, "\\$&")).join(".*") + "$");
 export const keyOf = (code) => code.toLowerCase().replace(/[^a-z0-9]+/g, "_");
@@ -189,7 +189,7 @@ export async function buildWdiIndia(root, dcfg) {
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1]) && process.argv.includes("--catalogue")) {
   const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
   const cfg = YAML.parse(fs.readFileSync(path.join(ROOT, "data/sources.yml"), "utf8"));
-  const raw = JSON.parse(fs.readFileSync(path.join(ROOT, "data/raw/worldbank-wdi-india.json"), "utf8"));
+  const raw = readRaw(ROOT, "data/raw/worldbank-wdi-india.json");
   const { catalogue } = bake(ROOT, cfg.dossiers.worldbank, raw);
   console.log(`catalogue: ${catalogue.items.length} items`);
 }

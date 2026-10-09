@@ -28,10 +28,12 @@ import asi1987Bundle from "../../data/series/asi-headline-1987.json";
 import asuseBundle from "../../data/series/asuse-annual.json";
 import asuseModernityBundle from "../../data/series/asuse-modernity.json";
 import aisheHeadlineBundle from "../../data/series/aishe-headline.json";
-import genderSexratioBundle from "../../data/series/gender-sexratio.json";
-import genderMmrBundle from "../../data/series/gender-mmr.json";
-import genderLiteracyBundle from "../../data/series/gender-literacy.json";
-import genderWorkBundle from "../../data/series/gender-work.json";
+// health-gender: the compendium's per-table bundles (sex ratio at birth, IMR by sex, MMR, census literacy, PLFS 2025)
+import genderSrbBundle from "../../data/series/gender-t007.json";
+import genderImrBundle from "../../data/series/gender-t015.json";
+import genderMmrBundle from "../../data/series/gender-t021.json";
+import genderLiteracyBundle from "../../data/series/gender-t055-census.json";
+import genderLfprBundle from "../../data/series/gender-t080-cy25.json";
 import mnreSourcesBundle from "../../data/series/mnre-sources.json";
 import mnreSolarBundle from "../../data/series/mnre-solar-categories.json";
 import { hydrate } from "../charts/plumbing.js";
@@ -79,10 +81,11 @@ const ASI87 = hydrate(asi1987Bundle);
 const ASU = hydrate(asuseBundle);
 const ASUM = hydrate(asuseModernityBundle);
 const AIH = hydrate(aisheHeadlineBundle);
-const GSR = hydrate(genderSexratioBundle);
+const GSR = hydrate(genderSrbBundle);
+const GIMR = hydrate(genderImrBundle);
 const GMM = hydrate(genderMmrBundle);
 const GLIT = hydrate(genderLiteracyBundle);
-const GWK = hydrate(genderWorkBundle);
+const GWK = hydrate(genderLfprBundle);
 const MNRE = hydrate(mnreSourcesBundle);
 const MNRE_RT = hydrate(mnreSolarBundle);
 const RATIO = { data: M2.rural.data.map((d, i) => ({ date: d.date, value: M2.urban.data[i].value / d.value })) };
@@ -232,11 +235,11 @@ render("reg-hces", hcesRows, 1, "sph", "2023-24 round");
 render("reg-asi", asiRows, 1, "spa", "2023-24");
 render("reg-aishe", aisheRows, 12, "spai", "2021-22 round", "Ministry of Education");
 const genderRows = [
-  ["Sex ratio, census, ♀ per 1000 ♂", "GEND-SR", "s-acc", GSR.sex_ratio, false, "/guides/gender/", null, (v) => String(Math.round(v))],
-  ["Maternal Mortality Ratio, per 100k", "GEND-MMR", "s-g1", GMM.mmr, false, "/guides/gender/", null, (v) => String(Math.round(v))],
-  ["Literacy, female, age 7+, %", "GEND-LITF", "s-g2", GLIT.literacy_female, false, "/guides/gender/", null, (v) => v.toFixed(1) + "%"],
-  ["LFPR, female, 15+, %", "GEND-LFPRF", "s-g3", GWK.lfpr_female, false, "/guides/gender/", null, (v) => v.toFixed(1) + "%"],
-  ["LFPR, male, 15+, %", "GEND-LFPRM", "s-g4", GWK.lfpr_male, false, "/guides/gender/", null, (v) => v.toFixed(1) + "%"],
+  ["Girls born per 1,000 boys, SRS", "GEND-SRB", "s-acc", GSR.total__all_india, false, "/guides/gender/", null, (v) => String(Math.round(v))],
+  ["Infant mortality, girls, per 1,000", "GEND-IMRF", "s-g1", GIMR.female__all_india, false, "/guides/gender/", null, (v) => String(Math.round(v))],
+  ["Maternal Mortality Ratio, per 100k", "GEND-MMR", "s-g2", GMM.all_india, false, "/guides/gender/", null, (v) => String(Math.round(v))],
+  ["Literacy, female, age 7+, census, %", "GEND-LITF", "s-g3", GLIT.total__female__all_india, false, "/guides/gender/", null, (v) => v.toFixed(1) + "%"],
+  ["LFPR, women 15+, PLFS 2025, %", "GEND-LFPRF", "s-g4", GWK.total__female__15__all_india, false, "/guides/gender/", null, (v) => v.toFixed(1) + "%"],
 ];
 render("reg-gender", genderRows, 12, "spgd", "multi-source", "MoSPI compendium");
 const mnreRows = [
@@ -260,20 +263,19 @@ import depositsBundle from "../../data/series/deposits-owners.json";
     ["Women's deposits", "BSR2-F", "s-g3", DP.female_total, false, "/guides/deposits/", null, lc],
   ], 1, "spdp", "Mar 2026", "RBI BSR-2");
 }
-import nfhsAnaemiaBundle from "../../data/series/nfhs-anaemia.json";
-import nfhsChildBundle from "../../data/series/nfhs-child.json";
-import nfhsFertilityBundle from "../../data/series/nfhs-fertility.json";
-const NA = hydrate(nfhsAnaemiaBundle);
-const NC = hydrate(nfhsChildBundle);
-const NF = hydrate(nfhsFertilityBundle);
-const nfhsFind = (b, needle) => { const lower = needle.toLowerCase(); return Object.values(b).find((s) => s.label && s.label.toLowerCase().includes(lower)); };
+// health-gender: the two rounds are separate bundles (two rulers); the register shows NFHS-5
+// and dates the NFHS-4 point four years back, so the year-ago column stays a dash by design
+import nfhs4AnaemiaBundle from "../../data/series/nfhs-4-anaemia.json";
+import nfhs5AnaemiaBundle from "../../data/series/nfhs-5-anaemia.json";
+import nfhs4MortalityBundle from "../../data/series/nfhs-4-mortality.json";
+import nfhs5MortalityBundle from "../../data/series/nfhs-5-mortality.json";
+const rounds = (b4, b5, k) => ({ data: [hydrate(b4)[k], hydrate(b5)[k]].filter(Boolean).map((s) => s.data[0]) });
 const nfhsRows = [
-  ["Child anaemia (6-59 mo), %", "NFHS-ANM", "s-acc", nfhsFind(NA, "children age 6-59")],
-  ["Infant mortality, /1,000", "NFHS-IMR", "s-g1", nfhsFind(NC, "infant mortality")],
-  ["Stunting (under-5), %", "NFHS-STN", "s-g2", nfhsFind(NC, "stunted")],
-  ["TFR, children/woman", "NFHS-TFR", "s-g3", nfhsFind(NF, "total fertility rate")],
-  ["Women's bank account, %", "NFHS-BNK", "s-g4", nfhsFind(NF, "bank or savings")],
-].filter(([, , , s]) => s != null);
+  ["Child anaemia (6-59 mo), %", "NFHS-ANM", "s-acc", rounds(nfhs4AnaemiaBundle, nfhs5AnaemiaBundle, "children_age_6_59_months_who_are_anaemic_11__all_india__total")],
+  ["Women anaemic (15-49), %", "NFHS-ANW", "s-g1", rounds(nfhs4AnaemiaBundle, nfhs5AnaemiaBundle, "all_women_age_15_49_years_who_are_anaemic__all_india__total")],
+  ["Infant mortality, /1,000", "NFHS-IMR", "s-g2", rounds(nfhs4MortalityBundle, nfhs5MortalityBundle, "infant_mortality_rate_per_1000_live_births__all_india__total")],
+  ["Under-five mortality, /1,000", "NFHS-U5", "s-g3", rounds(nfhs4MortalityBundle, nfhs5MortalityBundle, "under_five_mortality_rate_per_1000_live_birt__all_india__total")],
+].filter(([, , , s]) => s.data.length);
 render("reg-nfhs", nfhsRows.map(([nm, code, sw, s]) => [nm, code, sw, s, false, "/guides/nfhs/"]), 48, "spnf", "NFHS-5", "MoSPI / IIPS");
 // ---- bis family session: debt and house prices (BIS), quarterly ----
 import bisCreditBundle from "../../data/series/bis-credit.json";

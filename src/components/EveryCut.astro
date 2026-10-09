@@ -9,6 +9,7 @@
 //   <EveryCut slug="cpi" cuts={{ "cpi-2024": "Division" }} />   override a bundle's cut name
 import { bySlug } from "../dossiers/registry.js";
 import { guideBundles, bundleTitle, everyCutPlan } from "../dossiers/everycut.js";
+import { archiveFor } from "../dossiers/archive.js";
 import EveryCutTable from "./EveryCutTable.astro";
 interface Props { slug: string; cuts?: Record<string, string> }
 const { slug, cuts = {} } = Astro.props;
@@ -20,6 +21,8 @@ const titles = Object.fromEntries(plan.inline.map((b) => [b, bundleTitle(b)]));
 const nAll = plan.inlineRows.length + plan.tails.reduce((a, t) => a + t.rows.length, 0);
 const nFiles = guideBundles(d).length;
 const fmtN = (n) => n.toLocaleString("en-IN");
+// bundles whose finer grain is in the deep archive (data/archive/manifest.json)
+const arcs = guideBundles(d).map((b) => ({ b, a: archiveFor(b) })).filter((x) => x.a);
 const note = (t) => {
   const pages = t.pages.length > 1 ? `, over ${t.pages.length} pages` : "";
   if (t.kind === "bundle") { const g = new Set(t.rows.map((r) => r.group).filter(Boolean)).size; return `${t.rows[0]?.cut ?? ""}${g ? `, in ${g} groups` : ""}${pages}.`; }
@@ -37,9 +40,19 @@ const note = (t) => {
       ))}
     </ul>
   )}
+  {arcs.length > 0 && (
+    <div class="ec-arc">
+      <p>Finer detail than these files carry is in the India Atlas data archive, as Parquet and CSV:</p>
+      <ul>{arcs.map(({ b, a }) => <li><a class="archive-link" href={a.href}>Finer detail: {fmtN(a.tables)} {a.tables === 1 ? "table" : "tables"} in the archive</a> <small>under {bundleTitle(b)}</small></li>)}</ul>
+    </div>
+  )}
   {plan.inlineRows.length > 0 && <EveryCutTable rows={plan.inlineRows} id={`ec-${slug}`} titles={titles} />}
 </section>
 <style is:global>
+  .ec-arc{margin:18px 0 6px;font-family:var(--sans);font-size:.88rem;color:var(--ink-soft)}
+  .ec-arc ul{list-style:none;margin:8px 0 0;display:grid;gap:6px}
+  .ec-arc a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule-2)}
+  .ec-arc small{color:var(--muted);font-size:.8rem}
   .ec-tails{list-style:none;margin:22px 0 4px;font-family:var(--sans);font-size:.92rem;display:grid;gap:10px}
   .ec-tails a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule-2)}
   .ec-tails a:hover{border-bottom-color:var(--ink)}

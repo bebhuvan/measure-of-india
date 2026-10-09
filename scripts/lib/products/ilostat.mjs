@@ -167,6 +167,16 @@ function inScope(dcfg, f, inst, freq) {
 // ---------------------------------------------------------------------------
 // catalogue: one item per (instrument, frequency, flow, classification versions)
 // ---------------------------------------------------------------------------
+/** The catalogue item an observation belongs to: the one rule the catalogue and the deep
+ *  archive (scripts/lib/archive/ilo.mjs) both use, so they can never disagree. */
+export function itemIdOf(f, r) {
+  const cuts = cutsOf(f.dims);
+  const inst = instrument(r.SOURCE);
+  const vers = cuts.map((d) => verOf(r[d]));
+  return ["ilo", inst.slug, r.FREQ.toLowerCase(), `d${cuts.length}`, f.id.replace(/^DF_/, "").toLowerCase(), ...vers.map((v) => v.toLowerCase())].join(":");
+}
+export { cutsOf as iloCutsOf };
+
 export function catalogueItems(flows) {
   const items = new Map();
   for (const f of flows) {
@@ -175,7 +185,7 @@ export function catalogueItems(flows) {
     for (const r of f.rows) {
       const inst = instrument(r.SOURCE);
       const vers = cuts.map((d) => verOf(r[d]));
-      const id = ["ilo", inst.slug, r.FREQ.toLowerCase(), `d${cuts.length}`, f.id.replace(/^DF_/, "").toLowerCase(), ...vers.map((v) => v.toLowerCase())].join(":");
+      const id = itemIdOf(f, r);
       let it = items.get(id);
       if (!it) {
         const freqName = { A: "annual", Q: "quarterly", M: "monthly" }[r.FREQ] ?? r.FREQ;

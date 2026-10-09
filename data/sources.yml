@@ -911,55 +911,33 @@ dossiers:
         "9": teachers
 
   gender:
-    # regression floor (docs/RELEASE-CHECKLIST.md §2): the minimum period this
-    # dossier's live bundles must cover — bump it when a release moves the data
-    stale_after: "2011-01"
-    # multi-survey compendium: bundles legitimately mix frequencies
+    # regression floor (docs/RELEASE-CHECKLIST.md §2): the minimum period the guide's current
+    # bundle (gender-t007, SRS sex ratio at birth, three-year windows dated at their middle year)
+    # must cover — bump it when a release moves the data
+    stale_after: "2022-01"
+    # multi-source compendium: bundles legitimately mix frequencies
     frequency_exempt: true
     family: mospi
     geo: IND
     product: gender
     frequency: varies      # each indicator draws on a different source & cadence
     base: "multi-source compendium (Census, SRS, NFHS, PLFS, NCRB, et al.)"
-    release_calendar: "annual 'Women and Men in India' compendium; each indicator carries its own source vintage"
+    release_calendar: "annual 'Women and Men in India' compendium (27th edition, 29 April 2026); each indicator carries its own source vintage"
     revision_policy: "Each indicator is final as its underlying source publishes; the compendium is a curated cross-source portrait, never a single survey."
     source_agency: "MoSPI, from multiple source agencies (Office of the Registrar General, NFHS, NCRB, Ministry of Education, et al.)"
     release_url: https://www.mospi.gov.in
     fetch:
       endpoint: gender/getGenderRecords
-      # "Women and Men in India" — 157 indicators spanning population, fertility,
-      # mortality, health, education, work, finance, politics and safety. Each
-      # indicator is its own mini-table from a different source, with its own
-      # dimensions and time coverage; there is no shared base year or cadence.
-      # Every row keys on (year, state/UT) and gains dimensions per indicator:
-      # gender, sector, education_level, age_group, sub_indicator, crime_head,
-      # survey. The fetcher ingests ~20 core indicators that form the dossier's
-      # spine to raw, and bakes each as its own bundle with its own date axis —
-      # the varying cadences (census decadal, SRS annual, NFHS cross-sectional,
-      # MMR 3-year moving periods, life-expectancy 5-year cohorts) make a shared
-      # axis impossible and a forced one dishonest.
-      # The dossier (Dossier 10) covers the gender panorama: sex ratio (the
-      # 70-year census story), survival (IMR by gender, MMR, life expectancy
-      # convergence), fertility (TFR), education (literacy gap), work (LFPR) and
-      # state dispersion.
-      indicators:
-        "2": sex_ratio           # census 1951-2011, by state
-        "6": sex_ratio_state     # SRS, by state, more recent
-        "10": tfr                # by sector × education_level
-        "14": age_marriage       # mean age at marriage, by sector
-        "15": imr                # SRS annual 2008-2020, by gender
-        "16": imr_state          # by state × sector × gender
-        "17": u5mr              # under-5 mortality, by gender
-        "18": life_expectancy    # 5-year cohorts 1990-94 to 2031-36*, by gender
-        "19": life_exp_state     # by state × sector × gender
-        "21": mmr               # 3-year moving periods 2004-06 to 2018-20
-        "22": maternity_care     # sub_indicator × survey
-        "28": obesity           # by gender × survey
-        "55": literacy          # by sector × gender, census + 2017*
-        "80": lfpr              # by sector × gender × age_group (PLFS)
-        "93": unemployment      # by sector × gender (PLFS)
-        "141": crime_rate       # by sub_indicator × crime_head (NCRB)
-        "146": child_marriage   # % women 20-24 married before 18
+      # "Women and Men in India" 2025: 154 indicators (API codes 1 to 177 with gaps), each the
+      # compendium's reprint of one table from another agency, with its own dimensions and
+      # calendar. The adapter (scripts/lib/products/gender.mjs) fetches every indicator the
+      # API lists (gender/getGenderIndicatorList), pages each in full, archives raw with the
+      # filter listings, and bakes one bundle per indicator (gender-t<code>), split by ruler
+      # where an indicator joins two instruments (NFHS rounds, census and NSS, PLFS designs,
+      # ESAG and UDISE+). The per-indicator configuration (source agency, compendium table,
+      # unit for "-" rows, ruler splits) lives in the adapter's table T. Twelve codes in
+      # MoSPI's own MCP definitions (32-39, 75, 76, 139, 148) are no longer served ("No Data
+      # Found", 2026-10-10): blocked in data/coverage/gender.yml.
 
   mnre:
     # regression floor (docs/RELEASE-CHECKLIST.md §2): the minimum period this
@@ -1027,16 +1005,14 @@ dossiers:
       # Two survey rounds served: nfhs-4 and nfhs-5. Rows key on
       # (state, sub_indicator, sector, survey, value). state = "All India"
       # for national estimates; sector = "Rural + Urban (Combined)" for the
-      # headline. The fetcher ingests ALL 21 indicators to raw and bakes 7
-      # thematic bundles (child, maternal, anaemia, adult, fertility,
-      # household, states), each carrying every All-India Combined
-      # sub-indicator with both survey values on a 2-point date axis
-      # (2016 = NFHS-4 midpoint, 2020 = NFHS-5 midpoint). Some sub-indicators
-      # carry only NFHS-5 data (new in that round) — the NFHS-4 point is null.
-      # The dossier (Dossier 12) covers the full health landscape: child
-      # mortality & nutrition, anaemia (which WORSENED), maternal care,
-      # adult NCDs (the dual burden), fertility, women's empowerment and
-      # state dispersion.
+      # headline. The adapter (scripts/lib/products/nfhs.mjs) archives all 21
+      # tables, their filter listings and a DHS Program cross-check, and bakes
+      # every cell: one bundle per round per table (nfhs-4-<table>,
+      # nfhs-5-<table>), each series one sub-indicator in one place and
+      # sector, on a single date (2016-01-01 for NFHS-4, 2020-01-01 for
+      # NFHS-5). The rounds are two rulers (seams: nfhs). NFHS-4 sub-indicators
+      # the API misfiles or files under NFHS-5's wording are withheld (the
+      # adapter's QUARANTINE table, with evidence).
       indicators:
         "1": household_profile
         "2": adult_characteristics
@@ -1059,13 +1035,6 @@ dossiers:
         "19": womens_empowerment
         "20": gender_violence
         "21": tobacco_alcohol
-      themes:
-        child: [4, 10, 12]           # mortality, vaccination, feeding/nutrition
-        maternal: [8, 9]             # maternity care, delivery
-        anaemia: [14]                # anaemia deep-dive
-        adult: [13, 15, 16, 21]      # BMI, blood sugar, BP, tobacco, alcohol
-        fertility: [3, 5, 19, 20]    # fertility, contraception, empowerment, violence
-        household: [1]              # household profile (sanitation, water, etc.)
 
   deposits:
     # regression floor: BSR-2 is annual, as on 31 March
@@ -2135,3 +2104,17 @@ seams:
       to: null
       bundles: [plfs-monthly, plfs-cuts, plfs-monthly-age, plfs-q25, plfs-q25-states-lfpr, plfs-q25-states-wpr, plfs-q25-states-ur, plfs-q25-industry, plfs-cy25-india, plfs-cy25-states-lfpr, plfs-cy25-states-wpr, plfs-cy25-states-ur, plfs-cy25-workers-states, plfs-cy25-earnings]
   # ---- end jobs ----
+  # ---- health-gender: the National Family Health Survey's two rounds (scripts/lib/products/nfhs.mjs) ----
+  # Each round is a cross-section with its own sample, questionnaire and, for several tables,
+  # its own age range or definition (NFHS-5 measured blood pressure and blood sugar for everyone
+  # 15 and over, NFHS-4 for 15-49). No agency link joins them: plates draw the two side by side.
+  nfhs:
+    - base: "NFHS-4 (2015-16)"
+      from: "2015-01"
+      to: "2016-12"
+      bundles: [nfhs-4-adult-nutrition, nfhs-4-adults, nfhs-4-anaemia, nfhs-4-child-nutrition, nfhs-4-childhood-disease, nfhs-4-delivery, nfhs-4-empowerment, nfhs-4-family-planning, nfhs-4-fp-quality, nfhs-4-hiv-knowledge, nfhs-4-household, nfhs-4-marriage-fertility, nfhs-4-maternity, nfhs-4-mortality, nfhs-4-tobacco-alcohol, nfhs-4-vaccination]
+    - base: "NFHS-5 (2019-21)"
+      from: "2019-06"
+      to: null
+      bundles: [nfhs-5-adult-nutrition, nfhs-5-adults, nfhs-5-anaemia, nfhs-5-blood-pressure, nfhs-5-blood-sugar, nfhs-5-cancer-screening, nfhs-5-child-nutrition, nfhs-5-childhood-disease, nfhs-5-delivery, nfhs-5-empowerment, nfhs-5-family-planning, nfhs-5-fp-quality, nfhs-5-hiv-knowledge, nfhs-5-household, nfhs-5-marriage-fertility, nfhs-5-maternity, nfhs-5-mortality, nfhs-5-tobacco-alcohol, nfhs-5-unmet-need, nfhs-5-vaccination, nfhs-5-violence]
+  # ---- end health-gender ----

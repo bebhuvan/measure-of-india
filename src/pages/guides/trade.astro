@@ -119,6 +119,9 @@ const YTD = { x: B("trade-hs2-exports-ytd"), m: B("trade-hs2-imports-ytd") };
 T.ytd = { label: YTD.x.meta.period.label, prev: [YTD.x.series.total.data[0], YTD.m.series.total.data[0]], cur: [YTD.x.series.total.data[1], YTD.m.series.total.data[1]], fy: fyOf(YTD.x.dates[1]) };
 const latestFy = T.chapters.exports.fy;
 const fmtBn = (v) => `$${(v / 1000).toFixed(1)} bn`;
+// the 6- and 8-digit line tables in the deep archive (data/archive/manifest.json)
+import { archiveForFamily } from "../../dossiers/archive.js";
+const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
 ---
 <Base
   title="What India Buys and Sells · India Atlas"
@@ -771,7 +774,7 @@ const fmtBn = (v) => `$${(v / 1000).toFixed(1)} bn`;
     </div>
   </section>
 
-    <div class="prose xp-note"><p><b>Six- and eight-digit detail.</b> The 5,600 subheadings and 11,000 tariff lines, every month since January 2017, in dollars, rupees and quantity, are too large for these pages. They are published as files in the India Atlas data archive, one per year and flow, each on one HS edition; the headings above are their totals. <span id="xp-archive-link">The archive files are being prepared.</span></p></div>
+    <div class="prose xp-note"><p><b>Six- and eight-digit detail.</b> The 5,600 subheadings and 11,000 tariff lines, every month since January 2017, in dollars, rupees and quantity, are too large for these pages. They are published as files in the India Atlas data archive, one per year and flow, each on one HS edition; the headings above are their totals. <span id="xp-archive-link">{lines ? <a class="archive-link" href={lines.href}>{lines.tables.toLocaleString("en-IN")} files of subheadings and tariff lines, {lines.rows.toLocaleString("en-IN")} rows, as Parquet and CSV</a> : "The archive files are being prepared."}</span></p></div>
 
   <!-- § 10 what this measures: evergreen -->
   <section>
