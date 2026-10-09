@@ -151,3 +151,39 @@ export async function buildBsr2(root, dcfg, vintage, cfg) {
     { coverage: "Term deposits by size of deposit, the finer bands RBI introduced in March 2026", note: "RBI BSR-2 Table 3.6 via DBIE report 866, March 2026 only.",
       bands: fine.map((l) => ({ key: slug(l), label: tidy(l) })) });
 }
+
+/* Catalogue (docs/CONTRACT-coverage.md): the RBI's BSR-2 deposit tables, from the DBIE report
+ * catalogue in the Data Bank (dataset rbi_dbie_report_catalog, read-only): every report in
+ * the annual and quarterly BSR-2 menus, plus the ownership table 737. The five reports this
+ * guide reads are listed row by row, from their own content in the Data Bank mirror:
+ *   bsr2:<report>                                            a report not read
+ *   bsr2:737:<sector code>:<current|saving|term|total>       ownership x type
+ *   bsr2:847:<owner>:<rural|semi-urban|urban|metro|all-india>
+ *   bsr2:864|865|866:<band>:<individuals|others|total>:<accounts|amount> */
+import { databankQuery } from "../databank.mjs";
+import { writeCatalogue, idPart, catalogueCli, sourceCfg } from "../catalogue.mjs";
+export async function catalogueBsr2() {
+  const { cfg } = sourceCfg("deposits");
+  const db = databankRoot(cfg?.families?.databank);
+  const cat = databankQuery(db, "rbi_dbie_report_catalog", "SELECT DISTINCT report_id, report_name, menu FROM {table} WHERE menu LIKE '%Basic Statistical Return (BSR)-2%' OR report_id = '737' ORDER BY report_id").rows;
+  const READ = new Set(["737", "847", "864", "865", "866"]);
+  const items = [];
+  const seen = new Set();
+  for (const r of cat) {
+    if (seen.has(r.report_id)) continue; seen.add(r.report_id);
+    const q = /Quarterly/i.test(r.menu) ? "Quarterly. " : "";
+    if (!READ.has(r.report_id)) { items.push({ id: `bsr2:${r.report_id}`, label: q + r.report_name.trim() }); continue; }
+    const rep = dbieReport(db, r.report_id);
+    if (r.report_id === "737") {
+      for (const x of rep.rows) items.push({ id: `bsr2:737:${x["Dim Economy Sect Deposit.Item Code"]}:${idPart(String(x["Item Hierarchy Level2"]).split(" ")[0])}`, label: String(x["Item Description"]).trim() });
+    } else if (r.report_id === "847") {
+      for (const x of rep.rows) if (x["Dimension 1"]) for (const p of ["rural", "semi-urban", "urban", "metro", "all-india"]) items.push({ id: `bsr2:847:${idPart(x["Dimension 1"])}:${p}`, label: x["Dimension 1"].trim() });
+    } else {
+      for (const x of rep.rows) if (x["Dimension 1"]) for (const w of ["individuals", "others", "total"]) for (const m of ["accounts", "amount"]) items.push({ id: `bsr2:${r.report_id}:${idPart(x["Dimension 1"])}:${w}:${m}`, label: x["Dimension 1"].trim() });
+    }
+  }
+  writeCatalogue("deposits", { source: "Reserve Bank of India: Basic Statistical Return 2 on deposits (DBIE, via the local Data Bank)",
+    generator: "scripts/lib/products/bsr2.mjs --catalogue",
+    note: "Reports from the Data Bank's rbi_dbie_report_catalog (annual and quarterly BSR-2 menus, and report 737); the five reports read are itemised from their own rows in the Data Bank mirror.", items });
+}
+await catalogueCli(import.meta.url, catalogueBsr2);

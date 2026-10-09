@@ -11,7 +11,7 @@ import herit04Bundle from "../../data/series/iip-2004.json";
 import herit93Bundle from "../../data/series/iip-1993.json";
 import ispBundle from "../../data/series/isp.json";
 import {
-  MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend,
+  MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend, seamMarks, seamOverlap,
   peakOf, dodgeEndLabels, spark,
 } from "../charts/plumbing.js";
 
@@ -170,12 +170,11 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
       Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
       Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
       Plot.ruleY([0], { stroke: "#161A22", strokeOpacity: 0.55, strokeWidth: 1 }),
-      Plot.lineY(old.data, { x: "date", y: "value", stroke: old.color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
-      Plot.lineY(cur.data, { x: "date", y: "value", stroke: cur.color, strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
+      // the shared seam: two rulers side by side, the changeover marked where the new base starts
+      ...seamMarks("side", [old, cur], { at: new Date(Date.UTC(2023, 3, 1)), text: "base revised, 2011-12 → 2022-23",
+        textAt: new Date(Date.UTC(2023, 5, 1)), y: 132, anchor: "start", dx: 0, fontSize: 12.5, solid: true }),
       Plot.ruleX([new Date(Date.UTC(2020, 3, 1))], { stroke: "#DADDE3", strokeWidth: 1, strokeDasharray: "2,3" }),
       Plot.text([{ date: new Date(Date.UTC(2018, 0, 1)), value: 133 }], { x: "date", y: "value", text: ["COVID-19, −57% then +134%"], fontSize: 12.5, fill: "#878D99", fontFamily: mono, textAnchor: "start" }),
-      Plot.ruleX([new Date(Date.UTC(2023, 3, 1))], { stroke: "#CDD1D8", strokeWidth: 1 }),
-      Plot.text([{ date: new Date(Date.UTC(2023, 5, 1)), value: 132 }], { x: "date", y: "value", text: ["base revised, 2011-12 → 2022-23"], fontSize: 12.5, fill: "#5F6675", fontFamily: mono, textAnchor: "start" }),
       Plot.dot([cur.data.at(-1)], { x: "date", y: "value", fill: cur.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.text([cur.data.at(-1)], { x: "date", y: "value", text: (d) => `Base 2022-23 ${d.value.toFixed(2)}%`, dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
       Plot.dot([old.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", fill: old.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
