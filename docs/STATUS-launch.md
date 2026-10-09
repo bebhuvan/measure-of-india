@@ -1,6 +1,6 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 00:10.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 01:15.
 
 ## Running now: ten family sessions
 
@@ -29,7 +29,7 @@ Each decides every `pending` item in its ledgers (brief: `docs/briefs/wave2.md`)
 | Session | Guides | Pending items to decide |
 |---|---|---|
 | atlas-prices | cpi, wpi (+ CPI-IW, rural wages) | 82,269 |
-| atlas-jobs-deep | jobs | 1,592 |
+| atlas-jobs-deep | jobs | **merged**: 0 pending (9,523 items); found the 2025 PLFS redesign splice. Now fixing the same splice in services-jobs-cy |
 | atlas-industry | iip, factories (+ eight core industries) | 45,347 |
 | atlas-nas | gdp | 437 |
 
@@ -76,6 +76,11 @@ throttles, so not run alongside the states and services sessions). Then the laun
 - Phone charts open at the latest end, with an "Earlier years" cue.
 - Every-cut pages are lighter (states 0.87 to 0.50 MB, climate 1.43 to 0.69 MB), and all 208
   RBI Handbook tables are in the states guide's every-cut view.
+
+## For the launch-pass prose review
+
+- jobs: "Both moved against the headline" frames rising employment beside falling
+  unemployment as a contradiction; they agree.
 
 ## Queued (after wave 1 merges)
 
