@@ -264,3 +264,21 @@ fails on the omissions above, by design.
   bundle's count to equal its series count: all 23 guides pass, 0 duplicates or misses
   (ILO 41,656 series, services 27,851, states 16,877, climate 16,804). Pages also hold to
   the 1.2 MB budget; the largest long-tail page is under 1.1 MB.
+
+# Round 3 (2026-10-09, after merging launch-build: 24 guides with credit)
+
+## 1. Only time charts open at their latest end
+
+- The round-2 change opened every scrolling plot zone at its right end, which hid the category
+  names of horizontal bar plates. Now `guide.client.js` asks the chart itself: Plot's figure
+  carries its scales (`plot.scale("x")`, the hook addCrosshair uses), and a time or utc x
+  scale, or a band scale over dates, is time. A chart assembled by hand from several Plot
+  panels declares `data-x` on its own SVG where it is built (climate's `panels()` derives it
+  from its panels' scales). The finding is written on the zone as `data-x="time|other"`; zones
+  not yet drawn (charts drawn later) are decided when they draw.
+- Site-wide at 390px, after scrolling every page so lazy charts draw: 163 time zones (157
+  scroll), 109 other zones (all scroll, all kept at their left edge), 4 zones with no chart.
+  0 misplaced. Credit: 11 time, 11 bar plates (cb-who, cb-fast, cb-cost, cb-size,
+  cb-industries, cb-nbfc, cb-states, cb-pop, cb-women, cb-npaflow, cb-frauds); states: 1 time,
+  7 other (cb-pc, cb-size, cb-growth, cb-converge, cb-structure, cb-industries, cb-finance);
+  cpi 11 time, 5 other; gdp 13 time.

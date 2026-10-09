@@ -45,6 +45,9 @@ function panels(list, { cols = 2, pw = 568, ph = 220, gapX = 48, gapY = 64, titl
   const svg = document.createElementNS(ns, "svg");
   svg.setAttribute("width", totalW); svg.setAttribute("height", totalH); svg.setAttribute("viewBox", `0 0 ${totalW} ${totalH}`);
   svg.setAttribute("font-family", sans);
+  // the merged SVG has no scales of its own: declare whether time runs along x, from the panels'
+  // own x scales, so a phone opens it at its latest end (guide.client.js reads data-x)
+  svg.setAttribute("data-x", list.every(({ plot }) => ["time", "utc"].includes(plot.scale?.("x")?.type)) ? "time" : "other");
   list.forEach(({ title, plot }, i) => {
     const x = (i % cols) * (pw + gapX), y = Math.floor(i / cols) * (ph + titleH + gapY);
     const t = document.createElementNS(ns, "text");
