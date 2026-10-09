@@ -67,6 +67,14 @@ export function dbieReport(root, reportId) {
   };
 }
 
+/** The data providers of a DBIE report: [{ id, name, rows }]. Several reports carry two
+ *  classifications in two providers (trade: "Old" 1987-88 to 2013-14, "New" 2009-10 on), which
+ *  are different rulers and must be read apart (dbieProvider). */
+export function dbieProviders(root, reportId) {
+  return [...index(root).entries()].filter(([k]) => k.startsWith(reportId + "|"))
+    .map(([, v]) => ({ id: v.meta.dataprovider.id, name: v.meta.dataprovider.name, rows: v.meta.dataprovider.rowCount ?? null }));
+}
+
 /** Rows from one of the Data Bank's parsed datasets (policy rates, MPC votes, sectoral
  *  credit, BIS, IMF, World Bank, India Data Hub...), through the Data Bank's own CLI:
  *  `uv run databank query sql <dataset> "<sql>" --json`, so its publication rules choose
@@ -95,18 +103,21 @@ export function databankQuery(root, dataset, sql) {
   };
 }
 
-// credit (lb/credit): many DBIE reports carry several data providers (a "Final" and an "Old"
-// table, a food-credit table beside the business table); dbieReport() keeps only the largest.
-/** One named data provider of a DBIE report, parsed like dbieReport(). */
+// Many DBIE reports carry several data providers: a "Final" and an "Old" table, a food-credit
+// table beside the business table (credit), two trade classifications that are different
+// rulers (trade: "Old" 1987-88 to 2013-14, "New" 2009-10 on). dbieReport() keeps only the
+// largest; dbieProvider() reads one by name. (One reader for both families since round 4:
+// trade's scripts/lib/products/dbie-providers.mjs is folded in here.)
+/** One named data provider of a DBIE report, parsed like dbieReport() (quote-aware: DBIE text can
+ *  hold ";"): { header, rows, provenance }. Throws if the provider is absent. */
 export function dbieProvider(root, reportId, providerId) {
   const hit = index(root).get(`${reportId}|${providerId}`);
   if (!hit) throw new Error(`databank: DBIE report ${reportId} has no data provider ${providerId} in the Data Bank mirror`);
   let buf = fs.readFileSync(hit.content);
   if (hit.meta.stored_encoding === "gzip") buf = zlib.gunzipSync(buf);
-  const lines = buf.toString("utf8").split(/\r?\n/).filter(Boolean);
-  const split = (l) => l.split(";").map((x) => x.replace(/^"|"$/g, "").trim());
-  const header = split(lines[0]);
-  const rows = lines.slice(1).map(split).map((cells) => Object.fromEntries(header.map((h, i) => [h, cells[i] ?? ""])));
+  const table = parseCsv(buf.toString("utf8"), ";").filter((r) => r.some((c) => String(c).trim() !== ""));
+  const header = table[0].map((x) => String(x).trim());
+  const rows = table.slice(1).map((cells) => Object.fromEntries(header.map((h, i) => [h, String(cells[i] ?? "").trim()])));
   return {
     header, rows,
     provenance: { report_id: reportId, data_provider: providerId, rows: rows.length,
