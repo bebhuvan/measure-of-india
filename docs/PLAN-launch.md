@@ -88,6 +88,14 @@ Ledger rules mark them `archive: true` with `rolls_up_to` (`docs/CONTRACT-covera
   comes from, source, rows, sha256, vintage, the HF commit it was uploaded at, and the baked
   bundle it rolls up to. The every-cut table links each `rolls_up_to` bundle to its archive
   files.
+- **What lives where (decided 2026-10-09, when trade's tariff lines reached ~490 MB):** git
+  holds everything the site renders (the chart bundles) and every raw dump under about
+  25 MB. Heavier material goes to the archive: HS 6/8-digit trade, credit's district and
+  centre tables, ILO cubes, climate state-by-month cuts, and large raw audit-trail dumps.
+  It is staged in the git-ignored `data/archive/staging/<family>/`. A raw dump that moves
+  to the archive leaves a committed index in `data/raw/` (each call or file, its retrieval
+  time, sha256 and rows), so the audit trail stays verifiable from git (AGENTS.md hard
+  rule on `data/raw/` amended accordingly).
 - **Builder:** `scripts/archive.mjs` reads every `archive: true` rule, exports through the
   family adapters' raw readers, writes locally (git-ignored), verifies row counts against the
   catalogue, uploads, and updates the manifest. Run after the trade and credit families merge.
