@@ -287,6 +287,17 @@ const PAGES = [
     ["ex-p-women", (b) => fmt.pct1(100 * b["deposits-owners"].series.female_total.data.at(-1) / b["deposits-owners"].series.all_total.data.at(-1))],
     ["prov-vintage", (b) => b["deposits-owners"].meta.vintage],
   ]},
+  // ilo: titleblock and plate values straight from the ILO bundles
+  { url: "/guides/ilo/", slug: null, checks: [
+    ["n-emp", (b) => fmt.num1(b["ilo-est-emp-2emp"].series.emp_2emp_sex_age_nb__sex_t__age_ythadult_yge15.data.filter((v) => v != null).at(-1) / 1000) + " million"],
+    ["n-lfpr", (b) => fmt.pct1(b["ilo-est-eap-2wap"].series.eap_2wap_sex_age_rt__sex_t__age_ythadult_yge15.data.at(-1))],
+    ["n-women", (b) => fmt.pct1(b["ilo-est-eap-2wap"].series.eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15.data.at(-1))],
+    ["n-neet", (b) => fmt.pct1(b["ilo-est-eip-2eet"].series.eip_2eet_sex_rt__sex_f.data.at(-1))],
+    ["pv-unemp", (b) => fmt.pct1(b["ilo-est-une-2eap"].series.une_2eap_sex_age_rt__sex_t__age_ythadult_yge15.data.at(-1))],
+    ["ex-r-psss", (b) => fmt.pct1(b["plfs-annual"].series.lfpr_psss.data.at(-1))],
+    ["ex-i-tot", (b) => fmt.pct1(b["ilo-plfs-sdg"].series.sdg_0831_sex_eco_rt__sex_t__eco_sector_total.data.at(-1))],
+    ["prov-vintage", (b) => b["ilo-est-eap-2wap"].meta.vintage],
+  ]},
   { url: "/", slug: null, minPlots: 1, checks: [
     // the CPI print is the 2024-base series; core stays on the 2012 base
     // (no weights served for the new base), labelled "to Dec 2025"

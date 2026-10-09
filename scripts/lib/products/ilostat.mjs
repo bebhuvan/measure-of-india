@@ -86,6 +86,17 @@ const ddmmyyyy = (s) => { const m = String(s ?? "").match(/^(\d{2})\/(\d{2})\/(\
 const editionYear = (name) => { const m = String(name).match(/(?:Nov|Sept|July|Jan|Oct|Dec|May)\.?\s+(\d{4})\s*$/); return m ? +m[1] : null; };
 const editionLabel = (name) => (String(name).match(/--\s*(.*)$/) || [])[1] ?? null;
 
+// which bundle an observation belongs to. Modelled series: one bundle per indicator family
+// (ilo-est-eap-2wap), the guide's working set. Survey series: one per instrument and topic
+// (ilo-plfs-emp: every employment table from PLFS). Quarterly PLFS, the Census and each
+// administrative source: one bundle each. Instruments never share a bundle.
+function bundleSlug(inst, freq, flowId) {
+  const topic = flowId.replace(/^DF_/, "").split("_")[0].toLowerCase();
+  if (inst.slug === "est") { const fam = family(flowId); return { slug: `ilo-est-${fam.replace(/_/g, "-")}`, fam }; }
+  if (["plfs", "nss"].includes(inst.slug)) return freq === "A" ? { slug: `ilo-${inst.slug}-${topic}`, fam: topic } : { slug: `ilo-${inst.slug}-${freq.toLowerCase()}`, fam: "quarterly" };
+  return { slug: `ilo-${inst.slug}${freq === "A" ? "" : "-" + freq.toLowerCase()}`, fam: inst.slug };
+}
+
 // flow id -> indicator family: DF_EAP_DWAP_SEX_AGE_RT -> eap_dwap
 const family = (id) => id.replace(/^DF_/, "").split("_").slice(0, 2).join("_").toLowerCase();
 const short = (code) => code.toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
@@ -188,12 +199,31 @@ export function catalogueItems(flows) {
 // ---------------------------------------------------------------------------
 const PALETTE = ["#2E4BD8", "#C47A16", "#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 
-function unitOf(r, CL) {
+// the unit each series is shown in (src/dossiers/everycut.js UNITS reads it): from the
+// served UNIT_MEASURE and UNIT_MULT, made specific where the code alone is ambiguous
+function unitOf(r, flowId) {
+  const id = flowId.replace(/^DF_/, "");
+  if (/^EAR_(EHRG|EMTG)_/.test(id)) return "gini";
+  if (/^GDP_205U_/.test(id)) return "usd_2015";
+  if (/^GDP_(211P|2HRW)_/.test(id)) return "usd_ppp_2021";
+  if (/^GDP_2TOT_/.test(id)) return "usd_ppp_2021_million";
+  if (/^(INJ_(FATL|NFTL)_.*_RT|SDG_[FN]881_)/.test(id)) return "per_100k_workers";
+  if (/^HOW_2TDP_/.test(id)) return "hours";
+  if (/^POP_2LDR_/.test(id)) return "dependency_ratio";
   const u = r.UNIT_MEASURE, m = r.UNIT_MULT;
-  const base = { PT: "pct", RT: "rate", PS: "persons", LC: "inr", HR: "hours", DS: "days", CS: "cases", JS: "jobs", XT: "per_1000_workers", IN: "index", US: "usd", PP: "usd_ppp", WP: "workplaces", HH: "households" }[u] ?? (u ? u.toLowerCase() : "number");
-  const mult = { "0": "", "3": "_thousand", "6": "_million" }[m] ?? (m ? `_e${m}` : "");
-  return base + mult;
+  if (u === "PS" && m === "3") return "thousand";
+  const base = { PT: "pct", RT: "pct", LC: "inr", HR: "hours", DS: "days", CS: "cases", SC: "score" }[u];
+  if (!base) throw new Error(`ilostat: ${flowId} unit ${u} x10^${m} has no mapping in unitOf`);
+  return base + ({ "0": "", "3": "_thousand", "6": "_million" }[m] ?? `_e${m}`);
 }
+
+// the cut a flow's series are made of, in words ("Sex and economic activity")
+const CUT_NAME = { SEX: "sex", AGE: "age", ECO: "economic activity", EC2: "economic activity (2-digit)", OCU: "occupation", OC2: "occupation (2-digit)",
+  EDU: "education", GEO: "rural or urban", MTS: "marital status", STE: "status in employment", IFL: "formal or informal", INS: "public or private sector",
+  HOW: "hours band", HHT: "household type", JBT: "working time", MIG: "migrant status", MJH: "multiple job holding", JBC: "contract type", SKN: "skill match",
+  LMS: "labour market status", SKS: "skill", CHL: "children in the household", STU: "school attendance", CLA: "economic class", COI: "consumption item",
+  INJ: "type of incapacity", CUR: "currency", DCL: "decile", CAR: "care work", GAI: "exposure to generative AI", CCT: "citizenship", CDS: "destination", CRS: "residence", SOC: "social protection function", DUR: "duration", JBF: "full-time equivalent" };
+const groupOf = (cuts) => { const t = cuts.map((d) => CUT_NAME[d] ?? d.toLowerCase()).join(" and "); return t ? t[0].toUpperCase() + t.slice(1) : "No breakdown"; };
 
 function seriesFrom(rows, f, CL, dates, { keyPrefix = "" } = {}) {
   const cuts = cutsOf(f.dims);
@@ -246,7 +276,8 @@ function seriesFrom(rows, f, CL, dates, { keyPrefix = "" } = {}) {
     series[k] = {
       name: k,
       label,
-      unit: unitOf(g.r0, CL),
+      unit: unitOf(g.r0, f.id),
+      group: groupOf(cuts),
       color: PALETTE[Math.min(idx, PALETTE.length - 1)],
       data,
       ...(gaps.length ? { gaps, gapsNote: withheld.some((d) => gaps.includes(d)) ? "The ILO serves these cells blank (flagged, value withheld) or not at all." : "The ILO publishes no value for this cut in these periods." } : {}),
@@ -293,6 +324,7 @@ function bundleOf({ dcfg, geo, inst, freq, fam, flows, CL, rows, extraMeta = {} 
       source: `ILO, ILOSTAT (${inst.source})`,
       product: `ILOSTAT ${fam.toUpperCase().replace("_", " ")}: ${flows.map((f) => f.name.replace(/\s*--.*$/, "")).filter((v, i, x) => x.indexOf(v) === i).join("; ")}`,
       base: inst.base,
+      instrument: inst.slug,
       frequency: freqName,
       unit: [...new Set(Object.values(series).map((s) => s.unit))].join(", "),
       vintage: vintages.at(-1) ?? null,
@@ -357,13 +389,23 @@ export async function buildIlostat(root, dcfg, vintage) {
       const rawFile = ["est", "plfs", "nss"].includes(inst.slug) ? inst.slug : "other";
       (rawBy.get(rawFile) ?? rawBy.set(rawFile, []).get(rawFile)).push(r);
       if (inst.slug === "est" && +r.TIME_PERIOD.slice(0, 4) >= (f.edition ?? estEdition)) { projected.push({ r, f }); continue; }
-      const fam = family(f.id);
-      const slug = `ilo-${inst.slug}${r.FREQ === "A" ? "" : "-" + r.FREQ.toLowerCase()}-${fam.replace(/_/g, "-")}`;
+      const { slug, fam } = bundleSlug(inst, r.FREQ, f.id);
       let g = groups.get(slug);
-      if (!g) { g = { inst, freq: r.FREQ, fam, flows: new Map(), rows: [] }; groups.set(slug, g); }
+      if (!g) { g = { inst, freq: r.FREQ, fam, flows: new Map(), rows: [], keys: new Set() }; groups.set(slug, g); }
       g.flows.set(f.id, f);
       g.rows.push(r);
+      g.keys.add(f.id + "|" + r.MEASURE + "|" + cutsOf(f.dims).map((d) => r[d]).join("."));
     }
+  }
+  // survey topics too small to stand alone fold into one "more" bundle per instrument, so the
+  // guide's every-cut table (which lists small bundles inline) stays within the page budget
+  for (const [slug, g] of [...groups]) {
+    if (!["plfs", "nss"].includes(g.inst.slug) || g.freq !== "A" || g.keys.size > dcfg.bake.mergeBelowSeries) continue;
+    const to = `ilo-${g.inst.slug}-more`;
+    const m = groups.get(to) ?? { inst: g.inst, freq: "A", fam: "more", flows: new Map(), rows: [], keys: new Set() };
+    for (const [id, f] of g.flows) m.flows.set(id, f);
+    m.rows.push(...g.rows); for (const k of g.keys) m.keys.add(k);
+    groups.set(to, m); groups.delete(slug);
   }
 
   // ---------- the audit trail first ----------

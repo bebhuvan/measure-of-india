@@ -69,6 +69,17 @@ export const UNITS = {
   thousand_tonne: { kind: "pct", fmt: (v) => big(v * 1000, " tonnes") },
   thousand_kwh: { kind: "pct", fmt: (v) => grp(v / 1e6, 2) + " billion kWh", note: "published in thousand kWh" },
   kg_per_month: { kind: "pct", fmt: (v) => v.toFixed(2) + " kg", note: "a month" },
+  // ilo (ILOSTAT)
+  cases: { kind: "pct", fmt: (v) => big(v, "") , note: "cases" },
+  days: { kind: "pct", fmt: (v) => big(v, " days") },
+  hours: { kind: "diff", fmt: (v) => v.toFixed(1) + " h", note: "a week" },
+  hours_thousand: { kind: "pct", fmt: (v) => grp(v / 1e6, 2) + " billion h", note: "a week, published in thousand hours" },
+  usd_2015: { kind: "pct", fmt: (v) => "$" + grp(v), note: "constant 2015 US$" },
+  usd_ppp_2021: { kind: "pct", fmt: (v) => "$" + grp(v), note: "constant 2021 PPP dollars" },
+  usd_ppp_2021_million: { kind: "pct", fmt: (v) => "$" + grp(v / 1e6, 2) + " trillion", note: "constant 2021 PPP dollars" },
+  per_100k_workers: { kind: "diff", fmt: (v) => grp(v, 1), note: "per 1,00,000 workers" },
+  dependency_ratio: { kind: "diff", fmt: (v) => v.toFixed(2), note: "people per worker" },
+  score: { kind: "diff", fmt: (v) => grp(v, 1), note: "ILO score" },
 };
 
 // series.unit, then what the series name says, then the bundle's meta.unit: a bundle-level
@@ -177,6 +188,8 @@ function groupOf(s) {
 // survey rounds dated by one year on the axis, named as the source names them
 export const PERIOD_LABELS = {
   "nfhs-": { "2016-01-01": "NFHS-4, 2015-16", "2020-01-01": "NFHS-5, 2019-21" },
+  // ilo: the ILO dates each NSS round by the year it ends
+  "ilo-nss-": { "1994-01-01": "NSS 1993-94", "2000-01-01": "NSS 1999-2000", "2005-01-01": "NSS 2004-05", "2010-01-01": "NSS 2009-10", "2012-01-01": "NSS 2011-12" },
 };
 export function periodLabel(slug, bundle, iso) {
   for (const [pre, map] of Object.entries(PERIOD_LABELS)) if (slug.startsWith(pre) && map[iso]) return map[iso];

@@ -1042,6 +1042,9 @@ dossiers:
       # ...except the core quarterly rates by sex and age, and by sex and area, which are baked
       quarterlyFlows: [DF_EAP_DWAP_SEX_AGE_RT, DF_EMP_DWAP_SEX_AGE_RT, DF_UNE_DEAP_SEX_AGE_RT, DF_EIP_DWAP_SEX_AGE_RT,
         DF_EAP_DWAP_SEX_GEO_RT, DF_EMP_DWAP_SEX_GEO_RT, DF_UNE_DEAP_SEX_GEO_RT]
+      # survey topics with this many series or fewer fold into ilo-<instrument>-more (the
+      # every-cut table lists bundles of up to 150 series inline on the guide page)
+      mergeBelowSeries: 150
       # ILOSTAT's copies of other agencies' data and currency conversions: listed, never baked
       excludeFlows: ["^DF_CPI_", "^DF_CCF_", "_CUR_"]
 
@@ -1154,19 +1157,19 @@ seams:
     - base: "Labour inspectorate records (ADM-IR)"
       from: "1971-01"
       to: null
-      bundles: [ilo-adm-ir-inj-fatl, ilo-adm-ir-inj-nftl, ilo-adm-ir-sdg-f881, ilo-adm-ir-sdg-n881]
+      bundles: [ilo-adm-ir]
     - base: "Labour inspectorate records (ADM-LIR)"
       from: "1969-01"
       to: null
-      bundles: [ilo-adm-lir-inj-days, ilo-adm-lir-inj-fatl, ilo-adm-lir-inj-nftl, ilo-adm-lir-inj-work]
+      bundles: [ilo-adm-lir]
     - base: "Population Census, ILO processing"
       from: "1961-01"
       to: "2001-01"          # the ILO holds Census economic questions to 2001
-      bundles: [ilo-census-eap-dwap, ilo-census-eap-teap, ilo-census-eip-dwap, ilo-census-eip-teip, ilo-census-pop-mfrc, ilo-census-pop-xwap]
+      bundles: [ilo-census]
     - base: "Employment Market Information survey"
       from: "1969-01"
       to: null
-      bundles: [ilo-emi-ees-tees, ilo-emi-emp-publ, ilo-emi-emp-xpse]
+      bundles: [ilo-emi]
     - base: "ILO modelled estimates (ILOEST)"
       from: "1990-01"
       to: null
@@ -1178,52 +1181,52 @@ seams:
     - base: "Estimates based on the NSS employment-unemployment surveys"
       from: "2000-01"
       to: null
-      bundles: [ilo-eus-estimates-ilr-tumt]
+      bundles: [ilo-eus-estimates]
     - base: "Institute for Human Development estimates"
       from: "1983-01"
       to: null
-      bundles: [ilo-ihd-ees-xtmp]
+      bundles: [ilo-ihd]
     - base: "ILO estimates"
       from: "2022-01"
       to: null
-      bundles: [ilo-ilo-estimates-emp-temp]
+      bundles: [ilo-ilo-estimates]
     - base: "ILO Employment Policy Gateway"
       from: "2019-01"
       to: null
-      bundles: [ilo-ilo-policy-sdg-08b1]
+      bundles: [ilo-ilo-policy]
     - base: "ILO calculations from ILO textual sources"
       from: "2015-01"
       to: null
-      bundles: [ilo-ilo-textual-sdg-0882]
+      bundles: [ilo-ilo-textual]
     - base: "Labour legislation"
       from: "2000-01"
       to: null
-      bundles: [ilo-legislation-ear-inee]
+      bundles: [ilo-legislation]
     - base: "Ministry of External Affairs records"
       from: "2018-01"
       to: null
-      bundles: [ilo-mea-pop-mnas]
+      bundles: [ilo-mea]
     - base: "Ministry of Overseas Indian Affairs, annual report"
       from: "2008-01"
       to: null
-      bundles: [ilo-moia-pop-mnao, ilo-moia-pop-mnas]
+      bundles: [ilo-moia]
     - base: "NSS employment-unemployment rounds, ILO processing"
       from: "1994-01"
       to: "2012-01"          # the NSS quinquennial rounds ended with 2011-12; PLFS replaced them
-      bundles: [ilo-nss-eap-dwap, ilo-nss-eap-teap, ilo-nss-ear-emta, ilo-nss-ear-emtg, ilo-nss-ear-emtm, ilo-nss-ear-tmta, ilo-nss-ees-tees, ilo-nss-ees-xplv, ilo-nss-eip-3eet, ilo-nss-eip-dwap, ilo-nss-eip-neet, ilo-nss-eip-teip, ilo-nss-emp-3ifl, ilo-nss-emp-dwap, ilo-nss-emp-nifl, ilo-nss-emp-pifl, ilo-nss-emp-pter, ilo-nss-emp-publ, ilo-nss-emp-temp, ilo-nss-emp-tnif, ilo-nss-emp-tour, ilo-nss-emp-tpif, ilo-nss-ged-plfp, ilo-nss-ged-twap, ilo-nss-pop-3vet, ilo-nss-pop-xvet, ilo-nss-pop-xwap, ilo-nss-sdg-0552, ilo-nss-sdg-0831, ilo-nss-sdg-0852, ilo-nss-sdg-0861, ilo-nss-sdg-0922, ilo-nss-sdg-t552, ilo-nss-une-deap, ilo-nss-une-tune]
+      bundles: [ilo-nss-eap, ilo-nss-ear, ilo-nss-ees, ilo-nss-eip, ilo-nss-emp, ilo-nss-more, ilo-nss-pop, ilo-nss-une]
     - base: "Official estimates"
       from: "2009-01"
       to: null
-      bundles: [ilo-official-lai-vist, ilo-official-str-days, ilo-official-str-tstr, ilo-official-str-work]
+      bundles: [ilo-official]
     - base: "PLFS unit data, ILO processing"
       from: "2017-01"
       to: null
-      bundles: [ilo-plfs-cld-tpop, ilo-plfs-cld-xchl, ilo-plfs-cld-xgpb, ilo-plfs-cld-xhaz, ilo-plfs-cld-xsna, ilo-plfs-eap-dwap, ilo-plfs-eap-teap, ilo-plfs-ear-chra, ilo-plfs-ear-cmta, ilo-plfs-ear-ehra, ilo-plfs-ear-ehrg, ilo-plfs-ear-ehrm, ilo-plfs-ear-emta, ilo-plfs-ear-emtg, ilo-plfs-ear-emtm, ilo-plfs-ear-ggap, ilo-plfs-ear-shra, ilo-plfs-ear-smta, ilo-plfs-ear-xfls, ilo-plfs-ear-xtlp, ilo-plfs-ees-care, ilo-plfs-ees-stem, ilo-plfs-ees-tees, ilo-plfs-ees-xplv, ilo-plfs-ees-xtmp, ilo-plfs-eip-3eet, ilo-plfs-eip-dwap, ilo-plfs-eip-neet, ilo-plfs-eip-rcar, ilo-plfs-eip-teip, ilo-plfs-emp-3ifl, ilo-plfs-emp-care, ilo-plfs-emp-cnif, ilo-plfs-emp-cpif, ilo-plfs-emp-dwap, ilo-plfs-emp-nifl, ilo-plfs-emp-pifl, ilo-plfs-emp-pter, ilo-plfs-emp-snif, ilo-plfs-emp-spif, ilo-plfs-emp-stem, ilo-plfs-emp-temp, ilo-plfs-ged-plfp, ilo-plfs-ged-twap, ilo-plfs-how-care, ilo-plfs-how-eare, ilo-plfs-how-stee, ilo-plfs-how-stem, ilo-plfs-how-temp, ilo-plfs-how-xees, ilo-plfs-pop-3vet, ilo-plfs-pop-xvet, ilo-plfs-pop-xwap, ilo-plfs-q-eap-dwap, ilo-plfs-q-ear-ehra, ilo-plfs-q-ear-emta, ilo-plfs-q-eip-dwap, ilo-plfs-q-eip-neet, ilo-plfs-q-emp-dwap, ilo-plfs-q-emp-nifl, ilo-plfs-q-emp-pifl, ilo-plfs-q-how-temp, ilo-plfs-q-how-xees, ilo-plfs-q-une-deap, ilo-plfs-sdg-0552, ilo-plfs-sdg-0831, ilo-plfs-sdg-0851, ilo-plfs-sdg-0852, ilo-plfs-sdg-0861, ilo-plfs-sdg-0922, ilo-plfs-sdg-a871, ilo-plfs-sdg-t552, ilo-plfs-une-deap, ilo-plfs-une-tune]
+      bundles: [ilo-plfs-eap, ilo-plfs-ear, ilo-plfs-ees, ilo-plfs-eip, ilo-plfs-emp, ilo-plfs-how, ilo-plfs-more, ilo-plfs-pop, ilo-plfs-q, ilo-plfs-sdg, ilo-plfs-une]
     - base: "Special data collection (ILO questionnaire)"
       from: "1969-01"
       to: null
-      bundles: [ilo-special-str-days, ilo-special-str-tstr, ilo-special-str-work]
+      bundles: [ilo-special]
     - base: "ILO Social Security Inquiry"
       from: "2000-01"
       to: null
-      bundles: [ilo-ssi-sdg-0131]
+      bundles: [ilo-ssi]

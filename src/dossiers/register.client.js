@@ -271,3 +271,16 @@ const nfhsRows = [
   ["Women's bank account, %", "NFHS-BNK", "s-g4", nfhsFind(NF, "bank or savings")],
 ].filter(([, , , s]) => s != null);
 render("reg-nfhs", nfhsRows.map(([nm, code, sw, s]) => [nm, code, sw, s, false, "/guides/nfhs/"]), 48, "spnf", "NFHS-5", "MoSPI / IIPS");
+// ilo (ILOSTAT): the ILO's modelled estimates for India, annual, calendar years
+import iloLfprBundle from "../../data/series/ilo-est-eap-2wap.json";
+import iloUrBundle from "../../data/series/ilo-est-une-2eap.json";
+import iloNeetBundle from "../../data/series/ilo-est-eip-2eet.json";
+{
+  const IL = hydrate(iloLfprBundle), IU = hydrate(iloUrBundle), IN = hydrate(iloNeetBundle);
+  render("reg-ilo", [
+    ["Labour force participation, 15+, ILO model", "ILO-LFPR", "s-acc", IL.eap_2wap_sex_age_rt__sex_t__age_ythadult_yge15, false, "/guides/ilo/"],
+    ["Women's labour force participation, ILO model", "ILO-LFPR-F", "s-g1", IL.eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15, false, "/guides/ilo/"],
+    ["Unemployment rate, 15+, ILO model", "ILO-UR", "s-g2", IU.une_2eap_sex_age_rt__sex_t__age_ythadult_yge15, false, "/guides/ilo/"],
+    ["Youth not in work or study, ILO model", "ILO-NEET", "s-g3", IN.eip_2eet_sex_rt__sex_t, false, "/guides/ilo/"],
+  ], 1, "spilo", "Nov 2025 edition", "ILO, ILOSTAT");
+}

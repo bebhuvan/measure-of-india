@@ -208,6 +208,17 @@ const CARDS = [
     yStep: 10, fmt: (v) => v.toFixed(1) + "%", mr: 220,
     foot: (b, S) => `Manufacturing ${S.mva_pct_gdp.data.at(-1).value.toFixed(1)}% of GDP · 2025 · Source: World Bank WDI`,
   },
+  // ilo
+  {
+    slug: "ilo", bundleSlug: "ilo-est-eap-2wap",
+    keys: ["eap_2wap_sex_age_rt__sex_m__age_ythadult_yge15", "eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15"], d0: 0, d1: 100, band: null, trend: null,
+    yStep: 20, fmt: (v) => v.toFixed(1) + "%", mr: 220,
+    prep: (S) => {
+      S.eap_2wap_sex_age_rt__sex_m__age_ythadult_yge15 = { ...S.eap_2wap_sex_age_rt__sex_m__age_ythadult_yge15, label: "Men", color: "#5F6675" };
+      S.eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15 = { ...S.eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15, label: "Women", color: "#2E4BD8" };
+    },
+    foot: (b) => `Labour force participation, aged 15+, 1990 to ${b.dates.at(-1).slice(0, 4)}, ILO modelled estimates. Source: ILO, ILOSTAT`,
+  },
 ];
 
 await ensureFonts();

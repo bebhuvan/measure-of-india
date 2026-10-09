@@ -1278,10 +1278,11 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
  * seams registry in sources.yml lists them); peers carry their own geo (sources.yml peers). */
 {
   const D = cfg.dossiers.ilo;
-  const UNIT_RANGE = { pct: [-50, 100], rate: [0, 20000], days: [0, 1e8], cases: [0, 1e6], persons_thousand: [0, 1.6e6],
-    usd_ppp: [0, 1e5], usd_ppp_million: [0, 1e8], hours: [0, 100], hours_thousand: [0, 1e8], sc: [0, 10], inr: [0, 1e6], index: [0, 1] };
+  const UNIT_RANGE = { pct: [-50, 100], per_100k_workers: [0, 20000], days: [0, 1e8], cases: [0, 1e6], thousand: [0, 1.6e6],
+    usd_2015: [0, 1e5], usd_ppp_2021: [0, 1e5], usd_ppp_2021_million: [0, 1e8], hours: [0, 100], hours_thousand: [0, 1e8], score: [0, 10],
+    inr: [0, 1e6], gini: [0, 1], dependency_ratio: [0, 5] };
   const files = fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => /^ilo-.*\.json$/.test(f)).sort();
-  if (files.length < 150) fail(`ilo: only ${files.length} ilo-* bundles (expected ~177)`);
+  if (files.length < 60) fail(`ilo: only ${files.length} ilo-* bundles (expected ~68)`);
   let n = 0;
   for (const f of files) {
     const slug = f.replace(/\.json$/, ""), b = load(slug), m = b.meta ?? {};
@@ -1304,10 +1305,10 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
     // cadence: modelled and PLFS annual axes are consecutive years, PLFS quarters consecutive
     // quarters; NSS rounds, the Census and administrative sources are irregular by nature
     if (/^ilo-(est|peer)-/.test(slug)) checkCadence(b.dates, 12, slug);
-    else if (/^ilo-plfs-q-/.test(slug)) checkCadence(b.dates, 3, slug);
+    else if (slug === "ilo-plfs-q") checkCadence(b.dates, 3, slug);
     else if (/^ilo-plfs-/.test(slug)) checkCadence(b.dates, 12, slug);
     // freshness floors on the guide's headline rulers only
-    if (["ilo-est-eap-2wap", "ilo-est-une-2eap", "ilo-plfs-eap-dwap"].includes(slug)) checkFreshness(b, slug, { staleAfter: D.stale_after }, "ilo");
+    if (["ilo-est-eap-2wap", "ilo-est-une-2eap", "ilo-plfs-eap"].includes(slug)) checkFreshness(b, slug, { staleAfter: D.stale_after }, "ilo");
     else checkFreshness(b, slug, { stale: false }, "ilo");
     if (/^ilo-est-/.test(slug) && slug !== "ilo-est-projections" && b.dates.at(-1) >= "2025-01-01" && !/pop-2|cld-2/.test(slug)) fail(`${slug}: modelled bundle reaches ${b.dates.at(-1)}: projection years belong in ilo-est-projections`);
     n++;
@@ -1333,9 +1334,10 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
     else ok(`${bslug}: EPR = LFPR x (1 - UR) within ${worst.toFixed(3)} pt (${checked} points)`);
   }
   // identity 2: female and male rates bracket the total (participation, every instrument)
-  for (const bslug of ["ilo-est-eap-2wap", "ilo-plfs-eap-dwap", "ilo-nss-eap-dwap"]) {
+  for (const bslug of ["ilo-est-eap-2wap", "ilo-plfs-eap", "ilo-nss-eap"]) {
     const b = load(bslug); let bad = 0, checked = 0;
-    for (const k of Object.keys(b.series).filter((x) => x.includes("__sex_t__"))) {
+    // rates only (eap_dwap, eap_2wap): a count's total is the sum of its parts, not between them
+    for (const k of Object.keys(b.series).filter((x) => x.includes("__sex_t__") && /^eap_(dwap|2wap)_/.test(x))) {
       const kf = k.replace("__sex_t__", "__sex_f__"), km = k.replace("__sex_t__", "__sex_m__");
       if (!b.series[kf] || !b.series[km]) continue;
       b.dates.forEach((d, i) => {
@@ -1377,11 +1379,11 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
   }
   // hand-checked anchors (docs/status/ilo.md): ILOEST UR 2024 and PLFS women's LFPR 2024
   {
-    const u = load("ilo-est-une-2eap"), p = load("ilo-plfs-eap-dwap");
+    const u = load("ilo-est-une-2eap"), p = load("ilo-plfs-eap");
     const uv = at(u, "une_2eap_sex_age_rt__sex_t__age_ythadult_yge15", u.dates.indexOf("2024-01-01"));
     const pv = at(p, "eap_dwap_sex_age_rt__sex_f__age_ythadult_yge15", p.dates.indexOf("2024-01-01"));
     if (uv !== 4.173) fail(`ilo-est-une-2eap: 2024 UR ${uv} != hand-checked 4.173 (a new ILOEST edition? re-check by hand and update)`);
-    else if (pv !== 34.389) fail(`ilo-plfs-eap-dwap: 2024 women's LFPR ${pv} != hand-checked 34.389`);
+    else if (pv !== 34.389) fail(`ilo-plfs-eap: 2024 women's LFPR ${pv} != hand-checked 34.389`);
     else ok("ilo: hand-checked anchors hold (ILOEST UR 2024 = 4.173; PLFS women's LFPR 2024 = 34.389)");
   }
 }

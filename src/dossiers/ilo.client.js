@@ -8,7 +8,7 @@
 // solid dots; projection years are dashed and never labelled as data.
 
 import * as Plot from "@observablehq/plot";
-import { MONO as sans, hydrate, a11y, addCrosshair, wireTools, spark, fmt } from "../charts/plumbing.js";
+import { MONO as sans, hydrate, a11y, addCrosshair, wireTools, spark, seamMarks, fmt } from "../charts/plumbing.js";
 
 const RAW = JSON.parse(document.getElementById("ilo-data")?.textContent || "{}");
 const B = Object.fromEntries(Object.entries(RAW).map(([k, b]) => [k, { ...b, S: hydrate(b) }]));
@@ -52,7 +52,7 @@ function dodge(items, gap) {
  * A time-series plate. series: [{ s (hydrated), label, color, width, dash, dots, hollow, end }]
  * end: text for the end label (null = none). Optional band: { lo:[{date,value}], hi, color }.
  */
-function timeChart(id, { series, from, to, step = 5, yDomain, yTicks, yFmt = (v) => String(v), yLabel, height = 440, mr = 200, rules = [], bands = [], tipFmt = (v) => (v == null ? "—" : v.toFixed(1)), title, desc, fname }) {
+function timeChart(id, { series, from, to, seam = false, step = 5, yDomain, yTicks, yFmt = (v) => String(v), yLabel, height = 440, mr = 200, rules = [], bands = [], tipFmt = (v) => (v == null ? "—" : v.toFixed(1)), title, desc, fname }) {
   const host = document.getElementById("plot-" + id);
   if (!host) return null;
   const ticks = yearTicks(from, to, step);
@@ -64,9 +64,14 @@ function timeChart(id, { series, from, to, step = 5, yDomain, yTicks, yFmt = (v)
   }
   const pxPerUnit = (height - 70) / (yDomain[1] - yDomain[0]);
   const labels = [];
+  // a plate of several instruments draws its line rulers through the shared seam helper:
+  // side by side on one axis, never joined (src/charts/plumbing.js seamMarks)
+  if (seam) marks.push(...seamMarks("side", series.filter((x) => !x.dots).map((x) => ({ data: x.s.data.filter((d) => yr(d.date) >= from && yr(d.date) <= to), color: x.color, width: x.width ?? 1.75 })), false));
   for (const x of series) {
     const data = x.s.data.filter((d) => yr(d.date) >= from && yr(d.date) <= to);
-    if (x.dots) {
+    if (seam && !x.dots) {
+      // drawn by seamMarks above; only its end label is collected below
+    } else if (x.dots) {
       marks.push(Plot.dot(data.filter((d) => d.value != null), { x: "date", y: "value", r: x.r ?? 3.5, fill: x.hollow ? "#fff" : x.color, stroke: x.color, strokeWidth: 1.5 }));
     } else {
       marks.push(Plot.lineY(data, { x: "date", y: "value", stroke: x.color, strokeWidth: x.width ?? 1.75, strokeDasharray: x.dash, strokeLinejoin: "round", strokeLinecap: "round" }));
@@ -188,7 +193,7 @@ if (B.slfpr && B.nlfpr && B.clfpr && E && B.mospi) {
     { s: B.slfpr.S[sk("t")], label: "PLFS, ILO processing", color: ACC, width: 2.25, bold: true, end: `ILO, from PLFS ${p1(lastP(B.slfpr.S[sk("t")]).value)}` },
   ];
   timeChart("rulers", {
-    series: ser, from: 1961, to: 2025, step: 10, yDomain: [40, 70], yTicks: [40, 45, 50, 55, 60, 65, 70], yFmt: (v) => v + (v === 70 ? "%" : ""), yLabel: "labour force participation, everyone aged 15+, per cent", mr: 240,
+    series: ser, seam: true, from: 1961, to: 2025, step: 10, yDomain: [40, 70], yTicks: [40, 45, 50, 55, 60, 65, 70], yFmt: (v) => v + (v === 70 ? "%" : ""), yLabel: "labour force participation, everyone aged 15+, per cent", mr: 240,
     title: "Labour force participation by instrument", fname: "five-rulers",
     desc: `ILO from PLFS ${p1(lastP(B.slfpr.S[sk("t")]).value)} in ${yr(lastP(B.slfpr.S[sk("t")]).date)}; MoSPI usual status ${p1(lastP(MO.lfpr_psss).value)} in 2023-24.`,
   });

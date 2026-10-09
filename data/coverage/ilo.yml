@@ -20,577 +20,204 @@ rules:
     status: excluded
     reason: "Rupee earnings that the ILO has converted into US dollars and PPP dollars at its own exchange rates; the rupee series they are computed from are baked here."
 
+  # ---- quarterly PLFS rates by sex and age, and by sex and area: baked (bundle ilo-plfs-q) ----
+  # (their rule comes first so the quarterly exclusion below does not swallow them)
+  - match: ["ilo:plfs:q:*:eap_dwap_sex_age_rt", "ilo:plfs:q:*:eap_dwap_sex_age_rt:*", "ilo:plfs:q:*:eap_dwap_sex_geo_rt", "ilo:plfs:q:*:eap_dwap_sex_geo_rt:*", "ilo:plfs:q:*:ear_ehra_sex_nb", "ilo:plfs:q:*:ear_ehra_sex_nb:*", "ilo:plfs:q:*:ear_emta_sex_nb", "ilo:plfs:q:*:ear_emta_sex_nb:*", "ilo:plfs:q:*:eip_dwap_sex_age_rt", "ilo:plfs:q:*:eip_dwap_sex_age_rt:*", "ilo:plfs:q:*:eip_neet_sex_nb", "ilo:plfs:q:*:eip_neet_sex_nb:*", "ilo:plfs:q:*:eip_neet_sex_rt", "ilo:plfs:q:*:eip_neet_sex_rt:*", "ilo:plfs:q:*:emp_dwap_sex_age_rt", "ilo:plfs:q:*:emp_dwap_sex_age_rt:*", "ilo:plfs:q:*:emp_dwap_sex_geo_rt", "ilo:plfs:q:*:emp_dwap_sex_geo_rt:*", "ilo:plfs:q:*:emp_nifl_sex_nb", "ilo:plfs:q:*:emp_nifl_sex_nb:*", "ilo:plfs:q:*:emp_nifl_sex_rt", "ilo:plfs:q:*:emp_nifl_sex_rt:*", "ilo:plfs:q:*:emp_pifl_sex_nb", "ilo:plfs:q:*:emp_pifl_sex_nb:*", "ilo:plfs:q:*:emp_pifl_sex_rt", "ilo:plfs:q:*:emp_pifl_sex_rt:*", "ilo:plfs:q:*:how_temp_sex_nb", "ilo:plfs:q:*:how_temp_sex_nb:*", "ilo:plfs:q:*:how_xees_sex_nb", "ilo:plfs:q:*:how_xees_sex_nb:*", "ilo:plfs:q:*:une_deap_sex_age_rt", "ilo:plfs:q:*:une_deap_sex_age_rt:*", "ilo:plfs:q:*:une_deap_sex_geo_rt", "ilo:plfs:q:*:une_deap_sex_geo_rt:*"]
+    status: baked
+    bundle: ilo-plfs-q
+
   # ---- survey cubes held back (an owner decision, docs/status/ilo.md) ----
   - match: ["ilo:plfs:a:d3:*", "ilo:nss:a:d3:*"]
     status: excluded
     reason: "Three-way cubes (sex by two further classifications) that the ILO computed from PLFS and NSS unit data, about 951,000 Indian cells of which roughly one in six carries the ILO's own unreliable flag; they stay at ILOSTAT, linked from the guide, while every table by sex and one classification is baked."
-  - match: ["ilo:plfs:q:d2:eap_dwap_sex_age_rt:*", "ilo:plfs:q:d2:emp_dwap_sex_age_rt:*", "ilo:plfs:q:d2:une_deap_sex_age_rt:*", "ilo:plfs:q:d2:eip_dwap_sex_age_rt:*", "ilo:plfs:q:d2:eap_dwap_sex_geo_rt:*", "ilo:plfs:q:d2:emp_dwap_sex_geo_rt:*", "ilo:plfs:q:d2:une_deap_sex_geo_rt:*"]
-    status: baked
-    bundle: [ilo-plfs-q-eap-dwap, ilo-plfs-q-eip-dwap, ilo-plfs-q-emp-dwap, ilo-plfs-q-une-deap]
   - match: ["ilo:plfs:q:d2:*", "ilo:plfs:q:d3:*"]
     status: excluded
     reason: "Quarterly PLFS tables finer than sex, or sex by age or area, that the ILO computed from one quarter's share of the survey sample, about 1.35 million Indian cells of which one in seven carries the ILO's unreliable flag; the same tables are baked on calendar years, and the quarters stay at ILOSTAT."
 
-  # ---- everything else the ILO publishes for India: baked, one bundle per family ----
-  - match: ilo:adm-ir:a:*:inj_fatl_*
+  # ---- everything else the ILO publishes for India: baked, one rule per bundle ----
+  - match: ["ilo:adm-ir:a:*:inj_fatl_eco_rt", "ilo:adm-ir:a:*:inj_fatl_eco_rt:*", "ilo:adm-ir:a:*:inj_fatl_sex_mig_rt", "ilo:adm-ir:a:*:inj_fatl_sex_mig_rt:*", "ilo:adm-ir:a:*:inj_nftl_eco_rt", "ilo:adm-ir:a:*:inj_nftl_eco_rt:*", "ilo:adm-ir:a:*:inj_nftl_sex_mig_rt", "ilo:adm-ir:a:*:inj_nftl_sex_mig_rt:*", "ilo:adm-ir:a:*:sdg_f881_sex_mig_rt", "ilo:adm-ir:a:*:sdg_f881_sex_mig_rt:*", "ilo:adm-ir:a:*:sdg_n881_sex_mig_rt", "ilo:adm-ir:a:*:sdg_n881_sex_mig_rt:*"]
     status: baked
-    bundle: ilo-adm-ir-inj-fatl
-  - match: ilo:adm-ir:a:*:inj_nftl_*
+    bundle: ilo-adm-ir
+  - match: ["ilo:adm-lir:a:*:inj_days_eco_nb", "ilo:adm-lir:a:*:inj_days_eco_nb:*", "ilo:adm-lir:a:*:inj_days_sex_mig_nb", "ilo:adm-lir:a:*:inj_days_sex_mig_nb:*", "ilo:adm-lir:a:*:inj_fatl_eco_nb", "ilo:adm-lir:a:*:inj_fatl_eco_nb:*", "ilo:adm-lir:a:*:inj_fatl_eco_rt", "ilo:adm-lir:a:*:inj_fatl_eco_rt:*", "ilo:adm-lir:a:*:inj_fatl_sex_mig_nb", "ilo:adm-lir:a:*:inj_fatl_sex_mig_nb:*", "ilo:adm-lir:a:*:inj_fatl_sex_mig_rt", "ilo:adm-lir:a:*:inj_fatl_sex_mig_rt:*", "ilo:adm-lir:a:*:inj_nftl_eco_nb", "ilo:adm-lir:a:*:inj_nftl_eco_nb:*", "ilo:adm-lir:a:*:inj_nftl_eco_rt", "ilo:adm-lir:a:*:inj_nftl_eco_rt:*", "ilo:adm-lir:a:*:inj_nftl_inj_eco_nb", "ilo:adm-lir:a:*:inj_nftl_inj_eco_nb:*", "ilo:adm-lir:a:*:inj_nftl_sex_inj_mig_nb", "ilo:adm-lir:a:*:inj_nftl_sex_inj_mig_nb:*", "ilo:adm-lir:a:*:inj_nftl_sex_mig_nb", "ilo:adm-lir:a:*:inj_nftl_sex_mig_nb:*", "ilo:adm-lir:a:*:inj_nftl_sex_mig_rt", "ilo:adm-lir:a:*:inj_nftl_sex_mig_rt:*", "ilo:adm-lir:a:*:inj_work_eco_nb", "ilo:adm-lir:a:*:inj_work_eco_nb:*", "ilo:adm-lir:a:*:inj_work_sex_mig_nb", "ilo:adm-lir:a:*:inj_work_sex_mig_nb:*"]
     status: baked
-    bundle: ilo-adm-ir-inj-nftl
-  - match: ilo:adm-ir:a:*:sdg_f881_*
+    bundle: ilo-adm-lir
+  - match: ["ilo:census:a:*:eap_dwap_sex_age_rt", "ilo:census:a:*:eap_dwap_sex_age_rt:*", "ilo:census:a:*:eap_teap_sex_age_nb", "ilo:census:a:*:eap_teap_sex_age_nb:*", "ilo:census:a:*:eip_dwap_sex_age_rt", "ilo:census:a:*:eip_dwap_sex_age_rt:*", "ilo:census:a:*:eip_teip_sex_age_nb", "ilo:census:a:*:eip_teip_sex_age_nb:*", "ilo:census:a:*:pop_mfrc_sex_cct_nb", "ilo:census:a:*:pop_mfrc_sex_cct_nb:*", "ilo:census:a:*:pop_xwap_sex_age_nb", "ilo:census:a:*:pop_xwap_sex_age_nb:*", "ilo:census:a:*:pop_xwap_sex_edu_cct_nb", "ilo:census:a:*:pop_xwap_sex_edu_cct_nb:*"]
     status: baked
-    bundle: ilo-adm-ir-sdg-f881
-  - match: ilo:adm-ir:a:*:sdg_n881_*
+    bundle: ilo-census
+  - match: ["ilo:emi:a:*:ees_tees_sex_eco_nb", "ilo:emi:a:*:ees_tees_sex_eco_nb:*", "ilo:emi:a:*:emp_publ_sex_eco_nb", "ilo:emi:a:*:emp_publ_sex_eco_nb:*", "ilo:emi:a:*:emp_xpse_gov_nb", "ilo:emi:a:*:emp_xpse_gov_nb:*"]
     status: baked
-    bundle: ilo-adm-ir-sdg-n881
-  - match: ilo:adm-lir:a:*:inj_days_*
+    bundle: ilo-emi
+  - match: ["ilo:est:a:*:cld_2pop_sex_age_nb", "ilo:est:a:*:cld_2pop_sex_age_nb:*"]
     status: baked
-    bundle: ilo-adm-lir-inj-days
-  - match: ilo:adm-lir:a:*:inj_fatl_*
+    bundle: [ilo-est-cld-2pop, ilo-est-projections]
+  - match: ["ilo:est:a:*:eap_2eap_sex_age_nb", "ilo:est:a:*:eap_2eap_sex_age_nb:*"]
     status: baked
-    bundle: ilo-adm-lir-inj-fatl
-  - match: ilo:adm-lir:a:*:inj_nftl_*
+    bundle: [ilo-est-eap-2eap, ilo-est-projections]
+  - match: ["ilo:est:a:*:eap_2wap_sex_age_rt", "ilo:est:a:*:eap_2wap_sex_age_rt:*"]
     status: baked
-    bundle: ilo-adm-lir-inj-nftl
-  - match: ilo:adm-lir:a:*:inj_work_*
+    bundle: [ilo-est-eap-2wap, ilo-est-projections]
+  - match: ["ilo:est:a:*:eip_2eet_sex_nb", "ilo:est:a:*:eip_2eet_sex_nb:*", "ilo:est:a:*:eip_2eet_sex_rt", "ilo:est:a:*:eip_2eet_sex_rt:*"]
     status: baked
-    bundle: ilo-adm-lir-inj-work
-  - match: ilo:census:a:*:eap_dwap_*
+    bundle: [ilo-est-eip-2eet, ilo-est-projections]
+  - match: ["ilo:est:a:*:eip_2eip_sex_age_nb", "ilo:est:a:*:eip_2eip_sex_age_nb:*"]
     status: baked
-    bundle: ilo-census-eap-dwap
-  - match: ilo:census:a:*:eap_teap_*
+    bundle: [ilo-est-eip-2eip, ilo-est-projections]
+  - match: ["ilo:est:a:*:eip_2wap_sex_age_rt", "ilo:est:a:*:eip_2wap_sex_age_rt:*"]
     status: baked
-    bundle: ilo-census-eap-teap
-  - match: ilo:census:a:*:eip_dwap_*
+    bundle: [ilo-est-eip-2wap, ilo-est-projections]
+  - match: ["ilo:est:a:*:emp_2emp_age_ste_nb", "ilo:est:a:*:emp_2emp_age_ste_nb:*", "ilo:est:a:*:emp_2emp_sex_age_cla_nb", "ilo:est:a:*:emp_2emp_sex_age_cla_nb:*", "ilo:est:a:*:emp_2emp_sex_age_nb", "ilo:est:a:*:emp_2emp_sex_age_nb:*", "ilo:est:a:*:emp_2emp_sex_eco_nb", "ilo:est:a:*:emp_2emp_sex_eco_nb:*", "ilo:est:a:*:emp_2emp_sex_ocu_nb", "ilo:est:a:*:emp_2emp_sex_ocu_nb:*", "ilo:est:a:*:emp_2emp_sex_ste_nb", "ilo:est:a:*:emp_2emp_sex_ste_nb:*"]
     status: baked
-    bundle: ilo-census-eip-dwap
-  - match: ilo:census:a:*:eip_teip_*
+    bundle: [ilo-est-emp-2emp, ilo-est-projections]
+  - match: ["ilo:est:a:*:emp_2fte_sex_jbf_nb", "ilo:est:a:*:emp_2fte_sex_jbf_nb:*"]
     status: baked
-    bundle: ilo-census-eip-teip
-  - match: ilo:census:a:*:pop_mfrc_*
-    status: baked
-    bundle: ilo-census-pop-mfrc
-  - match: ilo:census:a:*:pop_xwap_*
-    status: baked
-    bundle: ilo-census-pop-xwap
-  - match: ilo:emi:a:*:ees_tees_*
+    bundle: [ilo-est-emp-2fte, ilo-est-projections]
+  - match: ["ilo:est:a:*:emp_2tru_sex_age_nb", "ilo:est:a:*:emp_2tru_sex_age_nb:*", "ilo:est:a:*:emp_2tru_sex_age_rt", "ilo:est:a:*:emp_2tru_sex_age_rt:*"]
     status: baked
-    bundle: ilo-emi-ees-tees
-  - match: ilo:emi:a:*:emp_publ_*
-    status: baked
-    bundle: ilo-emi-emp-publ
-  - match: ilo:emi:a:*:emp_xpse_*
-    status: baked
-    bundle: ilo-emi-emp-xpse
-  - match: ilo:est:a:*:cld_2pop_*
-    status: baked
-    bundle:
-      - ilo-est-cld-2pop
-      - ilo-est-projections
-  - match: ilo:est:a:*:eap_2eap_*
-    status: baked
-    bundle:
-      - ilo-est-eap-2eap
-      - ilo-est-projections
-  - match: ilo:est:a:*:eap_2wap_*
-    status: baked
-    bundle:
-      - ilo-est-eap-2wap
-      - ilo-est-projections
-  - match: ilo:est:a:*:eip_2eet_*
-    status: baked
-    bundle:
-      - ilo-est-eip-2eet
-      - ilo-est-projections
-  - match: ilo:est:a:*:eip_2eip_*
-    status: baked
-    bundle:
-      - ilo-est-eip-2eip
-      - ilo-est-projections
-  - match: ilo:est:a:*:eip_2wap_*
-    status: baked
-    bundle:
-      - ilo-est-eip-2wap
-      - ilo-est-projections
-  - match: ilo:est:a:*:emp_2emp_*
-    status: baked
-    bundle:
-      - ilo-est-emp-2emp
-      - ilo-est-projections
-  - match: ilo:est:a:*:emp_2fte_*
-    status: baked
-    bundle:
-      - ilo-est-emp-2fte
-      - ilo-est-projections
-  - match: ilo:est:a:*:emp_2tru_*
-    status: baked
-    bundle:
-      - ilo-est-emp-2tru
-      - ilo-est-projections
-  - match: ilo:est:a:*:emp_2wap_*
-    status: baked
-    bundle:
-      - ilo-est-emp-2wap
-      - ilo-est-projections
-  - match: ilo:est:a:*:gdp_205u_*
-    status: baked
-    bundle:
-      - ilo-est-gdp-205u
-      - ilo-est-projections
-  - match: ilo:est:a:*:gdp_211p_*
-    status: baked
-    bundle:
-      - ilo-est-gdp-211p
-      - ilo-est-projections
-  - match: ilo:est:a:*:gdp_2hrw_*
-    status: baked
-    bundle:
-      - ilo-est-gdp-2hrw
-      - ilo-est-projections
-  - match: ilo:est:a:*:gdp_2tot_*
-    status: baked
-    bundle:
-      - ilo-est-gdp-2tot
-      - ilo-est-projections
-  - match: ilo:est:a:*:how_2emp_*
-    status: baked
-    bundle:
-      - ilo-est-how-2emp
-      - ilo-est-projections
-  - match: ilo:est:a:*:how_2tdp_*
-    status: baked
-    bundle:
-      - ilo-est-how-2tdp
-      - ilo-est-projections
-  - match: ilo:est:a:*:how_2tot_*
-    status: baked
-    bundle:
-      - ilo-est-how-2tot
-      - ilo-est-projections
-  - match: ilo:est:a:*:lap_2gdp_*
-    status: baked
-    bundle:
-      - ilo-est-lap-2gdp
-      - ilo-est-projections
-  - match: ilo:est:a:*:lap_2lid_*
-    status: baked
-    bundle:
-      - ilo-est-lap-2lid
-      - ilo-est-projections
-  - match: ilo:est:a:*:luu_2lu2_*
-    status: baked
-    bundle:
-      - ilo-est-luu-2lu2
-      - ilo-est-projections
-  - match: ilo:est:a:*:pop_2ldr_*
-    status: baked
-    bundle:
-      - ilo-est-pop-2ldr
-      - ilo-est-projections
-  - match: ilo:est:a:*:pop_2pop_*
-    status: baked
-    bundle:
-      - ilo-est-pop-2pop
-      - ilo-est-projections
-  - match: ilo:est:a:*:pop_2wap_*
+    bundle: [ilo-est-emp-2tru, ilo-est-projections]
+  - match: ["ilo:est:a:*:emp_2wap_sex_age_rt", "ilo:est:a:*:emp_2wap_sex_age_rt:*"]
     status: baked
-    bundle:
-      - ilo-est-pop-2wap
-      - ilo-est-projections
-  - match: ilo:est:a:*:sdg_0111_*
+    bundle: [ilo-est-emp-2wap, ilo-est-projections]
+  - match: ["ilo:est:a:*:gdp_205u_noc_nb", "ilo:est:a:*:gdp_205u_noc_nb:*"]
     status: baked
-    bundle:
-      - ilo-est-sdg-0111
-      - ilo-est-projections
-  - match: ilo:est:a:*:sdg_0821_*
+    bundle: [ilo-est-gdp-205u, ilo-est-projections]
+  - match: ["ilo:est:a:*:gdp_211p_noc_nb", "ilo:est:a:*:gdp_211p_noc_nb:*"]
     status: baked
-    bundle:
-      - ilo-est-sdg-0821
-      - ilo-est-projections
-  - match: ilo:est:a:*:sdg_1041_*
+    bundle: [ilo-est-gdp-211p, ilo-est-projections]
+  - match: ["ilo:est:a:*:gdp_2hrw_noc_nb", "ilo:est:a:*:gdp_2hrw_noc_nb:*"]
     status: baked
-    bundle:
-      - ilo-est-sdg-1041
-      - ilo-est-projections
-  - match: ilo:est:a:*:sdg_b821_*
+    bundle: [ilo-est-gdp-2hrw, ilo-est-projections]
+  - match: ["ilo:est:a:*:gdp_2tot_noc_nb", "ilo:est:a:*:gdp_2tot_noc_nb:*"]
     status: baked
-    bundle:
-      - ilo-est-sdg-b821
-      - ilo-est-projections
-  - match: ilo:est:a:*:une_2eap_*
+    bundle: [ilo-est-gdp-2tot, ilo-est-projections]
+  - match: ["ilo:est:a:*:how_2emp_sex_nb", "ilo:est:a:*:how_2emp_sex_nb:*"]
     status: baked
-    bundle:
-      - ilo-est-une-2eap
-      - ilo-est-projections
-  - match: ilo:est:a:*:une_2une_*
+    bundle: [ilo-est-how-2emp, ilo-est-projections]
+  - match: ["ilo:est:a:*:how_2tdp_sex_rt", "ilo:est:a:*:how_2tdp_sex_rt:*"]
     status: baked
-    bundle:
-      - ilo-est-une-2une
-      - ilo-est-projections
-  - match: ilo:eus-estimates:a:*:ilr_tumt_*
+    bundle: [ilo-est-how-2tdp, ilo-est-projections]
+  - match: ["ilo:est:a:*:how_2tot_sex_nb", "ilo:est:a:*:how_2tot_sex_nb:*"]
     status: baked
-    bundle: ilo-eus-estimates-ilr-tumt
-  - match: ilo:ihd:a:*:ees_xtmp_*
+    bundle: [ilo-est-how-2tot, ilo-est-projections]
+  - match: ["ilo:est:a:*:lap_2gdp_noc_rt", "ilo:est:a:*:lap_2gdp_noc_rt:*"]
     status: baked
-    bundle: ilo-ihd-ees-xtmp
-  - match: ilo:ilo-estimates:a:*:emp_temp_*
+    bundle: [ilo-est-lap-2gdp, ilo-est-projections]
+  - match: ["ilo:est:a:*:lap_2lid_qtl_rt", "ilo:est:a:*:lap_2lid_qtl_rt:*"]
     status: baked
-    bundle: ilo-ilo-estimates-emp-temp
-  - match: ilo:ilo-policy:a:*:sdg_08b1_*
+    bundle: [ilo-est-lap-2lid, ilo-est-projections]
+  - match: ["ilo:est:a:*:luu_2lu2_sex_age_rt", "ilo:est:a:*:luu_2lu2_sex_age_rt:*", "ilo:est:a:*:luu_2lu2_sex_rt", "ilo:est:a:*:luu_2lu2_sex_rt:*"]
     status: baked
-    bundle: ilo-ilo-policy-sdg-08b1
-  - match: ilo:ilo-textual:a:*:sdg_0882_*
+    bundle: [ilo-est-luu-2lu2, ilo-est-projections]
+  - match: ["ilo:est:a:*:pop_2ldr_noc_rt", "ilo:est:a:*:pop_2ldr_noc_rt:*"]
     status: baked
-    bundle: ilo-ilo-textual-sdg-0882
-  - match: ilo:legislation:a:*:ear_inee_*
+    bundle: [ilo-est-pop-2ldr, ilo-est-projections]
+  - match: ["ilo:est:a:*:pop_2pop_sex_nb", "ilo:est:a:*:pop_2pop_sex_nb:*"]
     status: baked
-    bundle: ilo-legislation-ear-inee
-  - match: ilo:mea:a:*:pop_mnas_*
+    bundle: [ilo-est-pop-2pop, ilo-est-projections]
+  - match: ["ilo:est:a:*:pop_2wap_sex_age_nb", "ilo:est:a:*:pop_2wap_sex_age_nb:*"]
     status: baked
-    bundle: ilo-mea-pop-mnas
-  - match: ilo:moia:a:*:pop_mnao_*
+    bundle: [ilo-est-pop-2wap, ilo-est-projections]
+  - match: ["ilo:est:a:*:sdg_0111_sex_age_rt", "ilo:est:a:*:sdg_0111_sex_age_rt:*"]
     status: baked
-    bundle: ilo-moia-pop-mnao
-  - match: ilo:moia:a:*:pop_mnas_*
+    bundle: [ilo-est-sdg-0111, ilo-est-projections]
+  - match: ["ilo:est:a:*:sdg_0821_noc_rt", "ilo:est:a:*:sdg_0821_noc_rt:*"]
     status: baked
-    bundle: ilo-moia-pop-mnas
-  - match: ilo:nss:a:*:eap_dwap_*
+    bundle: [ilo-est-sdg-0821, ilo-est-projections]
+  - match: ["ilo:est:a:*:sdg_1041_noc_rt", "ilo:est:a:*:sdg_1041_noc_rt:*"]
     status: baked
-    bundle: ilo-nss-eap-dwap
-  - match: ilo:nss:a:*:eap_teap_*
+    bundle: [ilo-est-sdg-1041, ilo-est-projections]
+  - match: ["ilo:est:a:*:sdg_b821_noc_rt", "ilo:est:a:*:sdg_b821_noc_rt:*"]
     status: baked
-    bundle: ilo-nss-eap-teap
-  - match: ilo:nss:a:*:ear_emta_*
+    bundle: [ilo-est-sdg-b821, ilo-est-projections]
+  - match: ["ilo:est:a:*:une_2eap_sex_age_rt", "ilo:est:a:*:une_2eap_sex_age_rt:*"]
     status: baked
-    bundle: ilo-nss-ear-emta
-  - match: ilo:nss:a:*:ear_emtg_*
+    bundle: [ilo-est-une-2eap, ilo-est-projections]
+  - match: ["ilo:est:a:*:une_2une_sex_age_nb", "ilo:est:a:*:une_2une_sex_age_nb:*"]
     status: baked
-    bundle: ilo-nss-ear-emtg
-  - match: ilo:nss:a:*:ear_emtm_*
+    bundle: [ilo-est-une-2une, ilo-est-projections]
+  - match: ["ilo:eus-estimates:a:*:ilr_tumt_noc_rt", "ilo:eus-estimates:a:*:ilr_tumt_noc_rt:*"]
     status: baked
-    bundle: ilo-nss-ear-emtm
-  - match: ilo:nss:a:*:ear_tmta_*
+    bundle: ilo-eus-estimates
+  - match: ["ilo:ihd:a:*:ees_xtmp_sex_rt", "ilo:ihd:a:*:ees_xtmp_sex_rt:*"]
     status: baked
-    bundle: ilo-nss-ear-tmta
-  - match: ilo:nss:a:*:ees_tees_*
+    bundle: ilo-ihd
+  - match: ["ilo:ilo-estimates:a:*:emp_temp_sex_age_gai_nb", "ilo:ilo-estimates:a:*:emp_temp_sex_age_gai_nb:*", "ilo:ilo-estimates:a:*:emp_temp_sex_gai_nb", "ilo:ilo-estimates:a:*:emp_temp_sex_gai_nb:*"]
     status: baked
-    bundle: ilo-nss-ees-tees
-  - match: ilo:nss:a:*:ees_xplv_*
+    bundle: ilo-ilo-estimates
+  - match: ["ilo:ilo-policy:a:*:sdg_08b1_noc_nb", "ilo:ilo-policy:a:*:sdg_08b1_noc_nb:*"]
     status: baked
-    bundle: ilo-nss-ees-xplv
-  - match: ilo:nss:a:*:eip_3eet_*
+    bundle: ilo-ilo-policy
+  - match: ["ilo:ilo-textual:a:*:sdg_0882_noc_rt", "ilo:ilo-textual:a:*:sdg_0882_noc_rt:*"]
     status: baked
-    bundle: ilo-nss-eip-3eet
-  - match: ilo:nss:a:*:eip_dwap_*
+    bundle: ilo-ilo-textual
+  - match: ["ilo:legislation:a:*:ear_inee_noc_nb", "ilo:legislation:a:*:ear_inee_noc_nb:*"]
     status: baked
-    bundle: ilo-nss-eip-dwap
-  - match: ilo:nss:a:*:eip_neet_*
+    bundle: ilo-legislation
+  - match: ["ilo:mea:a:*:pop_mnas_sex_crs_nb", "ilo:mea:a:*:pop_mnas_sex_crs_nb:*"]
     status: baked
-    bundle: ilo-nss-eip-neet
-  - match: ilo:nss:a:*:eip_teip_*
+    bundle: ilo-mea
+  - match: ["ilo:moia:a:*:pop_mnao_sex_cds_nb", "ilo:moia:a:*:pop_mnao_sex_cds_nb:*", "ilo:moia:a:*:pop_mnas_sex_crs_nb", "ilo:moia:a:*:pop_mnas_sex_crs_nb:*"]
     status: baked
-    bundle: ilo-nss-eip-teip
-  - match: ilo:nss:a:*:emp_3ifl_*
+    bundle: ilo-moia
+  - match: ["ilo:nss:a:*:eap_dwap_sex_age_rt", "ilo:nss:a:*:eap_dwap_sex_age_rt:*", "ilo:nss:a:*:eap_dwap_sex_edu_rt", "ilo:nss:a:*:eap_dwap_sex_edu_rt:*", "ilo:nss:a:*:eap_dwap_sex_geo_rt", "ilo:nss:a:*:eap_dwap_sex_geo_rt:*", "ilo:nss:a:*:eap_dwap_sex_mts_rt", "ilo:nss:a:*:eap_dwap_sex_mts_rt:*", "ilo:nss:a:*:eap_teap_sex_age_nb", "ilo:nss:a:*:eap_teap_sex_age_nb:*", "ilo:nss:a:*:eap_teap_sex_edu_nb", "ilo:nss:a:*:eap_teap_sex_edu_nb:*", "ilo:nss:a:*:eap_teap_sex_geo_nb", "ilo:nss:a:*:eap_teap_sex_geo_nb:*", "ilo:nss:a:*:eap_teap_sex_mts_nb", "ilo:nss:a:*:eap_teap_sex_mts_nb:*"]
     status: baked
-    bundle: ilo-nss-emp-3ifl
-  - match: ilo:nss:a:*:emp_dwap_*
+    bundle: ilo-nss-eap
+  - match: ["ilo:nss:a:*:ear_emta_sex_age_nb", "ilo:nss:a:*:ear_emta_sex_age_nb:*", "ilo:nss:a:*:ear_emta_sex_eco_nb", "ilo:nss:a:*:ear_emta_sex_eco_nb:*", "ilo:nss:a:*:ear_emta_sex_edu_nb", "ilo:nss:a:*:ear_emta_sex_edu_nb:*", "ilo:nss:a:*:ear_emta_sex_geo_nb", "ilo:nss:a:*:ear_emta_sex_geo_nb:*", "ilo:nss:a:*:ear_emta_sex_ind_nb", "ilo:nss:a:*:ear_emta_sex_ind_nb:*", "ilo:nss:a:*:ear_emta_sex_mts_nb", "ilo:nss:a:*:ear_emta_sex_mts_nb:*", "ilo:nss:a:*:ear_emta_sex_nb", "ilo:nss:a:*:ear_emta_sex_nb:*", "ilo:nss:a:*:ear_emta_sex_ocu_nb", "ilo:nss:a:*:ear_emta_sex_ocu_nb:*", "ilo:nss:a:*:ear_emtg_sex_age_nb", "ilo:nss:a:*:ear_emtg_sex_age_nb:*", "ilo:nss:a:*:ear_emtg_sex_eco_nb", "ilo:nss:a:*:ear_emtg_sex_eco_nb:*", "ilo:nss:a:*:ear_emtg_sex_edu_nb", "ilo:nss:a:*:ear_emtg_sex_edu_nb:*", "ilo:nss:a:*:ear_emtg_sex_geo_nb", "ilo:nss:a:*:ear_emtg_sex_geo_nb:*", "ilo:nss:a:*:ear_emtg_sex_mts_nb", "ilo:nss:a:*:ear_emtg_sex_mts_nb:*", "ilo:nss:a:*:ear_emtg_sex_nb", "ilo:nss:a:*:ear_emtg_sex_nb:*", "ilo:nss:a:*:ear_emtg_sex_ocu_nb", "ilo:nss:a:*:ear_emtg_sex_ocu_nb:*", "ilo:nss:a:*:ear_emtm_sex_age_nb", "ilo:nss:a:*:ear_emtm_sex_age_nb:*", "ilo:nss:a:*:ear_emtm_sex_eco_nb", "ilo:nss:a:*:ear_emtm_sex_eco_nb:*", "ilo:nss:a:*:ear_emtm_sex_edu_nb", "ilo:nss:a:*:ear_emtm_sex_edu_nb:*", "ilo:nss:a:*:ear_emtm_sex_geo_nb", "ilo:nss:a:*:ear_emtm_sex_geo_nb:*", "ilo:nss:a:*:ear_emtm_sex_mts_nb", "ilo:nss:a:*:ear_emtm_sex_mts_nb:*", "ilo:nss:a:*:ear_emtm_sex_nb", "ilo:nss:a:*:ear_emtm_sex_nb:*", "ilo:nss:a:*:ear_emtm_sex_ocu_nb", "ilo:nss:a:*:ear_emtm_sex_ocu_nb:*", "ilo:nss:a:*:ear_tmta_sex_nb", "ilo:nss:a:*:ear_tmta_sex_nb:*"]
     status: baked
-    bundle: ilo-nss-emp-dwap
-  - match: ilo:nss:a:*:emp_nifl_*
+    bundle: ilo-nss-ear
+  - match: ["ilo:nss:a:*:ees_tees_age_ec2_nb", "ilo:nss:a:*:ees_tees_age_ec2_nb:*", "ilo:nss:a:*:ees_tees_age_oc2_nb", "ilo:nss:a:*:ees_tees_age_oc2_nb:*", "ilo:nss:a:*:ees_tees_eco_ocu_nb", "ilo:nss:a:*:ees_tees_eco_ocu_nb:*", "ilo:nss:a:*:ees_tees_sex_age_nb", "ilo:nss:a:*:ees_tees_sex_age_nb:*", "ilo:nss:a:*:ees_tees_sex_ec2_nb", "ilo:nss:a:*:ees_tees_sex_ec2_nb:*", "ilo:nss:a:*:ees_tees_sex_eco_nb", "ilo:nss:a:*:ees_tees_sex_eco_nb:*", "ilo:nss:a:*:ees_tees_sex_edu_nb", "ilo:nss:a:*:ees_tees_sex_edu_nb:*", "ilo:nss:a:*:ees_tees_sex_geo_nb", "ilo:nss:a:*:ees_tees_sex_geo_nb:*", "ilo:nss:a:*:ees_tees_sex_ins_nb", "ilo:nss:a:*:ees_tees_sex_ins_nb:*", "ilo:nss:a:*:ees_tees_sex_mjh_nb", "ilo:nss:a:*:ees_tees_sex_mjh_nb:*", "ilo:nss:a:*:ees_tees_sex_mts_nb", "ilo:nss:a:*:ees_tees_sex_mts_nb:*", "ilo:nss:a:*:ees_tees_sex_oc2_nb", "ilo:nss:a:*:ees_tees_sex_oc2_nb:*", "ilo:nss:a:*:ees_tees_sex_ocu_nb", "ilo:nss:a:*:ees_tees_sex_ocu_nb:*", "ilo:nss:a:*:ees_xplv_sex_rt", "ilo:nss:a:*:ees_xplv_sex_rt:*"]
     status: baked
-    bundle: ilo-nss-emp-nifl
-  - match: ilo:nss:a:*:emp_pifl_*
+    bundle: ilo-nss-ees
+  - match: ["ilo:nss:a:*:eip_3eet_sex_age_nb", "ilo:nss:a:*:eip_3eet_sex_age_nb:*", "ilo:nss:a:*:eip_3eet_sex_age_rt", "ilo:nss:a:*:eip_3eet_sex_age_rt:*", "ilo:nss:a:*:eip_dwap_sex_age_rt", "ilo:nss:a:*:eip_dwap_sex_age_rt:*", "ilo:nss:a:*:eip_dwap_sex_edu_rt", "ilo:nss:a:*:eip_dwap_sex_edu_rt:*", "ilo:nss:a:*:eip_dwap_sex_geo_rt", "ilo:nss:a:*:eip_dwap_sex_geo_rt:*", "ilo:nss:a:*:eip_dwap_sex_mts_rt", "ilo:nss:a:*:eip_dwap_sex_mts_rt:*", "ilo:nss:a:*:eip_neet_sex_age_nb", "ilo:nss:a:*:eip_neet_sex_age_nb:*", "ilo:nss:a:*:eip_neet_sex_age_rt", "ilo:nss:a:*:eip_neet_sex_age_rt:*", "ilo:nss:a:*:eip_neet_sex_edu_nb", "ilo:nss:a:*:eip_neet_sex_edu_nb:*", "ilo:nss:a:*:eip_neet_sex_edu_rt", "ilo:nss:a:*:eip_neet_sex_edu_rt:*", "ilo:nss:a:*:eip_neet_sex_geo_nb", "ilo:nss:a:*:eip_neet_sex_geo_nb:*", "ilo:nss:a:*:eip_neet_sex_geo_rt", "ilo:nss:a:*:eip_neet_sex_geo_rt:*", "ilo:nss:a:*:eip_neet_sex_mts_nb", "ilo:nss:a:*:eip_neet_sex_mts_nb:*", "ilo:nss:a:*:eip_neet_sex_mts_rt", "ilo:nss:a:*:eip_neet_sex_mts_rt:*", "ilo:nss:a:*:eip_neet_sex_nb", "ilo:nss:a:*:eip_neet_sex_nb:*", "ilo:nss:a:*:eip_neet_sex_rt", "ilo:nss:a:*:eip_neet_sex_rt:*", "ilo:nss:a:*:eip_teip_sex_age_nb", "ilo:nss:a:*:eip_teip_sex_age_nb:*", "ilo:nss:a:*:eip_teip_sex_edu_nb", "ilo:nss:a:*:eip_teip_sex_edu_nb:*", "ilo:nss:a:*:eip_teip_sex_geo_nb", "ilo:nss:a:*:eip_teip_sex_geo_nb:*", "ilo:nss:a:*:eip_teip_sex_mts_nb", "ilo:nss:a:*:eip_teip_sex_mts_nb:*"]
     status: baked
-    bundle: ilo-nss-emp-pifl
-  - match: ilo:nss:a:*:emp_pter_*
+    bundle: ilo-nss-eip
+  - match: ["ilo:nss:a:*:emp_3ifl_sex_age_rt", "ilo:nss:a:*:emp_3ifl_sex_age_rt:*", "ilo:nss:a:*:emp_dwap_sex_age_rt", "ilo:nss:a:*:emp_dwap_sex_age_rt:*", "ilo:nss:a:*:emp_dwap_sex_edu_rt", "ilo:nss:a:*:emp_dwap_sex_edu_rt:*", "ilo:nss:a:*:emp_dwap_sex_geo_rt", "ilo:nss:a:*:emp_dwap_sex_geo_rt:*", "ilo:nss:a:*:emp_dwap_sex_mts_rt", "ilo:nss:a:*:emp_dwap_sex_mts_rt:*", "ilo:nss:a:*:emp_nifl_age_ec2_nb", "ilo:nss:a:*:emp_nifl_age_ec2_nb:*", "ilo:nss:a:*:emp_nifl_age_ec2_rt", "ilo:nss:a:*:emp_nifl_age_ec2_rt:*", "ilo:nss:a:*:emp_nifl_age_oc2_nb", "ilo:nss:a:*:emp_nifl_age_oc2_nb:*", "ilo:nss:a:*:emp_nifl_age_oc2_rt", "ilo:nss:a:*:emp_nifl_age_oc2_rt:*", "ilo:nss:a:*:emp_nifl_eco_ocu_nb", "ilo:nss:a:*:emp_nifl_eco_ocu_nb:*", "ilo:nss:a:*:emp_nifl_eco_ocu_rt", "ilo:nss:a:*:emp_nifl_eco_ocu_rt:*", "ilo:nss:a:*:emp_nifl_sex_age_nb", "ilo:nss:a:*:emp_nifl_sex_age_nb:*", "ilo:nss:a:*:emp_nifl_sex_age_rt", "ilo:nss:a:*:emp_nifl_sex_age_rt:*", "ilo:nss:a:*:emp_nifl_sex_ec2_nb", "ilo:nss:a:*:emp_nifl_sex_ec2_nb:*", "ilo:nss:a:*:emp_nifl_sex_ec2_rt", "ilo:nss:a:*:emp_nifl_sex_ec2_rt:*", "ilo:nss:a:*:emp_nifl_sex_eco_nb", "ilo:nss:a:*:emp_nifl_sex_eco_nb:*", "ilo:nss:a:*:emp_nifl_sex_eco_rt", "ilo:nss:a:*:emp_nifl_sex_eco_rt:*", "ilo:nss:a:*:emp_nifl_sex_edu_nb", "ilo:nss:a:*:emp_nifl_sex_edu_nb:*", "ilo:nss:a:*:emp_nifl_sex_edu_rt", "ilo:nss:a:*:emp_nifl_sex_edu_rt:*", "ilo:nss:a:*:emp_nifl_sex_geo_nb", "ilo:nss:a:*:emp_nifl_sex_geo_nb:*", "ilo:nss:a:*:emp_nifl_sex_geo_rt", "ilo:nss:a:*:emp_nifl_sex_geo_rt:*", "ilo:nss:a:*:emp_nifl_sex_ind_nb", "ilo:nss:a:*:emp_nifl_sex_ind_nb:*", "ilo:nss:a:*:emp_nifl_sex_ind_rt", "ilo:nss:a:*:emp_nifl_sex_ind_rt:*", "ilo:nss:a:*:emp_nifl_sex_mts_nb", "ilo:nss:a:*:emp_nifl_sex_mts_nb:*", "ilo:nss:a:*:emp_nifl_sex_mts_rt", "ilo:nss:a:*:emp_nifl_sex_mts_rt:*", "ilo:nss:a:*:emp_nifl_sex_nb", "ilo:nss:a:*:emp_nifl_sex_nb:*", "ilo:nss:a:*:emp_nifl_sex_oc2_nb", "ilo:nss:a:*:emp_nifl_sex_oc2_nb:*", "ilo:nss:a:*:emp_nifl_sex_oc2_rt", "ilo:nss:a:*:emp_nifl_sex_oc2_rt:*", "ilo:nss:a:*:emp_nifl_sex_ocu_nb", "ilo:nss:a:*:emp_nifl_sex_ocu_nb:*", "ilo:nss:a:*:emp_nifl_sex_ocu_rt", "ilo:nss:a:*:emp_nifl_sex_ocu_rt:*", "ilo:nss:a:*:emp_nifl_sex_rt", "ilo:nss:a:*:emp_nifl_sex_rt:*", "ilo:nss:a:*:emp_nifl_sex_ste_nb", "ilo:nss:a:*:emp_nifl_sex_ste_nb:*", "ilo:nss:a:*:emp_nifl_sex_ste_rt", "ilo:nss:a:*:emp_nifl_sex_ste_rt:*", "ilo:nss:a:*:emp_pifl_age_ec2_nb", "ilo:nss:a:*:emp_pifl_age_ec2_nb:*", "ilo:nss:a:*:emp_pifl_age_ec2_rt", "ilo:nss:a:*:emp_pifl_age_ec2_rt:*", "ilo:nss:a:*:emp_pifl_age_oc2_nb", "ilo:nss:a:*:emp_pifl_age_oc2_nb:*", "ilo:nss:a:*:emp_pifl_age_oc2_rt", "ilo:nss:a:*:emp_pifl_age_oc2_rt:*", "ilo:nss:a:*:emp_pifl_eco_ocu_nb", "ilo:nss:a:*:emp_pifl_eco_ocu_nb:*", "ilo:nss:a:*:emp_pifl_eco_ocu_rt", "ilo:nss:a:*:emp_pifl_eco_ocu_rt:*", "ilo:nss:a:*:emp_pifl_sex_age_nb", "ilo:nss:a:*:emp_pifl_sex_age_nb:*", "ilo:nss:a:*:emp_pifl_sex_age_rt", "ilo:nss:a:*:emp_pifl_sex_age_rt:*", "ilo:nss:a:*:emp_pifl_sex_ec2_nb", "ilo:nss:a:*:emp_pifl_sex_ec2_nb:*", "ilo:nss:a:*:emp_pifl_sex_ec2_rt", "ilo:nss:a:*:emp_pifl_sex_ec2_rt:*", "ilo:nss:a:*:emp_pifl_sex_eco_nb", "ilo:nss:a:*:emp_pifl_sex_eco_nb:*", "ilo:nss:a:*:emp_pifl_sex_eco_rt", "ilo:nss:a:*:emp_pifl_sex_eco_rt:*", "ilo:nss:a:*:emp_pifl_sex_edu_nb", "ilo:nss:a:*:emp_pifl_sex_edu_nb:*", "ilo:nss:a:*:emp_pifl_sex_edu_rt", "ilo:nss:a:*:emp_pifl_sex_edu_rt:*", "ilo:nss:a:*:emp_pifl_sex_geo_nb", "ilo:nss:a:*:emp_pifl_sex_geo_nb:*", "ilo:nss:a:*:emp_pifl_sex_geo_rt", "ilo:nss:a:*:emp_pifl_sex_geo_rt:*", "ilo:nss:a:*:emp_pifl_sex_mts_nb", "ilo:nss:a:*:emp_pifl_sex_mts_nb:*", "ilo:nss:a:*:emp_pifl_sex_mts_rt", "ilo:nss:a:*:emp_pifl_sex_mts_rt:*", "ilo:nss:a:*:emp_pifl_sex_nb", "ilo:nss:a:*:emp_pifl_sex_nb:*", "ilo:nss:a:*:emp_pifl_sex_oc2_nb", "ilo:nss:a:*:emp_pifl_sex_oc2_nb:*", "ilo:nss:a:*:emp_pifl_sex_oc2_rt", "ilo:nss:a:*:emp_pifl_sex_oc2_rt:*", "ilo:nss:a:*:emp_pifl_sex_ocu_nb", "ilo:nss:a:*:emp_pifl_sex_ocu_nb:*", "ilo:nss:a:*:emp_pifl_sex_ocu_rt", "ilo:nss:a:*:emp_pifl_sex_ocu_rt:*", "ilo:nss:a:*:emp_pifl_sex_rt", "ilo:nss:a:*:emp_pifl_sex_rt:*", "ilo:nss:a:*:emp_pifl_sex_ste_nb", "ilo:nss:a:*:emp_pifl_sex_ste_nb:*", "ilo:nss:a:*:emp_pifl_sex_ste_rt", "ilo:nss:a:*:emp_pifl_sex_ste_rt:*", "ilo:nss:a:*:emp_pter_sex_rt", "ilo:nss:a:*:emp_pter_sex_rt:*", "ilo:nss:a:*:emp_publ_sex_age_nb", "ilo:nss:a:*:emp_publ_sex_age_nb:*", "ilo:nss:a:*:emp_publ_sex_ec2_nb", "ilo:nss:a:*:emp_publ_sex_ec2_nb:*", "ilo:nss:a:*:emp_publ_sex_eco_nb", "ilo:nss:a:*:emp_publ_sex_eco_nb:*", "ilo:nss:a:*:emp_publ_sex_edu_nb", "ilo:nss:a:*:emp_publ_sex_edu_nb:*", "ilo:nss:a:*:emp_publ_sex_geo_nb", "ilo:nss:a:*:emp_publ_sex_geo_nb:*", "ilo:nss:a:*:emp_publ_sex_mts_nb", "ilo:nss:a:*:emp_publ_sex_mts_nb:*", "ilo:nss:a:*:emp_publ_sex_ste_nb", "ilo:nss:a:*:emp_publ_sex_ste_nb:*", "ilo:nss:a:*:emp_temp_age_ec2_nb", "ilo:nss:a:*:emp_temp_age_ec2_nb:*", "ilo:nss:a:*:emp_temp_age_oc2_nb", "ilo:nss:a:*:emp_temp_age_oc2_nb:*", "ilo:nss:a:*:emp_temp_age_ste_nb", "ilo:nss:a:*:emp_temp_age_ste_nb:*", "ilo:nss:a:*:emp_temp_eco_ocu_nb", "ilo:nss:a:*:emp_temp_eco_ocu_nb:*", "ilo:nss:a:*:emp_temp_sex_age_nb", "ilo:nss:a:*:emp_temp_sex_age_nb:*", "ilo:nss:a:*:emp_temp_sex_ec2_nb", "ilo:nss:a:*:emp_temp_sex_ec2_nb:*", "ilo:nss:a:*:emp_temp_sex_eco_nb", "ilo:nss:a:*:emp_temp_sex_eco_nb:*", "ilo:nss:a:*:emp_temp_sex_edu_nb", "ilo:nss:a:*:emp_temp_sex_edu_nb:*", "ilo:nss:a:*:emp_temp_sex_geo_nb", "ilo:nss:a:*:emp_temp_sex_geo_nb:*", "ilo:nss:a:*:emp_temp_sex_ind_nb", "ilo:nss:a:*:emp_temp_sex_ind_nb:*", "ilo:nss:a:*:emp_temp_sex_ins_nb", "ilo:nss:a:*:emp_temp_sex_ins_nb:*", "ilo:nss:a:*:emp_temp_sex_mjh_nb", "ilo:nss:a:*:emp_temp_sex_mjh_nb:*", "ilo:nss:a:*:emp_temp_sex_mts_nb", "ilo:nss:a:*:emp_temp_sex_mts_nb:*", "ilo:nss:a:*:emp_temp_sex_oc2_nb", "ilo:nss:a:*:emp_temp_sex_oc2_nb:*", "ilo:nss:a:*:emp_temp_sex_ocu_nb", "ilo:nss:a:*:emp_temp_sex_ocu_nb:*", "ilo:nss:a:*:emp_temp_sex_ste_nb", "ilo:nss:a:*:emp_temp_sex_ste_nb:*", "ilo:nss:a:*:emp_tnif_sex_nb", "ilo:nss:a:*:emp_tnif_sex_nb:*", "ilo:nss:a:*:emp_tnif_sex_rt", "ilo:nss:a:*:emp_tnif_sex_rt:*", "ilo:nss:a:*:emp_tour_sex_age_nb", "ilo:nss:a:*:emp_tour_sex_age_nb:*", "ilo:nss:a:*:emp_tour_sex_ec2_nb", "ilo:nss:a:*:emp_tour_sex_ec2_nb:*", "ilo:nss:a:*:emp_tour_sex_eco_nb", "ilo:nss:a:*:emp_tour_sex_eco_nb:*", "ilo:nss:a:*:emp_tour_sex_edu_nb", "ilo:nss:a:*:emp_tour_sex_edu_nb:*", "ilo:nss:a:*:emp_tour_sex_geo_nb", "ilo:nss:a:*:emp_tour_sex_geo_nb:*", "ilo:nss:a:*:emp_tour_sex_jbt_nb", "ilo:nss:a:*:emp_tour_sex_jbt_nb:*", "ilo:nss:a:*:emp_tour_sex_mts_nb", "ilo:nss:a:*:emp_tour_sex_mts_nb:*", "ilo:nss:a:*:emp_tour_sex_oc2_nb", "ilo:nss:a:*:emp_tour_sex_oc2_nb:*", "ilo:nss:a:*:emp_tour_sex_ocu_nb", "ilo:nss:a:*:emp_tour_sex_ocu_nb:*", "ilo:nss:a:*:emp_tour_sex_ste_nb", "ilo:nss:a:*:emp_tour_sex_ste_nb:*", "ilo:nss:a:*:emp_tpif_sex_nb", "ilo:nss:a:*:emp_tpif_sex_nb:*", "ilo:nss:a:*:emp_tpif_sex_rt", "ilo:nss:a:*:emp_tpif_sex_rt:*"]
     status: baked
-    bundle: ilo-nss-emp-pter
-  - match: ilo:nss:a:*:emp_publ_*
+    bundle: ilo-nss-emp
+  - match: ["ilo:nss:a:*:ged_plfp_sex_hht_rt", "ilo:nss:a:*:ged_plfp_sex_hht_rt:*", "ilo:nss:a:*:ged_twap_hht_nb", "ilo:nss:a:*:ged_twap_hht_nb:*", "ilo:nss:a:*:sdg_0552_noc_rt", "ilo:nss:a:*:sdg_0552_noc_rt:*", "ilo:nss:a:*:sdg_0831_sex_eco_rt", "ilo:nss:a:*:sdg_0831_sex_eco_rt:*", "ilo:nss:a:*:sdg_0852_sex_age_rt", "ilo:nss:a:*:sdg_0852_sex_age_rt:*", "ilo:nss:a:*:sdg_0861_sex_rt", "ilo:nss:a:*:sdg_0861_sex_rt:*", "ilo:nss:a:*:sdg_0922_noc_rt", "ilo:nss:a:*:sdg_0922_noc_rt:*", "ilo:nss:a:*:sdg_t552_noc_rt", "ilo:nss:a:*:sdg_t552_noc_rt:*"]
     status: baked
-    bundle: ilo-nss-emp-publ
-  - match: ilo:nss:a:*:emp_temp_*
+    bundle: ilo-nss-more
+  - match: ["ilo:nss:a:*:pop_3vet_sex_age_nb", "ilo:nss:a:*:pop_3vet_sex_age_nb:*", "ilo:nss:a:*:pop_xvet_sex_age_nb", "ilo:nss:a:*:pop_xvet_sex_age_nb:*", "ilo:nss:a:*:pop_xvet_sex_edu_nb", "ilo:nss:a:*:pop_xvet_sex_edu_nb:*", "ilo:nss:a:*:pop_xwap_sex_age_nb", "ilo:nss:a:*:pop_xwap_sex_age_nb:*", "ilo:nss:a:*:pop_xwap_sex_edu_nb", "ilo:nss:a:*:pop_xwap_sex_edu_nb:*", "ilo:nss:a:*:pop_xwap_sex_geo_nb", "ilo:nss:a:*:pop_xwap_sex_geo_nb:*", "ilo:nss:a:*:pop_xwap_sex_lms_nb", "ilo:nss:a:*:pop_xwap_sex_lms_nb:*", "ilo:nss:a:*:pop_xwap_sex_mts_nb", "ilo:nss:a:*:pop_xwap_sex_mts_nb:*"]
     status: baked
-    bundle: ilo-nss-emp-temp
-  - match: ilo:nss:a:*:emp_tnif_*
+    bundle: ilo-nss-pop
+  - match: ["ilo:nss:a:*:une_deap_sex_age_rt", "ilo:nss:a:*:une_deap_sex_age_rt:*", "ilo:nss:a:*:une_deap_sex_edu_rt", "ilo:nss:a:*:une_deap_sex_edu_rt:*", "ilo:nss:a:*:une_deap_sex_geo_rt", "ilo:nss:a:*:une_deap_sex_geo_rt:*", "ilo:nss:a:*:une_deap_sex_mts_rt", "ilo:nss:a:*:une_deap_sex_mts_rt:*", "ilo:nss:a:*:une_tune_sex_age_nb", "ilo:nss:a:*:une_tune_sex_age_nb:*", "ilo:nss:a:*:une_tune_sex_edu_nb", "ilo:nss:a:*:une_tune_sex_edu_nb:*", "ilo:nss:a:*:une_tune_sex_geo_nb", "ilo:nss:a:*:une_tune_sex_geo_nb:*", "ilo:nss:a:*:une_tune_sex_mts_nb", "ilo:nss:a:*:une_tune_sex_mts_nb:*"]
     status: baked
-    bundle: ilo-nss-emp-tnif
-  - match: ilo:nss:a:*:emp_tour_*
+    bundle: ilo-nss-une
+  - match: ["ilo:official:a:*:lai_vist_noc_nb", "ilo:official:a:*:lai_vist_noc_nb:*", "ilo:official:a:*:str_days_eco_nb", "ilo:official:a:*:str_days_eco_nb:*", "ilo:official:a:*:str_tstr_eco_nb", "ilo:official:a:*:str_tstr_eco_nb:*", "ilo:official:a:*:str_work_eco_nb", "ilo:official:a:*:str_work_eco_nb:*"]
     status: baked
-    bundle: ilo-nss-emp-tour
-  - match: ilo:nss:a:*:emp_tpif_*
+    bundle: ilo-official
+  - match: ["ilo:plfs:a:*:eap_dwap_sex_age_rt", "ilo:plfs:a:*:eap_dwap_sex_age_rt:*", "ilo:plfs:a:*:eap_dwap_sex_edu_rt", "ilo:plfs:a:*:eap_dwap_sex_edu_rt:*", "ilo:plfs:a:*:eap_dwap_sex_geo_rt", "ilo:plfs:a:*:eap_dwap_sex_geo_rt:*", "ilo:plfs:a:*:eap_dwap_sex_mts_rt", "ilo:plfs:a:*:eap_dwap_sex_mts_rt:*", "ilo:plfs:a:*:eap_teap_sex_age_nb", "ilo:plfs:a:*:eap_teap_sex_age_nb:*", "ilo:plfs:a:*:eap_teap_sex_edu_nb", "ilo:plfs:a:*:eap_teap_sex_edu_nb:*", "ilo:plfs:a:*:eap_teap_sex_geo_nb", "ilo:plfs:a:*:eap_teap_sex_geo_nb:*", "ilo:plfs:a:*:eap_teap_sex_mts_nb", "ilo:plfs:a:*:eap_teap_sex_mts_nb:*"]
     status: baked
-    bundle: ilo-nss-emp-tpif
-  - match: ilo:nss:a:*:ged_plfp_*
+    bundle: ilo-plfs-eap
+  - match: ["ilo:plfs:a:*:ear_chra_sex_nb", "ilo:plfs:a:*:ear_chra_sex_nb:*", "ilo:plfs:a:*:ear_cmta_sex_nb", "ilo:plfs:a:*:ear_cmta_sex_nb:*", "ilo:plfs:a:*:ear_ehra_sex_age_nb", "ilo:plfs:a:*:ear_ehra_sex_age_nb:*", "ilo:plfs:a:*:ear_ehra_sex_eco_nb", "ilo:plfs:a:*:ear_ehra_sex_eco_nb:*", "ilo:plfs:a:*:ear_ehra_sex_edu_nb", "ilo:plfs:a:*:ear_ehra_sex_edu_nb:*", "ilo:plfs:a:*:ear_ehra_sex_geo_nb", "ilo:plfs:a:*:ear_ehra_sex_geo_nb:*", "ilo:plfs:a:*:ear_ehra_sex_ind_nb", "ilo:plfs:a:*:ear_ehra_sex_ind_nb:*", "ilo:plfs:a:*:ear_ehra_sex_mts_nb", "ilo:plfs:a:*:ear_ehra_sex_mts_nb:*", "ilo:plfs:a:*:ear_ehra_sex_nb", "ilo:plfs:a:*:ear_ehra_sex_nb:*", "ilo:plfs:a:*:ear_ehra_sex_ocu_nb", "ilo:plfs:a:*:ear_ehra_sex_ocu_nb:*", "ilo:plfs:a:*:ear_ehrg_sex_age_nb", "ilo:plfs:a:*:ear_ehrg_sex_age_nb:*", "ilo:plfs:a:*:ear_ehrg_sex_eco_nb", "ilo:plfs:a:*:ear_ehrg_sex_eco_nb:*", "ilo:plfs:a:*:ear_ehrg_sex_edu_nb", "ilo:plfs:a:*:ear_ehrg_sex_edu_nb:*", "ilo:plfs:a:*:ear_ehrg_sex_geo_nb", "ilo:plfs:a:*:ear_ehrg_sex_geo_nb:*", "ilo:plfs:a:*:ear_ehrg_sex_mts_nb", "ilo:plfs:a:*:ear_ehrg_sex_mts_nb:*", "ilo:plfs:a:*:ear_ehrg_sex_nb", "ilo:plfs:a:*:ear_ehrg_sex_nb:*", "ilo:plfs:a:*:ear_ehrg_sex_ocu_nb", "ilo:plfs:a:*:ear_ehrg_sex_ocu_nb:*", "ilo:plfs:a:*:ear_ehrm_sex_age_nb", "ilo:plfs:a:*:ear_ehrm_sex_age_nb:*", "ilo:plfs:a:*:ear_ehrm_sex_eco_nb", "ilo:plfs:a:*:ear_ehrm_sex_eco_nb:*", "ilo:plfs:a:*:ear_ehrm_sex_edu_nb", "ilo:plfs:a:*:ear_ehrm_sex_edu_nb:*", "ilo:plfs:a:*:ear_ehrm_sex_geo_nb", "ilo:plfs:a:*:ear_ehrm_sex_geo_nb:*", "ilo:plfs:a:*:ear_ehrm_sex_mts_nb", "ilo:plfs:a:*:ear_ehrm_sex_mts_nb:*", "ilo:plfs:a:*:ear_ehrm_sex_nb", "ilo:plfs:a:*:ear_ehrm_sex_nb:*", "ilo:plfs:a:*:ear_ehrm_sex_ocu_nb", "ilo:plfs:a:*:ear_ehrm_sex_ocu_nb:*", "ilo:plfs:a:*:ear_emta_sex_age_nb", "ilo:plfs:a:*:ear_emta_sex_age_nb:*", "ilo:plfs:a:*:ear_emta_sex_eco_nb", "ilo:plfs:a:*:ear_emta_sex_eco_nb:*", "ilo:plfs:a:*:ear_emta_sex_edu_nb", "ilo:plfs:a:*:ear_emta_sex_edu_nb:*", "ilo:plfs:a:*:ear_emta_sex_geo_nb", "ilo:plfs:a:*:ear_emta_sex_geo_nb:*", "ilo:plfs:a:*:ear_emta_sex_ind_nb", "ilo:plfs:a:*:ear_emta_sex_ind_nb:*", "ilo:plfs:a:*:ear_emta_sex_mts_nb", "ilo:plfs:a:*:ear_emta_sex_mts_nb:*", "ilo:plfs:a:*:ear_emta_sex_nb", "ilo:plfs:a:*:ear_emta_sex_nb:*", "ilo:plfs:a:*:ear_emta_sex_ocu_nb", "ilo:plfs:a:*:ear_emta_sex_ocu_nb:*", "ilo:plfs:a:*:ear_emtg_sex_age_nb", "ilo:plfs:a:*:ear_emtg_sex_age_nb:*", "ilo:plfs:a:*:ear_emtg_sex_eco_nb", "ilo:plfs:a:*:ear_emtg_sex_eco_nb:*", "ilo:plfs:a:*:ear_emtg_sex_edu_nb", "ilo:plfs:a:*:ear_emtg_sex_edu_nb:*", "ilo:plfs:a:*:ear_emtg_sex_geo_nb", "ilo:plfs:a:*:ear_emtg_sex_geo_nb:*", "ilo:plfs:a:*:ear_emtg_sex_mts_nb", "ilo:plfs:a:*:ear_emtg_sex_mts_nb:*", "ilo:plfs:a:*:ear_emtg_sex_nb", "ilo:plfs:a:*:ear_emtg_sex_nb:*", "ilo:plfs:a:*:ear_emtg_sex_ocu_nb", "ilo:plfs:a:*:ear_emtg_sex_ocu_nb:*", "ilo:plfs:a:*:ear_emtm_sex_age_nb", "ilo:plfs:a:*:ear_emtm_sex_age_nb:*", "ilo:plfs:a:*:ear_emtm_sex_eco_nb", "ilo:plfs:a:*:ear_emtm_sex_eco_nb:*", "ilo:plfs:a:*:ear_emtm_sex_edu_nb", "ilo:plfs:a:*:ear_emtm_sex_edu_nb:*", "ilo:plfs:a:*:ear_emtm_sex_geo_nb", "ilo:plfs:a:*:ear_emtm_sex_geo_nb:*", "ilo:plfs:a:*:ear_emtm_sex_mts_nb", "ilo:plfs:a:*:ear_emtm_sex_mts_nb:*", "ilo:plfs:a:*:ear_emtm_sex_nb", "ilo:plfs:a:*:ear_emtm_sex_nb:*", "ilo:plfs:a:*:ear_emtm_sex_ocu_nb", "ilo:plfs:a:*:ear_emtm_sex_ocu_nb:*", "ilo:plfs:a:*:ear_ggap_ocu_rt", "ilo:plfs:a:*:ear_ggap_ocu_rt:*", "ilo:plfs:a:*:ear_shra_sex_nb", "ilo:plfs:a:*:ear_shra_sex_nb:*", "ilo:plfs:a:*:ear_smta_sex_nb", "ilo:plfs:a:*:ear_smta_sex_nb:*", "ilo:plfs:a:*:ear_xfls_noc_rt", "ilo:plfs:a:*:ear_xfls_noc_rt:*", "ilo:plfs:a:*:ear_xtlp_sex_rt", "ilo:plfs:a:*:ear_xtlp_sex_rt:*"]
     status: baked
-    bundle: ilo-nss-ged-plfp
-  - match: ilo:nss:a:*:ged_twap_*
+    bundle: ilo-plfs-ear
+  - match: ["ilo:plfs:a:*:ees_care_sex_jbc_nb", "ilo:plfs:a:*:ees_care_sex_jbc_nb:*", "ilo:plfs:a:*:ees_stem_sex_jbc_nb", "ilo:plfs:a:*:ees_stem_sex_jbc_nb:*", "ilo:plfs:a:*:ees_tees_age_ec2_nb", "ilo:plfs:a:*:ees_tees_age_ec2_nb:*", "ilo:plfs:a:*:ees_tees_age_oc2_nb", "ilo:plfs:a:*:ees_tees_age_oc2_nb:*", "ilo:plfs:a:*:ees_tees_eco_ocu_nb", "ilo:plfs:a:*:ees_tees_eco_ocu_nb:*", "ilo:plfs:a:*:ees_tees_sex_age_nb", "ilo:plfs:a:*:ees_tees_sex_age_nb:*", "ilo:plfs:a:*:ees_tees_sex_ec2_nb", "ilo:plfs:a:*:ees_tees_sex_ec2_nb:*", "ilo:plfs:a:*:ees_tees_sex_eco_nb", "ilo:plfs:a:*:ees_tees_sex_eco_nb:*", "ilo:plfs:a:*:ees_tees_sex_edu_nb", "ilo:plfs:a:*:ees_tees_sex_edu_nb:*", "ilo:plfs:a:*:ees_tees_sex_geo_nb", "ilo:plfs:a:*:ees_tees_sex_geo_nb:*", "ilo:plfs:a:*:ees_tees_sex_how_nb", "ilo:plfs:a:*:ees_tees_sex_how_nb:*", "ilo:plfs:a:*:ees_tees_sex_mts_nb", "ilo:plfs:a:*:ees_tees_sex_mts_nb:*", "ilo:plfs:a:*:ees_tees_sex_oc2_nb", "ilo:plfs:a:*:ees_tees_sex_oc2_nb:*", "ilo:plfs:a:*:ees_tees_sex_ocu_nb", "ilo:plfs:a:*:ees_tees_sex_ocu_nb:*", "ilo:plfs:a:*:ees_xplv_sex_rt", "ilo:plfs:a:*:ees_xplv_sex_rt:*", "ilo:plfs:a:*:ees_xtmp_sex_rt", "ilo:plfs:a:*:ees_xtmp_sex_rt:*"]
     status: baked
-    bundle: ilo-nss-ged-twap
-  - match: ilo:nss:a:*:pop_3vet_*
+    bundle: ilo-plfs-ees
+  - match: ["ilo:plfs:a:*:eip_3eet_sex_age_nb", "ilo:plfs:a:*:eip_3eet_sex_age_nb:*", "ilo:plfs:a:*:eip_3eet_sex_age_rt", "ilo:plfs:a:*:eip_3eet_sex_age_rt:*", "ilo:plfs:a:*:eip_dwap_sex_age_rt", "ilo:plfs:a:*:eip_dwap_sex_age_rt:*", "ilo:plfs:a:*:eip_dwap_sex_edu_rt", "ilo:plfs:a:*:eip_dwap_sex_edu_rt:*", "ilo:plfs:a:*:eip_dwap_sex_geo_rt", "ilo:plfs:a:*:eip_dwap_sex_geo_rt:*", "ilo:plfs:a:*:eip_dwap_sex_mts_rt", "ilo:plfs:a:*:eip_dwap_sex_mts_rt:*", "ilo:plfs:a:*:eip_neet_sex_age_nb", "ilo:plfs:a:*:eip_neet_sex_age_nb:*", "ilo:plfs:a:*:eip_neet_sex_age_rt", "ilo:plfs:a:*:eip_neet_sex_age_rt:*", "ilo:plfs:a:*:eip_neet_sex_edu_nb", "ilo:plfs:a:*:eip_neet_sex_edu_nb:*", "ilo:plfs:a:*:eip_neet_sex_edu_rt", "ilo:plfs:a:*:eip_neet_sex_edu_rt:*", "ilo:plfs:a:*:eip_neet_sex_geo_nb", "ilo:plfs:a:*:eip_neet_sex_geo_nb:*", "ilo:plfs:a:*:eip_neet_sex_geo_rt", "ilo:plfs:a:*:eip_neet_sex_geo_rt:*", "ilo:plfs:a:*:eip_neet_sex_mts_nb", "ilo:plfs:a:*:eip_neet_sex_mts_nb:*", "ilo:plfs:a:*:eip_neet_sex_mts_rt", "ilo:plfs:a:*:eip_neet_sex_mts_rt:*", "ilo:plfs:a:*:eip_neet_sex_nb", "ilo:plfs:a:*:eip_neet_sex_nb:*", "ilo:plfs:a:*:eip_neet_sex_rt", "ilo:plfs:a:*:eip_neet_sex_rt:*", "ilo:plfs:a:*:eip_rcar_sex_age_rt", "ilo:plfs:a:*:eip_rcar_sex_age_rt:*", "ilo:plfs:a:*:eip_rcar_sex_edu_rt", "ilo:plfs:a:*:eip_rcar_sex_edu_rt:*", "ilo:plfs:a:*:eip_rcar_sex_geo_rt", "ilo:plfs:a:*:eip_rcar_sex_geo_rt:*", "ilo:plfs:a:*:eip_rcar_sex_rt", "ilo:plfs:a:*:eip_rcar_sex_rt:*", "ilo:plfs:a:*:eip_teip_sex_age_nb", "ilo:plfs:a:*:eip_teip_sex_age_nb:*", "ilo:plfs:a:*:eip_teip_sex_edu_nb", "ilo:plfs:a:*:eip_teip_sex_edu_nb:*", "ilo:plfs:a:*:eip_teip_sex_geo_nb", "ilo:plfs:a:*:eip_teip_sex_geo_nb:*", "ilo:plfs:a:*:eip_teip_sex_mts_nb", "ilo:plfs:a:*:eip_teip_sex_mts_nb:*"]
     status: baked
-    bundle: ilo-nss-pop-3vet
-  - match: ilo:nss:a:*:pop_xvet_*
+    bundle: ilo-plfs-eip
+  - match: ["ilo:plfs:a:*:emp_3ifl_sex_age_rt", "ilo:plfs:a:*:emp_3ifl_sex_age_rt:*", "ilo:plfs:a:*:emp_care_sex_age_nb", "ilo:plfs:a:*:emp_care_sex_age_nb:*", "ilo:plfs:a:*:emp_care_sex_ec2_nb", "ilo:plfs:a:*:emp_care_sex_ec2_nb:*", "ilo:plfs:a:*:emp_care_sex_eco_nb", "ilo:plfs:a:*:emp_care_sex_eco_nb:*", "ilo:plfs:a:*:emp_care_sex_edu_nb", "ilo:plfs:a:*:emp_care_sex_edu_nb:*", "ilo:plfs:a:*:emp_care_sex_geo_nb", "ilo:plfs:a:*:emp_care_sex_geo_nb:*", "ilo:plfs:a:*:emp_care_sex_how_nb", "ilo:plfs:a:*:emp_care_sex_how_nb:*", "ilo:plfs:a:*:emp_care_sex_jbt_nb", "ilo:plfs:a:*:emp_care_sex_jbt_nb:*", "ilo:plfs:a:*:emp_care_sex_mts_nb", "ilo:plfs:a:*:emp_care_sex_mts_nb:*", "ilo:plfs:a:*:emp_care_sex_oc2_nb", "ilo:plfs:a:*:emp_care_sex_oc2_nb:*", "ilo:plfs:a:*:emp_care_sex_ocu_nb", "ilo:plfs:a:*:emp_care_sex_ocu_nb:*", "ilo:plfs:a:*:emp_care_sex_ste_nb", "ilo:plfs:a:*:emp_care_sex_ste_nb:*", "ilo:plfs:a:*:emp_cnif_sex_nb", "ilo:plfs:a:*:emp_cnif_sex_nb:*", "ilo:plfs:a:*:emp_cnif_sex_rt", "ilo:plfs:a:*:emp_cnif_sex_rt:*", "ilo:plfs:a:*:emp_cpif_sex_nb", "ilo:plfs:a:*:emp_cpif_sex_nb:*", "ilo:plfs:a:*:emp_cpif_sex_rt", "ilo:plfs:a:*:emp_cpif_sex_rt:*", "ilo:plfs:a:*:emp_dwap_sex_age_rt", "ilo:plfs:a:*:emp_dwap_sex_age_rt:*", "ilo:plfs:a:*:emp_dwap_sex_edu_rt", "ilo:plfs:a:*:emp_dwap_sex_edu_rt:*", "ilo:plfs:a:*:emp_dwap_sex_geo_rt", "ilo:plfs:a:*:emp_dwap_sex_geo_rt:*", "ilo:plfs:a:*:emp_dwap_sex_mts_rt", "ilo:plfs:a:*:emp_dwap_sex_mts_rt:*", "ilo:plfs:a:*:emp_nifl_age_ec2_nb", "ilo:plfs:a:*:emp_nifl_age_ec2_nb:*", "ilo:plfs:a:*:emp_nifl_age_ec2_rt", "ilo:plfs:a:*:emp_nifl_age_ec2_rt:*", "ilo:plfs:a:*:emp_nifl_age_oc2_nb", "ilo:plfs:a:*:emp_nifl_age_oc2_nb:*", "ilo:plfs:a:*:emp_nifl_age_oc2_rt", "ilo:plfs:a:*:emp_nifl_age_oc2_rt:*", "ilo:plfs:a:*:emp_nifl_eco_ocu_nb", "ilo:plfs:a:*:emp_nifl_eco_ocu_nb:*", "ilo:plfs:a:*:emp_nifl_eco_ocu_rt", "ilo:plfs:a:*:emp_nifl_eco_ocu_rt:*", "ilo:plfs:a:*:emp_nifl_sex_age_nb", "ilo:plfs:a:*:emp_nifl_sex_age_nb:*", "ilo:plfs:a:*:emp_nifl_sex_age_rt", "ilo:plfs:a:*:emp_nifl_sex_age_rt:*", "ilo:plfs:a:*:emp_nifl_sex_ec2_nb", "ilo:plfs:a:*:emp_nifl_sex_ec2_nb:*", "ilo:plfs:a:*:emp_nifl_sex_ec2_rt", "ilo:plfs:a:*:emp_nifl_sex_ec2_rt:*", "ilo:plfs:a:*:emp_nifl_sex_eco_nb", "ilo:plfs:a:*:emp_nifl_sex_eco_nb:*", "ilo:plfs:a:*:emp_nifl_sex_eco_rt", "ilo:plfs:a:*:emp_nifl_sex_eco_rt:*", "ilo:plfs:a:*:emp_nifl_sex_edu_nb", "ilo:plfs:a:*:emp_nifl_sex_edu_nb:*", "ilo:plfs:a:*:emp_nifl_sex_edu_rt", "ilo:plfs:a:*:emp_nifl_sex_edu_rt:*", "ilo:plfs:a:*:emp_nifl_sex_geo_nb", "ilo:plfs:a:*:emp_nifl_sex_geo_nb:*", "ilo:plfs:a:*:emp_nifl_sex_geo_rt", "ilo:plfs:a:*:emp_nifl_sex_geo_rt:*", "ilo:plfs:a:*:emp_nifl_sex_how_nb", "ilo:plfs:a:*:emp_nifl_sex_how_nb:*", "ilo:plfs:a:*:emp_nifl_sex_how_rt", "ilo:plfs:a:*:emp_nifl_sex_how_rt:*", "ilo:plfs:a:*:emp_nifl_sex_ind_nb", "ilo:plfs:a:*:emp_nifl_sex_ind_nb:*", "ilo:plfs:a:*:emp_nifl_sex_ind_rt", "ilo:plfs:a:*:emp_nifl_sex_ind_rt:*", "ilo:plfs:a:*:emp_nifl_sex_mts_nb", "ilo:plfs:a:*:emp_nifl_sex_mts_nb:*", "ilo:plfs:a:*:emp_nifl_sex_mts_rt", "ilo:plfs:a:*:emp_nifl_sex_mts_rt:*", "ilo:plfs:a:*:emp_nifl_sex_nb", "ilo:plfs:a:*:emp_nifl_sex_nb:*", "ilo:plfs:a:*:emp_nifl_sex_oc2_nb", "ilo:plfs:a:*:emp_nifl_sex_oc2_nb:*", "ilo:plfs:a:*:emp_nifl_sex_oc2_rt", "ilo:plfs:a:*:emp_nifl_sex_oc2_rt:*", "ilo:plfs:a:*:emp_nifl_sex_ocu_nb", "ilo:plfs:a:*:emp_nifl_sex_ocu_nb:*", "ilo:plfs:a:*:emp_nifl_sex_ocu_rt", "ilo:plfs:a:*:emp_nifl_sex_ocu_rt:*", "ilo:plfs:a:*:emp_nifl_sex_rt", "ilo:plfs:a:*:emp_nifl_sex_rt:*", "ilo:plfs:a:*:emp_nifl_sex_ste_nb", "ilo:plfs:a:*:emp_nifl_sex_ste_nb:*", "ilo:plfs:a:*:emp_nifl_sex_ste_rt", "ilo:plfs:a:*:emp_nifl_sex_ste_rt:*", "ilo:plfs:a:*:emp_pifl_age_ec2_nb", "ilo:plfs:a:*:emp_pifl_age_ec2_nb:*", "ilo:plfs:a:*:emp_pifl_age_ec2_rt", "ilo:plfs:a:*:emp_pifl_age_ec2_rt:*", "ilo:plfs:a:*:emp_pifl_age_oc2_nb", "ilo:plfs:a:*:emp_pifl_age_oc2_nb:*", "ilo:plfs:a:*:emp_pifl_age_oc2_rt", "ilo:plfs:a:*:emp_pifl_age_oc2_rt:*", "ilo:plfs:a:*:emp_pifl_eco_ocu_nb", "ilo:plfs:a:*:emp_pifl_eco_ocu_nb:*", "ilo:plfs:a:*:emp_pifl_eco_ocu_rt", "ilo:plfs:a:*:emp_pifl_eco_ocu_rt:*", "ilo:plfs:a:*:emp_pifl_sex_age_nb", "ilo:plfs:a:*:emp_pifl_sex_age_nb:*", "ilo:plfs:a:*:emp_pifl_sex_age_rt", "ilo:plfs:a:*:emp_pifl_sex_age_rt:*", "ilo:plfs:a:*:emp_pifl_sex_ec2_nb", "ilo:plfs:a:*:emp_pifl_sex_ec2_nb:*", "ilo:plfs:a:*:emp_pifl_sex_ec2_rt", "ilo:plfs:a:*:emp_pifl_sex_ec2_rt:*", "ilo:plfs:a:*:emp_pifl_sex_eco_nb", "ilo:plfs:a:*:emp_pifl_sex_eco_nb:*", "ilo:plfs:a:*:emp_pifl_sex_eco_rt", "ilo:plfs:a:*:emp_pifl_sex_eco_rt:*", "ilo:plfs:a:*:emp_pifl_sex_edu_nb", "ilo:plfs:a:*:emp_pifl_sex_edu_nb:*", "ilo:plfs:a:*:emp_pifl_sex_edu_rt", "ilo:plfs:a:*:emp_pifl_sex_edu_rt:*", "ilo:plfs:a:*:emp_pifl_sex_geo_nb", "ilo:plfs:a:*:emp_pifl_sex_geo_nb:*", "ilo:plfs:a:*:emp_pifl_sex_geo_rt", "ilo:plfs:a:*:emp_pifl_sex_geo_rt:*", "ilo:plfs:a:*:emp_pifl_sex_how_nb", "ilo:plfs:a:*:emp_pifl_sex_how_nb:*", "ilo:plfs:a:*:emp_pifl_sex_how_rt", "ilo:plfs:a:*:emp_pifl_sex_how_rt:*", "ilo:plfs:a:*:emp_pifl_sex_mts_nb", "ilo:plfs:a:*:emp_pifl_sex_mts_nb:*", "ilo:plfs:a:*:emp_pifl_sex_mts_rt", "ilo:plfs:a:*:emp_pifl_sex_mts_rt:*", "ilo:plfs:a:*:emp_pifl_sex_nb", "ilo:plfs:a:*:emp_pifl_sex_nb:*", "ilo:plfs:a:*:emp_pifl_sex_oc2_nb", "ilo:plfs:a:*:emp_pifl_sex_oc2_nb:*", "ilo:plfs:a:*:emp_pifl_sex_oc2_rt", "ilo:plfs:a:*:emp_pifl_sex_oc2_rt:*", "ilo:plfs:a:*:emp_pifl_sex_ocu_nb", "ilo:plfs:a:*:emp_pifl_sex_ocu_nb:*", "ilo:plfs:a:*:emp_pifl_sex_ocu_rt", "ilo:plfs:a:*:emp_pifl_sex_ocu_rt:*", "ilo:plfs:a:*:emp_pifl_sex_rt", "ilo:plfs:a:*:emp_pifl_sex_rt:*", "ilo:plfs:a:*:emp_pifl_sex_ste_nb", "ilo:plfs:a:*:emp_pifl_sex_ste_nb:*", "ilo:plfs:a:*:emp_pifl_sex_ste_rt", "ilo:plfs:a:*:emp_pifl_sex_ste_rt:*", "ilo:plfs:a:*:emp_pter_sex_rt", "ilo:plfs:a:*:emp_pter_sex_rt:*", "ilo:plfs:a:*:emp_snif_sex_nb", "ilo:plfs:a:*:emp_snif_sex_nb:*", "ilo:plfs:a:*:emp_snif_sex_rt", "ilo:plfs:a:*:emp_snif_sex_rt:*", "ilo:plfs:a:*:emp_spif_sex_nb", "ilo:plfs:a:*:emp_spif_sex_nb:*", "ilo:plfs:a:*:emp_spif_sex_rt", "ilo:plfs:a:*:emp_spif_sex_rt:*", "ilo:plfs:a:*:emp_stem_sex_age_nb", "ilo:plfs:a:*:emp_stem_sex_age_nb:*", "ilo:plfs:a:*:emp_stem_sex_ec2_nb", "ilo:plfs:a:*:emp_stem_sex_ec2_nb:*", "ilo:plfs:a:*:emp_stem_sex_eco_nb", "ilo:plfs:a:*:emp_stem_sex_eco_nb:*", "ilo:plfs:a:*:emp_stem_sex_edu_nb", "ilo:plfs:a:*:emp_stem_sex_edu_nb:*", "ilo:plfs:a:*:emp_stem_sex_geo_nb", "ilo:plfs:a:*:emp_stem_sex_geo_nb:*", "ilo:plfs:a:*:emp_stem_sex_how_nb", "ilo:plfs:a:*:emp_stem_sex_how_nb:*", "ilo:plfs:a:*:emp_stem_sex_jbt_nb", "ilo:plfs:a:*:emp_stem_sex_jbt_nb:*", "ilo:plfs:a:*:emp_stem_sex_mts_nb", "ilo:plfs:a:*:emp_stem_sex_mts_nb:*", "ilo:plfs:a:*:emp_stem_sex_oc2_nb", "ilo:plfs:a:*:emp_stem_sex_oc2_nb:*", "ilo:plfs:a:*:emp_stem_sex_ocu_nb", "ilo:plfs:a:*:emp_stem_sex_ocu_nb:*", "ilo:plfs:a:*:emp_stem_sex_ste_nb", "ilo:plfs:a:*:emp_stem_sex_ste_nb:*", "ilo:plfs:a:*:emp_temp_age_ec2_nb", "ilo:plfs:a:*:emp_temp_age_ec2_nb:*", "ilo:plfs:a:*:emp_temp_age_oc2_nb", "ilo:plfs:a:*:emp_temp_age_oc2_nb:*", "ilo:plfs:a:*:emp_temp_age_ste_nb", "ilo:plfs:a:*:emp_temp_age_ste_nb:*", "ilo:plfs:a:*:emp_temp_eco_ocu_nb", "ilo:plfs:a:*:emp_temp_eco_ocu_nb:*", "ilo:plfs:a:*:emp_temp_sex_age_nb", "ilo:plfs:a:*:emp_temp_sex_age_nb:*", "ilo:plfs:a:*:emp_temp_sex_car_nb", "ilo:plfs:a:*:emp_temp_sex_car_nb:*", "ilo:plfs:a:*:emp_temp_sex_ec2_nb", "ilo:plfs:a:*:emp_temp_sex_ec2_nb:*", "ilo:plfs:a:*:emp_temp_sex_eco_nb", "ilo:plfs:a:*:emp_temp_sex_eco_nb:*", "ilo:plfs:a:*:emp_temp_sex_edu_nb", "ilo:plfs:a:*:emp_temp_sex_edu_nb:*", "ilo:plfs:a:*:emp_temp_sex_geo_nb", "ilo:plfs:a:*:emp_temp_sex_geo_nb:*", "ilo:plfs:a:*:emp_temp_sex_how_nb", "ilo:plfs:a:*:emp_temp_sex_how_nb:*", "ilo:plfs:a:*:emp_temp_sex_ind_nb", "ilo:plfs:a:*:emp_temp_sex_ind_nb:*", "ilo:plfs:a:*:emp_temp_sex_mts_nb", "ilo:plfs:a:*:emp_temp_sex_mts_nb:*", "ilo:plfs:a:*:emp_temp_sex_oc2_nb", "ilo:plfs:a:*:emp_temp_sex_oc2_nb:*", "ilo:plfs:a:*:emp_temp_sex_ocu_nb", "ilo:plfs:a:*:emp_temp_sex_ocu_nb:*", "ilo:plfs:a:*:emp_temp_sex_ste_nb", "ilo:plfs:a:*:emp_temp_sex_ste_nb:*"]
     status: baked
-    bundle: ilo-nss-pop-xvet
-  - match: ilo:nss:a:*:pop_xwap_*
+    bundle: ilo-plfs-emp
+  - match: ["ilo:plfs:a:*:how_care_sex_nb", "ilo:plfs:a:*:how_care_sex_nb:*", "ilo:plfs:a:*:how_eare_sex_nb", "ilo:plfs:a:*:how_eare_sex_nb:*", "ilo:plfs:a:*:how_stee_sex_nb", "ilo:plfs:a:*:how_stee_sex_nb:*", "ilo:plfs:a:*:how_stem_sex_nb", "ilo:plfs:a:*:how_stem_sex_nb:*", "ilo:plfs:a:*:how_temp_age_ec2_nb", "ilo:plfs:a:*:how_temp_age_ec2_nb:*", "ilo:plfs:a:*:how_temp_age_oc2_nb", "ilo:plfs:a:*:how_temp_age_oc2_nb:*", "ilo:plfs:a:*:how_temp_eco_ocu_nb", "ilo:plfs:a:*:how_temp_eco_ocu_nb:*", "ilo:plfs:a:*:how_temp_sex_age_nb", "ilo:plfs:a:*:how_temp_sex_age_nb:*", "ilo:plfs:a:*:how_temp_sex_ec2_nb", "ilo:plfs:a:*:how_temp_sex_ec2_nb:*", "ilo:plfs:a:*:how_temp_sex_eco_nb", "ilo:plfs:a:*:how_temp_sex_eco_nb:*", "ilo:plfs:a:*:how_temp_sex_ind_nb", "ilo:plfs:a:*:how_temp_sex_ind_nb:*", "ilo:plfs:a:*:how_temp_sex_nb", "ilo:plfs:a:*:how_temp_sex_nb:*", "ilo:plfs:a:*:how_temp_sex_oc2_nb", "ilo:plfs:a:*:how_temp_sex_oc2_nb:*", "ilo:plfs:a:*:how_temp_sex_ocu_nb", "ilo:plfs:a:*:how_temp_sex_ocu_nb:*", "ilo:plfs:a:*:how_xees_age_ec2_nb", "ilo:plfs:a:*:how_xees_age_ec2_nb:*", "ilo:plfs:a:*:how_xees_age_oc2_nb", "ilo:plfs:a:*:how_xees_age_oc2_nb:*", "ilo:plfs:a:*:how_xees_eco_ocu_nb", "ilo:plfs:a:*:how_xees_eco_ocu_nb:*", "ilo:plfs:a:*:how_xees_sex_age_nb", "ilo:plfs:a:*:how_xees_sex_age_nb:*", "ilo:plfs:a:*:how_xees_sex_ec2_nb", "ilo:plfs:a:*:how_xees_sex_ec2_nb:*", "ilo:plfs:a:*:how_xees_sex_eco_nb", "ilo:plfs:a:*:how_xees_sex_eco_nb:*", "ilo:plfs:a:*:how_xees_sex_edu_nb", "ilo:plfs:a:*:how_xees_sex_edu_nb:*", "ilo:plfs:a:*:how_xees_sex_geo_nb", "ilo:plfs:a:*:how_xees_sex_geo_nb:*", "ilo:plfs:a:*:how_xees_sex_mts_nb", "ilo:plfs:a:*:how_xees_sex_mts_nb:*", "ilo:plfs:a:*:how_xees_sex_nb", "ilo:plfs:a:*:how_xees_sex_nb:*", "ilo:plfs:a:*:how_xees_sex_oc2_nb", "ilo:plfs:a:*:how_xees_sex_oc2_nb:*", "ilo:plfs:a:*:how_xees_sex_ocu_nb", "ilo:plfs:a:*:how_xees_sex_ocu_nb:*"]
     status: baked
-    bundle: ilo-nss-pop-xwap
-  - match: ilo:nss:a:*:sdg_0552_*
+    bundle: ilo-plfs-how
+  - match: ["ilo:plfs:a:*:cld_tpop_sex_age_nb", "ilo:plfs:a:*:cld_tpop_sex_age_nb:*", "ilo:plfs:a:*:cld_xchl_sex_age_nb", "ilo:plfs:a:*:cld_xchl_sex_age_nb:*", "ilo:plfs:a:*:cld_xchl_sex_age_rt", "ilo:plfs:a:*:cld_xchl_sex_age_rt:*", "ilo:plfs:a:*:cld_xgpb_sex_age_rt", "ilo:plfs:a:*:cld_xgpb_sex_age_rt:*", "ilo:plfs:a:*:cld_xhaz_sex_age_nb", "ilo:plfs:a:*:cld_xhaz_sex_age_nb:*", "ilo:plfs:a:*:cld_xhaz_sex_age_rt", "ilo:plfs:a:*:cld_xhaz_sex_age_rt:*", "ilo:plfs:a:*:cld_xsna_sex_age_nb", "ilo:plfs:a:*:cld_xsna_sex_age_nb:*", "ilo:plfs:a:*:cld_xsna_sex_age_rt", "ilo:plfs:a:*:cld_xsna_sex_age_rt:*", "ilo:plfs:a:*:ged_plfp_sex_hht_rt", "ilo:plfs:a:*:ged_plfp_sex_hht_rt:*", "ilo:plfs:a:*:ged_twap_hht_nb", "ilo:plfs:a:*:ged_twap_hht_nb:*"]
     status: baked
-    bundle: ilo-nss-sdg-0552
-  - match: ilo:nss:a:*:sdg_0831_*
+    bundle: ilo-plfs-more
+  - match: ["ilo:plfs:a:*:pop_3vet_sex_age_nb", "ilo:plfs:a:*:pop_3vet_sex_age_nb:*", "ilo:plfs:a:*:pop_xvet_sex_age_nb", "ilo:plfs:a:*:pop_xvet_sex_age_nb:*", "ilo:plfs:a:*:pop_xvet_sex_edu_nb", "ilo:plfs:a:*:pop_xvet_sex_edu_nb:*", "ilo:plfs:a:*:pop_xwap_sex_age_nb", "ilo:plfs:a:*:pop_xwap_sex_age_nb:*", "ilo:plfs:a:*:pop_xwap_sex_edu_nb", "ilo:plfs:a:*:pop_xwap_sex_edu_nb:*", "ilo:plfs:a:*:pop_xwap_sex_geo_nb", "ilo:plfs:a:*:pop_xwap_sex_geo_nb:*", "ilo:plfs:a:*:pop_xwap_sex_lms_nb", "ilo:plfs:a:*:pop_xwap_sex_lms_nb:*", "ilo:plfs:a:*:pop_xwap_sex_mts_nb", "ilo:plfs:a:*:pop_xwap_sex_mts_nb:*"]
     status: baked
-    bundle: ilo-nss-sdg-0831
-  - match: ilo:nss:a:*:sdg_0852_*
+    bundle: ilo-plfs-pop
+  - match: ["ilo:plfs:a:*:sdg_0552_noc_rt", "ilo:plfs:a:*:sdg_0552_noc_rt:*", "ilo:plfs:a:*:sdg_0831_sex_eco_rt", "ilo:plfs:a:*:sdg_0831_sex_eco_rt:*", "ilo:plfs:a:*:sdg_0851_sex_ocu_nb", "ilo:plfs:a:*:sdg_0851_sex_ocu_nb:*", "ilo:plfs:a:*:sdg_0852_sex_age_rt", "ilo:plfs:a:*:sdg_0852_sex_age_rt:*", "ilo:plfs:a:*:sdg_0861_sex_rt", "ilo:plfs:a:*:sdg_0861_sex_rt:*", "ilo:plfs:a:*:sdg_0922_noc_rt", "ilo:plfs:a:*:sdg_0922_noc_rt:*", "ilo:plfs:a:*:sdg_a871_sex_age_rt", "ilo:plfs:a:*:sdg_a871_sex_age_rt:*", "ilo:plfs:a:*:sdg_t552_noc_rt", "ilo:plfs:a:*:sdg_t552_noc_rt:*"]
     status: baked
-    bundle: ilo-nss-sdg-0852
-  - match: ilo:nss:a:*:sdg_0861_*
+    bundle: ilo-plfs-sdg
+  - match: ["ilo:plfs:a:*:une_deap_sex_age_rt", "ilo:plfs:a:*:une_deap_sex_age_rt:*", "ilo:plfs:a:*:une_deap_sex_edu_rt", "ilo:plfs:a:*:une_deap_sex_edu_rt:*", "ilo:plfs:a:*:une_deap_sex_geo_rt", "ilo:plfs:a:*:une_deap_sex_geo_rt:*", "ilo:plfs:a:*:une_deap_sex_mts_rt", "ilo:plfs:a:*:une_deap_sex_mts_rt:*", "ilo:plfs:a:*:une_tune_sex_age_nb", "ilo:plfs:a:*:une_tune_sex_age_nb:*", "ilo:plfs:a:*:une_tune_sex_edu_nb", "ilo:plfs:a:*:une_tune_sex_edu_nb:*", "ilo:plfs:a:*:une_tune_sex_geo_nb", "ilo:plfs:a:*:une_tune_sex_geo_nb:*", "ilo:plfs:a:*:une_tune_sex_mts_nb", "ilo:plfs:a:*:une_tune_sex_mts_nb:*"]
     status: baked
-    bundle: ilo-nss-sdg-0861
-  - match: ilo:nss:a:*:sdg_0922_*
+    bundle: ilo-plfs-une
+  - match: ["ilo:special:a:*:str_days_eco_nb", "ilo:special:a:*:str_days_eco_nb:*", "ilo:special:a:*:str_tstr_eco_nb", "ilo:special:a:*:str_tstr_eco_nb:*", "ilo:special:a:*:str_work_eco_nb", "ilo:special:a:*:str_work_eco_nb:*"]
     status: baked
-    bundle: ilo-nss-sdg-0922
-  - match: ilo:nss:a:*:sdg_t552_*
+    bundle: ilo-special
+  - match: ["ilo:ssi:a:*:sdg_0131_sex_soc_rt", "ilo:ssi:a:*:sdg_0131_sex_soc_rt:*"]
     status: baked
-    bundle: ilo-nss-sdg-t552
-  - match: ilo:nss:a:*:une_deap_*
-    status: baked
-    bundle: ilo-nss-une-deap
-  - match: ilo:nss:a:*:une_tune_*
-    status: baked
-    bundle: ilo-nss-une-tune
-  - match: ilo:official:a:*:lai_vist_*
-    status: baked
-    bundle: ilo-official-lai-vist
-  - match: ilo:official:a:*:str_days_*
-    status: baked
-    bundle: ilo-official-str-days
-  - match: ilo:official:a:*:str_tstr_*
-    status: baked
-    bundle: ilo-official-str-tstr
-  - match: ilo:official:a:*:str_work_*
-    status: baked
-    bundle: ilo-official-str-work
-  - match: ilo:plfs:a:*:cld_tpop_*
-    status: baked
-    bundle: ilo-plfs-cld-tpop
-  - match: ilo:plfs:a:*:cld_xchl_*
-    status: baked
-    bundle: ilo-plfs-cld-xchl
-  - match: ilo:plfs:a:*:cld_xgpb_*
-    status: baked
-    bundle: ilo-plfs-cld-xgpb
-  - match: ilo:plfs:a:*:cld_xhaz_*
-    status: baked
-    bundle: ilo-plfs-cld-xhaz
-  - match: ilo:plfs:a:*:cld_xsna_*
-    status: baked
-    bundle: ilo-plfs-cld-xsna
-  - match: ilo:plfs:a:*:eap_dwap_*
-    status: baked
-    bundle: ilo-plfs-eap-dwap
-  - match: ilo:plfs:a:*:eap_teap_*
-    status: baked
-    bundle: ilo-plfs-eap-teap
-  - match: ilo:plfs:a:*:ear_chra_*
-    status: baked
-    bundle: ilo-plfs-ear-chra
-  - match: ilo:plfs:a:*:ear_cmta_*
-    status: baked
-    bundle: ilo-plfs-ear-cmta
-  - match: ilo:plfs:a:*:ear_ehra_*
-    status: baked
-    bundle: ilo-plfs-ear-ehra
-  - match: ilo:plfs:a:*:ear_ehrg_*
-    status: baked
-    bundle: ilo-plfs-ear-ehrg
-  - match: ilo:plfs:a:*:ear_ehrm_*
-    status: baked
-    bundle: ilo-plfs-ear-ehrm
-  - match: ilo:plfs:a:*:ear_emta_*
-    status: baked
-    bundle: ilo-plfs-ear-emta
-  - match: ilo:plfs:a:*:ear_emtg_*
-    status: baked
-    bundle: ilo-plfs-ear-emtg
-  - match: ilo:plfs:a:*:ear_emtm_*
-    status: baked
-    bundle: ilo-plfs-ear-emtm
-  - match: ilo:plfs:a:*:ear_ggap_*
-    status: baked
-    bundle: ilo-plfs-ear-ggap
-  - match: ilo:plfs:a:*:ear_shra_*
-    status: baked
-    bundle: ilo-plfs-ear-shra
-  - match: ilo:plfs:a:*:ear_smta_*
-    status: baked
-    bundle: ilo-plfs-ear-smta
-  - match: ilo:plfs:a:*:ear_xfls_*
-    status: baked
-    bundle: ilo-plfs-ear-xfls
-  - match: ilo:plfs:a:*:ear_xtlp_*
-    status: baked
-    bundle: ilo-plfs-ear-xtlp
-  - match: ilo:plfs:a:*:ees_care_*
-    status: baked
-    bundle: ilo-plfs-ees-care
-  - match: ilo:plfs:a:*:ees_stem_*
-    status: baked
-    bundle: ilo-plfs-ees-stem
-  - match: ilo:plfs:a:*:ees_tees_*
-    status: baked
-    bundle: ilo-plfs-ees-tees
-  - match: ilo:plfs:a:*:ees_xplv_*
-    status: baked
-    bundle: ilo-plfs-ees-xplv
-  - match: ilo:plfs:a:*:ees_xtmp_*
-    status: baked
-    bundle: ilo-plfs-ees-xtmp
-  - match: ilo:plfs:a:*:eip_3eet_*
-    status: baked
-    bundle: ilo-plfs-eip-3eet
-  - match: ilo:plfs:a:*:eip_dwap_*
-    status: baked
-    bundle: ilo-plfs-eip-dwap
-  - match: ilo:plfs:a:*:eip_neet_*
-    status: baked
-    bundle: ilo-plfs-eip-neet
-  - match: ilo:plfs:a:*:eip_rcar_*
-    status: baked
-    bundle: ilo-plfs-eip-rcar
-  - match: ilo:plfs:a:*:eip_teip_*
-    status: baked
-    bundle: ilo-plfs-eip-teip
-  - match: ilo:plfs:a:*:emp_3ifl_*
-    status: baked
-    bundle: ilo-plfs-emp-3ifl
-  - match: ilo:plfs:a:*:emp_care_*
-    status: baked
-    bundle: ilo-plfs-emp-care
-  - match: ilo:plfs:a:*:emp_cnif_*
-    status: baked
-    bundle: ilo-plfs-emp-cnif
-  - match: ilo:plfs:a:*:emp_cpif_*
-    status: baked
-    bundle: ilo-plfs-emp-cpif
-  - match: ilo:plfs:a:*:emp_dwap_*
-    status: baked
-    bundle: ilo-plfs-emp-dwap
-  - match: ilo:plfs:a:*:emp_nifl_*
-    status: baked
-    bundle: ilo-plfs-emp-nifl
-  - match: ilo:plfs:a:*:emp_pifl_*
-    status: baked
-    bundle: ilo-plfs-emp-pifl
-  - match: ilo:plfs:a:*:emp_pter_*
-    status: baked
-    bundle: ilo-plfs-emp-pter
-  - match: ilo:plfs:a:*:emp_snif_*
-    status: baked
-    bundle: ilo-plfs-emp-snif
-  - match: ilo:plfs:a:*:emp_spif_*
-    status: baked
-    bundle: ilo-plfs-emp-spif
-  - match: ilo:plfs:a:*:emp_stem_*
-    status: baked
-    bundle: ilo-plfs-emp-stem
-  - match: ilo:plfs:a:*:emp_temp_*
-    status: baked
-    bundle: ilo-plfs-emp-temp
-  - match: ilo:plfs:a:*:ged_plfp_*
-    status: baked
-    bundle: ilo-plfs-ged-plfp
-  - match: ilo:plfs:a:*:ged_twap_*
-    status: baked
-    bundle: ilo-plfs-ged-twap
-  - match: ilo:plfs:a:*:how_care_*
-    status: baked
-    bundle: ilo-plfs-how-care
-  - match: ilo:plfs:a:*:how_eare_*
-    status: baked
-    bundle: ilo-plfs-how-eare
-  - match: ilo:plfs:a:*:how_stee_*
-    status: baked
-    bundle: ilo-plfs-how-stee
-  - match: ilo:plfs:a:*:how_stem_*
-    status: baked
-    bundle: ilo-plfs-how-stem
-  - match: ilo:plfs:a:*:how_temp_*
-    status: baked
-    bundle: ilo-plfs-how-temp
-  - match: ilo:plfs:a:*:how_xees_*
-    status: baked
-    bundle: ilo-plfs-how-xees
-  - match: ilo:plfs:a:*:pop_3vet_*
-    status: baked
-    bundle: ilo-plfs-pop-3vet
-  - match: ilo:plfs:a:*:pop_xvet_*
-    status: baked
-    bundle: ilo-plfs-pop-xvet
-  - match: ilo:plfs:a:*:pop_xwap_*
-    status: baked
-    bundle: ilo-plfs-pop-xwap
-  - match: ilo:plfs:a:*:sdg_0552_*
-    status: baked
-    bundle: ilo-plfs-sdg-0552
-  - match: ilo:plfs:a:*:sdg_0831_*
-    status: baked
-    bundle: ilo-plfs-sdg-0831
-  - match: ilo:plfs:a:*:sdg_0851_*
-    status: baked
-    bundle: ilo-plfs-sdg-0851
-  - match: ilo:plfs:a:*:sdg_0852_*
-    status: baked
-    bundle: ilo-plfs-sdg-0852
-  - match: ilo:plfs:a:*:sdg_0861_*
-    status: baked
-    bundle: ilo-plfs-sdg-0861
-  - match: ilo:plfs:a:*:sdg_0922_*
-    status: baked
-    bundle: ilo-plfs-sdg-0922
-  - match: ilo:plfs:a:*:sdg_a871_*
-    status: baked
-    bundle: ilo-plfs-sdg-a871
-  - match: ilo:plfs:a:*:sdg_t552_*
-    status: baked
-    bundle: ilo-plfs-sdg-t552
-  - match: ilo:plfs:a:*:une_deap_*
-    status: baked
-    bundle: ilo-plfs-une-deap
-  - match: ilo:plfs:a:*:une_tune_*
-    status: baked
-    bundle: ilo-plfs-une-tune
-  - match: ilo:plfs:q:*:ear_ehra_*
-    status: baked
-    bundle: ilo-plfs-q-ear-ehra
-  - match: ilo:plfs:q:*:ear_emta_*
-    status: baked
-    bundle: ilo-plfs-q-ear-emta
-  - match: ilo:plfs:q:*:eip_neet_*
-    status: baked
-    bundle: ilo-plfs-q-eip-neet
-  - match: ilo:plfs:q:*:emp_nifl_*
-    status: baked
-    bundle: ilo-plfs-q-emp-nifl
-  - match: ilo:plfs:q:*:emp_pifl_*
-    status: baked
-    bundle: ilo-plfs-q-emp-pifl
-  - match: ilo:plfs:q:*:how_temp_*
-    status: baked
-    bundle: ilo-plfs-q-how-temp
-  - match: ilo:plfs:q:*:how_xees_*
-    status: baked
-    bundle: ilo-plfs-q-how-xees
-  - match: ilo:special:a:*:str_days_*
-    status: baked
-    bundle: ilo-special-str-days
-  - match: ilo:special:a:*:str_tstr_*
-    status: baked
-    bundle: ilo-special-str-tstr
-  - match: ilo:special:a:*:str_work_*
-    status: baked
-    bundle: ilo-special-str-work
-  - match: ilo:ssi:a:*:sdg_0131_*
-    status: baked
-    bundle: ilo-ssi-sdg-0131
+    bundle: ilo-ssi

@@ -36,6 +36,8 @@ export const HEADLINE = {
                    what: "children aged 6 to 59 months with anaemia", period: () => "NFHS-5, 2019-21" },
   manufacturing: { value: (b) => `${last(b, "mva_pct_gdp").toFixed(1)}%`, what: "manufacturing's share of GDP", period: (b) => lastDate(b).slice(0, 4) },
   deposits:      { value: (b) => `₹${last(b, "household_total").toFixed(1)} lakh crore`, what: "households' bank deposits", period: (b) => `March ${lastDate(b).slice(0, 4)}` },
+  // ilo
+  ilo:           { value: (b) => `${last(b, "eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15").toFixed(1)}%`, what: "women aged 15+ in the labour force, ILO estimate", period: (b) => lastDate(b).slice(0, 4) },
 };
 
 // The small chart beside each guide's figure: always on the current ruler, so a chart never
@@ -56,6 +58,8 @@ export const SPARK = {
   nfhs:          { bundle: "nfhs-anaemia", label: "Children age 6-59", slope: true },
   manufacturing: { bundle: "wdi-manufacturing", series: "mva_pct_gdp" },
   deposits:      { bundle: "deposits-owners", series: "household_total" },
+  // ilo
+  ilo:           { bundle: "ilo-est-eap-2wap", series: "eap_2wap_sex_age_rt__sex_f__age_ythadult_yge15" },
 };
 
 const cache = {};
