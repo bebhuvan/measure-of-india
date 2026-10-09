@@ -271,3 +271,19 @@ const nfhsRows = [
   ["Women's bank account, %", "NFHS-BNK", "s-g4", nfhsFind(NF, "bank or savings")],
 ].filter(([, , , s]) => s != null);
 render("reg-nfhs", nfhsRows.map(([nm, code, sw, s]) => [nm, code, sw, s, false, "/guides/nfhs/"]), 48, "spnf", "NFHS-5", "MoSPI / IIPS");
+
+// credit (lb/credit): bank credit, money and bank health, RBI
+import creditGrowthBundle from "../../data/series/credit-growth.json";
+import creditMoneyGrowthBundle from "../../data/series/credit-money-growth.json";
+import creditNpaBundle from "../../data/series/credit-npa.json";
+{
+  const CG = hydrate(creditGrowthBundle), CM = hydrate(creditMoneyGrowthBundle), CN = hydrate(creditNpaBundle);
+  const p1 = (v) => v.toFixed(1) + "%";
+  const mon = (iso) => ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][+iso.slice(5, 7) - 1] + " " + iso.slice(0, 4);
+  render("reg-credit", [
+    ["Bank credit, growth on a year earlier", "RBI-SIBC-I", "s-acc", CG.headline, false, "/guides/credit/", null, p1],
+    ["Personal loans, growth on a year earlier", "RBI-SIBC-4", "s-g1", CG.personal_loans, false, "/guides/credit/", null, p1],
+    ["Broad money (M3, including the merger), growth", "RBI-M3-IM", "s-g2", CM.m3_incl_merger, false, "/guides/credit/", "computed", p1, mon(creditMoneyGrowthBundle.dates.at(-1))],
+    ["Gross NPA ratio, all commercial banks", "RBI-GNPA", "s-g3", CN.all_gnpa_ratio, false, "/guides/credit/", null, p1, mon(creditNpaBundle.dates.at(-1))],
+  ], 12, "spcr", mon(creditGrowthBundle.dates.at(-1)), "RBI");
+}

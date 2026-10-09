@@ -393,6 +393,33 @@ export const DOSSIERS = [
     register: { id: "reg-deposits", label: "Bank deposits", unit: "Annual, RBI BSR-2, as on 31 March, ₹ lakh crore", historyCol: "Since 2019" },
     bundles: ["deposits-owners", "deposits-owners-2005", "deposits-population", "deposits-term-rates", "deposits-term-maturity", "deposits-term-size", "deposits-term-size-2026"],
   },
+  // credit (lb/credit): money, credit and banks
+  {
+    slug: "credit",
+    no: "15",
+    section: "Money",
+    name: "Money, Credit and Banks",
+    title: "Bank credit and money",   // the topic as a reader names it: nav, lists, search
+    kickerTitle: "Bank credit, money and bank health, RBI",
+    crumbTitle: "Money, credit and banks",
+    headline: "Who India's banks lend to, <i>and how safely.</i>",
+    ogTitle: "Who India's banks lend to.",
+    blurb: "Who borrows from India's banks, from farmers and factories to home buyers and gold-loan takers; how fast credit and money grow; where the loans go, state by state; and how the bad-loan cycle of 2015 to 2020 was cleaned up.",
+    description: "Bank credit by sector, industry and type of personal loan, money supply (M3), food credit, credit and deposits by state, women's share of loans, and banks' bad loans and capital, from the RBI's data, 1951 to 2026.",
+    rssDescription: "Who borrows from India's banks and how fast credit grows. Revised with each monthly sectoral credit release.",
+    stamp: { dateStyle: "month", vintageStyle: "vintage" },
+    statusNote: "Monthly, revised with each sectoral credit release",
+    version: "v1.0",
+    currentBundle: "credit-growth",
+    proseInputs: ["credit-sectors", "credit-industry"],
+    calendar: "fiscal-apr",
+    bands: null,
+    proseConstants: [100, 2019, 2023, 2025],   // verifier whitelist: years of the merger and the reporting change
+    spark: { bundle: "credit-growth", series: "headline" },
+    prose: true,
+    register: { id: "reg-credit", label: "Bank credit", unit: "Monthly, all scheduled commercial banks, growth on a year earlier", historyCol: "Since 2020" },
+    bundles: ["credit-growth", "credit-sectors", "credit-sectors-2007", "credit-industry", "credit-industry-2007", "credit-scb", "credit-scb-ratios", "credit-food", "credit-money", "credit-money-growth", "credit-money-monthly", "credit-money-annual", "credit-money-ratios", "credit-reserve-money", "credit-reserve-money-weekly", "credit-bank-survey", "credit-rbi-balance-sheet", "credit-depth", "credit-npa", "credit-npa-amounts", "credit-npa-movement", "credit-npa-banks", "credit-loan-quality", "credit-crar", "credit-frauds", "credit-frauds-half-year", "credit-states-cd-annual", "credit-states-annual", "credit-utilisation", "credit-states-cd", "credit-states", "credit-places", "credit-offices", "credit-states-cd-2017", "credit-states-2017", "credit-places-2017", "credit-offices-2017", "credit-states-cd-2004", "credit-states-2004", "credit-places-2004", "credit-offices-2004", "credit-places-annual", "credit-offices-annual", "credit-women", "credit-occupation", "credit-organisation", "credit-size", "credit-interest-rates", "credit-lending-rates", "credit-population-group", "credit-bank-groups", "credit-account-type", "credit-states-bsr1", "credit-states-occupation", "credit-nbfc"],
+  },
 ];
 export const bySlug = Object.fromEntries(DOSSIERS.map((d) => [d.slug, d]));
 

@@ -166,3 +166,38 @@ factories:
       The honest limits: registered and informal are separate instruments, never
       summed; GVA is nominal (prices as much as product); the data lands with a
       two-year lag. Must contain a plain "we do not know".
+
+# credit (lb/credit): the monthly sectoral credit release
+credit:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [headline.latest, non_food_credit.latest, personal_loans.latest, industry.latest]
+    minSeriesMentioned: 6        # bank credit + 5 of the sectors and loan types
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
+    brief: >
+      Two short paragraphs on the month's bank credit: total growth on a year earlier and
+      what drove it, by the four big sectors (agriculture, industry, services, personal
+      loans) and the standouts among loan types (gold loans, loans to NBFCs, cards, home
+      loans). Say how this compares with a year ago. Food credit is a tiny, seasonal line
+      for grain procurement: if it is the fastest grower, say so in those terms and do not
+      let it lead. A loan type whose growth slowed sharply must be described as exactly that,
+      "growth slowed from X% a year earlier to Y%", never as "weakest" while it still grows
+      fast. Write for a reader, not for the pipeline: never use the words "sheet", "mover",
+      "print", "base" or "line". Name months in full ("August 2026"). The deep-cut counts of
+      categories "rising" and "falling" are month-on-month changes in the amount lent, not
+      growth rates: leave them out, or say "the amount lent rose in N of the 43 categories
+      over the month". Concede what is genuine before qualifying it.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [headline.latest]
+    brief: >
+      The honest limits. Growth in the stock of loans is not the same as new lending, and
+      says nothing about whether loans will be repaid. Sector figures come from selected
+      banks, not all. NBFC lending sits outside these numbers. Since December 2025 the
+      year-on-year rate compares a month-end with an older reporting Friday, which flatters
+      it by an amount we do not know. Must contain a plain "we do not know". Name months in
+      full ("August 2026"); never use the words "sheet", "print" or "headline".
+

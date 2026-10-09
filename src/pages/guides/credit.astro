@@ -1,0 +1,912 @@
+---
+import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
+import GuideData from "../../components/GuideData.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+import { period } from "../../dossiers/periods.js";
+import fs from "node:fs";
+const D = bySlug["credit"];
+// periods named in the copy, read from the bundles (src/dossiers/periods.js)
+const PG = period("credit-growth"), PS = period("credit-sectors"), P42 = period("credit-scb-ratios"), PD = period("credit-depth"), PM = period("credit-money-growth");
+const PF = period("credit-food"), PN = period("credit-npa"), PST = period("credit-states-cd-annual"), PPL = period("credit-places"), PW = period("credit-women"), PR = period("credit-lending-rates");
+const PZ = period("credit-size"), PI = period("credit-industry"), PNB = period("credit-nbfc"), PFR = period("credit-frauds"), PMR = period("credit-money-ratios"), PNM = period("credit-npa-movement");
+const load = (b) => JSON.parse(fs.readFileSync(`data/series/${b}.json`, "utf8"));
+const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
+const sectors = load("credit-sectors"), growth = load("credit-growth"), industry = load("credit-industry"), cdA = load("credit-states-cd-annual"), stA = load("credit-states-annual");
+const women = load("credit-women"), npaBanks = load("credit-npa-banks"), occ = load("credit-occupation");
+const lastI = (b) => b.dates.length - 1;
+const yAgo = (b) => b.dates.indexOf(`${+b.dates.at(-1).slice(0, 4) - 1}${b.dates.at(-1).slice(4)}`);
+const f1 = (v) => (v == null ? "" : v.toFixed(1));
+const f2 = (v) => (v == null ? "" : v.toFixed(2));
+// every-cut tables, built here from the bundles
+const sectorRows = Object.entries(sectors.series).map(([k, s]) => ({ label: s.label, amt: s.data[lastI(sectors)], g: growth.series[k === "bank_credit" ? "headline" : k]?.data[lastI(growth)] ?? null,
+  gy: growth.series[k === "bank_credit" ? "headline" : k]?.data[yAgo(growth)] ?? null }));
+const indTot = industry.series.industry_total.data[lastI(industry)];
+const industryRows = Object.entries(industry.series).filter(([k]) => k !== "industry_total").map(([k, s]) => { const L = s.data[lastI(industry)], Y = s.data[yAgo(industry)]; return { label: s.label, amt: L, share: (100 * L) / indTot, g: L != null && Y ? 100 * (L / Y - 1) : null }; });
+const stateRows = Object.keys(cdA.series).filter((k) => k !== "all_india").map((k) => ({ label: cdA.series[k].label.replace(/, credit-deposit ratio$/, ""), cd: cdA.series[k].data[lastI(cdA)],
+  dep: stA.series[`${k}_deposits`]?.data[lastI(stA)], cr: stA.series[`${k}_credit`]?.data[lastI(stA)], w: women.series[`${k}_women_share`]?.data[lastI(women)] ?? null })).filter((r) => r.cd != null);
+const bankRows = Object.values(npaBanks.series).map((s) => ({ label: s.label.replace(/, gross NPA ratio$/, ""), v: s.data[lastI(npaBanks)], y: s.data[lastI(npaBanks) - 1] })).filter((r) => r.v != null).sort((a, b) => b.v - a.v);
+const occRows = Object.entries(occ.series).filter(([k]) => k.endsWith("_amount")).map(([k, s]) => ({ label: s.label.replace(/, credit outstanding$/, ""), amt: s.data[lastI(occ)], acc: occ.series[k.replace(/_amount$/, "_accounts")]?.data[lastI(occ)] ?? null,
+  g: s.data[yAgo(occ)] ? 100 * (s.data[lastI(occ)] / s.data[yAgo(occ)] - 1) : null }));
+const npaLast = npaBanks.dates.at(-1).slice(0, 4);
+---
+<Base
+  title="Money, credit and banks · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/credit/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<style is:global>
+  .credit-sm{display:grid;grid-template-columns:repeat(auto-fill,minmax(372px,1fr));gap:18px 28px}
+  .credit-sm-cell .sm-h{font-family:var(--sans);font-size:.85rem;color:var(--ink-soft)}
+  .credit-sm-cell .sm-v{font-family:var(--sans);font-size:1.35rem;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;margin:2px 0 4px}
+  .credit-sm-cell svg{max-width:100%;height:auto}
+  .cut-wrap{overflow-x:auto;margin:14px 0 30px}
+  .cut-wrap details{border-top:1px solid var(--rule-2);padding:12px 0}
+  .cut-wrap summary{font-family:var(--sans);font-size:.95rem;color:var(--ink);cursor:pointer}
+  .cut-wrap summary small{color:var(--muted);margin-left:8px}
+  table.cut-table{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:.86rem;min-width:560px;margin-top:10px}
+  table.cut-table th{font-weight:400;font-size:.78rem;color:var(--muted);text-align:left;padding:0 14px 8px 0;border-bottom:1px solid var(--rule-2);cursor:pointer;white-space:nowrap}
+  table.cut-table th[data-dir="asc"]::after{content:" ↑"} table.cut-table th[data-dir="desc"]::after{content:" ↓"}
+  table.cut-table td{padding:7px 14px 7px 0;border-bottom:1px solid var(--rule);color:var(--ink-soft)}
+  table.cut-table td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  table.cut-table th.n{text-align:right}
+</style>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">Every rupee a bank lends is someone's home, shop, tractor, factory or credit-card bill. The Reserve Bank counts those loans every fortnight and sorts them every month by who borrowed. Read together with the money supply and the banks' bad loans, the numbers show what Indians are borrowing for, and whether the system lending to them is sound.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>Reserve Bank of India, DBIE</b></span>
+      <span>Instrument <b>Scheduled commercial banks: Section 42 return, sectoral credit, BSR-1, money stock, NPAs</b></span>
+      <span>Frequency <b>Fortnightly, monthly, quarterly, annual</b></span>
+      <span>Window <b>1951 to {PG.year}</b></span>
+      <span>Latest <b id="m-latest">–</b></span>
+      <span>Unit <b>₹ lakh crore; growth on a year earlier</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Bank credit, growth on a year earlier</div><div class="v acc" id="n-growth">–</div><div class="d" id="d-growth">–</div><div class="nspark" id="nspark-growth"></div></div>
+      <div class="num"><div class="l">Personal loans, share of non-food credit</div><div class="v" id="n-pers">–</div><div class="d" id="d-pers">–</div></div>
+      <div class="num"><div class="l">Broad money (M3), growth on a year earlier</div><div class="v" id="n-m3">–</div><div class="d" id="d-m3">–</div></div>
+      <div class="num"><div class="l">Bad loans, gross NPAs as a share of advances</div><div class="v" id="n-npa">–</div><div class="d" id="d-npa">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading: the broad number and what it is not. Inputs: credit-growth (headline, every sector), credit-sectors. Prose: generated slots. -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Bank credit, growth on a year earlier</span><div class="big" id="rb-growth">–</div></div>
+      <p class="rt-cap">How much more all scheduled commercial banks had lent out at the end of {PG.long} than a year before, counting every loan not yet repaid: to farmers, firms, traders, home buyers and everyone else.</p>
+      <div class="rt-side"><span class="rk">Outstanding, all banks</span><div class="rt-side-v" id="rb-stock">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the figures say</span>
+        <Prose slot="credit.current-reading.what-the-print-says" />
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What they do not say</span>
+        <Prose slot="credit.current-reading.what-it-does-not-say" />
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 lived reality: what a loan is to a household. Evergreen, human-written. -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>What bank credit means at home</h2><span class="line"></span></div>
+    <div class="prose">
+      <p>Bank credit is the stock of every loan a bank has made and not yet been repaid. A family that takes a ₹30 lakh home loan adds ₹30 lakh to it on the day the money is paid out, and takes a little off with every monthly instalment. A farmer's crop loan, a kirana shop's overdraft, a car loan, a gold loan taken to pay school fees and a steel plant's working capital all sit in the same number.</p>
+      <p>So when credit grows fast, more people and firms are borrowing more, or borrowing bigger sums. That can mean confidence: shops stocking up, factories expanding, families buying homes. It can also mean strain, when households borrow to keep up with spending their incomes cannot cover. The numbers on this page cannot tell the two apart by themselves. What they can show is who is borrowing, for what, where, at what rate, and how much of it goes bad.</p>
+      <p>Credit also decides who gets a chance. A loan at 9% instead of a moneylender's 36% is the difference between a small business that grows and one that drowns in interest. That is why the RBI asks banks to lend a share to agriculture, small firms and weaker sections (priority sector lending), and why the map of credit by state, by town size and by gender matters as much as the total.</p>
+    </div>
+  </section>
+
+  <!-- § 03 how to read this: evergreen. -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>How to read these numbers</h2><span class="line"></span></div>
+    <div class="prose">
+      <p><b>Two counts of the same loans.</b> Every fortnight each scheduled commercial bank reports its total deposits and credit to the RBI under Section 42 of the RBI Act: this is the headline bank credit, covering every bank. Once a month a narrower return from selected banks, about 95% of non-food credit, sorts the loans by who borrowed: the sectoral figures. The sector shares on this page come from that second return, so they add up to a little less than total credit.</p>
+      <p><b>Growth is measured against a year earlier,</b> on the RBI's own year-ago figure. Month-to-month changes are noisy: credit swells at every quarter's end as banks and firms dress up their balance sheets, and falls back after.</p>
+      <p><b>Three breaks are disclosed, never joined over.</b> In January 2019 the RBI reclassified sectoral credit (new codes, aviation and gold loans counted separately): the old and new series are drawn apart. In July 2023 HDFC Ltd, a housing finance company, merged into HDFC Bank, adding about ₹6 lakh crore of its loans to bank credit overnight; for two years the RBI also published figures excluding the merger, and both are shown. From December 2025 banks report on the 15th and the last day of each month instead of alternate Fridays (Banking Laws (Amendment) Act 2025), so a year-on-year comparison briefly sets a month-end against an older Friday.</p>
+      <p><b>Money is not the same as credit.</b> Broad money (M3) is what the public holds: cash, and deposits with banks. Most of it is created when banks lend, because a loan lands in someone's deposit account. Reserve money (M0) is the RBI's own money, the cash in circulation and banks' balances with it.</p>
+    </div>
+  </section>
+
+  <!-- § 04 how fast credit grows. Inputs: credit-scb-ratios (credit_growth, deposits_growth, credit_growth_ex_merger, credit_deposit_ratio, investment_deposit_ratio), credit-depth (credit_to_gdp, aggregate_deposits_to_gdp). -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>How fast credit grows</h2><span class="line"></span><span class="unit">All scheduled commercial banks, every fortnight since 1998</span></div>
+    <div class="break">
+      <figure id="cb-growth" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Bank credit grew fastest in the mid-2000s boom and slowest after the 2016 bad-loan clean-up</h3>
+            <div class="sub">Growth of bank credit and deposits on a year earlier, all scheduled commercial banks, every reporting fortnight. The pale line removes the HDFC merger's one-time jump, July 2023 to August 2025.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-growth">–</div><div class="c">credit growth, latest fortnight</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Bank credit</button>
+            <button class="chip"><i style="background:#AFBBF0"></i>Bank credit, excluding the merger</button>
+            <button class="chip"><i style="background:#C47A16"></i>Deposits</button>
+          </div>
+          <div class="plotzone"><div id="plot-growth" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Business of Scheduled Banks (Section 42 return, DBIE report 689). Growth against the reporting date closest to a year earlier; excluding the merger: RBI's adjusted figures.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>When the blue line runs above the gold one, banks are lending faster than they are taking in deposits and must find the money elsewhere: by selling government bonds, borrowing, or competing harder for deposits with higher rates. When it runs below, money piles up in banks that cannot find borrowers.</p>
+            <p>Credit growth swings with the economy and with the banks' own health. It peaked in the 2004 to 2008 boom, fell after the 2008 crisis, and sank to its lowest after 2016, when banks laden with bad loans stopped lending to industry. The merger of HDFC Ltd into HDFC Bank in July 2023 added a year of artificial growth; the pale line shows growth without it.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {P42.long}</span>
+            <p>In the year to <span id="ex-g-date">–</span> bank credit grew <b id="ex-g-credit">–</b> and deposits <b id="ex-g-dep">–</b>. Since 2011 the slowest pace was <b id="ex-g-lo">–</b>, in <span id="ex-g-lo-d">–</span>. Excluding the merger, credit growth peaked at <b id="ex-g-exmax">–</b> in <span id="ex-g-exmax-d">–</span>; the pace now is above that. Part of the latest figure compares a month-end with an older Friday (the December 2025 change in reporting dates), which flatters it a little; we do not know by how much.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-cd" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Banks now lend out four of every five rupees deposited, against about half in the late 1990s</h3>
+            <div class="sub">Bank credit and banks' holdings of SLR securities (mostly government bonds) as a share of deposits, all scheduled commercial banks, every fortnight since June 1997.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-cd">–</div><div class="c">credit-deposit ratio, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-cd" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Section 42 return (DBIE report 689); ratios computed from the published levels.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Every deposit goes one of three ways: lent out, put into government bonds, or kept as cash and balances with the RBI. Banks must hold a minimum share in government bonds (the statutory liquidity ratio) and in cash with the RBI (the cash reserve ratio), so the credit-deposit ratio can never reach 100% for the system as a whole. A rising ratio means banks are turning deposits into loans rather than bonds.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {P42.long}</span>
+            <p>Banks had lent <b id="ex-cd-now">–</b> of their deposits, against <b id="ex-cd-0">–</b> in <span id="ex-cd-0d">–</span>, and held <b id="ex-cd-inv">–</b> in SLR securities.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-depth" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Bank credit was a twentieth of the economy in 1951; it is now well over half</h3>
+            <div class="sub">Deposits and credit of scheduled commercial banks as a share of GDP at current prices, every financial year since 1950-51.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-depth">–</div><div class="c">credit, share of GDP, latest year</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-depth" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Scheduled Commercial Banks: Ratios (DBIE report 332), as published. GDP on the national accounts base RBI used for each year.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>This is how deep banking runs in the economy. The climb after bank nationalisation in 1969 and the branch expansion that followed brought deposits from villages into the system; credit caught up after the 1990s reforms and the 2000s boom. India's ratio is still low next to China's or most rich countries', which is why economists argue both that Indian firms are short of credit and, at times, that households are borrowing too fast.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {fyOf(load("credit-depth").dates.at(-1))}</span>
+            <p>In {fyOf(load("credit-depth").dates.at(-1))} bank credit was <b id="ex-dp-c">–</b> of GDP and deposits <b id="ex-dp-d">–</b>. In 1950-51 credit was <b id="ex-dp-c0">–</b>; in 1990-91, on the eve of the reforms, <b id="ex-dp-c91">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 who borrows (anatomy). Inputs: credit-sectors (agriculture, industry_*, services, nbfcs, trade, commercial_real_estate, personal_loans, housing, vehicle_loans, gold_loans, credit_cards, non_food_credit), credit-sectors-2007 (the same, old format), credit-growth (every sector). -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>Who borrows</h2><span class="line"></span><span class="unit">Non-food credit by sector, selected banks, monthly</span></div>
+    <div class="break">
+      <figure id="cb-who" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Home loans are the largest single kind of bank credit, ahead of all big industry</h3>
+            <div class="sub">Share of bank credit to agriculture, industry, services and personal loans, by borrower, <span id="lg-who">–</span> (bars) and a year earlier, <span id="lg-who-y">–</span> (circles).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-who">–</div><div class="c">the largest single share</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-who" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Sectoral Deployment of Bank Credit (selected banks, about 95% of non-food credit). "Everything else" in services and personal loans is the published total less the rows shown.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each bar is one kind of borrower's share of the money lent to the four big sectors. Personal loans are loans to individuals for their own use: homes, vehicles, consumer goods, education, credit cards, gold loans. Loans to a proprietor for her shop count under services or industry, not here. NBFCs are finance companies that borrow from banks to lend on, so bank credit to them ends up with households and firms one step removed.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PS.long}</span>
+            <p>Personal loans took <b id="ex-w-pers">–</b> of the credit, services <b id="ex-w-serv">–</b>, industry <b id="ex-w-ind">–</b> and agriculture <b id="ex-w-agri">–</b>. Housing alone was <b id="ex-w-house">–</b>, more than large industry at <b id="ex-w-large">–</b>. Loans to NBFCs were <b id="ex-w-nbfc">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-mix" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Since 2007 banks have turned from lending to industry to lending to people</h3>
+            <div class="sub">Share of bank credit to the four sectors, monthly. Pale lines: the old classification, April 2007 to December 2018; solid: the current one, from January 2019. Never joined.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-mix">–</div><div class="c">personal loans' share, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Personal loans</button>
+            <button class="chip"><i style="background:#C47A16"></i>Services</button>
+            <button class="chip"><i style="background:#5F6675"></i>Industry</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Agriculture</button>
+          </div>
+          <div class="plotzone"><div id="plot-mix" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Sectoral Deployment of Bank Credit, old format (2007 to 2020) and new format (2019 on); shares computed from the published amounts.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The lines are shares, so one rising means another falling. Industry's share fell through the 2010s as big projects soured and banks pulled back; personal loans, which rarely go bad in large lumps, took its place. The two classifications are drawn apart because some loans moved between sectors when the RBI changed the codes in 2019; where they overlap, read each against its own history.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PS.long}</span>
+            <p>In April 2007 industry took <b id="ex-mx-i07">–</b> and personal loans <b id="ex-mx-p07">–</b>. Now industry takes <b id="ex-mx-i">–</b>, services <b id="ex-mx-s">–</b> and personal loans <b id="ex-mx-p">–</b>. On the current classification, personal loans first outweighed industry in <span id="ex-mx-cross">–</span>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-fast" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Which kinds of credit are growing fastest</h3>
+            <div class="sub">Growth on a year earlier by kind of borrower, <span id="lg-fast">–</span> (bars) and a year before that, <span id="lg-fast-y">–</span> (circles). Blue: faster than bank credit as a whole.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-fast">–</div><div class="c">the fastest, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-fast" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Sectoral Deployment of Bank Credit; growth on RBI's own printed year-ago figures where a release printed one.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Growth from a small base can look dramatic: a kind of loan that doubles from a low level moves the total less than a big one growing slowly. Read the bars with the shares above. Since May 2024 one bank has reclassified a category of farm loans as gold loans, which inflates gold-loan growth and depresses agriculture's for a year.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PG.long}</span>
+            <p><span id="ex-f-top">–</span> grew fastest, at <b id="ex-f-topv">–</b>; <span id="ex-f-low">–</span> slowest, at <b id="ex-f-lowv">–</b>. <b id="ex-f-n">–</b> of these <span id="ex-f-of">–</span> kinds of credit grew faster than bank credit as a whole (<b id="ex-f-head">–</b>).</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 loans to people. Inputs: credit-growth (gold_loans, housing, vehicle_loans, credit_cards, other_personal_loans, personal_loans), credit-lending-rates (every occupation), credit-size (every band, amount and accounts). -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>Loans to people: homes, cars, cards and gold</h2><span class="line"></span><span class="unit">Personal loans, growth, rates and sizes</span></div>
+    <div class="break">
+      <figure id="cb-personal" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Gold loans have boomed while credit-card borrowing has stalled</h3>
+            <div class="sub">Growth on a year earlier of five kinds of personal loan, monthly since January 2020. Each panel has its own scale.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-personal">–</div><div class="c">all personal loans, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-personal"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Sectoral Deployment of Bank Credit, new format. Housing includes priority-sector housing; July 2023 to June 2024 includes HDFC Ltd's home loans arriving in HDFC Bank.</span>
+            <span class="dl"><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Home and vehicle loans are secured: the bank can take the house or car. Credit cards and "other personal loans" are unsecured, and are the ones regulators watch for strain. In November 2023 the RBI raised the capital banks must set aside against unsecured personal loans and cards, and their growth slowed afterwards. Gold loans are secured by jewellery and are often taken by families who cannot borrow any other way; a surge in them can mean either a high gold price making jewellery worth more, or households under pressure, and the data cannot say which.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PG.long}</span>
+            <p>Gold loans grew <b id="ex-p-gold">–</b> in the year to <span id="ex-p-date">–</span>, to <b id="ex-p-goldamt">–</b>. Credit-card balances grew <b id="ex-p-cards">–</b>, down from a peak of <b id="ex-p-cardspk">–</b> in <span id="ex-p-cardspkd">–</span>. Home loans grew <b id="ex-p-house">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-cost" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>A credit-card balance costs nearly five times as much as a home loan</h3>
+            <div class="sub">Weighted average interest rate on outstanding bank loans, by what the loan is for, <span id="lg-cost">–</span> (bars) and a year earlier, <span id="lg-cost-y">–</span> (circles).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-cost">–</div><div class="c">all loans, average rate</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-cost" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, BSR-1 quarterly table 1.9 (DBIE report 949), scheduled commercial banks excluding RRBs. Rates on outstanding loans, weighted by amount.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>These are the rates borrowers are actually paying on loans already on the books, not the rates banks advertise for new ones. Old loans keep old rates until they are repriced, so this average moves slowly after the RBI changes the repo rate (see the <a href="/guides/rates/">interest rates guide</a>). Credit-card rates are the interest charged on balances carried over, which most cardholders who pay in full never see.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PR.long}</span>
+            <p>In <span id="ex-c-date">–</span> credit-card balances carried <b id="ex-c-card">–</b> a year, home loans <b id="ex-c-house">–</b>, farm loans <b id="ex-c-agri">–</b> and loans to industry <b id="ex-c-ind">–</b>. All bank loans averaged <b id="ex-c-all">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-size" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Most loan accounts are small; most of the money is in a few very large loans</h3>
+            <div class="sub">Bank loans by the size of the credit limit: share of all the money lent (bars) and of all loan accounts (circles), <span id="ex-z-date">–</span>.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-size">–</div><div class="c">of the money, in loans above ₹100 crore</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-size" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, BSR-1 quarterly table 1.7 (DBIE report 947), scheduled commercial banks excluding RRBs. Size is the limit sanctioned, not the amount drawn.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A circle far to the right of its bar means many borrowers holding little money: the crop loans, microloans and small personal loans most Indians have. A bar far to the right of its circle means a few borrowers holding a lot: the companies and projects whose fortunes decide whether banks stay healthy. The bad-loan crisis of 2015 to 2020 lived in the bottom rows.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PZ.long}</span>
+            <p>Loans of up to ₹2 lakh were <b id="ex-z-smalln">–</b> of the <b id="ex-z-accts">–</b> crore loan accounts but <b id="ex-z-smallv">–</b> of the money. Loans above ₹100 crore were <b id="ex-z-bign">–</b> of accounts and <b id="ex-z-bigv">–</b> of the money.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 industry, services and NBFCs. Inputs: credit-growth (industry_*), credit-industry (every industry), credit-nbfc (every sector), credit-sectors (nbfcs). -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>Industry, services and the finance companies</h2><span class="line"></span><span class="unit">Monthly, selected banks</span></div>
+    <div class="break">
+      <figure id="cb-ind" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Small and medium firms' borrowing has grown faster than big companies'</h3>
+            <div class="sub">Growth on a year earlier of bank credit to industry, by size of firm, monthly since January 2020.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-ind">–</div><div class="c">all industry, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Micro and small</button>
+            <button class="chip"><i style="background:#C47A16"></i>Medium</button>
+            <button class="chip"><i style="background:#5F6675"></i>Large</button>
+          </div>
+          <div class="plotzone"><div id="plot-ind" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Sectoral Deployment of Bank Credit, new format. Firm size follows the MSME definition, which was widened in July 2020 (investment and turnover limits).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Big companies can raise money from bond markets and abroad; small ones depend on banks. So large-industry credit can be weak even when big firms are investing, while small-firm credit tracks the health of the many workshops and units that employ most industrial workers. Part of the jump in medium-firm credit after 2020 is definitional: when the government raised the MSME limits, firms that had counted as large were reclassified as medium.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PG.long}</span>
+            <p>In <span id="ex-i-date">–</span> credit to micro and small firms grew <b id="ex-i-mse">–</b>, to medium firms <b id="ex-i-med">–</b> and to large ones <b id="ex-i-lg">–</b>. Medium-firm credit grew fastest in <span id="ex-i-medpkd">–</span>, at <b id="ex-i-medpk">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-industries" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Infrastructure takes about a third of all bank lending to industry</h3>
+            <div class="sub">Share of bank credit to industry, by industry, <span id="ex-in-date">–</span>.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-industries">–</div><div class="c">infrastructure's share</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-industries" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Industry-wise Deployment of Bank Credit (RBIB Table 16), new format, selected banks. Every industry and sub-industry is in the table at the foot of the page.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Infrastructure covers power, roads, telecom, ports, airports and railways other than Indian Railways. These are long, large loans, and many of the bad loans of 2015 to 2020 began here, especially in power. A big share is not by itself a risk; what matters is whether the projects earn enough to repay.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PI.long}</span>
+            <p>Infrastructure had <b id="ex-in-infra">–</b> of bank credit to industry: power alone <b id="ex-in-power">–</b> and roads <b id="ex-in-roads">–</b>. Among industries with at least ₹50,000 crore of bank loans, <span id="ex-in-fast">–</span> grew fastest over the year, at <b id="ex-in-fastg">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-nbfc" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Finance companies lend mostly to households and to infrastructure</h3>
+            <div class="sub">Credit given by selected non-banking finance companies and housing finance companies, by sector, ₹ lakh crore, latest month.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-nbfc">–</div><div class="c">NBFC credit, all sectors</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-nbfc" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, sectoral deployment of credit by selected NBFCs and HFCs, in the monthly sectoral credit release (from May 2024). Retail loans include housing, vehicles, gold and consumer durables.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>NBFCs are a second channel of credit: they borrow from banks, bond markets and the public, and lend to people and businesses banks find too small, too risky or too remote. Bank credit to NBFCs (the services row above) and NBFCs' own lending (this plate) overlap: part of the same money is counted twice, once as a bank loan to the NBFC and once as the NBFC's loan to you. Never add them.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PNB.long}</span>
+            <p>Selected NBFCs and HFCs had lent <b id="ex-n-tot">–</b> in <span id="ex-n-date">–</span>, <b id="ex-n-retail">–</b> of it as retail loans. Banks' own loans to NBFCs stood at <b id="ex-n-bank">–</b>, up <b id="ex-n-bankg">–</b> in a year.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 food credit. Inputs: credit-food (food_credit, food_share). -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>Food credit: the grain stockpile on the banks' books</h2><span class="line"></span><span class="unit">Every fortnight since 1993</span></div>
+    <div class="break">
+      <figure id="cb-food" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Food credit swells when the government buys grain and shrinks as it is distributed</h3>
+            <div class="sub">Bank loans to the Food Corporation of India and state agencies for buying and storing foodgrains, ₹ lakh crore, every reporting fortnight since January 1993.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-food">–</div><div class="c">latest fortnight</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-food" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Food and Non-Food Credit of Scheduled Commercial Banks (DBIE report 1130, item 7a.1 Food Credit).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>When the government buys wheat after the rabi harvest (April to June) and rice after the kharif harvest (October onwards) at the minimum support price, a consortium of banks lends the Food Corporation of India the money. The loan is repaid as the grain is sold through ration shops and the government reimburses the FCI. So food credit spikes in procurement season and falls back, and its level over years tracks how much the government relies on bank loans rather than the budget to carry its grain stocks. It is a tiny share of bank credit, which is why the RBI reports non-food credit separately: food credit's swings would otherwise blur the signal.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PF.long}</span>
+            <p>Food credit was <b id="ex-fd-now">–</b> on <span id="ex-fd-date">–</span>, <b id="ex-fd-share">–</b> of bank credit. This year it has ranged from <b id="ex-fd-lo">–</b> (<span id="ex-fd-lod">–</span>) to <b id="ex-fd-hi">–</b> (<span id="ex-fd-hid">–</span>). Its highest ever was <b id="ex-fd-pk">–</b>, on <span id="ex-fd-pkd">–</span>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 money. Inputs: credit-money-growth (m3, m3_incl_merger, m1, currency_with_public, currency_share_m3), credit-money (currency_with_public), credit-money-ratios (velocity_m3, m3_multiplier), cpi-2024-linked (headline, the CPI guide's bundle). -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>Money: how much there is, and whether it still drives prices</h2><span class="line"></span><span class="unit">Broad money (M3) and its parts</span></div>
+    <div class="break">
+      <figure id="cb-m3" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Money growth and inflation have parted ways: the link is loose year to year</h3>
+            <div class="sub">Growth on a year earlier of broad money (M3), every fortnight, against consumer price inflation (CPI, 2024 base, NSO's linked series), monthly, since 2013.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-m3">–</div><div class="c">M3 growth, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>M3, including the HDFC merger</button>
+            <button class="chip"><i style="background:#AFBBF0"></i>M3, excluding the merger (to June 2025)</button>
+            <button class="chip"><i style="background:#C47A16"></i>Consumer price inflation</button>
+          </div>
+          <div class="plotzone"><div id="plot-m3" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, money stock (DBIE Data Query MSC_F), growth computed inside each ruler; MoSPI, CPI 2024=100 with the NSO's back series (read from the consumer prices guide).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The old rule of thumb was that money growing faster than the economy's output pushes up prices. In India the rule has held loosely over decades but poorly over months: food prices, oil and the rains move inflation far more than money does, and much new money is held as savings rather than spent. Since 2016 the RBI has targeted inflation directly through interest rates, and treats money growth as one signal among many. The two M3 lines are different rulers: the pale one excludes HDFC Ltd's deposits that entered the banking system in July 2023, and stops in June 2025.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PM.long}</span>
+            <p>Broad money grew <b id="ex-m-m3">–</b> in the year to <span id="ex-m-m3d">–</span>, narrow money (cash and current and savings deposits) <b id="ex-m-m1">–</b>, and cash with the public <b id="ex-m-cur">–</b>. Consumer prices rose <b id="ex-m-cpi">–</b> in the year to <span id="ex-m-cpid">–</span>. Whether today's fast money growth will show up as inflation later, we do not know; it did not after the money surge of 2020.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-currency" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Cash's share of money halved with demonetisation and was back within two years</h3>
+            <div class="sub">Currency with the public as a share of broad money (M3), every reporting fortnight since 2001.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-currency">–</div><div class="c">cash's share, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-currency" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, money stock components (DBIE Data Query MSC_F); share computed from the levels, on the M3 including the merger from July 2023.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>On 8 November 2016 the government withdrew ₹500 and ₹1,000 notes, most of the cash in circulation. People deposited the old notes in banks, so cash fell and deposits rose, and the share of money held as cash dropped. As new notes were printed the share climbed back. A second climb came in 2020, when people held more cash during the pandemic. The rise of UPI payments since then has not, so far, pushed cash's share much below where it was before 2016.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PM.long}</span>
+            <p>Cash with the public was <b id="ex-cu-amt">–</b>, <b id="ex-cu-now">–</b> of broad money. Just before demonetisation it was <b id="ex-cu-pre">–</b>; at its lowest after it, <b id="ex-cu-low">–</b> on <span id="ex-cu-lowd">–</span>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-velocity" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Each rupee of money now supports about a quarter of the yearly output it did in the 1950s</h3>
+            <div class="sub">GDP at current prices over broad money (the income velocity of money) and broad money over reserve money (the money multiplier), every financial year since 1951-52.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-velocity">–</div><div class="c">GDP over M3, latest year</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-velocity" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, monetary ratios (DBIE Data Query MONTRY_RATIOS), as published.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Velocity falls as people keep more of their wealth in bank deposits instead of land, gold or cash under the mattress: money stops being only a means of payment and becomes a store of savings. That is financial deepening, not a slowdown. The multiplier rises as banks lend out more of each rupee the RBI creates; it fell back when the RBI raised the cash banks must keep with it, and after demonetisation.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {fyOf(load("credit-money-ratios").dates.at(-1))}</span>
+            <p>In <span id="ex-v-yr">–</span> GDP was <b id="ex-v-now">–</b> broad money, against <b id="ex-v-0">–</b> in 1951-52. Each rupee of reserve money supported <b id="ex-v-mm">–</b> of broad money.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 10 where the credit goes (granular cuts). Inputs: credit-states-cd-annual (every state), credit-states-annual (deposits), credit-utilisation (utilised), credit-places (population groups), credit-women (every state). -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>Where the credit goes</h2><span class="line"></span><span class="unit">By state, by town size, by gender</span></div>
+    <div class="break">
+      <figure id="cb-states" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Three southern states lend out more than they take in; much of the north and east sends its savings elsewhere</h3>
+            <div class="sub">Credit-deposit ratio by state, {PST.long}: credit booked by branches in the state as a share of deposits held there (bars), and credit actually used in the state as a share of its deposits (circles).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-states">–</div><div class="c">all India</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-states" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, annual spatial statement 3A (DBIE report 1427) and BSR-1 table 1.3, credit by place of sanction and of utilisation (DBIE report 1134); scheduled commercial banks including RRBs. States with deposits of at least ₹1 lakh crore.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A ratio below 100% means the state's depositors are funding loans somewhere else. Some of that is real: savings from Bihar or Uttar Pradesh pay for loans in Maharashtra or Tamil Nadu. Some is bookkeeping: a company's loan is booked where its head office banks, not where its factory stands. The circles correct for that by counting credit where it is used. A big gap between bar and circle marks a state that books loans for the rest of the country (Maharashtra, Delhi) or one whose projects are financed from elsewhere.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PST.long}</span>
+            <p>For all India banks had lent <b id="ex-s-all">–</b> of deposits. <span id="ex-s-hi">–</span> had the highest ratio, <b id="ex-s-hiv">–</b>, and <span id="ex-s-lo">–</span> the lowest, <b id="ex-s-lov">–</b>; <b id="ex-s-n">–</b> of the <span id="ex-s-of">–</span> states shown were below the national ratio and <b id="ex-s-n100">–</b> above 100%. Maharashtra booked loans worth <b id="ex-s-mh">–</b> of its deposits but used <b id="ex-s-mhu">–</b>; Bihar booked <b id="ex-s-bh">–</b> and used <b id="ex-s-bhu">–</b>. Uttar Pradesh booked <b id="ex-s-up">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-pop" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Metropolitan branches book well over half of all bank credit</h3>
+            <div class="sub">Share of all bank credit (bars) and of all deposits (circles) by the population group of the branch, {PPL.long}, scheduled commercial banks excluding RRBs.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-pop">–</div><div class="c">metropolitan share of credit</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-pop" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, quarterly spatial statement 3A (DBIE report 1415). Centres are classed by 2011 census population: rural below 10,000, semi-urban 10,000 to 1 lakh, urban 1 to 10 lakh, metropolitan above 10 lakh.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Credit is counted where the branch is. Big-city branches book loans for companies operating everywhere, so the metropolitan share overstates how much of the money is used in cities. Even so, a rural depositor's rupee is more likely to be lent in a city than a city depositor's is to be lent in a village. RRBs, which serve villages, are left out of this quarterly table from March 2023; they would raise the rural share a little.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PPL.long}</span>
+            <p>Metropolitan branches held <b id="ex-pp-md">–</b> of deposits and booked <b id="ex-pp-mc">–</b> of credit, lending <b id="ex-pp-mcd">–</b> of their deposits. Rural branches held <b id="ex-pp-rd">–</b> of deposits and booked <b id="ex-pp-rc">–</b> of credit, lending <b id="ex-pp-rcd">–</b> of their deposits, in <span id="ex-pp-date">–</span>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-women" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Women hold about a quarter of bank credit to individuals, and far more in the south</h3>
+            <div class="sub">Women's share of outstanding bank loans to individuals, by state, {PW.long}. Blue: at or above the all-India share. States with at least ₹20,000 crore of loans to individuals.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-women">–</div><div class="c">all India</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-women" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, BSR-1 quarterly table 1.10, district and gender-wise credit to individuals (DBIE report 1555), summed to states; scheduled commercial banks excluding RRBs.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The table counts loans by the borrower named on the account. Joint home loans, loans to women-led self-help groups and loans to firms women own are not all captured here, and a loan in a woman's name is not always hers to decide on. The southern states' high shares owe much to self-help group lending and to gold loans, often taken against women's jewellery.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PW.long}</span>
+            <p>Women held <b id="ex-wo-all">–</b> of bank credit to individuals in <span id="ex-wo-date">–</span> and <b id="ex-wo-acc">–</b> of the loan accounts, up from <b id="ex-wo-0">–</b> of the credit in <span id="ex-wo-0d">–</span>. <span id="ex-wo-hi">–</span> had the highest share, <b id="ex-wo-hiv">–</b>; <span id="ex-wo-lo">–</span> the lowest, <b id="ex-wo-lov">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 11 bank health. Inputs: credit-npa (gnpa ratios by group), credit-npa-movement (additions, reductions, write-offs), credit-crar (banks by band), credit-frauds (by operation). -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>Are the banks healthy?</h2><span class="line"></span><span class="unit">Bad loans, capital and frauds, as on 31 March each year</span></div>
+    <div class="break">
+      <figure id="cb-npa" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The bad-loan cycle: from 2% of advances in 2011 to 11% in 2018, and back</h3>
+            <div class="sub">Gross non-performing assets as a share of gross advances, by bank group, as on 31 March each year since 1997.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-npa">–</div><div class="c">all banks, latest March</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>All banks</button>
+            <button class="chip"><i style="background:#5F6675"></i>Public sector banks</button>
+            <button class="chip"><i style="background:#C47A16"></i>Private banks (from 2014)</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Foreign banks</button>
+          </div>
+          <div class="plotzone"><div id="plot-npa" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Gross and Net NPAs of Scheduled Commercial Banks, bank group-wise (DBIE report 330). Private banks drawn from March 2014, when the RBI began reporting them as one group; old and new private banks before that are in the data download.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A loan becomes a non-performing asset (NPA) when interest or principal is unpaid for 90 days. In the boom of the late 2000s banks, public sector banks above all, lent heavily to power, steel, roads and telecom projects. Many stalled. For years the losses were hidden by restructuring loans on easy terms. In 2015 the RBI's asset quality review made banks recognise them, and the NPA ratio jumped. The Insolvency and Bankruptcy Code of 2016, write-offs and fresh capital from the government brought it down. Every rupee of bad loans is a rupee of depositors' money the bank must cover from its profits or capital.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PN.long}</span>
+            <p>In <span id="ex-np-yr">–</span> gross NPAs were <b id="ex-np-all">–</b> of advances for all banks and <b id="ex-np-pub">–</b> for public sector banks, against a peak of <b id="ex-np-pk">–</b> (<span id="ex-np-pkd">–</span>) for all banks and <b id="ex-np-pkp">–</b> for public sector banks. After provisions, net NPAs were <b id="ex-np-net">–</b>. In 1997 the ratio was <b id="ex-np-97">–</b>. <b id="ex-cr-b9">–</b> of the <span id="ex-cr-n">–</span> banks reporting held capital below the 9% minimum in <span id="ex-cr-yr">–</span>; as many as <b id="ex-cr-pk">–</b> did in <span id="ex-cr-pkd">–</span>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-npaflow" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The clean-up was done more by writing loans off than by recovering them</h3>
+            <div class="sub">Gross NPAs of all scheduled commercial banks added during the year, recovered or upgraded, and written off, ₹ lakh crore, every financial year since 2004-05.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-npaflow">–</div><div class="c">written off since 2015-16</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Added (new bad loans)</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Recovered or upgraded</button>
+            <button class="chip"><i style="background:#C47A16"></i>Written off</button>
+          </div>
+          <div class="plotzone"><div id="plot-npaflow" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Movement of NPAs of Scheduled Commercial Banks (DBIE report 1114), bank by bank, summed. Closing = opening + added - recovered - written off, checked for every year.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A write-off removes a bad loan from the books after the bank has set aside money to cover it. It does not forgive the borrower: the bank can still pursue recovery. But money recovered later from written-off loans is a small fraction of what was written off, so most of it is a loss, borne by the banks' shareholders, which for public sector banks means the taxpayer.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PNM.long}</span>
+            <p>New bad loans peaked at <b id="ex-nf-pk">–</b> in <span id="ex-nf-pkd">–</span>. Since 2015-16 banks have written off <b id="ex-nf-wo">–</b>. In <span id="ex-nf-yr">–</span> they added <b id="ex-nf-add">–</b>, recovered or upgraded <b id="ex-nf-red">–</b> and wrote off <b id="ex-nf-wol">–</b>, ending the year with <b id="ex-nf-close">–</b> of gross NPAs.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-frauds" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Most frauds by number are card and internet frauds; most by money are loan frauds</h3>
+            <div class="sub">Amount involved in frauds reported by banks, by year of reporting, ₹ thousand crore, loan frauds and everything else, every financial year since 2004-05.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-frauds">–</div><div class="c">reported, latest year</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Loan frauds</button>
+            <button class="chip"><i style="background:#C9CED6"></i>Everything else (cards and internet, deposits, cash, cheques and more)</button>
+          </div>
+          <div class="plotzone"><div id="plot-frauds" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Report on Trend and Progress of Banking: frauds in various banking operations, by date of reporting (DBIE report 1508).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A fraud is counted in the year a bank reports it, which can be many years after it happened: the bars of 2019-20 and 2020-21 are mostly loans from the boom years declared fraudulent once they had gone bad. So a tall bar is a year of discovery, not of crime. Card and internet frauds are many and small; they are the ones ordinary customers meet.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {fyOf(load("credit-frauds").dates.at(-1))}</span>
+            <p>In <span id="ex-fr-yr">–</span> banks reported <b id="ex-fr-n">–</b> frauds involving <b id="ex-fr-amt">–</b>. Loan frauds were <b id="ex-fr-adv">–</b> of the money; card and internet frauds were <b id="ex-fr-cards">–</b> of the cases but <b id="ex-fr-cardamt">–</b> of the money. The largest year was <span id="ex-fr-pkd">–</span>, at <b id="ex-fr-pk">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 12 every cut: the long tail, built at render time from the bundles. -->
+  <section>
+    <div class="sec-head"><span class="no">12</span><h2>Every cut</h2><span class="line"></span><span class="unit">Click a column to sort</span></div>
+    <div class="prose"><p>Every sector, industry, occupation, state and bank this guide holds, at the latest figure, with a download of the full history in the data table below. Nothing here is estimated.</p></div>
+    <div class="cut-wrap">
+      <details open>
+        <summary>Bank credit by sector and type of personal loan<small>{PS.long}, ₹ lakh crore, {sectorRows.length} series</small></summary>
+        <table class="cut-table"><thead><tr><th data-k="l">Sector</th><th data-k="a" class="n">₹ lakh crore</th><th data-k="g" class="n">Growth, year</th><th data-k="gy" class="n">A year earlier</th></tr></thead>
+          <tbody>{sectorRows.map((r) => <tr><td>{r.label}</td><td class="n">{f2(r.amt)}</td><td class="n">{r.g == null ? "" : f1(r.g) + "%"}</td><td class="n">{r.gy == null ? "" : f1(r.gy) + "%"}</td></tr>)}</tbody></table>
+      </details>
+      <details>
+        <summary>Bank credit to industry, by industry<small>{PI.long}, {industryRows.length} industries and sub-industries</small></summary>
+        <table class="cut-table"><thead><tr><th data-k="l">Industry</th><th data-k="a" class="n">₹ lakh crore</th><th data-k="s" class="n">Share of industry</th><th data-k="g" class="n">Growth, year</th></tr></thead>
+          <tbody>{industryRows.map((r) => <tr><td>{r.label}</td><td class="n">{f2(r.amt)}</td><td class="n">{f1(r.share)}%</td><td class="n">{r.g == null ? "" : f1(r.g) + "%"}</td></tr>)}</tbody></table>
+      </details>
+      <details>
+        <summary>Bank credit by the borrower's occupation (BSR-1)<small>{period("credit-occupation").long}, {occRows.length} rows</small></summary>
+        <table class="cut-table"><thead><tr><th data-k="l">Occupation</th><th data-k="a" class="n">₹ lakh crore</th><th data-k="c" class="n">Accounts, lakh</th><th data-k="g" class="n">Growth, year</th></tr></thead>
+          <tbody>{occRows.map((r) => <tr><td>{r.label}</td><td class="n">{f2(r.amt)}</td><td class="n">{r.acc == null ? "" : f1(r.acc)}</td><td class="n">{r.g == null ? "" : f1(r.g) + "%"}</td></tr>)}</tbody></table>
+      </details>
+      <details>
+        <summary>States and union territories<small>March {PST.year}, including RRBs</small></summary>
+        <table class="cut-table"><thead><tr><th data-k="l">State</th><th data-k="d" class="n">Deposits, ₹ lakh crore</th><th data-k="c" class="n">Credit, ₹ lakh crore</th><th data-k="r" class="n">Credit-deposit ratio</th><th data-k="w" class="n">Women's share of loans to individuals, {PW.short}</th></tr></thead>
+          <tbody>{stateRows.map((r) => <tr><td>{r.label}</td><td class="n">{f2(r.dep)}</td><td class="n">{f2(r.cr)}</td><td class="n">{f1(r.cd)}%</td><td class="n">{r.w == null ? "" : f1(r.w) + "%"}</td></tr>)}</tbody></table>
+      </details>
+      <details>
+        <summary>Gross NPA ratio of every bank<small>March {npaLast}, {bankRows.length} banks</small></summary>
+        <table class="cut-table"><thead><tr><th data-k="l">Bank</th><th data-k="v" class="n">Gross NPA ratio</th><th data-k="y" class="n">A year earlier</th></tr></thead>
+          <tbody>{bankRows.map((r) => <tr><td>{r.label}</td><td class="n">{f2(r.v)}%</td><td class="n">{r.y == null ? "" : f2(r.y) + "%"}</td></tr>)}</tbody></table>
+      </details>
+    </div>
+  </section>
+
+  <!-- § 13 misreadings -->
+  <section>
+    <div class="sec-head"><span class="no">13</span><h2>How to misread these numbers</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li><span class="no">1</span><div><h3>"Credit grew 20% in 2023-24, a boom."</h3><p>A big part of that year's growth was the merger of HDFC Ltd into HDFC Bank, which moved existing home loans from a finance company into a bank. No new loan was made. RBI's figures excluding the merger show growth several points lower.</p></div></li>
+      <li><span class="no">2</span><div><h3>"Personal loans are now the biggest sector, so households are over-borrowed."</h3><p>Most personal-loan money is home loans, secured against houses. Indian household debt is low next to most countries' (see the <a href="/guides/debt/">debt guide</a>). The worry is narrower: unsecured loans and credit-card balances growing fast among borrowers with thin incomes.</p></div></li>
+      <li><span class="no">3</span><div><h3>"Bank credit and NBFC credit together are the credit in the economy."</h3><p>Banks lend to NBFCs, which lend on. Adding bank credit to NBFC credit counts that money twice. The sector tables also cover only selected banks.</p></div></li>
+      <li><span class="no">4</span><div><h3>"Bihar's low credit-deposit ratio means its people do not get loans."</h3><p>Partly, but loans to Bihar's farms and firms booked in Patna count there, while a company's loan for a plant in Bihar booked in Mumbai does not. Read the ratio by place of utilisation beside it.</p></div></li>
+      <li><span class="no">5</span><div><h3>"NPAs fell from 11% to 2%, so the banks recovered the money."</h3><p>Most of the fall came from writing loans off, which is a loss, and from loans growing faster than bad loans. Recoveries were a smaller part.</p></div></li>
+      <li><span class="no">6</span><div><h3>"Money supply grew 16%, so inflation is coming."</h3><p>Maybe; maybe not. Over months, money growth has been a poor guide to Indian inflation, which food and fuel prices drive. The RBI targets inflation directly.</p></div></li>
+    </ul>
+  </section>
+
+  <GuideData slug="credit" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>Reserve Bank of India, Database on Indian Economy (DBIE), through the owner's local mirror of it (the Data Bank): the Section 42 return (report 689), food credit (1130), sectoral and industry-wise deployment of bank credit (the RBI's exports and monthly releases), money stock and reserve money (Data Query tables MSC_F, MSS_F, BMC_M, RMC_M and others), NPAs, capital adequacy and frauds (330, 1114, 329, 336, 1508), the spatial statements (1415, 1427, 1465, 1483), BSR-1 (941 to 963, 1134, 1555), NBFC credit, and bank ratios (332). CPI from MoSPI via the consumer prices guide. Data vintage <b id="prov-vintage">–</b>.</p>
+      </div>
+      <div>
+        <h6>Method</h6>
+        <p>Amounts are converted from rupees or crore to ₹ lakh crore. Growth is computed from the published levels; for sectoral credit it uses the RBI's own printed year-ago figure wherever a release printed one, and equals the release. Shares and ratios are computed from levels. State totals add the RBI's bank-group and town-size rows. Nothing is estimated or filled; gaps are left empty.</p>
+      </div>
+      <div>
+        <h6>Revisions and breaks</h6>
+        <p>Never joined across: the January 2019 sectoral reclassification; figures including and excluding the July 2023 HDFC merger; quarterly spatial statements with RRBs (to December 2022) and without (from March 2023); centres classed by the 2001 and 2011 censuses; Andhra Pradesh before and after Telangana, Jammu and Kashmir before and after Ladakh. Source defects corrected and disclosed in each file's notes.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Version 1.0, built October 2026 from RBI data to {PG.long}. Revised with each monthly sectoral credit release; banking health once a year.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, money, credit and banks</span>
+      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/credit.client.js";
+</script>
+</Base>
