@@ -265,6 +265,11 @@ export const DOSSIERS = [
     prose: true,
     register: { id: "reg-asi", label: "Enterprises", unit: "Annual, ASI from 2008-09, ASUSE from 2021-22", historyCol: "History" },
     bundles: ["asi-headline", "asi-accounts", "asi-headline-1987", "asi-headline-1998", "asi-headline-2004", "asi-industries", "asi-states", "asuse-annual", "asuse-quarterly", "asuse-sectors", "asuse-states", "asuse-owners", "asuse-modernity", "asuse-structure"],
+    // industry (wave 2): every ASUSE table in both rulers, each family one paged view
+    everyCutFamilies: [
+      { id: "asuse-tables", label: "ASUSE, every table: the financial-year rounds 2021-22 to 2023-24", match: "asuse-t" },
+      { id: "asuse-2025-tables", label: "ASUSE, every table: the calendar-year 2025 round", match: "asuse-2025-" },
+    ],
   },
   {
     slug: "aishe",

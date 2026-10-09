@@ -314,7 +314,7 @@ const PRODUCTS = [
   { slug: "asuse-modernity", dossier: "asuse", cadence: 12, range: [0, 5e5] },
   { slug: "asuse-states", dossier: "asuse", cadence: 12, range: [0, 5e8] },
   // counts are in hundreds ('00): workers reach ~1.5e6 ('00) ≈ 152M
-  { slug: "asuse-quarterly", dossier: "asuse", cadence: 3, staleAfter: "2026-01", range: [0, 3e6], freq: "quarterly" },
+  { slug: "asuse-quarterly", dossier: "asuse", cadence: 3, staleAfter: "2026-04", range: [0, 3e6], freq: "quarterly", base: "quarterly bulletin (calendar quarters, from Jan-Mar 2025)" },
   // AISHE: counts (enrolment to ~4.3e7, teachers ~1.6e6) mixed with ratios
   // (GER ~25%, GPI ~1, PTR ~26); wide range admits them all
   { slug: "aishe-headline", dossier: "aishe", cadence: 12, range: [0, 5e7] },
@@ -1976,6 +1976,35 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
     checkRange(b, r.range[0], r.range[1], r.slug);
     checkFreshness(b, r.slug, r.stale ? { staleAfter: r.stale } : {}, r.dossier);
   }
+  // ASUSE: every table, both rulers. Per-1000 rows stay in [0, 1000]; counts and rupees are
+  // non-negative (no ASUSE table publishes a negative); percentages in [0, 100].
+  const UNIT_RANGE = { per_1000: [0, 1000], pct: [0, 100], count: [0, 5e8], inr_per_year: [0, 5e7], inr: [0, 5e8], months: [0, 12] };
+  for (const slug of files.filter((f) => /^asuse-(2025-)?t\d\d$/.test(f))) {
+    const b = load(slug), cy = slug.startsWith("asuse-2025-");
+    checkMeta(b, slug, "asuse", cy ? "calendar-year round (ASUSE 2025)" : "survey 2021-22 onward", "annual");
+    checkCadence(b.dates, 12, slug);
+    checkRange(b, -Infinity, Infinity, slug, Object.fromEntries(Object.entries(b.series).map(([k, s]) => [k, UNIT_RANGE[s.unit] ?? [NaN, NaN]])));
+    checkFreshness(b, slug, { staleAfter: cy ? "2025-01" : "2023-04" }, "asuse");
+    if (cy && b.dates.length !== 1) fail(`${slug}: the 2025 round is one calendar year, found ${b.dates.length} dates`);
+  }
+  ok(`asuse: ${files.filter((f) => /^asuse-(2025-)?t\d\d$/.test(f)).length} complete tables through the generic checks`);
+  // the complete tables agree with the curated bundles where both carry a figure
+  if (files.includes("asuse-t01") && files.includes("asuse-annual")) {
+    const t = load("asuse-t01"), a = load("asuse-annual");
+    const all = t.series.estimated_no_of_establishments;
+    if (!all) fail("asuse-t01: no All India, all establishments count to check against asuse-annual");
+    else if (JSON.stringify(all.data) !== JSON.stringify(a.series.establishments_all.data)) fail(`asuse-t01: All India establishments ${all.data} != asuse-annual ${a.series.establishments_all.data}`);
+    else ok(`asuse-t01: All India establishments identical to asuse-annual (${all.data.join(", ")})`);
+  }
+  // per-1000 distributions add to about 1,000 (published integers, rounding)
+  for (const slug of ["asuse-t03", "asuse-2025-t03", "asuse-t10", "asuse-2025-t10"].filter((x) => files.includes(x))) {
+    const b = load(slug);
+    const parts = Object.entries(b.series).filter(([k, s]) => /^All India · /.test(s.label) && !/ · All$/.test(s.label) && !/Proprietary-All/.test(s.label));
+    const sum = b.dates.map((_, i) => parts.reduce((a, [, s]) => a + (s.data[i] ?? 0), 0));
+    if (sum.some((v) => v && Math.abs(v - 1000) > 6)) fail(`${slug}: All India categories sum to ${sum.join(", ")} per 1,000`);
+    else ok(`${slug}: All India categories sum to ${sum.join(", ")} per 1,000`);
+  }
+
   // annual growth as published vs computed from the published (rounded) annual levels
   for (const slug of ["iip-annual-2022", "iip-annual-2011", "iip-annual-2004", "iip-annual-1993", "core-2011", "core-2004", "core-1993"].filter((x) => files.includes(x))) {
     const b = load(slug); let worst = 0, at = null, n = 0;

@@ -643,6 +643,73 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   wirePlate(document.getElementById("cb-lab"), plot, "india-atlas_asi_employment-share-by-industry_2023-24", csv);
 }
 
+/* ---------- § 06 plates 4e, 4f : what a factory job pays, and how big the plant is ----------
+ * Derived from published series, labelled as such: total emoluments / persons engaged, and
+ * persons engaged / factories in operation, by 2-digit division, latest survey year. */
+{
+  const SHORT = {
+    "10": "Food products", "11": "Beverages", "12": "Tobacco", "13": "Textiles", "14": "Wearing apparel", "15": "Leather",
+    "16": "Wood products", "17": "Paper", "18": "Printing", "19": "Coke & petroleum", "20": "Chemicals", "21": "Pharmaceuticals",
+    "22": "Rubber & plastics", "23": "Non-metallic minerals", "24": "Basic metals", "25": "Fabricated metal", "26": "Electronics & optical",
+    "27": "Electrical equipment", "28": "Machinery n.e.c.", "29": "Motor vehicles", "30": "Other transport eqpt", "31": "Furniture",
+    "32": "Other manufacturing", "33": "Repair & installation", "38": "Waste & recovery", "58": "Publishing", "01": "Crop & animal services", "08": "Other mining",
+  };
+  const S = industriesBundle.series, i = industriesBundle.dates.length - 1;
+  const codes = [...new Set(Object.keys(S).filter((k) => k.startsWith("persons_engaged_")).map((k) => k.slice(16)))].filter((c) => c !== "99998");
+  const g = (k, c) => S[`${k}_${c}`]?.data[i];
+  const rows = codes.map((c) => ({ c, name: SHORT[c] || c, p: g("persons_engaged", c), wage: (g("emoluments", c) * 1e5) / g("persons_engaged", c), size: g("persons_engaged", c) / g("factories_in_operation", c) }))
+    .filter((r) => Number.isFinite(r.wage) && Number.isFinite(r.size));
+  const hi = H.persons_engaged.data.length - 1;
+  const allWage = (H.emoluments.data[hi].value * 1e5) / H.persons_engaged.data[hi].value;
+  const allSize = H.persons_engaged.data[hi].value / H.factories_in_operation.data[hi].value;
+  const yr = fy(industriesBundle.dates.map((d) => new Date(d + "T00:00:00Z"))[i]);
+  const inr = (v) => "₹" + fmtIN(v);
+  const inrL = (v) => (v >= 1e5 ? "₹" + (v / 1e5).toFixed(1) + " lakh" : "₹" + fmtIN(v));
+  const strip = (id, block, key, fmtV, axisLabel, ref, refLab, file, a11yT) => {
+    const rs = [...rows].sort((a, b) => b[key] - a[key]);
+    const ext = [rs[0], rs.at(-1)];
+    const geo = { W: 1184, H: 30 + rs.length * 23 + 40, ml: 250, mr: 110, mt: 30, mb: 40 };
+    const max = rs[0][key] * 1.08;
+    const plot = Plot.plot({
+      width: geo.W, height: geo.H, marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+      style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#878D99", overflow: "visible" },
+      x: { label: axisLabel, labelAnchor: "right", labelArrow: false, domain: [0, max], tickSize: 0, tickPadding: 10, tickFormat: (d) => (d === 0 ? "0" : String(fmtV(d))) },
+      y: { label: null, domain: rs.map((r) => r.name), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
+      marks: [
+        Plot.gridX({ stroke: "#F0F2F5", strokeWidth: 1, ticks: 5 }),
+        Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+        Plot.ruleX([ref], { stroke: "#161A22", strokeOpacity: 0.5, strokeDasharray: "3,3" }),
+        Plot.text([{ x: ref, y: rs[0].name }], { x: "x", y: "y", text: [refLab + " " + fmtV(ref)], dy: -16, dx: 6, textAnchor: "start", fill: "#4A5160", fontSize: 11.5, fontFamily: mono }),
+        Plot.ruleY(rs, { y: "name", x1: 0, x2: key, stroke: (d) => (ext.includes(d) ? "#B9C3F3" : "#E3E6EB"), strokeWidth: 1.25 }),
+        Plot.dot(rs, { y: "name", x: key, fill: (d) => (ext.includes(d) ? "#2E4BD8" : "#5F6675"), r: 4 }),
+        Plot.text(rs.filter((d) => !ext.includes(d)), { y: "name", x: key, dx: 12, text: (d) => fmtV(d[key]), fill: "#878D99", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+        Plot.text(ext, { y: "name", x: key, dx: 12, text: (d) => fmtV(d[key]), fill: "#161A22", fontWeight: 500, fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      ],
+    });
+    a11y(plot, a11yT, "Sorted dot strip of " + rs.length + " industries, from " + rs[0].name + " at " + fmtV(rs[0][key]) + " to " + rs.at(-1).name + " at " + fmtV(rs.at(-1)[key]) + "; all factories " + fmtV(ref) + ".");
+    document.getElementById(id).append(plot);
+    const csv = ["nic_code,name," + key + "_" + yr, ...rs.map((r) => r.c + "," + r.name + "," + r[key].toFixed(2))].join("\n");
+    wirePlate(document.getElementById(block), plot, file, csv);
+    return rs;
+  };
+  const wr = strip("plot-wage", "cb-wage", "wage", (v) => (v >= 1e5 ? "₹" + (v / 1e5).toFixed(1) + "L" : "₹" + Math.round(v / 1000) + "k"), "emoluments per person engaged, ₹ a year →",
+    allWage, "all factories", "india-atlas_asi_emoluments-per-person_" + yr, "Total emoluments per person engaged by industry, " + yr);
+  setTxt("pv-wage", inrL(allWage));
+  setTxt("wg-all", inrL(allWage));
+  setTxt("wg-month", inr(Math.round(allWage / 12 / 100) * 100));
+  const below = wr.filter((r) => r.wage < allWage);
+  setTxt("wg-below", String(below.length));
+  setTxt("wg-n", String(wr.length));
+  const big3 = [...rows].sort((a, b) => b.p - a.p).slice(0, 3);
+  setTxt("wg-big", big3.map((r) => r.name.toLowerCase() + " " + inrL(r.wage)).join(", ").replace(/, ([^,]*)$/, " and $1"));
+  const sr = strip("plot-size", "cb-size", "size", (v) => String(Math.round(v)), "persons engaged per factory in operation →",
+    allSize, "all factories", "india-atlas_asi_persons-per-factory_" + yr, "Persons engaged per factory in operation by industry, " + yr);
+  setTxt("pv-size", String(Math.round(allSize)));
+  setTxt("sz-all", String(Math.round(allSize)));
+  setTxt("sz-top", sr.slice(0, 3).map((r) => r.name.toLowerCase() + " (" + Math.round(r.size) + ")").join(", "));
+  setTxt("sz-low", sr.slice(-3).reverse().map((r) => r.name.toLowerCase() + " (" + Math.round(r.size) + ")").join(", "));
+}
+
 /* ---------- § 07 the other economy ---------- */
 {
   const estOAE = last(UA.establishments_oae), estHWE = last(UA.establishments_hwe), estAll = last(UA.establishments_all);

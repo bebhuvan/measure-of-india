@@ -438,6 +438,14 @@ export const CUT_BY_BUNDLE = {
 };
 // the fallback, by what a bundle's slug says it is
 export const CUT_RULES = [
+  // --- industry (wave 2): complete ASI and ASUSE tables ---
+  [/^asuse-(2025-)?t\d\d$/, "ASUSE table"],
+  [/^asi(-\d{4})?-state-nic2$/, "State and industry"],
+  [/^asi(-\d{4})?-nic\d$/, "Industry"],
+  [/^asi(-\d{4})?-states(-all)?$/, "State"],
+  [/^asi-\d{4}-accounts$/, "Account"],
+  [/^asi-\d{4}-sectors$/, "Rural and urban"],
+  // --- end industry ---
   [/states?-sectors/, "State and sector"],
   [/-states?(-|$)/, "State"],
   [/-items?(-|$)/, "Item"],

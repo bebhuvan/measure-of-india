@@ -1,49 +1,165 @@
 # Coverage ledger: Annual Survey of Unincorporated Sector Enterprises, MoSPI
 # (docs/CONTRACT-coverage.md). Catalogue: node scripts/lib/products/asuse.mjs --catalogue.
-# Omissions left for the coordinator ("industry deeper", and the services guide for the
-# service activities): the 2025 round (inside every annual item; the bundles stop at
-# 2023-24), the 49 detailed activity categories, the state-wise twins of the distribution
-# tables (4, 7, 11, 13, 15, 17, 21, 23, 29, 31, 35), workers by gender, type and working time,
-# hired-worker emoluments by activity, audit status, service contracts, and the portrait
-# tables by activity and establishment type.
+# Every annual table is baked since wave 2 (2026-10-10): asuse-tNN for the financial-year
+# rounds and asuse-2025-tNN for the calendar-year 2025 round, a separate ruler. The curated
+# bundles drawn on the page come first; the 2025 tables join each drawn item's bundles.
 family: asuse
 guides: [factories]
 catalogue: data/coverage/asuse.catalogue.json
 rules:
   - match: ["asuse:annual:1:*:all", "asuse:annual:1:*:establishment-type:*", "asuse:annual:26:all", "asuse:annual:26:establishment-type:*", "asuse:annual:30:all", "asuse:annual:30:establishment-type:*", "asuse:annual:32:all", "asuse:annual:32:establishment-type:*", "asuse:annual:34:all", "asuse:annual:34:establishment-type:*"]
     status: shown
-    bundle: asuse-annual
+    bundle: [asuse-annual, asuse-2025-t01, asuse-2025-t26, asuse-2025-t30, asuse-2025-t32, asuse-2025-t34]
     plate: "The other economy, counted at last"
   - match: ["asuse:annual:1:5-*:sector:*", "asuse:annual:1:5-*:activity-category:26-manufacturing-activities", "asuse:annual:1:5-*:activity-category:33-trading-activities", "asuse:annual:1:5-*:activity-category:49-other-services"]
     status: shown
-    bundle: asuse-sectors
+    bundle: [asuse-sectors, asuse-2025-t01]
     plate: "The other economy, counted at last (by activity, rural and urban)"
   - match: ["asuse:annual:2:*:state-ut:*", "asuse:annual:27:state-ut:*", "asuse:annual:33:state-ut:*"]
     status: shown
-    bundle: asuse-states
+    bundle: [asuse-states, asuse-2025-t02, asuse-2025-t27, asuse-2025-t33]
     plate: "The other economy, counted at last (by state)"
   - match: ["asuse:annual:3:all", "asuse:annual:3:sector:*", "asuse:annual:3:ownership-type:*", "asuse:annual:10:all", "asuse:annual:10:sector:*", "asuse:annual:10:location-of-establishment:*", "asuse:annual:12:all", "asuse:annual:12:sector:*", "asuse:annual:12:nature-of-operation:*", "asuse:annual:14:all", "asuse:annual:14:sector:*", "asuse:annual:14:no-of-months-operated:*", "asuse:annual:16:all", "asuse:annual:16:sector:*", "asuse:annual:16:no-of-working-hours:*", "asuse:annual:19:all", "asuse:annual:19:sector:*", "asuse:annual:19:npi-status:*"]
     status: shown
-    bundle: asuse-structure
+    bundle: [asuse-structure, asuse-2025-t03, asuse-2025-t10, asuse-2025-t12, asuse-2025-t14, asuse-2025-t19]
     plate: "The informal firm, described"
   - match: ["asuse:annual:5:all", "asuse:annual:5:sector:*", "asuse:annual:5:general-education-level:*", "asuse:annual:6:all", "asuse:annual:6:sector:*", "asuse:annual:6:social-group-of-owner-major-partner:*"]
     status: shown
-    bundle: asuse-owners
+    bundle: [asuse-owners, asuse-2025-t05, asuse-2025-t06]
     plate: "The informal firm, described (who owns it)"
   - match: ["asuse:annual:9:all", "asuse:annual:9:sector:*", "asuse:annual:9:account-holder:*", "asuse:annual:20:all", "asuse:annual:20:sector:*", "asuse:annual:20:sub-indicator:*", "asuse:annual:20:establishment-type:*", "asuse:annual:22:all", "asuse:annual:22:sector:*", "asuse:annual:22:sub-indicator:*", "asuse:annual:22:acts-agency-of-registration:*", "asuse:annual:25:all"]
     status: shown
-    bundle: asuse-modernity
+    bundle: [asuse-modernity, asuse-2025-t09, asuse-2025-t20, asuse-2025-t22]
     plate: "The informal firm, described (how modern it is)"
   - match: ["asuse:quarterly:*:all", "asuse:quarterly:*:sector:*", "asuse:quarterly:*:broad-activity-category:*"]
     status: shown
     bundle: asuse-quarterly
     plate: "The other economy, counted at last (the quarterly bulletin)"
 
-  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
-  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
-  - match:
-      - "asuse:annual:*:*"
-      - "asuse:annual:*:*:*"
-      - "asuse:annual:*:*:*:*"
-    status: pending
-    scheduled: "wave 2: industry deeper"
+
+  # Every annual table, complete (wave 2, 2026-10-10): each indicator crossed with one cut, in
+  # the financial-year rounds (asuse-tNN) and the calendar-year 2025 round (asuse-2025-tNN).
+  # The full crosses of the cuts are staged for the deep archive (data/archive/staging/asuse/).
+  - match: "asuse:annual:1:*"
+    status: baked
+    bundle: [asuse-t01, asuse-2025-t01]
+  - match: "asuse:annual:2:*"
+    status: baked
+    bundle: [asuse-t02, asuse-2025-t02]
+  - match: "asuse:annual:3:*"
+    status: baked
+    bundle: [asuse-t03, asuse-2025-t03]
+  - match: "asuse:annual:4:*"
+    status: baked
+    bundle: [asuse-t04, asuse-2025-t04]
+  - match: "asuse:annual:6:*"
+    status: baked
+    bundle: [asuse-t06, asuse-2025-t06]
+  - match: "asuse:annual:7:*"
+    status: baked
+    bundle: [asuse-t07, asuse-2025-t07]
+  - match: "asuse:annual:8:*"
+    status: baked
+    bundle: [asuse-t08]
+  - match: "asuse:annual:9:*"
+    status: baked
+    bundle: [asuse-t09, asuse-2025-t09]
+  - match: "asuse:annual:10:*"
+    status: baked
+    bundle: [asuse-t10, asuse-2025-t10]
+  - match: "asuse:annual:11:*"
+    status: baked
+    bundle: [asuse-t11, asuse-2025-t11]
+  - match: "asuse:annual:12:*"
+    status: baked
+    bundle: [asuse-t12, asuse-2025-t12]
+  - match: "asuse:annual:13:*"
+    status: baked
+    bundle: [asuse-t13, asuse-2025-t13]
+  - match: "asuse:annual:14:*"
+    status: baked
+    bundle: [asuse-t14, asuse-2025-t14]
+  - match: "asuse:annual:15:*"
+    status: baked
+    bundle: [asuse-t15, asuse-2025-t15]
+  - match: "asuse:annual:16:*"
+    status: baked
+    bundle: [asuse-t16]
+  - match: "asuse:annual:17:*"
+    status: baked
+    bundle: [asuse-t17]
+  - match: "asuse:annual:18:*"
+    status: baked
+    bundle: [asuse-2025-t18]
+  - match: "asuse:annual:19:*"
+    status: baked
+    bundle: [asuse-t19, asuse-2025-t19]
+  - match: "asuse:annual:20:*"
+    status: baked
+    bundle: [asuse-t20, asuse-2025-t20]
+  - match: "asuse:annual:21:*"
+    status: baked
+    bundle: [asuse-t21, asuse-2025-t21]
+  - match: "asuse:annual:22:*"
+    status: baked
+    bundle: [asuse-t22, asuse-2025-t22]
+  - match: "asuse:annual:23:*"
+    status: baked
+    bundle: [asuse-t23, asuse-2025-t23]
+  - match: "asuse:annual:24:*"
+    status: baked
+    bundle: [asuse-2025-t24]
+  - match: "asuse:annual:25:*"
+    status: baked
+    bundle: [asuse-t25]
+  - match: "asuse:annual:26:*"
+    status: baked
+    bundle: [asuse-t26, asuse-2025-t26]
+  - match: "asuse:annual:27:*"
+    status: baked
+    bundle: [asuse-t27, asuse-2025-t27]
+  - match: "asuse:annual:28:*"
+    status: baked
+    bundle: [asuse-t28, asuse-2025-t28]
+  - match: "asuse:annual:29:*"
+    status: baked
+    bundle: [asuse-t29, asuse-2025-t29]
+  - match: "asuse:annual:30:*"
+    status: baked
+    bundle: [asuse-t30, asuse-2025-t30]
+  - match: "asuse:annual:31:*"
+    status: baked
+    bundle: [asuse-t31, asuse-2025-t31]
+  - match: "asuse:annual:32:*"
+    status: baked
+    bundle: [asuse-t32, asuse-2025-t32]
+  - match: "asuse:annual:33:*"
+    status: baked
+    bundle: [asuse-t33, asuse-2025-t33]
+  - match: "asuse:annual:34:*"
+    status: baked
+    bundle: [asuse-t34, asuse-2025-t34]
+  - match: "asuse:annual:35:*"
+    status: baked
+    bundle: [asuse-t35, asuse-2025-t35]
+  - match: "asuse:annual:36:*"
+    status: baked
+    bundle: [asuse-2025-t36]
+  - match: "asuse:annual:37:*"
+    status: baked
+    bundle: [asuse-2025-t37]
+  - match: "asuse:annual:38:*"
+    status: baked
+    bundle: [asuse-t38, asuse-2025-t38]
+  - match: "asuse:annual:39:*"
+    status: baked
+    bundle: [asuse-t39, asuse-2025-t39]
+  - match: "asuse:annual:56:*"
+    status: baked
+    bundle: [asuse-2025-t56]
+  - match: "asuse:annual:59:*"
+    status: baked
+    bundle: [asuse-2025-t59]
+  - match: "asuse:annual:60:*"
+    status: baked
+    bundle: [asuse-2025-t60]

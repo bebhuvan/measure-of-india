@@ -5,6 +5,16 @@ import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["factories"];
+// industry wages and plant size, read from the bundle (2-digit NIC, latest survey year)
+import ind from "../../../data/series/asi-industries.json";
+const II = ind.dates.length - 1, asiFy = `${ind.dates[II].slice(0, 4)}-${String((+ind.dates[II].slice(0, 4) + 1) % 100).padStart(2, "0")}`;
+const SHORTN = { "12": "tobacco products", "19": "coke and refined petroleum", "29": "motor vehicles", "16": "wood products", "01": "crop and animal services", "21": "pharmaceuticals", "26": "electronics" };
+const nicRows = [...new Set(Object.keys(ind.series).filter((k) => k.startsWith("persons_engaged_")).map((k) => k.slice(16)))].filter((c) => c !== "99998")
+  .map((c) => { const g = (k) => ind.series[`${k}_${c}`]?.data[II]; return { c, wage: (g("emoluments") * 1e5) / g("persons_engaged"), size: g("persons_engaged") / g("factories_in_operation") }; })
+  .filter((r) => Number.isFinite(r.wage) && Number.isFinite(r.size));
+const byWage = [...nicRows].sort((a, b) => a.wage - b.wage), bySize = [...nicRows].sort((a, b) => a.size - b.size);
+const inrK = (v) => v >= 1e5 ? `₹${(v / 1e5).toFixed(1)} lakh` : `₹${Math.round(v / 1000)},000`;
+const nm = (c) => SHORTN[c] ?? c;
 ---
 <Base
   title="Enterprises · India Atlas"
@@ -324,6 +334,64 @@ const D = bySlug["factories"];
           <div class="now">
             <span class="mk">As of 2023-24</span>
             <p>The largest employer is <b id="ex-lb1">–</b>, followed by <b id="ex-lb2">–</b> and <b id="ex-lb3">–</b>. The top five together hold <b id="ex-lb5">–</b> of all factory employment.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-wage" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>A {nm(byWage[0].c)} factory pays {inrK(byWage[0].wage)} a year for each person on its rolls; a {nm(byWage.at(-1).c)} plant pays {inrK(byWage.at(-1).wage)}</h3>
+            <div class="sub">Total emoluments per person engaged, ₹ a year, by 2-digit NIC division, {asiFy}, nominal, sorted; the dashed line is all factories</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-wage">–</div><div class="c">all factories, per person, {asiFy}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-wage"></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, ASI (NIC 2008): total emoluments (wages, salaries, bonus and the employer's contributions) divided by total persons engaged, computed by India Atlas from the two published series. Persons engaged include managers, supervisors and unpaid working owners, so this is an average over everyone on the rolls, not a worker's wage</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Divide the year's wage bill by the number of people on the rolls and you get what an average job in that industry is worth. Divide by twelve for a month. The low end is the work India does by hand: rolling bidis, cutting and stitching cloth, tanning leather, sawing wood. The high end is capital-heavy plants where a few people run expensive machines, and where a large share of the bill goes to engineers and managers. The same factory floor can hold both: these are averages over everyone, from the helper to the plant head.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asiFy}</span>
+            <p>Across all factories the average was <b id="wg-all">–</b> a year, about <b id="wg-month">–</b> a month. <b id="wg-below">–</b> of the <b id="wg-n">–</b> industries paid below that average. The three biggest employers paid <b id="wg-big">–</b> per person.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-size" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>A {nm(bySize.at(-1).c)} plant employs {Math.round(bySize.at(-1).size)} people on average; a {nm(bySize[0].c)} unit, {Math.round(bySize[0].size)}</h3>
+            <div class="sub">Persons engaged per factory in operation, by 2-digit NIC division, {asiFy}, sorted; the dashed line is all factories</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-size">–</div><div class="c">all factories, persons per factory</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-size"></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, ASI (NIC 2008): total persons engaged divided by factories in operation, computed by India Atlas. An average: most industries hold a few very large plants and many small ones</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The Factories Act starts counting at ten workers with power, twenty without, so even the smallest unit here is a real workplace. Car plants, electronics assembly and pharmaceuticals run large shifts under one roof. Rice mills, sawmills and cotton gins are small and scattered. Put this plate next to the one above and size and pay do not line up: bidi and garment factories are large and pay the least, while refineries are middling in size and pay the most. What a job pays follows the machines behind each worker more than the headcount around them.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asiFy}</span>
+            <p>The average factory in operation had <b id="sz-all">–</b> people on its rolls. The largest units by this measure are in <b id="sz-top">–</b>; the smallest in <b id="sz-low">–</b>.</p>
           </div>
         </div>
       </figure>
