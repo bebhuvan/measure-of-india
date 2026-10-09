@@ -70,7 +70,29 @@ the bundles, no client fetch) covers the long tail (all 358 CPI items, all HS ch
 all states). A reader can always get from the headline to the finest cut the source
 publishes.
 
-## 3. Sources and how each enters
+## 2b. The deep archive (owner's decision, 2026-10-09)
+
+Some sources publish a finer grain than a chart bundle can carry: RBI district and centre-wise
+credit tables (about 10 million rows), the ILO's three-way survey cubes (about 950,000 cells),
+climate cuts by state and month. They are neither dropped nor forced into `data/series/`.
+Ledger rules mark them `archive: true` with `rolls_up_to` (`docs/CONTRACT-coverage.md`).
+
+- **Host:** a public Hugging Face dataset, `huggingface.co/datasets/bebhuvan1/india-atlas-archive`
+  (the owner's account; uploads use the token already on the build machine, never one in
+  the repo). Chosen over Cloudflare R2: free for public data, every upload is a commit (so
+  each data vintage is kept and citable, which fits rule 5), a table viewer for readers,
+  and a place researchers already look. The manifest makes an R2 mirror possible later.
+- **Format:** Parquet per cut (HF's viewer reads it), plus gzipped CSV for spreadsheet users.
+  Same long shape for every file: the cut's dimensions, date, value, unit, source, vintage.
+- **Manifest:** `data/archive/manifest.json`, committed: for each file, the ledger rule it
+  comes from, source, rows, sha256, vintage, the HF commit it was uploaded at, and the baked
+  bundle it rolls up to. The every-cut table links each `rolls_up_to` bundle to its archive
+  files.
+- **Builder:** `scripts/archive.mjs` reads every `archive: true` rule, exports through the
+  family adapters' raw readers, writes locally (git-ignored), verifies row counts against the
+  catalogue, uploads, and updates the manifest. Run after the trade and credit families merge.
+
+
 
 | Transport | Used for | Reader | Status |
 |---|---|---|---|

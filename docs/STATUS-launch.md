@@ -47,11 +47,6 @@ throttles, so not run alongside the states and services sessions). Then the laun
 
 ## Waiting on the owner
 
-- **A deep-archive tier for cuts too big to bake** (climate state x season/month and CMIP6
-  state cuts; ILO three-way survey cubes, ~950k cells; credit district and centre-wise tables,
-  ~10m rows): publish them as compressed downloads outside the chart bundles, listed in a
-  committed manifest. Where to host them (Cloudflare R2, GitHub release assets, or the site
-  itself within its 25 MB-per-file limit)? Meanwhile sessions mark them `archive: true`.
 - For the Data Bank (found by atlas-rates): the MPC stance classifier misses "change the
   stance to calibrated tightening", which blocks meeting 63's promotion; 2019-20 G-sec
   notified amounts disagree with DBIE report 559 on 17 days.
@@ -69,6 +64,10 @@ throttles, so not run alongside the states and services sessions). Then the laun
   RBI Handbook tables are in the states guide's every-cut view.
 
 ## Queued (after wave 1 merges)
+
+- **Deep archive on Hugging Face** (owner chose 2026-10-09): `bebhuvan1/india-atlas-archive`,
+  public, Parquet plus CSV, manifest in the repo (`PLAN-launch.md` §2b). Built after trade
+  and credit merge.
 
 - Store `data/raw` gzipped: 316 MB tracked today, one file over GitHub's 50 MB warning;
   gzip shrinks them 6-50x with the audit trail intact.
