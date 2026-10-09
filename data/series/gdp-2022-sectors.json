@@ -1,0 +1,886 @@
+{
+ "meta": {
+  "dossier": "gdp",
+  "base": "2022-23",
+  "source": "MoSPI, National Statistical Office",
+  "vintage": "2026-10-09",
+  "mock": false,
+  "geo": "IND",
+  "releaseDate": null,
+  "revisionPolicy": "Revised continuously; finalised over ~3 years. Vintages are kept.",
+  "frequency": "annual",
+  "unit": "inr_crore",
+  "coverage": "All-India, annual, by institutional sector (households, private and public non-financial and financial companies, general government): gross saving, fixed investment, GVA and depreciation, levels and shares of nominal GDP",
+  "note": "Institutional-sector accounts are published with the revised estimates only. Saving, GVA and depreciation by sector are at current prices only. 'Saving less fixed investment' is computed here: a sector with a positive figure lends its surplus to the others; it ignores stocks and valuables, which are not published by sector. Households include non-profit institutions serving households (NPISH).",
+  "latestPeriod": "2025-04"
+ },
+ "dates": [
+  "2022-04-01",
+  "2023-04-01",
+  "2024-04-01",
+  "2025-04-01"
+ ],
+ "series": {
+  "saving_public_nfc": {
+   "name": "gross_saving_public_nfc_current_inr_crore_base2022",
+   "label": "Public non-financial companies, gross saving",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    345515,
+    462996,
+    467003,
+    null
+   ],
+   "nominal": true,
+   "group": "Public non-financial companies"
+  },
+  "saving_public_nfc_pct_gdp": {
+   "name": "gross_saving_public_nfc_pct_of_nominal_gdp_base2022",
+   "label": "Public non-financial companies, gross saving, share of GDP",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    1.32,
+    1.59,
+    1.47,
+    null
+   ],
+   "nominal": true,
+   "group": "Public non-financial companies"
+  },
+  "gfcf_public_nfc": {
+   "name": "gfcf_public_nfc_current_inr_crore_base2022",
+   "label": "Public non-financial companies, fixed investment, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    852061,
+    1000165,
+    1078320,
+    null
+   ],
+   "nominal": true,
+   "group": "Public non-financial companies"
+  },
+  "gfcf_public_nfc_constant": {
+   "name": "gfcf_public_nfc_constant_inr_crore_base2022",
+   "label": "Public non-financial companies, fixed investment, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    852061,
+    997882,
+    1071743,
+    null
+   ],
+   "group": "Public non-financial companies"
+  },
+  "gfcf_public_nfc_pct_gdp": {
+   "name": "gfcf_public_nfc_pct_of_nominal_gdp_base2022",
+   "label": "Public non-financial companies, fixed investment, share of GDP",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    3.25,
+    3.44,
+    3.39,
+    null
+   ],
+   "nominal": true,
+   "group": "Public non-financial companies"
+  },
+  "gap_public_nfc_pct_gdp": {
+   "name": "saving_less_gfcf_public_nfc_pct_of_nominal_gdp_base2022",
+   "label": "Public non-financial companies, saving less fixed investment, share of GDP (computed)",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    -1.94,
+    -1.85,
+    -1.92,
+    null
+   ],
+   "nominal": true,
+   "group": "Public non-financial companies"
+  },
+  "gva_public_nfc": {
+   "name": "gva_public_nfc_current_inr_crore_base2022",
+   "label": "Public non-financial companies, GVA, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    1258014,
+    1519220,
+    1546726,
+    null
+   ],
+   "nominal": true,
+   "group": "Public non-financial companies"
+  },
+  "gva_public_nfc_share": {
+   "name": "gva_public_nfc_pct_of_nominal_gva_base2022",
+   "label": "Public non-financial companies, share of GVA",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "data": [
+    5.28,
+    5.75,
+    5.36,
+    null
+   ],
+   "nominal": true,
+   "group": "Public non-financial companies"
+  },
+  "cfc_public_nfc": {
+   "name": "cfc_public_nfc_current_inr_crore_base2022",
+   "label": "Public non-financial companies, consumption of fixed capital",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    425124,
+    448494,
+    476315,
+    null
+   ],
+   "nominal": true,
+   "group": "Public non-financial companies"
+  },
+  "saving_private_nfc": {
+   "name": "gross_saving_private_nfc_current_inr_crore_base2022",
+   "label": "Private non-financial companies, gross saving",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    2040884,
+    2410409,
+    2726312,
+    null
+   ],
+   "nominal": true,
+   "group": "Private non-financial companies"
+  },
+  "saving_private_nfc_pct_gdp": {
+   "name": "gross_saving_private_nfc_pct_of_nominal_gdp_base2022",
+   "label": "Private non-financial companies, gross saving, share of GDP",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    7.8,
+    8.29,
+    8.57,
+    null
+   ],
+   "nominal": true,
+   "group": "Private non-financial companies"
+  },
+  "gfcf_private_nfc": {
+   "name": "gfcf_private_nfc_current_inr_crore_base2022",
+   "label": "Private non-financial companies, fixed investment, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    2760398,
+    2869935,
+    3111089,
+    null
+   ],
+   "nominal": true,
+   "group": "Private non-financial companies"
+  },
+  "gfcf_private_nfc_constant": {
+   "name": "gfcf_private_nfc_constant_inr_crore_base2022",
+   "label": "Private non-financial companies, fixed investment, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    2760398,
+    2833603,
+    3033275,
+    null
+   ],
+   "group": "Private non-financial companies"
+  },
+  "gfcf_private_nfc_pct_gdp": {
+   "name": "gfcf_private_nfc_pct_of_nominal_gdp_base2022",
+   "label": "Private non-financial companies, fixed investment, share of GDP",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    10.55,
+    9.87,
+    9.78,
+    null
+   ],
+   "nominal": true,
+   "group": "Private non-financial companies"
+  },
+  "gap_private_nfc_pct_gdp": {
+   "name": "saving_less_gfcf_private_nfc_pct_of_nominal_gdp_base2022",
+   "label": "Private non-financial companies, saving less fixed investment, share of GDP (computed)",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    -2.75,
+    -1.58,
+    -1.21,
+    null
+   ],
+   "nominal": true,
+   "group": "Private non-financial companies"
+  },
+  "gva_private_nfc": {
+   "name": "gva_private_nfc_current_inr_crore_base2022",
+   "label": "Private non-financial companies, GVA, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    8137375,
+    8582259,
+    9550828,
+    null
+   ],
+   "nominal": true,
+   "group": "Private non-financial companies"
+  },
+  "gva_private_nfc_share": {
+   "name": "gva_private_nfc_pct_of_nominal_gva_base2022",
+   "label": "Private non-financial companies, share of GVA",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "data": [
+    34.16,
+    32.5,
+    33.11,
+    null
+   ],
+   "nominal": true,
+   "group": "Private non-financial companies"
+  },
+  "cfc_private_nfc": {
+   "name": "cfc_private_nfc_current_inr_crore_base2022",
+   "label": "Private non-financial companies, consumption of fixed capital",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    1644972,
+    1751894,
+    1870641,
+    null
+   ],
+   "nominal": true,
+   "group": "Private non-financial companies"
+  },
+  "saving_public_fc": {
+   "name": "gross_saving_public_fc_current_inr_crore_base2022",
+   "label": "Public financial companies, gross saving",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    459701,
+    535510,
+    590172,
+    null
+   ],
+   "nominal": true,
+   "group": "Public financial companies"
+  },
+  "saving_public_fc_pct_gdp": {
+   "name": "gross_saving_public_fc_pct_of_nominal_gdp_base2022",
+   "label": "Public financial companies, gross saving, share of GDP",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    1.76,
+    1.84,
+    1.86,
+    null
+   ],
+   "nominal": true,
+   "group": "Public financial companies"
+  },
+  "gfcf_public_fc": {
+   "name": "gfcf_public_fc_current_inr_crore_base2022",
+   "label": "Public financial companies, fixed investment, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    22572,
+    25804,
+    38185,
+    null
+   ],
+   "nominal": true,
+   "group": "Public financial companies"
+  },
+  "gfcf_public_fc_constant": {
+   "name": "gfcf_public_fc_constant_inr_crore_base2022",
+   "label": "Public financial companies, fixed investment, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    22572,
+    25391,
+    37045,
+    null
+   ],
+   "group": "Public financial companies"
+  },
+  "gfcf_public_fc_pct_gdp": {
+   "name": "gfcf_public_fc_pct_of_nominal_gdp_base2022",
+   "label": "Public financial companies, fixed investment, share of GDP",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    0.09,
+    0.09,
+    0.12,
+    null
+   ],
+   "nominal": true,
+   "group": "Public financial companies"
+  },
+  "gap_public_fc_pct_gdp": {
+   "name": "saving_less_gfcf_public_fc_pct_of_nominal_gdp_base2022",
+   "label": "Public financial companies, saving less fixed investment, share of GDP (computed)",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    1.67,
+    1.75,
+    1.74,
+    null
+   ],
+   "nominal": true,
+   "group": "Public financial companies"
+  },
+  "gva_public_fc": {
+   "name": "gva_public_fc_current_inr_crore_base2022",
+   "label": "Public financial companies, GVA, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    645812,
+    714052,
+    780342,
+    null
+   ],
+   "nominal": true,
+   "group": "Public financial companies"
+  },
+  "gva_public_fc_share": {
+   "name": "gva_public_fc_pct_of_nominal_gva_base2022",
+   "label": "Public financial companies, share of GVA",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "data": [
+    2.71,
+    2.7,
+    2.71,
+    null
+   ],
+   "nominal": true,
+   "group": "Public financial companies"
+  },
+  "cfc_public_fc": {
+   "name": "cfc_public_fc_current_inr_crore_base2022",
+   "label": "Public financial companies, consumption of fixed capital",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    15355,
+    16629,
+    19060,
+    null
+   ],
+   "nominal": true,
+   "group": "Public financial companies"
+  },
+  "saving_private_fc": {
+   "name": "gross_saving_private_fc_current_inr_crore_base2022",
+   "label": "Private financial companies, gross saving",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    417714,
+    455938,
+    517560,
+    null
+   ],
+   "nominal": true,
+   "group": "Private financial companies"
+  },
+  "saving_private_fc_pct_gdp": {
+   "name": "gross_saving_private_fc_pct_of_nominal_gdp_base2022",
+   "label": "Private financial companies, gross saving, share of GDP",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    1.6,
+    1.57,
+    1.63,
+    null
+   ],
+   "nominal": true,
+   "group": "Private financial companies"
+  },
+  "gfcf_private_fc": {
+   "name": "gfcf_private_fc_current_inr_crore_base2022",
+   "label": "Private financial companies, fixed investment, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    92716,
+    102875,
+    132504,
+    null
+   ],
+   "nominal": true,
+   "group": "Private financial companies"
+  },
+  "gfcf_private_fc_constant": {
+   "name": "gfcf_private_fc_constant_inr_crore_base2022",
+   "label": "Private financial companies, fixed investment, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    92716,
+    100845,
+    127177,
+    null
+   ],
+   "group": "Private financial companies"
+  },
+  "gfcf_private_fc_pct_gdp": {
+   "name": "gfcf_private_fc_pct_of_nominal_gdp_base2022",
+   "label": "Private financial companies, fixed investment, share of GDP",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    0.35,
+    0.35,
+    0.42,
+    null
+   ],
+   "nominal": true,
+   "group": "Private financial companies"
+  },
+  "gap_private_fc_pct_gdp": {
+   "name": "saving_less_gfcf_private_fc_pct_of_nominal_gdp_base2022",
+   "label": "Private financial companies, saving less fixed investment, share of GDP (computed)",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    1.24,
+    1.21,
+    1.21,
+    null
+   ],
+   "nominal": true,
+   "group": "Private financial companies"
+  },
+  "gva_private_fc": {
+   "name": "gva_private_fc_current_inr_crore_base2022",
+   "label": "Private financial companies, GVA, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    831882,
+    944003,
+    1059339,
+    null
+   ],
+   "nominal": true,
+   "group": "Private financial companies"
+  },
+  "gva_private_fc_share": {
+   "name": "gva_private_fc_pct_of_nominal_gva_base2022",
+   "label": "Private financial companies, share of GVA",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "data": [
+    3.49,
+    3.58,
+    3.67,
+    null
+   ],
+   "nominal": true,
+   "group": "Private financial companies"
+  },
+  "cfc_private_fc": {
+   "name": "cfc_private_fc_current_inr_crore_base2022",
+   "label": "Private financial companies, consumption of fixed capital",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    57105,
+    62431,
+    70918,
+    null
+   ],
+   "nominal": true,
+   "group": "Private financial companies"
+  },
+  "saving_government": {
+   "name": "gross_saving_government_current_inr_crore_base2022",
+   "label": "General government, gross saving",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    -591900,
+    -318384,
+    -99729,
+    null
+   ],
+   "nominal": true,
+   "group": "General government"
+  },
+  "saving_government_pct_gdp": {
+   "name": "gross_saving_government_pct_of_nominal_gdp_base2022",
+   "label": "General government, gross saving, share of GDP",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    -2.26,
+    -1.1,
+    -0.31,
+    null
+   ],
+   "nominal": true,
+   "group": "General government"
+  },
+  "gfcf_government": {
+   "name": "gfcf_government_current_inr_crore_base2022",
+   "label": "General government, fixed investment, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    1031641,
+    1222623,
+    1351157,
+    null
+   ],
+   "nominal": true,
+   "group": "General government"
+  },
+  "gfcf_government_constant": {
+   "name": "gfcf_government_constant_inr_crore_base2022",
+   "label": "General government, fixed investment, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    1031641,
+    1222898,
+    1346962,
+    null
+   ],
+   "group": "General government"
+  },
+  "gfcf_government_pct_gdp": {
+   "name": "gfcf_government_pct_of_nominal_gdp_base2022",
+   "label": "General government, fixed investment, share of GDP",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    3.94,
+    4.21,
+    4.25,
+    null
+   ],
+   "nominal": true,
+   "group": "General government"
+  },
+  "gap_government_pct_gdp": {
+   "name": "saving_less_gfcf_government_pct_of_nominal_gdp_base2022",
+   "label": "General government, saving less fixed investment, share of GDP (computed)",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    -6.2,
+    -5.3,
+    -4.56,
+    null
+   ],
+   "nominal": true,
+   "group": "General government"
+  },
+  "gva_government": {
+   "name": "gva_government_current_inr_crore_base2022",
+   "label": "General government, GVA, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    2328798,
+    2502921,
+    2706803,
+    null
+   ],
+   "nominal": true,
+   "group": "General government"
+  },
+  "gva_government_share": {
+   "name": "gva_government_pct_of_nominal_gva_base2022",
+   "label": "General government, share of GVA",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "data": [
+    9.78,
+    9.48,
+    9.38,
+    null
+   ],
+   "nominal": true,
+   "group": "General government"
+  },
+  "cfc_government": {
+   "name": "cfc_government_current_inr_crore_base2022",
+   "label": "General government, consumption of fixed capital",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    347260,
+    375679,
+    406727,
+    null
+   ],
+   "nominal": true,
+   "group": "General government"
+  },
+  "saving_households": {
+   "name": "gross_saving_households_current_inr_crore_base2022",
+   "label": "Households, gross saving",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    5268223,
+    5890330,
+    6847097,
+    null
+   ],
+   "nominal": true,
+   "group": "Households"
+  },
+  "saving_households_pct_gdp": {
+   "name": "gross_saving_households_pct_of_nominal_gdp_base2022",
+   "label": "Households, gross saving, share of GDP",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    20.13,
+    20.26,
+    21.53,
+    null
+   ],
+   "nominal": true,
+   "group": "Households"
+  },
+  "gfcf_households": {
+   "name": "gfcf_households_current_inr_crore_base2022",
+   "label": "Households, fixed investment, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    3693567,
+    4024360,
+    4353684,
+    null
+   ],
+   "nominal": true,
+   "group": "Households"
+  },
+  "gfcf_households_constant": {
+   "name": "gfcf_households_constant_inr_crore_base2022",
+   "label": "Households, fixed investment, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    3693567,
+    4036898,
+    4359820,
+    null
+   ],
+   "group": "Households"
+  },
+  "gfcf_households_pct_gdp": {
+   "name": "gfcf_households_pct_of_nominal_gdp_base2022",
+   "label": "Households, fixed investment, share of GDP",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    14.11,
+    13.84,
+    13.69,
+    null
+   ],
+   "nominal": true,
+   "group": "Households"
+  },
+  "gap_households_pct_gdp": {
+   "name": "saving_less_gfcf_households_pct_of_nominal_gdp_base2022",
+   "label": "Households, saving less fixed investment, share of GDP (computed)",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    6.02,
+    6.42,
+    7.84,
+    null
+   ],
+   "nominal": true,
+   "group": "Households"
+  },
+  "gva_households": {
+   "name": "gva_households_current_inr_crore_base2022",
+   "label": "Households, GVA, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    10621255,
+    12143026,
+    13201645,
+    null
+   ],
+   "nominal": true,
+   "group": "Households"
+  },
+  "gva_households_share": {
+   "name": "gva_households_pct_of_nominal_gva_base2022",
+   "label": "Households, share of GVA",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "data": [
+    44.58,
+    45.99,
+    45.77,
+    null
+   ],
+   "nominal": true,
+   "group": "Households"
+  },
+  "cfc_households": {
+   "name": "cfc_households_current_inr_crore_base2022",
+   "label": "Households, consumption of fixed capital",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    1094564,
+    1181079,
+    1277814,
+    null
+   ],
+   "nominal": true,
+   "group": "Households"
+  },
+  "saving_total": {
+   "name": "gross_saving_total_current_inr_crore_base2022",
+   "label": "All sectors, gross saving",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    7940137,
+    9436799,
+    11048415,
+    null
+   ],
+   "nominal": true,
+   "group": "All sectors"
+  },
+  "saving_total_pct_gdp": {
+   "name": "gross_saving_total_pct_of_nominal_gdp_base2022",
+   "label": "All sectors, gross saving, share of GDP",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    30.33,
+    32.46,
+    34.75,
+    null
+   ],
+   "nominal": true,
+   "group": "All sectors"
+  },
+  "gfcf_total": {
+   "name": "gfcf_total_current_inr_crore_base2022",
+   "label": "All sectors, fixed investment, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    8452955,
+    9245762,
+    10064939,
+    10932539
+   ],
+   "nominal": true,
+   "group": "All sectors"
+  },
+  "gfcf_total_constant": {
+   "name": "gfcf_total_constant_inr_crore_base2022",
+   "label": "All sectors, fixed investment, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    8452955,
+    9217517,
+    9976022,
+    10777441
+   ],
+   "group": "All sectors"
+  },
+  "gfcf_total_pct_gdp": {
+   "name": "gfcf_total_pct_of_nominal_gdp_base2022",
+   "label": "All sectors, fixed investment, share of GDP",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    32.29,
+    31.8,
+    31.65,
+    31.65
+   ],
+   "nominal": true,
+   "group": "All sectors"
+  },
+  "gap_total_pct_gdp": {
+   "name": "saving_less_gfcf_total_pct_of_nominal_gdp_base2022",
+   "label": "All sectors, saving less fixed investment, share of GDP (computed)",
+   "color": "#878D99",
+   "unit": "pct_of_gdp",
+   "data": [
+    -1.96,
+    0.66,
+    3.09,
+    null
+   ],
+   "nominal": true,
+   "group": "All sectors"
+  },
+  "gva_total": {
+   "name": "gva_total_current_inr_crore_base2022",
+   "label": "All sectors, GVA, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    23823136,
+    26405480,
+    28845683,
+    31394691
+   ],
+   "nominal": true,
+   "group": "All sectors"
+  },
+  "cfc_total": {
+   "name": "cfc_total_current_inr_crore_base2022",
+   "label": "All sectors, consumption of fixed capital",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    3584380,
+    3836206,
+    4121476,
+    null
+   ],
+   "nominal": true,
+   "group": "All sectors"
+  }
+ }
+}

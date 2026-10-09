@@ -1,0 +1,792 @@
+{
+ "meta": {
+  "dossier": "gdp",
+  "base": "2022-23",
+  "source": "MoSPI, National Statistical Office",
+  "vintage": "2026-10-09",
+  "mock": false,
+  "geo": "IND",
+  "releaseDate": null,
+  "revisionPolicy": "Revised continuously; finalised over ~3 years. Vintages are kept.",
+  "frequency": "annual",
+  "unit": "inr_crore",
+  "coverage": "All-India, annual gross capital formation by the industry that uses the asset: 11 industries and 13 sub-industries, constant and current prices, and each industry's share of the total",
+  "note": "Capital formation by industry of use is published with the revised estimates only. It includes fixed investment, change in stocks and valuables, so the total differs from GFCF. Shares are current prices over the current-price total.",
+  "latestPeriod": "2024-04"
+ },
+ "dates": [
+  "2022-04-01",
+  "2023-04-01",
+  "2024-04-01"
+ ],
+ "series": {
+  "agriculture_constant": {
+   "name": "gcf_agriculture_constant_inr_crore_base2022",
+   "label": "Agriculture, forestry and fishing, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    614765,
+    551675,
+    609152
+   ],
+   "group": "Industry"
+  },
+  "agriculture_current": {
+   "name": "gcf_agriculture_current_inr_crore_base2022",
+   "label": "Agriculture, forestry and fishing, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    614765,
+    553399,
+    615601
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "agriculture_share": {
+   "name": "gcf_agriculture_pct_of_total_gcf_base2022",
+   "label": "Agriculture, forestry and fishing, share of all capital formation",
+   "color": "#878D99",
+   "unit": "pct_share",
+   "data": [
+    7.13,
+    5.75,
+    5.88
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "mining_constant": {
+   "name": "gcf_mining_constant_inr_crore_base2022",
+   "label": "Mining and quarrying, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    135024,
+    156573,
+    139759
+   ],
+   "group": "Industry"
+  },
+  "mining_current": {
+   "name": "gcf_mining_current_inr_crore_base2022",
+   "label": "Mining and quarrying, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    135024,
+    160687,
+    147479
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "mining_share": {
+   "name": "gcf_mining_pct_of_total_gcf_base2022",
+   "label": "Mining and quarrying, share of all capital formation",
+   "color": "#878D99",
+   "unit": "pct_share",
+   "data": [
+    1.57,
+    1.67,
+    1.41
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "manufacturing_constant": {
+   "name": "gcf_manufacturing_constant_inr_crore_base2022",
+   "label": "Manufacturing, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    1237087,
+    1353671,
+    1387215
+   ],
+   "group": "Industry"
+  },
+  "manufacturing_current": {
+   "name": "gcf_manufacturing_current_inr_crore_base2022",
+   "label": "Manufacturing, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    1237087,
+    1362598,
+    1399846
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "manufacturing_share": {
+   "name": "gcf_manufacturing_pct_of_total_gcf_base2022",
+   "label": "Manufacturing, share of all capital formation",
+   "color": "#878D99",
+   "unit": "pct_share",
+   "data": [
+    14.34,
+    14.15,
+    13.37
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "utilities_constant": {
+   "name": "gcf_utilities_constant_inr_crore_base2022",
+   "label": "Electricity, gas, water and utilities, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    451837,
+    574247,
+    698631
+   ],
+   "group": "Industry"
+  },
+  "utilities_current": {
+   "name": "gcf_utilities_current_inr_crore_base2022",
+   "label": "Electricity, gas, water and utilities, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    451837,
+    572030,
+    700493
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "utilities_share": {
+   "name": "gcf_utilities_pct_of_total_gcf_base2022",
+   "label": "Electricity, gas, water and utilities, share of all capital formation",
+   "color": "#878D99",
+   "unit": "pct_share",
+   "data": [
+    5.24,
+    5.94,
+    6.69
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "construction_constant": {
+   "name": "gcf_construction_constant_inr_crore_base2022",
+   "label": "Construction, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    690105,
+    691178,
+    709930
+   ],
+   "group": "Industry"
+  },
+  "construction_current": {
+   "name": "gcf_construction_current_inr_crore_base2022",
+   "label": "Construction, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    690105,
+    692020,
+    720888
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "construction_share": {
+   "name": "gcf_construction_pct_of_total_gcf_base2022",
+   "label": "Construction, share of all capital formation",
+   "color": "#878D99",
+   "unit": "pct_share",
+   "data": [
+    8,
+    7.19,
+    6.88
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "trade_hotels_constant": {
+   "name": "gcf_trade_hotels_constant_inr_crore_base2022",
+   "label": "Trade, repair, hotels and restaurants, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    741534,
+    854449,
+    1024630
+   ],
+   "group": "Industry"
+  },
+  "trade_hotels_current": {
+   "name": "gcf_trade_hotels_current_inr_crore_base2022",
+   "label": "Trade, repair, hotels and restaurants, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    741534,
+    852843,
+    1040881
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "trade_hotels_share": {
+   "name": "gcf_trade_hotels_pct_of_total_gcf_base2022",
+   "label": "Trade, repair, hotels and restaurants, share of all capital formation",
+   "color": "#878D99",
+   "unit": "pct_share",
+   "data": [
+    8.6,
+    8.86,
+    9.94
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "transport_constant": {
+   "name": "gcf_transport_constant_inr_crore_base2022",
+   "label": "Transport, storage and communication, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    721392,
+    948579,
+    836247
+   ],
+   "group": "Industry"
+  },
+  "transport_current": {
+   "name": "gcf_transport_current_inr_crore_base2022",
+   "label": "Transport, storage and communication, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    721392,
+    967325,
+    853995
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "transport_share": {
+   "name": "gcf_transport_pct_of_total_gcf_base2022",
+   "label": "Transport, storage and communication, share of all capital formation",
+   "color": "#878D99",
+   "unit": "pct_share",
+   "data": [
+    8.36,
+    10.05,
+    8.16
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "finance_constant": {
+   "name": "gcf_finance_constant_inr_crore_base2022",
+   "label": "Financial services, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    117212,
+    135363,
+    174599
+   ],
+   "group": "Industry"
+  },
+  "finance_current": {
+   "name": "gcf_finance_current_inr_crore_base2022",
+   "label": "Financial services, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    117212,
+    137165,
+    180030
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "finance_share": {
+   "name": "gcf_finance_pct_of_total_gcf_base2022",
+   "label": "Financial services, share of all capital formation",
+   "color": "#878D99",
+   "unit": "pct_share",
+   "data": [
+    1.36,
+    1.42,
+    1.72
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "realty_constant": {
+   "name": "gcf_realty_constant_inr_crore_base2022",
+   "label": "Real estate, dwellings and professional services, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    2568282,
+    2753102,
+    3059144
+   ],
+   "group": "Industry"
+  },
+  "realty_current": {
+   "name": "gcf_realty_current_inr_crore_base2022",
+   "label": "Real estate, dwellings and professional services, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    2568282,
+    2734936,
+    3049395
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "realty_share": {
+   "name": "gcf_realty_pct_of_total_gcf_base2022",
+   "label": "Real estate, dwellings and professional services, share of all capital formation",
+   "color": "#878D99",
+   "unit": "pct_share",
+   "data": [
+    29.77,
+    28.41,
+    29.12
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "public_admin_constant": {
+   "name": "gcf_public_admin_constant_inr_crore_base2022",
+   "label": "Public administration and defence, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    762893,
+    928834,
+    1024150
+   ],
+   "group": "Industry"
+  },
+  "public_admin_current": {
+   "name": "gcf_public_admin_current_inr_crore_base2022",
+   "label": "Public administration and defence, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    762893,
+    929042,
+    1028108
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "public_admin_share": {
+   "name": "gcf_public_admin_pct_of_total_gcf_base2022",
+   "label": "Public administration and defence, share of all capital formation",
+   "color": "#878D99",
+   "unit": "pct_share",
+   "data": [
+    8.84,
+    9.65,
+    9.82
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "other_services_constant": {
+   "name": "gcf_other_services_constant_inr_crore_base2022",
+   "label": "Other services, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    586945,
+    662463,
+    726296
+   ],
+   "group": "Industry"
+  },
+  "other_services_current": {
+   "name": "gcf_other_services_current_inr_crore_base2022",
+   "label": "Other services, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    586945,
+    666048,
+    735233
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "other_services_share": {
+   "name": "gcf_other_services_pct_of_total_gcf_base2022",
+   "label": "Other services, share of all capital formation",
+   "color": "#878D99",
+   "unit": "pct_share",
+   "data": [
+    6.8,
+    6.92,
+    7.02
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "total_constant": {
+   "name": "gcf_total_constant_inr_crore_base2022",
+   "label": "Total capital formation, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    8627076,
+    9610133,
+    10389754
+   ],
+   "group": "Industry"
+  },
+  "total_current": {
+   "name": "gcf_total_current_inr_crore_base2022",
+   "label": "Total capital formation, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    8627076,
+    9628092,
+    10471950
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "crops_constant": {
+   "name": "gcf_crops_constant_inr_crore_base2022",
+   "label": "Crops, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    515748,
+    455023,
+    505638
+   ],
+   "group": "Agriculture, forestry and fishing"
+  },
+  "crops_current": {
+   "name": "gcf_crops_current_inr_crore_base2022",
+   "label": "Crops, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    515748,
+    454095,
+    506438
+   ],
+   "nominal": true,
+   "group": "Agriculture, forestry and fishing"
+  },
+  "livestock_constant": {
+   "name": "gcf_livestock_constant_inr_crore_base2022",
+   "label": "Livestock, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    54433,
+    50824,
+    55533
+   ],
+   "group": "Agriculture, forestry and fishing"
+  },
+  "livestock_current": {
+   "name": "gcf_livestock_current_inr_crore_base2022",
+   "label": "Livestock, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    54433,
+    52891,
+    59640
+   ],
+   "nominal": true,
+   "group": "Agriculture, forestry and fishing"
+  },
+  "forestry_constant": {
+   "name": "gcf_forestry_constant_inr_crore_base2022",
+   "label": "Forestry and logging, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    9741,
+    8230,
+    9550
+   ],
+   "group": "Agriculture, forestry and fishing"
+  },
+  "forestry_current": {
+   "name": "gcf_forestry_current_inr_crore_base2022",
+   "label": "Forestry and logging, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    9741,
+    8215,
+    9607
+   ],
+   "nominal": true,
+   "group": "Agriculture, forestry and fishing"
+  },
+  "fishing_constant": {
+   "name": "gcf_fishing_constant_inr_crore_base2022",
+   "label": "Fishing and aquaculture, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    34842,
+    37597,
+    38431
+   ],
+   "group": "Agriculture, forestry and fishing"
+  },
+  "fishing_current": {
+   "name": "gcf_fishing_current_inr_crore_base2022",
+   "label": "Fishing and aquaculture, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    34842,
+    38198,
+    39916
+   ],
+   "nominal": true,
+   "group": "Agriculture, forestry and fishing"
+  },
+  "trade_repair_constant": {
+   "name": "gcf_trade_repair_constant_inr_crore_base2022",
+   "label": "Trade and repair, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    553988,
+    632404,
+    804324
+   ],
+   "group": "Trade, repair, hotels and restaurants"
+  },
+  "trade_repair_current": {
+   "name": "gcf_trade_repair_current_inr_crore_base2022",
+   "label": "Trade and repair, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    553988,
+    632161,
+    821990
+   ],
+   "nominal": true,
+   "group": "Trade, repair, hotels and restaurants"
+  },
+  "hotels_constant": {
+   "name": "gcf_hotels_constant_inr_crore_base2022",
+   "label": "Hotels and restaurants, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    187546,
+    222046,
+    220305
+   ],
+   "group": "Trade, repair, hotels and restaurants"
+  },
+  "hotels_current": {
+   "name": "gcf_hotels_current_inr_crore_base2022",
+   "label": "Hotels and restaurants, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    187546,
+    220682,
+    218891
+   ],
+   "nominal": true,
+   "group": "Trade, repair, hotels and restaurants"
+  },
+  "railways_constant": {
+   "name": "gcf_railways_constant_inr_crore_base2022",
+   "label": "Railways, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    163431,
+    238951,
+    250633
+   ],
+   "group": "Transport, storage and communication"
+  },
+  "railways_current": {
+   "name": "gcf_railways_current_inr_crore_base2022",
+   "label": "Railways, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    163431,
+    239665,
+    251534
+   ],
+   "nominal": true,
+   "group": "Transport, storage and communication"
+  },
+  "road_transport_constant": {
+   "name": "gcf_road_transport_constant_inr_crore_base2022",
+   "label": "Road transport, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    140710,
+    178293,
+    192695
+   ],
+   "group": "Transport, storage and communication"
+  },
+  "road_transport_current": {
+   "name": "gcf_road_transport_current_inr_crore_base2022",
+   "label": "Road transport, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    140710,
+    185116,
+    200727
+   ],
+   "nominal": true,
+   "group": "Transport, storage and communication"
+  },
+  "water_transport_constant": {
+   "name": "gcf_water_transport_constant_inr_crore_base2022",
+   "label": "Water transport, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    9285,
+    5269,
+    14549
+   ],
+   "group": "Transport, storage and communication"
+  },
+  "water_transport_current": {
+   "name": "gcf_water_transport_current_inr_crore_base2022",
+   "label": "Water transport, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    9285,
+    5357,
+    14791
+   ],
+   "nominal": true,
+   "group": "Transport, storage and communication"
+  },
+  "air_transport_constant": {
+   "name": "gcf_air_transport_constant_inr_crore_base2022",
+   "label": "Air transport, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    24786,
+    52803,
+    52674
+   ],
+   "group": "Transport, storage and communication"
+  },
+  "air_transport_current": {
+   "name": "gcf_air_transport_current_inr_crore_base2022",
+   "label": "Air transport, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    24786,
+    53623,
+    53719
+   ],
+   "nominal": true,
+   "group": "Transport, storage and communication"
+  },
+  "transport_services_constant": {
+   "name": "gcf_transport_services_constant_inr_crore_base2022",
+   "label": "Services incidental to transport, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    57226,
+    68362,
+    63473
+   ],
+   "group": "Transport, storage and communication"
+  },
+  "transport_services_current": {
+   "name": "gcf_transport_services_current_inr_crore_base2022",
+   "label": "Services incidental to transport, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    57226,
+    69496,
+    65204
+   ],
+   "nominal": true,
+   "group": "Transport, storage and communication"
+  },
+  "storage_constant": {
+   "name": "gcf_storage_constant_inr_crore_base2022",
+   "label": "Storage, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    15119,
+    23749,
+    9452
+   ],
+   "group": "Transport, storage and communication"
+  },
+  "storage_current": {
+   "name": "gcf_storage_current_inr_crore_base2022",
+   "label": "Storage, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    15119,
+    23495,
+    9306
+   ],
+   "nominal": true,
+   "group": "Transport, storage and communication"
+  },
+  "communication_constant": {
+   "name": "gcf_communication_constant_inr_crore_base2022",
+   "label": "Communication and broadcasting, capital formation at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    310834,
+    381152,
+    252772
+   ],
+   "group": "Transport, storage and communication"
+  },
+  "communication_current": {
+   "name": "gcf_communication_current_inr_crore_base2022",
+   "label": "Communication and broadcasting, capital formation at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    310834,
+    390573,
+    258713
+   ],
+   "nominal": true,
+   "group": "Transport, storage and communication"
+  }
+ }
+}

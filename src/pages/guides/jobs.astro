@@ -22,6 +22,60 @@ const qLabel = (iso) => `${QN[Math.floor((+iso.slice(5, 7) - 1) / 3)]} ${iso.sli
 const qUr = qtr.series.ur.data, qDates = qtr.dates;
 const q12 = qUr.slice(-12).filter((v) => v != null);
 const q12From = qDates[qDates.length - 12].slice(0, 4);
+
+// ---- the deep bundles the new plates draw, sliced at build time (src/dossiers/jobs.data.js) ----
+import { load as J, pick, stateRows, dateAt, keysOf } from "../../dossiers/jobs.data.js";
+const cyYear = dateAt("plfs-cy25-india").slice(0, 4);          // the latest calendar year, revamped design
+const cyOldYears = J("plfs-cy-india").dates.map((d) => d.slice(0, 4));
+const q25Last = dateAt("plfs-q25"), q25First = J("plfs-q25").dates[0];
+const H = "__person_all__a15plus";
+const DATA = {
+  seam: {
+    ay: pick("plfs-annual", ["lfpr_psss", "ur_psss"]),
+    cy: pick("plfs-cy-india", ["lfpr_psss" + H, "ur_psss" + H]),
+    cy25: pick("plfs-cy25-india", ["lfpr_psss" + H, "ur_psss" + H]),
+  },
+  q25: pick("plfs-q25", ["lfpr", "wpr", "ur"].flatMap((i) => ["all", "rural", "urban"].map((s) => `${i}_cws__person_${s}__a15plus`))),
+  youth: pick("plfs-monthly-age", ["ur_cws__person_all__a15_29", ...["male", "female"].flatMap((g) => ["rural", "urban"].map((s) => `ur_cws__${g}_${s}__a15_29`))]),
+  youthStates: stateRows("plfs-q25-states-ur", { y: "{st}__ur_cws__person_all__a15_29", all: "{st}__ur_cws__person_all__a15plus" }),
+  youthAi: { y: J("plfs-q25").series.ur_cws__person_all__a15_29.data.at(-1), all: J("plfs-q25").series["ur_cws" + H].data.at(-1) },
+  work: stateRows("plfs-cy25-states-wpr", { p: "{st}__wpr_psss__person_all__a15plus", m: "{st}__wpr_psss__male_all__a15plus", f: "{st}__wpr_psss__female_all__a15plus" }),
+  workAi: { p: J("plfs-cy25-india").series["wpr_psss" + H].data.at(-1), m: J("plfs-cy25-india").series.wpr_psss__male_all__a15plus.data.at(-1), f: J("plfs-cy25-india").series.wpr_psss__female_all__a15plus.data.at(-1) },
+  social: pick("plfs-cy25-india", keysOf("plfs-cy25-india", /^lfpr_psss__(male|female)_all__a15plus__(soc|rel)_/)),
+  socialAi: { m: J("plfs-cy25-india").series.lfpr_psss__male_all__a15plus.data.at(-1), f: J("plfs-cy25-india").series.lfpr_psss__female_all__a15plus.data.at(-1) },
+  kinds: stateRows("plfs-cy25-workers-states", { rg: "{st}__regular__person_all__psss", cs: "{st}__casual__person_all__psss", se: "{st}__self_employed__person_all__psss" }),
+  pay: stateRows("plfs-cy25-earnings", { p: "{st}__regular__person_all", f: "{st}__regular__female_all", m: "{st}__regular__male_all", cas: "{st}__casual__person_all" }),
+  payAi: Object.fromEntries(["regular__person_all", "regular__female_all", "regular__male_all", "casual__person_all", "self_employed__person_all"].map((k) => [k, J("plfs-cy25-earnings").series[k].data.at(-1)])),
+  cond: pick("plfs-conditions", ["no_contract", "no_paid_leave", "no_social_security", "none_of_three"].flatMap((c) => [`${c}__person_all`, `${c}__female_all`, `${c}__male_all`])),
+};
+// figures the hand-written notes name, read from the same slices (asof.mjs governs the notes)
+const byDesc = (rows, k) => [...rows].sort((a, b) => b[k] - a[k]);
+const W = byDesc(DATA.work, "f"), PAY = byDesc(DATA.pay, "p"), CAS = byDesc(DATA.pay, "cas"), KIND = byDesc(DATA.kinds, "rg"), YS = byDesc(DATA.youthStates, "y");
+const f1 = (v) => v.toFixed(1);
+const inr0 = (v) => "₹" + Math.round(v).toLocaleString("en-IN");
+const soc = (g, k) => DATA.social.series[`lfpr_psss__${g}_all__a15plus__${k}`].data.at(-1);
+const qn = (iso) => `${["Jan–Mar", "Apr–Jun", "Jul–Sep", "Oct–Dec"][Math.floor((+iso.slice(5, 7) - 1) / 3)]} ${iso.slice(0, 4)}`;
+const condY = (k, i) => DATA.cond.series[k].data.at(i);
+const condFirst = J("plfs-conditions").dates[0].slice(0, 4), condLast = J("plfs-conditions").dates.at(-1).slice(0, 4);
+const agri = (y) => `${y}-${String(+y + 1).slice(2)}`;
+// §04 the whole country: the title states the rural-urban order only while every quarter holds it
+const q25S = J("plfs-q25").series, q25R = q25S.ur_cws__person_rural__a15plus.data, q25U = q25S.ur_cws__person_urban__a15plus.data;
+const q25Title = q25R.every((v, i) => v == null || q25U[i] == null || v < q25U[i])
+  ? "Villages enter the quarterly count: rural unemployment runs below urban, every quarter"
+  : "Villages enter the quarterly count, beside the towns";
+// the same quarter a year earlier, when the series has one
+const q25Dates = J("plfs-q25").dates, q25YearAgo = q25Dates.indexOf(`${+q25Last.slice(0, 4) - 1}${q25Last.slice(4)}`);
+// §09 social: the title states the ordering only while the data holds it
+const socOrder = ["soc_scheduled_tribe", "soc_scheduled_caste", "soc_other_backward_class", "soc_others"].map((k) => soc("female", k));
+const socTitle = socOrder.every((v, i) => i === 0 || v < socOrder[i - 1])
+  ? `Women's work falls as caste rank rises: ${f1(socOrder[0])}% of tribal women are in the labour force, ${f1(socOrder[3])}% of women outside the reserved groups`
+  : `Women's work differs by social group far more than men's: from ${f1(Math.max(...socOrder))}% to ${f1(Math.min(...socOrder))}%`;
+// §03 seam: the latest year of the original design's calendar estimates against the first of the revamped
+const sL0 = DATA.seam.cy.series["lfpr_psss" + H].data.at(-1), sL1 = DATA.seam.cy25.series["lfpr_psss" + H].data.at(-1);
+const sU0 = DATA.seam.cy.series["ur_psss" + H].data.at(-1), sU1 = DATA.seam.cy25.series["ur_psss" + H].data.at(-1);
+const seamTitle = Math.abs(sL1 - sL0) < 1 && Math.abs(sU1 - sU0) < 0.5
+  ? "The redesigned survey picks up close to where the old one left off"
+  : `The redesigned survey reads participation ${f1(Math.abs(sL1 - sL0))} points ${sL1 > sL0 ? "higher" : "lower"} than the old one did a year earlier`;
 ---
 <Base
   title="Jobs · India Atlas"
@@ -34,6 +88,7 @@ const q12From = qDates[qDates.length - 12].slice(0, 4);
   ogImage={`/og/${D.slug}.png`}
 >
 <div class="page">
+<script type="application/json" id="jobs-data" is:inline set:html={JSON.stringify(DATA).replace(/</g, "\\u003c")} />
 
   <div class="titleblock break">
     <div class="kicker">{kicker(D)}</div>
@@ -160,35 +215,141 @@ const q12From = qDates[qDates.length - 12].slice(0, 4);
         </div>
       </figure>
     </div>
-  </section>
 
-  <!-- § 04 plate 1 -->
-  <section>
-    <div class="sec-head"><span class="no">04</span><h2>Plate 1: the long arc, urban</h2><span class="line"></span><span class="unit">per cent, quarterly, CWS</span></div>
-    <div class="break">
-      <figure id="cb-main" style="margin:0">
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-seam" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>Eight years of urban unemployment, including the quarter everything stopped</h3>
-            <div class="sub">Urban unemployment rate, 15+, current weekly status, 2018 to 2026</div>
+            <h3>{seamTitle}</h3>
+            <div class="sub">Participation (left) and unemployment (right), 15+, usual status (PS+SS), All India: agriculture years 2017-18 to 2023-24, calendar years {cyOldYears[0]} to {cyOldYears.at(-1)} on the original design, and {cyYear} on the revamped design, three rulers, never joined</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-main">–</div><div class="c">Jan–Mar 2026, urban CWS</div></div>
+          <div class="plate-val"><div class="v" id="pv-seam">–</div><div class="c">{cyYear}, participation, revamped design</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone" id="plot-main"><div class="cb-tip"></div></div>
+          <div class="legend">
+            <span class="chip" style="cursor:default"><i style="background:#A3A9B4"></i>Agriculture years (July to June)</span>
+            <span class="chip" style="cursor:default"><i style="background:#5F6675"></i>Calendar years, original design</span>
+            <span class="chip" style="cursor:default"><i style="background:#2E4BD8;width:9px;height:9px;border-radius:50%"></i>Calendar year, revamped design</span>
+          </div>
+          <div class="plotzone" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(570px,1fr));gap:32px">
+            <div id="plot-seam-l"></div>
+            <div id="plot-seam-u"></div>
+          </div>
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, PLFS quarterly bulletins, gaps: Apr–Jun 2019 (a mislabeled source cell, the published figure is 8.9; quarantined, disclosed in metadata) and Jan–Mar 2025 (never published, design transition)</span>
+            <span class="src">Source: MoSPI, PLFS annual reports (agriculture years) and calendar-year estimates, each year drawn at its middle, the dashed rule is January 2025, when MoSPI replaced the survey's sample design and estimation; MoSPI publishes no link between the two designs, so the lines never meet</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>The quarterly bulletin is the oldest continuous stopwatch: urban India, last-week status, since 2018. The spike is the lockdown quarter: one urban worker in five counted unemployed in April–June 2020. What matters after the spike is the slow grind down: six years to retrace a few points.</p>
+            <p>In January 2025 MoSPI rebuilt the survey: a new sample, households visited four months running, villages added to the quarterly count, and annual figures on the calendar year instead of July to June. A new design is a new ruler. Its first year cannot be read as a rise or fall from the old one's last, however tempting the two numbers side by side.</p>
+            <p>The agriculture-year and calendar-year lines are the same old survey over two different twelve-month windows, so they overlap and nearly agree. The blue dot is the new survey's first full year. Where it sits next to the grey lines says how differently the two rulers read the same country, not what happened to jobs.</p>
           </div>
           <div class="now">
-            <span class="mk">As of the {qLabel(qDates.at(-1))} quarter</span>
-            <p>The urban rate sits at <b id="ex-q1">–</b>, against <b id="ex-q0">–</b> when the bulletin began. Most of that fall is behind it: since {q12From} the rate has held between {Math.min(...q12).toFixed(1)}% and {Math.max(...q12).toFixed(1)}%.</p>
+            <span class="mk">As of the {cyYear} calendar-year estimates</span>
+            <p>The original design's last calendar year, {cyOldYears.at(-1)}, put usual-status participation at {f1(sL0)}% and unemployment at {f1(sU0)}%. The revamped design's {cyYear} reads {f1(sL1)}% and {f1(sU1)}%. We do not know how much of the difference is the economy and how much the ruler: MoSPI has published no year measured both ways.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 04 plate 1 -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>Plate 1: the long arc, and the whole country since 2025</h2><span class="line"></span><span class="unit">per cent, quarterly, CWS</span></div>
+    <div class="break">
+      <figure id="cb-main" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Seven years of urban unemployment, including the quarter everything stopped, then a new survey</h3>
+            <div class="sub">Urban unemployment rate, 15+, current weekly status: the original quarterly bulletin, Apr–Jun 2018 to {qLabel(qDates.at(-1))}, beside the revamped survey's urban figure from {qn(q25First)}, two rulers, never joined</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-main">–</div><div class="c">{qn(q25Last)}, urban, revamped design</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-main"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, PLFS quarterly bulletins, gaps: Apr–Jun 2019 (a mislabelled source cell, the published figure is 8.9; quarantined, disclosed in metadata) and Jan–Mar 2025 (never published: the survey was redesigned that quarter), the dashed rule marks January 2025, the redesign</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The quarterly bulletin was the oldest continuous stopwatch: urban India, last-week status, from 2018 to the end of 2024. The spike is the lockdown quarter: one urban worker in five counted unemployed in April–June 2020. What matters after the spike is the slow grind down: six years to retrace a few points.</p>
+            <p>From April–June 2025 the bulletin runs on the new survey design. Its urban line is drawn beside the old one, not joined to it: the two read the same cities through different samples, and the closeness of the levels is not proof that they agree.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the {qn(q25Last)} quarter</span>
+            <p>On the original design the urban rate ended at <b id="ex-q1">–</b> in {qLabel(qDates.at(-1))}, against <b id="ex-q0">–</b> when the bulletin began; in its last twelve quarters it held between {Math.min(...q12).toFixed(1)}% and {Math.max(...q12).toFixed(1)}%. The revamped survey reads urban unemployment at <b id="ex-q25u">–</b> in {qn(q25Last)}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-q25" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{q25Title}</h3>
+            <div class="sub">Unemployment rate, 15+, current weekly status, rural, urban and all India, revamped design, {qn(q25First)} to {qn(q25Last)}</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-q25">–</div><div class="c">{qn(q25Last)}, all India</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-q25">
+            <button class="chip" data-key="ur_cws__person_all__a15plus"><i style="background:#2E4BD8"></i>All India</button>
+            <button class="chip" data-key="ur_cws__person_urban__a15plus"><i style="background:#5F6675"></i>Urban</button>
+            <button class="chip" data-key="ur_cws__person_rural__a15plus"><i style="background:#A3A9B4"></i>Rural</button>
+          </div>
+          <div class="plotzone" id="plot-q25"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, PLFS quarterly bulletin (revamped design), all India, persons 15+, CWS</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Before 2025 the quarterly count stopped at the city limits. Now it covers the whole country, every quarter. Rural unemployment prints lower because village work is mostly the family farm or the family shop: a person helping on the land counts as working, even in a lean week. The rural line moves with the seasons; read it a year at a time, not quarter to quarter.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {qn(q25Last)}</span>
+            <p>Unemployment reads <b id="ex-q25a">–</b> for the country, <b id="ex-q25r">–</b> in villages and <b id="ex-q25ub">–</b> in towns and cities. Participation is <b id="ex-q25l">–</b>.{q25YearAgo >= 0 ? ` A year earlier, in ${qn(q25Dates[q25YearAgo])}, unemployment read ${f1(q25S["ur_cws" + H].data[q25YearAgo])}% and participation ${f1(q25S["lfpr_cws" + H].data[q25YearAgo])}%: the first comparison the new survey allows that the seasons cannot distort.` : " The series is too young for a same-quarter comparison a year apart."}</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-ystates" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{YS[0].name}'s young people face the longest queue for work; {YS.at(-1).name}'s the shortest</h3>
+            <div class="sub">Unemployment rate, ages 15 to 29 (dark dot) beside everyone 15 and above (pale dot), rural + urban, CWS, the {DATA.youthStates.length} states the bulletin publishes, {qn(q25Last)}</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-ystates">–</div><div class="c">{qn(q25Last)}, ages 15 to 29, all India</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip" style="cursor:default"><i style="background:#2E4BD8;width:9px;height:9px;border-radius:50%"></i>Ages 15 to 29</span>
+            <span class="chip" style="cursor:default"><i style="background:#C9CED6;width:9px;height:9px;border-radius:50%"></i>Everyone 15 and above</span>
+          </div>
+          <div class="plotzone" id="plot-ystates"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, PLFS quarterly bulletin (revamped design), state tables, the vertical rule is the all-India youth rate; state figures rest on smaller samples than all-India ones, so a one-quarter move of a few points can be noise</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The gap between the two dots on a row is how much harder it is to be young and looking for work in that state. Everywhere the young dot sits to the right: a first job is the hardest one to find, and a young person with a family to fall back on can afford to wait for a better offer. The widest gaps are in states with many educated young people and few salaried openings near home.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {qn(q25Last)}</span>
+            <p>Among 15-to-29-year-olds, {YS[0].name} prints {f1(YS[0].y)}% and {YS.at(-1).name} {f1(YS.at(-1).y)}%, around an all-India youth rate of {f1(DATA.youthAi.y)}%, against {f1(DATA.youthAi.all)}% for everyone 15 and above. In a classroom of twenty young people looking for work in {YS[0].name}, about {Math.round(YS[0].y / 5)} would be without it.</p>
           </div>
         </div>
       </figure>
@@ -202,7 +363,9 @@ const q12From = qDates[qDates.length - 12].slice(0, 4);
       <div>
         <p>Three ratios, one survey. The labour force is everyone working or actively seeking work. The participation rate, LFPR, is that group as a share of the population. The worker-population ratio is the share actually working. Unemployment is the gap between them: seekers as a share of seekers-plus-workers. When we say unemployment is 5.5 per cent, we mean <b>5.5 per cent of the labour force</b>: not of the country.</p>
         <p>The status questions do the real work. Usual status asks about the reference year and catches attachment to work; current weekly status asks about the seven days before the surveyor's knock and catches idleness inside employment. India publishes both because both are true.</p>
-        <p>And it is a survey: sample-based, household by household. The monthly bulletin is young, the quarterly one is urban-only in its long form, and the annual one runs on agriculture years. They are three instruments, and this guide never splices them into one line.</p>
+        <p>And it is a survey: sample-based, household by household. The monthly bulletin is young, the quarterly one was urban-only until 2025, and the annual one ran on agriculture years until 2024. They are different instruments, and this guide never splices them into one line.</p>
+        <p>In January 2025 MoSPI redesigned the survey itself. The new sample visits each household four months running, covers villages every quarter, and reports the year January to December. Everything before is one ruler (the original design: agriculture years 2017-18 to 2023-24, calendar years {cyOldYears[0]} to {cyOldYears.at(-1)}, the urban quarterly bulletin to the end of 2024); everything since is another. This guide draws them side by side with a marked seam (§03, §04) and never reads a change across it as a change in the labour market.</p>
+        <p>Two other guides read Indian work from different angles. <a href="/guides/ilo/">Work, as the ILO counts it</a> holds two other readings: the International Labour Organization's modelled estimates, which fill the years no survey covered so every country sits on one definition, and the ILO's own recomputation of PLFS unit data on its definitions. Both differ from the figures here, which are MoSPI's own tables as published, and both are right about what they measure. <a href="/guides/services/">Services</a> takes PLFS's industry tables for the service trades. This guide is the survey itself, at every cut MoSPI serves.</p>
       </div>
       <div class="wm-rail">
         <aside class="margin-note">
@@ -214,7 +377,11 @@ const q12From = qDates[qDates.length - 12].slice(0, 4);
         </aside>
         <aside class="margin-note">
           <span class="mk">Margin note, iii</span>
-          <b>One bad cell, quarantined.</b> The source carries a mislabeled 2019 cell contradicting its own WPR/LFPR identity; we exclude it from the chart and keep it in the raw archive.
+          <b>Bad cells, quarantined.</b> MoSPI's data service carries a mislabelled 2019 quarter, values garbled by character recognition ("l0.8" for 10.8) and two quarters whose state labels slipped one row. Every such cell is withheld, said so on its series, and kept in the raw archive.
+        </aside>
+        <aside class="margin-note">
+          <span class="mk">Margin note, iv</span>
+          <b>A new survey is a new ruler.</b> The January 2025 redesign changed the sample and the year. A 2025 figure beside a 2024 one is two instruments, not a trend.
         </aside>
       </div>
     </div>
@@ -310,6 +477,35 @@ const q12From = qDates[qDates.length - 12].slice(0, 4);
         </div>
       </figure>
     </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-youth" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Young women in cities queue longest for work</h3>
+            <div class="sub">Unemployment rate, ages 15 to 29, by gender and sector, current weekly status, monthly bulletin, {PC.span}</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-youth">–</div><div class="c">{PC.short}, young urban women</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-youth"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, PLFS monthly bulletin, ages 15 to 29, the age band the bulletin publishes beside 15+ and all ages</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The same four labour markets as the plates above, for the young alone. Every line sits well above its 15+ cousin: the young are new to the queue, and many are waiting for a particular kind of job. The top line is the one to watch: young women in towns and cities, often educated, looking for work that is safe, near home and salaried, and finding it rarely.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PC.stamp}</span>
+            <p>Among the young, urban women print <b id="ex-y-fu">–</b>, urban men <b id="ex-y-mu">–</b>, rural women <b id="ex-y-fr">–</b> and rural men <b id="ex-y-mr">–</b>; all young people together, <b id="ex-y-all">–</b>. Of young urban women looking for work, about one in <b id="ex-y-one">–</b> has none.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
   </section>
 
   <!-- § 07 what work is -->
@@ -376,7 +572,7 @@ const q12From = qDates[qDates.length - 12].slice(0, 4);
             <button class="chip" style="cursor:default"><i style="background:#5F6675"></i>Regular wage</button>
             <button class="chip" style="cursor:default"><i style="background:#A3A9B4"></i>Casual labour</button>
           </div>
-          <div class="plotzone" style="display:grid;grid-template-columns:1fr 1fr;gap:32px">
+          <div class="plotzone" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(570px,1fr));gap:32px">
             <div id="plot-gender-male"></div>
             <div id="plot-gender-female"></div>
           </div>
@@ -394,6 +590,39 @@ const q12From = qDates[qDates.length - 12].slice(0, 4);
           <div class="now">
             <span class="mk">The 2023-24 register, by gender</span>
             <p>Self-employment: <b id="ex-g-se-m">–</b> of men, <b id="ex-g-se-f">–</b> of women: up from <b id="ex-g-se-f0">–</b> in 2017-18. Regular wage: <b id="ex-g-rg-m">–</b> of men against <b id="ex-g-rg-f">–</b> of women. Casual labour: <b id="ex-g-cs-m">–</b> of men, <b id="ex-g-cs-f">–</b> of women. The female self-employment line is the structural story behind the participation rise in §03.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-kinds" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>In {DATA.kinds.filter((r) => r.rg < 30).length} of {DATA.kinds.length} states and UTs, fewer than three workers in ten draw a regular wage</h3>
+            <div class="sub">Share of workers in regular wage or salaried jobs (dark dot) and in casual labour (pale dot), every state and UT, 15+, usual status (PS+SS), rural + urban, {cyYear}; the rest are self-employed</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-kinds">–</div><div class="c">{cyYear}, spread in salaried share, highest to lowest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip" style="cursor:default"><i style="background:#2E4BD8;width:9px;height:9px;border-radius:50%"></i>Regular wage or salary</span>
+            <span class="chip" style="cursor:default"><i style="background:#C9CED6;width:9px;height:9px;border-radius:50%"></i>Casual labour</span>
+          </div>
+          <div class="plotzone" id="plot-kinds"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, PLFS calendar-year estimates (revamped design), share of all workers in each state, the three statuses add to 100; NIC section, occupation and enterprise-type shares for every state are in the every-cut table below</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each row is a state, sorted by the share of its workers with a regular wage or salary: a payslip every month, whatever its size. The pale dot is casual labour, work hired by the day. Whatever is left of a hundred is self-employment: the farm, the shop, the auto-rickshaw. Small, urban territories sit at the top because their economies are offices and services; the large farming states sit low, where most people work for themselves.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the {cyYear} estimates</span>
+            <p>{KIND[0].name} has {f1(KIND[0].rg)}% of its workers on a regular wage; {KIND.at(-1).name}, {f1(KIND.at(-1).rg)}%. Among the ten most populous states, {byDesc(DATA.kinds.filter((r) => ["Uttar Pradesh", "Bihar", "Maharashtra", "West Bengal", "Madhya Pradesh", "Rajasthan", "Tamil Nadu", "Karnataka", "Gujarat", "Andhra Pradesh"].includes(r.name)), "rg")[0].name} has the largest salaried share and {byDesc(DATA.kinds.filter((r) => ["Uttar Pradesh", "Bihar", "Maharashtra", "West Bengal", "Madhya Pradesh", "Rajasthan", "Tamil Nadu", "Karnataka", "Gujarat", "Andhra Pradesh"].includes(r.name)), "rg").at(-1).name} the smallest. Casual labour is largest in {byDesc(DATA.kinds, "cs")[0].name}, at {f1(byDesc(DATA.kinds, "cs")[0].cs)}%.</p>
           </div>
         </div>
       </figure>
@@ -473,6 +702,76 @@ const q12From = qDates[qDates.length - 12].slice(0, 4);
         </div>
       </figure>
     </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-paystates" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>A regular job pays {inr0(PAY[0].p)} a month in {PAY[0].name} and {inr0(PAY.at(-1).p)} in {PAY.at(-1).name}</h3>
+            <div class="sub">Average monthly earnings from regular wage or salaried work, all workers (dark dot) and women (pale dot), every state and UT, rural + urban, {cyYear}, nominal ₹</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-paystates">–</div><div class="c">{cyYear}, all India, regular wage, a month</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip" style="cursor:default"><i style="background:#5F6675;width:9px;height:9px;border-radius:50%"></i>All regular workers</span>
+            <span class="chip" style="cursor:default"><i style="background:#C9CED6;width:9px;height:9px;border-radius:50%"></i>Women</span>
+            <span class="chip" style="cursor:default"><i style="background:#2E4BD8;width:9px;height:9px;border-radius:50%"></i>Above the all-India average</span>
+          </div>
+          <div class="plotzone" id="plot-paystates"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, PLFS calendar-year estimates (revamped design), wage or salary earned in the calendar month before the survey, the vertical rule is the all-India average; small UTs rest on few sampled workers; casual day wages and self-employment earnings for every state and sector are in the every-cut table below</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The same kind of job, a regular wage or salary, pays very differently depending on where it is. The top of the strip is mostly small territories and the north-east, where government and organised employers are a large share of the few salaried jobs. The big farming states pay least. The pale dot, women's pay, sits left of the dark one in almost every row.</p>
+            <p>These are nominal rupees, and the cost of living differs by state as well. A rupee buys more rent in Bihar than in Delhi.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the {cyYear} estimates</span>
+            <p>A regular job pays <b id="ex-ps-ai">–</b> a month across India: <b id="ex-ps-m">–</b> for men and <b id="ex-ps-f">–</b> for women. A casual day pays most in {CAS[0].name}, {inr0(CAS[0].cas)}, and least in {CAS.at(-1).name}, {inr0(CAS.at(-1).cas)}: the same day's labour, priced {f1(CAS[0].cas / CAS.at(-1).cas)} times higher in one state than another.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-cond" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>More salaried workers have a written contract; the share with no protection at all has {condY("none_of_three__person_all", -1) >= condY("none_of_three__person_all", 0) ? "not fallen" : "barely fallen"}</h3>
+            <div class="sub">Per cent of regular wage or salaried employees with no written job contract, not eligible for paid leave, without any social security benefit, and with none of the three, all India, usual status, agriculture years {agri(condFirst)} to {agri(condLast)}</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-cond">–</div><div class="c">{agri(condLast)}, none of the three</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-cond">
+            <button class="chip" data-key="none_of_three__person_all"><i style="background:#2E4BD8"></i>None of the three</button>
+            <button class="chip" data-key="no_contract__person_all"><i style="background:#5F6675"></i>No written contract</button>
+            <button class="chip" data-key="no_social_security__person_all"><i style="background:#878D99"></i>No social security</button>
+            <button class="chip" data-key="no_paid_leave__person_all"><i style="background:#A3A9B4"></i>No paid leave</button>
+          </div>
+          <div class="plotzone" id="plot-cond"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, PLFS annual reports, regular wage or salaried employees (usual status), agriculture years plotted at July; every state, gender and sector is in the every-cut table below</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A regular job is the best kind of work the survey counts, and still, for many, it comes without a contract, without paid leave and without provident fund, pension or health cover. The blue line is the hard core: employees with none of the three. It is the share of India's "good jobs" that a sick week or a manager's whim can end without notice or pay.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {agri(condLast)}</span>
+            <p>Regular employees without a written contract fell from <b id="ex-c-nc0">–</b> to <b id="ex-c-nc1">–</b>. Those with none of the three protections were <b id="ex-c-n0">–</b> in {agri(condFirst)} and <b id="ex-c-n1">–</b> in {agri(condLast)}. Of every ten salaried workers, about <b id="ex-c-ten">–</b> still have no contract, no paid leave and no social security. These tables end with the original design: the revamped survey's calendar-year contract table is served without its labels, so it cannot be read (see the provenance notes).</p>
+          </div>
+        </div>
+      </figure>
+    </div>
   </section>
 
   <!-- § 09 the educated queue -->
@@ -507,6 +806,40 @@ const q12From = qDates[qDates.length - 12].slice(0, 4);
           <div class="now">
             <span class="mk">The 2023-24 register</span>
             <p>Graduate unemployment prints at <b id="ex-edu-g">–</b> against <b id="ex-edu-nl">–</b> for those who never learned to read: <b id="ex-edu-x">–</b> the rate, in the same country, the same year. The queue is young as well as educated: among 15-to-29-year-olds the rate is <b id="ex-edu-y">–</b>, against <b id="ex-edu-all">–</b> for everyone 15 and above. The concession the window offers: the graduate rate has fallen from <b id="ex-edu-g0">–</b> in 2017-18, and the youth rate from <b id="ex-edu-y0">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-social" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{socTitle}</h3>
+            <div class="sub">Labour force participation rate, 15+, usual status (PS+SS), rural + urban, by social group and by religion, women (dark dot) beside men (pale dot), all India, {cyYear}</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-social">–</div><div class="c">{cyYear}, all women 15+</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip" style="cursor:default"><i style="background:#2E4BD8;width:9px;height:9px;border-radius:50%"></i>Women</span>
+            <span class="chip" style="cursor:default"><i style="background:#C9CED6;width:9px;height:9px;border-radius:50%"></i>Men</span>
+          </div>
+          <div class="plotzone" id="plot-social"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, PLFS calendar-year estimates (revamped design), all India; social groups are the survey's: Scheduled Tribe, Scheduled Caste, Other Backward Class and "others", the groups outside the three; religions are the four the survey publishes, the vertical rule is all women</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Men's participation barely varies by caste or creed: about four men in five work or seek work, whatever their group. Women's varies enormously. Tribal women work most, often on their own land and forest produce, in communities where women's work outside the home carries less stigma. As social rank rises, a household's standing can come to rest on keeping its women at home, and participation falls. The religion rows tell a similar story about social norms, not ability or willingness.</p>
+            <p>"Others" in the survey means households outside the Scheduled Tribes, Scheduled Castes and Other Backward Classes: largely, though not only, the upper castes.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the {cyYear} estimates</span>
+            <p>Of every hundred women aged 15 and above, {Math.round(soc("female", "soc_scheduled_tribe"))} in tribal households are working or seeking work, {Math.round(soc("female", "soc_scheduled_caste"))} in Dalit households, {Math.round(soc("female", "soc_other_backward_class"))} in OBC households and {Math.round(soc("female", "soc_others"))} in the rest. By religion: Christian women {f1(soc("female", "rel_christianity"))}%, Hindu {f1(soc("female", "rel_hinduism"))}%, Sikh {f1(soc("female", "rel_sikhism"))}%, Muslim {f1(soc("female", "rel_islam"))}%. Men range only from {f1(Math.min(...["soc_scheduled_tribe", "soc_scheduled_caste", "soc_other_backward_class", "soc_others", "rel_hinduism", "rel_islam", "rel_christianity", "rel_sikhism"].map((k) => soc("male", k))))}% to {f1(Math.max(...["soc_scheduled_tribe", "soc_scheduled_caste", "soc_other_backward_class", "soc_others", "rel_hinduism", "rel_islam", "rel_christianity", "rel_sikhism"].map((k) => soc("male", k))))}%.</p>
           </div>
         </div>
       </figure>
@@ -551,6 +884,39 @@ const q12From = qDates[qDates.length - 12].slice(0, 4);
         </div>
       </figure>
     </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-work" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Men work at much the same rate everywhere; women's work is what separates the states</h3>
+            <div class="sub">Worker population ratio (the share of people aged 15+ who are working), women (dark dot) and men (pale dot), every state and UT, usual status (PS+SS), rural + urban, {cyYear}, sorted by women</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-work">–</div><div class="c">{cyYear}, women at work, highest to lowest state</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip" style="cursor:default"><i style="background:#2E4BD8;width:9px;height:9px;border-radius:50%"></i>Women</span>
+            <span class="chip" style="cursor:default"><i style="background:#C9CED6;width:9px;height:9px;border-radius:50%"></i>Men</span>
+          </div>
+          <div class="plotzone" id="plot-work"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, PLFS calendar-year estimates (revamped design), the vertical rule is all-India women; every state's participation, worker and unemployment rates by gender, sector, age band and education level, on both designs, are in the every-cut table below</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>This is the answer to "how many people in my state work". Read along a row: the pale dot is the share of the state's men aged 15 and over who are working, the dark dot the share of its women. The men's dots form a tight column. The women's dots scatter across the chart. States where women farm their own land, trade and gather forest produce sit near the top; states where women's work outside the home is rarer, and the city-territories, sit near the bottom.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the {cyYear} estimates</span>
+            <p>In {W[0].name}, {Math.round(W[0].f)} of every hundred women aged 15 and above are working; in {W.at(-1).name}, {Math.round(W.at(-1).f)}. Across India it is {Math.round(DATA.workAi.f)} women in a hundred, against {Math.round(DATA.workAi.m)} men. The spread between states is {f1(W[0].f - W.at(-1).f)} points for women and {f1(Math.max(...DATA.work.map((r) => r.m)) - Math.min(...DATA.work.map((r) => r.m)))} for men.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
   </section>
 
   <!-- § 11 misread -->
@@ -589,7 +955,21 @@ const q12From = qDates[qDates.length - 12].slice(0, 4);
         <span class="no">v.</span>
         <div>
           <h3>"The survey counts the informal sector."</h3>
-          <p>It counts <em>people</em>, including the informally employed: but employment here is a yes, not a description. A street vendor working two hours a day is employed in these tables. The annual reports do price the work (§08 draws on them); hours, contracts and security are thinner ground. A job and a good job are different facts.</p>
+          <p>It counts <em>people</em>, including the informally employed: but employment here is a yes, not a description. A street vendor working two hours a day is employed in these tables. The annual reports do price the work and count the contracts, paid leave and social security that come with salaried jobs (§08). A job and a good job are different facts.</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">vi.</span>
+        <div>
+          <h3>"Unemployment changed between 2024 and 2025."</h3>
+          <p>Perhaps, but the survey cannot tell you. In January 2025 MoSPI replaced the sample and the method; the 2025 figures come from a different instrument. A difference across that line mixes the economy with the ruler, and MoSPI has published no year measured both ways that would separate them (§03).</p>
+        </div>
+      </li>
+      <li>
+        <span class="no">vii.</span>
+        <div>
+          <h3>"My state's unemployment jumped this quarter."</h3>
+          <p>A state's quarterly figure rests on a few thousand households, so a move of a point or two is often sampling noise. And check the source table itself: twice since 2025 MoSPI's data service has served state figures under the wrong state's name. This guide withholds those quarters and says so on each series.</p>
         </div>
       </li>
     </ul>
@@ -604,8 +984,9 @@ const q12From = qDates[qDates.length - 12].slice(0, 4);
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. PLFS monthly bulletin ({PM.long}), quarterly bulletin (to {qLabel(qDates.at(-1))}) and annual reports (to 2023-24), retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>. State and UT unemployment rates (§10) are from the annual reports, 2017-18 to 2023-24, both stopwatches, same vintage. Dadra &amp; Nagar Haveli and Daman &amp; Diu report separately to 2019-20 and as one merged UT thereafter; the strip shows the merged series, the archive keeps both. Worker-status composition (§07), earnings by worker status (§08) and the education and age cuts of the unemployment rate (§09) are from the same annual reports: one instrument, agriculture years, never spliced with either bulletin.</p>
-        <p>Quarantined cells, all retained in the raw archive: Apr–Jun 2019 urban UR is carried as 21.6, contradicting that quarter's own WPR/LFPR identity (which implies 8.8, matching the published 8.9); and the 2017-18 rural-plus-urban earnings aggregates for regular and self-employed workers, whose implied urban worker weight (0.85 and 0.55) contradicts the stable structure of every later year (0.53–0.62 and 0.19–0.25) while their rural and urban components match the published report. Jan–Mar 2025 was never published in the quarterly bulletin (the design transition to the monthly bulletin). The reports' employment-condition tables, written contracts, paid leave, social security, are listed by the API but its data endpoint fails on them; they are absent here because we do not show what we cannot fetch.</p>
+        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office, Periodic Labour Force Survey, retrieved through the eSankhyiki API, vintage <b id="prov-vintage">–</b>. Every indicator MoSPI serves (participation, worker and unemployment rates; the distribution of workers by status, industry, occupation and enterprise; regular employees' job conditions; regular wages, casual wages and self-employment earnings) is fetched whole, at every cut, and archived as served before any bundle is cut from it.</p>
+        <p>Two survey designs. The original design: annual reports on agriculture years 2017-18 to 2023-24, calendar-year estimates {cyOldYears[0]} to {cyOldYears.at(-1)}, and the urban quarterly bulletin to {qLabel(qDates.at(-1))}. The revamped design, from January 2025: the monthly bulletin ({PM.long}), the quarterly bulletin with villages and 22 states ({qn(q25First)} to {qn(q25Last)}), and calendar-year estimates from {cyYear}. Never spliced. Dadra &amp; Nagar Haveli and Daman &amp; Diu report separately to 2019-20 and as one merged UT thereafter.</p>
+        <p>Withheld, every case disclosed on its series and kept in the raw archive: values the data service garbles ("l0.8", "IS.2", a worker ratio of 415); cells whose three ratios contradict each other (Apr–Jun 2019 urban unemployment is carried as 21.6 where the bulletin says 8.9); cells with no sampled person; the state tables of Apr–Jun 2025 and the participation table of Jul–Sep 2025 from Jammu &amp; Kashmir on, whose state labels the service shifted one row (checked against the bulletin); and the 2017-18 rural-plus-urban earnings aggregates for regular and self-employed workers, whose implied urban weight contradicts every later year. Jan–Mar 2025 was never published in the quarterly bulletin. The calendar-year job-contract tables are served with their category label missing and cannot be used; the agriculture-year ones are drawn in §08.</p>
       </div>
       <div>
         <h6>Revisions &amp; uncertainty</h6>
@@ -614,7 +995,7 @@ const q12From = qDates[qDates.length - 12].slice(0, 4);
       </div>
       <div>
         <h6>This guide</h6>
-        <p>Labour, version 1.3, adds the seven-year annual LFPR plate (§03) and the status-by-gender companion (§07) to v1.2. Next scheduled revision: on release of the July bulletin.</p>
+        <p>Labour, version 1.4, reads the whole PLFS: both survey designs side by side (§03, §04), the quarterly bulletin's villages and states, young people, work and pay in every state, women's work by social group and religion, and regular employees' job conditions. Next scheduled revision: on release of the next monthly bulletin.</p>
       </div>
     </div>
     <div class="fine">

@@ -157,6 +157,26 @@ stamps, silent series). What the audit changed:
   service, is used only as a cross-check read from the Data Bank, and its values never enter
   this repo or the site.
 
+- **2026-10-09/10 — The launch build, wave 1 and the start of wave 2.** Eleven family
+  sessions (separate Claude Code sessions in git worktrees, coordinated by one session;
+  `docs/briefs/`) built bis (debt, housing), services, states, worldbank (poverty,
+  population), climate, ilo, rates, external (rebuilt on DBIE), credit and trade; the
+  framework session built the every-cut table, one seam treatment for charts, the IDH
+  cross-check, ledgers for the existing guides, and a verifier that traces every figure.
+  25 guides by 23:50. Wave 2 then deepened jobs and national accounts. Findings worth
+  keeping: BIS extrapolates India's private credit from bank credit after the last
+  financial-accounts quarter, unflagged in the data (now `estimated`); TradeStat's annual
+  EIDB 2023-24 commodity tables count every shipment twice (MEIDB is the record);
+  TradeStat answers an unpublished month with HTTP 200 and zeros; RBI report 730's rupee
+  provider was a copy of its dollar provider; the 2025 PLFS redesign had been spliced in
+  two bundles (now separate rulers); MoSPI's NAS API truncates growth rates and overwrote
+  2022-23 estimate-stage figures under their old labels on 31 Aug 2026; the prose verifier
+  had only ever traced percentages (fixed; every figure now traced, unit-aware).
+  Coordination lessons: append-only blocks in shared files merge mechanically (a resolver
+  keeps both sides; in-place edits of a shared line need a person); trial-merge every
+  branch in a scratch worktree with the full gates before it lands; ten concurrent sessions
+  filled a 466 GB disk once (build output is ~700 MB each; deleted after each check now).
+
 ## Retired mechanisms
 
 - **`--mock` fetch mode (retired 2026-08, plan P2.8).** `scripts/lib/mock.mjs`

@@ -1,0 +1,1777 @@
+{
+ "meta": {
+  "dossier": "gdp",
+  "base": "2022-23",
+  "source": "MoSPI, National Statistical Office",
+  "vintage": "2026-10-09",
+  "mock": false,
+  "geo": "IND",
+  "releaseDate": null,
+  "revisionPolicy": "Revised continuously; finalised over ~3 years. Vintages are kept.",
+  "frequency": "annual",
+  "unit": "inr_crore",
+  "stages": [
+   {
+    "key": "fae",
+    "label": "First Advance Estimates",
+    "rank": 1,
+    "short": "First advance"
+   },
+   {
+    "key": "sae",
+    "label": "Second Advance Estimates",
+    "rank": 2,
+    "short": "Second advance"
+   },
+   {
+    "key": "pe",
+    "label": "Provisional Estimates",
+    "rank": 3,
+    "short": "Provisional"
+   },
+   {
+    "key": "fre",
+    "label": "First Revised Estimates",
+    "rank": 4,
+    "short": "First revised"
+   },
+   {
+    "key": "sre",
+    "label": "Second Revised Estimates",
+    "rank": 5,
+    "short": "Second revised"
+   },
+   {
+    "key": "tre",
+    "label": "Third Revised Estimates",
+    "rank": 6,
+    "short": "Third revised"
+   },
+   {
+    "key": "final",
+    "label": "Final Estimates",
+    "rank": 7,
+    "short": "Final"
+   },
+   {
+    "key": "addl",
+    "label": "Additional Revision",
+    "rank": 8,
+    "short": "Additional revision"
+   }
+  ],
+  "pairs": {
+   "gdp_growth_pe_real": {
+    "2025-04-01": "fre"
+   },
+   "gdp_growth_fre_real": {
+    "2024-04-01": "final"
+   },
+   "gdp_growth_final_real": {
+    "2023-04-01": "final"
+   },
+   "gdp_growth_pe_nominal": {
+    "2025-04-01": "fre"
+   },
+   "gdp_growth_fre_nominal": {
+    "2024-04-01": "final"
+   },
+   "gdp_growth_final_nominal": {
+    "2023-04-01": "final"
+   },
+   "gva_growth_pe_real": {
+    "2025-04-01": "fre"
+   },
+   "gva_growth_fre_real": {
+    "2024-04-01": "final"
+   },
+   "gva_growth_final_real": {
+    "2023-04-01": "final"
+   },
+   "gva_growth_pe_nominal": {
+    "2025-04-01": "fre"
+   },
+   "gva_growth_fre_nominal": {
+    "2024-04-01": "final"
+   },
+   "gva_growth_final_nominal": {
+    "2023-04-01": "final"
+   }
+  },
+  "coverage": "All-India, annual: every published estimate stage of every year (first and second advance, provisional, first, second and third revised, final, additional revision), levels of each national-accounts total and MoSPI's own growth rate at each stage",
+  "note": "Levels as the API holds each stage today: a later release can restate a stage under its old label (on 31 Aug 2026 MoSPI updated every 2022-23-base year for the new PPI and IIP; 2025-26 Provisional moved from Rs 3,23,12,034 to 3,24,70,100 crore at constant prices), so a stage here is the latest figure carrying that label, not every figure ever printed. Growth at each stage (gdp_growth_*, gva_growth_*) is computed from levels against the previous year's stage that reproduces MoSPI's published rate within 0.1 point (meta.pairs names it for every date); MoSPI's own one-decimal rates, which are sometimes truncated rather than rounded, are kept as *_published. First, latest and revision are computed from the growth series. The industry-by-stage detail is in the raw dump (data/raw/nas-deep-*-current-annual.json) and the deep archive.",
+  "latestPeriod": "2025-04"
+ },
+ "dates": [
+  "2022-04-01",
+  "2023-04-01",
+  "2024-04-01",
+  "2025-04-01"
+ ],
+ "series": {
+  "gva_pe_constant": {
+   "name": "gva_pe_constant_inr_crore_base2022",
+   "label": "Gross value added, Provisional estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    29590329
+   ],
+   "group": "Gross value added"
+  },
+  "gva_fre_constant": {
+   "name": "gva_fre_constant_inr_crore_base2022",
+   "label": "Gross value added, First revised estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    27421770,
+    null
+   ],
+   "group": "Gross value added"
+  },
+  "gva_final_constant": {
+   "name": "gva_final_constant_inr_crore_base2022",
+   "label": "Gross value added, Final estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    23823136,
+    25592651,
+    null,
+    null
+   ],
+   "group": "Gross value added"
+  },
+  "gva_pe_current": {
+   "name": "gva_pe_current_inr_crore_base2022",
+   "label": "Gross value added, Provisional estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    31394691
+   ],
+   "nominal": true,
+   "group": "Gross value added"
+  },
+  "gva_fre_current": {
+   "name": "gva_fre_current_inr_crore_base2022",
+   "label": "Gross value added, First revised estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    28845683,
+    null
+   ],
+   "nominal": true,
+   "group": "Gross value added"
+  },
+  "gva_final_current": {
+   "name": "gva_final_current_inr_crore_base2022",
+   "label": "Gross value added, Final estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    23823136,
+    26405480,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "Gross value added"
+  },
+  "net_taxes_pe_constant": {
+   "name": "net_taxes_pe_constant_inr_crore_base2022",
+   "label": "Net taxes on products, Provisional estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    2879771
+   ],
+   "group": "Net taxes on products"
+  },
+  "net_taxes_fre_constant": {
+   "name": "net_taxes_fre_constant_inr_crore_base2022",
+   "label": "Net taxes on products, First revised estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    2693658,
+    null
+   ],
+   "group": "Net taxes on products"
+  },
+  "net_taxes_final_constant": {
+   "name": "net_taxes_final_constant_inr_crore_base2022",
+   "label": "Net taxes on products, Final estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    2353866,
+    2501707,
+    null,
+    null
+   ],
+   "group": "Net taxes on products"
+  },
+  "net_taxes_pe_current": {
+   "name": "net_taxes_pe_current_inr_crore_base2022",
+   "label": "Net taxes on products, Provisional estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    3142105
+   ],
+   "nominal": true,
+   "group": "Net taxes on products"
+  },
+  "net_taxes_fre_current": {
+   "name": "net_taxes_fre_current_inr_crore_base2022",
+   "label": "Net taxes on products, First revised estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    2952841,
+    null
+   ],
+   "nominal": true,
+   "group": "Net taxes on products"
+  },
+  "net_taxes_final_current": {
+   "name": "net_taxes_final_current_inr_crore_base2022",
+   "label": "Net taxes on products, Final estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    2353866,
+    2667807,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "Net taxes on products"
+  },
+  "taxes_fre_constant": {
+   "name": "taxes_fre_constant_inr_crore_base2022",
+   "label": "Taxes on products, First revised estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    3369848,
+    null
+   ],
+   "group": "Taxes on products"
+  },
+  "taxes_final_constant": {
+   "name": "taxes_final_constant_inr_crore_base2022",
+   "label": "Taxes on products, Final estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    2963201,
+    3129392,
+    null,
+    null
+   ],
+   "group": "Taxes on products"
+  },
+  "taxes_fre_current": {
+   "name": "taxes_fre_current_inr_crore_base2022",
+   "label": "Taxes on products, First revised estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    3541954,
+    null
+   ],
+   "nominal": true,
+   "group": "Taxes on products"
+  },
+  "taxes_final_current": {
+   "name": "taxes_final_current_inr_crore_base2022",
+   "label": "Taxes on products, Final estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    2963201,
+    3244229,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "Taxes on products"
+  },
+  "subsidies_fre_constant": {
+   "name": "subsidies_fre_constant_inr_crore_base2022",
+   "label": "Subsidies on products, First revised estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    676189,
+    null
+   ],
+   "group": "Subsidies on products"
+  },
+  "subsidies_final_constant": {
+   "name": "subsidies_final_constant_inr_crore_base2022",
+   "label": "Subsidies on products, Final estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    609335,
+    627686,
+    null,
+    null
+   ],
+   "group": "Subsidies on products"
+  },
+  "subsidies_fre_current": {
+   "name": "subsidies_fre_current_inr_crore_base2022",
+   "label": "Subsidies on products, First revised estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    589112,
+    null
+   ],
+   "nominal": true,
+   "group": "Subsidies on products"
+  },
+  "subsidies_final_current": {
+   "name": "subsidies_final_current_inr_crore_base2022",
+   "label": "Subsidies on products, Final estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    609335,
+    576422,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "Subsidies on products"
+  },
+  "gdp_pe_constant": {
+   "name": "gdp_pe_constant_inr_crore_base2022",
+   "label": "Gross domestic product, Provisional estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    32470100
+   ],
+   "group": "Gross domestic product"
+  },
+  "gdp_fre_constant": {
+   "name": "gdp_fre_constant_inr_crore_base2022",
+   "label": "Gross domestic product, First revised estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    30115428,
+    null
+   ],
+   "group": "Gross domestic product"
+  },
+  "gdp_final_constant": {
+   "name": "gdp_final_constant_inr_crore_base2022",
+   "label": "Gross domestic product, Final estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    26177001,
+    28094358,
+    null,
+    null
+   ],
+   "group": "Gross domestic product"
+  },
+  "gdp_pe_current": {
+   "name": "gdp_pe_current_inr_crore_base2022",
+   "label": "Gross domestic product, Provisional estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    34536796
+   ],
+   "nominal": true,
+   "group": "Gross domestic product"
+  },
+  "gdp_fre_current": {
+   "name": "gdp_fre_current_inr_crore_base2022",
+   "label": "Gross domestic product, First revised estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    31798524,
+    null
+   ],
+   "nominal": true,
+   "group": "Gross domestic product"
+  },
+  "gdp_final_current": {
+   "name": "gdp_final_current_inr_crore_base2022",
+   "label": "Gross domestic product, Final estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    26177001,
+    29073287,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "Gross domestic product"
+  },
+  "cfc_fre_constant": {
+   "name": "cfc_fre_constant_inr_crore_base2022",
+   "label": "Consumption of fixed capital, First revised estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    4034807,
+    null
+   ],
+   "group": "Consumption of fixed capital"
+  },
+  "cfc_final_constant": {
+   "name": "cfc_final_constant_inr_crore_base2022",
+   "label": "Consumption of fixed capital, Final estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    3584380,
+    3797488,
+    null,
+    null
+   ],
+   "group": "Consumption of fixed capital"
+  },
+  "cfc_fre_current": {
+   "name": "cfc_fre_current_inr_crore_base2022",
+   "label": "Consumption of fixed capital, First revised estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    4121476,
+    null
+   ],
+   "nominal": true,
+   "group": "Consumption of fixed capital"
+  },
+  "cfc_final_current": {
+   "name": "cfc_final_current_inr_crore_base2022",
+   "label": "Consumption of fixed capital, Final estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    3584380,
+    3836206,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "Consumption of fixed capital"
+  },
+  "ndp_pe_constant": {
+   "name": "ndp_pe_constant_inr_crore_base2022",
+   "label": "Net domestic product, Provisional estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    28116214
+   ],
+   "group": "Net domestic product"
+  },
+  "ndp_fre_constant": {
+   "name": "ndp_fre_constant_inr_crore_base2022",
+   "label": "Net domestic product, First revised estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    26080621,
+    null
+   ],
+   "group": "Net domestic product"
+  },
+  "ndp_final_constant": {
+   "name": "ndp_final_constant_inr_crore_base2022",
+   "label": "Net domestic product, Final estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    22592622,
+    24296870,
+    null,
+    null
+   ],
+   "group": "Net domestic product"
+  },
+  "ndp_pe_current": {
+   "name": "ndp_pe_current_inr_crore_base2022",
+   "label": "Net domestic product, Provisional estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    30051117
+   ],
+   "nominal": true,
+   "group": "Net domestic product"
+  },
+  "ndp_fre_current": {
+   "name": "ndp_fre_current_inr_crore_base2022",
+   "label": "Net domestic product, First revised estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    27677048,
+    null
+   ],
+   "nominal": true,
+   "group": "Net domestic product"
+  },
+  "ndp_final_current": {
+   "name": "ndp_final_current_inr_crore_base2022",
+   "label": "Net domestic product, Final estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    22592622,
+    25237081,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "Net domestic product"
+  },
+  "gcf_fre_constant": {
+   "name": "gcf_fre_constant_inr_crore_base2022",
+   "label": "Gross capital formation, First revised estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    10389754,
+    null
+   ],
+   "group": "Gross capital formation"
+  },
+  "gcf_final_constant": {
+   "name": "gcf_final_constant_inr_crore_base2022",
+   "label": "Gross capital formation, Final estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    8627076,
+    9610133,
+    null,
+    null
+   ],
+   "group": "Gross capital formation"
+  },
+  "gcf_fre_current": {
+   "name": "gcf_fre_current_inr_crore_base2022",
+   "label": "Gross capital formation, First revised estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    10471950,
+    null
+   ],
+   "nominal": true,
+   "group": "Gross capital formation"
+  },
+  "gcf_final_current": {
+   "name": "gcf_final_current_inr_crore_base2022",
+   "label": "Gross capital formation, Final estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    8627076,
+    9628092,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "Gross capital formation"
+  },
+  "gfcf_pe_constant": {
+   "name": "gfcf_pe_constant_inr_crore_base2022",
+   "label": "Gross fixed capital formation, Provisional estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    10777441
+   ],
+   "group": "Gross fixed capital formation"
+  },
+  "gfcf_fre_constant": {
+   "name": "gfcf_fre_constant_inr_crore_base2022",
+   "label": "Gross fixed capital formation, First revised estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    9976022,
+    null
+   ],
+   "group": "Gross fixed capital formation"
+  },
+  "gfcf_final_constant": {
+   "name": "gfcf_final_constant_inr_crore_base2022",
+   "label": "Gross fixed capital formation, Final estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    8452955,
+    9217517,
+    null,
+    null
+   ],
+   "group": "Gross fixed capital formation"
+  },
+  "gfcf_pe_current": {
+   "name": "gfcf_pe_current_inr_crore_base2022",
+   "label": "Gross fixed capital formation, Provisional estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    10932539
+   ],
+   "nominal": true,
+   "group": "Gross fixed capital formation"
+  },
+  "gfcf_fre_current": {
+   "name": "gfcf_fre_current_inr_crore_base2022",
+   "label": "Gross fixed capital formation, First revised estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    10064939,
+    null
+   ],
+   "nominal": true,
+   "group": "Gross fixed capital formation"
+  },
+  "gfcf_final_current": {
+   "name": "gfcf_final_current_inr_crore_base2022",
+   "label": "Gross fixed capital formation, Final estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    8452955,
+    9245762,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "Gross fixed capital formation"
+  },
+  "pfce_pe_constant": {
+   "name": "pfce_pe_constant_inr_crore_base2022",
+   "label": "Private final consumption, Provisional estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    18108907
+   ],
+   "group": "Private final consumption"
+  },
+  "pfce_fre_constant": {
+   "name": "pfce_fre_constant_inr_crore_base2022",
+   "label": "Private final consumption, First revised estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    16891582,
+    null
+   ],
+   "group": "Private final consumption"
+  },
+  "pfce_final_constant": {
+   "name": "pfce_final_constant_inr_crore_base2022",
+   "label": "Private final consumption, Final estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    14938852,
+    15871241,
+    null,
+    null
+   ],
+   "group": "Private final consumption"
+  },
+  "pfce_pe_current": {
+   "name": "pfce_pe_current_inr_crore_base2022",
+   "label": "Private final consumption, Provisional estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    19617965
+   ],
+   "nominal": true,
+   "group": "Private final consumption"
+  },
+  "pfce_fre_current": {
+   "name": "pfce_fre_current_inr_crore_base2022",
+   "label": "Private final consumption, First revised estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    18078011,
+    null
+   ],
+   "nominal": true,
+   "group": "Private final consumption"
+  },
+  "pfce_final_current": {
+   "name": "pfce_final_current_inr_crore_base2022",
+   "label": "Private final consumption, Final estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    14938852,
+    16415547,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "Private final consumption"
+  },
+  "gfce_pe_constant": {
+   "name": "gfce_pe_constant_inr_crore_base2022",
+   "label": "Government final consumption, Provisional estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    3340012
+   ],
+   "group": "Government final consumption"
+  },
+  "gfce_fre_constant": {
+   "name": "gfce_fre_constant_inr_crore_base2022",
+   "label": "Government final consumption, First revised estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    3152795,
+    null
+   ],
+   "group": "Government final consumption"
+  },
+  "gfce_final_constant": {
+   "name": "gfce_final_constant_inr_crore_base2022",
+   "label": "Government final consumption, Final estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    2934060,
+    2956626,
+    null,
+    null
+   ],
+   "group": "Government final consumption"
+  },
+  "gfce_pe_current": {
+   "name": "gfce_pe_current_inr_crore_base2022",
+   "label": "Government final consumption, Provisional estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    3758533
+   ],
+   "nominal": true,
+   "group": "Government final consumption"
+  },
+  "gfce_fre_current": {
+   "name": "gfce_fre_current_inr_crore_base2022",
+   "label": "Government final consumption, First revised estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    3445340,
+    null
+   ],
+   "nominal": true,
+   "group": "Government final consumption"
+  },
+  "gfce_final_current": {
+   "name": "gfce_final_current_inr_crore_base2022",
+   "label": "Government final consumption, Final estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    2934060,
+    3121027,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "Government final consumption"
+  },
+  "stocks_pe_constant": {
+   "name": "stocks_pe_constant_inr_crore_base2022",
+   "label": "Change in stocks, Provisional estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    478835
+   ],
+   "group": "Change in stocks"
+  },
+  "stocks_fre_constant": {
+   "name": "stocks_fre_constant_inr_crore_base2022",
+   "label": "Change in stocks, First revised estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    413733,
+    null
+   ],
+   "group": "Change in stocks"
+  },
+  "stocks_final_constant": {
+   "name": "stocks_final_constant_inr_crore_base2022",
+   "label": "Change in stocks, Final estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    174121,
+    392616,
+    null,
+    null
+   ],
+   "group": "Change in stocks"
+  },
+  "stocks_pe_current": {
+   "name": "stocks_pe_current_inr_crore_base2022",
+   "label": "Change in stocks, Provisional estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    430694
+   ],
+   "nominal": true,
+   "group": "Change in stocks"
+  },
+  "stocks_fre_current": {
+   "name": "stocks_fre_current_inr_crore_base2022",
+   "label": "Change in stocks, First revised estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    407011,
+    null
+   ],
+   "nominal": true,
+   "group": "Change in stocks"
+  },
+  "stocks_final_current": {
+   "name": "stocks_final_current_inr_crore_base2022",
+   "label": "Change in stocks, Final estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    174121,
+    382329,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "Change in stocks"
+  },
+  "valuables_pe_constant": {
+   "name": "valuables_pe_constant_inr_crore_base2022",
+   "label": "Valuables, Provisional estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    305752
+   ],
+   "group": "Valuables"
+  },
+  "valuables_fre_constant": {
+   "name": "valuables_fre_constant_inr_crore_base2022",
+   "label": "Valuables, First revised estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    333382,
+    null
+   ],
+   "group": "Valuables"
+  },
+  "valuables_final_constant": {
+   "name": "valuables_final_constant_inr_crore_base2022",
+   "label": "Valuables, Final estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    360668,
+    327047,
+    null,
+    null
+   ],
+   "group": "Valuables"
+  },
+  "valuables_pe_current": {
+   "name": "valuables_pe_current_inr_crore_base2022",
+   "label": "Valuables, Provisional estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    694281
+   ],
+   "nominal": true,
+   "group": "Valuables"
+  },
+  "valuables_fre_current": {
+   "name": "valuables_fre_current_inr_crore_base2022",
+   "label": "Valuables, First revised estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    477281,
+    null
+   ],
+   "nominal": true,
+   "group": "Valuables"
+  },
+  "valuables_final_current": {
+   "name": "valuables_final_current_inr_crore_base2022",
+   "label": "Valuables, Final estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    360668,
+    376232,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "Valuables"
+  },
+  "exports_pe_constant": {
+   "name": "exports_pe_constant_inr_crore_base2022",
+   "label": "Exports of goods and services, Provisional estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    7083508
+   ],
+   "group": "Exports of goods and services"
+  },
+  "exports_fre_constant": {
+   "name": "exports_fre_constant_inr_crore_base2022",
+   "label": "Exports of goods and services, First revised estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    6659890,
+    null
+   ],
+   "group": "Exports of goods and services"
+  },
+  "exports_final_constant": {
+   "name": "exports_final_constant_inr_crore_base2022",
+   "label": "Exports of goods and services, Final estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    6278722,
+    6349414,
+    null,
+    null
+   ],
+   "group": "Exports of goods and services"
+  },
+  "exports_pe_current": {
+   "name": "exports_pe_current_inr_crore_base2022",
+   "label": "Exports of goods and services, Provisional estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    7669307
+   ],
+   "nominal": true,
+   "group": "Exports of goods and services"
+  },
+  "exports_fre_current": {
+   "name": "exports_fre_current_inr_crore_base2022",
+   "label": "Exports of goods and services, First revised estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    7020410,
+    null
+   ],
+   "nominal": true,
+   "group": "Exports of goods and services"
+  },
+  "exports_final_current": {
+   "name": "exports_final_current_inr_crore_base2022",
+   "label": "Exports of goods and services, Final estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    6278722,
+    6479296,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "Exports of goods and services"
+  },
+  "imports_pe_constant": {
+   "name": "imports_pe_constant_inr_crore_base2022",
+   "label": "Imports of goods and services, Provisional estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    7684960
+   ],
+   "group": "Imports of goods and services"
+  },
+  "imports_fre_constant": {
+   "name": "imports_fre_constant_inr_crore_base2022",
+   "label": "Imports of goods and services, First revised estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    7348884,
+    null
+   ],
+   "group": "Imports of goods and services"
+  },
+  "imports_final_constant": {
+   "name": "imports_final_constant_inr_crore_base2022",
+   "label": "Imports of goods and services, Final estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    6962377,
+    6949787,
+    null,
+    null
+   ],
+   "group": "Imports of goods and services"
+  },
+  "imports_pe_current": {
+   "name": "imports_pe_current_inr_crore_base2022",
+   "label": "Imports of goods and services, Provisional estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    8448024
+   ],
+   "nominal": true,
+   "group": "Imports of goods and services"
+  },
+  "imports_fre_current": {
+   "name": "imports_fre_current_inr_crore_base2022",
+   "label": "Imports of goods and services, First revised estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    7587030,
+    null
+   ],
+   "nominal": true,
+   "group": "Imports of goods and services"
+  },
+  "imports_final_current": {
+   "name": "imports_final_current_inr_crore_base2022",
+   "label": "Imports of goods and services, Final estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    6962377,
+    6946906,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "Imports of goods and services"
+  },
+  "primary_income_row_fre_constant": {
+   "name": "primary_income_row_fre_constant_inr_crore_base2022",
+   "label": "Net primary income from abroad, First revised estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    -349128,
+    null
+   ],
+   "group": "Net primary income from abroad"
+  },
+  "primary_income_row_final_constant": {
+   "name": "primary_income_row_final_constant_inr_crore_base2022",
+   "label": "Net primary income from abroad, Final estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    -370307,
+    -375305,
+    null,
+    null
+   ],
+   "group": "Net primary income from abroad"
+  },
+  "primary_income_row_fre_current": {
+   "name": "primary_income_row_fre_current_inr_crore_base2022",
+   "label": "Net primary income from abroad, First revised estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    -409118,
+    null
+   ],
+   "nominal": true,
+   "group": "Net primary income from abroad"
+  },
+  "primary_income_row_final_current": {
+   "name": "primary_income_row_final_current_inr_crore_base2022",
+   "label": "Net primary income from abroad, Final estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    -370307,
+    -411996,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "Net primary income from abroad"
+  },
+  "gni_pe_constant": {
+   "name": "gni_pe_constant_inr_crore_base2022",
+   "label": "Gross national income, Provisional estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    32130792
+   ],
+   "group": "Gross national income"
+  },
+  "gni_fre_constant": {
+   "name": "gni_fre_constant_inr_crore_base2022",
+   "label": "Gross national income, First revised estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    29766300,
+    null
+   ],
+   "group": "Gross national income"
+  },
+  "gni_final_constant": {
+   "name": "gni_final_constant_inr_crore_base2022",
+   "label": "Gross national income, Final estimate, constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    25806695,
+    27719053,
+    null,
+    null
+   ],
+   "group": "Gross national income"
+  },
+  "gni_pe_current": {
+   "name": "gni_pe_current_inr_crore_base2022",
+   "label": "Gross national income, Provisional estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    34106077
+   ],
+   "nominal": true,
+   "group": "Gross national income"
+  },
+  "gni_fre_current": {
+   "name": "gni_fre_current_inr_crore_base2022",
+   "label": "Gross national income, First revised estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    31389406,
+    null
+   ],
+   "nominal": true,
+   "group": "Gross national income"
+  },
+  "gni_final_current": {
+   "name": "gni_final_current_inr_crore_base2022",
+   "label": "Gross national income, Final estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    25806695,
+    28661291,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "Gross national income"
+  },
+  "transfers_row_fre_current": {
+   "name": "transfers_row_fre_current_inr_crore_base2022",
+   "label": "Net current transfers from abroad, First revised estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    1053958,
+    null
+   ],
+   "nominal": true,
+   "group": "Net current transfers from abroad"
+  },
+  "transfers_row_final_current": {
+   "name": "transfers_row_final_current_inr_crore_base2022",
+   "label": "Net current transfers from abroad, Final estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    819212,
+    883215,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "Net current transfers from abroad"
+  },
+  "gndi_pe_current": {
+   "name": "gndi_pe_current_inr_crore_base2022",
+   "label": "Gross national disposable income, Provisional estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    null,
+    35303081
+   ],
+   "nominal": true,
+   "group": "Gross national disposable income"
+  },
+  "gndi_fre_current": {
+   "name": "gndi_fre_current_inr_crore_base2022",
+   "label": "Gross national disposable income, First revised estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    32443363,
+    null
+   ],
+   "nominal": true,
+   "group": "Gross national disposable income"
+  },
+  "gndi_final_current": {
+   "name": "gndi_final_current_inr_crore_base2022",
+   "label": "Gross national disposable income, Final estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    26625906,
+    29544506,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "Gross national disposable income"
+  },
+  "gross_saving_fre_current": {
+   "name": "gross_saving_fre_current_inr_crore_base2022",
+   "label": "Gross saving, First revised estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    null,
+    null,
+    11048415,
+    null
+   ],
+   "nominal": true,
+   "group": "Gross saving"
+  },
+  "gross_saving_final_current": {
+   "name": "gross_saving_final_current_inr_crore_base2022",
+   "label": "Gross saving, Final estimate, current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    7940137,
+    9436799,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "Gross saving"
+  },
+  "gdp_growth_pe_real": {
+   "name": "gdp_growth_pe_real_pct_base2022",
+   "label": "GDP growth rate, Provisional estimate, real (computed from levels)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    null,
+    null,
+    7.82
+   ],
+   "group": "GDP growth rate"
+  },
+  "gdp_growth_pe_real_published": {
+   "name": "gdp_growth_pe_real_published_pct_base2022",
+   "label": "GDP growth rate, Provisional estimate, real, as the API publishes it (one decimal, cross-check)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    null,
+    null,
+    7.8
+   ],
+   "group": "GDP growth rate"
+  },
+  "gdp_growth_fre_real": {
+   "name": "gdp_growth_fre_real_pct_base2022",
+   "label": "GDP growth rate, First revised estimate, real (computed from levels)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    null,
+    7.19,
+    null
+   ],
+   "group": "GDP growth rate"
+  },
+  "gdp_growth_fre_real_published": {
+   "name": "gdp_growth_fre_real_published_pct_base2022",
+   "label": "GDP growth rate, First revised estimate, real, as the API publishes it (one decimal, cross-check)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    null,
+    7.2,
+    null
+   ],
+   "group": "GDP growth rate"
+  },
+  "gdp_growth_final_real": {
+   "name": "gdp_growth_final_real_pct_base2022",
+   "label": "GDP growth rate, Final estimate, real (computed from levels)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    7.32,
+    null,
+    null
+   ],
+   "group": "GDP growth rate"
+  },
+  "gdp_growth_final_real_published": {
+   "name": "gdp_growth_final_real_published_pct_base2022",
+   "label": "GDP growth rate, Final estimate, real, as the API publishes it (one decimal, cross-check)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    7.3,
+    null,
+    null
+   ],
+   "group": "GDP growth rate"
+  },
+  "gdp_growth_pe_nominal": {
+   "name": "gdp_growth_pe_nominal_pct_base2022",
+   "label": "GDP growth rate, Provisional estimate, nominal (computed from levels)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    null,
+    null,
+    8.61
+   ],
+   "nominal": true,
+   "group": "GDP growth rate"
+  },
+  "gdp_growth_pe_nominal_published": {
+   "name": "gdp_growth_pe_nominal_published_pct_base2022",
+   "label": "GDP growth rate, Provisional estimate, nominal, as the API publishes it (one decimal, cross-check)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    null,
+    null,
+    8.6
+   ],
+   "nominal": true,
+   "group": "GDP growth rate"
+  },
+  "gdp_growth_fre_nominal": {
+   "name": "gdp_growth_fre_nominal_pct_base2022",
+   "label": "GDP growth rate, First revised estimate, nominal (computed from levels)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    null,
+    9.37,
+    null
+   ],
+   "nominal": true,
+   "group": "GDP growth rate"
+  },
+  "gdp_growth_fre_nominal_published": {
+   "name": "gdp_growth_fre_nominal_published_pct_base2022",
+   "label": "GDP growth rate, First revised estimate, nominal, as the API publishes it (one decimal, cross-check)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    null,
+    9.4,
+    null
+   ],
+   "nominal": true,
+   "group": "GDP growth rate"
+  },
+  "gdp_growth_final_nominal": {
+   "name": "gdp_growth_final_nominal_pct_base2022",
+   "label": "GDP growth rate, Final estimate, nominal (computed from levels)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    11.06,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "GDP growth rate"
+  },
+  "gdp_growth_final_nominal_published": {
+   "name": "gdp_growth_final_nominal_published_pct_base2022",
+   "label": "GDP growth rate, Final estimate, nominal, as the API publishes it (one decimal, cross-check)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    11.1,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "GDP growth rate"
+  },
+  "gva_growth_pe_real": {
+   "name": "gva_growth_pe_real_pct_base2022",
+   "label": "GVA growth rate, Provisional estimate, real (computed from levels)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    null,
+    null,
+    7.91
+   ],
+   "group": "GVA growth rate"
+  },
+  "gva_growth_pe_real_published": {
+   "name": "gva_growth_pe_real_published_pct_base2022",
+   "label": "GVA growth rate, Provisional estimate, real, as the API publishes it (one decimal, cross-check)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    null,
+    null,
+    7.9
+   ],
+   "group": "GVA growth rate"
+  },
+  "gva_growth_fre_real": {
+   "name": "gva_growth_fre_real_pct_base2022",
+   "label": "GVA growth rate, First revised estimate, real (computed from levels)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    null,
+    7.15,
+    null
+   ],
+   "group": "GVA growth rate"
+  },
+  "gva_growth_fre_real_published": {
+   "name": "gva_growth_fre_real_published_pct_base2022",
+   "label": "GVA growth rate, First revised estimate, real, as the API publishes it (one decimal, cross-check)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    null,
+    7.1,
+    null
+   ],
+   "group": "GVA growth rate"
+  },
+  "gva_growth_final_real": {
+   "name": "gva_growth_final_real_pct_base2022",
+   "label": "GVA growth rate, Final estimate, real (computed from levels)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    7.43,
+    null,
+    null
+   ],
+   "group": "GVA growth rate"
+  },
+  "gva_growth_final_real_published": {
+   "name": "gva_growth_final_real_published_pct_base2022",
+   "label": "GVA growth rate, Final estimate, real, as the API publishes it (one decimal, cross-check)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    7.4,
+    null,
+    null
+   ],
+   "group": "GVA growth rate"
+  },
+  "gva_growth_pe_nominal": {
+   "name": "gva_growth_pe_nominal_pct_base2022",
+   "label": "GVA growth rate, Provisional estimate, nominal (computed from levels)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    null,
+    null,
+    8.84
+   ],
+   "nominal": true,
+   "group": "GVA growth rate"
+  },
+  "gva_growth_pe_nominal_published": {
+   "name": "gva_growth_pe_nominal_published_pct_base2022",
+   "label": "GVA growth rate, Provisional estimate, nominal, as the API publishes it (one decimal, cross-check)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    null,
+    null,
+    8.8
+   ],
+   "nominal": true,
+   "group": "GVA growth rate"
+  },
+  "gva_growth_fre_nominal": {
+   "name": "gva_growth_fre_nominal_pct_base2022",
+   "label": "GVA growth rate, First revised estimate, nominal (computed from levels)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    null,
+    9.24,
+    null
+   ],
+   "nominal": true,
+   "group": "GVA growth rate"
+  },
+  "gva_growth_fre_nominal_published": {
+   "name": "gva_growth_fre_nominal_published_pct_base2022",
+   "label": "GVA growth rate, First revised estimate, nominal, as the API publishes it (one decimal, cross-check)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    null,
+    9.2,
+    null
+   ],
+   "nominal": true,
+   "group": "GVA growth rate"
+  },
+  "gva_growth_final_nominal": {
+   "name": "gva_growth_final_nominal_pct_base2022",
+   "label": "GVA growth rate, Final estimate, nominal (computed from levels)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    10.84,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "GVA growth rate"
+  },
+  "gva_growth_final_nominal_published": {
+   "name": "gva_growth_final_nominal_published_pct_base2022",
+   "label": "GVA growth rate, Final estimate, nominal, as the API publishes it (one decimal, cross-check)",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    10.8,
+    null,
+    null
+   ],
+   "nominal": true,
+   "group": "GVA growth rate"
+  }
+ }
+}

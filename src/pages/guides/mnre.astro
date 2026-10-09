@@ -13,7 +13,7 @@ const P = period("mnre-sources");
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const prevShort = (() => { const d = new Date(Date.UTC(+P.year, MONTHS.indexOf(P.month) - 1, 1)); return MONTHS[d.getUTCMonth()].slice(0, 3) + " " + d.getUTCFullYear(); })();
 const yearsSince2020 = (() => { const m = (+P.year - 2020) * 12 + MONTHS.indexOf(P.month); const y = Math.floor(m / 12), half = m % 12 >= 6; return `${["zero","one","two","three","four","five","six","seven","eight","nine","ten"][y] ?? y}${half ? " and a half" : ""} years`; })();
-const leader = (b) => { const r = Object.values(b.series).map((s) => ({ name: s.label.split(" · ")[1] ?? s.label, v: s.data.at(-1) })).filter((x) => x.v != null).sort((a, c) => c.v - a.v)[0]; return `${r.name.replace(/\b\w/g, (c) => c.toUpperCase())} (${Math.round(r.v / 1000)} GW)`; };
+const leader = (b) => { const r = Object.entries(b.series).filter(([k]) => !k.includes("__")).map(([, s]) => s).map((s) => ({ name: s.label.split(" · ")[1] ?? s.label, v: s.data.at(-1) })).filter((x) => x.v != null).sort((a, c) => c.v - a.v)[0]; return `${r.name.replace(/\b\w/g, (c) => c.toUpperCase())} (${Math.round(r.v / 1000)} GW)`; };
 ---
 <Base
   title="Renewable Energy · India Atlas"
@@ -161,6 +161,7 @@ const leader = (b) => { const r = Object.values(b.series).map((s) => ({ name: s.
       <div>
         <p>This guide tracks <b>installed capacity</b>: the megawatts of renewable-energy equipment physically connected to the grid, counted at month-end by the Ministry of New and Renewable Energy. It is a stock, not a flow: it measures what exists, not what it produces. Generation (MWh) depends on capacity factor, how much the sun shines, how hard the wind blows, and is a different statistic entirely.</p>
         <p>Five types are served. <b>Solar</b> splits into ground-mounted utility plants, rooftop (including the PM Surya Ghar residential scheme), hybrid solar-and-other, and off-grid/KUSUM pumps. <b>Wind</b> is a single total. <b>Hydro</b> splits into small (≤25 MW) and large (>25 MW). <b>Bio</b> covers biomass, bagasse cogeneration and waste-to-energy. The <b>Grand Total</b> sums everything the ministry counts as renewable.</p>
+        <p>For how renewable power fits the whole energy mix, coal included, and what it means for emissions, see the <a href="/guides/climate/">climate guide</a>, which carries generation and emissions. This guide is about the machines.</p>
         <p>The Grand Total crossed a classification break in December 2023, when large hydro was added to the definition. Before that, the total excluded large hydro (~47 GW); after, it includes it. The two halves are never spliced, and growth is never computed across the seam.</p>
       </div>
       <div class="wm-rail">
@@ -332,9 +333,105 @@ const leader = (b) => { const r = Object.values(b.series).map((s) => ({ name: s.
     </div>
   </section>
 
-  <!-- § 09 how to misread -->
+  <!-- § 09 each source's own map (wave 2) -->
   <section>
-    <div class="sec-head"><span class="no">09</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">09</span><h2>Plate 5: each source has its own map</h2><span class="line"></span><span class="unit">State shares of each source's national capacity, {P.short}</span></div>
+    <div class="break">
+      <figure id="cb-srcmap" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Seven states hold almost all the wind; the hills hold the hydro; the sugar belt holds the bio power</h3>
+            <div class="sub">Each panel ranks the states by their share of one source's national installed capacity, {P.short}. Top eight states shown; every state is in the data download and the table at the end of the guide.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-srcmap">–</div><div class="c">of India's wind is in seven states</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-srcmap" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MNRE installed capacity by state and source, via MoSPI eSankhyiki. Large hydro is plants above 25 MW, counted by MNRE only since December 2023; small hydro is 25 MW and below.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://mnre.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each source is ranked on its own, as a share of its own national total, so a small source and a large one can sit side by side. Read the length of the first few bars: the shorter the list of states that matters, the more a source depends on a particular kind of place. Wind needs steady coastal and plateau winds, large hydro needs mountain rivers, and bio power needs sugar cane, because most of it is burned at sugar mills.</p>
+            <p>For a household this is the difference between where power is made and where it is used. Power made in one state travels to others over the national grid, so a state's capacity is not its consumption: a state with no wind farms still uses wind power.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {P.stamp}</span>
+            <p>Wind: <b id="ex-sm-wind">–</b>. Large hydro: <b id="ex-sm-lh">–</b>. Small hydro: <b id="ex-sm-sh">–</b>. Bio power: <b id="ex-sm-bio">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-rooftop" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Rooftop solar is concentrated too: Gujarat and Maharashtra have more than two-fifths of it</h3>
+            <div class="sub">Rooftop solar capacity (including the PM Surya Ghar scheme for homes) by state, GW, {P.short}. Top fifteen states.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-rooftop">–</div><div class="c">Gujarat and Maharashtra, share of rooftop solar</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-rooftop" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MNRE, rooftop solar (including PM Surya Ghar Yojana) by state, via MoSPI eSankhyiki. Rooftop covers homes, offices and factories alike.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://mnre.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Rooftop panels sit on homes, shops, schools and factories, so this is the solar a person is most likely to see. A state's rooftop capacity depends on its electricity tariffs, how quickly its distribution company connects net meters, and how many roofs it has, not only on sunshine.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {P.stamp}</span>
+            <p>Rooftop solar in India: <b id="ex-rt-total">–</b>. <span id="ex-rt-n1">–</span> <b id="ex-rt-v1">–</b> and <span id="ex-rt-n2">–</span> <b id="ex-rt-v2">–</b> lead; together <b id="ex-rt-share">–</b> of the total.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 10 bio power (wave 2) -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>Plate 6: what bio power burns</h2><span class="line"></span><span class="unit">Bio-power capacity by kind, GW, monthly</span></div>
+    <div class="break">
+      <figure id="cb-bio" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Most of India's bio power is sugar-mill power, and it has grown slowly</h3>
+            <div class="sub">Installed bio-power capacity by kind, GW, monthly {P.span}. Bagasse is the fibre left after crushing sugar cane, burned at the mill for steam and electricity.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-bio">–</div><div class="c">bagasse cogeneration, share of bio power</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-bio" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MNRE, bio power by kind (bagasse cogeneration, non-bagasse biomass cogeneration, waste to energy on and off the grid), via MoSPI eSankhyiki. The four kinds add up to the published bio-power total every month.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://mnre.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Four lines, one for each kind of plant. Bagasse cogeneration runs in the crushing season at sugar mills in Maharashtra, Uttar Pradesh and Karnataka, which is why bio power follows the sugar belt on the map above. Non-bagasse cogeneration burns other crop and wood residue. Waste to energy burns or digests city and industrial waste; its off-grid line counts plants that power a factory or a campus without feeding the grid.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {P.stamp}</span>
+            <p>Bagasse <b id="ex-bio-bag">–</b>, other biomass <b id="ex-bio-nb">–</b>, waste to energy <b id="ex-bio-wte">–</b> on the grid and <b id="ex-bio-off">–</b> off it. Bio power as a whole grew <b id="ex-bio-growth">–</b> since January 2020, against solar's <b id="ex-bio-solar">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 11 how to misread -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>How to misread this number</h2><span class="line"></span></div>
     <ul class="misread">
       <li>
         <span class="no">i.</span>
@@ -388,11 +485,11 @@ const leader = (b) => { const r = Object.values(b.series).map((s) => ({ name: s.
       </div>
       <div>
         <h6>Revisions &amp; uncertainty</h6>
-        <p>Capacity is a cumulative stock, revised as installations are registered or retired. The series is final on release. Solar sub-categories (Ground Mounted, Rooftop, Hybrid, Off-Grid) sum exactly to the Solar Total in every month (asserted in validate.mjs). State-level data for small UTs carries interior nulls where no capacity is reported; these are disclosed in the baked file's gaps array.</p>
+        <p>Capacity is a cumulative stock, revised as installations are registered or retired. The series is final on release. Solar sub-categories (Ground Mounted, Rooftop, Hybrid, Off-Grid) sum exactly to the Solar Total in every month, nationally and in every state, and the four kinds of bio power to the bio-power total (asserted in validate.mjs). State-level data for small UTs carries interior nulls where no capacity is reported; these are disclosed in the baked file's gaps array.</p>
       </div>
       <div>
         <h6>This guide</h6>
-        <p>Energy, version 1.0, covers the renewable capacity buildout: Grand Total (with the Dec 2023 classification break), the four sources, solar sub-categories (ground vs rooftop) and state dispersion. Next scheduled revision: with the next monthly release.</p>
+        <p>Energy, version 1.1 (October 2026), covers the renewable capacity buildout: Grand Total (with the Dec 2023 classification break), the four sources, solar sub-categories (ground vs rooftop), bio power by kind, and every source by state. Next scheduled revision: with the next monthly release.</p>
       </div>
     </div>
     <div class="fine">

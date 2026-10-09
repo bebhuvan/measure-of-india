@@ -69,6 +69,13 @@ const PAGES = [
     ["pv-si", (b) => b["gdp-back"].series.saving_rate.data.filter((v) => v != null).at(-1).toFixed(1) + "%"],
     ["nb-q3", (b) => fmt.pct2(b["gdp-2022"].series.gdp.data.at(-2))],
     ["prov-vintage", (b) => b.gdp.meta.vintage],
+    // ---- nas (wave 2): the deep accounts' plates ----
+    ["pv-spend", (b) => fmt.pct1Minus(b["gdp-2022-annual-shares"].series.pfce.data.filter((v) => v != null).at(-1))],
+    ["pv-disc", (b) => fmt.pct1Minus(b["gdp-2022-quarterly-shares"].series.discrepancy.data.at(-1))],
+    ["pv-sect", (b) => { const S = b["gdp-2022-sectors"].series, i = S.saving_households_pct_gdp.data.findLastIndex((v) => v != null); return fmt.pct1Minus(S.saving_households_pct_gdp.data[i] - S.gfcf_households_pct_gdp.data[i]); }],
+    ["pv-hh", (b) => fmt.pct1Minus(b["gdp-2022-sectors"].series.saving_households_pct_gdp.data.filter((v) => v != null).at(-1))],
+    ["pv-make", (b) => fmt.pct1Minus(b["gdp-2022-annual-industries"].series.agriculture_share.data.filter((v) => v != null).at(-1))],
+    // ---- end nas ----
   ]},
   { url: "/guides/wpi/", slug: null, checks: [
     // title strip and §02: the CURRENT base, 2022-23 (2011-12 ended Apr 2026)
@@ -134,7 +141,19 @@ const PAGES = [
   { url: "/guides/jobs/", slug: null, checks: [
     ["n-ur", (b) => fmt.pct2(b["plfs-monthly"].series.ur.data.at(-1))],
     ["n-fur", (b) => fmt.pct2(b["plfs-cuts"].series.ur_female_urban.data.at(-1))],
-    ["pv-main", (b) => fmt.pct2(b["plfs-quarterly"].series.ur.data.at(-1))],
+    // jobs-deep: plate 1 shows the revamped design's urban rate; the new plates' headline values
+    ["pv-main", (b) => fmt.pct1(b["plfs-q25"].series.ur_cws__person_urban__a15plus.data.at(-1))],
+    ["ex-q1", (b) => fmt.pct2(b["plfs-quarterly"].series.ur.data.filter((v) => v != null).at(-1))],
+    ["pv-seam", (b) => fmt.pct1(b["plfs-cy25-india"].series.lfpr_psss__person_all__a15plus.data.at(-1))],
+    ["pv-q25", (b) => fmt.pct1(b["plfs-q25"].series.ur_cws__person_all__a15plus.data.at(-1))],
+    ["ex-q25r", (b) => fmt.pct1(b["plfs-q25"].series.ur_cws__person_rural__a15plus.data.at(-1))],
+    ["pv-ystates", (b) => fmt.pct1(b["plfs-q25"].series.ur_cws__person_all__a15_29.data.at(-1))],
+    ["pv-youth", (b) => fmt.pct1(b["plfs-monthly-age"].series.ur_cws__female_urban__a15_29.data.at(-1))],
+    ["pv-paystates", (b) => fmt.inrR(b["plfs-cy25-earnings"].series.regular__person_all.data.at(-1))],
+    ["ex-ps-f", (b) => fmt.inrR(b["plfs-cy25-earnings"].series.regular__female_all.data.at(-1))],
+    ["pv-cond", (b) => fmt.pct1(b["plfs-conditions"].series.none_of_three__person_all.data.at(-1))],
+    ["ex-c-nc0", (b) => fmt.pct1(b["plfs-conditions"].series.no_contract__person_all.data[0])],
+    ["pv-social", (b) => fmt.pct1(b["plfs-cy25-india"].series.lfpr_psss__female_all__a15plus.data.at(-1))],
     ["pv-annual", (b) => fmt.pct2(b["plfs-annual"].series.ur_psss.data.at(-1))],
     ["ex-p0", (b) => fmt.pct2(b["plfs-annual"].series.ur_psss.data[0])],
     // annual-report extras (v1.2): composition, earnings, education
@@ -162,6 +181,9 @@ const PAGES = [
       const s = b["hces-categories-states"].series;
       return fmt.pct2(Math.max(...Object.keys(s).filter((k) => k.endsWith("_rural")).map((k) => s[k].data.at(-1))));
     }],
+    // households wave 2: what free items add, and inequality by state
+    ["pv-impute", (b) => "₹" + fmt.inr(b["hces-mpce"].series.rural_imputed.data.at(-1) - b["hces-mpce"].series.rural.data.at(-1))],
+    ["pv-ginist", (b) => { const s = b["hces-gini-states"].series; const r = Object.keys(s).filter((k) => k.endsWith("_rural")).filter((k) => s[k.replace(/_rural$/, "_urban")]); return `${r.filter((k) => s[k.replace(/_rural$/, "_urban")].data.at(-1) > s[k].data.at(-1)).length} of ${r.length}`; }],
     ["prov-vintage", (b) => b["hces-mpce"].meta.vintage],
     ["prov-vintage2", (b) => b["hces-mpce"].meta.vintage],
   ]},
@@ -232,9 +254,13 @@ const PAGES = [
     ["ex-fac-lecn", (b) => {
       const t = b["aishe-teachers"].series;
       const li = t.lecturer_assistant_both.data.length - 1;
-      const denom = t.professor_both.data[li] + t.reader_associate_both.data[li] + t.lecturer_assistant_both.data[li] + t.temporary_both.data[li] + t.demonstrator_both.data[li];
-      return fmt.pct0((t.lecturer_assistant_both.data[li] / denom) * 100);
+      // of all teachers, the published total (households wave 2: the six posts add up to it)
+      return fmt.pct0((t.lecturer_assistant_both.data[li] / t.all_both.data[li]) * 100);
     }],
+    // households wave 2: the state plates
+    ["pv-stptr", (b) => fmt.count(Math.max(...Object.entries(b["aishe-ptr"].series).filter(([k]) => k.endsWith("__ptr_regular_all") && !k.startsWith("all_india")).map(([, s]) => s.data.at(-1)).filter((v) => v != null)))],
+    ["pv-stwomen", (b) => fmt.pct0(100 * b["aishe-states-teachers"].series.all_india__all_female.data.at(-1) / b["aishe-states-teachers"].series.all_india__all_both.data.at(-1))],
+    ["pv-stcol", (b) => fmt.inr(b["aishe-states-institutions"].series.all_india__colleges.data.at(-1))],
     ["prov-vintage", (b) => b["aishe-headline"].meta.vintage],
     ["prov-vintage2", (b) => b["aishe-headline"].meta.vintage],
   ]},
@@ -260,6 +286,9 @@ const PAGES = [
     ["pv-total", (b) => fmt.num1(b["mnre-sources"].series.grand_total.data[0] / 1000) + " → " + fmt.num1(b["mnre-sources"].series.grand_total.data.at(-1) / 1000)],
     ["pv-sources", (b) => fmt.x1(b["mnre-sources"].series.solar.data.at(-1) / b["mnre-sources"].series.wind.data.at(-1))],
     ["pv-solar", (b) => fmt.pct0(b["mnre-solar-categories"].series.rooftop.data.at(-1) / b["mnre-sources"].series.solar.data.at(-1) * 100)],
+    // households wave 2: bio power by kind, rooftop by state
+    ["pv-bio", (b) => fmt.pct0(b["mnre-bio-categories"].series.bagasse.data.at(-1) / b["mnre-bio-categories"].series.total.data.at(-1) * 100)],
+    ["pv-rooftop", (b) => { const v = Object.entries(b["mnre-states-solar"].series).filter(([k]) => k.endsWith("__rooftop")).map(([, s]) => s.data.at(-1)).filter((x) => x > 0).sort((a, c) => c - a); return fmt.pct0((v[0] + v[1]) / v.reduce((a, x) => a + x, 0) * 100); }],
     ["prov-vintage", (b) => b["mnre-sources"].meta.vintage],
     ["prov-vintage2", (b) => b["mnre-sources"].meta.vintage],
   ]},
@@ -289,6 +318,12 @@ const PAGES = [
     ["ex-ty-sav", (b) => fmt.lc1(b["deposits-owners"].series.household_savings.data.at(-1))],
     ["cr-term", (b) => fmt.pct1(100 * b["deposits-owners"].series.household_term.data.at(-1) / b["deposits-owners"].series.household_total.data.at(-1))],
     ["ex-p-women", (b) => fmt.pct1(100 * b["deposits-owners"].series.female_total.data.at(-1) / b["deposits-owners"].series.all_total.data.at(-1))],
+    // households wave 2: owners, age, banks, original maturity, the quarterly return
+    ["pv-sectors", (b) => fmt.pct1(100 * b["deposits-sectors"].series.s4__total.data.at(-1) / b["deposits-sectors"].series.total__total.data.at(-1))],
+    ["pv-age", (b) => { const s = b["deposits-age"].series; const ks = Object.keys(s).filter((k) => k.startsWith("individuals__") && k.endsWith("__total")); const t = ks.reduce((a, k) => a + s[k].data.at(-1), 0); return fmt.pct1(100 * (s.individuals__a7_60_to_69__total.data.at(-1) + s.individuals__a8_70_and_above__total.data.at(-1)) / t); }],
+    ["pv-banks", (b) => fmt.pct1(100 * b["deposits-bankgroups-sectors"].series.total__private.data.at(-1) / b["deposits-bankgroups-sectors"].series.total__all_banks.data.at(-1))],
+    ["pv-origmat", (b) => fmt.pct1(100 * b["deposits-maturity-owners"].series.m4_1_to_3_years__total.data.at(-1) / b["deposits-maturity-owners"].series.all__total.data.at(-1))],
+    ["ex-q-tot", (b) => fmt.lc1(b["deposits-q-sectors"].series.total__total.data.at(-1) / 1e5)],
     ["prov-vintage", (b) => b["deposits-owners"].meta.vintage],
   ]},
   // ---- bis family session: debt (BIS total credit) ----
@@ -329,7 +364,7 @@ const PAGES = [
     ["n-share", (b) => fmt.pct1(b["services-gva-2022-share"].series.services.data.at(-1))],
     ["rb-share", (b) => fmt.pct1(b["services-gva-2022-share"].series.services.data.at(-1))],
     ["n-exp", (b) => "$" + Math.round(b["services-bop-annual"].series.s1_2_1_credit.data.at(-1) / 1000) + " bn"],
-    ["n-jobs", (b) => fmt.pct1(b["services-jobs-cy"].series.tertiary__person_all_cws.data.at(-1))],
+    ["n-jobs", (b) => fmt.pct1(b["services-jobs-cy25"].series.tertiary__person_all_cws.data.at(-1))],
     ["rb-side", (b) => fmt.bnAuto(b["services-trade-monthly"].series.exports.data.at(-1))],
     ["pv-long", (b) => fmt.pct1(b["services-gva-2022-share"].series.services.data.at(-1))],
     ["pv-quarter", (b) => fmt.pct2(b["gdp-2022-industries"].series.finance_realty.data.at(-1))],

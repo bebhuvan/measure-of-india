@@ -230,9 +230,9 @@
   "stamp": "{WK}"
  },
  "jobs#cb-main": {
-  "bundle": "plfs-quarterly",
+  "bundle": "plfs-q25",
   "latestDate": "2026-04-01",
-  "stamp": "the {qLabel(qDates.at(-1))} quarter"
+  "stamp": "the {qn(q25Last)} quarter"
  },
  "jobs#cb-cuts": {
   "bundle": "plfs-cuts",
@@ -258,6 +258,51 @@
   "bundle": "plfs-earnings",
   "latestDate": "2024-04-01",
   "stamp": "Apr–Jun 2024"
+ },
+ "jobs#cb-seam": {
+  "bundle": "plfs-cy25-india",
+  "latestDate": "2025-01-01",
+  "stamp": "the {cyYear} calendar-year estimates"
+ },
+ "jobs#cb-q25": {
+  "bundle": "plfs-q25",
+  "latestDate": "2026-04-01",
+  "stamp": "{qn(q25Last)}"
+ },
+ "jobs#cb-ystates": {
+  "bundle": "plfs-q25-states-ur",
+  "latestDate": "2026-04-01",
+  "stamp": "{qn(q25Last)}"
+ },
+ "jobs#cb-youth": {
+  "bundle": "plfs-monthly-age",
+  "latestDate": "2026-08-01",
+  "stamp": "{PC.stamp}"
+ },
+ "jobs#cb-kinds": {
+  "bundle": "plfs-cy25-workers-states",
+  "latestDate": "2025-01-01",
+  "stamp": "the {cyYear} estimates"
+ },
+ "jobs#cb-paystates": {
+  "bundle": "plfs-cy25-earnings",
+  "latestDate": "2025-01-01",
+  "stamp": "the {cyYear} estimates"
+ },
+ "jobs#cb-cond": {
+  "bundle": "plfs-conditions",
+  "latestDate": "2023-07-01",
+  "stamp": "{agri(condLast)}"
+ },
+ "jobs#cb-social": {
+  "bundle": "plfs-cy25-india",
+  "latestDate": "2025-01-01",
+  "stamp": "the {cyYear} estimates"
+ },
+ "jobs#cb-work": {
+  "bundle": "plfs-cy25-states-wpr",
+  "latestDate": "2025-01-01",
+  "stamp": "the {cyYear} estimates"
  },
  "consumption#cb-ladder": {
   "bundle": "hces-fractiles",
@@ -624,6 +669,46 @@
   "latestDate": "2011-04-01",
   "stamp": "the {BACK_LAST} back series"
  },
+ "gdp#cb-spend": {
+  "bundle": "gdp-2022-annual-shares",
+  "latestDate": "2025-04-01",
+  "stamp": "the {SPEND_T.y} accounts"
+ },
+ "gdp#cb-abroad": {
+  "bundle": "gdp-2022-annual-shares",
+  "latestDate": "2025-04-01",
+  "stamp": "the {ABROAD_T.y} accounts"
+ },
+ "gdp#cb-disc": {
+  "bundle": "gdp-2022-quarterly-shares",
+  "latestDate": "2026-04-01",
+  "stamp": "the {NB_LAST} print"
+ },
+ "gdp#cb-sect": {
+  "bundle": "gdp-2022-sectors",
+  "latestDate": "2025-04-01",
+  "stamp": "the {SECT_T.y} accounts"
+ },
+ "gdp#cb-hh": {
+  "bundle": "gdp-2022-sectors",
+  "latestDate": "2025-04-01",
+  "stamp": "the {SECT_T.y} accounts"
+ },
+ "gdp#cb-sub": {
+  "bundle": "gdp-annual-subindustries",
+  "latestDate": "2023-04-01",
+  "stamp": "the {SUB_T.to} accounts"
+ },
+ "gdp#cb-rev": {
+  "bundle": "gdp-revisions",
+  "latestDate": "2025-04-01",
+  "stamp": "the {SPEND_T.y} accounts"
+ },
+ "gdp#cb-make": {
+  "bundle": "gdp-2022-annual-industries",
+  "latestDate": "2025-04-01",
+  "stamp": "the {MAKE_T.y1} accounts"
+ },
  "debt#cb-sectors": {
   "bundle": "bis-credit",
   "latestDate": "2026-01-01",
@@ -755,12 +840,12 @@
   "stamp": "Apr to Jun 2025"
  },
  "services#cb-jobs": {
-  "bundle": "services-jobs-cy",
+  "bundle": "services-jobs-cy25",
   "latestDate": "2025-01-01",
   "stamp": "2025"
  },
  "services#cb-who": {
-  "bundle": "services-jobs-cy",
+  "bundle": "services-jobs-cy25",
   "latestDate": "2025-01-01",
   "stamp": "2025"
  },
@@ -1488,5 +1573,100 @@
   "bundle": "trade-partner-hs2-exports",
   "latestDate": "2025-04-01",
   "stamp": "{T.cxc ? T.cxc.us.fy : T.partners.fy}"
+ },
+ "consumption#cb-spend-rural": {
+  "bundle": "hces-categories-inr-states",
+  "latestDate": "2023-04-01",
+  "stamp": "2023-24"
+ },
+ "consumption#cb-spend-urban": {
+  "bundle": "hces-categories-inr-states",
+  "latestDate": "2023-04-01",
+  "stamp": "2023-24"
+ },
+ "consumption#cb-impute": {
+  "bundle": "hces-states-imputed",
+  "latestDate": "2023-04-01",
+  "stamp": "2023-24"
+ },
+ "consumption#cb-ginist": {
+  "bundle": "hces-gini-states",
+  "latestDate": "2023-04-01",
+  "stamp": "2023-24"
+ },
+ "aishe#cb-stptr": {
+  "bundle": "aishe-ptr",
+  "latestDate": "2021-04-01",
+  "stamp": "2021-22"
+ },
+ "aishe#cb-stwomen": {
+  "bundle": "aishe-states-teachers",
+  "latestDate": "2021-04-01",
+  "stamp": "2021-22"
+ },
+ "aishe#cb-stcol": {
+  "bundle": "aishe-states-institutions",
+  "latestDate": "2021-04-01",
+  "stamp": "2021-22"
+ },
+ "mnre#cb-srcmap": {
+  "bundle": "mnre-states-wind",
+  "latestDate": "2026-07-01",
+  "stamp": "{P.stamp}"
+ },
+ "mnre#cb-rooftop": {
+  "bundle": "mnre-states-solar",
+  "latestDate": "2026-07-01",
+  "stamp": "{P.stamp}"
+ },
+ "mnre#cb-bio": {
+  "bundle": "mnre-bio-categories",
+  "latestDate": "2026-07-01",
+  "stamp": "{P.stamp}"
+ },
+ "deposits#cb-sectors": {
+  "bundle": "deposits-sectors",
+  "latestDate": "2026-03-01",
+  "stamp": "March 2026"
+ },
+ "deposits#cb-age": {
+  "bundle": "deposits-age",
+  "latestDate": "2026-03-01",
+  "stamp": "March 2026"
+ },
+ "deposits#cb-womenst": {
+  "bundle": "deposits-states-owners",
+  "latestDate": "2026-03-01",
+  "stamp": "March 2026"
+ },
+ "deposits#cb-states": {
+  "bundle": "deposits-states-type",
+  "latestDate": "2026-03-01",
+  "stamp": "March 2026"
+ },
+ "deposits#cb-districts": {
+  "bundle": "deposits-districts",
+  "latestDate": "2026-03-01",
+  "stamp": "March 2026"
+ },
+ "deposits#cb-banks": {
+  "bundle": "deposits-bankgroups-sectors",
+  "latestDate": "2026-03-01",
+  "stamp": "March 2026"
+ },
+ "deposits#cb-staff": {
+  "bundle": "deposits-employees-bankgroups",
+  "latestDate": "2026-03-01",
+  "stamp": "March 2026"
+ },
+ "deposits#cb-origmat": {
+  "bundle": "deposits-maturity-owners",
+  "latestDate": "2026-03-01",
+  "stamp": "March 2026"
+ },
+ "deposits#cb-quarterly": {
+  "bundle": "deposits-q-sectors",
+  "latestDate": "2026-06-01",
+  "stamp": "June 2026"
  }
 }

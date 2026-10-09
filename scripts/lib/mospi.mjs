@@ -96,12 +96,12 @@ async function fetchWithRetry(url, retries) {
 // first 100 rows only.
 export const MOSPI_MAX_LIMIT = 100;
 
-export async function mospi(apiPath, params = {}, retries = 6) {
+export async function mospi(apiPath, params = {}, retries = 6, { fresh = false } = {}) {
   if (params.limit != null && Number(params.limit) > MOSPI_MAX_LIMIT) params = { ...params, limit: MOSPI_MAX_LIMIT };
   const qs = new URLSearchParams();
   for (const [k, v] of Object.entries(params)) qs.set(k, String(v));
   const url = BASE + apiPath + "?" + qs.toString();
-  const cached = cacheRead(url);
+  const cached = fresh ? null : cacheRead(url);
   if (cached) return cached;
   const run = queue.then(() => fetchWithRetry(url, retries));
   queue = run.catch(() => {});
@@ -114,19 +114,50 @@ export async function mospi(apiPath, params = {}, retries = 6) {
 // where the endpoint reports totalRecords, fails unless the rows collected
 // match it: a short read must never pass as a complete one. Endpoints without
 // meta_data page until a short batch.
-export async function mospiAll(apiPath, params = {}) {
+// One complete page set. `fresh` skips the cache (a re-read must reach the server).
+async function collectPages(apiPath, params, limit, fresh) {
   const rows = [];
   let expected = null;
   for (let page = 1; ; page++) {
-    const res = await mospi(apiPath, { ...params, page, limit: MOSPI_MAX_LIMIT });
+    const res = await mospi(apiPath, { ...params, page, limit }, 6, { fresh });
     const batch = res.data ?? [];
     rows.push(...batch);
     const meta = res.meta_data;
     if (meta?.totalRecords != null) expected = Number(meta.totalRecords);
-    if (meta?.totalPages != null ? page >= Number(meta.totalPages) : batch.length < MOSPI_MAX_LIMIT) break;
+    if (meta?.totalPages != null ? page >= Number(meta.totalPages) : batch.length < limit) break;
   }
   if (expected != null && rows.length !== expected) {
     throw new Error(`mospiAll ${apiPath} ${JSON.stringify(params)}: ${rows.length} rows collected, endpoint reports ${expected}`);
   }
   return rows;
+}
+const distinct = (rows) => { const m = new Map(); for (const r of rows) m.set(JSON.stringify(r), r); return m; };
+const sameKeys = (a, b) => a.size === b.size && [...a.keys()].every((k) => b.has(k));
+export const MOSPI_STABLE_LIMIT = 100;
+
+/** Every row of an endpoint, across pages.
+ *  The API pages without a stable order: a page set can repeat one row and drop another
+ *  while the count still matches (AISHE 2021-22 teachers, our dump of 2026-08-09; found
+ *  2026-10-10). Every data row is unique by its dimensions, so an identical row twice is a
+ *  warning sign. When one appears, the set is read again from the server in small pages
+ *  (100 rows, which pages stably). Same distinct rows both ways: the source itself repeats
+ *  them, and the copies are dropped with a warning. Different rows: paging slipped, and the
+ *  small-page read is checked against a second small-page read before it is trusted;
+ *  otherwise the fetch fails loudly. */
+export async function mospiAll(apiPath, params = {}) {
+  const rows = await collectPages(apiPath, params, MOSPI_MAX_LIMIT, false);
+  const big = distinct(rows);
+  if (big.size === rows.length) return rows;
+  const tag = `mospiAll ${apiPath} ${JSON.stringify(params)}`;
+  const small = distinct(await collectPages(apiPath, params, MOSPI_STABLE_LIMIT, true));
+  if (sameKeys(big, small)) {
+    console.warn(`  warn: ${tag}: the source repeats ${rows.length - big.size} row(s) verbatim; copies dropped`);
+    return [...big.values()];
+  }
+  const again = distinct(await collectPages(apiPath, params, MOSPI_STABLE_LIMIT, true));
+  if (sameKeys(small, again)) {
+    console.warn(`  warn: ${tag}: ${MOSPI_MAX_LIMIT}-row pages slipped (${big.size} distinct rows against ${small.size}); used ${MOSPI_STABLE_LIMIT}-row pages, read twice and identical`);
+    return [...small.values()];
+  }
+  throw new Error(`${tag}: rows differ between page sizes and between two small-page reads (unstable paging); not baking it`);
 }

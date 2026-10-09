@@ -83,6 +83,11 @@ export const UNITS = {
   usd_mn: { kind: "pct", fmt: (v) => (v < 0 ? MINUS : "") + "$" + grp(Math.abs(v) / 1e3, 1) + " bn", note: "published in US$ million" },
   usd_bn: { kind: "pct", fmt: (v) => (v < 0 ? MINUS : "") + "$" + grp(Math.abs(v), 1) + " bn" },
   // ---- end services ----
+  // ---- jobs (PLFS) ----
+  pct_of_employees: { kind: "pt", fmt: (v) => v.toFixed(1) + "%", note: "of regular employees" },
+  inr_per_month: { kind: "pct", fmt: (v) => "₹" + grp(v), note: "a month" },
+  inr_per_30_days: { kind: "pct", fmt: (v) => "₹" + grp(v), note: "per 30 days" },
+  // ---- end jobs ----
   // --- states (state economies: MoSPI regional accounts and every RBI Handbook of States table) ---
   inr_amount: { kind: "pct", fmt: (v) => (Math.abs(v) >= 1e12 ? "₹" + grp(v / 1e12, 2) + " lakh crore" : "₹" + grp(v / 1e7, Math.abs(v) >= 1e9 ? 0 : 2) + " crore")},
   inr_per_day: { kind: "pct", fmt: (v) => "₹" + grp(v, 1), note: "a day" },
@@ -193,6 +198,13 @@ export const UNITS = {
     ["ltr", "litres"], ["mtr", "metres"], ["cum", "CUM"], ["thn", "THN"], ["ctm", "CTM"], ["crt", "CRT"], ["thd", "THD"], ["tkw", "TKW"], ["gif", "GIF"], ["c_k", "C/K"], ["none", "no unit printed"]]
     .map(([k, w]) => [`qty_${k}`, { kind: "pct", fmt: (v) => grp(v) + (k === "none" ? "" : " " + w), note: k === "none" ? "quantity, no unit printed" : `quantity, unit as printed (${k.toUpperCase().replace("_", "/")})` }])),
   // --- end trade ---
+  // --- nas (gdp guide, wave 2) ---
+  ...Object.fromEntries(["gdp", "gdp-2022"].flatMap((b) => Object.entries({ "annual-levels": "Indicator", "annual-growth": "Indicator", "annual-shares": "Component of GDP", "annual-industries": "Industry", "annual-subindustries": "Sub-industry", "annual-gcf-industries": "Industry of use", "sectors": "Institutional sector", "revisions": "Estimate stage", "quarterly-levels": "Indicator", "quarterly-shares": "Component of GDP", "quarterly-industry-levels": "Industry" }).map(([k, c]) => [`${b}-${k}`, c]))),
+  "gdp-back-levels": "Indicator", "gdp-back-growth": "Indicator", "gdp-back-shares": "Component of GDP", "gdp-back-industries": "Industry", "gdp-back-subindustries": "Sub-industry",
+  // --- end nas ---
+  // --- households (wave 2: consumption, aishe, mnre, deposits) ---
+  pupils_per_teacher: { kind: "diff", fmt: (v) => grp(v), note: "students per teacher" },
+  // --- end households ---
 };
 
 // series.unit, then what the series name says, then the bundle's meta.unit: a bundle-level
@@ -258,6 +270,15 @@ export const CUT_BY_BUNDLE = {
   // jobs
   "plfs-monthly": "All India", "plfs-quarterly": "Urban", "plfs-annual": "All India", "plfs-cuts": "Gender and sector",
   "plfs-status": "Employment status", "plfs-earnings": "Employment type and gender", "plfs-education": "Education",
+  "plfs-monthly-age": "Age, gender and sector", "plfs-quarterly-cuts": "Gender and age, urban", "plfs-q25": "Gender, sector and age",
+  "plfs-ay-india": "Gender, sector, age, education, religion, social group", "plfs-cy-india": "Gender, sector, age, education, religion, social group",
+  "plfs-cy25-india": "Gender, sector, age, education, religion, social group",
+  ...Object.fromEntries(["ay", "cy", "cy25", "quarterly", "q25"].flatMap((t) => ["lfpr", "wpr", "ur"].map((i) => [`plfs-${t}-states-${i}`, "State, gender, sector, age, education"]))),
+  "plfs-quarterly-industry": "State, industry, gender", "plfs-q25-industry": "State, industry, gender and sector",
+  "plfs-ay-workers-states": "State, kind of work, gender and sector", "plfs-cy-workers-states": "State, kind of work, gender and sector",
+  "plfs-cy25-workers-states": "State, kind of work, gender and sector", "plfs-conditions": "State, condition, gender and sector",
+  "plfs-earnings-cuts": "State, kind of work, gender and sector", "plfs-cy-earnings": "State, kind of work, gender and sector",
+  "plfs-cy25-earnings": "State, kind of work, gender and sector",
   // consumption
   "hces-mpce": "Rural or urban", "hces-gini": "Rural or urban", "hces-fractiles": "Spending class",
   "hces-categories": "Spending category", "hces-categories-states": "State and category", "hces-social": "Social group",
@@ -290,7 +311,7 @@ export const CUT_BY_BUNDLE = {
   "services-gva-2011-share": "Industry", "services-gva-2011-growth": "Industry", "services-gva-2011-level": "Industry",
   "services-isp-growth": "Sub-sector", "services-isp-annual": "Sub-sector", "services-trade-monthly": "Flow",
   "services-bop-quarterly": "Category and flow", "services-invisibles-quarterly": "Purpose code", "services-bop-annual": "Category and flow",
-  "services-jobs-ay": "Industry, status, sex and place", "services-jobs-cy": "Industry, status, sex and place",
+  "services-jobs-ay": "Industry, status, sex and place", "services-jobs-cy": "Industry, status, sex and place", "services-jobs-cy25": "Industry, status, sex and place",
   "services-asuse": "Activity, sex and place", "services-asuse-profile": "Activity and profile", "services-asuse-2025": "Activity, sex and place", "services-asuse-profile-2025": "Activity and profile",
   // --- states (state economies) ---
   "states-spread": "Fixed panel of states", "states-structure": "State and sector", "states-industry-shares": "State and industry",
@@ -435,6 +456,39 @@ export const CUT_BY_BUNDLE = {
   "trade-principal-quantity-exports": "Principal commodity", "trade-principal-quantity-imports": "Principal commodity",
   ...Object.fromEntries(["hs2", "hs4"].flatMap((l) => ["exports", "imports"].flatMap((f) => ["", "-ytd"].map((t) => [`trade-partner-${l}-${f}${t}`, `Partner and HS ${l.slice(2)}-digit product`])))),
   // --- end trade ---
+  // --- nas (gdp guide, wave 2) ---
+  ...Object.fromEntries(["gdp", "gdp-2022"].flatMap((b) => Object.entries({ "annual-levels": "Indicator", "annual-growth": "Indicator", "annual-shares": "Component of GDP", "annual-industries": "Industry", "annual-subindustries": "Sub-industry", "annual-gcf-industries": "Industry of use", "sectors": "Institutional sector", "revisions": "Estimate stage", "quarterly-levels": "Indicator", "quarterly-shares": "Component of GDP", "quarterly-industry-levels": "Industry" }).map(([k, c]) => [`${b}-${k}`, c]))),
+  "gdp-back-levels": "Indicator", "gdp-back-growth": "Indicator", "gdp-back-shares": "Component of GDP", "gdp-back-industries": "Industry", "gdp-back-subindustries": "Sub-industry",
+  // --- end nas ---
+  // --- households (wave 2: consumption, aishe, mnre, deposits) ---
+  "hces-states-imputed": "State and sector", "hces-fractiles-states": "State, sector and spending class", "hces-categories-inr": "Spending category and sector",
+  "hces-categories-imputed": "Spending category and sector", "hces-categories-states-imputed": "State, sector and category", "hces-categories-inr-states": "State, sector and category",
+  "hces-categories-inr-states-imputed": "State, sector and category", "hces-quantities-states": "State, sector and cereal", "hces-item-values-states": "State, sector and cereal",
+  "hces-household-type-states": "State, sector and household type", "hces-social-states": "State, sector and social group", "hces-gini-states": "State and sector",
+  "aishe-states-institutions": "State and institution", "aishe-states-enrolment": "State, level and gender", "aishe-states-social": "State, social group and gender",
+  "aishe-states-minority": "State, community and gender", "aishe-states-ger": "State, social group and gender", "aishe-ptr": "State, institution and mode",
+  "aishe-states-teachers": "State, post and gender",
+  "mnre-states": "State", "mnre-states-solar": "State and solar category", "mnre-bio-categories": "Kind of bio power", "mnre-states-wind": "State",
+  "mnre-states-hydro": "State and size of plant", "mnre-states-bio": "State and kind of bio power",
+  "deposits-sectors": "Owning sector and account", "deposits-sectors-2005": "Owning sector and account", "deposits-states-sectors": "State and owning sector",
+  "deposits-metros-sectors": "City and owning sector", "deposits-bankgroups-sectors": "Owning sector and bank group", "deposits-population-type": "Population group and account",
+  "deposits-bankgroups-type": "Bank group and account", "deposits-states-type": "State and account", "deposits-population-owners": "Population group and owner",
+  "deposits-bankgroups-owners": "Bank group and owner", "deposits-states-owners": "State and owner", "deposits-districts": "District and population group",
+  "deposits-states-population-type": "State, population group and account", "deposits-states-bankgroups-type": "State, bank group and account",
+  "deposits-bankgroups-population-type": "Bank group, population group and account", "deposits-districts-gender": "District, individuals and women",
+  "deposits-maturity-owners": "Original maturity and owner", "deposits-maturity-population": "Original maturity and population group",
+  "deposits-maturity-bankgroups": "Original maturity and bank group", "deposits-maturity-population-owners": "Population group, maturity and owner",
+  "deposits-maturity-states": "State and original maturity", "deposits-employees-states": "State, post and gender", "deposits-employees-bankgroups": "Population group, bank group and post",
+  "deposits-age": "Age, individuals and women", "deposits-states-2010": "State, population group or bank group",
+  ...Object.fromEntries(Object.entries({ "sectors": "Owning sector and account", "states-sectors": "State and owning sector", "metros-sectors": "City and owning sector",
+    "bankgroups-sectors": "Owning sector and bank group", "population-type": "Population group and account", "bankgroups-type": "Bank group and account", "states-type": "State and account",
+    "population-owners": "Population group and owner", "bankgroups-owners": "Bank group and owner", "states-owners": "State and owner", "states-population-type": "State, population group and account",
+    "states-bankgroups-type": "State, bank group and account", "bankgroups-population-type": "Bank group, population group and account", "maturity-owners": "Original maturity and owner",
+    "maturity-population": "Original maturity and population group", "maturity-bankgroups": "Original maturity and bank group", "term-maturity": "Residual maturity and owner",
+    "term-rates": "Interest rate band and owner", "term-size": "Deposit size and owner", "maturity-population-owners": "Population group, maturity and owner",
+    "maturity-states": "State and original maturity", "employees-states": "State, post and gender", "employees-bankgroups": "Population group, bank group and post", "age": "Age, individuals and women" })
+    .map(([k, c]) => [`deposits-q-${k}`, c + ", quarterly"])),
+  // --- end households ---
 };
 // the fallback, by what a bundle's slug says it is
 export const CUT_RULES = [

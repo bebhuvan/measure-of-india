@@ -1,98 +1,137 @@
 # Coverage ledger: National Accounts Statistics, National account, MoSPI
 # (docs/CONTRACT-coverage.md). Catalogue: node scripts/lib/products/nas.mjs --catalogue.
-# The two bases mirror each other: rules are written once per base. Omissions left for the
-# coordinator (the "national accounts remainder" wave): annual GVA, consumption, investment,
-# trade and income aggregates outside the accounts bundle; quarterly net taxes, change in
-# stock and valuables (raw only today); the 15 industries and 18 sub-industries annually;
-# institutional sectors; revision stages; the approach split; the back series beyond GDP,
-# GVA by industry, the demand engines and saving.
+# The two bases mirror each other: rules are written once per base. Every item was decided in
+# wave 2 (atlas-nas, 2026-10-10): the deep bundles come from scripts/lib/products/nas-deep*.mjs,
+# which pull every row of every indicator below, unfiltered. Plates are named by section.
 family: gdp
 guides: [gdp]
 catalogue: data/coverage/gdp.catalogue.json
 rules:
-  # the API's own growth rates: rounded, kept as a cross-check of growth computed from levels
+  # ---- the approach cut: listed by the filter, ignored by the data endpoint
+  - match: "nas:*:current:annual:*:approach:*"
+    status: excluded
+    reason: "The filter lists an approach (expenditure, production, income) for GDP, GVA, NDP, GNI and GNDI, but the data endpoint ignores approach_code and returns the same rows for every code (checked 2026-10-09); the production-expenditure gap is shown instead as the discrepancy, computed from published levels."
+  # ---- revision stages: MoSPI's own growth rate at each stage, kept as the cross-check of
+  # stage growth computed from levels (the rate is one decimal, sometimes truncated)
+  - match: "nas:2011-12:current:annual:22:revision:*"
+    status: shown
+    bundle: gdp-revisions
+    plate: "§13 How a GDP number changes after its first print"
+  - match: ["nas:2022-23:current:annual:22:revision:*", "nas:*:current:annual:21:revision:*"]
+    status: baked
+    bundle: [gdp-revisions, gdp-2022-revisions]
+  # the API's own growth rates, outside the revision cut: rounded, kept as a cross-check
   - match: ["nas:*:*:*:21-*", "nas:*:*:*:21:*", "nas:*:*:*:22-*", "nas:*:*:*:22:*"]
     status: excluded
-    reason: "The API's growth-rate indicators are rounded (whole numbers until 2026-10, one decimal since); growth is computed here from constant-price levels, and the API's rate is kept only as the cross-check."
+    reason: "The API's growth-rate indicators are rounded or truncated to one decimal (whole numbers until 2026-10); growth is computed here from constant-price levels, and the API's rate is kept only as the cross-check."
   # ---- quarterly, base 2022-23 (current)
   - match: ["nas:2022-23:current:quarterly:5-*", "nas:2022-23:current:quarterly:1-*", "nas:2022-23:current:quarterly:10-*", "nas:2022-23:current:quarterly:9-*", "nas:2022-23:current:quarterly:1:industry:15-*"]
     status: shown
-    bundle: [gdp-2022, gdp-2022-nominal]
-    plate: "The current reading; The base has moved"
+    bundle: [gdp-2022, gdp-2022-nominal, gdp-2022-quarterly-levels]
+    plate: "§01 The current reading; §14 The base has moved"
   - match: ["nas:2022-23:current:quarterly:11-*", "nas:2022-23:current:quarterly:14-*", "nas:2022-23:current:quarterly:15-*"]
     status: baked
-    bundle: gdp-2022-expenditure
+    bundle: [gdp-2022-expenditure, gdp-2022-quarterly-levels, gdp-2022-quarterly-shares]
+  - match: ["nas:2022-23:current:quarterly:2-*", "nas:2022-23:current:quarterly:12-*", "nas:2022-23:current:quarterly:13-*"]
+    status: shown
+    bundle: [gdp-2022-quarterly-levels, gdp-2022-quarterly-shares]
+    plate: "§10 Two ways of adding up the same economy (the quarterly discrepancy)"
   - match: "nas:2022-23:current:quarterly:1:industry:*"
     status: shown
-    bundle: gdp-2022-industries
-    plate: "The base has moved (engines on the 2022-23 base)"
+    bundle: [gdp-2022-industries, gdp-2022-quarterly-industry-levels]
+    plate: "§14 Eight engines on the new base"
   # ---- quarterly, base 2011-12 (frozen at Q2 FY26)
   - match: ["nas:2011-12:current:quarterly:5-*", "nas:2011-12:current:quarterly:1-*", "nas:2011-12:current:quarterly:10-*", "nas:2011-12:current:quarterly:9-*", "nas:2011-12:current:quarterly:1:industry:15-*"]
     status: shown
-    bundle: [gdp, gdp-nominal]
-    plate: "Plate 1: a decade of growth, with its wound; The parts, one plate each; The deflator wedge"
+    bundle: [gdp, gdp-nominal, gdp-quarterly-levels]
+    plate: "§04 Plate 1: a decade of growth, with its wound; §06 The parts, one plate each; §08 The deflator wedge"
   - match: ["nas:2011-12:current:quarterly:11-*", "nas:2011-12:current:quarterly:14-*", "nas:2011-12:current:quarterly:15-*"]
     status: shown
-    bundle: gdp-expenditure
-    plate: "What growth is made of; The parts, one plate each"
+    bundle: [gdp-expenditure, gdp-quarterly-levels, gdp-quarterly-shares]
+    plate: "§03 What growth is made of; §06 The parts, one plate each"
+  - match: ["nas:2011-12:current:quarterly:2-*", "nas:2011-12:current:quarterly:12-*", "nas:2011-12:current:quarterly:13-*"]
+    status: shown
+    bundle: [gdp-quarterly-levels, gdp-quarterly-shares]
+    plate: "§10 Two ways of adding up the same economy (the quarterly discrepancy)"
   - match: "nas:2011-12:current:quarterly:1:industry:*"
     status: shown
-    bundle: gdp-industries
-    plate: "Eight engines"
-  # ---- annual accounts, both bases
+    bundle: [gdp-industries, gdp-quarterly-industry-levels]
+    plate: "§07 Eight engines"
+  # ---- annual, both bases: totals
   - match: "nas:2022-23:current:annual:5-*"
     status: shown
-    bundle: gdp-2022-accounts
-    series: [gdp]
-    plate: "Seventy-five years of growth"
-  - match: ["nas:2022-23:current:annual:7-*", "nas:2022-23:current:annual:17-*", "nas:2022-23:current:annual:3-*", "nas:2022-23:current:annual:4-*", "nas:2022-23:current:annual:6-*", "nas:2022-23:current:annual:8-*", "nas:2022-23:current:annual:20-*"]
-    status: baked
-    bundle: gdp-2022-accounts
+    bundle: [gdp-2022-accounts, gdp-2022-annual-levels]
+    plate: "§15 Seventy-five years of growth"
   - match: "nas:2011-12:current:annual:5-*"
     status: shown
-    bundle: gdp-accounts
-    series: [gdp]
-    plate: "Seventy-five years of growth"
-  - match: ["nas:2011-12:current:annual:7-*", "nas:2011-12:current:annual:17-*", "nas:2011-12:current:annual:3-*", "nas:2011-12:current:annual:4-*", "nas:2011-12:current:annual:6-*", "nas:2011-12:current:annual:8-*", "nas:2011-12:current:annual:20-*"]
+    bundle: [gdp-accounts, gdp-annual-levels]
+    plate: "§15 Seventy-five years of growth"
+  - match: ["nas:*:current:annual:10-*", "nas:*:current:annual:11-*", "nas:*:current:annual:9-*", "nas:*:current:annual:12-*", "nas:*:current:annual:13-*", "nas:*:current:annual:14-*", "nas:*:current:annual:15-*"]
+    status: shown
+    bundle: [gdp-annual-shares, gdp-2022-annual-shares, gdp-annual-levels, gdp-2022-annual-levels]
+    plate: "§10 Where the money goes"
+  - match: ["nas:*:current:annual:16-*", "nas:*:current:annual:18-*", "nas:*:current:annual:19-*"]
+    status: shown
+    bundle: [gdp-annual-shares, gdp-2022-annual-shares, gdp-annual-levels, gdp-2022-annual-levels]
+    plate: "§10 Income from abroad: from GDP to what Indians can spend"
+  - match: "nas:*:current:annual:20-*"
+    status: shown
+    bundle: [gdp-accounts, gdp-2022-accounts, gdp-sectors, gdp-2022-sectors]
+    plate: "§09 The saving rate; §11 Who saves, who invests"
+  - match: ["nas:*:current:annual:1-*", "nas:*:current:annual:2-*", "nas:*:current:annual:3-*", "nas:*:current:annual:4-*", "nas:*:current:annual:6-*", "nas:*:current:annual:7-*", "nas:*:current:annual:8-*", "nas:*:current:annual:17-*"]
+    status: shown
+    bundle: [gdp-accounts, gdp-2022-accounts, gdp-annual-levels, gdp-2022-annual-levels, gdp-annual-growth, gdp-2022-annual-growth]
+    plate: "§09 The annual ledger: six accounts"
+  # ---- annual by industry, sub-industry and institutional sector
+  - match: "nas:*:current:annual:1:industry:*"
     status: baked
-    bundle: gdp-accounts
+    bundle: [gdp-annual-industries, gdp-2022-annual-industries]
+  - match: "nas:*:current:annual:1:subindustry:*"
+    status: shown
+    bundle: [gdp-annual-subindustries, gdp-2022-annual-subindustries]
+    plate: "§12 Inside the engines: eighteen sub-industries"
+  - match: ["nas:*:current:annual:8:industry:*", "nas:*:current:annual:8:subindustry:*"]
+    status: baked
+    bundle: [gdp-annual-gcf-industries, gdp-2022-annual-gcf-industries]
+  - match: ["nas:*:current:annual:20:institutional-sector:*", "nas:*:current:annual:9:institutional-sector:*"]
+    status: shown
+    bundle: [gdp-sectors, gdp-2022-sectors]
+    plate: "§11 Who saves, who invests"
+  - match: ["nas:*:current:annual:1:institutional-sector:*", "nas:*:current:annual:6:institutional-sector:*"]
+    status: baked
+    bundle: [gdp-sectors, gdp-2022-sectors]
+  # ---- revision stages of the levels
+  - match: "nas:*:current:annual:5:revision:*"
+    status: shown
+    bundle: [gdp-revisions, gdp-2022-revisions]
+    plate: "§13 How a GDP number changes after its first print"
+  - match: "nas:*:current:annual:*:revision:*"
+    status: baked
+    bundle: [gdp-revisions, gdp-2022-revisions]
   # ---- the NSO back series, 1950-51 to 2011-12
   - match: "nas:2011-12:back:annual:5-*"
     status: shown
-    bundle: gdp-back
-    series: [gdp]
-    plate: "Seventy-five years of growth"
+    bundle: [gdp-back, gdp-back-levels]
+    plate: "§15 Seventy-five years of growth"
   - match: "nas:2011-12:back:annual:20-*"
     status: shown
-    bundle: gdp-back
-    series: [saving_rate]
-    plate: "Seventy-five years of growth (saving and investment)"
+    bundle: [gdp-back, gdp-back-levels]
+    plate: "§15 Seventy-five years of growth (saving and investment)"
   - match: "nas:2011-12:back:annual:9-*"
     status: shown
-    bundle: gdp-back
-    series: [gfcf, gfcf_rate]
-    plate: "Seventy-five years of growth (saving and investment)"
-  - match: ["nas:2011-12:back:annual:1-*", "nas:2011-12:back:annual:10-*", "nas:2011-12:back:annual:11-*", "nas:2011-12:back:annual:1:industry:*"]
+    bundle: [gdp-back, gdp-back-levels]
+    plate: "§15 Seventy-five years of growth (saving and investment)"
+  - match: "nas:2011-12:back:annual:1:industry:*"
+    status: shown
+    bundle: [gdp-back, gdp-back-industries]
+    plate: "§15 What India makes, 1950-51 to 2011-12"
+  - match: ["nas:2011-12:back:annual:10-*", "nas:2011-12:back:annual:11-*", "nas:2011-12:back:annual:14-*", "nas:2011-12:back:annual:15-*", "nas:2011-12:back:annual:16-*", "nas:2011-12:back:annual:18-*"]
+    status: shown
+    bundle: [gdp-back, gdp-back-levels, gdp-back-shares]
+    plate: "§10 Where the money goes; Income from abroad (the long view)"
+  - match: "nas:2011-12:back:annual:1:subindustry:*"
     status: baked
-    bundle: gdp-back
-
-  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
-  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
-  - match:
-      - "nas:2011-12:back:annual:*"
-      - "nas:2011-12:back:annual:*:subindustry:*"
-      - "nas:2011-12:current:annual:*"
-      - "nas:2011-12:current:annual:*:approach:*"
-      - "nas:2011-12:current:annual:*:industry:*"
-      - "nas:2011-12:current:annual:*:institutional-sector:*"
-      - "nas:2011-12:current:annual:*:revision:*"
-      - "nas:2011-12:current:annual:*:subindustry:*"
-      - "nas:2011-12:current:quarterly:*"
-      - "nas:2022-23:current:annual:*"
-      - "nas:2022-23:current:annual:*:industry:*"
-      - "nas:2022-23:current:annual:*:institutional-sector:*"
-      - "nas:2022-23:current:annual:*:revision:*"
-      - "nas:2022-23:current:annual:*:subindustry:*"
-      - "nas:2022-23:current:quarterly:*"
-    status: pending
-    scheduled: "wave 2: national accounts remainder"
+    bundle: gdp-back-subindustries
+  - match: "nas:2011-12:back:annual:*"
+    status: baked
+    bundle: [gdp-back, gdp-back-levels, gdp-back-growth, gdp-back-shares]

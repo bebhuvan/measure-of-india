@@ -179,7 +179,7 @@ const D = bySlug["aishe"];
         </aside>
         <aside class="margin-note">
           <span class="mk">Margin note, iii</span>
-          <b>The 2021-22 teacher total is reconstructed.</b> The API's published "All Teacher" row is garbled for that year; the figure used here is the sum of the five regular faculty types (99% of the total in clean years), disclosed in the provenance.
+          <b>The teacher count is the published total.</b> It equals the five regular posts plus visiting teachers. An earlier download of the 2021-22 rows was corrupted in transit and looked like a source error; a clean download (October 2026) shows the survey's figure is sound. See the provenance.
         </aside>
       </div>
     </div>
@@ -347,7 +347,7 @@ const D = bySlug["aishe"];
         <div class="plate-head">
           <div class="t">
             <h3>The higher the chair, the fewer the women</h3>
-            <div class="sub">Teachers by faculty type, male &amp; female, All India, 2021-22, the five regular faculty types (the defective "All Teacher" total is excluded)</div>
+            <div class="sub">Teachers by faculty type, male &amp; female, All India, 2021-22, the five regular posts. Visiting (guest) teachers are a sixth group, in the data download.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-fac">–</div><div class="c">female share, Professor &amp; Equivalent</div></div>
         </div>
@@ -356,7 +356,7 @@ const D = bySlug["aishe"];
             <div id="plot-fac"></div>
           </div>
           <div class="plotfoot">
-            <span class="src">Source: Ministry of Education, AISHE 2021-22, teachers by the five regular faculty types × gender, the defective "All Teacher" total and "Visiting Teacher" rows are excluded (see provenance), female share rises steadily as rank falls</span>
+            <span class="src">Source: Ministry of Education, AISHE 2021-22, teachers by the five regular posts × gender; the six posts with visiting teachers add up to the published total of all teachers</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
@@ -443,16 +443,112 @@ const D = bySlug["aishe"];
           </div>
           <div class="now">
             <span class="mk">As of 2021-22</span>
-            <p>PTR: <b id="ex-ptr-now">–</b> students per teacher, down from <b id="ex-ptr-first">–</b> in 2017-18. The teacher count behind it (<b id="ex-ptr-teach">–</b>) is reconstructed for 2021-22 from the five regular faculty types: see the provenance.</p>
+            <p>PTR: <b id="ex-ptr-now">–</b> students per teacher, down from <b id="ex-ptr-first">–</b> in 2017-18, with <b id="ex-ptr-teach">–</b> teachers in 2021-22. The state picture, which is far more uneven, is in Plate 9 below.</p>
           </div>
         </div>
       </figure>
     </div>
   </section>
 
-  <!-- § 13 how to misread -->
+  <!-- § 13 the states, closer (wave 2) -->
   <section>
-    <div class="sec-head"><span class="no">13</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">13</span><h2>The states, closer</h2><span class="line"></span><span class="unit">Teachers, women and colleges by state, 2021-22</span></div>
+    <div class="break">
+      <figure id="cb-stptr" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>A college teacher in Bihar has more than four times as many students as one in Tamil Nadu</h3>
+            <div class="sub">Pupil-teacher ratio by state, regular students in all institutions, 2021-22. States above the all-India ratio are in blue.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-stptr">–</div><div class="c">students per teacher in the most stretched state</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-stptr" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Education, AISHE 2021-22, pupil-teacher ratio, regular mode, all institutions. Distance-learning students are left out here because open universities would swell some states' ratios; that version is in the data.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each bar is the number of regular students for every teacher in the state's colleges and universities. It is not a class size, but it is a fair measure of how thinly teaching is spread: in a state at the top of this chart, each teacher is shared among far more students.</p>
+            <p>The ratio is low in small states and union territories partly because their colleges are small. Read the large states against each other.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2021-22</span>
+            <p>Most stretched: <b id="ex-stptr-hi">–</b>. Least: <b id="ex-stptr-lo">–</b>. All India: <b id="ex-stptr-ai">–</b> regular students per teacher.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-stwomen" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Women are now nearly half of college students almost everywhere, but a quarter of the teachers in Bihar</h3>
+            <div class="sub">Women's share of college and university teachers (bars) and of students (dots), by state, 2021-22, per cent. States below the all-India share of women teachers are in blue.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-stwomen">–</div><div class="c">women's share of teachers, All India</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>Women, share of teachers</span>
+            <span class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#C47A16"></i>Women, share of students</span>
+          </div>
+          <div class="plotzone"><div id="plot-stwomen" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Education, AISHE 2021-22, teachers by gender (all posts, including visiting teachers) and estimated enrolment by gender (all levels).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Where the bar falls short of the dot, women are a smaller share of those who teach than of those who learn. A young woman in college in such a state is less likely to be taught by a woman, and less likely to see one at the head of a department (Plate 6 shows how women thin out as the posts rise).</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2021-22</span>
+            <p>Highest share of women teachers: <b id="ex-stw-hi">–</b>. Lowest: <b id="ex-stw-lo">–</b>. All India: <b id="ex-stw-ai">–</b> of teachers and <b id="ex-stw-ais">–</b> of students.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-stcol" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Uttar Pradesh alone has nearly a fifth of India's colleges</h3>
+            <div class="sub">Number of colleges by state, 2021-22. Twenty states with the most colleges; every state, with its universities, is in the data download.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-stcol">–</div><div class="c">colleges in India, 2021-22</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-stcol" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Ministry of Education, AISHE 2021-22, number of colleges and universities by state. A college is counted once, wherever it sits; most are affiliated to a university in the same state.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://aishe.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A count of colleges says how many doors there are, not how big they are: many colleges in Uttar Pradesh, Rajasthan and Karnataka are small private colleges with a few hundred students each. Read it with Plate 4, which shows how much of each state's young population is enrolled.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2021-22</span>
+            <p><span id="ex-stc-n1">–</span> <b id="ex-stc-v1">–</b> colleges, <b id="ex-stc-s1">–</b> of the country's. Universities in India: <b id="ex-stc-univ">–</b>, up from <b id="ex-stc-univ0">–</b> in 2017-18.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 14 how to misread -->
+  <section>
+    <div class="sec-head"><span class="no">14</span><h2>How to misread this number</h2><span class="line"></span></div>
     <ul class="misread">
       <li>
         <span class="no">i.</span>
@@ -509,16 +605,16 @@ const D = bySlug["aishe"];
       <div>
         <h6>Source of record</h6>
         <p>Ministry of Education, Department of Higher Education. All India Survey on Higher Education (AISHE), survey rounds 2017-18 to 2021-22: the five rounds the eSankhyiki API serves. Retrieved via the MoSPI eSankhyiki API, vintage <b id="prov-vintage">–</b>. The survey itself runs to 2010-11; earlier rounds are not chained in, because the institutional frame widened over time and a longer line would mix survey-coverage gains with genuine expansion.</p>
-        <p>Coverage: all nine AISHE indicators are ingested raw; six baked bundles carry the page. The headline series (universities, colleges, enrolment, teachers, GER, GPI, PTR), the access cuts (GER by social category × gender, GPI by social category, enrolment by gender), the composition (enrolment by education level and social group), the state grain (enrolment, GER and GPI by state/UT), the faculty hierarchy (teachers by the five regular faculty types × gender) and the minority cut (PWD &amp; minority enrolment by gender). Nothing is selected away: every indicator the survey publishes is on the page or in the audit dump behind it.</p>
-        <p><b>Teacher reconstruction, 2021-22.</b> The API's "All Teacher" total row is a source defect for 2021-22: All India prints 12,904 against ~1.55 million the year before, and every state cell is likewise a near-zero residual. The 2021-22 figure used here is reconstructed as the sum of the five regular faculty types (Professor &amp; Equivalent, Reader &amp; Associate Professor, Lecturer/Assistant Professor, Demonstrator/Tutor, Temporary Teacher): a sum equal to 99.0–99.2% of the published total in every clean year. Earlier years use the published "All Teacher" total as served. The raw, defective value is preserved in the audit dump.</p>
+        <p>Coverage: all nine AISHE indicators are ingested raw and baked, every one by state as well as for All India; thirteen bundles carry the page and the table of every cut. The headline series (universities, colleges, enrolment, teachers, GER, GPI, PTR), the access cuts (GER by social category × gender, GPI by social category, enrolment by gender), the composition (enrolment by education level and social group), the state grain (enrolment, GER and GPI by state/UT), the faculty hierarchy (teachers by the five regular faculty types × gender) and the minority cut (PWD &amp; minority enrolment by gender). Nothing is selected away: every indicator the survey publishes is on the page or in the audit dump behind it.</p>
+        <p><b>A correction, October 2026.</b> Version 1.0 of this guide said the survey's 2021-22 "All Teacher" total was garbled (12,904 for All India) and rebuilt it from the five regular posts. That was our error, not the survey's: the download of 9 August 2026 came back from the API in an unstable page order, which repeated some rows and dropped others. A clean download on 10 October 2026, checked row by row for repeats, shows the published total, 15,97,688 teachers, and shows it equal to the five regular posts plus visiting teachers in 546 of 549 state, year and gender cells (All India 2020-21 is 34 teachers apart). Nagaland's 2021-22 enrolment, missing before, also returned. Every download is now checked for repeated rows and fails if it finds one. Both dumps are kept in the audit trail.</p>
       </div>
       <div>
         <h6>Revisions &amp; uncertainty</h6>
-        <p>AISHE results are final on release. The five rounds are comparable by design but are never chained into a spliced index. Enrolment counts enrolments, not distinct students; GER divides by a population projection; GPI is a ratio of ratios. Where the data carry a known defect (the 2021-22 teacher total), the reconstruction is disclosed and the raw value is kept. Where something is not measured, completion, dropout, learning, this guide says so.</p>
+        <p>AISHE results are final on release. The five rounds are comparable by design but are never chained into a spliced index. Enrolment counts enrolments, not distinct students; GER divides by a population projection; GPI is a ratio of ratios. Where a figure is corrected, the correction is disclosed and the earlier download is kept. Where something is not measured, completion, dropout, learning, this guide says so.</p>
       </div>
       <div>
         <h6>This guide</h6>
-        <p>Education, version 1.1, adds GER by gender (§07), the state enrolment companion strip (§08), the education-level small multiples (§09), the faculty-hierarchy plate (§10) and the PWD &amp; minority plate (§11). Next scheduled revision: on release of the 2022-23 round.</p>
+        <p>Education, version 1.2 (October 2026). Version 1.1 added GER by gender (§07), the state enrolment companion strip (§08), the education-level small multiples (§09), the faculty-hierarchy plate (§10) and the PWD &amp; minority plate (§11). Version 1.2 bakes every indicator by state, adds the state plates on teachers, women and colleges (§13), and corrects the 2021-22 teacher total (see above). Next scheduled revision: on release of the 2022-23 round.</p>
       </div>
     </div>
     <div class="fine">

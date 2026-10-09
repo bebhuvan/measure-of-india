@@ -21,6 +21,10 @@ import hhTypeBundle from "../../data/series/hces-household-type.json";
 import quantitiesBundle from "../../data/series/hces-quantities.json";
 import itemValuesBundle from "../../data/series/hces-item-values.json";
 import foodStatesBundle from "../../data/series/hces-categories-states.json";
+import inrStatesBundle from "../../data/series/hces-categories-inr-states.json";
+import inrAllBundle from "../../data/series/hces-categories-inr.json";
+import imputedStatesBundle from "../../data/series/hces-states-imputed.json";
+import giniStatesBundle from "../../data/series/hces-gini-states.json";
 import { MONO as mono, hydrate, wireTools, a11y } from "../charts/plumbing.js";
 
 const M = hydrate(mpceBundle);
@@ -595,7 +599,7 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
     ],
   });
   a11y(plot, "Average MPCE by state and union territory, rural and urban paired per state, 2023-24",
-    "Thirty-six rows sorted by rural MPCE. Rural runs from " + inr(hi.rural) + " in Sikkim down to " + inr(lo.rural) + " in Chhattisgarh; urban from " + inr(uHi.urban) + " down to " + inr(uLo.urban) + ". Dashed rules mark the all-India rural and urban means.");
+    "Thirty-six rows sorted by rural MPCE. Rural runs from " + inr(hi.rural) + " in " + hi.name + " down to " + inr(lo.rural) + " in " + lo.name + "; urban from " + inr(uHi.urban) + " down to " + inr(uLo.urban) + ". Dashed rules mark the all-India rural and urban means.");
   document.getElementById("plot-states").append(plot);
   const csvList = Object.keys(ST).sort().map((k) => ST[k]);
   wireTools(document.getElementById("cb-states"), plot, csvList, "india-atlas_hces_state-mpce", fmtRound);
@@ -649,9 +653,10 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
     ],
   });
   a11y(plot, "Share of MPCE going to food by state and union territory, rural and urban paired per state, 2023-24",
-    "Thirty-six rows sorted by the rural food share, from " + p2(hi.rural) + " in rural Ladakh down to " + p2(lo.rural) + ". The urban dot sits left of the rural in every state except Lakshadweep. Dashed rules mark the all-India rural and urban shares.");
+    "Thirty-six rows sorted by the rural food share, from " + p2(hi.rural) + " in rural " + hi.name + " down to " + p2(lo.rural) + ". The urban dot sits left of the rural in every state except Lakshadweep. Dashed rules mark the all-India rural and urban shares.");
   document.getElementById("plot-food").append(plot);
-  const csvList = Object.keys(FS).sort().map((k) => FS[k]);
+  // the food share only (keys without "__"; every other category by state sits beside them)
+  const csvList = Object.keys(FS).filter((k) => !k.includes("__")).sort().map((k) => FS[k]);
   wireTools(document.getElementById("cb-foodmap"), plot, csvList, "india-atlas_hces_state-food-share", fmtRound);
 }
 
@@ -694,6 +699,118 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
     "Four rows. Each shows a pale 2022-23 dot and a filled 2023-24 dot to its left: rural fell from " + g3(prv(G.rural)) + " to " + g3(cur(G.rural)) + ", urban from " + g3(prv(G.urban)) + " to " + g3(cur(G.urban)) + "; the with-imputation variants sit slightly lower still.");
   document.getElementById("plot-gini").append(plot);
   wireTools(document.getElementById("cb-gini"), plot, [G.rural, G.urban, G.rural_imputed, G.urban_imputed], "india-atlas_hces_gini", fmtRound);
+}
+
+
+/* ---------- § 09 what a person spends, state by state (wave 2) ---------- */
+const IS = hydrate(inrStatesBundle), IMS = hydrate(imputedStatesBundle), GS = hydrate(giniStatesBundle);
+const SHORT9 = { "Dadra & Nagar Haveli and Daman & Diu": "D&N Haveli, Daman & Diu", "Andaman & Nicobar Islands": "Andaman & Nicobar" };
+const stateName = (s) => SHORT9[s] || s;
+{
+  const COLS = [["MPCE", null], ["Food", "food_total"], ["Fuel, light", "fuel_and_light"], ["Schooling", "education"], ["Medicines, doctor", "medical_non_hospitalization"],
+    ["Hospital", "medical_hospitalization"], ["Travel", "conveyance"], ["Rent", "rent"], ["Durables", "durable_goods"]];
+  const I = inrStatesBundle.dates.length - 1;
+  for (const sec of ["rural", "urban"]) {
+    const keys = Object.keys(statesBundle.series).filter((k) => k.endsWith("_" + sec));
+    const states = keys.map((k) => ({ k, name: stateName(statesBundle.series[k].label.split(" · ")[0]), mpce: statesBundle.series[k].data[I] })).filter((d) => d.mpce != null).sort((a, b) => b.mpce - a.mpce);
+    const cells = [];
+    for (const st of states) for (const [col, cat] of COLS) {
+      const v = cat ? inrStatesBundle.series[`${st.k}__${cat}`]?.data[I] : st.mpce;
+      if (v != null) cells.push({ state: st.name, col, v });
+    }
+    // shade within each column: 0 = the column's lowest state, 1 = its highest
+    const span = Object.fromEntries(COLS.map(([c]) => { const vs = cells.filter((d) => d.col === c).map((d) => d.v); return [c, [Math.min(...vs), Math.max(...vs)]]; }));
+    const t = (d) => { const [lo, hi] = span[d.col]; return hi > lo ? (d.v - lo) / (hi - lo) : 0; };
+    const plot = Plot.plot({
+      width: 1184, height: 46 + states.length * 25, marginLeft: 190, marginRight: 4, marginTop: 40, marginBottom: 6,
+      style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+      x: { domain: COLS.map((c) => c[0]), axis: "top", label: null, tickSize: 0, tickPadding: 10, padding: 0.04 },
+      y: { domain: states.map((d) => d.name), label: null, tickSize: 0, tickPadding: 10, padding: 0.08 },
+      color: { type: "linear", domain: [0, 1], range: ["#F7F8FD", "#9DADEE"] },
+      marks: [
+        Plot.cell(cells, { x: "col", y: "state", fill: (d) => t(d) }),
+        Plot.text(cells, { x: "col", y: "state", text: (d) => "₹" + grp(Math.round(d.v)), fill: "#161A22", fontSize: 11.5, fontWeight: (d) => (d.col === "MPCE" ? 600 : 400), className: "inbar" }),
+      ],
+    });
+    const top = (cat) => { const r = states.map((st) => ({ n: st.name, v: inrStatesBundle.series[`${st.k}__${cat}`]?.data[I] })).filter((d) => d.v != null).sort((a, b) => b.v - a.v); return r; };
+    const food = top("food_total"), edu = top("education"), med = top("medical_non_hospitalization");
+    const span2 = (r) => `highest ${r[0].n} ${inr(Math.round(r[0].v))}, lowest ${r.at(-1).n} ${inr(Math.round(r.at(-1).v))}`;
+    a11y(plot, `What a ${sec} person spends a month, by state and category, 2023-24`, `Highest food bill ${food[0].n} ${inr(Math.round(food[0].v))}; schooling from ${span2(edu)}.`);
+    document.getElementById(`plot-spend-${sec}`).append(plot);
+    setTxt(`pv-spend-${sec}`, inr(Math.round(food[0].v)));
+    setTxt(`ex-sp-${sec}-food`, span2(food));
+    setTxt(`ex-sp-${sec}-edu`, span2(edu));
+    setTxt(`ex-sp-${sec}-med`, span2(med));
+    const ai = (cat) => inr(Math.round(inrAllBundle.series[`all_india_${sec}__${cat}`].data[I]));
+    setTxt(`ex-sp-${sec}-ai`, ai("food_total"));
+    setTxt(`ex-sp-${sec}-aiedu`, ai("education"));
+    setTxt(`ex-sp-${sec}-aimed`, ai("medical_non_hospitalization"));
+    const csvList = states.flatMap((st) => COLS.filter(([, c]) => c).map(([, c]) => IS[`${st.k}__${c}`]).filter(Boolean));
+    wireTools(document.getElementById(`cb-spend-${sec}`), plot, csvList, `india-atlas_hces_spending-by-state-${sec}`, fmtRound);
+  }
+}
+
+/* ---------- § 09 with imputation, by state (wave 2) ---------- */
+{
+  const I = 1;
+  const rows = Object.keys(statesBundle.series).filter((k) => k.endsWith("_rural")).map((k) => {
+    const a = statesBundle.series[k].data[I], b = imputedStatesBundle.series[k]?.data[I];
+    return { name: stateName(statesBundle.series[k].label.split(" · ")[0]), a, b, add: b - a, pct: ((b - a) / a) * 100 };
+  }).filter((d) => d.a != null && d.b != null).sort((x, y) => y.pct - x.pct);
+  const aiPct = ((cur(M.rural_imputed) - cur(M.rural)) / cur(M.rural)) * 100;
+  const plot = Plot.plot({
+    width: 1184, height: 40 + rows.length * 24 + 44, marginLeft: 210, marginRight: 120, marginTop: 30, marginBottom: 44,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+    x: { label: "added by counting free items, per cent →", labelAnchor: "right", labelArrow: false, domain: [0, 8], ticks: [0, 2, 4, 6, 8], tickSize: 0, tickPadding: 10, tickFormat: (d) => (d === 8 ? "8%" : String(d)) },
+    y: { label: null, domain: rows.map((d) => d.name), tickSize: 0, tickPadding: 12 },
+    marks: [
+      Plot.gridX([2, 4, 6, 8], { stroke: "#F0F2F5" }),
+      Plot.barX(rows, { y: "name", x: "pct", fill: (d) => (d.pct > aiPct ? "#2E4BD8" : "#C9CED6"), insetTop: 6, insetBottom: 6 }),
+      Plot.text(rows, { y: "name", x: "pct", dx: 8, text: (d) => `${d.pct.toFixed(1)}%  ${inr(d.add)}`, textAnchor: "start", fill: "#161A22", fontSize: 11.5 }),
+      Plot.ruleX([0], { stroke: "#B5BAC4" }),
+    ],
+  });
+  a11y(plot, "Rural spending with and without free items, by state, 2023-24", rows.slice(0, 4).map((d) => `${d.name} +${d.pct.toFixed(1)}%`).join(", "));
+  document.getElementById("plot-impute").append(plot);
+  setTxt("pv-impute", inr(cur(M.rural_imputed) - cur(M.rural)));
+  setTxt("ex-imp-hi", `${rows[0].name}, ${inr(rows[0].add)} (${rows[0].pct.toFixed(1)}%)`);
+  setTxt("ex-imp-ai", `${inr(cur(M.rural_imputed) - cur(M.rural))} (${aiPct.toFixed(1)}%)`);
+  setTxt("ex-imp-aiu", inr(cur(M.urban_imputed) - cur(M.urban)));
+  const zero = Object.keys(statesBundle.series).filter((k) => imputedStatesBundle.series[k]?.data[I] === statesBundle.series[k].data[I]).map((k) => k.replace(/_(rural|urban)$/, ""));
+  setTxt("ex-imp-zero", String(new Set(zero.filter((z) => zero.filter((x) => x === z).length === 2)).size));
+  wireTools(document.getElementById("cb-impute"), plot, Object.keys(IMS).sort().map((k) => IMS[k]), "india-atlas_hces_mpce-with-imputation-by-state", fmtRound);
+}
+
+/* ---------- § 09 Gini by state (wave 2) ---------- */
+{
+  const I = 1;
+  const rows = Object.keys(giniStatesBundle.series).filter((k) => k.endsWith("_rural")).map((k) => ({
+    name: stateName(giniStatesBundle.series[k].label.split(" · ")[0]), r: giniStatesBundle.series[k].data[I], u: giniStatesBundle.series[k.replace(/_rural$/, "_urban")]?.data[I],
+  })).filter((d) => d.r != null && d.u != null).sort((a, b) => b.u - a.u);
+  const more = rows.filter((d) => d.u > d.r).length;
+  const plot = Plot.plot({
+    width: 1184, height: 40 + rows.length * 24 + 44, marginLeft: 210, marginRight: 80, marginTop: 30, marginBottom: 44,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+    x: { label: "Gini →", labelAnchor: "right", labelArrow: false, domain: [0.14, 0.34], ticks: [0.15, 0.2, 0.25, 0.3], tickSize: 0, tickPadding: 10, tickFormat: (d) => d.toFixed(2) },
+    y: { label: null, domain: rows.map((d) => d.name), tickSize: 0, tickPadding: 12 },
+    marks: [
+      Plot.gridX([0.15, 0.2, 0.25, 0.3], { stroke: "#F0F2F5" }),
+      Plot.link(rows, { y: "name", x1: "r", x2: "u", stroke: "#DADDE3", strokeWidth: 1.5 }),
+      Plot.dot(rows, { y: "name", x: "u", r: 4, fill: "#5F6675", stroke: "#fff", strokeWidth: 1.25 }),
+      Plot.dot(rows, { y: "name", x: "r", r: 4, fill: "#2E4BD8", stroke: "#fff", strokeWidth: 1.25 }),
+      // the higher of the pair carries its value to its right, never across the connector
+      Plot.text(rows, { y: "name", x: (d) => Math.max(d.r, d.u), dx: 10, text: (d) => `${g3(d.u)} / ${g3(d.r)}`, textAnchor: "start", fill: "#4A5160", fontSize: 11 }),
+    ],
+  });
+  a11y(plot, "Gini of consumption spending by state, rural and urban, 2023-24", `Urban more unequal than rural in ${more} of ${rows.length} states. Highest urban ${rows[0].name} ${g3(rows[0].u)}.`);
+  document.getElementById("plot-ginist").append(plot);
+  const all = rows.flatMap((d) => [{ n: `${d.name}, urban`, v: d.u }, { n: `${d.name}, rural`, v: d.r }]).sort((a, b) => b.v - a.v);
+  setTxt("pv-ginist", `${more} of ${rows.length}`);
+  setTxt("ex-gs-hi", `${all[0].n}, ${g3(all[0].v)}`);
+  setTxt("ex-gs-lo", `${all.at(-1).n}, ${g3(all.at(-1).v)}`);
+  setTxt("ex-gs-air", g3(cur(G.rural)));
+  setTxt("ex-gs-aiu", g3(cur(G.urban)));
+  wireTools(document.getElementById("cb-ginist"), plot, Object.keys(GS).sort().map((k) => GS[k]), "india-atlas_hces_gini-by-state", fmtRound);
 }
 
 /* ---------- § 09 misread ---------- */

@@ -1,0 +1,1172 @@
+{
+ "meta": {
+  "dossier": "deposits",
+  "base": "as on 31 March",
+  "unit": "mixed",
+  "source": "Reserve Bank of India, Basic Statistical Return 2 (via DBIE)",
+  "vintage": "2026-10-09",
+  "mock": false,
+  "geo": "IND",
+  "releaseDate": null,
+  "revisionPolicy": "BSR-2 stocks are final on release for the year; the sector classification changed in 2018-19 and the deposit-size bands in March 2026 (both disclosed, never spliced).",
+  "frequency": "annual",
+  "latestPeriod": "2026-03",
+  "coverage": "Deposits by bank group and type of account, as on 31 March. Amounts in ₹ crore; accounts, offices and employees as counts.",
+  "note": "RBI BSR-2 Table 2.2 via DBIE report 852, read from the Data Bank mirror. Column meanings are fixed by identities checked on every row (scripts/lib/products/bsr2-tables.mjs)."
+ },
+ "dates": [
+  "2019-03-01",
+  "2020-03-01",
+  "2021-03-01",
+  "2022-03-01",
+  "2023-03-01",
+  "2024-03-01",
+  "2025-03-01",
+  "2026-03-01"
+ ],
+ "series": {
+  "psb__offices": {
+   "name": "psb__offices",
+   "label": "Bank offices · Public sector banks",
+   "group": "Public sector banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    91445,
+    91498,
+    90506,
+    88675,
+    87906,
+    88406,
+    89321,
+    91138
+   ]
+  },
+  "psb__current_accounts": {
+   "name": "psb__current_accounts",
+   "label": "Current accounts · Public sector banks",
+   "group": "Public sector banks",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    57971641,
+    60849380,
+    62170352,
+    89504751,
+    107868391,
+    124298732,
+    45389873,
+    49938366
+   ]
+  },
+  "psb__current": {
+   "name": "psb__current",
+   "label": "Current deposits · Public sector banks",
+   "group": "Public sector banks",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    522373.58,
+    536792.49,
+    653314.93,
+    681691.92,
+    690365.45,
+    754561.45,
+    869023.79,
+    908261.37
+   ]
+  },
+  "psb__savings_accounts": {
+   "name": "psb__savings_accounts",
+   "label": "Savings accounts · Public sector banks",
+   "group": "Public sector banks",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    1181915809,
+    1225426621,
+    1229224868,
+    1293345497,
+    1345726792,
+    1367595329,
+    1418500435,
+    1446818404
+   ]
+  },
+  "psb__savings": {
+   "name": "psb__savings",
+   "label": "Savings deposits · Public sector banks",
+   "group": "Public sector banks",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    2781243.21,
+    3018696.06,
+    3432297.17,
+    3793559.84,
+    3959287.04,
+    4146350.64,
+    4299672.96,
+    4715164.07
+   ]
+  },
+  "psb__term_accounts": {
+   "name": "psb__term_accounts",
+   "label": "Term deposit accounts · Public sector banks",
+   "group": "Public sector banks",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    187318605,
+    183610296,
+    180188240,
+    175411492,
+    168584270,
+    173734428,
+    179587108,
+    184028510
+   ]
+  },
+  "psb__term": {
+   "name": "psb__term",
+   "label": "Term deposits · Public sector banks",
+   "group": "Public sector banks",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    4688931.81,
+    5020532.48,
+    5374386.02,
+    5743079,
+    6400215.61,
+    7187687.05,
+    8038642.06,
+    8883241.09
+   ]
+  },
+  "psb__total_accounts": {
+   "name": "psb__total_accounts",
+   "label": "All deposit accounts · Public sector banks",
+   "group": "Public sector banks",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    1427206055,
+    1469886297,
+    null,
+    null,
+    null,
+    1665628489,
+    1643477416,
+    1680785280
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "psb__total": {
+   "name": "psb__total",
+   "label": "All deposits · Public sector banks",
+   "group": "Public sector banks",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    7992548.6,
+    8576021.03,
+    null,
+    null,
+    null,
+    12088599.14,
+    13207338.81,
+    14506666.53
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "foreign__offices": {
+   "name": "foreign__offices",
+   "label": "Bank offices · Foreign banks",
+   "group": "Foreign banks",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    296,
+    312,
+    880,
+    882,
+    823,
+    820,
+    814,
+    798
+   ]
+  },
+  "foreign__current_accounts": {
+   "name": "foreign__current_accounts",
+   "label": "Current accounts · Foreign banks",
+   "group": "Foreign banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    579896,
+    868273,
+    1105537,
+    921113,
+    899076,
+    663965,
+    629230,
+    610652
+   ]
+  },
+  "foreign__current": {
+   "name": "foreign__current",
+   "label": "Current deposits · Foreign banks",
+   "group": "Foreign banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    170408.11,
+    212781.08,
+    232694.19,
+    270657.95,
+    313659.21,
+    339818,
+    368653,
+    411009.01
+   ]
+  },
+  "foreign__savings_accounts": {
+   "name": "foreign__savings_accounts",
+   "label": "Savings accounts · Foreign banks",
+   "group": "Foreign banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    4995578,
+    5486224,
+    6135796,
+    7092072,
+    6322855,
+    6247470,
+    6760804,
+    6140238
+   ]
+  },
+  "foreign__savings": {
+   "name": "foreign__savings",
+   "label": "Savings deposits · Foreign banks",
+   "group": "Foreign banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    59360.31,
+    69983.88,
+    87061.98,
+    92144.79,
+    57669.42,
+    58416.92,
+    63716.9,
+    71565.56
+   ]
+  },
+  "foreign__term_accounts": {
+   "name": "foreign__term_accounts",
+   "label": "Term deposit accounts · Foreign banks",
+   "group": "Foreign banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    963765,
+    999871,
+    2439421,
+    2435386,
+    2157490,
+    2628708,
+    2572253,
+    2257697
+   ]
+  },
+  "foreign__term": {
+   "name": "foreign__term",
+   "label": "Term deposits · Foreign banks",
+   "group": "Foreign banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    335575.03,
+    382023.44,
+    441175.97,
+    465888.17,
+    475790.28,
+    601647.13,
+    659358.1,
+    759103.61
+   ]
+  },
+  "foreign__total_accounts": {
+   "name": "foreign__total_accounts",
+   "label": "All deposit accounts · Foreign banks",
+   "group": "Foreign banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    6539239,
+    7354368,
+    null,
+    null,
+    null,
+    9540143,
+    9962287,
+    9008587
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "foreign__total": {
+   "name": "foreign__total",
+   "label": "All deposits · Foreign banks",
+   "group": "Foreign banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    565343.45,
+    664788.4,
+    null,
+    null,
+    null,
+    999882.05,
+    1091727.99,
+    1241678.18
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "rrb__offices": {
+   "name": "rrb__offices",
+   "label": "Bank offices · Regional rural banks",
+   "group": "Regional rural banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    22042,
+    22130,
+    22202,
+    22187,
+    22321,
+    22425,
+    22481,
+    22539
+   ]
+  },
+  "rrb__current_accounts": {
+   "name": "rrb__current_accounts",
+   "label": "Current accounts · Regional rural banks",
+   "group": "Regional rural banks",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    2770858,
+    3048812,
+    3318486,
+    3405604,
+    3095054,
+    4574208,
+    3449891,
+    3488669
+   ]
+  },
+  "rrb__current": {
+   "name": "rrb__current",
+   "label": "Current deposits · Regional rural banks",
+   "group": "Regional rural banks",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    10315.82,
+    9441.63,
+    9776.52,
+    10941.04,
+    10485.69,
+    11112.44,
+    10360.94,
+    12666.08
+   ]
+  },
+  "rrb__savings_accounts": {
+   "name": "rrb__savings_accounts",
+   "label": "Savings accounts · Regional rural banks",
+   "group": "Regional rural banks",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    232973694,
+    247128889,
+    256921858,
+    267847552,
+    272690318,
+    277257172,
+    283268700,
+    293846011
+   ]
+  },
+  "rrb__savings": {
+   "name": "rrb__savings",
+   "label": "Savings deposits · Regional rural banks",
+   "group": "Regional rural banks",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    224241.01,
+    244475.5,
+    271609.92,
+    294593,
+    319512.29,
+    347379.39,
+    368166.89,
+    397575.75
+   ]
+  },
+  "rrb__term_accounts": {
+   "name": "rrb__term_accounts",
+   "label": "Term deposit accounts · Regional rural banks",
+   "group": "Regional rural banks",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    17242356,
+    17317251,
+    17373935,
+    16364274,
+    16249706,
+    16276497,
+    16313296,
+    16713396
+   ]
+  },
+  "rrb__term": {
+   "name": "rrb__term",
+   "label": "Term deposits · Regional rural banks",
+   "group": "Regional rural banks",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    192011.54,
+    213505.19,
+    229514.22,
+    240703.09,
+    267074.92,
+    283107.51,
+    311886.53,
+    334265.16
+   ]
+  },
+  "rrb__total_accounts": {
+   "name": "rrb__total_accounts",
+   "label": "All deposit accounts · Regional rural banks",
+   "group": "Regional rural banks",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    252986908,
+    267494952,
+    null,
+    null,
+    null,
+    298107877,
+    303031887,
+    314048076
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "rrb__total": {
+   "name": "rrb__total",
+   "label": "All deposits · Regional rural banks",
+   "group": "Regional rural banks",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    426568.37,
+    467422.32,
+    null,
+    null,
+    null,
+    641599.33,
+    690414.37,
+    744506.98
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "private__offices": {
+   "name": "private__offices",
+   "label": "Bank offices · Private sector banks",
+   "group": "Private sector banks",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    29564,
+    34973,
+    36024,
+    37649,
+    41315,
+    44670,
+    47851,
+    49830
+   ]
+  },
+  "private__current_accounts": {
+   "name": "private__current_accounts",
+   "label": "Current accounts · Private sector banks",
+   "group": "Private sector banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    19544041,
+    20964799,
+    24742677,
+    27576862,
+    31534692,
+    34205166,
+    35438078,
+    29875468
+   ]
+  },
+  "private__current": {
+   "name": "private__current",
+   "label": "Current deposits · Private sector banks",
+   "group": "Private sector banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    485287,
+    512502.68,
+    641487.77,
+    741016.58,
+    844222.16,
+    944925.86,
+    1019719.26,
+    1161459
+   ]
+  },
+  "private__savings_accounts": {
+   "name": "private__savings_accounts",
+   "label": "Savings accounts · Private sector banks",
+   "group": "Private sector banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    216626042,
+    238044830,
+    256413943,
+    284559445,
+    313522589,
+    342173427,
+    360911753,
+    341652301
+   ]
+  },
+  "private__savings": {
+   "name": "private__savings",
+   "label": "Savings deposits · Private sector banks",
+   "group": "Private sector banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    1045334,
+    1172420.26,
+    1455741.34,
+    1746691.79,
+    1887636.94,
+    2020242.42,
+    2131940.21,
+    2354266.17
+   ]
+  },
+  "private__term_accounts": {
+   "name": "private__term_accounts",
+   "label": "Term deposit accounts · Private sector banks",
+   "group": "Private sector banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    42174642,
+    49479204,
+    54105793,
+    56649480,
+    67758974,
+    77162502,
+    81008651,
+    80295706
+   ]
+  },
+  "private__term": {
+   "name": "private__term",
+   "label": "Term deposits · Private sector banks",
+   "group": "Private sector banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    2086450.33,
+    2292833.84,
+    2526673.77,
+    2806773.02,
+    3343025.67,
+    4330224.07,
+    5020066.33,
+    5715555.27
+   ]
+  },
+  "private__total_accounts": {
+   "name": "private__total_accounts",
+   "label": "All deposit accounts · Private sector banks",
+   "group": "Private sector banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    278344725,
+    308488833,
+    null,
+    null,
+    null,
+    453541095,
+    477358482,
+    451823475
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "private__total": {
+   "name": "private__total",
+   "label": "All deposits · Private sector banks",
+   "group": "Private sector banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    3617071.34,
+    3977756.78,
+    null,
+    null,
+    null,
+    7295392.35,
+    8171725.8,
+    9231280.43
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "sfb__offices": {
+   "name": "sfb__offices",
+   "label": "Bank offices · Small finance banks",
+   "group": "Small finance banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    2027,
+    4189,
+    4873,
+    5365,
+    6171,
+    6798,
+    7242,
+    7666
+   ]
+  },
+  "sfb__current_accounts": {
+   "name": "sfb__current_accounts",
+   "label": "Current accounts · Small finance banks",
+   "group": "Small finance banks",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    143233,
+    275440,
+    349126,
+    475940,
+    655930,
+    1467285,
+    901458,
+    1027602
+   ]
+  },
+  "sfb__current": {
+   "name": "sfb__current",
+   "label": "Current deposits · Small finance banks",
+   "group": "Small finance banks",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    1825.12,
+    2238.02,
+    3731.31,
+    5500.76,
+    7100.43,
+    10298.94,
+    13068.24,
+    16182.76
+   ]
+  },
+  "sfb__savings_accounts": {
+   "name": "sfb__savings_accounts",
+   "label": "Savings accounts · Small finance banks",
+   "group": "Small finance banks",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    6779336,
+    13513270,
+    19523427,
+    26424815,
+    32109183,
+    37739204,
+    38801024,
+    44772814
+   ]
+  },
+  "sfb__savings": {
+   "name": "sfb__savings",
+   "label": "Savings deposits · Small finance banks",
+   "group": "Small finance banks",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    7195.67,
+    10283.74,
+    22202,
+    43542.84,
+    54575.21,
+    59675.33,
+    68651.08,
+    81708.15
+   ]
+  },
+  "sfb__term_accounts": {
+   "name": "sfb__term_accounts",
+   "label": "Term deposit accounts · Small finance banks",
+   "group": "Small finance banks",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    720151,
+    2034314,
+    2512388,
+    2985549,
+    3875183,
+    4410441,
+    5235243,
+    5274784
+   ]
+  },
+  "sfb__term": {
+   "name": "sfb__term",
+   "label": "Term deposits · Small finance banks",
+   "group": "Small finance banks",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    28455.97,
+    50144.76,
+    61842.86,
+    72011.27,
+    99530.23,
+    141752.33,
+    183866.37,
+    217456.36
+   ]
+  },
+  "sfb__total_accounts": {
+   "name": "sfb__total_accounts",
+   "label": "All deposit accounts · Small finance banks",
+   "group": "Small finance banks",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    7642720,
+    15823024,
+    null,
+    null,
+    null,
+    43616930,
+    44937725,
+    51075200
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "sfb__total": {
+   "name": "sfb__total",
+   "label": "All deposits · Small finance banks",
+   "group": "Small finance banks",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    37476.76,
+    62666.53,
+    null,
+    null,
+    null,
+    211726.6,
+    265585.69,
+    315347.28
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "payments__offices": {
+   "name": "payments__offices",
+   "label": "Bank offices · Payments banks",
+   "group": "Payments banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    106,
+    97,
+    97,
+    102
+   ]
+  },
+  "payments__current_accounts": {
+   "name": "payments__current_accounts",
+   "label": "Current accounts · Payments banks",
+   "group": "Payments banks",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    904323,
+    1241773,
+    1329468,
+    1798769
+   ]
+  },
+  "payments__current": {
+   "name": "payments__current",
+   "label": "Current deposits · Payments banks",
+   "group": "Payments banks",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    389.24,
+    72.27,
+    87.24,
+    342.77
+   ]
+  },
+  "payments__savings_accounts": {
+   "name": "payments__savings_accounts",
+   "label": "Savings accounts · Payments banks",
+   "group": "Payments banks",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    149850255,
+    180697145,
+    213196875,
+    235917054
+   ]
+  },
+  "payments__savings": {
+   "name": "payments__savings",
+   "label": "Savings deposits · Payments banks",
+   "group": "Payments banks",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    11771.09,
+    16086.32,
+    24958.48,
+    36444.1
+   ]
+  },
+  "payments__term_accounts": {
+   "name": "payments__term_accounts",
+   "label": "Term deposit accounts · Payments banks",
+   "group": "Payments banks",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "payments__term": {
+   "name": "payments__term",
+   "label": "Term deposits · Payments banks",
+   "group": "Payments banks",
+   "unit": "inr_crore",
+   "color": "#A3A9B4",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "payments__total_accounts": {
+   "name": "payments__total_accounts",
+   "label": "All deposit accounts · Payments banks",
+   "group": "Payments banks",
+   "unit": "count",
+   "color": "#C9CED6",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    181938918,
+    214526343,
+    237715823
+   ]
+  },
+  "payments__total": {
+   "name": "payments__total",
+   "label": "All deposits · Payments banks",
+   "group": "Payments banks",
+   "unit": "inr_crore",
+   "color": "#5F6675",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    16158.59,
+    25045.72,
+    36786.87
+   ]
+  },
+  "all_banks__offices": {
+   "name": "all_banks__offices",
+   "label": "Bank offices · All banks",
+   "group": "All banks",
+   "unit": "count",
+   "color": "#878D99",
+   "data": [
+    145374,
+    153102,
+    154485,
+    154758,
+    158642,
+    163216,
+    167806,
+    172073
+   ]
+  },
+  "all_banks__current_accounts": {
+   "name": "all_banks__current_accounts",
+   "label": "Current accounts · All banks",
+   "group": "All banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    81009669,
+    86006704,
+    91686178,
+    121884270,
+    144957466,
+    166451129,
+    87137998,
+    86739526
+   ]
+  },
+  "all_banks__current": {
+   "name": "all_banks__current",
+   "label": "Current deposits · All banks",
+   "group": "All banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    1190209.63,
+    1273755.91,
+    1541004.72,
+    1709808.26,
+    1866222.18,
+    2060788.96,
+    2280912.47,
+    2509921
+   ]
+  },
+  "all_banks__savings_accounts": {
+   "name": "all_banks__savings_accounts",
+   "label": "Savings accounts · All banks",
+   "group": "All banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    1643290459,
+    1729599834,
+    1768219892,
+    1879269381,
+    2120221992,
+    2211709747,
+    2321439591,
+    2369146822
+   ]
+  },
+  "all_banks__savings": {
+   "name": "all_banks__savings",
+   "label": "Savings deposits · All banks",
+   "group": "All banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    4117374.2,
+    4515859.43,
+    5268912.41,
+    5970532.26,
+    6290451.99,
+    6648151.02,
+    6957106.52,
+    7656723.79
+   ]
+  },
+  "all_banks__term_accounts": {
+   "name": "all_banks__term_accounts",
+   "label": "Term deposit accounts · All banks",
+   "group": "All banks",
+   "unit": "count",
+   "color": "#A3A9B4",
+   "data": [
+    248419519,
+    253440936,
+    256619777,
+    253846181,
+    258625623,
+    274212576,
+    284716551,
+    288570093
+   ]
+  },
+  "all_banks__term": {
+   "name": "all_banks__term",
+   "label": "Term deposits · All banks",
+   "group": "All banks",
+   "unit": "inr_crore",
+   "color": "#C9CED6",
+   "data": [
+    7331424.69,
+    7959039.72,
+    8633592.83,
+    9328454.56,
+    10585636.71,
+    12544418.09,
+    14213819.39,
+    15909621.49
+   ]
+  },
+  "all_banks__total_accounts": {
+   "name": "all_banks__total_accounts",
+   "label": "All deposit accounts · All banks",
+   "group": "All banks",
+   "unit": "count",
+   "color": "#5F6675",
+   "data": [
+    1972719647,
+    2069047474,
+    null,
+    null,
+    null,
+    2652373452,
+    2693294140,
+    2744456441
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  },
+  "all_banks__total": {
+   "name": "all_banks__total",
+   "label": "All deposits · All banks",
+   "group": "All banks",
+   "unit": "inr_crore",
+   "color": "#878D99",
+   "data": [
+    12639008.51,
+    13748655.06,
+    null,
+    null,
+    null,
+    21253358.07,
+    23451838.38,
+    26076266.28
+   ],
+   "gaps": [
+    "2021-03-01",
+    "2022-03-01",
+    "2023-03-01"
+   ],
+   "gapsNote": "RBI's table prints no value here for these years; left empty."
+  }
+ }
+}
