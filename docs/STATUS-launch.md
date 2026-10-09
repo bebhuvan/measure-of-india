@@ -1,6 +1,6 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 01:15.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 01:25.
 
 ## Running now: ten family sessions
 
@@ -31,7 +31,7 @@ Each decides every `pending` item in its ledgers (brief: `docs/briefs/wave2.md`)
 | atlas-prices | cpi, wpi (+ CPI-IW, rural wages) | 82,269 |
 | atlas-jobs-deep | jobs | **merged**: 0 pending (9,523 items); found the 2025 PLFS redesign splice. Now fixing the same splice in services-jobs-cy |
 | atlas-industry | iip, factories (+ eight core industries) | 45,347 |
-| atlas-nas | gdp | 437 |
+| atlas-nas | gdp | **merged**: 0 pending; institutional sectors, revision paths, 18 sub-industries |
 
 Next: health and gender (nfhs, gender), households (hces, aishe, mnre, deposits), once
 MoSPI load allows.
@@ -81,6 +81,9 @@ throttles, so not run alongside the states and services sessions). Then the laun
 
 - jobs: "Both moved against the headline" frames rising employment beside falling
   unemployment as a contradiction; they agree.
+- gdp: growth quoted to two decimals ("7.82%", computed from levels) where MoSPI and the
+  press print one ("7.8%"). Decide a site-wide rule: published precision for headline
+  growth, with the computed figure only where it is the point.
 
 ## Queued (after wave 1 merges)
 
