@@ -1,6 +1,6 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-09, 19:45.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-09, 20:00.
 
 ## Running now: ten family sessions
 
@@ -13,11 +13,11 @@ Each writes its own log in `docs/status/<slug>.md` on its branch.
 | atlas-external | External account rebuilt on DBIE: BoP, weekly reserves, FDI and FPI, external debt, REER | started 18:17 |
 | atlas-trade | New guide: merchandise trade from TradeStat, HS 2 to 8 digit, partners | started 18:18 |
 | atlas-credit | New guide: credit by sector, money supply, bank health | started 18:18 |
-| atlas-rates | New guide: policy rates since 1935, MPC votes, lending and deposit rates, yields | started 18:18 |
+| atlas-rates | New guide: policy rates since 1935, MPC votes, lending and deposit rates, yields | **merged** (repo rate since 1935, every MPC vote, lending rates, yields) |
 | atlas-states | New guide: state GDP, per-capita income, what each state runs on | **merged** (state economies; all 182 RBI Handbook tables, every unit resolved) |
 | atlas-services | New guide: services output, exports, enterprises, jobs | **merged** |
-| atlas-ilo | New guide: the ILO's labour estimates for India | started 18:18 |
-| atlas-climate | New guide: temperature, rain, emissions (OWID, World Bank climate portal) | **merged**; prose follow-up sent (a seasonal misreading) |
+| atlas-ilo | New guide: the ILO's labour estimates for India | **merged** (68 bundles; every one spot-checked against ILO) |
+| atlas-climate | New guide: temperature, rain, emissions (OWID, World Bank climate portal) | **merged**, follow-up merged |
 | atlas-worldbank | WDI inventory; new guides on poverty and on population | **merged** (poverty, population; all 1,395 WDI India indicators baked) |
 | atlas-bis | BIS bundles; new guides on housing prices and on debt | **merged** (debt, housing; BIS India credit after 2023 marked as BIS estimates) |
 | atlas-framework | Every-cut table, seam charts, IDH cross-check, ledgers for the 14 existing guides | **merged** (every-cut table, seam charts, IDH cross-check, ledgers) |
@@ -41,14 +41,20 @@ throttles, so not run alongside the states and services sessions). Then the laun
   state x item, ASI 3-4 digit, NFHS tables, 144 gender indicators). Each is in its ledger as
   `pending`, scheduled for wave 2. Gates pass; the launch setting (`--strict`) fails until
   they are decided.
-- Merged guides on the branch: 21 (bis, services, states, worldbank, climate in).
+- Merged guides on the branch: 23 (bis, services, states, worldbank, climate, ilo, rates in).
 - Every-cut marks estimated values (", est."), enforced by a test.
 - DBIE reader fixed (quoted ";" misaligned 5,232 rows of report 1076).
 
 ## Waiting on the owner
 
-- Climate: state-by-season/month and some CMIP6 state projections were left out for size
-  (they would multiply the climate archive 10-15x). Include them?
+- **A deep-archive tier for cuts too big to bake** (climate state x season/month and CMIP6
+  state cuts; ILO three-way survey cubes, ~950k cells; credit district and centre-wise tables,
+  ~10m rows): publish them as compressed downloads outside the chart bundles, listed in a
+  committed manifest. Where to host them (Cloudflare R2, GitHub release assets, or the site
+  itself within its 25 MB-per-file limit)? Meanwhile sessions mark them `archive: true`.
+- For the Data Bank (found by atlas-rates): the MPC stance classifier misses "change the
+  stance to calibrated tightening", which blocks meeting 63's promotion; 2019-20 G-sec
+  notified amounts disagree with DBIE report 559 on 17 days.
 
 ## Queued (after wave 1 merges)
 
