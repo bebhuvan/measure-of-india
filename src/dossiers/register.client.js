@@ -271,3 +271,32 @@ const nfhsRows = [
   ["Women's bank account, %", "NFHS-BNK", "s-g4", nfhsFind(NF, "bank or savings")],
 ].filter(([, , , s]) => s != null);
 render("reg-nfhs", nfhsRows.map(([nm, code, sw, s]) => [nm, code, sw, s, false, "/guides/nfhs/"]), 48, "spnf", "NFHS-5", "MoSPI / IIPS");
+// ---- bis family session: debt and house prices (BIS), quarterly ----
+import bisCreditBundle from "../../data/series/bis-credit.json";
+import bisGapBundle from "../../data/series/bis-credit-gap.json";
+import bisDsrBundle from "../../data/series/bis-dsr.json";
+import bisPropertyBundle from "../../data/series/bis-property.json";
+import bisCitiesBundle from "../../data/series/bis-property-cities.json";
+{
+  const M3 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const qv = (b) => { const d = b.dates.at(-1); const m = +d.slice(5, 7) - 1; return `${M3[m]}-${M3[m + 2]} ${d.slice(0, 4)}`; };
+  const CR = hydrate(bisCreditBundle), GP = hydrate(bisGapBundle), DS = hydrate(bisDsrBundle);
+  const pg = (v) => v.toFixed(1) + "%";
+  const pt = (v) => (v < 0 ? "−" : "+") + Math.abs(v).toFixed(1) + " pt";
+  render("reg-debt", [
+    ["Debt of all non-financial borrowers, % of GDP", "BIS-TC-C", "s-acc", CR.total, false, "/guides/debt/", null, pg],
+    ["Households' debt, % of GDP (latest quarters BIS estimates)", "BIS-TC-H", "s-g1", CR.households, false, "/guides/debt/", null, pg],
+    ["Companies' debt, % of GDP (latest quarters BIS estimates)", "BIS-TC-N", "s-g2", CR.companies, false, "/guides/debt/", null, pg],
+    ["Government debt, % of GDP", "BIS-TC-G", "s-g3", CR.government, false, "/guides/debt/", null, pg],
+    ["Credit-to-GDP gap", "BIS-CG", "s-g1", GP.gap, false, "/guides/debt/", null, pt],
+    ["Debt service ratio, private sector", "BIS-DSR", "s-g2", DS.private, false, "/guides/debt/", null, pg],
+  ], 4, "spdb", qv(bisCreditBundle), "BIS");
+  const PP = hydrate(bisPropertyBundle), PC = hydrate(bisCitiesBundle);
+  const ix = (v) => v.toFixed(1);
+  render("reg-housing", [
+    ["Residential property prices, real, 2010 = 100", "BIS-SPP-R", "s-acc", PP.real, false, "/guides/housing/", null, ix],
+    ["Residential property prices, nominal, 2010 = 100", "BIS-SPP-N", "s-g1", PP.nominal, false, "/guides/housing/", null, ix],
+    ["Real house prices, % change on a year ago", "BIS-SPP-RY", "s-g2", PP.real_yoy, false, "/guides/housing/", null, (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(2) + "%"],
+    ["RBI house price index, 18 cities, 2022-23 = 100", "RBI-HPI-18", "s-g3", PC.cities_18, false, "/guides/housing/", null, ix],
+  ], 4, "spho", qv(bisPropertyBundle), "BIS");
+}

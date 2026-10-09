@@ -287,6 +287,38 @@ const PAGES = [
     ["ex-p-women", (b) => fmt.pct1(100 * b["deposits-owners"].series.female_total.data.at(-1) / b["deposits-owners"].series.all_total.data.at(-1))],
     ["prov-vintage", (b) => b["deposits-owners"].meta.vintage],
   ]},
+  // ---- bis family session: debt (BIS total credit) ----
+  { url: "/guides/debt/", slug: null, checks: [
+    ["n-total", (b) => fmt.pct1(b["bis-credit"].series.total.data.at(-1))],
+    // households are quoted for the last MEASURED quarter: later quarters are BIS estimates (series.estimated)
+    ["n-hh", (b) => { const B = b["bis-credit"], est = new Set(B.series.households.estimated ?? []); const i = B.dates.findLastIndex((d, j) => B.series.households.data[j] != null && !est.has(d)); return fmt.pct1(B.series.households.data[i]); }],
+    ["ex-s-hhe", (b) => fmt.pct1(b["bis-credit"].series.households.data.at(-1))],
+    ["n-dsr", (b) => fmt.pct1(b["bis-dsr"].series.private.data.at(-1))],
+    ["ex-s-co", (b) => { const B = b["bis-credit"], est = new Set(B.series.companies.estimated ?? []); const i = B.dates.findLastIndex((d, j) => B.series.companies.data[j] != null && !est.has(d)); return fmt.pct1(B.series.companies.data[i]); }],
+    ["ex-s-gov", (b) => fmt.pct1(b["bis-credit"].series.government.data.at(-1))],
+    ["pv-long", (b) => fmt.pct1(b["bis-credit"].series.private.data.at(-1))],
+    ["ex-l-banks", (b) => fmt.pct1(b["bis-credit"].series.private_banks.data.at(-1))],
+    ["pv-inr", (b) => "₹" + Math.round(b["bis-credit-inr"].series.households.data.at(-1) / 1000) + " lakh crore"],
+    ["pv-gap", (b) => { const g = b["bis-credit-gap"].series.gap.data.at(-1); return (g >= 0 ? "+" : "−") + Math.abs(g).toFixed(1) + " pt"; }],
+    ["ex-d-cn", (b) => fmt.pct1(b["bis-peer-chn"].series.dsr.data.filter((v) => v != null).at(-1))],
+    ["pv-gli", (b) => "$" + b["bis-gli"].series.usd.data.at(-1).toFixed(1) + " bn"],
+    ["prov-vintage", (b) => b["bis-credit"].meta.vintage],
+  ]},
+  // house prices: BIS y/y as published; RBI city levels; RESIDEX prices per sq ft
+  { url: "/guides/housing/", slug: null, checks: [
+    ["n-nom", (b) => fmt.pct1(b["bis-property"].series.nominal_yoy.data.at(-1))],
+    ["n-real", (b) => fmt.pct1(b["bis-property"].series.real_yoy.data.at(-1))],
+    ["rb-real", (b) => fmt.pct2(b["bis-property"].series.real_yoy.data.at(-1))],
+    ["pv-nr", (b) => b["bis-property"].series.real.data.at(-1).toFixed(1)],
+    ["ex-nr-nom", (b) => b["bis-property"].series.nominal.data.at(-1).toFixed(1)],
+    ["ex-c-top", (b) => b["housing-rbi-2022"].series.chennai.data.at(-1).toFixed(1)],
+    ["ex-c-bot", (b) => b["housing-rbi-2022"].series.delhi.data.at(-1).toFixed(1)],
+    ["pv-cities10", (b) => Math.max(...Object.values(b["housing-rbi-2010"].series).map((s) => s.data.at(-1))).toFixed(0)],
+    ["pv-price", (b) => "₹" + Math.round(Math.max(...Object.entries(b["housing-residex-prices-2025"].series).filter(([k]) => /_hfc_price$/.test(k)).map(([, s]) => s.data.at(-1)))).toLocaleString("en-IN")],
+    ["ex-x-india", (b) => { const s = b["housing-residex-2025"].series.india_hfc.data; const v = (s.at(-1) / s.at(-5) - 1) * 100; return (v < 0 ? "−" : "+") + Math.abs(v).toFixed(1) + "%"; }],
+    ["prov-vintage", (b) => b["bis-property"].meta.vintage],
+  ]},
+  // ---- end bis family ----
   { url: "/", slug: null, minPlots: 1, checks: [
     // the CPI print is the 2024-base series; core stays on the 2012 base
     // (no weights served for the new base), labelled "to Dec 2025"

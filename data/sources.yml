@@ -32,6 +32,23 @@ families:
       Refresh the mirror with the Data Bank's own CLI (docs/RBI_DBIE_WEBI_RUNBOOK.md there),
       then run `npm run data`. Override the path with INDIA_ATLAS_DATABANK.
 
+  # ---- bis family session (housing, debt) ----
+  bis:
+    transport: http
+    base: https://stats.bis.org/api/v1/
+    note: >
+      Bank for International Settlements statistics API (SDMX). Used ONLY for the coverage
+      catalogue (series-key listings, scripts/lib/bis.mjs); BIS values are read from the Data
+      Bank's bis_series and bis_daily datasets. No key; one request at a time, 3 s apart.
+  nhb:
+    transport: http
+    base: https://residex.nhbonline.org.in/
+    note: >
+      National Housing Bank RESIDEX dashboards (ASP.NET, form POSTs that answer JSON). Three
+      bases, each its own controller: DashboardBY2013, DashboardBY2018, Dashboard (2024-25).
+      scripts/lib/nhb.mjs posts one request at a time, 1.5 s apart. See docs/reference/residex.md.
+  # ---- end bis family ----
+
 dossiers:
 
   cpi:
@@ -1004,6 +1021,41 @@ dossiers:
       inr_lakh_crore: [0, 400]
 
 
+  # ---- bis family session: BIS (housing, debt), RBI house price index, NHB RESIDEX ----
+  bis:
+    # regression floor: BIS quarterly series run to Q1 2026 (2026-01) as of 2026-10
+    stale_after: "2026-01"
+    family: databank
+    geo: IND
+    product: bis
+    frequency: quarterly
+    frequency_exempt: true      # monthly/daily/annual cross-check copies (EER, policy rate, rupee, CPI)
+    release_calendar: "quarterly, BIS releases credit and property statistics about four months after the quarter (March, June, September, December)"
+    revision_policy: "BIS revises credit, debt service and property series as national sources revise; each update re-reads the last ten years. Break-adjusted series are BIS's own adjustment."
+    source_agency: "Bank for International Settlements (BIS)"
+    release_url: https://data.bis.org
+  rbihpi:
+    stale_after: "2026-04"
+    family: databank
+    geo: IND
+    product: rbihpi
+    frequency: quarterly
+    release_calendar: "quarterly, about two months after the quarter"
+    revision_policy: "The latest quarter is provisional and is finalised with the next release; RBI rebased the index in 2010-11 and 2022-23 (three bases, never joined)."
+    source_agency: "Reserve Bank of India, House Price Index (via DBIE)"
+    release_url: https://data.rbi.org.in
+  residex:
+    stale_after: "2026-04"
+    family: nhb
+    geo: IND
+    product: residex
+    frequency: quarterly
+    release_calendar: "quarterly, NHB press release about three months after the quarter"
+    revision_policy: "NHB rebased RESIDEX to 2012-13, 2017-18 and 2024-25 (three bases, never joined here). Values are as served by the RESIDEX dashboards at fetch time."
+    source_agency: "National Housing Bank, RESIDEX"
+    release_url: https://residex.nhbonline.org.in
+  # ---- end bis family ----
+
 # ---------------------------------------------------------------------------
 # SEAMS: the base-year registry (2026-10). One entry per base (or
 # classification) for every product whose instrument has changed ruler.
@@ -1107,3 +1159,32 @@ seams:
       from: "2025-04"
       to: null
       bundles: [isp]
+  # ---- bis family session ----
+  rbihpi:
+    # RBI house price index: three bases, quarters dated at their first month
+    - base: "2008-09=100"
+      from: "2009-01"
+      to: "2013-01"
+      bundles: [housing-rbi-2009]
+    - base: "2010-11=100"
+      from: "2010-04"
+      to: "2025-01"
+      bundles: [housing-rbi-2010, housing-rbi-2010-yoy]
+    - base: "2022-23=100"
+      from: "2022-04"
+      to: null
+      bundles: [housing-rbi-2022, housing-rbi-2022-yoy]
+  residex:
+    - base: "2012-13=100"
+      from: "2013-04"
+      to: "2018-01"
+      bundles: [housing-residex-2013, housing-residex-prices-2013]
+    - base: "2017-18=100"
+      from: "2018-04"
+      to: "2025-10"
+      bundles: [housing-residex-2018, housing-residex-prices-2018]
+    - base: "2024-25=100"
+      from: "2025-04"
+      to: null
+      bundles: [housing-residex-2025, housing-residex-prices-2025]
+  # ---- end bis family ----

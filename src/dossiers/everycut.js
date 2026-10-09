@@ -69,6 +69,14 @@ export const UNITS = {
   thousand_tonne: { kind: "pct", fmt: (v) => big(v * 1000, " tonnes") },
   thousand_kwh: { kind: "pct", fmt: (v) => grp(v / 1e6, 2) + " billion kWh", note: "published in thousand kWh" },
   kg_per_month: { kind: "pct", fmt: (v) => v.toFixed(2) + " kg", note: "a month" },
+  // ---- bis family session ----
+  inr_bn: { kind: "pct", fmt: (v) => "₹" + grp(v / 1000, 2) + " lakh crore", note: "published in ₹ billion" },
+  usd_bn: { kind: "pct", fmt: (v) => "$" + grp(v, 1) + " bn" },
+  eur_bn: { kind: "pct", fmt: (v) => "€" + grp(v, 1) + " bn" },
+  jpy_bn: { kind: "pct", fmt: (v) => "¥" + grp(v) + " bn" },
+  pp: { kind: "diff", fmt: (v) => (v < 0 ? MINUS : v > 0 ? "+" : "") + Math.abs(v).toFixed(1) + " pt", note: "percentage points" },
+  inr_per_sqft: { kind: "pct", fmt: (v) => "₹" + grp(v), note: "per sq ft" },
+  // ---- end bis family ----
 };
 
 // series.unit, then what the series name says, then the bundle's meta.unit: a bundle-level
@@ -96,6 +104,19 @@ export function unitOf(bundle, s) {
 /* ---------- cuts ---------- */
 // what kind of cut each bundle is; the first matching rule wins, CUT_BY_BUNDLE first
 export const CUT_BY_BUNDLE = {
+  // ---- bis family session ----
+  "bis-credit": "Borrower", "bis-credit-inr": "Borrower", "bis-credit-usd": "Borrower", "bis-credit-gap": "Measure",
+  "bis-dsr": "All India", "bis-property": "All India", "bis-property-cities": "City", "bis-property-10cities": "All India",
+  "bis-gli": "Currency", "bis-eer": "Measure", "bis-eer-daily": "Measure", "bis-policy-rate": "All India",
+  "bis-policy-rate-daily": "All India", "bis-xru-monthly": "Measure", "bis-xru-quarterly": "Measure", "bis-xru-annual": "Measure",
+  "bis-cpi-long": "All India", "bis-cpi-long-annual": "All India",
+  "bis-peer-usa": "United States", "bis-peer-chn": "China", "bis-peer-emu": "Euro area", "bis-peer-gbr": "United Kingdom",
+  "bis-peer-jpn": "Japan", "bis-peer-kor": "Korea", "bis-peer-idn": "Indonesia", "bis-peer-bra": "Brazil",
+  "bis-peer-zaf": "South Africa", "bis-peer-mex": "Mexico", "bis-peer-tur": "Türkiye", "bis-peer-aus": "Australia", "bis-peer-can": "Canada",
+  "housing-rbi-2009": "City", "housing-rbi-2010": "City", "housing-rbi-2010-yoy": "City", "housing-rbi-2022": "City", "housing-rbi-2022-yoy": "City",
+  "housing-residex-2013": "City", "housing-residex-2018": "City", "housing-residex-2025": "City",
+  "housing-residex-prices-2013": "City and home size", "housing-residex-prices-2018": "City and home size", "housing-residex-prices-2025": "City and home size",
+  // ---- end bis family ----
   // cpi
   "cpi": "All India", "cpi-rural": "Rural", "cpi-urban": "Urban", "cpi-subgroups": "Sub-group",
   "cpi-2024": "Division", "cpi-2024-back": "All India", "cpi-2024-linked": "All India",

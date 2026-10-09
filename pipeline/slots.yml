@@ -166,3 +166,63 @@ factories:
       The honest limits: registered and informal are separate instruments, never
       summed; GVA is nominal (prices as much as product); the data lands with a
       two-year lag. Must contain a plain "we do not know".
+
+# ---- bis family session ----
+debt:
+  - id: current-reading.what-the-figures-say
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [total.latest, government.latest, households.estimated.lastMeasured.value, companies.estimated.lastMeasured.value]
+    minSeriesMentioned: 4        # the total and at least three of the borrowers
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
+    brief: >
+      The quarter's debt picture as a share of GDP, honest about what is measured.
+      Each series' "estimated" field says which readings are BIS estimates: since the
+      RBI's last financial accounts quarter, BIS extends private credit with bank
+      credit and keeps the household/company split fixed. So: name the total and
+      government (measured); give private credit and the credit gap as BIS estimates
+      and say so; never describe households or companies as rising, falling or
+      driving anything after the last measured quarter, because their split is
+      carried forward, not observed. Use their lastMeasured values (and period) for
+      who owes what. Bring in the debt service ratio and one comparison with China or
+      the United States from the peer rankings. Concede before qualifying.
+  - id: current-reading.what-they-do-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [households.latest]
+    brief: >
+      The honest limits: the latest quarters of private credit are BIS estimates scaled
+      from bank credit, with the household/company split frozen at the last measured
+      quarter (see each series' "estimated" field), so we do not know how households'
+      and companies' debts moved since then; these are national totals, so they cannot
+      say how many families or firms are stretched; a ratio to GDP moves with inflation
+      and growth as well as with borrowing. Must contain a plain "we do not know".
+
+housing:
+  - id: current-reading.what-the-figures-say
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [nominal_yoy.latest, real_yoy.latest]
+    minSeriesMentioned: 2        # nominal and real
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
+    brief: >
+      House prices in the quarter: the change on a year ago in rupees (nominal) and
+      after inflation (real), and where the real index stands against its own past.
+      Bring in the city spread from the RBI's 18-city summary (fastest and slowest
+      city on a year ago). Those city figures are one quarter LATER than the BIS
+      series (their latestPeriod is 2026-04, April to June 2026) and the latest
+      quarter is provisional: say so in the same sentence, and warn that single
+      cities swing with the mix of homes sold. Then how India's real change ranks
+      among the comparison economies. Concede before qualifying.
+  - id: current-reading.what-they-do-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [real_yoy.latest]
+    brief: >
+      Do not repeat the other column's figures: cite the real change once and no
+      other index level. The honest limits: an index of registered transactions in a few big cities
+      is not the price of every home; it says nothing about incomes, so it cannot by
+      itself say whether homes are affordable; registered values can sit below what
+      buyers actually pay. Must contain a plain "we do not know".

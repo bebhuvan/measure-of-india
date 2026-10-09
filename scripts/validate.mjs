@@ -32,6 +32,13 @@ function checkCadence(dates, stepMonths, slug) {
   }
 }
 
+// true when every published point from index i to the series' last point is listed as estimated
+function trailingEst(s, dates, i, last) {
+  const est = new Set(s.estimated ?? []);
+  for (let j = i; j <= last; j++) if (s.data[j] != null && !est.has(dates[j])) return false;
+  return true;
+}
+
 function checkRange(bundle, lo, hi, slug, seriesRange) {
   // CONTRACT-series rule 2: disclosure lives on the series. A bundle-level
   // meta.gaps union survived only in the legacy shape; writeSeries migrates
@@ -53,7 +60,9 @@ function checkRange(bundle, lo, hi, slug, seriesRange) {
       const i = bundle.dates.indexOf(d);
       if (i === -1) fail(`${slug}.${k}: estimated date ${d} is not on the axis`);
       else if (s.data[i] == null) fail(`${slug}.${k}: estimated ${d} carries no value`);
-      else if (i <= first || i >= last) fail(`${slug}.${k}: estimated ${d} is not interior to the series' span`);
+      // interior (an interpolation) or part of one unbroken run that ends the series (an agency's
+      // extrapolation of its latest periods, e.g. BIS India credit; CONTRACT-series rule 2b)
+      else if (i <= first || (i >= last && !trailingEst(s, bundle.dates, i, last))) fail(`${slug}.${k}: estimated ${d} is neither interior to the series' span nor part of a trailing run of estimates`);
       else if (gaps.has(d)) fail(`${slug}.${k}: ${d} cannot be both estimated and a gap`);
     }
     s.data.forEach((v, i) => {
@@ -1271,6 +1280,133 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
     }
     ok(`seams/${dossier}: ${owner.size} bundles on ${bases.length} bases, ${inWindow} inside their window${overlaps.length ? `; overlaps ${overlaps.join(", ")}` : ""}`);
   }
+}
+
+/* ---- bis family session: BIS (India and peers), RBI house price index, NHB RESIDEX ----
+ * Rows run through the same meta/freshness/cadence/range checks as PRODUCTS. Peer bundles are
+ * one geography each (CONTRACT-series rule 8): their geo is checked against the adapter's
+ * PEERS table, not against the dossier's IND. Ranges are documentation of measured extremes. */
+{
+  const { PEERS } = await import("./lib/products/bis.mjs");
+  const BIS_ROWS = [
+    // credit % of GDP: India's total peaked near 190; private credit 1951 floor ~ 4
+    { slug: "bis-credit", dossier: "bis", cadence: 3, range: [0, 250], base: "% of GDP", freq: "quarterly" },
+    { slug: "bis-credit-inr", dossier: "bis", cadence: 3, range: [0, 1e6], base: "INR billion, current prices", freq: "quarterly" },
+    { slug: "bis-credit-usd", dossier: "bis", cadence: 3, range: [0, 1e5], base: "USD billion, current prices", freq: "quarterly" },
+    // the gap is negative as often as positive (about -15 after 2013's bank clean-up years)
+    { slug: "bis-credit-gap", dossier: "bis", cadence: 3, range: [-40, 250], base: "% of GDP", freq: "quarterly" },
+    { slug: "bis-dsr", dossier: "bis", cadence: 3, range: [0, 40], base: "% of income", freq: "quarterly" },
+    { slug: "bis-property", dossier: "bis", cadence: 3, range: [-30, 500], base: "2010=100", freq: "quarterly" },
+    { slug: "bis-property-cities", dossier: "bis", cadence: 3, range: [10, 250], base: "2022-23=100", freq: "quarterly" },
+    { slug: "bis-property-10cities", dossier: "bis", cadence: 3, staleAfter: "2025-01", range: [50, 400], base: "2010-11=100", freq: "quarterly" },
+    // levels in billions of each currency (yen to ~2,000 bn) beside y/y swings of +-60%
+    { slug: "bis-gli", dossier: "bis", cadence: 3, range: [-80, 3000], base: "billions of the currency of denomination", freq: "quarterly" },
+    { slug: "bis-eer", dossier: "bis", cadence: 1, staleAfter: "2026-06", range: [50, 250], base: "2020=100", freq: "monthly" },
+    { slug: "bis-eer-daily", dossier: "bis", noCadence: true, staleAfter: "2026-06", range: [50, 250], base: "2020=100", freq: "daily" },
+    // policy rate: 2% (1946) to 14.5% (1990s); the 1946 floor is the bank rate of the time
+    { slug: "bis-policy-rate", dossier: "bis", cadence: 1, staleAfter: "2026-03", range: [1, 20], base: "per cent a year", freq: "monthly" },
+    { slug: "bis-policy-rate-daily", dossier: "bis", noCadence: true, staleAfter: "2026-03", range: [1, 20], base: "per cent a year", freq: "daily" },
+    { slug: "bis-xru-monthly", dossier: "bis", cadence: 1, staleAfter: "2026-06", range: [4, 120], base: "INR per USD", freq: "monthly" },
+    { slug: "bis-xru-quarterly", dossier: "bis", cadence: 3, staleAfter: "2026-04", range: [4, 120], base: "INR per USD", freq: "quarterly" },
+    { slug: "bis-xru-annual", dossier: "bis", cadence: 12, staleAfter: "2025-01", range: [4, 120], base: "INR per USD", freq: "annual" },
+    // index from ~4 (1953) beside y/y from about -12% (1970s deflation episodes) to +34% (1974)
+    { slug: "bis-cpi-long", dossier: "bis", cadence: 1, staleAfter: "2026-06", range: [-20, 400], base: "2010=100", freq: "monthly" },
+    { slug: "bis-cpi-long-annual", dossier: "bis", cadence: 12, staleAfter: "2025-01", range: [-20, 400], base: "2010=100", freq: "annual" },
+    // RBI HPI: three bases, never joined; city levels and derived y/y
+    { slug: "housing-rbi-2009", dossier: "rbihpi", cadence: 3, staleAfter: "2013-01", range: [50, 400], base: "2008-09=100" },
+    { slug: "housing-rbi-2010", dossier: "rbihpi", cadence: 3, staleAfter: "2025-01", range: [50, 600], base: "2010-11=100" },
+    { slug: "housing-rbi-2010-yoy", dossier: "rbihpi", cadence: 3, staleAfter: "2025-01", range: [-40, 80], base: "2010-11=100" },
+    { slug: "housing-rbi-2022", dossier: "rbihpi", cadence: 3, range: [50, 300], base: "2022-23=100" },
+    { slug: "housing-rbi-2022-yoy", dossier: "rbihpi", cadence: 3, range: [-40, 80], base: "2022-23=100" },
+    // RESIDEX: indices; prices in rupees per sq ft (Mumbai's large homes ~ 45,000) beside record counts
+    { slug: "housing-residex-2013", dossier: "residex", cadence: 3, staleAfter: "2018-01", range: [30, 400], base: "2012-13=100" },
+    { slug: "housing-residex-2018", dossier: "residex", cadence: 3, staleAfter: "2025-10", range: [30, 400], base: "2017-18=100" },
+    { slug: "housing-residex-2025", dossier: "residex", cadence: 3, range: [30, 400], base: "2024-25=100" },
+    { slug: "housing-residex-prices-2013", dossier: "residex", cadence: 3, staleAfter: "2018-01", range: [0, 2e6], base: "2012-13=100" },
+    { slug: "housing-residex-prices-2018", dossier: "residex", cadence: 3, staleAfter: "2025-10", range: [0, 2e6], base: "2017-18=100" },
+    { slug: "housing-residex-prices-2025", dossier: "residex", cadence: 3, range: [0, 2e6], base: "2024-25=100" },
+  ];
+  for (const p of BIS_ROWS) {
+    if (!fs.existsSync(path.join(ROOT, "data/series", p.slug + ".json"))) { fail(`${p.slug}: data/series/${p.slug}.json missing`); continue; }
+    const b = load(p.slug);
+    checkMeta(b, p.slug, p.dossier, p.base, p.freq);
+    checkFreshness(b, p.slug, p, p.dossier);
+    if (!p.noCadence) checkCadence(b.dates, p.cadence, p.slug);
+    else for (let i = 1; i < b.dates.length; i++) if (b.dates[i] <= b.dates[i - 1]) fail(`${p.slug}: dates not ascending at ${b.dates[i]}`);
+    checkRange(b, p.range[0], p.range[1], p.slug, p.seriesRange);
+    console.log(`  ${p.slug}: ${b.dates.length} pts, ${b.dates[0]} .. ${b.dates.at(-1)}, vintage ${b.meta.vintage}`);
+  }
+  // peers: one economy per bundle, geo from the adapter's table
+  for (const [area, [iso3]] of Object.entries(PEERS)) {
+    const slug = `bis-peer-${iso3.toLowerCase()}`;
+    if (!fs.existsSync(path.join(ROOT, "data/series", slug + ".json"))) { fail(`${slug}: missing`); continue; }
+    const b = load(slug);
+    if (b.meta.geo !== iso3) fail(`${slug}: meta.geo "${b.meta.geo}" != ${iso3} (BIS area ${area})`);
+    checkFreshness(b, slug, { staleAfter: "2026-01" }, "bis");
+    checkCadence(b.dates, 3, slug);
+    // Japan's total non-financial credit reached 401.9% of GDP (2022); Turkey's real house prices swing by tens of per cent
+    checkRange(b, -100, 500, slug);
+  }
+  ok(`bis peers: ${Object.keys(PEERS).length} economies, one bundle each`);
+
+  // identities
+  withBundle("bis-credit-gap", (b) => {
+    let worst = 0;
+    b.dates.forEach((d, i) => { const [r, t, g] = ["ratio", "trend", "gap"].map((k) => b.series[k].data[i]); if (r != null && t != null && g != null) worst = Math.max(worst, Math.abs(r - t - g)); });
+    if (worst > 0.15) fail(`bis-credit-gap: gap != ratio - trend by ${worst.toFixed(2)} pt`); else ok(`bis-credit-gap: gap = ratio - trend (worst ${worst.toFixed(2)} pt, rounding)`);
+  });
+  withBundle("bis-credit", (b) => withBundle("bis-credit-gap", (g) => {
+    const S = b.series; let w1 = 0, w2 = 0, w3 = 0;
+    b.dates.forEach((d, i) => {
+      const [t, p, gv, h, c] = ["total", "private", "government", "households", "companies"].map((k) => S[k].data[i]);
+      if (t != null && p != null && gv != null) w1 = Math.max(w1, Math.abs(t - p - gv));
+      // BIS break-adjusts households and companies separately from the private total; they
+      // reconcile only from 2012 (before that the parts exceed the whole by up to 8.4 pt, disclosed)
+      if (d >= "2012-01-01" && p != null && h != null && c != null) w2 = Math.max(w2, Math.abs(p - h - c));
+      const j = g.dates.indexOf(d), gr = j >= 0 ? g.series.ratio.data[j] : null;
+      if (gr != null && p != null) w3 = Math.max(w3, Math.abs(gr - p));
+    });
+    if (w1 > 0.25) fail(`bis-credit: total != private + government by ${w1.toFixed(2)} pt`); else ok(`bis-credit: total = private + government (worst ${w1.toFixed(2)} pt)`);
+    if (w2 > 0.25) fail(`bis-credit: private != households + companies by ${w2.toFixed(2)} pt from 2012`); else ok(`bis-credit: private = households + companies from 2012 (worst ${w2.toFixed(2)} pt)`);
+    if (w3 > 0.15) fail(`bis-credit: private credit != credit-gap ratio by ${w3.toFixed(2)} pt`); else ok(`bis-credit: private credit equals the credit-gap ratio (worst ${w3.toFixed(2)} pt)`);
+  }));
+  // BIS's India extrapolation (series.estimated): in every estimated quarter households/private and
+  // banks/private equal their last measured ratio, which is what the adapter's detection claims
+  withBundle("bis-credit-inr", (b) => {
+    const S = b.series, est = new Set(S.households.estimated ?? []);
+    if (!est.size) return ok("bis-credit-inr: no BIS-estimated quarters this vintage");
+    const j0 = b.dates.findIndex((d) => est.has(d)) - 1;
+    let w = 0;
+    for (const k of ["households", "companies", "private_banks"]) {
+      const r0 = S[k].data[j0] / S.private.data[j0];
+      b.dates.forEach((d, i) => { if (est.has(d)) w = Math.max(w, Math.abs(S[k].data[i] / S.private.data[i] - r0) / r0); });
+      if (JSON.stringify(S[k].estimated) !== JSON.stringify(S.households.estimated)) fail(`bis-credit-inr.${k}: estimated dates differ from households'`);
+    }
+    if (w > 1e-5) fail(`bis-credit-inr: estimated quarters do not hold the last measured split (worst ${w})`); else ok(`bis-credit-inr: ${est.size} BIS-estimated quarters hold the ${b.dates[j0].slice(0, 7)} split`);
+  });
+  withBundle("bis-property", (b) => {
+    let w = 0;
+    for (const k of ["nominal", "real"]) b.dates.forEach((d, i) => { const a = b.series[k].data[i], z = b.series[k].data[i - 4], y = b.series[k + "_yoy"].data[i]; if (i >= 4 && a != null && z != null && y != null) w = Math.max(w, Math.abs((a / z - 1) * 100 - y)); });
+    if (w > 0.1) fail(`bis-property: published y/y deviates ${w.toFixed(3)} pt from the index`); else ok(`bis-property: published y/y matches the index (worst ${w.toFixed(3)} pt)`);
+  });
+  for (const base of ["2010", "2022"]) withBundle(`housing-rbi-${base}`, (b) => withBundle(`housing-rbi-${base}-yoy`, (y) => {
+    let w = 0;
+    for (const [k, s] of Object.entries(y.series)) y.dates.forEach((d, i) => { const j = b.dates.indexOf(d), v = s.data[i]; if (v == null) return; const a = b.series[k].data[j], z = b.series[k].data[j - 4]; w = Math.max(w, Math.abs((a / z - 1) * 100 - v)); });
+    if (w > 0.01) fail(`housing-rbi-${base}-yoy: derived y/y deviates from the index by ${w}`); else ok(`housing-rbi-${base}-yoy: y/y recomputes from the index`);
+    // the base year averages 100 for every city (2010-11 and 2022-23: four fiscal quarters)
+    const fy = base === "2010" ? ["2010-04-01", "2010-07-01", "2010-10-01", "2011-01-01"] : ["2022-04-01", "2022-07-01", "2022-10-01", "2023-01-01"];
+    let wb = 0;
+    for (const s of Object.values(b.series)) { const v = fy.map((d) => s.data[b.dates.indexOf(d)]); if (v.every((x) => x != null)) wb = Math.max(wb, Math.abs(v.reduce((a, c) => a + c, 0) / 4 - 100)); }
+    if (wb > 0.5) fail(`housing-rbi-${base}: base-year average is ${wb.toFixed(2)} away from 100`); else ok(`housing-rbi-${base}: every city averages 100 over the base year (worst ${wb.toFixed(2)})`);
+  }));
+  // RESIDEX: the four-quarter moving average (keys without suffix) tracks the mean of the four
+  // single quarters (_q). NHB averages prices weighted by records, so small cities drift by
+  // several points; the all-India index stays within a point (0.16 on 2024-25; up to 1.0 on the older bases, which NHB rounds to whole numbers).
+  for (const t of ["2013", "2018", "2025"]) withBundle(`housing-residex-${t}`, (b) => {
+    const a = b.series.india_hfc.data, q = b.series.india_hfc_q.data; let w = 0;
+    for (let i = 3; i < a.length; i++) if (a[i] != null && q.slice(i - 3, i + 1).every((v) => v != null)) w = Math.max(w, Math.abs(a[i] - q.slice(i - 3, i + 1).reduce((x, y) => x + y, 0) / 4));
+    if (w > 1.5) fail(`housing-residex-${t}: India moving average is ${w.toFixed(2)} from the mean of its four quarters`); else ok(`housing-residex-${t}: India moving average tracks its four quarters (worst ${w.toFixed(2)})`);
+  });
 }
 
 if (failures) { console.error(`\n${failures} validation failure(s)`); process.exit(1); }

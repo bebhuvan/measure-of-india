@@ -1,0 +1,16 @@
+# Coverage ledger: RBI house price index by city (DBIE report 688), three bases.
+family: bis-rbihpi
+guides: [housing]
+catalogue: data/coverage/bis-rbihpi.catalogue.json
+rules:
+  - match: "rbihpi:2022-23:*"
+    status: shown
+    bundle: [housing-rbi-2022, housing-rbi-2022-yoy]
+    plate: "housing §03 Eighteen cities since 2022-23 (cb-cities)"
+  - match: "rbihpi:2010-11:*"
+    status: shown
+    bundle: [housing-rbi-2010, housing-rbi-2010-yoy]
+    plate: "housing §03 Fifteen years, ten cities (cb-cities10)"
+  - match: "rbihpi:2008-09:*"
+    status: baked
+    bundle: housing-rbi-2009

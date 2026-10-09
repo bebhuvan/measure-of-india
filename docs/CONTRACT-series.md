@@ -50,7 +50,11 @@ disagree, file a bug — one of them is wrong.
    an estimator (linear interpolation, imputation) is data — it stays in
    `data`, never becomes `null` — but its date must be listed in that
    series' `estimated`. validate checks each estimated date: on the axis,
-   non-null, interior to the series' own span, never also a gap.
+   non-null, never also a gap, and either interior to the series' own span
+   (an interpolation) or part of one unbroken run of estimates that ends the
+   series (an agency's extrapolation of its latest periods, such as BIS's
+   India credit after the last financial-accounts quarter). Say how the
+   estimate was made in the series' `estimatedNote`.
 3. **One bundle, one instrument.** A base-year change, methodology revision,
    or coverage break starts a NEW bundle (`cpi.json` → `cpi-2024.json`).
    Never splice. Pages may show both, labelled as different rulers. Every base

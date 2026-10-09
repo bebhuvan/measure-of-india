@@ -84,8 +84,10 @@ for (const [k, s] of Object.entries(bundle.series)) {
   const L = data.at(-1).value, P = data.at(-2).value;
   const yIdx = data.length - 1 - lag;
   const Y = yIdx >= 0 ? data.at(-1 - lag).value : null;   // young series (e.g. CPI base 2024) have no same-base year-ago yet
-  const min = data.reduce((a, d) => (d.value < a.value ? d : a));
-  const max = data.reduce((a, d) => (d.value > a.value ? d : a));
+  // published points only: a series may start after the bundle's axis (leading nulls)
+  const pub = data.filter((d) => d.value != null);
+  const min = pub.reduce((a, d) => (d.value < a.value ? d : a));
+  const max = pub.reduce((a, d) => (d.value > a.value ? d : a));
   // Level-based series (ASI counts, ₹ lakh; HCES ₹) need growth rates derived
   // from levels — the raw deltaVsPrev is an absolute change, not a rate. The
   // pipeline's rate-based streaks (below2/above6) are meaningless for levels,
@@ -107,9 +109,15 @@ for (const [k, s] of Object.entries(bundle.series)) {
     const startIdx = vals.length - 1 - run.length;
     run.since = startIdx >= 0 ? periodLabel(data[startIdx].date) : periodLabel(data[0].date) + " (series start)";
   }
+  // estimated points (CONTRACT-series 2b): the writer must know which readings are an
+  // estimator's, and what the last measured reading was (BIS extrapolates India's credit)
+  const estSet = new Set(s.estimated ?? []);
+  const lastMeasured = [...data].reverse().find((d) => d.value != null && !estSet.has(d.date));
   const entry = {
     label: s.label,
     ruler: facts.ruler.base == null ? bundleSlug : `${facts.ruler.base}, ${bundleSlug}`,
+    estimated: estSet.size ? { from: periodLabel(s.estimated[0]), periods: estSet.size, latestIsEstimate: estSet.has(data.at(-1).date),
+      lastMeasured: lastMeasured ? { value: lastMeasured.value, period: periodLabel(lastMeasured.date) } : null, note: s.estimatedNote ?? null } : null,
     levelBased,
     latest: { value: L, period: periodLabel(data.at(-1).date) },
     previous: { value: P, period: periodLabel(data.at(-2).date) },
@@ -216,6 +224,27 @@ if (slug === "gdp") {
     for (let i = data.length - 2; i >= 0; i--) if (data[i] > L) return { value: data[i], period: periodLabel(bundle.dates[i]) };
     return null;
   })();
+}
+
+// bis family session: the comparison economies (one bundle each, bis-peer-<iso3>). India's
+// position among them is a fact the writer may cite; computed here so verify can trace it.
+if (slug === "debt" || slug === "housing") {
+  const peersDir = fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => /^bis-peer-[a-z]{3}\.json$/.test(f));
+  const rows = peersDir.map((f) => { const b = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", f), "utf8")); const name = b.meta.coverage.split(":")[0];
+    const lastV = (k) => { const s = b.series[k]; if (!s) return null; for (let i = s.data.length - 1; i >= 0; i--) if (s.data[i] != null) return { value: s.data[i], period: periodLabel(b.dates[i]) }; return null; };
+    return { name, households: lastV("households"), companies: lastV("companies"), government: lastV("government"), dsr: lastV("dsr"), credit_gap: lastV("credit_gap"), real_house_prices_yoy: lastV("real_house_prices_yoy") }; });
+  const india = slug === "debt" ? {
+    households: facts.series.households.latest, companies: facts.series.companies.latest, government: facts.series.government.latest,
+    dsr: { value: JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/bis-dsr.json"), "utf8")).series.private.data.at(-1) },
+    credit_gap: { value: JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/bis-credit-gap.json"), "utf8")).series.gap.data.at(-1) },
+  } : { real_house_prices_yoy: facts.series.real_yoy.latest };
+  const rank = (k) => { const xs = [{ name: "India", v: india[k]?.value }, ...rows.map((r) => ({ name: r.name, v: r[k]?.value }))].filter((x) => x.v != null).sort((a, b) => b.v - a.v);
+    return { measure: k, indiaRank: xs.findIndex((x) => x.name === "India") + 1, of: xs.length, highest: { name: xs[0].name, value: xs[0].v }, lowest: { name: xs.at(-1).name, value: xs.at(-1).v } }; };
+  facts.peers = {
+    note: "Latest quarter BIS publishes for each economy; rank 1 = highest. Same BIS definitions as India's series.",
+    rankings: (slug === "debt" ? ["households", "companies", "government", "dsr", "credit_gap"] : ["real_house_prices_yoy"]).map(rank),
+    china: rows.find((r) => r.name === "China"), unitedStates: rows.find((r) => r.name === "United States"),
+  };
 }
 
 // the writer's window on the SIBLING bundles (registry `proseInputs`): the
