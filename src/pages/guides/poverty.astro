@@ -3,6 +3,7 @@ import fs from "node:fs";
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
 import GuideData from "../../components/GuideData.astro";
+import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["poverty"];
@@ -338,7 +339,7 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
 
   <!-- § 09 every cut: every series of the PIP spell bundles, the lineup and poverty-wdi, as tables built at render time -->
   <section>
-    <div class="sec-head"><span class="no">09</span><h2>Every cut</h2><span class="line"></span><span class="unit">All the figures behind this guide</span></div>
+    <div class="sec-head"><span class="no">09</span><h2>The record, in tables</h2><span class="line"></span><span class="unit">Every figure behind this guide, laid out to compare</span></div>
     <div class="prose">
       <p>Every measure PIP publishes for India, at every survey; the World Bank's estimates for every year; and every poverty and distribution series in the World Development Indicators. All of it downloads below.</p>
     </div>
@@ -387,6 +388,7 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
     </ul>
   </section>
 
+  <EveryCut slug="poverty" />
   <GuideData slug="poverty" />
 
   <footer class="provenance">

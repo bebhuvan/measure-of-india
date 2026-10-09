@@ -418,7 +418,7 @@ export const DOSSIERS = [
     prose: true,
     proseInputs: [],   // the lineup and older spells are other rulers: facts.mjs keeps them out of the sheet
     register: { id: "reg-poverty", label: "Poverty", unit: "Survey years, World Bank PIP, 2021 PPP", historyCol: "Lineup, 1981 to 2023", latestCol: "2023-24", agoCol: "2022-23" },
-    bundles: ["poverty-pip-2022", "poverty-pip-2011", "poverty-pip-1993", "poverty-pip-1987", "poverty-pip-1983", "poverty-pip-1977", "poverty-pip-lineup", "poverty-wdi", "hces-mpce", "hces-fractiles"],
+    bundles: ["poverty-pip-2022", "poverty-pip-2011", "poverty-pip-1993", "poverty-pip-1987", "poverty-pip-1983", "poverty-pip-1977", "poverty-pip-lineup", "poverty-wdi"],
   },
   {
     slug: "population",

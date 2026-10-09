@@ -1321,7 +1321,7 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
     checkMeta(b, slug, "population");
     checkFreshness(b, slug, {}, "population");
     checkCadence(b.dates, 12, slug);
-    const sr = Object.fromEntries(Object.entries(b.series).map(([k, s]) => [k, { thousand: [-1e5, 3e6], pct: [-10, 100], per_1000: [-60, 1000], years: [0, 120], per_woman: [0, 10], ratio: [0, 250], per_sq_km: [0, 1000], per_100: [0, 200], doubling_years: [0, 10000], billion: [0, 3], crore: [0, 300] }[s.unit] ?? (fail(`${slug}.${k}: unit "${s.unit}" has no range`), [0, 0])]));
+    const sr = Object.fromEntries(Object.entries(b.series).map(([k, s]) => [k, { thousand: [-1e5, 3e6], pct: [-10, 100], per_1000: [-60, 1000], years: [0, 120], per_woman: [0, 10], males_per_100_females: [0, 250], per_sq_km: [0, 1000], per_100: [0, 200], doubling_years: [0, 10000], billion: [0, 3], crore: [0, 300] }[s.unit] ?? (fail(`${slug}.${k}: unit "${s.unit}" has no range`), [0, 0])]));
     checkRange(b, 0, 0, slug, sr);
   }
   withBundle("population-wpp", (e) => withBundle("population-wpp-projection", (p) => {
@@ -1363,7 +1363,7 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
     }
   });
   // PIP: one bundle per comparable spell, registered as a base in seams
-  const PR = { pct: [0, 100], ppp_usd_day: [0, 200], index_0_100: [0, 100], index: [0, 5], ratio: [0, 50], inr_per_ppp_usd: [1, 100], persons: [1e8, 2e9], million_persons: [0, 2000], inr_day: [0, 10000] };
+  const PR = { pct: [0, 100], ppp_usd_day: [0, 200], gini_index: [0, 100], coefficient: [0, 5], multiple: [0, 50], inr_per_ppp_usd: [1, 100], count: [1e8, 2e9], million_persons: [0, 2000], inr_day: [0, 10000] };
   for (const slug of pipB) {
     const b = load(slug);
     checkMeta(b, slug, "poverty", b.meta.base, b.meta.frequency);

@@ -116,9 +116,9 @@ function lineChart(el, { series, yDomain, yTicks, yFmt, yLabel, x0, x1, xStep = 
   const v = (k) => pts(varB, k);
   const lo95 = v("tpopulation1july__lower_95_pi"), hi95 = v("tpopulation1july__upper_95_pi");
   const lo80 = v("tpopulation1july__lower_80_pi"), hi80 = v("tpopulation1july__upper_80_pi");
-  const band = (lo, hi) => [{ date: Y(estN), lo: popL.value / 1e6, hi: popL.value / 1e6 }, ...lo.map((p, i) => ({ date: p.date, lo: p.value / 1e6, hi: hi[i].value / 1e6 }))];
+  const band = (lo, hi) => lo.map((p, i) => ({ date: p.date, lo: p.value / 1e6, hi: hi[i].value / 1e6 }));
   const E = popE.map((p) => ({ ...p, value: p.value / 1e6 }));
-  const P = [{ date: Y(estN), value: popL.value / 1e6 }, ...popP.map((p) => ({ ...p, value: p.value / 1e6 }))];
+  const P = popP.map((p) => ({ ...p, value: p.value / 1e6 }));   // the projection alone: never joined to the estimates
   const pk = { date: popPeak.date, value: popPeak.value / 1e6 };
   const plot = lineChart("plot-curve", {
     x0: est0, x1: projN, yDomain: [0, 2.4], yTicks: [0, 0.4, 0.8, 1.2, 1.6, 2.0, 2.4], yFmt: (x) => x.toFixed(1), yLabel: "people, billion", height: 500, mr: 200,
@@ -137,7 +137,7 @@ function lineChart(el, { series, yDomain, yTicks, yFmt, yLabel, x0, x1, xStep = 
     ],
   });
   a11y(plot, "India's population, 1950 to 2100", `UN estimates rise from ${bn2(popE[0].value)} in ${est0} to ${bn2(popL.value)} in ${estN}; the medium projection peaks at ${bn2(popPeak.value)} in ${popPeak.year} and falls to ${bn2(popP.at(-1).value)} by ${projN}.`);
-  addCrosshair(document.getElementById("plot-curve"), plot, [{ data: [...E, ...P.slice(1)], label: "Population", color: ACC }], null, yearFmt, (x) => (x == null ? "—" : x.toFixed(3) + " bn"));
+  addCrosshair(document.getElementById("plot-curve"), plot, [{ data: [...E, ...P], label: "Population", color: ACC }], null, yearFmt, (x) => (x == null ? "—" : x.toFixed(3) + " bn"));
   setHTML("pv-curve", `${popPeak.year}`);
   setHTML("ex-cu-peak", bn2(popPeak.value));
   setHTML("ex-cu-peakyr", String(popPeak.year));
@@ -198,7 +198,7 @@ function lineChart(el, { series, yDomain, yTicks, yFmt, yLabel, x0, x1, xStep = 
 
 /* ---------- § 03 median age ---------- */
 {
-  const E = pts(estB, "medianagepop"), P = [E.at(-1), ...pts(projB, "medianagepop")];
+  const E = pts(estB, "medianagepop"), P = [...pts(projB, "medianagepop")];
   const lowE = low(E);
   const plot = lineChart("plot-median", {
     x0: est0, x1: projN, yDomain: [0, 50], yTicks: [0, 10, 20, 30, 40, 50], yFmt: (x) => String(x), yLabel: "median age, years", height: 380,
@@ -209,17 +209,17 @@ function lineChart(el, { series, yDomain, yTicks, yFmt, yLabel, x0, x1, xStep = 
     ],
   });
   a11y(plot, "Median age of India's population, 1950 to 2100", `Half of Indians were younger than ${f1(lowE.value)} in ${lowE.year} and ${f1(E.at(-1).value)} in ${estN}; the UN projects ${f1(P.at(-1).value)} by ${projN}.`);
-  addCrosshair(document.getElementById("plot-median"), plot, [{ data: [...E, ...P.slice(1)], label: "Median age", color: ACC }], null, yearFmt, (x) => (x == null ? "—" : x.toFixed(1) + " years"));
+  addCrosshair(document.getElementById("plot-median"), plot, [{ data: [...E, ...P], label: "Median age", color: ACC }], null, yearFmt, (x) => (x == null ? "—" : x.toFixed(1) + " years"));
   setHTML("pv-median", f1(E.at(-1).value) + " years");
   setHTML("ex-md-low", f1(lowE.value));
   setHTML("ex-md-lowyr", String(lowE.year));
   setHTML("ex-md-2100", f1(P.at(-1).value));
-  wirePlate("cb-median", plot, "india-atlas_median-age", csvOf(["year", "kind", "median_age_years"], [...E.map((p) => [p.year, "estimate", p.value]), ...P.slice(1).map((p) => [p.year, "projection (medium)", p.value])]));
+  wirePlate("cb-median", plot, "india-atlas_median-age", csvOf(["year", "kind", "median_age_years"], [...E.map((p) => [p.year, "estimate", p.value]), ...P.map((p) => [p.year, "projection (medium)", p.value])]));
 }
 
 /* ---------- § 04 the working-age window ---------- */
 {
-  const E = pts(ageB, "share_15_64"), P = [E.at(-1), ...pts(ageProjB, "share_15_64")];
+  const E = pts(ageB, "share_15_64"), P = [...pts(ageProjB, "share_15_64")];
   const plot = lineChart("plot-window", {
     x0: est0, x1: projN, yDomain: [50, 75], yTicks: [50, 55, 60, 65, 70, 75], yFmt: (x) => x + (x === 75 ? "%" : ""), yLabel: "share of the population aged 15 to 64, per cent", height: 420,
     series: [{ data: P, color: ACC, width: 1.75, dash: "5 4", endLabel: `${projN}: ${f1(P.at(-1).value)}%` }, { data: E, color: ACC, width: 2.25 }],
@@ -230,7 +230,7 @@ function lineChart(el, { series, yDomain, yTicks, yFmt, yLabel, x0, x1, xStep = 
     ],
   });
   a11y(plot, "Working-age share of India's population, 1950 to 2100", `People aged 15 to 64 were ${f1(E.at(-1).value)}% of Indians in ${estN}; the UN projects the share to peak at ${f1(waPeak.value)}% in ${waPeak.year}.`);
-  addCrosshair(document.getElementById("plot-window"), plot, [{ data: [...E, ...P.slice(1)], label: "Aged 15 to 64", color: ACC }], null, yearFmt, (x) => (x == null ? "—" : x.toFixed(1) + "%"));
+  addCrosshair(document.getElementById("plot-window"), plot, [{ data: [...E, ...P], label: "Aged 15 to 64", color: ACC }], null, yearFmt, (x) => (x == null ? "—" : x.toFixed(1) + "%"));
   const n = [...pts(ageB, "working_age"), ...pts(ageProjB, "working_age")], nPk = peak(n);
   setHTML("pv-window", String(waPeak.year));
   setHTML("ex-wi-now", f1(E.at(-1).value) + "%");
@@ -239,12 +239,12 @@ function lineChart(el, { series, yDomain, yTicks, yFmt, yLabel, x0, x1, xStep = 
   setHTML("ex-wi-npk", crore(nPk.value));
   setHTML("ex-wi-npkyr", String(nPk.year));
   setHTML("ex-wi-nnow", crore(n.find((p) => p.year === estN).value));
-  wirePlate("cb-window", plot, "india-atlas_working-age-share", csvOf(["year", "kind", "share_15_64_pct", "aged_15_64_thousands"], [...E.map((p) => [p.year, "estimate", p.value, at(ageB, "working_age", p.year)]), ...P.slice(1).map((p) => [p.year, "projection (medium)", p.value, at(ageProjB, "working_age", p.year)])]));
+  wirePlate("cb-window", plot, "india-atlas_working-age-share", csvOf(["year", "kind", "share_15_64_pct", "aged_15_64_thousands"], [...E.map((p) => [p.year, "estimate", p.value, at(ageB, "working_age", p.year)]), ...P.map((p) => [p.year, "projection (medium)", p.value, at(ageProjB, "working_age", p.year)])]));
 }
 
 /* ---------- § 04 dependency ratios ---------- */
 {
-  const s = (k) => ({ E: pts(ageB, k), P: [pts(ageB, k).at(-1), ...pts(ageProjB, k)] });
+  const s = (k) => ({ E: pts(ageB, k), P: [...pts(ageProjB, k)] });
   const yg = s("dependency_young"), od = s("dependency_old");
   const cross = od.P.find((p) => p.value > yg.P.find((q) => q.year === p.year).value);
   const plot = lineChart("plot-dependency", {
@@ -259,7 +259,7 @@ function lineChart(el, { series, yDomain, yTicks, yFmt, yLabel, x0, x1, xStep = 
     notes: cross ? [{ ...cross, text: "", dot: true, color: GOLD }, { date: cross.date, value: 8, text: `More old than young from ${cross.year}`, dy: 0, fill: INK }] : [],
   });
   a11y(plot, "Young and old dependency ratios, 1950 to 2100", `In ${estN} there were ${f1(yg.E.at(-1).value)} children and ${f1(od.E.at(-1).value)} people aged 65 or more for every 100 of working age.`);
-  addCrosshair(document.getElementById("plot-dependency"), plot, [{ data: [...yg.E, ...yg.P.slice(1)], label: "Children 0-14", color: ACC }, { data: [...od.E, ...od.P.slice(1)], label: "Aged 65+", color: GOLD }], null, yearFmt, (x) => (x == null ? "—" : x.toFixed(1)));
+  addCrosshair(document.getElementById("plot-dependency"), plot, [{ data: [...yg.E, ...yg.P], label: "Children 0-14", color: ACC }, { data: [...od.E, ...od.P], label: "Aged 65+", color: GOLD }], null, yearFmt, (x) => (x == null ? "—" : x.toFixed(1)));
   setHTML("pv-dependency", f1(at(ageB, "dependency_total", estN)));
   setHTML("ex-de-young", f1(yg.E.at(-1).value));
   setHTML("ex-de-old", f1(od.E.at(-1).value));
@@ -274,7 +274,7 @@ function lineChart(el, { series, yDomain, yTicks, yFmt, yLabel, x0, x1, xStep = 
 
 /* ---------- § 05 fewer children ---------- */
 {
-  const E = pts(estB, "tfr"), P = [E.at(-1), ...pts(projB, "tfr")];
+  const E = pts(estB, "tfr"), P = [...pts(projB, "tfr")];
   const plot = lineChart("plot-tfr", {
     x0: est0, x1: projN, yDomain: [0, 6], yTicks: [0, 1, 2, 3, 4, 5, 6], yFmt: (x) => String(x), yLabel: "children per woman (total fertility rate)", height: 420,
     rules: [{ y: 2.1 }],
@@ -286,17 +286,17 @@ function lineChart(el, { series, yDomain, yTicks, yFmt, yLabel, x0, x1, xStep = 
     ],
   });
   a11y(plot, "Total fertility rate, 1950 to 2100", `An Indian woman would have ${f2(E[0].value)} children over her life at ${E[0].year} rates and ${f2(E.at(-1).value)} at ${estN} rates; below replacement since ${tfrBelow.year}.`);
-  addCrosshair(document.getElementById("plot-tfr"), plot, [{ data: [...E, ...P.slice(1)], label: "Fertility rate", color: ACC }], null, yearFmt, (x) => (x == null ? "—" : x.toFixed(2)));
+  addCrosshair(document.getElementById("plot-tfr"), plot, [{ data: [...E, ...P], label: "Fertility rate", color: ACC }], null, yearFmt, (x) => (x == null ? "—" : x.toFixed(2)));
   setHTML("pv-tfr", f2(E.at(-1).value));
   setHTML("ex-tf-1950", f2(E[0].value));
   setHTML("ex-tf-now", f2(E.at(-1).value));
   setHTML("ex-tf-yr", String(tfrBelow.year));
   setHTML("ex-tf-2100", f2(P.at(-1).value));
-  wirePlate("cb-tfr", plot, "india-atlas_fertility-rate", csvOf(["year", "kind", "tfr"], [...E.map((p) => [p.year, "estimate", p.value]), ...P.slice(1).map((p) => [p.year, "projection (medium)", p.value])]));
+  wirePlate("cb-tfr", plot, "india-atlas_fertility-rate", csvOf(["year", "kind", "tfr"], [...E.map((p) => [p.year, "estimate", p.value]), ...P.map((p) => [p.year, "projection (medium)", p.value])]));
 }
 {
   const bE = pts(estB, "births", 1e-3), dE = pts(estB, "deaths", 1e-3);
-  const bP = [bE.at(-1), ...pts(projB, "births", 1e-3)], dP = [dE.at(-1), ...pts(projB, "deaths", 1e-3)];
+  const bP = [...pts(projB, "births", 1e-3)], dP = [...pts(projB, "deaths", 1e-3)];
   const bPk = peak(bE);
   const cross = bP.find((p, i) => dP[i] && dP[i].value > p.value);
   const plot = lineChart("plot-births", {
@@ -313,7 +313,7 @@ function lineChart(el, { series, yDomain, yTicks, yFmt, yLabel, x0, x1, xStep = 
     ],
   });
   a11y(plot, "Births and deaths a year, 1950 to 2100", `Births peaked at ${f1(bPk.value)} million in ${bPk.year}; ${f1(bE.at(-1).value)} million in ${estN} against ${f1(dE.at(-1).value)} million deaths.`);
-  addCrosshair(document.getElementById("plot-births"), plot, [{ data: [...bE, ...bP.slice(1)], label: "Births", color: ACC }, { data: [...dE, ...dP.slice(1)], label: "Deaths", color: G1 }], null, yearFmt, (x) => (x == null ? "—" : x.toFixed(1) + " mn"));
+  addCrosshair(document.getElementById("plot-births"), plot, [{ data: [...bE, ...bP], label: "Births", color: ACC }, { data: [...dE, ...dP], label: "Deaths", color: G1 }], null, yearFmt, (x) => (x == null ? "—" : x.toFixed(1) + " mn"));
   setHTML("pv-births", f1(bE.at(-1).value) + " mn");
   setHTML("ex-bi-pk", f1(bPk.value) + " million");
   setHTML("ex-bi-pkyr", String(bPk.year));
@@ -327,7 +327,7 @@ function lineChart(el, { series, yDomain, yTicks, yFmt, yLabel, x0, x1, xStep = 
 /* ---------- § 06 longer lives ---------- */
 {
   const m = pts(estB, "lexmale"), f = pts(estB, "lexfemale");
-  const mP = [m.at(-1), ...pts(projB, "lexmale")], fP = [f.at(-1), ...pts(projB, "lexfemale")];
+  const mP = [...pts(projB, "lexmale")], fP = [...pts(projB, "lexfemale")];
   // the deepest one-year fall in the estimates (both sexes)
   const lx = pts(estB, "lex");
   let dip = null; for (let i = 1; i < lx.length; i++) { const d = lx[i].value - lx[i - 1].value; if (!dip || d < dip.d) dip = { d, at: lx[i], from: lx[i - 1] }; }
@@ -342,7 +342,7 @@ function lineChart(el, { series, yDomain, yTicks, yFmt, yLabel, x0, x1, xStep = 
     notes: [{ ...dip.at, value: m.find((p) => p.year === dip.at.year).value, text: `${dip.at.year}: the pandemic`, dy: 24, fill: MUTED }],
   });
   a11y(plot, "Life expectancy at birth by sex, 1950 to 2100", `Women ${f1(f.at(-1).value)} years, men ${f1(m.at(-1).value)} years at ${estN} death rates.`);
-  addCrosshair(document.getElementById("plot-life"), plot, [{ data: [...f, ...fP.slice(1)], label: "Women", color: ACC }, { data: [...m, ...mP.slice(1)], label: "Men", color: G1 }], null, yearFmt, (x) => (x == null ? "—" : x.toFixed(1) + " years"));
+  addCrosshair(document.getElementById("plot-life"), plot, [{ data: [...f, ...fP], label: "Women", color: ACC }, { data: [...m, ...mP], label: "Men", color: G1 }], null, yearFmt, (x) => (x == null ? "—" : x.toFixed(1) + " years"));
   setHTML("pv-life", f1(lx.at(-1).value) + " years");
   setHTML("ex-li-1950", f1(lx[0].value));
   setHTML("ex-li-now", f1(lx.at(-1).value));
@@ -365,7 +365,7 @@ function lineChart(el, { series, yDomain, yTicks, yFmt, yLabel, x0, x1, xStep = 
 const WUP_LAST = 2018;   // World Urbanization Prospects 2018: later years are its projections
 {
   const u = pts(urbB, "sp_urb_totl_in_zs");
-  const uE = u.filter((p) => p.year <= WUP_LAST), uP = u.filter((p) => p.year >= WUP_LAST);
+  const uE = u.filter((p) => p.year <= WUP_LAST), uP = u.filter((p) => p.year > WUP_LAST);
   const plot = lineChart("plot-urban", {
     x0: yearOf(urbB.dates[0]), x1: yearOf(urbB.dates.at(-1)), xStep: 10, yDomain: [0, 50], yTicks: [0, 10, 20, 30, 40, 50], yFmt: (x) => x + (x === 50 ? "%" : ""), yLabel: "share of Indians living in urban areas, per cent", height: 400, mr: 200, estRule: false,
     series: [{ data: uP, color: ACC, width: 1.75, dash: "5 4", endLabel: `${uP.at(-1).year}: ${f1(uP.at(-1).value)}%` }, { data: uE, color: ACC, width: 2.25 }],

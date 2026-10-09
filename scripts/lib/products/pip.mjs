@@ -45,15 +45,15 @@ const LINE_FIELDS = { headcount: "Share of people below", poverty_gap: "Poverty 
 const FREE_FIELDS = {
   mean: ["Mean consumption per person a day, 2021 PPP $", "ppp_usd_day", false],
   median: ["Median consumption per person a day, 2021 PPP $", "ppp_usd_day", false],
-  gini: ["Gini index of consumption", "index_0_100", true],
-  mld: ["Mean log deviation (an inequality index)", "index", false],
-  polarization: ["Polarisation index", "index", false],
+  gini: ["Gini index of consumption", "gini_index", true],
+  mld: ["Mean log deviation (an inequality index)", "coefficient", false],
+  polarization: ["Polarisation index", "coefficient", false],
   spl: ["Societal poverty line, 2021 PPP $ a day", "ppp_usd_day", false],
   spr: ["Societal poverty rate", "pct", true],
-  pg: ["Prosperity gap: the average factor by which consumption falls short of the prosperity standard ($28 a day, 2021 PPP, as WDI states it)", "ratio", false],
+  pg: ["Prosperity gap: the average factor by which consumption falls short of the prosperity standard ($28 a day, 2021 PPP, as WDI states it)", "multiple", false],
   ppp: ["PPP conversion factor used (rupees per 2021 international $)", "inr_per_ppp_usd", false],
-  cpi: ["CPI relative to 2021 used by PIP (2021 = 1)", "ratio", false],
-  reporting_pop: ["Population the estimate refers to", "persons", false],
+  cpi: ["CPI relative to 2021 used by PIP (2021 = 1)", "multiple", false],
+  reporting_pop: ["Population the estimate refers to", "count", false],
 };
 for (let d = 1; d <= 10; d++) FREE_FIELDS["decile" + d] = [`Share of all consumption held by decile ${d} (${d === 1 ? "poorest" : d === 10 ? "richest" : "from the bottom"} tenth)`, "pct", true];
 
@@ -93,7 +93,7 @@ export async function buildPip(root, dcfg) {
     const at = (line, y, f) => raw.survey[lineKey(line)].find((r) => r.reporting_level === "national" && r.reporting_year === y)?.[f];
     for (const l of official) {
       for (const [f, lab] of Object.entries(LINE_FIELDS)) {
-        series[`${f}_${lineKey(l)}`] = { name: `${f}_${l.toFixed(2)}`, label: `${lab} $${l.toFixed(2)} a day (2021 PPP), per cent`, unit: f === "watts" ? "index" : "pct", color: "#878D99", data: years.map((y) => (f === "watts" ? at(l, y, f) : pct(at(l, y, f)))) };
+        series[`${f}_${lineKey(l)}`] = { name: `${f}_${l.toFixed(2)}`, label: `${lab} $${l.toFixed(2)} a day (2021 PPP), per cent`, unit: f === "watts" ? "coefficient" : "pct", color: "#878D99", data: years.map((y) => (f === "watts" ? at(l, y, f) : pct(at(l, y, f)))) };
       }
       series[`poor_${lineKey(l)}`] = { name: `poor_millions_${l.toFixed(2)}`, label: `People below $${l.toFixed(2)} a day, millions (derived: headcount x population)`, unit: "million_persons", color: "#878D99",
         data: years.map((y) => Math.round(at(l, y, "headcount") * at(l, y, "reporting_pop") / 1e4) / 100) };

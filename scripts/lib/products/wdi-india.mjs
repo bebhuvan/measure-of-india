@@ -61,10 +61,12 @@ export const itemId = (code) => "wdi:" + code.toLowerCase().replace(/\./g, ":");
 export function unitClass(name) {
   const n = name.toLowerCase();
   if (/annual %|annual growth|% change|growth \(%|, growth/.test(n)) return "pct_change";
-  if (/\(% of gdp\)|\(% of gni\)|% gdp\)|\(% of gdp,|% of gni\b/.test(n)) return "pct_gdp";
+  if (/\(% of gdp\)|% gdp\)|\(% of gdp,/.test(n)) return "pct_gdp";
   if (/\(%[^)]*\)|\(%\)| %\)|percent|\(% /.test(n)) return "pct";
   if (/index|score|rating|scale/.test(n)) return "index";
-  if (/us\$|lcu|\$|ppp/.test(n)) return "money";
+  if (/lcu/.test(n)) return "lcu";
+  if (/ppp|international \$/.test(n)) return "ppp_usd";
+  if (/us\$|\$/.test(n)) return "usd";
   if (/per 1,000|per 100,000|per 100 |per 1,000,000|per million/.test(n)) return "rate";
   return "level";
 }

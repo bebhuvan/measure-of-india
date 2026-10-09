@@ -3,6 +3,7 @@ import fs from "node:fs";
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
 import GuideData from "../../components/GuideData.astro";
+import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["population"];
@@ -499,7 +500,7 @@ const varB = B("population-wpp-variants");
 
   <!-- § 10 every cut: every series of population-wpp, population-wpp-age(-projection), population-wdi* in tables built at render time -->
   <section>
-    <div class="sec-head"><span class="no">10</span><h2>Every cut</h2><span class="line"></span><span class="unit">All the figures behind this guide</span></div>
+    <div class="sec-head"><span class="no">10</span><h2>The record, in tables</h2><span class="line"></span><span class="unit">Every figure behind this guide, laid out to compare</span></div>
     <div class="prose">
       <p>Every indicator the UN publishes for India in its standard tables, every age group by sex, and every population indicator the World Bank carries for India. All of it downloads below. Projection variants are in the data file <a href="/data/population-wpp-variants.csv">population-wpp-variants</a> ({Object.keys(varB.series).length} series).</p>
     </div>
@@ -548,6 +549,7 @@ const varB = B("population-wpp-variants");
     </ul>
   </section>
 
+  <EveryCut slug="population" />
   <GuideData slug="population" />
 
   <footer class="provenance">

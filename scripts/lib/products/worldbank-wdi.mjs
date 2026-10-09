@@ -37,6 +37,7 @@ export async function buildWorldbankWdi(root, dcfg, vintage) {
   const src = await wb("sources/2");
   const wdiVintage = src[0]?.lastupdated ?? vintage;
 
+  let newest = "";
   const raw = { vintage: wdiVintage, note: "World Development Indicators via World Bank API v2, country IND. One array per indicator code, as served (newest first).", indicators: {} };
   const bundles = {};
 
@@ -47,6 +48,9 @@ export async function buildWorldbankWdi(root, dcfg, vintage) {
     for (const [code, key] of Object.entries(bcfg.indicators)) {
       const rows = await wb(`country/IND/indicator/${code}`);
       raw.indicators[code] = rows;
+      // each indicator's envelope carries its own lastupdated; the source-level stamp
+      // (sources/2) lags indicator updates (2026-10-09: 07-13 vs 10-08), so the newest wins
+      if (rows.lastupdated && rows.lastupdated > newest) newest = rows.lastupdated;
       const m = new Map();
       for (const r of rows) {
         if (r.value == null) continue;
@@ -106,6 +110,10 @@ export async function buildWorldbankWdi(root, dcfg, vintage) {
     };
   }
 
+  if (newest > raw.vintage) {
+    raw.vintage = newest;
+    for (const b of Object.values(bundles)) b.meta.vintage = newest;
+  }
   writeRaw(root, "data/raw/wdi-ind-manufacturing.json", raw);
   for (const [slug, bundle] of Object.entries(bundles)) writeSeries(root, `data/series/${slug}.json`, bundle);
   return bundles;

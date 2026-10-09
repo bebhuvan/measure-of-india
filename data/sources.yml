@@ -1033,7 +1033,9 @@ dossiers:
       pct_gdp: [-500, 1000]
       pct_change: [-100, 100000]
       index: [-1e4, 1e7]
-      money: [-1e16, 1e17]
+      usd: [-1e16, 1e17]
+      lcu: [-1e17, 1e18]
+      ppp_usd: [-1e16, 1e17]
       rate: [0, 1e6]
       level: [-1e13, 1e13]
     fetch:
@@ -1112,6 +1114,33 @@ dossiers:
       defects:
         variants: ["Median PI", "Lower 80 PI", "Upper 80 PI", "Lower 95 PI", "Upper 95 PI"]
         columns: [LE15, LE15Male, LE15Female, LE65, LE65Male, LE65Female, LE80, LE80Male, LE80Female, Q5, Q0040, Q0040Male, Q0040Female, Q0060, Q0060Male, Q0060Female, Q1550, Q1550Male, Q1550Female, Q1560, Q1560Male, Q1560Female]
+  manufacturing:
+    # added 2026-10-09 by the worldbank family session (the guide never had an entry, so
+    # `npm run data` never refreshed it); values copied from its existing bundles' meta
+    stale_after: "2022-01"
+    family: worldbank
+    geo: IND
+    product: worldbank-wdi
+    frequency: annual
+    base: "n/a — WDI annual (levels in constant 2015 US$)"
+    release_calendar: "WDI updates several times a year, without a fixed calendar"
+    revision_policy: "WDI revises history freely as member countries rebase national accounts. meta.vintage is the WDI database lastupdated stamp, not the fetch date."
+    source_agency: "World Bank — World Development Indicators (national accounts via UNIDO/OECD; trade via UN Comtrade)"
+    release_url: https://databank.worldbank.org/source/world-development-indicators
+    fetch:
+      bundles:
+        wdi-manufacturing:
+          note: "Headline: manufacturing value added — share of GDP, industry context, constant-US$ level, annual growth. 1960–latest."
+          indicators: { NV.IND.MANF.ZS: mva_pct_gdp, NV.IND.TOTL.ZS: industry_pct_gdp, NV.IND.MANF.KD: mva_constant_usd, NV.IND.MANF.KD.ZG: mva_growth }
+        wdi-manufacturing-composition:
+          note: "UNIDO technology/skill decomposition of manufacturing value added. Shares sum to ~100. 1963–2023."
+          indicators: { NV.MNF.MTRN.ZS.UN: machinery_transport, NV.MNF.CHEM.ZS.UN: chemicals, NV.MNF.FBTO.ZS.UN: food_beverages_tobacco, NV.MNF.TXTL.ZS.UN: textiles_clothing, NV.MNF.OTHR.ZS.UN: other }
+        wdi-manufacturing-tech:
+          note: "Medium- and high-tech share of manufacturing value added (UNIDO). 1990–2022."
+          indicators: { NV.MNF.TECH.ZS.UN: medhi_tech_share }
+        wdi-manufacturing-exports:
+          note: "Manufactures' share of merchandise exports (UN Comtrade). 1962–2024."
+          indicators: { TX.VAL.MANF.ZS.UN: manufactures_share_of_exports }
   # --- end worldbank family block ---
 
 

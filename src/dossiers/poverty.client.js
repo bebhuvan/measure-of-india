@@ -15,7 +15,7 @@ import p1983 from "../../data/series/poverty-pip-1983.json";
 import p1977 from "../../data/series/poverty-pip-1977.json";
 import lineupB from "../../data/series/poverty-pip-lineup.json";
 import wdiB from "../../data/series/poverty-wdi.json";
-import { MONO as sans, a11y, addCrosshair, spark, downloadSVG, downloadPNG, saveBlob } from "../charts/plumbing.js";
+import { MONO as sans, a11y, addCrosshair, spark, downloadSVG, downloadPNG, saveBlob, seamMarks } from "../charts/plumbing.js";
 
 /* ---------- shared ---------- */
 const INK = "#161A22", GRID = "#F0F2F5", BASE = "#D3D7DE", MUTED = "#878D99";
@@ -140,11 +140,11 @@ setHTML("cr-round", roundOf(CUR, L));
     Plot.lineY(lineupIn, { x: "date", y: "v", stroke: ACC_SOFT, strokeWidth: 1.5 }),
     Plot.lineY(lineupNow, { x: "date", y: "v", stroke: ACC_SOFT, strokeWidth: 1.5, strokeDasharray: "4 3" }),
   ];
-  // join dots only within a comparable spell
-  for (const b of SPELLS) for (const [k, lab, col] of LINES) {
-    const d = b.dates.map((dd, i) => ({ date: Y(yearOf(dd)), value: b.series["headcount_" + k].data[i] }));
-    if (d.length > 1) marks.push(Plot.lineY(d, { x: "date", y: "value", stroke: col, strokeWidth: 2 }));
-  }
+  // each comparable spell is its own ruler (rule 1): seamMarks joins dots only within a spell;
+  // one marker names the latest redesign, where the record's biggest fall sits
+  const ruler = (b, field, color) => ({ color, width: 2, data: b.dates.map((dd, i) => ({ date: Y(yearOf(dd)), value: b.series[field].data[i] })) });
+  LINES.forEach(([k, lab, col], j) => marks.push(...seamMarks("side", SPELLS.map((b) => ruler(b, "headcount_" + k, col)),
+    j === 0 ? { at: Y(2022), text: "HCES redesigned", y: 66, anchor: "start" } : false)));
   marks.push(Plot.dot(pts, { x: "date", y: "value", fill: (d) => d.col, r: 4, stroke: "#fff", strokeWidth: 1.5 }));
   for (const [k, lab, col] of LINES) {
     const e = pts.filter((p) => p.line === lab).at(-1);
@@ -262,7 +262,7 @@ setHTML("cr-round", roundOf(CUR, L));
 {
   const rows = SURVEYS.map((s) => ({ ...s, g: v(s, "gini") }));
   const marks = [Plot.gridY([20, 25, 30, 35], { stroke: GRID }), Plot.ruleY([15], { stroke: BASE })];
-  for (const b of SPELLS) if (b.dates.length > 1) marks.push(Plot.lineY(b.dates.map((d, i) => ({ date: Y(yearOf(d)), g: b.series.gini.data[i] })), { x: "date", y: "g", stroke: ACC, strokeWidth: 2 }));
+  marks.push(...seamMarks("side", SPELLS.map((b) => ({ color: ACC, width: 2, data: b.dates.map((d, i) => ({ date: Y(yearOf(d)), value: b.series.gini.data[i] })) })), false));
   marks.push(Plot.dot(rows, { x: "date", y: "g", fill: ACC, r: 4.5, stroke: "#fff", strokeWidth: 1.5 }));
   marks.push(Plot.text(rows, { x: "date", y: "g", text: (r) => f1(r.g), dy: -12, fill: INK, fontSize: 12, fontWeight: (r) => (r === rows.at(-1) ? 600 : 400) }));
   const plot = Plot.plot({
