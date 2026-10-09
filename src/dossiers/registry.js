@@ -583,7 +583,9 @@ export const DOSSIERS = [
     statusNote: "Monthly temperature, records since 1901, projections to 2100",
     version: "v1.0",
     currentBundle: "climate-temp-monthly",
-    proseInputs: ["climate-temp-annual", "climate-rain-owid"],   // same instrument as the current bundle (ERA5, OWID); facts.mjs refuses mixed rulers
+    // same instrument as the current bundle (ERA5, OWID); facts.mjs refuses mixed rulers. The ERA5
+    // rain total runs above the IMD all-India figure readers know, so it stays out of the prose
+    proseInputs: ["climate-temp-annual"],
     calendar: "calendar",
     bands: null,
     // structural numbers the prose may cite: baseline years and the reference windows

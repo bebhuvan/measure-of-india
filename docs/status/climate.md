@@ -87,3 +87,20 @@ registry entries), `pipeline/slots.yml`, `pipeline/asof-manifest.json`, `pipelin
 (units, cuts, period labels). **`scripts/lib/net.mjs`**: two opt-in options (`markup` for XML
 listings, `encoding` for binary), defaults unchanged. Not touched: `src/dossiers/periods.js`
 (no period words needed; the page derives its periods from the bundles). `src/dossiers/register.client.js`: one appended block (three climate rows).
+
+## Follow-up (2026-10-09, after the first merge)
+
+- **Seasonal levels.** The prose had called a May-to-August fall in the monthly temperature
+  level a streak; that is the calendar. Fixed at the source: a series flag `seasonal: true`
+  (set by both adapters on monthly and seasonal levels of temperature, rain and burnt area,
+  never on anomalies) makes `pipeline/facts.mjs` drop month-on-month moves, runs, `last4`,
+  year-start and base-effect fields for that series, keeping same-month comparisons and
+  extremes. **Generic, small and marked**: any guide can set the flag; no other guide sets it.
+- `proseInputs` is now `climate-temp-annual` only: the ERA5 rain total (about 1,400 mm) runs
+  above the IMD all-India figure readers know (normal about 1,160 mm), so it stays out of the
+  prose. The page's rain plates use the station record and say how it differs from IMD.
+- Slot briefs: state the rank once; never describe the level rising or falling month to
+  month. Prose regenerated and re-read: every figure checks against the facts sheet.
+- New misreading on the page (no. 2): monthly temperature always falls into the monsoon;
+  watch the anomaly, not the level.
+- Size exclusion: unchanged, with the owner.

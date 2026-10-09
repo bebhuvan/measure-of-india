@@ -285,7 +285,10 @@ export async function buildOwidClimate(root, dcfg, vintage) {
       const data = dates.map((t) => vals.get(t) ?? null);
       if (!data.some((v) => v != null)) continue;
       const gaps = gapsOf(dates, data);
-      series[k] = { name: `owid_${ind.dataset}_${k}`, label: ind.name, unit: unitCode(ind.shortUnit ?? ind.unit ?? "", ind.catalogPath), color: GREYS[gi++ % GREYS.length], data,
+      // a monthly or weekly level of temperature or rain follows the calendar: flagged so the
+      // facts sheet never offers a month-on-month move of it (pipeline/facts.mjs)
+      const seasonal = interval !== "year" && !/anomal/i.test(k) && ["degC", "mm", "hectares"].includes(unitCode(ind.shortUnit ?? ind.unit ?? "", ind.catalogPath));
+      series[k] = { name: `owid_${ind.dataset}_${k}`, label: ind.name, unit: unitCode(ind.shortUnit ?? ind.unit ?? "", ind.catalogPath), ...(seasonal ? { seasonal: true } : {}), color: GREYS[gi++ % GREYS.length], data,
         source: ind.producer, catalogPath: ind.catalogPath.replace(/\/\d{4}-\d{2}-\d{2}\//, "/"),
         ...(gaps.length ? { gaps, gapsNote: "Not published by OWID for these periods." } : {}) };
     }

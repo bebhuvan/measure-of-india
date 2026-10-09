@@ -217,7 +217,8 @@ function assemble(rows, keyOf, labelOf, freq, meta) {
     const first = data.findIndex((v) => v != null), last = data.length - 1 - [...data].reverse().findIndex((v) => v != null);
     const gaps = dates.filter((d, i) => i > first && i < last && data[i] == null);
     const v = VARS[r.variable];
-    series[k] = { name: `cckp_${k}`, label: labelOf(r), unit: v.unit, group: v.label, color: GREYS[gi++ % GREYS.length], data,
+    // monthly and seasonal levels follow the calendar (pipeline/facts.mjs honours the flag)
+    series[k] = { name: `cckp_${k}`, label: labelOf(r), unit: v.unit, group: v.label, ...(freq === "monthly" || freq === "seasonal" ? { seasonal: true } : {}), color: GREYS[gi++ % GREYS.length], data,
       ...(gaps.length ? { gaps, gapsNote: "CCKP serves no valid value for these periods (a missing value or its fill code)." } : {}) };
   }
   return { meta: { ...meta, latestPeriod: freq === "annual" ? dates.at(-1).slice(0, 4) : dates.at(-1).slice(0, 7) }, dates, series };

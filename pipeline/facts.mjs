@@ -161,6 +161,15 @@ for (const [k, s] of Object.entries(bundle.series)) {
         : null;
     })(),
   };
+  // seasonal raw levels (series flag `seasonal: true`, set by the adapter; added by
+  // lb/climate): a month-on-month move, a run of prints or a year-start comparison of a
+  // monthly temperature or rainfall level is the calendar, not a finding (India cools every
+  // year from May into the monsoon). Only same-month comparisons (yearAgo, deltaVsYear)
+  // and the series' extremes stay; the writer reads change from the anomaly series.
+  if (s.seasonal === true) {
+    Object.assign(entry, { seasonal: true, previous: null, deltaVsPrev: null, growthVsPrevPct: null, run: null, last4: null, yearStart: null, baseEffect: null,
+      seasonalNote: "A seasonal level: compare it only with the same month in other years." });
+  }
   facts.series[k] = entry;
 }
 
