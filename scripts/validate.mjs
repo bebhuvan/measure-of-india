@@ -205,6 +205,27 @@ const PRODUCTS = [
   // gfce 22.88, saving rate 37.82; mining -17.53 in 2011-12, the year the
   // back-cast meets the current series (level 316,533 -> 261,035 as published)
   { slug: "gdp-back", dossier: "gdp", cadence: 12, staleAfter: "2011-04", range: [-20, 45], base: "2011-12", freq: "annual" },
+  // ---- nas (wave 2): the rest of the national accounts, nas-deep-build.mjs ----
+  // Levels in Rs crore (negative lines: discrepancy, net primary income, stocks, government
+  // saving); shares of nominal GDP run to 103 (GNDI exceeds GDP by the remittances);
+  // sub-industry growth reaches -62.5 (air transport, 2020-21); the back series'
+  // discrepancy reaches -13.6% of GDP (1955-56): its expenditure side is not reconciled
+  // with output before the 1990s, as published.
+  ...[["", "2011-12", { levels: "2025-04", subs: "2023-04", gcf: "2023-04", q: "2025-07" }], ["-2022", "2022-23", { levels: "2025-04", subs: "2024-04", gcf: "2024-04", q: "2026-04" }]].flatMap(([b, base, st]) => [
+    { slug: `gdp${b}-annual-levels`, dossier: "gdp", cadence: 12, staleAfter: st.levels, range: [-2e6, 5e7], base, freq: "annual" },
+    { slug: `gdp${b}-annual-growth`, dossier: "gdp", cadence: 12, staleAfter: st.levels, range: [-40, 60], base, freq: "annual" },
+    { slug: `gdp${b}-annual-shares`, dossier: "gdp", cadence: 12, staleAfter: st.levels, range: [-15, 110], base, freq: "annual" },
+    { slug: `gdp${b}-annual-industries`, dossier: "gdp", cadence: 12, staleAfter: st.levels, range: [-40, 5e7], base, freq: "annual" },
+    { slug: `gdp${b}-annual-subindustries`, dossier: "gdp", cadence: 12, staleAfter: st.subs, range: [-80, 5e7], base, freq: "annual" },
+    { slug: `gdp${b}-annual-gcf-industries`, dossier: "gdp", cadence: 12, staleAfter: st.gcf, range: [-1e6, 5e7], base, freq: "annual" },
+    { slug: `gdp${b}-sectors`, dossier: "gdp", cadence: 12, staleAfter: st.levels, range: [-3e6, 5e7], base, freq: "annual" },
+    { slug: `gdp${b}-revisions`, dossier: "gdp", cadence: 12, staleAfter: st.levels, range: [-2e6, 5e7], base, freq: "annual" },
+    { slug: `gdp${b}-quarterly-levels`, dossier: "gdp", cadence: 3, staleAfter: st.q, range: [-1e6, 2e7], base },
+    { slug: `gdp${b}-quarterly-shares`, dossier: "gdp", cadence: 3, staleAfter: st.q, range: [-15, 100], base },
+    { slug: `gdp${b}-quarterly-industry-levels`, dossier: "gdp", cadence: 3, staleAfter: st.q, range: [0, 2e7], base },
+  ]),
+  ...["levels", "growth", "shares", "industries", "subindustries"].map((k) => ({ slug: `gdp-back-${k}`, dossier: "gdp", cadence: 12, staleAfter: "2011-04", range: k === "shares" ? [-15, 110] : [-2e6, 2e7], base: "2011-12", freq: "annual" })),
+  // ---- end nas ----
   // base 2011-12 ended at Apr 2026 (the OEA moved to 2022-23) — frozen
   { slug: "wpi", dossier: "wpi", cadence: 1, staleAfter: "2026-04", range: [-30, 60], cross: ["headline", "published_headline", 0.15] },
   { slug: "wpi-groups", dossier: "wpi", cadence: 1, staleAfter: "2026-04", range: [-70, 130] },
@@ -1385,6 +1406,82 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
     else if (Math.abs(back / cur - 1) > 1e-4) fail(`gdp-back: 2011-12 GDP ${back} (back series) != ${cur} (current 2011-12 base): the bridge does not meet the series`);
     else ok(`gdp-back: 2011-12 GDP level meets the current series (${back} vs ${cur} crore)`);
   }
+}
+
+/* ---- nas (wave 2): identities of the deep national-accounts bundles ----
+ * Published levels are whole crore, so each identity holds to a few crore. India's accounts
+ * are fixed-base, so constant-price aggregates add up too: the 11 industries sum to total
+ * GVA, the institutional sectors to the total, and taxes less subsidies to net taxes (which
+ * is also how we know the API's "Rs Lakh" label on taxes and subsidies is wrong). */
+{
+  const near = (a, b, tol) => a == null || b == null || Math.abs(a - b) <= Math.max(tol, Math.abs(b) * 2e-6);
+  const each = (slug, label, fn) => withBundle(slug, (b) => {
+    let n = 0, bad = null;
+    b.dates.forEach((d, i) => { const r = fn(b.series, i, d); if (r == null) return; n++; if (!r.ok && !bad) bad = `${d}: ${r.msg}`; });
+    if (!n) fail(`${slug}: ${label} checked 0 periods`);
+    else if (bad) fail(`${slug}: ${label} fails at ${bad}`);
+    else ok(`${slug}: ${label} (${n} periods)`);
+  });
+  const v = (S, k, i) => S[k]?.data[i] ?? null;
+  for (const b of ["gdp", "gdp-2022"]) {
+    each(`${b}-annual-levels`, "GDP = GVA + net taxes, both prices", (S, i) => {
+      const r = ["constant", "current"].map((p) => [v(S, `gdp_${p}`, i), v(S, `gva_${p}`, i), v(S, `net_taxes_${p}`, i)]).filter((x) => x.every((y) => y != null));
+      return r.length ? { ok: r.every(([g, a, t]) => near(g, a + t, 6)), msg: JSON.stringify(r) } : null;
+    });
+    each(`${b}-annual-levels`, "net taxes = taxes less subsidies (taxes and subsidies are Rs crore, not the API's Rs lakh)", (S, i) => {
+      const t = v(S, "taxes_current", i), s = v(S, "subsidies_current", i), n = v(S, "net_taxes_current", i);
+      return t == null || s == null ? null : { ok: near(n, t - s, 6), msg: `${t} - ${s} != ${n}` };
+    });
+    each(`${b}-annual-levels`, "NDP = GDP less consumption of fixed capital", (S, i) => {
+      const g = v(S, "gdp_current", i), c = v(S, "cfc_current", i), n = v(S, "ndp_current", i);
+      return c == null ? null : { ok: near(n, g - c, 6), msg: `${g} - ${c} != ${n}` };
+    });
+    each(`${b}-annual-industries`, "the 11 industries sum to total GVA at constant prices", (S, i) => {
+      const parts = ["agriculture", "mining", "manufacturing", "utilities", "construction", "trade_hotels", "transport", "finance", "realty", "public_admin", "other_services"].map((k) => v(S, `${k}_constant`, i));
+      if (parts.some((x) => x == null)) return null;
+      const sum = parts.reduce((a, x) => a + x, 0), tot = v(S, "total_constant", i);
+      return { ok: near(sum, tot, 15), msg: `${sum} != ${tot}` };
+    });
+    each(`${b}-annual-industries`, "the 8 groups sum to total GVA at current prices", (S, i) => {
+      const parts = ["agriculture", "mining", "manufacturing", "utilities", "construction", "trade_transport", "finance_realty", "public_admin_other"].map((k) => v(S, `${k}_current`, i));
+      if (parts.some((x) => x == null)) return null;
+      const sum = parts.reduce((a, x) => a + x, 0), tot = v(S, "total_current", i);
+      return { ok: near(sum, tot, 15), msg: `${sum} != ${tot}` };
+    });
+    each(`${b}-sectors`, "institutional sectors sum to the total (saving and fixed investment)", (S, i) => {
+      const sec = ["public_nfc", "private_nfc", "public_fc", "private_fc", "government", "households"];
+      const out = [];
+      for (const m of ["saving", "gfcf"]) {
+        const parts = sec.map((k) => v(S, `${m}_${k}`, i));
+        if (parts.some((x) => x == null)) continue;
+        out.push([parts.reduce((a, x) => a + x, 0), v(S, `${m}_total`, i)]);
+      }
+      return out.length ? { ok: out.every(([a, t]) => near(a, t, 15)), msg: JSON.stringify(out) } : null;
+    });
+    each(`${b}-quarterly-levels`, "quarterly GDP = GVA + net taxes", (S, i) => {
+      const g = v(S, "gdp_constant", i), a = v(S, "gva_constant", i), t = v(S, "net_taxes_constant", i);
+      return g == null || a == null || t == null ? null : { ok: near(g, a + t, 6), msg: `${a} + ${t} != ${g}` };
+    });
+    // a stage's growth must sit near the growth its levels imply against the previous year
+    // at the stage that stood in the same release; checked loosely, for the latest print
+    withBundle(`${b}-revisions`, (bb) => {
+      const st = bb.meta.stages?.map((x) => x.key) ?? [];
+      if (st.length !== 8) fail(`${b}-revisions: meta.stages must list the 8 MoSPI stages`);
+      const first = bb.series.gdp_growth_first, latest = bb.series.gdp_growth_latest;
+      if (b === "gdp" && (!first || !latest)) fail(`${b}-revisions: first and latest GDP growth missing`);
+      else ok(`${b}-revisions: ${Object.keys(bb.series).length} stage series`);
+    });
+  }
+  // the back series' industries reconcile with its total only from 2004-05: before that the
+  // sum runs above or below the published total (+471 crore in 1950-51, -4,630 in 1997-98,
+  // current prices), as published; disclosed in the bundle note, held from 2004-05 on
+  each("gdp-back-industries", "the 11 back-series industries sum to total GVA at 2011-12 prices, 2004-05 on", (S, i, d) => {
+    if (d < "2004-04-01") return null;
+    const parts = ["agriculture", "mining", "manufacturing", "utilities", "construction", "trade_hotels", "transport", "finance", "realty", "public_admin", "other_services"].map((k) => v(S, `${k}_constant`, i));
+    if (parts.some((x) => x == null)) return null;
+    const sum = parts.reduce((a, x) => a + x, 0), tot = v(S, "total_constant", i);
+    return { ok: near(sum, tot, 15), msg: `${sum} != ${tot}` };
+  });
 }
 
 /* ---- services: the family's identities (scripts/lib/products/services.mjs) ---- */

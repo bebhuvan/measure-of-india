@@ -1,0 +1,857 @@
+{
+ "meta": {
+  "dossier": "gdp",
+  "base": "2022-23",
+  "source": "MoSPI, National Statistical Office",
+  "vintage": "2026-10-09",
+  "mock": false,
+  "geo": "IND",
+  "releaseDate": null,
+  "revisionPolicy": "Revised continuously; finalised over ~3 years. Vintages are kept.",
+  "frequency": "annual",
+  "unit": "inr_crore",
+  "coverage": "All-India, annual GVA by industry: the 11 industries of the revised estimates and the 8 groups of the advance estimates, levels, real growth and share of nominal GVA",
+  "note": "MoSPI publishes years standing at a revised estimate by the finer industries only; for those years this group is the sum of its two published industries (listed in derived). The 11 finer industries end at the last year standing at a revised estimate; advance and provisional estimates publish only the 8 groups. Real growth is computed from constant-price levels; shares are of nominal total GVA.",
+  "latestPeriod": "2025-04"
+ },
+ "dates": [
+  "2022-04-01",
+  "2023-04-01",
+  "2024-04-01",
+  "2025-04-01"
+ ],
+ "series": {
+  "agriculture_constant": {
+   "name": "gva_agriculture_constant_inr_crore_base2022",
+   "label": "Agriculture, forestry and fishing, GVA at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    4744554,
+    4872239,
+    5074193,
+    5240222
+   ],
+   "group": "Industry"
+  },
+  "agriculture_current": {
+   "name": "gva_agriculture_current_inr_crore_base2022",
+   "label": "Agriculture, forestry and fishing, GVA at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    4744554,
+    5105553,
+    5576710,
+    5713629
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "agriculture_real_yoy": {
+   "name": "gva_agriculture_annual_real_yoy_pct_base2022",
+   "label": "Agriculture, forestry and fishing, real GVA growth",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    2.69,
+    4.14,
+    3.27
+   ],
+   "group": "Industry"
+  },
+  "agriculture_share": {
+   "name": "gva_agriculture_pct_of_nominal_gva_base2022",
+   "label": "Agriculture, forestry and fishing, share of GVA",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "data": [
+    19.92,
+    19.34,
+    19.33,
+    18.2
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "mining_constant": {
+   "name": "gva_mining_constant_inr_crore_base2022",
+   "label": "Mining and quarrying, GVA at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    506017,
+    510661,
+    579349,
+    620560
+   ],
+   "group": "Industry"
+  },
+  "mining_current": {
+   "name": "gva_mining_current_inr_crore_base2022",
+   "label": "Mining and quarrying, GVA at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    506017,
+    538030,
+    572560,
+    594023
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "mining_real_yoy": {
+   "name": "gva_mining_annual_real_yoy_pct_base2022",
+   "label": "Mining and quarrying, real GVA growth",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    0.92,
+    13.45,
+    7.11
+   ],
+   "group": "Industry"
+  },
+  "mining_share": {
+   "name": "gva_mining_pct_of_nominal_gva_base2022",
+   "label": "Mining and quarrying, share of GVA",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "data": [
+    2.12,
+    2.04,
+    1.98,
+    1.89
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "manufacturing_constant": {
+   "name": "gva_manufacturing_constant_inr_crore_base2022",
+   "label": "Manufacturing, GVA at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    3482848,
+    3854479,
+    4239607,
+    4612111
+   ],
+   "group": "Industry"
+  },
+  "manufacturing_current": {
+   "name": "gva_manufacturing_current_inr_crore_base2022",
+   "label": "Manufacturing, GVA at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    3482848,
+    3859133,
+    4184702,
+    4670561
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "manufacturing_real_yoy": {
+   "name": "gva_manufacturing_annual_real_yoy_pct_base2022",
+   "label": "Manufacturing, real GVA growth",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    10.67,
+    9.99,
+    8.79
+   ],
+   "group": "Industry"
+  },
+  "manufacturing_share": {
+   "name": "gva_manufacturing_pct_of_nominal_gva_base2022",
+   "label": "Manufacturing, share of GVA",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "data": [
+    14.62,
+    14.61,
+    14.51,
+    14.88
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "utilities_constant": {
+   "name": "gva_utilities_constant_inr_crore_base2022",
+   "label": "Electricity, gas, water and utilities, GVA at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    590956,
+    660193,
+    678703,
+    693068
+   ],
+   "group": "Industry"
+  },
+  "utilities_current": {
+   "name": "gva_utilities_current_inr_crore_base2022",
+   "label": "Electricity, gas, water and utilities, GVA at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    590956,
+    732148,
+    804842,
+    819870
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "utilities_real_yoy": {
+   "name": "gva_utilities_annual_real_yoy_pct_base2022",
+   "label": "Electricity, gas, water and utilities, real GVA growth",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    11.72,
+    2.8,
+    2.12
+   ],
+   "group": "Industry"
+  },
+  "utilities_share": {
+   "name": "gva_utilities_pct_of_nominal_gva_base2022",
+   "label": "Electricity, gas, water and utilities, share of GVA",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "data": [
+    2.48,
+    2.77,
+    2.79,
+    2.61
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "construction_constant": {
+   "name": "gva_construction_constant_inr_crore_base2022",
+   "label": "Construction, GVA at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    2112811,
+    2318022,
+    2470650,
+    2648587
+   ],
+   "group": "Industry"
+  },
+  "construction_current": {
+   "name": "gva_construction_current_inr_crore_base2022",
+   "label": "Construction, GVA at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    2112811,
+    2277370,
+    2452444,
+    2632585
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "construction_real_yoy": {
+   "name": "gva_construction_annual_real_yoy_pct_base2022",
+   "label": "Construction, real GVA growth",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    9.71,
+    6.58,
+    7.2
+   ],
+   "group": "Industry"
+  },
+  "construction_share": {
+   "name": "gva_construction_pct_of_nominal_gva_base2022",
+   "label": "Construction, share of GVA",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "data": [
+    8.87,
+    8.62,
+    8.5,
+    8.39
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "trade_transport_constant": {
+   "name": "gva_trade_transport_constant_inr_crore_base2022",
+   "label": "Trade, hotels, transport and communication, GVA at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    3264481,
+    3640930,
+    3895688,
+    4335333
+   ],
+   "group": "Industry group (8-group table)",
+   "derived": [
+    "2024-04-01",
+    "2023-04-01",
+    "2022-04-01"
+   ],
+   "derivedNote": "MoSPI publishes years standing at a revised estimate by the finer industries only; for those years this group is the sum of its two published industries (listed in derived)."
+  },
+  "trade_transport_current": {
+   "name": "gva_trade_transport_current_inr_crore_base2022",
+   "label": "Trade, hotels, transport and communication, GVA at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    3264481,
+    3714601,
+    3996393,
+    4491053
+   ],
+   "nominal": true,
+   "group": "Industry group (8-group table)",
+   "derived": [
+    "2024-04-01",
+    "2023-04-01",
+    "2022-04-01"
+   ],
+   "derivedNote": "MoSPI publishes years standing at a revised estimate by the finer industries only; for those years this group is the sum of its two published industries (listed in derived)."
+  },
+  "trade_transport_real_yoy": {
+   "name": "gva_trade_transport_annual_real_yoy_pct_base2022",
+   "label": "Trade, hotels, transport and communication, real GVA growth",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    11.53,
+    7,
+    11.29
+   ],
+   "group": "Industry group (8-group table)"
+  },
+  "trade_transport_share": {
+   "name": "gva_trade_transport_pct_of_nominal_gva_base2022",
+   "label": "Trade, hotels, transport and communication, share of GVA",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "data": [
+    13.7,
+    14.07,
+    13.85,
+    14.31
+   ],
+   "nominal": true,
+   "group": "Industry group (8-group table)"
+  },
+  "trade_hotels_constant": {
+   "name": "gva_trade_hotels_constant_inr_crore_base2022",
+   "label": "Trade, repair, hotels and restaurants, GVA at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    1946700,
+    2221865,
+    2381400,
+    null
+   ],
+   "group": "Industry"
+  },
+  "trade_hotels_current": {
+   "name": "gva_trade_hotels_current_inr_crore_base2022",
+   "label": "Trade, repair, hotels and restaurants, GVA at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    1946700,
+    2255038,
+    2451434,
+    null
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "trade_hotels_real_yoy": {
+   "name": "gva_trade_hotels_annual_real_yoy_pct_base2022",
+   "label": "Trade, repair, hotels and restaurants, real GVA growth",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    14.13,
+    7.18,
+    null
+   ],
+   "group": "Industry"
+  },
+  "trade_hotels_share": {
+   "name": "gva_trade_hotels_pct_of_nominal_gva_base2022",
+   "label": "Trade, repair, hotels and restaurants, share of GVA",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "data": [
+    8.17,
+    8.54,
+    8.5,
+    null
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "transport_constant": {
+   "name": "gva_transport_constant_inr_crore_base2022",
+   "label": "Transport, storage and communication, GVA at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    1317781,
+    1419065,
+    1514288,
+    null
+   ],
+   "group": "Industry"
+  },
+  "transport_current": {
+   "name": "gva_transport_current_inr_crore_base2022",
+   "label": "Transport, storage and communication, GVA at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    1317781,
+    1459563,
+    1544959,
+    null
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "transport_real_yoy": {
+   "name": "gva_transport_annual_real_yoy_pct_base2022",
+   "label": "Transport, storage and communication, real GVA growth",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    7.69,
+    6.71,
+    null
+   ],
+   "group": "Industry"
+  },
+  "transport_share": {
+   "name": "gva_transport_pct_of_nominal_gva_base2022",
+   "label": "Transport, storage and communication, share of GVA",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "data": [
+    5.53,
+    5.53,
+    5.36,
+    null
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "finance_realty_constant": {
+   "name": "gva_finance_realty_constant_inr_crore_base2022",
+   "label": "Finance, real estate and professional services, GVA at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    6045177,
+    6446738,
+    7025521,
+    7765987
+   ],
+   "group": "Industry group (8-group table)",
+   "derived": [
+    "2024-04-01",
+    "2023-04-01",
+    "2022-04-01"
+   ],
+   "derivedNote": "MoSPI publishes years standing at a revised estimate by the finer industries only; for those years this group is the sum of its two published industries (listed in derived)."
+  },
+  "finance_realty_current": {
+   "name": "gva_finance_realty_current_inr_crore_base2022",
+   "label": "Finance, real estate and professional services, GVA at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    6045177,
+    6729875,
+    7498888,
+    8336609
+   ],
+   "nominal": true,
+   "group": "Industry group (8-group table)",
+   "derived": [
+    "2024-04-01",
+    "2023-04-01",
+    "2022-04-01"
+   ],
+   "derivedNote": "MoSPI publishes years standing at a revised estimate by the finer industries only; for those years this group is the sum of its two published industries (listed in derived)."
+  },
+  "finance_realty_real_yoy": {
+   "name": "gva_finance_realty_annual_real_yoy_pct_base2022",
+   "label": "Finance, real estate and professional services, real GVA growth",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    6.64,
+    8.98,
+    10.54
+   ],
+   "group": "Industry group (8-group table)"
+  },
+  "finance_realty_share": {
+   "name": "gva_finance_realty_pct_of_nominal_gva_base2022",
+   "label": "Finance, real estate and professional services, share of GVA",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "data": [
+    25.38,
+    25.49,
+    26,
+    26.55
+   ],
+   "nominal": true,
+   "group": "Industry group (8-group table)"
+  },
+  "finance_constant": {
+   "name": "gva_finance_constant_inr_crore_base2022",
+   "label": "Financial services, GVA at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    1477694,
+    1580511,
+    1731762,
+    null
+   ],
+   "group": "Industry"
+  },
+  "finance_current": {
+   "name": "gva_finance_current_inr_crore_base2022",
+   "label": "Financial services, GVA at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    1477694,
+    1658055,
+    1839682,
+    null
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "finance_real_yoy": {
+   "name": "gva_finance_annual_real_yoy_pct_base2022",
+   "label": "Financial services, real GVA growth",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    6.96,
+    9.57,
+    null
+   ],
+   "group": "Industry"
+  },
+  "finance_share": {
+   "name": "gva_finance_pct_of_nominal_gva_base2022",
+   "label": "Financial services, share of GVA",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "data": [
+    6.2,
+    6.28,
+    6.38,
+    null
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "realty_constant": {
+   "name": "gva_realty_constant_inr_crore_base2022",
+   "label": "Real estate, dwellings and professional services, GVA at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    4567483,
+    4866227,
+    5293759,
+    null
+   ],
+   "group": "Industry"
+  },
+  "realty_current": {
+   "name": "gva_realty_current_inr_crore_base2022",
+   "label": "Real estate, dwellings and professional services, GVA at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    4567483,
+    5071820,
+    5659206,
+    null
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "realty_real_yoy": {
+   "name": "gva_realty_annual_real_yoy_pct_base2022",
+   "label": "Real estate, dwellings and professional services, real GVA growth",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    6.54,
+    8.79,
+    null
+   ],
+   "group": "Industry"
+  },
+  "realty_share": {
+   "name": "gva_realty_pct_of_nominal_gva_base2022",
+   "label": "Real estate, dwellings and professional services, share of GVA",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "data": [
+    19.17,
+    19.21,
+    19.62,
+    null
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "public_admin_other_constant": {
+   "name": "gva_public_admin_other_constant_inr_crore_base2022",
+   "label": "Public administration, defence and other services, GVA at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    3076292,
+    3289390,
+    3458059,
+    3674461
+   ],
+   "group": "Industry group (8-group table)",
+   "derived": [
+    "2024-04-01",
+    "2023-04-01",
+    "2022-04-01"
+   ],
+   "derivedNote": "MoSPI publishes years standing at a revised estimate by the finer industries only; for those years this group is the sum of its two published industries (listed in derived)."
+  },
+  "public_admin_other_current": {
+   "name": "gva_public_admin_other_current_inr_crore_base2022",
+   "label": "Public administration, defence and other services, GVA at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    3076292,
+    3448771,
+    3759144,
+    4136361
+   ],
+   "nominal": true,
+   "group": "Industry group (8-group table)",
+   "derived": [
+    "2024-04-01",
+    "2023-04-01",
+    "2022-04-01"
+   ],
+   "derivedNote": "MoSPI publishes years standing at a revised estimate by the finer industries only; for those years this group is the sum of its two published industries (listed in derived)."
+  },
+  "public_admin_other_real_yoy": {
+   "name": "gva_public_admin_other_annual_real_yoy_pct_base2022",
+   "label": "Public administration, defence and other services, real GVA growth",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    6.93,
+    5.13,
+    6.26
+   ],
+   "group": "Industry group (8-group table)"
+  },
+  "public_admin_other_share": {
+   "name": "gva_public_admin_other_pct_of_nominal_gva_base2022",
+   "label": "Public administration, defence and other services, share of GVA",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "data": [
+    12.91,
+    13.06,
+    13.03,
+    13.18
+   ],
+   "nominal": true,
+   "group": "Industry group (8-group table)"
+  },
+  "public_admin_constant": {
+   "name": "gva_public_admin_constant_inr_crore_base2022",
+   "label": "Public administration and defence, GVA at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    1430119,
+    1474951,
+    1559043,
+    null
+   ],
+   "group": "Industry"
+  },
+  "public_admin_current": {
+   "name": "gva_public_admin_current_inr_crore_base2022",
+   "label": "Public administration and defence, GVA at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    1430119,
+    1536920,
+    1671523,
+    null
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "public_admin_real_yoy": {
+   "name": "gva_public_admin_annual_real_yoy_pct_base2022",
+   "label": "Public administration and defence, real GVA growth",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    3.13,
+    5.7,
+    null
+   ],
+   "group": "Industry"
+  },
+  "public_admin_share": {
+   "name": "gva_public_admin_pct_of_nominal_gva_base2022",
+   "label": "Public administration and defence, share of GVA",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "data": [
+    6,
+    5.82,
+    5.79,
+    null
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "other_services_constant": {
+   "name": "gva_other_services_constant_inr_crore_base2022",
+   "label": "Other services, GVA at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    1646173,
+    1814439,
+    1899016,
+    null
+   ],
+   "group": "Industry"
+  },
+  "other_services_current": {
+   "name": "gva_other_services_current_inr_crore_base2022",
+   "label": "Other services, GVA at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    1646173,
+    1911851,
+    2087621,
+    null
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "other_services_real_yoy": {
+   "name": "gva_other_services_annual_real_yoy_pct_base2022",
+   "label": "Other services, real GVA growth",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    10.22,
+    4.66,
+    null
+   ],
+   "group": "Industry"
+  },
+  "other_services_share": {
+   "name": "gva_other_services_pct_of_nominal_gva_base2022",
+   "label": "Other services, share of GVA",
+   "color": "#878D99",
+   "unit": "pct_of_gva",
+   "data": [
+    6.91,
+    7.24,
+    7.24,
+    null
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "total_constant": {
+   "name": "gva_total_constant_inr_crore_base2022",
+   "label": "Total GVA, GVA at constant prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    23823136,
+    25592651,
+    27421770,
+    29590329
+   ],
+   "group": "Industry"
+  },
+  "total_current": {
+   "name": "gva_total_current_inr_crore_base2022",
+   "label": "Total GVA, GVA at current prices",
+   "color": "#878D99",
+   "unit": "inr_crore",
+   "data": [
+    23823136,
+    26405480,
+    28845683,
+    31394691
+   ],
+   "nominal": true,
+   "group": "Industry"
+  },
+  "total_real_yoy": {
+   "name": "gva_total_annual_real_yoy_pct_base2022",
+   "label": "Total GVA, real GVA growth",
+   "color": "#878D99",
+   "unit": "pct_yoy",
+   "data": [
+    null,
+    7.43,
+    7.15,
+    7.91
+   ],
+   "group": "Industry"
+  }
+ }
+}

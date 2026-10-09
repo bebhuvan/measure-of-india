@@ -350,6 +350,11 @@ dossiers:
           "11": realty
           "13": public_admin
           "14": other_services
+      # THE REST OF THE ACCOUNTS (2026-10, wave 2): nas-deep.mjs pulls every row of every
+      # indicator the coverage catalogue lists (both bases, Current and Back, annual and
+      # quarterly), unfiltered, to data/raw/nas-deep-*.json; nas-deep-build.mjs bakes the
+      # levels, growth, shares, industries, sub-industries, capital formation by industry of
+      # use, institutional sectors, revision stages and quarterly levels from those dumps.
       # NOT SERVED nationally: per-capita GDP/GNI/NNI. The API's per-capita
       # indicators (25, 28, 31) live in the Regional account, state-wise only
       # — there is no All-India row (checked the state filter list). The
@@ -1638,17 +1643,17 @@ seams:
     - base: "2011-12"
       from: "2011-04"
       to: "2025-07"
-      bundles: [gdp, gdp-expenditure, gdp-accounts, gdp-industries, gdp-nominal]
+      bundles: [gdp, gdp-expenditure, gdp-accounts, gdp-industries, gdp-nominal, gdp-annual-levels, gdp-annual-growth, gdp-annual-shares, gdp-annual-industries, gdp-annual-subindustries, gdp-annual-gcf-industries, gdp-sectors, gdp-revisions, gdp-quarterly-levels, gdp-quarterly-shares, gdp-quarterly-industry-levels]
       bridge:
         kind: agency back series
         what: "NSO back series (series=Back) at 2011-12 prices, annual 1950-51 to 2011-12; growth from 1951-52"
         from: "1950-04"
         to: "2011-04"
-        bundles: [gdp-back]
+        bundles: [gdp-back, gdp-back-levels, gdp-back-growth, gdp-back-shares, gdp-back-industries, gdp-back-subindustries]
     - base: "2022-23"
       from: "2022-04"
       to: null
-      bundles: [gdp-2022, gdp-2022-expenditure, gdp-2022-industries, gdp-2022-nominal, gdp-2022-accounts]
+      bundles: [gdp-2022, gdp-2022-expenditure, gdp-2022-industries, gdp-2022-nominal, gdp-2022-accounts, gdp-2022-annual-levels, gdp-2022-annual-growth, gdp-2022-annual-shares, gdp-2022-annual-industries, gdp-2022-annual-subindustries, gdp-2022-annual-gcf-industries, gdp-2022-sectors, gdp-2022-revisions, gdp-2022-quarterly-levels, gdp-2022-quarterly-shares, gdp-2022-quarterly-industry-levels]
   cpialrl:
     - base: "1986-87=100"
       from: "1995-07"

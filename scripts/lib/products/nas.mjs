@@ -28,6 +28,8 @@
 
 import { mospiAll } from "../mospi.mjs";
 import { writeSeries, writeRaw, yoyFromLevels, quarterAxis, round2 } from "../util.mjs";
+import { fetchNasDeep } from "./nas-deep.mjs";
+import { buildNasDeep } from "./nas-deep-build.mjs";
 
 // NAS revision labels by maturity; higher = more settled estimate.
 const REVISION_RANK = {
@@ -373,6 +375,10 @@ export async function buildNas(root, dcfg, vintage) {
     headCoverage: "The new 2022-23 base year. The 2011-12-base quarterly series ends at Q2 FY26; later quarters exist only here. Separate bundle — bases are never spliced.",
   });
   if (dcfg.fetch.back) await buildBack(root, dcfg, vintage);
+  // the rest of the accounts (2026-10, wave 2): every row of every indicator the catalogue
+  // lists, to raw, then every cut baked from the raw dumps (nas-deep*.mjs)
+  await fetchNasDeep(root, dcfg, vintage);
+  buildNasDeep(root, dcfg, vintage);
   return bundle;
 }
 
