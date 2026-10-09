@@ -1003,6 +1003,24 @@ dossiers:
     ranges:
       inr_lakh_crore: [0, 400]
 
+  # credit (lb/credit): money, credit and banks. Many RBI products at many frequencies, all
+  # read from the local Data Bank; scripts/lib/products/credit.mjs lists them.
+  credit:
+    # regression floor: sectoral credit is monthly, about a month behind
+    stale_after: "2026-06"
+    family: databank
+    geo: IND
+    product: credit
+    frequency: mixed
+    frequency_exempt: true
+    base: "mixed"
+    release_calendar: "Section 42 fortnightly (15th and last day of the month since December 2025); sectoral credit monthly, about 30 days after the month; money supply fortnightly; banking health annual, as on 31 March"
+    revision_policy: "Section 42 figures are provisional, then final; sectoral credit is provisional and revised the next month; NPAs and capital ratios are final on release. Seams disclosed, never joined: the 2019 sectoral classification, the July 2023 HDFC merger, the December 2025 reporting calendar."
+    source_agency: "Reserve Bank of India (via DBIE)"
+    release_url: https://data.rbi.org.in
+    ranges:
+      inr_lakh_crore: [0, 400]
+
 
 # ---------------------------------------------------------------------------
 # SEAMS: the base-year registry (2026-10). One entry per base (or

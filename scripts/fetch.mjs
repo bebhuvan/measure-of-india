@@ -33,6 +33,7 @@ import { buildMnre } from "./lib/products/mnre.mjs";
 import { buildNfhs } from "./lib/products/nfhs.mjs";
 import { buildWorldbankWdi } from "./lib/products/worldbank-wdi.mjs";
 import { buildBsr2 } from "./lib/products/bsr2.mjs";
+import { buildCredit } from "./lib/products/credit.mjs";
 import { writeSeries } from "./lib/util.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -41,7 +42,7 @@ const ONLY = args.includes("only") ? args.slice(args.indexOf("only") + 1) : null
 const cfg = YAML.parse(fs.readFileSync(path.join(ROOT, "data/sources.yml"), "utf8"));
 const VINTAGE = new Date().toISOString().slice(0, 10);
 
-const REGISTRY = { cpi: buildCpi, nas: buildNas, wpi: buildWpi, cpialrl: buildCpialrl, plfs: buildPlfs, rbi: buildRbi, isp: buildIsp, iip: buildIip, hces: buildHces, asi: buildAsi, asuse: buildAsuse, aishe: buildAishe, gender: buildGender, mnre: buildMnre, nfhs: buildNfhs, "worldbank-wdi": buildWorldbankWdi, bsr2: buildBsr2 };
+const REGISTRY = { cpi: buildCpi, nas: buildNas, wpi: buildWpi, cpialrl: buildCpialrl, plfs: buildPlfs, rbi: buildRbi, isp: buildIsp, iip: buildIip, hces: buildHces, asi: buildAsi, asuse: buildAsuse, aishe: buildAishe, gender: buildGender, mnre: buildMnre, nfhs: buildNfhs, "worldbank-wdi": buildWorldbankWdi, bsr2: buildBsr2, credit: buildCredit };
 
 // One product's failure must not starve the rest: collect, continue, and
 // exit non-zero at the end so CI still fails on the summary.
