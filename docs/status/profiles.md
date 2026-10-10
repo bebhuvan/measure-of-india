@@ -112,8 +112,15 @@ Updated 2026-10-10.
   the query is the unit's name; the home page shows a leading "State profile" result above the
   series. Tests: 6 spellings plus a mixed query in `test/search.test.mjs`; qc checks six
   spellings against the built core.
-- **Next, after step 5**: NFHS-6 in the nfhs guide as a third ruler (registry block, one note on
-  the page, no new plates, no prose regeneration).
+- **NFHS-6 in the nfhs guide** (done, the coordinator brought it forward): `profiles-nfhs6` and
+  `profiles-nfhs6-nfhs5` in the nfhs registry entry (marked block) as a third ruler; one note on
+  the page (§02) on where NFHS-6 comes from and how it was checked; margin note iii updated
+  ("NFHS-6 will be the third point" was no longer true). No new plates, prose not regenerated.
+  The guide's every-cut now lists 37,634 series.
+- **Step 5 prepared** (`scripts/lib/products/profiles-mospi.mjs`): UDISE+, Time Use, EnvStats,
+  NSS 75 to 80 as three resumable phases (A lists, B filters and page 1 for the expected row
+  counts, C every page checked against B), fenced behind `PROFILES_MOSPI_GO=1`; `--plan` and
+  `--status`. The Economic Census needs a manual discovery step: no record endpoint is known.
 - **Not to start**: new external sources (SHRUG, Census PCA, data.gov.in, MGNREGA, TCPD); the
   coordinator is taking the scope to the owner.
 

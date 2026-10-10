@@ -442,7 +442,10 @@ export const DOSSIERS = [
       "nfhs-4-anaemia", "nfhs-4-child-nutrition", "nfhs-4-childhood-disease", "nfhs-4-delivery", "nfhs-4-empowerment",
       "nfhs-4-family-planning", "nfhs-4-fp-quality", "nfhs-4-hiv-knowledge", "nfhs-4-household",
       "nfhs-4-marriage-fertility", "nfhs-4-maternity", "nfhs-4-mortality", "nfhs-4-tobacco-alcohol",
-      "nfhs-4-vaccination"],
+      "nfhs-4-vaccination",
+      // profiles (lb/profiles): NFHS-6 (2023-24) from the IIPS fact sheets, a third ruler, and the
+      // NFHS-5 column those fact sheets print beside it (scripts/lib/products/profiles-nfhs6.mjs)
+      "profiles-nfhs6", "profiles-nfhs6-nfhs5"],
   },
   {
     slug: "manufacturing",
