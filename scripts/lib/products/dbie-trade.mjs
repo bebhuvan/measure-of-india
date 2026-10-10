@@ -40,7 +40,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { databankRoot, databankQuery } from "../databank.mjs";
 import { dbieProvider, dbieProviders } from "../databank.mjs";
-import { writeRaw, writeSeries, readRaw } from "../util.mjs";
+import { writeRaw, writeSeries, readRaw, nullCopiedRuns } from "../util.mjs";
 
 const VERSION_RANK = { Final: 5, Revised: 4, Provisional: 2, Forecast: 1 };
 const fyStart = (fy) => `${fy.slice(0, 4)}-04-01`;                       // "2011-12" -> "2011-04-01"
@@ -262,11 +262,16 @@ export async function buildDbieTrade(root, dcfg, vintage, cfg) {
     const rows = R["148:DP1"].rows.filter((r) => r["Unit Description"] === "ACTUALS");
     const dates = axis(rows.map((r) => fyStart(r["Fiscal Year"])));
     const S = {};
-    for (const [desc, k, label, color] of [["Production of Crude oil", "crude_production", "Crude oil produced in India, million tonnes", "#5F6675"], ["Imports of Crude oil", "crude_imports", "Crude oil imported, million tonnes", "#C47A16"],
-      ["Production of POL products", "products_production", "Petroleum products produced in India's refineries, million tonnes", "#A3A9B4"], ["Imports of POL products", "products_imports", "Petroleum products imported, million tonnes", "#2E4BD8"]]) {
+    const ITEMS = [["Production of Crude oil", "crude_production", "Crude oil produced in India, million tonnes", "#5F6675"], ["Imports of Crude oil", "crude_imports", "Crude oil imported, million tonnes", "#C47A16"],
+      ["Production of POL products", "products_production", "Petroleum products produced in India's refineries, million tonnes", "#A3A9B4"], ["Imports of POL products", "products_imports", "Petroleum products imported, million tonnes", "#2E4BD8"]];
+    ITEMS.forEach(([desc, k, label, color]) => {
       const m = new Map(rows.filter((r) => r["Item Description"] === desc).map((r) => [fyStart(r["Fiscal Year"]), num(r.Amount)]));
       S[k] = { name: label, label, color, data: dates.map((d) => (m.get(d) == null ? null : Math.round(m.get(d) / 1e4) / 100)) };
-    }
+    });
+    // DBIE's export of report 148 (checked 2026-10-10) prints 1998-99 to 2007-08 a second time
+    // as 1988-89 to 1997-98 (1988-89 crude imports = 1998-99's 39.8 Mt; India imported about
+    // 21 Mt in 1990-91). The general detector (util.findCopiedRuns) blanks the copy.
+    nullCopiedRuns(dates, S, "DBIE report 148");
     write("trade-dbie-oil-volumes", dates, S, { frequency: "annual", base: "as published", unit: "million_tonnes",
       coverage: "Crude oil and petroleum products: how much India produces and how much it imports, million tonnes, since 1972-73",
       note: "RBI DBIE report 148 (Handbook of Statistics on the Indian Economy), Ministry of Petroleum and Natural Gas data. Published in tonnes; shown in million tonnes. POL: petroleum, oil and lubricants." });
