@@ -46,7 +46,7 @@ const gL = lastOf(gold, "gold_mumbai"), gY = gold.series.gold_mumbai.data[gL.i -
 const goldTitle = `Ten grams of gold cost ₹${Math.round(gL.v).toLocaleString("en-IN")} in Mumbai in ${MONTHS[+gL.date.slice(5, 7) - 1]} ${gL.date.slice(0, 4)}, ${Math.round(100 * (gL.v / gY - 1))}% more than a year earlier`;
 const eqA = lastOf(issuesA, "equity");
 const eqMax = Math.max(...issuesA.series.equity.data.filter((v) => v != null));
-const issuesTitle = `Companies raised ₹${(eqA.v / 1e5).toFixed(2)} lakh crore in new shares from the public in ${fyOf(eqA.date)}${eqA.v === eqMax ? ", more than in any year before" : ""}`;
+const issuesTitle = `Companies raised ₹${(eqA.v / 1e5).toFixed(1)} lakh crore in new shares from the public in ${fyOf(eqA.date)}${eqA.v === eqMax ? ", more than in any year before" : ""}`;
 const mcN = lastOf(mcap, "nse");
 const lqS = lastOf(lq, "sales");
 const lr = B("markets-listed-q-ratios"), icL = lastOf(lr, "int_cvg"), ic0 = lr.series.int_cvg.data[lr.dates.indexOf("2015-04-01")];
@@ -651,7 +651,7 @@ const baked = {
         <div class="plate-head">
           <div class="t">
             <h3>Industry by industry, sales growth ranged widely in {qOf(baked.industriesDate)}</h3>
-            <div class="sub">Sales growth of listed private companies on the same quarter a year earlier, per cent, by industry, {qOf(baked.industriesDate)}. Dot: the quarter; tick: the same quarter a year before.</div>
+            <div class="sub">Sales growth of listed private companies on the same quarter a year earlier, per cent, by industry, {qOf(baked.industriesDate)}. Bar: the quarter; tick: the same quarter a year before.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-industries">–</div><div class="c">industries growing faster than 10%</div></div>
         </div>
