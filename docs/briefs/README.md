@@ -42,6 +42,17 @@ than copying them, and stage anything archive-sized in `data/archive/staging/<fa
 a write fails with ENOSPC, message the coordinator; never delete anything outside your
 worktree.
 
+**One build at a time on the machine.** Every build-and-check runs under one shared lock, so
+memory and disk hold one build's worth however many sessions run:
+
+```
+flock /tmp/atlas-build.lock sh -c 'npx astro build && npm run gates; status=$?; rm -rf dist; exit $status'
+```
+
+`npm test`, `validate`, `coverage` and `prose:dry` need no build and run outside the lock.
+Looking at pages (Playwright at 1440 and 390) needs `dist`: do it inside the same locked
+command, or build, look and delete within one lock. Never leave a `dist/` behind.
+
 ## Files you own, files you share
 
 - **Own** (create freely): everything named for your slug: `data/series/<slug>-*.json`,
