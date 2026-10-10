@@ -26,7 +26,7 @@ Guide: how Indians pay (`/guides/payments/`, port 4432). Branch `lb/payments`.
   hand against the sheet: every figure checked (one wrong qualifier, "at the card machine" for
   an all-cards ratio, caught on reading and fixed by naming both ratios in the sheet).
 - Gates on the last build: validate, coverage, asof, qc, chart lint all green; npm test green.
-- Looked at 1440px (every plate) and 390px.
+- Looked at 1440px (every plate) and 390px (no overflow); downloaded the UPI plate's share image; OG card `public/og/payments.png` generated (other cards restored).
 
 ## Next
 
