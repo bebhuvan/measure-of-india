@@ -422,3 +422,15 @@ fails on the omissions above, by design.
   sources.yml sentence), 5 x `meta.geo` (absent to "IND"), 243 x series label in
   external-bop6-vintages ("first estimate" to "earliest estimate DBIE carries"). No value,
   date or vintage moved.
+
+## 3. validate: the drift cannot recur
+
+- A META TEXT pass over every bundle on disk (not only those a family check reaches) and every
+  sources.yml entry: `meta.geo` must be a three-letter code; a revision policy, where given,
+  must read as a sentence (three or more words, a capital, a full stop) and never a
+  placeholder ("x", "TBD", "n/a"...). Planting "x" in trade-dbie-annual and deleting
+  rbi-trade's geo fails validate on both; restored. 271 bundles (climate 62, states 61,
+  states-hbs 148) carry no revision policy at all; the contract does not require one, so the
+  pass counts them rather than failing.
+- A relabel like external-bop6-vintages' has no mechanical tell (labels change legitimately);
+  what catches it is a rebake, which the families run each release.

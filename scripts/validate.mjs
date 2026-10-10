@@ -89,9 +89,8 @@ function checkMeta(bundle, slug, dossierKey, baseOverride, freqOverride) {
   // compendia) declares frequency_exempt in sources.yml — never a hardcoded
   // list in code
   if (freq && m.frequency !== freq && !cfg.dossiers[dossierKey]?.frequency_exempt) fail(`${slug}: meta.frequency "${m.frequency}" != sources.yml "${freq}"`);
-  // one bundle, one geography. Bundles baked before the geo field carry no
-  // meta.geo — they default to "IND", as does a sources.yml entry without
-  // geo; new bakes stamp it explicitly and a mismatch fails loudly.
+  // one bundle, one geography: meta.geo must equal the sources.yml entry's geo (IND where the
+  // entry names none). Every bundle must carry meta.geo at all: the META TEXT pass below.
   const declaredGeo = cfg.dossiers[dossierKey]?.geo ?? "IND";
   const bundleGeo = m.geo ?? "IND";
   if (bundleGeo !== declaredGeo) fail(`${slug}: meta.geo "${m.geo}" != sources.yml "${declaredGeo}" (one bundle, one geography)`);
@@ -3212,6 +3211,30 @@ withBundle("wages-rural-2013", (b) => {
     if (Math.abs(sen - 20.0) > 0.05) fail(`deposits-age: seniors ${sen.toFixed(2)}% of deposits, RBI says 20.0%`); else ok(`deposits-age: seniors hold ${sen.toFixed(2)}% of deposits = RBI's 20.0%`); }));
   withBundle("deposits-maturity-owners", (b) => { const i = b.dates.indexOf("2026-03-01"); const sh = b.series["m4_1_to_3_years__total"].data[i] / b.series["all__total"]?.data[i] * 100;
     if (!(Math.abs(sh - 69.8) <= 0.05)) fail(`deposits-maturity-owners: 1-3 year share ${sh} differs from RBI's 69.8%`); else ok(`deposits-maturity-owners: 1-3 years ${sh.toFixed(2)}% of term deposits = RBI's 69.8%`); });
+}
+
+// META TEXT — every bundle on disk, whatever check family it belongs to, and every sources.yml
+// entry the adapters copy text from: meta.geo is a three-letter code on every bundle (CONTRACT-series
+// rule 8), and a revision policy, where one is given, reads as a sentence, never a placeholder
+// ("x", "TBD"). 2026-10: sixteen trade-dbie bundles shipped revisionPolicy "x" and five rbi-*
+// bundles no geo, unnoticed because the per-family checks above default a missing geo to IND.
+{
+  const PLACEHOLDER = /^(x+|tbd|todo|tba|n\/?a|none|null|undefined|placeholder|lorem.*|-+|\?+|\.+)$/i;
+  const sentence = (t) => typeof t === "string" && !PLACEHOLDER.test(t.trim()) && t.trim().split(/\s+/).length >= 3 && /^["'(\[]?[A-Z0-9]/.test(t.trim()) && /[.!?)"']$/.test(t.trim());
+  let n = 0, noPolicy = 0, bad = 0;
+  for (const f of fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => f.endsWith(".json")).sort()) {
+    const slug = f.replace(/\.json$/, "");
+    let m;
+    try { m = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", f), "utf8")).meta ?? {}; } catch (e) { fail(`${slug}: unreadable (${e.message})`); bad++; continue; }
+    n++;
+    if (typeof m.geo !== "string" || !/^[A-Z]{3}$/.test(m.geo)) { fail(`${slug}: meta.geo ${JSON.stringify(m.geo)} is not a three-letter code (every bundle names its geography)`); bad++; }
+    if (m.revisionPolicy == null) noPolicy++;
+    else if (!sentence(m.revisionPolicy)) { fail(`${slug}: meta.revisionPolicy ${JSON.stringify(m.revisionPolicy)} is not a sentence (fix sources.yml revision_policy or the adapter, then rebake)`); bad++; }
+  }
+  for (const [k, d] of Object.entries(cfg.dossiers ?? {})) {
+    if (d?.revision_policy != null && !sentence(d.revision_policy)) { fail(`sources.yml ${k}: revision_policy ${JSON.stringify(d.revision_policy)} is not a sentence`); bad++; }
+  }
+  if (!bad) ok(`meta text: ${n} bundles name a three-letter geography; every revision policy given is a sentence (${noPolicy} bundles carry none)`);
 }
 
 if (failures) { console.error(`\n${failures} validation failure(s)`); process.exit(1); }
