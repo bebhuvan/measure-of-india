@@ -8,11 +8,25 @@ const D = bySlug["mnre"];
 import { period } from "../../dossiers/periods.js";
 import stSolar from "../../../data/series/mnre-states-solar.json";
 import stTotal from "../../../data/series/mnre-states.json";
+import srcB from "../../../data/series/mnre-sources.json";
+import solB from "../../../data/series/mnre-solar-categories.json";
 // periods named in the copy, read from the bundles (src/dossiers/periods.js)
 const P = period("mnre-sources");
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const prevShort = (() => { const d = new Date(Date.UTC(+P.year, MONTHS.indexOf(P.month) - 1, 1)); return MONTHS[d.getUTCMonth()].slice(0, 3) + " " + d.getUTCFullYear(); })();
 const yearsSince2020 = (() => { const m = (+P.year - 2020) * 12 + MONTHS.indexOf(P.month); const y = Math.floor(m / 12), half = m % 12 >= 6; return `${["zero","one","two","three","four","five","six","seven","eight","nine","ten"][y] ?? y}${half ? " and a half" : ""} years`; })();
+// growth multiples named in the copy, computed here (large hydro left out: it entered the count
+// only in December 2023, so no growth figure crosses that seam)
+const lastV = (b, k) => b.series[k].data.filter((v) => v != null).at(-1);
+const firstPos = (b, k) => b.series[k].data.find((v) => v != null && v > 0);
+const times = (x) => { const n = Math.round(x); const w = ["", "", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen"][n] ?? String(n); return `${Math.abs(n - x) < 0.1 ? "" : n > x ? "nearly " : "more than "}${w}-fold`; };
+const exHydro = (lastV(srcB, "grand_total") - lastV(srcB, "large_hydro")) / srcB.series.grand_total.data[0];
+const xSolar = times(lastV(srcB, "solar") / firstPos(srcB, "solar"));
+const xWindPct = Math.round((lastV(srcB, "wind") / firstPos(srcB, "wind") - 1) * 100);
+const xRoof = times(lastV(solB, "rooftop") / firstPos(solB, "rooftop"));
+const xGround = times(lastV(solB, "ground_mounted") / firstPos(solB, "ground_mounted"));
+const crossYear = (() => { const so = srcB.series.solar.data, w = srcB.series.wind.data; const i = so.findIndex((v, j) => v != null && w[j] != null && v > w[j]); return srcB.dates[i]?.slice(0, 4); })();
+const hydroStep = Math.round(srcB.series.large_hydro.data.find((v) => v > 0) / 1000);
 const leader = (b) => { const r = Object.entries(b.series).filter(([k]) => !k.includes("__")).map(([, s]) => s).map((s) => ({ name: s.label.split(" · ")[1] ?? s.label, v: s.data.at(-1) })).filter((x) => x.v != null).sort((a, c) => c.v - a.v)[0]; return `${r.name.replace(/\b\w/g, (c) => c.toUpperCase())} (${Math.round(r.v / 1000)} GW)`; };
 ---
 <Base
@@ -31,7 +45,7 @@ const leader = (b) => { const r = Object.entries(b.series).filter(([k]) => !k.in
     <div class="kicker">{kicker(D)}</div>
     <div class="hero-grid">
       <h1 set:html={D.headline} />
-      <p class="lede">Once a month the Ministry of New and Renewable Energy counts every megawatt of solar, wind, hydro and biomass capacity installed in the country. The stock has tripled in six years: and one month in 2023 it jumped by forty-eight gigawatts overnight, because the definition changed.</p>
+      <p class="lede">Once a month the Ministry of New and Renewable Energy counts every megawatt of solar, wind, hydro and biomass capacity installed in the country. Leave out large hydro and the stock has grown {times(exHydro)} since January 2020. Large hydro is the one jump: in December 2023 it added {hydroStep} gigawatts overnight, because the definition changed.</p>
     </div>
     <div class="meta">
       <span>Source <b>Ministry of New and Renewable Energy</b></span>
@@ -60,8 +74,8 @@ const leader = (b) => { const r = Object.entries(b.series).filter(([k]) => !k.in
     <div class="reading-cols">
       <div class="reading-col">
         <span class="mk">What the print says</span>
-        <p>The {P.long} stock stands at <b id="cr-total">–</b> of installed renewable capacity, up from <b id="cr-total-first">–</b> in January 2020: a <b id="cr-growth">–</b> increase over {yearsSince2020}. Solar is <b id="cr-solar-share">–</b> of the total; wind, <b id="cr-wind-share">–</b>; bio and hydro, the balance.</p>
-        <p>Within solar, ground-mounted utility plants hold <b id="cr-gm-share">–</b>; rooftop (including PM Surya Ghar) <b id="cr-rt-share">–</b>. Rooftop grew <b id="cr-rt-growth">–</b> since the start of the window: the residential-solar acceleration.</p>
+        <p>The {P.long} stock stands at <b id="cr-total">–</b> of installed renewable capacity, up from <b id="cr-total-first">–</b> in January 2020. Leave out large hydro, which MNRE began counting only in December 2023, and capacity grew <b id="cr-growth">–</b> over {yearsSince2020}. Solar is <b id="cr-solar-share">–</b> of the total; wind, <b id="cr-wind-share">–</b>; bio and hydro, the balance.</p>
+        <p>Within solar, ground-mounted utility plants hold <b id="cr-gm-share">–</b>; rooftop (including PM Surya Ghar) <b id="cr-rt-share">–</b>. Rooftop grew <b>{xRoof}</b> since the start of the window, faster than any other kind of solar.</p>
       </div>
       <div class="reading-col now">
         <span class="mk">What it does not say</span>
@@ -203,14 +217,14 @@ const leader = (b) => { const r = Object.entries(b.series).filter(([k]) => !k.in
             <div id="plot-sources" style="position:relative"><div class="cb-tip"></div></div>
           </div>
           <div class="plotfoot">
-            <span class="src">Source: MNRE, installed capacity (MW) by source, large hydro omitted from this chart (it enters the definition in Dec 2023 and would dominate the scale), solar quadrupled; wind grew half as fast again; bio and small hydro are nearly flat</span>
+            <span class="src">Source: MNRE, installed capacity (MW) by source, large hydro omitted from this chart (it enters the definition in Dec 2023 and would dominate the scale), solar grew {xSolar}; wind grew {xWindPct}%; bio and small hydro are nearly flat</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://mnre.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Four lines, four speeds. Solar (blue) quadrupled, from 37 GW to 162 GW in six years, and overtook wind in 2021. Wind (grey) grew but slowly; bio (grey) and small hydro (grey) are nearly flat. The renewable buildout is, to a first approximation, a solar buildout; the other sources are the base that solar was built on top of.</p>
+            <p>Four lines, four speeds. Solar (blue) grew {xSolar} and overtook wind in {crossYear}. Wind (grey) grew but slowly; bio (grey) and small hydro (grey) are nearly flat. The renewable buildout is, to a first approximation, a solar buildout; the other sources are the base that solar was built on top of.</p>
             <p>Large hydro is deliberately omitted from this chart. It would sit above wind at 47 GW from Dec 2023, but it is a definitional addition, not a buildout. Showing it alongside the genuine growth sources would mislead.</p>
           </div>
           <div class="now">
@@ -243,14 +257,14 @@ const leader = (b) => { const r = Object.entries(b.series).filter(([k]) => !k.in
             <div id="plot-solar" style="position:relative"><div class="cb-tip"></div></div>
           </div>
           <div class="plotfoot">
-            <span class="src">Source: MNRE, solar installed capacity by sub-category, ground mounted is utility-scale; rooftop includes the PM Surya Ghar residential scheme (launched Feb 2024), rooftop grew nearly nine-fold; ground mounted grew three-and-a-half-fold</span>
+            <span class="src">Source: MNRE, solar installed capacity by sub-category, ground mounted is utility-scale; rooftop includes the PM Surya Ghar residential scheme (launched Feb 2024), rooftop grew {xRoof}; ground mounted grew {xGround}</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://mnre.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Two lines, both rising fast. Ground mounted (blue) is the bulk: utility-scale solar parks in Gujarat, Rajasthan, Karnataka. Rooftop (grey) is the surprise: it steepened visibly from 2024 as the PM Surya Ghar scheme pushed residential solar onto household roofs. Rooftop grew nearly nine-fold across the window; ground mounted grew three-and-a-half-fold.</p>
+            <p>Two lines, both rising fast. Ground mounted (blue) is the bulk: utility-scale solar parks in Gujarat, Rajasthan, Karnataka. Rooftop (grey) is the surprise: it steepened visibly from 2024 as the PM Surya Ghar scheme pushed residential solar onto household roofs. Rooftop grew {xRoof} across the window; ground mounted grew {xGround}.</p>
           </div>
           <div class="now">
             <span class="mk">As of {P.stamp}</span>
@@ -322,7 +336,7 @@ const leader = (b) => { const r = Object.entries(b.series).filter(([k]) => !k.in
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Two strips, one question each. The top strip asks <em>where is the solar?</em>: Rajasthan leads at 43 GW, then Gujarat at 33. The bottom strip asks <em>where is the total capacity?</em>: Gujarat leads at 52 GW because it also holds the country's largest wind fleet. The rankings swap because wind and solar are built in different geographies: wind on the coasts and passes (Tamil Nadu, Gujarat), solar in the desert (Rajasthan).</p>
+            <p>Two strips, one question each. The top strip asks <em>where is the solar?</em> The bottom strip asks <em>where is the total capacity?</em> A state that leads the second without leading the first holds a large wind fleet as well as solar. The rankings swap because wind and solar are built in different geographies: wind on the coasts and passes (Tamil Nadu, Gujarat), solar in the desert (Rajasthan).</p>
           </div>
           <div class="now">
             <span class="mk">As of {P.stamp}</span>
@@ -437,7 +451,7 @@ const leader = (b) => { const r = Object.entries(b.series).filter(([k]) => !k.in
         <span class="no">i.</span>
         <div>
           <h3>"Renewable capacity tripled: India is powered by renewables."</h3>
-          <p>Capacity is what is installed; generation is what flows. A solar GW produces roughly a fifth of the annual energy of a coal GW, because the sun shines fewer hours. India's grid is still largely thermal; the renewable share of <em>generation</em> is far lower than the share of <em>capacity</em>.</p>
+          <p>Capacity is what is installed; generation is what flows. A solar GW produces perhaps a third of the annual energy of a coal GW, because the sun shines only part of the day. India's grid is still largely thermal; the renewable share of <em>generation</em> is far lower than the share of <em>capacity</em>.</p>
         </div>
       </li>
       <li>
@@ -450,15 +464,15 @@ const leader = (b) => { const r = Object.entries(b.series).filter(([k]) => !k.in
       <li>
         <span class="no">iii.</span>
         <div>
-          <h3>"Wind capacity is growing steadily."</h3>
-          <p>Wind grew about 50% in six years: but almost all of that is repowering (replacing old turbines with bigger ones) and a handful of large projects. New wind site development has slowed; the growth line flatters a mature source being refreshed, not a young source being built.</p>
+          <h3>"Rooftop solar means solar on India's homes."</h3>
+          <p>The rooftop line counts every roof: factories, offices, schools and shops as well as houses. The PM Surya Ghar scheme for homes is inside it, but MNRE's monthly table does not split homes from businesses, so how much of the rooftop figure sits on houses, this source cannot say.</p>
         </div>
       </li>
       <li>
         <span class="no">iv.</span>
         <div>
           <h3>"Rooftop solar is still small: the residential programme failed."</h3>
-          <p>Rooftop is a smaller share than ground mounted, but it grew nearly nine-fold across the window and steepened sharply from 2024 (PM Surya Ghar). Read the slope, not the level: the rooftop line is accelerating faster than any other segment.</p>
+          <p>Rooftop is a smaller share than ground mounted, but it grew {xRoof} across the window and steepened sharply from 2024 (PM Surya Ghar). Read the slope, not the level: the rooftop line is accelerating faster than any other segment.</p>
         </div>
       </li>
       <li>
