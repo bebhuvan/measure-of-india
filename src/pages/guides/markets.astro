@@ -1,0 +1,850 @@
+---
+import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
+import GuideData from "../../components/GuideData.astro";
+import EveryCut from "../../components/EveryCut.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+import { period } from "../../dossiers/periods.js";
+import fs from "node:fs";
+const D = bySlug["markets"];
+// Every period, count and title figure named in this page's copy is read from the bundles at
+// build time. Heavy bundles (fortnightly CP and CD, the 51 fund houses, 45 listed industries, the
+// forecasters' rounds) are sliced here and handed to the page as baked JSON: the page makes no
+// data requests (CONTRACT-render), and the client carries only what it draws.
+const B = (s) => JSON.parse(fs.readFileSync(`data/series/${s}.json`, "utf8"));
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const M3 = MONTHS.map((m) => m.slice(0, 3));
+const fyOf = (iso) => { const y = +iso.slice(0, 4); return `${y}-${String((y + 1) % 100).padStart(2, "0")}`; };
+const qOf = (iso) => { const m = +iso.slice(5, 7) - 1; return `${M3[m]} to ${M3[m + 2]} ${iso.slice(0, 4)}`; };
+const lastOf = (b, k) => { const d = b.series[k].data; for (let i = d.length - 1; i >= 0; i--) if (d[i] != null) return { v: d[i], i, date: b.dates[i] }; return null; };
+const lakh = (v) => (v / 1e5).toFixed(1);
+
+const flows = B("markets-hh-flows"), flowsA = B("markets-hh-flows-annual"), stocks = B("markets-hh-stocks"), longB = B("markets-hh-annual");
+const aum = B("markets-mf-aum"), houses = B("markets-mf-houses"), sponsor = B("markets-mf-sponsor"), gold = B("markets-gold");
+const issuesA = B("markets-issues-annual"), issuesM = B("markets-issues"), cp = B("rates-cp"), cd = B("rates-cd");
+const mcap = B("markets-mcap"), turn = B("markets-turnover"), deriv = B("markets-derivatives");
+const lq = B("markets-listed-q"), lqi = B("markets-listed-q-industry"), lqs = B("markets-listed-q-sector");
+const pubG = B("markets-co-public-growth"), spf = B("markets-spf"), spfOld = B("markets-spf-2019"), spfI = B("markets-spf-inflation"), spfIOld = B("markets-spf-inflation-2019");
+
+const PQ = period("markets-hh-flows"), PA = period("markets-hh-flows-annual"), PS = period("markets-hh-stocks"), PL = period("markets-hh-annual");
+const PAUM = period("markets-mf-aum"), PH = period("markets-mf-houses"), PSP = period("markets-mf-sponsor"), PG = period("markets-gold");
+const PI = period("markets-issues"), PIA = period("markets-issues-annual"), PCP = period("rates-cp"), PM = period("markets-mcap"), PT = period("markets-turnover"), PD = period("markets-derivatives");
+const PLQ = period("markets-listed-q"), PCO = period("markets-co-public-growth"), PSPF = period("markets-spf");
+const qLabel = (P, b) => qOf(b.dates.at(-1));
+const fyA = fyOf(flowsA.dates.at(-1)), fyL = fyOf(longB.dates.at(-1)), fyIA = fyOf(issuesA.dates.at(-1)), fyCO = fyOf(pubG.dates.at(-1)), fyH = fyOf(houses.dates.at(-1)), fySP = fyOf(sponsor.dates.at(-1));
+const qSpan = (b) => `${qOf(b.dates[0])} to ${qOf(b.dates.at(-1))}`;
+const lqLast = qOf(lq.dates.at(-1)), flowsLast = qOf(flows.dates.at(-1)), stocksLast = qOf(stocks.dates.at(-1));
+
+// titles that carry a figure are computed from the bundles
+const A = (k) => flowsA.series[k].data.at(-1);
+const grossA = A("gross_financial_assets_i_financial_assets"), depA = A("i_financial_assets_1_total_deposits_a_b");
+const flowsTitle = `In ${fyA}, households put ₹${lakh(grossA)} lakh crore into financial assets; ${Math.round((100 * depA) / grossA)} rupees in every hundred went to deposits`;
+const aumL = lastOf(aum, "aum"), aum10 = aum.series.aum.data[aum.dates.indexOf(`${+aumL.date.slice(0, 4) - 10}-03-01`)];
+const aumTitle = `Mutual funds held ₹${lakh(aumL.v)} lakh crore in March ${aumL.date.slice(0, 4)}, ${(aumL.v / aum10).toFixed(1)} times as much as ten years earlier`;
+const gL = lastOf(gold, "gold_mumbai"), gY = gold.series.gold_mumbai.data[gL.i - 12];
+const goldTitle = `Ten grams of gold cost ₹${Math.round(gL.v).toLocaleString("en-IN")} in Mumbai in ${MONTHS[+gL.date.slice(5, 7) - 1]} ${gL.date.slice(0, 4)}, ${Math.round(100 * (gL.v / gY - 1))}% more than a year earlier`;
+const eqA = lastOf(issuesA, "equity");
+const eqMax = Math.max(...issuesA.series.equity.data.filter((v) => v != null));
+const issuesTitle = `Companies raised ₹${(eqA.v / 1e5).toFixed(2)} lakh crore in new shares from the public in ${fyOf(eqA.date)}${eqA.v === eqMax ? ", more than in any year before" : ""}`;
+const mcN = lastOf(mcap, "nse");
+const lqS = lastOf(lq, "sales");
+const lr = B("markets-listed-q-ratios"), icL = lastOf(lr, "int_cvg"), ic0 = lr.series.int_cvg.data[lr.dates.indexOf("2015-04-01")];
+const coverTitle = `Listed companies earned ${icL.v.toFixed(1)} times their interest bill in ${qOf(icL.date)}, against ${ic0.toFixed(1)} times in ${qOf("2015-04-01")}`;
+const coD = B("markets-co-public-ratios"), deFirst = coD.series.debt_to_equity.data.find((v) => v != null), deLast = lastOf(coD, "debt_to_equity");
+const debtTitle = `Under the Ind AS studies, public limited companies' debt fell from ${deFirst.toFixed(1)}% of equity in ${fyOf(coD.dates[0])} to ${deLast.v.toFixed(1)}% in ${fyOf(deLast.date)}`;
+
+// ---------------- baked slices ----------------
+const ser = (b, k, from) => { const i0 = from ? b.dates.findIndex((d) => d >= from) : 0; return b.dates.slice(i0).map((d, i) => [d, b.series[k].data[i0 + i]]); };
+const latestBy = (b, suffix, filt = () => true) => { const i = b.dates.length - 1; return Object.entries(b.series).filter(([k, s]) => k.endsWith(suffix) && filt(k, s)).map(([k, s]) => ({ k, label: s.label, group: s.group ?? null, v: s.data[i], y: s.data[i - 4] ?? null })).filter((x) => x.v != null); };
+const spfTargets = (b, re) => Object.entries(b.series).filter(([k]) => re.test(k) && k.endsWith("__median")).map(([k, s]) => ({ k, target: s.target, data: b.dates.map((d, i) => [d, s.data[i]]).filter((p) => p[1] != null) }));
+const baked = {
+  cp: ser(cp, "outstanding", "1993-01-01"), cd: ser(cd, "outstanding", "1991-01-01"),
+  houses: (() => { const i = houses.dates.length - 1; return Object.entries(houses.series).filter(([k]) => k !== "total").map(([k, s]) => ({ label: s.label, v: s.data[i] })).filter((x) => x.v != null).sort((a, b) => b.v - a.v); })(),
+  housesDate: houses.dates.at(-1),
+  // the RBI's table stopped printing its total row: the houses are summed here, and the page says so
+  housesTotal: Object.entries(houses.series).filter(([k]) => k !== "total").reduce((t, [, s]) => t + (s.data.at(-1) ?? 0), 0),
+  // leaf industries only: all companies and the three sums with sub-industries (manufacturing, services other than IT, agriculture) are left out
+  industries: latestBy(lqi, "__sales", (k) => !/^(inds_grp_all_comp|mnf|serv_oth_it|agr_rel_act)__/.test(k)).map((x) => ({ ...x, label: x.label.replace(/: Sales: growth on a year earlier, same companies$/, ""), n: lqi.series[x.k.replace(/__sales$/, "__companies")]?.data.at(-1) ?? null })),
+  industriesDate: lqi.dates.at(-1),
+  spfOld: spfTargets(spfOld, /^gdp_at_constant/), spfNew: spfTargets(spf, /^gdp_at_constant/),
+  cpiOld: spfTargets(spfIOld, /^cpi_combined_general/), cpiNew: spfTargets(spfI, /^cpi_combined_general/),
+  deriv: { dates: deriv.dates, anomalies: deriv.series.nse__index_options.anomalies ?? [], index_options: deriv.series.nse__index_options.data, cash: deriv.dates.map((d) => turn.series.nse.data[turn.dates.indexOf(d)] ?? null) },
+};
+---
+<Base
+  title="Savings, markets and companies · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/markets/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">Every rupee a household saves goes somewhere: into a bank, an insurance policy, a provident fund, a mutual fund, a share, a gold chain or a cash box. What does not stay in a bank finds its way, through markets, to the companies that borrow it and the forecasters who try to guess what happens next.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>Reserve Bank of India</b></span>
+      <span>Household savings <b>quarterly, to {flowsLast}</b></span>
+      <span>Markets <b>monthly, to {PM.long}</b></span>
+      <span>Companies <b>listed, to {lqLast}; studies, to {fyCO}</b></span>
+      <span>Unit <b>₹ crore unless named</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Households' net financial saving, share of GDP</div><div class="v acc" id="n-net">–</div><div class="d" id="d-net">–</div><div class="nspark" id="nspark-net"></div></div>
+      <div class="num"><div class="l">Mutual fund assets, end-March</div><div class="v" id="n-aum">–</div><div class="d" id="d-aum">–</div></div>
+      <div class="num"><div class="l">Listed companies' sales, growth on a year earlier</div><div class="v" id="n-sales">–</div><div class="d" id="d-sales">–</div></div>
+      <div class="num"><div class="l">Forecasters' median for GDP growth, this year</div><div class="v" id="n-spf">–</div><div class="d" id="d-spf">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading. Inputs: markets-hh-flows (net financial assets, % of GDP), proseInputs (markets-hh-flows-annual, markets-mf-aum, markets-issues, markets-listed-q, markets-spf). Prose: generated slots. -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">{flowsLast}</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Net financial saving of households</span><div class="big" id="rb-net">–</div></div>
+      <p class="rt-cap">What households added to their financial assets in the quarter, less what they borrowed, as a share of the quarter's GDP. It is the part of household saving that is lent on to companies and the government.</p>
+      <div class="rt-side"><span class="rk">Gross, before borrowing</span><div class="rt-side-v" id="rb-gross">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the figures say</span>
+        <Prose slot="markets.current-reading.what-the-print-says" />
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What they do not say</span>
+        <Prose slot="markets.current-reading.what-it-does-not-say" />
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 lived reality. Inputs: markets-hh-flows-annual (the instruments, latest year). Evergreen copy, numbers filled from data. -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>Where a household's hundred rupees went</h2><span class="line"></span><span class="unit">{fyA}</span></div>
+    <div class="prose">
+      <p>Take every rupee Indian households put into financial assets in {fyA} and shrink the total to ₹100. About <b id="lr-dep">–</b> went into bank and other deposits, <b id="lr-pf">–</b> into provident and pension funds, <b id="lr-ins">–</b> into life insurance, <b id="lr-mf">–</b> into mutual funds and <b id="lr-cash">–</b> stayed as cash. Small savings schemes at the post office took <b id="lr-ss">–</b>. Shares bought directly took <b id="lr-eq">–</b>: a negative figure means households sold more shares than they bought.</p>
+      <p>Against that, they borrowed. For every ₹100 saved, households took <b id="lr-borrow">–</b> in new loans, mostly from banks, for homes, vehicles, businesses and gold. What is left, <b id="lr-net">–</b> of GDP in the year, is the household sector's net contribution to the money the rest of the economy can borrow. A family that puts ₹5,000 a month into a SIP and pays an EMI of ₹15,000 is, in these tables, a borrower.</p>
+    </div>
+  </section>
+
+  <!-- § 03 how to read this (evergreen, human-written) -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>How to read this guide</h2><span class="line"></span></div>
+    <div class="prose">
+      <p>This guide follows money from households to companies. It starts with the RBI's estimates of what households save in <b>financial assets</b> (deposits, insurance, pensions, mutual funds, shares, cash) and what they borrow. Those estimates are built quarter by quarter from the balance sheets of banks, insurers, fund houses and the government, so they are revised as more data arrive; the latest quarters are preliminary. Saving in physical assets, a house or gold, is measured separately in the national accounts and is not in these tables.</p>
+      <p>It then looks at the markets that carry the money. <b>Mutual funds</b> pool savings and buy shares and bonds. Companies raise money from the public through <b>new issues</b> of shares and bonds, and borrow for a few months at a time through <b>commercial paper</b>; banks do the same through <b>certificates of deposit</b>. The <b>stock exchanges</b> are where shares change hands. Index levels such as the Sensex and the Nifty are the exchanges' licensed products and are not reproduced here; the market's value and turnover are.</p>
+      <p>Last, it asks how companies are doing. The RBI publishes two kinds of company data. Every quarter it adds up the results of the listed private companies that have reported; every year it studies the audited accounts of thousands of public and private limited companies, foreign-owned companies and finance companies. Both compare <b>the same companies a year apart</b>: a growth rate is like for like, but the companies change from one quarter or study to the next, so the rupee totals of two different years cannot be compared. The guide ends with the <b>Survey of Professional Forecasters</b>, the RBI's poll of economists every two months.</p>
+    </div>
+  </section>
+
+  <!-- § 04 anatomy: where the money went. Inputs: markets-hh-flows-annual (instruments), markets-hh-flows (gross, liabilities, net, % of GDP). -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>Where household savings go</h2><span class="line"></span><span class="unit">Flows, ₹ lakh crore and per cent of GDP</span></div>
+    <div class="break">
+      <figure id="cb-flows" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{flowsTitle}</h3>
+            <div class="sub">Households' net additions to each financial asset, ₹ lakh crore, {fyA} (bars) and {fyOf(flowsA.dates[0])} (ticks).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-flows">–</div><div class="c">into financial assets, {fyA}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-flows" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, flow of financial assets and liabilities of households, instrument-wise (DBIE report 1225, fiscal-year totals). Preliminary estimates.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each bar is what households added to one kind of asset during the year, net of what they took out. Provident funds and insurance grow steadily because contributions come out of salaries and premiums every month; mutual funds and shares swing with the market's mood. A bar below zero means households pulled money out.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {fyA}</span>
+            <p>Deposits <b id="ex-fl-dep">–</b>, provident and pension funds <b id="ex-fl-pf">–</b>, life insurance <b id="ex-fl-ins">–</b>, mutual funds <b id="ex-fl-mf">–</b>, currency <b id="ex-fl-cash">–</b>, shares <b id="ex-fl-eq">–</b>. Mutual funds took <b id="ex-fl-mf0">–</b> in {fyOf(flowsA.dates[0])}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-net" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Households save about a tenth of GDP in financial assets each quarter, and borrow back a growing part of it</h3>
+            <div class="sub">Gross financial saving, borrowing and net financial saving of households, per cent of the quarter's GDP, {qSpan(flows)}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-net">–</div><div class="c">net, {flowsLast}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-net" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, household financial flows (DBIE report 1225), quarterly. Net = gross financial assets less financial liabilities.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The top line is what households put into financial assets, the bottom line what they borrowed, and the line between is the difference. The spike in 2020 is the lockdown: spending stopped, and money piled up in bank accounts. Each March quarter runs high because salaried people top up tax-saving deposits and insurance before the year ends.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {flowsLast}</span>
+            <p>Gross financial saving <b id="ex-net-g">–</b> of GDP, borrowing <b id="ex-net-l">–</b>, net <b id="ex-net-n">–</b>. A year earlier the net figure was <b id="ex-net-y">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 the long view. Inputs: markets-hh-annual (every instrument, shares of the total computed here). -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>Fifty years of household saving</h2><span class="line"></span><span class="unit">Share of the year's financial saving, per cent</span></div>
+    <div class="break">
+      <figure id="cb-long" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Bank deposits take a smaller share of household saving than in the early 2010s; shares and pensions take more</h3>
+            <div class="sub">Each instrument's share of households' gross financial saving, per cent, {fyOf(longB.dates[0])} to {fyL}. Computed from the RBI's rupee figures.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-long">–</div><div class="c">in bank deposits, {fyL}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Bank deposits</button>
+            <button class="chip"><i style="background:#C47A16"></i>Shares and debentures (incl. mutual funds)</button>
+            <button class="chip"><i style="background:#5F6675"></i>Provident and pension funds</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Life insurance</button>
+          </div>
+          <div class="plotzone"><div id="plot-long" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics, changes in financial assets and liabilities of the household sector (DBIE report 246). Share = instrument / total change in financial assets.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Shares are of the year's new financial saving, so they swing when one asset has an unusual year. In the RBI's long table "shares and debentures" includes mutual fund units; the quarterly table in plate 4 separates the two. Claims on government (small savings, PPF) and currency make up most of the rest.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {fyL}</span>
+            <p>Bank deposits <b id="ex-long-dep">–</b> of the year's financial saving, shares and debentures <b id="ex-long-sh">–</b>, provident and pension funds <b id="ex-long-pf">–</b>, life insurance <b id="ex-long-ins">–</b>. In {fyOf(longB.dates[0])} bank deposits took <b id="ex-long-dep0">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 the household balance sheet. Inputs: markets-hh-stocks (every asset and liability line). -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>What households own and owe</h2><span class="line"></span><span class="unit">Stocks, ₹ lakh crore, {stocksLast}</span></div>
+    <div class="break">
+      <figure id="cb-stocks" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Bank deposits are still the largest financial asset households hold; shares and mutual funds together come close</h3>
+            <div class="sub">Households' financial assets by instrument at the end of {stocksLast}, ₹ lakh crore, and what they owe.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-stocks">–</div><div class="c">financial assets, % of GDP</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-stocks" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, stocks of financial assets and liabilities of households (DBIE report 1226). Equity holdings are published from December 2022.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>These are holdings, not the year's additions. Shares and mutual funds are at market value, so they rise and fall with prices even when nobody buys or sells; deposits and pension balances move only with new money and interest. Debt is shown at the foot: loans from banks and from finance companies.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {stocksLast}</span>
+            <p>Financial assets <b id="ex-st-a">–</b>, <b id="ex-st-ag">–</b> of GDP; financial liabilities <b id="ex-st-l">–</b>, <b id="ex-st-lg">–</b> of GDP. Bank deposits <b id="ex-st-dep">–</b>, shares <b id="ex-st-eq">–</b>, mutual funds <b id="ex-st-mf">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 mutual funds. Inputs: markets-mf-aum, markets-mf-sponsor (all five), markets-mf-houses (every fund house, latest year), markets-mf-bank-fi (baked). -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>Mutual funds</h2><span class="line"></span><span class="unit">Assets and net inflows, ₹ crore</span></div>
+    <div class="break">
+      <figure id="cb-aum" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{aumTitle}</h3>
+            <div class="sub">Assets under management of all mutual funds, ₹ lakh crore, end-March, {PAUM.firstLong.split(" ")[1]} to {PAUM.year}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-aum">–</div><div class="c">end-March {PAUM.year}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-aum" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics, assets under management of mutual funds (DBIE report 126), from AMFI.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Assets under management rise for two reasons: new money comes in, and the shares and bonds already held gain value. A fall, as in 2008-09 or March 2020, is usually prices, not people leaving. The plate below separates the new money.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of March {PAUM.year}</span>
+            <p>Mutual funds held <b id="ex-aum">–</b>, up <b id="ex-aum-y">–</b> in a year. Five years earlier the figure was <b id="ex-aum-5">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-houses" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Most new money goes to a handful of large fund houses</h3>
+            <div class="sub">Net money put into each fund house (sales less redemptions), {fyH}, ₹ thousand crore, the twenty largest of {baked.houses.length}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-houses">–</div><div class="c">all fund houses together (summed here), {fyH}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-houses" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, net resources mobilised by mutual funds, entity-wise (DBIE report 1361). Every fund house is in the data download.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Net inflow is money invested minus money withdrawn during the year. It is not the size of the fund house. A large house can show a small inflow in a year when its debt funds paid out, and a young house can show a large one.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {fyH}</span>
+            <p>The largest net inflow went to <b id="ex-h-top">–</b> (<b id="ex-h-topv">–</b>). The top five took <b id="ex-h-top5">–</b> of the net inflow into all houses; <b id="ex-h-neg">–</b> houses saw more money leave than arrive.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-sponsor" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Private fund houses took over from UTI and the bank-sponsored funds after 2000</h3>
+            <div class="sub">Net resources mobilised by mutual funds by sponsor, ₹ thousand crore, 1987-88 to {fySP} (private funds from {fyOf(sponsor.dates.find((d, i) => sponsor.series.private.data[i] != null))}).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-sponsor">–</div><div class="c">private funds, {fySP}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Private sector funds</button>
+            <button class="chip"><i style="background:#C47A16"></i>Bank-sponsored funds</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>UTI</button>
+          </div>
+          <div class="plotzone"><div id="plot-sponsor" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics, net resources mobilised by mutual funds (DBIE report 1360). The table ends in {fySP}.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Until 1987 the Unit Trust of India was the only mutual fund. Banks and insurers were allowed in from 1987, private companies from 1993. The deep dips are years when money fled: the UTI crisis of 2001, the global crisis of 2008, the debt fund losses of 2018-19.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {fySP}</span>
+            <p>Private funds took in <b id="ex-sp-p">–</b> net, bank-sponsored funds <b id="ex-sp-b">–</b>, UTI <b id="ex-sp-u">–</b>, all funds <b id="ex-sp-t">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 gold. Inputs: markets-gold (all eight), markets-gold-annual (baked). -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>Gold and silver</h2><span class="line"></span><span class="unit">₹ per 10 grams, monthly average</span></div>
+    <div class="break">
+      <figure id="cb-gold" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{goldTitle}</h3>
+            <div class="sub">Monthly average price of standard gold in Mumbai, and the London price converted to rupees, ₹ per 10 grams, {PG.firstShort} to {PG.short}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-gold">–</div><div class="c">Mumbai, {PG.short}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Mumbai</button>
+            <button class="chip"><i style="background:#C47A16"></i>London, in rupees</button>
+          </div>
+          <div class="plotzone"><div id="plot-gold" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI Bulletin, monthly average price of gold and silver (DBIE report 17). Silver and the overseas prices in dollars are in the data download.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The gap between the two lines is what it costs to bring gold into India: import duty, taxes, and the premium or discount local demand puts on it. The rupee price rises both when gold rises in dollars and when the rupee falls. Households hold gold as jewellery and coins; it counts as physical saving, not as a financial asset in plates 4 to 6.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PG.short}</span>
+            <p>Gold in Mumbai averaged <b id="ex-g-m">–</b> per 10 grams; silver <b id="ex-g-s">–</b> per kilogram. The latest month with a London price shows a spread of <b id="ex-g-sp">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 how companies raise money. Inputs: markets-issues-annual (equity, bonds), markets-issues (monthly, baked), rates-cp and rates-cd (outstanding; the rates guide's bundles, read only). -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>How companies raise money from markets</h2><span class="line"></span><span class="unit">₹ crore</span></div>
+    <div class="break">
+      <figure id="cb-issues" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{issuesTitle}</h3>
+            <div class="sub">New capital raised from the public by non-government public limited companies: equity shares (public issues and rights) since {fyOf(issuesA.dates[0])}, and public issues of bonds as the RBI's current table counts them, from 2010-11, ₹ lakh crore, to {fyIA}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-issues">–</div><div class="c">equity, {fyIA}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Equity shares</button>
+            <button class="chip"><i style="background:#C47A16"></i>Bonds and debentures, public issues</button>
+          </div>
+          <div class="plotzone"><div id="plot-issues" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics, new capital issues by non-government public limited companies (DBIE report 277); fiscal years. The 1970 to 1980 calendar years are a separate ruler, in the data download.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>These are issues to the public: initial and follow-on public offers, and rights issues to existing shareholders. Much larger sums are raised privately, through bonds placed with a few institutions and shares sold to qualified buyers; those are not in this table. A big year usually follows a rising stock market, when companies can sell shares at good prices.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {fyIA}</span>
+            <p>Equity raised <b id="ex-is-eq">–</b>, bonds <b id="ex-is-b">–</b>. In the latest month, {PI.long}, <b id="ex-is-mn">–</b> companies raised <b id="ex-is-mv">–</b> in shares.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-cpcd" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Companies and banks each owe several lakh crore in IOUs of under a year</h3>
+            <div class="sub">Commercial paper (companies' short-term borrowing) and certificates of deposit (banks'), amount outstanding, ₹ lakh crore, fortnightly, to {PCP.long}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-cp">–</div><div class="c">commercial paper, {PCP.short}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Commercial paper</button>
+            <button class="chip"><i style="background:#C47A16"></i>Certificates of deposit</button>
+          </div>
+          <div class="plotzone"><div id="plot-cpcd" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Weekly Statistical Supplement (DBIE reports 5 and 4), read from the bundles of the interest rates guide. Rates are in that guide.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Commercial paper is a company's promise to repay in a few weeks or months, sold mostly to mutual funds and banks; it is cheaper than a bank loan for a company with a good rating. Certificates of deposit are the same thing issued by banks, which use them when deposits do not keep pace with loans. Both are outstanding amounts, so they show how much short-term borrowing is alive at a time, not how much was raised.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PCP.long}</span>
+            <p>Commercial paper outstanding <b id="ex-cp">–</b>, certificates of deposit <b id="ex-cd">–</b>. A year earlier: <b id="ex-cp-y">–</b> and <b id="ex-cd-y">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 10 the stock market. Inputs: markets-mcap (BSE, NSE), markets-turnover (NSE cash), markets-derivatives (NSE index options), markets-exchanges-daily and markets-turnover-annual (baked). -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>How big the stock market is</h2><span class="line"></span><span class="unit">₹ lakh crore</span></div>
+    <div class="break">
+      <figure id="cb-mcap" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Shares listed on the NSE were worth ₹{lakh(mcN.v)} lakh crore at the end of {MONTHS[+mcN.date.slice(5, 7) - 1]} {mcN.date.slice(0, 4)}</h3>
+            <div class="sub">Market capitalisation of companies listed on the NSE and BSE, end of month, ₹ lakh crore, to {PM.long}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-mcap">–</div><div class="c">NSE, {PM.short}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>NSE</button>
+            <button class="chip"><i style="background:#C47A16"></i>BSE</button>
+          </div>
+          <div class="plotzone"><div id="plot-mcap" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, market capitalisation at BSE and NSE (DBIE reports 1350, 1351), exchange data reproduced by the RBI. Most large companies list on both, so the two are not added.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Market capitalisation is the number of shares of every listed company times the day's price. It is a price, not money anyone has: it rises when prices rise even if not a single new share is sold. The two lines nearly coincide because almost every large company is listed on both exchanges.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PM.long}</span>
+            <p>NSE <b id="ex-mc-n">–</b>, BSE <b id="ex-mc-b">–</b>; a year earlier, NSE <b id="ex-mc-ny">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-turnover" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Trading in index options now dwarfs trading in shares, by more than a hundred times</h3>
+            <div class="sub">NSE: value of shares traded in the cash market, and notional value of index options traded, ₹ lakh crore a month, logarithmic scale, to {PD.long}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-turnover">–</div><div class="c">options to cash, {PD.short}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Index options (notional)</button>
+            <button class="chip"><i style="background:#5F6675"></i>Shares, cash market</button>
+          </div>
+          <div class="plotzone"><div id="plot-turnover" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, turnover in the equity derivatives market (DBIE report 1357) and monthly turnover at NSE (report 1352). Notional value: the value of the shares the contracts cover. March 2011 is left off: the RBI's table prints every NSE instrument at some 230 times the months either side, a misprint kept as printed in the data download.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each step up the scale is ten times the one below. An option's notional value is far larger than the money that changes hands, the premium, so the comparison overstates how much is spent; it does show how the market's activity has moved from owning shares to betting on their short-term moves.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PD.long}</span>
+            <p>Index options <b id="ex-to-o">–</b> notional in the month, shares <b id="ex-to-c">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 11 listed companies. Inputs: markets-listed-q (sales, operating profit, net profit), markets-listed-q-sector (three sectors), markets-listed-q-ratios (interest coverage, net profit to sales), markets-listed-q-industry (every industry, latest quarter). -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>How listed companies are doing</h2><span class="line"></span><span class="unit">Growth on a year earlier, same companies, per cent</span></div>
+    <div class="break">
+      <figure id="cb-listed" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Listed companies' sales grew {lqS.v.toFixed(1)}% in {lqLast}, and their operating profit kept pace</h3>
+            <div class="sub">Listed private non-financial companies: growth in sales and operating profit on the same quarter a year earlier, the same companies in both, per cent, {qSpan(lq)}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-listed">–</div><div class="c">sales growth, {lqLast}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Sales</button>
+            <button class="chip"><i style="background:#C47A16"></i>Operating profit</button>
+          </div>
+          <div class="plotzone"><div id="plot-listed" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, performance of listed non-government non-financial companies (SDMX dataset PRF_LNGNFC_QTR_RN), via the RBI Innovation Hub's data service.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each quarter the RBI takes every listed private company that has published results for that quarter and for the same quarter a year before, a few thousand of them (the count is in the data download), and compares the two. Sales growth is in nominal rupees, so higher prices raise it as much as higher volumes do. The deep dip and rebound are the 2020 lockdown and its base.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {lqLast}</span>
+            <p><b id="ex-ls-n">–</b> companies: sales <b id="ex-ls-s">–</b>, operating profit <b id="ex-ls-o">–</b>, net profit <b id="ex-ls-p">–</b>, staff costs <b id="ex-ls-w">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-sectors" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Manufacturers, IT firms and other service companies grow at different speeds</h3>
+            <div class="sub">Sales growth of listed private companies by sector, on the same quarter a year earlier, per cent, {qSpan(lq)}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-sectors">–</div><div class="c">manufacturing, {lqLast}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Manufacturing</button>
+            <button class="chip"><i style="background:#C47A16"></i>IT</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Services other than IT</button>
+          </div>
+          <div class="plotzone"><div id="plot-sectors" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, listed companies by sector (SDMX dataset PRF_LNGNFC_QTR_IND_RN), via the RBI Innovation Hub's data service.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>IT companies earn most of their revenue abroad, in dollars, so their growth follows American and European demand and the exchange rate. Manufacturing sales follow commodity prices closely: when oil and steel prices fall, refiners' and steelmakers' sales fall with them even if they sell as much.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {lqLast}</span>
+            <p>Manufacturing <b id="ex-sec-m">–</b>, IT <b id="ex-sec-i">–</b>, services other than IT <b id="ex-sec-s">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-coverage" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{coverTitle}</h3>
+            <div class="sub">Interest coverage (earnings before interest and tax divided by interest, times) and net profit as a share of sales (per cent), listed private non-financial companies, {qSpan(lq)}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-coverage">–</div><div class="c">interest coverage, {lqLast}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Interest coverage, times</button>
+            <button class="chip"><i style="background:#C47A16"></i>Net profit to sales, per cent</button>
+          </div>
+          <div class="plotzone"><div id="plot-coverage" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, ratios of listed non-government non-financial companies (SDMX dataset RATIO_LNGNFC_QTR_RN), via the RBI Innovation Hub's data service.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Interest coverage is how many times over a company's operating earnings could pay its interest bill. Below about 1.5 a company is in trouble if business slows; above 5 it has room. The two lines share one scale but different units: times for coverage, per cent for the profit margin.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {lqLast}</span>
+            <p>Interest coverage <b id="ex-cv-i">–</b>; net profit <b id="ex-cv-p">–</b> of sales; interest <b id="ex-cv-is">–</b> of sales.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-industries" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Industry by industry, sales growth ranged widely in {qOf(baked.industriesDate)}</h3>
+            <div class="sub">Sales growth of listed private companies on the same quarter a year earlier, per cent, by industry, {qOf(baked.industriesDate)}. Dot: the quarter; tick: the same quarter a year before.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-industries">–</div><div class="c">industries growing faster than 10%</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-industries" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, industry-wise growth rates of listed companies (SDMX dataset PRF_LNGNFC_IND_QTR_RN), via the RBI Innovation Hub's data service. Every industry and indicator is in the data download.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Some industries have only a few dozen listed companies, so one large company can move the figure. The number of companies is in the data download beside each industry. Read the spread as much as the extremes: when most dots sit right of zero, the slowdown or upturn is broad.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {qOf(baked.industriesDate)}</span>
+            <p>Fastest: <b id="ex-in-hi">–</b>. Slowest: <b id="ex-in-lo">–</b>. The median industry grew <b id="ex-in-med">–</b>; <b id="ex-in-neg">–</b> of <b id="ex-in-n">–</b> industries saw sales fall.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 12 the RBI's company studies. Inputs: markets-co-{public,private,fdi}-growth and -2011 (net sales), markets-co-{public,private}-ratios and -2011 (debt to equity); every other study bundle in the every-cut table. -->
+  <section>
+    <div class="sec-head"><span class="no">12</span><h2>The RBI's studies of company finances</h2><span class="line"></span><span class="unit">Each year's figure from that year's study</span></div>
+    <div class="break">
+      <figure id="cb-studies" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Sales of public, private and foreign-owned companies, year by year</h3>
+            <div class="sub">Growth of sales (old format) and net sales (Ind AS) on the year before, per cent, from each year's RBI study (the same companies in both years). Old reporting format to the 2018-19 study; Ind AS format from the 2020-21 study. There is no 2019-20 study.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-studies">–</div><div class="c">public limited companies, {fyCO}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Public limited</button>
+            <button class="chip"><i style="background:#C47A16"></i>Private limited</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Foreign direct investment companies</button>
+          </div>
+          <div class="plotzone"><div id="plot-studies" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, studies of non-government non-financial public and private limited companies and of FDI companies (DBIE reports 1173, 1179, 1170), statement 1 or 2. The two formats are two rulers, drawn apart.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>These studies cover far more companies than the listed set: in the latest year <b id="ev-st-pub">–</b> public limited companies, <b id="ev-st-pvt">–</b> private limited companies and <b id="ev-st-fdi">–</b> foreign-owned ones. They come out a year or more after the year ends, so they confirm what the quarterly listed data suggested. Each point compares the same companies over two years; the companies change from one study to the next.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the {fyCO} studies</span>
+            <p>Net sales grew <b id="ex-st-pub">–</b> for public limited companies, <b id="ex-st-pvt">–</b> for private limited companies and <b id="ex-st-fdi">–</b> for foreign-owned companies.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-debt" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{debtTitle}</h3>
+            <div class="sub">Debt to equity, per cent, public and private limited companies, from each year's RBI study. Old format to 2018-19 and Ind AS from 2020-21, drawn apart.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-debt">–</div><div class="c">public limited companies, {fyCO}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Public limited</button>
+            <button class="chip"><i style="background:#C47A16"></i>Private limited</button>
+          </div>
+          <div class="plotzone"><div id="plot-debt" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, select financial ratios of public and private limited companies (DBIE reports 1182, 1187), statement 2.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Debt to equity compares long-term borrowing with what shareholders have put in and left in the business. At 100% a company owes as much as its owners own. The Ind AS format counts some items differently from the old one, so the two stretches are drawn apart and a level in one is never compared with a level in the other.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the {fyCO} studies</span>
+            <p>Public limited companies <b id="ex-dt-pub">–</b>, private limited companies <b id="ex-dt-pvt">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 13 forecasters and households. Inputs: markets-spf and markets-spf-2019 (GDP growth medians by target year), markets-spf-inflation and -2019 (CPI, nearest quarter). Household surveys: blocked (stated). -->
+  <section>
+    <div class="sec-head"><span class="no">13</span><h2>What forecasters expect</h2><span class="line"></span><span class="unit">Survey of Professional Forecasters, medians</span></div>
+    <div class="break">
+      <figure id="cb-spf" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Forecasters change their mind about a year's growth as the year unfolds</h3>
+            <div class="sub">At each survey round, the median forecast of real GDP growth for the fiscal year in progress and for the year ahead, per cent, November 2019 to {PSPF.long}. From round 99 the forecasts are on the new GDP base, drawn apart; paler lines are the old base.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-spf">–</div><div class="c">for <span id="pv-spf-y">–</span>, {PSPF.long}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>The year ahead</button>
+            <button class="chip"><i style="background:#5F6675"></i>The year in progress</button>
+          </div>
+          <div class="plotzone"><div id="plot-spf" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Survey of Professional Forecasters, round-wise aggregate tables (DBIE report 1475), via the RBI Innovation Hub's data service. Rounds 64, 71, 75, 78, 84, 86, 94 and 100 are missing from the service's export.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each April the year in progress becomes a new year, so both lines step from one target year to the next. The gap between them is the forecasters' view of whether growth will speed up or slow down. In 2020 the year in progress collapsed with the lockdown while the year ahead jumped on the expected rebound. The median is the middle answer of the panel, economists in banks, brokerages and research firms; the number answering varies from round to round. Every target year, round and statistic is in the data download.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PSPF.long}</span>
+            <p>The median forecast for <b id="ex-spf-y">–</b> is <b id="ex-spf-v">–</b>; for the year after, <b id="ex-spf-n">–</b>. The median forecast of CPI inflation for <b id="ex-spf-q">–</b> is <b id="ex-spf-c">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="prose" style="margin-top:56px">
+      <p><b>What households expect is not here yet.</b> The RBI also asks households in cities and villages what they expect inflation to be and how they feel about their income and jobs (the Inflation Expectations Survey of Households and the urban and rural consumer confidence surveys). DBIE serves those results only behind an input form that neither the Data Bank's mirror nor the RBI Innovation Hub's service has been able to read, so this guide cannot show them. We do not know, from the data here, what households expect.</p>
+    </div>
+  </section>
+
+  <!-- § 14 what this measures (evergreen) -->
+  <section>
+    <div class="sec-head"><span class="no">14</span><h2>What these numbers measure</h2><span class="line"></span></div>
+    <div class="prose">
+      <p><b>Household financial saving</b> is estimated by the RBI from the other side of each transaction: what banks owe households in deposits, what insurers and pension funds hold for them, what mutual funds owe their unitholders, what households borrowed. The "household sector" includes small unincorporated businesses and non-profit bodies, not only families. The quarterly table starts in 2018-19; the annual table runs from 1970-71, on older national accounts definitions.</p>
+      <p><b>Company studies</b> are compiled from the audited accounts companies file with the Ministry of Corporate Affairs. The RBI's sample grows each year and differs from the last, which is why only growth rates and ratios, computed inside each study, are drawn as lines. The studies moved to the Ind AS accounting format from the 2020-21 study. The <b>listed company</b> data are from quarterly results filed with the exchanges, unaudited for most quarters, for the companies that have reported by the cut-off.</p>
+      <p><b>Market statistics</b> (capitalisation, turnover, new issues, derivatives) are compiled by the exchanges and SEBI and reproduced by the RBI. <b>Forecasts</b> are the opinions of the survey's panellists, not the RBI's own projections.</p>
+    </div>
+  </section>
+
+  <!-- § 15 misreadings -->
+  <section>
+    <div class="sec-head"><span class="no">15</span><h2>How to misread these numbers</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li><span class="no">1</span><div><h3>"Household savings collapsed."</h3><p>Usually this means net financial saving fell, because households borrowed more, often to buy houses and vehicles. Gross financial saving and physical saving can be steady or rising at the same time. Ask which saving, and gross or net.</p></div></li>
+      <li><span class="no">2</span><div><h3>"Indians have moved their savings from banks to the stock market."</h3><p>Deposits remain the largest single destination of household saving, year after year. What has changed is the share going to mutual funds and pensions, and the market value of shares households already held.</p></div></li>
+      <li><span class="no">3</span><div><h3>"Market capitalisation rose by ₹X lakh crore, so investors earned that much."</h3><p>Market capitalisation is a price times a number of shares. It includes promoters, governments and foreign investors, and the gain is on paper until shares are sold.</p></div></li>
+      <li><span class="no">4</span><div><h3>"Company profits fell 20% this quarter, so the corporate sector is in trouble."</h3><p>Net profit swings with one-off gains and losses at a few large companies. Sales, operating profit and interest coverage tell you more about the typical business.</p></div></li>
+      <li><span class="no">5</span><div><h3>"Corporate sales in the RBI study rose from ₹X to ₹Y over ten years."</h3><p>Each study covers a different set of companies, so totals from two studies cannot be compared. Only growth rates and ratios inside each study are like for like.</p></div></li>
+      <li><span class="no">6</span><div><h3>"The forecasters expect 7% growth, so it will be 7%."</h3><p>The median forecast for a year moves by a point or more as the year unfolds, and the panel's range is wide. Read the forecast as the profession's mood at the time, not a prediction to bank on.</p></div></li>
+    </ul>
+  </section>
+
+  <EveryCut slug="markets" />
+
+  <GuideData slug="markets" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>Reserve Bank of India. Household financial flows and stocks, new capital issues, mutual funds, gold and silver prices, market capitalisation, turnover and derivatives, and the company finance studies are read from DBIE through the owner's local mirror of the RBI's database. The Survey of Professional Forecasters and the listed company tables, which DBIE gates behind an input form, are read from the RBI Innovation Hub's copy of DBIE. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Checked against the RBI's own publications: household flows in the Bulletin (October to December 2025), the public limited company study of 2024-25 (release of 30 March 2026), the listed company release for October to December 2025, the 101st round of the forecasters' survey, the Handbook's gold table, and the Bulletin's new issues table.</p>
+      </div>
+      <div>
+        <h6>Method</h6>
+        <p>Rupee amounts are converted to ₹ crore and shown in ₹ lakh crore. Shares of household saving are computed from the RBI's rupee figures. Every DBIE report repeats each value once per display unit; one is kept. Company study growth rates and ratios are taken from each year's own study; rupee levels are kept study by study and never joined. Nothing is estimated or interpolated.</p>
+      </div>
+      <div>
+        <h6>Revisions and breaks</h6>
+        <p>Household flows are preliminary and revised. Breaks kept apart: the company studies' change to the Ind AS format (from the 2020-21 study); the forecasters' move to the new GDP and CPI bases (from round 99); the capital issues table's calendar years before 1981-82 and its two layouts.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Version 1.0 (October 2026). Stock index levels (Sensex, Nifty and others) are left out: they are the exchanges' licensed products. Foreign portfolio flows are in the external account guide; interest rates on commercial paper and deposits in the interest rates guide.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, savings, markets and companies</span>
+      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<script type="application/json" id="markets-baked" set:html={JSON.stringify(baked)} />
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/markets.client.js";
+</script>
+</Base>

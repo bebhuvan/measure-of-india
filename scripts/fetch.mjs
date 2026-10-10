@@ -92,6 +92,12 @@ Object.assign(REGISTRY, { banks: buildBanks });   // banks (lb/banks)
 
 import { buildPublicFinance } from "./lib/products/public-finance.mjs";   // public-finance (lb/public-finance)
 Object.assign(REGISTRY, { "public-finance": buildPublicFinance });   // public-finance (lb/public-finance)
+import { buildMarkets, buildMarketsIssues } from "./lib/products/markets.mjs";   // markets (lb/markets)
+Object.assign(REGISTRY, { markets: buildMarkets, "markets-issues": buildMarketsIssues });   // markets (lb/markets)
+import { buildMarketsCompanies } from "./lib/products/markets-companies.mjs";   // markets (lb/markets)
+Object.assign(REGISTRY, { "markets-companies": buildMarketsCompanies });   // markets (lb/markets)
+import { buildMarketsHubOnce } from "./lib/products/markets-hub.mjs";   // markets (lb/markets)
+Object.assign(REGISTRY, { "markets-hub": buildMarketsHubOnce });   // markets (lb/markets)
 
 // One product's failure must not starve the rest: collect, continue, and
 // exit non-zero at the end so CI still fails on the summary.

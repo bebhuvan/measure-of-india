@@ -388,6 +388,49 @@ if (slug === "trade") {
   facts.cross.trade = T;
 }
 // --- end trade ---
+// ---- markets (lb/markets): household flows are published in ₹ crore; prose speaks in ₹ lakh
+// crore and in rupees out of every hundred. The conversion is done here, in code: every rupee
+// figure the writer may cite sits in cross.lakhCrore or cross.year (two decimals), every share
+// in cross.per100, and the market, company and forecaster figures in cross.markets.
+if (slug === "markets") {
+  const rd = (f) => JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", f + ".json"), "utf8"));
+  const lc = (v) => (v == null ? null : Math.round(v / 1e3) / 100);
+  const r1 = (v) => (v == null ? null : Math.round(v * 10) / 10);
+  const NAMES = { gross_financial_assets_i_financial_assets: "financial assets (gross saving)", gross_financial_liabilities_ii_financial_liabilities: "borrowing (financial liabilities)",
+    ii_financial_liabilities_1_financial_corporations_a_b: "loans from banks and other financial companies",
+    net_financial_assets_i_ii: "net financial saving", i_financial_assets_1_total_deposits_a_b: "deposits", i_financial_assets_1_total_deposits_a_b_a_bank_deposits: "bank deposits",
+    i_financial_assets_2_life_insurance_funds: "life insurance", i_financial_assets_3_provident_and_pension_funds_including_ppf: "provident and pension funds",
+    i_financial_assets_4_currency: "currency", i_financial_assets_5_investments_a_mutual_funds: "mutual funds", i_financial_assets_5_investments_b_equity: "shares bought directly",
+    i_financial_assets_6_small_savings_excluding_ppf: "small savings" };
+  facts.cross.lakhCrore = {};
+  for (const [k, name] of Object.entries(NAMES)) { const s = facts.series[k]; if (s) facts.cross.lakhCrore[k] = { name, latest: lc(s.latest.value), previous: lc(s.previous?.value), yearAgo: lc(s.yearAgo?.value), period: s.latest.period }; }
+  const G = facts.series.gross_financial_assets_i_financial_assets.latest.value;
+  facts.cross.per100 = { period: facts.latestPeriod, note: "Rupees out of every ₹100 of the quarter's gross financial saving." };
+  for (const [k, name] of Object.entries(NAMES)) if (k.startsWith("i_financial_assets_") && facts.series[k]) facts.cross.per100[name] = Math.round((100 * facts.series[k].latest.value) / G);
+  facts.cross.per100.borrowing = Math.round((100 * facts.series.gross_financial_liabilities_ii_financial_liabilities.latest.value) / G);
+  const A = rd("markets-hh-flows-annual"), ai = A.dates.length - 1, ay = `${A.dates[ai].slice(0, 4)}-${String((+A.dates[ai].slice(0, 4) + 1) % 100).padStart(2, "0")}`;
+  const ga = A.series.gross_financial_assets_i_financial_assets.data[ai];
+  facts.cross.year = { fiscalYear: ay, gross_lakh_crore: lc(ga), net_lakh_crore: lc(A.series.net_financial_assets_i_ii.data[ai]), net_pct_gdp: r1(A.series.per_cent_of_gdp_as_per_cent_to_gdp.data[ai]),
+    net_pct_gdp_previous_year: r1(A.series.per_cent_of_gdp_as_per_cent_to_gdp.data[ai - 1]), borrowing_lakh_crore: lc(A.series.gross_financial_liabilities_ii_financial_liabilities.data[ai]),
+    per100: Object.fromEntries(Object.entries(NAMES).filter(([k]) => k.startsWith("i_financial_assets_") && A.series[k]).map(([k, name]) => [name, Math.round((100 * A.series[k].data[ai]) / ga)])) };
+  facts.cross.netPctGdp = { latest: r1(facts.series.per_cent_of_gdp_as_per_cent_to_gdp.latest.value), yearAgo: r1(facts.series.per_cent_of_gdp_as_per_cent_to_gdp.yearAgo?.value), period: facts.latestPeriod,
+    grossLatest: r1(facts.series.gross_financial_assets_per_cent_of_gdp_as_per_cent_to_gdp.latest.value) };
+  const aum = rd("markets-mf-aum"), iss = rd("markets-issues"), lq = rd("markets-listed-q"), spf = rd("markets-spf");
+  const lastI = (b, k) => { const d = b.series[k].data; for (let i = d.length - 1; i >= 0; i--) if (d[i] != null) return i; return -1; };
+  const M = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const mon = (iso) => `${M[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}`;
+  const ia = lastI(aum, "aum"), ii = lastI(iss, "equity"), il = lastI(lq, "sales");
+  // the current fiscal year's forecast in the latest round: the earliest target that round still forecasts
+  const gdpKey = Object.keys(spf.series).filter((k) => /^gdp_at_constant_prices.*__median$/.test(k) && spf.series[k].data.at(-1) != null).sort()[0];
+  facts.cross.markets = {
+    mutualFundAssets: { lakh_crore: lc(aum.series.aum.data[ia]), year_ago_lakh_crore: lc(aum.series.aum.data[ia - 1]), asOn: `March ${aum.dates[ia].slice(0, 4)}` },
+    newShareIssues: { month: mon(iss.dates[ii]), crore: Math.round(iss.series.equity.data[ii]), issues: iss.series.equity_n.data[ii] },
+    listedCompanies: { quarter: periodLabel(lq.dates[il]), companies: lq.series.companies.data[il], salesGrowthPct: r1(lq.series.sales.data[il]), operatingProfitGrowthPct: r1(lq.series.opr_pft.data[il]), netProfitGrowthPct: r1(lq.series.net_pft.data[il]) },
+    forecasters: gdpKey ? { round: mon(spf.dates.at(-1)), target: spf.series[gdpKey].target, gdpGrowthMedianPct: spf.series[gdpKey].data.at(-1) } : null,
+  };
+  facts.cross.note = "Series values are ₹ crore and must not be cited directly. Cite rupee figures from cross.lakhCrore and cross.year (₹ lakh crore), shares from cross.per100 and cross.year.per100 (rupees out of ₹100), and the market, company and forecaster figures from cross.markets, as written.";
+}
+// ---- end markets ----
 
 // --- farms (lb/farms): the harvest, the advance estimate, yields, support prices and food
 // stocks, in the units the prose uses (million tonnes, kg per hectare, rupees a quintal), each

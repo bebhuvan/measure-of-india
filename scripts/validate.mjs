@@ -3436,6 +3436,95 @@ withBundle("wages-rural-2013", (b) => {
     if (!(Math.abs(sh - 69.8) <= 0.05)) fail(`deposits-maturity-owners: 1-3 year share ${sh} differs from RBI's 69.8%`); else ok(`deposits-maturity-owners: 1-3 years ${sh.toFixed(2)}% of term deposits = RBI's 69.8%`); });
 }
 
+// ---- markets (lb/markets): savings outside banks, markets, company finances, forecasters ----
+// Every markets-* bundle gets the generic checks (meta against its sources.yml entry, cadence, unit
+// ranges, disclosed gaps, freshness of the live ones), then the RBI tables' own arithmetic and the
+// values checked by hand against RBI publications (adapter headers record the sources). Ranges
+// document measured extremes: a company-study growth rate of -3,012.9% (FDI wholesale trade, a
+// sign change in a small base), a ratio of 11,024.4% (private motor vehicles, 2013-14: bank
+// borrowings against a near-zero external total), NSE index options turnover of ₹87 crore crore a month (notional),
+// cash coverage of -80.8 times (one listed industry's loss quarter), silver spreads below zero.
+{
+  const UR = { inr_crore: [-2e6, 1e9], count: [0, 2e12], pct: [-15000, 15000], times: [-200, 200], pct_of_gdp: [0, 200],
+    inr_per_10g: [-500, 3e5], inr_per_kg: [-5000, 6e5], usd_per_troy_oz: [30, 8000], usc_per_troy_oz: [100, 15000],
+    usd_bn: [-300, 400], inr_per_usd: [40, 150], usd_per_barrel: [10, 250] };
+  const CAD = { monthly: 1, bimonthly: 2, quarterly: 3, annual: 12, "half-yearly": 12 };
+  const FLOOR = { "markets-issues": "2026-03", "markets-gold": "2026-04", "markets-mcap": "2026-08", "markets-turnover": "2026-08", "markets-hh-flows": "2025-10",
+    "markets-mf-aum": "2026-03", "markets-listed-q": "2025-10", "markets-spf": "2026-07", "markets-co-public-growth": "2024-04", "markets-exchanges-daily": "2026-09" };
+  let n = 0;
+  for (const f of fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => /^markets-.*\.json$/.test(f)).sort()) {
+    const slug = f.replace(/\.json$/, ""), b = load(slug);
+    if (!cfg.dossiers[b.meta.dossier]) { fail(`${slug}: meta.dossier "${b.meta.dossier}" has no sources.yml entry`); continue; }
+    checkMeta(b, slug, b.meta.dossier, b.meta.base, b.meta.frequency);
+    if (b.dates.length > 1 && CAD[b.meta.frequency]) checkCadence(b.dates, CAD[b.meta.frequency], slug);
+    const sr = {};
+    for (const [k, s] of Object.entries(b.series)) { const u = s.unit ?? b.meta.unit; if (!UR[u]) fail(`${slug}.${k}: unit "${u}" has no range`); sr[k] = UR[u] ?? [-Infinity, Infinity]; }
+    checkRange(b, -Infinity, Infinity, slug, sr);
+    checkFreshness(b, slug, FLOOR[slug] ? { staleAfter: FLOOR[slug] } : { stale: false }, b.meta.dossier);
+    n++;
+  }
+  ok(`markets: ${n} bundles checked for meta, cadence, unit ranges, gaps and freshness`);
+
+  const sumCheck = (slug, label, total, parts, tol, skip = []) => withBundle(slug, (b) => {
+    let c = 0, bad = [];
+    b.dates.forEach((d, i) => {
+      const T = b.series[total]?.data[i], xs = parts.map((p) => b.series[p]?.data[i]);
+      if (T == null || xs.some((x) => x == null) || skip.includes(d)) return;
+      c++; const dev = Math.abs(xs.reduce((a, x) => a + x, 0) - T);
+      if (dev > (typeof tol === "function" ? tol(T) : tol)) bad.push(`${d} (${dev.toFixed(2)})`);
+    });
+    if (!c) fail(`${slug}: ${label} checked nothing`);
+    else if (bad.length) fail(`${slug}: ${label} fails in ${bad.length} of ${c}: ${bad.slice(0, 4).join(", ")}`);
+    else ok(`${slug}: ${label} in all ${c} periods`);
+  });
+  // new capital issues: the RBI's subtotals (amounts carry the RBI's own rounding, under ₹1 crore or 0.5%)
+  sumCheck("markets-issues", "equity issues = prospectus + rights (number)", "equity_n", ["equity_prospectus_n", "equity_rights_n"], 0);
+  sumCheck("markets-issues", "equity raised = prospectus + rights (₹ crore, RBI rounding)", "equity", ["equity_prospectus", "equity_rights"], (T) => Math.max(1.01, 0.005 * Math.abs(T)));
+  sumCheck("markets-issues-detail", "convertible = prospectus + rights", "convertible", ["convertible_prospectus", "convertible_rights"], 0.011);
+  sumCheck("markets-issues-detail", "non-convertible = prospectus + rights", "nonconvertible", ["nonconvertible_prospectus", "nonconvertible_rights"], 0.011);
+  // November 2024 is the one month the RBI's own table does not add up (disclosed in the bundle note)
+  sumCheck("markets-issues-detail", "debentures = convertible + non-convertible", "debentures", ["convertible", "nonconvertible"], 0.5, ["2024-11-01"]);
+  sumCheck("markets-mf-sponsor", "all funds = UTI + bank + FI + private (RBI rounding)", "total", ["uti", "bank", "fi", "private"], 2.01);
+  // gold: the spread is Mumbai less London in rupees (the RBI rounds each price; within ₹25)
+  withBundle("markets-gold", (b) => { let c = 0, bad = 0; b.dates.forEach((d, i) => { const m = b.series.gold_mumbai.data[i], l = b.series.gold_london_inr.data[i], s = b.series.gold_spread.data[i]; if ([m, l, s].includes(null)) return; c++; if (Math.abs(m - l - s) > 25) bad++; });
+    if (bad) fail(`markets-gold: spread != Mumbai - London in ${bad} of ${c} months`); else ok(`markets-gold: spread = Mumbai - London (₹25) in all ${c} months`); });
+  // household flows: net = gross assets - gross liabilities
+  withBundle("markets-hh-flows", (b) => { const A = b.series.gross_financial_assets_i_financial_assets, L = b.series.gross_financial_liabilities_ii_financial_liabilities, N = b.series.net_financial_assets_i_ii;
+    let c = 0, bad = 0; b.dates.forEach((d, i) => { if ([A, L, N].some((s) => s?.data[i] == null)) return; c++; if (Math.abs(A.data[i] - L.data[i] - N.data[i]) > 1) bad++; });
+    if (!c || bad) fail(`markets-hh-flows: net = assets - liabilities fails in ${bad} of ${c} quarters`); else ok(`markets-hh-flows: net = assets - liabilities in all ${c} quarters`); });
+  // company studies: every balance sheet balances, study by study, in both formats
+  for (const t of ["public", "private", "fdi"]) for (const fmt of ["", "-2011"]) withBundle(`markets-co-${t}-liabilities${fmt}`, (L) => withBundle(`markets-co-${t}-assets${fmt}`, (A) => {
+    const [lk, ak] = fmt ? ["total", "total"] : ["equity_and_liabilities", "total_assets"];
+    let c = 0, bad = 0;
+    for (const k of Object.keys(L.series).filter((k) => k.startsWith(lk + "__s"))) { const st = k.split("__s")[1], a = A.series[`${ak}__s${st}`]; if (!a) continue;
+      L.dates.forEach((d, i) => { const x = L.series[k].data[i], y = a.data[A.dates.indexOf(d)]; if (x == null || y == null) return; c++; if (Math.abs(x - y) > Math.max(1, 1e-5 * x)) bad++; }); }
+    if (!c || bad) fail(`markets-co-${t}${fmt}: liabilities != assets in ${bad} of ${c} study-years`); else ok(`markets-co-${t}${fmt}: the balance sheet balances in all ${c} study-years`);
+  }));
+  // listed companies: EBITDA = operating profit + other income; EBIT = EBITDA - depreciation (₹ crore, 0.05%)
+  withBundle("markets-listed-q-levels", (b) => { const g = (k, i) => b.series[k]?.data[i]; let c = 0, bad = 0;
+    b.dates.forEach((d, i) => { const e = g("ebitda", i), o = g("opr_pft", i), oi = g("oth_inc", i), dp = g("deprc", i), eb = g("gross_pft_ebit", i); if ([e, o, oi, dp, eb].includes(undefined) || [e, o, oi, dp, eb].includes(null)) return; c++;
+      if (Math.abs(o + oi - e) > 5e-4 * Math.abs(e) + 1 || Math.abs(e - dp - eb) > 5e-4 * Math.abs(e) + 1) bad++; });
+    if (!c || bad) fail(`markets-listed-q-levels: EBITDA/EBIT identities fail in ${bad} of ${c} quarters`); else ok(`markets-listed-q-levels: EBITDA = operating profit + other income, EBIT = EBITDA - depreciation in all ${c} quarters`); });
+  // SPF: lowest <= median <= highest, quartiles inside
+  for (const sl of ["markets-spf", "markets-spf-2019", "markets-spf-quarterly", "markets-spf-quarterly-2019", "markets-spf-inflation", "markets-spf-inflation-2019"]) withBundle(sl, (b) => {
+    let c = 0, bad = 0;
+    for (const k of Object.keys(b.series).filter((k) => k.endsWith("__median"))) { const p = k.slice(0, -"median".length);
+      b.dates.forEach((d, i) => { const md = b.series[k].data[i], lo = b.series[p + "min"]?.data[i], hi = b.series[p + "max"]?.data[i]; if ([md, lo, hi].some((v) => v == null)) return; c++; if (lo > md + 1e-9 || md > hi + 1e-9) bad++; }); }
+    if (!c || bad) fail(`${sl}: median outside [lowest, highest] in ${bad} of ${c}`); else ok(`${sl}: median between lowest and highest in all ${c}`); });
+  // values checked by hand against RBI publications (2026-10-10)
+  const pin = (sl, key, iso, want, tol, what) => withBundle(sl, (b) => { const v = b.series[key]?.data[b.dates.indexOf(iso)];
+    if (v == null || Math.abs(v - want) > tol) fail(`${sl}.${key} ${iso}: ${v}, the RBI publishes ${want} (${what})`); else ok(`${sl}.${key} ${iso} = ${v} (${what})`); });
+  pin("markets-issues", "equity", "2024-04-01", 25371, 1, "Bulletin, new capital issues, April 2024");
+  pin("markets-gold-annual", "gold_mumbai", "2025-04-01", 118420.9, 0.05, "Handbook table 35, 2025-26");
+  pin("markets-mf-aum", "aum", "2026-03-01", 7373000, 1000, "AMFI, end-March 2026, ₹73.73 lakh crore");
+  pin("markets-hh-flows", "net_financial_assets_i_ii", "2025-10-01", 422796.8, 0.1, "Bulletin table 52, Oct-Dec 2025");
+  pin("markets-co-public-growth", "net_sales", "2024-04-01", 7.8, 0.01, "RBI release on public limited companies 2024-25");
+  pin("markets-co-public-growth", "companies", "2024-04-01", 7992, 0, "the same release, number of companies");
+  pin("markets-listed-q", "sales", "2025-10-01", 10.1, 0.05, "RBI release on listed companies, Oct-Dec 2025");
+  pin("markets-spf", "gdp_at_constant_prices_annual_growth_per_cent__fy2026__median", "2026-07-01", 6.6, 0.01, "SPF round 101 results");
+}
+// ---- end markets ----
+
 // ---- profiles (lb/profiles): NFHS-6 from the IIPS fact sheets (scripts/lib/products/profiles-nfhs6.mjs) ----
 // Shape, ranges and the fact sheets' own arithmetic: every indicator for India and 35 units,
 // percentages in 0 to 100, fertility in 0.5 to 8, the total between urban and rural wherever

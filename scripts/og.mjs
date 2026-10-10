@@ -367,6 +367,15 @@ const CARDS = [
     foot: (b) => { const f = b.meta.stages.accountsTo; return `The Centre's deficits, per cent of GDP (2011-12 base), 2011-12 to ${f}, accounts. Source: RBI, Handbook of Statistics`; },
   },
   // --- end public-finance ---
+  // --- markets (lb/markets): households' gross and net financial saving, per cent of GDP, quarterly ---
+  {
+    slug: "markets", bundleSlug: "markets-hh-flows",
+    keys: ["gross_financial_assets_per_cent_of_gdp_as_per_cent_to_gdp", "per_cent_of_gdp_as_per_cent_to_gdp"], d0: 0, d1: 24, band: null, trend: null,
+    yStep: 4, fmt: (v) => v.toFixed(1) + "%", mr: 200,
+    prep: (S) => { S.gross_financial_assets_per_cent_of_gdp_as_per_cent_to_gdp = { ...S.gross_financial_assets_per_cent_of_gdp_as_per_cent_to_gdp, label: "Gross", color: "#5F6675" }; S.per_cent_of_gdp_as_per_cent_to_gdp = { ...S.per_cent_of_gdp_as_per_cent_to_gdp, label: "Net", color: "#2E4BD8" }; },
+    foot: (b) => { const d = b.dates.at(-1), M = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], m = +d.slice(5, 7) - 1; return `Households' financial saving, gross and net of borrowing, per cent of GDP, quarterly to ${M[m]} to ${M[m + 2]} ${d.slice(0, 4)}. Source: RBI`; },
+  },
+  // --- end markets ---
 ];
 
 await ensureFonts();

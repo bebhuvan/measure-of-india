@@ -64,6 +64,8 @@ export const HEADLINE = {
   banks:         { value: (b) => `${last(b, "all_gnpa").toFixed(2)}%`, what: "banks' bad loans, gross NPAs as a share of gross advances", period: month },
   // --- public-finance (lb/public-finance): the Centre's deficit so far this year, against the year's budget
   "public-finance": { value: (b) => `${last(b, "fiscal_deficit_pct_be").toFixed(1)}%`, what: "the Centre's fiscal deficit so far this year, as a share of the year's budget estimate", period: (b) => { const d = lastDate(b), m = +d.slice(5, 7) - 1; return `April to ${MONTHS[m]} ${d.slice(0, 4)}`; } },
+  // markets (lb/markets): households' net financial saving in the quarter, per cent of GDP
+  markets:       { value: (b) => `${last(b, "per_cent_of_gdp_as_per_cent_to_gdp").toFixed(1)}%`, what: "households' net financial saving, share of the quarter's GDP", period: quarter },
 };
 
 // The small chart beside each guide's figure: always on the current ruler, so a chart never
@@ -107,6 +109,7 @@ export const SPARK = {
   banks:         { bundle: "banks-health", series: "all_gnpa" },   // banks (lb/banks)
   // public-finance (lb/public-finance): the Centre's deficit, April to each month
   "public-finance": { bundle: "public-finance-centre-gfd-monthly", series: "gfd_fytd", n: 87 },
+  markets:       { bundle: "markets-hh-flows", series: "per_cent_of_gdp_as_per_cent_to_gdp" },   // markets (lb/markets)
 };
 
 const cache = {};
