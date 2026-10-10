@@ -1,6 +1,6 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 04:45.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 06:00.
 
 ## Running now: ten family sessions
 
@@ -30,7 +30,7 @@ Each decides every `pending` item in its ledgers (brief: `docs/briefs/wave2.md`)
 |---|---|---|
 | atlas-prices | cpi, wpi (+ CPI-IW, rural wages) | **merged**: 0 pending; CPI by state to the group, items staged for the archive |
 | atlas-jobs-deep | jobs | **merged**: 0 pending (9,523 items); found the 2025 PLFS redesign splice. services-jobs-cy split at the seam too (merged) |
-| atlas-industry | iip, factories (+ eight core industries) | 45,347; paging fix merged, audit clean so far (38 ASI tables, all 52 ASUSE, IIP annual); ASI download ~2 h left |
+| atlas-industry | iip, factories (+ eight core industries) | **merged**: 0 pending; ASI to 4-digit and state, core industries, ASUSE every table |
 | atlas-nas | gdp | **merged**: 0 pending; institutional sectors, revision paths, 18 sub-industries |
 
 | atlas-health-gender | nfhs, gender | **merged**: 0 pending; found MoSPI misfiling NFHS-4 values the old guide had printed |
@@ -44,6 +44,23 @@ Each decides every `pending` item in its ledgers (brief: `docs/briefs/wave2.md`)
 
 Jobs deeper, industry deeper, prices deeper, national accounts remainder (all MoSPI, which
 throttles, so not run alongside the states and services sessions). Then the launch pass.
+
+## Where the site stands (06:00, 10 Oct)
+
+**Every catalogue item on the site is decided: `coverage --strict` passes.** 25 guides,
+1,616 bundles, 656,418 series, 964 pages; all gates green; all 44 prose files verify.
+
+## Launch pass: what is left
+
+| Item | Who | State |
+|---|---|---|
+| Search index is 306 MB (Cloudflare refuses files over 25 MB) | atlas-framework round 5 | running |
+| Full fresh MoSPI re-download as an integrity audit (worktree `audit`) | coordinator, background | running |
+| Deep archive upload to Hugging Face (1.5 GB) | coordinator | **waiting on the owner's go** |
+| Read every guide end to end at 1440 and 390; release checklist | review sessions | after the audit and search land |
+| Prose rule: published precision for headline growth ("7.8%", not "7.82%") | coordinator | to decide |
+| IIP annual 2024-25: API 5.7% against 6.4% in press summaries (MoSPI PDF 403) | open | not quoted anywhere meanwhile |
+| GitHub remote, Cloudflare secrets and Pages project, DNS for atlas.thisindianlife.today, analytics | **owner** | to do |
 
 ## Done on the branch
 

@@ -186,6 +186,15 @@ stamps, silent series). What the audit changed:
   Those lines are withheld, pinned to the value served so a silent fix is noticed. Lesson:
   an agency's API is a copy of its report, and a copy can be wrong; check one value per
   table against the printed report, which is what caught both.
+- **2026-10-10 06:00 — Wave 2 complete; nothing pending.** Prices (CPI by state to the group,
+  CPI-IW, rural wages, WPI's old bases), jobs (the whole PLFS cube, the 2025 redesign seam),
+  industry (IIP all bases, core industries, ASI at every NIC digit), national accounts
+  (institutional sectors, revision paths), health and gender (all NFHS tables, all 154
+  compendium indicators) and households (HCES, AISHE, MNRE, BSR-2 decoded). With industry's
+  merge `coverage --strict` passed: every one of the 146,853 items the existing guides had
+  missed is now shown, baked, archived, excluded with a data reason, or blocked with the
+  error. 25 guides, 656,418 series. The first full build then showed a 306 MB search index,
+  the next thing to fix.
 
 ## Retired mechanisms
 
