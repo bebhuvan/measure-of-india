@@ -119,6 +119,8 @@ const Y = {}; for (const k in S) Y[k] = S[k].data.at(-13).value;
 const pc = '<span class="pc">%</span>';
 const arrow = (d) => (Math.abs(d) < 0.05 ? "unchanged" : (d > 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(1) + " pt");
 const word = (d) => (Math.abs(d) < 0.05 ? "steady" : d > 0 ? "firming" : "easing");
+// a move and its word, without saying a zero move twice ("unchanged", not "unchanged, steady")
+const moveWord = (d, sep = ", ") => (Math.abs(d) < 0.05 ? "unchanged" : arrow(d) + sep + word(d));
 const bandNote = (v) => (v < 2 ? "below the RBI band" : v > 6 ? "above the RBI band" : "within RBI band");
 const setHTML = (id, h) => (document.getElementById(id).innerHTML = h);
 const setTxt = (id, t) => (document.getElementById(id).textContent = t);
@@ -400,7 +402,7 @@ setTxt("pf-core", `peak: ${pkCore.value.toFixed(1)}%, ${fmtDate(pkCore.date)}, l
   <tr>
     <td class="name">${r.s.label}<small>№ ${rank} of ${all.length}, ${r.division}, ${r.code}</small></td>
     <td class="val">${f1(r.latest)}</td>
-    <td class="chg">${r.prevV == null ? "—" : arrow(r.latest - r.prevV) + " · " + word(r.latest - r.prevV)}</td>
+    <td class="chg">${r.prevV == null ? "—" : moveWord(r.latest - r.prevV)}</td>
     <td class="yr">${r.level == null ? "—" : r.level.toFixed(1)}</td>
     <td class="spark" id="sp-i24-${rank}"></td>
   </tr>`;
@@ -464,7 +466,7 @@ document.getElementById("ledger-body").innerHTML = regRows.map(([s, nm, sub, sw,
   // carries only current signals (the series' final reading still shows under Latest)
   const chgCell = retired
     ? `<td class="chg" style="color:var(--faint)" title="series ended: no live m/m">—</td>`
-    : `<td class="chg">${arrow(l - p)}, ${word(l - p)}</td>`;
+    : `<td class="chg">${moveWord(l - p)}</td>`;
   return `
   <tr>
     <td class="name"><span class="sw ${sw}"></span>${nm}<small>${sub}</small></td>
