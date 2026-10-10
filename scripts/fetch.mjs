@@ -90,6 +90,9 @@ Object.assign(REGISTRY, { farms: buildFarms });   // farms (lb/farms)
 import { buildBanks } from "./lib/products/banks.mjs";   // banks (lb/banks)
 Object.assign(REGISTRY, { banks: buildBanks });   // banks (lb/banks)
 
+import { buildPublicFinance } from "./lib/products/public-finance.mjs";   // public-finance (lb/public-finance)
+Object.assign(REGISTRY, { "public-finance": buildPublicFinance });   // public-finance (lb/public-finance)
+
 // One product's failure must not starve the rest: collect, continue, and
 // exit non-zero at the end so CI still fails on the summary.
 const failed = [];

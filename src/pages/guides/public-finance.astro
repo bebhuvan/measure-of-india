@@ -1,0 +1,905 @@
+---
+import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
+import GuideData from "../../components/GuideData.astro";
+import EveryCut from "../../components/EveryCut.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+import fs from "node:fs";
+const D = bySlug["public-finance"];
+// every period, year and count named in this page's copy is read from the bundles at build time
+const B = (s) => JSON.parse(fs.readFileSync(`data/series/${s}.json`, "utf8"));
+const P = (s) => B("public-finance-" + s);
+const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const longMonth = (iso) => `${MONTHS[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}`;
+const fy = (iso) => { const y = +iso.slice(0, 4), m = +iso.slice(5, 7), s = m >= 4 ? y : y - 1; return `${s}-${String((s + 1) % 100).padStart(2, "0")}`; };
+const at = (b, k, fyLabel) => { const i = b.dates.indexOf(`${fyLabel.slice(0, 4)}-04-01`); return i < 0 ? null : b.series[k]?.data[i] ?? null; };
+const lastOf = (b, k) => { const d = b.series[k].data; for (let i = d.length - 1; i >= 0; i--) if (d[i] != null) return { v: d[i], date: b.dates[i] }; return null; };
+const one = (b, k) => { const d = b.series[k]?.data ?? []; const i = d.findIndex((v) => v != null); return i < 0 ? null : { v: d[i], date: b.dates[i] }; };
+const r1 = (v) => (Math.round(v * 10) / 10).toFixed(1), r0 = (v) => String(Math.round(v));
+const lakh = (v) => (v / 1e5).toFixed(1);
+
+const cm = P("centre-monthly"), gm = P("centre-gfd-monthly"), path = P("centre-budget-path");
+const cd = P("centre-deficits"), ce = P("centre-expenditure"), cr = P("centre-receipts"), cf = P("centre-financing"), cl = P("centre-liabilities");
+const g11 = P("centre-gdp-b2011"), sg11 = P("allstates-gdp-b2011"), dg11 = P("combined-debt-gdp-b2011"), r22 = P("ratios-2022"), back = P("ratios-backcast");
+const sd = P("allstates-deficits"), srx = P("allstates-receipts"), sx = P("allstates-expenditure"), ctax = P("combined-taxes");
+const own = P("ownership-gsec"), tb = P("tbills"), mat = P("maturity"), ss = P("small-savings"), ssr = P("small-savings-rates"), wma = P("states-wma");
+const sfin = B("states-finances");   // read-only: the States guide's ratios to each state's GSDP
+const ST = cd.meta.stages, SS = sd.meta.stages;      // { accountsTo, revisedEstimate, budgetEstimate }
+const lastM = cm.dates.at(-1), curFY = fy(lastM), ytd = `April to ${MONTHS[+lastM.slice(5, 7) - 1]} ${lastM.slice(0, 4)}`;
+const prevFY = fy(`${+lastM.slice(0, 4) - 1}${lastM.slice(4)}`);
+
+// § 04 titles
+const gfdBE = one(g11, "gross_fiscal_deficit__be").v, gfdRE = one(g11, "gross_fiscal_deficit__re").v;
+const peak = g11.dates.map((d, i) => [fy(d), g11.series.gross_fiscal_deficit.data[i]]).filter((x) => x[1] != null).sort((a, b) => b[1] - a[1])[0];
+const ytdNow = lastOf(cm, "fiscal_deficit_pct_be"), ytdAgo = cm.series.fiscal_deficit_pct_be.data[cm.dates.length - 13];
+const pathYears = path.dates.map((d, i) => [fy(d), path.series.fiscal_deficit__be.data[i], path.series.fiscal_deficit__provisional.data[i]]).filter((x) => x[1] != null && x[2] != null);
+const nAbove = pathYears.filter((x) => x[2] > x[1]).length;
+const mbShare = 100 * one(cf, "market_borrowings__be").v / one(cf, "gross_fiscal_deficit__be").v;
+// § 05
+const TAXES = [["personal_income_tax", "Income tax"], ["corporation_tax", "Corporation tax"], ["gst", "GST"], ["excise_duties", "Excise duty"], ["customs_duties", "Customs duty"]];
+const taxAcc = TAXES.map(([k, l]) => [l, at(cr, k, ST.accountsTo)]).sort((a, b) => b[1] - a[1]);
+const taxNet = at(cr, "tax_revenue_net", ST.accountsTo);
+const B99 = P("centre-gdp-b1999"), B04 = P("centre-gdp-b2004");
+const dirYears = [B99, B04, g11].flatMap((b) => b.dates.map((d, i) => [fy(d), b.series.gross_direct_tax?.data[i], b.series.gross_indirect_tax?.data[i]])).filter((x) => x[1] != null && x[2] != null);
+let crossFY = null; for (let i = dirYears.length - 1; i >= 0 && dirYears[i][1] > dirYears[i][2]; i--) crossFY = dirYears[i][0];
+const stShare = (() => { const c = at(ctax, "centre_total", SS.accountsTo), s = at(ctax, "states_total", SS.accountsTo); return 100 * s / (c + s); })();
+// § 06
+const te = one(ce, "total_expenditure__be").v, intBE = one(ce, "interest_payments__be").v;
+const int100 = 100 * intBE / te;
+const intRR = 100 * intBE / one(cr, "revenue_receipts__be").v;
+const capBE = one(g11, "capital_expenditure__be").v, intGdpBE = one(g11, "interest_payments__be").v;
+// § 07
+const debtBE = one(dg11, "combined_total_liabilities_of_centre_and_states__be").v;
+const oi = own.dates.length - 1, oShare = (k) => own.series[k].data[oi];
+const tbWeek = tb.dates.at(-1), tbTotal = ["t91__total", "t182__total", "t364__total"].reduce((a, k) => a + (tb.series[k].data.at(-1) ?? 0), 0) + (tb.series.cmb__total.data.at(-1) ?? 0);
+const matLast = mat.dates.at(-1), over10 = 100 * mat.series.over_10_years.data.at(-1) / mat.series.total_amount.data.at(-1);
+const ssLast = lastOf(ss, "total__outstanding");
+// § 08
+const sRev = (k) => at(srx, k, SS.accountsTo), sRR = sRev("total_revenue_receipts");
+const fromCentre = 100 * (sRev("share_in_central_taxes") + sRev("grants_from_the_centre")) / sRR;
+const sExp = (k) => at(sx, k, SS.accountsTo);
+const intPen = 100 * (sExp("interest_payments") + sExp("pension_and_misc_general_services")) / sExp("total_expenditure");
+const sfDebt = Object.entries(sfin.series).filter(([k]) => k.endsWith("__debt")).map(([k, s]) => { const i = s.data.findLastIndex((v) => v != null); return { k: k.replace(/__debt$/, ""), label: s.label.split(":")[0], v: s.data[i], date: sfin.dates[i] }; }).filter((x) => x.date === sfin.dates.at(-1)).sort((a, b) => b.v - a.v);
+const sfYear = fy(sfin.dates.at(-1));
+const odStates = Object.entries(wma.series).filter(([k]) => k.endsWith("__od_days")).filter(([, s]) => s.data.slice(-12).some((v) => v > 0)).length;
+const wma12 = `${longMonth(wma.dates.at(-12))} to ${longMonth(wma.dates.at(-1))}`;
+// § 09
+const a24 = at(g11, "gross_fiscal_deficit", ST.accountsTo), n24 = at(r22, "centre_gross_fiscal_deficit", ST.accountsTo);
+const ratesBorrow = B("rates-borrowing");
+---
+<Base
+  title="Government budgets and debt · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/public-finance/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">Every rupee the government spends comes from a tax you pay, a fee, a sale, or a loan someone makes to it. This guide follows those rupees: what the Centre and the states earn, spend, borrow and owe, how each year's budget turned out, and who lends to them.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>Reserve Bank of India</b></span>
+      <span>Monthly accounts <b>{ytd}</b></span>
+      <span>Budget year <b>{ST.budgetEstimate}</b></span>
+      <span>History <b>deficits since {fy(cd.dates[0])}</b></span>
+      <span>Unit <b>₹ crore and per cent of GDP</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">The Centre's deficit so far, share of the year's budget</div><div class="v acc" id="n-ytd">–</div><div class="d" id="d-ytd">–</div><div class="nspark" id="nspark-ytd"></div></div>
+      <div class="num"><div class="l">The Centre's deficit, budget for {ST.budgetEstimate}</div><div class="v" id="n-gfd">–</div><div class="d" id="d-gfd">–</div></div>
+      <div class="num"><div class="l">Interest, per ₹100 of the Centre's revenue</div><div class="v" id="n-int">–</div><div class="d" id="d-int">–</div></div>
+      <div class="num"><div class="l">What the Centre and states owe, share of GDP</div><div class="v" id="n-debt">–</div><div class="d" id="d-debt">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading. Inputs: public-finance-centre-monthly (14 items, per cent of budget), proseInputs (budget path, ratios). Prose: generated slots. -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">Union accounts, {ytd}</span></div>
+    <div class="reading-top">
+      <div><span class="rk">The Centre's deficit, {ytd}</span><div class="big" id="rb-ytd">–</div></div>
+      <p class="rt-cap">The gap between what the Centre spent and what it earned from April to the latest month, as a share of the gap its budget planned for the whole of {curFY}. The Controller General of Accounts publishes it at the end of each month for the month before.</p>
+      <div class="rt-side"><span class="rk">In rupees</span><div class="rt-side-v" id="rb-ytd-inr" style="font-size:1.6rem">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the accounts say</span>
+        <Prose slot="public-finance.current-reading.what-the-print-says" />
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What they do not say</span>
+        <Prose slot="public-finance.current-reading.what-it-does-not-say" />
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 lived reality. Inputs: centre-expenditure and centre-receipts (budget estimate), population-wpp-projection (read-only), small-savings-rates, small-savings. Evergreen copy, numbers filled from data. -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>What it means for you</h2><span class="line"></span><span class="unit">The Centre's budget for {ST.budgetEstimate}</span></div>
+    <div class="prose">
+      <p>The Centre plans to spend <b id="lr-te">–</b> in {ST.budgetEstimate}, about <b id="lr-pp">–</b> for every person in India. Of every ₹100 of that, <b id="lr-int">–</b> goes to pay interest on what it has already borrowed, <b id="lr-def">–</b> to defence, <b id="lr-sub">–</b> to subsidies on food, fertiliser and fuel, and <b id="lr-cap">–</b> to building things that last, such as roads, railways and defence equipment. Interest comes first, before any new road or school: it is owed to people and institutions who lent in earlier years.</p>
+      <p>Much of that lending is close to home. When you put money in a Public Provident Fund account, a post office deposit or a Sukanya Samriddhi account for a daughter, you are lending to the government. Savers held <b id="lr-ss">–</b> in these schemes in <span id="lr-ss-when">–</span>. The government sets their interest rates each quarter: <b id="lr-ppf">–</b> on the PPF and <b id="lr-ssy">–</b> on Sukanya Samriddhi from <span id="lr-rate-when">–</span>. Your bank and your insurer lend too, by holding government bonds with your deposits and premiums.</p>
+    </div>
+  </section>
+
+  <!-- § 03 how to read this (evergreen, human-written) -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>How to read these numbers</h2><span class="line"></span></div>
+    <div class="prose">
+      <p><b>Three numbers for every year.</b> Each Union Budget, presented on 1 February, gives a <b>budget estimate</b> for the coming year and a <b>revised estimate</b> for the year about to end. Months after a year closes come the <b>accounts</b>: provisional ones from the Controller General of Accounts in May, audited ones later. The three can differ by lakhs of crores. This guide never joins them into one line: the accounts are drawn solid, the revised estimate and the budget estimate as separate marks, and every chart says which is which.</p>
+      <p><b>The deficits.</b> The <b>gross fiscal deficit</b> is everything the government spends less everything it receives other than new borrowing; it is how much it must borrow in the year. The <b>revenue deficit</b> is the part of day-to-day spending (salaries, interest, subsidies) not covered by day-to-day income: borrowing to pay running costs rather than to build. The <b>primary deficit</b> is the fiscal deficit less interest: whether this year's choices, leaving aside the cost of old debt, add to the debt.</p>
+      <p><b>The Centre, the states, and both.</b> The Centre collects most taxes and passes a share to the states; the states spend most of the money that reaches people, on schools, hospitals, police and roads. Their accounts are published apart. The combined account nets out what one owes the other, so it is not the sum of the two. The Centre's tax figures here are net of the states' share unless a chart says gross.</p>
+      <p><b>Per cent of GDP depends on which GDP.</b> A ratio to GDP is only as steady as its denominator, and India has measured GDP on several base years. The RBI divides by the GDP series of the time (the 1999-2000 base to 2003-04, the 2004-05 base to 2010-11, the 2011-12 base since), and these are drawn as separate rulers, never joined. Where a chart adds a line on one ruler back to 1970-71, that line is India Atlas's own arithmetic, the RBI's rupee figures divided by the statistics office's back series of 2011-12-base GDP: it is drawn dashed and named as ours, never as a continuation of the RBI's. The new 2022-23 series measures a different economy size again (section 09).</p>
+    </div>
+  </section>
+
+  <!-- § 04 the deficit. Inputs: ratios-backcast + centre/states-gdp-b2011 (GFD, RE, BE), centre-monthly (pct of BE), centre-budget-path, centre-deficits (accounts), centre-financing. -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>The deficit</h2><span class="line"></span><span class="unit">Since {fy(back.dates[0])}</span></div>
+    <div class="break">
+      <figure id="cb-deficit" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The Centre budgets a deficit of {r1(gfdBE)}% of GDP for {ST.budgetEstimate}, half its pandemic peak of {r1(peak[1])}% in {peak[0]}</h3>
+            <div class="sub">Gross fiscal deficit of the Centre and of all states together, per cent of GDP, {fy(back.dates[0])} to {ST.budgetEstimate}: the RBI's printed ratios, solid, on the GDP series of each period (1999-2000, 2004-05 and 2011-12 bases, never joined), accounts as lines and the revised and budget estimates as marks. Dashed grey, to 2010-11: India Atlas, computed: RBI amounts ÷ NSO back-series GDP.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-deficit">–</div><div class="c">Centre, budget estimate {ST.budgetEstimate}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>Centre, RBI</span>
+            <span class="chip"><i style="background:#C47A16"></i>All states, RBI</span>
+            <span class="chip"><i style="background:#A3A9B4"></i>India Atlas, computed: RBI amounts ÷ NSO back-series GDP</span>
+          </div>
+          <div class="plotzone"><div id="plot-deficit" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics, Key Deficit Indicators and Select Fiscal Indicators of the Central and State Governments (DBIE reports 713, 355, 451, 454); the dashed lines: RBI's rupee amounts (713, 451) over MoSPI's back series of GDP on the 2011-12 base, computed by India Atlas.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The Centre's deficit swells in hard years and shrinks in good ones. It ran at seven to eight per cent of GDP through the late 1980s, before the crisis of 1991, fell after the reforms that followed, rose again after the global financial crisis of 2008, and reached its highest in the pandemic year, when revenue fell and spending on food and health rose. The states' deficit is smaller and steadier: since the mid-2000s their own fiscal responsibility laws and the Centre's limits on their borrowing have held it near three per cent of GDP.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the Union Budget for {ST.budgetEstimate}</span>
+            <p>The Centre's deficit was <b id="ex-def-acc">–</b> of GDP in {ST.accountsTo} (accounts), <b id="ex-def-re">–</b> in {ST.revisedEstimate} (revised estimate) and is budgeted at <b id="ex-def-be">–</b> in {ST.budgetEstimate}. The states' budgets add up to <b id="ex-def-st">–</b> in {SS.budgetEstimate}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-ytd" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>By {MONTHS[+lastM.slice(5, 7) - 1]}, the Centre had used {r1(ytdNow.v)}% of its deficit budget for {curFY}, against {r1(ytdAgo)}% a year earlier</h3>
+            <div class="sub">The Centre's fiscal deficit from April to each month, per cent of that year's budget estimate, {curFY} against the five years before it.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-ytd">–</div><div class="c">{ytd}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>{curFY}</span>
+            <span class="chip"><i style="background:#A3A9B4"></i>Five earlier years</span>
+          </div>
+          <div class="plotzone"><div id="plot-ytd" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI Bulletin, Union Government Accounts at a Glance (DBIE report 49), from the Controller General of Accounts; unaudited. Share of the budget estimate computed by India Atlas.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The deficit does not build evenly through the year. Taxes arrive in lumps (advance tax in June, September, December and March), the RBI pays the government its surplus in May, and spending bunches near March. So a deficit at a third of the budget by July is neither good nor bad in itself; compare it with the same month of earlier years, as this chart does. A line that ends above 100% means the year's deficit overshot its budget.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {longMonth(lastM)}</span>
+            <p>From April to {MONTHS[+lastM.slice(5, 7) - 1]} the deficit was <b id="ex-ytd-inr">–</b>, or <b id="ex-ytd-pct">–</b> of the {curFY} budget. A year earlier it was <b id="ex-ytd-ago">–</b> of that year's budget. Tax revenue has reached <b id="ex-ytd-tax">–</b> of its budget and capital spending <b id="ex-ytd-cap">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-path" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>In {nAbove} of {pathYears.length} years the Centre's deficit ended above its budget</h3>
+            <div class="sub">The Centre's fiscal deficit each year as first budgeted, as revised a year later, and as the provisional accounts closed it, ₹ lakh crore, {pathYears[0][0]} to {ST.budgetEstimate}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-path">–</div><div class="c">provisional accounts {fy(path.dates.at(-2))} against budget</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#878D99"></i>Budget estimate</span>
+            <span class="chip"><i style="background:#C47A16"></i>Revised estimate</span>
+            <span class="chip"><i style="background:#2E4BD8"></i>Provisional accounts</span>
+          </div>
+          <div class="plotzone"><div id="plot-path" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI Bulletin, Union Government Accounts at a Glance (DBIE report 49): each year's budget estimate, revised estimate and March accounts. Rows of the table that do not add up are not used. Audited accounts are in the Handbook tables.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A budget is a plan, written in February for a year that ends fourteen months later. The gap between the grey mark and the blue one is how far events moved it: a recession that cut taxes, an oil shock that raised subsidies, a pandemic. The revised estimate, made in the last weeks of the year, is usually close to the outcome. When reading any budget, ask which of the three numbers you are looking at.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the provisional accounts for {fy(path.dates.at(-2))}</span>
+            <p>In {fy(path.dates.at(-2))} the deficit was budgeted at <b id="ex-path-be">–</b>, revised to <b id="ex-path-re">–</b>, and closed at <b id="ex-path-pr">–</b> in the provisional accounts. The widest miss above budget was in <b id="ex-path-max">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-financing" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Market borrowing pays for {r0(mbShare)}% of the Centre's budgeted deficit in {ST.budgetEstimate}</h3>
+            <div class="sub">How the Centre's gross fiscal deficit is financed, per cent of the deficit: dated bonds sold in the market, other borrowing (small savings, provident funds, Treasury bills and the like), loans from abroad, and its own cash. {fy(cf.dates[0])} to {ST.budgetEstimate}, accounts as lines; the latest two years as estimates.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-financing">–</div><div class="c">market borrowing, budget {ST.budgetEstimate}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>Market borrowing</span>
+            <span class="chip"><i style="background:#C47A16"></i>Other borrowing</span>
+            <span class="chip"><i style="background:#878D99"></i>External finance</span>
+            <span class="chip"><i style="background:#C9CED6"></i>Drawdown of cash</span>
+          </div>
+          <div class="plotzone"><div id="plot-financing" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics, Centre's Gross Fiscal Deficit and its Financing (DBIE report 656). Shares computed by India Atlas. Gross market borrowing by year is in the Interest rates guide (rates-borrowing).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Until the 1990s the RBI financed much of the deficit by lending to the government almost on demand, through ad hoc Treasury bills that it simply printed money to buy. That ended in April 1997. Since then the deficit has been paid for mostly by selling bonds to banks, insurers and funds at market rates, and, from the 2000s, by the National Small Savings Fund, which lends the savings collected at post offices. Shares can exceed 100 when another source runs negative, for instance when the government builds up cash.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the Union Budget for {ST.budgetEstimate}</span>
+            <p>In {ST.accountsTo} market borrowing paid for <b id="ex-fin-acc">–</b> of the deficit. In {ST.budgetEstimate} it is budgeted to pay for <b id="ex-fin-be">–</b>. The Centre and the states together borrowed <b id="ex-fin-gross">–</b> from the market (gross) in {fy(ratesBorrow.dates.at(-1))}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 where the money comes from. Inputs: centre-receipts (net taxes by type), centre-gdp-b1999/b2004/b2011 (gross direct, indirect), combined-taxes. -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>Where the money comes from</h2><span class="line"></span><span class="unit">Taxes, the Centre and the states</span></div>
+    <div class="break">
+      <figure id="cb-taxmix" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{taxAcc[0][0]} is now the Centre's largest tax, {r0(100 * taxAcc[0][1] / taxNet)}% of the tax it kept in {ST.accountsTo}</h3>
+            <div class="sub">Each tax's share of the Centre's net tax revenue (after the states' share), per cent, {fy(cr.dates[0])} to {ST.accountsTo}, accounts. GST from 2017-18.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-taxmix">–</div><div class="c">{taxAcc[0][0].toLowerCase()}, {ST.accountsTo}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>Income tax</span>
+            <span class="chip"><i style="background:#C47A16"></i>Corporation tax</span>
+            <span class="chip"><i style="background:#161A22"></i>GST</span>
+            <span class="chip"><i style="background:#878D99"></i>Excise duty</span>
+            <span class="chip"><i style="background:#C9CED6"></i>Customs duty</span>
+          </div>
+          <div class="plotzone"><div id="plot-taxmix" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics, Central Government Receipts, Major Components (DBIE report 655). Every tax is net of the states' share; shares computed by India Atlas.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>In the 1970s the Centre lived on excise duty and customs, taxes on goods made and goods imported. Liberalisation cut tariffs from the 1990s, and income and corporation tax grew with the salaried and corporate economy. In July 2017 the Goods and Services Tax replaced most excise duty, service tax and the states' sales taxes; what remains as excise is mainly on petrol, diesel and tobacco. The jump in income tax in 2000-01 is a change in sharing, not in collections: until then the states received most of the income tax and part of excise, and from that year they receive a share of all central taxes together. Shares do not add to 100, because smaller taxes and adjustments for the states' share are left out.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the accounts for {ST.accountsTo}</span>
+            <p>Of the tax the Centre kept in {ST.accountsTo}, income tax brought in <b id="ex-tax-pit">–</b>, corporation tax <b id="ex-tax-cit">–</b>, GST <b id="ex-tax-gst">–</b>, excise <b id="ex-tax-exc">–</b> and customs <b id="ex-tax-cus">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-taxgdp" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Direct taxes have outweighed indirect taxes every year since {crossFY}</h3>
+            <div class="sub">The Centre's gross direct taxes (income and corporation tax) and gross indirect taxes (GST, excise, customs), per cent of GDP, {dirYears[0][0]} to {ST.budgetEstimate}, on three GDP series (1999-2000 base to 2003-04, 2004-05 base to 2010-11, 2011-12 base after), never joined.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-taxgdp">–</div><div class="c">direct taxes, {ST.accountsTo}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>Direct taxes</span>
+            <span class="chip"><i style="background:#878D99"></i>Indirect taxes</span>
+          </div>
+          <div class="plotzone"><div id="plot-taxgdp" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics, Select Fiscal Indicators of the Central Government as per cent of GDP (DBIE report 355), on the GDP series the RBI used for each year.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Gross taxes are before the states' share is paid out. Direct taxes fall on income and profits, so they grow faster than the economy when incomes rise; indirect taxes fall on what people buy, so they weigh more heavily on poorer households as a share of their income. Each break in the lines is a change in how GDP was measured, not a change in taxes.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the accounts for {ST.accountsTo}</span>
+            <p>Gross direct taxes were <b id="ex-tg-dir">–</b> of GDP and gross indirect taxes <b id="ex-tg-ind">–</b> in {ST.accountsTo}; the budget for {ST.budgetEstimate} expects <b id="ex-tg-be">–</b> together.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-taxwho" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The states collect {r0(stShare)}% of all the taxes India's governments raise</h3>
+            <div class="sub">Taxes collected by the states (their own taxes, before any transfer) as a share of all taxes collected by the Centre (gross) and the states, per cent, {fy(ctax.dates[0])} to {SS.accountsTo}, accounts.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-taxwho">–</div><div class="c">states' share, {SS.accountsTo}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-taxwho" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics, Direct and Indirect Tax Revenues of Central and State Governments (DBIE report 673). Share computed by India Atlas.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>States tax what is local: sales and the state's half of GST, liquor, stamp duty on property, vehicles, electricity. The Centre taxes income, profits and imports, and then hands roughly two-fifths of its divisible pool to the states, as the Finance Commission decides. So the states spend far more than they collect; this chart shows only who collects.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the accounts for {SS.accountsTo}</span>
+            <p>The states collected <b id="ex-tw-st">–</b> in taxes in {SS.accountsTo}, against the Centre's gross <b id="ex-tw-c">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 where the money goes. Inputs: centre-expenditure (accounts and BE), centre-receipts (revenue receipts), states-expenditure/receipts (interest), centre-gdp-b2011 (interest, capital spending). -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>Where the money goes</h2><span class="line"></span><span class="unit">The Centre's spending</span></div>
+    <div class="break">
+      <figure id="cb-spend" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Of every ₹100 the Centre plans to spend in {ST.budgetEstimate}, ₹{r0(int100)} goes to interest</h3>
+            <div class="sub">The Centre's total expenditure split into interest, defence, subsidies, other day-to-day spending, capital outlay and loans, per ₹100, for three years: two from the accounts and the budget for {ST.budgetEstimate}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-spend">–</div><div class="c">interest per ₹100, {ST.budgetEstimate}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-spend" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics, Major Heads of Expenditure of the Central Government (DBIE report 353). 'Other day-to-day' is revenue spending less interest, defence and subsidies (computed); 'capital outlay' excludes defence capital.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>'Other day-to-day spending' is the largest block: salaries, pensions, and the grants the Centre gives states and its own schemes (rural jobs, health, education) that pay for running costs. Capital outlay builds assets the government owns. Grants that let states build roads count as day-to-day spending in the Centre's books, so the Centre's capital outlay understates what its money builds.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the Union Budget for {ST.budgetEstimate}</span>
+            <p>Interest takes <b id="ex-sp-int">–</b> of every ₹100, defence <b id="ex-sp-def">–</b>, subsidies <b id="ex-sp-sub">–</b>, and capital outlay outside defence <b id="ex-sp-cap">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-interest" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Interest will take ₹{r0(intRR)} of every ₹100 the Centre earns in {ST.budgetEstimate}</h3>
+            <div class="sub">Interest payments per ₹100 of revenue receipts, the Centre and all states, {fy(ce.dates[0])} to the budget year; accounts as lines, revised and budget estimates as marks. Computed from the RBI's rupee figures.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-interest">–</div><div class="c">Centre, budget {ST.budgetEstimate}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>Centre</span>
+            <span class="chip"><i style="background:#C47A16"></i>All states</span>
+          </div>
+          <div class="plotzone"><div id="plot-interest" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics, DBIE reports 353 and 655 (the Centre), 677 and 709 (the states). Ratios computed by India Atlas.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>This is the measure of how tightly old debt binds the present. A household that spends a third of its salary on loan instalments has less left for everything else, and the same is true of a government. The Centre's ratio rose through the 1980s and 1990s as deficits piled up, to about half of its revenue around 2000, eased as the economy grew fast in the 2000s, and rose again with the pandemic borrowing. The states' ratio is lower because they borrow less and get much of their revenue as transfers from the Centre.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the Union Budget for {ST.budgetEstimate}</span>
+            <p>The Centre paid <b id="ex-int-acc">–</b> of its revenue in interest in {ST.accountsTo}, and budgets <b id="ex-int-be">–</b> for {ST.budgetEstimate}. The states paid <b id="ex-int-st">–</b> in {SS.accountsTo}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-capex" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The Centre budgets {r1(intGdpBE)}% of GDP for interest and {r1(capBE)}% for capital spending in {ST.budgetEstimate}</h3>
+            <div class="sub">The Centre's interest payments and capital expenditure, per cent of GDP (2011-12 base), {fy(g11.dates[0])} to {ST.budgetEstimate}; accounts as lines, the revised and budget estimates as marks.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-capex">–</div><div class="c">capital spending, budget {ST.budgetEstimate}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>Capital expenditure</span>
+            <span class="chip"><i style="background:#878D99"></i>Interest payments</span>
+          </div>
+          <div class="plotzone"><div id="plot-capex" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics, Select Fiscal Indicators of the Central Government as per cent of GDP (DBIE report 355).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Capital expenditure is spending on assets (roads, railway lines, defence equipment) and loans to states and public companies. Interest is the cost of past deficits. After 2020-21 the Centre raised capital spending sharply, including long interest-free loans to states for building. Whether the extra roads and lines pay back the borrowing is a question these figures cannot answer.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the Union Budget for {ST.budgetEstimate}</span>
+            <p>Capital spending was <b id="ex-cap-acc">–</b> of GDP in {ST.accountsTo} against interest of <b id="ex-cap-int">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 what governments owe. Inputs: ratios-backcast + combined-debt-gdp-b2011, ownership-gsec, tbills, maturity, small-savings, small-savings-rates. -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>What India's governments owe, and to whom</h2><span class="line"></span><span class="unit">Debt, bonds, bills and small savings</span></div>
+    <div class="break">
+      <figure id="cb-debt" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>India's governments owe {r1(debtBE)}% of GDP by the budgets for {SS.budgetEstimate}</h3>
+            <div class="sub">Outstanding liabilities at the end of each March, the Centre, all states and the two together (which nets out what one owes the other), per cent of GDP, {fy(back.dates.find((d, i) => back.series.combined_liabilities.data[i] != null))} to {SS.budgetEstimate}: the RBI's printed ratios, solid, on the GDP series of each period (never joined). Dashed grey, to 2010-11: India Atlas, computed: RBI amounts ÷ NSO back-series GDP.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-debt">–</div><div class="c">Centre and states, budget {SS.budgetEstimate}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>Centre and states, RBI</span>
+            <span class="chip"><i style="background:#161A22"></i>Centre, RBI</span>
+            <span class="chip"><i style="background:#C47A16"></i>States, RBI</span>
+            <span class="chip"><i style="background:#A3A9B4"></i>India Atlas, computed: RBI amounts ÷ NSO back-series GDP</span>
+          </div>
+          <div class="plotzone"><div id="plot-debt" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics, Combined Liabilities and Select Debt Indicators of the Central and State Governments (DBIE reports 339, 342, 1399, 452); the dashed lines: RBI's rupee amounts over MoSPI's back series of GDP on the 2011-12 base, computed by India Atlas.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Debt grows with each year's deficit, but as a share of GDP it can fall if the economy grows faster than the debt. That is how the ratio fell in the 2000s. It jumped in 2020-21, when the deficit soared and GDP shrank at once. Almost all of it is owed in rupees to lenders inside India; the Centre's external debt is a small slice, valued at today's exchange rate.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the state budgets for {SS.budgetEstimate}</span>
+            <p>The Centre and states together owed <b id="ex-debt-acc">–</b> of GDP in {SS.accountsTo} (accounts). The Centre alone owes <b id="ex-debt-c">–</b> and the states <b id="ex-debt-s">–</b> by the budgets for {SS.budgetEstimate}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-holders" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Banks hold {r0(oShare("commercial_banks"))}% of the Centre's bonds, insurers {r0(oShare("insurance_companies"))}% and the RBI {r0(oShare("rbi"))}%</h3>
+            <div class="sub">Who holds the Centre's dated securities, per cent of the total outstanding at each quarter-end, {longMonth(own.dates[0])} to {longMonth(own.dates.at(-1))}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-holders">–</div><div class="c">outstanding, {longMonth(own.dates.at(-1))}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-holders" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI Bulletin, Ownership Pattern of Government of India Dated Securities (DBIE report 1369). Pension funds are shown apart from 'others' from March 2022; before that they were inside it.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Banks must hold a share of their deposits in government bonds (the statutory liquidity ratio), insurers and provident funds buy them because they need safe, long-dated assets to match what they owe policyholders and members, and the RBI holds them as it manages money in the economy. Foreign investors hold a small share, larger since Indian bonds entered global bond indices in 2024. Your fixed deposit, insurance premium and provident fund contribution all end up, in part, here.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {longMonth(own.dates.at(-1))}</span>
+            <p>The Centre's bonds outstanding came to <b id="ex-h-total">–</b>. Provident and pension funds held <b id="ex-h-pf">–</b> together, foreign investors <b id="ex-h-fpi">–</b>, mutual funds <b id="ex-h-mf">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-tbills" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The Centre owes ₹{lakh(tbTotal)} lakh crore on Treasury bills of a year or less</h3>
+            <div class="sub">Treasury bills outstanding by tenor, every Friday, ₹ lakh crore, {longMonth(tb.dates[0])} to {longMonth(tbWeek)}: 91-day, 182-day and 364-day bills and cash management bills.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-tbills">–</div><div class="c">all bills, week to {tbWeek.slice(8, 10).replace(/^0/, "")} {MONTHS[+tbWeek.slice(5, 7) - 1]} {tbWeek.slice(0, 4)}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>364-day</span>
+            <span class="chip"><i style="background:#C47A16"></i>182-day</span>
+            <span class="chip"><i style="background:#161A22"></i>91-day</span>
+            <span class="chip"><i style="background:#A3A9B4"></i>Cash management bills</span>
+          </div>
+          <div class="plotzone"><div id="plot-tbills" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Weekly Statistical Supplement table 13 and the Bulletin's Treasury Bills Ownership Pattern (DBIE reports 2 and 29). Totals add the holders printed each week (computed).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Treasury bills are the government's short-term borrowing, sold every week and repaid within a year. They smooth out the timing of taxes and spending. Cash management bills are even shorter, issued for days or weeks when cash runs low. Much of the 91-day stock is held by state governments, which park surplus cash in them.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {longMonth(tbWeek)}</span>
+            <p>In the week to {tbWeek.slice(8, 10).replace(/^0/, "")} {MONTHS[+tbWeek.slice(5, 7) - 1]}, 364-day bills outstanding were <b id="ex-tb-364">–</b>, 182-day <b id="ex-tb-182">–</b> and 91-day <b id="ex-tb-91">–</b>; state governments held <b id="ex-tb-st">–</b> of the 91-day bills.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-maturity" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{r0(over10)}% of the Centre's bonds fall due more than ten years from now</h3>
+            <div class="sub">The Centre's dated securities outstanding at the end of each March by years left to maturity, per cent of the total, {fy(mat.dates[0])} to {fy(matLast)}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-maturity">–</div><div class="c">all dated securities, end-March {+matLast.slice(0, 4) + 1}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>After 10 years</span>
+            <span class="chip"><i style="background:#C47A16"></i>5 to 10 years</span>
+            <span class="chip"><i style="background:#878D99"></i>Within 5 years</span>
+          </div>
+          <div class="plotzone"><div id="plot-maturity" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Maturity Pattern of Government of India Rupee Loans (DBIE report 1362). Shares computed by India Atlas.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Long-dated debt is safer for a government: it locks in today's rate and need not be refinanced soon. Debt falling due within five years must be repaid or rolled over at whatever rates prevail then. India's government sells bonds of up to fifty years, bought mostly by insurers and pension funds.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of end-March {+matLast.slice(0, 4) + 1}</span>
+            <p>Of <b id="ex-mat-total">–</b> in dated securities, <b id="ex-mat-5">–</b> fall due within five years.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-savings" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Savers have lent the government ₹{lakh(ssLast.v)} lakh crore through post office schemes</h3>
+            <div class="sub">Small savings outstanding at each month's end by scheme, ₹ lakh crore, {longMonth(ss.dates[0])} to {longMonth(ssLast.date)}.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-savings">–</div><div class="c">all schemes, {longMonth(ssLast.date)}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>All schemes</span>
+            <span class="chip"><i style="background:#878D99"></i>Each scheme</span>
+          </div>
+          <div class="plotzone"><div id="plot-savings" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI Bulletin, Small Savings (DBIE report 581), from the Accountant General, Posts and Telegraphs; interest rates from RBI, Small Savings Schemes (DBIE report 356).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Small savings schemes are run through post offices and banks: the Public Provident Fund, National Savings Certificates, Kisan Vikas Patra, the Senior Citizens' and Monthly Income schemes, time and recurring deposits, and Sukanya Samriddhi for girls. The money goes to the National Small Savings Fund, which lends it to the Centre (and to some states). Their rates are set each quarter, linked to government bond yields.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {longMonth(ssLast.date)}</span>
+            <p>The largest schemes are <b id="ex-sv-1">–</b> and <b id="ex-sv-2">–</b>. From <span id="ex-sv-when">–</span> the Senior Citizens' scheme pays <b id="ex-sv-scss">–</b> and a savings account at the post office <b id="ex-sv-posb">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+      <details class="every-cut">
+        <summary>Every small savings scheme's interest rate at each reset</summary>
+        <div class="em-table">
+          <table class="sortable" id="tbl-rates">
+            <thead><tr><th data-sort="s">Scheme</th>{ssr.dates.map((d) => <th class="n" data-sort="n">{MONTHS[+d.slice(5, 7) - 1].slice(0, 3)} {d.slice(0, 4)}</th>)}</tr></thead>
+            <tbody>
+              {Object.values(ssr.series).map((s) => <tr><td class="w">{s.label.split(":")[0]}</td>{s.data.map((v) => <td class="n">{v == null ? "" : v.toFixed(1) + "%"}</td>)}</tr>)}
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- § 08 the states. Inputs: states-receipts, states-expenditure, states-finances (read-only, States guide), states-wma. -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>The states</h2><span class="line"></span><span class="unit">All states, then state by state</span></div>
+    <div class="break">
+      <figure id="cb-st-receipts" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{r0(fromCentre)}% of the states' revenue comes from the Centre, as tax shares and grants</h3>
+            <div class="sub">All states' revenue receipts by source, per cent of the total, {fy(srx.dates[0])} to {SS.accountsTo}, accounts.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-st-receipts">–</div><div class="c">from the Centre, {SS.accountsTo}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>Own taxes</span>
+            <span class="chip"><i style="background:#C47A16"></i>Share in central taxes</span>
+            <span class="chip"><i style="background:#161A22"></i>Grants from the Centre</span>
+            <span class="chip"><i style="background:#A3A9B4"></i>Non-tax revenue</span>
+          </div>
+          <div class="plotzone"><div id="plot-st-receipts" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics, Pattern of Receipts of the State Governments (DBIE report 709). From 2017-18, all states and union territories with legislatures. Shares computed by India Atlas.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The Finance Commission, appointed every five years, decides what share of the Centre's divisible taxes goes to the states and how it is split among them; grants pay for centrally sponsored schemes and fill gaps. A state that leans heavily on transfers has less control over its own budget. In 2017 GST took away the states' power to set their own sales taxes on most goods.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the accounts for {SS.accountsTo}</span>
+            <p>Own taxes brought in <b id="ex-sr-own">–</b> of the states' revenue, their share of central taxes <b id="ex-sr-share">–</b>, grants <b id="ex-sr-grant">–</b>, and non-tax revenue <b id="ex-sr-nt">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-st-spend" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Interest and pensions take {r0(intPen)}% of what the states spend</h3>
+            <div class="sub">All states' expenditure by head, per cent of total expenditure, {fy(sx.dates[0])} to {SS.accountsTo}, accounts.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-st-spend">–</div><div class="c">social services, {SS.accountsTo}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>Social services</span>
+            <span class="chip"><i style="background:#C47A16"></i>Economic services</span>
+            <span class="chip"><i style="background:#161A22"></i>Interest</span>
+            <span class="chip"><i style="background:#878D99"></i>Pensions and general services</span>
+            <span class="chip"><i style="background:#C9CED6"></i>Capital outlay</span>
+          </div>
+          <div class="plotzone"><div id="plot-st-spend" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics, Expenditure Pattern of the State Governments (DBIE report 677). Social and economic services are revenue spending; capital outlay is separate. Shares computed by India Atlas.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Social services are schools, hospitals, water, housing and welfare; economic services are agriculture, irrigation, power, roads and industry. These are what a state government does for its people. Interest and pensions are commitments made in the past, which a state cannot easily cut.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the accounts for {SS.accountsTo}</span>
+            <p>Social services took <b id="ex-ss-soc">–</b> of the states' spending, economic services <b id="ex-ss-eco">–</b>, interest <b id="ex-ss-int">–</b> and capital outlay <b id="ex-ss-cap">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-state-cut" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{sfDebt[0].label} owes the most for the size of its economy: {r1(sfDebt[0].v)}% of its GSDP in {sfYear}</h3>
+            <div class="sub">Each state's outstanding liabilities at the end of March, per cent of its gross state domestic product (GSDP), {sfYear}, accounts, with its gross fiscal deficit in that year, also per cent of GSDP.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-state-cut">–</div><div class="c">median state, {sfYear}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#2E4BD8"></i>Debt, per cent of GSDP</span>
+            <span class="chip"><i style="background:#C47A16"></i>Fiscal deficit, per cent of GSDP</span>
+          </div>
+          <div class="plotzone"><div id="plot-state-cut" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: the States guide (states-finances): RBI, Handbook of Statistics on Indian States, tables 164 and 176, over MoSPI's GSDP at current prices; ratios computed by India Atlas, not the RBI's. The latest year with both accounts and GSDP for every state.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A state's debt is best read against the size of its own economy, which is what can be taxed to repay it. Small hill and north-eastern states often show high ratios because their economies are small and their spending large; Punjab, Kerala, West Bengal and Rajasthan carry high debt from years of revenue deficits. A ratio this high does not mean a state cannot pay: the RBI manages state borrowing, and the Centre caps it. It means more of the budget goes to interest.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the accounts for {sfYear}</span>
+            <p>In {sfYear}, <b id="ex-sc-n">–</b> states owed more than 30% of their GSDP. The lowest ratio was <b id="ex-sc-lo">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-wma" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{odStates} states ran an overdraft with the RBI at least once from {wma12}</h3>
+            <div class="sub">Days in each month a state drew on the RBI's special drawing facility, its ways and means advances, or an overdraft beyond them, summed over the last twelve months, {wma12}. States that drew on none are left out.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-wma">–</div><div class="c">states in overdraft, {longMonth(wma.dates.at(-1))}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#C9CED6"></i>Special drawing facility</span>
+            <span class="chip"><i style="background:#878D99"></i>Ways and means advances</span>
+            <span class="chip"><i style="background:#2E4BD8"></i>Overdraft</span>
+          </div>
+          <div class="plotzone"><div id="plot-wma" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI Bulletin, Financial Accommodation Availed by State Governments under various Facilities (DBIE report 63); twelve-month totals computed by India Atlas. Every state's monthly days and amounts since September 2017 are in the data below.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The RBI is every state's banker. When a state's cash runs short it first borrows against the funds it keeps with the RBI (the special drawing facility), then takes short advances up to a limit (ways and means advances), and beyond that runs an overdraft, which costs more and cannot run for more than a set number of days. Frequent overdrafts are the clearest sign that a state is struggling to pay its bills on time.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {longMonth(wma.dates.at(-1))}</span>
+            <p>In {longMonth(wma.dates.at(-1))}, <b id="ex-wma-od">–</b> states were in overdraft, <b id="ex-wma-wma">–</b> used ways and means advances and <b id="ex-wma-sdf">–</b> the special drawing facility. The most days in overdraft over the year were <b id="ex-wma-top">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 which GDP, which stage. Inputs: centre-gdp-b1999/b2004/b2011 (published), ratios-backcast, ratios-2022. -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>Which GDP, which stage</h2><span class="line"></span><span class="unit">The same deficit on different rulers</span></div>
+    <div class="break">
+      <figure id="cb-gdpbase" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The same deficit is {r1(a24)}% of GDP on the old series and {r1(n24)}% on the new one, for {ST.accountsTo}</h3>
+            <div class="sub">The Centre's gross fiscal deficit, per cent of GDP: as the RBI publishes it, on the GDP series of each period (1999-2000, 2004-05 and 2011-12 bases), solid; and, computed by India Atlas, over the statistics office's back series of the 2011-12 base and over the new 2022-23 series, dashed. {fy(B99.dates[0])} to {ST.accountsTo}, accounts.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-gdpbase">–</div><div class="c">on the 2022-23 series, {ST.accountsTo}</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <span class="chip"><i style="background:#878D99"></i>RBI, GDP of the time</span>
+            <span class="chip"><i style="background:#B9C3F3"></i>Over the 2011-12 back series (India Atlas)</span>
+            <span class="chip"><i style="background:#2E4BD8"></i>Over the 2022-23 series (India Atlas)</span>
+          </div>
+          <div class="plotzone"><div id="plot-gdpbase" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Select Fiscal Indicators of the Central Government (DBIE report 355) and Key Deficit Indicators (713); MoSPI, GDP back series (2011-12 base) and the 2022-23 series. Ratios other than the RBI's computed by India Atlas.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each time the statistics office rebases GDP it re-measures the size of the economy, and every ratio to GDP moves with it, though not a rupee of the deficit has changed. For the years before 2011-12 the RBI's ratios, on the GDP series of their time, sit close to the same deficits over the back series of the 2011-12 base: those rebasings moved this ratio little. The new 2022-23 series measures a smaller economy in recent years, so the same deficit is a larger share of it. Compare deficits across years only on one ruler, and never compare a ratio on one base with a target set on another.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the accounts for {ST.accountsTo}</span>
+            <p>Over the 2022-23 series the Centre's deficit was <b id="ex-gb-new">–</b> of GDP in {ST.accountsTo}, against <b id="ex-gb-old">–</b> as the RBI publishes it on the 2011-12 series.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 10 what these numbers measure (evergreen) -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>What these numbers measure</h2><span class="line"></span></div>
+    <div class="prose">
+      <p><b>The Handbook tables</b> come from budget documents and the Finance Accounts, compiled by the RBI each September. They print one figure a year: the accounts for years that have closed, the revised estimate for the year just ending and the budget estimate for the year ahead. Each table's note says which years are which, and this guide reads that note to label every figure. The RBI's database carries some earlier versions under labels that do not always match; the printed table is the record.</p>
+      <p><b>The monthly accounts</b> come from the Controller General of Accounts, cumulative from April, unaudited. A few months of the RBI's copy repeat an earlier month or do not add up; those months are left empty here, and the reasons are listed in the data.</p>
+      <p><b>Debt</b> here is outstanding liabilities: market loans, Treasury bills, small savings and provident funds, reserve funds and deposits, and the Centre's external debt at the current exchange rate. It is not the same as the country's external debt, which also includes what companies and banks owe abroad (see the External account guide).</p>
+      <p><b>Not here:</b> local governments (municipalities, panchayats), public sector companies' own borrowing, and most off-budget borrowing by state agencies. The government's guarantees on such borrowing are a liability that does not appear in these tables.</p>
+    </div>
+  </section>
+
+  <!-- § 11 misreadings -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>How to misread these numbers</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li><span class="no">1</span><div><h3>"The deficit is the government's debt."</h3><p>The deficit is a flow: what the government borrows in one year. Debt is the stock: everything it has borrowed and not repaid. A deficit of 4% of GDP adds to a debt that is already many times larger.</p></div></li>
+      <li><span class="no">2</span><div><h3>"The budget says the deficit will be X, so it was X."</h3><p>A budget estimate is a plan made fourteen months before a year ends. The revised estimate and the accounts can be far from it. Check which of the three numbers a headline quotes.</p></div></li>
+      <li><span class="no">3</span><div><h3>"The deficit jumped in April, the year is going badly."</h3><p>The monthly deficit is lumpy: taxes arrive in quarterly instalments and the RBI's dividend in May. Compare a month with the same month of earlier years, not with the year's budget divided by twelve.</p></div></li>
+      <li><span class="no">4</span><div><h3>"Income tax brings the Centre more than GST, so GST matters less."</h3><p>The Centre keeps only its part of GST and passes much of every tax to the states. The states' half of GST is counted in their own taxes. Compare collections before the states' share to see the whole of a tax.</p></div></li>
+      <li><span class="no">5</span><div><h3>"Debt fell from 85% to 80% of GDP, so the government repaid debt."</h3><p>Debt in rupees almost never falls. The ratio falls when the economy grows faster than the debt, and it moves when GDP is re-measured on a new base, as section 09 shows.</p></div></li>
+      <li><span class="no">6</span><div><h3>"Add the Centre's and the states' deficits to get the country's."</h3><p>The combined deficit nets out loans between them; it is a little less than the sum. Use the RBI's combined series.</p></div></li>
+    </ul>
+  </section>
+
+  <EveryCut slug="public-finance" />
+  <GuideData slug="public-finance" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>Reserve Bank of India: the Handbook of Statistics on the Indian Economy, the RBI Bulletin, the Weekly Statistical Supplement and the Database on Indian Economy (DBIE), read through the owner's local mirror of RBI publications (the Data Bank). The printed tables' notes from the RBI Innovation Hub's copy of DBIE. GDP from MoSPI, read from this site's GDP guide; state GSDP ratios from the States guide. Data vintage <b id="prov-vintage">–</b>.</p>
+      </div>
+      <div>
+        <h6>Method</h6>
+        <p>Amounts converted from rupees to ₹ crore; where a table prints one value per display unit, only actual values are read. Shares, ratios to revenue, ratios to GDP other than the RBI's, and shares of the budget estimate are India Atlas calculations, labelled as such. Every annual table is checked against the printed Handbook and every identity the tables state is tested. Nothing is estimated.</p>
+      </div>
+      <div>
+        <h6>Revisions and breaks</h6>
+        <p>Accounts, revised estimates and budget estimates are separate series. Ratios to GDP are kept apart by GDP base. Other breaks kept apart: small savings receipts (gross to March 2017, net after); 'others' among bondholders (pension funds separate from March 2022); two layouts of the ownership table; the Bulletin's monthly accounts, whose old layout counts borrowing inside receipts.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Version 1.0, built October 2026. Revised with each month's Union accounts and each annual Handbook.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, government budgets and debt</span>
+      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/public-finance.client.js";
+</script>
+</Base>

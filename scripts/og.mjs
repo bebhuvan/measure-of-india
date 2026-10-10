@@ -354,6 +354,19 @@ const CARDS = [
     foot: (b) => { const d = b.dates.at(-1); return `Banks' bad loans, gross NPAs as a share of advances, every quarter to ${["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}. Source: RBI, DBIE`; },
   },
   // --- end banks ---
+  // --- public-finance (lb/public-finance) ---
+  {
+    slug: "public-finance", bundleSlug: "public-finance-centre-gdp-b2011",
+    keys: ["gross_fiscal_deficit", "revenue_deficit"], d0: 0, d1: 10, band: null, trend: null,
+    yStep: 2, fmt: (v) => v.toFixed(1) + "%", mr: 230,
+    prep: (S) => {
+      const acc = (s) => ({ ...s, data: s.data.filter((d) => d.value != null) });   // accounts only: the estimates are not drawn on the card
+      S.gross_fiscal_deficit = { ...acc(S.gross_fiscal_deficit), label: "Fiscal deficit", color: "#2E4BD8" };
+      S.revenue_deficit = { ...acc(S.revenue_deficit), label: "Revenue deficit", color: "#A3A9B4" };
+    },
+    foot: (b) => { const f = b.meta.stages.accountsTo; return `The Centre's deficits, per cent of GDP (2011-12 base), 2011-12 to ${f}, accounts. Source: RBI, Handbook of Statistics`; },
+  },
+  // --- end public-finance ---
 ];
 
 await ensureFonts();

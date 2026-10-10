@@ -1,0 +1,414 @@
+{
+ "meta": {
+  "dossier": "public-finance",
+  "source": "Reserve Bank of India, DBIE (via the Data Bank)",
+  "product": "public-finance",
+  "base": "GDP 2004-05 series",
+  "vintage": "2026-10-10",
+  "mock": false,
+  "geo": "IND",
+  "releaseDate": null,
+  "revisionPolicy": "Each year passes through three stages: the budget estimate (February before the year), the revised estimate (February of the year) and the accounts (provisional in May after the year, audited later). The RBI's tables restate a year as it moves from one stage to the next; each stage is kept as its own series.",
+  "frequency": "annual",
+  "unit": "pct_gdp",
+  "stages": {
+   "accountsTo": "2024-25",
+   "revisedEstimate": "2025-26",
+   "budgetEstimate": "2026-27"
+  },
+  "scope": "centre",
+  "table": {
+   "report": "355",
+   "handbook": 196,
+   "title": "Select fiscal indicators of the Central Government, per cent of GDP"
+  },
+  "latestPeriod": "2010-11 (financial year)",
+  "coverage": "The Centre's deficits, taxes, spending and interest as a share of GDP, 2004-05 to 2010-11, over GDP on the 2004-05 base",
+  "note": "RBI, Select fiscal indicators of the Central Government, per cent of GDP (DBIE report 355). Per cent of GDP at current market prices, GDP on the 2004-05 base (the RBI's note on its state-indicators table: 1999-2000 base to 2003-04, 2004-05 base to 2010-11, 2011-12 base from 2011-12; the Centre's and the combined tables divide by the same GDP, checked by their implied denominators). A different GDP base is a different ruler: never joined across bundles. Net tax revenue is net of the states' share and the National Calamity Contingency Fund. Defence excludes pensions and civil spending. Capital receipts exclude the drawdown of cash balances. Cross-checked against the printed table (Innovation Hub export of Handbook report 196): 1253 of 1253 figures match."
+ },
+ "dates": [
+  "2004-04-01",
+  "2005-04-01",
+  "2006-04-01",
+  "2007-04-01",
+  "2008-04-01",
+  "2009-04-01",
+  "2010-04-01"
+ ],
+ "series": {
+  "non_tax_revenue": {
+   "name": "non_tax_revenue_pct_gdp",
+   "label": "Non tax revenue, per cent of GDP",
+   "color": "#2E4BD8",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 0,
+   "data": [
+    2.5,
+    2.08,
+    1.94,
+    2.05,
+    1.72,
+    1.79,
+    2.8083
+   ]
+  },
+  "capital_receipts": {
+   "name": "capital_receipts_pct_gdp",
+   "label": "Capital receipts, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 1,
+   "data": [
+    6.18,
+    4.86,
+    3.36,
+    3.97,
+    5.33,
+    6.9941,
+    5.1699
+   ]
+  },
+  "revenue_expenditure": {
+   "name": "revenue_expenditure_pct_gdp",
+   "label": "Revenue expenditure, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 2,
+   "data": [
+    11.85,
+    11.9,
+    11.98,
+    11.92,
+    14.1,
+    14.08,
+    13.37
+   ]
+  },
+  "defence_revenue_capital": {
+   "name": "defence_revenue_capital_pct_gdp",
+   "label": "Defence (Revenue+ capital), per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 3,
+   "data": [
+    2.34,
+    2.18,
+    1.99,
+    1.84,
+    2.03,
+    2.19,
+    1.98
+   ]
+  },
+  "capital_outlay": {
+   "name": "capital_outlay_pct_gdp",
+   "label": "Capital outlay, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 4,
+   "data": [
+    1.61,
+    1.49,
+    1.4,
+    2.14,
+    1.35,
+    1.5,
+    1.69
+   ]
+  },
+  "subsidies": {
+   "name": "subsidies_pct_gdp",
+   "label": "Subsidies, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 5,
+   "data": [
+    1.42,
+    1.29,
+    1.33,
+    1.42,
+    2.3,
+    2.18,
+    2.23
+   ]
+  },
+  "total_expenditure": {
+   "name": "total_expenditure_pct_gdp",
+   "label": "Total expenditure, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 6,
+   "data": [
+    15.37,
+    13.69,
+    13.58,
+    14.29,
+    15.7,
+    15.82,
+    15.38
+   ]
+  },
+  "capital_expenditure": {
+   "name": "capital_expenditure_pct_gdp",
+   "label": "Capital expenditure, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 7,
+   "data": [
+    3.5,
+    1.8,
+    1.6,
+    2.37,
+    1.6,
+    1.74,
+    2.01
+   ]
+  },
+  "gross_fiscal_deficit": {
+   "name": "gross_fiscal_deficit_pct_gdp",
+   "label": "Gross fiscal deficit, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 8,
+   "data": [
+    3.88,
+    3.96,
+    3.32,
+    2.54,
+    5.99,
+    6.46,
+    4.8
+   ]
+  },
+  "net_fiscal_deficit": {
+   "name": "net_fiscal_deficit_pct_gdp",
+   "label": "Net fiscal deficit, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 9,
+   "data": [
+    3.89,
+    3.95,
+    3.52,
+    2.42,
+    5.84,
+    6.35,
+    4.64
+   ]
+  },
+  "interest_payments": {
+   "name": "interest_payments_pct_gdp",
+   "label": "Interest payments, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 10,
+   "data": [
+    3.92,
+    3.59,
+    3.5,
+    3.43,
+    3.41,
+    3.29,
+    3.01
+   ]
+  },
+  "gross_primary_deficit": {
+   "name": "gross_primary_deficit_pct_gdp",
+   "label": "Gross primary deficit, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 11,
+   "data": [
+    -0.04,
+    0.37,
+    -0.18,
+    -0.88,
+    2.57,
+    3.17,
+    1.79
+   ]
+  },
+  "net_primary_deficit": {
+   "name": "net_primary_deficit_pct_gdp",
+   "label": "Net primary deficit, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 12,
+   "data": [
+    0.98,
+    0.95,
+    0.55,
+    -0.59,
+    2.8,
+    3.4,
+    1.89
+   ]
+  },
+  "revenue_deficit": {
+   "name": "revenue_deficit_pct_gdp",
+   "label": "Revenue deficit, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 13,
+   "data": [
+    2.42,
+    2.5,
+    1.87,
+    1.05,
+    4.5,
+    5.23,
+    3.24
+   ]
+  },
+  "primary_revenue_deficit": {
+   "name": "primary_revenue_deficit_pct_gdp",
+   "label": "Primary revenue deficit, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 14,
+   "data": [
+    -1.5,
+    -1.09,
+    -1.63,
+    -2.38,
+    1.09,
+    1.94,
+    0.23
+   ]
+  },
+  "draw_down_of_cash_balances": {
+   "name": "draw_down_of_cash_balances_pct_gdp",
+   "label": "Draw down of cash balances, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 15,
+   "data": [
+    -0.05,
+    -0.57,
+    0.11,
+    -0.54,
+    0.78,
+    -0.02,
+    0.08
+   ]
+  },
+  "net_rbi_credit_to_centre": {
+   "name": "net_rbi_credit_to_centre_pct_gdp",
+   "label": "Net RBI credit to centre, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 16,
+   "data": [
+    -1.86,
+    0.77,
+    -0.07,
+    -2.32,
+    3.1,
+    2.32,
+    2.38
+   ]
+  },
+  "gross_direct_tax": {
+   "name": "gross_direct_tax_pct_gdp",
+   "label": "Gross direct tax, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 17,
+   "data": [
+    4.1,
+    4.47,
+    5.36,
+    6.26,
+    5.94,
+    5.83,
+    5.73
+   ]
+  },
+  "gross_indirect_tax": {
+   "name": "gross_indirect_tax_pct_gdp",
+   "label": "Gross indirect tax, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 18,
+   "data": [
+    5.26,
+    5.47,
+    5.67,
+    5.63,
+    4.81,
+    3.81,
+    4.46
+   ]
+  },
+  "total_gross_tax": {
+   "name": "total_gross_tax_pct_gdp",
+   "label": "Total gross tax, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 19,
+   "data": [
+    9.36,
+    9.95,
+    11.03,
+    11.89,
+    10.75,
+    9.64,
+    10.19
+   ]
+  },
+  "tax_revenue_net": {
+   "name": "tax_revenue_net_pct_gdp",
+   "label": "Tax revenue net, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 20,
+   "data": [
+    6.93,
+    7.32,
+    8.18,
+    8.81,
+    7.87,
+    7.05,
+    7.32
+   ]
+  },
+  "revenue_receipts": {
+   "name": "revenue_receipts_pct_gdp",
+   "label": "Revenue receipts, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 21,
+   "data": [
+    9.44,
+    9.4,
+    10.11,
+    10.87,
+    9.6,
+    8.84,
+    10.13
+   ]
+  }
+ }
+}

@@ -62,6 +62,8 @@ export const HEADLINE = {
   farms:         { value: (b) => `${(last(b, "foodgrains") / 1000).toFixed(1)} million tonnes`, what: "foodgrains harvested in the crop year (final estimate)", period: fy },
   // banks (lb/banks): all scheduled commercial banks' bad loans, the quarter's end
   banks:         { value: (b) => `${last(b, "all_gnpa").toFixed(2)}%`, what: "banks' bad loans, gross NPAs as a share of gross advances", period: month },
+  // --- public-finance (lb/public-finance): the Centre's deficit so far this year, against the year's budget
+  "public-finance": { value: (b) => `${last(b, "fiscal_deficit_pct_be").toFixed(1)}%`, what: "the Centre's fiscal deficit so far this year, as a share of the year's budget estimate", period: (b) => { const d = lastDate(b), m = +d.slice(5, 7) - 1; return `April to ${MONTHS[m]} ${d.slice(0, 4)}`; } },
 };
 
 // The small chart beside each guide's figure: always on the current ruler, so a chart never
@@ -103,6 +105,8 @@ export const SPARK = {
   payments:      { bundle: "payments-monthly", series: "upi_volume" },   // payments (lb/payments)
   farms:         { bundle: "farms-production", series: "foodgrains" },   // farms (lb/farms)
   banks:         { bundle: "banks-health", series: "all_gnpa" },   // banks (lb/banks)
+  // public-finance (lb/public-finance): the Centre's deficit, April to each month
+  "public-finance": { bundle: "public-finance-centre-gfd-monthly", series: "gfd_fytd", n: 87 },
 };
 
 const cache = {};

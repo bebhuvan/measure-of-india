@@ -1,0 +1,91 @@
+{
+ "meta": {
+  "dossier": "public-finance",
+  "source": "Reserve Bank of India, DBIE (via the Data Bank)",
+  "product": "public-finance",
+  "base": "GDP 2004-05 series",
+  "vintage": "2026-10-10",
+  "mock": false,
+  "geo": "IND",
+  "releaseDate": null,
+  "revisionPolicy": "Each year passes through three stages: the budget estimate (February before the year), the revised estimate (February of the year) and the accounts (provisional in May after the year, audited later). The RBI's tables restate a year as it moves from one stage to the next; each stage is kept as its own series.",
+  "frequency": "annual",
+  "unit": "pct_gdp",
+  "stages": {
+   "accountsTo": "2023-24",
+   "revisedEstimate": "2024-25",
+   "budgetEstimate": "2025-26"
+  },
+  "scope": "combined",
+  "table": {
+   "report": "347",
+   "handbook": 86,
+   "title": "Combined deficits of the central and state governments, per cent of GDP"
+  },
+  "latestPeriod": "2010-11 (financial year)",
+  "coverage": "The general government's deficits as a share of GDP, 2004-05 to 2010-11, over GDP on the 2004-05 base",
+  "note": "RBI, Combined deficits of the central and state governments, per cent of GDP (DBIE report 347). Per cent of GDP at current market prices, GDP on the 2004-05 base (the RBI's note on its state-indicators table: 1999-2000 base to 2003-04, 2004-05 base to 2010-11, 2011-12 base from 2011-12; the Centre's and the combined tables divide by the same GDP, checked by their implied denominators). A different GDP base is a different ruler: never joined across bundles. Cross-checked against the printed table (Innovation Hub export of Handbook report 86): 135 of 135 figures match."
+ },
+ "dates": [
+  "2004-04-01",
+  "2005-04-01",
+  "2006-04-01",
+  "2007-04-01",
+  "2008-04-01",
+  "2009-04-01",
+  "2010-04-01"
+ ],
+ "series": {
+  "gross_fiscal_deficit": {
+   "name": "gross_fiscal_deficit_pct_gdp",
+   "label": "Gross fiscal deficit, per cent of GDP",
+   "color": "#2E4BD8",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 0,
+   "data": [
+    7.2,
+    6.5,
+    5.1,
+    4,
+    8.3,
+    9.3,
+    6.9
+   ]
+  },
+  "revenue_deficit": {
+   "name": "revenue_deficit_pct_gdp",
+   "label": "Revenue deficit, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 1,
+   "data": [
+    3.5,
+    2.7,
+    1.3,
+    0.2,
+    4.3,
+    5.7,
+    3.2
+   ]
+  },
+  "gross_primary_deficit": {
+   "name": "gross_primary_deficit_pct_gdp",
+   "label": "Gross primary deficit, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 2,
+   "data": [
+    1.3,
+    1,
+    -0.3,
+    -1.2,
+    3.3,
+    4.5,
+    2.4
+   ]
+  }
+ }
+}
