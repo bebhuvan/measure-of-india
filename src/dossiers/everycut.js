@@ -15,6 +15,7 @@
 // sessions add their units and cuts here, one contiguous block per family.
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 
 const ROOT = process.cwd();   // builds run from the repository root (see periods.js)
 const MINUS = "−";
@@ -637,6 +638,13 @@ const TIMED = new Set(["monthly", "quarterly", "annual"]);
 
 /** Every series of one bundle as table rows. Throws on a unit it cannot show. */
 const rowsMemo = new Map();
+/** A row's anchor on its every-cut page: "s" and seven base-36 characters of a hash of bundle
+ *  and key, so a link to one series survives a release (keys are stable; row order is not) and
+ *  costs a few bytes on pages of up to PAGE_ROWS rows. Site search links to it. */
+export function rowAnchor(bundle, key) {
+  const h = crypto.createHash("sha1").update(bundle + "\0" + key).digest();
+  return "s" + (h.readUInt32BE(0) * 256 + h[4]).toString(36).padStart(7, "0").slice(-7);
+}
 export function rowsOf(slug, opts = {}) {
   const mk = slug + "|" + (opts.cut ?? "");
   if (!rowsMemo.has(mk)) rowsMemo.set(mk, rowsOfUncached(slug, opts));
@@ -653,7 +661,7 @@ function rowsOfUncached(slug, opts = {}) {
     let li = -1;
     for (let i = s.data.length - 1; i >= 0; i--) if (s.data[i] != null) { li = i; break; }
     const row = {
-      bundle: slug, key, label: tidy(s.label || key), cut, group: groupOf(s), unit: u, unitNote: U.note || "", base: bundleBase(slug, b),
+      bundle: slug, key, id: rowAnchor(slug, key), label: tidy(s.label || key), cut, group: groupOf(s), unit: u, unitNote: U.note || "", base: bundleBase(slug, b),
       latest: null, latestText: "—", period: "", change: null, changeText: "—", spark: sparkPath(s.data),
       estimated: false, changeEstimated: false, estimatedNote: s.estimatedNote || "",
     };

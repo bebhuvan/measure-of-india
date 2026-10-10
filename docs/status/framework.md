@@ -381,3 +381,31 @@ fails on the omissions above, by design.
   recomputes through census-core). trade 53 MB to 4.9 MB (now committed), services-asuse
   24 MB to 0.36 MB, credit-place 6.3 to 1.1 MB. A census still over 10 MB is written to the
   git-ignored `census-<dossier>.full.json`. Test: committed census files are under 10 MB.
+
+# Round 5 (2026-10-10, after merging launch-build 0c37810: 25 guides, 6,56,418 series)
+
+## 1. Site search that scales with the series count (launch blocker)
+
+- `dist/search-index.json` was 306 MB (every series in one file). Cloudflare Pages refuses files
+  over 25 MiB. It is gone. Search is now static files under `/search/`, written after every
+  build by `scripts/search-index.mjs` (the `atlas-search-index` hook in astro.config.mjs) and
+  read by one engine, `src/dossiers/search-core.js`, which the home page and qc both use:
+  - `core.json`, fetched on first focus: 25 guides, 382 plates (title and finding, read from
+    the built pages), 1,616 files with their cut, guide and every-cut location, the long-tail
+    views, and the shard manifest. **110 KB gzipped** (budget 500 KB).
+  - 31 token shards (every label and group word, row ids gap- and run-coded, about 256 KB each)
+    and 866 row chunks (label, group, latest, period, row anchor, last 12 values; about 128 KB
+    each), fetched only for the words and rows a query needs.
+- Results: series first (linked to their every-cut row, `#s` + seven characters of a hash of
+  bundle and key, `everycut.js rowAnchor`, stable across releases; the row is unfolded, banded
+  and scrolled to), then guides and charts (`#<figure id>`), then whole files (their every-cut
+  view, or the download for the 23 files no guide carries).
+- Measured, engine in Node on the built files: "onion" 252 KB gzipped fetched, 134 ms;
+  "Bihar per capita" 292 KB; "repo rate" 69 KB (Policy repo rate first); "gold imports" 322 KB;
+  "women bank account" 151 KB (NFHS's "bank or savings account that they themselves use").
+  Checked in headless Chrome at 1440 and 390 px on all five: no horizontal overflow, series in
+  view on a phone, a followed result opens on its row.
+- qc: no dist file over 20 MB (largest now `data/ilo-plfs-emp.json`, 6.3 MB); core within its
+  gzipped budget; every shard and chunk under 1 MB; 12 series sampled from every guide (299)
+  found by their own label, each link opening a page that carries the row's anchor exactly
+  once. Budgets written into docs/CONTRACT-render.md. Unit tests: test/search.test.mjs.

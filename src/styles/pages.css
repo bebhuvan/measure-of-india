@@ -44,6 +44,12 @@
 #results .rv{text-align:right;font-size:1.05rem;font-weight:600;font-variant-numeric:tabular-nums}
 #results .rv small{display:block;font-size:.76rem;font-weight:400;color:var(--muted)}
 #results .count,#results .none{display:block;font-size:.82rem;color:var(--muted);cursor:default}
+#results{max-height:min(72vh,760px);overflow-y:auto;overscroll-behavior:contain}
+#results li.sec{display:flex;justify-content:space-between;gap:12px;padding:14px 16px 6px;border-top:1px solid var(--rule-2);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);cursor:default}
+#results li.sec:first-child{border-top:0}
+#results li.sec span{letter-spacing:0;text-transform:none;font-variant-numeric:tabular-nums}
+#results li.wait{display:block;font-size:.85rem;color:var(--muted);cursor:default}
+#results .rv small:only-child{font-size:.72rem;letter-spacing:.04em;text-transform:uppercase}
 
 /* ---------- home: every guide ---------- */
 .home .index{padding-top:88px}

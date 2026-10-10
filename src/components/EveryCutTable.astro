@@ -37,7 +37,7 @@ const num = (v) => (v == null ? "" : String(Math.round(v * 1e4) / 1e4));
       </tr></thead>
       <tbody>
         {rows.map((r, i) => (
-          <tr data-o={i} data-file={r.bundle} data-v={num(r.latest)} data-c={num(r.change)}>
+          <tr id={r.id} data-o={i} data-file={r.bundle} data-v={num(r.latest)} data-c={num(r.change)}>
             <td class="w">{r.label}<small>{cap([filterBy === "group" ? r.cut : r.group, r.unitNote, r.base].filter(Boolean).join(", "))}</small></td>
             <td class="ct">{facet(r)}</td>
             <td class="n v" title={r.estimated ? r.estimatedNote || "An estimate, not a measurement" : undefined}>{r.latestText}<small>{r.period}{r.estimated && ", est."}</small></td>
@@ -77,6 +77,8 @@ const num = (v) => (v == null ? "" : String(Math.round(v * 1e4) / 1e4));
   .ec-wrap th[aria-sort="descending"] button::after{content:" ↓"}
   .ec-wrap td{padding:9px 14px 9px 0;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-soft)}
   .ec-wrap td.w{color:var(--ink);max-width:30em}
+  .ec-wrap tr:target td,.ec-wrap tr.ec-hit td{background:var(--band)}
+  .ec-wrap tr{scroll-margin-top:96px}
   .ec-wrap small{display:block;font-size:.75rem;color:var(--muted);margin-top:1px;line-height:1.4}
   .ec-wrap .n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
   .ec-wrap td.v{color:var(--ink)}

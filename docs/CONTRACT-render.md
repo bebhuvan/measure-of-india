@@ -70,6 +70,19 @@ build.
 - **No runtime data fetching of published series.** Data rides in the bundle
   the page was built from; the deployed site performs zero data requests
   beyond static assets.
+- **No file in dist over 20 MB** (Cloudflare Pages refuses any file over 25 MiB; qc fails at 20 MB).
+- **Site search scales with the series count, not the page.** It is static files the build writes
+  under `/search/` (`scripts/search-index.mjs`, run by the build hook; engine
+  `src/dossiers/search-core.js`, shared by the home page and qc):
+  - the core index, fetched when a reader first focuses the search box, **≤ 500 KB gzipped**:
+    every guide, every plate (title and finding), every bundle (title, cut, guide, where its
+    every-cut rows live) and every long-tail every-cut view;
+  - series in **token shards and row chunks of ≤ 1 MB each** (packed to about 256 KB and 128 KB),
+    fetched only when a query needs them, with the manifest in the core index;
+  - every result links to a plate (`#<figure id>`), an every-cut row (`#s…`, everycut.js
+    `rowAnchor`, stable across releases) or a bundle's download.
+  qc fails a core over budget, a shard or chunk over 1 MB, and any of a sample of series from
+  every guide that its own label does not find, or whose link does not open on its row.
 - Charts render at their intrinsic width; containers may scale via CSS
   (`width:100%` on the svg) but plot geometry is computed once.
 

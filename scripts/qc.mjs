@@ -732,7 +732,7 @@ for (const page of PAGES) {
 // page and each long-tail page also stay inside their HTML budgets (docs/CONTRACT-render.md).
 {
   const EC = await import(pathToFileURL(path.join(ROOT, "src/dossiers/everycut.js")).href);
-  const rowsPerFile = (h, into) => { for (const m of h.matchAll(/<tr data-o="\d+" data-file="([^"]+)"/g)) into.set(m[1], (into.get(m[1]) ?? 0) + 1); };
+  const rowsPerFile = (h, into) => { for (const m of h.matchAll(/<tr (?:id="s[0-9a-z]{7}" )?data-o="\d+" data-file="([^"]+)"/g)) into.set(m[1], (into.get(m[1]) ?? 0) + 1); };
   for (const d of DOSSIERS) {
     const file = path.join(DIST, "guides", d.slug, "index.html");
     if (!fs.existsSync(file)) continue;   // "not built" is already reported above
@@ -807,6 +807,68 @@ for (const page of PAGES) {
     }
   }
   if (!bad) ok(`archive links: ${links} on ${pages.length} pages, all to paths in the manifest (${(man.tables ?? []).length} table files)`);
+}
+
+// file sizes and site search (docs/CONTRACT-render.md, "Budgets"): no file in dist over 20 MB
+// (Cloudflare Pages refuses 25 MiB); the search core within its gzipped budget, every shard and
+// chunk within 1 MB; and a sample of series from every guide found through the shards by their
+// own label, each result opening a page that carries the row's anchor once
+{
+  const FILE_MAX = 20e6, CORE_GZ_MAX = 500 * 1024, SHARD_MAX = 1024 * 1024, PER_GUIDE = 12;
+  const zlib = await import("node:zlib");
+  let largest = ["", 0], over = 0, nFiles = 0;
+  (function walk(dir) {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, e.name);
+      if (e.isDirectory()) { walk(p); continue; }
+      const sz = fs.statSync(p).size; nFiles++;
+      if (sz > largest[1]) largest = [p, sz];
+      if (sz > FILE_MAX) { over++; fail(`${path.relative(DIST, p)} is ${(sz / 1e6).toFixed(1)} MB; no file may pass 20 MB (Cloudflare Pages refuses 25 MiB)`); }
+    }
+  })(DIST);
+  if (!over) ok(`file sizes: ${nFiles} files in dist, largest ${path.relative(DIST, largest[0])} at ${(largest[1] / 1e6).toFixed(1)} MB (limit 20 MB)`);
+
+  const SD = path.join(DIST, "search");
+  const coreFile = path.join(SD, "core.json");
+  if (!fs.existsSync(coreFile)) fail("site search: dist/search/core.json missing (scripts/search-index.mjs runs after astro build)");
+  else {
+    const coreGz = zlib.gzipSync(fs.readFileSync(coreFile), { level: 9 }).length;
+    if (coreGz > CORE_GZ_MAX) fail(`site search: core.json is ${(coreGz / 1024).toFixed(0)} KB gzipped, over its ${CORE_GZ_MAX / 1024} KB budget`);
+    let bigShard = 0, nShard = 0;
+    for (const sub of ["t", "r"]) for (const f of fs.readdirSync(path.join(SD, sub))) {
+      const sz = fs.statSync(path.join(SD, sub, f)).size; nShard++; bigShard = Math.max(bigShard, sz);
+      if (sz > SHARD_MAX) fail(`site search: ${sub}/${f} is ${(sz / 1024).toFixed(0)} KB, over 1 MB`);
+    }
+    const core = JSON.parse(fs.readFileSync(coreFile, "utf8"));
+    const nAll = core.bundles.reduce((a, b) => a + b[5], 0);
+    if (nAll !== core.nSeries) fail(`site search: bundles hold ${nAll} rows, core says ${core.nSeries}`);
+    const SC = await import(pathToFileURL(path.join(ROOT, "src/dossiers/search-core.js")).href);
+    const S = SC.createSearch(core, async (p) => JSON.parse(fs.readFileSync(path.join(SD, p), "utf8")));
+    let tried = 0, missed = 0;
+    const pageCache = new Map();
+    const page = (url) => { if (!pageCache.has(url)) { const f = path.join(DIST, url, "index.html"); pageCache.set(url, fs.existsSync(f) ? fs.readFileSync(f, "utf8") : null); } return pageCache.get(url); };
+    for (let g = 0; g < core.guides.length; g++) {
+      const ids = core.bundles.filter((b) => b[3] === g).flatMap((b) => Array.from({ length: b[5] }, (_, k) => b[4] + k));
+      if (!ids.length) { fail(`site search: guide ${core.guides[g][0]} has no series in the index`); continue; }
+      const pick = [...new Set(Array.from({ length: Math.min(PER_GUIDE, ids.length) }, (_, k) => ids[Math.floor((k + 0.5) * ids.length / Math.min(PER_GUIDE, ids.length))]))];
+      const rows = await S.rowsAt(pick);
+      for (const id of pick) {
+        tried++;
+        const row = rows.get(id);
+        const c = await S.candidates(row[0] + " ");
+        const found = c && c.ids.includes(id) && (!c.deferred.has(id) || S.passes(row, c.words.filter((w) => c.looseWords.includes(w.w))));
+        if (!found) { missed++; fail(`site search: "${row[0]}" (${core.guides[g][0]}) is not found by its own label`); continue; }
+        const d = S.describe(id, row);
+        const [url, anchor] = d.href.split("#");
+        if (!anchor) { if (!fs.existsSync(path.join(DIST, url))) { missed++; fail(`site search: "${row[0]}" links to ${url}, which dist lacks`); } continue; }
+        const h = page(url);
+        const n = h ? h.split(`id="${anchor}"`).length - 1 : 0;
+        if (n !== 1) { missed++; fail(`site search: "${row[0]}" links to ${d.href}; the page carries that anchor ${n} times`); }
+      }
+    }
+    if (coreGz <= CORE_GZ_MAX && bigShard <= SHARD_MAX && !missed)
+      ok(`site search: core ${(coreGz / 1024).toFixed(0)} KB gzipped (budget ${CORE_GZ_MAX / 1024} KB), ${nShard} shards and chunks, largest ${(bigShard / 1024).toFixed(0)} KB; ${tried} sampled series across ${core.guides.length} guides all found by their label and opened on their row`);
+  }
 }
 
 // static greps over our own sources (not Plot internals) — the file list is
