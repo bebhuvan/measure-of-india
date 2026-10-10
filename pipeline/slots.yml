@@ -820,3 +820,37 @@ farms:
       the final foodgrain harvest, written as cross.farms.harvest_million.foodgrains followed by
       "million tonnes". Plain sentences, no metaphors.
 # ---- end farms ----
+
+# banks (lb/banks): the quarterly bank-wise return (DBIE report 1221)
+banks:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [all_gnpa.latest, psb_gnpa.latest, private_gnpa.latest, all_nnpa.latest]
+    minSeriesMentioned: 5        # all banks, net of provisions, and three of the four groups
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
+    brief: >
+      Two short paragraphs on the health of India's commercial banks at the latest quarter.
+      First: bad loans (gross NPA ratio) for all banks and for each bank group, against a
+      year earlier and against the peak of March 2018; the net NPA ratio (after provisions).
+      Second, from the ratios bundle: capital (CRAR), return on assets and the public sector
+      banks' share of deposits against the private banks'. Name the bank group with the most
+      bad loans and the one with the fewest; "highest" and "lowest" refer only to bad-loan
+      ratios, never to capital or returns. Deposits not with public sector banks sit with
+      private, foreign and small finance banks: name all three or none. Small finance banks lend to small
+      borrowers and carry more bad loans by design: say so if they are the extreme. Write for
+      a reader, not for the pipeline: never use the words "sheet", "mover", "print", "base"
+      or "line". Name the quarter's month in full ("March 2026"). Every ratio is per cent.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [all_gnpa.latest]
+    brief: >
+      The honest limits. A falling bad-loan ratio can come from write-offs and from faster
+      lending, not only from repayment. These are the banks' own unaudited quarterly returns
+      to the RBI, and bank groups change as banks move between them. They say nothing about
+      urban co-operative banks or NBFCs, which report separately. A bank group's average
+      hides the weakest bank in it. Must contain a plain "we do not know". Name months in
+      full; never use the words "sheet", "print" or "headline".
+

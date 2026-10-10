@@ -2365,6 +2365,170 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
 }
 /* ---- end industry ---- */
 
+/* ---- banks (lb/banks): banks one by one, urban co-operative banks, financial institutions ----
+ * Every banks-* bundle: meta, cadence, a unit and a sanity range on every series. Then the
+ * family's identities, each of which would catch a misread column or unit:
+ *   report 1221: deposits = customer deposits + deposits of banks; customer deposits = current +
+ *     savings + time + NRI + certificates; total assets = its seven items; liabilities = their five;
+ *     gross NPAs = sub-standard + doubtful + loss; the printed NPA ratio = NPAs / advances; the
+ *     all-bank row = public + private + foreign + small finance banks;
+ *   1221 against the RBI's annual bank-wise table (report 336, credit-loan-quality-banks): every
+ *     bank's March gross advances and gross NPAs, to the crore (the unit check: 1221 prints
+ *     thousands of rupees under a crore label);
+ *   the Outlook's two copies (Innovation Hub grids vs the Data Bank's typed tables) agree on every
+ *     March both print; balance sheets balance; bank shares of all banks add to 100;
+ *   deposit insurance (report 384) = scheduled commercial + co-operative banks in report 733;
+ *   and the hand-checked values in the adapters' headers stay what they were. */
+{
+  const files = fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => /^banks-.*\.json$/.test(f)).map((f) => f.replace(/\.json$/, ""));
+  if (files.length < 62) fail(`banks: only ${files.length} banks-* bundles (expected 62)`);
+  const RANGE = { inr_crore: [-5e7, 5e8], count: [0, 1e10], pct: [-1e7, 1e7] };
+  let nSeries = 0;
+  for (const slug of files) {
+    const b = load(slug);
+    checkMeta(b, slug, "banks", b.meta.base, b.meta.frequency);
+    if (b.meta.frequency === "quarterly") checkCadence(b.dates, 3, slug);
+    else if (b.meta.frequency === "annual") checkCadence(b.dates, 12, slug);
+    else for (let i = 1; i < b.dates.length; i++) if (b.dates[i] <= b.dates[i - 1]) fail(`${slug}: dates not ascending at ${b.dates[i]}`);
+    const sr = {};
+    for (const [k, s] of Object.entries(b.series)) {
+      nSeries++;
+      if (!RANGE[s.unit]) fail(`${slug}.${k}: unit ${s.unit} has no range`);
+      // a bank with almost no income prints ratios to it in the thousands of per cent (JSC VTB's
+      // profit margin); levels of all banks run to ₹3.6 crore crore of assets
+      sr[k] = RANGE[s.unit] ?? [NaN, NaN];
+    }
+    checkRange(b, -Infinity, Infinity, slug, sr);
+  }
+  ok(`banks: ${files.length} bundles, ${nSeries} series, every one with a unit and inside its range`);
+  const near = (a, z, tol) => a != null && z != null && Math.abs(a - z) <= tol;
+  // report 1221's identities, bank by bank and quarter by quarter
+  const ident = (slug, label, total, parts, tolFn = (t) => Math.max(1, 0.002 * Math.abs(t))) => {
+    const b = load(slug); let n = 0, bad = 0, worst = null;
+    const ents = new Set(Object.keys(b.series).map((k) => k.split("__")[0]));
+    for (const e of ents) for (const op of ["global", "domestic", "overseas"]) {
+      const T = b.series[`${e}__${total}__${op}`]; if (!T) continue;
+      const P = parts.map((p) => b.series[`${e}__${p}__${op}`]);
+      b.dates.forEach((d, i) => {
+        const t = T.data[i]; const ps = P.map((s) => s?.data[i]);
+        if (t == null || ps.some((x) => x == null)) return;
+        n++; const sum = ps.reduce((a, x) => a + x, 0);
+        if (Math.abs(sum - t) > tolFn(t)) { bad++; worst ??= `${e} ${op} ${d}: ${t} vs ${sum.toFixed(2)}`; }
+      });
+    }
+    if (n < 500) fail(`banks ${slug}: identity "${label}" checked only ${n} cells`);
+    else if (bad) fail(`banks ${slug}: ${label} fails in ${bad} of ${n} cells (first: ${worst})`);
+    else ok(`banks ${slug}: ${label} (${n} bank-quarters)`);
+  };
+  ident("banks-balance-sheet", "deposits = customer deposits + deposits of banks", "total_deposits", ["customer_deposits", "deposits_of_banks"]);
+  ident("banks-balance-sheet", "total assets = its seven items", "total_assets", ["cash_funds", "due_from_banks_fis_ccps", "slr_approved_securities", "non_slr_investments", "net_loans_and_advances", "fixed_assets_net", "other_assets"]);
+  ident("banks-balance-sheet", "capital and liabilities = their five items", "total_capital_and_liabilities", ["paid_up_share_capital", "reserves_and_surplus", "total_deposits", "total_borrowings", "other_liabilities"]);
+  ident("banks-asset-quality", "gross NPAs = sub-standard + doubtful + loss", "gross_npas_at_the_end_of_the_period", ["sub_standard_advances", "doubtful_advances", "loss_advances"]);
+  ident("banks-groups-balance-sheet", "a group's deposits = customer deposits + deposits of banks", "total_deposits", ["customer_deposits", "deposits_of_banks"]);
+  {
+    const b = load("banks-asset-quality"); let n = 0, bad = 0, first = null;
+    const ents = new Set(Object.keys(b.series).map((k) => k.split("__")[0]));
+    for (const e of ents) for (const op of ["global", "domestic"]) {
+      const [N, A, R] = ["gross_npas_at_the_end_of_the_period", "gross_advances", "gross_npas_to_gross_advances"].map((v) => b.series[`${e}__${v}__${op}`]);
+      if (!N || !A || !R) continue;
+      b.dates.forEach((d, i) => { const [x, y, r] = [N.data[i], A.data[i], R.data[i]]; if (x == null || y == null || r == null || y < 100) return; n++;
+        if (Math.abs((100 * x) / y - r) > 0.06) { bad++; first ??= `${e} ${op} ${d}: printed ${r}, computed ${((100 * x) / y).toFixed(2)}`; } });
+    }
+    // as printed: two cells (Krishna Bhima Samruddhi LAB, 2019) carry a ratio twice their amounts
+    if (bad > 3) fail(`banks-asset-quality: the printed gross NPA ratio differs from NPAs / advances in ${bad} of ${n} cells (first: ${first})`);
+    else ok(`banks-asset-quality: printed gross NPA ratio = gross NPAs / gross advances in ${n - bad} of ${n} bank-quarters${bad ? ` (as printed: ${first})` : ""}`);
+  }
+  {
+    // the all-bank row = public + private + foreign + small finance banks (scheduled); local area
+    // banks and the non-scheduled small finance banks sit outside it
+    const b = load("banks-groups-balance-sheet"); let n = 0, bad = [];
+    for (const item of ["total_deposits", "net_loans_and_advances", "total_assets"]) b.dates.forEach((d, i) => {
+      const t = b.series[`all__${item}__domestic`]?.data[i]; if (t == null) return;
+      const s = ["psb", "private", "foreign", "sfb"].reduce((a, g) => a + (b.series[`${g}__${item}__domestic`]?.data[i] ?? 0), 0);
+      n++; if (Math.abs(s - t) > Math.max(2, 0.0005 * t)) bad.push(`${item} ${d} (${t} vs ${s.toFixed(2)})`);
+    });
+    // one quarter (June 2024) misses by a hundredth of a per cent of deposits: tolerated, named
+    if (bad.length > 3) fail(`banks-groups-balance-sheet: all banks != the four groups in ${bad.length} of ${n} cells: ${bad.slice(0, 3).join("; ")}`);
+    else ok(`banks-groups-balance-sheet: all scheduled commercial banks = public + private + foreign + small finance banks in ${n - bad.length} of ${n} cells${bad.length ? ` (off: ${bad.join("; ")})` : ""}`);
+  }
+  {
+    // the unit check: March figures equal the RBI's annual bank-wise table (report 336) to the crore
+    const a = load("banks-asset-quality"), q = load("credit-loan-quality-banks"); let n = 0, bad = [];
+    for (const [k, s] of Object.entries(q.series)) {
+      const m = /^(.*)__(gnpa|gross_advances)$/.exec(k); if (!m) continue;
+      const mine = a.series[`${m[1]}__${m[2] === "gnpa" ? "gross_npas_at_the_end_of_the_period" : "gross_advances"}__global`]; if (!mine) continue;
+      q.dates.forEach((d, i) => { const j = a.dates.indexOf(d); if (j < 0 || s.data[i] == null || mine.data[j] == null) return; n++;
+        if (Math.abs(s.data[i] - mine.data[j]) > Math.max(1, 0.001 * s.data[i])) bad.push(`${k} ${d}: 336 ${s.data[i]}, 1221 ${mine.data[j]}`); });
+    }
+    if (n < 200) fail(`banks: only ${n} March values of report 1221 matched report 336 by bank name`);
+    else if (bad.length > 0.02 * n) fail(`banks: report 1221 differs from report 336 in ${bad.length} of ${n} bank-Marches (${bad.slice(0, 3).join("; ")})`);
+    else ok(`banks: report 1221 equals the RBI's annual bank-wise table (336) in ${n - bad.length} of ${n} bank-Marches${bad.length ? ` (revised later: ${bad.slice(0, 2).join("; ")})` : ""}`);
+    const sbi = a.series["state_bank_of_india__gross_npas_at_the_end_of_the_period__global"]?.data[a.dates.indexOf("2025-03-01")];
+    if (sbi !== 76880.2) fail(`banks: SBI gross NPAs March 2025 = ${sbi}, hand-checked ₹76,880.20 crore (SBI's 2024-25 results)`);
+  }
+  {
+    // the Outlook's two copies agree wherever both print a March
+    const pairs = [["banks-ucb-npa", "banks-ucb-npa-dbie", (k) => k], ["banks-ucb-indicators", "banks-ucb-indicators-dbie", (k) => k],
+      ["banks-ucb-balance-sheet", "banks-ucb-balance-sheet-shares", (k) => (k.endsWith("__share") ? k.replace(/__share$/, "") : null)]];
+    for (const [x, y, map] of pairs) {
+      const A = load(x), B = load(y); let n = 0, bad = [];
+      for (const [k, s] of Object.entries(A.series)) { const kb = map(k); if (!kb || !B.series[kb]) continue;
+        A.dates.forEach((d, i) => { const j = B.dates.indexOf(d); if (j < 0 || s.data[i] == null || B.series[kb].data[j] == null) return; n++;
+          if (Math.abs(s.data[i] - B.series[kb].data[j]) > 0.011 * Math.max(1, Math.abs(B.series[kb].data[j]))) bad.push(`${k} ${d}: ${s.data[i]} vs ${B.series[kb].data[j]}`); }); }
+      if (n < 30) fail(`${x} vs ${y}: only ${n} shared values`);
+      else if (bad.length) fail(`${x} vs ${y}: the two copies of the Outlook differ in ${bad.length} of ${n} values (${bad.slice(0, 3).join("; ")})`);
+      else ok(`${x} = ${y} on all ${n} values both print`);
+    }
+    // count tables: grids vs typed (CRAR bands, ratings, UCBs by state)
+    const cnt = (x, y, mapK) => { const A = load(x), B = load(y); let n = 0, bad = [];
+      for (const [k, s] of Object.entries(A.series)) { const kb = mapK(k); if (!kb || !B.series[kb]) continue;
+        A.dates.forEach((d, i) => { const j = B.dates.indexOf(d); if (j < 0 || s.data[i] == null || B.series[kb].data[j] == null) return; n++; if (s.data[i] !== B.series[kb].data[j]) bad.push(`${k} ${d}: ${s.data[i]} vs ${B.series[kb].data[j]}`); }); }
+      if (n < 10) fail(`${x} vs ${y}: only ${n} shared counts`);
+      else if (bad.length > 0.05 * n) fail(`${x} vs ${y}: counts differ in ${bad.length} of ${n} (${bad.slice(0, 3).join("; ")})`);
+      else ok(`${x} = ${y} in ${n - bad.length} of ${n} counts${bad.length ? ` (revised: ${bad.slice(0, 2).join("; ")})` : ""}`); };
+    cnt("banks-ucb-crar", "banks-ucb-crar-dbie", (k) => k.replace(/__(scheduled|non_scheduled|all)$/, (m, g) => `__${g}`));
+    cnt("banks-ucb-ratings", "banks-ucb-ratings-dbie", (k) => (k.endsWith("__ucbs") ? k : null));
+    cnt("banks-ucb-states", "banks-ucb-states-dbie", (k) => (k.endsWith("__ucbs") ? k : null));
+    cnt("banks-ucb-structure", "banks-ucb-balance-sheet", (k) => ({ all__ucbs: "all__no_of_ucbs", scheduled__ucbs: "scheduled__no_of_ucbs", non_scheduled__ucbs: "non_scheduled__no_of_ucbs" })[k]);
+    // every split of the UCBs adds up to their number (report 812): tiers, ratings, size bands, states
+    {
+      const st = load("banks-ucb-structure"), N = new Map(st.dates.map((d, i) => [d, st.series.all__ucbs.data[i]]));
+      const sums = [["banks-ucb-tiers", (k) => k.endsWith("__ucbs") && !k.startsWith("all")], ["banks-ucb-ratings", (k) => k.endsWith("__ucbs") && !k.startsWith("total")],
+        ["banks-ucb-size", (k) => k.startsWith("deposits__") && k.endsWith("__number") && !k.includes("all_ucbs")], ["banks-ucb-states", (k) => k.endsWith("__ucbs") && load("banks-ucb-states").series[k].stateSlug]];
+      for (const [slug, pick] of sums) {
+        const b = load(slug); let n = 0, bad = [];
+        b.dates.forEach((d, i) => { const ks = Object.keys(b.series).filter(pick); const vs = ks.map((k) => b.series[k].data[i]).filter((v) => v != null); if (!vs.length || N.get(d) == null) return; n++;
+          const sum = vs.reduce((a, v) => a + v, 0); if (sum !== N.get(d)) bad.push(`${d}: ${sum} vs ${N.get(d)}`); });
+        if (n < 5 || bad.length) fail(`${slug}: the parts do not add up to the number of UCBs (report 812) in ${bad.length} of ${n} years (${bad.slice(0, 3).join("; ")})`);
+        else ok(`${slug}: the parts add up to the number of UCBs in all ${n} years`);
+      }
+    }
+    // balance sheets balance
+    const bs = load("banks-ucb-balance-sheet"); let n = 0, bad = 0;
+    for (const g of ["scheduled", "non_scheduled", "all"]) bs.dates.forEach((d, i) => { const L = bs.series[`${g}__total_liabilities`]?.data[i], A = bs.series[`${g}__total_assets`]?.data[i]; if (L == null || A == null) return; n++; if (Math.abs(L - A) > 1) bad++; });
+    // as printed: March 2019 (the 2019-20 edition) is off by ₹107 crore for all UCBs
+    if (!n || bad > 3) fail(`banks-ucb-balance-sheet: liabilities != assets in ${bad} of ${n} group-years`); else ok(`banks-ucb-balance-sheet: liabilities = assets in ${n - bad} of ${n} group-years (March 2019 off as printed)`);
+    const hc = load("banks-ucb-npa").series.all__gross_npa_ratio?.data[load("banks-ucb-npa").dates.indexOf("2024-03-01")];
+    if (hc !== 7.33) fail(`banks-ucb-npa: all UCBs' gross NPA ratio, March 2024 = ${hc}; hand-checked 7.33`);
+  }
+  {
+    // bank-group shares of all banks add to 100
+    const s = load("banks-shares"); let worst = 0, n = 0;
+    for (const w of ["deposits", "advances", "assets"]) s.dates.forEach((d, i) => { const v = ["psb", "private", "foreign", "sfb"].map((g) => s.series[`${g}__${w}`]?.data[i]).filter((x) => x != null); if (v.length < 3) return; n++; worst = Math.max(worst, Math.abs(v.reduce((a, x) => a + x, 0) - 100)); });
+    if (worst > 0.05) fail(`banks-shares: group shares add to 100 within ${worst.toFixed(3)} only`); else ok(`banks-shares: the four groups' shares add to 100 (${n} quarters, worst ${worst.toFixed(3)})`);
+  }
+  {
+    // deposit insurance: report 384's insured deposits = report 733's commercial + co-operative banks
+    const f = load("banks-fi-insured-deposits"), c = load("credit-deep-insured-deposits"); let n = 0, bad = [];
+    c.dates.forEach((d, i) => { const s = c.series.all_scbs__total_insured_deposits?.data[i], co = c.series.all_co_operative_banks__total_insured_deposits?.data[i]; const j = f.dates.indexOf(d); const v = f.series.total_amount_of_insured_deposits?.data[j];
+      if (s == null || co == null || j < 0 || v == null) return; n++; if (Math.abs(s + co - v) > Math.max(2, 0.001 * v)) bad.push(`${d}: 384 ${v}, 733 ${(s + co).toFixed(1)}`); });
+    if (n < 3) fail(`banks-fi-insured-deposits: only ${n} Marches to compare with report 733`);
+    else if (bad.length) fail(`banks-fi-insured-deposits: != report 733's banks in ${bad.length} of ${n} years (${bad.slice(0, 3).join("; ")})`);
+    else ok(`banks-fi-insured-deposits: insured deposits = report 733's commercial + co-operative banks in all ${n} years`);
+  }
+}
+/* ---- end banks ---- */
+
 /* ---- seams: the base-year registry (sources.yml `seams`) ----
  * For every product that has changed ruler: each bundle of that dossier is
  * registered under exactly one base, its meta.base matches, and its dates

@@ -19,6 +19,8 @@ const OTHER_GEOGRAPHY = [
   [/^gender-t130$/, "high courts, several of which serve more than one state"],
   [/^states-hbs-t102$/, "IMD meteorological sub-divisions (East Uttar Pradesh, Konkan and Goa), not states"],
   [/^payments-cheques-(1970|centres)$/, "cheque clearing centres (cities and the national grid), not states"],   // payments (lb/payments)
+  // banks (lb/banks)
+  [/^banks-(?!ucb-states)(?!groups-)(balance-sheet|asset-quality|capital|profitability|performance|sectoral|priority|infra|infra-2014|shares|ucb-banks-)/, "one row per bank; some banks carry a state's name (Bank of Maharashtra, Jammu and Kashmir Bank, Punjab and Sind Bank)"],
 ];
 const otherGeo = (slug) => OTHER_GEOGRAPHY.find(([re]) => re.test(slug))?.[1] ?? null;
 

@@ -19,7 +19,9 @@ export function makePeriodLabel(frequency, calendar = "fiscal-apr") {
     if (monthly) return `${MONTHS_SHORT[m - 1]} ${y}`;
     if (annual) return fiscal ? "FY" + String(y + 1).slice(2) : String(y);
     if (fiscal) {
-      const q = m === 4 ? 1 : m === 7 ? 2 : m === 10 ? 3 : 4;
+      // any month of the quarter names it (start-month axes, 04/07/10/01, and the quarter-end
+      // axes of stocks as on 30 June, 30 September, 31 December, 31 March, alike)
+      const q = Math.floor(((m - 4 + 12) % 12) / 3) + 1;
       return "Q" + q + " FY" + String(q === 4 ? y : y + 1).slice(2);
     }
     return "Q" + Math.ceil(m / 3) + " " + y;
@@ -48,7 +50,11 @@ export function makePeriodIndex(dates, frequency, calendar = "fiscal-apr") {
       const qn = Number(fq[1]);
       const isoY = 2000 + Number(fq[2]) - (qn === 4 ? 0 : 1);
       const mm = { 1: "04", 2: "07", 3: "10", 4: "01" }[qn];
-      return dates.indexOf(`${isoY}-${mm}-01`);
+      const i = dates.indexOf(`${isoY}-${mm}-01`);
+      if (i >= 0) return i;
+      // a quarter-end axis (stocks as on the quarter's last day): the quarter's third month
+      const me = { 1: "06", 2: "09", 3: "12", 4: "03" }[qn];
+      return dates.indexOf(`${isoY}-${me}-01`);
     }
     const cq = str.match(/^Q([1-4])\s+(\d{4})$/);                  // calendar: Q1 = Jan–Mar
     if (!cq) return -1;

@@ -1,0 +1,832 @@
+---
+import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
+import GuideData from "../../components/GuideData.astro";
+import EveryCut from "../../components/EveryCut.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+import { period } from "../../dossiers/periods.js";
+import { bankData } from "../../dossiers/banks.data.js";
+const D = bySlug["banks"];
+// periods named in the copy, read from the bundles (src/dossiers/periods.js)
+const PH = period("banks-health"), PU = period("banks-ucb-npa-dbie"), PUS = period("banks-ucb-states"), PR = period("banks-ucb-ratings-dbie");
+const PB = period("credit-deep-branches-population"), PO = period("credit-deep-offices-bank-groups"), PN = period("credit-nbfc"), PI = period("banks-fi-insured-deposits"), PF = period("banks-fi-nabard");
+const PS = period("banks-groups-sectoral"), PIN = period("banks-groups-infra");
+const fyOf = (iso) => `${+iso.slice(0, 4) - 1}-${iso.slice(2, 4)}`;
+const DATA = bankData();
+---
+<Base
+  title="India's banks, one by one · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/banks/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<script type="application/json" id="banks-data" is:inline set:html={JSON.stringify(DATA).replace(/</g, "\\u003c")}></script>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">Every quarter each of India's commercial banks files its accounts with the Reserve Bank: what it holds, what it has lent, how much of that has gone bad, how much capital stands behind it and what it earned. Read bank by bank, the returns show who holds the country's savings, who lends them, and how a decade of bad loans was cleaned up.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>Reserve Bank of India, DBIE</b></span>
+      <span>Instrument <b>Banks' off-site returns (report 1221); the urban co-operative banks' Outlook; financial institutions</b></span>
+      <span>Frequency <b>Quarterly; annual for co-operative banks and institutions</b></span>
+      <span>Window <b>{PH.firstLong} to {PH.long}</b></span>
+      <span>Latest <b id="m-latest">–</b></span>
+      <span>Unit <b>Per cent; ₹ crore and ₹ lakh crore</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Bad loans, gross NPAs as a share of advances, all banks</div><div class="v acc" id="n-npa">–</div><div class="d" id="d-npa">–</div><div class="nspark" id="nspark-npa"></div></div>
+      <div class="num"><div class="l">Public sector banks' share of deposits</div><div class="v" id="n-psb">–</div><div class="d" id="d-psb">–</div></div>
+      <div class="num"><div class="l">Capital adequacy ratio, all banks</div><div class="v" id="n-crar">–</div><div class="d" id="d-crar">–</div></div>
+      <div class="num"><div class="l">Return on assets, all banks</div><div class="v" id="n-roa">–</div><div class="d" id="d-roa">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 current reading: the broad number and what it is not. Inputs: banks-health (every group's ratios), banks-shares. Prose: generated slots. -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Bad loans, all banks</span><div class="big" id="rb-npa">–</div></div>
+      <p class="rt-cap">Of every ₹100 that India's scheduled commercial banks had lent in India at the end of {PH.long}, this much had stopped being repaid for three months or more.</p>
+      <div class="rt-side"><span class="rk">At the peak, <span id="rb-peakd">–</span></span><div class="rt-side-v" id="rb-peak">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the figures say</span>
+        <Prose slot="banks.current-reading.what-the-print-says" />
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What they do not say</span>
+        <Prose slot="banks.current-reading.what-it-does-not-say" />
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 lived reality: what a bank's health means to a depositor and a borrower. Evergreen, human-written; one figure from banks-fi-insured-deposits. -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>What a bank's health means at home</h2><span class="line"></span></div>
+    <div class="prose">
+      <p>A bank lends out most of what its depositors put in. When a borrower stops paying, the loan becomes a non-performing asset, and the bank must set aside money from its profits to cover the loss. A few bad loans are a normal cost of lending. Many bad loans eat through profits, then through the bank's own capital, and then the question becomes whether depositors will be paid back.</p>
+      <p>For most families that question has an answer in law. The Deposit Insurance and Credit Guarantee Corporation, a subsidiary of the Reserve Bank, insures each depositor up to ₹5 lakh in each bank, savings and fixed deposits together. At the end of {PI.long} <b id="lr-ins-acc">–</b> of all deposit accounts were fully covered, but only <b id="lr-ins-share">–</b> of the money, because large deposits sit above the limit. When the RBI freezes a bank's withdrawals, as it did at Punjab and Maharashtra Co-operative Bank in 2019, depositors can claim the insured amount within ninety days (a rule added in 2021); the rest depends on what the bank's assets fetch.</p>
+      <p>A bank's health also reaches borrowers. Banks weighed down by bad loans stop lending, or lend only at higher rates, which is what happened to India's public sector banks between 2015 and 2020: their share of new loans fell while private banks grew. And the profits a public sector bank makes, or the losses it runs, are ultimately the government's, which recapitalised them through those years.</p>
+    </div>
+  </section>
+
+  <!-- § 03 how to read this: evergreen. -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>How to read these numbers</h2><span class="line"></span></div>
+    <div class="prose">
+      <p><b>One return, every bank.</b> Each scheduled commercial bank files an off-site return with the RBI's supervisors every quarter. The RBI publishes the main items bank by bank and by bank group: the balance sheet, the quality of loans, capital, profit, and the ratios built from them. This guide reads the whole table, from December 2013 to the latest quarter, for every bank that reported in any of those quarters.</p>
+      <p><b>Domestic, overseas and global.</b> Several large banks have branches abroad. The RBI prints each item three ways: for offices in India (domestic operations), abroad, and the two together (global). This guide uses domestic operations unless it says otherwise, because that is what Indian depositors and borrowers deal with, and because the first five quarters print no global figures.</p>
+      <p><b>Bad loans, three ways.</b> The gross NPA ratio is bad loans as a share of all loans. The net NPA ratio subtracts what banks have already set aside to cover them. The capital adequacy ratio (CRAR) is the bank's own capital as a share of its risk-weighted assets; the RBI requires at least 9%, and 11.5% with the conservation buffer.</p>
+      <p><b>Profit is counted from April.</b> The return reports income and profit cumulatively from the start of the financial year, so a June figure covers three months and a March figure the whole year. Annual profit on this page is the March figure. Ratios such as return on assets are annualised by the RBI.</p>
+      <p><b>Mergers are not growth.</b> State Bank of India absorbed its associate banks in 2017, eight public sector banks were merged into five others in 2019 and 2020, and HDFC Ltd merged into HDFC Bank in July 2023. A bank that absorbs another jumps in size in a single quarter. This guide shows each bank as the RBI reports it, ends the series of a bank that has been merged, and marks the jump on the acquirer.</p>
+    </div>
+  </section>
+
+  <!-- § 04 bad loans. Inputs: banks-health (all_gnpa, psb_gnpa, private_gnpa, foreign_gnpa, sfb_gnpa, all_nnpa). -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>Bad loans: the cycle that peaked in March 2018</h2><span class="line"></span><span class="unit">Gross NPAs as a share of gross advances, every quarter</span></div>
+    <div class="break">
+      <figure id="cb-npa" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Public sector banks' bad loans reached more than one rupee in seven before the clean-up</h3>
+            <div class="sub">Gross non-performing assets as a share of gross advances, by bank group, domestic operations, every quarter since December 2013.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-npa">–</div><div class="c">all banks, latest quarter</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Public sector banks</button>
+            <button class="chip"><i style="background:#C47A16"></i>Private sector banks</button>
+            <button class="chip"><i style="background:#161A22"></i>All banks</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Foreign banks</button>
+            <button class="chip"><i style="background:#C9CED6"></i>Small finance banks</button>
+          </div>
+          <div class="plotzone"><div id="plot-npa" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, bank-wise and bank group-wise variables (DBIE report 1221, table 2), via the Reserve Bank Innovation Hub's data service. Bank groups as the RBI lists them each quarter.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each line is a bank group's bad loans as a share of what it has lent. The rise from 2015 was not a sudden wave of new defaults. In 2015 the RBI's asset quality review made banks classify loans they had been rolling over as bad, mostly loans to steel, power, infrastructure and construction firms made in the boom of 2004 to 2011. The ratio then fell as banks wrote off loans, sold them, recovered them under the Insolvency and Bankruptcy Code of 2016, and lent afresh.</p>
+            <p>A falling ratio can come from fewer bad loans or from more lending: both shrink the share. Write-offs also lower it without anyone repaying.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PH.long}</span>
+            <p>All banks <b id="ex-n-all">–</b>, public sector <b id="ex-n-psb">–</b>, private sector <b id="ex-n-pvt">–</b>, foreign <b id="ex-n-for">–</b>, small finance banks <b id="ex-n-sfb">–</b>. At the peak, in <span id="ex-n-pkd">–</span>, all banks stood at <b id="ex-n-pk">–</b> and public sector banks at <b id="ex-n-pkpsb">–</b>. Net of provisions, bad loans are now <b id="ex-n-net">–</b> of advances.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 public and private. Inputs: banks-shares (group and bank shares of deposits and advances), banks-balance-sheet (deposits of every bank). -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>Public and private banks have traded places</h2><span class="line"></span><span class="unit">Shares of all banks' deposits and loans in India</span></div>
+    <div class="break">
+      <figure id="cb-shares" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Private banks have taken a fifth of the market from public sector banks in twelve years</h3>
+            <div class="sub">Each bank group's share of all scheduled commercial banks' deposits (left) and advances (right) in India, every quarter.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-shares">–</div><div class="c">public sector banks' share of deposits</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Public sector banks</button>
+            <button class="chip"><i style="background:#C47A16"></i>Private sector banks</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Foreign banks</button>
+            <button class="chip"><i style="background:#C9CED6"></i>Small finance banks</button>
+          </div>
+          <div class="plotzone"><div id="plot-shares" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, DBIE report 1221, table 1, via the Reserve Bank Innovation Hub. Shares computed by India Atlas: a group's deposits (or net advances) over all scheduled commercial banks', domestic operations. IDBI Bank moved from the public to the private group in 2019.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Two panels, the same four groups. Public sector banks are owned by the government; private sector banks by shareholders; foreign banks are branches of banks headquartered abroad; small finance banks, licensed from 2016, lend mostly to small borrowers. The shares of the four add to 100. Local area banks and the unscheduled small finance banks sit outside the all-bank total and are not shown.</p>
+            <p>The groups change as banks move between them. IDBI Bank was reclassified as private in 2019 after LIC bought control, which moved more than two points of the market in one quarter without a single customer switching banks.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PH.long}</span>
+            <p>Public sector banks hold <b id="ex-s-psb">–</b> of deposits (<b id="ex-s-psb0">–</b> in <span id="ex-s-d0">–</span>) and <b id="ex-s-psba">–</b> of loans. Private sector banks hold <b id="ex-s-pvt">–</b> of deposits (<b id="ex-s-pvt0">–</b>) and <b id="ex-s-pvta">–</b> of loans.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-biggest" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>State Bank of India holds more than one rupee in five deposited with India's banks</h3>
+            <div class="sub">The fifteen largest banks by deposits in India, share of all scheduled commercial banks' deposits, latest quarter (bars) and December 2013 (open dots).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-biggest">–</div><div class="c">held by the five largest banks</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Public sector</button>
+            <button class="chip"><i style="background:#C47A16"></i>Private sector</button>
+            <button class="chip"><i style="background:#fff;border:1.5px solid #5F6675;border-radius:50%"></i>December 2013</button>
+          </div>
+          <div class="plotzone"><div id="plot-biggest" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, DBIE report 1221, table 1 (total deposits, domestic operations), via the Reserve Bank Innovation Hub; shares computed by India Atlas. A bank's 2013 share excludes the banks it later absorbed.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The bar is the bank's share of all deposits today, the open dot its share at the end of 2013. Where the bar runs far past the dot, the bank grew faster than the market, or absorbed other banks: State Bank of India took in its five associates in 2017, HDFC Bank merged with its parent HDFC Ltd in 2023, and Bank of Baroda, Punjab National Bank, Canara Bank and Union Bank of India each absorbed smaller public sector banks in 2019 and 2020.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PH.long}</span>
+            <p><span id="ex-b-n">–</span> banks reported deposits. The largest, <span id="ex-b-1">–</span>, holds <b id="ex-b-1s">–</b> of them; the five largest together <b id="ex-b-5">–</b>. HDFC Bank's share went from <b id="ex-b-h0">–</b> to <b id="ex-b-h">–</b>; the quarter of its merger alone added <b id="ex-b-hm">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 profit, capital and margins. Inputs: banks-groups-profitability (net profit, March), banks-health (crar), banks-groups-performance (cost of funds, yield on funds, NIM). -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>Profit, capital and margins</h2><span class="line"></span><span class="unit">By bank group, each year and quarter</span></div>
+    <div class="break">
+      <figure id="cb-profit" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Public sector banks lost money for five years running; now they earn as much as private banks</h3>
+            <div class="sub">Net profit after tax, each financial year (April to March), ₹ lakh crore, by bank group, global operations.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-profit">–</div><div class="c">all banks, latest year</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Public sector banks</button>
+            <button class="chip"><i style="background:#C47A16"></i>Private sector banks</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Foreign banks</button>
+          </div>
+          <div class="plotzone"><div id="plot-profit" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, DBIE report 1221, table 4 (net profit or loss, April to date, the March figure), via the Reserve Bank Innovation Hub.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Bars below the line are losses. Public sector banks lost money from 2015-16 to 2019-20 because the provisions they had to make against bad loans exceeded what they earned on good ones. The government covered the gap with fresh capital. Profits returned as the old bad loans were provided for, recovered or written off, and as interest rates rose after 2022.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PH.long}</span>
+            <p>In <span id="ex-p-fy">–</span> all banks earned <b id="ex-p-all">–</b> after tax: public sector banks <b id="ex-p-psb">–</b>, private sector banks <b id="ex-p-pvt">–</b>. The worst year was <span id="ex-p-wfy">–</span>, when all banks together lost <b id="ex-p-w">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-capital" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Every bank group now holds well above the minimum capital</h3>
+            <div class="sub">Capital adequacy ratio (capital as a share of risk-weighted assets), by bank group, domestic operations, every quarter. The rule marks the RBI's minimum with the capital conservation buffer, 11.5%.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-capital">–</div><div class="c">all banks, latest quarter</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Public sector banks</button>
+            <button class="chip"><i style="background:#C47A16"></i>Private sector banks</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Foreign banks</button>
+          </div>
+          <div class="plotzone"><div id="plot-capital" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, DBIE report 1221, table 3 (standalone capital ratio), via the Reserve Bank Innovation Hub. Minimum: RBI's Basel III rules, 9% plus a 2.5% conservation buffer.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Capital is the cushion that absorbs losses before depositors' money is at risk: the shareholders' money and retained profits. Risk-weighted assets count a home loan at a fraction of its value and an unsecured corporate loan at full value, so the ratio rises when banks hold safer assets as well as when they raise capital. Public sector banks' ratios held up through the bad-loan years mostly because the government recapitalised them.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PH.long}</span>
+            <p>All banks <b id="ex-c-all">–</b>, public sector <b id="ex-c-psb">–</b>, private sector <b id="ex-c-pvt">–</b>, foreign <b id="ex-c-for">–</b>. The lowest any group reached was <b id="ex-c-lo">–</b> (<span id="ex-c-lod">–</span>).</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-margins" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>What banks pay for money and what they earn on it both fell; the margin between them stayed between three and four per cent</h3>
+            <div class="sub">All scheduled commercial banks, domestic operations, every quarter: cost of funds, yield on funds and net interest margin, annualised, per cent.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-margins">–</div><div class="c">net interest margin, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#A3A9B4"></i>Yield on funds</button>
+            <button class="chip"><i style="background:#C47A16"></i>Cost of funds</button>
+            <button class="chip"><i style="background:#2E4BD8"></i>Net interest margin</button>
+          </div>
+          <div class="plotzone"><div id="plot-margins" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, DBIE report 1221, table 5, via the Reserve Bank Innovation Hub. Ratios as the RBI computes them, annualised.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The cost of funds is roughly the interest a bank pays on deposits and borrowings; the yield is what it earns on loans and investments. The net interest margin is the difference, measured on the bank's interest-earning assets. It pays for branches, staff and bad loans before anything is left as profit. When the RBI raises its policy rate, loan rates usually move first and deposit rates later, so margins widen for a while; the reverse happens when rates fall.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PH.long}</span>
+            <p>Yield <b id="ex-m-y">–</b>, cost <b id="ex-m-c">–</b>, margin <b id="ex-m-n">–</b>. In <span id="ex-m-d0">–</span> the yield was <b id="ex-m-y0">–</b> and the cost <b id="ex-m-c0">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 bank by bank. Inputs: banks-asset-quality (gross advances, GNPA ratio of every bank), banks-performance (return on assets, NIM), banks-balance-sheet (deposits of the merged banks). -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>Bank by bank</h2><span class="line"></span><span class="unit">The twenty largest lenders in India</span></div>
+    <div class="break">
+      <figure id="cb-bank-npa" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Every one of the large public sector banks has cut its bad loans to a fraction of 2018's</h3>
+            <div class="sub">Gross NPA ratio of the twenty largest banks by gross advances in India: latest quarter (dot) and March 2018 (open dot), domestic operations, per cent. Labels give the latest value, then March 2018's.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-bank-npa">–</div><div class="c">highest among the twenty, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Public sector, latest</button>
+            <button class="chip"><i style="background:#C47A16"></i>Private sector, latest</button>
+            <button class="chip"><i style="background:#fff;border:1.5px solid #5F6675;border-radius:50%"></i>March 2018</button>
+          </div>
+          <div class="plotzone"><div id="plot-bank-npa" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, DBIE report 1221, table 2, via the Reserve Bank Innovation Hub. Banks as the RBI names them; a merged bank's March 2018 figure is its own, before the merger.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each row is a bank, ranked by how much it has lent. The line joins its bad-loan ratio at the 2018 peak (open dot) to the latest quarter (filled dot). Banks formed or merged since have no comparable 2018 figure: Bank of Baroda, Punjab National Bank, Canara Bank, Union Bank of India and Indian Bank absorbed others in 2019 and 2020, so their 2018 dots describe the smaller bank they were.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PH.long}</span>
+            <p>Among the twenty, the highest ratio is <span id="ex-bn-hi">–</span> at <b id="ex-bn-hiv">–</b> and the lowest <span id="ex-bn-lo">–</span> at <b id="ex-bn-lov">–</b>. Of all <span id="ex-bn-n">–</span> banks with at least ₹10,000 crore lent, the highest is <span id="ex-bn-x">–</span> at <b id="ex-bn-xv">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-bank-roa" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The large private banks still earn more on each rupee of assets than the public sector banks</h3>
+            <div class="sub">Return on assets of the twenty largest lenders, annualised, domestic operations, latest quarter, per cent.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-bank-roa">–</div><div class="c">highest among the twenty</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Public sector</button>
+            <button class="chip"><i style="background:#C47A16"></i>Private sector</button>
+          </div>
+          <div class="plotzone"><div id="plot-bank-roa" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, DBIE report 1221, table 5 (return on total assets, annualised), via the Reserve Bank Innovation Hub.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Return on assets is profit after tax as a share of everything the bank holds. One per cent is a healthy figure for a bank; two per cent is exceptional. A bank can earn more by charging more on loans, paying less for deposits (current and savings accounts cost banks far less than fixed deposits), earning fees, or having fewer bad loans to provide for.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PH.long}</span>
+            <p>Highest: <span id="ex-r-hi">–</span> at <b id="ex-r-hiv">–</b>. Lowest: <span id="ex-r-lo">–</span> at <b id="ex-r-lov">–</b>. State Bank of India: <b id="ex-r-sbi">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-mergers" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The steps in these lines are mergers, not growth</h3>
+            <div class="sub">Deposits in India of six banks that absorbed others, ₹ lakh crore, every quarter. Each step marks the quarter a merger took effect.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-mergers">–</div><div class="c">State Bank of India's deposits</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-mergers" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, DBIE report 1221, table 1 (total deposits, domestic operations), via the Reserve Bank Innovation Hub. Merger dates: RBI and government notifications.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>State Bank of India absorbed its five associate banks and Bharatiya Mahila Bank on 1 April 2017; Bank of Baroda took in Vijaya and Dena banks on 1 April 2019; Punjab National Bank, Canara Bank and Union Bank of India took in Oriental Bank of Commerce, United Bank, Syndicate, Andhra and Corporation banks on 1 April 2020; HDFC Ltd merged into HDFC Bank on 1 July 2023. The absorbed banks' own series end in the quarter before. Comparing a bank's size across one of these dates compares two different banks.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PH.long}</span>
+            <p>State Bank of India <b id="ex-mg-sbi">–</b>, HDFC Bank <b id="ex-mg-hdfc">–</b>, Punjab National Bank <b id="ex-mg-pnb">–</b>, Canara Bank <b id="ex-mg-can">–</b>, Bank of Baroda <b id="ex-mg-bob">–</b>, Union Bank of India <b id="ex-mg-ubi">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 which loans go bad. Inputs: banks-groups-sectoral (GNPA ratio by sector and retail product, all banks), banks-groups-priority (priority and non-priority), banks-groups-infra (infrastructure lending). -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>Which loans go bad, and where banks lend</h2><span class="line"></span><span class="unit">All scheduled commercial banks, domestic operations</span></div>
+    <div class="break">
+      <figure id="cb-sector-npa" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Loans to industry went bad the most; loans to households the least</h3>
+            <div class="sub">Gross NPA ratio by sector of the borrower, all scheduled commercial banks, domestic operations, every quarter, per cent.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-sector-npa">–</div><div class="c">industry, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Industry</button>
+            <button class="chip"><i style="background:#C47A16"></i>Agriculture</button>
+            <button class="chip"><i style="background:#5F6675"></i>Services</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Retail loans</button>
+          </div>
+          <div class="plotzone"><div id="plot-sector-npa" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, DBIE report 1221, table 8 (major sectoral credit), via the Reserve Bank Innovation Hub.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The bad-loan cycle was an industrial one. Large loans to steel, power, roads and telecom companies failed together when projects stalled and demand fell short. Farm loans go bad for other reasons, such as a failed monsoon or a loan waiver that teaches borrowers to wait, and stay high for longer. Retail loans (homes, cars, cards, education) are many small loans to salaried people, and their ratio barely moved.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PS.long}</span>
+            <p>Industry <b id="ex-sn-ind">–</b> (peak <b id="ex-sn-indpk">–</b>), agriculture <b id="ex-sn-agr">–</b>, services <b id="ex-sn-ser">–</b>, retail <b id="ex-sn-ret">–</b>. Priority-sector loans <b id="ex-sn-psl">–</b>, other loans <b id="ex-sn-non">–</b>; loans to micro and small enterprises <b id="ex-sn-mse">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-retail-npa" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Credit cards go bad more often than home loans</h3>
+            <div class="sub">Gross NPA ratio of retail loans by type, all scheduled commercial banks, latest quarter (bars) and the highest quarter since 2013 (open dots), per cent.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-retail-npa">–</div><div class="c">credit cards, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Latest quarter</button>
+            <button class="chip"><i style="background:#fff;border:1.5px solid #5F6675;border-radius:50%"></i>Highest since 2013</button>
+          </div>
+          <div class="plotzone"><div id="plot-retail-npa" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, DBIE report 1221, table 8 (major break-up of retail loans), via the Reserve Bank Innovation Hub.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A home loan is secured on the house and taken by people who usually keep paying; a credit-card balance is unsecured and carries interest of 30 to 45 per cent a year, so a missed payment snowballs. Education loans had the highest bad-loan ratio of any retail loan in the 2010s, when many borrowers could not find jobs that paid enough to repay.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PS.long}</span>
+            <p>Credit cards <b id="ex-rn-card">–</b>, vehicle loans <b id="ex-rn-veh">–</b>, education <b id="ex-rn-edu">–</b> (at most <b id="ex-rn-edupk">–</b>), home loans <b id="ex-rn-home">–</b>. Home loans outstanding: <b id="ex-rn-homeamt">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-infra" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>More than half of banks' infrastructure lending is to energy</h3>
+            <div class="sub">Bank lending to infrastructure by sector, all scheduled commercial banks, latest quarter, ₹ lakh crore.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-infra">–</div><div class="c">to infrastructure in all</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-infra" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, DBIE report 1221, table 10 (infrastructure financing), via the Reserve Bank Innovation Hub. The RBI's list of infrastructure sectors was renumbered in June 2022; the earlier list is in the data download, never joined to this one.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Infrastructure loans are long and large: a power plant or a highway takes years to build before it earns anything. Much of the bad-loan cycle began here. Energy covers power generation, transmission and distribution (much of it to state electricity boards) and oil and gas storage; transport covers roads, ports, airports and railways.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PIN.long}</span>
+            <p>Energy <b id="ex-i-en">–</b> of the total, transport <b id="ex-i-tr">–</b>, communication <b id="ex-i-co">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 branches. Inputs: credit-deep-branches-population (rural, semi-urban, urban, metropolitan), credit-deep-offices-bank-groups (branches by bank group). -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>Branches: six in ten are in villages and small towns</h2><span class="line"></span><span class="unit">Bank branches by place, since 1969, and by bank group</span></div>
+    <div class="break">
+      <figure id="cb-branches" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Nationalisation took banks to the villages; the 1990s pulled them back, and the 2010s sent them out again</h3>
+            <div class="sub">Branches of scheduled commercial banks by the population of the place they are in, every March since 1969.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-branches">–</div><div class="c">rural branches, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Rural</button>
+            <button class="chip"><i style="background:#C47A16"></i>Semi-urban</button>
+            <button class="chip"><i style="background:#5F6675"></i>Urban</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Metropolitan</button>
+          </div>
+          <div class="plotzone"><div id="plot-branches" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Handbook of Statistics on the Indian Economy, branches by population group (DBIE report 115), baked by this site's credit guide. Population groups by the census in force; the definitions changed with the 2001 and 2011 censuses.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Rural means a place of fewer than 10,000 people, semi-urban 10,000 to one lakh, urban one to ten lakh, and metropolitan ten lakh and more. After fourteen banks were nationalised in 1969, the RBI required banks to open four rural branches for every urban one, and rural branches multiplied. From the 1990s the rule was relaxed and banks closed loss-making rural branches. Financial inclusion drives from 2011, and the Jan Dhan accounts of 2014, took them back out, often as small branches and business correspondents.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PB.long}</span>
+            <p>Rural <b id="ex-br-r">–</b>, semi-urban <b id="ex-br-s">–</b>, urban <b id="ex-br-u">–</b>, metropolitan <b id="ex-br-m">–</b>. Villages and small towns together: <b id="ex-br-rs">–</b> of all branches.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-offices" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Private banks have seven times as many branches as in 2006; public sector banks not quite twice as many</h3>
+            <div class="sub">Functioning branches by bank group, latest quarter (bars), and the first quarter in the RBI's table (open dots).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-offices">–</div><div class="c">public sector bank branches</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Latest quarter</button>
+            <button class="chip"><i style="background:#fff;border:1.5px solid #5F6675;border-radius:50%"></i>First quarter in the table</button>
+          </div>
+          <div class="plotzone"><div id="plot-offices" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Statistical Tables Relating to Banks in India, functioning offices by bank group (DBIE report 619), baked by this site's credit guide.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Regional rural banks are government-sponsored banks that lend in villages; small finance banks grew out of microfinance companies licensed in 2016, which is why they start near zero. A branch here is a full branch; the RBI counts ATMs, digital banking units and business correspondents separately.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PO.long}</span>
+            <p>Public sector banks <b id="ex-of-psb">–</b> branches (<b id="ex-of-psb0">–</b> in <span id="ex-of-d0">–</span>), private sector banks <b id="ex-of-pvt">–</b> (<b id="ex-of-pvt0">–</b>), regional rural banks <b id="ex-of-rrb">–</b>, small finance banks <b id="ex-of-sfb">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 10 urban co-operative banks. Inputs: banks-ucb-structure, banks-ucb-npa-dbie, banks-health (all_gnpa, March), banks-ucb-states, banks-ucb-ratings-dbie, banks-ucb-crar-dbie. -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>Urban co-operative banks</h2><span class="line"></span><span class="unit">Primary (urban) co-operative banks, as on 31 March</span></div>
+    <div class="prose">
+      <p>An urban co-operative bank is owned by its members, usually the people of one town, community or trade, and lends to them. Most are small, holding a few hundred crore of deposits or less. They are concentrated in Maharashtra and Gujarat, where the co-operative movement is oldest. Until the Banking Regulation (Amendment) Act of 2020 they answered partly to state registrars of co-operative societies, which is one reason so many failed; since then the RBI supervises them fully, and their number has been falling as weak ones merge or close.</p>
+    </div>
+    <div class="break">
+      <figure id="cb-ucb" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Fewer urban co-operative banks every year, and their bad loans fell only after 2021</h3>
+            <div class="sub">Left: number of urban co-operative banks, 31 March. Right: gross NPA ratio of all urban co-operative banks and of all scheduled commercial banks, per cent, March of each year.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-ucb">–</div><div class="c">urban co-operative banks, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Urban co-operative banks</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Scheduled commercial banks</button>
+          </div>
+          <div class="plotzone"><div id="plot-ucb" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Primary (Urban) Co-operative Banks' Outlook, structure and NPA tables (DBIE reports 812 and 774), read from the local Data Bank mirror; the latest March is provisional. Commercial banks: DBIE report 1221.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The count falls when the RBI cancels licences of failed banks or weak banks merge into stronger ones. A scheduled UCB is one large enough to be on the RBI's second schedule; the rest are non-scheduled, and they carry most of the bad loans. Each year the RBI first publishes a provisional figure and revises it a year later; this chart shows the latest figure for each March.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PU.long}</span>
+            <p><b id="ex-u-n">–</b> urban co-operative banks (<b id="ex-u-n0">–</b> in <span id="ex-u-d0">–</span>), <b id="ex-u-sch">–</b> of them scheduled. Their gross NPA ratio was <b id="ex-u-npa">–</b>, against <b id="ex-u-scb">–</b> for commercial banks; non-scheduled UCBs <b id="ex-u-non">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-ucb-states" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Six rupees in ten of urban co-operative bank deposits are in Maharashtra</h3>
+            <div class="sub">Deposits of urban co-operative banks by state, ₹ crore, as on 31 March, the twelve largest states; with each state's number of banks.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-ucb-states">–</div><div class="c">Maharashtra's share of UCB deposits</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-ucb-states" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Primary (Urban) Co-operative Banks' Outlook, table 10 (DBIE report 800), via the Reserve Bank Innovation Hub; provisional for the latest March.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each bar is the money depositors keep in a state's urban co-operative banks. Maharashtra's lead comes from a century of co-operative banking in Mumbai, Pune and the sugar belt; Gujarat and Karnataka follow. In much of the north and east urban co-operative banks are rare, and the commercial and regional rural banks serve the same towns.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PUS.long}</span>
+            <p>Maharashtra <b id="ex-us-mh">–</b> across <b id="ex-us-mhn">–</b> banks; Gujarat <b id="ex-us-gj">–</b>; Karnataka <b id="ex-us-ka">–</b>. <span id="ex-us-none">–</span> states and union territories have one urban co-operative bank or none.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-ucb-ratings" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Most urban co-operative banks are rated middling by the RBI's supervisors</h3>
+            <div class="sub">Urban co-operative banks by supervisory rating (A best, E worst), number of banks, as on 31 March.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-ucb-ratings">–</div><div class="c">rated D or E</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-ucb-ratings" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, Primary (Urban) Co-operative Banks' Outlook, rating-wise distribution (DBIE report 776) and CRAR-wise distribution (report 775), read from the local Data Bank mirror.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The RBI's inspectors rate every urban co-operative bank on its capital, asset quality, management, earnings and liquidity. A bank rated D or E is under close watch; such banks are the ones that end up under the RBI's directions, with withdrawals capped, as happened to Punjab and Maharashtra Co-operative Bank in 2019. The ratings are the RBI's own and are not published bank by bank.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PR.long}</span>
+            <p>A <b id="ex-ur-a">–</b>, B+ <b id="ex-ur-bp">–</b>, B <b id="ex-ur-b">–</b>, C <b id="ex-ur-c">–</b>, D <b id="ex-ur-d">–</b>, E <b id="ex-ur-e">–</b>. <b id="ex-ur-low">–</b> banks had a capital ratio below 9%.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 11 NBFCs, development banks, deposit insurance. Inputs: credit-nbfc (NBFC credit by sector), banks-fi-nabard, banks-fi-sidbi, banks-fi-exim, banks-fi-nhb (total liabilities), banks-fi-insured-deposits. -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>NBFCs, development banks and deposit insurance</h2><span class="line"></span><span class="unit">The lenders beside the banks, and the guarantee behind deposits</span></div>
+    <div class="break">
+      <figure id="cb-nbfc" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Non-bank lenders lend most to individuals and to industry</h3>
+            <div class="sub">Credit outstanding from non-banking financial companies by sector, ₹ lakh crore, the latest month.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-nbfc">–</div><div class="c">NBFC credit in all</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-nbfc" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, sectoral credit of NBFCs (the Data Bank's rbi_nbfc_credit), baked by this site's credit guide.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A non-banking financial company lends like a bank but cannot take ordinary savings deposits or issue cheques. It borrows from banks and the bond market instead. NBFCs reach borrowers banks find too small or too risky: gold loans, two-wheeler loans, loans to small traders and microfinance. The RBI regulates them in layers by size; the largest, such as Bajaj Finance and Shriram Finance, are watched almost as closely as banks.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PN.long}</span>
+            <p>Retail loans <b id="ex-nb-ret">–</b>, industry <b id="ex-nb-ind">–</b> (infrastructure <b id="ex-nb-inf">–</b>), services <b id="ex-nb-ser">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-fi" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>NABARD has become the largest of the development banks</h3>
+            <div class="sub">Total liabilities (equal to total assets) of four all-India financial institutions, ₹ lakh crore, as on 31 March.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-fi">–</div><div class="c">NABARD, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>NABARD</button>
+            <button class="chip"><i style="background:#C47A16"></i>SIDBI</button>
+            <button class="chip"><i style="background:#5F6675"></i>EXIM Bank</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>NHB</button>
+          </div>
+          <div class="plotzone"><div id="plot-fi" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, liabilities and assets of NABARD, SIDBI, EXIM Bank and NHB (DBIE reports 392, 395, 873 and 393), read from the local Data Bank mirror.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>These institutions lend mostly to other lenders, not to the public. NABARD refinances banks' farm loans and runs the Rural Infrastructure Development Fund, into which banks that miss their farm-lending targets must deposit the shortfall. SIDBI refinances loans to small enterprises, NHB to housing, and EXIM Bank finances exports and lines of credit to other countries.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PF.long}</span>
+            <p>NABARD <b id="ex-fi-nab">–</b>, SIDBI <b id="ex-fi-sid">–</b>, EXIM Bank <b id="ex-fi-exim">–</b>, NHB <b id="ex-fi-nhb">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-insured" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Almost every deposit account is fully insured; well under half the money is</h3>
+            <div class="sub">Insured deposits as a share of assessable deposits (the money deposit insurance applies to), each date DICGC reports, per cent. Cover per depositor per bank: ₹1 lakh to 2020, ₹5 lakh since.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-insured">–</div><div class="c">of the money insured, latest</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-insured" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: RBI, DICGC insured deposits (DBIE report 384), read from the local Data Bank mirror; share computed by India Atlas. Cover raised from ₹1 lakh to ₹5 lakh on 4 February 2020.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Deposit insurance covers each depositor's money in each bank up to the limit, adding savings, current and fixed deposits together. The share of money insured fell for two decades as deposits grew and the ₹1 lakh limit stayed where it was set in 1993; it jumped when the limit rose to ₹5 lakh in 2020, and has drifted down again since. The share of accounts fully covered is far higher, because most accounts are small.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {PI.long}</span>
+            <p>Insured deposits <b id="ex-in-amt">–</b> of <b id="ex-in-ass">–</b> assessable: <b id="ex-in-sh">–</b>. Fully protected accounts: <b id="ex-in-acc">–</b> of all accounts.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 12 what this measures -->
+  <section>
+    <div class="sec-head"><span class="no">12</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="prose">
+      <p>Report 1221 is the public face of the RBI's off-site surveillance returns: what every scheduled commercial bank tells its supervisor each quarter about its balance sheet, loan quality, capital, profit and lending by sector. The RBI publishes it bank by bank and by bank group, about six months after the quarter. Banks file their own numbers; they are not audited for the quarter, and a bank's published results can differ in definition (standalone or consolidated, Indian or international accounting) from these returns.</p>
+      <p>Report 1221's figures are printed in thousands of rupees under a heading that says crore; this guide converts them. Every March figure has been checked against the RBI's annual bank-wise tables (Statistical Tables Relating to Banks in India) and agrees to the crore for 1,790 of 1,820 bank-years; the rest were revised later.</p>
+      <p>Urban co-operative banks report to the RBI separately, and the RBI publishes their figures yearly in the Primary (Urban) Co-operative Banks' Outlook. This guide reads two copies of it (the report grids and the RBI's typed tables) and shows they agree on every figure both print.</p>
+      <p>The financial-institutions tables are the RBI's compilation of the balance sheets of NABARD, SIDBI, NHB, EXIM Bank, IFCI, the state financial corporations and DICGC, and of lending by LIC and others, from their annual reports.</p>
+    </div>
+  </section>
+
+  <!-- § 13 misreadings -->
+  <section>
+    <div class="sec-head"><span class="no">13</span><h2>How to misread these numbers</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li><span class="no">1</span><div><h3>"Bad loans have fallen, so borrowers are paying back."</h3><p>Partly. A large share of the fall came from write-offs: loans removed from the books after full provision, most never recovered. The ratio also falls when total lending grows faster than bad loans.</p></div></li>
+      <li><span class="no">2</span><div><h3>"HDFC Bank doubled in a quarter."</h3><p>It merged with HDFC Ltd, a housing finance company, in July 2023. The jump in its deposits, loans and assets that quarter is the merger, not new business. The same is true of State Bank of India in 2017 and of five public sector banks in 2019 and 2020.</p></div></li>
+      <li><span class="no">3</span><div><h3>"Public sector banks are shrinking."</h3><p>Their deposits and loans are larger than ever. Their share falls because private banks grow faster; and some of the private group's growth is the reclassification of IDBI Bank in 2019.</p></div></li>
+      <li><span class="no">4</span><div><h3>"My money is safe because the bank's NPA ratio is low."</h3><p>A bank-wide ratio says little about a single bank's future, and a quarter's figure can change quickly. What protects a depositor is deposit insurance up to ₹5 lakh per bank, and the RBI's supervision above it.</p></div></li>
+      <li><span class="no">5</span><div><h3>"Co-operative banks are as safe as commercial banks."</h3><p>Their deposits are insured on the same terms. Their bad loans have been several times higher, and failures have been concentrated among them.</p></div></li>
+    </ul>
+  </section>
+
+  <EveryCut slug="banks" />
+
+  <GuideData slug="banks" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Source of record</h6>
+        <p>Reserve Bank of India, DBIE: variables published bank and bank group-wise (report 1221), and the data tables of the Primary (Urban) Co-operative Banks' Outlook (reports 772, 784 to 789, 795 to 800), both gated behind a prompt on DBIE and read through the Reserve Bank Innovation Hub's data service; the Outlook's typed tables (771, 773 to 777, 810 to 812) and the financial-institutions tables (382 to 398, 801, 873, 1372), read from the owner's local mirror of DBIE. Branches, offices and NBFC credit are the credit guide's bundles. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Checked by hand: State Bank of India's gross NPAs for March 2025, ₹76,880 crore and 1.82%, equal SBI's audited results; insured deposits for March 2025, ₹100.12 lakh crore, equal DICGC's published figure.</p>
+      </div>
+      <div>
+        <h6>Method</h6>
+        <p>Amounts converted to ₹ crore (₹ lakh crore on the charts). Banks named as the RBI names them; four renamed banks joined, mergers never joined. Identities checked on every bank and quarter: deposits, assets and liabilities add up, gross NPAs equal their three classes, the printed NPA ratio equals NPAs over advances, and the bank groups add to all banks. Shares of deposits and advances are computed by India Atlas and labelled. Nothing is estimated.</p>
+      </div>
+      <div>
+        <h6>Revisions and breaks</h6>
+        <p>Report 1221 is not revised once printed; the annual tables sometimes revise a March figure, and this guide keeps 1221's. The Outlook's latest March is provisional and is replaced by the next edition's figure. The infrastructure list was renumbered in June 2022 (two rulers, never joined). Bank groups change as the RBI moves banks between them.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Version 1.0 (October 2026), from RBI data to {PH.long} (banks) and {PU.long} (urban co-operative banks). Revised each quarter when the RBI publishes the next bank-wise return.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, India's banks</span>
+      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/banks.client.js";
+</script>
+</Base>

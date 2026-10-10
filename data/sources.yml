@@ -1675,6 +1675,24 @@ dossiers:
       pct_yoy: [-100, 1000]
   # ---- end payments ----
 
+  # ---- banks (lb/banks): banks one by one, co-operative banks, financial institutions ----
+  # scripts/lib/products/banks.mjs (+ banks-ucb.mjs, banks-fi.mjs). Prompt-gated DBIE reports
+  # through the Reserve Bank Innovation Hub's service; everything else from the Data Bank.
+  banks:
+    # regression floor: report 1221 is quarterly, about six months behind
+    stale_after: "2026-03"
+    family: rbihub
+    geo: IND
+    product: banks
+    frequency: mixed
+    frequency_exempt: true
+    base: "mixed"
+    release_calendar: "Bank-wise off-site returns (report 1221) quarterly, about six months after the quarter; the urban co-operative banks' Outlook and the financial-institutions tables yearly, as on 31 March"
+    revision_policy: "Bank-wise figures are the banks' own returns as the RBI publishes them and are not revised once printed; the Outlook's latest March is provisional and is replaced by the next edition's figure. Mergers are disclosed on the acquirer, never joined."
+    source_agency: "Reserve Bank of India (DBIE, via the Reserve Bank Innovation Hub's data service and the local Data Bank)"
+    release_url: https://dbie.rbihub.in
+  # ---- end banks ----
+
 # ---------------------------------------------------------------------------
 # SEAMS: the base-year registry (2026-10). One entry per base (or
 # classification) for every product whose instrument has changed ruler.
@@ -2325,3 +2343,15 @@ seams:
       to: null
       bundles: [farms-msp, farms-landuse, farms-pds, farms-pds-latest, farms-states-fertiliser]
   # ---- end farms ----
+  # ---- banks (lb/banks): report 1221's infrastructure-lending table changed its list of
+  # sub-sectors in June 2022 (the R.a-R.f list gave way to a renumbered one). Never joined.
+  banks-infra:
+    - base: "Infrastructure list, R.a to R.f"
+      from: "2013-12"
+      to: "2022-03"
+      bundles: [banks-infra-2014, banks-groups-infra-2014]
+    - base: "Infrastructure list, renumbered"
+      from: "2022-06"
+      to: null
+      bundles: [banks-infra, banks-groups-infra]
+  # ---- end banks ----

@@ -87,6 +87,8 @@ import { buildPayments } from "./lib/products/payments.mjs";   // payments (lb/p
 Object.assign(REGISTRY, { payments: buildPayments });   // payments (lb/payments)
 import { buildFarms } from "./lib/products/farms.mjs";   // farms (lb/farms)
 Object.assign(REGISTRY, { farms: buildFarms });   // farms (lb/farms)
+import { buildBanks } from "./lib/products/banks.mjs";   // banks (lb/banks)
+Object.assign(REGISTRY, { banks: buildBanks });   // banks (lb/banks)
 
 // One product's failure must not starve the rest: collect, continue, and
 // exit non-zero at the end so CI still fails on the summary.

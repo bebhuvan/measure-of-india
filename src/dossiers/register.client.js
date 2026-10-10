@@ -447,3 +447,19 @@ import paymentsMonthlyBundle from "../../data/series/payments-monthly.json";
   ], 12, "sppy", lbl, "RBI");
 }
 // --- end payments ---
+// --- banks (lb/banks): banks' health, quarterly, per cent ---
+import banksHealthBundle from "../../data/series/banks-health.json";
+import banksRatiosBundle from "../../data/series/banks-ratios.json";
+{
+  const BH = { ...hydrate(banksHealthBundle), ...hydrate(banksRatiosBundle) };
+  const p2 = (v) => v.toFixed(2) + "%";
+  const m = banksHealthBundle.dates.at(-1);
+  const lbl = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][+m.slice(5, 7) - 1] + " " + m.slice(0, 4);
+  render("reg-banks", [
+    ["Gross NPA ratio, all commercial banks, quarterly", "RBI-1221-GNPA", "s-acc", BH.all_gnpa, false, "/guides/banks/", null, p2],
+    ["Gross NPA ratio, public sector banks", "RBI-1221-GNPA-PSB", "s-g1", BH.psb_gnpa, false, "/guides/banks/", null, p2],
+    ["Capital adequacy ratio, all commercial banks", "RBI-1221-CRAR", "s-g2", BH.all_crar, false, "/guides/banks/", null, p2],
+    ["Public sector banks' share of deposits", "RBI-1221-PSBSH", "s-g3", BH.psb_deposit_share, true, "/guides/banks/", "computed", p2],
+  ], 4, "spbk", lbl, "RBI, DBIE");
+}
+// --- end banks ---
