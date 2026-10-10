@@ -19,9 +19,8 @@
 // as the RBI's policy statements do (launch brief, docs/briefs/review.md item 3). Flip it here.
 
 import { extractFigures } from "./figures.mjs";
-
-// units whose values are percentages: growth, rates, shares (see src/dossiers/everycut.js unitOf)
-export const RATE_UNITS = new Set(["pct", "pct_yoy", "percent", "pct_gdp", "pct_of_gdp", "pct_of_gva", "pct_per_annum"]);
+import { RATE_UNITS, round as roundTo } from "../../src/dossiers/precision.js";
+export { RATE_UNITS };
 
 // decimals for rates, by dossier; anything not listed writes one
 const TWO = { wpi: "the Office of the Economic Adviser prints WPI inflation to two decimals", rates: "interest rates and yields move in basis points" };
@@ -31,10 +30,8 @@ export function precisionNote(slug) {
   const p = ratePrecision(slug);
   return p === 2
     ? `Write rates, growth and shares to two decimals (${TWO[slug]}), deltas to two as well. Counts and money in readable units: at most one decimal on a lakh, crore, million or billion figure, none once it reaches a thousand.`
-    : "Write every rate, growth figure and share to ONE decimal (\"7.8%\", \"rose 0.6 points\"), the precision the agency publishes; the sheet's rate series are already rounded to it. Counts and money in readable units: at most one decimal on a lakh, crore, million or billion figure, none once it reaches a thousand (\"about 2,366 crore payments\").";
+    : "Write every rate, growth figure and share to ONE decimal (\"7.8%\", \"rose 0.6 points\"), the precision the agency publishes; the facts' rate series are already rounded to it. Counts and money in readable units: at most one decimal on a lakh, crore, million or billion figure, none once it reaches a thousand (\"about 2,366 crore payments\").";
 }
-
-const roundTo = (v, d) => (v == null ? v : Math.round(v * 10 ** d + (v >= 0 ? 1e-9 : -1e-9)) / 10 ** d);
 
 /** A copy of a bundle with every rate series rounded to `d` decimals (levels untouched). */
 export function roundBundle(bundle, d, unitOf) {

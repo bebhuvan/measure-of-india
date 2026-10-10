@@ -512,9 +512,43 @@ if (D.proseInputs?.length) {
       }
     }
   }
+  // a bundle that holds several MEASURES (participation, worker ratio and unemployment for
+  // the same groups; factory counts beside rupees of capital) must never be ranked as one
+  // field: "the highest reading" across a participation rate and an unemployment rate is
+  // meaningless (review-a, 2026-10: the jobs prose called rural women's 3.9% unemployment
+  // the lowest reading of an age cut that also held participation). Measures are read from
+  // the label's first segment ("LFPR · male · rural"): a few large groups, never one per state.
+  const measureGroups = (list) => {
+    const g = new Map();
+    for (const s of list) {
+      const m = String(s.label ?? "").includes(" · ") ? String(s.label).split(" · ")[0] : null;
+      if (m == null) return null;
+      if (!g.has(m)) g.set(m, []);
+      g.get(m).push(s);
+    }
+    return g.size >= 2 && g.size <= 8 && [...g.values()].every((l) => l.length >= 3) ? g : null;
+  };
   facts.proseInputs = D.proseInputs.map((slug2) => {
     const b = readSeries(slug2);
     const list = Object.entries(b.series).map(([key, s]) => seriesFacts(b.dates, { key, ...s }));
+    const groups = measureGroups(list);
+    if (groups) {
+      const tailOf = (l) => {
+        const v = l.map((s) => s.latest).filter((x) => x != null).sort((a, c) => a - c);
+        const p = l.map((s) => s.deltaVsPrev).filter((x) => x != null);
+        return v.length ? { median: Math.round(v[Math.floor(v.length / 2)] * 100) / 100, rising: p.filter((x) => x > 0).length, falling: p.filter((x) => x < 0).length, belowZero: v.filter((x) => x < 0).length } : null;
+      };
+      return {
+        bundle: slug2, seriesCount: list.length, base: b.meta.base, ruler: rulerOf(slug2), coverage: b.meta.coverage ?? null,
+        note: "Several measures in one cut: rank and compare only within a measure, never across them.",
+        byMeasure: [...groups].map(([measure, l]) => {
+          const e = crossBundle(slug2, l, null, hDir);
+          const bl = l.filter((s) => s.latest != null).sort((a, c) => c.latest - a.latest);
+          return { measure, series: l.length, top: mover(e.topByDelta ?? null), bottom: mover(e.bottomByDelta ?? null),
+            topByLatest: mover(bl[0] ?? null), bottomByLatest: mover(bl.at(-1) ?? null), ...(l.length > 10 ? { tail: tailOf(l) } : {}) };
+        }),
+      };
+    }
     const e = crossBundle(slug2, list, commonHeadline(Object.keys(b.series)), hDir);
     const bl = list.filter((s) => s.latest != null).sort((a, c) => c.latest - a.latest);
     const out2 = {
