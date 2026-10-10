@@ -25,6 +25,11 @@ export const SYN = {
   rupee: ["usd", "inr", "exchange", "dollar"], dollar: ["usd"], growth: ["gdp", "gva"], factory: ["manufacturing", "iip", "factories"],
   factories: ["factory", "manufacturing"], college: ["enrolment", "aishe"], women: ["female", "gender", "woman"], woman: ["female", "women"],
   power: ["electricity"], account: ["accounts"], bank: ["banks"],
+  // words readers type that the tables spell out (review-c, 2026-10: tried twenty real queries)
+  forex: ["foreign", "fx"], msp: ["minimum"], heatwave: ["heat", "hot"], heat: ["hot", "temperature"],
+  stunting: ["stunted"], wasting: ["wasted"], anaemia: ["anaemic", "anemia"], anemia: ["anaemia", "anaemic"],
+  home: ["housing", "house"], salary: ["wage", "wages", "earnings"], wages: ["wage", "earnings"],
+  monsoon: ["rainfall", "rain"], rainfall: ["rain"], poor: ["poverty"], loans: ["loan", "credit"],
 };
 export const MIN_PREFIX = 3;
 

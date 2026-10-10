@@ -817,7 +817,7 @@ export function everyCutPlan(d, { cuts = {} } = {}) {
     else if (used + rows.length <= cap && !over.length) { inline.push(b); used += rows.length; }
     else over.push(b);
   }
-  if (over.length) tails.push({ kind: "more", id: "more", label: "The remaining files", bundles: over });
+  if (over.length) tails.push({ kind: "more", id: "more", label: over.length === 1 ? bundleTitle(over[0]) : "The remaining files", bundles: over });
   for (const t of tails) {
     t.rows = t.bundles.flatMap((b) => rowsOf(b, { cut: cuts[b] }));
     t.pages = t.kind === "bundle" ? paginate(t.rows) : paginateBy(t.rows, (r) => r.bundle);
