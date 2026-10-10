@@ -2965,7 +2965,7 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
 
 /* ---- public-finance (lb/public-finance): ranges by each series' unit, and the tables' own identities ---- */
 // the GDP series a per-cent-of-GDP bundle divides by (sources.yml seams: public-finance); rupee bundles "n/a"
-function pfBase(n) { return /-b1999$/.test(n) ? "GDP 1999-2000 series" : /-b2004$/.test(n) ? "GDP 2004-05 series" : /-b2011$|^ratios-backcast$/.test(n) ? "GDP 2011-12 series" : undefined; }
+function pfBase(n) { return /-b1999$/.test(n) ? "GDP 1999-2000 series" : /-b2004$/.test(n) ? "GDP 2004-05 series" : /-b2011$/.test(n) ? "GDP 2011-12 series" : n === "ratios-backcast" ? "India Atlas ratio over the NSO back series of 2011-12-base GDP" : undefined; }
 function pfRanges(slug) {
   const f = path.join(ROOT, "data/series", slug + ".json");
   if (!fs.existsSync(f)) return {};

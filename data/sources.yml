@@ -2281,12 +2281,12 @@ seams:
       from: "2011-04"
       to: null
       bundles: [public-finance-centre-gdp-b2011, public-finance-allstates-gdp-b2011, public-finance-combined-gdp-b2011, public-finance-combined-debt-gdp-b2011, public-finance-combined-bulletin-gdp-b2011]
-      bridge:
-        kind: agency back series
-        what: "MoSPI's back series of GDP at current prices on the 2011-12 base, 1950-51 to 2010-11 (gdp-back-levels); the RBI's rupee figures are divided by it here"
-        from: "1970-04"
-        to: "2010-04"
-        bundles: [public-finance-ratios-backcast]
+    # India Atlas arithmetic, not an agency link: the RBI's rupee figures over MoSPI's back series of
+    # 2011-12-base GDP (gdp-back-levels). Its own ruler, drawn dashed beside the RBI's printed ratios.
+    - base: "India Atlas ratio over the NSO back series of 2011-12-base GDP"
+      from: "1970-04"
+      to: "2010-04"
+      bundles: [public-finance-ratios-backcast]
     - base: "GDP 2022-23 series"
       from: "2022-04"
       to: null

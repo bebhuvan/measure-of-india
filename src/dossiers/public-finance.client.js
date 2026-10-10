@@ -4,8 +4,8 @@
 // states-finances (the States guide), rates-borrowing (the Interest rates guide) and
 // population-wpp-projection (the Population guide, for the per-person figure).
 // Stages are never joined: accounts are lines, the revised estimate and the budget estimate are marks.
-// GDP bases are never joined: the RBI's ratios on each base are separate rulers (seamMarks "side"), and
-// the back-cast over the NSO's 2011-12 back series is drawn pale (seamMarks "agency").
+// GDP bases are never joined: the RBI's ratios on each base are separate rulers (seamMarks "side"); our
+// ratios over the NSO's 2011-12 back series are India Atlas arithmetic, a separate dashed grey line.
 
 import * as Plot from "@observablehq/plot";
 import cmB from "../../data/series/public-finance-centre-monthly.json";
@@ -19,6 +19,10 @@ import g99B from "../../data/series/public-finance-centre-gdp-b1999.json";
 import g04B from "../../data/series/public-finance-centre-gdp-b2004.json";
 import g11B from "../../data/series/public-finance-centre-gdp-b2011.json";
 import sg11B from "../../data/series/public-finance-allstates-gdp-b2011.json";
+import sg99B from "../../data/series/public-finance-allstates-gdp-b1999.json";
+import sg04B from "../../data/series/public-finance-allstates-gdp-b2004.json";
+import dg99B from "../../data/series/public-finance-combined-debt-gdp-b1999.json";
+import dg04B from "../../data/series/public-finance-combined-debt-gdp-b2004.json";
 import dg11B from "../../data/series/public-finance-combined-debt-gdp-b2011.json";
 import backB from "../../data/series/public-finance-ratios-backcast.json";
 import r22B from "../../data/series/public-finance-ratios-2022.json";
@@ -146,38 +150,50 @@ setHTML("prov-vintage2", cmB.meta.vintage);
 }
 
 /* =================== § 04 the deficit: Centre and states, 1970-71 to the budget =================== */
-{
-  const axis = fyAxis(backB.dates[0], g11B.dates.at(-1));
-  const line = (bk, pk) => { const m = new Map([...mapOf(backB, bk), ...mapOf(pk[0], pk[1])]); return onAxis(axis, m); };
-  const centre = line("centre_gross_fiscal_deficit", [g11B, "gross_fiscal_deficit"]);
-  const states = line("states_gross_fiscal_deficit", [sg11B, "gross_fiscal_deficit"]);
-  const cut = dt(g11B.dates[0]);
-  const cSt = stagePts(g11B, "gross_fiscal_deficit"), sSt = stagePts(sg11B, "gross_fiscal_deficit");
-  const all = [...centre, ...states, ...cSt, ...sSt].map((d) => d.value);
-  const y = span(all, 2);
-  const C = { label: "Centre", color: ACC, bold: true, data: centre, end: cSt.at(-1) };
-  const S = { label: "States", color: GOLD, data: states, end: sSt.at(-1) };
+// The RBI's printed ratios, each GDP base its own ruler (seamMarks "side"), solid. Our ratios over the
+// NSO's back series of 2011-12-base GDP are India Atlas arithmetic: a separate dashed grey line, never a
+// continuation of the RBI's.
+const ATLAS = "India Atlas, computed: RBI amounts ÷ NSO back-series GDP";
+const rulerOf = (b, k) => b.dates.map((d, i) => ({ date: dt(d), value: b.series[k]?.data[i] ?? null }));
+const unionMap = (lists) => { const m = new Map(); lists.flat().forEach((p) => { if (p.value != null) m.set(+p.date, p.value); }); return m; };
+function rbiAndAtlasPlate({ id, plotId, file, rbi, atlas, stages, step, yLabel, mr, title, desc, f, cut }) {
+  // rbi: [{ label, color, bold, rulers: [data...], width }]; atlas: [{ data }]; stages: [{ pts, color }]
+  const all = [...rbi.flatMap((r) => r.rulers.flat()), ...atlas.flatMap((a) => a.data), ...stages.flatMap((s) => s.pts)].map((d) => d.value);
+  const y = span(all, step);
+  const marks = [Plot.gridY(y.ticks, { stroke: GRID }), Plot.ruleY([0], { stroke: BASE })];
+  atlas.forEach((a) => marks.push(Plot.lineY(a.data, { x: "date", y: "value", stroke: G2, strokeWidth: 1.5, strokeDasharray: "5,3", strokeLinejoin: "round", strokeLinecap: "round" })));
+  rbi.forEach((r, i) => marks.push(...seamMarks("side", r.rulers.map((data) => ({ data, color: r.color, width: r.width ?? 2 })), i === 0 ? { text: "GDP rebased: 2004-05, 2011-12", y: y.domain[1] - (y.domain[1] - y.domain[0]) * 0.04, at: cut[1] } : { at: cut[0] })));
+  stages.forEach((s) => marks.push(...stageMarks(s.pts, s.color)));
+  marks.push(...endLabels(rbi.map((r, i) => ({ label: r.label, color: r.color, bold: r.bold, data: r.rulers.at(-1), end: stages[i]?.pts.at(-1) })), (y.domain[1] - y.domain[0]) / 14, f));
   const plot = Plot.plot({
-    width: W, height: 500, marginLeft: 44, marginRight: 170, marginTop: 28, marginBottom: 34, style,
+    width: W, height: 500, marginLeft: 44, marginRight: mr, marginTop: 28, marginBottom: 34, style,
     x: { type: "utc", label: null, tickSize: 0, tickPadding: 10, ticks: yearTicks(1970, 2025, 5), tickFormat: fyTick },
-    y: { label: "per cent of GDP", labelAnchor: "top", labelArrow: false, domain: y.domain, ticks: y.ticks, tickSize: 0, tickPadding: 8, tickFormat: (v) => String(v) },
-    marks: [
-      Plot.gridY(y.ticks, { stroke: GRID }), Plot.ruleY([0], { stroke: BASE }),
-      ...seamMarks("agency", [{ data: states, color: GOLD, width: 1.75, reconstructedUntil: cut }, { data: centre, color: ACC, width: 2.25, reconstructedUntil: cut }], { text: "NSO back series of GDP to 2010-11", y: y.domain[1] - 0.6, anchor: "end", at: cut }),
-      ...stageMarks(sSt, GOLD), ...stageMarks(cSt, ACC),
-      ...endLabels([C, S], 0.7, (v) => p1(v)),
-    ],
+    y: { label: yLabel, labelAnchor: "top", labelArrow: false, domain: y.domain, ticks: y.ticks, tickSize: 0, tickPadding: 8, tickFormat: (v) => String(v) },
+    marks,
   });
-  a11y(plot, "Gross fiscal deficit of the Centre and the states, per cent of GDP", `Centre ${p2(gfdBE)} budgeted for ${ST.budgetEstimate}; states ${p2(sSt.at(-1).value)} budgeted for ${SS.budgetEstimate}.`);
-  put("plot-deficit", plot);
-  const cross = [{ label: "Centre", color: ACC, data: axis.map((iso, i) => ({ date: dt(iso), value: centre[i].value ?? cSt.find((p) => +p.date === +dt(iso))?.value ?? null })) },
-    { label: "States", color: GOLD, data: axis.map((iso, i) => ({ date: dt(iso), value: states[i].value ?? sSt.find((p) => +p.date === +dt(iso))?.value ?? null })) }];
-  addCrosshair(document.getElementById("plot-deficit"), plot, cross, null, (d) => fyD(d), (v) => (v == null ? "—" : p2(v)));
-  wirePlate("cb-deficit", plot, "public-finance-deficit", csvOf(["financial_year", "centre_pct_gdp", "centre_stage", "states_pct_gdp", "states_stage", "gdp_ruler"], axis.map((iso, i) => {
-    const c = cross[0].data[i].value, s = cross[1].data[i].value, f = fyOf(iso);
-    const st = (pts, fy) => pts.find((p) => fyD(p.date) === fy)?.kind;
-    return [f, c, c == null ? "" : stageLabel(st(cSt, f)), s, s == null ? "" : stageLabel(st(sSt, f)), iso < g11B.dates[0] ? "NSO back series, 2011-12 base (India Atlas ratio)" : "2011-12 base (RBI)"];
+  a11y(plot, title, desc);
+  put(plotId, plot);
+  const axis = [...new Set([...rbi.flatMap((r) => r.rulers.flat()), ...atlas.flatMap((a) => a.data)].map((p) => +p.date))].sort((p, q) => p - q);
+  const rm = rbi.map((r) => unionMap(r.rulers)), am = atlas.map((a) => unionMap([a.data]));
+  const stageAt = (i, t) => stages[i]?.pts.find((p) => +p.date === t);
+  const cross = [...rbi.map((r, i) => ({ label: `${r.label}, RBI`, color: r.color, data: axis.map((t) => ({ date: new Date(t), value: rm[i].get(t) ?? stageAt(i, t)?.value ?? null })) })),
+    ...atlas.map((a, i) => ({ label: `${rbi[i].label}, India Atlas`, color: G2, data: axis.map((t) => ({ date: new Date(t), value: am[i].get(t) ?? null })) }))];
+  addCrosshair(document.getElementById(plotId), plot, cross, null, (d) => fyD(d), (v) => (v == null ? "—" : f(v)));
+  const baseOf = (iso) => (iso < "2004-04-01" ? "1999-2000 base" : iso < "2011-04-01" ? "2004-05 base" : "2011-12 base");
+  wirePlate(id, plot, file, csvOf(["financial_year", ...rbi.flatMap((r) => [`rbi_${r.key}_pct_gdp`, `rbi_${r.key}_stage`]), "rbi_gdp_series", ...rbi.map((r) => `india_atlas_${r.key}_pct_gdp_over_nso_back_series`)], axis.map((t) => {
+    const iso = new Date(t).toISOString().slice(0, 10);
+    return [fyOf(iso), ...rbi.flatMap((r, i) => { const v = rm[i].get(t) ?? stageAt(i, t)?.value ?? null; return [v, v == null ? "" : stageLabel(stageAt(i, t)?.kind)]; }), baseOf(iso), ...am.map((m) => m.get(t) ?? "")];
   })));
+}
+{
+  const cSt = stagePts(g11B, "gross_fiscal_deficit"), sSt = stagePts(sg11B, "gross_fiscal_deficit");
+  rbiAndAtlasPlate({ id: "cb-deficit", plotId: "plot-deficit", file: "public-finance-deficit", step: 2, yLabel: "per cent of GDP", mr: 170, f: (v) => p1(v),
+    cut: [dt(g04B.dates[0]), dt(g11B.dates[0])],
+    rbi: [{ key: "centre", label: "Centre", color: ACC, bold: true, width: 2.25, rulers: [g99B, g04B, g11B].map((b) => rulerOf(b, "gross_fiscal_deficit")) },
+      { key: "states", label: "States", color: GOLD, width: 1.75, rulers: [sg99B, sg04B, sg11B].map((b) => rulerOf(b, "gross_fiscal_deficit")) }],
+    atlas: [{ data: rulerOf(backB, "centre_gross_fiscal_deficit") }, { data: rulerOf(backB, "states_gross_fiscal_deficit") }],
+    stages: [{ pts: cSt, color: ACC }, { pts: sSt, color: GOLD }],
+    title: "Gross fiscal deficit of the Centre and the states, per cent of GDP", desc: `Centre ${p2(gfdBE)} budgeted for ${ST.budgetEstimate}; states ${p2(sSt.at(-1).value)} budgeted for ${SS.budgetEstimate}.` });
   setHTML("pv-deficit", p2(gfdBE));
   setHTML("ex-def-acc", p2(atFY(g11B, "gross_fiscal_deficit", ST.accountsTo)));
   setHTML("ex-def-re", p2(gfdRE));
@@ -461,33 +477,20 @@ setHTML("prov-vintage2", cmB.meta.vintage);
 
 /* =================== § 07 debt =================== */
 {
-  const axis = fyAxis(backB.dates[backB.series.combined_liabilities.data.findIndex((v) => v != null)], dg11B.dates.at(-1));
-  const line = (bk, pk) => onAxis(axis, new Map([...mapOf(backB, bk), ...mapOf(dg11B, pk)]));
-  const comb = line("combined_liabilities", "combined_total_liabilities_of_centre_and_states");
-  const cen = line("centre_liabilities", "total_liabilities_of_the_centre");
-  const sta = line("states_liabilities", "total_liabilities_of_the_states");
-  const cut = dt(dg11B.dates[0]);
+  const K = { comb: "combined_total_liabilities_of_centre_and_states", cen: "total_liabilities_of_the_centre", sta: "total_liabilities_of_the_states" };
   const st = (k) => stagePts(dg11B, k);
-  const y = span([...comb, ...cen, ...sta, ...st("combined_total_liabilities_of_centre_and_states")].map((d) => d.value), 20);
-  const plot = Plot.plot({
-    width: W, height: 500, marginLeft: 44, marginRight: 190, marginTop: 28, marginBottom: 34, style,
-    x: { type: "utc", label: null, tickSize: 0, tickPadding: 10, ticks: yearTicks(1980, 2025, 5), tickFormat: fyTick },
-    y: { label: "per cent of GDP", labelAnchor: "top", labelArrow: false, domain: y.domain, ticks: y.ticks, tickSize: 0, tickPadding: 8, tickFormat: (v) => String(v) },
-    marks: [
-      Plot.gridY(y.ticks, { stroke: GRID }), Plot.ruleY([0], { stroke: BASE }),
-      ...seamMarks("agency", [{ data: sta, color: GOLD, width: 1.5, reconstructedUntil: cut }, { data: cen, color: INK, width: 1.5, reconstructedUntil: cut }, { data: comb, color: ACC, width: 2.25, reconstructedUntil: cut }], { text: "NSO back series of GDP to 2010-11", y: y.domain[1] - 4, anchor: "end", at: cut }),
-      ...stageMarks(st("total_liabilities_of_the_states"), GOLD), ...stageMarks(st("total_liabilities_of_the_centre"), INK), ...stageMarks(st("combined_total_liabilities_of_centre_and_states"), ACC),
-      ...endLabels([{ label: "Centre and states", color: ACC, bold: true, data: comb, end: st("combined_total_liabilities_of_centre_and_states").at(-1) }, { label: "Centre", color: INK, data: cen, end: st("total_liabilities_of_the_centre").at(-1) }, { label: "States", color: GOLD, data: sta, end: st("total_liabilities_of_the_states").at(-1) }], 4, (v) => p1(v)),
-    ],
-  });
-  a11y(plot, "What India's governments owe, per cent of GDP", `Centre and states ${p1(debtBE)} by the budgets for ${SS.budgetEstimate}.`);
-  put("plot-debt", plot);
-  addCrosshair(document.getElementById("plot-debt"), plot, [{ label: "Centre and states", color: ACC, data: comb }, { label: "Centre", color: INK, data: cen }, { label: "States", color: GOLD, data: sta }], null, (d) => fyD(d), (v) => (v == null ? "—" : p1(v)));
-  wirePlate("cb-debt", plot, "public-finance-debt", csvOf(["financial_year", "centre_and_states_pct_gdp", "centre_pct_gdp", "states_pct_gdp", "gdp_ruler"], axis.map((iso, i) => [fyOf(iso), comb[i].value, cen[i].value, sta[i].value, iso < dg11B.dates[0] ? "NSO back series, 2011-12 base (India Atlas ratio)" : "2011-12 base (RBI)"])));
+  rbiAndAtlasPlate({ id: "cb-debt", plotId: "plot-debt", file: "public-finance-debt", step: 20, yLabel: "per cent of GDP", mr: 190, f: (v) => p1(v),
+    cut: [dt(dg04B.dates[0]), dt(dg11B.dates[0])],
+    rbi: [{ key: "centre_and_states", label: "Centre and states", color: ACC, bold: true, width: 2.25, rulers: [dg99B, dg04B, dg11B].map((b) => rulerOf(b, K.comb)) },
+      { key: "centre", label: "Centre", color: INK, width: 1.5, rulers: [dg99B, dg04B, dg11B].map((b) => rulerOf(b, K.cen)) },
+      { key: "states", label: "States", color: GOLD, width: 1.5, rulers: [dg99B, dg04B, dg11B].map((b) => rulerOf(b, K.sta)) }],
+    atlas: [{ data: rulerOf(backB, "combined_liabilities") }, { data: rulerOf(backB, "centre_liabilities") }, { data: rulerOf(backB, "states_liabilities") }],
+    stages: [{ pts: st(K.comb), color: ACC }, { pts: st(K.cen), color: INK }, { pts: st(K.sta), color: GOLD }],
+    title: "What India's governments owe, per cent of GDP", desc: `Centre and states ${p1(debtBE)} by the budgets for ${SS.budgetEstimate}.` });
   setHTML("pv-debt", p1(debtBE));
-  setHTML("ex-debt-acc", p1(atFY(dg11B, "combined_total_liabilities_of_centre_and_states", SS.accountsTo)));
-  setHTML("ex-debt-c", p1(firstOf(dg11B, "total_liabilities_of_the_centre__be").v));
-  setHTML("ex-debt-s", p1(firstOf(dg11B, "total_liabilities_of_the_states__be").v));
+  setHTML("ex-debt-acc", p1(atFY(dg11B, K.comb, SS.accountsTo)));
+  setHTML("ex-debt-c", p1(firstOf(dg11B, K.cen + "__be").v));
+  setHTML("ex-debt-s", p1(firstOf(dg11B, K.sta + "__be").v));
 }
 {
   const b = ownB;

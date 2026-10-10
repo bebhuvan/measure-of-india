@@ -137,7 +137,7 @@ const ratesBorrow = B("rates-borrowing");
       <p><b>Three numbers for every year.</b> Each Union Budget, presented on 1 February, gives a <b>budget estimate</b> for the coming year and a <b>revised estimate</b> for the year about to end. Months after a year closes come the <b>accounts</b>: provisional ones from the Controller General of Accounts in May, audited ones later. The three can differ by lakhs of crores. This guide never joins them into one line: the accounts are drawn solid, the revised estimate and the budget estimate as separate marks, and every chart says which is which.</p>
       <p><b>The deficits.</b> The <b>gross fiscal deficit</b> is everything the government spends less everything it receives other than new borrowing; it is how much it must borrow in the year. The <b>revenue deficit</b> is the part of day-to-day spending (salaries, interest, subsidies) not covered by day-to-day income: borrowing to pay running costs rather than to build. The <b>primary deficit</b> is the fiscal deficit less interest: whether this year's choices, leaving aside the cost of old debt, add to the debt.</p>
       <p><b>The Centre, the states, and both.</b> The Centre collects most taxes and passes a share to the states; the states spend most of the money that reaches people, on schools, hospitals, police and roads. Their accounts are published apart. The combined account nets out what one owes the other, so it is not the sum of the two. The Centre's tax figures here are net of the states' share unless a chart says gross.</p>
-      <p><b>Per cent of GDP depends on which GDP.</b> A ratio to GDP is only as steady as its denominator, and India has measured GDP on several base years. The RBI divides by the GDP series of the time (the 1999-2000 base to 2003-04, the 2004-05 base to 2010-11, the 2011-12 base since), and these are drawn as separate rulers, never joined. Where a chart runs one line back to 1970-71, it divides the RBI's rupee figures by the statistics office's own back series of 2011-12-base GDP, and says so. The new 2022-23 series measures a different economy size again (section 09).</p>
+      <p><b>Per cent of GDP depends on which GDP.</b> A ratio to GDP is only as steady as its denominator, and India has measured GDP on several base years. The RBI divides by the GDP series of the time (the 1999-2000 base to 2003-04, the 2004-05 base to 2010-11, the 2011-12 base since), and these are drawn as separate rulers, never joined. Where a chart adds a line on one ruler back to 1970-71, that line is India Atlas's own arithmetic, the RBI's rupee figures divided by the statistics office's back series of 2011-12-base GDP: it is drawn dashed and named as ours, never as a continuation of the RBI's. The new 2022-23 series measures a different economy size again (section 09).</p>
     </div>
   </section>
 
@@ -149,18 +149,19 @@ const ratesBorrow = B("rates-borrowing");
         <div class="plate-head">
           <div class="t">
             <h3>The Centre budgets a deficit of {r1(gfdBE)}% of GDP for {ST.budgetEstimate}, half its pandemic peak of {r1(peak[1])}% in {peak[0]}</h3>
-            <div class="sub">Gross fiscal deficit of the Centre and of all states together, per cent of GDP, {fy(back.dates[0])} to {ST.budgetEstimate}. Accounts as a line; the revised estimate and the budget estimate as separate marks. Before 2011-12, the RBI's rupee figures over the statistics office's back series of 2011-12-base GDP (pale); from 2011-12, the RBI's own ratios on that series.</div>
+            <div class="sub">Gross fiscal deficit of the Centre and of all states together, per cent of GDP, {fy(back.dates[0])} to {ST.budgetEstimate}: the RBI's printed ratios, solid, on the GDP series of each period (1999-2000, 2004-05 and 2011-12 bases, never joined), accounts as lines and the revised and budget estimates as marks. Dashed grey, to 2010-11: India Atlas, computed: RBI amounts ÷ NSO back-series GDP.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-deficit">–</div><div class="c">Centre, budget estimate {ST.budgetEstimate}</div></div>
         </div>
         <div class="frame">
           <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>Centre</span>
-            <span class="chip"><i style="background:#C47A16"></i>All states</span>
+            <span class="chip"><i style="background:#2E4BD8"></i>Centre, RBI</span>
+            <span class="chip"><i style="background:#C47A16"></i>All states, RBI</span>
+            <span class="chip"><i style="background:#A3A9B4"></i>India Atlas, computed: RBI amounts ÷ NSO back-series GDP</span>
           </div>
           <div class="plotzone"><div id="plot-deficit" style="position:relative"><div class="cb-tip"></div></div></div>
           <div class="plotfoot">
-            <span class="src">Source: RBI, Handbook of Statistics, Key Deficit Indicators and Select Fiscal Indicators of the Central and State Governments (DBIE reports 713, 355, 451, 454); MoSPI, back series of GDP on the 2011-12 base. Ratios before 2011-12 computed by India Atlas.</span>
+            <span class="src">Source: RBI, Handbook of Statistics, Key Deficit Indicators and Select Fiscal Indicators of the Central and State Governments (DBIE reports 713, 355, 451, 454); the dashed lines: RBI's rupee amounts (713, 451) over MoSPI's back series of GDP on the 2011-12 base, computed by India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -489,19 +490,20 @@ const ratesBorrow = B("rates-borrowing");
         <div class="plate-head">
           <div class="t">
             <h3>India's governments owe {r1(debtBE)}% of GDP by the budgets for {SS.budgetEstimate}</h3>
-            <div class="sub">Outstanding liabilities at the end of each March, the Centre, all states and the two together (which nets out what one owes the other), per cent of GDP, {fy(back.dates.find((d, i) => back.series.combined_liabilities.data[i] != null))} to {SS.budgetEstimate}. Before 2011-12 over the statistics office's back series of 2011-12-base GDP (pale); from 2011-12 the RBI's own ratios.</div>
+            <div class="sub">Outstanding liabilities at the end of each March, the Centre, all states and the two together (which nets out what one owes the other), per cent of GDP, {fy(back.dates.find((d, i) => back.series.combined_liabilities.data[i] != null))} to {SS.budgetEstimate}: the RBI's printed ratios, solid, on the GDP series of each period (never joined). Dashed grey, to 2010-11: India Atlas, computed: RBI amounts ÷ NSO back-series GDP.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-debt">–</div><div class="c">Centre and states, budget {SS.budgetEstimate}</div></div>
         </div>
         <div class="frame">
           <div class="legend">
-            <span class="chip"><i style="background:#2E4BD8"></i>Centre and states</span>
-            <span class="chip"><i style="background:#161A22"></i>Centre</span>
-            <span class="chip"><i style="background:#C47A16"></i>States</span>
+            <span class="chip"><i style="background:#2E4BD8"></i>Centre and states, RBI</span>
+            <span class="chip"><i style="background:#161A22"></i>Centre, RBI</span>
+            <span class="chip"><i style="background:#C47A16"></i>States, RBI</span>
+            <span class="chip"><i style="background:#A3A9B4"></i>India Atlas, computed: RBI amounts ÷ NSO back-series GDP</span>
           </div>
           <div class="plotzone"><div id="plot-debt" style="position:relative"><div class="cb-tip"></div></div></div>
           <div class="plotfoot">
-            <span class="src">Source: RBI, Handbook of Statistics, Combined Liabilities and Select Debt Indicators of the Central and State Governments (DBIE reports 339, 342, 1399, 452); MoSPI, back series of GDP. Ratios before 2011-12 computed by India Atlas.</span>
+            <span class="src">Source: RBI, Handbook of Statistics, Combined Liabilities and Select Debt Indicators of the Central and State Governments (DBIE reports 339, 342, 1399, 452); the dashed lines: RBI's rupee amounts over MoSPI's back series of GDP on the 2011-12 base, computed by India Atlas.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>

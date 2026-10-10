@@ -54,7 +54,8 @@
 //     GDP, checked: the implied denominators agree to rounding). Three bases, three bundles
 //     per table (AGENTS.md rule 1). The budget-estimate year divides by the budget's own GDP
 //     projection. We add two rulers of our own: the same ratios on the 2011-12 series back to
-//     1970-71 (MoSPI's back-cast, an agency link) and on the new 2022-23 series.
+//     1970-71 (the RBI's rupee figures over MoSPI's back series of GDP: India Atlas arithmetic, its own
+//     ruler, never joined to the RBI's) and on the new 2022-23 series.
 //
 // Hand checks against the RBI's own publications are recorded beside each bundle below.
 import fs from "node:fs";
@@ -946,9 +947,9 @@ export async function buildPublicFinance(root, dcfg, vintage, cfg) {
       if (stageCut) s[k].note = `The last year may be a revised estimate (Centre ${T["centre-deficits"].reFY}, states and combined ${T["allstates-deficits"].reFY}).`;
       s[k].derived = true; s[k].derivedNote = `${lab.replace(/^(Centre|States|Centre and states): /, (m, g) => (g === "Centre" ? "The Centre's " : g === "States" ? "The states' " : "The Centre's and states' "))} as the RBI prints it in rupees (DBIE report ${X.t.id}), divided by MoSPI's GDP at current prices, ${gdpName}; computed by India Atlas, not an RBI ratio.`; }); return s; };
     const fb = [...GB.keys()].filter((fy) => fy >= "1970-71" && fy <= "2010-11").sort();
-    write("ratios-backcast", { meta: meta({ source: "Computed by India Atlas from RBI DBIE (amounts) and MoSPI NAS (GDP)", frequency: "annual", unit: "pct_gdp", base: "GDP 2011-12 series", vintage, latestPeriod: fb.at(-1),
+    write("ratios-backcast", { meta: meta({ source: "Computed by India Atlas from RBI DBIE (amounts) and MoSPI NAS (GDP)", frequency: "annual", unit: "pct_gdp", base: "India Atlas ratio over the NSO back series of 2011-12-base GDP", vintage, latestPeriod: fb.at(-1),
       coverage: "Deficits, interest, taxes, spending and debt as a share of GDP on one ruler, 1970-71 to 2010-11: the RBI's rupee figures over MoSPI's back-cast of the 2011-12 GDP series",
-      note: "Computed here: the accounts in the RBI's rupee tables divided by GDP at current market prices from the NSO's back series on the 2011-12 base (gdp-back-levels; the NSO's own link, drawn as a back-cast). From 2011-12 the RBI's published ratios are on this same series (checked: our division reproduces its GFD ratio), so this bundle stops at 2010-11. Different from the RBI's published ratios for these years, which divide by the GDP series of the time (1999-2000 and 2004-05 bases)." }),
+      note: "Computed here: the accounts in the RBI's rupee tables divided by GDP at current market prices from the NSO's back series on the 2011-12 base (gdp-back-levels). India Atlas arithmetic, not an RBI ratio and not an agency link: its own ruler, never joined to the RBI's printed ratios. From 2011-12 the RBI's published ratios are on this same series (checked: our division reproduces its GFD ratio), so this bundle stops at 2010-11. Different from the RBI's published ratios for these years, which divide by the GDP series of the time (1999-2000 and 2004-05 bases)." }),
       dates: fb.map(fyStart), series: mkR(GB, fb, false, "the NSO's back series on the 2011-12 base") });
     const f22 = [...G22.keys()].sort();
     const s22 = mkR(G22, f22, true, "2022-23 series");

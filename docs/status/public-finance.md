@@ -35,9 +35,12 @@ Branch `lb/public-finance`. Guide `/guides/public-finance/` (port 4431). Updated
 - Derived labels (coordinator's review, 2026-10-10): every computed series carries
   `derived: true` and a `derivedNote` (the two GDP-ruler bundles, shares of the budget, running
   totals, sums and counts); the ratio bundles' meta.source names RBI and MoSPI and says the ratio
-  is India Atlas's. The which-GDP plate draws our two rulers dashed beside the RBI's solid one;
-  the pre-2011-12 back-cast on the deficit and debt plates stays a pale tint (seamMarks agency,
-  DESIGN) with the computation named in subtitle and source. Gates re-run green.
+  is India Atlas's. Plates (coordinator's second review): the deficit and debt plates now draw
+  the RBI's printed ratios solid, each GDP base its own ruler (seamMarks "side"), and our ratios
+  over the NSO back series as a separate dashed grey line named "India Atlas, computed: RBI
+  amounts ÷ NSO back-series GDP", never as a continuation of the RBI's line. ratios-backcast is
+  registered as its own ruler in seams (no longer an agency bridge). The which-GDP plate draws
+  both of our rulers dashed. Gates re-run green.
 
 ## Next
 
