@@ -1,6 +1,6 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 17:45.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 21:10.
 
 ## Running now: ten family sessions
 
@@ -45,12 +45,17 @@ Each decides every `pending` item in its ledgers (brief: `docs/briefs/wave2.md`)
 Jobs deeper, industry deeper, prices deeper, national accounts remainder (all MoSPI, which
 throttles, so not run alongside the states and services sessions). Then the launch pass.
 
-## Where the site stands (17:10, 10 Oct)
+## Where the site stands (21:10, 10 Oct)
 
-**30 guides and 36 state profiles, about 1,150 pages; every gate green; all 54 prose files
-verify; `coverage --strict` passes.** Wave 1 (11 families), wave 2 (the original 14 guides
-deepened), the state profiles and the DBIE wave (public finance, payments, farms, banks,
-markets) are all merged.
+**Ready to deploy, pending the owner's steps below.** 30 guides and 36 state profiles,
+1,148 pages; `npm test` 70/70, every gate green, `coverage --strict` clean, all 54 prose files
+verified and read by hand. The read-through (three reviewers plus a data-fix session) is
+merged. Everything is on `launch-build`; nothing is pushed.
+
+**For the owner, to go live:** (1) "upload" for the Hugging Face archive (119 "Finer detail"
+links 404 until then); (2) a GitHub repository, the Cloudflare Pages project `india-atlas`
+with `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`, DNS for atlas.thisindianlife.today;
+(3) merge `launch-build` into `main` once pushed.
 
 ## Launch pass: what is left
 
@@ -60,9 +65,9 @@ markets) are all merged.
 | State profiles, /states/<state>/ (owner, in launch scope) | atlas-profiles | **all merged**, including public finance and UCB state cuts |
 | Full fresh MoSPI re-download as an integrity audit | coordinator | **done, clean**: every MoSPI product re-fetched through the hardened client (or by its wave-2 session after the fix); 0 paging slips, 0 data values changed |
 | Deep archive upload to Hugging Face (1.5 GB) | coordinator | **waiting on the owner's go** |
-| Read every guide end to end at 1440 and 390; release checklist (`docs/briefs/review.md`) | atlas-review-a, -b, -c | **running** (started 17:40) |
+| Read every guide end to end at 1440 and 390; release checklist (`docs/briefs/review.md`) | atlas-review-a, -b, -c, datafix | **done and merged**: precision rule, false titles, copied runs, zeros for no estimate, units, search, GDP leads with the 2022-23 base, contact email |
 | Profile wording: middle ranks read "17th lowest of 36"; say "17th of 36" | atlas-profiles | to fix |
-| Prose rule: published precision for headline growth ("7.8%", not "7.82%") | coordinator | to decide |
+| Prose rule: published precision | review-a | **done**: pipeline/lib/precision.mjs, enforced by verify |
 | IIP annual 2024-25: API 5.7% against 6.4% in press summaries (MoSPI PDF 403) | open | not quoted anywhere meanwhile |
 | New sources (SHRUG, Census 2011 PCA, data.gov.in, MGNREGA, TCPD): before or after launch? | **owner** | asked |
 | DBIE wave: public finance, payments, farms, banks, markets (5 sessions) | atlas-* | **all merged**: payments 26, farms 27, banks 28, public finance 29, markets 30 |
@@ -127,6 +132,9 @@ markets) are all merged.
 
 ## After launch (decided)
 
+- CPI bundles' meta.revisionPolicy still says "final on release" until the next CPI bake
+  (sources.yml is corrected). Hybrid solar before April 2022: check against MNRE's archive.
+
 - Time Use guide (national; TUS 2019 and 2024). BIS CPMI payments comparison (Data Bank to
   mirror the CPMI flows). Economic Census (no record endpoint known). NSS 80 (API 500).
   Census 2011 PCA, then SHRUG and TCPD after licence checks. MGNREGA as soon as data.gov.in
@@ -134,7 +142,7 @@ markets) are all merged.
 
 ## For the launch-pass prose review
 
-- payments: counts quoted to two decimals of a crore ("2,365.84 crore payments").
+- (done by review-a) payments counts and gdp growth at published precision.
 - gdp: growth quoted to two decimals ("7.82%", computed from levels) where MoSPI and the
   press print one ("7.8%"). Decide a site-wide rule: published precision for headline
   growth, with the computed figure only where it is the point.

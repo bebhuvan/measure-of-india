@@ -207,6 +207,16 @@ stamps, silent series). What the audit changed:
   survey respondents' names, addresses and phone numbers (excluded; flagged to the owner).
   Machine lessons: concurrent sessions exhausted memory once (17 finished sessions were still
   resident); builds now run in two machine-wide slots; qc needs a 6 GB heap at this size.
+- **2026-10-10 evening — The read-through.** Three reviewers read every page at 1440 and
+  390px, and a data-fix session took what they could not rebake. Gates had passed throughout;
+  the read still found false claims (farms procurement "about 0%", housing "barely outpaced
+  inflation", CPI "never revised", CPI's thirteen divisions), a states' revenue double count
+  (142%), and a new fault class: a source printing part of its history a second time under
+  other dates (DBIE 148 and 612), now detected in every bundle by `validate`. Zeros that meant
+  "no estimate" became nulls in ten adapters; ratios that carried money units were fixed; a
+  site-wide precision rule (one decimal for rates, readable counts) is enforced by verify.
+  Lesson: the gates prove that numbers exist and charts do not collide; only reading proves a
+  sentence is true. Both are needed before every release.
 - **2026-10-10 06:00 — Wave 2 complete; nothing pending.** Prices (CPI by state to the group,
   CPI-IW, rural wages, WPI's old bases), jobs (the whole PLFS cube, the 2025 redesign seam),
   industry (IIP all bases, core industries, ASI at every NIC digit), national accounts
