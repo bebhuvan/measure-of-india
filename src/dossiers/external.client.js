@@ -183,6 +183,14 @@ setHTML("rb-res", bnR(res.value) + pc(""));
   setHTML("ex-ca-trough", `${fmt.bnFixed1(tr.value)} in ${qLabel(tr.date)}`);
   const surplusQ = s.data.filter((d) => d.value != null && d.value > 0).length, nQ = s.data.filter((d) => d.value != null).length;
   setHTML("ex-ca-surplus", `${surplusQ} of ${nQ}`);
+  // why the surpluses happened, counted from the bars: January to March quarters, and the 2020-21 lockdowns
+  const sur = s.data.filter((d) => d.value != null && d.value > 0);
+  const nJM = sur.filter((d) => d.date.getUTCMonth() === 0).length;
+  const nLock = sur.filter((d) => d.date.getUTCMonth() !== 0 && d.date >= new Date(Date.UTC(2020, 3, 1)) && d.date < new Date(Date.UTC(2021, 9, 1))).length;
+  const nOther = sur.length - nJM - nLock, w = (n) => ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"][n] ?? String(n);
+  const parts = [nJM && `${w(nJM)} January to March ${nJM === 1 ? "quarter" : "quarters"}, when exports run high before the fiscal year closes`,
+    nLock && `${w(nLock)} around the 2020 and 2021 lockdowns, when imports collapsed`, nOther && `${w(nOther)} other${nOther === 1 ? "" : "s"}`].filter(Boolean);
+  setHTML("ex-ca-surplus-why", parts.length > 1 ? parts.slice(0, -1).join(", ") + " and " + parts.at(-1) : parts[0] ?? "none");
 }
 {
   const s = { ...IND.cad_to_gdp, label: "Current account", color: ACC };
@@ -358,7 +366,7 @@ setHTML("rb-res", bnR(res.value) + pc(""));
   const s = { ...since(FP.fpi_net, "2016-01-01"), label: "Net FPI investment", color: ACC };
   const v = s.data.map((d) => ({ ...d, value: d.value == null ? null : d.value / 1000 }));   // ₹ crore -> ₹ thousand crore
   const ss = { ...s, data: v };
-  bars("plot-fpi", "cb-fpi", ss, { d0: -130, d1: 80, yTicks: [-120, -80, -40, 0, 40, 80], xTicks: yearTicks(2016, 2026, 2), yLabel: "₹ thousand crore, a month", valFmt: (x) => (x < 0 ? "−₹" : "₹") + Math.abs(x).toFixed(1) + "k cr",
+  bars("plot-fpi", "cb-fpi", ss, { d0: -130, d1: 80, yTicks: [-120, -80, -40, 0, 40, 80], xTicks: yearTicks(2016, 2026, 2), yLabel: "₹ thousand crore, a month", valFmt: (x) => (x < 0 ? "−₹" : "₹") + fmt.inr(Math.round(Math.abs(x) * 1000)) + " cr",
     tipDate: monLabel, file: "india-atlas_fpi-net_monthly", title: "Net investment by foreign portfolio investors in Indian shares and bonds, monthly since 2016",
     desc: `Bars in ₹ thousand crore; the latest month ${monLabel(lastPt(ss).date)} is ${lastPt(ss).value.toFixed(1)}.` });
   const L = lastPt(FP.fpi_net);
@@ -448,7 +456,7 @@ setHTML("rb-res", bnR(res.value) + pc(""));
     { ...RE.reer_trade, label: "Real (REER)", color: ACC },
     { ...RE.neer_trade, label: "Nominal (NEER)", color: G1 },
   ];
-  lines("plot-reer", "cb-reer", list, { d0: 60, d1: 120, yTicks: [60, 70, 80, 90, 100, 110, 120], xTicks: yearTicks(2005, 2025, 4), yLabel: "index, 2015-16 = 100, trade-weighted, 40 currencies",
+  lines("plot-reer", "cb-reer", list, { d0: 70, d1: 145, yTicks: [70, 80, 90, 100, 110, 120, 130, 140], xTicks: yearTicks(2005, 2025, 4), yLabel: "index, 2015-16 = 100, trade-weighted, 40 currencies",
     valFmt: (v) => v.toFixed(1), tipDate: monLabel, file: "india-atlas_reer-neer-40-currency_monthly", mr: 220, zero: false,
     title: "The rupee against a basket of 40 currencies, nominal and real, since 2004",
     desc: `Two lines: REER ${fmt.num1(reer.value)} and NEER ${fmt.num1(neer.value)} in ${monLabel(reer.date)}, against 100 in 2015-16. A rise is a stronger rupee.`,
