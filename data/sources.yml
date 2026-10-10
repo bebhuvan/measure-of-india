@@ -1656,6 +1656,27 @@ dossiers:
       pdf_sha256: "59dec561e837bea060b6684a75caca84e0c982ed9e2670848521755f2ab267f9"
   # ---- end profiles ----
 
+  # ---- public-finance (lb/public-finance, 2026-10): what governments earn, spend, borrow, owe ----
+  # One adapter (scripts/lib/products/public-finance.mjs) reads the owner's Data Bank (read-only),
+  # never RBI live, plus the RBI Innovation Hub's export of the printed Handbook tables for their
+  # notes (which name each year's stage: accounts, revised estimate, budget estimate).
+  public-finance:
+    # regression floor: the monthly Union accounts (Bulletin table) run about two months behind
+    stale_after: "2026-06"
+    family: databank
+    geo: IND
+    product: public-finance
+    frequency: annual
+    frequency_exempt: true      # annual budget tables beside monthly accounts, quarterly and weekly debt tables
+    base: "n/a"                 # rupee bundles; per-cent-of-GDP bundles carry their GDP base (seams below)
+    release_calendar: "Union Budget on 1 February (budget estimates for the coming year, revised estimates for the current one); the Controller General of Accounts' monthly accounts at the end of each month for the month before; the RBI Handbook in September; State Finances: A Study of Budgets around December; debt ownership quarterly"
+    revision_policy: "Each year passes through three stages: the budget estimate (February before the year), the revised estimate (February of the year) and the accounts (provisional in May after the year, audited later). The RBI's tables restate a year as it moves from one stage to the next; each stage is kept as its own series."
+    source_agency: "Reserve Bank of India (via the Data Bank)"
+    release_url: https://data.rbi.org.in
+    ranges:
+      pct_gdp: [-15, 100]
+  # ---- end public-finance ----
+
 # ---------------------------------------------------------------------------
 # SEAMS: the base-year registry (2026-10). One entry per base (or
 # classification) for every product whose instrument has changed ruler.
@@ -2226,3 +2247,48 @@ seams:
       to: null
       bundles: [profiles-nfhs6]
   # ---- end profiles ----
+  # ---- public-finance (lb/public-finance): GDP rulers under the per-cent-of-GDP tables ----
+  # The RBI divides by GDP at current market prices on the 1999-2000 base to 2003-04, the 2004-05
+  # base to 2010-11 and the 2011-12 base from 2011-12 (Handbook note on its state-indicators table;
+  # the Centre's and combined tables use the same denominators, checked). Each base is its own
+  # bundle. Rupee bundles have no GDP base ("n/a"). Two rulers are computed here: the RBI's rupee
+  # figures over MoSPI's back-cast of the 2011-12 series (the NSO's own link, so a bridge), and over
+  # the new 2022-23 series.
+  public-finance:
+    - base: "n/a"
+      from: "1970-04"
+      to: null
+      bundles: [public-finance-centre-deficits, public-finance-centre-receipts, public-finance-centre-expenditure, public-finance-centre-capital-receipts,
+        public-finance-centre-development, public-finance-centre-financing, public-finance-centre-liabilities, public-finance-centre-capital-formation,
+        public-finance-centre-monthly, public-finance-centre-gfd-monthly, public-finance-centre-budget-path, public-finance-plan-outlay, public-finance-plan-financing,
+        public-finance-states-deficits, public-finance-states-receipts, public-finance-states-expenditure, public-finance-states-capital-receipts,
+        public-finance-states-financing, public-finance-states-liabilities, public-finance-states-wma, public-finance-states-investments,
+        public-finance-combined-deficits, public-finance-combined-liabilities, public-finance-combined-development, public-finance-combined-taxes,
+        public-finance-combined-accounts, public-finance-combined-bulletin, public-finance-ownership-gsec, public-finance-ownership-sdl,
+        public-finance-ownership-tbills, public-finance-ownership-annual-gsec, public-finance-ownership-annual-sdl, public-finance-ownership-annual-tbills,
+        public-finance-ownership-annual-gsec-old, public-finance-ownership-annual-sdl-old, public-finance-ownership-annual-tbills-old,
+        public-finance-tbills, public-finance-maturity, public-finance-small-savings, public-finance-small-savings-annual,
+        public-finance-small-savings-handbook, public-finance-small-savings-rates]
+    - base: "GDP 1999-2000 series"
+      from: "1970-04"
+      to: "2003-04"
+      bundles: [public-finance-centre-gdp-b1999, public-finance-states-gdp-b1999, public-finance-combined-gdp-b1999, public-finance-combined-debt-gdp-b1999, public-finance-combined-bulletin-gdp-b1999]
+    - base: "GDP 2004-05 series"
+      from: "2004-04"
+      to: "2010-04"
+      bundles: [public-finance-centre-gdp-b2004, public-finance-states-gdp-b2004, public-finance-combined-gdp-b2004, public-finance-combined-debt-gdp-b2004, public-finance-combined-bulletin-gdp-b2004]
+    - base: "GDP 2011-12 series"
+      from: "2011-04"
+      to: null
+      bundles: [public-finance-centre-gdp-b2011, public-finance-states-gdp-b2011, public-finance-combined-gdp-b2011, public-finance-combined-debt-gdp-b2011, public-finance-combined-bulletin-gdp-b2011]
+      bridge:
+        kind: agency back series
+        what: "MoSPI's back series of GDP at current prices on the 2011-12 base, 1950-51 to 2010-11 (gdp-back-levels); the RBI's rupee figures are divided by it here"
+        from: "1970-04"
+        to: "2010-04"
+        bundles: [public-finance-ratios-backcast]
+    - base: "GDP 2022-23 series"
+      from: "2022-04"
+      to: null
+      bundles: [public-finance-ratios-2022]
+  # ---- end public-finance ----

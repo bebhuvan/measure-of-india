@@ -620,6 +620,30 @@ const PRODUCTS = [
     ...["groups", "subgroups", "subsubgroups", "items"].map((l) => ({ slug: `wpi-${t}-${l}`, dossier: "wpi", cadence: 1, staleAfter: stale, range: [-95, 900], base })),
   ]),
   // ---- end prices wave 2 ----
+  // ---- public-finance (lb/public-finance, 2026-10): government finance, RBI DBIE via the Data Bank ----
+  // Amounts in ₹ crore (a deficit can be negative, a surplus); ratios per cent of GDP; shares per cent.
+  // Ranges by unit (pfRanges); retired tables (the Plan, budgetary capital formation) and the earlier
+  // GDP bases are frozen (stale: false). Stage series (__re, __be) hold one point each by design.
+  ...["centre-deficits", "centre-receipts", "centre-expenditure", "centre-capital-receipts", "centre-development", "centre-financing", "centre-liabilities", "centre-gdp-b2011"]
+    .map((n) => ({ slug: `public-finance-${n}`, dossier: "public-finance", cadence: 12, freq: "annual", staleAfter: "2026-04", range: [-5e6, 5e7], base: pfBase(n), seriesRange: pfRanges(`public-finance-${n}`) })),
+  ...["states-deficits", "states-receipts", "states-expenditure", "states-capital-receipts", "states-financing", "states-liabilities", "states-gdp-b2011", "combined-deficits", "combined-gdp-b2011", "combined-liabilities", "combined-debt-gdp-b2011", "combined-development", "combined-taxes", "combined-accounts", "combined-bulletin", "combined-bulletin-gdp-b2011"]
+    .map((n) => ({ slug: `public-finance-${n}`, dossier: "public-finance", cadence: 12, freq: "annual", staleAfter: "2025-04", range: [-5e6, 5e7], base: pfBase(n), seriesRange: pfRanges(`public-finance-${n}`) })),
+  ...["centre-gdp-b1999", "centre-gdp-b2004", "states-gdp-b1999", "states-gdp-b2004", "combined-gdp-b1999", "combined-gdp-b2004", "combined-debt-gdp-b1999", "combined-debt-gdp-b2004", "combined-bulletin-gdp-b1999", "combined-bulletin-gdp-b2004",
+    "ratios-backcast", "centre-capital-formation", "plan-outlay", "plan-financing", "ownership-annual-gsec-old", "ownership-annual-sdl-old", "ownership-annual-tbills-old"]
+    .map((n) => ({ slug: `public-finance-${n}`, dossier: "public-finance", cadence: 12, freq: "annual", stale: false, range: [-5e6, 5e7], base: pfBase(n), seriesRange: pfRanges(`public-finance-${n}`) })),
+  { slug: "public-finance-centre-budget-path", dossier: "public-finance", cadence: 12, freq: "annual", staleAfter: "2026-04", range: [-5e6, 5e7] },
+  { slug: "public-finance-ratios-2022", dossier: "public-finance", cadence: 12, freq: "annual", staleAfter: "2025-04", range: [-15, 100], base: "GDP 2022-23 series" },
+  ...["maturity", "ownership-annual-gsec", "ownership-annual-sdl", "ownership-annual-tbills"].map((n) => ({ slug: `public-finance-${n}`, dossier: "public-finance", cadence: 12, freq: "annual", staleAfter: "2025-04", range: [0, 5e7], seriesRange: pfRanges(`public-finance-${n}`) })),
+  ...["small-savings-annual", "small-savings-handbook"].map((n) => ({ slug: `public-finance-${n}`, dossier: "public-finance", cadence: 12, freq: "annual", staleAfter: "2024-04", range: [-5e5, 5e7] })),
+  { slug: "public-finance-centre-monthly", dossier: "public-finance", cadence: 1, freq: "monthly", staleAfter: "2026-07", range: [-5e6, 5e7], seriesRange: pfRanges("public-finance-centre-monthly") },
+  { slug: "public-finance-centre-gfd-monthly", dossier: "public-finance", cadence: 1, freq: "monthly", staleAfter: "2026-05", range: [-5e6, 5e6] },
+  { slug: "public-finance-states-wma", dossier: "public-finance", cadence: 1, freq: "monthly", staleAfter: "2026-07", range: [0, 1e6], seriesRange: pfRanges("public-finance-states-wma") },
+  { slug: "public-finance-states-investments", dossier: "public-finance", cadence: 1, freq: "monthly", staleAfter: "2026-07", range: [0, 1e6] },
+  { slug: "public-finance-small-savings", dossier: "public-finance", cadence: 1, freq: "monthly", staleAfter: "2026-01", range: [-5e5, 5e7] },
+  ...["ownership-gsec", "ownership-sdl", "ownership-tbills"].map((n) => ({ slug: `public-finance-${n}`, dossier: "public-finance", cadence: 3, freq: "quarterly", staleAfter: "2026-06", range: [0, 5e7], seriesRange: pfRanges(`public-finance-${n}`) })),
+  { slug: "public-finance-tbills", dossier: "public-finance", noCadence: true, freq: "weekly", staleAfter: "2026-09", range: [0, 2e6] },
+  { slug: "public-finance-small-savings-rates", dossier: "public-finance", noCadence: true, freq: "irregular", staleAfter: "2026-07", range: [0, 15] },
+  // ---- end public-finance ----
 ];
 
 for (const p of PRODUCTS) {
@@ -2938,6 +2962,21 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
   }
 }
 
+/* ---- public-finance (lb/public-finance): ranges by each series' unit, and the tables' own identities ---- */
+// the GDP series a per-cent-of-GDP bundle divides by (sources.yml seams: public-finance); rupee bundles "n/a"
+function pfBase(n) { return /-b1999$/.test(n) ? "GDP 1999-2000 series" : /-b2004$/.test(n) ? "GDP 2004-05 series" : /-b2011$|^ratios-backcast$/.test(n) ? "GDP 2011-12 series" : undefined; }
+function pfRanges(slug) {
+  const f = path.join(ROOT, "data/series", slug + ".json");
+  if (!fs.existsSync(f)) return {};
+  const b = JSON.parse(fs.readFileSync(f, "utf8"));
+  const R = { inr_crore: [-5e6, 5e7], pct_gdp: [-15, 100], pct: [-0.5, 100.5], days: [0, 31], count: [0, 40], pct_per_annum: [0, 15] };
+  const out = {};
+  for (const [k, s] of Object.entries(b.series)) {
+    if (/_pct_be$/.test(k)) out[k] = [-5000, 5000];               // a cumulative month against a full year's estimate (a deficit can start as a surplus)
+    else if (R[s.unit]) out[k] = R[s.unit];
+  }
+  return out;
+}
 /* ---- rates (atlas-rates family session): identities across the RBI's own tables ---- */
 // series ranges by unit suffix (name ends _pct, _inr_crore, ...), so a bundle mixing rates and
 // rupee amounts checks each against its own scale
@@ -3239,6 +3278,74 @@ withBundle("wages-rural-2013", (b) => {
   // a total outside its urban and rural parts is a misread cell; the fact sheets' rounding allows 0.15
   if (outside > 0.005 * triplets) { fail(`profiles-nfhs6: ${outside} of ${triplets} totals lie outside their urban and rural figures`); bad++; }
   if (!bad) ok(`profiles-nfhs6: ${Object.keys(six.series).length} series, 36 geographies x 101 indicators; the total lies between urban and rural in ${triplets - outside} of ${triplets} places`);
+}
+
+/* ---- public-finance (lb/public-finance): the tables' own arithmetic, on the accounts years ---- */
+{
+  const acc = (b, k) => b.series[k]?.data ?? null;                  // accounts series only (stages are __re, __be)
+  const sumCheck = (slug, total, parts, tol, what) => withBundle(slug, (b) => {
+    const t = acc(b, total), ps = parts.map((k) => acc(b, k));
+    if (!t || ps.some((p) => !p)) return fail(`${slug}: identity ${what}: series missing (${[total, ...parts].filter((k) => !b.series[k]).join(", ")})`);
+    let worst = 0, at = null, n = 0;
+    // tol in crore; a figure may also differ by a hundredth of a per cent of the total (the RBI rounds each printed figure)
+    b.dates.forEach((d, i) => { if (t[i] == null || ps.some((p) => p[i] == null)) return; n++; const dv = Math.max(0, Math.abs(t[i] - ps.reduce((a, p, j) => a + (parts[j].startsWith("-") ? -1 : 1) * p[i], 0)) - 1e-4 * Math.abs(t[i])); if (dv > worst) { worst = dv; at = d; } });
+    if (!n) fail(`${slug}: identity ${what} checked no year`);
+    else if (worst > tol) fail(`${slug}: ${what} is off by ${worst.toFixed(2)} at ${at}`);
+    else ok(`${slug}: ${what} holds in ${n} years (worst ${worst.toFixed(2)})`);
+  });
+  sumCheck("public-finance-centre-expenditure", "total_expenditure", ["revenue_expenditure", "capital_expenditure"], 2, "total = revenue + capital expenditure");
+  sumCheck("public-finance-centre-expenditure", "capital_expenditure", ["capital_outlay", "loans_and_advances"], 2, "capital expenditure = capital outlay + loans and advances");
+  sumCheck("public-finance-centre-receipts", "total_receipts", ["revenue_receipts", "capital_receipts"], 2, "total = revenue + capital receipts");
+  sumCheck("public-finance-centre-receipts", "revenue_receipts", ["tax_revenue_net", "non_tax_revenue"], 2, "revenue receipts = net tax + non-tax revenue");
+  sumCheck("public-finance-states-expenditure", "total_expenditure", ["revenue_expenditure", "capital_expenditure"], 2, "total = revenue + capital expenditure");
+  sumCheck("public-finance-states-receipts", "total_receipts", ["total_revenue_receipts", "total_capital_receipts"], 2, "total = revenue + capital receipts");
+  sumCheck("public-finance-states-receipts", "total_revenue_receipts", ["tax_receipts", "non_tax_receipts"], 2, "revenue receipts = tax + non-tax receipts");
+  // the Centre's deficits against its spending and receipts (three tables)
+  withBundle("public-finance-centre-deficits", (d) => withBundle("public-finance-centre-expenditure", (e) => withBundle("public-finance-centre-receipts", (r) => {
+    let worstP = 0, worstR = 0, n = 0;
+    d.dates.forEach((dt, i) => {
+      const j = e.dates.indexOf(dt), k = r.dates.indexOf(dt); if (j < 0 || k < 0) return;
+      const g = d.series.gross_fiscal_deficit.data[i], p = d.series.gross_primary_deficit.data[i], int = e.series.interest_payments.data[j];
+      const rd = d.series.revenue_deficit.data[i], re = e.series.revenue_expenditure.data[j], rr = r.series.revenue_receipts.data[k];
+      if ([g, p, int, rd, re, rr].some((v) => v == null)) return; n++;
+      worstP = Math.max(worstP, Math.abs(g - int - p)); worstR = Math.max(worstR, Math.abs(re - rr - rd) / Math.max(1, Math.abs(re)) * 1e6);
+    });
+    if (!n) fail("public-finance: Centre deficit identities checked no year");
+    // the revenue deficit is printed in its own table: it may differ from the other two tables' arithmetic by rounding and late restatement (2014-15: 92 crore in 3.7 lakh crore)
+    else if (worstP > 2 || worstR > 0.001 * 1e6) fail(`public-finance: Centre's primary deficit or revenue deficit does not follow from its tables (off by ${worstP.toFixed(1)} crore and ${worstR.toFixed(0)} parts per million)`);
+    else ok(`public-finance: Centre's primary deficit = GFD - interest and revenue deficit = revenue spending - revenue receipts in ${n} years`);
+  })));
+  // the monthly accounts: the deficit is spending less receipts, every printed month
+  withBundle("public-finance-centre-monthly", (b) => {
+    const s = b.series; let worst = 0, n = 0;
+    b.dates.forEach((d, i) => { const f = s.fiscal_deficit.data[i], t = s.total_expenditure.data[i], r = s.total_receipts.data[i]; if ([f, t, r].some((v) => v == null)) return; n++; worst = Math.max(worst, Math.max(0, Math.abs(t - r - f) - Math.max(2, 0.001 * Math.abs(t)))); });
+    if (worst > 0) fail(`public-finance-centre-monthly: fiscal deficit != expenditure - receipts (off by ${worst} crore)`);
+    else ok(`public-finance-centre-monthly: fiscal deficit = total expenditure - total receipts in ${n} months`);
+  });
+  // who holds the debt: shares add up to 100 at every quarter (state governments sit inside 'others')
+  for (const nm of ["gsec", "sdl", "tbills"]) withBundle(`public-finance-ownership-${nm}`, (b) => {
+    let bad = 0; b.dates.forEach((d, i) => { const parts = Object.entries(b.series).filter(([k, s]) => s.unit === "pct" && k !== "state_governments").map(([, s]) => s.data[i]).filter((v) => v != null); if (parts.length >= 5 && Math.abs(parts.reduce((a, v) => a + v, 0) - 100) > 0.6) bad++; });
+    if (bad) fail(`public-finance-ownership-${nm}: shares do not add to 100 at ${bad} quarter(s)`); else ok(`public-finance-ownership-${nm}: holders' shares add to 100 at every quarter`);
+  });
+  // states' cash: no state draws on a facility for more days than the month has
+  withBundle("public-finance-states-wma", (b) => {
+    let bad = 0; for (const [k, s] of Object.entries(b.series)) if (k.endsWith("_days")) s.data.forEach((v, i) => { const d = new Date(b.dates[i] + "T00:00:00Z"); const dim = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate(); if (v != null && v > dim) bad++; });
+    if (bad) fail(`public-finance-states-wma: ${bad} state-months with more days than the month has`); else ok("public-finance-states-wma: days used never exceed the days in the month");
+  });
+  // small savings: the total outstanding is deposits plus certificates plus the PPF (the table's own 3+5+7)
+  // the table's grand total is its deposits, certificates and PPF (its own 3+5+7), except where it leaves out Sukanya
+  // Samriddhi and PM CARES (disclosed on the bundle); anything else beyond rounding fails
+  withBundle("public-finance-small-savings", (b) => {
+    const g = (k, i) => b.series[k]?.data[i] ?? 0; let n = 0, ssy = 0, near = 0, bad = [];
+    b.dates.forEach((d, i) => { const t = b.series.total__outstanding.data[i]; if (t == null) return; n++;
+      const diff = g("total_deposits__outstanding", i) + g("total_certificates__outstanding", i) + g("public_provident_fund__outstanding", i) - t;
+      if (Math.abs(diff) <= 3) return;
+      if (Math.abs(diff) <= 2e-3 * t) { near++; return; }               // within 0.2%: the table's parts were restated without its total (2011-12 to 2012-13)
+      if (Math.abs(diff - g("sukanya_samriddhi_yojana__outstanding", i) - g("pm_care_for_children__outstanding", i)) <= 3) { ssy++; return; }
+      bad.push(`${d}: ${Math.round(diff)}`); });
+    if (bad.length) fail(`public-finance-small-savings: total outstanding is not deposits + certificates + PPF at ${bad.slice(0, 4).join(", ")}`);
+    else ok(`public-finance-small-savings: total outstanding = deposits + certificates + PPF in ${n - ssy - near} months, within 0.2% in ${near}; ${ssy} months leave out Sukanya Samriddhi and PM CARES (disclosed)`);
+  });
 }
 
 // META TEXT — every bundle on disk, whatever check family it belongs to, and every sources.yml

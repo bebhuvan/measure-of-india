@@ -84,6 +84,9 @@ Object.assign(REGISTRY, { cpiiw: buildCpiiw, "wages-rural": buildWagesRural }); 
 import { buildProfilesNfhs6 } from "./lib/products/profiles-nfhs6.mjs";   // profiles (lb/profiles)
 Object.assign(REGISTRY, { "profiles-nfhs6": buildProfilesNfhs6 });   // profiles (lb/profiles)
 
+import { buildPublicFinance } from "./lib/products/public-finance.mjs";   // public-finance (lb/public-finance)
+Object.assign(REGISTRY, { "public-finance": buildPublicFinance });   // public-finance (lb/public-finance)
+
 // One product's failure must not starve the rest: collect, continue, and
 // exit non-zero at the end so CI still fails on the summary.
 const failed = [];

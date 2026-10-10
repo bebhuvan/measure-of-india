@@ -1,0 +1,210 @@
+{
+ "meta": {
+  "dossier": "public-finance",
+  "source": "Reserve Bank of India, DBIE (via the Data Bank)",
+  "product": "public-finance",
+  "base": "GDP 2004-05 series",
+  "vintage": "2026-10-10",
+  "mock": false,
+  "geo": "IND",
+  "releaseDate": null,
+  "revisionPolicy": "Each year passes through three stages: the budget estimate (February before the year), the revised estimate (February of the year) and the accounts (provisional in May after the year, audited later). The RBI's tables restate a year as it moves from one stage to the next; each stage is kept as its own series.",
+  "frequency": "annual",
+  "unit": "pct_gdp",
+  "stages": {
+   "accountsTo": "2023-24",
+   "revisedEstimate": "2024-25",
+   "budgetEstimate": "2025-26"
+  },
+  "scope": "states",
+  "table": {
+   "report": "454",
+   "handbook": 269,
+   "title": "Select fiscal indicators of the state governments, per cent of GDP"
+  },
+  "latestPeriod": "2010-11 (financial year)",
+  "coverage": "All states' deficits and receipts as a share of India's GDP, 2004-05 to 2010-11, over GDP on the 2004-05 base",
+  "note": "RBI, Select fiscal indicators of the state governments, per cent of GDP (DBIE report 454). Per cent of GDP at current market prices, GDP on the 2004-05 base (the RBI's note on its state-indicators table: 1999-2000 base to 2003-04, 2004-05 base to 2010-11, 2011-12 base from 2011-12; the Centre's and the combined tables divide by the same GDP, checked by their implied denominators). A different GDP base is a different ruler: never joined across bundles. Cross-checked against the printed table (Innovation Hub export of Handbook report 269): 530 of 530 figures match."
+ },
+ "dates": [
+  "2004-04-01",
+  "2005-04-01",
+  "2006-04-01",
+  "2007-04-01",
+  "2008-04-01",
+  "2009-04-01",
+  "2010-04-01"
+ ],
+ "series": {
+  "revenue_deficit": {
+   "name": "revenue_deficit_pct_gdp",
+   "label": "Revenue deficit, per cent of GDP",
+   "color": "#2E4BD8",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 0,
+   "data": [
+    1.2078,
+    0.1899,
+    -0.5788,
+    -0.8611,
+    -0.2251,
+    0.4788,
+    -0.0391
+   ]
+  },
+  "gross_fiscal_deficit": {
+   "name": "gross_fiscal_deficit_pct_gdp",
+   "label": "Gross fiscal deficit, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 1,
+   "data": [
+    3.3241,
+    2.4391,
+    1.8048,
+    1.513,
+    2.3905,
+    2.9149,
+    2.0713
+   ]
+  },
+  "primary_deficit": {
+   "name": "primary_deficit_pct_gdp",
+   "label": "Primary deficit, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 2,
+   "data": [
+    0.6586,
+    0.1641,
+    -0.3649,
+    -0.4888,
+    0.5619,
+    1.1734,
+    0.47
+   ]
+  },
+  "primary_revenue_deficit": {
+   "name": "primary_revenue_deficit_pct_gdp",
+   "label": "Primary revenue deficit, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 3,
+   "data": [
+    -1.4577,
+    -2.0851,
+    -2.7484,
+    -2.8629,
+    -2.0537,
+    -1.2626,
+    -1.6404
+   ]
+  },
+  "conventional_deficit": {
+   "name": "conventional_deficit_pct_gdp",
+   "label": "Conventional deficit, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 4,
+   "data": [
+    -0.3156,
+    -0.9191,
+    -0.3801,
+    -0.2689,
+    -0.1591,
+    0.1188,
+    -0.1904
+   ]
+  },
+  "aggregate_disbursements": {
+   "name": "aggregate_disbursements_pct_gdp",
+   "label": "Aggregate disbursements, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 5,
+   "data": [
+    17.0695,
+    15.2078,
+    15.3044,
+    15.0855,
+    15.6718,
+    15.6739,
+    14.8644
+   ]
+  },
+  "revenue_receipts": {
+   "name": "revenue_receipts_pct_gdp",
+   "label": "Revenue receipts, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 6,
+   "data": [
+    11.2119,
+    11.6701,
+    12.3537,
+    12.5073,
+    12.3384,
+    11.8579,
+    11.9988
+   ]
+  },
+  "tax_receipts": {
+   "name": "tax_receipts_pct_gdp",
+   "label": "Tax receipts, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 7,
+   "data": [
+    8.037,
+    8.2941,
+    8.6814,
+    8.7816,
+    8.5786,
+    8.152,
+    8.7257
+   ]
+  },
+  "non_tax_receipts": {
+   "name": "non_tax_receipts_pct_gdp",
+   "label": "Non tax receipts, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 8,
+   "data": [
+    3.1748,
+    3.3761,
+    3.6723,
+    3.7256,
+    3.7597,
+    3.7059,
+    3.2731
+   ]
+  },
+  "aggregate_receipts": {
+   "name": "aggregate_receipts_pct_gdp",
+   "label": "Aggregate receipts, per cent of GDP",
+   "color": "#A3A9B4",
+   "stage": "accounts",
+   "unit": "pct_gdp",
+   "order": 9,
+   "data": [
+    17.3851,
+    16.127,
+    15.6845,
+    15.3543,
+    15.8309,
+    15.5551,
+    15.0549
+   ]
+  }
+ }
+}
