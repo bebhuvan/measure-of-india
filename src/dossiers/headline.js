@@ -56,6 +56,8 @@ export const HEADLINE = {
   credit:        { value: (b) => `${last(b, "headline").toFixed(1)}%`, what: "growth of bank credit, year on year", period: month },
   // trade (lb/trade): the month's merchandise trade balance, US$ billion, signed (a deficit is negative)
   trade:         { value: (b) => `${last(b, "balance") < 0 ? "−" : ""}$${Math.abs(last(b, "balance") / 1000).toFixed(1)} bn`, what: "merchandise trade balance (exports minus imports)", period: month },
+  // --- public-finance (lb/public-finance): the Centre's deficit so far this year, against the year's budget
+  "public-finance": { value: (b) => `${last(b, "fiscal_deficit_pct_be").toFixed(1)}%`, what: "the Centre's fiscal deficit so far this year, as a share of the year's budget estimate", period: (b) => { const d = lastDate(b), m = +d.slice(5, 7) - 1; return `April to ${MONTHS[m]} ${d.slice(0, 4)}`; } },
 };
 
 // The small chart beside each guide's figure: always on the current ruler, so a chart never
@@ -94,6 +96,8 @@ export const SPARK = {
   // credit (lb/credit)
   credit:        { bundle: "credit-growth", series: "headline" },
   trade:         { bundle: "trade-total", series: "exports", n: 60 },   // trade (lb/trade)
+  // public-finance (lb/public-finance): the Centre's deficit, April to each month
+  "public-finance": { bundle: "public-finance-centre-gfd-monthly", series: "gfd_fytd", n: 87 },
 };
 
 const cache = {};

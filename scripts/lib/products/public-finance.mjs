@@ -473,8 +473,6 @@ export async function buildPublicFinance(root, dcfg, vintage, cfg) {
     const dates = monthAxis(months[0].slice(0, 7), months.at(-1).slice(0, 7));
     const fys = [...new Set(dates.map(fyOf))];
     // the year's budget estimate: the figure most months carry; its revised estimate: March, else February, else January
-    const mode = (fy, k) => { const c = new Map(); let last = null; for (const d of dates.filter((d) => fyOf(d) === fy)) { const v = BE.get(`${fy}|${k}|${d}`); if (v == null) continue; c.set(r2(v), (c.get(r2(v)) ?? 0) + 1); last = r2(v); } if (!c.size) return null; const best = Math.max(...c.values()); const tops = [...c].filter(([, n]) => n === best).map(([v]) => v); return tops.includes(last) ? last : tops.at(-1); };
-    const reOf = (fy, k) => { const y2 = +fy.slice(0, 4) + 1; for (const mm of ["03", "02", "01"]) { const d = `${y2}-${mm}-01`; const v = RE.get(`${fy}|${k}|${d}`); if (v != null) return r2(v); } return null; };
     // the old layout (to April 2019) mostly counts borrowing inside capital receipts and total receipts, so
     // total receipts equal total expenditure; the new layout counts only non-debt receipts. Two measures:
     // a month (or a year's estimate) whose total receipts equal its total expenditure goes to the
@@ -482,12 +480,42 @@ export async function buildPublicFinance(root, dcfg, vintage, cfg) {
     const INCL = ["non_debt_capital_receipts", "total_receipts"];
     const tolOf = (e) => Math.max(2, 0.001 * Math.abs(e ?? 0));
     const inclAt = (get) => { const t = get("total_receipts"), e = get("total_expenditure"), f = get("fiscal_deficit"); return t != null && e != null && Math.abs(t - e) <= tolOf(e) && Math.abs(f ?? 0) > tolOf(e); };
-    const beBy = new Map(fys.flatMap((fy) => keys.map((k) => [`${fy}|${k}`, mode(fy, k)])));
+    // a row of the table is usable only where its own arithmetic holds: total spending = revenue + capital
+    // spending, the revenue deficit = revenue spending - revenue receipts, the primary deficit = the fiscal
+    // deficit - interest, revenue receipts = net tax + non-tax revenue, and (in the non-debt layout) the fiscal
+    // deficit = spending - receipts. In some months the RBI's columns slip between items (2025-26's budget
+    // estimates: capital spending carries the revenue-spending figure); such rows fail and are not used.
+    const vecOk = (get) => {
+      const v = (k) => get(k); const near = (a, b, scale) => Math.abs(a - b) <= tolOf(scale);
+      const tests = [];
+      const add = (vals, f) => { if (vals.every((x) => x != null)) tests.push(f(...vals)); };
+      add([v("total_expenditure"), v("revenue_expenditure"), v("capital_expenditure")], (t, r, c) => near(t, r + c, t));
+      add([v("revenue_deficit"), v("revenue_expenditure"), v("revenue_receipts")], (d, e, r) => near(d, e - r, e));
+      add([v("primary_deficit"), v("fiscal_deficit"), v("interest_payments")], (p, f, i) => near(p, f - i, f));
+      add([v("revenue_receipts"), v("tax_revenue_net"), v("non_tax_revenue")], (r, t, n) => near(r, t + n, r));
+      if (!inclAt(get)) add([v("fiscal_deficit"), v("total_expenditure"), v("total_receipts")], (f, e, r) => near(f, e - r, e));
+      return tests.length >= 3 && tests.every(Boolean);
+    };
+    // the year's budget estimate: the row (all fourteen items of one month) that most of the year's months
+    // print and whose arithmetic holds; in election years that is the full budget's, not the interim one's
+    const rowsOf = (M, fy, monthsList) => monthsList.map((d) => Object.fromEntries(keys.map((k) => [k, M.get(`${fy}|${k}|${d}`) ?? null])));
+    const beRow = new Map(), reRow = new Map(), rejected = [];
+    for (const fy of fys) {
+      const ms = dates.filter((d) => fyOf(d) === fy);
+      const counts = new Map();
+      for (const row of rowsOf(BE, fy, ms)) { if (!Object.values(row).some((x) => x != null)) continue; const key = JSON.stringify(Object.values(row).map((x) => (x == null ? null : r2(x)))); const c = counts.get(key) ?? { row, n: 0 }; c.n++; counts.set(key, c); }
+      const ok = [...counts.values()].filter((c) => vecOk((k) => c.row[k])).sort((a, b) => b.n - a.n);
+      if (ok.length) beRow.set(fy, ok[0].row); else if (counts.size) rejected.push(`${fy} budget estimate`);
+      const y2 = +fy.slice(0, 4) + 1;
+      for (const mm of ["03", "02", "01"]) { const [row] = rowsOf(RE, fy, [`${y2}-${mm}-01`]); if (!Object.values(row).some((x) => x != null)) continue; if (vecOk((k) => row[k])) { reRow.set(fy, row); break; } rejected.push(`${fy} revised estimate as printed in ${y2}-${mm}`); }
+    }
+    const reOf = (fy, k) => { const v = reRow.get(fy)?.[k]; return v == null ? null : r2(v); };
+    const beBy = new Map(fys.flatMap((fy) => keys.map((k) => { const v = beRow.get(fy)?.[k]; return [`${fy}|${k}`, v == null ? null : r2(v)]; })));
     const inclFY = new Set(fys.filter((fy) => inclAt((k) => beBy.get(`${fy}|${k}`))));
     const inclMonth = new Set(dates.filter((d) => inclAt((k) => A.get(`${d}|${k}`))));
     // a month whose own figures do not add up (the deficit is not spending less non-debt receipts, nor is
     // it the old layout), or that repeats an earlier month of the same year item for item, is left empty
-    const inconsistent = dates.filter((d) => { if (repeated.includes(d) || inclMonth.has(d)) return false; const f = A.get(`${d}|fiscal_deficit`), e = A.get(`${d}|total_expenditure`), r = A.get(`${d}|total_receipts`); return [f, e, r].every((v) => v != null) && Math.abs(e - r - f) > tolOf(e); });
+    const inconsistent = dates.filter((d) => !repeated.includes(d) && keys.some((k) => A.get(`${d}|${k}`) != null) && !vecOk((k) => A.get(`${d}|${k}`) ?? null));
     const echoes = dates.filter((d, i) => keys.some((k) => A.get(`${d}|${k}`) != null) && dates.slice(0, i).some((p) => fyOf(p) === fyOf(d) && keys.every((k) => A.get(`${p}|${k}`) === A.get(`${d}|${k}`))));
     repeated.push(...inconsistent, ...echoes);
     console.log(`public-finance: 49: months left empty: repeated year ${repeated.length - inconsistent.length - echoes.length}, inconsistent ${inconsistent.join(" ")}, echoes ${echoes.join(" ")}`);
@@ -508,7 +536,7 @@ export async function buildPublicFinance(root, dcfg, vintage, cfg) {
     write("centre-monthly", { meta: meta({ frequency: "monthly", unit: "inr_crore", vintage: RAWV["49"], latestPeriod: dates.at(-1).slice(0, 7),
       coverage: "The Centre's accounts month by month, April to the month: receipts, spending, interest and the deficits, ₹ crore, and each as a share of the year's budget estimate",
       repeatedMonths: repeated,
-      note: `RBI Bulletin, Union Government Accounts at a Glance (DBIE report 49, two data providers: the old layout to April 2019 and the new from May 2019, the same fourteen items), from the Controller General of Accounts. Figures are cumulative from April and unaudited (the table's note 1). The share of the budget estimate is computed here against the year's budget estimate as the table carries it (the full budget's figure in election years). ${repeated.length} months are left empty: they repeat a year earlier, repeat an earlier month, or do not add up (listed on each series). In ${inclMonth.size} months, mostly in the old layout, the table counts borrowing inside capital receipts and total receipts (total receipts equal total expenditure); those two items are kept in separate 'including borrowing' series for those months. ${conflicts} duplicate rows with differing figures were found (the later row wins).` }),
+      note: `RBI Bulletin, Union Government Accounts at a Glance (DBIE report 49, two data providers: the old layout to April 2019 and the new from May 2019, the same fourteen items), from the Controller General of Accounts. Figures are cumulative from April and unaudited (the table's note 1). The share of the budget estimate is computed here against the year's budget estimate (from the row most of the year's months print whose own arithmetic holds; the full budget's figure in election years). A month whose own figures do not add up is left empty. ${repeated.length} months are left empty: they repeat a year earlier, repeat an earlier month, or do not add up (listed on each series). In ${inclMonth.size} months, mostly in the old layout, the table counts borrowing inside capital receipts and total receipts (total receipts equal total expenditure); those two items are kept in separate 'including borrowing' series for those months. ${conflicts} duplicate rows with differing figures were found (the later row wins).` }),
       dates, series });
     // the path of each year: budget estimate, revised estimate, provisional accounts (the March figure)
     const pf = fys.filter((fy) => keys.some((k) => beBy.get(`${fy}|${k}`) != null));
@@ -543,8 +571,8 @@ export async function buildPublicFinance(root, dcfg, vintage, cfg) {
     console.log(`public-finance: 49 BE/RE rule matches the Handbook for ${pairs.length} items`);
     write("centre-budget-path", { meta: meta({ frequency: "annual", unit: "inr_crore", vintage: RAWV["49"], latestPeriod: pf.at(-1),
       coverage: "Each year's journey from the budget estimate to the revised estimate to the provisional accounts, for the Centre's fourteen headline items, ₹ crore, 1999-2000 on",
-      checks,
-      note: `RBI Bulletin, Union Government Accounts at a Glance (DBIE report 49). For each financial year: the budget estimate (the figure most of the year's monthly rows carry, which in election years is the full budget's rather than the interim budget's), the revised estimate (as printed in March, else February, else January of the year) and the provisional accounts (the cumulative figure for March, unaudited). The audited accounts, published later, are in the Centre's Handbook tables. Checked: the rule gives the Handbook's figures for the latest budget and revised estimates (${pairs.length} items). Three stages, three series per item; never one line.` }),
+      checks, rejectedRows: rejected,
+      note: `RBI Bulletin, Union Government Accounts at a Glance (DBIE report 49). For each financial year: the budget estimate (the row of fourteen items that most of the year's months print and whose own arithmetic holds, which in election years is the full budget's rather than the interim budget's), the revised estimate (as printed in March, else February, else January of the year, again only from a row that adds up) and the provisional accounts (the cumulative figure for March, unaudited). The audited accounts, published later, are in the Centre's Handbook tables. Checked: the rule gives the Handbook's figures for the latest budget and revised estimates (${pairs.length} items). Rows whose own arithmetic fails are not used${rejected.length ? ` (${rejected.join("; ")})` : ""}. Three stages, three series per item; never one line.` }),
       dates: pf.map(fyStart), series: path });
   }
 
