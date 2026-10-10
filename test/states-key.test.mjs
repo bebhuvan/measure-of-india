@@ -24,7 +24,7 @@ const otherGeo = (slug) => OTHER_GEOGRAPHY.find(([re]) => re.test(slug))?.[1] ??
 // Inside a state cut, rows that are not one state, declared with the reason.
 const NON_STATE_ROWS = [
   [/^asuse-/, (s) => /^(All|HWE|OAE|Manufacturing|Trade|Other Services)$/.test(s.group ?? "") && !place(s.label), "all-India rows by enterprise type"],
-  [/^(mnre-states|states-hbs-t005$|states-hbs-t098$|states-hbs-t180$)/, (s) => /^(others|nhb\/states|others \(nri\/defense\))\b/i.test(s.label.split(/ · |: /).at(s.label.includes(" · ") ? -1 : 0)), "the source's own 'Others' row"],
+  [/./, (s) => /^(others|nhb\/states|others \(nri\/defense\))\b/i.test(s.label.split(/ · |: /).at(s.label.includes(" · ") ? -1 : 0)), "the source's own 'Others' row"],
   [/^states-hbs-t142$/, (s) => /^Damodar Valley Corporation/.test(s.label), "a power utility serving two states"],
   [/^states-hbs-t149$/, (s) => /^(Mumbai|Kolkata|Chennai|Delhi):/.test(s.label), "metro telephone circles"],
   [/^states-hbs-t177$/, (s) => /^Per Cent Of Gdp/.test(s.label), "the all-states total as a share of GDP"],
