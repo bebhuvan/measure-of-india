@@ -31,6 +31,14 @@ families:
       UN DESA Population Division, World Population Prospects standard CSV files (gzip,
       all countries). scripts/lib/products/wpp.mjs downloads them with net.mjs getBuffer and
       caches them in data/raw/http-cache for 30 days; WPP is revised every two years.
+  rbihub:
+    transport: http
+    base: https://data-api.dbie.rbihub.in
+    note: >
+      The Reserve Bank Innovation Hub's DBIE data service (scripts/lib/rbihub.mjs,
+      docs/reference/rbihub.md): raw DBIE report exports in a database. Used only for
+      reports the Data Bank holds no validated copy of (prompt-gated reports) and for the
+      SDMX datasets; the Data Bank stays the record wherever it has the report.
   databank:
     transport: local
     root: "~/Documents/Data/Data bank"
