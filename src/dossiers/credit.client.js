@@ -262,7 +262,9 @@ const ROWS_WHO = [
   const rows = KEYS.map(([k, name]) => ({ k, name, v: G.series[k].data[iL], y: at(G, k, yearsAgo(G.dates[iL], 1)) })).sort((a, b) => b.v - a.v);
   const head = G.series.headline.data[iL];
   const xmax = Math.ceil(Math.max(...rows.map((r) => Math.max(r.v, r.y ?? 0))) / 20) * 20;
-  const plot = hbars("plot-fast", rows, { valueFmt: (x) => x.toFixed(1) + "%", hl: (d) => d.v > head, xDomain: [Math.min(0, ...rows.map((r) => r.v)), xmax], xTicks: Array.from({ length: xmax / 20 + 1 }, (_, i) => i * 20), xFmt: (x) => x + (x === xmax ? "%" : ""), label: "growth on a year earlier", dot: "y", ml: 270,
+  // the axis reaches below zero when a bar or a year-ago circle does, so no circle sits on a row's name
+  const xmin = Math.floor(Math.min(0, ...rows.map((r) => Math.min(r.v, r.y ?? 0))) / 20) * 20;
+  const plot = hbars("plot-fast", rows, { valueFmt: (x) => x.toFixed(1) + "%", hl: (d) => d.v > head, xDomain: [xmin, xmax], xTicks: Array.from({ length: (xmax - xmin) / 20 + 1 }, (_, i) => xmin + i * 20), xFmt: (x) => x + (x === xmax ? "%" : ""), label: "growth on a year earlier", dot: "y", ml: 270,
     // the headline as a reference line
   });
   const svg = plot;
@@ -551,7 +553,7 @@ const ROWS_WHO = [
   const C = crarB;
   const below = C.series.all_below_minimum, L = C.dates.length - 1;
   const n10 = C.series.all_above_10.data[L], b910 = C.series.all_between_9_10.data[L], b9 = C.series.all_below_9.data[L];
-  setHTML("ex-cr-n", String(n10 + b910 + b9)); setHTML("ex-cr-b9", String(b9)); setHTML("ex-cr-yr", `March ${C.dates[L].slice(0, 4)}`);
+  setHTML("ex-cr-n", String(n10 + b910 + b9)); setHTML("ex-cr-b9", b9 === 0 ? "None" : String(b9)); setHTML("ex-cr-yr", `March ${C.dates[L].slice(0, 4)}`);
   const pk = below.data.reduce((b, v, i) => (v != null && C.dates[i] >= "2010-01-01" && v > b.v ? { v, d: C.dates[i] } : b), { v: -1 });
   setHTML("ex-cr-pk", String(pk.v)); setHTML("ex-cr-pkd", `March ${pk.d.slice(0, 4)}`);
 }
