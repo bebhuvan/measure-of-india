@@ -1,7 +1,8 @@
 # Coverage ledger: Index of Industrial Production, MoSPI (docs/CONTRACT-coverage.md).
 # Catalogue: node scripts/lib/products/iip.mjs --catalogue. Every monthly category and
 # industry of every base is baked (counts checked against the listing: 11/32, 10/23, 9/22,
-# 9/17). Omission left for the coordinator: the annual (financial-year) series of all bases.
+# 9/17). The annual (financial-year) series of every base are baked as iip-annual-<base>
+# (wave 2, 2026-10-10). The 1980-81 base, which MoSPI does not serve, is in iip-dbie.yml.
 family: iip
 guides: [iip]
 catalogue: data/coverage/iip.catalogue.json
@@ -10,32 +11,32 @@ rules:
     status: shown
     bundle: iip-2022
     series: [general]
-    plate: "§01 The current reading; §03 Four ledgers, one index"
+    plate: "§01 The current reading; §03 Five ledgers, one index"
   - match: ["iip:2022-23:monthly:sectoral:*", "iip:2022-23:monthly:use-based:*"]
     status: shown
     bundle: iip-2022
-    plate: "§05 Plate 1: the sectors; §07 The parts, one plate each"
+    plate: "§06 Plate 1: the sectors; §09 The parts, one plate each"
   - match: "iip:2022-23:monthly:industry:*"
     status: shown
     bundle: iip-industries-2022
-    plate: "§07 The current-base industry field"
+    plate: "§09 The current-base industry field"
   - match: "iip:2011-12:monthly:general"
     status: shown
     bundle: iip-2011
     series: [general]
-    plate: "§03 Four ledgers, one index (two bases)"
+    plate: "§03 Five ledgers, one index (two bases)"
   - match: ["iip:2011-12:monthly:sectoral:*", "iip:2011-12:monthly:use-based:*"]
     status: baked
     bundle: iip-2011
   - match: "iip:2011-12:monthly:industry:*"
     status: shown
     bundle: iip-industries-2011
-    plate: "§04 The long ledger: 23 industries"
+    plate: "§05 The long ledger: 23 industries"
   - match: "iip:2004-05:monthly:general"
     status: shown
     bundle: iip-2004
     series: [general]
-    plate: "§03 Four ledgers, one index (the deep ledger)"
+    plate: "§03 Five ledgers, one index (the deep ledger)"
   - match: ["iip:2004-05:monthly:sectoral:*", "iip:2004-05:monthly:use-based:*"]
     status: baked
     bundle: iip-2004
@@ -46,7 +47,7 @@ rules:
     status: shown
     bundle: iip-1993
     series: [general]
-    plate: "§03 Four ledgers, one index (the deep ledger)"
+    plate: "§03 Five ledgers, one index (the deep ledger)"
   - match: ["iip:1993-94:monthly:sectoral:*", "iip:1993-94:monthly:use-based:*"]
     status: baked
     bundle: iip-1993
@@ -54,24 +55,22 @@ rules:
     status: baked
     bundle: iip-industries-1993
 
-  # Known omissions, found 2026-10-09 when this ledger was first written (atlas-framework).
-  # Not decided yet: each is scheduled; --strict (launch) fails while any remain.
-  - match:
-      - "iip:1993-94:annual:general"
-      - "iip:1993-94:annual:industry:*"
-      - "iip:1993-94:annual:sectoral:*"
-      - "iip:1993-94:annual:use-based:*"
-      - "iip:2004-05:annual:general"
-      - "iip:2004-05:annual:industry:*"
-      - "iip:2004-05:annual:sectoral:*"
-      - "iip:2004-05:annual:use-based:*"
-      - "iip:2011-12:annual:general"
-      - "iip:2011-12:annual:industry:*"
-      - "iip:2011-12:annual:sectoral:*"
-      - "iip:2011-12:annual:use-based:*"
-      - "iip:2022-23:annual:general"
-      - "iip:2022-23:annual:industry:*"
-      - "iip:2022-23:annual:sectoral:*"
-      - "iip:2022-23:annual:use-based:*"
-    status: pending
-    scheduled: "wave 2: industry deeper"
+  # Financial-year series (frequency=Annually), baked in wave 2 (2026-10-10): every level and
+  # published growth MoSPI serves, one bundle per base; the general index is drawn.
+  - match: ["iip:2022-23:annual:general", "iip:2011-12:annual:general", "iip:2004-05:annual:general", "iip:1993-94:annual:general"]
+    status: shown
+    bundle: [iip-annual-2022, iip-annual-2011, iip-annual-2004, iip-annual-1993]
+    series: [general_index, general_growth]
+    plate: "§04 Financial years, five rulers"
+  - match: "iip:2022-23:annual:*"
+    status: baked
+    bundle: iip-annual-2022
+  - match: "iip:2011-12:annual:*"
+    status: baked
+    bundle: iip-annual-2011
+  - match: "iip:2004-05:annual:*"
+    status: baked
+    bundle: iip-annual-2004
+  - match: "iip:1993-94:annual:*"
+    status: baked
+    bundle: iip-annual-1993

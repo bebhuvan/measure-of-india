@@ -10,9 +10,18 @@ import oldIndBundle from "../../data/series/iip-industries-2011.json";
 import herit04Bundle from "../../data/series/iip-2004.json";
 import herit93Bundle from "../../data/series/iip-1993.json";
 import ispBundle from "../../data/series/isp.json";
+import herit80Bundle from "../../data/series/iip-1980.json";
+import fy80Bundle from "../../data/series/iip-annual-1980.json";
+import fy93Bundle from "../../data/series/iip-annual-1993.json";
+import fy04Bundle from "../../data/series/iip-annual-2004.json";
+import fy11Bundle from "../../data/series/iip-annual-2011.json";
+import fy22Bundle from "../../data/series/iip-annual-2022.json";
+import core93Bundle from "../../data/series/core-1993.json";
+import core04Bundle from "../../data/series/core-2004.json";
+import core11Bundle from "../../data/series/core-2011.json";
 import {
   MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend, seamMarks, seamOverlap,
-  peakOf, dodgeEndLabels, spark,
+  peakOf, dodgeEndLabels, spark, fmt,
 } from "../charts/plumbing.js";
 
 const S = hydrate(bundle);
@@ -193,6 +202,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
 {
   const H04 = hydrate(herit04Bundle);
   const H93 = hydrate(herit93Bundle);
+  const H80 = hydrate(herit80Bundle);
   // leading nulls (the base's first year has no same-base year-ago level)
   // are trimmed; the two spans differ and are never spliced
   const trim = (s, label, color) => {
@@ -201,6 +211,9 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
   };
   const h93 = trim(H93.general, "Base 1993-94", "#A3A9B4");
   const h04 = trim(H04.general, "Base 2004-05", "#5F6675");
+  const h80 = trim(H80.general, "Base 1980-81", "#C9CED6");
+  const low80 = h80.data.reduce((a, d) => (d.value != null && d.value < a.value ? d : a), h80.data[0]);
+  const end80 = h80.data.filter((d) => d.value != null).at(-1);
   const fmtM = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(2) + "%";
   // the one industrial winter: the deepest print either heritage ruler gave
   const trough = h04.data.reduce((a, d) => (d.value != null && d.value < a.value ? d : a), h04.data[0]);
@@ -211,10 +224,13 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
   setTxt("her-gfc04", fmtM(trough.value));
   setTxt("her-gfc93", "+" + gfc93.value.toFixed(2) + "%");
   setTxt("her-end93", fmtM(end93.value));
+  setTxt("her-low80", fmtM(low80.value));
+  setTxt("her-low80-at", fmtDate(low80.date));
+  setTxt("her-end80", fmtM(end80.value));
   setTxt("her-end04", fmtM(end04.value));
   const geo = { W: 1184, H: 520, ml: 80, mr: 190, mt: 36, mb: 48, d0: -12, d1: 26 };
   const yTicks = [-10, 0, 10, 20];
-  const xTicks = []; for (let y = 1996; y <= 2016; y += 4) xTicks.push(new Date(Date.UTC(y, 0, 1)));
+  const xTicks = []; for (let y = 1984; y <= 2016; y += 4) xTicks.push(new Date(Date.UTC(y, 0, 1)));
   const plot = Plot.plot({
     width: geo.W, height: geo.H,
     marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
@@ -226,12 +242,16 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
       Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
       Plot.ruleY([geo.d0], { stroke: "#E3E6EB", strokeWidth: 1 }),
       Plot.ruleY([0], { stroke: "#161A22", strokeOpacity: 0.55, strokeWidth: 1 }),
+      Plot.lineY(h80.data, { x: "date", y: "value", stroke: "#B5BAC4", strokeWidth: 1.5, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.lineY(h93.data, { x: "date", y: "value", stroke: h93.color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.lineY(h04.data, { x: "date", y: "value", stroke: h04.color, strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.ruleX([trough.date], { stroke: "#DADDE3", strokeWidth: 1, strokeDasharray: "2,3" }),
       Plot.text([{ date: new Date(Date.UTC(2008, 3, 1)), value: 24 }], { x: "date", y: "value", text: [`winter of 2008-09, ${fmtM(trough.value)} on one ruler, +${gfc93.value.toFixed(2)}% on the other`], fontSize: 12.5, fill: "#878D99", fontFamily: mono, textAnchor: "end" }),
       Plot.ruleX([new Date(Date.UTC(2006, 3, 1))], { stroke: "#CDD1D8", strokeWidth: 1 }),
       Plot.text([{ date: new Date(Date.UTC(2006, 5, 1)), value: -9.5 }], { x: "date", y: "value", text: ["base revised, 1993-94 → 2004-05"], fontSize: 12.5, fill: "#5F6675", fontFamily: mono, textAnchor: "start" }),
+      Plot.ruleX([new Date(Date.UTC(1995, 3, 1))], { stroke: "#CDD1D8", strokeWidth: 1 }),
+      Plot.text([{ date: new Date(Date.UTC(1995, 5, 1)), value: -9.5 }], { x: "date", y: "value", text: ["1980-81 → 1993-94"], fontSize: 12.5, fill: "#5F6675", fontFamily: mono, textAnchor: "start" }),
+      Plot.text([{ date: new Date(Date.UTC(1983, 0, 1)), value: 21 }], { x: "date", y: "value", text: ["Base 1980-81 (RBI's copy)"], fontSize: 12, fill: "#161A22", fontFamily: mono, textAnchor: "start" }),
       Plot.dot([trough], { x: "date", y: "value", fill: "#2E4BD8", r: 4, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.dot([end93], { x: "date", y: "value", fill: h93.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       // the 1993-94 line ends mid-chart where the 2004-05 line is busy —
@@ -242,12 +262,134 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
       Plot.text([end04], { x: "date", y: "value", text: (d) => `Base 2004-05 ${d.value.toFixed(2)}%`, dx: 16, fill: "#161A22", fontSize: 12, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
   });
-  a11y(plot, "IIP year-on-year growth on the retired 1993-94 and 2004-05 bases, 1995 to 2017",
-    "Two line charts side by side on one time axis. The 1993-94 base runs from 1995 to 2011 and never prints below zero. The 2004-05 base runs from 2006 to 2017 and dips to " + fmtM(trough.value) + " in February 2009. The bases are never spliced.");
+  a11y(plot, "IIP year-on-year growth on the retired 1980-81, 1993-94 and 2004-05 bases, 1982 to 2017",
+    "Three line charts side by side on one time axis. The 1980-81 base runs from 1982 to 1998 and touches " + fmtM(low80.value) + " in " + fmtDate(low80.date) + ". The 1993-94 base runs from 1995 to 2011 and never prints below zero. The 2004-05 base runs from 2006 to 2017 and dips to " + fmtM(trough.value) + " in February 2009. The bases are never spliced.");
   document.getElementById("plot-herit").append(plot);
-  wireTools(document.getElementById("cb-herit"), plot, [h04, h93], "india-atlas_iip_heritage-bases");
+  wireTools(document.getElementById("cb-herit"), plot, [h04, h93, h80], "india-atlas_iip_heritage-bases");
   // no crosshair: the two bases have different spans, so a shared index
   // cannot address both — the tooltip would lie
+}
+
+const fS = fmt.pct2Minus;   // signed with a true minus
+
+/* ---------- financial years on five rulers ---------- */
+{
+  const fyLabel = (d) => `${d.getUTCFullYear()}-${String((d.getUTCFullYear() + 1) % 100).padStart(2, "0")}`;
+  const R = [
+    ["Base 1980-81", fy80Bundle, "#C9CED6"], ["Base 1993-94", fy93Bundle, "#A3A9B4"], ["Base 2004-05", fy04Bundle, "#878D99"],
+    ["Base 2011-12", fy11Bundle, "#5F6675"], ["Base 2022-23", fy22Bundle, "#2E4BD8"],
+  ].map(([label, b, color]) => { const H = hydrate(b); const s = H.general_growth; const i = s.data.findIndex((d) => d.value != null); return { ...s, label, color, data: s.data.slice(i) }; });
+  const cur = R.at(-1), last = cur.data.at(-1);
+  setTxt("pv-fy", fS(last.value));
+  const all = R.flatMap((r) => r.data.filter((d) => d.value != null).map((d) => ({ ...d, r })));
+  const falls = all.filter((d) => d.value < 0);
+  const geo = { W: 1184, H: 500, ml: 70, mr: 150, mt: 36, mb: 48, d0: -11.5, d1: 17 };
+  const yTicks = [-5, 0, 5, 10, 15];
+  const xTicks = []; for (let y = 1982; y <= 2026; y += 4) xTicks.push(new Date(Date.UTC(y, 0, 1)));
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H, marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+    x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => String(d.getUTCFullYear()) },
+    y: { label: "↑ growth on the year before, per cent", labelAnchor: "top", labelArrow: false, ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11,
+         tickFormat: (d) => (d === yTicks.at(-1) ? d + "%" : String(d)) },
+    marks: [
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([0], { stroke: "#161A22", strokeOpacity: 0.55, strokeWidth: 1 }),
+      ...seamMarks("side", R, { text: "base 2022-23 from 2023-24", y: 15.5, anchor: "end", solid: true }),
+      ...R.map((r) => Plot.dot(r.data.filter((d) => d.value != null), { x: "date", y: "value", fill: r.color, r: r === cur ? 4 : 3, stroke: "#FFFFFF", strokeWidth: 1 })),
+      Plot.dot(falls, { x: "date", y: "value", r: 6, stroke: "#2E4BD8", strokeWidth: 1.5, fill: "none" }),
+      // ruler names along the floor, under each ruler's own span, clear of every dot
+      ...R.map((r) => { const v = r.data.filter((d) => d.value != null); const mid = new Date((v[0].date.getTime() + v.at(-1).date.getTime()) / 2);
+        return Plot.text([{ date: mid, value: -10.4 }], { x: "date", y: "value", text: () => r.label.replace("Base ", ""), fill: "#4A5160", fontSize: 11.5, fontFamily: mono, textAnchor: "middle" }); }),
+      Plot.text([last], { x: "date", y: "value", text: (d) => `${fyLabel(d.date)} ${fS(d.value)}`, dx: 14, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+    ],
+  });
+  a11y(plot, "IIP growth by financial year on five bases, " + fyLabel(R[0].data[0].date) + " to " + fyLabel(last.date),
+    "Dots per financial year on five rulers drawn side by side. Output fell in " + falls.map((d) => fyLabel(d.date) + " (" + d.value.toFixed(1) + "%, " + d.r.label + ")").join(", ") + ". The latest year, " + fyLabel(last.date) + ", grew " + last.value.toFixed(1) + " per cent on base 2022-23.");
+  document.getElementById("plot-fy").append(plot);
+  wireTools(document.getElementById("cb-fy"), plot, R, "india-atlas_iip_financial-years_five-bases");
+}
+
+/* ---------- the core eight: latest financial year, by industry ---------- */
+{
+  const C = hydrate(core11Bundle);
+  const i = C.composite_growth.data.length - 1;
+  const fy = C.composite_growth.data[i].date;
+  const fyLabel = `${fy.getUTCFullYear()}-${String((fy.getUTCFullYear() + 1) % 100).padStart(2, "0")}`;
+  const rows = Object.keys(C).filter((k) => k.endsWith("_growth") && k !== "composite_growth")
+    .map((k) => ({ k, name: C[k].label.split(",")[0], v: C[k].data[i].value, w: core11Bundle.series[k].weight }))
+    .sort((a, b) => b.v - a.v).map((r) => ({ ...r, cat: `${r.name} (${r.w})` }));
+  const comp = C.composite_growth.data[i].value;
+  setTxt("pv-core", fS(comp));
+  const ext = Math.max(...rows.map((r) => Math.abs(r.v)), Math.abs(comp)) * 1.25;
+  const pos = rows.filter((r) => r.v >= 0), neg = rows.filter((r) => r.v < 0);
+  const plot = Plot.plot({
+    width: 1184, height: 430, marginLeft: 250, marginRight: 90, marginTop: 30, marginBottom: 40,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+    x: { label: "growth on the year before, per cent →", labelAnchor: "right", domain: [-ext, ext], tickSize: 0, tickFormat: (d) => (d > 0 ? "+" : "") + d + "%" },
+    y: { label: null, domain: rows.map((r) => r.cat), tickSize: 0, tickPadding: 12 },
+    marks: [
+      Plot.gridX({ stroke: "#F0F2F5" }),
+      Plot.barX(rows, { x: "v", y: "cat", fill: (d) => (d.v >= 0 ? "#2E4BD8" : "#A3A9B4"), insetTop: 6, insetBottom: 6 }),
+      Plot.ruleX([0], { stroke: "#161A22", strokeOpacity: 0.55 }),
+      Plot.ruleX([comp], { stroke: "#161A22", strokeDasharray: "3,3", strokeOpacity: 0.6 }),
+      Plot.text([{ x: comp, y: rows[0].cat }], { x: "x", y: "y", text: [`composite ${fS(comp)}`], dy: -16, dx: 6, textAnchor: "start", fill: "#161A22", fontSize: 12, fontFamily: mono }),
+      Plot.text(pos, { x: "v", y: "cat", text: (d) => "+" + d.v.toFixed(1) + "%", dx: 8, textAnchor: "start", fill: "#161A22", fontSize: 12.5, fontFamily: mono }),
+      Plot.text(neg, { x: "v", y: "cat", text: (d) => "−" + Math.abs(d.v).toFixed(1) + "%", dx: -8, textAnchor: "end", fill: "#161A22", fontSize: 12.5, fontFamily: mono }),
+    ],
+  });
+  a11y(plot, "The eight core industries, growth in " + fyLabel + ", base 2011-12",
+    "Bar chart. " + rows.map((r) => r.name + " " + r.v.toFixed(1) + " per cent").join(", ") + ". Composite " + comp.toFixed(1) + " per cent.");
+  document.getElementById("plot-core").append(plot);
+  const csv = [{ ...C.composite_growth, label: "Composite", data: [C.composite_growth.data[i]] }, ...rows.map((r) => ({ ...C[r.k], label: r.name, data: [C[r.k].data[i]] }))];
+  wireTools(document.getElementById("cb-core"), plot, csv, "india-atlas_iip_core-eight_" + fyLabel);
+}
+
+/* ---------- the core over three rulers, against the IIP ---------- */
+{
+  const fyLabel = (d) => `${d.getUTCFullYear()}-${String((d.getUTCFullYear() + 1) % 100).padStart(2, "0")}`;
+  const trim = (s, label, color, width) => { const i = s.data.findIndex((d) => d.value != null); let j = s.data.length - 1; while (j > i && s.data[j].value == null) j--; return { ...s, label, color, width, data: s.data.slice(i, j + 1) }; };
+  const R = [
+    trim(hydrate(core93Bundle).composite_growth, "Core, base 1993-94", "#A3A9B4"),
+    trim(hydrate(core04Bundle).composite_growth, "Core, base 2004-05", "#878D99"),
+    trim(hydrate(core11Bundle).composite_growth, "Core, base 2011-12", "#2E4BD8", 2.25),
+  ];
+  const iip = trim(hydrate(fy11Bundle).general_growth, "IIP general, base 2011-12", "#C47A16", 1.5);
+  const at = (s, y) => s.data.find((d) => d.date.getUTCFullYear() === y)?.value;
+  setTxt("pv-corelong", fS(at(R[2], 2020)));
+  setTxt("core-2020", fS(at(R[2], 2020)));
+  setTxt("iip-2020", fS(at(iip, 2020)));
+  const ov = seamOverlap(R[0], R[1]);
+  setTxt("core-gap", ov.gap.toFixed(1) + " points (" + fyLabel(ov.gapAt) + ")");
+  const geo = { W: 1184, H: 500, ml: 70, mr: 130, mt: 36, mb: 48, d0: -10, d1: 14 };
+  const yTicks = [-5, 0, 5, 10];
+  const xTicks = []; for (let y = 1996; y <= 2024; y += 4) xTicks.push(new Date(Date.UTC(y, 0, 1)));
+  const ends = [...R, iip].map((r) => ({ r, d: r.data.filter((d) => d.value != null).at(-1) }));
+  const plot = Plot.plot({
+    width: geo.W, height: geo.H, marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+    style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+    x: { label: null, tickSize: 0, tickPadding: 16, ticks: xTicks, tickFormat: (d) => String(d.getUTCFullYear()) },
+    y: { label: "↑ growth on the year before, per cent", labelAnchor: "top", labelArrow: false, ticks: yTicks, domain: [geo.d0, geo.d1], tickSize: 0, tickPadding: 11,
+         tickFormat: (d) => (d === yTicks.at(-1) ? d + "%" : String(d)) },
+    marks: [
+      Plot.gridY(yTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.ruleY([0], { stroke: "#161A22", strokeOpacity: 0.55, strokeWidth: 1 }),
+      Plot.lineY(iip.data, { x: "date", y: "value", stroke: iip.color, strokeWidth: 1.5, strokeDasharray: "4,3" }),
+      ...seamMarks("overlap", R, { text: "rulers overlap", y: 12.8, anchor: "end" }),
+      ...R.map((r) => Plot.dot(r.data.filter((d) => d.value != null), { x: "date", y: "value", fill: r.color, r: 2.5 })),
+      // end labels for the two live lines only, the lower value pushed down, the higher up
+      ...ends.filter((e) => e.r === R[2] || e.r === iip).map((e) => { const other = ends.find((o) => (o.r === R[2] || o.r === iip) && o !== e);
+        return Plot.text([e.d], { x: "date", y: "value", text: () => `${e.r === iip ? "IIP" : "Core"} ${fS(e.d.value)}`, dx: 12, dy: e.d.value < other.d.value ? 8 : -8, fill: "#161A22", fontSize: 12, fontFamily: mono, textAnchor: "start", fontWeight: e.r === R[2] ? 500 : 400 }); }),
+      // ruler names along the floor, under each ruler's own span
+      ...R.map((r) => { const v = r.data.filter((d) => d.value != null); const mid = new Date((v[0].date.getTime() + v.at(-1).date.getTime()) / 2);
+        return Plot.text([{ date: mid, value: -9.3 }], { x: "date", y: "value", text: () => r.label.replace("Core, base ", "core, base "), fill: "#4A5160", fontSize: 11.5, fontFamily: mono, textAnchor: "middle" }); }),
+      Plot.text([{ date: new Date(Date.UTC(1996, 0, 1)), value: 12.6 }], { x: "date", y: "value", text: ["dashed: IIP general index, base 2011-12"], fill: "#4A5160", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+    ],
+  });
+  a11y(plot, "Growth of the eight-core composite index on three bases, with the IIP",
+    "Lines per base, never spliced. The core fell only in 2020-21, by " + Math.abs(at(R[2], 2020)).toFixed(1) + " per cent, when the IIP fell " + Math.abs(at(iip, 2020)).toFixed(1) + " per cent.");
+  document.getElementById("plot-corelong").append(plot);
+  wireTools(document.getElementById("cb-corelong"), plot, [...R, iip], "india-atlas_iip_core-three-bases");
 }
 
 /* ---------- sectors ---------- */

@@ -32,8 +32,40 @@
 //                          the distribution tables (4/7/11/13/15/17/21/23/
 //                          29/31/35) are consciously NOT ingested.
 
-import { mospi } from "../mospi.mjs";
-import { writeSeries, writeRaw, quarterAxis } from "../util.mjs";
+import { mospi, mospiAll } from "../mospi.mjs";
+import { writeSeries, quarterAxis } from "../util.mjs";
+import fs from "node:fs";
+import path from "node:path";
+import zlib from "node:zlib";
+import crypto from "node:crypto";
+
+// Raw archive (PLAN-launch §2b): every indicator's complete table, as served, gzipped JSON in
+// the git-ignored deep-archive staging folder; data/raw/asuse-index.json (committed) lists each
+// file with its rows, the endpoint's own row count (mospiAll fails on a short read) and sha256.
+// The single 65 MB data/raw/asuse-records.json it replaces is in git history.
+const STAGE = "data/archive/staging/asuse-raw";
+const INDEX = "data/raw/asuse-index.json";
+async function stageAll(root, lists, vintage) {
+  const all = {}, files = [];
+  for (const [fr, list] of lists) for (const ind of list) {
+    const code = String(ind.indicator_code);
+    const rows = await mospiAll("asuse/getAsuseRecords", { indicator_code: code });
+    all[code] = rows;
+    const gz = zlib.gzipSync(JSON.stringify(rows), { level: 9 });
+    const rel = `${fr}-${code.padStart(2, "0")}.json.gz`;
+    fs.mkdirSync(path.join(root, STAGE), { recursive: true });
+    fs.writeFileSync(path.join(root, STAGE, rel), gz);
+    files.push({ file: rel, frequency: fr, indicator: +code, name: String(ind.description).trim(), rows: rows.length, sha256: crypto.createHash("sha256").update(gz).digest("hex") });
+    process.stdout.write(`asuse ${fr} ${code}: ${rows.length} rows\n`);
+  }
+  // the index keeps its vintage while no table changed (data vintage, AGENTS.md rule 5)
+  const p = path.join(root, INDEX);
+  const prev = fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, "utf8")) : null;
+  const same = prev && JSON.stringify(prev.files.map((f) => [f.file, f.rows, f.sha256])) === JSON.stringify(files.map((f) => [f.file, f.rows, f.sha256]));
+  const body = { vintage: same ? prev.vintage : vintage, note: "Index of the ASUSE raw archive: every annual and quarterly indicator's complete table as served by asuse/getAsuseRecords (all pages, keyed by indicator_code only), gzipped JSON in the deep-archive staging folder. sha256 is of the stored .json.gz file.", root: STAGE, tables: files.length, rows: files.reduce((a, f) => a + f.rows, 0), files };
+  fs.writeFileSync(p, JSON.stringify(body, null, 1) + "\n");
+  return { all, vintage: body.vintage };
+}
 
 const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 const slugify = (s) => String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
@@ -41,41 +73,25 @@ const fyStart = (fy) => `${String(fy).slice(0, 4)}-04`;
 const Q_START = { "JAN-MAR": "01", "APR-JUN": "04", "JUL-SEP": "07", "OCT-DEC": "10" };
 const ET = { "Hired Worker Establishments(HWE)": "hwe", "Own Account Establishments(OAE)": "oae", "All Establishments(All)": "all" };
 
-async function fetchAll(code) {
-  const rows = [];
-  let page = 1;
-  for (;;) {
-    const res = await mospi("asuse/getAsuseRecords", { indicator_code: code, page, limit: 500 });
-    rows.push(...(res.data ?? []));
-    const tp = res.meta_data?.totalPages ?? 1;
-    if (page % 5 === 0 || page >= tp) process.stdout.write(`asuse ind ${code}: page ${page}/${tp} (${rows.length} rows)\n`);
-    if (page >= tp) break;
-    page++;
-  }
-  return rows;
-}
-
 export async function buildAsuse(root, dcfg, vintage) {
   // indicator catalogues (archived to raw for the audit trail)
   const freqs = (await mospi("asuse/getAsuseFrequencyList", {})).data ?? [];
   const listAnnual = (await mospi("asuse/getAsuseIndicatorListByFrequency", { frequency_code: 1 })).data ?? [];
   const listQuarterly = (await mospi("asuse/getAsuseIndicatorListByFrequency", { frequency_code: 2 })).data ?? [];
 
-  const byInd = {};
-  for (const code of [
-    ...Object.keys(dcfg.fetch.annual_indicators),
-    ...Object.keys(dcfg.fetch.quarterly_indicators),
-    ...Object.keys(dcfg.fetch.portrait_indicators ?? {}),
-    ...Object.keys(dcfg.fetch.state_indicators ?? {}),
-  ]) {
-    byInd[code] ??= await fetchAll(code);
-  }
-  writeRaw(root, "data/raw/asuse-records.json", {
-    vintage,
-    note: "Complete row-sets of the ASUSE indicators used by the baked bundles (annual 1/26/30/32/34, portrait 3/5/6/9/10/12/14/16/19/20/22/25, state cuts 2/27/33, quarterly 40-42/46-50), plus the indicator catalogues. State-wise duplicates of the distribution tables (4/7/11/13/15/17/21/23/29/31/35) are consciously not ingested.",
-    frequencies: freqs, indicators_annual: listAnnual, indicators_quarterly: listQuarterly,
-    records: byInd,
-  });
+  // every indicator, in full; the curated bundles below read the financial-year rounds only
+  // (2021-22 to 2023-24). The 2025 round is a calendar year, a different ruler: it lives in
+  // the asuse-2025-* bundles, never on the same axis.
+  const staged = await stageAll(root, [["annual", listAnnual], ["quarterly", listQuarterly]], vintage);
+  vintage = staged.vintage;
+  const isFy = (r) => /^\d{4}-\d{2}$/.test(String(r.year));
+  const qCodes = new Set(listQuarterly.map((i) => String(i.indicator_code)));
+  // tables 1 and 2 now carry two measures (a count and a percentage of establishments); the
+  // curated bundles were built on the count
+  const isCount = (r) => r.establishments == null || /estimated/i.test(r.establishments);
+  const byInd = Object.fromEntries(Object.entries(staged.all).map(([c, rows]) => [c, qCodes.has(c) ? rows : rows.filter((r) => isFy(r) && isCount(r))]));
+  for (const code of [...Object.keys(dcfg.fetch.annual_indicators), ...Object.keys(dcfg.fetch.quarterly_indicators), ...Object.keys(dcfg.fetch.portrait_indicators ?? {}), ...Object.keys(dcfg.fetch.state_indicators ?? {})])
+    if (!byInd[code]?.length) throw new Error(`ASUSE: indicator ${code} returned no rows`);
 
   const val = (r) => {
     const v = parseFloat(r.value);
@@ -245,7 +261,7 @@ export async function buildAsuse(root, dcfg, vintage) {
     });
     quarterlyBundle = {
       meta: {
-        ...metaBase, frequency: "quarterly",
+        ...metaBase, frequency: "quarterly", base: "quarterly bulletin (calendar quarters, from Jan-Mar 2025)",
         latestPeriod: qMonths.at(-1),
         coverage: "All India; quarterly ASUSE bulletin (from Jan–Mar 2025), by sector and by broad activity as published",
         note: "Calendar quarters plotted at quarter start. Establishment/worker counts are in hundreds ('00) as published; the rest are percentages. The quarterly bulletin is a separate short series and is never joined to the annual rounds.",
@@ -327,7 +343,9 @@ export async function buildAsuse(root, dcfg, vintage) {
   };
 
   /* ---- asuse-modernity: bank accounts (9), computer/internet (20), registration (22), franchise (25) ---- */
-  const HOLDER = { "Maintaining Bank/PO Savings Account": "any_account", "Account in the Name of Owner": "owner_account", "Account in the Name of Establishments": "estab_account" };
+  // MoSPI relabelled the headline row in 2026 ("Maintaining any kind of  Account in Financial
+  // Institutions", double space as served); the values are unchanged (666, 710, 761 per 1,000)
+  const HOLDER = { "Maintaining Bank/PO Savings Account": "any_account", "Maintaining any kind of  Account in Financial Institutions": "any_account", "Account in the Name of Owner": "owner_account", "Account in the Name of Establishments": "estab_account" };
   const SUB20 = { "Using Computer": "computer", "Using Internet": "internet" };
   const ACTS = {
     "Shops & Estb. Act": "shops_estb_act", "Indian Trust Act,1882": "trust_act",
@@ -347,7 +365,7 @@ export async function buildAsuse(root, dcfg, vintage) {
       seriesFrom(
         byInd["9"].filter((r) => AI(r) && r.sector === sec && r.broad_activity_category === "All" && ET[r.establishment_type] === "all" && gH(r.account_holder) != null),
         (r) => `bank_${gH(r.account_holder)}_${secKey}`,
-        (r) => `Bank/PO account · ${r.account_holder} · ${sec}`,
+        (r) => `Bank/PO account · ${r.account_holder.replace(/\s+/g, " ")} · ${sec}`,
         "per_1000", mSeries, mIdx);
       for (const et of ["hwe", "oae", "all"]) {
         seriesFrom(
@@ -469,7 +487,127 @@ export async function buildAsuse(root, dcfg, vintage) {
   writeSeries(root, "data/series/asuse-states.json", statesBundle);
   if (quarterlyBundle) writeSeries(root, "data/series/asuse-quarterly.json", quarterlyBundle);
   else process.stdout.write("asuse: quarterly indicators returned no usable dated rows — asuse-quarterly.json not written\n");
+  bakeTables(root, staged.all, listAnnual, { ...metaBase, vintage }, dcfg);
   return annualBundle;
+}
+
+/* ================= every annual table, complete (wave 2) =================
+ * One bundle per indicator per ruler: asuse-tNN (the financial-year rounds 2021-22 to 2023-24,
+ * dated at April) and asuse-2025-tNN (the calendar-year 2025 round). A table's own categories
+ * (ownership type, gender, months operated...) are always kept; of the five cutting
+ * dimensions (state, sector, activity, broad activity, establishment type) a baked series
+ * varies at most one from its headline ("All India", "Combined", "All", all establishments),
+ * which is exactly what a catalogue item is (an indicator x one cut). The full cross of the
+ * cuts (state x sector x activity x establishment type: about 370,000 series across the
+ * tables) is the deep-archive tier: long-format csv.gz per table and round, staged in
+ * data/archive/staging/asuse/, rolling up to the baked bundle. Nothing is computed.
+ * Units come from the table, row by row (UNIT below); a row whose unit cannot be told fails. */
+const UNIT = (code, r) => {
+  const c = +code;
+  if (c === 1 || c === 2) return /percentage/i.test(r.establishments ?? "") ? "pct" : "count";
+  if (c === 14 || c === 15) return /average/i.test(r.no_of_months_operated ?? "") ? "months" : "per_1000";
+  if ((c >= 3 && c <= 24) || c === 38) return "per_1000";
+  if ([25, 26, 27, 28, 29, 56, 60].includes(c)) return "count";
+  if (c === 30 || c === 31) return /number/i.test(r.sub_indicator ?? "") ? "count" : "inr_per_year";
+  if (c >= 32 && c <= 35) return "inr_per_year";
+  if (c === 36 || c === 37) return "inr";
+  if (c === 59) return "pct";
+  if (c === 39) return UNIT39(r);
+  return null;
+};
+// indicator 39 mixes measures in one table: its "worker characteristics" name each one
+const UNIT39 = (r) => {
+  const w = String(r.worker_characteristics ?? r["worker characteristics"] ?? "");
+  if (/per 1000|per thousand/i.test(w)) return "per_1000";
+  if (/percentage|%/i.test(w)) return "pct";
+  if (/rs\.?|value|gva|emolument/i.test(w)) return "inr_per_year";
+  if (/number|no\./i.test(w)) return "count";
+  return null;
+};
+const SKIP = new Set(["indicator", "frequency", "year", "value", "quarter"]);
+const CUTS = ["state/UT", "sector", "activity_category", "broad_activity_category", "establishment_type"];
+const HEADLINE = new Set(["All India", "Combined", "All", "All Establishments(All)"]);
+const isHead = (k, v) => v == null || v === "" || HEADLINE.has(String(v).trim());
+const ORDER = ["state/UT", "sector", "activity_category", "broad_activity_category", "establishment_type"];
+const ET_SHORT = { "Hired Worker Establishments(HWE)": "HWE", "Own Account Establishments(OAE)": "OAE", "All Establishments(All)": "All establishments" };
+const tidyV = (k, v) => (k === "establishment_type" ? ET_SHORT[v] ?? v : String(v).replace(/\s+/g, " ").trim());
+// a long value is cut to 30 characters plus a short hash of the whole, so two categories that
+// share a long prefix ("Outside Household Premises with Fixed Premises of ...") stay distinct
+const slugV = (v) => {
+  const full = String(v).toLowerCase().replace(/\+/g, "_plus").replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "").replace(/basis/g, "terms");
+  return full.length <= 36 ? full : full.slice(0, 30).replace(/_$/, "") + "_" + crypto.createHash("sha1").update(full).digest("hex").slice(0, 5);
+};
+
+function bakeTables(root, all, listAnnual, metaBase, dcfg) {
+  const names = Object.fromEntries(listAnnual.map((i) => [String(i.indicator_code), String(i.description).trim()]));
+  let nB = 0, nS = 0;
+  const archived = [];
+  for (const code of Object.keys(names).sort((a, b) => a - b)) {
+    const rows = all[code] ?? [];
+    for (const [ruler, keep, slug] of [["fy", (r) => /^\d{4}-\d{2}$/.test(String(r.year)), `asuse-t${code.padStart(2, "0")}`], ["cy", (r) => String(r.year) === "2025", `asuse-2025-t${code.padStart(2, "0")}`]]) {
+      const rs = rows.filter(keep);
+      const extra = rows.filter((r) => !/^\d{4}-\d{2}$/.test(String(r.year)) && String(r.year) !== "2025");
+      if (extra.length && ruler === "fy") throw new Error(`asuse t${code}: rows for a round this adapter does not know (${[...new Set(extra.map((r) => r.year))]})`);
+      if (!rs.length) continue;
+      const years = [...new Set(rs.map((r) => String(r.year)))].sort();
+      const axis = ruler === "fy" ? (() => { const a = []; for (let y = +years[0].slice(0, 4); y <= +years.at(-1).slice(0, 4); y++) a.push(`${y}-04-01`); return a; })() : ["2025-01-01"];
+      const dateOf = (r) => (ruler === "fy" ? `${String(r.year).slice(0, 4)}-04-01` : "2025-01-01");
+      const dimKeys = [...new Set(rs.flatMap((r) => Object.keys(r)))].filter((k) => !SKIP.has(k)).sort((a, b) => (ORDER.indexOf(a) + 1 || 99) - (ORDER.indexOf(b) + 1 || 99) || a.localeCompare(b));
+      const series = new Map();
+      const deepRows = [];
+      for (const r of rs) {
+        const v = parseFloat(r.value);
+        if (!Number.isFinite(v)) continue;
+        const cutsOff = CUTS.filter((k) => k in r && !isHead(k, r[k]));
+        if (cutsOff.length > 1) { deepRows.push(r); continue; }
+        // a series is named by its one cut (if any) and the table's own categories
+        const dims = dimKeys.filter((k) => r[k] != null && r[k] !== "" && !(CUTS.includes(k) && isHead(k, r[k])));
+        const key = dims.map((k) => slugV(tidyV(k, r[k]))).join("__") || "all_india";
+        const unit = UNIT(code, r);
+        if (!unit) throw new Error(`asuse t${code}: no unit for row ${JSON.stringify(r)}`);
+        // a table category at its "All" total is named with its dimension ("gender: all")
+        const human = (k) => k.replace(/_+$/, "").replace(/[_/]+/g, " ").toLowerCase().trim();
+        const label = (dims.some((k) => CUTS.includes(k)) ? "" : "All India · ") + dims.map((k) => (!CUTS.includes(k) && String(r[k]).trim() === "All" ? `${human(k)}: all` : tidyV(k, r[k]))).join(" · ");
+        let e = series.get(key);
+        if (!e) series.set(key, e = { label, unit, cells: new Map(), group: r["state/UT"] && r["state/UT"] !== "All India" ? r["state/UT"] : tidyV("a", r.activity_category ?? r.broad_activity_category ?? "All") });
+        if (e.label !== label) throw new Error(`asuse t${code}: key collision ${key}: "${e.label}" vs "${label}"`);
+        const d = dateOf(r);
+        if (e.cells.has(d) && e.cells.get(d) !== v) { process.stdout.write(`asuse WARN t${code} ${key} ${d}: ${e.cells.get(d)} vs ${v}, kept first\n`); continue; }
+        e.cells.set(d, v);
+      }
+      const out = {};
+      for (const [key, e] of [...series].sort((a, b) => (a[0] < b[0] ? -1 : 1))) {
+        const data = axis.map((d) => e.cells.get(d) ?? null);
+        const f = data.findIndex((x) => x != null), l = data.length - 1 - [...data].reverse().findIndex((x) => x != null);
+        const gaps = axis.filter((_, i) => i > f && i < l && data[i] == null);
+        out[key] = { name: `asuse_t${code}_${key}`, label: e.label, unit: e.unit, group: e.group, color: "#A3A9B4", data, ...(gaps.length ? { gaps, gapsNote: "Not published for this round." } : {}) };
+      }
+      // the axis ends where the bundle's data ends (no trailing empty round)
+      let last = axis.length - 1; while (last > 0 && !Object.values(out).some((s) => s.data[last] != null)) last--;
+      if (last < axis.length - 1) { axis.length = last + 1; for (const s of Object.values(out)) s.data.length = last + 1; }
+      const base = ruler === "fy" ? metaBase.base : "calendar-year round (ASUSE 2025)";
+      writeSeries(root, `data/series/${slug}.json`, {
+        meta: { ...metaBase, base, frequency: "annual", latestPeriod: axis.at(-1).slice(0, 7), product: `ASUSE table ${code}: ${names[code]}`,
+          coverage: `${names[code]}: every published row, ${ruler === "fy" ? `financial-year rounds ${years.join(", ")}` : "the calendar-year 2025 round"}`,
+          note: (ruler === "fy" ? "Financial-year rounds (April to March), dated at April of the first year." : "The 2025 round covers calendar year 2025 (January to December): a different reference period from the financial-year rounds, so a separate bundle, never joined to them.")
+            + " Every row MoSPI publishes for this table, values as served, including its published \"All\" totals; each series is named by all of its dimensions. Per-1000 distributions are integers and can miss 1,000 by a few parts from rounding. Rupee values are nominal." + (+code === 34 || +code === 35 ? " The source's HWE and OAE rows of GVA per establishment are mislabelled at All India (the published All reconciles only with the two inverted; see asuse-annual): they are baked here as served, and the curated bundles use the All row only." : "") },
+        dates: axis, series: out,
+      });
+      nB++; nS += Object.keys(out).length;
+      if (deepRows.length) {
+        const cell = (x) => (x == null ? "" : /[",\n]/.test(String(x)) ? `"${String(x).replace(/"/g, '""')}"` : String(x));
+        const other = dimKeys.filter((k) => !CUTS.includes(k));
+        const head = ["round", "indicator_code", "indicator", "state", "sector", "activity", "establishment_type", ...other.map((k) => k.toLowerCase().replace(/[^a-z0-9]+/g, "_")), "value", "unit", "source", "vintage"];
+        const lines = [head.join(","), ...deepRows.map((r) => [r.year, code, names[code], r["state/UT"], r.sector, r.activity_category ?? r.broad_activity_category, tidyV("establishment_type", r.establishment_type), ...other.map((k) => r[k]), parseFloat(r.value), UNIT(code, r), "MoSPI, NSO: ASUSE (eSankhyiki)", metaBase.vintage].map(cell).join(","))];
+        const file = `data/archive/staging/asuse/${slug}.csv.gz`;
+        fs.mkdirSync(path.join(root, "data/archive/staging/asuse"), { recursive: true });
+        fs.writeFileSync(path.join(root, file), zlib.gzipSync(lines.join("\n") + "\n", { level: 9 }));
+        archived.push({ file, rows: deepRows.length, indicator: +code, round: ruler === "fy" ? years.join(", ") : "2025", rolls_up_to: slug });
+      }
+    }
+  }
+  if (archived.length) fs.writeFileSync(path.join(root, "data/archive/staging/asuse/files.json"), JSON.stringify({ note: "Staged ASUSE full crosses (state x sector x activity x establishment type) for the deep archive (PLAN-launch §2b); each rolls up to the baked bundle named.", files: archived }, null, 1) + "\n");
+  process.stdout.write(`asuse tables: ${nB} bundles, ${nS} series; ${archived.length} archive files, ${archived.reduce((a, f) => a + f.rows, 0)} rows\n`);
 }
 
 /* Catalogue (docs/CONTRACT-coverage.md): asuse/getAsuseIndicatorListByFrequency (annual and

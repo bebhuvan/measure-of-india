@@ -1560,6 +1560,31 @@ dossiers:
     source_agency: "Reserve Bank of India, DBIE (DGCI&S data)"
     release_url: https://data.rbi.org.in
   # --- end trade ---
+  # ---- industry (lb/industry, wave 2): the RBI's industry tables (scripts/lib/products/industry-dbie.mjs) ----
+  core:
+    stale_after: "2025-04"     # financial years dated at April: 2025-04 is 2025-26
+    family: databank
+    geo: IND
+    product: core
+    frequency: annual
+    base: "2011-12=100"        # current base; 1993-94 and 2004-05 are separate bundles (seams below)
+    release_calendar: "monthly by the Office of the Economic Adviser (DPIIT), about 20 days after the month; the RBI Handbook's annual tables follow each financial year"
+    revision_policy: "The monthly index is provisional and revised in the next release; the RBI's annual tables carry the final financial-year averages."
+    source_agency: "Office of the Economic Adviser, DPIIT, as published by the RBI (DBIE, via the local Data Bank)"
+    release_url: https://eaindustry.nic.in
+  iip-1980:
+    stale_after: "1998-03"     # a closed ruler: base 1980-81 ended in March 1998
+    frequency_exempt: true     # monthly growth and financial-year averages
+    family: databank
+    geo: IND
+    product: iip-1980
+    frequency: monthly
+    base: "1980-81=100"
+    release_calendar: "closed base; no new data"
+    revision_policy: "Final figures on a retired base; frozen."
+    source_agency: "Central Statistical Organisation, as republished by the RBI (DBIE, via the local Data Bank)"
+    release_url: https://data.rbi.org.in
+  # ---- end industry ----
   # --- prices (lb/prices, wave 2) ---
   cpiiw:
     # CPI for industrial workers, Labour Bureau, from RBI DBIE reports 699 (All India,
@@ -1654,19 +1679,24 @@ seams:
     - base: "1993-94=100"
       from: "1994-04"
       to: "2011-06"
-      bundles: [iip-1993, iip-industries-1993]
+      bundles: [iip-1993, iip-industries-1993, iip-annual-1993]
     - base: "2004-05=100"
       from: "2005-04"
       to: "2017-03"
-      bundles: [iip-2004, iip-industries-2004]
+      bundles: [iip-2004, iip-industries-2004, iip-annual-2004]
     - base: "2011-12=100"
       from: "2012-04"
       to: "2026-03"
-      bundles: [iip-2011, iip-industries-2011]
+      bundles: [iip-2011, iip-industries-2011, iip-annual-2011]
     - base: "2022-23=100"
       from: "2023-04"
       to: null
-      bundles: [iip-2022, iip-industries-2022]
+      bundles: [iip-2022, iip-industries-2022, iip-annual-2022]
+    # industry (lb/industry): the oldest ruler, from the RBI's copy (DBIE 638, 219)
+    - base: "1980-81=100"
+      from: "1981-04"
+      to: "1998-03"
+      bundles: [iip-1980, iip-industries-1980, iip-annual-1980]
   gdp:
     # quarters are dated at their first month (Q2 FY26 = 2025-07); annual
     # rows at April of the fiscal year
@@ -1726,19 +1756,19 @@ seams:
     - base: "NIC 1987"
       from: "1992-04"
       to: "1997-04"
-      bundles: [asi-headline-1987]
+      bundles: [asi-headline-1987, asi-1987-accounts, asi-1987-nic2, asi-1987-nic3, asi-1987-states]
     - base: "NIC 1998"
       from: "1998-04"
       to: "2003-04"
-      bundles: [asi-headline-1998]
+      bundles: [asi-headline-1998, asi-1998-accounts, asi-1998-nic2, asi-1998-nic3, asi-1998-states]
     - base: "NIC 2004"
       from: "2004-04"
       to: "2007-04"
-      bundles: [asi-headline-2004]
+      bundles: [asi-headline-2004, asi-2004-accounts, asi-2004-nic2, asi-2004-nic3, asi-2004-nic4, asi-2004-states]
     - base: "NIC 2008"
       from: "2008-04"
       to: null
-      bundles: [asi-headline, asi-accounts, asi-industries, asi-states]
+      bundles: [asi-headline, asi-accounts, asi-industries, asi-states, asi-nic2, asi-nic3, asi-nic4, asi-state-nic2-andaman-nicobar-islands, asi-state-nic2-andhra-pradesh, asi-state-nic2-arunachal-pradesh, asi-state-nic2-assam, asi-state-nic2-bihar, asi-state-nic2-chandigarh, asi-state-nic2-chattisgarh, asi-state-nic2-dadra-nagar-haveli, asi-state-nic2-dadra-nagar-havelli-and-daman-diu, asi-state-nic2-daman-diu, asi-state-nic2-delhi, asi-state-nic2-goa, asi-state-nic2-gujarat, asi-state-nic2-haryana, asi-state-nic2-himachal-pradesh, asi-state-nic2-jammu-kashmir, asi-state-nic2-jharkhand, asi-state-nic2-karnataka, asi-state-nic2-kerala, asi-state-nic2-ladakh, asi-state-nic2-lakshadweep, asi-state-nic2-madhya-pradesh, asi-state-nic2-maharashtra, asi-state-nic2-manipur, asi-state-nic2-meghalaya, asi-state-nic2-mizoram, asi-state-nic2-nagaland, asi-state-nic2-odisha, asi-state-nic2-puducherry, asi-state-nic2-punjab, asi-state-nic2-rajasthan, asi-state-nic2-sikkim, asi-state-nic2-tamil-nadu, asi-state-nic2-telangana, asi-state-nic2-tripura, asi-state-nic2-uttar-pradesh, asi-state-nic2-uttarakhand, asi-state-nic2-west-bengal, asi-states-all]
   isp:
     - base: "2024-25=100"
       from: "2025-04"
@@ -2089,6 +2119,34 @@ seams:
       to: null
       bundles: [trade-dbie-tot-2012, trade-dbie-uvi-2012]
   # --- end trade ---
+  # ---- industry (lb/industry) ----
+  core:
+    - base: "1993-94=100"
+      from: "1994-04"
+      to: "2010-04"
+      bundles: [core-1993]
+    - base: "2004-05=100"
+      from: "2005-04"
+      to: "2015-04"
+      bundles: [core-2004]
+    - base: "2011-12=100"
+      from: "2012-04"
+      to: null
+      bundles: [core-2011]
+  asuse:
+    - base: "survey 2021-22 onward"
+      from: "2021-04"
+      to: "2023-04"
+      bundles: [asuse-annual, asuse-sectors, asuse-owners, asuse-modernity, asuse-structure, asuse-states, asuse-t01, asuse-t02, asuse-t03, asuse-t04, asuse-t05, asuse-t06, asuse-t07, asuse-t08, asuse-t09, asuse-t10, asuse-t11, asuse-t12, asuse-t13, asuse-t14, asuse-t15, asuse-t16, asuse-t17, asuse-t19, asuse-t20, asuse-t21, asuse-t22, asuse-t23, asuse-t25, asuse-t26, asuse-t27, asuse-t28, asuse-t29, asuse-t30, asuse-t31, asuse-t32, asuse-t33, asuse-t34, asuse-t35, asuse-t38, asuse-t39]
+    - base: "calendar-year round (ASUSE 2025)"
+      from: "2025-01"
+      to: null
+      bundles: [asuse-2025-t01, asuse-2025-t02, asuse-2025-t03, asuse-2025-t04, asuse-2025-t05, asuse-2025-t06, asuse-2025-t07, asuse-2025-t09, asuse-2025-t10, asuse-2025-t11, asuse-2025-t12, asuse-2025-t13, asuse-2025-t14, asuse-2025-t15, asuse-2025-t18, asuse-2025-t19, asuse-2025-t20, asuse-2025-t21, asuse-2025-t22, asuse-2025-t23, asuse-2025-t24, asuse-2025-t26, asuse-2025-t27, asuse-2025-t28, asuse-2025-t29, asuse-2025-t30, asuse-2025-t31, asuse-2025-t32, asuse-2025-t33, asuse-2025-t34, asuse-2025-t35, asuse-2025-t36, asuse-2025-t37, asuse-2025-t38, asuse-2025-t39, asuse-2025-t56, asuse-2025-t59, asuse-2025-t60]
+    - base: "quarterly bulletin (calendar quarters, from Jan-Mar 2025)"
+      from: "2025-01"
+      to: null
+      bundles: [asuse-quarterly]
+  # ---- end industry ----
   # ---- jobs (PLFS): two survey designs, never joined (scripts/lib/products/plfs-deep.mjs) ----
   # MoSPI revamped the PLFS sample design and estimation from January 2025 ("Changes in
   # Periodic Labour Force Survey from 2025"); the original design ran July 2017 to December

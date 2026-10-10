@@ -150,7 +150,7 @@ export const DOSSIERS = [
     rssDescription: "The monthly pulse of mining, manufacturing and electricity. Revised with the latest print.",
     stamp: { dateStyle: "monthNext", vintageStyle: "monthNext" },
     statusNote: "Evergreen, revised with each print",
-    version: "v1.2",
+    version: "v1.4",
     currentBundle: "iip-2022",
     proseInputs: ["iip-industries-2022"],
     calendar: "fiscal-apr",
@@ -159,7 +159,10 @@ export const DOSSIERS = [
     spark: { bundle: "iip-2022", series: "general" },
     prose: true,
     register: { id: "reg-iip", label: "Industry", unit: "Monthly, base 2022-23, quick estimates", historyCol: "2024 to 2026" },
-    bundles: ["iip-2022", "iip-2011", "iip-industries-2022", "iip-industries-2011", "iip-2004", "iip-1993", "isp"],
+    bundles: ["iip-2022", "iip-2011", "iip-industries-2022", "iip-industries-2011", "iip-2004", "iip-1993", "isp",
+      // industry (wave 2): the retired bases' industries, financial years, base 1980-81, core industries, annual ISP (services' bundle)
+      "iip-industries-2004", "iip-industries-1993", "iip-annual-2022", "iip-annual-2011", "iip-annual-2004", "iip-annual-1993",
+      "iip-1980", "iip-industries-1980", "iip-annual-1980", "core-2011", "core-2004", "core-1993", "services-isp-annual"],
   },
   {
     slug: "external",
@@ -284,7 +287,7 @@ export const DOSSIERS = [
     stamp: { dateText: "August 2026", vintageStyle: "round", plural: true },
     statusNote: "Evergreen, revised with each survey round",
     version: "v1.2",
-    proseInputs: ["asi-industries", "asi-states", "asuse-annual", "asuse-sectors", "asuse-states"],
+    proseInputs: ["asi-industries", "asi-states", "asuse-annual", "asuse-sectors", "asuse-states", "asuse-2025-t26"],
     currentBundle: "asi-headline",
     calendar: "fiscal-apr",
     bands: null,
@@ -293,6 +296,13 @@ export const DOSSIERS = [
     prose: true,
     register: { id: "reg-asi", label: "Enterprises", unit: "Annual, ASI from 2008-09, ASUSE from 2021-22", historyCol: "History" },
     bundles: ["asi-headline", "asi-accounts", "asi-headline-1987", "asi-headline-1998", "asi-headline-2004", "asi-industries", "asi-states", "asuse-annual", "asuse-quarterly", "asuse-sectors", "asuse-states", "asuse-owners", "asuse-modernity", "asuse-structure"],
+    // industry (wave 2): every ASUSE table in both rulers, each family one paged view
+    everyCutFamilies: [
+      { id: "asuse-tables", label: "ASUSE, every table: the financial-year rounds 2021-22 to 2023-24", match: "asuse-t" },
+      { id: "asuse-2025-tables", label: "ASUSE, every table: the calendar-year 2025 round", match: "asuse-2025-" },
+      { id: "asi-tables-2008", label: "ASI, NIC 2008 block: every indicator by 2-, 3- and 4-digit industry, by state, and by state and division", match: ["asi-nic", "asi-states-all", "asi-state-nic2-"] },
+      { id: "asi-tables-older", label: "ASI, the NIC 2004, 1998 and 1987 blocks: every indicator at every grain", match: ["asi-2004-", "asi-1998-", "asi-1987-"] },
+    ],
   },
   {
     slug: "aishe",

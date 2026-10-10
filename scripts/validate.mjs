@@ -9,7 +9,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import YAML from "yaml";
-import { readRawFile } from "./lib/util.mjs";
+import { readRawFile, readRaw } from "./lib/util.mjs";
 // raw dumps are stored gzipped (scripts/lib/util.mjs readRawFile reads either form)
 const rawFileExists = (f) => fs.existsSync(f) || fs.existsSync(f + ".gz");
 
@@ -374,7 +374,7 @@ const PRODUCTS = [
   { slug: "asuse-modernity", dossier: "asuse", cadence: 12, range: [0, 5e5] },
   { slug: "asuse-states", dossier: "asuse", cadence: 12, range: [0, 5e8] },
   // counts are in hundreds ('00): workers reach ~1.5e6 ('00) ≈ 152M
-  { slug: "asuse-quarterly", dossier: "asuse", cadence: 3, staleAfter: "2026-01", range: [0, 3e6], freq: "quarterly" },
+  { slug: "asuse-quarterly", dossier: "asuse", cadence: 3, staleAfter: "2026-04", range: [0, 3e6], freq: "quarterly", base: "quarterly bulletin (calendar quarters, from Jan-Mar 2025)" },
   // AISHE: counts (enrolment to ~4.3e7, teachers ~1.6e6) mixed with ratios
   // (GER ~25%, GPI ~1, PTR ~26); wide range admits them all
   { slug: "aishe-headline", dossier: "aishe", cadence: 12, range: [0, 5e7] },
@@ -2193,6 +2193,159 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
     }
   }
 }
+
+/* ---- industry (lb/industry, wave 2): IIP financial years, the 1980-81 base, core industries,
+ * the complete ASI tables and every ASUSE indicator. Generic checks per file, then identities.
+ * Ranges document measured extremes; they are not curation. ---- */
+{
+  const files = fs.readdirSync(path.join(ROOT, "data/series")).map((f) => f.replace(/\.json$/, ""));
+  const ROWS = [
+    ...["2022", "2011", "2004", "1993"].map((t) => ({ slug: `iip-annual-${t}`, dossier: "iip", base: `${t}-${String((+t + 1) % 100).padStart(2, "0")}=100`, freq: "annual", step: 12,
+      stale: { 2022: "2025-04", 2011: "2025-04", 2004: "2016-04", 1993: "2010-04" }[t], range: [-70, 1500] })),
+    { slug: "iip-1980", dossier: "iip-1980", base: "1980-81=100", freq: "monthly", step: 1, range: [-40, 60] },
+    // single manufacturing groups swing much harder: jute textiles -84% (Mar 1984) and +487% (Feb 1985)
+    { slug: "iip-industries-1980", dossier: "iip-1980", base: "1980-81=100", freq: "monthly", step: 1, range: [-90, 500], stale: "1994-03" },
+    { slug: "iip-annual-1980", dossier: "iip-1980", base: "1980-81=100", freq: "annual", step: 12, range: [-20, 500], stale: "1997-04" },
+    { slug: "core-1993", dossier: "core", base: "1993-94=100", freq: "annual", step: 12, range: [-30, 500], stale: "2010-04" },
+    { slug: "core-2004", dossier: "core", base: "2004-05=100", freq: "annual", step: 12, range: [-30, 500], stale: "2015-04" },
+    { slug: "core-2011", dossier: "core", base: "2011-12=100", freq: "annual", step: 12, range: [-30, 500] },
+  ];
+  for (const r of ROWS) {
+    if (!files.includes(r.slug)) { fail(`${r.slug}: bundle missing`); continue; }
+    const b = load(r.slug);
+    checkMeta(b, r.slug, r.dossier, r.base, r.freq);
+    checkCadence(b.dates, r.step, r.slug);
+    checkRange(b, r.range[0], r.range[1], r.slug);
+    checkFreshness(b, r.slug, r.stale ? { staleAfter: r.stale } : {}, r.dossier);
+  }
+  // ASUSE: every table, both rulers. Per-1000 rows stay in [0, 1000]; counts and rupees are
+  // non-negative (no ASUSE table publishes a negative); percentages in [0, 100].
+  const UNIT_RANGE = { per_1000: [0, 1000], pct: [0, 100], count: [0, 5e8], inr_per_year: [0, 5e7], inr: [0, 5e8], months: [0, 12] };
+  for (const slug of files.filter((f) => /^asuse-(2025-)?t\d\d$/.test(f))) {
+    const b = load(slug), cy = slug.startsWith("asuse-2025-");
+    checkMeta(b, slug, "asuse", cy ? "calendar-year round (ASUSE 2025)" : "survey 2021-22 onward", "annual");
+    checkCadence(b.dates, 12, slug);
+    checkRange(b, -Infinity, Infinity, slug, Object.fromEntries(Object.entries(b.series).map(([k, s]) => [k, UNIT_RANGE[s.unit] ?? [NaN, NaN]])));
+    checkFreshness(b, slug, { staleAfter: cy ? "2025-01" : "2023-04" }, "asuse");
+    if (cy && b.dates.length !== 1) fail(`${slug}: the 2025 round is one calendar year, found ${b.dates.length} dates`);
+  }
+  ok(`asuse: ${files.filter((f) => /^asuse-(2025-)?t\d\d$/.test(f)).length} complete tables through the generic checks`);
+  // the complete tables agree with the curated bundles where both carry a figure
+  if (files.includes("asuse-t01") && files.includes("asuse-annual")) {
+    const t = load("asuse-t01"), a = load("asuse-annual");
+    const all = t.series.estimated_no_of_establishments;
+    if (!all) fail("asuse-t01: no All India, all establishments count to check against asuse-annual");
+    else if (JSON.stringify(all.data) !== JSON.stringify(a.series.establishments_all.data)) fail(`asuse-t01: All India establishments ${all.data} != asuse-annual ${a.series.establishments_all.data}`);
+    else ok(`asuse-t01: All India establishments identical to asuse-annual (${all.data.join(", ")})`);
+  }
+  // per-1000 distributions add to about 1,000 (published integers, rounding)
+  for (const slug of ["asuse-t03", "asuse-2025-t03", "asuse-t10", "asuse-2025-t10"].filter((x) => files.includes(x))) {
+    const b = load(slug);
+    const parts = Object.entries(b.series).filter(([k, s]) => /^All India · /.test(s.label) && !/ · All$|: all$/.test(s.label) && !/Proprietary-All/.test(s.label));
+    const sum = b.dates.map((_, i) => parts.reduce((a, [, s]) => a + (s.data[i] ?? 0), 0));
+    if (sum.some((v) => v && Math.abs(v - 1000) > 6)) fail(`${slug}: All India categories sum to ${sum.join(", ")} per 1,000`);
+    else ok(`${slug}: All India categories sum to ${sum.join(", ")} per 1,000`);
+  }
+
+  // ASI: the complete tables of every NIC block. Counts are non-negative; money can be negative
+  // only in the stock-change, net-income and net-profit lines (24-30) and in value added and
+  // capital formation (19-23) for small cuts that made losses.
+  const ASI_BLOCK = { "": "NIC 2008", "-2004": "NIC 2004", "-1998": "NIC 1998", "-1987": "NIC 1987" };
+  const asiTables = files.filter((f) => /^asi(-\d{4})?-(nic[234]|states(-all)?|state-nic2-.+|accounts|sectors)$/.test(f) && f !== "asi-accounts");
+  for (const slug of asiTables) {
+    const b = load(slug), tag = (slug.match(/^asi(-\d{4})?-/) ?? [])[1] ?? "";
+    checkMeta(b, slug, "asi", ASI_BLOCK[tag], "annual");
+    checkCadence(b.dates, 12, slug);
+    // money can print negative in many lines for small cuts (working capital, stock changes,
+    // value added, profit), as published; counts and quantities never do
+    const rng = {};
+    for (const [k, s] of Object.entries(b.series)) rng[k] = /^inr/.test(s.unit) ? [-1e10, 1e10] : [0, 1e10];
+    checkRange(b, -Infinity, Infinity, slug, rng);
+    checkFreshness(b, slug, { staleAfter: { "": "2023-04", "-2004": "2007-04", "-1998": "2003-04", "-1987": "1997-04" }[tag] }, "asi");
+  }
+  ok(`asi: ${asiTables.length} complete tables through the generic checks`);
+  // the parts add up: every 2-digit division's GVA sums to the All-India figure (NIC 2008)
+  if (files.includes("asi-nic2") && files.includes("asi-accounts")) {
+    const n2 = load("asi-nic2"), acc = load("asi-accounts");
+    let worst = 0, at = null;
+    acc.dates.forEach((d, i) => {
+      const t = acc.series.i19.data[i]; if (t == null) return;
+      const sum = Object.entries(n2.series).filter(([k]) => k.startsWith("i19_")).reduce((a, [, s]) => a + (s.data[n2.dates.indexOf(d)] ?? 0), 0);
+      const dev = Math.abs(sum / t - 1); if (dev > worst) { worst = dev; at = d; }
+    });
+    if (worst > 0.005) fail(`asi-nic2: divisions' GVA sums ${(worst * 100).toFixed(2)}% away from All India at ${at}`);
+    else ok(`asi-nic2: divisions' GVA sums to All India within ${(worst * 100).toFixed(3)}%`);
+  }
+  // persons engaged = workers + other employees + unpaid family members (i31 = i32 + i38 + i41)
+  // at every grain: this is the check that catches a shifted indicator copy
+  for (const slug of asiTables.filter((f) => /-nic[234]$|-states/.test(f) && !/-1987|-1998/.test(f))) {
+    const b = load(slug); let bad = 0, n = 0;
+    for (const k of Object.keys(b.series).filter((x) => x.startsWith("i31"))) {
+      const sfx = k.slice(3), w = b.series["i32" + sfx], o = b.series["i38" + sfx], u = b.series["i41" + sfx];
+      if (!w || !o) continue;
+      b.dates.forEach((d, i) => {
+        const p = b.series[k].data[i]; if (p == null || w.data[i] == null || o.data[i] == null) return;
+        n++; if (Math.abs(w.data[i] + o.data[i] + (u?.data[i] ?? 0) - p) > Math.max(2, p * 0.002)) { bad++; if (bad <= 3) console.error(`   ${slug} ${k} ${d}: ${w.data[i]} + ${o.data[i]} + ${u?.data[i] ?? 0} != ${p}`); }
+      });
+    }
+    if (bad) fail(`${slug}: persons engaged != workers + other employees + unpaid in ${bad} of ${n} cells`);
+    else ok(`${slug}: persons engaged = workers + other employees + unpaid in all ${n} cells`);
+  }
+
+  // annual growth as published vs computed from the published (rounded) annual levels
+  for (const slug of ["iip-annual-2022", "iip-annual-2011", "iip-annual-2004", "iip-annual-1993", "core-2011", "core-2004", "core-1993"].filter((x) => files.includes(x))) {
+    const b = load(slug); let worst = 0, at = null, n = 0;
+    for (const k of Object.keys(b.series).filter((x) => x.endsWith("_index"))) {
+      const g = b.series[k.replace(/_index$/, "_growth")]; if (!g) continue;
+      const lv = b.series[k].data;
+      lv.forEach((v, i) => { if (i && v != null && lv[i - 1] != null && g.data[i] != null) { n++; const d = Math.abs((v / lv[i - 1] - 1) * 100 - g.data[i]); if (d > worst) { worst = d; at = `${k} ${b.dates[i]}`; } } });
+    }
+    // levels are printed to one decimal: growth from them can miss the published rate by a few tenths
+    if (worst > 0.6) fail(`${slug}: published growth differs from the levels by ${worst.toFixed(2)} pt at ${at}`);
+    else ok(`${slug}: published growth matches the levels within ${worst.toFixed(2)} pt (${n} years)`);
+  }
+  // a financial-year index is the mean of its twelve monthly levels (raw dumps)
+  {
+    const raw = readRaw(ROOT, "data/raw/iip-indices.json").levels;
+    for (const [tag, base] of [["2022", "2022-23"], ["2011", "2011-12"], ["2004", "2004-05"], ["1993", "1993-94"]]) {
+      if (!files.includes(`iip-annual-${tag}`)) continue;
+      const b = load(`iip-annual-${tag}`), m = raw[`${base}:general`]; let worst = 0, at = null, n = 0;
+      b.dates.forEach((d, i) => {
+        const y = +d.slice(0, 4), ms = Array.from({ length: 12 }, (_, k) => m[`${k < 9 ? y : y + 1}-${String(((k + 3) % 12) + 1).padStart(2, "0")}`]);
+        const v = b.series.general_index.data[i];
+        if (v == null || ms.some((x) => x == null)) return;
+        n++; const dev = Math.abs(ms.reduce((a, x) => a + x, 0) / 12 - v); if (dev > worst) { worst = dev; at = d; }
+      });
+      if (!n) fail(`iip-annual-${tag}: no year with twelve monthly levels to check`);
+      else if (worst > 0.15) fail(`iip-annual-${tag}: annual General index is ${worst.toFixed(2)} away from the mean of its months at ${at}`);
+      else ok(`iip-annual-${tag}: annual General index = mean of its twelve months within ${worst.toFixed(3)} (${n} years)`);
+    }
+    if (files.includes("iip-annual-1980")) {
+      const r80 = readRaw(ROOT, "data/raw/iip-1980.json").reports["638"].rows.filter((x) => x["Iip Industry Code"] === "IIPS04");
+      const MON = { JAN: 1, FEB: 2, MAR: 3, APR: 4, MAY: 5, JUN: 6, JUL: 7, AUG: 8, SEP: 9, OCT: 10, NOV: 11, DEC: 12 };
+      const lv = new Map(r80.map((x) => { const [mo, y] = x["Time Month"].split("-"); return [`${y}-${String(MON[mo]).padStart(2, "0")}`, +x["Index Value"]]; }));
+      const b = load("iip-annual-1980"); let worst = 0, n = 0;
+      b.dates.forEach((d, i) => {
+        const y = +d.slice(0, 4), ms = Array.from({ length: 12 }, (_, k) => lv.get(`${k < 9 ? y : y + 1}-${String(((k + 3) % 12) + 1).padStart(2, "0")}`));
+        if (ms.some((x) => x == null)) return; n++;
+        worst = Math.max(worst, Math.abs(ms.reduce((a, x) => a + x, 0) / 12 - b.series.general_index.data[i]));
+      });
+      if (worst > 0.15) fail(`iip-annual-1980: annual averages (report 219) miss the monthly table (638) by ${worst.toFixed(2)}`);
+      else ok(`iip-annual-1980: report 219's averages = mean of report 638's months within ${worst.toFixed(3)} (${n} years)`);
+    }
+  }
+  // the composite core index stays between its industries (a weighted mean)
+  for (const slug of ["core-2011", "core-2004", "core-1993"].filter((x) => files.includes(x))) {
+    const b = load(slug); let bad = 0;
+    b.dates.forEach((d, i) => {
+      const parts = Object.keys(b.series).filter((k) => k.endsWith("_index") && k !== "composite_index").map((k) => b.series[k].data[i]).filter((v) => v != null);
+      const c = b.series.composite_index?.data[i];
+      if (c != null && parts.length && (c < Math.min(...parts) || c > Math.max(...parts))) { bad++; fail(`${slug}: composite ${c} outside its industries at ${d}`); }
+    });
+    if (!bad) ok(`${slug}: composite index sits between its industries every year`);
+  }
+}
+/* ---- end industry ---- */
 
 /* ---- seams: the base-year registry (sources.yml `seams`) ----
  * For every product that has changed ruler: each bundle of that dossier is

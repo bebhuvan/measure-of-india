@@ -643,6 +643,201 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   wirePlate(document.getElementById("cb-lab"), plot, "india-atlas_asi_employment-share-by-industry_2023-24", csv);
 }
 
+/* ---------- § 06 plates 4e, 4f : what a factory job pays, and how big the plant is ----------
+ * Derived from published series, labelled as such: total emoluments / persons engaged, and
+ * persons engaged / factories in operation, by 2-digit division, latest survey year. */
+{
+  const SHORT = {
+    "10": "Food products", "11": "Beverages", "12": "Tobacco", "13": "Textiles", "14": "Wearing apparel", "15": "Leather",
+    "16": "Wood products", "17": "Paper", "18": "Printing", "19": "Coke & petroleum", "20": "Chemicals", "21": "Pharmaceuticals",
+    "22": "Rubber & plastics", "23": "Non-metallic minerals", "24": "Basic metals", "25": "Fabricated metal", "26": "Electronics & optical",
+    "27": "Electrical equipment", "28": "Machinery n.e.c.", "29": "Motor vehicles", "30": "Other transport eqpt", "31": "Furniture",
+    "32": "Other manufacturing", "33": "Repair & installation", "38": "Waste & recovery", "58": "Publishing", "01": "Crop & animal services", "08": "Other mining",
+  };
+  const S = industriesBundle.series, i = industriesBundle.dates.length - 1;
+  const codes = [...new Set(Object.keys(S).filter((k) => k.startsWith("persons_engaged_")).map((k) => k.slice(16)))].filter((c) => c !== "99998");
+  const g = (k, c) => S[`${k}_${c}`]?.data[i];
+  const rows = codes.map((c) => ({ c, name: SHORT[c] || c, p: g("persons_engaged", c), wage: (g("emoluments", c) * 1e5) / g("persons_engaged", c), size: g("persons_engaged", c) / g("factories_in_operation", c) }))
+    .filter((r) => Number.isFinite(r.wage) && Number.isFinite(r.size));
+  const hi = H.persons_engaged.data.length - 1;
+  const allWage = (H.emoluments.data[hi].value * 1e5) / H.persons_engaged.data[hi].value;
+  const allSize = H.persons_engaged.data[hi].value / H.factories_in_operation.data[hi].value;
+  const yr = fy(industriesBundle.dates.map((d) => new Date(d + "T00:00:00Z"))[i]);
+  const inr = (v) => "₹" + fmtIN(v);
+  const inrL = (v) => (v >= 1e5 ? "₹" + (v / 1e5).toFixed(1) + " lakh" : "₹" + fmtIN(v));
+  const strip = (id, block, key, fmtV, axisLabel, ref, refLab, file, a11yT) => {
+    const rs = [...rows].sort((a, b) => b[key] - a[key]);
+    const ext = [rs[0], rs.at(-1)];
+    const geo = { W: 1184, H: 30 + rs.length * 23 + 40, ml: 250, mr: 110, mt: 30, mb: 40 };
+    const max = rs[0][key] * 1.08;
+    const plot = Plot.plot({
+      width: geo.W, height: geo.H, marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+      style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#878D99", overflow: "visible" },
+      x: { label: axisLabel, labelAnchor: "right", labelArrow: false, domain: [0, max], tickSize: 0, tickPadding: 10, tickFormat: (d) => (d === 0 ? "0" : String(fmtV(d))) },
+      y: { label: null, domain: rs.map((r) => r.name), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
+      marks: [
+        Plot.gridX({ stroke: "#F0F2F5", strokeWidth: 1, ticks: 5 }),
+        Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
+        Plot.ruleX([ref], { stroke: "#161A22", strokeOpacity: 0.5, strokeDasharray: "3,3" }),
+        Plot.text([{ x: ref, y: rs[0].name }], { x: "x", y: "y", text: [refLab + " " + fmtV(ref)], dy: -16, dx: 6, textAnchor: "start", fill: "#4A5160", fontSize: 11.5, fontFamily: mono }),
+        Plot.ruleY(rs, { y: "name", x1: 0, x2: key, stroke: (d) => (ext.includes(d) ? "#B9C3F3" : "#E3E6EB"), strokeWidth: 1.25 }),
+        Plot.dot(rs, { y: "name", x: key, fill: (d) => (ext.includes(d) ? "#2E4BD8" : "#5F6675"), r: 4 }),
+        Plot.text(rs.filter((d) => !ext.includes(d)), { y: "name", x: key, dx: 12, text: (d) => fmtV(d[key]), fill: "#878D99", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+        Plot.text(ext, { y: "name", x: key, dx: 12, text: (d) => fmtV(d[key]), fill: "#161A22", fontWeight: 500, fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      ],
+    });
+    a11y(plot, a11yT, "Sorted dot strip of " + rs.length + " industries, from " + rs[0].name + " at " + fmtV(rs[0][key]) + " to " + rs.at(-1).name + " at " + fmtV(rs.at(-1)[key]) + "; all factories " + fmtV(ref) + ".");
+    document.getElementById(id).append(plot);
+    const csv = ["nic_code,name," + key + "_" + yr, ...rs.map((r) => r.c + "," + r.name + "," + r[key].toFixed(2))].join("\n");
+    wirePlate(document.getElementById(block), plot, file, csv);
+    return rs;
+  };
+  const wr = strip("plot-wage", "cb-wage", "wage", (v) => (v >= 1e5 ? "₹" + (v / 1e5).toFixed(1) + "L" : "₹" + Math.round(v / 1000) + "k"), "emoluments per person engaged, ₹ a year →",
+    allWage, "all factories", "india-atlas_asi_emoluments-per-person_" + yr, "Total emoluments per person engaged by industry, " + yr);
+  setTxt("pv-wage", inrL(allWage));
+  setTxt("wg-all", inrL(allWage));
+  setTxt("wg-month", inr(Math.round(allWage / 12 / 100) * 100));
+  const below = wr.filter((r) => r.wage < allWage);
+  setTxt("wg-below", String(below.length));
+  setTxt("wg-n", String(wr.length));
+  const big3 = [...rows].sort((a, b) => b.p - a.p).slice(0, 3);
+  setTxt("wg-big", big3.map((r) => r.name.toLowerCase() + " " + inrL(r.wage)).join(", ").replace(/, ([^,]*)$/, " and $1"));
+  const sr = strip("plot-size", "cb-size", "size", (v) => String(Math.round(v)), "persons engaged per factory in operation →",
+    allSize, "all factories", "india-atlas_asi_persons-per-factory_" + yr, "Persons engaged per factory in operation by industry, " + yr);
+  setTxt("pv-size", String(Math.round(allSize)));
+  setTxt("sz-all", String(Math.round(allSize)));
+  setTxt("sz-top", sr.slice(0, 3).map((r) => r.name.toLowerCase() + " (" + Math.round(r.size) + ")").join(", "));
+  setTxt("sz-low", sr.slice(-3).reverse().map((r) => r.name.toLowerCase() + " (" + Math.round(r.size) + ")").join(", "));
+}
+
+/* ---------- § 08 inside the shelf: the 4-digit classes and the state x division mix ----------
+ * Build-time picks (#asi-deep-data) from asi-nic4, asi-nic2, asi-accounts, asi-states-all and the
+ * per-state asi-state-nic2-* bundles; the whole tables are in the downloads. */
+{
+  const A = JSON.parse(document.getElementById("asi-deep-data")?.textContent || "null");
+  if (A && A.topClasses.length) {
+    const short = (t) => { const x = t.replace(/^(\d+) Manufacture of /, "$1 ").replace(/^(\d+) (.)/, (m, c, ch) => c + " " + ch.toUpperCase()); return x.length > 52 ? x.slice(0, 50).replace(/[ ,]+\S*$/, "") + "…" : x; };
+    const rows = A.topClasses.map((r) => ({ ...r, name: short(r.name) }));
+    const top = rows[0];
+    const share = rows.reduce((a, r) => a + r.sh, 0), psh = rows.reduce((a, r) => a + (r.psh ?? 0), 0);
+    setTxt("pv-nic4", share.toFixed(1) + "%");
+    setTxt("n4-top", top.name.replace(/^\d+ /, "").toLowerCase() + " (NIC " + top.code + "), " + top.sh.toFixed(1) + "%");
+    setTxt("n4-share", share.toFixed(1) + "%");
+    setTxt("n4-pshare", psh.toFixed(1) + "%");
+    const geo = { W: 1184, H: 30 + rows.length * 24 + 40, ml: 380, mr: 150, mt: 30, mb: 40 };
+    const max = Math.max(...rows.map((r) => r.sh)) * 1.1;
+    const plot = Plot.plot({
+      width: geo.W, height: geo.H, marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+      style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+      x: { label: "share of factory value added →", labelAnchor: "right", labelArrow: false, domain: [0, max], tickSize: 0, tickPadding: 10, tickFormat: (d) => (d === 0 ? "0" : d + "%") },
+      y: { label: null, domain: rows.map((r) => r.name), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
+      marks: [
+        Plot.gridX({ stroke: "#F0F2F5", ticks: 5 }),
+        Plot.barX(rows, { x: "sh", y: "name", fill: (d) => (d === top ? "#2E4BD8" : "#C9CED6"), insetTop: 4, insetBottom: 4 }),
+        Plot.ruleX([0], { stroke: "#B5BAC4" }),
+        Plot.text(rows.filter((d) => d !== top), { x: "sh", y: "name", dx: 8, textAnchor: "start", text: (d) => d.sh.toFixed(1) + "%", fill: "#4A5160", fontSize: 11.5, fontFamily: mono }),
+        Plot.text([top], { x: "sh", y: "name", dx: 8, textAnchor: "start", text: (d) => d.sh.toFixed(1) + "%", fill: "#161A22", fontWeight: 500, fontSize: 11.5, fontFamily: mono }),
+        Plot.text(rows.filter((d) => d.psh != null), { x: "sh", y: "name", dx: 62, textAnchor: "start", text: (d) => "jobs " + d.psh.toFixed(1) + "%", fill: "#A3A9B4", fontSize: 11, fontFamily: mono }),
+      ],
+    });
+    a11y(plot, "The 20 largest 4-digit factory classes by share of value added", "Bar chart. " + rows.slice(0, 3).map((r) => r.name + " " + r.sh.toFixed(1) + " per cent").join(", ") + "; together the twenty make " + share.toFixed(1) + " per cent of factory value added and " + psh.toFixed(1) + " per cent of jobs.");
+    document.getElementById("plot-nic4").append(plot);
+    const csv = ["nic4,class,gva_share_pct,employment_share_pct", ...A.topClasses.map((r) => `${r.code},"${r.name}",${r.sh.toFixed(2)},${r.psh?.toFixed(2) ?? ""}`)].join("\n");
+    wirePlate(document.getElementById("cb-nic4"), plot, "india-atlas_asi_top-4-digit-classes", csv);
+  }
+  if (A && A.mix.length) {
+    const SHORTD = { "10": "Food products", "11": "Beverages", "13": "Textiles", "14": "Apparel", "19": "Refining", "20": "Chemicals", "21": "Pharmaceuticals",
+      "22": "Rubber & plastics", "23": "Cement & glass", "24": "Basic metals", "25": "Fabricated metal", "26": "Electronics", "27": "Electrical equipment",
+      "28": "Machinery", "29": "Motor vehicles", "30": "Other transport" };
+    const dn = (c) => { if (SHORTD[c]) return SHORTD[c]; const d = A.divs.find((x) => x.code === c); const n = d.name.replace(/^\d+ /, "").replace(/^Manufacture of /, ""); const s2 = n.split(/,| and /)[0]; return s2.charAt(0).toUpperCase() + s2.slice(1).toLowerCase(); };
+    const cols = [...A.divs.map((d) => d.code), "other"];
+    const colName = (c) => (c === "other" ? "All other" : dn(c));
+    const cells = A.mix.flatMap((m) => [...m.cells.map((c) => ({ state: m.state, col: colName(c.code), sh: c.sh })), { state: m.state, col: "All other", sh: m.other }]);
+    const peak = cells.filter((c) => c.col !== "All other" && c.sh != null).sort((a, b) => b.sh - a.sh)[0];
+    const varied = [...A.mix].sort((a, b) => b.other - a.other)[0];
+    setTxt("pv-statemix", peak.sh.toFixed(1) + "%");
+    setTxt("sm-peak", peak.col.toLowerCase() + " in " + peak.state + ", " + peak.sh.toFixed(1) + "% of its factory value added");
+    setTxt("sm-div", varied.state + " (" + varied.other.toFixed(1) + "% in divisions outside the eight)");
+    const colTop = A.divs.map((d) => { const best = cells.filter((c) => c.col === colName(d.code) && c.sh != null).sort((a, b) => b.sh - a.sh)[0]; return colName(d.code).toLowerCase() + " in " + best.state + " (" + best.sh.toFixed(1) + "%)"; });
+    setTxt("sm-cols", colTop.join(", ").replace(/, ([^,]*)$/, " and $1"));
+    const plot = Plot.plot({
+      width: 1184, height: 60 + A.mix.length * 34 + 30, marginLeft: 160, marginRight: 10, marginTop: 70, marginBottom: 10,
+      style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#4A5160", overflow: "visible" },
+      x: { label: null, domain: cols.map(colName), axis: "top", tickSize: 0, tickPadding: 8, tickFormat: (s) => String(s) },
+      y: { label: null, domain: A.mix.map((m) => m.state), tickSize: 0, tickPadding: 10, tickFormat: (s) => String(s) },
+      color: { type: "linear", domain: [0, 40], range: ["#FFFFFF", "#B9C3F3"], clamp: true },
+      marks: [
+        Plot.cell(cells.filter((c) => c.sh != null), { x: "col", y: "state", fill: "sh", inset: 1 }),
+        Plot.text(cells.filter((c) => c.sh != null), { x: "col", y: "state", text: (d) => d.sh.toFixed(1), fill: "#161A22", fontSize: 11.5, fontFamily: mono }),
+      ],
+    });
+    a11y(plot, "Share of each state's factory value added by division", "Grid of twelve states by eight divisions and all other. The largest cell is " + peak.col + " in " + peak.state + " at " + peak.sh.toFixed(1) + " per cent.");
+    document.getElementById("plot-statemix").append(plot);
+    const csv = ["state," + cols.map((c) => `"${colName(c)}"`).join(","), ...A.mix.map((m) => `"${m.state}",` + [...m.cells.map((c) => c.sh?.toFixed(2) ?? ""), m.other.toFixed(2)].join(","))].join("\n");
+    wirePlate(document.getElementById("cb-statemix"), plot, "india-atlas_asi_state-by-division-mix", csv);
+  }
+}
+
+/* ---------- § 07 plates: the 2025 round, workers by trade and women's share ----------
+ * The ASUSE 2025 table is 1.7 MB, so the page carries a build-time pick of the figures these
+ * two plates draw (#u25-data, written by the page from asuse-2025-t26); the whole table is in
+ * the downloads and the every-cut view. */
+{
+  const U = JSON.parse(document.getElementById("u25-data").textContent);
+  const lc = (t) => { const x = t.replace(/^Manufacture of /, ""); return x.charAt(0) + x.slice(1).toLowerCase(); };
+  const short = (t) => { const x = lc(t); return x.length > 44 ? x.slice(0, 42).replace(/[ ,]+\S*$/, "") + "…" : x; };
+  const rows = U.trades.map((r) => ({ ...r, name: short(r.a) }));
+  setTxt("pv-trades", (U.all / 1e7).toFixed(2));
+  {
+    const geo = { W: 1184, H: 30 + rows.length * 20 + 40, ml: 330, mr: 110, mt: 30, mb: 40 };
+    const top = rows[0];
+    const plot = Plot.plot({
+      width: geo.W, height: geo.H, marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+      style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+      x: { label: "workers, lakh →", labelAnchor: "right", labelArrow: false, tickSize: 0, tickPadding: 10, tickFormat: (d) => String(Math.round(d / 1e5)) },
+      y: { label: null, domain: rows.map((r) => r.name), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
+      marks: [
+        Plot.gridX({ stroke: "#F0F2F5", ticks: 6 }),
+        Plot.barX(rows, { x: "n", y: "name", fill: (d) => (d === top ? "#2E4BD8" : "#C9CED6"), insetTop: 3, insetBottom: 3 }),
+        Plot.ruleX([0], { stroke: "#B5BAC4" }),
+        Plot.text(rows.filter((d) => d !== top), { x: "n", y: "name", dx: 8, textAnchor: "start", text: (d) => (d.n >= 1e5 ? (d.n / 1e5).toFixed(1) + " lakh" : fmtIN(d.n)), fill: "#878D99", fontSize: 11.5, fontFamily: mono }),
+        Plot.text([top], { x: "n", y: "name", dx: 8, textAnchor: "start", text: (d) => (d.n / 1e5).toFixed(1) + " lakh", fill: "#161A22", fontWeight: 500, fontSize: 11.5, fontFamily: mono }),
+      ],
+    });
+    a11y(plot, "Informal workers by detailed activity, 2025", "Bar chart of " + rows.length + " activities. " + rows.slice(0, 3).map((r) => r.name + " " + (r.n / 1e5).toFixed(1) + " lakh").join(", ") + ".");
+    document.getElementById("plot-trades").append(plot);
+    const csv = ["activity,workers_2025,female_workers_2025", ...rows.map((r) => `"${r.a}",${r.n},${r.f}`)].join("\n");
+    wirePlate(document.getElementById("cb-trades"), plot, "india-atlas_asuse-2025_workers-by-activity", csv);
+  }
+  {
+    const all = U.f / U.all;
+    const ws = rows.filter((r) => r.n >= 5e5).map((r) => ({ ...r, sh: (100 * r.f) / r.n })).sort((a, b) => b.sh - a.sh);
+    const ext = [ws[0], ws.at(-1)];
+    setTxt("pv-women", (100 * all).toFixed(1) + "%");
+    const geo = { W: 1184, H: 30 + ws.length * 22 + 40, ml: 330, mr: 90, mt: 30, mb: 40 };
+    const plot = Plot.plot({
+      width: geo.W, height: geo.H, marginLeft: geo.ml, marginRight: geo.mr, marginTop: geo.mt, marginBottom: geo.mb,
+      style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
+      x: { label: "women's share of workers →", labelAnchor: "right", labelArrow: false, domain: [0, 100], tickSize: 0, tickPadding: 10, tickFormat: (d) => (d === 0 ? "0" : d + "%") },
+      y: { label: null, domain: ws.map((r) => r.name), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
+      marks: [
+        Plot.gridX([25, 50, 75, 100], { stroke: "#F0F2F5" }),
+        Plot.ruleX([0], { stroke: "#B5BAC4" }),
+        Plot.ruleX([100 * all], { stroke: "#161A22", strokeOpacity: 0.5, strokeDasharray: "3,3" }),
+        Plot.text([{ x: 100 * all, y: ws[0].name }], { x: "x", y: "y", text: ["all activities " + (100 * all).toFixed(1) + "%"], dy: -16, dx: 6, textAnchor: "start", fill: "#4A5160", fontSize: 11.5, fontFamily: mono }),
+        Plot.ruleY(ws, { y: "name", x1: 0, x2: "sh", stroke: (d) => (ext.includes(d) ? "#B9C3F3" : "#E3E6EB"), strokeWidth: 1.25 }),
+        Plot.dot(ws, { y: "name", x: "sh", fill: (d) => (ext.includes(d) ? "#2E4BD8" : "#5F6675"), r: 4 }),
+        Plot.text(ws.filter((d) => !ext.includes(d)), { y: "name", x: "sh", dx: 10, textAnchor: "start", text: (d) => d.sh.toFixed(1) + "%", fill: "#878D99", fontSize: 11.5, fontFamily: mono }),
+        Plot.text(ext, { y: "name", x: "sh", dx: 10, textAnchor: "start", text: (d) => d.sh.toFixed(1) + "%", fill: "#161A22", fontWeight: 500, fontSize: 11.5, fontFamily: mono }),
+      ],
+    });
+    a11y(plot, "Women's share of informal workers by activity, 2025", "Sorted dot strip of " + ws.length + " activities, from " + ws[0].name + " at " + ws[0].sh.toFixed(1) + " per cent to " + ws.at(-1).name + " at " + ws.at(-1).sh.toFixed(1) + "; all activities " + (100 * all).toFixed(1) + ".");
+    document.getElementById("plot-women").append(plot);
+    const csv = ["activity,workers_2025,female_workers_2025,female_share_pct", ...ws.map((r) => `"${r.a}",${r.n},${r.f},${r.sh.toFixed(2)}`)].join("\n");
+    wirePlate(document.getElementById("cb-women"), plot, "india-atlas_asuse-2025_women-share-by-activity", csv);
+  }
+}
+
 /* ---------- § 07 the other economy ---------- */
 {
   const estOAE = last(UA.establishments_oae), estHWE = last(UA.establishments_hwe), estAll = last(UA.establishments_all);
@@ -671,7 +866,9 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   // quarterly bulletin — counts published in hundreds ('00); a level, not a trend
   const qEst = UQ.establishments_00_all_activities;
   setTxt("q-now", croreN(last(qEst) * 100) + " crore");
-  setTxt("q-then", croreN(firstV(qEst) * 100) + " crore");
+  // the same quarter a year earlier (four quarters back on the bulletin's axis)
+  const qYear = qEst.data.at(-5)?.value;
+  if (qYear != null && document.getElementById("q-then")) setTxt("q-then", croreN(qYear * 100) + " crore");
 }
 
 /* ---------- § 07 signature plate : GVA per worker, one scale ---------- */

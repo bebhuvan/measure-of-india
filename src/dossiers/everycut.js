@@ -77,6 +77,9 @@ export const UNITS = {
   pp: { kind: "diff", fmt: (v) => (v < 0 ? MINUS : v > 0 ? "+" : "") + Math.abs(v).toFixed(1) + " pt", note: "percentage points" },
   inr_per_sqft: { kind: "pct", fmt: (v) => "₹" + grp(v), note: "per sq ft" },
   // ---- end bis family ----
+  // ---- industry (wave 2): ASI fuel values are published in ₹ thousand ----
+  inr_thousand: { kind: "pct", fmt: (v) => (Math.abs(v) >= 1e9 ? "₹" + grp(v / 1e9, 2) + " lakh crore" : "₹" + grp(v / 1e4, 1) + " crore"), note: "published in ₹ thousand" },
+  // ---- end industry ----
   // ---- services ----
   pct_of_gva: { kind: "pt", fmt: (v) => v.toFixed(1) + "%", note: "of GVA" },
   pct_of_workers: { kind: "pt", fmt: (v) => v.toFixed(1) + "%", note: "of workers" },
@@ -263,6 +266,10 @@ export const CUT_BY_BUNDLE = {
   // iip
   "iip-2022": "Sector and use", "iip-2011": "Sector and use", "iip-2004": "Sector and use", "iip-1993": "Sector and use",
   "isp": "Services sub-sector",
+  // industry (wave 2)
+  "iip-industries-2004": "Industry", "iip-industries-1993": "Industry", "iip-industries-1980": "Industry", "iip-1980": "Sector",
+  "iip-annual-2022": "Financial year", "iip-annual-2011": "Financial year", "iip-annual-2004": "Financial year", "iip-annual-1993": "Financial year", "iip-annual-1980": "Financial year",
+  "core-2011": "Core industry", "core-2004": "Core industry", "core-1993": "Core industry",
   // external
   "rbi-trade": "All India", "rbi-trade-oil": "Oil and non-oil", "rbi-forex": "All India", "rbi-bop": "Account",
   "rbi-bop-ratios": "Ratio", "rbi-debt": "Component", "rbi-debt-quarterly": "Component", "rbi-nri": "Deposit scheme",
@@ -504,6 +511,14 @@ export const CUT_BY_BUNDLE = {
 };
 // the fallback, by what a bundle's slug says it is
 export const CUT_RULES = [
+  // --- industry (wave 2): complete ASI and ASUSE tables ---
+  [/^asuse-(2025-)?t\d\d$/, "ASUSE table"],
+  [/^asi(-\d{4})?-state-nic2$/, "State and industry"],
+  [/^asi(-\d{4})?-nic\d$/, "Industry"],
+  [/^asi(-\d{4})?-states(-all)?$/, "State"],
+  [/^asi-\d{4}-accounts$/, "Account"],
+  [/^asi-\d{4}-sectors$/, "Rural and urban"],
+  // --- end industry ---
   [/states?-sectors/, "State and sector"],
   [/-states?(-|$)/, "State"],
   [/-items?(-|$)/, "Item"],

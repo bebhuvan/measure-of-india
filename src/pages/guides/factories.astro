@@ -5,6 +5,58 @@ import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["factories"];
+// industry wages and plant size, read from the bundle (2-digit NIC, latest survey year)
+import ind from "../../../data/series/asi-industries.json";
+const II = ind.dates.length - 1, asiFy = `${ind.dates[II].slice(0, 4)}-${String((+ind.dates[II].slice(0, 4) + 1) % 100).padStart(2, "0")}`;
+const SHORTN = { "12": "tobacco products", "19": "coke and refined petroleum", "29": "motor vehicles", "16": "wood products", "01": "crop and animal services", "21": "pharmaceuticals", "26": "electronics" };
+const nicRows = [...new Set(Object.keys(ind.series).filter((k) => k.startsWith("persons_engaged_")).map((k) => k.slice(16)))].filter((c) => c !== "99998")
+  .map((c) => { const g = (k) => ind.series[`${k}_${c}`]?.data[II]; return { c, wage: (g("emoluments") * 1e5) / g("persons_engaged"), size: g("persons_engaged") / g("factories_in_operation") }; })
+  .filter((r) => Number.isFinite(r.wage) && Number.isFinite(r.size));
+const byWage = [...nicRows].sort((a, b) => a.wage - b.wage), bySize = [...nicRows].sort((a, b) => a.size - b.size);
+const inrK = (v) => v >= 1e5 ? `₹${(v / 1e5).toFixed(1)} lakh` : `₹${Math.round(v / 1000)},000`;
+const nm = (c) => SHORTN[c] ?? c;
+// the calendar-year 2025 ASUSE round: workers by detailed activity and gender
+import u25 from "../../../data/series/asuse-2025-t26.json";
+import ua from "../../../data/series/asuse-annual.json";
+const NOT_ACT = new Set(["All India", "OAE", "HWE", "Urban", "Rural", "Other Services", "Trading Activities", "Manufacturing Activities"]);
+const actW = {};
+for (const s of Object.values(u25.series)) { const [a, g, w] = s.label.split(" · "); if (w === "working time: all") (actW[a] ??= {})[g] = s.data[0]; }
+const u25All = actW["All India"]["gender: all"], u25F = actW["All India"].Female;
+const trades = Object.entries(actW).filter(([a]) => !NOT_ACT.has(a)).map(([a, v]) => ({ a, n: v["gender: all"], f: v.Female })).sort((x, y) => y.n - x.n);
+const nextThree = trades.slice(1, 4).reduce((t, r) => t + r.n, 0);
+const lakhN = (v) => (v >= 1e7 ? `${(v / 1e7).toFixed(1)} crore` : `${Math.round(v / 1e5)} lakh`);
+const wShare = trades.filter((r) => r.n >= 5e5).map((r) => ({ ...r, sh: r.f / r.n })).sort((x, y) => y.sh - x.sh);
+const per = (x) => { const p = Math.round(x * 10); return p >= 1 ? `${["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"][p]} in ten` : `${Math.round(x * 1000)} in a thousand`; };
+const lc = (t) => t.replace(/^Manufacture of /, "").toLowerCase();
+const fyWorkers = ua.series.workers_all.data.filter((v) => v != null).at(-1);
+const list3 = (rs) => rs.map((r) => `${lc(r.a)} (${(100 * r.sh).toFixed(100 * r.sh < 10 ? 1 : 0)}%)`).join(", ").replace(/, ([^,]*)$/, " and $1");
+// the quarterly bulletin: its latest quarter and the same quarter a year earlier
+import uq from "../../../data/series/asuse-quarterly.json";
+const Q3 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const qLab = (d) => `${Q3[+d.slice(5, 7) - 1]}–${Q3[+d.slice(5, 7) + 1]} ${d.slice(0, 4)}`;
+const qNow = qLab(uq.dates.at(-1)), qPrev = uq.dates.length > 4 ? qLab(uq.dates.at(-5)) : null, qFirst = qLab(uq.dates[0]);
+// industry (wave 2): the complete ASI tables, read at build time (the files are megabytes;
+// the page carries only the picks its two plates draw)
+import fs from "node:fs";
+const rd = (f) => { try { return JSON.parse(fs.readFileSync(`data/series/${f}.json`, "utf8")); } catch { return null; } };
+const n4 = rd("asi-nic4"), n2 = rd("asi-nic2"), accB = rd("asi-accounts"), stAll = rd("asi-states-all");
+const last4 = (b, k) => { const s = b?.series[k]; if (!s) return null; const i = b.dates.length - 1; return s.data[i]; };
+const tidyNic = (l) => l.split(" · ").slice(1).join(" · ").replace(/^(\d+) /, "$1 ").replace(/\s+/g, " ");
+const gvaAll = last4(accB, "i19"), pAll = last4(accB, "i31");
+// 99998 "Other" is the survey's residual, not a class
+const classes = n4 ? Object.keys(n4.series).filter((k) => k.startsWith("i19_") && k !== "i19_99998").map((k) => ({ code: k.slice(4), name: tidyNic(n4.series[k].label), gva: last4(n4, k), p: last4(n4, "i31_" + k.slice(4)) }))
+  .filter((r) => r.gva != null).sort((a, b) => b.gva - a.gva) : [];
+const topN = 20, topClasses = classes.slice(0, topN).map((r) => ({ ...r, sh: (100 * r.gva) / gvaAll, psh: r.p != null ? (100 * r.p) / pAll : null }));
+const topShare = topClasses.reduce((a, r) => a + r.sh, 0);
+// state x division mix: the twelve largest factory states, the eight largest divisions
+const stRows = stAll ? Object.keys(stAll.series).filter((k) => k.startsWith("i19_")).map((k) => ({ state: stAll.series[k].label.split(" · ")[1], gva: last4(stAll, k) })).filter((r) => r.gva > 0).sort((a, b) => b.gva - a.gva).slice(0, 12) : [];
+const divs = n2 ? Object.keys(n2.series).filter((k) => k.startsWith("i19_") && k !== "i19_99998").map((k) => ({ code: k.slice(4), name: tidyNic(n2.series[k].label), gva: last4(n2, k) })).filter((r) => r.gva > 0).sort((a, b) => b.gva - a.gva).slice(0, 8) : [];
+const stSlug = (st) => st.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const mix = stRows.map((r) => { const b = rd(`asi-state-nic2-${stSlug(r.state)}`); const cells = divs.map((d) => ({ code: d.code, v: last4(b, "i19_" + d.code) })); const known = cells.reduce((a, c) => a + (c.v ?? 0), 0);
+  return { state: r.state, gva: r.gva, cells: cells.map((c) => ({ code: c.code, sh: c.v != null ? (100 * c.v) / r.gva : null })), other: (100 * (r.gva - known)) / r.gva }; });
+const peak = mix.flatMap((m) => m.cells.map((c) => ({ state: m.state, code: c.code, sh: c.sh }))).filter((c) => c.sh != null).sort((a, b) => b.sh - a.sh)[0];
+const divName = (code) => divs.find((d) => d.code === code)?.name.replace(/^\d+ /, "").replace(/^Manufacture of /, "").toLowerCase() ?? code;
+const asiTabFy = accB ? `${accB.dates.at(-1).slice(0, 4)}-${String((+accB.dates.at(-1).slice(0, 4) + 1) % 100).padStart(2, "0")}` : "";
 ---
 <Base
   title="Enterprises · India Atlas"
@@ -29,7 +81,7 @@ const D = bySlug["factories"];
       <span>Instruments <b>ASI annual, ASUSE annual + quarterly</b></span>
       <span>Coverage <b>Registered factories, unincorporated establishments</b></span>
       <span>Latest ASI <b>2023-24</b></span>
-      <span>Latest ASUSE <b>2023-24, bulletin Jan–Mar 2026</b></span>
+      <span>Latest ASUSE <b>2023-24 and calendar 2025, bulletin {qNow}</b></span>
       <span>Rupees <b>Nominal, as published</b></span>
     </div>
     <div class="numbers">
@@ -328,11 +380,132 @@ const D = bySlug["factories"];
         </div>
       </figure>
     </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-wage" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>A {nm(byWage[0].c)} factory pays {inrK(byWage[0].wage)} a year for each person on its rolls; a {nm(byWage.at(-1).c)} plant pays {inrK(byWage.at(-1).wage)}</h3>
+            <div class="sub">Total emoluments per person engaged, ₹ a year, by 2-digit NIC division, {asiFy}, nominal, sorted; the dashed line is all factories</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-wage">–</div><div class="c">all factories, per person, {asiFy}</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-wage"></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, ASI (NIC 2008): total emoluments (wages, salaries, bonus and the employer's contributions) divided by total persons engaged, computed by India Atlas from the two published series. Persons engaged include managers, supervisors and unpaid working owners, so this is an average over everyone on the rolls, not a worker's wage</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Divide the year's wage bill by the number of people on the rolls and you get what an average job in that industry is worth. Divide by twelve for a month. The low end is the work India does by hand: rolling bidis, cutting and stitching cloth, tanning leather, sawing wood. The high end is capital-heavy plants where a few people run expensive machines, and where a large share of the bill goes to engineers and managers. The same factory floor can hold both: these are averages over everyone, from the helper to the plant head.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asiFy}</span>
+            <p>Across all factories the average was <b id="wg-all">–</b> a year, about <b id="wg-month">–</b> a month. <b id="wg-below">–</b> of the <b id="wg-n">–</b> industries paid below that average. The three biggest employers paid <b id="wg-big">–</b> per person.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-size" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>A {nm(bySize.at(-1).c)} plant employs {Math.round(bySize.at(-1).size)} people on average; a {nm(bySize[0].c)} unit, {Math.round(bySize[0].size)}</h3>
+            <div class="sub">Persons engaged per factory in operation, by 2-digit NIC division, {asiFy}, sorted; the dashed line is all factories</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-size">–</div><div class="c">all factories, persons per factory</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-size"></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, ASI (NIC 2008): total persons engaged divided by factories in operation, computed by India Atlas. An average: most industries hold a few very large plants and many small ones</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The Factories Act starts counting at ten workers with power, twenty without, so even the smallest unit here is a real workplace. Car plants, electronics assembly and pharmaceuticals run large shifts under one roof. Rice mills, sawmills and cotton gins are small and scattered. Put this plate next to the one above and size and pay do not line up: bidi and garment factories are large and pay the least, while refineries are middling in size and pay the most. What a job pays follows the machines behind each worker more than the headcount around them.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asiFy}</span>
+            <p>The average factory in operation had <b id="sz-all">–</b> people on its rolls. The largest units by this measure are in <b id="sz-top">–</b>; the smallest in <b id="sz-low">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07b inside the shelf: classes and states (wave 2) -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>Inside the shelf: every class, every state</h2><span class="line"></span><span class="unit">ASI, NIC 2008 at 4 digits, states by industry, {asiTabFy}</span></div>
+    <script type="application/json" id="asi-deep-data" set:html={JSON.stringify({ topClasses, mix, divs: divs.map((d) => ({ code: d.code, name: d.name })), nClasses: classes.length })}></script>
+    <div class="break">
+      <figure id="cb-nic4" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{topClasses.length ? `${topN} of ${classes.length} factory classes make ${topShare.toFixed(0)}% of value added; ${topClasses[0].name.replace(/^\d+ /, "").replace(/^Manufacture of /i, "").toLowerCase()} alone makes ${topClasses[0].sh.toFixed(1)}%` : "Every factory class"}</h3>
+            <div class="sub">Share of all-India factory gross value added, the {topN} largest 4-digit NIC classes, {asiTabFy}, nominal; the grey figure is each class's share of factory employment</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-nic4">–</div><div class="c">top {topN} classes, share of factory GVA</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-nic4"></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, ASI (NIC 2008), gross value added and persons engaged by 4-digit class, All India; shares of the all-industries totals computed by India Atlas. All {classes.length} classes, at 2, 3 and 4 digits and for every indicator, are in the downloads</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The two-digit divisions above lump together very different trades: "food products" holds rice mills, dairies, biscuit factories and edible-oil refineries. The four-digit class is the finest cut the survey publishes, close to how a factory owner would describe the business. A few classes, refining, steel, pharmaceuticals, cars, carry a large share of the value, and they are mostly capital-heavy: compare each bar with its share of jobs.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asiTabFy}</span>
+            <p>The largest class by value added is <b id="n4-top">–</b>. The {topN} largest together hold <b id="n4-share">–</b> of value added and <b id="n4-pshare">–</b> of factory jobs.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-statemix" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{peak ? `${peak.sh.toFixed(0)}% of ${peak.state}'s factory value added comes from ${divName(peak.code)}, the heaviest lean on one industry among the twelve largest factory states` : "What each state's factories make"}</h3>
+            <div class="sub">Share of each state's factory gross value added by 2-digit NIC division, {asiTabFy}, the twelve states with the largest factory GVA and the eight largest divisions nationally, the rest as "all other", nominal</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-statemix">–</div><div class="c">the largest single cell</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-statemix"></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, ASI (NIC 2008), gross value added by state and 2-digit division; shares of each state's all-industries GVA computed by India Atlas. Refining is NIC 19, coke and refined petroleum; cement and glass is NIC 23, other non-metallic mineral products. A blank cell is a division the survey does not publish for that state (too few factories to report). Every state by every division and indicator is in the downloads; states by 3-digit group are held for the Atlas's deep archive</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Read across a row to see what a state's factories make; read down a column to see where an industry lives. Steel needs iron ore and coal, so it sits where the mines are; car plants gather in clusters of suppliers around a few cities; medicines and chemicals follow ports, skilled labour and decades of policy. A state that leans on one industry rises and falls with it: a bad year for steel prices weighs on Odisha's factory accounts more than on any other state's.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of {asiTabFy}</span>
+            <p>The heaviest single lean is <b id="sm-peak">–</b>. Down the columns, each industry's largest share sits in: <span id="sm-cols">–</span>. The most varied of the twelve, where "all other" divisions carry the largest share, is <b id="sm-div">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
   </section>
 
   <!-- § 07 the other economy -->
   <section>
-    <div class="sec-head"><span class="no">08</span><h2>The other economy, counted at last</h2><span class="line"></span><span class="unit">ASUSE, establishments, ₹ per year</span></div>
+    <div class="sec-head"><span class="no">09</span><h2>The other economy, counted at last</h2><span class="line"></span><span class="unit">ASUSE, establishments, ₹ per year</span></div>
     <p>ASUSE, the Annual Survey of Unincorporated Sector Enterprises, is the young counterpart to the ASI's old ledger. It counts establishments no factory inspector visits: the tailor, the tea stall, the two-room workshop. The survey splits them in two. An <b>own-account establishment</b> (OAE) hires nobody: usually one person, or a family, working for themselves. A <b>hired-worker establishment</b> (HWE) employs at least one person for pay. In 2023-24 the own-account kind was <b id="ot-oaesh">–</b> of all establishments; the hired-worker kind, <b id="ot-hwesh">–</b>, held <b id="ot-hwewk">–</b> of the workers.</p>
 
     <div class="break basket" style="margin-top:44px">
@@ -342,7 +515,7 @@ const D = bySlug["factories"];
     <div class="break basket" style="margin-top:36px">
       <div class="bar" id="bar-wrk"></div>
       <div class="labels" id="lab-wrk"></div>
-      <p class="note" id="note-q">A quarterly ASUSE bulletin began with Jan–Mar 2025. It is five quarters old: a reading of scale, not yet of trend: <b id="q-now">–</b> establishments counted in Jan–Mar 2026, against <b id="q-then">–</b> a year earlier. We read the level and wait.</p>
+      <p class="note" id="note-q">A quarterly ASUSE bulletin began with {qFirst}. It is {uq.dates.length} quarters old: a reading of scale, not yet of trend: <b id="q-now">–</b> establishments counted in {qNow}{qPrev ? <Fragment>, against <b id="q-then">–</b> in {qPrev}</Fragment> : ""}. We read the level and wait.</p>
     </div>
 
     <div class="break" style="margin-top:104px">
@@ -441,11 +614,69 @@ const D = bySlug["factories"];
         </div>
       </figure>
     </div>
+    <div class="break" style="margin-top:104px">
+      <script type="application/json" id="u25-data" set:html={JSON.stringify({ all: u25All, f: u25F, trades })}></script>
+      <figure id="cb-trades" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{lc(trades[0].a).replace(/^./, (c) => c.toUpperCase())} employs {lakhN(trades[0].n)} people, more than the next three trades together</h3>
+            <div class="sub">Workers in unincorporated non-farm enterprises by detailed activity, calendar year 2025 (the new ASUSE round), all {trades.length} activities the survey publishes, sorted</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-trades">–</div><div class="c">informal workers, 2025, crore</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-trades"></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NSO, ASUSE 2025 (calendar year), table 26, estimated workers by activity, all genders, full and part time. The 2025 round covers January to December, a different reference period from the financial-year rounds of 2021-22 to 2023-24, so its levels are shown on their own</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>These are the shops, stalls, workshops and service counters that are not companies: the kirana store, the tailor, the auto-rickshaw owner, the tuition centre, the roadside dhaba. Each bar counts the people who work in them, owners and helpers included. Retail is the giant because a shop is the easiest business in India to open: little capital, often no registration at all, frequently run from the front room of a house.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2025</span>
+            <p>The 2025 round counts {lakhN(u25All)} workers in all. The next three trades after {lc(trades[0].a)}, {lc(trades[1].a)}, {lc(trades[2].a)} and {lc(trades[3].a)}, hold {lakhN(nextThree)} together. The last financial-year round, 2023-24, counted {lakhN(fyWorkers)}; the two rounds cover different twelve months and are not one series, so the gap between them is not a measure of growth.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:104px">
+      <figure id="cb-women" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>{per(wShare[0].sh).replace(/^./, (c) => c.toUpperCase())} workers in informal {lc(wShare[0].a)} units are women; in {lc(wShare.at(-1).a)}, {per(wShare.at(-1).sh)}</h3>
+            <div class="sub">Women's share of workers in unincorporated non-farm enterprises, by detailed activity, 2025, activities with at least five lakh workers, sorted; the dashed line is all activities</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-women">–</div><div class="c">women's share, all informal workers, 2025</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-women"></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NSO, ASUSE 2025, table 26: female workers divided by all workers, per activity, computed by India Atlas. Activities with fewer than five lakh workers are left off the chart (their shares rest on few sampled enterprises) and are in the downloads</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Much informal work done by women happens at home: rolling bidis, stitching garments on piece rates, weaving, running a tuition class from the verandah. Work outside the home, on the road or in the repair shop, is almost entirely men's. The survey counts a woman as a worker in an enterprise only if she works in it; women who work on the family farm or only at home for the household are outside this count altogether.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2025</span>
+            <p>Women were {(100 * u25F / u25All).toFixed(1)}% of informal workers in 2025. The highest shares are in {list3(wShare.slice(0, 3))}; the lowest in {list3(wShare.slice(-3).reverse())}.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
   </section>
 
   <!-- § 09 the informal firm, described -->
   <section>
-    <div class="sec-head"><span class="no">09</span><h2>The informal firm, described</h2><span class="line"></span><span class="unit">ASUSE, per 1,000 establishments, 2023-24</span></div>
+    <div class="sec-head"><span class="no">10</span><h2>The informal firm, described</h2><span class="line"></span><span class="unit">ASUSE, per 1,000 establishments, 2023-24</span></div>
     <p>Counting the informal economy was the first act; describing it is the second. ASUSE also asks each establishment who owns it, where it stands, how long it runs and what paperwork it holds: answers published as rates per 1,000 establishments. They describe a firm that is one person, male-owned, run from home or a permanent stall, open all year: and mostly outside every register the state keeps. Of every 1,000 in 2023-24, <b id="if-reg">–</b> were registered under no act at all, and <b id="if-comp">–</b> used a computer.</p>
 
     <div class="break" style="margin-top:44px">
@@ -563,7 +794,7 @@ const D = bySlug["factories"];
 
   <!-- § 10 the factory accounts, complete -->
   <section>
-    <div class="sec-head"><span class="no">10</span><h2>The factory accounts, complete</h2><span class="line"></span><span class="unit">All 57 ASI indicators, 2023-24, full CSV</span></div>
+    <div class="sec-head"><span class="no">11</span><h2>The factory accounts, complete</h2><span class="line"></span><span class="unit">All 57 ASI indicators, 2023-24, full CSV</span></div>
     <div class="break">
       <figure id="cb-acct" style="margin:0">
         <div class="plate-head">
@@ -604,11 +835,11 @@ const D = bySlug["factories"];
 
   <!-- § 11 the measure -->
   <section>
-    <div class="sec-head"><span class="no">11</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">12</span><h2>What this measures</h2><span class="line"></span></div>
     <div class="wm-grid">
       <div>
         <p>The ASI is a census-plus-sample of the Factories Act register: every large factory enumerated, the rest sampled, once a year, results final on release. "Registered" is the load-bearing word: broadly, ten or more workers with power, twenty without. The survey measures premises, money and people: counts of factories and workers are clean; every rupee figure is nominal, published in ₹ lakh, with no deflator offered or possible at this level.</p>
-        <p>ASUSE is the successor to the old NSS enterprise surveys, run annually since 2021-22. It samples households and premises to find unincorporated establishments, no company registration, no factory licence, in manufacturing, trade and other services. Its rupee figures are per-establishment and per-worker rates, also nominal. Three rounds exist. That is the entire history of India's informal-enterprise count.</p>
+        <p>ASUSE is the successor to the old NSS enterprise surveys, run annually since 2021-22. It samples households and premises to find unincorporated establishments, no company registration, no factory licence, in manufacturing, trade and other services. Its rupee figures are per-establishment and per-worker rates, also nominal. Three financial-year rounds exist (2021-22 to 2023-24), then a round for calendar year 2025, which measures a different twelve months and so stands as its own series, plus a quarterly bulletin since early 2025. That is the entire history of India's informal-enterprise count.</p>
         <p>Between the two surveys runs a seam, and much of the economy falls through it: agriculture, government, construction, and every incorporated firm that is not a factory: the software company, the bank, the airline. Neither survey sees them. This page describes the two shores it can see, and says so when it cannot.</p>
       </div>
       <div class="wm-rail">
@@ -630,7 +861,7 @@ const D = bySlug["factories"];
 
   <!-- § 12 misread -->
   <section>
-    <div class="sec-head"><span class="no">12</span><h2>How to misread this number</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">13</span><h2>How to misread this number</h2><span class="line"></span></div>
     <ul class="misread">
       <li>
         <span class="no">i.</span>
@@ -686,7 +917,7 @@ const D = bySlug["factories"];
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. Annual Survey of Industries, four classification blocks, NIC-1987 (1992-93 to 1997-98; 1993-94 not served by the source), NIC-1998 (1998-99 to 2003-04), NIC-2004 (2004-05 to 2007-08) and NIC-2008 (2008-09 to 2023-24), kept as four separate series, never spliced. ASUSE annual rounds 2021-22 to 2023-24 and quarterly bulletin from Jan–Mar 2025. Retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>.</p>
+        <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. Annual Survey of Industries, four classification blocks, NIC-1987 (1992-93 to 1997-98; 1993-94 not served by the source), NIC-1998 (1998-99 to 2003-04), NIC-2004 (2004-05 to 2007-08) and NIC-2008 (2008-09 to 2023-24), kept as four separate series, never spliced. ASUSE annual rounds 2021-22 to 2023-24, the calendar-year 2025 round (a separate series), and the quarterly bulletin from {qFirst} to {qNow}; every published ASUSE table is in the downloads, its full cross of state, sector, activity and establishment type held for the Atlas's deep archive. Retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>.</p>
         <p>Coverage: all 57 indicators the ASI 2008 block publishes are ingested raw, and 56 are baked (§10 carries the ledger; the children-workers indicator exists in the API only as a single corrupt row, its 2023-24 value duplicates the contract-workers count, and is quarantined, disclosed here and in the baked file); the older blocks publish 57, 28 and 32 indicators respectively, of which the comparable core is baked. Of ASUSE's 35 catalogued annual indicators, 20 are baked: the headline counts and rupee rates, the owner, paperwork and rhythm distributions (§09), and lean state cuts of establishments, workers and GVA per worker. The rest are state-wise duplicates of the All-India distributions (11 indicators) or minor residuals (multi-activity counts, internet-use types, size-band characteristics, worker types): skipped knowingly, listed in data/sources.yml.</p>
         <p>ASI monetary values are published in ₹ lakh and are shown here in ₹ lakh crore, nominal, with no deflation. The 1987 block serves Total Emoluments with a blank unit; it is ₹ lakh and is corrected and disclosed in the baked file. The 2010-11 sampling-frame revision is carried as published and annotated wherever a series crosses it. Ladakh's factory GVA is negative in 2021-22: a real published value, inputs exceeding output, not an error. Telangana appears from 2012-13 and Ladakh from 2019-20; earlier cells are null, not zero.</p>
       </div>

@@ -1,0 +1,22 @@
+# Coverage ledger: the eight core industries, RBI DBIE (docs/CONTRACT-coverage.md).
+# Catalogue: node scripts/lib/products/industry-dbie.mjs --catalogue. Every row label of DBIE
+# 499 (annual index) and 989 (growth) on all three bases, each base its own bundle.
+family: core
+guides: [iip]
+catalogue: data/coverage/core.catalogue.json
+rules:
+  - match: ["core:2011:index:*", "core:2011:growth:*"]
+    status: shown
+    bundle: core-2011
+    plate: "§07 The core eight"
+  - match: ["core:2004:index:*", "core:2004:growth:*"]
+    status: shown
+    bundle: core-2004
+    plate: "§07 The core eight (three rulers)"
+  - match: ["core:1993:index:*", "core:1993:growth:*"]
+    status: shown
+    bundle: core-1993
+    plate: "§07 The core eight (three rulers)"
+  - match: ["core:report:120", "core:report:839"]
+    status: excluded
+    reason: "The same tables as 499 and 989 under a second DBIE menu entry (302 and 324 identical rows); read once."

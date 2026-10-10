@@ -117,6 +117,10 @@ const PAGES = [
     ["w2r-n", (b) => { const c = new Map(b.cpi.dates.map((d, i) => [d, b.cpi.series.food.data[i]])); return fmt.count(b.wpi.dates.filter((d, i) => b.wpi.series.food_index.data[i] != null && c.get(d) != null).length); }],
   ]},
   { url: "/guides/iip/", slug: null, checks: [
+    // industry (wave 2): financial years, the core eight
+    ["pv-fy", (b) => fmt.pct2Minus(b["iip-annual-2022"].series.general_growth.data.at(-1))],
+    ["pv-core", (b) => fmt.pct2Minus(b["core-2011"].series.composite_growth.data.at(-1))],
+    ["pv-corelong", (b) => fmt.pct2Minus(b["core-2011"].series.composite_growth.data[b["core-2011"].dates.indexOf("2020-04-01")])],
     ["n-head", (b) => fmt.pct2(b["iip-2022"].series.general.data.at(-1))],
     ["n-cap", (b) => fmt.pct2(b["iip-2022"].series.use_capital_goods.data.at(-1))],
     // v1.2 deep-ledger plate: heritage bases 1993-94 / 2004-05
@@ -231,6 +235,11 @@ const PAGES = [
     }],
     ["prov-vintage", (b) => b["asi-headline"].meta.vintage],
     ["prov-vintage2", (b) => b["asi-headline"].meta.vintage],
+    // industry (wave 2): wages and plant size by industry, the 2025 ASUSE round
+    ["pv-wage", (b) => { const s = b["asi-headline"].series; return "₹" + fmt.num1(s.emoluments.data.at(-1) * 1e5 / s.persons_engaged.data.at(-1) / 1e5) + " lakh"; }],
+    ["pv-size", (b) => { const s = b["asi-headline"].series; return fmt.count(s.persons_engaged.data.at(-1) / s.factories_in_operation.data.at(-1)); }],
+    ["pv-trades", (b) => fmt.croreN(b["asuse-2025-t26"].series.all__all.data[0])],
+    ["pv-women", (b) => { const s = b["asuse-2025-t26"].series; return fmt.pct1(100 * s.female__all.data[0] / s.all__all.data[0]); }],
   ]},
   { url: "/guides/aishe/", slug: null, checks: [
     ["n-enrol", (b) => fmt.crore2(b["aishe-headline"].series.enrolment.data.at(-1))],
