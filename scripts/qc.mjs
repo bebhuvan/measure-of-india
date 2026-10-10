@@ -50,7 +50,7 @@ const PAGES = [
       const vals = Object.values(b["cpi-2024-items"].series).map((s) => s.data.at(-1)).filter((v) => v != null);
       return fmt.pct1(Math.max(...vals.map(R1)));
     }],
-    ["ex-t24neg", (b) => fmt.count(Object.values(b["cpi-2024-items"].series).map((s) => s.data.at(-1)).filter((v) => v != null && v < 0).length)],
+    ["ex-t24neg", (b) => fmt.count(Object.values(b["cpi-2024-items"].series).map((s) => s.data.at(-1)).filter((v) => v != null && R1(v) < 0).length)],   // review-a: counted at the precision shown
     ["pv-st24", (b) => {
       const vals = Object.values(b["cpi-2024-states"].series).map((s) => s.data.at(-1)).filter((v) => v != null);
       return fmt.pt1(Math.max(...vals.map(R1)) - Math.min(...vals.map(R1)));
@@ -85,7 +85,7 @@ const PAGES = [
     ["pv-nb", (b) => fmt.pct1(R1(b["gdp-2022"].series.gdp.data.at(-1)))],
     // 2022-23 base engines and the back series (2026-10)
     ["pv-nbind", (b) => fmt.pct1(R1(Math.max(...Object.values(b["gdp-2022-industries"].series).map((s) => s.data.at(-1)))))],
-    ["pv-si", (b) => b["gdp-back"].series.saving_rate.data.filter((v) => v != null).at(-1).toFixed(1) + "%"],
+    ["pv-si", (b) => R1(b["gdp-back"].series.saving_rate.data.filter((v) => v != null).at(-1)).toFixed(1) + "%"],
     ["nb-q3", (b) => fmt.pct1(R1(b["gdp-2022"].series.gdp.data.at(-2)))],
     ["prov-vintage", (b) => b.gdp.meta.vintage],
     // ---- nas (wave 2): the deep accounts' plates ----
@@ -108,7 +108,7 @@ const PAGES = [
       const vals = Object.values(b["wpi-items"].series).map((s) => s.data.at(-1)).filter((v) => v != null);
       return fmt.pct2(Math.max(...vals));
     }],
-    ["ex-ineg", (b) => fmt.count(Object.values(b["wpi-items"].series).map((s) => s.data.at(-1)).filter((v) => v != null && v < 0).length)],
+    ["ex-ineg", (b) => fmt.count(Object.values(b["wpi-items"].series).map((s) => s.data.at(-1)).filter((v) => v != null && R1(v) < 0).length)],   // review-a: counted at the precision shown
     ["ex-ionion", (b) => {
       const v = b["wpi-items"].series.onion.data.at(-1);
       return fmt.pct1Minus(v);
@@ -241,7 +241,7 @@ const PAGES = [
     // industry (wave 2): wages and plant size by industry, the 2025 ASUSE round
     ["pv-wage", (b) => { const s = b["asi-headline"].series; return "₹" + fmt.num1(s.emoluments.data.at(-1) * 1e5 / s.persons_engaged.data.at(-1) / 1e5) + " lakh"; }],
     ["pv-size", (b) => { const s = b["asi-headline"].series; return fmt.count(s.persons_engaged.data.at(-1) / s.factories_in_operation.data.at(-1)); }],
-    ["pv-trades", (b) => fmt.croreN(b["asuse-2025-t26"].series.all__all.data[0])],
+    ["pv-trades", (b) => (b["asuse-2025-t26"].series.all__all.data[0] / 1e7).toFixed(1)],   // review-a: one decimal on a crore figure
     ["pv-women", (b) => { const s = b["asuse-2025-t26"].series; return fmt.pct1(100 * s.female__all.data[0] / s.all__all.data[0]); }],
   ]},
   { url: "/guides/aishe/", slug: null, checks: [
@@ -623,9 +623,9 @@ const PAGES = [
   { url: "/", slug: null, minPlots: 1, checks: [
     // the CPI print is the 2024-base series; core stays on the 2012 base
     // (no weights served for the new base), labelled "to Dec 2025"
-    ["v-cpi", (b) => fmt.pct2(b["cpi-2024"].series.headline.data.at(-1)), "cpi-2024"],
+    ["v-cpi", (b) => fmt.pct1(R1(b["cpi-2024"].series.headline.data.at(-1))), "cpi-2024"],
     // the GDP print is the 2022-23-base series (old base ends Q2 FY26)
-    ["v-gdp", (b) => fmt.pct2(b["gdp-2022"].series.gdp.data.at(-1)), "gdp-2022"],
+    ["v-gdp", (b) => fmt.pct1(R1(b["gdp-2022"].series.gdp.data.at(-1))), "gdp-2022"],
   ]},
   // the guides index: one small chart per guide
   // ---- farms (lb/farms): title block and plate values recomputed from the bundles ----

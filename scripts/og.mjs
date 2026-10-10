@@ -107,24 +107,26 @@ const CARDS = [
   },
   {
     slug: "cpi", bundleSlug: "cpi-2024-linked",
-    keys: ["headline"], d0: 0, d1: 10, band: [2, 6], trend: 4,
+    keys: ["headline"], d0: 0, d1: 10, band: [2, 6], trend: 4, fmt: (v) => v.toFixed(1) + "%",
     prep: shortHeadline,
-    foot: (b, S) => `Consumer price inflation ${S.headline.data.at(-1).value.toFixed(2)}%, ${monthOf(b)}, base 2024. Source: MoSPI/NSO`,
+    foot: (b, S) => `Consumer price inflation ${S.headline.data.at(-1).value.toFixed(1)}%, ${monthOf(b)}, base 2024. Source: MoSPI/NSO`,
   },
   {
     slug: "gdp", bundleSlug: "gdp-2022",
-    keys: ["gdp", "gva", "pfce"], d0: 0, d1: 12, band: null, trend: null,
-    foot: (b, S) => `Real GDP ${S.gdp.data.at(-1).value.toFixed(2)}% y/y · latest quarter · Source: MoSPI/NSO`,
+    keys: ["gdp", "gva", "pfce"], d0: 0, d1: 12, band: null, trend: null, fmt: (v) => v.toFixed(1) + "%",
+    foot: (b, S) => `Real GDP growth ${S.gdp.data.at(-1).value.toFixed(1)}%, year on year, ${b.meta.latestPeriod ?? "latest quarter"}, base 2022-23. Source: MoSPI/NSO`,
   },
   {
-    slug: "wpi", bundleSlug: "wpi",
-    keys: ["headline", "primary", "manufactured", "food_index"], d0: -8, d1: 20, band: null, trend: null,
-    foot: (b, S) => `Headline WPI ${S.headline.data.at(-1).value.toFixed(2)}% y/y · ${b.meta.latestPeriod} · Source: OEA/DPIIT`,
+    // review-a: the current 2022-23 base (the card drew the 2011-12 base, retired after April 2026)
+    slug: "wpi", bundleSlug: "wpi-2022",
+    keys: ["headline", "primary", "manufactured", "food_index"], d0: -8, d1: 26, band: null, trend: null,
+    foot: (b, S) => `Wholesale price inflation ${S.headline.data.at(-1).value.toFixed(2)}%, year on year, ${monthOf(b)}, base 2022-23. Source: OEA/DPIIT`,
   },
   {
     slug: "iip", bundleSlug: "iip-2022",
     keys: ["general", "sector_manufacturing", "use_capital_goods"], d0: -5, d1: 18, band: null, trend: null,
-    foot: (b, S) => `IIP ${S.general.data.at(-1).value.toFixed(2)}% y/y · ${b.meta.latestPeriod} · Source: MoSPI/NSO · base 2022-23`,
+    fmt: (v) => v.toFixed(1) + "%",
+    foot: (b, S) => `Industrial production ${S.general.data.at(-1).value.toFixed(1)}%, year on year, ${monthOf(b)}, base 2022-23. Source: MoSPI/NSO`,
   },
   {
     // external (lb/external): weekly reserves since 2001, RBI DBIE
@@ -134,9 +136,12 @@ const CARDS = [
     foot: (b, S) => `Foreign exchange reserves $${(S.total_usd.data.at(-1).value / 1000).toFixed(0)} bn, week of ${b.dates.at(-1)}. Source: RBI DBIE`,
   },
   {
-    slug: "jobs", bundleSlug: "plfs-quarterly",
-    keys: ["ur"], d0: 0, d1: 24, band: null, trend: null,
-    foot: (b, S) => `Urban unemployment ${S.ur.data.filter((d) => d.value != null).at(-1).value.toFixed(2)}% · ${b.meta.latestPeriod} · Source: MoSPI/NSO`,
+    // review-a: the monthly bulletin, the guide's current series (the card drew the urban quarterly
+    // bulletin of the original design, which ended in December 2024)
+    slug: "jobs", bundleSlug: "plfs-monthly",
+    keys: ["ur", "lfpr", "wpr"], d0: 0, d1: 70, band: null, trend: null, fmt: (v) => v.toFixed(1) + "%",
+    prep: (S) => { S.ur = { ...S.ur, label: "Unemployment" }; S.lfpr = { ...S.lfpr, label: "Participation" }; S.wpr = { ...S.wpr, label: "Working" }; },
+    foot: (b, S) => `Unemployment ${S.ur.data.at(-1).value.toFixed(1)}%, age 15 and over, weekly status, ${monthOf(b)}. Source: MoSPI/NSO, PLFS monthly bulletin`,
   },
   {
     // HCES is cross-sectional: the card plots the 12-class fractile ladder
@@ -156,12 +161,12 @@ const CARDS = [
   {
     slug: "factories", bundleSlug: "asi-headline",
     keys: ["factories_in_operation", "number_of_factories"], d0: 0, d1: 3.2, band: null, trend: null,
-    scale: 1e-5, yStep: 1, fmt: (v) => v.toFixed(2) + " lakh", mr: 240,
+    scale: 1e-5, yStep: 1, fmt: (v) => v.toFixed(1) + " lakh", mr: 240,
     prep: (S) => {
       S.factories_in_operation = { ...S.factories_in_operation, label: "In operation", color: "#2E4BD8" };
       S.number_of_factories = { ...S.number_of_factories, label: "Registered", color: "#5F6675" };
     },
-    foot: (b, S) => `Factories in operation ${S.factories_in_operation.data.at(-1).value.toFixed(2)} lakh · ASI 2023-24 · Source: MoSPI/NSO`,
+    foot: (b, S) => `Factories in operation ${S.factories_in_operation.data.at(-1).value.toFixed(1)} lakh, Annual Survey of Industries 2023-24. Source: MoSPI/NSO`,
   },
   {
     slug: "aishe", bundleSlug: "aishe-access",
@@ -303,10 +308,11 @@ const CARDS = [
   },
   {
     slug: "population", bundleSlug: "population-wpp",
-    keys: ["tpopulation1july"], d0: 0, d1: 1.6, band: null, trend: null,
-    scale: 1e-6, yStep: 0.4, fmt: (v) => v.toFixed(2) + " bn", mr: 200,
+    // review-a: in crore, as the rest of the site counts people (WPP serves thousands)
+    keys: ["tpopulation1july"], d0: 0, d1: 160, band: null, trend: null,
+    scale: 1e-4, yStep: 40, fmt: (v) => v.toFixed(1) + " crore", mr: 220,
     prep: (S) => { S.tpopulation1july = { ...S.tpopulation1july, label: "Population", color: "#2E4BD8" }; },
-    foot: (b, S) => `India's population, UN estimate, ${b.dates.at(-1).slice(0, 4)}: ${S.tpopulation1july.data.at(-1).value.toFixed(3)} billion. Source: UN World Population Prospects 2024`,
+    foot: (b, S) => `India's population, UN estimate, ${b.dates.at(-1).slice(0, 4)}: ${S.tpopulation1july.data.at(-1).value.toFixed(1)} crore. Source: UN World Population Prospects 2024`,
   },
   // climate (lb/climate)
   {
@@ -396,7 +402,11 @@ fs.mkdirSync(path.join(ROOT, "public/og"), { recursive: true });
   }
 }
 
+// OG_ONLY=site,nfhs,profiles renders just those cards ("profiles" = the state profile cards), so a session
+// regenerates its own cards without rewriting everyone else's; unset, it renders every card
+const ONLY = process.env.OG_ONLY ? new Set(process.env.OG_ONLY.split(",")) : null;
 for (const card of CARDS) {
+  if (ONLY && !ONLY.has(card.slug)) continue;
   const entry = card.slug === "site" ? null : bySlug[card.slug];
   const kickerText = entry ? kicker(entry) : card.kicker;
   const title = entry ? entry.ogTitle : card.title;
@@ -424,6 +434,7 @@ for (const card of CARDS) {
 console.log("og cards done");
 
 // --- profiles (lb/profiles): one card per state profile, public/og/states/<slug>.png ---
+if (!ONLY || ONLY.has("profiles"))
 // One generated template: the unit's name, its kind and region, and four of its headline
 // figures, each with its period, read through src/dossiers/profiles.js like the page itself.
 {

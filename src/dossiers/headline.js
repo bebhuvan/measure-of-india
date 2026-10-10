@@ -19,17 +19,21 @@ const month = (b) => { const d = lastDate(b); return `${MONTHS[+d.slice(5, 7) - 
 const quarter = (b) => { const d = lastDate(b), m = +d.slice(5, 7) - 1; return `${M3[m]} to ${M3[m + 2]} ${d.slice(0, 4)}`; };
 const fy = (b) => { const y = +lastDate(b).slice(0, 4), m = +lastDate(b).slice(5, 7), s = m >= 4 ? y : y - 1; return `${s}-${String((s + 1) % 100).padStart(2, "0")}`; };
 const inr = (v) => Math.round(v).toLocaleString("en-IN");
+// review-a (2026-10): the precision rule (src/dossiers/precision.js). Rates at the agency's
+// precision, one decimal unless the guide is WPI or rates; counts in readable units.
+import { round } from "./precision.js";
+const p1 = (v) => round(v, 1).toFixed(1);
 
 export const HEADLINE = {
-  cpi:           { value: (b) => `${last(b, "headline").toFixed(2)}%`, what: "consumer price inflation, year on year", period: month },
-  gdp:           { value: (b) => `${last(b, "gdp").toFixed(2)}%`, what: "real GDP growth, year on year", period: quarter },
+  cpi:           { value: (b) => `${p1(last(b, "headline"))}%`, what: "consumer price inflation, year on year", period: month },
+  gdp:           { value: (b) => `${p1(last(b, "gdp"))}%`, what: "real GDP growth, year on year", period: quarter },
   wpi:           { value: (b) => `${last(b, "headline").toFixed(2)}%`, what: "wholesale price inflation, year on year", period: month },
-  iip:           { value: (b) => `${last(b, "general").toFixed(2)}%`, what: "industrial output growth, year on year", period: month },
+  iip:           { value: (b) => `${p1(last(b, "general"))}%`, what: "industrial output growth, year on year", period: month },
   external:      { value: (b) => { const v = last(b, "current_account") / 1000; return `${v < 0 ? "−" : "+"}$${Math.abs(v).toFixed(1)} bn`; }, what: "current account balance, the quarter's surplus (+) or deficit (−)", period: quarter },
   jobs:          { value: (b) => `${last(b, "ur").toFixed(1)}%`, what: "unemployment rate, age 15 and over", period: month },
   consumption:   { value: (b) => `₹${inr(last(b, "rural"))}`, what: "rural spending per person per month", period: fy },
-  factories:     { value: (b) => `${(last(b, "factories_in_operation") / 1e5).toFixed(2)} lakh`, what: "factories in operation", period: fy },
-  aishe:         { value: (b) => `${(last(b, "enrolment") / 1e7).toFixed(2)} crore`, what: "students enrolled in higher education", period: fy },
+  factories:     { value: (b) => `${(last(b, "factories_in_operation") / 1e5).toFixed(1)} lakh`, what: "factories in operation", period: fy },
+  aishe:         { value: (b) => `${(last(b, "enrolment") / 1e7).toFixed(1)} crore`, what: "students enrolled in higher education", period: fy },
   gender:        { value: (b) => `${Math.round(last(b, "total__all_india"))}`, what: "girls born for every 1,000 boys (Sample Registration System)", period: (b) => b.meta.latestPeriod },
   mnre:          { value: (b) => `${(last(b, "grand_total") / 1000).toFixed(1)} GW`, what: "renewable power capacity installed", period: month },
   nfhs:          { value: (b) => `${last(b, "children_age_6_59_months_who_are_anaemic_11__all_india__total").toFixed(1)}%`,
@@ -45,7 +49,7 @@ export const HEADLINE = {
   states:        { value: (b) => `${last(b, "gap_current").toFixed(1)} times`, what: "income per person, richest state against poorest", period: fy },
   // worldbank family (2026-10-09)
   poverty:       { value: (b) => `${last(b, "headcount_3_00").toFixed(1)}%`, what: "of Indians below $3.00 a day (2021 PPP)", period: (b) => `HCES ${lastDate(b).slice(0, 4)}-${String(+lastDate(b).slice(0, 4) + 1).slice(2)}` },
-  population:    { value: (b) => `${(last(b, "tpopulation1july") / 1e6).toFixed(3)} billion`, what: "people in India, UN estimate", period: (b) => lastDate(b).slice(0, 4) },
+  population:    { value: (b) => `${(last(b, "tpopulation1july") / 1e4).toFixed(1)} crore`, what: "people in India, UN estimate", period: (b) => lastDate(b).slice(0, 4) },
   // climate: the month's departure from its own 1991-2020 average (ERA5, OWID)
   climate:       { value: (b) => `${last(b, "temperature_anomaly") < 0 ? "−" : "+"}${Math.abs(last(b, "temperature_anomaly")).toFixed(2)}°C`, what: "India's temperature against the 1991-2020 average for the month", period: month },
   // ilo
@@ -57,11 +61,11 @@ export const HEADLINE = {
   // trade (lb/trade): the month's merchandise trade balance, US$ billion, signed (a deficit is negative)
   trade:         { value: (b) => `${last(b, "balance") < 0 ? "−" : ""}$${Math.abs(last(b, "balance") / 1000).toFixed(1)} bn`, what: "merchandise trade balance (exports minus imports)", period: month },
   // payments (lb/payments): UPI payments in the month, crore
-  payments:      { value: (b) => `${(last(b, "upi_volume") / 1e7).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} crore`, what: "UPI payments made in the month", period: month },
+  payments:      { value: (b) => `${Math.round(last(b, "upi_volume") / 1e7).toLocaleString("en-IN")} crore`, what: "UPI payments made in the month", period: month },
   // farms (lb/farms): the latest final foodgrain harvest, million tonnes
   farms:         { value: (b) => `${(last(b, "foodgrains") / 1000).toFixed(1)} million tonnes`, what: "foodgrains harvested in the crop year (final estimate)", period: fy },
   // banks (lb/banks): all scheduled commercial banks' bad loans, the quarter's end
-  banks:         { value: (b) => `${last(b, "all_gnpa").toFixed(2)}%`, what: "banks' bad loans, gross NPAs as a share of gross advances", period: month },
+  banks:         { value: (b) => `${p1(last(b, "all_gnpa"))}%`, what: "banks' bad loans, gross NPAs as a share of gross advances", period: month },
   // --- public-finance (lb/public-finance): the Centre's deficit so far this year, against the year's budget
   "public-finance": { value: (b) => `${last(b, "fiscal_deficit_pct_be").toFixed(1)}%`, what: "the Centre's fiscal deficit so far this year, as a share of the year's budget estimate", period: (b) => { const d = lastDate(b), m = +d.slice(5, 7) - 1; return `April to ${MONTHS[m]} ${d.slice(0, 4)}`; } },
   // markets (lb/markets): households' net financial saving in the quarter, per cent of GDP
