@@ -33,35 +33,44 @@ export const PRODUCTS = [
   { id: "udise", list: ["udise/getIndicatorList", {}], filter: ["udise/getUdiseFilterByIndicatorId", "indicator_code"], records: "udise/getUdiseRecords", why: "schools: enrolment, teachers, pupils per teacher, GER and NER, infrastructure, by state, 2018-19 to 2024-25" },
   { id: "tus", list: ["tus/getTusIndicatorList", { viz_status: 1 }], filter: ["tus/getTusFilterByIndicatorId", "indicator_code"], records: "tus/getTusRecords", why: "time use 2019 and 2024: unpaid care and paid work by gender, by state" },
   { id: "env", list: ["env/getEnvStatsIndicatorList", { viz_status: 1 }], filter: ["env/getEnvStatsFilterByIndicatorId", "indicator_code"], records: "env/getEnvStatsRecords", why: "forests, land use, water, air quality, minerals; most indicators state-wise" },
-  { id: "nss75", surveys: ["nss-75/getSurveyList", {}], list: ["nss-75/getIndicatorList", {}], filter: ["nss-75/getNss75FilterByIndicatorId", "indicator_code"], records: "nss-75/getNss75Records", why: "household spending on education (2017-18)" },
-  { id: "nss76", surveys: ["nss-75/getSurveyList", {}], list: ["nss-76/getIndicatorList", { survey_code: "{survey}" }], filter: ["nss-76/getNss76FilterByIndicatorId", "indicator_code"], records: "nss-76/getNss76Records", why: "drinking water, sanitation, hygiene and housing; persons with disabilities (2018)" },
+  { id: "nss75", surveys: ["nss-75/getSurveyList", {}], list: ["nss-75/getIndicatorList", { survey_code: "{survey}" }], filter: ["nss-75/getNss75FilterByIndicatorId", "indicator_code"], records: "nss-75/getNss75Records", why: "social consumption, round 75 (2017-18): two surveys, health (1) and education (2)" },
+  // NSS 76 has no survey list endpoint on record; its two surveys answer to codes 1 (disability)
+  // and 2 (drinking water, sanitation, hygiene and housing), as its own listings label them (2026-10-10)
+  { id: "nss76", surveys: [null, [1, 2]], list: ["nss-76/getIndicatorList", { survey_code: "{survey}" }], filter: ["nss-76/getNss76FilterByIndicatorId", "indicator_code"], records: "nss-76/getNss76Records", why: "drinking water, sanitation, hygiene and housing; persons with disabilities (2018)" },
   { id: "nss77", list: ["nss-77/getIndicatorList", { viz_status: 1 }], filter: ["nss-77/getFilterByIndicatorId", "indicator_code"], records: "nss-77/getNss77Records", why: "agricultural households: income, debt, land (2019)" },
   { id: "nss77aidis", surveys: ["nss-77/getNss77AidisSurveyList", {}], list: ["nss-77/getNss77AidisIndicatorList", { survey_code: "{survey}" }], filter: ["nss-77/getNss77AidisFiltersByIndicatorCode", "indicator_code"], records: "nss-77/getNss77AidisRecords", why: "household debt and assets (AIDIS 2019)" },
   { id: "nss78", list: ["nss-78/getIndicatorList", { viz_status: 1 }], filter: ["nss-78/getFilterByIndicatorId", "indicator_code"], records: "nss-78/getNss78Records", why: "living conditions, digital skills, migration (2020-21)" },
   { id: "nss79", surveys: ["nss-79/getNSS79SurveyList", {}], list: ["nss-79/getnss79IndicatorList", { survey_code: "{survey}" }], filter: ["nss-79/getNSS79FilterByIndicatorId", "indicator_code"], records: "nss-79/getNSS79Records", why: "AYUSH and the comprehensive annual modular survey: health spending, finance, digital (2022-23)" },
-  { id: "nss80", surveys: ["nss-80/getSurvey", {}], list: ["nss-80/getIndicatorList", {}], filter: ["nss-80/getFilterBySurveryAndIndicator", "indicator_id"], records: "nss-80/getNss80Records", why: "telecom use and education spending (2025)" },
+  { id: "nss80", surveys: ["nss-80/getSurvey", {}], list: ["nss-80/getIndicatorList", { survey: "{survey}" }], filter: ["nss-80/getFilterBySurveryAndIndicator", "indicator_id"], records: "nss-80/getNss80Records", why: "telecom use and education spending (2025)" },
 ];
 
 const readPlan = () => (fs.existsSync(PLAN_FILE) ? JSON.parse(fs.readFileSync(PLAN_FILE, "utf8")) : { written: null, products: {} });
 const savePlan = (p) => { p.written = new Date().toISOString(); fs.writeFileSync(PLAN_FILE + ".tmp", JSON.stringify(p, null, 1)); fs.renameSync(PLAN_FILE + ".tmp", PLAN_FILE); };
-const rowsOf = (res) => { const d = res?.data; return Array.isArray(d) ? d : d?.indicator ?? d?.indicators ?? d?.surveys ?? []; };
+// listings come in several shapes: { data: [...] }, { data: { indicator: [...] } }, { indicator: [...] } (NSS 78)
+const rowsOf = (res) => { const d = res?.data; return Array.isArray(d) ? d : d?.indicator ?? d?.indicators ?? d?.surveys ?? res?.indicator ?? res?.indicators ?? []; };
 const codeOf = (x) => x.indicator_code ?? x.indicator_id ?? x.id ?? x.code;
 const surveyOf = (x) => x.survey_code ?? x.survey_id ?? x.code ?? x.id;
 
 async function phaseList(mospi, plan) {
   for (const P of PRODUCTS) {
     const st = (plan.products[P.id] ??= { why: P.why });
-    if (st.indicators) continue;
-    const surveys = P.surveys ? rowsOf(await mospi(...P.surveys)).map(surveyOf).filter((x) => x != null) : [null];
+    if (st.indicators?.length) continue;
+    try { await listOne(mospi, P, st); } catch (e) { st.error = `${e.message.slice(0, 160)} (${new Date().toISOString().slice(0, 10)})`; console.log(`A ${P.id}: failed, ${st.error}`); }
+    savePlan(plan);
+  }
+}
+async function listOne(mospi, P, st) {
+  {
+    delete st.error;
+    const surveys = !P.surveys ? [null] : P.surveys[0] === null ? P.surveys[1] : rowsOf(await mospi(...P.surveys)).map(surveyOf).filter((x) => x != null);
     st.surveys = P.surveys ? surveys : undefined;
     const inds = [];
     for (const s of surveys) {
       const params = Object.fromEntries(Object.entries(P.list[1]).map(([k, v]) => [k, v === "{survey}" ? s : v]));
-      for (const x of rowsOf(await mospi(P.list[0], params))) inds.push({ code: codeOf(x), survey: s, label: x.description ?? x.indicator_name ?? x.label ?? null });
+      for (const x of rowsOf(await mospi(P.list[0], params))) inds.push({ code: codeOf(x), survey: s, label: x.description ?? x.indicator_name ?? x.label ?? x.name ?? null });
     }
     st.indicators = inds.map((x) => ({ ...x, filters: null, expected: null, done: false }));
     console.log(`A ${P.id}: ${inds.length} indicators`);
-    savePlan(plan);
   }
 }
 async function phaseMeta(mospi, plan) {
@@ -102,7 +111,7 @@ const argv = process.argv;
 if (argv.includes("--plan")) {
   console.log("Step 5 plan (state profiles). Phases run in order; each is resumable.\n");
   console.log("A  list:   one call per product (two where a survey list comes first): " + PRODUCTS.length + " products");
-  for (const P of PRODUCTS) console.log(`   ${P.id.padEnd(11)} ${P.surveys ? P.surveys[0] + " -> " : ""}${P.list[0]}   (${P.why})`);
+  for (const P of PRODUCTS) console.log(`   ${P.id.padEnd(11)} ${P.surveys ? (P.surveys[0] ?? `surveys ${P.surveys[1].join(", ")}`) + " -> " : ""}${P.list[0]}   (${P.why})`);
   console.log("B  meta:   per indicator, the filter listing and page 1 of the records (totalRecords = the expected rows)");
   console.log("C  fetch:  per indicator, every page (100 rows a page, MoSPI's cap), checked against B's count; raw dump per product");
   console.log("   Economic Census: no record endpoint known; one discovery step by hand once MoSPI is released");
