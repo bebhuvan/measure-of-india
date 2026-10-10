@@ -57,7 +57,7 @@
 //   payments-cheques-1970  all-India cheques cleared 2015-16: 109.6 crore (Handbook Table).
 //   The rest are checked by identity in validate (parts add to totals, annual = sum of months).
 import { databankRoot, dbieReport, dbieProvider, dbieProviders, databankQuery } from "../databank.mjs";
-import { writeSeries, writeRaw, readRaw } from "../util.mjs";
+import { writeSeries, writeRaw, readRaw, nullCopiedRuns } from "../util.mjs";
 
 const num = (s) => { const t = String(s ?? "").replace(/,/g, "").trim(); if (t === "") return null; const v = Number(t); return Number.isFinite(v) ? v : null; };
 const ym = (s) => `${s.slice(0, 4)}-${s.slice(5, 7)}-01`;                 // "2026/07/31 00:00:00" -> "2026-07-01"
@@ -229,6 +229,9 @@ export async function buildPayments(root, dcfg, vintage, cfg) {
 
   // a bundle: axis trimmed to where any series reports, interior nulls declared on the series
   const bundle = (rel, dates, series, extra, gapsNote = "The RBI's table prints no value for this line in these months; left empty.") => {
+    // report 612's old layout repeats Jul 2010 to Jun 2011 as Aug 2006 to Jul 2007 (found in
+    // the launch read-through, 2026-10-10): the general detector blanks any such copy
+    nullCopiedRuns(dates, series, "RBI DBIE report 612");
     const any = (i) => Object.values(series).some((s) => s.data[i] != null);
     let a = 0; while (a < dates.length && !any(a)) a++;
     let z = dates.length - 1; while (z > a && !any(z)) z--;
@@ -303,10 +306,27 @@ export async function buildPayments(root, dcfg, vintage, cfg) {
     frequency: "monthly", base: "re-organised table (from November 2019)", unit: "count",
     coverage: "Payment infrastructure at the end of each month since November 2019: credit and debit cards, wallets and prepaid cards, ATMs (bank-owned and white-label), micro ATMs, PoS terminals, Bharat QR and UPI QR codes",
     note: `RBI Bulletin Table 45 via DBIE report 612. Counts of instruments and devices outstanding at the end of the month. ${NOTE_SEAM}` });
-  bundle("payments-monthly-2004", OLDM, txSeries(OLD, OLDM), {
+  // Before April 2011 the old layout prints no ATM-use line for cards, and its "all usage"
+  // card lines then equal the PoS lines to the unit: they counted PoS only. From April 2011
+  // ATM use is added (debit cards 21.4 mn in Mar 2011, 422 mn in Apr 2011, launch read-through
+  // 2026-10-10). Rule, from the data: where a card type's ATM line is empty, its "all usage"
+  // line is left empty too (the PoS line carries those months under its own label), so the
+  // series never runs across the change in what it counts.
+  const OLDS = txSeries(OLD, OLDM);
+  const ATM_SEAM = "Before April 2011 the RBI's old table printed no ATM-use line, and this 'all usage' line counted PoS payments only (the PoS line carries those months); ATM use is counted from April 2011.";
+  for (const sfx of ["_volume", "_value"]) {
+    const atmOf = (t) => OLDS[`${t}_atm${sfx}`]?.data ?? [];
+    for (const [tot, types] of [["debit_cards", ["debit_cards"]], ["credit_cards", ["credit_cards"]], ["cards", ["debit_cards", "credit_cards"]]]) {
+      const s = OLDS[tot + sfx]; if (!s) continue;
+      let hit = false;
+      OLDM.forEach((d, i) => { if (s.data[i] != null && types.every((t) => atmOf(t)[i] == null)) { s.data[i] = null; hit = true; } });
+      if (hit) s.gapsNote = ATM_SEAM;
+    }
+  }
+  bundle("payments-monthly-2004", OLDM, OLDS, {
     frequency: "monthly", base: "old table (April 2004 to October 2019)", unit: "mixed",
     coverage: "The RBI's payment system table in its old layout, April 2004 to October 2019: RTGS, CCIL, paper clearing, ECS, NEFT, IMPS, NACH, card usage at ATMs and PoS, prepaid instruments and mobile banking, number and value",
-    note: "RBI Bulletin Table 45 (old layout) via DBIE report 612 (ACTUALS display unit). Debit and credit card lines include cash drawn at ATMs. UPI is not a line of this layout. Retired in November 2019; never joined to the re-organised table." });
+    note: "RBI Bulletin Table 45 (old layout) via DBIE report 612 (ACTUALS display unit). The 'all usage' card lines include cash drawn at ATMs from April 2011 only; before that the table counted PoS use alone, so those lines start in April 2011 and the PoS lines carry the earlier years. UPI is not a line of this layout. Retired in November 2019; never joined to the re-organised table." });
   bundle("payments-infra-2004", OLDM, infraSeries(OLD_INFRA, OLDM), {
     frequency: "monthly", base: "old table (April 2004 to October 2019)", unit: "count",
     coverage: "Cards outstanding (credit, debit), ATMs and PoS terminals, old layout of the RBI's table, to October 2019",

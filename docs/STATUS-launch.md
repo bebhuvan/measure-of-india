@@ -1,6 +1,6 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 17:10.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 17:45.
 
 ## Running now: ten family sessions
 
@@ -57,10 +57,10 @@ markets) are all merged.
 | Item | Who | State |
 |---|---|---|
 | Search index was 306 MB | atlas-framework round 5 | **fixed**: 112 KB core + shards; largest file 6 MB |
-| State profiles, /states/<state>/ (owner, in launch scope) | atlas-profiles | **merged**: 36 profiles, nav, search, NFHS-6, MoSPI surveys (step 5). Last round: wire public finance and UCB state bundles, look at three profiles |
+| State profiles, /states/<state>/ (owner, in launch scope) | atlas-profiles | **all merged**, including public finance and UCB state cuts |
 | Full fresh MoSPI re-download as an integrity audit | coordinator | **done, clean**: every MoSPI product re-fetched through the hardened client (or by its wave-2 session after the fix); 0 paging slips, 0 data values changed |
 | Deep archive upload to Hugging Face (1.5 GB) | coordinator | **waiting on the owner's go** |
-| Read every guide end to end at 1440 and 390; release checklist | review sessions | after the audit and search land |
+| Read every guide end to end at 1440 and 390; release checklist (`docs/briefs/review.md`) | atlas-review-a, -b, -c | **running** (started 17:40) |
 | Profile wording: middle ranks read "17th lowest of 36"; say "17th of 36" | atlas-profiles | to fix |
 | Prose rule: published precision for headline growth ("7.8%", not "7.82%") | coordinator | to decide |
 | IIP annual 2024-25: API 5.7% against 6.4% in press summaries (MoSPI PDF 403) | open | not quoted anywhere meanwhile |
