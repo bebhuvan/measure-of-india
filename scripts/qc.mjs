@@ -162,11 +162,11 @@ const PAGES = [
     ["prov-vintage", (b) => b["external-bop"].meta.vintage],
   ]},
   { url: "/guides/jobs/", slug: null, checks: [
-    ["n-ur", (b) => fmt.pct2(b["plfs-monthly"].series.ur.data.at(-1))],
-    ["n-fur", (b) => fmt.pct2(b["plfs-cuts"].series.ur_female_urban.data.at(-1))],
+    ["n-ur", (b) => fmt.pct1(R1(b["plfs-monthly"].series.ur.data.at(-1)))],
+    ["n-fur", (b) => fmt.pct1(R1(b["plfs-cuts"].series.ur_female_urban.data.at(-1)))],
     // jobs-deep: plate 1 shows the revamped design's urban rate; the new plates' headline values
     ["pv-main", (b) => fmt.pct1(b["plfs-q25"].series.ur_cws__person_urban__a15plus.data.at(-1))],
-    ["ex-q1", (b) => fmt.pct2(b["plfs-quarterly"].series.ur.data.filter((v) => v != null).at(-1))],
+    ["ex-q1", (b) => fmt.pct1(R1(b["plfs-quarterly"].series.ur.data.filter((v) => v != null).at(-1)))],
     ["pv-seam", (b) => fmt.pct1(b["plfs-cy25-india"].series.lfpr_psss__person_all__a15plus.data.at(-1))],
     ["pv-q25", (b) => fmt.pct1(b["plfs-q25"].series.ur_cws__person_all__a15plus.data.at(-1))],
     ["ex-q25r", (b) => fmt.pct1(b["plfs-q25"].series.ur_cws__person_rural__a15plus.data.at(-1))],
@@ -177,8 +177,8 @@ const PAGES = [
     ["pv-cond", (b) => fmt.pct1(b["plfs-conditions"].series.none_of_three__person_all.data.at(-1))],
     ["ex-c-nc0", (b) => fmt.pct1(b["plfs-conditions"].series.no_contract__person_all.data[0])],
     ["pv-social", (b) => fmt.pct1(b["plfs-cy25-india"].series.lfpr_psss__female_all__a15plus.data.at(-1))],
-    ["pv-annual", (b) => fmt.pct2(b["plfs-annual"].series.ur_psss.data.at(-1))],
-    ["ex-p0", (b) => fmt.pct2(b["plfs-annual"].series.ur_psss.data[0])],
+    ["pv-annual", (b) => fmt.pct1(R1(b["plfs-annual"].series.ur_psss.data.at(-1)))],
+    ["ex-p0", (b) => fmt.pct1(R1(b["plfs-annual"].series.ur_psss.data[0]))],
     // annual-report extras (v1.2): composition, earnings, education
     ["pv-status", (b) => fmt.pct1(b["plfs-status"].series.self_employed_person.data.at(-1))],
     ["ex-st-hp", (b) => fmt.pct1(b["plfs-status"].series.se_helper_person.data.at(-1))],
@@ -420,7 +420,7 @@ const PAGES = [
     ["ex-gap-0", (b) => fmt.x1(b["states-spread"].series.gap_current.data[0])],
     ["ex-cv-l", (b) => fmt.pct1(b["states-spread"].series.cv_constant.data.at(-1))],
     ["pv-pc", (b) => { const B = b["states-pcnsdp-current"], i = B.dates.indexOf(b["states-spread"].dates.at(-1)); return fmt.inrR(Math.max(...Object.entries(B.series).filter(([k]) => k !== "jammu_and_kashmir_state").map(([, s]) => s.data[i]).filter((v) => v != null))); }],
-    ["pv-size", (b) => { const B = b["states-gsdp-current"], i = B.dates.indexOf(b["states-spread"].dates.at(-1)); return "₹" + (Math.max(...Object.values(B.series).map((s) => s.data[i]).filter((v) => v != null)) / 1e5).toFixed(2) + " lakh cr"; }],
+    ["pv-size", (b) => { const B = b["states-gsdp-current"], i = B.dates.indexOf(b["states-spread"].dates.at(-1)); return "₹" + (Math.max(...Object.values(B.series).map((s) => s.data[i]).filter((v) => v != null)) / 1e5).toFixed(1) + " lakh cr"; }],
     ["pv-growth", (b) => {
       const B = b["states-gsdp-constant"], D = b["states-spread"].dates, i0 = B.dates.indexOf(D[0]), i1 = B.dates.indexOf(D.at(-1)), n = +D.at(-1).slice(0, 4) - +D[0].slice(0, 4);
       return fmt.pct1(Math.max(...Object.entries(B.series).filter(([k]) => !k.startsWith("jammu_and_kashmir")).map(([, s]) => s.data[i0] > 0 && s.data[i1] != null ? (Math.pow(s.data[i1] / s.data[i0], 1 / n) - 1) * 100 : -Infinity)));

@@ -32,7 +32,7 @@ const P = {}; for (const k in S) P[k] = S[k].data.at(-2).value;
 const Y = {}; for (const k in S) Y[k] = S[k].data.at(-13).value;
 const prevName = fmtDate(S.headline.data.at(-2).date);
 const pc = '<span class="pc">%</span>';
-const arrow = (d) => (d >= 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(2) + " pt";
+const arrow = (d) => (Math.abs(d) < 0.005 ? "unchanged" : (d > 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(2) + " pt");
 const word = (d) => (d >= 0 ? "firming" : "easing");
 const setHTML = (id, h) => (document.getElementById(id).innerHTML = h);
 const setTxt = (id, t) => (document.getElementById(id).textContent = t);

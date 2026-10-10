@@ -71,7 +71,7 @@ const LNB = {}; for (const k in NB) LNB[k] = NB[k].data.at(-1).value;
 const PNB = {}; for (const k in NB) PNB[k] = NB[k].data.at(-2).value;
 const prevQNB = "vs " + fmtDate(NB.gdp.data.at(-2).date).replace(/ FY\d+$/, "");
 const pc = '<span class="pc">%</span>';
-const arrow = (d) => (d >= 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(1) + " pt";
+const arrow = (d) => (Math.abs(d) < 0.05 ? "unchanged" : (d > 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(1) + " pt");
 const word = (d) => (d >= 0 ? "accelerating" : "slowing");
 const prevQ = "vs " + fmtDate(dates.at(-2)).replace(/ FY\d+$/, "");
 const setHTML = (id, h) => (document.getElementById(id).innerHTML = h);

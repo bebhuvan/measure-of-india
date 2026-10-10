@@ -17,6 +17,15 @@ const TENS = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", 
 const yearsW = G_YEARS < 20 ? String(G_YEARS) : TENS[Math.floor(G_YEARS / 10)] + (G_YEARS % 10 ? "-" + WORDS[G_YEARS % 10] : "");
 const listW = (xs) => xs.length < 2 ? xs.join("") : xs.slice(0, -1).join(", ") + " and " + xs.at(-1);
 const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+// the export share's standing against its own past, counted (the typed "highest since the
+// early 2000s" was wrong: 2015 to 2021 all printed higher)
+const XB = JSON.parse(fs.readFileSync("data/series/wdi-manufacturing-exports.json", "utf8"));
+const XS = XB.series.manufactures_share_of_exports.data, XL = XS.length - 1;
+const xHigherYr = (() => { for (let i = XL - 1; i >= 0; i--) if (XS[i] != null && XS[i] > XS[XL]) return XB.dates[i].slice(0, 4); return null; })();
+const xLowerYr = (() => { for (let i = XL - 1; i >= 0; i--) if (XS[i] != null && XS[i] < XS[XL]) return XB.dates[i].slice(0, 4); return null; })();
+const X_STAND = XS[XL] >= XS[XL - 1]
+  ? (xHigherYr ? `, the highest since ${xHigherYr}` : ", the highest on record")
+  : (xLowerYr ? `, the lowest since ${xLowerYr}` : ", the lowest on record");
 ---
 <Base
   title="Manufacturing · India Atlas"
@@ -288,7 +297,7 @@ const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1);
           </div>
           <div class="now">
             <span class="mk">As of the 13 July 2026 vintage</span>
-            <p>The 2024 print: <b id="ex-exp-now">–</b>, up from <b id="ex-exp-prev">–</b> in 2023 and the highest since the early 2000s. The goods ledger is two-thirds factory-made; the remaining third is petroleum, agriculture, minerals and gems in the rough.</p>
+            <p>The 2024 print: <b id="ex-exp-now">–</b>, against <b id="ex-exp-prev">–</b> in 2023{X_STAND}. The goods ledger is two-thirds factory-made; the remaining third is petroleum, agriculture, minerals and gems in the rough.</p>
           </div>
         </div>
       </figure>

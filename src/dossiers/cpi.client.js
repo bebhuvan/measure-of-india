@@ -117,8 +117,8 @@ const L = {}; for (const k in S) L[k] = S[k].data.at(-1).value;
 const P = {}; for (const k in S) P[k] = S[k].data.at(-2).value;
 const Y = {}; for (const k in S) Y[k] = S[k].data.at(-13).value;
 const pc = '<span class="pc">%</span>';
-const arrow = (d) => (d >= 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(1) + " pt";
-const word = (d) => (d >= 0 ? "firming" : "easing");
+const arrow = (d) => (Math.abs(d) < 0.05 ? "unchanged" : (d > 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(1) + " pt");
+const word = (d) => (Math.abs(d) < 0.05 ? "steady" : d > 0 ? "firming" : "easing");
 const bandNote = (v) => (v < 2 ? "below the RBI band" : v > 6 ? "above the RBI band" : "within RBI band");
 const setHTML = (id, h) => (document.getElementById(id).innerHTML = h);
 const setTxt = (id, t) => (document.getElementById(id).textContent = t);
@@ -1178,7 +1178,6 @@ const SHORTN = { "Food and beverages": "Food", "Paan, tobacco and intoxicants": 
   "Furnishings, household equipment and routine household maintenance": "Furnishing", "Health": "Health", "Transport": "Transport", "Information and communication": "Info, comms",
   "Recreation, sport and culture": "Recreation", "Education services": "Education", "Restaurants and accommodation services": "Restaurants", "Personal care, social protection and miscellaneous goods and services": "Personal care" };
 const NUMW = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
-const numWord = (n) => NUMW[n] ?? String(n);
 {
   const RD = hydrate(ruDivBundle), UD = hydrate(urDivBundle);
   const byCode = (B, raw) => Object.fromEntries(Object.entries(raw.series).map(([k, s]) => [s.code, B[k]]));
