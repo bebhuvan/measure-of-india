@@ -56,6 +56,8 @@ export const HEADLINE = {
   credit:        { value: (b) => `${last(b, "headline").toFixed(1)}%`, what: "growth of bank credit, year on year", period: month },
   // trade (lb/trade): the month's merchandise trade balance, US$ billion, signed (a deficit is negative)
   trade:         { value: (b) => `${last(b, "balance") < 0 ? "−" : ""}$${Math.abs(last(b, "balance") / 1000).toFixed(1)} bn`, what: "merchandise trade balance (exports minus imports)", period: month },
+  // markets (lb/markets): households' net financial saving in the quarter, per cent of GDP
+  markets:       { value: (b) => `${last(b, "per_cent_of_gdp_as_per_cent_to_gdp").toFixed(1)}%`, what: "households' net financial saving, share of the quarter's GDP", period: quarter },
 };
 
 // The small chart beside each guide's figure: always on the current ruler, so a chart never
@@ -94,6 +96,7 @@ export const SPARK = {
   // credit (lb/credit)
   credit:        { bundle: "credit-growth", series: "headline" },
   trade:         { bundle: "trade-total", series: "exports", n: 60 },   // trade (lb/trade)
+  markets:       { bundle: "markets-hh-flows", series: "per_cent_of_gdp_as_per_cent_to_gdp" },   // markets (lb/markets)
 };
 
 const cache = {};

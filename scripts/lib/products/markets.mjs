@@ -189,7 +189,9 @@ export async function buildMarketsIssues(root, dcfg, VINTAGE, cfg) {
     const cy = ann.filter((r) => /^\d{4}$/.test(r.Year)), fy = ann.filter((r) => /^\d{4}-\d{2}$/.test(r.Year));
     if (cy.length + fy.length !== ann.length) throw new Error("markets 277: a Year is neither a calendar year nor a fiscal year");
     const lab277 = "Hbs Hierarchy Level 1";
-    const T277 = [...ISSUES_NEW.filter(([sk]) => ![59, 60].includes(sk)), ...ISSUES_OLD,
+    // the old detailed lines carry their own keys (detail_*): "bonds" in the old layout ("4) Bonds")
+    // is not the current layout's "public issue of bonds/debentures"
+    const T277 = [...ISSUES_NEW.filter(([sk]) => ![59, 60].includes(sk)), ...ISSUES_OLD.map(([sk, k, l, src]) => [sk, `detail_${k}`, `Detailed table: ${l.charAt(0).toLowerCase()}${l.slice(1)}`, src]),
       [35, "new_companies_n", "Issues by new companies: number", "5.3 New"], [36, "new_companies", "Issues by new companies: amount", "5.3 New"],
       [37, "existing_companies_n", "Issues by existing companies: number", "5.4 Existing"], [38, "existing_companies", "Issues by existing companies: amount", "5.4 Existing"]];
     const annNote = "Annual table of RBI's Handbook (DBIE report 277). It carries both of the monthly report's layouts and adds issues by new and by existing companies. Where both carry a year the annual figure is the RBI's own and is not recomputed from months: they differ in some years (2016-17 and 2017-18 equity, years where months are missing), and the 2023-24 'prospectus' line (₹3,856 crore) equals March 2024's monthly figure, not the year's (the months add to ₹65,832 crore): as printed.";
@@ -328,7 +330,15 @@ export async function buildMarkets(root, dcfg, VINTAGE, cfg) {
         const isPct = /per cent/i.test(desc) || p.some((x) => /^Per cent of GDP$/i.test(x));
         // the bare headings ("Financial Liabilities" without a value, "Loans (Borrowings) from") carry no figures
         const key = slug(p.join(" "), 200);
-        const label = p.filter((x, i) => i === 0 || !/^(I\. |II\. )?(Gross )?Financial (Assets|Liabilities)$/i.test(x) || i === p.length - 1).join(": ");
+        // readable labels: drop the table's numbering and arithmetic markers, keep the path
+        const clean = (x) => x.replace(/^(I|II)\.\s*/, "").replace(/^\d+\.\s*/, "").replace(/^\([a-z]\)\s*/i, "").replace(/^(i|ii|iii)\.\s*/, "").replace(/^\((i|ii|iii)\)\s*/, "")
+          .replace(/\s*\((a\+b|i\+ii|a\+b\+c\+d\+e\+f\+g\+h|I-II|i\+ii\+iii)\)/gi, "").replace(/^As per cent to GDP$/i, "per cent of GDP").trim();
+        const parts = [];
+        for (const x of p.map(clean)) if (x && parts.at(-1)?.toLowerCase() !== x.toLowerCase() && !(/^per cent of gdp$/i.test(x) && /^per cent of gdp$/i.test(parts.at(-1) ?? ""))) parts.push(x);
+        // "Gross Financial Assets: Financial Assets" says one thing twice
+        // the table's bare "Per cent of GDP" row is net financial assets as a share of GDP
+        if (parts.length === 1 && /^per cent of gdp$/i.test(parts[0])) parts.splice(0, 1, "Net Financial Assets", "per cent of GDP");
+        const label = parts.filter((x, i) => !(i === 0 && /^gross financial (assets|liabilities)$/i.test(x) && /^financial (assets|liabilities)/i.test(parts[1] ?? ""))).join(": ");
         const s = ser(m, key, { label: `${kind}: ${label}`, unit: isPct ? "pct_of_gdp" : "inr_crore" });
         const d = dateOf(r);
         if (s.values.has(d) && s.values.get(d) != null && v != null) throw new Error(`markets household ${key} ${d}: two values`);

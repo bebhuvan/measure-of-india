@@ -557,6 +557,25 @@ const PAGES = [
   ]},
   // the guides index: one small chart per guide
   { url: "/guides/", slug: null, minPlots: 13, checks: [] },
+  // markets (lb/markets): the title block, the headline plate and a value from every part of the guide
+  { url: "/guides/markets/", slug: null, minPlots: 19, checks: [
+    ["n-net", (b) => b["markets-hh-flows"].series.per_cent_of_gdp_as_per_cent_to_gdp.data.at(-1).toFixed(1) + "%"],
+    ["pv-net", (b) => fmt.pct1(b["markets-hh-flows"].series.per_cent_of_gdp_as_per_cent_to_gdp.data.at(-1))],
+    ["ex-net-g", (b) => fmt.pct1(b["markets-hh-flows"].series.gross_financial_assets_per_cent_of_gdp_as_per_cent_to_gdp.data.at(-1))],
+    ["pv-flows", (b) => "₹" + (b["markets-hh-flows-annual"].series.gross_financial_assets_i_financial_assets.data.at(-1) / 1e5).toFixed(1) + " lakh crore"],
+    ["pv-aum", (b) => "₹" + (b["markets-mf-aum"].series.aum.data.at(-1) / 1e5).toFixed(1) + " lakh crore"],
+    ["pv-gold", (b) => fmt.inrR(b["markets-gold"].series.gold_mumbai.data.at(-1))],
+    ["pv-issues", (b) => "₹" + (b["markets-issues-annual"].series.equity.data.at(-1) / 1e5).toFixed(2) + " lakh crore"],
+    ["pv-cp", (b) => "₹" + (b["rates-cp"].series.outstanding.data.at(-1) / 1e5).toFixed(2) + " lakh crore"],
+    ["pv-mcap", (b) => "₹" + (b["markets-mcap"].series.nse.data.at(-1) / 1e5).toFixed(1) + " lakh crore"],
+    ["pv-listed", (b) => fmt.pct1Minus(b["markets-listed-q"].series.sales.data.at(-1))],
+    ["ex-ls-n", (b) => fmt.count(b["markets-listed-q"].series.companies.data.at(-1))],
+    ["pv-sectors", (b) => fmt.pct1Minus(b["markets-listed-q-sector"].series.icc_manf__sales.data.at(-1))],
+    ["pv-coverage", (b) => fmt.x1(b["markets-listed-q-ratios"].series.int_cvg.data.at(-1))],
+    ["pv-studies", (b) => fmt.pct1Minus(b["markets-co-public-growth"].series.net_sales.data.at(-1))],
+    ["pv-debt", (b) => fmt.pct1(b["markets-co-public-ratios"].series.debt_to_equity.data.at(-1))],
+    ["prov-vintage", (b) => b["markets-hh-flows"].meta.vintage],
+  ]},
   { url: "/register/", slug: null, minPlots: 8, checks: [] },
   // profiles (lb/profiles): five profiles of different shapes run their charts here and in lint-charts
   ...["bihar", "kerala", "goa", "ladakh", "telangana"].map((s) => ({ url: `/states/${s}/`, slug: null, minPlots: 4, checks: [] })),

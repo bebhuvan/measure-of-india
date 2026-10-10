@@ -78,6 +78,14 @@ export const UNITS = {
   pp: { kind: "diff", fmt: (v) => (v < 0 ? MINUS : v > 0 ? "+" : "") + Math.abs(v).toFixed(1) + " pt", note: "percentage points" },
   inr_per_sqft: { kind: "pct", fmt: (v) => "₹" + grp(v), note: "per sq ft" },
   // ---- end bis family ----
+  // ---- markets (lb/markets) ----
+  times: { kind: "diff", fmt: (v) => v.toFixed(2) + "×", note: "times" },
+  inr_per_10g: { kind: "pct", fmt: (v) => (v < 0 ? MINUS : "") + "₹" + grp(Math.abs(v), 0), note: "per 10 grams" },
+  inr_per_kg: { kind: "pct", fmt: (v) => (v < 0 ? MINUS : "") + "₹" + grp(Math.abs(v), 0), note: "per kilogram" },
+  usd_per_troy_oz: { kind: "pct", fmt: (v) => "$" + grp(v, 2), note: "per troy ounce" },
+  usc_per_troy_oz: { kind: "pct", fmt: (v) => grp(v, 2) + " US cents", note: "per troy ounce" },
+  usd_per_barrel: { kind: "pct", fmt: (v) => "$" + grp(v, 1), note: "per barrel" },
+  // ---- end markets ----
   // ---- industry (wave 2): ASI fuel values are published in ₹ thousand ----
   inr_thousand: { kind: "pct", fmt: (v) => (Math.abs(v) >= 1e9 ? "₹" + grp(v / 1e9, 2) + " lakh crore" : "₹" + grp(v / 1e4, 1) + " crore"), note: "published in ₹ thousand" },
   // ---- end industry ----
@@ -512,6 +520,29 @@ export const CUT_BY_BUNDLE = {
 };
 // the fallback, by what a bundle's slug says it is
 export const CUT_RULES = [
+  // --- markets (lb/markets) ---
+  [/^markets-co-.*-(income|liabilities|assets|sources|uses|forex)(-2011)?$/, "Item and study"],
+  [/^markets-co-.*-activity/, "Activity"],
+  [/^markets-co-.*-sales/, "Size of sales"],
+  [/^markets-co-.*-puc/, "Size of paid-up capital"],
+  [/^markets-co-.*-ownership/, "Public or private limited"],
+  [/^markets-co-fdi-distribution/, "Industry and country of origin"],
+  [/^markets-co-/, "Item"],
+  [/^markets-listed-.-sales/, "Size of sales"],
+  [/^markets-listed-.-puc/, "Size of paid-up capital"],
+  [/^markets-listed-.-industry/, "Industry"],
+  [/^markets-listed-.-sector/, "Sector"],
+  [/^markets-listed-/, "Item"],
+  [/^markets-spf/, "Indicator, target and statistic"],
+  [/^markets-hh-/, "Instrument"],
+  [/^markets-mf-houses/, "Fund house"],
+  [/^markets-mf-bank-fi/, "Fund"],
+  [/^markets-mf-sponsor/, "Sponsor"],
+  [/^markets-gold/, "Metal and market"],
+  [/^markets-derivatives/, "Exchange and instrument"],
+  [/^markets-(mcap|turnover|exchanges)/, "Exchange"],
+  [/^markets-(issues|euro)/, "Instrument"],
+  // --- end markets ---
   // --- industry (wave 2): complete ASI and ASUSE tables ---
   [/^asuse-(2025-)?t\d\d$/, "ASUSE table"],
   [/^asi(-\d{4})?-state-nic2$/, "State and industry"],

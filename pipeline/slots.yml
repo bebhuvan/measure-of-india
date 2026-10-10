@@ -742,3 +742,39 @@ gender:
       their share of scheme accounts. Do not discuss the compendium's missing tables. Must contain
       a plain "we do not know". Plain, literal sentences, no metaphors.
 # --- end health-gender ---
+# ---- markets (lb/markets): households' financial saving, the quarter's RBI estimate ----
+markets:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [cross.netPctGdp.latest, cross.lakhCrore.gross_financial_assets_i_financial_assets.latest, cross.lakhCrore.gross_financial_liabilities_ii_financial_liabilities.latest, cross.year.net_pct_gdp]
+    minSeriesMentioned: 5        # net saving, gross saving, borrowing and at least two instruments
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
+    brief: >
+      Two short paragraphs on the latest quarter of the RBI's estimate of household financial
+      saving. Paragraph one: net financial saving as a share of GDP against the same quarter a
+      year earlier (cross.netPctGdp), what households put into financial assets and what they
+      borrowed, in ₹ lakh crore from cross.lakhCrore (the biggest change on a year earlier is the
+      loans from banks and other financial companies: name it in those words), and where the money went, in rupees out of
+      every ₹100 from cross.per100 (deposits, provident and pension funds, currency, mutual funds,
+      shares bought directly; a negative share means households sold). Paragraph two: the full
+      fiscal year from cross.year, then one sentence each, only from cross.markets, on mutual
+      fund assets, the latest month's new share issues, listed companies' sales growth and the
+      forecasters' median for GDP growth, each with its own period. Every rupee figure in ₹ lakh
+      crore exactly as written in the cross blocks; never cite series values, which are ₹ crore.
+      Name the quarter. Name every period exactly as the sheet writes it (Q4 FY26, 2025-26,
+      March 2026, July 2026); never write a bare calendar year. Concede before qualifying.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 5
+    dateStamp: false
+    requiredFigures: [cross.netPctGdp.latest]
+    brief: >
+      The honest limits. These are preliminary estimates, revised as the RBI gathers more data,
+      and a single quarter swings with the March rush into tax-saving deposits and insurance.
+      Financial saving is only part of household saving: houses and gold are physical saving,
+      measured in the national accounts, not here. Net saving falls when households borrow more,
+      which can mean they bought homes, not that they saved less. The figures are totals for all
+      households and say nothing about how saving is shared between rich and poor. Must contain a
+      plain "we do not know" sentence (for example, how much of the borrowing went into houses).
+# ---- end markets ----
