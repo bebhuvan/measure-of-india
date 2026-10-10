@@ -201,10 +201,11 @@ setHTML("prov-vintage2", cmB.meta.vintage);
       Plot.gridY(y.ticks, { stroke: GRID }), Plot.ruleY([0], { stroke: BASE }), Plot.ruleY([100], { stroke: G2, strokeDasharray: "3,3" }),
       Plot.text([{ m: 1, value: 100 }], { x: "m", y: "value", text: ["The whole year's budgeted deficit"], dy: -8, textAnchor: "start", fill: G1, fontSize: 12 }),
       ...rows.slice(0, -1).map((r) => Plot.lineY(r.pts, { x: "m", y: "value", stroke: G3, strokeWidth: 1.5, strokeLinejoin: "round", strokeLinecap: "round" })),
-      ...rows.slice(0, -1).map((r) => Plot.text(r.pts.slice(-1), { x: "m", y: "value", text: () => r.fy, dx: 8, textAnchor: "start", fill: G1, fontSize: 11.5 })),
+      ...dodgeEndLabels(rows.slice(0, -1).filter((r) => r.pts.length).map((r) => ({ label: r.fy, data: r.pts })), 9).map((p) => Plot.text([{ m: p.s.data.at(-1).m, value: p.y }], { x: "m", y: "value", text: [p.s.label], dx: 10, textAnchor: "start", fill: G1, fontSize: 11.5 })),
       Plot.lineY(cur.pts, { x: "m", y: "value", stroke: ACC, strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.dot(cur.pts.slice(-1), { x: "m", y: "value", r: 3.5, fill: ACC, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text(cur.pts.slice(-1), { x: "m", y: "value", text: (d) => `${cur.fy} ${p1(d.value)}`, dx: 10, textAnchor: "start", fill: INK, fontSize: 12, fontWeight: 600 }),
+      // the current year's label sits above every line at its latest month, so no line crosses it
+      Plot.text(cur.pts.slice(-1), { x: "m", y: (d) => Math.max(...flat.filter((p) => p.m === d.m).map((p) => p.value)) + (y.domain[1] - y.domain[0]) * 0.06, text: (d) => `${cur.fy}: ${p1(d.value)}`, textAnchor: "middle", fill: INK, fontSize: 12, fontWeight: 600 }),
     ],
   });
   a11y(plot, "The Centre's deficit from April to each month as a share of the year's budget", `${curFY}: ${p1(ytd.v)} by ${lastMonth}; a year earlier ${p1(ytdAgo)}.`);
@@ -383,14 +384,15 @@ setHTML("prov-vintage2", cmB.meta.vintage);
   };
   const years = [["2004-05", (k) => atFY(b, k, "2004-05")], [ST.accountsTo, (k) => atFY(b, k, ST.accountsTo)], [`${ST.budgetEstimate} budget`, (k) => firstOf(b, k + "__be").v]];
   const rows = years.flatMap(([yl, get]) => { let x0 = 0; return parts(get).map((p) => { const r = { year: yl, part: p.k, x1: x0, x2: x0 + p.v, v: p.v }; x0 += p.v; return r; }); });
-  const COL = { Interest: ACC, Defence: "#7F8FE6", Subsidies: GOLD, "Other day-to-day spending": "#E3E6EC", "Capital outlay": "#9AA9EE", Loans: G3 };
+  // areas are pale tints with dark text on top (DESIGN §1); interest, the subject, the strongest tint
+  const COL = { Interest: tint(ACC, 0.45), Defence: tint(ACC, 0.72), Subsidies: tint(GOLD, 0.6), "Other day-to-day spending": "#ECEEF2", "Capital outlay": tint(ACC, 0.85), Loans: G3 };
   const plot = Plot.plot({
     width: W, height: 300, marginLeft: 150, marginRight: 30, marginTop: 34, marginBottom: 30, style,
     x: { label: "per ₹100 of total expenditure", labelAnchor: "right", domain: [0, 100], ticks: [0, 20, 40, 60, 80, 100], tickSize: 0, tickFormat: (v) => String(v) },
     y: { label: null, domain: years.map((y) => y[0]), tickSize: 0, padding: 0.28 },
     marks: [
       Plot.barX(rows, { x1: "x1", x2: "x2", y: "year", fill: (d) => COL[d.part], stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text(rows.filter((d) => d.v >= 5.5), { x: (d) => (d.x1 + d.x2) / 2, y: "year", text: (d) => `${d.part === "Other day-to-day spending" ? "Other" : d.part} ₹${Math.round(d.v)}`, fill: (d) => (d.part === "Interest" ? "#FFFFFF" : INK), fontSize: 11.5, fontWeight: (d) => (d.part === "Interest" ? 600 : 400) }),
+      Plot.text(rows.filter((d) => d.v >= 5.5), { x: (d) => (d.x1 + d.x2) / 2, y: "year", text: (d) => `${d.part === "Other day-to-day spending" ? "Other" : d.part} ₹${Math.round(d.v)}`, fill: INK, fontSize: 11.5, fontWeight: (d) => (d.part === "Interest" ? 600 : 400) }),
     ],
   });
   const be = parts((k) => firstOf(b, k + "__be").v);
@@ -475,7 +477,7 @@ setHTML("prov-vintage2", cmB.meta.vintage);
       Plot.gridY(y.ticks, { stroke: GRID }), Plot.ruleY([0], { stroke: BASE }),
       ...seamMarks("agency", [{ data: sta, color: GOLD, width: 1.5, reconstructedUntil: cut }, { data: cen, color: INK, width: 1.5, reconstructedUntil: cut }, { data: comb, color: ACC, width: 2.25, reconstructedUntil: cut }], { text: "NSO back series of GDP to 2010-11", y: y.domain[1] - 4, anchor: "end", at: cut }),
       ...stageMarks(st("total_liabilities_of_the_states"), GOLD), ...stageMarks(st("total_liabilities_of_the_centre"), INK), ...stageMarks(st("combined_total_liabilities_of_centre_and_states"), ACC),
-      ...endLabels([{ label: "Centre and states", color: ACC, bold: true, data: comb, end: st("combined_total_liabilities_of_centre_and_states").at(-1) }, { label: "Centre", color: INK, data: cen, end: st("total_liabilities_of_the_centre").at(-1) }, { label: "States", color: GOLD, data: sta, end: st("total_liabilities_of_the_states").at(-1) }], 4, (v) => fmt.pct0(v)),
+      ...endLabels([{ label: "Centre and states", color: ACC, bold: true, data: comb, end: st("combined_total_liabilities_of_centre_and_states").at(-1) }, { label: "Centre", color: INK, data: cen, end: st("total_liabilities_of_the_centre").at(-1) }, { label: "States", color: GOLD, data: sta, end: st("total_liabilities_of_the_states").at(-1) }], 4, (v) => p1(v)),
     ],
   });
   a11y(plot, "What India's governments owe, per cent of GDP", `Centre and states ${p1(debtBE)} by the budgets for ${SS.budgetEstimate}.`);
@@ -572,7 +574,7 @@ setHTML("prov-vintage2", cmB.meta.vintage);
   const lines = [{ k: "total__outstanding", label: "All schemes", color: ACC, width: 2.25, bold: true, data: L("total__outstanding") }, ...top.map((k) => ({ k, label: nm(k), color: G2, width: 1.25, data: L(k) }))];
   const y = span(lines.flatMap((l) => l.data.map((d) => d.value)), 5);
   const plot = Plot.plot({
-    width: W, height: 470, marginLeft: 44, marginRight: 260, marginTop: 28, marginBottom: 34, style,
+    width: W, height: 470, marginLeft: 44, marginRight: 350, marginTop: 28, marginBottom: 34, style,
     x: { type: "utc", label: null, tickSize: 0, tickPadding: 10, ticks: yearTicks(1992, 2025, 4).map((d) => new Date(Date.UTC(d.getUTCFullYear(), 0, 1))), tickFormat: (d) => String(d.getUTCFullYear()) },
     y: { label: "₹ lakh crore outstanding", labelAnchor: "top", labelArrow: false, domain: y.domain, ticks: y.ticks, tickSize: 0, tickPadding: 8, tickFormat: (v) => String(v) },
     marks: [
@@ -655,8 +657,8 @@ setHTML("prov-vintage2", cmB.meta.vintage);
   const rows = Object.entries(b.series).filter(([k]) => k.endsWith("__debt")).map(([k, s]) => ({ k: k.replace(/__debt$/, ""), state: s.label.split(":")[0], debt: s.data[i], gfd: b.series[k.replace(/__debt$/, "__gfd")]?.data[i] ?? null })).filter((r) => r.debt != null).sort((a, c) => c.debt - a.debt);
   const x = span(rows.flatMap((r) => [r.debt, r.gfd]), 10);
   const plot = Plot.plot({
-    width: W, height: 26 * rows.length + 60, marginLeft: 190, marginRight: 70, marginTop: 30, marginBottom: 30, style,
-    x: { label: "per cent of the state's GSDP", labelAnchor: "right", domain: x.domain, ticks: x.ticks, tickSize: 0, tickFormat: (v) => String(v), axis: "top" },
+    width: W, height: 26 * rows.length + 60, marginLeft: 250, marginRight: 70, marginTop: 30, marginBottom: 30, style,
+    x: { label: null, domain: x.domain, ticks: x.ticks, tickSize: 0, tickFormat: (v) => String(v), axis: "top" },
     y: { label: null, domain: rows.map((r) => r.state), tickSize: 0 },
     marks: [
       Plot.gridX(x.ticks, { stroke: GRID }),
@@ -684,12 +686,12 @@ setHTML("prov-vintage2", cmB.meta.vintage);
   const segs = rows.flatMap((r) => { let x0 = 0; return [["Overdraft", r.od, ACC], ["Ways and means advances", r.wma, GREY], ["Special drawing facility", r.sdf, G3]].map(([f, v, c]) => { const o = { state: r.state, f, x1: x0, x2: x0 + v, c, v }; x0 += v; return o; }); });
   const xmax = Math.max(...rows.map((r) => r.sdf + r.wma + r.od));
   const plot = Plot.plot({
-    width: W, height: 26 * rows.length + 60, marginLeft: 190, marginRight: 60, marginTop: 30, marginBottom: 30, style,
-    x: { label: "days used in the last twelve months", labelAnchor: "right", domain: [0, Math.ceil(xmax / 50) * 50], tickSize: 0, tickFormat: (v) => String(v), axis: "top" },
+    width: W, height: 26 * rows.length + 60, marginLeft: 190, marginRight: 190, marginTop: 30, marginBottom: 30, style,
+    x: { label: null, domain: [0, Math.ceil(xmax / 50) * 50], tickSize: 0, tickFormat: (v) => String(v), axis: "top" },
     y: { label: null, domain: rows.map((r) => r.state), tickSize: 0, padding: 0.25 },
     marks: [
       Plot.barX(segs.filter((d) => d.v > 0), { x1: "x1", x2: "x2", y: "state", fill: "c", stroke: "#FFFFFF", strokeWidth: 1 }),
-      Plot.text(rows, { x: (r) => r.sdf + r.wma + r.od, y: "state", text: (r) => (r.od ? `${r.od} days in overdraft` : ""), dx: 8, textAnchor: "start", fill: INK, fontSize: 11.5 }),
+      Plot.text(rows, { x: (r) => r.sdf + r.wma + r.od, y: "state", text: (r) => (r.od ? `${r.od} ${r.od === 1 ? "day" : "days"} in overdraft` : ""), dx: 8, textAnchor: "start", fill: INK, fontSize: 11.5 }),
     ],
   });
   const last = (k) => b.series[k].data.at(-1);
@@ -721,7 +723,7 @@ setHTML("prov-vintage2", cmB.meta.vintage);
       ...seamMarks("side", pub.map((data) => ({ data, color: GREY, width: 1.75 })), { text: "GDP rebased", y: y.domain[1] - 0.5, at: dt(g04B.dates[0]) }),
       Plot.lineY(newL, { x: "date", y: "value", stroke: ACC, strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.dot(newL.filter((p) => p.value != null), { x: "date", y: "value", r: 3, fill: ACC, stroke: "#FFFFFF", strokeWidth: 1 }),
-      ...endLabels([{ label: "2022-23 series", color: ACC, bold: true, data: newL }, { label: "RBI, 2011-12 series", color: GREY, data: pub[2] }, { label: "2011-12 back series", color: tint(ACC, 0.6), data: backL }], 0.5, (v) => p1(v)),
+      ...endLabels([{ label: "2022-23 series", color: ACC, bold: true, data: newL }, { label: "RBI, 2011-12 series", color: GREY, data: pub[2] }], 0.5, (v) => p1(v)),
     ],
   });
   const nw = newL.filter((p) => p.value != null).at(-1), od = pub[2].filter((p) => p.value != null).at(-1);

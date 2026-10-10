@@ -24,9 +24,18 @@ Branch `lb/public-finance`. Guide `/guides/public-finance/` (port 4431). Updated
   two phrases of pipeline jargon ("the sheet's weakest mover") removed by hand, then verify,
   lint and contract re-run clean.
 
+- Gates (locked build, 2026-10-10): `npx astro build`, `npm run gates` (validate, as-of, qc,
+  chart lint clean), `npm test` (52/52), `npm run prose:dry`, coverage `--strict` all green.
+  Looked at 1440 and 390 (every plate read); a share PNG of the deficit plate downloaded and
+  checked. Fixed on the way: unreadable white labels on the spend bars (now pale tints with ink
+  text), a truncated state name, ten label placements flagged by chart lint, and two notes
+  checked against the data (the 2000-01 jump in the Centre's net income tax is the change to
+  sharing all central taxes; the earlier GDP rebasings moved the deficit ratio little).
+
 ## Next
 
-Locked build + gates, look at 1440 and 390, share image.
+Nothing outstanding. Possible follow-ups: an every-state fiscal table (the States guide holds
+the state-wise Handbook tables); the combined Bulletin's budget-to-accounts path as a plate.
 
 ## Decisions (for HISTORY)
 
