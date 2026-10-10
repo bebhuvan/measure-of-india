@@ -5,6 +5,7 @@
 export const EXPLAINERS = [
   {
     slug: "inflation",
+    ruler: "cpi2012",   // the retired ruler its charts draw (Learn.astro says so on the page)
     no: "01",
     family: "Concepts",
     title: "Inflation is not “prices going up”",
@@ -15,6 +16,7 @@ export const EXPLAINERS = [
   },
   {
     slug: "base-effects",
+    ruler: "cpi2012",   // the retired ruler its charts draw (Learn.astro says so on the page)
     no: "02",
     family: "Prices",
     title: "Every number has a denominator",
@@ -25,16 +27,18 @@ export const EXPLAINERS = [
   },
   {
     slug: "index-weights",
+    ruler: "cpi2012",   // the retired ruler its charts draw (Learn.astro says so on the page)
     no: "03",
     family: "Prices",
     title: "Why onions move inflation more than rent",
-    blurb: "Index weights: the basket is not a list but a budget. How the 2011–12 spending survey decides what matters, and why your inflation is not the national inflation.",
+    blurb: "Index weights: the basket is not a list but a budget. How a spending survey decides what matters, and why your inflation is not the national inflation.",
     illustratedWith: "CPI group weights",
     minutes: 7,
     live: true,
   },
   {
     slug: "core-inflation",
+    ruler: "cpi2012",   // the retired ruler its charts draw (Learn.astro says so on the page)
     no: "04",
     family: "Prices",
     title: "Core inflation: the signal under the noise",
@@ -45,6 +49,7 @@ export const EXPLAINERS = [
   },
   {
     slug: "yoy-and-mom",
+    ruler: "cpi2012",   // the retired ruler its charts draw (Learn.astro says so on the page)
     no: "05",
     family: "Prices",
     title: "Year-on-year, month-on-month",
@@ -55,6 +60,7 @@ export const EXPLAINERS = [
   },
   {
     slug: "seasonality",
+    ruler: "cpi2012",   // the retired ruler its charts draw (Learn.astro says so on the page)
     no: "06",
     family: "Prices",
     title: "Seasons in the data",
@@ -65,6 +71,7 @@ export const EXPLAINERS = [
   },
   {
     slug: "inflation-targeting",
+    ruler: "cpi2012",   // the retired ruler its charts draw (Learn.astro says so on the page)
     no: "07",
     family: "Prices",
     title: "The band is law, not decoration",
@@ -75,16 +82,18 @@ export const EXPLAINERS = [
   },
   {
     slug: "index-numbers",
+    ruler: "cpi2012",   // the retired ruler its charts draw (Learn.astro says so on the page)
     no: "08",
     family: "Prices",
     title: "Index numbers and the base of 100",
-    blurb: "Why statisticians abolish the rupee and measure everything against a fixed year. Laspeyres baskets, chaining, and what “2012 = 100” actually claims.",
+    blurb: "Why statisticians abolish the rupee and measure everything against a fixed year. Laspeyres baskets, chaining, and what “100 in the base year” actually claims.",
     illustratedWith: "CPI level, 2016–2025",
     minutes: 6,
     live: true,
   },
   {
     slug: "gdp",
+    ruler: "gdp2011",   // the retired ruler its charts draw (Learn.astro says so on the page)
     no: "09",
     family: "Growth",
     title: "GDP: what it counts, what it misses",
@@ -95,6 +104,7 @@ export const EXPLAINERS = [
   },
   {
     slug: "gdp-vs-gva",
+    ruler: "gdp2011",   // the retired ruler its charts draw (Learn.astro says so on the page)
     no: "10",
     family: "Growth",
     title: "GDP versus GVA: the tax wedge",
@@ -105,6 +115,7 @@ export const EXPLAINERS = [
   },
   {
     slug: "real-vs-nominal",
+    ruler: "gdp2011",   // the retired ruler its charts draw (Learn.astro says so on the page)
     no: "11",
     family: "Growth",
     title: "Real versus nominal",
@@ -115,6 +126,7 @@ export const EXPLAINERS = [
   },
   {
     slug: "investment-gfcf",
+    ruler: "gdp2011",   // the retired ruler its charts draw (Learn.astro says so on the page)
     no: "12",
     family: "Growth",
     title: "Investment: the economy's bet on tomorrow",
@@ -125,6 +137,7 @@ export const EXPLAINERS = [
   },
   {
     slug: "consumption-pfce",
+    ruler: "gdp2011",   // the retired ruler its charts draw (Learn.astro says so on the page)
     no: "13",
     family: "Growth",
     title: "Consumption: the biggest slice of GDP",
@@ -158,7 +171,7 @@ export const EXPLAINERS = [
     no: "16",
     family: "Reading numbers",
     title: "The base year: the ruler's zero mark",
-    blurb: "Why statistics carry a year in their name, what a base revision changes (and what it cannot), and why 2011–12 still shapes the numbers you read today.",
+    blurb: "Why statistics carry a year in their name, what a base revision changes (and what it cannot), and what the 2026 move to new bases changed.",
     illustratedWith: "CPI and GDP bases",
     minutes: 6,
     live: true,
@@ -185,6 +198,7 @@ export const EXPLAINERS = [
   },
   {
     slug: "noise-and-trend",
+    ruler: "cpi2012",   // the retired ruler its charts draw (Learn.astro says so on the page)
     no: "19",
     family: "Reading numbers",
     title: "Noise and trend",
@@ -195,6 +209,7 @@ export const EXPLAINERS = [
   },
   {
     slug: "monsoon-and-food-prices",
+    ruler: "cpi2012",   // the retired ruler its charts draw (Learn.astro says so on the page)
     no: "20",
     family: "Prices",
     title: "The monsoon and food prices",

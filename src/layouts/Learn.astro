@@ -14,6 +14,13 @@ interface Props {
   ogImage?: string;
 }
 const { title, description, slug, kicker, h1, lede, meta, dateStamp = "Evergreen", crumbTitle, ogImage } = Astro.props;
+import { EXPLAINERS } from "../learn/registry.js";
+// a page whose charts draw a retired ruler says so above the first section, and points to the current one
+const RULERS = {
+  cpi2012: 'The charts on this page draw the consumer price index on its 2012 base, the series that ran to December 2025. From January 2026 the NSO publishes the index on a new base, 2024 = 100. The idea on this page works the same on either ruler; the latest figures are in the <a href="/guides/cpi/">Consumer prices guide</a>.',
+  gdp2011: 'The charts on this page draw the national accounts at 2011-12 prices, the series that ran to July to September 2025. The NSO now publishes GDP at 2022-23 prices. The idea on this page works the same on either ruler; the latest figures are in the <a href="/guides/gdp/">GDP guide</a>.',
+};
+const ruler = RULERS[EXPLAINERS.find((e) => e.slug === slug)?.ruler];
 ---
 <Base
   title={title}
@@ -37,6 +44,8 @@ const { title, description, slug, kicker, h1, lede, meta, dateStamp = "Evergreen
     </div>
   </div>
 
+  {ruler && <p class="ruler-note" set:html={ruler} />}
+
   <slot />
 
   <footer class="provenance">
@@ -53,3 +62,7 @@ const { title, description, slug, kicker, h1, lede, meta, dateStamp = "Evergreen
   </footer>
 </div>
 </Base>
+<style>
+  .ruler-note{max-width:62ch;margin:28px auto 0;padding:14px 18px;background:#F6F7FA;border-radius:4px;font-family:var(--sans);font-size:.92rem;line-height:1.55;color:var(--ink-soft)}
+  .ruler-note a{color:inherit}
+</style>
