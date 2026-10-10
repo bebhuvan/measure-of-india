@@ -102,6 +102,21 @@ Updated 2026-10-10.
   plus interest against revenue spending (t170 over t166, both actuals). Farms (R9): from the
   Handbook, as above. Nothing new baked for either.
 
+## Wiring (coordinator's answers, 2026-10-10)
+- **Nav**: a "States" entry beside Guides (marked block in `src/layouts/Base.astro`); profiles
+  and the index set `nav="states"`.
+- **Home page**: a "Your state" entry point above the every-guide index, every unit linked
+  (marked block in `src/pages/index.astro`).
+- **Site search**: `core.json` carries `profiles` (name plus every spelling in the state key;
+  block in `scripts/search-index.mjs`); `search-core.js quick()` returns `states`, `lead` when
+  the query is the unit's name; the home page shows a leading "State profile" result above the
+  series. Tests: 6 spellings plus a mixed query in `test/search.test.mjs`; qc checks six
+  spellings against the built core.
+- **Next, after step 5**: NFHS-6 in the nfhs guide as a third ruler (registry block, one note on
+  the page, no new plates, no prose regeneration).
+- **Not to start**: new external sources (SHRUG, Census PCA, data.gov.in, MGNREGA, TCPD); the
+  coordinator is taking the scope to the owner.
+
 ## Blocked
 - **NSS 73, 75 to 80 and the Economic Census** (brief step 5): `blocked` in the ledger, waiting
   for the coordinator to release MoSPI after the audit (lb/audit-refresh).
@@ -112,9 +127,5 @@ Updated 2026-10-10.
   `scripts/qc.mjs` (PAGES entries and the profiles block), `scripts/lint-charts.mjs` (PAGES),
   `scripts/og.mjs`. One sentence added to `src/pages/guides/states.astro` §09 linking `/states/`
   (another family's page: please keep or move).
-- **Asks**: (1) a nav link and a home-page link to `/states/` (Base.astro and index.astro are
-  shared); (2) profiles in site search (`scripts/search-index.mjs`: 36 entries, name and
-  aliases from states-key.js), or say if I should append a marked block; (3) health-gender may
-  want NFHS-6 in the Family health guide: the bundles are ready, and adding them to its
-  registry would also give them every-cut rows (profiles' NFHS-6 figures have no row links yet).
+- Asks (1) to (3) answered and done or scheduled: see Wiring above.
 - Not done, worth doing: CPI-IW centres mapped to states; generated prose per state.

@@ -37,3 +37,20 @@ test("a tiny index finds series by label and by their file's context", async () 
   assert.equal(gi.rows[0].href, "/guides/trade/every-cut/x/#s0000003");
   assert.equal((await S.series("onion gold ")).rows.length, 0);
 });
+
+// profiles (lb/profiles): a state's name, in any spelling the state key knows, leads with its profile
+test("a state's name finds its profile first, in every spelling", async () => {
+  const { STATES } = await import("../src/dossiers/states-key.js");
+  const profiles = STATES.map((u) => [u.slug, u.name, [...new Set([u.short, ...u.aliases].filter(Boolean))].join(" | ")]);
+  const core = { guides: [["states", "State economies", "income per person by state"]], plates: [], views: [], bundles: [], profiles, shards: { tokens: [""], rows: [0], frequent: [] } };
+  const S = createSearch(core, async () => ({}));
+  for (const [q, slug] of [["Orissa", "odisha"], ["Pondicherry", "puducherry"], ["NCT of Delhi", "delhi"], ["jammu & kashmir", "jammu-kashmir"], ["Tamil Nadu ", "tamil-nadu"], ["keral", "kerala"]]) {
+    const r = S.quick(q).states;
+    assert.ok(r.length && r[0].lead, `${q}: no profile leads`);
+    assert.equal(r[0].href, `/states/${slug}/`, q);
+  }
+  const mixed = S.quick("inflation in kerala ").states;
+  assert.equal(mixed[0]?.href, "/states/kerala/");
+  assert.equal(mixed[0].lead, false);
+  assert.equal(S.quick("onion").states.length, 0);
+});

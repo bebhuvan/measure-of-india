@@ -141,7 +141,12 @@ flushR();
 // the first shard must answer for any word sorting before its first token
 if (tFirst.length) tFirst[0] = "";
 
-const core = { v: 1, built: new Date().toISOString().slice(0, 10), nSeries: rows.length, guides, plates, bundles, views,
+// ---- profiles (lb/profiles): every state and UT profile, with each spelling the state key knows
+// (Orissa, Pondicherry, NCT of Delhi), so a state's name finds its profile first
+const { STATES } = await import("../src/dossiers/states-key.js");
+const profiles = STATES.map((u) => [u.slug, u.name, [...new Set([u.short, ...u.aliases].filter(Boolean))].join(" | ")]);
+// ---- end profiles
+const core = { v: 1, built: new Date().toISOString().slice(0, 10), nSeries: rows.length, guides, plates, bundles, views, profiles,
   shards: { tokens: tFirst, rows: rFirst, frequent: frequent.sort() } };
 fs.writeFileSync(path.join(OUT, "core.json"), JSON.stringify(core));
 

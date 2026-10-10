@@ -119,7 +119,20 @@ export function createSearch(core, load) {
       ...views.map((v, i) => ({ i: bundles.length + i, s: score(tokens(v[1]), [...tokens(v[1]), ...gTok[v[0]]]), href: v[2], title: v[1],
         note: `${guides[v[0]][1]}, every cut, ${v[3].toLocaleString("en-IN")} series` })),
     ]);
-    return { guides: g, plates: p, files };
+    // profiles (lb/profiles): a unit whose name or a spelling of it the query's words make up
+    // (all of them: "orissa"; lead: true) or contain ("inflation in kerala")
+    const st = (core.profiles ?? []).map((x, i) => {
+      const names = [x[1], ...String(x[2] ?? "").split(" | ")].map((n) => tokens(n).filter((t) => !STOP.has(t)));
+      let best = 0, lead = false;
+      for (const nt of names) {
+        if (!nt.length) continue;
+        const hit = words.filter((w) => nt.some((t) => tokenMatches(w, t))).length;
+        const covers = nt.every((t) => words.some((w) => tokenMatches(w, t)));
+        if (covers && hit > best) { best = hit; lead = hit === words.length; }
+      }
+      return { i, s: best, lead, href: `/states/${x[0]}/`, title: x[1], note: "State profile" };
+    }).filter((x) => x.s > 0).sort((a, b) => b.lead - a.lead || b.s - a.s || a.i - b.i).slice(0, 3);
+    return { guides: g, plates: p, files, states: st };
   }
 
   // ----- series: token shards, then the row chunks of the best rows

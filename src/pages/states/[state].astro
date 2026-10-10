@@ -25,6 +25,7 @@ const latestVintage = vintages.at(-1);
 const kindNote = u.kind === "ut" ? "A union territory without a legislature: the Union government runs it, and several state-level sources leave it out." : u.kind === "ut-legislature" ? "A union territory with an elected legislature." : "";
 ---
 <Base
+  nav="states"
   title={`${u.name}: a state profile · India Atlas`}
   description={`${u.name} in official figures: income, growth, prices, jobs, spending, health, banking, industry, farms, education, climate and state finances, each against India and its neighbours.`}
   dateStamp={latestVintage ? `Data to ${latestVintage}` : ""}
