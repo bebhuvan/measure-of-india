@@ -3627,7 +3627,9 @@ withBundle("wages-rural-2013", (b) => {
   parts("payments-monthly-2004", "paper", ["cts", "micr", "non_micr"], 0.001, { minN: 90 });
   parts("payments-monthly-2004", "micr", ["micr_rbi", "micr_other"], 0.002, { minN: 160 });
   parts("payments-monthly-2004", "retail_electronic", ["ecs_dr", "ecs_cr", "neft", "imps", "nach"], 0.001, { minN: 75 });
-  parts("payments-monthly-2004", "cards", ["credit_cards", "debit_cards"], 0.001, { minN: 180 });
+  // minN 100: the 'all usage' card lines start in April 2011, when the old table began counting
+  // ATM use (before then they were PoS only and are left to the PoS lines): 103 months to Oct 2019
+  parts("payments-monthly-2004", "cards", ["credit_cards", "debit_cards"], 0.001, { minN: 100 });
   parts("payments-monthly-2004", "credit_cards", ["credit_cards_atm", "credit_cards_pos"], 0.001, { minN: 100 });
   parts("payments-monthly-2004", "debit_cards", ["debit_cards_atm", "debit_cards_pos"], 0.001, { minN: 100 });
   parts("payments-monthly-2004", "ppi", ["ppi_wallets", "ppi_cards", "ppi_vouchers"], 0.002, { minN: 85 });
@@ -3932,3 +3934,24 @@ withBundle("farms-states-production", (b) => withBundle("farms-production", (n) 
 
 if (failures) { console.error(`\n${failures} validation failure(s)`); process.exit(1); }
 console.log("validate: all checks passed");
+
+/* ---- copied runs (launch read-through, 2026-10-10) ----
+ * A source can print one stretch of its history a second time under other dates (DBIE 148 and
+ * 612 did). util.findCopiedRuns finds blocks of >= 6 periods where a large share of a bundle's
+ * moving series repeat another block exactly; adapters blank them with nullCopiedRuns. Any left
+ * in a baked bundle fails here. Step-like series (rates that hold for weeks) and other
+ * frequencies are skipped: they repeat by nature. */
+{
+  const { findCopiedRuns } = await import("./lib/util.mjs");
+  const stepLike = (s) => { let z = 0, n = 0; for (let i = 1; i < s.length; i++) if (s[i] != null && s[i - 1] != null) { n++; if (s[i] === s[i - 1]) z++; } return n > 0 && z / n > 0.3; };
+  let checked = 0;
+  for (const f of fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => f.endsWith(".json"))) {
+    const b = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", f), "utf8"));
+    if (!["monthly", "quarterly", "annual"].includes(b.meta?.frequency)) continue;
+    const S = Object.values(b.series).map((s) => s.data).filter((s) => !stepLike(s));
+    if (S.length < 3 || (b.dates?.length ?? 0) < 12) continue;
+    checked++;
+    for (const r of findCopiedRuns(S)) fail(`${f.replace(".json", "")}: ${b.dates[r.copy[0]]}..${b.dates[r.copy[1]]} repeats ${b.dates[r.original[0]]}..${b.dates[r.original[1]]} value for value (a misfiled copy at the source?): blank it in the adapter with nullCopiedRuns`);
+  }
+  ok(`copied runs: none in ${checked} monthly, quarterly and annual bundles`);
+}
