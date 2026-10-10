@@ -124,6 +124,16 @@ Updated 2026-10-10.
 - **Not to start**: new external sources (SHRUG, Census PCA, data.gov.in, MGNREGA, TCPD); the
   coordinator is taking the scope to the owner.
 
+## Source quirks (step 5)
+- **UDISE+ dropout rates**: MoSPI serves 0 for some state-years after much higher values (Bihar,
+  classes 9 and 10: 29.5% in 2022-23, then 0 in 2023-24 and 2024-25; primary 0, 0, 10.7, 0).
+  Not a believable measurement and not documented as a floor, so the dropout rate is baked as
+  served but kept off the profiles. To check against the UDISE+ report itself.
+- **UDISE+ has no All India row** on the API: school measures on the profiles have no all-India
+  figure (we do not sum the states into one).
+- **NSS 75 paging**: some indicators page unstably (rows differ between two full reads);
+  mospiAll refuses them. Recorded per indicator in the plan file, retried split by state later.
+
 ## Blocked
 - **NSS 73, 75 to 80 and the Economic Census** (brief step 5): `blocked` in the ledger, waiting
   for the coordinator to release MoSPI after the audit (lb/audit-refresh).

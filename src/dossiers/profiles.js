@@ -287,7 +287,17 @@ export const MEASURES = [
   // education
   { id: "ger", where: true, section: "education", label: "College enrolment ratio", what: "the gross enrolment ratio in higher education (18 to 23 year olds)", bundle: "aishe-states-ger", pick: endsKey("__ger_all_both"), fmt: "pct1", india: { op: "cell", args: [["aishe-states-ger", "all_india__ger_all_both"]] }, guide: "aishe" },
   { id: "gerW", section: "education", label: "College enrolment ratio, women", what: "the gross enrolment ratio in higher education for women", bundle: "aishe-states-ger", pick: endsKey("__ger_all_female"), fmt: "pct1", india: { op: "cell", args: [["aishe-states-ger", "all_india__ger_all_female"]] }, guide: "aishe" },
-  { id: "gerSec", section: "education", label: "Secondary school enrolment ratio", what: "the gross enrolment ratio in classes 9 to 12", bundle: "states-hbs-t001", pick: endsKey("__secondary_class_ix_to_xii__total"), fmt: "pct1", india: { op: "cell", args: [["states-hbs-t001", "all_india__secondary_class_ix_to_xii__total"]] }, guide: "states" },
+  // schools, from UDISE+ (MoSPI eSankhyiki, step 5): the source the Handbook's school tables reprint
+  { id: "gerHs", section: "education", label: "School enrolment ratio, classes 11 and 12", what: "the gross enrolment ratio in classes 11 and 12", bundle: "profiles-mospi-udise-0-31", pick: endsKey("__higher_secondary_11_12"), fmt: "pct1", india: null, indiaNote: "UDISE+ on MoSPI's API publishes the states and UTs, not an all-India row", guide: null },
+  { id: "ptr", section: "education", label: "Pupils per teacher", what: "the number of pupils for each teacher in the state's schools", bundle: "profiles-mospi-udise-0-7", pick: () => true, fmt: "ptr", india: null, indiaNote: "UDISE+ on MoSPI's API publishes the states and UTs, not an all-India row", guide: null },
+  { id: "schoolsInternet", section: "education", label: "Schools with internet", what: "the share of schools with an internet connection", bundle: "profiles-mospi-udise-0-16", pick: endsKey("__internet_facility"), fmt: "pct1", derive: { op: "ratio", other: "profiles-mospi-udise-0-1", mapKey: (k) => k.replace(/__internet_facility$/, "") },
+    india: null, guide: null },
+  { id: "schoolsPower", section: "education", label: "Schools with working electricity", what: "the share of schools with electricity that works", bundle: "profiles-mospi-udise-0-16", pick: endsKey("__functional_electricity"), fmt: "pct1", derive: { op: "ratio", other: "profiles-mospi-udise-0-1", mapKey: (k) => k.replace(/__functional_electricity$/, "") },
+    india: null, guide: null },
+  { id: "schoolsGirlsToilet", section: "education", label: "Schools with a working girls' toilet", what: "the share of schools with a girls' toilet that works", bundle: "profiles-mospi-udise-0-16", pick: endsKey("__functional_girls_toilet"), fmt: "pct1", derive: { op: "ratio", other: "profiles-mospi-udise-0-1", mapKey: (k) => k.replace(/__functional_girls_toilet$/, "") },
+    india: null, guide: null },
+  { id: "singleTeacher", section: "education", label: "Single-teacher schools", what: "the share of schools with only one teacher", bundle: "profiles-mospi-udise-0-12", pick: () => true, fmt: "pct1", derive: { op: "ratio", other: "profiles-mospi-udise-0-1", mapKey: (k) => k },
+    india: null, guide: null },
   // climate (CCKP, ERA5): against the state's own 1951-1980 average
   { id: "temp", section: "climate", label: "Average temperature", what: "the average air temperature over the year", bundle: "climate-era5-states-temp", pick: startsKey("tas__"), fmt: "degC", normal: ["1951-01-01", "1980-01-01"], india: null, guide: "climate" },
   { id: "hot35", section: "climate", label: "Days of 35°C or more", what: "the number of days that reached 35°C or more", bundle: "climate-era5-states-hotdays", pick: startsKey("hd35__"), fmt: "days", normal: ["1951-01-01", "1980-01-01"], india: null, guide: "climate" },
@@ -612,7 +622,7 @@ const SECTION_TEXT = {
   money: "Bank deposits and credit booked at branches in the state, from the RBI's quarterly statistics, and the number of bank branches. Credit is counted where a loan is sanctioned, which is not always where the money is spent.",
   industry: "Registered factories from the Annual Survey of Industries; small unincorporated businesses outside farming, from the Annual Survey of Unincorporated Sector Enterprises; renewable power from the Ministry of New and Renewable Energy; electricity supply from the Central Electricity Authority and goods exports by state of origin from the commerce ministry, as the RBI's Handbook reprints them.",
   farms: "Crop output, yield, irrigation and milk from the Ministry of Agriculture and Farmers Welfare and the Department of Animal Husbandry, as the RBI's Handbook of Statistics on Indian States reprints them.",
-  education: "College enrolment from the All India Survey on Higher Education (2021-22), and school enrolment in classes 9 to 12 from UDISE+, as the RBI's Handbook reprints it. A gross enrolment ratio counts every enrolled student, of any age, against the population of the official age group.",
+  education: "Schools from UDISE+, the Ministry of Education's census of every school, as MoSPI serves it (2018-19 to 2024-25); college enrolment from the All India Survey on Higher Education (2021-22). A gross enrolment ratio counts every enrolled student, of any age, against the population of the official age group, so it can pass 100.",
   climate: "Temperature and rain over the whole state, from ERA5, a reconstruction of past weather that the World Bank's Climate Change Knowledge Portal averages over each state's area. Each year is set against the state's own average for 1951 to 1980.",
   finances: "The state government's own accounts, from the RBI's Handbook, set against the state's GSDP as the states guide computes it. Actual figures run two years behind; budget and revised estimates are left out.",
 };
@@ -620,7 +630,7 @@ const SECTION_TEXT = {
 const LEADS = {
   income: ["pc", "growth", "gsdp"], structure: ["services", "agri"], prices: ["cpi", "cpiFood"], work: ["ur", "urGrad", "lfprW", "wageFarm"],
   households: ["mpceR", "mpceU", "poorest5R", "foodR", "mpi", "sanitation"], health: ["stunting", "institutional", "bpW", "anaemiaW", "imr"], money: ["cd", "deposits", "creditFarm"],
-  industry: ["factories", "estab", "re"], farms: ["grain", "yield"], education: ["ger", "gerSec"], climate: ["temp", "rain", "hot35Future"], finances: ["debt", "gfd", "interest", "sdl"],
+  industry: ["factories", "estab", "re"], farms: ["grain", "yield"], education: ["ger", "gerHs", "ptr", "schoolsInternet"], climate: ["temp", "rain", "hot35Future"], finances: ["debt", "gfd", "interest", "sdl"],
 };
 const WHY_NONE = {
   income: "MoSPI's state accounts do not cover this union territory: it has no legislature, and its output is counted within the all-India figures.",

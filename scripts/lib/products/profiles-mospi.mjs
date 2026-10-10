@@ -105,11 +105,24 @@ async function phaseFetch(mospiAll, plan) {
       if (ind.error || ind.expected == null) continue;
       const rel = `data/raw/profiles-mospi/${P.id}-${ind.survey ?? 0}-${ind.code}.json`;
       if (ind.archived && rawExists(ROOT, rel)) continue;
-      // the disk is shared by several sessions: stop when free space is under 2 GB
-      const free = freeBytes();
-      if (free != null && free < 2e9) { console.error(`C: stopping at ${P.id} ${ind.code}: ${(free / 1e9).toFixed(2)} GB free (under 2 GB); message the coordinator`); process.exit(3); }
-      const rows = await mospiAll(P.records, { indicator_code: ind.code, ...(ind.survey != null ? { survey_code: ind.survey } : {}) });
-      if (rows.length !== ind.expected) throw new Error(`${P.id} ${ind.code}: ${rows.length} rows, page 1 reported ${ind.expected}`);
+      // the disk is shared by several sessions: under 2 GB free, wait for space to come back
+      for (let waited = 0; (freeBytes() ?? Infinity) < 2e9; waited++) {
+        if (waited % 10 === 0) console.log(`C: paused at ${P.id} ${ind.code}, ${(freeBytes() / 1e9).toFixed(2)} GB free (under 2 GB); waiting for space`);
+        await new Promise((r) => setTimeout(r, 60_000));
+      }
+      let rows;
+      try {
+        rows = await mospiAll(P.records, { indicator_code: ind.code, ...(ind.survey != null ? { survey_code: ind.survey } : {}) });
+        if (rows.length !== ind.expected) throw new Error(`${rows.length} rows, page 1 reported ${ind.expected}`);
+      } catch (e) {
+        // one indicator the server cannot page stably must not stop the others: record it and go on
+        if (/HTTP 429/.test(e.message)) throw e;
+        ind.fetchError = `${e.message.replace(/https?:\S+/, "").slice(0, 200)} (${new Date().toISOString().slice(0, 10)})`;
+        console.log(`C ${P.id} ${ind.code}: not archived, ${ind.fetchError}`);
+        savePlan(plan);
+        continue;
+      }
+      delete ind.fetchError;
       fs.mkdirSync(path.join(ROOT, "data/raw/profiles-mospi"), { recursive: true });
       writeRaw(ROOT, rel, { vintage: new Date().toISOString().slice(0, 10), note: `MoSPI eSankhyiki ${P.records}, indicator ${ind.code}${ind.survey != null ? `, survey ${ind.survey}` : ""}: every row (profiles step 5)`, product: P.id, indicator: ind, rows });
       ind.done = true; ind.archived = true; wrote++;
@@ -117,8 +130,167 @@ async function phaseFetch(mospiAll, plan) {
     }
     console.log(`C ${P.id}: ${wrote} indicators archived this run, ${st.indicators.filter((x) => x.archived).length} of ${st.indicators.length} in all`);
     // disk is shared and short: once every indicator is written, drop this product's cached pages
-    if (st.indicators.every((x) => x.archived || x.error || x.expected == null)) console.log(`C ${P.id}: ${trimCache(P.records)} cached pages removed`);
+    if (st.indicators.every((x) => x.archived || x.error || x.fetchError || x.expected == null)) console.log(`C ${P.id}: ${trimCache(P.records)} cached pages removed`);
   }
+}
+
+/* ---------- phase C2: retry, split by state ----------
+ * An indicator the server cannot page stably in one query (rows differ between two full reads)
+ * is read again one state at a time: each state's query is small, and each must return only that
+ * state's rows (else the parameter is ignored and the split is abandoned). The pieces must add up
+ * to the total page 1 reported. */
+async function phaseRetry(mospi, mospiAll, plan) {
+  const { writeRaw } = await import("../util.mjs");
+  for (const P of PRODUCTS) for (const ind of plan.products[P.id]?.indicators ?? []) {
+    if (!ind.fetchError || ind.archived) continue;
+    const base = { [P.filter[1]]: ind.code, ...(ind.survey != null ? { survey_code: ind.survey } : {}) };
+    const f = (await mospi(P.filter[0], base)).data ?? {};
+    const states = (Array.isArray(f) ? f[0] ?? {} : f).state ?? [];
+    if (!states.length) { console.log(`C2 ${P.id} ${ind.code}: no state list to split by`); continue; }
+    const rows = [];
+    let ok = true;
+    for (const st of states) {
+      const code = st.id ?? st.state_code ?? st.code;
+      let part;
+      try { part = await mospiAll(P.records, { indicator_code: ind.code, ...(ind.survey != null ? { survey_code: ind.survey } : {}), state_code: code }); }
+      catch (e) { console.log(`C2 ${P.id} ${ind.code} state ${code}: ${e.message.slice(0, 120)}`); ok = false; break; }
+      const label = String(st.label ?? st.state_name ?? st.description ?? "").trim();
+      if (part.some((r) => String(r.state ?? "").trim() !== label)) { console.log(`C2 ${P.id} ${ind.code}: state_code ${code} returned other states' rows; the split does not work here`); ok = false; break; }
+      rows.push(...part);
+    }
+    if (ok && rows.length !== ind.expected) { console.log(`C2 ${P.id} ${ind.code}: ${rows.length} rows by state, page 1 reported ${ind.expected}`); ok = false; }
+    if (!ok) { ind.fetchError += "; the split by state did not recover it"; savePlan(plan); continue; }
+    writeRaw(ROOT, `data/raw/profiles-mospi/${P.id}-${ind.survey ?? 0}-${ind.code}.json`, { vintage: new Date().toISOString().slice(0, 10), note: `MoSPI eSankhyiki ${P.records}, indicator ${ind.code}${ind.survey != null ? `, survey ${ind.survey}` : ""}: every row, read one state at a time because one query paged unstably (profiles step 5)`, product: P.id, indicator: ind, rows });
+    ind.archived = true; ind.done = true; ind.recovered = "by state"; delete ind.fetchError;
+    console.log(`C2 ${P.id} ${ind.code}: recovered by state, ${rows.length} rows`);
+    savePlan(plan);
+  }
+}
+
+/* ---------- phase D: bake (offline, from the archived dumps) ----------
+ * One bundle per indicator: data/series/profiles-mospi-<product>-<survey>-<code>.json. Rows are
+ * placed through the state key (a label it cannot place fails the bake). The standard cuts (sector,
+ * gender, management, social group, age, class, month, season) are kept at their headline value
+ * ("Total", "All", "Rural + Urban", "All Management", "Annual") where the source publishes one;
+ * a cut with no headline value, and every category dimension (a level of education, a facility,
+ * an activity), stays in the series key. The full grain stays in the raw dumps. Dates: the row's
+ * own year (a financial year "2022-23" at April, a calendar year at January), else the round. */
+const STD = ["sector", "gender", "type_of_management", "management", "social_group", "age_group", "class_taught", "month", "period", "religion", "household_type", "sex"];
+const HEAD = /^(total|all|all india|rural \+ urban|rural\+urban|combined|person|persons|all management|all persons|both|annual|all ages|all social groups|all categories|all religions)$/i;
+const ROUND = { nss75: ["2017-07-01", "NSS 75, 2017-18"], nss76: ["2018-07-01", "NSS 76, July to December 2018"], nss77: ["2019-01-01", "NSS 77, 2019"], nss77aidis: ["2019-01-01", "NSS 77 (AIDIS), 2019"], nss78: ["2020-01-01", "NSS 78, 2020-21"], nss79: ["2022-07-01", "NSS 79, 2022-23"] };
+const SKIPKEYS = new Set(["value", "indicator", "state", "unit", "year", "zone", "survey", "survey_code", "indicator_code"]);
+const dateOf = (P, row) => {
+  const y = String(row.year ?? "").trim();
+  if (/^\d{4}-\d{2,4}$/.test(y)) return `${y.slice(0, 4)}-04-01`;
+  if (/^\d{4}$/.test(y)) return `${y}-01-01`;
+  return ROUND[P.id]?.[0] ?? null;
+};
+const num = (v) => { if (v == null) return null; const t = String(v).replace(/,/g, "").trim(); if (t === "" || t === "-" || /^n\.?a\.?$/i.test(t) || t === "*") return null; const n = Number(t); return Number.isFinite(n) ? n : null; };
+import crypto from "node:crypto";
+// a key part from a label: long labels keep 40 characters and a hash of the whole, so two labels
+// that share their first words never collide
+const keyPart = (t) => {
+  const k = String(t).toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "") || "x";
+  return k.length <= 48 ? k : `${k.slice(0, 40)}_${crypto.createHash("sha1").update(k).digest("hex").slice(0, 6)}`;
+};
+function unitOf(label, rowUnit) {
+  const u = String(rowUnit ?? "").trim();
+  if (/^%$/.test(u)) return "percent";
+  if (/^(no\.?|number)$/i.test(u)) return "count";
+  if (/rs\.? ?crore/i.test(u)) return "inr_crore";
+  if (/°c/i.test(u)) return "degc";
+  if (/^mm$/i.test(u)) return "mm";
+  if (/sq\.? ?km/i.test(u)) return "sq_km";
+  if (/hectare/i.test(u)) return "hectares";
+  const t = String(label);
+  // units named inside the label or sub-indicator ("(in metric tonnes)", "Area (Sq. Km)", "(MU)")
+  if (/\(\s*(in )?%\s*\)|in percent|\(percent\)|% of /i.test(t)) return "percent";
+  if (/sq\.? ?km|km²|km2\b/i.test(t)) return "sq_km";
+  if (/\(\s*(in )?(metric )?tonnes?\s*\)/i.test(t)) return "tonnes";
+  if (/\(\s*(in )?hectares?\s*\)/i.test(t)) return "hectares";
+  if (/\(\s*(in )?mm\s*\)/i.test(t)) return "mm";
+  if (/\(\s*°c\s*\)|degree celsius/i.test(t)) return "degc";
+  if (/\(\s*(in )?(rs\.?|₹) ?crore\s*\)/i.test(t)) return "inr_crore";
+  if (/\(\s*(in )?km\s*\)/i.test(t)) return "km";
+  if (/\bpercentage\b|\bper cent\b/i.test(t) && !/per 1,?000/i.test(t)) return "percent";
+  if (/^enrolment of|^enrolments? in|\benrolment\b.*\b(total|primary|secondary)\b/i.test(t) && !/ratio|rate|share|proportion/i.test(t)) return "count";
+  if (/\(\s*thousand\b/i.test(t)) return "thousand";
+  if (/\(\s*lakh\b/i.test(t)) return "lakh_count";
+  if (/\b(number of|no\. of|total number)\b|\bin number\b|\(\s*(in )?(number|nos?\.?)\s*\)/i.test(t)) return "count";
+  if (/pupil teacher ratio/i.test(t)) return "pupils_per_teacher";
+  if (/gender parity index/i.test(t)) return "gpi";
+  if (/per 1,?000\b/i.test(t)) return "per_1000";
+  if (/^(percentage|percent|proportion|share)|\b(rate|ratio)\b.*\(%\)|enrolment ratio|enrolment rate|\brate\b/i.test(t) && !/per 1/i.test(t)) return "percent";
+  if (/\b(rs\.?|rupees|expenditure|₹)/i.test(t)) return "inr";
+  if (/^(total )?number|^average (teachers|enrolments)|^schools|^teachers|^enrolments|^new admission|^children with special/i.test(t)) return "count";
+  return "unstated";
+}
+async function phaseBake(plan) {
+  const { readRaw, writeSeries } = await import("../util.mjs");
+  const { placeAll } = await import("../../../src/dossiers/states-key.js");
+  const dir = path.join(ROOT, "data/raw/profiles-mospi");
+  let nB = 0, nS = 0, unplaced = new Map();
+  for (const P of PRODUCTS) {
+    for (const ind of plan.products[P.id]?.indicators ?? []) {
+      const rel = `data/raw/profiles-mospi/${P.id}-${ind.survey ?? 0}-${ind.code}.json`;
+      if (!fs.existsSync(path.join(ROOT, rel + ".gz")) && !fs.existsSync(path.join(ROOT, rel))) continue;
+      const raw = readRaw(ROOT, rel), rows = raw.rows;
+      if (!rows.length) continue;
+      // which standard cuts publish a headline value for this indicator
+      const dims = [...new Set(rows.flatMap((r) => Object.keys(r)))].filter((k) => !SKIPKEYS.has(k));
+      const headOf = new Map();
+      for (const d of dims) if (STD.includes(d)) { const h = [...new Set(rows.map((r) => r[d]))].find((v) => v != null && HEAD.test(String(v).trim())); if (h != null) headOf.set(d, h); }
+      const keep = dims.filter((d) => !headOf.has(d) && rows.some((r) => r[d] != null && r[d] !== ""));
+      const dates = [...new Set(rows.map((r) => dateOf(P, r)).filter(Boolean))].sort();
+      const series = {};
+      for (const r of rows) {
+        if ([...headOf].some(([d, h]) => r[d] != null && r[d] !== h)) continue;
+        const sl = String(r.state ?? "").trim();
+        let geo, gname;
+        // a row with no state but a zone is the zone's total (EnvStats power supply); else All India
+        // geographies that are not one state, kept under their own name (never ranked as a state)
+        if (/^(damodar valley corporation|others?|central|central sector|nhb\/states|jammu|kashmir|jammu division|kashmir division)$/i.test(sl)) { geo = `other_${keyPart(sl)}`; gname = sl; }
+        else if (!sl && r.zone) { geo = `zone_${keyPart(r.zone)}`; gname = String(r.zone).trim(); }
+        else if (!sl || /^all[- ]?india$/i.test(sl) || /^india$/i.test(sl)) { geo = "all_india"; gname = "All India"; }
+        else {
+          const hits = [...new Set(placeAll(sl).map((h) => h.slug))];
+          if (hits.length !== 1) { unplaced.set(sl, (unplaced.get(sl) ?? 0) + 1); continue; }
+          geo = hits[0].replace(/-/g, "_"); gname = sl;
+        }
+        const parts = keep.map((d) => r[d] ?? "");
+        const key = [geo, ...parts.map(keyPart)].join("__");
+        const d = dateOf(P, r);
+        if (!d) continue;
+        const label = [String(ind.label ?? r.indicator ?? "").trim().replace(/\s+/g, " "), ...parts.filter((x) => x !== "")].join(", ") + `, ${gname}`;
+        const s = (series[key] ??= { name: `${P.id}_${ind.code}_${key}`.slice(0, 120), label, unit: unitOf(label, r.unit), state: geo === "all_india" || geo.startsWith("zone_") || geo.startsWith("other_") ? undefined : gname, geo: gname, group: parts.filter((x) => x !== "").join(", ") || undefined, data: new Array(dates.length).fill(null) });
+        const v = num(r.value), i = dates.indexOf(d);
+        if (s.data[i] != null && v != null && s.data[i] !== v) throw new Error(`${P.id} ${ind.code}: two values for ${key} at ${d} (${s.data[i]}, ${v}); a dimension is missing from the key`);
+        if (v != null) s.data[i] = v;
+      }
+      // disclose interior nulls on the series that miss them
+      for (const s of Object.values(series)) {
+        const f = s.data.findIndex((v) => v != null), l = s.data.length - 1 - [...s.data].reverse().findIndex((v) => v != null);
+        const gaps = dates.filter((_, i) => i > f && i < l && s.data[i] == null);
+        if (gaps.length) s.gaps = gaps;
+      }
+      // trailing dates no series reaches are dropped (CONTRACT-series: the axis ends at the last published period)
+      while (dates.length && Object.values(series).every((s) => s.data.at(-1) == null)) { dates.pop(); for (const s of Object.values(series)) s.data.pop(); }
+      for (const [k, s] of Object.entries(series)) if (s.data.every((v) => v == null)) delete series[k];
+      if (!Object.keys(series).length) continue;
+      const slug = `profiles-mospi-${P.id}-${ind.survey ?? 0}-${ind.code}`;
+      const round = ROUND[P.id];
+      writeSeries(ROOT, `data/series/${slug}.json`, { dates, series, meta: {
+        dossier: "profiles-mospi", product: `mospi-${P.id}`, source: "MoSPI, eSankhyiki (" + P.records.split("/")[0] + ")", base: round ? round[1] : `${P.id} survey years`,
+        frequency: dates.length > 1 ? "annual" : "cross-sectional", unit: "see each series", vintage: raw.vintage, geo: "IND", latestPeriod: round?.[1] ?? null, releaseDate: null,
+        revisionPolicy: "Survey estimates are final on release; MoSPI may revise a table without notice, and each fetch is checked against the archived rows.",
+        coverage: `${String(ind.label ?? "").trim().slice(0, 200)}: every state and UT, at the headline of ${[...headOf.keys()].join(", ") || "no standard cut"}${keep.length ? `, by ${keep.join(", ")}` : ""}`,
+        note: `Baked from data/raw/profiles-mospi/${P.id}-${ind.survey ?? 0}-${ind.code}.json (${rows.length} rows as MoSPI serves them). Standard cuts kept at their headline value: ${[...headOf].map(([d, h]) => `${d} = ${h}`).join("; ") || "none"}. The finer grain is in the raw dump.`,
+        indicator: { product: P.id, survey: ind.survey ?? null, code: ind.code, rows: rows.length } } });
+      nB++; nS += Object.keys(series).length;
+    }
+  }
+  if (unplaced.size) throw new Error(`bake: the state key cannot place ${[...unplaced].map(([k, n]) => `"${k}" (${n})`).join(", ")}`);
+  console.log(`D: ${nB} bundles, ${nS} series`);
 }
 
 function freeBytes() { try { const st = fs.statfsSync(ROOT); return st.bavail * st.bsize; } catch { return null; } }
@@ -145,7 +317,9 @@ if (argv.includes("--plan")) {
   console.log(`\nPlan file: ${path.relative(ROOT, PLAN_FILE)} ${fs.existsSync(PLAN_FILE) ? "(exists)" : "(not yet written: phase A writes it)"}`);
 } else if (argv.includes("--status")) {
   const plan = readPlan();
-  for (const P of PRODUCTS) { const I = plan.products[P.id]?.indicators; console.log(`${P.id.padEnd(11)} ${I ? `${I.length} indicators, ${I.filter((x) => x.expected != null).length} sized, ${I.filter((x) => x.done).length} fetched, ${I.filter((x) => x.error).length} failed, ${I.reduce((a, x) => a + (x.expected ?? 0), 0)} rows expected` : "not listed yet"}`); }
+  for (const P of PRODUCTS) { const I = plan.products[P.id]?.indicators; console.log(`${P.id.padEnd(11)} ${I ? `${I.length} indicators, ${I.filter((x) => x.expected != null).length} sized, ${I.filter((x) => x.archived).length} archived, ${I.filter((x) => x.error || x.fetchError).length} failed, ${I.reduce((a, x) => a + (x.expected ?? 0), 0)} rows expected` : "not listed yet"}`); }
+} else if (argv.includes("--phase") && argv[argv.indexOf("--phase") + 1] === "bake") {
+  await phaseBake(readPlan());
 } else if (argv.includes("--phase")) {
   if (process.env.PROFILES_MOSPI_GO !== "1") { console.error("MoSPI is fenced for the audit refresh: set PROFILES_MOSPI_GO=1 only when the coordinator releases it."); process.exit(2); }
   const { mospi, mospiAll } = await import("../mospi.mjs");
@@ -154,5 +328,7 @@ if (argv.includes("--plan")) {
   if (ph === "list") await phaseList(mospi, plan);
   else if (ph === "meta") await phaseMeta(mospi, plan);
   else if (ph === "fetch") await phaseFetch(mospiAll, plan);
+  else if (ph === "bake") await phaseBake(plan);
+  else if (ph === "retry") await phaseRetry(mospi, mospiAll, plan);
   else { console.error(`unknown phase ${ph}`); process.exit(2); }
 }
