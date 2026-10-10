@@ -407,7 +407,7 @@ export async function buildFarms(root, dcfg, vintage, cfg) {
     return {
       meta: {
         dossier: "farms", frequency: "annual", base: "ministry final estimates", unit: "per series", source: dcfg.source_agency, vintage: null,
-        mock: false, geo: dcfg.geo ?? "IND", latestPeriod: fyLabel(axis.at(-1)), releaseDate: null, revisionPolicy: dcfg.revision_policy, periodKind: "fy",
+        mock: false, geo: dcfg.geo ?? "IND", latestPeriod: axis.at(-1).slice(0, 7), releaseDate: null, revisionPolicy: dcfg.revision_policy, periodKind: "fy",
         coverage, stage: "final estimates (every year the Handbook does not flag as an advance estimate)",
         note: `${note} Crop years (July to June), dated at April of their first year. ${AE_YEAR}, the ${AE_STAGE.toLowerCase()}, is a different ruler and lives in farms-advance; it is never joined to these years.`,
       },
@@ -481,6 +481,22 @@ export async function buildFarms(root, dcfg, vintage, cfg) {
     }
     cross.push(compare("Data Bank 459/460 vs Handbook 165/164 (index numbers)", pairs));
   }
+  // each base keeps only the years RBI's Handbook prints for it (reports 164 and 165): the Data
+  // Bank also carries unprinted years on a retired base (TE 1993-94: 2008-09 to 2012-13, ending in
+  // a 36 per cent one-year fall no harvest explains), which are left out and counted here
+  const printed = { 1982: new Set(), 1994: new Set(), 2008: new Set() };
+  for (const id of [164, 165]) for (const t of gridOf(id)) {
+    const m = /Triennium Ending (\d{4})-(\d{2})\s*=\s*100/i.exec(t.unit || "");
+    const b = m && { "1981": "1982", "1993": "1994", "2007": "2008" }[m[1]];
+    if (b) for (const row of t.rows) printed[b].add(fyDate(row.year));
+  }
+  const unprinted = {};
+  for (const b of ["1982", "1994", "2008"]) {
+    if (!printed[b].size) throw new Error(`farms: no printed years found for the index base ${b}`);
+    for (const { map } of idx[b].values()) for (const d of [...map.keys()]) if (!printed[b].has(d)) { map.delete(d); unprinted[b] = (unprinted[b] ?? new Set()).add(d); }
+  }
+  const unprintedNote = (b) => (unprinted[b]?.size ? ` The Data Bank also holds ${[...unprinted[b]].sort().map(fyLabel).join(", ")} on this base, years RBI's Handbook does not print for it; they are left out.` : "");
+  cross.push({ name: "Index years held but not printed (left out)", compared: 0, match: 0, mismatchCount: 0, mismatches: [], unprinted: Object.fromEntries(Object.entries(unprinted).map(([b, v]) => [b, [...v].sort()])) });
   if (dup460.differ.length) throw new Error(`farms: reports 459 and 460 disagree on the production index: ${dup460.differ.slice(0, 5).join("; ")}`);
   for (const b of ["1982", "1994", "2008"]) {
     const keys = [...idx[b].keys()].sort((p, q) => {
@@ -500,9 +516,9 @@ export async function buildFarms(root, dcfg, vintage, cfg) {
     bundles[`farms-index-${b}`] = {
       meta: {
         dossier: "farms", frequency: "annual", base: IDX_LABEL[b], unit: "index", source: dcfg.source_agency, vintage: null, mock: false, geo: dcfg.geo ?? "IND",
-        latestPeriod: fyLabel(axis.at(-1)), releaseDate: null, revisionPolicy: dcfg.revision_policy, periodKind: "fy",
+        latestPeriod: axis.at(-1).slice(0, 7), releaseDate: null, revisionPolicy: dcfg.revision_policy, periodKind: "fy",
         coverage: `Index numbers of area, production and yield, base triennium ending ${{ 1982: "1981-82", 1994: "1993-94", 2008: "2007-08" }[b]} = 100`,
-        note: `Index numbers of agricultural production by crop (DBIE report 459) and of area, production and yield of foodgrains, non-foodgrains and all crops (report 460), on the base ${IDX_LABEL[b]}. Each crop's weight in the all-crops index is on its series. One base, one ruler: the three bases are never linked here (the ministry publishes no linking factor in these tables).${b === "2008" ? ` ${AE_YEAR} (${AE_STAGE.toLowerCase()}) is in farms-advance.` : ""}`,
+        note: `Index numbers of agricultural production by crop (DBIE report 459) and of area, production and yield of foodgrains, non-foodgrains and all crops (report 460), on the base ${IDX_LABEL[b]}. Each crop's weight in the all-crops index is on its series. One base, one ruler: the three bases are never linked here (the ministry publishes no linking factor in these tables).${unprintedNote(b)}${b === "2008" ? ` ${AE_YEAR} (${AE_STAGE.toLowerCase()}) is in farms-advance.` : ""}`,
       },
       dates: axis, series,
     };
@@ -528,7 +544,7 @@ export async function buildFarms(root, dcfg, vintage, cfg) {
     bundles["farms-advance"] = {
       meta: {
         dossier: "farms", frequency: "annual", base: "ministry advance estimates", unit: "per series", source: dcfg.source_agency, vintage: null, mock: false, geo: dcfg.geo ?? "IND",
-        latestPeriod: AE_YEAR, releaseDate: null, revisionPolicy: dcfg.revision_policy, periodKind: "fy", stage: AE_STAGE,
+        latestPeriod: AE_DATE.slice(0, 7), releaseDate: null, revisionPolicy: dcfg.revision_policy, periodKind: "fy", stage: AE_STAGE,
         coverage: `${AE_YEAR}, ${AE_STAGE.toLowerCase()}: production, area, yield and index numbers`,
         note: `${AE_YEAR} as the agriculture ministry's ${AE_STAGE.toLowerCase()} give it (the Handbook's footnote to reports 164 to 192; horticulture in the index is on the second advance estimates). Advance estimates are revised, sometimes by several million tonnes, until the final estimates a year or so later: a different ruler from the final years in farms-production, farms-area, farms-yield and farms-index-2008, never joined to them.`,
       },
@@ -587,7 +603,7 @@ export async function buildFarms(root, dcfg, vintage, cfg) {
     bundles["farms-msp"] = {
       meta: {
         dossier: "farms", frequency: "annual", base: "as published", unit: "inr_per_quintal", source: dcfg.source_agency, vintage: null, mock: false, geo: dcfg.geo ?? "IND",
-        latestPeriod: fyLabel(axis.at(-1)), releaseDate: null, revisionPolicy: dcfg.revision_policy, periodKind: "fy",
+        latestPeriod: axis.at(-1).slice(0, 7), releaseDate: null, revisionPolicy: dcfg.revision_policy, periodKind: "fy",
         coverage: "Minimum support price, 16 crops, fair average quality, rupees per quintal, crop years from 1975-76",
         note: `Minimum support prices announced by the government on the recommendation of the Commission for Agricultural Costs and Prices, by crop year (DBIE reports 461 and 462; the Handbook's tables 194 and 195). A crop year's MSP is announced before sowing: kharif crops in about June of the crop year's first year, rabi crops (wheat, gram, mustard, safflower) in about October, for the harvest marketed the following spring, so "wheat 2025-26" is the price for wheat sown in 2025 and sold from April 2026. "Coarse cereals" in DBIE is the maize price (the Handbook heads it Maize). Cotton is medium staple to 2005-06 and long staple from 2006-07 (H-4). Sugarcane is the statutory minimum price, later the fair and remunerative price, per quintal of cane. RBI's notes, verbatim: ${(n194 + " " + n195).replace(/\s+/g, " ").replace(/Also see Notes on Tables\.?/gi, "").replace(/Source\s*:.*$/i, "").trim()}`,
       },
@@ -648,7 +664,7 @@ export async function buildFarms(root, dcfg, vintage, cfg) {
     bundles["farms-landuse"] = {
       meta: {
         dossier: "farms", frequency: "annual", base: "as published", unit: "per series", source: dcfg.source_agency, vintage: null, mock: false, geo: dcfg.geo ?? "IND",
-        latestPeriod: fyLabel(axis.at(-1)), releaseDate: null, revisionPolicy: dcfg.revision_policy, periodKind: "fy",
+        latestPeriod: axis.at(-1).slice(0, 7), releaseDate: null, revisionPolicy: dcfg.revision_policy, periodKind: "fy",
         coverage: "All India land use, irrigation, fertiliser and pesticide use, 1950-51 on",
         note: "Pattern of land use and select inputs (DBIE report 463; Handbook table 278), read in the unit RBI prints: areas in lakh hectares (stored as thousand hectares), fertiliser in lakh tonnes of nutrients (N+P+K), pesticides in thousand tonnes of technical-grade material. Fertiliser years are February to January up to 1982-83 and April to March from 1983-84 (RBI's note). The area under high-yielding varieties is printed as not available in recent years. Cropping intensity, the irrigated shares and fertiliser per hectare are computed by India Atlas from the published levels.",
       },
@@ -711,7 +727,7 @@ export async function buildFarms(root, dcfg, vintage, cfg) {
     bundles["farms-pds"] = {
       meta: {
         dossier: "farms", frequency: "annual", base: "as published", unit: "lakh_tonnes", source: dcfg.source_agency, vintage: null, mock: false, geo: dcfg.geo ?? "IND",
-        latestPeriod: fyLabel(axis.at(-1)), releaseDate: null, revisionPolicy: dcfg.revision_policy, periodKind: "fy",
+        latestPeriod: axis.at(-1).slice(0, 7), releaseDate: null, revisionPolicy: dcfg.revision_policy, periodKind: "fy",
         coverage: "Central procurement, off-take and stocks of rice and wheat, lakh tonnes, 1972-73 on",
         note: "Public distribution system: foodgrains procured by the Food Corporation of India and state agencies, issued from the central pool (off-take), and held in it (stocks, at the end of the year: the central pool on 1 April), DBIE report 464 and the Handbook's table 169, lakh tonnes. Total stocks include coarse grains, so they can exceed rice plus wheat. Off-take in 2020-21 to 2022-23 includes the free grain under PMGKAY, ANBP (migrants) and non-NFSA Covid allocations (RBI's note). RBI's table also prints stock figures for 1950-51 to 1970-71, at 6,680 lakh tonnes of rice in 1950-51 and similar: hundreds of times every later year and more than India's whole harvest, so their unit cannot be read and they are left out. 1971-72 is not printed. The part year after the last full year is in farms-pds-latest.",
       },
@@ -729,7 +745,7 @@ export async function buildFarms(root, dcfg, vintage, cfg) {
     bundles["farms-pds-latest"] = {
       meta: {
         dossier: "farms", frequency: "irregular", base: "as published", unit: "lakh_tonnes", source: dcfg.source_agency, vintage: null, mock: false, geo: dcfg.geo ?? "IND",
-        latestPeriod: partIso, releaseDate: null, revisionPolicy: dcfg.revision_policy, periodKind: "date",
+        latestPeriod: partIso.slice(0, 7), releaseDate: null, revisionPolicy: dcfg.revision_policy, periodKind: "date",
         coverage: `${latestYear} so far: stocks on ${dmy(stockAt[2])}, procurement and off-take to date`,
         note: `The part year ${latestYear} as report 464 prints it: stocks are the position on ${dmy(stockAt[2])}${offAt ? `, off-take is ${cap(offAt[2])} to ${cap(offAt[3])} ${offAt[4]}` : ""}${procAt ? `, procurement the position on ${dmy(procAt[2])}` : ""} (RBI's notes). Not comparable with a full year's procurement or off-take, or with a 1 April stock: a stock just after the wheat harvest is near its peak for the year.`,
       },
@@ -811,7 +827,7 @@ export async function buildFarms(root, dcfg, vintage, cfg) {
       bundles[slug] = {
         meta: {
           dossier: "farms", frequency: "annual", base, unit: "per series", source: dcfg.source_agency, vintage: null, mock: false, geo: dcfg.geo ?? "IND",
-          latestPeriod: fyLabel(axis.at(-1)), releaseDate: null, revisionPolicy: dcfg.revision_policy, periodKind: "fy", coverage, note,
+          latestPeriod: axis.at(-1).slice(0, 7), releaseDate: null, revisionPolicy: dcfg.revision_policy, periodKind: "fy", coverage, note,
         },
         dates: axis, series,
       };
@@ -858,7 +874,7 @@ export async function buildFarms(root, dcfg, vintage, cfg) {
     bundles["farms-states-fertiliser"] = {
       meta: {
         dossier: "farms", frequency: "annual", base: "as published", unit: "kg_per_hectare", source: HUB_SOURCE, vintage: null, mock: false, geo: dcfg.geo ?? "IND",
-        latestPeriod: fyLabel(axis.at(-1)), releaseDate: null, revisionPolicy: dcfg.revision_policy, periodKind: "fy",
+        latestPeriod: axis.at(-1).slice(0, 7), releaseDate: null, revisionPolicy: dcfg.revision_policy, periodKind: "fy",
         coverage: "Fertiliser (N+P+K) used per hectare, by state, 2004-05 to 2020-21",
         note: `RBI DBIE SDMX dataset AGG_STAT_IS_RN ("Agricultural Statistics - Indian State"), read from the RBI Innovation Hub service: kg of nitrogen, phosphate and potash per hectare, from RBI's Handbook of Statistics on Indian States table 94 (original source: Agricultural Statistics at a Glance, agriculture ministry). The dataset's footnote, without its spaces as served: ${foot.slice(0, 400)}`,
       },

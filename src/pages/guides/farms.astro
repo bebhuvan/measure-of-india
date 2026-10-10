@@ -274,7 +274,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
       <figure id="cb-crops" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>Sugarcane and soyabean grew fastest; jute has stood still for decades</h3>
+            <h3>Soyabean grew from almost nothing, cotton leapt after 2002, and jute has stood still for decades</h3>
             <div class="sub">Production of each commercial crop, final estimates, crop years, each panel on its own scale and in its own unit. Open circles: the latest advance estimate.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-crops">–</div><div class="c">million tonnes of sugarcane, latest final year</div></div>
@@ -437,7 +437,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
       <figure id="cb-mspinfl" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>Support prices usually rose faster than the cost of living of farm labourers</h3>
+            <h3>Support prices rose faster than farm labourers' cost of living in fewer than half the years</h3>
             <div class="sub">Rise in the paddy and wheat support price on the year before, per cent (bars), and inflation in the consumer price index for agricultural labourers, the average of the twelve monthly year-on-year rates over the crop year July to June (line), 1986-87 = 100 base, crop years <span id="sb-mi-span">–</span>.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-mspinfl">–</div><div class="c">years paddy's rise beat that inflation</div></div>
@@ -471,8 +471,8 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
       <figure id="cb-mspall" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>Over ten years, pulses and oilseeds were given the biggest increases</h3>
-            <div class="sub">Rise in each crop's minimum support price over the latest ten years each crop has a price for, per cent, with the latest price in rupees a quintal.</div>
+            <h3>Over ten years, oilseeds and cotton were given the biggest increases</h3>
+            <div class="sub">Rise in each crop's minimum support price over its latest ten crop years, per cent, with the latest price in rupees a quintal. Crops no longer priced (soyabean black, last priced in 2016-17) are left out.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-mspall">–</div><div class="c" id="pc-mspall">–</div></div>
         </div>
@@ -486,7 +486,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Raising the price of pulses and oilseeds faster than that of rice and wheat is how the government has tried to pull farmers towards crops India imports. A price only works where someone buys at it: the government buys pulses and oilseeds in much smaller amounts than rice and wheat.</p>
+            <p>Raising the price of oilseeds faster than that of rice and wheat is one way the government has tried to pull farmers towards crops India imports. Pulses, another import, were given rises close to those for paddy and wheat. A price only works where someone buys at it: the government buys pulses and oilseeds in much smaller amounts than rice and wheat.</p>
           </div>
           <div class="now">
             <span class="mk">As of the 2026-27 prices</span>
@@ -578,7 +578,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
         <div class="plate-head">
           <div class="t">
             <h3>A handful of states grow most of each crop</h3>
-            <div class="sub">Each state's share of India's production, per cent, crop year <span id="sb-states-fy">–</span>. States ordered by their share of foodgrains; the darker the cell, the larger the share. Cotton and jute are shares of bales.</div>
+            <div class="sub">Each state's share of India's production, per cent, crop year <span id="sb-states-fy">–</span>. States ordered by their share of foodgrains; the darker the cell, the larger the share; a tinted cell with no number is under 0.5 per cent, a white cell no output. Cotton and jute are shares of bales.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-states">–</div><div class="c" id="pc-states">–</div></div>
         </div>
@@ -606,7 +606,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
       <figure id="cb-statelong" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>The grain belt moved: Madhya Pradesh rose in wheat, and rice spread east and south</h3>
+            <h3>Madhya Pradesh's share of India's wheat tripled while Punjab's slipped</h3>
             <div class="sub">Each state's share of India's wheat (left) and rice (right) production, per cent, final estimates, 1980-81 to <span id="sb-long-fy">–</span>. States that split are drawn as two rulers: the undivided state (pale) to 1999-2000 (Madhya Pradesh, Uttar Pradesh) or 2014-15 (Andhra Pradesh), and the state after the split.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-statelong">–</div><div class="c">Madhya Pradesh's share of wheat, latest final year</div></div>
@@ -650,7 +650,7 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>The gap is mostly water and assured purchase: almost all of Punjab's wheat and rice is irrigated and bought by the government at the support price, while much of Bihar's, Assam's and Odisha's depends on the rain and is sold to traders. Higher yields in the north-west also come with heavier use of groundwater and fertiliser.</p>
+            <p>The gap is mostly water and assured purchase: almost all of Punjab's wheat and rice is irrigated and bought by the government at the support price, while much of the rice in Assam, Odisha and Jharkhand depends on the rain and is sold to traders. Higher yields in the north-west also come with heavier use of groundwater and fertiliser.</p>
           </div>
           <div class="now">
             <span class="mk">As of the 2024-25 crop</span>
@@ -700,12 +700,16 @@ const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
       <figure id="cb-monsoon" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>The worst harvests followed the driest monsoons, though less so than they used to</h3>
+            <h3>The worst harvests followed dry monsoons, but not every dry monsoon cut the harvest</h3>
             <div class="sub">Each dot is a crop year since 1951-52: across, June to September rainfall over India, per cent above or below its 1951-2000 average; up, the change in foodgrain production on the year before, per cent, final estimates. Rainfall: CRU gridded observations, as in the climate guide; not the India Meteorological Department's own monsoon figure.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-monsoon">–</div><div class="c">of the ten driest monsoons were followed by a smaller harvest</div></div>
         </div>
         <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#B9C3F3"></i>1951-52 to 1999-2000</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#2E4BD8"></i>2000-01 on</button>
+          </div>
           <div class="plotzone"><div id="plot-monsoon" style="position:relative"></div></div>
           <div class="plotfoot">
             <span class="src">Source: Foodgrain production, agriculture ministry via the RBI (DBIE 623); rainfall, CRU TS 4.10, University of East Anglia, via the World Bank Climate Change Knowledge Portal (the climate guide's bundle climate-cru-monthly). Departures and changes computed by India Atlas.</span>

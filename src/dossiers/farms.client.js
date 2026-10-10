@@ -38,6 +38,7 @@ const fyOf = (iso) => { const y = +String(iso).slice(0, 4); return `${y}-${Strin
 const dayOf = (iso) => `${+iso.slice(8, 10)} ${MONTHS[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}`;
 const csvOf = (header, rows) => [header.join(","), ...rows.map((r) => r.map((v) => (v == null ? "" : /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : v)).join(","))].join("\n");
 const mt = (v) => v / 1000;                       // thousand tonnes -> million tonnes
+const g1 = (v) => v.toLocaleString("en-IN", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 const mtS = (v) => fmt.num1(mt(v)) + " million tonnes";
 const kg = (v) => fmt.inr(v) + " kg";
 const pct = (a, b) => (a / b - 1) * 100;
@@ -135,7 +136,7 @@ const aeDate = new Date(aeB.dates[0] + "T00:00:00Z");
     marks: [
       Plot.gridY({ stroke: GRID }),
       Plot.ruleY([0], { stroke: BASE }),
-      ...seamMarks("side", [{ data: fin, color: ACC, width: 2 }, { data: ae, color: ACC }], { text: `${AEY}, advance`, y: top * 0.97, anchor: "end" }),
+      ...seamMarks("side", [{ data: fin, color: ACC, width: 2 }, { data: ae, color: ACC }], { text: null, y: top }),
       Plot.dot([last], { x: "date", y: "value", fill: ACC, r: 3.5, stroke: "#fff", strokeWidth: 1.5 }),
       Plot.dot(ae, { x: "date", y: "value", fill: "#fff", stroke: ACC, strokeWidth: 1.75, r: 4.5 }),
       Plot.text(ae, { x: "date", y: "value", text: (d) => `Advance: ${fmt.num1(d.value)}`, dx: 12, dy: -12, textAnchor: "start", fill: MUTED, fontSize: 12 }),
@@ -285,7 +286,7 @@ const aeDate = new Date(aeB.dates[0] + "T00:00:00Z");
     g.setAttribute("transform", `translate(${x0},${y0})`);
     const t1 = document.createElementNS("http://www.w3.org/2000/svg", "text");
     t1.setAttribute("x", 0); t1.setAttribute("y", -22); t1.setAttribute("fill", INK); t1.setAttribute("font-weight", "600"); t1.setAttribute("font-size", "12.5");
-    t1.textContent = `${label}: ${fmt.num1(last.value)}`;
+    t1.textContent = `${label}: ${g1(last.value)}`;
     const t2 = document.createElementNS("http://www.w3.org/2000/svg", "text");
     t2.setAttribute("x", 0); t2.setAttribute("y", -7); t2.setAttribute("fill", MUTED); t2.setAttribute("font-size", "11.5");
     t2.textContent = unit;
@@ -302,7 +303,7 @@ const aeDate = new Date(aeB.dates[0] + "T00:00:00Z");
   setHTML("ex-cr-sugar", mtS(P.sugarcane.data[iP]));
   setHTML("ex-cr-oil", mtS(P.oilseeds.data[iP]));
   setHTML("ex-cr-cotton", fmt.num1(P.cotton.data[iP] / 100) + " lakh bales");
-  setHTML("ex-cr-tea", fmt.num1(P.tea.data[iP]) + " thousand tonnes");
+  setHTML("ex-cr-tea", g1(P.tea.data[iP]) + " thousand tonnes");
   wirePlate("cb-crops", svg, "india-atlas_commercial-crops", csvOf(["crop", "unit", "crop_year", "estimate", "value"], csvRows));
 }
 {
@@ -476,8 +477,10 @@ const L = landB.series, iL = landB.dates.length - 1;
 }
 {
   // ten-year rise in every crop's MSP: latest price against the price ten crop years earlier
+  const lastYear = Math.max(...Object.values(M).map((s) => lastIdx(s.data)));
   const rows = Object.entries(M).map(([k, s]) => {
     const i = lastIdx(s.data);
+    if (i < lastYear - 1) return null;   // a variety no longer priced (soyabean black, to 2016-17)
     const j = i - 10;
     if (i < 0 || j < 0 || s.data[j] == null) return null;
     return { k, label: s.label, latest: s.data[i], fy: fyOf(mspB.dates[i]), fy0: fyOf(mspB.dates[j]), rise: pct(s.data[i], s.data[j]) };
@@ -678,20 +681,24 @@ const L = landB.series, iL = landB.dates.length - 1;
   const fy = fyOf(YP.wheat.year);
   // states with at least 0.1% of the crop's output
   const keep = (crop) => { const out = PR[crop]; return new Set(out.rows.filter((r) => out.ai && (100 * r.v) / out.ai >= 0.1).map((r) => r.name)); };
-  const rows = ["wheat", "rice"].flatMap((c) => { const k = keep(c); return YP[c].rows.filter((r) => k.has(r.name)).map((r) => ({ crop: c === "wheat" ? "Wheat" : "Rice", name: r.name, v: r.v })); });
+  const short = (n) => n.replace(/\s*\(.*\)$/, "").replace(/ & /g, " and ");
+  const rows = ["wheat", "rice"].flatMap((c) => { const k = keep(c); return YP[c].rows.filter((r) => k.has(r.name)).map((r) => ({ crop: c === "wheat" ? "Wheat" : "Rice", name: short(r.name), v: r.v })); });
   const order = [...new Set(rows.filter((r) => r.crop === "Rice").sort((a, b) => b.v - a.v).map((r) => r.name)), ...rows.filter((r) => r.crop === "Wheat").map((r) => r.name)].filter((v, i, a) => a.indexOf(v) === i);
   const ai = { Wheat: YP.wheat.ai, Rice: YP.rice.ai };
+  // value labels sit right of the dot unless the All India rule is within reach, then left
+  const near = (d) => d.v < ai[d.crop] && ai[d.crop] - d.v < 520;
   const plot = Plot.plot({
-    width: W, height: 60 + order.length * 22, marginLeft: 170, marginRight: 60, marginTop: 40, marginBottom: 30, style: baseStyle,
+    width: W, height: 70 + order.length * 22, marginLeft: 170, marginRight: 60, marginTop: 52, marginBottom: 30, style: baseStyle,
     fx: { label: null, domain: ["Rice", "Wheat"], padding: 0.1, axis: "top", tickSize: 0 },
     x: { label: null, domain: [0, 5600], ticks: [0, 2000, 4000], tickFormat: (d) => String(fmt.inr(d)), tickSize: 0 },
     y: { label: null, domain: order, tickSize: 0, tickPadding: 10 },
     marks: [
       Plot.gridX({ stroke: GRID, ticks: [1000, 2000, 3000, 4000, 5000] }),
       Plot.ruleX([{ crop: "Rice", v: ai.Rice }, { crop: "Wheat", v: ai.Wheat }], { fx: "crop", x: "v", stroke: ACC, strokeDasharray: "3,3", strokeOpacity: 0.7 }),
-      Plot.ruleY(rows, { fx: "crop", y: "name", x1: 0, x2: "v", stroke: "#DFE2E8", strokeWidth: 1.5 }),
+      Plot.text([{ crop: "Rice", v: ai.Rice }, { crop: "Wheat", v: ai.Wheat }], { fx: "crop", x: "v", frameAnchor: "top", text: (d) => `All India ${fmt.inr(d.v)}`, dy: -10, textAnchor: "start", dx: 4, fill: INK, fontSize: 11.5 }),
       Plot.dot(rows, { fx: "crop", y: "name", x: "v", fill: (d) => (d.name === "Punjab" ? ACC : GREY1), r: 4 }),
-      Plot.text(rows, { fx: "crop", y: "name", x: "v", text: (d) => fmt.inr(d.v), dx: 9, textAnchor: "start", fill: INK, fontSize: 11.5 }),
+      Plot.text(rows.filter((d) => !near(d)), { fx: "crop", y: "name", x: "v", text: (d) => fmt.inr(d.v), dx: 9, textAnchor: "start", fill: INK, fontSize: 11.5 }),
+      Plot.text(rows.filter(near), { fx: "crop", y: "name", x: "v", text: (d) => fmt.inr(d.v), dx: -9, textAnchor: "end", fill: INK, fontSize: 11.5 }),
     ],
   });
   const top = (c) => rows.filter((r) => r.crop === c).sort((a, b) => b.v - a.v)[0];
@@ -757,8 +764,8 @@ const L = landB.series, iL = landB.dates.length - 1;
   const lastR = rows.at(-1);
   const plot = Plot.plot({
     width: W, height: 480, marginLeft: 56, marginRight: 40, marginTop: 30, marginBottom: 44, style: baseStyle,
-    x: { label: "June to September rainfall, per cent above or below the 1951-2000 average →", labelAnchor: "right", labelArrow: false, domain: [-30, 30], tickFormat: (d) => (d > 0 ? "+" : "") + d + "%", tickSize: 0 },
-    y: { label: "↑ change in foodgrain production on the year before, per cent", labelAnchor: "top", labelArrow: false, domain: [-25, 25], tickFormat: (d) => (d > 0 ? "+" : "") + d + "%", tickSize: 0, tickPadding: 8 },
+    x: { label: "June to September rainfall, per cent above or below the 1951-2000 average →", labelAnchor: "right", labelArrow: false, domain: [Math.floor(Math.min(...rows.map((r) => r.rain)) / 5) * 5 - 5, Math.ceil(Math.max(...rows.map((r) => r.rain)) / 5) * 5 + 5], tickFormat: (d) => (d > 0 ? "+" : "") + d + "%", tickSize: 0 },
+    y: { label: "↑ change in foodgrain production on the year before, per cent", labelAnchor: "top", labelArrow: false, domain: [Math.floor(Math.min(...rows.map((r) => r.chg)) / 5) * 5 - 5, Math.ceil(Math.max(...rows.map((r) => r.chg)) / 5) * 5 + 5], tickFormat: (d) => (d > 0 ? "+" : "") + d + "%", tickSize: 0, tickPadding: 8 },
     marks: [
       Plot.gridX({ stroke: GRID }), Plot.gridY({ stroke: GRID }),
       Plot.ruleX([0], { stroke: BASE }), Plot.ruleY([0], { stroke: BASE }),
