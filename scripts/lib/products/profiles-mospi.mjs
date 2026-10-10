@@ -6,7 +6,7 @@
 //   node scripts/lib/products/profiles-mospi.mjs --plan            # no network: print the plan
 //   PROFILES_MOSPI_GO=1 node ... --phase list                       # A: indicator and survey lists
 //   PROFILES_MOSPI_GO=1 node ... --phase meta                       # B: filters and page 1 of each indicator
-//   PROFILES_MOSPI_GO=1 node ... --phase fetch                      # C: every page of every indicator
+//   PROFILES_MOSPI_GO=1 node ... --phase fetch [--skip tus]         # C: every page of every indicator
 //   node ... --status                                               # what is done, what is left
 //
 // Every call goes through scripts/lib/mospi.mjs (one request at a time, spaced, backoff on 429 and
@@ -83,14 +83,19 @@ async function phaseMeta(mospi, plan) {
       ind.hasState = Object.keys(ind.filters).some((k) => /state/i.test(k));
       const p1 = await mospi(P.records, { indicator_code: ind.code, ...(ind.survey != null ? { survey_code: ind.survey } : {}), page: 1, limit: 100 });
       ind.expected = Number(p1.meta_data?.totalRecords ?? rowsOf(p1).length);
+      const r1 = rowsOf(p1);
+      ind.bytesPerRow = r1.length ? Math.round(JSON.stringify(r1).length / r1.length) : null;
     } catch (e) { ind.error = `${e.message.slice(0, 160)} (${new Date().toISOString().slice(0, 10)})`; }
     savePlan(plan);
   }
-  for (const P of PRODUCTS) { const I = plan.products[P.id]?.indicators ?? []; console.log(`B ${P.id}: ${I.filter((x) => x.expected != null).length}/${I.length} indicators sized, ${I.reduce((a, x) => a + (x.expected ?? 0), 0)} rows expected, ${I.filter((x) => x.hasState).length} with a state dimension`); }
+  for (const P of PRODUCTS) { const I = plan.products[P.id]?.indicators ?? []; const mb = I.reduce((a, x) => a + (x.expected ?? 0) * (x.bytesPerRow ?? 0), 0) / 1e6; console.log(`B ${P.id}: about ${mb.toFixed(1)} MB of rows, ${I.filter((x) => x.expected != null).length}/${I.length} indicators sized, ${I.reduce((a, x) => a + (x.expected ?? 0), 0)} rows expected, ${I.filter((x) => x.hasState).length} with a state dimension`); }
 }
 async function phaseFetch(mospiAll, plan) {
   const { writeRaw } = await import("../util.mjs");
+  // --skip a,b leaves products out of this run (Time Use is national only on this API)
+  const skip = new Set(argv.includes("--skip") ? argv[argv.indexOf("--skip") + 1].split(",") : []);
   for (const P of PRODUCTS) {
+    if (skip.has(P.id)) { console.log(`C ${P.id}: skipped`); continue; }
     const st = plan.products[P.id];
     if (!st?.indicators) continue;
     const out = {};
@@ -104,7 +109,21 @@ async function phaseFetch(mospiAll, plan) {
     }
     writeRaw(ROOT, `data/raw/profiles-mospi-${P.id}.json`, { vintage: new Date().toISOString().slice(0, 10), note: `MoSPI eSankhyiki ${P.id}, every indicator, every row (profiles step 5)`, indicators: st.indicators, rows: out });
     console.log(`C ${P.id}: ${Object.keys(out).length} indicators archived`);
+    // disk is shared and short: once the raw dump is written, drop this product's cached pages
+    console.log(`C ${P.id}: ${trimCache(P.records)} cached pages removed`);
   }
+}
+
+// remove http-cache entries for one records endpoint (the cache stores each response's url)
+function trimCache(endpoint) {
+  const dir = path.join(ROOT, "data/raw/http-cache");
+  if (!fs.existsSync(dir)) return 0;
+  let n = 0;
+  for (const f of fs.readdirSync(dir)) {
+    const p = path.join(dir, f);
+    try { const head = fs.readFileSync(p, "utf8").slice(0, 400); if (head.includes(`/api/${endpoint}?`)) { fs.rmSync(p); n++; } } catch {}
+  }
+  return n;
 }
 
 const argv = process.argv;
