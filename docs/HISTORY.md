@@ -192,6 +192,21 @@ stamps, silent series). What the audit changed:
   adapters, states), or had been re-fetched through it by its own wave-2 session (ASI,
   ASUSE, AISHE, gender, MNRE, NFHS). No page set slipped and no data value changed; the
   only repeats were MoSPI serving identical rows, which are dropped with a warning.
+- **2026-10-10 — State profiles and the DBIE wave.** At the owner's request, a page for every
+  state and union territory (`/states/<state>/`): a state key with every source's spellings
+  and the boundary seams (2014, 2019, 2020), 101+ measures each with its own period and a rank
+  only among units with the same period, templated sentences traced by qc, NFHS-6 from the
+  IIPS fact sheets, and MoSPI's survey cuts (UDISE+, EnvStats, NSS 75 to 79). Then five RBI
+  families from the Data Bank and the RBI Innovation Hub's DBIE service (used only for the
+  prompt-gated reports the Data Bank lacks): payments, farms, banks, public finance, markets.
+  30 guides, 1,149 pages. Findings: credit had read cheque display codes as counts and
+  rounded small ₹ lakh crore values away (16,217 cells restored); report 1221 prints
+  thousands of rupees under a "crore" header; DBIE's BE/RE version labels are unreliable
+  (stages taken from the printed Handbook notes); public finance's own GDP ratios are now
+  flagged derived and drawn apart from RBI's; the Data Bank's copy of report 273 holds
+  survey respondents' names, addresses and phone numbers (excluded; flagged to the owner).
+  Machine lessons: concurrent sessions exhausted memory once (17 finished sessions were still
+  resident); builds now run in two machine-wide slots; qc needs a 6 GB heap at this size.
 - **2026-10-10 06:00 — Wave 2 complete; nothing pending.** Prices (CPI by state to the group,
   CPI-IW, rural wages, WPI's old bases), jobs (the whole PLFS cube, the 2025 redesign seam),
   industry (IIP all bases, core industries, ASI at every NIC digit), national accounts
