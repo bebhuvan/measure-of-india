@@ -7,9 +7,15 @@ guides: []
 catalogue: data/coverage/profiles.catalogue.json
 rules:
   # MoSPI rounds the brief names as gaps: held until the MoSPI audit refresh finishes
-  - match: ["mospi:nss:75", "mospi:nss:76", "mospi:nss:77", "mospi:nss:78", "mospi:nss:79", "mospi:nss:80"]
+  - match: "mospi:nss:80"
     status: blocked
-    reason: "Waiting for the MoSPI audit (lb/audit-refresh), 2026-10-10: the coordinator holds every new MoSPI download until it finishes; state cuts of these rounds are scheduled after it."
+    reason: "NSS 80's indicator list (nss-80/getIndicatorList) answered HTTP 500 on 2026-10-10 to four calls, without parameters and with survey=1, each after the full backoff; its survey list answers."
+  - match: "mospi:tus:*"
+    status: excluded
+    reason: "National only on the API (no state dimension); belongs to a national Time Use guide, inventory item 6, after launch."
+  - match: ["mospi:udise:*", "mospi:env:*", "mospi:nss75:*", "mospi:nss76:*", "mospi:nss77:*", "mospi:nss77aidis:*", "mospi:nss78:*", "mospi:nss79:*"]
+    status: pending
+    scheduled: "profiles step 5: phase C download running 2026-10-10, then bake and wire"
   - match: "mospi:nss:73"
     status: blocked
     reason: "NSS 73 (enterprises, 2015-16): every data call returned HTTP 400 when the inventory probed it, and new MoSPI calls wait for the audit (2026-10-10)."

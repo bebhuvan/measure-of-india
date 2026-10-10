@@ -13,7 +13,7 @@
 // 5xx, a response cache in data/raw/http-cache), so a run killed half way resumes where it stopped.
 // Progress and the expected row counts (each indicator's meta_data.totalRecords from page 1, phase B)
 // are kept in data/raw/profiles-mospi-plan.json; phase C checks the rows it collects against them
-// (mospiAll fails a short read). Raw dumps go to data/raw/profiles-mospi-<product>.json.gz. Bundles
+// (mospiAll fails a short read). Raw dumps, one per indicator, go to data/raw/profiles-mospi/. Bundles
 // are baked afterwards, product by product, once the shapes are seen.
 //
 // The Economic Census is not here: the eSankhyiki SPA serves it at macroindicators?product=ec4|5|6,
@@ -91,29 +91,37 @@ async function phaseMeta(mospi, plan) {
   for (const P of PRODUCTS) { const I = plan.products[P.id]?.indicators ?? []; const mb = I.reduce((a, x) => a + (x.expected ?? 0) * (x.bytesPerRow ?? 0), 0) / 1e6; console.log(`B ${P.id}: about ${mb.toFixed(1)} MB of rows, ${I.filter((x) => x.expected != null).length}/${I.length} indicators sized, ${I.reduce((a, x) => a + (x.expected ?? 0), 0)} rows expected, ${I.filter((x) => x.hasState).length} with a state dimension`); }
 }
 async function phaseFetch(mospiAll, plan) {
-  const { writeRaw } = await import("../util.mjs");
+  const { writeRaw, rawExists } = await import("../util.mjs");
   // --skip a,b leaves products out of this run (Time Use is national only on this API)
   const skip = new Set(argv.includes("--skip") ? argv[argv.indexOf("--skip") + 1].split(",") : []);
   for (const P of PRODUCTS) {
     if (skip.has(P.id)) { console.log(`C ${P.id}: skipped`); continue; }
     const st = plan.products[P.id];
     if (!st?.indicators) continue;
-    const out = {};
+    // one dump per indicator, written as soon as it is read: memory stays at one indicator, a run
+    // stopped part way keeps everything it finished, and no file nears the 25 MB git line
+    let wrote = 0;
     for (const ind of st.indicators) {
       if (ind.error || ind.expected == null) continue;
+      const rel = `data/raw/profiles-mospi/${P.id}-${ind.survey ?? 0}-${ind.code}.json`;
+      if (ind.archived && rawExists(ROOT, rel)) continue;
+      // the disk is shared by several sessions: stop when free space is under 2 GB
+      const free = freeBytes();
+      if (free != null && free < 2e9) { console.error(`C: stopping at ${P.id} ${ind.code}: ${(free / 1e9).toFixed(2)} GB free (under 2 GB); message the coordinator`); process.exit(3); }
       const rows = await mospiAll(P.records, { indicator_code: ind.code, ...(ind.survey != null ? { survey_code: ind.survey } : {}) });
       if (rows.length !== ind.expected) throw new Error(`${P.id} ${ind.code}: ${rows.length} rows, page 1 reported ${ind.expected}`);
-      out[`${ind.survey ?? ""}:${ind.code}`] = rows;
-      ind.done = true;
+      fs.mkdirSync(path.join(ROOT, "data/raw/profiles-mospi"), { recursive: true });
+      writeRaw(ROOT, rel, { vintage: new Date().toISOString().slice(0, 10), note: `MoSPI eSankhyiki ${P.records}, indicator ${ind.code}${ind.survey != null ? `, survey ${ind.survey}` : ""}: every row (profiles step 5)`, product: P.id, indicator: ind, rows });
+      ind.done = true; ind.archived = true; wrote++;
       savePlan(plan);
     }
-    writeRaw(ROOT, `data/raw/profiles-mospi-${P.id}.json`, { vintage: new Date().toISOString().slice(0, 10), note: `MoSPI eSankhyiki ${P.id}, every indicator, every row (profiles step 5)`, indicators: st.indicators, rows: out });
-    console.log(`C ${P.id}: ${Object.keys(out).length} indicators archived`);
-    // disk is shared and short: once the raw dump is written, drop this product's cached pages
-    console.log(`C ${P.id}: ${trimCache(P.records)} cached pages removed`);
+    console.log(`C ${P.id}: ${wrote} indicators archived this run, ${st.indicators.filter((x) => x.archived).length} of ${st.indicators.length} in all`);
+    // disk is shared and short: once every indicator is written, drop this product's cached pages
+    if (st.indicators.every((x) => x.archived || x.error || x.expected == null)) console.log(`C ${P.id}: ${trimCache(P.records)} cached pages removed`);
   }
 }
 
+function freeBytes() { try { const st = fs.statfsSync(ROOT); return st.bavail * st.bsize; } catch { return null; } }
 // remove http-cache entries for one records endpoint (the cache stores each response's url)
 function trimCache(endpoint) {
   const dir = path.join(ROOT, "data/raw/http-cache");

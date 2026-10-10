@@ -45,7 +45,13 @@ async function items() {
   for (const r of n6.rows.filter((x) => x.geography === "India"))
     out.push({ id: `nfhs6:i${String(r.indicator_no).padStart(3, "0")}`, label: `NFHS-6 indicator ${r.indicator_no}: ${r.indicator}`, dims: { indicator: +r.indicator_no } });
   const api = fs.readFileSync(path.join(ROOT, "docs/reference/esankhyiki-api.md"), "utf8");
-  for (const [, r] of api.matchAll(/^\| nss-(\d+) \|/gm)) out.push({ id: `mospi:nss:${r}`, label: `NSS round ${r}, state cuts`, dims: { product: `nss-${r}` } });
+  // step 5: every indicator the MoSPI listings returned (data/raw/profiles-mospi-plan.json, phase A),
+  // and one item per round for the rounds not listed (NSS 73, NSS 80 while its list fails)
+  const planFile = path.join(ROOT, "data/raw/profiles-mospi-plan.json");
+  const plan = fs.existsSync(planFile) ? JSON.parse(fs.readFileSync(planFile, "utf8")) : { products: {} };
+  for (const [pid, st] of Object.entries(plan.products)) for (const ind of st.indicators ?? [])
+    out.push({ id: `mospi:${pid}:${ind.survey ?? "0"}:${ind.code}`, label: ind.label ?? `${pid} indicator ${ind.code}`, dims: { product: pid, rows: ind.expected, state: !!ind.hasState } });
+  for (const [, r] of api.matchAll(/^\| nss-(\d+) \|/gm)) if (!plan.products[`nss${r}`]?.indicators?.length) out.push({ id: `mospi:nss:${r}`, label: `NSS round ${r}, state cuts`, dims: { product: `nss-${r}` } });
   const ec = /^\| ec(\d)\/(\d)\/(\d) \|/m.exec(api);
   if (ec) for (const r of ec.slice(1)) out.push({ id: `mospi:ec:${r}`, label: `Economic Census, round ${r}`, dims: { product: `ec${r}` } });
   return { out, P, STATES };
