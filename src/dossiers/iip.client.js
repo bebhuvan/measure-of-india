@@ -469,7 +469,10 @@ const IND_PICK = (() => {
   const all = keys.flatMap((k) => IND[k].data.map((d) => d.value)).filter((v) => v != null);
   const d0 = Math.min(-10, Math.floor(Math.min(...all) / 5) * 5 - 2), d1 = Math.max(20, Math.ceil(Math.max(...all) / 5) * 5 + 2);
   const ticks = []; for (let t = Math.ceil(d0 / 10) * 10; t <= d1; t += 10) ticks.push(t);
-  const geo = { W: 1184, H: 470, ml: 70, mr: 210, mt: 30, mb: 48, d0, d1 };
+  // the end labels are data-chosen names, so the right margin fits the longest ("Other transport
+  // equipment 25.3%"): about 7.6 px a character at 12.5 px, plus the gap to the line end
+  const longest = Math.max(...keys.map((k) => (IND_SHORT[k] + " 00.0%").length));
+  const geo = { W: 1184, H: 470, ml: 70, mr: Math.max(210, Math.ceil(longest * 7.6) + 40), mt: 30, mb: 48, d0, d1 };
   multiLine("cb-ind", "plot-ind", keys, IND, geo, ticks,
     [2024, 2025, 2026].map((y) => new Date(Date.UTC(y, 0, 1))),
     "india-atlas_iip_industries_base2022",
