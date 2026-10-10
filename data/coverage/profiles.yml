@@ -605,6 +605,20 @@ rules:
     status: shown
     bundle: credit-states-occupation
     plate: "§08 Money"
+  - match: ["profile:ucbs:ladakh"]
+    status: excluded
+    reason: "The source (banks-ucb-states-dbie) publishes no urban co-operative banks for these units; the profile says so in place of a figure."
+  - match: "profile:ucbs:*"
+    status: shown
+    bundle: banks-ucb-states-dbie
+    plate: "§08 Money"
+  - match: ["profile:ucbdeposits:ladakh"]
+    status: excluded
+    reason: "The source (banks-ucb-states) publishes no deposits in urban co-operative banks for these units; the profile says so in place of a figure."
+  - match: "profile:ucbdeposits:*"
+    status: shown
+    bundle: banks-ucb-states
+    plate: "§08 Money"
   - match: "profile:branches:*"
     status: shown
     bundle: credit-deep-offices-states
@@ -849,6 +863,27 @@ rules:
   - match: "profile:sdl:*"
     status: shown
     bundle: rates-sdl-states
+    plate: "§13 State finances"
+  - match: ["profile:wmadays:andaman-nicobar", "profile:wmadays:chandigarh", "profile:wmadays:dnh-dd", "profile:wmadays:delhi", "profile:wmadays:ladakh", "profile:wmadays:lakshadweep", "profile:wmadays:sikkim"]
+    status: excluded
+    reason: "The source (public-finance-states-wma) publishes no days on ways and means advances, last 12 months for these units; the profile says so in place of a figure."
+  - match: "profile:wmadays:*"
+    status: shown
+    bundle: public-finance-states-wma
+    plate: "§13 State finances"
+  - match: ["profile:oddays:andaman-nicobar", "profile:oddays:chandigarh", "profile:oddays:dnh-dd", "profile:oddays:delhi", "profile:oddays:ladakh", "profile:oddays:lakshadweep", "profile:oddays:sikkim"]
+    status: excluded
+    reason: "The source (public-finance-states-wma) publishes no days in overdraft with the rbi, last 12 months for these units; the profile says so in place of a figure."
+  - match: "profile:oddays:*"
+    status: shown
+    bundle: public-finance-states-wma
+    plate: "§13 State finances"
+  - match: ["profile:sinkingfund:andaman-nicobar", "profile:sinkingfund:chandigarh", "profile:sinkingfund:dnh-dd", "profile:sinkingfund:delhi", "profile:sinkingfund:ladakh", "profile:sinkingfund:lakshadweep", "profile:sinkingfund:sikkim"]
+    status: excluded
+    reason: "The source (public-finance-states-investments) publishes no consolidated sinking fund for these units; the profile says so in place of a figure."
+  - match: "profile:sinkingfund:*"
+    status: shown
+    bundle: public-finance-states-investments
     plate: "§13 State finances"
   - match: ["profile:interest:andaman-nicobar", "profile:interest:chandigarh", "profile:interest:dnh-dd", "profile:interest:ladakh", "profile:interest:lakshadweep"]
     status: excluded

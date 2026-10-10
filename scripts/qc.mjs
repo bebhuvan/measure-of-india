@@ -1026,6 +1026,7 @@ for (const page of PAGES) {
     nfhsIndia: ({ args: [[b, re]] }) => Object.values(B(b).series).find((s) => s.geo === "All India" && s.sector === "total" && new RegExp(re).test(s.group ?? "")).data[0],
     scale: ({ args: [[b, k, f]], iso }) => at(b, k, iso) * f,
     plus100: ({ args: [[b, k]], iso }) => 100 + at(b, k, iso),
+    sum12: ({ args: [[b, k]], iso }) => { const x = B(b), i = x.dates.indexOf(iso); return x.series[k].data.slice(i - 11, i + 1).reduce((a, v) => a + v, 0); },
     yoy12: ({ args: [[b, k]], iso }) => { const p = `${+iso.slice(0, 4) - 1}${iso.slice(4)}`; return (at(b, k, iso) / at(b, k, p) - 1) * 100; },
     ratioSum: ({ args: [num, den], iso }) => (num.reduce((a, [b, k]) => a + at(b, k, iso), 0) / den.reduce((a, [b, k]) => a + at(b, k, iso), 0)) * 100,
   };

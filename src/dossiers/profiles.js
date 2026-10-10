@@ -108,6 +108,8 @@ const cellOf = (bundle, key, iso) => { const b = load(bundle), i = idx(b, iso); 
 const lastCell = (bundle, key) => { const b = load(bundle), s = b.series[key]; if (!s) throw new Error(`profiles: ${bundle} has no series ${key}`); for (let i = s.data.length - 1; i >= 0; i--) if (s.data[i] != null) return b.dates[i]; return null; };
 const monthsBack = (iso, n) => { const d = new Date(Date.UTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1 - n, 1)); return d.toISOString().slice(0, 10); };
 export const COMPUTE = {
+  // a monthly flow summed over the twelve months ending at iso (all twelve must be published)
+  sum12: ([[b, k]], iso) => { const B = load(b), i = idx(B, iso); if (i < 11) return null; const xs = B.series[k].data.slice(i - 11, i + 1); return xs.some((v) => v == null) ? null : xs.reduce((a, v) => a + v, 0); },
   // change on the same month a year earlier, per cent, from an index's own levels
   yoy12: ([[b, k]], iso) => { const a = cellOf(b, k, iso), p = cellOf(b, k, monthsBack(iso, 12)); return a == null || p == null ? null : (a / p - 1) * 100; },
   // a cell as published
@@ -272,6 +274,9 @@ export const MEASURES = [
     india: { op: "ratio", args: [["credit-states-occupation", "all_india__agriculture"], ["credit-states-occupation", "all_india__total_credit"]] }, period: endMonth, guide: "credit" },
   { id: "creditPersonal", section: "money", label: "Personal loans, share of bank credit", what: "personal loans' share of bank credit (homes, vehicles, education, cards and others)", bundle: "credit-states-occupation", pick: endsKey("__personal_loans"), fmt: "pct1", derive: { op: "ratio", mapKey: (k) => k.replace(/__personal_loans$/, "__total_credit") },
     india: { op: "ratio", args: [["credit-states-occupation", "all_india__personal_loans"], ["credit-states-occupation", "all_india__total_credit"]] }, period: endMonth, guide: "credit" },
+  // banks (lb/banks): urban co-operative banks
+  { id: "ucbs", section: "money", label: "Urban co-operative banks", what: "the number of urban co-operative banks", bundle: "banks-ucb-states-dbie", pick: endsKey("__ucbs"), fmt: "count", india: null, period: endMonth, guide: "banks" },
+  { id: "ucbDeposits", section: "money", label: "Deposits in urban co-operative banks", what: "the deposits held by urban co-operative banks", bundle: "banks-ucb-states", pick: endsKey("__deposits"), fmt: "lakhcrFromCrore", india: null, period: endMonth, guide: "banks" },
   { id: "branches", section: "money", label: "Bank branches", what: "the number of bank branches", bundle: "credit-deep-offices-states", pick: endsKey("__branch"), fmt: "count", india: null, period: endMonth, guide: "credit" },
   // industry and energy
   { id: "factories", section: "industry", label: "Factories in operation", what: "the number of factories in operation", bundle: "asi-states", pick: startsKey("factories_in_operation_"), fmt: "count", india: { op: "cell", args: [["asi-headline", "factories_in_operation"]] }, guide: "factories" },
@@ -327,6 +332,10 @@ export const MEASURES = [
   { id: "debt", section: "finances", label: "Debt, % of GSDP", what: "outstanding liabilities at the end of March, as a share of GSDP", bundle: "states-finances", pick: endsKey("__debt"), fmt: "pct1", india: null, guide: "states" },
   { id: "ownTax", section: "finances", label: "Own tax revenue, % of GSDP", what: "the state's own tax revenue, as a share of GSDP", bundle: "states-finances", pick: endsKey("__own_tax"), fmt: "pct1", india: null, guide: "states" },
   { id: "sdl", section: "finances", label: "What the state pays to borrow", what: "the cut-off yield on the state's market loans, weighted by amount raised", bundle: "rates-sdl-states", pick: (k) => /_yield$/.test(k) && !/wavg/.test(k), fmt: "pct2pa", at: SDL_FULL_YEAR, india: { op: "cell", args: [["rates-sdl-states", "all_yield"]], label: "all states together" }, guide: "rates" },
+  // public finance (lb/public-finance): RBI's cash facilities to states and the states' cushions
+  { id: "wmaDays", section: "finances", label: "Days on ways and means advances, last 12 months", what: "the days in the last twelve months the state drew on the RBI's ways and means advances, a short loan for a cash shortfall", bundle: "public-finance-states-wma", pick: endsKey("__wma_days"), fmt: "days", derive: { op: "sum12" }, india: null, period: (iso) => `the year to ${endMonth(iso).slice(4)}`, guide: "public-finance" },
+  { id: "odDays", section: "finances", label: "Days in overdraft with the RBI, last 12 months", what: "the days in the last twelve months the state was in overdraft with the RBI, having spent past its advances", bundle: "public-finance-states-wma", pick: endsKey("__od_days"), fmt: "days", derive: { op: "sum12" }, india: null, period: (iso) => `the year to ${endMonth(iso).slice(4)}`, guide: "public-finance" },
+  { id: "sinkingFund", section: "finances", label: "Consolidated sinking fund", what: "the state's consolidated sinking fund, set aside with the RBI to repay its debt", bundle: "public-finance-states-investments", pick: endsKey("__consolidated_sinking_fund_csf"), fmt: "lakhcrFromCrore", india: null, period: endMonth, guide: "public-finance" },
   { id: "interest", section: "finances", label: "Interest, % of revenue spending", what: "interest payments as a share of revenue spending", bundle: "states-hbs-t170", pick: endsKey("__actual"), fmt: "pct1",
     derive: { op: "ratio", other: "states-hbs-t166", scale: 1e7, otherKey: (k) => k }, india: { op: "ratio", args: [["states-hbs-t170", "all_states_and_uts__actual"], ["states-hbs-t166", "all_states_and_uts__actual", 1e7]], label: "all states and UTs together" }, guide: "states" },
 ];
@@ -345,6 +354,10 @@ const otherKey = (m, slug) => {
   return cells({ ...m, id: m.id + ":other", bundle: m.derive.other }).cur.get(slug) ?? null;
 };
 function derivedAt(m, slug, iso) {
+  if (m.derive.op === "sum12") {
+    if (valueAt(m, slug, iso) == null) return null;
+    return COMPUTE.sum12([[m.bundle, cells(m).cur.get(slug)]], iso);
+  }
   if (m.derive.op === "yoy12") {
     if (valueAt(m, slug, iso) == null) return null;
     return COMPUTE.yoy12([[m.bundle, cells(m).cur.get(slug)]], iso);
@@ -430,6 +443,7 @@ export function periodOf(m, iso) {
 function srcOf(m, slug, iso) {
   const k = cells(m).cur.get(slug);
   if (m.derive?.op === "yoy12") return { op: "yoy12", args: [[m.bundle, k]], iso };
+  if (m.derive?.op === "sum12") return { op: "sum12", args: [[m.bundle, k]], iso };
   if (m.derive) return { op: "ratio", args: [[m.bundle, k], [m.derive.other ?? m.bundle, otherKey(m, slug), m.derive.scale ?? 1]], iso };
   return { op: "cell", args: [[m.bundle, k]], iso };
 }
@@ -645,13 +659,13 @@ const SECTION_TEXT = {
   farms: "Crop output, yield, irrigation and milk from the Ministry of Agriculture and Farmers Welfare and the Department of Animal Husbandry, as the RBI's Handbook of Statistics on Indian States reprints them; fertiliser use per hectare from the farms guide's state tables. The farms guide holds every crop for every state since 1980-81.",
   education: "Schools from UDISE+, the Ministry of Education's census of every school, as MoSPI serves it (2018-19 to 2024-25); college enrolment from the All India Survey on Higher Education (2021-22). A gross enrolment ratio counts every enrolled student, of any age, against the population of the official age group, so it can pass 100.",
   climate: "Temperature and rain over the whole state, from ERA5, a reconstruction of past weather that the World Bank's Climate Change Knowledge Portal averages over each state's area. Each year is set against the state's own average for 1951 to 1980.",
-  finances: "The state government's own accounts, from the RBI's Handbook, set against the state's GSDP as the states guide computes it. Actual figures run two years behind; budget and revised estimates are left out.",
+  finances: "The state government's own accounts, from the RBI's Handbook, set against the state's GSDP as the states guide computes it, with what it pays to borrow and how often it ran short of cash with the RBI, from the RBI's weekly and monthly tables. Actual accounts run two years behind; budget and revised estimates are left out.",
 };
 // a section's lead figures (its sentences); the rest go in the section's table
 const LEADS = {
   income: ["pc", "growth", "gsdp"], structure: ["services", "agri"], prices: ["cpi", "cpiFood"], work: ["ur", "urGrad", "lfprW", "wageFarm"],
   households: ["mpceR", "mpceU", "poorest5R", "foodR", "agriIncome", "debtRural", "mpi", "sanitation"], health: ["stunting", "institutional", "bpW", "anaemiaW", "imr"], money: ["cd", "deposits", "creditFarm"],
-  industry: ["factories", "estab", "re"], farms: ["grain", "yield", "rice", "wheat", "fertiliser"], education: ["ger", "gerHs", "ptr", "schoolsInternet", "neet"], climate: ["temp", "rain", "hot35Future"], finances: ["debt", "gfd", "interest", "sdl"],
+  industry: ["factories", "estab", "re"], farms: ["grain", "yield", "rice", "wheat", "fertiliser"], education: ["ger", "gerHs", "ptr", "schoolsInternet", "neet"], climate: ["temp", "rain", "hot35Future"], finances: ["debt", "gfd", "interest", "sdl", "odDays"],
 };
 const WHY_NONE = {
   income: "MoSPI's state accounts do not cover this union territory: it has no legislature, and its output is counted within the all-India figures.",

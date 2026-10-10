@@ -29,7 +29,10 @@ const slug = (document.location?.pathname ?? "").split("/").filter(Boolean).at(-
 /* ---------- where the state stands: one row per measure, each on its own scale ---------- */
 if (D.where?.length && el("plot-where")) {
   const rows = D.where;
-  const H = 64, TOP = 30;
+  // drawn once at the width the plate has: on a phone the measure's name sits above its row,
+  // so the dots, not a column of labels, fill the screen (jsdom has no layout: the wide form)
+  const avail = el("plot-where").clientWidth || W, narrow = avail < 700, PW = narrow ? avail : W;
+  const H = narrow ? 92 : 64, TOP = narrow ? 44 : 30;
   const flat = [];
   const ends = [], mine = [], ind = [];
   rows.forEach((r, i) => {
@@ -45,7 +48,7 @@ if (D.where?.length && el("plot-where")) {
     if (r.india != null) ind.push({ y, x: nx(r.india) });
   });
   const plot = Plot.plot({
-    width: W, height: TOP + rows.length * H, marginLeft: 270, marginRight: 24, marginTop: 0, marginBottom: 0, style,
+    width: PW, height: TOP + rows.length * H, marginLeft: narrow ? 10 : 270, marginRight: narrow ? 10 : 24, marginTop: 0, marginBottom: 0, style,
     x: { domain: [-0.02, 1.02], axis: null },
     y: { domain: [-0.5, rows.length - 0.5], axis: null, range: [TOP / 2, TOP / 2 + rows.length * H] },
     marks: [
@@ -56,11 +59,16 @@ if (D.where?.length && el("plot-where")) {
       Plot.text(mine, { x: "x", y: "y", text: "t", dy: -15, fill: INK, fontWeight: 600, fontSize: 12.5 }),
       Plot.text(ends.filter((e) => e.a === "start"), { x: "x", y: "y", text: "t", dy: 17, textAnchor: "start", fill: MUTED, fontSize: 11.5 }),
       Plot.text(ends.filter((e) => e.a === "end"), { x: "x", y: "y", text: "t", dy: 17, textAnchor: "end", fill: MUTED, fontSize: 11.5 }),
-      // the measure on one line and its period under it, so no label runs past the left edge
-      Plot.text(rows.map((_, i) => ({ y: i })), { x: -0.02, y: "y", text: (d) => rows[d.y].label, textAnchor: "end", dx: -14, dy: -7, fill: INK, fontSize: 12.5 }),
-      Plot.text(rows.map((_, i) => ({ y: i })), { x: -0.02, y: "y", text: (d) => rows[d.y].period, textAnchor: "end", dx: -14, dy: 9, fill: MUTED, fontSize: 11.5 }),
+      // the measure on one line and its period under it, so no label runs past the left edge;
+      // on a phone, the measure and its period on one line above the row
+      ...(narrow
+        ? [Plot.text(rows.map((_, i) => ({ y: i })), { x: -0.02, y: "y", text: (d) => `${rows[d.y].label}, ${rows[d.y].period}`, textAnchor: "start", dy: -36, fill: INK, fontSize: 12.5 })]
+        : [Plot.text(rows.map((_, i) => ({ y: i })), { x: -0.02, y: "y", text: (d) => rows[d.y].label, textAnchor: "end", dx: -14, dy: -7, fill: INK, fontSize: 12.5 }),
+           Plot.text(rows.map((_, i) => ({ y: i })), { x: -0.02, y: "y", text: (d) => rows[d.y].period, textAnchor: "end", dx: -14, dy: 9, fill: MUTED, fontSize: 11.5 })]),
     ],
   });
+  // drawn to the phone's width, so the site's 700px floor for scrolling plates does not apply
+  if (narrow) Object.assign(plot.style, { minWidth: "0", maxWidth: "100%" });
   el("plot-where").append(plot);
   a11y(plot, "Where the state stands", rows.map((r) => `${r.label} ${FMT[r.fmt](r.me)}, ${r.period}`).join("; "));
   wireCustom("cb-where", plot, `${slug}-where`, csvOf(["measure", "period", "state or UT", "value", "this unit"], rows.flatMap((r) => r.rows.map((x) => [r.label, r.period, x.s, x.v, x.me ? "yes" : ""]))));
@@ -173,20 +181,25 @@ function pairBars(id, figId, rows, { file, xMax = 100, catOf, whoOf }) {
   if (!el(id)) return;
   const cats = rows.map(catOf);
   const data = rows.flatMap((r) => [{ c: catOf(r), who: "this", v: r.me }, ...(r.india != null ? [{ c: catOf(r), who: "India", v: r.india }] : [])]);
+  // on a phone the category name sits above its bar (measured once, as the where-chart is)
+  const avail = el(id).clientWidth || W, narrow = avail < 700;
   const plot = Plot.plot({
-    width: W, height: 40 + rows.length * 46, marginLeft: 220, marginRight: 90, marginTop: 30, marginBottom: 8, style,
-    x: { domain: [0, xMax], axis: "top", label: null, tickSize: 0, tickPadding: 6, tickFormat: (v) => v + "%" },
-    y: { domain: cats, label: null, tickSize: 0, tickPadding: 12 },
+    width: narrow ? avail : W, height: 40 + rows.length * (narrow ? 62 : 46), marginLeft: narrow ? 10 : 220, marginRight: narrow ? 56 : 90, marginTop: 30, marginBottom: 8, style,
+    x: { domain: [0, xMax], axis: "top", label: null, tickSize: 0, tickPadding: 6, tickFormat: (v) => v + "%", ...(narrow ? { ticks: 5 } : {}) },
+    y: { domain: cats, label: null, tickSize: 0, tickPadding: 12, axis: narrow ? null : "left" },
     fy: undefined,
     marks: [
       Plot.gridX({ stroke: GRID }),
       Plot.ruleY(data.filter((d) => d.who === "this"), { y: "c", x1: 0, x2: "v", stroke: ACC, strokeWidth: 9 }),
-      Plot.tickX(data.filter((d) => d.who === "India"), { y: "c", x: "v", stroke: GOLD, strokeWidth: 2.5, insetTop: 8, insetBottom: 8 }),
+      // on a phone the tick spans the bar only, never the category name above it
+      Plot.tickX(data.filter((d) => d.who === "India"), { y: "c", x: "v", stroke: GOLD, strokeWidth: 2.5, insetTop: narrow ? 20 : 8, insetBottom: narrow ? 20 : 8 }),
       // the value sits at the bar's end, or past the India tick when the tick would strike it
-      Plot.text(data.filter((d) => d.who === "this"), { y: "c", x: (d) => { const i = rows.find((r) => catOf(r) === d.c).india; return i != null && i > d.v && i - d.v < 7 ? i : d.v; }, text: (d) => FMT.pct1(d.v), dx: 10, textAnchor: "start", fill: INK, fontWeight: 600 }),
+      Plot.text(data.filter((d) => d.who === "this"), { y: "c", x: (d) => { const i = rows.find((r) => catOf(r) === d.c).india; return i != null && i > d.v && i - d.v < (narrow ? 18 : 7) ? i : d.v; }, text: (d) => FMT.pct1(d.v), dx: 10, textAnchor: "start", fill: INK, fontWeight: 600 }),
       Plot.ruleX([0], { stroke: BASE }),
+      ...(narrow ? [Plot.text(cats.map((c) => ({ c })), { y: "c", x: 0, text: "c", textAnchor: "start", dy: -16, fill: INK, fontSize: 12 })] : []),
     ],
   });
+  if (narrow) Object.assign(plot.style, { minWidth: "0", maxWidth: "100%" });
   el(id).append(plot);
   a11y(plot, el(figId).querySelector("h3").textContent.trim(), rows.map((r) => `${catOf(r)} ${FMT.pct1(r.me)}${r.india != null ? ", India " + FMT.pct1(r.india) : ""}`).join("; "));
   wireCustom(figId, plot, file, csvOf(["measure", "this unit, %", "All India, %"], rows.map((r) => [catOf(r), r.me, r.india])));
