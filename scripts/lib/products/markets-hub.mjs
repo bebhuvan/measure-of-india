@@ -178,7 +178,7 @@ export async function buildMarketsHub(root, dcfg, VINTAGE, cfg, { only } = {}) {
       if (gap < 0 || gap > 5) throw new Error(`markets-hub SPF round ${n}: dated ${d} but its first forecast quarter starts ${firstQ} (${gap} months): the bimonthly schedule does not hold`);
       // Main Table 1 medians must equal Annex I medians (the main tables are a summary)
       for (const m of R.main) {
-        const a = R.annual.find((x) => x.fy === m.fy && /^GDP at constant prices/i.test(x.ind));
+        const a = R.annual.find((x) => x.fy === m.fy && /^GDP at constant/i.test(x.ind));
         if (a && m.median != null && a.vals[1] != null && Math.abs(a.vals[1] - m.median) > 0.051) throw new Error(`markets-hub SPF round ${n}: Main Table 1 real GDP median ${m.median} for ${m.fy} differs from Annex I ${a.vals[1]}`);
       }
     }

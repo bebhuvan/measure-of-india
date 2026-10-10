@@ -46,10 +46,12 @@ const monthOf = (d) => MS[d.getUTCMonth()] + " " + d.getUTCFullYear();
 const qOfDate = (d) => qtr(d.toISOString().slice(0, 10));
 const fyOfDate = (d) => fy(d.toISOString().slice(0, 10));
 const setHTML = (id, h) => { const el = document.getElementById(id); if (el) el.innerHTML = h; };
+// source text (fund house and industry names) is escaped before it meets innerHTML
+const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const pc = (u) => `<span class="pc">${u}</span>`;
 const MINUS = "−";
 const p1 = (v) => fmt.pct1Minus(v);                                   // a signed rate, one decimal
-const lc = (crore) => (crore < 0 ? MINUS : "") + "₹" + (Math.abs(crore) / 1e5).toFixed(1) + " lakh crore";
+const lc = (crore) => (crore < 0 ? MINUS : "") + "₹" + (Math.abs(crore) / 1e5).toLocaleString("en-IN", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + " lakh crore";
 const lc2 = (crore) => (crore < 0 ? MINUS : "") + "₹" + (Math.abs(crore) / 1e5).toFixed(2) + " lakh crore";
 const tc = (crore) => (crore < 0 ? MINUS : "") + "₹" + Math.round(Math.abs(crore)).toLocaleString("en-IN") + " crore";
 const lastOf = (b, k) => { const d = b.series[k]?.data; if (!d) return null; for (let i = d.length - 1; i >= 0; i--) if (d[i] != null) return { v: d[i], i, date: b.dates[i] }; return null; };
@@ -130,7 +132,7 @@ function bars(figId, plotId, rows, opts) {
   const h = Math.max(220, rows.length * (opts.rowH ?? 30) + 70);
   const plot = Plot.plot({
     width: W, height: h, marginLeft: opts.ml ?? 300, marginRight: 120, marginTop: 34, marginBottom: 20, style,
-    x: { label: opts.label, labelAnchor: "right", labelArrow: false, domain: xS.domain, ticks: xS.ticks, tickSize: 0, tickFormat: (v) => String(opts.fmt(v)), axis: "top" },
+    x: { label: opts.label, labelAnchor: "right", labelArrow: false, domain: xS.domain, ticks: xS.ticks, tickSize: 0, tickFormat: (v) => String(opts.tickFmt ? opts.tickFmt(v) : v.toLocaleString("en-IN")).replace("-", MINUS), axis: "top" },
     y: { label: null, domain: rows.map((r) => r.label), tickSize: 0, tickPadding: 10 },
     marks: [
       Plot.gridX(xS.ticks, { stroke: GRID }),
@@ -139,7 +141,8 @@ function bars(figId, plotId, rows, opts) {
       ...(rows.some((r) => r.ref != null) ? [Plot.tickX(rows.filter((r) => r.ref != null), { x: "ref", y: "label", stroke: INK, strokeWidth: 1.5, insetTop: 4, insetBottom: 4 })] : []),
       // values outside the bar's end, on the side away from zero
       Plot.text(rows.filter((r) => r.v >= 0), { x: (r) => Math.max(r.v, r.ref ?? -Infinity), y: "label", text: (r) => opts.fmt(r.v), dx: 8, textAnchor: "start", fill: INK, fontSize: 12 }),
-      Plot.text(rows.filter((r) => r.v < 0), { x: (r) => Math.min(r.v, r.ref ?? Infinity), y: "label", text: (r) => opts.fmt(r.v), dx: -8, textAnchor: "end", fill: INK, fontSize: 12 }),
+      // a bar below zero is labelled on the right of the zero rule, clear of the row names
+      Plot.text(rows.filter((r) => r.v < 0), { x: (r) => Math.max(0, r.ref ?? 0), y: "label", text: (r) => opts.fmt(r.v), dx: 8, textAnchor: "start", fill: INK, fontSize: 12 }),
     ],
   });
   a11y(plot, document.querySelector(`#${figId} .plate-head h3`)?.textContent.trim() ?? figId, rows.slice(0, 8).map((r) => `${r.label} ${opts.fmt(r.v)}`).join("; "));
@@ -162,13 +165,13 @@ setHTML("n-aum", lc(aumL.v));
 setHTML("d-aum", `<b>${p1(100 * (aumL.v / aumB.series.aum.data[aumL.i - 1] - 1))}</b> on a year earlier, March ${aumL.date.slice(0, 4)}`);
 const salesL = lastOf(lqB, "sales");
 setHTML("n-sales", p1(salesL.v).replace("%", pc("%")));
-setHTML("d-sales", `${qtr(salesL.date)}, <b>${fmt.count(lqB.series.companies.data[salesL.i])}</b> companies`);
+setHTML("d-sales", `${qtr(salesL.date)}, <b>${lqB.series.companies.data[salesL.i].toLocaleString("en-IN")}</b> companies`);
 // forecasters: the current fiscal year's median in the latest round
 const spfNow = (BK.spfNew ?? []).map((s) => ({ ...s, last: s.data.at(-1) })).filter((s) => s.last[0] === (BK.spfNew ?? []).flatMap((x) => x.data.map((p) => p[0])).sort().at(-1));
 const spfCur = spfNow.sort((a, b) => (a.target < b.target ? -1 : 1))[0], spfNext = spfNow.sort((a, b) => (a.target < b.target ? -1 : 1))[1];
 if (spfCur) {
   setHTML("n-spf", spfCur.last[1].toFixed(1) + pc("%"));
-  setHTML("d-spf", `for ${spfCur.target}, survey of ${monthOf(dt(spfCur.last[0]))}`);
+  setHTML("d-spf", `for ${esc(spfCur.target)}, survey of ${monthOf(dt(spfCur.last[0]))}`);
 }
 
 /* =================== § 02 lived reality =================== */
@@ -243,7 +246,7 @@ const fA = (k, i = flowsAB.dates.length - 1) => flowsAB.series[FA[k]]?.data[i] ?
 
 /* =================== § 07 mutual funds =================== */
 {
-  const a = { label: "Assets under management", color: ACC, bold: true, data: pts(aumB, "aum", 1e-5) };
+  const a = { label: "All funds", color: ACC, bold: true, data: pts(aumB, "aum", 1e-5) };
   lines("cb-aum", "plot-aum", [a], { y: { step: 10, label: "₹ lakh crore, end-March", fmt: (v) => String(v) }, tipFmt: (v) => "₹" + v.toFixed(1) + " lakh cr", dateFmt: (d) => "March " + d.getUTCFullYear(), x: { step: 4 }, mr: 260 });
   setHTML("pv-aum", lc(aumL.v)); setHTML("ex-aum", lc(aumL.v));
   setHTML("ex-aum-y", p1(100 * (aumL.v / aumB.series.aum.data[aumL.i - 1] - 1))); setHTML("ex-aum-5", lc(aumB.series.aum.data[aumL.i - 5]));
@@ -254,7 +257,7 @@ const fA = (k, i = flowsAB.dates.length - 1) => flowsAB.series[FA[k]]?.data[i] ?
   bars("cb-houses", "plot-houses", top, { step: 20, fmt: (v) => (v < 0 ? MINUS : "") + "₹" + Math.abs(v).toFixed(1) + " th cr", label: "₹ thousand crore", csvHead: `${fy(BK.housesDate)}, ₹ thousand crore`, ml: 300, rowH: 28 });
   setHTML("pv-houses", lc(BK.housesTotal));
   if (H.length) {
-    setHTML("ex-h-top", H[0].label); setHTML("ex-h-topv", tc(H[0].v));
+    setHTML("ex-h-top", esc(H[0].label)); setHTML("ex-h-topv", tc(H[0].v));
     const pos = H.filter((h) => h.v > 0).reduce((s, h) => s + h.v, 0);
     setHTML("ex-h-top5", fmt.pct0((100 * H.slice(0, 5).reduce((s, h) => s + h.v, 0)) / BK.housesTotal));
     setHTML("ex-h-neg", fmt.count(H.filter((h) => h.v < 0).length));
@@ -293,7 +296,7 @@ const fA = (k, i = flowsAB.dates.length - 1) => flowsAB.series[FA[k]]?.data[i] ?
 {
   const s = (rows, label, color, bold) => ({ label, color, bold, data: (rows ?? []).map(([d, v]) => ({ date: dt(d), value: v == null ? null : v / 1e5 })) });
   const cp = s(BK.cp, "Commercial paper", ACC, true), cd = s(BK.cd, "Certificates of deposit", GOLD);
-  lines("cb-cpcd", "plot-cpcd", [cd, cp], { y: { step: 1, label: "₹ lakh crore outstanding", fmt: (v) => String(v) }, tipFmt: (v) => "₹" + v.toFixed(2) + " lakh cr", dateFmt: (d) => `${d.getUTCDate()} ${monthOf(d)}`, x: { step: 4 }, mr: 260 });
+  lines("cb-cpcd", "plot-cpcd", [cd, cp], { y: { step: 1, label: "₹ lakh crore outstanding", fmt: (v) => String(v) }, tipFmt: (v) => "₹" + v.toFixed(2) + " lakh cr", dateFmt: (d) => `${d.getUTCDate()} ${monthOf(d)}`, x: { step: 4 }, mr: 310 });
   const lc_ = (rows) => rows.filter((r) => r[1] != null).at(-1);
   const yAgo = (rows) => { const l = lc_(rows); const t = new Date(dt(l[0]).getTime() - 365 * 864e5); return rows.filter((r) => r[1] != null && dt(r[0]) <= t).at(-1); };
   setHTML("pv-cp", lc2(lc_(BK.cp)[1])); setHTML("ex-cp", lc2(lc_(BK.cp)[1])); setHTML("ex-cd", lc2(lc_(BK.cd)[1]));
@@ -309,11 +312,12 @@ const fA = (k, i = flowsAB.dates.length - 1) => flowsAB.series[FA[k]]?.data[i] ?
   setHTML("pv-mcap", lc(nL.v)); setHTML("ex-mc-n", lc(nL.v)); setHTML("ex-mc-b", lc(lastOf(mcapB, "bse").v)); setHTML("ex-mc-ny", lc(mcapB.series.nse.data[nL.i - 12]));
 }
 {
-  const D = BK.deriv ?? { dates: [], index_options: [], cash: [] };
-  const mk = (arr, label, color, bold) => ({ label, color, bold, data: D.dates.map((d, i) => ({ date: dt(d), value: arr[i] == null || arr[i] <= 0 ? null : arr[i] / 1e5 })) });
+  const D = BK.deriv ?? { dates: [], index_options: [], cash: [], anomalies: [] };
+  const skip = new Set(D.anomalies ?? []);   // the RBI's misprinted months: left off the chart, kept in the data
+  const mk = (arr, label, color, bold) => ({ label, color, bold, data: D.dates.map((d, i) => ({ date: dt(d), value: arr[i] == null || arr[i] <= 0 || skip.has(d) ? null : arr[i] / 1e5 })) });
   const o = mk(D.index_options, "Index options", ACC, true), c = mk(D.cash, "Shares", G1);
-  const ticks = [0.1, 1, 10, 100, 1000, 10000];
-  lines("cb-turnover", "plot-turnover", [c, o], { y: { type: "log", domain: [0.1, 10000], ticks, label: "₹ lakh crore a month (log scale)", fmt: (v) => v.toLocaleString("en-IN") }, tipFmt: (v) => "₹" + (v >= 100 ? Math.round(v).toLocaleString("en-IN") : v.toFixed(1)) + " lakh cr", x: { step: 4 }, mr: 220, gap: 0 });
+  const ticks = [0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000];
+  lines("cb-turnover", "plot-turnover", [c, o], { y: { type: "log", domain: [0.001, 10000], ticks, label: "₹ lakh crore a month (log scale)", fmt: (v) => v.toLocaleString("en-IN") }, tipFmt: (v) => "₹" + (v >= 100 ? Math.round(v).toLocaleString("en-IN") : v.toFixed(1)) + " lakh cr", x: { step: 4 }, mr: 220, gap: 0 });
   const oL = o.data.filter((p) => p.value != null).at(-1), cL = c.data.find((p) => p.date.getTime() === oL.date.getTime());
   setHTML("pv-turnover", cL?.value ? `${Math.round(oL.value / cL.value)}${pc("×")}` : "—");
   setHTML("ex-to-o", lc(oL.value * 1e5)); setHTML("ex-to-c", cL?.value ? lc(cL.value * 1e5) : "—");
@@ -325,7 +329,7 @@ const fA = (k, i = flowsAB.dates.length - 1) => flowsAB.series[FA[k]]?.data[i] ?
   const list = [{ label: "Sales", color: ACC, bold: true, data: pts(lqB, "sales") }, { label: "Operating profit", color: GOLD, data: pts(lqB, "opr_pft") }];
   lines("cb-listed", "plot-listed", list, { y: { step: 10, label: "growth on a year earlier, per cent", fmt: (v) => String(v) }, tipFmt: (v) => p1(v), dateFmt: qOfDate, x: { step: 2 }, mr: 220 });
   setHTML("pv-listed", p1(s.v));
-  setHTML("ex-ls-n", fmt.count(lqB.series.companies.data[s.i])); setHTML("ex-ls-s", p1(s.v)); setHTML("ex-ls-o", p1(lqB.series.opr_pft.data[s.i]));
+  setHTML("ex-ls-n", lqB.series.companies.data[s.i].toLocaleString("en-IN")); setHTML("ex-ls-s", p1(s.v)); setHTML("ex-ls-o", p1(lqB.series.opr_pft.data[s.i]));
   setHTML("ex-ls-p", p1(lqB.series.net_pft.data[s.i])); setHTML("ex-ls-w", p1(lqB.series.expd_staff_cost.data[s.i]));
 }
 {
@@ -349,7 +353,7 @@ const fA = (k, i = flowsAB.dates.length - 1) => flowsAB.series[FA[k]]?.data[i] ?
   const sorted = R.map((r) => r.v).sort((a, b) => a - b), med = sorted.length % 2 ? sorted[(sorted.length - 1) / 2] : (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2;
   setHTML("pv-industries", `${fmt.count(R.filter((r) => r.v > 10).length)} of ${fmt.count(R.length)}`);
   if (R.length) {
-    setHTML("ex-in-hi", `${R[0].label}, ${p1(R[0].v)}`); setHTML("ex-in-lo", `${R.at(-1).label}, ${p1(R.at(-1).v)}`);
+    setHTML("ex-in-hi", `${esc(R[0].label)}, ${p1(R[0].v)}`); setHTML("ex-in-lo", `${esc(R.at(-1).label)}, ${p1(R.at(-1).v)}`);
     setHTML("ex-in-med", p1(med)); setHTML("ex-in-neg", fmt.count(R.filter((r) => r.v < 0).length)); setHTML("ex-in-n", fmt.count(R.length));
   }
 }
@@ -365,7 +369,7 @@ const fA = (k, i = flowsAB.dates.length - 1) => flowsAB.series[FA[k]]?.data[i] ?
     seams.push(...seamMarks("side", [{ data: o.data, color, width: 1.5 }, { data: n.data, color, width: bold ? 2 : 1.75 }], j === 0 ? { text: "Ind AS format from the 2020-21 study", y: 26, at: dt("2019-10-01") } : false));
     list.push(n, o);
   });
-  lines("cb-studies", "plot-studies", list, { y: { step: 10, label: "net sales, growth on the year before, per cent", fmt: (v) => String(v) }, tipFmt: (v) => p1(v), dateFmt: fyOfDate, x: { step: 2 }, mr: 220, noLines: true, pre: seams });
+  lines("cb-studies", "plot-studies", list, { y: { step: 10, label: "sales, growth on the year before, per cent", fmt: (v) => String(v) }, tipFmt: (v) => p1(v), dateFmt: fyOfDate, x: { step: 2 }, mr: 220, noLines: true, pre: seams });
   const L = (b) => lastOf(b, "net_sales").v;
   setHTML("pv-studies", p1(L(pubG)));
   setHTML("ex-st-pub", p1(L(pubG))); setHTML("ex-st-pvt", p1(L(pvtG))); setHTML("ex-st-fdi", p1(L(fdiG)));
@@ -386,37 +390,27 @@ const fA = (k, i = flowsAB.dates.length - 1) => flowsAB.series[FA[k]]?.data[i] ?
 
 /* =================== § 13 forecasters (old and new GDP base, drawn apart) =================== */
 {
-  const toS = (x, color) => ({ label: x.target, color, data: x.data.map(([d, v]) => ({ date: dt(d), value: v })) });
-  const olds = (BK.spfOld ?? []).sort((a, b) => (a.target < b.target ? -1 : 1)), news = (BK.spfNew ?? []).sort((a, b) => (a.target < b.target ? -1 : 1));
-  const palette = [G3, G2, G1, "#8790A0", G2, G1, G3, G2];
-  const oldS = olds.map((x, j) => toS(x, palette[j % palette.length])), newS = news.map((x, j) => toS(x, j === 0 ? ACC : GOLD));
-  const all = [...oldS, ...newS];
-  const yS = span(all.flatMap((s) => s.data.map((p) => p.value)), 2, false);
-  const plot = Plot.plot({
-    width: W, height: 500, marginLeft: 52, marginRight: 120, marginTop: 28, marginBottom: 34, style,
-    x: { type: "utc", label: null, tickSize: 0, tickPadding: 10, ticks: yearTicks(2020, 2026, 1), tickFormat: yearFmt },
-    y: { label: "median forecast of real GDP growth, per cent", labelAnchor: "top", labelArrow: false, domain: yS.domain, ticks: yS.ticks, tickSize: 0, tickPadding: 8, tickFormat: (v) => String(v) },
-    marks: [
-      Plot.gridY(yS.ticks, { stroke: GRID }),
-      Plot.ruleY([0], { stroke: BASE }),
-      // the new base is a second ruler: the seam treatment draws both sets apart, with the changeover marked
-      ...seamMarks("side", [...oldS.map((s) => ({ data: s.data, color: s.color, width: 1.5 })), ...newS.map((s) => ({ data: s.data, color: s.color, width: 2 }))], { text: "New GDP base from round 99", y: yS.domain[1] - 1, at: dt("2026-02-01") }),
-      Plot.dot(all.flatMap((s) => s.data.filter((p) => p.value != null).map((p) => ({ ...p, c: s.color }))), { x: "date", y: "value", fill: "c", r: 2.2 }),
-      // each target year labelled at its first round, above the point
-      Plot.text(all.map((s) => ({ ...s.data.find((p) => p.value != null), t: s.label })), { x: "date", y: "value", text: "t", dy: -10, fontSize: 11.5, fill: INK }),
-    ],
-  });
-  const cur = newS[0]?.data.at(-1);
-  a11y(plot, document.querySelector("#cb-spf .plate-head h3")?.textContent.trim(), cur ? `Median forecast for ${newS[0].label}: ${cur.value.toFixed(1)}% in ${monthOf(cur.date)}` : "");
-  put("plot-spf", plot);
-  wirePlate("cb-spf", plot, "markets-spf", csvSeries(all.map((s) => ({ ...s, label: `GDP growth forecast for ${s.label}, median (${newS.includes(s) ? "GDP 2022-23 base" : "GDP 2011-12 base"})` }))));
+  // at each round, the median for the fiscal year in progress and for the year ahead: one series
+  // each, picked from the per-target series by the round's own date (a selection, nothing computed)
+  const fyOfRound = (iso) => { const y = +iso.slice(0, 4), m = +iso.slice(5, 7), st = m >= 4 ? y : y - 1; return `${st}-${String((st + 1) % 100).padStart(2, "0")}`; };
+  const nextFy = (f) => { const st = +f.slice(0, 4) + 1; return `${st}-${String((st + 1) % 100).padStart(2, "0")}`; };
+  const pick = (list, ahead) => { const m = new Map(); for (const x of list ?? []) for (const [d, v] of x.data) { const f = fyOfRound(d); if (x.target === (ahead ? nextFy(f) : f)) m.set(d, v); }
+    return [...m.entries()].sort().map(([d, v]) => ({ date: dt(d), value: v })); };
+  const oT = { label: "This year (old base)", color: G2, data: pick(BK.spfOld, false), noLabel: true }, oN = { label: "Next year (old base)", color: "#7F93E8", data: pick(BK.spfOld, true), noLabel: true };
+  const nT = { label: "This year", color: G1, data: pick(BK.spfNew, false) }, nN = { label: "Next year", color: ACC, bold: true, data: pick(BK.spfNew, true) };
+  const newS = [nN, nT];
+  const seams = [...seamMarks("side", [{ data: oT.data, color: G2, width: 1.5 }, { data: nT.data, color: G1, width: 1.75 }], { text: "New GDP base from round 99", y: 11, at: dt("2026-02-01") }),
+    ...seamMarks("side", [{ data: oN.data, color: "#7F93E8", width: 1.5 }, { data: nN.data, color: ACC, width: 2 }], false)];
+  const dots = [oT, oN, nT, nN].map((s) => Plot.dot(s.data.filter((p) => p.value != null), { x: "date", y: "value", fill: s.color, r: 2.2 }));
+  const plot = lines("cb-spf", "plot-spf", [nN, nT, oN, oT], { y: { step: 2, label: "median forecast of real GDP growth, per cent", fmt: (v) => String(v), floor0: false }, tipFmt: (v) => fmt.pct1(v), labelFmt: (v) => v.toFixed(1) + "%", x: { step: 1 }, mr: 160, noLines: true, pre: [...seams, ...dots] });
+  void plot;
   if (spfCur) {
-    setHTML("pv-spf", spfCur.last[1].toFixed(1) + pc("%")); setHTML("pv-spf-y", spfCur.target);
-    setHTML("ex-spf-y", spfCur.target); setHTML("ex-spf-v", fmt.pct1(spfCur.last[1]));
-    setHTML("ex-spf-n", spfNext ? `${fmt.pct1(spfNext.last[1])} (${spfNext.target})` : "—");
+    setHTML("pv-spf", spfCur.last[1].toFixed(1) + pc("%")); setHTML("pv-spf-y", esc(spfCur.target));
+    setHTML("ex-spf-y", esc(spfCur.target)); setHTML("ex-spf-v", fmt.pct1(spfCur.last[1]));
+    setHTML("ex-spf-n", spfNext ? `${fmt.pct1(spfNext.last[1])} (${esc(spfNext.target)})` : "—");
   }
   const cpi = (BK.cpiNew ?? []).map((x) => ({ ...x, last: x.data.at(-1) })).filter((x) => x.last && x.last[0] === (spfCur?.last[0])).sort((a, b) => (a.target < b.target ? -1 : 1))[0];
-  if (cpi) { setHTML("ex-spf-q", cpi.target.replace(":", " ")); setHTML("ex-spf-c", fmt.pct1(cpi.last[1])); }
+  if (cpi) { setHTML("ex-spf-q", esc(cpi.target.replace(":", " "))); setHTML("ex-spf-c", fmt.pct1(cpi.last[1])); }
 }
 
 /* =================== provenance =================== */

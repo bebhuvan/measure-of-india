@@ -81,6 +81,11 @@ Branch `lb/markets`, port 4435. Guide `/guides/markets/`. Inventory items R11, R
   (blocked); its export of report 1476 has no rows.
 - Hub code lists are served by DSD code (`/api/codelists/PRF_LNGNFC_QTR_RN`), not by
   dimension name: worth adding to `docs/reference/rbihub.md`.
+- Report 1357 prints every NSE instrument (and BSE index futures) in March 2011 at some 230
+  times the months either side: flagged as `anomalies` on the series, kept as printed, left off
+  the turnover plate with a footnote.
+- Report 1361 stopped printing its total row: the page sums the fund houses and says so.
+- SPF wording changed with the base: "GDP at constant (2011-12) prices" before round 99.
 - **Privacy**: Data Bank report 273 (UCCS unit-level, 2010-14) holds respondents' names,
   addresses and phone numbers. Excluded here; the Data Bank owner may want to know.
 
@@ -101,6 +106,14 @@ Names only, from the Data Bank's `india_data_hub_series` (no values used):
 - `CMMFAUMTOT11M:IND` AUM of all mutual funds (monthly; compare March) ↔ `markets-mf-aum.aum`
 - `CMMMCPMNIR11F:IND` / `CMMMCPMXIR11F:IND` CP yields ↔ `rates-cp` (the rates family)
 
-## Next
+## Next (after merge)
 
-- Look at the page at 1440 and 390, read every chart, download one share image.
+- Rebake when the Data Bank and the Hub refresh (listed companies past Dec 2025; revised household flows).
+- Link from `gdp` (household saving) and `rates` (CP/CD) to this guide.
+
+Nothing outstanding on the bar. Final check (2026-10-10): `npx astro build` and `npm run gates`
+green (validate, coverage --strict, asof, QC, chart lint clean), `npm test` 52/52,
+`npm run prose:dry` green. Looked at every plate at 1440 and 390 over four rounds (fixed: bar
+labels colliding with row names, tick clutter, the log-scale floor, quarter-named subtitles, the
+fund-house total, the SPF plate redrawn as "year in progress / year ahead" per ruler, end labels
+running past the frame). Share image downloaded from the page (cb-flows PNG) and read.

@@ -405,6 +405,15 @@ export async function buildMarkets(root, dcfg, VINTAGE, cfg) {
       const exn = { bse: "BSE", nse: "NSE", mcx_sx: "MCX-SX" }[ex];
       ser(dv, `${ex}__${slug(inst)}`, { label: `${exn}: ${inst}`, unit: "inr_crore", group: exn }).values.set(monthOfStamp(r["Time Date"]), crore(num(r["Amount ( Rs Crore )"])));
     }
+    // a value more than fifty times both its neighbours is a misprint in the RBI's table (NSE index
+    // options, March 2011: ₹46,43,30,500 crore against about ₹2,00,000 crore either side); it stays
+    // in the data as printed, flagged on the series so a chart can leave it off and say so
+    for (const s of dv.values()) {
+      const ds = [...s.values.keys()].sort(), an = [];
+      ds.forEach((d, i) => { const v = s.values.get(d), a = s.values.get(ds[i - 1]), c = s.values.get(ds[i + 1]);
+        if (v != null && a > 0 && c > 0 && v > 50 * a && v > 50 * c) an.push(d); });
+      if (an.length) { s.anomalies = an; s.anomalyNote = "Printed by the RBI more than fifty times the months either side; kept as printed, left off charts."; }
+    }
     put("markets-derivatives", { frequency: "monthly", base: "as published", unit: "inr_crore", product: "DBIE report 1357 (turnover in the equity derivatives market)", coverage: "The value of futures and options traded, by exchange and instrument, monthly",
       note: "₹ crore. For options the RBI's table marks the figures with '$' (notional turnover: the value of the shares the contracts cover, not the premium paid). MCX-SX traded from 2013 and its later form is not in the table." },
       assemble(dv, { gapsNote: "The exchange prints nothing for this instrument in these months; left empty." }));

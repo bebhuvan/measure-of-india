@@ -33,6 +33,7 @@ const PI = period("markets-issues"), PIA = period("markets-issues-annual"), PCP 
 const PLQ = period("markets-listed-q"), PCO = period("markets-co-public-growth"), PSPF = period("markets-spf");
 const qLabel = (P, b) => qOf(b.dates.at(-1));
 const fyA = fyOf(flowsA.dates.at(-1)), fyL = fyOf(longB.dates.at(-1)), fyIA = fyOf(issuesA.dates.at(-1)), fyCO = fyOf(pubG.dates.at(-1)), fyH = fyOf(houses.dates.at(-1)), fySP = fyOf(sponsor.dates.at(-1));
+const qSpan = (b) => `${qOf(b.dates[0])} to ${qOf(b.dates.at(-1))}`;
 const lqLast = qOf(lq.dates.at(-1)), flowsLast = qOf(flows.dates.at(-1)), stocksLast = qOf(stocks.dates.at(-1));
 
 // titles that carry a figure are computed from the bundles
@@ -45,7 +46,7 @@ const gL = lastOf(gold, "gold_mumbai"), gY = gold.series.gold_mumbai.data[gL.i -
 const goldTitle = `Ten grams of gold cost ₹${Math.round(gL.v).toLocaleString("en-IN")} in Mumbai in ${MONTHS[+gL.date.slice(5, 7) - 1]} ${gL.date.slice(0, 4)}, ${Math.round(100 * (gL.v / gY - 1))}% more than a year earlier`;
 const eqA = lastOf(issuesA, "equity");
 const eqMax = Math.max(...issuesA.series.equity.data.filter((v) => v != null));
-const issuesTitle = `Companies raised ₹${lakh(eqA.v)} lakh crore in new shares from the public in ${fyOf(eqA.date)}${eqA.v === eqMax ? ", more than in any year before" : ""}`;
+const issuesTitle = `Companies raised ₹${(eqA.v / 1e5).toFixed(2)} lakh crore in new shares from the public in ${fyOf(eqA.date)}${eqA.v === eqMax ? ", more than in any year before" : ""}`;
 const mcN = lastOf(mcap, "nse");
 const lqS = lastOf(lq, "sales");
 const lr = B("markets-listed-q-ratios"), icL = lastOf(lr, "int_cvg"), ic0 = lr.series.int_cvg.data[lr.dates.indexOf("2015-04-01")];
@@ -60,12 +61,15 @@ const spfTargets = (b, re) => Object.entries(b.series).filter(([k]) => re.test(k
 const baked = {
   cp: ser(cp, "outstanding", "1993-01-01"), cd: ser(cd, "outstanding", "1991-01-01"),
   houses: (() => { const i = houses.dates.length - 1; return Object.entries(houses.series).filter(([k]) => k !== "total").map(([k, s]) => ({ label: s.label, v: s.data[i] })).filter((x) => x.v != null).sort((a, b) => b.v - a.v); })(),
-  housesDate: houses.dates.at(-1), housesTotal: houses.series.total.data.at(-1),
-  industries: latestBy(lqi, "__sales", (k) => !k.startsWith("inds_grp_all_comp")).map((x) => ({ ...x, label: x.label.replace(/: Sales: growth on a year earlier, same companies$/, ""), n: lqi.series[x.k.replace(/__sales$/, "__companies")]?.data.at(-1) ?? null })),
+  housesDate: houses.dates.at(-1),
+  // the RBI's table stopped printing its total row: the houses are summed here, and the page says so
+  housesTotal: Object.entries(houses.series).filter(([k]) => k !== "total").reduce((t, [, s]) => t + (s.data.at(-1) ?? 0), 0),
+  // leaf industries only: all companies and the three sums with sub-industries (manufacturing, services other than IT, agriculture) are left out
+  industries: latestBy(lqi, "__sales", (k) => !/^(inds_grp_all_comp|mnf|serv_oth_it|agr_rel_act)__/.test(k)).map((x) => ({ ...x, label: x.label.replace(/: Sales: growth on a year earlier, same companies$/, ""), n: lqi.series[x.k.replace(/__sales$/, "__companies")]?.data.at(-1) ?? null })),
   industriesDate: lqi.dates.at(-1),
-  spfOld: spfTargets(spfOld, /^gdp_at_constant_prices/), spfNew: spfTargets(spf, /^gdp_at_constant_prices/),
+  spfOld: spfTargets(spfOld, /^gdp_at_constant/), spfNew: spfTargets(spf, /^gdp_at_constant/),
   cpiOld: spfTargets(spfIOld, /^cpi_combined_general/), cpiNew: spfTargets(spfI, /^cpi_combined_general/),
-  deriv: { dates: deriv.dates, index_options: deriv.series.nse__index_options.data, cash: deriv.dates.map((d) => turn.series.nse.data[turn.dates.indexOf(d)] ?? null) },
+  deriv: { dates: deriv.dates, anomalies: deriv.series.nse__index_options.anomalies ?? [], index_options: deriv.series.nse__index_options.data, cash: deriv.dates.map((d) => turn.series.nse.data[turn.dates.indexOf(d)] ?? null) },
 };
 ---
 <Base
@@ -176,7 +180,7 @@ const baked = {
         <div class="plate-head">
           <div class="t">
             <h3>Households save about a tenth of GDP in financial assets each quarter, and borrow back a growing part of it</h3>
-            <div class="sub">Gross financial saving, borrowing and net financial saving of households, per cent of the quarter's GDP, {PQ.span}.</div>
+            <div class="sub">Gross financial saving, borrowing and net financial saving of households, per cent of the quarter's GDP, {qSpan(flows)}.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-net">–</div><div class="c">net, {flowsLast}</div></div>
         </div>
@@ -311,7 +315,7 @@ const baked = {
             <h3>Most new money goes to a handful of large fund houses</h3>
             <div class="sub">Net money put into each fund house (sales less redemptions), {fyH}, ₹ thousand crore, the twenty largest of {baked.houses.length}.</div>
           </div>
-          <div class="plate-val"><div class="v acc" id="pv-houses">–</div><div class="c">into all fund houses, {fyH}</div></div>
+          <div class="plate-val"><div class="v acc" id="pv-houses">–</div><div class="c">all fund houses together (summed here), {fyH}</div></div>
         </div>
         <div class="frame">
           <div class="plotzone"><div id="plot-houses" style="position:relative"></div></div>
@@ -337,7 +341,7 @@ const baked = {
         <div class="plate-head">
           <div class="t">
             <h3>Private fund houses took over from UTI and the bank-sponsored funds after 2000</h3>
-            <div class="sub">Net resources mobilised by mutual funds by sponsor, ₹ thousand crore, {fyOf(sponsor.dates.find((d, i) => sponsor.series.private.data[i] != null))} to {fySP}.</div>
+            <div class="sub">Net resources mobilised by mutual funds by sponsor, ₹ thousand crore, 1987-88 to {fySP} (private funds from {fyOf(sponsor.dates.find((d, i) => sponsor.series.private.data[i] != null))}).</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-sponsor">–</div><div class="c">private funds, {fySP}</div></div>
         </div>
@@ -524,7 +528,7 @@ const baked = {
           </div>
           <div class="plotzone"><div id="plot-turnover" style="position:relative"><div class="cb-tip"></div></div></div>
           <div class="plotfoot">
-            <span class="src">Source: RBI, turnover in the equity derivatives market (DBIE report 1357) and monthly turnover at NSE (report 1352). Notional value: the value of the shares the contracts cover.</span>
+            <span class="src">Source: RBI, turnover in the equity derivatives market (DBIE report 1357) and monthly turnover at NSE (report 1352). Notional value: the value of the shares the contracts cover. March 2011 is left off: the RBI's table prints every NSE instrument at some 230 times the months either side, a misprint kept as printed in the data download.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -550,7 +554,7 @@ const baked = {
         <div class="plate-head">
           <div class="t">
             <h3>Listed companies' sales grew {lqS.v.toFixed(1)}% in {lqLast}, and their operating profit kept pace</h3>
-            <div class="sub">Listed private non-financial companies: growth in sales and operating profit on the same quarter a year earlier, the same companies in both, per cent, {PLQ.span}.</div>
+            <div class="sub">Listed private non-financial companies: growth in sales and operating profit on the same quarter a year earlier, the same companies in both, per cent, {qSpan(lq)}.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-listed">–</div><div class="c">sales growth, {lqLast}</div></div>
         </div>
@@ -582,7 +586,7 @@ const baked = {
         <div class="plate-head">
           <div class="t">
             <h3>Manufacturers, IT firms and other service companies grow at different speeds</h3>
-            <div class="sub">Sales growth of listed private companies by sector, on the same quarter a year earlier, per cent, {PLQ.span}.</div>
+            <div class="sub">Sales growth of listed private companies by sector, on the same quarter a year earlier, per cent, {qSpan(lq)}.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-sectors">–</div><div class="c">manufacturing, {lqLast}</div></div>
         </div>
@@ -615,7 +619,7 @@ const baked = {
         <div class="plate-head">
           <div class="t">
             <h3>{coverTitle}</h3>
-            <div class="sub">Interest coverage (earnings before interest and tax divided by interest, times) and net profit as a share of sales (per cent), listed private non-financial companies, {PLQ.span}.</div>
+            <div class="sub">Interest coverage (earnings before interest and tax divided by interest, times) and net profit as a share of sales (per cent), listed private non-financial companies, {qSpan(lq)}.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-coverage">–</div><div class="c">interest coverage, {lqLast}</div></div>
         </div>
@@ -750,12 +754,16 @@ const baked = {
         <div class="plate-head">
           <div class="t">
             <h3>Forecasters change their mind about a year's growth as the year unfolds</h3>
-            <div class="sub">Median forecast of real GDP growth for each fiscal year, per cent, round by round, November 2019 to {PSPF.long}. From round 99 the forecasts are on the new GDP base.</div>
+            <div class="sub">At each survey round, the median forecast of real GDP growth for the fiscal year in progress and for the year ahead, per cent, November 2019 to {PSPF.long}. From round 99 the forecasts are on the new GDP base, drawn apart; paler lines are the old base.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-spf">–</div><div class="c">for <span id="pv-spf-y">–</span>, {PSPF.long}</div></div>
         </div>
         <div class="frame">
-          <div class="plotzone"><div id="plot-spf" style="position:relative"></div></div>
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>The year ahead</button>
+            <button class="chip"><i style="background:#5F6675"></i>The year in progress</button>
+          </div>
+          <div class="plotzone"><div id="plot-spf" style="position:relative"><div class="cb-tip"></div></div></div>
           <div class="plotfoot">
             <span class="src">Source: RBI, Survey of Professional Forecasters, round-wise aggregate tables (DBIE report 1475), via the RBI Innovation Hub's data service. Rounds 64, 71, 75, 78, 84, 86, 94 and 100 are missing from the service's export.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://dbie.rbihub.in" target="_blank" rel="noopener">Source</a></span>
@@ -764,7 +772,7 @@ const baked = {
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Each line follows one fiscal year through the rounds that forecast it, from about eighteen months ahead until the year is over. The 2020-21 line falls off a cliff as the pandemic arrives, then the next year's line jumps as forecasters expect the rebound. The median is the middle answer of the panel, economists in banks, brokerages and research firms; the number answering varies from round to round.</p>
+            <p>Each April the year in progress becomes a new year, so both lines step from one target year to the next. The gap between them is the forecasters' view of whether growth will speed up or slow down. In 2020 the year in progress collapsed with the lockdown while the year ahead jumped on the expected rebound. The median is the middle answer of the panel, economists in banks, brokerages and research firms; the number answering varies from round to round. Every target year, round and statistic is in the data download.</p>
           </div>
           <div class="now">
             <span class="mk">As of {PSPF.long}</span>
