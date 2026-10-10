@@ -45,11 +45,15 @@ worktree.
 **At most two builds at a time on the machine.** Every build-and-check runs in one of two
 shared slots (`scripts/build-slot.sh`, also at `/tmp/atlas-build-slot.sh` for branches that
 have not merged it yet), so memory and disk hold two builds' worth however many sessions
-run, and dist is deleted inside the slot:
+run; delete dist straight after:
 
 ```
-/tmp/atlas-build-slot.sh sh -c 'npx astro build && npm run gates; s=$?; rm -rf dist; exit $s'
+/tmp/atlas-build-slot.sh sh -c 'npx astro build && npm run gates'
+rm -rf ./dist
 ```
+
+(Claude Code's safety check refuses an `rm -rf` inside an inline `sh -c` script, which it cannot
+inspect; delete `./dist` with a plain command right after the slot returns.)
 
 (This replaced a single `flock /tmp/atlas-build.lock` on 2026-10-10: one slot queued four
 sessions for over an hour, since a full gates run takes 15 to 20 minutes.) `npm test`,

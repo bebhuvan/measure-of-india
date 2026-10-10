@@ -3,8 +3,8 @@
 # Several sessions share one machine (docs/briefs/README.md, "Disk"); a single lock queued
 # them for over an hour (a full gates run takes 15-20 min), while the machine can hold two
 # builds at once. The command runs once a slot is free, and the slot is released when it
-# exits. Delete dist/ inside the command, so a slot never leaves a build behind.
-#   scripts/build-slot.sh sh -c 'npx astro build && npm run gates; s=$?; rm -rf dist; exit $s'
+# exits. Delete ./dist with a plain command straight after, so no build is left behind.
+#   scripts/build-slot.sh sh -c 'npx astro build && npm run gates'; rm -rf ./dist
 SLOTS="${ATLAS_BUILD_SLOTS:-2}"
 while :; do
   i=1
