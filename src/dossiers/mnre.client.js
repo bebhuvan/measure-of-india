@@ -76,21 +76,20 @@ setHTML("rb-solar", gw(last(S.solar)) + pc("GW"));
 setHTML("rt-solar", gw(last(S.solar)) + pc("GW"));
 setHTML("cr-total", gw(last(S.grand_total)) + pc("GW"));
 setHTML("cr-total-first", gw(firstV(S.grand_total)) + pc("GW"));
-setHTML("cr-growth", ((last(S.grand_total) / firstV(S.grand_total) - 1) * 100).toFixed(0) + pc("%"));
+setHTML("cr-growth", (((last(S.grand_total) - last(S.large_hydro)) / firstV(S.grand_total) - 1) * 100).toFixed(0) + pc("%"));   // large hydro left out: no growth across the Dec 2023 seam
 setHTML("cr-solar-share", (last(S.solar) / last(S.grand_total) * 100).toFixed(0) + pc("%"));
 setHTML("cr-wind-share", (last(S.wind) / last(S.grand_total) * 100).toFixed(0) + pc("%"));
 setHTML("cr-gm-share", (last(SOL.ground_mounted) / last(S.solar) * 100).toFixed(0) + pc("%"));
 setHTML("cr-rt-share", (last(SOL.rooftop) / last(S.solar) * 100).toFixed(0) + pc("%"));
-setHTML("cr-rt-growth", ((last(SOL.rooftop) / firstV(SOL.rooftop) - 1) * 100).toFixed(0) + pc("%"));
 
 /* ---------- § 02 register ---------- */
 const regRows = [
   [S.grand_total, "Grand Total", "MNRE, MW, includes large hydro from Dec 2023", "s-acc", (v) => gw(v) + " GW", (v) => gw(v, 2) + " GW"],
   [S.solar, "Solar Power", "MNRE, MW, Solar Power Total", "s-g1", (v) => gw(v) + " GW", (v) => gw(v, 2) + " GW"],
   [S.wind, "Wind Power", "MNRE, MW", "s-g2", (v) => gw(v) + " GW", (v) => gw(v, 2) + " GW"],
-  [S.small_hydro, "Small Hydro Power", "MNRE, MW, ≤25 MW", "s-g3", (v) => gw(v, 0) + " GW", (v) => gw(v, 0) + " GW"],
-  [S.bio, "Bio Power", "MNRE, MW, Bio Power Total", "s-g4", (v) => gw(v, 0) + " GW", (v) => gw(v, 0) + " GW"],
-  [SOL.rooftop, "Solar, Rooftop (PM Surya Ghar)", "MNRE, MW", "s-acc", (v) => gw(v, 0) + " GW", (v) => gw(v, 1) + " GW"],
+  [S.small_hydro, "Small Hydro Power", "MNRE, MW, ≤25 MW", "s-g3", (v) => gw(v) + " GW", (v) => gw(v, 2) + " GW"],
+  [S.bio, "Bio Power", "MNRE, MW, Bio Power Total", "s-g4", (v) => gw(v) + " GW", (v) => gw(v, 2) + " GW"],
+  [SOL.rooftop, "Solar, Rooftop (PM Surya Ghar)", "MNRE, MW", "s-acc", (v) => gw(v) + " GW", (v) => gw(v, 2) + " GW"],
 ];
 document.getElementById("ledger-body").innerHTML = regRows.map(([s, nm, sub, sw, fV, fD], i) => {
   const data = s.data.filter((d) => d.value != null);
@@ -194,12 +193,12 @@ const breakDate = new Date(Date.UTC(2023, 11, 1)); // Dec 2023
     crossFmt: (v) => (v == null ? "—" : gw(v) + " GW"),
     gapFrac: 0.07,
     a11yTitle: "Renewable capacity by source, All India, monthly Jan 2020 to " + LATEST_SHORT,
-    a11yDesc: "Four lines. Solar (blue) quadrupled to " + gw(last(S.solar)) + " GW; wind (grey) grew to " + gw(last(S.wind)) + "; bio and small hydro are nearly flat. Solar overtook wind inside the window.",
+    a11yDesc: "Four lines. Solar (blue) grew to " + gw(last(S.solar)) + " GW; wind (grey) grew to " + gw(last(S.wind)) + "; bio and small hydro are nearly flat. Solar overtook wind inside the window.",
   });
   setHTML("pv-sources", (last(S.solar) / last(S.wind)).toFixed(1) + pc("×"));
   setHTML("ex-src-solar", gw(last(S.solar)) + pc("GW"));
   setHTML("ex-src-wind", gw(last(S.wind)) + pc("GW"));
-  setHTML("ex-src-bio", gw(last(S.bio), 0) + pc("GW"));
+  setHTML("ex-src-bio", gw(last(S.bio)) + pc("GW"));
   setHTML("ex-src-sh", gw(last(S.small_hydro), 1) + pc("GW"));
   setHTML("ex-src-ratio", (last(S.solar) / last(S.wind)).toFixed(1) + pc("×"));
   setHTML("ex-src-ratio0", (firstV(S.solar) / firstV(S.wind)).toFixed(2) + pc("×"));
@@ -220,7 +219,7 @@ const breakDate = new Date(Date.UTC(2023, 11, 1)); // Dec 2023
     crossFmt: (v) => (v == null ? "—" : gw(v) + " GW"),
     gapFrac: 0.08,
     a11yTitle: "Solar capacity by sub-category, All India, monthly Jan 2020 to " + LATEST_SHORT,
-    a11yDesc: "Ground mounted (blue) reaches " + gw(last(SOL.ground_mounted)) + " GW; rooftop (grey) reaches " + gw(last(SOL.rooftop)) + " GW: rooftop grew nearly nine-fold.",
+    a11yDesc: "Ground mounted (blue) reaches " + gw(last(SOL.ground_mounted)) + " GW; rooftop (grey) reaches " + gw(last(SOL.rooftop)) + " GW.",
   });
   setHTML("pv-solar", (last(SOL.rooftop) / last(S.solar) * 100).toFixed(0) + pc("%"));
   setHTML("ex-sol-gm", gw(last(SOL.ground_mounted)) + pc("GW"));
@@ -299,7 +298,7 @@ const breakDate = new Date(Date.UTC(2023, 11, 1)); // Dec 2023
         Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
         Plot.ruleY(rows, { y: "state", x1: 0, x2: "v", stroke: (d, i) => (isTop(d, i) ? "#B9C3F3" : "#E3E6EB"), strokeWidth: 1.25 }),
         Plot.dot(rows, { y: "state", x: "v", fill: (d, i) => (isTop(d, i) ? "#2E4BD8" : "#5F6675"), r: 5.5 }),
-        Plot.text(rows, { y: "state", x: "v", dx: 12, text: (d) => gw(d.v, 1) + " GW", fill: (d, i) => (isTop(d, i) ? "#161A22" : "#878D99"), fontSize: 12.5, fontFamily: mono, fontWeight: (d, i) => (isTop(d, i) ? 500 : 400), textAnchor: "start" }),
+        Plot.text(rows, { y: "state", x: "v", dx: 12, text: (d) => (d.v < 950 ? Math.round(d.v).toLocaleString("en-IN") + " MW" : gw(d.v, 1) + " GW"), fill: (d, i) => (isTop(d, i) ? "#161A22" : "#878D99"), fontSize: 12.5, fontFamily: mono, fontWeight: (d, i) => (isTop(d, i) ? 500 : 400), textAnchor: "start" }),
       ],
     });
   };

@@ -26,7 +26,7 @@ const arcs = guideBundles(d).map((b) => ({ b, a: archiveFor(b) })).filter((x) =>
 const note = (t) => {
   const pages = t.pages.length > 1 ? `, over ${t.pages.length} pages` : "";
   if (t.kind === "bundle") { const g = new Set(t.rows.map((r) => r.group).filter(Boolean)).size; return `${t.rows[0]?.cut ?? ""}${g ? `, in ${g} groups` : ""}${pages}.`; }
-  return `${fmtN(t.bundles.length)} files${pages}, filterable by file.`;
+  return t.bundles.length === 1 ? `One file${pages}.` : `${fmtN(t.bundles.length)} files${pages}, filterable by file.`;
 };
 ---
 <section class="endmatter everycut" aria-labelledby="ec-h" id="every-cut" data-series={nAll}>

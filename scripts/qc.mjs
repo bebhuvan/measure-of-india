@@ -250,7 +250,8 @@ const PAGES = [
     ["n-ger", (b) => fmt.pct1(b["aishe-headline"].series.ger.data.at(-1))],
     ["n-gpi", (b) => fmt.num2(b["aishe-headline"].series.gpi.data.at(-1))],
     ["n-ptr", (b) => fmt.count(b["aishe-headline"].series.ptr.data.at(-1))],
-    ["cr-enrol", (b) => fmt.inr(b["aishe-headline"].series.enrolment.data.at(-1))],
+    // counts in words a reader can hold (aishe.client.js countWords): crore, lakh, else digits
+    ["cr-enrol", (b) => { const v = b["aishe-headline"].series.enrolment.data.at(-1); return v >= 1e7 ? (v / 1e7).toFixed(2) + " crore" : v >= 1e5 ? (v / 1e5).toFixed(1) + " lakh" : fmt.inr(v); }],
     ["pv-comp", (b) => fmt.pct0(b["aishe-composition"].series.under_graduate.data.at(-1) / b["aishe-headline"].series.enrolment.data.at(-1) * 100)],
     ["pv-enrol", (b) => {
       const e = b["aishe-headline"].series.enrolment.data;
@@ -271,7 +272,7 @@ const PAGES = [
       const t = b["aishe-teachers"].series;
       return fmt.pct0(t.professor_female.data.at(-1) / t.professor_both.data.at(-1) * 100);
     }],
-    ["pv-min", (b) => fmt.inr(b["aishe-minority"].series.muslims_both.data.at(-1))],
+    ["pv-min", (b) => { const v = b["aishe-minority"].series.muslims_both.data.at(-1); return v >= 1e7 ? (v / 1e7).toFixed(2) + " crore" : v >= 1e5 ? (v / 1e5).toFixed(1) + " lakh" : fmt.inr(v); }],
     ["pv-ptr", (b) => fmt.count(b["aishe-headline"].series.ptr.data.at(-1))],
     // lecturers' share of the faculty ladder — regression test for the NaN
     // bug (denominator once summed datum objects, not values)

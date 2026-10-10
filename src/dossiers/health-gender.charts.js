@@ -142,7 +142,8 @@ export function lines(el, series, o = {}) {
   const ticks = o.ticks ?? niceTicks(lo, hi, 5);
   const dates = all.map((p) => p.date);
   const x0 = new Date(Math.min(...dates)), x1 = new Date(Math.max(...dates));
-  const years = o.xTicks ?? (() => { const a = x0.getUTCFullYear(), b = x1.getUTCFullYear(), step = Math.max(1, Math.ceil((b - a) / 8)); const t = []; for (let y = a; y <= b; y += step) t.push(new Date(Date.UTC(y, 0, 1))); return t; })();
+  // xTicks "points": tick the observations themselves (census years, not every eighth year)
+  const years = o.xTicks === "points" ? [...new Map(dates.map((d) => [+d, d])).values()].sort((a, b) => a - b) : o.xTicks ?? (() => { const a = x0.getUTCFullYear(), b = x1.getUTCFullYear(), step = Math.max(1, Math.ceil((b - a) / 8)); const t = []; for (let y = a; y <= b; y += step) t.push(new Date(Date.UTC(y, 0, 1))); return t; })();
   const fmt = o.fmt ?? f1;
   const marks = [Plot.gridY(ticks, { stroke: GRID }), Plot.ruleY([lo], { stroke: "#D3D7DE" })];
   if (o.ref != null) marks.push(Plot.ruleY([o.ref], { stroke: G2, strokeDasharray: "3,3" }), Plot.text([{ date: x0, value: o.ref }], { x: "date", y: "value", text: () => o.refLabel ?? String(o.ref), dy: -8, textAnchor: "start", fill: G1, fontSize: 12 }));
@@ -164,7 +165,9 @@ export function lines(el, series, o = {}) {
     });
   }
   // end labels, dodged so two lines ending close together never overlap
-  const ends = series.filter((s) => !s.noLabel).map((s) => ({ s, p: s.points.at(-1) })).sort((a, b) => b.p.value - a.p.value);
+  // a series that runs on into a projection is labelled at its last measured point, so the label
+  // states what was measured (the pale projection carries no number)
+  const ends = series.filter((s) => !s.noLabel).map((s) => ({ s, p: s.points.filter((p) => !s.est?.has(p.iso)).at(-1) ?? s.points.at(-1) })).sort((a, b) => b.p.value - a.p.value);
   const gap = (hi - lo) * 0.06;
   ends.forEach((e, i) => { e.y = i && ends[i - 1].y - e.p.value < gap ? ends[i - 1].y - gap : e.p.value; });
   marks.push(Plot.text(ends, { x: (e) => e.p.date, y: "y", text: (e) => `${e.s.label} ${fmt(e.p.value)}`, dx: 10, textAnchor: "start", fill: INK, fontSize: 12 }));

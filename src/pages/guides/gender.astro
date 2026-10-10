@@ -63,7 +63,9 @@ const lfF = states("gender-t082-cy25", "total__female__"), lfM = new Map(states(
 const lfRows = lfF.map((r) => ({ geo: r.geo, women: r.v, men: lfM.get(r.geo) ?? null }));
 const lfW = value("gender-t082-cy25", "total__female__all_india"), lfMen = value("gender-t082-cy25", "total__male__all_india");
 const wgF = states("gender-t087-cy25", "rural__female__"), wgM = new Map(states("gender-t087-cy25", "rural__male__").map((r) => [r.geo, r.v]));
-const wageRows = wgF.map((r) => ({ geo: r.geo, women: r.v, men: wgM.get(r.geo) ?? null }));
+// the table prints 0 where the survey has no estimate (no women in rural casual work sampled): not a wage
+const wageRows = wgF.filter((r) => r.v > 0).map((r) => ({ geo: r.geo, women: r.v, men: wgM.get(r.geo) || null }));
+const wageNone = wgF.filter((r) => !(r.v > 0)).map((r) => r.geo);
 const wF = value("gender-t087-cy25", "rural__female__all_india"), wM = value("gender-t087-cy25", "rural__male__all_india");
 const informalF = value("gender-t092-cy25", "total__female__all_india"), informalM = value("gender-t092-cy25", "total__male__all_india");
 
@@ -646,7 +648,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
         <div class="plate-head">
           <div class="t">
             <h3>A village woman doing casual work earns ₹{f0(wF)} a day, a man ₹{f0(wM)}: {Math.round((100 * wF) / wM)} rupees for every 100</h3>
-            <div class="sub">Average daily wage of casual labourers in work other than public works, rural, women (blue) and men (grey), by state and UT, 2025, rupees.</div>
+            <div class="sub">Average daily wage of casual labourers in work other than public works, rural, women (blue) and men (grey), by state and UT, 2025, rupees. {wageNone.length} states and UTs with no estimate for women are left out: {wageNone.join(", ")}.</div>
           </div>
           <div class="plate-val"><div class="v" id="pv-wage">₹{f0(wF)}</div><div class="c">a day, rural women</div></div>
         </div>
@@ -767,7 +769,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
           </div>
           <div class="now">
             <span class="mk">As of {lsNow.period}</span>
-            <p>{f0(lsW.at(-1).value)} women elected in {lsNow.period}, <b id="ex-ls-share">{f1(lsNow.value)}%</b> of seats, from {f0(lsCand.at(-1).value)} women candidates.</p>
+            <p>{f0(lsW.at(-1).value)} women elected in {lsNow.period}, <b id="ex-ls-share">{f1(lsNow.value)}%</b> of the {f0(lsSeats.get(lsW.at(-1).iso))} seats that went to a poll, from {f0(lsCand.at(-1).value)} women candidates. The Lok Sabha Secretariat counts all {f0(value("gender-t125", "total_seats__all_india"))} seats, so the chart below shows {f1(value("gender-t125", "women__all_india"))}%.</p>
           </div>
         </div>
       </figure>
@@ -935,7 +937,7 @@ const asOf = (slug) => { const b = load(slug); return b.meta.periodLabels?.[b.da
       </div></li>
       <li><span class="no">iii.</span><div>
         <h3>"Crime against women is highest in Delhi."</h3>
-        <p>Recorded crime is highest there. Delhi has more police stations per person, more women who know how to file a complaint, and a large population passing through that the rate does not count. Low rates in some states may mean less reporting, not less crime.</p>
+        <p>Recorded crime is highest there. A high rate can mean more crime, more women willing to go to the police, or police more ready to register a case, and the rate divides by the women who live in Delhi, not the many more who work in or pass through it. Low rates in some states may mean less reporting, not less crime.</p>
       </div></li>
       <li><span class="no">iv.</span><div>
         <h3>"Women own more bank accounts than men, so they control the money."</h3>

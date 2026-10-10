@@ -13,7 +13,7 @@ const B = (s) => JSON.parse(fs.readFileSync(`data/series/${s}.json`, "utf8"));
 const spells = ["poverty-pip-1977", "poverty-pip-1983", "poverty-pip-1987", "poverty-pip-1993", "poverty-pip-2011", "poverty-pip-2022"].map(B);
 const cols = spells.flatMap((b) => b.dates.map((d, i) => ({ b, i, round: b.meta.surveys[i].period.replace(/^(\d{4})-\d{2}(\d{2})$/, "$1-$2"), spell: b.meta.spell })));
 const keys = Object.keys(spells.at(-1).series);
-const nf = (v) => (v == null ? "—" : Math.abs(v) >= 1e6 ? Math.round(v).toLocaleString("en-IN") : Math.abs(v) >= 100 ? v.toFixed(1) : Math.abs(v) >= 1 ? v.toFixed(2) : v.toFixed(4));
+const nf = (v) => (v == null ? "—" : Math.abs(v) >= 1e6 ? Math.round(v).toLocaleString("en-IN") : Math.abs(v) >= 100 ? v.toFixed(1) : Math.abs(v) >= 1 ? v.toFixed(2) : v.toFixed(4).replace(/0+$/, "").replace(/\.$/, ""));   // 0.77, not 0.7700
 const pipRows = keys.map((k) => ({ label: spells.at(-1).series[k].label, vals: cols.map((c) => c.b.series[k]?.data[c.i] ?? null) }));
 const lineup = B("poverty-pip-lineup");
 const lu = lineup.dates.map((d, i) => ({ y: d.slice(0, 4), kind: lineup.meta.estimationType[d.slice(0, 4)], h3: lineup.series.headcount_3_00.data[i] ?? lineup.series.headcount_3_00_nowcast?.data[i], h42: lineup.series.headcount_4_20.data[i] ?? lineup.series.headcount_4_20_nowcast?.data[i], h83: lineup.series.headcount_8_30.data[i] ?? lineup.series.headcount_8_30_nowcast?.data[i], p3: lineup.series.poor_3_00.data[i] }));

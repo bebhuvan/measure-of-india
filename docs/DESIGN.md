@@ -105,7 +105,9 @@ the rupee sign is in latin-ext):
   `.provenance` footer (three columns + double-rule colophon).
 - Mobile (≤680px): nav never hides — it wraps and scrolls horizontally; grids
   stack; full plates scroll horizontally rather than shrink past legibility. A scrolling
-  plate opens at its latest end with a quiet "← Earlier years" cue (`guide.client.js`).
+  plate opens at its latest end with a quiet "← Earlier years" cue (`guide.client.js`);
+  any other scrolling plate (dot strips, bars) keeps its left edge with a "More of the chart
+  to the right →" cue, since its names fill the first screen.
 
 ## 4. Dossier anatomy
 

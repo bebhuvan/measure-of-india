@@ -189,11 +189,11 @@ export const MEASURES = [
   { id: "manuf", section: "structure", label: "Manufacturing's share of output", what: "manufacturing's share", bundle: "states-industry-shares", pick: endsKey("__manufacturing"), fmt: "pct1",
     india: { op: "sum", args: [["gdp-annual-industries", "manufacturing_share"]], label: "India, base 2011-12" }, guide: "states" },
   // prices: CPI base 2024 (current ruler)
-  { id: "cpi", section: "prices", label: "Retail inflation (CPI)", what: "retail inflation (prices against a year earlier)", bundle: "cpi-2024-states", pick: () => true, fmt: "pct2", glance: true,
+  { id: "cpi", section: "prices", label: "Retail inflation (CPI)", what: "retail inflation (prices against a year earlier)", bundle: "cpi-2024-states", pick: () => true, fmt: "pct1", glance: true,
     india: { op: "cell", args: [["cpi-2024", "headline"]], label: "All India, CPI base 2024" }, guide: "cpi" },
-  { id: "cpiAl", section: "prices", label: "Inflation for farm labourers (CPI-AL)", what: "inflation for farm labourers' households (CPI-AL, prices against a year earlier, computed from the index)", bundle: "cpialrl-states-2019", pick: () => true, fmt: "pct2", derive: { op: "yoy12" },
+  { id: "cpiAl", section: "prices", label: "Inflation for farm labourers (CPI-AL)", what: "inflation for farm labourers' households (CPI-AL, prices against a year earlier, computed from the index)", bundle: "cpialrl-states-2019", pick: () => true, fmt: "pct1", derive: { op: "yoy12" },
     india: { op: "yoy12", args: [["cpialrl-2019", "al"]], label: "All India, computed from the index" }, guide: "cpi" },
-  { id: "cpiFood", section: "prices", label: "Food and drink inflation", what: "inflation in food and drink", bundle: "cpi-2024-states-divisions", pick: endsKey("__01"), fmt: "pct2",
+  { id: "cpiFood", section: "prices", label: "Food and drink inflation", what: "inflation in food and drink", bundle: "cpi-2024-states-divisions", pick: endsKey("__01"), fmt: "pct1",
     india: { op: "cell", args: [["cpi-2024", "food_and_beverages"]], label: "All India" }, guide: "cpi" },
   // work and pay: PLFS revamped design, calendar year (usual status, age 15 and above)
   { id: "ur", section: "work", label: "Unemployment rate", what: "the unemployment rate (age 15 and above, usual status)", bundle: "plfs-cy25-states-ur", pick: endsKey("__ur_psss__person_all__a15plus"), fmt: "pct1", glance: true,
@@ -312,7 +312,7 @@ export const MEASURES = [
   { id: "schoolYears", section: "education", label: "Years of schooling, adults", what: "the mean years of formal schooling of adults aged 25 and above (NSS 79)", bundle: "profiles-mospi-nss79-1-3", pick: endsKey("__25_years_and_above"), fmt: "years", india: { op: "cell", args: [["profiles-mospi-nss79-1-3", "all_india__25_years_and_above"]] }, guide: null },
   // schools, from UDISE+ (MoSPI eSankhyiki, step 5): the source the Handbook's school tables reprint
   { id: "gerHs", section: "education", label: "School enrolment ratio, classes 11 and 12", what: "the gross enrolment ratio in classes 11 and 12", bundle: "profiles-mospi-udise-0-31", pick: endsKey("__higher_secondary_11_12"), fmt: "pct1", india: null, indiaNote: "UDISE+ on MoSPI's API publishes the states and UTs, not an all-India row", guide: null },
-  { id: "ptr", section: "education", label: "Pupils per teacher", what: "the number of pupils for each teacher in the state's schools", bundle: "profiles-mospi-udise-0-7", pick: () => true, fmt: "ptr", india: null, indiaNote: "UDISE+ on MoSPI's API publishes the states and UTs, not an all-India row", guide: null },
+  { id: "ptr", section: "education", label: "Pupils per teacher", what: "the pupil-teacher ratio in the state's schools", bundle: "profiles-mospi-udise-0-7", pick: () => true, fmt: "ptr", india: null, indiaNote: "UDISE+ on MoSPI's API publishes the states and UTs, not an all-India row", guide: null },
   { id: "schoolsInternet", section: "education", label: "Schools with internet", what: "the share of schools with an internet connection", bundle: "profiles-mospi-udise-0-16", pick: endsKey("__internet_facility"), fmt: "pct1", derive: { op: "ratio", other: "profiles-mospi-udise-0-1", mapKey: (k) => k.replace(/__internet_facility$/, "") },
     india: null, guide: null },
   { id: "schoolsPower", section: "education", label: "Schools with working electricity", what: "the share of schools with electricity that works", bundle: "profiles-mospi-udise-0-16", pick: endsKey("__functional_electricity"), fmt: "pct1", derive: { op: "ratio", other: "profiles-mospi-udise-0-1", mapKey: (k) => k.replace(/__functional_electricity$/, "") },
@@ -640,7 +640,7 @@ function translate(u, f) {
     case "pc": { const d = scaled(f, 1 / 365, "inr"); return d && `That is about ${d} a day for each person, before anyone pays for food, rent or school, and before it is split, very unequally, between wages, profits and taxes.`; }
     case "mpceR": case "mpceU": { const d = scaled(f, 1 / 30, "inr"); return d && `A month's ${F_(f)} is about ${d} a day for each person in the household, for food, fuel, rent, travel, school and everything else.`; }
     case "cd": { const d = scaled(f, 1, "count"); return d && (f.value < 100 ? `For every ₹100 deposited with banks in ${N}, they have lent about ₹${d} in ${N}. The rest is lent elsewhere.` : `For every ₹100 deposited with banks in ${N}, they have lent about ₹${d} in ${N}: more than its own deposits, drawn from savings elsewhere.`); }
-    case "cpi": return `Something that cost ₹100 a year earlier cost about ₹${figHTML((100 + f.value).toFixed(2), "num2", { op: "plus100", args: f.src.args, iso: f.src.iso })} ${inPeriod(f.period)}, on the average shopping basket of ${N}.`;
+    case "cpi": return `Something that cost ₹100 a year earlier cost about ₹${figHTML(String(Math.round(100 + f.value)), "round", { op: "plus100", args: f.src.args, iso: f.src.iso })} ${inPeriod(f.period)}, on the average shopping basket of ${N}.`;
     case "stunting": return `That is about ${figHTML(String(Math.round(f.value)), "round", f.src)} in every 100 children under five, a sign of poor nutrition in the years when it matters most.`;
     default: return null;
   }

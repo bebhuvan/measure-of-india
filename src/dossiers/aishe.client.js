@@ -39,12 +39,17 @@ const fmtIN = (n) => Math.round(n).toLocaleString("en-IN");
 const fy = (d) => d.getUTCFullYear() + "-" + String((d.getUTCFullYear() + 1) % 100).padStart(2, "0");
 const croreN = (n, dp = 2) => (n / 1e7).toFixed(dp);              // count -> crore
 const lakhOf = (n, dp = 1) => (n / 1e5).toFixed(dp);              // count -> lakh
+// a head count in words a reader can hold: "4.33 crore", "18.8 lakh", "88,748"
+// a short chart label in the same spirit: "4.8 lakh", "47,000"
+const countShort = (n) => (n >= 1e5 ? lakhOf(n) + " lakh" : (Math.round(n / 1000) * 1000).toLocaleString("en-IN"));
+const lakhTick = (d, i, arr) => (d === 0 ? "0" : String(+(d / 1e5).toFixed(1)) + (d === arr.at(-1) ? " lakh" : ""));
+const countWords = (n) => (n >= 1e7 ? croreN(n) + " crore" : n >= 1e5 ? lakhOf(n) + " lakh" : fmtIN(n));
 const last = (s) => s.data.filter((d) => d.value != null).at(-1).value;
 const prevV = (s) => s.data.filter((d) => d.value != null).at(-2).value;
 const firstV = (s) => s.data.filter((d) => d.value != null)[0].value;
 const atV = (s, i) => s.data.filter((d) => d.value != null)[i].value;
 const arrow = (d, f) => (d >= 0 ? "▲ +" : "▼ −") + f(Math.abs(d));
-const arrowPt = (d) => (d >= 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(2) + " pt";
+const arrowPt = (d) => (d >= 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(1) + " pt";
 
 /* ---------- titleblock numbers ---------- */
 setHTML("n-enrol", croreN(last(H.enrolment)) + pc("crore"));
@@ -72,13 +77,13 @@ function sparkPlot(s) {
 setHTML("rb-enrol", croreN(last(H.enrolment)) + pc("crore"));
 setHTML("rb-ger", last(H.ger).toFixed(1) + pc("%"));
 setTxt("rt-ratio", last(H.ger).toFixed(0));
-setTxt("cr-enrol", fmtIN(last(H.enrolment)));
+setTxt("cr-enrol", countWords(last(H.enrolment)));
 setTxt("cr-univ", fmtIN(last(H.universities)));
 setTxt("cr-coll", fmtIN(last(H.colleges)));
-setTxt("cr-teach", fmtIN(last(H.teachers)));
-setTxt("cr-growth", ((last(H.enrolment) / firstV(H.enrolment) - 1) * 100).toFixed(0) + pc("%"));
-setHTML("cr-enrol-first", fmtIN(firstV(H.enrolment)));
-setTxt("cr-ger", last(H.ger).toFixed(1) + pc("%"));
+setTxt("cr-teach", countWords(last(H.teachers)));
+setHTML("cr-growth", ((last(H.enrolment) / firstV(H.enrolment) - 1) * 100).toFixed(0) + pc("%"));
+setHTML("cr-enrol-first", countWords(firstV(H.enrolment)));
+setHTML("cr-ger", last(H.ger).toFixed(1) + pc("%"));
 setHTML("cr-ger-first", firstV(H.ger).toFixed(1) + pc("%"));
 setTxt("cr-gpi", last(H.gpi).toFixed(2));
 setHTML("cr-fem-share", (last(A.enrolment_female) / last(H.enrolment) * 100).toFixed(0) + pc("%"));
@@ -97,8 +102,8 @@ const regRows = [
   [H.enrolment, "Estimated student enrolment", "AISHE, count, Both, Grand Total", "s-acc", (v) => croreN(v) + " cr", (v) => lakhOf(v) + " lakh"],
   [H.universities, "Universities", "AISHE, count", "s-g1", fmtIN, fmtIN],
   [H.colleges, "Colleges", "AISHE, count", "s-g2", fmtIN, fmtIN],
-  [H.teachers, "Teachers", "AISHE, count, all posts", "s-g3", (v) => fmtIN(v), (v) => fmtIN(v)],
-  [H.ger, "Gross Enrolment Ratio", "AISHE, %, All Categories, Both", "s-acc", (v) => v.toFixed(1) + "%", (v) => v.toFixed(1)],
+  [H.teachers, "Teachers", "AISHE, count, all posts", "s-g3", (v) => countWords(v), (v) => countWords(v)],
+  [H.ger, "Gross Enrolment Ratio", "AISHE, %, All Categories, Both", "s-acc", (v) => v.toFixed(1) + "%", (v) => v.toFixed(1) + " pt"],
   [H.gpi, "Gender Parity Index", "AISHE, index, All Categories, 1.0 = parity", "s-g1", (v) => v.toFixed(2), (v) => v.toFixed(2)],
   [H.ptr, "Pupil-Teacher Ratio", "AISHE, ratio, all institutions", "s-g4", (v) => String(Math.round(v)), (v) => v.toFixed(1)],
 ];
@@ -186,7 +191,7 @@ const parityRule = new Date(Date.UTC(2017, 3, 1)); // unused anchor
     document.getElementById(barId).innerHTML = segs.map(([n, v, t]) =>
       `<div class="seg" style="width:${(v / t * 100).toFixed(2)}%;background:${colours[n] || "#A3A9B4"}" title="${n}: ${(v / t * 100).toFixed(1)}%"></div>`).join("");
     document.getElementById(labId).innerHTML = segs.map(([n, v, t]) =>
-      `<div class="blab"><div class="n"><span class="sw" style="background:${colours[n] || "#A3A9B4"}"></span>${n}</div><div class="w">${fmtIN(v)}, ${(v / t * 100).toFixed(1)}%</div></div>`).join("");
+      `<div class="blab"><div class="n"><span class="sw" style="background:${colours[n] || "#A3A9B4"}"></span>${n}</div><div class="w">${countWords(v)}, ${(v / t * 100).toFixed(1)}%</div></div>`).join("");
   };
   renderBasket("bar-edu", "lab-edu", eduSegs, eduColours);
   renderBasket("bar-soc", "lab-soc", socSegs, socColours);
@@ -201,9 +206,10 @@ const parityRule = new Date(Date.UTC(2017, 3, 1)); // unused anchor
   setHTML("ex-c-oth", pct("social_others"));
   setHTML("ex-c-sc", pct("social_sc"));
   setHTML("ex-c-st", pct("social_st"));
+  setHTML("ex-c-scst", ((last(C.social_sc) + last(C.social_st)) / total * 100).toFixed(1) + pc("%"));
 
   const csvE = "level,enrolment_2021_22,share_pct\n" + eduSegs.map(([n, v]) => `"${n}",${Math.round(v)},${(v / total * 100).toFixed(2)}`).join("\n");
-  const csvS = "social_group,enrolment_2021_24,share_pct\n" + socSegs.map(([n, v]) => `"${n}",${Math.round(v)},${(v / total * 100).toFixed(2)}`).join("\n");
+  const csvS = "social_group,enrolment_2021_22,share_pct\n" + socSegs.map(([n, v]) => `"${n}",${Math.round(v)},${(v / total * 100).toFixed(2)}`).join("\n");
   wirePlate(document.getElementById("cb-comp"), null, "india-atlas_aishe_composition_2021-22", csvE + "\n\n" + csvS);
 }
 
@@ -227,16 +233,17 @@ const parityRule = new Date(Date.UTC(2017, 3, 1)); // unused anchor
     crossFmt: (v) => (v == null ? "—" : v.toFixed(2) + " cr"),
     gapFrac: 0.12,
     a11yTitle: "Estimated student enrolment by gender, All India, 2017-18 to 2021-22",
-    a11yDesc: "Two rising lines over five survey rounds. Female enrolment (blue) rose from " + croreN(firstV(A.enrolment_female)) + " crore to " + croreN(last(A.enrolment_female)) + " crore; male (grey) from " + croreN(firstV(A.enrolment_male)) + " crore to " + croreN(last(A.enrolment_male)) + " crore. The gap narrowed throughout and closed to near-parity by 2021-22.",
+    a11yDesc: "Two rising lines over five survey rounds. Female enrolment (blue) rose from " + croreN(firstV(A.enrolment_female)) + " crore to " + croreN(last(A.enrolment_female)) + " crore; male (grey) from " + croreN(firstV(A.enrolment_male)) + " crore to " + croreN(last(A.enrolment_male)) + " crore. Men outnumber women in every round.",
   });
 
   const femGain = last(A.enrolment_female) - firstV(A.enrolment_female);
   const totalGain = last(H.enrolment) - firstV(H.enrolment);
   setHTML("pv-enrol", ((last(H.enrolment) / firstV(H.enrolment) - 1) * 100).toFixed(0) + pc("%"));
-  setHTML("ex-e-fem", fmtIN(last(A.enrolment_female)));
-  setHTML("ex-e-male", fmtIN(last(A.enrolment_male)));
+  setHTML("ex-e-fem", countWords(last(A.enrolment_female)));
+  setHTML("ex-e-male", countWords(last(A.enrolment_male)));
   setHTML("ex-e-femshare", (last(A.enrolment_female) / last(H.enrolment) * 100).toFixed(0) + pc("%"));
-  setHTML("ex-e-gap1", fmtIN(last(A.enrolment_male) - last(A.enrolment_female)));
+  setHTML("ex-e-gap1", countWords(last(A.enrolment_male) - last(A.enrolment_female)));
+  setHTML("ex-e-gap0", countWords(firstV(A.enrolment_male) - firstV(A.enrolment_female)));
   setTxt("ex-e-gpi0", firstV(H.gpi).toFixed(2));
   setTxt("ex-e-gpi1", last(H.gpi).toFixed(2));
   void femGain; void totalGain;
@@ -348,19 +355,19 @@ const parityRule = new Date(Date.UTC(2017, 3, 1)); // unused anchor
   setHTML("ex-se-top3", enrTop3Share.toFixed(0) + pc("%"));
 
   const geoE = { W: 1184, H: 30 + enrRows.length * 22 + 40, ml: 230, mr: 110, mt: 30, mb: 40 };
-  const enrTicks = [0, 2000000, 4000000, 6000000];
+  const enrTicks = [0, 2000000, 4000000, 6000000];   // 20, 40, 60 lakh
   const plotEnr = Plot.plot({
     width: geoE.W, height: geoE.H,
     marginLeft: geoE.ml, marginRight: geoE.mr, marginTop: geoE.mt, marginBottom: geoE.mb,
     style: { background: "transparent", fontFamily: mono, fontSize: "12.5px", color: "#878D99", overflow: "visible" },
-    x: { label: "estimated enrolment, crore →", labelAnchor: "right", labelArrow: false, domain: [0, enrRows[0].enr * 1.15], ticks: enrTicks, tickSize: 0, tickPadding: 10, tickFormat: (d, i, arr) => (d === 0 ? "0" : String((d / 1e7).toFixed(1)) + (d === arr.at(-1) ? " cr" : "")) },
+    x: { label: "estimated enrolment, lakh →", labelAnchor: "right", labelArrow: false, domain: [0, enrRows[0].enr * 1.15], ticks: enrTicks, tickSize: 0, tickPadding: 10, tickFormat: lakhTick },
     y: { label: null, domain: enrRows.map((r) => r.state), tickSize: 0, tickPadding: 12, tickFormat: (s) => String(s) },
     marks: [
       Plot.gridX(enrTicks, { stroke: "#F0F2F5", strokeWidth: 1 }),
       Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
       Plot.ruleY(enrRows, { y: "state", x1: 0, x2: "enr", stroke: (d, i) => (i < 3 ? "#B9C3F3" : "#F0F2F5"), strokeWidth: 1.25 }),
       Plot.dot(enrRows, { y: "state", x: "enr", fill: (d, i) => (i < 3 ? "#2E4BD8" : "#5F6675"), r: 4 }),
-      Plot.text(enrRows, { y: "state", x: "enr", dx: 12, text: (d) => croreN(d.enr) + " cr", fill: (d, i) => (i < 3 ? "#161A22" : "#878D99"), fontSize: 11.5, fontFamily: mono, fontWeight: (d, i) => (i < 3 ? 500 : 400), textAnchor: "start" }),
+      Plot.text(enrRows, { y: "state", x: "enr", dx: 12, text: (d) => (d.enr >= 1e5 ? lakhOf(d.enr) + " lakh" : fmtIN(d.enr)), fill: (d, i) => (i < 3 ? "#161A22" : "#878D99"), fontSize: 11.5, fontFamily: mono, fontWeight: (d, i) => (i < 3 ? 500 : 400), textAnchor: "start" }),
     ],
   });
   a11y(plotEnr, "Estimated student enrolment by state and union territory, 2021-22",
@@ -400,7 +407,7 @@ const parityRule = new Date(Date.UTC(2017, 3, 1)); // unused anchor
   setHTML("pv-gergen", last(H.gpi).toFixed(2));
   setTxt("ex-gg-fem", last(A.ger_all_female).toFixed(1) + "%");
   setTxt("ex-gg-male", last(A.ger_all_male).toFixed(1) + "%");
-  setTxt("ex-gg-diff", (diff >= 0 ? "+" : "") + diff.toFixed(1));
+  setTxt("ex-gg-diff", Math.abs(diff).toFixed(1));
   setTxt("ex-gg-gpi", last(H.gpi).toFixed(2));
   setTxt("ex-gg-peak", peakGpi.toFixed(2));
 
@@ -430,9 +437,9 @@ const parityRule = new Date(Date.UTC(2017, 3, 1)); // unused anchor
   const ugCell = cells.find((c) => c.key === "under_graduate");
   setHTML("pv-edu", (intCell.growth >= 0 ? "+" : "") + intCell.growth.toFixed(0) + pc("%"));
   setHTML("ex-edu-ug", croreN(ugCell.latest) + pc(" cr"));
-  setHTML("ex-edu-int-gain", (intCell.growth >= 0 ? "+" : "") + intCell.growth.toFixed(0) + pc("%"));
-  setHTML("ex-edu-mphil", mphilCell.growth.toFixed(0) + pc("%"));
-  setHTML("ex-edu-phd", (phdCell.growth >= 0 ? "+" : "") + phdCell.growth.toFixed(0) + pc("%"));
+  setHTML("ex-edu-int-gain", Math.abs(intCell.growth).toFixed(0) + pc("%"));
+  setHTML("ex-edu-mphil", Math.abs(mphilCell.growth).toFixed(0) + pc("%"));
+  setHTML("ex-edu-phd", Math.abs(phdCell.growth).toFixed(0) + pc("%"));
 
   const grid = document.getElementById("grid-edu");
   grid.style.display = "grid";
@@ -449,7 +456,8 @@ const parityRule = new Date(Date.UTC(2017, 3, 1)); // unused anchor
     lab.textContent = c.name;
     const val = document.createElement("div");
     val.style.cssText = "font-family:var(--sans);font-size:.6rem;letter-spacing:.04em;color:#5F6675;margin-top:5px";
-    val.textContent = croreN(c.latest) + " cr, " + (c.growth >= 0 ? "+" : "") + c.growth.toFixed(0) + "%";
+    const g = Math.round(c.growth);
+    val.textContent = countWords(c.latest) + ", " + (g === 0 ? "no change" : (g > 0 ? "+" : "−") + Math.abs(g) + "%");
     const max = Math.max(...c.data.map((d) => d.value ?? 0));
     const min = Math.min(...c.data.filter((d) => d.value != null).map((d) => d.value));
     const mini = Plot.plot({
@@ -501,28 +509,36 @@ const parityRule = new Date(Date.UTC(2017, 3, 1)); // unused anchor
   const plot = Plot.plot({
     width: 1184, height: 280, marginLeft: 180, marginRight: 150, marginTop: 14, marginBottom: 42,
     style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
-    x: { label: "teachers, count →", labelAnchor: "right", labelArrow: false, domain: [0, maxV], ticks: [0, 250000, 500000, 750000, 1000000], tickSize: 0, tickPadding: 10, tickFormat: (d) => (d === 0 ? "0" : String(Math.round(d / 1000)) + "k") },
+    x: { label: "teachers, lakh →", labelAnchor: "right", labelArrow: false, domain: [0, maxV], ticks: [0, 250000, 500000, 750000, 1000000].filter((t) => t <= maxV), tickSize: 0, tickPadding: 10, tickFormat: lakhTick },   // no tick past the domain: it drew off the plate
     y: { label: null, domain: rows.map((r) => r.rank), tickSize: 0, tickPadding: 14, tickFormat: (s) => String(s), padding: 0.28 },
     marks: [
-      Plot.gridX([0, 250000, 500000, 750000, 1000000], { stroke: "#F0F2F5", strokeWidth: 1 }),
+      Plot.gridX([0, 250000, 500000, 750000, 1000000].filter((t) => t <= maxV), { stroke: "#F0F2F5", strokeWidth: 1 }),
       Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
       Plot.link(rows, { y: "rank", x1: "male", x2: "female", stroke: "#C9CED6", strokeWidth: 2 }),
       Plot.dot(flat.filter((d) => d.gender === "Male"), { y: "rank", x: "v", fill: "#5F6675", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.dot(flat.filter((d) => d.gender === "Female"), { y: "rank", x: "v", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       /* labels point AWAY from the connector: the left dot's label to its
        * left, the right dot's to its right — they can never meet mid-row */
-      Plot.text(rows.filter((d) => d.male < d.female), { y: "rank", x: "male", dx: -12, text: (d) => Math.round(d.male / 1000) + "k", fill: "#5F6675", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
-      Plot.text(rows.filter((d) => d.male >= d.female), { y: "rank", x: "male", dx: 12, text: (d) => Math.round(d.male / 1000) + "k", fill: "#5F6675", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+      // a left-hand label that would reach the zero rule rides above its dot instead
       ...(() => {
         const pxU = (1184 - 180 - 150) / maxV;
-        const fsplit = (d) => (Math.round(d.female / 1000) + "k, " + (d.fshare * 100).toFixed(0) + "% F");
+        const hitsRule = (d) => 180 + d.male * pxU - 12 - countShort(d.male).length * 12.5 * 0.6 < 186;
+        return [
+          Plot.text(rows.filter((d) => d.male < d.female && !hitsRule(d)), { y: "rank", x: "male", dx: -12, text: (d) => countShort(d.male), fill: "#5F6675", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
+          Plot.text(rows.filter((d) => d.male < d.female && hitsRule(d)), { y: "rank", x: "male", dy: -14, text: (d) => countShort(d.male), fill: "#5F6675", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+        ];
+      })(),
+      Plot.text(rows.filter((d) => d.male >= d.female), { y: "rank", x: "male", dx: 12, text: (d) => countShort(d.male), fill: "#5F6675", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+      ...(() => {
+        const pxU = (1184 - 180 - 150) / maxV;
+        const fsplit = (d) => (countShort(d.female) + ", " + (d.fshare * 100).toFixed(0) + "% F");
         const crosses = (d) => 180 + d.female * pxU - 12 - fsplit(d).length * 12.5 * 0.6 < 180;
         return [
           Plot.text(rows.filter((d) => d.female <= d.male && !crosses(d)), { y: "rank", x: "female", dx: -12, text: fsplit, fill: "#161A22", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
           Plot.text(rows.filter((d) => d.female <= d.male && crosses(d)), { y: "rank", x: "female", dy: 17, text: fsplit, fill: "#161A22", fontSize: 12.5, fontFamily: mono, textAnchor: "middle" }),
         ];
       })(),
-      Plot.text(rows.filter((d) => d.female > d.male), { y: "rank", x: "female", dx: 12, text: (d) => Math.round(d.female / 1000) + "k, " + (d.fshare * 100).toFixed(0) + "% F", fill: "#161A22", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(rows.filter((d) => d.female > d.male), { y: "rank", x: "female", dx: 12, text: (d) => countShort(d.female) + ", " + (d.fshare * 100).toFixed(0) + "% F", fill: "#161A22", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
     ],
   });
   a11y(plot, "Teachers by faculty rank and gender, All India, 2021-22",
@@ -546,11 +562,11 @@ const parityRule = new Date(Date.UTC(2017, 3, 1)); // unused anchor
   })).filter((r) => r.both != null);
   rows.forEach((r) => { r.fshare = r.female != null && r.both ? r.female / r.both : null; });
 
-  setHTML("pv-min", fmtIN(last(MN.muslims_both)));
-  setHTML("ex-min-mus", fmtIN(rows[0].both));
+  setHTML("pv-min", countWords(last(MN.muslims_both)));
+  setHTML("ex-min-mus", countWords(rows[0].both));
   setHTML("ex-min-musf", (rows[0].fshare * 100).toFixed(0) + pc("%"));
-  setHTML("ex-min-om", fmtIN(rows[1].both));
-  setHTML("ex-min-ews", fmtIN(rows[2].both));
+  setHTML("ex-min-om", countWords(rows[1].both));
+  setHTML("ex-min-ews", countWords(rows[2].both));
   const pwdRow = rows.find((r) => r.group.startsWith("Persons"));
   setHTML("ex-min-pwd", fmtIN(pwdRow.both));
   setHTML("ex-min-pwdf", (pwdRow.fshare * 100).toFixed(0) + pc("%"));
@@ -560,27 +576,22 @@ const parityRule = new Date(Date.UTC(2017, 3, 1)); // unused anchor
     { group: r.group, gender: "Male", v: r.male },
     { group: r.group, gender: "Female", v: r.female },
   ].filter((d) => d.v != null));
+  /* men and women side by side in each row, never overlaid: men the upper half-band (grey),
+   * women the lower (blue), each labelled at its own bar end */
+  const H7 = 300, bandPx = (H7 - 14 - 42) / rows.length * (1 - 0.28), half = bandPx / 2;
+  const lab = (d) => countWords(d.v) + (d.gender === "Male" ? " men" : " women");
   const plot = Plot.plot({
-    width: 1184, height: 220, marginLeft: 210, marginRight: 150, marginTop: 14, marginBottom: 42,
+    width: 1184, height: H7, marginLeft: 210, marginRight: 150, marginTop: 14, marginBottom: 42,
     style: { background: "transparent", fontFamily: mono, fontSize: "12px", color: "#878D99", overflow: "visible" },
-    x: { label: "estimated enrolment, count →", labelAnchor: "right", labelArrow: false, domain: [0, maxV], tickSize: 0, tickPadding: 10, tickFormat: (d) => (d === 0 ? "0" : String(Math.round(d / 1000)) + "k") },
+    x: { label: "estimated enrolment, lakh →", labelAnchor: "right", labelArrow: false, domain: [0, maxV], tickSize: 0, tickPadding: 10, tickFormat: lakhTick },
     y: { label: null, domain: rows.map((r) => r.group), tickSize: 0, tickPadding: 14, tickFormat: (s) => String(s), padding: 0.28 },
     marks: [
       Plot.gridX([0, 500000, 1000000, 1500000, 2000000], { stroke: "#F0F2F5", strokeWidth: 1 }),
       Plot.ruleX([0], { stroke: "#B5BAC4", strokeWidth: 1.25 }),
-      Plot.barX(rows, { y: "group", x: "male", fill: "#C9CED6", strokeWidth: 0.5 }),
-      Plot.barX(rows, { y: "group", x: "female", fill: "#2E4BD8", strokeWidth: 0.5 }),
-      Plot.text(flat.filter((d) => d.gender === "Female"), { y: "group", x: "v", dx: 10, text: (d) => Math.round(d.v).toLocaleString("en-IN") + " F", fill: "#161A22", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
-      /* male labels sit left of the bar end — unless the bar is so short the
-       * label would cross the zero rule; then it rides on the bar */
-      ...(() => {
-        const pxU = (1184 - 210 - 150) / maxV;
-        const fits = (d) => d.v * pxU > (Math.round(d.v).toLocaleString("en-IN") + " M").length * 12.5 * 0.6 + 24;
-        return [
-          Plot.text(flat.filter((d) => d.gender === "Male" && fits(d)), { y: "group", x: "v", dx: -10, text: (d) => Math.round(d.v).toLocaleString("en-IN") + " M", fill: "#5F6675", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
-          Plot.text(flat.filter((d) => d.gender === "Male" && !fits(d)), { y: "group", x: "v", dx: 8, dy: -16, text: (d) => Math.round(d.v).toLocaleString("en-IN") + " M", fill: "#5F6675", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
-        ];
-      })(),
+      Plot.barX(flat.filter((d) => d.gender === "Male"), { y: "group", x: "v", fill: "#A3A9B4", insetBottom: half + 1 }),
+      Plot.barX(flat.filter((d) => d.gender === "Female"), { y: "group", x: "v", fill: "#2E4BD8", insetTop: half + 1 }),
+      Plot.text(flat.filter((d) => d.gender === "Male"), { y: "group", x: "v", dx: 8, dy: -half / 2, text: lab, fill: "#5F6675", fontSize: 12, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(flat.filter((d) => d.gender === "Female"), { y: "group", x: "v", dx: 8, dy: half / 2, text: lab, fill: "#161A22", fontSize: 12, fontFamily: mono, textAnchor: "start" }),
     ],
   });
   a11y(plot, "Estimated enrolment of PWD and minority communities by gender, All India, 2021-22",
@@ -610,7 +621,7 @@ const parityRule = new Date(Date.UTC(2017, 3, 1)); // unused anchor
   setHTML("pv-ptr", String(Math.round(last(H.ptr))));
   setTxt("ex-ptr-now", String(Math.round(last(H.ptr))));
   setTxt("ex-ptr-first", String(Math.round(firstV(H.ptr))));
-  setHTML("ex-ptr-teach", fmtIN(last(H.teachers)));
+  setHTML("ex-ptr-teach", countWords(last(H.teachers)));
 
   wirePlate(document.getElementById("cb-ptr"), plot, "india-atlas_aishe_ptr_2017-2021", "fiscal_year,pupil_teacher_ratio\n" + H.ptr.data.map((d) => fy(d.date) + "," + d.value).join("\n"));
   wireLegend(document.getElementById("legend-ptr"), plot, ["ptr"], store);

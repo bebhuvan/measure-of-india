@@ -169,7 +169,8 @@ if (D.growth && el("plot-growth")) {
       Plot.barY(mine, { x: "y", y: "v", fill: (d) => (d === mine.at(-1) ? ACC : "#B9C3F3") }),
       Plot.ruleY([0], { stroke: BASE }),
       Plot.tickY(ind, { x: "y", y: "v", stroke: GOLD, strokeWidth: 2.5 }),
-      Plot.text(mine.slice(-1), { x: "y", y: "v", text: (d) => FMT.pct1(d.v), dy: (mine.at(-1).v >= 0 ? -10 : 12), fill: INK, fontWeight: 600 }),
+      // the newest year of state accounts is always an early estimate, revised for years after
+      Plot.text(mine.slice(-1), { x: "y", y: "v", text: (d) => `${FMT.pct1(d.v)}\nlatest estimate`, dy: (mine.at(-1).v >= 0 ? -8 : 8), lineAnchor: (mine.at(-1).v >= 0 ? "bottom" : "top"), lineHeight: 1.3, fill: INK, fontWeight: 600 }),
     ],
   });
   el("plot-growth").append(plot);

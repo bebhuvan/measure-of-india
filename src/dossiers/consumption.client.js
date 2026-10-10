@@ -409,6 +409,8 @@ document.getElementById("ledger-body").innerHTML = regRows.map((r) => `
   const oilDrop = rows.find((r) => r.label === "Edible oil");
   setTxt("ex-sh-oil", arrowPt(cur(C.edible_oil_rural), prv(C.edible_oil_rural)));
   setTxt("ex-sh-veg", arrowPt(cur(C.vegetables_rural), prv(C.vegetables_rural)));
+  setTxt("ex-sh-fuel-r", arrowPt(cur(C.fuel_and_light_rural), prv(C.fuel_and_light_rural)));
+  setTxt("ex-sh-fuel-u", arrowPt(cur(C.fuel_and_light_urban), prv(C.fuel_and_light_urban)));
 
   const allDr = rows.map((r) => r.dr);
   const xMax = Math.ceil(Math.max(...allDr, ...rows.map((r) => r.du)) * 10) / 10 + 0.1;

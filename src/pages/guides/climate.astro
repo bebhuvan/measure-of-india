@@ -14,7 +14,8 @@ const D = bySlug["climate"];
 const C = climateData();
 const V = B(D.currentBundle).meta.vintage;
 const W = C.WIN;
-const w = (p) => `${p[0]}-${String(p[1]).slice(2)}`;          // "1951-80"
+// "1951-80"; a window that crosses a century is written in full ("1996-2025", never "1996-25")
+const w = (p) => `${p[0]}-${Math.floor(p[0] / 100) === Math.floor(p[1] / 100) ? String(p[1]).slice(2) : p[1]}`;
 const sd2 = (v) => (v < 0 ? "−" : "+") + fmt.num2(Math.abs(v)) + "°C";
 const sd1 = (v) => (v < 0 ? "−" : "+") + fmt.num1(Math.abs(v)) + "°C";
 const d1 = (v) => fmt.num1(v) + "°C";
@@ -241,7 +242,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           </div>
           <div class="now">
             <span class="mk">As of {C.century.cruLast}</span>
-            <p>The last ten years averaged <b id="ex-c-dec">{d1(C.century.decade)}</b> in the station record, against <b id="ex-c-early">{d1(C.century.early)}</b> in {w(W.early)}. Warming ran at <b id="ex-c-r1901">{fmt.num2(C.century.rate1901)}°C</b> a decade over the whole record and <b id="ex-c-r1976">{fmt.num2(C.century.rate1976)}°C</b> since 1976; the reanalysis gives <b id="ex-c-e1976">{fmt.num2(C.century.rate1976era5)}°C</b> since 1976. The five warmest years in the station record: {C.century.warmest.join(", ")}.</p>
+            <p>The last ten years averaged <b id="ex-c-dec">{d1(C.century.decade)}</b> in the station record, against <b id="ex-c-early">{d1(C.century.early)}</b> in {w(W.early)}. Warming ran at <b id="ex-c-r1901">{fmt.num2(C.century.rate1901)}°C</b> a decade over the whole record and <b id="ex-c-r1976">{fmt.num2(C.century.rate1976)}°C</b> since 1976; the reanalysis gives <b id="ex-c-e1976">{fmt.num2(C.century.rate1976era5)}°C</b> since 1976. The five warmest years in the station record, warmest first: {C.century.warmest.join(", ")}.</p>
           </div>
         </div>
       </figure>
@@ -363,7 +364,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
         <div class="plate-head">
           <div class="t">
             <h3>A century of monsoons: no long decline in the national total, and the droughts stand out</h3>
-            <div class="sub">Annual rainfall averaged over India's land, millimetres, 1901 to {C.century.cruLast}. The line marks the {w(W.base)} average.</div>
+            <div class="sub">Annual rainfall averaged over India's land, millimetres, 1901 to {C.century.cruLast}. The line marks the {w(W.base)} average; blue bars are years at least 10% below it.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-rain">{fmt.inr(R.annual.at(-1)[1])} mm</div><div class="c">{R.annual.at(-1)[0]}</div></div>
         </div>
@@ -381,7 +382,7 @@ const lakh = (v) => fmt.num1(v / 1e5) + " lakh";
           </div>
           <div class="now">
             <span class="mk">As of {C.century.cruLast}</span>
-            <p>Average annual rain: <b id="ex-r-base">{fmt.inr(R.base)} mm</b> in {w(W.base)}, <b id="ex-r-recent">{fmt.inr(R.recent)} mm</b> in {w(W.recent)}. June to September brought <b id="ex-r-jjas">{fmt.num1(R.jjasRecent)}%</b> of the year's rain in the recent period, against {fmt.num1(R.jjasBase)}% before. The driest years on the record: {R.driest.map(([y]) => y).join(", ")}.</p>
+            <p>Average annual rain: <b id="ex-r-base">{fmt.inr(R.base)} mm</b> in {w(W.base)}, <b id="ex-r-recent">{fmt.inr(R.recent)} mm</b> in {w(W.recent)}. June to September brought <b id="ex-r-jjas">{fmt.num1(R.jjasRecent)}%</b> of the year's rain in the recent period, against {fmt.num1(R.jjasBase)}% before. The driest years on the record, driest first: {R.driest.map(([y]) => y).join(", ")}.</p>
           </div>
         </div>
       </figure>

@@ -101,9 +101,9 @@ const CARDS = [
   {
     slug: "site", bundleSlug: "cpi-2024-linked", kicker: "Guides to India's official economic statistics",
     title: "An atlas of the Indian economy.",
-    keys: ["headline"], d0: 0, d1: 10, band: [2, 6], trend: 4,
+    keys: ["headline"], d0: 0, d1: 10, band: [2, 6], trend: 4, fmt: (v) => v.toFixed(1) + "%",
     prep: shortHeadline,
-    foot: (b, S) => `Consumer price inflation ${S.headline.data.at(-1).value.toFixed(2)}%, ${monthOf(b)}, base 2024. Source: MoSPI/NSO`,
+    foot: (b, S) => `Consumer price inflation ${S.headline.data.at(-1).value.toFixed(1)}%, ${monthOf(b)}, base 2024. Source: MoSPI/NSO`,
   },
   {
     slug: "cpi", bundleSlug: "cpi-2024-linked",
@@ -396,7 +396,11 @@ fs.mkdirSync(path.join(ROOT, "public/og"), { recursive: true });
   }
 }
 
+// OG_ONLY=site,nfhs,profiles renders just those cards ("profiles" = the state profile cards), so a session
+// regenerates its own cards without rewriting everyone else's; unset, it renders every card
+const ONLY = process.env.OG_ONLY ? new Set(process.env.OG_ONLY.split(",")) : null;
 for (const card of CARDS) {
+  if (ONLY && !ONLY.has(card.slug)) continue;
   const entry = card.slug === "site" ? null : bySlug[card.slug];
   const kickerText = entry ? kicker(entry) : card.kicker;
   const title = entry ? entry.ogTitle : card.title;
@@ -424,6 +428,7 @@ for (const card of CARDS) {
 console.log("og cards done");
 
 // --- profiles (lb/profiles): one card per state profile, public/og/states/<slug>.png ---
+if (!ONLY || ONLY.has("profiles"))
 // One generated template: the unit's name, its kind and region, and four of its headline
 // figures, each with its period, read through src/dossiers/profiles.js like the page itself.
 {
@@ -453,7 +458,7 @@ console.log("og cards done");
       `<text x="40" y="262" font-family="'Golos Text', sans-serif" font-size="19" fill="#4A5160">How it earns, spends, works, borrows, learns and falls ill, against India and its neighbours</text>` +
       cellsSvg +
       `<line x1="40" y1="596" x2="1160" y2="596" stroke="#ECEEF2"/>` +
-      `<text x="40" y="618" font-family="'Golos Text', sans-serif" font-size="14" fill="#878D99">Each figure with its own period. Sources: MoSPI, RBI, NFHS-5 and others, as named on the page.</text>` +
+      `<text x="40" y="618" font-family="'Golos Text', sans-serif" font-size="14" fill="#878D99">Each figure with its own period. Sources: MoSPI, RBI, the family health survey and others, as named on the page.</text>` +
       `<text x="1160" y="618" text-anchor="end" font-family="'Golos Text', sans-serif" font-size="14" fill="#878D99">atlas.thisindianlife.today/states/${u.slug}/</text>` +
       `</svg>`;
     const png = await sharp(Buffer.from(renderFonts(svg))).png().toBuffer();
