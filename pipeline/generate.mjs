@@ -100,7 +100,7 @@ Hard rules:
 - The FACTS SHEET is the only permitted source of numbers. Every figure you write must appear in it, rendered at the precision the agency publishes (the CONTRACT's Precision line: one decimal for growth, rates and shares, "7.8%", "rose 0.6 points", unless it says two; counts and money in readable units, "about 2,366 crore"); deltas in points. If a number is not in the sheet, do not invent it — say plainly what is not known.
 - Use the corpus's recurring moves: concede-then-counter (acknowledge the genuine before qualifying it); one concrete image per abstraction at most ("the flattery expires with the next bad monsoon"); "we do not know" said plainly when true; and name the denominator whenever a base effect is doing the work.
 - Vary sentence length deliberately — a 4-word sentence may follow a 30-word one. Uniform cadence is the AI tell.
-- The facts sheet is your tool, never the reader's: do not mention "the sheet", "this sheet" or "the facts sheet" in the prose; say "of the twelve divisions", "among the 32 industries", "in this guide".
+- The facts sheet is your tool, never the reader's: do not mention "the sheet", "this sheet" or "the facts sheet" in the prose; say "of the twelve divisions", "among the 32 industries", "in this guide". Nor its bookkeeping words: never "the lowest of those worker series", "the participation series", "the age cut", "a median of" without saying a median of what; name the people or things ("young women in towns", "the 32 industries"). Every percentage carries its % sign.
 - No verdict words ("strong", "robust", "healthy", "solid") without a number attached; no rhetorical questions to pad; no throat-clearing openers ("In a welcome development…").`;
 
 for (const slot of slots) {

@@ -561,7 +561,10 @@ if (D.proseInputs?.length) {
       bottom: mover(e.bottomByDelta ?? bl.at(-1) ?? null),
       topByLatest: mover(bl[0] ?? null),
       bottomByLatest: mover(bl.at(-1) ?? null),
-      spread: e.spreadDelta,
+      // two different spreads, named for what they are (review-a, 2026-10: the writer called
+      // the spread of year-on-year CHANGES "the spread across the industry groups")
+      rangeOfLatestReadings: bl.length > 1 ? Math.round((bl[0].latest - bl.at(-1).latest) * 100) / 100 : null,
+      spreadOfChangesOnAYearAgo: e.spreadDelta,
       countAboveHeadline: e.countAboveHeadline ?? null,
       contradictions: e.contradictions,
       ranking: e.ranking.slice(0, 10),

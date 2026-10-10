@@ -507,7 +507,10 @@ function enginesGrid(IND, SH, o) {
     div.append(mini);
     const foot = document.createElement("div");
     foot.style.cssText = "display:flex;justify-content:space-between;font-family:var(--sans);font-size:.55rem;color:#B5BAC4;margin-top:2px";
-    foot.innerHTML = `<span>${fmtDate(nn[0].date)}</span><span>${fmtDate(last.date)}</span>`;
+    // review-a (2026-10): each panel has its own scale and no axis, so the foot names it:
+    // the panel's low and high, and the grey rule is zero
+    const vMin = Math.min(...vs), vMax = Math.max(...vs);
+    foot.innerHTML = `<span>${fmtDate(nn[0].date)}</span><span>low ${fmtSigned(vMin)}, high ${fmtSigned(vMax)}; rule at 0</span><span>${fmtDate(last.date)}</span>`;
     div.append(foot);
     grid.append(div);
   }

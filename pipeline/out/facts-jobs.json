@@ -17,6 +17,10 @@
   "current": true,
   "agencyLink": null
  },
+ "precision": {
+  "rateDecimals": 1,
+  "rule": "Write every rate, growth figure and share to ONE decimal (\"7.8%\", \"rose 0.6 points\"), the precision the agency publishes; the facts' rate series are already rounded to it. Counts and money in readable units: at most one decimal on a lakh, crore, million or billion figure, none once it reaches a thousand (\"about 2,366 crore payments\")."
+ },
  "series": {
   "ur": {
    "label": "Unemployment",
@@ -238,62 +242,104 @@
     "agencyLink": null
    },
    "coverage": "All India, 15 years and above, CWS; gender × sector cuts of the monthly bulletin",
-   "top": {
-    "key": "lfpr_female_rural",
-    "label": "LFPR · female · rural",
-    "latest": 39.4,
-    "latestPeriod": "2026-08",
-    "deltaVsYearAgo": 2
-   },
-   "bottom": {
-    "key": "lfpr_female_urban",
-    "label": "LFPR · female · urban",
-    "latest": 25.4,
-    "latestPeriod": "2026-08",
-    "deltaVsYearAgo": -0.7
-   },
-   "topByLatest": {
-    "key": "lfpr_male_rural",
-    "label": "LFPR · male · rural",
-    "latest": 78.4,
-    "latestPeriod": "2026-08",
-    "deltaVsYearAgo": 0.5
-   },
-   "bottomByLatest": {
-    "key": "ur_female_rural",
-    "label": "UR · female · rural",
-    "latest": 3.9,
-    "latestPeriod": "2026-08",
-    "deltaVsYearAgo": -0.1
-   },
-   "spread": 2.7,
-   "countAboveHeadline": null,
-   "contradictions": [
-    "lfpr_male_rural",
-    "wpr_male_rural",
-    "ur_male_urban",
-    "lfpr_male_all",
-    "wpr_male_all",
-    "lfpr_female_rural",
-    "wpr_female_rural",
-    "ur_female_urban",
-    "lfpr_female_all",
-    "wpr_female_all",
-    "lfpr_person_rural",
-    "wpr_person_rural",
-    "ur_person_urban"
-   ],
-   "ranking": [
-    "lfpr_female_rural",
-    "wpr_female_rural",
-    "wpr_person_rural",
-    "lfpr_person_rural",
-    "lfpr_female_all",
-    "wpr_female_all",
-    "wpr_male_rural",
-    "lfpr_male_rural",
-    "lfpr_male_all",
-    "wpr_male_all"
+   "note": "Several measures in one cut: rank and compare only within a measure, never across them.",
+   "byMeasure": [
+    {
+     "measure": "LFPR",
+     "series": 8,
+     "top": {
+      "key": "lfpr_female_rural",
+      "label": "LFPR · female · rural",
+      "latest": 39.4,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": 2
+     },
+     "bottom": {
+      "key": "lfpr_female_urban",
+      "label": "LFPR · female · urban",
+      "latest": 25.4,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": -0.7
+     },
+     "topByLatest": {
+      "key": "lfpr_male_rural",
+      "label": "LFPR · male · rural",
+      "latest": 78.4,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": 0.5
+     },
+     "bottomByLatest": {
+      "key": "lfpr_female_urban",
+      "label": "LFPR · female · urban",
+      "latest": 25.4,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": -0.7
+     }
+    },
+    {
+     "measure": "WPR",
+     "series": 8,
+     "top": {
+      "key": "wpr_female_rural",
+      "label": "WPR · female · rural",
+      "latest": 37.8,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": 1.9
+     },
+     "bottom": {
+      "key": "wpr_female_urban",
+      "label": "WPR · female · urban",
+      "latest": 23.2,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": -0.6
+     },
+     "topByLatest": {
+      "key": "wpr_male_rural",
+      "label": "WPR · male · rural",
+      "latest": 75,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": 0.6
+     },
+     "bottomByLatest": {
+      "key": "wpr_female_urban",
+      "label": "WPR · female · urban",
+      "latest": 23.2,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": -0.6
+     }
+    },
+    {
+     "measure": "UR",
+     "series": 8,
+     "top": {
+      "key": "ur_male_urban",
+      "label": "UR · male · urban",
+      "latest": 6.1,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": 0.2
+     },
+     "bottom": {
+      "key": "ur_person_rural",
+      "label": "UR · person · rural",
+      "latest": 4.1,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": -0.2
+     },
+     "topByLatest": {
+      "key": "ur_female_urban",
+      "label": "UR · female · urban",
+      "latest": 8.9,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": 0
+     },
+     "bottomByLatest": {
+      "key": "ur_female_rural",
+      "label": "UR · female · rural",
+      "latest": 3.9,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": -0.1
+     }
+    }
    ]
   },
   {
@@ -312,97 +358,123 @@
     "agencyLink": null
    },
    "coverage": "All India, monthly bulletin, current weekly status: LFPR, WPR and UR for ages 15 to 29 and all ages, by gender and sector. Ages 15 and above are plfs-monthly and plfs-cuts.",
-   "top": {
-    "key": "lfpr_cws__female_rural__all_ages",
-    "label": "Labour force participation rate · All India · women · rural · age all ages · weekly status",
-    "latest": 29.9,
-    "latestPeriod": "2026-08",
-    "deltaVsYearAgo": 1.9
-   },
-   "bottom": {
-    "key": "lfpr_cws__female_urban__all_ages",
-    "label": "Labour force participation rate · All India · women · urban · age all ages · weekly status",
-    "latest": 20.4,
-    "latestPeriod": "2026-08",
-    "deltaVsYearAgo": -0.6
-   },
-   "topByLatest": {
-    "key": "lfpr_cws__male_rural__a15_29",
-    "label": "Labour force participation rate · All India · men · rural · age 15 to 29 · weekly status",
-    "latest": 61.1,
-    "latestPeriod": "2026-08",
-    "deltaVsYearAgo": 0.1
-   },
-   "bottomByLatest": {
-    "key": "ur_cws__female_rural__all_ages",
-    "label": "Unemployment rate · All India · women · rural · age all ages · weekly status",
-    "latest": 3.9,
-    "latestPeriod": "2026-08",
-    "deltaVsYearAgo": -0.1
-   },
-   "spread": 2.5,
-   "countAboveHeadline": null,
-   "contradictions": [
-    "lfpr_cws__male_rural__a15_29",
-    "lfpr_cws__male_rural__all_ages",
-    "lfpr_cws__male_urban__a15_29",
-    "lfpr_cws__male_urban__all_ages",
-    "lfpr_cws__male_all__a15_29",
-    "lfpr_cws__male_all__all_ages",
-    "lfpr_cws__female_rural__a15_29",
-    "lfpr_cws__female_rural__all_ages",
-    "lfpr_cws__female_urban__a15_29",
-    "lfpr_cws__female_all__a15_29",
-    "lfpr_cws__female_all__all_ages",
-    "lfpr_cws__person_rural__a15_29",
-    "lfpr_cws__person_rural__all_ages",
-    "lfpr_cws__person_all__a15_29",
-    "lfpr_cws__person_all__all_ages",
-    "wpr_cws__male_rural__a15_29",
-    "wpr_cws__male_rural__all_ages",
-    "wpr_cws__male_urban__all_ages",
-    "wpr_cws__male_all__all_ages",
-    "wpr_cws__female_rural__a15_29",
-    "wpr_cws__female_rural__all_ages",
-    "wpr_cws__female_all__all_ages",
-    "wpr_cws__person_rural__a15_29",
-    "wpr_cws__person_rural__all_ages",
-    "wpr_cws__person_all__all_ages",
-    "ur_cws__male_rural__a15_29",
-    "ur_cws__male_urban__a15_29",
-    "ur_cws__male_urban__all_ages",
-    "ur_cws__male_all__a15_29",
-    "ur_cws__female_rural__a15_29",
-    "ur_cws__female_urban__a15_29",
-    "ur_cws__female_all__a15_29",
-    "ur_cws__person_rural__a15_29",
-    "ur_cws__person_urban__a15_29",
-    "ur_cws__person_urban__all_ages",
-    "ur_cws__person_all__a15_29"
-   ],
-   "ranking": [
-    "lfpr_cws__female_rural__all_ages",
-    "wpr_cws__female_rural__all_ages",
-    "wpr_cws__person_rural__all_ages",
-    "lfpr_cws__person_rural__all_ages",
-    "wpr_cws__male_rural__all_ages",
-    "lfpr_cws__male_rural__all_ages",
-    "lfpr_cws__female_all__all_ages",
-    "wpr_cws__male_all__all_ages",
-    "wpr_cws__female_all__all_ages",
-    "lfpr_cws__male_all__all_ages",
-    "lfpr_cws__person_all__all_ages",
-    "wpr_cws__person_all__all_ages",
-    "ur_cws__female_urban__a15_29",
-    "ur_cws__female_all__a15_29",
-    "ur_cws__person_urban__a15_29"
-   ],
-   "tail": {
-    "median": 26.9,
-    "rising": 28,
-    "falling": 20,
-    "belowZero": 0
-   }
+   "note": "Several measures in one cut: rank and compare only within a measure, never across them.",
+   "byMeasure": [
+    {
+     "measure": "Labour force participation rate",
+     "series": 18,
+     "top": {
+      "key": "lfpr_cws__female_rural__all_ages",
+      "label": "Labour force participation rate · All India · women · rural · age all ages · weekly status",
+      "latest": 29.9,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": 1.9
+     },
+     "bottom": {
+      "key": "lfpr_cws__female_urban__all_ages",
+      "label": "Labour force participation rate · All India · women · urban · age all ages · weekly status",
+      "latest": 20.4,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": -0.6
+     },
+     "topByLatest": {
+      "key": "lfpr_cws__male_rural__a15_29",
+      "label": "Labour force participation rate · All India · men · rural · age 15 to 29 · weekly status",
+      "latest": 61.1,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": 0.1
+     },
+     "bottomByLatest": {
+      "key": "lfpr_cws__female_urban__all_ages",
+      "label": "Labour force participation rate · All India · women · urban · age all ages · weekly status",
+      "latest": 20.4,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": -0.6
+     },
+     "tail": {
+      "median": 41.6,
+      "rising": 9,
+      "falling": 5,
+      "belowZero": 0
+     }
+    },
+    {
+     "measure": "Worker population ratio",
+     "series": 18,
+     "top": {
+      "key": "wpr_cws__female_rural__all_ages",
+      "label": "Worker population ratio · All India · women · rural · age all ages · weekly status",
+      "latest": 28.7,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": 1.8
+     },
+     "bottom": {
+      "key": "wpr_cws__female_urban__all_ages",
+      "label": "Worker population ratio · All India · women · urban · age all ages · weekly status",
+      "latest": 18.6,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": -0.5
+     },
+     "topByLatest": {
+      "key": "wpr_cws__male_urban__all_ages",
+      "label": "Worker population ratio · All India · men · urban · age all ages · weekly status",
+      "latest": 56,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": 0.3
+     },
+     "bottomByLatest": {
+      "key": "wpr_cws__female_urban__a15_29",
+      "label": "Worker population ratio · All India · women · urban · age 15 to 29 · weekly status",
+      "latest": 15.9,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": -0.1
+     },
+     "tail": {
+      "median": 37.4,
+      "rising": 14,
+      "falling": 2,
+      "belowZero": 0
+     }
+    },
+    {
+     "measure": "Unemployment rate",
+     "series": 18,
+     "top": {
+      "key": "ur_cws__female_urban__a15_29",
+      "label": "Unemployment rate · All India · women · urban · age 15 to 29 · weekly status",
+      "latest": 26.4,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": 0.7
+     },
+     "bottom": {
+      "key": "ur_cws__person_rural__all_ages",
+      "label": "Unemployment rate · All India · person · rural · age all ages · weekly status",
+      "latest": 4.2,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": -0.2
+     },
+     "topByLatest": {
+      "key": "ur_cws__female_urban__a15_29",
+      "label": "Unemployment rate · All India · women · urban · age 15 to 29 · weekly status",
+      "latest": 26.4,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": 0.7
+     },
+     "bottomByLatest": {
+      "key": "ur_cws__female_rural__all_ages",
+      "label": "Unemployment rate · All India · women · rural · age all ages · weekly status",
+      "latest": 3.9,
+      "latestPeriod": "2026-08",
+      "deltaVsYearAgo": -0.1
+     },
+     "tail": {
+      "median": 12.7,
+      "rising": 5,
+      "falling": 13,
+      "belowZero": 0
+     }
+    }
+   ]
   },
   {
    "bundle": "plfs-q25",
@@ -420,95 +492,123 @@
     "agencyLink": null
    },
    "coverage": "All India, current weekly status (CWS), rural and urban areas, revamped design, from Apr-Jun 2025: LFPR, WPR and UR by gender, sector and age band (15 and above, 15 to 29, all ages).",
-   "top": {
-    "key": "ur_cws__female_rural__a15_29",
-    "label": "Unemployment rate · All India · women · rural · age 15 to 29 · weekly status",
-    "latest": 17.1,
-    "latestPeriod": "2026-04",
-    "deltaVsYearAgo": 4.7
-   },
-   "bottom": {
-    "key": "wpr_cws__person_rural__a15_29",
-    "label": "Worker population ratio · All India · person · rural · age 15 to 29 · weekly status",
-    "latest": 34.5,
-    "latestPeriod": "2026-04",
-    "deltaVsYearAgo": -2.3
-   },
-   "topByLatest": {
-    "key": "lfpr_cws__male_rural__a15plus",
-    "label": "Labour force participation rate · All India · men · rural · age 15 and above · weekly status",
-    "latest": 77.9,
-    "latestPeriod": "2026-04",
-    "deltaVsYearAgo": -0.5
-   },
-   "bottomByLatest": {
-    "key": "ur_cws__female_rural__all_ages",
-    "label": "Unemployment rate · All India · women · rural · age all ages · weekly status",
-    "latest": 4.7,
-    "latestPeriod": "2026-04",
-    "deltaVsYearAgo": 0.4
-   },
-   "spread": 7,
-   "countAboveHeadline": null,
-   "contradictions": [
-    "lfpr_cws__male_urban__a15_29",
-    "lfpr_cws__male_urban__a15plus",
-    "lfpr_cws__male_urban__all_ages",
-    "lfpr_cws__male_all__all_ages",
-    "lfpr_cws__female_rural__a15plus",
-    "lfpr_cws__female_rural__all_ages",
-    "lfpr_cws__person_rural__all_ages",
-    "lfpr_cws__person_all__all_ages",
-    "wpr_cws__male_rural__all_ages",
-    "wpr_cws__male_urban__a15_29",
-    "wpr_cws__male_urban__a15plus",
-    "wpr_cws__male_urban__all_ages",
-    "wpr_cws__male_all__all_ages",
-    "wpr_cws__female_rural__a15plus",
-    "wpr_cws__female_rural__all_ages",
-    "ur_cws__male_rural__a15_29",
-    "ur_cws__male_urban__a15_29",
-    "ur_cws__male_urban__a15plus",
-    "ur_cws__male_urban__all_ages",
-    "ur_cws__male_all__a15_29",
-    "ur_cws__female_rural__a15_29",
-    "ur_cws__female_rural__a15plus",
-    "ur_cws__female_rural__all_ages",
-    "ur_cws__female_urban__a15_29",
-    "ur_cws__female_all__a15_29",
-    "ur_cws__female_all__a15plus",
-    "ur_cws__female_all__all_ages",
-    "ur_cws__person_rural__a15_29",
-    "ur_cws__person_rural__a15plus",
-    "ur_cws__person_rural__all_ages",
-    "ur_cws__person_urban__a15_29",
-    "ur_cws__person_all__a15_29",
-    "ur_cws__person_all__a15plus",
-    "ur_cws__person_all__all_ages"
-   ],
-   "ranking": [
-    "ur_cws__female_rural__a15_29",
-    "ur_cws__female_all__a15_29",
-    "ur_cws__person_rural__a15_29",
-    "ur_cws__person_all__a15_29",
-    "lfpr_cws__male_urban__a15_29",
-    "lfpr_cws__male_urban__all_ages",
-    "wpr_cws__male_urban__all_ages",
-    "ur_cws__female_urban__a15_29",
-    "wpr_cws__male_urban__a15_29",
-    "ur_cws__male_rural__a15_29",
-    "ur_cws__male_all__a15_29",
-    "ur_cws__female_rural__a15plus",
-    "ur_cws__female_rural__all_ages",
-    "ur_cws__female_all__a15plus",
-    "ur_cws__female_all__all_ages"
-   ],
-   "tail": {
-    "median": 28.1,
-    "rising": 34,
-    "falling": 44,
-    "belowZero": 0
-   }
+   "note": "Several measures in one cut: rank and compare only within a measure, never across them.",
+   "byMeasure": [
+    {
+     "measure": "Labour force participation rate",
+     "series": 27,
+     "top": {
+      "key": "lfpr_cws__male_urban__a15_29",
+      "label": "Labour force participation rate · All India · men · urban · age 15 to 29 · weekly status",
+      "latest": 60,
+      "latestPeriod": "2026-04",
+      "deltaVsYearAgo": 0.7
+     },
+     "bottom": {
+      "key": "lfpr_cws__male_rural__a15_29",
+      "label": "Labour force participation rate · All India · men · rural · age 15 to 29 · weekly status",
+      "latest": 60.6,
+      "latestPeriod": "2026-04",
+      "deltaVsYearAgo": -2
+     },
+     "topByLatest": {
+      "key": "lfpr_cws__male_rural__a15plus",
+      "label": "Labour force participation rate · All India · men · rural · age 15 and above · weekly status",
+      "latest": 77.9,
+      "latestPeriod": "2026-04",
+      "deltaVsYearAgo": -0.5
+     },
+     "bottomByLatest": {
+      "key": "lfpr_cws__female_urban__all_ages",
+      "label": "Labour force participation rate · All India · women · urban · age all ages · weekly status",
+      "latest": 19.9,
+      "latestPeriod": "2026-04",
+      "deltaVsYearAgo": -0.5
+     },
+     "tail": {
+      "median": 41.5,
+      "rising": 5,
+      "falling": 20,
+      "belowZero": 0
+     }
+    },
+    {
+     "measure": "Worker population ratio",
+     "series": 27,
+     "top": {
+      "key": "wpr_cws__male_urban__all_ages",
+      "label": "Worker population ratio · All India · men · urban · age all ages · weekly status",
+      "latest": 55.6,
+      "latestPeriod": "2026-04",
+      "deltaVsYearAgo": 0.6
+     },
+     "bottom": {
+      "key": "wpr_cws__person_rural__a15_29",
+      "label": "Worker population ratio · All India · person · rural · age 15 to 29 · weekly status",
+      "latest": 34.5,
+      "latestPeriod": "2026-04",
+      "deltaVsYearAgo": -2.3
+     },
+     "topByLatest": {
+      "key": "wpr_cws__male_rural__a15plus",
+      "label": "Worker population ratio · All India · men · rural · age 15 and above · weekly status",
+      "latest": 74.1,
+      "latestPeriod": "2026-04",
+      "deltaVsYearAgo": -0.4
+     },
+     "bottomByLatest": {
+      "key": "wpr_cws__female_urban__a15_29",
+      "label": "Worker population ratio · All India · women · urban · age 15 to 29 · weekly status",
+      "latest": 15.6,
+      "latestPeriod": "2026-04",
+      "deltaVsYearAgo": -0.4
+     },
+     "tail": {
+      "median": 39.2,
+      "rising": 4,
+      "falling": 22,
+      "belowZero": 0
+     }
+    },
+    {
+     "measure": "Unemployment rate",
+     "series": 27,
+     "top": {
+      "key": "ur_cws__female_rural__a15_29",
+      "label": "Unemployment rate · All India · women · rural · age 15 to 29 · weekly status",
+      "latest": 17.1,
+      "latestPeriod": "2026-04",
+      "deltaVsYearAgo": 4.7
+     },
+     "bottom": {
+      "key": "ur_cws__female_urban__all_ages",
+      "label": "Unemployment rate · All India · women · urban · age all ages · weekly status",
+      "latest": 8.7,
+      "latestPeriod": "2026-04",
+      "deltaVsYearAgo": -0.2
+     },
+     "topByLatest": {
+      "key": "ur_cws__female_urban__a15_29",
+      "label": "Unemployment rate · All India · women · urban · age 15 to 29 · weekly status",
+      "latest": 25.2,
+      "latestPeriod": "2026-04",
+      "deltaVsYearAgo": 0.5
+     },
+     "bottomByLatest": {
+      "key": "ur_cws__female_rural__all_ages",
+      "label": "Unemployment rate · All India · women · rural · age all ages · weekly status",
+      "latest": 4.7,
+      "latestPeriod": "2026-04",
+      "deltaVsYearAgo": 0.4
+     },
+     "tail": {
+      "median": 6.1,
+      "rising": 25,
+      "falling": 2,
+      "belowZero": 0
+     }
+    }
+   ]
   }
  ]
 }

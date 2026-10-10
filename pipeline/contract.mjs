@@ -51,6 +51,9 @@ function resolvePath(p) {
 const numRendered = (v) => {
   const r = [v.toFixed(2), v.toFixed(1), Math.abs(v).toFixed(2), Math.abs(v).toFixed(1)];
   if (Number.isInteger(v)) r.push(String(v));
+  // the precision rule (pipeline/lib/precision.mjs) writes a figure of a hundred or more
+  // whole when it carries a scale word ("about 2,366 crore", never "2,365.84 crore")
+  if (Math.abs(v) >= 100) { const w = Math.round(Math.abs(v)); r.push(String(w), w.toLocaleString("en-IN"), w.toLocaleString("en-US")); }
   // the dossiers render rupee/large figures Indian thousand-grouped (₹4,122;
   // 2,60,061) via toLocaleString("en-IN"), so accept those forms too
   r.push(v.toLocaleString("en-IN"), Math.abs(v).toLocaleString("en-IN"));

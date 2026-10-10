@@ -677,7 +677,7 @@ const IND_PICK = (() => {
     const vs = s.data.map((d) => d.value);
     return `
   <tr>
-    <td class="name"><span class="sw" style="background:${s.color}"></span>${s.label.trim()}<small>14 months, range ${Math.min(...vs).toFixed(1)} – ${Math.max(...vs).toFixed(1)}</small></td>
+    <td class="name"><span class="sw" style="background:${s.color}"></span>${s.label.trim()}<small>${vs.length} months, range ${Math.min(...vs).toFixed(1)} – ${Math.max(...vs).toFixed(1)}</small></td>
     <td class="val">${l.toFixed(1)}</td>
     <td class="chg">${(g >= 0 ? "▲ +" : "▼ −") + Math.abs(g).toFixed(1)}%</td>
     <td class="yr">${y.toFixed(1)}</td>
@@ -736,7 +736,7 @@ const IND_PICK = (() => {
         grid.append(div);
       }
     }
-    grid.setAttribute("aria-label", "Nineteen small line charts, one per ISP service, grouped into six clusters (trade, logistics, finance, ICT, contact-intensive, professional). Each shows the index level over fourteen months against a base-year average of 100. Retail trade ends at " + ISP.retail_trade.data[li2].value.toFixed(1) + ".");
+    grid.setAttribute("aria-label", "Nineteen small line charts, one per ISP service, grouped into six clusters (trade, logistics, finance, ICT, contact-intensive, professional). Each shows the index level over " + dsI.length + " months against a base-year average of 100. Retail trade ends at " + ISP.retail_trade.data[li2].value.toFixed(1) + ".");
   }
 }
 
