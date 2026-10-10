@@ -53,9 +53,9 @@ test("the verifier passes honest prose and rejects a wrong scale in it", () => {
   if (!fs.existsSync(f) || !fs.existsSync("pipeline/out/facts-external.json")) return;
   execFileSync(process.execPath, ["pipeline/verify.mjs", f, "external"], { stdio: "pipe" });
   const prose = fs.readFileSync(f, "utf8");
-  const m = prose.match(/US\$(\d+(?:\.\d+)?) billion/);
+  const m = prose.match(/((?:US)?\$)(\d+(?:\.\d+)?) billion/);   // "US$4.2 billion" or "$4.2 billion"
   assert.ok(m, "the external prose quotes a US$ billion figure");
   const tmp = path.join(fs.mkdtempSync(path.join(os.tmpdir(), "verify-")), "p.md");
-  fs.writeFileSync(tmp, prose.replace(m[0], `US$${m[1]} million`));
+  fs.writeFileSync(tmp, prose.replace(m[0], `${m[1]}${m[2]} million`));
   assert.throws(() => execFileSync(process.execPath, ["pipeline/verify.mjs", tmp, "external"], { stdio: "pipe" }));
 });
