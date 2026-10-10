@@ -1,6 +1,6 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 16:30.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 17:10.
 
 ## Running now: ten family sessions
 
@@ -45,17 +45,19 @@ Each decides every `pending` item in its ledgers (brief: `docs/briefs/wave2.md`)
 Jobs deeper, industry deeper, prices deeper, national accounts remainder (all MoSPI, which
 throttles, so not run alongside the states and services sessions). Then the launch pass.
 
-## Where the site stands (06:00, 10 Oct)
+## Where the site stands (17:10, 10 Oct)
 
-**Every catalogue item on the site is decided: `coverage --strict` passes.** 25 guides,
-1,616 bundles, 656,418 series, 964 pages; all gates green; all 44 prose files verify.
+**30 guides and 36 state profiles, about 1,150 pages; every gate green; all 54 prose files
+verify; `coverage --strict` passes.** Wave 1 (11 families), wave 2 (the original 14 guides
+deepened), the state profiles and the DBIE wave (public finance, payments, farms, banks,
+markets) are all merged.
 
 ## Launch pass: what is left
 
 | Item | Who | State |
 |---|---|---|
 | Search index was 306 MB | atlas-framework round 5 | **fixed**: 112 KB core + shards; largest file 6 MB |
-| State profiles, /states/<state>/ (owner, in launch scope) | atlas-profiles | **36 pages merged**; nav, search and MoSPI pulls to come |
+| State profiles, /states/<state>/ (owner, in launch scope) | atlas-profiles | **merged**: 36 profiles, nav, search, NFHS-6, MoSPI surveys (step 5). Last round: wire public finance and UCB state bundles, look at three profiles |
 | Full fresh MoSPI re-download as an integrity audit | coordinator | **done, clean**: every MoSPI product re-fetched through the hardened client (or by its wave-2 session after the fix); 0 paging slips, 0 data values changed |
 | Deep archive upload to Hugging Face (1.5 GB) | coordinator | **waiting on the owner's go** |
 | Read every guide end to end at 1440 and 390; release checklist | review sessions | after the audit and search land |
@@ -63,7 +65,7 @@ throttles, so not run alongside the states and services sessions). Then the laun
 | Prose rule: published precision for headline growth ("7.8%", not "7.82%") | coordinator | to decide |
 | IIP annual 2024-25: API 5.7% against 6.4% in press summaries (MoSPI PDF 403) | open | not quoted anywhere meanwhile |
 | New sources (SHRUG, Census 2011 PCA, data.gov.in, MGNREGA, TCPD): before or after launch? | **owner** | asked |
-| DBIE wave: public finance, payments, farms, banks, markets (5 sessions) | atlas-* | **merged**: payments (26), farms (27), banks (28). In trial queue: profiles step 5, public finance, markets |
+| DBIE wave: public finance, payments, farms, banks, markets (5 sessions) | atlas-* | **all merged**: payments 26, farms 27, banks 28, public finance 29, markets 30 |
 | credit: cheque counts read as display codes (662), clearing-house totals from the wrong provider (743), a 0.001 placeholder | atlas-payments | fixing |
 | MGNREGA | coordinator | **blocked**: MIS is CAPTCHA-gated (not circumvented); api.data.gov.in refuses connections from this network; needs an owner API key and a reachable API |
 | GitHub remote, Cloudflare secrets and Pages project, DNS for atlas.thisindianlife.today, analytics | **owner** | to do |
@@ -116,6 +118,12 @@ throttles, so not run alongside the states and services sessions). Then the laun
   quarantining in the Data Bank and its backups, and perhaps telling RBI.
 - Index levels (Sensex, Nifty) excluded as licensed exchange products; market cap and
   turnover baked. One ledger rule to flip if you decide otherwise.
+
+## Build machine notes
+
+- Two build slots (`scripts/build-slot.sh`); qc and chart lint need a 6 GB heap at ~1,150
+  pages. A GitHub-hosted runner for a private repo has 7 GB of RAM: tight; consider a larger
+  runner or building on this machine and deploying the built `dist`.
 
 ## After launch (decided)
 
