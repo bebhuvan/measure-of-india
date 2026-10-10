@@ -53,9 +53,9 @@ const monthOf = (d) => MS[d.getUTCMonth()] + " " + d.getUTCFullYear();
 const dayOf = (d) => `${d.getUTCDate()} ${MS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 const setHTML = (id, h) => { const el = document.getElementById(id); if (el) el.innerHTML = h; };
 const pc = (u) => `<span class="pc">${u}</span>`;
-const p1 = fmt.pct1, p2 = fmt.pct2;
+const p1 = fmt.pct1;   // ratios to GDP at one decimal, as the Union Budget states them
 const crore = (v) => "₹" + fmt.inr(v) + " crore";
-const lc = (v) => "₹" + (v / 1e5).toFixed(2) + " lakh crore";
+const lc = (v) => "₹" + (v / 1e5).toFixed(1) + " lakh crore";
 const lc1 = (v) => "₹" + (v / 1e5).toFixed(1) + " lakh crore";
 const rs = (v) => "₹" + v.toFixed(0);
 const style = { background: "transparent", fontFamily: sans, fontSize: "12px", color: MUTED, overflow: "visible" };
@@ -114,8 +114,8 @@ setHTML("n-ytd", ytd.v.toFixed(1) + pc("%"));
 setHTML("d-ytd", `<b>${p1(ytdAgo)}</b> a year earlier, April to ${lastMonth}`);
 spark("nspark-ytd", { data: gmB.dates.map((d, i) => ({ date: dt(d), value: gmB.series.gfd_fytd.data[i] })).slice(-87), color: ACC });
 const gfdBE = firstOf(g11B, "gross_fiscal_deficit__be").v, gfdRE = firstOf(g11B, "gross_fiscal_deficit__re").v;
-setHTML("n-gfd", gfdBE.toFixed(2) + pc("% of GDP"));
-setHTML("d-gfd", `<b>${p2(gfdRE)}</b> revised estimate, ${ST.revisedEstimate}`);
+setHTML("n-gfd", gfdBE.toFixed(1) + pc("% of GDP"));
+setHTML("d-gfd", `<b>${p1(gfdRE)}</b> revised estimate, ${ST.revisedEstimate}`);
 const intRRbe = 100 * firstOf(ceB, "interest_payments__be").v / firstOf(crB, "revenue_receipts__be").v;
 const intRRacc = 100 * atFY(ceB, "interest_payments", ST.accountsTo) / atFY(crB, "revenue_receipts", ST.accountsTo);
 setHTML("n-int", "₹" + intRRbe.toFixed(1));
@@ -193,12 +193,12 @@ function rbiAndAtlasPlate({ id, plotId, file, rbi, atlas, stages, step, yLabel, 
       { key: "states", label: "States", color: GOLD, width: 1.75, rulers: [sg99B, sg04B, sg11B].map((b) => rulerOf(b, "gross_fiscal_deficit")) }],
     atlas: [{ data: rulerOf(backB, "centre_gross_fiscal_deficit") }, { data: rulerOf(backB, "states_gross_fiscal_deficit") }],
     stages: [{ pts: cSt, color: ACC }, { pts: sSt, color: GOLD }],
-    title: "Gross fiscal deficit of the Centre and the states, per cent of GDP", desc: `Centre ${p2(gfdBE)} budgeted for ${ST.budgetEstimate}; states ${p2(sSt.at(-1).value)} budgeted for ${SS.budgetEstimate}.` });
-  setHTML("pv-deficit", p2(gfdBE));
-  setHTML("ex-def-acc", p2(atFY(g11B, "gross_fiscal_deficit", ST.accountsTo)));
-  setHTML("ex-def-re", p2(gfdRE));
-  setHTML("ex-def-be", p2(gfdBE));
-  setHTML("ex-def-st", p2(sSt.find((p) => p.kind === "be").value));
+    title: "Gross fiscal deficit of the Centre and the states, per cent of GDP", desc: `Centre ${p1(gfdBE)} budgeted for ${ST.budgetEstimate}; states ${p1(sSt.at(-1).value)} budgeted for ${SS.budgetEstimate}.` });
+  setHTML("pv-deficit", p1(gfdBE));
+  setHTML("ex-def-acc", p1(atFY(g11B, "gross_fiscal_deficit", ST.accountsTo)));
+  setHTML("ex-def-re", p1(gfdRE));
+  setHTML("ex-def-be", p1(gfdBE));
+  setHTML("ex-def-st", p1(sSt.find((p) => p.kind === "be").value));
 }
 
 /* =================== § 04 this year so far, against the budget =================== */
@@ -360,12 +360,12 @@ function rbiAndAtlasPlate({ id, plotId, file, rbi, atlas, stages, step, yLabel, 
   const flat = (rs) => { const m = new Map(); rs.flat().forEach((d) => { if (d.value != null) m.set(+d.date, d.value); }); return m; };
   const axis = [...new Set([...dir.flat()].map((d) => +d.date))].sort((a, c) => a - c);
   const dm = flat(dir), im = flat(ind);
-  addCrosshair(document.getElementById("plot-taxgdp"), plot, [{ label: "Direct", color: ACC, data: axis.map((t) => ({ date: new Date(t), value: dm.get(t) ?? null })) }, { label: "Indirect", color: GREY, data: axis.map((t) => ({ date: new Date(t), value: im.get(t) ?? null })) }], null, (d) => fyD(d), (v) => (v == null ? "—" : p2(v)));
+  addCrosshair(document.getElementById("plot-taxgdp"), plot, [{ label: "Direct", color: ACC, data: axis.map((t) => ({ date: new Date(t), value: dm.get(t) ?? null })) }, { label: "Indirect", color: GREY, data: axis.map((t) => ({ date: new Date(t), value: im.get(t) ?? null })) }], null, (d) => fyD(d), (v) => (v == null ? "—" : p1(v)));
   wirePlate("cb-taxgdp", plot, "public-finance-taxes-gdp", csvOf(["financial_year", "gross_direct_tax_pct_gdp", "gross_indirect_tax_pct_gdp", "gdp_series"], axis.map((t) => { const iso = new Date(t).toISOString().slice(0, 10); return [fyOf(iso), dm.get(t), im.get(t), iso < g04B.dates[0] ? "1999-2000 base" : iso < g11B.dates[0] ? "2004-05 base" : "2011-12 base"]; })));
   setHTML("pv-taxgdp", p1(dAcc));
-  setHTML("ex-tg-dir", p2(dAcc));
-  setHTML("ex-tg-ind", p2(iAcc));
-  setHTML("ex-tg-be", p2(firstOf(g11B, "total_gross_tax__be").v));
+  setHTML("ex-tg-dir", p1(dAcc));
+  setHTML("ex-tg-ind", p1(iAcc));
+  setHTML("ex-tg-be", p1(firstOf(g11B, "total_gross_tax__be").v));
 }
 {
   const b = ctaxB;
@@ -466,13 +466,13 @@ function rbiAndAtlasPlate({ id, plotId, file, rbi, atlas, stages, step, yLabel, 
       ...endLabels([{ label: "Capital spending", color: ACC, bold: true, data: cap, end: cS.at(-1) }, { label: "Interest", color: GREY, data: int, end: iS.at(-1) }], 0.25, (v) => p1(v)),
     ],
   });
-  a11y(plot, "The Centre's capital expenditure and interest payments, per cent of GDP", `${ST.budgetEstimate} budget: capital ${p2(cS.at(-1).value)}, interest ${p2(iS.at(-1).value)}.`);
+  a11y(plot, "The Centre's capital expenditure and interest payments, per cent of GDP", `${ST.budgetEstimate} budget: capital ${p1(cS.at(-1).value)}, interest ${p1(iS.at(-1).value)}.`);
   put("plot-capex", plot);
-  addCrosshair(document.getElementById("plot-capex"), plot, [{ label: "Capital spending", color: ACC, data: cap }, { label: "Interest", color: GREY, data: int }], null, (d) => fyD(d), (v) => (v == null ? "—" : p2(v)));
+  addCrosshair(document.getElementById("plot-capex"), plot, [{ label: "Capital spending", color: ACC, data: cap }, { label: "Interest", color: GREY, data: int }], null, (d) => fyD(d), (v) => (v == null ? "—" : p1(v)));
   wirePlate("cb-capex", plot, "public-finance-capital-and-interest", csvOf(["financial_year", "capital_expenditure_pct_gdp", "interest_payments_pct_gdp", "stage"], b.dates.map((d, i) => [fyOf(d), b.series.capital_expenditure.data[i] ?? b.series.capital_expenditure__re.data[i] ?? b.series.capital_expenditure__be.data[i], b.series.interest_payments.data[i] ?? b.series.interest_payments__re.data[i] ?? b.series.interest_payments__be.data[i], fyOf(d) === ST.revisedEstimate ? "revised estimate" : fyOf(d) === ST.budgetEstimate ? "budget estimate" : "accounts"])));
-  setHTML("pv-capex", p2(cS.at(-1).value));
-  setHTML("ex-cap-acc", p2(atFY(b, "capital_expenditure", ST.accountsTo)));
-  setHTML("ex-cap-int", p2(atFY(b, "interest_payments", ST.accountsTo)));
+  setHTML("pv-capex", p1(cS.at(-1).value));
+  setHTML("ex-cap-acc", p1(atFY(b, "capital_expenditure", ST.accountsTo)));
+  setHTML("ex-cap-int", p1(atFY(b, "interest_payments", ST.accountsTo)));
 }
 
 /* =================== § 07 debt =================== */
@@ -529,7 +529,7 @@ function rbiAndAtlasPlate({ id, plotId, file, rbi, atlas, stages, step, yLabel, 
     marks: [
       Plot.gridY(y.ticks, { stroke: GRID }), Plot.ruleY([0], { stroke: BASE }),
       ...lines.map((l) => Plot.lineY(l.data, { x: "date", y: "value", stroke: l.color, strokeWidth: l.width, strokeLinejoin: "round", strokeLinecap: "round" })),
-      ...endLabels(lines.filter((l) => l.data.at(-1).value != null), 0.25, (v) => "₹" + v.toFixed(2) + " lakh cr"),
+      ...endLabels(lines.filter((l) => l.data.at(-1).value != null), 0.25, (v) => "₹" + v.toFixed(1) + " lakh cr"),
     ],
   });
   const last = (k) => b.series[k].data.at(-1);
@@ -604,8 +604,17 @@ function rbiAndAtlasPlate({ id, plotId, file, rbi, atlas, stages, step, yLabel, 
 /* =================== § 08 the states =================== */
 {
   const b = srxB, axis = b.dates.filter((d) => d <= `${SS.accountsTo.slice(0, 4)}-04-01`);
-  const share = (k) => axis.map((d) => { const i = b.dates.indexOf(d); const t = b.series.total_revenue_receipts.data[i], v = b.series[k]?.data[i]; return { date: dt(d), value: t && v != null ? 100 * v / t : null }; });
-  const lines = [["tax_receipts", "Own taxes", ACC, 2.25, true], ["share_in_central_taxes", "Share in central taxes", GOLD, 1.75], ["grants_from_the_centre", "Grants from the Centre", INK, 1.75], ["non_tax_receipts", "Non-tax revenue", G2, 1.5]].map(([k, label, color, width, bold]) => ({ k, label, color, width, bold, data: share(k) }));
+  // the RBI's "tax receipts" include the states' share in central taxes, and its "non-tax receipts" include grants
+  // from the Centre (tax + non-tax = total revenue receipts in every year); the states' own taxes and own non-tax
+  // revenue are those totals less the transfers, computed here so the four parts add to 100
+  const val = (k, i) => {
+    const g = (x) => b.series[x]?.data[i];
+    if (k === "own_taxes") return g("tax_receipts") == null || g("share_in_central_taxes") == null ? null : g("tax_receipts") - g("share_in_central_taxes");
+    if (k === "own_non_tax") return g("non_tax_receipts") == null || g("grants_from_the_centre") == null ? null : g("non_tax_receipts") - g("grants_from_the_centre");
+    return g(k);
+  };
+  const share = (k) => axis.map((d) => { const i = b.dates.indexOf(d); const t = b.series.total_revenue_receipts.data[i], v = val(k, i); return { date: dt(d), value: t && v != null ? 100 * v / t : null }; });
+  const lines = [["own_taxes", "Own taxes", ACC, 2.25, true], ["share_in_central_taxes", "Share in central taxes", GOLD, 1.75], ["grants_from_the_centre", "Grants from the Centre", INK, 1.75], ["own_non_tax", "Own non-tax revenue", G2, 1.5]].map(([k, label, color, width, bold]) => ({ k, label, color, width, bold, data: share(k) }));
   const y = span(lines.flatMap((l) => l.data.map((d) => d.value)), 10);
   const plot = Plot.plot({
     width: W, height: 470, marginLeft: 44, marginRight: 230, marginTop: 28, marginBottom: 34, style,
@@ -618,15 +627,15 @@ function rbiAndAtlasPlate({ id, plotId, file, rbi, atlas, stages, step, yLabel, 
     ],
   });
   const sh = (k) => lines.find((l) => l.k === k).data.at(-1).value;
-  a11y(plot, "The states' revenue by source", `${SS.accountsTo}: own taxes ${fmt.pct0(sh("tax_receipts"))}, share in central taxes ${fmt.pct0(sh("share_in_central_taxes"))}, grants ${fmt.pct0(sh("grants_from_the_centre"))}.`);
+  a11y(plot, "The states' revenue by source", `${SS.accountsTo}: own taxes ${fmt.pct0(sh("own_taxes"))}, share in central taxes ${fmt.pct0(sh("share_in_central_taxes"))}, grants ${fmt.pct0(sh("grants_from_the_centre"))}.`);
   put("plot-st-receipts", plot);
   addCrosshair(document.getElementById("plot-st-receipts"), plot, lines.map((l) => ({ label: l.label, color: l.color, data: l.data })), null, (d) => fyD(d), (v) => (v == null ? "—" : p1(v)));
   wirePlate("cb-st-receipts", plot, "public-finance-states-revenue", csvOf(["financial_year", ...lines.map((l) => l.k + "_pct")], axis.map((d, i) => [fyOf(d), ...lines.map((l) => (l.data[i].value == null ? "" : l.data[i].value.toFixed(2)))])));
   setHTML("pv-st-receipts", fmt.pct0(sh("share_in_central_taxes") + sh("grants_from_the_centre")));
-  setHTML("ex-sr-own", fmt.pct0(sh("tax_receipts")));
+  setHTML("ex-sr-own", fmt.pct0(sh("own_taxes")));
   setHTML("ex-sr-share", fmt.pct0(sh("share_in_central_taxes")));
   setHTML("ex-sr-grant", fmt.pct0(sh("grants_from_the_centre")));
-  setHTML("ex-sr-nt", fmt.pct0(sh("non_tax_receipts")));
+  setHTML("ex-sr-nt", fmt.pct0(sh("own_non_tax")));
 }
 {
   const b = sxB, axis = b.dates.filter((d) => d <= `${SS.accountsTo.slice(0, 4)}-04-01`);
@@ -731,14 +740,14 @@ function rbiAndAtlasPlate({ id, plotId, file, rbi, atlas, stages, step, yLabel, 
     ],
   });
   const nw = newL.filter((p) => p.value != null).at(-1), od = pub[2].filter((p) => p.value != null).at(-1);
-  a11y(plot, "The Centre's fiscal deficit on different GDP series", `${ST.accountsTo}: ${p2(od.value)} on the 2011-12 series, ${p2(nw.value)} on the 2022-23 series.`);
+  a11y(plot, "The Centre's fiscal deficit on different GDP series", `${ST.accountsTo}: ${p1(od.value)} on the 2011-12 series, ${p1(nw.value)} on the 2022-23 series.`);
   put("plot-gdpbase", plot);
   const axis = [...new Set([...pub.flat(), ...backL, ...newL].map((p) => +p.date))].sort((a, c) => a - c);
   const m = (list) => new Map(list.filter((p) => p.value != null).map((p) => [+p.date, p.value]));
   const pm = m(pub.flat()), bm = m(backL), nm2 = m(newL);
-  addCrosshair(document.getElementById("plot-gdpbase"), plot, [{ label: "RBI, GDP of the time", color: GREY, data: axis.map((t) => ({ date: new Date(t), value: pm.get(t) ?? null })) }, { label: "2011-12 back series", color: tint(ACC, 0.6), data: axis.map((t) => ({ date: new Date(t), value: bm.get(t) ?? null })) }, { label: "2022-23 series", color: ACC, data: axis.map((t) => ({ date: new Date(t), value: nm2.get(t) ?? null })) }], null, (d) => fyD(d), (v) => (v == null ? "—" : p2(v)));
+  addCrosshair(document.getElementById("plot-gdpbase"), plot, [{ label: "RBI, GDP of the time", color: GREY, data: axis.map((t) => ({ date: new Date(t), value: pm.get(t) ?? null })) }, { label: "2011-12 back series", color: tint(ACC, 0.6), data: axis.map((t) => ({ date: new Date(t), value: bm.get(t) ?? null })) }, { label: "2022-23 series", color: ACC, data: axis.map((t) => ({ date: new Date(t), value: nm2.get(t) ?? null })) }], null, (d) => fyD(d), (v) => (v == null ? "—" : p1(v)));
   wirePlate("cb-gdpbase", plot, "public-finance-which-gdp", csvOf(["financial_year", "rbi_published_pct_gdp", "rbi_gdp_series", "over_2011_12_back_series", "over_2022_23_series"], axis.map((t) => { const iso = new Date(t).toISOString().slice(0, 10); return [fyOf(iso), pm.get(t), iso < g04B.dates[0] ? "1999-2000 base" : iso < g11B.dates[0] ? "2004-05 base" : "2011-12 base", bm.get(t), nm2.get(t)]; })));
-  setHTML("pv-gdpbase", p2(nw.value));
-  setHTML("ex-gb-new", p2(nw.value));
-  setHTML("ex-gb-old", p2(od.value));
+  setHTML("pv-gdpbase", p1(nw.value));
+  setHTML("ex-gb-new", p1(nw.value));
+  setHTML("ex-gb-old", p1(od.value));
 }
