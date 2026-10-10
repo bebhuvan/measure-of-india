@@ -1,6 +1,6 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 12:00.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 16:30.
 
 ## Running now: ten family sessions
 
@@ -63,7 +63,7 @@ throttles, so not run alongside the states and services sessions). Then the laun
 | Prose rule: published precision for headline growth ("7.8%", not "7.82%") | coordinator | to decide |
 | IIP annual 2024-25: API 5.7% against 6.4% in press summaries (MoSPI PDF 403) | open | not quoted anywhere meanwhile |
 | New sources (SHRUG, Census 2011 PCA, data.gov.in, MGNREGA, TCPD): before or after launch? | **owner** | asked |
-| DBIE wave: public finance, payments, farms, banks, markets (5 sessions) | atlas-* | **payments merged** (guide 26); four running |
+| DBIE wave: public finance, payments, farms, banks, markets (5 sessions) | atlas-* | **merged**: payments (26), farms (27), banks (28). In trial queue: profiles step 5, public finance, markets |
 | credit: cheque counts read as display codes (662), clearing-house totals from the wrong provider (743), a 0.001 placeholder | atlas-payments | fixing |
 | MGNREGA | coordinator | **blocked**: MIS is CAPTCHA-gated (not circumvented); api.data.gov.in refuses connections from this network; needs an owner API key and a reachable API |
 | GitHub remote, Cloudflare secrets and Pages project, DNS for atlas.thisindianlife.today, analytics | **owner** | to do |
@@ -107,6 +107,15 @@ throttles, so not run alongside the states and services sessions). Then the laun
   `mospiAll` now detects a repeated row in any page set, re-reads it in 100-row pages and
   compares, and fails loudly if the two disagree. Re-running every MoSPI adapter with
   MOSPI_NO_CACHE=1 after wave 2 checks every dump on the site the same way.
+
+## For the owner, not the Atlas
+
+- **Personal data in the Data Bank.** Its copy of RBI DBIE report 273 (UCCS unit-level,
+  2010-14) holds respondents' names, addresses, telephone numbers and pincodes (51,007 rows),
+  apparently as RBI publishes it. Excluded from the Atlas (markets ledger); worth deleting or
+  quarantining in the Data Bank and its backups, and perhaps telling RBI.
+- Index levels (Sensex, Nifty) excluded as licensed exchange products; market cap and
+  turnover baked. One ledger rule to flip if you decide otherwise.
 
 ## After launch (decided)
 
