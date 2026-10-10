@@ -6,6 +6,7 @@ import { DOSSIERS, bySlug } from "../dossiers/registry.js";
 import { vintageLabel } from "../dossiers/display.js";
 import { headlineOf } from "../dossiers/headline.js";
 import { briefSVG } from "../charts/static.js";
+import { STATES } from "../dossiers/states-key.js";   // profiles (lb/profiles)
 import { MONTHS_FULL as MF } from "../../pipeline/lib/periods.mjs";
 const MONTHS_FULL = MF.map((m) => m[0].toUpperCase() + m.slice(1));
 
@@ -96,6 +97,20 @@ const SECTIONS = [...new Set(DOSSIERS.map((d) => d.section))];
       <ul id="results" role="listbox" hidden></ul>
     </div>
   </section>
+
+  <!-- profiles (lb/profiles): an entry point to the state profiles -->
+  <section class="index st-entry" aria-labelledby="st-h">
+    <div class="ix-head"><h2 id="st-h">Your state</h2><a href="/states/">All states and union territories</a></div>
+    <p class="st-lede">One page for each state and union territory: how it earns, spends, works, borrows and falls ill, against India and its neighbours.</p>
+    <ul class="st-links">{[...STATES].sort((a, b) => a.name.localeCompare(b.name, "en-IN")).map((u) => <li><a href={`/states/${u.slug}/`}>{u.name}</a></li>)}</ul>
+  </section>
+  <style>
+    .st-entry .st-lede{font-family:var(--sans);font-size:.95rem;color:var(--ink-soft);margin:6px 0 14px;max-width:62ch}
+    .st-entry .st-links{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 22px;font-family:var(--sans);font-size:.92rem}
+    .st-entry .st-links a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule-2)}
+    .st-entry .st-links a:hover{border-bottom-color:var(--ink)}
+  </style>
+  <!-- end profiles -->
 
   <section class="index" aria-labelledby="ix-h">
     <div class="ix-head"><h2 id="ix-h">Every guide</h2><a href="/guides/">Browse the guides</a></div>

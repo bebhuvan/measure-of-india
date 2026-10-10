@@ -460,13 +460,19 @@ export function formerFigures(m, slug) {
 
 /* ---------- words ---------- */
 const ORD = (n) => { const s = ["th", "st", "nd", "rd"], v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); };
+export const RANK_EDGE = 5;
 export function rankPhrase(rank) {
   if (!rank) return null;
+  // "highest" and "lowest" only for the ends of the table (the first and last EDGE places);
+  // in between, the place counted from the highest, marked as the middle it is
   const { r, n, tied = 1 } = rank;
   const j = tied > 1 ? "joint " : "";
+  const fromLow = n - (r + tied - 1) + 1;
   if (r === 1) return `${j ? "joint highest" : "the highest"} of ${n}`;
-  if (r + tied - 1 === n) return `${j ? "joint lowest" : "the lowest"} of ${n}`;
-  return r <= n / 2 ? `${j}${ORD(r)} highest of ${n}` : `${j}${ORD(n - (r + tied - 1) + 1)} lowest of ${n}`;
+  if (fromLow === 1) return `${j ? "joint lowest" : "the lowest"} of ${n}`;
+  if (r <= RANK_EDGE) return `${j}${ORD(r)} highest of ${n}`;
+  if (fromLow <= RANK_EDGE) return `${j}${ORD(fromLow)} lowest of ${n}`;
+  return `near the middle, ${j}${ORD(r)} of ${n} counted from the highest`;
 }
 export const lowerFirst = (s) => s.charAt(0).toLowerCase() + s.slice(1);
 export const withThe = (u) => (/Islands$/.test(u.name) ? `the ${u.name}` : u.name);
@@ -571,7 +577,9 @@ const KIND = { state: "State", "ut-legislature": "Union territory with a legisla
 export function sentence(u, f, { lead = "" } = {}) {
   let s = `${lead || `In ${withThe(u)}, `}${f.what} was ${F_(f)} ${inPeriod(f.period)}`;
   const rp = rankPhrase(f.rank);
-  if (rp) s += `, ${rp} states and union territories with figures for ${forPeriod(f.period)}`;
+  const units = `states and union territories with figures for ${forPeriod(f.period)}`;
+  if (rp && /^near the middle/.test(rp)) s += `, near the middle of the ${f.rank.n} ${units} (${f.rank.tied > 1 ? "joint " : ""}${ORD(f.rank.r)} counted from the highest)`;
+  else if (rp) s += `, ${rp} ${units}`;
   if (f.india) s += f.india.same ? `. The all-India figure was ${I_(f)}` : `. The latest all-India figure is ${I_(f)}, for ${forPeriod(f.india.period)}`;
   s += ".";
   if (f.newer) s += ` ${u.name}'s estimate for ${forPeriod(f.newer.period)}, which ${f.newer.n} states and union territories have published so far, is ${figHTML(f.newer.text, f.fmt, f.newer.src)}.`;

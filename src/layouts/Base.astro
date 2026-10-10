@@ -4,7 +4,7 @@ import "../styles/atlas.css";
 interface Props {
   title: string;
   description?: string;
-  nav?: "guides" | "home" | "learn" | "register" | "method" | "about";
+  nav?: "guides" | "home" | "learn" | "register" | "method" | "about" | "states";
   dateStamp?: string;
   crumbLeft?: string;   // html
   crumbRight?: string;  // html
@@ -55,7 +55,7 @@ const canonicalUrl = canonical ?? "https://atlas.thisindianlife.today/";
   <div class="sh-in">
     <a class="brand" href="/">India Atlas</a>
     <nav class="sh-nav" aria-label="Main">
-      <a href="/guides/" aria-current={nav === "guides" ? "page" : undefined}>Guides</a><a href="/learn/" aria-current={nav === "learn" ? "page" : undefined}>Learn</a><a href="/register/" aria-current={nav === "register" ? "page" : undefined}>Indicators</a><a href="/method/" aria-current={nav === "method" ? "page" : undefined}>Method</a><a href="/about/" aria-current={nav === "about" ? "page" : undefined}>About</a>
+      <a href="/guides/" aria-current={nav === "guides" ? "page" : undefined}>Guides</a><!-- profiles (lb/profiles) --><a href="/states/" aria-current={nav === "states" ? "page" : undefined}>States</a><!-- end profiles --><a href="/learn/" aria-current={nav === "learn" ? "page" : undefined}>Learn</a><a href="/register/" aria-current={nav === "register" ? "page" : undefined}>Indicators</a><a href="/method/" aria-current={nav === "method" ? "page" : undefined}>Method</a><a href="/about/" aria-current={nav === "about" ? "page" : undefined}>About</a>
     </nav>
     <a class="sh-search" href="/#find">Search <kbd>/</kbd></a>
     <span class="sh-date">{dateStamp}</span>

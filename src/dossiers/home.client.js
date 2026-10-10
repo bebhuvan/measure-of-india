@@ -31,6 +31,9 @@ if (q && res) {
     const head = (t) => `<li class="sec" role="presentation">${t}</li>`;
     // series first (what the box promises), then guides and charts, then whole files
     let html = "";
+    // profiles (lb/profiles): a query that is a state's name leads with its profile
+    const states = quick.states ?? [];
+    if (states.some((x) => x.lead)) html += head("State profile") + states.filter((x) => x.lead).map((x) => opt(x.href, x.title, x.note, "<small>Profile</small>")).join("");
     const clip = (t, n) => (t.length > n ? t.slice(0, n - 1).replace(/[\s,;:]+\S*$/, "") + "…" : t);
     const top = [...quick.guides.slice(0, 1).map((g) => ({ ...g, kind: "Guide" })), ...quick.plates.slice(0, 3).map((p) => ({ ...p, kind: "Chart" }))].slice(0, 3);
     if (series === null) html += `<li class="wait" role="presentation">Searching the series…</li>`;
@@ -41,8 +44,9 @@ if (q && res) {
         `${esc(r.latest)}<small>${esc(r.period)}</small>`, spark(r.recent))).join("");
     }
     if (top.length) html += head("Guides and charts") + top.map((x) => opt(x.href, x.title, x.note, `<small>${x.kind}</small>`)).join("");
+    if (states.length && !states.some((x) => x.lead)) html += head("State profiles") + states.map((x) => opt(x.href, x.title, x.note, "<small>Profile</small>")).join("");
     if (quick.files.length) html += head("Files") + quick.files.slice(0, 3).map((f) => opt(f.href, f.title, f.note, "<small>File</small>")).join("");
-    if (!html || (series && !series.rows.length && !top.length && !quick.files.length))
+    if (!html || (series && !series.rows.length && !top.length && !quick.files.length && !states.length))
       html = `<li class="none">Nothing matches “${esc(q.value)}”. Try fewer words, or a broader one, such as prices, output or a state's name.</li>`;
     res.innerHTML = html;
     options().forEach((li, i) => {

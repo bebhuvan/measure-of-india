@@ -4,7 +4,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { STATES, FORMER_BY_SLUG, SEAMS, placeAll } from "../src/dossiers/states-key.js";
-import { profile, page, MEASURES, load, cells, commonDate, measureAll, FMT } from "../src/dossiers/profiles.js";
+import { profile, page, MEASURES, load, cells, commonDate, measureAll, FMT, rankPhrase, RANK_EDGE } from "../src/dossiers/profiles.js";
 
 const all = STATES.map((u) => ({ u, p: profile(u.slug) }));
 const figsOf = (p) => p.sections.flatMap((s) => s.figures);
@@ -71,4 +71,15 @@ test("every figure renders through a known format, with its period", () => {
     assert.match(f.period, /\d{4}/, `${u.slug}/${f.id}: period "${f.period}"`);
     if (f.india) assert.match(f.india.period, /\d{4}/);
   }
+});
+
+test("ranks say highest or lowest only at the ends of the table", () => {
+  for (let n = 3; n <= 36; n++) for (let r = 1; r <= n; r++) {
+    const t = rankPhrase({ r, n });
+    const m = /(\d+)(st|nd|rd|th) (highest|lowest)/.exec(t);
+    if (m) assert.ok(+m[1] <= RANK_EDGE, `${r} of ${n}: "${t}"`);
+    if (r > RANK_EDGE && n - r + 1 > RANK_EDGE) assert.match(t, /^near the middle, \d+(st|nd|rd|th) of \d+ counted from the highest$/);
+  }
+  assert.equal(rankPhrase({ r: 17, n: 36 }), "near the middle, 17th of 36 counted from the highest");
+  assert.equal(rankPhrase({ r: 34, n: 36 }), "3rd lowest of 36");
 });

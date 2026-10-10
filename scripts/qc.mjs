@@ -915,6 +915,9 @@ for (const page of PAGES) {
       let want;
       try { want = PF[f](EVAL[src.op](src)); } catch (e) { bad++; fail(`profiles: ${url} figure "${el.textContent}": ${e.message}`); continue; }
       if (el.textContent !== want) { bad++; fail(`profiles: ${url} rendered "${el.textContent}" != data "${want}" (${JSON.stringify(src)})`); }
+      // its rank: "highest" or "lowest" only for the first and last five places (lb/profiles)
+      const rk = /(\d+)(st|nd|rd|th) (highest|lowest) of/.exec(el.closest("p, tr, .num, li")?.textContent ?? "");
+      if (rk && +rk[1] > 5) { bad++; fail(`profiles: ${url} says "${rk[0]}": a middle place reads as an extreme`); }
       // its period: in the same sentence, cell or number block
       const box = el.closest("p, tr, .num, li") ?? el.parentElement;
       const cap = el.closest("table")?.querySelector("caption")?.textContent ?? "";   // a table dated once, in its caption
@@ -923,6 +926,18 @@ for (const page of PAGES) {
     if (url !== "/states/" && !fs.existsSync(path.join(DIST, url.replace(/\/$/, "") + ".csv"))) fail(`profiles: ${url.replace(/\/$/, "")}.csv not built`);
   }
   if (!bad) ok(`profiles: ${pages} pages, ${nFig} figures each re-read from its bundle and dated`);
+  // site search: a state's name, in the spellings readers type, returns its profile first
+  const corePath = path.join(DIST, "search/core.json");
+  if (fs.existsSync(corePath)) {
+    const { createSearch } = await import(pathToFileURL(path.join(ROOT, "src/dossiers/search-core.js")).href);
+    const S = createSearch(JSON.parse(fs.readFileSync(corePath, "utf8")), async () => ({}));
+    let miss = 0;
+    for (const [q, slug] of [["Bihar", "bihar"], ["Orissa", "odisha"], ["Pondicherry", "puducherry"], ["NCT of Delhi", "delhi"], ["Jammu and Kashmir", "jammu-kashmir"], ["Uttaranchal", "uttarakhand"]]) {
+      const r = S.quick(q).states ?? [];
+      if (!(r[0]?.lead && r[0].href === `/states/${slug}/`)) { miss++; fail(`profiles: site search "${q}" does not lead with /states/${slug}/`); }
+    }
+    if (!miss) ok("profiles: site search leads with the profile for a state's name in six spellings");
+  } else fail("profiles: dist/search/core.json missing");
 }
 
 // static greps over our own sources (not Plot internals) — the file list is
