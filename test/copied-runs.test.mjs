@@ -27,3 +27,11 @@ test("nullCopiedRuns blanks the copy and declares the gap", () => {
     assert.match(s.gapsNote, /second time/);
   }
 });
+
+test("a copy cell off by a rounding unit is blanked too", () => {
+  const dates = Array.from({ length: 24 }, (_, i) => `${2000 + i}-04-01`);
+  const series = Object.fromEntries([1000, 3000, 7000].map((k, j) => [`s${j}`, { data: paste(ramp(k), 14, 2, 8) }]));
+  series.s0.data[5] += 1;   // a revision of one unit in the copy
+  nullCopiedRuns(dates, series, "TEST");
+  assert.equal(series.s0.data[5], null);
+});

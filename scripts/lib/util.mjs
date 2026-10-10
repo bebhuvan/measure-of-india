@@ -253,7 +253,11 @@ export function nullCopiedRuns(dates, series, source) {
     const reason = `${source} prints the figures for ${dates[original[0]].slice(0, 7)} to ${dates[original[1]].slice(0, 7)} a second time under ${dates[copy[0]].slice(0, 7)} to ${dates[copy[1]].slice(0, 7)}; left empty rather than shown wrongly.`;
     for (const k of keys) {
       const s = series[k]; let hit = false;
-      for (let q = copy[0]; q <= copy[1]; q++) if (s.data[q] != null && s.data[q] === s.data[q + original[0] - copy[0]]) { s.data[q] = null; hit = true; }
+      // blank with the detector's own tolerance: a copy can differ from its original by a
+      // rounding unit (report 612: May and Jul 2007 NEFT 14,870,000 against Apr 2011's
+      // 14,860,000), and leaving those cells would keep part of the copy on the page
+      const o = original[0] - copy[0];
+      for (let q = copy[0]; q <= copy[1]; q++) { const v = s.data[q], w = s.data[q + o]; if (v != null && w != null && v !== 0 && Math.abs(v - w) <= 0.002 * Math.abs(v)) { s.data[q] = null; hit = true; } }
       if (hit) {
         s.gaps = [...new Set([...(s.gaps ?? []), ...dates.slice(copy[0], copy[1] + 1)])].sort();
         s.gapsNote = s.gapsNote ? `${s.gapsNote} ${reason}` : reason;
