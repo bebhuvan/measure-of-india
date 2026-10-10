@@ -409,3 +409,16 @@ fails on the omissions above, by design.
   gzipped budget; every shard and chunk under 1 MB; 12 series sampled from every guide (299)
   found by their own label, each link opening a page that carries the row's anchor exactly
   once. Budgets written into docs/CONTRACT-render.md. Unit tests: test/search.test.mjs.
+
+## 2. Bundle text drift, rebaked offline from raw
+
+- The adapters already write the right text; the committed bundles were baked by older code:
+  trade-dbie's sixteen bundles carried `revisionPolicy: "x"` (9225baa, before sources.yml had
+  the sentence the adapter reads), five rbi-* bundles predated `metaBase.geo`, and
+  external-bop6-vintages predated the "earliest estimate DBIE carries" label.
+- Rebaked with no network: `fetch.mjs only trade-dbie` and `only external-bop` (Data Bank
+  mirror, read-only) and `RBI_FROM_RAW=1 fetch.mjs only rbi`. Raw dumps unchanged. A JSON diff
+  of every changed bundle against HEAD shows only: 16 x `meta.revisionPolicy` ("x" to the
+  sources.yml sentence), 5 x `meta.geo` (absent to "IND"), 243 x series label in
+  external-bop6-vintages ("first estimate" to "earliest estimate DBIE carries"). No value,
+  date or vintage moved.
