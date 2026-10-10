@@ -372,3 +372,43 @@ for (const card of CARDS) {
   console.log(`og/${card.slug}.png (${(png.length / 1024).toFixed(0)} KB)`);
 }
 console.log("og cards done");
+
+// --- profiles (lb/profiles): one card per state profile, public/og/states/<slug>.png ---
+// One generated template: the unit's name, its kind and region, and four of its headline
+// figures, each with its period, read through src/dossiers/profiles.js like the page itself.
+{
+  const { STATES } = await import("../src/dossiers/states-key.js");
+  const { compareRow, glanceMeasures } = await import("../src/dossiers/profiles.js");
+  const G = glanceMeasures();
+  const dir = path.join(ROOT, "public/og/states");
+  fs.mkdirSync(dir, { recursive: true });
+  const KIND = { state: "State", "ut-legislature": "Union territory", ut: "Union territory" };
+  for (const u of STATES) {
+    const r = compareRow(u.slug);
+    const cells = r.cells.map((c, i) => c && { label: G[i].label, text: c.text, period: c.period }).filter(Boolean).slice(0, 4);
+    const nameSize = u.name.length > 30 ? 40 : u.name.length > 20 ? 50 : 62;
+    const cellsSvg = cells.map((c, i) => {
+      const x = 40 + i * 282;
+      return `<line x1="${x}" y1="330" x2="${x + 250}" y2="330" stroke="#DFE2E8"/>` +
+        `<text x="${x}" y="362" font-family="'Golos Text', sans-serif" font-size="17" fill="#878D99">${esc(c.label)}</text>` +
+        `<text x="${x}" y="428" font-family="'Source Serif 4', serif" font-weight="300" font-size="50" fill="#161A22">${esc(c.text.replace(/ a day$/, ""))}</text>` +
+        `<text x="${x}" y="462" font-family="'Golos Text', sans-serif" font-size="16" fill="#4A5160">${esc(c.period)}</text>`;
+    }).join("");
+    const svg =
+      `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">` +
+      `<rect width="1200" height="630" fill="#FFFFFF"/>` +
+      `<text x="40" y="58" font-family="'Source Serif 4', serif" font-weight="600" font-size="22" fill="#161A22">India Atlas</text>` +
+      `<text x="40" y="100" font-family="'Golos Text', sans-serif" font-size="17" fill="#878D99">${esc(`${KIND[u.kind]} profile, ${u.region}`)}</text>` +
+      `<text x="40" y="${150 + nameSize / 2}" font-family="'Source Serif 4', serif" font-weight="500" font-size="${nameSize}" letter-spacing="-0.6" fill="#161A22">${esc(u.name)}</text>` +
+      `<text x="40" y="262" font-family="'Golos Text', sans-serif" font-size="19" fill="#4A5160">How it earns, spends, works, borrows, learns and falls ill, against India and its neighbours</text>` +
+      cellsSvg +
+      `<line x1="40" y1="596" x2="1160" y2="596" stroke="#ECEEF2"/>` +
+      `<text x="40" y="618" font-family="'Golos Text', sans-serif" font-size="14" fill="#878D99">Each figure with its own period. Sources: MoSPI, RBI, NFHS-5 and others, as named on the page.</text>` +
+      `<text x="1160" y="618" text-anchor="end" font-family="'Golos Text', sans-serif" font-size="14" fill="#878D99">atlas.thisindianlife.today/states/${u.slug}/</text>` +
+      `</svg>`;
+    const png = await sharp(Buffer.from(renderFonts(svg))).png().toBuffer();
+    fs.writeFileSync(path.join(dir, u.slug + ".png"), png);
+  }
+  console.log(`og/states: ${STATES.length} profile cards`);
+}
+// --- end profiles ---

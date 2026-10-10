@@ -93,6 +93,16 @@ families:
       with all-zero values: never baked. Notes and traps: docs/reference/tradestat.md.
   # --- end trade ---
 
+  # ---- profiles (lb/profiles): a parse of a published PDF, read from the owner's parse folder ----
+  pdfparse:
+    transport: local
+    root: "~/Documents/Bhuvan projects/Indica doc parse"
+    note: >
+      The owner's PDF-to-table parser (Indica doc parse). Read-only from here: an adapter reads a
+      parse's tidy CSV and checks it against an independent baked source before anything bakes.
+      The PDF itself is named by URL and sha256 in the dossier entry; the raw dump records both.
+  # ---- end profiles ----
+
 dossiers:
 
   cpi:
@@ -1617,6 +1627,27 @@ dossiers:
     release_url: https://labourbureau.gov.in
   # --- end prices ---
 
+  # ---- profiles (lb/profiles): NFHS-6 (2023-24) for the state profiles (scripts/lib/products/profiles-nfhs6.mjs) ----
+  profiles-nfhs6:
+    family: pdfparse
+    geo: IND
+    product: profiles-nfhs6
+    frequency: cross-sectional
+    frequency_exempt: true
+    base: "NFHS-6 (2023-24)"   # the NFHS-5 reference bundle declares its own
+    stale_after: "2024-01"
+    vintage: "2026-05-27"      # the PDF's own modification date; IIPS prints no release date
+    release_date: null
+    release_calendar: "one round about every five years"
+    revision_policy: "Fact-sheet estimates; the national and state reports may revise a figure. Rounds are compared by design, never chained."
+    source_agency: "International Institute for Population Sciences (IIPS) and the Ministry of Health and Family Welfare"
+    release_url: https://www.nfhsiips.in
+    fetch:
+      csv: "~/Documents/Bhuvan projects/Indica doc parse/out/nfhs6_clean/nfhs6_indicators.csv"
+      pdf_url: "https://www.nfhsiips.in/nfhsuser/assets/National%20Family%20Health%20Survey%20(NFHS-6)%202023-2024%20Fact%20Sheets.pdf"
+      pdf_sha256: "59dec561e837bea060b6684a75caca84e0c982ed9e2670848521755f2ab267f9"
+  # ---- end profiles ----
+
 # ---------------------------------------------------------------------------
 # SEAMS: the base-year registry (2026-10). One entry per base (or
 # classification) for every product whose instrument has changed ruler.
@@ -2176,3 +2207,14 @@ seams:
       to: null
       bundles: [nfhs-5-adult-nutrition, nfhs-5-adults, nfhs-5-anaemia, nfhs-5-blood-pressure, nfhs-5-blood-sugar, nfhs-5-cancer-screening, nfhs-5-child-nutrition, nfhs-5-childhood-disease, nfhs-5-delivery, nfhs-5-empowerment, nfhs-5-family-planning, nfhs-5-fp-quality, nfhs-5-hiv-knowledge, nfhs-5-household, nfhs-5-marriage-fertility, nfhs-5-maternity, nfhs-5-mortality, nfhs-5-tobacco-alcohol, nfhs-5-unmet-need, nfhs-5-vaccination, nfhs-5-violence]
   # ---- end health-gender ----
+  # ---- profiles (lb/profiles): NFHS-6 and the NFHS-5 column of its fact sheets, two rulers ----
+  profiles-nfhs6:
+    - base: "NFHS-5 (2019-21), as printed in the NFHS-6 fact sheets"
+      from: "2019-06"
+      to: "2021-12"
+      bundles: [profiles-nfhs6-nfhs5]
+    - base: "NFHS-6 (2023-24)"
+      from: "2023-01"
+      to: null
+      bundles: [profiles-nfhs6]
+  # ---- end profiles ----

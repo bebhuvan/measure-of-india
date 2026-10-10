@@ -81,6 +81,8 @@ Object.assign(REGISTRY, { credit: buildCredit });
 Object.assign(REGISTRY, { tradestat: buildTradestat, "dbie-trade": buildDbieTrade });   // trade (lb/trade)
 Object.assign(REGISTRY, { core: buildCore, "iip-1980": buildIip1980 });   // industry (lb/industry)
 Object.assign(REGISTRY, { cpiiw: buildCpiiw, "wages-rural": buildWagesRural });   // prices (lb/prices)
+import { buildProfilesNfhs6 } from "./lib/products/profiles-nfhs6.mjs";   // profiles (lb/profiles)
+Object.assign(REGISTRY, { "profiles-nfhs6": buildProfilesNfhs6 });   // profiles (lb/profiles)
 
 // One product's failure must not starve the rest: collect, continue, and
 // exit non-zero at the end so CI still fails on the summary.
