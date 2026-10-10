@@ -268,7 +268,7 @@ const fA = (k, i = flowsAB.dates.length - 1) => flowsAB.series[FA[k]]?.data[i] ?
 {
   const s = (k, label, color, bold) => ({ label, color, bold, data: pts(sponsorB, k, 1e-3, "1987-04-01") });
   const list = [s("private", "Private", ACC, true), s("bank", "Bank-sponsored", GOLD), s("uti", "UTI", G2)];
-  lines("cb-sponsor", "plot-sponsor", list, { y: { step: 50, label: "₹ thousand crore, net inflow", fmt: (v) => String(v) }, tipFmt: (v) => "₹" + Math.round(v * 1000).toLocaleString("en-IN") + " crore", dateFmt: fyOfDate, x: { step: 4 }, mr: 200 });
+  lines("cb-sponsor", "plot-sponsor", list, { y: { step: 50, label: "₹ thousand crore, net inflow", fmt: (v) => String(v) }, tipFmt: (v) => "₹" + Math.round(v * 1000).toLocaleString("en-IN") + " crore", labelFmt: (v) => "₹" + Math.round(v * 1000).toLocaleString("en-IN") + " cr", dateFmt: fyOfDate, x: { step: 4 }, mr: 230 });
   const L = (k) => lastOf(sponsorB, k).v;
   setHTML("pv-sponsor", tc(L("private")));
   setHTML("ex-sp-p", tc(L("private"))); setHTML("ex-sp-b", tc(L("bank"))); setHTML("ex-sp-u", tc(L("uti"))); setHTML("ex-sp-t", tc(L("total")));
