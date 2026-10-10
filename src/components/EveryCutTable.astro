@@ -67,6 +67,7 @@ const num = (v) => (v == null ? "" : String(Math.round(v * 1e4) / 1e4));
   .ec-tools input:focus,.ec-tools select:focus{border-bottom-color:var(--ink);outline:none}
   .ec-q input{min-width:16em}
   .ec-n{margin-left:auto;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums}
+  .ec-wrap{overflow-x:auto}   /* a wide table scrolls inside the page, never widens it (debt at 390px was 417px) */
   .ec-wrap table{width:100%;border-collapse:collapse;font-size:.88rem}
   .ec-wrap tr[hidden]{display:none !important}
   .ec-wrap th{font-weight:400;font-size:.78rem;color:var(--muted);text-align:left;padding:12px 14px 8px 0;border-bottom:1px solid var(--rule-2);vertical-align:bottom}

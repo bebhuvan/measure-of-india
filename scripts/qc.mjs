@@ -9,6 +9,9 @@
 // Usage: node scripts/qc.mjs   (after astro build)
 
 import fs from "node:fs";
+// a word joiner (U+2060) after a minus only stops a line break; compare text without it, so a
+// hand-written "−0.8%" and a formatter's "−\u20600.8%" are the same figure
+const wj = (s) => (s == null ? s : String(s).replace(/\u2060/g, ""));
 import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { pathToFileURL, fileURLToPath } from "node:url";
@@ -786,10 +789,10 @@ for (const page of PAGES) {
 
   // numbers match the baked data
   for (const [id, fn, which] of page.checks) {
-    const got = doc.getElementById(id)?.textContent.trim();
+    const got = wj(doc.getElementById(id)?.textContent.trim());
     let want;
     try {
-      want = fn(page.slug ? bundles[page.slug] : bundles);
+      want = wj(fn(page.slug ? bundles[page.slug] : bundles));
     } catch (e) {
       fail(`${page.url} #${id}: ${e.message}`);
       continue;
@@ -823,8 +826,8 @@ for (const page of PAGES) {
   // learn pages: level figures trace to the published index levels
   if (page.url === "/learn/inflation/") {
     const lv = (await import(pathToFileURL(path.join(ROOT, "scripts/lib/util.mjs")).href)).readRaw(ROOT, "data/raw/cpi-indices.json").levels;
-    const want = fmt.num1(lv["combined:general"]["2025-12"]);
-    const got = doc.getElementById("n-lvl-now")?.textContent.trim();
+    const want = wj(fmt.num1(lv["combined:general"]["2025-12"]));
+    const got = wj(doc.getElementById("n-lvl-now")?.textContent.trim());
     if (got !== want) fail(`${page.url} #n-lvl-now: rendered "${got}" != data "${want}"`);
     else ok(`${page.url} #n-lvl-now = ${want}`);
   }
@@ -1046,7 +1049,7 @@ for (const page of PAGES) {
       const f = el.getAttribute("data-f"), src = JSON.parse(el.getAttribute("data-src"));
       let want;
       try { want = PF[f](EVAL[src.op](src)); } catch (e) { bad++; fail(`profiles: ${url} figure "${el.textContent}": ${e.message}`); continue; }
-      if (el.textContent !== want) { bad++; fail(`profiles: ${url} rendered "${el.textContent}" != data "${want}" (${JSON.stringify(src)})`); }
+      if (wj(el.textContent) !== wj(want)) { bad++; fail(`profiles: ${url} rendered "${el.textContent}" != data "${want}" (${JSON.stringify(src)})`); }
       // its rank: "highest" or "lowest" only for the first and last five places (lb/profiles)
       const rk = /(\d+)(st|nd|rd|th) (highest|lowest) of/.exec(el.closest("p, tr, .num, li")?.textContent ?? "");
       if (rk && +rk[1] > 5) { bad++; fail(`profiles: ${url} says "${rk[0]}": a middle place reads as an extreme`); }
