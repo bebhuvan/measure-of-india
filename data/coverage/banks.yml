@@ -1,0 +1,556 @@
+# Coverage ledger: India's banks one by one, urban co-operative banks and financial institutions
+# (docs/CONTRACT-coverage.md). Catalogue: node scripts/lib/products/banks.mjs --catalogue.
+# How it was decided (2026-10-10): every report this guide reads (1221 and the Outlook through
+# the Reserve Bank Innovation Hub; the Outlook's typed tables and the financial-institutions
+# tables through the Data Bank) is baked whole, one bundle per report, and drawn where a plate
+# needs it. The bank-wise, branch, Trend and Progress and NBFC reports the brief names are baked
+# by the credit guide: they take credit's decision (its bundles, or its reason), and the two this
+# guide draws (branches by population group, offices by bank group) and the NBFC credit dataset
+# are marked shown. Nothing is pending.
+family: banks
+guides:
+- banks
+catalogue: data/coverage/banks.catalogue.json
+rules:
+- match: rbih:1221:zero:*
+  status: excluded
+  reason: The RBI prints this item as zero, or leaves it blank, for every bank and every quarter (mostly the overseas operations of banks that have no offices abroad); there is nothing to bake.
+- match:
+  - rbih:1221:asset-quality:*:group
+  status: shown
+  bundle:
+  - banks-groups-asset-quality
+  - banks-health
+  plate: '§04 Bad loans: the cycle that peaked in March 2018'
+- match:
+  - rbih:1221:asset-quality:*:bank
+  status: shown
+  bundle: banks-asset-quality
+  plate: §07 Bank by bank
+- match:
+  - rbih:1221:balance-sheet:*:group
+  status: shown
+  bundle:
+  - banks-groups-balance-sheet
+  - banks-shares
+  plate: §05 Public and private banks have traded places
+- match:
+  - rbih:1221:balance-sheet:*:bank
+  status: shown
+  bundle:
+  - banks-balance-sheet
+  - banks-shares
+  plate: §07 Bank by bank
+- match:
+  - rbih:1221:capital:*:group
+  status: shown
+  bundle:
+  - banks-groups-capital
+  - banks-health
+  plate: §06 Profit, capital and margins
+- match:
+  - rbih:1221:capital:*:bank
+  status: baked
+  bundle: banks-capital
+- match:
+  - rbih:1221:profitability:*:group
+  status: shown
+  bundle: banks-groups-profitability
+  plate: §06 Profit, capital and margins
+- match:
+  - rbih:1221:profitability:*:bank
+  status: baked
+  bundle: banks-profitability
+- match:
+  - rbih:1221:performance:*:group
+  status: shown
+  bundle:
+  - banks-groups-performance
+  - banks-health
+  plate: §06 Profit, capital and margins
+- match:
+  - rbih:1221:performance:*:bank
+  status: shown
+  bundle: banks-performance
+  plate: §07 Bank by bank
+- match:
+  - rbih:1221:sectoral:*:group
+  status: shown
+  bundle: banks-groups-sectoral
+  plate: §08 Which loans go bad, and where banks lend
+- match:
+  - rbih:1221:sectoral:*:bank
+  status: baked
+  bundle: banks-sectoral
+- match:
+  - rbih:1221:priority:*:group
+  status: shown
+  bundle: banks-groups-priority
+  plate: §08 Which loans go bad, and where banks lend
+- match:
+  - rbih:1221:priority:*:bank
+  status: baked
+  bundle: banks-priority
+- match:
+  - rbih:1221:infra:*:group
+  status: shown
+  bundle:
+  - banks-groups-infra
+  - banks-groups-infra-2014
+  plate: §08 Which loans go bad, and where banks lend
+- match:
+  - rbih:1221:infra:*:bank
+  status: baked
+  bundle:
+  - banks-infra
+  - banks-infra-2014
+- match: rbih:617
+  status: blocked
+  reason: The Reserve Bank Innovation Hub's copy of report 617 holds only the report's prompt page and no rows (checked 2026-10-10), and DBIE refused the Data Bank's fetch (HTTP 400, WSR 00102, 2026-10-08);
+    offices by bank group and population group are in the credit guide's credit-deep-offices-bank-groups and credit-deep-offices-banks.
+- match:
+  - rbih:799:business-per-employee:bank
+  - rbih:799:profit-per-employee:bank
+  status: excluded
+  reason: The editions print business and profit per employee in ₹ million, ₹ crore and plain rupees under labels that do not always say which (2021-22 prints rupees under a crore label), so no year can
+    be read without each bank's own report.
+- match: dbie:812:subgroup-*
+  status: excluded
+  reason: Four sub-groups of the structure table carry no label in either copy of the report (the Data Bank's and the Innovation Hub's), so we cannot say what they count; the labelled totals (all, scheduled,
+    non-scheduled) are baked.
+- match:
+  - dbie:1382
+  - dbie:1424
+  status: excluded
+  reason: 'The Outlook''s foreword note: text, not data.'
+- match:
+  - dbie:812:*
+  status: shown
+  bundle: banks-ucb-structure
+  plate: §10 Urban co-operative banks
+- match:
+  - dbie:774:*
+  status: shown
+  bundle: banks-ucb-npa-dbie
+  plate: §10 Urban co-operative banks
+- match:
+  - rbih:785:*
+  status: baked
+  bundle: banks-ucb-npa
+- match:
+  - rbih:800:*
+  status: shown
+  bundle: banks-ucb-states
+  plate: §10 Urban co-operative banks
+- match:
+  - dbie:777:*
+  status: shown
+  bundle: banks-ucb-states-dbie
+  plate: §10 Urban co-operative banks
+- match:
+  - dbie:776:*
+  status: shown
+  bundle: banks-ucb-ratings-dbie
+  plate: §10 Urban co-operative banks
+- match:
+  - dbie:775:*
+  status: shown
+  bundle: banks-ucb-crar-dbie
+  plate: §10 Urban co-operative banks
+- match: rbih:795:*
+  status: baked
+  bundle: banks-ucb-balance-sheet
+- match: rbih:784:*
+  status: baked
+  bundle: banks-ucb-income
+- match: rbih:788:*
+  status: baked
+  bundle: banks-ucb-indicators
+- match: rbih:786:*
+  status: baked
+  bundle: banks-ucb-tiers
+- match: rbih:789:*
+  status: baked
+  bundle: banks-ucb-crar
+- match: rbih:796:*
+  status: baked
+  bundle: banks-ucb-ratings
+- match: rbih:772:*
+  status: baked
+  bundle: banks-ucb-size
+- match: rbih:787:*
+  status: baked
+  bundle: banks-ucb-priority
+- match: rbih:799:*
+  status: baked
+  bundle: banks-ucb-banks-ratios
+- match: rbih:798:*
+  status: baked
+  bundle: banks-ucb-banks-balance-sheet
+- match: rbih:797:*
+  status: baked
+  bundle: banks-ucb-banks-income
+- match: dbie:773:*
+  status: baked
+  bundle: banks-ucb-indicators-dbie
+- match: dbie:771:*
+  status: baked
+  bundle: banks-ucb-balance-sheet-shares
+- match: dbie:810:*
+  status: baked
+  bundle: banks-ucb-priority-dbie
+- match: dbie:811:*
+  status: baked
+  bundle: banks-ucb-size-dbie
+- match:
+  - dbie:382:zero:*
+  - dbie:383:zero:*
+  - dbie:384:zero:*
+  - dbie:385:zero:*
+  - dbie:386:zero:*
+  - dbie:387:zero:*
+  - dbie:388:zero:*
+  - dbie:389:zero:*
+  - dbie:390:zero:*
+  - dbie:391:zero:*
+  - dbie:392:zero:*
+  - dbie:393:zero:*
+  - dbie:394:zero:*
+  - dbie:395:zero:*
+  - dbie:396:zero:*
+  - dbie:398:zero:*
+  - dbie:801:zero:*
+  - dbie:873:zero:*
+  - dbie:1372:zero:*
+  status: excluded
+  reason: The RBI's table prints this item as zero, or leaves it blank, in every year; there is nothing to bake.
+- match: dbie:382:*
+  status: baked
+  bundle: banks-fi-mutual-funds
+- match: dbie:383:*
+  status: baked
+  bundle: banks-fi-psu-bonds
+- match: dbie:384:*
+  status: shown
+  bundle: banks-fi-insured-deposits
+  plate: §11 NBFCs, development banks and deposit insurance
+- match: dbie:385:*
+  status: baked
+  bundle: banks-fi-dicgc-credit-guarantee
+- match: dbie:386:*
+  status: baked
+  bundle: banks-fi-dicgc-deposit-insurance
+- match: dbie:387:*
+  status: baked
+  bundle: banks-fi-dicgc-general
+- match: dbie:388:*
+  status: baked
+  bundle: banks-fi-nhb-refinance
+- match: dbie:389:*
+  status: baked
+  bundle: banks-fi-assistance
+- match: dbie:390:*
+  status: baked
+  bundle: banks-fi-lic-investments
+- match: dbie:391:*
+  status: baked
+  bundle: banks-fi-ifci
+- match: dbie:392:*
+  status: shown
+  bundle: banks-fi-nabard
+  plate: §11 NBFCs, development banks and deposit insurance
+- match: dbie:393:*
+  status: shown
+  bundle: banks-fi-nhb
+  plate: §11 NBFCs, development banks and deposit insurance
+- match: dbie:394:*
+  status: baked
+  bundle: banks-fi-sfcs
+- match: dbie:395:*
+  status: shown
+  bundle: banks-fi-sidbi
+  plate: §11 NBFCs, development banks and deposit insurance
+- match: dbie:396:*
+  status: baked
+  bundle: banks-fi-nabard-assistance
+- match: dbie:398:*
+  status: baked
+  bundle: banks-fi-private-placement
+- match: dbie:801:*
+  status: baked
+  bundle: banks-fi-industrial-refinance
+- match: dbie:873:*
+  status: shown
+  bundle: banks-fi-exim
+  plate: §11 NBFCs, development banks and deposit insurance
+- match: dbie:1372:*
+  status: baked
+  bundle: banks-fi-hdfc
+- match: databank:rbi_nbfc_credit
+  status: shown
+  bundle: credit-nbfc
+  plate: §11 NBFCs, development banks and deposit insurance
+- match: dbie:1056
+  status: baked
+  bundle:
+  - credit-deep-bank-group-ratios
+- match: dbie:1057
+  status: baked
+  bundle:
+  - credit-deep-employees-banks
+- match: dbie:1077
+  status: baked
+  bundle:
+  - credit-deep-crar-banks
+- match: dbie:1078
+  status: baked
+  bundle:
+  - credit-deep-bank-ratios
+- match: dbie:1088
+  status: baked
+  bundle:
+  - credit-deep-sensitive-sectors-banks
+- match: dbie:1112
+  status: baked
+  bundle:
+  - credit-deep-bank-earnings
+- match: dbie:1113
+  status: baked
+  bundle:
+  - credit-deep-bank-provisions
+- match: dbie:1114
+  status: baked
+  bundle:
+  - credit-npa-movement
+  - credit-npa-movement-banks
+- match: dbie:1115
+  status: baked
+  bundle:
+  - credit-deep-bank-profit-appropriation
+- match: dbie:115
+  status: shown
+  bundle: credit-deep-branches-population
+  plate: '§09 Branches: half of all bank branches are now in villages and small towns'
+- match: dbie:1508
+  status: baked
+  bundle:
+  - credit-frauds
+  - credit-frauds-half-year
+- match: dbie:1509
+  status: baked
+  bundle:
+  - credit-deep-tp-international-liabilities
+- match: dbie:1510
+  status: baked
+  bundle:
+  - credit-deep-tp-international-assets
+- match: dbie:1511
+  status: baked
+  bundle:
+  - credit-deep-tp-international-claims
+- match: dbie:1512
+  status: baked
+  bundle:
+  - credit-deep-tp-off-balance-sheet
+- match: dbie:1513
+  status: baked
+  bundle:
+  - credit-deep-tp-sensitive-sectors
+- match: dbie:1514
+  status: baked
+  bundle:
+  - credit-deep-tp-overseas-operations
+- match: dbie:1515
+  status: baked
+  bundle:
+  - credit-deep-tp-shareholding
+- match: dbie:1516
+  status: baked
+  bundle:
+  - credit-deep-tp-banking-glance
+- match: dbie:1517
+  status: baked
+  bundle:
+  - credit-deep-tp-claims-by-country
+- match: dbie:1518
+  status: baked
+  bundle:
+  - credit-deep-tp-branches-atms
+- match: dbie:1519
+  status: baked
+  bundle:
+  - credit-deep-tp-microfinance
+- match: dbie:1520
+  status: baked
+  bundle:
+  - credit-deep-tp-rrb-states
+- match: dbie:1521
+  status: baked
+  bundle:
+  - credit-deep-tp-rrb-psl
+- match: dbie:1522
+  status: baked
+  bundle:
+  - credit-deep-tp-ucb-performance
+- match: dbie:1523
+  status: baked
+  bundle:
+  - credit-deep-tp-ucb-parameters
+- match: dbie:1524
+  status: baked
+  bundle:
+  - credit-deep-tp-dccb-health
+- match: dbie:1525
+  status: baked
+  bundle:
+  - credit-deep-tp-pacs-members
+- match: dbie:1526
+  status: baked
+  bundle:
+  - credit-deep-tp-pacs
+- match: dbie:1527
+  status: baked
+  bundle:
+  - credit-deep-tp-scb-coop-health
+- match: dbie:1528
+  status: baked
+  bundle:
+  - credit-deep-tp-pacs-states
+- match: dbie:1529
+  status: baked
+  bundle:
+  - credit-deep-tp-scardb-balance-sheet
+- match: dbie:1530
+  status: baked
+  bundle:
+  - credit-deep-tp-scardb-performance
+- match: dbie:1531
+  status: baked
+  bundle:
+  - credit-deep-tp-scardb-asset-quality
+- match: dbie:1532
+  status: baked
+  bundle:
+  - credit-deep-tp-pcardb-performance
+- match: dbie:1533
+  status: baked
+  bundle:
+  - credit-deep-tp-pcardb-asset-quality
+- match: dbie:1534
+  status: baked
+  bundle:
+  - credit-deep-tp-nbfc-balance-sheet
+- match: dbie:1535
+  status: baked
+  bundle:
+  - credit-deep-tp-nbfc-d-balance-sheet
+- match: dbie:1536
+  status: baked
+  bundle:
+  - credit-deep-tp-pcardb-balance-sheet
+- match: dbie:1537
+  status: baked
+  bundle:
+  - credit-deep-tp-kcc-states
+  - credit-deep-tp-kcc
+- match: dbie:1538
+  status: baked
+  bundle:
+  - credit-deep-tp-scardb-regions
+- match: dbie:1539
+  status: baked
+  bundle:
+  - credit-deep-tp-pcardb-regions
+- match: dbie:1540
+  status: baked
+  bundle:
+  - credit-deep-tp-nbfc-ul-balance-sheet
+- match: dbie:1541
+  status: baked
+  bundle:
+  - credit-deep-tp-nbfc-ml-balance-sheet
+- match: dbie:1542
+  status: baked
+  bundle:
+  - credit-deep-tp-nbfc-credit
+- match: dbie:1543
+  status: baked
+  bundle:
+  - credit-deep-tp-nbfc-ul-performance
+- match: dbie:1544
+  status: baked
+  bundle:
+  - credit-deep-tp-nbfc-ml-performance
+- match: dbie:1545
+  status: baked
+  bundle:
+  - credit-deep-tp-fi-assistance
+- match: dbie:1546
+  status: baked
+  bundle:
+  - credit-deep-tp-primary-dealers
+- match: dbie:1547
+  status: baked
+  bundle:
+  - credit-deep-tp-primary-dealer-indicators
+- match: dbie:329
+  status: baked
+  bundle:
+  - credit-crar
+- match: dbie:330
+  status: baked
+  bundle:
+  - credit-npa
+  - credit-npa-amounts
+- match: dbie:331
+  status: baked
+  bundle:
+  - credit-deep-rrb-indicators
+- match: dbie:332
+  status: baked
+  bundle:
+  - credit-depth
+- match: dbie:336
+  status: baked
+  bundle:
+  - credit-loan-quality
+  - credit-loan-quality-banks
+  - credit-npa-banks
+- match: dbie:615
+  status: baked
+  bundle:
+  - credit-deep-offices-banks
+- match: dbie:618
+  status: baked
+  bundle:
+  - credit-deep-offices-states
+- match: dbie:619
+  status: shown
+  bundle: credit-deep-offices-bank-groups
+  plate: '§09 Branches: half of all bank branches are now in villages and small towns'
+- match: dbie:642
+  status: baked
+  bundle:
+  - credit-deep-offices-abroad
+- match: dbie:665
+  status: baked
+  bundle:
+  - credit-deep-asset-classification
+- match: dbie:745
+  status: baked
+  bundle:
+  - credit-deep-offices-abroad-banks
+- match: dbie:910
+  status: baked
+  bundle:
+  - credit-deep-npa-by-sector
+- match: dbie:983
+  status: baked
+  bundle:
+  - credit-deep-priority-sector-banks
+- match: dbie:986
+  status: baked
+  bundle:
+  - credit-loan-quality
+  - credit-loan-quality-banks
+  - credit-npa-banks

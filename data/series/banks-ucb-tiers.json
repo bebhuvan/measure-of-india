@@ -1,0 +1,792 @@
+{
+ "meta": {
+  "dossier": "banks",
+  "source": "Reserve Bank of India, DBIE, via the Reserve Bank Innovation Hub's data service",
+  "vintage": "2026-10-10",
+  "mock": false,
+  "geo": "IND",
+  "releaseDate": null,
+  "revisionPolicy": "Bank-wise figures are the banks' own returns as the RBI publishes them and are not revised once printed; the Outlook's latest March is provisional and is replaced by the next edition's figure. Mergers are disclosed on the acquirer, never joined.",
+  "frequency": "annual",
+  "unit": "mixed",
+  "base": "as on 31 March",
+  "latestPeriod": "2024-03",
+  "coverage": "Urban co-operative banks by regulatory tier (I to IV): number, deposits, advances and assets, and each tier's share",
+  "note": "RBI DBIE report 786, the Primary (Urban) Co-operative Banks' Outlook, via the Reserve Bank Innovation Hub's data service (one grid per edition, as on 31 March; a March printed by two editions takes the later edition's figure). Table 5. Tiers are the RBI's four-tier framework for UCBs (December 2022) where the edition is from 2022-23; earlier editions use the tiers of their time, so a tier's meaning changed in 2023 (disclosed, not joined: read the shares year by year)."
+ },
+ "dates": [
+  "2014-03-01",
+  "2015-03-01",
+  "2016-03-01",
+  "2017-03-01",
+  "2018-03-01",
+  "2019-03-01",
+  "2020-03-01",
+  "2021-03-01",
+  "2022-03-01",
+  "2023-03-01",
+  "2024-03-01"
+ ],
+ "series": {
+  "i__ucbs": {
+   "name": "i__ucbs_count",
+   "label": "I, number of UCBs",
+   "unit": "count",
+   "group": "UCBs by tier",
+   "data": [
+    1147,
+    1132,
+    1104,
+    1083,
+    1071,
+    917,
+    892,
+    846,
+    813,
+    898,
+    850
+   ]
+  },
+  "i__ucbs_share": {
+   "name": "i__ucbs_share_pct",
+   "label": "I, number of UCBs, per cent of total",
+   "unit": "pct",
+   "group": "UCBs by tier",
+   "data": [
+    72.18,
+    71.69,
+    70.14,
+    69.33,
+    69.05,
+    59.39,
+    57.96,
+    55.15,
+    53.7,
+    59.79,
+    57.74
+   ]
+  },
+  "i__deposits": {
+   "name": "i__deposits_inr_crore",
+   "label": "I, deposits",
+   "unit": "inr_crore",
+   "group": "UCBs by tier",
+   "data": [
+    46027.09,
+    54299.95,
+    50397.19,
+    60330.57,
+    59320.39,
+    43587.8,
+    38491.83,
+    33853.96,
+    40019.08,
+    67129.56,
+    63626.52
+   ]
+  },
+  "i__deposits_share": {
+   "name": "i__deposits_share_pct",
+   "label": "I, deposits, per cent of total",
+   "unit": "pct",
+   "group": "UCBs by tier",
+   "data": [
+    14.59,
+    15.29,
+    12.85,
+    13.6,
+    12.99,
+    9,
+    7.68,
+    6.42,
+    7.61,
+    12.59,
+    11.45
+   ]
+  },
+  "i__advances": {
+   "name": "i__advances_inr_crore",
+   "label": "I, advances",
+   "unit": "inr_crore",
+   "group": "UCBs by tier",
+   "data": [
+    27680.25,
+    32886.58,
+    29066.86,
+    31781.49,
+    33597.91,
+    25075.8,
+    22324.14,
+    19188.34,
+    23174.49,
+    42652.24,
+    41842.32
+   ]
+  },
+  "i__advances_share": {
+   "name": "i__advances_share_pct",
+   "label": "I, advances, per cent of total",
+   "unit": "pct",
+   "group": "UCBs by tier",
+   "data": [
+    13.86,
+    14.66,
+    11.86,
+    12.17,
+    11.98,
+    8.28,
+    7.31,
+    6.14,
+    7.36,
+    12.91,
+    12.06
+   ]
+  },
+  "i__assets": {
+   "name": "i__assets_inr_crore",
+   "label": "I, total assets",
+   "unit": "inr_crore",
+   "group": "UCBs by tier",
+   "data": [
+    57982.55,
+    66802.78,
+    62598.64,
+    74497.24,
+    73755.16,
+    54591.25,
+    49113.54,
+    44119.97,
+    53551.18,
+    89579.32,
+    88669.29
+   ]
+  },
+  "i__assets_share": {
+   "name": "i__assets_share_pct",
+   "label": "I, total assets, per cent of total",
+   "unit": "pct",
+   "group": "UCBs by tier",
+   "data": [
+    14.97,
+    15.35,
+    13.08,
+    13.8,
+    13.1,
+    9.11,
+    7.87,
+    6.71,
+    8.03,
+    13.17,
+    12.53
+   ]
+  },
+  "ii__ucbs": {
+   "name": "ii__ucbs_count",
+   "label": "II, number of UCBs",
+   "unit": "count",
+   "group": "UCBs by tier",
+   "data": [
+    442,
+    447,
+    470,
+    479,
+    480,
+    627,
+    647,
+    688,
+    701,
+    520,
+    538
+   ]
+  },
+  "ii__ucbs_share": {
+   "name": "ii__ucbs_share_pct",
+   "label": "II, number of UCBs, per cent of total",
+   "unit": "pct",
+   "group": "UCBs by tier",
+   "data": [
+    27.82,
+    28.31,
+    29.86,
+    30.67,
+    30.95,
+    40.61,
+    42.04,
+    44.85,
+    46.3,
+    34.62,
+    36.55
+   ]
+  },
+  "ii__deposits": {
+   "name": "ii__deposits_inr_crore",
+   "label": "II, deposits",
+   "unit": "inr_crore",
+   "group": "UCBs by tier",
+   "data": [
+    269475.67,
+    300833.77,
+    341782.17,
+    383137.75,
+    397186.39,
+    440728.05,
+    462685.72,
+    493127.99,
+    486001.44,
+    162180.05,
+    171039.18
+   ]
+  },
+  "ii__deposits_share": {
+   "name": "ii__deposits_share_pct",
+   "label": "II, deposits, per cent of total",
+   "unit": "pct",
+   "group": "UCBs by tier",
+   "data": [
+    85.41,
+    84.71,
+    87.15,
+    86.4,
+    87.01,
+    91,
+    92.32,
+    93.58,
+    92.39,
+    30.41,
+    30.79
+   ]
+  },
+  "ii__advances": {
+   "name": "ii__advances_inr_crore",
+   "label": "II, advances",
+   "unit": "inr_crore",
+   "group": "UCBs by tier",
+   "data": [
+    171970.4,
+    191442.05,
+    215945.67,
+    229443.04,
+    246903.36,
+    277941.96,
+    283044.13,
+    293576.85,
+    291566.45,
+    95915.81,
+    103498.15
+   ]
+  },
+  "ii__advances_share": {
+   "name": "ii__advances_share_pct",
+   "label": "II, advances, per cent of total",
+   "unit": "pct",
+   "group": "UCBs by tier",
+   "data": [
+    86.14,
+    85.34,
+    88.14,
+    87.83,
+    88.02,
+    91.72,
+    92.69,
+    93.86,
+    92.64,
+    29.04,
+    29.83
+   ]
+  },
+  "ii__assets": {
+   "name": "ii__assets_inr_crore",
+   "label": "II, total assets",
+   "unit": "inr_crore",
+   "group": "UCBs by tier",
+   "data": [
+    329334.26,
+    368394.5,
+    415804.98,
+    465405.68,
+    489423.47,
+    544622.47,
+    575069.13,
+    613731.48,
+    612934.61,
+    204966.41,
+    217141.96
+   ]
+  },
+  "ii__assets_share": {
+   "name": "ii__assets_share_pct",
+   "label": "II, total assets, per cent of total",
+   "unit": "pct",
+   "group": "UCBs by tier",
+   "data": [
+    85.03,
+    84.65,
+    86.92,
+    86.2,
+    86.9,
+    90.89,
+    92.13,
+    93.29,
+    91.97,
+    30.13,
+    30.68
+   ]
+  },
+  "all_ucbs__ucbs": {
+   "name": "all_ucbs__ucbs_count",
+   "label": "All UCBs, number of UCBs",
+   "unit": "count",
+   "group": "UCBs by tier",
+   "data": [
+    1589,
+    1579,
+    1574,
+    1562,
+    1551,
+    1544,
+    1539,
+    1534,
+    1514,
+    1502,
+    1472
+   ]
+  },
+  "all_ucbs__ucbs_share": {
+   "name": "all_ucbs__ucbs_share_pct",
+   "label": "All UCBs, number of UCBs, per cent of total",
+   "unit": "pct",
+   "group": "UCBs by tier",
+   "data": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ]
+  },
+  "all_ucbs__deposits": {
+   "name": "all_ucbs__deposits_inr_crore",
+   "label": "All UCBs, deposits",
+   "unit": "inr_crore",
+   "group": "UCBs by tier",
+   "data": [
+    315502.76,
+    355133.72,
+    392179.36,
+    443468.32,
+    456506.78,
+    484315.85,
+    501177.55,
+    526981.95,
+    526020.52,
+    533255.07,
+    555469.48
+   ]
+  },
+  "all_ucbs__deposits_share": {
+   "name": "all_ucbs__deposits_share_pct",
+   "label": "All UCBs, deposits, per cent of total",
+   "unit": "pct",
+   "group": "UCBs by tier",
+   "data": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ]
+  },
+  "all_ucbs__advances": {
+   "name": "all_ucbs__advances_inr_crore",
+   "label": "All UCBs, advances",
+   "unit": "inr_crore",
+   "group": "UCBs by tier",
+   "data": [
+    199650.66,
+    224328.63,
+    245012.52,
+    261224.54,
+    280501.27,
+    303017.76,
+    305368.27,
+    312765.19,
+    314740.94,
+    330325.4,
+    346903.39
+   ]
+  },
+  "all_ucbs__advances_share": {
+   "name": "all_ucbs__advances_share_pct",
+   "label": "All UCBs, advances, per cent of total",
+   "unit": "pct",
+   "group": "UCBs by tier",
+   "data": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ]
+  },
+  "all_ucbs__assets": {
+   "name": "all_ucbs__assets_inr_crore",
+   "label": "All UCBs, total assets",
+   "unit": "inr_crore",
+   "group": "UCBs by tier",
+   "data": [
+    387316.8,
+    435197.29,
+    478403.63,
+    539902.92,
+    563178.64,
+    599213.72,
+    624182.67,
+    657851.45,
+    666485.79,
+    680301.23,
+    707669.18
+   ]
+  },
+  "all_ucbs__assets_share": {
+   "name": "all_ucbs__assets_share_pct",
+   "label": "All UCBs, total assets, per cent of total",
+   "unit": "pct",
+   "group": "UCBs by tier",
+   "data": [
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100,
+    100
+   ]
+  },
+  "iii__ucbs": {
+   "name": "iii__ucbs_count",
+   "label": "III, number of UCBs",
+   "unit": "count",
+   "group": "UCBs by tier",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    78,
+    78
+   ]
+  },
+  "iii__ucbs_share": {
+   "name": "iii__ucbs_share_pct",
+   "label": "III, number of UCBs, per cent of total",
+   "unit": "pct",
+   "group": "UCBs by tier",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    5.19,
+    5.3
+   ]
+  },
+  "iii__deposits": {
+   "name": "iii__deposits_inr_crore",
+   "label": "III, deposits",
+   "unit": "inr_crore",
+   "group": "UCBs by tier",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    186760.98,
+    193105.49
+   ]
+  },
+  "iii__deposits_share": {
+   "name": "iii__deposits_share_pct",
+   "label": "III, deposits, per cent of total",
+   "unit": "pct",
+   "group": "UCBs by tier",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    35.02,
+    34.76
+   ]
+  },
+  "iii__advances": {
+   "name": "iii__advances_inr_crore",
+   "label": "III, advances",
+   "unit": "inr_crore",
+   "group": "UCBs by tier",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    112853.36,
+    116142.68
+   ]
+  },
+  "iii__advances_share": {
+   "name": "iii__advances_share_pct",
+   "label": "III, advances, per cent of total",
+   "unit": "pct",
+   "group": "UCBs by tier",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    34.16,
+    33.48
+   ]
+  },
+  "iii__assets": {
+   "name": "iii__assets_inr_crore",
+   "label": "III, total assets",
+   "unit": "inr_crore",
+   "group": "UCBs by tier",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    235356.36,
+    239240.11
+   ]
+  },
+  "iii__assets_share": {
+   "name": "iii__assets_share_pct",
+   "label": "III, total assets, per cent of total",
+   "unit": "pct",
+   "group": "UCBs by tier",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    34.6,
+    33.81
+   ]
+  },
+  "iv__ucbs": {
+   "name": "iv__ucbs_count",
+   "label": "IV, number of UCBs",
+   "unit": "count",
+   "group": "UCBs by tier",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    6,
+    6
+   ]
+  },
+  "iv__ucbs_share": {
+   "name": "iv__ucbs_share_pct",
+   "label": "IV, number of UCBs, per cent of total",
+   "unit": "pct",
+   "group": "UCBs by tier",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    0.4,
+    0.41
+   ]
+  },
+  "iv__deposits": {
+   "name": "iv__deposits_inr_crore",
+   "label": "IV, deposits",
+   "unit": "inr_crore",
+   "group": "UCBs by tier",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    117184.48,
+    127698.3
+   ]
+  },
+  "iv__deposits_share": {
+   "name": "iv__deposits_share_pct",
+   "label": "IV, deposits, per cent of total",
+   "unit": "pct",
+   "group": "UCBs by tier",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    21.98,
+    22.99
+   ]
+  },
+  "iv__advances": {
+   "name": "iv__advances_inr_crore",
+   "label": "IV, advances",
+   "unit": "inr_crore",
+   "group": "UCBs by tier",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    78903.99,
+    85420.24
+   ]
+  },
+  "iv__advances_share": {
+   "name": "iv__advances_share_pct",
+   "label": "IV, advances, per cent of total",
+   "unit": "pct",
+   "group": "UCBs by tier",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    23.89,
+    24.62
+   ]
+  },
+  "iv__assets": {
+   "name": "iv__assets_inr_crore",
+   "label": "IV, total assets",
+   "unit": "inr_crore",
+   "group": "UCBs by tier",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    150399.14,
+    162617.81
+   ]
+  },
+  "iv__assets_share": {
+   "name": "iv__assets_share_pct",
+   "label": "IV, total assets, per cent of total",
+   "unit": "pct",
+   "group": "UCBs by tier",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    22.11,
+    22.98
+   ]
+  }
+ }
+}
