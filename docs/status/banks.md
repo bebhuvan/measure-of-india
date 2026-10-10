@@ -32,9 +32,17 @@ Branch `lb/banks`, port 4434. Updated 2026-10-10.
 - Draws three of the credit guide's bundles read-only: `credit-deep-branches-population`,
   `credit-deep-offices-bank-groups`, `credit-nbfc` (listed in my registry entry too).
 
+- Gates (build under the shared lock): validate, coverage (strict), as-of, qc (17 number
+  checks, every-cut lists all series once) and chart lint all clean; `npm test` 52/52;
+  `prose:dry` clean. dist deleted after each run.
+- Looked at 1440 and 390 px (Playwright, all 20 plates, no page errors, no horizontal scroll
+  at 390); fixed by eye: labels that ran into bank names on the bank-by-bank plate, two label
+  bleeds, a clipped axis label, a loss shown as "₹0.3 lakh crore". Share image of the bad-loans
+  plate downloaded and read. OG card generated (only `public/og/banks.png` kept).
+
 ## Next
 
-Look at 1440 and 390; download a share image; commit; message the coordinator.
+Nothing for this guide. Waiting on the coordinator's merge.
 
 ## Decisions
 
