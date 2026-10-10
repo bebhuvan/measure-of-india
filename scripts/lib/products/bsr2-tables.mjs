@@ -409,7 +409,9 @@ export function buildBsr2Tables(root, db, dcfg, V) {
     const sha = (await_sha(gz));
     index.push({ report: t.id, table: t.table, file: `${STAGE}/${file}`, rows: rep.rows.length, sha256: sha, retrieved_at: rep.provenance.retrieved_at, databank_sha256: rep.provenance.sha256 });
   }
-  writeRaw(root, "data/raw/bsr2-tables-index.json", { vintage: V, note: "Index of the district-sized BSR-2 reports held in the deep-archive staging folder (gzipped JSON, header and rows as read). sha256 is of the stored .json.gz file.", files: index, archive: Object.values(notes) });
+  // archive indexes stay plain JSON (test/raw-gzip.test.mjs exempts *-index.json; trade's is plain):
+  // writeRaw gzips, so the index is written directly, stable and diffable
+  fs.writeFileSync(path.join(root, "data/raw/bsr2-tables-index.json"), JSON.stringify({ vintage: V, note: "Index of the district-sized BSR-2 reports held in the deep-archive staging folder (gzipped JSON, header and rows as read). sha256 is of the stored .json.gz file.", files: index, archive: Object.values(notes) }, null, 1) + "\n");
   console.log(`bsr2 tables: ${written.length} bundles, ${written.reduce((a, w) => a + w.series, 0).toLocaleString("en-IN")} series; ${Object.keys(notes).length} archive files staged`);
   return written;
 }

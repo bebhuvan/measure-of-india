@@ -45,7 +45,7 @@ const today = rows.find((r) => r.current)?.vintage ?? "";
 ---
 <section class="endmatter" aria-labelledby="data-h">
   <div class="em-head"><h2 id="data-h">Data and downloads</h2>
-    <p>Every series this guide draws on: {nFiles.toLocaleString("en-IN")} files, {nSeries.toLocaleString("en-IN")} series. Each downloads as published, as JSON or as a table (CSV). Missing values are left empty, never zero.{famRows.length ? " Large families of source tables are one row each; their files download from the family's own page." : ""}</p></div>
+    <p>Every series this guide draws on: {nFiles.toLocaleString("en-IN")} {nFiles === 1 ? "file" : "files"}, {nSeries.toLocaleString("en-IN")} series. Each downloads as published, as JSON or as a table (CSV). Missing values are left empty, never zero.{famRows.length ? " Large families of source tables are one row each; their files download from the family's own page." : ""}</p></div>
   <div class="em-table">
     <table>
       <thead><tr><th>Data</th><th>Base</th><th>Coverage</th><th class="n">Series</th><th>Vintage</th><th class="n">Download</th></tr></thead>
@@ -64,14 +64,14 @@ const today = rows.find((r) => r.current)?.vintage ?? "";
         ))}
         {famRows.map((f) => (
           <tr class="fam">
-            <td class="w">{f.label}<small>{f.src}. {f.files.toLocaleString("en-IN")} files, listed on their own page</small>
+            <td class="w">{f.label}<small>{f.src}. {f.files.toLocaleString("en-IN")} {f.files === 1 ? "file" : "files"}, listed on their own page</small>
               {f.arc && <small><a class="archive-link" href={f.arc.href}>Finer detail: {f.arc.tables.toLocaleString("en-IN")} {f.arc.tables === 1 ? "table" : "tables"} in the archive</a></small>}
-              <span class="em-m">{[`${f.from} to ${f.to}`, `${f.files} files`, `${f.n.toLocaleString("en-IN")} series`, `vintage ${f.vintage}`].join(", ")}</span></td>
+              <span class="em-m">{[`${f.from} to ${f.to}`, `${f.files} ${f.files === 1 ? "file" : "files"}`, `${f.n.toLocaleString("en-IN")} series`, `vintage ${f.vintage}`].join(", ")}</span></td>
             <td></td>
-            <td class="nw">{f.from === f.to ? f.from : `${f.from} to ${f.to}`}<small>{f.files.toLocaleString("en-IN")} files</small></td>
+            <td class="nw">{f.from === f.to ? f.from : `${f.from} to ${f.to}`}<small>{f.files.toLocaleString("en-IN")} {f.files === 1 ? "file" : "files"}</small></td>
             <td class="n">{f.n.toLocaleString("en-IN")}</td>
             <td class="nw">{f.vintage}</td>
-            <td class="n nw"><a href={`/guides/${d.slug}/every-cut/${f.id}/#files`}>All {f.files.toLocaleString("en-IN")} files</a></td>
+            <td class="n nw"><a href={`/guides/${d.slug}/every-cut/${f.id}/#files`}>All {f.files.toLocaleString("en-IN")} {f.files === 1 ? "file" : "files"}</a></td>
           </tr>
         ))}
       </tbody>

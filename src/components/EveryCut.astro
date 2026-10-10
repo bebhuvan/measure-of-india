@@ -31,7 +31,7 @@ const note = (t) => {
 ---
 <section class="endmatter everycut" aria-labelledby="ec-h" id="every-cut" data-series={nAll}>
   <div class="em-head"><h2 id="ec-h">Every series, every cut</h2>
-    <p>All {fmtN(nAll)} series behind this guide, from {fmtN(nFiles)} files, at every level the source publishes them, including the ones no chart above draws. Find a state, an item or a sector, sort by the latest value or by the change on a year earlier, and download any file whole. A dash means the source has no figure for a year earlier, or the change would mean nothing.</p></div>
+    <p>All {fmtN(nAll)} series behind this guide, from {fmtN(nFiles)} {nFiles === 1 ? "file" : "files"}, at every level the source publishes them, including the ones no chart above draws. Find a state, an item or a sector, sort by the latest value or by the change on a year earlier, and download any file whole. A dash means the source has no figure for a year earlier, or the change would mean nothing.</p></div>
   {plan.tails.length > 0 && (
     <ul class="ec-tails">
       {plan.tails.map((t) => (

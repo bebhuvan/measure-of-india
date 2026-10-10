@@ -43,7 +43,7 @@ const titles = Object.fromEntries((single ? [] : [...new Set(rows.map((r) => r.b
   <div class="titleblock break ec-page">
     <div class="kicker"><a href={`/guides/${slug}/#every-cut`}>{d.title}: every series, every cut</a></div>
     <h1>{title}</h1>
-    <p class="lede">{nAll.toLocaleString("en-IN")} series{single ? "" : ` from ${t.bundles.length.toLocaleString("en-IN")} files`}, each with its latest value, its change on a year earlier and its trend.{total > 1 ? ` Page ${n + 1} of ${total}.` : ""}</p>
+    <p class="lede">{nAll.toLocaleString("en-IN")} series{single ? "" : ` from ${t.bundles.length.toLocaleString("en-IN")} {t.bundles.length === 1 ? "file" : "files"}`}, each with its latest value, its change on a year earlier and its trend.{total > 1 ? ` Page ${n + 1} of ${total}.` : ""}</p>
     <div class="meta">
       <span>Source <b>{src}</b></span>
       {single && B.meta?.base && <span>Base <b>{B.meta.base}</b></span>}
@@ -56,7 +56,7 @@ const titles = Object.fromEntries((single ? [] : [...new Set(rows.map((r) => r.b
   <div class="break">
     {!single && (
       <details class="ec-files" id="files">
-        <summary>All {t.bundles.length.toLocaleString("en-IN")} files, to download whole</summary>
+        <summary>All {t.bundles.length.toLocaleString("en-IN")} {t.bundles.length === 1 ? "file" : "files"}, to download whole</summary>
         <ul>{t.bundles.map((b) => <li>{bundleTitle(b)} <a href={`/data/${b}.csv`} download>CSV</a> <a href={`/data/${b}.json`} download>JSON</a></li>)}</ul>
       </details>
     )}

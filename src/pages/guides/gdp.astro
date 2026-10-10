@@ -141,9 +141,81 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
     </div>
   </section>
 
-  <!-- § 02 register -->
+  <!-- § 02 the new base -->
   <section>
-    <div class="sec-head"><span class="no">02</span><h2>The register of series</h2><span class="line"></span><span class="unit">Shares, latest, year ago</span></div>
+    <div class="sec-head"><span class="no">02</span><h2>The base has moved</h2><span class="line"></span><span class="unit">Base 2022–23, y/y %, quarterly</span></div>
+    <div class="break">
+      <figure id="cb-nb" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Where the quarterly series continues: and what carries it</h3>
+            <div class="sub">Real GDP, GVA and the consumption and investment engines on the new 2022–23 base, year-on-year, per cent, {NB_FIRST} to {NB_LAST}</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-nb">–</div><div class="c" id="pv-nb-c">–, GDP y/y, base 2022–23</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend" id="legend-nb">
+            <button class="chip" data-key="gdp"><i style="background:#2E4BD8"></i>GDP</button>
+            <button class="chip" data-key="gva"><i style="background:#5F6675"></i>GVA</button>
+            <button class="chip" data-key="pfce"><i style="background:#A3A9B4"></i>Consumption, PFCE</button>
+            <button class="chip" data-key="gfcf"><i style="background:#878D99"></i>Investment, GFCF</button>
+          </div>
+          <div class="plotzone" id="plot-nb"><div class="cb-tip"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NAS releases on base 2022–23, growth computed from constant-price levels, a deliberately short axis: year-on-year growth needs a same-base year-ago level, so the new series can reach no further back than FY24</span>
+            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Every decade or so the statisticians rebuild GDP on a fresh base year: new weights, new source data, new prices to hold constant. The rebuilt series is a better map of today's economy and a different map of yesterday's: the same quarter gets a new growth rate, sometimes a point away from the old one. Neither number is a lie. They answer the same question with different rulers.</p>
+            <p>This atlas never splices rulers. The decade plate below stays on the 2011–12 base it was drawn on; this panel is the same economy on the 2022–23 base, where the quarterly releases now continue. When enough new-base history accumulates, the new base takes over the whole guide: side by side until then.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the {NB_LAST} print</span>
+            <p>The 2011–12-base series ended with the November 2025 release; the {word(nbSince)} quarters since exist only here. The latest, <span id="nb-q4-m">–</span>, reads <b id="nb-q4">–</b>, after <b id="nb-q3">–</b> in <span id="nb-q3-m">–</span>; investment grew <b id="nb-gfcf">–</b> in the latest quarter.</p>
+            <p>The rebase also re-scored the overlap: the June 2025 quarter reads <b id="nb-old-q1">–</b> on the old base and <b id="nb-new-q1">–</b> on the new: <b id="nb-gap">–</b> apart, from the same underlying returns. That gap is the whole argument for never splicing bases.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break" style="margin-top:88px">
+      <figure id="cb-nbind" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Eight engines on the new base</h3>
+            <div class="sub">Real GVA by the 8 NAS industry groups on the 2022–23 base, year-on-year, per cent, {NB_FIRST} to {NB_LAST}, each panel on its own scale</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-nbind">–</div><div class="c" id="pv-nbind-c">–, fastest engine</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" style="padding-top:26px">
+            <div id="grid-nbind" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:34px 44px"></div>
+          </div>
+          <div class="plotfoot">
+            <span class="src">Source: MoSPI, NAS releases on base 2022–23, growth computed from constant-price levels, shares are of nominal GVA over the last four published quarters, blue marks the fastest and the slowest engine of the latest quarter</span>
+            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The same eight engines as the 2011–12 plate above, on the new ruler. The new base re-weights them: each panel's share of GVA is computed afresh from 2022–23 prices, so a sector's weight here is not comparable with its weight on the old plate. Read each panel's shape, and read the shares as today's economy.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the {NB_LAST} print</span>
+            <p>The fastest engine is <b id="nbind-fast">–</b>; the slowest <b id="nbind-slow">–</b>. Manufacturing grew <b id="nbind-mfg">–</b> and agriculture <b id="nbind-agri">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 03 register -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>The register of series</h2><span class="line"></span><span class="unit">Shares, latest, year ago</span></div>
     <div class="break ledger">
       <table>
         <thead>
@@ -155,9 +227,9 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
     </div>
   </section>
 
-  <!-- § 03 composition -->
+  <!-- § 04 composition -->
   <section>
-    <div class="sec-head"><span class="no">03</span><h2>What growth is made of</h2><span class="line"></span><span class="unit">Expenditure shares, per cent of GDP, {SPEND_T.y}</span></div>
+    <div class="sec-head"><span class="no">04</span><h2>What growth is made of</h2><span class="line"></span><span class="unit">Expenditure shares, per cent of GDP, {SPEND_T.y}</span></div>
     <div class="break basket">
       <div class="bar" id="basket-bar"></div>
       <div class="labels" id="basket-labels"></div>
@@ -165,9 +237,9 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
     </div>
   </section>
 
-  <!-- § 04 plate 1 -->
+  <!-- § 05 plate 1 -->
   <section>
-    <div class="sec-head"><span class="no">04</span><h2>Plate 1: a decade of growth, with its wound</h2><span class="line"></span><span class="unit">y/y %, quarterly</span></div>
+    <div class="sec-head"><span class="no">05</span><h2>A decade of growth on the 2011–12 base, with its wound</h2><span class="line"></span><span class="unit">y/y %, quarterly</span></div>
     <div class="break">
       <figure id="cb-main" style="margin:0">
         <div class="plate-head">
@@ -210,9 +282,9 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
     </div>
   </section>
 
-  <!-- § 05 the measure -->
+  <!-- § 06 the measure -->
   <section>
-    <div class="sec-head"><span class="no">05</span><h2>What this measures</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">06</span><h2>What this measures</h2><span class="line"></span></div>
     <div class="wm-grid">
       <div>
         <p>Gross Domestic Product is the market value of everything produced inside India's borders in a period, with double-counting removed. It can be added up three ways: by what is <b>produced</b>, by what is <b>spent</b>, and by what is <b>earned</b>: and in India the three never quite agree, so the accounts publish a "discrepancies" line to absorb the difference.</p>
@@ -235,9 +307,9 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
     </div>
   </section>
 
-  <!-- § 06 component plates -->
+  <!-- § 07 component plates -->
   <section>
-    <div class="sec-head"><span class="no">06</span><h2>The parts, one plate each</h2><span class="line"></span><span class="unit">y/y %, quarterly</span></div>
+    <div class="sec-head"><span class="no">07</span><h2>The parts, one plate each</h2><span class="line"></span><span class="unit">y/y %, quarterly</span></div>
 
     <div class="break">
       <figure id="cb-pfce" style="margin:0">
@@ -362,9 +434,9 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
     </div>
   </section>
 
-  <!-- § 07 industry engines -->
+  <!-- § 08 industry engines -->
   <section>
-    <div class="sec-head"><span class="no">07</span><h2>Eight engines</h2><span class="line"></span><span class="unit">Real GVA by industry, y/y %, quarterly</span></div>
+    <div class="sec-head"><span class="no">08</span><h2>Eight engines</h2><span class="line"></span><span class="unit">Real GVA by industry, y/y %, quarterly</span></div>
     <div class="break">
       <figure id="cb-ind" style="margin:0">
         <div class="plate-head">
@@ -399,9 +471,9 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
     </div>
   </section>
 
-  <!-- § 08 deflator wedge -->
+  <!-- § 09 deflator wedge -->
   <section>
-    <div class="sec-head"><span class="no">08</span><h2>The deflator wedge</h2><span class="line"></span><span class="unit">Nominal vs real, y/y %, quarterly</span></div>
+    <div class="sec-head"><span class="no">09</span><h2>The deflator wedge</h2><span class="line"></span><span class="unit">Nominal vs real, y/y %, quarterly</span></div>
     <div class="break">
       <figure id="cb-defl" style="margin:0">
         <div class="plate-head">
@@ -439,9 +511,9 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
     </div>
   </section>
 
-  <!-- § 09 annual accounts -->
+  <!-- § 10 annual accounts -->
   <section>
-    <div class="sec-head"><span class="no">09</span><h2>The annual ledger: six accounts</h2><span class="line"></span><span class="unit">Fiscal years, y/y %, constant prices</span></div>
+    <div class="sec-head"><span class="no">10</span><h2>The annual ledger: six accounts</h2><span class="line"></span><span class="unit">Fiscal years, y/y %, constant prices</span></div>
     <div class="break">
       <figure id="cb-acc" style="margin:0">
         <div class="plate-head">
@@ -505,9 +577,9 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
     </div>
   </section>
 
-  <!-- § 10 where the money goes (wave 2) -->
+  <!-- § 11 where the money goes (wave 2) -->
   <section>
-    <div class="sec-head"><span class="no">10</span><h2>Where the money goes</h2><span class="line"></span><span class="unit">Shares of nominal GDP, fiscal years, three rulers</span></div>
+    <div class="sec-head"><span class="no">11</span><h2>Where the money goes</h2><span class="line"></span><span class="unit">Shares of nominal GDP, fiscal years, three rulers</span></div>
     <div class="break">
       <figure id="cb-spend" style="margin:0">
         <div class="plate-head">
@@ -608,9 +680,9 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
     </div>
   </section>
 
-  <!-- § 11 who saves (wave 2) -->
+  <!-- § 12 who saves (wave 2) -->
   <section>
-    <div class="sec-head"><span class="no">11</span><h2>Who saves, who invests</h2><span class="line"></span><span class="unit">Institutional sectors, share of nominal GDP</span></div>
+    <div class="sec-head"><span class="no">12</span><h2>Who saves, who invests</h2><span class="line"></span><span class="unit">Institutional sectors, share of nominal GDP</span></div>
     <div class="break">
       <figure id="cb-sect" style="margin:0">
         <div class="plate-head">
@@ -674,9 +746,9 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
     </div>
   </section>
 
-  <!-- § 12 sub-industries (wave 2) -->
+  <!-- § 13 sub-industries (wave 2) -->
   <section>
-    <div class="sec-head"><span class="no">12</span><h2>Inside the engines</h2><span class="line"></span><span class="unit">{SUB_T.n} sub-industries, {SUB_T.from} to {SUB_T.to}</span></div>
+    <div class="sec-head"><span class="no">13</span><h2>Inside the engines</h2><span class="line"></span><span class="unit">{SUB_T.n} sub-industries, {SUB_T.from} to {SUB_T.to}</span></div>
     <div class="break">
       <figure id="cb-sub" style="margin:0">
         <div class="plate-head">
@@ -708,9 +780,9 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
     </div>
   </section>
 
-  <!-- § 13 revisions (wave 2) -->
+  <!-- § 14 revisions (wave 2) -->
   <section>
-    <div class="sec-head"><span class="no">13</span><h2>How a GDP number changes after its first print</h2><span class="line"></span><span class="unit">Annual real growth at each estimate, base 2011–12</span></div>
+    <div class="sec-head"><span class="no">14</span><h2>How a GDP number changes after its first print</h2><span class="line"></span><span class="unit">Annual real growth at each estimate, base 2011–12</span></div>
     <div class="break">
       <figure id="cb-rev" style="margin:0">
         <div class="plate-head">
@@ -737,78 +809,6 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
           <div class="now">
             <span class="mk">As of the {SPEND_T.y} accounts</span>
             <p>Across the <b id="rv-n">–</b> years that have been revised, the average move from the first print to the latest was <b id="rv-mean">–</b> in either direction; <b id="rv-up">–</b> of them were revised up. The biggest upward move was <b id="rv-max">–</b>; the biggest downward, <b id="rv-min">–</b>. The 2022–23 base is too young to have a path of its own: <span id="rv-22">–</span>.</p>
-          </div>
-        </div>
-      </figure>
-    </div>
-  </section>
-
-  <!-- § 14 the new base -->
-  <section>
-    <div class="sec-head"><span class="no">14</span><h2>The base has moved</h2><span class="line"></span><span class="unit">Base 2022–23, y/y %, quarterly</span></div>
-    <div class="break">
-      <figure id="cb-nb" style="margin:0">
-        <div class="plate-head">
-          <div class="t">
-            <h3>Where the quarterly series continues: and what carries it</h3>
-            <div class="sub">Real GDP, GVA and the consumption and investment engines on the new 2022–23 base, year-on-year, per cent, {NB_FIRST} to {NB_LAST}</div>
-          </div>
-          <div class="plate-val"><div class="v" id="pv-nb">–</div><div class="c" id="pv-nb-c">–, GDP y/y, base 2022–23</div></div>
-        </div>
-        <div class="frame">
-          <div class="legend" id="legend-nb">
-            <button class="chip" data-key="gdp"><i style="background:#2E4BD8"></i>GDP</button>
-            <button class="chip" data-key="gva"><i style="background:#5F6675"></i>GVA</button>
-            <button class="chip" data-key="pfce"><i style="background:#A3A9B4"></i>Consumption, PFCE</button>
-            <button class="chip" data-key="gfcf"><i style="background:#878D99"></i>Investment, GFCF</button>
-          </div>
-          <div class="plotzone" id="plot-nb"><div class="cb-tip"></div></div>
-          <div class="plotfoot">
-            <span class="src">Source: MoSPI, NAS releases on base 2022–23, growth computed from constant-price levels, a deliberately short axis: year-on-year growth needs a same-base year-ago level, so the new series can reach no further back than FY24</span>
-            <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
-          </div>
-        </div>
-        <div class="explain">
-          <div class="ev">
-            <span class="mk">How to read this</span>
-            <p>Every decade or so the statisticians rebuild GDP on a fresh base year: new weights, new source data, new prices to hold constant. The rebuilt series is a better map of today's economy and a different map of yesterday's: the same quarter gets a new growth rate, sometimes a point away from the old one. Neither number is a lie. They answer the same question with different rulers.</p>
-            <p>This atlas never splices rulers. The decade plate above stays on the 2011–12 base it was drawn on; this panel is the same economy on the 2022–23 base, where the quarterly releases now continue. When enough new-base history accumulates, the new base takes over the whole guide: side by side until then.</p>
-          </div>
-          <div class="now">
-            <span class="mk">As of the {NB_LAST} print</span>
-            <p>The 2011–12-base series ended with the November 2025 release; the {word(nbSince)} quarters since exist only here. The latest, <span id="nb-q4-m">–</span>, reads <b id="nb-q4">–</b>, after <b id="nb-q3">–</b> in <span id="nb-q3-m">–</span>; investment grew <b id="nb-gfcf">–</b> in the latest quarter.</p>
-            <p>The rebase also re-scored the overlap: the June 2025 quarter reads <b id="nb-old-q1">–</b> on the old base and <b id="nb-new-q1">–</b> on the new: <b id="nb-gap">–</b> apart, from the same underlying returns. That gap is the whole argument for never splicing bases.</p>
-          </div>
-        </div>
-      </figure>
-    </div>
-
-    <div class="break" style="margin-top:88px">
-      <figure id="cb-nbind" style="margin:0">
-        <div class="plate-head">
-          <div class="t">
-            <h3>Eight engines on the new base</h3>
-            <div class="sub">Real GVA by the 8 NAS industry groups on the 2022–23 base, year-on-year, per cent, {NB_FIRST} to {NB_LAST}, each panel on its own scale</div>
-          </div>
-          <div class="plate-val"><div class="v" id="pv-nbind">–</div><div class="c" id="pv-nbind-c">–, fastest engine</div></div>
-        </div>
-        <div class="frame">
-          <div class="plotzone" style="padding-top:26px">
-            <div id="grid-nbind" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:34px 44px"></div>
-          </div>
-          <div class="plotfoot">
-            <span class="src">Source: MoSPI, NAS releases on base 2022–23, growth computed from constant-price levels, shares are of nominal GVA over the last four published quarters, blue marks the fastest and the slowest engine of the latest quarter</span>
-            <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
-          </div>
-        </div>
-        <div class="explain">
-          <div class="ev">
-            <span class="mk">How to read this</span>
-            <p>The same eight engines as the 2011–12 plate above, on the new ruler. The new base re-weights them: each panel's share of GVA is computed afresh from 2022–23 prices, so a sector's weight here is not comparable with its weight on the old plate. Read each panel's shape, and read the shares as today's economy.</p>
-          </div>
-          <div class="now">
-            <span class="mk">As of the {NB_LAST} print</span>
-            <p>The fastest engine is <b id="nbind-fast">–</b>; the slowest <b id="nbind-slow">–</b>. Manufacturing grew <b id="nbind-mfg">–</b> and agriculture <b id="nbind-agri">–</b>.</p>
           </div>
         </div>
       </figure>
