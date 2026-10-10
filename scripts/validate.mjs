@@ -3241,6 +3241,149 @@ withBundle("wages-rural-2013", (b) => {
   if (!bad) ok(`profiles-nfhs6: ${Object.keys(six.series).length} series, 36 geographies x 101 indicators; the total lies between urban and rural in ${triplets - outside} of ${triplets} places`);
 }
 
+// ---- payments (lb/payments): RBI payment system statistics (scripts/lib/products/payments.mjs) ----
+// Shape (meta against sources.yml and the seams registry, cadence, unit ranges, disclosed gaps),
+// then the RBI table's own arithmetic on the baked numbers: every total equals its parts in the
+// re-organised layout (exact to the rupee in DBIE; 0.05% allowed), the old layout to its printed
+// rounding, the annual table equals the sum of the monthly table's twelve months, the RBI's printed
+// year-on-year growth (WSS) equals growth computed from the monthly levels, and the values checked
+// by hand against RBI publications.
+{
+  const PAY = cfg.dossiers.payments;
+  const FLOOR = { "payments-monthly": "2026-07", "payments-infra": "2026-07", "payments-ticket": "2026-07", "payments-growth-wss": "2026-07",
+    "payments-annual": "2026-03", "payments-cheques-centres": "2026-03", "payments-clearing-houses": "2026-03", "payments-erupee": "2026-03" };
+  let n = 0;
+  for (const f of fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => /^payments-.*\.json$/.test(f)).sort()) {
+    const slug = f.replace(/\.json$/, ""), b = load(slug);
+    checkMeta(b, slug, "payments", b.meta.base, b.meta.frequency);
+    if (!["monthly", "annual"].includes(b.meta.frequency)) fail(`${slug}: frequency ${b.meta.frequency}`);
+    if (b.dates.length > 1) checkCadence(b.dates, b.meta.frequency === "monthly" ? 1 : 12, slug);
+    const sr = {};
+    for (const [k, s] of Object.entries(b.series)) { const u = s.unit ?? b.meta.unit; if (!PAY.ranges[u]) fail(`${slug}.${k}: unit "${u}" has no range in sources.yml`); sr[k] = PAY.ranges[u] ?? [-Infinity, Infinity]; }
+    checkRange(b, -Infinity, Infinity, slug, sr);
+    checkFreshness(b, slug, FLOOR[slug] ? { staleAfter: FLOOR[slug] } : { stale: false }, "payments");
+    n++;
+  }
+  if (n !== 11) fail(`payments: ${n} bundles on disk, expected 11`); else ok(`payments: ${n} bundles checked for meta, cadence, unit ranges, gaps and freshness`);
+
+  // totals = parts; parts missing on a date skip that date (a line the RBI began later)
+  const parts = (slug, tot, list, tol, { sfx = ["_volume", "_value"], optional = [], minN = 1 } = {}) => withBundle(slug, (b) => {
+    for (const x of sfx) {
+      let k = 0, worst = 0, at = "";
+      b.dates.forEach((d, i) => {
+        const t = b.series[tot + x]?.data[i]; if (t == null) return;
+        const ps = list.map((p) => b.series[p + x]?.data[i]); if (ps.some((v) => v == null)) return;
+        const sum = ps.reduce((a, c) => a + c, 0) + optional.reduce((a, p) => a + (b.series[p + x]?.data[i] ?? 0), 0); k++;
+        const rel = t === 0 ? (sum === 0 ? 0 : 1) : Math.abs(sum - t) / Math.abs(t);
+        if (rel > worst) { worst = rel; at = d; }
+      });
+      if (k < minN) fail(`${slug}: ${tot}${x} = ${list.join(" + ")} checked on only ${k} dates`);
+      else if (worst > tol) fail(`${slug}: ${tot}${x} differs from ${[...list, ...optional].join(" + ")} by ${(worst * 100).toFixed(3)}% at ${at}`);
+      else ok(`${slug}: ${tot}${x} = ${[...list, ...optional].join(" + ")} on ${k} dates (worst ${(worst * 100).toFixed(4)}%)`);
+    }
+  });
+  const T = 0.0005;
+  parts("payments-monthly", "total", ["rtgs", "retail_total"], T, { minN: 80 });
+  parts("payments-monthly", "retail_total", ["retail_credit", "debits", "cards", "ppi", "paper"], T, { minN: 79 });
+  parts("payments-monthly", "digital_total", ["rtgs", "retail_credit", "debits", "cards", "ppi"], T, { minN: 79 });
+  parts("payments-monthly", "retail_credit", ["aeps_transfer", "apbs", "imps", "nach_cr", "neft", "upi"], T, { optional: ["ecs_cr"], minN: 80 });
+  parts("payments-monthly", "debits", ["bhim_aadhaar_pay", "nach_dr", "netc"], T, { optional: ["ecs_dr"], minN: 80 });
+  parts("payments-monthly", "cards", ["credit_cards", "debit_cards"], T, { minN: 80 });
+  parts("payments-monthly", "credit_cards", ["credit_cards_pos", "credit_cards_other"], T, { minN: 80 });
+  parts("payments-monthly", "debit_cards", ["debit_cards_pos", "debit_cards_other"], T, { minN: 80 });
+  parts("payments-monthly", "ppi", ["ppi_wallets", "ppi_cards"], T, { minN: 79 });
+  parts("payments-monthly", "ppi_cards", ["ppi_cards_pos", "ppi_cards_other"], T, { minN: 80 });
+  parts("payments-monthly", "paper", ["cts", "paper_other"], T, { minN: 80 });
+  parts("payments-monthly", "rtgs", ["rtgs_customer", "rtgs_interbank"], T, { minN: 80 });
+  parts("payments-monthly", "ccil", ["ccil_gsec", "ccil_forex", "ccil_rupee_derivatives"], T, { minN: 80 });
+  parts("payments-monthly", "ccil_gsec", ["ccil_gsec_outright", "ccil_gsec_repo", "ccil_gsec_triparty"], T, { minN: 80 });
+  parts("payments-monthly", "mobile", ["mobile_intra", "mobile_inter"], T, { minN: 80 });
+  parts("payments-monthly", "internet", ["internet_intra", "internet_inter"], T, { minN: 80 });
+  parts("payments-monthly", "atm_cash", ["atm_cash_credit", "atm_cash_debit", "atm_cash_prepaid"], T, { minN: 80 });
+  parts("payments-monthly", "pos_cash", ["pos_cash_debit", "pos_cash_prepaid"], T, { minN: 80 });
+  parts("payments-monthly", "microatm_cash", ["microatm_cash_aeps"], T, { minN: 80 });
+  parts("payments-infra", "cards", ["credit_cards", "debit_cards"], T, { sfx: [""], minN: 80 });
+  parts("payments-infra", "ppi", ["ppi_wallets", "ppi_cards"], T, { sfx: [""], minN: 80 });
+  parts("payments-infra", "atms", ["atms_bank", "atms_white_label"], T, { sfx: [""], minN: 80 });
+  parts("payments-annual", "total", ["rtgs", "retail_total"], T, { minN: 10 });
+  parts("payments-annual", "retail_credit", ["apbs", "ecs_cr", "imps", "nach_cr", "neft"], T, { optional: ["aeps_transfer", "upi"], minN: 10 });
+  parts("payments-annual", "cards", ["credit_cards", "debit_cards"], T, { minN: 10 });
+  // the old layout prints volumes rounded to ten thousand in its early years: wider tolerances
+  parts("payments-monthly-2004", "total", ["rtgs_customer", "rtgs_interbank", "ccil", "paper", "retail_electronic", "cards", "ppi"], 0.001, { minN: 100 });
+  parts("payments-monthly-2004", "rtgs", ["rtgs_customer", "rtgs_interbank", "rtgs_interbank_clearing"], 0.015, { minN: 150 });
+  parts("payments-monthly-2004", "ccil_gsec", ["ccil_gsec_outright", "ccil_gsec_repo"], 0.005, { sfx: ["_value"], optional: ["ccil_gsec_triparty"], minN: 180 });
+  parts("payments-monthly-2004", "paper", ["cts", "micr", "non_micr"], 0.001, { minN: 90 });
+  parts("payments-monthly-2004", "micr", ["micr_rbi", "micr_other"], 0.002, { minN: 160 });
+  parts("payments-monthly-2004", "retail_electronic", ["ecs_dr", "ecs_cr", "neft", "imps", "nach"], 0.001, { minN: 75 });
+  parts("payments-monthly-2004", "cards", ["credit_cards", "debit_cards"], 0.001, { minN: 180 });
+  parts("payments-monthly-2004", "credit_cards", ["credit_cards_atm", "credit_cards_pos"], 0.001, { minN: 100 });
+  parts("payments-monthly-2004", "debit_cards", ["debit_cards_atm", "debit_cards_pos"], 0.001, { minN: 100 });
+  parts("payments-monthly-2004", "ppi", ["ppi_wallets", "ppi_cards", "ppi_vouchers"], 0.002, { minN: 85 });
+  parts("payments-infra-2004", "cards", ["credit_cards", "debit_cards"], 0.002, { sfx: [""], minN: 160 });
+  parts("payments-erupee", "retail", ["retail_50_paise", "retail_1", "retail_2", "retail_5", "retail_10", "retail_20", "retail_50", "retail_100", "retail_200", "retail_500"], 0.0001, { sfx: [""], minN: 4 });
+  parts("payments-erupee", "total", ["retail"], 0.0001, { sfx: [""], optional: ["wholesale"], minN: 4 });
+
+  // the annual table = the sum of the monthly table's months, for every whole fiscal year both cover
+  // Two published differences between the Handbook's year and the Bulletin's months, declared to the
+  // unit (months' sum minus the year): PPIs in 2022-23, which flows into the three totals by exactly
+  // the same amount, and CCIL's 2025-26 volume. Any other difference, or a change in these, fails.
+  const KNOWN = { "ppi_volume|2023-03-01": 17639254, "retail_total_volume|2023-03-01": 17639254, "total_volume|2023-03-01": 17639254, "digital_total_volume|2023-03-01": 17639254,
+    "ppi_value|2023-03-01": 10165903484.99, "retail_total_value|2023-03-01": 10165903485.4, "ccil_volume|2026-03-01": -84 };
+  withBundle("payments-annual", (a) => withBundle("payments-monthly", (m) => {
+    let k = 0, bad = 0, known = 0;
+    for (const key of Object.keys(a.series)) {
+      if (!m.series[key]) { fail(`payments-annual.${key}: no monthly line of that name`); bad++; continue; }
+      a.dates.forEach((d, i) => {
+        const end = +d.slice(0, 4), months = m.dates.filter((x) => x >= `${end - 1}-04-01` && x <= `${end}-03-01`);
+        if (months.length !== 12 || a.series[key].data[i] == null) return;
+        const vals = months.map((x) => m.series[key].data[m.dates.indexOf(x)]); if (vals.some((v) => v == null)) return;
+        const sum = vals.reduce((p, c) => p + c, 0), t = a.series[key].data[i]; k++;
+        const exp = KNOWN[`${key}|${d}`];
+        if (exp != null) { known++; if (Math.abs(sum - t - exp) > 1) { bad++; fail(`payments-annual.${key} ${d}: the months' sum less the year is ${sum - t}, declared ${exp}`); } }
+        else if (Math.abs(sum - t) > Math.max(1, Math.abs(t) * 1e-5)) { bad++; fail(`payments-annual.${key} ${d}: ${t} != the months' sum ${sum}`); }
+      });
+    }
+    if (k < 250) fail(`payments-annual: only ${k} year-line pairs compared with the monthly sums`);
+    else if (known !== Object.keys(KNOWN).length) fail(`payments-annual: ${known} of ${Object.keys(KNOWN).length} declared differences found`);
+    else if (!bad) ok(`payments-annual: equals the sum of report 612's months in ${k - known} year-line pairs; ${known} declared differences exact`);
+  }));
+
+  // the RBI's printed growth (WSS, RBIB43) = growth computed from the monthly levels
+  withBundle("payments-growth-wss", (g) => withBundle("payments-monthly", (m) => {
+    let k = 0, worst = 0, at = "";
+    for (const [key, s] of Object.entries(g.series)) {
+      const lvl = m.series[key.replace(/_yoy$/, "")]; if (!lvl) { fail(`payments-growth-wss.${key}: no level ${key.replace(/_yoy$/, "")}`); continue; }
+      g.dates.forEach((d, i) => {
+        const j = m.dates.indexOf(d), p = m.dates.indexOf(`${+d.slice(0, 4) - 1}${d.slice(4)}`);
+        if (s.data[i] == null || j < 0 || p < 0 || !lvl.data[p]) return;
+        const calc = (lvl.data[j] / lvl.data[p] - 1) * 100; k++;
+        if (Math.abs(calc - s.data[i]) > worst) { worst = Math.abs(calc - s.data[i]); at = `${key} ${d}: printed ${s.data[i]}, computed ${calc.toFixed(2)}`; }
+      });
+    }
+    if (k < 300) fail(`payments-growth-wss: only ${k} months compared`);
+    else if (worst > 0.05) fail(`payments-growth-wss: RBI's printed growth differs from the levels' by ${worst.toFixed(3)} points (${at})`);
+    else ok(`payments-growth-wss: the RBI's printed growth equals growth from the monthly levels in ${k} months (worst ${worst.toFixed(3)} points)`);
+  }));
+
+  // values checked by hand against RBI publications (scripts/lib/products/payments.mjs header)
+  for (const [slug, key, d, want, tol, src] of [
+    ["payments-monthly", "upi_volume", "2026-07-01", 23658353000, 1, "RBI Bulletin Table 45, July 2026: 2,36,583.53 lakh"],
+    ["payments-monthly", "upi_value", "2026-07-01", 29878804800000, 1e7, "RBI Bulletin Table 45, July 2026: ₹29,87,880.48 crore"],
+    ["payments-annual", "upi_volume", "2025-03-01", 185866025000, 1e6, "RBI Annual Report 2024-25: 18,587 crore UPI transactions"],
+    ["payments-erupee", "total", "2025-03-01", 10165000000, 1e6, "RBI Annual Report 2024-25: e₹ in circulation ₹1,016.5 crore"],
+    ["payments-cheques-1970", "all_india_number", "2016-03-01", 1096454614, 1, "RBI Handbook, cheque clearances 2015-16"],
+    ["payments-infra", "atms", "2026-07-01", 252508, 0, "RBI Bulletin Table 45, July 2026: 2,52,508 ATMs"],
+  ]) withBundle(slug, (b) => { const v = b.series[key]?.data[b.dates.indexOf(d)];
+    if (v == null || Math.abs(v - want) > tol) fail(`${slug}.${key} ${d} = ${v}, the RBI's publication says ${want} (${src})`); else ok(`${slug}.${key} ${d} = ${src}`); });
+  // the old layout's ATM count meets the new layout's first month (the x10^6 storage defect corrected)
+  withBundle("payments-infra-2004", (o) => withBundle("payments-infra", (nw) => {
+    const a = o.series.atms.data.at(-1), b2 = nw.series.atms.data[0];
+    if (!(a > 1e5 && Math.abs(b2 / a - 1) < 0.05)) fail(`payments-infra-2004: ATMs in October 2019 (${a}) do not meet November 2019 (${b2})`);
+    else ok(`payments-infra-2004: ATMs ${a} in October 2019 meet ${b2} in November 2019 (storage defect corrected)`);
+  }));
+}
+// ---- end payments ----
+
 // META TEXT — every bundle on disk, whatever check family it belongs to, and every sources.yml
 // entry the adapters copy text from: meta.geo is a three-letter code on every bundle (CONTRACT-series
 // rule 8), and a revision policy, where one is given, reads as a sentence, never a placeholder

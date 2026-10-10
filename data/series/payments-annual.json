@@ -1,0 +1,952 @@
+{
+ "meta": {
+  "dossier": "payments",
+  "source": "Reserve Bank of India, Payment System Indicators (via DBIE)",
+  "vintage": "2026-10-10",
+  "mock": false,
+  "geo": "IND",
+  "releaseDate": null,
+  "revisionPolicy": "Monthly figures are provisional when first printed and may be revised in later Bulletins; the RBI re-organised the table in November 2019, and the two layouts are kept apart.",
+  "latestPeriod": "2026-03",
+  "frequency": "annual",
+  "base": "re-organised classification, annual (restated by the RBI from 2015-16)",
+  "unit": "mixed",
+  "coverage": "Every payment system, number and value of transactions in each fiscal year since 2015-16, in the RBI's re-organised classification",
+  "note": "RBI Handbook of Statistics, Payment System Indicators, via DBIE report 907 (data providers DP5 volume, DP4 value). The RBI restated the years before November 2019 in the re-organised classification; from 2020-21 each year equals the sum of report 612's months (checked in validate), with two exceptions as published: prepaid instruments in 2022-23 are 1.76 crore transactions (₹1,017 crore) below the months' sum, which carries into the totals, and CCIL's 2025-26 volume is 84 trades above it. The year in progress is left out. The RBI's annual table in the old layout (2012-13 to 2017-18) is not used: DBIE stores it at one-hundredth (values) and one-tenth (volumes) of the monthly sums."
+ },
+ "dates": [
+  "2016-03-01",
+  "2017-03-01",
+  "2018-03-01",
+  "2019-03-01",
+  "2020-03-01",
+  "2021-03-01",
+  "2022-03-01",
+  "2023-03-01",
+  "2024-03-01",
+  "2025-03-01",
+  "2026-03-01"
+ ],
+ "series": {
+  "rtgs_volume": {
+   "name": "rtgs_volume",
+   "label": "RTGS, all (large-value transfers), number of transactions",
+   "unit": "count",
+   "group": "Large-value transfers",
+   "color": "#878D99",
+   "data": [
+    98341828,
+    107856417,
+    124433267,
+    136602975,
+    150661053,
+    159192001,
+    207839180,
+    242561860,
+    270016277,
+    302454580,
+    349978862
+   ]
+  },
+  "rtgs_value": {
+   "name": "rtgs_value",
+   "label": "RTGS, all (large-value transfers), value",
+   "unit": "inr_amount",
+   "group": "Large-value transfers",
+   "color": "#878D99",
+   "data": [
+    824578007784000,
+    981903761188000,
+    1167124775585000,
+    1356881867100000,
+    1311564749434430,
+    1055998485207200,
+    1286575164713220,
+    1499462860639850,
+    1708866703830320,
+    2013876822650760,
+    2273726482782510
+   ]
+  },
+  "retail_credit_volume": {
+   "name": "retail_credit_volume",
+   "label": "Retail credit transfers, all (AePS, APBS, ECS, IMPS, NACH, NEFT, UPI), number of transactions",
+   "unit": "count",
+   "group": "Credit transfers",
+   "color": "#878D99",
+   "data": [
+    2853569402,
+    3838053909,
+    5879317039,
+    11848073535,
+    20629730642,
+    31786774479,
+    57793474194,
+    98362084166,
+    148610689106,
+    206101491000,
+    261873801090
+   ]
+  },
+  "retail_credit_value": {
+   "name": "retail_credit_value",
+   "label": "Retail credit transfers, all (AePS, APBS, ECS, IMPS, NACH, NEFT, UPI), value",
+   "unit": "inr_amount",
+   "group": "Credit transfers",
+   "color": "#878D99",
+   "data": [
+    89018283140600.5,
+    128584055313431,
+    188142953090367,
+    260904709325996,
+    285565931301987,
+    335042256337562,
+    427280055509162,
+    550096195124114,
+    675428593756638,
+    798819761141935,
+    919391861842289.9
+   ]
+  },
+  "aeps_transfer_volume": {
+   "name": "aeps_transfer_volume",
+   "label": "AePS fund transfers (Aadhaar-enabled), number of transactions",
+   "unit": "count",
+   "group": "Credit transfers",
+   "color": "#878D99",
+   "data": [
+    null,
+    107764,
+    639348,
+    1082114,
+    950204,
+    1131283,
+    976000,
+    589998,
+    392499,
+    364000,
+    327600
+   ]
+  },
+  "aeps_transfer_value": {
+   "name": "aeps_transfer_value",
+   "label": "AePS fund transfers (Aadhaar-enabled), value",
+   "unit": "inr_amount",
+   "group": "Credit transfers",
+   "color": "#878D99",
+   "data": [
+    null,
+    507021116.43,
+    3003491623,
+    5009110946,
+    4689235249,
+    6229118921,
+    5748900000,
+    3563956826,
+    2605736644,
+    1895500000,
+    1697300000
+   ]
+  },
+  "apbs_volume": {
+   "name": "apbs_volume",
+   "label": "APBS (Aadhaar payment bridge: subsidies and benefits), number of transactions",
+   "unit": "count",
+   "group": "Credit transfers",
+   "color": "#878D99",
+   "data": [
+    717462994,
+    949133781,
+    1298025403,
+    1494900138,
+    1674710324,
+    1437298986,
+    1257332858,
+    1783395453,
+    2588816602,
+    3296443000,
+    3385421000
+   ]
+  },
+  "apbs_value": {
+   "name": "apbs_value",
+   "label": "APBS (Aadhaar payment bridge: subsidies and benefits), value",
+   "unit": "inr_amount",
+   "group": "Credit transfers",
+   "color": "#878D99",
+   "data": [
+    185975828931.01,
+    348383911089.76,
+    559482363525,
+    862263151006,
+    990483225106,
+    1110010701745,
+    1333450931857.44,
+    2475345664282.14,
+    3907434286968.7,
+    5540342800000,
+    7170398200000
+   ]
+  },
+  "ecs_cr_volume": {
+   "name": "ecs_cr_volume",
+   "label": "ECS credit, number of transactions",
+   "unit": "count",
+   "group": "Credit transfers",
+   "color": "#878D99",
+   "data": [
+    39000835,
+    10101592,
+    6135563,
+    5357454,
+    1826894,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "ecs_cr_value": {
+   "name": "ecs_cr_value",
+   "label": "ECS credit, value",
+   "unit": "inr_amount",
+   "group": "Credit transfers",
+   "color": "#878D99",
+   "data": [
+    1059439542000,
+    144082709000,
+    118643999000,
+    132353458000,
+    51455872713,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "imps_volume": {
+   "name": "imps_volume",
+   "label": "IMPS (immediate payment service), number of transactions",
+   "unit": "count",
+   "group": "Credit transfers",
+   "color": "#878D99",
+   "data": [
+    220812557,
+    506731364,
+    1009835834,
+    1752906075,
+    2579170315,
+    3278346785,
+    4662524508,
+    5653263693,
+    6005334978,
+    5624968000,
+    4943109000
+   ]
+  },
+  "imps_value": {
+   "name": "imps_value",
+   "label": "IMPS (immediate payment service), value",
+   "unit": "inr_amount",
+   "group": "Credit transfers",
+   "color": "#878D99",
+   "data": [
+    1622256022000,
+    4111058608000,
+    8924974755104,
+    15902568555322,
+    23375408685195,
+    29414995241748,
+    41710374708114,
+    55854411375222.5,
+    64956521261499.7,
+    71391098900000,
+    76699289400000
+   ]
+  },
+  "nach_cr_volume": {
+   "name": "nach_cr_volume",
+   "label": "NACH credit (bulk payouts: salaries, dividends, pensions), number of transactions",
+   "unit": "count",
+   "group": "Credit transfers",
+   "color": "#878D99",
+   "data": [
+    623413409,
+    731909311,
+    703085751,
+    883437515,
+    1109986238,
+    1646544115,
+    1875781673,
+    1925719271,
+    1622726981,
+    1693886000,
+    1828442000
+   ]
+  },
+  "nach_cr_value": {
+   "name": "nach_cr_value",
+   "label": "NACH credit (bulk payouts: salaries, dividends, pensions), value",
+   "unit": "inr_amount",
+   "group": "Credit transfers",
+   "color": "#878D99",
+   "data": [
+    2877505078669.48,
+    3870736951154.41,
+    5210005357811,
+    7296726996309,
+    10370793392946.7,
+    12165347119006,
+    12816854274510.5,
+    15418147436920.1,
+    15251037113351.6,
+    16702233900000,
+    19022931700000
+   ]
+  },
+  "neft_volume": {
+   "name": "neft_volume",
+   "label": "NEFT, number of transactions",
+   "unit": "count",
+   "group": "Credit transfers",
+   "color": "#878D99",
+   "data": [
+    1252879607,
+    1622096136,
+    1946357063,
+    2318887320,
+    2744468034,
+    3092788859,
+    4040729053,
+    5284743182,
+    7263950411,
+    9619804750,
+    10099615490
+   ]
+  },
+  "neft_value": {
+   "name": "neft_value",
+   "label": "NEFT, value",
+   "unit": "inr_amount",
+   "group": "Credit transfers",
+   "color": "#878D99",
+   "data": [
+    83273106669000,
+    120039677384000,
+    172228519722000,
+    227936080900000,
+    229455799636886,
+    251309095906596,
+    287254627896964,
+    337195410613028,
+    391360140088960,
+    444614643341936,
+    502265047842290
+   ]
+  },
+  "upi_volume": {
+   "name": "upi_volume",
+   "label": "UPI, number of transactions",
+   "unit": "count",
+   "group": "Credit transfers",
+   "color": "#2E4BD8",
+   "data": [
+    null,
+    17973961,
+    915238077,
+    5391502919,
+    12518618633,
+    22330664451,
+    45956130102,
+    83714372569,
+    131129467635,
+    185866025000,
+    241616886000
+   ]
+  },
+  "upi_value": {
+   "name": "upi_value",
+   "label": "UPI, value",
+   "unit": "inr_amount",
+   "group": "Credit transfers",
+   "color": "#2E4BD8",
+   "data": [
+    null,
+    69608729070.59,
+    1098323401304,
+    8769707154413,
+    21317301253891,
+    41036578249546,
+    84158998797715.9,
+    139149316077835,
+    199950855269215,
+    260569546700000,
+    314232497400000
+   ]
+  },
+  "debits_volume": {
+   "name": "debits_volume",
+   "label": "Debit transfers and direct debits, all, number of transactions",
+   "unit": "count",
+   "group": "Debits",
+   "color": "#878D99",
+   "data": [
+    276898661,
+    295235585,
+    378810544,
+    491385192,
+    602700755,
+    1045653916,
+    1218948701,
+    1534305306,
+    1824953355,
+    2165994636,
+    2347134000
+   ]
+  },
+  "debits_value": {
+   "name": "debits_value",
+   "label": "Debit transfers and direct debits, all, value",
+   "unit": "inr_amount",
+   "group": "Debits",
+   "color": "#878D99",
+   "data": [
+    2303543355889.91,
+    3088547620541,
+    3908691209246,
+    5245563713482,
+    6059393909169.7,
+    8655200989993.55,
+    10344435354076.7,
+    12896110611187.8,
+    16876575192615.3,
+    22085830754489.2,
+    26973548100000
+   ]
+  },
+  "bhim_aadhaar_pay_volume": {
+   "name": "bhim_aadhaar_pay_volume",
+   "label": "BHIM Aadhaar Pay, number of transactions",
+   "unit": "count",
+   "group": "Debits",
+   "color": "#878D99",
+   "data": [
+    null,
+    null,
+    1953265,
+    6792083,
+    9070335,
+    16083507,
+    22773000,
+    21422075,
+    19359100,
+    23008000,
+    23196000
+   ]
+  },
+  "bhim_aadhaar_pay_value": {
+   "name": "bhim_aadhaar_pay_value",
+   "label": "BHIM Aadhaar Pay, value",
+   "unit": "inr_amount",
+   "group": "Debits",
+   "color": "#878D99",
+   "data": [
+    null,
+    null,
+    780967237,
+    8154556436,
+    13033139378,
+    25798122285.5,
+    61134891810,
+    67911121091.46,
+    61116872645,
+    69072900000,
+    77389400000
+   ]
+  },
+  "ecs_dr_volume": {
+   "name": "ecs_dr_volume",
+   "label": "ECS debit, number of transactions",
+   "unit": "count",
+   "group": "Debits",
+   "color": "#878D99",
+   "data": [
+    224754391,
+    8758559,
+    1540117,
+    926326,
+    114015,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "ecs_dr_value": {
+   "name": "ecs_dr_value",
+   "label": "ECS debit, value",
+   "unit": "inr_amount",
+   "group": "Debits",
+   "color": "#878D99",
+   "data": [
+    1651502552000,
+    39136565000,
+    9716079000,
+    12600203000,
+    386070000,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+   ]
+  },
+  "nach_dr_volume": {
+   "name": "nach_dr_volume",
+   "label": "NACH debit (EMIs, SIPs, bills paid by mandate), number of transactions",
+   "unit": "count",
+   "group": "Debits",
+   "color": "#878D99",
+   "data": [
+    52144270,
+    286477026,
+    373797162,
+    483042783,
+    584194405,
+    964574605,
+    1075473962,
+    1350252238,
+    1642649360,
+    1976228000,
+    2161419000
+   ]
+  },
+  "nach_dr_value": {
+   "name": "nach_dr_value",
+   "label": "NACH debit (EMIs, SIPs, bills paid by mandate), value",
+   "unit": "inr_amount",
+   "group": "Debits",
+   "color": "#878D99",
+   "data": [
+    652040803889.91,
+    3049411055541,
+    3897808763009,
+    5224613954046,
+    6043973148176.7,
+    8620268870255,
+    10266405539562.5,
+    12802194193535.6,
+    16787689869738.2,
+    21993270600000,
+    26874590800000
+   ]
+  },
+  "netc_volume": {
+   "name": "netc_volume",
+   "label": "NETC (FASTag tolls, linked to a bank account), number of transactions",
+   "unit": "count",
+   "group": "Debits",
+   "color": "#878D99",
+   "data": [
+    null,
+    null,
+    1520000,
+    624000,
+    9322000,
+    64995804,
+    120701739,
+    162630993,
+    162944895,
+    166758636,
+    162519000
+   ]
+  },
+  "netc_value": {
+   "name": "netc_value",
+   "label": "NETC (FASTag tolls, linked to a bank account), value",
+   "unit": "inr_amount",
+   "group": "Debits",
+   "color": "#878D99",
+   "data": [
+    null,
+    null,
+    385400000,
+    195000000,
+    2001551615,
+    9133997453.05,
+    16894922704.21,
+    26005296560.76,
+    27768450232.2,
+    23487254489.21,
+    21567900000
+   ]
+  },
+  "cards_volume": {
+   "name": "cards_volume",
+   "label": "Card payments, all (excluding cash withdrawals), number of transactions",
+   "unit": "count",
+   "group": "Cards",
+   "color": "#878D99",
+   "data": [
+    1959287893,
+    3486435945,
+    4748552301,
+    6176870711,
+    7238354968,
+    5778660298,
+    6178293139,
+    6332472051,
+    5846979124,
+    6386114644,
+    7303975579
+   ]
+  },
+  "cards_value": {
+   "name": "cards_value",
+   "label": "Card payments, all (excluding cash withdrawals), value",
+   "unit": "inr_amount",
+   "group": "Cards",
+   "color": "#878D99",
+   "data": [
+    3995882650000,
+    6582885093000,
+    9190345946000,
+    11968879986000,
+    14348133894099.4,
+    12917986321537.6,
+    17018509392770.5,
+    21522445082534.5,
+    24235633139637.8,
+    26051103396799.3,
+    28079459137400
+   ]
+  },
+  "credit_cards_volume": {
+   "name": "credit_cards_volume",
+   "label": "Credit card payments, number of transactions",
+   "unit": "count",
+   "group": "Cards",
+   "color": "#878D99",
+   "data": [
+    785673411,
+    1087132461,
+    1405159681,
+    1762589623,
+    2177284002,
+    1764106465,
+    2239882319,
+    2914524487,
+    3561015288,
+    4774075976,
+    6023763909
+   ]
+  },
+  "credit_cards_value": {
+   "name": "credit_cards_value",
+   "label": "Credit card payments, value",
+   "unit": "inr_amount",
+   "group": "Cards",
+   "color": "#878D99",
+   "data": [
+    2406615144000,
+    3283817596000,
+    4589645980000,
+    6034133355000,
+    7308937696105.2,
+    6304136525375.68,
+    9716376827742.61,
+    14322552403158.2,
+    18311340278739.8,
+    21091967131448.8,
+    23624709498790
+   ]
+  },
+  "debit_cards_volume": {
+   "name": "debit_cards_volume",
+   "label": "Debit card payments, number of transactions",
+   "unit": "count",
+   "group": "Cards",
+   "color": "#878D99",
+   "data": [
+    1173614482,
+    2399303484,
+    3343392620,
+    4414281088,
+    5061070966,
+    4014553833,
+    3938410820,
+    3417947564,
+    2285963836,
+    1612038668,
+    1280211670
+   ]
+  },
+  "debit_cards_value": {
+   "name": "debit_cards_value",
+   "label": "Debit card payments, value",
+   "unit": "inr_amount",
+   "group": "Cards",
+   "color": "#878D99",
+   "data": [
+    1589267506000,
+    3299067497000,
+    4600699966000,
+    5934746631000,
+    7039196197994.24,
+    6613849796161.9,
+    7302132565027.89,
+    7199892679376.28,
+    5924292860898,
+    4959136265350.49,
+    4454749638610
+   ]
+  },
+  "ppi_volume": {
+   "name": "ppi_volume",
+   "label": "Prepaid payment instruments (wallets and prepaid cards), all, number of transactions",
+   "unit": "count",
+   "group": "Prepaid instruments",
+   "color": "#878D99",
+   "data": [
+    748017370,
+    1963655274,
+    3459046105,
+    4607228739,
+    5394098344,
+    4936566587,
+    6578275047,
+    7466744610,
+    7877539707,
+    7025408190,
+    9869946588
+   ]
+  },
+  "ppi_value": {
+   "name": "ppi_value",
+   "label": "Prepaid payment instruments (wallets and prepaid cards), all, value",
+   "unit": "inr_amount",
+   "group": "Prepaid instruments",
+   "color": "#878D99",
+   "data": [
+    487583222000,
+    838010774000,
+    1416342098000,
+    2133233433000,
+    2148604440791,
+    1970952740396.56,
+    2794164216901.1,
+    2871110724239.22,
+    2830480537480.4,
+    2167513672481.91,
+    2864294851570
+   ]
+  },
+  "paper_volume": {
+   "name": "paper_volume",
+   "label": "Paper instruments (cheques and drafts), all, number of transactions",
+   "unit": "count",
+   "group": "Paper",
+   "color": "#878D99",
+   "data": [
+    1096369894,
+    1206691030,
+    1171314544,
+    1123760814,
+    1041418600,
+    670370483,
+    699912211,
+    710928000,
+    663210099,
+    609538000,
+    558783000
+   ]
+  },
+  "paper_value": {
+   "name": "paper_value",
+   "label": "Paper instruments (cheques and drafts), all, value",
+   "unit": "inr_amount",
+   "group": "Paper",
+   "color": "#878D99",
+   "data": [
+    81860791153000,
+    80958147560000,
+    81934928083000,
+    82460649410000,
+    78248218331488.9,
+    56271075524654.1,
+    66503325654518.3,
+    71729040300000,
+    72123325859900,
+    71133497400000,
+    71475680400000
+   ]
+  },
+  "retail_total_volume": {
+   "name": "retail_total_volume",
+   "label": "Total retail payments (credit transfers, debits, cards, PPIs, paper), number of transactions",
+   "unit": "count",
+   "group": "Totals",
+   "color": "#878D99",
+   "data": [
+    6934143220,
+    10790071743,
+    15637040533,
+    24247318991,
+    34906303308,
+    44218025763,
+    72468903292,
+    114406534133,
+    164823371391,
+    222288546220,
+    281953640257
+   ]
+  },
+  "retail_total_value": {
+   "name": "retail_total_value",
+   "label": "Total retail payments (credit transfers, debits, cards, PPIs, paper), value",
+   "unit": "inr_amount",
+   "group": "Totals",
+   "color": "#878D99",
+   "data": [
+    177666083521490,
+    220051646360972,
+    284593260426613,
+    362713035868478,
+    386370281877536,
+    414857471914144,
+    523940490127428.94,
+    659114901842075,
+    791494608486272,
+    920257706365705.9,
+    1048784844331260
+   ]
+  },
+  "total_volume": {
+   "name": "total_volume",
+   "label": "Total payments (RTGS and retail), number of transactions",
+   "unit": "count",
+   "group": "Totals",
+   "color": "#878D99",
+   "data": [
+    7032485048,
+    10897928160,
+    15761473800,
+    24383921966,
+    35056964361,
+    44377217764,
+    72676742472,
+    114649095993,
+    165093387668,
+    222591000800,
+    282303619119
+   ]
+  },
+  "total_value": {
+   "name": "total_value",
+   "label": "Total payments (RTGS and retail), value",
+   "unit": "inr_amount",
+   "group": "Totals",
+   "color": "#878D99",
+   "data": [
+    1002244091305489.9,
+    1201955407548970,
+    1451718036011610,
+    1719594902968480,
+    1697935031311970,
+    1470855957121340.2,
+    1810515654840650,
+    2158577762481920,
+    2500361312316600,
+    2934134529016460,
+    3322511327113770
+   ]
+  },
+  "digital_total_volume": {
+   "name": "digital_total_volume",
+   "label": "Total digital payments (everything but paper), number of transactions",
+   "unit": "count",
+   "group": "Totals",
+   "color": "#878D99",
+   "data": [
+    5936115154,
+    9691237130,
+    14590159256,
+    23260161152,
+    34015545761,
+    43706847281,
+    71976830261,
+    113938167993,
+    164430177569,
+    221981462800,
+    281744836119
+   ]
+  },
+  "digital_total_value": {
+   "name": "digital_total_value",
+   "label": "Total digital payments (everything but paper), value",
+   "unit": "inr_amount",
+   "group": "Totals",
+   "color": "#878D99",
+   "data": [
+    920383300152489.9,
+    1120997259988969.9,
+    1369783107928610,
+    1637134253558480,
+    1619686812980480,
+    1414584881596690,
+    1744012329186130,
+    2086848722181920,
+    2428237986456700,
+    2863001031616460,
+    3251035646713770
+   ]
+  },
+  "ccil_volume": {
+   "name": "ccil_volume",
+   "label": "CCIL-operated systems (government securities, forex, rupee derivatives), number of transactions",
+   "unit": "count",
+   "group": "Settlement systems",
+   "color": "#878D99",
+   "data": [
+    3121501,
+    3654190,
+    3496176,
+    3616531,
+    3568468,
+    2797267,
+    3301134,
+    4143842,
+    4304058,
+    4739670,
+    5684340
+   ]
+  },
+  "ccil_value": {
+   "name": "ccil_value",
+   "label": "CCIL-operated systems (government securities, forex, rupee derivatives), value",
+   "unit": "inr_amount",
+   "group": "Settlement systems",
+   "color": "#878D99",
+   "data": [
+    807370419480000,
+    1056173361184000,
+    1074802022604000,
+    1165510381800000,
+    1341501916810000,
+    1619431408360000,
+    2068731116470000,
+    2587973355790850,
+    2592068933403630,
+    2962180304519490,
+    3670146016587450
+   ]
+  }
+ }
+}
