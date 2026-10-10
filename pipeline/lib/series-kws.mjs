@@ -237,4 +237,31 @@ export const SERIES_KWS = {
     ["trade deficit", "balance"], ["deficit", "balance"], ["trade balance", "balance"], ["balance", "balance"], ["surplus", "balance"],
   ],
   // --- end trade ---
+  // --- payments (lb/payments): the sheet's lines (pipeline/lib/facts-payments.mjs); values before numbers
+  payments: [
+    ["value of upi", "upi_value"], ["upi moved", "upi_value"], ["upi payments worth", "upi_value"],
+    ["upi on a basic phone", "upi_volume"], ["unified payments interface", "upi_volume"], ["upi", "upi_volume"],
+    ["imps moved", "imps_value"], ["value of imps", "imps_value"], ["imps", "imps_volume"], ["immediate payment", "imps_volume"],
+    ["neft moved", "neft_value"], ["value of neft", "neft_value"], ["neft", "neft_volume"],
+    ["rtgs moved", "rtgs_value"], ["value of rtgs", "rtgs_value"], ["rtgs", "rtgs_volume"], ["large-value", "rtgs_volume"],
+    ["credit card", "credit_cards_volume"], ["debit card", "debit_cards_volume"],
+    ["wallets", "ppi_volume"], ["wallet", "ppi_volume"], ["prepaid", "ppi_volume"],
+    ["cheques", "paper_volume"], ["cheque", "paper_volume"], ["paper", "paper_volume"],
+    ["nach debits", "nach_dr_volume"], ["emis", "nach_dr_volume"], ["sips", "nach_dr_volume"], ["mandates", "nach_dr_volume"],
+    ["nach credits", "nach_cr_volume"], ["salaries", "nach_cr_volume"], ["pensions", "nach_cr_volume"], ["bulk payouts", "nach_cr_volume"],
+    ["apbs", "apbs_volume"], ["benefit", "apbs_volume"], ["subsidies", "apbs_volume"],
+    ["fastag", "netc_volume"], ["netc", "netc_volume"], ["tolls", "netc_volume"],
+    ["withdrawn from atms", "atm_cash_value"], ["atm", "atm_cash_volume"], ["atms", "atm_cash_volume"],
+    ["aeps", "microatm_cash_volume"], ["micro atm", "microatm_cash_volume"], ["banking correspondent", "microatm_cash_volume"],
+    ["retail payments", "retail_total_volume"], ["all payments", "total_value"],
+  ],
+  // --- end payments ---
+  // ---- farms (lb/farms): the current bundle is farms-production (output by crop) ----
+  farms: [
+    ["coarse cereals", "coarse_cereals"], ["millets", "coarse_cereals"], ["foodgrains", "foodgrains"], ["foodgrain", "foodgrains"], ["grain harvest", "foodgrains"],
+    ["cereals", "cereals"], ["rice", "rice"], ["paddy", "rice"], ["wheat", "wheat"], ["pulses", "pulses"], ["dal", "pulses"],
+    ["groundnut", "groundnut"], ["mustard", "rapeseed_mustard"], ["rapeseed", "rapeseed_mustard"], ["soyabean", "soyabean"], ["soybean", "soyabean"], ["oilseeds", "oilseeds"],
+    ["sugarcane", "sugarcane"], ["cotton", "cotton"], ["jute", "jute_mesta"], ["tea", "tea"], ["coffee", "coffee"], ["tobacco", "tobacco"],
+  ],
+  // ---- end farms ----
 };

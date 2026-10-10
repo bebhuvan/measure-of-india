@@ -1,6 +1,6 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 09:00.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 12:00.
 
 ## Running now: ten family sessions
 
@@ -56,13 +56,16 @@ throttles, so not run alongside the states and services sessions). Then the laun
 |---|---|---|
 | Search index was 306 MB | atlas-framework round 5 | **fixed**: 112 KB core + shards; largest file 6 MB |
 | State profiles, /states/<state>/ (owner, in launch scope) | atlas-profiles | **36 pages merged**; nav, search and MoSPI pulls to come |
-| Full fresh MoSPI re-download as an integrity audit (worktree `audit`) | coordinator, background | running |
+| Full fresh MoSPI re-download as an integrity audit | coordinator | **done, clean**: every MoSPI product re-fetched through the hardened client (or by its wave-2 session after the fix); 0 paging slips, 0 data values changed |
 | Deep archive upload to Hugging Face (1.5 GB) | coordinator | **waiting on the owner's go** |
 | Read every guide end to end at 1440 and 390; release checklist | review sessions | after the audit and search land |
 | Profile wording: middle ranks read "17th lowest of 36"; say "17th of 36" | atlas-profiles | to fix |
 | Prose rule: published precision for headline growth ("7.8%", not "7.82%") | coordinator | to decide |
 | IIP annual 2024-25: API 5.7% against 6.4% in press summaries (MoSPI PDF 403) | open | not quoted anywhere meanwhile |
 | New sources (SHRUG, Census 2011 PCA, data.gov.in, MGNREGA, TCPD): before or after launch? | **owner** | asked |
+| DBIE wave: public finance, payments, farms, banks, markets (5 sessions) | atlas-* | **payments merged** (guide 26); four running |
+| credit: cheque counts read as display codes (662), clearing-house totals from the wrong provider (743), a 0.001 placeholder | atlas-payments | fixing |
+| MGNREGA | coordinator | **blocked**: MIS is CAPTCHA-gated (not circumvented); api.data.gov.in refuses connections from this network; needs an owner API key and a reachable API |
 | GitHub remote, Cloudflare secrets and Pages project, DNS for atlas.thisindianlife.today, analytics | **owner** | to do |
 
 ## Done on the branch
@@ -105,8 +108,16 @@ throttles, so not run alongside the states and services sessions). Then the laun
   compares, and fails loudly if the two disagree. Re-running every MoSPI adapter with
   MOSPI_NO_CACHE=1 after wave 2 checks every dump on the site the same way.
 
+## After launch (decided)
+
+- Time Use guide (national; TUS 2019 and 2024). BIS CPMI payments comparison (Data Bank to
+  mirror the CPMI flows). Economic Census (no record endpoint known). NSS 80 (API 500).
+  Census 2011 PCA, then SHRUG and TCPD after licence checks. MGNREGA as soon as data.gov.in
+  is reachable with a key.
+
 ## For the launch-pass prose review
 
+- payments: counts quoted to two decimals of a crore ("2,365.84 crore payments").
 - gdp: growth quoted to two decimals ("7.82%", computed from levels) where MoSPI and the
   press print one ("7.8%"). Decide a site-wide rule: published precision for headline
   growth, with the computed figure only where it is the point.

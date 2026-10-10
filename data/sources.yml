@@ -31,6 +31,14 @@ families:
       UN DESA Population Division, World Population Prospects standard CSV files (gzip,
       all countries). scripts/lib/products/wpp.mjs downloads them with net.mjs getBuffer and
       caches them in data/raw/http-cache for 30 days; WPP is revised every two years.
+  rbihub:
+    transport: http
+    base: https://data-api.dbie.rbihub.in
+    note: >
+      The Reserve Bank Innovation Hub's DBIE data service (scripts/lib/rbihub.mjs,
+      docs/reference/rbihub.md): raw DBIE report exports in a database. Used only for
+      reports the Data Bank holds no validated copy of (prompt-gated reports) and for the
+      SDMX datasets; the Data Bank stays the record wherever it has the report.
   databank:
     transport: local
     root: "~/Documents/Data/Data bank"
@@ -1647,6 +1655,25 @@ dossiers:
       pdf_url: "https://www.nfhsiips.in/nfhsuser/assets/National%20Family%20Health%20Survey%20(NFHS-6)%202023-2024%20Fact%20Sheets.pdf"
       pdf_sha256: "59dec561e837bea060b6684a75caca84e0c982ed9e2670848521755f2ab267f9"
   # ---- end profiles ----
+  # ---- payments (lb/payments): how Indians pay, RBI payment system statistics (scripts/lib/products/payments.mjs) ----
+  payments:
+    # regression floor: the monthly table reaches July 2026 (Data Bank fetch of 2026-10-08)
+    stale_after: "2026-07"
+    family: databank
+    geo: IND
+    product: payments
+    frequency: monthly
+    frequency_exempt: true      # annual Handbook and STRBI tables (cheques, clearing houses, e-rupee) beside the monthly table
+    release_calendar: "monthly, in the RBI Bulletin about six weeks after the month; the Handbook and STRBI tables once a year"
+    revision_policy: "Monthly figures are provisional when first printed and may be revised in later Bulletins; the RBI re-organised the table in November 2019, and the two layouts are kept apart."
+    source_agency: "Reserve Bank of India, Payment System Indicators (via DBIE)"
+    release_url: https://data.rbi.org.in
+    ranges:
+      count: [0, 1.0e12]
+      inr_amount: [0, 2.0e16]
+      inr: [0, 2.0e9]
+      pct_yoy: [-100, 1000]
+  # ---- end payments ----
 
 # ---------------------------------------------------------------------------
 # SEAMS: the base-year registry (2026-10). One entry per base (or
@@ -1662,6 +1689,24 @@ dossiers:
 #
 # Windows are the agency's own spans for each base, checked live on the MoSPI
 # MCP server 2026-10-09 (get_metadata + get_data probes).
+  # ---- farms (lb/farms): what India grows, where, per hectare, and what the state pays ----
+  # RBI DBIE agriculture reports via the Data Bank, report 190 and the Handbook grids via the
+  # RBI Innovation Hub (scripts/lib/products/farms.mjs). Rulers kept apart: the ministry's
+  # final estimates and its latest advance estimate; index numbers on three bases.
+  farms:
+    # regression floor: final crop estimates run to 2024-25 (2025-26 is an advance estimate)
+    stale_after: "2024-04"
+    family: databank
+    geo: IND
+    product: farms
+    frequency: annual
+    frequency_exempt: true      # the part-year stock position is dated, not annual
+    base: "ministry final estimates"
+    release_calendar: "annual in the RBI Handbook (September); the agriculture ministry's advance estimates through the crop year, final estimates about a year after it ends; MSPs before each sowing season"
+    revision_policy: "Advance estimates are revised until the ministry's final estimates; final figures change rarely. The latest year is kept apart as an advance estimate, never joined to the final years."
+    source_agency: "Reserve Bank of India, DBIE (agriculture ministry and food ministry data), via the Data Bank"
+    release_url: https://data.rbi.org.in
+  # ---- end farms ----
 seams:
   cpi:
     - base: "2012=100"
@@ -2218,3 +2263,65 @@ seams:
       to: null
       bundles: [profiles-nfhs6]
   # ---- end profiles ----
+  # ---- payments (lb/payments): the RBI re-organised its payment system table in November 2019 ----
+  # No agency link joins the two layouts (lines were redefined: card payments stopped counting
+  # cash at ATMs, UPI and AePS got lines of their own). The annual table is the RBI's own
+  # restatement of the re-organised classification back to 2015-16. The cheque, clearing-house
+  # and e-rupee tables are separate instruments, each its own ruler.
+  payments:
+    - base: "old table (April 2004 to October 2019)"
+      from: "2004-04"
+      to: "2019-10"
+      bundles: [payments-monthly-2004, payments-infra-2004]
+    - base: "re-organised table (from November 2019)"
+      from: "2019-11"
+      to: null
+      bundles: [payments-monthly, payments-infra, payments-ticket, payments-growth-wss]
+    - base: "re-organised classification, annual (restated by the RBI from 2015-16)"
+      from: "2016-03"
+      to: null
+      bundles: [payments-annual]
+    - base: "Handbook cheque clearance series (1970-71 to 2015-16)"
+      from: "1971-03"
+      to: "2016-03"
+      bundles: [payments-cheques-1970]
+    - base: "STRBI Table 22 (2004-05 on)"
+      from: "2005-03"
+      to: null
+      bundles: [payments-cheques-centres]
+    - base: "STRBI Table 27 (2005 on)"
+      from: "2005-03"
+      to: null
+      bundles: [payments-clearing-houses]
+    - base: "e₹ pilots (from December 2022)"
+      from: "2023-03"
+      to: null
+      bundles: [payments-erupee]
+  # ---- end payments ----
+  # ---- farms (lb/farms) ----
+  farms:
+    - base: "ministry final estimates"
+      from: "1950-04"
+      to: null
+      bundles: [farms-production, farms-area, farms-yield, farms-states-production]
+    - base: "ministry advance estimates"
+      from: "2022-04"
+      to: null
+      bundles: [farms-advance, farms-states-production-advance]
+    - base: "TE 1981-82=100"
+      from: "1949-04"
+      to: "1993-04"
+      bundles: [farms-index-1982]
+    - base: "TE 1993-94=100"
+      from: "1993-04"
+      to: "2007-04"
+      bundles: [farms-index-1994]
+    - base: "TE 2007-08=100"
+      from: "2007-04"
+      to: null
+      bundles: [farms-index-2008]
+    - base: "as published"
+      from: "1950-04"
+      to: null
+      bundles: [farms-msp, farms-landuse, farms-pds, farms-pds-latest, farms-states-fertiliser]
+  # ---- end farms ----

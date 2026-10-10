@@ -18,6 +18,7 @@ const OTHER_GEOGRAPHY = [
   [/^housing-|^bis-property-cities$|^deposits-(q-)?metros-sectors$|^credit-deep-cheque-clearances$/, "cities and clearing houses, not states"],
   [/^gender-t130$/, "high courts, several of which serve more than one state"],
   [/^states-hbs-t102$/, "IMD meteorological sub-divisions (East Uttar Pradesh, Konkan and Goa), not states"],
+  [/^payments-cheques-(1970|centres)$/, "cheque clearing centres (cities and the national grid), not states"],   // payments (lb/payments)
 ];
 const otherGeo = (slug) => OTHER_GEOGRAPHY.find(([re]) => re.test(slug))?.[1] ?? null;
 

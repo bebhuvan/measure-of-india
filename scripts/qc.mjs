@@ -16,6 +16,7 @@ import { JSDOM } from "jsdom";
 import { DOSSIERS, bySlug } from "../src/dossiers/registry.js";
 import * as fmt from "../src/charts/format.js";
 import * as display from "../src/dossiers/display.js";
+import * as PF from "../src/dossiers/payments.fmt.js";   // payments (lb/payments): the guide's own renderers
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 // QC_DIST lets gate runs point at a scratch build (e.g. astro build
@@ -548,6 +549,42 @@ const PAGES = [
     ["prov-vintage", (b) => b["trade-total"].meta.vintage],
   ]},
   // --- end trade ---
+  // --- payments (lb/payments): every rendered figure through src/dossiers/payments.fmt.js, the client's own formatters ---
+  { url: "/guides/payments/", slug: null, minPlots: 30, checks: [
+    ["n-upi", (b) => PF.crore(b["payments-monthly"].series.upi_volume.data.at(-1))],
+    ["rb-upi", (b) => PF.crore(b["payments-monthly"].series.upi_volume.data.at(-1))],
+    ["n-upiv", (b) => PF.lakhCrore(b["payments-monthly"].series.upi_value.data.at(-1))],
+    ["rb-share", (b) => { const s = b["payments-monthly"].series; return PF.share(s.upi_volume.data.at(-1), s.retail_total_volume.data.at(-1)); }],
+    ["n-avg", (b) => PF.rupees(b["payments-ticket"].series.upi.data.at(-1))],
+    ["n-atm", (b) => PF.crore(b["payments-monthly"].series.atm_cash_volume.data.at(-1))],
+    ["pv-ticket", (b) => PF.rupees(b["payments-ticket"].series.upi.data.at(-1))],
+    ["ex-tk-dc", (b) => PF.rupees(b["payments-ticket"].series.debit_cards.data.at(-1))],
+    ["pv-upi", (b) => PF.crore(b["payments-monthly"].series.upi_volume.data.at(-1))],
+    ["ex-upi-n0", (b) => PF.crore(b["payments-monthly"].series.upi_volume.data[0])],
+    ["pv-share", (b) => { const s = b["payments-monthly"].series; return PF.share(s.rtgs_value.data.at(-1), s.total_value.data.at(-1)); }],
+    ["pv-value", (b) => PF.lakhCrore(b["payments-monthly"].series.rtgs_value.data.at(-1))],
+    ["pv-cards", (b) => PF.crore(b["payments-monthly"].series.credit_cards_volume.data.at(-1))],
+    ["ex-cd-ndc", (b) => PF.crore(b["payments-infra"].series.debit_cards.data.at(-1))],
+    ["ex-cs-n", (b) => PF.crore(b["payments-monthly"].series.atm_cash_volume.data.at(-1))],
+    ["pv-cash", (b) => "₹" + b["credit-money"].series.currency_with_public.data.at(-1).toFixed(2) + " lakh crore"],
+    ["pv-machines", (b) => PF.count(b["payments-infra"].series.upi_qr.data.at(-1))],
+    ["ex-mc-atm", (b) => PF.count(b["payments-infra"].series.atms.data.at(-1))],
+    ["pv-systems", (b) => PF.count(b["payments-monthly"].series.nach_dr_volume.data.at(-1))],
+    ["pv-channels", (b) => PF.lakhCrore(b["payments-monthly"].series.mobile_value.data.at(-1))],
+    ["pv-annual", (b) => PF.crore(b["payments-annual"].series.upi_volume.data.at(-1))],
+    ["ex-an-tot", (b) => PF.crore(b["payments-annual"].series.total_volume.data.at(-1))],
+    ["pv-long", (b) => PF.crore(b["payments-monthly"].series.neft_volume.data.at(-1))],
+    ["ex-lg-neft0", (b) => PF.count(b["payments-monthly-2004"].series.neft_volume.data[0])],
+    ["pv-cheques", (b) => PF.crore(b["payments-annual"].series.paper_volume.data.at(-1))],
+    ["ex-cq-0", (b) => PF.crore(b["payments-cheques-1970"].series.all_india_number.data[0])],
+    ["pv-clearing", (b) => b["payments-clearing-houses"].series.total.data.at(-1).toLocaleString("en-IN")],
+    ["ex-cl-n0", (b) => b["payments-clearing-houses"].series.total.data[0].toLocaleString("en-IN")],
+    ["ex-cl-grid", (b) => PF.crore(b["payments-cheques-centres"].series.national_grid_number.data.at(-1))],
+    ["pv-erupee", (b) => PF.rsCrore(b["payments-erupee"].series.total.data.at(-1))],
+    ["ex-er-prev", (b) => PF.rsCrore(b["payments-erupee"].series.total.data.at(-2))],
+    ["prov-vintage", (b) => b["payments-monthly"].meta.vintage],
+  ]},
+  // --- end payments ---
   { url: "/", slug: null, minPlots: 1, checks: [
     // the CPI print is the 2024-base series; core stays on the 2012 base
     // (no weights served for the new base), labelled "to Dec 2025"
@@ -556,6 +593,27 @@ const PAGES = [
     ["v-gdp", (b) => fmt.pct2(b["gdp-2022"].series.gdp.data.at(-1)), "gdp-2022"],
   ]},
   // the guides index: one small chart per guide
+  // ---- farms (lb/farms): title block and plate values recomputed from the bundles ----
+  { url: "/guides/farms/", slug: null, minPlots: 18, checks: [
+    ["n-fg", (b) => fmt.num1(b["farms-production"].series.foodgrains.data.at(-1) / 1000) + " mt"],
+    ["rb-fg", (b) => fmt.num1(b["farms-production"].series.foodgrains.data.at(-1) / 1000) + " mt"],
+    ["rb-side", (b) => fmt.num1(b["farms-advance"].series.production_foodgrains.data[0] / 1000) + " mt"],
+    ["n-yield", (b) => fmt.inr(b["farms-yield"].series.wheat.data.at(-1)) + " kg"],
+    ["n-msp", (b) => { const d = b["farms-msp"].series.paddy_common.data; return fmt.inrR(d.filter((v) => v != null).at(-1)); }],
+    ["n-stock", (b) => fmt.num1(b["farms-pds"].series.stocks_total.data.at(-1) / 10) + " mt"],
+    ["pv-harvest", (b) => fmt.num1(b["farms-production"].series.foodgrains.data.at(-1) / 1000) + " mt"],
+    ["pv-grains", (b) => fmt.num1(b["farms-production"].series.rice.data.at(-1) / 1000) + " mt"],
+    ["pv-crops", (b) => fmt.num1(b["farms-production"].series.sugarcane.data.at(-1) / 1000)],
+    ["pv-area", (b) => fmt.num1(b["farms-area"].series.foodgrains.data.at(-1) / 1000)],
+    ["pv-index", (b) => fmt.num1(b["farms-index-2008"].series.production_all_crops.data.at(-1))],
+    ["pv-land", (b) => fmt.pct1(b["farms-landuse"].series.irrigated_share.data.at(-1))],
+    ["pv-fert", (b) => fmt.num1(b["farms-landuse"].series.fertiliser_per_ha.data.at(-1))],
+    ["pv-stocks", (b) => fmt.num1(b["farms-pds"].series.stocks_total.data.at(-1) / 10) + " mt"],
+    ["ex-st-lv", (b) => fmt.num1(b["farms-pds-latest"].series.stocks_total.data[0] / 10) + " million tonnes"],
+    ["ex-ha-gross", (b) => { const Y = b["farms-yield"], M = b["farms-msp"]; const d = Y.dates.filter((x, i) => Y.series.wheat.data[i] != null && M.series.wheat.data[M.dates.indexOf(x)] != null).at(-1); return fmt.inrR(Math.round(Y.series.wheat.data[Y.dates.indexOf(d)] * M.series.wheat.data[M.dates.indexOf(d)] / 100)); }],
+    ["prov-vintage", (b) => b["farms-production"].meta.vintage],
+  ]},
+  // ---- end farms ----
   { url: "/guides/", slug: null, minPlots: 13, checks: [] },
   { url: "/register/", slug: null, minPlots: 8, checks: [] },
   // profiles (lb/profiles): five profiles of different shapes run their charts here and in lint-charts

@@ -845,6 +845,67 @@ export const DOSSIERS = [
     ],
   },
   // --- end trade ---
+  // --- payments (lb/payments): how Indians pay, RBI payment system statistics ---
+  {
+    slug: "payments",
+    no: "26",   // next free number on this branch; the coordinator renumbers at merge
+    section: "Money",
+    name: "Payments, RBI",
+    title: "How Indians pay",   // the topic as a reader names it: nav, lists, search
+    kickerTitle: "Payment systems, RBI",
+    crumbTitle: "Payments",
+    headline: "How India pays, <i>one scan at a time.</i>",
+    ogTitle: "How India pays, one scan at a time.",
+    blurb: "UPI, cards, NEFT, RTGS, cheques, ATMs and the e-rupee: how many payments Indians make each month, how big they are, and whether cash and cards are giving way.",
+    description: "Every payment system the RBI counts: UPI, IMPS, NEFT, RTGS, cards, wallets, NACH, Aadhaar payments, cheques since 1970-71, ATM withdrawals, card machines and QR codes, and the e-rupee. Monthly since 2004.",
+    rssDescription: "How many payments Indians make, by what route, and how big they are. Revised with each monthly RBI Bulletin.",
+    stamp: { dateStyle: "month", vintageStyle: "vintage" },
+    statusNote: "Monthly, with each RBI Bulletin; re-organised table from November 2019",
+    version: "v1.0",
+    currentBundle: "payments-monthly",
+    calendar: "fiscal-apr",
+    bands: null,
+    proseConstants: [100, 2019],   // per 100 payments; the year the RBI re-organised its table
+    spark: { bundle: "payments-monthly", series: "upi_volume" },
+    prose: true,
+    proseInputs: ["payments-ticket", "payments-infra"],
+    factsModule: "pipeline/lib/facts-payments.mjs",   // the sheet in growth terms, with shares, averages and cash computed in code (see that file)
+    register: { id: "reg-payments", label: "Payments", unit: "Monthly, number of transactions and value, RBI payment system indicators", historyCol: "Since 2019" },
+    bundles: ["payments-monthly", "payments-infra", "payments-ticket", "payments-annual", "payments-growth-wss", "payments-monthly-2004", "payments-infra-2004",
+      "payments-cheques-1970", "payments-cheques-centres", "payments-clearing-houses", "payments-erupee"],
+  },
+  // --- end payments ---
+  // ---- farms (lb/farms): crops, MSP, procurement and stocks, RBI DBIE ----
+  {
+    slug: "farms",
+    no: "27",
+    section: "Output",
+    name: "Farms and food, crop statistics",
+    title: "What India grows",   // the topic as a reader names it: nav, lists, search
+    kickerTitle: "Crops, support prices and food stocks, RBI DBIE",
+    crumbTitle: "Farms and food",
+    headline: "What India grows, <i>and what the state buys.</i>",
+    ogTitle: "What India grows, and what the state buys.",
+    blurb: "How much rice, wheat, pulses, oilseeds, sugarcane and cotton India grows, how much a hectare yields, which states grow what, the support prices the government sets, and the grain it buys and stores.",
+    description: "India's crop output, area and yield since 1950-51, every state's harvest since 1980-81, minimum support prices since 1975-76, land use and fertiliser, and the government's procurement and food stocks, from the RBI's tables of agriculture ministry data.",
+    rssDescription: "Harvests, yields, support prices and food stocks: what India grows and what the state buys. Updated with each RBI Handbook.",
+    stamp: { dateStyle: "vintageMonth", vintageStyle: "vintage" },
+    statusNote: "Annual, crop years; the latest year is an advance estimate",
+    version: "v1.0",
+    currentBundle: "farms-production",
+    calendar: "fiscal-apr",
+    bands: null,
+    proseConstants: [100],   // verifier whitelist: kg in a quintal, per cent
+    spark: { bundle: "farms-production", series: "foodgrains" },
+    prose: true,
+    proseInputs: ["farms-yield", "farms-area"],   // same ruler; the advance estimate, MSPs and stocks ride in facts cross.farms
+    register: { id: "reg-farms", label: "Farms and food", unit: "Annual, crop years, thousand tonnes, RBI DBIE (agriculture ministry)", historyCol: "Since 1950-51" },
+    bundles: [
+      "farms-production", "farms-area", "farms-yield", "farms-advance", "farms-index-2008", "farms-index-1994", "farms-index-1982",
+      "farms-msp", "farms-landuse", "farms-pds", "farms-pds-latest", "farms-states-production", "farms-states-production-advance", "farms-states-fertiliser",
+    ],
+  },
+  // ---- end farms ----
 ];
 export const bySlug = Object.fromEntries(DOSSIERS.map((d) => [d.slug, d]));
 

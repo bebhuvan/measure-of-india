@@ -742,3 +742,81 @@ gender:
       their share of scheme accounts. Do not discuss the compendium's missing tables. Must contain
       a plain "we do not know". Plain, literal sentences, no metaphors.
 # --- end health-gender ---
+
+# --- payments (lb/payments): the month's payment system indicators, RBI ---
+payments:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [cross.upi.payments_crore, cross.upi.paymentsGrowthPct, cross.upi.value_lakh_crore, cross.shares.upiOfRetailPaymentsPct, cross.averagePayment.upi_rupees]
+    minSeriesMentioned: 6        # UPI and five of the other systems, cash and cards among them
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
+    brief: >
+      Two short paragraphs on the month's payments. First UPI: how many payments, what they
+      moved, the growth on a year earlier, its share of all retail payments and the average
+      payment. Then the rest of the field: which systems grew fastest and which shrank, by the
+      number of payments (credit cards against debit cards; IMPS, cheques and ATM withdrawals
+      falling; RTGS and NEFT carrying most of the money). Take UPI's figures from the upi
+      block (crore payments, ₹ lakh crore). Cite numbers of payments in crore and money in
+      lakh crore or crore. Name the month in
+      full ("July 2026"). A growth rate is on a year earlier; a run (months in a row) is about
+      the level month on month, so never write "rose X% for N months running". Card ratios:
+      say "all card payments" or "at shops' card machines" exactly as the shares block names
+      them. Write for a reader, never use the words "sheet", "series", "mover", "print" or
+      "line". Concede what is genuine before qualifying it.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [cross.cash.currencyWithPublic_lakh_crore, cross.cash.growthPct]
+    brief: >
+      The honest limits. These are counts of payments, not of people: we do not know how many
+      Indians use UPI or how often each person pays. An average payment is a mean pulled up by
+      large transfers; the RBI publishes no typical payment. Cash payments are not counted at
+      all, and the cash the public holds kept growing (give currency with the public and its
+      growth on a year earlier from the cash block). Payment values count the same money every
+      time it moves, so they are not spending or GDP. Recent months can be revised. Must
+      contain a plain "we do not know". Do not list payment systems one by one and do not
+      repeat the other paragraph's growth figures: this paragraph is about limits, not the
+      month's news. Never use the words "sheet", "series" or "print".
+# --- end payments ---
+
+# ---- farms (lb/farms) ----
+farms:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [cross.farms.harvest_million.foodgrains, cross.farms.harvest_million.rice, cross.farms.harvest_million.wheat, cross.farms.harvest_million.pulses]
+    minSeriesMentioned: 4        # foodgrains and three of its parts or the commercial crops
+    mustAcknowledge: [contradictions]
+    brief: >
+      The latest final harvest and what came after it. First the crop year the final estimates
+      cover (cross.farms.finalYear; write it as 2024-25, never FY25): foodgrains in million tonnes
+      and the change on the year before, and rice, wheat and pulses, each from
+      cross.farms.harvest_million; say whether foodgrains set a record
+      (cross.farms.foodgrainsRecord). Then the ministry's advance estimate for the next year
+      (cross.farms.advance): name its stage and say it will be revised. Then one sentence on what
+      the state did: the stocks in the central pool on cross.farms.stocks.asOn against the
+      1 April buffer norm, and the latest support prices for paddy and wheat with their crop years
+      (cross.farms.msp_rupees_per_quintal). Cite harvests and stocks in million tonnes and prices
+      in rupees a quintal, exactly as cross.farms writes them; never cite the series values, which
+      are thousand tonnes. Each figure keeps its own year. The stock total includes a little coarse
+      grain: call it grain in the central pool, never "rice and wheat". Never say "ruler". Plain
+      sentences, no metaphors.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 6
+    dateStamp: false
+    requiredFigures: [cross.farms.harvest_million.foodgrains]
+    brief: >
+      The honest limits. Crop output is an estimate built from land records and sample
+      crop-cutting, not a weighing of the harvest (output is area multiplied by yield). Name the crop
+      year as 2024-25, never FY25.
+      The next year, cross.farms.advance.year, has ended but is still an advance estimate, which the
+      ministry will revise; do not say how many times.
+      A bigger harvest is not higher farm income: the tables carry prices and output but not costs,
+      and the support price matters only where the government buys, mostly rice and wheat in a few
+      states. Full granaries are not the same as full plates. Must contain a plain "we do not know"
+      sentence (for example, whether a quintal became more profitable). Cite exactly one figure:
+      the final foodgrain harvest, written as cross.farms.harvest_million.foodgrains followed by
+      "million tonnes". Plain sentences, no metaphors.
+# ---- end farms ----
