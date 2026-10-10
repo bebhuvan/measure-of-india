@@ -283,6 +283,13 @@ export const MEASURES = [
   { id: "irrigated", section: "farms", label: "Cropped area irrigated", what: "the share of the cropped area that is irrigated (gross irrigated over gross sown area)", bundle: "states-hbs-t055", pick: notAgg, fmt: "pct1",
     derive: { op: "ratio", other: "states-hbs-t053" }, india: { op: "ratio", args: [["states-hbs-t055", "all_india"], ["states-hbs-t053", "all_india"]] }, guide: "states" },
   { id: "intensity", section: "farms", label: "Cropping intensity", what: "cropping intensity (gross sown area for every 100 hectares of net sown area)", bundle: "states-hbs-t057", pick: notAgg, fmt: "ratio", india: { op: "cell", args: [["states-hbs-t057", "all_india"]] }, guide: "states" },
+  { id: "rice", section: "farms", label: "Rice grown", what: "the rice harvest", bundle: "states-hbs-t058", pick: notAgg, fmt: "lakhTonnesFromThousand", india: { op: "cell", args: [["states-hbs-t058", "all_india"]] }, guide: "farms" },
+  { id: "wheat", section: "farms", label: "Wheat grown", what: "the wheat harvest", bundle: "states-hbs-t059", pick: notAgg, fmt: "lakhTonnesFromThousand", india: { op: "cell", args: [["states-hbs-t059", "all_india"]] }, guide: "farms" },
+  { id: "pulses", section: "farms", label: "Pulses grown", what: "the harvest of pulses (dal)", bundle: "states-hbs-t061", pick: notAgg, fmt: "lakhTonnesFromThousand", india: { op: "cell", args: [["states-hbs-t061", "all_india"]] }, guide: "farms" },
+  { id: "oilseeds", section: "farms", label: "Oilseeds grown", what: "the harvest of the nine oilseeds", bundle: "states-hbs-t063", pick: notAgg, fmt: "lakhTonnesFromThousand", india: { op: "cell", args: [["states-hbs-t063", "all_india"]] }, guide: "farms" },
+  { id: "sugarcane", section: "farms", label: "Sugarcane grown", what: "the sugarcane harvest", bundle: "states-hbs-t065", pick: notAgg, fmt: "lakhTonnesFromThousand", india: { op: "cell", args: [["states-hbs-t065", "all_india"]] }, guide: "farms" },
+  { id: "cotton", section: "farms", label: "Cotton grown", what: "the cotton harvest (lint, in bales of 170 kg)", bundle: "states-hbs-t064", pick: notAgg, fmt: "lakhBalesFromThousand", india: { op: "cell", args: [["states-hbs-t064", "all_india"]] }, guide: "farms" },
+  { id: "fertiliser", section: "farms", label: "Fertiliser per hectare", what: "the fertiliser (nitrogen, phosphate and potash) used on each hectare", bundle: "farms-states-fertiliser", pick: notAgg, fmt: "kgPerHa", india: { op: "cell", args: [["farms-states-fertiliser", "avg_all_india"]] }, guide: "farms" },
   { id: "milk", section: "farms", label: "Milk produced", what: "milk output", bundle: "states-hbs-t091", pick: notAgg, fmt: "lakhTonnesFromThousand", india: { op: "cell", args: [["states-hbs-t091", "all_india"]] }, guide: "states" },
   // education
   { id: "ger", where: true, section: "education", label: "College enrolment ratio", what: "the gross enrolment ratio in higher education (18 to 23 year olds)", bundle: "aishe-states-ger", pick: endsKey("__ger_all_both"), fmt: "pct1", india: { op: "cell", args: [["aishe-states-ger", "all_india__ger_all_both"]] }, guide: "aishe" },
@@ -482,7 +489,9 @@ export function rankPhrase(rank) {
   if (fromLow === 1) return `${j ? "joint lowest" : "the lowest"} of ${n}`;
   if (r <= RANK_EDGE) return `${j}${ORD(r)} highest of ${n}`;
   if (fromLow <= RANK_EDGE) return `${j}${ORD(fromLow)} lowest of ${n}`;
-  return `near the middle, ${j}${ORD(r)} of ${n} counted from the highest`;
+  // "near the middle" only for the middle third; elsewhere the place and how it is counted
+  const middle = r > n / 3 && r <= (2 * n) / 3;
+  return `${middle ? "near the middle, " : ""}${j}${ORD(r)} of ${n}${middle ? "" : ","} counted from the highest`;
 }
 export const lowerFirst = (s) => s.charAt(0).toLowerCase() + s.slice(1);
 export const withThe = (u) => (/Islands$/.test(u.name) ? `the ${u.name}` : u.name);
@@ -589,6 +598,7 @@ export function sentence(u, f, { lead = "" } = {}) {
   const rp = rankPhrase(f.rank);
   const units = `states and union territories with figures for ${forPeriod(f.period)}`;
   if (rp && /^near the middle/.test(rp)) s += `, near the middle of the ${f.rank.n} ${units} (${f.rank.tied > 1 ? "joint " : ""}${ORD(f.rank.r)} counted from the highest)`;
+  else if (rp && /counted from the highest$/.test(rp)) s += `, ${f.rank.tied > 1 ? "joint " : ""}${ORD(f.rank.r)} of the ${f.rank.n} ${units}, counted from the highest`;
   else if (rp) s += `, ${rp} ${units}`;
   if (f.india) s += f.india.same ? `. The all-India figure was ${I_(f)}` : `. The latest all-India figure is ${I_(f)}, for ${forPeriod(f.india.period)}`;
   s += ".";
@@ -621,7 +631,7 @@ const SECTION_TEXT = {
   health: "Nutrition, births, vaccination, blood pressure and blood sugar from the sixth National Family Health Survey (2023-24); anaemia, which its fact sheets do not print, from the fifth (2019-21); infant deaths and life expectancy from the Sample Registration System; government hospital beds from the Ministry of Health, as the RBI's Handbook reprints them.",
   money: "Bank deposits and credit booked at branches in the state, from the RBI's quarterly statistics, and the number of bank branches. Credit is counted where a loan is sanctioned, which is not always where the money is spent.",
   industry: "Registered factories from the Annual Survey of Industries; small unincorporated businesses outside farming, from the Annual Survey of Unincorporated Sector Enterprises; renewable power from the Ministry of New and Renewable Energy; electricity supply from the Central Electricity Authority and goods exports by state of origin from the commerce ministry, as the RBI's Handbook reprints them.",
-  farms: "Crop output, yield, irrigation and milk from the Ministry of Agriculture and Farmers Welfare and the Department of Animal Husbandry, as the RBI's Handbook of Statistics on Indian States reprints them.",
+  farms: "Crop output, yield, irrigation and milk from the Ministry of Agriculture and Farmers Welfare and the Department of Animal Husbandry, as the RBI's Handbook of Statistics on Indian States reprints them; fertiliser use per hectare from the farms guide's state tables. The farms guide holds every crop for every state since 1980-81.",
   education: "Schools from UDISE+, the Ministry of Education's census of every school, as MoSPI serves it (2018-19 to 2024-25); college enrolment from the All India Survey on Higher Education (2021-22). A gross enrolment ratio counts every enrolled student, of any age, against the population of the official age group, so it can pass 100.",
   climate: "Temperature and rain over the whole state, from ERA5, a reconstruction of past weather that the World Bank's Climate Change Knowledge Portal averages over each state's area. Each year is set against the state's own average for 1951 to 1980.",
   finances: "The state government's own accounts, from the RBI's Handbook, set against the state's GSDP as the states guide computes it. Actual figures run two years behind; budget and revised estimates are left out.",
@@ -630,7 +640,7 @@ const SECTION_TEXT = {
 const LEADS = {
   income: ["pc", "growth", "gsdp"], structure: ["services", "agri"], prices: ["cpi", "cpiFood"], work: ["ur", "urGrad", "lfprW", "wageFarm"],
   households: ["mpceR", "mpceU", "poorest5R", "foodR", "mpi", "sanitation"], health: ["stunting", "institutional", "bpW", "anaemiaW", "imr"], money: ["cd", "deposits", "creditFarm"],
-  industry: ["factories", "estab", "re"], farms: ["grain", "yield"], education: ["ger", "gerHs", "ptr", "schoolsInternet"], climate: ["temp", "rain", "hot35Future"], finances: ["debt", "gfd", "interest", "sdl"],
+  industry: ["factories", "estab", "re"], farms: ["grain", "yield", "rice", "wheat", "fertiliser"], education: ["ger", "gerHs", "ptr", "schoolsInternet"], climate: ["temp", "rain", "hot35Future"], finances: ["debt", "gfd", "interest", "sdl"],
 };
 const WHY_NONE = {
   income: "MoSPI's state accounts do not cover this union territory: it has no legislature, and its output is counted within the all-India figures.",

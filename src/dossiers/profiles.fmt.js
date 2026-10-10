@@ -34,4 +34,6 @@ export const FMT = {
   usd: (v) => (v >= 1e9 ? "US$" + (v / 1e9).toFixed(2) + " billion" : "US$" + g(v / 1e6) + " million"),
   score: (v) => g(v) + " out of 100",
   ptr: (v) => g(v) + " pupils for each teacher",
+  lakhBalesFromThousand: (v) => (v >= 1e4 ? g(v / 100) : (v / 100).toFixed(1)) + " lakh bales",
+  kgPerHa: (v) => g(v) + " kg a hectare",
 };
