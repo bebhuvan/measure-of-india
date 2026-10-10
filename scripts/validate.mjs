@@ -3400,6 +3400,28 @@ withBundle("wages-rural-2013", (b) => {
     if (!(a > 1e5 && Math.abs(b2 / a - 1) < 0.05)) fail(`payments-infra-2004: ATMs in October 2019 (${a}) do not meet November 2019 (${b2})`);
     else ok(`payments-infra-2004: ATMs ${a} in October 2019 meet ${b2} in November 2019 (storage defect corrected)`);
   }));
+  // the credit guide's copies of the same STRBI tables (reports 662, 743) must agree with these
+  // (678, 936): cheque counts centre by centre, and the clearing-house totals. Until 2026-10-10
+  // credit's "cheques" were the export's display-order codes; this would have caught it.
+  withBundle("credit-deep-cheque-clearances", (cr) => withBundle("payments-cheques-centres", (py) => {
+    let k = 0, bad = 0;
+    for (const [key, s] of Object.entries(cr.series)) {
+      if (!key.endsWith("__cheques")) continue;
+      const name = s.label.replace(/, cheques cleared \(number\)$/, "");
+      const ps = Object.values(py.series).find((x) => x.unit === "count" && x.label.replace(/, cheques cleared \(number\)$/, "") === name);
+      if (!ps) { fail(`credit-deep-cheque-clearances.${key}: no payments-cheques-centres series for "${name}"`); bad++; continue; }
+      cr.dates.forEach((d, i) => { const j = py.dates.indexOf(d); if (s.data[i] == null || j < 0 || ps.data[j] == null) return; k++; if (s.data[i] !== ps.data[j]) { bad++; fail(`credit-deep-cheque-clearances.${key} ${d}: ${s.data[i]} != payments ${ps.data[j]}`); } });
+    }
+    if (k < 150) fail(`credit-deep-cheque-clearances: only ${k} cheque counts compared with payments-cheques-centres`);
+    else if (!bad) ok(`credit-deep-cheque-clearances: ${k} cheque counts equal payments-cheques-centres (reports 662 and 678)`);
+  }));
+  withBundle("credit-deep-clearing-houses", (cr) => withBundle("payments-clearing-houses", (py) => {
+    const a = cr.series.total__all?.data, b = py.series.total.data;
+    if (!a) { fail("credit-deep-clearing-houses: no all-clearing-houses total"); return; }
+    const diff = cr.dates.filter((d, i) => a[i] != null && b[py.dates.indexOf(d)] != null && a[i] !== b[py.dates.indexOf(d)]);
+    if (diff.length) fail(`credit-deep-clearing-houses: totals differ from payments-clearing-houses in ${diff.join(", ")}`);
+    else ok(`credit-deep-clearing-houses: totals equal payments-clearing-houses (reports 743 and 936)`);
+  }));
 }
 // ---- end payments ----
 

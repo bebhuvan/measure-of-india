@@ -94,3 +94,36 @@ Nothing for this guide beyond the coordinator's merge. Blocked items are listed 
 - A first `generate.mjs payments --dry` was not the dry-run flag (`--dry-run`) and made real
   API calls; the drafts were discarded and regenerated after the facts sheet was fixed.
 - A headline.js and og.mjs edit swallowed two newlines and broke one build; fixed before commit.
+
+## Follow-up: the credit fixes (2026-10-10, after payments merged)
+
+Asked by the coordinator; the credit session is closed. All in the credit adapters, rebaked from
+the Data Bank, credit prose regenerated and read.
+
+- **Cheque clearances (662).** `bakeDeep` gained `siblings`: a table split across data providers
+  is read provider by provider, each value column chosen by content, never by provider id. The
+  count comes from the provider without DBIE's display-unit picker. Mumbai 2023-24: 15.75 crore
+  cheques; national grid 2024-25: 60.95 crore, equal to the payment system table's paper line.
+  validate now checks all 218 counts against `payments-cheques-centres` (report 678).
+- **Clearing houses (743).** MICR, non-MICR (by managing bank) and the total, read from the
+  providers named for them; STRBI strings ("1306(64+2*)$") parsed by `strbiCount`. Totals equal
+  `payments-clearing-houses` (checked in validate).
+- **A general display-code guard.** `isCodeColumn` drops any measure whose series are all one
+  small integer at every date (the export's row order). The sweep of all 228 deep tables found no
+  other such column; no all-zero totals remain.
+- **Rounding (credit.mjs `r3`, credit-deep).** Amounts in ₹ lakh crore were rounded to three
+  decimals (₹1,000 crore steps), so small states and categories read 0 or 0.001. Now four
+  significant figures below 1. Dadra and Nagar Haveli's farm credit limit is ₹62 to ₹125 crore
+  a quarter, as the RBI prints it (not a placeholder). Growth rates computed from those levels
+  moved for small categories (computer software by up to 4.6 points); the latest month's figures
+  changed only for loans against shares (12.24% to 12.67%).
+- **PACS by state (1528).** Viability classes and "Number" rows were read as rupees and divided
+  by 10^7; now counts. Dormant and defunct societies, rounded away before, are back; the classes
+  add up to the number of PACS (Gujarat 2024: 9,622).
+- **Bank ratios (1078).** Business and profit per employee are in rupees to March 2015 and in
+  ₹ lakh from March 2016 (one clean break for every bank); both now in ₹ crore (SBI 2023-24:
+  ₹34.10 crore of business, ₹26 lakh of profit per employee).
+- Credit prose regenerated (the month-on-month counts moved to 36 of 43 sectors and 30 of 43
+  industries); every figure checked against the facts sheet.
+- `data/raw/vintages/` holds two credit-deep provenance archives from today's rebakes (the
+  writer archives each superseded provenance file).
