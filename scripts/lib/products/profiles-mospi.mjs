@@ -90,7 +90,7 @@ async function phaseMeta(mospi, plan) {
   }
   for (const P of PRODUCTS) { const I = plan.products[P.id]?.indicators ?? []; const mb = I.reduce((a, x) => a + (x.expected ?? 0) * (x.bytesPerRow ?? 0), 0) / 1e6; console.log(`B ${P.id}: about ${mb.toFixed(1)} MB of rows, ${I.filter((x) => x.expected != null).length}/${I.length} indicators sized, ${I.reduce((a, x) => a + (x.expected ?? 0), 0)} rows expected, ${I.filter((x) => x.hasState).length} with a state dimension`); }
 }
-async function phaseFetch(mospiAll, plan) {
+async function phaseFetch(mospi, mospiAll, plan) {
   const { writeRaw, rawExists } = await import("../util.mjs");
   // --skip a,b leaves products out of this run (Time Use is national only on this API)
   const skip = new Set(argv.includes("--skip") ? argv[argv.indexOf("--skip") + 1].split(",") : []);
@@ -105,14 +105,20 @@ async function phaseFetch(mospiAll, plan) {
       if (ind.error || ind.expected == null) continue;
       const rel = `data/raw/profiles-mospi/${P.id}-${ind.survey ?? 0}-${ind.code}.json`;
       if (ind.archived && rawExists(ROOT, rel)) continue;
+      if (/union of reads|\d+ reads found/.test(ind.fetchError ?? "")) continue;   // left to --phase retry
       // the disk is shared by several sessions: under 2 GB free, wait for space to come back
       for (let waited = 0; (freeBytes() ?? Infinity) < 2e9; waited++) {
         if (waited % 10 === 0) console.log(`C: paused at ${P.id} ${ind.code}, ${(freeBytes() / 1e9).toFixed(2)} GB free (under 2 GB); waiting for space`);
         await new Promise((r) => setTimeout(r, 60_000));
       }
       let rows;
+      // a product that has paged unstably twice is read one state at a time from here on
+      // a product that has paged unstably twice is read as a union of fresh reads from here on
+      const unstable = st.indicators.filter((x) => /unstable paging/.test(x.fetchError ?? "") || x.recovered === "union").length >= 2;
       try {
-        rows = await mospiAll(P.records, { indicator_code: ind.code, ...(ind.survey != null ? { survey_code: ind.survey } : {}) });
+        rows = unstable ? await readUnion(mospi, P, ind)
+          : await mospiAll(P.records, { indicator_code: ind.code, ...(ind.survey != null ? { survey_code: ind.survey } : {}) });
+        if (unstable) ind.recovered = "union";
         if (rows.length !== ind.expected) throw new Error(`${rows.length} rows, page 1 reported ${ind.expected}`);
       } catch (e) {
         // one indicator the server cannot page stably must not stop the others: record it and go on
@@ -139,10 +145,62 @@ async function phaseFetch(mospiAll, plan) {
  * is read again one state at a time: each state's query is small, and each must return only that
  * state's rows (else the parameter is ignored and the split is abandoned). The pieces must add up
  * to the total page 1 reported. */
+// every row of one indicator when the server pages it in no fixed order (each full read repeats
+// some rows and skips others): fresh full reads, unioned by distinct row, until the union holds
+// exactly the total the server reports. Accepted only when no two rows share every dimension with
+// different values (a true conflict, not a paging slip). At most READS full reads.
+const READS = Number(process.env.PROFILES_MOSPI_READS ?? 6);
+async function readUnion(mospi, P, ind) {
+  const params = { indicator_code: ind.code, ...(ind.survey != null ? { survey_code: ind.survey } : {}) };
+  const seen = new Map();
+  for (let k = 1; k <= READS; k++) {
+    for (let page = 1; ; page++) {
+      const res = await mospi(P.records, { ...params, page, limit: 100 }, 6, { fresh: k > 1 });
+      const batch = res.data ?? [];
+      for (const r of batch) seen.set(JSON.stringify(r), r);
+      const pages = Number(res.meta_data?.totalPages ?? 0);
+      if (pages ? page >= pages : batch.length < 100) break;
+    }
+    if (seen.size === ind.expected) break;
+    if (seen.size > ind.expected) throw new Error(`union of reads holds ${seen.size} distinct rows, more than the ${ind.expected} reported`);
+  }
+  if (seen.size !== ind.expected) throw new Error(`${READS} reads found ${seen.size} of ${ind.expected} distinct rows`);
+  const rows = [...seen.values()];
+  const dimKey = (r) => JSON.stringify(Object.entries(r).filter(([k]) => k !== "value").sort());
+  const byDims = new Map();
+  for (const r of rows) { const d = dimKey(r); if (byDims.has(d) && byDims.get(d) !== r.value) throw new Error(`two values for one set of dimensions (${d.slice(0, 120)})`); byDims.set(d, r.value); }
+  return rows;
+}
+// every row of one indicator, one state at a time; throws when the split cannot be trusted
+async function readByState(mospi, mospiAll, P, ind) {
+  const base = { [P.filter[1]]: ind.code, ...(ind.survey != null ? { survey_code: ind.survey } : {}) };
+  const f = (await mospi(P.filter[0], base)).data ?? {};
+  const states = (Array.isArray(f) ? f[0] ?? {} : f).state ?? [];
+  if (!states.length) throw new Error("no state list to split by");
+  const rows = [];
+  for (const st of states) {
+    const code = st.id ?? st.state_code ?? st.code;
+    const part = await mospiAll(P.records, { indicator_code: ind.code, ...(ind.survey != null ? { survey_code: ind.survey } : {}), state_code: code });
+    const label = String(st.label ?? st.state_name ?? st.description ?? "").trim();
+    if (part.some((r) => String(r.state ?? "").trim() !== label)) throw new Error(`state_code ${code} returned other states' rows; the split does not work here`);
+    rows.push(...part);
+  }
+  if (rows.length !== ind.expected) throw new Error(`${rows.length} rows by state, page 1 reported ${ind.expected}`);
+  return rows;
+}
+
 async function phaseRetry(mospi, mospiAll, plan) {
   const { writeRaw } = await import("../util.mjs");
   for (const P of PRODUCTS) for (const ind of plan.products[P.id]?.indicators ?? []) {
     if (!ind.fetchError || ind.archived) continue;
+    try {
+      const rows = await readUnion(mospi, P, ind);
+      writeRaw(ROOT, `data/raw/profiles-mospi/${P.id}-${ind.survey ?? 0}-${ind.code}.json`, { vintage: new Date().toISOString().slice(0, 10), note: `MoSPI eSankhyiki ${P.records}, indicator ${ind.code}${ind.survey != null ? `, survey ${ind.survey}` : ""}: every row, the union of fresh full reads because the server pages it in no fixed order (profiles step 5)`, product: P.id, indicator: ind, rows });
+      ind.archived = true; ind.done = true; ind.recovered = "union"; delete ind.fetchError;
+      console.log(`C2 ${P.id} ${ind.code}: recovered as a union of reads, ${rows.length} rows`);
+      savePlan(plan);
+      continue;
+    } catch (e) { console.log(`C2 ${P.id} ${ind.code}: union failed, ${e.message.slice(0, 160)}`); ind.fetchError = ind.fetchError.split("; ")[0] + `; union of reads: ${e.message.slice(0, 120)}`; savePlan(plan); continue; }
     const base = { [P.filter[1]]: ind.code, ...(ind.survey != null ? { survey_code: ind.survey } : {}) };
     const f = (await mospi(P.filter[0], base)).data ?? {};
     const states = (Array.isArray(f) ? f[0] ?? {} : f).state ?? [];
@@ -327,7 +385,7 @@ if (argv.includes("--plan")) {
   const ph = argv[argv.indexOf("--phase") + 1];
   if (ph === "list") await phaseList(mospi, plan);
   else if (ph === "meta") await phaseMeta(mospi, plan);
-  else if (ph === "fetch") await phaseFetch(mospiAll, plan);
+  else if (ph === "fetch") await phaseFetch(mospi, mospiAll, plan);
   else if (ph === "bake") await phaseBake(plan);
   else if (ph === "retry") await phaseRetry(mospi, mospiAll, plan);
   else { console.error(`unknown phase ${ph}`); process.exit(2); }
