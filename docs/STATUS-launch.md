@@ -1,6 +1,6 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 09:00.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 10:10.
 
 ## Running now: ten family sessions
 
@@ -56,13 +56,15 @@ throttles, so not run alongside the states and services sessions). Then the laun
 |---|---|---|
 | Search index was 306 MB | atlas-framework round 5 | **fixed**: 112 KB core + shards; largest file 6 MB |
 | State profiles, /states/<state>/ (owner, in launch scope) | atlas-profiles | **36 pages merged**; nav, search and MoSPI pulls to come |
-| Full fresh MoSPI re-download as an integrity audit (worktree `audit`) | coordinator, background | running |
+| Full fresh MoSPI re-download as an integrity audit (worktree `audit`) | coordinator, background | part 1 (cpi, gdp, wpi, cpialrl, plfs, rbi, iip) **clean**: 0 paging slips, 0 values changed. ASI, ASUSE, AISHE, gender, MNRE, NFHS were already re-fetched through the hardened client by their wave-2 sessions. Part 2 (isp, services, states) running |
 | Deep archive upload to Hugging Face (1.5 GB) | coordinator | **waiting on the owner's go** |
 | Read every guide end to end at 1440 and 390; release checklist | review sessions | after the audit and search land |
 | Profile wording: middle ranks read "17th lowest of 36"; say "17th of 36" | atlas-profiles | to fix |
 | Prose rule: published precision for headline growth ("7.8%", not "7.82%") | coordinator | to decide |
 | IIP annual 2024-25: API 5.7% against 6.4% in press summaries (MoSPI PDF 403) | open | not quoted anywhere meanwhile |
 | New sources (SHRUG, Census 2011 PCA, data.gov.in, MGNREGA, TCPD): before or after launch? | **owner** | asked |
+| DBIE wave: public finance, payments, farms, banks, markets (5 sessions) | atlas-* | started 09:40 |
+| MGNREGA | coordinator | **blocked**: MIS is CAPTCHA-gated (not circumvented); api.data.gov.in refuses connections from this network; needs an owner API key and a reachable API |
 | GitHub remote, Cloudflare secrets and Pages project, DNS for atlas.thisindianlife.today, analytics | **owner** | to do |
 
 ## Done on the branch
