@@ -6,13 +6,13 @@
   "geo": "IND",
   "releaseDate": null,
   "revisionPolicy": "Section 42 figures are provisional, then final; sectoral credit is provisional and revised the next month; NPAs and capital ratios are final on release. Seams disclosed, never joined: the 2019 sectoral classification, the July 2023 HDFC merger, the December 2025 reporting calendar.",
-  "vintage": "2026-10-09",
+  "vintage": "2026-10-10",
   "frequency": "annual",
   "unit": "count",
   "base": "Statistical Tables Relating to Banks in India",
   "latestPeriod": "2026-03-01",
-  "coverage": "Clearing houses by the bank that manages them, each year",
-  "note": "RBI DBIE report 743 (data provider DP3), read from the local Data Bank mirror, as published."
+  "coverage": "Clearing houses, MICR (machine-read cheques) and non-MICR, by the bank that manages them, and all clearing houses, each year",
+  "note": "RBI DBIE report 743 (data provider DP3), read from the local Data Bank mirror, as published. Measures read from the report's data providers DP3, DP2, DP4, each chosen by its content."
  },
  "dates": [
   "2005-03-01",
@@ -39,9 +39,38 @@
   "2026-03-01"
  ],
  "series": {
-  "associates_of_state_bank_of_india": {
-   "name": "associates_of_state_bank_of_india_count",
-   "label": "Associates of State Bank of India",
+  "associates_of_state_bank_of_india__micr": {
+   "name": "associates_of_state_bank_of_india__micr_count",
+   "label": "Associates of State Bank of India, MICR clearing houses",
+   "unit": "count",
+   "data": [
+    2,
+    3,
+    4,
+    4,
+    4,
+    4,
+    3,
+    3,
+    3,
+    1,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "associates_of_state_bank_of_india__non_micr": {
+   "name": "associates_of_state_bank_of_india__non_micr_count",
+   "label": "Associates of State Bank of India, non-MICR clearing houses",
    "unit": "count",
    "data": [
     327,
@@ -68,9 +97,38 @@
     null
    ]
   },
-  "nationalized_banks": {
-   "name": "nationalized_banks_count",
-   "label": "Nationalized Banks",
+  "nationalized_banks__micr": {
+   "name": "nationalized_banks__micr_count",
+   "label": "Nationalized Banks, MICR clearing houses",
+   "unit": "count",
+   "data": [
+    13,
+    21,
+    22,
+    22,
+    25,
+    26,
+    26,
+    26,
+    26,
+    9,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "nationalized_banks__non_micr": {
+   "name": "nationalized_banks__non_micr_count",
+   "label": "Nationalized Banks, non-MICR clearing houses",
    "unit": "count",
    "data": [
     18,
@@ -97,9 +155,9 @@
     null
    ]
   },
-  "other": {
-   "name": "other_count",
-   "label": "Other",
+  "other__non_micr": {
+   "name": "other__non_micr_count",
+   "label": "Other, non-MICR clearing houses",
    "unit": "count",
    "data": [
     null,
@@ -126,9 +184,38 @@
     null
    ]
   },
-  "reserve_bank_of_india": {
-   "name": "reserve_bank_of_india_count",
-   "label": "Reserve Bank of India",
+  "reserve_bank_of_india__micr": {
+   "name": "reserve_bank_of_india__micr_count",
+   "label": "Reserve Bank of India, MICR clearing houses",
+   "unit": "count",
+   "data": [
+    15,
+    16,
+    16,
+    16,
+    16,
+    17,
+    17,
+    17,
+    17,
+    3,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "reserve_bank_of_india__non_micr": {
+   "name": "reserve_bank_of_india__non_micr_count",
+   "label": "Reserve Bank of India, non-MICR clearing houses",
    "unit": "count",
    "data": [
     16,
@@ -155,9 +242,38 @@
     1
    ]
   },
-  "state_bank_of_india": {
-   "name": "state_bank_of_india_count",
-   "label": "State Bank of India",
+  "state_bank_of_india__micr": {
+   "name": "state_bank_of_india__micr_count",
+   "label": "State Bank of India, MICR clearing houses",
+   "unit": "count",
+   "data": [
+    10,
+    12,
+    17,
+    18,
+    19,
+    19,
+    20,
+    20,
+    20,
+    5,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  "state_bank_of_india__non_micr": {
+   "name": "state_bank_of_india__non_micr_count",
+   "label": "State Bank of India, non-MICR clearing houses",
    "unit": "count",
    "data": [
     684,
@@ -182,6 +298,35 @@
     null,
     null,
     null
+   ]
+  },
+  "total__all": {
+   "name": "total__all_count",
+   "label": "Total, all clearing houses",
+   "unit": "count",
+   "data": [
+    1045,
+    1030,
+    1045,
+    1094,
+    1103,
+    1139,
+    1166,
+    1201,
+    1306,
+    1373,
+    1298,
+    1288,
+    1166,
+    1051,
+    732,
+    217,
+    3,
+    3,
+    3,
+    1,
+    1,
+    1
    ]
   }
  }

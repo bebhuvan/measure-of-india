@@ -81,7 +81,8 @@ const sentence = (l) => (l === l.toUpperCase() && /[A-Z]{4,}/.test(l) ? l.split(
 const SMALL = new Set(["and", "of", "the", "&"]);
 export const placeName = (v) => String(v).trim().toLowerCase().split(/(\s+|-|\(|\))/).map((w, i) => (i && SMALL.has(w) ? w : w.replace(/^\w/, (c) => c.toUpperCase()))).join("").replace(/\bAnd\b/g, "and");
 const keyOf = (s) => String(s).toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "").slice(0, 60) || "x";
-const COUNT_RE = /\b(no\.?|number|nos?)\b.*\b(of)\b|\baccounts?\b|borrowers|branches|offices|employees|banks\b|units\b|members|cases|shgs|centres|atms|staff|\bcount\b|outlets|cards issued/i;
+// a label whose last part is just "Number" ("Societies in Profit, Number") is a count too (2026-10-10)
+const COUNT_RE = /(^|,\s*)number$|\b(no\.?|number|nos?)\b.*\b(of)\b|\baccounts?\b|borrowers|branches|offices|employees|banks\b|units\b|members|cases|shgs|centres|atms|staff|\bcount\b|outlets|cards issued/i;
 const PCT_RE = /%|per ?cent|percentage|\bratios?\b|\brate\b|return on|yield|share in|\bcrar\b|margin/i;
 
 /** Bake one DBIE table per its config. Returns a provenance record. */
@@ -94,7 +95,8 @@ export async function bakeDeep(root, db, cfg, meta) {
   // cfg.also: further reports that publish the other half of the same table (e.g. spatial 6A
   // and 6B, each carrying some quarters of both); rows they share must agree to the rupee
   // also: [report, provider, {column overrides}] for a provider that names a column differently
-  const parts = [{ ...P, over: {} }, ...(cfg.also ?? []).map(([id, dp, over]) => { const q = providersOf(db, id).find((x) => x.dp === dp); if (!q) throw new Error(`credit-deep: report ${id} ${dp} not in the mirror`); return { ...q, id, over: over ?? {} }; })];
+  const parts = cfg.siblings ? await siblingParts(db, cfg)
+    : [{ ...P, over: {} }, ...(cfg.also ?? []).map(([id, dp, over]) => { const q = providersOf(db, id).find((x) => x.dp === dp); if (!q) throw new Error(`credit-deep: report ${id} ${dp} not in the mirror`); return { ...q, id, over: over ?? {} }; })];
   let ci = null, clash = 0;
   for (const PP of parts) { ci = null; const C = { ...cfg, ...PP.over };
   header = await streamCsv(PP.content, PP.gz, (c, h) => {
@@ -111,7 +113,7 @@ export async function bakeDeep(root, db, cfg, meta) {
     if (dims.every((x) => !x) && !cfg.allowNoDims) return;
     const fin = ci.version < 0 ? 3 : /final/i.test(c[ci.version]) || c[ci.version] === "F" ? 3 : /partial/i.test(c[ci.version]) ? 1 : /revised/i.test(c[ci.version]) ? 2 : 0;
     for (const v0 of ci.values) {
-      const raw = String(c[v0.i] ?? "").replace(/,/g, ""); if (raw === "" || raw === "-" || raw === "NULL" || isNaN(+raw)) continue;
+      const raw = cfg.parse ? cfg.parse(c[v0.i]) : String(c[v0.i] ?? "").replace(/,/g, ""); if (raw == null || raw === "" || raw === "-" || raw === "NULL" || isNaN(+raw)) continue;
       if (cfg.skip?.(c, h, v0)) continue;
       // cfg.measure: a value whose meaning depends on the row (a sub-table flag) is named per row
       const vv = cfg.measure ? cfg.measure(c, h, v0) : v0; if (!vv) continue;
@@ -168,7 +170,8 @@ export async function bakeDeep(root, db, cfg, meta) {
     const it = item || label;
     if (unit === "auto") unit = PCT_RE.test(it) ? "pct" : /\bamount\b|outstanding|₹|rs\.? ?crore|deposits|advances|loans|credit|profit|loss|income|expen|charges|interest/i.test(it) && !/\b(no\.?|number)\b/i.test(it) ? "inr_crore" : COUNT_RE.test(it) ? "count" : "inr_crore";
     const d = ub?.[2]?.div ? ub[2].div : unit === "inr_crore" ? (cfg.inCrore || ub?.[2]?.inCrore ? 1 : 1e7) : unit === "inr_lakh_crore" ? 1e12 : unit === "lakh_count" ? 1e5 : 1;
-    const data = dates.map((dt) => { const v = vals.get(`${key}|${dt}`); return v == null ? null : Math.round(((v * (cfg.scale ?? 1)) / d) * 1000) / 1000; });
+    // three decimals for 1 and above, four significant figures below (a small state's ₹ crore figure kept)
+    const data = dates.map((dt) => { const v = vals.get(`${key}|${dt}`); if (v == null) return null; const x = (v * (cfg.scale ?? 1) * (cfg.scaleAt?.(key, dt) ?? 1)) / d; return Math.abs(x) >= 1 ? Math.round(x * 1000) / 1000 : x === 0 ? 0 : +x.toPrecision(4); });
     // a value 100,000 times its own series' median is the source printing rupees where the rest
     // of the series is in crore (or a ratio stored scaled); left out, and the note says where
     const nz = data.filter((x) => x != null && x !== 0).map(Math.abs).sort((a, b) => a - b), med = nz[Math.floor(nz.length / 2)];
@@ -188,6 +191,15 @@ export async function bakeDeep(root, db, cfg, meta) {
     for (let i = last + 1; i < data.length; i++) data[i] = null;
     series[key] = { name: `${key}_${unit}`, label, unit, data };
   }
+  // a display-order column: DBIE exports carry the report's row order as a value column (report
+  // 662's "Num Chq" prints 17 for Mumbai in every year, 5 for Ahmedabad...). A measure whose
+  // every series holds one small integer at every date, with the rows differing from each other,
+  // is that code, not data: its series are dropped and the note says so (credit, 2026-10-10).
+  const codeCols = [];
+  { const byCol = new Map();
+    for (const [key, s] of Object.entries(series)) { const col = labels.get(key)?.vlabel ?? ""; (byCol.get(col) ?? byCol.set(col, []).get(col)).push(key); }
+    for (const [col, keys] of byCol) if (isCodeColumn(keys.map((k) => series[k].data))) { codeCols.push(col || "value"); for (const k of keys) delete series[k]; }
+    if (codeCols.length) console.warn(`credit-deep ${cfg.id}: dropped display-order column(s) ${codeCols.join(", ")}`); }
   // trim the axis to dates some series has; disclose interior gaps on each series
   const any = (i) => Object.values(series).some((s) => s.data[i] != null);
   let a = 0, b = dates.length - 1; while (a <= b && !any(a)) a++; while (b >= a && !any(b)) b--;
@@ -200,9 +212,66 @@ export async function bakeDeep(root, db, cfg, meta) {
   if (!Object.keys(series).length) throw new Error(`credit-deep ${cfg.id}: no series left to bake (every cell missing or ambiguous)`);
   const unitNote = cfg.unit === "auto" ? "Amounts in ₹ crore; counts as numbers; ratios in per cent, as each row's label says." : cfg.unit === "inr_crore" ? "Amounts in ₹ crore." : "";
   writeSeries(root, `data/series/${cfg.rel}.json`, { meta: { ...meta, frequency: freq, unit: cfg.unit === "auto" ? "mixed" : cfg.unit, base: cfg.base ?? `RBI DBIE report ${cfg.id}`, latestPeriod: D.at(-1),
-    coverage: cfg.coverage, note: `RBI DBIE report ${cfg.id} (${P.name ? `data provider ${P.dp}` : P.dp})${cfg.also ? `, with report ${cfg.also.map((a) => a[0]).join(" and ")} for the dates it alone carries (shared rows agree)` : ""}, read from the local Data Bank mirror, as published. ${cfg.unitCol ? `One display unit kept (${cfg.unitKeep ?? "ACTUALS"}).` : ""} ${cfg.version ? "Final figures where published, else provisional." : ""} ${unitNote} ${cfg.note ?? ""} ${conflicts.length ? `${conflicts.length} cells the source prints more than once with different values (${[...new Set(conflicts.map((c) => c[1]))].slice(0, 4).join(", ")}${new Set(conflicts.map((c) => c[1])).size > 4 ? " and other dates" : ""}) are left out: we cannot tell which value is right.` : ""} ${slips.length ? `Left out as printed in the wrong unit (${slips.length > 3 ? slips.length + " values, e.g. " : ""}${slips.slice(0, 3).join("; ")}).` : ""}`.replace(/\s+/g, " ").trim() }, dates: D, series });
+    coverage: cfg.coverage, note: `RBI DBIE report ${cfg.id} (${P.name ? `data provider ${P.dp}` : P.dp})${cfg.also ? `, with report ${cfg.also.map((a) => a[0]).join(" and ")} for the dates it alone carries (shared rows agree)` : ""}, read from the local Data Bank mirror, as published. ${cfg.unitCol ? `One display unit kept (${cfg.unitKeep ?? "ACTUALS"}).` : ""} ${cfg.version ? "Final figures where published, else provisional." : ""} ${unitNote} ${cfg.note ?? ""} ${conflicts.length ? `${conflicts.length} cells the source prints more than once with different values (${[...new Set(conflicts.map((c) => c[1]))].slice(0, 4).join(", ")}${new Set(conflicts.map((c) => c[1])).size > 4 ? " and other dates" : ""}) are left out: we cannot tell which value is right.` : ""} ${codeCols.length ? `The export's display-order column (${codeCols.join(", ")}: one small code per row, the same in every year) is left out; it is not data.` : ""} ${parts.length > 1 && cfg.siblings ? `Measures read from the report's data providers ${parts.map((x) => x.dp).join(", ")}, each chosen by its content.` : ""} ${slips.length ? `Left out as printed in the wrong unit (${slips.length > 3 ? slips.length + " values, e.g. " : ""}${slips.slice(0, 3).join("; ")}).` : ""}`.replace(/\s+/g, " ").trim() }, dates: D, series });
   return { report: cfg.id, data_provider: P.dp, rows: n, sha256: P.sha256, retrieved_at: P.retrieved, document_id: P.document_id, bundle: cfg.rel, series: Object.keys(series).length,
-    ...(cfg.also ? { also: parts.slice(1).map((x) => ({ report: x.id, data_provider: x.dp, sha256: x.sha256, retrieved_at: x.retrieved, document_id: x.document_id })) } : {}) };
+    ...(cfg.also || cfg.siblings ? { also: parts.slice(1).map((x) => ({ report: x.id ?? cfg.id, data_provider: x.dp, sha256: x.sha256, retrieved_at: x.retrieved, document_id: x.document_id })) } : {}) };
+}
+
+/** True when a measure's series are display codes, not data: at least three series, each with
+ *  at least three published dates holding one integer from 0 to 200 throughout, and the rows not
+ *  all the same code. Genuine constants (a bank with one branch every year) sit beside series
+ *  that move, so a whole measure of fixed small integers is the export's row order. */
+export function isCodeColumn(datas) {
+  const full = datas.map((d) => d.filter((v) => v != null)).filter((d) => d.length >= 3);
+  if (full.length < 3 || full.length < datas.length * 0.8) return false;
+  const codes = new Set();
+  for (const d of full) { if (!d.every((v) => v === d[0] && Number.isInteger(v) && v >= 0 && v <= 200)) return false; codes.add(d[0]); }
+  return codes.size >= 2;
+}
+
+/** cfg.siblings: a table split across its data providers, one measure each (report 662: the
+ *  amounts in one provider, the number of cheques in another; report 743: MICR, non-MICR and
+ *  total clearing houses). Every provider whose header has the table's date and dimension
+ *  columns is read; its value column is the first column (not the date, a dimension or a unit
+ *  column) that holds numbers and is not a display-order code (isCodeColumn); cfg.siblings
+ *  names the measure from what the provider is (its name, whether it carries the display-unit
+ *  picker) and returns null for a provider to skip. Provider ids are never named: DBIE
+ *  renumbers them between exports. */
+async function siblingParts(db, cfg) {
+  const out = [];
+  for (const p of providersOf(db, cfg.id).sort((a, b) => b.rows - a.rows)) {
+    const rows = []; const header = await streamCsv(p.content, p.gz, (c) => rows.push(c));
+    if (!header.includes(cfg.date) || !cfg.dims.every((d) => header.includes(d))) continue;
+    const hasUnit = !!cfg.unitCol && header.includes(cfg.unitCol);
+    const keep = rows.filter((c) => !hasUnit || c[header.indexOf(cfg.unitCol)] === (cfg.unitKeep ?? "ACTUALS"));
+    const skip = new Set([cfg.date, ...cfg.dims]);
+    const cands = header.filter((h) => !skip.has(h) && !/^unit/i.test(h));
+    let col = null;
+    for (const h of cands) {
+      const i = header.indexOf(h), bySeries = new Map();
+      for (const c of keep) { const raw = cfg.parse ? cfg.parse(c[i]) : String(c[i] ?? "").replace(/,/g, ""); if (raw == null || raw === "" || isNaN(+raw)) continue;
+        const k = cfg.dims.map((d) => c[header.indexOf(d)]).join("|"); (bySeries.get(k) ?? bySeries.set(k, new Map()).get(k)).set(c[header.indexOf(cfg.date)], +raw); }
+      if (!bySeries.size) continue;
+      if (isCodeColumn([...bySeries.values()].map((m) => [...m.values()]))) continue;
+      col = h; break;
+    }
+    if (!col) continue;
+    const m = cfg.siblings({ name: p.name, hasUnit });
+    if (!m) continue;
+    out.push({ ...p, over: { values: [{ col, ...m }], unitCol: hasUnit ? cfg.unitCol : null } });
+  }
+  if (!out.length) throw new Error(`credit-deep ${cfg.id}: no data provider with a value column`);
+  return out;
+}
+
+/** Clearing-house counts as STRBI Table 27 prints them: "1030 (52)" (total, MICR in brackets),
+ *  "(16)" (MICR only), "1306(64+2*)$" (footnote marks): the number outside the brackets, else
+ *  the bracketed sum. */
+export function strbiCount(s) {
+  const t = String(s ?? "").replace(/[*$#@]/g, "").trim(); if (!t) return null;
+  const lead = /^(\d+)/.exec(t); if (lead) return lead[1];
+  const br = /^\(([^)]*)\)$/.exec(t); if (br) { const n = br[1].match(/\d+/g); return n ? String(n.reduce((a, b) => a + +b, 0)) : null; }
+  return null;
 }
 
 /* ---------- the tables, one line each ----------
@@ -306,7 +375,13 @@ DEEP.push(
   { id: "665", rel: "credit-deep-asset-classification", date: "Year", values: [{ col: "Amount", key: "amount", label: "₹ crore", unit: "inr_crore" }, { col: "Percentage", key: "share", label: "per cent of gross advances", unit: "pct" }], dims: ["Bank Group Name", "Classification Name"], unitCol: U, unit: "inr_crore", coverage: "Classification of loan assets by bank group, as the RBI publishes the totals: standard, sub-standard, doubtful and loss advances and gross NPAs, amounts and shares, every March since 2004" },
   { id: "910", rel: "credit-deep-npa-by-sector", date: "Year", value: "Amount", dims: ["Bank Group Name", "Sector Name", "Item Description"], unitCol: U, unit: "inr_crore", unitBy: [[/percentage$/i, "pct"]], coverage: "Gross NPAs of public sector banks by sector: priority, non-priority and public sector loans, amounts and shares, every March since 2004" },
   { id: "1077", rel: "credit-deep-crar-banks", date: "Time Date", value: "Item Value", dims: ["Bank Group Name", "Bank Name", "Bal Sheet Description"], version: "Version Desc", unit: "pct", coverage: "Capital adequacy ratio of every scheduled commercial bank under Basel I, II and III: total, tier I and tier II, every March" },
-  { id: "1078", dp: "DP1", rel: "credit-deep-bank-ratios", date: "Time Cal Year", value: "Ratio Amount", dims: ["Bank Group Name", "Bank Name", "Bal Sheet Description"], version: "Version Desc", unit: "pct", unitBy: [[/per employee/i, "inr_crore"]], coverage: "Thirty-five financial ratios of every scheduled commercial bank: credit-deposit ratio, net interest margin, return on assets and equity, cost of funds, business and profit per employee, net NPA ratio, each year", note: "Business and profit per employee converted from rupees to ₹ crore." },
+  { id: "1078", dp: "DP1", rel: "credit-deep-bank-ratios", date: "Time Cal Year", value: "Ratio Amount", dims: ["Bank Group Name", "Bank Name", "Bal Sheet Description"], version: "Version Desc", unit: "pct", unitBy: [[/per employee/i, "inr_crore", { div: 100 }]], coverage: "Thirty-five financial ratios of every scheduled commercial bank: credit-deposit ratio, net interest margin, return on assets and equity, cost of funds, business and profit per employee, net NPA ratio, each year",
+    // the RBI prints the per-employee figures in ₹ lakh (State Bank of India 3,410 in 2023-24: ₹34.1 crore of
+    // business per employee; profit 26, ₹26 lakh). Read as rupees until 2026-10-10, they rounded to nothing.
+    // ...and in rupees through March 2015: the switch is one clean break for every bank (the median bank's
+    // business per employee is ₹14.42 crore in 2015 and ₹14.71 crore in 2016 once each year is read in its unit)
+    scaleAt: (key, dt) => (/_per_employee$/.test(key) && dt <= "2015-03-01" ? 1e-5 : 1),
+    note: "Business and profit per employee are printed in rupees to March 2015 and in ₹ lakh from March 2016 (one break, every bank); both converted to ₹ crore." },
   { id: "998", dp: "DP0", rel: "credit-deep-scheduled-banks", date: "Fortnight Date", value: "Item Values", dims: ["Item Description"], unitCol: U, version: "Provisional Final Flag", unit: "inr_crore", base: "Section 42, all scheduled banks", coverage: "Liabilities and assets of all scheduled banks (commercial and co-operative), every reporting Friday since 1997" },
   { id: "20", dp: "DP4", rel: "credit-deep-rbi-weekly-statement", date: "Week (RBI - Liabilities & Assets)", value: "Amount (RBI - Liabilities & Assets)", dims: ["Item Desc Level1 (RBI - Liabilities & Assets)", "Item Desc Level2 (RBI - Liabilities & Assets)", "Item Description (RBI - Liabilities & Assets)"], unitCol: U, unit: "inr_crore", coverage: "The RBI's weekly statement of affairs: liabilities and assets of the Issue and Banking Departments, every week since July 2004" },
   { id: "39", dp: "DP2", rel: "credit-deep-rbi-liabilities-assets", date: "Week", value: "Amount", dims: ["Item Desc WSS"], unitCol: U, unit: "inr_crore", coverage: "The RBI's liabilities and assets, Issue and Banking Departments combined (the Weekly Statistical Supplement's first table), every week since July 2004" },
@@ -462,7 +537,9 @@ DEEP.push(
   TP("1525", "credit-deep-tp-pacs-members", FY, ["Catergory Description", "Mb Description"], "Members and borrowers of primary agricultural credit societies by social group, each year", { dp: "DP3", unit: "count" }),
   TP("1526", "credit-deep-tp-pacs", TD, ["Pacs Hierarchy Level 1", "Pacs Description"], "Primary agricultural credit societies: liabilities and assets, each year"),
   TP("1527", "credit-deep-tp-scb-coop-health", FY, ["Region Name", "Mscb Ind Description"], "State co-operative banks by state: profit, bad loans and recovery, each year", { place: ["Region Name"] }),
-  TP("1528", "credit-deep-tp-pacs-states", FY, ["Region Name", "Ind Hierarchy Level 1", "Ind Hierarchy Level 2"], "Primary agricultural credit societies by state: number, members, deposits, loans and profit, each year", { dp: "DP3", place: ["Region Name"] }),
+  TP("1528", "credit-deep-tp-pacs-states", FY, ["Region Name", "Ind Hierarchy Level 1", "Ind Hierarchy Level 2"], "Primary agricultural credit societies by state: number, members, deposits, loans and profit, each year",
+    // the viability classes are numbers of societies; read as rupees they were divided by 10^7 (0.001)
+    { dp: "DP3", place: ["Region Name"], unitBy: [[/, (viable|potentially viable|dormant|defunct|others)$/i, "count"]] }),
   TP("1529", "credit-deep-tp-scardb-balance-sheet", TD, ["Item Hierarchy Level 1", "Item Description"], "State co-operative agriculture and rural development banks: liabilities and assets, each year", { unit: "inr_crore" }),
   TP("1530", "credit-deep-tp-scardb-performance", FY, ["Per Hierarchy Level 1", "Per Description"], "State co-operative agriculture and rural development banks: income, expenditure and profit, each year", { unit: "inr_crore" }),
   TP("1531", "credit-deep-tp-scardb-asset-quality", TD, ["Quality Hierarchy Level 1", "Quality Description"], "State co-operative agriculture and rural development banks: bad loans and recovery, each year"),
@@ -574,9 +651,23 @@ DEEP.push(
   ST("734", "DP0", "credit-deep-coop-branches-states", "Reporting Year", "Num Of Offices", ["State Name", BG], "Branches of state and district central co-operative banks by state, each year", { unit: "count", place: ["State Name"] }),
   ST("642", "DP0", "credit-deep-offices-abroad", "Reporting Year", "Office Count", ["Country Name"], "Offices of Indian commercial banks outside India, by country, each year", { unit: "count", place: ["Country Name"] }),
   ST("745", "DP0", "credit-deep-offices-abroad-banks", "Time Cal Year", "Office Count", [BN, "Country Name"], "Offices of Indian commercial banks outside India, bank by bank and country by country, each year", { unit: "count", place: ["Country Name"] }),
-  ST("662", "DP0", "credit-deep-cheque-clearances", "V T ime D Fis Year", null, ["Item Desc Level2"], "Cheque clearances: number of cheques and their value, by type of clearing centre, each year",
-    { values: [{ col: "Num Chq", key: "cheques", label: "cheques cleared (number, as printed)", unit: "count" }, { col: "Amount", key: "amount", label: "value cleared", unit: "inr_crore" }], unitCol: U, unit: "mixed" }),
-  ST("743", "DP3", "credit-deep-clearing-houses", "Reporting Year", "clearance_value", ["Micr Description"], "Clearing houses by the bank that manages them, each year", { unit: "count" }),
+  // 662 and 743 are split across data providers, one measure each (siblingParts). Until
+  // 2026-10-10 this read 662's DP0 alone and took its "Num Chq" column, a display-order code
+  // (Mumbai 17 in every year), for the number of cheques; and 743's non-MICR provider alone,
+  // labelled as all clearing houses. Hand check, 2026-10-10: Mumbai cleared 15.75 crore cheques
+  // in 2023-24 and the national grid 60.95 crore in 2024-25 (STRBI Table 22); the national grid's
+  // 2024-25 count equals the paper-instruments line of the RBI's payment system table (61.0 crore,
+  // payments-annual). Clearing houses: 1,045 in 2005, of which 40 MICR (STRBI Table 27).
+  ST("662", null, "credit-deep-cheque-clearances", "V T ime D Fis Year", null, ["Item Desc Level2"], "Cheque clearances: number of cheques and their value, by type of clearing centre, each year",
+    { unitCol: U, unit: "mixed",
+      // the provider with DBIE's display-unit picker carries rupees; the one without, the count
+      siblings: ({ hasUnit }) => (hasUnit ? { key: "amount", label: "value cleared", unit: "inr_crore" } : { key: "cheques", label: "cheques cleared (number)", unit: "count" }) }),
+  ST("743", null, "credit-deep-clearing-houses", "Reporting Year", null, ["Micr Description"], "Clearing houses, MICR (machine-read cheques) and non-MICR, by the bank that manages them, and all clearing houses, each year",
+    { unit: "count", parse: strbiCount,
+      // the table's providers are named for what they hold
+      siblings: ({ name }) => (/^not micr$/i.test(name.trim()) ? { key: "non_micr", label: "non-MICR clearing houses", unit: "count" }
+        : /^micr$/i.test(name.trim()) ? { key: "micr", label: "MICR clearing houses", unit: "count" }
+        : /^total$/i.test(name.trim()) ? { key: "all", label: "all clearing houses", unit: "count" } : null) }),
   ST("705", "DP0", "credit-deep-scb-investments-old", "Reporting Date", null, ["Category Desc"], "Investments of scheduled commercial banks by kind of security: amounts and shares (discontinued)",
     { values: [{ col: "Amount_actuals", key: "amount", label: "₹ crore", unit: "inr_crore" }, { col: "Percent Share", key: "share", label: "per cent of the total", unit: "pct" }], unitCol: "Unit Desc", unit: "mixed" }),
   ST("747", "DP0", "credit-deep-scb-investments-offices", "D Time D Date", null, ["Category Desc"], "Investments of scheduled commercial banks by offices in India and abroad: amounts and shares (discontinued)",

@@ -44,7 +44,10 @@ import path from "node:path";
 
 const LC = 1e12;                       // rupees in a lakh crore
 const CR_LC = 1e5;                     // crore in a lakh crore
-const r3 = (v) => (v == null || !Number.isFinite(v) ? null : Math.round(v * 1000) / 1000);
+// three decimals for 1 and above; four significant figures below 1. Amounts are baked in ₹ lakh
+// crore, where three decimals is ₹1,000 crore: small states and occupations rounded to 0 or 0.001
+// (Dadra and Nagar Haveli's farm credit limit read 0.001 every quarter). Fixed 2026-10-10.
+const r3 = (v) => (v == null || !Number.isFinite(v) ? null : Math.abs(v) >= 1 ? Math.round(v * 1000) / 1000 : v === 0 ? 0 : +v.toPrecision(4));
 const r2 = (v) => (v == null || !Number.isFinite(v) ? null : Math.round(v * 100) / 100);
 const num = (s) => { if (s == null || s === "") return null; const v = parseFloat(String(s).replace(/,/g, "")); return Number.isFinite(v) ? v : null; };
 const iso = (s) => String(s).slice(0, 10).replace(/\//g, "-");   // "2026/09/15 00:00:00" -> "2026-09-15"
