@@ -191,3 +191,74 @@ export function plfsQuarterStart(year, quarterCode) {
   if (q === 4) return `${year + 1}-01`;
   return null;
 }
+
+/** Copied runs: a block of >= minRun consecutive periods in which >= minSeries series all
+ *  repeat, value for value, another block of the same length elsewhere. Seen at the source:
+ *  DBIE report 148 prints 1998-99..2007-08 again as 1988-89..1997-98, and report 612's old
+ *  layout repeats Jul 2010..Jun 2011 as Aug 2006..Jul 2007 (found in the launch read-through,
+ *  2026-10-10). Which block is the copy is decided by continuity: the copy jumps away from
+ *  its neighbours at its edges, the original flows on. Returns [{ copy:[i0,i1], original:[j0,j1] }].
+ *  series: arrays aligned to one date axis. */
+export function findCopiedRuns(series, { minRun = 6, minSeries = 3, minShare = 0.25, tol = 0.002 } = {}) {
+  const n = series[0]?.length ?? 0, out = [];
+  const eq = (x, y) => x != null && y != null && x !== 0 && Math.abs(x - y) <= tol * Math.abs(x);   // a copy may carry a small revision
+  // a misfiled copy moves a large share of a bundle's series at once (all 4 in report 148, 12
+  // in report 612's old layout); a few sticky prices among 700 WPI items repeating a pattern
+  // by chance is not one
+  const same = (i, j) => {
+    const live = series.filter((s) => s[i] != null && s[j] != null).length;
+    const hit = series.filter((s) => eq(s[i], s[j])).length;
+    return hit >= minSeries && hit >= minShare * live;
+  };
+  const lj = (s, a, b) => (a < 0 || b >= n || !(s[a] > 0) || !(s[b] > 0) ? null : Math.abs(Math.log(s[b] / s[a])));
+  const med = (xs) => { const v = xs.filter((x) => x != null).sort((p, q) => p - q); return v.length ? v[Math.floor(v.length / 2)] : 0; };
+  // A pasted block breaks at BOTH edges; the original flows on at both, unless the series has
+  // an unrelated break at one edge (report 612: debit cards change definition in April 2011,
+  // right after the original block). So a block scores the SMALLER of its two edge jumps, the
+  // median over the series that match; the higher score is the copy.
+  const score = (lo, hi, idx) => Math.min(med(idx.map((k) => lj(series[k], lo - 1, lo))), med(idx.map((k) => lj(series[k], hi, hi + 1))));
+  const taken = new Set();
+  for (let off = minRun; off < n; off++) {
+    for (let i = 0; i + off < n; ) {
+      if (!same(i, i + off)) { i++; continue; }
+      let L = 1; while (i + off + L < n && same(i + L, i + off + L)) L++;
+      // a copy only means something where the values move: a flat stretch (a policy rate that
+      // held, a count that stayed put) repeating itself is not evidence of anything
+      // the tolerance absorbs a small revision, but a copy is mostly exact: a smooth series near
+      // a large level (growing season ~353 days) matches itself within 0.2% at any lag
+      const exactShare = (k) => { const w = series[k].slice(i, i + L), x = w.filter((v, q) => v != null && v === series[k][i + off + q]).length; return x / Math.max(1, w.filter((v) => v != null).length); };
+      const idx = series.map((s, k) => k).filter((k) => series[k].slice(i, i + L).every((v, q) => v == null || eq(v, series[k][i + off + q])) && exactShare(k) >= 0.7 && new Set(series[k].slice(i, i + L).filter((v) => v != null)).size >= 3);
+      if (L >= minRun && idx.length >= minSeries && !taken.has(i) && !taken.has(i + off)) {
+        // extend while the series that matched keep matching (an unrelated break in other
+        // series near the original's end must not cut the copy short)
+        const keeps = (q) => idx.filter((k) => eq(series[k][q], series[k][q + off])).length >= minSeries;
+        while (i + off + L < n && keeps(i + L)) L++;
+        const A = [i, i + L - 1], B = [i + off, i + off + L - 1];
+        const copy = score(...A, idx) >= score(...B, idx) ? A : B, original = copy === A ? B : A;
+        out.push({ copy, original });
+        for (let k = copy[0]; k <= copy[1]; k++) taken.add(k);
+      }
+      i += L;
+    }
+  }
+  return out;
+}
+
+/** Blank every copied run findCopiedRuns finds (in place) and declare it as a gap on each
+ *  series it touches (CONTRACT-series: gaps are dates, gapsNote says why). dates: the bundle
+ *  axis; series: { key: { data, gaps?, gapsNote? } }. Returns the runs. */
+export function nullCopiedRuns(dates, series, source) {
+  const keys = Object.keys(series), runs = findCopiedRuns(keys.map((k) => series[k].data));
+  for (const { copy, original } of runs) {
+    const reason = `${source} prints the figures for ${dates[original[0]].slice(0, 7)} to ${dates[original[1]].slice(0, 7)} a second time under ${dates[copy[0]].slice(0, 7)} to ${dates[copy[1]].slice(0, 7)}; left empty rather than shown wrongly.`;
+    for (const k of keys) {
+      const s = series[k]; let hit = false;
+      for (let q = copy[0]; q <= copy[1]; q++) if (s.data[q] != null && s.data[q] === s.data[q + original[0] - copy[0]]) { s.data[q] = null; hit = true; }
+      if (hit) {
+        s.gaps = [...new Set([...(s.gaps ?? []), ...dates.slice(copy[0], copy[1] + 1)])].sort();
+        s.gapsNote = s.gapsNote ? `${s.gapsNote} ${reason}` : reason;
+      }
+    }
+  }
+  return runs;
+}
