@@ -57,13 +57,15 @@ Reader copy:
 
 ## Found, not mine to fix
 
-Data (sent to the coordinator; confirmed and fixed at class level on lb/fix-oil):
+Data (sent to the coordinator; confirmed and fixed at class level, merged here at 20bcc51):
 - `trade-dbie-oil-volumes`: 1988-89 to 1997-98 were copies of 1998-99 to 2007-08 (DBIE 148).
 - `payments-monthly-2004`: Aug 2006 to Jul 2007 were copies of Jul 2010 to Jun 2011 (DBIE 612).
 - `payments-monthly-2004`: debit_cards and cards "all usage" lines are PoS only until 2011-03;
   ATM use is counted from 2011-04 (20x step). The page does not draw across it (it sums the
   PoS lines); the bundle needs a seam or split. Sent to the coordinator.
-- To re-read after lb/fix-oil lands: trade #cb-crude and payments "Fifteen years before UPI".
+- After the fix landed (two copied months first survived on a rounding unit; now fixed too) I
+  re-read trade #cb-crude and payments "Fifteen years before UPI" at both widths: both lines now
+  break across the blanked years, and each source note says why.
 
 Prose (review-a regenerates all of it, including my slugs): two-decimal rates and counts
 throughout (credit, external, rates, payments, markets, housing); "the sheet" leaked into rates
@@ -74,11 +76,14 @@ Shared components (not edited by me):
 - `EveryCutTable.astro`: on debt at 390px the table is 417px wide and the page scrolls sideways
   (a long latest value). `.ec-wrap{overflow-x:auto}` would contain it.
 - `GuideData.astro` at 390px uses only half the column width (rows wrap into a narrow strip).
+- The every-cut table prints "$0.00 bn" for small lines (trade); it needs a precision that scales.
 - A minus sign before $ or ₹ can end a line in the reading notes. A blanket `white-space:nowrap`
   on `.now b` fixed that but widened the notes past 390px, so I took it out; it needs a no-break
   joiner in the shared number formatters instead.
 
 ## Checks
 
-npm test 55/55, prose:dry clean, asof 464 paragraphs verified; final build and `npm run gates`
-result below.
+On the merged branch (launch-build 20bcc51 + review-b): npm test 58/58, prose:dry clean,
+asof 464 paragraphs verified, `npx astro build` and `npm run gates` green (QC all checks passed;
+chart lint clean across 855 SVGs on 87 pages). One chart-lint bleed my markets labels caused
+was fixed before the final run. dist deleted after every look.
