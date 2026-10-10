@@ -21,10 +21,12 @@ const monthL = (d) => `${MONTHS_FULL[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`;
 const monthS = (d) => `${M3[+d.slice(5, 7) - 1]} ${d.slice(0, 4)}`;
 const qtrL = (d) => { const m = +d.slice(5, 7) - 1; return `${MONTHS_FULL[m]} to ${MONTHS_FULL[m + 2]} ${d.slice(0, 4)}`; };
 const qtrS = (d) => { const m = +d.slice(5, 7) - 1; return `${M3[m]} to ${M3[m + 2]} ${d.slice(0, 4)}`; };
-const p2 = (v) => `${v.toFixed(2)}%`;
+// rates at the precision the agencies publish them: one decimal (CPI, GDP, IIP, PLFS)
+const p1 = (v) => `${v.toFixed(1)}%`;
+const r1 = (v) => Math.round(v * 10) / 10;   // compare what the reader sees, not hidden decimals
 const series = (b, k) => { const j = read(b); const P = j.dates.map((d, i) => ({ d, v: j.series[k].data[i] })).filter((p) => p.v != null); return P; };
 // months of consecutive rises (or falls) ending at the latest point
-const streak = (P) => { let n = 0; const up = P.at(-1).v > P.at(-2).v; for (let i = P.length - 1; i > 0; i--) { if ((P[i].v > P[i - 1].v) === up && P[i].v !== P[i - 1].v) n++; else break; } return { n, up }; };
+const streak = (P) => { let n = 0; const up = r1(P.at(-1).v) > r1(P.at(-2).v); for (let i = P.length - 1; i > 0; i--) { if ((r1(P[i].v) > r1(P[i - 1].v)) === up && r1(P[i].v) !== r1(P[i - 1].v)) n++; else break; } return { n, up }; };
 const ordinal = (n) => ["", "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth"][n] ?? `${n}th`;
 
 // 1. prices: the continuous 2024-base headline (back-cast before 2025, never the retired base)
@@ -42,18 +44,18 @@ const iip = series("iip-2022", "general"), iL = iip.at(-1), iP = iip.at(-2);
 const ur = series("plfs-monthly", "ur"), uL = ur.at(-1), uP = ur.at(-2);
 
 const LEAD = [
-  { slug: "cpi", topic: "Prices", value: p2(cL.v),
-    sentence: `Consumer prices were <b>${p2(cL.v)}</b> higher in ${MONTHS_FULL[+cL.d.slice(5, 7) - 1]} than a year earlier, ${cS.up ? "up" : "down"} for the ${cS.n > 1 ? `${ordinal(cS.n)} month in a row` : "first time"}, and ${cpiNews}.`,
-    chart: briefSVG({ dates: cpi.map((p) => p.d).slice(-60), values: cpi.map((p) => p.v).slice(-60) }, { ref: band.target, refLabel: `Target ${band.target}%`, label: "Consumer price inflation, last five years", period: monthS }) },
-  { slug: "gdp", topic: "Growth", value: p2(gL.v),
-    sentence: `The economy grew <b>${p2(gL.v)}</b> in ${qtrL(gL.d)}, ${gL.v < gP.v ? "a little slower than" : gL.v > gP.v ? "faster than" : "the same as"} the ${p2(gP.v)} of the quarter before.`,
-    chart: briefSVG({ dates: gdp.map((p) => p.d), values: gdp.map((p) => p.v) }, { label: "Real GDP growth by quarter", period: qtrS }) },
-  { slug: "iip", topic: "Factories", value: p2(iL.v),
-    sentence: `Industrial output grew <b>${p2(iL.v)}</b> in ${MONTHS_FULL[+iL.d.slice(5, 7) - 1]}, ${iL.v > iP.v ? "up" : "down"} from ${p2(iP.v)} the month before.`,
-    chart: briefSVG({ dates: iip.map((p) => p.d), values: iip.map((p) => p.v) }, { ref: 0, label: "Industrial output growth by month", period: monthS }) },
+  { slug: "cpi", topic: "Prices", value: p1(cL.v),
+    sentence: `Consumer prices were <b>${p1(cL.v)}</b> higher in ${MONTHS_FULL[+cL.d.slice(5, 7) - 1]} than a year earlier, ${cS.n === 0 ? "the same rate as the month before" : `${cS.up ? "up" : "down"} for the ${cS.n > 1 ? `${ordinal(cS.n)} month in a row` : "first time"}`}, and ${cpiNews}.`,
+    chart: briefSVG({ dates: cpi.map((p) => p.d).slice(-60), values: cpi.map((p) => p.v).slice(-60) }, { ref: band.target, refLabel: `Target ${band.target}%`, label: "Consumer price inflation, last five years", period: monthS, dp: 1 }) },
+  { slug: "gdp", topic: "Growth", value: p1(gL.v),
+    sentence: `The economy grew <b>${p1(gL.v)}</b> in ${qtrL(gL.d)}, ${r1(gL.v) < r1(gP.v) ? (r1(gP.v) - r1(gL.v) <= 1 ? "a little slower than" : "slower than") : r1(gL.v) > r1(gP.v) ? "faster than" : "the same as"} the ${p1(gP.v)} of the quarter before.`,
+    chart: briefSVG({ dates: gdp.map((p) => p.d), values: gdp.map((p) => p.v) }, { label: "Real GDP growth by quarter", period: qtrS, dp: 1 }) },
+  { slug: "iip", topic: "Factories", value: p1(iL.v),
+    sentence: `Industrial output ${iL.v < 0 ? "shrank" : "grew"} <b>${p1(Math.abs(iL.v))}</b> in ${MONTHS_FULL[+iL.d.slice(5, 7) - 1]}, ${r1(iL.v) === r1(iP.v) ? "the same as" : r1(iL.v) > r1(iP.v) ? "up from" : "down from"} ${p1(iP.v)} the month before.`,
+    chart: briefSVG({ dates: iip.map((p) => p.d), values: iip.map((p) => p.v) }, { ref: 0, label: "Industrial output growth by month", period: monthS, dp: 1 }) },
   { slug: "jobs", topic: "Jobs", value: `${uL.v.toFixed(1)}%`,
-    sentence: uL.v === uP.v ? `Unemployment held at <b>${uL.v.toFixed(1)}%</b> in ${MONTHS_FULL[+uL.d.slice(5, 7) - 1]}, the same as the month before.`
-      : `Unemployment ${uL.v > uP.v ? "rose" : "fell"} to <b>${uL.v.toFixed(1)}%</b> in ${MONTHS_FULL[+uL.d.slice(5, 7) - 1]}, from ${uP.v.toFixed(1)}% the month before.`,
+    sentence: r1(uL.v) === r1(uP.v) ? `Unemployment held at <b>${uL.v.toFixed(1)}%</b> in ${MONTHS_FULL[+uL.d.slice(5, 7) - 1]}, the same as the month before.`
+      : `Unemployment ${r1(uL.v) > r1(uP.v) ? "rose" : "fell"} to <b>${uL.v.toFixed(1)}%</b> in ${MONTHS_FULL[+uL.d.slice(5, 7) - 1]}, from ${uP.v.toFixed(1)}% the month before.`,
     chart: briefSVG({ dates: ur.map((p) => p.d), values: ur.map((p) => p.v) }, { label: "Unemployment rate by month", period: monthS, dp: 1 }) },
 ];
 const leadSlugs = new Set(LEAD.map((l) => l.slug));
@@ -136,7 +138,7 @@ const SECTIONS = [...new Set(DOSSIERS.map((d) => d.section))];
   <footer class="provenance">
     <div class="cols">
       <div><h6>India Atlas</h6><p>A reference work on Indian economic statistics, revised as each figure is released. All data comes from the statistical agencies and is built into the page; nothing is estimated unless a chart says so.</p></div>
-      <div><h6>Sources</h6><p>MoSPI and the National Statistics Office, the Office of the Economic Adviser, the Reserve Bank of India, the Ministry of New and Renewable Energy and the World Bank. Each guide cites its release.</p></div>
+      <div><h6>Sources</h6><p>MoSPI and the National Statistics Office, the Reserve Bank of India, the Office of the Economic Adviser, the Registrar General, the ministries of agriculture, education, health, commerce and renewable energy, and, for the comparisons with the world, the World Bank, the UN, the ILO and the BIS. Each guide cites its release.</p></div>
       <div><h6>Before you cite</h6><p>Read <a href="/method/">how we work</a>. Every chart downloads as an image or as data, with its source attached.</p></div>
     </div>
     <div class="fine"><span>India Atlas</span><span>Static, no trackers, no cookies</span><span>Set in Source Serif 4 and Golos Text</span></div>

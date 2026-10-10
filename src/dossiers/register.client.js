@@ -5,6 +5,7 @@ import * as Plot from "@observablehq/plot";
 import cpiBundle from "../../data/series/cpi.json";
 import cpi2024Bundle from "../../data/series/cpi-2024.json";
 import gdpBundle from "../../data/series/gdp.json";
+import gdp2022Bundle from "../../data/series/gdp-2022.json";
 import wpiBundle from "../../data/series/wpi.json";
 import iipBundle from "../../data/series/iip-2022.json";
 // external account: RBI DBIE bundles (lb/external, 2026-10)
@@ -41,6 +42,7 @@ import { hydrate } from "../charts/plumbing.js";
 const C = hydrate(cpiBundle);
 const C24 = hydrate(cpi2024Bundle);   // base 2024=100 — separate series, never spliced
 const G = hydrate(gdpBundle);
+const G22 = hydrate(gdp2022Bundle);   // base 2022-23, the current ruler
 const W = hydrate(wpiBundle);
 const I = hydrate(iipBundle);
 const PM = hydrate(plfsMonthlyBundle);
@@ -93,18 +95,20 @@ const RATIO = { data: M2.rural.data.map((d, i) => ({ date: d.date, value: M2.urb
 // rows[8] (optional) overrides the section vintage — the 2024-base prints
 // arrive on their own release cycle
 const cpiRows = [
-  ["Headline CPI, base 2024", "CPI24-ALL", "s-acc", C24.headline, false, "/guides/cpi/", null, f1, "12 Jul 2026"],
-  ["Food & beverages, base 2024", "CPI24-FB", "s-g1", C24.food_and_beverages, false, "/guides/cpi/", null, f1, "12 Jul 2026"],
+  ["Headline CPI, base 2024", "CPI24-ALL", "s-acc", C24.headline, false, "/guides/cpi/", null, f1, "VINT_CPI24"],
+  ["Food & beverages, base 2024", "CPI24-FB", "s-g1", C24.food_and_beverages, false, "/guides/cpi/", null, f1, "VINT_CPI24"],
   ["Headline CPI (combined), base retired, to Dec 2025", "CPI-ALL", "s-acc", C.headline, false, "/guides/cpi/", "computed"],
   ["Food & beverages, base retired, to Dec 2025", "CPI-FB", "s-g1", C.food, false, "/guides/cpi/"],
   ["Fuel & light, base retired, to Dec 2025", "CPI-FUEL", "s-g2", C.fuel, false, "/guides/cpi/"],
   ["Core, ex food & fuel, base retired, to Dec 2025", "IA-CORE", "s-g3", C.core, true, "/guides/cpi/", "derived"],
 ];
+// the current 2022-23 base first (its own vintage), then the retired 2011-12 base, labelled as such
 const gdpRows = [
-  ["Real GDP", "NAS-GDP", "s-acc", G.gdp, false, "/guides/gdp/", "computed"],
-  ["Real GVA", "NAS-GVA", "s-g1", G.gva, false, "/guides/gdp/"],
-  ["Consumption, PFCE", "NAS-PFCE", "s-g2", G.pfce, false, "/guides/gdp/", "computed"],
-  ["Investment, GFCF", "NAS-GFCF", "s-g3", G.gfcf, false, "/guides/gdp/", "computed"],
+  ["Real GDP growth, base 2022-23", "NAS22-GDP", "s-acc", G22.gdp, false, "/guides/gdp/", "computed", f1, "VINT_GDP22"],
+  ["Real GVA growth, base 2022-23", "NAS22-GVA", "s-g1", G22.gva, false, "/guides/gdp/", null, f1, "VINT_GDP22"],
+  ["Consumption (PFCE) growth, base 2022-23", "NAS22-PFCE", "s-g2", G22.pfce, false, "/guides/gdp/", "computed", f1, "VINT_GDP22"],
+  ["Investment (GFCF) growth, base 2022-23", "NAS22-GFCF", "s-g3", G22.gfcf, false, "/guides/gdp/", "computed", f1, "VINT_GDP22"],
+  ["Real GDP growth, base 2011-12, retired", "NAS-GDP", "s-g4", G.gdp, false, "/guides/gdp/", "computed"],
 ];
 const wpiRows = [
   ["Headline WPI", "WPI-ALL", "s-acc", W.headline, false, "/guides/wpi/", "computed"],
@@ -155,7 +159,7 @@ const aisheRows = [
   ["Student enrolment, AISHE", "AISHE-ENR", "s-acc", AIH.enrolment, false, "/guides/aishe/", null, fCr],
   ["Universities, AISHE", "AISHE-UNI", "s-g1", AIH.universities, false, "/guides/aishe/", null, (v) => Math.round(v).toLocaleString("en-IN")],
   ["Colleges, AISHE", "AISHE-COL", "s-g2", AIH.colleges, false, "/guides/aishe/", null, (v) => Math.round(v).toLocaleString("en-IN")],
-  ["Teachers, AISHE, 2021-22 reconstructed", "AISHE-TEA", "s-g3", AIH.teachers, false, "/guides/aishe/", null, fCr],
+  ["Teachers, AISHE", "AISHE-TEA", "s-g3", AIH.teachers, false, "/guides/aishe/", null, fCr],
   ["Gross Enrolment Ratio, All Categories", "AISHE-GER", "s-g4", AIH.ger, false, "/guides/aishe/", null, (v) => v.toFixed(1) + "%"],
   ["Gender Parity Index, All Categories", "AISHE-GPI", "s-acc", AIH.gpi, false, "/guides/aishe/", null, (v) => v.toFixed(2)],
   ["Pupil-Teacher Ratio, all institutions", "AISHE-PTR", "s-g1", AIH.ptr, false, "/guides/aishe/", null, (v) => String(Math.round(v))],
@@ -182,6 +186,9 @@ const vintOf = (b) => {
   return `${Number(iso.slice(8, 10))} ${VT_MS[Number(iso.slice(5, 7)) - 1]} ${iso.slice(0, 4)}`;
 };
 
+// row-level vintages named by key, resolved from the bundle so they never rot
+const VT_OF = { VINT_CPI24: vintOf(cpi2024Bundle), VINT_GDP22: vintOf(gdp2022Bundle) };
+
 function render(tbody, rows, lag, prefix, vintage, srcName = "MoSPI / NSO") {
   document.getElementById(tbody).innerHTML = rows.map(([nm, code, sw, s, derived, href, note, fmt, vt], i) => {
     const f = fmt ?? f1;
@@ -199,7 +206,7 @@ function render(tbody, rows, lag, prefix, vintage, srcName = "MoSPI / NSO") {
       <td class="code">${code}</td>
       <td class="val">${f(data.at(-1).value)}</td>
       <td class="code">${yrAgo == null ? "—" : f(yrAgo.value)}</td>
-      <td class="vt">${vt ?? vintage}</td>
+      <td class="vt">${VT_OF[vt] ?? vt ?? vintage}</td>
       <td class="spark" id="${prefix}-${i}"></td>
     </tr>`;
   }).join("");
@@ -228,9 +235,9 @@ function render(tbody, rows, lag, prefix, vintage, srcName = "MoSPI / NSO") {
 render("reg-cpi", cpiRows, 12, "spc", "12 Jan 2026");
 render("reg-gdp", gdpRows, 4, "spg", "28 Nov 2025");
 render("reg-wpi", wpiRows, 12, "spw", vintOf(wpiBundle), "OEA / DPIIT");
-render("reg-iip", iipRows, 12, "spi", "Jul 2026, QE");
+render("reg-iip", iipRows, 12, "spi", vintOf(iipBundle));
 render("reg-ext", extRows, 12, "spe", vintOf(extBopBundle), "RBI DBIE");
-render("reg-plfs", plfsRows, 12, "spl", "Jun 2026");
+render("reg-plfs", plfsRows, 12, "spl", vintOf(plfsMonthlyBundle));
 render("reg-hces", hcesRows, 1, "sph", "2023-24 round");
 render("reg-asi", asiRows, 1, "spa", "2023-24");
 render("reg-aishe", aisheRows, 12, "spai", "2021-22 round", "Ministry of Education");
@@ -248,7 +255,7 @@ const mnreRows = [
   ["Wind, installed, GW", "MNRE-WND", "s-g2", MNRE.wind, false, "/guides/mnre/", null, (v) => (v / 1000).toFixed(1) + " GW"],
   ["Rooftop solar, installed, GW", "MNRE-RT", "s-g3", MNRE_RT.rooftop, false, "/guides/mnre/", null, (v) => (v / 1000).toFixed(1) + " GW"],
 ];
-render("reg-mnre", mnreRows, 1, "spmn", "Jun 2026", "MNRE");
+render("reg-mnre", mnreRows, 1, "spmn", vintOf(mnreSourcesBundle), "MNRE");
 // NFHS — 2-point, cross-sectional; the register's year-ago logic needs no change
 // (it finds the nearest observation ~365 days back, which is the NFHS-4 point)
 // Bank deposits, RBI BSR-2: annual, as on 31 March, ₹ lakh crore
@@ -261,7 +268,7 @@ import depositsBundle from "../../data/series/deposits-owners.json";
     ["Household fixed (term) deposits", "BSR2-HHT", "s-g1", DP.household_term, false, "/guides/deposits/", null, lc],
     ["Household savings accounts", "BSR2-HHS", "s-g2", DP.household_savings, false, "/guides/deposits/", null, lc],
     ["Women's deposits", "BSR2-F", "s-g3", DP.female_total, false, "/guides/deposits/", null, lc],
-  ], 1, "spdp", "Mar 2026", "RBI BSR-2");
+  ], 1, "spdp", vintOf(depositsBundle), "RBI BSR-2");
 }
 // health-gender: the two rounds are separate bundles (two rulers); the register shows NFHS-5
 // and dates the NFHS-4 point four years back, so the year-ago column stays a dash by design
@@ -480,3 +487,35 @@ import pfMonthlyBundle from "../../data/series/public-finance-centre-monthly.jso
   ], 12, "sppf", lbl, "CGA, via the RBI Bulletin");
 }
 // --- end public-finance ---
+
+// register tables for the guides added in the DBIE wave (manufacturing, farms, markets)
+import wdiMfgBundle from "../../data/series/wdi-manufacturing.json";
+import farmsProdBundle from "../../data/series/farms-production.json";
+import farmsPdsBundle from "../../data/series/farms-pds.json";
+import marketsHhBundle from "../../data/series/markets-hh-flows.json";
+{
+  const WM = hydrate(wdiMfgBundle);
+  const pc = (v) => v.toFixed(1) + "%";
+  render("reg-manufacturing", [
+    ["Manufacturing value added, % of GDP", "WDI-MVA", "s-acc", WM.mva_pct_gdp, false, "/guides/manufacturing/", null, pc],
+    ["Industry including construction, % of GDP", "WDI-IND", "s-g1", WM.industry_pct_gdp, false, "/guides/manufacturing/", null, pc],
+    ["Manufacturing value added, growth", "WDI-MVAG", "s-g2", WM.mva_growth, false, "/guides/manufacturing/", null, pc],
+  ], 1, "spmf", vintOf(wdiMfgBundle), "World Bank WDI");
+  const FP = hydrate(farmsProdBundle), FD = hydrate(farmsPdsBundle);
+  const mt = (v) => (v / 1000).toFixed(1) + " mt";          // thousand tonnes -> million tonnes
+  const mtL = (v) => (v / 10).toFixed(1) + " mt";           // lakh tonnes -> million tonnes
+  render("reg-farms", [
+    ["Foodgrains, final estimate", "AG-FG", "s-acc", FP.foodgrains, false, "/guides/farms/", null, mt],
+    ["Rice", "AG-RICE", "s-g1", FP.rice, false, "/guides/farms/", null, mt],
+    ["Wheat", "AG-WHT", "s-g2", FP.wheat, false, "/guides/farms/", null, mt],
+    ["Pulses", "AG-PUL", "s-g3", FP.pulses, false, "/guides/farms/", null, mt],
+    ["Rice procured, central pool", "FCI-PR-R", "s-g4", noNulls(FD.procurement_rice), false, "/guides/farms/", null, mtL, vintOf(farmsPdsBundle)],
+    ["Wheat procured, central pool", "FCI-PR-W", "s-g1", noNulls(FD.procurement_wheat), false, "/guides/farms/", null, mtL, vintOf(farmsPdsBundle)],
+  ], 1, "spfm", vintOf(farmsProdBundle), "Agriculture ministry via RBI");
+  const MH = hydrate(marketsHhBundle);
+  render("reg-markets", [
+    ["Households' net financial saving, % of GDP", "RBI-HHNFS", "s-acc", MH.per_cent_of_gdp_as_per_cent_to_gdp, false, "/guides/markets/", null, pc],
+    ["Households' gross financial assets, % of GDP", "RBI-HHGFA", "s-g1", MH.gross_financial_assets_per_cent_of_gdp_as_per_cent_to_gdp, false, "/guides/markets/", null, pc],
+    ["Households' financial liabilities, % of GDP", "RBI-HHFL", "s-g2", MH.gross_financial_liabilities_per_cent_of_gdp_as_per_cent_to_gdp, false, "/guides/markets/", null, pc],
+  ], 4, "spmk", vintOf(marketsHhBundle), "RBI");
+}
