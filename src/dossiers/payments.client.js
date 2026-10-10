@@ -283,13 +283,13 @@ const I = P.i, IL = I.dates.length - 1;
   const p2 = miniLine(cwp, { color: ACC, w: 560, h: 220, xTicks: [2016, 2019, 2022, 2025].map((y) => new Date(Date.UTC(y, 0, 1))) });
   const atmL = lastPt(atm), cwpL = lastPt(cwp), cwpNov = pub(cwp).find((d) => d.date >= new Date(Date.UTC(2019, 10, 1)));
   panel(grid, "Cash withdrawals at ATMs", `crore a month, ${firstMonth} ${F.crore(M.atm_cash_volume[0])}`, F.crore(M.atm_cash_volume[L]), p1);
-  panel(grid, "Currency with the public", `₹ lakh crore, January 2016 ₹${firstPt(cwp).value.toFixed(2)} lakh crore`, "₹" + cwpL.value.toFixed(2) + " lakh crore", p2);
-  setHTML("pv-cash", "₹" + cwpL.value.toFixed(2) + " lakh crore");
+  panel(grid, "Currency with the public", `₹ lakh crore, January 2016 ₹${firstPt(cwp).value.toFixed(1)} lakh crore`, "₹" + cwpL.value.toFixed(1) + " lakh crore", p2);
+  setHTML("pv-cash", "₹" + cwpL.value.toFixed(1) + " lakh crore");
   setHTML("ex-cs-n", F.crore(M.atm_cash_volume[L]));
   setHTML("ex-cs-n0", F.crore(M.atm_cash_volume[0]));
   setHTML("ex-cs-v", F.lakhCrore(M.atm_cash_value[L]));
-  setHTML("ex-cs-cwp", "₹" + cwpL.value.toFixed(2) + " lakh crore");
-  setHTML("ex-cs-cwp0", "₹" + cwpNov.value.toFixed(2) + " lakh crore");
+  setHTML("ex-cs-cwp", "₹" + cwpL.value.toFixed(1) + " lakh crore");
+  setHTML("ex-cs-cwp0", "₹" + cwpNov.value.toFixed(1) + " lakh crore");
   wirePlate("cb-cash", null, "india-atlas_payments-cash", () => csvRows(["date", "atm_cash_withdrawals", "currency_with_public_inr_lakh_crore"],
     [...new Set([...M.dates, ...C.dates])].sort().map((d) => [d, M.atm_cash_volume[M.dates.indexOf(d)] ?? null, C.cwp[C.dates.indexOf(d)] ?? null])));
 }
@@ -479,10 +479,12 @@ const I = P.i, IL = I.dates.length - 1;
       ...ls.map((s) => Plot.lineY(s.data, { x: "date", y: "value", stroke: s.color, strokeWidth: 1.5, strokeLinejoin: "round" })),
       Plot.dot(pub(grid0), { x: "date", y: "value", r: 4, fill: INK, stroke: "#fff", strokeWidth: 1.5 }),
       Plot.text([lastPt(grid0)], { x: "date", y: "value", text: () => "National grid", dx: 9, textAnchor: "start", fill: INK, fontSize: 11.5, fontWeight: 600 }),
+      // each centre named at the end of its own line, so no colour has to be decoded
+      ...ls.map((s) => Plot.text([lastPt(s.data)], { x: "date", y: "value", text: () => s.label, dx: 7, textAnchor: "start", fill: s.color === ACC ? ACC : G1, fontSize: 11 })),
     ],
   });
   panel(grid, "Clearing houses", "end-March each year", bars.at(-1).v.toLocaleString("en-IN"), p1).querySelector("svg").removeAttribute("aria-hidden");
-  panel(grid, "Cheques cleared by centre", "crore a year: Mumbai (blue), New Delhi, Chennai; the national grid (dots)", F.crore(lastPt(grid0).value * CR), p2).querySelector("svg").removeAttribute("aria-hidden");
+  panel(grid, "Cheques cleared by centre", "crore a year: Mumbai, New Delhi, Chennai; the national grid (dots)", F.crore(lastPt(grid0).value * CR), p2).querySelector("svg").removeAttribute("aria-hidden");
   a11y(p1, "Cheque clearing houses in India", bars.map((r) => `${r.y} ${r.v}`).join(", "));
   a11y(p2, "Cheques cleared by centre", ls.map((s) => `${s.label} ${firstPt(s.data).value.toFixed(1)} crore in ${fyD(firstPt(s.data).date)}`).join(", ") + `; national grid ${lastPt(grid0).value.toFixed(1)} crore in ${fyD(lastPt(grid0).date)}.`);
   const n0 = bars[0].v, nL = bars.at(-1).v;
@@ -510,7 +512,7 @@ const I = P.i, IL = I.dates.length - 1;
     marks: [
       Plot.gridY({ stroke: GRID }),
       Plot.barY(rows, { x: "y", y: "v", fill: "part", order }),
-      Plot.text(totals, { x: "y", y: "v", text: (d) => "₹" + d.v.toLocaleString("en-IN", { maximumFractionDigits: 2 }) + " crore", dy: -10, fill: INK, fontSize: 12 }),
+      Plot.text(totals, { x: "y", y: "v", text: (d) => "₹" + d.v.toLocaleString("en-IN", { maximumFractionDigits: d.v >= 100 ? 0 : 1 }) + " crore", dy: -10, fill: INK, fontSize: 12 }),
       Plot.ruleY([0], { stroke: BASE }),
     ],
   });

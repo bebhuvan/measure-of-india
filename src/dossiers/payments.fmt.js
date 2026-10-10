@@ -3,14 +3,14 @@
 // disagree. Bundles store volumes as counts and values as rupees (DBIE's ACTUALS).
 const grp = (v, d = 0) => v.toLocaleString("en-IN", { minimumFractionDigits: d, maximumFractionDigits: d });
 
-/** a count in crore, two decimals: 23658353000 -> "2,365.84 crore" */
-export const crore = (v) => grp(v / 1e7, 2) + " crore";
+/** a count in crore, readable: whole from 100 crore up (23658353000 -> "2,366 crore"), else one decimal ("60.5 crore") */
+export const crore = (v) => grp(v / 1e7, Math.abs(v) >= 1e9 ? 0 : 1) + " crore";
 /** a count in lakh, one decimal: 252508 -> "2.5 lakh" */
 export const lakh = (v) => grp(v / 1e5, 1) + " lakh";
 /** a count, read at its own scale: crore from a crore, lakh from a lakh, else whole */
 export const count = (v) => (Math.abs(v) >= 1e7 ? crore(v) : Math.abs(v) >= 1e5 ? lakh(v) : grp(Math.round(v)));
-/** rupees in lakh crore, two decimals: 29878804800000 -> "₹29.88 lakh crore" */
-export const lakhCrore = (v) => "₹" + grp(v / 1e12, 2) + " lakh crore";
+/** rupees in lakh crore, one decimal: 29878804800000 -> "₹29.9 lakh crore" */
+export const lakhCrore = (v) => "₹" + grp(v / 1e12, 1) + " lakh crore";
 /** rupees in crore, whole: 7716600000 -> "₹772 crore"; below ₹100 crore, two decimals */
 export const rsCrore = (v) => "₹" + (Math.abs(v) >= 1e9 ? grp(v / 1e7) : grp(v / 1e7, 2)) + " crore";
 /** rupees, read at their own scale */
