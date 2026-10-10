@@ -27,8 +27,10 @@ function cells(round, table, sub, sector = "total") {
   const b = bundleOf(round, table);
   if (!b) return [];
   return Object.entries(b.series).filter(([, s]) => sub.test(s.group) && s.sector === sector)
-    .map(([key, s]) => ({ key, geo: s.geo, label: s.group, value: s.data[0], caution: !!s.flags?.caution }));
+    .map(([key, s]) => ({ key, geo: GEO_NAME[s.geo] ?? s.geo, label: s.group, value: s.data[0], caution: !!s.flags?.caution }));
 }
+// MoSPI's copy spells Puducherry "Puduchery"; the page uses the official spelling (the bundle keeps the source's)
+const GEO_NAME = { Puduchery: "Puducherry" };
 /** one value: All India unless a place is named; null when the round has no figure */
 export function val(round, table, sub, { geo = "All India", sector = "total" } = {}) {
   const c = cells(round, table, sub, sector).filter((x) => x.geo === geo);

@@ -154,7 +154,26 @@ const table = {
   rows: geos.map((g) => ({ geo: g, v: COLS.map(([t, re]) => val(5, t, re, { geo: g })) })),
 };
 
+// §01b NFHS-6 (2023-24): India, from the IIPS fact sheets (profiles-nfhs6), set beside the NFHS-5
+// column those same fact sheets print (profiles-nfhs6-nfhs5): one publication, so comparable by design
+const n6 = load("profiles-nfhs6"), n6p5 = load("profiles-nfhs6-nfhs5");
+const v6 = (code) => n6.series[`all_india__${code}__total`]?.data.at(-1) ?? null;
+const v6p5 = (code) => n6p5.series[`all_india__${code}__total`]?.data.at(-1) ?? null;
+const N6 = [["i069", "Stunted (too short for age)"], ["i070", "Wasted (too thin for height)"], ["i072", "Underweight"], ["i068", "Adequate diet, 6-23 months"],
+  ["i062", "Only breastmilk, under 6 months"], ["i044", "Fully vaccinated (card or recall)"], ["i053", "Rotavirus, 3 doses"], ["i028", "Antenatal check in first three months"],
+  ["i035", "Born in a health facility"], ["i038", "Born by caesarean"], ["i016", "Women 20-24 married before 18"], ["i020", "Family planning, any method"],
+  ["i025", "Unmet need for family planning"], ["i007", "Household has health insurance"], ["i076", "Women overweight or obese"], ["i086", "Women: high blood pressure or on medicine"],
+  ["i089", "Men: high blood pressure or on medicine"], ["i080", "Women: high blood sugar or on medicine"], ["i083", "Men: high blood sugar or on medicine"],
+  ["i092", "Women with a bank account they use"], ["i093", "Women with a phone they use"], ["i014", "Women who have used the internet"],
+  ["i095", "Married women ever hurt by a husband"], ["i099", "Men using tobacco"]];
+const nfhs6 = N6.map(([code, label]) => ({ label, a: v6p5(code), b: v6(code) })).filter((r) => r.b != null);
+const n6v = (code) => ({ now: v6(code), then: v6p5(code) });
+const s6 = n6v("i069"), fv6 = n6v("i044"), ib6 = n6v("i035"), bp6 = n6v("i089"), ph6 = n6v("i093"), sv6 = n6v("i095");
+const moved = (o) => (o.now < o.then ? "fell" : o.now > o.then ? "rose" : "held");
+const nIndicators6 = Object.keys(n6.series).filter((k) => k.startsWith("all_india__") && k.endsWith("__total")).length;
+
 const DATA = {
+  nfhs6,
   direction: dir.map((r) => ({ label: r.label, short: r.short, a: r.a, b: r.b, change: r.change, dir: r.dir })),
   anaemia, nutrition, mortality, vaccines, births, household, fp, ncd, women,
   "anaemia-states": { rows: anRows, ref: an5 },
@@ -196,7 +215,7 @@ const asOf = "NFHS-5";
     <div class="kicker">{kicker(D)}</div>
     <div class="hero-grid">
       <h1 set:html={D.headline} />
-      <p class="lede">India's largest health survey visits about six lakh homes, weighs the children, takes a drop of blood and a blood-pressure reading, and asks women about their bank accounts and their husbands. Between 2015-16 and 2019-21 it found fewer babies dying, more births in hospitals and cleaner toilets. It also found more children anaemic, and, for the first time across all adults, one in five with high blood pressure.</p>
+      <p class="lede">India's largest health survey visits about six lakh homes, weighs the children, takes a drop of blood and a blood-pressure reading, and asks women about their bank accounts and their husbands. Between 2015-16 and 2019-21 it found fewer babies dying, more births in hospitals and cleaner toilets. It also found more children anaemic, and, for the first time across all adults, one in five with high blood pressure. The third round, NFHS-6 (2023-24), puts stunting at {f1(s6.now)}%, against {f1(s6.then)}% in NFHS-5.</p>
     </div>
     <div class="meta">
       <span>Source <b>IIPS for the Ministry of Health and Family Welfare, via MoSPI</b></span>
@@ -234,9 +253,45 @@ const asOf = "NFHS-5";
     </div>
   </section>
 
+  <!-- § 01b NFHS-6 (2023-24): the newest round, India, from the IIPS fact sheets -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>The newest round, NFHS-6</h2><span class="line"></span><span class="unit">India, NFHS-6 (2023-24) against NFHS-5</span></div>
+    <div class="prose">
+      <p>The third round, NFHS-6, was surveyed in 2023-24 and its fact sheets came out in May 2026. MoSPI does not serve it yet, so this guide reads it from the fact sheets themselves. They carry {nIndicators6} measures for India and every state, and each fact sheet prints the NFHS-5 figure beside the new one, so the two can be read side by side. They carry no anaemia and no child-death figures; for those, NFHS-5 is still the latest word, and the plates further down, which set NFHS-4 beside NFHS-5, stay the deeper record.</p>
+    </div>
+    <div class="break">
+      <figure id="cb-nfhs6" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>In NFHS-6, stunting {moved(s6)} to {f1(s6.now)}% and full vaccination {moved(fv6)} to {f1(fv6.now)}%</h3>
+            <div class="sub">Selected measures, India, NFHS-5 (grey) and NFHS-6 (blue), both as printed in the NFHS-6 fact sheets. Every measure, for every state, village and town, is in the downloads.</div>
+          </div>
+          <div class="plate-val"><div class="v" id="pv-nfhs6">{f1(s6.now)}<span class="pc">%</span></div><div class="c">children under 5 stunted, NFHS-6</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone" id="plot-nfhs6"></div>
+          <div class="plotfoot">
+            <span class="src">Source: NFHS-6 (2023-24) India fact sheet, IIPS and MoHFW, May 2026, with the NFHS-5 figures it prints alongside. Read into data by India Atlas; not yet on MoSPI's API.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://rchiips.org/nfhs/" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each row is one measure: the grey dot is NFHS-5 (2019-21), the blue dot NFHS-6 (2023-24). They are two surveys with different samples, a before and an after, not a trend. Whether a move is good depends on the measure: fewer stunted children is good, more men with high blood pressure is not.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of NFHS-6</span>
+            <p>Stunted <b id="ex-n6-stunted">{f1(s6.now)}%</b>, from {f1(s6.then)}%. Fully vaccinated <b id="ex-n6-vacc">{f1(fv6.now)}%</b>, from {f1(fv6.then)}%. Born in a health facility {f1(ib6.now)}%, from {f1(ib6.then)}%. Women with a phone of their own {f1(ph6.now)}%, from {f1(ph6.then)}%. Men with high blood pressure or on medicine {f1(bp6.now)}%, from {f1(bp6.then)}%. Married women ever hurt by a husband {f1(sv6.now)}%, from {f1(sv6.then)}%.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
   <!-- § 02 how to read the survey: evergreen, human-written -->
   <section>
-    <div class="sec-head"><span class="no">02</span><h2>How to read the survey</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">03</span><h2>How to read the survey</h2><span class="line"></span></div>
     <div class="wm-grid">
       <div>
         <p>The National Family Health Survey is a door-to-door visit. Field teams working for the International Institute for Population Sciences, on behalf of the Ministry of Health and Family Welfare, sit with a sample of households in every district, ask about births and deaths, vaccines and contraception, money and violence, and measure what a clinic would: height, weight, waist, a drop of blood for haemoglobin and sugar, three blood-pressure readings. Each round publishes a fact sheet for India and for every state and union territory, split by village and town. This guide holds every line of those fact sheets that MoSPI serves: 21 tables, two rounds, {nCells.toLocaleString("en-IN")} figures in {nBundles} files.</p>
@@ -244,20 +299,20 @@ const asOf = "NFHS-5";
         <p><b>The two rounds are two rulers.</b> NFHS-4 ({round4.fieldwork}) and NFHS-5 ({round5.fieldwork}) used different samples, and several questions changed. NFHS-5 measured blood pressure and blood sugar, and asked about tobacco and alcohol, for everyone 15 and over; NFHS-4 for ages 15 to 49. Its cancer questions changed too. This guide puts the two rounds side by side, a grey dot and a blue one, and never draws them as a trend: two surveys are a before and an after, not a line.</p>
         <p><b>A figure in brackets</b> in the fact sheet rests on 25 to 49 people; this guide marks it with an asterisk. A figure based on fewer than 25 is not published at all. Small union territories (Lakshadweep, Ladakh, the Andaman and Nicobar Islands) often sit at the edges of a ranking for this reason.</p>
         <!-- profiles (lb/profiles): NFHS-6, the third round, from the IIPS fact sheets -->
-        <p><b>NFHS-6 (2023-24), the third round,</b> is not on MoSPI's API, so it comes from the IIPS fact sheets themselves (the 182-page PDF IIPS published in May 2026), read table by table into data and checked before use: the NFHS-5 figures those fact sheets print beside each indicator agree with MoSPI's NFHS-5 to the fact sheet's rounding in 2,486 of 2,499 state figures, every total lies between its urban and rural figures, and Bihar's pages were checked by hand against the PDF. Its 101 indicators for India and every state and UT are in this guide's data and every-cut table as their own ruler, with the NFHS-5 column the fact sheets print beside them; the plates above still compare NFHS-4 and NFHS-5. The state profiles use NFHS-6 where its fact sheets carry a measure.</p>
+        <p><b>NFHS-6 (2023-24), the third round,</b> is not on MoSPI's API, so it comes from the IIPS fact sheets themselves (the 182-page PDF IIPS published in May 2026), read table by table into data and checked before use: the NFHS-5 figures those fact sheets print beside each indicator agree with MoSPI's NFHS-5 to the fact sheet's rounding in 2,486 of 2,499 state figures, every total lies between its urban and rural figures, and Bihar's pages were checked by hand against the PDF. Its 101 indicators for India and every state and UT are in this guide's data and every-cut table as their own ruler, with the NFHS-5 column the fact sheets print beside them; section 02 sets its India figures beside NFHS-5, and the plates after this section compare NFHS-4 and NFHS-5. The state profiles use NFHS-6 where its fact sheets carry a measure.</p>
         <p><b>What we withhold.</b> MoSPI's copy of the survey files some NFHS-4 figures against the wrong line. For India it gives 3.3 per cent of women with a bank account; the NFHS-5 national report says 53 per cent. The error shifts whole columns in the tables on unmet need for contraception, anaemia, blood pressure, women's lives and violence, and it repeats in every state. (MoSPI corrected its maternity-care table between August and October 2026; we check every withheld line against what MoSPI serves on each fetch.) We checked each NFHS-4 line against the DHS Program's own tabulation of the same survey and against the national report, and we do not use the {nWithheld} NFHS-4 lines that fail or that measured a different group of people. NFHS-5 checks clean. The list is below the provenance notes.</p>
       </div>
       <div class="wm-rail">
         <aside class="margin-note"><span class="mk">Margin note, i</span><b>The pandemic split the survey.</b> NFHS-5 surveyed 22 states and UTs between June 2019 and January 2020. The other 14 began in January 2020 and, interrupted by the pandemic, finished by April 2021. A state's figure belongs to the months its own fieldwork ran.</aside>
         <aside class="margin-note"><span class="mk">Margin note, ii</span><b>Borders moved.</b> Ladakh was part of Jammu and Kashmir in NFHS-4; Dadra and Nagar Haveli and Daman and Diu were two territories, now one. Each round keeps its own map; nothing here re-adds them.</aside>
-        <aside class="margin-note"><span class="mk">Margin note, iii</span><b>Rounds, not a trend.</b> Two surveys show a change, not a trend. NFHS-6, the third point, is in the data below; the plates here compare the first two.</aside>
+        <aside class="margin-note"><span class="mk">Margin note, iii</span><b>Rounds, not a trend.</b> Two surveys show a change, not a trend. NFHS-6, the third point, has its own section above; the plates below compare the first two.</aside>
       </div>
     </div>
   </section>
 
   <!-- § 03 what changed. Inputs: every per-cent sub-indicator of every nfhs-4-* and nfhs-5-* bundle, All India total. Prose: evergreen + as-of. -->
   <section>
-    <div class="sec-head"><span class="no">03</span><h2>What changed between the rounds</h2><span class="line"></span><span class="unit">Every measure taken both times, percentage points</span></div>
+    <div class="sec-head"><span class="no">04</span><h2>What changed between the rounds</h2><span class="line"></span><span class="unit">Every measure taken both times, percentage points</span></div>
     <div class="break">
       <figure id="cb-direction" style="margin:0">
         <div class="plate-head">
@@ -296,7 +351,7 @@ const asOf = "NFHS-5";
 
   <!-- § 04 anaemia. Inputs: nfhs-4-anaemia, nfhs-5-anaemia (All India, every state). -->
   <section>
-    <div class="sec-head"><span class="no">04</span><h2>Anaemia, the measure that went the wrong way</h2><span class="line"></span><span class="unit">Per cent anaemic, NFHS-4 and NFHS-5</span></div>
+    <div class="sec-head"><span class="no">05</span><h2>Anaemia, the measure that went the wrong way</h2><span class="line"></span><span class="unit">Per cent anaemic, NFHS-4 and NFHS-5</span></div>
     <div class="break">
       <figure id="cb-anaemia" style="margin:0">
         <div class="plate-head">
@@ -361,7 +416,7 @@ const asOf = "NFHS-5";
 
   <!-- § 05 children: survival and growth. Inputs: nfhs-*-child-nutrition, nfhs-*-mortality. -->
   <section>
-    <div class="sec-head"><span class="no">05</span><h2>Children: surviving and growing</h2><span class="line"></span><span class="unit">Children under 5, NFHS-4 and NFHS-5</span></div>
+    <div class="sec-head"><span class="no">06</span><h2>Children: surviving and growing</h2><span class="line"></span><span class="unit">Children under 5, NFHS-4 and NFHS-5</span></div>
     <div class="break">
       <figure id="cb-nutrition" style="margin:0">
         <div class="plate-head">
@@ -422,7 +477,7 @@ const asOf = "NFHS-5";
 
   <!-- § 06 vaccines and childhood illness. Inputs: nfhs-*-vaccination, nfhs-*-childhood-disease. -->
   <section>
-    <div class="sec-head"><span class="no">06</span><h2>Vaccines and childhood illness</h2><span class="line"></span><span class="unit">Children 12-23 months, NFHS-4 and NFHS-5</span></div>
+    <div class="sec-head"><span class="no">07</span><h2>Vaccines and childhood illness</h2><span class="line"></span><span class="unit">Children 12-23 months, NFHS-4 and NFHS-5</span></div>
     <div class="break">
       <figure id="cb-vaccines" style="margin:0">
         <div class="plate-head">
@@ -455,7 +510,7 @@ const asOf = "NFHS-5";
 
   <!-- § 07 births and mothers. Inputs: nfhs-*-maternity, nfhs-*-delivery. -->
   <section>
-    <div class="sec-head"><span class="no">07</span><h2>Births and mothers</h2><span class="line"></span><span class="unit">Births in the five years before the survey</span></div>
+    <div class="sec-head"><span class="no">08</span><h2>Births and mothers</h2><span class="line"></span><span class="unit">Births in the five years before the survey</span></div>
     <div class="break">
       <figure id="cb-births" style="margin:0">
         <div class="plate-head">
@@ -519,7 +574,7 @@ const asOf = "NFHS-5";
 
   <!-- § 08 blood pressure and blood sugar. Inputs: nfhs-5-blood-pressure, nfhs-5-blood-sugar, nfhs-*-adult-nutrition. -->
   <section>
-    <div class="sec-head"><span class="no">08</span><h2>Blood pressure and blood sugar</h2><span class="line"></span><span class="unit">Adults 15 and over, NFHS-5</span></div>
+    <div class="sec-head"><span class="no">09</span><h2>Blood pressure and blood sugar</h2><span class="line"></span><span class="unit">Adults 15 and over, NFHS-5</span></div>
     <div class="break">
       <figure id="cb-ncd" style="margin:0">
         <div class="plate-head">
@@ -588,7 +643,7 @@ const asOf = "NFHS-5";
 
   <!-- § 09 cancer screening. Inputs: nfhs-5-cancer-screening. -->
   <section>
-    <div class="sec-head"><span class="no">09</span><h2>Cancer screening</h2><span class="line"></span><span class="unit">Women and men 30-49, NFHS-5</span></div>
+    <div class="sec-head"><span class="no">10</span><h2>Cancer screening</h2><span class="line"></span><span class="unit">Women and men 30-49, NFHS-5</span></div>
     <div class="break">
       <figure id="cb-cancer-states" style="margin:0">
         <div class="plate-head">
@@ -625,7 +680,7 @@ const asOf = "NFHS-5";
 
   <!-- § 10 women's lives. Inputs: nfhs-5-empowerment, nfhs-5-adults (and nfhs-4 where baked). -->
   <section>
-    <div class="sec-head"><span class="no">10</span><h2>Women's money, phones and say at home</h2><span class="line"></span><span class="unit">Women 15-49, NFHS-5</span></div>
+    <div class="sec-head"><span class="no">11</span><h2>Women's money, phones and say at home</h2><span class="line"></span><span class="unit">Women 15-49, NFHS-5</span></div>
     <div class="break">
       <figure id="cb-women" style="margin:0">
         <div class="plate-head">
@@ -693,7 +748,7 @@ const asOf = "NFHS-5";
 
   <!-- § 11 violence at home. Inputs: nfhs-5-violence; gender-t143 (the compendium's NFHS reprint). -->
   <section>
-    <div class="sec-head"><span class="no">11</span><h2>Violence at home</h2><span class="line"></span><span class="unit">Ever-married women 18-49, NFHS-5</span></div>
+    <div class="sec-head"><span class="no">12</span><h2>Violence at home</h2><span class="line"></span><span class="unit">Ever-married women 18-49, NFHS-5</span></div>
     <div class="break">
       <figure id="cb-violence-states" style="margin:0">
         <div class="plate-head">
@@ -726,7 +781,7 @@ const asOf = "NFHS-5";
 
   <!-- § 12 tobacco and alcohol. Inputs: nfhs-5-tobacco-alcohol. -->
   <section>
-    <div class="sec-head"><span class="no">12</span><h2>Tobacco and alcohol</h2><span class="line"></span><span class="unit">Adults 15 and over, NFHS-5</span></div>
+    <div class="sec-head"><span class="no">13</span><h2>Tobacco and alcohol</h2><span class="line"></span><span class="unit">Adults 15 and over, NFHS-5</span></div>
     <div class="break">
       <figure id="cb-tobacco-states" style="margin:0">
         <div class="plate-head">
@@ -763,7 +818,7 @@ const asOf = "NFHS-5";
 
   <!-- § 13 the household. Inputs: nfhs-*-household. -->
   <section>
-    <div class="sec-head"><span class="no">13</span><h2>The household</h2><span class="line"></span><span class="unit">NFHS-4 and NFHS-5</span></div>
+    <div class="sec-head"><span class="no">14</span><h2>The household</h2><span class="line"></span><span class="unit">NFHS-4 and NFHS-5</span></div>
     <div class="break">
       <figure id="cb-household" style="margin:0">
         <div class="plate-head">
@@ -796,7 +851,7 @@ const asOf = "NFHS-5";
 
   <!-- § 14 fertility and family planning. Inputs: nfhs-*-marriage-fertility, nfhs-*-family-planning, nfhs-*-unmet-need. -->
   <section>
-    <div class="sec-head"><span class="no">14</span><h2>Children per woman, and how families plan them</h2><span class="line"></span><span class="unit">NFHS-4 and NFHS-5</span></div>
+    <div class="sec-head"><span class="no">15</span><h2>Children per woman, and how families plan them</h2><span class="line"></span><span class="unit">NFHS-4 and NFHS-5</span></div>
     <div class="break">
       <figure id="cb-tfr-states" style="margin:0">
         <div class="plate-head">
@@ -856,7 +911,7 @@ const asOf = "NFHS-5";
 
   <!-- § 15 village and town. Inputs: every per-cent sub-indicator of every nfhs-5-* bundle, rural and urban. -->
   <section>
-    <div class="sec-head"><span class="no">15</span><h2>Village and town</h2><span class="line"></span><span class="unit">NFHS-5, town minus village, percentage points</span></div>
+    <div class="sec-head"><span class="no">16</span><h2>Village and town</h2><span class="line"></span><span class="unit">NFHS-5, town minus village, percentage points</span></div>
     <div class="break">
       <figure id="cb-gap" style="margin:0">
         <div class="plate-head">
@@ -889,7 +944,7 @@ const asOf = "NFHS-5";
 
   <!-- § 16 state by state. Inputs: twelve sub-indicators of the nfhs-5-* bundles, every state. -->
   <section>
-    <div class="sec-head"><span class="no">16</span><h2>State by state</h2><span class="line"></span><span class="unit">Twelve measures, NFHS-5</span></div>
+    <div class="sec-head"><span class="no">17</span><h2>State by state</h2><span class="line"></span><span class="unit">Twelve measures, NFHS-5</span></div>
     <div class="break">
       <figure id="cb-table" style="margin:0">
         <div class="plate-head">
@@ -918,7 +973,7 @@ const asOf = "NFHS-5";
 
   <!-- § 17 how to misread: evergreen -->
   <section>
-    <div class="sec-head"><span class="no">17</span><h2>How to misread this survey</h2><span class="line"></span></div>
+    <div class="sec-head"><span class="no">18</span><h2>How to misread this survey</h2><span class="line"></span></div>
     <ul class="misread">
       <li><span class="no">i.</span><div>
         <h3>"Women's bank accounts jumped from 3% to 79% in five years."</h3>
@@ -945,8 +1000,8 @@ const asOf = "NFHS-5";
         <p>The smallest union territories rest on a few dozen births and a few hundred households. Their figures swing on a handful of cases and the fact sheets mark many of them as uncertain. Read them, but do not rank on them.</p>
       </div></li>
       <li><span class="no">vii.</span><div>
-        <h3>"These two rounds show a trend."</h3>
-        <p>They show a change between two surveys, taken five years apart with different samples, and in some states on either side of a lockdown. NFHS-6 will be the third point.</p>
+        <h3>"These rounds show a trend."</h3>
+        <p>They show changes between separate surveys, each with its own sample, and NFHS-5 in some states on either side of a lockdown. NFHS-6 adds a third point for the measures it repeats, and three snapshots are still three snapshots: read each change between two rounds, not a line through all three.</p>
       </div></li>
     </ul>
   </section>

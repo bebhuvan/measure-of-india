@@ -29,6 +29,14 @@ for (const [k, title, o] of DUMB) {
   const p = dumbbell(el, D[k], { title, desc: D[k].map((r) => `${r.label}: ${r.a == null ? "" : f1(r.a) + " then "}${f1(r.b)}`).join("; "), ...o });
   wire("cb-" + k, p, "nfhs-" + k, toCsv(["measure", "nfhs4", "nfhs5"], D[k].map((r) => [r.label, r.a, r.b])));
 }
+/* ---------- NFHS-6 beside the NFHS-5 figures its own fact sheets print ---------- */
+{
+  const el = mount("plot-nfhs6");
+  if (el && D.nfhs6) {
+    const p = dumbbell(el, D.nfhs6, { title: "Selected measures, India, NFHS-5 and NFHS-6", desc: D.nfhs6.map((r) => `${r.label}: ${r.a == null ? "" : f1(r.a) + " then "}${f1(r.b)}`).join("; ") });
+    wire("cb-nfhs6", p, "nfhs-6", toCsv(["measure", "nfhs5", "nfhs6"], D.nfhs6.map((r) => [r.label, r.a, r.b])));
+  }
+}
 /* ---------- rural and urban, NFHS-5 (grey village, blue town) ---------- */
 for (const k of ["ncd", "women"]) {
   const el = mount("plot-" + k);
