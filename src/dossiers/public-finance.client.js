@@ -719,9 +719,10 @@ setHTML("prov-vintage2", cmB.meta.vintage);
     y: { label: "per cent of GDP", labelAnchor: "top", labelArrow: false, domain: y.domain, ticks: y.ticks, tickSize: 0, tickPadding: 8, tickFormat: (v) => String(v) },
     marks: [
       Plot.gridY(y.ticks, { stroke: GRID }), Plot.ruleY([0], { stroke: BASE }),
-      Plot.lineY(backL, { x: "date", y: "value", stroke: tint(ACC, 0.6), strokeWidth: 2, strokeLinejoin: "round", strokeLinecap: "round" }),
+      // our computed rulers are derived: dashed (DESIGN), beside the RBI's own published ratio
+      Plot.lineY(backL, { x: "date", y: "value", stroke: tint(ACC, 0.6), strokeWidth: 2, strokeDasharray: "5,3", strokeLinejoin: "round", strokeLinecap: "round" }),
       ...seamMarks("side", pub.map((data) => ({ data, color: GREY, width: 1.75 })), { text: "GDP rebased", y: y.domain[1] - 0.5, at: dt(g04B.dates[0]) }),
-      Plot.lineY(newL, { x: "date", y: "value", stroke: ACC, strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
+      Plot.lineY(newL, { x: "date", y: "value", stroke: ACC, strokeWidth: 2.5, strokeDasharray: "5,3", strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.dot(newL.filter((p) => p.value != null), { x: "date", y: "value", r: 3, fill: ACC, stroke: "#FFFFFF", strokeWidth: 1 }),
       ...endLabels([{ label: "2022-23 series", color: ACC, bold: true, data: newL }, { label: "RBI, 2011-12 series", color: GREY, data: pub[2] }], 0.5, (v) => p1(v)),
     ],

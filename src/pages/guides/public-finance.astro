@@ -751,7 +751,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="plotzone"><div id="plot-state-cut" style="position:relative"></div></div>
           <div class="plotfoot">
-            <span class="src">Source: the States guide (states-finances): RBI, Handbook of Statistics on Indian States, tables 164 and 176, over MoSPI's GSDP at current prices. The latest year with both accounts and GSDP for every state.</span>
+            <span class="src">Source: the States guide (states-finances): RBI, Handbook of Statistics on Indian States, tables 164 and 176, over MoSPI's GSDP at current prices; ratios computed by India Atlas, not the RBI's. The latest year with both accounts and GSDP for every state.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -785,7 +785,7 @@ const ratesBorrow = B("rates-borrowing");
           </div>
           <div class="plotzone"><div id="plot-wma" style="position:relative"></div></div>
           <div class="plotfoot">
-            <span class="src">Source: RBI Bulletin, Financial Accommodation Availed by State Governments under various Facilities (DBIE report 63). Every state's monthly days and amounts since September 2017 are in the data below.</span>
+            <span class="src">Source: RBI Bulletin, Financial Accommodation Availed by State Governments under various Facilities (DBIE report 63); twelve-month totals computed by India Atlas. Every state's monthly days and amounts since September 2017 are in the data below.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -811,15 +811,15 @@ const ratesBorrow = B("rates-borrowing");
         <div class="plate-head">
           <div class="t">
             <h3>The same deficit is {r1(a24)}% of GDP on the old series and {r1(n24)}% on the new one, for {ST.accountsTo}</h3>
-            <div class="sub">The Centre's gross fiscal deficit, per cent of GDP: as the RBI publishes it, on the GDP series of each period (1999-2000, 2004-05 and 2011-12 bases); over the statistics office's back series of the 2011-12 base; and over the new 2022-23 series. {fy(B99.dates[0])} to {ST.accountsTo}, accounts.</div>
+            <div class="sub">The Centre's gross fiscal deficit, per cent of GDP: as the RBI publishes it, on the GDP series of each period (1999-2000, 2004-05 and 2011-12 bases), solid; and, computed by India Atlas, over the statistics office's back series of the 2011-12 base and over the new 2022-23 series, dashed. {fy(B99.dates[0])} to {ST.accountsTo}, accounts.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-gdpbase">–</div><div class="c">on the 2022-23 series, {ST.accountsTo}</div></div>
         </div>
         <div class="frame">
           <div class="legend">
             <span class="chip"><i style="background:#878D99"></i>RBI, GDP of the time</span>
-            <span class="chip"><i style="background:#B9C3F3"></i>Over the 2011-12 back series</span>
-            <span class="chip"><i style="background:#2E4BD8"></i>Over the 2022-23 series</span>
+            <span class="chip"><i style="background:#B9C3F3"></i>Over the 2011-12 back series (India Atlas)</span>
+            <span class="chip"><i style="background:#2E4BD8"></i>Over the 2022-23 series (India Atlas)</span>
           </div>
           <div class="plotzone"><div id="plot-gdpbase" style="position:relative"><div class="cb-tip"></div></div></div>
           <div class="plotfoot">

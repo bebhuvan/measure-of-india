@@ -97,6 +97,8 @@ const sentence = (s) => {
   return t ? t[0].toUpperCase() + t.slice(1) : t;
 };
 
+// CONTRACT-series rule 5: a series computed here (a ratio, a share, a running total, a sum) says so
+const derive = (series, note) => { for (const s of Object.values(series)) { s.derived = true; s.derivedNote = typeof note === "function" ? note(s) : note; } return series; };
 const RANK = { Final: 4, Actual: 3, "Revised Estimates": 2, "Budget Estimates": 1 };
 
 /* ======================================================================================
@@ -442,7 +444,7 @@ export async function buildPublicFinance(root, dcfg, vintage, cfg) {
       note: `RBI, Month-wise Gross Fiscal Deficit of the Central Government (DBIE report 349; Handbook), from the Controller General of Accounts. A negative month is a surplus (the RBI's dividend to the government usually lands in May). March is from the final accounts, so a year's twelve months add up to the year's accounts in the Centre's deficit table: checked, they do in ${nYears - off.length} of ${nYears} years; in ${off.map((x) => x.split(" ")[0]).join(", ")} the months differ from the year's audited figure by up to ${(worst * 100).toFixed(1)}% (the monthly table was not restated). The running total is computed here.` }),
       dates, series: {
         gfd_month: { name: "gfd_month_inr_crore", label: "Gross fiscal deficit in the month", unit: "inr_crore", color: C.g2, data: month },
-        gfd_fytd: { name: "gfd_fytd_inr_crore", label: "Gross fiscal deficit, April to the month (computed)", unit: "inr_crore", color: C.accent, data: fytd },
+        gfd_fytd: { name: "gfd_fytd_inr_crore", label: "Gross fiscal deficit, April to the month (computed)", unit: "inr_crore", color: C.accent, data: fytd, derived: true, derivedNote: "The RBI's monthly deficits added up from April; computed by India Atlas." },
       } });
     T.gfdMonthly = { dates, month, fytd };
   }
@@ -529,7 +531,8 @@ export async function buildPublicFinance(root, dcfg, vintage, cfg) {
         data: raw.map((v, i) => (inclMonth.has(dates[i]) ? v : null)), gapsNote: "Only the months in which the table counted borrowing inside receipts (total receipts equal total expenditure); the other months are in the non-debt series." };
       series[k] = { name: `${k}_inr_crore`, label: `${LABEL[k]}, April to the month`, unit: "inr_crore", color: k === "fiscal_deficit" ? C.accent : C.g2, data };
       const pct = dates.map((d, i) => { const be = beBy.get(`${fyOf(d)}|${k}`); return data[i] == null || !be || (INCL.includes(k) && inclFY.has(fyOf(d))) ? null : r2((100 * data[i]) / be); });
-      series[`${k}_pct_be`] = { name: `${k}_pct_of_be`, label: `${LABEL[k]}, April to the month, per cent of the year's budget estimate (computed)`, unit: "pct", color: k === "fiscal_deficit" ? C.accent : C.g2, data: pct };
+      series[`${k}_pct_be`] = { name: `${k}_pct_of_be`, label: `${LABEL[k]}, April to the month, per cent of the year's budget estimate (computed)`, unit: "pct", color: k === "fiscal_deficit" ? C.accent : C.g2, data: pct,
+        derived: true, derivedNote: "The CGA's cumulative figure as printed by the RBI, divided by the year's budget estimate from the same table; computed by India Atlas." };
     });
     for (const s of Object.values(series)) {
       const rep = repeated.filter((d) => dates.indexOf(d) > s.data.findIndex((v) => v != null));
@@ -607,7 +610,8 @@ export async function buildPublicFinance(root, dcfg, vintage, cfg) {
     }
     // how many states drew on each facility in the month (computed)
     for (const f of ["wma", "sdf", "od"]) series[`states_using_${f}`] = { name: `states_using_${f}`, label: `Total: number of states that used ${FL[f]} in the month (computed)`, unit: "count", group: "All states", color: f === "od" ? C.accent : C.g2,
-      data: dates.map((d) => { let n = 0, seen = 0; for (const [k] of states) { const v = by.get(`${k}|${f}|days|${d}`); if (v == null) continue; seen++; if (v > 0) n++; } return seen ? n : null; }) };
+      data: dates.map((d) => { let n = 0, seen = 0; for (const [k] of states) { const v = by.get(`${k}|${f}|days|${d}`); if (v == null) continue; seen++; if (v > 0) n++; } return seen ? n : null; }),
+      derived: true, derivedNote: "States with at least one day on the facility in the month, counted by India Atlas from the RBI's table." };
     write("states-wma", { meta: meta({ frequency: "monthly", unit: "inr_crore", vintage: RAWV["63"], latestPeriod: dates.at(-1).slice(0, 7), states: [...states.values()].sort(),
       coverage: "Which states ran short of cash: days each state drew on the RBI's special drawing facility, ways and means advances and overdraft, and the average amount, every month since September 2017",
       note: "RBI Bulletin, Financial Accommodation Availed by State Governments under various Facilities (DBIE report 63). SDF is drawn against the state's reserve funds and Treasury bills held with the RBI; WMA is the RBI's advance for temporary cash mismatches; overdraft is anything beyond the WMA limit (the table's notes 1 to 3). Average amount is the total drawn divided by the days it was drawn (note 4). The table prints '-' for nil: read as zero. State counts are computed here." }),
@@ -627,7 +631,8 @@ export async function buildPublicFinance(root, dcfg, vintage, cfg) {
     for (const [k, st] of [...states].sort()) for (const [it, lab] of items) series[`${k}__${it}`] = { name: `${k}_${it}_inr_crore`, label: `${st}: ${lab}, ₹ crore`, unit: "inr_crore", group: st, color: C.g2,
       data: dates.map((d) => r2(by.get(`${k}|${it}|${d}`) ?? null)) };
     for (const [it, lab] of items) series[`all__${it}`] = { name: `all_${it}_inr_crore`, label: `All states: ${lab}, ₹ crore (sum of the states that report, computed)`, unit: "inr_crore", group: "All states", color: C.accent,
-      data: dates.map((d) => { let s = 0, n = 0; for (const [k] of states) { const v = by.get(`${k}|${it}|${d}`); if (v != null) { s += v; n++; } } return n ? r2(s) : null; }) };
+      data: dates.map((d) => { let s = 0, n = 0; for (const [k] of states) { const v = by.get(`${k}|${it}|${d}`); if (v != null) { s += v; n++; } } return n ? r2(s) : null; }),
+      derived: true, derivedNote: "The states' holdings in the RBI's table added up by India Atlas." };
     write("states-investments", { meta: meta({ frequency: "monthly", unit: "inr_crore", vintage: RAWV["37"], latestPeriod: dates.at(-1).slice(0, 7),
       coverage: "The states' cushions: what each state holds in its consolidated sinking fund, guarantee redemption fund, budget stabilisation fund and Treasury bills with the RBI, month-end, since September 2017",
       note: "RBI Bulletin, Investments by State Governments (DBIE report 37). The sinking fund (CSF), guarantee redemption fund (GRF) and budget stabilisation fund (BSF, from December 2025) are reserve funds kept with the RBI; ATBs are Treasury bills bought at auction (the table's notes 1, 2 and 4). An empty cell is '--', not a member of the scheme: left empty. All-state sums are computed here." }),
@@ -726,6 +731,7 @@ export async function buildPublicFinance(root, dcfg, vintage, cfg) {
       for (const [h, hl] of hs) if ([...by.keys()].some((k) => k.startsWith(`${i}|${h}|`))) series[`${i}__${h}`] = { name: `${i}_${h}_inr_crore`, label: `${INL[i]} held by ${hl === "Others" ? "others" : hl.replace(/^(Banks|Primary Dealers|State Governments)$/, (m) => m.toLowerCase())}, ₹ crore`, unit: "inr_crore", group: INL[i], color: C.g2,
         data: dates.map((d) => r2(by.get(`${i}|${h}|${d}`) ?? null)) };
       series[`${i}__total`] = { name: `${i}_total_inr_crore`, label: `${INL[i]} outstanding, all holders, ₹ crore (computed)`, unit: "inr_crore", group: INL[i], color: C.accent,
+        derived: true, derivedNote: "The holders the RBI's table prints for the week, added up by India Atlas.",
         data: dates.map((d) => { if (voidWeek.has(`${i}|${d}`)) return null; const vs = [...hs.keys()].map((h) => by.get(`${i}|${h}|${d}`)); return vs.some((v) => v != null) ? r2(vs.reduce((a, v) => a + (v ?? 0), 0)) : null; }) };
     }
     write("tbills", { meta: meta({ frequency: "weekly", unit: "inr_crore", vintage: RAWV["2"], latestPeriod: dates.at(-1).slice(0, 7),
@@ -934,19 +940,20 @@ export async function buildPublicFinance(root, dcfg, vintage, cfg) {
       if (!n || worst > 0.02) throw new Error(`public-finance: the RBI's GFD ratio is not GFD over the 2011-12 GDP series (worst ${worst})`);
       console.log(`public-finance: RBI's GFD/GDP = GFD over MoSPI's 2011-12 series in ${n} years (worst ${r4(worst)} pt)`);
     }
-    const mkR = (G, fys, stageCut) => { const s = {}; ITEMS.forEach(([bn, key, lab], j) => { const { it, X } = pick(bn, key); const k = `${X.t.scope}_${key.replace(/_of_the_states|_of_centre_and_states|^combined_/g, "").replace(/total_liabilities.*/, "liabilities")}`;
+    const mkR = (G, fys, stageCut, gdpName) => { const s = {}; ITEMS.forEach(([bn, key, lab], j) => { const { it, X } = pick(bn, key); const k = `${X.t.scope}_${key.replace(/_of_the_states|_of_centre_and_states|^combined_/g, "").replace(/total_liabilities.*/, "liabilities")}`;
       s[k] = { name: `${k}_pct_gdp`, label: `${lab}, per cent of GDP (computed)`, unit: "pct_gdp", group: X.t.scope === "centre" ? "Centre" : X.t.scope === "states" ? "States" : "Centre and states", color: j === 0 ? C.accent : C.g2,
         data: fys.map((fy) => { const g = G.get(fy), o = it.byFY.get(fy); if (g == null || o == null || (X.reFY && fy >= X.reFY && !stageCut)) return null; if (X.reFY && fy > X.reFY) return null; return r4((100 * o.v) / g); }) };
-      if (stageCut) s[k].note = `The last year may be a revised estimate (Centre ${T["centre-deficits"].reFY}, states and combined ${T["allstates-deficits"].reFY}).`; }); return s; };
+      if (stageCut) s[k].note = `The last year may be a revised estimate (Centre ${T["centre-deficits"].reFY}, states and combined ${T["allstates-deficits"].reFY}).`;
+      s[k].derived = true; s[k].derivedNote = `${lab.replace(/^(Centre|States|Centre and states): /, (m, g) => (g === "Centre" ? "The Centre's " : g === "States" ? "The states' " : "The Centre's and states' "))} as the RBI prints it in rupees (DBIE report ${X.t.id}), divided by MoSPI's GDP at current prices, ${gdpName}; computed by India Atlas, not an RBI ratio.`; }); return s; };
     const fb = [...GB.keys()].filter((fy) => fy >= "1970-71" && fy <= "2010-11").sort();
-    write("ratios-backcast", { meta: meta({ frequency: "annual", unit: "pct_gdp", base: "GDP 2011-12 series", vintage, latestPeriod: fb.at(-1),
+    write("ratios-backcast", { meta: meta({ source: "Computed by India Atlas from RBI DBIE (amounts) and MoSPI NAS (GDP)", frequency: "annual", unit: "pct_gdp", base: "GDP 2011-12 series", vintage, latestPeriod: fb.at(-1),
       coverage: "Deficits, interest, taxes, spending and debt as a share of GDP on one ruler, 1970-71 to 2010-11: the RBI's rupee figures over MoSPI's back-cast of the 2011-12 GDP series",
       note: "Computed here: the accounts in the RBI's rupee tables divided by GDP at current market prices from the NSO's back series on the 2011-12 base (gdp-back-levels; the NSO's own link, drawn as a back-cast). From 2011-12 the RBI's published ratios are on this same series (checked: our division reproduces its GFD ratio), so this bundle stops at 2010-11. Different from the RBI's published ratios for these years, which divide by the GDP series of the time (1999-2000 and 2004-05 bases)." }),
-      dates: fb.map(fyStart), series: mkR(GB, fb, false) });
+      dates: fb.map(fyStart), series: mkR(GB, fb, false, "the NSO's back series on the 2011-12 base") });
     const f22 = [...G22.keys()].sort();
-    const s22 = mkR(G22, f22, true);
+    const s22 = mkR(G22, f22, true, "2022-23 series");
     for (const s of Object.values(s22)) s.data = s.data.map((v, i) => v);   // the revised-estimate year is kept and named in the note
-    write("ratios-2022", { meta: meta({ frequency: "annual", unit: "pct_gdp", base: "GDP 2022-23 series", vintage: g22.meta.vintage > vintage ? vintage : g22.meta.vintage, latestPeriod: f22.at(-1),
+    write("ratios-2022", { meta: meta({ source: "Computed by India Atlas from RBI DBIE (amounts) and MoSPI NAS (GDP)", frequency: "annual", unit: "pct_gdp", base: "GDP 2022-23 series", vintage: g22.meta.vintage > vintage ? vintage : g22.meta.vintage, latestPeriod: f22.at(-1),
       coverage: "The same ratios over the new GDP series (2022-23 base), 2022-23 on: what the deficit and debt look like against the larger or smaller economy the new series measures",
       note: `Computed here: the RBI's rupee figures over GDP at current market prices on the 2022-23 base (gdp-2022-annual-levels). The RBI still divides by the 2011-12 series. The Centre's ${T["centre-deficits"].reFY} figure is its revised estimate and the states' ${T["allstates-deficits"].reFY} theirs, over the NSO's estimate of that year's GDP; budget estimates are left out (they assume a GDP the NSO has not measured).` }),
       dates: f22.map(fyStart), series: s22 });

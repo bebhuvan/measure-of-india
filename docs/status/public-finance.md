@@ -32,6 +32,13 @@ Branch `lb/public-finance`. Guide `/guides/public-finance/` (port 4431). Updated
   checked against the data (the 2000-01 jump in the Centre's net income tax is the change to
   sharing all central taxes; the earlier GDP rebasings moved the deficit ratio little).
 
+- Derived labels (coordinator's review, 2026-10-10): every computed series carries
+  `derived: true` and a `derivedNote` (the two GDP-ruler bundles, shares of the budget, running
+  totals, sums and counts); the ratio bundles' meta.source names RBI and MoSPI and says the ratio
+  is India Atlas's. The which-GDP plate draws our two rulers dashed beside the RBI's solid one;
+  the pre-2011-12 back-cast on the deficit and debt plates stays a pale tint (seamMarks agency,
+  DESIGN) with the computation named in subtitle and source. Gates re-run green.
+
 ## Next
 
 Nothing outstanding. Possible follow-ups: an every-state fiscal table (the States guide holds
