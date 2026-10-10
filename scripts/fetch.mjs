@@ -83,6 +83,12 @@ Object.assign(REGISTRY, { core: buildCore, "iip-1980": buildIip1980 });   // ind
 Object.assign(REGISTRY, { cpiiw: buildCpiiw, "wages-rural": buildWagesRural });   // prices (lb/prices)
 import { buildProfilesNfhs6 } from "./lib/products/profiles-nfhs6.mjs";   // profiles (lb/profiles)
 Object.assign(REGISTRY, { "profiles-nfhs6": buildProfilesNfhs6 });   // profiles (lb/profiles)
+import { buildMarkets, buildMarketsIssues } from "./lib/products/markets.mjs";   // markets (lb/markets)
+Object.assign(REGISTRY, { markets: buildMarkets, "markets-issues": buildMarketsIssues });   // markets (lb/markets)
+import { buildMarketsCompanies } from "./lib/products/markets-companies.mjs";   // markets (lb/markets)
+Object.assign(REGISTRY, { "markets-companies": buildMarketsCompanies });   // markets (lb/markets)
+import { buildMarketsHubOnce } from "./lib/products/markets-hub.mjs";   // markets (lb/markets)
+Object.assign(REGISTRY, { "markets-hub": buildMarketsHubOnce });   // markets (lb/markets)
 
 // One product's failure must not starve the rest: collect, continue, and
 // exit non-zero at the end so CI still fails on the summary.

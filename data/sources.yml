@@ -1655,6 +1655,72 @@ dossiers:
       pdf_url: "https://www.nfhsiips.in/nfhsuser/assets/National%20Family%20Health%20Survey%20(NFHS-6)%202023-2024%20Fact%20Sheets.pdf"
       pdf_sha256: "59dec561e837bea060b6684a75caca84e0c982ed9e2670848521755f2ab267f9"
   # ---- end profiles ----
+  # ---- markets (lb/markets): savings outside banks, markets, companies, expectations ----
+  # Adapters: scripts/lib/products/markets.mjs (Data Bank DBIE reports), markets-companies.mjs
+  # (RBI company finance studies, Data Bank), markets-hub.mjs (Survey of Professional
+  # Forecasters and listed-company tables via the RBI Innovation Hub). Catalogue:
+  # scripts/lib/products/markets-catalogue.mjs. Bundles of different rulers name their own base.
+  markets:
+    stale_after: "2025-09"
+    frequency_exempt: true    # daily, monthly, quarterly and annual tables
+    family: databank
+    geo: IND
+    product: markets
+    frequency: monthly
+    base: "as published"
+    release_calendar: "monthly RBI Bulletin and weekly supplement tables; annual Handbook tables each September"
+    revision_policy: "The RBI's tables are final as printed except household financial flows, which are preliminary and revised as more data arrive; the latest print of each period is kept and earlier ones stay in the raw archive."
+    source_agency: "Reserve Bank of India (DBIE, via the local Data Bank)"
+    release_url: https://data.rbi.org.in
+  markets-issues:
+    stale_after: "2026-03"
+    frequency_exempt: true
+    family: databank
+    geo: IND
+    product: markets-issues
+    frequency: monthly
+    base: "current layout"
+    release_calendar: "monthly, in the RBI Bulletin, about two months after the month"
+    revision_policy: "Final as printed; the RBI's annual table is its own and can differ from the sum of months, which is disclosed, never reconciled."
+    source_agency: "Reserve Bank of India (DBIE, via the local Data Bank), from SEBI and stock-exchange filings"
+    release_url: https://data.rbi.org.in
+  markets-companies:
+    stale_after: "2024-04"
+    frequency_exempt: true
+    family: databank
+    geo: IND
+    product: markets-companies
+    frequency: annual
+    base: "Ind AS format (studies 2020-21 on)"
+    release_calendar: "one study a year for each company type, about a year after the fiscal year"
+    revision_policy: "Each study is final for its own sample of companies; a later study re-measures the earlier year on a different sample, kept beside it, never chained."
+    source_agency: "Reserve Bank of India, studies of company finances (DBIE, via the local Data Bank)"
+    release_url: https://data.rbi.org.in
+  markets-listed:
+    stale_after: "2025-10"
+    frequency_exempt: true
+    family: rbihub
+    geo: IND
+    product: markets-hub
+    frequency: quarterly
+    base: "as published"
+    release_calendar: "quarterly, about three months after the quarter, in the RBI's data on listed companies"
+    revision_policy: "Each quarter's figures come from the companies that reported in that quarter; growth rates compare the same companies a year apart and are final as printed."
+    source_agency: "Reserve Bank of India, DBIE, via the Reserve Bank Innovation Hub's data service"
+    release_url: https://dbie.rbihub.in
+  markets-spf:
+    stale_after: "2026-07"
+    frequency_exempt: true
+    family: rbihub
+    geo: IND
+    product: markets-hub
+    frequency: bimonthly
+    base: "GDP 2022-23, CPI 2024 (round 99 on)"
+    release_calendar: "every two months, with the monetary policy statement"
+    revision_policy: "Each round's forecasts are final as published; later rounds are new forecasts, never revisions."
+    source_agency: "Reserve Bank of India, Survey of Professional Forecasters, DBIE, via the Reserve Bank Innovation Hub's data service"
+    release_url: https://dbie.rbihub.in
+  # ---- end markets ----
 
 # ---------------------------------------------------------------------------
 # SEAMS: the base-year registry (2026-10). One entry per base (or
@@ -2226,3 +2292,55 @@ seams:
       to: null
       bundles: [profiles-nfhs6]
   # ---- end profiles ----
+  # ---- markets (lb/markets) ----
+  # New capital issues: the RBI's annual table is in calendar years to 1980 and fiscal years from
+  # 1981-82; the monthly report carries a current layout and an old detailed one (to Nov 2024).
+  markets-issues:
+    - base: "calendar year"
+      from: "1970-01"
+      to: "1980-12"
+      bundles: [markets-issues-annual-cy]
+    - base: "fiscal year (April to March)"
+      from: "1981-04"
+      to: null
+      bundles: [markets-issues-annual]
+    - base: "current layout"
+      from: "1990-04"
+      to: null
+      bundles: [markets-issues]
+    - base: "old detailed layout"
+      from: "1990-04"
+      to: "2024-11"
+      bundles: [markets-issues-detail]
+  # The Survey of Professional Forecasters moved its GDP and CPI forecasts to the new bases
+  # (GDP 2022-23, CPI 2024) from round 99 (March 2026); earlier rounds forecast the old ones.
+  markets-spf:
+    - base: "GDP 2011-12, CPI 2012 (rounds 61 to 98)"
+      from: "2019-11"
+      to: "2026-01"
+      bundles: [markets-spf-2019, markets-spf-quarterly-2019, markets-spf-inflation-2019]
+    - base: "GDP 2022-23, CPI 2024 (round 99 on)"
+      from: "2026-03"
+      to: null
+      bundles: [markets-spf, markets-spf-quarterly, markets-spf-inflation]
+  # Company finance studies: the RBI moved its studies to the Ind AS format from the 2020-21 study
+  # (there is no 2019-20 study); the NBFC studies ran 2013-14 to 2018-19 on their own format; the
+  # listed manufacturing half-yearly table was discontinued in 2019. Each format is a ruler.
+  markets-companies:
+    - base: "Old reporting format (studies 2011-12 to 2018-19)"
+      from: "2009-04"
+      to: "2018-04"
+      bundles: [markets-co-fdi-assets-2011, markets-co-fdi-distribution-country-2011, markets-co-fdi-forex-2011, markets-co-fdi-growth-2011, markets-co-fdi-growth-2011-prior, markets-co-fdi-growth-country-2011, markets-co-fdi-growth-country-2011-prior, markets-co-fdi-growth-industry-2011, markets-co-fdi-growth-industry-2011-prior, markets-co-fdi-growth-ownership-2011, markets-co-fdi-growth-ownership-2011-prior, markets-co-fdi-income-2011, markets-co-fdi-liabilities-2011, markets-co-fdi-ratios-2011, markets-co-fdi-ratios-2011-prior, markets-co-fdi-ratios-2011-prior2, markets-co-fdi-ratios-country-2011, markets-co-fdi-ratios-country-2011-prior, markets-co-fdi-ratios-country-2011-prior2, markets-co-fdi-ratios-industry-2011, markets-co-fdi-ratios-industry-2011-prior, markets-co-fdi-ratios-industry-2011-prior2, markets-co-fdi-sources-2011, markets-co-fdi-uses-2011, markets-co-private-assets-2011, markets-co-private-forex-2011, markets-co-private-growth-2011, markets-co-private-growth-2011-prior, markets-co-private-growth-industry-2011, markets-co-private-growth-industry-2011-prior, markets-co-private-income-2011, markets-co-private-liabilities-2011, markets-co-private-ratios-2011, markets-co-private-ratios-2011-prior, markets-co-private-ratios-2011-prior2, markets-co-private-ratios-industry-2011, markets-co-private-ratios-industry-2011-prior, markets-co-private-ratios-industry-2011-prior2, markets-co-private-sources-2011, markets-co-private-uses-2011, markets-co-public-assets-2011, markets-co-public-forex-2011, markets-co-public-growth-2011, markets-co-public-growth-2011-prior, markets-co-public-growth-industry-2011, markets-co-public-growth-industry-2011-prior, markets-co-public-growth-puc-2011, markets-co-public-growth-puc-2011-prior, markets-co-public-growth-sales-2011, markets-co-public-growth-sales-2011-prior, markets-co-public-income-2011, markets-co-public-liabilities-2011, markets-co-public-ratios-2011, markets-co-public-ratios-2011-prior, markets-co-public-ratios-2011-prior2, markets-co-public-ratios-industry-2011, markets-co-public-ratios-industry-2011-prior, markets-co-public-ratios-industry-2011-prior2, markets-co-public-ratios-puc-2011, markets-co-public-ratios-puc-2011-prior, markets-co-public-ratios-puc-2011-prior2, markets-co-public-ratios-sales-2011, markets-co-public-ratios-sales-2011-prior, markets-co-public-ratios-sales-2011-prior2, markets-co-public-sources-2011, markets-co-public-uses-2011]
+    - base: "Ind AS format (studies 2020-21 on)"
+      from: "2018-04"
+      to: null
+      bundles: [markets-co-fdi-assets, markets-co-fdi-distribution-country, markets-co-fdi-growth, markets-co-fdi-growth-country, markets-co-fdi-growth-country-prior, markets-co-fdi-growth-industry, markets-co-fdi-growth-industry-prior, markets-co-fdi-growth-ownership, markets-co-fdi-growth-ownership-prior, markets-co-fdi-growth-prior, markets-co-fdi-income, markets-co-fdi-liabilities, markets-co-fdi-ratios, markets-co-fdi-ratios-country, markets-co-fdi-ratios-country-prior, markets-co-fdi-ratios-country-prior2, markets-co-fdi-ratios-industry, markets-co-fdi-ratios-industry-prior, markets-co-fdi-ratios-industry-prior2, markets-co-fdi-ratios-prior, markets-co-fdi-ratios-prior2, markets-co-fdi-sources, markets-co-fdi-uses, markets-co-private-assets, markets-co-private-growth, markets-co-private-growth-industry, markets-co-private-growth-industry-prior, markets-co-private-growth-prior, markets-co-private-income, markets-co-private-liabilities, markets-co-private-ratios, markets-co-private-ratios-industry, markets-co-private-ratios-industry-prior, markets-co-private-ratios-industry-prior2, markets-co-private-ratios-prior, markets-co-private-ratios-prior2, markets-co-private-sources, markets-co-private-uses, markets-co-public-assets, markets-co-public-growth, markets-co-public-growth-industry, markets-co-public-growth-industry-prior, markets-co-public-growth-prior, markets-co-public-growth-puc, markets-co-public-growth-puc-prior, markets-co-public-growth-sales, markets-co-public-growth-sales-prior, markets-co-public-income, markets-co-public-liabilities, markets-co-public-ratios, markets-co-public-ratios-industry, markets-co-public-ratios-industry-prior, markets-co-public-ratios-industry-prior2, markets-co-public-ratios-prior, markets-co-public-ratios-prior2, markets-co-public-ratios-puc, markets-co-public-ratios-puc-prior, markets-co-public-ratios-puc-prior2, markets-co-public-ratios-sales, markets-co-public-ratios-sales-prior, markets-co-public-ratios-sales-prior2, markets-co-public-sources, markets-co-public-uses]
+    - base: "NBFC study format (studies 2013-14 to 2018-19)"
+      from: "2011-04"
+      to: "2018-04"
+      bundles: [markets-co-nbfc-assets-activity, markets-co-nbfc-growth-activity, markets-co-nbfc-growth-activity-prior, markets-co-nbfc-income-activity, markets-co-nbfc-liabilities-activity, markets-co-nbfc-ratios-activity, markets-co-nbfc-ratios-activity-prior, markets-co-nbfc-ratios-activity-prior2, markets-co-nbfc-sources-activity, markets-co-nbfc-uses-activity]
+    - base: "as published"
+      from: "2018-04"
+      to: "2019-04"
+      bundles: [markets-co-listed-halfyear]
+  # ---- end markets ----
