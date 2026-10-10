@@ -336,6 +336,15 @@ const CARDS = [
     foot: (b) => { const m = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][+b.dates.at(-1).slice(5, 7) - 1]; return `India's merchandise exports and imports, monthly, US$ billion, to ${m} ${b.dates.at(-1).slice(0, 4)}. Source: Ministry of Commerce, TradeStat (DGCI&S)`; },
   },
   // --- end trade ---
+  // ---- farms (lb/farms): foodgrains, rice and wheat since 1950-51, final estimates ----
+  {
+    slug: "farms", bundleSlug: "farms-production",
+    keys: ["foodgrains", "rice", "wheat"], d0: 0, d1: 400, band: null, trend: null, scale: 1 / 1000,
+    yStep: 100, fmt: (v) => v.toFixed(1) + " mt", mr: 220,
+    prep: (S) => { S.foodgrains = { ...S.foodgrains, label: "Foodgrains", color: "#2E4BD8" }; S.rice = { ...S.rice, label: "Rice", color: "#5F6675" }; S.wheat = { ...S.wheat, label: "Wheat", color: "#C47A16" }; },
+    foot: (b) => { const y = +b.dates.at(-1).slice(0, 4); return `Foodgrain, rice and wheat production, million tonnes, 1950-51 to ${y}-${String((y + 1) % 100).padStart(2, "0")}, final estimates. Source: agriculture ministry, via the RBI`; },
+  },
+  // ---- end farms ----
 ];
 
 await ensureFonts();

@@ -256,4 +256,12 @@ export const SERIES_KWS = {
     ["retail payments", "retail_total_volume"], ["all payments", "total_value"],
   ],
   // --- end payments ---
+  // ---- farms (lb/farms): the current bundle is farms-production (output by crop) ----
+  farms: [
+    ["coarse cereals", "coarse_cereals"], ["millets", "coarse_cereals"], ["foodgrains", "foodgrains"], ["foodgrain", "foodgrains"], ["grain harvest", "foodgrains"],
+    ["cereals", "cereals"], ["rice", "rice"], ["paddy", "rice"], ["wheat", "wheat"], ["pulses", "pulses"], ["dal", "pulses"],
+    ["groundnut", "groundnut"], ["mustard", "rapeseed_mustard"], ["rapeseed", "rapeseed_mustard"], ["soyabean", "soyabean"], ["soybean", "soyabean"], ["oilseeds", "oilseeds"],
+    ["sugarcane", "sugarcane"], ["cotton", "cotton"], ["jute", "jute_mesta"], ["tea", "tea"], ["coffee", "coffee"], ["tobacco", "tobacco"],
+  ],
+  // ---- end farms ----
 };

@@ -58,6 +58,8 @@ export const HEADLINE = {
   trade:         { value: (b) => `${last(b, "balance") < 0 ? "−" : ""}$${Math.abs(last(b, "balance") / 1000).toFixed(1)} bn`, what: "merchandise trade balance (exports minus imports)", period: month },
   // payments (lb/payments): UPI payments in the month, crore
   payments:      { value: (b) => `${(last(b, "upi_volume") / 1e7).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} crore`, what: "UPI payments made in the month", period: month },
+  // farms (lb/farms): the latest final foodgrain harvest, million tonnes
+  farms:         { value: (b) => `${(last(b, "foodgrains") / 1000).toFixed(1)} million tonnes`, what: "foodgrains harvested in the crop year (final estimate)", period: fy },
 };
 
 // The small chart beside each guide's figure: always on the current ruler, so a chart never
@@ -97,6 +99,7 @@ export const SPARK = {
   credit:        { bundle: "credit-growth", series: "headline" },
   trade:         { bundle: "trade-total", series: "exports", n: 60 },   // trade (lb/trade)
   payments:      { bundle: "payments-monthly", series: "upi_volume" },   // payments (lb/payments)
+  farms:         { bundle: "farms-production", series: "foodgrains" },   // farms (lb/farms)
 };
 
 const cache = {};

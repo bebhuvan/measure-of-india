@@ -1689,6 +1689,24 @@ dossiers:
 #
 # Windows are the agency's own spans for each base, checked live on the MoSPI
 # MCP server 2026-10-09 (get_metadata + get_data probes).
+  # ---- farms (lb/farms): what India grows, where, per hectare, and what the state pays ----
+  # RBI DBIE agriculture reports via the Data Bank, report 190 and the Handbook grids via the
+  # RBI Innovation Hub (scripts/lib/products/farms.mjs). Rulers kept apart: the ministry's
+  # final estimates and its latest advance estimate; index numbers on three bases.
+  farms:
+    # regression floor: final crop estimates run to 2024-25 (2025-26 is an advance estimate)
+    stale_after: "2024-04"
+    family: databank
+    geo: IND
+    product: farms
+    frequency: annual
+    frequency_exempt: true      # the part-year stock position is dated, not annual
+    base: "ministry final estimates"
+    release_calendar: "annual in the RBI Handbook (September); the agriculture ministry's advance estimates through the crop year, final estimates about a year after it ends; MSPs before each sowing season"
+    revision_policy: "Advance estimates are revised until the ministry's final estimates; final figures change rarely. The latest year is kept apart as an advance estimate, never joined to the final years."
+    source_agency: "Reserve Bank of India, DBIE (agriculture ministry and food ministry data), via the Data Bank"
+    release_url: https://data.rbi.org.in
+  # ---- end farms ----
 seams:
   cpi:
     - base: "2012=100"
@@ -2280,3 +2298,30 @@ seams:
       to: null
       bundles: [payments-erupee]
   # ---- end payments ----
+  # ---- farms (lb/farms) ----
+  farms:
+    - base: "ministry final estimates"
+      from: "1950-04"
+      to: null
+      bundles: [farms-production, farms-area, farms-yield, farms-states-production]
+    - base: "ministry advance estimates"
+      from: "2022-04"
+      to: null
+      bundles: [farms-advance, farms-states-production-advance]
+    - base: "TE 1981-82=100"
+      from: "1949-04"
+      to: "1993-04"
+      bundles: [farms-index-1982]
+    - base: "TE 1993-94=100"
+      from: "1993-04"
+      to: "2007-04"
+      bundles: [farms-index-1994]
+    - base: "TE 2007-08=100"
+      from: "2007-04"
+      to: null
+      bundles: [farms-index-2008]
+    - base: "as published"
+      from: "1950-04"
+      to: null
+      bundles: [farms-msp, farms-landuse, farms-pds, farms-pds-latest, farms-states-fertiliser]
+  # ---- end farms ----

@@ -85,6 +85,8 @@ import { buildProfilesNfhs6 } from "./lib/products/profiles-nfhs6.mjs";   // pro
 Object.assign(REGISTRY, { "profiles-nfhs6": buildProfilesNfhs6 });   // profiles (lb/profiles)
 import { buildPayments } from "./lib/products/payments.mjs";   // payments (lb/payments)
 Object.assign(REGISTRY, { payments: buildPayments });   // payments (lb/payments)
+import { buildFarms } from "./lib/products/farms.mjs";   // farms (lb/farms)
+Object.assign(REGISTRY, { farms: buildFarms });   // farms (lb/farms)
 
 // One product's failure must not starve the rest: collect, continue, and
 // exit non-zero at the end so CI still fails on the summary.

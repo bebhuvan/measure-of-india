@@ -620,6 +620,25 @@ const PRODUCTS = [
     ...["groups", "subgroups", "subsubgroups", "items"].map((l) => ({ slug: `wpi-${t}-${l}`, dossier: "wpi", cadence: 1, staleAfter: stale, range: [-95, 900], base })),
   ]),
   // ---- end prices wave 2 ----
+  // ---- farms (lb/farms): crop output, area, yield (thousand tonnes or bales, thousand ha, kg/ha),
+  // index numbers on three bases, MSP (Rs per quintal), land use, procurement and stocks (lakh tonnes).
+  // Sugarcane runs to 500,000 thousand tonnes and 85,000 kg/ha, the largest numbers here; its
+  // statutory minimum price was Rs 8.50 a quintal in 1976-77, the smallest.
+  { slug: "farms-production", dossier: "farms", cadence: 12, range: [0, 700000] },
+  { slug: "farms-area", dossier: "farms", cadence: 12, range: [0, 200000] },
+  { slug: "farms-yield", dossier: "farms", cadence: 12, range: [0, 100000] },
+  { slug: "farms-advance", dossier: "farms", cadence: 12, staleAfter: "2025-04", range: [0, 700000], base: "ministry advance estimates" },
+  { slug: "farms-index-1982", dossier: "farms", cadence: 12, staleAfter: "1993-04", range: [0, 600], base: "TE 1981-82=100" },
+  { slug: "farms-index-1994", dossier: "farms", cadence: 12, staleAfter: "2007-04", range: [0, 600], base: "TE 1993-94=100" },
+  { slug: "farms-index-2008", dossier: "farms", cadence: 12, range: [0, 600], base: "TE 2007-08=100" },
+  { slug: "farms-msp", dossier: "farms", cadence: 12, staleAfter: "2026-04", range: [1, 20000], base: "as published" },
+  { slug: "farms-landuse", dossier: "farms", cadence: 12, range: [0, 250000], base: "as published" },
+  { slug: "farms-pds", dossier: "farms", cadence: 12, staleAfter: "2025-04", range: [0, 2000], base: "as published" },
+  { slug: "farms-pds-latest", dossier: "farms", noCadence: true, freq: "irregular", staleAfter: "2026-05", range: [0, 2500], base: "as published" },
+  { slug: "farms-states-production", dossier: "farms", cadence: 12, staleAfter: "2021-04", range: [0, 700000] },
+  { slug: "farms-states-production-advance", dossier: "farms", cadence: 12, staleAfter: "2022-04", range: [0, 700000], base: "ministry advance estimates" },
+  { slug: "farms-states-fertiliser", dossier: "farms", cadence: 12, staleAfter: "2020-04", range: [0, 1500], base: "as published" },
+  // ---- end farms ----
 ];
 
 for (const p of PRODUCTS) {
@@ -3383,6 +3402,83 @@ withBundle("wages-rural-2013", (b) => {
   }));
 }
 // ---- end payments ----
+
+/* ---- farms (lb/farms): the crop tables' own identities ---- */
+withBundle("farms-production", (b) => withBundle("farms-area", (a) => withBundle("farms-yield", (y) => {
+  const P = b.series, at = (s, i) => s?.data[i];
+  // the group totals RBI prints are the sums of their parts (each part rounded on its own)
+  let wc = 0, wf = 0, wcAt = null, wfAt = null;
+  b.dates.forEach((d, i) => {
+    const c = at(P.cereals, i) - at(P.rice, i) - at(P.wheat, i) - at(P.coarse_cereals, i);
+    const f = at(P.foodgrains, i) - at(P.cereals, i) - at(P.pulses, i);
+    if (Number.isFinite(c) && Math.abs(c) / at(P.cereals, i) > Math.abs(wc)) { wc = Math.abs(c) / at(P.cereals, i); wcAt = d; }
+    if (Number.isFinite(f) && Math.abs(f) / at(P.foodgrains, i) > Math.abs(wf)) { wf = Math.abs(f) / at(P.foodgrains, i); wfAt = d; }
+  });
+  if (wc > 0.001) fail(`farms-production: cereals differ from rice + wheat + coarse cereals by ${(wc * 100).toFixed(2)}% at ${wcAt}`);
+  if (wf > 0.001) fail(`farms-production: foodgrains differ from cereals + pulses by ${(wf * 100).toFixed(2)}% at ${wfAt}`);
+  // yield is production over area (kg per hectare = thousand tonnes / thousand ha x 1000)
+  let wy = 0, wyAt = null;
+  for (const k of ["rice", "wheat", "foodgrains"]) b.dates.forEach((d, i) => {
+    const j = a.dates.indexOf(d), q = y.dates.indexOf(d);
+    const pv = P[k].data[i], av = a.series[k].data[j], yv = y.series[k].data[q];
+    if (pv == null || !av || !yv) return;
+    const r = Math.abs((pv / av) * 1000 / yv - 1);
+    if (r > wy) { wy = r; wyAt = `${k} ${d}`; }
+  });
+  if (wy > 0.03) fail(`farms: yield differs from production over area by ${(wy * 100).toFixed(1)}% (${wyAt})`);
+  ok(`farms: cereals and foodgrains equal their parts within ${(Math.max(wc, wf) * 100).toFixed(3)}%; rice, wheat and foodgrain yield equal output over area within ${(wy * 100).toFixed(1)}%`);
+})));
+withBundle("farms-advance", (b) => {
+  const S = b.series;
+  const d = S.production_foodgrains.data[0] - S.production_cereals.data[0] - S.production_pulses.data[0];
+  if (Math.abs(d) > 0.001 * S.production_foodgrains.data[0]) fail(`farms-advance: foodgrains differ from cereals + pulses by ${d}`);
+  if (b.dates.length !== 1) fail(`farms-advance: ${b.dates.length} years; the advance estimate is one year`);
+  else ok(`farms-advance: one year (${b.dates[0].slice(0, 4)}), foodgrains equal cereals + pulses`);
+});
+withBundle("farms-pds", (b) => {
+  const S = b.series;
+  let bad = 0;
+  b.dates.forEach((d, i) => {
+    for (const w of ["procurement", "offtake"]) {
+      const t = S[`${w}_total`].data[i], r = S[`${w}_rice`].data[i] ?? 0, h = S[`${w}_wheat`].data[i] ?? 0;
+      if (t != null && Math.abs(t - r - h) > 0.25) { bad++; fail(`farms-pds: ${w} total ${t} != rice ${r} + wheat ${h} at ${d}`); }
+    }
+    // total stocks include coarse grains, so they are at least rice plus wheat
+    const t = S.stocks_total.data[i], r = S.stocks_rice.data[i], h = S.stocks_wheat.data[i];
+    if (t != null && r != null && h != null && t < r + h - 0.25) { bad++; fail(`farms-pds: stocks total ${t} below rice + wheat at ${d}`); }
+  });
+  if (+b.dates[0].slice(0, 4) < 1972) fail("farms-pds: starts before 1972-73; the 1950-51 to 1970-71 stock rows have no readable unit");
+  if (!bad) ok("farms-pds: procurement and off-take totals equal rice plus wheat; stocks at least rice plus wheat");
+});
+withBundle("farms-landuse", (b) => {
+  const S = b.series;
+  let bad = 0;
+  b.dates.forEach((d, i) => {
+    const ns = S.net_sown_area.data[i], gs = S.gross_sown_area.data[i], ni = S.net_irrigated_area.data[i], gi = S.gross_irrigated_area.data[i];
+    if (ns != null && gs != null && gs < ns) { bad++; fail(`farms-landuse: gross sown below net sown at ${d}`); }
+    if (ni != null && gi != null && gi < ni) { bad++; fail(`farms-landuse: gross irrigated below net irrigated at ${d}`); }
+    if (ns != null && ni != null && ni > ns) { bad++; fail(`farms-landuse: net irrigated above net sown at ${d}`); }
+  });
+  if (!bad) ok("farms-landuse: gross areas never below net, irrigated never above sown");
+});
+withBundle("farms-states-production", (b) => withBundle("farms-production", (n) => {
+  // the state table's All India against the national table (the state table is not revised as
+  // often, so they can differ by a few per cent in old years)
+  let w = 0, wAt = null;
+  b.dates.forEach((d, i) => {
+    const j = n.dates.indexOf(d), s = b.series.all_india__foodgrains.data[i], v = n.series.foodgrains.data[j];
+    if (j < 0 || s == null || v == null) return;
+    const r = Math.abs(s / v - 1);
+    if (r > w) { w = r; wAt = d; }
+  });
+  if (w > 0.05) fail(`farms-states-production: All India foodgrains differ from the national table by ${(w * 100).toFixed(1)}% at ${wAt}`);
+  else ok(`farms-states-production: All India foodgrains within ${(w * 100).toFixed(1)}% of the national table (worst ${wAt})`);
+  for (const k of Object.keys(b.series)) if (/_undivided__/.test(k)) {
+    const last = b.dates[b.series[k].data.findLastIndex((v) => v != null)];
+    if (last > "2014-04-01") fail(`farms-states-production: ${k} runs to ${last}, past its state's split`);
+  }
+}));
+// ---- end farms ----
 
 // META TEXT — every bundle on disk, whatever check family it belongs to, and every sources.yml
 // entry the adapters copy text from: meta.geo is a three-letter code on every bundle (CONTRACT-series
