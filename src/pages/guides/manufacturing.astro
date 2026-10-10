@@ -5,6 +5,18 @@ import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
 const D = bySlug["manufacturing"];
+// review-a (2026-10): the growth plate's title and its list of falls are counted from the
+// bundle, not typed (the typed "three falls" missed 2022 once the vintage showed -1.7%)
+import fs from "node:fs";
+const MB = JSON.parse(fs.readFileSync("data/series/wdi-manufacturing.json", "utf8"));
+const FALLS = MB.dates.map((d, i) => ({ y: d.slice(0, 4), v: MB.series.mva_growth.data[i] })).filter((x) => x.v != null && x.v < 0);
+const G_YEARS = MB.series.mva_growth.data.filter((v) => v != null).length;
+const WORDS = ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+const NUMW = (n) => WORDS[n] ?? String(n);
+const TENS = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+const yearsW = G_YEARS < 20 ? String(G_YEARS) : TENS[Math.floor(G_YEARS / 10)] + (G_YEARS % 10 ? "-" + WORDS[G_YEARS % 10] : "");
+const listW = (xs) => xs.length < 2 ? xs.join("") : xs.slice(0, -1).join(", ") + " and " + xs.at(-1);
+const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1);
 ---
 <Base
   title="Manufacturing · India Atlas"
@@ -166,7 +178,7 @@ const D = bySlug["manufacturing"];
       <figure id="cb-growth" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>Three falls in sixty-five years: and one whipsaw</h3>
+            <h3>{cap(NUMW(FALLS.length))} falls in {yearsW} years, and one whipsaw</h3>
             <div class="sub">Manufacturing value added, annual growth, per cent, calendar years 1961–2025, the zero line is drawn strong</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-growth">–</div><div class="c">2025, annual growth</div></div>
@@ -186,7 +198,7 @@ const D = bySlug["manufacturing"];
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>One point per calendar year, growth over the year before. The line has crossed below zero only three times on this vintage: <b id="ex-growth-trough">–</b> (the deepest fall on record), 1991, and 2019. The peak was <b id="ex-growth-peak">–</b> in 2006, the height of the 2000s boom.</p>
+            <p>One point per calendar year, growth over the year before. The line has crossed below zero only {NUMW(FALLS.length)} times on this vintage, in {listW(FALLS.map((f) => f.y))}; the deepest fall on record is <b id="ex-growth-trough">–</b>. The peak was <b id="ex-growth-peak">–</b> in 2006, the height of the 2000s boom.</p>
             <p>The pandemic does not appear as one clean crash. Annual calendar data smears the lockdown quarters (March–June 2020, in India's fiscal Q1) across neighbouring years, so 2019–2023 reads as a whipsaw: <b id="ex-growth-whipsaw">–</b>. No single annual point is "the lockdown".</p>
           </div>
           <div class="now">

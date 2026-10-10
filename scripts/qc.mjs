@@ -15,6 +15,8 @@ import { pathToFileURL, fileURLToPath } from "node:url";
 import { JSDOM } from "jsdom";
 import { DOSSIERS, bySlug } from "../src/dossiers/registry.js";
 import * as fmt from "../src/charts/format.js";
+import { round as roundP } from "../src/dossiers/precision.js";   // review-a: rates shown at the agency's precision
+const R1 = (v) => roundP(v, 1);
 import * as display from "../src/dossiers/display.js";
 import * as PF from "../src/dossiers/payments.fmt.js";   // payments (lb/payments): the guide's own renderers
 
@@ -33,58 +35,58 @@ const PAGES = [
   // titleblock and §01 lead with the 2024-base print; the 2012-base story
   // (§05 plate, core) stays below — both bundles are checked
   { url: "/guides/cpi/", slug: null, checks: [
-    ["n-head", (b) => fmt.pct2(b["cpi-2024"].series.headline.data.at(-1))],
-    ["n-food", (b) => fmt.pct2(b["cpi-2024"].series.food_and_beverages.data.at(-1))],
-    ["n-old", (b) => fmt.pct2(b.cpi.series.headline.data.at(-1))],
-    ["n-core", (b) => fmt.pct2(b.cpi.series.core.data.at(-1))],
-    ["pv-nb", (b) => fmt.pct2(b["cpi-2024"].series.headline.data.at(-1))],
-    ["nb-old-final", (b) => fmt.pct2(b.cpi.series.headline.data.at(-1))],
-    ["ex-hjan", (b) => fmt.pct2(b.cpi.series.headline.data.at(-12))],
+    ["n-head", (b) => fmt.pct1(R1(b["cpi-2024"].series.headline.data.at(-1)))],
+    ["n-food", (b) => fmt.pct1(R1(b["cpi-2024"].series.food_and_beverages.data.at(-1)))],
+    ["n-old", (b) => fmt.pct1(R1(b.cpi.series.headline.data.at(-1)))],
+    ["n-core", (b) => fmt.pct1(R1(b.cpi.series.core.data.at(-1)))],
+    ["pv-nb", (b) => fmt.pct1(R1(b["cpi-2024"].series.headline.data.at(-1)))],
+    ["nb-old-final", (b) => fmt.pct1(R1(b.cpi.series.headline.data.at(-1)))],
+    ["ex-hjan", (b) => fmt.pct1(R1(b.cpi.series.headline.data.at(-12)))],
     ["prov-vintage", (b) => b.cpi.meta.vintage],
     ["prov-vintage24", (b) => b["cpi-2024"].meta.vintage],
     ["prov-vintage2", (b) => b["cpi-2024"].meta.vintage],
     // v2.4 — the 358-item ledger and the new-base state strip
     ["pv-tail24", (b) => {
       const vals = Object.values(b["cpi-2024-items"].series).map((s) => s.data.at(-1)).filter((v) => v != null);
-      return fmt.pct2(Math.max(...vals));
+      return fmt.pct1(Math.max(...vals.map(R1)));
     }],
     ["ex-t24neg", (b) => fmt.count(Object.values(b["cpi-2024-items"].series).map((s) => s.data.at(-1)).filter((v) => v != null && v < 0).length)],
     ["pv-st24", (b) => {
       const vals = Object.values(b["cpi-2024-states"].series).map((s) => s.data.at(-1)).filter((v) => v != null);
-      return fmt.pt1(Math.max(...vals) - Math.min(...vals));
+      return fmt.pt1(Math.max(...vals.map(R1)) - Math.min(...vals.map(R1)));
     }],
-    ["pf-st24-ai", (b) => fmt.pct2(b["cpi-2024"].series.headline.data.at(-1))],
+    ["pf-st24-ai", (b) => fmt.pct1(R1(b["cpi-2024"].series.headline.data.at(-1)))],
     // ---- prices wave 2 (lb/prices): CPI-IW, rural wages, state x division, the 2012 groups and items
-    ["pv-iw", (b) => fmt.pct2(b["cpiiw-2016"].series.general.data.at(-1))],
-    ["iw-yago", (b) => fmt.pct2(b["cpiiw-2016"].series.general.data.at(-13))],
-    ["iwg-food", (b) => fmt.pct2(b["cpiiw-2016"].series.food.data.at(-1))],
+    ["pv-iw", (b) => fmt.pct1(R1(b["cpiiw-2016"].series.general.data.at(-1)))],
+    ["iw-yago", (b) => fmt.pct1(R1(b["cpiiw-2016"].series.general.data.at(-13)))],
+    ["iwg-food", (b) => fmt.pct1(R1(b["cpiiw-2016"].series.food.data.at(-1)))],
     ["iwc-n", (b) => fmt.count(Object.values(b["cpiiw-centres-2016"].series).filter((s) => s.data.at(-1) != null).length)],
-    ["iwc-ai", (b) => fmt.pct2(b["cpiiw-2016"].series.general.data.at(-1))],
+    ["iwc-ai", (b) => fmt.pct1(R1(b["cpiiw-2016"].series.general.data.at(-1)))],
     ["pv-wage", (b) => fmt.inrR(b["wages-rural-2013"].series.o1210.data.filter((v) => v != null).at(-1))],
     ["wgs-ai", (b) => fmt.inrR(b["wages-rural-2013"].series.o1210.data.filter((v) => v != null).at(-1))],
     ["stdiv-cells", (b) => fmt.count(Object.values(b["cpi-2024-states-divisions"].series).filter((s) => s.data.at(-1) != null).length)],
-    ["oth-misc", (b) => fmt.pct2(b["cpi-groups"].series.miscellaneous.data.at(-1))],
-    ["oth-housing", (b) => fmt.pct2(b["cpi-groups"].series.housing.data.at(-1))],
+    ["oth-misc", (b) => fmt.pct1(R1(b["cpi-groups"].series.miscellaneous.data.at(-1)))],
+    ["oth-housing", (b) => fmt.pct1(R1(b["cpi-groups"].series.housing.data.at(-1)))],
     ["pv-items12", (b) => Math.max(...Object.values(b["cpi-items-2012"].series).map((s) => s.latest_level).filter((v) => v != null)).toFixed(1)],
     ["it12-below", (b) => { const n = Object.values(b["cpi-items-2012"].series).filter((s) => s.latest_level != null && s.latest_level < 100).length; return n === 1 ? "only one item was" : fmt.count(n) + " items were"; }],
   ]},
   { url: "/guides/gdp/", slug: null, checks: [
-    ["n-gdp", (b) => fmt.pct2(b["gdp-2022"].series.gdp.data.at(-1))],
-    ["n-gfcf", (b) => fmt.pct2(b["gdp-2022"].series.gfcf.data.at(-1))],
+    ["n-gdp", (b) => fmt.pct1(R1(b["gdp-2022"].series.gdp.data.at(-1)))],
+    ["n-gfcf", (b) => fmt.pct1(R1(b["gdp-2022"].series.gfcf.data.at(-1)))],
     // v1.8 slots: engines, deflator wedge, saving rate, the 2022-23 base
     ["pv-ind", (b) => {
       const s = b["gdp-industries"].series;
-      return fmt.pct2(Math.max(...Object.values(s).map((x) => x.data.at(-1))));
+      return fmt.pct1(R1(Math.max(...Object.values(s).map((x) => x.data.at(-1)))));
     }],
-    ["ex-eng-agri", (b) => fmt.pct2(b["gdp-industries"].series.agriculture.data.at(-1))],
-    ["pv-defl", (b) => fmt.pct2(b["gdp-nominal"].series.deflator.data.at(-1))],
-    ["ex-defl-n", (b) => fmt.pct2(b["gdp-nominal"].series.gdp_nominal.data.at(-1))],
+    ["ex-eng-agri", (b) => fmt.pct1(R1(b["gdp-industries"].series.agriculture.data.at(-1)))],
+    ["pv-defl", (b) => fmt.pct1(R1(b["gdp-nominal"].series.deflator.data.at(-1)))],
+    ["ex-defl-n", (b) => fmt.pct1(R1(b["gdp-nominal"].series.gdp_nominal.data.at(-1)))],
     ["ac-sav", (b) => fmt.pct1(b["gdp-accounts"].series.saving_rate.data.filter((v) => v != null).at(-1))],
-    ["pv-nb", (b) => fmt.pct2(b["gdp-2022"].series.gdp.data.at(-1))],
+    ["pv-nb", (b) => fmt.pct1(R1(b["gdp-2022"].series.gdp.data.at(-1)))],
     // 2022-23 base engines and the back series (2026-10)
-    ["pv-nbind", (b) => fmt.pct2(Math.max(...Object.values(b["gdp-2022-industries"].series).map((s) => s.data.at(-1))))],
+    ["pv-nbind", (b) => fmt.pct1(R1(Math.max(...Object.values(b["gdp-2022-industries"].series).map((s) => s.data.at(-1)))))],
     ["pv-si", (b) => b["gdp-back"].series.saving_rate.data.filter((v) => v != null).at(-1).toFixed(1) + "%"],
-    ["nb-q3", (b) => fmt.pct2(b["gdp-2022"].series.gdp.data.at(-2))],
+    ["nb-q3", (b) => fmt.pct1(R1(b["gdp-2022"].series.gdp.data.at(-2)))],
     ["prov-vintage", (b) => b.gdp.meta.vintage],
     // ---- nas (wave 2): the deep accounts' plates ----
     ["pv-spend", (b) => fmt.pct1Minus(b["gdp-2022-annual-shares"].series.pfce.data.filter((v) => v != null).at(-1))],
@@ -119,25 +121,25 @@ const PAGES = [
   ]},
   { url: "/guides/iip/", slug: null, checks: [
     // industry (wave 2): financial years, the core eight
-    ["pv-fy", (b) => fmt.pct2Minus(b["iip-annual-2022"].series.general_growth.data.at(-1))],
-    ["pv-core", (b) => fmt.pct2Minus(b["core-2011"].series.composite_growth.data.at(-1))],
-    ["pv-corelong", (b) => fmt.pct2Minus(b["core-2011"].series.composite_growth.data[b["core-2011"].dates.indexOf("2020-04-01")])],
-    ["n-head", (b) => fmt.pct2(b["iip-2022"].series.general.data.at(-1))],
-    ["n-cap", (b) => fmt.pct2(b["iip-2022"].series.use_capital_goods.data.at(-1))],
+    ["pv-fy", (b) => fmt.pct1Minus(R1(b["iip-annual-2022"].series.general_growth.data.at(-1)))],
+    ["pv-core", (b) => fmt.pct1Minus(R1(b["core-2011"].series.composite_growth.data.at(-1)))],
+    ["pv-corelong", (b) => fmt.pct1Minus(R1(b["core-2011"].series.composite_growth.data[b["core-2011"].dates.indexOf("2020-04-01")]))],
+    ["n-head", (b) => fmt.pct1(R1(b["iip-2022"].series.general.data.at(-1)))],
+    ["n-cap", (b) => fmt.pct1(R1(b["iip-2022"].series.use_capital_goods.data.at(-1)))],
     // v1.2 deep-ledger plate: heritage bases 1993-94 / 2004-05
     ["pv-herit", (b) => {
       const v = Math.min(...b["iip-2004"].series.general.data.filter((x) => x != null));
-      return fmt.pct2Minus(v);
+      return fmt.pct1Minus(R1(v));
     }],
     ["her-gfc93", (b) => {
       const g04 = b["iip-2004"].series.general.data;
       const i = g04.indexOf(Math.min(...g04.filter((x) => x != null)));
       const d = b["iip-2004"].dates[i];
       const j = b["iip-1993"].dates.indexOf(d);
-      return fmt.pct2Plus(b["iip-1993"].series.general.data[j]);
+      return fmt.pct1Plus(R1(b["iip-1993"].series.general.data[j]));
     }],
-    ["her-end93", (b) => fmt.pct2(b["iip-1993"].series.general.data.filter((x) => x != null).at(-1))],
-    ["her-end04", (b) => fmt.pct2(b["iip-2004"].series.general.data.filter((x) => x != null).at(-1))],
+    ["her-end93", (b) => fmt.pct1(R1(b["iip-1993"].series.general.data.filter((x) => x != null).at(-1)))],
+    ["her-end04", (b) => fmt.pct1(R1(b["iip-2004"].series.general.data.filter((x) => x != null).at(-1)))],
     ["prov-vintage", (b) => b["iip-2022"].meta.vintage],
   ]},
   // external (lb/external, 2026-10): RBI DBIE bundles; amounts US$ million shown in US$ bn
@@ -397,7 +399,7 @@ const PAGES = [
     ["n-jobs", (b) => fmt.pct1(b["services-jobs-cy25"].series.tertiary__person_all_cws.data.at(-1))],
     ["rb-side", (b) => fmt.bnAuto(b["services-trade-monthly"].series.exports.data.at(-1))],
     ["pv-long", (b) => fmt.pct1(b["services-gva-2022-share"].series.services.data.at(-1))],
-    ["pv-quarter", (b) => fmt.pct2(b["gdp-2022-industries"].series.finance_realty.data.at(-1))],
+    ["pv-quarter", (b) => fmt.pct1(R1(b["gdp-2022-industries"].series.finance_realty.data.at(-1)))],
     ["ex-mo-exp", (b) => fmt.bnFixed1(b["services-trade-monthly"].series.exports.data.at(-1))],
     ["ex-mo-imp", (b) => fmt.bnFixed1(b["services-trade-monthly"].series.imports.data.at(-1))],
     ["ex-tl-sw", (b) => fmt.bnAuto(b["services-bop-annual"].series.s1_2_1_5_1_credit.data.at(-1) / 1000)],

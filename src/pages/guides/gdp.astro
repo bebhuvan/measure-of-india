@@ -126,7 +126,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
     <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit">The {NB_LAST} print</span></div>
     <div class="reading-top">
       <div><span class="rk">Current reading</span><div class="big" id="rb-big">–</div></div>
-      <p class="rt-cap">Real GDP growth, {NB_LAST_MONTHS}, on the 2022–23 base: {NB_LAST_VAL < NB_PREV_VAL ? "down" : "up"} from {NB_PREV_VAL.toFixed(2)}% the quarter before, against a rough pre-pandemic trend of 6%.</p>
+      <p class="rt-cap">Real GDP growth, {NB_LAST_MONTHS}, on the 2022–23 base: {NB_LAST_VAL < NB_PREV_VAL ? "down" : "up"} from {NB_PREV_VAL.toFixed(1)}% the quarter before, against a rough pre-pandemic trend of 6%.</p>
       <div><div class="band-scale" id="rb-scale"></div><div class="band-chip" id="rb-band">vs 6% trend: <b>–</b></div></div>
     </div>
     <div class="reading-cols">
@@ -201,8 +201,8 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <p>GDP and GVA move together because they are nearly the same thing: GDP = GVA + net indirect taxes. Consumption (PFCE) is the demand engine; when it outgrows GDP, households are confident, and vice versa.</p>
           </div>
           <div class="now">
-            <span class="mk">As of November 2025</span>
-            <p>The base-effect theatre is finally over: the last four quarters read <b id="ex-last4">–</b>: the cleanest trend signal since before the pandemic, and accelerating. Growth is running well above the old 6% trend, with consumption growing nearly as fast as the headline.</p>
+            <span class="mk">As of November 2025, the old base's last print</span>
+            <p>By the time this base closed, the base-effect years were over: its last four quarters, to Q2 FY26, read <b id="ex-last4">–</b>, the cleanest trend signal since before the pandemic, and accelerating, with consumption growing nearly as fast as the headline. The quarters since are on the 2022–23 base, in the current reading above and the new-base plate further down.</p>
             <p>The caution: these are early estimates. The quarterly series leans heavily on listed-company results and government accounts; the informal sector is extrapolated. Revisions over the next three years will redraw parts of this picture.</p>
           </div>
         </div>
@@ -216,8 +216,8 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
     <div class="wm-grid">
       <div>
         <p>Gross Domestic Product is the market value of everything produced inside India's borders in a period, with double-counting removed. It can be added up three ways: by what is <b>produced</b>, by what is <b>spent</b>, and by what is <b>earned</b>: and in India the three never quite agree, so the accounts publish a "discrepancies" line to absorb the difference.</p>
-        <p>The headline is <b>real</b> GDP: values at constant 2011–12 prices, so that growth means more output, not just higher prices. The nominal figure, current prices, runs several points higher when inflation is high, and it is the nominal number that tax collections and debt ratios actually care about.</p>
-        <p>Unlike the CPI, which is final on release, the national accounts are <b>revised relentlessly</b>: a quarter's growth is first estimated two months after it ends, then restated as annual surveys, tax data and the new base year arrive. Today's 8.2 is a pencil sketch that hardens over three years.</p>
+        <p>The headline is <b>real</b> GDP: values at the constant prices of a base year, 2022–23 on the current series, so that growth means more output, not just higher prices. The nominal figure, current prices, runs several points higher when inflation is high, and it is the nominal number that tax collections and debt ratios actually care about.</p>
+        <p>Unlike the CPI, which is final on release, the national accounts are <b>revised relentlessly</b>: a quarter's growth is first estimated two months after it ends, then restated as annual surveys, tax data and the new base year arrive. Each new quarter's first estimate is a pencil sketch that hardens over three years.</p>
       </div>
       <div class="wm-rail">
         <aside class="margin-note">
@@ -261,8 +261,8 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <p>What households spend on goods and services: the largest and steadiest block of demand. It tracks wages, rural incomes and consumer confidence, and it is the single best summary of how ordinary life is going. Sustained strength here is what turns a statistical recovery into a felt one.</p>
           </div>
           <div class="now">
-            <span class="mk">As of November 2025</span>
-            <p>At <b id="ex-pfce">–</b>, consumption is growing at nearly the pace of the headline: helped by two good monsoons and by food deflation freeing up household budgets.</p>
+            <span class="mk">As of November 2025, the old base's last print</span>
+            <p>At <b id="ex-pfce">–</b> in Q2 FY26, the last quarter on this base, consumption was growing at nearly the pace of the headline: helped by two good monsoons and by food deflation freeing up household budgets.</p>
           </div>
         </div>
       </figure>
@@ -290,8 +290,8 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <p>Spending on machines, buildings and infrastructure: the economy's bet on its own future. Note the y-axis: investment collapsed more than <b>40%</b> in the pandemic quarter and rebounded over 60%, the widest swing of any major component. Judge its level over a year, never a quarter.</p>
           </div>
           <div class="now">
-            <span class="mk">As of November 2025</span>
-            <p>At <b id="ex-gfcf">–</b>, investment is steady rather than surging. Public capex has been doing the heavy lifting; a broad private-sector capex cycle remains, as ever, one budget away.</p>
+            <span class="mk">As of November 2025, the old base's last print</span>
+            <p>At <b id="ex-gfcf">–</b> in Q2 FY26, the last quarter on this base, investment was steady rather than surging, with public capex doing the heavy lifting. The new base carries the line on; read its latest quarter in the current reading, never against this one.</p>
           </div>
         </div>
       </figure>
@@ -319,8 +319,8 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <p>GVA measures producers' output net of input costs, before product taxes and subsidies. Economists often prefer it as the cleaner read on supply conditions; newspapers usually quote GDP. When the two diverge, the cause is almost always net taxes: check before reading meaning into it.</p>
           </div>
           <div class="now">
-            <span class="mk">As of November 2025</span>
-            <p>At <b id="ex-gva">–</b>, GVA trails GDP only slightly: subsidy arithmetic, not weak production. The sectoral detail behind this line is where next quarter's story will come from.</p>
+            <span class="mk">As of November 2025, the old base's last print</span>
+            <p>At <b id="ex-gva">–</b> in Q2 FY26, GVA trailed GDP only slightly: subsidy arithmetic, not weak production.</p>
           </div>
         </div>
       </figure>
@@ -354,8 +354,8 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <p>All three swing harder than consumption. Government spending lurches with the fiscal calendar; trade answers to the world cycle and the oil bill. Read them for composition, not for trend.</p>
           </div>
           <div class="now">
-            <span class="mk">As of November 2025</span>
-            <p>Imports grew <b id="ex-imp">–</b> in the September quarter against <b id="ex-exp">–</b> for exports, so net trade subtracted from the print. Government consumption read <b id="ex-gfce">–</b>. The quarter belonged to households and builders, not to the state or the border.</p>
+            <span class="mk">As of November 2025, the old base's last print</span>
+            <p>Imports grew <b id="ex-imp">–</b> in the September 2025 quarter against <b id="ex-exp">–</b> for exports, so net trade subtracted from the print. Government consumption read <b id="ex-gfce">–</b>. That quarter belonged to households and builders, not to the state or the border.</p>
           </div>
         </div>
       </figure>
@@ -390,9 +390,9 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <p>Agriculture answers to the monsoon, not the cycle: it was the one engine still running through the lockdown quarter. Construction and trade are the swing engines; they fell close to half and rebuilt from there. Public administration moves with the budget, which makes it steady and tells you little about private demand.</p>
           </div>
           <div class="now">
-            <span class="mk">As of November 2025</span>
-            <p>The spread this quarter runs from <b id="ex-eng-slow">–</b> to <b id="ex-eng-fast">–</b>. Finance and real estate is the largest engine and the fastest; manufacturing, at <b id="ex-eng-mfg">–</b>, is having its best run in over a year. Mining is the one engine in the red: a monsoon story as much as a commodity one.</p>
-            <p>Agriculture grew <b id="ex-eng-agri">–</b>: its second good year in a row, and the reason food prices, and with them the CPI, have been so quiet.</p>
+            <span class="mk">As of November 2025, the old base's last print</span>
+            <p>In Q2 FY26, this base's last quarter, the spread ran from <b id="ex-eng-slow">–</b> to <b id="ex-eng-fast">–</b>. Finance and real estate was the largest engine and the fastest; manufacturing, at <b id="ex-eng-mfg">–</b>, was having its best run in over a year. Mining was the one engine in the red: a monsoon story as much as a commodity one.</p>
+            <p>Agriculture grew <b id="ex-eng-agri">–</b>: its second good year in a row, and one reason food prices, and with them the CPI, were so quiet through 2025. The eight engines on the new base are in the plate further down.</p>
           </div>
         </div>
       </figure>
@@ -430,9 +430,9 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
             <p>The deflator leans heavily on wholesale prices, a known quirk of Indian national accounting, so it tracks the <a href="/guides/wpi/">WPI</a> more than the <a href="/guides/cpi/">CPI</a>. That makes it honest about producer prices and unreliable as a cost-of-living measure. It can even turn negative while consumer inflation stays positive, as it did in FY16. When the two price worlds diverge, the deflator sides with the factory gate.</p>
           </div>
           <div class="now">
-            <span class="mk">As of November 2025</span>
-            <p>The wedge has nearly closed: nominal GDP grew <b id="ex-defl-n">–</b> against <b id="ex-defl-r">–</b> real, an implied deflator of <b id="ex-defl-d">–</b>: wholesale prices have stalled. Three years ago the deflator peaked at <b id="ex-defl-pk">–</b> and nominal growth flattered every ratio it touched.</p>
-            <p>A near-zero deflator cuts the other way: real growth looks fast while tax collections and nominal incomes grow no faster than the headline. The FY26 budget arithmetic was written for a fatter wedge.</p>
+            <span class="mk">As of November 2025, the old base's last print</span>
+            <p>In Q2 FY26 the wedge had nearly closed: nominal GDP grew <b id="ex-defl-n">–</b> against <b id="ex-defl-r">–</b> real, an implied deflator of <b id="ex-defl-d">–</b>, because wholesale prices had stalled. Three years earlier the deflator peaked at <b id="ex-defl-pk">–</b> and nominal growth flattered every ratio it touched.</p>
+            <p>A near-zero deflator cuts the other way: real growth looks fast while tax collections and nominal incomes grow no faster than the headline. The current reading at the top of the page gives the deflator on the new base.</p>
           </div>
         </div>
       </figure>
@@ -963,7 +963,7 @@ const NB_LAST_MONTHS = `${QMONTHS[nb22.dates.at(-1).slice(5, 7)]} ${nb22.dates.a
         <span class="no">vi.</span>
         <div>
           <h3>"Quarterly momentum = y/y growth."</h3>
-          <p>India publishes year-on-year quarterly growth; many countries publish annualised quarter-on-quarter. The two can move in opposite directions. Never compare India's 8.2 with America's 2.8 without checking which convention each used.</p>
+          <p>India publishes year-on-year quarterly growth; many countries publish annualised quarter-on-quarter. The two can move in opposite directions. Never compare India's year-on-year rate with America's 2.8 without checking which convention each used.</p>
         </div>
       </li>
       <li>

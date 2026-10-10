@@ -6,7 +6,7 @@ import GuideData from "../../components/GuideData.astro";
 import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
-import { period } from "../../dossiers/periods.js";
+import { period, word } from "../../dossiers/periods.js";
 const D = bySlug["services"];
 const load = (slug) => JSON.parse(fs.readFileSync(`data/series/${slug}.json`, "utf8"));
 // the large bundles ride in the page as picks of the series the plates draw; the whole files
@@ -25,6 +25,15 @@ const PICK = {
 const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
 const PS = period("services-gva-2022-share"), PT = period("services-trade-monthly"), PI = period("services-isp-growth");
 const fy = (p) => `${p.year}-${String((+p.year + 1) % 100).padStart(2, "0")}`;
+// review-a (2026-10): the trial ISP plate's title is counted from the latest month, not typed
+const ISPG = load("services-isp-growth"), iL = ISPG.dates.length - 1;
+const ispRows = Object.values(ISPG.series).map((s) => ({ label: s.label.trim().replace(/\s+/g, " "), v: s.data[iL], all: s.data.filter((v) => v != null) })).filter((r) => r.v != null);
+const ispDD = ispRows.filter((r) => r.v >= 10).length, ispNeg = ispRows.filter((r) => r.v < 0);
+const listW = (xs) => xs.length < 2 ? xs.join("") : xs.slice(0, -1).join(", ") + " and " + xs.at(-1);
+const capW = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+const ISP_TITLE = `${capW(word(ispDD))} of the ${word(ispRows.length)} service sub-sectors are growing in double digits; ` +
+  (ispNeg.length ? `${listW(ispNeg.map((r) => r.label.toLowerCase()))} ${ispNeg.length === 1 ? "is" : "are"} shrinking` : "none is shrinking");
+const alwaysBelow = ispRows.filter((r) => r.all.length > 1 && r.all.every((v) => v < 0)).map((r) => r.label.toLowerCase());
 ---
 <Base
   title="Services · India Atlas"
@@ -227,7 +236,7 @@ const fy = (p) => `${p.year}-${String((+p.year + 1) % 100).padStart(2, "0")}`;
       <figure id="cb-isp" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>About half the service sub-sectors are growing in double digits; air transport is shrinking</h3>
+            <h3>{ISP_TITLE}</h3>
             <div class="sub">Trial ISP, growth over the same month a year earlier, by sub-sector. Blue: the latest month; grey: the months before it. A trial series: treat every value as provisional.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-isp">–</div><div class="c">sub-sectors growing 10% or more</div></div>
@@ -250,7 +259,7 @@ const fy = (p) => `${p.year}-${String((+p.year + 1) % 100).padStart(2, "0")}`;
           </div>
           <div class="now">
             <span class="mk">As of July 2026</span>
-            <p>In <span id="ex-isp-m">–</span>, <b id="ex-isp-n">–</b> of the 19 sub-sectors grew 10% or more. The fastest was <b id="ex-isp-top">–</b> and the slowest <b id="ex-isp-bot">–</b>; <b id="ex-isp-neg">–</b> shrank. Air transport has been below its year-ago level in every month of the record.</p>
+            <p>In <span id="ex-isp-m">–</span>, <b id="ex-isp-n">–</b> of the {word(ispRows.length)} sub-sectors grew 10% or more. The fastest was <b id="ex-isp-top">–</b> and the slowest <b id="ex-isp-bot">–</b>; <b id="ex-isp-neg">–</b> shrank.{alwaysBelow.length ? ` ${capW(listW(alwaysBelow))} ${alwaysBelow.length === 1 ? "has" : "have"} been below the year-ago level in every month of the record.` : ""}</p>
           </div>
         </div>
       </figure>

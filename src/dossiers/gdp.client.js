@@ -4,20 +4,34 @@
 // constant-price levels, computed in the pipeline.
 
 import * as Plot from "@observablehq/plot";
-import bundle from "../../data/series/gdp.json";
-import expBundle from "../../data/series/gdp-expenditure.json";
-import accBundle from "../../data/series/gdp-accounts.json";
-import indBundle from "../../data/series/gdp-industries.json";
-import nomBundle from "../../data/series/gdp-nominal.json";
-import nbBundle from "../../data/series/gdp-2022.json";
-import nbIndBundle from "../../data/series/gdp-2022-industries.json";
-import nbExpBundle from "../../data/series/gdp-2022-expenditure.json";
-import nbAccBundle from "../../data/series/gdp-2022-accounts.json";
-import backBundle from "../../data/series/gdp-back.json";
+import bundle_raw from "../../data/series/gdp.json";
+import expBundle_raw from "../../data/series/gdp-expenditure.json";
+import accBundle_raw from "../../data/series/gdp-accounts.json";
+import indBundle_raw from "../../data/series/gdp-industries.json";
+import nomBundle_raw from "../../data/series/gdp-nominal.json";
+import nbBundle_raw from "../../data/series/gdp-2022.json";
+import nbIndBundle_raw from "../../data/series/gdp-2022-industries.json";
+import nbExpBundle_raw from "../../data/series/gdp-2022-expenditure.json";
+import nbAccBundle_raw from "../../data/series/gdp-2022-accounts.json";
+import backBundle_raw from "../../data/series/gdp-back.json";
 import {
   MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend, seamMarks, seamOverlap,
   peakOf, troughOf, peakBetween, dodgeEndLabels, spark, makePlacer, annotationSpot,
 } from "../charts/plumbing.js";
+
+import { roundRates } from "./precision.js";
+// review-a (2026-10): rates at the precision the agency publishes, rounded once as they load
+// (src/dossiers/precision.js), so every delta and spread on the page is redone from what is shown
+const bundle = roundRates(bundle_raw);
+const expBundle = roundRates(expBundle_raw);
+const accBundle = roundRates(accBundle_raw);
+const indBundle = roundRates(indBundle_raw);
+const nomBundle = roundRates(nomBundle_raw);
+const nbBundle = roundRates(nbBundle_raw);
+const nbIndBundle = roundRates(nbIndBundle_raw);
+const nbExpBundle = roundRates(nbExpBundle_raw);
+const nbAccBundle = roundRates(nbAccBundle_raw);
+const backBundle = roundRates(backBundle_raw);
 
 const S = hydrate(bundle);
 const E = hydrate(expBundle);
@@ -57,29 +71,29 @@ const LNB = {}; for (const k in NB) LNB[k] = NB[k].data.at(-1).value;
 const PNB = {}; for (const k in NB) PNB[k] = NB[k].data.at(-2).value;
 const prevQNB = "vs " + fmtDate(NB.gdp.data.at(-2).date).replace(/ FY\d+$/, "");
 const pc = '<span class="pc">%</span>';
-const arrow = (d) => (d >= 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(2) + " pt";
+const arrow = (d) => (d >= 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(1) + " pt";
 const word = (d) => (d >= 0 ? "accelerating" : "slowing");
 const prevQ = "vs " + fmtDate(dates.at(-2)).replace(/ FY\d+$/, "");
 const setHTML = (id, h) => (document.getElementById(id).innerHTML = h);
 const setTxt = (id, t) => (document.getElementById(id).textContent = t);
-const f1 = (v) => v.toFixed(2) + "%";
+const f1 = (v) => v.toFixed(1) + "%";
 
-setHTML("n-gdp", LNB.gdp.toFixed(2) + pc);
-setHTML("n-gva", LNB.gva.toFixed(2) + pc);
-setHTML("n-pfce", LNB.pfce.toFixed(2) + pc);
-setHTML("n-gfcf", LNB.gfcf.toFixed(2) + pc);
+setHTML("n-gdp", LNB.gdp.toFixed(1) + pc);
+setHTML("n-gva", LNB.gva.toFixed(1) + pc);
+setHTML("n-pfce", LNB.pfce.toFixed(1) + pc);
+setHTML("n-gfcf", LNB.gfcf.toFixed(1) + pc);
 setHTML("d-gdp", `<b>${arrow(LNB.gdp - PNB.gdp)}</b> ${prevQNB}, ${word(LNB.gdp - PNB.gdp)}`);
 setHTML("d-gva", `<b>${arrow(LNB.gva - PNB.gva)}</b> ${prevQNB}, ${word(LNB.gva - PNB.gva)}`);
 setHTML("d-pfce", `<b>${arrow(LNB.pfce - PNB.pfce)}</b> ${prevQNB}, ${word(LNB.pfce - PNB.pfce)}`);
 setHTML("d-gfcf", `<b>${arrow(LNB.gfcf - PNB.gfcf)}</b> ${prevQNB}, ${word(LNB.gfcf - PNB.gfcf)}`);
 
-setHTML("rb-big", LNB.gdp.toFixed(2) + pc);
-setHTML("rb-band", `vs 6% trend: <b>${(LNB.gdp - 6 >= 0 ? "+" : "") + (LNB.gdp - 6).toFixed(2)} pt</b>`);
+setHTML("rb-big", LNB.gdp.toFixed(1) + pc);
+setHTML("rb-band", `vs 6% trend: <b>${(LNB.gdp - 6 >= 0 ? "+" : "") + (LNB.gdp - 6).toFixed(1)} pt</b>`);
 {
   const W = 236, H = 46, min = 0, max = 10, val = LNB.gdp;
   const X = (v) => ((v - min) / (max - min)) * W, y = 18;
   document.getElementById("rb-scale").innerHTML =
-    `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Scale from 0 to 10 per cent. The rough pre-pandemic trend of 6 per cent is dashed; the current reading, ${val.toFixed(2)} per cent, is marked.">` +
+    `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Scale from 0 to 10 per cent. The rough pre-pandemic trend of 6 per cent is dashed; the current reading, ${val.toFixed(1)} per cent, is marked.">` +
     `<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="#DADDE3" stroke-width="1"/>` +
     `<line x1="${X(6)}" y1="${y - 10}" x2="${X(6)}" y2="${y + 10}" stroke="#878D99" stroke-width="1" stroke-dasharray="2,3"/>` +
     [0, 2, 4, 6, 8, 10].map((t, i, a) => `<text x="${X(t)}" y="${H - 6}" font-family="'Golos Text',sans-serif" font-size="11" fill="#878D99" text-anchor="${i === 0 ? "start" : i === a.length - 1 ? "end" : "middle"}">${t}%</text>`).join("") +
@@ -99,7 +113,7 @@ setTxt("pf-gfcf", `peak: ${pkF.value.toFixed(1)}%, ${fmtDate(pkF.date)}, latest:
 setTxt("pf-gva", `peak: ${pkV.value.toFixed(1)}%, ${fmtDate(pkV.date)}, latest: ${f1(L.gva)}`);
 
 /* ---------- expenditure-side numbers ---------- */
-const fSigned = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(2) + "%";
+const fSigned = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
 setTxt("pv-exp", f1(L.imports));
 setTxt("ex-imp", f1(L.imports));
 setTxt("ex-exp", f1(L.exports));
@@ -196,7 +210,7 @@ document.getElementById("ledger-body").innerHTML = regRows.map(([k, nm, sub, sw,
   placer.addRuleY(6).addRuleX(new Date(Date.UTC(2020, 3, 1)));
   /* the dodged end labels are obstacles too — nothing may overlap them */
   for (const p of dodged) {
-    const lbl = `${p.s.label} ${p.value.toFixed(2)}%`;
+    const lbl = `${p.s.label} ${p.value.toFixed(1)}%`;
     placer.addObstacleBox(placer.box({ x: dates.at(-1), y: p.y, anchor: "start", dx: 16 }, lbl, 14.5));
   }
   const trendSpot = placer.place("Rough pre-pandemic trend, 6%", 12, [
@@ -236,7 +250,7 @@ document.getElementById("ledger-body").innerHTML = regRows.map(([k, nm, sub, sw,
       { x: dates.at(-1), y: p.value }, { x: dates.at(-1), y: p.y },
     ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
     ...dodged.map((p) => Plot.text([{ date: dates.at(-1), y: p.y }], {
-      x: "date", y: "y", text: () => `${p.s.label} ${p.value.toFixed(2)}%`,
+      x: "date", y: "y", text: () => `${p.s.label} ${p.value.toFixed(1)}%`,
       dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono,
       fontWeight: p.s === S.gdp ? 500 : 400, textAnchor: "start",
     })),
@@ -297,7 +311,7 @@ function componentChart(blockId, plotId, key, d0, d1, yTicks, extraNote) {
       Plot.line(leader, { x: "x", y: "y", stroke: "#2E4BD8", strokeWidth: 1 }),
       Plot.text([{ date: textX, value: textY }], { x: "date", y: "value", text: [pkText], fill: "#161A22", fontSize: 12, fontFamily: mono, textAnchor: spot.anchor }),
       Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([s.data.at(-1)], { x: "date", y: "value", text: (d) => d.value.toFixed(2) + "%", dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.text([s.data.at(-1)], { x: "date", y: "value", text: (d) => d.value.toFixed(1) + "%", dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
   });
   a11y(plot, s.label + " growth, year-on-year, FY17 to FY26",
@@ -340,7 +354,7 @@ componentChart("cb-gva", "plot-gva", "gva", -28, 24, [-20, -10, 0, 10, 20], "GVA
         { x: dates.at(-1), y: p.value }, { x: dates.at(-1), y: p.y },
       ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
       ...dodged.map((p) => Plot.text([{ date: dates.at(-1), y: p.y }], {
-        x: "date", y: "y", text: () => `${p.s.label} ${p.value.toFixed(2)}%`,
+        x: "date", y: "y", text: () => `${p.s.label} ${p.value.toFixed(1)}%`,
         dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono,
         fontWeight: p.s === E.imports ? 500 : 400, textAnchor: "start",
       })),
@@ -364,7 +378,7 @@ componentChart("cb-gva", "plot-gva", "gva", -28, 24, [-20, -10, 0, 10, 20], "GVA
     ["cfc", "Capital consumption", "Depreciation of the stock", "#5F6675"],
     ["gcf_industry", "Capital formation", "Gross, all assets", "#5F6675"],
   ];
-  const fmtSigned = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(2) + "%";
+  const fmtSigned = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
   const grid = document.getElementById("grid-acc");
   for (const [k, nm, sub, col] of panels) {
     const s = ACC[k];
@@ -453,7 +467,7 @@ function enginesGrid(IND, SH, o) {
   // disclosed accent rule: the fastest and the slowest engine of the latest quarter
   const fastest = keys.reduce((a, k) => (latest[k] > latest[a] ? k : a));
   const slowest = keys.reduce((a, k) => (latest[k] < latest[a] ? k : a));
-  const fmtSigned = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(2) + "%";
+  const fmtSigned = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
   setTxt(o.ids.pv, f1(latest[fastest]));
   setTxt(o.ids.pvc, fmtDate(dts.at(-1)) + ", fastest: " + IND[fastest].label);
   if (o.ids.fast) setTxt(o.ids.fast, fmtSigned(latest[fastest]) + " (" + IND[fastest].label.toLowerCase() + ")");
@@ -558,7 +572,7 @@ enginesGrid(IND, SH, { grid: "grid-ind", cb: "cb-ind", baseLabel: "base 2011-12"
         { x: dates.at(-1), y: p.value }, { x: dates.at(-1), y: p.y },
       ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
       ...dodged.map((p) => Plot.text([{ date: dates.at(-1), y: p.y }], {
-        x: "date", y: "y", text: () => `${p.s.label} ${p.value.toFixed(2)}%`,
+        x: "date", y: "y", text: () => `${p.s.label} ${p.value.toFixed(1)}%`,
         dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono,
         fontWeight: p.s === N.gdp_nominal ? 500 : 400, textAnchor: "start",
       })),
@@ -610,7 +624,7 @@ setTxt("ac-sav0", ACC.saving_rate.data.find((d) => d.value != null).value.toFixe
         { x: nbDates.at(-1), y: p.value }, { x: nbDates.at(-1), y: p.y },
       ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
       ...dodged.map((p) => Plot.text([{ date: nbDates.at(-1), y: p.y }], {
-        x: "date", y: "y", text: () => `${p.s.label} ${p.value.toFixed(2)}%`,
+        x: "date", y: "y", text: () => `${p.s.label} ${p.value.toFixed(1)}%`,
         dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono,
         fontWeight: p.s === NB.gdp ? 500 : 400, textAnchor: "start",
       })),
@@ -635,7 +649,7 @@ setTxt("ac-sav0", ACC.saving_rate.data.find((d) => d.value != null).value.toFixe
   const newQ1 = NB.gdp.data.find((d) => d.date.getTime() === oldQ1.date.getTime());
   setTxt("nb-old-q1", f1(oldQ1.value));
   setTxt("nb-new-q1", f1(newQ1.value));
-  setTxt("nb-gap", Math.abs(oldQ1.value - newQ1.value).toFixed(2) + " pt");
+  setTxt("nb-gap", Math.abs(oldQ1.value - newQ1.value).toFixed(1) + " pt");
 }
 
 /* ---------- §11 seventy-five years: the NSO back series beside both bases ----------

@@ -4,6 +4,7 @@ import GuideData from "../../components/GuideData.astro";
 import EveryCut from "../../components/EveryCut.astro";
 import { bySlug, kicker } from "../../dossiers/registry.js";
 import { dateStamp } from "../../dossiers/display.js";
+import { word } from "../../dossiers/periods.js";
 const D = bySlug["factories"];
 // industry wages and plant size, read from the bundle (2-digit NIC, latest survey year)
 import ind from "../../../data/series/asi-industries.json";
@@ -404,7 +405,7 @@ const asiTabFy = accB ? `${accB.dates.at(-1).slice(0, 4)}-${String((+accB.dates.
           </div>
           <div class="now">
             <span class="mk">As of {asiFy}</span>
-            <p>Across all factories the average was <b id="wg-all">–</b> a year, about <b id="wg-month">–</b> a month. <b id="wg-below">–</b> of the <b id="wg-n">–</b> industries paid below that average. The three biggest employers paid <b id="wg-big">–</b> per person.</p>
+            <p>Across all factories the average was <b id="wg-all">–</b> a year, about <b id="wg-month">–</b> a month. <b id="wg-below">–</b> of the <b id="wg-n">–</b> industries paid below that average. The three biggest employers paid, per person: <b id="wg-big">–</b>.</p>
           </div>
         </div>
       </figure>
@@ -515,7 +516,7 @@ const asiTabFy = accB ? `${accB.dates.at(-1).slice(0, 4)}-${String((+accB.dates.
     <div class="break basket" style="margin-top:36px">
       <div class="bar" id="bar-wrk"></div>
       <div class="labels" id="lab-wrk"></div>
-      <p class="note" id="note-q">A quarterly ASUSE bulletin began with {qFirst}. It is {uq.dates.length} quarters old: a reading of scale, not yet of trend: <b id="q-now">–</b> establishments counted in {qNow}{qPrev ? <Fragment>, against <b id="q-then">–</b> in {qPrev}</Fragment> : ""}. We read the level and wait.</p>
+      <p class="note" id="note-q">A quarterly ASUSE bulletin began with {qFirst}. It is {word(uq.dates.length)} quarters old: a reading of scale, not yet of trend: <b id="q-now">–</b> establishments counted in {qNow}{qPrev ? <Fragment>, against <b id="q-then">–</b> in {qPrev}</Fragment> : ""}. We read the level and wait.</p>
     </div>
 
     <div class="break" style="margin-top:104px">
@@ -742,7 +743,7 @@ const asiTabFy = accB ? `${accB.dates.at(-1).slice(0, 4)}-${String((+accB.dates.
           </div>
           <div class="now">
             <span class="mk">As of 2023-24</span>
-            <p>Per 1,000 establishments: <b id="ex-m-bank">–</b> maintain a bank or post-office account, <b id="ex-m-net">–</b> use the internet, <b id="ex-m-comp">–</b> a computer. <b id="ex-m-gst">–</b> hold GST registration, <b id="ex-m-shops">–</b> a Shops &amp; Establishments registration: and <b id="ex-m-none">–</b> are registered under nothing. Hiring changes the picture: internet use is <b id="ex-m-hwe">–</b> per 1,000 among hired-worker establishments against <b id="ex-m-oae">–</b> among own-account ones.</p>
+            <p>Per 1,000 establishments: <b id="ex-m-bank">–</b> maintain a bank or post-office account, <b id="ex-m-net">–</b> use the internet, <b id="ex-m-comp">–</b> a computer. Only <b id="ex-m-gst">–</b> hold GST registration, <b id="ex-m-shops">–</b> a Shops &amp; Establishments registration: and <b id="ex-m-none">–</b> are registered under nothing. Hiring changes the picture: internet use is <b id="ex-m-hwe">–</b> per 1,000 among hired-worker establishments against <b id="ex-m-oae">–</b> among own-account ones.</p>
           </div>
         </div>
       </figure>

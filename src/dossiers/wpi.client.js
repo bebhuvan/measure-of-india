@@ -659,7 +659,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, fmtX, dlNa
   setTxt("pv-w2r", best.lag + (best.lag === 1 ? " month" : " months"));
   setTxt("pc-w2r", "best-fitting lag, correlation " + best.r.toFixed(2));
   setTxt("w2r-n", String(pts.length));
-  setTxt("w2r-lag", best.lag + (best.lag === 1 ? " month" : " months"));
+  setTxt("w2r-lag", best.lag === 0 ? "with no shift at all, in the same month" : "when shifted " + best.lag + (best.lag === 1 ? " month" : " months") + " later");
   setTxt("w2r-r", best.r.toFixed(2));
   setTxt("w2r-wrange", rng("w"));
   setTxt("w2r-crange", rng("c"));
