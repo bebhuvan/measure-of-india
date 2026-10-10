@@ -46,7 +46,7 @@ rules:
   status: shown
   bundle:
   - banks-groups-capital
-  - banks-health
+  - banks-ratios
   plate: §06 Profit, capital and margins
 - match:
   - rbih:1221:capital:*:bank
@@ -66,7 +66,7 @@ rules:
   status: shown
   bundle:
   - banks-groups-performance
-  - banks-health
+  - banks-ratios
   plate: §06 Profit, capital and margins
 - match:
   - rbih:1221:performance:*:bank
@@ -330,7 +330,7 @@ rules:
 - match: dbie:115
   status: shown
   bundle: credit-deep-branches-population
-  plate: '§09 Branches: half of all bank branches are now in villages and small towns'
+  plate: '§09 Branches: six in ten are in villages and small towns'
 - match: dbie:1508
   status: baked
   bundle:
@@ -527,7 +527,7 @@ rules:
 - match: dbie:619
   status: shown
   bundle: credit-deep-offices-bank-groups
-  plate: '§09 Branches: half of all bank branches are now in villages and small towns'
+  plate: '§09 Branches: six in ten are in villages and small towns'
 - match: dbie:642
   status: baked
   bundle:

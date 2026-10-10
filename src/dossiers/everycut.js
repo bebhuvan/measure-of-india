@@ -508,7 +508,16 @@ export const CUT_BY_BUNDLE = {
   "cpialrl-states-groups-2019": "State and group", "cpialrl-states-groups-1986": "State and group",
   "wpi-subsubgroups": "Sub-sub-group", "wpi-2022-subsubgroups": "Sub-sub-group",
   ...Object.fromEntries(["2004", "1993"].flatMap((t) => [[`wpi-${t}`, "All India"], [`wpi-${t}-groups`, "Group"], [`wpi-${t}-subgroups`, "Sub-group"], [`wpi-${t}-subsubgroups`, "Sub-sub-group"], [`wpi-${t}-items`, "Item"]])),
-  // --- end prices ---
+  // --- end prices ---,
+  // banks (lb/banks)
+  "banks-health": "Bank group and measure", "banks-ratios": "Bank group and measure", "banks-shares": "Bank or bank group",
+  ...Object.fromEntries(["balance-sheet", "asset-quality", "capital", "profitability", "performance", "sectoral", "priority", "infra", "infra-2014"].flatMap((t) => [[`banks-groups-${t}`, "Bank group and item"], [`banks-${t}`, "Bank and item"]])),
+  "banks-ucb-structure": "UCB group", "banks-ucb-npa": "UCB group and item", "banks-ucb-npa-dbie": "UCB group and item", "banks-ucb-indicators": "UCB group and ratio", "banks-ucb-indicators-dbie": "UCB group and ratio",
+  "banks-ucb-balance-sheet": "UCB group and item", "banks-ucb-balance-sheet-shares": "UCB group and item", "banks-ucb-income": "UCB group and item", "banks-ucb-states": "State", "banks-ucb-states-dbie": "State",
+  "banks-ucb-ratings": "Rating", "banks-ucb-ratings-dbie": "Rating", "banks-ucb-crar": "Capital band", "banks-ucb-crar-dbie": "Capital band", "banks-ucb-tiers": "Tier", "banks-ucb-size": "Size band", "banks-ucb-size-dbie": "Size band",
+  "banks-ucb-priority": "Sector", "banks-ucb-priority-dbie": "Sector", "banks-ucb-banks-balance-sheet": "UCB and item", "banks-ucb-banks-income": "UCB and item", "banks-ucb-banks-ratios": "UCB and ratio",
+  ...Object.fromEntries(["insured-deposits", "nabard", "sidbi", "nhb", "exim", "ifci", "sfcs", "assistance", "nabard-assistance", "nhb-refinance", "industrial-refinance", "dicgc-deposit-insurance", "dicgc-credit-guarantee", "dicgc-general", "lic-investments", "mutual-funds", "psu-bonds", "private-placement", "hdfc"].map((t) => [`banks-fi-${t}`, "Item"])),
+  // end banks
 };
 // the fallback, by what a bundle's slug says it is
 export const CUT_RULES = [

@@ -2362,7 +2362,7 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
  *   and the hand-checked values in the adapters' headers stay what they were. */
 {
   const files = fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => /^banks-.*\.json$/.test(f)).map((f) => f.replace(/\.json$/, ""));
-  if (files.length < 61) fail(`banks: only ${files.length} banks-* bundles (expected 61)`);
+  if (files.length < 62) fail(`banks: only ${files.length} banks-* bundles (expected 62)`);
   const RANGE = { inr_crore: [-5e7, 5e8], count: [0, 1e10], pct: [-1e7, 1e7] };
   let nSeries = 0;
   for (const slug of files) {
@@ -2471,6 +2471,19 @@ withBundle("mnre-solar-categories", (b) => withBundle("mnre-sources", (s) => {
     cnt("banks-ucb-ratings", "banks-ucb-ratings-dbie", (k) => (k.endsWith("__ucbs") ? k : null));
     cnt("banks-ucb-states", "banks-ucb-states-dbie", (k) => (k.endsWith("__ucbs") ? k : null));
     cnt("banks-ucb-structure", "banks-ucb-balance-sheet", (k) => ({ all__ucbs: "all__no_of_ucbs", scheduled__ucbs: "scheduled__no_of_ucbs", non_scheduled__ucbs: "non_scheduled__no_of_ucbs" })[k]);
+    // every split of the UCBs adds up to their number (report 812): tiers, ratings, size bands, states
+    {
+      const st = load("banks-ucb-structure"), N = new Map(st.dates.map((d, i) => [d, st.series.all__ucbs.data[i]]));
+      const sums = [["banks-ucb-tiers", (k) => k.endsWith("__ucbs") && !k.startsWith("all")], ["banks-ucb-ratings", (k) => k.endsWith("__ucbs") && !k.startsWith("total")],
+        ["banks-ucb-size", (k) => k.startsWith("deposits__") && k.endsWith("__number") && !k.includes("all_ucbs")], ["banks-ucb-states", (k) => k.endsWith("__ucbs") && load("banks-ucb-states").series[k].stateSlug]];
+      for (const [slug, pick] of sums) {
+        const b = load(slug); let n = 0, bad = [];
+        b.dates.forEach((d, i) => { const ks = Object.keys(b.series).filter(pick); const vs = ks.map((k) => b.series[k].data[i]).filter((v) => v != null); if (!vs.length || N.get(d) == null) return; n++;
+          const sum = vs.reduce((a, v) => a + v, 0); if (sum !== N.get(d)) bad.push(`${d}: ${sum} vs ${N.get(d)}`); });
+        if (n < 5 || bad.length) fail(`${slug}: the parts do not add up to the number of UCBs (report 812) in ${bad.length} of ${n} years (${bad.slice(0, 3).join("; ")})`);
+        else ok(`${slug}: the parts add up to the number of UCBs in all ${n} years`);
+      }
+    }
     // balance sheets balance
     const bs = load("banks-ucb-balance-sheet"); let n = 0, bad = 0;
     for (const g of ["scheduled", "non_scheduled", "all"]) bs.dates.forEach((d, i) => { const L = bs.series[`${g}__total_liabilities`]?.data[i], A = bs.series[`${g}__total_assets`]?.data[i]; if (L == null || A == null) return; n++; if (Math.abs(L - A) > 1) bad++; });

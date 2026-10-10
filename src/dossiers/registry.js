@@ -842,6 +842,49 @@ export const DOSSIERS = [
     ],
   },
   // --- end trade ---
+  // --- banks (lb/banks) ---
+  {
+    slug: "banks",
+    no: "26",
+    section: "Money",
+    name: "Banks, One by One",
+    title: "India's banks",   // the topic as a reader names it: nav, lists, search
+    kickerTitle: "Banks one by one, co-operative banks and lenders, RBI",
+    crumbTitle: "Banks one by one",
+    headline: "India's banks, <i>one by one.</i>",
+    ogTitle: "India's banks, one by one.",
+    blurb: "Which banks hold India's money and lend it, how public and private banks traded places, which are healthiest and most profitable, how the bad-loan cycle of 2015 to 2020 was cleaned up, and the co-operative banks, NBFCs and development banks beside them.",
+    description: "Every scheduled commercial bank, quarter by quarter since 2013: deposits, loans, bad loans, capital, profit and margins, bank by bank and by bank group; urban co-operative banks state by state and bank by bank; NBFCs, NABARD, SIDBI, NHB, EXIM Bank and deposit insurance. From the RBI's DBIE.",
+    rssDescription: "Bank by bank: deposits, bad loans, capital and profit of every scheduled commercial bank, and the co-operative banks and lenders beside them. Revised each quarter.",
+    stamp: { dateStyle: "month", vintageStyle: "vintage" },
+    statusNote: "Quarterly, revised with each RBI release of bank-wise data",
+    version: "v1.0",
+    currentBundle: "banks-health",
+    calendar: "fiscal-apr",
+    bands: null,
+    proseConstants: [100, 2018, 2026, 5],   // per 100 of advances; the peak year; DICGC's ₹5 lakh cover
+    spark: { bundle: "banks-health", series: "all_gnpa" },
+    prose: true,
+    proseInputs: ["banks-ratios"],
+    register: { id: "reg-banks", label: "Banks", unit: "Quarterly, all scheduled commercial banks, gross NPAs as a share of gross advances", historyCol: "Since 2013" },
+    everyCutInline: 600,
+    everyCutFamilies: [
+      { id: "ucb-tables", label: "Urban co-operative banks: the Outlook's tables, by group, state, size, rating and bank", match: "banks-ucb-" },
+      { id: "fi-tables", label: "Financial institutions: NABARD, SIDBI, NHB, EXIM Bank, IFCI, SFCs, DICGC, LIC and others", match: "banks-fi-" },
+    ],
+    bundles: [
+      "banks-health", "banks-ratios", "banks-shares",
+      ...["balance-sheet", "asset-quality", "capital", "profitability", "performance", "sectoral", "priority", "infra", "infra-2014"].flatMap((t) => [`banks-groups-${t}`, `banks-${t}`]),
+      "banks-ucb-structure", "banks-ucb-npa-dbie", "banks-ucb-npa", "banks-ucb-indicators-dbie", "banks-ucb-indicators", "banks-ucb-balance-sheet", "banks-ucb-balance-sheet-shares", "banks-ucb-income",
+      "banks-ucb-states", "banks-ucb-states-dbie", "banks-ucb-ratings", "banks-ucb-ratings-dbie", "banks-ucb-crar", "banks-ucb-crar-dbie", "banks-ucb-tiers", "banks-ucb-size", "banks-ucb-size-dbie",
+      "banks-ucb-priority", "banks-ucb-priority-dbie", "banks-ucb-banks-balance-sheet", "banks-ucb-banks-income", "banks-ucb-banks-ratios",
+      "banks-fi-insured-deposits", "banks-fi-nabard", "banks-fi-sidbi", "banks-fi-nhb", "banks-fi-exim", "banks-fi-ifci", "banks-fi-sfcs", "banks-fi-assistance", "banks-fi-nabard-assistance", "banks-fi-nhb-refinance",
+      "banks-fi-industrial-refinance", "banks-fi-dicgc-deposit-insurance", "banks-fi-dicgc-credit-guarantee", "banks-fi-dicgc-general", "banks-fi-lic-investments", "banks-fi-mutual-funds", "banks-fi-psu-bonds", "banks-fi-private-placement", "banks-fi-hdfc",
+      // drawn from the credit guide's bundles (read-only): branches, offices, NBFC credit
+      "credit-deep-branches-population", "credit-deep-offices-bank-groups", "credit-nbfc",
+    ],
+  },
+  // --- end banks ---
 ];
 export const bySlug = Object.fromEntries(DOSSIERS.map((d) => [d.slug, d]));
 

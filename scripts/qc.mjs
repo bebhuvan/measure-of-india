@@ -574,6 +574,27 @@ const PAGES = [
       minPlots: { "base-effects": 2, "real-vs-nominal": 0, revisions: 0, "per-capita": 0, "base-year": 0, "stocks-and-flows": 0, "averages-and-distribution": 0 }[e.slug] ?? 1,
       checks: [],
     })),
+  // --- banks (lb/banks): every number recomputed from the bundles ---
+  { url: "/guides/banks/", slug: null, minPlots: 20, checks: [
+    ["n-npa", (b) => fmt.pct2(b["banks-health"].series.all_gnpa.data.at(-1))],
+    ["pv-npa", (b) => fmt.pct2(b["banks-health"].series.all_gnpa.data.at(-1))],
+    ["ex-n-psb", (b) => fmt.pct2(b["banks-health"].series.psb_gnpa.data.at(-1))],
+    ["n-psb", (b) => fmt.pct1(b["banks-ratios"].series.psb_deposit_share.data.at(-1))],
+    ["ex-s-pvt", (b) => fmt.pct1(b["banks-shares"].series.private__deposits.data.at(-1))],
+    ["n-crar", (b) => fmt.pct2(b["banks-ratios"].series.all_crar.data.at(-1))],
+    ["ex-c-all", (b) => fmt.pct2(b["banks-ratios"].series.all_crar.data.at(-1))],
+    ["n-roa", (b) => fmt.pct2(b["banks-ratios"].series.all_roa.data.at(-1))],
+    ["pv-profit", (b) => { const p = b["banks-groups-profitability"]; const i = p.dates.findLastIndex((d) => d.endsWith("-03-01")); return fmt.lc1(p.series.all__net_profit_loss_pat__global.data[i] / 1e5); }],
+    ["pv-margins", (b) => fmt.pct2(b["banks-groups-performance"].series.all__net_interest_margin_nim_annualized__domestic.data.at(-1))],
+    ["ex-mg-sbi", (b) => fmt.lc1(Math.round(b["banks-balance-sheet"].series.state_bank_of_india__total_deposits__domestic.data.at(-1) / 1e3) / 100)],
+    ["pv-sector-npa", (b) => fmt.pct2(b["banks-groups-sectoral"].series.all__industry_gnpa_ratio__domestic.data.at(-1))],
+    ["pv-ucb", (b) => fmt.inr(b["banks-ucb-structure"].series.all__ucbs.data.at(-1))],
+    ["ex-u-npa", (b) => fmt.pct2(b["banks-ucb-npa-dbie"].series.all__gross_npa_ratio.data.at(-1))],
+    ["pv-insured", (b) => { const s = b["banks-fi-insured-deposits"].series; return fmt.pct1((100 * s.total_amount_of_insured_deposits.data.at(-1)) / s.total_amount_of_assessable_deposits.data.at(-1)); }],
+    ["pv-fi", (b) => fmt.lc1(Math.round(b["banks-fi-nabard"].series.liabilities_total_liabilities.data.at(-1) / 1e3) / 100)],
+    ["prov-vintage", (b) => b["banks-health"].meta.vintage],
+  ]},
+  // --- end banks ---
 ];
 
 // startup guard: the PAGES table and the dossier registry must cover each

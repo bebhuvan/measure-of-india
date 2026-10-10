@@ -361,8 +361,9 @@ export function bakeShares(root, metaBase) {
     for (const [k, s] of Object.entries(b.series)) {
       if (!k.endsWith(`__${item}__domestic`)) continue;
       const ai = b.dates.map((d) => g.dates.indexOf(d));
-      series[`${k.replace(`__${item}__domestic`, "")}__${word}`] = { name: `${k.replace(`__${item}__domestic`, "")}__${word}_share_pct`, unit: "pct", group: s.group, bank: s.bank,
-        label: `${s.bank}, share of all banks' ${word} (derived: bank / all scheduled commercial banks, domestic operations (offices in India))`,
+      const bank = s.label.split(", ")[0];
+      series[`${k.replace(`__${item}__domestic`, "")}__${word}`] = { name: `${k.replace(`__${item}__domestic`, "")}__${word}_share_pct`, unit: "pct", group: s.group,
+        label: `${bank}, share of all banks' ${word} (derived: bank / all scheduled commercial banks, domestic operations (offices in India))`,
         data: b.dates.map((d, i) => (s.data[i] != null && all.data[ai[i]] ? Math.round((s.data[i] / all.data[ai[i]]) * 10000) / 100 : null)),
         ...(s.mergerNote ? { mergerNote: s.mergerNote } : {}) };
     }
@@ -405,10 +406,17 @@ export function bakeHealth(root, metaBase) {
     series[`${g}_${k}`] = { name: `${g}_${k}_pct`, unit: "pct", group: GROUP_LABEL[g], label: `${GROUP_LABEL[g]}, ${what}, domestic operations`, data: src.data.slice(), ...(src.gaps ? { gaps: src.gaps, gapsNote: src.gapsNote } : {}) };
   }
   for (const g of ["psb", "private"]) { const src = sh.series[`${g}__deposits`]; series[`${g}_deposit_share`] = { name: `${g}_deposit_share_pct`, unit: "pct", group: GROUP_LABEL[g], label: `${GROUP_LABEL[g]}, share of all banks' deposits in India (derived)`, data: src.data.slice() }; }
+  // two bundles: the bad-loan ratios (one comparable measure, the guide's current bundle) and
+  // the other ratios (capital, returns, margins, deposit shares)
+  const pick = (re) => Object.fromEntries(Object.entries(series).filter(([k]) => re.test(k)));
   writeSeries(root, "data/series/banks-health.json", { meta: { ...metaBase, frequency: "quarterly", unit: "pct", base: "Off-site returns, as published", latestPeriod: dates.at(-1).slice(0, 7),
-    coverage: "How healthy India's banks are, quarter by quarter: bad loans, capital, returns and margins for all scheduled commercial banks and each bank group, and the public and private banks' share of deposits",
-    note: "A selection from RBI DBIE report 1221 (tables 2, 3 and 5; domestic operations), copied as published from banks-groups-asset-quality, banks-groups-capital and banks-groups-performance; the deposit shares are derived (banks-shares). Small finance banks are reported from December 2016." },
-    dates, series });
+    coverage: "Bad loans of India's banks, quarter by quarter: gross and net NPA ratios of all scheduled commercial banks and each bank group",
+    note: "A selection from RBI DBIE report 1221 (table 2, domestic operations), copied as published from banks-groups-asset-quality. Small finance banks are reported from December 2016." },
+    dates, series: pick(/_(gnpa|nnpa)$/) });
+  writeSeries(root, "data/series/banks-ratios.json", { meta: { ...metaBase, frequency: "quarterly", unit: "pct", base: "Off-site returns, as published", latestPeriod: dates.at(-1).slice(0, 7),
+    coverage: "Capital, returns and margins of all scheduled commercial banks and each bank group, quarter by quarter, and the public and private banks' share of deposits",
+    note: "A selection from RBI DBIE report 1221 (tables 3 and 5, domestic operations), copied as published from banks-groups-capital and banks-groups-performance; the deposit shares are derived (banks-shares)." },
+    dates, series: pick(/_(crar|roa|roe|nim|deposit_share)$/) });
 }
 
 /* ---------- the coverage catalogue (docs/CONTRACT-coverage.md) ----------

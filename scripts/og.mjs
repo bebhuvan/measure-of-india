@@ -326,6 +326,15 @@ const CARDS = [
     foot: (b) => { const m = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][+b.dates.at(-1).slice(5, 7) - 1]; return `India's merchandise exports and imports, monthly, US$ billion, to ${m} ${b.dates.at(-1).slice(0, 4)}. Source: Ministry of Commerce, TradeStat (DGCI&S)`; },
   },
   // --- end trade ---
+  // --- banks (lb/banks) ---
+  {
+    slug: "banks", bundleSlug: "banks-health",
+    keys: ["psb_gnpa", "private_gnpa", "all_gnpa"], d0: 0, d1: 16, band: null, trend: null,
+    yStep: 4, fmt: (v) => v.toFixed(1) + "%", mr: 230,
+    prep: (S) => { S.psb_gnpa = { ...S.psb_gnpa, label: "Public sector banks", color: "#2E4BD8" }; S.private_gnpa = { ...S.private_gnpa, label: "Private sector banks", color: "#C47A16" }; S.all_gnpa = { ...S.all_gnpa, label: "All banks", color: "#161A22" }; },
+    foot: (b) => { const d = b.dates.at(-1); return `Banks' bad loans, gross NPAs as a share of advances, every quarter to ${["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}. Source: RBI, DBIE`; },
+  },
+  // --- end banks ---
 ];
 
 await ensureFonts();

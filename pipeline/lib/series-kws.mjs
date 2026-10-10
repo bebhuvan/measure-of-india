@@ -237,4 +237,15 @@ export const SERIES_KWS = {
     ["trade deficit", "balance"], ["deficit", "balance"], ["trade balance", "balance"], ["balance", "balance"], ["surplus", "balance"],
   ],
   // --- end trade ---
+  // --- banks (lb/banks): the headline selection banks-health (bank groups' ratios, domestic operations) ---
+  banks: [
+    ["public sector banks' net", "psb_nnpa"], ["private sector banks' net", "private_nnpa"], ["foreign banks' net", "foreign_nnpa"], ["small finance banks' net", "sfb_nnpa"],
+    ["net npa", "all_nnpa"], ["net bad loans", "all_nnpa"], ["net of provisions", "all_nnpa"],
+    ["public sector", "psb_gnpa"], ["state-owned", "psb_gnpa"], ["government-owned", "psb_gnpa"],
+    ["private sector", "private_gnpa"], ["private banks", "private_gnpa"],
+    ["foreign banks", "foreign_gnpa"], ["foreign", "foreign_gnpa"],
+    ["small finance", "sfb_gnpa"],
+    ["gross npa", "all_gnpa"], ["bad loans", "all_gnpa"], ["bad-loan", "all_gnpa"], ["all banks", "all_gnpa"], ["commercial banks", "all_gnpa"],
+  ],
+  // --- end banks ---
 };

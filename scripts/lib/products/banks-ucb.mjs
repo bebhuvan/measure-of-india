@@ -219,27 +219,37 @@ function singleYear(csv, { labelRe, measures, unitOf, skipRow = () => false, gro
   return C;
 }
 
-// 772: three side-by-side blocks (by deposits, by advances, by total assets), each
-// band | number | share | amount | share; the band label says which block it is (D, Ad, Asset)
+// 772: side-by-side blocks (by deposits, by advances, from 2024 by total assets), each
+// band | number | share | amount | share; the band label says which block it is (D, A or Ad,
+// Asset). Editions to March 2018 print amounts and band limits in ₹ billion ("0.10 <= D < 0.25"),
+// later ones in ₹ crore ("10 <= D < 25"): the same bands, converted to ₹ crore (x 100).
+const BAND_RE = /^(?:([\d.]+)\s*<=\s*)?(D|Ad|A|Asset)\s*(?:(<|≥|>=)\s*([\d.]+))?$/i;
 function sizeBands(csv) {
   const C = collector();
-  const BLOCK = { D: ["deposits", "UCBs by size of deposits"], AD: ["advances", "UCBs by size of advances"], ASSET: ["assets", "UCBs by size of total assets"] };
+  const BLOCK = { D: ["deposits", "UCBs by size of deposits"], AD: ["advances", "UCBs by size of advances"], A: ["advances", "UCBs by size of advances"], ASSET: ["assets", "UCBs by size of total assets"] };
   for (const [p, rows] of blocks(csv)) {
     const ed = editionYear(p);
+    // the scale: band limits below 100 everywhere mean ₹ billion
+    const limits = rows.flatMap((r) => r.map((c) => BAND_RE.exec(c)).filter(Boolean).flatMap((m) => [m[1], m[4]].filter(Boolean).map(Number)));
+    const k = limits.length && Math.max(...limits) <= 100 ? 100 : 1;
     for (const r of rows) {
+      let blockNo = 0;
       for (let i = 0; i < r.length; i++) {
-        const m = /^(?:([\d.]+)\s*<=\s*)?(D|Ad|Asset)\s*(<|≥|>=)\s*([\d.]+)$/i.exec(r[i]) ?? (/^total$/i.test(r[i]) && isNum(r[i + 1]) ? [r[i], null, null, "total", null] : null);
-        if (!m) continue;
-        // which block a "Total" row belongs to: by its position among the row's totals
-        const which = m[2] ? m[2].toUpperCase() : ["D", "AD", "ASSET"][r.slice(0, i).filter((c) => /^total$/i.test(c)).length];
+        const m = BAND_RE.exec(r[i]);
+        const isTotal = /^total$/i.test(r[i]) && isNum(r[i + 1]);
+        if (!m && !isTotal) continue;
+        const which = m ? m[2].toUpperCase() : ["D", "AD", "ASSET"][blockNo];
+        blockNo++;
         const [word, title] = BLOCK[which];
-        const band = m[4] === "total" || m[3] === "total" ? "All UCBs" : m[1] != null ? `₹${+m[1]} crore to ₹${+m[4]} crore` : `₹${+m[4]} crore and above`;
-        const bk = keyOf(band);
+        const lo = m?.[1] != null ? +m[1] * k : null, hi = m?.[4] != null ? +m[4] * k : null;
+        const up = m && (m[3] === "≥" || m[3] === ">=" || (lo != null && hi == null));   // "D ≥ 1000", "10.00 <= D"
+        const band = isTotal ? "All UCBs" : up ? `₹${hi ?? lo} crore and above` : lo == null ? `under ₹${hi} crore` : `₹${lo} crore to ₹${hi} crore`;
+        const bk = keyOf(band.replace(/^under/, "0 to"));
         const v = r.slice(i + 1, i + 5).map(num);
         if (v.filter((x) => x != null).length < 4) continue;
         C.put(`${word}__${bk}__number`, `${title}, ${band}, number of UCBs`, "count", march(ed), v[0], ed, { group: title });
         C.put(`${word}__${bk}__number_share`, `${title}, ${band}, per cent of UCBs`, "pct", march(ed), v[1], ed, { group: title });
-        C.put(`${word}__${bk}__amount`, `${title}, ${band}, ${word}`, "inr_crore", march(ed), v[2], ed, { group: title });
+        C.put(`${word}__${bk}__amount`, `${title}, ${band}, ${word}`, "inr_crore", march(ed), Math.round(v[2] * k * 100) / 100, ed, { group: title });
         C.put(`${word}__${bk}__amount_share`, `${title}, ${band}, per cent of all UCBs' ${word}`, "pct", march(ed), v[3], ed, { group: title });
       }
     }
@@ -247,8 +257,13 @@ function sizeBands(csv) {
   return C;
 }
 
-// 800: states and regions; columns by header name (their order changed in 2014-15)
-function states(csv) {
+// 800: states and regions; columns by header name (their order changed in 2014-15). The counts
+// (banks, branches, districts, counters, ATMs) are printed on a different scale in some editions
+// (March 2014: a hundred times; 2015 to 2018: a tenth). Each edition's scale is fixed by its
+// all-India number of UCBs against the structure table (report 812) for that March, a power of
+// ten, and every rescaled count must come out a whole number; the note names the editions.
+export const RESCALED = [], ROUNDED = new Set();
+function states(csv, knownUcbs = new Map()) {
   const C = collector();
   const M = [[/^no\.? of ucbs/i, "ucbs", "number of UCBs", "count"], [/branches/i, "branches", "branches", "count"], [/^deposits/i, "deposits", "deposits", "inr_crore"], [/^advances/i, "advances", "advances", "inr_crore"],
     [/^total districts/i, "districts", "districts", "count"], [/districts with(?!out)/i, "districts_with_ucb", "districts with a UCB", "count"], [/districts without/i, "districts_without_ucb", "districts without a UCB", "count"],
@@ -260,11 +275,20 @@ function states(csv) {
     const H = rows[hi];
     const cols = H.map((h, i) => [i, M.find(([re]) => re.test(h))]).filter(([, m]) => m);
     const ni = H.findIndex((c) => /^name$/i.test(c)), si = H.findIndex((c) => /state ?\/ ?ut/i.test(c));
+    // this edition's scale for counts
+    const ai = rows.slice(hi + 1).find((r) => /^all india$/i.test(r[0] ?? ""));
+    const ucbCol = cols.find(([, m]) => m[1] === "ucbs")?.[0];
+    const printed = ai ? num(ai[ucbCol]) : null, known = knownUcbs.get(ed);
+    let f = 1;
+    if (printed && known) { f = 10 ** Math.round(Math.log10(known / printed)); if (Math.abs(printed * f - known) > 2) throw new Error(`banks-ucb 800: edition ${p} prints ${printed} UCBs, report 812 has ${known}: not a power-of-ten scale`); }
+    else if (!known) throw new Error(`banks-ucb 800: no count of UCBs in report 812 for March ${ed}`);
+    if (f !== 1) RESCALED.push(`${ed} (×${f})`);
+    const put = [];   // this edition's cells, checked before they are kept
     for (const r of rows.slice(hi + 1)) {
       if (r.some((c) => /^note|^\d\. data|^source/i.test(c))) break;
       let name, off;
       if (/^\d+$/.test(r[0]) && r[ni]) { name = r[ni]; off = 0; }                         // a state row
-      else if (r[0] && /total$|^all india$/i.test(r[0]) && isNum(r[1])) { name = r[0]; off = si - 0; }   // region total or all-India: values two columns left
+      else if (r[0] && /total$|^all india$/i.test(r[0])) { name = r[0]; off = 0; }   // region total or all-India: label in the serial column, values under their headers
       else continue;
       const isAgg = /total$|^all india$/i.test(name);
       let slug, label;
@@ -276,8 +300,23 @@ function states(csv) {
         slug = u.slug === "andhra-pradesh" && ed <= 2014 ? "andhra-pradesh-undivided" : u.slug === "jammu-kashmir" && ed <= 2019 ? "jammu-kashmir-state" : u.slug;
         label = slug === "andhra-pradesh-undivided" ? "Andhra Pradesh (undivided)" : slug === "jammu-kashmir-state" ? "Jammu and Kashmir (state)" : u.name;
       }
-      for (const [i, m] of cols) C.put(`${keyOf(slug)}__${m[1]}`, `${label}, ${m[2]}`, m[3], march(ed), num(r[i - off]), ed, { group: isAgg ? "Regions and all India" : "States and union territories", ...(isAgg ? {} : { state: slug }) });
+      for (const [i, m] of cols) {
+        let v = num(r[i - off]);
+        if (v != null && m[3] === "count" && f !== 1) v = v * f;
+        put.push({ key: `${keyOf(slug)}__${m[1]}`, label: `${label}, ${m[2]}`, m, v, isAgg, slug });
+      }
     }
+    // a count is kept for the states only where they add up to the all-India figure: the 2015 to
+    // 2018 editions print state counts rounded to tens, so those state counts are left empty
+    for (const [, m] of cols) {
+      if (m[3] !== "count") continue;
+      const st = put.filter((x) => !x.isAgg && x.m === m && x.v != null), tot = put.find((x) => x.key === `all_india__${m[1]}`)?.v;
+      const sum = st.reduce((a, x) => a + x.v, 0);
+      const whole = st.every((x) => Math.abs(x.v - Math.round(x.v)) < 0.05);
+      if (tot != null && (Math.abs(sum - tot) > 0.5 || !whole)) { for (const x of st) x.v = null; ROUNDED.add(ed); }
+      for (const x of put.filter((x) => x.m === m && x.v != null)) x.v = Math.round(x.v);
+    }
+    for (const x of put) C.put(x.key, x.label, x.m[3], march(ed), x.v, ed, { group: x.isAgg ? "Regions and all India" : "States and union territories", ...(x.isAgg ? {} : { state: x.label.replace(/, [^,]+$/, ""), stateSlug: x.slug, ...(x.m[3] === "count" ? { gapsNote: "The 2015 to 2018 editions print the states' counts rounded to tens (they do not add up to the all-India figure), so those years are left empty." } : {}) }) });
   }
   if (unplaced.size) throw new Error(`banks-ucb 800: state names not in states-key.js: ${[...unplaced].join(", ")}`);
   return C;
@@ -410,13 +449,16 @@ export async function buildBanksUcb(root, db, R, metaBase, dcfg, runVintage) {
     measures: [[/^no\.? of ucbs|^number|^banks/i, "ucbs", "number of UCBs", "count"], [/^deposits/i, "deposits", "deposits"], [/^advances/i, "advances", "advances"]], group: () => "UCBs by supervisory rating" }), M({}),
     { coverage: "Urban co-operative banks by the RBI's supervisory rating (A to E): number, deposits, advances and shares", note: `${src(796)} Table 9. The 2023-24 edition's shares add to 104 per cent as printed (the RBI's rounding of a rating it lists twice is not explained); kept as printed.` }));
   out.push(writeBundle(root, "banks-ucb-size", sizeBands(R[772].csv), M({}),
-    { coverage: "Urban co-operative banks by size of deposits, of advances and (from 2024) of total assets: number of banks and amounts in each band, with shares", note: `${src(772)} Table 4. Bands in ₹ crore.` }));
+    { coverage: "Urban co-operative banks by size of deposits, of advances and (from 2024) of total assets: number of banks and amounts in each band, with shares", note: `${src(772)} Table 4. Bands and amounts in ₹ crore; editions to March 2018 print them in ₹ billion and are converted (x 100). The service's copy of the March 2020 edition holds only the totals.` }));
   out.push(writeBundle(root, "banks-ucb-priority", singleYear(R[787].csv, { labelRe: /^item$/i, unitOf: () => "inr_crore",
     measures: [[/weaker.*amount/i, "weaker_amount", "advances to weaker sections"], [/weaker.*(percentage|share)/i, "weaker_share", "advances to weaker sections, per cent of total advances", "pct"], [/priority sector advances amount|^amount$/i, "amount", "priority-sector advances"], [/percentage to total|share in total/i, "share", "per cent of total advances", "pct"]],
     group: () => "Priority-sector advances of UCBs" }), M({}),
     { coverage: "Urban co-operative banks' priority-sector advances by sector (agriculture, micro and small enterprises, housing, education...), in ₹ crore and as a share of all their advances", note: `${src(787)} Table 3. All UCBs.` }));
-  out.push(writeBundle(root, "banks-ucb-states", states(R[800].csv), M({}),
-    { coverage: "Urban co-operative banks state by state and region by region: number of banks, branches, deposits, advances, districts reached, extension counters and ATMs", note: `${src(800)} Table 10. Andhra Pradesh before the 2014 split and Jammu and Kashmir before 2019 are their own series.` }));
+  const known812 = new Map(dbieProvider(db, "812", "DP2").rows.filter((x) => x["Bank Group Ucb Display Order"] === "1" && num(x["Item Value"]) != null).map((x) => [editionYear(x["Time Fis Year"]), num(x["Item Value"])]));
+  RESCALED.length = 0; ROUNDED.clear();
+  const stC = states(R[800].csv, known812);
+  out.push(writeBundle(root, "banks-ucb-states", stC, M({}),
+    { coverage: "Urban co-operative banks state by state and region by region: number of banks, branches, deposits, advances, districts reached, extension counters and ATMs", note: `${src(800)} Table 10. Andhra Pradesh before the 2014 split and Jammu and Kashmir before 2019 are their own series. Counts rescaled where an edition prints them on another scale, fixed by its all-India number of UCBs against report 812: ${RESCALED.join(", ") || "none"}. State counts left empty where they do not add up to the all-India figure (rounded to tens in print): ${[...ROUNDED].sort().join(", ") || "none"}.` }));
   const alias = linkUcbNames(R[797].csv);
   const P = { cost_of_deposits: [/cost of dep/i, "average cost of deposits", "pct"], yield_on_advances: [/yield on adv/i, "average yield on advances", "pct"], nii_to_assets: [/nii to ta|net int(?:erest)? inc(?:ome)? to tot/i, "net interest income to total assets (spread)", "pct"],
     nii_to_working_funds: [/nii to wf|net int(?:erest)? inc(?:ome)? to w(?:or)?k?i?ng/i, "net interest income to working funds", "pct"], non_interest_income_to_working_funds: [/non-?ii to wf|non-?int(?:erest)? inc(?:ome)? to w/i, "non-interest income to working funds", "pct"],
@@ -464,7 +506,7 @@ export async function buildBanksUcb(root, db, R, metaBase, dcfg, runVintage) {
     const unplaced = new Set();
     out.push(writeBundle(root, "banks-ucb-states-dbie", typed("777", null, (x, C) => { const v = num(x["Item Value"]); if (v == null) return; const ed = editionYear(x["Time Fis Year"]); const u = place(x["State Name"]); if (!u) { unplaced.add(x["State Name"]); return; }
       const slug = u.slug === "jammu-kashmir" && ed <= 2019 ? "jammu-kashmir-state" : u.slug;
-      C.put(`${keyOf(slug)}__ucbs`, `${slug === "jammu-kashmir-state" ? "Jammu and Kashmir (state)" : u.name}, number of UCBs`, "count", march(ed), v / 1e7, ed, { group: "States and union territories", state: slug }); }), MB({}),
+      C.put(`${keyOf(slug)}__ucbs`, `${slug === "jammu-kashmir-state" ? "Jammu and Kashmir (state)" : u.name}, number of UCBs`, "count", march(ed), v / 1e7, ed, { group: "States and union territories", state: slug === "jammu-kashmir-state" ? "Jammu and Kashmir (state)" : u.name, stateSlug: slug }); }), MB({}),
       { unit: "count", coverage: "Number of urban co-operative banks in each state and union territory, to March 2026", note: dbSrc(777) + " Counts are stored multiplied by 10 million in the source (its unit field says crore); divided back, as the 2024 figures equal report 800's to the bank." }));
     if (unplaced.size) throw new Error(`banks-ucb 777: unplaced states ${[...unplaced].join(", ")}`);
   }
