@@ -294,7 +294,7 @@ setHTML("rb-nom", fmt.pct1(last(P.nominal_yoy)));
   wireCustom("cb-peers", plot, "india-atlas_real-house-prices-compared", "economy,real_pct_change_on_year,quarter\n" + rows.map((r) => `${r.name},${r.v},${r.d}`).join("\n"));
   const rank = rows.findIndex((r) => r.name === "India") + 1;
   setHTML("pv-peers", `${rank} of ${rows.length}`);
-  setHTML("ex-pp-in", sgn(last(P.real_yoy), 2));
+  setHTML("ex-pp-in", sgn(last(P.real_yoy)));
   setHTML("ex-pp-rank", `${rank} of ${rows.length}`);
   setHTML("ex-pp-top", `${esc(rows[0].name)}, ${sgn(rows[0].v)}`);
   setHTML("ex-pp-bot", `${esc(rows.at(-1).name)}, ${sgn(rows.at(-1).v)}`);
