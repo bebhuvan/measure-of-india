@@ -16,7 +16,7 @@ const lineCsv = (series, periods) => {
 /* ---------- lines ---------- */
 const LINES = [
   ["srb", { fmt: f0, lo: 860, hi: 940, title: "Girls born per 1,000 boys, India, towns and villages" }],
-  ["census", { fmt: f0, lo: 900, hi: 960, title: "Women per 1,000 men, census years" }],
+  ["census", { fmt: f0, lo: 900, hi: 960, xTicks: "points", title: "Women per 1,000 men, census years" }],
   ["imr", { fmt: f0, title: "Infant deaths per 1,000 births, girls and boys" }],
   ["mmr", { fmt: f0, title: "Maternal deaths per 1,00,000 births" }],
   ["life", { lo: 50, hi: 80, title: "Life expectancy at birth, women and men, with projections" }],
@@ -73,7 +73,7 @@ const BARS = [
   ["tfr-edu", (d) => d.rows, { ref: D["tfr-edu"]?.ref, refLabel: "all literate women", title: "Children per woman by schooling", fmt: f1 }],
   ["money", (d) => d, { hi: 100, title: "Women's share of accounts and holders, per cent" }],
   ["voice", (d) => d, { hi: 100, title: "Women's share of office, per cent" }],
-  ["conviction", (d) => d, { title: "Convictions as a share of cases due for trial, per cent", fmt: (v) => v.toFixed(2) }],
+  ["conviction", (d) => d, { title: "Convictions as a share of cases due for trial, per cent", fmt: (v) => v.toFixed(1) }],
 ];
 for (const [k, rows, o] of BARS) {
   const el = mount("plot-" + k);
@@ -86,7 +86,7 @@ for (const [k, rows, o] of BARS) {
 const PAIRS = [
   ["school", "Enrolment and dropout, boys and girls", {}],
   ["time", "Minutes a day per person, Time Use Survey 2019 and 2024", { fmt: f0 }],
-  ["crime-heads", "Crimes against women registered, by head", { fmt: f0 }],
+  ["crime-heads", "Crimes against women registered, by head", { fmt: f0, tick: f0 }],
   ["causes", "Share of deaths by cause, men and women", {}],
 ];
 for (const [k, title, o] of PAIRS) {
