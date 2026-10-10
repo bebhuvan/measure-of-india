@@ -249,6 +249,16 @@ const CARDS = [
     prep: (S) => { S.headline = { ...S.headline, label: "Bank credit", color: "#2E4BD8" }; S.personal_loans = { ...S.personal_loans, label: "Personal loans", color: "#5F6675" }; S.industry = { ...S.industry, label: "Industry", color: "#A3A9B4" }; },
     foot: (b, S) => { const d = b.dates.at(-1); return `Bank credit growth on a year earlier, ${["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}. Source: RBI, sectoral deployment of bank credit`; },
   },
+  // payments (lb/payments): UPI and card payments a month, crore
+  {
+    slug: "payments", bundleSlug: "payments-monthly",
+    keys: ["upi_volume", "cards_volume"], d0: 0, d1: 3000,   // raise d1 when UPI passes 3,000 crore a month
+    band: null, trend: null,
+    scale: 1e-7, yStep: 500, fmt: (v) => v.toFixed(0) + " crore", mr: 220,
+    prep: (S) => { S.upi_volume = { ...S.upi_volume, label: "UPI", color: "#2E4BD8" }; S.cards_volume = { ...S.cards_volume, label: "Cards", color: "#A3A9B4" }; },
+    foot: (b) => { const d = b.dates.at(-1); return `Payments a month, crore, November 2019 to ${["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][+d.slice(5, 7) - 1]} ${d.slice(0, 4)}. Source: RBI, payment system indicators`; },
+  },
+
   {
     slug: "manufacturing", bundleSlug: "wdi-manufacturing",
     keys: ["mva_pct_gdp", "industry_pct_gdp"], d0: 0, d1: 30, band: null, trend: null,
