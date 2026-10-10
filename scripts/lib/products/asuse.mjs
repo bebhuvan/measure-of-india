@@ -67,6 +67,16 @@ async function stageAll(root, lists, vintage) {
   return { all, vintage: body.vintage };
 }
 
+function readStaged(root, ix) {
+  const all = {};
+  for (const f of ix.files) {
+    const gz = fs.readFileSync(path.join(root, ix.root, f.file));
+    if (crypto.createHash("sha256").update(gz).digest("hex") !== f.sha256) throw new Error(`asuse: staged ${f.file} does not match its sha256 in ${INDEX}`);
+    all[String(f.indicator)] = JSON.parse(zlib.gunzipSync(gz));
+  }
+  return { all, vintage: ix.vintage };
+}
+
 const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 const slugify = (s) => String(s).trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 const fyStart = (fy) => `${String(fy).slice(0, 4)}-04`;
@@ -75,14 +85,18 @@ const ET = { "Hired Worker Establishments(HWE)": "hwe", "Own Account Establishme
 
 export async function buildAsuse(root, dcfg, vintage) {
   // indicator catalogues (archived to raw for the audit trail)
-  const freqs = (await mospi("asuse/getAsuseFrequencyList", {})).data ?? [];
-  const listAnnual = (await mospi("asuse/getAsuseIndicatorListByFrequency", { frequency_code: 1 })).data ?? [];
-  const listQuarterly = (await mospi("asuse/getAsuseIndicatorListByFrequency", { frequency_code: 2 })).data ?? [];
+  // ASUSE_FROM_RAW=1 re-bakes from the staged raw archive (checked against the index's sha256)
+  // without calling the API; the indicator lists come from the index
+  const fromRaw = Boolean(process.env.ASUSE_FROM_RAW);
+  const ix = fromRaw ? JSON.parse(fs.readFileSync(path.join(root, INDEX), "utf8")) : null;
+  const listOf = (fr) => ix.files.filter((f) => f.frequency === fr).map((f) => ({ indicator_code: f.indicator, description: f.name }));
+  const listAnnual = fromRaw ? listOf("annual") : (await mospi("asuse/getAsuseIndicatorListByFrequency", { frequency_code: 1 })).data ?? [];
+  const listQuarterly = fromRaw ? listOf("quarterly") : (await mospi("asuse/getAsuseIndicatorListByFrequency", { frequency_code: 2 })).data ?? [];
 
   // every indicator, in full; the curated bundles below read the financial-year rounds only
   // (2021-22 to 2023-24). The 2025 round is a calendar year, a different ruler: it lives in
   // the asuse-2025-* bundles, never on the same axis.
-  const staged = await stageAll(root, [["annual", listAnnual], ["quarterly", listQuarterly]], vintage);
+  const staged = fromRaw ? readStaged(root, ix) : await stageAll(root, [["annual", listAnnual], ["quarterly", listQuarterly]], vintage);
   vintage = staged.vintage;
   const isFy = (r) => /^\d{4}-\d{2}$/.test(String(r.year));
   const qCodes = new Set(listQuarterly.map((i) => String(i.indicator_code)));
@@ -538,6 +552,15 @@ const slugV = (v) => {
   return full.length <= 36 ? full : full.slice(0, 30).replace(/_$/, "") + "_" + crypto.createHash("sha1").update(full).digest("hex").slice(0, 5);
 };
 
+// A rupee figure per worker, per hired worker or per establishment (tables 30 to 35: emoluments
+// per hired worker, GVA per worker and per establishment) is never 0 where the cut has any such
+// worker or establishment. The tables print 0 where there is none in the sample (own-account
+// establishments have no hired workers by definition) or no estimate: a gap, never a zero
+// (validate.mjs NONZERO). Shared with services.mjs.
+export const PER_HEAD_MONEY = new Set([30, 31, 32, 33, 34, 35]);
+export const noEstimate = (code, unit, v) => v === 0 && PER_HEAD_MONEY.has(+code) && unit === "inr_per_year";
+const NO_ESTIMATE_NOTE = "No estimate for these rounds: the table prints 0 (no hired worker or establishment in the sample for this cut).";
+
 function bakeTables(root, all, listAnnual, metaBase, dcfg) {
   const names = Object.fromEntries(listAnnual.map((i) => [String(i.indicator_code), String(i.description).trim()]));
   let nB = 0, nS = 0;
@@ -572,6 +595,7 @@ function bakeTables(root, all, listAnnual, metaBase, dcfg) {
         if (!e) series.set(key, e = { label, unit, cells: new Map(), group: r["state/UT"] && r["state/UT"] !== "All India" ? r["state/UT"] : tidyV("a", r.activity_category ?? r.broad_activity_category ?? "All") });
         if (e.label !== label) throw new Error(`asuse t${code}: key collision ${key}: "${e.label}" vs "${label}"`);
         const d = dateOf(r);
+        if (noEstimate(code, unit, v)) { e.zeroed = true; continue; }
         if (e.cells.has(d) && e.cells.get(d) !== v) { process.stdout.write(`asuse WARN t${code} ${key} ${d}: ${e.cells.get(d)} vs ${v}, kept first\n`); continue; }
         e.cells.set(d, v);
       }
@@ -580,7 +604,8 @@ function bakeTables(root, all, listAnnual, metaBase, dcfg) {
         const data = axis.map((d) => e.cells.get(d) ?? null);
         const f = data.findIndex((x) => x != null), l = data.length - 1 - [...data].reverse().findIndex((x) => x != null);
         const gaps = axis.filter((_, i) => i > f && i < l && data[i] == null);
-        out[key] = { name: `asuse_t${code}_${key}`, label: e.label, unit: e.unit, group: e.group, color: "#A3A9B4", data, ...(gaps.length ? { gaps, gapsNote: "Not published for this round." } : {}) };
+        if (f < 0) continue;   // every cell was a 0 that means no estimate
+        out[key] = { name: `asuse_t${code}_${key}`, label: e.label, unit: e.unit, group: e.group, color: "#A3A9B4", data, ...(gaps.length ? { gaps, gapsNote: e.zeroed ? NO_ESTIMATE_NOTE : "Not published for this round." } : {}) };
       }
       // the axis ends where the bundle's data ends (no trailing empty round)
       let last = axis.length - 1; while (last > 0 && !Object.values(out).some((s) => s.data[last] != null)) last--;

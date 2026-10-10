@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Capital Receipts: RBI Handbook of Statistics on Indian States, Table 172",
-  "note": "DBIE report 1736, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1736, data provider \"Main\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: value. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -800,9 +800,9 @@
     2710200000000
    ]
   },
-  "andhra_pradesh": {
-   "name": "andhra_pradesh",
-   "label": "Andhra Pradesh: Capital Receipts",
+  "andhra_pradesh_undivided": {
+   "name": "andhra_pradesh_undivided",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Capital Receipts",
    "unit": "inr_amount",
    "group": "Fiscal",
    "data": [
@@ -816,17 +816,17 @@
     2101710000000,
     2284730000000,
     2606300000000,
-    2794560000000,
-    3573420000000,
-    4180150000000,
-    4747930000000,
-    4785150000000,
-    6169580000000,
-    7260160000000,
-    2942530000000,
-    6453450000000,
-    5556120000000,
-    2710450000000
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
    ]
   },
   "telangana": {
@@ -835,16 +835,16 @@
    "unit": "inr_amount",
    "group": "Fiscal",
    "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     1548510000000,
     1711140000000,
     4224940000000,
@@ -972,6 +972,35 @@
     23010000000,
     374730000000,
     401460000000
+   ]
+  },
+  "andhra_pradesh": {
+   "name": "andhra_pradesh",
+   "label": "Andhra Pradesh: Capital Receipts",
+   "unit": "inr_amount",
+   "group": "Fiscal",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    2794560000000,
+    3573420000000,
+    4180150000000,
+    4747930000000,
+    4785150000000,
+    6169580000000,
+    7260160000000,
+    2942530000000,
+    6453450000000,
+    5556120000000,
+    2710450000000
    ]
   },
   "jammu_and_kashmir_ut": {

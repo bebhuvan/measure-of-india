@@ -292,8 +292,11 @@ function unitOf(label, rowUnit) {
   if (/^(total )?number|^average (teachers|enrolments)|^schools|^teachers|^enrolments|^new admission|^children with special/i.test(t)) return "count";
   return "unstated";
 }
+// an API field name as words: "age_group" -> "age group", "sub_indicator" -> "sub-indicator",
+// the source's misspelt "instituition_type" -> "institution type"
+const fieldWords = (f) => String(f).replace(/^sub_/, "sub-").replace(/instituition/, "institution").replace(/_+/g, " ").trim();
 async function phaseBake(plan) {
-  const { readRaw, writeSeries } = await import("../util.mjs");
+  const { readRaw, writeSeries, nullBornStandIns } = await import("../util.mjs");
   const { placeAll } = await import("../../../src/dossiers/states-key.js");
   const dir = path.join(ROOT, "data/raw/profiles-mospi");
   let nB = 0, nS = 0, unplaced = new Map();
@@ -367,6 +370,8 @@ async function phaseBake(plan) {
         notSeries.push(`${P.id} ${ind.code}`);
         continue;
       }
+      // a state's 0s before it existed (Ladakh's disease cases before October 2019) are not values (util)
+      nullBornStandIns(dates, series);
       // disclose interior nulls on the series that miss them
       for (const s of Object.values(series)) {
         if (s._prov?.size) s.provisional = [...s._prov].sort();
@@ -385,7 +390,8 @@ async function phaseBake(plan) {
         dossier: "profiles-mospi", product: `mospi-${P.id}`, source: "MoSPI, eSankhyiki (" + P.records.split("/")[0] + ")", base: round ? round[1] : `${P.id} survey years`,
         frequency: dates.length > 1 ? "annual" : "cross-sectional", unit: "see each series", vintage: raw.vintage, geo: "IND", latestPeriod: round?.[1] ?? null, releaseDate: null,
         revisionPolicy: "Survey estimates are final on release; MoSPI may revise a table without notice, and each fetch is checked against the archived rows.",
-        coverage: `${String(ind.label ?? "").trim().slice(0, 200)}: every state and UT, at the headline of ${[...headOf.keys()].join(", ") || "no standard cut"}${keep.length ? `, by ${keep.join(", ")}` : ""}`,
+        // the API's field names ("age_group", "sub_indicator") read as words in a title
+        coverage: `${String(ind.label ?? "").trim().slice(0, 200)}: every state and UT, at the headline of ${[...headOf.keys()].map(fieldWords).join(", ") || "no standard cut"}${keep.length ? `, by ${keep.map(fieldWords).join(", ")}` : ""}`,
         note: `Baked from data/raw/profiles-mospi/${P.id}-${ind.survey ?? 0}-${ind.code}.json (${rows.length} rows as MoSPI serves them). Standard cuts kept at their headline value: ${[...headOf].map(([d, h]) => `${d} = ${h}`).join("; ") || "none"}. The finer grain is in the raw dump.`,
         indicator: { product: P.id, survey: ind.survey ?? null, code: ind.code, rows: rows.length },
         ...(Object.keys(labels).length ? { periodLabels: Object.fromEntries(Object.entries(labels).filter(([d]) => dates.includes(d)).map(([d, t]) => [d, [...t].join(" / ")])) } : {}) } });

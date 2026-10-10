@@ -191,7 +191,7 @@ async function buildBase(root, dcfg, vintage, b) {
     };
   }
   const accounts = {
-    meta: { dossier: "gdp", ...metaBase, frequency: "annual", latestPeriod: aMonths.at(-1) ?? null, coverage: "Annual (fiscal years); the income-side accounts are not published quarterly. saving_rate is gross saving over nominal GDP — saving is published at current prices only." },
+    meta: { dossier: "gdp", ...metaBase, frequency: "annual", latestPeriod: aMonths.at(-1) ?? null, coverage: "Annual (fiscal years); the income-side accounts are not published quarterly. The gross saving rate is gross saving over nominal GDP: saving is published at current prices only." },
     dates: aAxis.map((ym) => `${ym}-01`),
     series: aSeries,
   };

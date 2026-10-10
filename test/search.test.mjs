@@ -51,6 +51,69 @@ test("a state's name finds its profile first, in every spelling", async () => {
   }
   const mixed = S.quick("inflation in kerala ").states;
   assert.equal(mixed[0]?.href, "/states/kerala/");
+  // "inflation" is no topic of this one-guide index, so the profile is offered, not led with
   assert.equal(mixed[0].lead, false);
   assert.equal(S.quick("onion").states.length, 0);
+});
+
+// datafix (2026-10-10): "inflation in kerala" ranked CPI-AL and CPI-RL rows above Kerala's own CPI.
+// When a query names a state and a topic, the state's own headline measure (a row its profile
+// quotes; core.own from scripts/search-index.mjs) leads the series, ahead of narrower rows that
+// match the same words, and the state's profile leads the page.
+test("a state and a topic: the state's own headline measure and its profile lead", async () => {
+  const { STATES } = await import("../src/dossiers/states-key.js");
+  const profiles = STATES.map((u) => [u.slug, u.name, [...new Set([u.short, ...u.aliases].filter(Boolean))].join(" | ")]);
+  const ST = ["Kerala", "Bihar", "Punjab", "Tamil Nadu", "Gujarat", "Odisha", "Maharashtra", "Assam", "West Bengal", "Rajasthan", "Uttar Pradesh"];
+  const guides = [["cpi", "Consumer prices", "retail inflation"], ["jobs", "Jobs", "unemployment and work"], ["states", "State economies", "income per person by state"],
+    ["consumption", "What households spend", "monthly spending per person"], ["credit", "Bank credit", "loans and deposits"], ["health", "Health", "infant deaths"]];
+  // [slug, title, cut, guide, own weight (0: narrower rows), row label template]
+  const SPEC = [
+    // the read-through's case: CPI-AL rows are labelled with the state's name alone, and sit first
+    ["cpialrl-states", "CPI for agricultural and rural labourers (farm labourers), inflation by state", "State", 0, 0, (s) => [s, ""]],
+    ["cpi-2024-states-divisions", "Retail inflation by state and division, CPI", "State x division", 0, 0, (s) => [`${s}, clothing and footwear`, ""]],
+    ["cpi-2024-states", "Retail inflation by state, CPI base 2024", "State", 0, 3, (s) => [s, ""]],
+    ["plfs-cy25-states-ur-edu", "Unemployment rate by state and education, PLFS", "State x education", 1, 0, (s) => [`${s}, graduates, unemployment rate`, ""]],
+    ["plfs-cy25-states-ur", "Unemployment rate by state, PLFS", "State", 1, 2, (s) => [`${s}, unemployment rate, age 15 and above`, ""]],
+    ["states-hbs-t113", "Daily wages by state, farm labour", "State", 2, 0, (s) => [`${s}: daily wage, ploughing`, ""]],
+    ["states-pcnsdp-current", "Income per person by state, per capita NSDP", "State", 2, 3, (s) => [s, ""]],
+    ["hces-states-groups", "Monthly spending per person by state and social group", "State x group", 3, 0, (s) => [`${s}, rural, scheduled castes, spending`, ""]],
+    ["hces-states", "Monthly spending per person by state, MPCE", "State", 3, 3, (s) => [`${s}, rural`, ""]],
+    ["credit-states-occupation", "Bank credit by state and occupation, deposits beside", "State x occupation", 4, 0, (s) => [`${s}, farm loans, bank credit`, ""]],
+    ["credit-states", "Bank deposits and credit by state", "State", 4, 2, (s) => [`${s} deposits`, ""]],
+    ["states-hbs-t004-rural", "Infant deaths per 1,000 births by state, rural and urban", "State x sector", 5, 0, (s) => [`${s}, rural, infant deaths`, ""]],
+    ["states-hbs-t004", "Infant deaths per 1,000 births by state", "State", 5, 2, (s) => [`${s}, infant deaths`, ""]],
+  ];
+  const rows = [], bundles = [], ownG = [], ownO = [];
+  for (const [slug, title, cut, g, w, lab] of SPEC) {
+    const start = rows.length;
+    for (const s of ST) { const id = rows.length; const [l, grp] = lab(s); rows.push([l, grp, "1", "2026", `s${id}`, []]); if (w === 3) ownG.push(id); if (w === 2) ownO.push(id); }
+    bundles.push([slug, title, cut, g, start, ST.length, [[0, `/guides/${guides[g][0]}/`]], ""]);
+  }
+  const post = {};
+  rows.forEach((r, i) => { for (const t of new Set(tokens(r[0] + " " + r[1]))) if (!["a", "and", "the"].includes(t)) (post[t] ??= []).push(i); });
+  const shard = Object.fromEntries(Object.entries(post).map(([t, ids]) => [t, encodeIds(ids)]));
+  const core = { guides, plates: [], views: [], bundles, profiles, own: { glance: encodeIds(ownG), other: encodeIds(ownO) },
+    shards: { tokens: [""], rows: [0], frequent: [] } };
+  const S = createSearch(core, async (p) => (p.startsWith("t/") ? shard : rows));
+  const TEN = [
+    ["inflation in kerala ", "cpi-2024-states", "kerala"], ["prices bihar ", "cpi-2024-states", "bihar"], ["unemployment in punjab ", "plfs-cy25-states-ur", "punjab"],
+    ["jobs tamil nadu ", "plfs-cy25-states-ur", "tamil-nadu"], ["income per person gujarat ", "states-pcnsdp-current", "gujarat"], ["spending in odisha ", "hces-states", "odisha"],
+    ["bank deposits maharashtra ", "credit-states", "maharashtra"], ["infant deaths assam ", "states-hbs-t004", "assam"], ["inflation west bengal ", "cpi-2024-states", "west-bengal"],
+    ["unemployment rate rajasthan ", "plfs-cy25-states-ur", "rajasthan"], ["Orissa inflation ", "cpi-2024-states", "odisha"],
+  ];
+  for (const [q, bundle, state] of TEN) {
+    const r = await S.series(q);
+    assert.ok(r.rows.length, `${q}: no series`);
+    assert.equal(r.rows[0].bundle, bundle, `${q}: leads with ${r.rows[0].bundle} "${r.rows[0].label}", not the state's own ${bundle}`);
+    const st = S.quick(q).states;
+    assert.equal(st[0]?.href, `/states/${state}/`, `${q}: profile`);
+    assert.equal(st[0].lead, true, `${q}: the profile should lead`);
+  }
+  // a state with a word the site has no topic for: the profile is offered, not led with
+  assert.equal(S.quick("kerala zebra ").states[0]?.lead, false);
+  // no state named: no boost, the narrower rows keep their place by the words alone
+  assert.equal((await S.series("farm labourers inflation ")).rows[0].bundle, "cpialrl-states");
+  // and the fixture does test the boost: without core.own, CPI-AL leads "inflation in kerala"
+  const bare = createSearch({ ...core, own: undefined }, async (p) => (p.startsWith("t/") ? shard : rows));
+  assert.equal((await bare.series("inflation in kerala ")).rows[0].bundle, "cpialrl-states");
 });

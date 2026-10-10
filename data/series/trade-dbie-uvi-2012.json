@@ -12,7 +12,7 @@
   "base": "2012-13=100",
   "unit": "index",
   "coverage": "Unit value and quantum indices of exports and imports by commodity (SITC-based DGCI&S groups), base 2012-13=100, from 2013-14",
-  "note": "RBI DBIE reports 601 (exports) and 552 (imports), data provider DP0, DGCI&S indices on base 2012-13=100. Commodity codes are the DGCI&S index codes. A different base is a different ruler.",
+  "note": "RBI DBIE reports 601 (exports) and 552 (imports), data provider DP0, DGCI&S indices on base 2012-13=100. Commodity codes are the DGCI&S index codes. A different base is a different ruler. The table prints 0 where no index was compiled for a group that year; those are left empty, and a group printed as 0 in every year is not baked.",
   "retired": false
  },
  "dates": [
@@ -166,7 +166,7 @@
     14.85,
     3333.49,
     147.63,
-    0,
+    null,
     12.38,
     48.88,
     26.11,
@@ -176,6 +176,10 @@
     117.82,
     31.46,
     68.81
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2016-04-01"
    ]
   },
   "exports_qi_017": {
@@ -1243,10 +1247,14 @@
     54.88,
     4.17,
     28.03,
-    0,
+    null,
     0.6,
-    0,
-    0
+    null,
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2022-04-01"
    ]
   },
   "exports_qi_22": {
@@ -1433,9 +1441,13 @@
     163.18,
     132.7,
     122.8,
-    0,
+    null,
     520.06,
     2322.06
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2023-04-01"
    ]
   },
   "exports_qi_246": {
@@ -1455,8 +1467,12 @@
     146.28,
     220.5,
     5050.87,
-    0,
+    null,
     78.85
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2024-04-01"
    ]
   },
   "exports_qi_247": {
@@ -1984,27 +2000,6 @@
     442.55
    ]
   },
-  "exports_qi_286": {
-   "name": "Uranium or thorium ores and concentrates (code 286), quantum index, exports",
-   "label": "Uranium or thorium ores and concentrates (code 286), quantum index, exports",
-   "color": "#A3A9B4",
-   "group": "Exports, quantum",
-   "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
   "exports_qi_287": {
    "name": "Ores and concentrates of base metals, n.e.s. (code 287), quantum index, exports",
    "label": "Ores and concentrates of base metals, n.e.s. (code 287), quantum index, exports",
@@ -2257,27 +2252,6 @@
     69.69
    ]
   },
-  "exports_qi_333": {
-   "name": "Petroleum oils and oils obtained from bituminous minerals, crude (code 333), quantum index, exports",
-   "label": "Petroleum oils and oils obtained from bituminous minerals, crude (code 333), quantum index, exports",
-   "color": "#A3A9B4",
-   "group": "Exports, quantum",
-   "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
   "exports_qi_334": {
    "name": "Petroleum oils and oils obtained from bituminous minerals (other than crude); preparations, n.e.s., containing by weight 70% or more of petroleum oils or of oils obtained from bituminous minerals, these oils being the basic constituents of the preparation (code 334), quantum index, exports",
    "label": "Petroleum oils and oils obtained from bituminous minerals (other than crude); preparations, n.e.s., containing by weight 70% or more of petroleum oils or of oils obtained from bituminous minerals, these oils being the basic constituents of the preparation (code 334), quantum index, exports",
@@ -2416,13 +2390,18 @@
     58.82,
     73.42,
     27.17,
-    0,
-    0,
+    null,
+    null,
     1.02,
     0.68,
-    0,
-    0,
-    0
+    null,
+    null,
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2019-04-01",
+    "2020-04-01"
    ]
   },
   "exports_qi_35": {
@@ -2431,7 +2410,7 @@
    "color": "#A3A9B4",
    "group": "Exports, quantum",
    "data": [
-    0,
+    null,
     443040.28,
     1318384.49,
     1637240.79,
@@ -2444,7 +2423,8 @@
     3138489.64,
     2762953.11,
     4868343.69
-   ]
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0)."
   },
   "exports_qi_351": {
    "name": "Electric current (code 351), quantum index, exports",
@@ -2452,7 +2432,7 @@
    "color": "#A3A9B4",
    "group": "Exports, quantum",
    "data": [
-    0,
+    null,
     443040.28,
     1318384.49,
     1637240.79,
@@ -2465,7 +2445,8 @@
     3138489.64,
     2762953.11,
     4868343.69
-   ]
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0)."
   },
   "exports_qi_4": {
    "name": "Animal and vegetable oils, fats and waxes (code 4), quantum index, exports",
@@ -6982,48 +6963,6 @@
     7.66
    ]
   },
-  "exports_qi_91": {
-   "name": "Postal packages not classified according to kind (code 91), quantum index, exports",
-   "label": "Postal packages not classified according to kind (code 91), quantum index, exports",
-   "color": "#A3A9B4",
-   "group": "Exports, quantum",
-   "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  "exports_qi_911": {
-   "name": "Postal packages not classified according to kind (code 911), quantum index, exports",
-   "label": "Postal packages not classified according to kind (code 911), quantum index, exports",
-   "color": "#A3A9B4",
-   "group": "Exports, quantum",
-   "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
   "exports_qi_93": {
    "name": "Special transactions and commodities not classified according to kind (code 93), quantum index, exports",
    "label": "Special transactions and commodities not classified according to kind (code 93), quantum index, exports",
@@ -7156,20 +7095,21 @@
    "color": "#A3A9B4",
    "group": "Exports, quantum",
    "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     288.64,
     331.68,
     117.31,
-    0,
-    0,
-    0,
-    0
-   ]
+    null,
+    null,
+    null,
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0)."
   },
   "exports_qi_ii": {
    "name": "Gold coin and current coin (code II), quantum index, exports",
@@ -7177,7 +7117,7 @@
    "color": "#A3A9B4",
    "group": "Exports, quantum",
    "data": [
-    0,
+    null,
     1.14,
     222.36,
     199.12,
@@ -7190,7 +7130,8 @@
     69.29,
     3.18,
     0.33
-   ]
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0)."
   },
   "exports_uvi_0": {
    "name": "Food and live animals (code 0), unit value index, exports",
@@ -7327,7 +7268,7 @@
     140.96,
     199.11,
     84.53,
-    0,
+    null,
     65.36,
     109.47,
     166.86,
@@ -7337,6 +7278,10 @@
     328.8,
     413.45,
     446.18
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2016-04-01"
    ]
   },
   "exports_uvi_017": {
@@ -8404,10 +8349,14 @@
     147.46,
     117.38,
     175.15,
-    0,
+    null,
     37.47,
-    0,
-    0
+    null,
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2022-04-01"
    ]
   },
   "exports_uvi_22": {
@@ -8594,9 +8543,13 @@
     205.98,
     457.48,
     440.85,
-    0,
+    null,
     123.55,
     31.03
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2023-04-01"
    ]
   },
   "exports_uvi_246": {
@@ -8616,8 +8569,12 @@
     328.21,
     452.33,
     153.12,
-    0,
+    null,
     313.21
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2024-04-01"
    ]
   },
   "exports_uvi_247": {
@@ -9152,18 +9109,28 @@
    "group": "Exports, unit value",
    "data": [
     38.51,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
     219.89,
-    0,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
+    null,
     113.36,
     153.17,
-    0,
-    0
+    null,
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2014-04-01",
+    "2015-04-01",
+    "2016-04-01",
+    "2018-04-01",
+    "2019-04-01",
+    "2020-04-01",
+    "2021-04-01"
    ]
   },
   "exports_uvi_287": {
@@ -9418,27 +9385,6 @@
     223.02
    ]
   },
-  "exports_uvi_333": {
-   "name": "Petroleum oils and oils obtained from bituminous minerals, crude (code 333), unit value index, exports",
-   "label": "Petroleum oils and oils obtained from bituminous minerals, crude (code 333), unit value index, exports",
-   "color": "#A3A9B4",
-   "group": "Exports, unit value",
-   "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
   "exports_uvi_334": {
    "name": "Petroleum oils and oils obtained from bituminous minerals (other than crude); preparations, n.e.s., containing by weight 70% or more of petroleum oils or of oils obtained from bituminous minerals, these oils being the basic constituents of the preparation (code 334), unit value index, exports",
    "label": "Petroleum oils and oils obtained from bituminous minerals (other than crude); preparations, n.e.s., containing by weight 70% or more of petroleum oils or of oils obtained from bituminous minerals, these oils being the basic constituents of the preparation (code 334), unit value index, exports",
@@ -9577,13 +9523,18 @@
     124.9,
     106.28,
     163.53,
-    0,
-    0,
+    null,
+    null,
     85.68,
     50.29,
-    0,
-    0,
-    0
+    null,
+    null,
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2019-04-01",
+    "2020-04-01"
    ]
   },
   "exports_uvi_35": {
@@ -9592,7 +9543,7 @@
    "color": "#A3A9B4",
    "group": "Exports, unit value",
    "data": [
-    0,
+    null,
     55.08,
     120.38,
     127.23,
@@ -9605,7 +9556,8 @@
     134.82,
     232.63,
     186.74
-   ]
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0)."
   },
   "exports_uvi_351": {
    "name": "Electric current (code 351), unit value index, exports",
@@ -9613,7 +9565,7 @@
    "color": "#A3A9B4",
    "group": "Exports, unit value",
    "data": [
-    0,
+    null,
     55.08,
     120.38,
     127.23,
@@ -9626,7 +9578,8 @@
     134.82,
     232.63,
     186.74
-   ]
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0)."
   },
   "exports_uvi_4": {
    "name": "Animal and vegetable oils, fats and waxes (code 4), unit value index, exports",
@@ -14143,48 +14096,6 @@
     362.42
    ]
   },
-  "exports_uvi_91": {
-   "name": "Postal packages not classified according to kind (code 91), unit value index, exports",
-   "label": "Postal packages not classified according to kind (code 91), unit value index, exports",
-   "color": "#A3A9B4",
-   "group": "Exports, unit value",
-   "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  "exports_uvi_911": {
-   "name": "Postal packages not classified according to kind (code 911), unit value index, exports",
-   "label": "Postal packages not classified according to kind (code 911), unit value index, exports",
-   "color": "#A3A9B4",
-   "group": "Exports, unit value",
-   "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
   "exports_uvi_93": {
    "name": "Special transactions and commodities not classified according to kind (code 93), unit value index, exports",
    "label": "Special transactions and commodities not classified according to kind (code 93), unit value index, exports",
@@ -14317,20 +14228,21 @@
    "color": "#A3A9B4",
    "group": "Exports, unit value",
    "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     138.06,
     174.28,
     100.28,
-    0,
-    0,
-    0,
-    0
-   ]
+    null,
+    null,
+    null,
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0)."
   },
   "exports_uvi_ii": {
    "name": "Gold coin and current coin (code II), unit value index, exports",
@@ -14338,7 +14250,7 @@
    "color": "#A3A9B4",
    "group": "Exports, unit value",
    "data": [
-    0,
+    null,
     128.21,
     99.17,
     111.07,
@@ -14351,7 +14263,8 @@
     182.68,
     247.3,
     322.76
-   ]
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0)."
   },
   "imports_qi_0": {
    "name": "Food and live animals (code 0), quantum index, imports",
@@ -14437,27 +14350,6 @@
     256.9
    ]
   },
-  "imports_qi_011": {
-   "name": "Meat of bovine animals, fresh, chilled or frozen (code 011), quantum index, imports",
-   "label": "Meat of bovine animals, fresh, chilled or frozen (code 011), quantum index, imports",
-   "color": "#A3A9B4",
-   "group": "Imports, quantum",
-   "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
   "imports_qi_012": {
    "name": "Other meat and edible meat offal, fresh, chilled or frozen (except meat and meat offal unfit or unsuitable for human consumption) (code 012), quantum index, imports",
    "label": "Other meat and edible meat offal, fresh, chilled or frozen (except meat and meat offal unfit or unsuitable for human consumption) (code 012), quantum index, imports",
@@ -14486,18 +14378,29 @@
    "group": "Imports, quantum",
    "data": [
     36.06,
-    0,
+    null,
     25.71,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     962.2,
     482.87,
     220.79
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2014-04-01",
+    "2016-04-01",
+    "2017-04-01",
+    "2018-04-01",
+    "2019-04-01",
+    "2020-04-01",
+    "2021-04-01",
+    "2022-04-01"
    ]
   },
   "imports_qi_017": {
@@ -15795,11 +15698,15 @@
     1570.52,
     140,
     147.78,
-    0,
+    null,
     89.82,
     85.33,
-    0,
-    0
+    null,
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2021-04-01"
    ]
   },
   "imports_qi_247": {
@@ -16327,27 +16234,6 @@
     322.9
    ]
   },
-  "imports_qi_286": {
-   "name": "Uranium or thorium ores and concentrates (code 286), quantum index, imports",
-   "label": "Uranium or thorium ores and concentrates (code 286), quantum index, imports",
-   "color": "#A3A9B4",
-   "group": "Imports, quantum",
-   "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
   "imports_qi_287": {
    "name": "Ores and concentrates of base metals, n.e.s. (code 287), quantum index, imports",
    "label": "Ores and concentrates of base metals, n.e.s. (code 287), quantum index, imports",
@@ -16753,61 +16639,23 @@
    "color": "#A3A9B4",
    "group": "Imports, quantum",
    "data": [
-    0,
-    0,
+    null,
+    null,
     9.78,
-    0,
+    null,
     21.49,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  "imports_qi_35": {
-   "name": "Electric current (code 35), quantum index, imports",
-   "label": "Electric current (code 35), quantum index, imports",
-   "color": "#A3A9B4",
-   "group": "Imports, quantum",
-   "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  "imports_qi_351": {
-   "name": "Electric current (code 351), quantum index, imports",
-   "label": "Electric current (code 351), quantum index, imports",
-   "color": "#A3A9B4",
-   "group": "Imports, quantum",
-   "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2016-04-01"
    ]
   },
   "imports_qi_4": {
@@ -21044,12 +20892,16 @@
     26.41,
     66.36,
     6.77,
-    0,
+    null,
     2.54,
     328.09,
     17.46,
     8.95,
-    0
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2020-04-01"
    ]
   },
   "imports_qi_884": {
@@ -21325,48 +21177,6 @@
     69.46
    ]
   },
-  "imports_qi_91": {
-   "name": "Postal packages not classified according to kind (code 91), quantum index, imports",
-   "label": "Postal packages not classified according to kind (code 91), quantum index, imports",
-   "color": "#A3A9B4",
-   "group": "Imports, quantum",
-   "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  "imports_qi_911": {
-   "name": "Postal packages not classified according to kind (code 911), quantum index, imports",
-   "label": "Postal packages not classified according to kind (code 911), quantum index, imports",
-   "color": "#A3A9B4",
-   "group": "Imports, quantum",
-   "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
   "imports_qi_93": {
    "name": "Special transactions and commodities not classified according to kind (code 93), quantum index, imports",
    "label": "Special transactions and commodities not classified according to kind (code 93), quantum index, imports",
@@ -21418,16 +21228,22 @@
     359.88,
     66308.47,
     1008.03,
-    0,
+    null,
     1086.65,
-    0,
+    null,
     221.22,
-    0,
+    null,
     386.94,
     125.64,
     21.35,
     264.53,
-    0
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2016-04-01",
+    "2018-04-01",
+    "2020-04-01"
    ]
   },
   "imports_qi_961": {
@@ -21439,16 +21255,22 @@
     359.88,
     66308.47,
     1008.03,
-    0,
+    null,
     1086.65,
-    0,
+    null,
     221.22,
-    0,
+    null,
     386.94,
     125.64,
     21.35,
     264.53,
-    0
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2016-04-01",
+    "2018-04-01",
+    "2020-04-01"
    ]
   },
   "imports_qi_97": {
@@ -21499,20 +21321,21 @@
    "color": "#A3A9B4",
    "group": "Imports, quantum",
    "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     2.99,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0)."
   },
   "imports_qi_ii": {
    "name": "Gold coin and current coin (code II), quantum index, imports",
@@ -21520,19 +21343,25 @@
    "color": "#A3A9B4",
    "group": "Imports, quantum",
    "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     2.99,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
     5805.1,
-    0,
-    0
+    null,
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2020-04-01",
+    "2021-04-01",
+    "2022-04-01"
    ]
   },
   "imports_uvi_0": {
@@ -21619,27 +21448,6 @@
     182.32
    ]
   },
-  "imports_uvi_011": {
-   "name": "Meat of bovine animals, fresh, chilled or frozen (code 011), unit value index, imports",
-   "label": "Meat of bovine animals, fresh, chilled or frozen (code 011), unit value index, imports",
-   "color": "#A3A9B4",
-   "group": "Imports, unit value",
-   "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
   "imports_uvi_012": {
    "name": "Other meat and edible meat offal, fresh, chilled or frozen (except meat and meat offal unfit or unsuitable for human consumption) (code 012), unit value index, imports",
    "label": "Other meat and edible meat offal, fresh, chilled or frozen (except meat and meat offal unfit or unsuitable for human consumption) (code 012), unit value index, imports",
@@ -21668,18 +21476,29 @@
    "group": "Imports, unit value",
    "data": [
     120.7,
-    0,
+    null,
     215.74,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     192.64,
     178.56,
     244.11
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2014-04-01",
+    "2016-04-01",
+    "2017-04-01",
+    "2018-04-01",
+    "2019-04-01",
+    "2020-04-01",
+    "2021-04-01",
+    "2022-04-01"
    ]
   },
   "imports_uvi_017": {
@@ -22977,11 +22796,15 @@
     89.63,
     150.06,
     165.63,
-    0,
+    null,
     392.92,
     428,
-    0,
-    0
+    null,
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2021-04-01"
    ]
   },
   "imports_uvi_247": {
@@ -23509,27 +23332,6 @@
     172.68
    ]
   },
-  "imports_uvi_286": {
-   "name": "Uranium or thorium ores and concentrates (code 286), unit value index, imports",
-   "label": "Uranium or thorium ores and concentrates (code 286), unit value index, imports",
-   "color": "#A3A9B4",
-   "group": "Imports, unit value",
-   "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
   "imports_uvi_287": {
    "name": "Ores and concentrates of base metals, n.e.s. (code 287), unit value index, imports",
    "label": "Ores and concentrates of base metals, n.e.s. (code 287), unit value index, imports",
@@ -23935,61 +23737,23 @@
    "color": "#A3A9B4",
    "group": "Imports, unit value",
    "data": [
-    0,
-    0,
+    null,
+    null,
     250,
-    0,
+    null,
     22.27,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  "imports_uvi_35": {
-   "name": "Electric current (code 35), unit value index, imports",
-   "label": "Electric current (code 35), unit value index, imports",
-   "color": "#A3A9B4",
-   "group": "Imports, unit value",
-   "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  "imports_uvi_351": {
-   "name": "Electric current (code 351), unit value index, imports",
-   "label": "Electric current (code 351), unit value index, imports",
-   "color": "#A3A9B4",
-   "group": "Imports, unit value",
-   "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2016-04-01"
    ]
   },
   "imports_uvi_4": {
@@ -28226,12 +27990,16 @@
     185.95,
     298.01,
     372.54,
-    0,
+    null,
     32.63,
     60.58,
     275.9,
     37.63,
-    0
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2020-04-01"
    ]
   },
   "imports_uvi_884": {
@@ -28507,48 +28275,6 @@
     284.06
    ]
   },
-  "imports_uvi_91": {
-   "name": "Postal packages not classified according to kind (code 91), unit value index, imports",
-   "label": "Postal packages not classified according to kind (code 91), unit value index, imports",
-   "color": "#A3A9B4",
-   "group": "Imports, unit value",
-   "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
-  "imports_uvi_911": {
-   "name": "Postal packages not classified according to kind (code 911), unit value index, imports",
-   "label": "Postal packages not classified according to kind (code 911), unit value index, imports",
-   "color": "#A3A9B4",
-   "group": "Imports, unit value",
-   "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
-   ]
-  },
   "imports_uvi_93": {
    "name": "Special transactions and commodities not classified according to kind (code 93), unit value index, imports",
    "label": "Special transactions and commodities not classified according to kind (code 93), unit value index, imports",
@@ -28600,16 +28326,22 @@
     148.38,
     75.73,
     250,
-    0,
+    null,
     246.16,
-    0,
+    null,
     141.95,
-    0,
+    null,
     53.8,
     153.98,
     275.83,
     169.11,
-    0
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2016-04-01",
+    "2018-04-01",
+    "2020-04-01"
    ]
   },
   "imports_uvi_961": {
@@ -28621,16 +28353,22 @@
     148.38,
     75.73,
     250,
-    0,
+    null,
     246.16,
-    0,
+    null,
     141.95,
-    0,
+    null,
     53.8,
     153.98,
     275.83,
     169.11,
-    0
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2016-04-01",
+    "2018-04-01",
+    "2020-04-01"
    ]
   },
   "imports_uvi_97": {
@@ -28681,19 +28419,23 @@
    "color": "#A3A9B4",
    "group": "Imports, unit value",
    "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     292.25,
-    0,
+    null,
     218.19,
-    0,
-    0,
-    0,
-    0
+    null,
+    null,
+    null,
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2020-04-01"
    ]
   },
   "imports_uvi_ii": {
@@ -28702,19 +28444,24 @@
    "color": "#A3A9B4",
    "group": "Imports, unit value",
    "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     292.25,
-    0,
+    null,
     218.19,
-    0,
+    null,
     87.34,
-    0,
-    0
+    null,
+    null
+   ],
+   "gapsNote": "No index compiled for these years (the RBI table prints 0).",
+   "gaps": [
+    "2020-04-01",
+    "2022-04-01"
    ]
   }
  }

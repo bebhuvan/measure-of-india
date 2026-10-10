@@ -266,3 +266,29 @@ export function nullCopiedRuns(dates, series, source) {
   }
   return runs;
 }
+
+/* ---- stand-in zeros before a state existed (datafix, launch read-through 2026-10-10) ----
+ * Sources fill a new state's rows with 0 for the years before it was formed (Telangana's capital
+ * receipts 2004-05 to 2013-14 in the RBI Handbook; Ladakh's start-ups and disease cases before
+ * October 2019). Those zeros are "no such state", never a measured zero (AGENTS.md rule 2).
+ * A run counts only when EVERY figure before formation is 0 and the series has a non-zero one
+ * after it: a landlocked state's water transport, a cool year's hot days, stay as published.
+ * Keys name the state as the whole key, its first part or its last part ("ladakh__cases"). */
+export const STATE_BORN = { telangana: "2014-04-01", ladakh: "2019-04-01", dadra_and_nagar_haveli_and_daman_and_diu: "2020-01-01" };
+export function bornOfKey(key) {
+  return Object.entries(STATE_BORN).find(([st]) => key === st || key.startsWith(st + "__") || key.endsWith("__" + st))?.[1] ?? null;
+}
+/** Indices of a series' stand-in zeros before its state existed ([] when it has none). */
+export function bornStandIns(key, dates, data) {
+  const born = bornOfKey(key);
+  if (!born) return [];
+  const pre = data.map((v, i) => i).filter((i) => data[i] != null && dates[i] < born);
+  if (pre.length < 1 || pre.some((i) => data[i] !== 0) || !data.some((v, i) => v != null && v !== 0 && dates[i] >= born)) return [];
+  return pre;
+}
+/** Blank them in place (they lead the series, so they become leading nulls). Returns the count. */
+export function nullBornStandIns(dates, series) {
+  let n = 0;
+  for (const [k, s] of Object.entries(series)) for (const i of bornStandIns(k, dates, s.data)) { s.data[i] = null; n++; }
+  return n;
+}

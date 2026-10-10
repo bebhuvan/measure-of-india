@@ -114,7 +114,9 @@ function outline(rows) {
   const used = new Set();
   for (const it of list) {
     const dup = count.get(it.desc.toLowerCase()) > 1;
-    it.label = dup && it.parent ? `${it.parent.desc}: ${it.desc}` : it.desc;
+    // the RBI's export prints a capital I for a lower-case l inside words ("Raw materiaIs", "Net
+    // infIow/outfIow"): fixed in the label a reader sees (keys keep the source's spelling)
+    it.label = (dup && it.parent ? `${it.parent.desc}: ${it.desc}` : it.desc).replace(/(?<=[a-z])I(?=[a-z]|s?\b)/g, "l");
     let key = slug(it.label, 70);
     if (used.has(key)) key = `${key}_${slug(String(it.code))}`;
     used.add(key);

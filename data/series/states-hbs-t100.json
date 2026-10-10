@@ -20,7 +20,7 @@
    "duplicates": []
   },
   "coverage": "State-wise Afforestation under different schemes: RBI Handbook of Statistics on Indian States, Table 100",
-  "note": "DBIE report 1729, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: value. Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
+  "note": "DBIE report 1729, data provider \"Query 1\". Values exactly as DBIE serves them; each series carries its unit (scripts/lib/products/states.mjs HBS_UNITS, read from the table's unit column and divisor). Periods: fiscal years, dated at April. Dimensions: none; measures: value. Andhra Pradesh before 2014-15 is the undivided state, a separate series (Telangana was formed on 2 June 2014; 2014-15 straddles the split). Jammu & Kashmir to 2018-19 (with Ladakh) and from 2019-20 (the UT) are separate series; 2019-20 straddles the change of 31 October 2019."
  },
  "dates": [
   "2004-04-01",
@@ -660,9 +660,9 @@
     39.1
    ]
   },
-  "andhra_pradesh": {
-   "name": "andhra_pradesh",
-   "label": "Andhra Pradesh: Afforestation under different schemes",
+  "andhra_pradesh_undivided": {
+   "name": "andhra_pradesh_undivided",
+   "label": "Andhra Pradesh (undivided, to 2013-14): Afforestation under different schemes",
    "unit": "thousand_hectares",
    "group": "Environment",
    "data": [
@@ -676,19 +676,15 @@
     407.7,
     407.3,
     373,
-    208.6,
-    133.6,
-    274.6,
-    229.4,
-    312.2,
-    198.9,
     null,
-    148.7
-   ],
-   "gaps": [
-    "2020-04-01"
-   ],
-   "gapsNote": "Not in the Handbook table for these years."
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
   },
   "telangana": {
    "name": "telangana",
@@ -696,15 +692,15 @@
    "unit": "thousand_hectares",
    "group": "Environment",
    "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     null,
     80.4,
     236.6,
@@ -714,11 +710,7 @@
     564.8,
     407.1,
     294.8
-   ],
-   "gaps": [
-    "2013-04-01"
-   ],
-   "gapsNote": "Not in the Handbook table for these years."
+   ]
   },
   "karnataka": {
    "name": "karnataka",
@@ -879,6 +871,36 @@
     0.3,
     0.1
    ]
+  },
+  "andhra_pradesh": {
+   "name": "andhra_pradesh",
+   "label": "Andhra Pradesh: Afforestation under different schemes",
+   "unit": "thousand_hectares",
+   "group": "Environment",
+   "data": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    208.6,
+    133.6,
+    274.6,
+    229.4,
+    312.2,
+    198.9,
+    null,
+    148.7
+   ],
+   "gaps": [
+    "2020-04-01"
+   ],
+   "gapsNote": "Not in the Handbook table for these years."
   },
   "jammu_and_kashmir_ut": {
    "name": "jammu_and_kashmir_ut",

@@ -541,10 +541,32 @@ const HBS_UNITS = {
   162: "pct", 163: "count", 164: "inr_amount", 165: "inr_amount", 166: "inr_crore", ...R(167, 172, "inr_amount"), 173: "inr_crore", ...R(174, 178, "inr_amount"),
   179: "count", 180: "count", 181: "usd", 182: "count",
 };
-export function hbsUnit(table, measure, dims) {
+export function hbsUnit(table, measure, dims, place) {
   const u = HBS_UNITS[Number(table)];
-  const v = typeof u === "function" ? u(measure, dims) : u;
+  let v = typeof u === "function" ? u(measure, dims) : u;
+  // a ratio row in a money table (Table 177 prints guarantees "Per Cent Of GDP" beside the rupee
+  // amounts) carries its own unit, never the table's money unit (datafix 2026-10-10)
+  const words = [measure, ...(dims ?? []), place].filter(Boolean).join(" ");
+  if (/^inr|usd/.test(v ?? "") && /per ?cent of (gdp|gsdp)/i.test(words)) v = /gsdp/i.test(words) ? "pct_of_gsdp" : "pct_of_gdp";
+  else if (/^inr|usd/.test(v ?? "") && /\bratio\b|per ?cent|percentage/i.test(words)) v = "pct";
   if (!v) throw new Error(`states: no unit declared for RBI Handbook Table ${table} (HBS_UNITS in scripts/lib/products/states.mjs)`);
+  return v;
+}
+
+/* Zeros that are not values. The Handbook prints 0 for a cell it has no figure for in two
+ * cases a reader must not see as zero (found in the 2026-10 read-through):
+ *  - a state before it existed: Telangana's capital receipts are 0 for 2004-05 to 2013-14; the
+ *    state was formed on 2 June 2014 (Ladakh and the merged Dadra and Nagar Haveli and Daman and
+ *    Diu likewise). A non-zero figure before birth (a state's own back-cast) is kept.
+ *  - a yield where the crop was not reported: cotton yield 0 for ten states in 2016-17 to
+ *    2019-20 is a blank, not a failed harvest (a crop not grown has no yield).
+ * Both become gaps; validate.mjs NONZERO fails a yield of 0 left in a bundle. */
+const STATE_BORN = { telangana: 2014, ladakh: 2019, dadra_and_nagar_haveli_and_daman_and_diu: 2020 };
+const NONZERO_UNITS = new Set(["kg_per_hectare"]);
+export function hbsValue(v, stateSlug, year, unit) {
+  if (v !== 0) return v;
+  if (STATE_BORN[stateSlug] != null && year < STATE_BORN[stateSlug]) return null;
+  if (unit && NONZERO_UNITS.has(unit)) return null;
   return v;
 }
 
@@ -585,7 +607,7 @@ export function parseHandbookTable(rep) {
   // before 2014-15 with no Telangana beside it is reporting the undivided state for those
   // years; a table with Telangana from its start (the SDP tables, back-cast by the states)
   // or one that starts after the split has no undivided years.
-  const hasVal = (r) => measures.some(([, i]) => parseNumber(r[i]) != null);
+  const hasVal = (r) => measures.some(([, i]) => hbsValue(parseNumber(r[i]), stateSlug(r[iState]), periodOf(r).year, null) != null);
   const pre = (name) => rowsOk.some((r) => slug(r[iState]) === name && periodOf(r).year < 2014 && hasVal(r));
   const apSplitUsed = pre("andhra_pradesh") && !pre("telangana") ? 2014 : null;
 
@@ -617,8 +639,8 @@ export function parseHandbookTable(rep) {
       const parts = [who.key, ...dimVals.map(slug), ...(suffix && !isRegion ? [slug(mName(h))] : [])];
       const key = parts.join("__");
       const label = [who.label, subject, ...dimVals, ...(suffix && !isRegion ? [mName(h)] : [])].join(": ");
-      const unit = hbsUnit(table, mName(h), dimVals);
-      const v = parseNumber(r[i]);
+      const unit = hbsUnit(table, mName(h), dimVals, who.label);
+      const v = hbsValue(parseNumber(r[i]), stateSlug(r[iState]), p.year, unit);
       const ck = `${key}|${p.date}`;
       if (g.seen.has(ck)) {
         const prev = g.seen.get(ck);
@@ -721,17 +743,18 @@ export function writeCatalogue(root) {
 /* ------------------------------------------------------------------ entry */
 
 export async function buildStates(root, dcfg, vintage, cfg) {
+  // STATES_FROM_RAW=1 re-bakes from the archived dumps (no MoSPI call, no Data Bank read)
+  const fromRaw = Boolean(process.env.STATES_FROM_RAW);
   // MoSPI first: the source of record
-  const nasRaw = await fetchNas(root, vintage);
+  const nasRaw = fromRaw ? readRaw(root, NAS_RAW) : await fetchNas(root, vintage);
   const { missing23 } = buildNas(root, nasRaw, nasRaw.vintage, dcfg);
   console.log(`states: MoSPI GSDP not served for ${missing23.join(", ")} (derived from published parts)`);
 
   // the RBI Handbook, every table
-  const db = databankRoot(cfg?.families?.databank);
-  const reports = readHandbook(db);
+  const reports = fromRaw ? Object.entries(readRaw(root, HBS_RAW).reports).map(([id, r]) => ({ id, ...r })) : readHandbook(databankRoot(cfg?.families?.databank));
   if (reports.length < 150) throw new Error(`states: only ${reports.length} Handbook reports in the Data Bank mirror (expected about 182)`);
   // anchor: Table 21 (GSDP, current prices) must carry Bihar 2011-12 on the 2011-12 base
-  writeRaw(root, HBS_RAW, {
+  if (!fromRaw) writeRaw(root, HBS_RAW, {
     vintage,
     note: "RBI DBIE, Handbook of Statistics on Indian States: every report in the menu, read from the local Data Bank mirror (rbi_dbie_webi_rows). Per report: the DBIE catalogue row, the data provider read (Main / Query 1), its provenance (Data Bank fetch time and content sha256), the header and every row as served.",
     reports: Object.fromEntries(reports.map((r) => [r.id, { catalog: r.catalog, document: r.document, provider: r.provider, provenance: r.provenance, header: r.header, rows: r.rows }])),

@@ -23,8 +23,10 @@
    "2022-04-01": "2022-23"
   },
   "cut": "State",
-  "note": "MoSPI's compendium reprints this table from All India Survey on Higher Education, Department of Higher Education, Ministry of Education; the figures are that agency's. Values printed as \"-\" (no observation) or \"NR\" (not reported) are not baked; meta.omitted counts them.",
-  "omitted": {}
+  "note": "MoSPI's compendium reprints this table from All India Survey on Higher Education, Department of Higher Education, Ministry of Education; the figures are that agency's. Values printed as \"-\" (no observation) or \"NR\" (not reported) are not baked; meta.omitted counts them. The source serves 1 cells of this table as 0 where there is no estimate (a parity index is never zero where the state has students); they are left out, not shown as zero.",
+  "omitted": {
+   "0 (no estimate)": 1
+  }
  },
  "dates": [
   "2018-04-01",
@@ -304,21 +306,6 @@
    "group": "Kerala",
    "geo": "Kerala"
   },
-  "ladakh": {
-   "name": "gender_t64_ladakh",
-   "label": "Ladakh",
-   "color": "#5F6675",
-   "unit": "gpi",
-   "data": [
-    0,
-    2.25,
-    2.2,
-    2.19,
-    2.14
-   ],
-   "group": "Ladakh",
-   "geo": "Ladakh"
-  },
   "lakshadweep": {
    "name": "gender_t64_lakshadweep",
    "label": "Lakshadweep",
@@ -588,6 +575,21 @@
    ],
    "group": "West Bengal",
    "geo": "West Bengal"
+  },
+  "ladakh": {
+   "name": "gender_t64_ladakh",
+   "label": "Ladakh",
+   "color": "#5F6675",
+   "unit": "gpi",
+   "data": [
+    null,
+    2.25,
+    2.2,
+    2.19,
+    2.14
+   ],
+   "group": "Ladakh",
+   "geo": "Ladakh"
   }
  }
 }

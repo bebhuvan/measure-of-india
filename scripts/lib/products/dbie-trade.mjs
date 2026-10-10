@@ -246,15 +246,20 @@ export async function buildDbieTrade(root, dcfg, vintage, cfg) {
         const k = `${flow}_${kind}_${slug(code)}`;
         const d = fyStart(r["Fiscal Year"]); allDates.add(d);
         if (!by.has(k)) by.set(k, { label: `${desc} (code ${code}), ${kind === "uvi" ? "unit value index" : "quantum index"}, ${flow}`, group: `${flow === "exports" ? "Exports" : "Imports"}, ${kind === "uvi" ? "unit value" : "quantum"}`, m: new Map() });
-        by.get(k).m.set(d, num(r.item_value));
+        // an index is never 0: DGCI&S prints 0 where it compiled no index for a group that year
+        // (nothing traded, or the group not in the basket); a gap, never a zero (validate NONZERO)
+        const v = num(r.item_value);
+        by.get(k).m.set(d, v === 0 ? null : v);
+        if (v === 0) by.get(k).zeroed = true;
       }
       for (const [k, x] of by) S[k] = x;
     }
     const dates = axis([...allDates]);
     const series = Object.fromEntries([...Object.entries(S)].sort(([a], [b]) => (a < b ? -1 : 1)).map(([k, x]) => [k, { name: x.label, label: x.label, color: "#A3A9B4", group: x.group,
-      data: dates.map((d) => (x.m.has(d) && x.m.get(d) != null ? Math.round(x.m.get(d) * 100) / 100 : null)) }]));
+      data: dates.map((d) => (x.m.has(d) && x.m.get(d) != null ? Math.round(x.m.get(d) * 100) / 100 : null)),
+      ...(x.zeroed ? { gapsNote: "No index compiled for these years (the RBI table prints 0)." } : {}) }]));
     write(rel, dates, series, { frequency: "annual", base, unit: "index", coverage: `Unit value and quantum indices of exports and imports by commodity (SITC-based DGCI&S groups), base ${base}, from ${from}`,
-      note: `RBI DBIE reports 601 (exports) and 552 (imports), data provider ${dp}, DGCI&S indices on base ${base}. Commodity codes are the DGCI&S index codes. A different base is a different ruler.`, retired: dp === "DP3" });
+      note: `RBI DBIE reports 601 (exports) and 552 (imports), data provider ${dp}, DGCI&S indices on base ${base}. Commodity codes are the DGCI&S index codes. A different base is a different ruler. The table prints 0 where no index was compiled for a group that year; those are left empty, and a group printed as 0 in every year is not baked.`, retired: dp === "DP3" });
   }
 
   /* ---------- crude oil and petroleum products, tonnes: 148 ---------- */

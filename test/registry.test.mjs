@@ -75,3 +75,24 @@ test("hand-typed display dates never contradict the current bundle", () => {
     }
   }
 });
+
+// datafix (2026-10-10): register.unit said "Jan 2020 to Jun 2026" when MNRE ran to July. A span's
+// open end or a count of periods typed into register text goes stale with the next print; it
+// is written as a token ({span}, {latest}, {n}) that periods.js fillPeriods reads from the bundle.
+test("register text names no open span end or period count by hand", async () => {
+  const { fillPeriods } = await import("../src/dossiers/periods.js");
+  const MON = "(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*";
+  for (const d of DOSSIERS) {
+    for (const field of ["unit", "historyCol"]) {
+      const text = d.register?.[field];
+      if (!text) continue;
+      assert.ok(!new RegExp(`\\bto ${MON} \\d{4}\\b`).test(text), `${d.slug}: register.${field} "${text}" types a span's end: write {span} or {latest}`);
+      assert.ok(!/^\d+ (months|quarters|prints)$/.test(text), `${d.slug}: register.${field} "${text}" types a count: write {n}`);
+      const filled = fillPeriods(text, d.currentBundle);
+      assert.ok(!/\{[a-zA-Z]+\}/.test(filled), `${d.slug}: register.${field} has an unknown token: ${filled}`);
+    }
+  }
+  const mnre = DOSSIERS.find((d) => d.slug === "mnre");
+  const b = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", mnre.currentBundle + ".json"), "utf8"));
+  assert.match(fillPeriods(mnre.register.unit, mnre.currentBundle), new RegExp(`${["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][+b.dates.at(-1).slice(5, 7) - 1]} ${b.dates.at(-1).slice(0, 4)}$`));
+});

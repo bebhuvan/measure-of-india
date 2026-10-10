@@ -31,6 +31,7 @@ import YAML from "yaml";
 import { mospi, mospiAll } from "../mospi.mjs";
 import { databankRoot, dbieReport } from "../databank.mjs";
 import { writeSeries, writeRaw, monthAxis, quarterAxis, round2, readRaw } from "../util.mjs";
+import { noEstimate } from "./asuse.mjs";
 
 const ACC = "#2E4BD8";
 const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
@@ -558,8 +559,11 @@ const ACT_KEY = (a) => ({ "Trading Activities": "trading", "Other Services": "ot
 
 export async function buildServicesAsuse(root, dcfg, vintage) {
   const keep = new Set(ASUSE_SERVICE_ACTIVITIES);
-  const byInd = {}; let total = 0;
-  for (const code of dcfg.fetch.indicators) {
+  let byInd = {}; let total = 0;
+  // SERVICES_ASUSE_FROM_RAW=1 re-bakes from the archived dump without calling the API
+  const fromRaw = Boolean(process.env.SERVICES_ASUSE_FROM_RAW);
+  if (fromRaw) byInd = readRaw(root, "data/raw/services-asuse.json").records;
+  else for (const code of dcfg.fetch.indicators) {
     byInd[code] = [];
     for (const y of dcfg.fetch.years) {
       const rows = await mospiAll(dcfg.fetch.endpoint, { indicator_code: code, year: y });
@@ -569,15 +573,17 @@ export async function buildServicesAsuse(root, dcfg, vintage) {
     process.stdout.write(`services-asuse: indicator ${code}, ${byInd[code].length} service rows kept\n`);
   }
   if (!byInd[1]?.length || !byInd[26]?.length) throw new Error("services-asuse: no establishment or worker rows returned for service activities");
-  writeRaw(root, "data/raw/services-asuse.json", { vintage, note: `ASUSE rows for service activities (and the All, Trading Activities and Other Services aggregates), All India, every indicator that carries the activity dimension; ${total} rows read in all, manufacturing activities left to the factories guide's raw dump.`, records: byInd });
+  if (!fromRaw) writeRaw(root, "data/raw/services-asuse.json", { vintage, note: `ASUSE rows for service activities (and the All, Trading Activities and Other Services aggregates), All India, every indicator that carries the activity dimension; ${total} rows read in all, manufacturing activities left to the factories guide's raw dump.`, records: byInd });
 
+  // the data's vintage, not the run date (AGENTS.md rule 5)
+  vintage = readRaw(root, "data/raw/services-asuse.json").vintage;
   const fiscal = (y) => /^\d{4}-\d{2}$/.test(y);
   for (const [round, pick, dateOf, base, sfx] of [
     ["fiscal", fiscal, (y) => `${y.slice(0, 4)}-04-01`, dcfg.base, ""],
     ["2025", (y) => /^\d{4}$/.test(y), (y) => `${y}-01-01`, "calendar-year round (ASUSE 2025)", "-2025"],
   ]) {
     for (const part of ["core", "profile"]) {
-      const cells = new Map(), labels = new Map(), units = new Map(), groups = new Map(), order = [];
+      const cells = new Map(), labels = new Map(), units = new Map(), groups = new Map(), order = [], zeroed = new Set();
       for (const [code, rows] of Object.entries(byInd)) {
         if ((part === "core") !== ASUSE_CORE.has(+code)) continue;
         for (const r of rows) {
@@ -596,6 +602,7 @@ export async function buildServicesAsuse(root, dcfg, vintage) {
             order.push(key);
           }
           const d = dateOf(String(r.year)); const ck = `${key}|${d}`;
+          if (noEstimate(code, units.get(key), v)) { zeroed.add(key); continue; }   // asuse.mjs PER_HEAD_MONEY
           if (cells.has(ck) && cells.get(ck) !== v) process.stdout.write(`services-asuse WARN ${key} ${d}: ${cells.get(ck)} vs ${v}, kept first\n`);
           else cells.set(ck, v);
         }
@@ -605,7 +612,9 @@ export async function buildServicesAsuse(root, dcfg, vintage) {
       const dates = yearAxis(+ds[0].slice(0, 4), +ds.at(-1).slice(0, 4), ds[0].slice(5, 7));
       const series = {};
       for (const key of order) series[key] = { name: `asuse_${key}`, label: labels.get(key), group: groups.get(key), color: /__all_activities__/.test(key) ? "#A3A9B4" : ACC, unit: units.get(key), data: dates.map((d) => cells.get(`${key}|${d}`) ?? null) };
+      for (const k of Object.keys(series)) if (series[k].data.every((v) => v == null)) delete series[k];   // printed as 0 in every round
       discloseGaps(dates, series, "ASUSE did not publish this cell in this round.");
+      for (const k of zeroed) if (series[k]?.gaps) series[k].gapsNote = "No estimate for these rounds: the table prints 0 (no hired worker in the sample for this cut).";
       const slug = `services-asuse${part === "profile" ? "-profile" : ""}${sfx}`;
       writeSeries(root, `data/series/${slug}.json`, { meta: { dossier: "services-asuse", frequency: "annual", base, source: dcfg.source_agency, vintage, mock: false, geo: dcfg.geo ?? "IND",
         releaseDate: null, revisionPolicy: dcfg.revision_policy, latestPeriod: dates.at(-1).slice(0, 7),

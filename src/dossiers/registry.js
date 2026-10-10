@@ -406,7 +406,7 @@ export const DOSSIERS = [
     proseConstants: [100],   // verifier whitelist: weights/shares/base years this dossier may cite
     spark: { bundle: "mnre-sources", series: "grand_total" },
     prose: false,
-    register: { id: "reg-mnre", label: "Renewable Energy", unit: "Monthly, MNRE, Jan 2020 to Jun 2026", historyCol: "78 months" },
+    register: { id: "reg-mnre", label: "Renewable Energy", unit: "Monthly, MNRE, {span}", historyCol: "{n} months" },   // tokens: periods.js fillPeriods (datafix)
     bundles: ["mnre-sources", "mnre-solar-categories", "mnre-states", "mnre-states-solar", "mnre-bio-categories", "mnre-states-wind", "mnre-states-hydro", "mnre-states-bio"],
   },
   {

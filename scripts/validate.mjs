@@ -3932,8 +3932,6 @@ withBundle("farms-states-production", (b) => withBundle("farms-production", (n) 
   if (!bad) ok(`meta text: ${n} bundles name a three-letter geography; every revision policy given is a sentence (${noPolicy} bundles carry none)`);
 }
 
-if (failures) { console.error(`\n${failures} validation failure(s)`); process.exit(1); }
-console.log("validate: all checks passed");
 
 /* ---- copied runs (launch read-through, 2026-10-10) ----
  * A source can print one stretch of its history a second time under other dates (DBIE 148 and
@@ -3955,3 +3953,54 @@ console.log("validate: all checks passed");
   }
   ok(`copied runs: none in ${checked} monthly, quarterly and annual bundles`);
 }
+
+/* ---- datafix (launch read-through, 2026-10-10): zeros that cannot be values ----
+ * Missing is null, never 0 (AGENTS.md rule 2). Sources print 0 for "no estimate" in places a
+ * reader would take as a measured zero: a casual wage of Rs 0 a day (PLFS via the gender
+ * compendium), an exchange rate of 0 (DBIE 720), a commodity index of 0 (DGCI&S), Telangana's
+ * capital receipts before the state existed (RBI Handbook). Each class below cannot be 0 by its
+ * nature; a 0 left in any bundle fails, and the fix belongs in the adapter (a gap with a note).
+ * The classes are read from units and labels, never from a list of bundles. */
+export const NONZERO = [
+  { why: "an exchange rate is never 0", test: (s, u) => /^inr_per_(unit|usd)$/.test(u) },
+  { why: "an index level is never 0", test: (s, u, k) => u === "index" && !/spei/i.test(k) && !/below zero/i.test(s.label ?? "") },
+  { why: "a parity index or pupil-teacher ratio is never 0", test: (s, u) => u === "gpi" || u === "pupils_per_teacher" },
+  { why: "a crop yield is never 0 (a crop not grown has no yield)", test: (s, u) => u === "kg_per_hectare" && /yield/i.test(`${s.label} ${s.name}`) },
+  // a wage rate (rupees a day, a month, a year per person), not a wage bill (ASI's crore totals can be 0)
+  { why: "a wage or earning per person is never 0", test: (s, u, k, m) => /^inr(_per_(day|hour|month|30_days|year))?$/.test(u ?? "") && /\b(wages?|emoluments?|earnings?)\b/i.test(`${s.label} ${s.name} ${m?.coverage ?? ""}`) },
+  { why: "a rupee figure per worker or per establishment is never 0", test: (s, u) => u === "inr_per_year" && /per (hired )?worker|per est/i.test(`${s.label} ${s.name}`) },
+  // for a state's whole population or one sex; a narrow cell (diploma holders, young urban women of
+  // one UT) can be 0 in a survey sample, so education and age-band cuts are left out
+  { why: "a worker population ratio or labour force participation rate is never 0", test: (s, u, k) => /worker population ratio|labour force participation|^wpr\b|^lfpr\b/i.test(s.label ?? "") && !/__edu_|__a\d+_\d+/.test(k) },
+  { why: "a gross enrolment ratio is never 0", test: (s) => /gross enrolment ratio|\bGER\b/.test(s.label ?? "") },
+];
+// a state's figure before the state existed is not a value (util.bornStandIns: every figure before
+// formation 0, a non-zero one after); climate grids measure the land, which existed, and are skipped
+const { bornStandIns } = await import("./lib/util.mjs");
+{
+  let n = 0, bad = 0;
+  const hits = new Map();
+  for (const f of fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => f.endsWith(".json")).sort()) {
+    const b = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", f), "utf8"));
+    for (const [k, s] of Object.entries(b.series ?? {})) {
+      const u = s.unit ?? b.meta?.unit;
+      const rule = NONZERO.find((r) => r.test(s, u, k, b.meta));
+      const standIn = /^climate-/.test(f) ? new Set() : new Set(bornStandIns(k, b.dates, s.data ?? []));
+      if (!rule && !standIn.size) continue;
+      n++;
+      (s.data ?? []).forEach((v, i) => {
+        if (v !== 0) return;
+        const why = rule ? rule.why : standIn.has(i) ? "a state's figure before the state existed" : null;
+        if (!why) return;
+        const key = `${f.replace(".json", "")}: ${why}`;
+        (hits.get(key) ?? hits.set(key, []).get(key)).push(`${k} ${b.dates[i]}`);
+      });
+    }
+  }
+  for (const [key, cells] of hits) { bad++; fail(`${key}, but ${cells.length} cell(s) are 0 (e.g. ${cells.slice(0, 3).join(", ")}): map the source's "no estimate" to null in the adapter`); }
+  if (!bad) ok(`no-estimate zeros: none in ${n} series that cannot be 0 (exchange rates, indices, ratios, yields, wages)`);
+}
+// ---- end datafix ----
+
+if (failures) { console.error(`\n${failures} validation failure(s)`); process.exit(1); }
+console.log("validate: all checks passed");
