@@ -42,16 +42,20 @@ than copying them, and stage anything archive-sized in `data/archive/staging/<fa
 a write fails with ENOSPC, message the coordinator; never delete anything outside your
 worktree.
 
-**One build at a time on the machine.** Every build-and-check runs under one shared lock, so
-memory and disk hold one build's worth however many sessions run:
+**At most two builds at a time on the machine.** Every build-and-check runs in one of two
+shared slots (`scripts/build-slot.sh`, also at `/tmp/atlas-build-slot.sh` for branches that
+have not merged it yet), so memory and disk hold two builds' worth however many sessions
+run, and dist is deleted inside the slot:
 
 ```
-flock /tmp/atlas-build.lock sh -c 'npx astro build && npm run gates; status=$?; rm -rf dist; exit $status'
+/tmp/atlas-build-slot.sh sh -c 'npx astro build && npm run gates; s=$?; rm -rf dist; exit $s'
 ```
 
-`npm test`, `validate`, `coverage` and `prose:dry` need no build and run outside the lock.
-Looking at pages (Playwright at 1440 and 390) needs `dist`: do it inside the same locked
-command, or build, look and delete within one lock. Never leave a `dist/` behind.
+(This replaced a single `flock /tmp/atlas-build.lock` on 2026-10-10: one slot queued four
+sessions for over an hour, since a full gates run takes 15 to 20 minutes.) `npm test`,
+`validate`, `coverage` and `prose:dry` need no build and run outside the slots. Looking at
+pages (Playwright at 1440 and 390) needs `dist`: build, look and delete inside one slot.
+Never leave a `dist/` behind.
 
 ## Files you own, files you share
 
