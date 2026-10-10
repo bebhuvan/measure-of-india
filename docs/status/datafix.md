@@ -5,8 +5,11 @@ offline from the archived raw (or the local Data Bank), with a check so it canno
 
 ## State (2026-10-10)
 
-All five items done. `validate`, `coverage` (42 ledgers), `npm test` (65), `prose:dry` green.
-Build and gates: see the last section.
+All five items done. `npx astro build` (1,148 pages) and `npm run gates` green in a slot
+(validate, coverage 42 ledgers, as-of, qc, chart lint 855 SVGs clean); `npm test` 66/66;
+`prose:dry` green. Facts sheets changed in two title strings only (climate, gdp), no figure, so
+no prose was regenerated. Looked at /register/, gender, mnre and external at 1440 and 390, and
+the home search for three state queries (profile first, then the state's own row). dist deleted.
 
 ## 1. Zeros that mean "no estimate"
 
@@ -101,6 +104,10 @@ Real index, before and after: "inflation in kerala" opened on CPI-RL, now Kerala
 "bank deposits maharashtra" opened on foreign banks' deposits, now the state's deposits.
 Tests: eleven state-and-topic queries in `test/search.test.mjs` (with a control that fails
 without the boost); ten on the real built index in `qc.mjs`.
+
+First gates run caught one regression of mine: dropping "prices" after "current" from the index
+but not from the query broke finding seven GDP and state rows by their own label; the query now
+uses the index's tokens (commit bb03529), 1,171 sampled labels all found.
 
 ## Decisions
 
