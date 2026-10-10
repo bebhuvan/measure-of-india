@@ -128,11 +128,11 @@ export const FORMER = [
 // publish beside states. A label naming one of these is placed as that aggregate, never as
 // a state. Order matters only through alias length (longest wins).
 export const AGGREGATES = [
-  { slug: "india", name: "All India", aliases: ["all india", "all-india", "india", "all states", "all states and uts", "total", "grand total", "national"] },
+  { slug: "india", name: "All India", aliases: ["all india", "all-india", "india", "all states", "all states and uts", "all states uts"] },
   { slug: "zone", name: "a region of several states", aliases: [
     "northern region", "north eastern region", "north-eastern region", "eastern region", "central region", "western region", "southern region",
     "north east", "north-east", "north eastern states", "ne states", "other uts", "other states", "union territories", "all uts", "uts",
-    "north eastern", "special category states", "general category states", "non special category states", "states and uts"] },
+    "north eastern", "east zone", "west zone", "north zone", "south zone", "central zone", "north east zone", "north eastern zone", "special category states", "general category states", "non special category states", "states and uts"] },
 ];
 
 /* ---------- matching ---------- */

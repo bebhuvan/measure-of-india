@@ -28,6 +28,7 @@ const NON_STATE_ROWS = [
   [/^states-hbs-t142$/, (s) => /^Damodar Valley Corporation/.test(s.label), "a power utility serving two states"],
   [/^states-hbs-t149$/, (s) => /^(Mumbai|Kolkata|Chennai|Delhi):/.test(s.label), "metro telephone circles"],
   [/^states-hbs-t177$/, (s) => /^Per Cent Of Gdp/.test(s.label), "the all-states total as a share of GDP"],
+  [/^gender-t16[4-7]$/, (s) => /, Central$/.test(s.label), "central school boards (CBSE, NIOS), not a state"],
   [/^gender-t031$/, (s) => /, (Jammu|Kashmir)$/.test(s.label), "the Jammu and Kashmir divisions, below the state"],
 ];
 // Labels that name a state and then a finer place inside it (districts, boards, banks in a state).
@@ -97,10 +98,11 @@ test("every state label in every baked bundle is placed, or the bundle is nation
       if (units.length > 1) { if (hier) continue; problems.push(`${slug}/${k}: "${t}" names ${units.join(" and ")}`); continue; }
       if ([...new Set(placeAll(k).map((h) => h.slug))].length === 1) continue;
       if (placeAggregate(t) || placeAggregate(k)) continue;
+      if (t.split(/ · |, |: /).some((seg) => /^(grand )?total$/i.test(seg.trim()))) continue;   // the source's national total row
       if (NON_STATE_ROWS.some(([re, ok]) => re.test(slug) && ok(s))) continue;
       problems.push(`${slug}/${k}: cannot place "${t}"`);
     }
   }
   assert.ok(stateCuts > 500, `only ${stateCuts} state-cut bundles found`);
-  assert.deepEqual(problems.slice(0, 40), [], `${problems.length} labels the state key cannot place`);
+  assert.deepEqual(problems.slice(0, 200), [], `${problems.length} labels the state key cannot place`);
 });
