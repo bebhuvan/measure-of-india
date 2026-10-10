@@ -160,6 +160,21 @@ Updated 2026-10-10.
 - **NSS 80** stays blocked: its indicator list answered HTTP 500 to five calls on 2026-10-10.
 - **Economic Census**: no record endpoint known; manual discovery after launch.
 
+## Final round (2026-10-10)
+- Merged launch-build (30 guides). Wired: public finance (days on ways and means advances and in
+  overdraft with the RBI over the last 12 months, the consolidated sinking fund), urban
+  co-operative banks (number, to March 2026; deposits, to March 2024), and from farms, crop output
+  by crop and fertiliser per hectare. State key learns "Jammu and Kashmir (state)" as the former
+  state, and keeps "Jammu and Kashmir State Board" on the present UT.
+- Looked at Uttar Pradesh, Sikkim and Puducherry at 1440 and 390. Fixed: the district table shows
+  the ten largest and folds the rest (Uttar Pradesh listed 75); on a phone, the "where it stands"
+  chart and the work bars draw to the phone's width, names above each row, so the dots and bars
+  are on screen (they had scrolled off under the site's 700 px floor for scrolling plates); the
+  India ticks on the phone bars no longer cross the labels. Line charts keep the site's
+  scroll-from-the-latest convention.
+- Rank wording: "highest"/"lowest" only for the first and last five; "near the middle" only for
+  the middle third; otherwise "6th of 31, counted from the highest".
+
 ## Blocked
 - NSS 80 (HTTP 500), seven indicators MoSPI could not serve whole, and the Economic Census: see
   Step 5 above. NSS 73 stays blocked (HTTP 400 on every data call when the inventory probed it).

@@ -48,6 +48,8 @@ const kindNote = u.kind === "ut" ? "A union territory without a legislature: the
   @media (max-width:680px){.pf-numbers{grid-template-columns:repeat(2,minmax(0,1fr))}}
   .pf-table td a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--rule-2)}
   .pf-table tr.self td{background:#F7F8FC}
+  .pf-more summary{cursor:pointer;font-family:var(--sans);font-size:.9rem;color:var(--ink);padding:10px 0;border-bottom:1px solid var(--rule)}
+  .pf-more table{margin-top:10px}
   .pf-table caption{caption-side:top;text-align:left;font-family:var(--sans);font-size:.85rem;color:var(--ink-soft);padding:0 0 10px;line-height:1.5}
   .pf-table .v{font-weight:600;color:var(--ink)}
   .pf-note{font-family:var(--sans);font-size:.88rem;color:var(--muted);line-height:1.55;margin:10px 0 0}
@@ -167,17 +169,31 @@ const kindNote = u.kind === "ut" ? "A union territory without a legislature: the
           </table>
         </div>
       )}
-      {s.id === "money" && P.districts && (
-        <div class="pf-table">
-          <table>
-            <caption>{N}'s {P.districts.rows.length === 1 ? "district" : `${P.districts.rows.length} districts`}, by bank deposits, as on {P.districts.period} (RBI, Basic Statistical Returns; amounts are the sums of the rural, semi-urban, urban and metropolitan figures as published)</caption>
-            <thead><tr><th>District</th><th>Deposits</th><th>Credit</th><th>Credit-deposit ratio</th><th>Women's share of loans to individuals</th></tr></thead>
-            <tbody>
-              {P.districts.rows.map((r) => <tr><td>{r.name}</td><td set:html={F(r.dep)} /><td set:html={r.cred ? F(r.cred) : "<span class=\"na\">no figure</span>"} /><td set:html={r.cd ? F(r.cd) : "<span class=\"na\">no figure</span>"} /><td set:html={r.women ? F(r.women) : "<span class=\"na\">no figure</span>"} /></tr>)}
-            </tbody>
-          </table>
-        </div>
-      )}
+      {s.id === "money" && P.districts && (() => {
+        // the ten largest districts by deposits show; the rest fold under one line
+        const row = (r) => <tr><td>{r.name}</td><td set:html={F(r.dep)} /><td set:html={r.cred ? F(r.cred) : "<span class=\"na\">no figure</span>"} /><td set:html={r.cd ? F(r.cd) : "<span class=\"na\">no figure</span>"} /><td set:html={r.women ? F(r.women) : "<span class=\"na\">no figure</span>"} /></tr>;
+        const head = <thead><tr><th>District</th><th>Deposits</th><th>Credit</th><th>Credit-deposit ratio</th><th>Women's share of loans to individuals</th></tr></thead>;
+        const n = P.districts.rows.length, top = P.districts.rows.slice(0, 10), more = P.districts.rows.slice(10);
+        return (
+          <div class="pf-table">
+            <table>
+              <caption>{N}'s {n === 1 ? "district" : `${n} districts`}{more.length ? ", the ten largest" : ""}, by bank deposits, as on {P.districts.period} (RBI, Basic Statistical Returns; amounts are the sums of the rural, semi-urban, urban and metropolitan figures as published)</caption>
+              {head}
+              <tbody>{top.map(row)}</tbody>
+            </table>
+            {more.length > 0 && (
+              <details class="pf-more">
+                <summary>The other {more.length} {more.length === 1 ? "district" : "districts"}</summary>
+                <table>
+                  <caption>The rest of {N}'s districts, by bank deposits, as on {P.districts.period}</caption>
+                  {head}
+                  <tbody>{more.map(row)}</tbody>
+                </table>
+              </details>
+            )}
+          </div>
+        );
+      })()}
       {s.rest.length > 0 && (
         <div class="pf-table">
           <table>
