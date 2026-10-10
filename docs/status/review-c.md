@@ -113,6 +113,5 @@ Kerala's CPI (ranking, not fixed); "forex reserves", "wheat MSP", "heatwave", "c
 
 - All 36 profiles and the states index at 390: no overflow, placeholders, NaN or console errors.
 - `npm test`: 58 pass. `npm run prose:dry`: clean. `npm run gates` after merging launch-build
-  (46090dd): QC all checks passed, chart lint clean (856 SVGs). A final build re-ran the gates after
-  one more label tweak (result below). `dist/` deleted.
+  (46090dd): QC all checks passed, chart lint clean (856 SVGs). The final build, with the last label tweak, re-ran the gates: QC all passed, chart lint clean. `dist/` deleted.
 - No prose regenerated: the generated slots in my guides are review-a's precision pass.
