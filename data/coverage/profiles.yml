@@ -7,9 +7,12 @@ guides: []
 catalogue: data/coverage/profiles.catalogue.json
 rules:
   # MoSPI rounds the brief names as gaps: held until the MoSPI audit refresh finishes
-  - match: ["mospi:nss:75", "mospi:nss:76", "mospi:nss:77", "mospi:nss:78", "mospi:nss:79", "mospi:nss:80"]
+  - match: "mospi:nss:80"
     status: blocked
-    reason: "Waiting for the MoSPI audit (lb/audit-refresh), 2026-10-10: the coordinator holds every new MoSPI download until it finishes; state cuts of these rounds are scheduled after it."
+    reason: "NSS 80's indicator list (nss-80/getIndicatorList) answered HTTP 500 on 2026-10-10 to five calls (twice without parameters, three times with survey=1), each after the full backoff; its survey list (nss-80/getSurvey) answers."
+  - match: "mospi:tus:*"
+    status: excluded
+    reason: "National only on the API (no state dimension); belongs to a national Time Use guide, inventory item 6, after launch."
   - match: "mospi:nss:73"
     status: blocked
     reason: "NSS 73 (enterprises, 2015-16): every data call returned HTTP 400 when the inventory probed it, and new MoSPI calls wait for the audit (2026-10-10)."
@@ -329,6 +332,49 @@ rules:
     status: shown
     bundle: hces-social-states
     plate: "§06 How households live"
+  - match: ["profile:agriincome:andaman-nicobar", "profile:agriincome:chandigarh", "profile:agriincome:dnh-dd", "profile:agriincome:delhi", "profile:agriincome:goa", "profile:agriincome:jammu-kashmir", "profile:agriincome:ladakh", "profile:agriincome:lakshadweep", "profile:agriincome:puducherry"]
+    status: excluded
+    reason: "The source (profiles-mospi-nss77-0-24) publishes no monthly income of a farm household for these units; the profile says so in place of a figure."
+  - match: "profile:agriincome:*"
+    status: shown
+    bundle: profiles-mospi-nss77-0-24
+    plate: "§06 How households live"
+  - match: ["profile:assetsrural:dnh-dd", "profile:assetsrural:jammu-kashmir", "profile:assetsrural:ladakh"]
+    status: excluded
+    reason: "The source (profiles-mospi-nss77aidis-1-6) publishes no assets of a rural household for these units; the profile says so in place of a figure."
+  - match: "profile:assetsrural:*"
+    status: shown
+    bundle: profiles-mospi-nss77aidis-1-6
+    plate: "§06 How households live"
+  - match: ["profile:debtrural:dnh-dd", "profile:debtrural:jammu-kashmir", "profile:debtrural:ladakh"]
+    status: excluded
+    reason: "The source (profiles-mospi-nss77aidis-1-6) publishes no debt of a rural household for these units; the profile says so in place of a figure."
+  - match: "profile:debtrural:*"
+    status: shown
+    bundle: profiles-mospi-nss77aidis-1-6
+    plate: "§06 How households live"
+  - match: ["profile:indebtedrural:dnh-dd", "profile:indebtedrural:jammu-kashmir", "profile:indebtedrural:ladakh"]
+    status: excluded
+    reason: "The source (profiles-mospi-nss77aidis-1-6) publishes no rural households in debt for these units; the profile says so in place of a figure."
+  - match: "profile:indebtedrural:*"
+    status: shown
+    bundle: profiles-mospi-nss77aidis-1-6
+    plate: "§06 How households live"
+  - match: "profile:bankadults:*"
+    status: shown
+    bundle: profiles-mospi-nss79-1-14
+    plate: "§06 How households live"
+  - match: "profile:broadband:*"
+    status: shown
+    bundle: profiles-mospi-nss78-0-7
+    plate: "§06 How households live"
+  - match: ["profile:disability:dnh-dd", "profile:disability:jammu-kashmir", "profile:disability:ladakh"]
+    status: excluded
+    reason: "The source (profiles-mospi-nss76-1-1) publishes no people with a disability for these units; the profile says so in place of a figure."
+  - match: "profile:disability:*"
+    status: shown
+    bundle: profiles-mospi-nss76-1-1
+    plate: "§06 How households live"
   - match: "profile:mpi:*"
     status: shown
     bundle: states-hbs-t010
@@ -641,6 +687,55 @@ rules:
     status: shown
     bundle: states-hbs-t057
     plate: "§10 Farms"
+  - match: ["profile:rice:andaman-nicobar", "profile:rice:chandigarh", "profile:rice:dnh-dd", "profile:rice:ladakh", "profile:rice:lakshadweep"]
+    status: excluded
+    reason: "The source (states-hbs-t058) publishes no rice grown for these units; the profile says so in place of a figure."
+  - match: "profile:rice:*"
+    status: shown
+    bundle: states-hbs-t058
+    plate: "§10 Farms"
+  - match: ["profile:wheat:andaman-nicobar", "profile:wheat:chandigarh", "profile:wheat:dnh-dd", "profile:wheat:goa", "profile:wheat:kerala", "profile:wheat:ladakh", "profile:wheat:lakshadweep", "profile:wheat:mizoram", "profile:wheat:puducherry", "profile:wheat:tamil-nadu"]
+    status: excluded
+    reason: "The source (states-hbs-t059) publishes no wheat grown for these units; the profile says so in place of a figure."
+  - match: "profile:wheat:*"
+    status: shown
+    bundle: states-hbs-t059
+    plate: "§10 Farms"
+  - match: ["profile:pulses:andaman-nicobar", "profile:pulses:chandigarh", "profile:pulses:dnh-dd", "profile:pulses:ladakh", "profile:pulses:lakshadweep"]
+    status: excluded
+    reason: "The source (states-hbs-t061) publishes no pulses grown for these units; the profile says so in place of a figure."
+  - match: "profile:pulses:*"
+    status: shown
+    bundle: states-hbs-t061
+    plate: "§10 Farms"
+  - match: ["profile:oilseeds:andaman-nicobar", "profile:oilseeds:chandigarh", "profile:oilseeds:dnh-dd", "profile:oilseeds:ladakh", "profile:oilseeds:lakshadweep"]
+    status: excluded
+    reason: "The source (states-hbs-t063) publishes no oilseeds grown for these units; the profile says so in place of a figure."
+  - match: "profile:oilseeds:*"
+    status: shown
+    bundle: states-hbs-t063
+    plate: "§10 Farms"
+  - match: ["profile:sugarcane:andaman-nicobar", "profile:sugarcane:chandigarh", "profile:sugarcane:dnh-dd", "profile:sugarcane:delhi", "profile:sugarcane:ladakh", "profile:sugarcane:lakshadweep", "profile:sugarcane:sikkim"]
+    status: excluded
+    reason: "The source (states-hbs-t065) publishes no sugarcane grown for these units; the profile says so in place of a figure."
+  - match: "profile:sugarcane:*"
+    status: shown
+    bundle: states-hbs-t065
+    plate: "§10 Farms"
+  - match: ["profile:cotton:andaman-nicobar", "profile:cotton:arunachal-pradesh", "profile:cotton:bihar", "profile:cotton:chandigarh", "profile:cotton:dnh-dd", "profile:cotton:delhi", "profile:cotton:goa", "profile:cotton:jammu-kashmir", "profile:cotton:jharkhand", "profile:cotton:ladakh", "profile:cotton:lakshadweep", "profile:cotton:manipur", "profile:cotton:sikkim", "profile:cotton:uttarakhand"]
+    status: excluded
+    reason: "The source (states-hbs-t064) publishes no cotton grown for these units; the profile says so in place of a figure."
+  - match: "profile:cotton:*"
+    status: shown
+    bundle: states-hbs-t064
+    plate: "§10 Farms"
+  - match: ["profile:fertiliser:ladakh", "profile:fertiliser:lakshadweep"]
+    status: excluded
+    reason: "The source (farms-states-fertiliser) publishes no fertiliser per hectare for these units; the profile says so in place of a figure."
+  - match: "profile:fertiliser:*"
+    status: shown
+    bundle: farms-states-fertiliser
+    plate: "§10 Farms"
   - match: ["profile:milk:dnh-dd", "profile:milk:ladakh"]
     status: excluded
     reason: "The source (states-hbs-t091) publishes no milk produced for these units; the profile says so in place of a figure."
@@ -656,9 +751,41 @@ rules:
     status: shown
     bundle: aishe-states-ger
     plate: "§11 Education"
-  - match: "profile:gersec:*"
+  - match: "profile:internetyouth:*"
     status: shown
-    bundle: states-hbs-t001
+    bundle: profiles-mospi-nss79-1-18
+    plate: "§11 Education"
+  - match: "profile:neet:*"
+    status: shown
+    bundle: profiles-mospi-nss79-1-9
+    plate: "§11 Education"
+  - match: "profile:schoolyears:*"
+    status: shown
+    bundle: profiles-mospi-nss79-1-3
+    plate: "§11 Education"
+  - match: "profile:gerhs:*"
+    status: shown
+    bundle: profiles-mospi-udise-0-31
+    plate: "§11 Education"
+  - match: "profile:ptr:*"
+    status: shown
+    bundle: profiles-mospi-udise-0-7
+    plate: "§11 Education"
+  - match: "profile:schoolsinternet:*"
+    status: shown
+    bundle: [profiles-mospi-udise-0-16, profiles-mospi-udise-0-1]
+    plate: "§11 Education"
+  - match: "profile:schoolspower:*"
+    status: shown
+    bundle: [profiles-mospi-udise-0-16, profiles-mospi-udise-0-1]
+    plate: "§11 Education"
+  - match: "profile:schoolsgirlstoilet:*"
+    status: shown
+    bundle: [profiles-mospi-udise-0-16, profiles-mospi-udise-0-1]
+    plate: "§11 Education"
+  - match: "profile:singleteacher:*"
+    status: shown
+    bundle: [profiles-mospi-udise-0-12, profiles-mospi-udise-0-1]
     plate: "§11 Education"
   - match: ["profile:temp:dnh-dd", "profile:temp:jammu-kashmir", "profile:temp:ladakh"]
     status: excluded
@@ -730,6 +857,1086 @@ rules:
     status: shown
     bundle: [states-hbs-t170, states-hbs-t166]
     plate: "§13 State finances"
+  - match: "mospi:udise:0:1"
+    status: baked
+    bundle: profiles-mospi-udise-0-1
+  - match: "mospi:udise:0:2"
+    status: baked
+    bundle: profiles-mospi-udise-0-2
+  - match: "mospi:udise:0:3"
+    status: baked
+    bundle: profiles-mospi-udise-0-3
+  - match: "mospi:udise:0:4"
+    status: baked
+    bundle: profiles-mospi-udise-0-4
+  - match: "mospi:udise:0:5"
+    status: baked
+    bundle: profiles-mospi-udise-0-5
+  - match: "mospi:udise:0:6"
+    status: baked
+    bundle: profiles-mospi-udise-0-6
+  - match: "mospi:udise:0:7"
+    status: shown
+    bundle: profiles-mospi-udise-0-7
+    plate: "§11 Education"
+  - match: "mospi:udise:0:8"
+    status: baked
+    bundle: profiles-mospi-udise-0-8
+  - match: "mospi:udise:0:9"
+    status: baked
+    bundle: profiles-mospi-udise-0-9
+  - match: "mospi:udise:0:10"
+    status: baked
+    bundle: profiles-mospi-udise-0-10
+  - match: "mospi:udise:0:11"
+    status: baked
+    bundle: profiles-mospi-udise-0-11
+  - match: "mospi:udise:0:12"
+    status: shown
+    bundle: profiles-mospi-udise-0-12
+    plate: "§11 Education"
+  - match: "mospi:udise:0:13"
+    status: baked
+    bundle: profiles-mospi-udise-0-13
+  - match: "mospi:udise:0:14"
+    status: baked
+    bundle: profiles-mospi-udise-0-14
+  - match: "mospi:udise:0:15"
+    status: baked
+    bundle: profiles-mospi-udise-0-15
+  - match: "mospi:udise:0:16"
+    status: shown
+    bundle: profiles-mospi-udise-0-16
+    plate: "§11 Education"
+  - match: "mospi:udise:0:18"
+    status: baked
+    bundle: profiles-mospi-udise-0-18
+  - match: "mospi:udise:0:19"
+    status: baked
+    bundle: profiles-mospi-udise-0-19
+  - match: "mospi:udise:0:20"
+    status: baked
+    bundle: profiles-mospi-udise-0-20
+  - match: "mospi:udise:0:21"
+    status: baked
+    bundle: profiles-mospi-udise-0-21
+  - match: "mospi:udise:0:22"
+    status: baked
+    bundle: profiles-mospi-udise-0-22
+  - match: "mospi:udise:0:23"
+    status: baked
+    bundle: profiles-mospi-udise-0-23
+  - match: "mospi:udise:0:24"
+    status: baked
+    bundle: profiles-mospi-udise-0-24
+  - match: "mospi:udise:0:25"
+    status: baked
+    bundle: profiles-mospi-udise-0-25
+  - match: "mospi:udise:0:26"
+    status: baked
+    bundle: profiles-mospi-udise-0-26
+  - match: "mospi:udise:0:28"
+    status: baked
+    bundle: profiles-mospi-udise-0-28
+  - match: "mospi:udise:0:29"
+    status: baked
+    bundle: profiles-mospi-udise-0-29
+  - match: "mospi:udise:0:30"
+    status: baked
+    bundle: profiles-mospi-udise-0-30
+  - match: "mospi:udise:0:31"
+    status: shown
+    bundle: profiles-mospi-udise-0-31
+    plate: "§11 Education"
+  - match: "mospi:udise:0:32"
+    status: baked
+    bundle: profiles-mospi-udise-0-32
+  - match: "mospi:udise:0:33"
+    status: baked
+    bundle: profiles-mospi-udise-0-33
+  - match: "mospi:udise:0:34"
+    status: baked
+    bundle: profiles-mospi-udise-0-34
+  - match: "mospi:udise:0:35"
+    status: baked
+    bundle: profiles-mospi-udise-0-35
+  - match: "mospi:udise:0:36"
+    status: baked
+    bundle: profiles-mospi-udise-0-36
+  - match: "mospi:udise:0:37"
+    status: baked
+    bundle: profiles-mospi-udise-0-37
+  - match: "mospi:udise:0:38"
+    status: baked
+    bundle: profiles-mospi-udise-0-38
+  - match: "mospi:udise:0:39"
+    status: baked
+    bundle: profiles-mospi-udise-0-39
+  - match: "mospi:udise:0:40"
+    status: baked
+    bundle: profiles-mospi-udise-0-40
+  - match: "mospi:udise:0:41"
+    status: baked
+    bundle: profiles-mospi-udise-0-41
+  - match: "mospi:udise:0:42"
+    status: baked
+    bundle: profiles-mospi-udise-0-42
+  - match: "mospi:udise:0:43"
+    status: baked
+    bundle: profiles-mospi-udise-0-43
+  - match: "mospi:udise:0:45"
+    status: baked
+    bundle: profiles-mospi-udise-0-45
+  - match: "mospi:udise:0:46"
+    status: baked
+    bundle: profiles-mospi-udise-0-46
+  - match: "mospi:udise:0:47"
+    status: baked
+    bundle: profiles-mospi-udise-0-47
+  - match: "mospi:udise:0:48"
+    status: baked
+    bundle: profiles-mospi-udise-0-48
+  - match: "mospi:udise:0:49"
+    status: baked
+    bundle: profiles-mospi-udise-0-49
+  - match: "mospi:env:0:1"
+    status: baked
+    bundle: profiles-mospi-env-0-1
+  - match: "mospi:env:0:2"
+    status: baked
+    bundle: profiles-mospi-env-0-2
+  - match: "mospi:env:0:3"
+    status: baked
+    bundle: profiles-mospi-env-0-3
+  - match: "mospi:env:0:4"
+    status: excluded
+    reason: "The source names no period for any row of this table, so it cannot sit on a dated axis; every row is in data/raw/profiles-mospi/."
+  - match: "mospi:env:0:5"
+    status: excluded
+    reason: "The source names no period for any row of this table, so it cannot sit on a dated axis; every row is in data/raw/profiles-mospi/."
+  - match: "mospi:env:0:6"
+    status: baked
+    bundle: profiles-mospi-env-0-6
+  - match: "mospi:env:0:7"
+    status: baked
+    bundle: profiles-mospi-env-0-7
+  - match: "mospi:env:0:8"
+    status: baked
+    bundle: profiles-mospi-env-0-8
+  - match: "mospi:env:0:9"
+    status: excluded
+    reason: "The source names no period for any row of this table, so it cannot sit on a dated axis; every row is in data/raw/profiles-mospi/."
+  - match: "mospi:env:0:10"
+    status: baked
+    bundle: profiles-mospi-env-0-10
+  - match: "mospi:env:0:11"
+    status: excluded
+    reason: "MoSPI lists this indicator but serves no rows for it (checked 2026-10-10)."
+  - match: "mospi:env:0:12"
+    status: baked
+    bundle: profiles-mospi-env-0-12
+  - match: "mospi:env:0:13"
+    status: baked
+    bundle: profiles-mospi-env-0-13
+  - match: "mospi:env:0:14"
+    status: baked
+    bundle: profiles-mospi-env-0-14
+  - match: "mospi:env:0:16"
+    status: excluded
+    reason: "The source names no period for any row of this table, so it cannot sit on a dated axis; every row is in data/raw/profiles-mospi/."
+  - match: "mospi:env:0:17"
+    status: excluded
+    reason: "The source names no period for any row of this table, so it cannot sit on a dated axis; every row is in data/raw/profiles-mospi/."
+  - match: "mospi:env:0:18"
+    status: baked
+    bundle: profiles-mospi-env-0-18
+  - match: "mospi:env:0:19"
+    status: baked
+    bundle: profiles-mospi-env-0-19
+  - match: "mospi:env:0:20"
+    status: baked
+    bundle: profiles-mospi-env-0-20
+  - match: "mospi:env:0:21"
+    status: baked
+    bundle: profiles-mospi-env-0-21
+  - match: "mospi:env:0:22"
+    status: baked
+    bundle: profiles-mospi-env-0-22
+  - match: "mospi:env:0:23"
+    status: baked
+    bundle: profiles-mospi-env-0-23
+  - match: "mospi:env:0:24"
+    status: baked
+    bundle: profiles-mospi-env-0-24
+  - match: "mospi:env:0:25"
+    status: baked
+    bundle: profiles-mospi-env-0-25
+  - match: "mospi:env:0:26"
+    status: baked
+    bundle: profiles-mospi-env-0-26
+  - match: "mospi:env:0:27"
+    status: baked
+    bundle: profiles-mospi-env-0-27
+  - match: "mospi:env:0:28"
+    status: baked
+    bundle: profiles-mospi-env-0-28
+  - match: "mospi:env:0:30"
+    status: baked
+    bundle: profiles-mospi-env-0-30
+  - match: "mospi:env:0:31"
+    status: baked
+    bundle: profiles-mospi-env-0-31
+  - match: "mospi:env:0:32"
+    status: baked
+    bundle: profiles-mospi-env-0-32
+  - match: "mospi:env:0:33"
+    status: baked
+    bundle: profiles-mospi-env-0-33
+  - match: "mospi:env:0:34"
+    status: baked
+    bundle: profiles-mospi-env-0-34
+  - match: "mospi:env:0:35"
+    status: baked
+    bundle: profiles-mospi-env-0-35
+  - match: "mospi:env:0:36"
+    status: baked
+    bundle: profiles-mospi-env-0-36
+  - match: "mospi:env:0:37"
+    status: baked
+    bundle: profiles-mospi-env-0-37
+  - match: "mospi:env:0:38"
+    status: baked
+    bundle: profiles-mospi-env-0-38
+  - match: "mospi:env:0:39"
+    status: baked
+    bundle: profiles-mospi-env-0-39
+  - match: "mospi:env:0:40"
+    status: baked
+    bundle: profiles-mospi-env-0-40
+  - match: "mospi:env:0:41"
+    status: baked
+    bundle: profiles-mospi-env-0-41
+  - match: "mospi:env:0:42"
+    status: baked
+    bundle: profiles-mospi-env-0-42
+  - match: "mospi:env:0:43"
+    status: excluded
+    reason: "No row of this table names a state, All India or a period the bake can place; every row is in data/raw/profiles-mospi/."
+  - match: "mospi:env:0:44"
+    status: baked
+    bundle: profiles-mospi-env-0-44
+  - match: "mospi:env:0:45"
+    status: baked
+    bundle: profiles-mospi-env-0-45
+  - match: "mospi:env:0:46"
+    status: baked
+    bundle: profiles-mospi-env-0-46
+  - match: "mospi:env:0:47"
+    status: baked
+    bundle: profiles-mospi-env-0-47
+  - match: "mospi:env:0:48"
+    status: baked
+    bundle: profiles-mospi-env-0-48
+  - match: "mospi:env:0:49"
+    status: baked
+    bundle: profiles-mospi-env-0-49
+  - match: "mospi:env:0:50"
+    status: baked
+    bundle: profiles-mospi-env-0-50
+  - match: "mospi:env:0:51"
+    status: baked
+    bundle: profiles-mospi-env-0-51
+  - match: "mospi:env:0:52"
+    status: baked
+    bundle: profiles-mospi-env-0-52
+  - match: "mospi:env:0:53"
+    status: baked
+    bundle: profiles-mospi-env-0-53
+  - match: "mospi:env:0:54"
+    status: baked
+    bundle: profiles-mospi-env-0-54
+  - match: "mospi:env:0:55"
+    status: baked
+    bundle: profiles-mospi-env-0-55
+  - match: "mospi:env:0:56"
+    status: baked
+    bundle: profiles-mospi-env-0-56
+  - match: "mospi:env:0:57"
+    status: baked
+    bundle: profiles-mospi-env-0-57
+  - match: "mospi:env:0:58"
+    status: baked
+    bundle: profiles-mospi-env-0-58
+  - match: "mospi:env:0:59"
+    status: baked
+    bundle: profiles-mospi-env-0-59
+  - match: "mospi:env:0:60"
+    status: baked
+    bundle: profiles-mospi-env-0-60
+  - match: "mospi:env:0:61"
+    status: baked
+    bundle: profiles-mospi-env-0-61
+  - match: "mospi:env:0:62"
+    status: baked
+    bundle: profiles-mospi-env-0-62
+  - match: "mospi:env:0:63"
+    status: baked
+    bundle: profiles-mospi-env-0-63
+  - match: "mospi:env:0:64"
+    status: baked
+    bundle: profiles-mospi-env-0-64
+  - match: "mospi:env:0:65"
+    status: baked
+    bundle: profiles-mospi-env-0-65
+  - match: "mospi:env:0:66"
+    status: excluded
+    reason: "No row of this table names a state, All India or a period the bake can place; every row is in data/raw/profiles-mospi/."
+  - match: "mospi:env:0:67"
+    status: baked
+    bundle: profiles-mospi-env-0-67
+  - match: "mospi:env:0:68"
+    status: baked
+    bundle: profiles-mospi-env-0-68
+  - match: "mospi:env:0:69"
+    status: excluded
+    reason: "The source names no period for any row of this table, so it cannot sit on a dated axis; every row is in data/raw/profiles-mospi/."
+  - match: "mospi:env:0:70"
+    status: baked
+    bundle: profiles-mospi-env-0-70
+  - match: "mospi:env:0:71"
+    status: baked
+    bundle: profiles-mospi-env-0-71
+  - match: "mospi:env:0:72"
+    status: excluded
+    reason: "MoSPI lists this indicator but serves no rows for it (checked 2026-10-10)."
+  - match: "mospi:env:0:73"
+    status: baked
+    bundle: profiles-mospi-env-0-73
+  - match: "mospi:env:0:74"
+    status: baked
+    bundle: profiles-mospi-env-0-74
+  - match: "mospi:env:0:75"
+    status: baked
+    bundle: profiles-mospi-env-0-75
+  - match: "mospi:env:0:76"
+    status: baked
+    bundle: profiles-mospi-env-0-76
+  - match: "mospi:env:0:77"
+    status: baked
+    bundle: profiles-mospi-env-0-77
+  - match: "mospi:env:0:78"
+    status: baked
+    bundle: profiles-mospi-env-0-78
+  - match: "mospi:env:0:80"
+    status: baked
+    bundle: profiles-mospi-env-0-80
+  - match: "mospi:env:0:81"
+    status: baked
+    bundle: profiles-mospi-env-0-81
+  - match: "mospi:env:0:82"
+    status: baked
+    bundle: profiles-mospi-env-0-82
+  - match: "mospi:env:0:83"
+    status: baked
+    bundle: profiles-mospi-env-0-83
+  - match: "mospi:env:0:84"
+    status: baked
+    bundle: profiles-mospi-env-0-84
+  - match: "mospi:env:0:85"
+    status: baked
+    bundle: profiles-mospi-env-0-85
+  - match: "mospi:env:0:86"
+    status: excluded
+    reason: "The source names no period for any row of this table, so it cannot sit on a dated axis; every row is in data/raw/profiles-mospi/."
+  - match: "mospi:env:0:87"
+    status: baked
+    bundle: profiles-mospi-env-0-87
+  - match: "mospi:env:0:88"
+    status: baked
+    bundle: profiles-mospi-env-0-88
+  - match: "mospi:env:0:89"
+    status: baked
+    bundle: profiles-mospi-env-0-89
+  - match: "mospi:env:0:91"
+    status: excluded
+    reason: "A list of events or records (several to one place and year), not a series; every row is in data/raw/profiles-mospi/."
+  - match: "mospi:env:0:92"
+    status: baked
+    bundle: profiles-mospi-env-0-92
+  - match: "mospi:env:0:93"
+    status: baked
+    bundle: profiles-mospi-env-0-93
+  - match: "mospi:env:0:94"
+    status: baked
+    bundle: profiles-mospi-env-0-94
+  - match: "mospi:env:0:95"
+    status: baked
+    bundle: profiles-mospi-env-0-95
+  - match: "mospi:env:0:96"
+    status: baked
+    bundle: profiles-mospi-env-0-96
+  - match: "mospi:env:0:97"
+    status: excluded
+    reason: "The source names no period for any row of this table, so it cannot sit on a dated axis; every row is in data/raw/profiles-mospi/."
+  - match: "mospi:env:0:98"
+    status: baked
+    bundle: profiles-mospi-env-0-98
+  - match: "mospi:env:0:99"
+    status: baked
+    bundle: profiles-mospi-env-0-99
+  - match: "mospi:env:0:100"
+    status: baked
+    bundle: profiles-mospi-env-0-100
+  - match: "mospi:env:0:101"
+    status: baked
+    bundle: profiles-mospi-env-0-101
+  - match: "mospi:env:0:102"
+    status: baked
+    bundle: profiles-mospi-env-0-102
+  - match: "mospi:env:0:103"
+    status: baked
+    bundle: profiles-mospi-env-0-103
+  - match: "mospi:env:0:104"
+    status: baked
+    bundle: profiles-mospi-env-0-104
+  - match: "mospi:env:0:105"
+    status: baked
+    bundle: profiles-mospi-env-0-105
+  - match: "mospi:env:0:107"
+    status: excluded
+    reason: "The source names no period for any row of this table, so it cannot sit on a dated axis; every row is in data/raw/profiles-mospi/."
+  - match: "mospi:env:0:108"
+    status: baked
+    bundle: profiles-mospi-env-0-108
+  - match: "mospi:env:0:110"
+    status: baked
+    bundle: profiles-mospi-env-0-110
+  - match: "mospi:env:0:111"
+    status: excluded
+    reason: "No row of this table names a state, All India or a period the bake can place; every row is in data/raw/profiles-mospi/."
+  - match: "mospi:env:0:112"
+    status: baked
+    bundle: profiles-mospi-env-0-112
+  - match: "mospi:env:0:113"
+    status: baked
+    bundle: profiles-mospi-env-0-113
+  - match: "mospi:env:0:114"
+    status: baked
+    bundle: profiles-mospi-env-0-114
+  - match: "mospi:env:0:115"
+    status: baked
+    bundle: profiles-mospi-env-0-115
+  - match: "mospi:env:0:116"
+    status: baked
+    bundle: profiles-mospi-env-0-116
+  - match: "mospi:env:0:117"
+    status: baked
+    bundle: profiles-mospi-env-0-117
+  - match: "mospi:env:0:118"
+    status: baked
+    bundle: profiles-mospi-env-0-118
+  - match: "mospi:env:0:119"
+    status: baked
+    bundle: profiles-mospi-env-0-119
+  - match: "mospi:env:0:120"
+    status: baked
+    bundle: profiles-mospi-env-0-120
+  - match: "mospi:env:0:121"
+    status: baked
+    bundle: profiles-mospi-env-0-121
+  - match: "mospi:env:0:122"
+    status: baked
+    bundle: profiles-mospi-env-0-122
+  - match: "mospi:env:0:123"
+    status: baked
+    bundle: profiles-mospi-env-0-123
+  - match: "mospi:env:0:124"
+    status: baked
+    bundle: profiles-mospi-env-0-124
+  - match: "mospi:env:0:125"
+    status: baked
+    bundle: profiles-mospi-env-0-125
+  - match: "mospi:env:0:126"
+    status: baked
+    bundle: profiles-mospi-env-0-126
+  - match: "mospi:env:0:127"
+    status: baked
+    bundle: profiles-mospi-env-0-127
+  - match: "mospi:env:0:128"
+    status: baked
+    bundle: profiles-mospi-env-0-128
+  - match: "mospi:env:0:129"
+    status: baked
+    bundle: profiles-mospi-env-0-129
+  - match: "mospi:env:0:130"
+    status: baked
+    bundle: profiles-mospi-env-0-130
+  - match: "mospi:env:0:131"
+    status: baked
+    bundle: profiles-mospi-env-0-131
+  - match: "mospi:env:0:132"
+    status: baked
+    bundle: profiles-mospi-env-0-132
+  - match: "mospi:nss77:0:16"
+    status: baked
+    bundle: profiles-mospi-nss77-0-16
+  - match: "mospi:nss77:0:17"
+    status: baked
+    bundle: profiles-mospi-nss77-0-17
+  - match: "mospi:nss77:0:18"
+    status: baked
+    bundle: profiles-mospi-nss77-0-18
+  - match: "mospi:nss77:0:19"
+    status: baked
+    bundle: profiles-mospi-nss77-0-19
+  - match: "mospi:nss77:0:21"
+    status: baked
+    bundle: profiles-mospi-nss77-0-21
+  - match: "mospi:nss77:0:22"
+    status: baked
+    bundle: profiles-mospi-nss77-0-22
+  - match: "mospi:nss77:0:23"
+    status: baked
+    bundle: profiles-mospi-nss77-0-23
+  - match: "mospi:nss77:0:24"
+    status: shown
+    bundle: profiles-mospi-nss77-0-24
+    plate: "§06 How households live"
+  - match: "mospi:nss77:0:25"
+    status: baked
+    bundle: profiles-mospi-nss77-0-25
+  - match: "mospi:nss77:0:26"
+    status: baked
+    bundle: profiles-mospi-nss77-0-26
+  - match: "mospi:nss77:0:27"
+    status: baked
+    bundle: profiles-mospi-nss77-0-27
+  - match: "mospi:nss77:0:28"
+    status: baked
+    bundle: profiles-mospi-nss77-0-28
+  - match: "mospi:nss77:0:29"
+    status: baked
+    bundle: profiles-mospi-nss77-0-29
+  - match: "mospi:nss77:0:31"
+    status: baked
+    bundle: profiles-mospi-nss77-0-31
+  - match: "mospi:nss77:0:32"
+    status: baked
+    bundle: profiles-mospi-nss77-0-32
+  - match: "mospi:nss77:0:33"
+    status: baked
+    bundle: profiles-mospi-nss77-0-33
+  - match: "mospi:nss77:0:34"
+    status: baked
+    bundle: profiles-mospi-nss77-0-34
+  - match: "mospi:nss77:0:35"
+    status: baked
+    bundle: profiles-mospi-nss77-0-35
+  - match: "mospi:nss77:0:36"
+    status: baked
+    bundle: profiles-mospi-nss77-0-36
+  - match: "mospi:nss77:0:37"
+    status: baked
+    bundle: profiles-mospi-nss77-0-37
+  - match: "mospi:nss77:0:39"
+    status: baked
+    bundle: profiles-mospi-nss77-0-39
+  - match: "mospi:nss77:0:40"
+    status: baked
+    bundle: profiles-mospi-nss77-0-40
+  - match: "mospi:nss77:0:41"
+    status: baked
+    bundle: profiles-mospi-nss77-0-41
+  - match: "mospi:nss77:0:42"
+    status: baked
+    bundle: profiles-mospi-nss77-0-42
+  - match: "mospi:nss77:0:43"
+    status: baked
+    bundle: profiles-mospi-nss77-0-43
+  - match: "mospi:nss77:0:44"
+    status: baked
+    bundle: profiles-mospi-nss77-0-44
+  - match: "mospi:nss77:0:45"
+    status: baked
+    bundle: profiles-mospi-nss77-0-45
+  - match: "mospi:nss77:0:46"
+    status: baked
+    bundle: profiles-mospi-nss77-0-46
+  - match: "mospi:nss77:0:47"
+    status: baked
+    bundle: profiles-mospi-nss77-0-47
+  - match: "mospi:nss77:0:48"
+    status: baked
+    bundle: profiles-mospi-nss77-0-48
+  - match: "mospi:nss77:0:49"
+    status: baked
+    bundle: profiles-mospi-nss77-0-49
+  - match: "mospi:nss77:0:50"
+    status: baked
+    bundle: profiles-mospi-nss77-0-50
+  - match: "mospi:nss77:0:51"
+    status: baked
+    bundle: profiles-mospi-nss77-0-51
+  - match: "mospi:nss77aidis:1:2"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-2
+  - match: "mospi:nss77aidis:1:3"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-3
+  - match: "mospi:nss77aidis:1:4"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-4
+  - match: "mospi:nss77aidis:1:5"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-5
+  - match: "mospi:nss77aidis:1:6"
+    status: shown
+    bundle: profiles-mospi-nss77aidis-1-6
+    plate: "§06 How households live"
+  - match: "mospi:nss77aidis:1:8"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-8
+  - match: "mospi:nss77aidis:1:9"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-9
+  - match: "mospi:nss77aidis:1:10"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-10
+  - match: "mospi:nss77aidis:1:11"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-11
+  - match: "mospi:nss77aidis:1:12"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-12
+  - match: "mospi:nss77aidis:1:16"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-16
+  - match: "mospi:nss77aidis:1:17"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-17
+  - match: "mospi:nss77aidis:1:18"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-18
+  - match: "mospi:nss77aidis:1:19"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-19
+  - match: "mospi:nss77aidis:1:24"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-24
+  - match: "mospi:nss77aidis:1:26"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-26
+  - match: "mospi:nss77aidis:1:29"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-29
+  - match: "mospi:nss77aidis:1:30"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-30
+  - match: "mospi:nss77aidis:1:32"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-32
+  - match: "mospi:nss77aidis:1:34"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-34
+  - match: "mospi:nss77aidis:1:36"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-36
+  - match: "mospi:nss77aidis:1:38"
+    status: baked
+    bundle: profiles-mospi-nss77aidis-1-38
+  - match: "mospi:nss79:1:1"
+    status: baked
+    bundle: profiles-mospi-nss79-1-1
+  - match: "mospi:nss79:1:2"
+    status: baked
+    bundle: profiles-mospi-nss79-1-2
+  - match: "mospi:nss79:1:3"
+    status: shown
+    bundle: profiles-mospi-nss79-1-3
+    plate: "§11 Education"
+  - match: "mospi:nss79:1:4"
+    status: baked
+    bundle: profiles-mospi-nss79-1-4
+  - match: "mospi:nss79:1:5"
+    status: baked
+    bundle: profiles-mospi-nss79-1-5
+  - match: "mospi:nss79:1:6"
+    status: baked
+    bundle: profiles-mospi-nss79-1-6
+  - match: "mospi:nss79:1:7"
+    status: baked
+    bundle: profiles-mospi-nss79-1-7
+  - match: "mospi:nss79:1:8"
+    status: baked
+    bundle: profiles-mospi-nss79-1-8
+  - match: "mospi:nss79:1:9"
+    status: shown
+    bundle: profiles-mospi-nss79-1-9
+    plate: "§11 Education"
+  - match: "mospi:nss79:1:10"
+    status: baked
+    bundle: profiles-mospi-nss79-1-10
+  - match: "mospi:nss79:1:11"
+    status: baked
+    bundle: profiles-mospi-nss79-1-11
+  - match: "mospi:nss79:1:12"
+    status: baked
+    bundle: profiles-mospi-nss79-1-12
+  - match: "mospi:nss79:1:13"
+    status: baked
+    bundle: profiles-mospi-nss79-1-13
+  - match: "mospi:nss79:1:14"
+    status: shown
+    bundle: profiles-mospi-nss79-1-14
+    plate: "§06 How households live"
+  - match: "mospi:nss79:1:15"
+    status: baked
+    bundle: profiles-mospi-nss79-1-15
+  - match: "mospi:nss79:1:16"
+    status: baked
+    bundle: profiles-mospi-nss79-1-16
+  - match: "mospi:nss79:1:17"
+    status: baked
+    bundle: profiles-mospi-nss79-1-17
+  - match: "mospi:nss79:1:18"
+    status: shown
+    bundle: profiles-mospi-nss79-1-18
+    plate: "§11 Education"
+  - match: "mospi:nss79:1:19"
+    status: baked
+    bundle: profiles-mospi-nss79-1-19
+  - match: "mospi:nss79:1:20"
+    status: baked
+    bundle: profiles-mospi-nss79-1-20
+  - match: "mospi:nss79:1:21"
+    status: baked
+    bundle: profiles-mospi-nss79-1-21
+  - match: "mospi:nss79:1:22"
+    status: baked
+    bundle: profiles-mospi-nss79-1-22
+  - match: "mospi:nss79:1:23"
+    status: baked
+    bundle: profiles-mospi-nss79-1-23
+  - match: "mospi:nss79:1:24"
+    status: baked
+    bundle: profiles-mospi-nss79-1-24
+  - match: "mospi:nss79:1:25"
+    status: baked
+    bundle: profiles-mospi-nss79-1-25
+  - match: "mospi:nss79:1:26"
+    status: baked
+    bundle: profiles-mospi-nss79-1-26
+  - match: "mospi:nss79:1:27"
+    status: baked
+    bundle: profiles-mospi-nss79-1-27
+  - match: "mospi:nss79:1:28"
+    status: baked
+    bundle: profiles-mospi-nss79-1-28
+  - match: "mospi:nss79:2:29"
+    status: baked
+    bundle: profiles-mospi-nss79-2-29
+  - match: "mospi:nss79:2:30"
+    status: baked
+    bundle: profiles-mospi-nss79-2-30
+  - match: "mospi:nss79:2:31"
+    status: baked
+    bundle: profiles-mospi-nss79-2-31
+  - match: "mospi:nss79:2:32"
+    status: baked
+    bundle: profiles-mospi-nss79-2-32
+  - match: "mospi:nss79:2:33"
+    status: baked
+    bundle: profiles-mospi-nss79-2-33
+  - match: "mospi:nss79:2:34"
+    status: baked
+    bundle: profiles-mospi-nss79-2-34
+  - match: "mospi:nss79:2:35"
+    status: baked
+    bundle: profiles-mospi-nss79-2-35
+  - match: "mospi:nss75:1:1"
+    status: blocked
+    reason: "MoSPI pages this indicator in no fixed order or cut the read short: 6 reads found 3986 of 3996 distinct rows (2026-10-10); union of reads: 10 reads found 3987 of 3996 distinct rows; nothing partial is baked."
+  - match: "mospi:nss75:1:2"
+    status: baked
+    bundle: profiles-mospi-nss75-1-2
+  - match: "mospi:nss75:1:3"
+    status: baked
+    bundle: profiles-mospi-nss75-1-3
+  - match: "mospi:nss75:1:4"
+    status: baked
+    bundle: profiles-mospi-nss75-1-4
+  - match: "mospi:nss75:1:5"
+    status: baked
+    bundle: profiles-mospi-nss75-1-5
+  - match: "mospi:nss75:1:6"
+    status: baked
+    bundle: profiles-mospi-nss75-1-6
+  - match: "mospi:nss75:1:7"
+    status: baked
+    bundle: profiles-mospi-nss75-1-7
+  - match: "mospi:nss75:1:8"
+    status: baked
+    bundle: profiles-mospi-nss75-1-8
+  - match: "mospi:nss75:1:9"
+    status: baked
+    bundle: profiles-mospi-nss75-1-9
+  - match: "mospi:nss75:1:10"
+    status: baked
+    bundle: profiles-mospi-nss75-1-10
+  - match: "mospi:nss75:1:11"
+    status: blocked
+    reason: "MoSPI pages this indicator in no fixed order or cut the read short: 6 reads found 22640 of 22644 distinct rows (2026-10-10); nothing partial is baked."
+  - match: "mospi:nss75:1:12"
+    status: baked
+    bundle: profiles-mospi-nss75-1-12
+  - match: "mospi:nss75:1:13"
+    status: baked
+    bundle: profiles-mospi-nss75-1-13
+  - match: "mospi:nss75:1:14"
+    status: baked
+    bundle: profiles-mospi-nss75-1-14
+  - match: "mospi:nss75:1:15"
+    status: blocked
+    reason: "MoSPI pages this indicator in no fixed order or cut the read short: 6 reads found 3532 of 3552 distinct rows (2026-10-10); union of reads: 10 reads found 3532 of 3552 distinct rows; nothing partial is baked."
+  - match: "mospi:nss75:1:16"
+    status: baked
+    bundle: profiles-mospi-nss75-1-16
+  - match: "mospi:nss75:1:17"
+    status: baked
+    bundle: profiles-mospi-nss75-1-17
+  - match: "mospi:nss75:1:18"
+    status: baked
+    bundle: profiles-mospi-nss75-1-18
+  - match: "mospi:nss75:1:19"
+    status: baked
+    bundle: profiles-mospi-nss75-1-19
+  - match: "mospi:nss75:1:20"
+    status: blocked
+    reason: "MoSPI pages this indicator in no fixed order or cut the read short: 6 reads found 50938 of 50949 distinct rows (2026-10-10); nothing partial is baked."
+  - match: "mospi:nss75:1:21"
+    status: baked
+    bundle: profiles-mospi-nss75-1-21
+  - match: "mospi:nss75:1:22"
+    status: baked
+    bundle: profiles-mospi-nss75-1-22
+  - match: "mospi:nss75:1:23"
+    status: baked
+    bundle: profiles-mospi-nss75-1-23
+  - match: "mospi:nss75:1:24"
+    status: baked
+    bundle: profiles-mospi-nss75-1-24
+  - match: "mospi:nss75:1:25"
+    status: blocked
+    reason: "MoSPI pages this indicator in no fixed order or cut the read short: 6 reads found 33965 of 33966 distinct rows (2026-10-10); nothing partial is baked."
+  - match: "mospi:nss75:1:26"
+    status: baked
+    bundle: profiles-mospi-nss75-1-26
+  - match: "mospi:nss75:1:27"
+    status: baked
+    bundle: profiles-mospi-nss75-1-27
+  - match: "mospi:nss75:1:28"
+    status: baked
+    bundle: profiles-mospi-nss75-1-28
+  - match: "mospi:nss75:1:29"
+    status: baked
+    bundle: profiles-mospi-nss75-1-29
+  - match: "mospi:nss75:1:30"
+    status: baked
+    bundle: profiles-mospi-nss75-1-30
+  - match: "mospi:nss75:1:31"
+    status: baked
+    bundle: profiles-mospi-nss75-1-31
+  - match: "mospi:nss75:1:32"
+    status: baked
+    bundle: profiles-mospi-nss75-1-32
+  - match: "mospi:nss75:1:33"
+    status: baked
+    bundle: profiles-mospi-nss75-1-33
+  - match: "mospi:nss75:1:34"
+    status: baked
+    bundle: profiles-mospi-nss75-1-34
+  - match: "mospi:nss75:1:35"
+    status: baked
+    bundle: profiles-mospi-nss75-1-35
+  - match: "mospi:nss75:1:36"
+    status: baked
+    bundle: profiles-mospi-nss75-1-36
+  - match: "mospi:nss75:1:37"
+    status: baked
+    bundle: profiles-mospi-nss75-1-37
+  - match: "mospi:nss75:1:38"
+    status: excluded
+    reason: "No row of this table names a state, All India or a period the bake can place; every row is in data/raw/profiles-mospi/."
+  - match: "mospi:nss75:1:39"
+    status: blocked
+    reason: "MoSPI pages this indicator in no fixed order or cut the read short: 6 reads found 3966 of 3996 distinct rows (2026-10-10); union of reads: 10 reads found 3967 of 3996 distinct rows; nothing partial is baked."
+  - match: "mospi:nss75:1:40"
+    status: baked
+    bundle: profiles-mospi-nss75-1-40
+  - match: "mospi:nss75:1:41"
+    status: baked
+    bundle: profiles-mospi-nss75-1-41
+  - match: "mospi:nss75:1:42"
+    status: baked
+    bundle: profiles-mospi-nss75-1-42
+  - match: "mospi:nss75:2:43"
+    status: baked
+    bundle: profiles-mospi-nss75-2-43
+  - match: "mospi:nss75:2:44"
+    status: baked
+    bundle: profiles-mospi-nss75-2-44
+  - match: "mospi:nss75:2:45"
+    status: baked
+    bundle: profiles-mospi-nss75-2-45
+  - match: "mospi:nss75:2:46"
+    status: baked
+    bundle: profiles-mospi-nss75-2-46
+  - match: "mospi:nss75:2:47"
+    status: baked
+    bundle: profiles-mospi-nss75-2-47
+  - match: "mospi:nss75:2:48"
+    status: baked
+    bundle: profiles-mospi-nss75-2-48
+  - match: "mospi:nss75:2:49"
+    status: baked
+    bundle: profiles-mospi-nss75-2-49
+  - match: "mospi:nss75:2:50"
+    status: baked
+    bundle: profiles-mospi-nss75-2-50
+  - match: "mospi:nss75:2:51"
+    status: baked
+    bundle: profiles-mospi-nss75-2-51
+  - match: "mospi:nss75:2:52"
+    status: baked
+    bundle: profiles-mospi-nss75-2-52
+  - match: "mospi:nss75:2:53"
+    status: baked
+    bundle: profiles-mospi-nss75-2-53
+  - match: "mospi:nss75:2:54"
+    status: baked
+    bundle: profiles-mospi-nss75-2-54
+  - match: "mospi:nss75:2:55"
+    status: baked
+    bundle: profiles-mospi-nss75-2-55
+  - match: "mospi:nss76:1:3"
+    status: baked
+    bundle: profiles-mospi-nss76-1-3
+  - match: "mospi:nss76:1:11"
+    status: baked
+    bundle: profiles-mospi-nss76-1-11
+  - match: "mospi:nss76:1:13"
+    status: baked
+    bundle: profiles-mospi-nss76-1-13
+  - match: "mospi:nss76:1:4"
+    status: baked
+    bundle: profiles-mospi-nss76-1-4
+  - match: "mospi:nss76:1:2"
+    status: baked
+    bundle: profiles-mospi-nss76-1-2
+  - match: "mospi:nss76:1:1"
+    status: shown
+    bundle: profiles-mospi-nss76-1-1
+    plate: "§06 How households live"
+  - match: "mospi:nss76:1:7"
+    status: baked
+    bundle: profiles-mospi-nss76-1-7
+  - match: "mospi:nss76:1:6"
+    status: baked
+    bundle: profiles-mospi-nss76-1-6
+  - match: "mospi:nss76:1:5"
+    status: baked
+    bundle: profiles-mospi-nss76-1-5
+  - match: "mospi:nss76:1:12"
+    status: baked
+    bundle: profiles-mospi-nss76-1-12
+  - match: "mospi:nss76:1:10"
+    status: baked
+    bundle: profiles-mospi-nss76-1-10
+  - match: "mospi:nss76:1:8"
+    status: baked
+    bundle: profiles-mospi-nss76-1-8
+  - match: "mospi:nss76:1:9"
+    status: baked
+    bundle: profiles-mospi-nss76-1-9
+  - match: "mospi:nss76:2:23"
+    status: baked
+    bundle: profiles-mospi-nss76-2-23
+  - match: "mospi:nss76:2:24"
+    status: baked
+    bundle: profiles-mospi-nss76-2-24
+  - match: "mospi:nss76:2:22"
+    status: excluded
+    reason: "No row of this table names a state, All India or a period the bake can place; every row is in data/raw/profiles-mospi/."
+  - match: "mospi:nss76:2:19"
+    status: baked
+    bundle: profiles-mospi-nss76-2-19
+  - match: "mospi:nss76:2:15"
+    status: blocked
+    reason: "MoSPI pages this indicator in no fixed order or cut the read short: 11619 rows, page 1 reported 40014 (2026-10-10); nothing partial is baked."
+  - match: "mospi:nss76:2:26"
+    status: baked
+    bundle: profiles-mospi-nss76-2-26
+  - match: "mospi:nss76:2:14"
+    status: baked
+    bundle: profiles-mospi-nss76-2-14
+  - match: "mospi:nss76:2:21"
+    status: baked
+    bundle: profiles-mospi-nss76-2-21
+  - match: "mospi:nss76:2:16"
+    status: baked
+    bundle: profiles-mospi-nss76-2-16
+  - match: "mospi:nss76:2:25"
+    status: excluded
+    reason: "No row of this table names a state, All India or a period the bake can place; every row is in data/raw/profiles-mospi/."
+  - match: "mospi:nss76:2:18"
+    status: baked
+    bundle: profiles-mospi-nss76-2-18
+  - match: "mospi:nss76:2:20"
+    status: baked
+    bundle: profiles-mospi-nss76-2-20
+  - match: "mospi:nss78:0:2"
+    status: baked
+    bundle: profiles-mospi-nss78-0-2
+  - match: "mospi:nss78:0:3"
+    status: baked
+    bundle: profiles-mospi-nss78-0-3
+  - match: "mospi:nss78:0:4"
+    status: baked
+    bundle: profiles-mospi-nss78-0-4
+  - match: "mospi:nss78:0:5"
+    status: baked
+    bundle: profiles-mospi-nss78-0-5
+  - match: "mospi:nss78:0:6"
+    status: baked
+    bundle: profiles-mospi-nss78-0-6
+  - match: "mospi:nss78:0:7"
+    status: shown
+    bundle: profiles-mospi-nss78-0-7
+    plate: "§06 How households live"
+  - match: "mospi:nss78:0:8"
+    status: baked
+    bundle: profiles-mospi-nss78-0-8
+  - match: "mospi:nss78:0:9"
+    status: baked
+    bundle: profiles-mospi-nss78-0-9
+  - match: "mospi:nss78:0:10"
+    status: baked
+    bundle: profiles-mospi-nss78-0-10
+  - match: "mospi:nss78:0:11"
+    status: baked
+    bundle: profiles-mospi-nss78-0-11
+  - match: "mospi:nss78:0:12"
+    status: baked
+    bundle: profiles-mospi-nss78-0-12
+  - match: "mospi:nss78:0:13"
+    status: baked
+    bundle: profiles-mospi-nss78-0-13
+  - match: "mospi:nss78:0:14"
+    status: baked
+    bundle: profiles-mospi-nss78-0-14
+  - match: "mospi:nss78:0:15"
+    status: baked
+    bundle: profiles-mospi-nss78-0-15
   - match: ["nfhs6:i004", "nfhs6:i005", "nfhs6:i007", "nfhs6:i008", "nfhs6:i010", "nfhs6:i011", "nfhs6:i012", "nfhs6:i014", "nfhs6:i016", "nfhs6:i018", "nfhs6:i035", "nfhs6:i044", "nfhs6:i069", "nfhs6:i070", "nfhs6:i076", "nfhs6:i080", "nfhs6:i083", "nfhs6:i086", "nfhs6:i089", "nfhs6:i092", "nfhs6:i093", "nfhs6:i095", "nfhs6:i099"]
     status: shown
     bundle: [profiles-nfhs6, profiles-nfhs6-nfhs5]

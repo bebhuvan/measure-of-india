@@ -45,7 +45,13 @@ async function items() {
   for (const r of n6.rows.filter((x) => x.geography === "India"))
     out.push({ id: `nfhs6:i${String(r.indicator_no).padStart(3, "0")}`, label: `NFHS-6 indicator ${r.indicator_no}: ${r.indicator}`, dims: { indicator: +r.indicator_no } });
   const api = fs.readFileSync(path.join(ROOT, "docs/reference/esankhyiki-api.md"), "utf8");
-  for (const [, r] of api.matchAll(/^\| nss-(\d+) \|/gm)) out.push({ id: `mospi:nss:${r}`, label: `NSS round ${r}, state cuts`, dims: { product: `nss-${r}` } });
+  // step 5: every indicator the MoSPI listings returned (data/raw/profiles-mospi-index.json, phase A),
+  // and one item per round for the rounds not listed (NSS 73, NSS 80 while its list fails)
+  const planFile = path.join(ROOT, "data/raw/profiles-mospi-index.json");
+  const plan = fs.existsSync(planFile) ? JSON.parse(fs.readFileSync(planFile, "utf8")) : { products: {} };
+  for (const [pid, st] of Object.entries(plan.products)) for (const ind of st.indicators ?? [])
+    out.push({ id: `mospi:${pid}:${ind.survey ?? "0"}:${ind.code}`, label: ind.label ?? `${pid} indicator ${ind.code}`, dims: { product: pid, rows: ind.expected, state: !!ind.hasState } });
+  for (const [, r] of api.matchAll(/^\| nss-(\d+) \|/gm)) if (!plan.products[`nss${r}`]?.indicators?.length) out.push({ id: `mospi:nss:${r}`, label: `NSS round ${r}, state cuts`, dims: { product: `nss-${r}` } });
   const ec = /^\| ec(\d)\/(\d)\/(\d) \|/m.exec(api);
   if (ec) for (const r of ec.slice(1)) out.push({ id: `mospi:ec:${r}`, label: `Economic Census, round ${r}`, dims: { product: `ec${r}` } });
   return { out, P, STATES };
@@ -75,6 +81,28 @@ async function ledger() {
     lines.push(`    status: shown`);
     lines.push(`    bundle: ${m.derive?.other ? `[${m.bundle}, ${m.derive.other}]` : m.bundle}`);
     lines.push(`    plate: "${PLATE[m.section]}"`);
+  }
+  // step 5 MoSPI products: every listed indicator, decided from the plan file and the bake report
+  const planFile = path.join(ROOT, "data/raw/profiles-mospi-index.json"), bakeFile = path.join(ROOT, "data/coverage/profiles-mospi-bake.json");
+  if (fs.existsSync(planFile)) {
+    const plan = JSON.parse(fs.readFileSync(planFile, "utf8")), bake = fs.existsSync(bakeFile) ? JSON.parse(fs.readFileSync(bakeFile, "utf8")) : { undated: [], notSeries: [] };
+    const usedBy = new Map(P.MEASURES.filter((m) => m.bundle.startsWith("profiles-mospi-")).map((m) => [m.bundle, m]));
+    for (const [pid, st] of Object.entries(plan.products)) {
+      if (pid === "tus" || pid === "nss80") continue;   // decided by hand above
+      for (const ind of st.indicators ?? []) {
+        const id = `mospi:${pid}:${ind.survey ?? "0"}:${ind.code}`, slug = `profiles-mospi-${pid}-${ind.survey ?? 0}-${ind.code}`;
+        const onDisk = fs.existsSync(path.join(ROOT, "data/series", slug + ".json"));
+        lines.push(`  - match: "${id}"`);
+        if (ind.fetchError) { lines.push(`    status: blocked`, `    reason: ${JSON.stringify(`MoSPI pages this indicator in no fixed order or cut the read short: ${ind.fetchError.replace(/^mospiAll \S+ \{[^}]*\}: /, "")}; nothing partial is baked.`)}`); continue; }
+        if (ind.expected === 0) { lines.push(`    status: excluded`, `    reason: "MoSPI lists this indicator but serves no rows for it (checked 2026-10-10)."`); continue; }
+        if (bake.undated.includes(`${pid} ${ind.code}`)) { lines.push(`    status: excluded`, `    reason: "The source names no period for any row of this table, so it cannot sit on a dated axis; every row is in data/raw/profiles-mospi/."`); continue; }
+        if (bake.notSeries.includes(`${pid} ${ind.code}`)) { lines.push(`    status: excluded`, `    reason: "A list of events or records (several to one place and year), not a series; every row is in data/raw/profiles-mospi/."`); continue; }
+        if (!onDisk) { lines.push(`    status: excluded`, `    reason: "No row of this table names a state, All India or a period the bake can place; every row is in data/raw/profiles-mospi/."`); continue; }
+        const m = usedBy.get(slug);
+        if (m) lines.push(`    status: shown`, `    bundle: ${slug}`, `    plate: "${PLATE[m.section]}"`);
+        else lines.push(`    status: baked`, `    bundle: ${slug}`);
+      }
+    }
   }
   // NFHS-6: the indicators a profile shows, then the rest, baked
   const used = [...new Set(P.MEASURES.filter((m) => m.bundle === "profiles-nfhs6").map((m) => { const k = [...P.cells(m).cur.values()][0]; return k.match(/__i(\d{3})__/)[1]; }))].sort();

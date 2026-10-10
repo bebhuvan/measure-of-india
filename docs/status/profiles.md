@@ -1,7 +1,7 @@
 # profiles: state profiles
 
 Session `atlas-profiles`, branch `lb/profiles`, port 4427. Brief: `docs/briefs/state-profiles.md`.
-Status: **steps 1 to 4 done; step 5 (new MoSPI pulls) blocked, waiting for the MoSPI audit.**
+Status: **steps 1 to 5 done.**
 Updated 2026-10-10.
 
 ## What shipped
@@ -124,9 +124,45 @@ Updated 2026-10-10.
 - **Not to start**: new external sources (SHRUG, Census PCA, data.gov.in, MGNREGA, TCPD); the
   coordinator is taking the scope to the owner.
 
+## Source quirks (step 5)
+- **UDISE+ dropout rates**: MoSPI serves 0 for some state-years after much higher values (Bihar,
+  classes 9 and 10: 29.5% in 2022-23, then 0 in 2023-24 and 2024-25; primary 0, 0, 10.7, 0).
+  Not a believable measurement and not documented as a floor, so the dropout rate is baked as
+  served but kept off the profiles. To check against the UDISE+ report itself.
+- **UDISE+ has no All India row** on the API: school measures on the profiles have no all-India
+  figure (we do not sum the states into one).
+- **NSS 75 paging**: some indicators page unstably (rows differ between two full reads);
+  mospiAll refuses them. Recorded per indicator in the plan file, retried split by state later.
+
+## Step 5: MoSPI (done 2026-10-10)
+- **Downloaded** (scripts/lib/products/profiles-mospi.mjs, phases A list, B size, C fetch, C2
+  retry, D bake): UDISE+ 46 indicators, EnvStats 126, NSS 75 55, NSS 76 25, NSS 77 33, AIDIS 22,
+  NSS 78 14, NSS 79 35. One gzipped raw dump per indicator in data/raw/profiles-mospi/ (8.7 MB);
+  the plan file records every indicator's expected rows, state dimension and outcome.
+- **Baked**: 331 bundles (profiles-mospi-<product>-<survey>-<code>), 54,659 series, 27 MB. Every
+  cut held at its headline value where the source prints one (a distribution keeps the cut it
+  distributes); finer cuts stay in the raw dumps. validate: shape and meta of every bundle, and
+  distributions adding up to their whole (1,112 of 1,240 place x period x cut groups; the rest
+  within the check's tolerance per bundle).
+- **On the profiles**: UDISE+ (GER classes 11-12, pupils per teacher, schools with internet,
+  working electricity, a working girls' toilet, single-teacher schools); NSS 77 farm household
+  income (₹10,218 All India, as SAS 2019 published, hand-checked); AIDIS assets, debt and the
+  share of rural households in debt; NSS 79 bank accounts, internet use among the young, NEET,
+  years of schooling; NSS 78 broadband; NSS 76 disability.
+- **Not complete, blocked with the shortfall**: NSS 75 indicators 1, 11, 15, 20, 25 and 39 (MoSPI
+  pages them in no fixed order. Fresh reads unioned reached 3,987 of 3,996, 3,532 of 3,552 and
+  3,967 of 3,996 rows after ten reads (1, 15, 39: no gain from read six to ten, so the missing rows
+  never come back), and 22,640 of 22,644, 50,938 of 50,949 and 33,965 of 33,966 after six (11, 20,
+  25: not retried, 3,000 to 5,000 calls each)); NSS 76 indicator 15
+  (a read cut short at 11,619 of 40,014 rows). Recovered by unions of reads: NSS 75 4 and 18.
+- **Excluded**: Time Use (national only on the API; a national guide after launch); nine
+  EnvStats tables that name no period, and one list of earthquakes (not a series).
+- **NSS 80** stays blocked: its indicator list answered HTTP 500 to five calls on 2026-10-10.
+- **Economic Census**: no record endpoint known; manual discovery after launch.
+
 ## Blocked
-- **NSS 73, 75 to 80 and the Economic Census** (brief step 5): `blocked` in the ledger, waiting
-  for the coordinator to release MoSPI after the audit (lb/audit-refresh).
+- NSS 80 (HTTP 500), seven indicators MoSPI could not serve whole, and the Economic Census: see
+  Step 5 above. NSS 73 stays blocked (HTTP 400 on every data call when the inventory probed it).
 
 ## For the coordinator
 - Shared files touched, each one marked block: `data/sources.yml` (family `pdfparse`, dossier

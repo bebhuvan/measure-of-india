@@ -78,8 +78,10 @@ test("ranks say highest or lowest only at the ends of the table", () => {
     const t = rankPhrase({ r, n });
     const m = /(\d+)(st|nd|rd|th) (highest|lowest)/.exec(t);
     if (m) assert.ok(+m[1] <= RANK_EDGE, `${r} of ${n}: "${t}"`);
-    if (r > RANK_EDGE && n - r + 1 > RANK_EDGE) assert.match(t, /^near the middle, \d+(st|nd|rd|th) of \d+ counted from the highest$/);
+    if (r > RANK_EDGE && n - r + 1 > RANK_EDGE) assert.match(t, /^(near the middle, )?\d+(st|nd|rd|th) of \d+,? counted from the highest$/);
+    if (/^near the middle/.test(t)) assert.ok(r > n / 3 && r <= (2 * n) / 3, `${r} of ${n}: "${t}" is not the middle third`);
   }
   assert.equal(rankPhrase({ r: 17, n: 36 }), "near the middle, 17th of 36 counted from the highest");
+  assert.equal(rankPhrase({ r: 6, n: 31 }), "6th of 31, counted from the highest");
   assert.equal(rankPhrase({ r: 34, n: 36 }), "3rd lowest of 36");
 });
