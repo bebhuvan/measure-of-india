@@ -527,7 +527,7 @@ const L = landB.series, iL = landB.dates.length - 1;
       Plot.text(ends, { x: "date", y: "ly", text: (d) => `${d.label} ${fmt.num1(d.value)}`, dx: 10, textAnchor: "start", fill: INK, fontSize: 12 }),
     ],
   });
-  const rw = (S.procurement_rice.data[iS] + S.procurement_wheat.data[iS]) / ((P.rice.data[iP] + P.wheat.data[iP]) / 100);   // lakh tonnes over thousand tonnes / 100
+  const rw = (S.procurement_rice.data[iS] + S.procurement_wheat.data[iS]) / ((P.rice.data[iP] + P.wheat.data[iP]) / 100) * 100;   // lakh tonnes over (thousand tonnes / 100 = lakh tonnes), as a per cent
   a11y(plot, "Procurement and off-take", `In ${fyOf(pdsB.dates[iS])}: rice procured ${fmt.num1(lt(S.procurement_rice.data[iS]))}, wheat ${fmt.num1(lt(S.procurement_wheat.data[iS]))}, issued ${fmt.num1(lt(S.offtake_total.data[iS]))} million tonnes.`);
   const el = mount("plot-proc", plot);
   addCrosshair(el, plot, series, null, (d) => fyOf(d.toISOString()), (v) => (v == null ? "—" : fmt.num1(v) + " mt"));
