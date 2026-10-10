@@ -12,7 +12,7 @@
 // Every call goes through scripts/lib/mospi.mjs (one request at a time, spaced, backoff on 429 and
 // 5xx, a response cache in data/raw/http-cache), so a run killed half way resumes where it stopped.
 // Progress and the expected row counts (each indicator's meta_data.totalRecords from page 1, phase B)
-// are kept in data/raw/profiles-mospi-plan.json; phase C checks the rows it collects against them
+// are kept in data/raw/profiles-mospi-index.json; phase C checks the rows it collects against them
 // (mospiAll fails a short read). Raw dumps, one per indicator, go to data/raw/profiles-mospi/. Bundles
 // are baked afterwards, product by product, once the shapes are seen.
 //
@@ -24,7 +24,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
-const PLAN_FILE = path.join(ROOT, "data/raw/profiles-mospi-plan.json");
+const PLAN_FILE = path.join(ROOT, "data/raw/profiles-mospi-index.json");
 
 // The endpoints, as the eSankhyiki SPA calls them (docs/reference/esankhyiki-api.md). Where a
 // product's parameter names are not recorded there, phase A's listing response names them; the
@@ -193,6 +193,9 @@ async function phaseRetry(mospi, mospiAll, plan) {
   const { writeRaw } = await import("../util.mjs");
   for (const P of PRODUCTS) for (const ind of plan.products[P.id]?.indicators ?? []) {
     if (!ind.fetchError || ind.archived) continue;
+    // PROFILES_MOSPI_RETRY_MAX_ROWS bounds the cost: an indicator over it keeps its recorded shortfall
+    if (ind.expected > Number(process.env.PROFILES_MOSPI_RETRY_MAX_ROWS ?? Infinity)) continue;
+    if (/page 1 reported/.test(ind.fetchError)) continue;   // a short read is the server's, not paging order
     try {
       const rows = await readUnion(mospi, P, ind);
       writeRaw(ROOT, `data/raw/profiles-mospi/${P.id}-${ind.survey ?? 0}-${ind.code}.json`, { vintage: new Date().toISOString().slice(0, 10), note: `MoSPI eSankhyiki ${P.records}, indicator ${ind.code}${ind.survey != null ? `, survey ${ind.survey}` : ""}: every row, the union of fresh full reads because the server pages it in no fixed order (profiles step 5)`, product: P.id, indicator: ind, rows });
@@ -237,10 +240,16 @@ const STD = ["sector", "gender", "type_of_management", "management", "social_gro
 const HEAD = /^(total|all|all india|rural \+ urban|rural\+urban|combined|person|persons|all management|all persons|both|annual|all ages|all social groups|all categories|all religions)$/i;
 const ROUND = { nss75: ["2017-07-01", "NSS 75, 2017-18"], nss76: ["2018-07-01", "NSS 76, July to December 2018"], nss77: ["2019-01-01", "NSS 77, 2019"], nss77aidis: ["2019-01-01", "NSS 77 (AIDIS), 2019"], nss78: ["2020-01-01", "NSS 78, 2020-21"], nss79: ["2022-07-01", "NSS 79, 2022-23"] };
 const SKIPKEYS = new Set(["value", "indicator", "state", "unit", "year", "zone", "survey", "survey_code", "indicator_code"]);
+// the period a row names, as a date on the axis: "2022-23" or "2021-22(P)" a financial year at
+// April, "2024", "ISFR 2023" or "As on January 2024" that year at January, "31-Oct-22" that year,
+// "NFHS-5 (2019-21)" its first year; else the survey round; else none (the row is not baked)
+const periodText = (row) => String(row.year ?? row.NFHS_round ?? row.nfhs_round ?? row.round ?? "").trim();
 const dateOf = (P, row) => {
-  const y = String(row.year ?? "").trim();
-  if (/^\d{4}-\d{2,4}$/.test(y)) return `${y.slice(0, 4)}-04-01`;
-  if (/^\d{4}$/.test(y)) return `${y}-01-01`;
+  const y = periodText(row);
+  let m;
+  if ((m = /\b((?:19|20)\d{2})\s*-\s*(\d{2}|\d{4})\b(?!\s*\))/.exec(y)) && !/nfhs/i.test(y)) return `${m[1]}-04-01`;
+  if ((m = /\b((?:19|20)\d{2})\b/.exec(y))) return `${m[1]}-01-01`;
+  if ((m = /\b\d{1,2}-[A-Za-z]{3}-(\d{2})\b/.exec(y))) return `20${m[1]}-01-01`;
   return ROUND[P.id]?.[0] ?? null;
 };
 const num = (v) => { if (v == null) return null; const t = String(v).replace(/,/g, "").trim(); if (t === "" || t === "-" || /^n\.?a\.?$/i.test(t) || t === "*") return null; const n = Number(t); return Number.isFinite(n) ? n : null; };
@@ -288,6 +297,7 @@ async function phaseBake(plan) {
   const { placeAll } = await import("../../../src/dossiers/states-key.js");
   const dir = path.join(ROOT, "data/raw/profiles-mospi");
   let nB = 0, nS = 0, unplaced = new Map();
+  const undated = [], notSeries = [];
   for (const P of PRODUCTS) {
     for (const ind of plan.products[P.id]?.indicators ?? []) {
       const rel = `data/raw/profiles-mospi/${P.id}-${ind.survey ?? 0}-${ind.code}.json`;
@@ -297,17 +307,34 @@ async function phaseBake(plan) {
       // which standard cuts publish a headline value for this indicator
       const dims = [...new Set(rows.flatMap((r) => Object.keys(r)))].filter((k) => !SKIPKEYS.has(k));
       const headOf = new Map();
-      for (const d of dims) if (STD.includes(d)) { const h = [...new Set(rows.map((r) => r[d]))].find((v) => v != null && HEAD.test(String(v).trim())); if (h != null) headOf.set(d, h); }
+      // every cut but the sub-indicator (the measure itself) is held at its headline where the
+      // source prints one ("All", "Total", "All (incl. n.r.)"): a state profile reads the headline,
+      // and the finer cuts stay in the raw dump
+      for (const d of dims) if (d !== "sub_indicator") { const h = [...new Set(rows.map((r) => r[d]))].find((v) => v != null && (HEAD.test(String(v).trim()) || /^(all|total)\b/i.test(String(v).trim()))); if (h != null) headOf.set(d, h); }
+      // in a distribution, the cut being distributed must stay whole: a cut whose headline rows are
+      // mostly the whole itself (100, or 1,000 per 1,000) is that cut, so it is not collapsed
+      const lab = String(ind.label ?? rows[0]?.indicator ?? "");
+      const whole = /per 1,?000 distribution/i.test(lab) ? 1000 : /distribution/i.test(lab) ? 100 : null;
+      if (whole) for (const [d, h] of [...headOf]) {
+        const at = rows.filter((r) => r[d] === h).map((r) => num(r.value)).filter((v) => v != null);
+        if (at.length && at.filter((v) => Math.abs(v - whole) <= whole * 0.015).length >= 0.5 * at.length) headOf.delete(d);
+      }
       const keep = dims.filter((d) => !headOf.has(d) && rows.some((r) => r[d] != null && r[d] !== ""));
       const dates = [...new Set(rows.map((r) => dateOf(P, r)).filter(Boolean))].sort();
+      if (!dates.length) { undated.push(`${P.id} ${ind.code}`); continue; }
+      const labels = {};
+      for (const r of rows) { const d = dateOf(P, r), t = periodText(r); if (d && t && !/^\d{4}(-\d{2})?$/.test(t)) (labels[d] ??= new Set()).add(t); }
       const series = {};
+      try {
       for (const r of rows) {
-        if ([...headOf].some(([d, h]) => r[d] != null && r[d] !== h)) continue;
+        // only rows at exactly the headline of each cut that has one (a blank there marks a
+        // different measure in the same table, such as a count beside a distribution)
+        if ([...headOf].some(([d, h]) => r[d] !== h)) continue;
         const sl = String(r.state ?? "").trim();
         let geo, gname;
         // a row with no state but a zone is the zone's total (EnvStats power supply); else All India
         // geographies that are not one state, kept under their own name (never ranked as a state)
-        if (/^(damodar valley corporation|others?|central|central sector|nhb\/states|jammu|kashmir|jammu division|kashmir division)$/i.test(sl)) { geo = `other_${keyPart(sl)}`; gname = sl; }
+        if (/^(damodar valley corporation|others?|central|central sector|nhb\/states|jammu|kashmir|jammu division|kashmir division|group of (north eastern|ne) states|group of uts)$/i.test(sl)) { geo = `other_${keyPart(sl)}`; gname = sl; }
         else if (!sl && r.zone) { geo = `zone_${keyPart(r.zone)}`; gname = String(r.zone).trim(); }
         else if (!sl || /^all[- ]?india$/i.test(sl) || /^india$/i.test(sl)) { geo = "all_india"; gname = "All India"; }
         else {
@@ -322,11 +349,28 @@ async function phaseBake(plan) {
         const label = [String(ind.label ?? r.indicator ?? "").trim().replace(/\s+/g, " "), ...parts.filter((x) => x !== "")].join(", ") + `, ${gname}`;
         const s = (series[key] ??= { name: `${P.id}_${ind.code}_${key}`.slice(0, 120), label, unit: unitOf(label, r.unit), state: geo === "all_india" || geo.startsWith("zone_") || geo.startsWith("other_") ? undefined : gname, geo: gname, group: parts.filter((x) => x !== "").join(", ") || undefined, data: new Array(dates.length).fill(null) });
         const v = num(r.value), i = dates.indexOf(d);
-        if (s.data[i] != null && v != null && s.data[i] !== v) throw new Error(`${P.id} ${ind.code}: two values for ${key} at ${d} (${s.data[i]}, ${v}); a dimension is missing from the key`);
-        if (v != null) s.data[i] = v;
+        // a table can print a year twice, provisional "(P)" and final: the final one wins, and a
+        // cell left with only a provisional figure is listed on its series as provisional
+        const prov = /\(\s*p\s*\)|provisional/i.test(periodText(r));
+        s._prov ??= new Set();
+        if (s.data[i] != null && v != null && s.data[i] !== v) {
+          if (prov && !s._prov.has(d)) continue;              // a final value is already there
+          if (!prov && s._prov.has(d)) { s.data[i] = v; s._prov.delete(d); continue; }
+          throw Object.assign(new Error(`two values for ${key} at ${d} (${s.data[i]}, ${v})`), { notSeries: true });
+        }
+        if (v != null) { s.data[i] = v; if (prov) s._prov.add(d); }
+      }
+      } catch (e) {
+        if (!e.notSeries) throw e;
+        // a list of events or records (earthquakes, sites), not a series: its rows cannot be keyed
+        // by place, cut and period; the raw dump keeps every row
+        notSeries.push(`${P.id} ${ind.code}`);
+        continue;
       }
       // disclose interior nulls on the series that miss them
       for (const s of Object.values(series)) {
+        if (s._prov?.size) s.provisional = [...s._prov].sort();
+        delete s._prov;
         const f = s.data.findIndex((v) => v != null), l = s.data.length - 1 - [...s.data].reverse().findIndex((v) => v != null);
         const gaps = dates.filter((_, i) => i > f && i < l && s.data[i] == null);
         if (gaps.length) s.gaps = gaps;
@@ -343,12 +387,14 @@ async function phaseBake(plan) {
         revisionPolicy: "Survey estimates are final on release; MoSPI may revise a table without notice, and each fetch is checked against the archived rows.",
         coverage: `${String(ind.label ?? "").trim().slice(0, 200)}: every state and UT, at the headline of ${[...headOf.keys()].join(", ") || "no standard cut"}${keep.length ? `, by ${keep.join(", ")}` : ""}`,
         note: `Baked from data/raw/profiles-mospi/${P.id}-${ind.survey ?? 0}-${ind.code}.json (${rows.length} rows as MoSPI serves them). Standard cuts kept at their headline value: ${[...headOf].map(([d, h]) => `${d} = ${h}`).join("; ") || "none"}. The finer grain is in the raw dump.`,
-        indicator: { product: P.id, survey: ind.survey ?? null, code: ind.code, rows: rows.length } } });
+        indicator: { product: P.id, survey: ind.survey ?? null, code: ind.code, rows: rows.length },
+        ...(Object.keys(labels).length ? { periodLabels: Object.fromEntries(Object.entries(labels).filter(([d]) => dates.includes(d)).map(([d, t]) => [d, [...t].join(" / ")])) } : {}) } });
       nB++; nS += Object.keys(series).length;
     }
   }
   if (unplaced.size) throw new Error(`bake: the state key cannot place ${[...unplaced].map(([k, n]) => `"${k}" (${n})`).join(", ")}`);
-  console.log(`D: ${nB} bundles, ${nS} series`);
+  console.log(`D: ${nB} bundles, ${nS} series${undated.length ? `; not baked, no period named: ${undated.join(", ")}` : ""}${notSeries.length ? `; not baked, not a series: ${notSeries.join(", ")}` : ""}`);
+  fs.writeFileSync(path.join(ROOT, "data/coverage/profiles-mospi-bake.json"), JSON.stringify({ baked: nB, series: nS, undated, notSeries }, null, 1));
 }
 
 function freeBytes() { try { const st = fs.statfsSync(ROOT); return st.bavail * st.bsize; } catch { return null; } }

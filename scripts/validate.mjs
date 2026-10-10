@@ -3480,6 +3480,49 @@ withBundle("farms-states-production", (b) => withBundle("farms-production", (n) 
 }));
 // ---- end farms ----
 
+// ---- profiles (lb/profiles): the step 5 MoSPI bakes (profiles-mospi-*, scripts/lib/products/profiles-mospi.mjs) ----
+// Shape and meta for every bundle; and the identity a distribution must keep: within one place,
+// period and set of cuts, the shares of a "percentage distribution" add to 100 and of a "per
+// 1000 distribution" to 1,000 (within the source's rounding, 1.5 points; groups that print their
+// own total row are skipped). A bundle where most groups miss is a misread, and fails.
+{
+  const PM = fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => /^profiles-mospi-.*\.json$/.test(f)).map((f) => f.slice(0, -5));
+  let groups = 0, okG = 0, badBundles = [];
+  for (const slug of PM) {
+    const b = load(slug);
+    checkMeta(b, slug, "profiles-mospi", b.meta.base, b.meta.frequency);
+    const label = String(b.meta.coverage ?? "");
+    const whole = /per 1,?000 distribution/i.test(label) ? 1000 : /percentage distribution|percent distribution/i.test(label) ? 100 : null;
+    if (!whole) continue;
+    const by = new Map();
+    for (const [k, s] of Object.entries(b.series)) {
+      const parts = k.split("__");
+      if (parts.length < 2) continue;
+      const g = parts.slice(0, -1).join("__");
+      if (!by.has(g)) by.set(g, []);
+      by.get(g).push(s);
+    }
+    let bG = 0, bOk = 0;
+    for (const [, members] of by) {
+      // the shares only: not the source's own total row ("Total", "Immobile Total", "incl. n.r."),
+      // nor counts, areas or independent "percentage of" rates printed in the same table
+      const isShare = (s) => { const t = String(s.group ?? "").split(", ").at(-1); return !/\btotal\b|^all\b|incl\.? ?n\.?r|per 1,?000 h|number|no\. of|\barea\b|'000|000 ha|percentage of|average/i.test(t); };
+      const shares = members.filter(isShare);
+      if (shares.length < 2 || shares.length < members.length - 3) continue;
+      members.length = 0; members.push(...shares);
+      b.dates.forEach((_, i) => {
+        const vs = members.map((s) => s.data[i]);
+        if (vs.some((v) => v == null)) return;
+        bG++; if (Math.abs(vs.reduce((a, v) => a + v, 0) - whole) <= (whole === 100 ? 1.5 : 15)) bOk++;
+      });
+    }
+    groups += bG; okG += bOk;
+    if (bG >= 10 && bOk < 0.5 * bG) badBundles.push(`${slug} (${bOk}/${bG})`);
+  }
+  if (badBundles.length) fail(`profiles-mospi: distributions that do not add up in most groups: ${badBundles.join(", ")}`);
+  else ok(`profiles-mospi: ${PM.length} bundles; distributions add up to their whole in ${okG} of ${groups} groups (place x period x cut)`);
+}
+
 // META TEXT — every bundle on disk, whatever check family it belongs to, and every sources.yml
 // entry the adapters copy text from: meta.geo is a three-letter code on every bundle (CONTRACT-series
 // rule 8), and a revision policy, where one is given, reads as a sentence, never a placeholder
