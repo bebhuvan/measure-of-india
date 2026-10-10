@@ -519,7 +519,15 @@ const parityRule = new Date(Date.UTC(2017, 3, 1)); // unused anchor
       Plot.dot(flat.filter((d) => d.gender === "Female"), { y: "rank", x: "v", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       /* labels point AWAY from the connector: the left dot's label to its
        * left, the right dot's to its right — they can never meet mid-row */
-      Plot.text(rows.filter((d) => d.male < d.female), { y: "rank", x: "male", dx: -12, text: (d) => countShort(d.male), fill: "#5F6675", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
+      // a left-hand label that would reach the zero rule rides above its dot instead
+      ...(() => {
+        const pxU = (1184 - 180 - 150) / maxV;
+        const hitsRule = (d) => 180 + d.male * pxU - 12 - countShort(d.male).length * 12.5 * 0.6 < 186;
+        return [
+          Plot.text(rows.filter((d) => d.male < d.female && !hitsRule(d)), { y: "rank", x: "male", dx: -12, text: (d) => countShort(d.male), fill: "#5F6675", fontSize: 12.5, fontFamily: mono, textAnchor: "end" }),
+          Plot.text(rows.filter((d) => d.male < d.female && hitsRule(d)), { y: "rank", x: "male", dy: -14, text: (d) => countShort(d.male), fill: "#5F6675", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
+        ];
+      })(),
       Plot.text(rows.filter((d) => d.male >= d.female), { y: "rank", x: "male", dx: 12, text: (d) => countShort(d.male), fill: "#5F6675", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
       ...(() => {
         const pxU = (1184 - 180 - 150) / maxV;
