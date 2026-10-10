@@ -1,6 +1,6 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 10:10.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 11:00.
 
 ## Running now: ten family sessions
 
@@ -56,7 +56,7 @@ throttles, so not run alongside the states and services sessions). Then the laun
 |---|---|---|
 | Search index was 306 MB | atlas-framework round 5 | **fixed**: 112 KB core + shards; largest file 6 MB |
 | State profiles, /states/<state>/ (owner, in launch scope) | atlas-profiles | **36 pages merged**; nav, search and MoSPI pulls to come |
-| Full fresh MoSPI re-download as an integrity audit (worktree `audit`) | coordinator, background | part 1 (cpi, gdp, wpi, cpialrl, plfs, rbi, iip) **clean**: 0 paging slips, 0 values changed. ASI, ASUSE, AISHE, gender, MNRE, NFHS were already re-fetched through the hardened client by their wave-2 sessions. Part 2 (isp, services, states) running |
+| Full fresh MoSPI re-download as an integrity audit | coordinator | **done, clean**: every MoSPI product re-fetched through the hardened client (or by its wave-2 session after the fix); 0 paging slips, 0 data values changed |
 | Deep archive upload to Hugging Face (1.5 GB) | coordinator | **waiting on the owner's go** |
 | Read every guide end to end at 1440 and 390; release checklist | review sessions | after the audit and search land |
 | Profile wording: middle ranks read "17th lowest of 36"; say "17th of 36" | atlas-profiles | to fix |

@@ -186,6 +186,12 @@ stamps, silent series). What the audit changed:
   Those lines are withheld, pinned to the value served so a silent fix is noticed. Lesson:
   an agency's API is a copy of its report, and a copy can be wrong; check one value per
   table against the printed report, which is what caught both.
+- **2026-10-10 11:00 — The MoSPI integrity audit came back clean.** After the AISHE paging
+  corruption, every MoSPI product on the site was re-downloaded fresh through the hardened
+  `mospiAll` (CPI, GDP, WPI, CPI-AL/RL, PLFS, the RBI mirror, IIP, ISP, the services
+  adapters, states), or had been re-fetched through it by its own wave-2 session (ASI,
+  ASUSE, AISHE, gender, MNRE, NFHS). No page set slipped and no data value changed; the
+  only repeats were MoSPI serving identical rows, which are dropped with a warning.
 - **2026-10-10 06:00 — Wave 2 complete; nothing pending.** Prices (CPI by state to the group,
   CPI-IW, rural wages, WPI's old bases), jobs (the whole PLFS cube, the 2025 redesign seam),
   industry (IIP all bases, core industries, ASI at every NIC digit), national accounts
