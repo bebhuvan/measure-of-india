@@ -1,6 +1,6 @@
 # Launch status
 
-Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 11:00.
+Plan: `docs/PLAN-launch.md`. Branch: `launch-build`. Updated 2026-10-10, 12:00.
 
 ## Running now: ten family sessions
 
@@ -63,7 +63,8 @@ throttles, so not run alongside the states and services sessions). Then the laun
 | Prose rule: published precision for headline growth ("7.8%", not "7.82%") | coordinator | to decide |
 | IIP annual 2024-25: API 5.7% against 6.4% in press summaries (MoSPI PDF 403) | open | not quoted anywhere meanwhile |
 | New sources (SHRUG, Census 2011 PCA, data.gov.in, MGNREGA, TCPD): before or after launch? | **owner** | asked |
-| DBIE wave: public finance, payments, farms, banks, markets (5 sessions) | atlas-* | started 09:40 |
+| DBIE wave: public finance, payments, farms, banks, markets (5 sessions) | atlas-* | **payments merged** (guide 26); four running |
+| credit: cheque counts read as display codes (662), clearing-house totals from the wrong provider (743), a 0.001 placeholder | atlas-payments | fixing |
 | MGNREGA | coordinator | **blocked**: MIS is CAPTCHA-gated (not circumvented); api.data.gov.in refuses connections from this network; needs an owner API key and a reachable API |
 | GitHub remote, Cloudflare secrets and Pages project, DNS for atlas.thisindianlife.today, analytics | **owner** | to do |
 
@@ -107,8 +108,16 @@ throttles, so not run alongside the states and services sessions). Then the laun
   compares, and fails loudly if the two disagree. Re-running every MoSPI adapter with
   MOSPI_NO_CACHE=1 after wave 2 checks every dump on the site the same way.
 
+## After launch (decided)
+
+- Time Use guide (national; TUS 2019 and 2024). BIS CPMI payments comparison (Data Bank to
+  mirror the CPMI flows). Economic Census (no record endpoint known). NSS 80 (API 500).
+  Census 2011 PCA, then SHRUG and TCPD after licence checks. MGNREGA as soon as data.gov.in
+  is reachable with a key.
+
 ## For the launch-pass prose review
 
+- payments: counts quoted to two decimals of a crore ("2,365.84 crore payments").
 - gdp: growth quoted to two decimals ("7.82%", computed from levels) where MoSPI and the
   press print one ("7.8%"). Decide a site-wide rule: published precision for headline
   growth, with the computed figure only where it is the point.
