@@ -28,7 +28,7 @@ const kindNote = u.kind === "ut" ? "A union territory without a legislature: the
   nav="states"
   title={`${u.name}: a state profile · India Atlas`}
   description={`${u.name} in official figures: income, growth, prices, jobs, spending, health, banking, industry, farms, education, climate and state finances, each against India and its neighbours.`}
-  dateStamp={latestVintage ? `Data to ${latestVintage}` : ""}
+  dateStamp={latestVintage ? `Updated ${+latestVintage.slice(8, 10)} ${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+latestVintage.slice(5, 7) - 1]} ${latestVintage.slice(0, 4)}` : ""}
   crumbLeft={`<a href="/states/">States and union territories</a> / <b>${u.name}</b>`}
   crumbRight={`${P.kind}, ${u.iso}`}
   canonical={`https://atlas.thisindianlife.today/states/${u.slug}/`}
@@ -268,8 +268,8 @@ const kindNote = u.kind === "ut" ? "A union territory without a legislature: the
     <div class="sec-head"><span class="no">{String(P.sections.length + 5).padStart(2, "0")}</span><h2>How to misread a state profile</h2><span class="line"></span></div>
     <ul class="misread">
       <li><span class="no">1</span><div><h3>"Income per person is what a typical person earns."</h3><p>It is what is produced in the state, divided by everyone who lives there. Profits of companies based elsewhere count where the plant stands; money sent home by people working in other states counts where they work. Spending per person, from the household survey, is closer to how a household lives.</p></div></li>
-      <li><span class="no">2</span><div><h3>"It ranks 10th, so it is in the middle."</h3><p>Check of how many. Some tables cover 36 units, some 19. A rank says nothing about the distance to the next state; the row in the first chart shows it.</p></div></li>
-      <li><span class="no">3</span><div><h3>"This figure is from this year."</h3><p>Each figure carries its own period. The family health survey is from 2019-21, college enrolment from 2021-22, state finances from 2022-23. Two figures side by side may be years apart.</p></div></li>
+      <li><span class="no">2</span><div><h3>"It ranks 10th, so it is in the middle."</h3><p>Check out of how many. Some tables cover 36 units, some 19. A rank says nothing about the distance to the next state; the row in the first chart shows it.</p></div></li>
+      <li><span class="no">3</span><div><h3>"This figure is from this year."</h3><p>Each figure carries its own period, printed beside it. A family health survey figure, a college enrolment ratio and a state's accounts each come from a different year, and the newest of them can be years apart. Two figures side by side may not describe the same year.</p></div></li>
       <li><span class="no">4</span><div><h3>"A low credit-deposit ratio means banks are not lending."</h3><p>Loans are counted where they are sanctioned. A company with plants in one state may borrow in Mumbai; a farmer's crop loan stays local. A low ratio says that much of the money saved in the state is lent elsewhere.</p></div></li>
       <li><span class="no">5</span><div><h3>"The state's weather station says otherwise."</h3><p>The climate figures are averages over the whole area of the state, from a reconstruction of past weather, not readings at one station. A city can be warmer or wetter than its state's average.</p></div></li>
     </ul>
