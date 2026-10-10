@@ -424,8 +424,9 @@ if (C) {
 if (C) {
   const rows = C.states.filter((s) => s.proj != null).sort((p, q) => q.proj - p.proj);
   const plot = Plot.plot({
-    width: W, height: 50 + rows.length * 24, marginLeft: 230, marginRight: 70, marginTop: 24, marginBottom: 30, style: baseStyle,
-    x: { label: "°C, change from 1995-2014", labelAnchor: "right", labelArrow: false, domain: [0, 2], ticks: [0, 0.5, 1, 1.5, 2], tickSize: 0, tickPadding: 8, tickFormat: (v) => (v ? "+" : "") + fmt.num1(v) },
+    width: W, height: 66 + rows.length * 24, marginLeft: 230, marginRight: 70, marginTop: 24, marginBottom: 46, style: baseStyle,
+    // the axis label sits under the ticks, so it never lands on the last one
+    x: { label: "°C, change from 1995-2014", labelAnchor: "right", labelArrow: false, labelOffset: 40, domain: [0, 2], ticks: [0, 0.5, 1, 1.5, 2], tickSize: 0, tickPadding: 8, tickFormat: (v) => (v ? "+" : "") + fmt.num1(v) },
     y: { label: null, domain: rows.map((r) => r.name), tickSize: 0, tickPadding: 14 },
     marks: [
       Plot.gridX([0.5, 1, 1.5, 2], { stroke: GRID }),
