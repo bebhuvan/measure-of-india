@@ -51,8 +51,9 @@ const esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replac
 const pc = (u) => `<span class="pc">${u}</span>`;
 const MINUS = "−";
 const p1 = (v) => fmt.pct1Minus(v);                                   // a signed rate, one decimal
-const lc = (crore) => (crore < 0 ? MINUS : "") + "₹" + (Math.abs(crore) / 1e5).toLocaleString("en-IN", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + " lakh crore";
-const lc2 = (crore) => (crore < 0 ? MINUS : "") + "₹" + (Math.abs(crore) / 1e5).toFixed(2) + " lakh crore";
+// one decimal of a lakh crore, whole lakh crore from 1,000 up ("₹5,704 lakh crore", not "₹5,703.6")
+const lc = (crore) => { const d = Math.abs(crore) >= 1e8 ? 0 : 1; return (crore < 0 ? MINUS : "") + "₹" + (Math.abs(crore) / 1e5).toLocaleString("en-IN", { minimumFractionDigits: d, maximumFractionDigits: d }) + " lakh crore"; };
+const lc2 = (crore) => (crore < 0 ? MINUS : "") + "₹" + (Math.abs(crore) / 1e5).toFixed(1) + " lakh crore";
 const tc = (crore) => (crore < 0 ? MINUS : "") + "₹" + Math.round(Math.abs(crore)).toLocaleString("en-IN") + " crore";
 const lastOf = (b, k) => { const d = b.series[k]?.data; if (!d) return null; for (let i = d.length - 1; i >= 0; i--) if (d[i] != null) return { v: d[i], i, date: b.dates[i] }; return null; };
 const at = (b, k, iso) => { const i = b.dates.indexOf(iso); return i < 0 ? null : b.series[k]?.data[i] ?? null; };
@@ -254,7 +255,7 @@ const fA = (k, i = flowsAB.dates.length - 1) => flowsAB.series[FA[k]]?.data[i] ?
 {
   const H = BK.houses ?? [], top = H.slice(0, 20).map((h) => ({ label: h.label, v: h.v / 1000 }));
   if (top.length) top[0].hi = true;
-  bars("cb-houses", "plot-houses", top, { step: 20, fmt: (v) => (v < 0 ? MINUS : "") + "₹" + Math.abs(v).toFixed(1) + " th cr", label: "₹ thousand crore", csvHead: `${fy(BK.housesDate)}, ₹ thousand crore`, ml: 300, rowH: 28 });
+  bars("cb-houses", "plot-houses", top, { step: 20, fmt: (v) => (v < 0 ? MINUS : "") + "₹" + Math.round(Math.abs(v) * 1000).toLocaleString("en-IN") + " crore", label: "₹ thousand crore", csvHead: `${fy(BK.housesDate)}, ₹ thousand crore`, ml: 300, rowH: 28 });
   setHTML("pv-houses", lc(BK.housesTotal));
   if (H.length) {
     setHTML("ex-h-top", esc(H[0].label)); setHTML("ex-h-topv", tc(H[0].v));
@@ -267,7 +268,7 @@ const fA = (k, i = flowsAB.dates.length - 1) => flowsAB.series[FA[k]]?.data[i] ?
 {
   const s = (k, label, color, bold) => ({ label, color, bold, data: pts(sponsorB, k, 1e-3, "1987-04-01") });
   const list = [s("private", "Private", ACC, true), s("bank", "Bank-sponsored", GOLD), s("uti", "UTI", G2)];
-  lines("cb-sponsor", "plot-sponsor", list, { y: { step: 50, label: "₹ thousand crore, net inflow", fmt: (v) => String(v) }, tipFmt: (v) => "₹" + v.toFixed(1) + " th cr", dateFmt: fyOfDate, x: { step: 4 }, mr: 200 });
+  lines("cb-sponsor", "plot-sponsor", list, { y: { step: 50, label: "₹ thousand crore, net inflow", fmt: (v) => String(v) }, tipFmt: (v) => "₹" + Math.round(v * 1000).toLocaleString("en-IN") + " crore", labelFmt: (v) => "₹" + Math.round(v * 1000).toLocaleString("en-IN") + " cr", dateFmt: fyOfDate, x: { step: 4 }, mr: 230 });
   const L = (k) => lastOf(sponsorB, k).v;
   setHTML("pv-sponsor", tc(L("private")));
   setHTML("ex-sp-p", tc(L("private"))); setHTML("ex-sp-b", tc(L("bank"))); setHTML("ex-sp-u", tc(L("uti"))); setHTML("ex-sp-t", tc(L("total")));
@@ -287,7 +288,7 @@ const fA = (k, i = flowsAB.dates.length - 1) => flowsAB.series[FA[k]]?.data[i] ?
 {
   const e = { label: "Equity", color: ACC, bold: true, data: pts(issuesAB, "equity", 1e-5) };
   const b = { label: "Bonds", color: GOLD, data: pts(issuesAB, "bonds", 1e-5) };
-  lines("cb-issues", "plot-issues", [b, e], { y: { step: 0.5, label: "₹ lakh crore", fmt: (v) => v.toFixed(1) }, tipFmt: (v) => "₹" + v.toFixed(2) + " lakh cr", dateFmt: fyOfDate, x: { step: 4 }, mr: 220 });
+  lines("cb-issues", "plot-issues", [b, e], { y: { step: 0.5, label: "₹ lakh crore", fmt: (v) => v.toFixed(1) }, tipFmt: (v) => "₹" + v.toFixed(1) + " lakh cr", dateFmt: fyOfDate, x: { step: 4 }, mr: 220 });
   const eL = lastOf(issuesAB, "equity"), bL = lastOf(issuesAB, "bonds");
   setHTML("pv-issues", lc2(eL.v)); setHTML("ex-is-eq", lc2(eL.v)); setHTML("ex-is-b", tc(bL.v));
   const mn = lastOf(issuesB, "equity_n"), mv = lastOf(issuesB, "equity");
@@ -296,7 +297,7 @@ const fA = (k, i = flowsAB.dates.length - 1) => flowsAB.series[FA[k]]?.data[i] ?
 {
   const s = (rows, label, color, bold) => ({ label, color, bold, data: (rows ?? []).map(([d, v]) => ({ date: dt(d), value: v == null ? null : v / 1e5 })) });
   const cp = s(BK.cp, "Commercial paper", ACC, true), cd = s(BK.cd, "Certificates of deposit", GOLD);
-  lines("cb-cpcd", "plot-cpcd", [cd, cp], { y: { step: 1, label: "₹ lakh crore outstanding", fmt: (v) => String(v) }, tipFmt: (v) => "₹" + v.toFixed(2) + " lakh cr", dateFmt: (d) => `${d.getUTCDate()} ${monthOf(d)}`, x: { step: 4 }, mr: 310 });
+  lines("cb-cpcd", "plot-cpcd", [cd, cp], { y: { step: 1, label: "₹ lakh crore outstanding", fmt: (v) => String(v) }, tipFmt: (v) => "₹" + v.toFixed(1) + " lakh cr", dateFmt: (d) => `${d.getUTCDate()} ${monthOf(d)}`, x: { step: 4 }, mr: 310 });
   const lc_ = (rows) => rows.filter((r) => r[1] != null).at(-1);
   const yAgo = (rows) => { const l = lc_(rows); const t = new Date(dt(l[0]).getTime() - 365 * 864e5); return rows.filter((r) => r[1] != null && dt(r[0]) <= t).at(-1); };
   setHTML("pv-cp", lc2(lc_(BK.cp)[1])); setHTML("ex-cp", lc2(lc_(BK.cp)[1])); setHTML("ex-cd", lc2(lc_(BK.cd)[1]));

@@ -70,7 +70,7 @@ function lines(id, list, { yDomain, yTicks, yFmt = (v) => String(v), yLabel, xTi
 }
 
 /** Horizontal bars with values at the bar's end, optional comparison dots (open). */
-function hbars(id, rows, { valueFmt, color = () => G3, xDomain, xTicks, xFmt = (v) => String(v), ml = 260, mr = 120, dot = null, rowH = 34 }) {
+function hbars(id, rows, { valueFmt, color = () => G3, xDomain, xTicks, xFmt = (v) => String(v), ml = 260, mr = 120, dot = null, dotText = null, rowH = 34 }) {
   const host = document.getElementById(id); if (!host) return null;
   const marks = [
     Plot.gridX(xTicks.filter((v) => v !== 0), { stroke: GRID }),
@@ -80,8 +80,10 @@ function hbars(id, rows, { valueFmt, color = () => G3, xDomain, xTicks, xFmt = (
   if (dot) marks.push(Plot.dot(rows.filter((r) => r[dot] != null), { y: "name", x: dot, r: 4, fill: "#fff", stroke: G1, strokeWidth: 1.5 }));
   // the value label sits past whichever is further out, the bar's end or the comparison dot
   const upx = (xDomain[1] - xDomain[0]) / (W - ml - mr);
-  const lx = (r) => (dot && r[dot] != null && r[dot] > r.v - 6 * upx ? Math.max(r.v, r[dot] + 6 * upx) : r.v);
+  // with dotText the dot carries its own muted label, so the bar's value stays at the bar's end
+  const lx = (r) => (!dotText && dot && r[dot] != null && r[dot] > r.v - 6 * upx ? Math.max(r.v, r[dot] + 6 * upx) : r.v);
   marks.push(Plot.text(rows, { y: "name", x: lx, text: (d) => valueFmt(d.v), dx: 9, textAnchor: "start", fill: INK, fontSize: 12.5 }));
+  if (dot && dotText) marks.push(Plot.text(rows.filter((r) => r[dot] != null), { y: "name", x: dot, text: (d) => dotText(d[dot]), dx: 9, textAnchor: "start", fill: MUTED, fontSize: 11.5 }));
   const plot = Plot.plot({
     width: W, height: 40 + rows.length * rowH, marginLeft: ml, marginRight: mr, marginTop: 24, marginBottom: 30, style: baseStyle,
     x: { label: null, domain: xDomain, ticks: xTicks, tickFormat: xFmt, tickSize: 0, tickPadding: 8 },
@@ -155,10 +157,16 @@ setHTML("rb-peakd", monthOf(peakAll[0]));
   const ends = panels.flatMap(([w, pn]) => G.map(([g, name, c]) => { const a = D.shares[`${g}__${w}`]; return a?.length ? { panel: pn, name, c, date: toDate(a.at(-1)[0]), value: a.at(-1)[1] } : null; }).filter(Boolean));
   // end labels, dodged per panel
   const labelled = [];
-  for (const [, pn] of panels) { const e = ends.filter((x) => x.panel === pn).sort((a, b) => b.value - a.value); let lastY = Infinity; for (const x of e) { const y = Math.min(x.value, lastY - 5.5); labelled.push({ ...x, y }); lastY = y; } }
+  for (const [, pn] of panels) {
+    const e = ends.filter((x) => x.panel === pn).sort((a, b) => b.value - a.value); let lastY = Infinity; const out = [];
+    for (const x of e) { const y = Math.min(x.value, lastY - 5.5); out.push({ ...x, y }); lastY = y; }
+    // dodging only pushes down, so the smallest group's label can land on the year axis: lift the small groups together
+    const lift = Math.max(0, 2.5 - Math.min(...out.map((x) => x.y)));
+    for (const x of out) labelled.push(x.value < 20 ? { ...x, y: x.y + lift } : x);
+  }
   const plot = Plot.plot({
     width: W, height: 470, marginLeft: 44, marginRight: 190, marginTop: 40, marginBottom: 34, style: baseStyle,
-    fx: { label: null, padding: 0.32, tickSize: 0, axis: "top", tickFormat: (p) => String(p) },
+    fx: { label: null, domain: panels.map(([, pn]) => pn), padding: 0.32, tickSize: 0, axis: "top", tickFormat: (p) => String(p) },   // deposits left, as the subtitle says
     x: { type: "utc", label: null, tickSize: 0, tickPadding: 10, ticks: yearTicks(2014, +L.slice(0, 4), 4), tickFormat: (d) => String(d.getUTCFullYear()) },
     y: { label: "↑ share of all banks, per cent", labelAnchor: "top", labelArrow: false, domain: [0, 80], ticks: [0, 20, 40, 60, 80], tickFormat: (v) => v + (v === 80 ? "%" : ""), tickSize: 0, tickPadding: 8 },
     marks: [
@@ -329,7 +337,7 @@ setHTML("rb-peakd", monthOf(peakAll[0]));
 {
   const rows = D.retail.filter((r) => r.ratio != null).map((r) => ({ ...r, v: r.ratio })).sort((a, b) => b.v - a.v);
   const xMax = niceMax(Math.max(...rows.map((r) => Math.max(r.v, r.peak))) * 1.05);
-  const plot = hbars("plot-retail-npa", rows, { valueFmt: fmt.pct2, color: () => ACC, xDomain: [0, xMax], xTicks: ticksTo(xMax, 5), xFmt: (x) => x + (x === xMax ? "%" : ""), dot: "peak", ml: 200 });
+  const plot = hbars("plot-retail-npa", rows, { valueFmt: fmt.pct2, color: () => ACC, xDomain: [0, xMax], xTicks: ticksTo(xMax, 5), xFmt: (x) => x + (x === xMax ? "%" : ""), dot: "peak", dotText: (v) => "highest " + fmt.pct2(v), ml: 200 });
   const g = (k) => D.retail.find((r) => r.k === k);
   a11y(plot, "Bad loans by type of retail loan", rows.map((r) => `${r.name} ${fmt.pct2(r.v)}`).join(", "));
   setHTML("pv-retail-npa", fmt.pct2(g("retail_loans_credit_card_receivables").ratio));

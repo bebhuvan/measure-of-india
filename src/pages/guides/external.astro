@@ -101,7 +101,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {Q.bop}</span>
-            <p>The latest quarter, <span id="ex-ca-q">–</span>, shows a balance of <b id="ex-ca-latest">–</b>. The deepest deficit in this run was <b id="ex-ca-trough">–</b>. Only <b id="ex-ca-surplus">–</b> quarters since 2010 ended in surplus: four January to March quarters, when exports run high before the fiscal year closes, and three around the 2020 and 2021 lockdowns, when imports collapsed.</p>
+            <p>The latest quarter, <span id="ex-ca-q">–</span>, shows a balance of <b id="ex-ca-latest">–</b>. The deepest deficit in this run was <b id="ex-ca-trough">–</b>. Only <b id="ex-ca-surplus">–</b> quarters since 2010 ended in surplus: <span id="ex-ca-surplus-why">–</span>.</p>
           </div>
         </div>
       </figure>
@@ -283,7 +283,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
         </div>
         <div class="frame">
           <div class="legend" id="legend-lrs"></div>
-          <div class="plotzone"><div id="plot-lrs" style="position:relative"></div></div>
+          <div class="plotzone" data-x="time"><div id="plot-lrs" style="position:relative"></div></div>
           <div class="plotfoot">
             <span class="src">Source: RBI, outward remittances under the LRS (DBIE report 793), monthly, summed by India Atlas into fiscal years; only complete years are drawn.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
@@ -329,7 +329,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
           </div>
           <div class="now">
             <span class="mk">As of {Q.bop}</span>
-            <p>Net direct investment was <b id="ex-f-fdi">–</b> and net portfolio investment <b id="ex-f-fpi">–</b> in the latest quarter. Over the quarters drawn, portfolio flows swing with a standard deviation of <b id="ex-f-sdfpi">–</b> a quarter against <b id="ex-f-sdfdi">–</b> for direct investment; portfolio money left on net in <b id="ex-f-negfpi">–</b> quarters, direct investment in <b id="ex-f-negfdi">–</b>.</p>
+            <p>Net direct investment was <b id="ex-f-fdi">–</b> and net portfolio investment <b id="ex-f-fpi">–</b> in the latest quarter. Over the quarters drawn, portfolio flows typically land about <b id="ex-f-sdfpi">–</b> away from their own average in a quarter, against <b id="ex-f-sdfdi">–</b> for direct investment (one standard deviation); portfolio money left on net in <b id="ex-f-negfpi">–</b> quarters, direct investment in <b id="ex-f-negfdi">–</b>.</p>
           </div>
         </div>
       </figure>
@@ -471,7 +471,7 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
         <div class="frame">
           <div class="plotzone" id="plot-rupee"><div class="cb-tip"></div></div>
           <div class="plotfoot">
-            <span class="src">Source: RBI, monthly average exchange rates (DBIE report 719). The table runs from 1966; for March 1992 to February 1993 (the dual exchange rate) it carries the official LERMS rate (₹25.89 to ₹26.20), while the market rate (₹29.46 to ₹32.65) is in DBIE report 1374, both downloadable below.</span>
+            <span class="src">Source: RBI, monthly average exchange rates (DBIE report 719). The table runs from 1966; for March 1992 to February 1993 (the dual exchange rate) it carries the official LERMS rate (₹25.89 to ₹26.20), while the market rate (₹29.46 to ₹32.65) is in DBIE report 1374, both downloadable below. The table has no figure for May 2024, so the line breaks there.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -699,12 +699,12 @@ const DEBT = `March ${last("external-debt-annual").slice(0, 4)}`;
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Reserve Bank of India, Database on Indian Economy (DBIE), read from the owner's local mirror of DBIE (the Data Bank), never from RBI live. Every external-sector table DBIE publishes is either baked into a file listed above or accounted for in the coverage ledger: copies of the same table under other DBIE menus, and the few tables DBIE serves without names for their columns. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Reserve Bank of India, Database on Indian Economy (DBIE), read from India Atlas's archived copy of DBIE, not fetched live from the RBI. Every external-sector table DBIE publishes is either baked into a file listed above or accounted for in the coverage ledger: copies of the same table under other DBIE menus, and the few tables DBIE serves without names for their columns. Data vintage <b id="prov-vintage">–</b>.</p>
         <p>Checked by hand against the RBI's own figures: the latest quarter's current account, the reserves in the Weekly Statistical Supplement, and the current-account ratio to GDP in RBI's press release. The checks, and every source quirk found, are recorded in the adapters and in the guide's status notes.</p>
       </div>
       <div>
         <h6>Method</h6>
-        <p>Amounts are converted from dollars to US$ million and shown in US$ billion. Where several versions of a figure exist, the latest is shown and the earlier are kept. Sums over fiscal years, month-to-month changes and shares are computed by India Atlas and say so. Nothing is estimated or filled in.</p>
+        <p>RBI publishes amounts in US$ million; this guide shows them in US$ billion. Where several versions of a figure exist, the latest is shown and the earlier are kept. Sums over fiscal years, month-to-month changes and shares are computed by India Atlas and say so. Nothing is estimated or filled in.</p>
       </div>
       <div>
         <h6>Revisions and breaks</h6>

@@ -98,7 +98,7 @@ if (T.qe) {
   const phone = byCode["8517"];
   setHTML("pv-home", mn(phone.values.at(-1)));
   const p17 = phone.values[phone.dates.indexOf("2017-01-01")], r = T.homeRank;
-  setHTML("h-home", `Phone and telecom exports rose from ${mn(p17)} in January 2017 to ${mn(phone.values.at(-1))} in ${latestMonth}, ${r.phone === 1 ? "the largest" : ord(r.phone)} of India's ${r.of} export headings that month${r.phone === 1 ? "" : ` (the first was HS ${r.top})`}`);
+  setHTML("h-home", `Phone and telecom exports rose from ${mn(p17)} in January 2017 to ${mn(phone.values.at(-1))} in ${latestMonth}, ${r.phone === 1 ? "the largest" : "the " + (["", "", "second", "third", "fourth", "fifth"][r.phone] ?? ord(r.phone)) + "-largest"} of India's ${r.of.toLocaleString("en-IN")} export headings that month${r.phone === 1 ? "" : byCode[r.top] ? ` (behind ${byCode[r.top].name.toLowerCase().replace(/ \(.*\)$/, "")})` : ` (behind HS heading ${r.top})`}`);
   setHTML("ex-h-phone", mn(phone.values.at(-1)));
   setHTML("ex-h-phone17", mn(phone.values[phone.dates.indexOf("2017-01-01")]));
   setHTML("ex-h-crude", mn(byCode["2709"].values.at(-1)));
@@ -467,7 +467,7 @@ if (T.cxc) {
   addCrosshair(document.getElementById("plot-crude"), plot, [I, Pr], null, (d) => fyOf(d.toISOString()), (v) => (v == null ? "—" : v.toFixed(1) + " Mt"));
   setHTML("pv-crude", fmt.pct1(pct(C.imports[k], C.imports[k] + C.production[k])));
   const j0 = C.dates.findIndex((d, j) => C.imports[j] != null && C.production[j] != null);
-  setHTML("h-crude", `Imports made up ${fmt.pct0(pct(C.imports[k], C.imports[k] + C.production[k]))} of the crude oil India produced and imported in ${fyOf(C.dates[k])}, against ${fmt.pct0(pct(C.imports[j0], C.imports[j0] + C.production[j0]))} in ${fyOf(C.dates[j0])}`);
+  setHTML("h-crude", `India bought ${fmt.pct0(pct(C.imports[k], C.imports[k] + C.production[k]))} of its crude oil abroad in ${fyOf(C.dates[k])}, against ${fmt.pct0(pct(C.imports[j0], C.imports[j0] + C.production[j0]))} in ${fyOf(C.dates[j0])}`);
   setHTML("ex-cr-imp", fmt.num1(C.imports[k]) + " million tonnes");
   setHTML("ex-cr-prod", fmt.num1(C.production[k]) + " million tonnes");
   wirePlate("cb-crude", plot, "india-atlas_crude-oil-production-imports", () => csvRows(["financial_year", "crude_imported_mt", "crude_produced_mt"], C.dates.map((d, j) => [fyOf(d), C.imports[j], C.production[j]])));
@@ -506,6 +506,8 @@ if (T.cxc) {
   const E = T.explorer;
   const lvl = document.getElementById("xp-level"), flow = document.getElementById("xp-flow"), q = document.getElementById("xp-q");
   const body = document.getElementById("xp-body");
+  // US$ million: whole millions, except small lines that would round to nothing (the CSV keeps every decimal)
+  const xpVal = (v) => (v == null ? "—" : v.toLocaleString("en-IN", { maximumFractionDigits: Math.abs(v) < 10 ? 2 : 0 }));
   const cache = new Map();
   let state = { rows: [], fyLabels: ["", ""], sortK: "cur", sortDir: -1, file: null };
   async function load(file) {
@@ -526,7 +528,7 @@ if (T.cxc) {
       .filter((r) => r.code !== "total" && (!term || r.label.toLowerCase().includes(term) || r.code.includes(term)));
     rows.sort((a, b) => { const x = a[state.sortK], y = b[state.sortK]; if (x == null) return 1; if (y == null) return -1; return (typeof x === "string" ? x.localeCompare(y) : x - y) * state.sortDir; });
     const shown = rows.slice(0, 400);
-    body.innerHTML = shown.map((r) => `<tr><td class="c">${esc(r.code)}</td><td>${esc(r.label)}</td><td class="n">${r.cur == null ? "—" : r.cur.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td><td class="n">${r.prev == null ? "—" : r.prev.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td><td class="n">${r.chg == null ? "—" : fmt.pct1Minus(r.chg)}</td></tr>`).join("");
+    body.innerHTML = shown.map((r) => `<tr><td class="c">${esc(r.code)}</td><td>${esc(r.label)}</td><td class="n">${xpVal(r.cur)}</td><td class="n">${xpVal(r.prev)}</td><td class="n">${r.chg == null ? "—" : fmt.pct1Minus(r.chg)}</td></tr>`).join("");
     setHTML("xp-n", `${rows.length.toLocaleString("en-IN")} rows${rows.length > shown.length ? `, first ${shown.length} shown; the CSV has all` : ""}`);
     setHTML("xp-h-cur", state.fyLabels[0] || "Latest");
     setHTML("xp-h-prev", state.fyLabels[1] || "Year before");

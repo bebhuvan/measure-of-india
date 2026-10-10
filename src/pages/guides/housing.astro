@@ -92,7 +92,7 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
           </div>
           <div class="plotzone"><div id="plot-nr" style="position:relative"><div class="cb-tip"></div></div></div>
           <div class="plotfoot">
-            <span class="src">Source: BIS selected residential property prices (WS_SPP), compiled from the RBI's house price index. Source: BIS.</span>
+            <span class="src">Source: BIS selected residential property prices (WS_SPP), compiled from the RBI's house price index.</span>
             <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.bis.org/topics/RPP" target="_blank" rel="noopener">Source</a></span>
           </div>
         </div>
@@ -114,7 +114,7 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
       <figure id="cb-yoy" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>Since 2019, house prices have barely outpaced inflation</h3>
+            <h3 id="h-yoy">How fast house prices rose, before and after inflation</h3>
             <div class="sub">Residential property prices, % change on the same quarter a year earlier, nominal and real.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-yoy">–</div><div class="c">real, latest</div></div>
@@ -180,7 +180,7 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
       <figure id="cb-cities" style="margin:0">
         <div class="plate-head">
           <div class="t">
-            <h3>On the new 2022-23 base, Chennai has risen most and Delhi has fallen</h3>
+            <h3 id="h-cities">House prices city by city on the new 2022-23 base</h3>
             <div class="sub">RBI house price index, {nRbi} cities, index 2022-23 = 100, latest quarter ({LR}), with the change on a year ago shown beside each bar.</div>
           </div>
           <div class="plate-val"><div class="v acc" id="pv-cities">–</div><div class="c">highest, latest</div></div>
@@ -199,7 +199,7 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
           </div>
           <div class="now">
             <span class="mk">As of {LR}</span>
-            <p>Chennai's index stood at <b id="ex-c-top">–</b> and Delhi's at <b id="ex-c-bot">–</b>. On a year earlier, <b id="ex-c-up">–</b> of the {nRbi} cities rose; the largest rise was <span id="ex-c-yhi">–</span> and the largest fall <span id="ex-c-ylo">–</span>.</p>
+            <p>The highest index was <span id="ex-c-topn">–</span>'s, at <b id="ex-c-top">–</b>, and the lowest <span id="ex-c-botn">–</span>'s, at <b id="ex-c-bot">–</b>. On a year earlier, <b id="ex-c-up">–</b> of the {nRbi} cities rose; the largest rise was <span id="ex-c-yhi">–</span> and the largest fall <span id="ex-c-ylo">–</span>.</p>
           </div>
         </div>
       </figure>
@@ -378,7 +378,7 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
     <div class="cols">
       <div>
         <h6>Source of record</h6>
-        <p>Reserve Bank of India, house price index (DBIE report 688), through the owner's Data Bank mirror of DBIE; National Housing Bank, RESIDEX dashboards; Bank for International Settlements, residential property prices (WS_SPP, WS_DPP), through the Data Bank's BIS mirror. Source: BIS. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Reserve Bank of India, house price index (DBIE report 688), read from India Atlas's archived copy of DBIE; National Housing Bank, RESIDEX dashboards; Bank for International Settlements, residential property prices (WS_SPP, WS_DPP), from India Atlas's archived copy of the BIS statistics. Data vintage <b id="prov-vintage">–</b>.</p>
         <p>Checked by hand: the RBI's 18-city all-India index for January to March 2026, 115.85 here, against 115.9 in the RBI's press release of 29 May 2026 (later revised to 116.2, a revision BIS has not yet picked up).</p>
       </div>
       <div>

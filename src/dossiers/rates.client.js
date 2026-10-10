@@ -38,7 +38,7 @@ const dayOf = (d) => `${d.getUTCDate()} ${MS[d.getUTCMonth()]} ${d.getUTCFullYea
 const setHTML = (id, h) => { const el = document.getElementById(id); if (el) el.innerHTML = h; };
 const pc = (u) => `<span class="pc">${u}</span>`;
 const p2 = fmt.pct2, pt2 = (v) => (v < 0 ? "−" : "+") + Math.abs(v).toFixed(2) + " pt";
-const sp = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(2) + "%";       // a signed rate (real rates)
+const sp = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";       // a signed rate (real rates): one decimal, as CPI inflation is published
 const lastOf = (b, k) => { const d = b.series[k].data; for (let i = d.length - 1; i >= 0; i--) if (d[i] != null) return { v: d[i], i, date: b.dates[i] }; return null; };
 const at = (b, k, iso) => { const i = b.dates.indexOf(iso); return i < 0 ? null : b.series[k].data[i]; };
 const pts = (b, k, from) => b.dates.map((d, i) => ({ date: dt(d), value: b.series[k].data[i] })).filter((p) => !from || p.date >= dt(from));
@@ -104,7 +104,7 @@ setHTML("n-fd", df.v.toFixed(2) + pc("%"));
 setHTML("d-fd", `<b>${pt2(df.v - lendB.series.wadtdr_fresh_all.data[df.i - 12])}</b> on a year earlier, ${lmonth}`);
 const rr = lastOf(realB, "repo"), cpiNow = lastOf(realB, "cpi");
 setHTML("n-real", sp(rr.v).replace("%", pc("%")));
-setHTML("d-real", `repo minus CPI inflation of <b>${p2(cpiNow.v)}</b>, ${monthOf(dt(rr.date))}`);
+setHTML("d-real", `repo minus CPI inflation of <b>${fmt.pct1(cpiNow.v)}</b>, ${monthOf(dt(rr.date))}`);
 setHTML("rb-repo", repo.toFixed(2) + pc("%"));
 setHTML("rb-stance", STANCE[lastM.stance] ?? "Not recorded");
 
@@ -115,7 +115,7 @@ setHTML("rb-stance", STANCE[lastM.stance] ?? "Not recorded");
   setHTML("lr-emi", fmt.inrR(emi(house + 1) - emi(house)));
   setHTML("lr-house", p2(house));
   setHTML("lr-fd", p2(lastOf(lendB, "wadtdr_fresh_all").v));
-  setHTML("lr-cpi", p2(at(realB, "cpi", wf.date)));
+  setHTML("lr-cpi", fmt.pct1(at(realB, "cpi", wf.date)));
   setHTML("lr-realfd", sp(at(realB, "fd_fresh", wf.date)));
 }
 
@@ -186,7 +186,8 @@ setHTML("rb-stance", STANCE[lastM.stance] ?? "Not recorded");
   const slr = { label: "SLR", color: G1, data: steps(P.dates, P.series.slr.data, end) };
   const plot = Plot.plot({
     width: W, height: 430, marginLeft: 44, marginRight: 110, marginTop: 28, marginBottom: 34, style,
-    x: { type: "utc", label: null, tickSize: 0, tickPadding: 10, ticks: yearTicks(1940, 2020, 10).concat([dt("2026-01-01")]), tickFormat: yearFmt },
+    // the same 1935 start as the policy-rate plate above: the SLR begins in 1949 and the CRR (as one ratio) in 1962
+    x: { type: "utc", label: null, domain: [dt(P.dates[0]), end], tickSize: 0, tickPadding: 10, ticks: yearTicks(1940, 2020, 10).concat([dt("2026-01-01")]), tickFormat: yearFmt },
     y: { label: "per cent of deposits", labelAnchor: "top", labelArrow: false, domain: [0, 40], ticks: [0, 10, 20, 30, 40], tickSize: 0, tickPadding: 8, tickFormat: (v) => String(v) },
     marks: [
       Plot.gridY([10, 20, 30, 40], { stroke: GRID }),
@@ -311,7 +312,7 @@ setHTML("rb-stance", STANCE[lastM.stance] ?? "Not recorded");
   });
   a11y(plot, "Floating-rate loans by benchmark, quarterly since 2019", `External benchmark ${p2(lastOf(Bn, "all_eblr").v)} of loans in ${qlab(Bn.dates.at(-1))}.`);
   put("plot-bench", plot);
-  const l = (k) => p2(lastOf(Bn, k).v);
+  const l = (k) => fmt.pct1(lastOf(Bn, k).v);   // shares of the loan book: one decimal
   setHTML("pv-bench", l("all_eblr"));
   setHTML("ex-bench-eblr", l("all_eblr")); setHTML("ex-bench-mclr", l("all_mclr")); setHTML("ex-bench-base", l("all_base_rate"));
   setHTML("ex-bench-psb", l("public_eblr")); setHTML("ex-bench-pvt", l("private_eblr"));
@@ -442,7 +443,7 @@ function hbars(id, rows, { valueFmt, hl, xMax, xTicks, label, prev, mr = 90, ml 
   addCrosshair(document.getElementById("plot-real"), plot, S, null, monthOf, (v) => (v == null ? "—" : sp(v)));
   const l = (k) => sp(lastOf(R, k).v);
   setHTML("pv-real", l("fd_fresh"));
-  setHTML("ex-real-cpi", p2(lastOf(R, "cpi").v)); setHTML("ex-real-fdf", l("fd_fresh")); setHTML("ex-real-fdo", l("fd_outstanding")); setHTML("ex-real-repo", l("repo"));
+  setHTML("ex-real-cpi", fmt.pct1(lastOf(R, "cpi").v)); setHTML("ex-real-fdf", l("fd_fresh")); setHTML("ex-real-fdo", l("fd_outstanding")); setHTML("ex-real-repo", l("repo"));
   const keys = Object.keys(R.series);
   wirePlate("cb-real", plot, "india-atlas_real-interest-rates", csvOf(["month", ...keys.map((k) => R.series[k].name)], R.dates.map((d, i) => [d, ...keys.map((k) => R.series[k].data[i])])));
 }

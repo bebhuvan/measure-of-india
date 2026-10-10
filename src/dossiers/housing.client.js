@@ -92,8 +92,8 @@ setHTML("d-rx", `${qlab(rxLast.date)}, base 2024-25`);
 spark("nspark-real", { ...P.real, color: ACC });
 
 /* ---------- § 01 ---------- */
-setHTML("rb-real", fmt.pct2(last(P.real_yoy)));
-setHTML("rb-nom", fmt.pct2(last(P.nominal_yoy)));
+setHTML("rb-real", fmt.pct1(last(P.real_yoy)));
+setHTML("rb-nom", fmt.pct1(last(P.nominal_yoy)));
 
 /* ---------- § 02 nominal and real ---------- */
 {
@@ -145,9 +145,17 @@ setHTML("rb-nom", fmt.pct2(last(P.nominal_yoy)));
   addCrosshair(document.getElementById("plot-yoy"), plot, series, null, qlab, pctV);
   wireTools(document.getElementById("cb-yoy"), plot, series, "india-atlas_house-prices-change");
   const since = P.real_yoy.data.filter((d) => d.value != null && d.date >= new Date(Date.UTC(2019, 3, 1)));
+  // the title is the current run of the real line: how long prices have run ahead of (or behind) inflation
+  const ry = P.real_yoy.data.filter((d) => d.value != null);
+  let k = ry.length - 1; const up = ry[k].value >= 0;
+  while (k > 0 && (ry[k - 1].value >= 0) === up) k--;
+  const run = ry.length - k, runFrom = qlab(ry[k].date);
+  setHTML("h-yoy", run >= 4
+    ? `Since ${runFrom}, house prices have risen ${up ? "faster" : "more slowly"} than inflation every quarter${ry.slice(k).every((d) => Math.abs(d.value) < 4) ? ", but only just" : ""}`
+    : `House prices ${up ? "have edged ahead of" : "have fallen behind"} inflation again in the last ${run === 1 ? "quarter" : run + " quarters"}`);
   setHTML("pv-yoy", fmt.pct1(last(P.real_yoy)));
-  setHTML("ex-y-nom", fmt.pct2(last(P.nominal_yoy)));
-  setHTML("ex-y-real", fmt.pct2(last(P.real_yoy)));
+  setHTML("ex-y-nom", fmt.pct1(last(P.nominal_yoy)));
+  setHTML("ex-y-real", fmt.pct1(last(P.real_yoy)));
   setHTML("ex-y-n", String(since.length));
   setHTML("ex-y-avg", sgn(since.reduce((a, d) => a + d.value, 0) / since.length));
 }
@@ -183,8 +191,12 @@ setHTML("rb-nom", fmt.pct2(last(P.nominal_yoy)));
   wireCustom("cb-cities", plot, "india-atlas_house-prices-18-cities", "city,index_2022_23_eq_100,pct_change_on_year,quarter,provisional\n" + rows.map((r) => `${r.name},${r.v},${r.y.toFixed(2)},${rbi22.dates.at(-1)},yes`).join("\n"));
   const ys = [...rows].sort((a, b) => b.y - a.y);
   setHTML("pv-cities", rows[0].v.toFixed(0));
-  setHTML("ex-c-top", rows.find((r) => r.k === "chennai").v.toFixed(1));
-  setHTML("ex-c-bot", rows.find((r) => r.k === "delhi").v.toFixed(1));
+  const below = rows.filter((r) => r.v < 100);
+  setHTML("h-cities", `On the new 2022-23 base, ${esc(rows[0].name)} has risen most${below.length === 0 ? " and every city is above its base" : below.length === 1 ? ` and ${esc(below[0].name)} has fallen` : `; ${below.length} cities are below their base`}`);
+  setHTML("ex-c-topn", esc(rows[0].name));
+  setHTML("ex-c-top", rows[0].v.toFixed(1));
+  setHTML("ex-c-botn", esc(rows.at(-1).name));
+  setHTML("ex-c-bot", rows.at(-1).v.toFixed(1));
   setHTML("ex-c-up", String(rows.filter((r) => r.y > 0).length));
   setHTML("ex-c-yhi", `${esc(ys[0].name)}, ${sgn(ys[0].y)}`);
   setHTML("ex-c-ylo", `${esc(ys.at(-1).name)}, ${sgn(ys.at(-1).y)}`);
@@ -282,7 +294,7 @@ setHTML("rb-nom", fmt.pct2(last(P.nominal_yoy)));
   wireCustom("cb-peers", plot, "india-atlas_real-house-prices-compared", "economy,real_pct_change_on_year,quarter\n" + rows.map((r) => `${r.name},${r.v},${r.d}`).join("\n"));
   const rank = rows.findIndex((r) => r.name === "India") + 1;
   setHTML("pv-peers", `${rank} of ${rows.length}`);
-  setHTML("ex-pp-in", sgn(last(P.real_yoy), 2));
+  setHTML("ex-pp-in", sgn(last(P.real_yoy)));
   setHTML("ex-pp-rank", `${rank} of ${rows.length}`);
   setHTML("ex-pp-top", `${esc(rows[0].name)}, ${sgn(rows[0].v)}`);
   setHTML("ex-pp-bot", `${esc(rows.at(-1).name)}, ${sgn(rows.at(-1).v)}`);

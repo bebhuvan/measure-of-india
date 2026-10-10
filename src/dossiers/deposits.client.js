@@ -331,7 +331,8 @@ function bars(id, rows, { valueFmt, hl, xMax, xTicks, xFmt, label, dots, rowH = 
 {
   const B = stOwnersBundle, I = lastI(B);
   const st = Object.keys(B.series).filter((k) => k.endsWith("__women") && B.series[k].group === "State").map((k) => { const p = k.slice(0, -7);
-    return { p, name: B.series[k].label.split(" · ").at(-1), v: (v(B, k) / v(B, p + "__individuals")) * 100 }; }).sort((a, b) => b.v - a.v);
+    return { p, name: B.series[k].label.split(" · ").at(-1), v: v(B, k) == null || !v(B, p + "__individuals") ? null : (v(B, k) / v(B, p + "__individuals")) * 100 }; })
+    .filter((r) => r.v != null).sort((a, b) => b.v - a.v);   // retired units (Daman & Diu, Dadra & Nagar Haveli before 2020) have no figure: left out, not drawn as zero
   const ai = (v(B, "all_india__women") / v(B, "all_india__individuals")) * 100, ai0 = (v(B, "all_india__women", 0) / v(B, "all_india__individuals", 0)) * 100;
   const plot = bars("plot-womenst", st, { valueFmt: (d) => d.v.toFixed(1) + "%", hl: (d) => d.v >= ai, xMax: 55, xTicks: [0, 10, 20, 30, 40, 50], xFmt: (x) => x + (x === 50 ? "%" : ""), label: "women's share of individuals' deposits", rowH: 22, ml: 240 });
   a11y(plot, "Women's share of individuals' deposits by state, March 2026", `${st[0].name} ${st[0].v.toFixed(1)}%, ${st.at(-1).name} ${st.at(-1).v.toFixed(1)}%, All India ${ai.toFixed(1)}%`);
@@ -346,7 +347,7 @@ function bars(id, rows, { valueFmt, hl, xMax, xTicks, xFmt, label, dots, rowH = 
 /* ---------- § 08 where the money sits ---------- */
 {
   const B = stTypeBundle, I = lastI(B), T = v(B, "all_india__total");
-  const st = Object.keys(B.series).filter((k) => k.endsWith("__total") && B.series[k].group === "State").map((k) => ({ k, name: B.series[k].label.split(" · ").at(-1), v: (v(B, k) / T) * 100 }))
+  const st = Object.keys(B.series).filter((k) => k.endsWith("__total") && B.series[k].group === "State").map((k) => ({ k, name: B.series[k].label.split(" · ").at(-1), v: v(B, k) == null ? null : (v(B, k) / T) * 100 }))
     .filter((r) => r.v != null).sort((a, b) => b.v - a.v);
   const plot = bars("plot-states", st, { valueFmt: (d) => d.v.toFixed(1) + "%", hl: (d) => st.indexOf(d) < 3, xMax: 25, xTicks: [0, 5, 10, 15, 20, 25], xFmt: (x) => x + (x === 25 ? "%" : ""), label: "share of all deposits", rowH: 22, ml: 240 });
   a11y(plot, "Deposits by state, March 2026", st.slice(0, 5).map((r) => `${r.name} ${r.v.toFixed(1)}%`).join(", "));
@@ -394,10 +395,15 @@ function bars(id, rows, { valueFmt, hl, xMax, xTicks, xFmt, label, dots, rowH = 
   }
   // end labels dodged apart: the three small groups sit within two points of each other
   const xEnd = S.psb.data.at(-1).date;
-  for (const p of dodgeEndLabels(G.map(([g, name, c]) => ({ ...S[g], label: name })), 3.2))
+  // dodging pushes labels down only, so the smallest group's label can fall onto the year axis: lift the small
+  // groups' labels together until the lowest clears it
+  const ends = dodgeEndLabels(G.map(([g, name, c]) => ({ ...S[g], label: name })), 3.2);
+  const lift = Math.max(0, 1.8 - Math.min(...ends.map((p) => p.y)));
+  for (const p of ends) if (p.value < 20) p.y += lift;
+  for (const p of ends)
     marks.push(Plot.text([{ x: xEnd, y: p.y }], { x: "x", y: "y", text: () => `${p.key} ${p.value.toFixed(1)}%`, dx: 10, textAnchor: "start", fill: INK, fontSize: 12, fontWeight: p.key.startsWith("Private") ? 600 : 400 }));
   const plot = Plot.plot({ width: W, height: 400, marginLeft: 44, marginRight: 230, marginTop: 30, marginBottom: 34, style: baseStyle,
-    x: { label: null, tickSize: 0, tickPadding: 12, ticks: B.dates.map((d) => new Date(d + "T00:00:00Z")), tickFormat: (d) => "March " + d.getUTCFullYear() },
+    x: { label: null, tickSize: 0, tickPadding: 12, ticks: B.dates.map((d) => new Date(d + "T00:00:00Z")), tickFormat: (d) => String(d.getUTCFullYear()) },
     y: { label: "share of all deposits, per cent", labelAnchor: "top", labelArrow: false, domain: [0, 70], ticks: [0, 10, 20, 30, 40, 50, 60, 70], tickSize: 0, tickPadding: 10 }, marks });
   a11y(plot, "Share of deposits by bank group, 2019 to 2026", G.map(([g, n]) => `${n} ${S[g].data[0].value.toFixed(1)}% to ${S[g].data.at(-1).value.toFixed(1)}%`).join("; "));
   document.getElementById("plot-banks").append(plot);
