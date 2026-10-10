@@ -190,7 +190,7 @@ setHTML("rb-res", bnR(res.value) + pc(""));
   const nOther = sur.length - nJM - nLock, w = (n) => ["no", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"][n] ?? String(n);
   const parts = [nJM && `${w(nJM)} January to March ${nJM === 1 ? "quarter" : "quarters"}, when exports run high before the fiscal year closes`,
     nLock && `${w(nLock)} around the 2020 and 2021 lockdowns, when imports collapsed`, nOther && `${w(nOther)} other${nOther === 1 ? "" : "s"}`].filter(Boolean);
-  setHTML("ex-ca-surplus-why", parts.length > 1 ? parts.slice(0, -1).join(", ") + " and " + parts.at(-1) : parts[0] ?? "none");
+  setHTML("ex-ca-surplus-why", parts.length > 1 ? parts.slice(0, -1).join(", ") + ", and " + parts.at(-1) : parts[0] ?? "none");
 }
 {
   const s = { ...IND.cad_to_gdp, label: "Current account", color: ACC };
