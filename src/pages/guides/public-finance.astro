@@ -21,8 +21,8 @@ const lakh = (v) => (v / 1e5).toFixed(1);
 
 const cm = P("centre-monthly"), gm = P("centre-gfd-monthly"), path = P("centre-budget-path");
 const cd = P("centre-deficits"), ce = P("centre-expenditure"), cr = P("centre-receipts"), cf = P("centre-financing"), cl = P("centre-liabilities");
-const g11 = P("centre-gdp-b2011"), sg11 = P("states-gdp-b2011"), dg11 = P("combined-debt-gdp-b2011"), r22 = P("ratios-2022"), back = P("ratios-backcast");
-const sd = P("states-deficits"), srx = P("states-receipts"), sx = P("states-expenditure"), ctax = P("combined-taxes");
+const g11 = P("centre-gdp-b2011"), sg11 = P("allstates-gdp-b2011"), dg11 = P("combined-debt-gdp-b2011"), r22 = P("ratios-2022"), back = P("ratios-backcast");
+const sd = P("allstates-deficits"), srx = P("allstates-receipts"), sx = P("allstates-expenditure"), ctax = P("combined-taxes");
 const own = P("ownership-gsec"), tb = P("tbills"), mat = P("maturity"), ss = P("small-savings"), ssr = P("small-savings-rates"), wma = P("states-wma");
 const sfin = B("states-finances");   // read-only: the States guide's ratios to each state's GSDP
 const ST = cd.meta.stages, SS = sd.meta.stages;      // { accountsTo, revisedEstimate, budgetEstimate }

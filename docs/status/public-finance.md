@@ -15,9 +15,18 @@ Branch `lb/public-finance`. Guide `/guides/public-finance/` (port 4431). Updated
   spending - revenue receipts, monthly deficit = spending - receipts, ownership shares = 100,
   small savings total = its parts).
 
+- Guide `/guides/public-finance/`: 20 plates in 11 sections (current reading, lived reality,
+  how to read, the deficit, receipts, spending, debt and who holds it, the states, which GDP,
+  what these measure, misreadings), every-cut table, data downloads; registry (`no: "26"`,
+  renumber on merge), headline, spark, register rows, OG card, qc PAGES (22 checks), 20 as-of
+  entries, prose slots, corpus, series keywords.
+- Prose generated (DeepSeek) and read against the facts sheet: every figure checked by hand;
+  two phrases of pipeline jargon ("the sheet's weakest mover") removed by hand, then verify,
+  lint and contract re-run clean.
+
 ## Next
 
-Guide page and client, registry, headline, OG card, qc, asof, prose; looked at 1440 and 390.
+Locked build + gates, look at 1440 and 390, share image.
 
 ## Decisions (for HISTORY)
 
@@ -68,4 +77,21 @@ Guide page and client, registry, headline, OG card, qc, asof, prose; looked at 1
 
 ## Read-only use of other families' bundles
 
-- `rates-borrowing` (market borrowing, charted); `states-finances` (state cut, charted).
+- `rates-borrowing` (market borrowing, in a plate note); `states-finances` (state cut,
+  charted); `population-wpp-projection` (per-person spending; a UN projection, labelled).
+
+## For the coordinator
+
+- Shared files touched (one marked block each): `data/sources.yml` (dossier + seams),
+  `scripts/fetch.mjs`, `scripts/validate.mjs`, `scripts/qc.mjs`, `scripts/og.mjs`,
+  `src/dossiers/registry.js`, `headline.js` (HEADLINE + SPARK), `register.client.js`,
+  `everycut.js` (cuts), `pipeline/slots.yml`, `pipeline/lib/series-kws.mjs`,
+  `pipeline/asof-manifest.json`. `og.mjs` re-renders every card: only my PNG is committed.
+- All-states aggregate bundles are named `public-finance-allstates-*`: the state-key test
+  reads any `-states-` bundle as state-wise.
+- State cut for atlas-profiles: no new state-wise fiscal bundle here beyond the States guide's;
+  `public-finance-states-wma` (days and amounts on SDF, WMA and overdraft, per state, monthly
+  since Sep 2017) and `public-finance-states-investments` (each state's CSF, GRF, BSF, T-bills)
+  are state-wise and could join the profiles.
+- IDH: no India Data Hub series in the Data Bank match these bundles (only T-bill yields and
+  G-sec yields, which belong to rates).
