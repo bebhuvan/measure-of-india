@@ -13,6 +13,7 @@ import { makePeriodIndex, yearLag, MONTHS_FULL } from "./lib/periods.mjs";
 import { SERIES_KWS } from "./lib/series-kws.mjs";
 import { makeAllowed, extractFigures, traces, KEY_SCALE } from "./lib/figures.mjs";
 import { unitOf } from "../src/dossiers/everycut.js";
+import { overPrecise } from "./lib/precision.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const [file, slug] = process.argv.slice(2);
@@ -106,6 +107,9 @@ for (const fig of extractFigures(prose)) {
   seen.add(id);
   if (!traces(fig, allowed)) failures.push(`untraceable figure: "${fig.raw}"${fig.scale ? ` (no facts number in a unit that restates as ${fig.scale})` : ""}`);
 }
+// precision (pipeline/lib/precision.mjs): a rate finer than the agency publishes, or a
+// crore figure to two decimals, traces but still fails
+failures.push(...overPrecise(prose, slug));
 // bare years and ordinals ("six of the last seven months") — years checked loosely
 for (const m of prose.matchAll(/\b(19|20)\d{2}\b/g)) {
   if (!allowed.plain.has(m[0])) failures.push(`untraceable year: ${m[0]}`);

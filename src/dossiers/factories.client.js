@@ -10,24 +10,42 @@
 // The 2010-11 ASI frame revision is annotated on the chart it breaks.
 
 import * as Plot from "@observablehq/plot";
-import headlineBundle from "../../data/series/asi-headline.json";
-import accountsBundle from "../../data/series/asi-accounts.json";
-import legacy1987 from "../../data/series/asi-headline-1987.json";
-import legacy1998 from "../../data/series/asi-headline-1998.json";
-import legacy2004 from "../../data/series/asi-headline-2004.json";
-import industriesBundle from "../../data/series/asi-industries.json";
-import statesBundle from "../../data/series/asi-states.json";
-import asuseBundle from "../../data/series/asuse-annual.json";
-import asuseQBundle from "../../data/series/asuse-quarterly.json";
-import asuseSectorsBundle from "../../data/series/asuse-sectors.json";
-import asuseStatesBundle from "../../data/series/asuse-states.json";
-import ownersBundle from "../../data/series/asuse-owners.json";
-import modernityBundle from "../../data/series/asuse-modernity.json";
-import structureBundle from "../../data/series/asuse-structure.json";
+import headlineBundle_raw from "../../data/series/asi-headline.json";
+import accountsBundle_raw from "../../data/series/asi-accounts.json";
+import legacy1987_raw from "../../data/series/asi-headline-1987.json";
+import legacy1998_raw from "../../data/series/asi-headline-1998.json";
+import legacy2004_raw from "../../data/series/asi-headline-2004.json";
+import industriesBundle_raw from "../../data/series/asi-industries.json";
+import statesBundle_raw from "../../data/series/asi-states.json";
+import asuseBundle_raw from "../../data/series/asuse-annual.json";
+import asuseQBundle_raw from "../../data/series/asuse-quarterly.json";
+import asuseSectorsBundle_raw from "../../data/series/asuse-sectors.json";
+import asuseStatesBundle_raw from "../../data/series/asuse-states.json";
+import ownersBundle_raw from "../../data/series/asuse-owners.json";
+import modernityBundle_raw from "../../data/series/asuse-modernity.json";
+import structureBundle_raw from "../../data/series/asuse-structure.json";
 import {
   MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend,
   dodgeEndLabels, spark, downloadSVG, downloadPNG, saveBlob,
 } from "../charts/plumbing.js";
+
+import { roundRates, numWord } from "./precision.js";
+// review-a (2026-10): rates at the precision the agency publishes, rounded once as they load
+// (src/dossiers/precision.js), so every delta and spread on the page is redone from what is shown
+const headlineBundle = roundRates(headlineBundle_raw);
+const accountsBundle = roundRates(accountsBundle_raw);
+const legacy1987 = roundRates(legacy1987_raw);
+const legacy1998 = roundRates(legacy1998_raw);
+const legacy2004 = roundRates(legacy2004_raw);
+const industriesBundle = roundRates(industriesBundle_raw);
+const statesBundle = roundRates(statesBundle_raw);
+const asuseBundle = roundRates(asuseBundle_raw);
+const asuseQBundle = roundRates(asuseQBundle_raw);
+const asuseSectorsBundle = roundRates(asuseSectorsBundle_raw);
+const asuseStatesBundle = roundRates(asuseStatesBundle_raw);
+const ownersBundle = roundRates(ownersBundle_raw);
+const modernityBundle = roundRates(modernityBundle_raw);
+const structureBundle = roundRates(structureBundle_raw);
 
 const H = hydrate(headlineBundle);
 const ACC = hydrate(accountsBundle);
@@ -452,7 +470,7 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   a11y(plot, "State shares of factory gross value added, 2023-24",
     "Sorted dot strip of " + rows.length + " states and union territories. " + rows[0].state + " leads at " + rows[0].share.toFixed(1) + " per cent, then " + rows[1].state + " at " + rows[1].share.toFixed(1) + " and " + rows[2].state + " at " + rows[2].share.toFixed(1) + "; together " + share3.toFixed(1) + " per cent. Shares fall below 2 per cent after the top ten.");
   document.getElementById("plot-states").append(plot);
-  const csv = ["state,share_pct,gva_inr_lakh", ...rows.map((r) => `"${r.state}",${r.share.toFixed(2)},${r.gva}`)].join("\n");
+  const csv = ["state,share_pct,gva_inr_lakh", ...rows.map((r) => `"${r.state}",${r.share.toFixed(1)},${r.gva}`)].join("\n");
   wirePlate(document.getElementById("cb-states"), plot, "india-atlas_asi_state-gva-shares_2023-24", csv);
 }
 
@@ -578,7 +596,7 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
     "Scatter, one dot per industry. Above the diagonal sit capital-intensive industries (more value than their headcount would imply); below it, labour-intensive ones (big in jobs, modest in value). The most labour-intensive is " + labour[0].name + " at " + labour[0].e.toFixed(1) + " per cent of jobs against " + labour[0].g.toFixed(1) + " per cent of value; the most capital-intensive is " + capTop.name + ".");
   document.getElementById("plot-jv").append(plot);
   wirePlate(document.getElementById("cb-jv"), plot, "india-atlas_asi_jobs-vs-value_2023-24",
-    "nic_code,name,employment_share_pct,gva_share_pct\n" + pts.map((p) => p.code + "," + p.name + "," + p.e.toFixed(2) + "," + p.g.toFixed(2)).join("\n"));
+    "nic_code,name,employment_share_pct,gva_share_pct\n" + pts.map((p) => p.code + "," + p.name + "," + p.e.toFixed(1) + "," + p.g.toFixed(1)).join("\n"));
 }
 
 /* ---------- § 06 plate 4d : labour share by industry — where the jobs are ----------
@@ -639,7 +657,7 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   a11y(plot, "Share of factory employment by two-digit industry, 2023-24",
     "Sorted dot strip of " + rows.length + " industries. " + rows[0].name + " leads at " + rows[0].share.toFixed(1) + " per cent of factory employment, then " + rows[1].name + " at " + rows[1].share.toFixed(1) + " and " + rows[2].name + " at " + rows[2].share.toFixed(1) + "; together " + share3.toFixed(1) + " per cent.");
   document.getElementById("plot-lab").append(plot);
-  const csv = ["nic_code,name,employment_share_pct,persons_engaged_2023_24", ...rows.map((r) => r.code + "," + r.name + "," + r.share.toFixed(2) + "," + r.emp)].join("\n");
+  const csv = ["nic_code,name,employment_share_pct,persons_engaged_2023_24", ...rows.map((r) => r.code + "," + r.name + "," + r.share.toFixed(1) + "," + r.emp)].join("\n");
   wirePlate(document.getElementById("cb-lab"), plot, "india-atlas_asi_employment-share-by-industry_2023-24", csv);
 }
 
@@ -688,7 +706,7 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
     });
     a11y(plot, a11yT, "Sorted dot strip of " + rs.length + " industries, from " + rs[0].name + " at " + fmtV(rs[0][key]) + " to " + rs.at(-1).name + " at " + fmtV(rs.at(-1)[key]) + "; all factories " + fmtV(ref) + ".");
     document.getElementById(id).append(plot);
-    const csv = ["nic_code,name," + key + "_" + yr, ...rs.map((r) => r.c + "," + r.name + "," + r[key].toFixed(2))].join("\n");
+    const csv = ["nic_code,name," + key + "_" + yr, ...rs.map((r) => r.c + "," + r.name + "," + r[key].toFixed(1))].join("\n");
     wirePlate(document.getElementById(block), plot, file, csv);
     return rs;
   };
@@ -698,7 +716,7 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   setTxt("wg-all", inrL(allWage));
   setTxt("wg-month", inr(Math.round(allWage / 12 / 100) * 100));
   const below = wr.filter((r) => r.wage < allWage);
-  setTxt("wg-below", String(below.length));
+  setTxt("wg-below", numWord(below.length, true));
   setTxt("wg-n", String(wr.length));
   const big3 = [...rows].sort((a, b) => b.p - a.p).slice(0, 3);
   setTxt("wg-big", big3.map((r) => r.name.toLowerCase() + " " + inrL(r.wage)).join(", ").replace(/, ([^,]*)$/, " and $1"));
@@ -742,7 +760,7 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
     });
     a11y(plot, "The 20 largest 4-digit factory classes by share of value added", "Bar chart. " + rows.slice(0, 3).map((r) => r.name + " " + r.sh.toFixed(1) + " per cent").join(", ") + "; together the twenty make " + share.toFixed(1) + " per cent of factory value added and " + psh.toFixed(1) + " per cent of jobs.");
     document.getElementById("plot-nic4").append(plot);
-    const csv = ["nic4,class,gva_share_pct,employment_share_pct", ...A.topClasses.map((r) => `${r.code},"${r.name}",${r.sh.toFixed(2)},${r.psh?.toFixed(2) ?? ""}`)].join("\n");
+    const csv = ["nic4,class,gva_share_pct,employment_share_pct", ...A.topClasses.map((r) => `${r.code},"${r.name}",${r.sh.toFixed(1)},${r.psh?.toFixed(1) ?? ""}`)].join("\n");
     wirePlate(document.getElementById("cb-nic4"), plot, "india-atlas_asi_top-4-digit-classes", csv);
   }
   if (A && A.mix.length) {
@@ -773,7 +791,7 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
     });
     a11y(plot, "Share of each state's factory value added by division", "Grid of twelve states by eight divisions and all other. The largest cell is " + peak.col + " in " + peak.state + " at " + peak.sh.toFixed(1) + " per cent.");
     document.getElementById("plot-statemix").append(plot);
-    const csv = ["state," + cols.map((c) => `"${colName(c)}"`).join(","), ...A.mix.map((m) => `"${m.state}",` + [...m.cells.map((c) => c.sh?.toFixed(2) ?? ""), m.other.toFixed(2)].join(","))].join("\n");
+    const csv = ["state," + cols.map((c) => `"${colName(c)}"`).join(","), ...A.mix.map((m) => `"${m.state}",` + [...m.cells.map((c) => c.sh?.toFixed(1) ?? ""), m.other.toFixed(1)].join(","))].join("\n");
     wirePlate(document.getElementById("cb-statemix"), plot, "india-atlas_asi_state-by-division-mix", csv);
   }
 }
@@ -787,7 +805,7 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   const lc = (t) => { const x = t.replace(/^Manufacture of /, ""); return x.charAt(0) + x.slice(1).toLowerCase(); };
   const short = (t) => { const x = lc(t); return x.length > 44 ? x.slice(0, 42).replace(/[ ,]+\S*$/, "") + "…" : x; };
   const rows = U.trades.map((r) => ({ ...r, name: short(r.a) }));
-  setTxt("pv-trades", (U.all / 1e7).toFixed(2));
+  setTxt("pv-trades", (U.all / 1e7).toFixed(1));
   {
     const geo = { W: 1184, H: 30 + rows.length * 20 + 40, ml: 330, mr: 110, mt: 30, mb: 40 };
     const top = rows[0];
@@ -833,7 +851,7 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
     });
     a11y(plot, "Women's share of informal workers by activity, 2025", "Sorted dot strip of " + ws.length + " activities, from " + ws[0].name + " at " + ws[0].sh.toFixed(1) + " per cent to " + ws.at(-1).name + " at " + ws.at(-1).sh.toFixed(1) + "; all activities " + (100 * all).toFixed(1) + ".");
     document.getElementById("plot-women").append(plot);
-    const csv = ["activity,workers_2025,female_workers_2025,female_share_pct", ...ws.map((r) => `"${r.a}",${r.n},${r.f},${r.sh.toFixed(2)}`)].join("\n");
+    const csv = ["activity,workers_2025,female_workers_2025,female_share_pct", ...ws.map((r) => `"${r.a}",${r.n},${r.f},${r.sh.toFixed(1)}`)].join("\n");
     wirePlate(document.getElementById("cb-women"), plot, "india-atlas_asuse-2025_women-share-by-activity", csv);
   }
 }
@@ -858,7 +876,7 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   ];
   for (const [barId, labId, segs] of baskets) {
     document.getElementById(barId).innerHTML = segs.map(([n, v, t, c]) =>
-      `<div class="seg" style="width:${(v / t * 100).toFixed(2)}%;background:${c}" title="${n}: ${(v / t * 100).toFixed(1)}%"></div>`).join("");
+      `<div class="seg" style="width:${(v / t * 100).toFixed(1)}%;background:${c}" title="${n}: ${(v / t * 100).toFixed(1)}%"></div>`).join("");
     document.getElementById(labId).innerHTML = segs.map(([n, v, t, c]) =>
       `<div class="blab"><div class="n"><span class="sw" style="background:${c}"></span>${n}</div><div class="w">${croreN(v)} cr, ${(v / t * 100).toFixed(1)}%, 2023-24</div></div>`).join("");
   }
@@ -1036,14 +1054,14 @@ const frameBreak = new Date(Date.UTC(2010, 3, 1));
   a11y(plot, "Share of informal workers by state and union territory, 2023-24",
     "Sorted dot strip of " + rows.length + " states and union territories. " + rows[0].state + " leads at " + rows[0].share.toFixed(1) + " per cent, then " + rows[1].state + " at " + rows[1].share.toFixed(1) + " and " + rows[2].state + " at " + rows[2].share.toFixed(1) + "; together " + share3.toFixed(1) + " per cent. Dispersion is far wider than the factory GVA map.");
   document.getElementById("plot-ust").append(plot);
-  const csv = ["state,workers_share_pct,workers_count_2023_24", ...rows.map((r) => `"${r.state}",${r.share.toFixed(2)},${r.workers}`)].join("\n");
+  const csv = ["state,workers_share_pct,workers_count_2023_24", ...rows.map((r) => `"${r.state}",${r.share.toFixed(1)},${r.workers}`)].join("\n");
   wirePlate(document.getElementById("cb-ust"), plot, "india-atlas_asuse_state-worker-shares_2023-24", csv);
 }
 
 /* ---------- § 09 : the informal firm, described ---------- */
 const renderBasket = (barId, labId, segs, denom) => {
   document.getElementById(barId).innerHTML = segs.map(([n, v, c]) =>
-    `<div class="seg" style="width:${(v / 10).toFixed(2)}%;background:${c}" title="${n}: ${v} per 1,000"></div>`).join("");
+    `<div class="seg" style="width:${(v / 10).toFixed(1)}%;background:${c}" title="${n}: ${v} per 1,000"></div>`).join("");
   document.getElementById(labId).innerHTML = segs.map(([n, v, c]) =>
     `<div class="blab"><div class="n"><span class="sw" style="background:${c}"></span>${n}</div><div class="w">${fmtIN(v)} / 1,000 ${denom}, 2023-24</div></div>`).join("");
 };
@@ -1186,7 +1204,7 @@ const renderBasket = (barId, labId, segs, denom) => {
     if (unit === "inr_lakh") return sign + (a >= 1e7 ? "₹" + (a / 1e7).toFixed(1) + " L cr" : "₹" + fmtIN(Math.round(a / 100)) + " cr");
     if (unit === "count") return sign + (a >= 1e7 ? croreN(a) + " cr" : a >= 2e5 ? lakhOf(a) + " lakh" : fmtIN(a));
     if (code === 42) return sign + croreN(a * 1000) + " cr days";
-    if (unit === "thousand") return sign + "₹" + (a / 1e9).toFixed(2) + " L cr";
+    if (unit === "thousand") return sign + "₹" + (a / 1e9).toFixed(1) + " L cr";
     if (unit === "thousand_kwh") return sign + fmtIN(Math.round(a / 1e6)) + " bn kWh";
     if (unit === "thousand_tonne") return sign + croreN(a * 1000, 1) + " cr t";
     return sign + fmtIN(a);

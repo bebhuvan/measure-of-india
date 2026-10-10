@@ -23,7 +23,7 @@ const gen = b22.series.general.data.filter((v) => v != null);
 const nNeg = gen.filter((v) => v <= 0).length;
 const rankWord = ["strongest", "second-strongest", "third-strongest"][[...gen].sort((a, b) => b - a).indexOf(gen.at(-1))] ?? null;
 const last = (k) => b22.series[k].data.at(-1);
-const pct = (v) => (v < 0 ? "−" + Math.abs(v).toFixed(2) : v.toFixed(2)) + "%";
+const pct = (v) => (v < 0 ? "−" + Math.abs(v).toFixed(1) : v.toFixed(1)) + "%";   // review-a: MoSPI prints IIP growth to one decimal
 // months capital goods has outgrown consumer non-durables, counted back from the latest
 const cg = b22.series.use_capital_goods.data, cn = b22.series.use_consumer_non_durables.data;
 let capRun = 0; for (let i = cg.length - 1; i >= 0 && cg[i] != null && cn[i] != null && cg[i] > cn[i]; i--) capRun++;
@@ -230,7 +230,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
             <div id="grid-old" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:28px 36px"></div>
           </div>
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, NSO, y-axes clipped at −40 / +45: the 2020–21 lockdown prints run to −99% and past +1000%, off scale by design, blue marks a final print beyond ±10%, the disclosed threshold, Mar 2025 was never loaded, so Feb 2026 is the last computable month, full values in the CSV</span>
+            <span class="src">Source: MoSPI, NSO, y-axes clipped at −40 / +45: the 2020–21 lockdown prints run to −99% and past +1000%, off scale by design, blue marks a final print beyond ±10%, the disclosed threshold, the final print is March 2026, full values in the CSV</span>
             <span class="dl"><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
@@ -242,7 +242,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
           </div>
           <div class="now">
             <span class="mk">As of the final prints</span>
-            <p>The old base signed off in February 2026 with the split it had shown for two years: <b id="old-hi-name">–</b> fastest at <b id="old-hi">–</b>, <b id="old-lo-name">–</b> slowest at <b id="old-lo">–</b>. In its last month, <b id="old-n">–</b> of the 23 industries were moving faster than ±10%: the average never described them.</p>
+            <p>The old base signed off in March 2026 with the split it had shown for two years: <b id="old-hi-name">–</b> fastest at <b id="old-hi">–</b>, <b id="old-lo-name">–</b> slowest at <b id="old-lo">–</b>. In its last month, <b id="old-n">–</b> of the 23 industries were moving faster than ±10%: the average never described them.</p>
           </div>
         </div>
       </figure>
@@ -278,7 +278,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>Manufacturing is the heavyweight, most of the index, so the blue general line shadows the dark one. Mining and electricity swing wider and mean less individually. When the three point the same way, as they have through 2026, the print is broad-based; when they scatter, the headline is an average of disagreement.</p>
+            <p>Manufacturing is the heavyweight, most of the index, so the blue general line shadows the dark one. Mining and electricity swing wider and mean less individually. When the three point the same way, the print is broad-based; when they scatter, the headline is an average of disagreement.</p>
           </div>
           <div class="now">
             <span class="mk">As of {P.stamp}</span>
@@ -427,25 +427,25 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
         <div class="plate-head">
           <div class="t">
             <h3>Inside manufacturing: the fastest and the slowest</h3>
-            <div class="sub">Selected 2-digit industries, year-on-year, per cent, Apr 2024 to {P.short}</div>
+            <div class="sub">The two manufacturing industries with the fastest average growth over the last twelve months, and the two with the slowest, year-on-year, per cent, Apr 2024 to {P.short}</div>
           </div>
-          <div class="plate-val"><div class="v" id="pv-ind">–</div><div class="c">{PI.short}, electrical equipment y/y</div></div>
+          <div class="plate-val"><div class="v" id="pv-ind">–</div><div class="c">{PI.short}, <span id="pc-ind">–</span></div></div>
         </div>
         <div class="frame">
           <div class="plotzone" id="plot-ind"><div class="cb-tip"></div></div>
           <div class="plotfoot">
-            <span class="src">Source: MoSPI, NSO, four of the 23 manufacturing industries on the current base, chosen by June rank</span>
+            <span class="src">Source: MoSPI, NSO, four of the 23 manufacturing industries on the current base, chosen by their average growth over the last twelve months, recomputed with every print</span>
             <span class="dl"><button data-dl="svg">SVG</button><span class="sep"></span><button data-dl="png">PNG</button><span class="sep"></span><button data-dl="csv">CSV</button><span class="sep"></span><a href="https://www.mospi.gov.in" target="_blank" rel="noopener">Source ↗</a></span>
           </div>
         </div>
         <div class="explain">
           <div class="ev">
             <span class="mk">How to read this</span>
-            <p>The aggregate hides a split economy. Electrical equipment, transformers, switchgear, the grid build-out, and motor vehicles are running hot; apparel and wood products are shrinking. Averages describe none of these industries. This is why the register of industries matters more than the headline.</p>
+            <p>The aggregate hides a split economy. In the same twelve months one industry can grow by a fifth while another shrinks, and the headline describes neither. The four lines are picked by the data each month: the two fastest and the two slowest over the last year. A single month moves them around; the twelve-month average is what earns a line its place.</p>
           </div>
           <div class="now">
             <span class="mk">As of {PI.stamp}</span>
-            <p>Electrical equipment grew <b id="ex-elec">–</b> in {PI.month} and motor vehicles <b id="ex-mv">–</b>, while wearing apparel contracted <b id="ex-app">–</b>. The boom is in the capital-goods spine of manufacturing; the weakness sits in export-facing consumer lines.</p>
+            <p>Over the last twelve months <b id="ind-f1">–</b> grew fastest, averaging <b id="ind-f1a">–</b> a month on a year earlier, followed by <b id="ind-f2">–</b>; <b id="ind-s1">–</b> and <b id="ind-s2">–</b> were the slowest, the last averaging <b id="ind-s2a">–</b>. In {PI.month} the four read <b id="ex-elec">–</b>, <b id="ex-mv">–</b>, <b id="ex-s1">–</b> and <b id="ex-app">–</b>.</p>
           </div>
         </div>
       </figure>
@@ -537,7 +537,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
           </div>
         </div>
         <div id="grid-isp" style="padding:8px 0"></div>
-        <p style="font-family:var(--sans);font-size:11px;letter-spacing:.6px;color:#878D99;margin-top:16px;line-height:1.8">Each panel: the service's index level over fourteen months against 100, the base-year average. The percentage is the like-month change from May 2025. Sawtooth is unmodelled seasonality: the series is too young for anyone to know its calendar shape.</p>
+        <p style="font-family:var(--sans);font-size:11px;letter-spacing:.6px;color:#878D99;margin-top:16px;line-height:1.8">Each panel: the service's index level over {PISP.nWord} months against 100, the base-year average. The percentage is the change from {PISP.month} {+PISP.year - 1}, the same month a year earlier. Sawtooth is unmodelled seasonality: the series is too young for anyone to know its calendar shape.</p>
       </div>
     </div>
   </section>
@@ -608,7 +608,7 @@ const fmt1 = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
       <div>
         <h6>Source of record</h6>
         <p>Ministry of Statistics &amp; Programme Implementation, National Statistical Office. "Quick Estimates of Index of Industrial Production: {P.long}" (base 2022-23=100). Index levels retrieved via the eSankhyiki API, vintage <b id="prov-vintage">–</b>; growth rates are computed from levels and track the published rates within 0.05 pt.</p>
-        <p>The discontinued base 2011-12=100, including the 23-industry register in §04, is shown separately and never spliced with the current base (the base-year rule). Its final publication carried no March 2025 figure; the resulting gaps are disclosed in the series metadata.</p>
+        <p>The discontinued base 2011-12=100, including the 23-industry register in §05, is shown separately and never spliced with the current base (the base-year rule). Its March 2025 index, missing from the source for months, was later loaded, so the series closes without a gap.</p>
         <p>The heritage bases 1993-94=100 (Apr 1994 to Jun 2011) and 2004-05=100 (Apr 2005 to Mar 2017), the deep ledger in §03, come from the same API, each on its own ruler. The API serves four bases, monthly and annual, by sector, use and two-digit industry, and nothing finer; every one of those cuts is in the downloads, the annual rows as published (levels and growth) since October 2026.</p>
         <p>The oldest ruler, 1980-81=100 (Apr 1981 to Mar 1998; manufacturing groups to Mar 1994), is not served by MoSPI's API. It comes from the CSO's index as republished by the Reserve Bank of India in its database (DBIE reports 638 and 219), read through the Atlas's local mirror of DBIE. Every other base in those RBI tables is a copy of MoSPI's series and is not used.</p>
         <p>The eight core industries come from the Office of the Economic Adviser, DPIIT, as published annually by the RBI (DBIE reports 499 and 989) on bases 1993-94, 2004-05 and 2011-12. The RBI's growth figure for the first year of the 1993-94 base is measured against the 1980-81 base and is left out. The monthly core index is not in the RBI database and is not yet carried here.</p>

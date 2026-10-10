@@ -16,6 +16,18 @@ export function load(slug) {
   return cache.get(slug);
 }
 
+// The ILO serves the same modelled series under two age classifications (youth/adult bands
+// and aggregate bands) and sets its observation flags on the aggregate one only. A drawn
+// series takes its twin's flags when it has none of its own and the values are identical
+// (review-a, 2026-10: the women's participation plate said "the ILO flags none" while 2010
+// is flagged real).
+const flagsOf = (b, k) => {
+  const s = b.series[k];
+  if (s.flags && Object.keys(s.flags).length) return s.flags;
+  const twin = b.series[k.replace("_age_ythadult_", "_age_aggregate_")];
+  return twin && twin !== s && twin.flags && twin.data.every((v, i) => v === s.data[i]) ? twin.flags : null;
+};
+
 /** A slim copy of a bundle holding only `keys` (all keys must exist: a missing one throws). */
 export function pick(slug, keys) {
   const b = load(slug);
@@ -23,7 +35,8 @@ export function pick(slug, keys) {
   for (const k of keys) {
     const s = b.series[k];
     if (!s) throw new Error(`ilo.data: ${slug} has no series ${k}`);
-    series[k] = { label: s.label, unit: s.unit, data: s.data, ...(s.flags ? { flags: s.flags } : {}), ...(s.lower ? { lower: s.lower, upper: s.upper } : {}) };
+    const flags = flagsOf(b, k);
+    series[k] = { label: s.label, unit: s.unit, data: s.data, ...(flags ? { flags } : {}), ...(s.lower ? { lower: s.lower, upper: s.upper } : {}) };
   }
   return { meta: { vintage: b.meta.vintage, base: b.meta.base, source: b.meta.source, geo: b.meta.geo, frequency: b.meta.frequency }, dates: b.dates, series };
 }
@@ -46,7 +59,7 @@ export function first(slug, key) {
   return null;
 }
 /** years carrying an ILO observation flag (R real, U unreliable, ...) */
-export const flagged = (slug, key, flag) => (load(slug).series[key].flags?.[flag] ?? []).map(year);
+export const flagged = (slug, key, flag) => (flagsOf(load(slug), key)?.[flag] ?? []).map(year);
 
 // ---- the keys the guide draws, in one place ----
 const age = (sex, a) => `${sex}__age_ythadult_${a}`;

@@ -103,7 +103,7 @@ function weightedIndex(levels, keys, W, months) {
 
 export async function buildCpi(root, dcfg, vintage) {
   const { subByCode, states } = await cpiMeta(dcfg);
-  // The 2012 base stopped at December 2025 and CPI is final on release: with `retired: true`
+  // The 2012 base stopped at December 2025, and a CPI month is final once the next release prints it: with `retired: true`
   // its six baked bundles are not fetched again (about 2,700 calls); the wave-2 deep bake
   // and the 2024 base run as usual, on the baked axis.
   if (dcfg.fetch.retired) {

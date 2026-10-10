@@ -3,42 +3,77 @@
 // Plumbing (downloads, a11y, crosshair, legend, dodge, spark): src/charts/plumbing.js.
 
 import * as Plot from "@observablehq/plot";
-import bundle from "../../data/series/cpi.json";
-import ruralBundle from "../../data/series/cpi-rural.json";
-import urbanBundle from "../../data/series/cpi-urban.json";
-import subBundle from "../../data/series/cpi-subgroups.json";
-import statesBundle from "../../data/series/cpi-states.json";
-import statesSectorsBundle from "../../data/series/cpi-states-sectors.json";
-import alrl2019Bundle from "../../data/series/cpialrl-2019.json";
-import alrl1986Bundle from "../../data/series/cpialrl-1986.json";
-import alrlGroupsBundle from "../../data/series/cpialrl-groups-2019.json";
-import bundle2024 from "../../data/series/cpi-2024.json";
-import back2024Bundle from "../../data/series/cpi-2024-back.json";
-import linked2024Bundle from "../../data/series/cpi-2024-linked.json";
-import sectors2024Bundle from "../../data/series/cpi-2024-sectors.json";
-import groups2024Bundle from "../../data/series/cpi-2024-groups.json";
-import items2024Bundle from "../../data/series/cpi-2024-items.json";
-import states2024Bundle from "../../data/series/cpi-2024-states.json";
-import alStates86Bundle from "../../data/series/cpialrl-states-1986.json";
+import bundle_raw from "../../data/series/cpi.json";
+import ruralBundle_raw from "../../data/series/cpi-rural.json";
+import urbanBundle_raw from "../../data/series/cpi-urban.json";
+import subBundle_raw from "../../data/series/cpi-subgroups.json";
+import statesBundle_raw from "../../data/series/cpi-states.json";
+import statesSectorsBundle_raw from "../../data/series/cpi-states-sectors.json";
+import alrl2019Bundle_raw from "../../data/series/cpialrl-2019.json";
+import alrl1986Bundle_raw from "../../data/series/cpialrl-1986.json";
+import alrlGroupsBundle_raw from "../../data/series/cpialrl-groups-2019.json";
+import bundle2024_raw from "../../data/series/cpi-2024.json";
+import back2024Bundle_raw from "../../data/series/cpi-2024-back.json";
+import linked2024Bundle_raw from "../../data/series/cpi-2024-linked.json";
+import sectors2024Bundle_raw from "../../data/series/cpi-2024-sectors.json";
+import groups2024Bundle_raw from "../../data/series/cpi-2024-groups.json";
+import items2024Bundle_raw from "../../data/series/cpi-2024-items.json";
+import states2024Bundle_raw from "../../data/series/cpi-2024-states.json";
+import alStates86Bundle_raw from "../../data/series/cpialrl-states-1986.json";
 // wave 2 (lb/prices): CPI for industrial workers (four bases, centres) and rural wages
-import iw60Bundle from "../../data/series/cpiiw-1960.json";
-import iw82Bundle from "../../data/series/cpiiw-1982.json";
-import iw01Bundle from "../../data/series/cpiiw-2001.json";
-import iw16Bundle from "../../data/series/cpiiw-2016.json";
-import iwCenBundle from "../../data/series/cpiiw-centres-2016.json";
-import wageBundle from "../../data/series/wages-rural-2013.json";
-import wageStBundle from "../../data/series/wages-rural-states-2013.json";
-import alSt19Bundle from "../../data/series/cpialrl-states-2019.json";
-import rlSt19Bundle from "../../data/series/cpialrl-states-rl-2019.json";
-import ruDivBundle from "../../data/series/cpi-2024-rural-divisions.json";
-import urDivBundle from "../../data/series/cpi-2024-urban-divisions.json";
-import stDivBundle from "../../data/series/cpi-2024-states-divisions.json";
-import groups12Bundle from "../../data/series/cpi-groups.json";
-import items12Bundle from "../../data/series/cpi-items-2012.json";
+import iw60Bundle_raw from "../../data/series/cpiiw-1960.json";
+import iw82Bundle_raw from "../../data/series/cpiiw-1982.json";
+import iw01Bundle_raw from "../../data/series/cpiiw-2001.json";
+import iw16Bundle_raw from "../../data/series/cpiiw-2016.json";
+import iwCenBundle_raw from "../../data/series/cpiiw-centres-2016.json";
+import wageBundle_raw from "../../data/series/wages-rural-2013.json";
+import wageStBundle_raw from "../../data/series/wages-rural-states-2013.json";
+import alSt19Bundle_raw from "../../data/series/cpialrl-states-2019.json";
+import rlSt19Bundle_raw from "../../data/series/cpialrl-states-rl-2019.json";
+import ruDivBundle_raw from "../../data/series/cpi-2024-rural-divisions.json";
+import urDivBundle_raw from "../../data/series/cpi-2024-urban-divisions.json";
+import stDivBundle_raw from "../../data/series/cpi-2024-states-divisions.json";
+import groups12Bundle_raw from "../../data/series/cpi-groups.json";
+import items12Bundle_raw from "../../data/series/cpi-items-2012.json";
 import {
   SEAM_RULE, fmt, MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend, seamMarks, seamOverlap,
   peakOf, peakBetween, dodgeEndLabels, spark, downloadCSV, stripLabelSide, stripLabelSpot, makePlacer, annotationSpot,
 } from "../charts/plumbing.js";
+
+import { roundRates, numWord } from "./precision.js";
+// review-a (2026-10): rates at the precision the agency publishes, rounded once as they load
+// (src/dossiers/precision.js), so every delta and spread on the page is redone from what is shown
+const bundle = roundRates(bundle_raw);
+const ruralBundle = roundRates(ruralBundle_raw);
+const urbanBundle = roundRates(urbanBundle_raw);
+const subBundle = roundRates(subBundle_raw);
+const statesBundle = roundRates(statesBundle_raw);
+const statesSectorsBundle = roundRates(statesSectorsBundle_raw);
+const alrl2019Bundle = roundRates(alrl2019Bundle_raw);
+const alrl1986Bundle = roundRates(alrl1986Bundle_raw);
+const alrlGroupsBundle = roundRates(alrlGroupsBundle_raw);
+const bundle2024 = roundRates(bundle2024_raw);
+const back2024Bundle = roundRates(back2024Bundle_raw);
+const linked2024Bundle = roundRates(linked2024Bundle_raw);
+const sectors2024Bundle = roundRates(sectors2024Bundle_raw);
+const groups2024Bundle = roundRates(groups2024Bundle_raw);
+const items2024Bundle = roundRates(items2024Bundle_raw);
+const states2024Bundle = roundRates(states2024Bundle_raw);
+const alStates86Bundle = roundRates(alStates86Bundle_raw);
+const iw60Bundle = roundRates(iw60Bundle_raw);
+const iw82Bundle = roundRates(iw82Bundle_raw);
+const iw01Bundle = roundRates(iw01Bundle_raw);
+const iw16Bundle = roundRates(iw16Bundle_raw);
+const iwCenBundle = roundRates(iwCenBundle_raw);
+const wageBundle = roundRates(wageBundle_raw);
+const wageStBundle = roundRates(wageStBundle_raw);
+const alSt19Bundle = roundRates(alSt19Bundle_raw);
+const rlSt19Bundle = roundRates(rlSt19Bundle_raw);
+const ruDivBundle = roundRates(ruDivBundle_raw);
+const urDivBundle = roundRates(urDivBundle_raw);
+const stDivBundle = roundRates(stDivBundle_raw);
+const groups12Bundle = roundRates(groups12Bundle_raw);
+const items12Bundle = roundRates(items12Bundle_raw);
 
 const S = hydrate(bundle);
 const R = hydrate(ruralBundle);
@@ -82,8 +117,10 @@ const L = {}; for (const k in S) L[k] = S[k].data.at(-1).value;
 const P = {}; for (const k in S) P[k] = S[k].data.at(-2).value;
 const Y = {}; for (const k in S) Y[k] = S[k].data.at(-13).value;
 const pc = '<span class="pc">%</span>';
-const arrow = (d) => (d >= 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(2) + " pt";
-const word = (d) => (d >= 0 ? "firming" : "easing");
+const arrow = (d) => (Math.abs(d) < 0.05 ? "unchanged" : (d > 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(1) + " pt");
+const word = (d) => (Math.abs(d) < 0.05 ? "steady" : d > 0 ? "firming" : "easing");
+// a move and its word, without saying a zero move twice ("unchanged", not "unchanged, steady")
+const moveWord = (d, sep = ", ") => (Math.abs(d) < 0.05 ? "unchanged" : arrow(d) + sep + word(d));
 const bandNote = (v) => (v < 2 ? "below the RBI band" : v > 6 ? "above the RBI band" : "within RBI band");
 const setHTML = (id, h) => (document.getElementById(id).innerHTML = h);
 const setTxt = (id, t) => (document.getElementById(id).textContent = t);
@@ -94,10 +131,10 @@ const L24 = {}; for (const k in S24) L24[k] = S24[k].data.at(-1).value;
 const P24 = {}; for (const k in S24) P24[k] = S24[k].data.at(-2).value;
 const FIRST24 = S24.headline.data[0].value;
 
-setHTML("n-head", L24.headline.toFixed(2) + pc);
-setHTML("n-food", L24.food_and_beverages.toFixed(2) + pc);
-setHTML("n-old", L.headline.toFixed(2) + pc);
-setHTML("n-core", L.core.toFixed(2) + pc);
+setHTML("n-head", L24.headline.toFixed(1) + pc);
+setHTML("n-food", L24.food_and_beverages.toFixed(1) + pc);
+setHTML("n-old", L.headline.toFixed(1) + pc);
+setHTML("n-core", L.core.toFixed(1) + pc);
 // the previous month is named from the data (it read "vs May" by hand, stale since July)
 const prevM24 = MN[S24.headline.data.at(-2).date.getUTCMonth()];
 setHTML("d-head", `<b>${arrow(L24.headline - P24.headline)}</b> vs ${prevM24}, ${bandNote(L24.headline)}`);
@@ -105,18 +142,18 @@ setHTML("d-food", `<b>${arrow(L24.food_and_beverages - P24.food_and_beverages)}<
 setHTML("d-old", `base retired, series ends Dec 2025`);
 setHTML("d-core", `<b>${arrow(L.core - P.core)}</b> vs Nov, to Dec 2025`);
 
-setHTML("rb-big", L24.headline.toFixed(2) + pc);
+setHTML("rb-big", L24.headline.toFixed(1) + pc);
 setHTML("rb-band", `Position in RBI band: <b>${
-  L24.headline < 2 ? (2 - L24.headline).toFixed(2) + " pt below the floor"
-  : L24.headline < 4 ? (4 - L24.headline).toFixed(2) + " pt below target"
-  : L24.headline <= 6 ? (L24.headline - 4).toFixed(2) + " pt above target"
-  : (L24.headline - 6).toFixed(2) + " pt above the ceiling"
+  L24.headline < 2 ? (2 - L24.headline).toFixed(1) + " pt below the floor"
+  : L24.headline < 4 ? (4 - L24.headline).toFixed(1) + " pt below target"
+  : L24.headline <= 6 ? (L24.headline - 4).toFixed(1) + " pt above target"
+  : (L24.headline - 6).toFixed(1) + " pt above the ceiling"
 }</b>`);
 {
   const W = 236, H = 46, min = 0, max = 8, val = L24.headline;
   const X = (v) => ((v - min) / (max - min)) * W, y = 18;
   document.getElementById("rb-scale").innerHTML =
-    `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Scale from 0 to 8 per cent. The RBI tolerance band from 2 to 6 per cent is shaded; the 4 per cent target is dashed; the current reading, ${val.toFixed(2)} per cent, is marked.">` +
+    `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Scale from 0 to 8 per cent. The RBI tolerance band from 2 to 6 per cent is shaded; the 4 per cent target is dashed; the current reading, ${val.toFixed(1)} per cent, is marked.">` +
     `<rect x="${X(2)}" y="${y - 7}" width="${X(6) - X(2)}" height="14" fill="#F6F7F9" stroke="#EEF0F3" stroke-width="1"/>` +
     `<line x1="0" y1="${y}" x2="${W}" y2="${y}" stroke="#DADDE3" stroke-width="1"/>` +
     `<line x1="${X(4)}" y1="${y - 10}" x2="${X(4)}" y2="${y + 10}" stroke="#878D99" stroke-width="1" stroke-dasharray="2,3"/>` +
@@ -124,7 +161,7 @@ setHTML("rb-band", `Position in RBI band: <b>${
     `<circle cx="${X(val)}" cy="${y}" r="4.5" fill="#2E4BD8" stroke="#FFFFFF" stroke-width="1.5"/>` +
     `</svg>`;
 }
-const f1 = (v) => v.toFixed(2) + "%";
+const f1 = (v) => v.toFixed(1) + "%";
 // §01 "current reading" prose is now pipeline-generated (pipeline/out/prose-cpi.*.md);
 // the cr-* figure spans it used to carry are retired.
 
@@ -181,7 +218,7 @@ setTxt("pf-core", `peak: ${pkCore.value.toFixed(1)}%, ${fmtDate(pkCore.date)}, l
         { text: "NSO back-cast to Dec 2024, live from Jan 2025", y: 9.4 }),
       Plot.dot([oldS.data.at(-1)], { x: "date", y: "value", fill: oldS.color, r: 3, stroke: "#FFFFFF", strokeWidth: 1 }),
       Plot.dot([linked.data.at(-1)], { x: "date", y: "value", fill: linked.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([linked.data.at(-1)], { x: "date", y: "value", text: (d) => `Base 2024 ${d.value.toFixed(2)}%`, dx: 16, dy: -8, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.text([linked.data.at(-1)], { x: "date", y: "value", text: (d) => `Base 2024 ${d.value.toFixed(1)}%`, dx: 16, dy: -8, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
   });
   a11y(plot, "Headline CPI as a continuous series on the 2024 base (NSO back-cast to 2014, live from 2025), beside the retired 2012 ruler",
@@ -197,7 +234,7 @@ setTxt("pf-core", `peak: ${pkCore.value.toFixed(1)}%, ${fmtDate(pkCore.date)}, l
 }
 
 /* ---------- §03 the new basket, opened up ----------
- * The rebase's editorial point: six groups → thirteen COICOP-2018 divisions,
+ * The rebase's editorial point: six groups → twelve COICOP-2018-style divisions,
  * so services (housing, health, education, transport, recreation, restaurants,
  * personal care) are seen separately for the first time. The API serves no
  * division weights for this base, so divisions are a ranked strip, not a
@@ -238,7 +275,7 @@ setTxt("pf-core", `peak: ${pkCore.value.toFixed(1)}%, ${fmtDate(pkCore.date)}, l
       Plot.text([{ x: head }], { x: "x", text: () => "Headline, " + f1(head), frameAnchor: "top", dy: -16, dx: 5, fill: "#161A22", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
       Plot.dot(rows, { x: "v", y: "name", r: 5.5, fill: (d) => (d.v > head ? "#2E4BD8" : "#878D99"), stroke: "#FFFFFF", strokeWidth: 1 }),
       /* Plot ignores function-valued dx/textAnchor — one text mark per side */
-      ["start", "end", "middle"].map((a) => Plot.text(rows.filter((d) => divSpot(d.v).anchor === a), { x: "v", y: "name", text: (d) => d.v.toFixed(2) + "%",
+      ["start", "end", "middle"].map((a) => Plot.text(rows.filter((d) => divSpot(d.v).anchor === a), { x: "v", y: "name", text: (d) => d.v.toFixed(1) + "%",
         dx: a === "end" ? -12 : a === "start" ? 12 : 0, dy: a === "middle" ? -11 : 0.5,
         fill: (d) => (d.v > head ? "#161A22" : "#878D99"), fontSize: 12.5, fontFamily: mono, textAnchor: a })),
     ],
@@ -251,9 +288,9 @@ setTxt("pf-core", `peak: ${pkCore.value.toFixed(1)}%, ${fmtDate(pkCore.date)}, l
   wireTools(document.getElementById("cb-div"), plot, rows.map((r) => r.s), "india-atlas_cpi_13-divisions_2026");
   setTxt("pv-div", top.name);
   setTxt("div-top", top.name + ", " + f1(top.v));
-  setTxt("div-bot", bot.name + ", " + bot.v.toFixed(2) + "%");
+  setTxt("div-bot", bot.name + ", " + bot.v.toFixed(1) + "%");
   setTxt("div-spread", (top.v - bot.v).toFixed(1) + " points");
-  setTxt("div-above", String(aboveN));
+  setTxt("div-above", numWord(aboveN, true));
   setTxt("div-gold", f1(S24.personal_care_social_protection_and_miscellaneous_goods_and_services.data.at(-1).value));
   setTxt("div-rest", f1(S24.restaurants_and_accommodation_services.data.at(-1).value));
   setTxt("div-info", f1(S24.information_and_communication.data.at(-1).value));
@@ -281,7 +318,7 @@ setTxt("pf-core", `peak: ${pkCore.value.toFixed(1)}%, ${fmtDate(pkCore.date)}, l
   const rl = V.rural.data.at(-1).value, ul = V.urban.data.at(-1).value;
   setTxt("pv-ru24", f1(rl));
   setTxt("ru24-r", f1(rl)); setTxt("ru24-u", f1(ul));
-  setTxt("ru24-gap", (rl - ul).toFixed(2) + " pt");
+  setTxt("ru24-gap", (rl - ul).toFixed(1) + " pt");
 }
 
 /* ---------- §03 the 43 groups — field-guide grid (base 2024) ----------
@@ -365,8 +402,8 @@ setTxt("pf-core", `peak: ${pkCore.value.toFixed(1)}%, ${fmtDate(pkCore.date)}, l
   <tr>
     <td class="name">${r.s.label}<small>№ ${rank} of ${all.length}, ${r.division}, ${r.code}</small></td>
     <td class="val">${f1(r.latest)}</td>
-    <td class="chg">${r.prevV == null ? "—" : arrow(r.latest - r.prevV) + " · " + word(r.latest - r.prevV)}</td>
-    <td class="yr">${r.level == null ? "—" : r.level.toFixed(2)}</td>
+    <td class="chg">${r.prevV == null ? "—" : moveWord(r.latest - r.prevV)}</td>
+    <td class="yr">${r.level == null ? "—" : r.level.toFixed(1)}</td>
     <td class="spark" id="sp-i24-${rank}"></td>
   </tr>`;
   document.getElementById("tail24-body").innerHTML =
@@ -429,7 +466,7 @@ document.getElementById("ledger-body").innerHTML = regRows.map(([s, nm, sub, sw,
   // carries only current signals (the series' final reading still shows under Latest)
   const chgCell = retired
     ? `<td class="chg" style="color:var(--faint)" title="series ended: no live m/m">—</td>`
-    : `<td class="chg">${arrow(l - p)}, ${word(l - p)}</td>`;
+    : `<td class="chg">${moveWord(l - p)}</td>`;
   return `
   <tr>
     <td class="name"><span class="sw ${sw}"></span>${nm}<small>${sub}</small></td>
@@ -555,7 +592,7 @@ document.getElementById("basket-labels").innerHTML = `<div style="display:flex;f
       { x: dates.at(-1), y: p.value }, { x: dates.at(-1), y: p.y },
     ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
     ...dodged.map((p) => Plot.text([{ date: dates.at(-1), y: p.y }], {
-      x: "date", y: "y", text: () => `${p.s.label} ${p.value.toFixed(2)}%`,
+      x: "date", y: "y", text: () => `${p.s.label} ${p.value.toFixed(1)}%`,
       dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono,
       fontWeight: p.s === S.headline ? 500 : 400, textAnchor: "start",
     })),
@@ -634,7 +671,7 @@ function componentChart(blockId, plotId, key, d0, d1, yTicks, extraNote) {
       Plot.line(leader, { x: "x", y: "y", stroke: "#2E4BD8", strokeWidth: 1 }),
       Plot.text([{ date: textX, value: textY }], { x: "date", y: "value", text: [pkText], fill: "#161A22", fontSize: 12, fontFamily: mono, textAnchor: spot.anchor }),
       Plot.dot([s.data.at(-1)], { x: "date", y: "value", fill: "#2E4BD8", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([s.data.at(-1)], { x: "date", y: "value", text: (d) => d.value.toFixed(2) + "%", dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.text([s.data.at(-1)], { x: "date", y: "value", text: (d) => d.value.toFixed(1) + "%", dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
   });
   a11y(plot, s.label + " inflation, year-on-year, 2016 to 2025",
@@ -669,7 +706,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, fmtX, dlNa
       { x: dts.at(-1), y: p.value }, { x: dts.at(-1), y: p.y },
     ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
     ...dodged.map((p) => Plot.text([{ date: dts.at(-1), y: p.y }], {
-      x: "date", y: "y", text: () => `${p.s.endLabel ?? p.s.label} ${p.value.toFixed(2)}%`,
+      x: "date", y: "y", text: () => `${p.s.endLabel ?? p.s.label} ${p.value.toFixed(1)}%`,
       dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono,
       fontWeight: p.s === seriesList[0] ? 500 : 400, textAnchor: "start",
     })),
@@ -763,7 +800,7 @@ const fmtMY = (d) => MN[d.getUTCMonth()] + " " + String(d.getUTCFullYear()).slic
   const latest = [...SM_WILD.keys, ...SM_QUIET.keys].map((k) => SUB[k].data.at(-1).value);
   const lo = latest.filter((v) => v < 2).length, hi = latest.filter((v) => v > 6).length;
   setTxt("pv-sub", String(lo + hi));
-  setTxt("sub-n", String(lo + hi)); setTxt("sub-lo", String(lo)); setTxt("sub-hi", String(hi));
+  setTxt("sub-n", numWord(lo + hi, true)); setTxt("sub-lo", String(lo)); setTxt("sub-hi", String(hi));
   setTxt("sub-veg", f1(SUB.vegetables.data.at(-1).value));
   setTxt("sub-pulses", f1(SUB.pulses_and_products.data.at(-1).value));
   setTxt("sub-gold", f1(SUB.personal_care_and_effects.data.at(-1).value));
@@ -836,7 +873,7 @@ const fmtMY = (d) => MN[d.getUTCMonth()] + " " + String(d.getUTCFullYear()).slic
       Plot.ruleX([ai], { stroke: "#161A22", strokeWidth: 1, strokeDasharray: "3,3" }),
       Plot.text([{ x: ai }], { x: "x", text: () => "All-India, " + f1(ai), frameAnchor: "top", dy: -18, dx: 4, fill: "#161A22", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
       Plot.dot(rows, { x: "v", y: "name", r: 5.5, fill: (d) => (out(d.v) ? "#2E4BD8" : "#878D99"), stroke: "#FFFFFF", strokeWidth: 1 }),
-      ["start", "end", "middle"].map((a) => Plot.text(rows.filter((d) => stSpot(d.v).anchor === a), { x: "v", y: "name", text: (d) => d.v.toFixed(2) + "%",
+      ["start", "end", "middle"].map((a) => Plot.text(rows.filter((d) => stSpot(d.v).anchor === a), { x: "v", y: "name", text: (d) => d.v.toFixed(1) + "%",
         dx: a === "end" ? -13 : a === "start" ? 13 : 0, dy: a === "middle" ? -11 : 0.5,
         fill: (d) => (out(d.v) ? "#161A22" : "#878D99"), fontSize: 12.5, fontFamily: mono, textAnchor: a })),
     ],
@@ -851,9 +888,9 @@ const fmtMY = (d) => MN[d.getUTCMonth()] + " " + String(d.getUTCFullYear()).slic
   setTxt("st24-bot", bot.name + ", " + f1(bot.v));
   setTxt("st24-spread", (top.v - bot.v).toFixed(1) + " points");
   setTxt("st24-ai", f1(ai)); setTxt("pf-st24-ai", f1(ai));
-  setTxt("st24-above", String(rows.filter((r) => r.v > 6).length));
-  setTxt("st24-below", String(rows.filter((r) => r.v < 2).length));
-  setTxt("st24-neg", String(rows.filter((r) => r.v < 0).length));
+  setTxt("st24-above", numWord(rows.filter((r) => r.v > 6).length, true));
+  setTxt("st24-below", numWord(rows.filter((r) => r.v < 2).length));
+  setTxt("st24-neg", numWord(rows.filter((r) => r.v < 0).length));
 }
 
 /* ---------- §11 states, retired base: sorted dot strip ---------- */
@@ -886,7 +923,7 @@ const stateName = (k) => ({
       Plot.ruleX([ai], { stroke: "#161A22", strokeWidth: 1, strokeDasharray: "3,3" }),
       Plot.text([{ x: ai }], { x: "x", text: () => "All-India, " + f1(ai), frameAnchor: "top", dy: -18, dx: 4, fill: "#161A22", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
       Plot.dot(rows, { x: "v", y: "name", r: 5.5, fill: (d) => (out(d.v) ? "#2E4BD8" : "#878D99"), stroke: "#FFFFFF", strokeWidth: 1 }),
-      ["start", "end", "middle"].map((a) => Plot.text(rows.filter((d) => stSpot(d.v).anchor === a), { x: "v", y: "name", text: (d) => d.v.toFixed(2) + "%",
+      ["start", "end", "middle"].map((a) => Plot.text(rows.filter((d) => stSpot(d.v).anchor === a), { x: "v", y: "name", text: (d) => d.v.toFixed(1) + "%",
         dx: a === "end" ? -13 : a === "start" ? 13 : 0, dy: a === "middle" ? -11 : 0.5,
         fill: (d) => (out(d.v) ? "#161A22" : "#878D99"), fontSize: 12.5, fontFamily: mono, textAnchor: a })),
     ],
@@ -902,7 +939,7 @@ const stateName = (k) => ({
   setTxt("st-spread", (top.v - bot.v).toFixed(1) + " points");
   setTxt("st-ai", f1(ai)); setTxt("pf-st-ai", f1(ai));
   setTxt("st-neg", String(rows.filter((r) => r.v < 0).length));
-  setTxt("st-below", String(rows.filter((r) => r.v < 2).length));
+  setTxt("st-below", numWord(rows.filter((r) => r.v < 2).length, true));
   setTxt("st-above", String(rows.filter((r) => r.v > 6).length));
 }
 
@@ -933,10 +970,10 @@ const stateName = (k) => ({
       Plot.dot(rows, { x: "u", y: "name", r: 3.5, fill: "#A3A9B4", stroke: "#FFFFFF", strokeWidth: 1.25 }),
       /* labels outside the dumbbell; Plot ignores function dx/textAnchor,
        * so one text mark per quadrant */
-      Plot.text(rows.filter((d) => d.r < d.u), { x: "r", y: "name", text: (d) => d.r.toFixed(2) + "%", dx: -16, dy: 0.5, fill: "#5F6675", fontSize: 11.5, fontFamily: mono, textAnchor: "end" }),
-      Plot.text(rows.filter((d) => d.r >= d.u), { x: "r", y: "name", text: (d) => d.r.toFixed(2) + "%", dx: 16, dy: 0.5, fill: "#5F6675", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
-      Plot.text(rows.filter((d) => d.r < d.u), { x: "u", y: "name", text: (d) => d.u.toFixed(2) + "%", dx: 16, dy: 0.5, fill: "#878D99", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
-      Plot.text(rows.filter((d) => d.r >= d.u), { x: "u", y: "name", text: (d) => d.u.toFixed(2) + "%", dx: -16, dy: 0.5, fill: "#878D99", fontSize: 11.5, fontFamily: mono, textAnchor: "end" }),
+      Plot.text(rows.filter((d) => d.r < d.u), { x: "r", y: "name", text: (d) => d.r.toFixed(1) + "%", dx: -16, dy: 0.5, fill: "#5F6675", fontSize: 11.5, fontFamily: mono, textAnchor: "end" }),
+      Plot.text(rows.filter((d) => d.r >= d.u), { x: "r", y: "name", text: (d) => d.r.toFixed(1) + "%", dx: 16, dy: 0.5, fill: "#5F6675", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(rows.filter((d) => d.r < d.u), { x: "u", y: "name", text: (d) => d.u.toFixed(1) + "%", dx: 16, dy: 0.5, fill: "#878D99", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(rows.filter((d) => d.r >= d.u), { x: "u", y: "name", text: (d) => d.u.toFixed(1) + "%", dx: -16, dy: 0.5, fill: "#878D99", fontSize: 11.5, fontFamily: mono, textAnchor: "end" }),
     ],
   });
   a11y(plot, "Rural against urban inflation, December 2025, in the five states where they differ most",
@@ -973,7 +1010,7 @@ const stateName = (k) => ({
   const alPlacer = makePlacer(geo, oldPad.data.map((d) => d.date));
   alPlacer.addSeries(oldS.data).addSeries(newS.data).addRuleX(seam).addRuleY(0);
   const oldLabelSpot = annotationSpot(alPlacer, oldS.data.at(-1),
-    `Base 1986-87 ${oldS.data.at(-1).value.toFixed(2)}%`, 13.5, [
+    `Base 1986-87 ${oldS.data.at(-1).value.toFixed(1)}%`, 13.5, [
       { x: oldS.data.at(-1).date, y: oldS.data.at(-1).value, anchor: "end", dx: -14, dy: -20 },
       { x: oldS.data.at(-1).date, y: oldS.data.at(-1).value, anchor: "end", dx: -14, dy: 26 },
       { x: oldS.data.at(-1).date, y: oldS.data.at(-1).value, anchor: "middle", dx: 0, dy: 32 },
@@ -995,9 +1032,9 @@ const stateName = (k) => ({
       Plot.dot([pk], { x: "date", y: "value", fill: "#878D99", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.text([{ date: pk.date, value: pk.value + 1.3 }], { x: "date", y: "value", text: () => pk.value.toFixed(1) + "%, " + fmtDate(pk.date) + ", after the failed monsoon", fill: "#878D99", fontSize: 12, fontFamily: mono, textAnchor: "middle" }),
       Plot.dot([oldS.data.at(-1)], { x: "date", y: "value", fill: oldS.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([{ date: oldLabelSpot.textX, value: oldLabelSpot.textY }], { x: "date", y: "value", text: [`Base 1986-87 ${oldS.data.at(-1).value.toFixed(2)}%`], fill: "#161A22", fontSize: 12, fontFamily: mono, textAnchor: oldLabelSpot.spot.anchor }),
+      Plot.text([{ date: oldLabelSpot.textX, value: oldLabelSpot.textY }], { x: "date", y: "value", text: [`Base 1986-87 ${oldS.data.at(-1).value.toFixed(1)}%`], fill: "#161A22", fontSize: 12, fontFamily: mono, textAnchor: oldLabelSpot.spot.anchor }),
       Plot.dot([newS.data.at(-1)], { x: "date", y: "value", fill: newS.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([newS.data.at(-1)], { x: "date", y: "value", text: (d) => `Base 2019 ${d.value.toFixed(2)}%`, dx: 16, dy: -8, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.text([newS.data.at(-1)], { x: "date", y: "value", text: (d) => `Base 2019 ${d.value.toFixed(1)}%`, dx: 16, dy: -8, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
   });
   a11y(plot, "CPI for agricultural labourers, year-on-year, on the retired 1986-87 base and the new 2019 base",
@@ -1120,7 +1157,7 @@ const stateName = (k) => ({
       Plot.ruleX([ai], { stroke: "#161A22", strokeWidth: 1, strokeDasharray: "3,3" }),
       Plot.text([{ x: ai }], { x: "x", text: () => "All-India CPI-AL, " + f1(ai), frameAnchor: "top", dy: -16, dx: 5, fill: "#161A22", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
       Plot.dot(rows, { x: "v", y: "name", r: 5.5, fill: (d) => (d.v > ai ? "#2E4BD8" : "#878D99"), stroke: "#FFFFFF", strokeWidth: 1 }),
-      ["start", "end", "middle"].map((a) => Plot.text(rows.filter((d) => alSpot(d.v).anchor === a), { x: "v", y: "name", text: (d) => d.v.toFixed(2) + "%",
+      ["start", "end", "middle"].map((a) => Plot.text(rows.filter((d) => alSpot(d.v).anchor === a), { x: "v", y: "name", text: (d) => d.v.toFixed(1) + "%",
         dx: a === "end" ? -12 : a === "start" ? 12 : 0, dy: a === "middle" ? -11 : 0.5,
         fill: (d) => (d.v > ai ? "#161A22" : "#878D99"), fontSize: 12.5, fontFamily: mono, textAnchor: a })),
     ],
@@ -1133,9 +1170,9 @@ const stateName = (k) => ({
   wireTools(document.getElementById("cb-alst"), plot, rows.map((r) => r.s), "india-atlas_cpial_states_base1986-final");
   setTxt("pv-alst", top.name);
   setTxt("alst-top", top.name + ", " + f1(top.v));
-  setTxt("alst-bot", bot.name + ", " + bot.v.toFixed(2) + "%");
+  setTxt("alst-bot", bot.name + ", " + bot.v.toFixed(1) + "%");
   setTxt("alst-spread", (top.v - bot.v).toFixed(1) + " points");
-  setTxt("alst-above", String(aboveN));
+  setTxt("alst-above", numWord(aboveN, true));
 }
 
 /* ---------- §03 rural against urban, division by division (wave 2, lb/prices) ---------- */
@@ -1143,7 +1180,6 @@ const SHORTN = { "Food and beverages": "Food", "Paan, tobacco and intoxicants": 
   "Furnishings, household equipment and routine household maintenance": "Furnishing", "Health": "Health", "Transport": "Transport", "Information and communication": "Info, comms",
   "Recreation, sport and culture": "Recreation", "Education services": "Education", "Restaurants and accommodation services": "Restaurants", "Personal care, social protection and miscellaneous goods and services": "Personal care" };
 const NUMW = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
-const numWord = (n) => NUMW[n] ?? String(n);
 {
   const RD = hydrate(ruDivBundle), UD = hydrate(urDivBundle);
   const byCode = (B, raw) => Object.fromEntries(Object.entries(raw.series).map(([k, s]) => [s.code, B[k]]));
@@ -1169,10 +1205,10 @@ const numWord = (n) => NUMW[n] ?? String(n);
       Plot.dot(rows, { x: "u", y: "name", r: 4.5, fill: "#A3A9B4", stroke: "#FFFFFF", strokeWidth: 1.25 }),
       Plot.dot(rows, { x: "r", y: "name", r: 4.5, fill: "#2E4BD8", stroke: "#FFFFFF", strokeWidth: 1.25 }),
       /* labels outside the dumbbell, one text mark per side */
-      Plot.text(rows.filter((d) => d.r < d.u), { x: "r", y: "name", text: (d) => d.r.toFixed(2) + "%", dx: -12, dy: 0.5, fill: "#161A22", fontSize: 11.5, fontFamily: mono, textAnchor: "end" }),
-      Plot.text(rows.filter((d) => d.r >= d.u), { x: "r", y: "name", text: (d) => d.r.toFixed(2) + "%", dx: 12, dy: 0.5, fill: "#161A22", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
-      Plot.text(rows.filter((d) => d.r < d.u), { x: "u", y: "name", text: (d) => d.u.toFixed(2) + "%", dx: 12, dy: 0.5, fill: "#878D99", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
-      Plot.text(rows.filter((d) => d.r >= d.u), { x: "u", y: "name", text: (d) => d.u.toFixed(2) + "%", dx: -12, dy: 0.5, fill: "#878D99", fontSize: 11.5, fontFamily: mono, textAnchor: "end" }),
+      Plot.text(rows.filter((d) => d.r < d.u), { x: "r", y: "name", text: (d) => d.r.toFixed(1) + "%", dx: -12, dy: 0.5, fill: "#161A22", fontSize: 11.5, fontFamily: mono, textAnchor: "end" }),
+      Plot.text(rows.filter((d) => d.r >= d.u), { x: "r", y: "name", text: (d) => d.r.toFixed(1) + "%", dx: 12, dy: 0.5, fill: "#161A22", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(rows.filter((d) => d.r < d.u), { x: "u", y: "name", text: (d) => d.u.toFixed(1) + "%", dx: 12, dy: 0.5, fill: "#878D99", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(rows.filter((d) => d.r >= d.u), { x: "u", y: "name", text: (d) => d.u.toFixed(1) + "%", dx: -12, dy: 0.5, fill: "#878D99", fontSize: 11.5, fontFamily: mono, textAnchor: "end" }),
     ],
   });
   const when = longDate(lastOf(Object.values(RD)[0]).date);
@@ -1188,7 +1224,7 @@ const numWord = (n) => NUMW[n] ?? String(n);
   setTxt("pc-divru", "widest gap: " + top.name.toLowerCase());
   setTxt("divru-rhi", numWord(rhi));
   setTxt("divru-top", top.name.toLowerCase() + ", rural " + f1(top.r) + " against urban " + f1(top.u));
-  setTxt("divru-bot", bot.name.toLowerCase() + " (" + Math.abs(bot.gap).toFixed(2) + " points apart)");
+  setTxt("divru-bot", bot.name.toLowerCase() + (Math.abs(bot.gap) < 0.05 ? " (the same rate in both)" : " (" + Math.abs(bot.gap).toFixed(1) + " points apart)"));
 }
 
 /* ---------- §11 state x division table (wave 2, lb/prices) ----------
@@ -1234,7 +1270,7 @@ const numWord = (n) => NUMW[n] ?? String(n);
   setTxt("stdiv-wide-hi", wide.hi.n + ", " + f1(wide.hi.v));
   setTxt("stdiv-wide-lo", wide.lo.n + ", " + f1(wide.lo.v));
   setTxt("stdiv-narrow", DIVN[narrow.c].toLowerCase() + ", its middle half within " + narrow.w.toFixed(1) + " points");
-  setTxt("stdiv-negcells", String(all.filter((v) => v < 0).length));
+  setTxt("stdiv-negcells", numWord(all.filter((v) => v < 0).length, true));
   setTxt("stdiv-cells", String(all.length));
 }
 
@@ -1325,8 +1361,8 @@ const numWord = (n) => NUMW[n] ?? String(n);
       Plot.link(rows, { x1: "al", x2: "rl", y: "name", stroke: "#C9CED6", strokeWidth: 2 }),
       Plot.dot(rows, { x: "rl", y: "name", r: 4, fill: "#A3A9B4", stroke: "#FFFFFF", strokeWidth: 1.25 }),
       Plot.dot(rows, { x: "al", y: "name", r: 4, fill: "#2E4BD8", stroke: "#FFFFFF", strokeWidth: 1.25 }),
-      Plot.text(rows.filter((d) => d.al < d.rl), { x: "al", y: "name", text: (d) => d.al.toFixed(2) + "%", dx: -12, dy: 0.5, fill: "#161A22", fontSize: 11.5, fontFamily: mono, textAnchor: "end" }),
-      Plot.text(rows.filter((d) => d.al >= d.rl), { x: "al", y: "name", text: (d) => d.al.toFixed(2) + "%", dx: 12, dy: 0.5, fill: "#161A22", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
+      Plot.text(rows.filter((d) => d.al < d.rl), { x: "al", y: "name", text: (d) => d.al.toFixed(1) + "%", dx: -12, dy: 0.5, fill: "#161A22", fontSize: 11.5, fontFamily: mono, textAnchor: "end" }),
+      Plot.text(rows.filter((d) => d.al >= d.rl), { x: "al", y: "name", text: (d) => d.al.toFixed(1) + "%", dx: 12, dy: 0.5, fill: "#161A22", fontSize: 11.5, fontFamily: mono, textAnchor: "start" }),
     ],
   });
   const when = longDate(new Date(alSt19Bundle.dates.at(-1) + "T00:00:00Z"));
@@ -1378,7 +1414,7 @@ const IW = { b1960: hydrate(iw60Bundle), b1982: hydrate(iw82Bundle), b2001: hydr
       Plot.dot([peak.p], { x: "date", y: "value", fill: "#878D99", r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
       Plot.text([peak.p], { x: "date", y: "value", text: (d) => d.value.toFixed(1) + "%, " + fmtDate(d.date), dx: 10, textAnchor: "start", fill: "#5F6675", fontSize: 12, fontFamily: mono }),
       Plot.dot([curEnd], { x: "date", y: "value", fill: cur.color, r: 4, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([curEnd], { x: "date", y: "value", text: (d) => "Base 2016 " + d.value.toFixed(2) + "%", dx: 12, textAnchor: "start", fill: "#161A22", fontSize: 12.5, fontWeight: 500, fontFamily: mono }),
+      Plot.text([curEnd], { x: "date", y: "value", text: (d) => "Base 2016 " + d.value.toFixed(1) + "%", dx: 12, textAnchor: "start", fill: "#161A22", fontSize: 12.5, fontWeight: 500, fontFamily: mono }),
     ],
   });
   a11y(plot, "CPI for industrial workers, year-on-year, on four bases from " + y0 + " to " + y1,
@@ -1448,7 +1484,7 @@ const IW = { b1960: hydrate(iw60Bundle), b1982: hydrate(iw82Bundle), b2001: hydr
       Plot.ruleX([ai], { stroke: "#161A22", strokeWidth: 1, strokeDasharray: "3,3" }),
       Plot.text([{ x: ai }], { x: "x", text: () => "All India, " + f1(ai), frameAnchor: "top", dy: -16, dx: 5, fill: "#161A22", fontSize: 12.5, fontFamily: mono, textAnchor: "start" }),
       Plot.dot(dots, { x: "v", y: label, r: 5, fill: (d) => (d.v > ai ? "#2E4BD8" : "#878D99"), stroke: "#FFFFFF", strokeWidth: 1 }),
-      ["start", "end", "middle"].map((a) => Plot.text(dots.filter((d) => spot(d.v).anchor === a), { x: "v", y: label, text: (d) => d.v.toFixed(2) + "%",
+      ["start", "end", "middle"].map((a) => Plot.text(dots.filter((d) => spot(d.v).anchor === a), { x: "v", y: label, text: (d) => d.v.toFixed(1) + "%",
         dx: a === "end" ? -12 : a === "start" ? 12 : 0, dy: a === "middle" ? -11 : 0.5, fill: (d) => (d.v > ai ? "#161A22" : "#878D99"), fontSize: 12, fontFamily: mono, textAnchor: a })),
     ],
   });
@@ -1461,7 +1497,7 @@ const IW = { b1960: hydrate(iw60Bundle), b1982: hydrate(iw82Bundle), b2001: hydr
   setTxt("iwc-top", top.name + " (" + top.state + "), " + f1(top.v));
   setTxt("iwc-bot", bot.name + " (" + bot.state + "), " + f1(bot.v));
   setTxt("iwc-spread", (top.v - bot.v).toFixed(1) + " points");
-  setTxt("iwc-above", String(all.filter((r) => r.v > ai).length));
+  setTxt("iwc-above", numWord(all.filter((r) => r.v > ai).length, true));
   setTxt("iwc-n", String(all.length));
   setTxt("iwc-ai", f1(ai));
   setTxt("iwc-neg", String(all.filter((r) => r.v < 0).length));

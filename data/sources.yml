@@ -123,12 +123,12 @@ dossiers:
     frequency: monthly
     base: "2012=100"
     release_calendar: "~12th of each month"
-    revision_policy: "CPI is final on release; never revised."
+    revision_policy: "Released provisional; the next month's release prints the month as final, after which it is not revised (both the 2012 and 2024 bases)."
     source_agency: MoSPI, National Statistical Office
     release_url: https://www.mospi.gov.in
     fetch:
       endpoint: cpi/getCPIData
-      # the 2012 base ended Dec 2025 and CPI is never revised: its six baked bundles are not
+      # the 2012 base ended Dec 2025 and its last month is long final: its six baked bundles are not
       # fetched again (cpi.mjs); set false to re-ingest them from the API
       retired: true
       params:

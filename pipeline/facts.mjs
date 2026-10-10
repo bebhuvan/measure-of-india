@@ -10,6 +10,8 @@ import { fileURLToPath } from "node:url";
 import { bySlug } from "../src/dossiers/registry.js";
 import { makePeriodLabel, yearLag } from "./lib/periods.mjs";
 import { seriesFacts, crossBundle, commonHeadline } from "./lib/census-core.mjs";
+import { ratePrecision, roundBundle, precisionNote } from "./lib/precision.mjs";
+import { unitOf } from "../src/dossiers/everycut.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const slug = process.argv[2];
@@ -45,8 +47,13 @@ if (D.factsModule) {
   console.log("wrote", `pipeline/out/facts-${slug}.json`, `(${Object.keys(sheet.series).length} series, from ${D.factsModule})`);
   process.exit(0);
 }
+// every bundle is read through the precision rule (pipeline/lib/precision.mjs): rate series
+// arrive rounded to the precision the agency publishes, so every delta, run and band position
+// below is computed from the figures a reader sees
+const PREC = ratePrecision(slug);
+const readSeries = (name) => roundBundle(JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", name + ".json"), "utf8")), PREC, unitOf);
 const bundleSlug = D.currentBundle;
-const bundle = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", bundleSlug + ".json"), "utf8"));
+const bundle = readSeries(bundleSlug);
 const monthly = bundle.meta.frequency === "monthly";
 const annual = bundle.meta.frequency === "annual";
 const lag = yearLag(bundle.meta.frequency);
@@ -61,7 +68,7 @@ const periodLabel = makePeriodLabel(bundle.meta.frequency, calendar);
 // `ruler` keys when it collects the numbers prose may use.
 const SEAMS = YAML.parse(fs.readFileSync(path.join(ROOT, "data/sources.yml"), "utf8")).seams ?? {};
 function rulerOf(b) {
-  const meta = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", b + ".json"), "utf8")).meta ?? {};
+  const meta = readSeries(b).meta ?? {};
   for (const [product, bases] of Object.entries(SEAMS)) {
     for (const e of bases ?? []) {
       const win = { from: e.from ?? null, to: e.to ?? null };
@@ -87,6 +94,7 @@ const facts = {
   releaseDate: bundle.meta.releaseDate,
   bands,
   ruler: rulerOf(bundleSlug),
+  precision: { rateDecimals: PREC, rule: precisionNote(slug) },
   series: {},
 };
 
@@ -226,7 +234,7 @@ if (slug === "cpi") {
   // the retired 2012 base carries the only core index (the 2024 base serves no
   // weights, so core can't be computed on it) — expose its final reading so the
   // "what it does not say" slot can be honest about the ruler change.
-  const old = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/cpi.json"), "utf8"));
+  const old = readSeries("cpi");
   facts.legacy = {
     retiredBase: old.meta.base,
     ruler: rulerOf("cpi"),
@@ -240,7 +248,7 @@ if (slug === "cpi") {
 // dollar figure it may cite sits in cross.bn (one decimal), with the period it belongs to.
 if (slug === "external") {
   const bn1 = (v) => (v == null ? null : Math.round(v / 100) / 10);
-  const rd = (f) => JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", f + ".json"), "utf8"));
+  const rd = (f) => readSeries(f);
   facts.cross.bn = {};
   for (const [k, s] of Object.entries(facts.series)) facts.cross.bn[k] = { latest: bn1(s.latest.value), previous: bn1(s.previous.value), yearAgo: s.yearAgo ? bn1(s.yearAgo.value) : null, period: s.latest.period };
   const g = rd("external-bop-gross");
@@ -285,13 +293,13 @@ if (slug === "consumption") {
 // position among them is a fact the writer may cite; computed here so verify can trace it.
 if (slug === "debt" || slug === "housing") {
   const peersDir = fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => /^bis-peer-[a-z]{3}\.json$/.test(f));
-  const rows = peersDir.map((f) => { const b = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", f), "utf8")); const name = b.meta.coverage.split(":")[0];
+  const rows = peersDir.map((f) => { const b = readSeries(f.replace(/\.json$/, "")); const name = b.meta.coverage.split(":")[0];
     const lastV = (k) => { const s = b.series[k]; if (!s) return null; for (let i = s.data.length - 1; i >= 0; i--) if (s.data[i] != null) return { value: s.data[i], period: periodLabel(b.dates[i]) }; return null; };
     return { name, households: lastV("households"), companies: lastV("companies"), government: lastV("government"), dsr: lastV("dsr"), credit_gap: lastV("credit_gap"), real_house_prices_yoy: lastV("real_house_prices_yoy") }; });
   const india = slug === "debt" ? {
     households: facts.series.households.latest, companies: facts.series.companies.latest, government: facts.series.government.latest,
-    dsr: { value: JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/bis-dsr.json"), "utf8")).series.private.data.at(-1) },
-    credit_gap: { value: JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/bis-credit-gap.json"), "utf8")).series.gap.data.at(-1) },
+    dsr: { value: readSeries("bis-dsr").series.private.data.at(-1) },
+    credit_gap: { value: readSeries("bis-credit-gap").series.gap.data.at(-1) },
   } : { real_house_prices_yoy: facts.series.real_yoy.latest };
   const rank = (k) => { const xs = [{ name: "India", v: india[k]?.value }, ...rows.map((r) => ({ name: r.name, v: r[k]?.value }))].filter((x) => x.v != null).sort((a, b) => b.v - a.v);
     return { measure: k, indiaRank: xs.findIndex((x) => x.name === "India") + 1, of: xs.length, highest: { name: xs[0].name, value: xs[0].v }, lowest: { name: xs.at(-1).name, value: xs.at(-1).v } }; };
@@ -313,7 +321,7 @@ if (slug === "climate") {
   const r2 = (v) => Math.round(v * 100) / 100;
   const last12 = a.slice(-12).filter((v) => v != null);
   const ytd = d.map((x, i) => (x.startsWith(yr) ? a[i] : null)).filter((v) => v != null);
-  const cru = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series/climate-cru.json"), "utf8"));
+  const cru = readSeries("climate-cru");
   const cy = (y0, y1) => { const v = cru.dates.map((x, i) => (+x.slice(0, 4) >= y0 && +x.slice(0, 4) <= y1 ? cru.series.tas.data[i] : null)).filter((z) => z != null); return v.reduce((s2, z) => s2 + z, 0) / v.length; };
   const slope = (y0) => { const p2 = cru.dates.map((x, i) => [+x.slice(0, 4), cru.series.tas.data[i]]).filter(([y, v]) => y >= y0 && v != null); const mx = p2.reduce((s2, q) => s2 + q[0], 0) / p2.length, my = p2.reduce((s2, q) => s2 + q[1], 0) / p2.length; return 10 * p2.reduce((s2, [x, y]) => s2 + (x - mx) * (y - my), 0) / p2.reduce((s2, [x]) => s2 + (x - mx) ** 2, 0); };
   const cl = cru.dates.at(-1).slice(0, 4);
@@ -330,7 +338,7 @@ if (slug === "climate") {
 // and the partners. Every figure is computed here from the baked bundles.
 if (slug === "trade") {
   const { chapterName } = await import("../src/dossiers/trade-chapters.js");
-  const B = (s) => JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", s + ".json"), "utf8"));
+  const B = (s) => readSeries(s);
   const r1 = (v) => (v == null ? null : Math.round(v * 10) / 10);
   const bn = (v) => r1(v / 1000);
   const g = (a, b) => (a == null || b == null || b === 0 ? null : r1((a / b - 1) * 100));
@@ -393,7 +401,7 @@ if (slug === "trade") {
 // figure the writer may cite sits in cross.lakhCrore or cross.year (two decimals), every share
 // in cross.per100, and the market, company and forecaster figures in cross.markets.
 if (slug === "markets") {
-  const rd = (f) => JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", f + ".json"), "utf8"));
+  const rd = (f) => readSeries(f);
   const lc = (v) => (v == null ? null : Math.round(v / 1e3) / 100);
   const r1 = (v) => (v == null ? null : Math.round(v * 10) / 10);
   const NAMES = { gross_financial_assets_i_financial_assets: "financial assets (gross saving)", gross_financial_liabilities_ii_financial_liabilities: "borrowing (financial liabilities)",
@@ -438,7 +446,7 @@ if (slug === "markets") {
 // from the final harvest, so they ride here, labelled, rather than as proseInputs. Every
 // figure is computed here from the baked bundles.
 if (slug === "farms") {
-  const B = (s) => JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", s + ".json"), "utf8"));
+  const B = (s) => readSeries(s);
   const r1 = (v) => (v == null ? null : Math.round(v * 10) / 10);
   const pct = (a, b) => (a == null || b == null || b === 0 ? null : r1((a / b - 1) * 100));
   const fy = (iso) => { const y = +iso.slice(0, 4); return `${y}-${String((y + 1) % 100).padStart(2, "0")}`; };
@@ -497,16 +505,50 @@ if (D.proseInputs?.length) {
   {
     const seams = YAML.parse(fs.readFileSync(path.join(ROOT, "data/sources.yml"), "utf8")).seams ?? {};
     for (const slug2 of D.proseInputs) {
-      const m2 = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", slug2 + ".json"), "utf8")).meta;
+      const m2 = readSeries(slug2).meta;
       if (m2.dossier === bundle.meta.dossier && seams[m2.dossier] && m2.base !== bundle.meta.base) {
         console.error(`facts: proseInput ${slug2} is on base "${m2.base}" but ${bundleSlug} is on "${bundle.meta.base}": point proseInputs at the current base's bundles`);
         process.exit(1);
       }
     }
   }
+  // a bundle that holds several MEASURES (participation, worker ratio and unemployment for
+  // the same groups; factory counts beside rupees of capital) must never be ranked as one
+  // field: "the highest reading" across a participation rate and an unemployment rate is
+  // meaningless (review-a, 2026-10: the jobs prose called rural women's 3.9% unemployment
+  // the lowest reading of an age cut that also held participation). Measures are read from
+  // the label's first segment ("LFPR · male · rural"): a few large groups, never one per state.
+  const measureGroups = (list) => {
+    const g = new Map();
+    for (const s of list) {
+      const m = String(s.label ?? "").includes(" · ") ? String(s.label).split(" · ")[0] : null;
+      if (m == null) return null;
+      if (!g.has(m)) g.set(m, []);
+      g.get(m).push(s);
+    }
+    return g.size >= 2 && g.size <= 8 && [...g.values()].every((l) => l.length >= 3) ? g : null;
+  };
   facts.proseInputs = D.proseInputs.map((slug2) => {
-    const b = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", slug2 + ".json"), "utf8"));
+    const b = readSeries(slug2);
     const list = Object.entries(b.series).map(([key, s]) => seriesFacts(b.dates, { key, ...s }));
+    const groups = measureGroups(list);
+    if (groups) {
+      const tailOf = (l) => {
+        const v = l.map((s) => s.latest).filter((x) => x != null).sort((a, c) => a - c);
+        const p = l.map((s) => s.deltaVsPrev).filter((x) => x != null);
+        return v.length ? { median: Math.round(v[Math.floor(v.length / 2)] * 100) / 100, rising: p.filter((x) => x > 0).length, falling: p.filter((x) => x < 0).length, belowZero: v.filter((x) => x < 0).length } : null;
+      };
+      return {
+        bundle: slug2, seriesCount: list.length, base: b.meta.base, ruler: rulerOf(slug2), coverage: b.meta.coverage ?? null,
+        note: "Several measures in one cut: rank and compare only within a measure, never across them.",
+        byMeasure: [...groups].map(([measure, l]) => {
+          const e = crossBundle(slug2, l, null, hDir);
+          const bl = l.filter((s) => s.latest != null).sort((a, c) => c.latest - a.latest);
+          return { measure, series: l.length, top: mover(e.topByDelta ?? null), bottom: mover(e.bottomByDelta ?? null),
+            topByLatest: mover(bl[0] ?? null), bottomByLatest: mover(bl.at(-1) ?? null), ...(l.length > 10 ? { tail: tailOf(l) } : {}) };
+        }),
+      };
+    }
     const e = crossBundle(slug2, list, commonHeadline(Object.keys(b.series)), hDir);
     const bl = list.filter((s) => s.latest != null).sort((a, c) => c.latest - a.latest);
     const out2 = {
@@ -519,7 +561,10 @@ if (D.proseInputs?.length) {
       bottom: mover(e.bottomByDelta ?? bl.at(-1) ?? null),
       topByLatest: mover(bl[0] ?? null),
       bottomByLatest: mover(bl.at(-1) ?? null),
-      spread: e.spreadDelta,
+      // two different spreads, named for what they are (review-a, 2026-10: the writer called
+      // the spread of year-on-year CHANGES "the spread across the industry groups")
+      rangeOfLatestReadings: bl.length > 1 ? Math.round((bl[0].latest - bl.at(-1).latest) * 100) / 100 : null,
+      spreadOfChangesOnAYearAgo: e.spreadDelta,
       countAboveHeadline: e.countAboveHeadline ?? null,
       contradictions: e.contradictions,
       ranking: e.ranking.slice(0, 10),

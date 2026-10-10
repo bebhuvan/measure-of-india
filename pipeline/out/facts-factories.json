@@ -17,6 +17,10 @@
   "current": true,
   "agencyLink": null
  },
+ "precision": {
+  "rateDecimals": 1,
+  "rule": "Write every rate, growth figure and share to ONE decimal (\"7.8%\", \"rose 0.6 points\"), the precision the agency publishes; the facts' rate series are already rounded to it. Counts and money in readable units: at most one decimal on a lakh, crore, million or billion figure, none once it reaches a thousand (\"about 2,366 crore payments\")."
+ },
  "series": {
   "number_of_factories": {
    "label": "Number of factories",
@@ -603,92 +607,237 @@
     "agencyLink": null
    },
    "coverage": "All India × 2-digit NIC 2008 divisions; core indicators (factories in operation, fixed capital, gross output, GVA, persons engaged, emoluments)",
-   "top": {
-    "key": "total_output_10",
-    "label": "Gross output · 10 Manufacture of Food Products",
-    "latest": 202831001,
-    "latestPeriod": "2023-04",
-    "deltaVsYearAgo": 23793230
-   },
-   "bottom": {
-    "key": "total_output_19",
-    "label": "Gross output · 19 Manufacture of Coke and Refined Petroleum Products",
-    "latest": 186757666,
-    "latestPeriod": "2023-04",
-    "deltaVsYearAgo": -16319388
-   },
-   "topByLatest": {
-    "key": "total_output_24",
-    "label": "Gross output · 24 Manufacture of Basic Metals",
-    "latest": 222144598,
-    "latestPeriod": "2023-04",
-    "deltaVsYearAgo": 6820254
-   },
-   "bottomByLatest": {
-    "key": "factories_in_operation_08",
-    "label": "Factories in operation · 08 Other Mining and Quarrying",
-    "latest": 132,
-    "latestPeriod": "2023-04",
-    "deltaVsYearAgo": 7
-   },
-   "spread": 40112618,
-   "countAboveHeadline": null,
-   "contradictions": [
-    "factories_in_operation_01",
-    "factories_in_operation_12",
-    "factories_in_operation_18",
-    "factories_in_operation_19",
-    "factories_in_operation_30",
-    "factories_in_operation_33",
-    "fixed_capital_01",
-    "fixed_capital_12",
-    "fixed_capital_31",
-    "fixed_capital_38",
-    "fixed_capital_58",
-    "total_output_12",
-    "total_output_13",
-    "total_output_14",
-    "total_output_15",
-    "total_output_19",
-    "total_output_20",
-    "total_output_38",
-    "total_output_58",
-    "gva_08",
-    "gva_18",
-    "gva_19",
-    "gva_38",
-    "persons_engaged_01",
-    "persons_engaged_12",
-    "persons_engaged_13",
-    "persons_engaged_18",
-    "persons_engaged_31",
-    "persons_engaged_33",
-    "emoluments_01",
-    "emoluments_31"
-   ],
-   "ranking": [
-    "total_output_10",
-    "total_output_29",
-    "total_output_27",
-    "total_output_28",
-    "total_output_26",
-    "fixed_capital_24",
-    "total_output_24",
-    "total_output_23",
-    "fixed_capital_20",
-    "gva_29",
-    "fixed_capital_19",
-    "fixed_capital_22",
-    "fixed_capital_99998",
-    "total_output_21",
-    "fixed_capital_10"
-   ],
-   "tail": {
-    "median": 1522861,
-    "rising": 143,
-    "falling": 31,
-    "belowZero": 0
-   }
+   "note": "Several measures in one cut: rank and compare only within a measure, never across them.",
+   "byMeasure": [
+    {
+     "measure": "Factories in operation",
+     "series": 29,
+     "top": {
+      "key": "factories_in_operation_28",
+      "label": "Factories in operation · 28 Manufacture of Machinery and Equipment N.e.c",
+      "latest": 12406,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 782
+     },
+     "bottom": {
+      "key": "factories_in_operation_01",
+      "label": "Factories in operation · 01 Crop and Animal Production,hunting and Related Service Activities",
+      "latest": 2498,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": -127
+     },
+     "topByLatest": {
+      "key": "factories_in_operation_10",
+      "label": "Factories in operation · 10 Manufacture of Food Products",
+      "latest": 35081,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 602
+     },
+     "bottomByLatest": {
+      "key": "factories_in_operation_08",
+      "label": "Factories in operation · 08 Other Mining and Quarrying",
+      "latest": 132,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 7
+     },
+     "tail": {
+      "median": 4128,
+      "rising": 23,
+      "falling": 6,
+      "belowZero": 0
+     }
+    },
+    {
+     "measure": "Fixed capital",
+     "series": 29,
+     "top": {
+      "key": "fixed_capital_24",
+      "label": "Fixed capital · 24 Manufacture of Basic Metals",
+      "latest": 80567152,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 8067522
+     },
+     "bottom": {
+      "key": "fixed_capital_31",
+      "label": "Fixed capital · 31 Manufacture of Furniture",
+      "latest": 1155735,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": -242123
+     },
+     "topByLatest": {
+      "key": "fixed_capital_24",
+      "label": "Fixed capital · 24 Manufacture of Basic Metals",
+      "latest": 80567152,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 8067522
+     },
+     "bottomByLatest": {
+      "key": "fixed_capital_08",
+      "label": "Fixed capital · 08 Other Mining and Quarrying",
+      "latest": 117507,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 51268
+     },
+     "tail": {
+      "median": 7487094,
+      "rising": 24,
+      "falling": 5,
+      "belowZero": 0
+     }
+    },
+    {
+     "measure": "Gross output",
+     "series": 29,
+     "top": {
+      "key": "total_output_10",
+      "label": "Gross output · 10 Manufacture of Food Products",
+      "latest": 202831001,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 23793230
+     },
+     "bottom": {
+      "key": "total_output_19",
+      "label": "Gross output · 19 Manufacture of Coke and Refined Petroleum Products",
+      "latest": 186757666,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": -16319388
+     },
+     "topByLatest": {
+      "key": "total_output_24",
+      "label": "Gross output · 24 Manufacture of Basic Metals",
+      "latest": 222144598,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 6820254
+     },
+     "bottomByLatest": {
+      "key": "total_output_08",
+      "label": "Gross output · 08 Other Mining and Quarrying",
+      "latest": 308130,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 91354
+     },
+     "tail": {
+      "median": 34065248,
+      "rising": 21,
+      "falling": 8,
+      "belowZero": 0
+     }
+    },
+    {
+     "measure": "Gross value added",
+     "series": 29,
+     "top": {
+      "key": "gva_29",
+      "label": "Gross value added · 29 Manufacture of Motor Vehicles,trailers and Semi Trailers.",
+      "latest": 22393329,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 4656799
+     },
+     "bottom": {
+      "key": "gva_19",
+      "label": "Gross value added · 19 Manufacture of Coke and Refined Petroleum Products",
+      "latest": 15368161,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": -3735523
+     },
+     "topByLatest": {
+      "key": "gva_24",
+      "label": "Gross value added · 24 Manufacture of Basic Metals",
+      "latest": 28423673,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 2999284
+     },
+     "bottomByLatest": {
+      "key": "gva_08",
+      "label": "Gross value added · 08 Other Mining and Quarrying",
+      "latest": 77641,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": -4550
+     },
+     "tail": {
+      "median": 6915404,
+      "rising": 25,
+      "falling": 4,
+      "belowZero": 0
+     }
+    },
+    {
+     "measure": "Total persons engaged",
+     "series": 29,
+     "top": {
+      "key": "persons_engaged_28",
+      "label": "Total persons engaged · 28 Manufacture of Machinery and Equipment N.e.c",
+      "latest": 1252506,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 142630
+     },
+     "bottom": {
+      "key": "persons_engaged_12",
+      "label": "Total persons engaged · 12 Manufacture of Tobacco Products",
+      "latest": 409362,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": -26626
+     },
+     "topByLatest": {
+      "key": "persons_engaged_10",
+      "label": "Total persons engaged · 10 Manufacture of Food Products",
+      "latest": 2167329,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 51009
+     },
+     "bottomByLatest": {
+      "key": "persons_engaged_08",
+      "label": "Total persons engaged · 08 Other Mining and Quarrying",
+      "latest": 9186,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 1258
+     },
+     "tail": {
+      "median": 467693,
+      "rising": 23,
+      "falling": 6,
+      "belowZero": 0
+     }
+    },
+    {
+     "measure": "Total emoluments (wages & salaries incl. employer's contribution)",
+     "series": 29,
+     "top": {
+      "key": "emoluments_28",
+      "label": "Total emoluments (wages & salaries incl. employer's contribution) · 28 Manufacture of Machinery and Equipment N.e.c",
+      "latest": 6988294,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 1050809
+     },
+     "bottom": {
+      "key": "emoluments_31",
+      "label": "Total emoluments (wages & salaries incl. employer's contribution) · 31 Manufacture of Furniture",
+      "latest": 436708,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": -62597
+     },
+     "topByLatest": {
+      "key": "emoluments_29",
+      "label": "Total emoluments (wages & salaries incl. employer's contribution) · 29 Manufacture of Motor Vehicles,trailers and Semi Trailers.",
+      "latest": 7445185,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 867973
+     },
+     "bottomByLatest": {
+      "key": "emoluments_08",
+      "label": "Total emoluments (wages & salaries incl. employer's contribution) · 08 Other Mining and Quarrying",
+      "latest": 21489,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 4725
+     },
+     "tail": {
+      "median": 2195496,
+      "rising": 27,
+      "falling": 2,
+      "belowZero": 0
+     }
+    }
+   ]
   },
   {
    "bundle": "asi-states",
@@ -706,115 +855,237 @@
     "agencyLink": null
    },
    "coverage": "States/UTs, all industries (NIC 99999); core indicators",
-   "top": {
-    "key": "total_output_haryana",
-    "label": "Gross output · Haryana",
-    "latest": 110833060,
-    "latestPeriod": "2023-04",
-    "deltaVsYearAgo": 22806036
-   },
-   "bottom": {
-    "key": "total_output_punjab",
-    "label": "Gross output · Punjab",
-    "latest": 40754266,
-    "latestPeriod": "2023-04",
-    "deltaVsYearAgo": -5448099
-   },
-   "topByLatest": {
-    "key": "total_output_gujarat",
-    "label": "Gross output · Gujarat",
-    "latest": 263949936,
-    "latestPeriod": "2023-04",
-    "deltaVsYearAgo": 7176631
-   },
-   "bottomByLatest": {
-    "key": "factories_in_operation_lakshadweep",
-    "label": "Factories in operation · Lakshadweep",
-    "latest": 3,
-    "latestPeriod": "2023-04",
-    "deltaVsYearAgo": null
-   },
-   "spread": 28254135,
-   "countAboveHeadline": null,
-   "contradictions": [
-    "factories_in_operation_andaman_nicobar_islands",
-    "factories_in_operation_arunachal_pradesh",
-    "factories_in_operation_bihar",
-    "factories_in_operation_chandigarh",
-    "factories_in_operation_dadra_nagar_haveli",
-    "factories_in_operation_delhi",
-    "factories_in_operation_himachal_pradesh",
-    "factories_in_operation_ladakh",
-    "factories_in_operation_mizoram",
-    "factories_in_operation_nagaland",
-    "factories_in_operation_puducherry",
-    "factories_in_operation_punjab",
-    "factories_in_operation_telangana",
-    "factories_in_operation_west_bengal",
-    "fixed_capital_arunachal_pradesh",
-    "fixed_capital_dadra_nagar_haveli",
-    "fixed_capital_delhi",
-    "fixed_capital_himachal_pradesh",
-    "fixed_capital_mizoram",
-    "fixed_capital_nagaland",
-    "fixed_capital_sikkim",
-    "fixed_capital_uttarakhand",
-    "total_output_assam",
-    "total_output_bihar",
-    "total_output_chandigarh",
-    "total_output_dadra_nagar_haveli",
-    "total_output_daman_diu",
-    "total_output_delhi",
-    "total_output_himachal_pradesh",
-    "total_output_jharkhand",
-    "total_output_ladakh",
-    "total_output_manipur",
-    "total_output_punjab",
-    "total_output_west_bengal",
-    "gva_bihar",
-    "gva_himachal_pradesh",
-    "gva_manipur",
-    "gva_meghalaya",
-    "gva_mizoram",
-    "gva_nagaland",
-    "persons_engaged_andaman_nicobar_islands",
-    "persons_engaged_assam",
-    "persons_engaged_chandigarh",
-    "persons_engaged_dadra_nagar_havelli_and_daman_diu",
-    "persons_engaged_delhi",
-    "persons_engaged_himachal_pradesh",
-    "persons_engaged_ladakh",
-    "persons_engaged_manipur",
-    "persons_engaged_puducherry",
-    "persons_engaged_punjab",
-    "emoluments_andaman_nicobar_islands",
-    "emoluments_assam",
-    "emoluments_ladakh",
-    "emoluments_manipur"
-   ],
-   "ranking": [
-    "total_output_haryana",
-    "total_output_tamil_nadu",
-    "total_output_maharashtra",
-    "fixed_capital_gujarat",
-    "total_output_karnataka",
-    "total_output_uttar_pradesh",
-    "total_output_gujarat",
-    "total_output_andhra_pradesh",
-    "fixed_capital_maharashtra",
-    "fixed_capital_madhya_pradesh",
-    "fixed_capital_tamil_nadu",
-    "total_output_telangana",
-    "total_output_rajasthan",
-    "fixed_capital_odisha",
-    "gva_haryana"
-   ],
-   "tail": {
-    "median": 679151,
-    "rising": 168,
-    "falling": 49,
-    "belowZero": 0
-   }
+   "note": "Several measures in one cut: rank and compare only within a measure, never across them.",
+   "byMeasure": [
+    {
+     "measure": "Factories in operation",
+     "series": 38,
+     "top": {
+      "key": "factories_in_operation_uttar_pradesh",
+      "label": "Factories in operation · Uttar Pradesh",
+      "latest": 18827,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 2564
+     },
+     "bottom": {
+      "key": "factories_in_operation_west_bengal",
+      "label": "Factories in operation · West Bengal",
+      "latest": 8416,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": -465
+     },
+     "topByLatest": {
+      "key": "factories_in_operation_tamil_nadu",
+      "label": "Factories in operation · Tamil Nadu",
+      "latest": 32000,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 483
+     },
+     "bottomByLatest": {
+      "key": "factories_in_operation_lakshadweep",
+      "label": "Factories in operation · Lakshadweep",
+      "latest": 3,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": null
+     },
+     "tail": {
+      "median": 2253,
+      "rising": 23,
+      "falling": 9,
+      "belowZero": 0
+     }
+    },
+    {
+     "measure": "Fixed capital",
+     "series": 38,
+     "top": {
+      "key": "fixed_capital_gujarat",
+      "label": "Fixed capital · Gujarat",
+      "latest": 90327908,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 9359433
+     },
+     "bottom": {
+      "key": "fixed_capital_uttarakhand",
+      "label": "Fixed capital · Uttarakhand",
+      "latest": 6340757,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": -2235160
+     },
+     "topByLatest": {
+      "key": "fixed_capital_gujarat",
+      "label": "Fixed capital · Gujarat",
+      "latest": 90327908,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 9359433
+     },
+     "bottomByLatest": {
+      "key": "fixed_capital_lakshadweep",
+      "label": "Fixed capital · Lakshadweep",
+      "latest": 54,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": null
+     },
+     "tail": {
+      "median": 4945415,
+      "rising": 29,
+      "falling": 8,
+      "belowZero": 0
+     }
+    },
+    {
+     "measure": "Gross output",
+     "series": 38,
+     "top": {
+      "key": "total_output_haryana",
+      "label": "Gross output · Haryana",
+      "latest": 110833060,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 22806036
+     },
+     "bottom": {
+      "key": "total_output_punjab",
+      "label": "Gross output · Punjab",
+      "latest": 40754266,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": -5448099
+     },
+     "topByLatest": {
+      "key": "total_output_gujarat",
+      "label": "Gross output · Gujarat",
+      "latest": 263949936,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 7176631
+     },
+     "bottomByLatest": {
+      "key": "total_output_lakshadweep",
+      "label": "Gross output · Lakshadweep",
+      "latest": 78,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": null
+     },
+     "tail": {
+      "median": 16370941,
+      "rising": 25,
+      "falling": 12,
+      "belowZero": 0
+     }
+    },
+    {
+     "measure": "Gross value added",
+     "series": 38,
+     "top": {
+      "key": "gva_haryana",
+      "label": "Gross value added · Haryana",
+      "latest": 15306213,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 3389663
+     },
+     "bottom": {
+      "key": "gva_himachal_pradesh",
+      "label": "Gross value added · Himachal Pradesh",
+      "latest": 3956086,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": -142967
+     },
+     "topByLatest": {
+      "key": "gva_maharashtra",
+      "label": "Gross value added · Maharashtra",
+      "latest": 39209738,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 3327034
+     },
+     "bottomByLatest": {
+      "key": "gva_lakshadweep",
+      "label": "Gross value added · Lakshadweep",
+      "latest": 25,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": null
+     },
+     "tail": {
+      "median": 3307237,
+      "rising": 31,
+      "falling": 6,
+      "belowZero": 0
+     }
+    },
+    {
+     "measure": "Total persons engaged",
+     "series": 38,
+     "top": {
+      "key": "persons_engaged_gujarat",
+      "label": "Total persons engaged · Gujarat",
+      "latest": 2559577,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 224941
+     },
+     "bottom": {
+      "key": "persons_engaged_punjab",
+      "label": "Total persons engaged · Punjab",
+      "latest": 780562,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": -60341
+     },
+     "topByLatest": {
+      "key": "persons_engaged_tamil_nadu",
+      "label": "Total persons engaged · Tamil Nadu",
+      "latest": 2984439,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 209590
+     },
+     "bottomByLatest": {
+      "key": "persons_engaged_lakshadweep",
+      "label": "Total persons engaged · Lakshadweep",
+      "latest": 12,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": null
+     },
+     "tail": {
+      "median": 236026,
+      "rising": 27,
+      "falling": 10,
+      "belowZero": 0
+     }
+    },
+    {
+     "measure": "Total emoluments (wages & salaries incl. employer's contribution)",
+     "series": 38,
+     "top": {
+      "key": "emoluments_maharashtra",
+      "label": "Total emoluments (wages & salaries incl. employer's contribution) · Maharashtra",
+      "latest": 13908389,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 1441616
+     },
+     "bottom": {
+      "key": "emoluments_assam",
+      "label": "Total emoluments (wages & salaries incl. employer's contribution) · Assam",
+      "latest": 525133,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": -14567
+     },
+     "topByLatest": {
+      "key": "emoluments_maharashtra",
+      "label": "Total emoluments (wages & salaries incl. employer's contribution) · Maharashtra",
+      "latest": 13908389,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 1441616
+     },
+     "bottomByLatest": {
+      "key": "emoluments_lakshadweep",
+      "label": "Total emoluments (wages & salaries incl. employer's contribution) · Lakshadweep",
+      "latest": 11,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": null
+     },
+     "tail": {
+      "median": 991392,
+      "rising": 33,
+      "falling": 4,
+      "belowZero": 0
+     }
+    }
+   ]
   },
   {
    "bundle": "asuse-annual",
@@ -860,7 +1131,8 @@
     "latestPeriod": "2023-04",
     "deltaVsYearAgo": 5763
    },
-   "spread": 10975249,
+   "rangeOfLatestReadings": 120490603,
+   "spreadOfChangesOnAYearAgo": 10975249,
    "countAboveHeadline": null,
    "contradictions": [
     "emoluments_per_hired_worker_all"
@@ -894,69 +1166,137 @@
     "agencyLink": null
    },
    "coverage": "All India, rural/urban × broad activity groups (published aggregates: Manufacturing Activities, Trading Activities, Other Services, All); all establishment types",
-   "top": {
-    "key": "workers_urban_all",
-    "label": "Workers · Urban · All activities",
-    "latest": 64461404,
-    "latestPeriod": "2023-04",
-    "deltaVsYearAgo": 7201688
-   },
-   "bottom": {
-    "key": "establishments_rural_trading",
-    "label": "Establishments · Rural · Trading Activities",
-    "latest": 11443466,
-    "latestPeriod": "2023-04",
-    "deltaVsYearAgo": -116637
-   },
-   "topByLatest": {
-    "key": "workers_urban_all",
-    "label": "Workers · Urban · All activities",
-    "latest": 64461404,
-    "latestPeriod": "2023-04",
-    "deltaVsYearAgo": 7201688
-   },
-   "bottomByLatest": {
-    "key": "gva_per_worker_rural_manufacturing",
-    "label": "GVA per worker (market establishments) · Rural · Manufacturing Activities",
-    "latest": 81642,
-    "latestPeriod": "2023-04",
-    "deltaVsYearAgo": -3089
-   },
-   "spread": 7318325,
-   "countAboveHeadline": null,
-   "contradictions": [
-    "establishments_rural_trading",
-    "workers_rural_trading",
-    "gva_per_worker_rural_manufacturing",
-    "gva_per_worker_urban_manufacturing",
-    "emoluments_per_hired_worker_rural_manufacturing",
-    "emoluments_per_hired_worker_rural_other_services",
-    "emoluments_per_hired_worker_urban_other_services",
-    "emoluments_per_hired_worker_rural_all"
-   ],
-   "ranking": [
-    "workers_urban_all",
-    "establishments_urban_all",
-    "workers_urban_other_services",
-    "establishments_rural_all",
-    "workers_rural_all",
-    "workers_rural_other_services",
-    "establishments_urban_other_services",
-    "establishments_rural_other_services",
-    "workers_urban_manufacturing",
-    "establishments_rural_manufacturing",
-    "establishments_urban_manufacturing",
-    "workers_rural_manufacturing",
-    "workers_urban_trading",
-    "establishments_urban_trading",
-    "gva_per_worker_urban_trading"
-   ],
-   "tail": {
-    "median": 8055022,
-    "rising": 24,
-    "falling": 8,
-    "belowZero": 0
-   }
+   "note": "Several measures in one cut: rank and compare only within a measure, never across them.",
+   "byMeasure": [
+    {
+     "measure": "Establishments",
+     "series": 8,
+     "top": {
+      "key": "establishments_urban_all",
+      "label": "Establishments · Urban · All activities",
+      "latest": 33651800,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 4246737
+     },
+     "bottom": {
+      "key": "establishments_rural_trading",
+      "label": "Establishments · Rural · Trading Activities",
+      "latest": 11443466,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": -116637
+     },
+     "topByLatest": {
+      "key": "establishments_rural_all",
+      "label": "Establishments · Rural · All activities",
+      "latest": 39747675,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 4104348
+     },
+     "bottomByLatest": {
+      "key": "establishments_urban_manufacturing",
+      "label": "Establishments · Urban · Manufacturing Activities",
+      "latest": 8055022,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 947517
+     }
+    },
+    {
+     "measure": "Workers",
+     "series": 8,
+     "top": {
+      "key": "workers_urban_all",
+      "label": "Workers · Urban · All activities",
+      "latest": 64461404,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 7201688
+     },
+     "bottom": {
+      "key": "workers_rural_trading",
+      "label": "Workers · Rural · Trading Activities",
+      "latest": 17887545,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": -102366
+     },
+     "topByLatest": {
+      "key": "workers_urban_all",
+      "label": "Workers · Urban · All activities",
+      "latest": 64461404,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 7201688
+     },
+     "bottomByLatest": {
+      "key": "workers_urban_manufacturing",
+      "label": "Workers · Urban · Manufacturing Activities",
+      "latest": 16137622,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 2169592
+     }
+    },
+    {
+     "measure": "GVA per worker (market establishments)",
+     "series": 8,
+     "top": {
+      "key": "gva_per_worker_urban_trading",
+      "label": "GVA per worker (market establishments) · Urban · Trading Activities",
+      "latest": 193826,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 15530
+     },
+     "bottom": {
+      "key": "gva_per_worker_urban_manufacturing",
+      "label": "GVA per worker (market establishments) · Urban · Manufacturing Activities",
+      "latest": 146849,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": -10361
+     },
+     "topByLatest": {
+      "key": "gva_per_worker_urban_trading",
+      "label": "GVA per worker (market establishments) · Urban · Trading Activities",
+      "latest": 193826,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 15530
+     },
+     "bottomByLatest": {
+      "key": "gva_per_worker_rural_manufacturing",
+      "label": "GVA per worker (market establishments) · Rural · Manufacturing Activities",
+      "latest": 81642,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": -3089
+     }
+    },
+    {
+     "measure": "Emoluments per hired worker",
+     "series": 8,
+     "top": {
+      "key": "emoluments_per_hired_worker_urban_manufacturing",
+      "label": "Emoluments per hired worker · Urban · Manufacturing Activities",
+      "latest": 129454,
+      "latestPeriod": "2022-04",
+      "deltaVsYearAgo": 13361
+     },
+     "bottom": {
+      "key": "emoluments_per_hired_worker_rural_other_services",
+      "label": "Emoluments per hired worker · Rural · Other Services",
+      "latest": 111448,
+      "latestPeriod": "2022-04",
+      "deltaVsYearAgo": -26597
+     },
+     "topByLatest": {
+      "key": "emoluments_per_hired_worker_urban_other_services",
+      "label": "Emoluments per hired worker · Urban · Other Services",
+      "latest": 146069,
+      "latestPeriod": "2022-04",
+      "deltaVsYearAgo": -753
+     },
+     "bottomByLatest": {
+      "key": "emoluments_per_hired_worker_rural_manufacturing",
+      "label": "Emoluments per hired worker · Rural · Manufacturing Activities",
+      "latest": 96663,
+      "latestPeriod": "2022-04",
+      "deltaVsYearAgo": -146
+     }
+    }
+   ]
   },
   {
    "bundle": "asuse-states",
@@ -974,82 +1314,123 @@
     "agencyLink": null
    },
    "coverage": "States/UTs; estimated establishments (indicator 2), workers (27, all genders and working time), and annual GVA per worker (33, market establishments) — Combined sector, activity All, all establishment types",
-   "top": {
-    "key": "wrk_gujarat",
-    "label": "Workers · Gujarat",
-    "latest": 9200653,
-    "latestPeriod": "2023-04",
-    "deltaVsYearAgo": 2319899
-   },
-   "bottom": {
-    "key": "wrk_jharkhand",
-    "label": "Workers · Jharkhand",
-    "latest": 2570291,
-    "latestPeriod": "2023-04",
-    "deltaVsYearAgo": -322357
-   },
-   "topByLatest": {
-    "key": "wrk_uttar_pradesh",
-    "label": "Workers · Uttar Pradesh",
-    "latest": 15995004,
-    "latestPeriod": "2023-04",
-    "deltaVsYearAgo": 249149
-   },
-   "bottomByLatest": {
-    "key": "est_lakshadweep",
-    "label": "Establishments · Lakshadweep",
-    "latest": 4477,
-    "latestPeriod": "2023-04",
-    "deltaVsYearAgo": 1379
-   },
-   "spread": 2642256,
-   "countAboveHeadline": null,
-   "contradictions": [
-    "est_andaman_nicobar_islands",
-    "est_arunachal_pradesh",
-    "est_jharkhand",
-    "wrk_andaman_nicobar_islands",
-    "wrk_arunachal_pradesh",
-    "wrk_bihar",
-    "wrk_jammu_kashmir",
-    "wrk_jharkhand",
-    "wrk_karnataka",
-    "wrk_meghalaya",
-    "wrk_sikkim",
-    "gvapw_andhra_pradesh",
-    "gvapw_chhattisgarh",
-    "gvapw_delhi",
-    "gvapw_goa",
-    "gvapw_madhya_pradesh",
-    "gvapw_meghalaya",
-    "gvapw_nagaland",
-    "gvapw_puduchery",
-    "gvapw_punjab",
-    "gvapw_west_bengal"
-   ],
-   "ranking": [
-    "wrk_gujarat",
-    "wrk_west_bengal",
-    "est_west_bengal",
-    "est_gujarat",
-    "wrk_rajasthan",
-    "wrk_madhya_pradesh",
-    "wrk_kerala",
-    "est_madhya_pradesh",
-    "wrk_odisha",
-    "est_rajasthan",
-    "est_bihar",
-    "wrk_telangana",
-    "wrk_maharashtra",
-    "est_odisha",
-    "wrk_chhattisgarh"
-   ],
-   "tail": {
-    "median": 194445,
-    "rising": 87,
-    "falling": 21,
-    "belowZero": 0
-   }
+   "note": "Several measures in one cut: rank and compare only within a measure, never across them.",
+   "byMeasure": [
+    {
+     "measure": "Establishments",
+     "series": 38,
+     "top": {
+      "key": "est_west_bengal",
+      "label": "Establishments · West Bengal",
+      "latest": 9267816,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 1436559
+     },
+     "bottom": {
+      "key": "est_jharkhand",
+      "label": "Establishments · Jharkhand",
+      "latest": 1767860,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": -209654
+     },
+     "topByLatest": {
+      "key": "est_uttar_pradesh",
+      "label": "Establishments · Uttar Pradesh",
+      "latest": 9383148,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 388825
+     },
+     "bottomByLatest": {
+      "key": "est_lakshadweep",
+      "label": "Establishments · Lakshadweep",
+      "latest": 4477,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 1379
+     },
+     "tail": {
+      "median": 997101,
+      "rising": 33,
+      "falling": 3,
+      "belowZero": 0
+     }
+    },
+    {
+     "measure": "Workers",
+     "series": 38,
+     "top": {
+      "key": "wrk_gujarat",
+      "label": "Workers · Gujarat",
+      "latest": 9200653,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 2319899
+     },
+     "bottom": {
+      "key": "wrk_jharkhand",
+      "label": "Workers · Jharkhand",
+      "latest": 2570291,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": -322357
+     },
+     "topByLatest": {
+      "key": "wrk_uttar_pradesh",
+      "label": "Workers · Uttar Pradesh",
+      "latest": 15995004,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 249149
+     },
+     "bottomByLatest": {
+      "key": "wrk_lakshadweep",
+      "label": "Workers · Lakshadweep",
+      "latest": 7622,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 2926
+     },
+     "tail": {
+      "median": 1702236,
+      "rising": 28,
+      "falling": 8,
+      "belowZero": 0
+     }
+    },
+    {
+     "measure": "GVA per worker",
+     "series": 38,
+     "top": {
+      "key": "gvapw_ladakh",
+      "label": "GVA per worker · Ladakh",
+      "latest": 284862,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 81037
+     },
+     "bottom": {
+      "key": "gvapw_meghalaya",
+      "label": "GVA per worker · Meghalaya",
+      "latest": 126627,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": -87252
+     },
+     "topByLatest": {
+      "key": "gvapw_chandigarh",
+      "label": "GVA per worker · Chandigarh",
+      "latest": 303612,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 45180
+     },
+     "bottomByLatest": {
+      "key": "gvapw_odisha",
+      "label": "GVA per worker · Odisha",
+      "latest": 85804,
+      "latestPeriod": "2023-04",
+      "deltaVsYearAgo": 1878
+     },
+     "tail": {
+      "median": 160553,
+      "rising": 26,
+      "falling": 10,
+      "belowZero": 0
+     }
+    }
+   ]
   },
   {
    "bundle": "asuse-2025-t26",
@@ -1095,7 +1476,8 @@
     "latestPeriod": "2025-01",
     "deltaVsYearAgo": null
    },
-   "spread": null,
+   "rangeOfLatestReadings": 128051841,
+   "spreadOfChangesOnAYearAgo": null,
    "countAboveHeadline": null,
    "contradictions": [],
    "ranking": [

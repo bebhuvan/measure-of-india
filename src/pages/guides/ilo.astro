@@ -166,7 +166,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="now">
             <span class="mk">As of {asOf.est}</span>
-            <p>Women's participation stands at <b id="ex-lfpr-now">–</b>, up from a low of <b id="ex-lfpr-low">–</b>, but still below <b id="ex-lfpr-peak">–</b> in 2005. Of the years from 1990, the ILO flags {lfprReal.length ? lfprReal.join(", ") : "none"} as taken directly from a survey; every other point is the model's.</p>
+            <p>Women's participation stands at <b id="ex-lfpr-now">–</b>, up from a low of <b id="ex-lfpr-low">–</b>, but still below <b id="ex-lfpr-peak">–</b> in 2005. {lfprReal.length ? `Of the years from 1990, the ILO flags only ${lfprReal.join(", ")} as taken directly from a survey; every other point is the model's.` : "The ILO flags no year from 1990 as taken directly from a survey: every point is the model's."}</p>
           </div>
         </div>
       </figure>
@@ -248,7 +248,7 @@ const asOf = { est: estYear, plfs: plfsYear, cls: clsLast };
           </div>
           <div class="now">
             <span class="mk">As of {asOf.est}</span>
-            <p>The model holds unemployment at about <b id="ex-u-flat">–</b> through the 2000s, with a band of <b id="ex-u-band">–</b> in 2000. The NSS rounds of those years, as the ILO itself processed them, measured between <b id="ex-u-nss">–</b>. From <b id="ex-u-first">–</b> it follows the survey: <b id="ex-u-now">–</b> for everyone 15+ and <b id="ex-u-youth">–</b> for those aged 15 to 24 in {estYear}.</p>
+            <p>The model holds unemployment at about <b id="ex-u-flat">–</b> through the 2000s, with a band of <b id="ex-u-band">–</b> in 2000. The NSS rounds of those years, as the ILO itself processed them, measured <b id="ex-u-nss">–</b>. From <b id="ex-u-first">–</b> it follows the survey: <b id="ex-u-now">–</b> for everyone 15+ and <b id="ex-u-youth">–</b> for those aged 15 to 24 in {estYear}.</p>
           </div>
         </div>
       </figure>

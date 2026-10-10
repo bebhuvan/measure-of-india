@@ -236,7 +236,7 @@ if (U) {
   setHTML("ex-u-first", String(firstReal));
   setHTML("ex-u-now", p1(lastP(U[k]).value));
   setHTML("ex-u-youth", p1(lastP(U[ky]).value));
-  if (nssU) { const v = nn(nssU).map((d) => d.value); setHTML("ex-u-nss", `${p1(Math.min(...v))} to ${p1(Math.max(...v))}`); }
+  if (nssU) { const v = nn(nssU).map((d) => d.value); setHTML("ex-u-nss", `between ${p1(Math.min(...v))} and ${p1(Math.max(...v))}`); }
 }
 
 /* ======================================================================

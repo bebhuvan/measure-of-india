@@ -32,7 +32,7 @@ const P = {}; for (const k in S) P[k] = S[k].data.at(-2).value;
 const Y = {}; for (const k in S) Y[k] = S[k].data.at(-13).value;
 const prevName = fmtDate(S.headline.data.at(-2).date);
 const pc = '<span class="pc">%</span>';
-const arrow = (d) => (d >= 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(2) + " pt";
+const arrow = (d) => (Math.abs(d) < 0.005 ? "unchanged" : (d > 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(2) + " pt");
 const word = (d) => (d >= 0 ? "firming" : "easing");
 const setHTML = (id, h) => (document.getElementById(id).innerHTML = h);
 const setTxt = (id, t) => (document.getElementById(id).textContent = t);
@@ -659,7 +659,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, fmtX, dlNa
   setTxt("pv-w2r", best.lag + (best.lag === 1 ? " month" : " months"));
   setTxt("pc-w2r", "best-fitting lag, correlation " + best.r.toFixed(2));
   setTxt("w2r-n", String(pts.length));
-  setTxt("w2r-lag", best.lag + (best.lag === 1 ? " month" : " months"));
+  setTxt("w2r-lag", best.lag === 0 ? "with no shift at all, in the same month" : "when shifted " + best.lag + (best.lag === 1 ? " month" : " months") + " later");
   setTxt("w2r-r", best.r.toFixed(2));
   setTxt("w2r-wrange", rng("w"));
   setTxt("w2r-crange", rng("c"));

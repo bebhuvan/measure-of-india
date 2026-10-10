@@ -6,6 +6,7 @@
 // published it, is in the every-state table. Every number on the page is read from the bundles.
 
 import * as Plot from "@observablehq/plot";
+import { numWord } from "./precision.js";
 import spreadB from "../../data/series/states-spread.json";
 import pcB from "../../data/series/states-pcnsdp-current.json";
 import pcRealB from "../../data/series/states-pcnsdp-constant.json";
@@ -24,7 +25,7 @@ const setHTML = (id, h) => { const el = document.getElementById(id); if (el) el.
 const pc = (u) => `<span class="pc">${u}</span>`;
 const fy = (iso) => { const y = +iso.slice(0, 4); return `${y}-${String((y + 1) % 100).padStart(2, "0")}`; };
 const inrR = fmt.inrR;
-const lakhCr = (crore) => "₹" + (crore / 1e5).toFixed(2) + " lakh crore";
+const lakhCr = (crore) => "₹" + (crore / 1e5).toFixed(1) + " lakh crore";   // review-a: one decimal on a lakh crore figure
 const median = (xs) => { const s = [...xs].sort((a, b) => a - b), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
 // a state's display name: the label as served, less our own annotations
 const nameOf = (s) => s.label.replace(/ \(derived.*\)$/, "").replace(/:.*$/, "");
@@ -117,7 +118,7 @@ function hbars(id, rows, { x, xMax, xTicks, xFmt, val, hl, extra = [], marginLef
   setHTML("ex-pc-low", `${low.name}, ${inrR(low.v)}`);
   setHTML("ex-pc-lowday", inrR(low.v / 365));
   setHTML("ex-pc-med", inrR(med));
-  setHTML("ex-pc-n25", String(rows.filter((r) => r.tick != null).length));
+  setHTML("ex-pc-n25", numWord(rows.filter((r) => r.tick != null).length, true));
   wirePlate("cb-pc", plot, "india-atlas_states-income-per-person",
     "state,year,per_capita_nsdp_inr_current,per_capita_nsdp_2011_12,per_capita_nsdp_2025_26\n" + rows.map((r) => csvRow([r.name, r.year, r.v, r.dot, r.tick])).join("\n"));
 }
@@ -178,7 +179,7 @@ function hbars(id, rows, { x, xMax, xTicks, xFmt, val, hl, extra = [], marginLef
   const same = rows.filter((r) => !r.faint), total = same.reduce((a, r) => a + r.v, 0);
   setHTML("h-size", `${top.name} is the largest economy among the states; the five largest make about ${Math.round((100 * same.slice(0, 5).reduce((a, r) => a + r.v, 0)) / total)}% of the total`);
   setHTML("s-size-year", YL);
-  setHTML("pv-size", "₹" + top.v.toFixed(2) + pc(" lakh cr"));
+  setHTML("pv-size", "₹" + top.v.toFixed(1) + pc(" lakh cr"));
   setHTML("pc-size", `${top.name}, ${YL}`);
   setHTML("ex-size-1", `${rows[0].name}, ${lakhCr(rows[0].v * 1e5)}`);
   setHTML("ex-size-2", `${rows[1].name}, ${lakhCr(rows[1].v * 1e5)}`);

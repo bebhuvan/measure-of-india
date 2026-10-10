@@ -3,26 +3,46 @@
 // + iip-industries-2022.json, baked at build time by scripts/fetch.mjs.
 
 import * as Plot from "@observablehq/plot";
-import bundle from "../../data/series/iip-2022.json";
-import oldBundle from "../../data/series/iip-2011.json";
-import indBundle from "../../data/series/iip-industries-2022.json";
-import oldIndBundle from "../../data/series/iip-industries-2011.json";
-import herit04Bundle from "../../data/series/iip-2004.json";
-import herit93Bundle from "../../data/series/iip-1993.json";
-import ispBundle from "../../data/series/isp.json";
-import herit80Bundle from "../../data/series/iip-1980.json";
-import fy80Bundle from "../../data/series/iip-annual-1980.json";
-import fy93Bundle from "../../data/series/iip-annual-1993.json";
-import fy04Bundle from "../../data/series/iip-annual-2004.json";
-import fy11Bundle from "../../data/series/iip-annual-2011.json";
-import fy22Bundle from "../../data/series/iip-annual-2022.json";
-import core93Bundle from "../../data/series/core-1993.json";
-import core04Bundle from "../../data/series/core-2004.json";
-import core11Bundle from "../../data/series/core-2011.json";
+import bundle_raw from "../../data/series/iip-2022.json";
+import oldBundle_raw from "../../data/series/iip-2011.json";
+import indBundle_raw from "../../data/series/iip-industries-2022.json";
+import oldIndBundle_raw from "../../data/series/iip-industries-2011.json";
+import herit04Bundle_raw from "../../data/series/iip-2004.json";
+import herit93Bundle_raw from "../../data/series/iip-1993.json";
+import ispBundle_raw from "../../data/series/isp.json";
+import herit80Bundle_raw from "../../data/series/iip-1980.json";
+import fy80Bundle_raw from "../../data/series/iip-annual-1980.json";
+import fy93Bundle_raw from "../../data/series/iip-annual-1993.json";
+import fy04Bundle_raw from "../../data/series/iip-annual-2004.json";
+import fy11Bundle_raw from "../../data/series/iip-annual-2011.json";
+import fy22Bundle_raw from "../../data/series/iip-annual-2022.json";
+import core93Bundle_raw from "../../data/series/core-1993.json";
+import core04Bundle_raw from "../../data/series/core-2004.json";
+import core11Bundle_raw from "../../data/series/core-2011.json";
 import {
   MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend, seamMarks, seamOverlap,
   peakOf, dodgeEndLabels, spark, fmt,
 } from "../charts/plumbing.js";
+
+import { roundRates } from "./precision.js";
+// review-a (2026-10): rates at the precision the agency publishes, rounded once as they load
+// (src/dossiers/precision.js), so every delta and spread on the page is redone from what is shown
+const bundle = roundRates(bundle_raw);
+const oldBundle = roundRates(oldBundle_raw);
+const indBundle = roundRates(indBundle_raw);
+const oldIndBundle = roundRates(oldIndBundle_raw);
+const herit04Bundle = roundRates(herit04Bundle_raw);
+const herit93Bundle = roundRates(herit93Bundle_raw);
+const ispBundle = roundRates(ispBundle_raw);
+const herit80Bundle = roundRates(herit80Bundle_raw);
+const fy80Bundle = roundRates(fy80Bundle_raw);
+const fy93Bundle = roundRates(fy93Bundle_raw);
+const fy04Bundle = roundRates(fy04Bundle_raw);
+const fy11Bundle = roundRates(fy11Bundle_raw);
+const fy22Bundle = roundRates(fy22Bundle_raw);
+const core93Bundle = roundRates(core93Bundle_raw);
+const core04Bundle = roundRates(core04Bundle_raw);
+const core11Bundle = roundRates(core11Bundle_raw);
 
 const S = hydrate(bundle);
 const OLD = hydrate(oldBundle);
@@ -48,10 +68,6 @@ S.sector_mining_quarrying.endLabel = "Mining";
 S.use_infrastructure_construction_goods.endLabel = "Infrastructure";
 S.use_consumer_non_durables.endLabel = "Non-durables";
 S.use_consumer_durables.endLabel = "Durables";
-IND.sub_manufacturing_manufacture_of_electrical_equipment.color = "#2E4BD8";
-IND.sub_manufacturing_manufacture_of_motor_vehicles_trailers_and_semi_trailers.color = "#5F6675";
-IND.sub_manufacturing_manufacture_of_wearing_apparel.color = "#A3A9B4";
-IND.sub_manufacturing_manufacture_of_wood_and_products_of_wood_and_cork_except_furniture_manufacture_of_articles_of_straw_and_plaiting_materials.color = "#878D99";
 const dates = S.general.data.map((d) => d.date);
 const MN = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const fmtDate = (d) => MN[d.getUTCMonth()] + " " + d.getUTCFullYear();
@@ -66,34 +82,30 @@ const P = {}; for (const k in S) P[k] = S[k].data.at(-2).value;
 const Y = {}; for (const k in S) Y[k] = S[k].data.at(-13).value;
 const prevName = fmtDate(S.general.data.at(-2).date);
 const pc = '<span class="pc">%</span>';
-const arrow = (d) => (d >= 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(2) + " pt";
+const arrow = (d) => (Math.abs(d) < 0.05 ? "unchanged" : (d > 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(1) + " pt");
 const word = (d) => (d >= 0 ? "accelerating" : "cooling");
 const setHTML = (id, h) => (document.getElementById(id).innerHTML = h);
 const setTxt = (id, t) => (document.getElementById(id).textContent = t);
-const f1 = (v) => v.toFixed(2) + "%";
+const f1 = (v) => v.toFixed(1) + "%";
 
-setHTML("n-head", L.general.toFixed(2) + pc);
-setHTML("n-mfg", L.sector_manufacturing.toFixed(2) + pc);
-setHTML("n-cap", L.use_capital_goods.toFixed(2) + pc);
-setHTML("n-elec", L.sector_electricity_gas_supply.toFixed(2) + pc);
+setHTML("n-head", L.general.toFixed(1) + pc);
+setHTML("n-mfg", L.sector_manufacturing.toFixed(1) + pc);
+setHTML("n-cap", L.use_capital_goods.toFixed(1) + pc);
+setHTML("n-elec", L.sector_electricity_gas_supply.toFixed(1) + pc);
 setHTML("d-head", `<b>${arrow(L.general - P.general)}</b> vs ${prevName}, ${word(L.general - P.general)}`);
 setHTML("d-mfg", `<b>${arrow(L.sector_manufacturing - P.sector_manufacturing)}</b> vs ${prevName}`);
 setHTML("d-cap", `<b>${arrow(L.use_capital_goods - P.use_capital_goods)}</b> vs ${prevName}`);
 setHTML("d-elec", `<b>${arrow(L.sector_electricity_gas_supply - P.sector_electricity_gas_supply)}</b> vs ${prevName}`);
 
-setHTML("rb-big", L.general.toFixed(2) + pc);
-setHTML("rb-prev", P.general.toFixed(2) + pc);
+setHTML("rb-big", L.general.toFixed(1) + pc);
+setHTML("rb-prev", P.general.toFixed(1) + pc);
 // §01 "current reading" prose is pipeline-generated (pipeline/out/prose-iip.*.md).
 
 setTxt("pv-bases", f1(L.general));
 setTxt("pv-main", f1(L.general));
 setTxt("pv-use", f1(L.use_capital_goods));
-setTxt("pv-ind", f1(IND.sub_manufacturing_manufacture_of_electrical_equipment.data.at(-1).value));
 setTxt("ex-cap", f1(L.use_capital_goods));
 setTxt("ex-cnd", f1(L.use_consumer_non_durables));
-setTxt("ex-elec", f1(IND.sub_manufacturing_manufacture_of_electrical_equipment.data.at(-1).value));
-setTxt("ex-mv", f1(IND.sub_manufacturing_manufacture_of_motor_vehicles_trailers_and_semi_trailers.data.at(-1).value));
-setTxt("ex-app", f1(Math.abs(IND.sub_manufacturing_manufacture_of_wearing_apparel.data.at(-1).value)));
 
 /* ---------- register ---------- */
 const regRows = [
@@ -135,7 +147,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
       { x: dts.at(-1), y: p.value }, { x: dts.at(-1), y: p.y },
     ], { x: "x", y: "y", stroke: p.s.color, strokeWidth: 1, strokeOpacity: 0.45 })),
     ...dodged.map((p) => Plot.text([{ date: dts.at(-1), y: p.y }], {
-      x: "date", y: "y", text: () => `${p.s.endLabel ?? p.s.label} ${p.value.toFixed(2)}%`,
+      x: "date", y: "y", text: () => `${p.s.endLabel ?? p.s.label} ${p.value.toFixed(1)}%`,
       dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono,
       fontWeight: p.s === seriesList[0] ? 500 : 400, textAnchor: "start",
     })),
@@ -185,9 +197,9 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
       Plot.ruleX([new Date(Date.UTC(2020, 3, 1))], { stroke: "#DADDE3", strokeWidth: 1, strokeDasharray: "2,3" }),
       Plot.text([{ date: new Date(Date.UTC(2018, 0, 1)), value: 133 }], { x: "date", y: "value", text: ["COVID-19, −57% then +134%"], fontSize: 12.5, fill: "#878D99", fontFamily: mono, textAnchor: "start" }),
       Plot.dot([cur.data.at(-1)], { x: "date", y: "value", fill: cur.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([cur.data.at(-1)], { x: "date", y: "value", text: (d) => `Base 2022-23 ${d.value.toFixed(2)}%`, dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.text([cur.data.at(-1)], { x: "date", y: "value", text: (d) => `Base 2022-23 ${d.value.toFixed(1)}%`, dx: 16, fill: "#161A22", fontSize: 12.5, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
       Plot.dot([old.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", fill: old.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([old.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", text: (d) => `Base 2011-12 ${d.value.toFixed(2)}%`, dx: 16, dy: 20, fill: "#161A22", fontSize: 12, fontFamily: mono, textAnchor: "start" }),
+      Plot.text([old.data.filter((d) => d.value != null).at(-1)], { x: "date", y: "value", text: (d) => `Base 2011-12 ${d.value.toFixed(1)}%`, dx: 16, dy: 20, fill: "#161A22", fontSize: 12, fontFamily: mono, textAnchor: "start" }),
     ],
   });
   a11y(plot, "IIP year-on-year growth on the retired 2011-12 base and the current 2022-23 base",
@@ -214,7 +226,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
   const h80 = trim(H80.general, "Base 1980-81", "#C9CED6");
   const low80 = h80.data.reduce((a, d) => (d.value != null && d.value < a.value ? d : a), h80.data[0]);
   const end80 = h80.data.filter((d) => d.value != null).at(-1);
-  const fmtM = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(2) + "%";
+  const fmtM = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
   // the one industrial winter: the deepest print either heritage ruler gave
   const trough = h04.data.reduce((a, d) => (d.value != null && d.value < a.value ? d : a), h04.data[0]);
   const gfc93 = h93.data.find((d) => d.date.getTime() === trough.date.getTime());
@@ -222,7 +234,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
   const end04 = h04.data.filter((d) => d.value != null).at(-1);
   setTxt("pv-herit", fmtM(trough.value));
   setTxt("her-gfc04", fmtM(trough.value));
-  setTxt("her-gfc93", "+" + gfc93.value.toFixed(2) + "%");
+  setTxt("her-gfc93", "+" + gfc93.value.toFixed(1) + "%");
   setTxt("her-end93", fmtM(end93.value));
   setTxt("her-low80", fmtM(low80.value));
   setTxt("her-low80-at", fmtDate(low80.date));
@@ -246,7 +258,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
       Plot.lineY(h93.data, { x: "date", y: "value", stroke: h93.color, strokeWidth: 1.75, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.lineY(h04.data, { x: "date", y: "value", stroke: h04.color, strokeWidth: 2.5, strokeLinejoin: "round", strokeLinecap: "round" }),
       Plot.ruleX([trough.date], { stroke: "#DADDE3", strokeWidth: 1, strokeDasharray: "2,3" }),
-      Plot.text([{ date: new Date(Date.UTC(2008, 3, 1)), value: 24 }], { x: "date", y: "value", text: [`winter of 2008-09, ${fmtM(trough.value)} on one ruler, +${gfc93.value.toFixed(2)}% on the other`], fontSize: 12.5, fill: "#878D99", fontFamily: mono, textAnchor: "end" }),
+      Plot.text([{ date: new Date(Date.UTC(2008, 3, 1)), value: 24 }], { x: "date", y: "value", text: [`winter of 2008-09, ${fmtM(trough.value)} on one ruler, +${gfc93.value.toFixed(1)}% on the other`], fontSize: 12.5, fill: "#878D99", fontFamily: mono, textAnchor: "end" }),
       Plot.ruleX([new Date(Date.UTC(2006, 3, 1))], { stroke: "#CDD1D8", strokeWidth: 1 }),
       Plot.text([{ date: new Date(Date.UTC(2006, 5, 1)), value: -9.5 }], { x: "date", y: "value", text: ["base revised, 1993-94 → 2004-05"], fontSize: 12.5, fill: "#5F6675", fontFamily: mono, textAnchor: "start" }),
       Plot.ruleX([new Date(Date.UTC(1995, 3, 1))], { stroke: "#CDD1D8", strokeWidth: 1 }),
@@ -257,9 +269,9 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
       // the 1993-94 line ends mid-chart where the 2004-05 line is busy —
       // lift its label into the empty upper region on a short leader
       Plot.line([{ x: end93.date, y: end93.value + 1.2 }, { x: end93.date, y: 12.2 }], { x: "x", y: "y", stroke: h93.color, strokeWidth: 1, strokeOpacity: 0.45 }),
-      Plot.text([{ date: end93.date, value: 13 }], { x: "date", y: "value", text: [`Base 1993-94 ${end93.value.toFixed(2)}%`], dx: 6, fill: "#161A22", fontSize: 12, fontFamily: mono, textAnchor: "start" }),
+      Plot.text([{ date: end93.date, value: 13 }], { x: "date", y: "value", text: [`Base 1993-94 ${end93.value.toFixed(1)}%`], dx: 6, fill: "#161A22", fontSize: 12, fontFamily: mono, textAnchor: "start" }),
       Plot.dot([end04], { x: "date", y: "value", fill: h04.color, r: 3.5, stroke: "#FFFFFF", strokeWidth: 1.5 }),
-      Plot.text([end04], { x: "date", y: "value", text: (d) => `Base 2004-05 ${d.value.toFixed(2)}%`, dx: 16, fill: "#161A22", fontSize: 12, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
+      Plot.text([end04], { x: "date", y: "value", text: (d) => `Base 2004-05 ${d.value.toFixed(1)}%`, dx: 16, fill: "#161A22", fontSize: 12, fontFamily: mono, fontWeight: 500, textAnchor: "start" }),
     ],
   });
   a11y(plot, "IIP year-on-year growth on the retired 1980-81, 1993-94 and 2004-05 bases, 1982 to 2017",
@@ -270,7 +282,7 @@ function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, dlName, a1
   // cannot address both — the tooltip would lie
 }
 
-const fS = fmt.pct2Minus;   // signed with a true minus
+const fS = fmt.pct1Minus;   // signed with a true minus; one decimal, as MoSPI prints IIP growth
 
 /* ---------- financial years on five rulers ---------- */
 {
@@ -415,24 +427,65 @@ const fS = fmt.pct2Minus;   // signed with a true minus
     "Line chart. Capital goods ends at " + L.use_capital_goods.toFixed(1) + " per cent against consumer non-durables at " + L.use_consumer_non_durables.toFixed(1) + ".");
 }
 
-/* ---------- industries ---------- */
+/* ---------- industries ----------
+ * review-a (2026-10): the four lines are chosen from the data, never typed: the two
+ * manufacturing industries with the fastest average growth over the last twelve months and
+ * the two with the slowest (the fixed choice of 2025 kept "wood products" as a laggard after
+ * it turned to growth). */
+const IND_P = "sub_manufacturing_";
+const IND_SHORT = {
+    [IND_P + "manufacture_of_basic_metals"]: "Basic metals",
+    [IND_P + "manufacture_of_basic_pharmaceutical_products_and_pharmaceutical_preparations"]: "Pharmaceuticals",
+    [IND_P + "manufacture_of_beverages"]: "Beverages",
+    [IND_P + "manufacture_of_chemicals_and_chemical_products"]: "Chemicals",
+    [IND_P + "manufacture_of_coke_and_refined_petroleum_products"]: "Coke & refined petroleum",
+    [IND_P + "manufacture_of_computer_electronic_and_optical_products"]: "Electronics & optical",
+    [IND_P + "manufacture_of_electrical_equipment"]: "Electrical equipment",
+    [IND_P + "manufacture_of_fabricated_metal_products_except_machinery_and_equipment"]: "Fabricated metals",
+    [IND_P + "manufacture_of_food_products"]: "Food products",
+    [IND_P + "manufacture_of_furniture"]: "Furniture",
+    [IND_P + "manufacture_of_leather_and_related_products"]: "Leather",
+    [IND_P + "manufacture_of_machinery_and_equipment_n_e_c"]: "Machinery n.e.c.",
+    [IND_P + "manufacture_of_motor_vehicles_trailers_and_semi_trailers"]: "Motor vehicles",
+    [IND_P + "manufacture_of_other_non_metallic_mineral_products"]: "Non-metallic minerals",
+    [IND_P + "manufacture_of_other_transport_equipment"]: "Other transport equipment",
+    [IND_P + "manufacture_of_paper_and_paper_products"]: "Paper",
+    [IND_P + "manufacture_of_rubber_and_plastics_products"]: "Rubber & plastics",
+    [IND_P + "manufacture_of_textiles"]: "Textiles",
+    [IND_P + "manufacture_of_tobacco_products"]: "Tobacco",
+    [IND_P + "manufacture_of_wearing_apparel"]: "Wearing apparel",
+    [IND_P + "manufacture_of_wood_and_products_of_wood_and_cork_except_furniture_manufacture_of_articles_of_straw_and_plaiting_materials"]: "Wood & cork",
+    [IND_P + "other_manufacturing"]: "Other manufacturing",
+    [IND_P + "printing_and_reproduction_of_recorded_media"]: "Printing & media",
+};
+const IND_PICK = (() => {
+  const avg = (k) => { const d = IND[k].data.slice(-12).map((x) => x.value).filter((v) => v != null); return d.reduce((a, c) => a + c, 0) / d.length; };
+  const r = Object.keys(IND).filter((k) => k.startsWith(IND_P) && IND_SHORT[k] && IND[k].data.at(-1).value != null).map((k) => ({ k, a: avg(k) })).sort((a, b) => b.a - a.a);
+  return [r[0], r[1], r.at(-2), r.at(-1)];
+})();
 {
-  const keys = [
-    "sub_manufacturing_manufacture_of_electrical_equipment",
-    "sub_manufacturing_manufacture_of_motor_vehicles_trailers_and_semi_trailers",
-    "sub_manufacturing_manufacture_of_wearing_apparel",
-    "sub_manufacturing_manufacture_of_wood_and_products_of_wood_and_cork_except_furniture_manufacture_of_articles_of_straw_and_plaiting_materials",
-  ];
-  IND[keys[3]].label = "Wood products";
-  IND[keys[1]].label = "Motor vehicles";
-  IND[keys[0]].endLabel = "Electrical eq.";
-  IND[keys[2]].endLabel = "Wearing apparel";
-  const geo = { W: 1184, H: 470, ml: 70, mr: 210, mt: 30, mb: 48, d0: -14, d1: 36 };
-  multiLine("cb-ind", "plot-ind", keys, IND, geo, [-10, 0, 10, 20, 30],
+  const keys = IND_PICK.map((x) => x.k);
+  ["#2E4BD8", "#5F6675", "#878D99", "#A3A9B4"].forEach((c, i) => { IND[keys[i]].color = c; IND[keys[i]].label = IND_SHORT[keys[i]]; IND[keys[i]].endLabel = IND_SHORT[keys[i]]; });
+  const all = keys.flatMap((k) => IND[k].data.map((d) => d.value)).filter((v) => v != null);
+  const d0 = Math.min(-10, Math.floor(Math.min(...all) / 5) * 5 - 2), d1 = Math.max(20, Math.ceil(Math.max(...all) / 5) * 5 + 2);
+  const ticks = []; for (let t = Math.ceil(d0 / 10) * 10; t <= d1; t += 10) ticks.push(t);
+  // the end labels are data-chosen names, so the right margin fits the longest ("Other transport
+  // equipment 25.3%"): about 7.6 px a character at 12.5 px, plus the gap to the line end
+  const longest = Math.max(...keys.map((k) => (IND_SHORT[k] + " 00.0%").length));
+  const geo = { W: 1184, H: 470, ml: 70, mr: Math.max(210, Math.ceil(longest * 7.6) + 40), mt: 30, mb: 48, d0, d1 };
+  multiLine("cb-ind", "plot-ind", keys, IND, geo, ticks,
     [2024, 2025, 2026].map((y) => new Date(Date.UTC(y, 0, 1))),
     "india-atlas_iip_industries_base2022",
-    "Selected manufacturing industries, year-on-year, April 2024 to " + LATEST,
-    "Line chart. Electrical equipment ends at +" + IND[keys[0]].data.at(-1).value.toFixed(1) + " per cent, apparel at " + IND[keys[2]].data.at(-1).value.toFixed(1) + ".");
+    "The two fastest and two slowest manufacturing industries over the last twelve months, year-on-year, April 2024 to " + LATEST,
+    "Line chart. " + keys.map((k) => IND_SHORT[k] + " ends at " + IND[k].data.at(-1).value.toFixed(1) + " per cent").join("; ") + ".");
+  const f1s = (v) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
+  setTxt("pv-ind", f1(IND[keys[0]].data.at(-1).value));
+  setTxt("pc-ind", IND_SHORT[keys[0]].toLowerCase() + ", y/y");
+  setTxt("ind-f1", IND_SHORT[keys[0]].toLowerCase()); setTxt("ind-f2", IND_SHORT[keys[1]].toLowerCase());
+  setTxt("ind-s1", IND_SHORT[keys[2]].toLowerCase()); setTxt("ind-s2", IND_SHORT[keys[3]].toLowerCase());
+  setTxt("ind-f1a", f1s(IND_PICK[0].a)); setTxt("ind-s2a", f1s(IND_PICK[3].a));
+  setTxt("ex-elec", f1s(IND[keys[0]].data.at(-1).value)); setTxt("ex-mv", f1s(IND[keys[1]].data.at(-1).value));
+  setTxt("ex-app", f1s(IND[keys[3]].data.at(-1).value)); setTxt("ex-s1", f1s(IND[keys[2]].data.at(-1).value));
 }
 
 /* ---------- the current-base industry field: every industry on 2022-23 base ----------
@@ -489,32 +542,7 @@ const fS = fmt.pct2Minus;   // signed with a true minus
  * Small multiples on one clipped scale. The lockdown prints (−99% to past
  * +1000%) are clipped off scale on purpose; the CSV carries full values. */
 {
-  const P = "sub_manufacturing_";
-  const SHORT = {
-    [P + "manufacture_of_basic_metals"]: "Basic metals",
-    [P + "manufacture_of_basic_pharmaceutical_products_and_pharmaceutical_preparations"]: "Pharmaceuticals",
-    [P + "manufacture_of_beverages"]: "Beverages",
-    [P + "manufacture_of_chemicals_and_chemical_products"]: "Chemicals",
-    [P + "manufacture_of_coke_and_refined_petroleum_products"]: "Coke & refined petroleum",
-    [P + "manufacture_of_computer_electronic_and_optical_products"]: "Electronics & optical",
-    [P + "manufacture_of_electrical_equipment"]: "Electrical equipment",
-    [P + "manufacture_of_fabricated_metal_products_except_machinery_and_equipment"]: "Fabricated metals",
-    [P + "manufacture_of_food_products"]: "Food products",
-    [P + "manufacture_of_furniture"]: "Furniture",
-    [P + "manufacture_of_leather_and_related_products"]: "Leather",
-    [P + "manufacture_of_machinery_and_equipment_n_e_c"]: "Machinery n.e.c.",
-    [P + "manufacture_of_motor_vehicles_trailers_and_semi_trailers"]: "Motor vehicles",
-    [P + "manufacture_of_other_non_metallic_mineral_products"]: "Non-metallic minerals",
-    [P + "manufacture_of_other_transport_equipment"]: "Other transport equipment",
-    [P + "manufacture_of_paper_and_paper_products"]: "Paper",
-    [P + "manufacture_of_rubber_and_plastics_products"]: "Rubber & plastics",
-    [P + "manufacture_of_textiles"]: "Textiles",
-    [P + "manufacture_of_tobacco_products"]: "Tobacco",
-    [P + "manufacture_of_wearing_apparel"]: "Wearing apparel",
-    [P + "manufacture_of_wood_and_products_of_wood_and_cork_except_furniture_manufacture_of_articles_of_straw_and_plaiting_materials"]: "Wood & cork",
-    [P + "other_manufacturing"]: "Other manufacturing",
-    [P + "printing_and_reproduction_of_recorded_media"]: "Printing & media",
-  };
+  const SHORT = IND_SHORT;
   const TH = 10; // disclosed accent threshold, per cent y/y
   const fmtSigned = (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(1) + "%";
   const rows = Object.keys(OLDIND).map((k) => {
@@ -652,7 +680,7 @@ const fS = fmt.pct2Minus;   // signed with a true minus
     const vs = s.data.map((d) => d.value);
     return `
   <tr>
-    <td class="name"><span class="sw" style="background:${s.color}"></span>${s.label.trim()}<small>14 months, range ${Math.min(...vs).toFixed(1)} – ${Math.max(...vs).toFixed(1)}</small></td>
+    <td class="name"><span class="sw" style="background:${s.color}"></span>${s.label.trim()}<small>${vs.length} months, range ${Math.min(...vs).toFixed(1)} – ${Math.max(...vs).toFixed(1)}</small></td>
     <td class="val">${l.toFixed(1)}</td>
     <td class="chg">${(g >= 0 ? "▲ +" : "▼ −") + Math.abs(g).toFixed(1)}%</td>
     <td class="yr">${y.toFixed(1)}</td>
@@ -711,7 +739,7 @@ const fS = fmt.pct2Minus;   // signed with a true minus
         grid.append(div);
       }
     }
-    grid.setAttribute("aria-label", "Nineteen small line charts, one per ISP service, grouped into six clusters (trade, logistics, finance, ICT, contact-intensive, professional). Each shows the index level over fourteen months against a base-year average of 100. Retail trade ends at " + ISP.retail_trade.data[li2].value.toFixed(1) + ".");
+    grid.setAttribute("aria-label", "Nineteen small line charts, one per ISP service, grouped into six clusters (trade, logistics, finance, ICT, contact-intensive, professional). Each shows the index level over " + dsI.length + " months against a base-year average of 100. Retail trade ends at " + ISP.retail_trade.data[li2].value.toFixed(1) + ".");
   }
 }
 

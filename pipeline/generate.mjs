@@ -16,6 +16,7 @@ import path from "node:path";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import YAML from "yaml";
+import { precisionNote } from "./lib/precision.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 try { process.loadEnvFile(path.join(ROOT, ".env")); } catch {}
@@ -96,9 +97,10 @@ const SYSTEM_SYS = `You are the lead writer for India Atlas — a static referen
 The register is a printed monograph crossed with a good newspaper's second paragraph: short declarative sentences, plain words, the nuance kept in the structure, not the vocabulary. The corpus exemplars ARE the voice — match their cadence and their recurring moves, never their specific numbers (those belong to a past print).
 
 Hard rules:
-- The FACTS SHEET is the only permitted source of numbers. Every figure you write must appear in it, rendered as the voice dictates (the print itself at two decimals, e.g. "4.38%"; everything else at one, e.g. "rose 4.7%"; deltas in points). If a number is not in the sheet, do not invent it — say plainly what is not known.
+- The FACTS SHEET is the only permitted source of numbers. Every figure you write must appear in it, rendered at the precision the agency publishes (the CONTRACT's Precision line: one decimal for growth, rates and shares, "7.8%", "rose 0.6 points", unless it says two; counts and money in readable units, "about 2,366 crore"); deltas in points. If a number is not in the sheet, do not invent it — say plainly what is not known.
 - Use the corpus's recurring moves: concede-then-counter (acknowledge the genuine before qualifying it); one concrete image per abstraction at most ("the flattery expires with the next bad monsoon"); "we do not know" said plainly when true; and name the denominator whenever a base effect is doing the work.
 - Vary sentence length deliberately — a 4-word sentence may follow a 30-word one. Uniform cadence is the AI tell.
+- The facts sheet is your tool, never the reader's: do not mention "the sheet", "this sheet" or "the facts sheet" in the prose; say "of the twelve divisions", "among the 32 industries", "in this guide". Nor its bookkeeping words: never "the lowest of those worker series", "the participation series", "the age cut", "a median of" without saying a median of what; name the people or things ("young women in towns", "the 32 industries"). Every percentage carries its % sign.
 - No verdict words ("strong", "robust", "healthy", "solid") without a number attached; no rhetorical questions to pad; no throat-clearing openers ("In a welcome development…").`;
 
 for (const slot of slots) {
@@ -107,6 +109,7 @@ for (const slot of slots) {
     `Slot: ${slot.id} (dossier: ${slug})`,
     `Type: ${slot.dateStamp ? "dated — must name the period (" + facts.latestPeriod + ")" : "dated commentary"}`,
     `Max sentences: ${slot.maxSentences}`,
+    `Precision: ${precisionNote(slug)} The verifier rejects a finer figure.`,
     `Required figures (use exactly these, from the facts sheet): ${slot.requiredFigures.join(", ")}`,
     slot.minSeriesMentioned != null ? `Coverage floor: name at least ${slot.minSeriesMentioned} distinct series of the sheet (by name or by their figures) — the contract gate rejects prose that stays silent on most of the basket.` : null,
     slot.mustName?.includes("extremes") ? "Coverage floor: the sheet's hottest and weakest movers MUST appear." : null,
@@ -130,7 +133,7 @@ for (const slot of slots) {
   // summarized deep cuts. The writer reads it; contract.mjs enforces it.
   const statusOf = (k) => {
     const parts = [];
-    if (cross.topMover?.key === k) parts.push("HOTTEST mover — must appear");
+    if (cross.topMover?.key === k) parts.push("HOTTEST mover (biggest change on a year ago; for a growth or inflation rate, the one that sped up most, not necessarily the highest reading) — must appear");
     if (cross.bottomMover?.key === k) parts.push("WEAKEST mover — must appear");
     if ((cross.contradictions ?? []).some((c) => c.key === k)) parts.push("CONTRADICTS the headline move — must be acknowledged");
     const r = (cross.ranking ?? []).indexOf(k);
@@ -139,14 +142,22 @@ for (const slot of slots) {
   };
   const coverage = Object.entries(facts.series).map(([k, s]) => `- ${s.label}: ${statusOf(k)}`);
   for (const pi of facts.proseInputs ?? []) {
+    if (pi.byMeasure) {
+      // a cut holding several measures: each measure's range on its own line, never one field
+      for (const m of pi.byMeasure) coverage.push(`- [deep cut ${pi.bundle}, measure "${m.measure}", ${m.series} series]: range runs from ${m.topByLatest?.label} at ${m.topByLatest?.latest} (highest ${m.measure}) down to ${m.bottomByLatest?.label} at ${m.bottomByLatest?.latest} (lowest ${m.measure})`
+        + (m.top && m.top.key !== m.topByLatest?.key ? `; biggest rise on a year ago: ${m.top.label}, now ${m.top.latest}` : "")
+        + (m.tail ? `; median ${m.tail.median}` : "")
+        + ` — compare only within this measure; summarize or name, never ignore the cut.`);
+      continue;
+    }
     coverage.push(
       // two different extremes, named for what they are: the RANGE (highest and lowest
       // latest reading) and the MOVERS (biggest change on a year ago). Calling the mover
       // "hottest" let the writer present it as the top of the range (IIP, Aug 2026:
       // beverages at 18.25% was the biggest riser; electrical equipment at 30.92% was the top).
       `- [deep cut ${pi.bundle} — ${pi.seriesCount} series]: range runs from ${pi.topByLatest?.label ?? pi.top?.label ?? "?"} at ${pi.topByLatest?.latest ?? pi.top?.latest} (highest latest reading) down to ${pi.bottomByLatest?.label ?? pi.bottom?.label ?? "?"} at ${pi.bottomByLatest?.latest ?? pi.bottom?.latest} (lowest latest reading)`
-      + (pi.top && pi.top.key !== pi.topByLatest?.key ? `; biggest rise on a year ago: ${pi.top.label}, now ${pi.top.latest} (not the highest reading)` : "")
-      + (pi.bottom && pi.bottom.key !== pi.bottomByLatest?.key ? `; biggest fall on a year ago: ${pi.bottom.label}, now ${pi.bottom.latest} (not the lowest reading)` : "")
+      + (pi.top && pi.top.key !== pi.topByLatest?.key ? `; biggest rise on a year ago: ${pi.top.label}, now ${pi.top.latest} (not the highest reading; where the series are growth or inflation rates, this is the rate that SPED UP most against a year earlier: say "sped up most", never "the biggest riser" or "grew most")` : "")
+      + (pi.bottom && pi.bottom.key !== pi.bottomByLatest?.key ? `; biggest fall on a year ago: ${pi.bottom.label}, now ${pi.bottom.latest} (not the lowest reading; for rates, the one that SLOWED most)` : "")
       + (pi.tail ? `; median ${pi.tail.median}, ${pi.tail.rising} rising vs ${pi.tail.falling} falling, ${pi.tail.belowZero} below zero` : "")
       + " — summarize or name; never ignore the cut.",
     );

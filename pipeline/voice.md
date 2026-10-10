@@ -21,8 +21,14 @@ deliberately plainer than the author's essay voice — do not blend them.
 - **Address the reader's likely misreading before they have it** (the whole of §07).
 
 ## Numbers in prose
-- The print itself at two decimals: "8.23%", "1.34%".
-- Everything else at one decimal: "rose 7.9%", "three points above".
+- Growth, rates and shares at the precision the agency publishes: one decimal
+  ("GDP grew 7.8%", "unemployment was 5.0%", "rose 0.6 points"); two only on the
+  guides whose agency prints two and where the second decimal is a real move
+  (WPI; interest rates and yields). The rule lives in pipeline/lib/precision.mjs,
+  facts sheets arrive rounded to it, and verify rejects a finer figure.
+- Counts and money in readable units: "about 2,366 crore payments", "₹24.6 lakh
+  crore", never "2,365.84 crore". At most one decimal on a lakh, crore, million
+  or billion figure, none once it reaches a thousand.
 - Deltas in points, never "percent change vs percent".
 - Every number must appear in the facts sheet. No exceptions.
 

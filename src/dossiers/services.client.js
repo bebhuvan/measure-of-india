@@ -10,15 +10,15 @@
 //   services-asuse*      ASUSE: unincorporated service enterprises by activity
 
 import * as Plot from "@observablehq/plot";
-import share22 from "../../data/series/services-gva-2022-share.json";
-import growth22 from "../../data/series/services-gva-2022-growth.json";
-import level22 from "../../data/series/services-gva-2022-level.json";
-import share11 from "../../data/series/services-gva-2011-share.json";
-import gdpInd from "../../data/series/gdp-2022-industries.json";
-import ispGrowth from "../../data/series/services-isp-growth.json";
-import ispAnnual from "../../data/series/services-isp-annual.json";
-import tradeM from "../../data/series/services-trade-monthly.json";
-import bopA from "../../data/series/services-bop-annual.json";
+import share22_raw from "../../data/series/services-gva-2022-share.json";
+import growth22_raw from "../../data/series/services-gva-2022-growth.json";
+import level22_raw from "../../data/series/services-gva-2022-level.json";
+import share11_raw from "../../data/series/services-gva-2011-share.json";
+import gdpInd_raw from "../../data/series/gdp-2022-industries.json";
+import ispGrowth_raw from "../../data/series/services-isp-growth.json";
+import ispAnnual_raw from "../../data/series/services-isp-annual.json";
+import tradeM_raw from "../../data/series/services-trade-monthly.json";
+import bopA_raw from "../../data/series/services-bop-annual.json";
 // the large bundles (jobs, enterprises, BoP detail) ride in the page as build-time picks of
 // just the series the plates draw (src/pages/guides/services.astro, #svc-data): the whole
 // files are megabytes and stay in the downloads and the every-series table
@@ -26,6 +26,19 @@ const PICK = JSON.parse(document.getElementById("svc-data")?.textContent || "{}"
 const bopQ = PICK["services-bop-quarterly"], invQ = PICK["services-invisibles-quarterly"], jobsCy = PICK["services-jobs-cy25"], jobsAy = PICK["services-jobs-ay"];
 const asuse = PICK["services-asuse"], asuseProfile = PICK["services-asuse-profile"];
 import { MONO as sans, hydrate, a11y, addCrosshair, spark, downloadSVG, downloadPNG, saveBlob, fmt } from "../charts/plumbing.js";
+
+import { roundRates, numWord } from "./precision.js";
+// review-a (2026-10): rates at the precision the agency publishes, rounded once as they load
+// (src/dossiers/precision.js), so every delta and spread on the page is redone from what is shown
+const share22 = roundRates(share22_raw);
+const growth22 = roundRates(growth22_raw);
+const level22 = roundRates(level22_raw);
+const share11 = roundRates(share11_raw);
+const gdpInd = roundRates(gdpInd_raw);
+const ispGrowth = roundRates(ispGrowth_raw);
+const ispAnnual = roundRates(ispAnnual_raw);
+const tradeM = roundRates(tradeM_raw);
+const bopA = roundRates(bopA_raw);
 
 const INK = "#161A22", GRID = "#F0F2F5", BASE = "#D3D7DE", MUTED = "#878D99", ACC = "#2E4BD8", GOLD = "#C47A16", PALE = "#B9C3F3", GREY = "#A3A9B4";
 const W = 1184;
@@ -222,12 +235,12 @@ setHTML("rt-est", (share22.meta.estimates.split("; ").at(-1) || "").split(": ")[
   });
   a11y(plot, "Quarterly real growth of the three service groups", ends.map((o) => `${o.s.label} ${o.e.value.toFixed(1)}% in ${qOf(o.e.date.toISOString())}`).join("; ") + ".");
   const el = mount("plot-quarter", plot);
-  addCrosshair(el, plot, series, null, (d) => qOf(d.toISOString()), (v) => (v == null ? "—" : v.toFixed(2) + "%"));
-  setHTML("pv-quarter", fmt.pct2(Q.finance_realty.data.at(-1).value));
+  addCrosshair(el, plot, series, null, (d) => qOf(d.toISOString()), (v) => (v == null ? "—" : v.toFixed(1) + "%"));
+  setHTML("pv-quarter", fmt.pct1(Q.finance_realty.data.at(-1).value));
   setHTML("ex-q-q", qOf(gdpInd.dates.at(-1)));
-  setHTML("ex-q-fin", fmt.pct2(Q.finance_realty.data.at(-1).value));
-  setHTML("ex-q-trade", fmt.pct2(Q.trade_transport.data.at(-1).value));
-  setHTML("ex-q-pub", fmt.pct2(Q.public_admin.data.at(-1).value));
+  setHTML("ex-q-fin", fmt.pct1(Q.finance_realty.data.at(-1).value));
+  setHTML("ex-q-trade", fmt.pct1(Q.trade_transport.data.at(-1).value));
+  setHTML("ex-q-pub", fmt.pct1(Q.public_admin.data.at(-1).value));
   const rows = gdpInd.dates.map((d, i) => [d, ...KEYS.map(([k]) => gdpInd.series[k].data[i])]);
   wirePlate("cb-quarter", plot, "india-atlas_services-groups-quarterly-real-growth", csvOf(["quarter_start", ...KEYS.map(([k]) => k + "_real_yoy_pct")], rows));
 }
@@ -261,7 +274,7 @@ setHTML("rt-est", (share22.meta.estimates.split("; ").at(-1) || "").split(": ")[
   setHTML("ex-isp-top", `${ispLatest[0].label} (${ispLatest[0].v.toFixed(1)}%)`);
   setHTML("ex-isp-bot", `${ispLatest.at(-1).label} (${ispLatest.at(-1).v.toFixed(1)}%)`);
   setHTML("ex-isp-n", String(ispDouble));
-  setHTML("ex-isp-neg", String(ispLatest.filter((d) => d.v < 0).length));
+  setHTML("ex-isp-neg", numWord(ispLatest.filter((d) => d.v < 0).length));
   const csv = csvOf(["sub_sector", ...months.map((m) => m.slice(0, 7) + "_yoy_pct")], Object.values(IG).map((s) => [s.label, ...s.data]));
   wirePlate("cb-isp", plot, "india-atlas_isp-growth-by-sub-sector", csv);
 }
@@ -556,12 +569,12 @@ const asKey = (ind, act, sector = "combined", et = "all") => `${ind}${MID[ind] ?
   a11y(plot, "Workers in informal service enterprises by activity", `In ${asFy}, ${rows[0].label} employed ${(rows[0].wk / 1e5).toFixed(1)} lakh workers in unincorporated enterprises.`);
   mount("plot-asize", plot);
   setHTML("asize-fy", asFy);
-  setHTML("pv-asize", (totW / 1e7).toFixed(2) + " crore");
+  setHTML("pv-asize", (totW / 1e7).toFixed(1) + " crore");
   setHTML("ex-as-fy", asFy);
-  setHTML("ex-as-tot", (totW / 1e7).toFixed(2) + " crore");
+  setHTML("ex-as-tot", (totW / 1e7).toFixed(1) + " crore");
   setHTML("ex-as-share", ((100 * totW) / allW).toFixed(1) + "%");
   setHTML("ex-as-top", `${rows[0].label.toLowerCase()} (${(rows[0].wk / 1e5).toFixed(1)} lakh)`);
-  setHTML("ex-as-est", ((AS[asKey("establishments", "trading")].data[asY] + AS[asKey("establishments", "other_services_group")].data[asY]) / 1e7).toFixed(2) + " crore");
+  setHTML("ex-as-est", ((AS[asKey("establishments", "trading")].data[asY] + AS[asKey("establishments", "other_services_group")].data[asY]) / 1e7).toFixed(1) + " crore");
   wirePlate("cb-asize", plot, "india-atlas_informal-service-enterprises-workers", csvOf(["activity", "establishments", "workers", "survey_year"], rows.map((r) => [r.label, r.est, r.wk, asFy])));
 }
 {
@@ -582,7 +595,7 @@ const asKey = (ind, act, sector = "combined", et = "all") => `${ind}${MID[ind] ?
       Plot.link(order.map((l) => ({ l, a: rows.find((r) => r.label === l && r.sector === "rural")?.v, b: rows.find((r) => r.label === l && r.sector === "urban")?.v })).filter((d) => d.a != null && d.b != null), { y1: "l", y2: "l", x1: "a", x2: "b", stroke: "#DFE2E8", strokeWidth: 2 }),
       Plot.dot(rows.filter((r) => r.sector === "rural" && order.includes(r.label)), { y: "label", x: "v", r: 4, fill: "#fff", stroke: MUTED, strokeWidth: 1.5 }),
       Plot.dot(ur, { y: "label", x: "v", r: 4.5, fill: ACC }),
-      Plot.text(order.map((l) => ({ l, v: Math.max(...rows.filter((r) => r.label === l).map((r) => r.v)) })), { y: "l", x: "v", text: (d) => "₹" + (d.v / 1e5).toFixed(2) + " lakh", dx: 10, textAnchor: "start", fill: INK, fontSize: 11.5 }),
+      Plot.text(order.map((l) => ({ l, v: Math.max(...rows.filter((r) => r.label === l).map((r) => r.v)) })), { y: "l", x: "v", text: (d) => "₹" + (d.v / 1e5).toFixed(1) + " lakh", dx: 10, textAnchor: "start", fill: INK, fontSize: 11.5 }),
     ],
   });
   a11y(plot, "GVA per worker in informal service enterprises", `In ${asFy}, urban ${order[0]} produced the most per worker; all activities, urban, ₹${fmt.inr(allU)} a year, rural ₹${fmt.inr(allR)}.`);

@@ -10,18 +10,30 @@
 // month-scale pair share a plate, the day-rate has its own.
 
 import * as Plot from "@observablehq/plot";
-import monthlyBundle from "../../data/series/plfs-monthly.json";
-import quarterlyBundle from "../../data/series/plfs-quarterly.json";
-import annualBundle from "../../data/series/plfs-annual.json";
-import cutsBundle from "../../data/series/plfs-cuts.json";
-import statesBundle from "../../data/series/plfs-states.json";
-import statusBundle from "../../data/series/plfs-status.json";
-import earningsBundle from "../../data/series/plfs-earnings.json";
-import educationBundle from "../../data/series/plfs-education.json";
+import monthlyBundle_raw from "../../data/series/plfs-monthly.json";
+import quarterlyBundle_raw from "../../data/series/plfs-quarterly.json";
+import annualBundle_raw from "../../data/series/plfs-annual.json";
+import cutsBundle_raw from "../../data/series/plfs-cuts.json";
+import statesBundle_raw from "../../data/series/plfs-states.json";
+import statusBundle_raw from "../../data/series/plfs-status.json";
+import earningsBundle_raw from "../../data/series/plfs-earnings.json";
+import educationBundle_raw from "../../data/series/plfs-education.json";
 import {
   MONO as mono, hydrate, wireTools, a11y, addCrosshair, wireLegend,
   peakOf, dodgeEndLabels, spark, downloadSVG, downloadPNG, saveBlob, seamMarks,
 } from "../charts/plumbing.js";
+
+import { roundRates, numWord } from "./precision.js";
+// review-a (2026-10): rates at the precision the agency publishes, rounded once as they load
+// (src/dossiers/precision.js), so every delta and spread on the page is redone from what is shown
+const monthlyBundle = roundRates(monthlyBundle_raw);
+const quarterlyBundle = roundRates(quarterlyBundle_raw);
+const annualBundle = roundRates(annualBundle_raw);
+const cutsBundle = roundRates(cutsBundle_raw);
+const statesBundle = roundRates(statesBundle_raw);
+const statusBundle = roundRates(statusBundle_raw);
+const earningsBundle = roundRates(earningsBundle_raw);
+const educationBundle = roundRates(educationBundle_raw);
 
 // the deep bundles' slices, embedded at build time by the page (src/dossiers/jobs.data.js)
 const JD = JSON.parse(document.getElementById("jobs-data")?.textContent || "{}");
@@ -52,27 +64,27 @@ const last = (s) => s.data.filter((d) => d.value != null).at(-1).value;
 const prev = (s) => s.data.filter((d) => d.value != null).at(-2).value;
 const first = (s) => s.data.filter((d) => d.value != null)[0].value;
 const pc = '<span class="pc">%</span>';
-const arrow = (d) => (d >= 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(2) + " pt";
+const arrow = (d) => (Math.abs(d) < 0.05 ? "unchanged" : (d > 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(1) + " pt");
 // annual-report figures are published to one decimal / whole rupees
-const arrow1 = (d) => (d >= 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(1) + " pt";
+const arrow1 = (d) => (Math.abs(d) < 0.05 ? "unchanged" : (d > 0 ? "▲ +" : "▼ −") + Math.abs(d).toFixed(1) + " pt");
 const arrowInr = (d) => (d >= 0 ? "▲ +₹" : "▼ −₹") + Math.abs(Math.round(d)).toLocaleString("en-IN");
 const setHTML = (id, h) => (document.getElementById(id).innerHTML = h);
 const setTxt = (id, t) => (document.getElementById(id).textContent = t);
-const f1 = (v) => v.toFixed(2) + "%";
+const f1 = (v) => v.toFixed(1) + "%";
 const f1a = (v) => v.toFixed(1) + "%";
 const inr = (v) => "₹" + Math.round(v).toLocaleString("en-IN");
 
-setHTML("n-ur", last(M.ur).toFixed(2) + pc);
-setHTML("n-lfpr", last(M.lfpr).toFixed(2) + pc);
-setHTML("n-fur", last(CUTS.ur_female_urban).toFixed(2) + pc);
-setHTML("n-psss", last(A.ur_psss).toFixed(2) + pc);
+setHTML("n-ur", last(M.ur).toFixed(1) + pc);
+setHTML("n-lfpr", last(M.lfpr).toFixed(1) + pc);
+setHTML("n-fur", last(CUTS.ur_female_urban).toFixed(1) + pc);
+setHTML("n-psss", last(A.ur_psss).toFixed(1) + pc);
 setHTML("d-ur", `<b>${arrow(last(M.ur) - prev(M.ur))}</b> vs ${fmtDate(M.ur.data.at(-2).date)}`);
 setHTML("d-lfpr", `<b>${arrow(last(M.lfpr) - prev(M.lfpr))}</b> vs ${fmtDate(M.lfpr.data.at(-2).date)}`);
 setHTML("d-fur", `<b>${arrow(last(CUTS.ur_female_urban) - prev(CUTS.ur_female_urban))}</b> vs ${fmtDate(CUTS.ur_female_urban.data.at(-2).date)}`);
 setHTML("d-psss", `<b>${arrow(last(A.ur_psss) - prev(A.ur_psss))}</b> vs ${fmtAgri(A.ur_psss.data.at(-2).date)}`);
 
-setHTML("rb-big", last(M.ur).toFixed(2) + pc);
-setHTML("rb-first", first(M.ur).toFixed(2) + pc);
+setHTML("rb-big", last(M.ur).toFixed(1) + pc);
+setHTML("rb-first", first(M.ur).toFixed(1) + pc);
 // §01 "current reading" prose is pipeline-generated (pipeline/out/prose-jobs.*.md).
 
 setTxt("pv-annual", f1(last(A.ur_psss)));
@@ -149,7 +161,7 @@ document.getElementById("ledger-body").innerHTML = regRows.map(([s, nm, sub, sw,
 }).join("");
 
 /* ---------- shared plate renderer ---------- */
-function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, fmtX, dlName, a11yTitle, a11yDesc, fmtCross = fmtDate, fmtV = (v) => v.toFixed(2) + "%") {
+function multiLine(blockId, plotId, keys, store, geo, yTicks, xTicks, fmtX, dlName, a11yTitle, a11yDesc, fmtCross = fmtDate, fmtV = (v) => v.toFixed(1) + "%") {
   const seriesList = keys.map((k) => store[k]);
   const dts = seriesList[0].data.map((d) => d.date);
   const dodged = dodgeEndLabels(seriesList.filter((s) => s.data.at(-1).value != null), (geo.d1 - geo.d0) * 0.06);
@@ -361,7 +373,7 @@ function moneyPlate(blockId, plotId, keys, store, geo, yTicks, xTicks, tickFmt, 
  * The third ratio, absent until now. The share of people actually working —
  * the gap between this line and the LFPR line above IS the unemployment rate. */
 {
-  setTxt("pv-wpr", last(CUTS.wpr_male_urban).toFixed(2) + "%");
+  setTxt("pv-wpr", last(CUTS.wpr_male_urban).toFixed(1) + "%");
   const V = {
     wpr_male_urban: { ...CUTS.wpr_male_urban, label: "Urban men", color: "#5F6675" },
     wpr_male_rural: { ...CUTS.wpr_male_rural, label: "Rural men", color: "#878D99" },
@@ -883,7 +895,7 @@ const nice = (v, step) => Math.ceil(v / step) * step;
   setTxt("ex-y-fr", f1a(last(V.ur_cws__female_rural__a15_29)));
   setTxt("ex-y-mr", f1a(last(V.ur_cws__male_rural__a15_29)));
   setTxt("ex-y-all", f1a(last(Y.ur_cws__person_all__a15_29)));
-  setTxt("ex-y-one", String(Math.round(100 / last(V.ur_cws__female_urban__a15_29))));
+  setTxt("ex-y-one", numWord(Math.round(100 / last(V.ur_cws__female_urban__a15_29))));
 }
 
 /* ---------- §07 kinds of work, state by state ---------- */
@@ -941,7 +953,7 @@ const nice = (v, step) => Math.ceil(v / step) * step;
   setTxt("ex-c-nc1", f1a(last(V.no_contract__person_all)));
   setTxt("ex-c-n0", f1a(first(V.none_of_three__person_all)));
   setTxt("ex-c-n1", f1a(last(V.none_of_three__person_all)));
-  setTxt("ex-c-ten", String(Math.round(last(V.none_of_three__person_all) / 10)));
+  setTxt("ex-c-ten", numWord(Math.round(last(V.none_of_three__person_all) / 10)));
 }
 
 /* ---------- §09 women's work by social group and religion ---------- */
