@@ -287,7 +287,7 @@ export const DOSSIERS = [
     stamp: { dateText: "August 2026", vintageStyle: "round", plural: true },
     statusNote: "Evergreen, revised with each survey round",
     version: "v1.2",
-    proseInputs: ["asi-industries", "asi-states", "asuse-annual", "asuse-sectors", "asuse-states"],
+    proseInputs: ["asi-industries", "asi-states", "asuse-annual", "asuse-sectors", "asuse-states", "asuse-2025-t26"],
     currentBundle: "asi-headline",
     calendar: "fiscal-apr",
     bands: null,

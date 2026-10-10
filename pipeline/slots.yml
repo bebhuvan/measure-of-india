@@ -258,22 +258,33 @@ factories:
   - id: current-reading.what-the-print-says
     maxSentences: 7
     dateStamp: true
-    requiredFigures: [gva.latest, factories_in_operation.latest]
+    requiredFigures: [gva.growthVsYearPct, factories_in_operation.latest]
     minSeriesMentioned: 3        # gva, factory count, people
     mustName: [extremes]
     mustAcknowledge: [contradictions]
     brief: >
       The factory sector's value added, factory counts and people on the shop
       floor. Set the registered (ASI) beside the informal (ASUSE) scale. Concede
-      before qualifying.
+      before qualifying. ASUSE now has a calendar-year 2025 round (asuse-2025-t26, workers):
+      it covers January to December 2025, a different twelve months from the 2023-24 round,
+      so name its year, keep it in its own sentence, and never state a change between 2023-24
+      and 2025. Workers in asuse-2025-t26 are counts of people; its labels name the cut.
+      Write every figure the way a reader says it: ASI money is in ₹ lakh in the sheet, so
+      write it in ₹ lakh crore or ₹ crore (245833606 ₹ lakh is ₹24.6 lakh crore); counts in
+      lakh or crore (19589131 is 1.96 crore), except the factory count, written in full with
+      Indian grouping (2,12,990). Never print a bare long number. Write years as
+      2023-24, not FY24. Never call a change "the largest", "the biggest" or "the fewest": the series are in different units (rupees, factories, people) and cannot be ranked against each other. The factory count has
+      a frame revision in 2010-11 (the count jumps that year): do not call the rise since
+      2008-09 an unbroken streak.
   - id: current-reading.what-it-does-not-say
     maxSentences: 6
     dateStamp: false
-    requiredFigures: [gva.latest]
+    requiredFigures: [gva.growthVsYearPct]
     brief: >
       The honest limits: registered and informal are separate instruments, never
       summed; GVA is nominal (prices as much as product); the data lands with a
-      two-year lag. Must contain a plain "we do not know".
+      two-year lag. Must contain a plain "we do not know". Money in ₹ lakh crore or ₹ crore,
+      counts in lakh or crore, never a bare long number; years as 2023-24, not FY24. Never call a change "the largest", "the biggest" or "the fewest" across series in different units.
 
 # ---- bis family session ----
 debt:
