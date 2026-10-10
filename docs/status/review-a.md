@@ -101,6 +101,50 @@ site-wide precision rule for prose (brief item 3). Branch `lb/review-a`, October
 - **Consumption prose** says "1.7 times ... against 1.71": two precisions for one ratio. It
   is legal under the rule but reads oddly. Review-c's page.
 
-## Checks
+## Routed from review-c (via the coordinator)
 
-See the end of this file for the final gate run.
+- **Headline figures** (`src/dossiers/headline.js`: home page, guides index, RSS). CPI, GDP,
+  IIP and bank NPAs now show one decimal. Factories and AISHE counts show one decimal of a
+  lakh or crore. UPI payments are whole ("2,366 crore"). Population is in crore
+  ("143.8 crore"), as the rest of the site counts people. WPI and rates keep two decimals.
+  qc's home-page checks follow.
+- **Share cards** regenerated for cpi, gdp, wpi, iip, jobs, factories and population
+  (`OG_ONLY`, the same lines as on lb/review-c). Two cards drew retired series: WPI the
+  2011-12 base, and jobs the original design's urban bulletin, which ended in December 2024.
+  Both now draw the current series. Card footers lose their middle dots.
+- **"CPI is final on release, never revised"** was false. MoSPI prints the latest month as
+  provisional and the previous month as final. Checked against two releases. On the 2012
+  base, 12 April 2024: "Mar. 2024 (Prov.)", "Feb. 2024 (Final)". On the 2024 base, the
+  July 2026 release: "July, 2026 (Provisional)" with a section "June 2026 (Final)". So the
+  rule holds on both bases. Corrected on the CPI, WPI and GDP guides, the method page, the
+  revisions and noise-and-trend learn pages, the GDP corpus, `sources.yml` (CPI
+  revision_policy) and the CPI adapter's comment. The CPI guide now tells the reader that
+  the latest month is provisional and the one before it final.
+- **Data-level, not mine to rebake**: `data/series/cpi.json` and `cpi-2024.json` (and the
+  other CPI bundles) still carry `meta.revisionPolicy: "CPI is final on release; never
+  revised."` from the old `sources.yml` text. They will pick up the new wording on the next
+  bake. CPI-AL/RL and CPI-IW keep "final on release" in `sources.yml`. I did not check the
+  Labour Bureau's practice, so they are left as they were.
+
+## Build-time bugs found and fixed
+
+- `src/dossiers/precision.js` first imported `unitOf` from `everycut.js`, which imports
+  `node:fs`. In the browser the CPI page script threw ("i.join is not a function") and qc
+  caught it. `unitOf` now lives in `src/dossiers/units.js`, which has no node imports, and
+  `everycut.js` re-exports it.
+- The rebuilt IIP industry plate let two data-chosen end labels bleed past the plot. The
+  right margin now fits the longest label.
+- `test/figures.test.mjs` expected "US$" in the external prose; the new prose writes "$". The
+  test now accepts both. New `test/precision.test.mjs` covers the rule.
+
+## Checks (final, 2026-10-10, after merging launch-build 46090dd)
+
+- `npx astro build` then `npm run gates`, in a slot: exit 0. QC passed, chart lint clean
+  (855 SVGs, 87 pages), as-of 464 paragraphs verified, prose fresh 52/52. `./dist` deleted.
+- `npm test`: 62 passed, 0 failed. `npm run prose:dry`: exit 0. verify, lint and contract
+  pass on every `pipeline/out/prose-*.md`.
+- Playwright on the final build, all ten guides: no overflow at 390 outside the sideways
+  zones, no broken internal links or anchors, no console errors. The only `–` left are real
+  empty table cells. One share image from each guide downloads as both PNG and SVG; the CPI
+  and GDP PNGs were opened and read.
+- "Finer detail" Hugging Face links: one, on ilo (`huggingface.co/datasets/bebhuvan1/india-atlas-archive/tree/main/tables/ilo`). It points at the planned path and will 404 until the upload. Kept, as the brief asks.
