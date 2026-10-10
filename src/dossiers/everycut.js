@@ -509,6 +509,11 @@ export const CUT_BY_BUNDLE = {
   "wpi-subsubgroups": "Sub-sub-group", "wpi-2022-subsubgroups": "Sub-sub-group",
   ...Object.fromEntries(["2004", "1993"].flatMap((t) => [[`wpi-${t}`, "All India"], [`wpi-${t}-groups`, "Group"], [`wpi-${t}-subgroups`, "Sub-group"], [`wpi-${t}-subsubgroups`, "Sub-sub-group"], [`wpi-${t}-items`, "Item"]])),
   // --- end prices ---
+  // --- payments (lb/payments) ---
+  "payments-monthly": "Payment system", "payments-monthly-2004": "Payment system", "payments-annual": "Payment system", "payments-ticket": "Payment system",
+  "payments-growth-wss": "Payment system", "payments-infra": "Instrument or device", "payments-infra-2004": "Instrument or device",
+  "payments-cheques-1970": "Clearing centre", "payments-cheques-centres": "Clearing centre", "payments-clearing-houses": "Managing bank", "payments-erupee": "Denomination",
+  // --- end payments ---
 };
 // the fallback, by what a bundle's slug says it is
 export const CUT_RULES = [

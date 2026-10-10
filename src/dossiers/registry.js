@@ -842,6 +842,36 @@ export const DOSSIERS = [
     ],
   },
   // --- end trade ---
+  // --- payments (lb/payments): how Indians pay, RBI payment system statistics ---
+  {
+    slug: "payments",
+    no: "26",   // next free number on this branch; the coordinator renumbers at merge
+    section: "Money",
+    name: "Payments, RBI",
+    title: "How Indians pay",   // the topic as a reader names it: nav, lists, search
+    kickerTitle: "Payment systems, RBI",
+    crumbTitle: "Payments",
+    headline: "How India pays, <i>one scan at a time.</i>",
+    ogTitle: "How India pays, one scan at a time.",
+    blurb: "UPI, cards, NEFT, RTGS, cheques, ATMs and the e-rupee: how many payments Indians make each month, how big they are, and whether cash and cards are giving way.",
+    description: "Every payment system the RBI counts: UPI, IMPS, NEFT, RTGS, cards, wallets, NACH, Aadhaar payments, cheques since 1970-71, ATM withdrawals, card machines and QR codes, and the e-rupee. Monthly since 2004.",
+    rssDescription: "How many payments Indians make, by what route, and how big they are. Revised with each monthly RBI Bulletin.",
+    stamp: { dateStyle: "month", vintageStyle: "vintage" },
+    statusNote: "Monthly, with each RBI Bulletin; re-organised table from November 2019",
+    version: "v1.0",
+    currentBundle: "payments-monthly",
+    calendar: "fiscal-apr",
+    bands: null,
+    proseConstants: [100, 2019],   // per 100 payments; the year the RBI re-organised its table
+    spark: { bundle: "payments-monthly", series: "upi_volume" },
+    prose: true,
+    proseInputs: ["payments-ticket", "payments-infra"],
+    factsModule: "pipeline/lib/facts-payments.mjs",   // the sheet in growth terms, with shares, averages and cash computed in code (see that file)
+    register: { id: "reg-payments", label: "Payments", unit: "Monthly, number of transactions and value, RBI payment system indicators", historyCol: "Since 2019" },
+    bundles: ["payments-monthly", "payments-infra", "payments-ticket", "payments-annual", "payments-growth-wss", "payments-monthly-2004", "payments-infra-2004",
+      "payments-cheques-1970", "payments-cheques-centres", "payments-clearing-houses", "payments-erupee"],
+  },
+  // --- end payments ---
 ];
 export const bySlug = Object.fromEntries(DOSSIERS.map((d) => [d.slug, d]));
 

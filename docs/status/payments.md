@@ -17,9 +17,20 @@ Guide: how Indians pay (`/guides/payments/`, port 4432). Branch `lb/payments`.
   hand against RBI publications.
 - Coverage ledger `data/coverage/payments.yml`: nothing pending.
 
+- Guide `/guides/payments/`: 9 sections, 16 plates (36 charts), every number data-bound;
+  every-cut table and data downloads; registry (number 26, next free on this branch: the
+  coordinator renumbers at merge), headline, spark, register rows, OG card, qc PAGES (32
+  checks through `src/dossiers/payments.fmt.js`, shared with the client), 15 asof entries.
+- Prose: facts module `pipeline/lib/facts-payments.mjs` (registry `factsModule`), slots,
+  keyword map, corpus. Generated with DeepSeek, passed verify, lint and contract, and read by
+  hand against the sheet: every figure checked (one wrong qualifier, "at the card machine" for
+  an all-cards ratio, caught on reading and fixed by naming both ratios in the sheet).
+- Gates on the last build: validate, coverage, asof, qc, chart lint all green; npm test green.
+- Looked at 1440px (every plate) and 390px.
+
 ## Next
 
-Guide page and client, registry, headline, OG card, qc, asof, prose.
+Nothing for this guide beyond the coordinator's merge. Blocked items are listed below.
 
 ## Decisions
 
@@ -63,3 +74,23 @@ Guide page and client, registry, headline, OG card, qc, asof, prose.
 - **banks**: report 1518 (branches and ATMs of SCBs, Trend and Progress) is theirs; this guide
   uses the ATM counts in the payment table instead.
 - No state cut: the RBI publishes payment statistics for India only.
+- Shared files touched, each one block marked "payments": sources.yml (dossier and seams),
+  fetch.mjs, validate.mjs, registry.js, headline.js (HEADLINE and SPARK), og.mjs, qc.mjs,
+  slots.yml, asof-manifest.json, series-kws.mjs, everycut.js (CUT_BY_BUNDLE),
+  register.client.js, test/states-key.test.mjs (cheque centres are not states).
+- This guide reads the credit guide's `credit-money` bundle (currency with the public),
+  read-only, for the cash plate and the prose.
+- NPCI: UPI by app and by bank is published on npci.org.in, but its terms page renders only
+  with JavaScript and states no licence we could read (2026-10-10). Not used.
+- IDH series that match these bundles (for the cross-check manifest; names only, no values
+  read): MOPYVOUPIP11M / MOPYVAUPIP11M (UPI), MOPYVONEFT11M / MOPYVANEFT11M, MOPYVORTGS11M /
+  MOPYVARTGS11M, MOPYVOIMPS11M / MOPYVAIMPS11M, MOPYVONACH11M, MOPYVONETC11M, MOPYVOAEPS11M,
+  MOPYVOCCPS11M / MOPYVODCPS11M (cards), MOPYVOCCPO11M / MOPYVODCPO11M (PoS), MOPYVOCDTM11M /
+  MOPYVACDTM11M (ATM cash), MOPYVOPPIS11M, MOPYVOCHEQ11M, MOPYVOATMS11M, MOPYVOPOST11M,
+  MOPYVOMATM11M, MOPYVOUPQR11M, MOPYVOCCOS11M / MOPYVODCOS11M (cards outstanding).
+
+## Mistakes and fixes this session
+
+- A first `generate.mjs payments --dry` was not the dry-run flag (`--dry-run`) and made real
+  API calls; the drafts were discarded and regenerated after the facts sheet was fixed.
+- A headline.js and og.mjs edit swallowed two newlines and broke one build; fixed before commit.

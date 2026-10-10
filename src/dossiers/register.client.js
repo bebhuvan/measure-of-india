@@ -431,3 +431,19 @@ import tradeTotalBundle from "../../data/series/trade-total.json";
   ], 12, "sptr", lbl, "TradeStat (DGCI&S)");
 }
 // --- end trade ---
+// --- payments (lb/payments): RBI payment system indicators, monthly, from November 2019 ---
+import paymentsMonthlyBundle from "../../data/series/payments-monthly.json";
+{
+  const PY = hydrate(paymentsMonthlyBundle);
+  const cr = (v) => (v / 1e7).toLocaleString("en-IN", { maximumFractionDigits: 2, minimumFractionDigits: 2 }) + " crore";
+  const lcr = (v) => "₹" + (v / 1e12).toFixed(2) + " lakh cr";
+  const m = paymentsMonthlyBundle.dates.at(-1);
+  const lbl = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][+m.slice(5, 7) - 1] + " " + m.slice(0, 4);
+  render("reg-payments", [
+    ["UPI, number of transactions", "PSI-UPI-N", "s-acc", PY.upi_volume, false, "/guides/payments/", null, cr],
+    ["UPI, value", "PSI-UPI-V", "s-g1", PY.upi_value, false, "/guides/payments/", null, lcr],
+    ["Card payments, number", "PSI-CARD-N", "s-g2", PY.cards_volume, false, "/guides/payments/", null, cr],
+    ["Cash withdrawals at ATMs, number", "PSI-ATM-N", "s-g3", PY.atm_cash_volume, false, "/guides/payments/", null, cr],
+  ], 12, "sppy", lbl, "RBI");
+}
+// --- end payments ---

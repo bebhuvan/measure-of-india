@@ -13,31 +13,31 @@ rules:
   - match: ["payments:612:new:65-*", "payments:612:new:62-*", "payments:612:new:64-*", "payments:612:new:72-*", "payments:612:new:79-*", "payments:612:new:70-*", "payments:612:new:84-*", "payments:612:new:63-*", "payments:612:new:60-*", "payments:612:new:71-*", "payments:612:new:68-*", "payments:612:new:66-*", "payments:612:new:59-*", "payments:612:new:58-*", "payments:612:new:67-*"]
     status: shown
     bundle: [payments-monthly, payments-ticket]
-    plate: "§04 UPI and the rest; §06 Every other way money moves"
+    plate: "§04 UPI and everything else; §02 What one payment is worth; §06 Twelve payment systems"
   - match: ["payments:612:new:54-*", "payments:612:new:55-*", "payments:612:new:56-*", "payments:612:new:87-*", "payments:612:new:88-*", "payments:612:new:89-*"]
     status: shown
     bundle: payments-monthly
-    plate: "§04 Most of the money still moves through RTGS"
+    plate: "§04 UPI carries most of the payments; RTGS carries most of the money"
   - match: ["payments:612:new:73-*", "payments:612:new:74-*", "payments:612:new:75-*", "payments:612:new:76-*", "payments:612:new:77-*", "payments:612:new:78-*"]
     status: shown
     bundle: payments-monthly
-    plate: "§05 Credit cards overtook debit cards"
+    plate: "§05 Credit cards overtook debit cards, as debit card payments shrank"
   - match: ["payments:612:new:98-*", "payments:612:new:99-*", "payments:612:new:100-*", "payments:612:new:101-*", "payments:612:new:105-*", "payments:612:new:106-*"]
     status: shown
     bundle: payments-monthly
-    plate: "§05 Cash drawn from ATMs, and cash held"
+    plate: "§05 Fewer trips to the ATM, but more cash in people's hands"
   - match: ["payments:612:new:91-*", "payments:612:new:92-*", "payments:612:new:93-*", "payments:612:new:94-*", "payments:612:new:95-*", "payments:612:new:96-*"]
     status: shown
     bundle: payments-monthly
-    plate: "§06 Phones, not browsers"
+    plate: "§06 Phones carry the payments; net banking still carries more of the money"
   - match: ["payments:612:new:infra:108-*", "payments:612:new:infra:109-*", "payments:612:new:infra:110-*"]
     status: shown
     bundle: payments-infra
-    plate: "§05 Credit cards overtook debit cards"
+    plate: "§05 Credit cards overtook debit cards, as debit card payments shrank"
   - match: ["payments:612:new:infra:114-*", "payments:612:new:infra:115-*", "payments:612:new:infra:116-*", "payments:612:new:infra:117-*", "payments:612:new:infra:118-*", "payments:612:new:infra:119-*", "payments:612:new:infra:146-*"]
     status: shown
     bundle: payments-infra
-    plate: "§05 Eighty crore QR codes, one crore card machines"
+    plate: "§05 QR codes, card machines and ATMs"
   - match: "payments:612:new:infra:*"
     status: baked
     bundle: payments-infra
@@ -53,7 +53,7 @@ rules:
   - match: ["payments:612:old:20-*", "payments:612:old:25-*", "payments:612:old:28-*", "payments:612:old:27-*"]
     status: shown
     bundle: payments-monthly-2004
-    plate: "§07 Fifteen years before UPI"
+    plate: "§07 Fifteen years before UPI: NEFT and card payments at shops since 2004"
   - match: "payments:612:old:infra:*"
     status: baked
     bundle: payments-infra-2004
@@ -74,7 +74,7 @@ rules:
   - match: ["payments:907:cheques:7-*", "payments:907:cheques:8-*"]
     status: shown
     bundle: payments-cheques-1970
-    plate: "§07 Cheques peaked in 2008-09"
+    plate: "§07 Cheques peaked and have been falling since"
   - match: "payments:907:cheques:*"
     status: baked
     bundle: payments-cheques-1970
@@ -97,7 +97,7 @@ rules:
   - match: ["payments:1404:12-*", "payments:1404:13-*", "payments:1404:14-*"]
     status: shown
     bundle: payments-erupee
-    plate: "§08 The digital rupee"
+    plate: "§08 The e-rupee is a rounding error beside cash"
   - match: "payments:1404:11-*"
     status: excluded
     reason: "The RBI's e-rupee table has a ₹2000 column, but no e-rupee was ever issued in it: every year is blank."

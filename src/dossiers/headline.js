@@ -56,6 +56,8 @@ export const HEADLINE = {
   credit:        { value: (b) => `${last(b, "headline").toFixed(1)}%`, what: "growth of bank credit, year on year", period: month },
   // trade (lb/trade): the month's merchandise trade balance, US$ billion, signed (a deficit is negative)
   trade:         { value: (b) => `${last(b, "balance") < 0 ? "−" : ""}$${Math.abs(last(b, "balance") / 1000).toFixed(1)} bn`, what: "merchandise trade balance (exports minus imports)", period: month },
+  // payments (lb/payments): UPI payments in the month, crore
+  payments:      { value: (b) => `${(last(b, "upi_volume") / 1e7).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} crore`, what: "UPI payments made in the month", period: month },
 };
 
 // The small chart beside each guide's figure: always on the current ruler, so a chart never
@@ -94,6 +96,7 @@ export const SPARK = {
   // credit (lb/credit)
   credit:        { bundle: "credit-growth", series: "headline" },
   trade:         { bundle: "trade-total", series: "exports", n: 60 },   // trade (lb/trade)
+  payments:      { bundle: "payments-monthly", series: "upi_volume" },   // payments (lb/payments)
 };
 
 const cache = {};
