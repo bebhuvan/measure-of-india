@@ -11,7 +11,7 @@
 //         data/raw/climate-cckp.json.gz; CCKP draws no unit for Jammu and Kashmir or
 //         Ladakh, and still draws the two former UTs that merged in 2020
 //
-// Boundary changes (each a seam: a profile shows the post-change unit, and a figure for the
+// Boundary changes (each a seam; sameTerritory() below decides which figures cross one: a profile shows the post-change unit, and a figure for the
 // old unit is shown only under the old unit's name, never joined to the new series):
 //   2014-06-02  Andhra Pradesh split into Andhra Pradesh and Telangana
 //   2019-10-31  the state of Jammu and Kashmir became two union territories, J&K and Ladakh
@@ -36,7 +36,7 @@ export const STATES = [
   { slug: "andaman-nicobar", name: "Andaman and Nicobar Islands", short: "Andaman and Nicobar", kind: "ut", iso: "IN-AN", lgd: 35, cckp: "IND.1151", region: "Islands",
     aliases: ["andaman and nicobar islands", "andaman and nicobar island", "andaman and nicobar", "andaman nicobar islands", "andaman nicobar", "andaman and n islands", "a and n islands", "andaman"], neighbours: [] },
   { slug: "andhra-pradesh", name: "Andhra Pradesh", kind: "state", iso: "IN-AP", lgd: 28, cckp: "IND.1152", region: "South",
-    aliases: ["andhra pradesh", "andhra pradesh after telangana was separated", "andhra pradesh residual"], neighbours: ["telangana", "karnataka", "tamil-nadu", "odisha", "chhattisgarh", "puducherry"], since: "2014-06-02", seam: "ap-2014" },
+    aliases: ["andhra pradesh", "andhra pradesh after telangana was separated", "andhra pradesh residual"], neighbours: ["telangana", "karnataka", "tamil-nadu", "odisha", "chhattisgarh", "puducherry"], since: "2014-06-02", seam: "ap-2014", shrank: "ap-2014" },
   { slug: "arunachal-pradesh", name: "Arunachal Pradesh", kind: "state", iso: "IN-AR", lgd: 12, cckp: "IND.1153", region: "North-east",
     aliases: ["arunachal pradesh"], neighbours: ["assam", "nagaland"] },
   { slug: "assam", name: "Assam", kind: "state", iso: "IN-AS", lgd: 18, cckp: "IND.1154", region: "North-east",
@@ -62,7 +62,7 @@ export const STATES = [
   { slug: "himachal-pradesh", name: "Himachal Pradesh", kind: "state", iso: "IN-HP", lgd: 2, cckp: "IND.11514", region: "North",
     aliases: ["himachal pradesh"], neighbours: ["jammu-kashmir", "ladakh", "punjab", "haryana", "uttarakhand"] },
   { slug: "jammu-kashmir", name: "Jammu and Kashmir", kind: "ut-legislature", iso: "IN-JK", lgd: 1, cckp: null, region: "North",
-    aliases: ["jammu and kashmir", "jammu kashmir", "j and k", "jammu and kashmir after ladakh was separated", "jammu and kashmir ut", "jammu and kashmir union territory"], neighbours: ["ladakh", "himachal-pradesh", "punjab"], since: "2019-10-31", seam: "jk-2019" },
+    aliases: ["jammu and kashmir", "jammu kashmir", "j and k", "jammu and kashmir after ladakh was separated", "jammu and kashmir ut", "jammu and kashmir union territory"], neighbours: ["ladakh", "himachal-pradesh", "punjab"], since: "2019-10-31", seam: "jk-2019", shrank: "jk-2019" },
   { slug: "jharkhand", name: "Jharkhand", kind: "state", iso: "IN-JH", lgd: 20, cckp: "IND.11516", region: "East",
     aliases: ["jharkhand"], neighbours: ["bihar", "uttar-pradesh", "chhattisgarh", "odisha", "west-bengal"] },
   { slug: "karnataka", name: "Karnataka", kind: "state", iso: "IN-KA", lgd: 29, cckp: "IND.11517", region: "South",
@@ -217,18 +217,23 @@ export function placeStrict(text, where = "") {
   throw new Error(`states-key: cannot place "${text}"${where ? ` (${where})` : ""}`);
 }
 
-// Which side of a boundary seam a dated figure for `slug` sits on. A figure dated before
-// the unit existed is the old unit's, unless the source carries the successor beside it
-// for that date (MoSPI publishes Telangana from 2011-12, so its Andhra Pradesh is the
-// residual state throughout). Returns "current" or the former unit's slug.
-export function sideOfSeam(slug, dateIso, { successorHasValue = false } = {}) {
+// Whether a dated figure a source labels with a unit's name describes the unit's present
+// territory. Only Andhra Pradesh (2014) and Jammu and Kashmir (2019) lost territory under an
+// unchanged name: a figure for a period that ended before the split describes the undivided
+// unit, unless the same source carries the successor (Telangana, Ladakh) for that period, in
+// which case it has split its own past (MoSPI does, from 2011-12). A name that only exists
+// after a change (Telangana, Ladakh, the merged Dadra and Nagar Haveli and Daman and Diu)
+// fixes its territory, so the source's own back-cast under that name is the unit's.
+export function sameTerritory(slug, periodEndIso, { successorHasValue = false } = {}) {
   const u = BY_SLUG.get(slug);
-  if (!u?.since || dateIso >= u.since) return "current";
-  if (successorHasValue) return "current";
-  const seam = SEAMS.find((s) => s.id === u.seam);
-  const old = Array.isArray(seam.old) ? null : seam.old;
-  return old ?? "none";   // a merged unit has no single predecessor: its pre-merger figures are not its own
+  if (!u?.shrank) return true;
+  const seam = SEAMS.find((x) => x.id === u.shrank);
+  return periodEndIso >= seam.date || successorHasValue;
 }
+export const successorOf = (slug) => {
+  const u = BY_SLUG.get(slug);
+  return u?.shrank ? SEAMS.find((x) => x.id === u.shrank).next.find((n) => n !== slug) : null;
+};
 
 // The first unit a hierarchical label names ("West Bengal, Koch Bihar": a state, then its
 // district). Only for sources whose labels run state first, then a finer place.

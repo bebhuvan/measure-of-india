@@ -1,0 +1,740 @@
+# Coverage ledger: state profiles (docs/CONTRACT-coverage.md; brief docs/briefs/state-profiles.md).
+# Catalogue: scripts/lib/products/profiles.mjs --catalogue. First matching rule decides.
+# The profiles bake nothing of their own; every shown item reads another family's bundle.
+# Written 2026-10-10 by the profiles session.
+family: profiles
+guides: []
+catalogue: data/coverage/profiles.catalogue.json
+rules:
+  # MoSPI rounds the brief names as gaps: held until the MoSPI audit refresh finishes
+  - match: ["mospi:nss:75", "mospi:nss:76", "mospi:nss:77", "mospi:nss:78", "mospi:nss:79", "mospi:nss:80"]
+    status: blocked
+    reason: "Waiting for the MoSPI audit (lb/audit-refresh), 2026-10-10: the coordinator holds every new MoSPI download until it finishes; state cuts of these rounds are scheduled after it."
+  - match: "mospi:nss:73"
+    status: blocked
+    reason: "NSS 73 (enterprises, 2015-16): every data call returned HTTP 400 when the inventory probed it, and new MoSPI calls wait for the audit (2026-10-10)."
+  - match: "mospi:ec:*"
+    status: blocked
+    reason: "Waiting for the MoSPI audit (lb/audit-refresh), 2026-10-10: the Economic Census needs one call per state, held until the audit finishes."
+  # RBI Handbook of Statistics on Indian States: every table, each with a decision
+  - match: "hbs:t001"
+    status: shown
+    bundle: [states-hbs-t001]
+    plate: "§11 Education"
+  - match: "hbs:t004"
+    status: shown
+    bundle: [states-hbs-t004]
+    plate: "§07 Health"
+  - match: "hbs:t007"
+    status: shown
+    bundle: [states-hbs-t007]
+    plate: "§07 Health"
+  - match: "hbs:t010"
+    status: shown
+    bundle: [states-hbs-t010]
+    plate: "§06 How households live"
+  - match: "hbs:t017"
+    status: shown
+    bundle: [states-hbs-t017]
+    plate: "§07 Health"
+  - match: "hbs:t053"
+    status: shown
+    bundle: [states-hbs-t053]
+    plate: "§10 Farms"
+  - match: "hbs:t055"
+    status: shown
+    bundle: [states-hbs-t055]
+    plate: "§10 Farms"
+  - match: "hbs:t057"
+    status: shown
+    bundle: [states-hbs-t057]
+    plate: "§10 Farms"
+  - match: "hbs:t062"
+    status: shown
+    bundle: [states-hbs-t062]
+    plate: "§10 Farms"
+  - match: "hbs:t084"
+    status: shown
+    bundle: [states-hbs-t084]
+    plate: "§10 Farms"
+  - match: "hbs:t091"
+    status: shown
+    bundle: [states-hbs-t091]
+    plate: "§10 Farms"
+  # SDG India Index scores: the Handbook dates each edition at March of a year, and which edition
+  # each date is we have not confirmed; left off the profiles until we have, kept in the states guide
+  - match: "hbs:t106"
+    status: baked
+    bundle: [states-hbs-t106]
+  - match: "hbs:t112"
+    status: shown
+    bundle: [states-hbs-t112]
+    plate: "§05 Work and pay"
+  - match: "hbs:t113"
+    status: shown
+    bundle: [states-hbs-t113]
+    plate: "§05 Work and pay"
+  - match: "hbs:t115"
+    status: shown
+    bundle: [states-hbs-t115]
+    plate: "§05 Work and pay"
+  - match: "hbs:t138"
+    status: shown
+    bundle: [states-hbs-t138]
+    plate: "§09 Industry, energy and exports"
+  - match: "hbs:t148"
+    status: shown
+    bundle: [states-hbs-t148]
+    plate: "§09 Industry, energy and exports"
+  - match: "hbs:t166"
+    status: shown
+    bundle: [states-hbs-t166]
+    plate: "§13 State finances"
+  - match: "hbs:t170"
+    status: shown
+    bundle: [states-hbs-t170]
+    plate: "§13 State finances"
+  - match: "hbs:t181"
+    status: shown
+    bundle: [states-hbs-t181]
+    plate: "§09 Industry, energy and exports"
+  # State domestic product: the profiles read MoSPI's own state accounts (states-* bundles), which these tables reprint a year later; the Handbook copies stay in the states guide.
+  - match: ["hbs:t019", "hbs:t020", "hbs:t021", "hbs:t022", "hbs:t023", "hbs:t024", "hbs:t025", "hbs:t026", "hbs:t027", "hbs:t028", "hbs:t029", "hbs:t030", "hbs:t031", "hbs:t032", "hbs:t033", "hbs:t034", "hbs:t035", "hbs:t036", "hbs:t037", "hbs:t038", "hbs:t039", "hbs:t040", "hbs:t041", "hbs:t042", "hbs:t043", "hbs:t044", "hbs:t045", "hbs:t046", "hbs:t047", "hbs:t048", "hbs:t049", "hbs:t050", "hbs:t051", "hbs:t052"]
+    status: baked
+    bundle: [states-hbs-t019-2004, states-hbs-t019, states-hbs-t020-2004, states-hbs-t020, states-hbs-t021-2004, states-hbs-t021, states-hbs-t022-2004, states-hbs-t022, states-hbs-t023-2004, states-hbs-t023, states-hbs-t024-2004, states-hbs-t024, states-hbs-t025, states-hbs-t026, states-hbs-t027, states-hbs-t028, states-hbs-t029, states-hbs-t030-2004, states-hbs-t030, states-hbs-t031, states-hbs-t032-2004, states-hbs-t032, states-hbs-t033-2004, states-hbs-t033, states-hbs-t034-2004, states-hbs-t034, states-hbs-t035-2004, states-hbs-t035, states-hbs-t036-2004, states-hbs-t036, states-hbs-t037-2004, states-hbs-t037, states-hbs-t038-2004, states-hbs-t038, states-hbs-t039-2004, states-hbs-t039, states-hbs-t040-2004, states-hbs-t040, states-hbs-t041-2004, states-hbs-t041, states-hbs-t042-2004, states-hbs-t042, states-hbs-t043-2004, states-hbs-t043, states-hbs-t044, states-hbs-t045-2004, states-hbs-t045, states-hbs-t046-2004, states-hbs-t046, states-hbs-t047, states-hbs-t048-2004, states-hbs-t048, states-hbs-t049-2004, states-hbs-t049, states-hbs-t050-2004, states-hbs-t050, states-hbs-t051-2004, states-hbs-t051, states-hbs-t052-2004, states-hbs-t052]
+  # Births, deaths, maternal deaths and fertility from the Sample Registration System: the profiles show infant deaths and life expectancy from it, and fertility from NFHS-5; the rest are in the states guide.
+  - match: ["hbs:t002", "hbs:t003", "hbs:t005", "hbs:t006", "hbs:t011"]
+    status: baked
+    bundle: [states-hbs-t002, states-hbs-t003, states-hbs-t005, states-hbs-t006, states-hbs-t011]
+  # Unemployment on the old PLFS design, rural and urban: the profiles show the survey's 2025 calendar-year estimates instead, a different ruler, never mixed.
+  - match: ["hbs:t008", "hbs:t009"]
+    status: baked
+    bundle: [states-hbs-t008, states-hbs-t009]
+  # School gender parity and anaemia: the profiles show NFHS-5's anaemia figures directly; these reprints stay in the states guide.
+  - match: ["hbs:t012", "hbs:t014", "hbs:t015"]
+    status: baked
+    bundle: [states-hbs-t012, states-hbs-t014, states-hbs-t015]
+  # Tourist visits: counted visits, not visitors, and revised often; in the states guide.
+  - match: ["hbs:t013", "hbs:t182"]
+    status: baked
+    bundle: [states-hbs-t013, states-hbs-t182]
+  # Doctors and public health spending: kept in the states guide; spending needs a population or GSDP the table does not carry.
+  - match: ["hbs:t016", "hbs:t018"]
+    status: baked
+    bundle: [states-hbs-t016, states-hbs-t018]
+  # Crop-by-crop output, area and yield, livestock, fertiliser, storage and rural infrastructure finance: the profiles show the foodgrain total, its yield, irrigation, cropping intensity and milk; every crop is in the states guide's tables.
+  - match: ["hbs:t054", "hbs:t056", "hbs:t058", "hbs:t059", "hbs:t060", "hbs:t061", "hbs:t063", "hbs:t064", "hbs:t065", "hbs:t066", "hbs:t067", "hbs:t068", "hbs:t069", "hbs:t070", "hbs:t071", "hbs:t072", "hbs:t073", "hbs:t074", "hbs:t075", "hbs:t076", "hbs:t077", "hbs:t078", "hbs:t079", "hbs:t080", "hbs:t081", "hbs:t082", "hbs:t083", "hbs:t085", "hbs:t086", "hbs:t087", "hbs:t088", "hbs:t089", "hbs:t090", "hbs:t092", "hbs:t093", "hbs:t094", "hbs:t095", "hbs:t096", "hbs:t097", "hbs:t098"]
+    status: baked
+    bundle: [states-hbs-t054, states-hbs-t056, states-hbs-t058, states-hbs-t059, states-hbs-t060, states-hbs-t061, states-hbs-t063, states-hbs-t064, states-hbs-t065, states-hbs-t066, states-hbs-t067, states-hbs-t068, states-hbs-t069, states-hbs-t070, states-hbs-t071, states-hbs-t072, states-hbs-t073, states-hbs-t074, states-hbs-t075, states-hbs-t076, states-hbs-t077, states-hbs-t078, states-hbs-t079, states-hbs-t080, states-hbs-t081, states-hbs-t082, states-hbs-t083, states-hbs-t085, states-hbs-t086, states-hbs-t087, states-hbs-t088, states-hbs-t089, states-hbs-t090, states-hbs-t092, states-hbs-t093, states-hbs-t094, states-hbs-t095, states-hbs-t096, states-hbs-t097, states-hbs-t098]
+  # Forests, rainfall by IMD sub-division, cold and heat wave days, disaster relief and groundwater: the profiles' climate section reads ERA5 averages over each state; these are in the states guide.
+  - match: ["hbs:t099", "hbs:t100", "hbs:t101", "hbs:t102", "hbs:t103", "hbs:t104", "hbs:t105", "hbs:t107"]
+    status: baked
+    bundle: [states-hbs-t099, states-hbs-t100, states-hbs-t101, states-hbs-t102, states-hbs-t103, states-hbs-t104, states-hbs-t105, states-hbs-t107]
+  # Average CPI inflation by year on the 2012 base: the profiles show the CPI itself, both bases as separate rulers.
+  - match: ["hbs:t108", "hbs:t109", "hbs:t110", "hbs:t111"]
+    status: baked
+    bundle: [states-hbs-t108, states-hbs-t109, states-hbs-t110, states-hbs-t111]
+  # Rural wages of horticulture workers: the profiles show farm labour, non-farm labour and construction; this is in the states guide.
+  - match: ["hbs:t114"]
+    status: baked
+    bundle: [states-hbs-t114]
+  # Factories and small industry: the profiles read the Annual Survey of Industries directly (asi-states); the Handbook reprints and the old small-industry census are in the states guide.
+  - match: ["hbs:t116", "hbs:t117", "hbs:t118", "hbs:t119", "hbs:t120", "hbs:t121", "hbs:t122", "hbs:t123", "hbs:t124", "hbs:t125", "hbs:t126", "hbs:t127", "hbs:t128", "hbs:t129", "hbs:t130", "hbs:t131", "hbs:t132", "hbs:t133", "hbs:t134", "hbs:t135", "hbs:t136", "hbs:t137"]
+    status: baked
+    bundle: [states-hbs-t116, states-hbs-t117, states-hbs-t118, states-hbs-t119, states-hbs-t120, states-hbs-t121, states-hbs-t122, states-hbs-t123, states-hbs-t124, states-hbs-t125, states-hbs-t126, states-hbs-t127, states-hbs-t128, states-hbs-t129, states-hbs-t130, states-hbs-t131, states-hbs-t132, states-hbs-t133, states-hbs-t134, states-hbs-t135, states-hbs-t136, states-hbs-t137]
+  # Power supply, roads, railways, telephones and schools: the profiles show electricity per person and power losses; these are in the states guide.
+  - match: ["hbs:t139", "hbs:t140", "hbs:t141", "hbs:t142", "hbs:t143", "hbs:t144", "hbs:t145", "hbs:t146", "hbs:t147", "hbs:t149", "hbs:t150", "hbs:t151"]
+    status: baked
+    bundle: [states-hbs-t139, states-hbs-t140, states-hbs-t141, states-hbs-t142, states-hbs-t143, states-hbs-t144, states-hbs-t145, states-hbs-t146, states-hbs-t147, states-hbs-t149, states-hbs-t150, states-hbs-t151]
+  # Bank offices, deposits and credit: the profiles read the RBI's quarterly state statistics directly (credit-states, credit-states-cd); these annual reprints are in the states guide.
+  - match: ["hbs:t152", "hbs:t153", "hbs:t154", "hbs:t155", "hbs:t156", "hbs:t157", "hbs:t158", "hbs:t159", "hbs:t160", "hbs:t161", "hbs:t162", "hbs:t163"]
+    status: baked
+    bundle: [states-hbs-t152, states-hbs-t153, states-hbs-t154, states-hbs-t155, states-hbs-t156, states-hbs-t157, states-hbs-t158, states-hbs-t159, states-hbs-t160, states-hbs-t161, states-hbs-t162, states-hbs-t163]
+  # State budget lines: the profiles show the fiscal deficit, debt and own tax revenue as the states guide computes them against GSDP, and interest against revenue spending; every line is in the states guide.
+  - match: ["hbs:t164", "hbs:t165", "hbs:t167", "hbs:t168", "hbs:t169", "hbs:t171", "hbs:t172", "hbs:t173", "hbs:t174", "hbs:t175", "hbs:t176", "hbs:t177", "hbs:t178", "hbs:t179", "hbs:t180"]
+    status: baked
+    bundle: [states-hbs-t164, states-hbs-t165, states-hbs-t167, states-hbs-t168, states-hbs-t169, states-hbs-t171, states-hbs-t172, states-hbs-t173, states-hbs-t174, states-hbs-t175, states-hbs-t176, states-hbs-t177, states-hbs-t178, states-hbs-t179, states-hbs-t180]
+  # --- generated: measures x units (scripts/lib/products/profiles.mjs --ledger) ---
+  - match: ["profile:pc:dnh-dd", "profile:pc:lakshadweep"]
+    status: excluded
+    reason: "The source (states-pcnsdp-current) publishes no income per person for these units; the profile says so in place of a figure."
+  - match: "profile:pc:*"
+    status: shown
+    bundle: states-pcnsdp-current
+    plate: "§02 Income and growth"
+  - match: ["profile:pcreal:dnh-dd", "profile:pcreal:ladakh", "profile:pcreal:lakshadweep"]
+    status: excluded
+    reason: "The source (states-pcnsdp-constant) publishes no income per person, 2011-12 prices for these units; the profile says so in place of a figure."
+  - match: "profile:pcreal:*"
+    status: shown
+    bundle: states-pcnsdp-constant
+    plate: "§02 Income and growth"
+  - match: ["profile:gsdp:dnh-dd", "profile:gsdp:lakshadweep"]
+    status: excluded
+    reason: "The source (states-gsdp-current) publishes no size of the economy (gsdp) for these units; the profile says so in place of a figure."
+  - match: "profile:gsdp:*"
+    status: shown
+    bundle: states-gsdp-current
+    plate: "§02 Income and growth"
+  - match: ["profile:growth:dnh-dd", "profile:growth:ladakh", "profile:growth:lakshadweep"]
+    status: excluded
+    reason: "The source (states-growth-real) publishes no real growth of gsdp for these units; the profile says so in place of a figure."
+  - match: "profile:growth:*"
+    status: shown
+    bundle: states-growth-real
+    plate: "§02 Income and growth"
+  - match: ["profile:pcgrowth:dnh-dd", "profile:pcgrowth:ladakh", "profile:pcgrowth:lakshadweep"]
+    status: excluded
+    reason: "The source (states-growth-real) publishes no real growth of income per person for these units; the profile says so in place of a figure."
+  - match: "profile:pcgrowth:*"
+    status: shown
+    bundle: states-growth-real
+    plate: "§02 Income and growth"
+  - match: ["profile:agri:dnh-dd", "profile:agri:lakshadweep"]
+    status: excluded
+    reason: "The source (states-structure) publishes no farming's share of output for these units; the profile says so in place of a figure."
+  - match: "profile:agri:*"
+    status: shown
+    bundle: states-structure
+    plate: "§03 What the economy runs on"
+  - match: ["profile:industry:dnh-dd", "profile:industry:lakshadweep"]
+    status: excluded
+    reason: "The source (states-structure) publishes no industry's share of output for these units; the profile says so in place of a figure."
+  - match: "profile:industry:*"
+    status: shown
+    bundle: states-structure
+    plate: "§03 What the economy runs on"
+  - match: ["profile:services:dnh-dd", "profile:services:lakshadweep"]
+    status: excluded
+    reason: "The source (states-structure) publishes no services' share of output for these units; the profile says so in place of a figure."
+  - match: "profile:services:*"
+    status: shown
+    bundle: states-structure
+    plate: "§03 What the economy runs on"
+  - match: ["profile:manuf:dnh-dd", "profile:manuf:lakshadweep"]
+    status: excluded
+    reason: "The source (states-industry-shares) publishes no manufacturing's share of output for these units; the profile says so in place of a figure."
+  - match: "profile:manuf:*"
+    status: shown
+    bundle: states-industry-shares
+    plate: "§03 What the economy runs on"
+  - match: "profile:cpi:*"
+    status: shown
+    bundle: cpi-2024-states
+    plate: "§04 Prices"
+  - match: ["profile:cpial:chandigarh", "profile:cpial:dnh-dd", "profile:cpial:delhi", "profile:cpial:ladakh"]
+    status: excluded
+    reason: "The source (cpialrl-states-2019) publishes no inflation for farm labourers (cpi-al) for these units; the profile says so in place of a figure."
+  - match: "profile:cpial:*"
+    status: shown
+    bundle: cpialrl-states-2019
+    plate: "§04 Prices"
+  - match: "profile:cpifood:*"
+    status: shown
+    bundle: cpi-2024-states-divisions
+    plate: "§04 Prices"
+  - match: "profile:ur:*"
+    status: shown
+    bundle: plfs-cy25-states-ur
+    plate: "§05 Work and pay"
+  - match: "profile:uryouth:*"
+    status: shown
+    bundle: plfs-cy25-states-ur
+    plate: "§05 Work and pay"
+  - match: "profile:urgrad:*"
+    status: shown
+    bundle: plfs-cy25-states-ur
+    plate: "§05 Work and pay"
+  - match: "profile:urw:*"
+    status: shown
+    bundle: plfs-cy25-states-ur
+    plate: "§05 Work and pay"
+  - match: "profile:urm:*"
+    status: shown
+    bundle: plfs-cy25-states-ur
+    plate: "§05 Work and pay"
+  - match: "profile:lfprw:*"
+    status: shown
+    bundle: plfs-cy25-states-lfpr
+    plate: "§05 Work and pay"
+  - match: "profile:lfprm:*"
+    status: shown
+    bundle: plfs-cy25-states-lfpr
+    plate: "§05 Work and pay"
+  - match: "profile:wprw:*"
+    status: shown
+    bundle: plfs-cy25-states-wpr
+    plate: "§05 Work and pay"
+  - match: "profile:wprm:*"
+    status: shown
+    bundle: plfs-cy25-states-wpr
+    plate: "§05 Work and pay"
+  - match: ["profile:wagefarm:andaman-nicobar", "profile:wagefarm:arunachal-pradesh", "profile:wagefarm:chandigarh", "profile:wagefarm:chhattisgarh", "profile:wagefarm:dnh-dd", "profile:wagefarm:delhi", "profile:wagefarm:goa", "profile:wagefarm:jharkhand", "profile:wagefarm:ladakh", "profile:wagefarm:lakshadweep", "profile:wagefarm:manipur", "profile:wagefarm:mizoram", "profile:wagefarm:nagaland", "profile:wagefarm:puducherry", "profile:wagefarm:sikkim", "profile:wagefarm:telangana", "profile:wagefarm:uttarakhand"]
+    status: excluded
+    reason: "The source (states-hbs-t113) publishes no daily wage, farm labour (men) for these units; the profile says so in place of a figure."
+  - match: "profile:wagefarm:*"
+    status: shown
+    bundle: states-hbs-t113
+    plate: "§05 Work and pay"
+  - match: ["profile:wagenonfarm:andaman-nicobar", "profile:wagenonfarm:arunachal-pradesh", "profile:wagenonfarm:chandigarh", "profile:wagenonfarm:chhattisgarh", "profile:wagenonfarm:dnh-dd", "profile:wagenonfarm:delhi", "profile:wagenonfarm:goa", "profile:wagenonfarm:jharkhand", "profile:wagenonfarm:ladakh", "profile:wagenonfarm:lakshadweep", "profile:wagenonfarm:manipur", "profile:wagenonfarm:mizoram", "profile:wagenonfarm:nagaland", "profile:wagenonfarm:puducherry", "profile:wagenonfarm:sikkim", "profile:wagenonfarm:telangana", "profile:wagenonfarm:uttarakhand"]
+    status: excluded
+    reason: "The source (states-hbs-t115) publishes no daily wage, non-farm labour (men) for these units; the profile says so in place of a figure."
+  - match: "profile:wagenonfarm:*"
+    status: shown
+    bundle: states-hbs-t115
+    plate: "§05 Work and pay"
+  - match: ["profile:wagebuild:andaman-nicobar", "profile:wagebuild:arunachal-pradesh", "profile:wagebuild:chandigarh", "profile:wagebuild:chhattisgarh", "profile:wagebuild:dnh-dd", "profile:wagebuild:delhi", "profile:wagebuild:goa", "profile:wagebuild:jharkhand", "profile:wagebuild:ladakh", "profile:wagebuild:lakshadweep", "profile:wagebuild:mizoram", "profile:wagebuild:nagaland", "profile:wagebuild:puducherry", "profile:wagebuild:sikkim", "profile:wagebuild:telangana", "profile:wagebuild:uttarakhand"]
+    status: excluded
+    reason: "The source (states-hbs-t112) publishes no daily wage, construction (men) for these units; the profile says so in place of a figure."
+  - match: "profile:wagebuild:*"
+    status: shown
+    bundle: states-hbs-t112
+    plate: "§05 Work and pay"
+  - match: "profile:mpcer:*"
+    status: shown
+    bundle: hces-states
+    plate: "§06 How households live"
+  - match: "profile:mpceu:*"
+    status: shown
+    bundle: hces-states
+    plate: "§06 How households live"
+  - match: "profile:foodr:*"
+    status: shown
+    bundle: hces-categories-states
+    plate: "§06 How households live"
+  - match: "profile:foodu:*"
+    status: shown
+    bundle: hces-categories-states
+    plate: "§06 How households live"
+  - match: "profile:poorest5r:*"
+    status: shown
+    bundle: hces-fractiles-states
+    plate: "§06 How households live"
+  - match: "profile:richest5r:*"
+    status: shown
+    bundle: hces-fractiles-states
+    plate: "§06 How households live"
+  - match: "profile:ginir:*"
+    status: shown
+    bundle: hces-gini-states
+    plate: "§06 How households live"
+  - match: "profile:giniu:*"
+    status: shown
+    bundle: hces-gini-states
+    plate: "§06 How households live"
+  - match: ["profile:mpcescr:ladakh"]
+    status: excluded
+    reason: "The source (hces-social-states) publishes no monthly spending per person, scheduled caste households, rural for these units; the profile says so in place of a figure."
+  - match: "profile:mpcescr:*"
+    status: shown
+    bundle: hces-social-states
+    plate: "§06 How households live"
+  - match: "profile:mpi:*"
+    status: shown
+    bundle: states-hbs-t010
+    plate: "§06 How households live"
+  - match: "profile:sanitation:*"
+    status: shown
+    bundle: nfhs-5-household
+    plate: "§06 How households live"
+  - match: "profile:cooking:*"
+    status: shown
+    bundle: nfhs-5-household
+    plate: "§06 How households live"
+  - match: ["profile:water:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no improved drinking water for these units; the profile says so in place of a figure."
+  - match: "profile:water:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§06 How households live"
+  - match: ["profile:electricity:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no electricity at home for these units; the profile says so in place of a figure."
+  - match: "profile:electricity:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§06 How households live"
+  - match: ["profile:insurance:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no health insurance for these units; the profile says so in place of a figure."
+  - match: "profile:insurance:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§06 How households live"
+  - match: ["profile:bankw:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no women with a bank account for these units; the profile says so in place of a figure."
+  - match: "profile:bankw:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§06 How households live"
+  - match: ["profile:phonew:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no women with a mobile phone for these units; the profile says so in place of a figure."
+  - match: "profile:phonew:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§06 How households live"
+  - match: ["profile:internetw:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no women who have used the internet for these units; the profile says so in place of a figure."
+  - match: "profile:internetw:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§06 How households live"
+  - match: ["profile:schoolw:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no women with 10 years of school for these units; the profile says so in place of a figure."
+  - match: "profile:schoolw:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§06 How households live"
+  - match: ["profile:childmarriage:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no women married before 18 for these units; the profile says so in place of a figure."
+  - match: "profile:childmarriage:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§06 How households live"
+  - match: "profile:sexratiobirth:*"
+    status: shown
+    bundle: nfhs-5-household
+    plate: "§06 How households live"
+  - match: ["profile:bankhh:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no households with a bank account for these units; the profile says so in place of a figure."
+  - match: "profile:bankhh:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§06 How households live"
+  - match: ["profile:landw:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no women who own a house or land for these units; the profile says so in place of a figure."
+  - match: "profile:landw:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§06 How households live"
+  - match: ["profile:preschool:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no children aged 2 to 4 in pre-school for these units; the profile says so in place of a figure."
+  - match: "profile:preschool:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§06 How households live"
+  - match: ["profile:violence:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no women who faced spousal violence for these units; the profile says so in place of a figure."
+  - match: "profile:violence:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§06 How households live"
+  - match: ["profile:stunting:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no children stunted for these units; the profile says so in place of a figure."
+  - match: "profile:stunting:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§07 Health"
+  - match: ["profile:wasting:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no children wasted for these units; the profile says so in place of a figure."
+  - match: "profile:wasting:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§07 Health"
+  - match: "profile:anaemiaw:*"
+    status: shown
+    bundle: nfhs-5-anaemia
+    plate: "§07 Health"
+  - match: "profile:anaemiac:*"
+    status: shown
+    bundle: nfhs-5-anaemia
+    plate: "§07 Health"
+  - match: ["profile:institutional:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no births in a hospital or clinic for these units; the profile says so in place of a figure."
+  - match: "profile:institutional:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§07 Health"
+  - match: ["profile:vaccinated:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no children fully vaccinated for these units; the profile says so in place of a figure."
+  - match: "profile:vaccinated:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§07 Health"
+  - match: ["profile:tfr:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no children per woman for these units; the profile says so in place of a figure."
+  - match: "profile:tfr:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§07 Health"
+  - match: ["profile:mlaw:andaman-nicobar", "profile:mlaw:chandigarh", "profile:mlaw:dnh-dd", "profile:mlaw:jammu-kashmir", "profile:mlaw:ladakh", "profile:mlaw:lakshadweep"]
+    status: excluded
+    reason: "The source (gender-t126-states) publishes no women among mlas for these units; the profile says so in place of a figure."
+  - match: "profile:mlaw:*"
+    status: shown
+    bundle: gender-t126-states
+    plate: "§06 How households live"
+  - match: ["profile:overweightw:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no women overweight or obese for these units; the profile says so in place of a figure."
+  - match: "profile:overweightw:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§07 Health"
+  - match: ["profile:bpw:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no women with high blood pressure for these units; the profile says so in place of a figure."
+  - match: "profile:bpw:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§07 Health"
+  - match: ["profile:bpm:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no men with high blood pressure for these units; the profile says so in place of a figure."
+  - match: "profile:bpm:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§07 Health"
+  - match: ["profile:sugarw:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no women with high blood sugar for these units; the profile says so in place of a figure."
+  - match: "profile:sugarw:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§07 Health"
+  - match: ["profile:sugarm:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no men with high blood sugar for these units; the profile says so in place of a figure."
+  - match: "profile:sugarm:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§07 Health"
+  - match: ["profile:tobaccom:manipur"]
+    status: excluded
+    reason: "The source (profiles-nfhs6) publishes no men who use tobacco for these units; the profile says so in place of a figure."
+  - match: "profile:tobaccom:*"
+    status: shown
+    bundle: profiles-nfhs6
+    plate: "§07 Health"
+  - match: ["profile:imr:dnh-dd", "profile:imr:ladakh"]
+    status: excluded
+    reason: "The source (states-hbs-t004) publishes no infant deaths per 1,000 births for these units; the profile says so in place of a figure."
+  - match: "profile:imr:*"
+    status: shown
+    bundle: states-hbs-t004
+    plate: "§07 Health"
+  - match: ["profile:life:andaman-nicobar", "profile:life:arunachal-pradesh", "profile:life:chandigarh", "profile:life:dnh-dd", "profile:life:goa", "profile:life:ladakh", "profile:life:lakshadweep", "profile:life:manipur", "profile:life:meghalaya", "profile:life:mizoram", "profile:life:nagaland", "profile:life:puducherry", "profile:life:sikkim", "profile:life:tripura"]
+    status: excluded
+    reason: "The source (states-hbs-t007) publishes no life expectancy at birth for these units; the profile says so in place of a figure."
+  - match: "profile:life:*"
+    status: shown
+    bundle: states-hbs-t007
+    plate: "§07 Health"
+  - match: "profile:beds:*"
+    status: shown
+    bundle: states-hbs-t017
+    plate: "§07 Health"
+  - match: "profile:cd:*"
+    status: shown
+    bundle: credit-states-cd
+    plate: "§08 Money"
+  - match: "profile:deposits:*"
+    status: shown
+    bundle: credit-states
+    plate: "§08 Money"
+  - match: "profile:credit:*"
+    status: shown
+    bundle: credit-states
+    plate: "§08 Money"
+  - match: "profile:creditfarm:*"
+    status: shown
+    bundle: credit-states-occupation
+    plate: "§08 Money"
+  - match: "profile:creditpersonal:*"
+    status: shown
+    bundle: credit-states-occupation
+    plate: "§08 Money"
+  - match: "profile:branches:*"
+    status: shown
+    bundle: credit-deep-offices-states
+    plate: "§08 Money"
+  - match: "profile:factories:*"
+    status: shown
+    bundle: asi-states
+    plate: "§09 Industry, energy and exports"
+  - match: "profile:factoryjobs:*"
+    status: shown
+    bundle: asi-states
+    plate: "§09 Industry, energy and exports"
+  - match: "profile:factorygva:*"
+    status: shown
+    bundle: asi-states
+    plate: "§09 Industry, energy and exports"
+  - match: "profile:estab:*"
+    status: shown
+    bundle: asuse-states
+    plate: "§09 Industry, energy and exports"
+  - match: "profile:estabworkers:*"
+    status: shown
+    bundle: asuse-states
+    plate: "§09 Industry, energy and exports"
+  - match: "profile:re:*"
+    status: shown
+    bundle: mnre-states
+    plate: "§09 Industry, energy and exports"
+  - match: "profile:solar:*"
+    status: shown
+    bundle: mnre-states-solar
+    plate: "§09 Industry, energy and exports"
+  - match: "profile:wind:*"
+    status: shown
+    bundle: mnre-states-wind
+    plate: "§09 Industry, energy and exports"
+  - match: ["profile:power:dnh-dd", "profile:power:ladakh"]
+    status: excluded
+    reason: "The source (states-hbs-t138) publishes no electricity available per person for these units; the profile says so in place of a figure."
+  - match: "profile:power:*"
+    status: shown
+    bundle: states-hbs-t138
+    plate: "§09 Industry, energy and exports"
+  - match: ["profile:tdloss:dnh-dd", "profile:tdloss:ladakh"]
+    status: excluded
+    reason: "The source (states-hbs-t148) publishes no power lost in transmission for these units; the profile says so in place of a figure."
+  - match: "profile:tdloss:*"
+    status: shown
+    bundle: states-hbs-t148
+    plate: "§09 Industry, energy and exports"
+  - match: "profile:exports:*"
+    status: shown
+    bundle: states-hbs-t181
+    plate: "§09 Industry, energy and exports"
+  - match: ["profile:grain:andaman-nicobar", "profile:grain:chandigarh", "profile:grain:dnh-dd", "profile:grain:ladakh", "profile:grain:lakshadweep"]
+    status: excluded
+    reason: "The source (states-hbs-t062) publishes no foodgrains grown for these units; the profile says so in place of a figure."
+  - match: "profile:grain:*"
+    status: shown
+    bundle: states-hbs-t062
+    plate: "§10 Farms"
+  - match: ["profile:yield:andaman-nicobar", "profile:yield:chandigarh", "profile:yield:dnh-dd", "profile:yield:ladakh", "profile:yield:lakshadweep"]
+    status: excluded
+    reason: "The source (states-hbs-t084) publishes no foodgrain yield for these units; the profile says so in place of a figure."
+  - match: "profile:yield:*"
+    status: shown
+    bundle: states-hbs-t084
+    plate: "§10 Farms"
+  - match: ["profile:irrigated:andaman-nicobar", "profile:irrigated:chandigarh", "profile:irrigated:dnh-dd", "profile:irrigated:ladakh", "profile:irrigated:lakshadweep"]
+    status: excluded
+    reason: "The source (states-hbs-t055) publishes no cropped area irrigated for these units; the profile says so in place of a figure."
+  - match: "profile:irrigated:*"
+    status: shown
+    bundle: [states-hbs-t055, states-hbs-t053]
+    plate: "§10 Farms"
+  - match: ["profile:intensity:andaman-nicobar", "profile:intensity:chandigarh", "profile:intensity:dnh-dd", "profile:intensity:ladakh", "profile:intensity:lakshadweep"]
+    status: excluded
+    reason: "The source (states-hbs-t057) publishes no cropping intensity for these units; the profile says so in place of a figure."
+  - match: "profile:intensity:*"
+    status: shown
+    bundle: states-hbs-t057
+    plate: "§10 Farms"
+  - match: ["profile:milk:dnh-dd", "profile:milk:ladakh"]
+    status: excluded
+    reason: "The source (states-hbs-t091) publishes no milk produced for these units; the profile says so in place of a figure."
+  - match: "profile:milk:*"
+    status: shown
+    bundle: states-hbs-t091
+    plate: "§10 Farms"
+  - match: "profile:ger:*"
+    status: shown
+    bundle: aishe-states-ger
+    plate: "§11 Education"
+  - match: "profile:gerw:*"
+    status: shown
+    bundle: aishe-states-ger
+    plate: "§11 Education"
+  - match: "profile:gersec:*"
+    status: shown
+    bundle: states-hbs-t001
+    plate: "§11 Education"
+  - match: ["profile:temp:dnh-dd", "profile:temp:jammu-kashmir", "profile:temp:ladakh"]
+    status: excluded
+    reason: "The source (climate-era5-states-temp) publishes no average temperature for these units; the profile says so in place of a figure."
+  - match: "profile:temp:*"
+    status: shown
+    bundle: climate-era5-states-temp
+    plate: "§12 Climate"
+  - match: ["profile:hot35:dnh-dd", "profile:hot35:jammu-kashmir", "profile:hot35:ladakh"]
+    status: excluded
+    reason: "The source (climate-era5-states-hotdays) publishes no days of 35°c or more for these units; the profile says so in place of a figure."
+  - match: "profile:hot35:*"
+    status: shown
+    bundle: climate-era5-states-hotdays
+    plate: "§12 Climate"
+  - match: ["profile:hot35future:dnh-dd", "profile:hot35future:jammu-kashmir", "profile:hot35future:ladakh"]
+    status: excluded
+    reason: "The source (climate-cmip6-states-hotdays) publishes no extra hot days by 2040-59 (middle path) for these units; the profile says so in place of a figure."
+  - match: "profile:hot35future:*"
+    status: shown
+    bundle: climate-cmip6-states-hotdays
+    plate: "§12 Climate"
+  - match: ["profile:hot35futurehigh:dnh-dd", "profile:hot35futurehigh:jammu-kashmir", "profile:hot35futurehigh:ladakh"]
+    status: excluded
+    reason: "The source (climate-cmip6-states-hotdays) publishes no extra hot days by 2040-59 (high path) for these units; the profile says so in place of a figure."
+  - match: "profile:hot35futurehigh:*"
+    status: shown
+    bundle: climate-cmip6-states-hotdays
+    plate: "§12 Climate"
+  - match: ["profile:rain:dnh-dd", "profile:rain:jammu-kashmir", "profile:rain:ladakh"]
+    status: excluded
+    reason: "The source (climate-era5-states-rain) publishes no rainfall in the year for these units; the profile says so in place of a figure."
+  - match: "profile:rain:*"
+    status: shown
+    bundle: climate-era5-states-rain
+    plate: "§12 Climate"
+  - match: ["profile:gfd:andaman-nicobar", "profile:gfd:chandigarh", "profile:gfd:dnh-dd", "profile:gfd:ladakh", "profile:gfd:lakshadweep"]
+    status: excluded
+    reason: "The source (states-finances) publishes no fiscal deficit, % of gsdp for these units; the profile says so in place of a figure."
+  - match: "profile:gfd:*"
+    status: shown
+    bundle: states-finances
+    plate: "§13 State finances"
+  - match: ["profile:debt:andaman-nicobar", "profile:debt:chandigarh", "profile:debt:dnh-dd", "profile:debt:ladakh", "profile:debt:lakshadweep"]
+    status: excluded
+    reason: "The source (states-finances) publishes no debt, % of gsdp for these units; the profile says so in place of a figure."
+  - match: "profile:debt:*"
+    status: shown
+    bundle: states-finances
+    plate: "§13 State finances"
+  - match: ["profile:owntax:andaman-nicobar", "profile:owntax:chandigarh", "profile:owntax:dnh-dd", "profile:owntax:ladakh", "profile:owntax:lakshadweep"]
+    status: excluded
+    reason: "The source (states-finances) publishes no own tax revenue, % of gsdp for these units; the profile says so in place of a figure."
+  - match: "profile:owntax:*"
+    status: shown
+    bundle: states-finances
+    plate: "§13 State finances"
+  - match: ["profile:sdl:andaman-nicobar", "profile:sdl:chandigarh", "profile:sdl:dnh-dd", "profile:sdl:ladakh", "profile:sdl:lakshadweep"]
+    status: excluded
+    reason: "The source (rates-sdl-states) publishes no what the state pays to borrow for these units; the profile says so in place of a figure."
+  - match: "profile:sdl:*"
+    status: shown
+    bundle: rates-sdl-states
+    plate: "§13 State finances"
+  - match: ["profile:interest:andaman-nicobar", "profile:interest:chandigarh", "profile:interest:dnh-dd", "profile:interest:ladakh", "profile:interest:lakshadweep"]
+    status: excluded
+    reason: "The source (states-hbs-t170) publishes no interest, % of revenue spending for these units; the profile says so in place of a figure."
+  - match: "profile:interest:*"
+    status: shown
+    bundle: [states-hbs-t170, states-hbs-t166]
+    plate: "§13 State finances"
+  - match: ["nfhs6:i004", "nfhs6:i005", "nfhs6:i007", "nfhs6:i008", "nfhs6:i010", "nfhs6:i011", "nfhs6:i012", "nfhs6:i014", "nfhs6:i016", "nfhs6:i018", "nfhs6:i035", "nfhs6:i044", "nfhs6:i069", "nfhs6:i070", "nfhs6:i076", "nfhs6:i080", "nfhs6:i083", "nfhs6:i086", "nfhs6:i089", "nfhs6:i092", "nfhs6:i093", "nfhs6:i095", "nfhs6:i099"]
+    status: shown
+    bundle: [profiles-nfhs6, profiles-nfhs6-nfhs5]
+    plate: "§06 How households live and §07 Health"
+  - match: "nfhs6:*"
+    status: baked
+    bundle: [profiles-nfhs6, profiles-nfhs6-nfhs5]
+  # --- end generated ---

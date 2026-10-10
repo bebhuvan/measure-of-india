@@ -1,0 +1,88 @@
+---
+// /states/: every state and union territory, sorted and searchable, each linking to its
+// profile. Figures come from src/dossiers/profiles.js (the same reader as the profiles), each
+// with its period; qc traces them like the profiles' own.
+import Base from "../../layouts/Base.astro";
+import { STATES } from "../../dossiers/states-key.js";
+import { compareRow, glanceMeasures, figHTML, rankPhrase } from "../../dossiers/profiles.js";
+const G = glanceMeasures();
+const rows = STATES.map((u) => ({ u, r: compareRow(u.slug) })).sort((a, b) => a.u.name.localeCompare(b.u.name, "en-IN"));
+const KIND = { state: "State", "ut-legislature": "UT, with legislature", ut: "UT" };
+const F = (f) => (f ? `${figHTML(f.text, f.fmt, f.src)}<small>${f.period}</small>` : `<span class="na">no figure</span>`);
+const sortVal = (f) => (f ? String(f.value) : "");
+---
+<Base
+  title="States and union territories · India Atlas"
+  description="A profile of every Indian state and union territory: income, growth, prices, jobs, spending, health, banking, industry, farms, education, climate and state finances, from official sources."
+  crumbLeft={`<a href="/guides/">Guides</a> / <b>States and union territories</b>`}
+  canonical="https://atlas.thisindianlife.today/states/"
+>
+<style is:global>
+  .st-index{overflow-x:auto;margin-top:16px}
+  .st-index table{width:100%;min-width:900px;border-collapse:collapse;font-family:var(--sans);font-size:.9rem}
+  .st-index th{font-weight:400;font-size:.78rem;color:var(--muted);text-align:left;padding:0 12px 10px 0;border-bottom:1px solid var(--rule-2);vertical-align:bottom}
+  .st-index th button{all:unset;cursor:pointer;border-bottom:1px dotted var(--faint)}
+  .st-index th button[aria-sort]{color:var(--ink)}
+  .st-index td{padding:9px 12px 9px 0;border-bottom:1px solid var(--rule);color:var(--ink-soft);font-variant-numeric:tabular-nums;vertical-align:top}
+  .st-index td:first-child a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--rule-2);font-weight:500}
+  .st-index td small{display:block;color:var(--muted);font-size:.76rem}
+  .st-index .na{color:var(--muted);font-size:.8rem}
+  .st-find{margin-top:28px;font-family:var(--sans)}
+  .st-find input{font:inherit;font-size:1rem;padding:9px 12px;border:1px solid var(--rule-2);width:min(420px,100%);background:var(--bg);color:var(--ink)}
+  .st-find .n{color:var(--muted);font-size:.85rem;margin-left:12px}
+</style>
+<div class="page">
+  <div class="titleblock break">
+    <div class="kicker">States and union territories</div>
+    <div class="hero-grid">
+      <h1>Every state, <i>one page each.</i></h1>
+      <p class="lede">Twenty-eight states and eight union territories, each with a profile of how it earns, spends, works, borrows, learns, falls ill and warms, set against India and its neighbours.</p>
+    </div>
+  </div>
+  <section>
+    <div class="prose"><p>Find a state or union territory by name, or sort by any column. Each figure carries its own period: sources publish at different lags, and some do not cover every union territory. The guide to <a href="/guides/states/">state economies</a> sets every state side by side, measure by measure.</p></div>
+    <div class="break st-find"><label><input type="search" id="st-q" aria-label="Find a state or union territory" placeholder="Find a state or union territory" autocomplete="off"></label><span class="n" id="st-n">{STATES.length} states and union territories</span></div>
+    <div class="break st-index">
+      <table>
+        <thead><tr><th><button data-k="name">State or UT</button></th><th><button data-k="kind">Kind</button></th><th><button data-k="region">Region</button></th>{G.map((m, i) => <th><button data-k={`m${i}`}>{m.label}</button></th>)}</tr></thead>
+        <tbody id="st-body">
+          {rows.map(({ u, r }) => (
+            <tr data-name={u.name} data-kind={KIND[u.kind]} data-region={u.region} data-q={[u.name, u.short, ...u.aliases].join(" ").toLowerCase()} {...Object.fromEntries(r.cells.map((c, i) => [`data-m${i}`, sortVal(c)]))}>
+              <td><a href={`/states/${u.slug}/`}>{u.name}</a></td>
+              <td>{KIND[u.kind]}</td>
+              <td>{u.region}</td>
+              {r.cells.map((c) => <td set:html={F(c)} />)}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+<script>
+  const body = document.getElementById("st-body");
+  const rows = [...body.rows];
+  const q = document.getElementById("st-q");
+  const n = document.getElementById("st-n");
+  const apply = () => {
+    const t = (q.value || "").trim().toLowerCase();
+    let k = 0;
+    for (const tr of rows) { const ok = !t || tr.dataset.q.includes(t); tr.hidden = !ok; if (ok) k++; }
+    n.textContent = t ? `${k} of ${rows.length}` : `${rows.length} states and union territories`;
+  };
+  q.addEventListener("input", apply);
+  let key = null, dir = 1;
+  for (const b of document.querySelectorAll(".st-index th button")) b.addEventListener("click", () => {
+    const k = b.dataset.k, num = /^m\d/.test(k);
+    if (key === k) dir = -dir; else { key = k; dir = num ? -1 : 1; }
+    for (const th of document.querySelectorAll(".st-index th")) th.removeAttribute("aria-sort");
+    b.closest("th").setAttribute("aria-sort", dir > 0 ? "ascending" : "descending");
+    rows.sort((x, y) => {
+      const a = x.dataset[k] ?? "", c = y.dataset[k] ?? "";
+      if (num) { if (a === "" && c === "") return 0; if (a === "") return 1; if (c === "") return -1; return dir * (+a - +c); }
+      return dir * a.localeCompare(c, "en-IN");
+    });
+    body.append(...rows);
+  });
+</script>
+</Base>

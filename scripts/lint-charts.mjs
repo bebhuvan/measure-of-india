@@ -39,6 +39,8 @@ const PAGES = [
   ...DOSSIERS.map((d) => "/guides/" + d.slug + "/"),
   ...EXPLAINERS.filter((e) => e.live).map((e) => "/learn/" + e.slug + "/"),
   "/",
+  // profiles (lb/profiles): every state profile
+  ...(await import("../src/dossiers/states-key.js")).STATES.map((u) => `/states/${u.slug}/`),
 ];
 
 const MONO_ADV = 0.6;
@@ -159,7 +161,8 @@ for (const url of PAGES) {
   globalThis.document = window.document;
   const scripts = [...html.matchAll(/<script[^>]+src="([^"]+\.js)"/g)].map((m) => m[1]);
   try {
-    for (const src of scripts) await import(pathToFileURL(path.join(DIST, src)).href);
+    // per-page query: a shared entry module runs once per page, not once per process (lb/profiles)
+    for (const src of scripts) await import(pathToFileURL(path.join(DIST, src)).href + "?page=" + encodeURIComponent(url));
   } catch (e) {
     issues.push({ url, kind: "script-error", detail: e.message.slice(0, 160) });
     continue;

@@ -1,0 +1,294 @@
+---
+// /states/<state>/: one profile per state and union territory, from one template. Every figure
+// is read from a baked bundle at build time by src/dossiers/profiles.js and written as a
+// templated sentence or table cell carrying its period; qc re-reads each one (data-src).
+// Section inputs (bundles): src/dossiers/profiles.js MEASURES, by section; the page lists them
+// under "Sources" at the foot. Prose: templated sentences only; no generated prose.
+import Base from "../../layouts/Base.astro";
+import { STATES } from "../../dossiers/states-key.js";
+import { page, FMT, figHTML, rankPhrase, rowHref } from "../../dossiers/profiles.js";
+
+export function getStaticPaths() {
+  return STATES.map((u) => ({ params: { state: u.slug } }));
+}
+const { state } = Astro.params;
+const P = page(state);
+const { u, N, p } = P;
+const F = (f) => figHTML(f.text, f.fmt, f.src);
+const I = (f) => (f.india ? figHTML(f.india.text, f.fmt, f.india.src) + (f.india.same ? "" : ` <small>${f.india.period}</small>`) : "<span class=\"na\">no figure</span>");
+const rk = (f) => (f.rank ? rankPhrase(f.rank) : "<span class=\"na\">not ranked</span>");
+const nb = (s) => P.nameOf(s);
+const chartsJSON = JSON.stringify(P.charts).replace(/</g, "\\u003c");
+const fmtN = (n) => n.toLocaleString("en-IN");
+const vintages = [...new Set(P.sources.map((s) => s.vintage).filter(Boolean))].sort();
+const latestVintage = vintages.at(-1);
+const kindNote = u.kind === "ut" ? "A union territory without a legislature: the Union government runs it, and several state-level sources leave it out." : u.kind === "ut-legislature" ? "A union territory with an elected legislature." : "";
+---
+<Base
+  title={`${u.name}: a state profile · India Atlas`}
+  description={`${u.name} in official figures: income, growth, prices, jobs, spending, health, banking, industry, farms, education, climate and state finances, each against India and its neighbours.`}
+  dateStamp={latestVintage ? `Data to ${latestVintage}` : ""}
+  crumbLeft={`<a href="/states/">States and union territories</a> / <b>${u.name}</b>`}
+  crumbRight={`${P.kind}, ${u.iso}`}
+  canonical={`https://atlas.thisindianlife.today/states/${u.slug}/`}
+  ogImage={`/og/states/${u.slug}.png`}
+>
+<style is:global>
+  .pf-lead p{margin:0 0 1em}
+  .pf-lead .fig,.pf-table .fig,.numbers .fig{font-weight:600;color:var(--ink)}
+  .pf-table{overflow-x:auto;margin:18px 0 6px}
+  .pf-table table{width:100%;border-collapse:collapse;font-family:var(--sans);font-size:.88rem;min-width:640px}
+  .pf-table th{font-weight:400;font-size:.78rem;color:var(--muted);text-align:left;padding:0 12px 9px 0;border-bottom:1px solid var(--rule-2);vertical-align:bottom}
+  .pf-table td{padding:8px 12px 8px 0;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+  .pf-table td:first-child{color:var(--ink)}
+  .pf-table td small,.pf-table .na{color:var(--muted);font-size:.78rem}
+  .pf-table td small{display:block;font-weight:400}
+  .pf-numbers{grid-template-columns:repeat(3,minmax(0,1fr))}
+  @media (max-width:680px){.pf-numbers{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  .pf-table td a{color:var(--ink-soft);text-decoration:none;border-bottom:1px solid var(--rule-2)}
+  .pf-table tr.self td{background:#F7F8FC}
+  .pf-table caption{caption-side:top;text-align:left;font-family:var(--sans);font-size:.85rem;color:var(--ink-soft);padding:0 0 10px;line-height:1.5}
+  .pf-table .v{font-weight:600;color:var(--ink)}
+  .pf-note{font-family:var(--sans);font-size:.88rem;color:var(--muted);line-height:1.55;margin:10px 0 0}
+  .pf-none{font-family:var(--sans);font-size:.95rem;color:var(--ink-soft);border-left:2px solid var(--rule-2);padding:4px 0 4px 14px}
+  .pf-deeper{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px 36px;margin-top:10px}
+  .pf-deeper a{display:block;text-decoration:none;color:var(--ink);border-top:1px solid var(--rule-2);padding-top:10px;font-family:var(--sans)}
+  .pf-deeper a b{font-weight:500;display:block}
+  .pf-deeper a span{color:var(--muted);font-size:.85rem}
+  .pf-deeper a:hover b{color:var(--accent)}
+  .numbers .num .d small{display:block}
+</style>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{u.kind === "state" ? "State" : "Union territory"} profile, {u.region}</div>
+    <div class="hero-grid">
+      <h1>{u.name}</h1>
+      <p class="lede">{P.lede}</p>
+    </div>
+    <div class="meta">
+      <span>Kind <b>{P.kind}</b></span>
+      <span>Codes <b>{u.iso}, LGD {u.lgd}</b></span>
+      <span>Neighbours <b>{u.neighbours.length ? u.neighbours.map(nb).join(", ") : "none by land"}</b></span>
+      <span>Series naming it <b>{fmtN(P.rows.length)} in {P.deeper.length} guides</b></span>
+    </div>
+    <div class="numbers pf-numbers">
+      {P.glance.map(({ m, f }) => (
+        <div class="num">
+          <div class="l">{m.label}</div>
+          <div class="v acc" set:html={F(f)} />
+          <div class="d" set:html={`<b>${f.period}</b>${f.rank ? ", " + rankPhrase(f.rank) : ""}${f.india ? `<small>India ${figHTML(f.india.text, f.fmt, f.india.src)}${f.india.same ? "" : ", " + f.india.period}</small>` : ""}`} />
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- § 01 where it stands. Inputs: the glance measures (profiles.js MEASURES glance: true), every unit at the comparison period -->
+  <section id="where">
+    <div class="sec-head"><span class="no">01</span><h2>Where {N} stands</h2><span class="line"></span></div>
+    <div class="prose pf-lead">
+      <p>Each row puts every state and union territory with a figure for the same period on one line, lowest on the left and highest on the right. {N} is the blue dot; India, where the source gives an all-India figure for that period, is the gold tick. Rows read on their own scales: a dot near the right of one row and the left of another says where {N} ranks, not how big the numbers are.</p>
+      {kindNote && <p>{kindNote}</p>}
+    </div>
+    <div class="break">
+      <figure id="cb-where" style="margin:0">
+        <div class="plate-head"><div class="t"><h3>{N} among the states and union territories</h3><div class="sub">Each measure at its comparison period, the latest that at least three in four units have published.</div></div></div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-where" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: India Atlas, from the bundles named under each section below. Ranks count only units with a figure for the same period.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button></span>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  {P.sections.map((s) => (
+    <section id={s.id}>
+      <div class="sec-head"><span class="no">{s.no}</span><h2>{s.title}</h2><span class="line"></span></div>
+      <div class="prose pf-lead">
+        <p>{s.intro}</p>
+        {s.none && <p class="pf-none">{s.none}</p>}
+        {s.sentences.map((t) => <p set:html={t} />)}
+        {s.former.map((t) => <p class="pf-note" set:html={t} />)}
+      </div>
+      {s.id === "income" && P.charts.income && (
+        <div class="break"><figure id="cb-income" style="margin:0">
+          <div class="plate-head"><div class="t"><h3>Income per person in {N}, each year</h3><div class="sub">Per-capita net state domestic product, ₹ a year at current prices, base 2011-12, against the middle state of the 31 that report every year.</div></div></div>
+          <div class="frame"><div class="plotzone"><div id="plot-income" style="position:relative"><div class="cb-tip"></div></div></div>
+            <div class="plotfoot"><span class="src">Source: MoSPI, regional accounts (states-pcnsdp-current, states-spread). Each state's own population, as published.</span><span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="/data/states-pcnsdp-current.csv">Data</a></span></div></div>
+        </figure></div>
+      )}
+      {s.id === "income" && P.charts.growth && (
+        <div class="break"><figure id="cb-growth" style="margin:0">
+          <div class="plate-head"><div class="t"><h3>How fast {N}'s economy grew, after inflation</h3><div class="sub">Real growth of GSDP each year, per cent, at constant 2011-12 prices; the line is India's GDP on the same base, computed from MoSPI's levels.</div></div></div>
+          <div class="frame"><div class="plotzone"><div id="plot-growth" style="position:relative"></div></div>
+            <div class="plotfoot"><span class="src">Source: MoSPI, regional accounts (states-growth-real) and national accounts, base 2011-12 (gdp-annual-levels).</span><span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button></span></div></div>
+        </figure></div>
+      )}
+      {s.id === "structure" && P.charts.structure && (
+        <div class="break"><figure id="cb-structure" style="margin:0">
+          <div class="plate-head"><div class="t"><h3>What {N}'s output is made of, against India</h3><div class="sub">Shares of gross value added at current prices, per cent, {P.charts.structure.period}. Base 2011-12.</div></div></div>
+          <div class="frame"><div class="plotzone"><div id="plot-structure" style="position:relative"></div></div>
+            <div class="plotfoot"><span class="src">Source: MoSPI, regional accounts (states-structure) and national accounts, base 2011-12 (gdp-annual-industries).</span><span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button></span></div></div>
+        </figure></div>
+      )}
+      {s.id === "prices" && P.charts.prices && (
+        <div class="break"><figure id="cb-prices" style="margin:0">
+          <div class="plate-head"><div class="t"><h3>Prices in {N} against a year earlier, on two rulers</h3><div class="sub">Consumer Price Index, combined, per cent change on the same month a year earlier: base 2012 to December 2025, base 2024 from January 2026. The two are different indices and are not joined. Grey: All India.</div></div></div>
+          <div class="frame"><div class="plotzone"><div id="plot-prices" style="position:relative"><div class="cb-tip"></div></div></div>
+            <div class="plotfoot"><span class="src">Source: MoSPI, NSO, CPI (cpi-states, cpi-2024-states, cpi, cpi-2024).</span><span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button></span></div></div>
+        </figure></div>
+      )}
+      {s.id === "work" && P.charts.work && (
+        <div class="break"><figure id="cb-work" style="margin:0">
+          <div class="plate-head"><div class="t"><h3>Women and men at work in {N}, against India</h3><div class="sub">Per cent, age 15 and above, usual status, calendar year {P.charts.work.period}. Gold ticks: All India.</div></div></div>
+          <div class="frame"><div class="plotzone"><div id="plot-work" style="position:relative"></div></div>
+            <div class="plotfoot"><span class="src">Source: MoSPI, Periodic Labour Force Survey, calendar-year estimates (plfs-cy25-states-ur, -lfpr, -wpr; plfs-cy25-india).</span><span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button></span></div></div>
+        </figure></div>
+      )}
+      {s.id === "climate" && P.charts.climate && (
+        <div class="break"><figure id="cb-climate" style="margin:0">
+          <div class="plate-head"><div class="t"><h3>How warm {N}'s years have been since 1950</h3><div class="sub">Average air temperature over the year, °C, across the state's area. The rule is its own average for {P.charts.climate.span}.</div></div></div>
+          <div class="frame"><div class="plotzone"><div id="plot-climate" style="position:relative"><div class="cb-tip"></div></div></div>
+            <div class="plotfoot"><span class="src">Source: World Bank Climate Change Knowledge Portal, ERA5 reanalysis (climate-era5-states-temp).</span><span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button></span></div></div>
+        </figure></div>
+      )}
+      {s.id === "industry" && P.industries && (
+        <div class="pf-table">
+          <table>
+            <caption>What {N}'s registered factories make: the largest industries by value added, {P.industries.period} (Annual Survey of Industries; {P.industries.n} industries in all)</caption>
+            <thead><tr><th>Industry (NIC 2008 division)</th><th>Value added</th><th>Share of the state's factory value added</th><th>People engaged</th></tr></thead>
+            <tbody>
+              {P.industries.rows.map((r) => <tr><td>{r.name}</td><td set:html={F(r.gva)} /><td set:html={F(r.share)} /><td set:html={r.people ? F(r.people) : "<span class=\"na\">no figure</span>"} /></tr>)}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {s.id === "money" && P.districts && (
+        <div class="pf-table">
+          <table>
+            <caption>{N}'s {P.districts.rows.length === 1 ? "district" : `${P.districts.rows.length} districts`}, by bank deposits, as on {P.districts.period} (RBI, Basic Statistical Returns; amounts are the sums of the rural, semi-urban, urban and metropolitan figures as published)</caption>
+            <thead><tr><th>District</th><th>Deposits</th><th>Credit</th><th>Credit-deposit ratio</th><th>Women's share of loans to individuals</th></tr></thead>
+            <tbody>
+              {P.districts.rows.map((r) => <tr><td>{r.name}</td><td set:html={F(r.dep)} /><td set:html={r.cred ? F(r.cred) : "<span class=\"na\">no figure</span>"} /><td set:html={r.cd ? F(r.cd) : "<span class=\"na\">no figure</span>"} /><td set:html={r.women ? F(r.women) : "<span class=\"na\">no figure</span>"} /></tr>)}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {s.rest.length > 0 && (
+        <div class="pf-table">
+          <table>
+            <thead><tr><th>Measure</th><th>{u.name}</th><th>Period</th><th>Rank</th><th>All India</th><th>Every cut</th></tr></thead>
+            <tbody>
+              {s.rest.map((f) => {
+                const href = rowHref(f.bundle, f.key);
+                return (
+                  <tr>
+                    <td>{f.label}</td>
+                    <td class="v" set:html={F(f) + (f.newer ? `<small>${f.newer.period}: ${figHTML(f.newer.text, f.fmt, f.newer.src)}</small>` : "") + (f.earlier ? `<small>${f.earlier.period}: ${figHTML(f.earlier.text, f.fmt, f.earlier.src)}</small>` : "") + (f.normal ? `<small>${f.normal.span} average: ${figHTML(f.normal.text, f.fmt, f.normal.src)}</small>` : "")} />
+                    <td>{f.period}</td>
+                    <td set:html={rk(f)} />
+                    <td set:html={I(f)} />
+                    <td>{href ? <a href={href}>Row</a> : <span class="na">no row</span>}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {s.missing && <p class="pf-note">{s.missing}</p>}
+      <p class="pf-note">Read from: {s.bundles.map((b, i) => <>{i ? ", " : ""}<a href={`/data/${b}.csv`}>{b}</a></>)}.</p>
+    </section>
+  ))}
+
+  <!-- § neighbours and peers. Inputs: the glance measures for the unit, its neighbours (states-key) and three peers by income per person -->
+  <section id="neighbours">
+    <div class="sec-head"><span class="no">{String(P.sections.length + 2).padStart(2, "0")}</span><h2>Neighbours and peers</h2><span class="line"></span></div>
+    <div class="prose pf-lead">
+      <p>{N} beside the units it shares a land border with{p.peers.length ? `, and the three nearest to it in income per person (marked †)` : ""}. Each figure carries its own period; where two periods differ, the figures are not a like-for-like comparison.</p>
+    </div>
+    <div class="break"><div class="pf-table">
+      <table>
+        <thead><tr><th>State or UT</th>{P.compare[0].cells.map((c, i) => <th>{P.glance[i]?.m.label ?? ""}</th>)}</tr></thead>
+        <tbody>
+          {P.compare.map((r) => (
+            <tr class={r.self ? "self" : ""}>
+              <td>{r.self ? <b>{r.name}</b> : <a href={`/states/${r.slug}/`}>{r.name}</a>}{r.peer ? " †" : ""}</td>
+              {r.cells.map((c) => <td set:html={c ? `${F(c)}<small>${c.period}</small>` : "<span class=\"na\">no figure</span>"} />)}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div></div>
+  </section>
+
+  <!-- § go deeper. Inputs: every guide's every-cut table (src/dossiers/everycut.js), every series naming the unit -->
+  <section id="deeper">
+    <div class="sec-head"><span class="no">{String(P.sections.length + 3).padStart(2, "0")}</span><h2>Go deeper</h2><span class="line"></span></div>
+    <div class="prose pf-lead">
+      <p>{fmtN(P.rows.length)} series across {P.deeper.length} guides name {N}. Each guide explains its measure in full, and its every-cut table holds every series. The figures above link to their own rows. The whole list, with each series' latest value and a link to its row, is one download: <a href={`/states/${u.slug}.csv`} download>{u.slug}.csv</a>.</p>
+    </div>
+    <div class="pf-deeper">
+      {P.deeper.map((d) => <a href={`/guides/${d.slug}/#every-cut`}><b>{d.title}</b><span>{fmtN(d.n)} series name {u.name}</span></a>)}
+    </div>
+  </section>
+
+  <!-- § how to read this. Evergreen -->
+  <section id="read">
+    <div class="sec-head"><span class="no">{String(P.sections.length + 4).padStart(2, "0")}</span><h2>How to read this profile</h2><span class="line"></span></div>
+    <div class="prose">
+      <p>Every number on this page is copied from an official table, or worked out from one in a way the page names (a share, a growth rate, an average). Nothing is estimated or filled in. Where a source has no figure for {N}, the page says so.</p>
+      <p>States report at different lags. MoSPI's newest year of state accounts comes from a few states first, so each figure is ranked at its comparison period, the latest that at least three in four units have published, and the newer estimate is given beside it. A rank counts only the units with a figure for that period, and says how many.</p>
+      <p>Figures from different sources are different rulers. The 2012 and 2024 bases of the Consumer Price Index, the two designs of the labour force survey, and the rounds of the family health survey are never joined into one series. Boundaries change too: Andhra Pradesh and Telangana split in June 2014; Jammu and Kashmir became two union territories in October 2019; Dadra and Nagar Haveli and Daman and Diu merged in January 2020. A figure for a unit before its change appears only under that unit's own name.</p>
+    </div>
+  </section>
+
+  <!-- § misreadings. Evergreen -->
+  <section id="misread">
+    <div class="sec-head"><span class="no">{String(P.sections.length + 5).padStart(2, "0")}</span><h2>How to misread a state profile</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li><span class="no">1</span><div><h3>"Income per person is what a typical person earns."</h3><p>It is what is produced in the state, divided by everyone who lives there. Profits of companies based elsewhere count where the plant stands; money sent home by people working in other states counts where they work. Spending per person, from the household survey, is closer to how a household lives.</p></div></li>
+      <li><span class="no">2</span><div><h3>"It ranks 10th, so it is in the middle."</h3><p>Check of how many. Some tables cover 36 units, some 19. A rank says nothing about the distance to the next state; the row in the first chart shows it.</p></div></li>
+      <li><span class="no">3</span><div><h3>"This figure is from this year."</h3><p>Each figure carries its own period. The family health survey is from 2019-21, college enrolment from 2021-22, state finances from 2022-23. Two figures side by side may be years apart.</p></div></li>
+      <li><span class="no">4</span><div><h3>"A low credit-deposit ratio means banks are not lending."</h3><p>Loans are counted where they are sanctioned. A company with plants in one state may borrow in Mumbai; a farmer's crop loan stays local. A low ratio says that much of the money saved in the state is lent elsewhere.</p></div></li>
+      <li><span class="no">5</span><div><h3>"The state's weather station says otherwise."</h3><p>The climate figures are averages over the whole area of the state, from a reconstruction of past weather, not readings at one station. A city can be warmer or wetter than its state's average.</p></div></li>
+    </ul>
+  </section>
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Sources of record</h6>
+        <p>{P.sources.length} baked tables: {[...new Set(P.sources.map((s) => s.source.replace(/ \(.*\)$/, "")))].join("; ")}.</p>
+      </div>
+      <div>
+        <h6>Method</h6>
+        <p>Read at build time from the Atlas's baked bundles through one state key (src/dossiers/states-key.js), which maps every source's spelling of every state. Sentences are templates filled from the data; no language model writes on this page. The build checks every figure against its table.</p>
+      </div>
+      <div>
+        <h6>Breaks</h6>
+        <p>No series is joined across a change of base, survey design or boundary. Ranks never mix periods.</p>
+      </div>
+      <div>
+        <h6>This profile</h6>
+        <p>Rebuilt whenever any of its tables is refreshed. Data vintages from {vintages[0]} to {latestVintage}.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, state profiles</span>
+      <span>{u.name}</span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<script type="application/json" id="pf-data" set:html={chartsJSON}></script>
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/profiles.client.js";
+</script>
+</Base>

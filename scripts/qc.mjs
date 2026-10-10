@@ -558,6 +558,8 @@ const PAGES = [
   // the guides index: one small chart per guide
   { url: "/guides/", slug: null, minPlots: 13, checks: [] },
   { url: "/register/", slug: null, minPlots: 8, checks: [] },
+  // profiles (lb/profiles): five profiles of different shapes run their charts here and in lint-charts
+  ...["bihar", "kerala", "goa", "ladakh", "telangana"].map((s) => ({ url: `/states/${s}/`, slug: null, minPlots: 4, checks: [] })),
   { url: "/learn/inflation/", slug: "cpi", minPlots: 3, checks: [
     ["lr-rdec", (b) => fmt.pct2(b.series.headline.data.at(-1))],
     ["lr-rjan", (b) => fmt.pct2(b.series.headline.data.at(-12))],
@@ -627,7 +629,9 @@ for (const page of PAGES) {
   try {
     for (const src of scripts) {
       const p = path.join(DIST, src);
-      await import(pathToFileURL(p).href);
+      // a per-page query, so an entry module several pages share (the 36 state profiles)
+      // executes once per page instead of once per process (lb/profiles)
+      await import(pathToFileURL(p).href + "?page=" + encodeURIComponent(page.url));
     }
     if (inline.trim()) {
       const blob = new Blob([inline], { type: "text/javascript" });
@@ -869,6 +873,56 @@ for (const page of PAGES) {
     if (coreGz <= CORE_GZ_MAX && bigShard <= SHARD_MAX && !missed)
       ok(`site search: core ${(coreGz / 1024).toFixed(0)} KB gzipped (budget ${CORE_GZ_MAX / 1024} KB), ${nShard} shards and chunks, largest ${(bigShard / 1024).toFixed(0)} KB; ${tried} sampled series across ${core.guides.length} guides all found by their label and opened on their row`);
   }
+}
+
+// ---- profiles (lb/profiles): the state profiles, /states/<state>/ --------------------------
+// Every unit in the state key has a page and a CSV; every figure on every profile and on the
+// index (<b class="fig" data-f data-src>) is re-read here from its bundle by an evaluator of
+// this gate's own and rendered through the profiles' formats; no figure sits in a sentence,
+// cell or number block without a period; pages stay inside the HTML budget. The charts of five
+// profiles of different shapes run through the PAGES harness above (and lint-charts).
+{
+  const { STATES } = await import(pathToFileURL(path.join(ROOT, "src/dossiers/states-key.js")).href);
+  const { FMT: PF } = await import(pathToFileURL(path.join(ROOT, "src/dossiers/profiles.fmt.js")).href);
+  const B = (slug) => bundles[slug];
+  const at = (b, k, iso) => { const x = B(b), i = x.dates.indexOf(iso); if (i < 0) throw new Error(`${b} has no date ${iso}`); if (!x.series[k]) throw new Error(`${b} has no series ${k}`); return x.series[k].data[i]; };
+  const EVAL = {
+    cell: ({ args: [[b, k]], iso }) => at(b, k, iso),
+    sum: ({ args, iso }) => args.reduce((a, [b, k]) => a + at(b, k, iso), 0),
+    growth: ({ args: [[b, k]], iso }) => { const x = B(b), i = x.dates.indexOf(iso); return (x.series[k].data[i] / x.series[k].data[i - 1] - 1) * 100; },
+    ratio: ({ args: [[b1, k1], [b2, k2, sc = 1]], iso }) => (at(b1, k1, iso) / (at(b2, k2, iso) * sc)) * 100,
+    mean: ({ args: [[b, k, from, to]] }) => { const x = B(b); const v = x.dates.map((d, i) => (d >= from && d <= to ? x.series[k].data[i] : null)).filter((y) => y != null); return v.reduce((a, y) => a + y, 0) / v.length; },
+    nfhsIndia: ({ args: [[b, re]] }) => Object.values(B(b).series).find((s) => s.geo === "All India" && s.sector === "total" && new RegExp(re).test(s.group ?? "")).data[0],
+    scale: ({ args: [[b, k, f]], iso }) => at(b, k, iso) * f,
+    plus100: ({ args: [[b, k]], iso }) => 100 + at(b, k, iso),
+    yoy12: ({ args: [[b, k]], iso }) => { const p = `${+iso.slice(0, 4) - 1}${iso.slice(4)}`; return (at(b, k, iso) / at(b, k, p) - 1) * 100; },
+    ratioSum: ({ args: [num, den], iso }) => (num.reduce((a, [b, k]) => a + at(b, k, iso), 0) / den.reduce((a, [b, k]) => a + at(b, k, iso), 0)) * 100,
+  };
+  const unesc = (t) => t.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+  let nFig = 0, bad = 0, pages = 0;
+  const PERIOD = /\b(19|20)\d{2}\b/;
+  const urls = ["/states/", ...STATES.map((u) => `/states/${u.slug}/`)];
+  for (const url of urls) {
+    const file = path.join(DIST, url, "index.html");
+    if (!fs.existsSync(file)) { fail(`profiles: ${url} not built`); continue; }
+    const html = fs.readFileSync(file, "utf8");
+    pages++;
+    if (html.length > 1e6) fail(`profiles: ${url} is ${(html.length / 1e6).toFixed(2)} MB of HTML (budget 1 MB)`);
+    const dom = new JSDOM(html);
+    for (const el of dom.window.document.querySelectorAll("b.fig")) {
+      nFig++;
+      const f = el.getAttribute("data-f"), src = JSON.parse(el.getAttribute("data-src"));
+      let want;
+      try { want = PF[f](EVAL[src.op](src)); } catch (e) { bad++; fail(`profiles: ${url} figure "${el.textContent}": ${e.message}`); continue; }
+      if (el.textContent !== want) { bad++; fail(`profiles: ${url} rendered "${el.textContent}" != data "${want}" (${JSON.stringify(src)})`); }
+      // its period: in the same sentence, cell or number block
+      const box = el.closest("p, tr, .num, li") ?? el.parentElement;
+      const cap = el.closest("table")?.querySelector("caption")?.textContent ?? "";   // a table dated once, in its caption
+      if (!PERIOD.test(box.textContent.replace(el.textContent, "")) && !PERIOD.test(cap)) { bad++; fail(`profiles: ${url} figure "${el.textContent}" carries no period`); }
+    }
+    if (url !== "/states/" && !fs.existsSync(path.join(DIST, url.replace(/\/$/, "") + ".csv"))) fail(`profiles: ${url.replace(/\/$/, "")}.csv not built`);
+  }
+  if (!bad) ok(`profiles: ${pages} pages, ${nFig} figures each re-read from its bundle and dated`);
 }
 
 // static greps over our own sources (not Plot internals) — the file list is

@@ -6,7 +6,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { STATES, FORMER, SEAMS, placeAll, place, placeAggregate, placeStrict, placeFirst, sideOfSeam, normalise } from "../src/dossiers/states-key.js";
+import { STATES, FORMER, SEAMS, placeAll, place, placeAggregate, placeStrict, placeFirst, sameTerritory, successorOf, normalise } from "../src/dossiers/states-key.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DIR = path.join(ROOT, "data/series");
@@ -67,14 +67,17 @@ test("the spellings the brief names place correctly", () => {
   assert.equal(normalise("Andaman & N. Islands"), "andaman and n islands");
 });
 
-test("boundary seams: a figure dated before a unit existed is the old unit's", () => {
-  assert.equal(sideOfSeam("telangana", "2013-04-01"), "andhra-pradesh-undivided");
-  assert.equal(sideOfSeam("andhra-pradesh", "2013-04-01"), "andhra-pradesh-undivided");
-  assert.equal(sideOfSeam("andhra-pradesh", "2013-04-01", { successorHasValue: true }), "current");
-  assert.equal(sideOfSeam("andhra-pradesh", "2015-04-01"), "current");
-  assert.equal(sideOfSeam("ladakh", "2018-04-01"), "jammu-kashmir-state");
-  assert.equal(sideOfSeam("dnh-dd", "2018-04-01"), "none");
-  assert.equal(sideOfSeam("bihar", "1990-01-01"), "current");
+test("boundary seams: a figure for the undivided unit is never the present unit's", () => {
+  assert.equal(sameTerritory("andhra-pradesh", "2014-03-31"), false);
+  assert.equal(sameTerritory("andhra-pradesh", "2014-03-31", { successorHasValue: true }), true);
+  assert.equal(sameTerritory("andhra-pradesh", "2015-03-31"), true);
+  assert.equal(sameTerritory("jammu-kashmir", "2019-03-31"), false);
+  assert.equal(sameTerritory("jammu-kashmir", "2020-03-31"), true);
+  assert.equal(sameTerritory("telangana", "2012-03-31"), true);
+  assert.equal(sameTerritory("bihar", "1990-01-01"), true);
+  assert.equal(successorOf("andhra-pradesh"), "telangana");
+  assert.equal(successorOf("jammu-kashmir"), "ladakh");
+  assert.equal(successorOf("bihar"), null);
 });
 
 test("every state label in every baked bundle is placed, or the bundle is national or another geography", () => {

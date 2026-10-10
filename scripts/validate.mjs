@@ -3213,6 +3213,34 @@ withBundle("wages-rural-2013", (b) => {
     if (!(Math.abs(sh - 69.8) <= 0.05)) fail(`deposits-maturity-owners: 1-3 year share ${sh} differs from RBI's 69.8%`); else ok(`deposits-maturity-owners: 1-3 years ${sh.toFixed(2)}% of term deposits = RBI's 69.8%`); });
 }
 
+// ---- profiles (lb/profiles): NFHS-6 from the IIPS fact sheets (scripts/lib/products/profiles-nfhs6.mjs) ----
+// Shape, ranges and the fact sheets' own arithmetic: every indicator for India and 35 units,
+// percentages in 0 to 100, fertility in 0.5 to 8, the total between urban and rural wherever
+// both are printed (to the fact sheet's rounding), and the NFHS-5 reference column on its own ruler.
+{
+  const six = load("profiles-nfhs6"), five = load("profiles-nfhs6-nfhs5");
+  checkMeta(six, "profiles-nfhs6", "profiles-nfhs6");
+  checkMeta(five, "profiles-nfhs6-nfhs5", "profiles-nfhs6", five.meta.base);
+  checkFreshness(six, "profiles-nfhs6", {}, "profiles-nfhs6");
+  checkFreshness(five, "profiles-nfhs6-nfhs5", { stale: false }, "profiles-nfhs6");
+  let bad = 0, triplets = 0, outside = 0;
+  const geos = new Set(), inds = new Set();
+  for (const [k, s] of Object.entries(six.series)) {
+    geos.add(s.geo); inds.add(s.indicator);
+    const v = s.data[0];
+    const [lo, hi] = s.unit === "births_per_woman" ? [0.5, 8] : [0, 100];
+    if (!(v >= lo && v <= hi)) { fail(`profiles-nfhs6.${k}: ${v} outside ${lo} to ${hi}`); bad++; }
+    if (s.sector === "total") {
+      const u = six.series[k.replace(/__total$/, "__urban")]?.data[0], r = six.series[k.replace(/__total$/, "__rural")]?.data[0];
+      if (u != null && r != null) { triplets++; if (v < Math.min(u, r) - 0.15 || v > Math.max(u, r) + 0.15) outside++; }
+    }
+  }
+  if (geos.size !== 36 || inds.size !== 101) { fail(`profiles-nfhs6: ${geos.size} geographies x ${inds.size} indicators (expected 36 x 101)`); bad++; }
+  // a total outside its urban and rural parts is a misread cell; the fact sheets' rounding allows 0.15
+  if (outside > 0.005 * triplets) { fail(`profiles-nfhs6: ${outside} of ${triplets} totals lie outside their urban and rural figures`); bad++; }
+  if (!bad) ok(`profiles-nfhs6: ${Object.keys(six.series).length} series, 36 geographies x 101 indicators; the total lies between urban and rural in ${triplets - outside} of ${triplets} places`);
+}
+
 // META TEXT — every bundle on disk, whatever check family it belongs to, and every sources.yml
 // entry the adapters copy text from: meta.geo is a three-letter code on every bundle (CONTRACT-series
 // rule 8), and a revision policy, where one is given, reads as a sentence, never a placeholder
