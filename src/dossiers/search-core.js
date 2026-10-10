@@ -78,7 +78,8 @@ export function decodeIds(d) {
  *  (the last, with no space after it) matches as a prefix once it has MIN_PREFIX letters;
  *  finished words match whole, with a plural or singular form and the synonyms above. */
 export function parseQuery(q) {
-  const raw = tokens(q);
+  // the same words as the index: "prices" after "current" or "constant" names a valuation basis
+  const raw = indexTokens(q);
   if (!raw.length) return [];
   const typing = !/\s$/.test(q);
   let words = raw.map((w, i) => ({ w, prefix: typing && i === raw.length - 1 && w.length >= MIN_PREFIX }));

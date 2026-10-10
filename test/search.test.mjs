@@ -117,3 +117,10 @@ test("a state and a topic: the state's own headline measure and its profile lead
   const bare = createSearch({ ...core, own: undefined }, async (p) => (p.startsWith("t/") ? shard : rows));
   assert.equal((await bare.series("inflation in kerala ")).rows[0].bundle, "cpialrl-states");
 });
+
+// datafix: "prices" in "at current prices" is a valuation basis, dropped from the index and from a
+// query alike, so a row is still found by its own label and "prices in bihar" still means inflation
+test("a valuation basis is no topic, in the index and in the query", () => {
+  assert.deepEqual(parseQuery("Exports of goods, current prices ").map((w) => w.w), ["exports", "goods", "current"]);
+  assert.ok(parseQuery("prices in bihar ")[0].forms.includes("inflation"));
+});
