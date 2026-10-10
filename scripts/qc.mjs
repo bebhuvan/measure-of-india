@@ -1007,6 +1007,29 @@ for (const page of PAGES) {
         if (n !== 1) { missed++; fail(`site search: "${row[0]}" links to ${d.href}; the page carries that anchor ${n} times`); }
       }
     }
+    // datafix (2026-10-10): a state and a topic open on the state's own headline measure (a row
+    // its profile quotes, core.own) and lead with its profile; "inflation in kerala" once opened
+    // on CPI-RL. Ten queries a reader types, each with the profile measure it should land on.
+    {
+      const { BY_ID, cells } = await import(pathToFileURL(path.join(ROOT, "src/dossiers/profiles.js")).href);
+      const TEN = [["inflation in kerala", "kerala", "cpi"], ["prices in bihar", "bihar", "cpi"], ["unemployment in punjab", "punjab", "ur"],
+        ["jobs in tamil nadu", "tamil-nadu", "ur"], ["income per person gujarat", "gujarat", "pc"], ["spending odisha", "odisha", "mpceR"],
+        ["bank deposits maharashtra", "maharashtra", "deposits"], ["infant mortality assam", "assam", "imr"], ["inflation west bengal", "west-bengal", "cpi"],
+        ["Orissa inflation", "odisha", "cpi"]];
+      let good = 0;
+      for (const [q, st, mid] of TEN) {
+        const m = BY_ID[mid], key = cells(m).cur.get(st);
+        const r = await S.series(q + " ");
+        const top = r.rows[0];
+        const { rowAnchor } = await import(pathToFileURL(path.join(ROOT, "src/dossiers/everycut.js")).href);
+        if (!top || top.bundle !== m.bundle || !key || !top.href.endsWith("#" + rowAnchor(m.bundle, key)))
+          fail(`site search: "${q}" opens on ${top ? `${top.bundle} "${top.label}"` : "nothing"}, not ${st}'s own ${m.label} (${m.bundle})`);
+        else good++;
+        const prof = S.quick(q + " ").states?.[0];
+        if (!prof?.lead || prof.href !== `/states/${st}/`) { good--; fail(`site search: "${q}" does not lead with the ${st} profile`); }
+      }
+      if (good === TEN.length) ok(`site search: ${TEN.length} state-and-topic queries open on the state's own measure, profile first`);
+    }
     if (coreGz <= CORE_GZ_MAX && bigShard <= SHARD_MAX && !missed)
       ok(`site search: core ${(coreGz / 1024).toFixed(0)} KB gzipped (budget ${CORE_GZ_MAX / 1024} KB), ${nShard} shards and chunks, largest ${(bigShard / 1024).toFixed(0)} KB; ${tried} sampled series across ${core.guides.length} guides all found by their label and opened on their row`);
   }
@@ -1161,6 +1184,18 @@ ok("static source greps done");
     if (checked) ok(`prose fresh: ${checked}/${Object.keys(manifest).length} dated slots describe the current print`);
   }
 }
+
+// ---- datafix (2026-10-10): reader text. A bundle's title (meta.coverage) and its series labels are
+// printed by every-cut tables, their links and search; internal names (key templates, API field
+// names, dataset ids, a label that is only a key) must not leak into them (scripts/lib/reader-text.mjs).
+{
+  const { allReaderTextProblems } = await import("./lib/reader-text.mjs");
+  const probs = allReaderTextProblems(ROOT);
+  for (const p of probs.slice(0, 30)) fail(`reader text: ${p.where} carries ${p.why}: "${p.text}" (move it to meta.note, or write it in words, in the adapter)`);
+  if (probs.length > 30) fail(`reader text: ${probs.length - 30} more`);
+  if (!probs.length) ok("reader text: no internal names in bundle titles or series labels");
+}
+// ---- end datafix ----
 
 if (failures) { console.error(`\n${failures} QC failure(s)`); process.exit(1); }
 console.log("\nQC: all checks passed");

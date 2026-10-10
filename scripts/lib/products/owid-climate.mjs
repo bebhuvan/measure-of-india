@@ -212,6 +212,16 @@ async function indicatorData(id) {
 
 const isoDay = (zero, days) => new Date(Date.parse(zero + "T00:00:00Z") + days * 86400_000).toISOString().slice(0, 10);
 
+// Reader text (datafix 2026-10-10): OWID's dataset and indicator ids ("surface_temperature_annual_average",
+// "failed_care_planet") are slugs, not titles; titles and labels carry them as words. The ids stay
+// in meta.product and series.name. scripts/migrations/2026-10-datafix-reader-text.mjs applies the
+// same two functions to the baked bundles.
+export const datasetWords = (ds) => {
+  const w = String(ds).replace(/__/g, ", ").replace(/_/g, " ").replace(/\s+/g, " ").trim();
+  return w.replace(/^./, (c) => c.toUpperCase()).replace(/\bet al\b/g, "et al.").replace(/\b([a-z])([a-z]+) et al\./g, (m, a, b) => a.toUpperCase() + b + " et al.");
+};
+export const labelWords = (name) => (/^[a-z0-9]+(_[a-z0-9]+)+$/.test(String(name)) ? String(name).replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase()) : name);
+
 export async function buildOwidClimate(root, dcfg, vintage) {
   /* -- the CSV datasets -- */
   const all = {};
@@ -288,7 +298,7 @@ export async function buildOwidClimate(root, dcfg, vintage) {
       // a monthly or weekly level of temperature or rain follows the calendar: flagged so the
       // facts sheet never offers a month-on-month move of it (pipeline/facts.mjs)
       const seasonal = interval !== "year" && !/anomal/i.test(k) && ["degC", "mm", "hectares"].includes(unitCode(ind.shortUnit ?? ind.unit ?? "", ind.catalogPath));
-      series[k] = { name: `owid_${ind.dataset}_${k}`, label: ind.name, unit: unitCode(ind.shortUnit ?? ind.unit ?? "", ind.catalogPath), ...(seasonal ? { seasonal: true } : {}), color: GREYS[gi++ % GREYS.length], data,
+      series[k] = { name: `owid_${ind.dataset}_${k}`, label: labelWords(ind.name), unit: unitCode(ind.shortUnit ?? ind.unit ?? "", ind.catalogPath), ...(seasonal ? { seasonal: true } : {}), color: GREYS[gi++ % GREYS.length], data,
         source: ind.producer, catalogPath: ind.catalogPath.replace(/\/\d{4}-\d{2}-\d{2}\//, "/"),
         ...(gaps.length ? { gaps, gapsNote: "Not published by OWID for these periods." } : {}) };
     }
@@ -300,7 +310,7 @@ export async function buildOwidClimate(root, dcfg, vintage) {
         base: dcfg.bases[slug] ?? dcfg.bases.default, frequency: interval === "month" ? "monthly" : interval === "week" ? "weekly" : regular ? "annual" : "irregular",
         unit: "see each series", vintage: lastVersion || vintage, geo: "IND",
         latestPeriod: interval === "month" ? d1.slice(0, 7) : interval === "week" ? d1 : d1.slice(0, 4), releaseDate: lastVersion || null, mock: false,
-        coverage: `India: OWID dataset ${list[0].dataset} (${Object.keys(series).length} series), ${dates[0].slice(0, interval === "year" ? 4 : interval === "month" ? 7 : 10)} to ${d1.slice(0, interval === "year" ? 4 : interval === "month" ? 7 : 10)}.`,
+        coverage: `India: ${datasetWords(list[0].dataset)}, Our World in Data (${Object.keys(series).length} series), ${dates[0].slice(0, interval === "year" ? 4 : interval === "month" ? 7 : 10)} to ${d1.slice(0, interval === "year" ? 4 : interval === "month" ? 7 : 10)}.`,
         note: [`OWID dataset ${list[0].ns}/${list[0].dataset}, version ${list[0].version} (updated ${lastVersion}); licence CC BY 4.0; underlying producers: ${producers}.`,
           dropped ? `The year ${dropped} is not shown: OWID's figure for it averages only the months published so far.` : null,
           dcfg.fetch.notes?.[slug] ?? null].filter(Boolean).join(" "),

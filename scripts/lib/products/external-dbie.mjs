@@ -288,6 +288,9 @@ export function unitFor(label, metaUnit) {
   if (/per cent a year/i.test(l)) return "pct_per_annum";
   if (/to GDP|GDP Ratio/i.test(l)) return "pct_of_gdp";
   if (/per cent|%/i.test(l)) return "percent";
+  // a ratio or share named without its unit ("E.9 Forex Reserves - Total Debt Ratio") is a per
+  // cent, never the bundle's money unit (datafix: it showed as "$0.10 bn" in the every-cut table)
+  if (/\bratio\b|\bshare of\b/i.test(l)) return "percent";
   if (/, number$/i.test(l)) return "count";
   if (/, years$/i.test(l)) return "years";
   if (/SDR million/.test(l)) return "sdr_million";

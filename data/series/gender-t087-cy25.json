@@ -19,8 +19,10 @@
    "2025-01-01": "2025"
   },
   "cut": "Rural or urban, sex and state",
-  "note": "MoSPI's compendium reprints this table from Periodic Labour Force Survey, National Statistics Office, MoSPI; the figures are that agency's. This bundle holds one instrument only (PLFS, revamped design, calendar year); the indicator's other instrument is a separate bundle, never joined to this one. Values printed as \"-\" (no observation) or \"NR\" (not reported) are not baked; meta.omitted counts them.",
-  "omitted": {}
+  "note": "MoSPI's compendium reprints this table from Periodic Labour Force Survey, National Statistics Office, MoSPI; the figures are that agency's. This bundle holds one instrument only (PLFS, revamped design, calendar year); the indicator's other instrument is a separate bundle, never joined to this one. Values printed as \"-\" (no observation) or \"NR\" (not reported) are not baked; meta.omitted counts them. The source serves 23 cells of this table as 0 where there is no estimate (a wage or a share of adults at work cannot be zero); they are left out, not shown as zero.",
+  "omitted": {
+   "0 (no estimate)": 23
+  }
  },
  "dates": [
   "2025-01-01"
@@ -191,17 +193,6 @@
    "group": "Urban",
    "geo": "Arunachal Pradesh"
   },
-  "urban__female__arunachal_pradesh": {
-   "name": "gender_t87_urban__female__arunachal_pradesh",
-   "label": "Urban, Female, Arunachal Pradesh",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
-   ],
-   "group": "Urban",
-   "geo": "Arunachal Pradesh"
-  },
   "rural__male__assam": {
    "name": "gender_t87_rural__male__assam",
    "label": "Rural, Male, Assam",
@@ -290,28 +281,6 @@
    "group": "Urban",
    "geo": "Bihar"
   },
-  "rural__male__chandigarh": {
-   "name": "gender_t87_rural__male__chandigarh",
-   "label": "Rural, Male, Chandigarh",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
-   ],
-   "group": "Rural",
-   "geo": "Chandigarh"
-  },
-  "rural__female__chandigarh": {
-   "name": "gender_t87_rural__female__chandigarh",
-   "label": "Rural, Female, Chandigarh",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
-   ],
-   "group": "Rural",
-   "geo": "Chandigarh"
-  },
   "urban__male__chandigarh": {
    "name": "gender_t87_urban__male__chandigarh",
    "label": "Urban, Male, Chandigarh",
@@ -319,17 +288,6 @@
    "unit": "inr",
    "data": [
     653
-   ],
-   "group": "Urban",
-   "geo": "Chandigarh"
-  },
-  "urban__female__chandigarh": {
-   "name": "gender_t87_urban__female__chandigarh",
-   "label": "Urban, Female, Chandigarh",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
    ],
    "group": "Urban",
    "geo": "Chandigarh"
@@ -389,17 +347,6 @@
    "group": "Rural",
    "geo": "Dadra & Nagar Haveli and Daman & Diu"
   },
-  "rural__female__dadra_nagar_haveli_and_daman_d": {
-   "name": "gender_t87_rural__female__dadra_nagar_haveli_and_daman_d",
-   "label": "Rural, Female, Dadra & Nagar Haveli and Daman & Diu",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
-   ],
-   "group": "Rural",
-   "geo": "Dadra & Nagar Haveli and Daman & Diu"
-  },
   "urban__male__dadra_nagar_haveli_and_daman_d": {
    "name": "gender_t87_urban__male__dadra_nagar_haveli_and_daman_d",
    "label": "Urban, Male, Dadra & Nagar Haveli and Daman & Diu",
@@ -407,17 +354,6 @@
    "unit": "inr",
    "data": [
     399
-   ],
-   "group": "Urban",
-   "geo": "Dadra & Nagar Haveli and Daman & Diu"
-  },
-  "urban__female__dadra_nagar_haveli_and_daman_d": {
-   "name": "gender_t87_urban__female__dadra_nagar_haveli_and_daman_d",
-   "label": "Urban, Female, Dadra & Nagar Haveli and Daman & Diu",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
    ],
    "group": "Urban",
    "geo": "Dadra & Nagar Haveli and Daman & Diu"
@@ -455,17 +391,6 @@
    "group": "Urban",
    "geo": "Delhi"
   },
-  "urban__female__delhi": {
-   "name": "gender_t87_urban__female__delhi",
-   "label": "Urban, Female, Delhi",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
-   ],
-   "group": "Urban",
-   "geo": "Delhi"
-  },
   "rural__male__goa": {
    "name": "gender_t87_rural__male__goa",
    "label": "Rural, Male, Goa",
@@ -495,17 +420,6 @@
    "unit": "inr",
    "data": [
     797
-   ],
-   "group": "Urban",
-   "geo": "Goa"
-  },
-  "urban__female__goa": {
-   "name": "gender_t87_urban__female__goa",
-   "label": "Urban, Female, Goa",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
    ],
    "group": "Urban",
    "geo": "Goa"
@@ -653,17 +567,6 @@
    "group": "Rural",
    "geo": "Jammu & Kashmir"
   },
-  "rural__female__jammu_kashmir": {
-   "name": "gender_t87_rural__female__jammu_kashmir",
-   "label": "Rural, Female, Jammu & Kashmir",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
-   ],
-   "group": "Rural",
-   "geo": "Jammu & Kashmir"
-  },
   "urban__male__jammu_kashmir": {
    "name": "gender_t87_urban__male__jammu_kashmir",
    "label": "Urban, Male, Jammu & Kashmir",
@@ -671,17 +574,6 @@
    "unit": "inr",
    "data": [
     618
-   ],
-   "group": "Urban",
-   "geo": "Jammu & Kashmir"
-  },
-  "urban__female__jammu_kashmir": {
-   "name": "gender_t87_urban__female__jammu_kashmir",
-   "label": "Urban, Female, Jammu & Kashmir",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
    ],
    "group": "Urban",
    "geo": "Jammu & Kashmir"
@@ -829,17 +721,6 @@
    "group": "Rural",
    "geo": "Ladakh"
   },
-  "rural__female__ladakh": {
-   "name": "gender_t87_rural__female__ladakh",
-   "label": "Rural, Female, Ladakh",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
-   ],
-   "group": "Rural",
-   "geo": "Ladakh"
-  },
   "urban__male__ladakh": {
    "name": "gender_t87_urban__male__ladakh",
    "label": "Urban, Male, Ladakh",
@@ -847,17 +728,6 @@
    "unit": "inr",
    "data": [
     777
-   ],
-   "group": "Urban",
-   "geo": "Ladakh"
-  },
-  "urban__female__ladakh": {
-   "name": "gender_t87_urban__female__ladakh",
-   "label": "Urban, Female, Ladakh",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
    ],
    "group": "Urban",
    "geo": "Ladakh"
@@ -873,17 +743,6 @@
    "group": "Rural",
    "geo": "Lakshadweep"
   },
-  "rural__female__lakshadweep": {
-   "name": "gender_t87_rural__female__lakshadweep",
-   "label": "Rural, Female, Lakshadweep",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
-   ],
-   "group": "Rural",
-   "geo": "Lakshadweep"
-  },
   "urban__male__lakshadweep": {
    "name": "gender_t87_urban__male__lakshadweep",
    "label": "Urban, Male, Lakshadweep",
@@ -891,17 +750,6 @@
    "unit": "inr",
    "data": [
     976
-   ],
-   "group": "Urban",
-   "geo": "Lakshadweep"
-  },
-  "urban__female__lakshadweep": {
-   "name": "gender_t87_urban__female__lakshadweep",
-   "label": "Urban, Female, Lakshadweep",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
    ],
    "group": "Urban",
    "geo": "Lakshadweep"
@@ -1093,17 +941,6 @@
    "group": "Rural",
    "geo": "Mizoram"
   },
-  "rural__female__mizoram": {
-   "name": "gender_t87_rural__female__mizoram",
-   "label": "Rural, Female, Mizoram",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
-   ],
-   "group": "Rural",
-   "geo": "Mizoram"
-  },
   "urban__male__mizoram": {
    "name": "gender_t87_urban__male__mizoram",
    "label": "Urban, Male, Mizoram",
@@ -1111,17 +948,6 @@
    "unit": "inr",
    "data": [
     623
-   ],
-   "group": "Urban",
-   "geo": "Mizoram"
-  },
-  "urban__female__mizoram": {
-   "name": "gender_t87_urban__female__mizoram",
-   "label": "Urban, Female, Mizoram",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
    ],
    "group": "Urban",
    "geo": "Mizoram"
@@ -1137,17 +963,6 @@
    "group": "Rural",
    "geo": "Nagaland"
   },
-  "rural__female__nagaland": {
-   "name": "gender_t87_rural__female__nagaland",
-   "label": "Rural, Female, Nagaland",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
-   ],
-   "group": "Rural",
-   "geo": "Nagaland"
-  },
   "urban__male__nagaland": {
    "name": "gender_t87_urban__male__nagaland",
    "label": "Urban, Male, Nagaland",
@@ -1155,17 +970,6 @@
    "unit": "inr",
    "data": [
     644
-   ],
-   "group": "Urban",
-   "geo": "Nagaland"
-  },
-  "urban__female__nagaland": {
-   "name": "gender_t87_urban__female__nagaland",
-   "label": "Urban, Female, Nagaland",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
    ],
    "group": "Urban",
    "geo": "Nagaland"
@@ -1357,17 +1161,6 @@
    "group": "Rural",
    "geo": "Sikkim"
   },
-  "rural__female__sikkim": {
-   "name": "gender_t87_rural__female__sikkim",
-   "label": "Rural, Female, Sikkim",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
-   ],
-   "group": "Rural",
-   "geo": "Sikkim"
-  },
   "urban__male__sikkim": {
    "name": "gender_t87_urban__male__sikkim",
    "label": "Urban, Male, Sikkim",
@@ -1375,17 +1168,6 @@
    "unit": "inr",
    "data": [
     632
-   ],
-   "group": "Urban",
-   "geo": "Sikkim"
-  },
-  "urban__female__sikkim": {
-   "name": "gender_t87_urban__female__sikkim",
-   "label": "Urban, Female, Sikkim",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
    ],
    "group": "Urban",
    "geo": "Sikkim"
@@ -1511,17 +1293,6 @@
    "group": "Urban",
    "geo": "Tripura"
   },
-  "urban__female__tripura": {
-   "name": "gender_t87_urban__female__tripura",
-   "label": "Urban, Female, Tripura",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
-   ],
-   "group": "Urban",
-   "geo": "Tripura"
-  },
   "rural__male__uttarakhand": {
    "name": "gender_t87_rural__male__uttarakhand",
    "label": "Rural, Male, Uttarakhand",
@@ -1533,17 +1304,6 @@
    "group": "Rural",
    "geo": "Uttarakhand"
   },
-  "rural__female__uttarakhand": {
-   "name": "gender_t87_rural__female__uttarakhand",
-   "label": "Rural, Female, Uttarakhand",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
-   ],
-   "group": "Rural",
-   "geo": "Uttarakhand"
-  },
   "urban__male__uttarakhand": {
    "name": "gender_t87_urban__male__uttarakhand",
    "label": "Urban, Male, Uttarakhand",
@@ -1551,17 +1311,6 @@
    "unit": "inr",
    "data": [
     534
-   ],
-   "group": "Urban",
-   "geo": "Uttarakhand"
-  },
-  "urban__female__uttarakhand": {
-   "name": "gender_t87_urban__female__uttarakhand",
-   "label": "Urban, Female, Uttarakhand",
-   "color": "#5F6675",
-   "unit": "inr",
-   "data": [
-    0
    ],
    "group": "Urban",
    "geo": "Uttarakhand"

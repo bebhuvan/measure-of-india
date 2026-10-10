@@ -11,7 +11,7 @@
   "releaseDate": null,
   "revisionPolicy": "Cumulative installed capacity stock; revised as capacity is added or retired. Final on release.",
   "coverage": "States/UTs; installed solar capacity (MW), monthly: Solar Power Total and its four sub-categories (ground-mounted, rooftop, hybrid, off-grid and KUSUM). Interior nulls disclosed in gaps.",
-  "note": "CLASSIFICATION BREAK (Dec 2023): Large Hydro Power (>25 MW) was folded into the renewable-energy total starting Dec 2023. Before that it reads 0 MW; after, ~46,910 MW — a definitional change, not a capacity addition. The Grand Total carries the step (+48 GW in one month: 132.7 → 180.8 GW). Growth rates are never computed across this seam. Individual sources (Solar, Wind, Small Hydro, Bio) are unaffected."
+  "note": "CLASSIFICATION BREAK (December 2023): Large Hydro Power (above 25 MW) enters MNRE's table and its Grand Total in December 2023. Before that MNRE prints 0 for it, which means not counted, so the series is empty before then; the entry is a definitional change, not a capacity addition. The Grand Total carries the step. Growth rates are never computed across this seam. Individual sources (Solar, Wind, Small Hydro, Bio) are unaffected by it."
  },
  "dates": [
   "2020-01-01",
@@ -468,8 +468,8 @@
     0,
     0,
     0.24,
-    0,
-    0,
+    null,
+    null,
     0.24,
     0.27,
     0.27,
@@ -533,7 +533,12 @@
     0.27,
     0.27
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "andhra_pradesh": {
    "name": "mnre_solar_andhra_pradesh",
@@ -908,8 +913,8 @@
     0,
     0,
     88.34,
-    0,
-    0,
+    null,
+    null,
     88.34,
     88.34,
     88.34,
@@ -973,7 +978,12 @@
     88.34,
     88.34
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "arunachal_pradesh": {
    "name": "mnre_solar_arunachal_pradesh",
@@ -1348,8 +1358,8 @@
     0,
     0,
     4.55,
-    0,
-    0,
+    null,
+    null,
     5.49,
     5.56,
     5.61,
@@ -1413,7 +1423,12 @@
     7.77,
     7.77
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "assam": {
    "name": "mnre_solar_assam",
@@ -1788,8 +1803,8 @@
     0,
     0,
     8.57,
-    0,
-    0,
+    null,
+    null,
     9.13,
     9.23,
     9.3,
@@ -1853,7 +1868,12 @@
     12.64,
     12.64
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "bihar": {
    "name": "mnre_solar_bihar",
@@ -2228,8 +2248,8 @@
     0,
     0,
     20.72,
-    0,
-    0,
+    null,
+    null,
     20.91,
     20.98,
     21.01,
@@ -2293,7 +2313,12 @@
     21.28,
     21.28
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "chandigarh": {
    "name": "mnre_solar_chandigarh",
@@ -2668,8 +2693,8 @@
     0,
     0,
     0.81,
-    0,
-    0,
+    null,
+    null,
     0.81,
     0.81,
     0.81,
@@ -2733,7 +2758,12 @@
     0.81,
     0.81
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "chhattisgarh": {
    "name": "mnre_solar_chhattisgarh",
@@ -3108,8 +3138,8 @@
     0,
     0,
     192.73,
-    0,
-    0,
+    null,
+    null,
     192.74,
     192.74,
     192.75,
@@ -3173,7 +3203,12 @@
     390.73,
     390.73
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "dadar_and_nagar_haveli": {
    "name": "mnre_solar_dadar_and_nagar_haveli",
@@ -5088,8 +5123,8 @@
     0,
     0,
     1.46,
-    0,
-    0,
+    null,
+    null,
     1.46,
     1.46,
     1.46,
@@ -5153,7 +5188,12 @@
     1.46,
     1.46
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "goa": {
    "name": "mnre_solar_goa",
@@ -5528,8 +5568,8 @@
     0,
     0,
     0.12,
-    0,
-    0,
+    null,
+    null,
     0.12,
     0.12,
     0.12,
@@ -5593,7 +5633,12 @@
     1.49,
     1.49
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "gujarat": {
    "name": "mnre_solar_gujarat",
@@ -5968,8 +6013,8 @@
     0,
     0,
     39.05,
-    0,
-    0,
+    null,
+    null,
     40.56,
     40.56,
     40.56,
@@ -6033,7 +6078,12 @@
     200.48,
     200.52
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "haryana": {
    "name": "mnre_solar_haryana",
@@ -6408,8 +6458,8 @@
     0,
     0,
     64.43,
-    0,
-    0,
+    null,
+    null,
     112.7,
     113.48,
     115.82,
@@ -6473,7 +6523,12 @@
     1210.92,
     1214.19
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "himachal_pradesh": {
    "name": "mnre_solar_himachal_pradesh",
@@ -6848,8 +6903,8 @@
     0,
     0,
     7.55,
-    0,
-    0,
+    null,
+    null,
     8.44,
     11.52,
     16.19,
@@ -6913,7 +6968,12 @@
     34.58,
     34.58
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "jammu_and_kashmir": {
    "name": "mnre_solar_jammu_and_kashmir",
@@ -7288,8 +7348,8 @@
     0,
     0,
     21.4,
-    0,
-    0,
+    null,
+    null,
     21.94,
     22.26,
     22.26,
@@ -7353,7 +7413,12 @@
     38.72,
     38.73
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "jharkhand": {
    "name": "mnre_solar_jharkhand",
@@ -7728,8 +7793,8 @@
     0,
     0,
     17.8,
-    0,
-    0,
+    null,
+    null,
     19.92,
     22.21,
     26.01,
@@ -7793,7 +7858,12 @@
     187.43,
     201.32
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "karnataka": {
    "name": "mnre_solar_karnataka",
@@ -8168,8 +8238,8 @@
     0,
     0,
     28.71,
-    0,
-    0,
+    null,
+    null,
     28.83,
     29,
     29,
@@ -8233,7 +8303,12 @@
     198.08,
     214.88
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "kerala": {
    "name": "mnre_solar_kerala",
@@ -8608,8 +8683,8 @@
     0,
     0,
     20.4,
-    0,
-    0,
+    null,
+    null,
     20.44,
     20.59,
     20.59,
@@ -8673,7 +8748,12 @@
     24.93,
     24.92
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "ladakh": {
    "name": "mnre_solar_ladakh",
@@ -9488,8 +9568,8 @@
     0,
     0,
     2.52,
-    0,
-    0,
+    null,
+    null,
     2.52,
     2.52,
     2.52,
@@ -9553,7 +9633,12 @@
     2.52,
     2.52
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "madhya_pradesh": {
    "name": "mnre_solar_madhya_pradesh",
@@ -9928,8 +10013,8 @@
     0,
     0,
     81.49,
-    0,
-    0,
+    null,
+    null,
     81.5,
     81.54,
     81.6,
@@ -9993,7 +10078,12 @@
     168.77,
     178.23
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "maharashtra": {
    "name": "mnre_solar_maharashtra",
@@ -10368,8 +10458,8 @@
     0,
     0,
     33.82,
-    0,
-    0,
+    null,
+    null,
     33.82,
     33.82,
     33.82,
@@ -10433,7 +10523,12 @@
     2167.47,
     2200.55
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "manipur": {
    "name": "mnre_solar_manipur",
@@ -10808,8 +10903,8 @@
     0,
     0,
     5.03,
-    0,
-    0,
+    null,
+    null,
     5.47,
     5.61,
     5.64,
@@ -10873,7 +10968,12 @@
     6.36,
     6.36
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "meghalaya": {
    "name": "mnre_solar_meghalaya",
@@ -11248,8 +11348,8 @@
     0,
     0,
     3.73,
-    0,
-    0,
+    null,
+    null,
     3.73,
     3.82,
     3.82,
@@ -11313,7 +11413,12 @@
     4.07,
     4.06
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "mizoram": {
    "name": "mnre_solar_mizoram",
@@ -11688,8 +11793,8 @@
     0,
     0,
     5.45,
-    0,
-    0,
+    null,
+    null,
     6.26,
     6.26,
     6.3,
@@ -11753,7 +11858,12 @@
     7.1,
     7.11
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "nagaland": {
    "name": "mnre_solar_nagaland",
@@ -12128,8 +12238,8 @@
     0,
     0,
     1.91,
-    0,
-    0,
+    null,
+    null,
     2.01,
     2.01,
     2.01,
@@ -12193,7 +12303,12 @@
     2.58,
     2.58
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "odisha": {
    "name": "mnre_solar_odisha",
@@ -12568,8 +12683,8 @@
     0,
     0,
     23.81,
-    0,
-    0,
+    null,
+    null,
     24.09,
     25.03,
     25.08,
@@ -12633,7 +12748,12 @@
     81.41,
     82.37
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "others": {
    "name": "mnre_solar_others",
@@ -12656,8 +12776,8 @@
     0,
     0,
     45.01,
-    0,
-    0,
+    null,
+    null,
     45.01,
     45.01,
     45.01,
@@ -12721,7 +12841,12 @@
     45.01,
     45.01
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "others__ground_mounted": {
    "name": "mnre_solar_others__ground_mounted",
@@ -13008,8 +13133,8 @@
     0,
     0,
     45.01,
-    0,
-    0,
+    null,
+    null,
     45.01,
     45.01,
     45.01,
@@ -13073,7 +13198,12 @@
     45.01,
     45.01
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "puducherry": {
    "name": "mnre_solar_puducherry",
@@ -13448,8 +13578,8 @@
     0,
     0,
     0.18,
-    0,
-    0,
+    null,
+    null,
     0.18,
     0.18,
     0.18,
@@ -13513,7 +13643,12 @@
     0.18,
     0.18
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "punjab": {
    "name": "mnre_solar_punjab",
@@ -13888,8 +14023,8 @@
     0,
     0,
     22.8,
-    0,
-    0,
+    null,
+    null,
     30.67,
     33.7,
     35.47,
@@ -13953,7 +14088,12 @@
     117.02,
     117.02
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "rajasthan": {
    "name": "mnre_solar_rajasthan",
@@ -14328,8 +14468,8 @@
     0,
     0,
     193.02,
-    0,
-    0,
+    null,
+    null,
     245.03,
     256.7,
     256.75,
@@ -14393,7 +14533,12 @@
     874.44,
     874.44
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "sikkim": {
    "name": "mnre_solar_sikkim",
@@ -14768,8 +14913,8 @@
     0,
     0,
     1.87,
-    0,
-    0,
+    null,
+    null,
     1.87,
     1.87,
     1.87,
@@ -14833,7 +14978,12 @@
     1.92,
     1.92
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "tamil_nadu": {
    "name": "mnre_solar_tamil_nadu",
@@ -15208,8 +15358,8 @@
     0,
     0,
     52.26,
-    0,
-    0,
+    null,
+    null,
     52.46,
     52.47,
     52.47,
@@ -15273,7 +15423,12 @@
     75.91,
     75.91
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "telangana": {
    "name": "mnre_solar_telangana",
@@ -15648,8 +15803,8 @@
     0,
     0,
     8.42,
-    0,
-    0,
+    null,
+    null,
     8.54,
     8.54,
     8.56,
@@ -15713,7 +15868,12 @@
     8.71,
     8.71
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "tripura": {
    "name": "mnre_solar_tripura",
@@ -16088,8 +16248,8 @@
     0,
     0,
     4.15,
-    0,
-    0,
+    null,
+    null,
     5.11,
     5.21,
     5.37,
@@ -16153,7 +16313,12 @@
     21.4,
     21.79
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "uttar_pradesh": {
    "name": "mnre_solar_uttar_pradesh",
@@ -16528,8 +16693,8 @@
     0,
     0,
     123.77,
-    0,
-    0,
+    null,
+    null,
     127.42,
     128.92,
     129.71,
@@ -16593,7 +16758,12 @@
     380.63,
     380.63
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "uttarakhand": {
    "name": "mnre_solar_uttarakhand",
@@ -16968,8 +17138,8 @@
     0,
     0,
     11.72,
-    0,
-    0,
+    null,
+    null,
     11.92,
     11.95,
     12.02,
@@ -17033,7 +17203,12 @@
     31.18,
     31.91
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "west_bengal": {
    "name": "mnre_solar_west_bengal",
@@ -17408,8 +17583,8 @@
     0,
     0,
     12.81,
-    0,
-    0,
+    null,
+    null,
     12.81,
     12.82,
     12.84,
@@ -17473,7 +17648,12 @@
     13.14,
     13.14
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   }
  }
 }

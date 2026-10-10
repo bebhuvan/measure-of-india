@@ -130,8 +130,8 @@ export async function buildBsr2(root, dcfg, vintage, cfg) {
     Object.assign(otherPop, Object.fromEntries(Object.entries(popSeries(lab, `s${m[1].replace(/\./g, "_")}`, `${m[1]} ${m[2]}`)).map(([k, v]) => [k, { ...v, color: "#A3A9B4" }])));
   }
   bundle("deposits-population", D847, { ...popSeries("4 Household sector", "household", "Households"), ...popSeries("4.1.1 of which  Female", "female", "Women"), ...popSeries("ALL INDIA", "all", "All depositors"), ...otherPop },
-    { coverage: "Bank deposits of households, women, all depositors and every other owning sector of table 1.2 (keys s<code>_<group>), by rural, semi-urban, urban and metropolitan centres",
-      note: "RBI BSR-2 Table 1.2 via DBIE report 847. Population groups are classified by the location of the bank branch." });
+    { coverage: "Bank deposits of households, women, all depositors and every other owning sector of table 1.2, by rural, semi-urban, urban and metropolitan centres",
+      note: "RBI BSR-2 Table 1.2 via DBIE report 847. Population groups are classified by the location of the bank branch. Series keys for the other owning sectors: s<code>_<group>." });
 
   // ---------- 3.x tables: individuals' term deposits by band ----------
   const bands = (id) => {

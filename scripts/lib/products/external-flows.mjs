@@ -52,6 +52,10 @@ import {
 const MN = 1e6, CR = 1e7;
 const RAW = "data/raw/external-dbie";
 
+// an exchange rate is never 0: a 0 in an RBI rate table is a month with no quote or a rate below
+// the table's printed decimals, so it is baked as a gap (validate.mjs NONZERO fails any 0 left)
+const zeroless = (v) => (v === 0 ? null : v);
+
 export async function buildExternalFlows(root, dcfg, vintage, cfg) {
   const db = databankRoot(cfg?.families?.databank);
   const P = (id) => dbieProviders(db, id);
@@ -312,12 +316,12 @@ export async function buildExternalFlows(root, dcfg, vintage, cfg) {
     // 720: 155 currencies
     {
       const p = P("720")[0];
-      const b = bakeLong(p.rows, { date: (r) => monthOf(r["Time Date"]), key: (r) => `${slug(r["Currency Code Dim Currency"], 6)}_${slug(r["Currency Description Dim Currency"], 24)}`, value: (r) => num(r["Forex Rate"]), round: 6,
+      const b = bakeLong(p.rows, { date: (r) => monthOf(r["Time Date"]), key: (r) => `${slug(r["Currency Code Dim Currency"], 6)}_${slug(r["Currency Description Dim Currency"], 24)}`, value: (r) => zeroless(num(r["Forex Rate"])), round: 6,
         label: (k, r) => `₹ per ${tidy(r["Currency Description Dim Currency"]).toLowerCase()} (${r["Currency Code Dim Currency"]}), monthly average` });
       onAxis(b, monthAxis(b.dates[0], b.dates.at(-1)));
       write("external-rupee-155", b, meta({ frequency: "monthly", unit: "inr_per_unit", vintage: V, product: "Monthly average exchange rates, 155 currencies (DBIE report 720)",
         coverage: "The rupee against every currency the RBI quotes, monthly average",
-        note: "RBI DBIE report 720, rupees per unit of each currency as published (some currencies are quoted per 100 units; the label names the currency, not the quotation unit). Currencies enter and leave the table over the years. A few codes carry two currency names with different rates (SKK as both 'Slovak koruna' and 'koruna'); each name is kept as its own series, as published." }), "No rate published for these months.");
+        note: "RBI DBIE report 720, rupees per unit of each currency as published (some currencies are quoted per 100 units; the label names the currency, not the quotation unit). Currencies enter and leave the table over the years. A few codes carry two currency names with different rates (SKK as both 'Slovak koruna' and 'koruna'); each name is kept as its own series, as published. A rate printed as 0 is not a rate: it is a month with no quote (the rupiah in January 2018) or a rate below the table's four decimals (the old Turkish lira before 2005, the Zimbabwe dollar in 2008); both are left empty and disclosed per series." }), "No rate published for these months, or printed as 0 (no quote, or a rate too small for the table's four decimals).");
     }
     // 583: monthly high / low, two layouts
     {
@@ -542,7 +546,7 @@ export async function buildExternalFlows(root, dcfg, vintage, cfg) {
       const b = bakeLong(actuals(p), { date: (r) => fyEnd(r["Fiscal Year"]),
         key: (r) => { const code = r.ext_debt_code ?? r["Ext Debt Code"]; let k = dk(r["External Debt Classification"]); if (taken.has(k) && taken.get(k) !== code) k += "_" + code; taken.set(k, code); return k; },
         value: (r) => { const v = num(r[c]); return isPct(r) ? (v == null ? null : pctFix(v, scale) * scale) : v; }, unitScale: scale, round: 3,
-        rank: (r) => vrank(r["Version Desc"]), version: (r) => r["Version Desc"], label: (k, r) => (isPct(r) ? `${pctLabel(r)}${/%|ratio/i.test(pctLabel(r)) ? "" : ", per cent"}` : `${dl(r["External Debt Classification"])}${unit === "usd_million" ? ", US$ million" : ", ₹ crore"}`),
+        rank: (r) => vrank(r["Version Desc"]), version: (r) => r["Version Desc"], label: (k, r) => (isPct(r) ? `${pctLabel(r)}${/%|per cent/i.test(pctLabel(r)) ? "" : ", per cent"}` : `${dl(r["External Debt Classification"])}${unit === "usd_million" ? ", US$ million" : ", ₹ crore"}`),
         order: (r) => +(r.ext_debt_code ?? r["Ext Debt Code"]) });
       onAxis(b, monthAxis(b.dates[0], b.dates.at(-1), 12));
       if (id === "563" && !(b.series["e_1_gross_external_debt_position"]?.data.at(-1) > 300000)) throw new Error("external-flows: external debt anchor failed (gross debt line missing or implausible)");

@@ -34,7 +34,7 @@
 //                              Categories), all 5 years
 
 import { mospi } from "../mospi.mjs";
-import { writeSeries, writeRaw } from "../util.mjs";
+import { writeSeries, writeRaw, readRaw } from "../util.mjs";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -69,17 +69,29 @@ async function fetchAll(code) {
   return rows;
 }
 
+// Ratios the API serves as 0 where the ratio has no base: GER for a social group with no notified
+// population in the state (Scheduled Castes in Arunachal Pradesh and Nagaland, Scheduled Tribes
+// in Delhi, Haryana and Punjab), and pupils per teacher where the state counts no college
+// (Lakshadweep, 2017-18 to 2019-20). A ratio of 0 there is "no figure": baked as a gap, never as
+// zero (validate.mjs NONZERO). GER (6), GPI (7), PTR (8).
+const NONZERO_INDICATORS = new Set(["6", "7", "8"]);
+export const dropBaselessZeros = (byInd) => Object.fromEntries(Object.entries(byInd).map(([code, rows]) =>
+  [code, NONZERO_INDICATORS.has(code) ? rows.map((r) => (val(r) === 0 ? { ...r, value: null } : r)) : rows]));
+
 export async function buildAishe(root, dcfg, vintage) {
-  const byInd = {};
-  for (const code of Object.keys(dcfg.fetch.indicators)) byInd[code] = await fetchAll(code);
-  writeRaw(root, "data/raw/aishe-records.json", {
+  let byInd = {};
+  // AISHE_FROM_RAW=1 re-bakes from the archived dump without calling the API
+  if (process.env.AISHE_FROM_RAW) byInd = readRaw(root, "data/raw/aishe-records.json").indicators;
+  else for (const code of Object.keys(dcfg.fetch.indicators)) byInd[code] = await fetchAll(code);
+  if (!process.env.AISHE_FROM_RAW) writeRaw(root, "data/raw/aishe-records.json", {
     vintage,
     note: "Complete row-sets of all 9 AISHE indicators from aishe/getAisheRecords, survey years 2017-18 to 2021-22, 100-row pages, checked for duplicate rows (see the adapter header for the 2026-08-09 dump that had them).",
     indicators: byInd,
   });
   // vintage = the date the DATA last changed: writeRaw keeps the dump's old stamp when the
   // body is unchanged, and the bundles carry that stamp, never the run date (hard rule 5)
-  vintage = JSON.parse(fs.readFileSync(path.join(root, "data/raw/aishe-records.json"), "utf8")).vintage;
+  vintage = readRaw(root, "data/raw/aishe-records.json").vintage;
+  byInd = dropBaselessZeros(byInd);
 
   // continuous fiscal-year axis over the five served survey years
   const allYears = [...new Set(Object.values(byInd).flat().map((r) => r.year))].sort();

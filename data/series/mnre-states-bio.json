@@ -11,7 +11,7 @@
   "releaseDate": null,
   "revisionPolicy": "Cumulative installed capacity stock; revised as capacity is added or retired. Final on release.",
   "coverage": "States/UTs; installed bio-power capacity (MW), monthly: the published total and its four kinds (bagasse cogeneration, non-bagasse cogeneration, waste to energy on and off the grid).",
-  "note": "CLASSIFICATION BREAK (Dec 2023): Large Hydro Power (>25 MW) was folded into the renewable-energy total starting Dec 2023. Before that it reads 0 MW; after, ~46,910 MW — a definitional change, not a capacity addition. The Grand Total carries the step (+48 GW in one month: 132.7 → 180.8 GW). Growth rates are never computed across this seam. Individual sources (Solar, Wind, Small Hydro, Bio) are unaffected."
+  "note": "CLASSIFICATION BREAK (December 2023): Large Hydro Power (above 25 MW) enters MNRE's table and its Grand Total in December 2023. Before that MNRE prints 0 for it, which means not counted, so the series is empty before then; the entry is a definitional change, not a capacity addition. The Grand Total carries the step. Growth rates are never computed across this seam. Individual sources (Solar, Wind, Small Hydro, Bio) are unaffected by it."
  },
  "dates": [
   "2020-01-01",
@@ -820,9 +820,9 @@
     0,
     0,
     29.21,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
     29.21,
     29.21,
     29.21,
@@ -885,7 +885,13 @@
     49.19,
     49.19
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01",
+    "2021-06-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021, June 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "andhra_pradesh__total": {
    "name": "mnre_bio_andhra_pradesh__total",
@@ -2140,9 +2146,9 @@
     0,
     0,
     1,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
     1,
     1,
     1,
@@ -2205,7 +2211,13 @@
     1.32,
     1.32
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01",
+    "2021-06-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021, June 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "bihar__total": {
    "name": "mnre_bio_bihar__total",
@@ -3020,9 +3032,9 @@
     0,
     0,
     0.41,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
     0.41,
     0.41,
     0.41,
@@ -3085,7 +3097,13 @@
     10.83,
     10.83
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01",
+    "2021-06-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021, June 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "chhattisgarh__total": {
    "name": "mnre_bio_chhattisgarh__total",
@@ -5880,9 +5898,9 @@
     0,
     0,
     22.57,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
     22.57,
     22.58,
     22.58,
@@ -5945,7 +5963,13 @@
     45.05,
     45.05
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01",
+    "2021-06-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021, June 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "gujarat__total": {
    "name": "mnre_bio_gujarat__total",
@@ -6320,9 +6344,9 @@
     0,
     0,
     4.89,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
     4.89,
     6.14,
     6.14,
@@ -6385,7 +6409,13 @@
     42.82,
     42.82
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01",
+    "2021-06-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021, June 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "haryana__total": {
    "name": "mnre_bio_haryana__total",
@@ -6760,9 +6790,9 @@
     0,
     0,
     1,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
     1,
     1,
     1,
@@ -6825,7 +6855,13 @@
     1,
     1
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01",
+    "2021-06-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021, June 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "himachal_pradesh__total": {
    "name": "mnre_bio_himachal_pradesh__total",
@@ -8080,9 +8116,9 @@
     0,
     0,
     13.62,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
     13.62,
     13.85,
     13.85,
@@ -8145,7 +8181,13 @@
     26.94,
     26.94
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01",
+    "2021-06-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021, June 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "karnataka__total": {
    "name": "mnre_bio_karnataka__total",
@@ -8520,9 +8562,9 @@
     0,
     0,
     0.23,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
     0.23,
     0.23,
     0.23,
@@ -8585,7 +8627,13 @@
     0.23,
     0.23
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01",
+    "2021-06-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021, June 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "kerala__total": {
    "name": "mnre_bio_kerala__total",
@@ -9840,9 +9888,9 @@
     0,
     0,
     4.91,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
     4.91,
     5.25,
     5.25,
@@ -9905,7 +9953,13 @@
     32.71,
     32.71
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01",
+    "2021-06-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021, June 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "madhya_pradesh__total": {
    "name": "mnre_bio_madhya_pradesh__total",
@@ -10280,9 +10334,9 @@
     0,
     0,
     35.16,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
     35.16,
     35.16,
     35.16,
@@ -10345,7 +10399,13 @@
     63.68,
     63.68
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01",
+    "2021-06-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021, June 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "maharashtra__total": {
    "name": "mnre_bio_maharashtra__total",
@@ -13800,9 +13860,9 @@
     0,
     0,
     7.45,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
     7.45,
     7.45,
     7.45,
@@ -13865,7 +13925,13 @@
     34.55,
     34.55
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01",
+    "2021-06-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021, June 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "punjab__total": {
    "name": "mnre_bio_punjab__total",
@@ -14240,9 +14306,9 @@
     0,
     0,
     3.83,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
     3.83,
     3.83,
     3.83,
@@ -14305,7 +14371,13 @@
     11.77,
     11.77
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01",
+    "2021-06-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021, June 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "rajasthan__total": {
    "name": "mnre_bio_rajasthan__total",
@@ -15120,9 +15192,9 @@
     0,
     0,
     20.86,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
     20.86,
     20.86,
     20.86,
@@ -15185,7 +15257,13 @@
     27.57,
     27.57
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01",
+    "2021-06-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021, June 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "tamil_nadu__total": {
    "name": "mnre_bio_tamil_nadu__total",
@@ -15560,9 +15638,9 @@
     0,
     0,
     4.58,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
     4.58,
     13.43,
     13.43,
@@ -15625,7 +15703,13 @@
     14.47,
     14.47
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01",
+    "2021-06-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021, June 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "telangana__total": {
    "name": "mnre_bio_telangana__total",
@@ -16440,9 +16524,9 @@
     0,
     0,
     58.84,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
     59.47,
     62.41,
     62.41,
@@ -16505,7 +16589,13 @@
     159.63,
     159.63
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01",
+    "2021-06-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021, June 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "uttar_pradesh__total": {
    "name": "mnre_bio_uttar_pradesh__total",
@@ -16880,9 +16970,9 @@
     0,
     0,
     9.22,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
     9.22,
     9.22,
     9.22,
@@ -16945,7 +17035,13 @@
     16.85,
     16.85
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01",
+    "2021-06-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021, June 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "uttarakhand__total": {
    "name": "mnre_bio_uttarakhand__total",
@@ -17320,9 +17416,9 @@
     0,
     0,
     1.17,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
     1.17,
     1.17,
     1.17,
@@ -17385,7 +17481,13 @@
     8.34,
     8.34
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01",
+    "2021-06-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021, June 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "west_bengal__total": {
    "name": "mnre_bio_west_bengal__total",

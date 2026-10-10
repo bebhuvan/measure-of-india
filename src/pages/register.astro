@@ -4,6 +4,7 @@ import "../styles/pages.css";
 import fs from "node:fs";
 import { DOSSIERS } from "../dossiers/registry.js";
 import { dateStamp } from "../dossiers/display.js";
+import { fillPeriods } from "../dossiers/periods.js";
 
 // same computed counts as the front page — the two must never disagree
 const SERIES_FILES = fs.readdirSync("data/series").filter((f) => f.endsWith(".json"));
@@ -29,10 +30,10 @@ const N_DOSSIERS = DOSSIERS.length;
 
   {DOSSIERS.map((d) => (
     <section>
-      <div class="sec-head"><span class="no">{d.no}</span><h2>{d.register.label}, Guide {d.no}</h2><span class="line"></span><span class="unit">{d.register.unit}</span></div>
+      <div class="sec-head"><span class="no">{d.no}</span><h2>{d.register.label}, Guide {d.no}</h2><span class="line"></span><span class="unit">{fillPeriods(d.register.unit, d.currentBundle)}</span></div>
       <div class="break ledger">
         <table>
-          <thead><tr><th>Series</th><th>Code</th><th>{d.register.latestCol ?? "Latest"}</th><th>{d.register.agoCol ?? "Year ago"}</th><th>Vintage</th><th class="spark">{d.register.historyCol}</th></tr></thead>
+          <thead><tr><th>Series</th><th>Code</th><th>{d.register.latestCol ?? "Latest"}</th><th>{d.register.agoCol ?? "Year ago"}</th><th>Vintage</th><th class="spark">{fillPeriods(d.register.historyCol, d.currentBundle)}</th></tr></thead>
           <tbody id={d.register.id}></tbody>
         </table>
       </div>

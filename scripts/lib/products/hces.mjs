@@ -26,7 +26,7 @@
 // (scripts/validate.mjs reads it from the raw dump).
 
 import { mospi } from "../mospi.mjs";
-import { writeSeries, writeRaw } from "../util.mjs";
+import { writeSeries, writeRaw, readRaw } from "../util.mjs";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -60,7 +60,7 @@ export async function buildHces(root, dcfg, vintage) {
   // HCES_FROM_RAW=1 rebakes from the archived dump instead of refetching (the two survey
   // rounds are final; the dump is the complete row-set of every indicator)
   let byInd = {}; // code -> rows
-  if (process.env.HCES_FROM_RAW === "1") byInd = JSON.parse(fs.readFileSync(path.join(root, "data/raw/hces-records.json"), "utf8")).indicators;
+  if (process.env.HCES_FROM_RAW === "1") byInd = readRaw(root, "data/raw/hces-records.json").indicators;
   else for (const code of Object.keys(dcfg.fetch.indicators)) byInd[code] = await fetchAll(code);
   writeRaw(root, "data/raw/hces-records.json", {
     vintage,
@@ -69,7 +69,7 @@ export async function buildHces(root, dcfg, vintage) {
   });
   // vintage = the date the DATA last changed: writeRaw keeps the dump's old stamp when the
   // body is unchanged, and the bundles carry that stamp, never the run date (hard rule 5)
-  vintage = JSON.parse(fs.readFileSync(path.join(root, "data/raw/hces-records.json"), "utf8")).vintage;
+  vintage = readRaw(root, "data/raw/hces-records.json").vintage;
 
   // the two survey rounds present in the rows, oldest first
   const years = [...new Set(Object.values(byInd).flat().map((r) => r.year))].sort();
@@ -415,8 +415,9 @@ export async function buildHces(root, dcfg, vintage) {
   // food-total keys stay as they were, for the page)
   const fullCatStates = deep(byInd["4"].filter((r) => r.state !== "All India" && r.item_category !== "Food Total"), catDim, "pct_of_mpce", "Without Imputation");
   Object.assign(foodStatesBundle.series, fullCatStates);
-  foodStatesBundle.meta.coverage = "States/UTs × rural/urban; percentage share of MPCE by broad item category (30-day recall), without imputation. Keys <state>_<sector> are the Food Total share; <state>_<sector>__<category> every other category.";
-  foodStatesBundle.meta.note = "Food Total plus Non-Food Total is 100 in every state and sector; the detail categories sum to their aggregate.";
+  // the title is what a reader sees; how the keys are built is a note for whoever reads the JSON
+  foodStatesBundle.meta.coverage = "States/UTs × rural/urban; percentage share of MPCE by broad item category (30-day recall), without imputation.";
+  foodStatesBundle.meta.note = "Food Total plus Non-Food Total is 100 in every state and sector; the detail categories sum to their aggregate. Series keys: <state>_<sector> is the Food Total share; <state>_<sector>__<category> every other category.";
   // the national rows with imputation (indicators 6, 7, 8) are the All India rows of the
   // -states bundles below; the national bundles stay on the headline convention alone, so a
   // ranking across their series never mixes the two conventions

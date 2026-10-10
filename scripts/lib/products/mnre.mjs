@@ -4,8 +4,10 @@
 // MW (not generation): Solar (1), Wind (2), Hydro (3), Bio (4), Total (5).
 // Monthly from Jan 2020 to the latest month served. state_code 36 = All India.
 //
-// CLASSIFICATION BREAK (Dec 2023): Large Hydro reads 0 MW through Nov 2023,
-// then jumps to ~46,910 MW in Dec 2023 — a definitional change, not capacity.
+// CLASSIFICATION BREAK (Dec 2023): Large Hydro reads 0 MW through Nov 2023 (baked as empty:
+// not counted), then ~46,910 MW from Dec 2023 — a definitional change, not capacity. Other
+// zeros that are not capacity (categories before they enter, unreported months) are gaps too;
+// see notCounted below.
 // The published Grand Total carries the step. The dossier annotates the break
 // as a seam; growth is never computed across it. Individual sources are clean.
 //
@@ -28,7 +30,7 @@
 // off-grid row); see scripts/validate.mjs for the identity across every month.
 
 import { mospi } from "../mospi.mjs";
-import { writeSeries, writeRaw, monthAxis } from "../util.mjs";
+import { writeSeries, writeRaw, readRaw, monthAxis } from "../util.mjs";
 
 const GREYS = ["#5F6675", "#878D99", "#A3A9B4", "#C9CED6"];
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -64,15 +66,21 @@ async function fetchType(typeCode, stateCode, tag) {
 export async function buildMnre(root, dcfg, vintage) {
   // One call set per type with no state filter: every state, every category, every month.
   // The All India rows (state "All India") are the national series; the rest are the states.
-  const allByType = {};
-  for (const code of Object.keys(dcfg.fetch.types)) allByType[code] = await fetchType(code, null, dcfg.fetch.types[code]);
+  // MNRE_FROM_RAW=1 re-bakes from the archived dump without calling the API
+  const fromRaw = Boolean(process.env.MNRE_FROM_RAW);
+  let allByType = {};
+  if (fromRaw) ({ types: allByType, vintage } = readRaw(root, "data/raw/mnre-records.json"));
+  else for (const code of Object.keys(dcfg.fetch.types)) allByType[code] = await fetchType(code, null, dcfg.fetch.types[code]);
   const isAI = (r) => String(r.state).trim() === "All India";
   const byType = Object.fromEntries(Object.entries(allByType).map(([k, rows]) => [k, rows.filter(isAI)]));
-  writeRaw(root, "data/raw/mnre-records.json", {
+  if (!fromRaw) writeRaw(root, "data/raw/mnre-records.json", {
     vintage,
     note: "All 5 MNRE renewable-energy types for every state and All India, every month and category served by mnre/getDataByEnergy (no state filter). Values are cumulative installed capacity in MW. Large Hydro reads 0 through Nov 2023, then ~46,910 from Dec 2023: a classification change, disclosed in sources.yml.",
     types: allByType,
   });
+
+  // the data's vintage (writeRaw keeps the old stamp while the body is unchanged), never the run date
+  vintage = readRaw(root, "data/raw/mnre-records.json").vintage;
 
   // continuous monthly axis from the Grand Total (type 5) data
   const totalRows = byType["5"];
@@ -106,15 +114,34 @@ export async function buildMnre(root, dcfg, vintage) {
     return s;
   };
   const GAP_NOTE = "MNRE's state table skips this state in these months; the capacity is not published for them, so the months are left empty rather than filled.";
+  const mon = (d) => { const [y, m] = d.split("-"); return `${MONTHS[+m - 1]} ${y}`; };
+  // ZEROS THAT ARE NOT CAPACITY (datafix, 2026-10-10). Every series here is a cumulative stock:
+  // installed capacity never falls to 0 and comes back. MNRE prints 0 for a category it did not
+  // report that month (off-grid solar: 1,150.64 MW in March 2021, 0 in April and May, 1,272.49 MW
+  // in June, and the published solar total drops by the same amount), and for a category before
+  // it entered the All-India table (large hydro until it was counted, off-grid until March 2021,
+  // hybrid until April 2022). Both are gaps, never zeros (AGENTS.md rule 2). The entry month is
+  // read from the data. A state's leading zeros are kept: a state can have had no capacity yet.
+  const notCounted = (s, { leading }) => {
+    const nz = s.data.map((v, i) => (v != null && v !== 0 ? i : -1)).filter((i) => i >= 0);
+    if (!nz.length) return s;
+    const first = nz[0], last = nz.at(-1);
+    const interior = s.data.map((v, i) => (v === 0 && i > first && i < last ? i : -1)).filter((i) => i >= 0);
+    const lead = leading ? s.data.map((v, i) => (v === 0 && i < first ? i : -1)).filter((i) => i >= 0) : [];
+    for (const i of [...interior, ...lead]) s.data[i] = null;
+    if (lead.length) s.entersNote = `Not counted in MNRE's table before ${mon(dates[first])}: it prints 0 for those months, which is not a capacity of zero. The series starts when the category enters the table.`;
+    if (interior.length) { s.gaps = [...new Set([...(s.gaps ?? []), ...interior.map((i) => dates[i])])].sort(); s.gapsNote = `MNRE prints 0 for ${interior.map((i) => mon(dates[i])).join(", ")} between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty.`; }
+    return s;
+  };
   const stateKey = (st) => st.trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "");
 
   /* ---- mnre-sources.json ---- */
-  const breakNote = "CLASSIFICATION BREAK (Dec 2023): Large Hydro Power (>25 MW) was folded into the renewable-energy total starting Dec 2023. Before that it reads 0 MW; after, ~46,910 MW — a definitional change, not a capacity addition. The Grand Total carries the step (+48 GW in one month: 132.7 → 180.8 GW). Growth rates are never computed across this seam. Individual sources (Solar, Wind, Small Hydro, Bio) are unaffected.";
+  const breakNote = "CLASSIFICATION BREAK ({LH_ENTRY}): Large Hydro Power (above 25 MW) enters MNRE's table and its Grand Total in {LH_ENTRY}. Before that MNRE prints 0 for it, which means not counted, so the series is empty before then; the entry is a definitional change, not a capacity addition. The Grand Total carries the step. Growth rates are never computed across this seam. Individual sources (Solar, Wind, Small Hydro, Bio) are unaffected by it.";
   const sourcesBundle = {
     meta: {
       ...metaBase,
       coverage: "All India; cumulative installed capacity (MW) by source, monthly Jan 2020 to latest. Grand Total is the published type-5 series; Large Hydro is shown separately to expose the 2023 classification break.",
-      note: breakNote + " Values are as published (MW). The Grand Total from Jan 2023 onward includes Large Hydro; before that it does not.",
+      note: breakNote + " Values are as published (MW). The Grand Total from {LH_ENTRY} onward includes Large Hydro; before that it does not.",
     },
     dates,
     series: {
@@ -126,6 +153,12 @@ export async function buildMnre(root, dcfg, vintage) {
       grand_total: { name: "mnre_grand_total", label: "Grand Total (published)", color: "#2E4BD8", data: data(toMap(byType["5"])), unit: "mw" },
     },
   };
+
+  for (const s of Object.values(sourcesBundle.series)) notCounted(s, { leading: true });
+  const lhEntry = dates[sourcesBundle.series.large_hydro.data.findIndex((v) => v != null)];
+  if (!lhEntry) throw new Error("MNRE: large hydro never enters the table");
+  sourcesBundle.series.large_hydro.label = `Large Hydro Power (counted from ${mon(lhEntry)})`;
+  delete sourcesBundle.series.large_hydro.entersNote;   // the break note says it
 
   /* ---- mnre-solar-categories.json ---- */
   const SOLAR_CATS = [
@@ -142,6 +175,7 @@ export async function buildMnre(root, dcfg, vintage) {
       data: data(toMap(byType["1"], cat.trim())), unit: "mw",
     };
   });
+  for (const s of Object.values(solSeries)) notCounted(s, { leading: true });
   const solarBundle = {
     meta: {
       ...metaBase,
@@ -164,6 +198,7 @@ export async function buildMnre(root, dcfg, vintage) {
     bioSeries[key] = { name: `mnre_bio_${key}`, label, color: key === "bagasse" ? "#2E4BD8" : GREYS[i % GREYS.length],
       data: data(toMap(byType["4"], cat)), unit: "mw" };
   });
+  for (const s of Object.values(bioSeries)) notCounted(s, { leading: true });
   const bioBundle = {
     meta: { ...metaBase,
       coverage: "All India; cumulative installed bio-power capacity (MW) by kind, monthly. Bagasse cogeneration burns sugar-cane residue at sugar mills; non-bagasse cogeneration burns other farm and forest residue; waste to energy burns or digests urban and industrial waste.",
@@ -187,8 +222,13 @@ export async function buildMnre(root, dcfg, vintage) {
         const m = toMap(sr, cat);
         if (!m.size) continue;
         const key = ck ? `${stateKey(st)}__${ck}` : stateKey(st);
-        series[key] = withGaps({ name: `mnre_${{ 1: "solar", 2: "wind", 3: "hydro", 4: "bio", 5: "total" }[code]}_${key}`, label: labelOf(st, cat), group: st,
+        const ser = withGaps({ name: `mnre_${{ 1: "solar", 2: "wind", 3: "hydro", 4: "bio", 5: "total" }[code]}_${key}`, label: labelOf(st, cat), group: st,
           color: GREYS[i++ % GREYS.length], data: data(m), unit: "mw" }, GAP_NOTE);
+        // large hydro: a state's 0 before the category entered the table is "not counted"
+        if (cat === "Large Hydro Power") ser.data = ser.data.map((v, j) => (v === 0 && dates[j] < lhEntry ? null : v));
+        notCounted(ser, { leading: false });
+        if (ser.data.every((v) => v == null)) continue;
+        series[key] = ser;
       }
     }
     return { meta: { ...metaBase, coverage: cov, note: breakNote }, dates, series };
@@ -200,12 +240,19 @@ export async function buildMnre(root, dcfg, vintage) {
     (st, cat) => cat === "Solar Power Total" ? `Solar · ${st}` : `Solar, ${SOLAR_CATS.find(([c]) => c === cat)[2].toLowerCase()} · ${st}`);
   const stWindBundle = stateBundle("2", [[null, null]], "States/UTs; installed wind capacity (MW), monthly.", (st) => `Wind · ${st}`);
   const stHydroBundle = stateBundle("3", [["Small Hydro Power", "small_hydro"], ["Large Hydro Power", "large_hydro"]],
-    "States/UTs; installed hydro capacity (MW), monthly: small hydro (up to 25 MW a plant) and large hydro (above 25 MW). Large hydro reads 0 before December 2023, when MNRE first counted it; that is a classification change, not new capacity.",
+    "States/UTs; installed hydro capacity (MW), monthly: small hydro (up to 25 MW a plant) and large hydro (above 25 MW). Large hydro starts in {LH_ENTRY}, when MNRE first counted it (it printed 0 before, which is not a capacity of zero); that is a classification change, not new capacity.",
     (st, cat) => `${cat === "Small Hydro Power" ? "Small hydro" : "Large hydro"} · ${st}`);
   const stBioBundle = stateBundle("4", BIO_CATS.map(([c, k]) => [c, k]),
     "States/UTs; installed bio-power capacity (MW), monthly: the published total and its four kinds (bagasse cogeneration, non-bagasse cogeneration, waste to energy on and off the grid).",
     (st, cat) => `${BIO_CATS.find(([c]) => c === cat)[2]} · ${st}`);
 
+  // the large-hydro entry month and each category's own entry, read from the data, into the notes
+  for (const b of [sourcesBundle, solarBundle, bioBundle, statesBundle, stSolarBundle, stWindBundle, stHydroBundle, stBioBundle]) {
+    const enters = Object.values(b.series).filter((x) => x.entersNote).map((x) => `${x.label}: ${x.entersNote}`);
+    for (const x of Object.values(b.series)) delete x.entersNote;
+    b.meta.note = (b.meta.note + (enters.length ? " " + enters.join(" ") : "")).replaceAll("{LH_ENTRY}", mon(lhEntry));
+    b.meta.coverage = b.meta.coverage.replaceAll("{LH_ENTRY}", mon(lhEntry));
+  }
   if (!sourcesBundle.series.grand_total.data.some((v) => v != null)) throw new Error("MNRE: no grand total data returned");
   for (const [b, n] of [[stWindBundle, 20], [stHydroBundle, 30], [stBioBundle, 60], [stSolarBundle, 100]])
     if (Object.keys(b.series).length < n) throw new Error(`MNRE: state table too small (${Object.keys(b.series).length} series, expected at least ${n})`);

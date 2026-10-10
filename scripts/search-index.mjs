@@ -15,7 +15,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { DOSSIERS } from "../src/dossiers/registry.js";
 import { everyCutPlan, guideBundles, rowsOf, loadBundle, bundleTitle, cutOf } from "../src/dossiers/everycut.js";
-import { tokens, STOP, encodeIds } from "../src/dossiers/search-core.js";
+import { tokens, indexTokens, STOP, encodeIds } from "../src/dossiers/search-core.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const DIST = path.resolve(process.argv[2] ?? path.join(ROOT, "dist"));
@@ -85,6 +85,7 @@ const all = fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => f.endsW
 const order = [...all.filter((b) => place.has(b)).sort((a, b) => place.get(a).seq - place.get(b).seq), ...all.filter((b) => !place.has(b))];
 const bundles = [];
 const rows = [];
+const rowIdOf = new Map();   // "bundle|key" -> row id
 const post = new Map();   // token -> row ids
 for (const b of order) {
   const B = loadBundle(b);
@@ -98,8 +99,9 @@ for (const b of order) {
     let li = s.data.length - 1; while (li >= 0 && s.data[li] == null) li--;
     const recent = li < 0 ? [] : s.data.slice(Math.max(0, li - 11), li + 1).map(round3);
     const id = rows.length;
+    rowIdOf.set(b + "|" + r.key, id);   // datafix: profile rows, below
     rows.push([r.label, r.group || "", r.latestText, r.period + (r.estimated ? ", est." : ""), r.id, recent]);
-    for (const t of new Set(tokens(r.label + " " + (r.group || "")))) {
+    for (const t of new Set(indexTokens(r.label + " " + (r.group || "")))) {
       if (STOP.has(t)) continue;
       if (!post.has(t)) post.set(t, []);
       post.get(t).push(id);
@@ -146,7 +148,23 @@ if (tFirst.length) tFirst[0] = "";
 const { STATES } = await import("../src/dossiers/states-key.js");
 const profiles = STATES.map((u) => [u.slug, u.name, [...new Set([u.short, ...u.aliases].filter(Boolean))].join(" | ")]);
 // ---- end profiles
-const core = { v: 1, built: new Date().toISOString().slice(0, 10), nSeries: rows.length, guides, plates, bundles, views, profiles,
+// ---- datafix (2026-10-10): a state's own measures. "inflation in kerala" ranked CPI-AL and CPI-RL
+// rows above Kerala's own CPI. The rows a state profile quotes (src/dossiers/profiles.js MEASURES,
+// each placed per state by its pick) are that state's headline measures: own.glance holds the
+// rows of the measures a profile shows at a glance (retail inflation, income per person, monthly
+// spending...), own.other every other measure's. search-core.js ranks them first when a query
+// names a state. Row ids coded as the token postings are.
+const { MEASURES, cells } = await import("../src/dossiers/profiles.js");
+const ownIds = { glance: new Set(), other: new Set() };
+for (const m of MEASURES) {
+  if (!m.bundle || typeof m.pick !== "function") continue;
+  let c; try { c = cells(m); } catch { continue; }
+  for (const key of c.cur.values()) { const id = rowIdOf.get(m.bundle + "|" + key); if (id != null) (m.glance ? ownIds.glance : ownIds.other).add(id); }
+}
+for (const id of ownIds.glance) ownIds.other.delete(id);
+const own = { glance: encodeIds([...ownIds.glance].sort((a, b) => a - b)), other: encodeIds([...ownIds.other].sort((a, b) => a - b)) };
+// ---- end datafix
+const core = { v: 1, built: new Date().toISOString().slice(0, 10), nSeries: rows.length, guides, plates, bundles, views, profiles, own,
   shards: { tokens: tFirst, rows: rFirst, frequent: frequent.sort() } };
 fs.writeFileSync(path.join(OUT, "core.json"), JSON.stringify(core));
 

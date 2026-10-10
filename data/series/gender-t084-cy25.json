@@ -19,8 +19,10 @@
    "2025-01-01": "2025"
   },
   "cut": "Rural or urban, sex and state",
-  "note": "MoSPI's compendium reprints this table from Periodic Labour Force Survey, National Statistics Office, MoSPI; the figures are that agency's. This bundle holds one instrument only (PLFS, revamped design, calendar year); the indicator's other instrument is a separate bundle, never joined to this one. Values printed as \"-\" (no observation) or \"NR\" (not reported) are not baked; meta.omitted counts them.",
-  "omitted": {}
+  "note": "MoSPI's compendium reprints this table from Periodic Labour Force Survey, National Statistics Office, MoSPI; the figures are that agency's. This bundle holds one instrument only (PLFS, revamped design, calendar year); the indicator's other instrument is a separate bundle, never joined to this one. Values printed as \"-\" (no observation) or \"NR\" (not reported) are not baked; meta.omitted counts them. The source serves 3 cells of this table as 0 where there is no estimate (a wage or a share of adults at work cannot be zero); they are left out, not shown as zero.",
+  "omitted": {
+   "0 (no estimate)": 3
+  }
  },
  "dates": [
   "2025-01-01"
@@ -619,39 +621,6 @@
    ],
    "group": "Total",
    "geo": "Bihar"
-  },
-  "rural__male__chandigarh": {
-   "name": "gender_t84_rural__male__chandigarh",
-   "label": "Rural, Male, Chandigarh",
-   "color": "#5F6675",
-   "unit": "percent",
-   "data": [
-    0
-   ],
-   "group": "Rural",
-   "geo": "Chandigarh"
-  },
-  "rural__female__chandigarh": {
-   "name": "gender_t84_rural__female__chandigarh",
-   "label": "Rural, Female, Chandigarh",
-   "color": "#5F6675",
-   "unit": "percent",
-   "data": [
-    0
-   ],
-   "group": "Rural",
-   "geo": "Chandigarh"
-  },
-  "rural__person__chandigarh": {
-   "name": "gender_t84_rural__person__chandigarh",
-   "label": "Rural, Person, Chandigarh",
-   "color": "#5F6675",
-   "unit": "percent",
-   "data": [
-    0
-   ],
-   "group": "Rural",
-   "geo": "Chandigarh"
   },
   "urban__male__chandigarh": {
    "name": "gender_t84_urban__male__chandigarh",

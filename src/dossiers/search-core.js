@@ -21,7 +21,7 @@
 export const STOP = new Set(["a", "an", "and", "the", "of", "in", "on", "for", "to", "by", "at", "with", "from", "or", "as", "is", "its"]);
 // plain-language words for what the series call something else
 export const SYN = {
-  inflation: ["price", "cpi", "wpi"], prices: ["price"], jobs: ["unemployment", "labour", "employment", "plfs"],
+  inflation: ["price", "cpi", "wpi"], jobs: ["unemployment", "labour", "employment", "plfs"],
   rupee: ["usd", "inr", "exchange", "dollar"], dollar: ["usd"], growth: ["gdp", "gva"], factory: ["manufacturing", "iip", "factories"],
   factories: ["factory", "manufacturing"], college: ["enrolment", "aishe"], women: ["female", "gender", "woman"], woman: ["female", "women"],
   power: ["electricity"], account: ["accounts"], bank: ["banks"],
@@ -30,12 +30,21 @@ export const SYN = {
   stunting: ["stunted"], wasting: ["wasted"], anaemia: ["anaemic", "anemia"], anemia: ["anaemia", "anaemic"],
   home: ["housing", "house"], salary: ["wage", "wages", "earnings"], wages: ["wage", "earnings"],
   monsoon: ["rainfall", "rain"], rainfall: ["rain"], poor: ["poverty"], loans: ["loan", "credit"],
+  // a state's GDP is its GSDP; "prices" asks about inflation (datafix 2026-10-10)
+  gdp: ["gsdp"], prices: ["price", "inflation", "cpi"], price: ["inflation", "cpi"],
 };
 export const MIN_PREFIX = 3;
 
 /** Lower-cased words of a text, accents stripped, split on anything not a letter or digit. */
 export function tokens(text) {
   return String(text ?? "").toLowerCase().normalize("NFKD").replace(/[̀-ͯ]/g, "").split(/[^a-z0-9]+/).filter(Boolean);
+}
+/** The words a text is indexed under: tokens(), less "prices" where it names a valuation basis
+ *  ("GSDP at current prices", "constant 2011-12 prices"): a reader searching "prices in bihar"
+ *  wants inflation, not every rupee figure (datafix 2026-10-10). The label still reads in full. */
+export function indexTokens(text) {
+  const t = tokens(text);
+  return t.filter((w, i) => !((w === "prices" || w === "price") && /^(current|constant|\d+)$/.test(t[i - 1] ?? "")));
 }
 /** Index of the last element of a sorted array that is <= x (0 if none). */
 function floorIdx(arr, x) {
@@ -74,7 +83,8 @@ export function decodeIds(d) {
  *  (the last, with no space after it) matches as a prefix once it has MIN_PREFIX letters;
  *  finished words match whole, with a plural or singular form and the synonyms above. */
 export function parseQuery(q) {
-  const raw = tokens(q);
+  // the same words as the index: "prices" after "current" or "constant" names a valuation basis
+  const raw = indexTokens(q);
   if (!raw.length) return [];
   const typing = !/\s$/.test(q);
   let words = raw.map((w, i) => ({ w, prefix: typing && i === raw.length - 1 && w.length >= MIN_PREFIX }));
@@ -82,7 +92,8 @@ export function parseQuery(q) {
   if (content.length) words = content;
   return words.map(({ w, prefix }) => {
     const forms = new Set([w, ...(SYN[w] ?? [])]);
-    if (!prefix) { if (w.length > 3 && w.endsWith("s")) forms.add(w.slice(0, -1)); else forms.add(w + "s"); }
+    // a plural or singular of the word and of each synonym ("inflation" -> "price" -> "prices")
+    if (!prefix) for (const f of [...forms]) { if (f.length > 3 && f.endsWith("s")) forms.add(f.slice(0, -1)); else forms.add(f + "s"); }
     return { w, prefix, forms: [...forms] };
   });
 }
@@ -97,9 +108,38 @@ export function createSearch(core, load) {
   const chunk = (i) => { if (!rChunks.has(i)) rChunks.set(i, load(`r/${i}.json`)); return rChunks.get(i); };
   const starts = bundles.map((b) => b[4]);
   const bundleOf = (row) => floorIdx(starts, row);
-  const hay = (parts) => tokens(parts.filter(Boolean).join(" "));
+  const hay = (parts) => indexTokens(parts.filter(Boolean).join(" "));
   const gTok = guides.map((g) => hay([g[1], g[2]]));
   const bTok = bundles.map((b) => [...new Set([...hay([b[1], b[2], b[7]]), ...(b[3] >= 0 ? hay([guides[b[3]][1]]) : [])])]);
+
+  // datafix (2026-10-10): a state's own measures (scripts/search-index.mjs core.own) lead when a
+  // query names a state: "inflation in kerala" opens on Kerala's retail inflation, not on the
+  // farm-labourer index for Kerala. An own row gains 2, ordinary rows scoring 1 or 2 a word, so it
+  // outranks a narrower row that matches the query the same way; a measure the profile shows at a
+  // glance gains a quarter more, the weight of one extra word in a label (series() below), which
+  // settles a tie between two of a state's own measures without overriding a closer label
+  // ("bank deposits maharashtra": deposits, not the credit-deposit ratio shown at a glance).
+  const ownW = new Map();
+  for (const id of decodeIds(core.own?.other ?? [])) ownW.set(id, 2);
+  for (const id of decodeIds(core.own?.glance ?? [])) ownW.set(id, 2.25);
+  const ownBundles = new Set([...ownW.keys()].map((id) => floorIdx(starts, id)));
+  // what a bundle is about: its title, cut and guide (not its source: "Labour Bureau" is no topic)
+  const bTopic = bundles.map((b) => new Set([...hay([b[1], b[2]]), ...(b[3] >= 0 ? hay([guides[b[3]][1], guides[b[3]][2]]) : [])]));
+  const pNames = (core.profiles ?? []).map((x) => [x[1], ...String(x[2] ?? "").split(" | ")].map((n) => tokens(n).filter((t) => !STOP.has(t))).filter((nt) => nt.length));
+  /** The state profile a query names, if any: { i, nameWords (the query words its name uses), rest (the others) }. */
+  function stateIn(words) {
+    let best = null;
+    pNames.forEach((names, i) => {
+      for (const nt of names) {
+        if (!nt.every((t) => words.some((w) => tokenMatches(w, t)))) continue;
+        const used = words.filter((w) => nt.some((t) => tokenMatches(w, t)));
+        if (!best || used.length > best.nameWords.length) best = { i, nameWords: used, rest: words.filter((w) => !used.includes(w)) };
+      }
+    });
+    return best;
+  }
+  // a word is a topic when a guide or a bundle that holds a state's own measure speaks of it
+  const isTopic = (w) => gTok.some((g) => g.some((t) => tokenMatches(w, t))) || [...ownBundles].some((bi) => [...bTopic[bi]].some((t) => tokenMatches(w, t)));
 
   // ----- instant: guides, charts and files, from core.json alone
   function quick(q, { limit = 6 } = {}) {
@@ -135,6 +175,8 @@ export function createSearch(core, load) {
         const covers = nt.every((t) => words.some((w) => tokenMatches(w, t)));
         if (covers && hit > best) { best = hit; lead = hit === words.length; }
       }
+      // a state and a topic the site covers ("inflation in kerala"): the profile leads too
+      if (best && !lead) { const named = stateIn(words); if (named?.i === i && named.rest.length && named.rest.every(isTopic)) lead = true; }
       return { i, s: best, lead, href: `/states/${x[0]}/`, title: x[1], note: "State profile" };
     }).filter((x) => x.s > 0).sort((a, b) => b.lead - a.lead || b.s - a.s || a.i - b.i).slice(0, 3);
     return { guides: g, plates: p, files, states: st };
@@ -163,6 +205,9 @@ export function createSearch(core, load) {
   async function candidates(q) {
     const words = parseQuery(q);
     if (!words.length) return null;
+    // a state named in another spelling ("Orissa", "Pondicherry") finds the rows that use its name
+    const named0 = stateIn(words);
+    if (named0) { const canon = tokens(core.profiles[named0.i][1]).filter((t) => !STOP.has(t)); for (const w of named0.nameWords) w.forms = [...new Set([...w.forms, ...canon])]; }
     const per = [];
     for (const w of words) {
       const { ids, loose } = await postingsFor(w);
@@ -179,9 +224,12 @@ export function createSearch(core, load) {
     const score = new Map();
     const deferred = [];
     const keep = [];
+    const named = ownW.size ? named0 : null;
     for (const r of pool) {
-      let s = 0, ok = true, wait = false;
       const bi = bundleOf(r);
+      // the boost needs the topic words in the row's label or in what its bundle is about
+      const own = named && ownW.has(r) && named.rest.every((w) => per.find((p) => p.w === w)?.ids.has(r) || [...bTopic[bi]].some((t) => tokenMatches(w, t)));
+      let s = own ? ownW.get(r) : 0, ok = true, wait = false;
       for (const p of per) {
         if (p.ids.has(r)) s += 2;
         else if (p.ctx.has(bi)) s += 1;
@@ -203,7 +251,7 @@ export function createSearch(core, load) {
     return out;
   }
   // a deferred row passes when its own label or group carries each frequent word it relied on
-  const passes = (row, words) => { const t = tokens(row[0] + " " + row[1]); return words.every((w) => t.some((x) => tokenMatches(w, x))); };
+  const passes = (row, words) => { const t = indexTokens(row[0] + " " + row[1]); return words.every((w) => t.some((x) => tokenMatches(w, x))); };
 
   /** The best `limit` series, fetching at most `maxChunks` row chunks. */
   async function series(q, { limit = 8, maxChunks = 6 } = {}) {
@@ -224,7 +272,7 @@ export function createSearch(core, load) {
     for (const r of picked) {
       const row = data.get(r);
       if (c.deferred.has(r) && !passes(row, looseWords)) continue;
-      const lt = tokens(row[0]);
+      const lt = indexTokens(row[0]);
       const inLabel = words.filter((w) => lt.some((t) => tokenMatches(w, t))).length;
       // a label made of the query's words and little else ranks first ("repo rate": "Policy repo rate")
       const extra = lt.filter((t) => !STOP.has(t) && !words.some((w) => tokenMatches(w, t))).length;
@@ -242,5 +290,5 @@ export function createSearch(core, load) {
     return { label: row[0], group: row[1], latest: row[2], period: row[3], recent: row[5] ?? [], bundle: b[0], file: b[1],
       guide: b[3] >= 0 ? guides[b[3]][1] : null, href: url ? `${url}#${row[4]}` : `/data/${b[0]}.csv` };
   }
-  return { quick, series, candidates, rowsAt, describe, passes, bundleOf };
+  return { quick, series, candidates, rowsAt, describe, passes, bundleOf, stateIn };
 }

@@ -14,7 +14,7 @@ import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";
 import readline from "node:readline";
-import { writeSeries } from "../util.mjs";
+import { writeSeries, nullBornStandIns } from "../util.mjs";
 
 const MON = { JAN: 1, FEB: 2, MAR: 3, APR: 4, MAY: 5, JUN: 6, JUL: 7, AUG: 8, SEP: 9, OCT: 10, NOV: 11, DEC: 12 };
 const pad = (n) => String(n).padStart(2, "0");
@@ -84,6 +84,7 @@ const keyOf = (s) => String(s).toLowerCase().normalize("NFKD").replace(/[^a-z0-9
 // a label whose last part is just "Number" ("Societies in Profit, Number") is a count too (2026-10-10)
 const COUNT_RE = /(^|,\s*)number$|\b(no\.?|number|nos?)\b.*\b(of)\b|\baccounts?\b|borrowers|branches|offices|employees|banks\b|units\b|members|cases|shgs|centres|atms|staff|\bcount\b|outlets|cards issued/i;
 const PCT_RE = /%|per ?cent|percentage|\bratios?\b|\brate\b|return on|yield|share in|\bcrar\b|margin/i;
+export const RATIO_ROW = /\bratios?\b|as per ?cent|percentage (of|to)|as percentage|per ?cent (of|to)\b|% of\b|\(%\)/i;
 
 /** Bake one DBIE table per its config. Returns a provenance record. */
 export async function bakeDeep(root, db, cfg, meta) {
@@ -160,7 +161,8 @@ export async function bakeDeep(root, db, cfg, meta) {
   const seen = new Map(); for (const [, o] of labels) seen.set(o.label, (seen.get(o.label) ?? 0) + 1);
   for (const [, o] of labels) if (seen.get(o.label) > 1) o.label = o.raw;
   const seen2 = new Map(); for (const [k, o] of labels) { const n = (seen2.get(o.label) ?? 0) + 1; seen2.set(o.label, n); if (n > 1) o.label += ` (${n})`; }
-  for (const o of labels.values()) { o.orig = o.label; for (const [re, to] of cfg.relabel ?? []) o.label = o.label.replace(re, to); }
+  // the RBI's typewriter quotes (`Other' deposits) become plain ones (datafix: reader text)
+  for (const o of labels.values()) { o.orig = o.label; for (const [re, to] of cfg.relabel ?? []) o.label = o.label.replace(re, to); o.label = o.label.replace(/`([^`']*)'/g, "'$1'").replace(/`/g, "'"); }
   const series = {}, slips = [];
   for (const [key, { label, orig, item, unit: vu }] of [...labels].sort((a, b) => a[1].label.localeCompare(b[1].label))) {
     const ub = (cfg.unitBy ?? []).find(([re]) => re.test(orig ?? label));
@@ -169,6 +171,11 @@ export async function bakeDeep(root, db, cfg, meta) {
     // co-operative banks" is money, not a count of banks), then counts, else money
     const it = item || label;
     if (unit === "auto") unit = PCT_RE.test(it) ? "pct" : /\bamount\b|outstanding|₹|rs\.? ?crore|deposits|advances|loans|credit|profit|loss|income|expen|charges|interest/i.test(it) && !/\b(no\.?|number)\b/i.test(it) ? "inr_crore" : COUNT_RE.test(it) ? "count" : "inr_crore";
+    // a ratio row inside a money table ("% of PSA to ANBC", "Leverage Ratio", "NPA as percentage of
+    // loans outstanding") is a per cent (a leverage ratio is times), never ₹ crore, and is not
+    // divided by a crore (datafix 2026-10-10: these showed as ₹0.0000039 crore). Interest-rate
+    // slabs ("5% to 6%, credit outstanding") are amounts and do not match.
+    if (/^inr/.test(unit ?? "") && RATIO_ROW.test(label)) unit = /leverage ratio/i.test(label) ? "times" : "pct";
     const d = ub?.[2]?.div ? ub[2].div : unit === "inr_crore" ? (cfg.inCrore || ub?.[2]?.inCrore ? 1 : 1e7) : unit === "inr_lakh_crore" ? 1e12 : unit === "lakh_count" ? 1e5 : 1;
     // three decimals for 1 and above, four significant figures below (a small state's ₹ crore figure kept)
     const data = dates.map((dt) => { const v = vals.get(`${key}|${dt}`); if (v == null) return null; const x = (v * (cfg.scale ?? 1) * (cfg.scaleAt?.(key, dt) ?? 1)) / d; return Math.abs(x) >= 1 ? Math.round(x * 1000) / 1000 : x === 0 ? 0 : +x.toPrecision(4); });
@@ -200,6 +207,8 @@ export async function bakeDeep(root, db, cfg, meta) {
     for (const [key, s] of Object.entries(series)) { const col = labels.get(key)?.vlabel ?? ""; (byCol.get(col) ?? byCol.set(col, []).get(col)).push(key); }
     for (const [col, keys] of byCol) if (isCodeColumn(keys.map((k) => series[k].data))) { codeCols.push(col || "value"); for (const k of keys) delete series[k]; }
     if (codeCols.length) console.warn(`credit-deep ${cfg.id}: dropped display-order column(s) ${codeCols.join(", ")}`); }
+  // a state's 0s before it existed (Telangana's co-operative banks in March 2014) are not values (util)
+  nullBornStandIns(dates, series);
   // trim the axis to dates some series has; disclose interior gaps on each series
   const any = (i) => Object.values(series).some((s) => s.data[i] != null);
   let a = 0, b = dates.length - 1; while (a <= b && !any(a)) a++; while (b >= a && !any(b)) b--;

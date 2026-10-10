@@ -24,7 +24,7 @@
 // Group on Population Projections' figures (July 2020): kept on the series they extend, each
 // date listed in `estimated` (CONTRACT-series rule 2b).
 //
-// Source quirks: values "-" (no observation) and "NR" (not reported) are not baked (counted in
+// Source quirks: some PLFS tables serve blank cells as 0 (see NO_ESTIMATE); values "-" (no observation) and "NR" (not reported) are not baked (counted in
 // meta.omitted); numbers can carry Indian digit grouping ("7,75,947"); a few units are "-"
 // and are set per table below; the API's year field mixes "2019", "2019-21", "C.Y. 2022 (P)",
 // "as on 31.03.2025" and "FY26TD till Oct'25", all parsed by periodOf. The API lists 154
@@ -44,7 +44,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { mospi, mospiAll } from "../mospi.mjs";
-import { writeSeries, writeRaw } from "../util.mjs";
+import { writeSeries, writeRaw, readRaw, bornStandIns } from "../util.mjs";
 import { getJson } from "../net.mjs";
 import { parseNumber } from "../tabular.mjs";
 
@@ -92,7 +92,9 @@ const A = {
 
 /* ---------- per indicator: compendium table, agency, slug, unit for "-" ----------
  * unit: one unit for the whole table, or units: { <row unit>: <atlas unit> }. Row units not
- * listed fall back to UNIT_OF below. plfs: PLFS rulers by year label. split: a custom ruler. */
+ * listed fall back to UNIT_OF below. plfs: PLFS rulers by year label. split: a custom ruler.
+ * zeroNone: the table's 0 means "no estimate", never a measured zero (a wage, the share of
+ * adults at work); see NO_ESTIMATE below. */
 const T = {
   1: { tab: "1.1", src: A.proj, slug: "population", est: (l) => +String(l).slice(0, 4) > 2011 },
   2: { tab: "1.3", src: A.census, slug: "sex-ratio-census", unit: "ratio" },
@@ -138,8 +140,8 @@ const T = {
   60: { tab: "3.5", src: A.udise + "; higher education from AISHE", slug: "ger", unit: "percent" },
   61: { tab: "3.6", src: A.udise, slug: "aner", unit: "percent" },
   62: { tab: "3.7", src: "Educational Statistics at a Glance to 2011-12; UDISE+ and AISHE, Ministry of Education, from 2012-13", slug: "gpi", unit: "gpi", split: (r) => (Number(String(r.year).slice(0, 4)) < 2012 ? ["esag", "Educational Statistics at a Glance"] : ["udise", "UDISE+ and AISHE"]) },
-  63: { tab: "3.8.2", src: A.udise, slug: "gpi-nep-states", unit: "gpi" },
-  64: { tab: "3.8.3", src: A.aishe, slug: "gpi-higher-states", unit: "gpi" },
+  63: { tab: "3.8.2", src: A.udise, slug: "gpi-nep-states", unit: "gpi", zeroNone: true },
+  64: { tab: "3.8.3", src: A.aishe, slug: "gpi-higher-states", unit: "gpi", zeroNone: true },
   65: { tab: "3.9", src: A.aishe, slug: "ug-enrolment" },
   66: { tab: "3.10", src: A.aishe, slug: "pg-enrolment" },
   67: { tab: "3.11", src: A.aishe, slug: "female-per-100-male-programmes", unit: "per_100_males" },
@@ -157,11 +159,11 @@ const T = {
   81: { tab: "4.2", src: A.plfs, slug: "lfpr-all-ages-states", plfs: true },
   82: { tab: "4.3", src: A.plfs, slug: "lfpr-states", plfs: true },
   83: { tab: "4.4", src: A.plfs, slug: "wpr-all-ages-states", plfs: true },
-  84: { tab: "4.5", src: A.plfs, slug: "wpr-states", plfs: true },
+  84: { tab: "4.5", src: A.plfs, slug: "wpr-states", plfs: true, zeroNone: true },
   85: { tab: "4.6.1", src: A.plfs, slug: "wpr", plfs: true },
   86: { tab: "4.6.2", src: A.plfs, slug: "wpr-age", plfs: true },
-  87: { tab: "4.7", src: A.plfs, slug: "casual-wage", plfs: true },
-  88: { tab: "4.8", src: A.plfs, slug: "hourly-wage-occupation", plfs: true },
+  87: { tab: "4.7", src: A.plfs, slug: "casual-wage", plfs: true, zeroNone: true },
+  88: { tab: "4.8", src: A.plfs, slug: "hourly-wage-occupation", plfs: true, zeroNone: true },
   89: { tab: "4.9", src: A.plfs, slug: "employment-status-states", plfs: true },
   90: { tab: "4.10", src: A.plfs, slug: "employment-status", plfs: true },
   91: { tab: "4.11", src: A.plfs, slug: "industry", plfs: true },
@@ -231,7 +233,7 @@ const T = {
   157: { tab: "6.11", src: A.ncrb, slug: "cyber-crimes" },
   159: { tab: "2.20", src: A.mohfw, slug: "tb-notified" },
   160: { tab: "2.30", src: A.srs + " (Cause of Death Statistics)", slug: "causes-of-death" },
-  161: { tab: "3.8.1", src: A.udise + "; higher education from AISHE", slug: "gpi-states", unit: "gpi" },
+  161: { tab: "3.8.1", src: A.udise + "; higher education from AISHE", slug: "gpi-states", unit: "gpi", zeroNone: true },
   162: { tab: "3.16", src: A.nss + " (Comprehensive Modular Survey: Education, 2025)", slug: "course-fees" },
   163: { tab: "3.17", src: A.nss + " (Comprehensive Modular Survey: Education, 2025)", slug: "school-spending" },
   164: { tab: "3.21", src: A.moe, slug: "class-x-regular" },
@@ -341,6 +343,27 @@ const GREY = "#5F6675";
 const pad3 = (c) => String(c).padStart(3, "0");
 export const genderSlug = (code, ruler) => `gender-t${pad3(code)}${ruler ? "-" + ruler : ""}`;
 
+/* ---------- zeros that mean "no estimate" ----------
+ * The API serves the compendium's blank cells as 0 in some PLFS tables (checked 2026-10-10
+ * against the table design: a casual wage of Rs 0 a day, an hourly wage of Rs 0.00, a worker
+ * population ratio of 0.0 for all adults). Two rules, both from the data, never a list of cells:
+ *  1. a table marked zeroNone: every 0 is "no estimate" (a wage or a WPR cannot be 0);
+ *  2. a PLFS domain (year, state, rural or urban) whose all-persons WPR in table 4.5 is 0 was
+ *     not sampled: every PLFS table's figures for that domain are "no estimate" (Chandigarh's
+ *     rural sector in 2025 prints 0.0 for WPR, unemployment and informal share alike).
+ * Such cells are not baked; meta.omitted counts them under "0 (no estimate)". */
+const NO_ESTIMATE = "0 (no estimate)";
+const plfsDomain = (r) => [String(r.year).trim(), String(r["state/UT"] ?? "").trim(), String(r.sector ?? "").trim()].join("|");
+export function unsampledPlfsDomains(raw) {
+  const out = new Set();
+  for (const r of raw.indicators["84"] ?? []) if (r.gender === "Person" && parseNumber(r.value) === 0) out.add(plfsDomain(r));
+  return out;
+}
+export function zeroMeansNone(cfg, r, unsampled) {
+  if (parseNumber(r.value) !== 0) return false;
+  return Boolean(cfg.zeroNone || (cfg.plfs && unsampled.has(plfsDomain(r))));
+}
+
 export function bakeGender(root, dcfg, raw) {
   const vintage = raw.vintage;
   const listed = new Map(raw.list.map((i) => [String(i.indicator_code), String(i.description).trim()]));
@@ -351,6 +374,7 @@ export function bakeGender(root, dcfg, raw) {
   const missingCfg = [...listed.keys()].filter((c) => !T[c]);
   if (missingCfg.length) throw new Error(`gender: no table config for indicator(s) ${missingCfg.join(", ")}: add them to T in gender.mjs`);
 
+  const unsampled = unsampledPlfsDomains(raw);
   const written = [];
   for (const [code, rows] of Object.entries(raw.indicators)) {
     const cfg = T[code];
@@ -409,6 +433,7 @@ export function bakeGender(root, dcfg, raw) {
         if (p.provisional) provisional = true;
         const v = parseNumber(r.value);
         if (v == null) { const k = String(r.value).trim() || "blank"; omitted[k] = (omitted[k] ?? 0) + 1; continue; }
+        if (zeroMeansNone(cfg, r, unsampled)) { omitted[NO_ESTIMATE] = (omitted[NO_ESTIMATE] ?? 0) + 1; continue; }
         const unit = cfg.unitOf?.(r) ?? cfg.units?.[r.unit] ?? cfg.unit ?? UNIT_OF[r.unit];
         if (!unit) throw new Error(`gender ${code}: no Atlas unit for row unit "${r.unit}"`);
         unitsSeen.add(unit);
@@ -434,6 +459,7 @@ export function bakeGender(root, dcfg, raw) {
       const out = {};
       for (const [k, s] of Object.entries(series)) {
         const data = dates.map((d) => s.map.get(d) ?? null);
+        for (const i of bornStandIns(k, dates, data)) data[i] = null;   // a state's 0s before it existed (util)
         const first = data.findIndex((v) => v != null), last = data.length - 1 - [...data].reverse().findIndex((v) => v != null);
         const gaps = dates.filter((d, i) => i > first && i < last && data[i] == null);
         const o = { name: s.name, label: s.label, color: s.color, unit: s.unit, data, group: s.group };
@@ -460,7 +486,7 @@ export function bakeGender(root, dcfg, raw) {
           coverage: `${name}${g.label ? ` (${g.label})` : ""}`,
           periodLabels: Object.fromEntries(dates.map((d) => [d, axis.get(d)])),
           cut: (() => { const w = [...dims.map((k) => DIM_WORD[k] ?? k.replace(/_/g, " ")), ...(g.rows.some((r) => GEO_KEYS.some((k) => r[k] != null && !/^(All )?India$/.test(String(r[k]).trim()))) ? ["state"] : [])]; return w.length ? (w.length > 1 ? w.slice(0, -1).join(", ") + " and " + w.at(-1) : w[0]).replace(/^./, (c) => c.toUpperCase()) : "All India"; })(),
-          note: `MoSPI's compendium reprints this table from ${cfg.src || "the agency its table names"}; the figures are that agency's.${g.label ? ` This bundle holds one instrument only (${g.label}); the indicator's other instrument is a separate bundle, never joined to this one.` : ""}${provisional ? " The latest year is provisional at source." : ""} Values printed as "-" (no observation) or "NR" (not reported) are not baked; meta.omitted counts them.`,
+          note: `MoSPI's compendium reprints this table from ${cfg.src || "the agency its table names"}; the figures are that agency's.${g.label ? ` This bundle holds one instrument only (${g.label}); the indicator's other instrument is a separate bundle, never joined to this one.` : ""}${provisional ? " The latest year is provisional at source." : ""} Values printed as "-" (no observation) or "NR" (not reported) are not baked; meta.omitted counts them.${omitted[NO_ESTIMATE] ? ` The source serves ${omitted[NO_ESTIMATE]} cells of this table as 0 where there is no estimate (${cfg.zeroNone ? (cfg.unit === "gpi" ? "a parity index is never zero where the state has students" : "a wage or a share of adults at work cannot be zero") : "PLFS drew no sample in that state's rural or urban sector"}); they are left out, not shown as zero.` : ""}`,
           omitted,
         },
         dates, series: out,
@@ -482,7 +508,7 @@ export async function buildGender(root, dcfg, vintage) {
   const raw = await fetchGenderRaw(root, vintage);
   const failed = Object.keys(raw.failed ?? {});
   if (failed.length) throw new Error(`gender: ${failed.length} indicator(s) failed to fetch: ${failed.join(", ")}`);
-  const onDisk = JSON.parse(fs.readFileSync(path.join(root, "data/raw/gender-records.json"), "utf8"));
+  const onDisk = readRaw(root, "data/raw/gender-records.json");
   return bakeGender(root, dcfg, onDisk);
 }
 
@@ -511,7 +537,7 @@ if (process.argv[1] && path.resolve(process.argv[1]).endsWith("products/gender.m
   if (process.argv.includes("--fetch")) await fetchGenderRaw(ROOT, new Date().toISOString().slice(0, 10));
   if (process.argv.includes("--bake")) {
     const { dcfg } = sourceCfg("gender");
-    const raw = JSON.parse(fs.readFileSync(path.join(ROOT, "data/raw/gender-records.json"), "utf8"));
+    const raw = readRaw(ROOT, "data/raw/gender-records.json");
     const w = bakeGender(ROOT, dcfg, raw);
     console.log(`gender: ${w.length} bundles`);
   }

@@ -51,3 +51,13 @@ export function period(slug) {
   cache.set(slug, out);
   return out;
 }
+
+// ---- datafix (2026-10-10): registry text that names a period ----
+// A registry line such as register.unit ("Monthly, MNRE, Jan 2020 to Jun 2026") went stale the
+// month after it was typed. Registry text writes tokens instead, filled here from the bundle:
+// {span} "Jan 2020 to Jul 2026", {first} "Jan 2020", {latest} "Jul 2026", {n} 79, {nWord}.
+export function fillPeriods(text, slug) {
+  if (text == null || !/\{(span|first|latest|n|nWord)\}/.test(text)) return text;
+  const p = period(slug);
+  return text.replace(/\{span\}/g, p.span).replace(/\{first\}/g, p.firstShort).replace(/\{latest\}/g, p.short).replace(/\{nWord\}/g, p.nWord).replace(/\{n\}/g, String(p.n));
+}

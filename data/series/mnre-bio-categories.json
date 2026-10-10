@@ -11,7 +11,7 @@
   "releaseDate": null,
   "revisionPolicy": "Cumulative installed capacity stock; revised as capacity is added or retired. Final on release.",
   "coverage": "All India; cumulative installed bio-power capacity (MW) by kind, monthly. Bagasse cogeneration burns sugar-cane residue at sugar mills; non-bagasse cogeneration burns other farm and forest residue; waste to energy burns or digests urban and industrial waste.",
-  "note": "The four kinds sum to the published Bio Power Total (checked in scripts/validate.mjs)."
+  "note": "The four kinds sum to the published Bio Power Total (checked in scripts/validate.mjs). Waste to energy, off-grid: Not counted in MNRE's table before March 2021: it prints 0 for those months, which is not a capacity of zero. The series starts when the category enters the table."
  },
  "dates": [
   "2020-01-01",
@@ -361,24 +361,24 @@
    "label": "Waste to energy, off-grid",
    "color": "#C9CED6",
    "data": [
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
     218.95,
-    0,
-    0,
-    0,
+    null,
+    null,
+    null,
     219.57,
     233.2,
     233.2,
@@ -441,7 +441,13 @@
     554.16,
     554.16
    ],
-   "unit": "mw"
+   "unit": "mw",
+   "gaps": [
+    "2021-04-01",
+    "2021-05-01",
+    "2021-06-01"
+   ],
+   "gapsNote": "MNRE prints 0 for April 2021, May 2021, June 2021 between months with capacity: a cumulative capacity does not vanish and return, so these months were not reported and are left empty."
   },
   "total": {
    "name": "mnre_bio_total",
