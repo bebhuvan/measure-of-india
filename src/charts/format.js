@@ -7,7 +7,7 @@
 // Convention: a minus is the typographic "−" (U+2212), never a hyphen,
 // wherever it leads a rendered figure.
 
-const MINUS = "−";
+const MINUS = "−\u2060";   // U+2212 then a word joiner: the sign never wraps away from ₹ or $ after it
 export const inr = (v) => Math.round(v).toLocaleString("en-IN");
 
 export const pct2 = (v) => v.toFixed(2) + "%";

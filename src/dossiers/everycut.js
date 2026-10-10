@@ -18,7 +18,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 
 const ROOT = process.cwd();   // builds run from the repository root (see periods.js)
-const MINUS = "−";
+const MINUS = "−\u2060";   // U+2212 then a word joiner: the sign never wraps away from ₹ or $ after it
 const M3 = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 /* ---------- units ----------
@@ -34,6 +34,10 @@ const big = (v, unit) => {   // levels in a base unit, shown at a readable scale
   if (a >= 1e5) return grp(v / 1e5, 2) + " lakh" + unit;
   return grp(v) + unit;
 };
+
+// US$ amounts given in millions: a billion and over in bn with one decimal, below that in mn,
+// so a small line never reads "$0.0 bn"
+const usdFromMn = (v) => { const a = Math.abs(v); const s = a >= 1000 ? grp(a / 1e3, 1) + " bn" : grp(a, a >= 10 ? 0 : 1) + " mn"; return (v < 0 ? MINUS : "") + "$" + s; };
 export const UNITS = {
   pct_yoy: { kind: "pt", fmt: (v) => v.toFixed(1) + "%", note: "year-on-year" },
   pct: { kind: "pt", fmt: (v) => v.toFixed(1) + "%" },
@@ -60,7 +64,7 @@ export const UNITS = {
   inr_lakh: { kind: "pct", fmt: (v) => (Math.abs(v) >= 1e7 ? "₹" + grp(v / 1e7, 2) + " lakh crore" : "₹" + grp(v / 100) + " crore"), note: "published in ₹ lakh" },
   inr_crore: { kind: "pct", fmt: (v) => "₹" + grp(v) + " crore" },
   inr_lakh_crore: { kind: "pct", fmt: (v) => "₹" + grp(v, 2) + " lakh crore" },
-  usd_millions: { kind: "pct", fmt: (v) => (v < 0 ? MINUS : "") + "$" + grp(Math.abs(v) / 1e3, 1) + " bn" },
+  usd_millions: { kind: "pct", fmt: usdFromMn },
   usd_constant_2015: { kind: "pct", fmt: (v) => "$" + grp(v / 1e9, 1) + " bn", note: "constant 2015 US$" },
   inr_per_usd: { kind: "pct", fmt: (v) => "₹" + v.toFixed(2), note: "per US$" },
   inr_per_eur: { kind: "pct", fmt: (v) => "₹" + v.toFixed(2), note: "per euro" },
@@ -72,7 +76,7 @@ export const UNITS = {
   kg_per_month: { kind: "pct", fmt: (v) => v.toFixed(2) + " kg", note: "a month" },
   // ---- bis family session ----
   inr_bn: { kind: "pct", fmt: (v) => "₹" + grp(v / 1000, 2) + " lakh crore", note: "published in ₹ billion" },
-  usd_bn: { kind: "pct", fmt: (v) => "$" + grp(v, 1) + " bn" },
+  usd_bn: { kind: "pct", fmt: (v) => usdFromMn(v * 1e3) },
   eur_bn: { kind: "pct", fmt: (v) => "€" + grp(v, 1) + " bn" },
   jpy_bn: { kind: "pct", fmt: (v) => "¥" + grp(v) + " bn" },
   pp: { kind: "diff", fmt: (v) => (v < 0 ? MINUS : v > 0 ? "+" : "") + Math.abs(v).toFixed(1) + " pt", note: "percentage points" },
@@ -92,8 +96,8 @@ export const UNITS = {
   // ---- services ----
   pct_of_gva: { kind: "pt", fmt: (v) => v.toFixed(1) + "%", note: "of GVA" },
   pct_of_workers: { kind: "pt", fmt: (v) => v.toFixed(1) + "%", note: "of workers" },
-  usd_mn: { kind: "pct", fmt: (v) => (v < 0 ? MINUS : "") + "$" + grp(Math.abs(v) / 1e3, 1) + " bn", note: "published in US$ million" },
-  usd_bn: { kind: "pct", fmt: (v) => (v < 0 ? MINUS : "") + "$" + grp(Math.abs(v), 1) + " bn" },
+  usd_mn: { kind: "pct", fmt: usdFromMn, note: "published in US$ million" },
+  usd_bn: { kind: "pct", fmt: (v) => usdFromMn(v * 1e3) },
   // ---- end services ----
   // ---- jobs (PLFS) ----
   pct_of_employees: { kind: "pt", fmt: (v) => v.toFixed(1) + "%", note: "of regular employees" },
