@@ -548,6 +548,39 @@ const PAGES = [
     ["prov-vintage", (b) => b["trade-total"].meta.vintage],
   ]},
   // --- end trade ---
+  // --- public-finance (lb/public-finance): the title block, each plate's lead value, provenance ---
+  { url: "/guides/public-finance/", slug: null, minPlots: 18, checks: (() => {
+    const P = (b, k) => b["public-finance-" + k];
+    const first = (b, k) => b.series[k].data.find((v) => v != null);
+    const last = (b, k) => b.series[k].data.filter((v) => v != null).at(-1);
+    const fyAt = (b, k, fy) => b.series[k].data[b.dates.indexOf(fy.slice(0, 4) + "-04-01")];
+    const lakh2 = (v) => "₹" + fmt.lakhN(v) + " lakh crore", lakh1 = (v) => "₹" + fmt.num1(v / 1e5) + " lakh crore";
+    return [
+      ["n-ytd", (b) => fmt.pct1(last(P(b, "centre-monthly"), "fiscal_deficit_pct_be"))],
+      ["rb-ytd", (b) => fmt.pct1(last(P(b, "centre-monthly"), "fiscal_deficit_pct_be"))],
+      ["rb-ytd-inr", (b) => lakh2(last(P(b, "centre-monthly"), "fiscal_deficit"))],
+      ["n-gfd", (b) => fmt.pct2(first(P(b, "centre-gdp-b2011"), "gross_fiscal_deficit__be")) + " of GDP"],
+      ["n-int", (b) => "₹" + fmt.num1(100 * first(P(b, "centre-expenditure"), "interest_payments__be") / first(P(b, "centre-receipts"), "revenue_receipts__be"))],
+      ["n-debt", (b) => fmt.pct1(first(P(b, "combined-debt-gdp-b2011"), "combined_total_liabilities_of_centre_and_states__be"))],
+      ["pv-deficit", (b) => fmt.pct2(first(P(b, "centre-gdp-b2011"), "gross_fiscal_deficit__be"))],
+      ["ex-def-acc", (b) => { const g = P(b, "centre-gdp-b2011"); return fmt.pct2(fyAt(g, "gross_fiscal_deficit", P(b, "centre-deficits").meta.stages.accountsTo)); }],
+      ["pv-ytd", (b) => fmt.pct1(last(P(b, "centre-monthly"), "fiscal_deficit_pct_be"))],
+      ["ex-ytd-inr", (b) => lakh2(last(P(b, "centre-monthly"), "fiscal_deficit"))],
+      ["pv-financing", (b) => { const f = P(b, "centre-financing"); return fmt.pct0(100 * first(f, "market_borrowings__be") / first(f, "gross_fiscal_deficit__be")); }],
+      ["pv-spend", (b) => "₹" + fmt.num1(100 * first(P(b, "centre-expenditure"), "interest_payments__be") / first(P(b, "centre-expenditure"), "total_expenditure__be"))],
+      ["pv-interest", (b) => "₹" + fmt.num1(100 * first(P(b, "centre-expenditure"), "interest_payments__be") / first(P(b, "centre-receipts"), "revenue_receipts__be"))],
+      ["pv-capex", (b) => fmt.pct2(first(P(b, "centre-gdp-b2011"), "capital_expenditure__be"))],
+      ["pv-debt", (b) => fmt.pct1(first(P(b, "combined-debt-gdp-b2011"), "combined_total_liabilities_of_centre_and_states__be"))],
+      ["pv-holders", (b) => lakh1(last(P(b, "ownership-gsec"), "total"))],
+      ["pv-tbills", (b) => { const t = P(b, "tbills").series, at = (k) => t[k].data.at(-1) ?? 0; return lakh2(at("t91__total") + at("t182__total") + at("t364__total") + at("cmb__total")); }],
+      ["pv-maturity", (b) => lakh1(last(P(b, "maturity"), "total_amount"))],
+      ["pv-savings", (b) => lakh1(last(P(b, "small-savings"), "total__outstanding"))],
+      ["pv-wma", (b) => fmt.count(P(b, "states-wma").series.states_using_od.data.at(-1))],
+      ["pv-gdpbase", (b) => { const r = P(b, "ratios-2022"), acc = P(b, "centre-deficits").meta.stages.accountsTo; return fmt.pct2(fyAt(r, "centre_gross_fiscal_deficit", acc)); }],
+      ["prov-vintage", (b) => P(b, "centre-monthly").meta.vintage],
+    ];
+  })() },
+  // --- end public-finance ---
   { url: "/", slug: null, minPlots: 1, checks: [
     // the CPI print is the 2024-base series; core stays on the 2012 base
     // (no weights served for the new base), labelled "to Dec 2025"

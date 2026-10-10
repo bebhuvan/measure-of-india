@@ -80,7 +80,7 @@ rules:
   # ================= the Centre, monthly =================
   - match: ["dbie:49:*"]
     status: shown
-    bundle: [public-finance-centre-monthly, public-finance-centre-budget-path]
+    bundle: [public-finance-centre-monthly, public-finance-centre-budget-path, public-finance-centre-monthly-incl-borrowing]
     plate: "§04 This year so far, against the budget"
   - match: ["dbie:349:*", "cas:cg-defm-rn:*"]
     status: baked
@@ -88,45 +88,45 @@ rules:
   # ================= the states =================
   - match: ["dbie:451:dp0:gross-fiscal-deficit", "dbie:451:dp0:revenue-deficit"]
     status: shown
-    bundle: [public-finance-states-deficits, public-finance-ratios-backcast]
+    bundle: [public-finance-allstates-deficits, public-finance-ratios-backcast]
     plate: "§04 Fifty-six years of the Centre's deficit"
   - match: ["dbie:451:*"]
     status: baked
-    bundle: public-finance-states-deficits
+    bundle: public-finance-allstates-deficits
   - match: ["dbie:709:dp0:*"]
     status: shown
-    bundle: public-finance-states-receipts
+    bundle: public-finance-allstates-receipts
     plate: "§08 Where the states' money comes from"
   - match: ["dbie:709:dp1", "dbie:709:dp2"]
     status: excluded
     reason: "Two helper providers of the same table: one holds only the table's latest date, the other unlabelled amounts with no item name, which cannot be told apart; the labelled table is read in full."
   - match: ["dbie:677:dp0:interest-payments", "dbie:677:dp0:pension-and-misc.-general-services", "dbie:677:dp0:social-services", "dbie:677:dp0:economic-services", "dbie:677:dp0:capital-outlay", "dbie:677:dp0:total-expenditure-2-3"]
     status: shown
-    bundle: public-finance-states-expenditure
+    bundle: public-finance-allstates-expenditure
     plate: "§08 Where the states' money goes"
   - match: ["dbie:677:*"]
     status: baked
-    bundle: public-finance-states-expenditure
+    bundle: public-finance-allstates-expenditure
   - match: ["dbie:453:*"]
     status: baked
-    bundle: public-finance-states-capital-receipts
+    bundle: public-finance-allstates-capital-receipts
   - match: ["dbie:692:*"]
     status: baked
-    bundle: public-finance-states-financing
+    bundle: public-finance-allstates-financing
   - match: ["dbie:452:dp0:total-liabilities-of-the-states"]
     status: shown
-    bundle: [public-finance-states-liabilities, public-finance-ratios-backcast, public-finance-ratios-2022]
+    bundle: [public-finance-allstates-liabilities, public-finance-ratios-backcast, public-finance-ratios-2022]
     plate: "§07 What India's governments owe"
   - match: ["dbie:452:*"]
     status: baked
-    bundle: public-finance-states-liabilities
+    bundle: public-finance-allstates-liabilities
   - match: ["dbie:454:dp1:gross-fiscal-deficit"]
     status: shown
-    bundle: [public-finance-states-gdp-b1999, public-finance-states-gdp-b2004, public-finance-states-gdp-b2011]
+    bundle: [public-finance-allstates-gdp-b1999, public-finance-allstates-gdp-b2004, public-finance-allstates-gdp-b2011]
     plate: "§04 Fifty-six years of the Centre's deficit"
   - match: ["dbie:454:*", "cas:fisg-gdp-rn:*"]
     status: baked
-    bundle: [public-finance-states-gdp-b1999, public-finance-states-gdp-b2004, public-finance-states-gdp-b2011]
+    bundle: [public-finance-allstates-gdp-b1999, public-finance-allstates-gdp-b2004, public-finance-allstates-gdp-b2011]
   - match: ["dbie:63:*"]
     status: shown
     bundle: public-finance-states-wma

@@ -742,3 +742,38 @@ gender:
       their share of scheme accounts. Do not discuss the compendium's missing tables. Must contain
       a plain "we do not know". Plain, literal sentences, no metaphors.
 # --- end health-gender ---
+
+# ---- public-finance (lb/public-finance): the Centre's monthly accounts against the year's budget ----
+public-finance:
+  - id: current-reading.what-the-print-says
+    maxSentences: 7
+    dateStamp: true
+    requiredFigures: [fiscal_deficit.latest, fiscal_deficit_pct_be.latest, fiscal_deficit_pct_be.yearAgo, tax_revenue_net_pct_be.latest, capital_expenditure_pct_be.latest]
+    minSeriesMentioned: 5        # the deficit, taxes, spending, capital spending, interest (of 14 items)
+    mustName: [extremes]
+    mustAcknowledge: [contradictions]
+    brief: >
+      Two short paragraphs on the Centre's accounts from April to the latest month of this
+      financial year. Every figure is cumulative from April: never call a cumulative figure a
+      month's figure. Paragraph one: the fiscal deficit so far in rupees and as a share of the
+      year's budget estimate, against the same share a year earlier. Paragraph two: what made
+      it, using the shares of the budget estimate for tax revenue, total receipts, total
+      expenditure, capital expenditure and interest payments: which items are ahead of the
+      pace of a year earlier and which behind. Say "of the year's budget estimate" each time a
+      share is given. Do not divide the budget by twelve or call a share good or bad by
+      itself. Do not use the calendar-year start figures (yearStart). Name the period as
+      April to the month.
+  - id: current-reading.what-it-does-not-say
+    maxSentences: 5
+    dateStamp: false
+    requiredFigures: [fiscal_deficit_pct_be.latest]
+    brief: >
+      The honest limits, without repeating the other slot's figures beyond the share of the
+      budget used so far. These are unaudited monthly accounts, cumulative from April, and
+      the deficit builds unevenly through a year: taxes arrive in quarterly instalments, the
+      RBI's dividend usually lands in May, and spending bunches near March. So the share used
+      by now does not tell how the year will end; the budget itself is a plan made before the
+      year began and is revised in February. The accounts cover the Centre only, not the
+      states. Must contain a plain "we do not know" sentence (for example, where the year's
+      deficit will end).
+# ---- end public-finance ----

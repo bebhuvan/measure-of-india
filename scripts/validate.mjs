@@ -626,9 +626,9 @@ const PRODUCTS = [
   // GDP bases are frozen (stale: false). Stage series (__re, __be) hold one point each by design.
   ...["centre-deficits", "centre-receipts", "centre-expenditure", "centre-capital-receipts", "centre-development", "centre-financing", "centre-liabilities", "centre-gdp-b2011"]
     .map((n) => ({ slug: `public-finance-${n}`, dossier: "public-finance", cadence: 12, freq: "annual", staleAfter: "2026-04", range: [-5e6, 5e7], base: pfBase(n), seriesRange: pfRanges(`public-finance-${n}`) })),
-  ...["states-deficits", "states-receipts", "states-expenditure", "states-capital-receipts", "states-financing", "states-liabilities", "states-gdp-b2011", "combined-deficits", "combined-gdp-b2011", "combined-liabilities", "combined-debt-gdp-b2011", "combined-development", "combined-taxes", "combined-accounts", "combined-bulletin", "combined-bulletin-gdp-b2011"]
+  ...["allstates-deficits", "allstates-receipts", "allstates-expenditure", "allstates-capital-receipts", "allstates-financing", "allstates-liabilities", "allstates-gdp-b2011", "combined-deficits", "combined-gdp-b2011", "combined-liabilities", "combined-debt-gdp-b2011", "combined-development", "combined-taxes", "combined-accounts", "combined-bulletin", "combined-bulletin-gdp-b2011"]
     .map((n) => ({ slug: `public-finance-${n}`, dossier: "public-finance", cadence: 12, freq: "annual", staleAfter: "2025-04", range: [-5e6, 5e7], base: pfBase(n), seriesRange: pfRanges(`public-finance-${n}`) })),
-  ...["centre-gdp-b1999", "centre-gdp-b2004", "states-gdp-b1999", "states-gdp-b2004", "combined-gdp-b1999", "combined-gdp-b2004", "combined-debt-gdp-b1999", "combined-debt-gdp-b2004", "combined-bulletin-gdp-b1999", "combined-bulletin-gdp-b2004",
+  ...["centre-gdp-b1999", "centre-gdp-b2004", "allstates-gdp-b1999", "allstates-gdp-b2004", "combined-gdp-b1999", "combined-gdp-b2004", "combined-debt-gdp-b1999", "combined-debt-gdp-b2004", "combined-bulletin-gdp-b1999", "combined-bulletin-gdp-b2004",
     "ratios-backcast", "centre-capital-formation", "plan-outlay", "plan-financing", "ownership-annual-gsec-old", "ownership-annual-sdl-old", "ownership-annual-tbills-old"]
     .map((n) => ({ slug: `public-finance-${n}`, dossier: "public-finance", cadence: 12, freq: "annual", stale: false, range: [-5e6, 5e7], base: pfBase(n), seriesRange: pfRanges(`public-finance-${n}`) })),
   { slug: "public-finance-centre-budget-path", dossier: "public-finance", cadence: 12, freq: "annual", staleAfter: "2026-04", range: [-5e6, 5e7] },
@@ -636,6 +636,7 @@ const PRODUCTS = [
   ...["maturity", "ownership-annual-gsec", "ownership-annual-sdl", "ownership-annual-tbills"].map((n) => ({ slug: `public-finance-${n}`, dossier: "public-finance", cadence: 12, freq: "annual", staleAfter: "2025-04", range: [0, 5e7], seriesRange: pfRanges(`public-finance-${n}`) })),
   ...["small-savings-annual", "small-savings-handbook"].map((n) => ({ slug: `public-finance-${n}`, dossier: "public-finance", cadence: 12, freq: "annual", staleAfter: "2024-04", range: [-5e5, 5e7] })),
   { slug: "public-finance-centre-monthly", dossier: "public-finance", cadence: 1, freq: "monthly", staleAfter: "2026-07", range: [-5e6, 5e7], seriesRange: pfRanges("public-finance-centre-monthly") },
+  { slug: "public-finance-centre-monthly-incl-borrowing", dossier: "public-finance", cadence: 1, freq: "monthly", stale: false, range: [0, 5e7] },
   { slug: "public-finance-centre-gfd-monthly", dossier: "public-finance", cadence: 1, freq: "monthly", staleAfter: "2026-05", range: [-5e6, 5e6] },
   { slug: "public-finance-states-wma", dossier: "public-finance", cadence: 1, freq: "monthly", staleAfter: "2026-07", range: [0, 1e6], seriesRange: pfRanges("public-finance-states-wma") },
   { slug: "public-finance-states-investments", dossier: "public-finance", cadence: 1, freq: "monthly", staleAfter: "2026-07", range: [0, 1e6] },
@@ -3297,9 +3298,9 @@ withBundle("wages-rural-2013", (b) => {
   sumCheck("public-finance-centre-expenditure", "capital_expenditure", ["capital_outlay", "loans_and_advances"], 2, "capital expenditure = capital outlay + loans and advances");
   sumCheck("public-finance-centre-receipts", "total_receipts", ["revenue_receipts", "capital_receipts"], 2, "total = revenue + capital receipts");
   sumCheck("public-finance-centre-receipts", "revenue_receipts", ["tax_revenue_net", "non_tax_revenue"], 2, "revenue receipts = net tax + non-tax revenue");
-  sumCheck("public-finance-states-expenditure", "total_expenditure", ["revenue_expenditure", "capital_expenditure"], 2, "total = revenue + capital expenditure");
-  sumCheck("public-finance-states-receipts", "total_receipts", ["total_revenue_receipts", "total_capital_receipts"], 2, "total = revenue + capital receipts");
-  sumCheck("public-finance-states-receipts", "total_revenue_receipts", ["tax_receipts", "non_tax_receipts"], 2, "revenue receipts = tax + non-tax receipts");
+  sumCheck("public-finance-allstates-expenditure", "total_expenditure", ["revenue_expenditure", "capital_expenditure"], 2, "total = revenue + capital expenditure");
+  sumCheck("public-finance-allstates-receipts", "total_receipts", ["total_revenue_receipts", "total_capital_receipts"], 2, "total = revenue + capital receipts");
+  sumCheck("public-finance-allstates-receipts", "total_revenue_receipts", ["tax_receipts", "non_tax_receipts"], 2, "revenue receipts = tax + non-tax receipts");
   // the Centre's deficits against its spending and receipts (three tables)
   withBundle("public-finance-centre-deficits", (d) => withBundle("public-finance-centre-expenditure", (e) => withBundle("public-finance-centre-receipts", (r) => {
     let worstP = 0, worstR = 0, n = 0;

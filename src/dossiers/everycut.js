@@ -509,6 +509,26 @@ export const CUT_BY_BUNDLE = {
   "wpi-subsubgroups": "Sub-sub-group", "wpi-2022-subsubgroups": "Sub-sub-group",
   ...Object.fromEntries(["2004", "1993"].flatMap((t) => [[`wpi-${t}`, "All India"], [`wpi-${t}-groups`, "Group"], [`wpi-${t}-subgroups`, "Sub-group"], [`wpi-${t}-subsubgroups`, "Sub-sub-group"], [`wpi-${t}-items`, "Item"]])),
   // --- end prices ---
+  // --- public-finance (lb/public-finance) ---
+  ...Object.fromEntries([
+    ["centre-monthly", "Item"], ["centre-monthly-incl-borrowing", "Item"], ["centre-gfd-monthly", "Measure"], ["centre-budget-path", "Item and stage"],
+    ["centre-deficits", "Deficit and stage"], ["centre-receipts", "Receipt and stage"], ["centre-expenditure", "Spending head and stage"],
+    ["centre-capital-receipts", "Receipt and stage"], ["centre-development", "Spending head and stage"], ["centre-financing", "Source and stage"],
+    ["centre-liabilities", "Instrument and stage"], ["centre-capital-formation", "Item"], ["plan-outlay", "Head of development"], ["plan-financing", "Source"],
+    ["allstates-deficits", "Deficit and stage"], ["allstates-receipts", "Receipt and stage"], ["allstates-expenditure", "Spending head and stage"],
+    ["allstates-capital-receipts", "Receipt and stage"], ["allstates-financing", "Source and stage"], ["allstates-liabilities", "Instrument and stage"],
+    ["states-wma", "State and facility"], ["states-investments", "State and fund"],
+    ["combined-deficits", "Deficit and stage"], ["combined-liabilities", "Government and stage"], ["combined-development", "Government and head"],
+    ["combined-taxes", "Government and tax"], ["combined-accounts", "Item and stage"], ["combined-bulletin", "Item and stage"],
+    ["ratios-backcast", "Government and item"], ["ratios-2022", "Government and item"],
+    ["ownership-gsec", "Holder"], ["ownership-sdl", "Holder"], ["ownership-tbills", "Holder"],
+    ["ownership-annual-gsec", "Holder"], ["ownership-annual-sdl", "Holder"], ["ownership-annual-tbills", "Holder"],
+    ["ownership-annual-gsec-old", "Holder"], ["ownership-annual-sdl-old", "Holder"], ["ownership-annual-tbills-old", "Holder"],
+    ["tbills", "Tenor and holder"], ["maturity", "Years to maturity"],
+    ["small-savings", "Scheme"], ["small-savings-annual", "Scheme"], ["small-savings-handbook", "Scheme"], ["small-savings-rates", "Scheme"],
+    ...["centre", "allstates", "combined", "combined-debt", "combined-bulletin"].flatMap((t) => ["b1999", "b2004", "b2011"].map((g) => [`${t}-gdp-${g}`, "Item and stage"])),
+  ].map(([k, v]) => [`public-finance-${k}`, v])),
+  // --- end public-finance ---
 };
 // the fallback, by what a bundle's slug says it is
 export const CUT_RULES = [

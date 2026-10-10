@@ -852,7 +852,7 @@ export const DOSSIERS = [
     kickerTitle: "Government finance, the Centre and the states, RBI",
     crumbTitle: "Public finance",
     headline: "Where the money comes from, <i>and where it goes.</i>",
-    ogTitle: "Where the government's money comes from, and where it goes.",
+    ogTitle: "Where the money comes from, and where it goes.",
     blurb: "What India's governments earn, spend, borrow and owe: the Centre's deficit month by month, every budget against what it delivered, how much of each rupee goes to interest, who lends to the government, and which states are stretched.",
     description: "India's public finances from the RBI: the fiscal deficit of the Centre and the states since 1970-71, taxes, spending, interest and debt, each year's budget against its accounts, the monthly accounts, who holds government debt, small savings, and the states' cash.",
     rssDescription: "What the Centre and the states earn, spend, borrow and owe. Revised with each month's Union accounts and each RBI Handbook.",
@@ -865,15 +865,15 @@ export const DOSSIERS = [
     proseConstants: [100, 2017, 2026],   // verifier whitelist: per hundred rupees, GST (2017), the year the budget-year runs to
     spark: { bundle: "public-finance-centre-gfd-monthly", series: "gfd_fytd" },
     prose: true,
-    proseInputs: ["public-finance-centre-budget-path", "public-finance-centre-gdp-b2011"],
+    proseInputs: ["public-finance-centre-budget-path", "public-finance-centre-deficits"],   // rupee rulers only: facts.mjs refuses a per-cent-of-GDP bundle beside the rupee current bundle
     register: { id: "reg-public-finance", label: "Government finance", unit: "The Centre's accounts, April to the month, ₹ crore; the year's budget estimate", historyCol: "Since 2019" },
     bundles: [
-      "public-finance-centre-monthly", "public-finance-centre-gfd-monthly", "public-finance-centre-budget-path",
+      "public-finance-centre-monthly", "public-finance-centre-monthly-incl-borrowing", "public-finance-centre-gfd-monthly", "public-finance-centre-budget-path",
       "public-finance-centre-deficits", "public-finance-centre-receipts", "public-finance-centre-expenditure", "public-finance-centre-capital-receipts",
       "public-finance-centre-development", "public-finance-centre-financing", "public-finance-centre-liabilities",
       "public-finance-centre-gdp-b2011", "public-finance-centre-gdp-b2004", "public-finance-centre-gdp-b1999",
-      "public-finance-states-deficits", "public-finance-states-receipts", "public-finance-states-expenditure", "public-finance-states-capital-receipts",
-      "public-finance-states-financing", "public-finance-states-liabilities", "public-finance-states-gdp-b2011", "public-finance-states-gdp-b2004", "public-finance-states-gdp-b1999",
+      "public-finance-allstates-deficits", "public-finance-allstates-receipts", "public-finance-allstates-expenditure", "public-finance-allstates-capital-receipts",
+      "public-finance-allstates-financing", "public-finance-allstates-liabilities", "public-finance-allstates-gdp-b2011", "public-finance-allstates-gdp-b2004", "public-finance-allstates-gdp-b1999",
       "public-finance-states-wma", "public-finance-states-investments",
       "public-finance-combined-deficits", "public-finance-combined-liabilities", "public-finance-combined-development", "public-finance-combined-taxes",
       "public-finance-combined-accounts", "public-finance-combined-bulletin",

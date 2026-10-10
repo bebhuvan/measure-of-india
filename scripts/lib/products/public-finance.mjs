@@ -141,26 +141,26 @@ const ANNUAL = [
     title: "Gross capital formation from budgetary resources of the Central Government (discontinued)", coverage: "What the Centre's budget built or paid others to build, ₹ crore, 1970-71 to 2017-18 (the table ends there)",
     note: "From the Ministry of Finance's Economic and Functional Classification of the Central Government Budget; the RBI stopped the table at 2017-18 (BE)." },
   // ---------- States ----------
-  { id: "451", hub: 78, bundle: "states-deficits", scope: "states", unit: "inr_crore", year: "Year", item: "Budget Item", value: AMT, unitCol: "Unit Desc",
+  { id: "451", hub: 78, bundle: "allstates-deficits", scope: "states", unit: "inr_crore", year: "Year", item: "Budget Item", value: AMT, unitCol: "Unit Desc",
     title: "Key deficit indicators of the state governments", coverage: "All states' deficits added up, every measure, ₹ crore, 1970-71 on",
     note: "From 2017-18 all states and the union territories with legislatures (Handbook note 2). Net RBI credit is the change in the RBI's loans to states net of their deposits with it, a means of financing (note 4)." },
-  { id: "709", provider: "DP0", hub: 79, bundle: "states-receipts", scope: "states", unit: "inr_crore", year: "Year", item: "Budget Item", value: AMT, unitCol: "Unit Desc",
+  { id: "709", provider: "DP0", hub: 79, bundle: "allstates-receipts", scope: "states", unit: "inr_crore", year: "Year", item: "Budget Item", value: AMT, unitCol: "Unit Desc",
     title: "Pattern of receipts of the state governments", coverage: "Where the states' money comes from: their own taxes, their share of central taxes, grants from the Centre, capital receipts, ₹ crore, 1970-71 on",
     note: "'Sales tax' is the states' sales tax and VAT, and from 2017-18 their GST as the RBI groups it. Capital receipts include the public account on a net basis (Handbook note 5)." },
-  { id: "677", hub: 80, bundle: "states-expenditure", scope: "states", unit: "inr_crore", year: "Year", item: "Budget Item", value: AMT, unitCol: "Unit Desc",
+  { id: "677", hub: 80, bundle: "allstates-expenditure", scope: "states", unit: "inr_crore", year: "Year", item: "Budget Item", value: AMT, unitCol: "Unit Desc",
     title: "Expenditure pattern of the state governments", coverage: "Where the states' money goes: social and economic services, interest, pensions, capital outlay, ₹ crore, 1970-71 on",
     note: "Developmental spending is social and economic services; non-developmental is interest, administration and pensions (Handbook note 5)." },
-  { id: "453", hub: 211, bundle: "states-capital-receipts", scope: "states", unit: "inr_crore", year: "Year", item: "Budget Item", value: AMT, unitCol: "Unit Desc",
+  { id: "453", hub: 211, bundle: "allstates-capital-receipts", scope: "states", unit: "inr_crore", year: "Year", item: "Budget Item", value: AMT, unitCol: "Unit Desc",
     title: "Pattern of major capital receipts of the state governments", coverage: "The states' capital receipts: market loans, loans from the Centre, NSSF, provident funds, ₹ crore, 1970-71 on",
     note: "From 1999-2000 the states' share of small savings is shown as special securities issued to the NSSF, not as loans from the Centre (Handbook note 6)." },
-  { id: "692", hub: 212, bundle: "states-financing", scope: "states", unit: "inr_crore", year: "Year", item: "Item Description", code: "Old Item Sk", value: AMT, unitCol: "Unit Desc",
+  { id: "692", hub: 212, bundle: "allstates-financing", scope: "states", unit: "inr_crore", year: "Year", item: "Item Description", code: "Old Item Sk", value: AMT, unitCol: "Unit Desc",
     labels: { "70": "Special securities issued to NSSF (old classification)", "90": "State provident funds, small savings and others" }, keys: { "70": "nssf_old", "90": "provident_funds_and_others" },
     title: "The states' gross fiscal deficit and its financing", coverage: "How the states' deficit is financed: market borrowing, loans from the Centre, NSSF, provident funds, ₹ crore, 1970-71 on",
     note: "Financing items are net (Handbook note 5). Two codes for NSSF securities: the older one (to 1993-94) and the current one (from 1980-81), kept apart." },
-  { id: "452", hub: 83, bundle: "states-liabilities", scope: "states", unit: "inr_crore", year: "Year", item: "Budget Item", value: AMT, unitCol: "Unit Desc", version: "Version Desc",
+  { id: "452", hub: 83, bundle: "allstates-liabilities", scope: "states", unit: "inr_crore", year: "Year", item: "Budget Item", value: AMT, unitCol: "Unit Desc", version: "Version Desc",
     title: "Outstanding liabilities of the state governments", coverage: "What all states together owe at the end of each March, by instrument, ₹ crore, 1980-81 on",
     note: "Total liabilities include reserve funds, deposits and advances and contingency funds (Handbook note 3). Market loans include power bonds to 2014-15; UDAY bonds are in 'compensation and other bonds' from 2015-16 (notes 4 and 5)." },
-  { id: "454", provider: "DP1", hub: 269, bundle: "states-gdp", scope: "states", unit: "pct_gdp", year: "Year", item: "Items", value: "Amount", gdp: true,
+  { id: "454", provider: "DP1", hub: 269, bundle: "allstates-gdp", scope: "states", unit: "pct_gdp", year: "Year", item: "Items", value: "Amount", gdp: true,
     title: "Select fiscal indicators of the state governments, per cent of GDP", coverage: "All states' deficits and receipts as a share of India's GDP" },
   // ---------- Centre and states combined ----------
   { id: "346", hub: 163, bundle: "combined-deficits", scope: "combined", unit: "inr_crore", year: "Year", item: "Budget Item", value: AMT, unitCol: "Unit Desc", version: "Version Desc",
@@ -515,7 +515,9 @@ export async function buildPublicFinance(root, dcfg, vintage, cfg) {
     const inclMonth = new Set(dates.filter((d) => inclAt((k) => A.get(`${d}|${k}`))));
     // a month whose own figures do not add up (the deficit is not spending less non-debt receipts, nor is
     // it the old layout), or that repeats an earlier month of the same year item for item, is left empty
-    const inconsistent = dates.filter((d) => !repeated.includes(d) && keys.some((k) => A.get(`${d}|${k}`) != null) && !vecOk((k) => A.get(`${d}|${k}`) ?? null));
+    // a row of zeros adds up trivially but is not a month of accounts (March 2007 prints 0 for every item)
+    const zeroRow = (d) => !A.get(`${d}|total_expenditure`);
+    const inconsistent = dates.filter((d) => !repeated.includes(d) && keys.some((k) => A.get(`${d}|${k}`) != null) && (zeroRow(d) || !vecOk((k) => A.get(`${d}|${k}`) ?? null)));
     const echoes = dates.filter((d, i) => keys.some((k) => A.get(`${d}|${k}`) != null) && dates.slice(0, i).some((p) => fyOf(p) === fyOf(d) && keys.every((k) => A.get(`${p}|${k}`) === A.get(`${d}|${k}`))));
     repeated.push(...inconsistent, ...echoes);
     console.log(`public-finance: 49: months left empty: repeated year ${repeated.length - inconsistent.length - echoes.length}, inconsistent ${inconsistent.join(" ")}, echoes ${echoes.join(" ")}`);
@@ -533,10 +535,16 @@ export async function buildPublicFinance(root, dcfg, vintage, cfg) {
       const rep = repeated.filter((d) => dates.indexOf(d) > s.data.findIndex((v) => v != null));
       if (rep.length) s.gapsNote = `Months left empty: ${rep.map((d) => d.slice(0, 7)).join(", ")}. In each the RBI's table either repeats the figures of a year earlier (ten or more of its fourteen items match the same month of the previous year to the rupee), repeats an earlier month of the same year, or prints figures that do not add up (the deficit is not spending less receipts). Other empty months are months the table does not print.`;
     }
+    const old = Object.fromEntries(Object.entries(series).filter(([k]) => k.endsWith("_incl_borrowing")));
+    for (const k of Object.keys(old)) delete series[k];
+    write("centre-monthly-incl-borrowing", { meta: meta({ frequency: "monthly", unit: "inr_crore", vintage: RAWV["49"], latestPeriod: dates.at(-1).slice(0, 7),
+      coverage: "The Centre's capital receipts and total receipts counted with borrowing, the measure the Bulletin's old layout used in most months to April 2019, April to the month, ₹ crore",
+      note: "RBI Bulletin, Union Government Accounts at a Glance (DBIE report 49). In these months the table counts borrowing inside capital receipts and total receipts (total receipts equal total expenditure): a different measure from the non-debt receipts in public-finance-centre-monthly, so a separate bundle, never joined." }),
+      dates, series: old });
     write("centre-monthly", { meta: meta({ frequency: "monthly", unit: "inr_crore", vintage: RAWV["49"], latestPeriod: dates.at(-1).slice(0, 7),
       coverage: "The Centre's accounts month by month, April to the month: receipts, spending, interest and the deficits, ₹ crore, and each as a share of the year's budget estimate",
       repeatedMonths: repeated,
-      note: `RBI Bulletin, Union Government Accounts at a Glance (DBIE report 49, two data providers: the old layout to April 2019 and the new from May 2019, the same fourteen items), from the Controller General of Accounts. Figures are cumulative from April and unaudited (the table's note 1). The share of the budget estimate is computed here against the year's budget estimate (from the row most of the year's months print whose own arithmetic holds; the full budget's figure in election years). A month whose own figures do not add up is left empty. ${repeated.length} months are left empty: they repeat a year earlier, repeat an earlier month, or do not add up (listed on each series). In ${inclMonth.size} months, mostly in the old layout, the table counts borrowing inside capital receipts and total receipts (total receipts equal total expenditure); those two items are kept in separate 'including borrowing' series for those months. ${conflicts} duplicate rows with differing figures were found (the later row wins).` }),
+      note: `RBI Bulletin, Union Government Accounts at a Glance (DBIE report 49, two data providers: the old layout to April 2019 and the new from May 2019, the same fourteen items), from the Controller General of Accounts. Figures are cumulative from April and unaudited (the table's note 1). The share of the budget estimate is computed here against the year's budget estimate (from the row most of the year's months print whose own arithmetic holds; the full budget's figure in election years). A month whose own figures do not add up is left empty. ${repeated.length} months are left empty: they repeat a year earlier, repeat an earlier month, or do not add up (listed on each series). In ${inclMonth.size} months, mostly in the old layout, the table counts borrowing inside capital receipts and total receipts (total receipts equal total expenditure); those two items for those months are in a separate bundle (public-finance-centre-monthly-incl-borrowing). ${conflicts} duplicate rows with differing figures were found (the later row wins).` }),
       dates, series });
     // the path of each year: budget estimate, revised estimate, provisional accounts (the March figure)
     const pf = fys.filter((fy) => keys.some((k) => beBy.get(`${fy}|${k}`) != null));
@@ -570,7 +578,7 @@ export async function buildPublicFinance(root, dcfg, vintage, cfg) {
     }
     console.log(`public-finance: 49 BE/RE rule matches the Handbook for ${pairs.length} items`);
     write("centre-budget-path", { meta: meta({ frequency: "annual", unit: "inr_crore", vintage: RAWV["49"], latestPeriod: pf.at(-1),
-      coverage: "Each year's journey from the budget estimate to the revised estimate to the provisional accounts, for the Centre's fourteen headline items, ₹ crore, 1999-2000 on",
+      coverage: "Each year's path from the budget estimate to the revised estimate to the provisional accounts, for the Centre's fourteen headline items, ₹ crore, 1999-2000 on",
       checks, rejectedRows: rejected,
       note: `RBI Bulletin, Union Government Accounts at a Glance (DBIE report 49). For each financial year: the budget estimate (the row of fourteen items that most of the year's months print and whose own arithmetic holds, which in election years is the full budget's rather than the interim budget's), the revised estimate (as printed in March, else February, else January of the year, again only from a row that adds up) and the provisional accounts (the cumulative figure for March, unaudited). The audited accounts, published later, are in the Centre's Handbook tables. Checked: the rule gives the Handbook's figures for the latest budget and revised estimates (${pairs.length} items). Rows whose own arithmetic fails are not used${rejected.length ? ` (${rejected.join("; ")})` : ""}. Three stages, three series per item; never one line.` }),
       dates: pf.map(fyStart), series: path });
@@ -598,7 +606,7 @@ export async function buildPublicFinance(root, dcfg, vintage, cfg) {
       series[`${k}__${f}_${m}`] = { name: `${k}_${f}_${m}`, label: `${st}: ${FL[f]}, ${m === "days" ? "days used in the month" : "average amount used, ₹ crore"}`, unit: m === "days" ? "days" : "inr_crore", group: st, color: f === "od" ? C.accent : C.g2, data };
     }
     // how many states drew on each facility in the month (computed)
-    for (const f of ["wma", "sdf", "od"]) series[`states_using_${f}`] = { name: `states_using_${f}`, label: `Number of states that used ${FL[f]} in the month (computed)`, unit: "count", group: "All states", color: f === "od" ? C.accent : C.g2,
+    for (const f of ["wma", "sdf", "od"]) series[`states_using_${f}`] = { name: `states_using_${f}`, label: `Total: number of states that used ${FL[f]} in the month (computed)`, unit: "count", group: "All states", color: f === "od" ? C.accent : C.g2,
       data: dates.map((d) => { let n = 0, seen = 0; for (const [k] of states) { const v = by.get(`${k}|${f}|days|${d}`); if (v == null) continue; seen++; if (v > 0) n++; } return seen ? n : null; }) };
     write("states-wma", { meta: meta({ frequency: "monthly", unit: "inr_crore", vintage: RAWV["63"], latestPeriod: dates.at(-1).slice(0, 7), states: [...states.values()].sort(),
       coverage: "Which states ran short of cash: days each state drew on the RBI's special drawing facility, ways and means advances and overdraft, and the average amount, every month since September 2017",
@@ -883,7 +891,7 @@ export async function buildPublicFinance(root, dcfg, vintage, cfg) {
   {
     const q = databankQuery(db, "rbi_dbie_cas_money", "select distinct dsd_code, series_label, observation_date, value from {table} where dsd_code in ('FICG_GDP_RN','FISG_GDP_RN','CG_DEFM_RN') order by 1, 2, 3");
     writeRaw(root, `data/raw/${SLUG}-cas.json`, { vintage, note: "RBI DBIE CAS (Data Query) government-finance series, from the Data Bank's parsed rbi_dbie_cas_money: the same tables as DBIE webi reports 355, 454 and 349, read to check them.", provenance: q.provenance, rows: q.rows });
-    const cmp = { FICG_GDP_RN: ["centre-gdp", 0.011], FISG_GDP_RN: ["states-gdp", 0.011] };
+    const cmp = { FICG_GDP_RN: ["centre-gdp", 0.011], FISG_GDP_RN: ["allstates-gdp", 0.011] };
     const report = {};
     for (const [dsd, [bn, tol]] of Object.entries(cmp)) {
       const X = T[bn]; const byLab = new Map([...X.items.values()].map((it) => [slug(it.label), it]));
@@ -916,7 +924,7 @@ export async function buildPublicFinance(root, dcfg, vintage, cfg) {
     const ITEMS = [["centre-deficits", "gross_fiscal_deficit", "Centre: gross fiscal deficit"], ["centre-deficits", "revenue_deficit", "Centre: revenue deficit"], ["centre-deficits", "gross_primary_deficit", "Centre: primary deficit"],
       ["centre-expenditure", "interest_payments", "Centre: interest payments"], ["centre-expenditure", "total_expenditure", "Centre: total expenditure"], ["centre-expenditure", "capital_expenditure", "Centre: capital expenditure"],
       ["centre-receipts", "tax_revenue_net", "Centre: tax revenue, net of the states' share"], ["centre-receipts", "revenue_receipts", "Centre: revenue receipts"], ["centre-liabilities", "total_liabilities", "Centre: outstanding liabilities"],
-      ["states-deficits", "gross_fiscal_deficit", "States: gross fiscal deficit"], ["states-deficits", "revenue_deficit", "States: revenue deficit"], ["states-liabilities", "total_liabilities_of_the_states", "States: outstanding liabilities"],
+      ["allstates-deficits", "gross_fiscal_deficit", "States: gross fiscal deficit"], ["allstates-deficits", "revenue_deficit", "States: revenue deficit"], ["allstates-liabilities", "total_liabilities_of_the_states", "States: outstanding liabilities"],
       ["combined-deficits", "gross_fiscal_deficit", "Centre and states: gross fiscal deficit"], ["combined-liabilities", "combined_total_liabilities_of_centre_and_states", "Centre and states: outstanding liabilities"]];
     const pick = (bn, key) => { const X = T[bn]; const it = [...X.items.values()].find((i) => X.keyOf.get(i.code) === key); if (!it) throw new Error(`public-finance: ratios: no ${key} in ${bn} (${[...X.keyOf.values()].join(", ")})`); return { it, X }; };
     // check first: on the 2011-12 series our own division reproduces the RBI's published ratio for the Centre's GFD
@@ -929,7 +937,7 @@ export async function buildPublicFinance(root, dcfg, vintage, cfg) {
     const mkR = (G, fys, stageCut) => { const s = {}; ITEMS.forEach(([bn, key, lab], j) => { const { it, X } = pick(bn, key); const k = `${X.t.scope}_${key.replace(/_of_the_states|_of_centre_and_states|^combined_/g, "").replace(/total_liabilities.*/, "liabilities")}`;
       s[k] = { name: `${k}_pct_gdp`, label: `${lab}, per cent of GDP (computed)`, unit: "pct_gdp", group: X.t.scope === "centre" ? "Centre" : X.t.scope === "states" ? "States" : "Centre and states", color: j === 0 ? C.accent : C.g2,
         data: fys.map((fy) => { const g = G.get(fy), o = it.byFY.get(fy); if (g == null || o == null || (X.reFY && fy >= X.reFY && !stageCut)) return null; if (X.reFY && fy > X.reFY) return null; return r4((100 * o.v) / g); }) };
-      if (stageCut) s[k].note = `The last year may be a revised estimate (Centre ${T["centre-deficits"].reFY}, states and combined ${T["states-deficits"].reFY}).`; }); return s; };
+      if (stageCut) s[k].note = `The last year may be a revised estimate (Centre ${T["centre-deficits"].reFY}, states and combined ${T["allstates-deficits"].reFY}).`; }); return s; };
     const fb = [...GB.keys()].filter((fy) => fy >= "1970-71" && fy <= "2010-11").sort();
     write("ratios-backcast", { meta: meta({ frequency: "annual", unit: "pct_gdp", base: "GDP 2011-12 series", vintage, latestPeriod: fb.at(-1),
       coverage: "Deficits, interest, taxes, spending and debt as a share of GDP on one ruler, 1970-71 to 2010-11: the RBI's rupee figures over MoSPI's back-cast of the 2011-12 GDP series",
@@ -940,7 +948,7 @@ export async function buildPublicFinance(root, dcfg, vintage, cfg) {
     for (const s of Object.values(s22)) s.data = s.data.map((v, i) => v);   // the revised-estimate year is kept and named in the note
     write("ratios-2022", { meta: meta({ frequency: "annual", unit: "pct_gdp", base: "GDP 2022-23 series", vintage: g22.meta.vintage > vintage ? vintage : g22.meta.vintage, latestPeriod: f22.at(-1),
       coverage: "The same ratios over the new GDP series (2022-23 base), 2022-23 on: what the deficit and debt look like against the larger or smaller economy the new series measures",
-      note: `Computed here: the RBI's rupee figures over GDP at current market prices on the 2022-23 base (gdp-2022-annual-levels). The RBI still divides by the 2011-12 series. The Centre's ${T["centre-deficits"].reFY} figure is its revised estimate and the states' ${T["states-deficits"].reFY} theirs, over the NSO's estimate of that year's GDP; budget estimates are left out (they assume a GDP the NSO has not measured).` }),
+      note: `Computed here: the RBI's rupee figures over GDP at current market prices on the 2022-23 base (gdp-2022-annual-levels). The RBI still divides by the 2011-12 series. The Centre's ${T["centre-deficits"].reFY} figure is its revised estimate and the states' ${T["allstates-deficits"].reFY} theirs, over the NSO's estimate of that year's GDP; budget estimates are left out (they assume a GDP the NSO has not measured).` }),
       dates: f22.map(fyStart), series: s22 });
   }
 

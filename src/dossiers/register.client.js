@@ -431,3 +431,20 @@ import tradeTotalBundle from "../../data/series/trade-total.json";
   ], 12, "sptr", lbl, "TradeStat (DGCI&S)");
 }
 // --- end trade ---
+// --- public-finance (lb/public-finance): the Centre's accounts, April to each month (CGA, via the RBI Bulletin)
+import pfMonthlyBundle from "../../data/series/public-finance-centre-monthly.json";
+{
+  const PF = hydrate(pfMonthlyBundle);
+  const since = (s, iso) => ({ ...s, data: s.data.filter((d) => d.date >= new Date(iso + "T00:00:00Z")) });
+  const lakh = (v) => "₹" + (v / 1e5).toFixed(2) + " lakh cr";
+  const pctBE = (v) => v.toFixed(1) + "% of BE";
+  const d = pfMonthlyBundle.dates.at(-1);
+  const lbl = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][+d.slice(5, 7) - 1] + " " + d.slice(0, 4);
+  render("reg-public-finance", [
+    ["Centre's fiscal deficit, April to the month", "CGA-GFD", "s-acc", since(PF.fiscal_deficit, "2019-05-01"), false, "/guides/public-finance/", null, lakh],
+    ["Fiscal deficit, share of the year's budget", "IA-GFD-BE", "s-g1", since(PF.fiscal_deficit_pct_be, "2019-05-01"), true, "/guides/public-finance/", null, pctBE],
+    ["Net tax revenue, share of the year's budget", "IA-TAX-BE", "s-g2", since(PF.tax_revenue_net_pct_be, "2019-05-01"), true, "/guides/public-finance/", null, pctBE],
+    ["Capital expenditure, share of the year's budget", "IA-CAPEX-BE", "s-g3", since(PF.capital_expenditure_pct_be, "2019-05-01"), true, "/guides/public-finance/", null, pctBE],
+  ], 12, "sppf", lbl, "CGA, via the RBI Bulletin");
+}
+// --- end public-finance ---

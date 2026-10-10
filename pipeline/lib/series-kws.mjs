@@ -237,4 +237,19 @@ export const SERIES_KWS = {
     ["trade deficit", "balance"], ["deficit", "balance"], ["trade balance", "balance"], ["balance", "balance"], ["surplus", "balance"],
   ],
   // --- end trade ---
+  // --- public-finance (lb/public-finance): the current bundle is public-finance-centre-monthly (cumulative from April);
+  // a share of the budget names the _pct_be series, so those phrases come first
+  "public-finance": [
+    ["fiscal deficit", "fiscal_deficit"], ["the deficit", "fiscal_deficit"], ["deficit so far", "fiscal_deficit"],
+    ["revenue deficit", "revenue_deficit"], ["primary deficit", "primary_deficit"],
+    ["net tax revenue", "tax_revenue_net"], ["tax revenue", "tax_revenue_net"], ["taxes", "tax_revenue_net"],
+    ["non-tax revenue", "non_tax_revenue"], ["non-tax", "non_tax_revenue"], ["dividend", "non_tax_revenue"],
+    ["revenue receipts", "revenue_receipts"], ["total receipts", "total_receipts"], ["receipts", "total_receipts"],
+    ["non-debt capital receipts", "non_debt_capital_receipts"], ["recovery of loans", "recovery_of_loans"], ["disinvestment", "other_receipts"],
+    ["interest payments", "interest_payments"], ["interest", "interest_payments"],
+    ["capital expenditure", "capital_expenditure"], ["capital spending", "capital_expenditure"], ["capex", "capital_expenditure"],
+    ["revenue expenditure", "revenue_expenditure"], ["day-to-day spending", "revenue_expenditure"],
+    ["total expenditure", "total_expenditure"], ["spending", "total_expenditure"], ["expenditure", "total_expenditure"],
+  ],
+  // --- end public-finance ---
 };
