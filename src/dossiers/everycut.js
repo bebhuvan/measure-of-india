@@ -214,6 +214,9 @@ export const UNITS = {
   // --- households (wave 2: consumption, aishe, mnre, deposits) ---
   pupils_per_teacher: { kind: "diff", fmt: (v) => grp(v), note: "students per teacher" },
   // --- end households ---
+  // ---- farms (lb/farms) ----
+  inr_per_quintal: { kind: "pct", fmt: (v) => "₹" + grp(v, v < 100 ? 2 : 0), note: "a quintal (100 kg)" },
+  // ---- end farms ----
 };
 
 // series.unit, then what the series name says, then the bundle's meta.unit: a bundle-level
@@ -509,6 +512,12 @@ export const CUT_BY_BUNDLE = {
   "wpi-subsubgroups": "Sub-sub-group", "wpi-2022-subsubgroups": "Sub-sub-group",
   ...Object.fromEntries(["2004", "1993"].flatMap((t) => [[`wpi-${t}`, "All India"], [`wpi-${t}-groups`, "Group"], [`wpi-${t}-subgroups`, "Sub-group"], [`wpi-${t}-subsubgroups`, "Sub-sub-group"], [`wpi-${t}-items`, "Item"]])),
   // --- end prices ---
+  // ---- farms (lb/farms) ----
+  "farms-production": "Crop", "farms-area": "Crop", "farms-yield": "Crop", "farms-advance": "Crop and measure",
+  "farms-index-1982": "Crop and measure", "farms-index-1994": "Crop and measure", "farms-index-2008": "Crop and measure",
+  "farms-msp": "Crop", "farms-landuse": "Measure", "farms-pds": "Grain and measure", "farms-pds-latest": "Grain and measure",
+  "farms-states-production": "State and crop", "farms-states-production-advance": "State and crop", "farms-states-fertiliser": "State",
+  // ---- end farms ----
 };
 // the fallback, by what a bundle's slug says it is
 export const CUT_RULES = [

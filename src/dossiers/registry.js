@@ -842,6 +842,37 @@ export const DOSSIERS = [
     ],
   },
   // --- end trade ---
+  // ---- farms (lb/farms): crops, MSP, procurement and stocks, RBI DBIE ----
+  {
+    slug: "farms",
+    no: "26",
+    section: "Output",
+    name: "Farms and food, crop statistics",
+    title: "What India grows",   // the topic as a reader names it: nav, lists, search
+    kickerTitle: "Crops, support prices and food stocks, RBI DBIE",
+    crumbTitle: "Farms and food",
+    headline: "What India grows, <i>and what the state buys.</i>",
+    ogTitle: "What India grows, and what the state buys.",
+    blurb: "How much rice, wheat, pulses, oilseeds, sugarcane and cotton India grows, how much a hectare yields, which states grow what, the support prices the government sets, and the grain it buys and stores.",
+    description: "India's crop output, area and yield since 1950-51, every state's harvest since 1980-81, minimum support prices since 1975-76, land use and fertiliser, and the government's procurement and food stocks, from the RBI's tables of agriculture ministry data.",
+    rssDescription: "Harvests, yields, support prices and food stocks: what India grows and what the state buys. Updated with each RBI Handbook.",
+    stamp: { dateStyle: "vintageMonth", vintageStyle: "vintage" },
+    statusNote: "Annual, crop years; the latest year is an advance estimate",
+    version: "v1.0",
+    currentBundle: "farms-production",
+    calendar: "fiscal-apr",
+    bands: null,
+    proseConstants: [100],   // verifier whitelist: kg in a quintal, per cent
+    spark: { bundle: "farms-production", series: "foodgrains" },
+    prose: true,
+    proseInputs: ["farms-yield", "farms-area"],   // same ruler; the advance estimate, MSPs and stocks ride in facts cross.farms
+    register: { id: "reg-farms", label: "Farms and food", unit: "Annual, crop years, thousand tonnes, RBI DBIE (agriculture ministry)", historyCol: "Since 1950-51" },
+    bundles: [
+      "farms-production", "farms-area", "farms-yield", "farms-advance", "farms-index-2008", "farms-index-1994", "farms-index-1982",
+      "farms-msp", "farms-landuse", "farms-pds", "farms-pds-latest", "farms-states-production", "farms-states-production-advance", "farms-states-fertiliser",
+    ],
+  },
+  // ---- end farms ----
 ];
 export const bySlug = Object.fromEntries(DOSSIERS.map((d) => [d.slug, d]));
 

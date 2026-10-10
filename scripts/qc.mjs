@@ -556,6 +556,27 @@ const PAGES = [
     ["v-gdp", (b) => fmt.pct2(b["gdp-2022"].series.gdp.data.at(-1)), "gdp-2022"],
   ]},
   // the guides index: one small chart per guide
+  // ---- farms (lb/farms): title block and plate values recomputed from the bundles ----
+  { url: "/guides/farms/", slug: null, minPlots: 18, checks: [
+    ["n-fg", (b) => fmt.num1(b["farms-production"].series.foodgrains.data.at(-1) / 1000) + " mt"],
+    ["rb-fg", (b) => fmt.num1(b["farms-production"].series.foodgrains.data.at(-1) / 1000) + " mt"],
+    ["rb-side", (b) => fmt.num1(b["farms-advance"].series.production_foodgrains.data[0] / 1000) + " mt"],
+    ["n-yield", (b) => fmt.inr(b["farms-yield"].series.wheat.data.at(-1)) + " kg"],
+    ["n-msp", (b) => { const d = b["farms-msp"].series.paddy_common.data; return fmt.inrR(d.filter((v) => v != null).at(-1)); }],
+    ["n-stock", (b) => fmt.num1(b["farms-pds"].series.stocks_total.data.at(-1) / 10) + " mt"],
+    ["pv-harvest", (b) => fmt.num1(b["farms-production"].series.foodgrains.data.at(-1) / 1000) + " mt"],
+    ["pv-grains", (b) => fmt.num1(b["farms-production"].series.rice.data.at(-1) / 1000) + " mt"],
+    ["pv-crops", (b) => fmt.num1(b["farms-production"].series.sugarcane.data.at(-1) / 1000)],
+    ["pv-area", (b) => fmt.num1(b["farms-area"].series.foodgrains.data.at(-1) / 1000)],
+    ["pv-index", (b) => fmt.num1(b["farms-index-2008"].series.production_all_crops.data.at(-1))],
+    ["pv-land", (b) => fmt.pct1(b["farms-landuse"].series.irrigated_share.data.at(-1))],
+    ["pv-fert", (b) => fmt.num1(b["farms-landuse"].series.fertiliser_per_ha.data.at(-1))],
+    ["pv-stocks", (b) => fmt.num1(b["farms-pds"].series.stocks_total.data.at(-1) / 10) + " mt"],
+    ["ex-st-lv", (b) => fmt.num1(b["farms-pds-latest"].series.stocks_total.data[0] / 10) + " million tonnes"],
+    ["ex-ha-gross", (b) => { const Y = b["farms-yield"], M = b["farms-msp"]; const d = Y.dates.filter((x, i) => Y.series.wheat.data[i] != null && M.series.wheat.data[M.dates.indexOf(x)] != null).at(-1); return fmt.inrR(Math.round(Y.series.wheat.data[Y.dates.indexOf(d)] * M.series.wheat.data[M.dates.indexOf(d)] / 100)); }],
+    ["prov-vintage", (b) => b["farms-production"].meta.vintage],
+  ]},
+  // ---- end farms ----
   { url: "/guides/", slug: null, minPlots: 13, checks: [] },
   { url: "/register/", slug: null, minPlots: 8, checks: [] },
   // profiles (lb/profiles): five profiles of different shapes run their charts here and in lint-charts

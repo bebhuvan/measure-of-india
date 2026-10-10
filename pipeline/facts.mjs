@@ -389,6 +389,56 @@ if (slug === "trade") {
 }
 // --- end trade ---
 
+// --- farms (lb/farms): the harvest, the advance estimate, yields, support prices and food
+// stocks, in the units the prose uses (million tonnes, kg per hectare, rupees a quintal), each
+// with its own year. The advance estimate and the MSP and stock tables are different rulers
+// from the final harvest, so they ride here, labelled, rather than as proseInputs. Every
+// figure is computed here from the baked bundles.
+if (slug === "farms") {
+  const B = (s) => JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", s + ".json"), "utf8"));
+  const r1 = (v) => (v == null ? null : Math.round(v * 10) / 10);
+  const pct = (a, b) => (a == null || b == null || b === 0 ? null : r1((a / b - 1) * 100));
+  const fy = (iso) => { const y = +iso.slice(0, 4); return `${y}-${String((y + 1) % 100).padStart(2, "0")}`; };
+  const S = bundle.series, n = bundle.dates.length - 1;
+  const mt = (k, i = n) => r1(S[k].data[i] / 1000);
+  const F = { finalYear: fy(bundle.dates[n]), stage: "final estimates" };
+  F.harvest_million = { foodgrains: mt("foodgrains"), rice: mt("rice"), wheat: mt("wheat"), coarse_cereals: mt("coarse_cereals"), pulses: mt("pulses"), oilseeds: mt("oilseeds"), sugarcane: mt("sugarcane") };
+  F.harvest_previous_year = { year: fy(bundle.dates[n - 1]), foodgrains_million: mt("foodgrains", n - 1), changePct: pct(S.foodgrains.data[n], S.foodgrains.data[n - 1]) };
+  F.cotton_lakh_bales = r1(S.cotton.data[n] / 100);
+  // the highest final foodgrain harvest before this one
+  let kmax = 0; S.foodgrains.data.forEach((v, k) => { if (k < n && v != null && v > S.foodgrains.data[kmax]) kmax = k; });
+  F.foodgrainsRecord = { isRecord: S.foodgrains.data[n] > S.foodgrains.data[kmax], previousHigh_million: mt("foodgrains", kmax), previousHighYear: fy(bundle.dates[kmax]) };
+  F.firstYear = { year: fy(bundle.dates[0]), foodgrains_million: mt("foodgrains", 0) };
+  const A = B("farms-advance"), AS = A.series;
+  F.advance = { year: fy(A.dates[0]), stage: A.meta.stage, note: "an advance estimate, revised until the final estimates; a different ruler from the final years",
+    foodgrains_million: r1(AS.production_foodgrains.data[0] / 1000), rice_million: r1(AS.production_rice.data[0] / 1000), wheat_million: r1(AS.production_wheat.data[0] / 1000),
+    pulses_million: r1(AS.production_pulses.data[0] / 1000), oilseeds_million: r1(AS.production_oilseeds?.data[0] / 1000), changeOnFinalPct: pct(AS.production_foodgrains.data[0], S.foodgrains.data[n]) };
+  const Y = B("farms-yield"), yi = Y.dates.length - 1;
+  const yv = (k, i) => Y.series[k].data[i];
+  F.yield_kg_per_hectare = { year: fy(Y.dates[yi]), firstYear: fy(Y.dates[0]) };
+  for (const k of ["rice", "wheat", "pulses", "foodgrains"]) F.yield_kg_per_hectare[k] = { latest: yv(k, yi), first: yv(k, 0), multiple: r1(yv(k, yi) / yv(k, 0)) };
+  const M = B("farms-msp"), MS = M.series;
+  const lastOf = (s) => { for (let i = s.data.length - 1; i >= 0; i--) if (s.data[i] != null) return i; return -1; };
+  F.msp_rupees_per_quintal = {};
+  for (const k of ["paddy_common", "wheat", "arhar", "cotton"]) {
+    const i = lastOf(MS[k]);
+    F.msp_rupees_per_quintal[k] = { year: fy(M.dates[i]), latest: MS[k].data[i], previous: MS[k].data[i - 1], risePct: pct(MS[k].data[i], MS[k].data[i - 1]) };
+  }
+  F.msp_rupees_per_quintal.note = "A quintal is 100 kg. Kharif crops are priced before the June sowing of the crop year's first year; wheat before the October sowing, for the harvest sold the next spring.";
+  const P = B("farms-pds"), PS = P.series, pi = P.dates.length - 1;
+  const lt = (k, i = pi) => r1(PS[k].data[i] / 10);   // lakh tonnes -> million tonnes
+  // the operational buffer norm for 1 April (Department of Food and Public Distribution, January 2015): 210.4 lakh tonnes
+  F.stocks = { asOn: `1 April ${+P.dates[pi].slice(0, 4) + 1}`, total_million: lt("stocks_total"), rice_million: lt("stocks_rice"), wheat_million: lt("stocks_wheat"),
+    bufferNorm1April_million: 21.04, timesTheNorm: r1(PS.stocks_total.data[pi] / 210.4), yearEarlier_million: lt("stocks_total", pi - 1) };
+  F.procurement_million = { year: fy(P.dates[pi]), rice: lt("procurement_rice"), wheat: lt("procurement_wheat"), total: lt("procurement_total") };
+  F.offtake_million = { year: fy(P.dates[pi]), total: lt("offtake_total") };
+  const L = B("farms-pds-latest");
+  F.latestStockPosition = { date: L.dates[0], total_million: r1(L.series.stocks_total.data[0] / 10), wheat_million: r1(L.series.stocks_wheat.data[0] / 10), note: "a position just after the wheat harvest, near the year's peak; not comparable with a 1 April stock" };
+  facts.cross.farms = F;
+  facts.cross.note = "Cite harvests and stocks as the _million figures in cross.farms, written as million tonnes (357.7 million tonnes); yields in kg per hectare; prices in rupees a quintal. The series values are thousand tonnes and must not be cited directly.";
+}
+// --- end farms ---
+
 // the writer's window on the SIBLING bundles (registry `proseInputs`): the
 // deep cuts — groups, items, states, sectors — summarized as field facts
 // (rankings, extremes, contradictions), never 358 raw rows. Every number

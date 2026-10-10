@@ -1,0 +1,135 @@
+family: farms
+guides: [farms]
+catalogue: data/coverage/farms.catalogue.json
+# Every DBIE agriculture report (Data Bank) and the RBI Hub's report 190, Handbook grids and SDMX
+# agriculture datasets. The agricultural tables of the Handbook of Statistics on Indian States are
+# the states family's (data/coverage/states.yml); this guide charts several of them read-only.
+rules:
+  # ---- crop output, area and yield (all India) ----
+  - match: "farms:623:production:*"
+    status: shown
+    bundle: [farms-production, farms-advance]
+    plate: "§04 The harvest since 1951 (harvest, grains)"
+  - match: ["farms:624:production:sugarcane", "farms:624:production:oilseeds", "farms:624:production:soyabean", "farms:624:production:groundnut", "farms:624:production:rapeseed-mustard", "farms:624:production:cotton-lint", "farms:624:production:raw-jute-mesta", "farms:624:production:tea", "farms:624:production:coffee", "farms:624:production:tobacco"]
+    status: shown
+    bundle: [farms-production, farms-advance]
+    plate: "§05 Beyond grain (every commercial crop)"
+  - match: ["farms:625:area:rice", "farms:625:area:wheat", "farms:625:area:coarse-cereals", "farms:625:area:pulses", "farms:625:area:foodgrains"]
+    status: shown
+    bundle: [farms-area, farms-advance]
+    plate: "§04 The harvest since 1951 (area)"
+  - match: "farms:625:area:cereals"
+    status: baked
+    bundle: [farms-area, farms-advance]
+  - match: ["farms:886:yield:rice", "farms:886:yield:wheat", "farms:886:yield:coarse-cereals", "farms:886:yield:pulses"]
+    status: shown
+    bundle: [farms-yield, farms-advance]
+    plate: "§04 The harvest since 1951 (yield); §02 From one hectare to the plate (wheat)"
+  - match: ["farms:886:yield:cereals", "farms:886:yield:foodgrains", "farms:887:yield:*"]
+    status: baked
+    bundle: [farms-yield, farms-advance]
+  # report 190 prints commercial-crop area in whole lakh hectares; the same areas at full
+  # precision come from DBIE's SDMX dataset AREA_UNDER_CULT_RN (below), checked against every cell
+  - match: "farms:190:area:*"
+    status: excluded
+    reason: "Report 190 prints these areas rounded to whole lakh hectares; the same areas at full precision are baked from DBIE's SDMX dataset AREA_UNDER_CULT_RN, which agrees with every printed cell."
+  # ---- index numbers: three bases ----
+  - match: ["farms:459:triennium-ending-1981-82-100:production:all-crops", "farms:459:triennium-ending-1993-94-100:production:all-crops", "farms:459:triennium-ending-2007-08-100:production:all-crops"]
+    status: shown
+    bundle: [farms-index-1982, farms-index-1994, farms-index-2008, farms-advance]
+    plate: "§05 Beyond grain (index of all crops on three bases)"
+  - match: "farms:459:triennium-ending-1981-82-100:*"
+    status: baked
+    bundle: farms-index-1982
+  - match: "farms:459:triennium-ending-1993-94-100:*"
+    status: baked
+    bundle: farms-index-1994
+  - match: "farms:459:triennium-ending-2007-08-100:*"
+    status: baked
+    bundle: [farms-index-2008, farms-advance]
+  - match: "farms:460:triennium-ending-1981-82-100:*"
+    status: baked
+    bundle: farms-index-1982
+  - match: "farms:460:triennium-ending-1993-94-100:*"
+    status: baked
+    bundle: farms-index-1994
+  - match: "farms:460:triennium-ending-2007-08-100:*"
+    status: baked
+    bundle: [farms-index-2008, farms-advance]
+  # ---- support prices ----
+  - match: "farms:461:msp:*"
+    status: shown
+    bundle: farms-msp
+    plate: "§07 What the state promises to pay (paddy and wheat; every crop's ten-year rise)"
+  - match: "farms:462:msp:*"
+    status: excluded
+    reason: "Report 462 repeats report 461's non-foodgrain support prices cell for cell (checked on every fetch); report 461 is baked."
+  # ---- land use and inputs ----
+  - match: ["farms:463:landuse:net-sown-area", "farms:463:landuse:gross-sown-area", "farms:463:landuse:gross-irrigated-area", "farms:463:landuse:consumption-of-fertilizer"]
+    status: shown
+    bundle: farms-landuse
+    plate: "§06 Land, water and fertiliser"
+  - match: ["farms:463:landuse:net-irrigated-area", "farms:463:landuse:consumption-of-pesticides"]
+    status: baked
+    bundle: farms-landuse
+  - match: "farms:463:landuse:area-under-high-yield-varieties"
+    status: excluded
+    reason: "RBI's table prints the area under high-yielding varieties as not available in every year it covers, so there is nothing to bake."
+  # ---- procurement, off-take and stocks ----
+  - match: "farms:464:stocks:*:early"
+    status: excluded
+    reason: "RBI prints 1950-51 to 1970-71 stocks at hundreds of times every later year (6,680 lakh tonnes of rice in 1950-51, more than India's whole harvest), so their unit cannot be read; the stock series start in 1972-73."
+  - match: "farms:464:*"
+    status: shown
+    bundle: [farms-pds, farms-pds-latest]
+    plate: "§08 What the state buys, stores and hands out"
+  # ---- state-wise output (report 465) ----
+  - match: ["farms:465:punjab:wheat", "farms:465:haryana:wheat", "farms:465:uttar-pradesh:wheat", "farms:465:madhya-pradesh:wheat", "farms:465:all-india:wheat",
+      "farms:465:punjab:rice", "farms:465:west-bengal:rice", "farms:465:odisha:rice", "farms:465:andhra-pradesh:rice", "farms:465:all-india:rice"]
+    status: shown
+    bundle: [farms-states-production, farms-states-production-advance]
+    plate: "§09 Where it grows (state shares of wheat and rice since 1980-81)"
+  - match: "farms:465:*"
+    status: baked
+    bundle: [farms-states-production, farms-states-production-advance]
+  # ---- the Handbook's own copies of the reports above ----
+  - match: ["farms:handbook:164", "farms:handbook:165", "farms:handbook:166", "farms:handbook:167", "farms:handbook:169", "farms:handbook:189", "farms:handbook:191", "farms:handbook:192", "farms:handbook:193", "farms:handbook:194", "farms:handbook:195", "farms:handbook:278"]
+    status: excluded
+    reason: "The Handbook's printed copy of a report baked from the Data Bank (164, 165, 166, 167, 169, 189, 191, 192, 193, 194, 195 and 278 are 460, 459, 624, 625, 464, 623, 886, 887, 465, 461, 462 and 463), rounded for print; read for its footnotes and checked cell by cell against the baked figures."
+  - match: "farms:handbook:458"
+    status: excluded
+    reason: "The Agriculture menu's copy of report 190 (commercial-crop area); the RBI Hub has not exported it and the Data Bank's fetch failed, and the same areas are baked from report 190's SDMX twin."
+  # ---- SDMX agriculture datasets (RBI Innovation Hub) ----
+  - match: ["farms:sdmx:area-under-cult-rn:cff", "farms:sdmx:area-under-cult-rn:cotton", "farms:sdmx:area-under-cult-rn:grdnt", "farms:sdmx:area-under-cult-rn:mjr-com-crps", "farms:sdmx:area-under-cult-rn:oilsds",
+      "farms:sdmx:area-under-cult-rn:oth", "farms:sdmx:area-under-cult-rn:rjnm", "farms:sdmx:area-under-cult-rn:rnm", "farms:sdmx:area-under-cult-rn:sgrcn", "farms:sdmx:area-under-cult-rn:soy",
+      "farms:sdmx:area-under-cult-rn:tea", "farms:sdmx:area-under-cult-rn:tobb"]
+    status: baked
+    bundle: [farms-area, farms-advance]
+  - match: "farms:sdmx:area-under-cult-rn:*"
+    status: excluded
+    reason: "Foodgrain areas that repeat report 625 hectare for hectare (checked on every fetch); report 625 is baked."
+  - match: ["farms:sdmx:agg-stat-is-rn:avg-conspt-fert-pr-hec:*", "farms:sdmx:agg-stat-is-rn:conspt-fert-pr-hec:*"]
+    status: shown
+    bundle: farms-states-fertiliser
+    plate: "§09 Where it grows (fertiliser per hectare by state)"
+  - match: "farms:sdmx:agg-stat-is-rn:cold-storg-cap:*"
+    status: excluded
+    reason: "Cold storage capacity by state repeats the Handbook of Statistics on Indian States table 98, which the states guide bakes (states-hbs-t098); every value matches."
+  - match: ["farms:sdmx:agr-prod-st-rn:mjr-com-crps:*"]
+    status: excluded
+    reason: "A 'major commercial crops' total that adds tonnes of sugarcane and oilseeds to bales of cotton and jute (178,790.7 for All India in 1980-81 is exactly that sum), which cannot be added; each crop is baked on its own."
+  - match: "farms:sdmx:agr-prod-st-rn:*"
+    status: excluded
+    reason: "State-wise production that repeats report 465 cell for cell (checked 2026-10-10); report 465 is baked."
+  - match: "farms:sdmx:min-sup-price-rn:fdgrns"
+    status: excluded
+    reason: "A sum of the support prices of different foodgrains, which means nothing as a price; each crop's price is baked."
+  - match: "farms:sdmx:min-sup-price-rn:*"
+    status: excluded
+    reason: "Support prices that repeat report 461 cell for cell (checked 2026-10-10); report 461 is baked."
+  - match: ["farms:sdmx:agr-prod-rn:*", "farms:sdmx:agr-productivity-rn:*", "farms:sdmx:patt-lu-uaii-rn:*", "farms:sdmx:agr-index-rn:*", "farms:sdmx:agr-index-mjr-crps-rn:*"]
+    status: excluded
+    reason: "SDMX copies of reports 623 and 624 (production), 886 and 887 (yield), 463 (land use) and 459 and 460 (index numbers); every value matches the baked reports (checked 2026-10-10)."
+  - match: "farms:sdmx:pds-agr-prod-rn:*"
+    status: excluded
+    reason: "An SDMX copy of report 464 that matches it in every year from 1972-73 and repeats its unreadable 1951-52 to 1970-71 stock rows; report 464 is baked."

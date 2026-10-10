@@ -1,0 +1,780 @@
+---
+import fs from "node:fs";
+import Base from "../../layouts/Base.astro";
+import Prose from "../../components/Prose.astro";
+import GuideData from "../../components/GuideData.astro";
+import EveryCut from "../../components/EveryCut.astro";
+import { bySlug, kicker } from "../../dossiers/registry.js";
+import { dateStamp } from "../../dossiers/display.js";
+const D = bySlug["farms"];
+const load = (slug) => JSON.parse(fs.readFileSync(`data/series/${slug}.json`, "utf8"));
+// The state tables, the long state series and the climate guide's monthly rainfall are large;
+// the page carries build-time picks of what the plates draw. The whole files are in the
+// downloads and the every-series table below (CONTRACT-render: page JS budget).
+const lastIdx = (a) => { for (let i = a.length - 1; i >= 0; i--) if (a[i] != null) return i; return -1; };
+const stateName = (label) => label.split(":")[0].trim();
+// the states guide's Handbook of Statistics on Indian States tables (read only): output by crop
+// and yield, the latest year every table shares
+const HBS = { rice: "t058", wheat: "t059", coarse_cereals: "t060", pulses: "t061", foodgrains: "t062", oilseeds: "t063", cotton: "t064", sugarcane: "t065", jute_mesta: "t066" };
+const hbsLatest = (t) => {
+  const b = load(`states-hbs-${t}`), i = b.dates.length - 1;
+  return { year: b.dates[i], unit: b.meta.unit, ai: b.series.all_india?.data[i] ?? null,
+    rows: Object.entries(b.series).filter(([k, s]) => k !== "all_india" && s.data[i] != null).map(([k, s]) => ({ k, name: stateName(s.label), v: s.data[i] })) };
+};
+const SP = load("farms-states-production");
+const LONG_KEYS = ["all_india__wheat", "punjab__wheat", "haryana__wheat", "uttar_pradesh__wheat", "uttar_pradesh_undivided__wheat", "madhya_pradesh__wheat", "madhya_pradesh_undivided__wheat", "rajasthan__wheat",
+  "all_india__rice", "punjab__rice", "west_bengal__rice", "uttar_pradesh__rice", "uttar_pradesh_undivided__rice", "andhra_pradesh__rice", "andhra_pradesh_undivided__rice", "telangana__rice", "odisha__rice", "chhattisgarh__rice", "madhya_pradesh_undivided__rice"];
+const FERT = load("farms-states-fertiliser");
+const fi = FERT.dates.length - 1;
+const CRU = load("climate-cru-monthly");
+const jjas = {};
+CRU.dates.forEach((d, i) => { const m = +d.slice(5, 7), y = d.slice(0, 4); if (m >= 6 && m <= 9) { (jjas[y] ??= []).push(CRU.series.pr.data[i]); } });
+const CPIAL = load("cpialrl-1986");
+const PICK = {
+  states: Object.fromEntries(Object.entries(HBS).map(([k, t]) => [k, hbsLatest(t)])),
+  yields: { rice: hbsLatest("t080"), wheat: hbsLatest("t081") },
+  long: { dates: SP.dates, series: Object.fromEntries(LONG_KEYS.filter((k) => SP.series[k]).map((k) => [k, { label: SP.series[k].label, data: SP.series[k].data }])) },
+  fert: { year: FERT.dates[fi], dates: FERT.dates, rows: Object.entries(FERT.series).map(([k, s]) => ({ k, name: (s.state ?? stateName(s.label)).replace(/ \(average\)$/, ""), v: s.data[fi], first: s.data[0] })),
+    ai: Object.entries(FERT.series).find(([k]) => /all_india/.test(k))?.[1].data ?? [] },
+  monsoon: Object.entries(jjas).filter(([, v]) => v.length === 4 && v.every((x) => x != null)).map(([y, v]) => ({ y: +y, mm: Math.round(v.reduce((a, b) => a + b, 0) * 10) / 10 })),
+  cpial: { dates: CPIAL.dates, al: CPIAL.series.al.data },
+};
+const pickJson = JSON.stringify(PICK).replace(/</g, "\\u003c");
+---
+<Base
+  title="Farms and food · India Atlas"
+  description={D.description}
+  nav="guides"
+  dateStamp={dateStamp(D)}
+  crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
+  crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
+  canonical="https://atlas.thisindianlife.today/guides/farms/"
+  ogImage={`/og/${D.slug}.png`}
+>
+<script type="application/json" id="farms-data" set:html={pickJson}></script>
+<div class="page">
+
+  <div class="titleblock break">
+    <div class="kicker">{kicker(D)}</div>
+    <div class="hero-grid">
+      <h1 set:html={D.headline} />
+      <p class="lede">The rice on the plate, the dal in the pot, the sugar in the tea and the cotton in the shirt start on about fourteen crore hectares of Indian fields. This guide counts what those fields grow each year, how much a hectare gives, which states grow what, the prices the government promises farmers, and the grain it buys, stores and hands out.</p>
+    </div>
+    <div class="meta">
+      <span>Source <b>Agriculture and food ministries' statistics, as the RBI publishes them (DBIE)</b></span>
+      <span>Frequency <b>Annual, crop years (July to June)</b></span>
+      <span>Rulers <b>Final estimates and the latest advance estimate, never joined</b></span>
+      <span>Latest <b id="m-latest">–</b></span>
+    </div>
+    <div class="numbers">
+      <div class="num"><div class="l">Foodgrains harvested, final estimate</div><div class="v acc" id="n-fg">–</div><div class="d" id="d-fg">–</div><div class="nspark" id="nspark-fg"></div></div>
+      <div class="num"><div class="l">Wheat from one hectare</div><div class="v" id="n-yield">–</div><div class="d" id="d-yield">–</div></div>
+      <div class="num"><div class="l">Support price for paddy, a quintal</div><div class="v" id="n-msp">–</div><div class="d" id="d-msp">–</div></div>
+      <div class="num"><div class="l">Grain in the central pool, 1 April</div><div class="v" id="n-stock">–</div><div class="d" id="d-stock">–</div></div>
+    </div>
+  </div>
+
+  <!-- § 01 the current reading: generated prose (pipeline/slots.yml, farms). Inputs: farms-production (current), farms-yield, farms-area; facts cross.farms (farms-advance, farms-msp, farms-pds, farms-pds-latest) -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>The current reading</h2><span class="line"></span><span class="unit" id="u-reading">–</span></div>
+    <div class="reading-top">
+      <div><span class="rk">Foodgrains, final estimate</span><div class="big" id="rb-fg">–</div></div>
+      <p class="rt-cap">Rice, wheat, coarse cereals and pulses harvested in the crop year <span id="rt-fy">–</span>, in million tonnes, on the agriculture ministry's final estimates.</p>
+      <div class="rt-side"><span class="rk" id="rb-side-l">–</span><div class="rt-side-v" id="rb-side">–</div></div>
+    </div>
+    <div class="reading-cols">
+      <div class="reading-col">
+        <span class="mk">What the figures say</span>
+        <Prose slot="farms.current-reading.what-the-print-says" />
+      </div>
+      <div class="reading-col now">
+        <span class="mk">What they do not say</span>
+        <Prose slot="farms.current-reading.what-it-does-not-say" />
+      </div>
+    </div>
+  </section>
+
+  <!-- § 02 lived reality: from a hectare to a family's income. Inputs: farms-yield (wheat), farms-msp (wheat) -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>From one hectare to the plate</h2><span class="line"></span><span class="unit">Wheat, yield times the support price, rupees a hectare</span></div>
+    <div class="prose">
+      <p>A hectare is a square a hundred metres on each side, about two and a half acres. Most Indian farms are smaller than that. On it, a wheat farmer in an average year now harvests about <b id="lr-yield">–</b> of grain. If every kilo were sold to the government at the minimum support price, that hectare would bring in <b id="lr-gross">–</b> before a rupee is spent on seed, fertiliser, diesel, water, labour or rent.</p>
+      <p>That is the gross figure, and it is generous. Only some farmers sell to the government at all: procurement is concentrated in a few states, and elsewhere wheat often sells below the support price. The costs come out of it. A family with half a hectare and one crop of wheat lives on a fraction of this. The chart shows how the gross figure has grown since 1975-76, in the rupees of each year.</p>
+    </div>
+    <div class="break">
+      <figure id="cb-hectare" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>A hectare of wheat sold at the support price brings in far more rupees than it used to</h3>
+            <div class="sub">All India wheat yield (kg per hectare) times the wheat minimum support price (rupees a kg), by crop year: what one average hectare would fetch at the support price, before costs, in the rupees of each year (not adjusted for inflation). Computed by India Atlas.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-hectare">–</div><div class="c" id="pc-hectare">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-hectare" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Agriculture ministry, yield per hectare and minimum support prices, as published by the RBI (DBIE reports 886 and 461). Product computed by India Atlas.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A quintal is 100 kg, so a support price of ₹2,000 a quintal is ₹20 a kg. The line multiplies the year's national average yield by that price. It is the most a farmer on an average hectare could have earned from wheat at the support price that year. It says nothing about costs, about farms smaller or less fertile than the average, or about farmers who sold to traders at lower prices.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the 2024-25 crop</span>
+            <p>In <span id="ex-ha-fy">–</span>, an average hectare gave <b id="ex-ha-yield">–</b> of wheat. At the support price of <b id="ex-ha-msp">–</b> a quintal, that is <b id="ex-ha-gross">–</b>. In <span id="ex-ha-fy0">–</span>, the first year in the table, the same sum was <b id="ex-ha-gross0">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 03 how to read this: evergreen, human-written -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>How to read these numbers</h2><span class="line"></span></div>
+    <div class="prose">
+      <p><b>Crop years.</b> Indian agriculture counts from July to June, so that one year holds both seasons: the kharif crop sown with the monsoon (rice, most pulses, cotton, soyabean, groundnut) and the rabi crop sown after it in winter (wheat, gram, mustard). The crop year 2024-25 is July 2024 to June 2025. On this page it is dated at April 2024, as the site dates every financial year.</p>
+      <p><b>Estimates, not counts.</b> Nobody weighs India's harvest. Each state measures the area sown from land records and estimates the yield from crop-cutting experiments, where a small plot in a sample of fields is harvested and weighed. The agriculture ministry adds these up and publishes them in stages: first, second and third advance estimates during the year, then a final estimate about a year after the harvest. The advance figures move, sometimes by several million tonnes. This guide keeps the latest advance estimate apart from the final years and draws it as a separate mark.</p>
+      <p><b>Units.</b> Grain, oilseeds and sugarcane are in tonnes. Cotton is counted in bales of 170 kg of lint, and jute and mesta in bales of 180 kg. Tea and coffee are in kg. Yield is kg per hectare; cotton yield is kg of lint, and rice yield is kg of milled rice, not of paddy.</p>
+      <p><b>Support prices and procurement.</b> The minimum support price (MSP) is the price at which the government promises to buy a crop, announced before sowing on the advice of the Commission for Agricultural Costs and Prices. Prices are set for 22 or so crops, but the government buys large amounts of only two, rice and wheat, through the Food Corporation of India and state agencies. That grain is stored in the central pool and issued to ration shops under the National Food Security Act and other schemes. Issues from the pool are called off-take.</p>
+      <p><b>Index numbers.</b> The agriculture ministry also publishes index numbers of area, production and yield, weighting each crop by its value. The base has changed three times (the three years ending 1981-82, 1993-94 and 2007-08). Each base is a different ruler; this guide never joins them.</p>
+    </div>
+  </section>
+
+  <!-- § 04 the anatomy: the harvest since 1951. Inputs: farms-production, farms-advance, farms-yield, farms-area -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>The harvest since 1951</h2><span class="line"></span><span class="unit">Foodgrains: rice, wheat, coarse cereals and pulses</span></div>
+    <div class="break">
+      <figure id="cb-harvest" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>India grows <span id="tt-harvest">–</span> times the grain it grew in 1950-51</h3>
+            <div class="sub">Foodgrain production, million tonnes, crop years. The line is the agriculture ministry's final estimates; the open circle is the latest advance estimate, a separate ruler that will be revised.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-harvest">–</div><div class="c" id="pc-harvest">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Final estimates</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #2E4BD8"></i><span id="lg-ae">–</span></button>
+          </div>
+          <div class="plotzone"><div id="plot-harvest" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Agriculture ministry, as published by the RBI (DBIE report 623; Handbook of Statistics on the Indian Economy).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each point is a whole crop year, both seasons. The dips are droughts: 1965-66 and 1966-67, 1979-80, 1987-88, 2002-03 and 2009-10 were all years of a failed monsoon. Population grew too, so grain per person rose far less than the line; this chart is the total.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the 2025-26 advance estimate</span>
+            <p>The final estimate for <span id="ex-hv-fy">–</span> is <b id="ex-hv-fg">–</b>, against <b id="ex-hv-fg0">–</b> in <span id="ex-hv-fy0">–</span>. The ministry's <span id="ex-hv-stage">–</span> for <span id="ex-hv-aey">–</span> put the harvest at <b id="ex-hv-ae">–</b>, a figure that will be revised.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-grains" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Wheat and rice carried the rise; coarse cereals and pulses lagged</h3>
+            <div class="sub">Production of each foodgrain, million tonnes, final estimates, with the latest advance estimate as an open circle. Coarse cereals are jowar, bajra, maize, ragi, barley and the small millets.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-grains">–</div><div class="c">rice, latest final year</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-grains" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Agriculture ministry, as published by the RBI (DBIE report 623).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The four panels share one scale, so their heights compare directly. Wheat took off after the high-yielding varieties of the mid-1960s, the Green Revolution, first in Punjab, Haryana and western Uttar Pradesh. Pulses, grown mostly on unirrigated land, barely moved for forty years before rising in the last decade.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the 2024-25 crop</span>
+            <p>In <span id="ex-gr-fy">–</span>: rice <b id="ex-gr-rice">–</b>, wheat <b id="ex-gr-wheat">–</b>, coarse cereals <b id="ex-gr-coarse">–</b> and pulses <b id="ex-gr-pulses">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-yield" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Most of the gain came from each hectare giving more</h3>
+            <div class="sub">Yield per hectare, kg, final estimates, crop years, 1950-51 on. Rice yield is milled rice.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-yield">–</div><div class="c">wheat yield, times its 1950-51 level</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-yield" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Agriculture ministry, as published by the RBI (DBIE report 886).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Yield is the harvest divided by the area under the crop. It rises with better seed, irrigation, fertiliser and timely sowing, and falls with a bad monsoon, pests or heat at the wrong moment. India's yields are still below those of China for rice and wheat, which is one reason the same land could feed more.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the 2024-25 crop</span>
+            <p>An average hectare gave <b id="ex-yl-wheat">–</b> of wheat, <b id="ex-yl-rice">–</b> of rice and <b id="ex-yl-pulses">–</b> of pulses in <span id="ex-yl-fy">–</span>. In 1950-51 the figures were <b id="ex-yl-wheat0">–</b>, <b id="ex-yl-rice0">–</b> and <b id="ex-yl-pulses0">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-area" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Land under grain has grown little since the 1960s, and coarse cereals lost <span id="tt-area">–</span> of theirs</h3>
+            <div class="sub">Area under each foodgrain, million hectares, final estimates, crop years.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-area">–</div><div class="c">million hectares under foodgrains, latest final year</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-area" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Agriculture ministry, as published by the RBI (DBIE report 625).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>A hectare that carries two crops in a year is counted twice, once in each crop's area. The fall in coarse cereals is the story of millets: as irrigation spread, farmers moved to rice and wheat, which the government buys at a support price, and to cash crops.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the 2024-25 crop</span>
+            <p>In <span id="ex-ar-fy">–</span>, rice covered <b id="ex-ar-rice">–</b>, wheat <b id="ex-ar-wheat">–</b>, coarse cereals <b id="ex-ar-coarse">–</b> and pulses <b id="ex-ar-pulses">–</b> million hectares. Coarse cereals covered <b id="ex-ar-coarse0">–</b> million hectares in 1950-51.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 05 beyond grain. Inputs: farms-production, farms-area, farms-advance, farms-index-1982/1994/2008 -->
+  <section>
+    <div class="sec-head"><span class="no">05</span><h2>Beyond grain: oilseeds, sugarcane, fibres and plantations</h2><span class="line"></span><span class="unit">Every commercial crop RBI's tables carry</span></div>
+    <div class="break">
+      <figure id="cb-crops" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Sugarcane and soyabean grew fastest; jute has stood still for decades</h3>
+            <div class="sub">Production of each commercial crop, final estimates, crop years, each panel on its own scale and in its own unit. Open circles: the latest advance estimate.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-crops">–</div><div class="c">million tonnes of sugarcane, latest final year</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-crops" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Agriculture ministry, Tea Board and Coffee Board, as published by the RBI (DBIE report 624).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Each panel has its own vertical scale: read the shape, not the height against a neighbour. Oilseeds are nine crops together (groundnut, rapeseed and mustard, soyabean, sunflower, sesame, safflower, niger, castor and linseed). India still imports more than half of the edible oil it eats; the domestic harvest is one side of that.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the 2024-25 crop</span>
+            <p>In <span id="ex-cr-fy">–</span> India grew <b id="ex-cr-sugar">–</b> of sugarcane, <b id="ex-cr-oil">–</b> of oilseeds, <b id="ex-cr-cotton">–</b> of cotton and <b id="ex-cr-tea">–</b> of tea.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-index" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Three rulers for one harvest: the index of all crops on each base</h3>
+            <div class="sub">Index of agricultural production, all crops, crop years, on three bases (triennium ending 1981-82, 1993-94 and 2007-08 = 100). Drawn side by side and never joined: each base weights crops by their value in its own years.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-index">–</div><div class="c" id="pc-index">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#ABB7EF"></i>TE 1981-82 = 100</button>
+            <button class="chip"><i style="background:#778AE6"></i>TE 1993-94 = 100</button>
+            <button class="chip"><i style="background:#2E4BD8"></i>TE 2007-08 = 100</button>
+            <button class="chip"><i style="width:9px;height:9px;border-radius:50%;background:#fff;border:1.5px solid #2E4BD8"></i>Advance estimate</button>
+          </div>
+          <div class="plotzone"><div id="plot-index" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Agriculture ministry, index numbers of agricultural production, as published by the RBI (DBIE reports 459 and 460).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>An index of 150 means production half as large again as in the base years. On the newest base, fruits and vegetables, plantation crops and spices carry weight alongside grain, so the all-crops index can rise when grain is flat. Compare growth within one line; never read one base's level against another's.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the 2024-25 crop</span>
+            <p>On the 2007-08 base, the all-crops production index stood at <b id="ex-ix-all">–</b> in <span id="ex-ix-fy">–</span>, foodgrains at <b id="ex-ix-fg">–</b> and non-foodgrains at <b id="ex-ix-nfg">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 06 land and inputs. Inputs: farms-landuse -->
+  <section>
+    <div class="sec-head"><span class="no">06</span><h2>Land, water and fertiliser</h2><span class="line"></span><span class="unit">Land use and inputs, All India</span></div>
+    <div class="break">
+      <figure id="cb-land" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The farmed area stopped growing long ago; irrigation and double cropping kept rising</h3>
+            <div class="sub">Net sown area (land sown at least once in the year), gross sown area (counting each season's crop), and gross irrigated area, million hectares, 1950-51 on.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-land">–</div><div class="c">of gross sown area irrigated, latest year</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-land" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Agriculture ministry, land use statistics, as published by the RBI (DBIE report 463). Irrigated share computed by India Atlas.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The gap between gross and net sown area is land that carries a second or third crop in the year, usually because it has water in winter. Cropping intensity, gross over net, is the measure of that. Most irrigation is groundwater from tube wells, which is why water tables in Punjab, Haryana and Rajasthan keep falling.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2024-25</span>
+            <p>India sowed <b id="ex-ld-net">–</b> million hectares at least once and <b id="ex-ld-gross">–</b> counting every season, a cropping intensity of <b id="ex-ld-ci">–</b>. Of the gross area, <b id="ex-ld-irr">–</b> was irrigated, against <b id="ex-ld-irr0">–</b> in 1950-51.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-fert" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Fertiliser per hectare climbed steeply after the Green Revolution, then levelled off</h3>
+            <div class="sub">Fertiliser used (nitrogen, phosphate and potash, nutrient tonnes) per hectare of gross sown area, kg, 1950-51 on. Computed by India Atlas from RBI's land-use table.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-fert">–</div><div class="c">kg per hectare, latest year</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-fert" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Agriculture ministry, as published by the RBI (DBIE report 463). Per hectare computed by India Atlas.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>This is the weight of nutrients, not of the bags: a 45 kg bag of urea holds about 21 kg of nitrogen. Urea is sold at a fixed, heavily subsidised price, so farmers use far more nitrogen than phosphate and potash; agronomists recommend a balance closer to four, two and one. The state chart further down shows how unevenly it is spread.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2024-25</span>
+            <p>India used <b id="ex-ft-tot">–</b> lakh tonnes of nutrients in <span id="ex-ft-fy">–</span>, about <b id="ex-ft-ha">–</b> per hectare sown, and <b id="ex-ft-pest">–</b> thousand tonnes of pesticides in <span id="ex-ft-pfy">–</span>, the latest year printed.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 07 what the state pays. Inputs: farms-msp, cpialrl-1986 (prices guide, read only) -->
+  <section>
+    <div class="sec-head"><span class="no">07</span><h2>What the state promises to pay</h2><span class="line"></span><span class="unit">Minimum support prices, rupees a quintal</span></div>
+    <div class="break">
+      <figure id="cb-msp" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The support price for paddy is <span id="tt-msp">–</span> times what it was in 1975-76</h3>
+            <div class="sub">Minimum support price, rupees a quintal (100 kg), fair average quality, by crop year: common paddy (kharif) and wheat (rabi).</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-msp">–</div><div class="c" id="pc-msp">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Paddy (common)</button>
+            <button class="chip"><i style="background:#C47A16"></i>Wheat</button>
+          </div>
+          <div class="plotzone"><div id="plot-msp" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Commission for Agricultural Costs and Prices and the agriculture ministry, as published by the RBI (DBIE reports 461 and 462).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Kharif prices are announced around June for the crop then being sown; wheat's in October for the crop sold the next spring. In a few years the price includes a bonus the RBI's notes record (wheat in 1992-93, 1993-94, 1996-97, 2005-06, 2006-07 and 2010-11; paddy in 2006-07 and 2007-08). Paddy is priced as paddy, before milling: about two-thirds of its weight becomes rice.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the 2026-27 kharif prices</span>
+            <p>The paddy price for <span id="ex-ms-py">–</span> is <b id="ex-ms-p">–</b> a quintal, up <b id="ex-ms-pr">–</b> on the year before. Wheat for <span id="ex-ms-wy">–</span> is <b id="ex-ms-w">–</b>, up <b id="ex-ms-wr">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-mspinfl" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Support prices usually rose faster than the cost of living of farm labourers</h3>
+            <div class="sub">Rise in the paddy and wheat support price on the year before, per cent (bars), and inflation in the consumer price index for agricultural labourers, the average of the twelve monthly year-on-year rates over the crop year July to June (line), 1986-87 = 100 base, crop years <span id="sb-mi-span">–</span>.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-mspinfl">–</div><div class="c">years paddy's rise beat that inflation</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Paddy price rise</button>
+            <button class="chip"><i style="background:#C47A16"></i>Wheat price rise</button>
+            <button class="chip"><i style="background:#161A22;height:2px"></i>Farm labourers' inflation</button>
+          </div>
+          <div class="plotzone"><div id="plot-mspinfl" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Support prices as published by the RBI (DBIE 461); CPI for agricultural labourers, Labour Bureau (the prices guide's bundle cpialrl-1986). Rises and averages computed by India Atlas.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Where a bar stands above the line, the support price rose faster than the cost of living of a farm labourer's household that year. That says nothing about the cost of growing the crop: seed, fertiliser, diesel and hired labour. The Commission for Agricultural Costs and Prices estimates those costs state by state, but the RBI's tables do not carry them, so this guide cannot show the margin. We do not know from these tables whether farming a quintal became more or less profitable.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the 2023-24 crop</span>
+            <p>Of the <b id="ex-mi-n">–</b> crop years compared, the paddy price rose faster than farm labourers' inflation in <b id="ex-mi-p">–</b> and wheat in <b id="ex-mi-w">–</b>. In <span id="ex-mi-fy">–</span> paddy rose <b id="ex-mi-pl">–</b>, wheat <b id="ex-mi-wl">–</b>, and the labourers' index <b id="ex-mi-cl">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-mspall" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Over ten years, pulses and oilseeds were given the biggest increases</h3>
+            <div class="sub">Rise in each crop's minimum support price over the latest ten years each crop has a price for, per cent, with the latest price in rupees a quintal.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-mspall">–</div><div class="c" id="pc-mspall">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-mspall" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Support prices as published by the RBI (DBIE reports 461 and 462). Ten-year rise computed by India Atlas.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Raising the price of pulses and oilseeds faster than that of rice and wheat is how the government has tried to pull farmers towards crops India imports. A price only works where someone buys at it: the government buys pulses and oilseeds in much smaller amounts than rice and wheat.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the 2026-27 prices</span>
+            <p>The largest ten-year rise was for <span id="ex-ma-top">–</span>, the smallest for <span id="ex-ma-bot">–</span>; paddy rose <b id="ex-ma-p">–</b> and wheat <b id="ex-ma-w">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 08 what the state buys and stores. Inputs: farms-pds, farms-pds-latest -->
+  <section>
+    <div class="sec-head"><span class="no">08</span><h2>What the state buys, stores and hands out</h2><span class="line"></span><span class="unit">Central pool, rice and wheat, million tonnes</span></div>
+    <div class="break">
+      <figure id="cb-proc" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The government buys about <span id="tt-proc">–</span> of India's rice and wheat</h3>
+            <div class="sub">Rice and wheat procured by the Food Corporation of India and state agencies, and total grain issued from the central pool (off-take), million tonnes, by year, 1972-73 on.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-proc">–</div><div class="c" id="pc-proc">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Rice procured</button>
+            <button class="chip"><i style="background:#C47A16"></i>Wheat procured</button>
+            <button class="chip"><i style="background:#A3A9B4"></i>Issued (off-take, all grain)</button>
+          </div>
+          <div class="plotzone"><div id="plot-proc" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Food ministry, as published by the RBI (DBIE report 464; Handbook table on the public distribution system).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Procurement is grain bought at the support price, mostly from Punjab, Haryana, Madhya Pradesh, Chhattisgarh, Telangana and Andhra Pradesh. Off-take is grain released from the pool, mainly to ration shops, where about 80 crore people are entitled to grain. The spike in 2020-21 to 2022-23 is the free grain of the pandemic schemes, which RBI's note flags.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2025-26</span>
+            <p>In <span id="ex-pr-fy">–</span>, agencies bought <b id="ex-pr-rice">–</b> of rice and <b id="ex-pr-wheat">–</b> of wheat, and issued <b id="ex-pr-off">–</b> of grain.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-stocks" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The granaries hold several times what the buffer norm asks for</h3>
+            <div class="sub">Rice and wheat in the central pool at the end of each year (1 April), million tonnes, 1972-73 on, against the 1 April buffer norm set in 2015. The open circle is the latest position the RBI prints, a date just after the wheat harvest, when stocks are near their yearly peak.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-stocks">–</div><div class="c" id="pc-stocks">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="legend">
+            <button class="chip"><i style="background:#2E4BD8"></i>Total stocks, 1 April</button>
+            <button class="chip"><i style="background:#878D99"></i>Rice</button>
+            <button class="chip"><i style="background:#C47A16"></i>Wheat</button>
+            <button class="chip"><i style="background:none;border-top:1.5px dashed #161A22;height:0;width:16px"></i>1 April buffer norm, 21.04 million tonnes</button>
+          </div>
+          <div class="plotzone"><div id="plot-stocks" style="position:relative"><div class="cb-tip"></div></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Food ministry, as published by the RBI (DBIE report 464). Buffer norm: Department of Food and Public Distribution, operational buffer and strategic reserve for 1 April, January 2015 (21.04 million tonnes).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The buffer norm is the stock the government wants on hand for the ration system and emergencies; it differs by quarter, lowest in April, before the wheat is bought. Stock far above the norm costs money to store and can spoil; stock near or below it leaves little grain to release when market prices jump. Total stocks include small amounts of coarse grains. Before 1972-73 the RBI's table prints figures whose unit cannot be read; they are left out.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 31 May 2026</span>
+            <p>On <span id="ex-st-date">–</span> the pool held <b id="ex-st-tot">–</b>: <b id="ex-st-rice">–</b> of rice and <b id="ex-st-wheat">–</b> of wheat, <b id="ex-st-x">–</b> the 1 April norm. The latest position the RBI prints, <span id="ex-st-ld">–</span>, was <b id="ex-st-lv">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 09 the granular cuts: states. Inputs: states-hbs-t058..t066, t080, t081 (states guide, read only), farms-states-production, farms-states-fertiliser -->
+  <section>
+    <div class="sec-head"><span class="no">09</span><h2>Where it grows</h2><span class="line"></span><span class="unit">States and union territories</span></div>
+    <div class="break">
+      <figure id="cb-states" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>A handful of states grow most of each crop</h3>
+            <div class="sub">Each state's share of India's production, per cent, crop year <span id="sb-states-fy">–</span>. States ordered by their share of foodgrains; the darker the cell, the larger the share. Cotton and jute are shares of bales.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-states">–</div><div class="c" id="pc-states">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-states" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Agriculture ministry, as published in the RBI's Handbook of Statistics on Indian States, tables 58 to 66 (the states guide's bundles). Shares computed by India Atlas.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in/Scripts/AnnualPublications.aspx?head=Handbook+of+Statistics+on+Indian+States" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Read across a row to see what a state grows, and down a column to see who grows a crop. The shares are of the national total, which includes the union territories, so a column sums to a little under 100. A state's large share can come from size (Uttar Pradesh), from irrigation (Punjab) or from a crop suited to its soil and rain (cotton on the black soils of Gujarat and Maharashtra).</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the 2024-25 crop</span>
+            <p>Uttar Pradesh grew the largest share of foodgrains, <b id="ex-sg-up">–</b>. The top three states grew <b id="ex-sg-wheat3">–</b> of the wheat, <b id="ex-sg-cotton3">–</b> of the cotton and <b id="ex-sg-sugar3">–</b> of the sugarcane.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-statelong" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The grain belt moved: Madhya Pradesh rose in wheat, and rice spread east and south</h3>
+            <div class="sub">Each state's share of India's wheat (left) and rice (right) production, per cent, final estimates, 1980-81 to <span id="sb-long-fy">–</span>. States that split are drawn as two rulers: the undivided state (pale) to 1999-2000 (Madhya Pradesh, Uttar Pradesh) or 2014-15 (Andhra Pradesh), and the state after the split.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-statelong">–</div><div class="c">Madhya Pradesh's share of wheat, latest final year</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-statelong" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Agriculture ministry, state-wise production, as published by the RBI (DBIE report 465). Shares computed by India Atlas.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>When Chhattisgarh was carved out of Madhya Pradesh in 2000 and Telangana out of Andhra Pradesh in 2014, the parent state's figures changed meaning overnight. The pale line is the old, larger state; the dark line the smaller one that remains. A drop at the seam is the map changing, not the harvest.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the 2021-22 crop</span>
+            <p>In <span id="ex-sl-fy">–</span>, the last final year in the state table, Uttar Pradesh grew <b id="ex-sl-upw">–</b> of India's wheat, Madhya Pradesh <b id="ex-sl-mpw">–</b> and Punjab <b id="ex-sl-pbw">–</b>. Punjab grew <b id="ex-sl-pbw0">–</b> in 1980-81.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-stateyield" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>A hectare in Punjab gives far more wheat and rice than one in the east</h3>
+            <div class="sub">Yield of rice and wheat by state, kg per hectare, crop year <span id="sb-sy-fy">–</span>, with the All India average as a rule. States growing less than a tenth of a per cent of the crop are left out.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-stateyield">–</div><div class="c" id="pc-stateyield">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-stateyield" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Agriculture ministry, as published in the RBI's Handbook of Statistics on Indian States, tables 80 and 81 (the states guide's bundles).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://www.rbi.org.in/Scripts/AnnualPublications.aspx?head=Handbook+of+Statistics+on+Indian+States" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>The gap is mostly water and assured purchase: almost all of Punjab's wheat and rice is irrigated and bought by the government at the support price, while much of Bihar's, Assam's and Odisha's depends on the rain and is sold to traders. Higher yields in the north-west also come with heavier use of groundwater and fertiliser.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the 2024-25 crop</span>
+            <p>The highest wheat yield was <span id="ex-sy-wt">–</span>'s, <b id="ex-sy-wv">–</b>; the highest rice yield <span id="ex-sy-rt">–</span>'s, <b id="ex-sy-rv">–</b>. All India: <b id="ex-sy-wai">–</b> for wheat and <b id="ex-sy-rai">–</b> for rice.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="break">
+      <figure id="cb-statefert" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>Some states use several times as much fertiliser per hectare as others</h3>
+            <div class="sub">Fertiliser (nitrogen, phosphate and potash) used per hectare, kg, by state, <span id="sb-sf-fy">–</span>, the latest year in RBI's table, with the All India average as a rule.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-statefert">–</div><div class="c" id="pc-statefert">–</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-statefert" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Agriculture ministry, Agricultural Statistics at a Glance, as published in the RBI's Handbook of Statistics on Indian States (table 94; DBIE SDMX dataset AGG_STAT_IS_RN, via the RBI Innovation Hub service).</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://data.rbi.org.in" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Per hectare figures follow irrigation and crop mix: irrigated rice and wheat take far more fertiliser than rain-fed millets or pulses, and the hill and north-eastern states, where much farming is organic by default, use very little. A high figure is not the same as good practice; overuse of nitrogen wastes money and leaches into groundwater.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of 2020-21</span>
+            <p>In <span id="ex-sf-fy">–</span>, <span id="ex-sf-top">–</span> used the most, <b id="ex-sf-topv">–</b> per hectare, against an All India average of <b id="ex-sf-ai">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 10 the monsoon. Inputs: farms-production (foodgrains), climate-cru-monthly (climate guide, read only) -->
+  <section>
+    <div class="sec-head"><span class="no">10</span><h2>The monsoon and the harvest</h2><span class="line"></span><span class="unit">June to September rainfall and the year's foodgrain output</span></div>
+    <div class="prose">
+      <p>About <span id="mn-unirr">–</span> of India's gross sown area has no irrigation, and even irrigated land depends on the rain that refills wells and reservoirs. The four monsoon months, June to September, bring most of the year's rain. A weak monsoon cuts the kharif crop at once and the rabi crop through dry soil and empty tanks. For the full picture of rain and heat, see the <a href="/guides/climate/">climate guide</a>.</p>
+    </div>
+    <div class="break">
+      <figure id="cb-monsoon" style="margin:0">
+        <div class="plate-head">
+          <div class="t">
+            <h3>The worst harvests followed the driest monsoons, though less so than they used to</h3>
+            <div class="sub">Each dot is a crop year since 1951-52: across, June to September rainfall over India, per cent above or below its 1951-2000 average; up, the change in foodgrain production on the year before, per cent, final estimates. Rainfall: CRU gridded observations, as in the climate guide; not the India Meteorological Department's own monsoon figure.</div>
+          </div>
+          <div class="plate-val"><div class="v acc" id="pv-monsoon">–</div><div class="c">of the ten driest monsoons were followed by a smaller harvest</div></div>
+        </div>
+        <div class="frame">
+          <div class="plotzone"><div id="plot-monsoon" style="position:relative"></div></div>
+          <div class="plotfoot">
+            <span class="src">Source: Foodgrain production, agriculture ministry via the RBI (DBIE 623); rainfall, CRU TS 4.10, University of East Anglia, via the World Bank Climate Change Knowledge Portal (the climate guide's bundle climate-cru-monthly). Departures and changes computed by India Atlas.</span>
+            <span class="dl"><button data-dl="svg">SVG</button><button data-dl="png">PNG</button><button data-dl="csv">CSV</button><a href="https://climateknowledgeportal.worldbank.org" target="_blank" rel="noopener">Source</a></span>
+          </div>
+        </div>
+        <div class="explain">
+          <div class="ev">
+            <span class="mk">How to read this</span>
+            <p>Dots to the left had a dry monsoon; dots low down a smaller harvest than the year before. The crop year 2002-03 lines up with the monsoon of 2002, its kharif season. The link is loose: a dry June can be made up in August, irrigation has grown, and a good harvest the year before makes the next one's change look worse. A gridded estimate of rain over the whole country is not the farmer's rain gauge.</p>
+          </div>
+          <div class="now">
+            <span class="mk">As of the 2024 monsoon</span>
+            <p>The driest monsoon in the record was <span id="ex-mn-dy">–</span>, <b id="ex-mn-dv">–</b> below average; foodgrain output that crop year changed by <b id="ex-mn-dc">–</b>. In <span id="ex-mn-ly">–</span>, rainfall was <b id="ex-mn-lv">–</b> the average and output changed by <b id="ex-mn-lc">–</b>.</p>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- § 11 misreadings -->
+  <section>
+    <div class="sec-head"><span class="no">11</span><h2>How to misread these numbers</h2><span class="line"></span></div>
+    <ul class="misread">
+      <li><span class="no">1</span><div><h3>"A record harvest this year."</h3><p>The first figures for a year are advance estimates, made while the crop is still in the field or just cut. They are revised over the next year, up or down. A record on the second advance estimate is a forecast. This guide shows the final years as a line and the latest advance estimate apart.</p></div></li>
+      <li><span class="no">2</span><div><h3>"Farmers get the MSP."</h3><p>The support price is what the government pays when it buys. It buys mostly rice and wheat, mostly in a few states. A farmer elsewhere, or growing another crop, sells at whatever traders pay, which can be well below it.</p></div></li>
+      <li><span class="no">3</span><div><h3>"The MSP went up, so farmers earn more."</h3><p>A higher price per quintal can be eaten by higher costs of diesel, fertiliser and labour. The RBI's tables carry the prices but not the costs, so this guide cannot show the margin. We do not know from these numbers whether a quintal became more profitable.</p></div></li>
+      <li><span class="no">4</span><div><h3>"Overflowing granaries mean nobody goes hungry."</h3><p>Stocks are grain the government holds, not grain people eat. Hunger depends on whether a family can get and afford food: ration cards, prices, wages. Large stocks can sit beside poor diets, and they cost the government money to keep.</p></div></li>
+      <li><span class="no">5</span><div><h3>"Rice yield is 2,900 kg, so a hectare gives 2.9 tonnes of paddy."</h3><p>Rice yield is milled rice. Paddy, the grain as harvested, weighs about half as much again. Comparing rice yield with the paddy price, or with another country's paddy yield, overstates or understates by a third.</p></div></li>
+      <li><span class="no">6</span><div><h3>"Madhya Pradesh's wheat jumped in 2000."</h3><p>Some state lines break because the state changed. Madhya Pradesh, Bihar and Uttar Pradesh lost territory in 2000, Andhra Pradesh in 2014. Compare a state only within one shape of its map.</p></div></li>
+      <li><span class="no">7</span><div><h3>"Cotton output is 30 million tonnes."</h3><p>Cotton is counted in bales of 170 kg, so 300 lakh bales is about 5 million tonnes of lint. Jute bales are 180 kg. Read the unit before comparing crops.</p></div></li>
+    </ul>
+  </section>
+
+  <EveryCut slug="farms" />
+
+  <GuideData slug="farms" />
+
+  <footer class="provenance">
+    <h2 class="prov-h">Sources, method and revisions</h2>
+    <div class="cols">
+      <div>
+        <h6>Sources of record</h6>
+        <p>Ministry of Agriculture and Farmers Welfare (crop area, production and yield, index numbers, land use, inputs, state-wise production, minimum support prices), the Tea Board and the Coffee Board, and the Ministry of Consumer Affairs, Food and Public Distribution (procurement, off-take and stocks), as the Reserve Bank of India publishes them in its Database on Indian Economy and its Handbooks. Read from the Atlas's local, read-only mirror of DBIE; report 190 (commercial-crop area), the Handbook's printed tables and two SDMX datasets from the Reserve Bank Innovation Hub's DBIE service. Data vintage <b id="prov-vintage">–</b>.</p>
+        <p>Every cell the Data Bank holds was checked against the RBI's own printed table at its printed precision: 16,800 cells across twelve tables, all equal. Checked by hand: rice 2024-25, 150,184 thousand tonnes (the Handbook prints 1,502 lakh tonnes); cotton 2023-24, 325.22 lakh bales, the ministry's final figure; paddy MSP 2024-25 ₹2,300 and wheat 2025-26 ₹2,585, the government's announced prices; wheat stocks on 1 April 2025, 11.8 million tonnes, as the food ministry reported.</p>
+      </div>
+      <div>
+        <h6>Method</h6>
+        <p>Values are stored once each (DBIE repeats every value once per display unit), in the units the RBI prints: thousand tonnes, thousand bales, thousand hectares, kg per hectare, lakh tonnes, rupees a quintal. Crop years are dated at April of their first year. Shares, per hectare figures, the hectare's value at the support price, rainfall departures and the crop-year average of farm labourers' inflation are computed by India Atlas and labelled as such.</p>
+      </div>
+      <div>
+        <h6>Revisions and breaks</h6>
+        <p>Never joined: the latest advance estimate and the final years; index numbers on the three bases; states before and after a split (Madhya Pradesh, Bihar and Uttar Pradesh in 2000, Andhra Pradesh in 2014, Jammu and Kashmir in 2019). Left out: the RBI's stock figures for 1950-51 to 1970-71, printed at more than India's whole harvest, whose unit cannot be read; the SDMX totals that add tonnes to bales or prices of different crops. The part year after the last full year (stocks on 31 May 2026) is shown apart.</p>
+      </div>
+      <div>
+        <h6>This guide</h6>
+        <p>Version 1.0, built October 2026. Revised when the RBI updates its agriculture tables, usually with the Handbook each September, and when the ministry's estimates move. Agricultural credit is in the <a href="/guides/credit/">credit guide</a>; rural wages in the <a href="/guides/cpi/">prices guide</a>; each state's farm figures in the <a href="/guides/states/">states guide</a>.</p>
+      </div>
+    </div>
+    <div class="fine">
+      <span>India Atlas, farms and food</span>
+      <span>Vintage <span id="prov-vintage2">–</span></span>
+      <span>Set in Source Serif 4 and Golos Text</span>
+    </div>
+  </footer>
+
+</div>
+<script>
+  import "../../dossiers/guide.client.js";
+  import "../../dossiers/farms.client.js";
+</script>
+</Base>
