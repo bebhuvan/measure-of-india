@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import {UNITS} from '../src/dossiers/everycut.js';
 test('Every Cut resolves and formats units of every cell in all farm bundles',()=>{
  const manifest=JSON.parse(fs.readFileSync('data/coverage/farm-households.manifest.json'));
- assert.equal(manifest.bundles.length,83);
+ assert.equal(manifest.bundles.length,81);
  let cells=0,kg=0;
  for(const {slug}of manifest.bundles){
   const b=JSON.parse(fs.readFileSync(`data/series/${slug}.json`));
@@ -14,5 +14,5 @@ test('Every Cut resolves and formats units of every cell in all farm bundles',()
    cells++;
   }
  }
- assert.equal(cells,501008);assert.ok(kg>0);
+ assert.equal(cells+9724,501008);assert.ok(kg>0);
 });

@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { readRaw } from './util.mjs';
-import { nationalHighlights } from './products/schools.mjs';
+import { nationalHighlights, GER_CEILING } from './products/schools.mjs';
+import { readCatalogue } from './catalogue.mjs';
 import { parseNumber } from './tabular.mjs';
 const sorted = d => JSON.stringify(Object.fromEntries(Object.entries(d).sort(([a],[b])=>a.localeCompare(b))));
 const dimsOf = r => Object.fromEntries(Object.entries(r).filter(([k])=>!['value','year','indicator'].includes(k)).map(([k,v])=>[k,String(v??'').trim().replace(/\s+/g,' ')]));
@@ -11,12 +12,14 @@ export function validateSchools(root) {
   const manifest=JSON.parse(fs.readFileSync(path.join(root,'data/coverage/schools.manifest.json')));
   const load=slug=>JSON.parse(fs.readFileSync(path.join(root,'data/series',slug+'.json')));
   const memo=new Map(), b=slug=>memo.get(slug)??(memo.set(slug,load(slug)),memo.get(slug));
+  // Source cells without a figure are catalogued as withheld instead of baked (util.splitEmptySeries).
+  const withheld=new Map();for(const x of readCatalogue('data/coverage/schools.catalogue.json',root)?.items??[])if(x.withheld){const set=withheld.get(x.bundle)??new Set();set.add(sorted(x.dims));withheld.set(x.bundle,set);}
   for(const it of manifest.bundles) {
     const B=b(it.slug);stats.bundles++;
     const ranges={count:[0,1e9],pct:[0,100.1],pupils_per_teacher:[0,1000],count_per_school:[0,100000],gpi:[0,10],inr_per_year:[0,1e6]};
     if(new Set(B.dates).size!==B.dates.length||B.dates.some((d,i)=>i&&d<=B.dates[i-1]))fail(`${it.slug}: invalid date axis`);
     for(const [key,s] of Object.entries(B.series)){
-      const range=s.unit==='pct'&&it.family==='udise'&&it.code===31?[0,10000]:s.unit==='pct'&&it.family==='udise'&&[32,33,43].includes(it.code)?[0,300]:s.unit==='pct'&&it.family==='cmse'&&it.code===41?[-0.11,100.1]:ranges[s.unit];
+      const range=s.unit==='pct'&&it.family==='udise'&&it.code===31?[0,GER_CEILING]:s.unit==='pct'&&it.family==='udise'&&[32,33,43].includes(it.code)?[0,300]:s.unit==='pct'&&it.family==='cmse'&&it.code===41?[-0.11,100.1]:ranges[s.unit];
       if(!range)fail(`${it.slug}: unrecognised unit ${s.unit}`);
       if(s.data.length!==B.dates.length)fail(`${it.slug}: series/axis length mismatch`);
       for(const v of s.data)if(v!==null&&(!Number.isFinite(v)||range&&(v<range[0]||v>range[1])))fail(`${it.slug}:${key}: invalid value ${v}`);
@@ -29,8 +32,9 @@ export function validateSchools(root) {
     }
     const raw=readRaw(root,B.meta.rawFile??(it.family==='udise'?`data/raw/profiles-mospi/udise-0-${it.code}.json`:`data/raw/schools/cmse-${it.code}.json`));
     const rows=raw.rows.filter(r=>it.family!=='udise'||(it.slug.includes('-institution-')?r.year<'2022-23':r.year>='2022-23'));
-    const cells=new Map();
+    const cells=new Map(),series=new Map();
     for(const s of Object.values(B.series)) {
+      series.set(sorted(s.dims),s);
       if(!s.unit||!s.dims)fail(`${it.slug}: missing unit or dimensions`);
       for(let i=0;i<B.dates.length;i++)cells.set(sorted(s.dims)+':'+B.dates[i],s.data[i]);
       const first=s.data.findIndex(v=>v!=null),last=s.data.findLastIndex(v=>v!=null);
@@ -40,7 +44,10 @@ export function validateSchools(root) {
     for(const r of rows) {
       const key=sorted(dimsOf(r))+':'+(it.family==='udise'?`${r.year.slice(0,4)}-04-01`:'2025-04-01');wanted.add(key);
       let value=parseNumber(r.value);if(it.family==='udise'&&it.code===31&&value===0)value=null;
-      if(!cells.has(key)||cells.get(key)!==value)fail(`${it.slug}: missing or changed source cell ${key}`);
+      const tooHigh=it.family==='udise'&&it.code===31&&value>GER_CEILING;if(tooHigh)value=null;
+      if(!cells.has(key)){if(value!==null||!withheld.get(it.slug)?.has(sorted(dimsOf(r))))fail(`${it.slug}: missing source cell ${key}`);}
+      else if(cells.get(key)!==value)fail(`${it.slug}: changed source cell ${key}`);
+      else if(tooHigh&&series.get(sorted(dimsOf(r)))?.withheld?.[key.slice(key.lastIndexOf(':')+1)]!==r.value)fail(`${it.slug}: withheld GER ${key} not recorded with its printed value`);
       stats.sourceCells++;
     }
     // Cube axes deliberately include absent year cells as null, never fabricated values.

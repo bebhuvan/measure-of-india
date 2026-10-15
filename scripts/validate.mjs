@@ -14,6 +14,7 @@ import {replayPensionExpectedProofs} from './lib/pensions-expected-schedule-fact
 import {validatePensionPolicyEvidence} from './lib/pensions-source-policy-evidence.mjs';
 const registeredExpectedSchedules = new Map();
 import {registeredSeriesRanges} from './lib/series-range-contract.mjs';
+import {envelopeOf, envelopeRanges} from './lib/unit-envelope.mjs';
 import {vintageError} from './lib/vintage.mjs';
 import fs from "node:fs";
 import { validateMarketsRbi } from "./lib/markets-rbi-validation.mjs";
@@ -55,6 +56,14 @@ if (cfg.dossiers?.pensions && fs.existsSync(path.join(ROOT, "data/series/pension
 }
 
 
+// A gate only reads (AGENTS.md). The source-quality registers a family validator computes are
+// written by scripts/source-quality.mjs; here the committed copy must match what replay computes.
+function sourceQualityCurrent(family, result) {
+  const file = path.join(ROOT, `data/coverage/${family}.source-quality.json`);
+  const want = JSON.stringify(result, null, 1) + "\n";
+  if (!fs.existsSync(file) || fs.readFileSync(file, "utf8") !== want) fail(`data/coverage/${family}.source-quality.json is stale: run node scripts/source-quality.mjs ${family}`);
+}
+
 function checkCadence(dates, stepMonths, slug) {
   let prev = null;
   for (const d of dates) {
@@ -76,7 +85,11 @@ function trailingEst(s, dates, i, last) {
   return true;
 }
 
+// slugs a family check has passed through checkRange; every other bundle on disk gets the null
+// rule and its unit envelopes in the EVERY BUNDLE pass below (CONTRACT-series rule 2d)
+const RANGE_CHECKED = new Set();
 function checkRange(bundle, lo, hi, slug, seriesRange, verifiedSourceSnapshots = new Map(), verifiedExpectedSchedules = registeredExpectedSchedules) {
+  RANGE_CHECKED.add(slug);
   // CONTRACT-series rule 2: disclosure lives on the series. A bundle-level
   // meta.gaps union survived only in the legacy shape; writeSeries migrates
   // it, so any meta.gaps here bypassed the writer by hand.
@@ -3976,50 +3989,9 @@ if (fs.existsSync(path.join(ROOT, "data/coverage/households.manifest.json"))) {
   const b=load(slug);checkMeta(b,slug,"households",b.meta.base,b.meta.frequency);checkFreshness(b,slug,{},"households");
  }
  const result=validateHouseholds(ROOT);for(const e of result.errors)fail(e);
- fs.writeFileSync(path.join(ROOT,"data/coverage/households.source-quality.json"),JSON.stringify(result,null,1)+'\n');
+ sourceQualityCurrent("households",result);
  if(!result.errors.length)ok(`households: ${result.stats.sourceCells} source cells replayed; ${result.stats.identities} statistical identities; ${result.issues.length} published discrepancies flagged`);
 }
-
-// META TEXT — every bundle on disk, whatever check family it belongs to, and every sources.yml
-// entry the adapters copy text from: meta.geo is a three-letter code on every bundle (CONTRACT-series
-// rule 8), and a revision policy, where one is given, reads as a sentence, never a placeholder
-// ("x", "TBD"). 2026-10: sixteen trade-dbie bundles shipped revisionPolicy "x" and five rbi-*
-// bundles no geo, unnoticed because the per-family checks above default a missing geo to IND.
-{
-  const PLACEHOLDER = /^(x+|tbd|todo|tba|n\/?a|none|null|undefined|placeholder|lorem.*|-+|\?+|\.+)$/i;
-  const sentence = (t) => typeof t === "string" && !PLACEHOLDER.test(t.trim()) && t.trim().split(/\s+/).length >= 3 && /^["'(\[]?[A-Z0-9]/.test(t.trim()) && /[.!?)"']$/.test(t.trim());
-  let n = 0, noPolicy = 0, bad = 0;
-  for (const f of fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => f.endsWith(".json")).sort()) {
-    const slug = f.replace(/\.json$/, "");
-    let m, canonical;
-    try { canonical = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", f), "utf8")); m = canonical.meta ?? {}; } catch (e) { fail(`${slug}: unreadable (${e.message})`); bad++; continue; }
-    n++;
-    if (m.observationKind !== undefined || Object.values(canonical.series || {}).some(series => series.expected !== undefined)) {
-      if (m.observationKind !== undefined && m.observationKind !== "expected-schedule") { fail(`${slug}: unsupported observationKind ${JSON.stringify(m.observationKind)}`); bad++; }
-      if (!Object.keys(canonical.series || {}).length) { fail(`${slug}: empty expected-source bundle`); bad++; }
-      for (const key of Object.keys(canonical.series || {})) {
-        const problem = expectedScheduleProblem(canonical, key, registeredExpectedSchedules.get(`${slug}:${key}`), slug);
-        if (problem) { fail(`${slug}.${key}: ${problem}`); bad++; }
-      }
-    }
-    if (m.periodLabelMode !== undefined && m.periodLabelMode !== "source-date") { fail(`${slug}: unknown meta.periodLabelMode ${JSON.stringify(m.periodLabelMode)}`); bad++; }
-    if (m.periodLabelMode === "source-date") {
-      const bundle = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", f), "utf8"));
-      for (const iso of bundle.dates) {
-        const date = new Date(iso + "T00:00:00Z");
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(iso) || !Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== iso) { fail(`${slug}: invalid exact source date ${JSON.stringify(iso)}`); bad++; }
-      }
-    }
-    if (typeof m.geo !== "string" || !/^[A-Z]{3}$/.test(m.geo)) { fail(`${slug}: meta.geo ${JSON.stringify(m.geo)} is not a three-letter code (every bundle names its geography)`); bad++; }
-    if (m.revisionPolicy == null) noPolicy++;
-    else if (!sentence(m.revisionPolicy)) { fail(`${slug}: meta.revisionPolicy ${JSON.stringify(m.revisionPolicy)} is not a sentence (fix sources.yml revision_policy or the adapter, then rebake)`); bad++; }
-  }
-  for (const [k, d] of Object.entries(cfg.dossiers ?? {})) {
-    if (d?.revision_policy != null && !sentence(d.revision_policy)) { fail(`sources.yml ${k}: revision_policy ${JSON.stringify(d.revision_policy)} is not a sentence`); bad++; }
-  }
-  if (!bad) ok(`meta text: ${n} bundles name a three-letter geography; every revision policy given is a sentence (${noPolicy} bundles carry none)`);
-}
-
 
 /* ---- copied runs (launch read-through, 2026-10-10) ----
  * A source can print one stretch of its history a second time under other dates (DBIE 148 and
@@ -4093,9 +4065,9 @@ const { bornStandIns } = await import("./lib/util.mjs");
 // ---- energy expansion ----
 if(fs.existsSync(path.join(ROOT,"data/coverage/energy.manifest.json"))){
  const {validateEnergy}=await import("./lib/energy-validation.mjs");
- for(const {slug} of JSON.parse(fs.readFileSync(path.join(ROOT,"data/coverage/energy.manifest.json"))).bundles){const b=load(slug);checkMeta(b,slug,"energy",b.meta.base,b.meta.frequency);checkRange(b,-1e8,1e8,slug);checkCadence(b.dates,b.meta.frequency==="monthly"?1:12,slug);}
+ for(const {slug} of JSON.parse(fs.readFileSync(path.join(ROOT,"data/coverage/energy.manifest.json"))).bundles){const b=load(slug);checkMeta(b,slug,"energy",b.meta.base,b.meta.frequency);checkRange(b,-Infinity,Infinity,slug,envelopeRanges(b,slug));checkCadence(b.dates,b.meta.frequency==="monthly"?1:12,slug);}
  const result=validateEnergy(ROOT);for(const e of result.errors)fail(e);
- fs.writeFileSync(path.join(ROOT,"data/coverage/energy.source-quality.json"),JSON.stringify(result,null,1)+'\n');
+ sourceQualityCurrent("energy",result);
  if(!result.errors.length)ok("energy: "+result.stats.sourceCells+" source cells replayed; "+result.stats.identities+" identities; "+result.issues.length+" published discrepancies disclosed");
 }
 // ---- end energy expansion ----
@@ -4105,7 +4077,7 @@ if(fs.existsSync(path.join(ROOT,'data/coverage/farm-households.manifest.json')))
  const {validateFarmHouseholds}=await import('./lib/farm-households-validation.mjs');
  for(const {slug} of JSON.parse(fs.readFileSync(path.join(ROOT,'data/coverage/farm-households.manifest.json'))).bundles){const b=load(slug);checkMeta(b,slug,'farm-households',b.meta.base,b.meta.frequency);if(b.dates.length!==1||Object.values(b.series).some(s=>s.data.length!==1))fail('Farm snapshot axis mismatch '+slug);}
  const r=validateFarmHouseholds(ROOT);for(const e of r.errors)fail(e);
- fs.writeFileSync(path.join(ROOT,'data/coverage/farm-households.source-quality.json'),JSON.stringify(r,null,1)+'\n');
+ sourceQualityCurrent("farm-households",r);
  if(!r.errors.length)ok(`farm-households: ${r.stats.sourceCells} API/report cells replayed; ${r.stats.identities} identities; ${r.stats.withheld} source heading cells withheld`);
 }
 // ---- end farm-households ----
@@ -4138,11 +4110,67 @@ if (cfg.dossiers?.pensions) {
       const b=load(slug);checkMeta(b,slug,'pensions',b.meta.base,b.meta.frequency);
       if(!b.dates.length||b.dates.some((d,i)=>!/^\d{4}-\d{2}-\d{2}$/.test(d)||!Number.isFinite(Date.parse(d))||(i&&d<=b.dates[i-1])))fail(`${slug}: invalid or unordered source axis`);
       for(const [key,row] of Object.entries(b.series))if(row.data.some(v=>v!==null&&!Number.isFinite(v)))fail(`${slug}.${key}: non-finite source value`);
-      checkRange(b,-1e15,1e15,slug);
+      checkRange(b,-Infinity,Infinity,slug,envelopeRanges(b,slug));
     }
     ok(`pensions: ${model.manifest.bundles.length} source-bound bundles; ${model.coverage.reviewedStandaloneRecords} reviewed, ${model.coverage.pendingRecords} pending, ${model.coverage.sourceOnlyRecords} source-only`);
   } catch(error){fail(`pensions: ${error.message}`);}
 }
+
+// Runs last: the family checks above register what they range-checked (RANGE_CHECKED).
+// META TEXT — every bundle on disk, whatever check family it belongs to, and every sources.yml
+// entry the adapters copy text from: meta.geo is a three-letter code on every bundle (CONTRACT-series
+// rule 8), and a revision policy, where one is given, reads as a sentence, never a placeholder
+// ("x", "TBD"). 2026-10: sixteen trade-dbie bundles shipped revisionPolicy "x" and five rbi-*
+// bundles no geo, unnoticed because the per-family checks above default a missing geo to IND.
+{
+  const PLACEHOLDER = /^(x+|tbd|todo|tba|n\/?a|none|null|undefined|placeholder|lorem.*|-+|\?+|\.+)$/i;
+  const sentence = (t) => typeof t === "string" && !PLACEHOLDER.test(t.trim()) && t.trim().split(/\s+/).length >= 3 && /^["'(\[]?[A-Z0-9]/.test(t.trim()) && /[.!?)"']$/.test(t.trim());
+  let n = 0, noPolicy = 0, bad = 0, unchecked = 0;
+  for (const f of fs.readdirSync(path.join(ROOT, "data/series")).filter((f) => f.endsWith(".json")).sort()) {
+    const slug = f.replace(/\.json$/, "");
+    let m, canonical;
+    try { canonical = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", f), "utf8")); m = canonical.meta ?? {}; } catch (e) { fail(`${slug}: unreadable (${e.message})`); bad++; continue; }
+    n++;
+    // EVERY BUNDLE (CONTRACT-series rules 2 and 2d): a bundle no family check range-checked still
+    // gets the null rule and its unit envelopes; every series of every bundle stays inside the
+    // envelope of its unit, whatever range its family allowed; a bundle with no series is no bundle.
+    if (!Object.keys(canonical.series ?? {}).length && !canonical.points) { fail(`${slug}: no series (leave an empty bundle out)`); bad++; }
+    try {
+      if (!RANGE_CHECKED.has(slug) && canonical.series) { checkRange(canonical, -Infinity, Infinity, slug, envelopeRanges(canonical, slug)); unchecked++; }
+      for (const [k, s] of Object.entries(canonical.series ?? {})) {
+        const { unit, range } = envelopeOf(canonical, s);
+        if (!range) { fail(`${slug}.${k}: unit "${unit}" has no envelope in scripts/lib/unit-envelope.mjs`); bad++; continue; }
+        const i = (s.data ?? []).findIndex((v) => v != null && (v < range[0] || v > range[1]));
+        if (i >= 0) { fail(`${slug}.${k}: ${s.data[i]} at ${canonical.dates[i]} is outside the ${unit} envelope [${range}] (a mislabelled unit or a source defect)`); bad++; }
+      }
+    } catch (e) { fail(e.message); bad++; }
+    if (m.observationKind !== undefined || Object.values(canonical.series || {}).some(series => series.expected !== undefined)) {
+      if (m.observationKind !== undefined && m.observationKind !== "expected-schedule") { fail(`${slug}: unsupported observationKind ${JSON.stringify(m.observationKind)}`); bad++; }
+      if (!Object.keys(canonical.series || {}).length) { fail(`${slug}: empty expected-source bundle`); bad++; }
+      for (const key of Object.keys(canonical.series || {})) {
+        const problem = expectedScheduleProblem(canonical, key, registeredExpectedSchedules.get(`${slug}:${key}`), slug);
+        if (problem) { fail(`${slug}.${key}: ${problem}`); bad++; }
+      }
+    }
+    if (m.periodLabelMode !== undefined && m.periodLabelMode !== "source-date") { fail(`${slug}: unknown meta.periodLabelMode ${JSON.stringify(m.periodLabelMode)}`); bad++; }
+    if (m.periodLabelMode === "source-date") {
+      const bundle = JSON.parse(fs.readFileSync(path.join(ROOT, "data/series", f), "utf8"));
+      for (const iso of bundle.dates) {
+        const date = new Date(iso + "T00:00:00Z");
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(iso) || !Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== iso) { fail(`${slug}: invalid exact source date ${JSON.stringify(iso)}`); bad++; }
+      }
+    }
+    if (typeof m.geo !== "string" || !/^[A-Z]{3}$/.test(m.geo)) { fail(`${slug}: meta.geo ${JSON.stringify(m.geo)} is not a three-letter code (every bundle names its geography)`); bad++; }
+    if (m.revisionPolicy == null) noPolicy++;
+    else if (!sentence(m.revisionPolicy)) { fail(`${slug}: meta.revisionPolicy ${JSON.stringify(m.revisionPolicy)} is not a sentence (fix sources.yml revision_policy or the adapter, then rebake)`); bad++; }
+  }
+  for (const [k, d] of Object.entries(cfg.dossiers ?? {})) {
+    if (d?.revision_policy != null && !sentence(d.revision_policy)) { fail(`sources.yml ${k}: revision_policy ${JSON.stringify(d.revision_policy)} is not a sentence`); bad++; }
+  }
+  if (!bad) ok(`meta text: ${n} bundles name a three-letter geography; every revision policy given is a sentence (${noPolicy} bundles carry none)`);
+  if (!bad) ok(`every bundle: ${n} bundles inside their unit envelopes; ${unchecked} with no family range check got the null rule and envelopes`);
+}
+
 
 if (failures) { console.error(`\n${failures} validation failure(s)`); process.exit(1); }
 console.log("validate: all checks passed");

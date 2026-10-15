@@ -3539,18 +3539,6 @@ rules:
   - match: energy-ember-states-yearly-electricity-generation-gwh-geo-jk-ladakh-separate:*
     status: baked
     bundle: energy-ember-states-yearly-electricity-generation-gwh-geo-jk-ladakh-separate
-  - match: energy-ember-states-yearly-power-sector-emissions-pct:*
-    status: baked
-    bundle: energy-ember-states-yearly-power-sector-emissions-pct
-  - match: energy-ember-states-yearly-power-sector-emissions-pct-geo-jk-includes-ladakh:*
-    status: baked
-    bundle: energy-ember-states-yearly-power-sector-emissions-pct-geo-jk-includes-ladakh
-  - match: energy-ember-states-yearly-power-sector-emissions-pct-geo-jk-ladakh-transition:*
-    status: baked
-    bundle: energy-ember-states-yearly-power-sector-emissions-pct-geo-jk-ladakh-transition
-  - match: energy-ember-states-yearly-power-sector-emissions-pct-geo-jk-ladakh-separate:*
-    status: baked
-    bundle: energy-ember-states-yearly-power-sector-emissions-pct-geo-jk-ladakh-separate
   - match: energy-ember-states-yearly-power-sector-emissions-kt-co2e:c_f34c0bf878202e6d4f19
     status: shown
     bundle: energy-ember-states-yearly-power-sector-emissions-kt-co2e
@@ -5555,15 +5543,6 @@ rules:
   - match: energy-ember-states-monthly-electricity-generation-gwh-geo-jk-ladakh-separate:*
     status: baked
     bundle: energy-ember-states-monthly-electricity-generation-gwh-geo-jk-ladakh-separate
-  - match: energy-ember-states-monthly-power-sector-emissions-pct:*
-    status: baked
-    bundle: energy-ember-states-monthly-power-sector-emissions-pct
-  - match: energy-ember-states-monthly-power-sector-emissions-pct-geo-jk-includes-ladakh:*
-    status: baked
-    bundle: energy-ember-states-monthly-power-sector-emissions-pct-geo-jk-includes-ladakh
-  - match: energy-ember-states-monthly-power-sector-emissions-pct-geo-jk-ladakh-separate:*
-    status: baked
-    bundle: energy-ember-states-monthly-power-sector-emissions-pct-geo-jk-ladakh-separate
   - match: energy-ember-states-monthly-power-sector-emissions-kt-co2e:c_553395c06e91a1fa6670
     status: shown
     bundle: energy-ember-states-monthly-power-sector-emissions-kt-co2e
@@ -6766,3 +6745,38 @@ rules:
   - match: energy-report-2026-petroleum-gwh:*
     status: baked
     bundle: energy-report-2026-petroleum-gwh
+  - match: energy-ember-states-monthly-power-sector-emissions-pct-geo-jk-includes-ladakh:duplicate:*
+    status: excluded
+    reason: Ember prints these power-sector emissions a second time under the unit
+      %; every row repeats the ktCO2 figure for the same state, period and fuel,
+      so the copy is not baked.
+  - match: energy-ember-states-monthly-power-sector-emissions-pct-geo-jk-ladakh-separate:duplicate:*
+    status: excluded
+    reason: Ember prints these power-sector emissions a second time under the unit
+      %; every row repeats the ktCO2 figure for the same state, period and fuel,
+      so the copy is not baked.
+  - match: energy-ember-states-monthly-power-sector-emissions-pct:duplicate:*
+    status: excluded
+    reason: Ember prints these power-sector emissions a second time under the unit
+      %; every row repeats the ktCO2 figure for the same state, period and fuel,
+      so the copy is not baked.
+  - match: energy-ember-states-yearly-power-sector-emissions-pct-geo-jk-includes-ladakh:duplicate:*
+    status: excluded
+    reason: Ember prints these power-sector emissions a second time under the unit
+      %; every row repeats the ktCO2 figure for the same state, period and fuel,
+      so the copy is not baked.
+  - match: energy-ember-states-yearly-power-sector-emissions-pct-geo-jk-ladakh-separate:duplicate:*
+    status: excluded
+    reason: Ember prints these power-sector emissions a second time under the unit
+      %; every row repeats the ktCO2 figure for the same state, period and fuel,
+      so the copy is not baked.
+  - match: energy-ember-states-yearly-power-sector-emissions-pct-geo-jk-ladakh-transition:duplicate:*
+    status: excluded
+    reason: Ember prints these power-sector emissions a second time under the unit
+      %; every row repeats the ktCO2 figure for the same state, period and fuel,
+      so the copy is not baked.
+  - match: energy-ember-states-yearly-power-sector-emissions-pct:duplicate:*
+    status: excluded
+    reason: Ember prints these power-sector emissions a second time under the unit
+      %; every row repeats the ktCO2 figure for the same state, period and fuel,
+      so the copy is not baked.

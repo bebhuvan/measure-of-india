@@ -27,7 +27,22 @@ export function writeJson(root, rel, obj) {
 // explain — a meta.gaps union says nothing about which series actually
 // misses which date. Any adapter still assembling meta.gaps/meta.gapsNote
 // gets per-series gaps, mechanically derived from the data.
+/* A series with no figure at all is not a series (AGENTS.md rule 2, CONTRACT-series rule 2c).
+ * The one exception is a cell the source itself marks as unpublished, declared on the series as
+ * `unavailable` and proved against the archive by validate.mjs (digital access). Adapters split
+ * empty cells out with splitEmptySeries and record them in their catalogue as withheld, with
+ * the reason, so coverage still accounts for every cell the source lists. */
+export const isEmptySeries = (s) => !(s?.data ?? []).some((v) => v != null) && !s?.unavailable;
+export function splitEmptySeries(series) {
+  const kept = {}, empty = {};
+  for (const [k, s] of Object.entries(series ?? {})) (isEmptySeries(s) ? empty : kept)[k] = s;
+  return { kept, empty };
+}
+
 export function writeSeries(root, rel, obj) {
+  const empty = Object.keys(obj.series ?? {}).filter((k) => obj.series[k]?.data && isEmptySeries(obj.series[k]));
+  if (empty.length) throw new Error(`writeSeries ${rel}: ${empty.length} series have no value at all (e.g. ${empty.slice(0, 3).join(", ")}); keep them out of the bundle with splitEmptySeries and record them in the catalogue as withheld`);
+  if (obj.series && !Object.keys(obj.series).length) throw new Error(`writeSeries ${rel}: no series left to write; leave the bundle out`);
   if (obj.meta?.gaps?.length) {
     const declared = new Set(obj.meta.gaps);
     for (const s of Object.values(obj.series ?? {})) {

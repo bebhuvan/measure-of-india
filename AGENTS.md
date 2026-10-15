@@ -33,7 +33,9 @@ Hard rules — breaking any of these is a bug regardless of what else works:
    are different rulers; they live in separate bundles, never one series.
 2. **Missing data is `null`, never 0, never gaps in the array.** Interior nulls
    must be declared in the `gaps` of the very series that misses them
-   (CONTRACT-series rule 2; bundle-level `meta.gaps` is retired).
+   (CONTRACT-series rule 2; bundle-level `meta.gaps` is retired). A series with
+   no value at all is not baked (rule 2e), and every value sits inside the
+   envelope of its unit (rule 2f, `scripts/lib/unit-envelope.mjs`).
 3. **Every number in prose must come from the facts sheet.** verify.mjs traces
    this mechanically; there are no exceptions, ever.
 4. **Nothing deploys without passing `npm run gates` AND a human merging the
@@ -52,6 +54,7 @@ Hard rules — breaking any of these is a bug regardless of what else works:
 | `npm run prose` | facts + regenerate all dated prose (needs .env LLM keys) |
 | `npm run prose:dry` | prompts only, no API calls |
 | `npx astro build` | build from committed data (no fetch) |
+| `node scripts/source-quality.mjs` | rewrite the households/energy/farm source-quality registers after a rebake (validate only checks them) |
 | `npm run qc` | post-build gate (numbers + chart geometry lint); run AFTER a build |
 | `npm run lint:charts` | chart geometry lint alone (collisions, overlaps, bleeds, clips) |
 

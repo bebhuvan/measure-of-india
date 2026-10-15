@@ -159,7 +159,8 @@ let chartsSeen = 0;
 for (const url of PAGES) {
   if (ONLY && url !== ONLY) continue;
   const file = path.join(DIST, url, "index.html");
-  if (!fs.existsSync(file)) { console.error("MISSING BUILD:", url); continue; }
+  // a page the registry promises but the build lacks is a failure: a gate that skips it passes nothing
+  if (!fs.existsSync(file)) { issues.push({ kind: "missing build", url, detail: `no ${path.relative(process.cwd(), file)}; run npx astro build first` }); continue; }
   const html = fs.readFileSync(file, "utf8");
   const dom = new JSDOM(html, { url: "https://indiaatlas.in" + url, pretendToBeVisual: true });
   const { window } = dom;

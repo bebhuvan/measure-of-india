@@ -261,47 +261,79 @@ const keyPart = (t) => {
   const k = String(t).toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, "") || "x";
   return k.length <= 48 ? k : `${k.slice(0, 40)}_${crypto.createHash("sha1").update(k).digest("hex").slice(0, 6)}`;
 };
-function unitOf(label, rowUnit) {
-  const u = String(rowUnit ?? "").trim();
-  if (/^%$/.test(u)) return "percent";
-  if (/^(no\.?|number)$/i.test(u)) return "count";
-  if (/rs\.? ?crore/i.test(u)) return "inr_crore";
-  if (/°c/i.test(u)) return "degc";
-  if (/^mm$/i.test(u)) return "mm";
-  if (/sq\.? ?km/i.test(u)) return "sq_km";
-  if (/hectare/i.test(u)) return "hectares";
-  const t = String(label);
-  // units named inside the label or sub-indicator ("(in metric tonnes)", "Area (Sq. Km)", "(MU)")
-  if (/\(\s*(in )?%\s*\)|in percent|\(percent\)|% of /i.test(t)) return "percent";
-  if (/sq\.? ?km|km²|km2\b/i.test(t)) return "sq_km";
-  if (/\(\s*(in )?(metric )?tonnes?\s*\)/i.test(t)) return "tonnes";
-  if (/\(\s*(in )?hectares?\s*\)/i.test(t)) return "hectares";
-  if (/\(\s*(in )?mm\s*\)/i.test(t)) return "mm";
-  if (/\(\s*°c\s*\)|degree celsius/i.test(t)) return "degc";
-  if (/\(\s*(in )?(rs\.?|₹) ?crore\s*\)/i.test(t)) return "inr_crore";
-  if (/\(\s*(in )?km\s*\)/i.test(t)) return "km";
-  if (/\bpercentage\b|\bper cent\b/i.test(t) && !/per 1,?000/i.test(t)) return "percent";
+/* The unit of one series. An explicit unit or denominator ("(Rs.)", "per 1,000", "(%)", the row's
+ * unit field) is a strong signal; a keyword ("rate", "number of") is a weak one. The series' own
+ * measure text (sub-indicator and cut parts) outranks the table title at each strength: a table
+ * titled "Percentage of households ..." can carry a count of households beside the percentage,
+ * one titled "Proportion per 1000 ... and average amount" carries rupee amounts beside the rates,
+ * and an "Incidence rate" column under a "per 1,00,000 persons" title is per 1,00,000. */
+export function unitOf(label, rowUnit, measure) {
+  return strongUnit(rowUnit, true) ?? (measure ? strongUnit(measure) ?? countMeasure(measure) : null) ?? strongUnit(label)
+    ?? (measure ? weakUnit(measure) : null) ?? weakUnit(label) ?? "unstated";
+}
+function strongUnit(t, isUnitField = false) {
+  const u = String(t ?? "").trim();
+  if (isUnitField) {
+    if (/^%$/.test(u)) return "percent";
+    if (/^(no\.?|number)$/i.test(u)) return "count";
+    if (/rs\.? ?crore/i.test(u)) return "inr_crore";
+    if (/°c/i.test(u)) return "degc";
+    if (/^mm$/i.test(u)) return "mm";
+    if (/sq\.? ?km/i.test(u)) return "sq_km";
+    if (/hectare/i.test(u)) return "hectares";
+    return null;
+  }
+  if (/per rs\.? ?1,?000\b/i.test(u)) return "per_1000";
+  if (/per 1,?00,?000\b|per lakh (persons|population)/i.test(u)) return "per_100k";
+  if (/\(\s*(in )?%\s*\)|in percent|\(percent\)|% of /i.test(u)) return "percent";
+  if (/sq\.? ?km|km²|km2\b/i.test(u)) return "sq_km";
+  if (/\(\s*(in )?(metric )?tonnes?\s*\)/i.test(u)) return "tonnes";
+  if (/\(\s*'?000 ha\.?\s*\)|'000 ha\b/i.test(u)) return "thousand_ha";
+  if (/\(\s*(in )?hectares?\s*\)/i.test(u)) return "hectares";
+  if (/\(\s*(in )?mm\s*\)/i.test(u)) return "mm";
+  if (/\(\s*°c\s*\)|degree celsius/i.test(u)) return "degc";
+  if (/\(\s*(in )?(rs\.?|₹) ?crore\s*\)/i.test(u)) return "inr_crore";
+  if (/\(\s*rs\.? ?lakhs?\s*\)/i.test(u)) return "inr_lakh";
+  if (/\(\s*(in )?km\s*\)/i.test(u)) return "km";
+  if (/\bin days\b|\(\s*days?\s*\)/i.test(u)) return "days";
+  if (/\(\s*thousand\b/i.test(u)) return "thousand";
+  if (/\(\s*lakh\b/i.test(u)) return "lakh_count";
+  if (/per 1,?000\b/i.test(u)) return "per_1000";
+  if (/\((rs\.?|₹)\)|\(in (rs\.?|₹)\)/i.test(u)) return "inr";
+  if (/\bpercentage\b|\bper cent\b/i.test(u)) return "percent";
+  return null;
+}
+// a column that names itself as a head count, whatever its table is titled
+function countMeasure(t) {
+  if (/percent|%|ratio|rate|share|proportion|per 1/i.test(t)) return null;
+  if (/^total\b.*\bhouseholds?\b|^no\.? of\b.*\bhouseholds?\b|^(type[- ]wise )?.*\bpopulation$|^average number of\b/i.test(t)) return "count";
+  return null;
+}
+function weakUnit(t) {
+  t = String(t ?? "");
   if (/^enrolment of|^enrolments? in|\benrolment\b.*\b(total|primary|secondary)\b/i.test(t) && !/ratio|rate|share|proportion/i.test(t)) return "count";
-  if (/\(\s*thousand\b/i.test(t)) return "thousand";
-  if (/\(\s*lakh\b/i.test(t)) return "lakh_count";
-  if (/\b(number of|no\. of|total number)\b|\bin number\b|\(\s*(in )?(number|nos?\.?)\s*\)/i.test(t)) return "count";
   if (/pupil teacher ratio/i.test(t)) return "pupils_per_teacher";
   if (/gender parity index/i.test(t)) return "gpi";
-  if (/per 1,?000\b/i.test(t)) return "per_1000";
+  if (/\b(number of|no\. of|total number)\b|\bin number\b|\(\s*(in )?(number|nos?\.?)\s*\)/i.test(t)) return "count";
   if (/^(percentage|percent|proportion|share)|\b(rate|ratio)\b.*\(%\)|enrolment ratio|enrolment rate|\brate\b/i.test(t) && !/per 1/i.test(t)) return "percent";
   if (/\b(rs\.?|rupees|expenditure|₹)/i.test(t)) return "inr";
   if (/^(total )?number|^average (teachers|enrolments)|^schools|^teachers|^enrolments|^new admission|^children with special/i.test(t)) return "count";
-  return "unstated";
+  return null;
 }
 // an API field name as words: "age_group" -> "age group", "sub_indicator" -> "sub-indicator",
 // the source's misspelt "instituition_type" -> "institution type"
 const fieldWords = (f) => String(f).replace(/^sub_/, "sub-").replace(/instituition/, "institution").replace(/_+/g, " ").trim();
+// Tables the publisher serves broken, named with the evidence; never baked, every row stays in the
+// raw dump. A gate (validate.mjs unit envelopes) is what finds these; the fix is never a guess.
+export const SOURCE_DEFECTS = {
+  "env 99": "MoSPI serves this table with its column labels rotated: from 2019-20 to 2022-23 the column named Percentage holds household counts (Goa: 263,013) and the column named Total Rural Households holds the percentage (115.62 in 2019-20), so no column can be read as what it says.",
+};
 async function phaseBake(plan) {
   const { readRaw, writeSeries, nullBornStandIns } = await import("../util.mjs");
   const { placeAll } = await import("../../../src/dossiers/states-key.js");
   const dir = path.join(ROOT, "data/raw/profiles-mospi");
   let nB = 0, nS = 0, unplaced = new Map();
-  const undated = [], notSeries = [];
+  const undated = [], notSeries = [], sourceDefects = [];
   for (const P of PRODUCTS) {
     for (const ind of plan.products[P.id]?.indicators ?? []) {
       const rel = `data/raw/profiles-mospi/${P.id}-${ind.survey ?? 0}-${ind.code}.json`;
@@ -326,6 +358,7 @@ async function phaseBake(plan) {
       const keep = dims.filter((d) => !headOf.has(d) && rows.some((r) => r[d] != null && r[d] !== ""));
       const dates = [...new Set(rows.map((r) => dateOf(P, r)).filter(Boolean))].sort();
       if (!dates.length) { undated.push(`${P.id} ${ind.code}`); continue; }
+      if (SOURCE_DEFECTS[`${P.id} ${ind.code}`]) { sourceDefects.push(`${P.id} ${ind.code}`); fs.rmSync(path.join(ROOT, "data/series", `profiles-mospi-${P.id}-${ind.survey ?? 0}-${ind.code}.json`), { force: true }); continue; }
       const labels = {};
       for (const r of rows) { const d = dateOf(P, r), t = periodText(r); if (d && t && !/^\d{4}(-\d{2})?$/.test(t)) (labels[d] ??= new Set()).add(t); }
       const series = {};
@@ -351,7 +384,7 @@ async function phaseBake(plan) {
         const d = dateOf(P, r);
         if (!d) continue;
         const label = [String(ind.label ?? r.indicator ?? "").trim().replace(/\s+/g, " "), ...parts.filter((x) => x !== "")].join(", ") + `, ${gname}`;
-        const s = (series[key] ??= { name: `${P.id}_${ind.code}_${key}`.slice(0, 120), label, unit: unitOf(label, r.unit), state: geo === "all_india" || geo.startsWith("zone_") || geo.startsWith("other_") ? undefined : gname, geo: gname, group: parts.filter((x) => x !== "").join(", ") || undefined, data: new Array(dates.length).fill(null) });
+        const s = (series[key] ??= { name: `${P.id}_${ind.code}_${key}`.slice(0, 120), label, unit: unitOf(label, r.unit, parts.filter((x) => x !== "").join(", ")), state: geo === "all_india" || geo.startsWith("zone_") || geo.startsWith("other_") ? undefined : gname, geo: gname, group: parts.filter((x) => x !== "").join(", ") || undefined, data: new Array(dates.length).fill(null) });
         const v = num(r.value), i = dates.indexOf(d);
         // a table can print a year twice, provisional "(P)" and final: the final one wins, and a
         // cell left with only a provisional figure is listed on its series as provisional
@@ -401,7 +434,7 @@ async function phaseBake(plan) {
   }
   if (unplaced.size) throw new Error(`bake: the state key cannot place ${[...unplaced].map(([k, n]) => `"${k}" (${n})`).join(", ")}`);
   console.log(`D: ${nB} bundles, ${nS} series${undated.length ? `; not baked, no period named: ${undated.join(", ")}` : ""}${notSeries.length ? `; not baked, not a series: ${notSeries.join(", ")}` : ""}`);
-  fs.writeFileSync(path.join(ROOT, "data/coverage/profiles-mospi-bake.json"), JSON.stringify({ baked: nB, series: nS, undated, notSeries }, null, 1));
+  fs.writeFileSync(path.join(ROOT, "data/coverage/profiles-mospi-bake.json"), JSON.stringify({ baked: nB, series: nS, undated, notSeries, sourceDefects }, null, 1));
 }
 
 function freeBytes() { try { const st = fs.statfsSync(ROOT); return st.bavail * st.bsize; } catch { return null; } }

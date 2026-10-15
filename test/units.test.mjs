@@ -16,7 +16,8 @@ const MONEY = /^(inr|usd|sdr|eur)|crore|lakh|million|billion|_bn$|_mn$/;
 export const RATIO_LABEL = /\bratios?\b|as per ?cent|percentage (of|to)|as percentage|per ?cent (of|to)\b|% of\b|\(%\)|\bin per ?cent\b/i;
 // money rows whose names only mention a rate: derivatives on interest rates, interest-rate slabs
 // ("5% to 6%, credit outstanding"), and trade commodity names ("not more than 85 percent of H3BO3")
-const NOT_A_RATIO = /interest rate (swaps?|futures?|options?)|forward rate agreements?|percent of h3bo3/i;
+// and a rupee column that names its own unit under a table titled "Percentage of ..." (NSS profile tables)
+const NOT_A_RATIO = /interest rate (swaps?|futures?|options?)|forward rate agreements?|percent of h3bo3|average expenditure[^,]*\(rs\.?\)/i;
 
 test("no series labelled as a ratio or per cent carries a money unit", () => {
   const bad = [];

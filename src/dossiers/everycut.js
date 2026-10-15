@@ -79,6 +79,7 @@ export const UNITS = {
   pct_per_annum: { kind: "pt", fmt: (v) => v.toFixed(2) + "%", note: "a year" },
   per_1000: { kind: "diff", fmt: (v) => grp(v, 1), note: "per 1,000" },
   per_100k_live_births: { kind: "diff", fmt: (v) => grp(v), note: "per 1,00,000 live births" },
+  per_100k: { kind: "diff", fmt: (v) => grp(v), note: "per 1,00,000 persons" },
   births_per_woman: { kind: "diff", fmt: (v) => v.toFixed(2), note: "births per woman" },
   gini: { kind: "diff", fmt: (v) => v.toFixed(3), note: "Gini coefficient" },
   ratio: { kind: "diff", fmt: (v) => grp(v), note: "females per 1,000 males" },

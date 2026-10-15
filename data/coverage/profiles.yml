@@ -1317,8 +1317,8 @@ rules:
     status: baked
     bundle: profiles-mospi-env-0-98
   - match: "mospi:env:0:99"
-    status: baked
-    bundle: profiles-mospi-env-0-99
+    status: excluded
+    reason: "MoSPI serves this table with its column labels rotated: from 2019-20 to 2022-23 the column named Percentage holds household counts (Goa: 263,013) and the column named Total Rural Households holds the percentage (115.62 in 2019-20), so no column can be read as what it says. Every row is in data/raw/profiles-mospi/."
   - match: "mospi:env:0:100"
     status: baked
     bundle: profiles-mospi-env-0-100

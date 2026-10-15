@@ -12,6 +12,8 @@ export function vintageError(meta={},today=new Date().toISOString().slice(0,10))
   if(!isIsoDate(meta.vintage))return 'vintage must be an ISO date or explicitly declared unknown';
   if(meta.vintageStatus==='unknown')return 'unknown vintage status cannot carry a dated vintage';
   if(meta.vintage>today)return 'data vintage is in the future';
+  // AGENTS.md rule 5: the day the Atlas captured a body is never the day the source revised it
+  if(meta.archiveCapturedDate&&meta.vintage===meta.archiveCapturedDate)return 'vintage equals the archive capture date (a fetch date, not a data vintage)';
  }
  for(const key of ['archiveCapturedDate','reportEditionDate','apiRevisionDate']){
   if(meta[key]!=null&&(!isIsoDate(meta[key])||meta[key]>today))return `${key} must be a real, nonfuture ISO date`;

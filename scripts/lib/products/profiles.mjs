@@ -96,6 +96,7 @@ async function ledger() {
         if (ind.fetchError) { lines.push(`    status: blocked`, `    reason: ${JSON.stringify(`MoSPI pages this indicator in no fixed order or cut the read short: ${ind.fetchError.replace(/^mospiAll \S+ \{[^}]*\}: /, "")}; nothing partial is baked.`)}`); continue; }
         if (ind.expected === 0) { lines.push(`    status: excluded`, `    reason: "MoSPI lists this indicator but serves no rows for it (checked 2026-10-10)."`); continue; }
         if (bake.undated.includes(`${pid} ${ind.code}`)) { lines.push(`    status: excluded`, `    reason: "The source names no period for any row of this table, so it cannot sit on a dated axis; every row is in data/raw/profiles-mospi/."`); continue; }
+        if (bake.sourceDefects?.includes(`${pid} ${ind.code}`)) { const { SOURCE_DEFECTS } = await import("./profiles-mospi.mjs"); lines.push(`    status: excluded`, `    reason: ${JSON.stringify(SOURCE_DEFECTS[`${pid} ${ind.code}`] + " Every row is in data/raw/profiles-mospi/.")}`); continue; }
         if (bake.notSeries.includes(`${pid} ${ind.code}`)) { lines.push(`    status: excluded`, `    reason: "A list of events or records (several to one place and year), not a series; every row is in data/raw/profiles-mospi/."`); continue; }
         if (!onDisk) { lines.push(`    status: excluded`, `    reason: "No row of this table names a state, All India or a period the bake can place; every row is in data/raw/profiles-mospi/."`); continue; }
         const m = usedBy.get(slug);

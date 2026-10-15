@@ -1,6 +1,7 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import crypto from 'node:crypto';import {execFileSync} from 'node:child_process';
 import {parse} from 'acorn';import {unpublishedSnapshotProblem} from '../scripts/lib/source-unpublished-snapshot.mjs';
 import {loadExpectedContract,replayExpectedSchedule,expectedScheduleProblem} from '../scripts/lib/source-expected-schedule.mjs';import {sourceRecordFingerprint} from '../src/explore/source-quality.js';
+import {envelopeOf,envelopeRanges} from '../scripts/lib/unit-envelope.mjs';
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 test('portable independent XLSX proof binds expected points and rejects flag-only, source and schema drift',()=>{
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'atlas-expected-source-'));
@@ -20,11 +21,12 @@ sys.stdout.buffer.write(b.getvalue())`;
   const replay=()=>replayExpectedSchedule(root,contract,{parseSource:body=>JSON.parse(execFileSync(process.env.ATLAS_PYTHON||'python3',[path.resolve('scripts/lib/pensions-source-xlsx.py')],{input:body})),verifyContext:s=>s.Source.A1===c.title.text&&s.Source.A6===c.method.text,records:s=>[{key:'key',sourceLabel:s.Source.B2,unit:'count',dates:B.dates,values:[s.Source.B3,s.Source.B4==='-'?null:s.Source.B4],sourceCells:['B3','B4'],canonicalFingerprint:sourceRecordFingerprint(B,{...B.series.key,key:'key'})}]});
   const proof=replay().get('fixture-bundle:key');
   const validator=fs.readFileSync('scripts/validate.mjs','utf8'),ast=parse(validator,{ecmaVersion:'latest',sourceType:'module'}),fn=name=>{const n=ast.body.find(n=>n.type==='FunctionDeclaration'&&n.id.name===name);return validator.slice(n.start,n.end);},errors=[];
-  const rangeCheck=new Function('expectedScheduleProblem','unpublishedSnapshotProblem','registeredExpectedSchedules','fail',fn('trailingEst')+';return '+fn('checkRange'))(expectedScheduleProblem,unpublishedSnapshotProblem,new Map(),m=>errors.push(m));
+  const rangeCheck=new Function('expectedScheduleProblem','unpublishedSnapshotProblem','registeredExpectedSchedules','fail','RANGE_CHECKED',fn('trailingEst')+';return '+fn('checkRange'))(expectedScheduleProblem,unpublishedSnapshotProblem,new Map(),m=>errors.push(m),new Set());
   rangeCheck(B,0,1000000,'fixture-bundle',{},new Map(),new Map([['fixture-bundle:key',proof]]));assert.deepEqual(errors,[]);
   rangeCheck(B,0,1000000,'fixture-bundle',{});assert.ok(errors.some(e=>e.includes('Unproved')));errors.length=0;
   const globalNode=ast.body.find(n=>n.type==='BlockStatement'&&validator.slice(n.start,n.end).includes('const PLACEHOLDER')&&validator.slice(n.start,n.end).includes('unsupported observationKind'));
-  const globalGuard=new Function('fs','path','ROOT','cfg','expectedScheduleProblem','registeredExpectedSchedules','fail','ok',validator.slice(globalNode.start,globalNode.end));
+  const globalGuardWith=new Function('fs','path','ROOT','cfg','expectedScheduleProblem','registeredExpectedSchedules','fail','ok','RANGE_CHECKED','checkRange','envelopeOf','envelopeRanges',validator.slice(globalNode.start,globalNode.end));
+  const globalGuard=(...a)=>globalGuardWith(...a,new Set(),()=>{},envelopeOf,envelopeRanges);
   fs.mkdirSync(path.join(root,'data/series'));const outside=structuredClone(B);outside.meta.dossier='unregistered-family';fs.writeFileSync(path.join(root,'data/series/outside-family.json'),JSON.stringify(outside));globalGuard(fs,path,root,{dossiers:{}},expectedScheduleProblem,new Map(),m=>errors.push(m),()=>{});assert.ok(errors.some(e=>e.includes('Unproved')));errors.length=0;
   outside.meta.observationKind='expected-schdule';fs.writeFileSync(path.join(root,'data/series/outside-family.json'),JSON.stringify(outside));globalGuard(fs,path,root,{dossiers:{}},expectedScheduleProblem,new Map(),m=>errors.push(m),()=>{});assert.ok(errors.some(e=>e.includes('unsupported observationKind')));errors.length=0;
 

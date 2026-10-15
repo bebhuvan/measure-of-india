@@ -90,6 +90,21 @@ disagree, file a bug — one of them is wrong.
    headlines and current state-profile claims. CSV/JSON preserve exact dates,
    values and nulls with explicit expected flags; legacy exports are unchanged.
    Source headings and actual table windows that disagree remain disclosed.
+2e. **A series with no figure is not a series.** A source cell with no value
+   (a blank, an "X", a quarantined or withheld cell) is kept out of the bundle:
+   the adapter splits it off with `splitEmptySeries` (`scripts/lib/util.mjs`) and
+   records it in its catalogue as withheld, with the reason, so coverage still
+   accounts for every cell the source lists. `writeSeries` refuses an all-null
+   series (other than a rule-2c declaration) and a bundle with no series.
+2f. **Every series sits inside the envelope of its unit.** `scripts/lib/unit-envelope.mjs`
+   gives every stored unit its plausible range, from what the unit means: a share
+   stays within 0-100, a rate per 1,000 within plus or minus 1,000, a published
+   percentage within -100 to 1,000. validate.mjs applies it to every series of
+   every bundle, after the family checks, and gives any bundle no family
+   range-checked the null rule as well. A family may be stricter, never looser;
+   a unit missing from the table fails. A value outside its envelope is a
+   mislabelled unit or a source defect: fix the adapter's unit, or keep the
+   cell out with its reason (rule 2e), never widen the envelope to pass it.
 3. **One bundle, one instrument.** A base-year change, methodology revision,
    or coverage break starts a NEW bundle (`cpi.json` → `cpi-2024.json`).
    Never splice. Pages may show both, labelled as different rulers. Every base
