@@ -24,9 +24,14 @@ test('report extraction retains complete land-class grids and distinguishes cond
  assert.equal(Object.keys(r.seriesByTable['29']).length,31*8*25);assert.equal(Object.keys(r.seriesByTable['27A']).length,31*8*3*16);
  const national=Object.values(r.seriesByTable['29']).find(s=>s.dims.state==='All India'&&s.dims['Land_Possessed(hectares)']==='All Size'&&s.dims.sub_indicator==='Mean outstanding loan per agricultural household');assert.equal(national.data[0],74121);assert.ok(national.source.pdfPage>0);
 });
-test('analytical values and headline figures trace to their actual canonical cells',()=>{
+// The lens method (docs/briefs/launch-cleanup-2026-10-15.md): one plate per reader question; every
+// other published cell stays in Every Cut and the downloads.
+test('each plate answers its own question; values and facts trace to their canonical cells',()=>{
  const m=farmModel(),cache=new Map(),load=slug=>cache.get(slug)??(cache.set(slug,JSON.parse(fs.readFileSync('data/series/'+slug+'.json'))),cache.get(slug));
  assert.equal(m.facts.paid_income.value,10218);assert.equal(m.facts.imputed_income.value,8337);assert.equal(m.facts.debt.value,74121);assert.equal(m.facts.indebted.value,502);
- for(const p of m.plates){assert.equal(new Set(p.rows.map(r=>r.unit)).size,1);for(const r of p.rows)assert.equal(r.value,load(r.bundle).series[r.series].data[0]);}
- for(const [id,f]of Object.entries(m.facts)){const s=m.factSources[id];if(s.bundle)assert.equal(f.value,load(s.bundle).series[s.series].data[0]);else assert.ok(s.sourceText.includes(String(f.value)),id);}
+ assert.equal(m.plates.length,21);assert.equal(new Set(m.plates.map(p=>p.title)).size,m.plates.length);assert.equal(new Set(m.plates.map(p=>p.id)).size,m.plates.length);
+ for(const p of m.plates){assert.ok(p.rows.length>=2,p.id);assert.equal(new Set(p.rows.map(r=>r.unit)).size,1);assert.ok(p.rows.every(r=>Number.isFinite(r.value)&&!/^c_|Not applicable|\(hectares\)/.test(r.name)),p.id);for(const r of p.rows)assert.equal(r.value,load(r.bundle).series[r.series].data[0]);}
+ for(const [id,f]of Object.entries(m.facts)){const s=m.factSources[id];
+  if(s.derived){const v=s.parts.map(x=>load(x.bundle).series[x.series].data[0]);const want=id==='under_hectare_pct'?Math.round((v[0]+v[1]+v[2])/v[3]*100):id==='moneylender_debt_pct'?Math.round((v[0]+v[1])/10):Math.round(v[0]/10);assert.equal(f.value,want,id);}
+  else if(s.bundle)assert.equal(f.value,load(s.bundle).series[s.series].data[0],id);else assert.ok(s.sourceText.includes(String(f.value)),id);}
 });

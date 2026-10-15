@@ -32,10 +32,6 @@ const refreshIds = argv.includes("--refresh") ? argv.slice(argv.indexOf("--refre
 const SCAFFOLD = argv.includes("--scaffold");
 
 // every .now block, parsed from source: { id: "slug#figure", stamp, bundleSlug }
-// ---- energy expansion ----
-import {energyModel} from "../src/dossiers/energy.model.js";
-// ---- end energy expansion ----
-import {farmModel} from "../src/dossiers/farm-households.model.js"; // farm-households
 function scanBlocks() {
   const blocks = [];
   for (const d of DOSSIERS) {
@@ -52,10 +48,6 @@ function scanBlocks() {
   // markets-rbi: full-name listed-company plates use the same freshness contract.
   for (const p of marketsRbiSlices(slug => JSON.parse(fs.readFileSync(path.join(ROOT,'data/series',slug+'.json'),'utf8')))) blocks.push({id:`markets#cb-${p.id}`,stamp:"{view.f === 'a' ? fyOf(view.date) : qOf(view.date)}",dossier:'markets'});
   // Programmatic plates declare the same freshness contract as literal figures.
-// ---- energy expansion ----
-  for(const p of energyModel().plates)blocks.push({id:`energy#cb-${p.id}`,stamp:"{p.period}",dossier:"energy"});
-  // ---- end energy expansion ----
-  for(const p of farmModel().plates)blocks.push({id:`farm-households#cb-${p.id}`,stamp:"{p.period}",dossier:"farm-households"}); // farm-households
   return blocks;
 }
 

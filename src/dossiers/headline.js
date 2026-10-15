@@ -36,9 +36,9 @@ export const HEADLINE = {
   pensions: {value:b=>pensionHeadlineRecord(b).value.toLocaleString('en-IN'),what:'APY subscribers, published stock',period:b=>pensionHeadlineRecord(b).period,asOf:b=>pensionHeadlineRecord(b).date},
   "digital-access": { value: b => last(b, "c_9dfb5647c122b90f0409fc15").toFixed(1) + "%", what: "households with internet within their premises", period: b => b.meta.latestPeriod },
   // farm-households: historical income after paid-out costs
-  "farm-households": { value: (b) => "₹" + last(b, "c_f933a5307465e8a32ad64e2d").toLocaleString("en-IN"), what: "mean monthly agricultural-household income, historical survey", period: (b) => b.meta.latestPeriod },
+  "farm-households": { value: (b) => "₹" + last(b, "c_f933a5307465e8a32ad64e2d").toLocaleString("en-IN"), what: "average monthly income of a farm household", period: (b) => String(b.meta.latestPeriod).split(";")[0] },
   // ---- energy expansion ----
-  energy: { value: (b) => last(b, "c_2fee63973c1676aa96bb").toLocaleString("en-IN", {maximumFractionDigits:2}) + " KToE", what: "total primary energy supply", period: (b) => b.meta.latestPeriod },
+  energy: { value: (b) => (last(b, "c_2fee63973c1676aa96bb") / 1000).toLocaleString("en-IN", {maximumFractionDigits:0}) + " Mtoe", what: "total primary energy supply, million tonnes of oil equivalent", period: (b) => b.meta.latestPeriod },
   // ---- end energy expansion ----
   households: { value: (b) => "₹" + last(b, "c_1b185419507995b98bdc1bff").toLocaleString("en-IN"), what: "mean assets per rural household, historical snapshot", period: (b) => b.meta.latestPeriod },
   schools: { value: (b) => `${(last(b, "enrolments_total_number_of_enrolments_pre_primary_to_higher_secondary") / 1e7).toFixed(2)} crore`, what: "students enrolled in recognised schools, including school pre-primary", period: (b) => b.meta.latestPeriod },

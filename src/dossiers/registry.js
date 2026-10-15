@@ -1071,13 +1071,13 @@ export const DOSSIERS = [
     slug: "farm-households", factsGenerator: "scripts/farm-households-editorial.mjs", no: "33", section: "Households", name: "Farm households", title: "Farm households",
     kickerTitle: "Rural livelihoods, land and crop risk", crumbTitle: "Farm households",
     headline: "How farm families earn, <i>and what farming costs.</i>", ogTitle: "How farm families earn.",
-    blurb: "Income, paid-out and imputed costs, land, tenure, animals, creditors, crop sales, inputs and risk in the rural household survey.",
-    description: "Farm households in India: the complete archived NSS77 grain, with official report repairs and separate income, land and crop-risk populations.",
-    rssDescription: "Historical rural survey evidence on farm livelihoods, land, borrowing and crop risk.",
-    stamp: { dateStyle: "edition", vintageStyle: "vintage" }, statusNote: "Historical rural household survey", version: "v1.0",
+    blurb: "How India's farm families earn and what they owe: wages, crops, milk, land, costs, crop sales, insurance and loans, from the national farm household survey.",
+    description: "How Indian farm households earn a living, from the NSS 77th round survey of agricultural households: income by source and land size, farming costs, land and leasing, crop sales and the support price, insurance, and debt.",
+    rssDescription: "Farm household income, costs, land, crop sales, insurance and debt, from the national survey of agricultural households, 2018-19.",
+    stamp: { dateStyle: "edition", vintageStyle: "vintage" }, statusNote: "Survey of 2018-19", version: "v1.1",
     currentBundle: "farm-households-nss77-24-03", calendar: "calendar", bands: null, proseConstants: [1000],
     spark: { bundle: "farm-households-nss77-24-03", series: "c_f933a5307465e8a32ad64e2d" }, prose: false,
-    register: { id: "reg-farm-households", label: "Farm households", unit: "NSS77 historical rural survey", historyCol: "Snapshot" },
+    register: { id: "reg-farm-households", label: "Farm households", unit: "Farm household survey", historyCol: "Snapshot" },
     bundles: ["farm-households-nss77-24-03"],
     everyCutFamilies: [{id:"nss77",label:"Agricultural and land/livestock survey: every archived joint cut",match:"farm-households-nss77-"},{id:"report",label:"Official report repairs and complementary tables",match:"farm-households-report-"}],
   },
@@ -1094,15 +1094,15 @@ export const DOSSIERS = [
   "crumbTitle": "Energy",
   "headline": "The fuels behind <i>everyday life.</i>",
   "ogTitle": "The fuels behind everyday life.",
-  "blurb": "Where energy comes from, where it goes, and how India produces electricity.",
-  "description": "Complete published energy balances and electricity generation, demand, capacity and emissions, with national and state cuts.",
-  "rssDescription": "Energy flows and electricity, with separate fiscal and calendar-year accounts.",
+  "blurb": "Where India's energy comes from and who uses it: coal, oil, gas and renewables, imports, power stations and losses, and the electricity mix and its emissions.",
+  "description": "India's energy accounts and electricity in plain terms: supply by fuel, imports, what reaches users and which sectors use it, and how electricity is generated and what it emits, by state.",
+  "rssDescription": "India's energy supply, imports, use by sector and fuel, and electricity generation, demand and emissions, from MoSPI's energy accounts and Ember.",
   "stamp": {
     "dateStyle": "vintage",
     "vintageStyle": "vintage"
   },
-  "statusNote": "Annual accounts and monthly electricity",
-  "version": "v1.0",
+  "statusNote": "Energy accounts to 2024-25, electricity to 2025",
+  "version": "v1.1",
   "currentBundle": "energy-report-2026-balance-ktoe",
   "calendar": "fiscal-apr",
   "bands": null,
@@ -1154,7 +1154,7 @@ export const DOSSIERS = [
   "register": {
     "id": "reg-energy",
     "label": "Energy",
-    "unit": "KToE; fiscal years"
+    "unit": "Million tonnes of oil equivalent; fiscal years"
   },
   "bundles": [
     "energy-mospi-ktoe-supply-coal-includes-lignite",

@@ -36,8 +36,8 @@ test('published archive checksums identify the preserved source bytes',()=>{
   assert.equal(b.meta.archiveSha256,hash(fs.readFileSync(b.meta.rawFile+'.gz')),slug);
  }
 });
-test('all 229 analytical plates retain source provenance and use the shared unknown-friendly text',()=>{
- const m=farmModel();assert.equal(m.plates.length,229);
+test('every analytical plate retains source provenance and uses the shared unknown-friendly text',()=>{
+ const m=farmModel();assert.equal(m.plates.length,21);
  assert.equal(Object.keys(m.provenance).length,81);
  for(const p of m.plates){
   assert.equal(p.vintageText,vintageText(p),p.id);
