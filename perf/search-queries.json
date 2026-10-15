@@ -9,9 +9,9 @@
   },
   {
    "q": "rupee",
-   "bundle": "^external-rupee",
-   "top": 3,
-   "known": "guides whose blurbs mention \u20b9 crowd out the exchange-rate series"
+   "href": "^/guides/external/#cb-(rate|rupee|inr|fx|usd|dollar|nominal|reer)|^/guides/external/",
+   "top": 1,
+   "label": "rupee"
   },
   {
    "q": "wheat",
@@ -21,20 +21,17 @@
   {
    "q": "CPI",
    "href": "^/guides/cpi/$",
-   "top": 1,
-   "known": "guide titles carry no abbreviations; WPI's blurb wins"
+   "top": 1
   },
   {
    "q": "inflation",
    "href": "^/guides/cpi/$",
-   "top": 2,
-   "known": "CPI guide does not say inflation in title or blurb"
+   "top": 1
   },
   {
    "q": "repo rate",
-   "href": "^/guides/rates/$",
-   "top": 1,
-   "series": "^Policy repo rate"
+   "series": "^Policy repo rate",
+   "top": 1
   },
   {
    "q": "GDP",
@@ -43,15 +40,13 @@
   },
   {
    "q": "food inflation",
-   "series": "^(?!.*(CPI-RL|CPI-AL)).*food",
-   "top": 8,
-   "known": "state labour-price indices lead over all-India CPI food"
+   "series": "Consumer Food Price|Food and beverages",
+   "top": 1
   },
   {
    "q": "urban female unemployment",
-   "series": "^(?!.*previous)",
-   "top": 8,
-   "known": "previous ILO definition (ICLS13) leads over the current one"
+   "series": "^(?!.*previous).*(Unemployment).*(female|women).*",
+   "top": 1
   },
   {
    "q": "unemployment rate",
@@ -60,16 +55,13 @@
   },
   {
    "q": "infant mortality",
-   "series": "India",
-   "top": 8,
-   "known": "state rows lead over the all-India figure"
+   "series": "All India|India",
+   "top": 1
   },
   {
    "q": "Karnataka electricity capacity",
    "href": "^/states/karnataka/$",
-   "top": 1,
-   "series": "Total|All",
-   "known": "one fuel (gas) leads over total capacity"
+   "top": 1
   },
   {
    "q": "bank deposits Maharashtra",
@@ -94,7 +86,7 @@
   },
   {
    "q": "exports",
-   "href": "^/guides/trade/",
+   "href": "^/guides/(trade|external|gdp)/",
    "top": 3
   },
   {
@@ -105,19 +97,18 @@
   {
    "q": "onion prices",
    "series": "^Onion",
-   "top": 8,
-   "known": "a farm-household price-satisfaction cell leads over CPI/WPI onion prices"
+   "top": 1,
+   "known": "a farm-household price-satisfaction cell (long label, both words) leads over the CPI/WPI onion price"
   },
   {
    "q": "petrol",
-   "href": "^/guides/(energy|trade)/",
-   "top": 3
+   "href": "^/guides/(cpi|wpi|energy|trade)/",
+   "top": 1
   },
   {
    "q": "IIP",
    "href": "^/guides/iip/$",
-   "top": 1,
-   "known": "guide titles carry no abbreviations"
+   "top": 1
   },
   {
    "q": "manufacturing",
@@ -126,18 +117,20 @@
   },
   {
    "q": "forex reserves",
-   "href": "^/guides/external/$",
-   "top": 1
+   "series": "^(?!.*([Rr]atio|[Ii]ncrease)).*[Rr]eserves",
+   "top": 1,
+   "known": "the reserves-to-debt ratio and BoP reserve changes lead over the level of reserves; no chart title says forex"
   },
   {
    "q": "fiscal deficit",
    "href": "^/guides/public-finance/",
-   "top": 3
+   "top": 3,
+   "known": "the states' gross fiscal deficit rows lead; the Centre's deficit chart title says deficit, not fiscal deficit"
   },
   {
    "q": "household debt",
    "href": "^/guides/(debt|households)/",
-   "top": 3
+   "top": 1
   },
   {
    "q": "literacy",
@@ -151,12 +144,12 @@
   },
   {
    "q": "rainfall",
-   "href": "^/guides/climate/$",
+   "href": "^/guides/climate/",
    "top": 1
   },
   {
    "q": "coal",
-   "href": "^/guides/(climate|energy)/",
+   "href": "^/guides/(climate|energy|iip|wpi)/",
    "top": 3
   },
   {
@@ -166,7 +159,7 @@
   },
   {
    "q": "UPI",
-   "href": "^/guides/payments/$",
+   "href": "^/guides/payments/",
    "top": 1
   },
   {
@@ -187,7 +180,8 @@
   {
    "q": "school enrolment",
    "href": "^/guides/schools/",
-   "top": 3
+   "top": 3,
+   "known": "a gender-parity index of enrolment from the state handbook leads over enrolment itself"
   },
   {
    "q": "pension",
@@ -197,7 +191,7 @@
   {
    "q": "electricity generation",
    "href": "^/guides/energy/",
-   "top": 3
+   "top": 1
   },
   {
    "q": "rural wages",

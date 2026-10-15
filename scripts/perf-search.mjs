@@ -12,7 +12,7 @@ import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";
 import { fileURLToPath } from "node:url";
-import { createSearch } from "../src/dossiers/search-core.js";
+import { createSearch, layout } from "../src/dossiers/search-core.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2);
@@ -46,14 +46,10 @@ for (const q of queries) {
   const series = await S.series(q.q, { limit: 8 });
   const ms = performance.now() - t;
   const bytes = fetched.reduce((a, f) => a + gz(f), 0);
-  // the reader's list, in the order the home page shows it: state profiles that lead, guides,
-  // charts, then series (home.client.js)
-  const list = [
-    ...quick.states.filter((s) => s.lead).map((s) => ({ kind: "state", href: s.href, label: s.title })),
-    ...quick.guides.map((g) => ({ kind: "guide", href: g.href, label: g.title })),
-    ...quick.plates.map((p) => ({ kind: "chart", href: p.href, label: p.title })),
-    ...series.rows.map((r) => ({ kind: "series", href: r.guideHref, label: r.label + (r.group ? ` (${r.group})` : ""), bundle: r.bundle })),
-  ];
+  // the reader's list, in the order the home page shows it (search-core.js layout)
+  const list = layout(quick, series).flatMap((sec) => sec.items.map((x) => sec.kind === "series"
+    ? { kind: "series", href: x.guideHref, label: x.label + (x.group ? ` (${x.group})` : ""), bundle: x.bundle }
+    : { kind: sec.kind === "top" ? x.kind.toLowerCase() : sec.kind, href: x.href, label: x.title }));
   const top = list.slice(0, q.top ?? 3);
   const hit = (x) => (!q.href || re(q.href).test(x.href)) && (!q.label || re(q.label).test(x.label)) && (!q.bundle || re(q.bundle).test(x.bundle ?? ""));
   const firstSeries = series.rows[0];

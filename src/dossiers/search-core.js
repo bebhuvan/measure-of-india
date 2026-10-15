@@ -35,6 +35,30 @@ export const SYN = {
   gdp: ["gsdp"], prices: ["price", "inflation", "cpi"], price: ["inflation", "cpi"],
 };
 export const MIN_PREFIX = 3;
+// labels that speak for the whole country or a whole total (series() prefers them when no place is named)
+let PROMINENCE = Number(globalThis.process?.env?.ATLAS_SEARCH_PROMINENCE ?? 0.5);
+const NATIONAL = /\b(all[- ]india|india)\b/i, TOTAL = /\b(total|all)\b/i;
+
+/** The reader's list, in order: a state profile the query names, then a guide every word of the
+ *  query names (a topic query opens on its guide), then the series, then guides and charts,
+ *  other state profiles and whole files. The home page renders exactly this; perf-search judges it. */
+export function layout(quick, series) {
+  const states = quick.states ?? [];
+  const leadGuide = quick.guides[0]?.strong ? [quick.guides[0]] : [];
+  // with no guide to lead, a chart whose title holds every word leads, unless a series label is
+  // the query itself ("repo rate": the policy repo rate, with its value, beats a chart about it)
+  // (decided once the series are in, so the list does not reorder under the reader's finger)
+  const leadChart = !leadGuide.length && series?.rows && !series.rows[0]?.exact ? quick.plates.filter((p) => p.strong).slice(0, 1) : [];
+  const top = [...quick.guides.filter((g) => !leadGuide.includes(g)).slice(0, 1).map((g) => ({ ...g, kind: "Guide" })), ...quick.plates.filter((p) => !leadChart.includes(p)).slice(0, 3).map((p) => ({ ...p, kind: "Chart" }))].slice(0, 3);
+  return [
+    { kind: "state", items: states.filter((x) => x.lead) },
+    { kind: "guide", items: [...leadGuide.map((g) => ({ ...g, kind: "Guide" })), ...leadChart.map((p) => ({ ...p, kind: "Chart" }))] },
+    { kind: "series", items: series?.rows?.slice(0, 6) ?? [] },
+    { kind: "top", items: top },
+    { kind: "states", items: states.some((x) => x.lead) ? [] : states },
+    { kind: "files", items: quick.files.slice(0, 3) },
+  ];
+}
 
 /** Lower-cased words of a text, accents stripped, split on anything not a letter or digit. */
 export function tokens(text) {
@@ -93,12 +117,16 @@ export function parseQuery(q) {
   if (content.length) words = content;
   return words.map(({ w, prefix }) => {
     const forms = new Set([w, ...(SYN[w] ?? [])]);
-    // a plural or singular of the word and of each synonym ("inflation" -> "price" -> "prices")
-    if (!prefix) for (const f of [...forms]) { if (f.length > 3 && f.endsWith("s")) forms.add(f.slice(0, -1)); else forms.add(f + "s"); }
+    // a plural or singular of the word and of each synonym ("inflation" -> "price" -> "prices").
+    // While a word is being typed it matches as a prefix, which covers its own plural; its
+    // synonyms are whole words, so they take their plurals either way.
+    for (const f of [...forms]) { if (prefix && f === w) continue; if (f.length > 3 && f.endsWith("s")) forms.add(f.slice(0, -1)); else forms.add(f + "s"); }
     return { w, prefix, forms: [...forms] };
   });
 }
 const tokenMatches = (word, t) => word.forms.some((f) => (word.prefix && f === word.w ? t.startsWith(f) : t === f));
+// the word itself, as typed, or its plural or singular (not a synonym)
+const own = (word, t) => (word.prefix ? t.startsWith(word.w) : t === word.w || t === word.w + "s" || (word.w.endsWith("s") && t === word.w.slice(0, -1)));
 
 // Quantity intent is a ranking preference, never a filter or a unit conversion. Ambiguous
 // financial words alone do not choose an intent; explicit shares/index/growth override pay.
@@ -205,7 +233,11 @@ export function createSearch(core, load, { expectedQualityVersion } = {}) {
     return false;
   };
   const hay = (parts) => indexTokens(parts.filter(Boolean).join(" "));
-  const gTok = guides.map((g) => hay([g[1], g[2]]));
+  // A guide answers to its title, its formal name (registry crumbTitle: "Consumer Price Index"),
+  // its slug and the initials of its formal name ("cpi", "iip"); its blurb is weaker evidence.
+  const initials = (t) => { const w = String(t ?? "").split(/[^A-Za-z]+/).filter((x) => x && !STOP.has(x.toLowerCase()) && /^[A-Z]/.test(x)); return w.length >= 3 ? w.map((x) => x[0]).join("").toLowerCase() : null; };
+  const gTitle = guides.map((g) => [...new Set([...hay([g[1], g[3]]), ...tokens(g[0]), ...[initials(g[3]), initials(g[1])].filter(Boolean)])]);
+  const gTok = guides.map((g, i) => [...new Set([...gTitle[i], ...hay([g[2]])])]);
   const bTok = bundles.map((b) => [...new Set([...hay([b[1], b[2], b[7]]), ...(b[3] >= 0 ? hay([guides[b[3]][1]]) : [])])]);
 
   // datafix (2026-10-10): a state's own measures (scripts/search-index.mjs core.own) lead when a
@@ -244,16 +276,25 @@ export function createSearch(core, load, { expectedQualityVersion } = {}) {
     const score = (title, all) => {
       let s = 0;
       for (const w of words) {
-        if (title.some((t) => tokenMatches(w, t))) s += 2;
+        // the word as typed (or its plural) in the title counts more than a synonym of it there
+        if (title.some((t) => tokenMatches(w, t))) s += title.some((t) => own(w, t)) ? 2 : 1.75;
         else if (all.some((t) => tokenMatches(w, t))) s += 1;
         else return 0;
       }
       return s;
     };
     const rank = (items) => items.filter((x) => x.s > 0).sort((a, b) => b.s - a.s || a.i - b.i).slice(0, limit);
-    const g = rank(guides.map((x, i) => ({ i, s: score(tokens(x[1]), gTok[i]), href: `/guides/${x[0]}/`, title: x[1], note: x[2] })));
-    const p = rank(plates.map((x, i) => ({ i, s: score(tokens(x[2]), [...tokens(x[2]), ...tokens(x[3]), ...gTok[x[0]]]),
-      href: `/guides/${guides[x[0]][0]}/#${x[1]}`, title: x[2], note: guides[x[0]][1] })));
+    // a guide needs at least one word in its title-level names (a blurb that mentions rupees does not
+    // make a guide about the rupee); one with every word there is a strong answer and leads
+    const g = rank(guides.map((x, i) => {
+      const s = score(gTitle[i], gTok[i]), titled = words.filter((w) => gTitle[i].some((t) => tokenMatches(w, t))).length;
+      return { i, s: titled ? s : 0, strong: titled === words.length, href: `/guides/${x[0]}/`, title: x[1], note: x[2] };
+    }));
+    // a chart in a guide that is itself about the query's words ranks before the same match in a
+    // guide that only mentions them ("rupee": the external account's rupee, not CPI's labourer's rupee)
+    const about = (g) => words.every((w) => gTok[g].some((t) => tokenMatches(w, t)));
+    const p = rank(plates.map((x, i) => { const tt = tokens(x[2]), s0 = score(tt, [...tt, ...tokens(x[3]), ...gTok[x[0]]]); return { i, s: s0 && s0 + (about(x[0]) ? 1 : 0),
+      strong: words.every((w) => tt.some((t) => tokenMatches(w, t))), href: `/guides/${guides[x[0]][0]}/#${x[1]}`, title: x[2], note: guides[x[0]][1] }; }));
     const files = rank([
       ...bundles.map((b, i) => {const quality=qualityOf(b[0]);return { i, s: score(tokens(b[1]), bTok[i]), href: quality?.canInterpret===false&&b[8]?`/explore/?${new URLSearchParams({series:b[0]+':'+b[8]})}`:(b[6][0]?.[1] ?? `/data/${b[0]}.csv`), title: quality?.canInterpret===false?(quality.publicTitle??'Source file under review'):b[1],
         note: [quality?.canInterpret===false?'Source mapping under review':null,b[3] >= 0 ? guides[b[3]][1] : null, b[2], `${b[5].toLocaleString("en-IN")} series`].filter(Boolean).join(", "), slug: b[0],quality };}),
@@ -343,7 +384,7 @@ export function createSearch(core, load, { expectedQualityVersion } = {}) {
       if (wait) deferred.push(r);
     }
     keep.sort((a, b) => score.get(b) - score.get(a) || a - b);
-    return { words, ids: keep, score, deferred: new Set(deferred), looseWords: per.filter((p) => p.loose && !p.list.length).map((p) => p.w) };
+    return { words, ids: keep, score, deferred: new Set(deferred), looseWords: per.filter((p) => p.loose && !p.list.length).map((p) => p.w), named: named0 };
   }
   async function rowsAt(ids) {
     const out = new Map();
@@ -392,12 +433,20 @@ export function createSearch(core, load, { expectedQualityVersion } = {}) {
       const inLabel = words.filter((w) => lt.some((t) => tokenMatches(w, t))).length;
       // a label made of the query's words and little else ranks first ("repo rate": "Policy repo rate")
       const extra = lt.filter((t) => !STOP.has(t) && !words.some((w) => tokenMatches(w, t))).length;
+      // A query that names no place wants the whole country first: a row for India, All India or
+      // a total outranks the same row for one state, one fuel or one group (a tie-break, worth
+      // less than one more word of the query in the label).
+      const national = (!c.named && NATIONAL.test(row[0] + " | " + row[1]) ? 0.5 : 0) + (TOTAL.test(row[0] + " | " + row[1]) ? 0.5 : 0);
+      // A row its guide shows on the guide page itself (not only in an every-cut view) is one the
+      // guide is about; the same match on a long-tail table cell ranks after it.
+      const featured = onGuidePage(r) ? PROMINENCE : 0;
       // Long truthful qualifiers must not lose to a short label for another quantity.
-      out.push({ id: r, row, rank: c.score.get(r) + inLabel - Math.min(extra / 4,1) - Math.min(row[0].length / 300,.25) });
+      out.push({ id: r, row, exact: inLabel === words.length && extra <= 1, rank: c.score.get(r) + inLabel + national + featured - Math.min(extra / 4,1) - Math.min(row[0].length / 300,.25) });
     }
     out.sort((a, b) => b.rank - a.rank || a.id - b.id);
-    return { rows: out.slice(0, limit).map(({ id, row }) => describe(id, row)), total: c.ids.length, approx: c.deferred.size > 0 };
+    return { rows: out.slice(0, limit).map(({ id, row, exact }) => ({ ...describe(id, row), exact })), total: c.ids.length, approx: c.deferred.size > 0 };
   }
+  const onGuidePage = (id) => { const b = bundles[bundleOf(id)], off = id - b[4]; let url = null; for (const [o, u] of b[6]) if (o <= off) url = u; return !!url && !url.includes("/every-cut/"); };
   /** Where a row lives: its guide, its every-cut page and the anchor of its row there. */
   function describe(id, row) {
     const bi = bundleOf(id), b = bundles[bi];
