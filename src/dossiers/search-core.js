@@ -474,7 +474,7 @@ export function createSearch(core, load, { expectedQualityVersion } = {}) {
     return a.slice(i)===b.slice(i+1);
   };
   async function suggest(q) {
-    const lexicon = await cached(lexFile, 0, file("lex"), 1);
+    const lexicon = await cached(lexFile, 0, file("x/lex"), 1);
     const known = new Set(lexicon);
     const hasForm = (f, prefix) => { if (!prefix) return known.has(f); let i = floorIdx(lexicon, f); if (lexicon[i] < f) i++; return lexicon[i]?.startsWith(f) ?? false; };
     let result=q;

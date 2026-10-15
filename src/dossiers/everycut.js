@@ -867,8 +867,11 @@ function rowsOfUncached(slug, opts = {}) {
 
 // a bundle with more series than this gets its own page; the guide's table links to it
 export const LONG_TAIL = 150;
-// rows per long-tail page; longer bundles are split, packing whole groups where they exist
-export const PAGE_ROWS = 1000;
+// rows per long-tail page; longer bundles are split, packing whole groups where they exist. A page
+// renders its first rows in HTML and streams the rest from a gzip pack (everycut-html.js), so a
+// page can hold far more rows than its HTML weighs; 5,000 keeps a page's table within what a
+// mid-range phone lays out comfortably, and every row findable with find-in-page.
+export const PAGE_ROWS = 5000;
 
 // the guide page inlines at most this many rows (about 450 KB of HTML); the bundles after the
 // cap, in registry order, go to a paged long-tail view. A registry entry may set

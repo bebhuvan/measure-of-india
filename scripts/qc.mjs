@@ -12,6 +12,7 @@ import { awaitChartJobs } from './lib/chart-ready.mjs';
 import {vintageText,vintageSummary} from './lib/vintage.mjs';
 import {guideBundles} from '../src/dossiers/everycut.js';
 import fs from "node:fs";
+import zlib from "node:zlib";
 // a word joiner (U+2060) after a minus only stops a line break; compare text without it, so a
 // hand-written "−0.8%" and a formatter's "−\u20600.8%" are the same figure
 const wj = (s) => (s == null ? s : String(s).replace(/\u2060/g, ""));
@@ -924,6 +925,8 @@ for (const page of PAGES) {
 // page and each long-tail page also stay inside their HTML budgets (docs/CONTRACT-render.md).
 {
   const EC = await import(pathToFileURL(path.join(ROOT, "src/dossiers/everycut.js")).href);
+  // a page's rows include those it streams from its pack (src/dossiers/everycut-html.js)
+  const withPack = (h) => { for (const m of h.matchAll(/data-pack="([^"]+)"/g)) { const pf = path.join(DIST, m[1]); if (!fs.existsSync(pf)) { fail(`every-cut pack missing: ${m[1]}`); continue; } h += "\n" + zlib.gunzipSync(fs.readFileSync(pf)).toString("utf8"); } return h; };
   const rowsPerFile = (h, into) => { for (const m of h.matchAll(/<tr (?:id="s[0-9a-z]{7}" )?data-o="\d+" data-file="([^"]+)"/g)) into.set(m[1], (into.get(m[1]) ?? 0) + 1); };
   for (const d of DOSSIERS) {
     const file = path.join(DIST, "guides", d.slug, "index.html");
@@ -932,14 +935,14 @@ for (const page of PAGES) {
     if (!html.includes('id="every-cut"')) { fail(`/guides/${d.slug}/: no every-cut table (src/components/EveryCut.astro)`); continue; }
     if (html.length > 1.2e6) fail(`/guides/${d.slug}/: ${(html.length / 1e6).toFixed(2)} MB of HTML (budget 1.2 MB; lower everyCutInline)`);
     const seen = new Map();
-    rowsPerFile(html, seen);
+    rowsPerFile(withPack(html), seen);
     const plan = EC.everyCutPlan(d);
     for (const t of plan.tails) {
       t.pages.forEach((_, i) => {
         const pf = path.join(DIST, "guides", d.slug, "every-cut", t.id, i ? String(i + 1) : "", "index.html");
         if (!fs.existsSync(pf)) { fail(`every-cut page missing: ${path.relative(DIST, pf)}`); return; }
         const h = fs.readFileSync(pf, "utf8");
-        rowsPerFile(h, seen);
+        rowsPerFile(withPack(h), seen);
         if (h.length > 1.2e6) fail(`${path.relative(DIST, pf)}: ${(h.length / 1e6).toFixed(2)} MB of HTML (budget 1.2 MB, docs/CONTRACT-render.md)`);
       });
     }
@@ -1042,10 +1045,16 @@ for (const page of PAGES) {
     const S = SC.createSearch(core, async (p) => JSON.parse(fs.readFileSync(path.join(SD, p), "utf8")));
     let tried = 0, missed = 0;
     const pageCache = new Map();
+    // a page's rows: its HTML and, for an every-cut page, the rows it streams from its pack
     const page = (url) => {
       if (!pageCache.has(url)) {
         const f = path.join(DIST, url, "index.html");
-        pageCache.set(url, fs.existsSync(f) ? fs.readFileSync(f, "utf8") : null);
+        let h = fs.existsSync(f) ? fs.readFileSync(f, "utf8") : null;
+        for (const m of h ? h.matchAll(/data-pack="([^"]+)"/g) : []) {
+          const pf = path.join(DIST, m[1]);
+          h += fs.existsSync(pf) ? zlib.gunzipSync(fs.readFileSync(pf)).toString("utf8") : "";
+        }
+        pageCache.set(url, h);
         if (pageCache.size > 8) pageCache.delete(pageCache.keys().next().value);
       }
       return pageCache.get(url);

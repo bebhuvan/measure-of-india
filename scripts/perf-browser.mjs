@@ -7,6 +7,7 @@
 //   node scripts/perf-browser.mjs [dist] [--only /guides/cpi/,/states/kerala/] [--runs 3]
 //        [--json out.json] [--record]
 //
+// (plus the three every-cut pages with the most rows, which stream their packs after load).
 // Per page, the median of --runs cold loads (fresh context each, so nothing is cached):
 //   maxTask   the longest main-thread task (ms), from navigation until the page settles
 //   tbt       total blocking time: the sum of (task - 50 ms) over the same window
@@ -17,6 +18,9 @@
 // The network is not throttled: these budgets are about the main thread, which is what a phone
 // lacks; transfer is gated byte-exactly by scripts/perf-budget.mjs. Medians of three cold runs
 // keep the gate steady; budgets carry 15% + 50 ms of slack over a recorded value.
+// Run it with the machine otherwise quiet: a build, qc or a second browser beside it inflates
+// main-thread times by 15-25% (measured 2026-10-16) and fails pages that are not slower.
+// A failure that does not reproduce with --only <pages> --workers 1 --runs 5 is contention.
 import fs from "node:fs";
 import path from "node:path";
 import http from "node:http";
@@ -30,7 +34,7 @@ const args = process.argv.slice(2);
 const opt = (f) => { const i = args.indexOf(f); return i >= 0 ? args[i + 1] : null; };
 const DIST = path.resolve(args.find((a, i) => !a.startsWith("--") && !["--only", "--runs", "--json", "--workers"].includes(args[i - 1])) ?? process.env.QC_DIST ?? path.join(ROOT, "dist"));
 const RUNS = Number(opt("--runs") ?? process.env.ATLAS_PERF_RUNS ?? 3);
-const WORKERS = Number(opt("--workers") ?? Math.max(1, Math.min(4, Math.floor(os.availableParallelism() / 4))));
+const WORKERS = Number(opt("--workers") ?? process.env.ATLAS_PERF_WORKERS ?? Math.max(1, Math.min(3, Math.floor(os.availableParallelism() / 4))));
 const BUDGETS = path.join(ROOT, "perf/budgets.json");
 const budgets = JSON.parse(fs.readFileSync(BUDGETS, "utf8"));
 if (!fs.existsSync(path.join(DIST, "index.html"))) { console.error(`perf-browser: no build at ${DIST}`); process.exit(1); }
@@ -41,6 +45,17 @@ let routes = [
   ...dirs(path.join(DIST, "guides")).map((s) => `/guides/${s}/`),
   ...dirs(path.join(DIST, "states")).map((s) => `/states/${s}/`),
 ].filter((r) => !/^<!doctype html><title>Redirecting/i.test(fs.readFileSync(path.join(DIST, r, "index.html"), "utf8").slice(0, 60)));
+// and the three heaviest every-cut pages (the most rows on one page), which stream their packs
+{
+  const pages = [];
+  for (const g of dirs(path.join(DIST, "guides"))) {
+    const root = path.join(DIST, "guides", g, "every-cut");
+    (function walk(d) { if (!fs.existsSync(d)) return; for (const e of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, e.name); if (e.isDirectory()) walk(p); else if (e.name === "index.html") {
+      const n = [...fs.readFileSync(p, "utf8").matchAll(/class="ec"[^>]*data-total="(\d+)"/g)].reduce((a, m) => a + +m[1], 0);
+      pages.push(["/" + path.relative(DIST, path.dirname(p)).split(path.sep).join("/") + "/", n]); } } })(root);
+  }
+  routes.push(...pages.sort((a, b) => b[1] - a[1]).slice(0, 3).map(([r]) => r));
+}
 if (opt("--only")) routes = opt("--only").split(",");
 
 // ---- a static server with gzip, MIME types and trailing-slash directories
@@ -84,6 +99,9 @@ async function measure(browser, route) {
     const jobs = document.__atlasChartJobs ?? [];
     await Promise.allSettled(jobs.map((j) => j.promise));
     const quiet = 1500, cap = 120_000;
+    // every-cut tables stream their packs after load (everycut.client.js): wait for them too
+    while (document.querySelector(".ec[data-pack]:not([data-complete]):not([data-failed])") && performance.now() < cap) await new Promise((r) => setTimeout(r, 250));
+    window.__perf.everyCutFailed = document.querySelectorAll(".ec[data-failed]").length;
     let last = performance.now();
     while (performance.now() < cap) {
       const end = Math.max(0, ...window.__perf.tasks.map(([s, d]) => s + d));
@@ -97,6 +115,7 @@ async function measure(browser, route) {
   await ctx.close();
   const maxTask = Math.max(0, ...p.tasks.map(([, d]) => d));
   const tbt = p.tasks.reduce((a, [, d]) => a + Math.max(0, d - 50), 0);
+  if (p.everyCutFailed) errors.push(`${p.everyCutFailed} every-cut table(s) failed to stream`);
   return { maxTask: Math.round(maxTask), tbt: Math.round(tbt), tasks: p.tasks.length, cls: +p.cls.toFixed(4), lcp: Math.round(p.lcp), settled: Math.round(settled), wall: Date.now() - t0, errors };
 }
 

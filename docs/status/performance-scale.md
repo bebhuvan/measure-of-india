@@ -95,3 +95,140 @@ What changed in `src/dossiers/everycut.js`:
   formatter per call, which was 52% of the time.
 - `periodLabel` is memoized per bundle and date. The `PERIOD_LABELS` prefix scan was 24%.
 - `rowAnchor` hashes with one-shot `crypto.hash` where Node has it: same bytes, 2x faster.
+
+## 2026-10-15: fonts split into primary and on-demand files, outlines proven identical
+
+`scripts/fonts-build.mjs` (subset-font 2.9.0, harfbuzz wasm, no Python) cuts the six self-hosted
+originals (now `fonts/source/`) into four files per face:
+- **primary:** the characters the site uses, listed in `fonts/primary.txt` with page counts;
+- **extra:** the latin-ext characters the site uses (₹, †);
+- **two rest files:** every other glyph the originals cover, so coverage is unchanged.
+
+How it is checked:
+- **Self-check:** every glyph's outline and advance, at four weights × four optical sizes, equals
+  the original's. That is 25,952 comparisons, all identical.
+- **Weight axis left alone:** cutting `wght` to 300-700 moved some outlines by one font unit at
+  700, so it is not done.
+- **Real coverage:** `unicode-range` is each file's actual coverage. The old Golos latin-ext rule
+  claimed ₹, which Golos does not have, so every rupee page fetched 19 KB for nothing.
+- **Caching:** names are content-hashed and `/fonts/*` is immutable.
+- **Cleanup:** six unused files (Archivo, Newsreader, Plex Mono; about 500 KB) left the deploy.
+
+| Page | Fonts before | Fonts after (expected) |
+|---|---:|---:|
+| Guide or state page | 281-523 KB | ~128 KB (serif 97 + sans 27 + extras 4) |
+| Page with italic headings | | +106 KB for the italic primary |
+
+The after column is confirmed by the build-2 measurements below.
+
+## 2026-10-15: search ranking, judged on labelled reader queries
+
+`perf/search-queries.json` holds 42 queries with written expectations. `perf/search-heldout.json`
+holds 20 more, with expectations written before running either engine; it is never used for
+tuning. `layout()` in search-core is the one result order: the home page renders it and
+`perf-search` judges it.
+
+| Engine | Labelled | Held-out |
+|---|---:|---:|
+| 417a96f | 21/40 | 12/20 |
+| Now | 38/42 | 18/20 |
+
+Fixed by general rules, none of them per query:
+- a guide answers to its slug, formal name and initials (CPI, IIP);
+- a guide needs a title-level match to appear (a blurb mentioning ₹ no longer surfaces five
+  guides for "rupee");
+- a guide or chart every word names leads, unless a series label is the query itself;
+- a chart in a guide about the words outranks a passing mention;
+- the typed word outranks its synonyms;
+- India and total rows break ties when no place is named;
+- synonyms take plurals while typing ("inflation" → "prices");
+- deficit and surplus find the published "balance".
+
+Known misses, recorded in the query file:
+- onion prices
+- forex reserves
+- fiscal deficit
+- school enrolment
+
+FDI (held-out) passes only loosely.
+
+## 2026-10-15: search index v2, a fixed-size core
+
+Same catalogue (1,708,268 series). Node, gzip -6 (`perf/runs/v2-search.json`).
+
+| | v1 (417a96f) | v2 |
+|---|---:|---:|
+| core.json | 2,357 KB raw / 390 KB gzip | 550 KB raw / 110 KB gzip |
+| core parse + engine setup | 176 ms | 22 ms |
+| cold query, median gzip fetched | 169 KB in 5 files | 74 KB in 11 files |
+| cold query, max | 411 KB | 210 KB |
+| index files | 3,245 | 3,925 |
+| ranking (labelled / held-out) | | unchanged: 38/42, 18/20 |
+| sampled rows found by their own label | | 1,411 of 1,411 |
+
+- **What moved out of the core:** bundle records, bundle-context postings, quantity groups and the
+  vocabulary, all fetched by need.
+- **Shards and chunks:** token shards are 32 KB; row chunks are a fixed 512 rows, so no bounds list
+  ships.
+- **Naming:** one release hash names every file.
+- **Warm on idle:** the home page fetches the core when idle after load, except on Save-Data or 2G.
+- **Budgets:** core 500 KB → 150 KB gzip, and 300 KB gzip per cold query.
+
+## 2026-10-16: every-cut pages stream their rows; build 3, all gates
+
+- **Page size:** each every-cut page holds up to 5,000 rows (was 1,000).
+- **What the HTML carries:** the first 100 rows.
+- **The pack:** the rest are a gzip pack (`/ec/<guide>/<view>/<page>.<hash>.gz`) of the same row
+  markup. `src/dossiers/everycut-html.js` is the one row template, shared by the page and the
+  pack.
+- **Streaming:** after first paint the pack is fetched, decompressed as it arrives
+  (DecompressionStream) and appended in batches of about 8 ms. Then sort, filter and the browser's
+  find-in-page cover every row of the page.
+- **Guide pages:** the inline every-cut tables stream the same way.
+
+| | Baseline (417a96f) | Build 3 |
+|---|---:|---:|
+| every-cut pages | 2,008 (1,319 MB) | 718 pages (64 MB) + 741 packs (75 MB) |
+| dist | 15,763 files, 4.78 GB | 15,897 files, 3.56 GB |
+| pages built | 2,113 | 823 |
+| build, wall | 798 s | 580 s (build 2, machine quiet); 572 s (build 3, tests alongside) |
+| page rendering | 488 s | 380 s |
+| `npm test` | 944 s (cleanup session, same commit) | 255 s, 326/326 pass (a build alongside) |
+| every-cut HTML, gzip median / max | 43 / 157 KB | 8.6 / 22 KB |
+| guide HTML, gzip median | 65 KB | 34 KB |
+| fonts per guide / state / every-cut page (perf-budget upper bound) | 509 / 274 / 157 KB | 231 / 125 / 121 KB |
+
+Phone, 390 px, 4x CPU, median of 3 (`perf/runs/build2-browser.json`; chart code unchanged):
+
+| | Baseline | Build 2 |
+|---|---:|---:|
+| Median longest task, 72 pages | 958 ms | 877 ms |
+| Median TBT, 72 pages | 1,050 ms | 962 ms |
+| Median LCP, 72 pages | 610 ms | 568 ms |
+| Farm households TBT | 34.9 s | 26.6 s |
+| Pensions TBT | 27.0 s | 17.4 s |
+| Digital access TBT | 31.9 s | 27.0 s |
+| Three largest every-cut pages (5,000 rows each, streaming) | | longest task ≤ 87 ms, TBT ≤ 61 ms, CLS 0 |
+
+- The three-worker run flagged 5 pages 15-25% over their records. Rerun alone (5 runs, 1 worker),
+  all 5 were under baseline. It was CPU contention from a browser check running alongside, so
+  perf-browser now says to run on a quiet machine.
+- Real Chrome check on `/guides/farm-households/every-cut/nss77/` with a link to its last row:
+  - all 5,000 rows arrived;
+  - the linked row was marked and scrolled into view;
+  - `window.find` found its label;
+  - sorting covered streamed rows;
+  - no console errors.
+
+  On the CPI guide, the 557-row inline table streamed in with 25 rows shown, as before.
+
+Gates on build 3, all passing:
+- qc: 516 s, 6.3 GB RSS; every guide's rows counted once across page and pack.
+- lint-charts: 1,892 SVGs × 2 widths, clean.
+- explore-verify: 1,708,268 records exact.
+- perf-budget and perf-search pass.
+
+On the way, qc caught a bare `addEventListener` the gates' jsdom did not have (fixed: `window.`).
+
+Raised one ceiling, with the reason recorded in `perf/budgets.json` `raised`: every-cut JS 4 → 6 KB
+gzip (streaming code, 3.6 → 4.7 KB).

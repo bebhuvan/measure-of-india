@@ -34,7 +34,7 @@ test('spelling suggestions require one unambiguous vocabulary edit and leave val
 test('an unknown word fetches at most one small token shard and never rows or the vocabulary',async()=>{
  const paths=[];const S=createSearch(core,async p=>{paths.push(p);return get(p);});
  assert.equal((await S.series('zzzzimpossible')).total,0);
- assert.ok(paths.filter(p=>p.startsWith('t/')).length<=1,paths.join());assert.ok(!paths.some(p=>p.startsWith('r/')||p.startsWith('lex')),paths.join());
+ assert.ok(paths.filter(p=>p.startsWith('t/')).length<=1,paths.join());assert.ok(!paths.some(p=>p.startsWith('r/')||p.startsWith('x/')),paths.join());
 });
 test('row cache remains bounded over a long search session',async()=>{
  const n=60*ROWS_PER_CHUNK,f=searchFixture({guides:base.guides,bundles:[{slug:'b',title:'Workers',rows:Array.from({length:n},(_,i)=>['A worker','',1,'2026','s'+i,[]])}]});

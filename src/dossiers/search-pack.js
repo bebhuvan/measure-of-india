@@ -69,7 +69,7 @@ export function packSearchIndex(c) {
   for (let i = 0; i * BUNDLES_PER_FILE < recs.length; i++) files.set(`b/${i}`, recs.slice(i * BUNDLES_PER_FILE, (i + 1) * BUNDLES_PER_FILE));
   const groups = Object.keys(c.units ?? {}).sort();
   for (const g of groups) files.set(`u/${g}`, encodeIds(c.units[g]));
-  files.set("lex", [...c.post.keys()].sort());
+  files.set("x/lex", [...c.post.keys()].sort());
   // one hash over every file names the release
   const h = crypto.createHash("sha256");
   for (const [k, v] of [...files].sort(([a], [b]) => (a < b ? -1 : 1))) h.update(k + "\0" + JSON.stringify(v) + "\0");

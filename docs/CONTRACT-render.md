@@ -61,13 +61,19 @@ build.
   Below-the-fold ledgers that blow the budget move to lazily fetched JSON —
   not more inlining.
 - **HTML: a guide page stays well under 1 MB; a long-tail every-cut page under 1.2 MB**
-  (qc fails both). Long tables are paginated onto their own static pages, never inlined
-  whole and never fetched at runtime: the every-cut table inlines at most 600 rows and puts
-  long bundles, bundle families and the overflow on `/guides/<slug>/every-cut/<id>/`, split
-  at 1,000 rows.
-- **No runtime data fetching of published series.** Data rides in the bundle
-  the page was built from; the deployed site performs zero data requests
-  beyond static assets.
+  (qc fails both). The every-cut table on a guide inlines at most 600 rows. Long bundles, bundle
+  families and the overflow go on `/guides/<slug>/every-cut/<id>/`, split at 5,000 rows.
+  - **Each table renders its first 100 rows in HTML.** The rest of the page arrives in its pack,
+    `/ec/<guide>/<view>/<page>.<hash>.gz`. The pack is gzip of the same row markup
+    (`src/dossiers/everycut-html.js`, the one row template), streamed in after first paint in
+    short batches. Then sort, filter and find-in-page cover every row.
+  - On Save-Data or 2G, the pack waits for the reader to reach for the table.
+  - qc counts the rows of the page and its pack together. `perf-browser` loads the three
+    heaviest every-cut pages and fails on long tasks or a failed stream.
+- **No runtime data fetching of published series from anywhere but the site's own static
+  files.** Data rides in the bundle the page was built from, or in the content-named static files
+  the build writes beside it: search shards, explorer shards and every-cut packs. The deployed
+  site makes no request beyond its own static assets.
 - **No file in dist over 20 MB** (Cloudflare Pages refuses any file over 25 MiB; qc fails at 20 MB).
 - **Site search: a core of fixed size, everything per row fetched by need** (index v2, 2026-10-15).
   Static files the build writes under `/search/` (`scripts/search-index.mjs`, run by the build

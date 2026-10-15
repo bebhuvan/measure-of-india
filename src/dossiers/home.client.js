@@ -114,11 +114,11 @@ if (q && res) {
   // The search box is the home page's main door: fetch the small core (about 110 KB) once the page
   // is idle, so the first query answers at once. Not on a metered or 2G connection, where it waits
   // for the reader to reach for the box.
-  const net = navigator.connection;
+  const net = window.navigator?.connection;
   if (!(net?.saveData || /(^|-)2g$/.test(net?.effectiveType ?? ""))) {
     const warm = () => load().catch(() => {});
-    if ("requestIdleCallback" in window) addEventListener("load", () => requestIdleCallback(warm, { timeout: 4000 }), { once: true });
-    else addEventListener("load", () => setTimeout(warm, 1500), { once: true });
+    if (window.requestIdleCallback) window.addEventListener("load", () => window.requestIdleCallback(warm, { timeout: 4000 }), { once: true });
+    else window.addEventListener("load", () => setTimeout(warm, 1500), { once: true });
   }
   q.addEventListener("input", search);
   q.addEventListener("keydown", (e) => {
