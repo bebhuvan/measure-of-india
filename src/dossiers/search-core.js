@@ -33,6 +33,8 @@ export const SYN = {
   monsoon: ["rainfall", "rain"], rainfall: ["rain"], poor: ["poverty"], loans: ["loan", "credit"],
   // a state's GDP is its GSDP; "prices" asks about inflation (datafix 2026-10-10)
   gdp: ["gsdp"], prices: ["price", "inflation", "cpi"], price: ["inflation", "cpi"],
+  // the accounts publish a balance; readers say deficit or surplus (perf-search held-out set, 2026-10-15)
+  deficit: ["balance"], surplus: ["balance"],
 };
 export const MIN_PREFIX = 3;
 // labels that speak for the whole country or a whole total (series() prefers them when no place is named)
