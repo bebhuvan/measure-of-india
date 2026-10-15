@@ -248,3 +248,32 @@ over 14 queries (`performance-scale/build3-search-browser.json`):
 The earlier pass measured complete cold results at 4.6-5.8 s under the same throttling. Its
 harness differed (`launch-performance.md`), so the comparison is indicative. Lab numbers, not
 field p75. The slowest query is "urban female unemployment": four large postings, 2.7 s cold.
+
+## 2026-10-16: CI that fits, and a phone gate that travels
+
+**Calibration.** perf-browser times a fixed JavaScript workload under the same 4x throttle, with
+as many browsers at once as the run uses, and scales every ceiling by
+`this machine / recording machine`.
+- The recording machine reads 2,200 ms (3 browsers, 14 cores). Alone it reads 1,950 ms, which
+  matches the 12-20% contention seen on pages.
+- So a slower CI runner, or a busy laptop, does not fail pages that are not slower.
+- `--record` stores new values in the recording machine's terms.
+
+**ci.yml: three parallel jobs.** Wall time is the longest job, not the sum.
+- **tests:** `npm test`.
+- **data:** validate, coverage, as-of.
+- **build-gates:** build, qc (+ chart lint x2), explore-verify, perf static, then the phone gate,
+  which has its numbers uploaded as an artifact.
+- **Caching:** npm, pip, and Playwright's Chromium (keyed by package-lock). Nothing built is
+  cached; every run builds from committed data.
+- **Timeouts:** 40/40/120 minutes, about twice the expected runner time.
+
+**deploy.yml:** `perf:static` now runs before the deploy, with the deploy file cap at 20,000.
+Cloudflare Pages docs (5 Sep 2026) give 20,000 files on the Free plan and 100,000 on
+Pro/Business/Enterprise. A Workers Paid subscription raises the Workers static-assets cap to
+100,000, but this deploy still goes to Pages until the Workers cutover. **Owner: confirm the
+account's Pages plan, or cut over to Workers, before the file count nears 20,000 (15,897 today).**
+
+**update.yml:** it ran `npm run build` after its own fetch + validate, which fetched and validated
+a second time (validate alone took about 13 minutes in the cleanup session's measurement). It now
+runs `npm run og && npx astro build`, then `perf:static`.

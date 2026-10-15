@@ -34,10 +34,10 @@ const args = process.argv.slice(2);
 const opt = (f) => { const i = args.indexOf(f); return i >= 0 ? args[i + 1] : null; };
 const DIST = path.resolve(args.find((a, i) => !a.startsWith("--") && !["--only", "--runs", "--json", "--workers"].includes(args[i - 1])) ?? process.env.QC_DIST ?? path.join(ROOT, "dist"));
 const RUNS = Number(opt("--runs") ?? process.env.ATLAS_PERF_RUNS ?? 3);
-const WORKERS = Number(opt("--workers") ?? process.env.ATLAS_PERF_WORKERS ?? Math.max(1, Math.min(3, Math.floor(os.availableParallelism() / 4))));
+const WORKERS = Number(opt("--workers") ?? process.env.ATLAS_PERF_WORKERS ?? Math.max(1, Math.min(3, Math.floor(os.availableParallelism() / 2))));
 const BUDGETS = path.join(ROOT, "perf/budgets.json");
 const budgets = JSON.parse(fs.readFileSync(BUDGETS, "utf8"));
-if (!fs.existsSync(path.join(DIST, "index.html"))) { console.error(`perf-browser: no build at ${DIST}`); process.exit(1); }
+if (!args.includes("--calibrate-only") && !fs.existsSync(path.join(DIST, "index.html"))) { console.error(`perf-browser: no build at ${DIST}`); process.exit(1); }
 
 // ---- routes: every guide and every state profile in the build
 const dirs = (p) => fs.existsSync(p) ? fs.readdirSync(p, { withFileTypes: true }).filter((e) => e.isDirectory() && fs.existsSync(path.join(p, e.name, "index.html"))).map((e) => e.name) : [];
@@ -119,6 +119,42 @@ async function measure(browser, route) {
   return { maxTask: Math.round(maxTask), tbt: Math.round(tbt), tasks: p.tasks.length, cls: +p.cls.toFixed(4), lcp: Math.round(p.lcp), settled: Math.round(settled), wall: Date.now() - t0, errors };
 }
 
+// Calibration: the same fixed JavaScript work, under the same 4x throttle, timed on this machine.
+// Ceilings are recorded on one machine and checked on another (a laptop, a CI runner); they are
+// scaled by how much slower or faster this machine runs that work than the one that recorded them.
+const CALIBRATE = () => {
+  const t = performance.now();
+  let acc = 0;
+  for (let k = 0; k < 6; k++) {
+    const a = Array.from({ length: 60000 }, (_, i) => ({ i, v: Math.sin(i * 7.3 + k) * 1e4, s: "row " + ((i * 2654435761) % 100000) }));
+    a.sort((x, y) => x.v - y.v);
+    const j = JSON.parse(JSON.stringify(a.slice(0, 20000)));
+    acc += j.length + a.filter((x) => x.s.includes("7")).length;
+    const d = document.createElement("div");
+    for (let i = 0; i < 1500; i++) { const e = document.createElement("span"); e.textContent = a[i].s; d.append(e); }
+    document.body.append(d); acc += d.getBoundingClientRect().height; d.remove();
+  }
+  return performance.now() - t + (acc < 0 ? 1 : 0);
+};
+async function calibrate(browser) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const page = await ctx.newPage();
+  const cdp = await ctx.newCDPSession(page);
+  await cdp.send("Emulation.setCPUThrottlingRate", { rate: 4 });
+  await page.setContent("<!doctype html><html><body></body></html>");
+  const runs = [];
+  for (let i = 0; i < 5; i++) runs.push(await page.evaluate(CALIBRATE));
+  await ctx.close();
+  return Math.round(runs.sort((a, b) => a - b)[2]);
+}
+// calibrated with as many browsers at once as the run uses, so a busy machine is measured as busy
+const calibrationMs = await Promise.all(Array.from({ length: WORKERS }, async () => { const b = await launch(); try { return await calibrate(b); } finally { await b.close(); } }))
+  .then((v) => v.sort((a, b) => a - b)[Math.floor(v.length / 2)]);
+if (args.includes("--calibrate-only")) { console.log(`calibrationMs ${calibrationMs} (${WORKERS} at once)`); server.close(); process.exit(0); }
+const B0 = budgets.browser;
+const factor = B0.calibrationMs ? Math.max(0.5, calibrationMs / B0.calibrationMs) : 1;
+console.log(`calibration: ${calibrationMs} ms here, ${B0.calibrationMs ?? "none"} ms where the ceilings were recorded; ceilings scaled x${factor.toFixed(2)}`);
+
 const results = {};
 const queue = [...routes];
 const t0 = Date.now();
@@ -140,11 +176,11 @@ server.close();
 // ---- gate
 const B = budgets.browser;
 const failures = [];
-const slack = (v) => Math.round(v * (1 + B.slack) + B.slackMs);
+const slack = (v) => Math.round(v * factor * (1 + B.slack) + B.slackMs);
 for (const [r, x] of Object.entries(results)) {
   const own = B.pages?.[r] ?? {};
   for (const k of ["maxTask", "tbt"]) {
-    const ceiling = own[k] != null ? slack(own[k]) : B.default[k];
+    const ceiling = own[k] != null ? slack(own[k]) : Math.round(B.default[k] * factor);
     if (x[k] > ceiling) failures.push(`${r} ${k}: ${x[k]} ms, over ${ceiling} ms${own[k] != null ? ` (recorded ${own[k]} + slack)` : " (default)"}`);
   }
   const clsCeil = own.cls != null ? Math.max(own.cls * (1 + B.slack), B.default.cls) : B.default.cls;
@@ -157,9 +193,11 @@ if (args.includes("--record")) {
   B.pages ??= {};
   for (const [r, x] of Object.entries(results)) {
     const o = (B.pages[r] ??= {});
-    for (const k of ["maxTask", "tbt", "cls"]) o[k] = o[k] == null ? x[k] : Math.min(o[k], x[k]);
+    // in the recording machine's terms: this machine's times divided by the calibration factor
+    for (const k of ["maxTask", "tbt", "cls"]) { const v = k === "cls" ? x[k] : Math.round(x[k] / factor); o[k] = o[k] == null ? v : Math.min(o[k], v); }
   }
   B.pages = Object.fromEntries(Object.entries(B.pages).sort(([a], [b]) => a.localeCompare(b)));
+  B.calibrationMs = B.calibrationMs ?? calibrationMs;
   fs.writeFileSync(BUDGETS, JSON.stringify(budgets, null, 1) + "\n");
 }
 console.log(`perf-browser: ${Object.keys(results).length} pages x ${RUNS} runs in ${((Date.now() - t0) / 1000).toFixed(0)} s, ${WORKERS} workers`);

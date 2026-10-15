@@ -28,6 +28,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
 
       - name: Python for the XLSX source replays
         run: pip install -r requirements.txt
@@ -47,6 +48,15 @@ jobs:
       # paragraph must stop the deploy, not just the PR that carried it.
       - name: As-of governance (hand-written paragraphs)
         run: node pipeline/asof.mjs
+
+      # Bytes per page, search quality and the file count. Cloudflare Pages allows 20,000 files
+      # per deployment on the Free plan and 100,000 on Pro/Business/Enterprise; Workers Paid static
+      # assets allow 100,000. Until the Workers cutover (docs/RUNBOOK-workers-cutover.md) this
+      # deploy is to Pages, so the cap here is 20,000 unless the account's Pages plan says more.
+      - name: Performance, static
+        env:
+          ATLAS_DEPLOY_FILE_CAP: "20000"
+        run: npm run perf:static
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3

@@ -813,7 +813,8 @@
     "cls": 0
    }
   },
-  "note": "pages: recorded medians (3 cold runs, 390px, 4x CPU) from the 417a96f baseline; a page fails over recorded*(1+slack)+slackMs. Records only ever move down (--record). Pages without a record use default, the target for a page drawn with the build-time chart kit."
+  "note": "pages: recorded medians (3 cold runs, 390px, 4x CPU) from the 417a96f baseline; a page fails over recorded*(1+slack)+slackMs. Records only ever move down (--record). Pages without a record use default, the target for a page drawn with the build-time chart kit. calibrationMs: the fixed workload in perf-browser.mjs CALIBRATE, timed with 3 browsers at once on the recording machine (14 cores, 2026-10-16); other machines scale every ceiling by their own time over this one.",
+  "calibrationMs": 2200
  },
  "search": {
   "maxCoreGz": 153600,
