@@ -1,4 +1,5 @@
 ---
+import { mastheadStamp } from "../../dossiers/headline.js";
 import Base from '../../layouts/Base.astro';
 import EveryCut from '../../components/EveryCut.astro';
 import GuideData from '../../components/GuideData.astro';
@@ -12,7 +13,7 @@ const period=model.plates[0].period;
 const cmsePeriod=model.plates.find(p=>p.id==='cmse-23').period;
 const payload={facts:model.facts,plates:model.plates.map(({explain,extra,...p})=>p)};
 ---
-<Base title="Schools · India Atlas" description={D.description} nav="guides" dateStamp={dateStamp(D)} crumbLeft={`<a href="/guides/">Guides</a> / Education / <b>Schools</b>`} crumbRight={`${D.statusNote}, <b>${D.version}</b>`} canonical="https://atlas.thisindianlife.today/guides/schools/" ogImage="/og/schools.png">
+<Base title="Schools · India Atlas" description={D.description} nav="guides" dateStamp={mastheadStamp(D)} crumbLeft={`<a href="/guides/">Guides</a> / Education / <b>Schools</b>`} crumbRight={`${D.statusNote}, <b>${D.version}</b>`} canonical="https://atlas.thisindianlife.today/guides/schools/" ogImage="/og/schools.png">
 <div class="page">
  <div class="titleblock break" data-inputs="schools-national" data-prose="evergreen">
   <div class="kicker">{kicker(D)}</div>

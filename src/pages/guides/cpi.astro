@@ -1,4 +1,5 @@
 ---
+import { mastheadStamp } from "../../dossiers/headline.js";
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
 import GuideData from "../../components/GuideData.astro";
@@ -32,7 +33,7 @@ const ruAbove = sec24.series.rural.data.filter((v, i) => v > sec24.series.urban.
   title="Consumer Prices · India Atlas"
   description={D.description}
   nav="guides"
-  dateStamp={dateStamp(D)}
+  dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
   canonical="https://atlas.thisindianlife.today/guides/cpi/"

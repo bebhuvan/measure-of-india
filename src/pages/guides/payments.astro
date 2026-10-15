@@ -1,4 +1,5 @@
 ---
+import { mastheadStamp } from "../../dossiers/headline.js";
 // Guide 26, how Indians pay. Data: data/series/payments-*.json (RBI payment system statistics
 // via the local Data Bank, scripts/lib/products/payments.mjs) and, read-only, the credit guide's
 // credit-money bundle for currency with the public. The plates' series are cut here at build
@@ -49,7 +50,7 @@ const cashLast = (() => { const d = P.cash.dates.at(-1); return `${+d.slice(8, 1
   title="How Indians Pay · India Atlas"
   description={D.description}
   nav="guides"
-  dateStamp={dateStamp(D)}
+  dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
   canonical="https://atlas.thisindianlife.today/guides/payments/"

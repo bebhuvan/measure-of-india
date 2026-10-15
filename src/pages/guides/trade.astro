@@ -1,4 +1,5 @@
 ---
+import { mastheadStamp } from "../../dossiers/headline.js";
 // Guide 15, merchandise trade. Data: data/series/trade-*.json (TradeStat via
 // scripts/lib/products/tradestat*.mjs; RBI DBIE via scripts/lib/products/dbie-trade.mjs).
 // The bundles are large (HS 4 digits monthly is 1.7 MB), so the plates' data is cut here at
@@ -127,7 +128,7 @@ const lines = archiveForFamily("trade", (t) => /hs[68]/.test(t.rule ?? ""));
   title="What India Buys and Sells · India Atlas"
   description={D.description}
   nav="guides"
-  dateStamp={dateStamp(D)}
+  dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
   canonical="https://atlas.thisindianlife.today/guides/trade/"

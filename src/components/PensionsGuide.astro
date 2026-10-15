@@ -1,4 +1,5 @@
 ---
+import { mastheadStamp } from "../dossiers/headline.js";
 import Base from '../layouts/Base.astro';
 import EveryCut from './EveryCut.astro';
 import GuideData from './GuideData.astro';
@@ -16,7 +17,7 @@ const stockIds=new Set(['A1','A2','A3','M2','M3']);
 const sections=[{title:'The account stocks and the money held',groups:groups.filter(g=>stockIds.has(g.id))},{title:'Registrations, administrative cases and expected timing',groups:groups.filter(g=>!stockIds.has(g.id))}];
 const payload=governedPensionPayload(model.plates),sourceURL='https://www.pfrda.org.in/en/research-publications/statistics/statistical-data';
 ---
-<Base title="Pensions and retirement saving · India Atlas" description={D.description} nav="guides" dateStamp={monthYearStamp(h.lastSourceDate)} crumbLeft='<a href="/guides/">Guides</a> / Households / <b>Pensions</b>' crumbRight={`${D.statusNote}, <b>${D.version}</b>`} canonical="https://atlas.thisindianlife.today/guides/pensions/" ogImage="/og/pensions.png">
+<Base title="Pensions and retirement saving · India Atlas" description={D.description} nav="guides" dateStamp={mastheadStamp(D)} crumbLeft='<a href="/guides/">Guides</a> / Households / <b>Pensions</b>' crumbRight={`${D.statusNote}, <b>${D.version}</b>`} canonical="https://atlas.thisindianlife.today/guides/pensions/" ogImage="/og/pensions.png">
 <div class="page pensions-guide">
  <div class="titleblock break" data-inputs={h.bundle} data-prose="evergreen and source-bound facts">
   <div class="kicker">{kicker(D)}</div><div class="hero-grid"><h1 set:html={D.headline}/><p class="lede">An account records participation in a scheme. Contributions add money; investments hold it; an annuity can pay income later. These administrative records describe separate stages of retirement saving under the National Pension System and Atal Pension Yojana.</p></div>

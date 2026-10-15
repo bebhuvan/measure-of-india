@@ -1,4 +1,5 @@
 ---
+import { mastheadStamp } from "../../dossiers/headline.js";
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
 import GuideData from "../../components/GuideData.astro";
@@ -23,7 +24,7 @@ const nRbi = Object.keys(rbi22.series).length, nRbi10 = Object.keys(rbi10.series
   title="House prices · India Atlas"
   description={D.description}
   nav="guides"
-  dateStamp={dateStamp(D)}
+  dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
   canonical="https://atlas.thisindianlife.today/guides/housing/"

@@ -1,4 +1,5 @@
 ---
+import { mastheadStamp } from "../../dossiers/headline.js";
 import Base from '../../layouts/Base.astro';
 import EveryCut from '../../components/EveryCut.astro';
 import GuideData from '../../components/GuideData.astro';
@@ -9,7 +10,7 @@ const D=bySlug['farm-households'],model=farmModel();
 const groups=[...new Set(model.plates.map(p=>p.group))];
 const payload={facts:model.facts,plates:model.plates.map(({signature,...p})=>p)};
 ---
-<Base title="Farm households · India Atlas" description={D.description} nav="guides" dateStamp={dateStamp(D)} crumbLeft={`<a href="/guides/">Guides</a> / Households / <b>Farm livelihoods</b>`} crumbRight={`${D.statusNote}, <b>${D.version}</b>`} canonical="https://atlas.thisindianlife.today/guides/farm-households/" ogImage="/og/farm-households.png">
+<Base title="Farm households · India Atlas" description={D.description} nav="guides" dateStamp={mastheadStamp(D)} crumbLeft={`<a href="/guides/">Guides</a> / Households / <b>Farm livelihoods</b>`} crumbRight={`${D.statusNote}, <b>${D.version}</b>`} canonical="https://atlas.thisindianlife.today/guides/farm-households/" ogImage="/og/farm-households.png">
 <div class="page">
  <div class="titleblock break" data-inputs="farm-households-nss77-24, farm-households-report-29" data-prose="evergreen and data-bound facts"><div class="kicker">{kicker(D)}</div><div class="hero-grid"><h1 set:html={D.headline}/><p class="lede">A farm family’s livelihood can depend on wages, crops, animals and a business outside agriculture. The household survey puts those sources together, then follows the land, costs, borrowing and risks behind them.</p></div>
  <div class="meta"><span>Income reference <b>{model.periods.annual}</b></span><span>Coverage <b>Rural households, with measure-specific populations</b></span><span>Instrument <b>NSS Situation Assessment and Land and Livestock Holdings</b></span><span>Reading <b>Historical survey snapshot</b></span></div>

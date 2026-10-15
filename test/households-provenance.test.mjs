@@ -28,6 +28,6 @@ test('Each household plate retains its own canonical publisher source URL',()=>{
   const b=JSON.parse(fs.readFileSync('data/series/'+p.bundle+'.json'));
   assert.equal(p.sourceUrl,b.meta.sourceUrl,p.id);
  }
- assert.equal(model.plates.find(p=>p.id==='indebted-households').sourceUrl,'https://www.pib.gov.in/PressReleasePage.aspx?PRID=1753935');
- assert.equal(model.plates.find(p=>p.id==='aidis-2-0').sourceUrl,'https://www.mospi.gov.in/sites/default/files/publication_reports/Report_no588-AIDIS-77R-SeptFinal_0.pdf');
+ assert.equal(model.plates.find(p=>p.id==='debt-base').sourceUrl,'https://www.pib.gov.in/PressReleasePage.aspx?PRID=1753935');
+ assert.equal(model.plates.find(p=>p.id==='value-types').sourceUrl,'https://www.mospi.gov.in/sites/default/files/publication_reports/Report_no588-AIDIS-77R-SeptFinal_0.pdf');
 });

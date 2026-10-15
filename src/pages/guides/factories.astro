@@ -1,4 +1,5 @@
 ---
+import { mastheadStamp } from "../../dossiers/headline.js";
 import Base from "../../layouts/Base.astro";
 import GuideData from "../../components/GuideData.astro";
 import EveryCut from "../../components/EveryCut.astro";
@@ -63,7 +64,7 @@ const asiTabFy = accB ? `${accB.dates.at(-1).slice(0, 4)}-${String((+accB.dates.
   title="Enterprises · India Atlas"
   description={D.description}
   nav="guides"
-  dateStamp={dateStamp(D)}
+  dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
   canonical="https://atlas.thisindianlife.today/guides/factories/"

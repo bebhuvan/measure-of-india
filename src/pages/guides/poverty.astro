@@ -1,4 +1,5 @@
 ---
+import { mastheadStamp } from "../../dossiers/headline.js";
 import fs from "node:fs";
 import Base from "../../layouts/Base.astro";
 import Prose from "../../components/Prose.astro";
@@ -25,7 +26,7 @@ const latestRound = cols.at(-1).round, firstRound = cols[0].round;
   title="Poverty and inequality · India Atlas"
   description={D.description}
   nav="guides"
-  dateStamp={dateStamp(D)}
+  dateStamp={mastheadStamp(D)}
   crumbLeft={`<a href="/guides/">Guides</a> / ${D.section} / <b>${D.crumbTitle}</b>`}
   crumbRight={`${D.statusNote}, <b>${D.version}</b>`}
   canonical="https://atlas.thisindianlife.today/guides/poverty/"

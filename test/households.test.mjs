@@ -34,11 +34,16 @@ test('All source cells replay and statistical identities hold; anomalies remain 
  const r=validateHouseholds(process.cwd());assert.deepEqual(r.errors,[]);assert.equal(r.stats.sourceCells,218824);assert.ok(r.stats.identities>3000);
  assert.equal(r.issues.filter(x=>x.value<0).length,2);
 });
-test('Each indicator has analytical plates; plate observations and facts match canonical cells',()=>{
- const m=householdModel(),slugs=new Set(m.plates.map(p=>p.bundle));
- assert.equal(slugs.size,23);assert.equal(m.plates.length,109);
- for(const p of m.plates){const b=JSON.parse(fs.readFileSync(`data/series/${p.bundle}.json`));for(const r of p.rows){assert.equal(r.value,b.series[r.series].data[0]);assert.equal(r.unit,b.series[r.series].unit);}}
- for(const [id,f] of Object.entries(m.facts)){const src=m.factSources[id],b=JSON.parse(fs.readFileSync(`data/series/${src.bundle}.json`));assert.equal(f.value,b.series[src.series].data[0]);}
+// The lens method (docs/briefs/launch-cleanup-2026-10-15.md): one plate per reader question; every
+// other published cell stays in Every Cut and the downloads.
+test('Each plate answers its own question; plate observations and facts match canonical cells',()=>{
+ const m=householdModel();
+ assert.equal(m.plates.length,15);assert.equal(new Set(m.plates.map(p=>p.title)).size,m.plates.length);
+ for(const p of m.plates){assert.ok(p.rows.length>=2,p.id);assert.equal(new Set(p.rows.map(r=>r.unit)).size,1,p.id);const b=JSON.parse(fs.readFileSync(`data/series/${p.bundle}.json`));for(const r of p.rows){assert.equal(r.value,b.series[r.series].data[0]);assert.equal(r.unit,b.series[r.series].unit);}}
+ for(const [id,f] of Object.entries(m.facts)){const src=m.factSources[id];
+  if(src.derived){const v=src.parts.map(x=>JSON.parse(fs.readFileSync(`data/series/${x.bundle}.json`)).series[x.series].data[0]);
+   const want=/land_building/.test(id)?Math.round((v[0]+v[1])/v[2]*100):/moneylender/.test(id)?Math.round((v[0]+v[1])/10):Math.round(v[0]/10);assert.equal(f.value,want,id);continue;}
+  const b=JSON.parse(fs.readFileSync(`data/series/${src.bundle}.json`));assert.equal(f.value,b.series[src.series].data[0]);}
 });
 
 import {isWageRate} from '../scripts/lib/measure-semantics.mjs';

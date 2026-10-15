@@ -153,6 +153,12 @@ export function headlineOf(d) {
   return { value: h.value(b), what: h.what, period: h.period(b), asOf: h.asOf ? h.asOf(b) : lastDate(b), released: b.meta.releaseDate ?? null, vintage: b.meta.vintage, bundle: b };
 }
 
+/** The guide masthead's dateline: the period the headline figure describes, the same one the home
+ * page, guide index and RSS quote. One rule for every guide; never a fetch date or a vintage. */
+export function mastheadStamp(d) {
+  return `Latest: ${String(headlineOf(d).period).replace(/^from /, "")}`;
+}
+
 /** { dates, values, slope } for the guide's small chart. */
 export function sparkOf(d) {
   if(d.slug==='pensions'){
