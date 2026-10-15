@@ -23,7 +23,7 @@ async function ensureFonts() {
   for (const f of ["source-serif-4-normal-latin", "golos-text-normal-latin"]) {
     const out = path.join(dir, "india-atlas-" + f + ".ttf");
     if (fs.existsSync(out)) continue;
-    const ttf = await wawoff2.decompress(fs.readFileSync(path.join(ROOT, "public/fonts", f + ".woff2")));
+    const ttf = await wawoff2.decompress(fs.readFileSync(path.join(ROOT, "fonts/source", f + ".woff2")));
     fs.writeFileSync(out, Buffer.from(ttf));
   }
   // v3: librsvg cannot set a variable font's optical size or weight, so the display serif is

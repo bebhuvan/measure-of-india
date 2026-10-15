@@ -15,6 +15,7 @@
 //     dumbbell labels go outside the two dots, never between them.
 
 import * as Plot from "@observablehq/plot";
+import FONTS from "../styles/fonts.generated.js";
 
 // Chart text is Golos Text (proportional, tabular figures). The export keeps its old name,
 // MONO, so the 15 client files that import it need no change; SANS is the honest alias.
@@ -82,13 +83,11 @@ let _fontCssPromise = null;
 function embeddedFontCss() {
   if (!_fontCssPromise) {
     _fontCssPromise = (async () => {
-      const faces = [
-        ["Source Serif 4", "normal", "300 700", "source-serif-4-normal-latin"],
-        ["Golos Text", "normal", "400 700", "golos-text-normal-latin"],
-        ["Golos Text", "normal", "400 700", "golos-text-normal-latin-ext"],
-      ];
+      // the site's primary and extra files (scripts/fonts-build.mjs): every character the pages use
+      const faces = ["serif", "sans"].flatMap((id) => ["primary", "extra"].filter((p) => FONTS.faces[id].files[p])
+        .map((p) => [FONTS.faces[id].family, FONTS.faces[id].style, FONTS.faces[id].weight, FONTS.faces[id].files[p]]));
       const rules = await Promise.all(faces.map(async ([fam, style, weight, file]) => {
-        const buf = await fetch("/fonts/" + file + ".woff2").then((r) => r.arrayBuffer());
+        const buf = await fetch("/fonts/" + file).then((r) => r.arrayBuffer());
         const bytes = new Uint8Array(buf);
         let bin = "";
         for (let i = 0; i < bytes.length; i += 32768) bin += String.fromCharCode(...bytes.subarray(i, i + 32768));
