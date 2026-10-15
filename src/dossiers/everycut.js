@@ -838,7 +838,7 @@ function rowsOfUncached(slug, opts = {}) {
       row.sourceDefinition = quality.definition || quality.reason;
       row.referenceBasis = quality.referencePeriod || quality.referenceBasis || "";
       if (!quality.canInterpret) {
-        row.latest = null; row.latestText = "Review pending";
+        row.latest = null; row.latestText = "Not yet checked";
         row.change = null; row.changeText = "—"; row.spark = null;
         row.estimated = false; row.changeEstimated = false; if (row.expected) row.expected = false;
         row.unitNote = ""; row.base = "";

@@ -51,7 +51,7 @@ const citationVintage = sourceDateSummary === "Mixed dated and unknown revisions
 ---
 <section class="endmatter" aria-labelledby="data-h">
   <div class="em-head"><h2 id="data-h">Data and downloads</h2>
-    {governed ? <p>{nFiles.toLocaleString("en-IN")} canonical files contain {nSeries.toLocaleString("en-IN")} source records. Reviewed CSVs contain reviewed source columns, with explicit coverage and status. Archival JSON retains every canonical record with its review policy. Original workbooks retain all published cells, including held records.</p> : <p>Every series this guide draws on: {nFiles.toLocaleString("en-IN")} {nFiles === 1 ? "file" : "files"}, {nSeries.toLocaleString("en-IN")} series. Each downloads as published, as JSON or as a table (CSV). Missing values are left empty, never zero.{famRows.length ? " Large families of source tables are one row each; their files download from the family's own page." : ""}</p>}</div>
+    {governed ? <p>{nFiles.toLocaleString("en-IN")} files, {nSeries.toLocaleString("en-IN")} series. The CSV holds the series whose definitions we have checked; the JSON holds every series, with a note on each still being checked; the original files are the publisher's own, with every published number.</p> : <p>Every series this guide draws on: {nFiles.toLocaleString("en-IN")} {nFiles === 1 ? "file" : "files"}, {nSeries.toLocaleString("en-IN")} series. Each downloads as published, as JSON or as a table (CSV). Missing values are left empty, never zero.{famRows.length ? " Large families of source tables are one row each; their files download from the family's own page." : ""}</p>}</div>
   <div class="em-table">
     <table>
       <thead><tr><th>Data</th><th>Base</th><th>Coverage</th><th class="n">Series</th><th>Vintage</th><th class="n">Download</th></tr></thead>
@@ -65,7 +65,7 @@ const citationVintage = sourceDateSummary === "Mixed dated and unknown revisions
             <td class="nw">{r.from === r.to ? r.from : `${r.from} to ${r.to}`}<small>{r.freq}</small></td>
             <td class="n">{r.n}</td>
             <td>{r.vintageText}</td>
-            <td class="n nw"><a href={`/data/${r.b}.csv`} download>{r.downloads?(r.downloads.eligible.length?"Reviewed CSV":"Review status CSV"):"CSV"}</a><a href={`/data/${r.b}.json`} download>{r.downloads?"Archival JSON":"JSON"}</a>{r.downloads&&<><small>{r.downloads.eligible.length} reviewed; {r.downloads.pending.length} pending</small><a href={r.downloads.source.href} download>{r.downloads.source.linkLabel||"Original workbook"}</a></>}</td>
+            <td class="n nw"><a href={`/data/${r.b}.csv`} download>{r.downloads?(r.downloads.eligible.length?"CSV":"CSV (list only)"):"CSV"}</a><a href={`/data/${r.b}.json`} download>JSON</a>{r.downloads&&<><small>{r.downloads.eligible.length} checked, {r.downloads.pending.length} still being checked</small><a href={r.downloads.source.href} download>{r.downloads.source.linkLabel||"Original workbook"}</a></>}</td>
           </tr>
         ))}
         {famRows.map((f) => (
@@ -84,8 +84,8 @@ const citationVintage = sourceDateSummary === "Mixed dated and unknown revisions
     </table>
   </div>
   {sourceInventory&&<details class="ec-files" id="source-archive"><summary>All {sourceInventory.originals.length} original source files and source coverage</summary>
-    {d.slug==="pensions"?<><p>{sourceInventory.sourceOnlyRecords} source records are held while their units, contribution basis or territorial scope remain under review. The original workbooks retain these published cells.</p><ul>{sourceInventory.originals.map(s=><li>{s.id}: {s.title} <a href={s.href} download>Original XLSX</a></li>)}</ul></>:<><p>Canonical JSON retains every source record. CSVs distinguish reviewed columns from pending status receipts. Public original archive: {sourceInventory.archiveAvailable?"verified public copies":"not available; upload and full public readback remain pending"}.</p><p>The source inventory names every original hash, native format and publisher URL. Legacy XLS, XLSX and JSON retain their original bytes and units.</p>{sourceInventory.archiveAvailable&&<ul>{sourceInventory.originals.map(s=><li><a href={s.href} download={s.filename}>{s.filename}</a> ({s.format})</li>)}</ul>}</>}
-    <a href={sourceInventory.sourceCoverage||"/data/pensions-source-coverage.json"} download>Full source inventory and review status</a></details>}
+    {d.slug==="pensions"?<><p>{sourceInventory.sourceOnlyRecords} more series are not yet shown while we check their units or coverage; the original files below hold them.</p><ul>{sourceInventory.originals.map(s=><li>{s.id}: {s.title} <a href={s.href} download>Original XLSX</a></li>)}</ul></>:<><p>Canonical JSON retains every source record. CSVs distinguish reviewed columns from pending status receipts. Public original archive: {sourceInventory.archiveAvailable?"verified public copies":"not available; upload and full public readback remain pending"}.</p><p>The source inventory names every original hash, native format and publisher URL. Legacy XLS, XLSX and JSON retain their original bytes and units.</p>{sourceInventory.archiveAvailable&&<ul>{sourceInventory.originals.map(s=><li><a href={s.href} download={s.filename}>{s.filename}</a> ({s.format})</li>)}</ul>}</>}
+    <a href={sourceInventory.sourceCoverage||"/data/pensions-source-coverage.json"} download>List of every series and whether it is shown</a></details>}
   <div class="em-cite">
     <h3>Cite this guide</h3>
     <p>India Atlas, “{d.title}”, {citationVintage}. atlas.thisindianlife.today/guides/{d.slug}/</p>

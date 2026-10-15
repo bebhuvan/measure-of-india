@@ -38,7 +38,7 @@ const titles = Object.fromEntries((single ? [] : [...new Set(rows.map((r) => r.b
 ---
 <Base
   title={`${title}: every series · India Atlas`}
-  description={`Every series of ${title}, from the India Atlas guide to ${d.title.toLowerCase()}: ${governed ? "source records, review status and original workbooks" : snapshot ? "source estimates and downloads" : "latest values, change on a year earlier, and downloads"}.`}
+  description={`Every series of ${title}, from the India Atlas guide to ${d.title.toLowerCase()}: ${governed ? "every series, with the publisher's original files" : snapshot ? "source estimates and downloads" : "latest values, change on a year earlier, and downloads"}.`}
   nav="guides"
   crumbLeft={`<a href="/guides/">Guides</a> / <a href="/guides/${slug}/">${d.crumbTitle}</a> / <b>Every cut</b>`}
   canonical={`https://atlas.thisindianlife.today${href(n)}`}
@@ -48,22 +48,22 @@ const titles = Object.fromEntries((single ? [] : [...new Set(rows.map((r) => r.b
   <div class="titleblock break ec-page">
     <div class="kicker"><a href={`/guides/${slug}/#every-cut`}>{d.title}: every series, every cut</a></div>
     <h1>{title}</h1>
-    <p class="lede">{nAll.toLocaleString("en-IN")} series{single ? "" : ` from ${t.bundles.length.toLocaleString("en-IN")} ${t.bundles.length === 1 ? "file" : "files"}`}{governed ? ". Reviewed records show source observations; pending records retain source identities and review status." : <>, each with {snapshot ? "its source estimate and downloads" : "its latest value, its change on a year earlier and its trend"}.</>}{total > 1 ? ` Page ${n + 1} of ${total}.` : ""}</p>
+    <p class="lede">{nAll.toLocaleString("en-IN")} series{single ? "" : ` from ${t.bundles.length.toLocaleString("en-IN")} ${t.bundles.length === 1 ? "file" : "files"}`}{governed ? ". Series whose definitions we have checked show their figures; the rest are listed without a figure until we have." : <>, each with {snapshot ? "its source estimate and downloads" : "its latest value, its change on a year earlier and its trend"}.</>}{total > 1 ? ` Page ${n + 1} of ${total}.` : ""}</p>
     {d.everyCutChangeMode === "none" && <p>Derived changes are not supplied.</p>}
     <div class="meta">
       <span>Source <b>{src}</b></span>
       {single && B.meta?.base && <span>Base <b>{B.meta.base}</b></span>}
       {single && <span>Frequency <b>{B.meta?.frequency}</b></span>}
       {single && <span>Vintage <b>{vintageText(B.meta)}</b></span>}
-      {single ? <span>Download <b><a href={`/data/${id}.csv`} download>{governed?(downloadInfo(id).eligible.length?"Reviewed CSV":"Review status CSV"):"CSV"}</a>, <a href={`/data/${id}.json`} download>{governed?"Archival JSON":"JSON"}</a>{governed&&<>, <a href={downloadInfo(id).source.href} download>{downloadInfo(id).source.linkLabel||"Original workbook"}</a></>}</b></span>
-        : <span>Download <b>{governed?"reviewed columns, archival records and original workbooks":"each file's CSV from its rows"}</b></span>}
+      {single ? <span>Download <b><a href={`/data/${id}.csv`} download>{governed?(downloadInfo(id).eligible.length?"CSV":"CSV (list only)"):"CSV"}</a>, <a href={`/data/${id}.json`} download>JSON</a>{governed&&<>, <a href={downloadInfo(id).source.href} download>{downloadInfo(id).source.linkLabel||"Original workbook"}</a></>}</b></span>
+        : <span>Download <b>{governed?"CSV, JSON and the publisher's original files":"each file's CSV from its rows"}</b></span>}
     </div>
   </div>
   <div class="break">
     {!single && (
       <details class="ec-files" id="files">
-        <summary>All {t.bundles.length.toLocaleString("en-IN")} {t.bundles.length === 1 ? "file" : "files"}{governed?": review status, eligible columns and source originals":", to download whole"}</summary>
-        <ul>{t.bundles.map((b) => <li>{bundleTitle(b)} <a href={`/data/${b}.csv`} download>{governed?(downloadInfo(b).eligible.length?"Reviewed CSV":"Review status CSV"):"CSV"}</a> <a href={`/data/${b}.json`} download>{governed?"Archival JSON":"JSON"}</a>{governed&&<><small> {downloadInfo(b).eligible.length} reviewed; {downloadInfo(b).pending.length} pending </small><a href={downloadInfo(b).source.href} download>{downloadInfo(b).source.linkLabel||"Original workbook"}</a></>}</li>)}</ul>
+        <summary>All {t.bundles.length.toLocaleString("en-IN")} {t.bundles.length === 1 ? "file" : "files"}{governed?", with the publisher's original files":", to download whole"}</summary>
+        <ul>{t.bundles.map((b) => <li>{bundleTitle(b)} <a href={`/data/${b}.csv`} download>{governed?(downloadInfo(b).eligible.length?"CSV":"CSV (list only)"):"CSV"}</a> <a href={`/data/${b}.json`} download>JSON</a>{governed&&<><small> {downloadInfo(b).eligible.length} checked, {downloadInfo(b).pending.length} still being checked </small><a href={downloadInfo(b).source.href} download>{downloadInfo(b).source.linkLabel||"Original workbook"}</a></>}</li>)}</ul>
       </details>
     )}
     {total > 1 && (

@@ -1,12 +1,14 @@
 // Bounded offline semantic audit; read-only local holdings, no source discovery network.
-import fs from 'node:fs';import path from 'node:path';
+import fs from 'node:fs';import path from 'node:path';import os from 'node:os';import YAML from 'yaml';
 import {readRaw} from './lib/util.mjs';import {parseCsv} from './lib/tabular.mjs';
 import {REPORTS} from './lib/products/markets-rbi.mjs';
+// The owner's local Data Bank: INDIA_ATLAS_DATABANK, else data/sources.yml families.databank.root.
+const DATABANK=(process.env.INDIA_ATLAS_DATABANK??YAML.parse(fs.readFileSync('data/sources.yml','utf8')).families.databank.root).replace(/^~(?=\/)/,os.homedir());
 const root=process.cwd(),cas=readRaw(root,'data/raw/markets-rbi-cas.json'),mirror=readRaw(root,'data/raw/markets-hub.json');
 const key=r=>[r.dsd_code,r.series_key,r.observation_date].join('|'),official=new Map(cas.rows.map(r=>[key(r),r]));let shared=0,missing=0;const differences=[];
 for(const t of mirror.listed){const table=parseCsv(t.csv,','),head=table.shift();for(const row of table){const r=Object.fromEntries(head.map((h,i)=>[h,row[i]]));if(!r.time_period)continue;const dims=Object.keys(r).filter(k=>['perf_ind_rn','typ_ratio_rn','ind_clasf_rn','inds_grp_rn','puc_cls_rn','sale_sz_cls_rn','unit_measure'].includes(k));const sk=dims.sort().map(k=>`${k}=${r[k]}`).join('|');const dsd=t.table.toUpperCase(),c=official.get([dsd,sk,r.time_period.slice(0,10)].join('|'));if(!c){missing++;continue;}shared++;if(Number(c.value)!==Number(r.obs_value))differences.push({dsd,key:sk,date:r.time_period,cas:c.value,mirror:r.obs_value,artifact:c.source_artifact_id});}}
 // Exact title/ID references are widened to source adapter code before declaring a concept unused.
-const inventory=parseCsv(fs.readFileSync('/home/bhuvanesh.r/Documents/Data/Data bank/data/derived/rbi_dbie_webi_inventory.csv','utf8'),',');const head=inventory.shift();const rows=inventory.map(r=>Object.fromEntries(head.map((h,i)=>[h,r[i]])));
+const inventory=parseCsv(fs.readFileSync(path.join(DATABANK,'data/derived/rbi_dbie_webi_inventory.csv'),'utf8'),',');const head=inventory.shift();const rows=inventory.map(r=>Object.fromEntries(head.map((h,i)=>[h,r[i]])));
 const walk=dir=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(dir,e.name)):[path.join(dir,e.name)]);
 const files=walk('scripts/lib/products').filter(f=>/\.(mjs|js)$/.test(f)).map(f=>({file:f,text:fs.readFileSync(f,'utf8')}));
 const concepts=[

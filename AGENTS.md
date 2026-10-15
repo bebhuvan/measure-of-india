@@ -7,8 +7,8 @@ line: "Read AGENTS.md and follow it."
 
 ## What this site is
 
-A static reference work on Indian economic statistics: 32 guides and 36
-state profiles at the 2026-10-10 launch checkpoint, build-time-rendered charts,
+A static reference work on Indian economic statistics: 36 guides and 36
+state profiles at the 2026-10-15 cleanup (the registry is the count), build-time-rendered charts,
 mechanically verified prose. Live inventory: `npm run coverage:expansion`. No
 framework runtime, no database, no client-side fetching of data. Everything
 is a file, every file has a gate, every gate exits non-zero on failure.

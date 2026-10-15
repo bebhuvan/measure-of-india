@@ -13,6 +13,7 @@
 //    vintage instead of overwriting it (scripts/lib/util.mjs writeRaw).
 
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import YAML from "yaml";
@@ -120,11 +121,18 @@ Object.assign(REGISTRY, {pensions:buildPensionsProduct});
 
 // One product's failure must not starve the rest: collect, continue, and
 // exit non-zero at the end so CI still fails on the summary.
-const failed = [];
+const failed = [], held = [];
+// A family read from the owner's machine (transport: local: the Data Bank, the PDF parse folder)
+// cannot be refreshed where its folder is absent, as in CI. Those products keep their committed
+// bundles and are listed as held; they refresh when fetch runs on a machine that has the folder.
+// --require-local makes an absent folder a failure again.
+const localRoot = (fam) => (fam === "databank" && process.env.INDIA_ATLAS_DATABANK) || String(cfg.families[fam]?.root ?? "").replace(/^~(?=\/)/, os.homedir());
+const unavailable = (fam) => cfg.families[fam]?.transport === "local" && !process.argv.includes("--require-local") && !fs.existsSync(localRoot(fam));
 for (const [slug, dcfg] of Object.entries(cfg.dossiers)) {
   if (ONLY && !ONLY.includes(slug) && !ONLY.includes(dcfg.product)) continue;
   if (!dcfg.family) throw new Error(`dossier "${slug}" has no family: in data/sources.yml`);
   if (!cfg.families?.[dcfg.family]) throw new Error(`dossier "${slug}" declares unknown family "${dcfg.family}" (not in families: in data/sources.yml)`);
+  if (unavailable(dcfg.family)) { held.push(slug); continue; }
   const fetcher = REGISTRY[dcfg.product];
   if (!fetcher) throw new Error(`no fetcher registered for product "${dcfg.product}" (dossier ${slug})`);
   console.log(`\n== ${slug} (${dcfg.product}) ==`);
@@ -135,6 +143,7 @@ for (const [slug, dcfg] of Object.entries(cfg.dossiers)) {
     console.error(`FAILED: ${slug}: ${err.message}`);
   }
 }
+if (held.length) console.log(`\nheld, local source folder not on this machine (committed bundles kept): ${held.join(", ")}`);
 if (failed.length) {
   console.error(`\nfetch finished with ${failed.length} failed product(s): ${failed.join(", ")}`);
   process.exitCode = 1;

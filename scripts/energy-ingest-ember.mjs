@@ -4,7 +4,10 @@ import crypto from 'node:crypto';
 import {guardEnergyArchive} from './lib/energy-archive-guard.mjs';
 import {writeRaw,rawExists} from './lib/util.mjs';
 import {getText} from './lib/net.mjs';
-const sibling='/home/bhuvanesh.r/Documents/Bhuvan projects/THis Indian Life';
+// The original Ember snapshots live in the This Indian Life repository (data/snapshots, data/catalog).
+// Point ATLAS_EMBER_SOURCE at a checkout of it; this one-off ingest never runs in CI.
+const sibling=process.env.ATLAS_EMBER_SOURCE;
+if(!sibling)throw Error('Set ATLAS_EMBER_SOURCE to the This Indian Life checkout that holds the Ember snapshots');
 const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const manifest=JSON.parse(fs.readFileSync(path.join(sibling,'data/catalog/ember-manifest.json')));
 for(const a of manifest){
